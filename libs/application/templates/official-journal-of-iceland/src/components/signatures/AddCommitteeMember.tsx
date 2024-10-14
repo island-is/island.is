@@ -9,6 +9,7 @@ import {
 } from '../../lib/constants'
 import { getCommitteeAnswers, getEmptyMember } from '../../lib/utils'
 import set from 'lodash/set'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -19,6 +20,8 @@ export const AddCommitteeMember = ({ applicationId }: Props) => {
   const { updateApplication, application, isLoading } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
 
   const onAddCommitteeMember = () => {
     const { signature, currentAnswers } = getCommitteeAnswers(
@@ -36,6 +39,8 @@ export const AddCommitteeMember = ({ applicationId }: Props) => {
         InputFields.signature.committee,
         withExtraMember,
       )
+
+      setValue(InputFields.signature.committee, withExtraMember)
 
       updateApplication(updatedAnswers)
     }

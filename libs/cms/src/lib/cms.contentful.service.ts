@@ -310,11 +310,19 @@ export class CmsContentfulService {
     )
   }
 
-  async getOrganization(slug: string, lang: string): Promise<Organization> {
+  async getOrganization(
+    slug: string,
+    lang: string,
+  ): Promise<Organization | null> {
+    if (!slug) {
+      return null
+    }
+
     const params = {
       ['content_type']: 'organization',
       include: 10,
       'fields.slug': slug,
+      limit: 1,
     }
 
     const result = await this.contentfulRepository

@@ -30,7 +30,7 @@ export const TaskList = () => {
 
   if (loading) {
     return (
-      <Box marginBottom={[4, 4, 8]}>
+      <Box paddingTop={1} marginBottom={[4, 4, 8]}>
         <SkeletonLoader height={80} repeat={3} space={3} />
       </Box>
     )
@@ -38,25 +38,29 @@ export const TaskList = () => {
 
   if (error) {
     return (
-      <ContentBlock>
-        <AlertMessage
-          type="error"
-          title={t(msg.errorTitle)}
-          message={t(msg.errorText)}
-        />
-      </ContentBlock>
+      <Box paddingTop={1}>
+        <ContentBlock>
+          <AlertMessage
+            type="error"
+            title={t(msg.errorTitle)}
+            message={t(msg.errorText)}
+          />
+        </ContentBlock>
+      </Box>
     )
   }
 
   if (drafts && drafts.length === 0) {
     return (
-      <ContentBlock>
-        <AlertMessage
-          type="default"
-          title={t(msg.noDataTitle)}
-          message={t(msg.noDataText)}
-        />
-      </ContentBlock>
+      <Box paddingTop={1}>
+        <ContentBlock>
+          <AlertMessage
+            type="default"
+            title={t(msg.noDataTitle)}
+            message={t(msg.noDataText)}
+          />
+        </ContentBlock>
+      </Box>
     )
   }
 

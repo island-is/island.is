@@ -20,12 +20,23 @@ import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bott
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useAndroidNotificationPermission } from '../../hooks/use-android-notification-permission'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useDeepLinkHandling } from '../../hooks/use-deep-link-handling'
 import { useNotificationsStore } from '../../stores/notifications-store'
+import {
+  preferencesStore,
+  usePreferencesStore,
+} from '../../stores/preferences-store'
 import { useUiStore } from '../../stores/ui-store'
 import { isAndroid } from '../../utils/devices'
+import { needsToUpdateAppVersion } from '../../utils/minimum-app-version'
 import { getRightButtons } from '../../utils/get-main-root'
-import { handleInitialNotification } from '../../utils/lifecycle/setup-notifications'
 import { testIDs } from '../../utils/test-ids'
+import { navigateTo } from '../../lib/deep-linking'
+import {
+  AirDiscountModule,
+  useGetAirDiscountQuery,
+  validateAirDiscountInitialData,
+} from './air-discount-module'
 import {
   ApplicationsModule,
   useListApplicationsQuery,
@@ -37,26 +48,17 @@ import {
   useListDocumentsQuery,
   validateInboxInitialData,
 } from './inbox-module'
-import { OnboardingModule } from './onboarding-module'
-import {
-  VehiclesModule,
-  useListVehiclesQuery,
-  validateVehiclesInitialData,
-} from './vehicles-module'
-import {
-  preferencesStore,
-  usePreferencesStore,
-} from '../../stores/preferences-store'
-import {
-  AirDiscountModule,
-  useGetAirDiscountQuery,
-  validateAirDiscountInitialData,
-} from './air-discount-module'
 import {
   LicensesModule,
-  validateLicensesInitialData,
   useGetLicensesData,
+  validateLicensesInitialData,
 } from './licenses-module'
+import { OnboardingModule } from './onboarding-module'
+import {
+  useListVehiclesQuery,
+  validateVehiclesInitialData,
+  VehiclesModule,
+} from './vehicles-module'
 
 interface ListItem {
   id: string
@@ -149,6 +151,8 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const widgetsInitialised = usePreferencesStore(
     ({ widgetsInitialised }) => widgetsInitialised,
   )
+
+  useDeepLinkHandling()
 
   const applicationsRes = useListApplicationsQuery({
     skip: !applicationsWidgetEnabled,
@@ -252,15 +256,21 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const keyExtractor = useCallback((item: ListItem) => item.id, [])
   const scrollY = useRef(new Animated.Value(0)).current
 
+  const isAppUpdateRequired = useCallback(async () => {
+    const needsUpdate = await needsToUpdateAppVersion()
+    if (needsUpdate) {
+      navigateTo('/update-app', { closable: false })
+    }
+  }, [])
+
   useEffect(() => {
     // Sync push tokens and unseen notifications
     syncToken()
     checkUnseen()
     // Get user locale from server
     getAndSetLocale()
-
-    // Handle initial notification
-    handleInitialNotification()
+    // Check if upgrade wall should be shown
+    isAppUpdateRequired()
   }, [])
 
   const refetch = useCallback(async () => {

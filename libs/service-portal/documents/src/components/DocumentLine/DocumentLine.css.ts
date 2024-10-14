@@ -71,3 +71,30 @@ export const checkCircle = style({
   maxWidth: 30,
   transition: 'background-color .25s',
 })
+
+export const linkWrapper = style({
+  backgroundColor: 'unset',
+  ...themeUtils.responsiveStyle({
+    sm: {
+      backgroundColor: theme.color.blueberry100,
+    },
+  }),
+})
+
+export const badge = style({
+  position: 'absolute',
+  top: -12,
+  bottom: 0,
+  right: 'auto',
+  left: -107,
+  height: theme.spacing[1],
+  width: theme.spacing[1],
+  borderRadius: '50%',
+  backgroundColor: theme.color.red400,
+})
+
+export const avatar = style({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+})

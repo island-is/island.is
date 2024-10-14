@@ -39,11 +39,11 @@ test.describe.serial('Indictment tests', () => {
     await page
       .getByRole('checkbox', { name: 'Ákærði er ekki með íslenska kennitölu' })
       .check()
-    await page.getByTestId('nationalId').click()
-    await page.getByTestId('nationalId').fill('01.01.2000')
-    await page.getByTestId('accusedName').click()
-    await page.getByTestId('accusedName').fill(accusedName)
-    await page.getByTestId('accusedName').press('Tab')
+    await page.getByTestId('inputNationalId').click()
+    await page.getByTestId('inputNationalId').fill('01.01.2000')
+    await page.getByTestId('inputName').click()
+    await page.getByTestId('inputName').fill(accusedName)
+    await page.getByTestId('inputName').press('Tab')
     await page.getByTestId('accusedAddress').fill('Testgata 12')
     await page.locator('#defendantGender').click()
     await page.locator('#react-select-defendantGender-option-0').click()
@@ -79,9 +79,14 @@ test.describe.serial('Indictment tests', () => {
       verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
     ])
     await Promise.all([
+      page.getByText('Nei').last().click(),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+    ])
+    await Promise.all([
       page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),
     ])
+
     // Case files
     await expect(page).toHaveURL(`/akaera/domskjol/${caseId}`)
 

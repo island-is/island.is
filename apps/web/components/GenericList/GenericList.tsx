@@ -292,12 +292,53 @@ export const GenericList = ({
 
   const selectedFilters = extractFilterTags(filterCategories)
 
+  const selectedFiltersComponent = (
+    <Box className={styles.filterTagsContainer}>
+      <Inline space={1} alignY="top">
+        {selectedFilters.length > 0 && (
+          <Text>{activeLocale === 'is' ? 'Síað eftir:' : 'Filtered by:'}</Text>
+        )}
+        <Inline space={1}>
+          {selectedFilters.map(({ value, label, category }) => (
+            <FilterTag
+              key={value}
+              active={true}
+              onClick={() => {
+                setParameters((prevParameters) => {
+                  const updatedParameters = {
+                    ...prevParameters,
+                    [category]: (prevParameters?.[category] ?? []).filter(
+                      (prevValue) => prevValue !== value,
+                    ),
+                  }
+
+                  // Make sure we clear out the query params from the url when there is nothing selected
+                  if (
+                    Object.values(updatedParameters).every(
+                      (s) => !s || s.length === 0,
+                    )
+                  ) {
+                    return null
+                  }
+
+                  return updatedParameters
+                })
+              }}
+            >
+              {label}
+            </FilterTag>
+          ))}
+        </Inline>
+      </Inline>
+    </Box>
+  )
+
   return (
     <Box paddingBottom={3}>
       <GridContainer>
-        <Stack space={5}>
+        <Stack space={4}>
           <Box ref={ref}>
-            {filterCategories.length > 0 && (
+            {filterCategories.length > 1 && (
               <Stack space={4}>
                 <Stack space={3}>
                   {isMobile && filterInputComponent}
@@ -332,6 +373,7 @@ export const GenericList = ({
                     variant={isMobile ? 'dialog' : 'popover'}
                     onFilterClear={() => {
                       setParameters(null)
+                      setPage(null)
                     }}
                     filterInput={filterInputComponent}
                   >
@@ -342,6 +384,7 @@ export const GenericList = ({
                           : 'Clear selection'
                       }
                       onChange={({ categoryId, selected }) => {
+                        setPage(null)
                         setParameters((prevParameters) => {
                           // Make sure we clear out the query params from the url when there is nothing selected
                           if (
@@ -361,6 +404,7 @@ export const GenericList = ({
                         })
                       }}
                       onClear={(categoryId) => {
+                        setPage(null)
                         setParameters((prevParameters) => {
                           const updatedParameters = {
                             ...prevParameters,
@@ -383,47 +427,52 @@ export const GenericList = ({
                     />
                   </Filter>
                 </Stack>
+                {selectedFiltersComponent}
+              </Stack>
+            )}
 
-                <Inline space={1} alignY="top">
-                  {selectedFilters.length > 0 && (
-                    <Text>
-                      {activeLocale === 'is' ? 'Síað eftir:' : 'Filtered by:'}
-                    </Text>
-                  )}
-                  <Inline space={1}>
-                    {selectedFilters.map(({ value, label, category }) => (
-                      <FilterTag
-                        key={value}
-                        onClick={() => {
-                          setParameters((prevParameters) => {
-                            const updatedParameters = {
+            {filterCategories.length <= 1 && (
+              <Stack space={4}>
+                <Stack space={3}>
+                  {filterInputComponent}
+                  {selectedFilters.length > 0 && selectedFiltersComponent}
+                </Stack>
+                <Inline space={1}>
+                  {filterTags
+                    ?.filter((tag) => {
+                      const isActive = Boolean(
+                        selectedFilters.find(
+                          (filter) => filter.value === tag.slug,
+                        ),
+                      )
+                      return !isActive
+                    })
+                    .map((tag) => {
+                      const category = tag.genericTagGroup?.slug
+                      const value = tag.slug
+                      const label = tag.title
+                      return (
+                        <Tag
+                          key={tag.id}
+                          onClick={() => {
+                            if (!category) {
+                              return
+                            }
+                            setParameters((prevParameters) => ({
                               ...prevParameters,
                               [category]: (
                                 prevParameters?.[category] ?? []
-                              ).filter((prevValue) => prevValue !== value),
-                            }
-
-                            // Make sure we clear out the query params from the url when there is nothing selected
-                            if (
-                              Object.values(updatedParameters).every(
-                                (s) => !s || s.length === 0,
-                              )
-                            ) {
-                              return null
-                            }
-
-                            return updatedParameters
-                          })
-                        }}
-                      >
-                        {label}
-                      </FilterTag>
-                    ))}
-                  </Inline>
+                              ).concat(value),
+                            }))
+                          }}
+                        >
+                          {label}
+                        </Tag>
+                      )
+                    })}
                 </Inline>
               </Stack>
             )}
-            {filterCategories.length === 0 && filterInputComponent}
           </Box>
           {displayError && (
             <AlertMessage
@@ -436,7 +485,7 @@ export const GenericList = ({
               }
             />
           )}
-          {totalItems === 0 && !displayError && (
+          {totalItems === 0 && !displayError && !loading && (
             <Text>{noResultsFoundText}</Text>
           )}
           {totalItems > 0 && (
@@ -511,7 +560,7 @@ export const GenericListWrapper = ({
     useState<GenericListItemResponse | null>(null)
   const [errorOccurred, setErrorOccurred] = useState(false)
 
-  const [fetchListItems, { loading }] = useLazyQuery<
+  const [fetchListItems, { loading, called }] = useLazyQuery<
     Query,
     GetGenericListItemsQueryVariables
   >(GET_GENERIC_LIST_ITEMS_QUERY, {
@@ -567,7 +616,7 @@ export const GenericListWrapper = ({
         })
       }}
       totalItems={totalItems}
-      loading={loading}
+      loading={loading || !called}
       pageQueryId={pageQueryId}
       searchQueryId={searchQueryId}
       tagQueryId={tagQueryId}

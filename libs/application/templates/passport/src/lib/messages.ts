@@ -307,6 +307,11 @@ export const m = defineMessages({
     defaultMessage: 'Greiða',
     description: 'Some description',
   },
+  dropLocationTitleFixedValue: {
+    id: 'pa.application:overview.dropLocationTitle',
+    defaultMessage: 'Þjóðskrá',
+    description: 'Some description',
+  },
 
   /* Payment Section */
   paymentSection: {

@@ -4,6 +4,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { InputFields } from '../../lib/types'
 import { isRegularSignature } from '../../lib/utils'
 import set from 'lodash/set'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -17,6 +18,8 @@ export const RemoveRegularSignature = ({
   const { updateApplication, application } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
 
   const onRemove = () => {
     const currentAnswers = structuredClone(application.answers)
@@ -35,6 +38,8 @@ export const RemoveRegularSignature = ({
         InputFields.signature.regular,
         updatedRegularSignature,
       )
+
+      setValue(InputFields.signature.regular, updatedRegularSignature)
 
       updateApplication(updatedSignatures)
     }

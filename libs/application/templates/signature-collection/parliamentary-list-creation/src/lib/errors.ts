@@ -26,6 +26,18 @@ export const errorMessages = {
       description: '',
     },
   }),
+  alreadyCandidate: defineMessages({
+    title: {
+      id: 'plc.application:error.alreadyCandidate.title',
+      defaultMessage: 'Ekki hægt að tvískrá meðmælasöfnun',
+      description: '',
+    },
+    summary: {
+      id: 'plc.application:error.alreadyCandidate.summary',
+      defaultMessage: 'Þú ert nú þegar með framboð',
+      description: '',
+    },
+  }),
   citizenship: defineMessages({
     title: {
       id: 'plc.application:error.citizenship.title',

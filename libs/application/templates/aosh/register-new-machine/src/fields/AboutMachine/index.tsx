@@ -8,6 +8,8 @@ import { useLocale } from '@island.is/localization'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { MACHINE_SUB_CATEGORIES } from '../../graphql/queries'
+import { CategoryType } from '../../shared/types'
+import { getAboutMachineAnswers } from '../../utils'
 
 export const machineSubCategories = gql`
   ${MACHINE_SUB_CATEGORIES}
@@ -17,44 +19,29 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
   const { application, field, setBeforeSubmitCallback } = props
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { control, register, setValue } = useFormContext()
 
-  const machineParentCategories = getValueViaPath(
-    application.externalData,
-    'machineParentCategories.data',
-    [],
-  ) as { name: string }[]
-  const machineType = getValueViaPath(
-    application.answers,
-    'machine.aboutMachine.type',
-    '',
-  ) as string
-  const machineModel = getValueViaPath(
-    application.answers,
-    'machine.aboutMachine.model',
-    '',
-  ) as string
-  const machineCategory = getValueViaPath(
-    application.answers,
-    'machine.aboutMachine.category',
-    '',
-  ) as string
-  const machineSubCategory = getValueViaPath(
-    application.answers,
-    'machine.aboutMachine.subcategory',
-    '',
-  ) as string
-  const fromService = getValueViaPath(
-    application.answers,
-    'machine.aboutMachine.fromService',
-    false,
-  ) as boolean
+  const {
+    machineParentCategories,
+    machineType,
+    machineModel,
+    machineCategory,
+    machineSubCategory,
+    fromService,
+    categoriesFromService,
+  } = getAboutMachineAnswers(application.answers, application.externalData)
 
-  const [category, setCategory] = useState<string>(machineCategory)
-  const [subCategory, setSubCategory] = useState<string>(machineSubCategory)
+  const [category, setCategory] = useState<CategoryType>({
+    nameIs: machineCategory.nameIs,
+    nameEn: machineCategory.nameEn,
+  })
+  const [subCategory, setSubCategory] = useState<CategoryType>({
+    nameIs: machineSubCategory.nameIs,
+    nameEn: machineSubCategory.nameEn,
+  })
   const [subCategories, setSubCategories] = useState<
-    { subCat: string; registrationNumberPrefix: string }[]
+    { subCat: CategoryType; registrationNumberPrefix: string }[]
   >([])
   const [registrationNumberPrefix, setRegistrationNumberPrefix] =
     useState<string>(
@@ -65,7 +52,8 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
       ) as string,
     )
   const [subCategoryDisabled, setSubCategoryDisabled] = useState<boolean>(
-    fromService || (!fromService && !subCategory.length),
+    (fromService && categoriesFromService.length === 1) ||
+      (!fromService && !subCategory.nameIs.length),
   )
   const [type, setType] = useState<string>(machineType)
   const [model, setModel] = useState<string>(machineModel)
@@ -77,9 +65,16 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
         setSubCategoryDisabled(false)
         setSubCategories(
           result.getMachineSubCategories.map(
-            (subCat: { name: string; registrationNumberPrefix: string }) => {
+            (subCat: {
+              name: string
+              nameEn: string
+              registrationNumberPrefix: string
+            }) => {
               return {
-                subCat: subCat.name,
+                subCat: {
+                  nameIs: subCat.name,
+                  nameEn: subCat.nameEn,
+                },
                 registrationNumberPrefix: subCat.registrationNumberPrefix,
               }
             },
@@ -89,18 +84,28 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
     },
   })
 
-  const setCategoryValue = (value: string) => {
-    setSubCategory('')
+  const setCategoryValue = (value: CategoryType) => {
+    setSubCategory({ nameIs: '', nameEn: '' })
     setSubCategoryDisabled(true)
-    setCategory(value)
+    setCategory({ nameIs: value.nameIs, nameEn: value.nameEn })
+  }
+
+  const setDisabledCategoryValue = (value: CategoryType) => {
+    const newCategory = categoriesFromService.find(
+      (category) => category.subcategoryIs === value.nameIs,
+    )
+    setCategory({
+      nameIs: newCategory?.categoryIs ?? '',
+      nameEn: newCategory?.categoryEn ?? '',
+    })
   }
 
   useEffect(() => {
     // Call subcategory
-    if (category.length && !fromService) {
+    if (category.nameIs.length && !fromService) {
       runQuery({
         variables: {
-          parentCategory: category,
+          parentCategory: category.nameIs,
         },
       })
     }
@@ -110,8 +115,8 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
     if (
       type.length === 0 ||
       model.length === 0 ||
-      category.length === 0 ||
-      subCategory.length === 0
+      category.nameIs.length === 0 ||
+      subCategory.nameIs.length === 0
     ) {
       setDisplayError(true)
       return [false, '']
@@ -122,14 +127,15 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
   return (
     <Box paddingTop={2}>
-      <GridRow marginBottom={2}>
-        <GridColumn span={['1/1', '1/2']}>
+      <GridRow>
+        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <InputController
             id={`${field.id}.type`}
             label={formatMessage(machine.labels.basicMachineInformation.type)}
             backgroundColor="blue"
             required
             disabled={fromService}
+            maxLength={50}
             onChange={(e) => setType(e.target.value)}
             error={
               displayError && type.length === 0
@@ -138,13 +144,14 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
             }
           />
         </GridColumn>
-        <GridColumn span={['1/1', '1/2']}>
+        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <InputController
             id={`${field.id}.model`}
             label={formatMessage(machine.labels.basicMachineInformation.model)}
             backgroundColor="blue"
             required
             disabled={fromService}
+            maxLength={50}
             onChange={(e) => setModel(e.target.value)}
             error={
               displayError && model.length === 0
@@ -155,7 +162,7 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
         </GridColumn>
       </GridRow>
       <GridRow>
-        <GridColumn span={['1/1', '1/2']}>
+        <GridColumn span={['1/1', '1/2']} paddingBottom={[2, 0]}>
           <Controller
             name={`${field.id}.category`}
             render={({ field: { onChange } }) => {
@@ -165,20 +172,36 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
                   label={formatMessage(
                     machine.labels.basicMachineInformation.category,
                   )}
-                  options={machineParentCategories.map(({ name }) => {
-                    return { value: name, label: name }
+                  options={machineParentCategories.map(({ name, nameEn }) => {
+                    return {
+                      value: { nameIs: name, nameEn: nameEn },
+                      label: lang === 'is' ? name : nameEn,
+                    }
                   })}
                   onChange={(option) => {
                     onChange(option?.value)
-                    option && setCategoryValue(option.value)
+                    option &&
+                      setCategoryValue({
+                        nameIs: option.value.nameIs ?? '',
+                        nameEn: option.value.nameEn ?? '',
+                      })
                   }}
                   value={
-                    category ? { value: category, label: category } : undefined
+                    category
+                      ? {
+                          value: {
+                            nameIs: category.nameIs,
+                            nameEn: category.nameEn,
+                          },
+                          label:
+                            lang === 'is' ? category.nameIs : category.nameEn,
+                        }
+                      : undefined
                   }
                   backgroundColor="blue"
                   isDisabled={fromService}
                   required
-                  hasError={displayError && category.length === 0}
+                  hasError={displayError && category.nameIs.length === 0}
                   errorMessage={formatMessage(coreErrorMessages.defaultError)}
                 />
               )
@@ -196,31 +219,59 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
                     machine.labels.basicMachineInformation.subcategory,
                   )}
                   options={
-                    fromService && subCategory
-                      ? [{ value: subCategory, label: subCategory }]
+                    fromService && categoriesFromService.length
+                      ? categoriesFromService.map(
+                          ({ subcategoryEn, subcategoryIs }) => {
+                            return {
+                              value: {
+                                nameIs: subcategoryIs,
+                                nameEn: subcategoryEn,
+                              },
+                              label:
+                                lang === 'is' ? subcategoryIs : subcategoryEn,
+                            }
+                          },
+                        )
                       : subCategories.map((cat) => {
                           return {
-                            value: cat.subCat,
-                            label: cat.subCat,
+                            value: {
+                              nameIs: cat.subCat.nameIs,
+                              nameEn: cat.subCat.nameEn,
+                            },
+                            label:
+                              lang === 'is'
+                                ? cat.subCat.nameIs
+                                : cat.subCat.nameEn,
                           }
                         })
                   }
                   isLoading={loading}
                   isDisabled={subCategoryDisabled}
-                  value={{ value: subCategory ?? '', label: subCategory ?? '' }}
+                  value={{
+                    value: {
+                      nameIs: subCategory.nameIs,
+                      nameEn: subCategory.nameEn,
+                    },
+                    label:
+                      lang === 'is' ? subCategory.nameIs : subCategory.nameEn,
+                  }}
                   onChange={(option) => {
                     onChange(option?.value)
                     option && setSubCategory(option.value)
                     option &&
                       setRegistrationNumberPrefix(
                         subCategories.find(
-                          ({ subCat }) => subCat === option.value,
+                          ({ subCat }) => subCat.nameIs === option.value.nameIs,
                         )?.registrationNumberPrefix ?? '',
                       )
+                    fromService &&
+                      categoriesFromService.length &&
+                      option &&
+                      setDisabledCategoryValue(option.value)
                   }}
                   backgroundColor="blue"
                   required
-                  hasError={displayError && subCategory.length === 0}
+                  hasError={displayError && subCategory.nameIs.length === 0}
                   errorMessage={formatMessage(coreErrorMessages.defaultError)}
                 />
               )

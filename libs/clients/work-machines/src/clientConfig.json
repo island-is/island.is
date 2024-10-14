@@ -30,6 +30,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
@@ -77,6 +86,15 @@
               "type": "string",
               "default": ""
             }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
@@ -120,6 +138,17 @@
       "post": {
         "tags": ["MachineOwnerChange"],
         "summary": "An enpoint to post an ownerChange application that hasn't been confirmed by the buyer.",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "description": "",
           "content": {
@@ -169,6 +198,17 @@
       "put": {
         "tags": ["MachineOwnerChange"],
         "summary": "An enpoint that completes the ownerchange process when the buyer has confirmed ownership.",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "description": "",
           "content": {
@@ -219,6 +259,25 @@
     "/api/MachineParentCategories": {
       "get": {
         "tags": ["MachineParentCategories"],
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "is"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -255,6 +314,15 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
@@ -263,7 +331,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MachineParentCategoryDetailsDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MachineParentCategoryDetailsDto"
+                  }
                 }
               }
             }
@@ -285,6 +356,17 @@
       "post": {
         "tags": ["MachineRequestInspection"],
         "summary": "Request an inspection for a machine.",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "description": "",
           "content": {
@@ -407,6 +489,15 @@
             "schema": {
               "type": "string",
               "default": "is"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -585,6 +676,16 @@
       },
       "post": {
         "tags": ["Machines"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -691,6 +792,15 @@
             "schema": {
               "type": "string",
               "default": "is"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -872,6 +982,15 @@
               "type": "string",
               "default": "excel"
             }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
@@ -943,6 +1062,17 @@
       "post": {
         "tags": ["MachineStatusChange"],
         "summary": "Changes the status of the machine.",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "description": "",
           "content": {
@@ -979,6 +1109,17 @@
       "post": {
         "tags": ["MachineStreetRegistration"],
         "summary": "Register a machine for street use.",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json-patch+json": {
@@ -1054,6 +1195,17 @@
       "get": {
         "tags": ["MachineStreetRegistration"],
         "summary": "Returns a list of registration number prefixes that require an inspection before street registration",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1075,6 +1227,17 @@
       "get": {
         "tags": ["MachineStreetRegistration"],
         "summary": "Returns a list of registration number prefixes that require an inspection before street registration",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1102,6 +1265,23 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "is"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
@@ -1125,6 +1305,17 @@
       "post": {
         "tags": ["MachineSupervisorChange"],
         "summary": "Update the supervisor assigned to a machine.",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "description": "",
           "content": {
@@ -1180,6 +1371,17 @@
     "/api/MachineTypes": {
       "get": {
         "tags": ["MachineTypes"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1221,6 +1423,17 @@
       "get": {
         "tags": ["Openapi"],
         "summary": "Returns the openapi document as a json file",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1245,6 +1458,23 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "is"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
@@ -1267,6 +1497,17 @@
     "/api/TechnicalInfo/BearingCables": {
       "get": {
         "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1287,6 +1528,17 @@
     "/api/TechnicalInfo/PullingCables": {
       "get": {
         "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1307,6 +1559,17 @@
     "/api/TechnicalInfo/Chemicals": {
       "get": {
         "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1327,6 +1590,17 @@
     "/api/TechnicalInfo/BaseTypes": {
       "get": {
         "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1347,6 +1621,17 @@
     "/api/TechnicalInfo/HeatingEquipment": {
       "get": {
         "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1367,6 +1652,17 @@
     "/api/TechnicalInfo/RunningSpeed": {
       "get": {
         "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1387,6 +1683,17 @@
     "/api/TechnicalInfo/LiftingEquiptment": {
       "get": {
         "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1407,6 +1714,17 @@
     "/api/TechnicalInfo/PowerSource": {
       "get": {
         "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -1804,7 +2122,15 @@
             "type": "string",
             "nullable": true
           },
+          "nameEn": {
+            "type": "string",
+            "nullable": true
+          },
           "subCategoryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "subCategoryNameEn": {
             "type": "string",
             "nullable": true
           },
@@ -1819,6 +2145,10 @@
         "type": "object",
         "properties": {
           "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nameEn": {
             "type": "string",
             "nullable": true
           }
@@ -2009,11 +2339,19 @@
             "type": "string",
             "nullable": true
           },
+          "nameEn": {
+            "type": "string",
+            "nullable": true
+          },
           "registrationNumberPrefix": {
             "type": "string",
             "nullable": true
           },
           "parentCategoryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "parentCategoryNameEn": {
             "type": "string",
             "nullable": true
           }
@@ -2206,6 +2544,10 @@
             "type": "string",
             "nullable": true
           },
+          "labelEn": {
+            "type": "string",
+            "nullable": true
+          },
           "type": {
             "type": "string",
             "nullable": true
@@ -2221,8 +2563,22 @@
           "values": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/TechInfoListItem"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechInfoListItem": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nameEn": {
+            "type": "string",
             "nullable": true
           }
         },

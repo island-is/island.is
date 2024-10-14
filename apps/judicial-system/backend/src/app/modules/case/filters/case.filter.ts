@@ -1,4 +1,4 @@
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
@@ -6,6 +6,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  EventType,
   getIndictmentVerdictAppealDeadlineStatus,
   IndictmentCaseReviewDecision,
   isCourtOfAppealsUser,
@@ -84,6 +85,27 @@ const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
 
   // Check case state access
   if (theCase.state !== CaseState.COMPLETED) {
+    return false
+  }
+
+  // Check indictment ruling decision access
+  if (
+    !theCase.indictmentRulingDecision ||
+    ![
+      CaseIndictmentRulingDecision.FINE,
+      CaseIndictmentRulingDecision.RULING,
+    ].includes(theCase.indictmentRulingDecision)
+  ) {
+    return false
+  }
+
+  // Make sure the indictment has been sent to the public prosecutor
+  if (
+    !theCase.eventLogs?.some(
+      (eventLog) =>
+        eventLog.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+    )
+  ) {
     return false
   }
 
@@ -330,22 +352,27 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
     }
   }
 
-  const formattedNationalId = formatNationalId(user.nationalId)
+  const normalizedAndFormattedNationalId = normalizeAndFormatNationalId(
+    user.nationalId,
+  )
+
   // Check case defender access
   if (isIndictmentCase(theCase.type)) {
     if (
       !theCase.defendants?.some(
         (defendant) =>
-          defendant.defenderNationalId === user.nationalId ||
-          defendant.defenderNationalId === formattedNationalId,
+          defendant.defenderNationalId &&
+          normalizedAndFormattedNationalId.includes(
+            defendant.defenderNationalId,
+          ),
       )
     ) {
       return false
     }
   } else {
     if (
-      theCase.defenderNationalId !== user.nationalId &&
-      theCase.defenderNationalId !== formattedNationalId
+      !theCase.defenderNationalId ||
+      !normalizedAndFormattedNationalId.includes(theCase.defenderNationalId)
     ) {
       return false
     }

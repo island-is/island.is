@@ -42,10 +42,18 @@ export const serviceSetup =
           prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
         },
         COMPANY_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
+        SYSLUMENN_HOST: {
+          dev: 'https://api.syslumenn.is/staging',
+          staging: 'https://api.syslumenn.is/staging',
+          prod: 'https://api.syslumenn.is/api',
+        },
+        SYSLUMENN_TIMEOUT: '3000',
       })
       .secrets({
         IDENTITY_SERVER_CLIENT_SECRET:
           '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
+        SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
+        SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
       })
       .xroad(Base, Client, RskProcuring)
       .ingress({

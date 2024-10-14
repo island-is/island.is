@@ -210,7 +210,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: {
     slug: 'skil-arsreikninga-kirkjugardar',
-    translation: 'fsck.application',
+    translation: 'fsc.application',
   },
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
     slug: 'skilarsreikninga',
@@ -390,7 +390,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
     slug: 'nyr-grunnskoli',
-    translation: ['dess.nps.application', 'uiForms.application'],
+    translation: ['nps.application', 'uiForms.application'],
   },
   [ApplicationTypes.MACHINE_REGISTRATION]: {
     slug: 'nyskraning-taekis',

@@ -8,18 +8,23 @@ import {
 import { useState } from 'react'
 import { comments } from '../../lib/messages/comments'
 import { useLocale } from '@island.is/localization'
-import { useComments } from '../../hooks/useComments'
+import { AddCommentVariables } from '../../hooks/useComments'
+import { ApolloError } from '@apollo/client'
 
 type Props = {
-  applicationId: string
+  addComment: (variables: AddCommentVariables, cb?: () => void) => void
+  addCommentLoading?: boolean
+  addCommentSuccess?: boolean
+  addCommentError?: ApolloError
 }
 
-export const AddComment = ({ applicationId }: Props) => {
+export const AddComment = ({
+  addComment,
+  addCommentError,
+  addCommentLoading,
+  addCommentSuccess,
+}: Props) => {
   const { formatMessage: f } = useLocale()
-  const { addComment, addCommentLoading, addCommentSuccess } = useComments({
-    applicationId,
-  })
-
   const [comment, setComment] = useState('')
 
   const onAddComment = () => {
@@ -31,13 +36,14 @@ export const AddComment = ({ applicationId }: Props) => {
 
   return (
     <Stack space={4}>
-      {addCommentSuccess === false && (
-        <AlertMessage
-          type="error"
-          title={f(comments.warnings.postCommentFailedTitle)}
-          message={f(comments.warnings.postCommentFailedMessage)}
-        />
-      )}
+      {addCommentSuccess === false ||
+        (addCommentError && (
+          <AlertMessage
+            type="error"
+            title={f(comments.warnings.postCommentFailedTitle)}
+            message={f(comments.warnings.postCommentFailedMessage)}
+          />
+        ))}
       <Box>
         <Input
           disabled={addCommentLoading}

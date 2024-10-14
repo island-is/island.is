@@ -69,7 +69,7 @@ export class VehicleService {
     const findVehicle = await this.findByVehicleId(permno)
     if (findVehicle) {
       findVehicle.mileage = mileage ?? 0
-      findVehicle.plateCount = plateCount ?? 0
+      findVehicle.plateCount = plateCount
       findVehicle.plateLost = plateLost
 
       await findVehicle.save()
@@ -85,7 +85,6 @@ export class VehicleService {
       throw new Error(errorMsg)
     }
   }
-
   async create(vehicle: VehicleModel): Promise<boolean> {
     try {
       // check if vehicle is already in db

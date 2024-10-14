@@ -51,9 +51,45 @@ export function setupRoutes() {
     selectTab(4)
   })
 
-  addRoute('/applications', () => {
+  addRoute('/applications', async () => {
     Navigation.dismissAllModals()
     selectTab(3)
+  })
+
+  addRoute('/applications-completed', async (passProps) => {
+    Navigation.dismissAllModals()
+    selectTab(3)
+    await Navigation.popToRoot(StackRegistry.ApplicationsStack)
+    await Navigation.push(ComponentRegistry.ApplicationsScreen, {
+      component: {
+        name: ComponentRegistry.ApplicationsCompletedScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/applications-in-progress', async (passProps) => {
+    Navigation.dismissAllModals()
+    selectTab(3)
+    await Navigation.popToRoot(StackRegistry.ApplicationsStack)
+    await Navigation.push(ComponentRegistry.ApplicationsScreen, {
+      component: {
+        name: ComponentRegistry.ApplicationsInProgressScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/applications-incomplete', async (passProps) => {
+    Navigation.dismissAllModals()
+    selectTab(3)
+    await Navigation.popToRoot(StackRegistry.ApplicationsStack)
+    await Navigation.push(ComponentRegistry.ApplicationsScreen, {
+      component: {
+        name: ComponentRegistry.ApplicationsIncompleteScreen,
+        passProps,
+      },
+    })
   })
 
   addRoute('/vehicles', async (passProps) => {
@@ -114,6 +150,18 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/health-overview', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.popToRoot(StackRegistry.MoreStack)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.HealthOverviewScreen,
+        passProps,
+      },
+    })
+  })
+
   addRoute('/personalinfo', async (passProps) => {
     Navigation.showModal({
       stack: {
@@ -136,6 +184,26 @@ export function setupRoutes() {
           {
             component: {
               name: ComponentRegistry.PasskeyScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/update-app', async (passProps) => {
+    Navigation.showModal({
+      stack: {
+        options: {
+          modal: {
+            swipeToDismiss: false,
+          },
+        },
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.UpdateAppScreen,
               passProps,
             },
           },
@@ -222,7 +290,6 @@ export function setupRoutes() {
   addRoute('/vehicle/:id', async (passProps: any) => {
     await Navigation.dismissAllModals()
     selectTab(4)
-    await Navigation.popToRoot(StackRegistry.MoreStack)
     Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.VehicleDetailScreen,

@@ -19,6 +19,7 @@ export const InputFields = {
     categories: 'advert.categories',
     channels: 'advert.channels',
     message: 'advert.message',
+    involvedPartyId: 'advert.involvedPartyId',
   },
   [Routes.SIGNATURE]: {
     regular: 'signatures.regular',

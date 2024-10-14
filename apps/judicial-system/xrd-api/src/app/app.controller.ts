@@ -3,6 +3,9 @@ import {
   Controller,
   Inject,
   InternalServerErrorException,
+  Param,
+  ParseUUIDPipe,
+  Patch,
   Post,
   UseInterceptors,
 } from '@nestjs/common'
@@ -14,6 +17,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { LawyersService, LawyerType } from '@island.is/judicial-system/lawyers'
 
+import { UpdateSubpoenaDto } from './dto/subpoena.dto'
+import { SubpoenaResponse } from './models/subpoena.response'
 import { CreateCaseDto } from './app.dto'
 import { EventInterceptor } from './app.interceptor'
 import { Case, Defender } from './app.model'
@@ -58,5 +63,16 @@ export class AppController {
       this.logger.error('Failed to retrieve lawyers', error)
       throw new InternalServerErrorException('Failed to retrieve lawyers')
     }
+  }
+
+  @Patch('subpoena/:subpoenaId')
+  @ApiResponse({ status: 500, description: 'Failed to update subpoena' })
+  async updateSubpoena(
+    @Param('subpoenaId', new ParseUUIDPipe()) subpoenaId: string,
+    @Body() updateSubpoena: UpdateSubpoenaDto,
+  ): Promise<SubpoenaResponse> {
+    this.logger.debug(`Updating subpoena for ${subpoenaId}`)
+
+    return this.appService.updateSubpoena(subpoenaId, updateSubpoena)
   }
 }

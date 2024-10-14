@@ -26,6 +26,7 @@ export interface InputComponentProps {
   maxLength?: number
   max?: number | string
   min?: number | string
+  step?: string
   size?: keyof typeof styles.inputSize
   onFocus?: (
     event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -83,6 +84,7 @@ export interface InputProps extends InputComponentProps {
   buttons?: InputButton[]
   max?: number | string
   min?: number | string
+  step?: string
 }
 
 export interface AsideProps {

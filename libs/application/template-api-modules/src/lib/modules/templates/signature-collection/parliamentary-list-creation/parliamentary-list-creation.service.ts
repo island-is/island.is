@@ -17,6 +17,9 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CollectionType } from '@island.is/clients/signature-collection'
 import { CreateListSchema } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
 import { FetchError } from '@island.is/clients/middlewares'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { isCompany } from 'kennitala'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class ParliamentaryListCreationService extends BaseTemplateApiService {
@@ -24,6 +27,7 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly _sharedTemplateAPIService: SharedTemplateApiService,
     private signatureCollectionClientService: SignatureCollectionClientService,
+    private nationalRegisryClientService: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.PARLIAMENTARY_LIST_CREATION)
   }
@@ -49,8 +53,38 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
         405,
       )
     }
+    const contactNationalId = isCompany(auth.nationalId)
+      ? auth.actor?.nationalId ?? auth.nationalId
+      : auth.nationalId
+
+    if (
+      currentCollection.candidates.some(
+        (c) => c.nationalId.replace('-', '') === contactNationalId,
+      )
+    ) {
+      throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
+    }
 
     return currentCollection
+  }
+
+  async parliamentaryIdentity({ auth }: TemplateApiModuleActionProps) {
+    const contactNationalId = isCompany(auth.nationalId)
+      ? auth.actor?.nationalId ?? auth.nationalId
+      : auth.nationalId
+
+    const identity = await this.nationalRegisryClientService.getIndividual(
+      contactNationalId,
+    )
+
+    if (!identity) {
+      throw new TemplateApiError(
+        coreErrorMessages.nationalIdNotFoundInNationalRegistrySummary,
+        500,
+      )
+    }
+
+    return identity
   }
 
   async submit({ application, auth }: TemplateApiModuleActionProps) {
@@ -59,7 +93,12 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
       .parliamentaryCollection.data as Collection
 
     const input: CreateParliamentaryCandidacyInput = {
-      owner: answers.applicant,
+      owner: {
+        ...answers.applicant,
+        nationalId: application?.applicantActors?.[0]
+          ? application.applicant
+          : answers.applicant.nationalId,
+      },
       agents: (answers.managers ?? [])
         .map((manager) => ({
           nationalId: manager.manager.nationalId,

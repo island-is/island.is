@@ -9,8 +9,10 @@ import {
 } from '@island.is/clients/financial-statements-inao'
 import { mapValuesToIndividualtype } from './mapValuesToUserTypes'
 
-const LESS = 'less'
-const GREATER = 'greater'
+export enum FinancialElectionIncomeLimit {
+  LESS = 'less',
+  GREATER = 'greater',
+}
 
 export const getIndividualElectionValues = (answers: FormValue) => {
   const incomeLimit = getValueViaPath(answers, 'election.incomeLimit') as string
@@ -21,7 +23,7 @@ export const getIndividualElectionValues = (answers: FormValue) => {
   const clientName = getValueViaPath(answers, 'about.fullName') as string
   const clientPhone = getValueViaPath(answers, 'about.phoneNumber') as string
   const clientEmail = getValueViaPath(answers, 'about.email') as string
-  const noValueStatement = incomeLimit === LESS
+  const noValueStatement = incomeLimit === FinancialElectionIncomeLimit.LESS
 
   return {
     noValueStatement,
@@ -34,8 +36,11 @@ export const getIndividualElectionValues = (answers: FormValue) => {
 }
 
 export const getShouldGetFileName = (answers: FormValue) => {
-  const incomeLimit = getValueViaPath(answers, 'election.incomeLimit') as string
-  return incomeLimit === GREATER
+  const incomeLimit = getValueViaPath(
+    answers,
+    'election.incomeLimit',
+  ) as FinancialElectionIncomeLimit
+  return incomeLimit === FinancialElectionIncomeLimit.GREATER
 }
 
 export const getActorContact = (
@@ -70,7 +75,7 @@ export const getInput = (
   const { incomeLimit, electionId, clientName, clientPhone, clientEmail } =
     getIndividualElectionValues(answers)
 
-  const noValueStatement = incomeLimit === LESS
+  const noValueStatement = incomeLimit === FinancialElectionIncomeLimit.LESS
   const client: Client = {
     nationalId,
     name: clientName,

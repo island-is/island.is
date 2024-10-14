@@ -30,6 +30,7 @@ import {
   DomainLoader,
   ISLAND_DOMAIN,
 } from '@island.is/api/domains/auth'
+import { CreateDelegationInput } from './dto/createDelegation.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(CustomDelegation)
@@ -66,6 +67,14 @@ export class DelegationAdminResolver {
     return this.delegationAdminService.deleteDelegationAdmin(user, id)
   }
 
+  @Mutation(() => CustomDelegation, { name: 'authCreateDelegation' })
+  async createDelegationSystem(
+    @Args('input') input: CreateDelegationInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.delegationAdminService.createDelegationAdmin(user, input)
+  }
+
   @ResolveField('from', () => Identity)
   resolveFromIdentity(
     @Loader(IdentityLoader) identityLoader: IdentityDataLoader,
@@ -80,6 +89,17 @@ export class DelegationAdminResolver {
     @Parent() customDelegation: DelegationDTO,
   ) {
     return identityLoader.load(customDelegation.toNationalId)
+  }
+
+  @ResolveField('createdBy', () => Identity, { nullable: true })
+  resolveCreatedByIdentity(
+    @Loader(IdentityLoader) identityLoader: IdentityDataLoader,
+    @Parent() customDelegation: DelegationDTO,
+  ) {
+    if (!customDelegation.createdByNationalId) {
+      return null
+    }
+    return identityLoader.load(customDelegation.createdByNationalId)
   }
 
   @ResolveField('validTo', () => Date, { nullable: true })
@@ -100,6 +120,16 @@ export class DelegationAdminResolver {
     @Loader(DomainLoader) domainLoader: DomainDataLoader,
     @Parent() delegation: DelegationDTO,
   ): Promise<Domain> {
+    if (!delegation.domainName) {
+      return {
+        name: '',
+        displayName: '',
+        description: '',
+        nationalId: '',
+        organisationLogoKey: '',
+      }
+    }
+
     const domainName = delegation.domainName ?? ISLAND_DOMAIN
     const domain = await domainLoader.load({
       lang: 'is',

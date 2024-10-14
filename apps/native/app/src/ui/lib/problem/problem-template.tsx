@@ -83,15 +83,17 @@ const Host = styled.View<{
   min-height: 280px;
 `
 
-const Tag = styled(Typography)<{
+const Tag = styled(View)<{
   backgroundColor: Colors
-  color?: Colors
 }>`
   background-color: ${({ backgroundColor, theme }) =>
     theme.color[backgroundColor]};
   padding: ${({ theme }) => theme.spacing[1]}px;
   border-radius: ${({ theme }) => theme.border.radius.large};
   overflow: hidden;
+`
+
+const TagText = styled(Typography)<{ color?: Colors }>`
   ${({ color, theme }) => color && `color: ${theme.color[color]};`}
 `
 
@@ -119,12 +121,10 @@ export const ProblemTemplate = ({
   return (
     <Host borderColor={borderColor} noContainer={withContainer}>
       {tag && (
-        <Tag
-          variant="eyebrow"
-          backgroundColor={tagBackgroundColor}
-          color={tagColor}
-        >
-          {tag}
+        <Tag backgroundColor={tagBackgroundColor}>
+          <TagText variant="eyebrow" color={tagColor}>
+            {tag}
+          </TagText>
         </Tag>
       )}
       {showIcon && <Icon source={getIcon(variant)} />}

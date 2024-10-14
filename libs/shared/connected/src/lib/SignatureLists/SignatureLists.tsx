@@ -115,7 +115,11 @@ export const SignatureLists: FC<
                           size: 'small',
                           onClick: () =>
                             window.open(
-                              `${window.location.origin}/umsoknir/maela-med-frambodi/?candidate=${candidate.id}`,
+                              `${window.location.origin}/umsoknir/${
+                                collection.isPresidential
+                                  ? 'maela-med-frambodi'
+                                  : 'maela-med-althingisframbodi'
+                              }/?candidate=${candidate.id}`,
                               '_blank',
                             ),
                         }

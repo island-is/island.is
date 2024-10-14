@@ -32,6 +32,8 @@ const exhaustiveCheck = (param: never) => {
         return PersonalRepresentativeDelegation
       case AuthDelegationType.Custom:
         return CustomDelegation
+      case AuthDelegationType.GeneralMandate:
+        return GeneralMandate
       case AuthDelegationType.LegalRepresentative:
         return LegalRepresentativeDelegation
       default:
@@ -49,11 +51,17 @@ export abstract class Delegation {
   @Field(() => Identity)
   to!: Identity
 
+  @Field(() => Identity, { nullable: true })
+  createdBy?: Identity
+
   @Field(() => AuthDelegationType)
   type!: AuthDelegationType
 
   @Field(() => AuthDelegationProvider)
   provider!: AuthDelegationProvider
+
+  @Field(() => String, { nullable: true })
+  referenceId?: string
 }
 
 @ObjectType('AuthLegalGuardianDelegation', {
@@ -70,6 +78,14 @@ export class ProcuringHolderDelegation extends Delegation {}
   implements: Delegation,
 })
 export class PersonalRepresentativeDelegation extends Delegation {}
+
+@ObjectType('AuthGeneralMandate', {
+  implements: Delegation,
+})
+export class GeneralMandate extends Delegation {
+  @Field(() => Date, { nullable: true })
+  validTo?: Date
+}
 
 @ObjectType('AuthCustomDelegation', {
   implements: Delegation,

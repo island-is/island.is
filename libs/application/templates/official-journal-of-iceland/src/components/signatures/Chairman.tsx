@@ -3,12 +3,17 @@ import { useApplication } from '../../hooks/useUpdateApplication'
 import { useLocale } from '@island.is/localization'
 import { signatures } from '../../lib/messages/signatures'
 import { InputFields } from '../../lib/types'
-import { getCommitteeAnswers, getEmptyMember } from '../../lib/utils'
+import {
+  getCommitteeAnswers,
+  getEmptyMember,
+  getSingleSignatureMarkup,
+} from '../../lib/utils'
 import { memberItemSchema } from '../../lib/dataSchema'
 import { SignatureMember } from './Member'
 import set from 'lodash/set'
 import * as styles from './Signatures.css'
 import * as z from 'zod'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -23,15 +28,30 @@ export const Chairman = ({ applicationId, member }: Props) => {
     applicationId,
   })
 
+  const { setValue } = useFormContext()
+
   const handleChairmanChange = (value: string, key: keyof MemberProperties) => {
     const { signature, currentAnswers } = getCommitteeAnswers(
       application.answers,
     )
 
     if (signature) {
+      const additionalSignature =
+        application.answers.signatures?.additionalSignature?.committee
+      const chairman = { ...signature.chairman, [key]: value }
+
+      const html = getSingleSignatureMarkup(
+        {
+          ...signature,
+        },
+        additionalSignature,
+        chairman,
+      )
+
       const updatedCommitteeSignature = {
         ...signature,
-        chairman: { ...signature.chairman, [key]: value },
+        chairman: chairman,
+        html: html,
       }
 
       const updatedSignatures = set(
@@ -39,6 +59,8 @@ export const Chairman = ({ applicationId, member }: Props) => {
         InputFields.signature.committee,
         updatedCommitteeSignature,
       )
+
+      setValue(InputFields.signature.committee, updatedCommitteeSignature)
 
       return updatedSignatures
     }

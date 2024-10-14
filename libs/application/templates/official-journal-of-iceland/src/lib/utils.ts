@@ -5,6 +5,7 @@ import {
   committeeSignatureSchema,
   memberItemSchema,
   partialSchema,
+  regularSignatureItemSchema,
   regularSignatureSchema,
 } from './dataSchema'
 import { getValueViaPath } from '@island.is/application/core'
@@ -242,7 +243,7 @@ const signatureTemplate = (
   return `${markup}${additionalMarkup}` as HTMLText
 }
 
-export const getSignatureMarkup = ({
+export const getSignaturesMarkup = ({
   signatures,
   type,
 }: {
@@ -310,4 +311,12 @@ export const parseZodIssue = (issue: z.ZodCustomIssue) => {
     name: getValueViaPath(RequiredInputFieldsNames, path) as string,
     message: issue?.params as MessageDescriptor,
   }
+}
+
+export const getSingleSignatureMarkup = (
+  signature: z.infer<typeof regularSignatureItemSchema>,
+  additionalSignature?: string,
+  chairman?: z.infer<typeof memberItemSchema>,
+) => {
+  return signatureTemplate([signature], additionalSignature, chairman)
 }

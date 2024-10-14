@@ -62,7 +62,7 @@ export const Done: Form = buildForm({
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
               title: '',
-              url: '/minarsidur/min-gogn/listar/medmaelasofnun',
+              url: '/minarsidur/min-gogn/listar/althingis-medmaelasofnun',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
             }),

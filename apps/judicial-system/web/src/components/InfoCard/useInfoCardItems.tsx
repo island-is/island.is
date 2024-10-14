@@ -20,13 +20,14 @@ import {
 
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
 import { FormContext } from '../FormProvider/FormProvider'
+import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
 import {
   DefendantInfo,
   DefendantInfoActionButton,
 } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
 import { Item } from './InfoCard'
-import { strings } from './InfoCardIndictment.strings'
+import { strings } from './useInfoCardItems.strings'
 
 const useInfoCardItems = () => {
   const { formatMessage } = useIntl()
@@ -297,6 +298,23 @@ const useInfoCardItems = () => {
     ],
   }
 
+  const civilClaimants: Item = {
+    id: 'civil-claimant-item',
+    title: capitalize(
+      workingCase.civilClaimants && workingCase.civilClaimants.length > 1
+        ? formatMessage(strings.civilClaimants)
+        : formatMessage(strings.civilClaimant),
+    ),
+    values: workingCase.civilClaimants
+      ? workingCase.civilClaimants.map((civilClaimant) => (
+          <CivilClaimantInfo
+            key={civilClaimant.id}
+            civilClaimant={civilClaimant}
+          />
+        ))
+      : [],
+  }
+
   return {
     defendants,
     indictmentCreated,
@@ -324,6 +342,7 @@ const useInfoCardItems = () => {
     indictmentReviewDecision,
     indictmentReviewedDate,
     parentCaseValidToDate,
+    civilClaimants,
   }
 }
 

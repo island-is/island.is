@@ -32,16 +32,16 @@ import {
 import { EmailService } from '@island.is/email-service'
 
 import { SharedTemplateApiService } from '../../shared'
-import {
-  BaseTemplateApiApplicationService,
-  TemplateApiModuleActionProps,
-} from '../../../types'
+import { TemplateApiModuleActionProps } from '../../../types'
 import { ParentalLeaveService } from './parental-leave.service'
-import { APPLICATION_ATTACHMENT_BUCKET, apiConstants } from './constants'
+import { apiConstants } from './constants'
 import { SmsService } from '@island.is/nova-sms'
 import { ChildrenService } from './children/children.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { PaymentService } from '@island.is/application/api/payment'
+import { sharedModuleConfig } from '../../shared/shared.config'
+import { ApplicationService } from '@island.is/application/api/core'
+import { AwsService } from '@island.is/nest/aws'
 
 const nationalId = '1234564321'
 let id = 0
@@ -231,14 +231,18 @@ describe('ParentalLeaveService', () => {
           useClass: MockSmsService,
         },
         {
-          provide: BaseTemplateApiApplicationService,
+          provide: sharedModuleConfig.KEY,
+          useValue: {},
+        },
+        {
+          provide: ApplicationService,
+          useValue: {},
+        },
+        {
+          provide: AwsService,
           useValue: {},
         },
         SharedTemplateApiService,
-        {
-          provide: APPLICATION_ATTACHMENT_BUCKET,
-          useValue: 'attachmentBucket',
-        },
       ],
     }).compile()
 
@@ -247,224 +251,156 @@ describe('ParentalLeaveService', () => {
   })
 
   describe('createPeriodsDTO', () => {
-    it('should return 2 periods, one standard and one using the right period code', async () => {
+    it('should return 2 periods with "M-S-GR,ORLOF-FBF" rightsCodePeriod and ratio in days', async () => {
       const application = createApplication()
-      const res = await parentalLeaveService.createPeriodsDTO(
-        application,
-        nationalId,
-      )
+
+      set(application, 'answers.periods[1]', {
+        ratio: '80',
+        useLength: 'no',
+        startDate: '2025-03-12',
+        endDate: '2025-09-11',
+      })
+      const periods = get(application.answers, 'periods') as object as Period[]
+      const rights = 'M-S-GR,ORLOF-FBF'
+
+      const res = parentalLeaveService.createPeriodsDTO(periods, false, rights)
 
       expect(res).toEqual([
         {
           from: '2021-05-17',
-          to: '2021-11-16',
-          ratio: '100',
-          approved: false,
-          paid: false,
-          rightsCodePeriod: 'M-L-GR',
-        },
-        {
-          from: '2021-11-17',
           to: '2022-01-01',
-          ratio: 'D45',
+          ratio: 'D225',
           approved: false,
           paid: false,
-          rightsCodePeriod: apiConstants.rights.receivingRightsId,
+          rightsCodePeriod: rights,
+        },
+        {
+          from: '2025-03-12',
+          to: '2025-09-11',
+          ratio: 'D144',
+          approved: false,
+          paid: false,
+          rightsCodePeriod: rights,
         },
       ])
     })
+  })
 
-    it('should return 2 periods, one standard and one using single parent right code', async () => {
+  describe('createRightsDTO', () => {
+    it('should return 2 applicationRights, basic rights, single parent rights, and multiple Birth', async () => {
       const application = createApplication()
 
-      set(application, 'answers.otherParent', SINGLE)
+      set(application, 'answers.periods[1]', {
+        ratio: '100',
+        useLength: 'no',
+        startDate: '2025-03-12',
+        endDate: '2025-09-14',
+      })
+      set(application, 'answers.multipleBirths.hasMultipleBirths', YES)
+      set(application, 'answers.multipleBirthsRequestDays', 79)
+      set(application, 'answers.multipleBirths.multipleBirths', 2)
+      set(application, 'answers.otherParentObj.chooseOtherParent', SINGLE)
 
-      const res = await parentalLeaveService.createPeriodsDTO(
-        application,
-        nationalId,
-      )
+      const res = await parentalLeaveService.createRightsDTO(application)
 
       expect(res).toEqual([
         {
-          from: '2021-05-17',
-          to: '2021-11-16',
-          ratio: '100',
-          approved: false,
-          paid: false,
-          rightsCodePeriod: 'M-L-GR',
+          days: '180',
+          daysLeft: '0',
+          months: '6.0',
+          rightsDescription: 'Grunnréttur móður',
+          rightsUnit: 'M-L-GR',
         },
         {
-          from: '2021-11-17',
-          to: '2022-01-01',
-          ratio: 'D45',
-          approved: false,
-          paid: false,
-          rightsCodePeriod: apiConstants.rights.artificialInseminationRightsId,
+          days: '180',
+          daysLeft: '0',
+          months: '6.0',
+          rightsDescription: 'Eitt foreldri',
+          rightsUnit: 'EITTFOR',
+        },
+        {
+          days: '90',
+          daysLeft: '42',
+          months: '3.0',
+          rightsDescription: 'Fjölburafæðing (orlof)',
+          rightsUnit: 'ORLOF-FBF',
         },
       ])
     })
 
-    it('should return 2 periods, one standard and mark it as ActualDateOfBirth and one using the right period code', async () => {
+    it('should return 1 applicationRights, basic rights', async () => {
       const application = createApplication()
 
-      const firstPeriod = get(application.answers, 'periods[0]') as object
-      set(
-        firstPeriod,
-        'firstPeriodStart',
-        StartDateOptions.ACTUAL_DATE_OF_BIRTH,
-      )
+      set(application, 'answers.requestRights', {})
 
-      const res = await parentalLeaveService.createPeriodsDTO(
-        application,
-        nationalId,
-      )
+      const res = await parentalLeaveService.createRightsDTO(application)
 
       expect(res).toEqual([
         {
-          from: 'date_of_birth',
-          to: '2021-11-16',
-          ratio: '100',
-          approved: false,
-          paid: false,
-          rightsCodePeriod: 'M-L-GR',
-        },
-        {
-          from: '2021-11-17',
-          to: '2022-01-01',
-          ratio: 'D45',
-          approved: false,
-          paid: false,
-          rightsCodePeriod: apiConstants.rights.receivingRightsId,
+          days: '180',
+          daysLeft: '0',
+          months: '6.0',
+          rightsDescription: 'Grunnréttur móður',
+          rightsUnit: 'M-L-GR',
         },
       ])
     })
 
-    it('should return 3 periods, one standard, one using single parent right code and one using multiple birth right code', async () => {
+    it('should return 2 applicationRights, basic rights, multiple Birth', async () => {
       const application = createApplication()
 
-      const firstPeriod = get(application.answers, 'periods[0]') as object
-      set(firstPeriod, 'endDate', '2022-07-09')
-      set(application.answers, 'otherParent', SINGLE)
-      set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
-      set(application.answers, 'multipleBirths.hasMultipleBirths', YES)
-      set(application.answers, 'multipleBirths.multipleBirths', 2)
-      set(application.answers, 'multipleBirthsRequestDays', 90)
+      set(application, 'answers.multipleBirths.hasMultipleBirths', YES)
+      set(application, 'answers.multipleBirthsRequestDays', 79)
+      set(application, 'answers.multipleBirths.multipleBirths', 2)
 
-      const res = await parentalLeaveService.createPeriodsDTO(
-        application,
-        nationalId,
-      )
+      const res = await parentalLeaveService.createRightsDTO(application)
 
       expect(res).toEqual([
         {
-          from: '2021-05-17',
-          to: '2021-11-16',
-          ratio: '100',
-          approved: false,
-          paid: false,
-          rightsCodePeriod: 'M-L-GR',
+          days: '180',
+          daysLeft: '0',
+          months: '6.0',
+          rightsDescription: 'Grunnréttur móður',
+          rightsUnit: 'M-L-GR',
         },
         {
-          from: '2021-11-17',
-          to: '2022-05-16',
-          ratio: '100',
-          approved: false,
-          paid: false,
-          rightsCodePeriod: apiConstants.rights.artificialInseminationRightsId,
-        },
-        {
-          from: '2022-05-17',
-          to: '2022-07-09',
-          ratio: 'D53',
-          approved: false,
-          paid: false,
-          rightsCodePeriod: apiConstants.rights.multipleBirthsOrlofRightsId,
+          days: '79',
+          daysLeft: '34',
+          months: '2.6',
+          rightsDescription: 'Fjölburafæðing (orlof)',
+          rightsUnit: 'ORLOF-FBF',
         },
       ])
     })
 
-    it('should return 3 periods, one standard, one using multiple birth right code and one using right period code', async () => {
+    it('should return 2 applicationRights, one basic rights and one for rights transfer', async () => {
       const application = createApplication()
 
-      const firstPeriod = get(application.answers, 'periods[0]') as object
-      set(firstPeriod, 'endDate', '2022-04-01')
-      set(application.answers, 'applicationType.option', PARENTAL_GRANT)
-      set(application.answers, 'multipleBirths.hasMultipleBirths', YES)
-      set(application.answers, 'multipleBirths.multipleBirths', 2)
-      set(application.answers, 'multipleBirthsRequestDays', 90)
+      set(application, 'answers.periods[0]', {
+        ratio: '100',
+        useLength: 'no',
+        startDate: '2025-03-12',
+        endDate: '2025-09-14',
+      })
 
-      const res = await parentalLeaveService.createPeriodsDTO(
-        application,
-        nationalId,
-      )
+      const res = await parentalLeaveService.createRightsDTO(application)
 
       expect(res).toEqual([
         {
-          from: '2021-05-17',
-          to: '2021-11-16',
-          ratio: '100',
-          approved: false,
-          paid: false,
-          rightsCodePeriod: 'M-FS',
+          days: '180',
+          daysLeft: '0',
+          months: '6.0',
+          rightsDescription: 'Grunnréttur móður',
+          rightsUnit: 'M-L-GR',
         },
         {
-          from: '2021-11-17',
-          to: '2022-02-16',
-          ratio: '100',
-          approved: false,
-          paid: false,
-          rightsCodePeriod: apiConstants.rights.multipleBirthsGrantRightsId,
-        },
-        {
-          from: '2022-02-17',
-          to: '2022-04-01',
-          ratio: 'D45',
-          approved: false,
-          paid: false,
-          rightsCodePeriod: apiConstants.rights.receivingRightsId,
+          days: '45',
+          daysLeft: '42',
+          months: '1.5',
+          rightsDescription: 'Framsal grunnréttur',
+          rightsUnit: 'FSAL-GR',
         },
       ])
-    })
-
-    it('should change period ratio to D<number_of_days> when using .daysToUse', async () => {
-      const application = createApplication()
-
-      const startDate = new Date(2022, 9, 10)
-      const endDate = new Date(2023, 0, 9)
-      const ratio = 0.59
-
-      const originalPeriods: Period[] = [
-        {
-          startDate: startDate.toISOString().split('T')[0],
-          endDate: endDate.toISOString().split('T')[0],
-          ratio: `${ratio * 100}`,
-          firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
-          daysToUse: calculatePeriodLength(
-            startDate,
-            endDate,
-            ratio,
-          ).toString(),
-        },
-      ]
-
-      set(application.answers, 'periods', originalPeriods)
-
-      const expectedPeriods: VmstPeriod[] = [
-        {
-          approved: false,
-          from: originalPeriods[0].startDate,
-          to: originalPeriods[0].endDate,
-          paid: false,
-          ratio: `D${originalPeriods[0].daysToUse}`,
-          rightsCodePeriod: 'M-L-GR',
-        },
-      ]
-      const res = await parentalLeaveService.createPeriodsDTO(
-        application,
-        nationalId,
-      )
-
-      expect(res).toEqual(expectedPeriods)
     })
   })
 

@@ -407,7 +407,7 @@ const useS3Upload = (caseId: string) => {
   )
 
   const handleRemove = useCallback(
-    async (file: TUploadFile, callback: (file: TUploadFile) => void) => {
+    async (file: TUploadFile, callback?: (file: TUploadFile) => void) => {
       try {
         if (file.id) {
           const { data } = await remove(file.id)
@@ -421,7 +421,7 @@ const useS3Upload = (caseId: string) => {
             throw new Error('Failed to delete file')
           }
 
-          callback(file)
+          callback && callback(file)
         }
       } catch {
         toast.error(formatMessage(strings.removeFailed))

@@ -7,7 +7,7 @@ import {
   ReactNode,
 } from 'react'
 import { useMutation, gql } from '@apollo/client'
-import { LawChapterSlug, toISODate } from '@island.is/regulations'
+import { LawChapterSlug, PlainText, toISODate } from '@island.is/regulations'
 import { useNavigate } from 'react-router-dom'
 import { RegulationDraftTypes, Step, StepNames } from '../types'
 import { useLocale } from '@island.is/localization'
@@ -250,6 +250,10 @@ const useMakeDraftingState = (inputs: StateInputs) => {
 
       addAppendix: () => {
         dispatch({ type: 'APPENDIX_ADD' })
+      },
+
+      setMinistry: (value?: PlainText) => {
+        dispatch({ type: 'SET_MINISTRY', value })
       },
 
       updateLawChapterProp: (

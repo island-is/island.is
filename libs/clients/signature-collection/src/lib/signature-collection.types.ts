@@ -30,6 +30,14 @@ export interface CreateListInput {
   owner: OwnerInput
   areas?: AreaInput[]
 }
+
+// Should replace CreateListInput once refactored to new ÞÍ endpoints
+export interface AddListsInput {
+  collectionId: string
+  candidateId: string
+  areas?: AreaInput[]
+}
+
 export interface CreateParliamentaryCandidacyInput extends CreateListInput {
   agents: AgentInput[]
 }

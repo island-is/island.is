@@ -192,7 +192,8 @@ export const Cases: FC = () => {
       (c) =>
         !activeCases.includes(c) &&
         !casesAwaitingAssignment.includes(c) &&
-        !casesAwaitingReview.includes(c),
+        !casesAwaitingReview.includes(c) &&
+        !casesAwaitingConfirmation.includes(c),
     )
 
     return [

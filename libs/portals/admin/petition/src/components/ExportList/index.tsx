@@ -42,10 +42,6 @@ export const ExportList: FC<React.PropsWithChildren<Props>> = ({
     ),
   })
 
-  if (document.error) {
-    console.warn(document.error)
-  }
-
   return (
     <Box className={styles.buttonWrapper}>
       <DropdownMenu

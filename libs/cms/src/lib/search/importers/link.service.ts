@@ -5,6 +5,7 @@ import { Entry } from 'contentful'
 import { ILink } from '../../generated/contentfulTypes'
 import { mapLink } from '../../models/link.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
+import { extractChildEntryIds } from './utils'
 
 @Injectable()
 export class LinkSyncService implements CmsSyncProvider<ILink> {
@@ -24,6 +25,10 @@ export class LinkSyncService implements CmsSyncProvider<ILink> {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapLink(entry)
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+
           return {
             _id: mapped.id,
             title: mapped.text,
@@ -32,6 +37,10 @@ export class LinkSyncService implements CmsSyncProvider<ILink> {
             response: JSON.stringify({ ...mapped, typename: 'Link' }),
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
+            tags: childEntryIds.map((id) => ({
+              key: id,
+              type: 'hasChildEntryWithId',
+            })),
           }
         } catch (error) {
           logger.warn('Failed to import link', {

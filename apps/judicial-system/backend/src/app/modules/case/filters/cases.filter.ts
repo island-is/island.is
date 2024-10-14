@@ -2,7 +2,7 @@ import { Op, Sequelize, WhereOptions } from 'sequelize'
 
 import { ForbiddenException } from '@nestjs/common'
 
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
@@ -11,6 +11,7 @@ import {
   CaseState,
   CaseType,
   DateType,
+  EventType,
   IndictmentCaseReviewDecision,
   indictmentCases,
   investigationCases,
@@ -75,8 +76,20 @@ const getPublicProsecutionUserCasesQueryFilter = (): WhereOptions => {
   return {
     [Op.and]: [
       { is_archived: false },
-      { state: [CaseState.COMPLETED] },
       { type: indictmentCases },
+      { state: CaseState.COMPLETED },
+      {
+        indictment_ruling_decision: [
+          CaseIndictmentRulingDecision.FINE,
+          CaseIndictmentRulingDecision.RULING,
+        ],
+      },
+      {
+        // The following condition will filter out all event logs that are not of type INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR
+        // but that should be ok the case list for the public prosecutor is not using other event logs
+        '$eventLogs.event_type$':
+          EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+      },
     ],
   }
 }
@@ -190,15 +203,10 @@ const getPrisonAdminUserCasesQueryFilter = (): WhereOptions => {
     [Op.or]: [
       {
         state: CaseState.ACCEPTED,
-        type: [
-          CaseType.CUSTODY,
-          CaseType.ADMISSION_TO_FACILITY,
-          CaseType.PAROLE_REVOCATION,
-          CaseType.TRAVEL_BAN,
-        ],
+        type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
       },
       {
-        type: CaseType.INDICTMENT,
+        type: indictmentCases,
         state: CaseState.COMPLETED,
         indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
         indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
@@ -216,7 +224,9 @@ const getPrisonAdminUserCasesQueryFilter = (): WhereOptions => {
 }
 
 const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
-  const formattedNationalId = formatNationalId(user.nationalId)
+  const [normalizedNationalId, formattedNationalId] =
+    normalizeAndFormatNationalId(user.nationalId)
+
   const options: WhereOptions = [
     { is_archived: false },
     {
@@ -238,6 +248,8 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                 {
                   [Op.and]: [
                     { state: CaseState.RECEIVED },
+                    // The following condition will filter out all date logs that are not of type ARRAIGNMENT_DATE
+                    // but that should be ok for request cases since they only have one date log
                     { '$dateLogs.date_type$': DateType.ARRAIGNMENT_DATE },
                   ],
                 },
@@ -251,7 +263,7 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
               ],
             },
             {
-              defender_national_id: [user.nationalId, formattedNationalId],
+              defender_national_id: [normalizedNationalId, formattedNationalId],
             },
           ],
         },
@@ -266,10 +278,13 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
               ],
             },
             {
-              '$defendants.defender_national_id$': [
-                user.nationalId,
-                formattedNationalId,
-              ],
+              id: {
+                [Op.in]: Sequelize.literal(`
+                (SELECT case_id
+                  FROM defendant
+                  WHERE defender_national_id in ('${normalizedNationalId}', '${formattedNationalId}'))
+              `),
+              },
             },
           ],
         },

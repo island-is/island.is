@@ -13,7 +13,16 @@ import { NationalRegistryUser, TeacherV4 } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
-import { B_FULL_RENEWAL_65, B_TEMP, BE, Pickup, YES } from '../../lib/constants'
+import {
+  B_FULL,
+  B_FULL_RENEWAL_65,
+  B_TEMP,
+  BE,
+  CHARGE_ITEM_CODES,
+  DELIVERY_FEE,
+  Pickup,
+  YES,
+} from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,
@@ -159,23 +168,40 @@ export const subSectionSummary = buildSubSection({
         buildDividerField({}),
         buildKeyValueField({
           label: m.overviewPaymentCharge,
-          value: ({ externalData, answers }) => {
-            const items = externalData.payment.data as {
+          value: (application) => {
+            const items = application.externalData.payment.data as {
               priceAmount: number
               chargeItemCode: string
             }[]
+
+            const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
+
             const targetCode =
-              answers.applicationFor === B_TEMP
-                ? 'AY114'
-                : answers.applicationFor === BE
-                ? 'AY115'
-                : 'AY110'
+              typeof application.answers.applicationFor === 'string'
+                ? CHARGE_ITEM_CODES[application.answers.applicationFor]
+                  ? CHARGE_ITEM_CODES[application.answers.applicationFor]
+                  : DEFAULT_ITEM_CODE
+                : DEFAULT_ITEM_CODE
+
+            let pickupItem = null
+
+            if (application.answers.pickup === Pickup.POST) {
+              pickupItem = items.find(
+                ({ chargeItemCode }) =>
+                  chargeItemCode === CHARGE_ITEM_CODES[DELIVERY_FEE],
+              )
+            }
 
             const item = items.find(
               ({ chargeItemCode }) => chargeItemCode === targetCode,
             )
-            return (item?.priceAmount?.toLocaleString('is-IS') +
-              ' kr.') as StaticText
+
+            const price = item?.priceAmount ?? 0
+            const deliveryPrice = pickupItem?.priceAmount ?? 0
+
+            const total = deliveryPrice + price
+
+            return (total?.toLocaleString('is-IS') + ' kr.') as StaticText
           },
           width: 'full',
         }),

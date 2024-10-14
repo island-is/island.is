@@ -3,10 +3,9 @@ import times from 'lodash/times'
 import request from 'supertest'
 
 import {
-  ApiScope,
-  Client,
   ClientDelegationType,
   Delegation,
+  DelegationDelegationType,
   DelegationDTO,
   DelegationDTOMapper,
   DelegationProviderModel,
@@ -153,6 +152,7 @@ describe('ActorDelegationsController', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
     let delegationModel: typeof Delegation
+    let delegationDelegationTypeModel: typeof DelegationDelegationType
     let clientDelegationTypeModel: typeof ClientDelegationType
     let nationalRegistryApi: NationalRegistryClientService
 
@@ -173,6 +173,9 @@ describe('ActorDelegationsController', () => {
       delegationModel = app.get<typeof Delegation>(getModelToken(Delegation))
       clientDelegationTypeModel = app.get<typeof ClientDelegationType>(
         getModelToken(ClientDelegationType),
+      )
+      delegationDelegationTypeModel = app.get<typeof DelegationDelegationType>(
+        getModelToken(DelegationDelegationType),
       )
       nationalRegistryApi = app.get(NationalRegistryClientService)
     })
@@ -293,31 +296,79 @@ describe('ActorDelegationsController', () => {
         )
       })
 
-      it('should return custom delegations when the delegationTypes filter has custom type', async () => {
+      it('should return custom delegations and general mandate when the delegationTypes filter has both types and delegation exists for both', async () => {
         // Arrange
+        const delegation = createDelegation({
+          fromNationalId: nationalRegistryUser.nationalId,
+          toNationalId: user.nationalId,
+          scopes: [],
+        })
+
+        await delegationModel.create(delegation)
+
+        await delegationDelegationTypeModel.create({
+          delegationId: delegation.id,
+          delegationTypeId: AuthDelegationType.GeneralMandate,
+        })
+
         await createDelegationModels(delegationModel, [
           mockDelegations.incomingWithOtherDomain,
         ])
-        const expectedModel = await findExpectedMergedDelegationModels(
-          delegationModel,
-          mockDelegations.incomingWithOtherDomain.id,
-          [Scopes[0].name],
-        )
 
         // Act
         const res = await server.get(
-          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}`,
+          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&delegationTypes=${AuthDelegationType.GeneralMandate}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(2)
+        expect(
+          res.body
+            .map((d: MergedDelegationDTO) => d.types)
+            .flat()
+            .sort(),
+        ).toEqual(
+          [AuthDelegationType.Custom, AuthDelegationType.GeneralMandate].sort(),
+        )
+      })
+
+      it('should return a merged object with both Custom and GeneralMandate types', async () => {
+        // Arrange
+        const delegation = createDelegation({
+          fromNationalId:
+            mockDelegations.incomingWithOtherDomain.fromNationalId,
+          toNationalId: user.nationalId,
+          domainName: null,
+          scopes: [],
+        })
+
+        await delegationModel.create(delegation)
+
+        await delegationDelegationTypeModel.create({
+          delegationId: delegation.id,
+          delegationTypeId: AuthDelegationType.GeneralMandate,
+        })
+
+        await createDelegationModels(delegationModel, [
+          mockDelegations.incomingWithOtherDomain,
+        ])
+
+        // Act
+        const res = await server.get(
+          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&delegationTypes=${AuthDelegationType.GeneralMandate}`,
         )
 
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingMergedDelegations(
-          res.body[0],
-          updateDelegationFromNameToPersonName(
-            expectedModel,
-            nationalRegistryUsers,
-          ),
+        expect(
+          res.body
+            .map((d: MergedDelegationDTO) => d.types)
+            .flat()
+            .sort(),
+        ).toEqual(
+          [AuthDelegationType.Custom, AuthDelegationType.GeneralMandate].sort(),
         )
       })
 
@@ -335,6 +386,34 @@ describe('ActorDelegationsController', () => {
         // Act
         const res = await server.get(
           `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&otherUser=${mockDelegations.incoming.fromNationalId}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(1)
+        expectMatchingMergedDelegations(
+          res.body[0],
+          updateDelegationFromNameToPersonName(
+            expectedModel,
+            nationalRegistryUsers,
+          ),
+        )
+      })
+
+      it('should return only delegations related to the provided otherUser national id without the general mandate since there is none', async () => {
+        // Arrange
+        await createDelegationModels(delegationModel, [
+          mockDelegations.incoming,
+        ])
+        const expectedModel = await findExpectedMergedDelegationModels(
+          delegationModel,
+          mockDelegations.incoming.id,
+          [Scopes[0].name],
+        )
+
+        // Act
+        const res = await server.get(
+          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&delegationTypes${AuthDelegationType.GeneralMandate}&otherUser=${mockDelegations.incoming.fromNationalId}`,
         )
 
         // Assert

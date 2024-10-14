@@ -8,6 +8,8 @@ import {
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
+import { Subpoena } from './subpoena.model'
+
 registerEnumType(Gender, { name: 'Gender' })
 registerEnumType(DefendantPlea, { name: 'DefendantPlea' })
 registerEnumType(ServiceRequirement, { name: 'ServiceRequirement' })
@@ -75,4 +77,7 @@ export class Defendant {
 
   @Field(() => SubpoenaType, { nullable: true })
   readonly subpoenaType?: SubpoenaType
+
+  @Field(() => [Subpoena], { nullable: true })
+  readonly subpoenas?: Subpoena[]
 }

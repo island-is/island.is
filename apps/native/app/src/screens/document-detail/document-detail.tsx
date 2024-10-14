@@ -1,10 +1,17 @@
 import { useApolloClient, useFragment_experimental } from '@apollo/client'
-import { blue400, dynamicColor, Header, Loader } from '@ui'
+import { Alert, blue400, dynamicColor, Header, Loader } from '@ui'
 import { Problem } from '@ui/lib/problem/problem'
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import { Animated, Platform, StyleSheet, View } from 'react-native'
 import {
+  Alert as RNAlert,
+  Animated,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native'
+import {
+  Navigation,
   NavigationFunctionComponent,
   OptionsTopBarButton,
 } from 'react-native-navigation'
@@ -13,11 +20,11 @@ import {
   useNavigationComponentDidAppear,
 } from 'react-native-navigation-hooks/dist'
 import Pdf, { Source } from 'react-native-pdf'
-import Share from 'react-native-share'
 import WebView from 'react-native-webview'
 import styled, { useTheme } from 'styled-components/native'
 import {
   DocumentV2,
+  DocumentV2Action,
   ListDocumentFragmentDoc,
   useGetDocumentQuery,
 } from '../../graphql/types/schema'
@@ -26,11 +33,15 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { toggleAction } from '../../lib/post-mail-action'
 import { authStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
+import { usePreferencesStore } from '../../stores/preferences-store'
 import { ButtonRegistry } from '../../utils/component-registry'
+import { getButtonsForActions } from './utils/get-buttons-for-actions'
+import { useBrowser } from '../../lib/use-browser'
+import { shareFile } from './utils/share-file'
 
 const Host = styled.SafeAreaView`
-  margin-left: 24px;
-  margin-right: 24px;
+  margin-left: ${({ theme }) => theme.spacing[2]}px;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Border = styled.View`
@@ -41,11 +52,23 @@ const Border = styled.View`
   }))};
 `
 
+const ActionsWrapper = styled.View`
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  gap: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const PdfWrapper = styled.View`
   flex: 1;
   background-color: ${dynamicColor('background')};
 `
-const regexForBr = /<br \/>*\\?>/g
+
+const DocumentWrapper = styled.View<{ hasMarginTop?: boolean }>`
+  flex: 1;
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-top: ${({ theme }) => theme.spacing[2]}px;
+`
+const regexForBr = /<br\s*\/>/gi
 
 // Styles for html documents
 const useHtmlStyles = () => {
@@ -200,15 +223,53 @@ const PdfViewer = React.memo(
 
 export const DocumentDetailScreen: NavigationFunctionComponent<{
   docId: string
-}> = ({ componentId, docId }) => {
+  isUrgent?: boolean
+}> = ({ componentId, docId, isUrgent }) => {
   useNavigationOptions(componentId)
 
   const client = useApolloClient()
   const intl = useIntl()
   const htmlStyles = useHtmlStyles()
+  const { locale } = usePreferencesStore()
+  const { openBrowser } = useBrowser()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   const [accessToken, setAccessToken] = useState<string>()
   const [error, setError] = useState(false)
+  const [showConfirmedAlert, setShowConfirmedAlert] = useState(false)
+  const [visible, setVisible] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+  const [pdfUrl, setPdfUrl] = useState('')
+  const [refetching, setRefetching] = useState(false)
+
+  const refetchDocumentContent = async () => {
+    setRefetching(true)
+    try {
+      const result = await docRes.refetch({
+        input: { id: docId, includeDocument: true },
+      })
+      if (result.data?.documentV2?.alert) {
+        setShowConfirmedAlert(true)
+      }
+    } finally {
+      markDocumentAsRead()
+      setRefetching(false)
+      setLoaded(true)
+    }
+  }
+
+  const showConfirmationAlert = (confirmation: DocumentV2Action) => {
+    RNAlert.alert(confirmation.title ?? '', confirmation.data ?? '', [
+      {
+        text: intl.formatMessage({ id: 'inbox.markAllAsReadPromptCancel' }),
+        style: 'cancel',
+        onPress: () => Navigation.pop(componentId),
+      },
+      {
+        text: intl.formatMessage({ id: 'inbox.openDocument' }),
+        onPress: refetchDocumentContent,
+      },
+    ])
+  }
 
   // Check if we have the document in the cache
   const doc = useFragment_experimental<DocumentV2>({
@@ -220,14 +281,30 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     returnPartialData: true,
   })
 
+  // We want to make sure we don't include the document content if isUrgent is undefined/null since then we don't have
+  // the info from the server and don't want to make any assumptions about it just yet
+  const shouldIncludeDocument = isUrgent === false
+
   // Fetch the document to get the content information
   const docRes = useGetDocumentQuery({
     variables: {
       input: {
         id: docId,
+        // If the document is urgent we need to check if the user needs to confirm reception of it before fetching the document data
+        includeDocument: shouldIncludeDocument,
       },
+      locale: locale === 'is-IS' ? 'is' : 'en',
     },
     fetchPolicy: 'no-cache',
+    onCompleted: async (data) => {
+      const confirmation = data.documentV2?.confirmation
+      if (confirmation && !refetching) {
+        showConfirmationAlert(confirmation)
+      } else if (!confirmation && !refetching && !shouldIncludeDocument) {
+        // If the user has already confirmed accepting the document we fetch the content
+        refetchDocumentContent()
+      }
+    },
   })
 
   const Document = {
@@ -235,9 +312,14 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     ...(docRes.data?.documentV2 || {}),
   }
 
-  const [visible, setVisible] = useState(false)
-  const [loaded, setLoaded] = useState(false)
-  const [pdfUrl, setPdfUrl] = useState('')
+  const hasActions = !!Document.actions?.length
+  const hasConfirmation = !!Document.confirmation
+  const hasAlert =
+    !!Document.alert && (Document.alert?.title || Document.alert?.data)
+  const showAlert =
+    showConfirmedAlert ||
+    (hasAlert && !hasConfirmation) ||
+    (hasActions && !showConfirmationAlert)
 
   const loading = docRes.loading || !accessToken
   const fileTypeLoaded = !!Document?.content?.type
@@ -247,6 +329,8 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const isHtml =
     Document?.content?.type.toLocaleLowerCase() === 'html' &&
     Document.content?.value !== ''
+
+  const onShare = () => shareFile({ document: Document as DocumentV2, pdfUrl })
 
   useConnectivityIndicator({
     componentId,
@@ -268,16 +352,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       )
     }
     if (buttonId === ButtonRegistry.ShareButton && loaded) {
-      if (Platform.OS === 'android') {
-        authStore.setState({ noLockScreenUntilNextAppStateActive: true })
-      }
-      Share.open({
-        title: Document.subject!,
-        subject: Document.subject!,
-        message: `${Document.sender!.name!} \n ${Document.subject!}`,
-        type: hasPdf ? 'application/pdf' : undefined,
-        url: hasPdf ? `file://${pdfUrl}` : Document.downloadUrl!,
-      })
+      onShare()
     }
   }, componentId)
 
@@ -285,11 +360,10 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     setVisible(true)
   })
 
-  useEffect(() => {
+  const markDocumentAsRead = () => {
     if (Document.opened) {
       return
     }
-
     // Let's mark the document as read in the cache and decrease unreadCount if it is not 0
     client.cache.modify({
       id: client.cache.identify({
@@ -312,6 +386,13 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         },
       },
     })
+  }
+
+  useEffect(() => {
+    if (Document.opened || !shouldIncludeDocument) {
+      return
+    }
+    markDocumentAsRead()
   }, [Document.id])
 
   useEffect(() => {
@@ -355,14 +436,31 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           isLoading={loading && !Document.subject}
           hasBorder={false}
           logo={getOrganizationLogoUrl(Document.sender?.name ?? '', 75)}
+          label={isUrgent ? intl.formatMessage({ id: 'inbox.urgent' }) : ''}
         />
       </Host>
+      {showAlert && (
+        <ActionsWrapper>
+          {showConfirmedAlert && (
+            <Alert
+              type="success"
+              hasBorder
+              message={
+                Document.alert?.title ?? Document.alert?.data ?? undefined
+              }
+            />
+          )}
+          {hasActions &&
+            getButtonsForActions(
+              openBrowser,
+              onShare,
+              componentId,
+              Document.actions,
+            )}
+        </ActionsWrapper>
+      )}
       <Border />
-      <View
-        style={{
-          flex: 1,
-        }}
-      >
+      <DocumentWrapper hasMarginTop={true}>
         <Animated.View
           style={{
             flex: 1,
@@ -374,13 +472,14 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             (isHtml ? (
               <WebView
                 source={{
-                  html:
-                    // Removing all <br /> tags to fix a bug in react-native that renders <br /> with too much vertical space
-                    // https://github.com/facebook/react-native/issues/32062
-                    `${htmlStyles}${Document.content?.value.replaceAll(
-                      regexForBr,
-                      '',
-                    )}` ?? '',
+                  html: Document.content?.value
+                    ? // Removing all <br /> tags to fix a bug in react-native that renders <br /> with too much vertical space
+                      // https://github.com/facebook/react-native/issues/32062
+                      `${htmlStyles}${Document.content?.value.replace(
+                        regexForBr,
+                        '',
+                      )}`
+                    : '',
                 }}
                 scalesPageToFit
                 onLoadEnd={() => {
@@ -389,20 +488,27 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               />
             ) : hasPdf ? (
               <PdfWrapper>
-                {visible && accessToken && (
-                  <PdfViewer
-                    url={`data:application/pdf;base64,${Document.content?.value}`}
-                    body={`documentId=${Document.id}&__accessToken=${accessToken}`}
-                    onLoaded={(filePath: any) => {
-                      setPdfUrl(filePath)
-                      setLoaded(true)
-                    }}
-                    onError={() => {
-                      setLoaded(true)
-                      setError(true)
-                    }}
-                  />
-                )}
+                {visible &&
+                  accessToken &&
+                  (shouldIncludeDocument ||
+                    (!shouldIncludeDocument && showAlert)) && (
+                    <PdfViewer
+                      url={`data:application/pdf;base64,${Document.content?.value}`}
+                      body={`documentId=${Document.id}&__accessToken=${accessToken}`}
+                      onLoaded={(filePath: any) => {
+                        setPdfUrl(filePath)
+                        // Make sure to not set document as loaded until actions have been fetched
+                        // To prevent top of first page not being shown
+                        if (shouldIncludeDocument) {
+                          setLoaded(true)
+                        }
+                      }}
+                      onError={() => {
+                        setLoaded(true)
+                        setError(true)
+                      }}
+                    />
+                  )}
               </PdfWrapper>
             ) : (
               <WebView
@@ -438,7 +544,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             )}
           </View>
         )}
-      </View>
+      </DocumentWrapper>
     </>
   )
 }

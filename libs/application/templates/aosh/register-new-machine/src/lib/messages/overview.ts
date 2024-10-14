@@ -33,7 +33,7 @@ export const overview = {
     alertMessageMessage: {
       id: 'aosh.rnm.application:overview.labels.alertMessageMessage',
       defaultMessage:
-        'Tæki í flokkum IA, IF, IM, JL og KG uppfylla oft ekki kröfur um gerð og búnað ökutækja og þarf að sækja sérstaklega um götuskráningu þeirra með því að hafa samband við þjónustuver Vinnueftirlitsins.',
+        'Tæki í flokkum IA, IF, JL, IM, IB og KG uppfylla oft ekki kröfur um gerð og búnað ökutækja og þarf Vinnueftirlitið að taka þau sérstaklega út til að staðfesta að þau uppfylli kröfur um götuskráningu.',
       description: 'Overview alert message',
     },
     editMessage: {

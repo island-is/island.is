@@ -43,12 +43,12 @@ export const formatValueForPresentation = (
 
       let divider = 1
       let postfix = ''
-      let precision = 0
+      let precision = increasePrecisionBy
 
       if (reduceAndRoundValue && value >= 1e6) {
         divider = 1e6
         postfix = messages[activeLocale].millionPostfix
-        precision = 1 + increasePrecisionBy
+        precision += 1
       } else if (reduceAndRoundValue && value >= 1e4) {
         divider = 1e3
         postfix = messages[activeLocale].thousandPostfix
