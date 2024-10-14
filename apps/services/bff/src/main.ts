@@ -8,9 +8,11 @@ bootstrap({
   appModule: AppModule,
   name: 'bff',
   port: environment.port,
-  globalPrefix: `${environment.keyPath}/bff`,
-  globalPrefixOptions: {
-    exclude: [{ path: 'health/check', method: RequestMethod.GET }],
+  globalPrefix: {
+    prefix: `${environment.keyPath}/bff`,
+    options: {
+      exclude: [{ path: 'health/check', method: RequestMethod.GET }],
+    },
   },
   healthCheck: {
     database: true,
