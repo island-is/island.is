@@ -711,28 +711,6 @@ export const formatAdvocateAssignedEmailNotification = (
   return { body, subject }
 }
 
-export const formatDefendantSelectedDefenderEmailNotification = (
-  formatMessage: FormatMessage,
-  theCase: Case,
-  overviewUrl?: string,
-): SubjectAndBody => {
-  const subject = formatMessage(
-    notifications.defendantSelectedDefender.subject,
-    {
-      court: capitalize(theCase.court?.name ?? ''),
-    },
-  )
-
-  const body = formatMessage(notifications.defendantSelectedDefender.body, {
-    courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
-    courtName: theCase.court?.name.replace('dómur', 'dómi') ?? '',
-    linkStart: `<a href="${overviewUrl}">`,
-    linkEnd: '</a>',
-  })
-
-  return { body, subject }
-}
-
 export const formatCourtOfAppealJudgeAssignedEmailNotification = (
   formatMessage: FormatMessage,
   caseNumber: string,

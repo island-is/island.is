@@ -633,21 +633,6 @@ export const notifications = {
       description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
     },
   }),
-  defendantSelectedDefender: defineMessages({
-    subject: {
-      id: 'judicial.system.backend:notifications.defendant_selected_defender.subject',
-      defaultMessage: 'Val á verjanda í máli {courtCaseNumber}',
-      description:
-        'Fyrirsögn í pósti til dómara og dómritara þegar ákærði hefur valið verjanda á island.is eða í Birtingi.',
-    },
-    body: {
-      id: 'judicial.system.backend:notifications.defendant_selected_defender.body',
-      defaultMessage:
-        'Verjandi hefur verið valinn í máli {courtCaseNumber}.<br /><br />Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
-      description:
-        'Texti í pósti til dómara og dómritara þegar ákærði hefur valið verjanda á island.is eða í Birtingi.',
-    },
-  }),
   defendantsNotUpdatedAtCourt: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.defendants_not_updated_at_court.subject',
