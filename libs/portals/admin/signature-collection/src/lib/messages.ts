@@ -470,7 +470,8 @@ export const m = defineMessages({
   },
   lockListDescription: {
     id: 'admin-portal.signature-collection:lockListDescription',
-    defaultMessage: 'Ýtið hér ef framboð hefur skilað inn framboðsgögnum fyrir lok framboðsfrest',
+    defaultMessage:
+      'Ýtið hér ef framboð hefur skilað inn framboðsgögnum fyrir lok framboðsfrest',
     description: '',
   },
   lockListSuccess: {
