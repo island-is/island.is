@@ -19,7 +19,7 @@ import {
 
 import { Case, CaseHasExistedGuard, CurrentCase } from '../case'
 import { CaseNotificationDto } from './dto/caseNotification.dto'
-import { NotificationBodyDto } from './dto/institutionNotification.dto'
+import { NotificationBodyDto } from './dto/notificationBody.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { InstitutionNotificationService } from './institutionNotification.service'
 import { InternalNotificationService } from './internalNotification.service'
