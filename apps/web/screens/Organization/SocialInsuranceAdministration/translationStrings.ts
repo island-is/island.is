@@ -440,6 +440,11 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Samtals greiðslur frá TR eftir skatt',
     description: 'H2, Samtals greiðslur frá TR eftir skatt',
   },
+  highlightedResult2025ItemHeading: {
+    id: 'web.pensionCalculator:highlighedResult2025ItemHeading',
+    defaultMessage: 'Samtals ráðstöfunartekjur eftir skatt',
+    description: 'H2, Samtals ráðstöfunartekjur eftir skatt',
+  },
   changeAssumptions: {
     id: 'web.pensionCalculator:changeAssumptions',
     defaultMessage: 'Breyta forsendum',

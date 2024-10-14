@@ -388,7 +388,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                               SocialInsurancePensionCalculationBasePensionType.Disability && (
                               <Text as="h2" variant="h3">
                                 {formatMessage(
-                                  translationStrings.highlightedResultItemHeading,
+                                  translationStrings.highlightedResult2025ItemHeading,
                                 )}
                               </Text>
                             )}
