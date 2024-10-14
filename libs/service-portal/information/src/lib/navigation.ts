@@ -65,6 +65,18 @@ export const informationNavigation: PortalNavigationItem = {
               navHide: true,
               path: SignatureCollectionPaths.ViewParliamentaryList,
             },
+            {
+              name: m.signatureCollectionLists,
+              navHide: true,
+              path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
+              children: [
+                {
+                  name: m.viewSignatureList,
+                  navHide: true,
+                  path: SignatureCollectionPaths.CompanyViewParliamentaryList,
+                },
+              ],
+            },
           ],
         },
         // Presidential
