@@ -87,7 +87,7 @@ const HighlightedItems = ({
 }: HighlightedItemsProps) => {
   const { formatMessage } = useIntl()
 
-  const higlightedItemIsPresent = highlightedItems.length > 0
+  const highlightedItemPresent = highlightedItems.length > 0
   const perMonthText = formatMessage(translationStrings.perMonth)
   const perYearText = formatMessage(translationStrings.perYear)
 
@@ -132,12 +132,12 @@ const HighlightedItems = ({
         return (
           <Stack key={index} space={2}>
             <Inline alignY="center" justifyContent="spaceBetween" space={5}>
-              {higlightedItemIsPresent && (
+              {highlightedItemPresent && (
                 <Text variant={titleVariant} as={titleAs}>
                   {highlightedItemName}
                 </Text>
               )}
-              {!higlightedItemIsPresent && <Box />}
+              {!highlightedItemPresent && <Box />}
             </Inline>
 
             <Box className={styles.grid}>
@@ -298,7 +298,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
     typeof calculation2025.groups?.length === 'number' &&
     calculation2025.groups.length > 0
 
-  const higlightedItemIsPresent = highlightedItems.length > 0
+  const highlightedItemPresent = highlightedItems.length > 0
   const highlighted2025ItemIsPresent =
     highlightedItems2025.length > 0 &&
     is2025PreviewActive(customPageData) &&
@@ -381,7 +381,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                           />
                         </Box>
                       </Hidden>
-                      {higlightedItemIsPresent && (
+                      {highlightedItemPresent && (
                         <Stack space={2}>
                           {highlighted2025ItemIsPresent &&
                             calculationInput.typeOfBasePension ===
@@ -483,7 +483,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                       {calculationIsPresent && (
                         <Accordion dividerOnTop={false}>
                           <AccordionItem
-                            startExpanded={!higlightedItemIsPresent}
+                            startExpanded={!highlightedItemPresent}
                             id="resultDetails"
                             labelVariant="h3"
                             labelUse="h3"
@@ -559,7 +559,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
               </Text>
             </Box>
           </Stack>
-          {higlightedItemIsPresent && (
+          {highlightedItemPresent && (
             <HighlightedItems
               customPageData={customPageData}
               highlightedItems={highlightedItems}
