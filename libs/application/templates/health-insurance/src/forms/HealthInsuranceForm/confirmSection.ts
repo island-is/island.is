@@ -74,6 +74,7 @@ export const confirmSection = buildSection({
         buildCheckboxField({
           id: 'confirmCorrectInfo',
           title: '',
+          required: true,
           options: [
             {
               value: YES,
