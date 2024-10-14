@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import {
   AlertMessage,
   Box,
@@ -78,7 +78,11 @@ export const CausesAndEffects: FC<
     setMostSeriousList(options)
   }
 
-  console.log(getValues())
+  useEffect(() => {
+    if (mostSeriousAnswer) {
+      setValue(mostSeriousAnswerId, mostSeriousAnswer)
+    }
+  }, [mostSeriousAnswer, mostSeriousAnswerId, setValue])
 
   // TODO(balli) Need to cover case where user chooses a most serious circumstance and then removes that option from the list
   return (
@@ -149,36 +153,30 @@ export const CausesAndEffects: FC<
               </Box>
             )}
           </Box>
-          <Controller // TODO Remove if not needed ?
-            render={() => {
+          <Box>
+            {mostSerious.map((item, index) => {
               return (
-                <Box>
-                  {mostSerious.map((item, index) => {
-                    return (
-                      <Box
-                        marginBottom={1}
-                        key={`${item.label}-${index}-radio`}
-                      >
-                        <RadioButton
-                          id={`${item.label}-${index}-radio`}
-                          name={`most serious-${index}`}
-                          label={item.label}
-                          value={item.value}
-                          checked={item.value === mostSeriousChosen}
-                          backgroundColor="white"
-                          onChange={(e) => {
-                            setMostSeriousChosen(e.target.value)
-                            setValue(mostSeriousAnswerId, e.target.value)
-                          }}
-                        />
-                      </Box>
-                    )
-                  })}
+                <Box
+                  marginBottom={1}
+                  key={`${item.label}-${index}-radio`}
+                  id={mostSeriousAnswerId}
+                >
+                  <RadioButton
+                    id={`${item.label}-${index}-radio`}
+                    name={`most serious-${index}`}
+                    label={item.label}
+                    value={item.value}
+                    checked={item.value === mostSeriousChosen}
+                    backgroundColor="white"
+                    onChange={(e) => {
+                      setMostSeriousChosen(e.target.value)
+                      setValue(mostSeriousAnswerId, e.target.value)
+                    }}
+                  />
                 </Box>
               )
-            }}
-            name={mostSeriousAnswerId}
-          />
+            })}
+          </Box>
         </Box>
       ) : null}
     </Box>

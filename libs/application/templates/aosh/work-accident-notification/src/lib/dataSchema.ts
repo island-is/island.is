@@ -105,8 +105,6 @@ const createCauseAndEffectSchema = (
         )
 
         // If there are 2 or more options, the most serious must have a value
-        console.log(totalOptions, data[mostSeriousKey])
-
         return totalOptions < 2 || (totalOptions >= 2 && data[mostSeriousKey])
       },
       {

@@ -141,9 +141,7 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
         label: chosenGroup.name,
       })
     if (!majorGroup || !majorGroup.code || !majorGroup.name) return
-    setSelectedMajorGroup(
-      { value: majorGroup.code, label: majorGroup.name } || null,
-    )
+    setSelectedMajorGroup({ value: majorGroup.code, label: majorGroup.name })
   }
 
   const onChangeMajorGroup = (value?: EventOption) => {
