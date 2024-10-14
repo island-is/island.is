@@ -1,35 +1,34 @@
 {
   "name": "service-portal",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/service-portal/src",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/portals/my-pages/src",
   "projectType": "application",
   "tags": ["scope:portals-mypages"],
-  "generators": {},
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",
       "options": {
         "baseHref": "/minarsidur/",
-        "outputPath": "dist/apps/service-portal",
-        "index": "apps/service-portal/src/index.html",
-        "main": "apps/service-portal/src/Main.tsx",
-        "polyfills": "apps/service-portal/src/polyfills.ts",
-        "tsConfig": "apps/service-portal/tsconfig.app.json",
+        "outputPath": "dist/apps/portals/my-pages",
+        "index": "apps/portals/my-pages/src/index.html",
+        "main": "apps/portals/my-pages/src/Main.tsx",
+        "polyfills": "apps/portals/my-pages/src/polyfills.ts",
+        "tsConfig": "apps/portals/my-pages/tsconfig.app.json",
         "assets": [
-          "apps/service-portal/src/favicon.ico",
-          "apps/service-portal/src/mockServiceWorker.js",
-          "apps/service-portal/src/assets"
+          "apps/portals/my-pages/src/favicon.ico",
+          "apps/portals/my-pages/src/mockServiceWorker.js",
+          "apps/portals/my-pages/src/assets"
         ],
-        "styles": ["apps/service-portal/src/styles.css"],
+        "styles": ["apps/portals/my-pages/src/styles.css"],
         "scripts": [],
-        "webpackConfig": "apps/service-portal/webpack.config.js",
+        "webpackConfig": "apps/portals/my-pages/webpack.config.js",
         "maxWorkers": 2
       },
       "configurations": {
         "production": {
           "optimization": true,
           "outputHashing": "all",
-          "index": "apps/service-portal/src/index.src.html",
+          "index": "apps/portals/my-pages/src/index.src.html",
           "sourceMap": false,
           "extractCss": true,
           "namedChunks": false,
@@ -55,10 +54,10 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "node scripts/dockerfile-assets/bash/extract-environment.js apps/service-portal/src"
+          "node scripts/dockerfile-assets/bash/extract-environment.js apps/portals/my-pages/src"
         ]
       },
-      "outputs": ["{workspaceRoot}/apps/service-portal/src/index.html"]
+      "outputs": ["{workspaceRoot}/apps/portals/my-pages/src/index.html"]
     },
     "serve": {
       "executor": "@nx/webpack:dev-server",
@@ -82,14 +81,14 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/service-portal/jest.config.ts"
+        "jestConfig": "apps/portals/my-pages/jest.config.ts"
       },
-      "outputs": ["{workspaceRoot}/coverage/apps/service-portal"]
+      "outputs": ["{workspaceRoot}/coverage/apps/portals/my-pages"]
     },
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/service-portal/src/{screens,components}/**/*.{js,ts,tsx}'"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/portals/my-pages/src/{screens,components}/**/*.{js,ts,tsx}'"
       }
     },
     "dev-init": {

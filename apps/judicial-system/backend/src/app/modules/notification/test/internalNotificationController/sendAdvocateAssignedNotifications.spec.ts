@@ -43,6 +43,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   let mockConfig: ConfigType<typeof notificationModuleConfig>
   let mockNotificationModel: typeof Notification
   let givenWhenThen: GivenWhenThen
+  let notificationDTO: CaseNotificationDto
 
   beforeEach(async () => {
     const {
@@ -51,6 +52,11 @@ describe('InternalNotificationController - Send defender assigned notifications'
       notificationModel,
       internalNotificationController,
     } = await createTestingNotificationModule()
+
+    notificationDTO = {
+      user: { id: userId } as User,
+      type: NotificationType.ADVOCATE_ASSIGNED,
+    }
 
     mockEmailService = emailService
     mockConfig = notificationConfig
@@ -78,11 +84,8 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when sending defender assigned notifications', () => {
-    const notificationDto: CaseNotificationDto = {
-      user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
-    }
     const caseId = uuid()
+
     const defendant = {
       defenderNationalId: '1234567890',
       defenderEmail: 'recipient@gmail.com',
@@ -97,7 +100,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
     } as Case
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, notificationDto)
+      await givenWhenThen(caseId, theCase, notificationDTO)
     })
 
     it('should send correct email', () => {
@@ -119,17 +122,127 @@ describe('InternalNotificationController - Send defender assigned notifications'
         },
         attachments: undefined,
         subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
-        text: expect.anything(), // same as hmtl but stripped hmtl tags
+        text: expect.anything(), // same as html but stripped html tags
         html: `Héraðsdómur Reykjavíkur hefur skráð þig verjanda í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
       })
     })
   })
 
-  describe('when sending defender data is missing', () => {
-    const notificationDto: CaseNotificationDto = {
-      user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
+  describe('when the case has civil claims and the advocate is a lawyer', () => {
+    const caseId = uuid()
+    const civilClaimant = {
+      hasSpokesperson: true,
+      spokespersonNationalId: '1234567890',
+      spokespersonEmail: 'recipient@gmail.com',
+      spokespersonName: 'John Doe',
+      spokespersonIsLawyer: true,
     }
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      court,
+      courtCaseNumber: 'S-123/2022',
+      civilClaimants: [civilClaimant],
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, notificationDTO)
+    })
+
+    it('should send correct email', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
+        from: {
+          name: mockConfig.email.fromName,
+          address: mockConfig.email.fromEmail,
+        },
+        to: [
+          {
+            name: civilClaimant.spokespersonName,
+            address: civilClaimant.spokespersonEmail,
+          },
+        ],
+        replyTo: {
+          name: mockConfig.email.replyToName,
+          address: mockConfig.email.replyToEmail,
+        },
+        attachments: undefined,
+        subject: `Skráning í máli ${theCase.courtCaseNumber}`,
+        text: expect.anything(), // same as html but stripped html tags
+        html: `Héraðsdómur Reykjavíkur hefur skráð þig lögmann einkaréttarkröfuhafa í máli ${theCase.courtCaseNumber}.<br /><br />Sjá nánar á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+      })
+    })
+  })
+
+  describe('when the case has civil claims and the advocate is a legal rights protector', () => {
+    const caseId = uuid()
+    const civilClaimant = {
+      hasSpokesperson: true,
+      spokespersonNationalId: '1234567890',
+      spokespersonEmail: 'recipient@gmail.com',
+      spokespersonName: 'John Doe',
+      spokespersonIsLawyer: false,
+    }
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      court,
+      courtCaseNumber: 'S-123/2022',
+      civilClaimants: [civilClaimant],
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, notificationDTO)
+    })
+
+    it('should send correct email', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
+        from: {
+          name: mockConfig.email.fromName,
+          address: mockConfig.email.fromEmail,
+        },
+        to: [
+          {
+            name: civilClaimant.spokespersonName,
+            address: civilClaimant.spokespersonEmail,
+          },
+        ],
+        replyTo: {
+          name: mockConfig.email.replyToName,
+          address: mockConfig.email.replyToEmail,
+        },
+        attachments: undefined,
+        subject: `Skráning í máli ${theCase.courtCaseNumber}`,
+        text: expect.anything(), // same as html but stripped html tags
+        html: `Héraðsdómur Reykjavíkur hefur skráð þig réttargæslumann einkaréttarkröfuhafa í máli ${theCase.courtCaseNumber}.<br /><br />Sjá nánar á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+      })
+    })
+  })
+
+  describe('when the case has civil claims and civil claimant does not have representation', () => {
+    const caseId = uuid()
+    const civilClaimant = {
+      hasSpokesperson: false,
+    }
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      court,
+      courtCaseNumber: 'S-123/2022',
+      civilClaimants: [civilClaimant],
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, theCase, notificationDTO)
+    })
+
+    it('should send correct email', () => {
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('when sending defender data is missing', () => {
     const caseId = uuid()
     const theCase = {
       type: CaseType.INDICTMENT,
@@ -139,7 +252,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
     beforeEach(async () => {
       const mockCreate = mockNotificationModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce({} as Notification)
-      then = await givenWhenThen(caseId, theCase, notificationDto)
+      then = await givenWhenThen(caseId, theCase, notificationDTO)
     })
 
     it('should not send notification', () => {
@@ -150,10 +263,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('record notification', () => {
-    const notificationDto: CaseNotificationDto = {
-      user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
-    }
     const caseId = uuid()
     const defendant = {
       defenderEmail: 'recipient@gmail.com',
@@ -169,14 +278,14 @@ describe('InternalNotificationController - Send defender assigned notifications'
     beforeEach(async () => {
       const mockCreate = mockNotificationModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce({} as Notification)
-      await givenWhenThen(caseId, theCase, notificationDto)
+      await givenWhenThen(caseId, theCase, notificationDTO)
     })
 
-    it('should record notfication', () => {
+    it('should record notification', () => {
       expect(mockNotificationModel.create).toHaveBeenCalledTimes(1)
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
-        type: notificationDto.type,
+        type: notificationDTO.type,
         recipients: [
           {
             address: defendant.defenderEmail,
@@ -188,10 +297,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('returns that the notification was sent', () => {
-    const notificationDto: CaseNotificationDto = {
-      user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
-    }
     const caseId = uuid()
     const theCase = {
       id: caseId,
@@ -209,7 +314,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
     beforeEach(async () => {
       const mockCreate = mockNotificationModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce({} as Notification)
-      then = await givenWhenThen(caseId, theCase, notificationDto)
+      then = await givenWhenThen(caseId, theCase, notificationDTO)
     })
 
     it('should return notification was sent', () => {
@@ -218,10 +323,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('only send notification once to defender', () => {
-    const notificationDto: CaseNotificationDto = {
-      user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
-    }
     const caseId = uuid()
     const defendant = {
       defenderEmail: 'recipient@gmail.com',
@@ -246,12 +347,12 @@ describe('InternalNotificationController - Send defender assigned notifications'
           notifications: [
             {
               caseId,
-              type: notificationDto.type,
+              type: notificationDTO.type,
               recipients: [{ address: defendant.defenderEmail, success: true }],
             },
           ],
         } as Case,
-        notificationDto,
+        notificationDTO,
       )
     })
 
@@ -263,10 +364,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('should send email to every defender', () => {
-    const notificationDto: CaseNotificationDto = {
-      user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
-    }
     const caseId = uuid()
     const defender1 = { defenderEmail: 'some-email@island.is' }
     const defender2 = { defenderEmail: 'other-email@island.is' }
@@ -281,7 +378,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
     beforeEach(async () => {
       const mockCreate = mockNotificationModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce({} as Notification)
-      then = await givenWhenThen(caseId, theCase, notificationDto)
+      then = await givenWhenThen(caseId, theCase, notificationDTO)
     })
 
     it('should return notification was sent', () => {
@@ -292,10 +389,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('should only send one email to each defender', () => {
-    const notificationDto: CaseNotificationDto = {
-      user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
-    }
     const caseId = uuid()
     const defender1 = {
       defenderNationalId: '1234567890',
@@ -315,7 +408,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
     beforeEach(async () => {
       const mockCreate = mockNotificationModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce({} as Notification)
-      then = await givenWhenThen(caseId, theCase, notificationDto)
+      then = await givenWhenThen(caseId, theCase, notificationDTO)
     })
 
     it('should return notification was sent', () => {
@@ -338,7 +431,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
         },
         attachments: undefined,
         subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
-        text: expect.anything(), // same as hmtl but stripped hmtl tags
+        text: expect.anything(), // same as html but stripped html tags
         html: `Héraðsdómur Reykjavíkur hefur skráð þig verjanda í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
       })
       expect(then.result).toEqual(expect.objectContaining({ delivered: true }))
@@ -346,12 +439,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when sending assigned defender notifications in a restriction case', () => {
-    const notificationDto: CaseNotificationDto = {
-      user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
-    }
     const caseId = uuid()
-
     const theCase = {
       id: caseId,
       type: CaseType.ADMISSION_TO_FACILITY,
@@ -364,7 +452,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
     } as Case
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, notificationDto)
+      await givenWhenThen(caseId, theCase, notificationDTO)
     })
 
     it('should send email with link', () => {
@@ -393,12 +481,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when sending assigned defender without national id notifications in a restriction case', () => {
-    const notificationDto: CaseNotificationDto = {
-      user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
-    }
     const caseId = uuid()
-
     const theCase = {
       id: caseId,
       type: CaseType.ADMISSION_TO_FACILITY,
@@ -410,7 +493,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
     } as Case
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, notificationDto)
+      await givenWhenThen(caseId, theCase, notificationDTO)
     })
 
     it('should send an email without a link', () => {
@@ -439,12 +522,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when sending notifications in an investigation case', () => {
-    const notificationDto: CaseNotificationDto = {
-      user: { id: userId } as User,
-      type: NotificationType.DEFENDER_ASSIGNED,
-    }
     const caseId = uuid()
-
     const theCase = {
       id: caseId,
       type: CaseType.PHONE_TAPPING,
@@ -456,7 +534,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
     } as Case
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, notificationDto)
+      await givenWhenThen(caseId, theCase, notificationDTO)
     })
 
     it('should not send email', () => {
