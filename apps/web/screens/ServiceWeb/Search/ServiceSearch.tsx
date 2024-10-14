@@ -83,7 +83,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   })
   const { linkResolver } = useLinkResolver()
   const organizationNamespace = useMemo(
-    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    () => JSON.parse(organization?.namespace?.fields || '{}'),
     [organization?.namespace?.fields],
   )
   const o = useNamespace(organizationNamespace)
@@ -431,7 +431,7 @@ ServiceSearch.getProps = async ({ apolloClient, locale, query }) => {
       })
       .then((variables) => {
         // map data here to reduce data processing in component
-        return JSON.parse(variables?.data?.getNamespace?.fields ?? '{}')
+        return JSON.parse(variables?.data?.getNamespace?.fields || '{}')
       }),
     apolloClient.query<Query, QueryGetServiceWebPageArgs>({
       query: GET_SERVICE_WEB_PAGE_QUERY,

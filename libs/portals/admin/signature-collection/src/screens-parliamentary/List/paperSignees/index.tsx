@@ -44,6 +44,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
         listId,
       },
     },
+    skip: !nationalId.isValid(nationalIdInput) || !name,
   })
 
   useEffect(() => {

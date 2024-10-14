@@ -1,4 +1,3 @@
-import React, { FC } from 'react'
 import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './SummaryItem.css'
@@ -23,7 +22,7 @@ type SummaryItemProps = {
   tagText: string
 }
 
-const SummaryItem: FC<React.PropsWithChildren<SummaryItemProps>> = ({
+export const SummaryItem = ({
   title,
   description,
   furtherInformationTitle,
@@ -33,7 +32,7 @@ const SummaryItem: FC<React.PropsWithChildren<SummaryItemProps>> = ({
   buttonLink,
   tagText,
   index,
-}) => {
+}: SummaryItemProps) => {
   return (
     <Box
       position="relative"
@@ -98,5 +97,3 @@ const SummaryItem: FC<React.PropsWithChildren<SummaryItemProps>> = ({
     </Box>
   )
 }
-
-export default SummaryItem
