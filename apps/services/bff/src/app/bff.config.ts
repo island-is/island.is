@@ -12,7 +12,6 @@ export const idsSchema = z.strictObject({
 
 const BffConfigSchema = z.object({
   redis: z.object({
-    name: z.string(),
     nodes: z.array(z.string()),
     ssl: z.boolean(),
   }),
@@ -74,7 +73,6 @@ export const BffConfig = defineConfig({
        */
       graphqlApiEndpoint: env.required('BFF_PROXY_API_ENDPOINT'),
       redis: {
-        name: env.required('BFF_REDIS_NAME', 'unnamed-bff'),
         // Redis nodes are only required in production
         // In development, we can use a local Redis server or
         // rely on the default in-memory cache provided by CacheModule
