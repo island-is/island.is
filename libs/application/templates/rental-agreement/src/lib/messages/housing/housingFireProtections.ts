@@ -36,7 +36,7 @@ export const housingFireProtections = defineMessages({
   exitFireBlanketRequirements: {
     id: 'ra.application:housingFireProtections.exitFireBlanketRequirements',
     defaultMessage:
-      'Nauðsynlegt er að hafa að minnsta kosti 1 CE merktan reykskynjara á hverja 80m2 og 1 slökkvitæki í eigninni.',
+      'Flóttaleiðir þurfa að vera auðrataðar og greiðfærar en ekki er gerð krafa um eldvarnarteppi.',
     description: 'Smoke detector and fire blanket requirements',
   },
   exitsLabel: {
