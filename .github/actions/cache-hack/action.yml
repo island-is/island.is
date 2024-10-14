@@ -1,0 +1,15 @@
+name: 'Cache Hack'
+description: 'Hack cache'
+runs:
+  using: 'composite'
+  steps:
+    - name: Adding required env vars
+      uses: actions/github-script@v7
+      env:
+        github-token: ${{ inputs.GITHUB_TOKEN }}
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', 'https://cache.dev01.devland.is/')
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env['ACTIONS_RUNTIME_TOKEN'])
+          core.exportVariable('ACTIONS_RUNTIME_URL', process.env['ACTIONS_RUNTIME_URL'])
+    
