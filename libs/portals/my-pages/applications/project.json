@@ -1,0 +1,31 @@
+{
+  "name": "portals-my-pages-applications",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portals/my-pages/applications/src",
+  "projectType": "library",
+  "tags": [
+    "lib:portals-mypages",
+    "scope:portals-mypages",
+    "TODO:RemoveOverrides"
+  ],
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/portals/my-pages/applications/jest.config.ts"
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/portals/my-pages/applications"]
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "parallel": false,
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/portals/my-pages/applications/src/lib/messages.ts"
+      }
+    }
+  }
+}

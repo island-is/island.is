@@ -13,7 +13,7 @@ import {
   ServicePortalNavigationItem,
   m,
   useDynamicRoutesWithNavigation,
-} from '@island.is/service-portal/core'
+} from '@island.is/portals/my-pages/core'
 import { theme } from '@island.is/island-ui/theme'
 
 import { isDefined } from '@island.is/shared/utils'

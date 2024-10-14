@@ -2,7 +2,7 @@
 export default {
   displayName: 'service-portal',
   preset: './jest.preset.js',
-  rootDir: '../../..',
+  rootDir: '../../../..',
   roots: [__dirname],
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',

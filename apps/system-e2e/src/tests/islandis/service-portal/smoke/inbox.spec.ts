@@ -4,7 +4,7 @@ import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { messages } from '@island.is/service-portal/documents/messages'
-import { m } from '@island.is/service-portal/core/messages'
+import { m } from '@island.is/portals/my-pages/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
