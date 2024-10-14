@@ -19,7 +19,7 @@ import {
   UserProfileApi,
 } from '../dataProviders'
 import { m } from '../lib/messages/messages'
-import Logo from '../assets/Logo'
+import { Logo } from '../assets/Logo'
 import { prerequisitesFailed } from '../healthInsuranceUtils'
 
 export const PrerequisitesForm: Form = buildForm({

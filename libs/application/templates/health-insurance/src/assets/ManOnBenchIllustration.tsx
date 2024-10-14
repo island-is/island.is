@@ -1,6 +1,4 @@
-import React, { FC } from 'react'
-
-const ManOnBenchIllustration: FC<React.PropsWithChildren<unknown>> = () => (
+export const ManOnBenchIllustration = () => (
   <svg
     width="432"
     height="445"
@@ -1769,5 +1767,3 @@ const ManOnBenchIllustration: FC<React.PropsWithChildren<unknown>> = () => (
     </defs>
   </svg>
 )
-
-export default ManOnBenchIllustration

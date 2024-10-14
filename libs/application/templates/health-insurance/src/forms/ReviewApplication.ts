@@ -8,10 +8,12 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages/messages'
+import { Logo } from '../assets/Logo'
 
 export const ReviewApplication: Form = buildForm({
   id: 'HealthInsuranceDraft',
   title: m.formTitle,
+  logo: Logo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({

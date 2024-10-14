@@ -13,10 +13,12 @@ import {
 import { Application, Form, FormModes, YES } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { m } from '../lib/messages/messages'
+import { Logo } from '../assets/Logo'
 
 export const MissingInfoForm: Form = buildForm({
   id: 'HealthInsuranceReview',
   title: m.formTitle,
+  logo: Logo,
   mode: FormModes.IN_PROGRESS,
   children: [
     buildSection({

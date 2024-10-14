@@ -1,8 +1,7 @@
-import { formatText } from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import { Box, Bullet, BulletList, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MissingInfoType, ReviewFieldProps } from '../../utils/types'
-import { AgentComment } from '../AgentComment/AgentComment'
 import { MissingInfoRemarks } from '../MissingInfoRemarks/MissingInfoRemarks'
 import { m } from '../../lib/messages/messages'
 
@@ -19,10 +18,24 @@ export const ReviewMissingInfo = ({
 }: Props) => {
   const { formatMessage } = useLocale()
 
+  const agentComments = getValueViaPath(
+    application.answers,
+    'agentComments',
+  ) as string
+
   return (
     <Box paddingY={2}>
       <Stack space={4}>
-        <AgentComment application={application} field={field} />
+        <Stack space={1}>
+          <Text variant="h4">
+            {formatText(m.agentCommentsTitle, application, formatMessage)}
+          </Text>
+          <Text>
+            {agentComments
+              ? agentComments
+              : formatText(m.agentCommentsEmpty, application, formatMessage)}
+          </Text>
+        </Stack>
         <Stack space={1}>
           <Text variant="h5">
             {formatText(m.missingInfoAnswersTitle, application, formatMessage)}
