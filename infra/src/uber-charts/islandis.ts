@@ -12,7 +12,8 @@ import { serviceSetup as appSystemFormSetup } from '../../../apps/application-sy
 
 // Portals
 import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
-import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
+import { serviceSetup as servicePortalSetup } from '../../../apps/portals/my-pages/infra/portals-my-pages'
+
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
 
 // Bff's
