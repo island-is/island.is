@@ -40,7 +40,7 @@ export const ApplicationsIncompleteScreen: NavigationFunctionComponent = ({
       input: {
         status: [ApplicationResponseDtoStatusEnum.Draft],
       },
-      locale: locale === 'is-US' ? 'is' : 'en',
+      locale: locale === 'is-IS' ? 'is' : 'en',
     },
   })
 

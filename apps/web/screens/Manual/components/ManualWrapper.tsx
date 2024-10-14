@@ -33,7 +33,7 @@ export const ManualWrapper = ({
               paddingTop={0}
               sidebarContent={null}
             >
-              <Stack space={3}>
+              <Stack space={5}>
                 <ManualHeader manual={manual} namespace={namespace} />
                 {children}
               </Stack>

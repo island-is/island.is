@@ -207,13 +207,14 @@ export const en: TranslatedMessages = {
   'inbox.emptyListTitle': 'There are currently no documents',
   'inbox.emptyListDescription':
     'When you receive electronic documents from the government, they will appear here.',
-
   'inbox.markAllAsReadPromptTitle': 'Do you want to mark all as read?',
   'inbox.markAllAsReadPromptDescription': 'This action cannot be undone',
   'inbox.markAllAsReadPromptCancel': 'Cancel',
   'inbox.markAllAsReadPromptConfirm': 'Mark all as read',
   'inbox.cardNoInboxDocuments':
     'When you receive mail in your mailbox, it will appear here.',
+  'inbox.urgent': 'Urgent',
+  'inbox.openDocument': 'Open document',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Filter documents',
@@ -344,7 +345,8 @@ export const en: TranslatedMessages = {
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
   'profile.finance': 'Finance',
-  'profile.airDiscount': 'Air discount scheme',
+  'profile.airDiscount': 'Air discount',
+  'profile.health': 'Health',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
@@ -596,4 +598,32 @@ export const en: TranslatedMessages = {
   'passkeys.skipButton': 'Skip',
   'passkeys.errorRegistering': 'Error',
   'passkeys.errorRegisteringMessage': 'Could not create a passkey',
+
+  // update app
+  'updateApp.title': 'Update app',
+  'updateApp.description':
+    'You are about to use an old version of the Island.is app. Please update the app to be able to continue.',
+  'updateApp.button': 'Update',
+  'updateApp.buttonSkip': 'Skip',
+
+  // health
+  'health.overview.screenTitle': 'Health',
+  'health.overview.title': 'My health',
+  'health.overview.description':
+    'Here you can find your health data, health center and health insurance.',
+  'health.overview.healthCenter': 'Health center',
+  'health.overview.noHealthCenterRegistered': 'No health center registered',
+  'health.overview.physician': 'Physician',
+  'health.overview.noPhysicianRegistered': 'No doctor registered',
+  'health.overview.statusOfRights': 'Status of rights',
+  'health.overview.insuredFrom': 'Insured from',
+  'health.overview.status': 'Status',
+  'health.overview.notInsured': 'You do not have health insurance',
+  'health.overview.payments': 'Payments',
+  'health.overview.maxMonthlyPayment': 'Max monthly payment',
+  'health.overview.paymentLimit': 'Payment Limit',
+  'health.overview.paymentCredit': 'Credit',
+  'health.overview.paymentDebt': 'Debt',
+  'health.overview.therapy': 'Therapy',
+  'health.overview.aidsAndNutrition': 'Aids and nutrition',
 }

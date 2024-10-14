@@ -32,9 +32,11 @@ import { SignatureCollectionSignatureIdInput } from './dto/signatureId.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
 import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
-import { ReasonKey } from '@island.is/clients/signature-collection'
 import { CanSignInfo } from './models/canSignInfo.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
+import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
+import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
+import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -262,5 +264,36 @@ export class SignatureCollectionAdminResolver {
       user,
       input,
     )
+  }
+
+  @Query(() => [SignatureCollectionSignature])
+  @Scopes(
+    AdminPortalScope.signatureCollectionManage,
+    AdminPortalScope.signatureCollectionProcess,
+  )
+  @Audit()
+  async signatureCollectionSignatureLookup(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionSignatureLookupInput,
+  ): Promise<SignatureCollectionSignature[]> {
+    return this.signatureCollectionService.signatureLookup(user, input)
+  }
+
+  @Query(() => SignatureCollectionAreaSummaryReport)
+  @Audit()
+  async signatureCollectionAreaSummaryReport(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionAreaSummaryReportInput,
+  ): Promise<SignatureCollectionAreaSummaryReport> {
+    return this.signatureCollectionService.getAreaSummaryReport(input, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionLockList(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionListIdInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.lockList(input, user)
   }
 }

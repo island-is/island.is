@@ -22,6 +22,7 @@ import {
   addMediumText,
   addNormalRightAlignedText,
   addNormalText,
+  Confirmation,
   setTitle,
 } from './pdfHelpers'
 
@@ -33,6 +34,7 @@ export const createSubpoena = (
   arraignmentDate?: Date,
   location?: string,
   subpoenaType?: SubpoenaType,
+  confirmation?: Confirmation,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -51,7 +53,7 @@ export const createSubpoena = (
 
   setTitle(doc, formatMessage(strings.title))
 
-  if (subpoena) {
+  if (confirmation) {
     addEmptyLines(doc, 5)
   }
 
@@ -154,13 +156,8 @@ export const createSubpoena = (
 
   addFooter(doc)
 
-  if (subpoena) {
-    addConfirmation(doc, {
-      actor: theCase.judge?.name || '',
-      title: theCase.judge?.title,
-      institution: theCase.judge?.institution?.name || '',
-      date: subpoena.created,
-    })
+  if (confirmation) {
+    addConfirmation(doc, confirmation)
   }
 
   doc.end()

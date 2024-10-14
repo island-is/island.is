@@ -443,7 +443,7 @@ export class VehiclesService {
   async putMileageReading(
     auth: User,
     input: RootPutRequest['putMileageReadingModel'],
-  ): Promise<Array<MileageReadingDto> | null> {
+  ): Promise<MileageReadingDto | null> {
     if (!input) return null
 
     const isAllowed = await this.isAllowedMileageRegistration(
@@ -458,10 +458,9 @@ export class VehiclesService {
       throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
     }
 
-    const res = await this.getMileageWithAuth(auth).rootPut({
+    return this.getMileageWithAuth(auth).rootPut({
       putMileageReadingModel: input,
     })
-    return res
   }
 
   async canRegisterMileage(

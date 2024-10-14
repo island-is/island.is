@@ -20,7 +20,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { indictmentCases, SubpoenaType } from '@island.is/judicial-system/types'
+import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { defenderRule } from '../../guards'
 import {
@@ -37,7 +37,6 @@ import { SubpoenaExistsOptionalGuard } from './guards/subpoenaExists.guard'
 import { Subpoena } from './models/subpoena.model'
 
 @Controller([
-  'api/case/:caseId/limitedAccess/defendant/:defendantId/subpoena',
   'api/case/:caseId/limitedAccess/defendant/:defendantId/subpoena/:subpoenaId',
 ])
 @UseGuards(
@@ -71,23 +70,15 @@ export class LimitedAccessSubpoenaController {
     @CurrentDefendant() defendant: Defendant,
     @CurrentSubpoena() subpoena: Subpoena,
     @Res() res: Response,
-    @Query('arraignmentDate') arraignmentDate?: Date,
-    @Query('location') location?: string,
-    @Query('subpoenaType') subpoenaType?: SubpoenaType,
   ): Promise<void> {
     this.logger.debug(
-      `Getting subpoena ${
-        subpoenaId ?? 'draft'
-      } for defendant ${defendantId} of case ${caseId} as a pdf document`,
+      `Getting subpoena ${subpoenaId} for defendant ${defendantId} of case ${caseId} as a pdf document`,
     )
 
     const pdf = await this.pdfService.getSubpoenaPdf(
       theCase,
       defendant,
       subpoena,
-      arraignmentDate,
-      location,
-      subpoenaType,
     )
 
     res.end(pdf)

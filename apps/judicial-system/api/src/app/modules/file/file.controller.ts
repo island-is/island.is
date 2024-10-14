@@ -182,16 +182,18 @@ export class FileController {
   getSubpoenaPdf(
     @Param('id') id: string,
     @Param('defendantId') defendantId: string,
-    @Param('subpoenaId') subpoenaId: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
+    @Param('subpoenaId') subpoenaId?: string,
     @Query('arraignmentDate') arraignmentDate?: string,
     @Query('location') location?: string,
     @Query('subpoenaType') subpoenaType?: SubpoenaType,
   ): Promise<Response> {
     this.logger.debug(
-      `Getting the subpoena for defendant ${defendantId} of case ${id} as a pdf document`,
+      `Getting subpoena ${
+        subpoenaId ?? 'draft'
+      } for defendant ${defendantId} of case ${id} as a pdf document`,
     )
 
     const subpoenaIdInjection = subpoenaId ? `/${subpoenaId}` : ''

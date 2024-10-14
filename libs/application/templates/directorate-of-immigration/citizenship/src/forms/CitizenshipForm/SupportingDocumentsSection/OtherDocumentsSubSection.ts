@@ -6,6 +6,7 @@ import {
   buildFileUploadField,
   YES,
   getValueViaPath,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
 import {
@@ -42,10 +43,20 @@ export const OtherDocumentsSubSection = buildSubSection({
       children: [
         buildDescriptionField({
           id: `${Routes.SUPPORTINGDOCUMENTS}.title`,
-          title: supportingDocuments.labels.otherDocuments.title,
+          description: supportingDocuments.labels.otherDocuments.title,
           titleVariant: 'h5',
+          title: '',
         }),
-
+        buildHiddenInput({
+          id: `${Routes.SUPPORTINGDOCUMENTS}.birthCertificateRequired`,
+          defaultValue: (application: Application) => {
+            const answers = application.answers as Citizenship
+            if (answers?.parentInformation?.hasValidParents === YES) {
+              return 'true'
+            }
+            return 'false'
+          },
+        }),
         buildFileUploadField({
           id: `${Routes.SUPPORTINGDOCUMENTS}.birthCertificate`,
           title: supportingDocuments.labels.otherDocuments.birthCertificate,

@@ -1,19 +1,24 @@
-import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
+import { IsEnum, IsOptional, IsString } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import { DefenderChoice } from '@island.is/judicial-system/types'
+import { DefenderChoice, ServiceStatus } from '@island.is/judicial-system/types'
 
 export class UpdateSubpoenaDto {
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  readonly acknowledged?: boolean
+  @IsEnum(ServiceStatus)
+  @ApiPropertyOptional({ enum: ServiceStatus })
+  readonly serviceStatus?: ServiceStatus
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  readonly registeredBy?: string
+  readonly servedBy?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly serviceDate?: string
 
   @IsOptional()
   @IsString()

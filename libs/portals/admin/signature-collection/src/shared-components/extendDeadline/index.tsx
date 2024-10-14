@@ -63,7 +63,7 @@ const ActionExtendDeadline = ({
           readOnly
           value={format(new Date(endDate), 'dd.MM.yyyy HH:mm')}
         />
-        <Box marginLeft={2}>
+        <Box marginLeft={3}>
           <Button
             icon="calendar"
             iconType="outline"

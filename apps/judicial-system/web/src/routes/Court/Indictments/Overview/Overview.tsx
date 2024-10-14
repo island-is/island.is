@@ -18,6 +18,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  ServiceAnnouncement,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
 import { IndictmentDecision } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -39,6 +40,7 @@ const IndictmentOverview = () => {
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
+
   // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNavigationTo = useCallback(
@@ -76,6 +78,18 @@ const IndictmentOverview = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.defendants?.map((defendant) =>
+          defendant.subpoenas?.map(
+            (subpoena) =>
+              subpoena.subpoenaId && (
+                <ServiceAnnouncement
+                  key={`${subpoena.id}-${subpoena.created}`}
+                  subpoena={subpoena}
+                  defendantName={defendant.name}
+                />
+              ),
+          ),
+        )}
         {workingCase.court &&
           latestDate?.date &&
           workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&

@@ -5,6 +5,10 @@ export const m = defineMessages({
     id: 'service.portal:reference',
     defaultMessage: 'Tilvísun',
   },
+  goToPage: {
+    id: 'service.portal:go-to-page',
+    defaultMessage: 'Fara á síðu',
+  },
   print: {
     id: 'service.portal:print',
     defaultMessage: 'Prenta',
@@ -1386,6 +1390,11 @@ export const m = defineMessages({
     id: 'service.portal:mms-tooltip-secondary',
     defaultMessage: 'Menntamálastofnun hefur umsjón með gögnum um menntaskóla.',
   },
+  domsmalaraduneytidTooltip: {
+    id: 'service.portal:dmr-tooltip',
+    defaultMessage:
+      'Dómsmálaráðuneytið hefur umsjón með gögnum um dómsmál og þeim tengt.',
+  },
   occupationalLicenseTooltip: {
     id: 'service.portal:occupational-license-tooltip',
     defaultMessage:
@@ -1629,9 +1638,51 @@ export const m = defineMessages({
     defaultMessage:
       'Ef þú telur að þú eigir að vera með skráðann {arg}, vinsamlegast hafðu samband við þjónustuaðila.',
   },
+  lawAndOrder: {
+    id: 'service.portal:law-and-order',
+    defaultMessage: 'Lög og reglur',
+  },
+  lawAndOrderDashboard: {
+    id: 'service.portal:law-and-order-dashboard',
+    defaultMessage: 'Þín mál í dómskerfinu',
+  },
+  lawAndOrderDescription: {
+    id: 'service.portal:law-and-order-description',
+    defaultMessage:
+      'Hér eru upplýsingar og yfirlit yfir mál sem þú átt hjá dómskerfinu.',
+  },
+  courtCases: {
+    id: 'service.portal:court-cases',
+    defaultMessage: 'Dómsmál',
+  },
+  subpoena: {
+    id: 'service.portal:subpoena',
+    defaultMessage: 'Fyrirkall',
+  },
+  urgent: {
+    id: 'service.portal:urgent',
+    defaultMessage: 'Áríðandi',
+  },
+  openErrand: {
+    id: 'service.portal:open-errand',
+    defaultMessage: 'Opna erindi',
+  },
   readMoreAbout: {
     id: 'service.portal:read-more-about',
     defaultMessage: 'Lesa meira um {arg}',
+  },
+  acknowledgeTitle: {
+    id: 'sp.service.portal:acknowledge-title',
+    defaultMessage: 'Staðfesting á móttöku',
+  },
+  acknowledgeText: {
+    id: 'sp.service.portal:acknowledge-text',
+    defaultMessage:
+      'Þú ert að opna erindi frá {arg}. Veljir þú að opna erindið fá viðeigandi aðilar senda staðfestingu á möttöku. Veljir þú að opna ekki erindið munu viðeigandi aðilar leita annarra leiða til að afhenda þér það, t.d. með aðstoð lögreglu.',
+  },
+  acknowledgementCompleted: {
+    id: 'sp.service.portal:acknowledgement-completed',
+    defaultMessage: 'Staðfesting á móttöku tókst',
   },
   submit: {
     id: 'service.portal:submit',

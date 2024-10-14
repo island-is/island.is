@@ -14,11 +14,11 @@ interface Props extends FieldBaseProps {
 
 export const ActionCardListFormField: FC<Props> = ({ application, field }) => {
   const { items, marginBottom = 4, marginTop = 4, space = 2 } = field
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   return (
     <Box marginBottom={marginBottom} marginTop={marginTop}>
       <Stack space={space}>
-        {items(application).map((item, index) => {
+        {items(application, lang).map((item, index) => {
           const itemWithTranslatedTexts: ActionCardProps = {
             ...item,
             heading:
