@@ -200,10 +200,10 @@ export function Alert({
           </Icon>
         )}
 
-        {message && (
+        {(message || title) && (
           <Content>
             {title && <Title variant="heading5">{title}</Title>}
-            <Typography variant="body3">{message}</Typography>
+            {message && <Typography variant="body3">{message}</Typography>}
           </Content>
         )}
 

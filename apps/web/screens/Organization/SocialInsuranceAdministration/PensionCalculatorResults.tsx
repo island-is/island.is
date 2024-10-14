@@ -1,4 +1,4 @@
-import { Fragment, ReactNode } from 'react'
+import { Fragment } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -59,16 +59,25 @@ import {
 } from './utils'
 import * as styles from './PensionCalculatorResults.css'
 
+const ChangeAssumptionsButton = ({ href }: { href: string }) => {
+  const { formatMessage } = useIntl()
+  return (
+    <LinkV2 href={href}>
+      <Button unfocusable={true} variant="text" preTextIcon="arrowBack">
+        {formatMessage(translationStrings.changeAssumptions)}
+      </Button>
+    </LinkV2>
+  )
+}
+
 interface HighlightedItemsProps {
   highlightedItems: SocialInsurancePensionCalculationResponseItem[]
   customPageData: CustomPage | null | undefined
-  firstItemRightAlignedContent?: ReactNode
 }
 
 const HighlightedItems = ({
   highlightedItems,
   customPageData,
-  firstItemRightAlignedContent,
 }: HighlightedItemsProps) => {
   const { formatMessage } = useIntl()
 
@@ -113,7 +122,6 @@ const HighlightedItems = ({
                 </Text>
               )}
               {!higlightedItemIsPresent && <Box />}
-              {index === 0 && firstItemRightAlignedContent}
             </Inline>
 
             <Box className={styles.grid}>
@@ -270,6 +278,10 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
 
   const isTurnedOff = customPageData?.configJson?.isTurnedOff ?? false
 
+  const changeAssumtionsHref = `${
+    linkResolver('pensioncalculator').href
+  }?${queryParamString}`
+
   return (
     <>
       <Box printHidden>
@@ -321,40 +333,22 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                           </Text>
                         </Box>
                       </Stack>
+                      <Hidden print>
+                        <Box
+                          display="flex"
+                          justifyContent={['flexStart', 'flexStart', 'flexEnd']}
+                        >
+                          <ChangeAssumptionsButton
+                            href={changeAssumtionsHref}
+                          />
+                        </Box>
+                      </Hidden>
                       {higlightedItemIsPresent && (
                         <HighlightedItems
                           customPageData={customPageData}
                           highlightedItems={highlightedItems}
-                          firstItemRightAlignedContent={
-                            <Hidden print below="md">
-                              <LinkV2
-                                href={`${
-                                  linkResolver('pensioncalculator').href
-                                }?${queryParamString}`}
-                              >
-                                <Button unfocusable={true} size="small">
-                                  {formatMessage(
-                                    translationStrings.changeAssumptions,
-                                  )}
-                                </Button>
-                              </LinkV2>
-                            </Hidden>
-                          }
                         />
                       )}
-                      <Hidden print above="sm">
-                        <LinkV2
-                          href={`${
-                            linkResolver('pensioncalculator').href
-                          }?${queryParamString}`}
-                        >
-                          <Button unfocusable={true} size="small">
-                            {formatMessage(
-                              translationStrings.changeAssumptions,
-                            )}
-                          </Button>
-                        </LinkV2>
-                      </Hidden>
 
                       {!calculationIsPresent && (
                         <AlertMessage
@@ -395,17 +389,9 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                               </Stack>
 
                               <Hidden print>
-                                <LinkV2
-                                  href={`${
-                                    linkResolver('pensioncalculator').href
-                                  }?${queryParamString}`}
-                                >
-                                  <Button unfocusable={true} size="small">
-                                    {formatMessage(
-                                      translationStrings.changeAssumptions,
-                                    )}
-                                  </Button>
-                                </LinkV2>
+                                <ChangeAssumptionsButton
+                                  href={changeAssumtionsHref}
+                                />
                               </Hidden>
                             </Box>
                           </AccordionItem>
@@ -505,6 +491,7 @@ PensionCalculatorResults.getProps = async ({
   }
 
   const queryParams = convertToQueryParams(calculationInput)
+  const queryParamsObject = Object.fromEntries(queryParams)
 
   return {
     organizationPage: getOrganizationPage,
@@ -517,6 +504,10 @@ PensionCalculatorResults.getProps = async ({
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,
     ),
+    languageToggleQueryParams: {
+      is: queryParamsObject,
+      en: queryParamsObject,
+    },
   }
 }
 
