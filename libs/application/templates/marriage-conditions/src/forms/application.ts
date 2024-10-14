@@ -12,10 +12,12 @@ import {
   getValueViaPath,
   buildDateField,
   buildExternalDataProvider,
-  buildAlertMessageField,
   buildNationalIdWithNameField,
   buildPhoneField,
   buildHiddenInputWithWatchedValue,
+  buildAlertMessageField,
+  buildImageField,
+  buildCheckboxField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -38,6 +40,7 @@ import { UserProfile } from '../types/schema'
 import { fakeDataSection } from './fakeDataSection'
 import { dataCollection } from './sharedSections/dataCollection'
 import { removeCountryCode } from '@island.is/application/ui-components'
+import DigitalServices from '../assets/DigitalServices'
 
 export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
@@ -125,6 +128,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     title: m.phone,
                     width: 'half',
                     backgroundColor: 'blue',
+                    disableDropdown: true,
                     defaultValue: (application: Application) => {
                       const data = application.externalData.userProfile
                         .data as UserProfile
@@ -148,12 +152,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     title: m.informationSpouse2,
                     titleVariant: 'h4',
                     space: 'containerGutter',
-                  }),
-                  buildAlertMessageField({
-                    id: 'alert',
-                    title: '',
-                    alertType: 'info',
-                    message: m.informationAlertMessage,
                   }),
                   buildNationalIdWithNameField({
                     id: 'spouse.person',
@@ -181,6 +179,12 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       const info = application.answers.spouse as Individual
                       return info?.email ?? ''
                     },
+                  }),
+                  buildDescriptionField({
+                    id: 'info',
+                    title: '',
+                    space: 'gutter',
+                    description: m.informationAlertMessage,
                   }),
                 ],
               }),
@@ -258,7 +262,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                         label: 'Nei',
                       },
                     ],
-                    largeButtons: false,
+                    largeButtons: true,
                     width: 'half',
                   }),
                   buildDescriptionField({
@@ -291,7 +295,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     id: 'ceremony.date',
                     title: m.ceremonyDate,
                     placeholder: m.ceremonyDatePlaceholder,
-                    width: 'half',
+                    width: 'full',
                     minDate: new Date(),
                     // max date is set to 12 weeks from now
                     maxDate: new Date(
@@ -471,6 +475,52 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 id: 'overview',
                 title: '',
                 component: 'ApplicationOverview',
+              }),
+            ],
+          }),
+        ],
+      }),
+      buildSection({
+        id: 'missingInformation',
+        title: 'Gögn vantar',
+        children: [
+          buildMultiField({
+            id: 'missingInfo',
+            title: 'Athugið',
+            description:
+              'Því miður reyndist gagnaöflun ófullnægjandi. Vinsamlegast hafðu samband við næsta sýslumann.',
+            children: [
+              buildImageField({
+                id: 'image',
+                title: '',
+                image: DigitalServices,
+                imageWidth: '50%',
+                imagePosition: 'center',
+              }),
+              buildDescriptionField({
+                id: 'space',
+                title: '',
+                space: 'gutter',
+              }),
+              buildAlertMessageField({
+                id: 'missingInfoAlert',
+                title: 'Gögn vantar',
+                message:
+                  'Skila þarf inn fæðingarvottorði til að fullnægja kröfum um að fá staðfestingu á hjónavígslu.',
+                alertType: 'warning',
+              }),
+              buildCheckboxField({
+                id: 'applicantConfirmMissingInfo',
+                title: '',
+                large: true,
+                defaultValue: [],
+                options: [
+                  {
+                    value: YES,
+                    label:
+                      'Ég skil að ég þarf að skila inn fæðingarvottorði til syslumanns.',
+                  },
+                ],
               }),
               buildSubmitField({
                 id: 'submitApplication',

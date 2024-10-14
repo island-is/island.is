@@ -19,6 +19,7 @@ export const PhoneWithElectronicId: FC<
         label={formatMessage(m.phone)}
         backgroundColor="blue"
         required
+        disableDropdown
         error={errors ? getErrorViaPath(errors, id) : undefined}
         /*onChange={() => {
         //trigger electronic id lookup

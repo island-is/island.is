@@ -237,7 +237,7 @@ export const m = defineMessages({
   ceremonyPeriodDescription: {
     id: 'mac.application:ceremonyPeriodDescription',
     defaultMessage:
-      'Ef áætlaður dagur liggur ekki fyrir, þá þarf samt að velja áætlað tímabil hjónavíglsu.',
+      'Ef áætlaður dagur liggur ekki fyrir, þá þarf samt að velja áætlað tímabil hjónavíglsu:',
     description: '',
   },
   ceremonyPeriodFrom: {
