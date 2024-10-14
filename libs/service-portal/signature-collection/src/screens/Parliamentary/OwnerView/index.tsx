@@ -106,58 +106,73 @@ const OwnerView = ({
                   withLabel: true,
                 }}
                 eyebrow={list.title.split(' - ')[0]}
-                cta={{
-                  label: formatMessage(m.viewList),
-                  variant: 'text',
-                  icon: 'arrowForward',
-                  onClick: () => {
-                    const path = location.pathname.includes('fyrirtaeki')
-                      ? SignatureCollectionPaths.CompanyViewParliamentaryList
-                      : SignatureCollectionPaths.ViewParliamentaryList
-                    navigate(path.replace(':id', list.id), {
-                      state: {
-                        collectionId: currentCollection?.id || '',
-                      },
-                    })
-                  },
-                }}
-                tag={{
-                  label: 'Cancel collection',
-                  renderTag: () => (
-                    <DialogPrompt
-                      baseId="cancel_collection_dialog"
-                      title={
-                        formatMessage(m.cancelCollectionButton) +
-                        ' - ' +
-                        list.area?.name
+                cta={
+                  list.active
+                    ? {
+                        label: formatMessage(m.viewList),
+                        variant: 'text',
+                        icon: 'arrowForward',
+                        onClick: () => {
+                          const path = location.pathname.includes('fyrirtaeki')
+                            ? SignatureCollectionPaths.CompanyViewParliamentaryList
+                            : SignatureCollectionPaths.ViewParliamentaryList
+                          navigate(path.replace(':id', list.id), {
+                            state: {
+                              collectionId: currentCollection?.id || '',
+                            },
+                          })
+                        },
                       }
-                      description={formatMessage(
-                        m.cancelCollectionModalMessage,
-                      )}
-                      ariaLabel="delete"
-                      disclosureElement={
-                        <Tag outlined variant="red">
-                          <Box display="flex" alignItems="center">
-                            <Icon icon="trash" size="small" type="outline" />
-                          </Box>
-                        </Tag>
+                    : undefined
+                }
+                tag={
+                  list.active
+                    ? {
+                        label: 'Cancel collection',
+                        renderTag: () => (
+                          <DialogPrompt
+                            baseId="cancel_collection_dialog"
+                            title={
+                              formatMessage(m.cancelCollectionButton) +
+                              ' - ' +
+                              list.area?.name
+                            }
+                            description={formatMessage(
+                              m.cancelCollectionModalMessage,
+                            )}
+                            ariaLabel="delete"
+                            disclosureElement={
+                              <Tag outlined variant="red">
+                                <Box display="flex" alignItems="center">
+                                  <Icon
+                                    icon="trash"
+                                    size="small"
+                                    type="outline"
+                                  />
+                                </Box>
+                              </Tag>
+                            }
+                            onConfirm={() => {
+                              onCancelCollection(list.id)
+                            }}
+                            buttonTextConfirm={formatMessage(
+                              m.cancelCollectionModalConfirmButton,
+                            )}
+                            buttonPropsConfirm={{
+                              variant: 'primary',
+                              colorScheme: 'destructive',
+                            }}
+                            buttonTextCancel={formatMessage(
+                              m.cancelCollectionModalCancelButton,
+                            )}
+                          />
+                        ),
                       }
-                      onConfirm={() => {
-                        onCancelCollection(list.id)
-                      }}
-                      buttonTextConfirm={formatMessage(
-                        m.cancelCollectionModalConfirmButton,
-                      )}
-                      buttonPropsConfirm={{
-                        variant: 'primary',
-                        colorScheme: 'destructive',
-                      }}
-                      buttonTextCancel={formatMessage(
-                        m.cancelCollectionModalCancelButton,
-                      )}
-                    />
-                  ),
-                }}
+                    : {
+                        label: formatMessage(m.listSubmitted),
+                        variant: 'blueberry',
+                      }
+                }
               />
             </Box>
           ))
