@@ -10,16 +10,17 @@ import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
+import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { NotificationType } from '@island.is/judicial-system/types'
 
-import { InternalCaseService } from '../case'
+import { CaseService } from '../case'
 import { EventService } from '../event'
-import { type User, UserService } from '../user'
+import { SubpoenaService } from '../subpoena'
 import { DeliverResponse } from './models/deliver.response'
-import { Notification } from './models/notification.model'
+import { Notification, Recipient } from './models/notification.model'
 import { BaseNotificationService } from './baseNotification.service'
-import { strings } from './institutionNotification.strings'
 import { notificationModuleConfig } from './notification.config'
+import { strings } from './subpoenaNotification.strings'
 
 @Injectable()
 export class SubpoenaNotification extends BaseNotificationService {
@@ -32,8 +33,8 @@ export class SubpoenaNotification extends BaseNotificationService {
     intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
-    private readonly internalCaseService: InternalCaseService,
-    private readonly userService: UserService,
+    private readonly caseService: CaseService,
+    private readonly subpoenaService: SubpoenaService,
   ) {
     super(
       notificationModel,
@@ -45,60 +46,72 @@ export class SubpoenaNotification extends BaseNotificationService {
     )
   }
 
-  private async sendIndictmentsWaitingForConfirmationNotification(
-    prosecutorsOfficeId?: string,
+  private async sendServiceStatusUpdatedNotification(
+    subpoenaId?: string,
   ): Promise<unknown> {
-    if (!prosecutorsOfficeId) {
+    if (!subpoenaId) {
       return
     }
 
-    const count =
-      await this.internalCaseService.countIndictmentsWaitingForConfirmation(
-        prosecutorsOfficeId,
+    const subpoena = await this.subpoenaService.findBySubpoenaId(subpoenaId)
+    const theCase = await this.caseService.findById(subpoena.caseId)
+
+    if (!theCase.id) {
+      throw new InternalServerErrorException(`Case not found`)
+    }
+
+    if (!theCase.courtCaseNumber || !theCase.id) {
+      throw new InternalServerErrorException(
+        `Unable to find courtCaseNumber for case ${theCase.id}`,
       )
-
-    if (count === 0) {
-      return
     }
 
-    const recipients = await this.userService.getUsersWhoCanConfirmIndictments(
-      prosecutorsOfficeId,
-    )
-
-    if (recipients.length === 0) {
-      return
-    }
-
-    await this.refreshFormatMessage()
-
-    const subject = this.formatMessage(strings.waitingForConfirmation.subject)
-    const body = this.formatMessage(strings.waitingForConfirmation.body, {
-      count,
+    const subject = this.formatMessage(strings.serviceStatusUpdatedSubject, {
+      courtCaseNumber: theCase.courtCaseNumber,
     })
-    const tail = this.formatMessage(strings.tail)
 
-    return Promise.all(
-      recipients.map((recipient: User) =>
+    const body = this.formatMessage(strings.serviceStatusUpdatedBody, {
+      courtCaseNumber: theCase.courtCaseNumber,
+      linkStart: `<a href="${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}">`,
+      linkEnd: '</a>',
+    })
+
+    const promises: Promise<Recipient>[] = []
+    const judgeName = theCase.judge?.name
+    const judgeEmail = theCase.judge?.email
+    const registrarName = theCase.registrar?.name
+    const registrarEmail = theCase.registrar?.email
+
+    if (judgeName && judgeEmail) {
+      promises.push(
+        this.sendEmail(subject, body, judgeName, judgeEmail, undefined, true),
+      )
+    }
+
+    if (registrarName && registrarEmail) {
+      promises.push(
         this.sendEmail(
           subject,
-          `${body}<br /><br />${tail}`,
-          recipient.name,
-          recipient.email,
+          body,
+          registrarName,
+          registrarEmail,
+          undefined,
+          true,
         ),
-      ),
-    )
+      )
+    }
+
+    return Promise.all(promises)
   }
 
   async sendNotification(
     type: NotificationType,
-    prosecutorsOfficeId?: string,
+    subpoenaId?: string,
   ): Promise<DeliverResponse> {
     try {
       switch (type) {
-        case NotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION:
-          await this.sendIndictmentsWaitingForConfirmationNotification(
-            prosecutorsOfficeId,
-          )
+        case NotificationType.SERVICE_STATUS_UPDATED:
+          await this.sendServiceStatusUpdatedNotification(subpoenaId)
           break
         default:
           throw new InternalServerErrorException(
