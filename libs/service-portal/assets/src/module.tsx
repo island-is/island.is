@@ -103,14 +103,12 @@ export const assetsModule: PortalModule = {
         name: m.workMachines,
         path: AssetsPaths.AssetsWorkMachines,
         enabled: userInfo.scopes.includes(ApiScope.workMachines),
-        key: 'WorkMachines',
         element: <WorkMachinesOverview />,
       },
       {
         name: m.workMachines,
         path: AssetsPaths.AssetsWorkMachinesDetail,
         enabled: userInfo.scopes.includes(ApiScope.workMachines),
-        key: 'WorkMachines',
         element: <WorkMachinesDetail />,
       },
       {
@@ -142,7 +140,6 @@ export const assetsModule: PortalModule = {
         name: m.vehicleMileage,
         path: AssetsPaths.AssetsVehiclesDetailMileage,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        key: 'VehicleMileage',
         element: <VehicleMileage />,
       },
       {
@@ -210,7 +207,6 @@ export const assetsModule: PortalModule = {
         element: <IPPatentDetail />,
       },
     ]
-
     return routes
   },
 }
