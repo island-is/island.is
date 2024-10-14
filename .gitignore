@@ -97,3 +97,8 @@ apps/**/index.html
 .next
 
 .nx/
+
+# E2E outputs
+test-results/
+playwright-report/
+tmp-sessions/
