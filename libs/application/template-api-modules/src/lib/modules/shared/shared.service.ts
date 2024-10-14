@@ -234,6 +234,18 @@ export class SharedTemplateApiService {
     return file
   }
 
+  // getS3UriInformation(
+  //   application: ApplicationWithAttachments,
+  //   attachmentKey: string,
+  // ): S3UriInformation {
+  //   const fileName = (
+  //     application.attachments as {
+  //       [key: string]: string
+  //     }
+  //   )[attachmentKey]
+  //   return AmazonS3URI(fileName)
+  // }
+
   async getAttachmentContentAsBase64(
     application: ApplicationWithAttachments,
     attachmentKey: string,
@@ -332,5 +344,27 @@ export class SharedTemplateApiService {
       { expiresIn },
     )
     return token
+  }
+
+  async getAttachmentUrl2(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+    expiration: number,
+  ): Promise<string> {
+    if (expiration <= 0) {
+      return Promise.reject('expiration must be positive')
+    }
+    const fileName = (
+      application.attachments as {
+        [key: string]: string
+      }
+    )[attachmentKey]
+    const { bucket, key } = AmazonS3URI(fileName)
+
+    return this.s3.getSignedUrlPromise('getObject', {
+      Bucket: bucket,
+      Key: key,
+      Expires: expiration,
+    })
   }
 }
