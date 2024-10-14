@@ -349,6 +349,11 @@ export const m = defineMessages({
     defaultMessage: 'Umsjónaraðilar',
     description: '',
   },
+  supervisorsInfo: {
+    id: 'sp.signatureCollection:supervisorsInfo',
+    defaultMessage: 'Umsjónaraðilar hafa aðgang að öllum upplýsingum safnananna en geta ekki eytt söfnununum. ',
+    description: '',
+  },
   add: {
     id: 'sp.signatureCollection:add',
     defaultMessage: 'Bæta við',
