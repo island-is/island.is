@@ -1,11 +1,8 @@
 export enum NotificationType {
-  /**
-   * Notification sent for system-related events such as updates or stock changes.
-   * @param {string} documentId - The ID of the documentId
-   */
   System = 'SystemNotification',
   ChildrenResidenceChange = 'ChildrenResidenceChangeNotification',
   RejectedByCounterParty = 'RejectedByCounterPartyNotification',
+  RejectedByOrganization = 'RejectedByOrganizationNotification',
   AssignCounterParty = 'AssignCounterPartyNotification',
   ChildrenResidenceChangeApprovedByOrg = 'ChildrenResidenceChangeApprovedByOrgNotification',
   ReferenceTemplate = 'ReferenceTemplateNotification',
@@ -24,6 +21,10 @@ export const NotificationConfig = {
   [NotificationType.RejectedByCounterParty]: {
     templateId: 'HNIPP.AS.CRC.REJECTED.BY.COUNTERPARTY',
     keys: {} as { counterPartyName: string },
+  },
+  [NotificationType.RejectedByOrganization]: {
+    templateId: 'HNIPP.AS.CRC.REJECTED.BY.ORGANIZATION',
+    keys: {} as { orgName: string },
   },
   [NotificationType.AssignCounterParty]: {
     templateId: 'HNIPP.AS.CRC.ASSIGN.COUNTERPARTY',

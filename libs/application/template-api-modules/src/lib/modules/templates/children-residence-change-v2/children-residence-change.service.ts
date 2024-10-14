@@ -14,18 +14,10 @@ import {
 import { Override } from '@island.is/application/templates/family-matters-core/types'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change-v2'
 import { SharedTemplateApiService } from '../../shared'
-import {
-  applicationRejectedByOrganizationEmail,
-  generateApplicationSubmittedEmail,
-  generateSyslumennNotificationEmail,
-  transferRequestedEmail,
-} from './emailGenerators'
+import { generateSyslumennNotificationEmail } from './emailGenerators'
 import { Application, ApplicationTypes } from '@island.is/application/types'
-import { SmsService } from '@island.is/nova-sms'
 import { syslumennDataFromPostalCode } from './utils'
-import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { isValidNumberForRegion } from 'libphonenumber-js'
 import { generateResidenceChangePdf } from './pdfGenerators'
 import { NotificationsService } from '../../../notification/notifications.service'
@@ -42,8 +34,6 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
   constructor(
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly smsService: SmsService,
-    private nationalRegistryApi: NationalRegistryClientService,
     private readonly notificationsService: NotificationsService,
   ) {
     super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2)
@@ -170,12 +160,12 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
   }
 
   async sendNotificationToCounterParty({ application }: Props) {
-    const { answers, externalData } = application
-    const { counterParty } = answers
+    const {
+      externalData: { nationalRegistry, childrenCustodyInformation },
+    } = application
 
-    const applicant = externalData.nationalRegistry.data
-    const otherParent =
-      externalData.childrenCustodyInformation.data[0].otherParent
+    const applicant = nationalRegistry.data
+    const otherParent = childrenCustodyInformation.data[0].otherParent
     const applicationLink = await this.getApplicationLink(application)
 
     if (otherParent) {
@@ -191,50 +181,25 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
         },
       })
     }
-
-    if (counterParty.email) {
-      await this.sharedTemplateAPIService.sendEmail(
-        transferRequestedEmail,
-        application as unknown as Application,
-      )
-    }
-
-    if (counterParty.phoneNumber) {
-      await this.smsService.sendSms(
-        counterParty.phoneNumber,
-        'Þér hafa borist drög að samningi um breytt lögheimili barns á Island.is. Samningurinn er aðgengilegur á island.is/minarsidur undir Umsóknir.',
-      )
-    }
   }
 
   // Sends notification to both parties
   async approvedByOrganization({ application }: Props) {
-    const { answers, externalData } = application
-    const { parentA, parentB } = answers
-    const { nationalRegistry } = externalData
+    const {
+      externalData: {
+        nationalRegistry,
+        childrenCustodyInformation,
+        submitApplication,
+      },
+    } = application
     const applicant = nationalRegistry.data
-    const otherParent =
-      externalData.childrenCustodyInformation.data[0].otherParent
-    const childResidenceInfo = childrenResidenceInfo(
-      applicant,
-      externalData.childrenCustodyInformation.data,
-      answers.selectedChildren,
-    )
-    const caseNumber = externalData.submitApplication?.data?.caseNumber
+    const otherParent = childrenCustodyInformation.data[0].otherParent
+    const caseNumber = submitApplication?.data?.caseNumber
+    const applicationLink = await this.getApplicationLink(application)
 
     if (!otherParent) {
       throw new Error('Other parent was undefined')
     }
-
-    if (!childResidenceInfo.future?.address?.postalCode) {
-      throw new Error('Future residence postal code was not found')
-    }
-
-    const pdf = await generateResidenceChangePdf(application)
-    const applicationLink = await this.getApplicationLink(application)
-    const syslumennData = syslumennDataFromPostalCode(
-      childResidenceInfo.future.address.postalCode,
-    )
 
     this.notificationsService.sendNotification({
       type: NotificationType.ChildrenResidenceChangeApprovedByOrg,
@@ -256,38 +221,14 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
         caseNumber: caseNumber || '',
       },
     })
-
-    await this.sharedTemplateAPIService.sendEmail(
-      (props) =>
-        generateApplicationSubmittedEmail(
-          props,
-          pdf.toString('binary'),
-          parentA.email,
-          syslumennData.name,
-          caseNumber,
-        ),
-      application as unknown as Application,
-    )
-
-    await this.sharedTemplateAPIService.sendEmail(
-      (props) =>
-        generateApplicationSubmittedEmail(
-          props,
-          pdf.toString('binary'),
-          parentB.email,
-          syslumennData.name,
-          caseNumber,
-        ),
-      application as unknown as Application,
-    )
   }
 
   async rejectedByCounterParty({ application }: Props) {
-    const { externalData } = application
-    const { nationalRegistry } = externalData
+    const {
+      externalData: { nationalRegistry, childrenCustodyInformation },
+    } = application
     const applicant = nationalRegistry.data
-    const otherParent =
-      externalData.childrenCustodyInformation.data[0].otherParent
+    const otherParent = childrenCustodyInformation.data[0].otherParent
 
     this.notificationsService.sendNotification({
       type: NotificationType.RejectedByCounterParty,
@@ -298,17 +239,46 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
         counterPartyName: otherParent?.fullName || '',
       },
     })
-    await this.sharedTemplateAPIService.sendEmail(
-      applicationRejectedEmail,
-      application as unknown as Application,
-    )
   }
 
   async rejectedByOrganization({ application }: Props) {
-    await this.sharedTemplateAPIService.sendEmail(
-      applicationRejectedByOrganizationEmail,
-      application as unknown as Application,
+    const {
+      answers,
+      externalData: { nationalRegistry, childrenCustodyInformation },
+    } = application
+    const applicant = nationalRegistry.data
+    const otherParent = childrenCustodyInformation.data[0].otherParent
+    const childResidenceInfo = childrenResidenceInfo(
+      applicant,
+      childrenCustodyInformation.data,
+      answers.selectedChildren,
     )
+    const syslumennName = syslumennDataFromPostalCode(
+      childResidenceInfo?.future?.address?.postalCode || '',
+    ).name
+
+    if (!otherParent) {
+      throw new Error('Other parent was undefined')
+    }
+
+    this.notificationsService.sendNotification({
+      type: NotificationType.RejectedByOrganization,
+      messageParties: {
+        recipient: applicant.nationalId,
+      },
+      args: {
+        orgName: syslumennName,
+      },
+    })
+    this.notificationsService.sendNotification({
+      type: NotificationType.RejectedByOrganization,
+      messageParties: {
+        recipient: otherParent.nationalId,
+      },
+      args: {
+        orgName: syslumennName,
+      },
+    })
   }
 
   private async getApplicationLink(application: CRCApplication) {
