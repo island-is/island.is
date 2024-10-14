@@ -167,7 +167,11 @@ export class AuthService {
       targetLinkUri &&
       !validateUri(targetLinkUri, this.config.allowedRedirectUris)
     ) {
-      this.logger.error('Invalid target_link_uri provided:', targetLinkUri)
+      this.logger.error(
+        `Invalid target_link_uri provided: ${targetLinkUri}. Allowed redirect uris: "${this.config.allowedRedirectUris.join(
+          ', ',
+        )}"`,
+      )
 
       return this.redirectWithError(res, {
         code: 400,
