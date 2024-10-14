@@ -111,17 +111,14 @@ const OwnerView = ({
                   variant: 'text',
                   icon: 'arrowForward',
                   onClick: () => {
-                    const path = location.pathname.includes('fyrirtaeki') ?
-                      SignatureCollectionPaths.CompanyViewParliamentaryList :
-                      SignatureCollectionPaths.ViewParliamentaryList
-                    navigate(
-                      path.replace(':id', list.id),
-                      {
-                        state: {
-                          collectionId: currentCollection?.id || '',
-                        },
+                    const path = location.pathname.includes('fyrirtaeki')
+                      ? SignatureCollectionPaths.CompanyViewParliamentaryList
+                      : SignatureCollectionPaths.ViewParliamentaryList
+                    navigate(path.replace(':id', list.id), {
+                      state: {
+                        collectionId: currentCollection?.id || '',
                       },
-                    )
+                    })
                   },
                 }}
                 tag={{
