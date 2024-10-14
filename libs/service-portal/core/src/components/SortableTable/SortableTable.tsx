@@ -8,6 +8,10 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './SortableTable.css'
 import { ExpandHeader, ExpandRow } from '../ExpandableTable'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
+import Table, { TableRow } from './Mobile/SortableMobileTable'
+import { isDefined } from 'class-validator'
 
 type ConfigType = { direction: 'ascending' | 'descending'; key: string }
 
@@ -75,6 +79,8 @@ export const SortableTable = (props: SortableTableProps) => {
     props.items,
     { direction: 'ascending', key: props.defaultSortByKey ?? 'name' },
   )
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
   const [headerSorted, setHeaderSorted] = useState<string[]>([])
 
   useMemo(() => {
@@ -125,6 +131,15 @@ export const SortableTable = (props: SortableTableProps) => {
     )
   }
 
+  let mobileTableRows: TableRow[]
+  let mobileHeaderData = headerSorted.map((headItem, i) => {
+    const label = props.labels[headItem]
+    if (!isDefined(label)) return null
+    return label
+  })
+  mobileHeaderData = mobileHeaderData.filter((item) => item !== null)
+
+  console.log('mobileHeaderData', mobileHeaderData)
   return (
     <>
       {props.title && (
@@ -132,103 +147,123 @@ export const SortableTable = (props: SortableTableProps) => {
           {props.title}
         </Text>
       )}
-      <T.Table>
-        {props.expandable ? (
-          <ExpandHeader
-            data={headerSorted.map((headItem, i) => {
-              return {
-                value: headerButton(headItem, i),
-                align: headerSorted.slice(-2).includes(headItem)
-                  ? 'right'
-                  : 'left',
-                element: true,
-              }
-            })}
-          />
-        ) : (
-          <T.Head>
-            <T.Row>
-              {headerSorted?.map((headItem, i) => (
-                <T.HeadData key={`head-${headItem}`}>
-                  <Text variant="medium" fontWeight="semiBold" as={'p'}>
-                    {headerButton(headItem, i)}
-                  </Text>
-                </T.HeadData>
-              ))}
-            </T.Row>
-          </T.Head>
-        )}
-        <T.Body>
-          {items.map((item) => {
+      {isMobile ? (
+        <Table
+          header={props.title ?? ''}
+          rows={items.map((item, index) => {
             const { id, name, tag, lastNode, children, ...itemObject } = item
             const valueItems = Object.values(itemObject)
 
-            return props.expandable ? (
-              <ExpandRow
-                key={id}
-                data={valueItems.map((valueItem, i) => ({
-                  value:
-                    valueItems.length - 1 === i && tag ? (
-                      <Tag variant={tag} outlined={props.tagOutlined}>
-                        {valueItem}
-                      </Tag>
-                    ) : valueItems.length - 1 === i && lastNode ? (
-                      lastNode
-                    ) : (
-                      valueItem
-                    ),
-                  align: valueItems.slice(-2).includes(valueItem)
+            return {
+              title: valueItems[0].toString() ?? '',
+              data: valueItems.map((valueItem, valueIndex) => {
+                return {
+                  title: mobileHeaderData[valueIndex] ?? '',
+                  content: valueItem.toString() ?? '',
+                }
+              }),
+            }
+          })}
+        ></Table>
+      ) : (
+        <T.Table>
+          {props.expandable ? (
+            <ExpandHeader
+              data={headerSorted.map((headItem, i) => {
+                return {
+                  value: headerButton(headItem, i),
+                  align: headerSorted.slice(-2).includes(headItem)
                     ? 'right'
                     : 'left',
-                }))}
-              >
-                {children}
-              </ExpandRow>
-            ) : (
-              <T.Row key={id}>
-                <T.Data>
-                  <Text variant={'medium'} as="span">
-                    {name}
-                  </Text>
-                </T.Data>
-                {valueItems.map((valueItem, i) => {
-                  const lastItem = valueItems.length - 1 === i
-                  return (
-                    <T.Data key={`body-${id}-${i}`}>
-                      {lastItem && tag ? (
+                  element: true,
+                }
+              })}
+            />
+          ) : (
+            <T.Head>
+              <T.Row>
+                {headerSorted?.map((headItem, i) => (
+                  <T.HeadData key={`head-${headItem}`}>
+                    <Text variant="medium" fontWeight="semiBold" as={'p'}>
+                      {headerButton(headItem, i)}
+                    </Text>
+                  </T.HeadData>
+                ))}
+              </T.Row>
+            </T.Head>
+          )}
+          <T.Body>
+            {items.map((item) => {
+              const { id, name, tag, lastNode, children, ...itemObject } = item
+              const valueItems = Object.values(itemObject)
+
+              return props.expandable ? (
+                <ExpandRow
+                  key={id}
+                  data={valueItems.map((valueItem, i) => ({
+                    value:
+                      valueItems.length - 1 === i && tag ? (
                         <Tag variant={tag} outlined={props.tagOutlined}>
                           {valueItem}
                         </Tag>
-                      ) : lastItem && lastNode ? (
+                      ) : valueItems.length - 1 === i && lastNode ? (
                         lastNode
                       ) : (
-                        <Text variant={'medium'} as="span">
-                          {valueItem}
-                        </Text>
-                      )}
+                        valueItem
+                      ),
+                    align: valueItems.slice(-2).includes(valueItem)
+                      ? 'right'
+                      : 'left',
+                  }))}
+                >
+                  {children}
+                </ExpandRow>
+              ) : (
+                <T.Row key={id}>
+                  <T.Data>
+                    <Text variant={'medium'} as="span">
+                      {name}
+                    </Text>
+                  </T.Data>
+                  {valueItems.map((valueItem, i) => {
+                    const lastItem = valueItems.length - 1 === i
+                    return (
+                      <T.Data key={`body-${id}-${i}`}>
+                        {lastItem && tag ? (
+                          <Tag variant={tag} outlined={props.tagOutlined}>
+                            {valueItem}
+                          </Tag>
+                        ) : lastItem && lastNode ? (
+                          lastNode
+                        ) : (
+                          <Text variant={'medium'} as="span">
+                            {valueItem}
+                          </Text>
+                        )}
+                      </T.Data>
+                    )
+                  })}
+                </T.Row>
+              )
+            })}
+            {props.footer ? (
+              <T.Row>
+                {Object.values(props.footer).map((valueItem) => {
+                  return (
+                    <T.Data
+                      text={{ fontWeight: 'semiBold' }}
+                      borderColor={'white'}
+                      key={`footer-${valueItem}`}
+                    >
+                      {valueItem}
                     </T.Data>
                   )
                 })}
               </T.Row>
-            )
-          })}
-          {props.footer ? (
-            <T.Row>
-              {Object.values(props.footer).map((valueItem) => {
-                return (
-                  <T.Data
-                    text={{ fontWeight: 'semiBold' }}
-                    borderColor={'white'}
-                    key={`footer-${valueItem}`}
-                  >
-                    {valueItem}
-                  </T.Data>
-                )
-              })}
-            </T.Row>
-          ) : undefined}
-        </T.Body>
-      </T.Table>
+            ) : undefined}
+          </T.Body>
+        </T.Table>
+      )}
     </>
   )
 }
