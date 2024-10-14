@@ -8,6 +8,7 @@ import {
   buildSection,
   buildSelectField,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages/messages'
 import { FormValue } from '@island.is/application/types'
@@ -17,6 +18,10 @@ import {
 } from '../../healthInsuranceUtils'
 import { FILE_SIZE_LIMIT } from '../../utils/constants'
 import { countryOptions, getYesNoOptions } from '../../utils/options'
+import {
+  formerInsuranceCondition,
+  getFormerCountryAndCitizenship,
+} from '../../utils/getFormerCountryAndCitizenship'
 
 export const formerInsuranceSection = buildSection({
   id: 'formerInsuranceSection',
@@ -63,16 +68,8 @@ export const formerInsuranceSection = buildSection({
           message: m.waitingPeriodDescription,
           alertType: 'error',
           condition: (answers: FormValue) => {
-            const formerCountry = (
-              answers as {
-                formerInsurance: { country: string }
-              }
-            )?.formerInsurance?.country
-            const citizenship = (
-              answers as {
-                citizenship: string
-              }
-            )?.citizenship
+            const { formerCountry, citizenship } =
+              getFormerCountryAndCitizenship(answers)
             return (
               !!formerCountry &&
               requireWaitingPeriod(formerCountry, citizenship)
@@ -88,11 +85,7 @@ export const formerInsuranceSection = buildSection({
           uploadDescription: m.fileUploadDescription,
           uploadButtonLabel: m.fileUploadButton,
           condition: (answers: FormValue) => {
-            const formerCountry = (
-              answers as {
-                formerInsurance: { country: string }
-              }
-            )?.formerInsurance?.country
+            const { formerCountry } = getFormerCountryAndCitizenship(answers)
             return requireConfirmationOfResidency(formerCountry)
           },
         }),
@@ -105,19 +98,7 @@ export const formerInsuranceSection = buildSection({
           title: '',
           description: m.formerInsuranceEntitlement,
           tooltip: m.formerInsuranceEntitlementTooltip,
-          condition: (answers: FormValue) => {
-            const formerCountry = (
-              answers as {
-                formerInsurance: { country: string }
-              }
-            )?.formerInsurance?.country
-            const citizenship = (
-              answers as {
-                citizenship: string
-              }
-            )?.citizenship
-            return !requireWaitingPeriod(formerCountry, citizenship)
-          },
+          condition: (answers: FormValue) => formerInsuranceCondition(answers),
         }),
         buildRadioField({
           id: 'formerInsurance.entitlement',
@@ -125,19 +106,7 @@ export const formerInsuranceSection = buildSection({
           width: 'half',
           largeButtons: true,
           options: getYesNoOptions({}),
-          condition: (answers: FormValue) => {
-            const formerCountry = (
-              answers as {
-                formerInsurance: { country: string }
-              }
-            )?.formerInsurance?.country
-            const citizenship = (
-              answers as {
-                citizenship: string
-              }
-            ).citizenship
-            return !requireWaitingPeriod(formerCountry, citizenship)
-          },
+          condition: (answers: FormValue) => formerInsuranceCondition(answers),
         }),
         buildTextField({
           id: 'formerInsurance.entitlementReason',
@@ -146,19 +115,7 @@ export const formerInsuranceSection = buildSection({
           variant: 'textarea',
           rows: 4,
           backgroundColor: 'blue',
-          condition: (answers: FormValue) => {
-            const formerCountry = (
-              answers as {
-                formerInsurance: { country: string }
-              }
-            )?.formerInsurance?.country
-            const citizenship = (
-              answers as {
-                citizenship: string
-              }
-            )?.citizenship
-            return !requireWaitingPeriod(formerCountry, citizenship)
-          },
+          condition: (answers: FormValue) => formerInsuranceCondition(answers),
         }),
       ],
     }),
