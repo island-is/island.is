@@ -109,6 +109,11 @@ export const m = defineMessages({
     defaultMessage: 'Ógilt meðmæli',
     description: '',
   },
+  listSubmitted: {
+    id: 'sp.signatureCollection:listSubmitted',
+    defaultMessage: 'Lista skilað',
+    description: '',
+  },
 
   /* Signee View */
   noCollectionIsActive: {
