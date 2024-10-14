@@ -111,3 +111,12 @@ export const companyNavigation: PortalNavigationItem = {
   },
   description: m.companyDescription,
 }
+
+export const SignatureCollectionNavigation: PortalNavigationItem = {
+  name: m.signatureCollectionLists,
+  path: InformationPaths.SignatureCollection,
+  icon: {
+    icon: 'receipt',
+  },
+  description: m.signatureCollectionParliamentaryLists,
+}

@@ -6,6 +6,7 @@ import { applicationsNavigation } from '@island.is/service-portal/applications'
 import { assetsNavigation } from '@island.is/service-portal/assets'
 import { educationNavigation } from '@island.is/service-portal/education'
 import {
+  SignatureCollectionNavigation,
   companyNavigation,
   informationNavigation,
 } from '@island.is/service-portal/information'
@@ -47,6 +48,7 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
       ],
     },
     companyNavigation,
+    SignatureCollectionNavigation,
     informationNavigation,
     socialInsuranceMaintenanceNavigation,
     assetsNavigation,
