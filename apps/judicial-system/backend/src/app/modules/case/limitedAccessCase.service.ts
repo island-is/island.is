@@ -37,10 +37,7 @@ import {
   DefendantService,
 } from '../defendant'
 import { EventLog } from '../event-log'
-import {
-  CaseFile,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
-} from '../file'
+import { CaseFile, defenderCaseFileCategoriesForRequestCases } from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
 import { Subpoena } from '../subpoena'
@@ -510,9 +507,7 @@ export class LimitedAccessCaseService {
         (file) =>
           file.key &&
           file.category &&
-          defenderCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
-            file.category,
-          ),
+          defenderCaseFileCategoriesForRequestCases.includes(file.category),
       ) ?? []
 
     // TODO: speed this up by fetching all files in parallel

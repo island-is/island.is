@@ -1,5 +1,4 @@
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseDecision,
@@ -21,9 +20,11 @@ import {
   isRestrictionCase,
   RequestSharedWithDefender,
   ServiceRequirement,
+  type User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { CivilClaimant, Defendant } from '../../defendant'
 import { Case } from '../models/case.model'
 import { DateLog } from '../models/dateLog.model'
 
@@ -386,29 +387,16 @@ const canDefenceUserAccessIndictmentCase = (
     return false
   }
 
-  const normalizedAndFormattedNationalId = normalizeAndFormatNationalId(
-    user.nationalId,
-  )
-
   // Check case defender assignment
-  if (
-    theCase.defendants?.some(
-      (defendant) =>
-        defendant.defenderNationalId &&
-        normalizedAndFormattedNationalId.includes(defendant.defenderNationalId),
-    )
-  ) {
+  if (Defendant.isDefenderOfDefendant(user.nationalId, theCase.defendants)) {
     return true
   }
 
   // Check case spokesperson assignment
   if (
-    theCase.civilClaimants?.some(
-      (civilClaimant) =>
-        civilClaimant.spokespersonNationalId &&
-        normalizedAndFormattedNationalId.includes(
-          civilClaimant.spokespersonNationalId,
-        ),
+    CivilClaimant.isSpokespersonOfCivilClaimant(
+      user.nationalId,
+      theCase.civilClaimants,
     )
   ) {
     return true

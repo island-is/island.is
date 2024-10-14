@@ -26,6 +26,8 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
               theCase.type,
               theCase.state,
               category,
+              theCase.defendants,
+              theCase.civilClaimants,
             ),
         )
 

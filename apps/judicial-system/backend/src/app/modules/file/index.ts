@@ -2,5 +2,5 @@ export { CaseFile } from './models/file.model'
 export { FileService } from './file.service'
 export {
   canLimitedAcccessUserViewCaseFile,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+  defenderCaseFileCategoriesForRequestCases,
 } from './guards/caseFileCategory'
