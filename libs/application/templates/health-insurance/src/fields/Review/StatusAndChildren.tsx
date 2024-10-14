@@ -174,7 +174,9 @@ export const StatusAndChildren = ({
               ]}
             />
           </Stack>
-          {/* {children === YES && (
+          {/* 
+          TODO: Refactor the whole review section when build accordion field merges and add this back in
+          {children === YES && (
             <Box marginBottom={[2, 2, 4]}>
               <ChildrenInfoMessage application={application} field={field} />
             </Box>
