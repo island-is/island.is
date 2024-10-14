@@ -27,4 +27,17 @@ export const strings = {
     description:
       'Body of the notification sent when the serive status in an indictment has changed',
   }),
+  defendantSelectedDefenderSubject: defineMessage({
+    id: 'judicial.system.backend:subpoena_notifications.defendant_selected_defender_subject',
+    defaultMessage: 'Val á verjanda í máli {courtCaseNumber}',
+    description:
+      'Subject of the notification sent when the serive status in an indictment has changed',
+  }),
+  defendantSelectedDefenderBody: defineMessage({
+    id: 'judicial.system.backend:subpoena_notifications.defendant_selected_defender_body',
+    defaultMessage:
+      'Verjandi hefur verið valinn í máli {courtCaseNumber}.<br /><br />Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+    description:
+      'Body of the notification sent when the serive status in an indictment has changed',
+  }),
 }

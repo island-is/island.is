@@ -17,6 +17,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
+  DefenderChoice,
   isTrafficViolationCase,
   NotificationType,
   ServiceStatus,
@@ -149,7 +150,8 @@ export class SubpoenaService {
 
     if (
       this.isSuccessfulServiceStatus(serviceStatus) ||
-      this.isFailedServiceStatus(serviceStatus)
+      this.isFailedServiceStatus(serviceStatus) ||
+      (defenderChoice === DefenderChoice.CHOOSE && defenderNationalId)
     ) {
       this.messageService
         .sendMessagesToQueue([
@@ -158,7 +160,9 @@ export class SubpoenaService {
             body: {
               type: this.isSuccessfulServiceStatus(serviceStatus)
                 ? NotificationType.SERVICE_SUCCESSFUL
-                : NotificationType.SERVICE_FAILED,
+                : this.isFailedServiceStatus(serviceStatus)
+                ? NotificationType.SERVICE_FAILED
+                : NotificationType.DEFENDANT_SELECTED_DEFENDER,
               subpoenaId: subpoena.subpoenaId,
             },
           },

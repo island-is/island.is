@@ -78,32 +78,14 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       linkEnd: '</a>',
     })
 
-    const promises: Promise<Recipient>[] = []
-    const judgeName = theCase.judge?.name
-    const judgeEmail = theCase.judge?.email
-    const registrarName = theCase.registrar?.name
-    const registrarEmail = theCase.registrar?.email
-
-    if (judgeName && judgeEmail) {
-      promises.push(
-        this.sendEmail(subject, body, judgeName, judgeEmail, undefined, true),
-      )
-    }
-
-    if (registrarName && registrarEmail) {
-      promises.push(
-        this.sendEmail(
-          subject,
-          body,
-          registrarName,
-          registrarEmail,
-          undefined,
-          true,
-        ),
-      )
-    }
-
-    return Promise.all(promises)
+    return this.sendEmails(
+      subject,
+      body,
+      theCase.judge?.name,
+      theCase.judge?.email,
+      theCase.registrar?.name,
+      theCase.registrar?.email,
+    )
   }
 
   private async sendServiceFailedNotification(
@@ -138,11 +120,70 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       linkEnd: '</a>',
     })
 
+    return this.sendEmails(
+      subject,
+      body,
+      theCase.judge?.name,
+      theCase.judge?.email,
+      theCase.registrar?.name,
+      theCase.registrar?.email,
+    )
+  }
+
+  private async sendDefendantSelectedDefenderNotification(
+    subpoenaId?: string,
+  ): Promise<unknown> {
+    if (!subpoenaId) {
+      return
+    }
+
+    const subpoena = await this.subpoenaService.findBySubpoenaId(subpoenaId)
+    const theCase = await this.caseService.findById(subpoena.caseId)
+
+    if (!theCase.id) {
+      throw new InternalServerErrorException(`Case not found`)
+    }
+
+    if (!theCase.courtCaseNumber || !theCase.id) {
+      throw new InternalServerErrorException(
+        `Unable to find courtCaseNumber for case ${theCase.id}`,
+      )
+    }
+
+    await this.refreshFormatMessage()
+
+    const subject = this.formatMessage(
+      strings.defendantSelectedDefenderSubject,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+      },
+    )
+
+    const body = this.formatMessage(strings.defendantSelectedDefenderBody, {
+      courtCaseNumber: theCase.courtCaseNumber,
+      linkStart: `<a href="${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}">`,
+      linkEnd: '</a>',
+    })
+
+    return this.sendEmails(
+      subject,
+      body,
+      theCase.judge?.name,
+      theCase.judge?.email,
+      theCase.registrar?.name,
+      theCase.registrar?.email,
+    )
+  }
+
+  private sendEmails(
+    subject: string,
+    body: string,
+    judgeName?: string,
+    judgeEmail?: string,
+    registrarName?: string,
+    registrarEmail?: string,
+  ) {
     const promises: Promise<Recipient>[] = []
-    const judgeName = theCase.judge?.name
-    const judgeEmail = theCase.judge?.email
-    const registrarName = theCase.registrar?.name
-    const registrarEmail = theCase.registrar?.email
 
     if (judgeName && judgeEmail) {
       promises.push(
@@ -177,6 +218,9 @@ export class SubpoenaNotificationService extends BaseNotificationService {
           break
         case NotificationType.SERVICE_FAILED:
           await this.sendServiceFailedNotification(subpoenaId)
+          break
+        case NotificationType.DEFENDANT_SELECTED_DEFENDER:
+          await this.sendDefendantSelectedDefenderNotification(subpoenaId)
           break
         default:
           throw new InternalServerErrorException(
