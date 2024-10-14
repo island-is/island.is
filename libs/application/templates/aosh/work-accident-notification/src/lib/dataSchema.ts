@@ -71,14 +71,66 @@ const employeeSchema = z.object({
   postnumberAndMunicipality: z.string(),
   startDate: z.string(), // date string
   tempEmploymentSSN: z.string(), // Starfsmannaleiga
-  workhourArrangement: z.string(),
-  workStation: z.string(),
+  workstation: z.string(), // starfsstöð
 })
 
-const circumstancesSchema = z.object({
-  physicialActivities: z.array(option).optional(),
-  physicialActivitiesMostSerious: z.string().optional(),
-})
+// Reusable schema generator
+const createCauseAndEffectSchema = (
+  fieldKey: string,
+  mostSeriousKey: string,
+) => {
+  return z
+    .object({
+      [fieldKey]: z
+        .record(z.array(option))
+        .refine((obj) => Object.values(obj).some((arr) => arr.length > 0), {
+          message: 'At least one option has to be chosen',
+        }),
+      [mostSeriousKey]: z.string().optional(),
+    })
+    .refine(
+      (data) => {
+        // Narrow the type of data[fieldKey]
+        const fieldData = data[fieldKey] as
+          | Record<string, { value: string; label: string }[]>
+          | undefined
+
+        // Safely check if fieldData exists
+        if (!fieldData) return false
+
+        // Get total number of option objects across all arrays
+        const totalOptions = Object.values(fieldData).reduce(
+          (sum, arr) => sum + arr.length,
+          0,
+        )
+
+        // If there are 2 or more options, the most serious must have a value
+        console.log(totalOptions, data[mostSeriousKey])
+
+        return totalOptions < 2 || (totalOptions >= 2 && data[mostSeriousKey])
+      },
+      {
+        message:
+          'If more than one option is chosen, you must specify the most serious one',
+        path: [mostSeriousKey], // Error path
+      },
+    )
+}
+
+const circumstancesSchema = createCauseAndEffectSchema(
+  'physicalActivities',
+  'physicalActivitiesMostSerious',
+)
+
+const workDeviationsSchema = createCauseAndEffectSchema(
+  'workDeviations',
+  'workDeviationsMostSerious',
+)
+
+const contactModeOfInjurySchema = createCauseAndEffectSchema(
+  'contactModeOfInjury',
+  'contactModeOfInjuryMostSerious',
+)
 
 const absenceSchema = z.object({
   absenceDueToAccident: z.string(),
@@ -111,6 +163,8 @@ export const WorkAccidentNotificationAnswersSchema = z.object({
   employee: employeeSchema,
   projectPurchase: projectPurchaseSchema,
   circumstances: circumstancesSchema,
+  deviations: workDeviationsSchema,
+  causeOfInjury: contactModeOfInjurySchema,
 })
 
 export type WorkAccidentNotification = z.TypeOf<

@@ -1,6 +1,13 @@
 import { defineMessages } from 'react-intl'
 
 export const causeAndConsequences = {
+  shared: defineMessages({
+    searchPlaceholder: {
+      id: 'aosh.wan.application:causeAndConsequences.circumstances.searchPlaceholder',
+      defaultMessage: 'Sláðu inn leitarorð',
+      description: 'Placeholder of the search input',
+    },
+  }),
   absence: defineMessages({
     title: {
       id: 'aosh.wan.application:causeAndConsequences.absence.title',
@@ -56,10 +63,53 @@ export const causeAndConsequences = {
       description:
         'Text below heading before choosing circumstance of accident',
     },
-    searchPlaceholder: {
-      id: 'aosh.wan.application:causeAndConsequences.circumstances.searchPlaceholder',
-      defaultMessage: 'Sláðu inn leitarorð',
-      description: 'Placeholder of the search input',
+  }),
+  deviations: defineMessages({
+    title: {
+      id: 'aosh.wan.application:causeAndConsequences.deviations.title',
+      defaultMessage: 'Frávik í vinnuferli',
+      description: 'Title of the deviation page',
+    },
+    description: {
+      id: 'aosh.wan.application:causeAndConsequences.deviations.description',
+      defaultMessage:
+        'Lýstu því við hvaða aðstæður slysið varð með því að velja úr listanum hér fyrir neðan. Þú getur líka slegið inn í leitina.',
+      description: 'description of the deviation page',
+    },
+    heading: {
+      id: 'aosh.wan.application:causeAndConsequences.deviations.heading',
+      defaultMessage: 'Hvað fór úrskeiðis þegar slysið varð?',
+      description: 'Heading before choosing deviation of accident',
+    },
+    subHeading: {
+      id: 'aosh.wan.application:causeAndConsequences.deviations.subHeading',
+      defaultMessage:
+        'Lýstu því við hvað það var sem gerðist með því að velja úr listanum hér fyrir neðan. Merktu við alla möguleika sem eiga við.',
+      description: 'Text below heading before choosing deviation of accident',
+    },
+  }),
+  causeOfInjury: defineMessages({
+    title: {
+      id: 'aosh.wan.application:causeAndConsequences.causeOfInjury.title',
+      defaultMessage: 'Orsök áverka',
+      description: 'Title of the cause of injury page',
+    },
+    description: {
+      id: 'aosh.wan.application:causeAndConsequences.causeOfInjury.description',
+      defaultMessage:
+        'Lýstu því við hvaða aðstæður áverkinn myndaðist með því að velja úr listanum hér fyrir neðan. Þú getur líka slegið inn í leitina. Marktu við alla möguleika sem eiga við.',
+      description: 'description of the cause of injury page',
+    },
+    heading: {
+      id: 'aosh.wan.application:causeAndConsequences.causeOfInjury.heading',
+      defaultMessage: '?ennan texta vantar...',
+      description: 'Heading before choosing cause of injury of accident',
+    },
+    subHeading: {
+      id: 'aosh.wan.application:causeAndConsequences.causeOfInjury.subHeading',
+      defaultMessage: 'Lýstu því við hvað .... vantar þennan texta',
+      description:
+        'Text below heading before choosing cause of injury of accident',
     },
   }),
 }

@@ -11,6 +11,6 @@ export const employeeSection = (index: number) =>
     condition: (formValue: FormValue, externalData, user) => {
       // TODO Nonsense condition for testing,
       // Potentially could look into answers here to determine if this section should be displayed i.e employee nr. x
-      return index === 1
+      return index === 0
     },
   })

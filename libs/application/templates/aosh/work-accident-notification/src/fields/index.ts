@@ -1,4 +1,6 @@
 export { Occupation } from './Occupation'
 export { CheckboxFieldCustom } from './CheckboxFieldCustom'
 export { Circumstance } from './Circumstance'
+export { Deviation } from './Deviation'
+export { CauseOfInjury } from './CauseOfInjury'
 export { AccidentLocation } from './AccidentLocation'

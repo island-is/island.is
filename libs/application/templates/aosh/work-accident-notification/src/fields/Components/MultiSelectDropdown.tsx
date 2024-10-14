@@ -46,7 +46,10 @@ export const MultiSelectDropdown: FC<
               onChange={(ev, meta) => {
                 if (meta.action === 'select-option') {
                   onChange(
-                    ev as Option[],
+                    ev.map(({ value, label }) => ({
+                      value,
+                      label,
+                    })) as Option[],
                     group.code.substring(0, 1),
                     true,
                     meta.option?.value || '',

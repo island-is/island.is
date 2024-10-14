@@ -10,8 +10,6 @@ import { Logo } from '../../assets/Logo'
 
 import { externalData } from '../../lib/messages'
 import { accidentSection } from './AccidentSection'
-import { causeAndConsequencesSection } from './CauseAndConsequencesSection'
-import { employeeSection } from './EmployeeSection'
 import { EmployeeAndAccidentInformationSection } from '../RepeatableSection'
 
 const buildRepeatableSections = (): Section[] => {
