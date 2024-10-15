@@ -189,7 +189,7 @@ const OwnerView = ({
             {formatMessage(m.supervisors) + ' '}
             <Tooltip
               placement="right"
-              text={formatMessage(m.supervisorsInfo)}
+              text={formatMessage(m.supervisorsTooltip)}
               color="blue400"
             />
           </Text>
