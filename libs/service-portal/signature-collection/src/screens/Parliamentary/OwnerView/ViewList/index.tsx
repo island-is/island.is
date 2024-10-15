@@ -36,7 +36,7 @@ const ViewList = () => {
               {!!listInfo?.collectors?.length && (
                 <>
                   <Text marginTop={[2, 0]} variant="h5">
-                    {formatMessage(m.coOwners)}
+                    {formatMessage(m.supervisors)}
                   </Text>
                   {listInfo?.collectors?.map((collector) => (
                     <Box
