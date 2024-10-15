@@ -49,7 +49,7 @@ export const DelegationViewModal = ({
   const isOutgoing = direction === 'outgoing'
   const [getAuthScopeTree, { data: scopeTreeData, loading: scopeTreeLoading }] =
     useAuthScopeTreeLazyQuery()
-  
+
   useEffect(() => {
     if (delegation && delegation.domain) {
       getAuthScopeTree({
