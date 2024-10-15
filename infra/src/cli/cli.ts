@@ -85,7 +85,7 @@ const cli = yargs(process.argv.slice(2))
     },
   )
   .command(
-    'run-local-env',
+    'run-local-env [services...]',
     'Render environment and run the local environment.\nThis is to be used when developing locally and loading of the environment variables for "dev" environment is needed.',
     (yargs) => {
       return yargs
@@ -109,7 +109,14 @@ const cli = yargs(process.argv.slice(2))
           type: 'boolean',
           default: false,
         })
-        .demandCommand(1, 'You must pass at least one service to run!')
+        .check((argv) => {
+          const svc = argv.services
+          if (svc.length < 1) {
+            throw new Error('You must pass at least one service to run!')
+          } else {
+            return true
+          }
+        })
     },
     async (argv) =>
       await runLocalServices(argv.services, argv.dependencies, {
