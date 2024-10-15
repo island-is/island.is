@@ -71,10 +71,6 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     const subpoena = await this.subpoenaService.findBySubpoenaId(subpoenaId)
     const theCase = await this.caseService.findById(subpoena.caseId)
 
-    if (!theCase.id) {
-      throw new InternalServerErrorException(`Case not found`)
-    }
-
     if (!theCase.courtCaseNumber) {
       throw new InternalServerErrorException(
         `Unable to find courtCaseNumber for case ${theCase.id}`,
