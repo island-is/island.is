@@ -208,7 +208,9 @@ const GrantAccess = () => {
                             return formatMessage(m.grantSameSsn)
                           }
 
-                          if (valueAsString === userInfo.profile.actor?.nationalId) {
+                          if (
+                            valueAsString === userInfo.profile.actor?.nationalId
+                          ) {
                             return formatMessage(m.grantActorSsn)
                           }
 
