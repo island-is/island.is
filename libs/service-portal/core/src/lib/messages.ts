@@ -565,6 +565,11 @@ export const m = defineMessages({
     id: 'service.portal:signatureCollectionParliamentaryLists',
     defaultMessage: 'Alþingiskosningar - Meðmælasöfnun',
   },
+  signatureCollectionParliamentaryListsCompany: {
+    id: 'service.portal:signatureCollectionParliamentaryListsCompany',
+    defaultMessage:
+      'Alþingiskosningar - Meðmælasöfnun (Aðeins fyrir stjórnmálasamtök)',
+  },
   signatureCollectionPresidentialLists: {
     id: 'service.portal:signatureCollectionPresidentialLists',
     defaultMessage: 'Forsetakosningar - Meðmælasöfnun',
