@@ -176,7 +176,7 @@ export const en: TranslatedMessages = {
   'home.onboardingModule.card2':
     'The app’s purpose is to provide faster access to your documents, applications, and other dealings with governmental institutions.',
   'home.onboardingModule.card3':
-    'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at',
+    'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at island@island.is',
   'home.onboardingModule.card4':
     'We encourage our users to read Digital Iceland’s privacy policy on',
   'home.vehicleModule.summary':
@@ -345,7 +345,8 @@ export const en: TranslatedMessages = {
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
   'profile.finance': 'Finance',
-  'profile.airDiscount': 'Air discount scheme',
+  'profile.airDiscount': 'Air discount',
+  'profile.health': 'Health',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
@@ -607,4 +608,25 @@ export const en: TranslatedMessages = {
     'You are about to use an old version of the Island.is app. Please update the app to be able to continue.',
   'updateApp.button': 'Update',
   'updateApp.buttonSkip': 'Skip',
+
+  // health
+  'health.overview.screenTitle': 'Health',
+  'health.overview.title': 'My health',
+  'health.overview.description':
+    'Here you can find your health data, health center and health insurance.',
+  'health.overview.healthCenter': 'Health center',
+  'health.overview.noHealthCenterRegistered': 'No health center registered',
+  'health.overview.physician': 'Physician',
+  'health.overview.noPhysicianRegistered': 'No doctor registered',
+  'health.overview.statusOfRights': 'Status of rights',
+  'health.overview.insuredFrom': 'Insured from',
+  'health.overview.status': 'Status',
+  'health.overview.notInsured': 'You do not have health insurance',
+  'health.overview.payments': 'Payments',
+  'health.overview.maxMonthlyPayment': 'Max monthly payment',
+  'health.overview.paymentLimit': 'Payment Limit',
+  'health.overview.paymentCredit': 'Credit',
+  'health.overview.paymentDebt': 'Debt',
+  'health.overview.therapy': 'Therapy',
+  'health.overview.aidsAndNutrition': 'Aids and nutrition',
 }

@@ -35,6 +35,10 @@ export const m = {
       id: 'web.ojoi:home.mainCategories',
       defaultMessage: 'Yfirflokkar',
     },
+    latestAdverts: {
+      id: 'web.ojoi:home.latestAdverts',
+      defaultMessage: 'Nýjustu auglýsingar',
+    },
     allCategories: {
       id: 'web.ojoi:home.allCategories',
       defaultMessage: 'Málaflokkar A-Ö',
@@ -42,6 +46,19 @@ export const m = {
   }),
 
   search: defineMessages({
+    emptySearchResult: {
+      id: 'web.ojoi:search.emptySearchResult',
+      defaultMessage: 'Engin mál fundust',
+    },
+    errorFetchingAdvertsTitle: {
+      id: 'web.ojoi:search.errorFetchingAdvertsTitle',
+      defaultMessage: 'Ekki tókst að sækja auglýsingar',
+    },
+    errorFetchingAdvertsMessage: {
+      id: 'web.ojoi:search.errorFetchingAdvertsMessage',
+      defaultMessage:
+        'Ekki náðist samband við vefþjónustur Stjórnartíðinda, reynið aftur síðar.',
+    },
     title: {
       id: 'web.ojoi:search.title',
       defaultMessage: 'Leit í Stjórnartíðindum',

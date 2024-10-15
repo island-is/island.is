@@ -176,7 +176,7 @@ export const is = {
   'home.onboardingModule.card2':
     'Markmiðið með appinu er að þú hafir í hendi þér það sem þú þarfnast hverju sinni í samskiptum við hið opinbera.',
   'home.onboardingModule.card3':
-    'Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á',
+    'Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á island@island.is',
   'home.onboardingModule.card4':
     'Notendum er bent á að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á',
   'home.vehicleModule.summary':
@@ -250,6 +250,7 @@ export const is = {
   'profile.assets': 'Fasteignir',
   'profile.finance': 'Fjármál',
   'profile.airDiscount': 'Loftbrú',
+  'profile.health': 'Heilsa',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
@@ -607,4 +608,25 @@ export const is = {
     'Þú ert að fara að nota gamla útgáfu af Ísland.is appinu. Vinsamlegast uppfærðu appið til að halda áfram.',
   'updateApp.button': 'Uppfæra',
   'updateApp.buttonSkip': 'Sleppa',
+
+  // health
+  'health.overview.screenTitle': 'Heilsa',
+  'health.overview.title': 'Heilsan mín',
+  'health.overview.description':
+    'Hér finnur þú þín heilsufarsgögn, heilsugæslu og sjúkratryggingar',
+  'health.overview.healthCenter': 'Heilsugæsla',
+  'health.overview.noHealthCenterRegistered': 'Engin heilsugæsla skráð',
+  'health.overview.physician': 'Heimilislæknir',
+  'health.overview.noPhysicianRegistered': 'Enginn læknir skráður',
+  'health.overview.statusOfRights': 'Réttindastaða',
+  'health.overview.insuredFrom': 'Sjúkratrygging frá',
+  'health.overview.status': 'Staða',
+  'health.overview.notInsured': 'Þú ert ekki með sjúkratryggingu',
+  'health.overview.payments': 'Greiðslur',
+  'health.overview.maxMonthlyPayment': 'Hámarksgreiðslan þín á mánuði',
+  'health.overview.paymentLimit': 'Greiðslumark',
+  'health.overview.paymentCredit': 'Inneign',
+  'health.overview.paymentDebt': 'Skuld',
+  'health.overview.therapy': 'Þjálfun',
+  'health.overview.aidsAndNutrition': 'Hjálpartæki og næring',
 }
