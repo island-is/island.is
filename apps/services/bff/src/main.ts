@@ -14,7 +14,5 @@ bootstrap({
       exclude: [{ path: 'health/check', method: RequestMethod.GET }],
     },
   },
-  healthCheck: {
-    database: true,
-  },
+  healthCheck: true,
 })
