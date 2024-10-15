@@ -33,8 +33,11 @@ import { formatNationalId } from '@island.is/portals/core'
 
 const OwnerView = ({
   currentCollection,
+  // list holder is an individual who owns a list or has a delegation of type Procuration Holder
+  isListHolder,
 }: {
   currentCollection: SignatureCollection
+  isListHolder: boolean
 }) => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -80,7 +83,8 @@ const OwnerView = ({
               color="blue400"
             />
           </Text>
-          {!loadingOwnerLists &&
+          {isListHolder &&
+            !loadingOwnerLists &&
             listsForOwner?.length < currentCollection?.areas.length && (
               <AddConstituency
                 lists={listsForOwner}
@@ -126,7 +130,7 @@ const OwnerView = ({
                     : undefined
                 }
                 tag={
-                  list.active
+                  list.active && isListHolder
                     ? {
                         label: 'Cancel collection',
                         renderTag: () => (
@@ -168,10 +172,12 @@ const OwnerView = ({
                           />
                         ),
                       }
-                    : {
+                    : !list.active
+                    ? {
                         label: formatMessage(m.listSubmitted),
                         variant: 'blueberry',
                       }
+                    : undefined
                 }
               />
             </Box>
@@ -187,7 +193,11 @@ const OwnerView = ({
         >
           <Text variant="h4">
             {formatMessage(m.supervisors) + ' '}
-            <Tooltip placement="right" text="info" color="blue400" />
+            <Tooltip
+              placement="right"
+              text={formatMessage(m.supervisorsTooltip)}
+              color="blue400"
+            />
           </Text>
         </Box>
         <T.Table>
@@ -207,13 +217,15 @@ const OwnerView = ({
                   <CollectorSkeleton />
                 </T.Data>
               </T.Row>
-            ) : (
+            ) : collectors.length ? (
               collectors.map((collector) => (
                 <T.Row key={collector.nationalId}>
                   <T.Data width={'35%'}>{collector.name}</T.Data>
                   <T.Data>{formatNationalId(collector.nationalId)}</T.Data>
                 </T.Row>
               ))
+            ) : (
+              <Text marginTop={2}>{formatMessage(m.noSupervisors)}</Text>
             )}
           </T.Body>
         </T.Table>

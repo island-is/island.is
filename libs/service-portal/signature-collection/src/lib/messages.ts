@@ -354,6 +354,17 @@ export const m = defineMessages({
     defaultMessage: 'Umsjónaraðilar',
     description: '',
   },
+  noSupervisors: {
+    id: 'sp.signatureCollection:noSupervisors',
+    defaultMessage: 'Enginn umsjónaraðili skráður',
+    description: '',
+  },
+  supervisorsTooltip: {
+    id: 'sp.signatureCollection:supervisorsTooltip',
+    defaultMessage:
+      'Umsjónaraðilar hafa aðgang að öllum upplýsingum safnananna en geta ekki eytt söfnununum.',
+    description: '',
+  },
   add: {
     id: 'sp.signatureCollection:add',
     defaultMessage: 'Bæta við',
