@@ -15,7 +15,7 @@ The library functions as a license client factory for:
 The factory provides two types of clients:
 
 - **License Clients**: For internal use.
-- **Update Clients**: For external organizations to query license updates.
+- **Update Clients**: For external organizations to update licenses.
 
 For usage examples, refer to `api/domains/license-service`.
 
