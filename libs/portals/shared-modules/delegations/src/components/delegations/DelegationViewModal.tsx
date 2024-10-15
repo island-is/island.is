@@ -50,6 +50,8 @@ export const DelegationViewModal = ({
   const [getAuthScopeTree, { data: scopeTreeData, loading: scopeTreeLoading }] =
     useAuthScopeTreeLazyQuery()
 
+  console.log('delegation', delegation?.validTo, delegation?.validTo && isValid(new Date(delegation?.validTo)))
+
   useEffect(() => {
     if (delegation && delegation.domain) {
       getAuthScopeTree({
@@ -154,7 +156,7 @@ export const DelegationViewModal = ({
               <IdentityCard
                 label={formatMessage(m.validTo)}
                 title={
-                  delegation?.validTo && isValid(delegation.validTo)
+                  delegation?.validTo && isValid(new Date(delegation.validTo))
                     ? format(new Date(delegation?.validTo), 'dd.MM.yyyy')
                     : formatMessage(m.noValidToDate)
                 }

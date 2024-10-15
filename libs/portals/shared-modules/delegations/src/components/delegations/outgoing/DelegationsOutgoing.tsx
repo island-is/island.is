@@ -122,13 +122,11 @@ export const DelegationsOutgoing = () => {
                       key={delegation.id}
                       delegation={delegation}
                       onDelete={
-                        !isGeneralMandate
-                          ? (delegation) => {
+                        (delegation) => {
                               setDelegation(
                                 delegation as AuthCustomDelegationOutgoing,
                               )
                             }
-                          : undefined
                       }
                       onEdit={
                         !isGeneralMandate
