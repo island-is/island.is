@@ -1,6 +1,6 @@
 # Mocking
 
-This library provides helpers for setting up API mocking in Node.js and browser projects.
+This library provides helpers to set up API mocking in Node.JS and browser projects.
 
 ## Quick Start
 
@@ -27,16 +27,19 @@ const article = factory<Article>({
   author: () => user(),
 })
 
-const store = createStore(() => ({
-  articles: article.list(100),
-}))
+const store = createStore(() => {
+  return {
+    articles: article.list(100),
+  }
+})
 
 const resolvers = createResolvers<Resolvers>({
   Query: {
     articles: (_obj, args) => {
       const page = args.page || 0
       const perPage = args.perPage || 10
-      return store.articles.slice(page * perPage, page * perPage + perPage)
+      const start = page * perPage
+      return store.articles.slice(start, start + perPage)
     },
   },
 })
@@ -46,13 +49,14 @@ if (process.env.NODE_ENV !== 'production' && process.env.API_MOCKS) {
 }
 ```
 
-Generate the schema and types from the real API using [GraphQL Code Generator](https://graphql-code-generator.com/):
+We recommend generating the schema and types from the real API using [GraphQL Code Generator](https://graphql-code-generator.com/). Something like this:
 
-### schema.ts
+**schema.ts**
 
 ```typescript
 import { buildSchema } from 'graphql'
 
+// This should be pulled directly from the real API.
 export default buildSchema(`
   type User {
     name: String!
@@ -65,12 +69,12 @@ export default buildSchema(`
   }
 
   type Query {
-    articles(page: Number, perPage: Number): [Article]!
+    articles(page: Number, perPage: Number): Article[]!
   }
 `)
 ```
 
-### types.ts
+**types.ts**
 
 ```typescript
 export interface User {
@@ -105,17 +109,21 @@ export interface Resolvers {
 
 ### `startMocking(requestHandlers)`
 
-Initializes Mock Service Worker (MSW) with specified handlers.
+Starts Mock Service Worker (MSW) with the specified MSW requestHandlers.
 
-Add `mockServiceWorker.js` to your public folder using `yarn msw init path/to/your/public/`. Automatically supported in Node.js.
+For this to work in browsers, you need to add `mockServiceWorker.js` to your public folder by running `yarn msw init path/to/your/public/`. Automatically works in Node.JS.
+
+> **Note:** Should only be called in development when mocking is turned on.
 
 #### Arguments
 
-- `requestHandlers: Array<msw.RequestHandler>` - Array of mocked request handlers.
+- `requestHandlers: Array<msw.RequestHandler>` - a list of mocked request handlers. Can use standard MSW REST/GraphQL handlers. We recommend using strongly typed GraphQL mocks using `createGraphqlHandler` below.
 
 #### Returns
 
-`msw.SetupWorkerApi | msw.SetupServerApi` - Utilities for managing handlers.
+`msw.SetupWorkerApi | msw.SetupServerApi`
+
+The return object can be used to add or override requestHandlers with `mocking.use(...requestHandlers)`. These can be reset with `mocking.resetHandlers()`.
 
 #### Usage
 
@@ -129,7 +137,12 @@ if (process.env.NODE_ENV !== 'production' && process.env.API_MOCKS) {
   startMocking([
     rest.post('/login', (req, res, ctx) => {
       const { username } = req.body
-      return res(ctx.json({ username, firstName: 'John' }))
+      return res(
+        ctx.json({
+          username,
+          firstName: 'John',
+        }),
+      )
     }),
     createGraphqlHandler({ resolvers, schema }),
   ])
@@ -138,21 +151,25 @@ if (process.env.NODE_ENV !== 'production' && process.env.API_MOCKS) {
 
 ### `createGraphqlHandler(options: Options)`
 
-Creates an MSW handler for GraphQL requests using a schema and resolvers.
+Creates an MSW request handler which evaluates GraphQL requests using a schema and resolvers.
+
+The reason we use this handler instead of the built-in MSW GraphQL handlers is that it can share the same schema as the real API and use strongly typed resolvers.
+
+This provides better developer experience when mocking resolvers and creating test data and allows the CI to catch instances where mocks are out of date.
 
 #### Arguments
 
-- `Options#mask?: string | RegExp` - URL patterns to handle. Default is `'*/api/graphql'`.
-- `resolvers: Resolvers` - GraphQL resolvers defined via `createResolvers`.
-- `schema: GraphQLSchema` - GraphQL schema for the mock API.
+- `Options#mask?: string | RegExp` - which URLs to handle. Defaults to `'*/api/graphql'`.
+- `resolvers: Resolvers` - GraphQL resolvers as returned by `createResolvers` below.
+- `schema: GraphQLSchema` - GraphQL schema for mock API.
 
 #### Returns
 
-`msw.RequestHandler` - Add to `startMocking()`.
+- `msw.RequestHandler` - should be passed to `startMocking()` above.
 
-#### Example
+#### Calling real APIs with `fetch`
 
-Call real APIs with `context.fetch` in resolvers:
+MSW provides a special `fetch` function that ignores its mocking handlers. The GraphQL handler passes this `fetch` function to resolvers using the GraphQL context argument. Example:
 
 ```typescript
 createGraphqlHandler({
@@ -168,18 +185,22 @@ createGraphqlHandler({
 
 ### `createResolvers(baseResolvers)`
 
-Creates a wrapper for mocked GraphQL resolvers.
+Wraps an object with mocked GraphQL resolvers so it can be passed to `createGraphqlHandler`. Supports standard field and type resolvers.
+
+The resolvers type should be generated with the [TypeScript Resolvers plugin](https://graphql-code-generator.com/docs/plugins/typescript-resolvers) in [GraphQL Code Generator](https://graphql-code-generator.com/) for everything to be strongly typed.
+
+Depending on the schema and application, it's not necessary to fully implement all resolvers. Any field (including queries and mutations) which does not have a resolver returns null.
 
 #### Arguments
 
-- `baseResolvers: Resolvers` - Initial mocked resolvers.
+- `baseResolvers: Resolvers` - the initial mocked resolvers.
 
 #### Returns
 
-Methods for managing resolvers:
+An object with the following methods:
 
-- `#add(resolvers: Resolvers)` - Adds or overrides mocked resolvers.
-- `#reset()` - Resets resolvers to initial state.
+- `#add(resolvers: Resolvers)` - adds (and overrides) mocked resolvers. Useful to test edge cases in E2E tests.
+- `#reset()` - resets resolvers to the initial resolvers passed to `createResolvers()`
 
 #### Usage
 
@@ -198,20 +219,36 @@ const resolvers = createResolvers<Resolvers>({
   User: {
     fullName: (user) => `${user.firstName} ${user.lastName}`,
   },
+  UnionType: {
+    __resolveType: (obj) => obj.type,
+  },
 })
 ```
 
 ### `createStore<Data>(initializer)`
 
-Creates a store with mocked data for handlers, resolvers, and tests.
+Creates a store containing mocked data which can be used by mock handlers, resolvers, and tests.
+
+The store is created lazily, on demand, to not create a lot of mocking data until it's needed.
+
+The store data can be freely edited (as plain JavaScript objects), which is quite useful:
+
+- Mutations and write handlers can edit the store for later queries.
+- Tests can prepare special data for queries.
+
+The store can also be reset to its initial state, e.g. in jest's `afterEach()`.
 
 #### Arguments
 
-- `initializer: () => Data` - Function to generate mock data.
+- `initializer: () => Data` - a function which creates the mock data and returns as an object.
 
 #### Returns
 
-Proxy object with store data and `$reset()` for restoring the initial state.
+Short answer: The object returned by the `initializer` function, with one additional property:
+
+- `$reset(): void` - Resets the store to the initial state.
+
+Long answer: A Proxy object. Most properties are forwarded to the object returned by the `initializer` function. The `initializer` function is lazily invoked the first time a property is accessed.
 
 #### Usage
 
@@ -221,6 +258,7 @@ import { article } from './factories'
 
 const store = createStore(() => ({
   articles: article.list(100),
+  // ...
 }))
 
 console.log(store.articles.length) // 100
@@ -232,13 +270,28 @@ console.log(store.articles.length) // 100
 
 ### `factory<Type>(initializer)`
 
-Creates an object factory for strongly typed objects.
+Creates an object factory which can be used to create one or more objects using a strongly typed initializer and traits.
+
+The `Type` generic can be specified explicitly based on types from the GraphQL schema to give a better developer experience.
 
 #### Arguments
 
-- `initializer` - Matches `Type` shape. Supports static or dynamic values.
+- `initializer` - initializer object which matches the shape of `Type`.
 
-Supports traits for customized object creation:
+Each property can have a static value (same for all created objects) or a function (dynamic value for each created object).
+
+Dynamic properties can depend on other properties. The factory calls the property function with an object that contains all of the properties that have been assigned at that point. The object is passed both as `this` and as the first parameter.
+
+```typescript
+factory({
+  a: 5,
+  b: (obj) => obj.a + 1,
+})
+```
+
+- `initializer.$traits` - map of traits which can be used when generating objects.
+
+Traits can be specified at creation time to modify the created object. Each trait has a name (the key) and an object containing new values for the created object, either static or dynamic.
 
 ```typescript
 factory({
@@ -251,9 +304,41 @@ factory({
 })
 ```
 
+> **Note:** Properties are assigned in the order they are defined in the root `initializer` object (even if traits or overrides have another order). Example:
+>
+> ```typescript
+> factory({
+>   a: 5,
+>   b() {
+>     return this.a
+>   },
+>   c() {
+>     return this.b
+>   },
+>
+>   $traits: {
+>     changed: {
+>       c: 7,
+>       // b will always return undefined since c is assigned after b.
+>       b() {
+>         return this.c
+>       },
+>     },
+>   },
+> })
+> ```
+
 #### Returns
 
-Factory object with methods for generating objects.
+A callable factory object.
+
+`(...data: Array<string | object>) => Type`
+
+Create a new object according to the factory schema. The function accepts an optional list of traits to use and/or an object that overrides properties.
+
+`#list(count: number, ...data: Array<string | object>) => Array<Type>`
+
+Create a list of `count` objects. Supports traits and overrides.
 
 #### Usage
 
@@ -280,14 +365,20 @@ const article = factory<Article>({
   },
 })
 
+// Elsewhere:
+const normalArticle = article()
 const primaryArticle = article('withAuthor', {
   title: 'Hello World',
+  body: 'Welcome to the site',
 })
+const articles = article.list(3, 'withAuthor') // [Article, Article, Article]
 ```
 
-### Other Helpers
+### Other helpers
 
-- `title` - Returns a title string using `faker.lorem.words()`.
+- `title()`
+
+Returns a title-like string using `faker.lorem.words()`.
 
 ```typescript
 import { factory, title } from '@island.is/shared/mocking'
@@ -296,35 +387,54 @@ factory({
 })
 ```
 
-- `slugify(field)` - Creates slugged fields.
+- `slugify(field)`
+
+A helper to create slugged fields in factories:
 
 ```typescript
-import { factory, slugify } from '@island.is/shared/mocking'
+import { factory, title, slugify } from '@island.is/shared/mocking'
 factory({
   title: () => title(),
   slug: slugify('title'),
 })
 ```
 
-- `simpleFactory(initializerFn)` - Factory function with a `#list` helper.
+- `simpleFactory(initializerFn)`
+
+Wraps a normal factory function and provides a `#list` helper to run it multiple times. All arguments are passed directly through. Appropriate for factories which create values that don't have a simple object schema (e.g. GraphQL union types).
 
 ```typescript
 import { simpleFactory } from '@island.is/shared/mocking'
 const slice = simpleFactory(() =>
   Math.random() > 0.5 ? contentSlice() : imageSlice(),
 )
+slice() // ContentSlice | ImageSlice
+slice.list(3) // Array<ContentSlice | ImageSlice>
 ```
 
-- `faker` - Re-export of [faker](https://github.com/marak/Faker.js) for creating mock data.
+- `faker`
 
-## Remove Mocking Code from Production Builds
+Re-exported [faker](https://github.com/Marak/faker.js) to create fake mock data. One day we may add our own locale to create more Icelandic mock data.
 
-Ensure `startMocking` executes only when `process.env.API_MOCKS === 'true'`.
+## Remove mocking code from production builds
 
-To remove unused code, mark the `package.json` with:
+The first step is to only call `startMocking` when `process.env.API_MOCKS === 'true'`. Then Webpack is able to remove it from the bundle in production builds.
+
+However, that still leaves all the resolver, handler, store, and factory code. Webpack doesn't remove that because the code looks like this:
+
+```typescript
+const store = createStore(/* ... */)
+```
+
+Webpack knows that `store` is not used in production builds, but it won't remove the code since `createStore` could have some side-effect.
+
+We can tell Webpack that there are no side effects in this code, by creating a `package.json` in the mocking folder that includes `{ sideEffects: false }`. However, that would remove the `startMocking()` call, which is a side effect we want (at least in development).
+
+The fix is to keep `startMocking` in its own file (e.g. `mocks/index.ts`) and mark that as the only file with side effects:
 
 ```json
 {
   "sideEffects": ["mocks/index.ts"]
 }
 ```
+
