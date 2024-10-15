@@ -33,7 +33,6 @@ export const MultiSelectDropdown: FC<
               name="tag-select"
               isMulti={true}
               label={group.name}
-              // placeholder={group.name}
               closeMenuOnSelect={false}
               hideSelectedOptions={false}
               options={options.map((option) => ({

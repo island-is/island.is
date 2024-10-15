@@ -130,6 +130,16 @@ const contactModeOfInjurySchema = createCauseAndEffectSchema(
   'contactModeOfInjuryMostSerious',
 )
 
+const typeOfInjurySchema = createCauseAndEffectSchema(
+  'typeOfInjury',
+  'typeOfInjuryMostSerious',
+)
+
+const partOfBodyInjuredSchema = createCauseAndEffectSchema(
+  'partOfBodyInjured',
+  'partOfBodyInjuredMostSerious',
+)
+
 const absenceSchema = z.object({
   absenceDueToAccident: z.string(),
 })
@@ -163,6 +173,8 @@ export const WorkAccidentNotificationAnswersSchema = z.object({
   circumstances: circumstancesSchema,
   deviations: workDeviationsSchema,
   causeOfInjury: contactModeOfInjurySchema,
+  typeOfInjury: typeOfInjurySchema,
+  injuredBodyParts: partOfBodyInjuredSchema,
 })
 
 export type WorkAccidentNotification = z.TypeOf<

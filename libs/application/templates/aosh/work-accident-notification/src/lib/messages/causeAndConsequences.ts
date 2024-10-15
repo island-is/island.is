@@ -112,4 +112,52 @@ export const causeAndConsequences = {
         'Text below heading before choosing cause of injury of accident',
     },
   }),
+  typeOfInjury: defineMessages({
+    title: {
+      id: 'aosh.wan.application:causeAndConsequences.typeOfInjury.title',
+      defaultMessage: 'Tegund áverka',
+      description: 'Title of the type of injury page',
+    },
+    description: {
+      id: 'aosh.wan.application:causeAndConsequences.typeOfInjury.description',
+      defaultMessage:
+        'Lýstu hvers kyns áverki eða áverkar hlaust með því að velja úr listanum hér fyrir neðan. Þú getur líka slegið inn í leitina. Marktu við alla möguleika sem eiga við.',
+      description: 'description of the type of injury page',
+    },
+    heading: {
+      id: 'aosh.wan.application:causeAndConsequences.typeOfInjury.heading',
+      defaultMessage: '?ennan texta vantar...',
+      description: 'Heading before choosing type of injury of accident',
+    },
+    subHeading: {
+      id: 'aosh.wan.application:causeAndConsequences.typeOfInjury.subHeading',
+      defaultMessage: 'Lýstu því við hvað .... vantar þennan texta',
+      description:
+        'Text below heading before choosing type of injury of accident',
+    },
+  }),
+  injuredBodyParts: defineMessages({
+    title: {
+      id: 'aosh.wan.application:causeAndConsequences.injuredBodyParts.title',
+      defaultMessage: 'Tegund áverka',
+      description: 'Title of the injured body parts page',
+    },
+    description: {
+      id: 'aosh.wan.application:causeAndConsequences.injuredBodyParts.description',
+      defaultMessage:
+        'Lýstu hvers kyns áverki eða áverkar hlaust með því að velja úr listanum hér fyrir neðan. Þú getur líka slegið inn í leitina. Marktu við alla möguleika sem eiga við.',
+      description: 'description of the injured body parts page',
+    },
+    heading: {
+      id: 'aosh.wan.application:causeAndConsequences.injuredBodyParts.heading',
+      defaultMessage: '?ennan texta vantar...',
+      description: 'Heading before choosing injured body parts of accident',
+    },
+    subHeading: {
+      id: 'aosh.wan.application:causeAndConsequences.injuredBodyParts.subHeading',
+      defaultMessage: 'Lýstu því við hvað .... vantar þennan texta',
+      description:
+        'Text below heading before choosing injured body parts of accident',
+    },
+  }),
 }

@@ -72,6 +72,10 @@ export const CausesAndEffects: FC<
       })
     }
 
+    if (!options.some((option) => option.value === mostSeriousChosen)) {
+      setValue(mostSeriousAnswerId, undefined)
+      setMostSeriousChosen('')
+    }
     // Check if mostSeriousChosen exists in the options list.
     // If it does not exists. Remove if from answers.
 
