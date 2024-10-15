@@ -3,7 +3,7 @@ import axios from 'axios'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ZendeskServiceConfig } from './zendesk.config'
-import { ConfigType } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 
 export enum TicketStatus {
   Open = 'open',
