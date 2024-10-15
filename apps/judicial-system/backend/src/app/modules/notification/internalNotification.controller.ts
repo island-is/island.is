@@ -20,7 +20,8 @@ import {
 
 import { Case, CaseHasExistedGuard, CurrentCase } from '../case'
 import { CaseNotificationDto } from './dto/caseNotification.dto'
-import { NotificationBodyDto } from './dto/notificationBody.dto'
+import { InstitutionNotificationDto } from './dto/institutionNotification.dto'
+import { SubpoenaNotificationDto } from './dto/subpoenaNotification.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { InstitutionNotificationService } from './institutionNotification.service'
 import { InternalNotificationService } from './internalNotification.service'
@@ -67,25 +68,30 @@ export class InternalNotificationController {
     description: 'Sends a new notification',
   })
   sendNotification(
-    @Body() notificationDto: NotificationBodyDto,
+    @Body() notificationDto: InstitutionNotificationDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Sending ${notificationDto.type} notification`)
 
-    if (notificationDto.prosecutorsOfficeId) {
-      return this.institutionNotificationService.sendNotification(
-        notificationDto.type,
-        notificationDto.prosecutorsOfficeId,
-      )
-    } else if (notificationDto.subpoenaId) {
-      return this.subpoenaNotificationService.sendNotification(
-        notificationDto.type,
-        notificationDto.subpoenaId,
-      )
-    } else {
-      throw new BadRequestException(
-        'Either prosecutorsOfficeId or subpoenaId must be provided.',
-      )
-    }
+    return this.institutionNotificationService.sendNotification(
+      notificationDto.type,
+      notificationDto.prosecutorsOfficeId,
+    )
+  }
+
+  @Post(messageEndpoint[MessageType.SUBPOENA_NOTIFICATION])
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Sends a new notification',
+  })
+  sendSubpoenaNotification(
+    @Body() notificationDto: SubpoenaNotificationDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Sending ${notificationDto.type} notification`)
+
+    return this.subpoenaNotificationService.sendNotification(
+      notificationDto.type,
+      notificationDto.subpoenaId,
+    )
   }
 
   @Post(messageEndpoint[MessageType.NOTIFICATION_DISPATCH])
@@ -94,7 +100,7 @@ export class InternalNotificationController {
     description: 'Dispatches notifications',
   })
   dispatchNotification(
-    @Body() notificationDto: NotificationBodyDto,
+    @Body() notificationDto: InstitutionNotificationDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Dispatching ${notificationDto.type} notification`)
 

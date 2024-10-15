@@ -146,7 +146,7 @@ export class SubpoenaService {
       this.messageService
         .sendMessagesToQueue([
           {
-            type: MessageType.NOTIFICATION,
+            type: MessageType.SUBPOENA_NOTIFICATION,
             body: {
               type: notificationType,
               subpoenaId: subpoena.subpoenaId,
