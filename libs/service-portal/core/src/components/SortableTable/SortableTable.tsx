@@ -5,13 +5,18 @@ import {
   Icon,
   TagVariant,
   Tag,
+  AlertMessage,
+  Button,
+  IconProps,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import * as styles from './SortableTable.css'
 import { ExpandHeader, ExpandRow } from '../ExpandableTable'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import Table, { TableRow } from './Mobile/SortableMobileTable'
+import Table from './Mobile/SortableMobileTable'
 import { isDefined } from 'class-validator'
+import { m } from '@island.is/portals/core'
 
 type ConfigType = { direction: 'ascending' | 'descending'; key: string }
 
@@ -19,9 +24,14 @@ type SortableData = {
   name: string
   id: string
   tag?: TagVariant
-  lastNode?: React.ReactElement
+  lastNode?: {
+    type: 'info' | 'action' | 'text'
+    label: string
+    icon?: Pick<IconProps, 'icon' | 'type'>
+    action?: () => void
+  }
   children?: React.ReactElement
-} & { [key: string]: string | React.ReactElement }
+} & { [key: string]: string | React.ReactElement | any }
 
 type SortableTableProps = {
   items: Array<SortableData>
@@ -131,15 +141,13 @@ export const SortableTable = (props: SortableTableProps) => {
     )
   }
 
-  let mobileTableRows: TableRow[]
   let mobileHeaderData = headerSorted.map((headItem, i) => {
     const label = props.labels[headItem]
     if (!isDefined(label)) return null
     return label
   })
   mobileHeaderData = mobileHeaderData.filter((item) => item !== null)
-
-  console.log('mobileHeaderData', mobileHeaderData)
+  !props.expandable && mobileHeaderData.splice(0, 1)
   return (
     <>
       {props.title && (
@@ -151,20 +159,61 @@ export const SortableTable = (props: SortableTableProps) => {
         <Table
           header={props.title ?? ''}
           rows={items.map((item, index) => {
-            const { id, name, tag, lastNode, children, ...itemObject } = item
+            const { id, tag, name, lastNode, children, ...itemObject } = item
             const valueItems = Object.values(itemObject)
-
+            let action = undefined
             return {
-              title: valueItems[0].toString() ?? '',
-              data: valueItems.map((valueItem, valueIndex) => {
-                return {
-                  title: mobileHeaderData[valueIndex] ?? '',
-                  content: valueItem.toString() ?? '',
-                }
-              }),
+              title: item.name ?? valueItems[0].toString() ?? '',
+              data: valueItems
+                .map((valueItem, valueIndex) => {
+                  if (tag)
+                    return {
+                      title: valueItem ?? '',
+                      content: (
+                        <Tag variant={tag} outlined={props.tagOutlined}>
+                          {valueItem}
+                        </Tag>
+                      ),
+                    }
+                  if (valueItems.length - 1 === valueIndex && lastNode) {
+                    if (lastNode.type === 'info') {
+                      action = (
+                        <AlertMessage type="info" message={lastNode.label} />
+                      )
+                    } else if (lastNode.type === 'action') {
+                      action = (
+                        <div className={styles.btnContainer}>
+                          <Button
+                            variant="utility"
+                            type="button"
+                            icon={lastNode.icon?.icon}
+                            iconType={lastNode.icon?.type}
+                            onClick={lastNode.action}
+                            size="small"
+                          >
+                            {lastNode.label}
+                          </Button>
+                        </div>
+                      )
+                    } else {
+                      return {
+                        title: valueItem ?? '',
+                        content: lastNode.label,
+                      }
+                    }
+                  }
+
+                  return {
+                    title: mobileHeaderData[valueIndex] ?? '',
+                    content: valueItem,
+                  }
+                })
+                .filter((item) => item !== undefined),
+              children: children,
+              action: action,
             }
           })}
-        ></Table>
+        />
       ) : (
         <T.Table>
           {props.expandable ? (
@@ -201,16 +250,34 @@ export const SortableTable = (props: SortableTableProps) => {
                 <ExpandRow
                   key={id}
                   data={valueItems.map((valueItem, i) => ({
-                    value:
-                      valueItems.length - 1 === i && tag ? (
-                        <Tag variant={tag} outlined={props.tagOutlined}>
-                          {valueItem}
-                        </Tag>
-                      ) : valueItems.length - 1 === i && lastNode ? (
-                        lastNode
+                    value: tag ? (
+                      <Tag variant={tag} outlined={props.tagOutlined}>
+                        {valueItem}
+                      </Tag>
+                    ) : valueItems.length - 1 === i && lastNode ? (
+                      lastNode.type === 'info' ? (
+                        <Tooltip text={lastNode.label} />
+                      ) : lastNode.type === 'action' ? (
+                        <Button
+                          variant="text"
+                          type="button"
+                          icon={lastNode.icon?.icon}
+                          iconType={lastNode.icon?.type}
+                          onClick={lastNode.action}
+                          size="small"
+                        >
+                          {lastNode.label}
+                        </Button>
                       ) : (
-                        valueItem
-                      ),
+                        <Text variant={'medium'} as="span">
+                          {lastNode.label}
+                        </Text>
+                      )
+                    ) : (
+                      <Text variant={'medium'} as="span">
+                        {valueItem}
+                      </Text>
+                    ),
                     align: valueItems.slice(-2).includes(valueItem)
                       ? 'right'
                       : 'left',
@@ -226,15 +293,30 @@ export const SortableTable = (props: SortableTableProps) => {
                     </Text>
                   </T.Data>
                   {valueItems.map((valueItem, i) => {
-                    const lastItem = valueItems.length - 1 === i
                     return (
                       <T.Data key={`body-${id}-${i}`}>
-                        {lastItem && tag ? (
+                        {tag ? (
                           <Tag variant={tag} outlined={props.tagOutlined}>
                             {valueItem}
                           </Tag>
-                        ) : lastItem && lastNode ? (
-                          lastNode
+                        ) : lastNode ? (
+                          lastNode.type === 'info' ? (
+                            <Tooltip text={lastNode.label} />
+                          ) : lastNode.type === 'action' ? (
+                            <Button
+                              variant="text"
+                              type="button"
+                              icon={lastNode.icon?.icon}
+                              iconType={lastNode.icon?.type}
+                              onClick={lastNode.action}
+                            >
+                              {lastNode.label}
+                            </Button>
+                          ) : (
+                            <Text variant={'medium'} as="span">
+                              {lastNode.label}
+                            </Text>
+                          )
                         ) : (
                           <Text variant={'medium'} as="span">
                             {valueItem}

@@ -24,7 +24,8 @@ import cn from 'classnames'
 interface Props {
   id: string
   activePrescription?: Prescription
-  disclosure?: ReactElement
+  toggleClose?: boolean
+  isVisible?: boolean
 }
 
 interface RenewFormData {
@@ -35,7 +36,8 @@ interface RenewFormData {
 const RenewPrescriptionModal: React.FC<Props> = ({
   id,
   activePrescription,
-  disclosure,
+  toggleClose,
+  isVisible,
 }) => {
   const { formatMessage } = useLocale()
   const columnWidth = '7/12'
@@ -44,13 +46,11 @@ const RenewPrescriptionModal: React.FC<Props> = ({
     return index % 4 === 0 || index % 4 === 1
   }
   const [selectedMedicine, setSelectedMedicine] = useState('')
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
-  const [formData, setFormData] = useState<RenewFormData | null>(
-    {
-      healthcare: HealthCenterData[1],
-      medicineInformation: activePrescription,
-    } ?? null,
-  )
+  const [modalVisible, setModalVisible] = useState<boolean>(isVisible ?? false)
+  const [formData, setFormData] = useState<RenewFormData | null>({
+    healthcare: HealthCenterData[1],
+    medicineInformation: activePrescription,
+  })
 
   const closeModal = () => {
     setModalVisible(false)
@@ -74,8 +74,8 @@ const RenewPrescriptionModal: React.FC<Props> = ({
       onVisibilityChange={(visibility) => {
         setModalVisible(visibility)
       }}
+      toggleClose={toggleClose}
       removeOnClose
-      disclosure={disclosure}
       className={styles.modal}
     >
       <Box paddingY={8} paddingX={12}>

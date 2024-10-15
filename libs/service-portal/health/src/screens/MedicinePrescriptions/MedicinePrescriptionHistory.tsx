@@ -13,9 +13,11 @@ import {
 } from '../Medicine/utils/mockData'
 import { HealthPaths } from '../../lib/paths'
 import { messages } from '../../lib/messages'
+import { useNavigate } from 'react-router-dom'
 
 const MedicinePrescriptionHistory = () => {
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
 
   return (
     <MedicinePrescriptionWrapper
@@ -43,17 +45,16 @@ const MedicinePrescriptionHistory = () => {
               status: item?.status.type ?? '',
 
               lastNode:
-                item?.status.type === 'renew' ? (
-                  <LinkButton
-                    to={item.status.data}
-                    text={formatMessage(messages.renew)}
-                    icon="reload"
-                  />
-                ) : item?.status.type === 'tooltip' ? (
-                  <Tooltip text={item.status.data} />
-                ) : (
-                  <Text>{item.status.data}</Text>
-                ),
+                item?.status.type === 'renew'
+                  ? {
+                      type: 'action',
+                      label: formatMessage(messages.renew),
+                      action: () => navigate(item.status.data),
+                      icon: { icon: 'reload', type: 'outline' },
+                    }
+                  : item?.status.type === 'tooltip'
+                  ? { type: 'info', label: item.status.data }
+                  : { type: 'text', label: item.status.data },
 
               children: (
                 <Box padding={1} background={'blue100'}>

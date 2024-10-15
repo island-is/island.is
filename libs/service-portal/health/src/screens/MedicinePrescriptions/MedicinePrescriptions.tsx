@@ -1,6 +1,6 @@
 import { useLocale } from '@island.is/localization'
 import { LinkButton, SortableTable } from '@island.is/service-portal/core'
-import React from 'react'
+import React, { useState } from 'react'
 import { messages } from '../../lib/messages'
 import { Box, Tooltip, Text, Button } from '@island.is/island-ui/core'
 import { MedicinePrescriptionWrapper } from '../Medicine/wrapper/MedicinePrescriptionWrapper'
@@ -18,6 +18,8 @@ import RenewPrescriptionModal from './components/RenewPrescriptionModal/RenewPre
 
 const MedicinePrescriptions = () => {
   const { formatMessage } = useLocale()
+  const [activePrescription, setActivePrescription] = React.useState<any>(null)
+  const [openModal, setOpenModal] = useState(false)
 
   return (
     <MedicinePrescriptionWrapper
@@ -39,29 +41,25 @@ const MedicinePrescriptions = () => {
             MedicinePrescriptionsData?.map((item, i) => ({
               id: item?.id ?? `${i}`,
               name: item?.medicineName ?? '',
-
               medicine: item?.medicineName ?? '',
               usedFor: item?.usedFor ?? '',
               process: item?.process ?? '',
               validTo: item?.validTo ?? '',
-              status: item?.status.type ?? '',
-
+              status: undefined,
               lastNode:
-                item?.status.type === 'renew' ? (
-                  <RenewPrescriptionModal
-                    id={`renewPrescriptionModal-${item.id}`}
-                    activePrescription={item}
-                    disclosure={
-                      <Button icon="reload" size="small" variant="text">
-                        {formatMessage(messages.renew)}
-                      </Button>
+                item?.status.type === 'renew'
+                  ? {
+                      type: 'action',
+                      label: formatMessage(messages.renew),
+                      action: () => {
+                        setActivePrescription(item)
+                        setOpenModal(true)
+                      },
+                      icon: { icon: 'reload', type: 'outline' },
                     }
-                  />
-                ) : item?.status.type === 'tooltip' ? (
-                  <Tooltip text={item.status.data} />
-                ) : (
-                  <Text>{item.status.data}</Text>
-                ),
+                  : item?.status.type === 'tooltip'
+                  ? { type: 'info', label: item.status.data }
+                  : { type: 'text', label: item.status.data },
 
               children: (
                 <Box padding={1} background={'blue100'}>
@@ -85,6 +83,15 @@ const MedicinePrescriptions = () => {
           }
         />
       </Box>
+
+      {activePrescription && (
+        <RenewPrescriptionModal
+          id={`renewPrescriptionModal-${activePrescription.id}`}
+          activePrescription={activePrescription}
+          toggleClose={openModal}
+          isVisible={openModal}
+        />
+      )}
     </MedicinePrescriptionWrapper>
   )
 }

@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import {
   EmptyTable,
@@ -10,7 +10,6 @@ import { messages } from '../../lib/messages'
 import { m } from '@island.is/service-portal/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { delegationData, Delegation } from './utils/mockdata'
-import kennitala from 'kennitala'
 import DelegationModal from './components/DelegationModal'
 
 const MedicineDelegation = () => {
