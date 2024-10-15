@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import { Accordion, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isDefenceUser,
@@ -56,7 +57,15 @@ const IndictmentOverview: FC = () => {
     workingCase.indictmentReviewer?.id === user?.id &&
     Boolean(!workingCase.indictmentReviewDecision)
   const canAddFiles =
+    !isCompletedCase(workingCase.state) &&
     isDefenceUser(user) &&
+    workingCase.defendants?.some(
+      (defendant) =>
+        defendant?.defenderNationalId &&
+        normalizeAndFormatNationalId(user?.nationalId).includes(
+          defendant.defenderNationalId,
+        ),
+    ) &&
     workingCase.indictmentDecision !==
       IndictmentDecision.POSTPONING_UNTIL_VERDICT
 

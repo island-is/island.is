@@ -31,7 +31,7 @@ import { DateLog } from '../models/dateLog.model'
 const canProsecutionUserAccessCase = (
   theCase: Case,
   user: User,
-  forUpdate = true,
+  forUpdate: boolean,
 ): boolean => {
   // Check case type access
   if (user.role !== UserRole.PROSECUTOR && !isIndictmentCase(theCase.type)) {
@@ -198,7 +198,7 @@ const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
 
 const canPrisonStaffUserAccessCase = (
   theCase: Case,
-  forUpdate = true,
+  forUpdate: boolean,
 ): boolean => {
   // Prison staff users cannot update cases
   if (forUpdate) {
@@ -236,7 +236,7 @@ const canPrisonStaffUserAccessCase = (
 
 const canPrisonAdminUserAccessCase = (
   theCase: Case,
-  forUpdate = true,
+  forUpdate: boolean,
 ): boolean => {
   // Prison admin users cannot update cases
   if (forUpdate) {
@@ -366,6 +366,7 @@ const canDefenceUserAccessRequestCase = (
 const canDefenceUserAccessIndictmentCase = (
   theCase: Case,
   user: User,
+  forUpdate: boolean,
 ): boolean => {
   // Check case state access
   if (
@@ -397,7 +398,8 @@ const canDefenceUserAccessIndictmentCase = (
     CivilClaimant.isSpokespersonOfCivilClaimant(
       user.nationalId,
       theCase.civilClaimants,
-    )
+    ) &&
+    !forUpdate
   ) {
     return true
   }
@@ -405,13 +407,17 @@ const canDefenceUserAccessIndictmentCase = (
   return false
 }
 
-const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
+const canDefenceUserAccessCase = (
+  theCase: Case,
+  user: User,
+  forUpdate: boolean,
+): boolean => {
   if (isRequestCase(theCase.type)) {
     return canDefenceUserAccessRequestCase(theCase, user)
   }
 
   if (isIndictmentCase(theCase.type)) {
-    return canDefenceUserAccessIndictmentCase(theCase, user)
+    return canDefenceUserAccessIndictmentCase(theCase, user, forUpdate)
   }
 
   // Other cases are not accessible to defence users
@@ -421,7 +427,7 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
 export const canUserAccessCase = (
   theCase: Case,
   user: User,
-  forUpdate = true,
+  forUpdate: boolean,
 ): boolean => {
   if (isProsecutionUser(user)) {
     return canProsecutionUserAccessCase(theCase, user, forUpdate)
@@ -444,7 +450,7 @@ export const canUserAccessCase = (
   }
 
   if (isDefenceUser(user)) {
-    return canDefenceUserAccessCase(theCase, user)
+    return canDefenceUserAccessCase(theCase, user, forUpdate)
   }
 
   if (isPublicProsecutorUser(user)) {
