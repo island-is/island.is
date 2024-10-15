@@ -5,7 +5,7 @@ import { env } from '../../../../support/urls'
 import { resetMocks, wildcard } from '../../../../support/wire-mocks'
 import { loadParentalLeaveXroadMocks } from './mocks/parentalLeave.mock'
 import { loadSocialInsuranceAdministrationXroadMocks } from './mocks/socialInsuranceAdministration.mock'
-import { loadNationalRegistryXroadMocks } from './mocks/nationalRegistry.mocks'
+import { loadNationalRegistryXroadMocks } from './mocks/nationalRegistry.mock'
 
 export const setupXroadMocks = async () => {
   await resetMocks()
