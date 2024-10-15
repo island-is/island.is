@@ -672,9 +672,9 @@ export const is = {
     'Ég heimila líffæragjöf, með takmörkunum.',
   'health.organDonation.isNotDonor': 'Ég heimila ekki líffæragjöf',
   'health.organDonation.isDonorDescription':
-    'Öll líffærin mín má nota til ígræðslu',
+    'Öll líffærin mín má nota til ígræðslu.',
   'health.organDonation.isNotDonorDescription':
-    'Engin líffæri má nota til ígræðslu',
+    'Engin líffæri má nota til ígræðslu.',
   'health.organDonation.isDonorWithLimitationsDescription':
-    'Öll líffærin mín má nota til ígræðslu fyrir utan: ',
+    'Öll líffærin mín má nota til ígræðslu fyrir utan: {limitations}.',
 }
