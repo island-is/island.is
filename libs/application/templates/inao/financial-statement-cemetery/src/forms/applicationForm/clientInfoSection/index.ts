@@ -5,12 +5,10 @@ import {
   buildSection,
   buildTextField,
 } from '@island.is/application/core'
-import { getCurrentUserType } from '../../../utils/helpers'
 import { Application, UserProfile } from '@island.is/application/types'
 import { m } from '../../../lib/messages'
 import { ABOUTIDS } from '../../../utils/constants'
 import { Identity } from '@island.is/api/schema'
-import { FSIUSERTYPE } from '../../../types/types'
 
 export const clientInfoSection = buildSection({
   id: 'info',
@@ -19,14 +17,7 @@ export const clientInfoSection = buildSection({
     buildMultiField({
       id: 'about',
       title: m.info,
-      description: (application: Application) => {
-        const answers = application.answers
-        const externalData = application.externalData
-        const userType = getCurrentUserType(answers, externalData)
-        return userType === FSIUSERTYPE.INDIVIDUAL
-          ? m.reviewInfo
-          : m.reviewContact
-      },
+      description: m.reviewContact,
       children: [
         buildDescriptionField({
           id: ABOUTIDS.operatingYear,
