@@ -37,6 +37,7 @@ import { useBrowser } from '../../lib/use-browser'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
+import { useLocale } from '../../hooks/use-locale'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -122,8 +123,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const now = useMemo(() => new Date().toISOString(), [])
 
   const medicinePurchaseRes = useGetMedicineDataQuery()
-
   const organDonationRes = useGetOrganDonorStatusQuery({
+    variables: {
+      locale: useLocale(),
+    },
     skip: !isOrganDonationEnabled,
   })
   const healthInsuranceRes = useGetHealthInsuranceOverviewQuery()
@@ -557,20 +560,17 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                     ? 'health.organDonation.isDonor'
                     : 'health.organDonation.isNotDonor',
                 })}
-                value={`${intl.formatMessage(
-                  {
-                    id: isOrganDonorWithLimitations
-                      ? 'health.organDonation.isDonorWithLimitationsDescription'
-                      : isOrganDonor
-                      ? 'health.organDonation.isDonorDescription'
-                      : 'health.organDonation.isNotDonorDescription',
-                  },
-                  {
-                    limitations: isOrganDonorWithLimitations
-                      ? organLimitations?.join(', ')
-                      : '',
-                  },
-                )}`}
+                value={`${intl.formatMessage({
+                  id: isOrganDonorWithLimitations
+                    ? 'health.organDonation.isDonorWithLimitationsDescription'
+                    : isOrganDonor
+                    ? 'health.organDonation.isDonorDescription'
+                    : 'health.organDonation.isNotDonorDescription',
+                })}${
+                  isOrganDonorWithLimitations
+                    ? organLimitations?.join(', ')
+                    : ''
+                }.`}
                 loading={paymentStatusRes.loading && !paymentStatusRes.data}
                 error={paymentStatusRes.error && !paymentStatusRes.data}
                 noBorder
