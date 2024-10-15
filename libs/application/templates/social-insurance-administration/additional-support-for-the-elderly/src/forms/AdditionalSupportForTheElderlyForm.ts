@@ -287,6 +287,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
                     socialInsuranceAdministrationMessage.payment
                       .personalAllowancePercentage,
                   suffix: '%',
+                  dataTestId: 'personal-allowance-usage',
                   condition: (answers) => {
                     const { personalAllowance } = getApplicationAnswers(answers)
                     return personalAllowance === YES
