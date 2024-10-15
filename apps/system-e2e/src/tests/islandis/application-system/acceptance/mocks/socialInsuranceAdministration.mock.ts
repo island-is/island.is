@@ -97,4 +97,28 @@ export const loadSocialInsuranceAdministrationXroadMocks = async () => {
     prefixType: 'only-base-path',
     method: HttpMethod.POST,
   })
+
+  /* Pension supplement */
+  await addXroadMock({
+    config: SocialInsuranceAdministration,
+    prefix: 'XROAD_TR_PATH',
+    apiPath:
+      '/api/protected/v1/Applicant/pensionsupplement/eligible',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      isEligible: true,
+      reason: null,
+      reasonCode: null,
+    }),
+  })
+  await addXroadMock({
+    config: SocialInsuranceAdministration,
+    prefix: 'XROAD_TR_PATH',
+    apiPath: '/api/protected/v1/Application/pensionsupplement',
+    response: new Response().withJSONBody({
+      applicationLineId: 1234567,
+    }),
+    prefixType: 'only-base-path',
+    method: HttpMethod.POST,
+  })
 }
