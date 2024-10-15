@@ -86,12 +86,8 @@ export class SubpoenaNotificationService extends BaseNotificationService {
 
   private async sendSubpoenaNotification(
     notificationType: subpoenaNotificationType,
-    subpoenaId?: string,
+    subpoenaId: string,
   ): Promise<unknown> {
-    if (!subpoenaId) {
-      return
-    }
-
     const theCase = await this.getCase(subpoenaId)
 
     await this.refreshFormatMessage()
@@ -152,7 +148,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
 
   async sendNotification(
     type: NotificationType,
-    subpoenaId?: string,
+    subpoenaId: string,
   ): Promise<DeliverResponse> {
     try {
       this.sendSubpoenaNotification(
