@@ -74,6 +74,29 @@ export const loadSocialInsuranceAdministrationXroadMocks = async () => {
     method: HttpMethod.POST,
   })
 
+  /* Half Old-age pension */
+  await addXroadMock({
+    config: SocialInsuranceAdministration,
+    prefix: 'XROAD_TR_PATH',
+    apiPath: '/api/protected/v1/Applicant/halfoldagepension/eligible',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      isEligible: true,
+      reason: null,
+      reasonCode: null,
+    }),
+  })
+  await addXroadMock({
+    config: SocialInsuranceAdministration,
+    prefix: 'XROAD_TR_PATH',
+    apiPath: '/api/protected/v1/Application/halfoldagepension',
+    response: new Response().withJSONBody({
+      applicationLineId: 1234567,
+    }),
+    prefixType: 'only-base-path',
+    method: HttpMethod.POST,
+  })
+
   /* Additional support for the elderly */
   await addXroadMock({
     config: SocialInsuranceAdministration,
