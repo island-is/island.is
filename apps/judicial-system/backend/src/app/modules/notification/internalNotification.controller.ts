@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Inject,
@@ -70,15 +71,21 @@ export class InternalNotificationController {
   ): Promise<DeliverResponse> {
     this.logger.debug(`Sending ${notificationDto.type} notification`)
 
-    return notificationDto.prosecutorsOfficeId
-      ? this.institutionNotificationService.sendNotification(
-          notificationDto.type,
-          notificationDto.prosecutorsOfficeId,
-        )
-      : this.subpoenaNotificationService.sendNotification(
-          notificationDto.type,
-          notificationDto.subpoenaId,
-        )
+    if (notificationDto.prosecutorsOfficeId) {
+      return this.institutionNotificationService.sendNotification(
+        notificationDto.type,
+        notificationDto.prosecutorsOfficeId,
+      )
+    } else if (notificationDto.subpoenaId) {
+      return this.subpoenaNotificationService.sendNotification(
+        notificationDto.type,
+        notificationDto.subpoenaId,
+      )
+    } else {
+      throw new BadRequestException(
+        'Either prosecutorsOfficeId or subpoenaId must be provided.',
+      )
+    }
   }
 
   @Post(messageEndpoint[MessageType.NOTIFICATION_DISPATCH])
