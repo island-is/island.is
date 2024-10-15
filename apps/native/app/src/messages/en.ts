@@ -176,7 +176,7 @@ export const en: TranslatedMessages = {
   'home.onboardingModule.card2':
     'The app’s purpose is to provide faster access to your documents, applications, and other dealings with governmental institutions.',
   'home.onboardingModule.card3':
-    'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at',
+    'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at island@island.is',
   'home.onboardingModule.card4':
     'We encourage our users to read Digital Iceland’s privacy policy on',
   'home.vehicleModule.summary':
