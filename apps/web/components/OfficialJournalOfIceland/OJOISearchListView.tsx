@@ -10,7 +10,7 @@ export const OJOISearchListView = ({
   adverts,
   locale,
 }: {
-  adverts: OfficialJournalOfIcelandAdvertsResponse['adverts']
+  adverts?: OfficialJournalOfIcelandAdvertsResponse['adverts']
   locale: Locale
 }) => {
   const { linkResolver } = useLinkResolver()
@@ -27,7 +27,7 @@ export const OJOISearchListView = ({
         </T.Row>
       </T.Head>
       <T.Body>
-        {adverts.map((ad) => (
+        {adverts?.map((ad) => (
           <T.Row key={ad.id}>
             <T.Data>
               <Text variant="small" whiteSpace="nowrap">

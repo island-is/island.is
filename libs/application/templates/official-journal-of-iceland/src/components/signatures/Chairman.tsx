@@ -90,24 +90,24 @@ export const Chairman = ({ applicationId, member }: Props) => {
             }
           />
           <SignatureMember
-            name={`signature.comittee.member.after`}
-            label={f(signatures.inputs.after.label)}
-            defaultValue={member.after}
-            onChange={(e) =>
-              debouncedOnUpdateApplicationHandler(
-                handleChairmanChange(e.target.value, 'after'),
-              )
-            }
-          />
-        </Box>
-        <Box className={styles.inputWrapper}>
-          <SignatureMember
             name={`signature.comittee.member.name`}
             label={f(signatures.inputs.name.label)}
             defaultValue={member.name}
             onChange={(e) =>
               debouncedOnUpdateApplicationHandler(
                 handleChairmanChange(e.target.value, 'name'),
+              )
+            }
+          />
+        </Box>
+        <Box className={styles.inputWrapper}>
+          <SignatureMember
+            name={`signature.comittee.member.after`}
+            label={f(signatures.inputs.after.label)}
+            defaultValue={member.after}
+            onChange={(e) =>
+              debouncedOnUpdateApplicationHandler(
+                handleChairmanChange(e.target.value, 'after'),
               )
             }
           />

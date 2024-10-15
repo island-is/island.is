@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { SignatureCollectionSuccess } from './models/success.model'
 import { SignatureCollection } from './models/collection.model'
 import {
@@ -27,6 +31,12 @@ export class SignatureCollectionService {
   constructor(
     private signatureCollectionClientService: SignatureCollectionClientService,
   ) {}
+
+  private checkListAccess(listId: string, signee: SignatureCollectionSignee) {
+    if (!signee.ownedLists?.some((list) => list.id === listId)) {
+      throw new NotFoundException('List not found')
+    }
+  }
 
   async currentCollection(): Promise<SignatureCollection> {
     return await this.signatureCollectionClientService.currentCollection()
@@ -82,7 +92,12 @@ export class SignatureCollectionService {
     )
   }
 
-  async list(listId: string, user: User): Promise<SignatureCollectionList> {
+  async list(
+    listId: string,
+    user: User,
+    signee: SignatureCollectionSignee,
+  ): Promise<SignatureCollectionList> {
+    this.checkListAccess(listId, signee)
     return await this.signatureCollectionClientService.getList(listId, user)
   }
 
@@ -149,19 +164,21 @@ export class SignatureCollectionService {
   async canSignFromPaper(
     user: User,
     input: SignatureCollectionCanSignFromPaperInput,
+    signee: SignatureCollectionSignee,
   ): Promise<boolean> {
-    const signee = await this.signatureCollectionClientService.getSignee(
-      user,
-      input.signeeNationalId,
-    )
-    const list = await this.list(input.listId, user)
+    const signatureSignee =
+      await this.signatureCollectionClientService.getSignee(
+        user,
+        input.signeeNationalId,
+      )
+    const list = await this.list(input.listId, user, signee)
     // Current signatures should not prevent paper signatures
     const canSign =
-      signee.canSign ||
-      (signee.canSignInfo?.length === 1 &&
-        signee.canSignInfo[0] === ReasonKey.AlreadySigned)
+      signatureSignee.canSign ||
+      (signatureSignee.canSignInfo?.length === 1 &&
+        signatureSignee.canSignInfo[0] === ReasonKey.AlreadySigned)
 
-    return canSign && list.area.id === signee.area?.id
+    return canSign && list.area.id === signatureSignee.area?.id
   }
 
   async collectors(

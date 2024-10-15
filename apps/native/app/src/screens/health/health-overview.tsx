@@ -293,7 +293,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           )}
           <HeadingSection
             title={intl.formatMessage({
-              id: 'health.overview.payments',
+              id: 'health.overview.coPayments',
             })}
             onPress={() =>
               openBrowser(
