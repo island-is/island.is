@@ -7,39 +7,43 @@ import {
   CemeteryFinancialStatementValues,
   FinancialStatementsInaoClientService,
   ClientRoles,
-  Contact,
-  ContactType,
-  DigitalSignee,
 } from '@island.is/clients/financial-statements-inao'
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,
-  PerformActionResult,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import AmazonS3URI from 'amazon-s3-uri'
 import { TemplateApiModuleActionProps } from '../../../types'
 import * as kennitala from 'kennitala'
 import {
-  DataResponse,
-  getCurrentUserType,
-} from '../financial-statements-inao/financial-statements-inao.service'
-import {
-  BoardMember,
-  FSIUSERTYPE,
-} from '@island.is/application/templates/financial-statements-inao/types'
-import {
   mapValuesToCemeterytype,
   getNeededCemeteryValues,
   mapContactsAnswersToContacts,
   mapDigitalSignee,
 } from '../financial-statement-cemetery/mappers/mapValuesToUserType'
-import { TemplateApiError } from '@island.is/nest/problem'
-import { ApplicationApiAction } from '../../template-api.service'
 
 export type AttachmentData = {
   key: string
   name: string
+}
+
+export interface DataResponse {
+  success: boolean
+  message?: string
+}
+
+export const getCurrentUserType = (
+  answers: Application['answers'],
+  externalData: Application['externalData'],
+) => {
+  const fakeUserType: any = getValueViaPath(answers, 'fakeData.options')
+
+  const currentUserType: any = getValueViaPath(
+    externalData,
+    'getUserType.data.value',
+  )
+  return fakeUserType ?? currentUserType
 }
 
 export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiService {
