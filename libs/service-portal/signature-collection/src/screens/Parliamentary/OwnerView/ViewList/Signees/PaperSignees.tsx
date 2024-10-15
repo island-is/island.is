@@ -73,7 +73,7 @@ export const PaperSignees = ({
         },
       },
       onCompleted: (res) => {
-        if (res.success) {
+        if (res.signatureCollectionUploadPaperSignature?.success) {
           toast.success(formatMessage(m.paperSigneeSuccess))
           refetchSignees()
         } else {

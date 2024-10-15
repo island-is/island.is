@@ -176,7 +176,8 @@ export class SignatureCollectionService {
     const canSign =
       signatureSignee.canSign ||
       (signatureSignee.canSignInfo?.length === 1 &&
-        signatureSignee.canSignInfo[0] === ReasonKey.AlreadySigned)
+        (signatureSignee.canSignInfo[0] === ReasonKey.AlreadySigned ||
+          signatureSignee.canSignInfo[0] === ReasonKey.noInvalidSignature))
 
     return canSign && list.area.id === signatureSignee.area?.id
   }
