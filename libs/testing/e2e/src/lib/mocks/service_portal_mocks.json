@@ -1,0 +1,1176 @@
+{
+  "uuid": "3188fa7c-9286-42d5-8e02-cde7c041d8aa",
+  "lastMigration": 32,
+  "name": "Service Portal Mocks",
+  "endpointPrefix": "",
+  "latency": 0,
+  "port": 8081,
+  "hostname": "",
+  "folders": [
+    {
+      "uuid": "c3275fb8-3e44-4a63-a1b4-a1bd5ef54fed",
+      "name": "Health Insurance",
+      "children": [
+        {
+          "type": "route",
+          "uuid": "4db80175-b387-47e6-a785-c401f3356fb3"
+        },
+        {
+          "type": "route",
+          "uuid": "d2ef4413-a485-4c97-abb3-9b320a9b3c95"
+        },
+        {
+          "type": "route",
+          "uuid": "1b1fc103-c381-4b64-ba10-7ec148bf8150"
+        },
+        {
+          "type": "route",
+          "uuid": "20567f05-89ee-4286-84bf-6fe42bfa8b6b"
+        },
+        {
+          "type": "route",
+          "uuid": "aff5ef2b-b7ff-40ef-b6af-5e53db60494c"
+        },
+        {
+          "type": "route",
+          "uuid": "03ec90b1-5004-4e53-ac6d-0893cee158bd"
+        },
+        {
+          "type": "route",
+          "uuid": "9a21bd65-7db7-4a17-ab2e-88769a5a22fe"
+        },
+        {
+          "type": "route",
+          "uuid": "ab44c0fd-16a3-4978-8a4c-de45ff63674d"
+        },
+        {
+          "type": "route",
+          "uuid": "ff7148a1-a583-4d74-978a-6ccd7e9145e2"
+        },
+        {
+          "type": "route",
+          "uuid": "fc0a286b-f05f-4ee5-8211-b03fe0b8cdce"
+        }
+      ]
+    },
+    {
+      "uuid": "4e78eb48-9b40-4adf-8a3a-b6b32f93f5fa",
+      "name": "Assets",
+      "children": [
+        {
+          "type": "route",
+          "uuid": "a093ca6c-b98a-4c79-b132-37f4ec686279"
+        },
+        {
+          "type": "route",
+          "uuid": "7c87fab1-bc2f-4ca8-a51f-9e68b1f7baa2"
+        }
+      ]
+    },
+    {
+      "uuid": "5224e13b-be8e-4665-a7f9-2f5f53f8e0a5",
+      "name": "Education",
+      "children": [
+        {
+          "type": "route",
+          "uuid": "ad26276e-7807-47b6-b4d6-8c5884837741"
+        }
+      ]
+    },
+    {
+      "uuid": "f5bc18a5-1732-4fa4-875e-60e12099fe92",
+      "name": "Licenses",
+      "children": [
+        {
+          "type": "route",
+          "uuid": "fd94adfd-ea59-4b8b-9619-7e54a9211874"
+        },
+        {
+          "type": "route",
+          "uuid": "40e7ffbc-e626-42db-917f-bcd8435a01cb"
+        },
+        {
+          "type": "route",
+          "uuid": "dc4f81a9-c735-4a0f-801c-365f3cc61cfa"
+        },
+        {
+          "type": "route",
+          "uuid": "02bbc9d5-a819-499a-bb61-92a7807e83cf"
+        },
+        {
+          "type": "route",
+          "uuid": "24a0a001-6830-49f3-833a-63ca2b04aa9b"
+        },
+        {
+          "type": "route",
+          "uuid": "842c6e50-2bc4-4d2f-908e-478a5ce1d560"
+        },
+        {
+          "type": "route",
+          "uuid": "7f67c189-feb5-4b70-b8f4-ac2975a720a8"
+        },
+        {
+          "type": "route",
+          "uuid": "65769b5f-6faa-4064-8c39-98a3158753cf"
+        },
+        {
+          "type": "route",
+          "uuid": "49f61c48-a63f-4786-9e51-52f2a576ed07"
+        },
+        {
+          "type": "route",
+          "uuid": "be1a7fe9-eed7-4b8d-8e7d-c12600a52b80"
+        },
+        {
+          "type": "route",
+          "uuid": "d854d346-a3fb-45d5-8ff7-da628a0af2f7"
+        },
+        {
+          "type": "route",
+          "uuid": "ddb97ac8-5fc8-41f9-9d53-cbc6997c407d"
+        },
+        {
+          "type": "route",
+          "uuid": "f47b6ce2-24d4-401e-8568-5ae2e7ee6077"
+        }
+      ]
+    },
+    {
+      "uuid": "02ff10c6-ee39-4153-aff1-f66081984b82",
+      "name": "Occupational Licenses",
+      "children": [
+        {
+          "type": "route",
+          "uuid": "3b8b9615-8428-4986-ba58-e3d1fcddec61"
+        },
+        {
+          "type": "route",
+          "uuid": "261f5b58-5aea-49db-8606-1a9d4a5427bb"
+        },
+        {
+          "type": "route",
+          "uuid": "81579408-5556-4864-b1bb-a0f0cdd85aa4"
+        },
+        {
+          "type": "route",
+          "uuid": "9a9c4083-fe80-474a-b829-ef49c15ab611"
+        }
+      ]
+    },
+    {
+      "uuid": "f1748812-2277-4c8e-a33d-1fcf3b59f608",
+      "name": "Social  Insurance",
+      "children": [
+        {
+          "type": "route",
+          "uuid": "9ff539a0-96bd-4e55-a6c3-391f868761c2"
+        },
+        {
+          "type": "route",
+          "uuid": "c3bdad0b-b319-49f1-8c86-f19b0aae1064"
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "uuid": "20567f05-89ee-4286-84bf-6fe42bfa8b6b",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur/v1/overview/insurance",
+      "responses": [
+        {
+          "uuid": "2014ef77-3a33-47c2-ab63-23978784d39d",
+          "body": "{\n  \"isInsured\": true,\n  \"explanation\": \"Testing\",\n  \"from\": \"current date\",\n  \"status\": {\n    \"display\": \"test status\",\n    \"code\": \"ALM\"\n  },\n  \"maximumPayment\": 80,\n  \"refundDate\": \"2030-05-18T00:00:00.000Z\",\n  \"ehicCardExpiryDate\": \"2030-05-18T00:00:00.000Z\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "1b1fc103-c381-4b64-ba10-7ec148bf8150",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur/v1/dentists/current",
+      "responses": [
+        {
+          "uuid": "b969ece2-003a-4df9-9b27-3577d554e7c8",
+          "body": "{\n  \"id\": 123,\n  \"name\": \"Ósvikinn læknir\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "d2ef4413-a485-4c97-abb3-9b320a9b3c95",
+      "type": "http",
+      "documentation": "",
+      "method": "post",
+      "endpoint": "r1/IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur/v1/dentists/1010101/register",
+      "responses": [
+        {
+          "uuid": "3c6dfc56-0e99-4eba-80f9-192ad963d857",
+          "body": "",
+          "latency": 0,
+          "statusCode": 201,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "aff5ef2b-b7ff-40ef-b6af-5e53db60494c",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur/v1/dentists/bills",
+      "responses": [
+        {
+          "uuid": "4a38059c-7120-458b-9a31-91d7eb779713",
+          "body": "[\n  {\n    \"number\": 123,\n    \"amount\": 456,\n    \"coveredAmount\": 789,\n    \"date\": \"2023-11-29T00:00:00.000Z\",\n    \"refundDate\": \"2023-11-29T00:00:00.000Z\"\n  },\n  {\n    \"number\": 10000,\n    \"amount\": 7979,\n    \"coveredAmount\": 6868,\n    \"date\": \"2023-04-18T00:00:00.000Z\",\n    \"refundDate\": \"2023-05-18T00:00:00.000Z\"\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "4db80175-b387-47e6-a785-c401f3356fb3",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur/v1/dentists",
+      "responses": [
+        {
+          "uuid": "dfc1fa15-8029-43fa-b794-59e83fe93f2e",
+          "body": "{\n  \"dentists\": [\n    {\n      \"id\": 123,\n      \"name\": \"Ósvikinn læknir\",\n      \"practices\": [\n        {\n          \"practice\": \"Alvöru heilsgæsla ehf\",\n          \"address\": \"Ekki feikgata 18\",\n          \"region\": \"Langtíburtistan\",\n          \"postalCode\": \"999\"\n        }\n      ]\n    },\n    {\n      \"id\": 1010101,\n      \"name\": \"Skottulæknir\",\n      \"practices\": [\n        {\n          \"practice\": \"Inn í hól 2\",\n          \"address\": \"Uppáhæð\",\n          \"region\": \"Kópasker\",\n          \"postalCode\": \"670\"\n        }\n      ]\n    }\n  ],\n  \"pageInfo\": {\n    \"hasPreviousPage\": false,\n    \"hasNextPage\": false\n  },\n  \"totalCount\": 2\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "9a21bd65-7db7-4a17-ab2e-88769a5a22fe",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur/v1/healthcenters",
+      "responses": [
+        {
+          "uuid": "63262c40-e531-4ecb-ab0b-f33bf6303a33",
+          "body": "{\n  \"healthCenters\": [\n    {\n      \"id\": 123,\n      \"url\": \"www.alvoru-docs.au\",\n      \"name\": \"Ekki gildra ehf\",\n      \"address\": \"Annar álfasteinn til vinstri\",\n      \"city\": \"Rauðhólar 25\",\n      \"region\": \"Álfaskeið\",\n      \"waitlistRegistration\": false,\n      \"dateFrom\": \"2023-11-29T00:00:00.000Z\",\n      \"postalCode\": \"999\"\n    },\n    {\n      \"id\": 987,\n      \"url\": \"doc-ock.oc\",\n      \"name\": \"Octavius enterprises\",\n      \"address\": \"High street\",\n      \"city\": \"New yahk citeh\",\n      \"region\": \"Hrunamannahreppur\",\n      \"waitlistRegistration\": false,\n      \"dateFrom\": \"2023-11-29T00:00:00.000Z\",\n      \"postalCode\": \"129\"\n    }\n  ],\n  \"pageInfo\": {\n    \"hasPreviousPage\": false,\n    \"hasNextPage\": false\n  },\n  \"totalCount\": 2\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "03ec90b1-5004-4e53-ac6d-0893cee158bd",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur/v1/healthcenters/history",
+      "responses": [
+        {
+          "uuid": "ecefe105-3d42-41b3-a5a6-18f5f0be411a",
+          "body": "[\n  {\n    \"dateFrom\": \"2023-11-29T00:00:00.000Z\",\n    \"dateTo\": \"2023-11-30T00:00:00.000Z\",\n    \"registrationType\": \"kvef\",\n    \"registrationTypeCode\": 1,\n    \"healthCenter\": {\n      \"healthCenter\": \"Ekki gildra ehf\",\n      \"url\": \"www.alvoru-docs.au\",\n      \"doctor\": \"Hr. Doktor\"\n    }\n  },\n  {\n    \"dateFrom\": \"2023-11-05T00:00:00.000Z\",\n    \"dateTo\": \"2023-11-05T00:00:00.000Z\",\n    \"registrationType\": \"svo kvefaður omg\",\n    \"registrationTypeCode\": 2,\n    \"healthCenter\": {\n      \"healthCenter\": \"Ekki gildra ehf\",\n      \"url\": \"www.alvoru-docs.au\",\n      \"doctor\": \"Doktor læknir md.\"\n    }\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "ab44c0fd-16a3-4978-8a4c-de45ff63674d",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur/v1/healthcenters/current",
+      "responses": [
+        {
+          "uuid": "f5d6e9ae-bbb9-4365-9922-2c4c5348ee51",
+          "body": "{\n  \"healthCenter\": \"Dýraspítalinn Víðidal\",\n  \"url\": \"heal-ur-pets.org\",\n  \"doctor\": \"Sámur Læknir, md., góður strákur\",\n  \"canRegister\": true\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "ff7148a1-a583-4d74-978a-6ccd7e9145e2",
+      "type": "http",
+      "documentation": "",
+      "method": "post",
+      "endpoint": "r1/IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur/v1/healthcenters/123/register",
+      "responses": [
+        {
+          "uuid": "54abae43-e3b3-4a72-8beb-1421e9da0d0d",
+          "body": "{\n  \"healthCenter\": \"Dýraspítalinn Víðidal\",\n  \"url\": \"heal-ur-pets.org\",\n  \"doctor\": \"Sámur Læknir, md., góður strákur\",\n  \"canRegister\": true\n}",
+          "latency": 0,
+          "statusCode": 201,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "fc0a286b-f05f-4ee5-8211-b03fe0b8cdce",
+      "type": "http",
+      "documentation": "",
+      "method": "post",
+      "endpoint": "r1/IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur/v1/healthcenters/987/register",
+      "responses": [
+        {
+          "uuid": "3c2fa59c-9780-45fa-91a3-8086f575d53e",
+          "body": "",
+          "latency": 0,
+          "statusCode": 201,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "a093ca6c-b98a-4c79-b132-37f4ec686279",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1/api/v1/fasteignir",
+      "responses": [
+        {
+          "uuid": "1097e230-ebad-4f0e-b7cf-7b99836a22d9",
+          "body": "{\n  \"paging\": {\n    \"page\": 1,\n    \"pageSize\": 10,\n    \"total\": 10,\n    \"totalPages\": 1,\n    \"offset\": 0,\n    \"hasPreviousPage\": false,\n    \"hasNextPage\": false\n  },\n  \"fasteignir\": [\n    {\n      \"fasteignanumer\": \"F12345\",\n      \"sjalfgefidStadfang\": {\n        \"birtingStutt\": \"Eldfjallagata 23\",\n        \"birting\": \"Eldfjallagata 23, Siglufjörður\",\n        \"landeignarnumer\": \"123\",\n        \"sveitarfelagBirting\": \"Siglufjörður\",\n        \"postnumer\": \"580\",\n        \"stadfanganumer\": \"88\"\n      }\n    }\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "7c87fab1-bc2f-4ca8-a51f-9e68b1f7baa2",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1/api/v1/fasteignir/12345",
+      "responses": [
+        {
+          "uuid": "491fc712-8a6a-4dfc-bb0c-7cb09abb9577",
+          "body": "{\n  \"fasteignanumer\": \"F12345\",\n  \"sjalfgefidStadfang\": {\n    \"stadfanganumer\": 1234,\n    \"landeignarnumer\": 567,\n    \"postnumer\": 113,\n    \"sveitarfelagBirting\": \"Reykjavík\",\n    \"birting\": \"Reykjavík\",\n    \"birtingStutt\": \"RVK\"\n  },\n  \"fasteignamat\": {\n    \"gildandiFasteignamat\": 50000000,\n    \"fyrirhugadFasteignamat\": 55000000,\n    \"gildandiMannvirkjamat\": 30000000,\n    \"fyrirhugadMannvirkjamat\": 35000000,\n    \"gildandiLodarhlutamat\": 20000000,\n    \"fyrirhugadLodarhlutamat\": 25000000,\n    \"gildandiAr\": 2024,\n    \"fyrirhugadAr\": 2025\n  },\n  \"landeign\": {\n    \"landeignarnumer\": \"123456\",\n    \"lodamat\": 75000000,\n    \"notkunBirting\": \"Íbúðarhúsalóð\",\n    \"flatarmal\": \"300000\",\n    \"flatarmalEining\": \"m²\"\n  },\n  \"thinglystirEigendur\": {\n    \"thinglystirEigendur\": [\n      {\n        \"nafn\": \"Jón Jónsson\",\n        \"kennitala\": \"2222222222\",\n        \"eignarhlutfall\": 0.5,\n        \"kaupdagur\": \"2024-10-15T00:00:00.000Z\",\n        \"heimildBirting\": \"A+\"\n      },\n      {\n        \"nafn\": \"Jóna Jónasdóttir\",\n        \"kennitala\": \"3333333333\",\n        \"eignarhlutfall\": 0.5,\n        \"kaupdagur\": \"2024-10-15T00:00:00.000Z\",\n        \"heimildBirting\": \"A+\"\n      }\n    ]\n  },\n  \"notkunareiningar\": null\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "ad26276e-7807-47b6-b4d6-8c5884837741",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10066/MMS-Protected/grade-api-v1/api/v2/public/studentAssessments/0101302399",
+      "responses": [
+        {
+          "uuid": "bd1eedf1-a9b1-439b-919d-ea8d93d31dcc",
+          "body": "{\n  \"einkunnir\": [\n    {\n      \"bekkur\": 4,\n      \"namsgreinar\": [\n        {\n          \"heiti\": \"Testlenskan\",\n          \"dagsetning\": \"1990-02-01T00:00:00.000Z\",\n          \"haefnieinkunn\": \"Glæsó\",\n          \"haefnieinkunnStada\": \"A+123\",\n          \"samtals\": {\n            \"heiti\": \"bing\",\n            \"radeinkunn\": {\n              \"einkunn\": \"99\",\n              \"heiti\": \"Raðeinkunn\",\n              \"vaegi\": 0\n            },\n            \"grunnskolaeinkunn\": {\n              \"einkunn\": \"67\",\n              \"heiti\": \"Grunnskólaeinkunn\",\n              \"vaegi\": 0\n            }\n          },\n          \"framfaraTexti\": {\n            \"einkunn\": \"Framfarir eru flottar og mikilvægar jibbí\",\n            \"heiti\": \"Framfaratexti\",\n            \"vaegi\": 0\n          },\n          \"einkunnir\": [\n            {\n              \"heiti\": \"Lesskilningur\",\n              \"radeinkunn\": {\n                \"einkunn\": \"896\",\n                \"heiti\": \"Lesskilningur, raðeinkunn\",\n                \"vaegi\": 97\n              },\n              \"grunnskolaeinkunn\": {\n                \"einkunn\": \"2\",\n                \"heiti\": \"Lesskilningur, Grunnskólaeinkunn\",\n                \"vaegi\": 97\n              }\n            },\n            {\n              \"heiti\": \"Málnotkun\",\n              \"radeinkunn\": {\n                \"einkunn\": \"896\",\n                \"heiti\": \"Málnotkun, raðeinkunn\",\n                \"vaegi\": 64\n              },\n              \"grunnskolaeinkunn\": {\n                \"einkunn\": \"2\",\n                \"heiti\": \"Málnotkun, Grunnskólaeinkunn\",\n                \"vaegi\": 965\n              }\n            }\n          ],\n          \"ordOgTalnadaemi\": {\n            \"einkunn\": \"Test svipað gott í öllum fögum\",\n            \"heiti\": \"Frammistaða í hinu og þessu\",\n            \"vaegi\": 0\n          }\n        },\n        {\n          \"heiti\": \"Stærðófræðó\",\n          \"dagsetning\": \"1650-02-01T00:00:00.000Z\",\n          \"haefnieinkunn\": \"Slæm\",\n          \"haefnieinkunnStada\": \"F--\",\n          \"samtals\": {\n            \"heiti\": \"bunrb\",\n            \"radeinkunn\": {\n              \"einkunn\": \"3\",\n              \"heiti\": \"Raðeinkunn\",\n              \"vaegi\": 0\n            },\n            \"grunnskolaeinkunn\": {\n              \"einkunn\": \"8765\",\n              \"heiti\": \"Grunnskólaeinkunn\",\n              \"vaegi\": 0\n            }\n          },\n          \"framfaraTexti\": {\n            \"einkunn\": \"Framfarir eru lit\",\n            \"heiti\": \"Framfaratexti\",\n            \"vaegi\": 0\n          },\n          \"einkunnir\": [\n            {\n              \"heiti\": \"Samlagning\",\n              \"radeinkunn\": {\n                \"einkunn\": \"88\",\n                \"heiti\": \"Samlagning, raðeinkunn\",\n                \"vaegi\": 97\n              },\n              \"grunnskolaeinkunn\": {\n                \"einkunn\": \"287692\",\n                \"heiti\": \"Samlagning, Grunnskólaeinkunn\",\n                \"vaegi\": 97\n              }\n            },\n            {\n              \"heiti\": \"Ekki gera vitlaust\",\n              \"radeinkunn\": {\n                \"einkunn\": \"89756\",\n                \"heiti\": \"Málnotkun, raðeinkunn\",\n                \"vaegi\": 64\n              },\n              \"grunnskolaeinkunn\": {\n                \"einkunn\": \"-7654\",\n                \"heiti\": \"Málnotkun, Grunnskólaeinkunn\",\n                \"vaegi\": 965\n              }\n            }\n          ],\n          \"ordOgTalnadaemi\": {\n            \"einkunn\": \"L+elegt\",\n            \"heiti\": \"Frekar\",\n            \"vaegi\": 0\n          }\n        }\n      ]\n    },\n    {\n      \"bekkur\": 9,\n      \"namsgreinar\": [\n        {\n          \"heiti\": \"Bíngó\",\n          \"dagsetning\": \"1990-02-01T00:00:00.000Z\",\n          \"haefnieinkunn\": \"Glæsó\",\n          \"haefnieinkunnStada\": \"A+123\",\n          \"samtals\": {\n            \"heiti\": \"goieo\",\n            \"radeinkunn\": {\n              \"einkunn\": \"99\",\n              \"heiti\": \"Raðeinkunn\",\n              \"vaegi\": 0\n            },\n            \"grunnskolaeinkunn\": {\n              \"einkunn\": \"67\",\n              \"heiti\": \"Grunnskólaeinkunn\",\n              \"vaegi\": 0\n            }\n          },\n          \"framfaraTexti\": {\n            \"einkunn\": \"Framfarir eru flottar og mikilvægar jibbí\",\n            \"heiti\": \"Framfaratexti\",\n            \"vaegi\": 0\n          },\n          \"einkunnir\": [\n            {\n              \"heiti\": \"Lesskilningur\",\n              \"radeinkunn\": {\n                \"einkunn\": \"896\",\n                \"heiti\": \"Lesskilningur, raðeinkunn\",\n                \"vaegi\": 97\n              },\n              \"grunnskolaeinkunn\": {\n                \"einkunn\": \"2\",\n                \"heiti\": \"Lesskilningur, Grunnskólaeinkunn\",\n                \"vaegi\": 97\n              }\n            },\n            {\n              \"heiti\": \"Málnotkun\",\n              \"radeinkunn\": {\n                \"einkunn\": \"896\",\n                \"heiti\": \"Málnotkun, raðeinkunn\",\n                \"vaegi\": 64\n              },\n              \"grunnskolaeinkunn\": {\n                \"einkunn\": \"2\",\n                \"heiti\": \"Málnotkun, Grunnskólaeinkunn\",\n                \"vaegi\": 965\n              }\n            }\n          ],\n          \"ordOgTalnadaemi\": {\n            \"einkunn\": \"Bah\",\n            \"heiti\": \"Hab\",\n            \"vaegi\": 0\n          }\n        }\n      ]\n    }\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "3b8b9615-8428-4986-ba58-e3d1fcddec61",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10066/MMS-Protected/license-api-v1/api/public/users/0101302399/licenses",
+      "responses": [
+        {
+          "uuid": "a309ddd6-e00a-4c0f-b552-48164973e871",
+          "body": "[\n  {\n    \"id\": \"123\",\n    \"issued\": \"2999-01-01T00:00:00.000Z\",\n    \"nationalId\": \"123\",\n    \"type\": \"kennari TEST\",\n    \"fullName\": \"Testi gæ\",\n    \"s3Key\": null,\n    \"contentHash\": null,\n    \"issuer\": \"Online skóli\",\n    \"country\": \"Iceland\",\n    \"created\": \"2023-01-19T12:16:07.157Z\",\n    \"modified\": \"2023-01-19T12:16:07.157Z\"\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "9ff539a0-96bd-4e55-a6c3-391f868761c2",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1/PaymentPlan",
+      "responses": [
+        {
+          "uuid": "cd23038a-6539-46ea-b36d-a829d50cc646",
+          "body": "{\n  \"totalPayment\": 61461,\n  \"subtracted\": -15,\n  \"paidOut\": 1234,\n  \"groups\": [\n    {\n      \"group\": \"Skattskyldar greiðslutegundir\",\n      \"groupId\": 10,\n      \"total\": 84,\n      \"monthTotals\": [\n        {\n          \"month\": 0,\n          \"amount\": 95630\n        }\n      ],\n      \"rows\": [\n        {\n          \"name\": \"Ellilífeyrir\",\n          \"total\": 96743826,\n          \"months\": [\n            {\n              \"month\": 0,\n              \"amount\": 2346\n            }\n          ]\n        },\n        {\n          \"name\": \"Orlofs- og desemberuppbót á ellilífeyri\",\n          \"total\": 1235464,\n          \"months\": [\n            {\n              \"month\": 0,\n              \"amount\": 15\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"group\": \"Frádráttur\",\n      \"groupId\": 20,\n      \"total\": -1350545,\n      \"monthTotals\": [\n        {\n          \"month\": 0,\n          \"amount\": -11115\n        }\n      ],\n      \"rows\": [\n        {\n          \"name\": \"Staðgreiðsla\",\n          \"total\": -1555,\n          \"months\": [\n            {\n              \"month\": 0,\n              \"amount\": -9875\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"group\": \"Ráðstöfun\",\n      \"groupId\": 30,\n      \"total\": 775,\n      \"monthTotals\": [\n        {\n          \"month\": 0,\n          \"amount\": 25252\n        }\n      ],\n      \"rows\": [\n        {\n          \"name\": \"Til greiðslu\",\n          \"total\": 333555,\n          \"months\": [\n            {\n              \"month\": 0,\n              \"amount\": 999888\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "fd94adfd-ea59-4b8b-9619-7e54a9211874",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-token-v1/api/Adr",
+      "responses": [
+        {
+          "uuid": "4fe7fb6e-2af5-465c-830a-f0867018d1b2",
+          "body": "{\n  \"kennitala\": \"123\",\n  \"fulltNafn\": \"Bubbi bílakall\",\n  \"skirteinisNumer\": \"987654321\",\n  \"faedingarDagur\": \"1930-01-01T00:00:00Z\",\n  \"rikisfang\": \"US\",\n  \"gildirTil\": \"2040-01-01T00:00:00Z\",\n  \"adrRettindi\": [\n    {\n      \"flokkur\": \"1\",\n      \"grunn\": false,\n      \"tankar\": false,\n      \"heiti\": [\n        {\n          \"flokkur\": \"1.\",\n          \"heiti\": \"Sprengifim efni og hlutir.\"\n        }\n      ]\n    },\n    {\n      \"flokkur\": \"2\",\n      \"grunn\": true,\n      \"tankar\": true,\n      \"heiti\": [\n        {\n          \"flokkur\": \"2.\",\n          \"heiti\": \"Lofttegundir.\"\n        }\n      ]\n    },\n    {\n      \"flokkur\": \"3\",\n      \"grunn\": true,\n      \"tankar\": true,\n      \"heiti\": [\n        {\n          \"flokkur\": \"3.\",\n          \"heiti\": \"Eldfimir vökvar.\"\n        }\n      ]\n    }\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "40e7ffbc-e626-42db-917f-bcd8435a01cb",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": " r1/IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-token-v1/api/Vinnuvela",
+      "responses": [
+        {
+          "uuid": "d5e510fd-8359-4484-8bff-66a17c98e902",
+          "body": "{\n  \"kennitala\": \"123\",\n  \"fulltNafn\": \"Bubbi gröfukall\",\n  \"skirteinisNumer\": \"987654321\",\n  \"fyrstiUtgafuDagur\": \"1980-05-05T00:00:00Z\",\n  \"utgafuStadur\": \"Reykjavík 11-12-2019\",\n  \"utgafuLand\": \"Ísland\",\n  \"okuskirteinisNumer\": \"34 000 005\",\n  \"vinnuvelaRettindi\": [\n    {\n      \"flokkur\": \"A\",\n      \"stjorna\": \"2080-01-01T00:00:00Z\",\n      \"kenna\": \"2080-01-01T00:00:00Z\",\n      \"fulltHeiti\": \"Byggingarkranar.\",\n      \"stuttHeiti\": \"Byggingarkranar.\"\n    },\n    {\n      \"flokkur\": \"B\",\n      \"stjorna\": \"2080-01-01T00:00:00Z\",\n      \"kenna\": \"2080-01-01T00:00:00Z\",\n      \"fulltHeiti\": \"Grindabómukranar.\",\n      \"stuttHeiti\": \"Grindabómukranar.\"\n    }\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "dc4f81a9-c735-4a0f-801c-365f3cc61cfa",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur/v1/ehic/card",
+      "responses": [
+        {
+          "uuid": "35944477-a6f7-447e-8d33-8bbc7abf5f8a",
+          "body": "{\n  \"cardHolderName\": \"Bubbi sjúklingskall\",\n  \"cardHolderNationalId\": \"123\",\n  \"cardNumber\": \"987654321\",\n  \"expiryDate\": \"2050-05-05T00:00:00Z\",\n  \"issued\": \"1980-05-05T00:00:00Z\",\n  \"sent\": \"2000-05-05T00:00:00Z\",\n  \"hasTempCard\": false\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "02bbc9d5-a819-499a-bb61-92a7807e83cf",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10007/SJUKRA-Protected/ehic/v1/ehic/card/pdf",
+      "responses": [
+        {
+          "uuid": "f5ec5a8c-a720-487f-9a74-d9a1e8989cf7",
+          "body": "{\n  \"data\": \"bing\",\n  \"fileName\": \"beng\",\n  \"contentType\": \"bung\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "842c6e50-2bc4-4d2f-908e-478a5ce1d560",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Cloud-Protected/Forskraning-V1/api/v1/identitydocument/identitydocument",
+      "responses": [
+        {
+          "uuid": "56fcee6c-5b82-477e-bf8c-c358b849f02e",
+          "body": "[\n  {\n    \"productionRequestID\": \"67u589nj\",\n    \"number\": \"6842\",\n    \"type\": \"Good\",\n    \"verboseType\": \"Vegabréf\",\n    \"subType\": \"Well\",\n    \"status\": \"Cool\",\n    \"displayFirstName\": \"Bubbi\",\n    \"displayLastName\": \"Flugkall\",\n    \"mrzFirstName\": \"Búbbi\",\n    \"mrzLastName\": \"Flugman\",\n    \"sex\": \"X\",\n    \"numberWithType\": \"6842Good\",\n    \"expiryStatus\": null,\n    \"issuingDate\": \"1980-05-05T00:00:00Z\",\n    \"expirationDate\": \"2050-05-05T00:00:00Z\"\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "65769b5f-6faa-4064-8c39-98a3158753cf",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10008/TR-Protected/oryrki-v1/faskirteini",
+      "responses": [
+        {
+          "uuid": "94e8eee0-b79e-4a71-a3e1-8323bd3e7c2c",
+          "body": "{\n  \"kennitala\": \"987654321\",\n  \"nafn\": \"Bubbi kall\",\n  \"gildirfra\": \"2023-03-08T00:00:00Z\",\n  \"gildirtil\": \"2025-10-",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "24a0a001-6830-49f3-833a-63ca2b04aa9b",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur/api/StaediskortaMal/GetStaediskortToken",
+      "responses": [
+        {
+          "uuid": "79f95e67-db27-4c93-b938-f87ce893f26e",
+          "body": "{\n  \"malsnumer\": \"987654321\",\n  \"nafn\": \"Bubbi bilakall\",\n  \"kennitala\": \"123\",\n  \"tegundMalsadila\": \"gervikall\",\n  \"undirtegund\": \"mjög gervi\",\n  \"tegund\": \"gervi\",\n  \"stada\": \"gervileg\",\n  \"malalok\": \"til staðar\",\n  \"mottekidDagsetning\": \"1980-05-05T00:00:00Z\",\n  \"malalokDagsetning\": \"2000-05-05T00:00:00Z\",\n  \"utgafudagur\": \"1999-05-05T00:00:00Z\",\n  \"gildistimi\": \"2050-05-05T00:00:00Z\",\n  \"utgefandi\": \"Sjúkra\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "7f67c189-feb5-4b70-b8f4-ac2975a720a8",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Cloud-Protected/Forskraning-V1/api/v1/identitydocument/childrenidentitydocument",
+      "responses": [
+        {
+          "uuid": "5ec37cb1-19aa-4fde-b816-febe818449be",
+          "body": "[\n  {\n    \"childrenSSN\": \"784298\",\n    \"childrenName\": \"Búbbert jr\",\n    \"secondParent\": \"Bubb\",\n    \"secondParentName\": \"Bubbína\",\n    \"identityDocumentResponses\": [\n      {\n        \"productionRequestID\": \"67u589nj\",\n        \"number\": \"21111111\",\n        \"type\": \"Good\",\n        \"verboseType\": \"Vegabréf\",\n        \"subType\": \"X - \",\n        \"status\": \"Cool\",\n        \"displayFirstName\": \"Búbbert\",\n        \"displayLastName\": \"Jr\",\n        \"mrzFirstName\": \"Búbbert\",\n        \"mrzLastName\": \"Flugbarn\",\n        \"issuingDate\": \"1980-05-05T00:00:00Z\",\n        \"expirationDate\": \"2050-05-05T00:00:00Z\"\n      }\n    ]\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "49f61c48-a63f-4786-9e51-52f2a576ed07",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api/permit_hunting/",
+      "responses": [
+        {
+          "uuid": "3242dc01-7a84-4101-9fc4-6d551398ab94",
+          "body": "{\n  \"personid\": \"123\",\n  \"personname\": \"Bubbi veiðikall\",\n  \"address\": \"Gervistræti\",\n  \"postal_code\": \"000\",\n  \"postal_address\": \"Ótilgreint\",\n  \"permit_category\": \"Almennt veiðikort\",\n  \"permit_number\": \"987654321\",\n  \"permit_validity\": \"Í gildi\",\n  \"valid_from\": \"2024-04-01T00:00:00Z\",\n  \"valid_to\": \"2025-03-31T23:59:59Z\",\n  \"permit_issued\": \"2025-04-01T16:33:00Z\",\n  \"permit_renew_link\": \"https://ust.is/veidimenn\",\n  \"permit_for\": [\n    \"fuglum\",\n    \"refum og minkum\",\n    \"hreindýrum\"\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "be1a7fe9-eed7-4b8d-8e7d-c12600a52b80",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5/api/drivinglicense/v5",
+      "responses": [
+        {
+          "uuid": "37957670-66a5-49b0-8bf8-3ffd8ab8bed6",
+          "body": "{\n  \"id\": 987654321,\n  \"temporaryLicense\": true,\n  \"name\": \"Bubbi bílakall\",\n  \"socialSecurityNumber\": \"9742\",\n  \"birthPlace\": \"Gerviholt 8\",\n  \"birthPlaceName\": \"Bingotown\",\n  \"publishDate\": \"2017-04-22T15:30:23Z\",\n  \"dateValidTo\": \"2030-04-22T15:30:23Z\",\n  \"publishPlaceNr\": 12374,\n  \"publishPlaceName\": \"Keilukvos\",\n  \"categories\": [\n    {\n      \"id\": 68446262,\n      \"nr\": \"A\",\n      \"categoryName\": \"Big big trucks\",\n      \"publishDate\": \"2017-04-22T15:30:23Z\",\n      \"dateTo\": \"2030-04-22T15:30:23Z\",\n      \"validToCode\": 6140897,\n      \"validToText\": \"28 sept\",\n      \"comment\": \"Vroom vroom\"\n    }\n  ],\n  \"comments\": [\n    {\n      \"id\": 9,\n      \"nr\": \"9\",\n      \"comment\": \"Níu\"\n    }\n  ],\n  \"photoId\": 673,\n  \"signatureId\": 8265,\n  \"photo\": {\n    \"id\": 777,\n    \"socialSecurityNumber\": \"9742\",\n    \"dateRegistered\": \"2017-04-22T15:30:23Z\",\n    \"quality\": 0,\n    \"image\": \"abc\",\n    \"program\": 1,\n    \"type\": 1\n  },\n  \"signature\": {\n    \"id\": 777,\n    \"image\": \"abc\",\n    \"socialSecurityNumber\": \"9742\",\n    \"dateRegistered\": \"2017-04-22T15:30:23Z\",\n    \"quality\": 0,\n    \"program\": 1,\n    \"type\": 1\n  }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "d854d346-a3fb-45d5-8ff7-da628a0af2f7",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1/api/FirearmApplication/LicenseInfo",
+      "responses": [
+        {
+          "uuid": "2bb97ff0-b793-484b-8427-031a816babd9",
+          "body": "{\n  \"ssn\": \"9742\",\n  \"name\": \"Bubbi byssukall\",\n  \"expirationDate\": \"2030-04-22T15:30:23Z\",\n  \"issueDate\": \"2017-04-22T15:30:23Z\",\n  \"licenseNumber\": \"987654321\",\n  \"qualifications\": \"ABCD\",\n  \"collectorLicenseExpirationDate\": \"2017-04-22T15:30:23Z\",\n  \"address\": \"Hvergigata 8\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "ddb97ac8-5fc8-41f9-9d53-cbc6997c407d",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1/api/FirearmApplication/PropertyInfo",
+      "responses": [
+        {
+          "uuid": "10387c6c-8199-40a9-a1e5-bd9b17f1714e",
+          "body": "{\n  \"licenseNumber\": \"987654321\",\n  \"properties\": [\n    {\n      \"category\": \"A\",\n      \"typeOfFirearm\": \"cannon\",\n      \"name\": \"Howitzer\",\n      \"serialNumber\": \"1337\",\n      \"caliber\": \"vverylarge\",\n      \"landsnumer\": \"999\",\n      \"limitation\": \"aint no brakes\"\n    },\n    {\n      \"category\": \"B\",\n      \"typeOfFirearm\": \"laserrailgun\",\n      \"name\": \"Macguffin\",\n      \"serialNumber\": \"010101\",\n      \"caliber\": \"2cm\",\n      \"landsnumer\": \"9123\",\n      \"limitation\": \"imagination\"\n    }\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "f47b6ce2-24d4-401e-8568-5ae2e7ee6077",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1/api/FirearmApplication/Categories",
+      "responses": [
+        {
+          "uuid": "77350669-620d-4fa1-b1cf-299715dd7c3e",
+          "body": "{\n  \"Flokkur A\": \"1. Haglabyssum nr. 12 og minni, þó eigi sjálfvirkum eða hálfsjálfvirkum.\\n2. Rifflum cal. 22 (long rifle og minni), þ.m.t. loftrifflum, þó eigi sjálfvirkum eða hálfsjálfvirkum.\",\n  \"Flokkur B\": \"Leyfi fyrir rifflum með hlaupvídd allt að cal. 30 og hálfsjálfvirkum haglabyssum skal ekki veitt nema sérstakar ástæður mæli með því, enda hafi umsækjandi haft skotvopnaleyfi í a.m.k. eitt ár.\",\n  \"Flokkur C\": \"Leyfi fyrir skotvopnum sem sérstaklega eru ætluð til minkaveiða eða meindýraeyðingar (t.d. skammbyssur fyrir haglaskot) má aðeins veita að fenginni umsögn veiðistjóra.\",\n  \"Flokkur D\": \"Leyfi sem sérstaklega er veitt einstaklingi eða skotfélagi fyrir skammbyssum vegna íþróttaskotfimi sbr. 11. gr.\",\n  \"Flokkur E\": \"Leyfi lögreglustjóra til að hlaða skothylki til eigin nota í þau skotvopn sem viðkomandi hefur leyfi fyrir.\",\n  \"Flokkur S\": \"Söfnunarleyfi sbr. 20. gr. Reglugerð um skotvopn, skotfæri o.fl.\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "261f5b58-5aea-49db-8606-1a9d4a5427bb",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir/StarfsleyfiAMinumSidum",
+      "responses": [
+        {
+          "uuid": "f2b29e6e-056d-476e-ac93-2c87e5f58ad7",
+          "body": "[\n  {\n    \"logadili_ID\": \"019\",\n    \"kennitala\": \"1234\",\n    \"nafn\": \"Buggi\",\n    \"starfsstett\": \"Bebeb\",\n    \"leyfi\": \"Starfsleyfi\",\n    \"leyfisnumer\": \"13\",\n    \"gildir_Fra\": \"1978-09-13T00:00:00\",\n    \"gildir_TIl\": \"2030-09-13T00:00:00\",\n    \"id\": \"1337\",\n    \"stada\": \"góð bara, takk\"\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "81579408-5556-4864-b1bb-a0f0cdd85aa4",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur/RettindiFyrirIslandIs/RettindiFyrirIslandIs",
+      "responses": [
+        {
+          "uuid": "92b86f1f-4d87-4009-bfb5-4dc6665ab280",
+          "body": "{\n  \"leyfi\": [\n    {\n      \"audkenni\": \"1010101\",\n      \"titill\": \"Heimagisting - Test\",\n      \"utgafudagur\": \"2022-07-11T14:40:36\",\n      \"utgefandi\": {\n        \"audkenni\": \"41\",\n        \"titill\": \"Sýslumaðurinn á höfuðborgarsvæðinu\"\n      },\n      \"stada\": {\n        \"titill\": \"Útrunnið\",\n        \"kodi\": \"EXPIRED\"\n      }\n    },\n    {\n      \"audkenni\": \"123\",\n      \"titill\": \"Verðbréfaréttindi\",\n      \"utgafudagur\": \"2023-03-29T22:54:26\",\n      \"utgefandi\": {\n        \"audkenni\": \"41\",\n        \"titill\": \"Sýslumaðurinn á höfuðborgarsvæðinu\"\n      },\n      \"stada\": {\n        \"titill\": \"Í gildi\",\n        \"kodi\": \"VALID\"\n      }\n    },\n    {\n      \"audkenni\": \"789\",\n      \"titill\": \"Heimagisting - Test2\",\n      \"utgafudagur\": null,\n      \"utgefandi\": {\n        \"audkenni\": \"41\",\n        \"titill\": \"Sýslumaðurinn á höfuðborgarsvæðinu\"\n      },\n      \"stada\": {\n        \"titill\": \"Í vinnslu\",\n        \"kodi\": \"INPROGRESS\"\n      }\n    }\n  ],\n  \"villur\": {\n    \"kodi\": null,\n    \"skilabod\": null\n  }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "9a9c4083-fe80-474a-b829-ef49c15ab611",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur/RettindiFyrirIslandIs/RettindiFyrirIslandIs/123",
+      "responses": [
+        {
+          "uuid": "c7ebea65-747e-4464-9f8a-68e4e5e1a9e3",
+          "body": "{\n  \"nafn\": \"Bubbi verðbréfakall\",\n  \"leyfi\": {\n    \"audkenni\": \"123\",\n    \"titill\": \"Verðbréfaréttindi\",\n    \"utgafudagur\": \"1999-12-12T01:01:01\",\n    \"utgefandi\": {\n      \"audkenni\": \"999\",\n      \"titill\": \"Sýslukall\"\n    },\n    \"stada\": {\n      \"titill\": \"Í vinnslu\",\n      \"kodi\": \"INPROGRESS\"\n    }\n  },\n  \"svid\": [\n    {\n      \"heiti\": \"Gildir til\",\n      \"gildi\": \"1.1.2999\",\n      \"tegund\": \"date\"\n    }\n  ],\n  \"textar\": {\n    \"haus\": \"Verðbréfaréttindi abc\",\n    \"fotur\": \"blablabla\"\n  },\n  \"adgerdir\": [\n    {\n      \"tegund\": \"postholf\",\n      \"titill\": \"test pósthólf\",\n      \"slod\": \"123xyz\"\n    },\n    {\n      \"tegund\": \"link\",\n      \"titill\": \"Test link\",\n      \"slod\": \"https://example.org\"\n    }\n  ],\n  \"skrar\": null,\n  \"villur\": null\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "c3bdad0b-b319-49f1-8c86-f19b0aae1064",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1/PaymentPlan/legitimatepayments",
+      "responses": [
+        {
+          "uuid": "701a4736-8613-4abc-856d-830cd29fa8f5",
+          "body": "{\n  \"nextPayment\": 1587,\n  \"previousPayment\": 98671498\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    }
+  ],
+  "rootChildren": [
+    {
+      "type": "folder",
+      "uuid": "c3275fb8-3e44-4a63-a1b4-a1bd5ef54fed"
+    },
+    {
+      "type": "folder",
+      "uuid": "4e78eb48-9b40-4adf-8a3a-b6b32f93f5fa"
+    },
+    {
+      "type": "folder",
+      "uuid": "5224e13b-be8e-4665-a7f9-2f5f53f8e0a5"
+    },
+    {
+      "type": "folder",
+      "uuid": "f5bc18a5-1732-4fa4-875e-60e12099fe92"
+    },
+    {
+      "type": "folder",
+      "uuid": "02ff10c6-ee39-4153-aff1-f66081984b82"
+    },
+    {
+      "type": "folder",
+      "uuid": "f1748812-2277-4c8e-a33d-1fcf3b59f608"
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "cors": true,
+  "headers": [
+    {
+      "key": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "key": "Access-Control-Allow-Origin",
+      "value": "*"
+    },
+    {
+      "key": "Access-Control-Allow-Methods",
+      "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+    },
+    {
+      "key": "Access-Control-Allow-Headers",
+      "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+    }
+  ],
+  "proxyReqHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyResHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "data": [],
+  "callbacks": []
+}

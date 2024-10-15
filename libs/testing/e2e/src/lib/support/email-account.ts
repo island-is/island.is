@@ -139,8 +139,8 @@ const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
           const mail = await simpleParser(
             messages[messages.length - 1].parts[0].body,
           )
-          debug(mail.subject)
-          debug(mail.text)
+          debug(mail.subject ?? 'No subject')
+          debug(mail.text ?? 'No text')
 
           // and returns the main fields
           return {
