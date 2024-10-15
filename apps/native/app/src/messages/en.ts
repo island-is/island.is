@@ -594,6 +594,9 @@ export const en: TranslatedMessages = {
     'You are opening Island.is in a browser. Do you want to create a passkey to sign in automatically with the app?',
   'passkeys.headingSubtitle':
     'Do you want to create a passkey to sign in automatically with the app?',
+  'passkeys.settings':
+    'In settings it is always possible to delete or add a passkey',
+  'passkeys.furtherInformation': 'More about passkeys',
   'passkeys.createButton': 'Create a passkey',
   'passkeys.skipButton': 'Skip',
   'passkeys.errorRegistering': 'Error',

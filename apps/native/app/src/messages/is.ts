@@ -594,6 +594,9 @@ export const is = {
     'Þú ert að fara að opna Ísland.is í vafra. Viltu búa til aðgangslykil til að skrá þig inn sjálfkrafa með appinu?',
   'passkeys.headingSubtitle':
     'Viltu búa til aðgangslykil til að skrá þig inn sjálfkrafa með appinu?',
+  'passkeys.settings':
+    'Undir stillingum er alltaf hægt að eyða eða búa til aðgangslykil',
+  'passkeys.furtherInformation': 'Nánar um aðgangslykla',
   'passkeys.createButton': 'Búa til aðgangslykil',
   'passkeys.skipButton': 'Sleppa',
   'passkeys.errorRegistering': 'Villa',
