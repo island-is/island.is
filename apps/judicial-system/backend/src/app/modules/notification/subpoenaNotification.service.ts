@@ -86,6 +86,35 @@ export class SubpoenaNotificationService extends BaseNotificationService {
   ): Promise<unknown> {
     const theCase = await this.getCase(subpoenaId)
 
+    const hasSentSuccessfulServiceNotification = Boolean(
+      this.hasSentNotification(
+        NotificationType.SERVICE_SUCCESSFUL,
+        theCase.notifications,
+      ) && notificationType === NotificationType.SERVICE_SUCCESSFUL,
+    )
+
+    const hasSentFailedServiceNotification = Boolean(
+      this.hasSentNotification(
+        NotificationType.SERVICE_FAILED,
+        theCase.notifications,
+      ) && notificationType === NotificationType.SERVICE_FAILED,
+    )
+
+    const hasSendDefendantSelectedDefenderNotification = Boolean(
+      this.hasSentNotification(
+        NotificationType.DEFENDANT_SELECTED_DEFENDER,
+        theCase.notifications,
+      ) && notificationType === NotificationType.DEFENDANT_SELECTED_DEFENDER,
+    )
+
+    if (
+      hasSentSuccessfulServiceNotification ||
+      hasSentFailedServiceNotification ||
+      hasSendDefendantSelectedDefenderNotification
+    ) {
+      return
+    }
+
     await this.refreshFormatMessage()
 
     const [subject, body] = this.getEmailContents(notificationType)
@@ -101,6 +130,8 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     })
 
     return this.sendEmails(
+      theCase.id,
+      notificationType,
       formattedSubject,
       formattedBody,
       theCase.judge?.name,
@@ -110,7 +141,9 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     )
   }
 
-  private sendEmails(
+  private async sendEmails(
+    caseId: string,
+    notificationType: subpoenaNotificationType,
     subject: string,
     body: string,
     judgeName?: string,
@@ -139,7 +172,9 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       )
     }
 
-    return Promise.all(promises)
+    const recipients = await Promise.all(promises)
+
+    return this.recordNotification(caseId, notificationType, recipients)
   }
 
   async sendNotification(
