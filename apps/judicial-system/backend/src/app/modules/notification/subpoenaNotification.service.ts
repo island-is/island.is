@@ -181,7 +181,10 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     subpoena: Subpoena,
   ): Promise<DeliverResponse> {
     try {
-      this.sendSubpoenaNotification(type as subpoenaNotificationType, subpoena)
+      await this.sendSubpoenaNotification(
+        type as subpoenaNotificationType,
+        subpoena,
+      )
     } catch (error) {
       this.logger.error('Failed to send notification', error)
 
