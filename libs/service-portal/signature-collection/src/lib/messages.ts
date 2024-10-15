@@ -223,7 +223,7 @@ export const m = defineMessages({
   },
   coOwners: {
     id: 'sp.signatureCollection:coOwners',
-    defaultMessage: 'Umboðsaðilar:',
+    defaultMessage: 'Umsjónaraðilar:',
     description: '',
   },
   copyLink: {
@@ -274,6 +274,12 @@ export const m = defineMessages({
   paperSigneesHeader: {
     id: 'sp.signatureCollection:paperSigneesHeader',
     defaultMessage: 'Skrá meðmæli af blaði',
+    description: '',
+  },
+  paperSigneesTooltip: {
+    id: 'sp.signatureCollection:paperSigneesTooltip',
+    defaultMessage:
+      'Athugið að ógild meðmæli skrást inn en teljast ekki með í heildartölu meðmæla. Dæmi slegnar eru inn 10 kennitölur en kerfið telur aðeins 8 gildar.',
     description: '',
   },
   paperSigneesClearButton: {
@@ -352,6 +358,11 @@ export const m = defineMessages({
   supervisors: {
     id: 'sp.signatureCollection:supervisors',
     defaultMessage: 'Umsjónaraðilar',
+    description: '',
+  },
+  supervisorsTooltip: {
+    id: 'sp.signatureCollection:supervisorsTooltip',
+    defaultMessage: 'Umsjónaraðilar hafa aðgang að öllum upplýsingum safnananna en geta ekki eytt söfnununum.',
     description: '',
   },
   add: {

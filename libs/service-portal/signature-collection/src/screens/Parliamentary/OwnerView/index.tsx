@@ -187,7 +187,7 @@ const OwnerView = ({
         >
           <Text variant="h4">
             {formatMessage(m.supervisors) + ' '}
-            <Tooltip placement="right" text="info" color="blue400" />
+            <Tooltip placement="right" text={formatMessage(m.supervisorsTooltip)} color="blue400" />
           </Text>
         </Box>
         <T.Table>
