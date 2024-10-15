@@ -30,10 +30,10 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useLocale } from '../../hooks/use-locale'
 import { toggleAction } from '../../lib/post-mail-action'
 import { authStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
-import { usePreferencesStore } from '../../stores/preferences-store'
 import { ButtonRegistry } from '../../utils/component-registry'
 import { getButtonsForActions } from './utils/get-buttons-for-actions'
 import { useBrowser } from '../../lib/use-browser'
@@ -230,7 +230,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const client = useApolloClient()
   const intl = useIntl()
   const htmlStyles = useHtmlStyles()
-  const { locale } = usePreferencesStore()
   const { openBrowser } = useBrowser()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   const [accessToken, setAccessToken] = useState<string>()
@@ -293,7 +292,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         // If the document is urgent we need to check if the user needs to confirm reception of it before fetching the document data
         includeDocument: shouldIncludeDocument,
       },
-      locale: locale === 'is-IS' ? 'is' : 'en',
+      locale: useLocale(),
     },
     fetchPolicy: 'no-cache',
     onCompleted: async (data) => {
