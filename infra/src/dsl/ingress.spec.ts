@@ -182,4 +182,34 @@ describe('Ingress definitions', () => {
       },
     })
   })
+  it('Global auth annotation not set if missing', async () => {
+    const sut = service('api').ingress({
+      primary: {
+        public: false,
+        host: { dev: 'a', staging: 'a', prod: 'a' },
+        paths: ['/api'],
+        extraAnnotations: {
+          dev: {},
+          staging: {},
+          prod: {},
+        },
+      },
+    })
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+
+    expect(result.serviceDef[0].ingress).toEqual({
+      'primary-alb': {
+        annotations: {
+          'kubernetes.io/ingress.class': 'nginx-internal-alb',
+          'nginx.ingress.kubernetes.io/service-upstream': 'true',
+        },
+        hosts: [{ host: 'a.internal.staging01.devland.is', paths: ['/api'] }],
+      },
+    })
+  })
 })
