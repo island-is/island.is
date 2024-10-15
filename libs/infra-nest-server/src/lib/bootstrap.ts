@@ -73,11 +73,7 @@ export const createApp = async ({
   const globalPrefix = options.globalPrefix
 
   if (globalPrefix) {
-    if (typeof globalPrefix === 'string') {
-      app.setGlobalPrefix(globalPrefix)
-    } else {
-      app.setGlobalPrefix(globalPrefix.prefix, globalPrefix.options)
-    }
+    app.setGlobalPrefix(globalPrefix)
   }
 
   if (options.collectMetrics !== false) {

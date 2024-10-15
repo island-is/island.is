@@ -4,7 +4,6 @@ import { Server } from 'http'
 
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface'
 import { HealthCheckOptions } from './infra/health/types'
-import { GlobalPrefixOptions } from '@nestjs/common/interfaces'
 
 export type RunServerOptions = {
   /**
@@ -41,12 +40,7 @@ export type RunServerOptions = {
   /**
    * Global url prefix for the app
    */
-  globalPrefix?:
-    | string
-    | {
-        prefix: string
-        options?: GlobalPrefixOptions
-      }
+  globalPrefix?: string
 
   stripNonClassValidatorInputs?: boolean
 
