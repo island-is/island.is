@@ -15,7 +15,7 @@ import { NotificationType } from '@island.is/judicial-system/types'
 
 import { CaseService } from '../case'
 import { EventService } from '../event'
-import { SubpoenaService } from '../subpoena'
+import { Subpoena, SubpoenaService } from '../subpoena'
 import { DeliverResponse } from './models/deliver.response'
 import { Notification, Recipient } from './models/notification.model'
 import { BaseNotificationService } from './baseNotification.service'
@@ -67,9 +67,8 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     }
   }
 
-  private async getCase(subpoenaId: string) {
-    const subpoena = await this.subpoenaService.findBySubpoenaId(subpoenaId)
-    const theCase = await this.caseService.findById(subpoena.caseId)
+  private async getCase(caseId: string) {
+    const theCase = await this.caseService.findById(caseId)
 
     if (!theCase.courtCaseNumber) {
       throw new InternalServerErrorException(
@@ -82,9 +81,9 @@ export class SubpoenaNotificationService extends BaseNotificationService {
 
   private async sendSubpoenaNotification(
     notificationType: subpoenaNotificationType,
-    subpoenaId: string,
+    subpoena: Subpoena,
   ): Promise<unknown> {
-    const theCase = await this.getCase(subpoenaId)
+    const theCase = await this.getCase(subpoena.caseId)
 
     const hasSentSuccessfulServiceNotification = Boolean(
       this.hasSentNotification(
@@ -179,13 +178,10 @@ export class SubpoenaNotificationService extends BaseNotificationService {
 
   async sendNotification(
     type: NotificationType,
-    subpoenaId: string,
+    subpoena: Subpoena,
   ): Promise<DeliverResponse> {
     try {
-      this.sendSubpoenaNotification(
-        type as subpoenaNotificationType,
-        subpoenaId,
-      )
+      this.sendSubpoenaNotification(type as subpoenaNotificationType, subpoena)
     } catch (error) {
       this.logger.error('Failed to send notification', error)
 

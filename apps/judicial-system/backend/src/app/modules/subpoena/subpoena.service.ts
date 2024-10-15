@@ -149,7 +149,7 @@ export class SubpoenaService {
             type: MessageType.SUBPOENA_NOTIFICATION,
             body: {
               type: notificationType,
-              subpoenaId: subpoena.subpoenaId,
+              subpoena,
             },
           },
         ])
