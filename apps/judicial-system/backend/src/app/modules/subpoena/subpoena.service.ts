@@ -115,6 +115,14 @@ export class SubpoenaService {
       serviceStatus,
     } = update
 
+    const notificationType = this.isSuccessfulServiceStatus(serviceStatus)
+      ? NotificationType.SERVICE_SUCCESSFUL
+      : this.isFailedServiceStatus(serviceStatus)
+      ? NotificationType.SERVICE_FAILED
+      : defenderChoice === DefenderChoice.CHOOSE && defenderNationalId
+      ? NotificationType.DEFENDANT_SELECTED_DEFENDER
+      : undefined
+
     const [numberOfAffectedRows] = await this.subpoenaModel.update(update, {
       where: { subpoenaId: subpoena.subpoenaId },
       returning: true,
@@ -148,21 +156,13 @@ export class SubpoenaService {
       )
     }
 
-    if (
-      this.isSuccessfulServiceStatus(serviceStatus) ||
-      this.isFailedServiceStatus(serviceStatus) ||
-      (defenderChoice === DefenderChoice.CHOOSE && defenderNationalId)
-    ) {
+    if (notificationType) {
       this.messageService
         .sendMessagesToQueue([
           {
             type: MessageType.NOTIFICATION,
             body: {
-              type: this.isSuccessfulServiceStatus(serviceStatus)
-                ? NotificationType.SERVICE_SUCCESSFUL
-                : this.isFailedServiceStatus(serviceStatus)
-                ? NotificationType.SERVICE_FAILED
-                : NotificationType.DEFENDANT_SELECTED_DEFENDER,
+              type: notificationType,
               subpoenaId: subpoena.subpoenaId,
             },
           },
