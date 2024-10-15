@@ -68,6 +68,23 @@ const IndictmentOverview: FC = () => {
     ) &&
     workingCase.indictmentDecision !==
       IndictmentDecision.POSTPONING_UNTIL_VERDICT
+  const shouldDisplayGeneratedPDFs =
+    workingCase.defendants?.some(
+      (defendant) =>
+        defendant.defenderNationalId &&
+        normalizeAndFormatNationalId(user?.nationalId).includes(
+          defendant.defenderNationalId,
+        ),
+    ) ||
+    workingCase.civilClaimants?.some(
+      (civilClaimant) =>
+        civilClaimant.hasSpokesperson &&
+        civilClaimant.spokespersonNationalId &&
+        normalizeAndFormatNationalId(user?.nationalId).includes(
+          civilClaimant.spokespersonNationalId,
+        ) &&
+        civilClaimant.caseFilesSharedWithSpokesperson,
+    )
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -154,12 +171,15 @@ const IndictmentOverview: FC = () => {
             )}
           </Box>
         )}
-        {workingCase.caseFiles && (
+        {workingCase.caseFiles && ( // TODO: Find a more accurate condition, there may be generated PDFs to display even if there are no uploaded files to display
           <Box
             component="section"
             marginBottom={shouldDisplayReviewDecision || canAddFiles ? 5 : 10}
           >
-            <IndictmentCaseFilesList workingCase={workingCase} />
+            <IndictmentCaseFilesList
+              workingCase={workingCase}
+              displayGeneratedPDFs={shouldDisplayGeneratedPDFs}
+            />
           </Box>
         )}
         {canAddFiles && (
