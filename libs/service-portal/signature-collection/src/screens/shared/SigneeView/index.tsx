@@ -107,7 +107,7 @@ const SigneeView = ({
         <AlertMessage
           type="warning"
           title={formatMessage(m.actorNoAccessTitle)}
-          message={m.actorNoAccessDescription.defaultMessage}
+          message={formatMessage(m.actorNoAccessDescription)}
         />
       ) : (
         <Skeleton />
