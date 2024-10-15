@@ -291,9 +291,10 @@ const canPrisonAdminUserAccessCase = (
   }
 
   // Check defendant verdict appeal deadline access
-  const verdictInfo = theCase.defendants?.map<[boolean, Date | undefined]>(
-    (defendant) => [true, defendant.verdictViewDate],
-  )
+  const canAppealVerdict = true
+  const verdictInfo = (theCase.defendants || []).map<
+    [boolean, Date | undefined]
+  >((defendant) => [canAppealVerdict, defendant.verdictViewDate])
 
   const [_, indictmentVerdictAppealDeadlineExpired] =
     getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
