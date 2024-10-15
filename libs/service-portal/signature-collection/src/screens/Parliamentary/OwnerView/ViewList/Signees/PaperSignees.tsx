@@ -71,9 +71,13 @@ export const PaperSignees = ({
           pageNumber: Number(page),
         },
       },
-      onCompleted: () => {
-        toast.success(formatMessage(m.paperSigneeSuccess))
-        refetchSignees()
+      onCompleted: (res) => {
+        if (res.success) {
+          toast.success(formatMessage(m.paperSigneeSuccess))
+          refetchSignees()
+        } else {
+          toast.error(formatMessage(m.paperSigneeError))
+        }
       },
       onError: () => {
         toast.error(formatMessage(m.paperSigneeError))
