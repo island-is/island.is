@@ -37,6 +37,7 @@ export const sendForm = async (id: string, url: string, userInfo: User) => {
 export const downloadFile = async (
   doc: ActiveDocumentType2,
   userInfo: User,
+  query?: string,
 ) => {
   let html: string | undefined = undefined
   if (doc?.document.type === 'HTML') {
@@ -64,9 +65,11 @@ export const downloadFile = async (
     form.appendChild(documentIdInput)
     form.appendChild(tokenInput)
 
+    const url = query ? `${doc?.downloadUrl}?action=${query}` : doc?.downloadUrl
+
     // Form values
     form.method = 'post'
-    form.action = doc?.downloadUrl ?? ''
+    form.action = doc?.downloadUrl ? url : ''
     form.target = '_blank'
 
     // Document Id values

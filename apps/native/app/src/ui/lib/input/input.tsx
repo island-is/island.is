@@ -4,18 +4,23 @@ import { Image, TouchableOpacity, View } from 'react-native'
 import styled from 'styled-components/native'
 import CopyIcon from '../../assets/icons/copy.png'
 import { dynamicColor } from '../../utils'
-import { font } from '../../utils/font'
 import { Skeleton } from '../skeleton/skeleton'
-const Host = styled.SafeAreaView<{ noBorder: boolean; borderDark?: boolean }>`
+import { Typography } from '../typography/typography'
+
+const Host = styled.SafeAreaView<{
+  noBorder: boolean
+  darkBorder?: boolean
+  background?: boolean
+}>`
   flex: 1;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
   border-bottom-color: ${dynamicColor(
-    ({ theme, noBorder, borderDark }) => ({
+    ({ theme, noBorder, darkBorder }) => ({
       light: noBorder
         ? 'transparent'
-        : borderDark
-        ? theme.color.blue200
-        : theme.color.blue100,
+        : darkBorder
+        ? theme.color.blueberry200
+        : theme.color.blue200,
       dark: noBorder ? 'transparent' : theme.shades.dark.shade200,
     }),
     true,
@@ -30,20 +35,8 @@ const Content = styled.View<{ isCompact: boolean }>`
     theme.spacing[isCompact ? 1 : 3]}px;
 `
 
-const Label = styled.Text`
+const Label = styled(Typography)`
   margin-bottom: ${({ theme }) => theme.spacing[1]}px;
-
-  ${font({
-    fontSize: 13,
-    lineHeight: 17,
-  })}
-`
-
-const Value = styled.Text<{ size?: 'normal' | 'big' }>`
-  ${font({
-    fontSize: ({ size }) => (size === 'big' ? 20 : 16),
-    fontWeight: '600',
-  })}
 `
 
 interface InputProps {
@@ -55,7 +48,7 @@ interface InputProps {
   noBorder?: boolean
   size?: 'normal' | 'big'
   isCompact?: boolean
-  borderDark?: boolean
+  darkBorder?: boolean
   copy?: boolean
 }
 
@@ -68,16 +61,16 @@ export function Input({
   noBorder = false,
   size = 'normal',
   isCompact = false,
-  borderDark = false,
+  darkBorder = false,
   copy = false,
 }: InputProps) {
   const tvalue =
     value !== undefined && typeof value === 'string' && value.trim()
 
   return (
-    <Host noBorder={noBorder} borderDark={borderDark}>
+    <Host noBorder={noBorder} darkBorder={darkBorder}>
       <Content isCompact={isCompact}>
-        <Label>{label}</Label>
+        <Label variant="body3">{label}</Label>
         {loading || error ? (
           <Skeleton
             active={loading}
@@ -86,9 +79,13 @@ export function Input({
           />
         ) : (
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Value testID={valueTestID} selectable size={size}>
+            <Typography
+              testID={valueTestID}
+              selectable
+              variant={size === 'normal' ? 'heading5' : 'heading3'}
+            >
               {tvalue === '' || !value ? '-' : value}
-            </Value>
+            </Typography>
             {copy && (
               <TouchableOpacity
                 onPress={() => Clipboard.setString(value ?? '')}
