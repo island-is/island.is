@@ -2,6 +2,31 @@ import { HttpMethod, Response } from '@anev/ts-mountebank'
 import { SocialInsuranceAdministration } from '../../../../../../../../infra/src/dsl/xroad'
 import { addXroadMock } from '../../../../../support/wire-mocks'
 
+const setupApplicationMocks = async (applicationType: string) => {
+  await addXroadMock({
+    config: SocialInsuranceAdministration,
+    prefix: 'XROAD_TR_PATH',
+    apiPath: `/api/protected/v1/Applicant/${applicationType}/eligible`,
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      isEligible: true,
+      reason: null,
+      reasonCode: null,
+    }),
+  })
+
+  await addXroadMock({
+    config: SocialInsuranceAdministration,
+    prefix: 'XROAD_TR_PATH',
+    apiPath: `/api/protected/v1/Application/${applicationType}`,
+    response: new Response().withJSONBody({
+      applicationLineId: 1234567,
+    }),
+    prefixType: 'only-base-path',
+    method: HttpMethod.POST,
+  })
+}
+
 export const loadSocialInsuranceAdministrationXroadMocks = async () => {
   await addXroadMock({
     config: SocialInsuranceAdministration,
@@ -51,119 +76,9 @@ export const loadSocialInsuranceAdministrationXroadMocks = async () => {
     }),
   })
 
-  /* Old-age pension */
-  await addXroadMock({
-    config: SocialInsuranceAdministration,
-    prefix: 'XROAD_TR_PATH',
-    apiPath: '/api/protected/v1/Applicant/oldagepension/eligible',
-    prefixType: 'only-base-path',
-    response: new Response().withJSONBody({
-      isEligible: true,
-      reason: null,
-      reasonCode: null,
-    }),
-  })
-  await addXroadMock({
-    config: SocialInsuranceAdministration,
-    prefix: 'XROAD_TR_PATH',
-    apiPath: '/api/protected/v1/Application/oldagepension',
-    response: new Response().withJSONBody({
-      applicationLineId: 1234567,
-    }),
-    prefixType: 'only-base-path',
-    method: HttpMethod.POST,
-  })
-
-  /* Half Old-age pension */
-  await addXroadMock({
-    config: SocialInsuranceAdministration,
-    prefix: 'XROAD_TR_PATH',
-    apiPath: '/api/protected/v1/Applicant/halfoldagepension/eligible',
-    prefixType: 'only-base-path',
-    response: new Response().withJSONBody({
-      isEligible: true,
-      reason: null,
-      reasonCode: null,
-    }),
-  })
-  await addXroadMock({
-    config: SocialInsuranceAdministration,
-    prefix: 'XROAD_TR_PATH',
-    apiPath: '/api/protected/v1/Application/halfoldagepension',
-    response: new Response().withJSONBody({
-      applicationLineId: 1234567,
-    }),
-    prefixType: 'only-base-path',
-    method: HttpMethod.POST,
-  })
-
-  /* Additional support for the elderly */
-  await addXroadMock({
-    config: SocialInsuranceAdministration,
-    prefix: 'XROAD_TR_PATH',
-    apiPath:
-      '/api/protected/v1/Applicant/additionalsupportfortheelderly/eligible',
-    prefixType: 'only-base-path',
-    response: new Response().withJSONBody({
-      isEligible: true,
-      reason: null,
-      reasonCode: null,
-    }),
-  })
-  await addXroadMock({
-    config: SocialInsuranceAdministration,
-    prefix: 'XROAD_TR_PATH',
-    apiPath: '/api/protected/v1/Application/additionalsupportfortheelderly',
-    response: new Response().withJSONBody({
-      applicationLineId: 1234567,
-    }),
-    prefixType: 'only-base-path',
-    method: HttpMethod.POST,
-  })
-
-  /* Pension supplement */
-  await addXroadMock({
-    config: SocialInsuranceAdministration,
-    prefix: 'XROAD_TR_PATH',
-    apiPath: '/api/protected/v1/Applicant/pensionsupplement/eligible',
-    prefixType: 'only-base-path',
-    response: new Response().withJSONBody({
-      isEligible: true,
-      reason: null,
-      reasonCode: null,
-    }),
-  })
-  await addXroadMock({
-    config: SocialInsuranceAdministration,
-    prefix: 'XROAD_TR_PATH',
-    apiPath: '/api/protected/v1/Application/pensionsupplement',
-    response: new Response().withJSONBody({
-      applicationLineId: 1234567,
-    }),
-    prefixType: 'only-base-path',
-    method: HttpMethod.POST,
-  })
-
-  /* Household supplement */
-  await addXroadMock({
-    config: SocialInsuranceAdministration,
-    prefix: 'XROAD_TR_PATH',
-    apiPath: '/api/protected/v1/Applicant/householdsupplement/eligible',
-    prefixType: 'only-base-path',
-    response: new Response().withJSONBody({
-      isEligible: true,
-      reason: null,
-      reasonCode: null,
-    }),
-  })
-  await addXroadMock({
-    config: SocialInsuranceAdministration,
-    prefix: 'XROAD_TR_PATH',
-    apiPath: '/api/protected/v1/Application/householdsupplement',
-    response: new Response().withJSONBody({
-      applicationLineId: 1234567,
-    }),
-    prefixType: 'only-base-path',
-    method: HttpMethod.POST,
-  })
+  await setupApplicationMocks('oldagepension')
+  await setupApplicationMocks('halfoldagepension')
+  await setupApplicationMocks('additionalsupportfortheelderly')
+  await setupApplicationMocks('pensionsupplement')
+  await setupApplicationMocks('householdsupplement')
 }
