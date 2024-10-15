@@ -56,7 +56,7 @@ const ActionLockList = ({
         closeButtonLabel={''}
       >
         <Box marginTop={5}>
-          <Text>{formatMessage(m.lockList)}</Text>
+          <Text>{formatMessage(m.lockListDescription)}</Text>
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               iconType="outline"

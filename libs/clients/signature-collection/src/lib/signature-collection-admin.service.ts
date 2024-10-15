@@ -78,7 +78,10 @@ export class SignatureCollectionAdminClientService {
       const list = await this.getApiWithAuth(
         this.adminApi,
         auth,
-      ).adminMedmaelalistiIDToggleListPatch({ iD: parseInt(listId) })
+      ).adminMedmaelalistiIDToggleListPatch({
+        iD: parseInt(listId),
+        shouldToggle: listStatus === ListStatus.InReview,
+      })
       return { success: !!list }
     }
     return { success: false }

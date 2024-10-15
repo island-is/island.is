@@ -980,4 +980,14 @@ export const requirementsMessages = defineMessages({
     description:
       'requirement unmet api returned false for an unspecified reason',
   },
+  noExtendedDrivingLicenseTitle: {
+    id: 'dl.application:requirementunmet.noExtendedDrivingLicenseTitle',
+    defaultMessage: 'Ekki hægt að sækja um endurnýjun á 65+ ökuskírteini.',
+    description: 'requirement unmet 65 plus renewal',
+  },
+  noExtendedDrivingLicenseDescription: {
+    id: 'dl.application:requirementunmet.noExtendedDrivingLicenseDescription#markdown',
+    defaultMessage: 'Ekki hægt að sækja um endurnýjun á 65+ ökuskírteini.',
+    description: 'requirement unmet 65 plus renewal',
+  },
 })

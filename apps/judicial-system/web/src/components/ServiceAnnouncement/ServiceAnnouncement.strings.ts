@@ -23,17 +23,22 @@ export const strings = defineMessages({
   },
   serviceStatusUnknown: {
     id: 'judicial.system.core:service_announcement.service_status_unknown',
-    defaultMessage: 'Birtingarstaða óþekkt',
+    defaultMessage: 'Ákæra er í birtingarferli',
     description: 'Notaður sem texti þegar ekki er vitað um stöðu birtingar.',
   },
   servedToDefender: {
     id: 'judicial.system.core:service_announcement.served_to_defender',
     defaultMessage: 'Birt fyrir verjanda - {lawyerName} {practice}',
-    description: 'Notaður sem texti þegar birti var verjanda.',
+    description: 'Notaður sem texti þegar birt var verjanda.',
   },
   servedToElectronically: {
     id: 'judicial.system.core:service_announcement.served_electronically',
     defaultMessage: 'Rafrænt pósthólf island.is - {date}',
-    description: 'Notaður sem texti þegar birti var í pósthólfi.',
+    description: 'Notaður sem texti þegar birt var í pósthólfi.',
+  },
+  subpoenaCreated: {
+    id: 'judicial.system.core:service_announcement.subpoena_created',
+    defaultMessage: 'Ákæra fór í birtingu {date}',
+    description: 'Notaður sem texti þegar birt var í pósthólfi.',
   },
 })

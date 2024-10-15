@@ -355,8 +355,15 @@ export class DrivingLicenseService {
     }
   }
 
-  async canApplyFor(type: 'B-full' | 'B-temp' | 'BE', token: string) {
-    if (type === 'B-full') {
+  async canApplyFor(
+    type: 'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65',
+    token: string,
+  ) {
+    if (type === 'B-full-renewal-65') {
+      return this.drivingLicenseApi.getCanApplyForRenewal65({
+        token,
+      })
+    } else if (type === 'B-full') {
       return this.drivingLicenseApi.getCanApplyForCategoryFull({
         category: 'B',
         token,

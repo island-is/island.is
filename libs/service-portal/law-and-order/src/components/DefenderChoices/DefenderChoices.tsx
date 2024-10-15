@@ -7,6 +7,7 @@ import {
   toast,
   GridColumn,
   LoadingDots,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -105,10 +106,9 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
           {formatMessage(messages.chooseDefenderTitle)}
         </Text>
       )}
-      {loading && !error && <LoadingDots />}
       {!loading && error && <Problem size="small" />}
-      {lawyers === null ? (
-        <Problem size="small" />
+      {loading ? (
+        <SkeletonLoader height={24} repeat={4} space={4} />
       ) : (
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(handleSubmitForm)}>

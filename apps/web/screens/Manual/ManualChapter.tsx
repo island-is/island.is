@@ -7,7 +7,9 @@ import {
   Accordion,
   AccordionItem,
   Box,
+  Button,
   Divider,
+  Inline,
   LinkV2,
   Stack,
   TableOfContents,
@@ -91,6 +93,48 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
     initialScrollHasHappened.current = true
   }, [selectedItemId])
 
+  const { previousChapterUrl, nextChapterUrl } = useMemo(() => {
+    if (!manual?.slug || !manualChapter?.id) {
+      return {
+        previousChapterUrl: '',
+        nextChapterUrl: '',
+      }
+    }
+
+    const index = manual.chapters.findIndex(
+      (chapter) => chapter.id === manualChapter?.id,
+    )
+
+    if (index < 0) {
+      return {
+        previousChapterUrl: '',
+        nextChapterUrl: '',
+      }
+    }
+
+    const nextChapterSlug = manual.chapters[index + 1]?.slug
+
+    if (index === 0) {
+      return {
+        previousChapterUrl: '',
+        nextChapterUrl: nextChapterSlug
+          ? linkResolver('manualchapter', [manual.slug, nextChapterSlug]).href
+          : '',
+      }
+    }
+
+    const previousChapterSlug = manual.chapters[index - 1]?.slug
+
+    return {
+      previousChapterUrl: previousChapterSlug
+        ? linkResolver('manualchapter', [manual.slug, previousChapterSlug]).href
+        : '',
+      nextChapterUrl: nextChapterSlug
+        ? linkResolver('manualchapter', [manual.slug, nextChapterSlug]).href
+        : '',
+    }
+  }, [linkResolver, manual?.chapters, manual?.slug, manualChapter?.id])
+
   return (
     <ManualWrapper
       manual={manual}
@@ -98,12 +142,13 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
       socialTitle={generateOgTitle(manual?.title, manualChapter?.title)}
     >
       {manualChapter && (
-        <Stack space={2}>
+        <Stack space={5}>
           <LinkV2
-            className={styles.smallLink}
             underline="small"
             underlineVisibility="always"
+            color="blue400"
             href={linkResolver('manual', [manual?.slug as string]).href}
+            className={styles.link}
           >
             {n(
               'manualFrontpage',
@@ -111,7 +156,7 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
             )}
           </LinkV2>
           <Divider />
-          <Box paddingTop={2}>
+          <Box>
             <Text variant="h2" as="h1">
               {manualChapter.title}
             </Text>
@@ -122,7 +167,7 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
 
       <Stack space={3}>
         {manualChapter && (
-          <Accordion>
+          <Accordion singleExpand={false}>
             {manualChapter.chapterItems.map((item) => (
               <AccordionItem
                 labelUse="h2"
@@ -153,6 +198,54 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
               </AccordionItem>
             ))}
           </Accordion>
+        )}
+        {(Boolean(previousChapterUrl) || Boolean(nextChapterUrl)) && (
+          <Box paddingTop={3}>
+            <Inline space={3} alignY="center" justifyContent="spaceBetween">
+              <Box>
+                {previousChapterUrl && (
+                  <LinkV2 href={previousChapterUrl}>
+                    <Button
+                      preTextIcon="arrowBack"
+                      preTextIconType="filled"
+                      size="medium"
+                      type="button"
+                      variant="text"
+                      truncate
+                      unfocusable
+                    >
+                      {n(
+                        'manualPreviousChapter',
+                        activeLocale === 'is'
+                          ? 'Fyrri kafli'
+                          : 'Previous chapter',
+                      )}
+                    </Button>
+                  </LinkV2>
+                )}
+              </Box>
+              <Box>
+                {nextChapterUrl && (
+                  <LinkV2 href={nextChapterUrl}>
+                    <Button
+                      icon="arrowForward"
+                      iconType="filled"
+                      size="medium"
+                      type="button"
+                      variant="text"
+                      truncate
+                      unfocusable
+                    >
+                      {n(
+                        'manualNextChapter',
+                        activeLocale === 'is' ? 'Næsti kafli' : 'Next chapter',
+                      )}
+                    </Button>
+                  </LinkV2>
+                )}
+              </Box>
+            </Inline>
+          </Box>
         )}
       </Stack>
     </ManualWrapper>
