@@ -8,5 +8,5 @@ export const companySignatureCollectionNavigation: PortalNavigationItem = {
   icon: {
     icon: 'receipt',
   },
-  description: m.signatureCollectionParliamentaryLists,
+  description: m.signatureCollectionParliamentaryListsCompany,
 }
