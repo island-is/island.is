@@ -199,6 +199,7 @@ export class SignatureCollectionResolver {
 
   @Scopes(ApiScope.signatureCollection)
   @IsOwner()
+  @AllowManager()
   @Query(() => [SignatureCollectionCollector])
   @Audit()
   async signatureCollectionCollectors(
