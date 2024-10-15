@@ -58,19 +58,6 @@ export class EndorsementService {
     private readonly awsService: AwsService,
   ) {}
 
-  async onModuleInit() {
-    this.logger.info(
-      'Updating endorsement counts for all lists onModuleInit...',
-    )
-    try {
-      await this.updateCountsForAllLists()
-    } catch (error) {
-      this.logger.error(
-        'Error updating endorsement counts for all lists',
-        error,
-      )
-    }
-  }
 
   async updateCountsForAllLists(): Promise<void> {
     const allLists = await this.endorsementListModel.findAll()
