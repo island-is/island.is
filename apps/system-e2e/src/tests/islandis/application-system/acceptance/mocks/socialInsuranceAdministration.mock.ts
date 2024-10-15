@@ -102,8 +102,7 @@ export const loadSocialInsuranceAdministrationXroadMocks = async () => {
   await addXroadMock({
     config: SocialInsuranceAdministration,
     prefix: 'XROAD_TR_PATH',
-    apiPath:
-      '/api/protected/v1/Applicant/pensionsupplement/eligible',
+    apiPath: '/api/protected/v1/Applicant/pensionsupplement/eligible',
     prefixType: 'only-base-path',
     response: new Response().withJSONBody({
       isEligible: true,
