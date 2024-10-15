@@ -32,6 +32,7 @@ export type Icon =
   | 'documents'
   | 'dots'
   | 'download'
+  | 'upload'
   | 'ellipse'
   | 'ellipsisHorizontal'
   | 'ellipsisVertical'
@@ -42,6 +43,7 @@ export type Icon =
   | 'fileTrayFull'
   | 'fileTrayEmpty'
   | 'filter'
+  | 'gavel'
   | 'heart'
   | 'home'
   | 'homeWithCar'
@@ -126,6 +128,7 @@ export default {
     documents: 'Documents',
     dots: 'Dots',
     download: 'Download',
+    upload: 'Upload',
     ellipse: 'Ellipse',
     ellipsisHorizontal: 'EllipsisHorizontal',
     ellipsisVertical: 'EllipsisVertical',
@@ -136,6 +139,7 @@ export default {
     fileTrayFull: 'FileTrayFull',
     fileTrayEmpty: 'FileTrayEmpty',
     filter: 'Filter',
+    gavel: 'Gavel',
     heart: 'Heart',
     home: 'Home',
     homeWithCar: 'HomeWithCar',
@@ -219,6 +223,7 @@ export default {
     documents: 'DocumentsOutline',
     dots: 'Dots',
     download: 'DownloadOutline',
+    upload: 'UploadOutline',
     ellipse: 'EllipseOutline',
     ellipsisHorizontal: 'EllipsisHorizontalOutline',
     ellipsisVertical: 'EllipsisVerticalOutline',
@@ -229,6 +234,7 @@ export default {
     fileTrayFull: 'FileTrayFullOutline',
     fileTrayEmpty: 'FileTrayEmptyOutline',
     filter: 'FilterOutline',
+    gavel: 'GavelOutline',
     heart: 'HeartOutline',
     home: 'HomeOutline',
     homeWithCar: 'HomeWithCarOutline',

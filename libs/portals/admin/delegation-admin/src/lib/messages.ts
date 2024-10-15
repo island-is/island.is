@@ -61,9 +61,13 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:create',
     defaultMessage: 'Skrá umboð',
   },
+  delete: {
+    id: 'admin.delegationAdmin:delete',
+    defaultMessage: 'Eyða umboði',
+  },
   noEndDate: {
     id: 'admin.delegationAdmin:noEndDate',
-    defaultMessage: 'Gildis tími óendanlegur',
+    defaultMessage: 'Gildistími óendanlegur',
   },
   validTo: {
     id: 'admin.delegationAdmin:validTo',
@@ -73,8 +77,8 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:type',
     defaultMessage: 'Aðgangstegund',
   },
-  typeGeneral: {
-    id: 'admin.delegationAdmin:typeGeneral',
+  generalMandateLabel: {
+    id: 'admin.delegationAdmin:generalMandateLabel',
     defaultMessage: 'Allsherjarumboð',
   },
   referenceId: {
@@ -117,8 +121,42 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:createDelegationConfirmModalTitle',
     defaultMessage: 'Þú ert að skrá nýtt umboð',
   },
+  deleteDelegationModalTitle: {
+    id: 'admin.delegationAdmin:deleteDelegationModalTitle',
+    defaultMessage: 'Eyða umboði',
+  },
   createDelegationSuccessToast: {
     id: 'admin.delegationAdmin:createDelegationSuccessToast',
     defaultMessage: 'Umboð var skráð',
+  },
+  nationalIdsMismatchError: {
+    id: 'admin.delegationAdmin:nationalIdsMismatchError',
+    defaultMessage:
+      'Kennitölur á umboði stemma ekki við kennitölur í Zendesk máli',
+  },
+  zendeskCaseNotSolvedError: {
+    id: 'admin.delegationAdmin:zendeskCaseNotSolvedError',
+    defaultMessage: 'Zendesk málið er ekki í stöðunni leyst',
+  },
+  zendeskMissingTagError: {
+    id: 'admin.delegationAdmin:zendeskMissingTagError',
+    defaultMessage: 'Zendesk málið vantar nauðsynlegt tagg',
+  },
+  zendeskCustomFieldsMissingError: {
+    id: 'admin.delegationAdmin:zendeskCustomFieldsMissingError',
+    defaultMessage:
+      'Zendesk málið vantar nauðsynlegar upplýsingar um kennitölur umboðsveitanda og umboðshafa',
+  },
+  sameNationalIdError: {
+    id: 'admin.delegationAdmin:sameNationalIdError',
+    defaultMessage: 'Kennitölur mega ekki vera eins',
+  },
+  validPersonError: {
+    id: 'admin.delegationAdmin:validPersonError',
+    defaultMessage: 'Kennitölur þurfa að vera gildar kennitölur',
+  },
+  invalidDateFormatError: {
+    id: 'admin.delegationAdmin:invalidDateFormatError',
+    defaultMessage: 'Dagsetning er ekki á réttu sniði',
   },
 })

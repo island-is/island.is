@@ -4,6 +4,8 @@ export const ALLOWED_FILE_TYPES = ['.pdf', '.doc', '.docx']
 
 export const FILE_SIZE_LIMIT = 10000000
 
+export const OJOI_DF = 'd. MMMM yyyy.'
+
 export const VERDSKRA_LINK =
   'https://www.stjornartidindi.is/PdfVersions.aspx?recordId=0f574646-eb9d-430b-bbe7-936e7c9389a0'
 
@@ -24,6 +26,7 @@ export const MINIMUM_WEEKDAYS = 10
 
 export enum Routes {
   REQUIREMENTS = 'requirements',
+  INVOLVED_PARTY = 'involvedParty',
   COMMENTS = 'comments',
   ADVERT = 'advert',
   SIGNATURE = 'signature',

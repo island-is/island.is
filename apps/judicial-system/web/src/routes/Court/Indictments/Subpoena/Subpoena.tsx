@@ -2,8 +2,9 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
@@ -19,14 +20,9 @@ import {
   SectionHeading,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
-import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { SubpoenaType } from '@island.is/judicial-system-web/src/routes/Court/components'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  useCase,
-  useDefendants,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { subpoena as strings } from './Subpoena.strings'
@@ -35,27 +31,32 @@ const Subpoena: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const [newSubpoenas, setNewSubpoenas] = useState<string[]>([])
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
   const {
     courtDate,
-    courtDateHasChanged,
     handleCourtDateChange,
     handleCourtRoomChange,
     sendCourtDateToServer,
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
-  const { sendNotification } = useCase()
 
   const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
+  const isSchedulingArraignmentDate =
+    !isArraignmentScheduled || newSubpoenas.length > 0
+
+  const isSchedulingArraignmentDateForDefendant = (defendantId: string) =>
+    !isArraignmentScheduled ||
+    (isArraignmentScheduled && newSubpoenas.includes(defendantId))
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      if (isArraignmentScheduled) {
+      if (!isSchedulingArraignmentDate) {
         router.push(`${destination}/${workingCase.id}`)
         return
       }
 
-      const promises: Promise<boolean | undefined>[] = [sendCourtDateToServer()]
+      const promises: Promise<boolean>[] = []
 
       if (workingCase.defendants) {
         workingCase.defendants.forEach((defendant) => {
@@ -69,34 +70,43 @@ const Subpoena: FC = () => {
         })
       }
 
-      if (
-        !hasSentNotification(
-          NotificationType.COURT_DATE,
-          workingCase.notifications,
-        ).hasSent ||
-        courtDateHasChanged
-      ) {
-        promises.push(
-          sendNotification(workingCase.id, NotificationType.COURT_DATE),
-        )
+      // Make sure defendants are updated before submitting the court date
+      const allDefendantsUpdated = await Promise.all(promises)
+
+      if (!allDefendantsUpdated.every((result) => result)) {
+        return
       }
 
-      const allDataSentToServer = await Promise.all(promises)
-      if (!allDataSentToServer.every((result) => result)) {
+      // If rescheduling after the court has met, then clear the current conclusion
+      const clearedConclusion =
+        isArraignmentScheduled && workingCase.indictmentDecision
+          ? [
+              {
+                indictmentDecision: null,
+                courtSessionType: null,
+                courtDate: null,
+                postponedIndefinitelyExplanation: null,
+                indictmentRulingDecision: null,
+                mergeCaseId: null,
+                force: true,
+              },
+            ]
+          : undefined
+
+      const courtDateUpdated = await sendCourtDateToServer(clearedConclusion)
+
+      if (!courtDateUpdated) {
         return
       }
 
       router.push(`${destination}/${workingCase.id}`)
     },
     [
-      isArraignmentScheduled,
+      isSchedulingArraignmentDate,
       sendCourtDateToServer,
       workingCase.defendants,
-      workingCase.notifications,
       workingCase.id,
-      courtDateHasChanged,
       updateDefendant,
-      sendNotification,
     ],
   )
 
@@ -118,7 +128,27 @@ const Subpoena: FC = () => {
           <Box component="section" marginBottom={5}>
             {
               <SubpoenaType
-                defendants={workingCase.defendants}
+                subpoenaItems={workingCase.defendants.map((defendant) => ({
+                  defendant,
+                  disabled:
+                    isArraignmentScheduled &&
+                    !newSubpoenas.includes(defendant.id),
+                  children: isArraignmentScheduled && (
+                    <Button
+                      variant="text"
+                      icon="reload"
+                      disabled={newSubpoenas.includes(defendant.id)}
+                      onClick={() =>
+                        setNewSubpoenas((previous) => [
+                          ...previous,
+                          defendant.id,
+                        ])
+                      }
+                    >
+                      {formatMessage(strings.newSubpoenaButtonText)}
+                    </Button>
+                  ),
+                }))}
                 workingCase={workingCase}
                 setWorkingCase={setWorkingCase}
                 updateDefendantState={updateDefendantState}
@@ -134,32 +164,59 @@ const Subpoena: FC = () => {
             handleCourtDateChange={handleCourtDateChange}
             handleCourtRoomChange={handleCourtRoomChange}
             courtDate={workingCase.arraignmentDate}
-            dateTimeDisabled={isArraignmentScheduled}
-            courtRoomDisabled={isArraignmentScheduled}
+            dateTimeDisabled={!isSchedulingArraignmentDate}
+            courtRoomDisabled={!isSchedulingArraignmentDate}
             courtRoomRequired
           />
         </Box>
         <Box component="section" marginBottom={10}>
-          {workingCase.defendants?.map((defendant, index) => (
-            <Box
-              key={defendant.id}
-              marginBottom={
-                index + 1 === workingCase.defendants?.length ? 0 : 2
-              }
-            >
-              <PdfButton
-                caseId={workingCase.id}
-                title={`Fyrirkall - ${defendant.name} - PDF`}
-                pdfType="subpoena"
-                disabled={
-                  !courtDate?.date ||
-                  !courtDate?.location ||
-                  !defendant.subpoenaType
-                }
-                elementId={defendant.id}
-                queryParameters={`arraignmentDate=${courtDate?.date}&location=${courtDate?.location}&subpoenaType=${defendant.subpoenaType}`}
-              />
-            </Box>
+          {workingCase.defendants?.map((defendant, dIndex) => (
+            <>
+              {isSchedulingArraignmentDateForDefendant(defendant.id) && (
+                <Box
+                  key={`subpoena-${defendant.id}`}
+                  marginBottom={
+                    dIndex + 1 === workingCase.defendants?.length &&
+                    (!defendant.subpoenas || defendant.subpoenas.length === 0)
+                      ? 0
+                      : 2
+                  }
+                >
+                  <PdfButton
+                    caseId={workingCase.id}
+                    title={`Fyrirkall - ${defendant.name} nýtt - PDF`}
+                    pdfType="subpoena"
+                    disabled={
+                      !courtDate?.date ||
+                      !courtDate?.location ||
+                      !defendant.subpoenaType
+                    }
+                    elementId={defendant.id}
+                    queryParameters={`arraignmentDate=${courtDate?.date}&location=${courtDate?.location}&subpoenaType=${defendant.subpoenaType}`}
+                  />
+                </Box>
+              )}
+              {defendant.subpoenas?.map((subpoena, sIndex) => (
+                <Box
+                  key={`subpoena-${subpoena.id}`}
+                  marginBottom={
+                    dIndex + 1 === workingCase.defendants?.length &&
+                    sIndex + 1 === defendant.subpoenas?.length
+                      ? 0
+                      : 2
+                  }
+                >
+                  <PdfButton
+                    caseId={workingCase.id}
+                    title={`Fyrirkall - ${defendant.name} ${formatDate(
+                      subpoena.created,
+                    )} - PDF`}
+                    pdfType="subpoena"
+                    elementId={[defendant.id, subpoena.id]}
+                  />
+                </Box>
+              ))}
+            </>
           ))}
         </Box>
       </FormContentContainer>
@@ -169,14 +226,14 @@ const Subpoena: FC = () => {
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() => {
-            if (isArraignmentScheduled) {
+            if (!isSchedulingArraignmentDate) {
               router.push(
                 `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
               )
             } else setNavigateTo(constants.INDICTMENTS_DEFENDER_ROUTE)
           }}
           nextButtonText={
-            isArraignmentScheduled
+            !isSchedulingArraignmentDate
               ? undefined
               : formatMessage(strings.nextButtonText)
           }

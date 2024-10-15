@@ -14,7 +14,6 @@ import { environment } from '../../../environments'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 
 import { LoggingModule } from '@island.is/logging'
-import { TemplateApiApplicationService } from './template-api.service'
 import { AwsModule } from '@island.is/nest/aws'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
@@ -35,10 +34,7 @@ import { ApplicationActionService } from './application-action.service'
     PaymentModule,
     AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
-    TemplateAPIModule.register({
-      ...environment.templateApi,
-      applicationService: TemplateApiApplicationService,
-    }),
+    TemplateAPIModule.register(environment.templateApi),
     ApplicationApiCoreModule,
     createBullModule(),
     ApplicationFilesModule,

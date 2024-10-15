@@ -62,26 +62,17 @@ export class NotificationService {
           // the judge chooses not to send a calendar invitation
           messages = [
             this.getNotificationMessage(
-              NotificationType.DEFENDER_ASSIGNED,
+              NotificationType.ADVOCATE_ASSIGNED,
               user,
               theCase,
             ),
           ]
         } else {
           messages = [this.getNotificationMessage(type, user, theCase)]
-          theCase.defendants?.forEach((defendant) => {
-            // TODO: move this elsewhere when we know exactly where the trigger should be
-            messages.push({
-              type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
-              user,
-              caseId: theCase.id,
-              elementId: defendant.id,
-            })
-          })
         }
         break
       case NotificationType.HEADS_UP:
-      case NotificationType.DEFENDER_ASSIGNED:
+      case NotificationType.ADVOCATE_ASSIGNED:
       case NotificationType.APPEAL_JUDGES_ASSIGNED:
       case NotificationType.APPEAL_CASE_FILES_UPDATED:
         messages = [this.getNotificationMessage(type, user, theCase)]

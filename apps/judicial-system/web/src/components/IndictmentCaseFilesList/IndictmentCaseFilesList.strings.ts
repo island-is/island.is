@@ -40,8 +40,8 @@ export const strings = defineMessages({
     description: 'Notaður sem titill á dómskjalaskjá í ákærum.',
   },
   subpoenaButtonText: {
-    id: 'judicial.system.indictments:indictment_case_files_list.subpoena_button_text',
-    defaultMessage: 'Fyrirkall {name}.pdf',
+    id: 'judicial.system.indictments:indictment_case_files_list.subpoena_button_text_v2',
+    defaultMessage: 'Fyrirkall {name} {date}.pdf',
     description:
       'Notaður sem texti á PDF takka til að sækja firyrkall í ákærum.',
   },

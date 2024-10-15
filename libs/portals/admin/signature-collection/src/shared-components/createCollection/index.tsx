@@ -6,6 +6,8 @@ import {
   Input,
   AlertMessage,
   toast,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
@@ -126,52 +128,56 @@ const CreateCollection = ({ collectionId }: { collectionId: string }) => {
         <Text marginBottom={5}>
           {formatMessage(m.createCollectionModalDescription)}
         </Text>
-        <Stack space={3}>
-          <InputController
-            control={control as unknown as Control}
-            type="tel"
-            id="candidateNationalId"
-            label={formatMessage(m.candidateNationalId)}
-            format="######-####"
-            defaultValue={nationalIdInput}
-            onChange={(v) =>
-              setNationalIdInput(v.target.value.replace(/\W/g, ''))
-            }
-            loading={loadingCandidate}
-            error={
-              nationalIdNotFound
-                ? formatMessage(m.candidateNationalIdNotFound)
-                : undefined
-            }
-          />
-          <Input
-            name="candidateName"
-            label={formatMessage(m.candidateName)}
-            readOnly
-            value={name}
-            placeholder={loadingCandidate ? 'Sæki nafn...' : ''}
-          />
-        </Stack>
-        {!canCreate && (
-          <Box marginTop={3}>
-            <AlertMessage
-              type="error"
-              title={''}
-              message={canCreateErrorReason}
-            />
-          </Box>
-        )}
-        <Box display="flex" justifyContent="center" marginY={5}>
-          <Button
-            onClick={() => {
-              createNewCollection()
-            }}
-            disabled={!canCreate}
-            loading={loading}
-          >
-            {formatMessage(m.createCollection)}
-          </Button>
-        </Box>
+        <GridRow>
+          <GridColumn span="10/12" offset="1/12">
+            <Stack space={3}>
+              <InputController
+                control={control as unknown as Control}
+                type="tel"
+                id="candidateNationalId"
+                label={formatMessage(m.candidateNationalId)}
+                format="######-####"
+                defaultValue={nationalIdInput}
+                onChange={(v) =>
+                  setNationalIdInput(v.target.value.replace(/\W/g, ''))
+                }
+                loading={loadingCandidate}
+                error={
+                  nationalIdNotFound
+                    ? formatMessage(m.candidateNationalIdNotFound)
+                    : undefined
+                }
+              />
+              <Input
+                name="candidateName"
+                label={formatMessage(m.candidateName)}
+                readOnly
+                value={name}
+                placeholder={loadingCandidate ? 'Sæki nafn...' : ''}
+              />
+            </Stack>
+            {!canCreate && (
+              <Box marginTop={3}>
+                <AlertMessage
+                  type="error"
+                  title={''}
+                  message={canCreateErrorReason}
+                />
+              </Box>
+            )}
+            <Box display="flex" justifyContent="center" marginY={5}>
+              <Button
+                onClick={() => {
+                  createNewCollection()
+                }}
+                disabled={!canCreate}
+                loading={loading}
+              >
+                {formatMessage(m.createCollection)}
+              </Button>
+            </Box>
+          </GridColumn>
+        </GridRow>
       </Modal>
     </Box>
   )

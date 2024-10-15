@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { SafeAreaView, ScrollView } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
-import externalOpen from '../../assets/icons/external-open.png'
+import externalLink from '../../assets/icons/external-link.png'
 import { getConfig } from '../../config'
 import { GetFinanceStatus } from '../../graphql/types/finance.types'
 import { useGetFinanceStatusQuery } from '../../graphql/types/schema'
@@ -162,7 +162,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
             />
           }
           disabled={!scheduleButtonVisible}
-          icon={externalOpen}
+          icon={externalLink}
           onPress={() => {
             openBrowser(
               `${getConfig().apiUrl.replace(

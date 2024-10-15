@@ -1,17 +1,3 @@
-import {
-  Body,
-  Controller,
-  Header,
-  Post,
-  Res,
-  Param,
-  UseGuards,
-} from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { GetDocumentDto } from './dto/getDocument.dto'
-import { Response } from 'express'
-import { DocumentClient } from '@island.is/clients/documents'
-import { DocumentsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -19,7 +5,12 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { DocumentsScope } from '@island.is/auth/scopes'
+import { DocumentClient } from '@island.is/clients/documents'
 import { AuditService } from '@island.is/nest/audit'
+import { Controller, Header, Param, Post, Res, UseGuards } from '@nestjs/common'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { Response } from 'express'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(DocumentsScope.main)
@@ -40,7 +31,6 @@ export class DocumentController {
   async getPdf(
     @Param('pdfId') pdfId: string,
     @CurrentUser() user: User,
-    @Body() resource: GetDocumentDto,
     @Res() res: Response,
   ) {
     const rawDocumentDTO = await this.documentClient.customersDocument({

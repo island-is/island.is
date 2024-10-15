@@ -1,17 +1,14 @@
-import { FC } from 'react'
-import { m } from '../../forms/messages'
+import { m } from '../../lib/messages/messages'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
-import SummaryItem from './SummaryItem'
+import { SummaryItem } from './SummaryItem'
 import {
   hasHealthInsurance,
   hasNoIcelandicAddress,
 } from '../../healthInsuranceUtils'
 import { useLocale } from '@island.is/localization'
 
-const PrerequisiteSummary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  application,
-}) => {
+export const PrerequisiteSummary = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   const externalData = application.externalData
 
@@ -78,7 +75,7 @@ const PrerequisiteSummary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       {prerequisites.map((prerequisite, i) => {
         return (
           <SummaryItem
-            key={i}
+            key={`${prerequisite.name}-${i}`}
             index={i + 1}
             application={application}
             {...prerequisite}
@@ -88,5 +85,3 @@ const PrerequisiteSummary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     </Box>
   )
 }
-
-export default PrerequisiteSummary

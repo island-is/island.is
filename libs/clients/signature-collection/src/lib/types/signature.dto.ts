@@ -14,6 +14,7 @@ export interface Signature {
   pageNumber?: number
   valid: boolean
   isInitialType: boolean
+  locked: boolean
 }
 const digitalTypes = [1, 3]
 const initialTypes = [1, 2]
@@ -40,5 +41,6 @@ export const mapSignature = (signature: MedmaeliDTO): Signature => {
     pageNumber:
       !isDigital && signature.bladsidaNr ? signature.bladsidaNr : undefined,
     valid: signature.valid ?? true,
+    locked: signature.locked ?? false,
   }
 }

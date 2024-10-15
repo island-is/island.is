@@ -355,7 +355,11 @@ export const OrganizationHeader: React.FC<
             'landlaeknirHeaderImage',
             'https://images.ctfassets.net/8k0h54kbe6bj/2p6UWMBdVkVHBAjsnX20bY/c04b402332dbae96c198db7b8640f20b/Header_illustration_1.svg',
           )}
-          className={styles.landlaeknirHeaderGridContainer}
+          className={
+            isSubpage
+              ? styles.landlaeknirHeaderGridContainerSubpage
+              : styles.landlaeknirHeaderGridContainer
+          }
         />
       ) : (
         <LandlaeknirHeader
@@ -416,7 +420,11 @@ export const OrganizationHeader: React.FC<
       return n('usingDefaultHeader', false) ? (
         <DefaultHeader
           {...defaultProps}
-          className={styles.sakHeaderGridContainer}
+          className={
+            isSubpage
+              ? styles.sakHeaderGridContainerSubpage
+              : styles.sakHeaderGridContainer
+          }
           image={n(
             `sakHeaderBgImage`,
             'https://images.ctfassets.net/8k0h54kbe6bj/4SjqwRBZRMWVWG0y73sXxq/cf8d0d16704cfea124362eca03afdb41/sak-header-trans_2x.png',
@@ -448,7 +456,11 @@ export const OrganizationHeader: React.FC<
       return n('usingDefaultHeader', false) ? (
         <DefaultHeader
           {...defaultProps}
-          className={styles.hveHeaderGridContainer}
+          className={
+            isSubpage
+              ? styles.hveHeaderGridContainerSubpage
+              : styles.hveHeaderGridContainer
+          }
           image={n(
             'hveHeaderImage',
             'https://images.ctfassets.net/8k0h54kbe6bj/7ie5X2T4g8a7g5PLvu5226/4ec8b2cb69b5cb7193a61c562f9b36e0/minstur1.png',
@@ -478,7 +490,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hsa':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={
+            isSubpage
+              ? styles.hsaHeaderGridContainerWidthSubpage
+              : styles.hsaHeaderGridContainerWidth
+          }
+        />
+      ) : (
         <HeilbrigdisstofnunAusturlandsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -1125,6 +1146,7 @@ export const OrganizationWrapper: React.FC<
                         type="button"
                         variant="text"
                         truncate
+                        unfocusable
                       >
                         {backLink.text}
                       </Button>
