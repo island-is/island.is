@@ -75,7 +75,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       throw new InternalServerErrorException(`Case not found`)
     }
 
-    if (!theCase.courtCaseNumber || !theCase.id) {
+    if (!theCase.courtCaseNumber) {
       throw new InternalServerErrorException(
         `Unable to find courtCaseNumber for case ${theCase.id}`,
       )
