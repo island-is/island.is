@@ -39,8 +39,8 @@ enum Roles {
 
 type AccidentNotificationEvent =
   | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.REJECT }
+  | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.ASSIGN }
 
 const assignStatePendingAction = (
