@@ -18,9 +18,10 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   DefenderChoice,
+  isFailedServiceStatus,
+  isSuccessfulServiceStatus,
   isTrafficViolationCase,
   NotificationType,
-  ServiceStatus,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -51,21 +52,6 @@ export class SubpoenaService {
     private readonly fileService: FileService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  private isSuccessfulServiceStatus(serviceStatus?: ServiceStatus) {
-    return (
-      serviceStatus &&
-      [
-        ServiceStatus.ELECTRONICALLY,
-        ServiceStatus.DEFENDER,
-        ServiceStatus.IN_PERSON,
-      ].includes(serviceStatus)
-    )
-  }
-
-  private isFailedServiceStatus(serviceStatus?: ServiceStatus) {
-    return serviceStatus && serviceStatus === ServiceStatus.FAILED
-  }
 
   async createSubpoena(
     defendantId: string,
@@ -115,9 +101,9 @@ export class SubpoenaService {
       serviceStatus,
     } = update
 
-    const notificationType = this.isSuccessfulServiceStatus(serviceStatus)
+    const notificationType = isSuccessfulServiceStatus(serviceStatus)
       ? NotificationType.SERVICE_SUCCESSFUL
-      : this.isFailedServiceStatus(serviceStatus)
+      : isFailedServiceStatus(serviceStatus)
       ? NotificationType.SERVICE_FAILED
       : defenderChoice === DefenderChoice.CHOOSE && defenderNationalId
       ? NotificationType.DEFENDANT_SELECTED_DEFENDER
