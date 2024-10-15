@@ -1,20 +1,20 @@
-# Nest Config Documentation
+# Nest Config
 
-This documentation provides an overview of the Nest Config package, which enhances Nest's [Configuration](https://docs.nestjs.com/techniques/configuration) functionality with additional features, including:
+Wraps Nest's [Configuration](https://docs.nestjs.com/techniques/configuration) functionality with the following features:
 
-- Validation of required environment variables.
-- Fallback values for local development.
-- Support for configurations disabled by [Server Side Feature Flags](../../../handbook/technical-overview/devops/service-setup.md#server-side-feature-flags).
-- Helpers for JSON-encoded environment variables.
-- Validation, transformation, and TypeScript types using Zod.
+- Validates that required environment variables are set.
+- Supports fallback values for local development.
+- Supports configurations that are disabled behind [Server Side Feature Flags](../../../handbook/technical-overview/devops/service-setup.md#server-side-feature-flags).
+- Provides helpers for JSON encoded environment variables.
+- Includes validation, transformation, and TypeScript types with Zod.
 
-This configuration system is intended to replace NX's environment files as the primary way to configure Nest modules in APIs, especially as we develop larger and more complex module trees.
+This configuration system should replace NX's environment files as the primary way to configure Nest modules in our APIs. This is especially useful as we create bigger and deeper module trees.
 
 ## Basic Usage
 
-Define a configuration and a load function.
+Firstly, define a configuration and a load function.
 
-```tsx
+```typescript
 import { defineConfig } from '@island.is/nest/config'
 
 export const someModuleConfig = defineConfig({
@@ -29,11 +29,9 @@ export const someModuleConfig = defineConfig({
 
 These configuration definitions should ideally mirror [config blocks in our Helm DSL](https://github.com/island-is/infrastructure/issues/918).
 
-### Environment Loaders
-
 The `env` object provides helpers to read values from the environment:
 
-```tsx
+```typescript
 interface EnvLoader {
   required(envVariable: string, devFallback?: string): string
   requiredJSON<T = any>(envVariable: string, devFallback?: T): T
@@ -42,21 +40,22 @@ interface EnvLoader {
 }
 ```
 
-The helpers behave as follows:
+These helpers have the following behaviour:
 
-- **`required` Helpers**: Used for configurations required in production.
-  - Crashes the process in production if a required variable is missing, logging the missing variables.
-  - In development, returns `devFallback` or logs a warning and continues with partial configuration if `devFallback` is not specified.
-- **`optional` Helpers**: Used for optional configurations with good defaults.
-  - Allows for different defaults in dev and production, or a shared default using `??`.
-- **JSON Variants**: Parse environment variables as JSON, which is useful for booleans, numbers, or more complex config values.
-  - Specify types using Zod schema. JSON parsing errors are logged before crashing (with `requiredJSON`).
+- The `required` helpers are designed for everything that needs to be configured in production. If something is missing, its behaviour depends on `NODE_ENV`:
+  - In production, it crashes the process after logging something like this:
+    `SomeModule is not configured. Missing environment variables: SOME_MODULE_URL, SOME_MODULE_SECRET`
+  - In development, it returns the `devFallback` argument. If there is no `devFallback` specified, it logs a warning and keeps running with a partial configuration (`isConfigured === false`).
+- The `optional` helpers are meant for optional configuration that might have good defaults.
+  - If you want the same default value in dev and production, use: `env.optional('EMAIL') ?? 'island@island.is'`.
+  - If you want different defaults or don't want any default value in production, use the `devFallback` argument: `env.optional('CACHE_URL', 'localhost:1122')`
+- The `*JSON` variants try to parse the environment variable as JSON. This is very handy for boolean/numerical environment variables or more complex configurations. If you ever use these helpers, you should specify the expected types using the Zod schema. Any JSON parsing issues are logged as error before crashing the process (with `requiredJSON`).
 
-### Injecting Module Configurations
+### Injecting Module Config
 
-To inject configuration into services:
+After defining the config, you can inject it into services using its key. By using the `ConfigType` interface, you get a strongly-typed configuration object.
 
-```tsx
+```typescript
 import { Inject } from '@nestjs/common'
 import { ConfigType } from '@island.is/nest/config'
 import { someModuleConfig } from './someModule.config'
@@ -76,9 +75,9 @@ export class SomeModuleService {
 
 ### Loading a Module and Its Configuration
 
-Configurations are loaded through the root module as in NestJS's Config module.
+Loading configuration happens through the root module like in NestJS's Config module.
 
-```tsx
+```typescript
 import { ConfigModule } from '@island.is/nest/config'
 import { SomeModuleModule, someModuleConfig } from '@island.is/some/module'
 
@@ -97,13 +96,17 @@ import { SomeModuleModule, someModuleConfig } from '@island.is/some/module'
 export class SomeAppModule {}
 ```
 
-This provides an overview of all configured modules. Configurations are loaded in the root module but imported where needed.
+In this example, the module is configured and imported in the same place. In many cases, the module's configuration will be loaded in the root module but imported elsewhere. For instance, a hypothetical IdsModule may be imported in multiple places, all sharing a singleton configuration and services.
+
+By listing configurations to load in the root module, it provides a good overview of all modules configured and used by the app. Developers and DevOps can navigate through the config definitions to see which environment variables are needed by each.
+
+If someone accidentally imports a module that is not configured, NestJS stops the process with an error message specifying the missing configuration.
 
 ### Validating Configuration
 
-Use Zod schema to validate the final configuration object:
+Beyond validating missing environment variables with the `env.required` helpers, you can provide a Zod schema to validate the final object.
 
-```tsx
+```typescript
 import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
 
@@ -124,21 +127,28 @@ export const someModuleConfig = defineConfig({
 })
 ```
 
-Validation ensures:
+This is especially useful for:
 
-- Configuration values are valid (e.g., URLs).
-- Correct types for JSON-parsed values.
-- Better TypeScript types for JSON-parsed values.
+- Validating that configuration values are valid (URLs, regex, etc).
+- Validating the type of values parsed by the `*JSON` helpers.
+- Providing better TypeScript types for values parsed by the `*JSON` helpers.
 
-If validation fails, the process stops with detailed errors.
+If configuration validation fails, the process is stopped with an error similar to this:
+
+> SomeModule is not configured. Validation failed with the following errors:
+>
+> - url is not a string.
+> - ttl is not a number.
 
 ## Advanced Functionality
 
-### Optional Configurations
+### Optional Config
 
-Modules that depend on optional configs can use the `isConfigured` property. Import the config definition with `registerOptional()` to make it optional.
+If you have a module that can depend on a config optionally, it can use the `isConfigured` property to check if the config is provided. Then, in the module's imports, import the config definition with `registerOptional()`. This allows for a complete config to be optional, but if some property is provided, all required properties need to be provided.
 
-**Usage:**
+_Warning: Only optional configs should be imported in the module itself. Required config should be loaded in the root module using the `ConfigModule.forRoot(...)`._
+
+Checking if config is provided:
 
 ```ts
 import { Inject } from '@nestjs/common'
@@ -159,7 +169,7 @@ export class SomeClientService {
 }
 ```
 
-Add the config as optional in the module:
+Add the config as optional in the module.
 
 ```ts
 import { ConfigModule } from '@island.is/nest/config'
@@ -175,11 +185,13 @@ import { SomeClientService } from './someClient.service'
 export class SomeClientModule {}
 ```
 
-### Server-Side Features
+### Server Side Features
 
-Use [Server-Side Feature Flags](https://docs.devland.is/technical-overview/devops/service-setup#server-side-feature-flags) for server-side functionality:
+If you're working on server-side functionality or integrations that need to be on main, but aren't ready for staging or production, you can use [Server-Side Feature Flags](https://docs.devland.is/technical-overview/devops/service-setup#server-side-feature-flags) to disable the functionality. In these cases, entire module configurations may be missing, which would crash configuration loading.
 
-```tsx
+To handle this, you can define a configuration to depend on a specific server-side feature:
+
+```typescript
 import { defineConfig } from '@island.is/nest/config'
 
 const EXTERNAL_CLIENT_FEATURE = 'EXTERNAL_CLIENT'
@@ -193,13 +205,13 @@ export const someModuleConfig = defineConfig({
 })
 ```
 
-When `serverSideFeature` is set, the config module loads only if the feature is enabled.
+When `serverSideFeature` is set, the config module is only loaded if the specified feature is turned on. Alternatively, the configuration object only has its `isConfigured` attribute set to false.
 
-### Dynamic Configuration Support
+### Supporting Dynamic Configuration
 
-Support both global and dynamic configuration using an injection key:
+You can support both global configuration as well as dynamic configuration by using your own injection key:
 
-```tsx
+```typescript
 // Snip
 
 export const someModuleConfig = defineConfig({
@@ -210,7 +222,7 @@ export const someModuleConfig = defineConfig({
 export const SomeModuleConfigKey = 'SomeModuleConfigKey'
 ```
 
-```tsx
+```typescript
 import { Inject } from '@nestjs/common'
 import { ConfigType } from '@island.is/nest/config'
 import { someModuleConfig, SomeModuleConfigKey } from './someModule.config'
@@ -223,9 +235,9 @@ export class SomeModuleService {
 }
 ```
 
-Provide the injection key using global config, and support dynamic module registration:
+The module can then provide the injection key using existing global configuration, as well as support dynamic module registration with an explicit config object:
 
-```tsx
+```typescript
 @Module({
   providers: [
     SomeModuleService,
@@ -243,9 +255,9 @@ export class SomeModuleModule {
 }
 ```
 
-To import a module with dynamic configuration:
+To import a module with dynamic configuration, just call the register static function:
 
-```tsx
+```typescript
 import { ConfigModule } from '@island.is/nest/config'
 import { SomeModuleModule, someModuleConfig } from '@island.is/some/module'
 
@@ -264,4 +276,3 @@ export class SomeAppModule {}
 ## Running Unit Tests
 
 Run `nx test nest-config` to execute the unit tests via [Jest](https://jestjs.io).
-
