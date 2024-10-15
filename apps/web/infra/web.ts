@@ -1,3 +1,4 @@
+import { Ingress } from 'infra/src/dsl/types/input-types'
 import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
@@ -49,7 +50,7 @@ export const serviceSetup = (services: {
           },
         },
         paths: ['/'],
-      },
+      } as Ingress,
     })
     .liveness('/liveness')
     .readiness({ path: '/readiness', initialDelaySeconds: 20 })
