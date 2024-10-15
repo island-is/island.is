@@ -293,7 +293,7 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                     [Op.in]: Sequelize.literal(`
                       (SELECT case_id
                         FROM civil_claimant
-                        WHERE spokesperson_national_id in ('${normalizedNationalId}', '${formattedNationalId}'))
+                        WHERE has_spokesperson = true AND spokesperson_national_id in ('${normalizedNationalId}', '${formattedNationalId}'))
                     `),
                   },
                 },

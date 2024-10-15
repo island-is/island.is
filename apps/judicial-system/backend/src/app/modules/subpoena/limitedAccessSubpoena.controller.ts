@@ -27,9 +27,9 @@ import {
   CaseReadGuard,
   CaseTypeGuard,
   CurrentCase,
+  defenderGeneratedPdfRule,
   PdfService,
 } from '../case'
-import { defenderGeneratedPdfRule } from '../case/guards/rolesRules'
 import { CurrentDefendant, Defendant, DefendantExistsGuard } from '../defendant'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import { SubpoenaExistsOptionalGuard } from './guards/subpoenaExists.guard'
