@@ -1,5 +1,5 @@
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { pensionSupplementFormMessage } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
+import { householdSupplementFormMessage } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import { test as base, expect, Page } from '@playwright/test'
 import {
   disableI18n,
@@ -10,7 +10,7 @@ import { helpers } from '../../../../support/locator-helpers'
 import { session } from '../../../../support/session'
 import { setupXroadMocks } from './setup-xroad.mocks'
 
-const homeUrl = '/umsoknir/uppbot-a-lifeyri'
+const homeUrl = '/umsoknir/heimilisuppbot'
 
 const applicationTest = base.extend<{ applicationPage: Page }>({
   applicationPage: async ({ browser }, use) => {
@@ -25,7 +25,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(applicationPage).toBeApplication('uppbot-a-lifeyri')
+    await expect(applicationPage).toBeApplication()
     await setupXroadMocks()
     await use(applicationPage)
 
@@ -34,7 +34,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
   },
 })
 
-applicationTest.describe('Pension Supplement', () => {
+applicationTest.describe('Household Supplement', () => {
   applicationTest(
     'Should be able to create application',
     async ({ applicationPage }) => {
@@ -74,7 +74,7 @@ applicationTest.describe('Pension Supplement', () => {
           ),
         })
         await phoneNumber.selectText()
-        await phoneNumber.fill('6555555')
+        await phoneNumber.type('6555555')
         await proceed()
       })
 
@@ -92,24 +92,40 @@ applicationTest.describe('Pension Supplement', () => {
         await proceed()
       })
 
-      await applicationTest.step('Select application reason', async () => {
+      await applicationTest.step('Household supplement', async () => {
         await expect(
           page.getByRole('heading', {
-            name: label(pensionSupplementFormMessage.applicationReason.title),
+            name: label(
+              householdSupplementFormMessage.shared.householdSupplement,
+            ),
           }),
         ).toBeVisible()
 
         await page
           .getByRole('region', {
-            name: label(pensionSupplementFormMessage.applicationReason.title),
-          })
-          .getByRole('checkbox', {
             name: label(
-              pensionSupplementFormMessage.applicationReason.medicineCost,
+              householdSupplementFormMessage.info.householdSupplementHousing,
+            ),
+          })
+          .getByRole('radio', {
+            name: label(
+              householdSupplementFormMessage.info
+                .householdSupplementHousingOwner,
             ),
           })
           .click()
 
+        await page
+          .getByRole('region', {
+            name: label(
+              householdSupplementFormMessage.info
+                .householdSupplementChildrenBetween18And25,
+            ),
+          })
+          .getByRole('radio', {
+            name: label(socialInsuranceAdministrationMessage.shared.no),
+          })
+          .click()
         await proceed()
       })
 

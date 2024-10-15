@@ -83,6 +83,13 @@ export const loadNationalRegistryXroadMocks = async () => {
       },
     ]),
   })
+  await addXroadMock({
+    config: NationalRegistry,
+    prefix: 'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
+    apiPath: '/api/v1/einstaklingar/0101303019/samibuar',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody(['0101303019']),
+  })
 
   /* Gervimaður útlönd */
   await addXroadMock({
