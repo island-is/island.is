@@ -689,7 +689,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       let usedDays = calculateDaysUsedByPeriods(periods)
       const rights = VMSTApplicationRights.map((VMSTRight) => {
         const daysLeft = Math.max(0, Number(VMSTRight.days) - usedDays)
-        usedDays -= Number(VMSTRight.days) + daysLeft
+        usedDays -= Number(VMSTRight.days) - daysLeft
         return {
           ...VMSTRight,
           daysLeft: String(daysLeft),
@@ -940,8 +940,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       periods,
       firstPeriodStart,
     )
-    console.log({ periodsDTO, rightsDTO })
-    throw 'e'
+    // console.log({ periodsDTO, rightsDTO })
+    // throw 'e'
 
     try {
       const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
@@ -1039,8 +1039,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       periods,
       firstPeriodStart,
     )
-    console.log({ periodsDTO, rightsDTO })
-    throw 'e'
+    // console.log({ periodsDTO, rightsDTO })
+    // throw 'e'
 
     try {
       const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
@@ -1090,22 +1090,22 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     application,
   }: TemplateApiModuleActionProps) {
     // Testing
-    return [
-      {
-        rightsUnit: 'F-ANDV22',
-        rightsDescription: 'dfads',
-        months: '1',
-        days: '30',
-        daysLeft: '30',
-      },
-      {
-        rightsUnit: 'gfddf',
-        rightsDescription: 'fsdfs',
-        months: '2',
-        days: '30',
-        daysLeft: '60',
-      },
-    ]
+    // return [
+    //   {
+    //     rightsUnit: 'F-ANDV22',
+    //     rightsDescription: 'dfads',
+    //     months: '1',
+    //     days: '30',
+    //     daysLeft: '30',
+    //   },
+    //   {
+    //     rightsUnit: 'gfddf',
+    //     rightsDescription: 'fsdfs',
+    //     months: '2',
+    //     days: '60',
+    //     daysLeft: '60',
+    //   },
+    // ]
     try {
       const { parentalLeaves } =
         await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
@@ -1119,6 +1119,14 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         (parentalLeave) => parentalLeave.applicationId === applicationFundId,
       )
       parentalLeaves?.forEach((p) => console.log({ p }))
+      parentalLeaves?.forEach(({ applicationId }) =>
+        console.log({ applicationId }),
+      )
+      console.log({ applicationFundId })
+
+      console.log({ parentalLeaveApplication })
+
+      // return parentalLeaveApplication?.applicationRights ?? ''
       const c = {
         ...parentalLeaveApplication,
         applicationRights: [
