@@ -13,10 +13,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import {
-  Application,
-  UserProfile,
-} from '@island.is/api/schema'
+import { Application, UserProfile } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 import Logo from '../../assets/Logo'
 

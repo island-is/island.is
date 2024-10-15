@@ -14,7 +14,10 @@ export const CopyLink: FC<FieldBaseProps> = ({ application }) => {
       <Text variant="h4" marginBottom={2}>
         {formatMessage(m.shareList)}
       </Text>
-      <Copy linkUrl={`${document.location.origin}${slug}`} buttonTitle={formatMessage(m.copyLink)} />
+      <Copy
+        linkUrl={`${document.location.origin}${slug}`}
+        buttonTitle={formatMessage(m.copyLink)}
+      />
     </Box>
   )
 }
