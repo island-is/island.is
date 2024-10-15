@@ -95,7 +95,7 @@ const canDefenceUsaerViewCaseFile = (
   civilClaimants?: CivilClaimant[],
 ) => {
   if (isRequestCase(caseType)) {
-    canDefenceUserViewCaseFileOfRequestCase(caseState, caseFileCategory)
+    return canDefenceUserViewCaseFileOfRequestCase(caseState, caseFileCategory)
   }
 
   if (isIndictmentCase(caseType)) {

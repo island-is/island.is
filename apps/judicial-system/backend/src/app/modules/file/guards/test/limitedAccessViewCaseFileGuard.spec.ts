@@ -1,3 +1,5 @@
+import { uuid } from 'uuidv4'
+
 import {
   ExecutionContext,
   ForbiddenException,
@@ -164,22 +166,58 @@ describe('Limited Access View Case File Guard', () => {
         ]
 
         describe.each(allowedCaseFileCategories)(
-          'a defender can view %s',
+          'case file category %s',
           (category) => {
-            let then: Then
+            describe('a defender with case files access can view', () => {
+              let then: Then
 
-            beforeEach(() => {
-              mockRequest.mockImplementationOnce(() => ({
-                user: { role: UserRole.DEFENDER },
-                case: { type, state },
-                caseFile: { category },
-              }))
+              beforeEach(() => {
+                const nationalId = uuid()
+                mockRequest.mockImplementationOnce(() => ({
+                  user: { role: UserRole.DEFENDER, nationalId },
+                  case: {
+                    type,
+                    state,
+                    defendants: [{ defenderNationalId: nationalId }],
+                  },
+                  caseFile: { category },
+                }))
 
-              then = givenWhenThen()
+                then = givenWhenThen()
+              })
+
+              it('should activate', () => {
+                expect(then.result).toBe(true)
+              })
             })
 
-            it('should activate', () => {
-              expect(then.result).toBe(true)
+            describe('spokesperson with case files access can view', () => {
+              let then: Then
+
+              beforeEach(() => {
+                const nationalId = uuid()
+                mockRequest.mockImplementationOnce(() => ({
+                  user: { role: UserRole.DEFENDER, nationalId },
+                  case: {
+                    type,
+                    state,
+                    civilClaimants: [
+                      {
+                        hasSpokesperson: true,
+                        spokespersonNationalId: nationalId,
+                        caseFilesSharedWithSpokesperson: true,
+                      },
+                    ],
+                  },
+                  caseFile: { category },
+                }))
+
+                then = givenWhenThen()
+              })
+
+              it('should activate', () => {
+                expect(then.result).toBe(true)
+              })
             })
           },
         )
@@ -189,24 +227,190 @@ describe('Limited Access View Case File Guard', () => {
             (category) =>
               !allowedCaseFileCategories.includes(category as CaseFileCategory),
           ),
-        )('a defender can not view %s', (category) => {
-          let then: Then
+        )('case file category %s', (category) => {
+          describe('a defender with case files access can not view', () => {
+            let then: Then
 
-          beforeEach(() => {
-            mockRequest.mockImplementationOnce(() => ({
-              user: { role: UserRole.DEFENDER },
-              case: { type, state },
-              caseFile: { category },
-            }))
+            beforeEach(() => {
+              const nationalId = uuid()
+              mockRequest.mockImplementationOnce(() => ({
+                user: { role: UserRole.DEFENDER, nationalId },
+                case: {
+                  type,
+                  state,
+                  defendants: [{ defenderNationalId: nationalId }],
+                },
+                caseFile: { category },
+              }))
 
-            then = givenWhenThen()
+              then = givenWhenThen()
+            })
+
+            it('should throw ForbiddenException', () => {
+              expect(then.error).toBeInstanceOf(ForbiddenException)
+              expect(then.error.message).toBe(
+                `Forbidden for ${UserRole.DEFENDER}`,
+              )
+            })
           })
 
-          it('should throw ForbiddenException', () => {
-            expect(then.error).toBeInstanceOf(ForbiddenException)
-            expect(then.error.message).toBe(
-              `Forbidden for ${UserRole.DEFENDER}`,
-            )
+          describe('spokesperson with case files access can not view', () => {
+            let then: Then
+
+            beforeEach(() => {
+              const nationalId = uuid()
+              mockRequest.mockImplementationOnce(() => ({
+                user: { role: UserRole.DEFENDER, nationalId },
+                case: {
+                  type,
+                  state,
+                  civilClaimants: [
+                    {
+                      hasSpokesperson: true,
+                      spokesPersonNationalId: nationalId,
+                      caseFilesSharedWithSpokesperson: true,
+                    },
+                  ],
+                },
+                caseFile: { category },
+              }))
+
+              then = givenWhenThen()
+            })
+
+            it('should throw ForbiddenException', () => {
+              expect(then.error).toBeInstanceOf(ForbiddenException)
+              expect(then.error.message).toBe(
+                `Forbidden for ${UserRole.DEFENDER}`,
+              )
+            })
+          })
+        })
+      })
+    })
+
+    describe.each(indictmentCases)('for %s cases', (type) => {
+      describe.each(Object.values(CaseState))('in state %s', (state) => {
+        const allowedCaseFileCategories = [
+          CaseFileCategory.COURT_RECORD,
+          CaseFileCategory.RULING,
+        ]
+
+        describe.each(allowedCaseFileCategories)(
+          'case file category %s',
+          (category) => {
+            describe('a defender without case files access can view', () => {
+              let then: Then
+
+              beforeEach(() => {
+                const nationalId = uuid()
+                mockRequest.mockImplementationOnce(() => ({
+                  user: { role: UserRole.DEFENDER, nationalId },
+                  case: {
+                    type,
+                    state,
+                  },
+                  caseFile: { category },
+                }))
+
+                then = givenWhenThen()
+              })
+
+              it('should activate', () => {
+                expect(then.result).toBe(true)
+              })
+            })
+
+            describe('spokesperson without case files access can view', () => {
+              let then: Then
+
+              beforeEach(() => {
+                const nationalId = uuid()
+                mockRequest.mockImplementationOnce(() => ({
+                  user: { role: UserRole.DEFENDER, nationalId },
+                  case: {
+                    type,
+                    state,
+                    civilClaimants: [
+                      {
+                        hasSpokesperson: true,
+                        spokespersonNationalId: nationalId,
+                      },
+                    ],
+                  },
+                  caseFile: { category },
+                }))
+
+                then = givenWhenThen()
+              })
+
+              it('should activate', () => {
+                expect(then.result).toBe(true)
+              })
+            })
+          },
+        )
+
+        describe.each(
+          Object.keys(CaseFileCategory).filter(
+            (category) =>
+              !allowedCaseFileCategories.includes(category as CaseFileCategory),
+          ),
+        )('case file category %s', (category) => {
+          describe('a defender without case files access can not view', () => {
+            let then: Then
+
+            beforeEach(() => {
+              const nationalId = uuid()
+              mockRequest.mockImplementationOnce(() => ({
+                user: { role: UserRole.DEFENDER, nationalId },
+                case: {
+                  type,
+                  state,
+                },
+                caseFile: { category },
+              }))
+
+              then = givenWhenThen()
+            })
+
+            it('should throw ForbiddenException', () => {
+              expect(then.error).toBeInstanceOf(ForbiddenException)
+              expect(then.error.message).toBe(
+                `Forbidden for ${UserRole.DEFENDER}`,
+              )
+            })
+          })
+
+          describe('spokesperson without case files access can not view', () => {
+            let then: Then
+
+            beforeEach(() => {
+              const nationalId = uuid()
+              mockRequest.mockImplementationOnce(() => ({
+                user: { role: UserRole.DEFENDER, nationalId },
+                case: {
+                  type,
+                  state,
+                  civilClaimants: [
+                    {
+                      hasSpokesperson: true,
+                      spokesPersonNationalId: nationalId,
+                    },
+                  ],
+                },
+                caseFile: { category },
+              }))
+
+              then = givenWhenThen()
+            })
+
+            it('should throw ForbiddenException', () => {
+              expect(then.error).toBeInstanceOf(ForbiddenException)
+              expect(then.error.message).toBe(
+                `Forbidden for ${UserRole.DEFENDER}`,
+              )
+            })
           })
         })
       })
