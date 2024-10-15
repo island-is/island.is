@@ -1,5 +1,4 @@
 import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { MissingSetting } from '../../../../../infra/src/dsl/types/input-types'
 import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
 const REDIS_NODE_CONFIG = {
