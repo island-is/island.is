@@ -58,7 +58,6 @@ export class EndorsementService {
     private readonly awsService: AwsService,
   ) {}
 
-
   async updateCountsForAllLists(): Promise<void> {
     const allLists = await this.endorsementListModel.findAll()
     for (const list of allLists) {
