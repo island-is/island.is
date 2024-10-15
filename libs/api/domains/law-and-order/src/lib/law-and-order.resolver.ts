@@ -64,24 +64,12 @@ export class LawAndOrderResolver {
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
   ) {
-    try {
-      return await this.auditService.auditPromise(
-        {
-          auth: user,
-          namespace: '@island.is/api/law-and-order',
-          action: 'getCourtCaseDetail',
-          resources: input.id,
-        },
-        this.lawAndOrderService.getCourtCase(user, input.id, locale),
-      )
-    } catch (e) {
-      this.logger.info('failed to get single court case', {
-        category: LOG_CATEGORY,
-        id: input.id,
-        error: e,
-      })
-      throw e
-    }
+    return this.auditAndHandle(
+      'getCourtCaseDetail',
+      input.id,
+      this.lawAndOrderService.getCourtCase(user, input.id, locale),
+      user,
+    )
   }
 
   @Query(() => Subpoena, { name: 'lawAndOrderSubpoena', nullable: true })
@@ -92,24 +80,12 @@ export class LawAndOrderResolver {
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
   ) {
-    try {
-      return await this.auditService.auditPromise(
-        {
-          auth: user,
-          namespace: '@island.is/api/law-and-order',
-          action: 'getSubpoena',
-          resources: input.id,
-        },
-        this.lawAndOrderService.getSubpoena(user, input.id, locale),
-      )
-    } catch (e) {
-      this.logger.info('failed to get subpoena for court case', {
-        category: LOG_CATEGORY,
-        id: input.id,
-        error: e,
-      })
-      throw e
-    }
+    return this.auditAndHandle(
+      'getSubpoena',
+      input.id,
+      this.lawAndOrderService.getSubpoena(user, input.id, locale),
+      user,
+    )
   }
 
   @Query(() => Lawyers, { name: 'lawAndOrderLawyers', nullable: true })
@@ -133,21 +109,37 @@ export class LawAndOrderResolver {
     locale: Locale = 'is',
     @CurrentUser() user: User,
   ) {
+    return this.auditAndHandle(
+      'postDefenseChoice',
+      input.caseId,
+      this.lawAndOrderService.postDefenseChoice(user, input, locale),
+      user,
+      { defenseChoice: input.choice },
+    )
+  }
+
+  private async auditAndHandle<T>(
+    actionName: string,
+    resources: string,
+    promise: Promise<T>,
+    user: User,
+    meta?: any,
+  ): Promise<T> {
     try {
       return await this.auditService.auditPromise(
         {
           auth: user,
           namespace: '@island.is/api/law-and-order',
-          action: 'postDefenseChoice',
-          resources: input.caseId,
-          meta: { defenseChoice: input.choice },
+          action: actionName,
+          resources: resources,
+          meta: meta,
         },
-        this.lawAndOrderService.postDefenseChoice(user, input, locale),
+        promise,
       )
     } catch (e) {
-      this.logger.info('failed to patch defender choice for subpoena ', {
+      this.logger.error(`Failed to ${actionName}`, {
         category: LOG_CATEGORY,
-        id: input.caseId,
+        id: resources,
         error: e,
       })
       throw e
