@@ -33,7 +33,7 @@ export class SignatureCollectionService {
   ) {}
 
   private checkListAccess(listId: string, signee: SignatureCollectionSignee) {
-    if (!signee.ownedLists?.some((list) => list.id === listId) || false) {
+    if (!signee.ownedLists?.some((list) => list.id === listId)) {
       throw new NotFoundException('List not found')
     }
   }
