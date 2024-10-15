@@ -2,7 +2,7 @@ import { assign } from 'xstate'
 import unset from 'lodash/unset'
 import set from 'lodash/set'
 import cloneDeep from 'lodash/cloneDeep'
-
+import { Features } from '@island.is/feature-flags'
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -58,6 +58,7 @@ const DeathBenefitsTemplate: ApplicationTemplate<
   translationNamespaces: ApplicationConfigurations.DeathBenefits.translation,
   dataSchema,
   allowMultipleApplicationsInDraft: false,
+  featureFlag: Features.deathBenefits,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
