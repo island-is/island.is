@@ -176,7 +176,7 @@ export const is = {
   'home.onboardingModule.card2':
     'Markmiðið með appinu er að þú hafir í hendi þér það sem þú þarfnast hverju sinni í samskiptum við hið opinbera.',
   'home.onboardingModule.card3':
-    'Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á',
+    'Hafir þú athugasemdir eða ábendingar um eitthvað sem vantar eða sem má betur fara viljum við gjarnan fá frá þér línu á island@island.is',
   'home.onboardingModule.card4':
     'Notendum er bent á að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á',
   'home.vehicleModule.summary':
@@ -594,6 +594,9 @@ export const is = {
     'Þú ert að fara að opna Ísland.is í vafra. Viltu búa til aðgangslykil til að skrá þig inn sjálfkrafa með appinu?',
   'passkeys.headingSubtitle':
     'Viltu búa til aðgangslykil til að skrá þig inn sjálfkrafa með appinu?',
+  'passkeys.settings':
+    'Undir stillingum er alltaf hægt að eyða eða búa til aðgangslykil',
+  'passkeys.furtherInformation': 'Nánar um aðgangslykla',
   'passkeys.createButton': 'Búa til aðgangslykil',
   'passkeys.skipButton': 'Sleppa',
   'passkeys.errorRegistering': 'Villa',

@@ -1,11 +1,9 @@
 import { Label, Typography } from '@ui'
 import React, { isValidElement } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import { Image, ImageSourcePropType, Pressable } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { Image, ImageSourcePropType } from 'react-native'
+import styled from 'styled-components/native'
 
-import StarFilled from '../../../assets/icons/star-filled.png'
-import Star from '../../../assets/icons/star.png'
 import { dynamicColor } from '../../utils'
 
 const Host = styled.SafeAreaView<{ unread?: boolean }>`
@@ -61,16 +59,6 @@ const Title = styled.View`
 
 const Cell = styled.View``
 
-const StarImage = styled.Image<{ active?: boolean }>`
-  tint-color: ${dynamicColor(({ active, theme }) => ({
-    dark: active ? theme.color.blue400 : theme.color.dark300,
-    light: active ? theme.color.blue400 : theme.color.dark300,
-  }))};
-  width: 16px;
-  height: 16px;
-  margin-top: -4px;
-`
-
 interface ListItemAction {
   id: string
   text: string
@@ -84,8 +72,6 @@ interface ListItemProps {
   unread?: boolean
   actions?: ListItemAction[]
   icon?: ImageSourcePropType | React.ReactNode
-  onStarPress?(): void
-  starred?: boolean
   urgent?: boolean
 }
 
@@ -94,13 +80,10 @@ export function ListItem({
   subtitle,
   date,
   icon,
-  onStarPress,
-  starred = false,
   unread = false,
   urgent = false,
 }: ListItemProps) {
   const intl = useIntl()
-  const theme = useTheme()
   return (
     <Cell>
       <Host unread={unread}>
@@ -144,12 +127,6 @@ export function ListItem({
                 {intl.formatMessage({ id: 'inbox.urgent' })}
               </Label>
             )}
-            <Pressable hitSlop={16} onPress={onStarPress}>
-              <StarImage
-                source={starred ? StarFilled : Star}
-                active={starred}
-              />
-            </Pressable>
           </Row>
         </Content>
       </Host>
