@@ -228,14 +228,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
             <RenderFiles caseFiles={civilClaims} onOpenFile={onOpen} />
           </Box>
         )}
-      {uploadedCaseFiles && uploadedCaseFiles.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={3}>
-            {formatMessage(strings.uploadedCaseFiles)}
-          </Text>
-          <CaseFileTable caseFiles={uploadedCaseFiles} onOpenFile={onOpen} />
-        </Box>
-      )}
       {showSubpoenaPdf && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
@@ -257,6 +249,14 @@ const IndictmentCaseFilesList: FC<Props> = ({
               </Box>
             )),
           )}
+        </Box>
+      )}
+      {uploadedCaseFiles && uploadedCaseFiles.length > 0 && (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={3}>
+            {formatMessage(strings.uploadedCaseFiles)}
+          </Text>
+          <CaseFileTable caseFiles={uploadedCaseFiles} onOpenFile={onOpen} />
         </Box>
       )}
       <AnimatePresence>
