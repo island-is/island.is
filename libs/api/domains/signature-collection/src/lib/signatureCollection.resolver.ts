@@ -45,6 +45,7 @@ export class SignatureCollectionResolver {
 
   @Scopes(ApiScope.signatureCollection)
   @Query(() => SignatureCollectionSuccess)
+  @AllowManager()
   @Audit()
   async signatureCollectionIsOwner(
     @CurrentSignee() signee: SignatureCollectionSignee,
@@ -97,9 +98,10 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionList(
     @CurrentUser() user: User,
+    @CurrentSignee() signee: SignatureCollectionSignee,
     @Args('input') input: SignatureCollectionListIdInput,
   ): Promise<SignatureCollectionList> {
-    return this.signatureCollectionService.list(input.listId, user)
+    return this.signatureCollectionService.list(input.listId, user, signee)
   }
 
   @Scopes(ApiScope.signatureCollection)
@@ -140,8 +142,13 @@ export class SignatureCollectionResolver {
   async signatureCollectionCanSignFromPaper(
     @Args('input') input: SignatureCollectionCanSignFromPaperInput,
     @CurrentUser() user: User,
+    @CurrentSignee() signee: SignatureCollectionSignee,
   ): Promise<boolean> {
-    return await this.signatureCollectionService.canSignFromPaper(user, input)
+    return await this.signatureCollectionService.canSignFromPaper(
+      user,
+      input,
+      signee,
+    )
   }
 
   @Scopes(ApiScope.signatureCollection)
