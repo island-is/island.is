@@ -118,14 +118,14 @@ export const RegularMember = ({
           }
         />
         <SignatureMember
-          name={`signature.regular.member.after.${signatureIndex}.${memberIndex}`}
-          label={f(signatures.inputs.after.label)}
-          defaultValue={member.after}
+          name={`signature.regular.member.name.${signatureIndex}.${memberIndex}`}
+          label={f(signatures.inputs.name.label)}
+          defaultValue={member.name}
           onChange={(e) =>
             debouncedOnUpdateApplicationHandler(
               handleMemberChange(
                 e.target.value,
-                'after',
+                'name',
                 signatureIndex,
                 memberIndex,
               ),
@@ -135,14 +135,14 @@ export const RegularMember = ({
       </Box>
       <Box className={styles.inputWrapper}>
         <SignatureMember
-          name={`signature.regular.member.name.${signatureIndex}.${memberIndex}`}
-          label={f(signatures.inputs.name.label)}
-          defaultValue={member.name}
+          name={`signature.regular.member.after.${signatureIndex}.${memberIndex}`}
+          label={f(signatures.inputs.after.label)}
+          defaultValue={member.after}
           onChange={(e) =>
             debouncedOnUpdateApplicationHandler(
               handleMemberChange(
                 e.target.value,
-                'name',
+                'after',
                 signatureIndex,
                 memberIndex,
               ),
