@@ -1,22 +1,22 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text } from '@island.is/island-ui/core'
-import {
-  acceptedAmountBreakDown,
-  Amount,
-  Application as Application2, // Todo: refactor
-  ApplicationState,
-} from '@island.is/financial-aid/shared/lib'
 import { aidAmount } from '../../../lib/messages'
 import { waitingForSpouse } from '../../..'
 import Breakdown from '../../../components/Breakdown/Breakdown'
 import { Estimation } from '../Estimation/Estimation'
 import { Application, DataProviderResult } from '@island.is/application/types'
 import { VeitaEstimation } from '../Estimation/VeitaEstimation'
+import {
+  acceptedAmountBreakDown,
+  Amount,
+  ApplicationState,
+  Application as FinancialAidAnswers,
+} from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   application: Application
-  veitaApplication?: Application2
+  veitaApplication?: FinancialAidAnswers
   municipality: DataProviderResult
   state?: ApplicationState
   amount?: Amount

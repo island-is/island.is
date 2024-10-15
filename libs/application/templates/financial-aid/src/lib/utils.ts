@@ -76,17 +76,22 @@ export function findFamilyStatus(
     'relationshipStatus.unregisteredCohabitation',
   ) as string | undefined
 
-  switch (true) {
-    case martialStatusTypeFromMartialCode(maritalStatus) ===
-      MartialStatusType.MARRIED:
-      return FamilyStatus.MARRIED
-    case externalData.nationalRegistrySpouse.data != null:
-      return FamilyStatus.COHABITATION
-    case unregisteredCohabitation === ApproveOptions.Yes:
-      return FamilyStatus.UNREGISTERED_COBAHITATION
-    default:
-      return FamilyStatus.NOT_COHABITATION
+  if (
+    martialStatusTypeFromMartialCode(maritalStatus) ===
+    MartialStatusType.MARRIED
+  ) {
+    return FamilyStatus.MARRIED
   }
+
+  if (externalData.nationalRegistrySpouse.data != null) {
+    return FamilyStatus.COHABITATION
+  }
+
+  if (unregisteredCohabitation === ApproveOptions.Yes) {
+    return FamilyStatus.UNREGISTERED_COBAHITATION
+  }
+
+  return FamilyStatus.NOT_COHABITATION
 }
 
 export function hasActiveCurrentApplication(context: ApplicationContext) {

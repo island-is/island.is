@@ -15,25 +15,6 @@ import {
 import { childrenForm } from '../../../lib/messages'
 import { SummaryComment } from '../../../lib/types'
 
-let externalData: ExternalData = {}
-
-const test = (extD: ExternalData) => {
-  console.log(extD)
-
-  return [
-    buildDescriptionField({
-      id: 'childrenSubsectionDescriptionX',
-      title: 'Test 1',
-      marginBottom: 4,
-    }),
-    buildDescriptionField({
-      id: 'childrenSubsectionDescriptionXX',
-      title: 'Test 2',
-      marginBottom: 4,
-    }),
-  ]
-}
-
 export const childrenSubSection = buildSubSection({
   condition: (_, externalData) => {
     const childWithInfo = getValueViaPath(
@@ -52,7 +33,6 @@ export const childrenSubSection = buildSubSection({
       title: 'Börn',
       description: childrenForm.general.description,
       children: [
-        ...test(externalData),
         buildDescriptionField({
           id: 'childrenSubsectionDescription',
           title: '',

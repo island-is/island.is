@@ -8,8 +8,10 @@ import format from 'date-fns/format'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath } from '@island.is/application/core'
 import kennitala from 'kennitala'
-import { ApplicantChildCustodyInformation } from 'libs/application/types/src/lib/template-api/shared-api/models'
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  ApplicantChildCustodyInformation,
+  FieldBaseProps,
+} from '@island.is/application/types'
 
 const ChildrenForm = ({ application, field, errors }: FieldBaseProps) => {
   const { setValue, clearErrors } = useFormContext()
