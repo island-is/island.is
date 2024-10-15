@@ -8,8 +8,10 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { sharedModuleConfig } from '../../shared'
 
 const mockConfig = {
-  templateApi: {
-    attachmentBucket: 'island-is-dev-storage-application-system',
+  SharedModuleConfig: {
+    templateApi: {
+      attachmentBucket: 'island-is-dev-storage-application-system',
+    },
   },
 }
 

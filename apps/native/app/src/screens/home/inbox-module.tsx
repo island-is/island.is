@@ -124,14 +124,15 @@ const InboxModule = React.memo(({ data, loading, error }: InboxModuleProps) => {
               publicationDate={item.publicationDate}
               id={`${item.id}-${index}`}
               unread={!item.opened}
-              bookmarked={item.bookmarked}
               senderName={item.sender.name}
               icon={
                 item.sender.name && getOrganizationLogoUrl(item.sender.name, 75)
               }
+              isUrgent={item.isUrgent}
               onPress={() =>
                 navigateTo(`/inbox/${item.id}`, {
                   title: item.sender.name,
+                  isUrgent: item.isUrgent,
                 })
               }
             />
