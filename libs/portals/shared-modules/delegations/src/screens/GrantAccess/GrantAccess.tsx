@@ -107,7 +107,8 @@ const GrantAccess = () => {
       value.length === 10 &&
       kennitala.isValid(value) &&
       !kennitala.isCompany(value) &&
-      value !== userInfo.profile.nationalId
+      value !== userInfo.profile.nationalId &&
+      value !== userInfo.profile.actor?.nationalId
     ) {
       getIdentity({
         variables: { input: { nationalId: value } },
@@ -205,6 +206,10 @@ const GrantAccess = () => {
 
                           if (valueAsString === userInfo.profile.nationalId) {
                             return formatMessage(m.grantSameSsn)
+                          }
+
+                          if (valueAsString === userInfo.profile.actor?.nationalId) {
+                            return formatMessage(m.grantActorSsn)
                           }
 
                           if (kennitala.isCompany(valueAsString)) {
