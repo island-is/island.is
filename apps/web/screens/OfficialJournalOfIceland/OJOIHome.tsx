@@ -32,6 +32,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
+  OJOIAdvertCard,
   OJOIAdvertCards,
   OJOIHomeIntro,
   OJOISearchListView,
@@ -71,11 +72,7 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
     },
   ]
 
-  const {
-    data: aAdverts,
-    loading: aLoading,
-    error: aError,
-  } = useQuery<
+  const { data, loading, error } = useQuery<
     {
       officialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsResponse
     },
@@ -84,61 +81,13 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
     variables: {
       input: {
         page: 1,
-        pageSize: 1,
-        department: ['a-deild'],
+        pageSize: 5,
       },
     },
     fetchPolicy: 'no-cache',
   })
 
-  const {
-    data: bAdverts,
-    loading: bLoading,
-    error: bError,
-  } = useQuery<
-    {
-      officialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsResponse
-    },
-    QueryOfficialJournalOfIcelandAdvertsArgs
-  >(ADVERTS_QUERY, {
-    variables: {
-      input: {
-        page: 1,
-        pageSize: 1,
-        department: ['b-deild'],
-      },
-    },
-    fetchPolicy: 'no-cache',
-  })
-
-  const {
-    data: cAdverts,
-    loading: cLoading,
-    error: cError,
-  } = useQuery<
-    {
-      officialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsResponse
-    },
-    QueryOfficialJournalOfIcelandAdvertsArgs
-  >(ADVERTS_QUERY, {
-    variables: {
-      input: {
-        page: 1,
-        pageSize: 1,
-        department: ['c-deild'],
-      },
-    },
-    fetchPolicy: 'no-cache',
-  })
-
-  const loading = aLoading || bLoading || cLoading
-  const error = aError || bError || cError
-
-  const adverts = [
-    ...(aAdverts?.officialJournalOfIcelandAdverts.adverts ?? []),
-    ...(bAdverts?.officialJournalOfIcelandAdverts.adverts ?? []),
-    ...(cAdverts?.officialJournalOfIcelandAdverts.adverts ?? []),
-  ]
+  const adverts = data?.officialJournalOfIcelandAdverts.adverts
 
   return (
     <OJOIWrapper
@@ -226,31 +175,29 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
                 <Text marginBottom={3} variant="h3">
                   {formatMessage(m.home.latestAdverts)}
                 </Text>
-                {loading ? (
-                  <SkeletonLoader repeat={4} height={200} />
-                ) : (
-                  <Stack space={3}>
-                    {error && (
-                      <AlertMessage
-                        type="warning"
-                        message={formatMessage(
-                          m.search.errorFetchingAdvertsMessage,
-                        )}
-                        title={formatMessage(
-                          m.search.errorFetchingAdvertsTitle,
-                        )}
-                      />
-                    )}
-                    {!error && !adverts?.length && (
-                      <AlertMessage
-                        type="info"
-                        message={formatMessage(m.search.emptySearchResult)}
-                      />
-                    )}
 
+                <Stack space={3}>
+                  {loading && <SkeletonLoader repeat={4} height={200} />}
+                  {error && (
+                    <AlertMessage
+                      type="warning"
+                      message={formatMessage(
+                        m.search.errorFetchingAdvertsMessage,
+                      )}
+                      title={formatMessage(m.search.errorFetchingAdvertsTitle)}
+                    />
+                  )}
+                  {!error && !adverts?.length && (
+                    <AlertMessage
+                      type="info"
+                      message={formatMessage(m.search.emptySearchResult)}
+                    />
+                  )}
+
+                  {adverts && (
                     <OJOIAdvertCards adverts={adverts} locale={locale} />
-                  </Stack>
-                )}
+                  )}
+                </Stack>
               </GridColumn>
             </GridRow>
 
