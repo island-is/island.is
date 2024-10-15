@@ -619,7 +619,7 @@ export const is = {
   'health.overview.insuredFrom': 'Sjúkratrygging frá',
   'health.overview.status': 'Staða',
   'health.overview.notInsured': 'Þú ert ekki með sjúkratryggingu',
-  'health.overview.payments': 'Greiðslur',
+  'health.overview.coPayments': 'Greiðsluþáttaka',
   'health.overview.maxMonthlyPayment': 'Hámarksgreiðslan þín á mánuði',
   'health.overview.paymentLimit': 'Greiðslumark',
   'health.overview.paymentCredit': 'Inneign',
