@@ -157,17 +157,19 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
     (medicinePurchaseData?.dateTo &&
       new Date(medicinePurchaseData.dateTo) > new Date())
   const isOrganDonor =
-    organDonationRes.data?.healthDirectorateOrganDonation.donor?.isDonor
+    organDonationRes.data?.healthDirectorateOrganDonation.donor?.isDonor ??
+    false
 
   const isOrganDonorWithLimitations =
     isOrganDonor &&
-    organDonationRes.data?.healthDirectorateOrganDonation.donor?.limitations
-      ?.hasLimitations
+    (organDonationRes.data?.healthDirectorateOrganDonation.donor?.limitations
+      ?.hasLimitations ??
+      false)
 
   const organLimitations = isOrganDonorWithLimitations
     ? organDonationRes.data?.healthDirectorateOrganDonation.donor?.limitations?.limitedOrgansList?.map(
         (organ) => organ.name,
-      )
+      ) ?? []
     : []
 
   useConnectivityIndicator({
