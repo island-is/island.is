@@ -464,7 +464,7 @@ export class ServiceBuilder<ServiceType extends string> {
    */
   ingress(ingresses: IngressMapping): this {
     const FORCED_ANNOTATIONS: { [key: string]: string } = {
-      'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+      'nginx.ingress.kubernetes.io/enable-global-auth': 'true',
     }
     this.serviceDef.ingress = ingresses
 
@@ -477,6 +477,9 @@ export class ServiceBuilder<ServiceType extends string> {
       ingressAnnotations ?? {},
     )) {
       for (const annotation of Object.keys(annotations)) {
+        if (!(annotation in FORCED_ANNOTATIONS)) {
+          continue
+        }
         // Apply any forced annotations
         annotations[annotation] =
           FORCED_ANNOTATIONS[annotation] ?? annotations[annotation]
