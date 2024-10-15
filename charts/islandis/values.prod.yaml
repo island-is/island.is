@@ -2177,11 +2177,11 @@ services-bff-portals-admin:
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/stjornbord/bff/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/health/check'
+      path: '/stjornbord/bff/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
