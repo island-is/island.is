@@ -1,22 +1,26 @@
 import {
   buildCheckboxField,
-  buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
 import { getUnknownRelationshipOptions } from '../../../lib/utils/getUnknownRelationshipOptions'
 import { FormValue } from '@island.is/application/types'
-import { ApproveOptions, ExternalData } from '../../../lib/types'
+import { ApproveOptions } from '../../../lib/types'
 
 export const unknownRelationshipSubSection = buildSubSection({
-  condition: (_, externalData) =>
-    (externalData as unknown as ExternalData).nationalRegistrySpouse.data ==
-    null,
+  condition: (_, externalData) => {
+    const spouseData = getValueViaPath(
+      externalData,
+      'nationalRegistrySpouse.data',
+    )
+    return spouseData == null
+  },
   title: m.unknownRelationship.general.sectionTitle,
   id: Routes.UNKNOWNRELATIONSHIP,
   children: [

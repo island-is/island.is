@@ -7,11 +7,8 @@ import {
   DefaultEvents,
   Application,
 } from '@island.is/application/types'
-
 import { assign } from 'xstate'
-
 import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
-
 import { application, stateDescriptions } from './messages'
 import { dataSchema } from './dataSchema'
 import {
@@ -19,7 +16,7 @@ import {
   hasActiveCurrentApplication,
   hasSpouseCheck,
 } from './utils'
-import { FAApplication } from '..'
+import { FinancialAidAnswers, FinancialAidExternalData } from '..'
 import {
   CreateApplicationApi,
   CurrentApplicationApi,
@@ -265,11 +262,13 @@ const FinancialAidTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       assignToSpouse: assign((context) => {
-        const { externalData, answers } =
-          context.application as unknown as FAApplication
+        const { externalData, answers } = context.application
+        const answersSchema = answers as unknown as FinancialAidAnswers
+        const externalDataSchema =
+          externalData as unknown as FinancialAidExternalData
         const spouse =
-          externalData.nationalRegistrySpouse.data?.nationalId ||
-          answers.relationshipStatus.spouseNationalId
+          externalDataSchema.nationalRegistrySpouse.data?.nationalId ||
+          answersSchema.relationshipStatus.spouseNationalId
 
         if (spouse) {
           return {

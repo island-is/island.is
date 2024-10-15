@@ -3,17 +3,23 @@ import {
   buildFileUploadField,
   buildMultiField,
   buildSection,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { ExternalData } from '../../lib/types'
 import { FILE_SIZE_LIMIT, Routes, UPLOAD_ACCEPT } from '../../lib/constants'
 import * as m from '../../lib/messages'
 
 export const spouseTaxReturnFilesSection = buildSection({
-  condition: (_, externalData) =>
-    (externalData as unknown as ExternalData)?.taxDataSpouse?.data
-      ?.municipalitiesDirectTaxPayments?.success === false ||
-    (externalData as unknown as ExternalData)?.taxDataSpouse?.data
-      ?.municipalitiesPersonalTaxReturn?.personalTaxReturn == null,
+  condition: (_, externalData) => {
+    const spouseTaxSuccess = getValueViaPath(
+      externalData,
+      'taxDataSpouse.data.municipalitiesDirectTaxPayments.success',
+    )
+    const spouseTaxReturn = getValueViaPath(
+      externalData,
+      'taxDataSpouse.data.municipalitiesPersonalTaxReturn.personalTaxReturn',
+    )
+    return spouseTaxSuccess === false || spouseTaxReturn == null
+  },
   id: Routes.SPOUSETAXRETURNFILES,
   title: m.taxReturnForm.general.sectionTitle,
   children: [

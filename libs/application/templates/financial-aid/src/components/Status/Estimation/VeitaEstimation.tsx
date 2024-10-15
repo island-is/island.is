@@ -5,39 +5,41 @@ import {
   aidCalculator,
   estimatedBreakDown,
   showSpouseData,
+  Application as Application2, // Todo: refactor
 } from '@island.is/financial-aid/shared/lib'
-import { ApproveOptions } from '../../../lib/types'
 import { aidAmount as aidAmountMessages } from '../../../lib/messages'
-import { findFamilyStatus } from '../../..'
 import Breakdown from '../../../components/Breakdown/Breakdown'
 import DescriptionText from '../../../components/DescriptionText/DescriptionText'
-import { Application, DataProviderResult } from '@island.is/application/types'
+import { DataProviderResult } from '@island.is/application/types'
 import { getEstimationConstants } from './utils'
 
-type EstimationProps = {
-  application: Application
+type VeitaEstiamtionProps = {
+  application: Application2
   municipality: DataProviderResult
 }
 
-export const Estimation = ({ application, municipality }: EstimationProps) => {
+export const VeitaEstimation = ({
+  application,
+  municipality,
+}: VeitaEstiamtionProps) => {
   const { formatMessage } = useIntl()
-  const { answers, externalData } = application
 
   const getAidType = () => {
-    return !showSpouseData[findFamilyStatus(answers, externalData)]
+    switch (true) {
+      case application.familyStatus != undefined:
+        return !showSpouseData[application.familyStatus]
+      default:
+        return application.spouseNationalId == null
+    }
   }
 
-  const {
-    individualAid,
-    cohabitationAid,
-    homeCircumstances,
-    personalTaxCredit,
-  } = getEstimationConstants(municipality, answers)
+  const { individualAid, cohabitationAid } =
+    getEstimationConstants(municipality)
 
   const aidAmount = useMemo(() => {
-    if (homeCircumstances && municipality.data) {
+    if (municipality.data && application.homeCircumstances) {
       return aidCalculator(
-        homeCircumstances,
+        application.homeCircumstances,
         getAidType() ? individualAid : cohabitationAid,
       )
     }
@@ -61,7 +63,7 @@ export const Estimation = ({ application, municipality }: EstimationProps) => {
       <Breakdown
         calculations={estimatedBreakDown(
           aidAmount,
-          personalTaxCredit === ApproveOptions.Yes,
+          application.usePersonalTaxCredit,
         )}
       />
     </>

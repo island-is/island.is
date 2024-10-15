@@ -1,18 +1,14 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { summaryForm } from '../../lib/messages'
 import { formatNationalId } from '@island.is/financial-aid/shared/lib'
 import SummaryBlock from './SummaryBlock'
 import { Routes } from '../../lib/constants'
+import { ChildrenSchoolInfo } from '../../lib/types'
 
 interface Props {
-  childrenSchoolInfo: {
-    nationalId: string
-    school: string
-    fullName: string
-  }[]
+  childrenSchoolInfo: Array<ChildrenSchoolInfo>
   goToScreen: ((id: string) => void) | undefined
   childrenComment?: string
 }

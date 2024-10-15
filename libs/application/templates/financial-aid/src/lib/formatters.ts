@@ -12,10 +12,15 @@ import format from 'date-fns/format'
 
 import * as m from './messages'
 import { Routes } from './constants'
-import { ApproveOptions, ExternalData } from './types'
+import { ApproveOptions } from './types'
 import { findFamilyStatus } from './utils'
-import { NationalRegistryIndividual } from '@island.is/application/types'
+import {
+  ExternalData,
+  FormValue,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 import { AnswersSchema } from './dataSchema'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const getMessageHomeCircumstances: KeyMapping<
   HomeCircumstances,
@@ -85,64 +90,70 @@ export const formatBankInfo = (bankInfo: {
       bankInfo?.accountNumber
     : ''
 
-export const formItems = (
-  answers: AnswersSchema,
-  externalData: ExternalData,
-) => [
-  {
-    route: Routes.INRELATIONSHIP,
-    label: m.inRelationship.general.sectionTitle,
-    info: getMessageFamilyStatus[findFamilyStatus(answers, externalData)],
-  },
-  {
-    route: Routes.HOMECIRCUMSTANCES,
-    label: m.homeCircumstancesForm.general.sectionTitle,
-    info:
-      answers?.homeCircumstances?.type === HomeCircumstances.OTHER
-        ? answers?.homeCircumstances?.custom
-        : getMessageHomeCircumstances[answers?.homeCircumstances?.type],
-  },
-  {
-    route: Routes.STUDENT,
-    label: m.studentForm.general.sectionTitle,
-    info: getMessageApproveOptions[answers?.student?.isStudent],
-    comment:
-      answers?.student?.isStudent === ApproveOptions.Yes
-        ? answers?.student?.custom
-        : undefined,
-  },
-  {
-    route: Routes.EMPLOYMENT,
-    label: m.employmentForm.general.sectionTitle,
-    info:
-      answers?.employment?.type === Employment.OTHER
-        ? answers?.employment.custom
-        : getMessageEmploymentStatus[answers?.employment?.type],
-  },
-  {
-    route: Routes.INCOME,
-    label: m.incomeForm.general.sectionTitle,
-    info: getMessageApproveOptionsForIncome[answers?.income.type],
-  },
-  {
-    route: Routes.PERSONALTAXCREDIT,
-    label: m.summaryForm.formInfo.personalTaxCreditTitle,
-    info: getMessageApproveOptions[answers?.personalTaxCredit.type],
-  },
-  {
-    route: Routes.BANKINFO,
-    label: m.bankInfoForm.general.sectionTitle,
-    info: formatBankInfo(answers?.bankInfo),
-  },
-]
+export const formItems = (answers: FormValue, externalData: ExternalData) => {
+  const answersSchema = answers as AnswersSchema
+  const homeCircumstancesType = answersSchema?.homeCircumstances?.type
+  const isStudent = answersSchema?.student?.isStudent
 
-export const spouseFormItems = (answers: AnswersSchema) => [
-  {
-    route: Routes.SPOUSEINCOME,
-    label: m.incomeForm.general.sectionTitle,
-    info: getMessageApproveOptionsForIncome[answers?.spouseIncome.type],
-  },
-]
+  return [
+    {
+      route: Routes.INRELATIONSHIP,
+      label: m.inRelationship.general.sectionTitle,
+      info: getMessageFamilyStatus[findFamilyStatus(answers, externalData)],
+    },
+    {
+      route: Routes.HOMECIRCUMSTANCES,
+      label: m.homeCircumstancesForm.general.sectionTitle,
+      info:
+        homeCircumstancesType === HomeCircumstances.OTHER
+          ? answersSchema?.homeCircumstances?.custom
+          : getMessageHomeCircumstances[homeCircumstancesType],
+    },
+    {
+      route: Routes.STUDENT,
+      label: m.studentForm.general.sectionTitle,
+      info: getMessageApproveOptions[isStudent],
+      comment:
+        isStudent === ApproveOptions.Yes
+          ? answersSchema?.student?.custom
+          : undefined,
+    },
+    {
+      route: Routes.EMPLOYMENT,
+      label: m.employmentForm.general.sectionTitle,
+      info:
+        answersSchema?.employment?.type === Employment.OTHER
+          ? answersSchema?.employment.custom
+          : getMessageEmploymentStatus[answersSchema?.employment?.type],
+    },
+    {
+      route: Routes.INCOME,
+      label: m.incomeForm.general.sectionTitle,
+      info: getMessageApproveOptionsForIncome[answersSchema?.income.type],
+    },
+    {
+      route: Routes.PERSONALTAXCREDIT,
+      label: m.summaryForm.formInfo.personalTaxCreditTitle,
+      info: getMessageApproveOptions[answersSchema?.personalTaxCredit.type],
+    },
+    {
+      route: Routes.BANKINFO,
+      label: m.bankInfoForm.general.sectionTitle,
+      info: formatBankInfo(answersSchema?.bankInfo),
+    },
+  ]
+}
+
+export const spouseFormItems = (answers: FormValue) => {
+  const type = getValueViaPath(answers, 'spouseIncome.type') as ApproveOptions
+  return [
+    {
+      route: Routes.SPOUSEINCOME,
+      label: m.incomeForm.general.sectionTitle,
+      info: getMessageApproveOptionsForIncome[type],
+    },
+  ]
+}
 
 export const getStateMessageAndColor: KeyMapping<
   ApplicationState,

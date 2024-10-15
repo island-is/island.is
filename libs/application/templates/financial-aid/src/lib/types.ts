@@ -1,7 +1,5 @@
 import {
   ApplicantChildCustodyInformation,
-  Application,
-  FieldBaseProps,
   NationalRegistryIndividual,
   NationalRegistrySpouse,
 } from '@island.is/application/types'
@@ -17,11 +15,11 @@ export enum ApproveOptions {
   No = 'No',
 }
 
-type Override<T1, T2> = Omit<T1, keyof T2> & T2
+export type FinancialAidAnswers = AnswersSchema
 
 export type ErrorSchema = NestedType<AnswersSchema>
 
-export interface ExternalData {
+export interface FinancialAidExternalData {
   nationalRegistry: {
     data: NationalRegistryIndividual
     date: string
@@ -71,18 +69,13 @@ export type NestedType<T> = {
     : string
 }
 
-export type FAApplication = Override<
-  Application,
-  {
-    answers: AnswersSchema
-    externalData: ExternalData
-  }
->
-
-export type FAFieldBaseProps = Override<
-  FieldBaseProps,
-  { application: FAApplication; errors: ErrorSchema }
->
+export type ChildrenSchoolInfo = {
+  nationalId: string
+  school: string
+  fullName: string
+  livesWithApplicant?: boolean
+  livesWithBothParents?: boolean
+}
 
 export interface TaxData {
   municipalitiesPersonalTaxReturn: {

@@ -2,11 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Box } from '@island.is/island-ui/core'
 import { useAuth } from '@island.is/auth/react'
 import * as m from '../../lib/messages'
-import {
-  ApproveOptions,
-  FAFieldBaseProps,
-  SummaryComment as SummaryCommentType,
-} from '../../lib/types'
+import { SummaryComment as SummaryCommentType } from '../../lib/types'
 import { Routes } from '../../lib/constants'
 import { formatAddress, spouseFormItems } from '../../lib/formatters'
 import { useFormContext } from 'react-hook-form'
@@ -18,22 +14,35 @@ import Files from '../../components/Summary/Files'
 import FormInfo from '../../components/Summary/FormInfo'
 import DirectTaxPaymentCell from '../../components/Summary/DirectTaxPaymentCell'
 import UserInfo from '../../components/Summary/UserInfo'
+import { FieldBaseProps } from '@island.is/application/types'
+import { getSpouseSummaryConstants } from './utils'
 
-const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
+const SpouseSummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.SPOUSEFORMCOMMENT
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { setValue } = useFormContext()
 
-  const nationalId =
-    externalData.nationalRegistrySpouse.data?.nationalId ||
-    answers?.relationshipStatus?.spouseNationalId
-
   const { userInfo } = useAuth()
+
   useEffect(() => {
     setValue('spouseName', userInfo?.profile.name)
   }, [])
+
+  const {
+    nationalId,
+    data,
+    taxData,
+    sposeEmail,
+    sposePhone,
+    route,
+    personalTaxReturn,
+    directTaxPayments,
+    fetchDate,
+    spouseTaxReturnFiles,
+    spouseIncomeFiles,
+  } = getSpouseSummaryConstants(answers, externalData)
 
   return (
     <>
@@ -44,7 +53,7 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       <UserInfo
         name={userInfo?.profile.name}
         nationalId={nationalId}
-        address={formatAddress(externalData.nationalRegistry.data)}
+        address={formatAddress(data)}
       />
 
       <FormInfo items={spouseFormItems(answers)} goToScreen={goToScreen} />
@@ -52,54 +61,39 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       {externalData?.taxDataSpouse && (
         <DirectTaxPaymentCell
           setIsModalOpen={setIsModalOpen}
-          hasFetchedPayments={
-            externalData?.taxDataSpouse?.data?.municipalitiesDirectTaxPayments
-              ?.success
-          }
+          hasFetchedPayments={taxData?.municipalitiesDirectTaxPayments?.success}
           directTaxPayments={
-            externalData?.taxDataSpouse?.data?.municipalitiesDirectTaxPayments
-              ?.directTaxPayments
+            taxData?.municipalitiesDirectTaxPayments?.directTaxPayments
           }
         />
       )}
 
       <ContactInfo
         route={Routes.SPOUSECONTACTINFO}
-        email={answers?.spouseContactInfo?.email}
-        phone={answers?.spouseContactInfo?.phone}
+        email={sposeEmail}
+        phone={sposePhone}
         goToScreen={goToScreen}
       />
 
       <Files
-        route={
-          answers.spouseIncome.type === ApproveOptions.Yes
-            ? Routes.SPOUSEINCOMEFILES
-            : Routes.SPOUSETAXRETURNFILES
-        }
+        route={route}
         goToScreen={goToScreen}
-        personalTaxReturn={
-          externalData?.taxDataSpouse?.data?.municipalitiesPersonalTaxReturn
-            ?.personalTaxReturn
-        }
-        taxFiles={answers?.spouseTaxReturnFiles ?? []}
-        incomeFiles={answers?.spouseIncomeFiles ?? []}
+        personalTaxReturn={personalTaxReturn}
+        taxFiles={spouseTaxReturnFiles ?? []}
+        incomeFiles={spouseIncomeFiles ?? []}
         childrenFiles={[]}
         applicationId={id}
       />
 
       <SummaryComment
         commentId={summaryCommentType}
-        comment={answers?.spouseFormComment}
+        comment={answers?.spouseFormComment as string}
       />
 
-      {externalData?.taxDataSpouse?.data?.municipalitiesDirectTaxPayments
-        ?.directTaxPayments && (
+      {directTaxPayments && (
         <DirectTaxPaymentModal
-          items={
-            externalData?.taxDataSpouse?.data?.municipalitiesDirectTaxPayments
-              ?.directTaxPayments
-          }
-          dateDataWasFetched={externalData?.nationalRegistry?.date}
+          items={directTaxPayments}
+          dateDataWasFetched={fetchDate}
           isVisible={isModalOpen}
           onVisibilityChange={(isOpen: boolean) => {
             setIsModalOpen(isOpen)

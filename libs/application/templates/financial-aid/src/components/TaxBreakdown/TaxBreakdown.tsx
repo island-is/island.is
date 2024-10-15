@@ -9,7 +9,6 @@ import {
 import TaxBreakdownHeadline from './TaxBreakdownHeadline'
 import groupBy from 'lodash/groupBy'
 import { directTaxPaymentModal } from '../../lib/messages'
-
 import * as styles from './TaxBreakdown.css'
 import { useIntl } from 'react-intl'
 import { useLocale } from '@island.is/localization'

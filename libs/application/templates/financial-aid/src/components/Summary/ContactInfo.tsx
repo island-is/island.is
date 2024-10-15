@@ -1,6 +1,5 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { Routes } from '../../lib/constants'
 import { contactInfo } from '../../lib/messages'

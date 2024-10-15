@@ -11,9 +11,7 @@ type Props = {
   files?: UploadFile[]
 }
 
-const FileList = ({ files, applicationSystemId }: Props) => {
-  const { openFileById } = useFileUpload(files ?? [], applicationSystemId)
-
+const FileList = ({ files }: Props) => {
   if (files === undefined || files.length === 0) {
     return null
   }

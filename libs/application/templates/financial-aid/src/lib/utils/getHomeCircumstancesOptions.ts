@@ -1,4 +1,3 @@
-import { FormValue } from '@island.is/application/types'
 import { HomeCircumstances } from '@island.is/financial-aid/shared/lib'
 import { homeCircumstancesForm } from '../messages'
 

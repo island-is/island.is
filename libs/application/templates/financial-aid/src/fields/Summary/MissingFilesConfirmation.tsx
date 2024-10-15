@@ -1,14 +1,15 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { useFormContext } from 'react-hook-form'
-import { Text, Box, Button } from '@island.is/island-ui/core'
-import { FAFieldBaseProps, UploadFileType } from '../../lib/types'
+import { Text, Box } from '@island.is/island-ui/core'
+import { UploadFileType } from '../../lib/types'
 import { missingFiles } from '../../lib/messages'
 import FileList from './FileList'
 import { RecordObject } from '@island.is/shared/types'
 import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 
-const MissingFilesConfirmation = ({ application, field }: FAFieldBaseProps) => {
+const MissingFilesConfirmation = ({ application, field }: FieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { getValues } = useFormContext()
 

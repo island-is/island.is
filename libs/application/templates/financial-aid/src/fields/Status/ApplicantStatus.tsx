@@ -1,9 +1,6 @@
 import React from 'react'
-
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
-
-import { FAFieldBaseProps } from '../../lib/types'
 import { hasSpouse, waitingForSpouse } from '../../lib/utils'
 import useApplication from '../../lib/hooks/useApplication'
 import Header from '../../components/Status/Header/Header'
@@ -14,11 +11,21 @@ import MissingFilesCard from '../../components/Status/MissingFilesCard/MissingFi
 import AidAmount from '../../components/Status/AidAmount/AidAmount'
 import Timeline from '../../components/Status/Timeline/Timeline'
 import MoreActions from '../../components/Status/MoreActions/MoreActions'
+import { FieldBaseProps } from '@island.is/application/types'
+import { getApplicantStatusConstants } from './util'
 
-const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
-  const { currentApplication, loading } = useApplication(
-    application.externalData.currentApplication.data?.currentApplicationId,
-  )
+const ApplicantStatus = ({ application, goToScreen }: FieldBaseProps) => {
+  const { answers, externalData } = application
+  const {
+    currentApplicationId,
+    showCopyUrl,
+    rulesPage,
+    homepage,
+    email,
+    rulesHomepage,
+  } = getApplicantStatusConstants(answers, externalData)
+
+  const { currentApplication, loading } = useApplication(currentApplicationId)
   const { municipality } = application.externalData
   const isWaitingForSpouse = waitingForSpouse(application.state)
 
@@ -34,20 +41,16 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   return (
     <Box paddingBottom={5}>
       <Header state={state} />
-      {isWaitingForSpouse && (
-        <SpouseAlert
-          showCopyUrl={!application.externalData.sendSpouseEmail?.data.success}
-        />
-      )}
+      {isWaitingForSpouse && <SpouseAlert showCopyUrl={showCopyUrl} />}
       {state === ApplicationState.APPROVED && (
         <ApprovedAlert events={currentApplication?.applicationEvents} />
       )}
       {state === ApplicationState.REJECTED && (
         <RejectionMessage
           rejectionComment={currentApplication?.rejection}
-          rulesPage={municipality.data?.rulesHomepage}
-          homepage={municipality.data?.homepage}
-          email={municipality.data?.email}
+          rulesPage={rulesPage}
+          homepage={homepage}
+          email={email}
         />
       )}
       {state === ApplicationState.DATANEEDED && (
@@ -68,13 +71,13 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
         modified={currentApplication?.modified ?? application.modified}
         showSpouseStep={
           isWaitingForSpouse
-            ? hasSpouse(application.answers, application.externalData)
+            ? hasSpouse(answers, externalData)
             : currentApplication?.spouseNationalId != null
         }
       />
       <MoreActions
-        municipalityRulesPage={municipality.data?.rulesHomepage}
-        municipalityEmail={municipality.data?.email}
+        municipalityRulesPage={rulesHomepage}
+        municipalityEmail={email}
       />
     </Box>
   )

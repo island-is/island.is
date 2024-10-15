@@ -2,26 +2,19 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
 import { getValueViaPath } from '@island.is/application/core'
 import {
-  Answer,
   ApplicantChildCustodyInformation,
+  Application,
   ApplicationContext,
   ExternalData,
   FormValue,
 } from '@island.is/application/types'
-
 import {
   FamilyStatus,
   MartialStatusType,
   martialStatusTypeFromMartialCode,
   Municipality,
 } from '@island.is/financial-aid/shared/lib'
-
-import {
-  ApproveOptions,
-  CurrentApplication,
-  FAApplication,
-  UploadFileType,
-} from '..'
+import { ApproveOptions, CurrentApplication, UploadFileType } from '..'
 import { UploadFile } from '@island.is/island-ui/core'
 import { ApplicationStates } from './constants'
 import sortBy from 'lodash/sortBy'
@@ -39,18 +32,17 @@ export const isValidNationalId = (value: string) => kennitala.isValid(value)
 
 export function hasSpouseCheck(context: ApplicationContext) {
   const { externalData, answers } =
-    context.application as unknown as FAApplication
+    context.application as unknown as Application
   return hasSpouse(answers, externalData)
 }
 
-export const hasSpouse = (
-  answers: FAApplication['answers'],
-  externalData: FAApplication['externalData'],
-) => {
+export const hasSpouse = (answers: FormValue, externalData: ExternalData) => {
   const nationalRegistrySpouse = externalData.nationalRegistrySpouse.data
 
-  const unregisteredCohabitation =
-    answers?.relationshipStatus?.unregisteredCohabitation
+  const unregisteredCohabitation = getValueViaPath(
+    answers,
+    'relationshipStatus.unregisteredCohabitation',
+  ) as string | undefined
 
   return (
     Boolean(nationalRegistrySpouse) ||
@@ -72,18 +64,25 @@ export const encodeFilenames = (filename: string) =>
   filename && encodeURI(filename.normalize().replace(/ +/g, '_'))
 
 export function findFamilyStatus(
-  answers: FAApplication['answers'],
-  externalData: FAApplication['externalData'],
+  answers: FormValue,
+  externalData: ExternalData,
 ) {
+  const maritalStatus = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.maritalStatus',
+  ) as string | undefined
+  const unregisteredCohabitation = getValueViaPath(
+    answers,
+    'relationshipStatus.unregisteredCohabitation',
+  ) as string | undefined
+
   switch (true) {
-    case martialStatusTypeFromMartialCode(
-      externalData.nationalRegistrySpouse.data?.maritalStatus,
-    ) === MartialStatusType.MARRIED:
+    case martialStatusTypeFromMartialCode(maritalStatus) ===
+      MartialStatusType.MARRIED:
       return FamilyStatus.MARRIED
     case externalData.nationalRegistrySpouse.data != null:
       return FamilyStatus.COHABITATION
-    case answers?.relationshipStatus?.unregisteredCohabitation ===
-      ApproveOptions.Yes:
+    case unregisteredCohabitation === ApproveOptions.Yes:
       return FamilyStatus.UNREGISTERED_COBAHITATION
     default:
       return FamilyStatus.NOT_COHABITATION
