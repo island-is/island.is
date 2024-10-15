@@ -8,7 +8,7 @@ import slugify from '@sindresorhus/slugify'
 
 const DEBOUNCE_TIME = 100
 
-const OrganizationSubpageSlugField = () => {
+const ProjectSubpageSlugField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const cma = useCMA()
   const [value, setValue] = useState(sdk.field?.getValue() ?? '')
@@ -148,4 +148,4 @@ const OrganizationSubpageSlugField = () => {
   )
 }
 
-export default OrganizationSubpageSlugField
+export default ProjectSubpageSlugField
