@@ -173,8 +173,9 @@ export const m = defineMessages({
     description: '',
   },
   actorNoAccessDescription: {
-    id: 'sp.signatureCollection:actorNoAccessDescription',
-    defaultMessage: 'Þú hefur ekki réttindi til að sjá þessar upplýsingar.',
+    id: 'sp.signatureCollection:actorNoAccessDescription#markdown',
+    defaultMessage:
+      'Eingöngu kennitölur sem hafa skráðan listabókstaf geta stofnað meðmælendasöfnun. Ef þú átt listabókstaf geturðu stofnað meðmælendasöfnun hér.',
     description: '',
   },
 
