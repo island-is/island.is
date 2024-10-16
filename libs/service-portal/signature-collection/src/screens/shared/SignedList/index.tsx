@@ -12,7 +12,6 @@ import {
   SignatureCollectionSignedList,
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
-import { SingleListSkeleton } from '../../../skeletons'
 
 const SignedList = ({
   currentCollection,
