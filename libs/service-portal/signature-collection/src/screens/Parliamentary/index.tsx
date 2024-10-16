@@ -16,7 +16,7 @@ const SignatureListsParliamentary = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
 
-  const { isOwner, loadingIsOwner } = useIsOwner()
+  const { isOwner, loadingIsOwner, refetchIsOwner } = useIsOwner()
   const userInfo = useUserInfo()
   const { currentCollection, loadingCurrentCollection } =
     useGetCurrentCollection()
@@ -34,6 +34,7 @@ const SignatureListsParliamentary = () => {
           {!currentCollection?.isPresidential ? (
             isOwner.success ? (
               <OwnerView
+                refetchIsOwner={refetchIsOwner}
                 currentCollection={currentCollection}
                 isListHolder={
                   !userInfo?.profile?.delegationType ||
