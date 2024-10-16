@@ -25,12 +25,17 @@ const CaseFile = () => {
     useContext(FormContext)
 
   const caseFiles = useMemo(() => {
-    return (
-      workingCase.caseFiles?.filter(
-        (caseFile) => caseFile.category === CaseFileCategory.CASE_FILE_RECORD,
-      ) ?? []
+    return new Map(
+      workingCase.policeCaseNumbers?.map((policeCaseNumber) => [
+        policeCaseNumber,
+        workingCase.caseFiles?.filter(
+          (caseFile) =>
+            caseFile.policeCaseNumber === policeCaseNumber &&
+            caseFile.category === CaseFileCategory.CASE_FILE_RECORD,
+        ),
+      ]),
     )
-  }, [workingCase.caseFiles])
+  }, [workingCase.caseFiles, workingCase.policeCaseNumbers])
 
   const { formatMessage } = useIntl()
   const [editCount, setEditCount] = useState<number>(0)
@@ -73,7 +78,7 @@ const CaseFile = () => {
                     caseId={workingCase.id}
                     policeCaseNumber={policeCaseNumber}
                     shouldStartExpanded={index === 0}
-                    caseFiles={caseFiles}
+                    caseFiles={caseFiles.get(policeCaseNumber) ?? []}
                     subtypes={workingCase.indictmentSubtypes}
                     crimeScenes={workingCase.crimeScenes}
                     setEditCount={setEditCount}
