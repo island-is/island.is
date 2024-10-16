@@ -294,6 +294,20 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     const namespaceValue = namespace?.[namespaceKey] ?? {}
     const { cssVariables, ...languagePack } = namespaceValue
 
+    const replaceDirectorateOfImmigrationWebChatWithAI = Boolean(
+      namespace?.replaceDirectorateOfImmigrationWebChatWithAI,
+    )
+
+    const propsCopy = { ...props }
+
+    if (
+      !replaceDirectorateOfImmigrationWebChatWithAI &&
+      props.integrationID === '9e320784-ad44-4da9-9eb3-f305057a196a'
+    ) {
+      propsCopy.integrationID = '89a03e83-5c73-4642-b5ba-cd3771ceca54'
+      propsCopy.serviceInstanceID = 'bc3d8312-d862-4750-b8bf-529db282050a'
+    }
+
     let scriptElement: HTMLScriptElement | null = null
 
     const queryParam = new URLSearchParams(window.location.search).get('wa_lid')
@@ -321,7 +335,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           serviceDesk: {
             skipConnectAgentCard: true,
           },
-          ...props,
+          ...propsCopy,
           onLoad: (instance) => {
             watsonInstance.current = instance
             if (Object.keys(cssVariables).length > 0) {
