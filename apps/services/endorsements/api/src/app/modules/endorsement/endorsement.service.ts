@@ -59,13 +59,7 @@ export class EndorsementService {
   ) {}
 
 
-  async updateCountsForAllLists(): Promise<void> {
-    const allLists = await this.endorsementListModel.findAll()
-    for (const list of allLists) {
-      await this.updateEndorsementCountOnList(list.id)
-    }
-    this.logger.info('All endorsement counts have been updated.')
-  }
+  
 
   async updateEndorsementCountOnList(listId: string): Promise<void> {
     const count = await this.endorsementModel.count({
