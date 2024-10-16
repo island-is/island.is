@@ -116,6 +116,18 @@ export const m = defineMessages({
   },
 
   /* Signee View */
+  noUserFound: {
+    id: 'sp.signatureCollection:noUserFound',
+    defaultMessage:
+      'Þú uppfyllir ekki skilyrði til að taka þátt í meðmælasöfnunum',
+    description: '',
+  },
+  noUserFoundDescription: {
+    id: 'sp.signatureCollection:noUserFoundDescription#markdown',
+    defaultMessage:
+      'Ef þú telur þessar upplýsingar rangar, vinsamlegast hafðu samband við Þjóðskrá Íslands.',
+    description: '',
+  },
   noCollectionIsActive: {
     id: 'sp.signatureCollection:noCollectionIsActive',
     defaultMessage: 'Engin söfnun í gangi',

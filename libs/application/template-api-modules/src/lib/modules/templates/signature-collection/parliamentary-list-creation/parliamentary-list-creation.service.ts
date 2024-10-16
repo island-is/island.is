@@ -7,7 +7,6 @@ import {
   Collection,
   CreateParliamentaryCandidacyInput,
   MandateType,
-  ReasonKey,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { errorMessages } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
@@ -20,6 +19,7 @@ import { FetchError } from '@island.is/clients/middlewares'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { isCompany } from 'kennitala'
 import { coreErrorMessages } from '@island.is/application/core'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 @Injectable()
 export class ParliamentaryListCreationService extends BaseTemplateApiService {
@@ -53,13 +53,11 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
         405,
       )
     }
-    const contactNationalId = isCompany(auth.nationalId)
-      ? auth.actor?.nationalId ?? auth.nationalId
-      : auth.nationalId
+    // Candidates are stored on user national id never the actors so should be able to check just the auth national id
 
     if (
       currentCollection.candidates.some(
-        (c) => c.nationalId.replace('-', '') === contactNationalId,
+        (c) => c.nationalId.replace('-', '') === auth.nationalId,
       )
     ) {
       throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
@@ -85,6 +83,15 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     }
 
     return identity
+  }
+
+  async delegatedToCompany({ auth }: TemplateApiModuleActionProps) {
+    const data = {
+      delegatedToCompany:
+        auth.delegationType?.includes(AuthDelegationType.ProcurationHolder) ??
+        false,
+    }
+    return data
   }
 
   async submit({ application, auth }: TemplateApiModuleActionProps) {
