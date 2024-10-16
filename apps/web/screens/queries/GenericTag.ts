@@ -14,6 +14,7 @@ export const GET_GENERIC_TAG_IN_TAG_GROUP_QUERY = gql`
     getGenericTagsInTagGroup(input: $input) {
       id
       title
+      slug
       genericTagGroup {
         id
         title
