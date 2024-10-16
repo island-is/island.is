@@ -18,11 +18,19 @@ import {
   XroadConfig,
   PodDisruptionBudget,
   IngressMapping,
+  OpsEnv,
 } from './types/input-types'
 import { logger } from '../logging'
 import { COMMON_SECRETS } from './consts'
-export const OVERRIDE_ANNOTATIONS: { [key: string]: string } = {
-  'nginx.ingress.kubernetes.io/enable-global-auth': 'true',
+
+export const OVERRIDE_ANNOTATIONS: NonNullable<Ingress['extraAnnotations']> = {
+  dev: {
+    'nginx.ingress.kubernetes.io/enable-global-auth': 'true',
+  },
+  staging: {
+    'nginx.ingress.kubernetes.io/enable-global-auth': 'true',
+  },
+  prod: {},
 }
 
 /**
@@ -473,17 +481,16 @@ export class ServiceBuilder<ServiceType extends string> {
       // Early return if no primary
       return this
     }
-    const ingressAnnotations = ingresses.primary.extraAnnotations
-    for (const [_env, annotations] of Object.entries(
-      ingressAnnotations ?? {},
-    )) {
+    const ingressAnnotations = ingresses.primary.extraAnnotations ?? {}
+    for (const [env, annotations] of Object.entries(ingressAnnotations)) {
       for (const annotation of Object.keys(annotations)) {
-        if (!(annotation in OVERRIDE_ANNOTATIONS)) {
+        const overrides = OVERRIDE_ANNOTATIONS[env as OpsEnv] ?? {}
+        if (!(annotation in overrides)) {
+          // Leave non-overriddes as is
           continue
         }
         // Apply overrides
-        annotations[annotation] =
-          OVERRIDE_ANNOTATIONS[annotation] ?? annotations[annotation]
+        annotations[annotation] = overrides[annotation]
       }
     }
     return this
