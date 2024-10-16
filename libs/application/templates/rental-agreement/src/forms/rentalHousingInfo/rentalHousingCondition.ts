@@ -7,8 +7,8 @@ import {
   buildFileUploadField,
 } from '@island.is/application/core'
 import { getApplicationAnswers, getInspectorOptions } from '../../lib/utils'
-import * as m from '../../lib/messages'
 import { rentalHousingConditionInspector } from '../../lib/constants'
+import * as m from '../../lib/messages'
 
 export const RentalHousingCondition = buildSubSection({
   id: 'rentalHousingCondition',
