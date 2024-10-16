@@ -110,6 +110,7 @@ export const en: TranslatedMessages = {
   'settings.security.appLockTimeoutLabel': 'App lock timeout',
   'settings.security.appLockTimeoutDescription':
     'Time until app lock will appear',
+  'settings.security.appLockTimeoutSeconds': 'sec.',
   'settings.about.groupTitle': 'About',
   'settings.about.versionLabel': 'Version',
   'settings.about.logoutLabel': 'Logout',
@@ -168,7 +169,6 @@ export const en: TranslatedMessages = {
   'home.screenTitle': 'Overview',
   'home.applicationsStatus': 'Applications',
   'home.allApplications': 'Digital applications',
-  'home.inbox': 'Latest in inbox',
   'home.welcomeText': 'Hi',
   'home.goodDay': 'Good day,',
   'home.onboardingModule.card1':
@@ -176,13 +176,25 @@ export const en: TranslatedMessages = {
   'home.onboardingModule.card2':
     'The app’s purpose is to provide faster access to your documents, applications, and other dealings with governmental institutions.',
   'home.onboardingModule.card3':
-    'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at',
+    'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at island@island.is',
   'home.onboardingModule.card4':
     'We encourage our users to read Digital Iceland’s privacy policy on',
   'home.vehicleModule.summary':
     'Enter mileage of electric and plug-in hybrid vehicles',
   'home.vehicleModule.button': 'My vehicles',
   'button.seeAll': 'See all',
+
+  // home options
+  'homeOptions.screenTitle': 'Home screen',
+  'homeOptions.heading.title': 'Configure home screen',
+  'homeOptions.heading.subtitle':
+    'Here you can configure what is displayed on the home screen.',
+  'homeOptions.graphic': 'Display graphic',
+  'homeOptions.inbox': 'Latest in inbox',
+  'homeOptions.licenses': 'Licenses',
+  'homeOptions.applications': 'Applications',
+  'homeOptions.vehicles': 'Vehicles',
+  'homeOptions.airDiscount': 'Air discount scheme',
 
   // inbox
   'inbox.screenTitle': 'Inbox',
@@ -195,22 +207,34 @@ export const en: TranslatedMessages = {
   'inbox.emptyListTitle': 'There are currently no documents',
   'inbox.emptyListDescription':
     'When you receive electronic documents from the government, they will appear here.',
-  'inbox.filterButtonTitle': 'Filter',
-  'inbox.filterOpenedTagTitle': 'Unread',
-  'inbox.filterArchivedTagTitle': 'Archived',
-  'inbox.filterStarredTagTitle': 'Starred',
   'inbox.markAllAsReadPromptTitle': 'Do you want to mark all as read?',
   'inbox.markAllAsReadPromptDescription': 'This action cannot be undone',
   'inbox.markAllAsReadPromptCancel': 'Cancel',
   'inbox.markAllAsReadPromptConfirm': 'Mark all as read',
   'inbox.cardNoInboxDocuments':
     'When you receive mail in your mailbox, it will appear here.',
+  'inbox.urgent': 'Urgent',
+  'inbox.openDocument': 'Open document',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Filter documents',
   'inboxFilters.unreadOnly': 'Show only unread',
   'inboxFilters.starred': 'Starred',
   'inboxFilters.archived': 'Archived',
+  'inbox.filterButtonTitle': 'Filter',
+  'inbox.filterOpenedTagTitle': 'Unread',
+  'inbox.filterArchivedTagTitle': 'Archived',
+  'inbox.filterStarredTagTitle': 'Starred',
+  'inbox.filterOrganizationTitle': 'Organization',
+  'inbox.filterCategoryTitle': 'Category',
+  'inbox.filterDatesTitle': 'Dates',
+  'inbox.filterClearButton': 'Clear',
+  'inbox.filterApplyButton': 'Apply filters',
+  'inbox.filterDateFromLabel': 'Date from',
+  'inbox.filterDateToLabel': 'Date to',
+  'inbox.filterDatePlaceholder': 'Choose a date',
+  'inbox.filterDateConfirm': 'Confirm',
+  'inbox.filterDateCancel': 'Cancel',
 
   // document detail
   'documentDetail.screenTitle': 'Document',
@@ -321,7 +345,8 @@ export const en: TranslatedMessages = {
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
   'profile.finance': 'Finance',
-  'profile.airDiscount': 'Air discount scheme',
+  'profile.airDiscount': 'Air discount',
+  'profile.health': 'Health',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
@@ -451,27 +476,34 @@ export const en: TranslatedMessages = {
   // applications screen
   'applications.title': 'Applications',
   'applications.bottomTabText': 'Applications',
-  'applications.searchPlaceholder': 'Search...',
-  'applications.loadingText': 'Searching...',
-  'applications.resultText': 'results',
-  'applications.singleResultText': 'result',
-  'applications.noResultText': 'No results',
-  'applications.emptyListTitle': 'There are currently no links',
-  'applications.emptyListDescription':
-    'There are no links available at the moment',
+  'applications.emptyTitle': 'No applications',
+  'applications.emptyDescription':
+    'When you apply for services from the government, they will appear here.',
+  'applications.incomplete': 'Unfinished applications',
+  'applications.completed': 'Finished applications',
+  'applications.inProgress': 'Applications in progress',
 
   // cards
   'applicationStatusCard.openButtonLabel': 'Open application',
-  'applicationStatusCard.seeMoreApplications': 'View applications',
+  'applicationStatusCard.description': `{
+    state,
+    select,
+    inprogress {The application is being processed}
+    completed {Completed}
+    rejected {Rejected}
+    other {}
+  }`,
   'applicationStatusCard.status': `{
     state,
     select,
     inprogress {In progress}
     completed {Completed}
     rejected {Rejected}
+    draft {Application in progress}
     other {Unknown status}
   }`,
-  'applicationStatusCard.noActiveApplications': 'No active applications',
+  'applicationStatusCard.draftProgress':
+    'You have completed {draftFinishedSteps} of {draftTotalSteps} steps',
 
   // edit phone
   'edit.phone.screenTitle': 'Edit Phone',
@@ -479,8 +511,8 @@ export const en: TranslatedMessages = {
   'edit.phone.inputlabel': 'Phone number',
   'edit.phone.button': 'Save',
   'edit.phone.button.empty': 'Save empty',
-  'edit.phone.button.error': 'Error',
-  'edit.phone.button.errorMessage': 'Could not send verification code',
+  'edit.phone.error': 'Error',
+  'edit.phone.errorMessage': 'Could not send verification code',
 
   // edit email
   'edit.email.screenTitle': 'Edit Email',
@@ -488,8 +520,8 @@ export const en: TranslatedMessages = {
   'edit.email.inputlabel': 'Email',
   'edit.email.button': 'Save',
   'edit.email.button.empty': 'Save empty',
-  'edit.email.button.error': 'Error',
-  'edit.email.button.errorMessage': 'Could not send verification code',
+  'edit.email.error': 'Error',
+  'edit.email.errorMessage': 'Could not send verification code',
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Edit Bank Info',
@@ -499,6 +531,8 @@ export const en: TranslatedMessages = {
   'edit.bankinfo.inputlabel.book': 'Hb.',
   'edit.bankinfo.inputlabel.number': 'Account number',
   'edit.bankinfo.button': 'Save',
+  'edit.bankinfo.error': 'Error',
+  'edit.bankinfo.errorMessage': 'Could not save bank info',
 
   // edit confirm
   'edit.confirm.screenTitle': 'Confirm edit',
@@ -512,6 +546,8 @@ export const en: TranslatedMessages = {
   'edit.confirm.inputlabel': 'Security number',
   'edit.cancel.button': 'Cancel',
   'edit.confirm.button': 'Confirm',
+  'edit.confirm.error': 'Error',
+  'edit.confirm.errorMessage': 'Could not update information',
 
   // air discount
   'airDiscount.screenTitle': 'Air discount scheme',
@@ -558,8 +594,39 @@ export const en: TranslatedMessages = {
     'You are opening Island.is in a browser. Do you want to create a passkey to sign in automatically with the app?',
   'passkeys.headingSubtitle':
     'Do you want to create a passkey to sign in automatically with the app?',
+  'passkeys.settings':
+    'In settings it is always possible to delete or add a passkey',
+  'passkeys.furtherInformation': 'More about passkeys',
   'passkeys.createButton': 'Create a passkey',
   'passkeys.skipButton': 'Skip',
   'passkeys.errorRegistering': 'Error',
   'passkeys.errorRegisteringMessage': 'Could not create a passkey',
+
+  // update app
+  'updateApp.title': 'Update app',
+  'updateApp.description':
+    'You are about to use an old version of the Island.is app. Please update the app to be able to continue.',
+  'updateApp.button': 'Update',
+  'updateApp.buttonSkip': 'Skip',
+
+  // health
+  'health.overview.screenTitle': 'Health',
+  'health.overview.title': 'My health',
+  'health.overview.description':
+    'Here you can find your health data, health center and health insurance.',
+  'health.overview.healthCenter': 'Health center',
+  'health.overview.noHealthCenterRegistered': 'No health center registered',
+  'health.overview.physician': 'Physician',
+  'health.overview.noPhysicianRegistered': 'No doctor registered',
+  'health.overview.statusOfRights': 'Status of rights',
+  'health.overview.insuredFrom': 'Insured from',
+  'health.overview.status': 'Status',
+  'health.overview.notInsured': 'You do not have health insurance',
+  'health.overview.coPayments': 'Co-payment',
+  'health.overview.maxMonthlyPayment': 'Max monthly payment',
+  'health.overview.paymentLimit': 'Payment Limit',
+  'health.overview.paymentCredit': 'Credit',
+  'health.overview.paymentDebt': 'Debt',
+  'health.overview.therapy': 'Therapy',
+  'health.overview.aidsAndNutrition': 'Aids and nutrition',
 }

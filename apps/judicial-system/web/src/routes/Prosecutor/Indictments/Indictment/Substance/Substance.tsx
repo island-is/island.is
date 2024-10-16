@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { FC, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'

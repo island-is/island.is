@@ -11,7 +11,7 @@ import {
   InstitutionNationalIds,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { dataSchema } from './dataSchema'
+import { partialSchema } from './dataSchema'
 import { general } from './messages'
 import { TemplateApiActions } from './types'
 import { Features } from '@island.is/feature-flags'
@@ -47,7 +47,7 @@ const OJOITemplate: ApplicationTemplate<
   translationNamespaces: [
     ApplicationConfigurations.OfficialJournalOfIceland.translation,
   ],
-  dataSchema: dataSchema,
+  dataSchema: partialSchema,
   allowMultipleApplicationsInDraft: true,
   stateMachineOptions: {
     actions: {
@@ -99,18 +99,6 @@ const OJOITemplate: ApplicationTemplate<
           status: 'inprogress',
           progress: 0.66,
           lifecycle: pruneAfterDays(90),
-          onEntry: [
-            defineTemplateApi({
-              action: TemplateApiActions.departments,
-              externalDataId: 'departments',
-              order: 1,
-            }),
-            defineTemplateApi({
-              action: TemplateApiActions.types,
-              externalDataId: 'types',
-              order: 2,
-            }),
-          ],
           roles: [
             {
               id: Roles.APPLICANT,

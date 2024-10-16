@@ -37,31 +37,27 @@ interface DefendantInfoProps {
 }
 
 export const getAppealExpirationInfo = (
-  viewDate?: string | null,
+  verdictAppealDeadline?: string | null,
   serviceRequirement?: ServiceRequirement | null,
 ) => {
-  if (!viewDate) {
-    return { message: strings.appealDateNotBegun, data: null }
-  }
-
   if (serviceRequirement === ServiceRequirement.NOT_REQUIRED) {
     return { message: strings.serviceRequirementNotRequired, data: null }
   }
 
-  if (serviceRequirement === ServiceRequirement.NOT_APPLICABLE) {
-    return { message: strings.serviceRequirementNotApplicable, data: null }
+  if (!verdictAppealDeadline) {
+    return { message: strings.appealDateNotBegun, date: null }
   }
 
+  // TODO: Move to the server as today may not be accurate in the client
   const today = new Date()
-  const expiryDate = new Date(viewDate)
-  expiryDate.setDate(expiryDate.getDate() + 28)
+  const expiryDate = new Date(verdictAppealDeadline)
 
   const message =
     today < expiryDate
       ? strings.appealExpirationDate
       : strings.appealDateExpired
 
-  return { message, data: formatDate(expiryDate) }
+  return { message, date: formatDate(expiryDate) }
 }
 
 export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
@@ -75,7 +71,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   const { formatMessage } = useIntl()
 
   const appealExpirationInfo = getAppealExpirationInfo(
-    defendant.verdictViewDate,
+    defendant.verdictAppealDeadline,
     defendant.serviceRequirement,
   )
 
@@ -123,7 +119,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           <Box>
             <Text as="span">
               {formatMessage(appealExpirationInfo.message, {
-                appealExpirationDate: appealExpirationInfo.data,
+                appealExpirationDate: appealExpirationInfo.date,
               })}
             </Text>
           </Box>

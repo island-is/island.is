@@ -34,7 +34,7 @@ export const TeamMemberListWrapper = ({
   )
   const [errorOccurred, setErrorOccurred] = useState(false)
 
-  const [fetchListItems, { loading }] = useLazyQuery<Query>(
+  const [fetchListItems, { loading, called }] = useLazyQuery<Query>(
     GET_TEAM_MEMBERS_QUERY,
     {
       onCompleted(data) {
@@ -65,6 +65,7 @@ export const TeamMemberListWrapper = ({
   )
 
   const totalItems = itemsResponse?.total ?? 0
+
   const items = itemsResponse?.items ?? []
 
   return (
@@ -88,7 +89,7 @@ export const TeamMemberListWrapper = ({
         })
       }}
       totalItems={totalItems}
-      loading={loading}
+      loading={loading || !called}
       pageQueryId={pageQueryId}
       searchQueryId={searchQueryId}
       tagQueryId={tagQueryId}
@@ -96,6 +97,10 @@ export const TeamMemberListWrapper = ({
       <TeamList
         teamMembers={items as TeamListProps['teamMembers']}
         variant="accordion"
+        prefixes={{
+          email: activeLocale === 'is' ? 'Netfang:' : 'Email:',
+          phone: activeLocale === 'is' ? 'Sími:' : 'Phone:',
+        }}
       />
     </GenericList>
   )

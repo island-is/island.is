@@ -53,10 +53,13 @@ export const EditConfirmScreen: NavigationFunctionComponent<any> = ({
           Navigation.dismissModal(parentComponentId)
         }
       } else {
-        throw new Error('Failed')
+        throw new Error('Failed to update profile')
       }
     } catch (e) {
-      Alert.alert('Villa', 'Gat ekki uppfært upplýsingar')
+      Alert.alert(
+        intl.formatMessage({ id: 'edit.confirm.error' }),
+        intl.formatMessage({ id: 'edit.confirm.errorMessage' }),
+      )
     }
     setLoading(false)
   }

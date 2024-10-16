@@ -17,7 +17,10 @@ import { formatCurrency } from '@island.is/application/ui-components'
 import { Answers, EstateMember, heirAgeValidation } from '../../types'
 import { AdditionalHeir } from './AdditionalHeir'
 import { getValueViaPath } from '@island.is/application/core'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  PhoneInputController,
+} from '@island.is/shared/form-fields'
 import { format as formatNationalId, info } from 'kennitala'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import {
@@ -404,13 +407,12 @@ export const HeirsRepeater: FC<
                       />
                     </GridColumn>
                     <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                      <InputController
+                      <PhoneInputController
                         id={`${fieldIndex}.phone`}
                         name={`${fieldIndex}.phone`}
                         label={formatMessage(m.phone)}
                         backgroundColor="blue"
                         disabled={!member.enabled}
-                        format="###-####"
                         defaultValue={member.phone || ''}
                         error={
                           error && error[mainIndex] && error[mainIndex].phone
@@ -529,13 +531,12 @@ export const HeirsRepeater: FC<
                       />
                     </GridColumn>
                     <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                      <InputController
+                      <PhoneInputController
                         id={`${fieldIndex}.advocate.phone`}
                         name={`${fieldIndex}.advocate.phone`}
                         label={formatMessage(m.phone)}
                         backgroundColor="blue"
                         disabled={!member.enabled}
-                        format="###-####"
                         defaultValue={member.advocate?.phone || ''}
                         error={
                           error &&

@@ -225,22 +225,24 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
     const realEstate: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.realEstate?.data ?? []
-    ).map((item) => {
-      const value = valueToNumber(item.propertyValuation)
-      const deceasedShare = valueToNumber(item.deceasedShare)
-      const { shareValue, deceasedShareValue } = getShareValue(
-        value,
-        deceasedShare,
-      )
-      const deduction = deceasedWasInCohabitation ? value - shareValue : 0
-      return {
-        value,
-        deduction,
-        shareValue,
-        deceasedShareValue,
-        deceasedShare,
-      }
-    })
+    )
+      .filter((item) => item?.enabled)
+      .map((item) => {
+        const value = valueToNumber(item.propertyValuation)
+        const deceasedShare = valueToNumber(item.deceasedShare)
+        const { shareValue, deceasedShareValue } = getShareValue(
+          value,
+          deceasedShare,
+        )
+        const deduction = deceasedWasInCohabitation ? value - shareValue : 0
+        return {
+          value,
+          deduction,
+          shareValue,
+          deceasedShareValue,
+          deceasedShare,
+        }
+      })
 
     const stocks: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.stocks?.data ?? []

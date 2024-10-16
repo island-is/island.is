@@ -1,6 +1,6 @@
 import { EditorFileUploader } from '@island.is/regulations-tools/Editor'
 import { RegulationDraftId } from '@island.is/regulations/admin'
-import { useS3Upload } from './dataHooks'
+import { fileUrl, useS3Upload } from './dataHooks'
 
 export function useFileUploader(draftId: RegulationDraftId) {
   const { createPresignedPost, createFormData } = useS3Upload()
@@ -35,9 +35,7 @@ export function useFileUploader(draftId: RegulationDraftId) {
 
         request.addEventListener('load', () => {
           if (request.status >= 200 && request.status < 300 && presignedPost) {
-            success(
-              `https://files.reglugerd.is/${presignedPost?.fields?.['key']}`,
-            )
+            success(`${fileUrl}/${presignedPost?.fields?.['key']}`)
           } else {
             failure(`Upload failed. ${request.statusText}`)
           }

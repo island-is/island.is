@@ -375,7 +375,19 @@
             "type": "array",
             "nullable": true,
             "items": { "$ref": "#/components/schemas/IdentityDocumentResponse" }
+          },
+          "rikisfang": {
+            "nullable": true,
+            "oneOf": [{ "$ref": "#/components/schemas/Rikisfang" }]
           }
+        }
+      },
+      "Rikisfang": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "kodi": { "type": "string", "nullable": true },
+          "land": { "type": "string", "nullable": true }
         }
       },
       "Preregistration": {

@@ -8,58 +8,6 @@ import {
   sortedFilesInChapter,
 } from './IndictmentsCaseFilesAccordionItem'
 
-const items: ReorderableItem[] = [
-  {
-    id: faker.datatype.uuid(),
-    displayText: faker.lorem.words(2),
-    isDivider: false,
-    isHeading: false,
-    chapter: 0,
-    orderWithinChapter: 0,
-  },
-  {
-    id: faker.datatype.uuid(),
-    displayText: faker.lorem.words(2),
-    isDivider: false,
-    isHeading: false,
-    chapter: 0,
-    orderWithinChapter: 1,
-  },
-  {
-    id: faker.datatype.uuid(),
-    displayText: faker.lorem.words(2),
-    isDivider: false,
-    isHeading: true,
-    chapter: 1,
-  },
-  {
-    id: faker.datatype.uuid(),
-    displayText: faker.lorem.words(2),
-    isDivider: false,
-    isHeading: false,
-    chapter: 1,
-    orderWithinChapter: 0,
-  },
-  {
-    id: faker.datatype.uuid(),
-    displayText: faker.lorem.words(2),
-    isDivider: true,
-    isHeading: false,
-  },
-  {
-    id: faker.datatype.uuid(),
-    displayText: faker.lorem.words(2),
-    isDivider: false,
-    isHeading: false,
-  },
-  {
-    id: faker.datatype.uuid(),
-    displayText: faker.lorem.words(2),
-    isDivider: false,
-    isHeading: false,
-  },
-]
-
 const caseFiles = [
   {
     id: faker.datatype.uuid(),
@@ -117,29 +65,233 @@ describe('getFilesToUpdate', () => {
   })
 
   it('should return the item if a file is reordered but not put under a chapter', () => {
-    expect(getFilesToUpdate(items[items.length - 1].id || '', items)).toEqual([
+    const items: ReorderableItem[] = [
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+        chapter: 0,
+        orderWithinChapter: 0,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+        chapter: 0,
+        orderWithinChapter: 1,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: true,
+        chapter: 1,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+        chapter: 1,
+        orderWithinChapter: 0,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: true,
+        isHeading: false,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+        chapter: 2,
+        orderWithinChapter: 0,
+      },
+    ]
+
+    expect(getFilesToUpdate(items[items.length - 1].id, items)).toEqual([
       null,
       null,
       [items[items.length - 1]],
     ])
   })
 
-  it('should return the correct chapter, orderWithinChapter and items if a file is reordered under a chapter', () => {
-    expect(getFilesToUpdate(items[0].id || '', items)).toEqual([
+  it('should return the correct chapter, orderWithinChapter and items if a file is reordered as the first item in a chapter', () => {
+    const items: ReorderableItem[] = [
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+        chapter: 0,
+        orderWithinChapter: 1,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: true,
+        chapter: 1,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+        chapter: 1,
+        orderWithinChapter: 0,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: true,
+        isHeading: false,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+      },
+    ]
+
+    expect(getFilesToUpdate(items[0].id, items)).toEqual([
       0,
       0,
       [items[0], items[1]],
     ])
-    expect(getFilesToUpdate(items[1].id || '', items)).toEqual([
-      0,
-      1,
-      [items[1]],
-    ])
-    expect(getFilesToUpdate(items[3].id || '', items)).toEqual([
-      1,
-      0,
-      [items[3]],
-    ])
+  })
+
+  it('should return the correct chapter, orderWithinChapter and items if a file is reordered as the last item in a chapter', () => {
+    const items: ReorderableItem[] = [
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+        chapter: 0,
+        orderWithinChapter: 0,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: true,
+        chapter: 1,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+        chapter: 1,
+        orderWithinChapter: 0,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: true,
+        isHeading: false,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+      },
+    ]
+
+    expect(getFilesToUpdate(items[1].id, items)).toEqual([0, 1, [items[1]]])
+  })
+
+  it('should return the correct chapter, orderWithinChapter and items if a file is reordered under a previously empty chapter', () => {
+    const items: ReorderableItem[] = [
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+        chapter: 0,
+        orderWithinChapter: 0,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+        chapter: 0,
+        orderWithinChapter: 1,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: true,
+        chapter: 1,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+        chapter: 4,
+        orderWithinChapter: 4,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: true,
+        isHeading: false,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+      },
+      {
+        id: faker.datatype.uuid(),
+        displayText: faker.lorem.words(2),
+        isDivider: false,
+        isHeading: false,
+      },
+    ]
+
+    expect(getFilesToUpdate(items[3].id, items)).toEqual([1, 0, [items[3]]])
   })
 })
 
@@ -151,6 +303,11 @@ describe('sortedFilesInChapter', () => {
   it('should return an array of files in chapter sorted by orderWithinChapter', () => {
     expect(sortedFilesInChapter(0, caseFiles)).toEqual([
       {
+        canEdit: true,
+        category: undefined,
+        displayDate: undefined,
+        status: 'done',
+        userGeneratedFilename: undefined,
         displayText: caseFiles[1].name,
         isDivider: false,
         isHeading: false,
@@ -161,6 +318,11 @@ describe('sortedFilesInChapter', () => {
         canOpen: false,
       },
       {
+        canEdit: true,
+        category: undefined,
+        displayDate: undefined,
+        status: 'done',
+        userGeneratedFilename: undefined,
         displayText: caseFiles[0].name,
         isDivider: false,
         isHeading: false,
@@ -171,6 +333,11 @@ describe('sortedFilesInChapter', () => {
         canOpen: false,
       },
       {
+        canEdit: true,
+        category: undefined,
+        displayDate: undefined,
+        status: 'done',
+        userGeneratedFilename: undefined,
         displayText: caseFiles[2].name,
         isDivider: false,
         isHeading: false,

@@ -26,16 +26,17 @@ const RemovableUserSchemaBase = z
     email: z.string().optional(),
     phone: z.string().optional(),
     wasRemoved: z.string().optional(),
+    needsAgeValidation: z.boolean().optional(),
   })
   .refine(
-    ({ nationalId, wasRemoved }) => {
+    ({ nationalId, wasRemoved, needsAgeValidation }) => {
       return (
         wasRemoved === 'true' ||
         (nationalId &&
           nationalId.length !== 0 &&
           kennitala.isValid(nationalId) &&
           (kennitala.isCompany(nationalId) ||
-            kennitala.info(nationalId).age >= 18))
+            (needsAgeValidation ? kennitala.info(nationalId).age >= 18 : true)))
       )
     },
     { path: ['nationalId'] },

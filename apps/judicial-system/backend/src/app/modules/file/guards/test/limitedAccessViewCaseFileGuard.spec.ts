@@ -160,6 +160,7 @@ describe('Limited Access View Case File Guard', () => {
           CaseFileCategory.CASE_FILE,
           CaseFileCategory.PROSECUTOR_CASE_FILE,
           CaseFileCategory.DEFENDANT_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIM,
         ]
 
         describe.each(allowedCaseFileCategories)(
@@ -212,11 +213,7 @@ describe('Limited Access View Case File Guard', () => {
     })
   })
 
-  describe('prison system users', () => {
-    const prisonUser = {
-      role: UserRole.PRISON_SYSTEM_STAFF,
-      institution: { type: InstitutionType.PRISON },
-    }
+  describe('prison admin users', () => {
     const prisonAdminUser = {
       role: UserRole.PRISON_SYSTEM_STAFF,
       institution: { type: InstitutionType.PRISON_ADMIN },
@@ -224,32 +221,27 @@ describe('Limited Access View Case File Guard', () => {
 
     describe.each(Object.keys(CaseType))('for %s cases', (type) => {
       describe.each(completedCaseStates)('in state %s', (state) => {
-        const allowedCaseFileCategories = [CaseFileCategory.APPEAL_RULING]
+        const allowedCaseFileCategories = [
+          CaseFileCategory.APPEAL_RULING,
+          CaseFileCategory.RULING,
+        ]
 
         describe.each(allowedCaseFileCategories)(
-          'prison system users can view %s',
+          'prison admin users can view %s',
           (category) => {
-            let thenPrison: Then
             let thenPrisonAdmin: Then
 
             beforeEach(() => {
-              mockRequest.mockImplementationOnce(() => ({
-                user: prisonUser,
-                case: { type, state },
-                caseFile: { category },
-              }))
               mockRequest.mockImplementationOnce(() => ({
                 user: prisonAdminUser,
                 case: { type, state },
                 caseFile: { category },
               }))
 
-              thenPrison = givenWhenThen()
               thenPrisonAdmin = givenWhenThen()
             })
 
             it('should activate', () => {
-              expect(thenPrison.result).toBe(true)
               expect(thenPrisonAdmin.result).toBe(true)
             })
           },
@@ -260,31 +252,20 @@ describe('Limited Access View Case File Guard', () => {
             (category) =>
               !allowedCaseFileCategories.includes(category as CaseFileCategory),
           ),
-        )('prison system users can not view %s', (category) => {
-          let thenPrison: Then
+        )('prison admin users can not view %s', (category) => {
           let thenPrisonAdmin: Then
 
           beforeEach(() => {
-            mockRequest.mockImplementationOnce(() => ({
-              user: prisonUser,
-              case: { type, state },
-              caseFile: { category },
-            }))
             mockRequest.mockImplementationOnce(() => ({
               user: prisonAdminUser,
               case: { type, state },
               caseFile: { category },
             }))
 
-            thenPrison = givenWhenThen()
             thenPrisonAdmin = givenWhenThen()
           })
 
           it('should throw ForbiddenException', () => {
-            expect(thenPrison.error).toBeInstanceOf(ForbiddenException)
-            expect(thenPrison.error.message).toBe(
-              `Forbidden for ${UserRole.PRISON_SYSTEM_STAFF}`,
-            )
             expect(thenPrisonAdmin.error).toBeInstanceOf(ForbiddenException)
             expect(thenPrisonAdmin.error.message).toBe(
               `Forbidden for ${UserRole.PRISON_SYSTEM_STAFF}`,
@@ -299,10 +280,46 @@ describe('Limited Access View Case File Guard', () => {
         ),
       )('in state %s', (state) => {
         describe.each(Object.keys(CaseFileCategory))(
-          'prison system users can not view %s',
+          'prison admin users can not view %s',
           (category) => {
-            let thenPrison: Then
             let thenPrisonAdmin: Then
+
+            beforeEach(() => {
+              mockRequest.mockImplementationOnce(() => ({
+                user: prisonAdminUser,
+                case: { type, state },
+                caseFile: { category },
+              }))
+
+              thenPrisonAdmin = givenWhenThen()
+            })
+
+            it('should throw ForbiddenException', () => {
+              expect(thenPrisonAdmin.error).toBeInstanceOf(ForbiddenException)
+              expect(thenPrisonAdmin.error.message).toBe(
+                `Forbidden for ${UserRole.PRISON_SYSTEM_STAFF}`,
+              )
+            })
+          },
+        )
+      })
+    })
+  })
+
+  describe('prison users', () => {
+    const prisonUser = {
+      role: UserRole.PRISON_SYSTEM_STAFF,
+      institution: { type: InstitutionType.PRISON },
+    }
+
+    describe.each(Object.keys(CaseType))('for %s cases', (type) => {
+      describe.each(completedCaseStates)('in state %s', (state) => {
+        const allowedCaseFileCategories = [CaseFileCategory.APPEAL_RULING]
+
+        describe.each(allowedCaseFileCategories)(
+          'prison users can view %s',
+          (category) => {
+            let thenPrisonUser: Then
 
             beforeEach(() => {
               mockRequest.mockImplementationOnce(() => ({
@@ -310,23 +327,66 @@ describe('Limited Access View Case File Guard', () => {
                 case: { type, state },
                 caseFile: { category },
               }))
+
+              thenPrisonUser = givenWhenThen()
+            })
+
+            it('should activate', () => {
+              expect(thenPrisonUser.result).toBe(true)
+            })
+          },
+        )
+
+        describe.each(
+          Object.keys(CaseFileCategory).filter(
+            (category) =>
+              !allowedCaseFileCategories.includes(category as CaseFileCategory),
+          ),
+        )('prison users can not view %s', (category) => {
+          let thenPrison: Then
+
+          beforeEach(() => {
+            mockRequest.mockImplementationOnce(() => ({
+              user: prisonUser,
+              case: { type, state },
+              caseFile: { category },
+            }))
+
+            thenPrison = givenWhenThen()
+          })
+
+          it('should throw ForbiddenException', () => {
+            expect(thenPrison.error).toBeInstanceOf(ForbiddenException)
+            expect(thenPrison.error.message).toBe(
+              `Forbidden for ${UserRole.PRISON_SYSTEM_STAFF}`,
+            )
+          })
+        })
+      })
+
+      describe.each(
+        Object.keys(CaseState).filter(
+          (state) => !completedCaseStates.includes(state as CaseState),
+        ),
+      )('in state %s', (state) => {
+        describe.each(Object.keys(CaseFileCategory))(
+          'prison users can not view %s',
+          (category) => {
+            let thenPrison: Then
+
+            beforeEach(() => {
               mockRequest.mockImplementationOnce(() => ({
-                user: prisonAdminUser,
+                user: prisonUser,
                 case: { type, state },
                 caseFile: { category },
               }))
 
               thenPrison = givenWhenThen()
-              thenPrisonAdmin = givenWhenThen()
             })
 
             it('should throw ForbiddenException', () => {
               expect(thenPrison.error).toBeInstanceOf(ForbiddenException)
               expect(thenPrison.error.message).toBe(
-                `Forbidden for ${UserRole.PRISON_SYSTEM_STAFF}`,
-              )
-              expect(thenPrisonAdmin.error).toBeInstanceOf(ForbiddenException)
-              expect(thenPrisonAdmin.error.message).toBe(
                 `Forbidden for ${UserRole.PRISON_SYSTEM_STAFF}`,
               )
             })

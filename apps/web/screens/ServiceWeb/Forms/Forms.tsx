@@ -96,7 +96,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   useLocalLinkTypeResolver()
 
   const organizationNamespace = useMemo(
-    () => JSON.parse(organization?.namespace?.fields ?? '{}'),
+    () => JSON.parse(organization?.namespace?.fields || '{}'),
     [organization?.namespace],
   )
   const o = useNamespace(organizationNamespace)
@@ -434,7 +434,7 @@ ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
       })
       .then(
         (variables) =>
-          JSON.parse(variables?.data?.getNamespace?.fields ?? '{}')?.entities ??
+          JSON.parse(variables?.data?.getNamespace?.fields || '{}')?.entities ??
           [],
       ),
     apolloClient
@@ -448,7 +448,7 @@ ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
         },
       })
       .then((variables) =>
-        JSON.parse(variables?.data?.getNamespace?.fields ?? '{}'),
+        JSON.parse(variables?.data?.getNamespace?.fields || '{}'),
       ),
     apolloClient.query<Query, QueryGetServiceWebPageArgs>({
       query: GET_SERVICE_WEB_PAGE_QUERY,

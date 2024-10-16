@@ -18,6 +18,7 @@ import {
 } from '../graphql/types/schema'
 import { ComponentRegistry } from '../utils/component-registry'
 import { getRightButtons } from '../utils/get-main-root'
+import { setBadgeCountAsync } from 'expo-notifications'
 
 export interface Notification {
   id: string
@@ -45,14 +46,6 @@ interface NotificationsActions {
 }
 
 type NotificationsStore = NotificationsState & NotificationsActions
-
-const rightButtonScreens = [
-  ComponentRegistry.HomeScreen,
-  ComponentRegistry.InboxScreen,
-  ComponentRegistry.WalletScreen,
-  ComponentRegistry.ApplicationsScreen,
-  ComponentRegistry.MoreScreen,
-]
 
 const initialState: NotificationsState = {
   unseenCount: 0,
@@ -122,13 +115,15 @@ export const notificationsStore = create<NotificationsStore>(
       },
       updateNavigationUnseenCount(unseenCount: number) {
         set({ unseenCount })
+        setBadgeCountAsync(unseenCount)
 
-        rightButtonScreens.forEach((componentId) => {
-          Navigation.mergeOptions(componentId, {
-            topBar: {
-              rightButtons: getRightButtons({ unseenCount }),
-            },
-          })
+        Navigation.mergeOptions(ComponentRegistry.HomeScreen, {
+          topBar: {
+            rightButtons: getRightButtons({
+              unseenCount,
+              icons: ['notifications', 'options'],
+            }),
+          },
         })
       },
       async checkUnseen() {

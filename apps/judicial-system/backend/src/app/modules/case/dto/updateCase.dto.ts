@@ -513,4 +513,14 @@ export class UpdateCaseDto {
   @IsUUID()
   @ApiPropertyOptional({ type: String })
   readonly mergeCaseId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly civilDemands?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly hasCivilClaims?: boolean
 }

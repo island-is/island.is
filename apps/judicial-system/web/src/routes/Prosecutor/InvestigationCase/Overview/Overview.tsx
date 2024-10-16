@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
@@ -72,7 +72,6 @@ export const Overview = () => {
     registrar,
     prosecutor,
     caseType,
-    confirmedCourtDate,
   } = useInfoCardItems()
 
   const [modal, setModal] = useState<
@@ -191,9 +190,6 @@ export const Overview = () => {
                   ...(workingCase.registrar ? [registrar] : []),
                   prosecutor(workingCase.type),
                   caseType,
-                  ...(workingCase.arraignmentDate?.date
-                    ? [confirmedCourtDate]
-                    : []),
                 ],
                 columns: 2,
               },

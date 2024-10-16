@@ -9,6 +9,7 @@ import { IOrganizationSubpage } from '../../generated/contentfulTypes'
 import {
   extractStringsFromObject,
   pruneNonSearchableSliceUnionFields,
+  extractChildEntryIds,
 } from './utils'
 
 @Injectable()
@@ -48,6 +49,10 @@ export class OrganizationSubpageSyncService
           const content = extractStringsFromObject(
             (mapped.description ?? []).map(pruneNonSearchableSliceUnionFields),
           )
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -67,6 +72,10 @@ export class OrganizationSubpageSyncService
                 key: entry.fields?.organizationPage.fields?.slug,
                 type: 'organization',
               },
+              ...childEntryIds.map((id) => ({
+                key: id,
+                type: 'hasChildEntryWithId',
+              })),
             ],
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),

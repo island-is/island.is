@@ -5,6 +5,7 @@ import { logger } from '@island.is/logging'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { IVacancy } from '../../generated/contentfulTypes'
 import { mapVacancy } from '../../models/vacancy.model'
+import { extractChildEntryIds } from './utils'
 
 @Injectable()
 export class VacancySyncService implements CmsSyncProvider<IVacancy> {
@@ -24,6 +25,10 @@ export class VacancySyncService implements CmsSyncProvider<IVacancy> {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapVacancy(entry)
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+
           return {
             _id: mapped.id,
             title: mapped.title ?? '',
@@ -34,6 +39,10 @@ export class VacancySyncService implements CmsSyncProvider<IVacancy> {
             }),
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
+            tags: childEntryIds.map((id) => ({
+              key: id,
+              type: 'hasChildEntryWithId',
+            })),
           }
         } catch (error) {
           logger.warn('Failed to import vacancy', {

@@ -1,60 +1,66 @@
-import { Box, Button, Input } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Input,
+  Stack,
+} from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { comments } from '../../lib/messages/comments'
 import { useLocale } from '@island.is/localization'
+import { AddCommentVariables } from '../../hooks/useComments'
+import { ApolloError } from '@apollo/client'
 
 type Props = {
-  onCommentChange?: (comment: string) => void
-  onAddComment?: (comment: string) => void
+  addComment: (variables: AddCommentVariables, cb?: () => void) => void
+  addCommentLoading?: boolean
+  addCommentSuccess?: boolean
+  addCommentError?: ApolloError
 }
 
-export const AddComment = ({ onCommentChange, onAddComment }: Props) => {
-  const { formatMessage } = useLocale()
-
+export const AddComment = ({
+  addComment,
+  addCommentError,
+  addCommentLoading,
+  addCommentSuccess,
+}: Props) => {
+  const { formatMessage: f } = useLocale()
   const [comment, setComment] = useState('')
 
-  const handleChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-  ) => {
-    setComment(event.target.value)
-    if (onCommentChange) {
-      onCommentChange(event.target.value)
-    }
-  }
-
-  const handleAdd = () => {
+  const onAddComment = () => {
+    addComment({
+      comment: comment,
+    })
     setComment('')
-    if (onAddComment) {
-      onAddComment(comment)
-    }
   }
 
   return (
-    <Box
-      display="flex"
-      background="white"
-      padding={4}
-      flexDirection="column"
-      rowGap={4}
-    >
+    <Stack space={4}>
+      {addCommentSuccess === false ||
+        (addCommentError && (
+          <AlertMessage
+            type="error"
+            title={f(comments.warnings.postCommentFailedTitle)}
+            message={f(comments.warnings.postCommentFailedMessage)}
+          />
+        ))}
       <Box>
         <Input
+          disabled={addCommentLoading}
           name="add-comment"
           textarea
-          label={formatMessage(comments.inputs.addCommentTextarea.label)}
-          placeholder={formatMessage(
-            comments.inputs.addCommentTextarea.placeholder,
-          )}
+          label={f(comments.inputs.addCommentTextarea.label)}
+          placeholder={f(comments.inputs.addCommentTextarea.placeholder)}
           value={comment}
           rows={3}
-          onChange={handleChange}
+          onChange={(e) => setComment(e.target.value)}
         />
       </Box>
       <Box display="flex" justifyContent="flexEnd">
-        <Button size="small" onClick={handleAdd}>
-          {formatMessage(comments.inputs.addCommentButton.label)}
+        <Button size="small" loading={addCommentLoading} onClick={onAddComment}>
+          {f(comments.inputs.addCommentButton.label)}
         </Button>
       </Box>
-    </Box>
+    </Stack>
   )
 }

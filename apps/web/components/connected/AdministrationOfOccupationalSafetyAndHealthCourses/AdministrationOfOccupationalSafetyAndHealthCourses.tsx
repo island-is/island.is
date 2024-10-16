@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client/react'
 
 import {
@@ -11,11 +12,11 @@ import {
 } from '@island.is/island-ui/core'
 import { BorderAbove } from '@island.is/web/components'
 import { ConnectedComponent, Query } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { extractHeadingLevels } from '@island.is/web/utils/navigation'
 
 import { GET_ADMINISTRATION_OF_SAFETY_AND_HEALTH_COURSES_QUERY } from './queries'
+import { translation as translationStrings } from './translation.strings'
 import { getCurrencyString, parseDateString } from './utils'
 
 const normalizesAndMatch = (value1: string, value2: string) => {
@@ -31,8 +32,8 @@ type ListState = 'loading' | 'loaded' | 'error'
 const AdministrationOfOccupationalSafetyAndHealthCourses = ({
   slice,
 }: AdministrationOfOccupationalSafetyAndHealthCoursesProps) => {
-  const n = useNamespace(slice.json ?? {})
   const { format } = useDateUtils()
+  const { formatMessage } = useIntl()
 
   const title = slice.json?.title ?? null
   const hasBorderAbove = slice.configJson?.hasBorderAbove ?? false
@@ -99,15 +100,17 @@ const AdministrationOfOccupationalSafetyAndHealthCourses = ({
       )}
       {listState === 'error' && (
         <AlertMessage
-          title={n('errorTitle', 'Villa')}
-          message={n('errorMessage', 'Ekki tókst að sækja áfengisleyfi.')}
+          title={formatMessage(translationStrings.errorTitle)}
+          message={formatMessage(translationStrings.errorMessage)}
           type="error"
         />
       )}
 
       {listState === 'loaded' && courses.length === 0 && (
         <Box display="flex" marginTop={4} justifyContent="center">
-          <Text variant="h3">{n('noResults', 'Engin Námskeið fundust.')}</Text>
+          <Text variant="h3">
+            {formatMessage(translationStrings.noResults)}
+          </Text>
         </Box>
       )}
       {listState === 'loaded' && courses.length > 0 && (
@@ -168,19 +171,19 @@ const AdministrationOfOccupationalSafetyAndHealthCourses = ({
                   >
                     <Box style={{ flex: '0 0 50%' }}>
                       <Text>
-                        {n('validPeriodLabel', 'Dagsetning')}:{' '}
+                        {formatMessage(translationStrings.validPeriodLabel)}:{' '}
                         {dateFrom !== dateTo
                           ? dateFrom + ' - ' + dateTo
                           : dateFrom}
                       </Text>
                       <Text paddingBottom={2}>
-                        {n('time', 'Klukkan')}: {course.time}
+                        {formatMessage(translationStrings.time)}: {course.time}
                       </Text>
                     </Box>
 
                     <Box paddingLeft={[0, 0, 0, 2]}>
                       <Text>
-                        {n('price', 'Verð')}:{' '}
+                        {formatMessage(translationStrings.price)}:{' '}
                         {getCurrencyString(course.price || 0)}
                       </Text>
                     </Box>

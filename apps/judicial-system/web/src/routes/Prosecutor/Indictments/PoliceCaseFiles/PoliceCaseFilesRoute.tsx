@@ -1,4 +1,4 @@
-import React, {
+import {
   FC,
   memo,
   useCallback,
@@ -268,12 +268,10 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
         buttonLabel={formatMessage(strings.inputFileUpload.buttonLabel)}
         onChange={(files) =>
           handleUpload(
-            addUploadFiles(
-              files,
-              CaseFileCategory.CASE_FILE_RECORD,
-              undefined,
+            addUploadFiles(files, {
+              category: CaseFileCategory.CASE_FILE_RECORD,
               policeCaseNumber,
-            ),
+            }),
             updateUploadFile,
           )
         }

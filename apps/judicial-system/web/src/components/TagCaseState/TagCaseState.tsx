@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Tag, TagVariant } from '@island.is/island-ui/core'

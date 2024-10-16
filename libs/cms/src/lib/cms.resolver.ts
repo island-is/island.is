@@ -120,6 +120,7 @@ import { GetTeamMembersInput } from './dto/getTeamMembers.input'
 import { TeamMemberResponse } from './models/teamMemberResponse.model'
 import { TeamList } from './models/teamList.model'
 import { TeamMember } from './models/teamMember.model'
+import { LatestGenericListItems } from './models/latestGenericListItems.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -836,5 +837,20 @@ export class TeamListResolver {
   async teamMembers(@Parent() teamList: TeamList) {
     // The 'accordion' variant has a search so to reduce the inital payload (since it isn't used) we simply return an empty list
     return teamList?.variant === 'accordion' ? [] : teamList?.teamMembers ?? []
+  }
+}
+
+@Resolver(() => LatestGenericListItems)
+export class LatestGenericListItemsResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => GenericListItemResponse, { nullable: true })
+  async itemResponse(
+    @Parent() { itemResponse: input }: LatestGenericListItems,
+  ) {
+    if (!input) {
+      return null
+    }
+    return this.cmsElasticsearchService.getGenericListItems(input)
   }
 }

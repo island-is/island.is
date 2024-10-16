@@ -17,7 +17,7 @@ export type SubmitResponse = {
 }
 
 export enum ApiActions {
-  submitApplication = 'createLists',
+  submitApplication = 'submit',
 }
 
 export type Manager = {
@@ -35,13 +35,3 @@ export type Supervisor = {
   }
   constituency: string
 }
-
-// These will be fetched later
-export const Constituencies = [
-  'Norðvesturkjördæmi',
-  'Norðausturkjördæmi',
-  'Suðurkjördæmi',
-  'Suðvesturkjördæmi',
-  'Reykjavíkurkjördæmi suður',
-  'Reykjavíkurkjördæmi norður',
-]

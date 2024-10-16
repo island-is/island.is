@@ -47,6 +47,7 @@ export type AppendixDraftForm = {
   title: DraftField<PlainText, 'text'>
   text: HtmlDraftField
 
+  diff?: HtmlDraftField
   /**
    * Appendixes may be revoked by `RegulationChange`s.
    *
@@ -214,6 +215,10 @@ export type Action =
       type: 'UPDATE_LAWCHAPTER_PROP'
       action?: 'add' | 'delete'
       value: LawChapterSlug
+    }
+  | {
+      type: 'SET_MINISTRY'
+      value?: PlainText
     }
   | ({
       type: 'UPDATE_PROP'

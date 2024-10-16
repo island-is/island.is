@@ -27,5 +27,16 @@ export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
         },
       ],
     },
+    {
+      name: m.incomePlan,
+      path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlan,
+      children: [
+        {
+          name: m.latestIncomePlan,
+          path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
+          navHide: true,
+        },
+      ],
+    },
   ],
 }

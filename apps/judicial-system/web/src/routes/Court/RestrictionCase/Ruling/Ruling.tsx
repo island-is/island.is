@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 import { useRouter } from 'next/router'

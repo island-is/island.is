@@ -12,4 +12,5 @@ export {
   Locale,
   organLocale,
   VaccinationDto,
+  DiseaseVaccinationDtoVaccinationStatusEnum,
 } from './lib/clients'

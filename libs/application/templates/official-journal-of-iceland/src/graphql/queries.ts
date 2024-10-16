@@ -7,6 +7,7 @@ export const GET_PRICE_QUERY = gql`
     }
   }
 `
+
 export const ADVERTS_QUERY = gql`
   query Adverts($input: OfficialJournalOfIcelandAdvertsInput!) {
     officialJournalOfIcelandAdverts(input: $input) {
@@ -189,6 +190,18 @@ export const DEPARTMENTS_QUERY = gql`
   }
 `
 
+export const INVOLVED_PARTIES_QUERY = gql`
+  query InvolvedParties($input: GetUserInvolvedPartiesInput!) {
+    officialJournalOfIcelandApplicationGetUserInvolvedParties(input: $input) {
+      involvedParties {
+        id
+        title
+        slug
+      }
+    }
+  }
+`
+
 export const CATEGORIES_QUERY = gql`
   query AdvertCategories($params: OfficialJournalOfIcelandQueryInput!) {
     officialJournalOfIcelandCategories(params: $params) {
@@ -219,10 +232,88 @@ export const PDF_URL_QUERY = gql`
   }
 `
 
-export const PDF_QUERY = gql`
-  query PdfDocument($id: String!) {
-    officialJournalOfIcelandApplicationGetPdf(id: $id) {
-      pdf
+export const GET_PRESIGNED_URL_MUTATION = gql`
+  mutation GetPresignedUrl(
+    $input: OfficialJournalOfIcelandApplicationGetPresignedUrlInput!
+  ) {
+    officialJournalOfIcelandApplicationGetPresignedUrl(input: $input) {
+      url
+    }
+  }
+`
+
+export const ADD_APPLICATION_ATTACHMENT_MUTATION = gql`
+  mutation AddApplicationAttachment(
+    $input: OfficialJournalOfIcelandApplicationAddApplicationAttachmentInput!
+  ) {
+    officialJournalOfIcelandApplicationAddAttachment(input: $input) {
+      success
+    }
+  }
+`
+
+export const GET_APPLICATION_ATTACHMENTS_QUERY = gql`
+  query OfficialJournalOfIcelandApplicationGetAttachments(
+    $input: OfficialJournalOfIcelandApplicationGetApplicationAttachmentInput!
+  ) {
+    officialJournalOfIcelandApplicationGetAttachments(input: $input) {
+      attachments {
+        id
+        originalFileName
+        fileName
+        fileFormat
+        fileExtension
+        fileLocation
+        fileSize
+      }
+    }
+  }
+`
+
+export const DELETE_APPLICATION_ATTACHMENT_MUTATION = gql`
+  mutation DeleteApplicationAttachment(
+    $input: OfficialJournalOfIcelandApplicationDeleteApplicationAttachmentInput!
+  ) {
+    officialJournalOfIcelandApplicationDeleteAttachment(input: $input) {
+      success
+    }
+  }
+`
+
+export const GET_COMMENTS_QUERY = gql`
+  query GetComments(
+    $input: OfficialJournalOfIcelandApplicationGetCommentsInput!
+  ) {
+    officialJournalOfIcelandApplicationGetComments(input: $input) {
+      comments {
+        createdAt
+        type {
+          title
+        }
+        task {
+          from
+          to
+          title {
+            title
+          }
+          comment
+        }
+        status {
+          id
+          title
+          slug
+        }
+      }
+    }
+  }
+`
+
+export const POST_COMMENT_MUTATION = gql`
+  mutation AddComment(
+    $input: OfficialJournalOfIcelandApplicationPostCommentInput!
+  ) {
+    officialJournalOfIcelandApplicationPostComment(input: $input) {
+      success
     }
   }
 `

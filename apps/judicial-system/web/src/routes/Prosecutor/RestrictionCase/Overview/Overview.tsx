@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
@@ -81,7 +81,6 @@ export const Overview = () => {
     prosecutorsOffice,
     requestedCourtDate,
     parentCaseValidToDate,
-    confirmedCourtDate,
   } = useInfoCardItems()
 
   const handleNextButtonClick = async (caseResentExplanation?: string) => {
@@ -198,9 +197,6 @@ export const Overview = () => {
                   ...(workingCase.registrar ? [registrar] : []),
                   prosecutor(workingCase.type),
                   parentCaseValidToDate,
-                  ...(workingCase.arraignmentDate?.date
-                    ? [confirmedCourtDate]
-                    : []),
                 ],
                 columns: 2,
               },

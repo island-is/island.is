@@ -15,7 +15,7 @@ export const MachineAnswersSchema = z.object({
     index: z.string().optional(),
     id: z.string().min(1),
   }),
-  approveExternalData: z.boolean(),
+  approveExternalData: z.boolean().refine((v) => v),
   location: z.object({
     address: z.string().min(1),
     city: z.string().min(1),

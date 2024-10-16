@@ -75,10 +75,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
     it('should look for defender', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         where: {
-          [Op.or]: [
-            { defenderNationalId: formattedDefenderNationalId },
-            { defenderNationalId: defenderNationalId },
-          ],
+          defenderNationalId: [defenderNationalId, formattedDefenderNationalId],
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },

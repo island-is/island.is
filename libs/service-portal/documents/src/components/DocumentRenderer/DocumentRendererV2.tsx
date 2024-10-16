@@ -19,19 +19,7 @@ export const DocumentRenderer: React.FC<DocumentRendererProps> = ({ doc }) => {
   }
 
   if (doc?.document?.type === 'PDF') {
-    return (
-      <PdfDocWithModal
-        document={{
-          ...doc,
-          document: {
-            content: doc.document.value ?? '',
-            html: doc.document.value ?? '',
-            url: doc.document.value ?? '',
-            fileType: doc.document.type ?? '',
-          },
-        }}
-      />
-    )
+    return <PdfDocWithModal document={doc} />
   }
 
   if (doc?.document?.type === 'URL' || doc.downloadUrl) {

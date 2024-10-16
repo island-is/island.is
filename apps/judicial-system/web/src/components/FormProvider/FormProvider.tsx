@@ -1,6 +1,8 @@
-import React, {
+import {
   createContext,
+  Dispatch,
   ReactNode,
+  SetStateAction,
   useCallback,
   useContext,
   useEffect,
@@ -35,7 +37,7 @@ type ProviderState =
 
 interface FormProvider {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   isLoadingWorkingCase: boolean
   caseNotFound: boolean
   isCaseUpToDate: boolean

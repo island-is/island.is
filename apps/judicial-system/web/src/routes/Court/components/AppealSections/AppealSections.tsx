@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
@@ -24,7 +24,7 @@ import * as styles from './AppealSections.css'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
 }
 
 const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {

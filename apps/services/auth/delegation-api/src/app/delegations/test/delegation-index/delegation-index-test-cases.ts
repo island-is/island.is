@@ -85,4 +85,16 @@ export const indexingTestCases: Record<string, TestCase> = {
       expectedFrom: [adult1],
     },
   ),
+  customTwoDomains: new TestCase(
+    createClient({
+      clientId: clientId,
+      supportsCustomDelegation: true,
+      supportedDelegationTypes: [AuthDelegationType.Custom],
+    }),
+    {
+      fromCustom: [adult1],
+      fromCustomOtherDomain: [adult1],
+      expectedFrom: [adult1],
+    },
+  ),
 }

@@ -40,6 +40,7 @@ export const Prerequisites: Form = buildForm({
     buildSection({
       id: 'preInformation',
       title: externalData.preInformation.sectionTitle,
+
       children: [
         buildMultiField({
           id: 'preInformation.multifield',
@@ -73,6 +74,7 @@ export const Prerequisites: Form = buildForm({
           title: externalData.dataProvider.pageTitle,
           subTitle: externalData.dataProvider.subTitle,
           checkboxLabel: externalData.dataProvider.checkboxLabel,
+          enableMockPayment: true,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
@@ -104,7 +106,8 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: IdentityDocumentApi,
-              title: '',
+              title: externalData.identityDocument.title,
+              subTitle: externalData.identityDocument.subTitle,
             }),
             buildDataProviderItem({
               provider: SyslumadurPaymentCatalogApi,

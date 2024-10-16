@@ -1,0 +1,18 @@
+query SignatureCollectionSignatureLookup(
+  $input: SignatureCollectionSignatureLookupInput!
+) {
+  signatureCollectionSignatureLookup(input: $input) {
+    id
+    listId
+    listTitle
+    created
+    signee {
+      nationalId
+      name
+      address
+    }
+    valid
+    isDigital
+    pageNumber
+  }
+}

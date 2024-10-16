@@ -7,6 +7,11 @@ export const externalData = {
       defaultMessage: 'Miðlun upplýsinga',
       description: 'Information on data handling',
     },
+    listTitle: {
+      id: 'an.application:section.agreementDescription.listTitle',
+      defaultMessage: 'Meðferð á gögnum',
+      description: 'Data handling list item title',
+    },
     bulletOne: {
       id: 'an.application:section.agreementDescription.BulletOne',
       defaultMessage:

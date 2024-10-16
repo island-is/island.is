@@ -1,5 +1,6 @@
 import {
   buildMultiField,
+  buildPhoneField,
   buildSection,
   buildSelectField,
   buildTextField,
@@ -48,12 +49,12 @@ export const applicant = buildSection({
             return externalData.nationalRegistry?.data.address.streetAddress
           },
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'applicant.phone',
           title: m.phone,
           width: 'half',
           required: true,
-          format: '###-####',
+          enableCountrySelector: true,
           defaultValue: (application: Application) => {
             const phone =
               (

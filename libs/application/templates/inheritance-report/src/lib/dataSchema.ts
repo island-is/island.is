@@ -15,7 +15,6 @@ import {
   PrePaidInheritanceOptions,
   RelationSpouse,
 } from './constants'
-import { DebtTypes } from '../types'
 
 const deceasedShare = {
   deceasedShare: z.string().nonempty().optional(),
@@ -782,6 +781,9 @@ export const inheritanceReportSchema = z.object({
       },
     ),
   confirmAction: z.array(z.enum([YES])).length(1),
+  assetsConfirmation: z.array(z.enum([YES])).length(1),
+  debtsConfirmation: z.array(z.enum([YES])).length(1),
+  heirsConfirmation: z.array(z.enum([YES])).length(1),
 })
 
 export type InheritanceReport = z.TypeOf<typeof inheritanceReportSchema>

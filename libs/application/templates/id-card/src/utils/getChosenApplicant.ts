@@ -1,54 +1,46 @@
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  Application,
-  NationalRegistryIndividual,
-} from '@island.is/application/types'
-import { IdentityDocumentChild, Routes } from '../lib/constants'
+import { NationalRegistryIndividual } from '@island.is/application/types'
+import { IdentityDocumentChild } from '../lib/constants'
 
 export interface ChosenApplicant {
-  nationalId: string
-  name: string
+  name?: string | null
+  isApplicant: boolean
+  nationalId: string | null
+  secondParentName?: string | null
 }
 
 export const getChosenApplicant = (
-  application: Application,
-  nationalId?: string,
+  externalData: any,
+  nationalId: string | null,
 ): ChosenApplicant => {
   const applicantIdentity = getValueViaPath(
-    application.externalData,
+    externalData,
     'nationalRegistry.data',
     {},
   ) as NationalRegistryIndividual
 
   const applicantChildren = getValueViaPath(
-    application.externalData,
+    externalData,
     'identityDocument.data.childPassports',
     [],
   ) as Array<IdentityDocumentChild>
 
-  const chosenApplicantNationalId =
-    nationalId ??
-    (getValueViaPath(
-      application.answers,
-      Routes.CHOSENAPPLICANTS,
-      '',
-    ) as string)
-
-  if (
-    chosenApplicantNationalId === '' ||
-    applicantIdentity?.nationalId === chosenApplicantNationalId
-  ) {
+  //this nationalId null check is only because conditions are rendered before applicant has been chosen
+  if (!nationalId || applicantIdentity?.nationalId === nationalId) {
     return {
-      nationalId: applicantIdentity?.nationalId,
       name: applicantIdentity?.fullName,
+      isApplicant: true,
+      nationalId: applicantIdentity.nationalId,
     }
   } else {
     const chosenChild = applicantChildren.filter(
-      (x) => x.childNationalId === chosenApplicantNationalId,
+      (x) => x.childNationalId === nationalId,
     )?.[0]
     return {
-      nationalId: chosenChild.childNationalId,
       name: chosenChild.childName,
+      isApplicant: false,
+      nationalId: chosenChild.childNationalId || '',
+      secondParentName: chosenChild.secondParentName,
     }
   }
 }

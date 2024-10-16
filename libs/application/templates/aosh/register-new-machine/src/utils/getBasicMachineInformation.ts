@@ -1,11 +1,13 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { FormatMessage, FormValue } from '@island.is/application/types'
+import { FormatMessage, FormValue, YES } from '@island.is/application/types'
 import { AboutMachine, BasicInformation } from '../lib/dataSchema'
-import { machine } from '../lib/messages'
+import { information, machine } from '../lib/messages'
+import { NEW } from '../shared/types'
 
 export const getBasicMachineInformation = (
   answers: FormValue,
   formatMessage: FormatMessage,
+  lang: 'is' | 'en',
 ) => {
   const basicMachineInformation = getValueViaPath(
     answers,
@@ -24,10 +26,14 @@ export const getBasicMachineInformation = (
       aboutMachineInformation.model
     }`,
     `${formatMessage(machine.labels.basicMachineInformation.category)}: ${
-      aboutMachineInformation.category
+      lang === 'is'
+        ? aboutMachineInformation.category?.nameIs
+        : aboutMachineInformation.category?.nameEn
     }`,
     `${formatMessage(machine.labels.basicMachineInformation.subcategory)}: ${
-      aboutMachineInformation.subcategory
+      lang === 'is'
+        ? aboutMachineInformation.subcategory?.nameIs
+        : aboutMachineInformation.subcategory?.nameEn
     }`,
     `${formatMessage(
       machine.labels.basicMachineInformation.productionCountry,
@@ -39,13 +45,21 @@ export const getBasicMachineInformation = (
       machine.labels.basicMachineInformation.productionNumber,
     )}: ${basicMachineInformation.productionNumber}`,
     `${formatMessage(machine.labels.basicMachineInformation.markedCE)}: ${
-      basicMachineInformation.markedCE
+      basicMachineInformation.markedCE === YES
+        ? formatMessage(information.labels.radioButtons.radioOptionYes)
+        : formatMessage(information.labels.radioButtons.radioOptionNo)
     }`,
     `${formatMessage(
       machine.labels.basicMachineInformation.preRegistration,
-    )}: ${basicMachineInformation.preRegistration}`,
+    )}: ${
+      basicMachineInformation.preRegistration === YES
+        ? formatMessage(information.labels.radioButtons.radioOptionYes)
+        : formatMessage(information.labels.radioButtons.radioOptionNo)
+    }`,
     `${formatMessage(machine.labels.basicMachineInformation.isUsed)}: ${
-      basicMachineInformation.isUsed
+      basicMachineInformation.isUsed === NEW
+        ? formatMessage(machine.labels.basicMachineInformation.new)
+        : formatMessage(machine.labels.basicMachineInformation.used)
     }`,
     `${formatMessage(machine.labels.basicMachineInformation.location)}: ${
       basicMachineInformation.location

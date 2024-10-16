@@ -421,6 +421,12 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Sending umsóknar mistókst',
     description: 'Message indicating submission after payment failed',
   },
+  paymentSubmitFailedDescription: {
+    id: 'application.system:core.payment.submitTitle',
+    defaultMessage:
+      'Villa hefur komið upp við áframhaldandi vinnslu. Vinsamlegast reynið aftur síðar. Ef villa endurtekur sig vinsamlegast hafið samband við island@island.is.',
+    description: 'Message indicating submission after payment failed',
+  },
   applicationSubmitFailed: {
     id: 'application.system:core.application.SubmitFailed',
     defaultMessage: 'Sending umsóknar mistókst',

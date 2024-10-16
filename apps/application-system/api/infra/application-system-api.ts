@@ -34,6 +34,8 @@ import {
   VehiclesMileage,
   UniversityCareers,
   Frigg,
+  HealthDirectorateVaccination,
+  HealthDirectorateOrganDonation,
 } from '../../../../infra/src/dsl/xroad'
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
@@ -57,7 +59,7 @@ export const workerSetup =
         },
         XROAD_CHARGE_FJS_V2_PATH: {
           dev: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
-          staging: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2',
+          staging: 'IS-TEST/GOV/10021/FJS-Public/chargeFJS_v2',
           prod: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2',
         },
         APPLICATION_ATTACHMENT_BUCKET: {
@@ -111,7 +113,7 @@ export const workerSetup =
       })
       .resources({
         limits: { cpu: '400m', memory: '768Mi' },
-        requests: { cpu: '100m', memory: '384Mi' },
+        requests: { cpu: '150m', memory: '384Mi' },
       })
 
 export const serviceSetup = (services: {
@@ -221,12 +223,12 @@ export const serviceSetup = (services: {
       ),
       XROAD_COURT_BANKRUPTCY_CERT_PATH: {
         dev: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
-        staging: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
+        staging: 'IS-TEST/GOV/10019/Domstolasyslan/JusticePortal-v1',
         prod: 'IS/GOV/4707171140/Domstolasyslan/JusticePortal-v1',
       },
       XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: {
         dev: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
-        staging: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
+        staging: 'IS-TEST/GOV/10047/UA-Protected/kvortun-v1/',
         prod: 'IS/GOV/5605882089/UA-Protected/kvortun-v1',
       },
       NOVA_ACCEPT_UNAUTHORIZED: {
@@ -290,6 +292,8 @@ export const serviceSetup = (services: {
       OfficialJournalOfIcelandApplication,
       UniversityCareers,
       Frigg,
+      HealthDirectorateVaccination,
+      HealthDirectorateOrganDonation,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',

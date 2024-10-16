@@ -143,6 +143,16 @@ export const machine = {
         defaultMessage: 'Er vélin ný eða notuð?',
         description: `Basic machine information is used or new label`,
       },
+      new: {
+        id: 'aosh.rnm.application:machine.labels.basicMachineInformation.new',
+        defaultMessage: 'Ný',
+        description: `Basic machine information new label`,
+      },
+      used: {
+        id: 'aosh.rnm.application:machine.labels.basicMachineInformation.used',
+        defaultMessage: 'Notuð',
+        description: `Basic machine information used label`,
+      },
       registrationInformationTitle: {
         id: 'aosh.rnm.application:machine.labels.basicMachineInformation.registrationInformationTitle',
         defaultMessage: 'Skráningaupplýsingar',
@@ -157,6 +167,17 @@ export const machine = {
         id: 'aosh.rnm.application:machine.labels.basicMachineInformation.cargoFileNumber',
         defaultMessage: 'Farmskrárnúmer',
         description: `Basic machine information cargo file number label`,
+      },
+      alertTitle: {
+        id: 'aosh.rnm.application:machine.labels.basicMachineInformation.alertTitle',
+        defaultMessage: 'CE merking',
+        description: `Basic machine information alert title`,
+      },
+      alertMessage: {
+        id: 'aosh.rnm.application:machine.labels.basicMachineInformation.alertMessage',
+        defaultMessage:
+          'Ef tæki er ekki CE merkt þarf að skila inn samræmisyfirlýsingu og fleiri viðbótargögnum.',
+        description: `Basic machine information alert message`,
       },
     }),
     technicalMachineInformation: defineMessages({

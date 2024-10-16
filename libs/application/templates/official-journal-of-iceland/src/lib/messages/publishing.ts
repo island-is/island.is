@@ -21,7 +21,7 @@ export const publishing = {
     communicationIntro: {
       id: 'ojoi.application:publishing.general.communicationIntro',
       defaultMessage:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sit amet mattis erat, eget dignissim lacus. Cras id enim ac urna bibendum gravida.',
+        'Hér getur þú skráð inn tölvupóstfang og/eða símanúmer þess sem best er að hafa samskipti við vegna málsins, hægt að skrá fleiri en einn.',
       description: 'Intro of the communication section',
     },
   }),
@@ -67,6 +67,11 @@ export const publishing = {
         id: 'ojoi.application:publishing.inputs.contentCategories.label',
         defaultMessage: 'Efnisflokkar',
         description: 'Label of the content categories input',
+      },
+      placeholder: {
+        id: 'ojoi.application:publishing.inputs.contentCategories.placeholder',
+        defaultMessage: 'Veldu efnisflokka',
+        description: 'Placeholder of the content categories input',
       },
     }),
     messages: defineMessages({

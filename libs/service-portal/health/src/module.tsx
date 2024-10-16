@@ -62,12 +62,8 @@ const OrganDonationRegistration = lazy(() =>
   import('./screens/OrganDonationRegistration/RegistrationForm'),
 )
 
-const VaccinationsGeneral = lazy(() =>
-  import('./screens/Vaccinations/VaccinationsGeneral'),
-)
-
-const VaccinationsOther = lazy(() =>
-  import('./screens/Vaccinations/VaccinationsOther'),
+const Vaccinations = lazy(() =>
+  import('./screens/Vaccinations/VaccinationsWrapper'),
 )
 
 export const healthModule: PortalModule = {
@@ -224,21 +220,7 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthVaccinations,
       key: 'HealthVaccinations',
       enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
-      element: <VaccinationsGeneral />,
-    },
-    {
-      name: hm.generalVaccinations,
-      path: HealthPaths.HealthVaccinationsGeneral,
-      key: 'HealthVaccinations',
-      enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
-      element: <VaccinationsGeneral />,
-    },
-    {
-      name: hm.otherVaccinations,
-      path: HealthPaths.HealthVaccinationsOther,
-      key: 'HealthVaccinations',
-      enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
-      element: <VaccinationsOther />,
+      element: <Vaccinations />,
     },
   ],
 }

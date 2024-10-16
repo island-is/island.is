@@ -1,6 +1,7 @@
 import {
   NO,
   YES,
+  buildAlertMessageField,
   buildCustomField,
   buildDescriptionField,
   buildMultiField,
@@ -10,6 +11,9 @@ import {
 } from '@island.is/application/core'
 import { information, machine } from '../../../lib/messages'
 import { NEW, USED } from '../../../shared/types'
+import { getAllCountryCodes } from '@island.is/shared/utils'
+import { isNotCEmarked } from '../../../utils'
+import { FormValue } from '@island.is/application/types'
 
 export const MachineBasicInformation = buildSubSection({
   id: 'machineBasicInformation',
@@ -36,11 +40,16 @@ export const MachineBasicInformation = buildSubSection({
           titleVariant: 'h5',
           marginTop: 3,
         }),
-        buildTextField({
+        buildSelectField({
           id: 'machine.basicInformation.productionCountry',
           title: machine.labels.basicMachineInformation.productionCountry,
           width: 'half',
           required: true,
+          options: () => {
+            return getAllCountryCodes().map(({ name_is }) => {
+              return { value: `${name_is}`, label: `${name_is}` }
+            })
+          },
         }),
         buildTextField({
           id: 'machine.basicInformation.productionYear',
@@ -48,11 +57,14 @@ export const MachineBasicInformation = buildSubSection({
           width: 'half',
           required: true,
           variant: 'number',
+          min: 1900,
+          max: new Date().getFullYear(),
         }),
         buildTextField({
           id: 'machine.basicInformation.productionNumber',
           title: machine.labels.basicMachineInformation.productionNumber,
           width: 'half',
+          maxLength: 50,
           required: true,
         }),
         buildSelectField({
@@ -95,11 +107,11 @@ export const MachineBasicInformation = buildSubSection({
           options: [
             {
               value: NEW,
-              label: 'Ný',
+              label: machine.labels.basicMachineInformation.new,
             },
             {
               value: USED,
-              label: 'Notuð',
+              label: machine.labels.basicMachineInformation.used,
             },
           ],
         }),
@@ -114,13 +126,20 @@ export const MachineBasicInformation = buildSubSection({
           id: 'machine.basicInformation.location',
           title: machine.labels.basicMachineInformation.location,
           width: 'half',
-          required: true,
+          maxLength: 255,
         }),
         buildTextField({
           id: 'machine.basicInformation.cargoFileNumber',
           title: machine.labels.basicMachineInformation.cargoFileNumber,
           width: 'half',
-          required: true,
+          maxLength: 50,
+        }),
+        buildAlertMessageField({
+          id: 'machine.basicInformation.alert',
+          title: machine.labels.basicMachineInformation.alertTitle,
+          message: machine.labels.basicMachineInformation.alertMessage,
+          alertType: 'warning',
+          condition: (answer: FormValue) => isNotCEmarked(answer),
         }),
       ],
     }),

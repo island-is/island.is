@@ -25,6 +25,7 @@ import { mapToScopeTree } from './utils/scope-tree.mapper'
 
 import type { Attributes, WhereOptions } from 'sequelize'
 import type { ConfigType } from '@island.is/nest/config'
+
 type DelegationConfigType = ConfigType<typeof DelegationConfig>
 type ScopeRule = DelegationConfigType['customScopeRules'] extends Array<
   infer ScopeRule
@@ -135,7 +136,7 @@ export class DelegationResourcesService {
 
   async findScopes(
     user: User,
-    domainName: string,
+    domainName: string | null,
     language?: string,
     direction?: DelegationDirection,
   ): Promise<ApiScopeListDTO[]> {
@@ -166,7 +167,7 @@ export class DelegationResourcesService {
 
   async findScopeNames(
     user: User,
-    domainName: string,
+    domainName: string | null,
     direction?: DelegationDirection,
   ) {
     const scopes = await this.findScopesInternal({
@@ -180,7 +181,7 @@ export class DelegationResourcesService {
 
   async validateScopeAccess(
     user: User,
-    domainName: string,
+    domainName: string | null,
     direction: DelegationDirection,
     scopesToCheck: Array<string>,
   ): Promise<boolean> {
@@ -236,7 +237,7 @@ export class DelegationResourcesService {
     attributes,
   }: {
     user: User
-    domainName: string
+    domainName: string | null
     language?: string
     direction?: DelegationDirection
     attributes?: Array<keyof Attributes<ApiScope>>

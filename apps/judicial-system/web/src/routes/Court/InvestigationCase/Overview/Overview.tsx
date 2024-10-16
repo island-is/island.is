@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -129,10 +129,10 @@ const Overview = () => {
                 id: 'case-info-section',
                 items: [
                   policeCaseNumbers,
-                  prosecutorsOffice,
                   requestedCourtDate,
-                  prosecutor(workingCase.type),
+                  prosecutorsOffice,
                   caseType,
+                  prosecutor(workingCase.type),
                 ],
                 columns: 2,
               },

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/router'

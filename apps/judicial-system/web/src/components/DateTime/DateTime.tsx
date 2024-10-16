@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import { ChangeEvent, FC, FocusEvent, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { DatePicker, Input } from '@island.is/island-ui/core'
@@ -117,7 +117,7 @@ const DateTime: FC<Props> = ({
     )
   }
 
-  const onTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onTimeChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newTime = event.target.value
 
     setCurrentTime(newTime)
@@ -133,7 +133,7 @@ const DateTime: FC<Props> = ({
     sendToParent(currentDate, newTime)
   }
 
-  const onTimeBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+  const onTimeBlur = (event: FocusEvent<HTMLInputElement>) => {
     const time = event.target.value
 
     const validations: Validation[] = ['empty', 'time-format']

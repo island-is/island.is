@@ -1,5 +1,24 @@
 {
-  "applinks": {},
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "J3WWZR9JLF.is.island.app",
+          "J3WWZR9JLF.is.island.app.dev"
+        ],
+        "components": [
+          { "/": "/minarsidur/postholf" },
+          { "/": "/minarsidur/postholf/*" },
+          { "/": "/minarsidur/skirteini" },
+          { "/": "/minarsidur/eignir/fasteignir" },
+          { "/": "/minarsidur/eignir/fasteignir/*" },
+          { "/": "/minarsidur/eignir/okutaeki/min-okutaeki" },
+          { "/": "/minarsidur/eignir/okutaeki/min-okutaeki/*" },
+          { "/": "/minarsidur/loftbru" }
+        ]
+      }
+    ]
+  },
   "webcredentials": {
     "apps": [
       "J3WWZR9JLF.is.island.app",

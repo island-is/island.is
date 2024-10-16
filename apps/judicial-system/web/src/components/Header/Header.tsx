@@ -1,10 +1,4 @@
-import React, {
-  FC,
-  PropsWithChildren,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import { FC, PropsWithChildren, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import getConfig from 'next/config'
 import Link from 'next/link'

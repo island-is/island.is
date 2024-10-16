@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Application } from '../../types/schema'
+import { removeCountryCode } from '@island.is/application/ui-components'
 
 export const subSectionInfo = buildSubSection({
   id: 'infoStep',
@@ -33,9 +34,16 @@ export const subSectionInfo = buildSubSection({
           format: '###-####',
           placeholder: '',
           width: 'half',
-          defaultValue: (application: Application) =>
-            application.externalData?.userProfile?.data?.mobilePhoneNumber ??
-            '',
+          defaultValue: (application: Application) => {
+            const phone =
+              (
+                application.externalData.userProfile?.data as {
+                  mobilePhoneNumber?: string
+                }
+              )?.mobilePhoneNumber ?? ''
+
+            return removeCountryCode(phone)
+          },
         }),
         buildTextField({
           id: 'applicantEmail',

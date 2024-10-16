@@ -14,10 +14,10 @@ export const HealthDirectorateOrganDonationClientConfig = defineConfig<
   load(env) {
     return {
       xroadPath: env.required(
-        'XROAD_HEALTH_DIRECTORATE_PATH',
-        'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
+        'XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH',
+        'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1',
       ),
-      scope: [],
+      scope: ['@landlaeknir.is/organ-donations'],
     }
   },
 })

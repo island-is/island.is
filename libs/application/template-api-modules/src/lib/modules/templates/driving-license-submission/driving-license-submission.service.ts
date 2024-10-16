@@ -48,11 +48,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const applicationFor = getValueViaPath<'B-full' | 'B-temp' | 'BE'>(
-      answers,
-      'applicationFor',
-      'B-full',
-    )
+    const applicationFor = getValueViaPath<
+      'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'
+    >(answers, 'applicationFor', 'B-full')
 
     const chargeItemCode =
       applicationFor === 'B-full'
@@ -139,8 +137,10 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     auth: User,
   ): Promise<NewDrivingLicenseResult> {
     const applicationFor =
-      getValueViaPath<'B-full' | 'B-temp' | 'BE'>(answers, 'applicationFor') ??
-      'B-full'
+      getValueViaPath<'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'>(
+        answers,
+        'applicationFor',
+      ) ?? 'B-full'
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const remarks = answers.hasHealthRemarks === 'yes'
@@ -170,7 +170,11 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         })
     }
 
-    if (applicationFor === 'B-full') {
+    if (applicationFor === 'B-full-renewal-65') {
+      return this.drivingLicenseService.renewDrivingLicense65AndOver(
+        auth.authorization.replace('Bearer ', ''),
+      )
+    } else if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId as number,
         needsToPresentHealthCertificate: needsHealthCert || remarks,

@@ -124,7 +124,7 @@ export class PaymentService {
     return `${this.config.arkBaseUrl}/quickpay/pay?doc_num=${docNum}`
   }
 
-  private async setUser4(
+  async setUser4(
     applicationId: string,
     paymentId: string,
     user4: string,

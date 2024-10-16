@@ -11,7 +11,7 @@ import { type User } from '@island.is/judicial-system/types'
 import { CaseState, NotificationType } from '@island.is/judicial-system/types'
 
 import { type Case } from '../case'
-import { CaseEvent, EventService } from '../event'
+import { EventService } from '../event'
 import { SendNotificationResponse } from './models/sendNotification.response'
 
 @Injectable()
@@ -56,17 +56,13 @@ export class NotificationService {
         break
       case NotificationType.COURT_DATE:
         if (eventOnly) {
-          this.eventService.postEvent(
-            CaseEvent.SCHEDULE_COURT_DATE,
-            theCase,
-            true,
-          )
+          this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase, true)
 
           // We still want to send the defender a link to the case even if
           // the judge chooses not to send a calendar invitation
           messages = [
             this.getNotificationMessage(
-              NotificationType.DEFENDER_ASSIGNED,
+              NotificationType.ADVOCATE_ASSIGNED,
               user,
               theCase,
             ),
@@ -76,7 +72,7 @@ export class NotificationService {
         }
         break
       case NotificationType.HEADS_UP:
-      case NotificationType.DEFENDER_ASSIGNED:
+      case NotificationType.ADVOCATE_ASSIGNED:
       case NotificationType.APPEAL_JUDGES_ASSIGNED:
       case NotificationType.APPEAL_CASE_FILES_UPDATED:
         messages = [this.getNotificationMessage(type, user, theCase)]

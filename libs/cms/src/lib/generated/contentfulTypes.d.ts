@@ -581,14 +581,14 @@ export interface IChartFields {
   /** X Axis Format */
   xAxisFormat?: string | undefined
 
+  /** Y Axis Label */
+  yAxisLabel?: string | undefined
+
   /** Custom Style Config */
   customStyleConfig?: Record<string, any> | undefined
 
   /** Reduce and round value */
   reduceAndRoundValue?: boolean | undefined
-
-  /** Y Axis Label */
-  yAxisLabel?: string | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */
@@ -854,7 +854,7 @@ export interface IEmailSignupFields {
   formFields?: IFormField[] | undefined
 
   /** Signup Type */
-  signupType?: 'mailchimp' | 'zenter' | undefined
+  signupType?: 'mailchimp' | 'zenter' | 'campaign monitor' | undefined
 
   /** Configuration */
   configuration?: Record<string, any> | undefined
@@ -1333,7 +1333,7 @@ export interface IFormFields {
   intro?: string | undefined
 
   /** Recipient */
-  recipient: string
+  recipient?: string | undefined
 
   /** Default field namespace */
   defaultFieldNamespace?: Record<string, any> | undefined
@@ -1606,6 +1606,9 @@ export interface IGenericListItemFields {
 
   /** Asset */
   asset?: Asset | undefined
+
+  /** External Link */
+  externalLink?: ILinkUrl | undefined
 }
 
 /** An item that belongs to a generic list */
@@ -1984,6 +1987,41 @@ export interface ILatestEventsSlice extends Entry<ILatestEventsSliceFields> {
     contentType: {
       sys: {
         id: 'latestEventsSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILatestGenericListItemsFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Title */
+  title?: string | undefined
+
+  /** Generic List */
+  genericList?: IGenericList | undefined
+
+  /** See more page */
+  seeMorePage?: IOrganizationSubpage | undefined
+
+  /** See more link text */
+  seeMoreLinkText?: string | undefined
+}
+
+export interface ILatestGenericListItems
+  extends Entry<ILatestGenericListItemsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'latestGenericListItems'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2937,6 +2975,7 @@ export interface IOrganizationPageFields {
         | ISectionWithVideo
         | IAnchorPageList
         | ISectionWithImage
+        | IChartNumberBox
       )[]
     | undefined
 
@@ -3659,11 +3698,11 @@ export interface IServiceWebPageFields {
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
-  /** Email Config */
-  emailConfig?: Record<string, any> | undefined
-
   /** Contact Form Disclaimer */
   contactFormDisclaimer?: Document | undefined
+
+  /** Email Config */
+  emailConfig?: Record<string, any> | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
@@ -3770,6 +3809,9 @@ export interface ISliceConnectedComponentFields {
 
   /** Config */
   config?: Record<string, any> | undefined
+
+  /** Translation namespace */
+  translationNamespace?: INamespace | undefined
 }
 
 export interface ISliceConnectedComponent
@@ -4330,6 +4372,9 @@ export interface ITeamListFields {
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
 
+  /** Filter groups */
+  filterGroups?: IGenericTagGroup[] | undefined
+
   /** Variant */
   variant?: 'card' | 'accordion' | undefined
 }
@@ -4363,13 +4408,19 @@ export interface ITeamMemberFields {
   /** Image */
   mynd: Asset
 
-  /** Image On Select */
+  /** Image On Hover */
   imageOnSelect?: Asset | undefined
 
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
 
-  /** Intro */
+  /** Accordion email */
+  email?: string | undefined
+
+  /** Accordion phone */
+  phone?: string | undefined
+
+  /** Accordion free text */
   intro?: Document | undefined
 }
 
@@ -4590,7 +4641,7 @@ export interface ITwoColumnTextFields {
   /** Left Title */
   leftTitle?: string | undefined
 
-  /** Only use one title */
+  /** Only use left title */
   onlyUseOneTitle?: boolean | undefined
 
   /** Left Content */
@@ -5010,6 +5061,7 @@ export type CONTENT_TYPE =
   | 'iconBullet'
   | 'introLinkImage'
   | 'latestEventsSlice'
+  | 'latestGenericListItems'
   | 'latestNewsSlice'
   | 'lifeEventPage'
   | 'link'

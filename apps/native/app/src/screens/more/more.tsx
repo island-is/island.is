@@ -1,16 +1,8 @@
-import { FamilyMemberCard, ListButton } from '@ui'
+import { FamilyMemberCard, MoreCard } from '@ui'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import {
-  Image,
-  SafeAreaView,
-  ScrollView,
-  TouchableHighlight,
-} from 'react-native'
-import {
-  Navigation,
-  NavigationFunctionComponent,
-} from 'react-native-navigation'
+import { SafeAreaView, ScrollView, TouchableHighlight } from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import styled, { useTheme } from 'styled-components/native'
 import assetsIcon from '../../assets/icons/assets.png'
@@ -18,8 +10,8 @@ import familyIcon from '../../assets/icons/family.png'
 import financeIcon from '../../assets/icons/finance.png'
 import vehicleIcon from '../../assets/icons/vehicle.png'
 import airplaneIcon from '../../assets/icons/airplane.png'
+import healthIcon from '../../assets/icons/health.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
@@ -30,11 +22,9 @@ import { getRightButtons } from '../../utils/get-main-root'
 import { isIos } from '../../utils/devices'
 
 const Row = styled.View`
-  margin-top: ${({ theme }) => theme.spacing[2]}px;
-  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-  margin-left: -${({ theme }) => theme.spacing[2]}px;
-  margin-right: -${({ theme }) => theme.spacing[2]}px;
-  flex-direction: column;
+  margin-vertical: ${({ theme }) => theme.spacing[1]}px;
+  column-gap: ${({ theme }) => theme.spacing[2]}px;
+  flex-direction: row;
 `
 
 const { useNavigationOptions, getNavigationOptions } =
@@ -44,7 +34,9 @@ const { useNavigationOptions, getNavigationOptions } =
         title: {
           text: intl.formatMessage({ id: 'profile.screenTitle' }),
         },
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
+        rightButtons: initialized
+          ? getRightButtons({ icons: ['settings'], theme: theme as any })
+          : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -80,12 +72,10 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
   const intl = useIntl()
   const theme = useTheme()
   const [hiddenContent, setHiddenContent] = useState(isIos)
-  const showFinances = useFeatureFlag('isFinancesEnabled', false)
-  const showAirDiscount = useFeatureFlag('isAirDiscountEnabled', false)
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons(),
+    rightButtons: getRightButtons({ icons: ['settings'] }),
   })
 
   useNavigationComponentDidAppear(() => {
@@ -106,7 +96,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
           paddingVertical: 16,
         }}
       >
-        <SafeAreaView>
+        <SafeAreaView style={{ marginBottom: theme.spacing[1] }}>
           <TouchableHighlight
             underlayColor={
               theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
@@ -122,65 +112,40 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
           </TouchableHighlight>
         </SafeAreaView>
         <Row>
-          <ListButton
+          <MoreCard
             title={intl.formatMessage({ id: 'profile.family' })}
-            onPress={() => navigateTo(`/family`)}
-            icon={
-              <Image
-                source={familyIcon}
-                style={{ width: 24, height: 24 }}
-                resizeMode="contain"
-              />
-            }
+            icon={familyIcon}
+            onPress={() => navigateTo('/family')}
           />
-          <ListButton
+          <MoreCard
             title={intl.formatMessage({ id: 'profile.vehicles' })}
-            onPress={() => navigateTo(`/vehicles`)}
-            icon={
-              <Image
-                source={vehicleIcon}
-                style={{ width: 24, height: 24 }}
-                resizeMode="contain"
-              />
-            }
+            icon={vehicleIcon}
+            onPress={() => navigateTo('/vehicles')}
           />
-          <ListButton
+        </Row>
+        <Row>
+          <MoreCard
             title={intl.formatMessage({ id: 'profile.assets' })}
-            onPress={() => navigateTo(`/assets`)}
-            icon={
-              <Image
-                source={assetsIcon}
-                style={{ width: 24, height: 24 }}
-                resizeMode="contain"
-              />
-            }
+            icon={assetsIcon}
+            onPress={() => navigateTo('/assets')}
           />
-          {showFinances && (
-            <ListButton
-              title={intl.formatMessage({ id: 'profile.finance' })}
-              onPress={() => navigateTo(`/finance`)}
-              icon={
-                <Image
-                  source={financeIcon}
-                  style={{ width: 24, height: 24 }}
-                  resizeMode="contain"
-                />
-              }
-            />
-          )}
-          {showAirDiscount && (
-            <ListButton
-              title={intl.formatMessage({ id: 'profile.airDiscount' })}
-              onPress={() => navigateTo(`/air-discount`)}
-              icon={
-                <Image
-                  source={airplaneIcon}
-                  style={{ width: 24, height: 24 }}
-                  resizeMode="contain"
-                />
-              }
-            />
-          )}
+          <MoreCard
+            title={intl.formatMessage({ id: 'profile.finance' })}
+            icon={financeIcon}
+            onPress={() => navigateTo('/finance')}
+          />
+        </Row>
+        <Row>
+          <MoreCard
+            title={intl.formatMessage({ id: 'profile.health' })}
+            icon={healthIcon}
+            onPress={() => navigateTo('/health-overview')}
+          />
+          <MoreCard
+            title={intl.formatMessage({ id: 'profile.airDiscount' })}
+            icon={airplaneIcon}
+            onPress={() => navigateTo('/air-discount')}
+          />
         </Row>
       </ScrollView>
       <BottomTabsIndicator index={4} total={5} />

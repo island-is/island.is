@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, ReactNode, useContext } from 'react'
+import { FC, PropsWithChildren, ReactNode, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 

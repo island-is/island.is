@@ -3,6 +3,13 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import {
+  IndividualDto,
+  NationalRegistryClientService,
+} from '@island.is/clients/national-registry-v2'
+import { SyslumennService } from '@island.is/clients/syslumenn'
+import { logger } from '@island.is/logging'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
@@ -12,6 +19,7 @@ import { ClientDelegationType } from '../clients/models/client-delegation-type.m
 import { Client } from '../clients/models/client.model'
 import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 import { ApiScope } from '../resources/models/api-scope.model'
+import { UNKNOWN_NAME } from './constants/names'
 import { DelegationDTOMapper } from './delegation-dto.mapper'
 import { DelegationProviderService } from './delegation-provider.service'
 import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
@@ -58,6 +66,9 @@ export class DelegationsIncomingService {
     private delegationsIncomingWardService: DelegationsIncomingWardService,
     private delegationsIndexService: DelegationsIndexService,
     private delegationProviderService: DelegationProviderService,
+    private nationalRegistryClient: NationalRegistryClientService,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly syslumennService: SyslumennService,
   ) {}
 
   async findAllValid(
@@ -92,6 +103,12 @@ export class DelegationsIncomingService {
     )
 
     delegationPromises.push(
+      this.delegationsIncomingCustomService.findAllValidGeneralMandate({
+        nationalId: user.nationalId,
+      }),
+    )
+
+    delegationPromises.push(
       this.delegationsIncomingRepresentativeService.findAllIncoming({
         nationalId: user.nationalId,
       }),
@@ -116,20 +133,20 @@ export class DelegationsIncomingService {
     const client = await this.getClientDelegationInfo(user)
     if (!client?.supportedDelegationTypes) return []
 
-    const types: ClientDelegationType[] =
-      client.supportedDelegationTypes.filter(
+    const types: AuthDelegationType[] = client.supportedDelegationTypes
+      .filter(
         (dt) =>
           !delegationTypes ||
           delegationTypes.includes(dt.delegationType as AuthDelegationType),
       )
+      .map((t) => t.delegationType as AuthDelegationType)
 
     if (types.length == 0) return []
 
-    const providers = await this.delegationProviderService.findProviders(
-      types.map((t) => t.delegationType),
-    )
+    const providers = await this.delegationProviderService.findProviders(types)
 
-    const clientAllowedApiScopes = await this.getClientAllowedApiScopes(user)
+    const clientAllowedApiScopes: ApiScopeInfo[] =
+      await this.getClientAllowedApiScopes(user)
 
     const delegationPromises = []
 
@@ -161,7 +178,7 @@ export class DelegationsIncomingService {
       )
     }
 
-    if (providers.includes(AuthDelegationProvider.Custom)) {
+    if (types?.includes(AuthDelegationType.Custom)) {
       delegationPromises.push(
         this.delegationsIncomingCustomService.findAllAvailableIncoming(
           user,
@@ -169,6 +186,24 @@ export class DelegationsIncomingService {
           client.requireApiScopes,
         ),
       )
+    }
+
+    if (types?.includes(AuthDelegationType.GeneralMandate)) {
+      const isGeneralMandateDelegationEnabled =
+        await this.featureFlagService.getValue(
+          Features.isGeneralMandateDelegationEnabled,
+          false,
+          user,
+        )
+      if (isGeneralMandateDelegationEnabled) {
+        delegationPromises.push(
+          this.delegationsIncomingCustomService.findAllAvailableGeneralMandate(
+            user,
+            clientAllowedApiScopes,
+            client.requireApiScopes,
+          ),
+        )
+      }
     }
 
     if (
@@ -185,6 +220,27 @@ export class DelegationsIncomingService {
             ds.map((d) => DelegationDTOMapper.toMergedDelegationDTO(d)),
           ),
       )
+    }
+
+    if (
+      providers.includes(AuthDelegationProvider.DistrictCommissionersRegistry)
+    ) {
+      const isLegalRepresentativeDelegationEnabled =
+        await this.featureFlagService.getValue(
+          Features.isLegalRepresentativeDelegationEnabled,
+          false,
+          user,
+        )
+      if (isLegalRepresentativeDelegationEnabled) {
+        delegationPromises.push(
+          this.getAvailableDistrictCommissionersRegistryDelegations(
+            user,
+            types,
+            clientAllowedApiScopes,
+            client.requireApiScopes,
+          ),
+        )
+      }
     }
 
     const delegationSets = await Promise.all(delegationPromises)
@@ -224,6 +280,70 @@ export class DelegationsIncomingService {
     return [...mergedDelegationMap.values()]
   }
 
+  async verifyDelegationAtProvider(
+    user: User,
+    fromNationalId: string,
+    delegationTypes: AuthDelegationType[],
+  ): Promise<boolean> {
+    const providers = await this.delegationProviderService.findProviders(
+      delegationTypes,
+    )
+
+    if (
+      providers.includes(AuthDelegationProvider.DistrictCommissionersRegistry)
+    ) {
+      try {
+        const delegationFound =
+          await this.syslumennService.checkIfDelegationExists(
+            user.nationalId,
+            fromNationalId,
+          )
+
+        if (delegationFound) {
+          return true
+        } else {
+          void this.delegationsIndexService.removeDelegationRecord(
+            {
+              fromNationalId,
+              toNationalId: user.nationalId,
+              type: AuthDelegationType.LegalRepresentative,
+              provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+            },
+            user,
+          )
+        }
+      } catch (error) {
+        logger.error(
+          `Failed checking if delegation exists at provider '${AuthDelegationProvider.DistrictCommissionersRegistry}'`,
+        )
+      }
+    }
+
+    return false
+  }
+
+  private async getAvailableDistrictCommissionersRegistryDelegations(
+    user: User,
+    types: AuthDelegationType[],
+    clientAllowedApiScopes: ApiScopeInfo[],
+    requireApiScopes?: boolean,
+  ): Promise<MergedDelegationDTO[]> {
+    const records =
+      await this.delegationsIndexService.getAvailableDistrictCommissionersRegistryRecords(
+        user,
+        types,
+        clientAllowedApiScopes,
+        requireApiScopes,
+      )
+    const merged = records.map((d) =>
+      DelegationDTOMapper.recordToMergedDelegationDTO(d),
+    )
+
+    await Promise.all(merged.map((d) => this.updateName(d)))
+
+    return merged
+  }
+
   private getClientDelegationInfo(
     user: User,
   ): Promise<ClientDelegationInfo | null> {
@@ -259,5 +379,19 @@ export class DelegationsIncomingService {
       },
       attributes: ['name', 'isAccessControlled'],
     })
+  }
+
+  private async updateName(
+    mergedDelegation: MergedDelegationDTO,
+  ): Promise<void> {
+    try {
+      const fromIndividual: IndividualDto | null =
+        await this.nationalRegistryClient.getIndividual(
+          mergedDelegation.fromNationalId,
+        )
+      mergedDelegation.fromName = fromIndividual?.name ?? UNKNOWN_NAME
+    } catch (error) {
+      mergedDelegation.fromName = UNKNOWN_NAME
+    }
   }
 }

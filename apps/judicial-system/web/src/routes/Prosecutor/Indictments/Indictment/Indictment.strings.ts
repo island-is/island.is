@@ -94,4 +94,22 @@ export const indictment = defineMessages({
     defaultMessage: 'Ákæra - PDF',
     description: 'Notaður sem texti á hnappi til að sækja ákæru sem PDF skjal.',
   },
+  civilDemandsTitle: {
+    id: 'judicial.system.core:indictments_indictment.civil_demands_title',
+    defaultMessage: 'Einkaréttarkrafa',
+    description:
+      'Notaður sem titill á Einkaréttarkrafa svæði á ákæra skrefi í ákærum.',
+  },
+  civilDemandsLabel: {
+    id: 'judicial.system.core:indictments_indictment.civil_demands_label',
+    defaultMessage: 'Einkaréttarkrafa',
+    description:
+      'Notaður sem titill á Einkaréttarkrafa textasvæði á ákæra skrefi í ákærum.',
+  },
+  civilDemandsPlaceholder: {
+    id: 'judicial.system.core:indictments_indictment.civil_demands_placeholder',
+    defaultMessage: 'Hver er krafa kröfuhafa?',
+    description:
+      'Notaður sem skýritexti á Einkaréttarkrafa textasvæði á ákæra skrefi í ákærum.',
+  },
 })

@@ -82,8 +82,7 @@ export const m = defineMessages({
   },
   listInformationDescription: {
     id: 'plc.application:listInformationDescription#markdown',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce aliquet imperdiet odio.',
+    defaultMessage: 'Vinsamlegast yfirfarið að upplýsingarnar séu réttar.',
     description: '',
   },
   information: {
@@ -225,7 +224,7 @@ export const m = defineMessages({
   overviewDescription: {
     id: 'plc.application:overviewDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce aliquet imperdiet odio, id ornare ante tincidunt ac. Phasellus massa velit, condimentum quis est id, tristique vestibulum lectus.',
+      'Vinsamlegast yfirfarið upplýsingar áður en meðmælasöfnun er stofnuð.',
     description: '',
   },
   applicantOverviewHeader: {
@@ -239,7 +238,7 @@ export const m = defineMessages({
     description: '',
   },
   listsOverviewHeader: {
-    id: 'plc.application:listOverviewHeader',
+    id: 'plc.application:listsOverviewHeader',
     defaultMessage: 'Upplýsingar um meðmælalista',
     description: '',
   },
@@ -306,7 +305,7 @@ export const m = defineMessages({
 
   /* Action Card logs */
   logListCreated: {
-    id: 'plc.application:listCreated',
+    id: 'plc.application:logListCreated',
     defaultMessage: 'Meðmælalisti stofnaður',
     description: '',
   },

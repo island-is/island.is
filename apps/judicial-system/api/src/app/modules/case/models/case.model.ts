@@ -26,7 +26,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Defendant } from '../../defendant'
+import { CivilClaimant, Defendant } from '../../defendant'
 import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
@@ -436,8 +436,8 @@ export class Case {
   @Field(() => Boolean, { nullable: true })
   readonly indictmentVerdictViewedByAll?: boolean
 
-  @Field(() => String, { nullable: true })
-  readonly indictmentVerdictAppealDeadline?: string
+  @Field(() => Boolean, { nullable: true })
+  readonly indictmentVerdictAppealDeadlineExpired?: boolean
 
   @Field(() => IndictmentDecision, { nullable: true })
   readonly indictmentDecision?: IndictmentDecision
@@ -453,4 +453,13 @@ export class Case {
 
   @Field(() => [Case], { nullable: true })
   readonly mergedCases?: Case[]
+
+  @Field(() => [CivilClaimant], { nullable: true })
+  readonly civilClaimants?: CivilClaimant[]
+
+  @Field(() => String, { nullable: true })
+  readonly civilDemands?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly hasCivilClaims?: boolean
 }

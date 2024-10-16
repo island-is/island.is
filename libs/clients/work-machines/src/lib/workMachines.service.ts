@@ -133,6 +133,7 @@ export class WorkMachinesClientService {
       .apiMachinesGet(input)
       .catch(handle404)
   }
+
   getWorkMachineById = async (
     user: User,
     input: GetMachineRequest,
@@ -288,11 +289,11 @@ export class WorkMachinesClientService {
   async mustInspectBeforeRegistration(auth: Auth) {
     return await this.machineStreetApiWithAuth(
       auth,
-    ).apiMachineStreetRegistrationMustInspectBeforeRegistrationGet()
+    ).apiMachineStreetRegistrationMustInspectBeforeRegistrationGet({})
   }
 
   async getMachineTypes(auth: Auth): Promise<MachineTypeDto[]> {
-    return await this.machineTypesApiWithAuth(auth).apiMachineTypesGet()
+    return await this.machineTypesApiWithAuth(auth).apiMachineTypesGet({})
   }
 
   async getMachineModels(
@@ -307,8 +308,7 @@ export class WorkMachinesClientService {
   async getMachineParentCategoriesTypeModel(
     auth: Auth,
     requestParameters: ApiMachineParentCategoriesTypeModelGetRequest,
-  ): Promise<MachineParentCategoryDetailsDto> {
-    console.log(requestParameters.model, requestParameters.type)
+  ): Promise<MachineParentCategoryDetailsDto[]> {
     return await this.machineParentCategoriesApiWithAuth(
       auth,
     ).apiMachineParentCategoriesTypeModelGet(requestParameters)
@@ -319,7 +319,7 @@ export class WorkMachinesClientService {
   ): Promise<MachineParentCategoryDto[]> {
     return await this.machineParentCategoriesApiWithAuth(
       auth,
-    ).apiMachineParentCategoriesGet()
+    ).apiMachineParentCategoriesGet({})
   }
 
   async getMachineSubCategories(

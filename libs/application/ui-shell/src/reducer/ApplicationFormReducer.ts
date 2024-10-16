@@ -13,9 +13,9 @@ import {
 } from './reducerUtils'
 import { FormScreen } from '../types'
 
-export function initializeReducer(
+export const initializeReducer = (
   state: ApplicationUIState,
-): ApplicationUIState {
+): ApplicationUIState => {
   const { application, form } = state
   const { answers, externalData } = application
   const sections = getNavigableSectionsInForm(
@@ -127,7 +127,7 @@ const answerAndGoNextScreen = (
   return { ...newState, activeScreen, historyReason: 'navigate' }
 }
 
-function expandRepeater(state: ApplicationUIState): ApplicationUIState {
+const expandRepeater = (state: ApplicationUIState): ApplicationUIState => {
   const { activeScreen, form, screens, application } = state
   const repeater = screens[activeScreen]
 
@@ -166,10 +166,10 @@ function expandRepeater(state: ApplicationUIState): ApplicationUIState {
   }
 }
 
-function findNearestRepeater(
+const findNearestRepeater = (
   activeScreen: number,
   screens: FormScreen[],
-): number {
+): number => {
   let repeaterIndex = activeScreen - 1
 
   for (repeaterIndex; repeaterIndex >= 0; repeaterIndex--) {

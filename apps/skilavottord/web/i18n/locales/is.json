@@ -329,7 +329,23 @@
         "primaryButton": "Reyna aftur",
         "secondaryButton": "Hætta við"
       },
-      "currentMileage": "Núverandi kílómetrastaða"
+      "currentMileage": "Núverandi kílómetrastaða",
+      "numberplate": {
+        "sectionTitle": "Upplýsingar um númeraplötur",
+        "alert": {
+          "info": {
+            "title": "Ökutækið er skráð úr umferð hjá Samgöngustofu",
+            "message": "Númeraplöturnar eru innlagðar hjá Samgöngustofu"
+          },
+          "warning": {
+            "title": "Ökutækið er skráð úr umferð (miði) hjá Samgöngustofu",
+            "message": "Númeraplöturnar eiga að fylgja ökutækinu"
+          }
+        },
+        "count": "Fjöldi númeraplatna skilað með ökutækinu",
+        "lost": "Númeraplötur eru týndar",
+        "missingInfo": "Ef að númeraplöturnar finnast skal skila þeim til Samgöngustofu"
+      }
     }
   },
   "recyclingFundOverview": {
