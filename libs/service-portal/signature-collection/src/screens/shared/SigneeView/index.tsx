@@ -31,16 +31,14 @@ const SigneeView = ({
     <Box>
       {!user?.profile.actor && !loadingSignedLists && !loadingUserLists ? (
         <Box>
-          {currentCollection?.isPresidential &&
-            listsForUser.length === 0 &&
-            signedLists.length === 0 && (
-              <Box marginTop={10}>
-                <EmptyState
-                  title={m.noCollectionIsActive}
-                  description={m.noCollectionIsActiveDescription}
-                />
-              </Box>
-            )}
+          {listsForUser.length === 0 && signedLists.length === 0 && (
+            <Box marginTop={10}>
+              <EmptyState
+                title={m.noCollectionIsActive}
+                description={m.noCollectionIsActiveDescription}
+              />
+            </Box>
+          )}
           <Box marginTop={[2, 7]}>
             {/* Signed list */}
             <SignedList currentCollection={currentCollection} />
