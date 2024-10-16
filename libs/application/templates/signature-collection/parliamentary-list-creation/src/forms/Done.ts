@@ -83,7 +83,7 @@ export const Done: Form = buildForm({
               },
               id: 'done.goToServicePortalCompany',
               title: '',
-              url: '/minarsidur/min-gogn/listar/fyrirtaekjaskra',
+              url: '/minarsidur/fyrirtaeki/listar/althingis-medmaelasofnun',
               buttonTitle: m.linkFieldButtonCompanyTitle,
               message: m.linkFieldCompanyMessage,
             }),
