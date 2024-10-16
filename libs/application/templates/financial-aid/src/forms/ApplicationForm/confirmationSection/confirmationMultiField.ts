@@ -92,7 +92,10 @@ export const confirmationMultiField = buildMultiField({
         )
         return {
           ...m.confirmation.links.content,
-          values: { statusPage: window.location.href, homePage: url ?? '' },
+          values: {
+            statusPage: typeof window !== 'undefined' ? window.location.href : '',
+            homePage: url ?? '',
+          },
         }
       },
       marginTop: 5,
