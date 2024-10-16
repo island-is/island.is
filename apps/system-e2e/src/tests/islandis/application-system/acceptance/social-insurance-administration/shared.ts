@@ -124,12 +124,9 @@ export const submitApplication = async (page: Page) => {
   await expect(
     page
       .locator('form')
-      .getByRole('paragraph')
-      .filter({
-        hasText: label(
-          socialInsuranceAdministrationMessage.confirm.overviewTitle,
-        ),
-      }),
+      .getByText(
+        label(socialInsuranceAdministrationMessage.confirm.overviewTitle),
+      ),
   ).toBeVisible()
   await page
     .getByRole('button', {
