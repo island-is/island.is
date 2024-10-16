@@ -60,12 +60,13 @@ export const Done: Form = buildForm({
               component: 'CopyLink',
             }),
             buildMessageWithLinkButtonField({
-              condition: (_, externalData) =>
-                !(
-                  externalData?.isDelegatedToCompany.data as {
+              condition: (_, externalData) => {
+                return !(
+                  externalData?.delegatedToCompany.data as {
                     delegatedToCompany: boolean
                   }
-                ).delegatedToCompany,
+                ).delegatedToCompany
+              },
               id: 'done.goToServicePortal',
               title: '',
               url: '/minarsidur/min-gogn/listar/althingis-medmaelasofnun',
@@ -73,12 +74,13 @@ export const Done: Form = buildForm({
               message: m.linkFieldMessage,
             }),
             buildMessageWithLinkButtonField({
-              condition: (_, externalData) =>
-                (
-                  externalData?.isDelegatedToCompany.data as {
+              condition: (_, externalData) => {
+                return (
+                  externalData?.delegatedToCompany.data as {
                     delegatedToCompany: boolean
                   }
-                ).delegatedToCompany,
+                ).delegatedToCompany
+              },
               id: 'done.goToServicePortalCompany',
               title: '',
               url: '/minarsidur/min-gogn/listar/fyrirtaekjaskra',

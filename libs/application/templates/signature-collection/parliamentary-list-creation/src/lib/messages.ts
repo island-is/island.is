@@ -303,12 +303,12 @@ export const m = defineMessages({
     description: '',
   },
   linkFieldButtonCompanyTitle: {
-    id: 'plc.application:linkFieldButtonTitle',
+    id: 'plc.application:linkFieldButtonCompanyTitle',
     defaultMessage: 'Mínar síður (fyrirtæki)',
     description: '',
   },
   linkFieldCompanyMessage: {
-    id: 'plc.application:linkFieldMessage',
+    id: 'plc.application:linkFieldCompanyMessage',
     defaultMessage:
       'Á mínum síðum fyrirtækja sést hve mörgum meðmælum hefur verið safnað í hverjum landsfjórðungi.',
     description: '',

@@ -89,17 +89,12 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
   }
 
   async delegatedToCompany({ auth }: TemplateApiModuleActionProps) {
-    console.log('auth.delegationType', auth.delegationType)
-    console.log('auth.delegationProvider', auth.delegationProvider)
-    console.log(
-      'we are checking for delegationType',
-      AuthDelegationType.ProcurationHolder,
-    )
-    return {
-      delegatedToCompany: auth.delegationType?.includes(
-        AuthDelegationType.ProcurationHolder,
-      ),
+    const data = {
+      delegatedToCompany:
+        auth.delegationType?.includes(AuthDelegationType.ProcurationHolder) ??
+        false,
     }
+    return data
   }
 
   async submit({ application, auth }: TemplateApiModuleActionProps) {
