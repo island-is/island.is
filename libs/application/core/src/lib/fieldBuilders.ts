@@ -524,6 +524,7 @@ export const buildMessageWithLinkButtonField = (
 ): MessageWithLinkButtonField => {
   const { id, title, url, message, buttonTitle, marginBottom, marginTop } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
     id,
     title,
