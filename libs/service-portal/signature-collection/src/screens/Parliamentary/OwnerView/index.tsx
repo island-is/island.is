@@ -78,10 +78,13 @@ const OwnerView = ({
   return (
     <Stack space={8}>
       <Box marginTop={5}>
-        <Box marginBottom={8}>
-          <SignedList currentCollection={currentCollection} />
-        </Box>
-        <Box display="flex" justifyContent="spaceBetween" alignItems="baseline">
+        <SignedList currentCollection={currentCollection} />
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="baseline"
+          marginTop={5}
+        >
           <Text variant="h4">
             {formatMessage(m.myListsDescription) + ' '}
             <Tooltip
