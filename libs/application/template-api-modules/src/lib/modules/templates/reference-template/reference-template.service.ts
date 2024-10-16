@@ -31,8 +31,6 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
       'nationalRegistry.data.fullName',
     ) as string
 
-    console.log('applicatn name', applicantName)
-
     this.notificationsService.sendNotification({
       type: NotificationType.ChildrenResidenceChange,
       messageParties: {

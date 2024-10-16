@@ -12,15 +12,18 @@ export class NotificationsService {
    *
    * @param data - The notification data object
    * @param data.type - The type of notification (User, Order, or System)
-   * @param data.recipient - The recipient nationalId of the notification
+   * @param data.messageParties.recipient - The recipient nationalId of the notification
+   * @param data.messageParties.sender - Optional. The sender nationalId of the notification
    * @param data.args - The arguments specific to the notification type
-   * @param data.sender - Optional. The sender nationalId of the notification
+ 
    *
    * @example
    * // Sending a User notification
    * notificationsService.sendNotification({
    *   type: NotificationType.User,
-   *   recipient: 'user@example.com',
+   *   messageParties: {
+   *     recipient: 'user@example.com',
+   *   },
    *   args: {
    *     username: 'johndoe',
    *     email: 'johndoe@example.com'
@@ -31,7 +34,9 @@ export class NotificationsService {
    * // Sending an Order notification with a sender
    * notificationsService.sendNotification({
    *   type: NotificationType.Order,
-   *   recipient: 'customer@example.com',
+   *   messageParties: {
+   *     recipient: 'customer@example.com',
+   *   },
    *   args: {
    *     orderId: '12345',
    *     orderStatus: 'Shipped'
@@ -58,8 +63,6 @@ export class NotificationsService {
         value: String(value),
       })),
     }
-
-    console.log(notification)
 
     this.notificationApi.notificationsControllerCreateHnippNotification({
       createHnippNotificationDto: notification,

@@ -16,7 +16,7 @@ import {
 } from '@island.is/application/templates/family-matters-core/utils'
 import { Override } from '@island.is/application/templates/family-matters-core/types'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change-v2'
-import { SharedTemplateApiService, sharedModuleConfig } from '../../shared'
+import { SharedTemplateApiService } from '../../shared'
 import { generateSyslumennNotificationEmail } from './emailGenerators'
 import { Application, ApplicationTypes } from '@island.is/application/types'
 import { syslumennDataFromPostalCode } from './utils'
@@ -26,7 +26,7 @@ import { generateResidenceChangePdf } from './pdfGenerators'
 import { NotificationsService } from '../../../notification/notifications.service'
 import { NotificationType } from '../../../notification/notificationsTemplates'
 import { getSlugFromType } from '@island.is/application/core'
-import { ConfigService, ConfigType } from '@nestjs/config'
+import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
 
 type Props = Override<
@@ -40,8 +40,6 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
-    @Inject(sharedModuleConfig.KEY)
-    private config: ConfigType<typeof sharedModuleConfig>,
     private readonly configService: ConfigService<SharedModuleConfig>,
   ) {
     super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2)
@@ -172,6 +170,13 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
       externalData: { nationalRegistry, childrenCustodyInformation },
     } = application
 
+    if (
+      !childrenCustodyInformation?.data ||
+      childrenCustodyInformation.data.length === 0
+    ) {
+      throw new Error('No custody information available')
+    }
+
     const applicant = nationalRegistry.data
     const otherParent = childrenCustodyInformation.data[0].otherParent
     const contractLink = await this.getApplicationLink(application)
@@ -200,6 +205,12 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
         submitApplication,
       },
     } = application
+    if (
+      !childrenCustodyInformation?.data ||
+      childrenCustodyInformation.data.length === 0
+    ) {
+      throw new Error('No custody information available')
+    }
     const applicant = nationalRegistry.data
     const otherParent = childrenCustodyInformation.data[0].otherParent
     const caseNumber = submitApplication?.data?.caseNumber
@@ -235,6 +246,12 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
     const {
       externalData: { nationalRegistry, childrenCustodyInformation },
     } = application
+    if (
+      !childrenCustodyInformation?.data ||
+      childrenCustodyInformation.data.length === 0
+    ) {
+      throw new Error('No custody information available')
+    }
     const applicant = nationalRegistry.data
     const otherParent = childrenCustodyInformation.data[0].otherParent
 
@@ -254,6 +271,12 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
       answers,
       externalData: { nationalRegistry, childrenCustodyInformation },
     } = application
+    if (
+      !childrenCustodyInformation?.data ||
+      childrenCustodyInformation.data.length === 0
+    ) {
+      throw new Error('No custody information available')
+    }
     const applicant = nationalRegistry.data
     const otherParent = childrenCustodyInformation.data[0].otherParent
     const childResidenceInfo = childrenResidenceInfo(
