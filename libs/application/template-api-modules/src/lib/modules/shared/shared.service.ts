@@ -234,18 +234,6 @@ export class SharedTemplateApiService {
     return file
   }
 
-  // getS3UriInformation(
-  //   application: ApplicationWithAttachments,
-  //   attachmentKey: string,
-  // ): S3UriInformation {
-  //   const fileName = (
-  //     application.attachments as {
-  //       [key: string]: string
-  //     }
-  //   )[attachmentKey]
-  //   return AmazonS3URI(fileName)
-  // }
-
   async getAttachmentContentAsBase64(
     application: ApplicationWithAttachments,
     attachmentKey: string,
@@ -261,24 +249,6 @@ export class SharedTemplateApiService {
   ): Promise<Blob> {
     const file = await this.getS3File(application, attachmentKey)
     return new Blob([file.Body as ArrayBuffer], { type: file.ContentType })
-  }
-
-  async getAttachmentUrl(key: string, expiration: number): Promise<string> {
-    if (expiration <= 0) {
-      return Promise.reject('expiration must be positive')
-    }
-
-    const bucket = this.config.templateApi.attachmentBucket
-
-    if (bucket == undefined) {
-      return Promise.reject('could not find s3 bucket')
-    }
-
-    return this.s3.getSignedUrlPromise('getObject', {
-      Bucket: bucket,
-      Key: key,
-      Expires: expiration,
-    })
   }
 
   async saveAttachmentToApplicaton(
