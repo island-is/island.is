@@ -202,9 +202,20 @@ export const m = defineMessages({
     defaultMessage: 'Þú ert að fara að hætta við söfnun meðmæla. Ertu viss?',
     description: '',
   },
+  cancelCollectionModalMessageLastList: {
+    id: 'sp.signatureCollection:cancelCollectionModalMessageLastList',
+    defaultMessage:
+      'Þú ert að fara að hætta við söfnun meðmæla í þessu kjördæmi. Þau meðmæli sem þú hefur nú þegar safnað munu eyðast. Athugaðu að með því að hætta við síðustu söfnun framboðsins verður framboðinu einnig eytt. Ertu viss um að þú viljir hætta við söfnun og eyða framboði?',
+    description: '',
+  },
   cancelCollectionModalConfirmButton: {
     id: 'sp.signatureCollection:modalConfirmButton',
     defaultMessage: 'Já, hætta við',
+    description: '',
+  },
+  cancelCollectionModalConfirmButtonLastList: {
+    id: 'sp.signatureCollection:cancelCollectionModalConfirmButtonLastList',
+    defaultMessage: 'Já, hætta við söfnun of eyða framboði',
     description: '',
   },
   cancelCollectionModalCancelButton: {
