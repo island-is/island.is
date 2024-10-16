@@ -96,15 +96,9 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         paths: ['/backend'],
         public: true,
         extraAnnotations: {
-          dev: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
-          staging: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
-          prod: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
+          dev: {},
+          staging: {},
+          prod: {},
         },
       },
     })

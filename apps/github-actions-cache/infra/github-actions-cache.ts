@@ -20,9 +20,7 @@ export const serviceSetup = (): ServiceBuilder<'github-actions-cache'> => {
         },
         paths: ['/'],
         extraAnnotations: {
-          dev: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
+          dev: {},
           staging: {},
           prod: {},
         },

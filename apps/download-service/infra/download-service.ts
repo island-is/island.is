@@ -66,9 +66,7 @@ export const serviceSetup = (services: {
         paths: ['/download'],
         extraAnnotations: {
           dev: {},
-          staging: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
+          staging: {},
           prod: {},
         },
         public: true,

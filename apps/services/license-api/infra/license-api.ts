@@ -80,9 +80,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
         public: false,
         extraAnnotations: {
           dev: {},
-          staging: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
+          staging: {},
           prod: {},
         },
       },
