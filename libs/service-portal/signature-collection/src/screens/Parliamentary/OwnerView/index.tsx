@@ -83,7 +83,7 @@ const OwnerView = ({
           display="flex"
           justifyContent="spaceBetween"
           alignItems="baseline"
-          marginTop={5}
+          marginTop={[5, 10]}
         >
           <Text variant="h4">
             {formatMessage(m.myListsDescription) + ' '}
