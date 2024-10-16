@@ -30,6 +30,7 @@ import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
 import copyToClipboard from 'copy-to-clipboard'
 import { formatNationalId } from '@island.is/portals/core'
+import SignedList from '../../shared/SignedList'
 
 const OwnerView = ({
   currentCollection,
@@ -71,6 +72,9 @@ const OwnerView = ({
   return (
     <Stack space={8}>
       <Box marginTop={5}>
+        <Box marginBottom={8}>
+          <SignedList currentCollection={currentCollection} />
+        </Box>
         <Box display="flex" justifyContent="spaceBetween" alignItems="baseline">
           <Text variant="h4">
             {formatMessage(m.myListsDescription) + ' '}
