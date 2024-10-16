@@ -316,7 +316,7 @@ export class SharedTemplateApiService {
     return token
   }
 
-  async getAttachmentUrl2(
+  async getAttachmentUrl(
     application: ApplicationWithAttachments,
     attachmentKey: string,
     expiration: number,
