@@ -11,7 +11,6 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 
