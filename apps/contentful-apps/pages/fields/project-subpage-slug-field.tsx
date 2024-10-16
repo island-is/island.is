@@ -77,8 +77,6 @@ const ProjectSubpageSlugField = () => {
         return
       }
 
-      console.log(projectPage)
-
       const subpageIds: string[] =
         projectPage?.fields?.projectSubpages?.[defaultLocale]?.map(
           (subpage) => subpage.sys.id,
