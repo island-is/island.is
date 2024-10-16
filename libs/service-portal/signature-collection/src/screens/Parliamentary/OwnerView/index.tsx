@@ -85,14 +85,7 @@ const OwnerView = ({
           alignItems="baseline"
           marginTop={[5, 10]}
         >
-          <Text variant="h4">
-            {formatMessage(m.myListsDescription) + ' '}
-            <Tooltip
-              placement="right"
-              text={formatMessage(m.myListsInfo)}
-              color="blue400"
-            />
-          </Text>
+          <Text variant="h4">{formatMessage(m.myListsDescription) + ' '}</Text>
           {isListHolder &&
             !loadingOwnerLists &&
             listsForOwner?.length < currentCollection?.areas.length && (
@@ -210,9 +203,8 @@ const OwnerView = ({
           <Text variant="h4">
             {formatMessage(m.supervisors) + ' '}
             <Tooltip
-              placement="right"
+              placement="bottom"
               text={formatMessage(m.supervisorsTooltip)}
-              color="blue400"
             />
           </Text>
         </Box>
