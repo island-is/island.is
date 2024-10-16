@@ -28,7 +28,7 @@ export const subpoena = {
     description: 'Notaður sem inngangur.',
   }),
   intro_female: defineMessage({
-    id: 'judicial.system.backend:pdf.subpoena.intro_femail',
+    id: 'judicial.system.backend:pdf.subpoena.female',
     defaultMessage:
       'Ákærða er kvödd til að koma fyrir dóm, hlýða á ákæru, halda uppi vörnum og sæta dómi.',
     description: 'Notaður sem inngangur þegar ákærða er kona.',
@@ -57,7 +57,7 @@ export const subpoena = {
     defaultMessage:
       'Sæki ákært ekki þing má hán búast við því að verða handtekið og fært fyrir dóm.',
     description:
-      'Notaður sem inngangur fyrir handtökufyrirkall þegar ákærða er kona.',
+      'Notaður sem inngangur fyrir handtökufyrirkall þegar ákærða er kynsegin/annað.',
   }),
   absenceIntro: defineMessage({
     id: 'judicial.system.backend:pdf.subpoena.absence_intro',
@@ -75,9 +75,9 @@ export const subpoena = {
   absenceIntroNonBinary: defineMessage({
     id: 'judicial.system.backend:pdf.subpoena.absence_intro_non_binary',
     defaultMessage:
-      'Sæki ákært ekki þing má hán búast við því að fjarvist hánar verði metin til jafns við það að hán viðurkenni að hafa framið brot það sem hán er ákært fyrir og dómur verði lagður á málið að háni fjarstöddu.',
+      'Sæki ákært ekki þing má hán búast við því að fjarvist háns verði metin til jafns við það að hán viðurkenni að hafa framið brot það sem hán er ákært fyrir og dómur verði lagður á málið að háni fjarstöddu.',
     description:
-      'Notaður sem inngangur fyrir útivistarfyrirkall þegar ákærða er kona.',
+      'Notaður sem inngangur fyrir útivistarfyrirkall þegar ákærða er kynsegin/annað.',
   }),
   deadline: defineMessage({
     id: 'judicial.system.backend:pdf.subpoena.deadline',
