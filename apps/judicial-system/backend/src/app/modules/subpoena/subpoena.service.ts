@@ -98,13 +98,10 @@ export class SubpoenaService {
       defenderEmail,
       defenderPhoneNumber,
       defenderName,
-<<<<<<< HEAD
       serviceStatus,
-=======
       requestedDefenderChoice,
       requestedDefenderNationalId,
       requestedDefenderName,
->>>>>>> 2bd7d23d979dba86963254c14bdc066bd8e0ae63
     } = update
 
     const notificationType = isSuccessfulServiceStatus(serviceStatus)
