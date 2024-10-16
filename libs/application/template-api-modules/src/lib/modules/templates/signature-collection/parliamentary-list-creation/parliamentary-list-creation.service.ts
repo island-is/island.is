@@ -7,7 +7,6 @@ import {
   Collection,
   CreateParliamentaryCandidacyInput,
   MandateType,
-  ReasonKey,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { errorMessages } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
@@ -54,13 +53,11 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
         405,
       )
     }
-    const contactNationalId = isCompany(auth.nationalId)
-      ? auth.actor?.nationalId ?? auth.nationalId
-      : auth.nationalId
+    // Candidates are stored on user national id never the actors so should be able to check just the auth national id
 
     if (
       currentCollection.candidates.some(
-        (c) => c.nationalId.replace('-', '') === contactNationalId,
+        (c) => c.nationalId.replace('-', '') === auth.nationalId,
       )
     ) {
       throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
