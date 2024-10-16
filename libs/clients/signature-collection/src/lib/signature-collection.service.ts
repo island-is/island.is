@@ -15,12 +15,7 @@ import {
   AddListsInput,
 } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
-import {
-  List,
-  SignedList,
-  getSlug,
-  mapListBase,
-} from './types/list.dto'
+import { List, SignedList, getSlug, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { Signee } from './types/user.dto'
 import { Success, mapReasons } from './types/success.dto'
@@ -420,67 +415,67 @@ export class SignatureCollectionClientService {
     const { id, isPresidential, isActive, areas } = collection
     try {
       const user = await this.getApiWithAuth(
-      this.collectionsApi,
-      auth,
-    ).medmaelasofnunIDEinsInfoKennitalaGet({
-      kennitala: nationalId ?? auth.nationalId,
-      iD: parseInt(id),
-    })
- 
-    
-    const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
-    const activeSignature = user.medmaeli?.find((signature) => signature.valid)
-    const signatures = user.medmaeli?.map((signature) =>
-      mapSignature(signature),
-    )
-    const ownedLists =
-      user.medmaelalistar && candidate
-        ? user.medmaelalistar?.map((list) => mapListBase(list))
-        : []
-
-    const { success: canCreate, reasons: canCreateInfo } =
-      await this.sharedService.canCreate({
-        requirementsMet: user.maFrambod,
-        canCreateInfo: user.maFrambodInfo,
-        ownedLists,
-        isPresidential,
-        isActive,
-        areas,
+        this.collectionsApi,
+        auth,
+      ).medmaelasofnunIDEinsInfoKennitalaGet({
+        kennitala: nationalId ?? auth.nationalId,
+        iD: parseInt(id),
       })
 
-    const { success: canSign, reasons: canSignInfo } = await this.canSign({
-      requirementsMet: user.maKjosa,
-      canSignInfo: user.maKjosaInfo,
-      activeSignature,
-      signatures,
-    })
+      const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
+      const activeSignature = user.medmaeli?.find(
+        (signature) => signature.valid,
+      )
+      const signatures = user.medmaeli?.map((signature) =>
+        mapSignature(signature),
+      )
+      const ownedLists =
+        user.medmaelalistar && candidate
+          ? user.medmaelalistar?.map((list) => mapListBase(list))
+          : []
 
-    return {
-      nationalId: user.kennitala ?? '',
-      name: user.nafn ?? '',
-      electionName: user.kosningNafn ?? '',
-      canSign,
-      canSignInfo,
-      canCreate,
-      canCreateInfo,
-      area: user.svaedi && {
-        id: user.svaedi?.id?.toString() ?? '',
-        name: user.svaedi?.nafn?.toString() ?? '',
-      },
-      signatures,
-      ownedLists,
-      isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,
-      candidate,
-      hasPartyBallotLetter: !!user.maFrambodInfo?.medListabokstaf,
-      partyBallotLetterInfo: {
-        letter: user.listabokstafur?.stafur ?? '',
-        name: user.listabokstafur?.frambodNafn ?? '',
-      },
+      const { success: canCreate, reasons: canCreateInfo } =
+        await this.sharedService.canCreate({
+          requirementsMet: user.maFrambod,
+          canCreateInfo: user.maFrambodInfo,
+          ownedLists,
+          isPresidential,
+          isActive,
+          areas,
+        })
+
+      const { success: canSign, reasons: canSignInfo } = await this.canSign({
+        requirementsMet: user.maKjosa,
+        canSignInfo: user.maKjosaInfo,
+        activeSignature,
+        signatures,
+      })
+
+      return {
+        nationalId: user.kennitala ?? '',
+        name: user.nafn ?? '',
+        electionName: user.kosningNafn ?? '',
+        canSign,
+        canSignInfo,
+        canCreate,
+        canCreateInfo,
+        area: user.svaedi && {
+          id: user.svaedi?.id?.toString() ?? '',
+          name: user.svaedi?.nafn?.toString() ?? '',
+        },
+        signatures,
+        ownedLists,
+        isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,
+        candidate,
+        hasPartyBallotLetter: !!user.maFrambodInfo?.medListabokstaf,
+        partyBallotLetterInfo: {
+          letter: user.listabokstafur?.stafur ?? '',
+          name: user.listabokstafur?.frambodNafn ?? '',
+        },
+      }
+    } catch (e) {
+      throw new NotFoundException('User not found')
     }
-  } catch (e) {
-
-    throw new NotFoundException('User not found')
-  }
   }
 
   async isCandidateId(candidateId: string, auth: User): Promise<boolean> {

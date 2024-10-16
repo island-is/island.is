@@ -125,7 +125,8 @@ export const errorMessages = {
   singeeNotFound: defineMessages({
     title: {
       id: 'pls.application:error.singeeNotFound.title',
-      defaultMessage: 'Notandi uppfyllir ekki skilyrði til að framkvæma þessa aðgerð',
+      defaultMessage:
+        'Notandi uppfyllir ekki skilyrði til að framkvæma þessa aðgerð',
       description: '',
     },
     summary: {

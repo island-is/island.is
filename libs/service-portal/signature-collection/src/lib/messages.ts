@@ -118,7 +118,8 @@ export const m = defineMessages({
   /* Signee View */
   noUserFound: {
     id: 'sp.signatureCollection:noUserFound',
-    defaultMessage: 'Þú uppfyllir ekki skilyrði til að taka þátt í meðmælasöfnunum',
+    defaultMessage:
+      'Þú uppfyllir ekki skilyrði til að taka þátt í meðmælasöfnunum',
     description: '',
   },
   noUserFoundDescription: {

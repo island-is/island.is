@@ -37,41 +37,40 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
 
   async canSign({ auth }: TemplateApiModuleActionProps) {
     try {
-       const signee = await this.signatureCollectionClientService.getSignee(auth)
-    const { canSign, canSignInfo } = signee
-    if (canSign) {
-      return signee
-    }
-    if (!canSignInfo) {
-      // canCreateInfo will always be defined if canCreate is false but we need to check for typescript
-      throw new TemplateApiError(errorMessages.deniedByService, 400)
-    }
-    const errors: ProviderErrorReason[] = canSignInfo?.map((key) => {
-      switch (key) {
-        case ReasonKey.UnderAge:
-          return errorMessages.age
-        case ReasonKey.NoCitizenship:
-          return errorMessages.citizenship
-        case ReasonKey.NotISResidency:
-          return errorMessages.residency
-        case ReasonKey.CollectionNotOpen:
-          return errorMessages.active
-        case ReasonKey.AlreadySigned:
-          return errorMessages.signer
-        case ReasonKey.noInvalidSignature:
-          return errorMessages.invalidSignature
-        default:
-          return errorMessages.deniedByService
+      const signee = await this.signatureCollectionClientService.getSignee(auth)
+      const { canSign, canSignInfo } = signee
+      if (canSign) {
+        return signee
       }
-    })
-    throw new TemplateApiError(errors, 405)
+      if (!canSignInfo) {
+        // canCreateInfo will always be defined if canCreate is false but we need to check for typescript
+        throw new TemplateApiError(errorMessages.deniedByService, 400)
+      }
+      const errors: ProviderErrorReason[] = canSignInfo?.map((key) => {
+        switch (key) {
+          case ReasonKey.UnderAge:
+            return errorMessages.age
+          case ReasonKey.NoCitizenship:
+            return errorMessages.citizenship
+          case ReasonKey.NotISResidency:
+            return errorMessages.residency
+          case ReasonKey.CollectionNotOpen:
+            return errorMessages.active
+          case ReasonKey.AlreadySigned:
+            return errorMessages.signer
+          case ReasonKey.noInvalidSignature:
+            return errorMessages.invalidSignature
+          default:
+            return errorMessages.deniedByService
+        }
+      })
+      throw new TemplateApiError(errors, 405)
     } catch (error) {
-      if(error.status === 404) {
+      if (error.status === 404) {
         throw new TemplateApiError(errorMessages.singeeNotFound, 404)
       }
       throw new TemplateApiError(errorMessages.deniedByService, 400)
     }
-   
   }
 
   async getList({ auth, application }: TemplateApiModuleActionProps) {
