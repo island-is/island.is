@@ -20943,6 +20943,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/rss@npm:0.0.32":
+  version: 0.0.32
+  resolution: "@types/rss@npm:0.0.32"
+  checksum: c54004684f0d4b37c1d369cf93133ad86dc02632675a1149f1cfe456a0526e107f9e1b73a986da70f4c5a948400842366faa0571e2661aef3c637c68c7dd16b4
+  languageName: node
+  linkType: hard
+
 "@types/sanitize-html@npm:2.9.0":
   version: 2.9.0
   resolution: "@types/sanitize-html@npm:2.9.0"
@@ -37362,6 +37369,7 @@ __metadata:
     "@types/react-table": 7.0.24
     "@types/request": 2.48.5
     "@types/resolve": ^1.20.2
+    "@types/rss": 0.0.32
     "@types/sanitize-html": 2.9.0
     "@types/smoothscroll-polyfill": 0.3.1
     "@types/supertest": 2.0.11
@@ -37557,6 +37565,7 @@ __metadata:
     regenerator-runtime: 0.13.7
     remark-parse: 9.0.0
     rosetta: 1.0.0
+    rss: 1.2.2
     rxjs: 7.8.1
     sanitize-html: 2.10.0
     sequelize: 6.37.3
@@ -42291,6 +42300,22 @@ __metadata:
   version: 1.52.0
   resolution: "mime-db@npm:1.52.0"
   checksum: 0d99a03585f8b39d68182803b12ac601d9c01abfa28ec56204fa330bc9f3d1c5e14beb049bafadb3dbdf646dfb94b87e24d4ec7b31b7279ef906a8ea9b6a513f
+  languageName: node
+  linkType: hard
+
+"mime-db@npm:~1.25.0":
+  version: 1.25.0
+  resolution: "mime-db@npm:1.25.0"
+  checksum: bf1c56d50cb5752c5495ddf2a1dd938015c58b3bc0c8d19c4cacb198322267d6fc1b944e70efec0d5215584cf1c57d58e2d4f609094ebe3e88bdf34028ca102d
+  languageName: node
+  linkType: hard
+
+"mime-types@npm:2.1.13":
+  version: 2.1.13
+  resolution: "mime-types@npm:2.1.13"
+  dependencies:
+    mime-db: ~1.25.0
+  checksum: 661db5db5900dcf8bc345d2aea9cc2bd38d53374c000e0d8d7b592230ff37ea173b9514f15bfd89efe46476f57f1785866d13060c71d12ca98c5b5a8f662ae04
   languageName: node
   linkType: hard
 
@@ -49647,6 +49672,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rss@npm:1.2.2":
+  version: 1.2.2
+  resolution: "rss@npm:1.2.2"
+  dependencies:
+    mime-types: 2.1.13
+    xml: 1.0.1
+  checksum: 9f823a6c1c807b4d9a800f74063d03eb188751c2e7fab36a50d5bdc33577a03562d5a610d8c809729f5a3721805a5495119c105237a87a6bb5a8a146df8b887a
+  languageName: node
+  linkType: hard
+
 "rtl-css-js@npm:^1.14.0":
   version: 1.14.0
   resolution: "rtl-css-js@npm:1.14.0"
@@ -56156,6 +56191,13 @@ __metadata:
     sax: ">=0.6.0"
     xmlbuilder: ~11.0.0
   checksum: 437f353fd66d367bf158e9555a0625df9965d944e499728a5c6bc92a54a2763179b144f14b7e1c725040f56bbd22b0fa6cfcb09ec4faf39c45ce01efe631f40b
+  languageName: node
+  linkType: hard
+
+"xml@npm:1.0.1":
+  version: 1.0.1
+  resolution: "xml@npm:1.0.1"
+  checksum: 11b5545ef3f8fec3fa29ce251f50ad7b6c97c103ed4d851306ec23366f5fa4699dd6a942262df52313a0cd1840ab26256da253c023bad3309d8ce46fe6020ca0
   languageName: node
   linkType: hard
 
