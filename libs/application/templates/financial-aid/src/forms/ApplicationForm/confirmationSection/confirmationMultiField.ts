@@ -26,7 +26,7 @@ export const confirmationMultiField = buildMultiField({
       title: m.confirmation.alertMessagesInRelationship.success,
       alertType: 'success',
       condition: (formValue) => {
-        return hasIncomeFiles(formValue)
+        return !hasIncomeFiles(formValue)
       },
     }),
     buildAlertMessageField({

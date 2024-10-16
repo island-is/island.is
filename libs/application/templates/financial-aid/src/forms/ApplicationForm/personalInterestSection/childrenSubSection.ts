@@ -8,10 +8,7 @@ import {
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
-import {
-  ApplicantChildCustodyInformation,
-  ExternalData,
-} from '@island.is/application/types'
+import { ApplicantChildCustodyInformation } from '@island.is/application/types'
 import { childrenForm } from '../../../lib/messages'
 import { SummaryComment } from '../../../lib/types'
 
@@ -29,8 +26,7 @@ export const childrenSubSection = buildSubSection({
   title: m.childrenForm.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'asdf',
-      title: 'Börn',
+      title: m.childrenForm.general.sectionTitle,
       description: childrenForm.general.description,
       children: [
         buildDescriptionField({

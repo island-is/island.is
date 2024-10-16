@@ -19,7 +19,7 @@ export const inARelationshipSubSection = buildSubSection({
       description: m.inRelationship.general.intro,
       children: [
         buildDescriptionField({
-          id: `${Routes.INRELATIONSHIP}.description`,
+          id: 'spouse.description',
           title: '',
           description: m.inRelationship.general.description,
         }),
