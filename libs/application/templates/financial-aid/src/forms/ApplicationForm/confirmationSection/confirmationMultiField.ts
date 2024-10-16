@@ -25,8 +25,8 @@ export const confirmationMultiField = buildMultiField({
       id: 'confirmationAlert-1',
       title: m.confirmation.alertMessagesInRelationship.success,
       alertType: 'success',
-      condition: (formValue) => {
-        return !hasIncomeFiles(formValue)
+      condition: (answers) => {
+        return !hasIncomeFiles(answers)
       },
     }),
     buildAlertMessageField({
@@ -34,8 +34,8 @@ export const confirmationMultiField = buildMultiField({
       title: m.confirmation.alertMessages.dataNeeded,
       message: m.confirmation.alertMessages.dataNeededText,
       alertType: 'warning',
-      condition: (formValue) => {
-        return !hasIncomeFiles(formValue)
+      condition: (answers) => {
+        return !hasIncomeFiles(answers)
       },
     }),
     buildAlertMessageField({
@@ -51,8 +51,8 @@ export const confirmationMultiField = buildMultiField({
           : m.confirmation.alertMessagesInRelationship.dataNeededAlternativeText
       },
       alertType: 'warning',
-      condition: (formValue, externalData) => {
-        return hasSpouse2(formValue, externalData)
+      condition: (answers, externalData) => {
+        return hasSpouse2(answers, externalData)
       },
     }),
     buildDescriptionField({
@@ -64,8 +64,8 @@ export const confirmationMultiField = buildMultiField({
     buildDescriptionField({
       id: 'confirmationDescription',
       title: '',
-      description: (formValue: Application<FormValue>) =>
-        getNextStepsDescription(formValue.answers, formValue.externalData),
+      description: (application: Application<FormValue>) =>
+        getNextStepsDescription(application.answers, application.externalData),
     }),
     buildDescriptionField({
       id: 'confirmationDescriptionBullets',
