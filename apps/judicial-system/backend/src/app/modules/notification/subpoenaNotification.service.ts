@@ -13,9 +13,8 @@ import { type ConfigType } from '@island.is/nest/config'
 import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import { NotificationType } from '@island.is/judicial-system/types'
 
-import { CaseService } from '../case'
 import { EventService } from '../event'
-import { Subpoena, SubpoenaService } from '../subpoena'
+import { Subpoena } from '../subpoena'
 import { DeliverResponse } from './models/deliver.response'
 import { Notification, Recipient } from './models/notification.model'
 import { BaseNotificationService } from './baseNotification.service'
@@ -38,8 +37,6 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     intlService: IntlService,
     emailService: EmailService,
     eventService: EventService,
-    private readonly caseService: CaseService,
-    private readonly subpoenaService: SubpoenaService,
   ) {
     super(
       notificationModel,
@@ -67,23 +64,17 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     }
   }
 
-  private async getCase(caseId: string) {
-    const theCase = await this.caseService.findById(caseId)
-
-    if (!theCase.courtCaseNumber) {
-      throw new InternalServerErrorException(
-        `Unable to find courtCaseNumber for case ${theCase.id}`,
-      )
-    }
-
-    return theCase
-  }
-
   private async sendSubpoenaNotification(
     notificationType: subpoenaNotificationType,
     subpoena: Subpoena,
   ): Promise<unknown> {
-    const theCase = await this.getCase(subpoena.caseId)
+    const theCase = subpoena.case
+
+    console.log('!!!!!!!!!!!!!!!!!!!!!!!!', { name: theCase?.judge })
+
+    if (!theCase) {
+      throw new InternalServerErrorException('Missing case')
+    }
 
     const hasSentSuccessfulServiceNotification = Boolean(
       this.hasSentNotification(

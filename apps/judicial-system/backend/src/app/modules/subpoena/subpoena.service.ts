@@ -22,7 +22,7 @@ import {
   isSuccessfulServiceStatus,
   isTrafficViolationCase,
   NotificationType,
-  type User,
+  type User as TUser,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
@@ -30,12 +30,26 @@ import { PdfService } from '../case/pdf.service'
 import { Defendant } from '../defendant/models/defendant.model'
 import { FileService } from '../file'
 import { PoliceService } from '../police'
+import { User } from '../user'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { Subpoena } from './models/subpoena.model'
 
 export const include: Includeable[] = [
-  { model: Case, as: 'case' },
+  {
+    model: Case,
+    as: 'case',
+    include: [
+      {
+        model: User,
+        as: 'judge',
+      },
+      {
+        model: User,
+        as: 'registrar',
+      },
+    ],
+  },
   { model: Defendant, as: 'defendant' },
 ]
 @Injectable()
@@ -217,7 +231,7 @@ export class SubpoenaService {
     theCase: Case,
     defendant: Defendant,
     subpoena: Subpoena,
-    user: User,
+    user: TUser,
   ): Promise<DeliverResponse> {
     try {
       const subpoenaPdf = await this.pdfService.getSubpoenaPdf(

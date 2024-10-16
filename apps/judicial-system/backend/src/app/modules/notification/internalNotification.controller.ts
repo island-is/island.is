@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Inject,
@@ -19,9 +18,6 @@ import {
 } from '@island.is/judicial-system/message'
 
 import { Case, CaseHasExistedGuard, CurrentCase } from '../case'
-import { Subpoena } from '../subpoena'
-import { CurrentSubpoena } from '../subpoena/guards/subpoena.decorator'
-import { SubpoenaExistsGuard } from '../subpoena/guards/subpoenaExists.guard'
 import { CaseNotificationDto } from './dto/caseNotification.dto'
 import { InstitutionNotificationDto } from './dto/institutionNotification.dto'
 import { SubpoenaNotificationDto } from './dto/subpoenaNotification.dto'
