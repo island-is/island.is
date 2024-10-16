@@ -428,10 +428,22 @@ export const translationStrings = defineMessages({
       'Vinsamlega hafðu í huga að reiknivélin reiknar greiðslur miðað við þær forsendur sem þú gefur upp. Líkanið er einungis til leiðbeiningar en veitir ekki bindandi upplýsingar um endanlega afgreiðslu máls eða greiðslufjárhæðir',
     description: 'Fyrirvari á niðurstöðuskjá',
   },
+  result2025Disclaimer: {
+    id: 'web.pensionCalculator:result2025Disclaimer',
+    defaultMessage:
+      'Reiknivélinni byggir á þeim forsendum sem þú gafst upp. Upphæðir eru aðeins leiðbeinandi og veita ekki bindandi upplýsingar um endanlega afgreiðslu mála eða greiðsluupphæða. Annars vegar eru niðurstöður birtar fyrir árið núna og hins vegar í nýju kerfi eftir 1. september 2025',
+    description:
+      'Fyrirvari á niðurstöðuskjá fyrir örorkulífeyrissamanburð eftir 1. september 2025',
+  },
   highlightedResultItemHeading: {
     id: 'web.pensionCalculator:highlighedResultItemHeading',
     defaultMessage: 'Samtals greiðslur frá TR eftir skatt',
     description: 'H2, Samtals greiðslur frá TR eftir skatt',
+  },
+  highlightedResult2025ItemHeading: {
+    id: 'web.pensionCalculator:highlighedResult2025ItemHeading',
+    defaultMessage: 'Samtals ráðstöfunartekjur eftir skatt',
+    description: 'H2, Samtals ráðstöfunartekjur eftir skatt',
   },
   changeAssumptions: {
     id: 'web.pensionCalculator:changeAssumptions',
@@ -442,6 +454,16 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:resultDetailsLabel',
     defaultMessage: 'Sundurliðun',
     description: 'Sundurliðun',
+  },
+  resultDetails2024Label: {
+    id: 'web.pensionCalculator:resultDetails2024Label',
+    defaultMessage: 'Sundurliðun upphæða 2024',
+    description: 'Sundurliðun upphæða 2024',
+  },
+  result2025DetailsLabel: {
+    id: 'web.pensionCalculator:result2025DetailsLabel',
+    defaultMessage: 'Sundurliðun upphæða eftir 1. september 2025',
+    description: 'Sundurliðun upphæða eftir 1. september 2025',
   },
   print: {
     id: 'web.pensionCalculator:print',
@@ -561,6 +583,21 @@ export const translationStrings = defineMessages({
       'Þú getur byrjað töku ellilífeyris frá {month} {year}. Þú getur flýtt um 2 ár eða frestað töku ellilífeyris.',
     description:
       'Lýsing fyrir ofan mánuð og ár reit varðandi hvenær notandi vill hefja töku á ellilífeyri',
+  },
+  after1stSeptember2025: {
+    id: 'web.pensionCalculator:after1stSeptember2025',
+    defaultMessage: 'Eftir 1. september 2025',
+    description: 'Eftir 1. september 2025',
+  },
+  after1stSeptember2025Calculate: {
+    id: 'web.pensionCalculator:after1stSeptember2025Calculate',
+    defaultMessage: 'Reikna',
+    description: 'Reikna',
+  },
+  after1stSeptember2025Description: {
+    id: 'web.pensionCalculator:after1stSeptember2025Description',
+    defaultMessage: 'Sjá útreikning örorkulífeyris í nýju kerfi',
+    description: 'Sjá útreikning örorkulífeyris í nýju kerfi',
   },
   birthMonthLabel: {
     id: 'web.pensionCalculator:birthMonthLabel',

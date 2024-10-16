@@ -14,7 +14,7 @@ import {
   DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT,
   DEFAULT_REGULAR_SIGNATURE_COUNT,
   DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
-  OJOI_INPUT_HEIGHT as OJOI_INPUT_HEIGHT,
+  OJOI_INPUT_HEIGHT,
   SignatureTypes,
 } from '../lib/constants'
 import { useApplication } from '../hooks/useUpdateApplication'

@@ -118,6 +118,21 @@ export const dataSchema = z.object({
         dateOfBirth: z.string().min(1).optional(),
         dummy: z.boolean().optional(),
       })
+      .refine(
+        ({ name, relation, nationalId, foreignCitizenship, dateOfBirth }) => {
+          const hasNameAndRelation = name && relation
+
+          if (foreignCitizenship && foreignCitizenship.length !== 0) {
+            return Boolean(dateOfBirth) && hasNameAndRelation
+          } else {
+            return Boolean(nationalId) && hasNameAndRelation
+          }
+        },
+        {
+          message: m.errorNoDateOfBirthProvided.defaultMessage,
+          path: ['dateOfBirth'],
+        },
+      )
       .array()
       .optional(),
     encountered: z.boolean().optional(),

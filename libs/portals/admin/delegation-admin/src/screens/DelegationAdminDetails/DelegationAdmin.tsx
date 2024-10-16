@@ -1,10 +1,4 @@
-import {
-  Button,
-  GridColumn,
-  GridRow,
-  Stack,
-  Tabs,
-} from '@island.is/island-ui/core'
+import { Button, GridColumn, Box, Stack, Tabs } from '@island.is/island-ui/core'
 import { BackButton } from '@island.is/portals/admin/core'
 import { useLocale } from '@island.is/localization'
 import { useLoaderData, useNavigate } from 'react-router-dom'
@@ -33,39 +27,44 @@ const DelegationAdminScreen = () => {
   return (
     <Stack space="containerGutter">
       <BackButton onClick={() => navigate(DelegationAdminPaths.Root)} />
-      <GridRow rowGap={3}>
-        <GridColumn span={['12/12', '8/12']}>
-          <IntroHeader
-            title={delegationAdmin.name}
-            intro={formatNationalId(delegationAdmin.nationalId)}
-          />
-        </GridColumn>
+
+      <IntroHeader
+        title={delegationAdmin.name}
+        intro={formatNationalId(delegationAdmin.nationalId)}
+      >
         {hasAdminAccess && (
-          <GridColumn span={['12/12', '4/12']}>
-            <Button
-              icon="arrowForward"
-              onClick={async () => {
-                const maskedNationalId =
-                  (await maskString(
-                    delegationAdmin.nationalId,
-                    userInfo?.profile.nationalId || '',
-                  )) ?? ''
-                const query = new URLSearchParams({
-                  fromNationalId: maskedNationalId,
-                })
-                navigate(
-                  `${
-                    DelegationAdminPaths.CreateDelegation
-                  }?${query.toString()}`,
-                )
-              }}
-              size="small"
+          <GridColumn span={['8/8', '3/8']}>
+            <Box
+              display={'flex'}
+              justifyContent={['flexStart', 'flexEnd']}
+              alignItems={['flexStart', 'center']}
+              height={'full'}
             >
-              {formatMessage(m.createNewDelegation)}
-            </Button>
+              <Button
+                onClick={async () => {
+                  const maskedNationalId =
+                    (await maskString(
+                      delegationAdmin.nationalId,
+                      userInfo?.profile.nationalId || '',
+                    )) ?? ''
+                  const query = new URLSearchParams({
+                    fromNationalId: maskedNationalId,
+                  })
+                  navigate(
+                    `${
+                      DelegationAdminPaths.CreateDelegation
+                    }?${query.toString()}`,
+                  )
+                }}
+                size="small"
+              >
+                {formatMessage(m.createNewDelegation)}
+              </Button>
+            </Box>
           </GridColumn>
         )}
-      </GridRow>
+      </IntroHeader>
+
       <Tabs
         contentBackground="white"
         label={'Delegation Admin'}
@@ -73,11 +72,11 @@ const DelegationAdminScreen = () => {
           {
             label: formatMessage(m.delegationFrom),
             content:
-              delegationAdmin.incoming.length > 0 ? (
+              delegationAdmin.outgoing.length > 0 ? (
                 <DelegationList
-                  direction="incoming"
+                  direction="outgoing"
                   delegationsList={
-                    delegationAdmin.incoming as AuthCustomDelegation[]
+                    delegationAdmin.outgoing as AuthCustomDelegation[]
                   }
                 />
               ) : (
@@ -90,11 +89,11 @@ const DelegationAdminScreen = () => {
           {
             label: formatMessage(m.delegationTo),
             content:
-              delegationAdmin.outgoing.length > 0 ? (
+              delegationAdmin.incoming.length > 0 ? (
                 <DelegationList
-                  direction="outgoing"
+                  direction="incoming"
                   delegationsList={
-                    delegationAdmin.outgoing as AuthCustomDelegation[]
+                    delegationAdmin.incoming as AuthCustomDelegation[]
                   }
                 />
               ) : (

@@ -7,7 +7,8 @@ import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './PdfButton.css'
 
 interface Props {
-  caseId: string
+  caseId?: string
+  connectedCaseParentId?: string
   title?: string | null
   pdfType?:
     | 'ruling'
@@ -21,12 +22,15 @@ interface Props {
   disabled?: boolean
   renderAs?: 'button' | 'row'
   handleClick?: () => void
-  elementId?: string
+  elementId?: string | string[]
   queryParameters?: string
 }
 
 const PdfButton: FC<PropsWithChildren<Props>> = ({
   caseId,
+  // This is used when accessing data belonging to a case which has been merged into another case.
+  // For access control purposes, the data must be accessed through the parent case.
+  connectedCaseParentId,
   title,
   pdfType,
   disabled,
@@ -39,10 +43,16 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
   const { limitedAccess } = useContext(UserContext)
 
   const handlePdfClick = async () => {
-    const prefix = limitedAccess ? 'limitedAccess/' : ''
-    const postfix = elementId ? `/${elementId}` : ''
+    const prefix = `${limitedAccess ? 'limitedAccess/' : ''}${
+      connectedCaseParentId ? `mergedCase/${caseId}/` : ''
+    }`
+    const postfix = elementId
+      ? `/${Array.isArray(elementId) ? elementId.join('/') : elementId}`
+      : ''
     const query = queryParameters ? `?${queryParameters}` : ''
-    const url = `${api.apiUrl}/api/case/${caseId}/${prefix}${pdfType}${postfix}${query}`
+    const url = `${api.apiUrl}/api/case/${
+      connectedCaseParentId ?? caseId
+    }/${prefix}${pdfType}${postfix}${query}`
 
     window.open(url, '_blank')
   }

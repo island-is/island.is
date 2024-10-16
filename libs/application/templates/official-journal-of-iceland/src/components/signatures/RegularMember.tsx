@@ -15,6 +15,7 @@ import { memberItemSchema } from '../../lib/dataSchema'
 import { SignatureMember } from './Member'
 import * as z from 'zod'
 import { RemoveRegularMember } from './RemoveRegularMember'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -35,6 +36,8 @@ export const RegularMember = ({
   const { debouncedOnUpdateApplicationHandler, application } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
 
   const handleMemberChange = (
     value: string,
@@ -84,6 +87,8 @@ export const RegularMember = ({
         updatedRegularSignature,
       )
 
+      setValue(InputFields.signature.regular, updatedRegularSignature)
+
       return updatedSignatures
     }
 
@@ -113,14 +118,14 @@ export const RegularMember = ({
           }
         />
         <SignatureMember
-          name={`signature.regular.member.after.${signatureIndex}.${memberIndex}`}
-          label={f(signatures.inputs.after.label)}
-          defaultValue={member.after}
+          name={`signature.regular.member.name.${signatureIndex}.${memberIndex}`}
+          label={f(signatures.inputs.name.label)}
+          defaultValue={member.name}
           onChange={(e) =>
             debouncedOnUpdateApplicationHandler(
               handleMemberChange(
                 e.target.value,
-                'after',
+                'name',
                 signatureIndex,
                 memberIndex,
               ),
@@ -130,14 +135,14 @@ export const RegularMember = ({
       </Box>
       <Box className={styles.inputWrapper}>
         <SignatureMember
-          name={`signature.regular.member.name.${signatureIndex}.${memberIndex}`}
-          label={f(signatures.inputs.name.label)}
-          defaultValue={member.name}
+          name={`signature.regular.member.after.${signatureIndex}.${memberIndex}`}
+          label={f(signatures.inputs.after.label)}
+          defaultValue={member.after}
           onChange={(e) =>
             debouncedOnUpdateApplicationHandler(
               handleMemberChange(
                 e.target.value,
-                'name',
+                'after',
                 signatureIndex,
                 memberIndex,
               ),

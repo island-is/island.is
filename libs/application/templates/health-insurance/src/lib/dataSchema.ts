@@ -1,23 +1,32 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import * as z from 'zod'
-import { NO, YES } from '../shared'
+import { EmploymentStatus, YES, YesOrNo } from '../utils/constants'
 
-export const HealthInsuranceSchema = z.object({
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
+const formerInsurance = z.object({
+  registration: z.nativeEnum(YesOrNo),
+  country: z.string().min(1),
+  personalId: z.string().min(1),
+  institution: z.string().min(1),
+  confirmationOfResidencyDocument: FileSchema.optional(),
+  entitlement: z.nativeEnum(YesOrNo).optional(),
+  entitlementReason: z.string().optional(),
+})
+
+export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  status: z.object({
-    type: z.enum(['employed', 'student', 'pensioner', 'other']),
-  }),
   applicant: applicantInformationSchema(),
+  status: z.object({ type: z.nativeEnum(EmploymentStatus) }),
+  children: z.nativeEnum(YesOrNo),
   citizenship: z.string().optional(),
-  formerInsurance: z.object({
-    registration: z.enum([YES, NO]),
-    country: z.string().min(1),
-    personalId: z.string().min(1),
-    institution: z.string().min(1),
-    entitlementReason: z.string().optional(),
-  }),
-  children: z.enum([YES, NO]),
-  hasAdditionalInfo: z.enum([YES, NO]),
+  formerInsurance,
+  hasAdditionalInfo: z.nativeEnum(YesOrNo),
   additionalRemarks: z.string().optional(),
-  confirmCorrectInfo: z.boolean().refine((v) => v),
+  additionalFiles: z.array(FileSchema).optional(),
+  confirmCorrectInfo: z.array(z.enum([YES])).length(1),
 })

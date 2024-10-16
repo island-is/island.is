@@ -16,7 +16,7 @@ import {
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 import { LawyersService } from '@island.is/judicial-system/lawyers'
-import { DefenderChoice } from '@island.is/judicial-system/types'
+import { DefenderChoice, ServiceStatus } from '@island.is/judicial-system/types'
 
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { SubpoenaResponse } from './models/subpoena.response'
@@ -96,33 +96,54 @@ export class AppService {
     subpoenaId: string,
     updateSubpoena: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
-    let update = { ...updateSubpoena }
+    let defenderName = undefined
 
     if (
-      update.defenderChoice === DefenderChoice.CHOOSE &&
-      !update.defenderNationalId
+      updateSubpoena.defenderChoice === DefenderChoice.CHOOSE &&
+      !updateSubpoena.defenderNationalId
     ) {
       throw new BadRequestException(
         'Defender national id is required for choice',
       )
     }
 
-    if (update.defenderNationalId) {
+    if (updateSubpoena.defenderNationalId) {
       try {
         const chosenLawyer = await this.lawyersService.getLawyer(
-          update.defenderNationalId,
+          updateSubpoena.defenderNationalId,
         )
-        update = {
-          ...update,
-          ...{
-            defenderName: chosenLawyer.Name,
-            defenderEmail: chosenLawyer.Email,
-            defenderPhoneNumber: chosenLawyer.Phone,
-          },
-        }
+
+        defenderName = chosenLawyer.Name
       } catch (reason) {
+        // TODO: Reconsider throwing - what happens if registry is down?
+        this.logger.error(
+          `Failed to retrieve lawyer with national id ${updateSubpoena.defenderNationalId}`,
+          reason,
+        )
         throw new BadRequestException('Lawyer not found')
       }
+    }
+
+    //TODO: move logic to reusable place if this is the data structure we keep
+    const serviceStatus = updateSubpoena.deliveredToLawyer
+      ? ServiceStatus.DEFENDER
+      : updateSubpoena.prosecutedConfirmedSubpoenaThroughIslandis
+      ? ServiceStatus.ELECTRONICALLY
+      : updateSubpoena.deliveredOnPaper || updateSubpoena.delivered === true
+      ? ServiceStatus.IN_PERSON
+      : updateSubpoena.acknowledged === false
+      ? ServiceStatus.FAILED
+      : // TODO: handle expired
+        undefined
+
+    const updateToSend = {
+      serviceStatus,
+      comment: updateSubpoena.comment,
+      servedBy: updateSubpoena.servedBy,
+      serviceDate: updateSubpoena.servedAt,
+      requestedDefenderChoice: updateSubpoena.defenderChoice,
+      requestedDefenderNationalId: updateSubpoena.defenderNationalId,
+      requestedDefenderName: defenderName,
     }
 
     try {
@@ -134,7 +155,7 @@ export class AppService {
             'Content-Type': 'application/json',
             authorization: `Bearer ${this.config.backend.accessToken}`,
           },
-          body: JSON.stringify(update),
+          body: JSON.stringify(updateToSend),
         },
       )
 
@@ -144,8 +165,8 @@ export class AppService {
         return {
           subpoenaComment: response.comment,
           defenderInfo: {
-            defenderChoice: response.defendant.defenderChoice,
-            defenderName: response.defendant.defenderName,
+            defenderChoice: response.defendant.requestedDefenderChoice,
+            defenderName: response.defendant.requestedDefenderName,
           },
         } as SubpoenaResponse
       }

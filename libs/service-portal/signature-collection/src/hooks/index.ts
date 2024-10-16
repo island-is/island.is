@@ -8,6 +8,7 @@ import {
   GetListsForOwner,
   GetCurrentCollection,
   GetCanSign,
+  GetCollectors,
 } from './graphql/queries'
 import {
   SignatureCollectionListBase,
@@ -16,6 +17,7 @@ import {
   SignatureCollectionSuccess,
   SignatureCollection,
   SignatureCollectionSignedList,
+  SignatureCollectionCollector,
 } from '@island.is/api/schema'
 
 export const useGetSignatureList = (listId: string) => {
@@ -149,18 +151,32 @@ export const useGetCurrentCollection = () => {
   }
 }
 
-export const useGetCanSign = (signeeId: string, isValidId: boolean) => {
+export const useGetCanSign = (
+  signeeId: string,
+  listId: string,
+  isValidId: boolean,
+) => {
   const { data: getCanSignData, loading: loadingCanSign } = useQuery(
     GetCanSign,
     {
       variables: {
         input: {
           signeeNationalId: signeeId,
+          listId: listId,
         },
       },
       skip: !signeeId || signeeId.length !== 10 || !isValidId,
     },
   )
-  const canSign = getCanSignData?.signatureCollectionCanSign ?? false
+  const canSign = getCanSignData?.signatureCollectionCanSignFromPaper ?? false
   return { canSign, loadingCanSign }
+}
+
+export const useGetCollectors = () => {
+  const { data: getCollectorsData, loading: loadingCollectors } =
+    useQuery(GetCollectors)
+  const collectors =
+    (getCollectorsData?.signatureCollectionCollectors as SignatureCollectionCollector[]) ??
+    []
+  return { collectors, loadingCollectors }
 }

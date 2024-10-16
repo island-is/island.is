@@ -21,6 +21,11 @@ import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionSlug } from './models/slug.model'
 import { SignatureCollectionListStatus } from './models/status.model'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
+import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
+import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
+import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
+import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
+import { SignatureCollectionListIdInput } from './dto'
 
 @Injectable()
 export class SignatureCollectionAdminService {
@@ -47,10 +52,22 @@ export class SignatureCollectionAdminService {
   async getCanSignInfo(
     auth: User,
     nationalId: string,
-  ): Promise<ReasonKey[] | undefined> {
-    return (
+    listId: string,
+  ): Promise<SignatureCollectionSuccess> {
+    const signatureSignee =
       await this.signatureCollectionBasicService.getSignee(auth, nationalId)
-    ).canSignInfo
+    const list = await this.list(listId, auth)
+    // Current signatures should not prevent paper signatures
+    const canSign =
+      signatureSignee.canSign ||
+      (signatureSignee.canSignInfo?.length === 1 &&
+        (signatureSignee.canSignInfo[0] === ReasonKey.AlreadySigned ||
+          signatureSignee.canSignInfo[0] === ReasonKey.noInvalidSignature))
+
+    return {
+      success: canSign && list.area.id === signatureSignee.area?.id,
+      reasons: canSign ? [] : signatureSignee.canSignInfo,
+    }
   }
 
   async signatures(
@@ -174,6 +191,56 @@ export class SignatureCollectionAdminService {
     return await this.signatureCollectionClientService.removeCandidate(
       candidateId,
       user,
+    )
+  }
+
+  async removeList(
+    listId: string,
+    user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.removeList(listId, user)
+  }
+
+  async updateSignaturePageNumber(
+    user: User,
+    input: SignatureCollectionSignatureUpdateInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.updateSignaturePageNumber(
+      user,
+      input.signatureId,
+      input.pageNumber,
+    )
+  }
+
+  async signatureLookup(
+    user: User,
+    input: SignatureCollectionSignatureLookupInput,
+  ): Promise<SignatureCollectionSignature[]> {
+    return await this.signatureCollectionClientService.signatureLookup(
+      user,
+      input.collectionId,
+      input.nationalId,
+    )
+  }
+
+  async getAreaSummaryReport(
+    input: SignatureCollectionAreaSummaryReportInput,
+    user: User,
+  ): Promise<SignatureCollectionAreaSummaryReport> {
+    return await this.signatureCollectionClientService.getAreaSummaryReport(
+      user,
+      input.collectionId,
+      input.areaId,
+    )
+  }
+
+  async lockList(
+    input: SignatureCollectionListIdInput,
+    user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.lockList(
+      user,
+      input.listId,
     )
   }
 }

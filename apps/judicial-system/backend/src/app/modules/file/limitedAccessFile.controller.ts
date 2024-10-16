@@ -36,6 +36,7 @@ import {
   CurrentCase,
   LimitedAccessCaseExistsGuard,
 } from '../case'
+import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
@@ -107,9 +108,14 @@ export class LimitedAccessFileController {
     return this.fileService.createCaseFile(theCase, createFile, user)
   }
 
-  @UseGuards(CaseReadGuard, CaseFileExistsGuard, LimitedAccessViewCaseFileGuard)
+  @UseGuards(
+    CaseReadGuard,
+    MergedCaseExistsGuard,
+    CaseFileExistsGuard,
+    LimitedAccessViewCaseFileGuard,
+  )
   @RolesRules(prisonSystemStaffRule, defenderRule)
-  @Get('file/:fileId/url')
+  @Get(['file/:fileId/url', 'mergedCase/:mergedCaseId/file/:fileId/url'])
   @ApiOkResponse({
     type: SignedUrl,
     description: 'Gets a signed url for a case file',

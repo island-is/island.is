@@ -19,9 +19,10 @@ import { IntroHeader, m as coreMessages } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 import { DelegationAdminPaths } from '../../lib/paths'
 import NumberFormat from 'react-number-format'
-
+import startOfDay from 'date-fns/startOfDay'
 import {
   Form,
+  redirect,
   useActionData,
   useNavigate,
   useSearchParams,
@@ -39,8 +40,11 @@ import {
 import { CreateDelegationConfirmModal } from '../../components/CreateDelegationConfirmModal'
 import { Identity } from '@island.is/api/schema'
 import kennitala from 'kennitala'
-import { unmaskString } from '@island.is/shared/utils'
+import { maskString, unmaskString } from '@island.is/shared/utils'
 import { useAuth } from '@island.is/auth/react'
+import { replaceParams } from '@island.is/react-spa/shared'
+import { FORM_ERRORS } from '../../constants/errors'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const CreateDelegationScreen = () => {
   const { formatMessage } = useLocale()
@@ -57,7 +61,7 @@ const CreateDelegationScreen = () => {
   const [isConfirmed, setIsConfirmed] = React.useState(false)
   const [fromNationalId, setFromNationalId] = React.useState('')
   const [toNationalId, setToNationalId] = React.useState('')
-
+  const [loading, setLoading] = React.useState(false)
   const fromInputRef = React.useRef<HTMLInputElement>(null)
   const toInputRef = React.useRef<HTMLInputElement>(null)
   const formRef = React.useRef<HTMLFormElement>(null)
@@ -67,17 +71,46 @@ const CreateDelegationScreen = () => {
 
   const typeOptions = [
     {
-      label: formatMessage(m.typeGeneral),
-      value: 'general', // Todo: change to correct enum value, yet to be created
+      label: formatMessage(m.generalMandateLabel),
+      value: AuthDelegationType.GeneralMandate,
     },
   ]
 
+  async function success() {
+    try {
+      const maskedNationalId = await maskString(
+        fromIdentity?.nationalId ?? '',
+        userInfo?.profile.nationalId ?? '',
+      )
+      successToast()
+      setLoading(false)
+      setShowConfirmModal(false)
+      navigate(
+        replaceParams({
+          href: DelegationAdminPaths.DelegationAdmin,
+          params: {
+            nationalId: maskedNationalId ?? '',
+          },
+        }),
+        { replace: true },
+      )
+    } catch (e) {
+      navigate(DelegationAdminPaths.Root)
+    }
+  }
+
   useEffect(() => {
+    if (actionData?.success) {
+      success()
+    }
+
     if (actionData?.data && !actionData.errors) {
       setIsConfirmed(true)
       setShowConfirmModal(true)
     } else {
+      setLoading(false)
       setIsConfirmed(false)
+      setShowConfirmModal(false)
     }
   }, [actionData])
 
@@ -95,11 +128,15 @@ const CreateDelegationScreen = () => {
       }
     }
 
-    getFromNationalId()
+    !!defaultFromNationalId && getFromNationalId()
   }, [defaultFromNationalId])
 
   const noUserFoundToast = () => {
     toast.warning(formatMessage(m.grantIdentityError))
+  }
+
+  const successToast = () => {
+    toast.success(formatMessage(m.createDelegationSuccessToast))
   }
 
   const [getFromIdentity, { loading: fromIdentityQueryLoading }] =
@@ -339,6 +376,8 @@ const CreateDelegationScreen = () => {
                   errorMessage={formatMessage(
                     m[actionData?.errors?.validTo as keyof typeof m],
                   )}
+                  minDate={startOfDay(new Date())}
+                  appearInline
                 />
                 <input
                   type="hidden"
@@ -369,10 +408,22 @@ const CreateDelegationScreen = () => {
               />
             </GridColumn>
             {actionData?.globalError && (
-              <GridColumn span={['12/12']}>
+              <GridColumn span={['12/12', '12/12', '7/12']}>
                 <AlertMessage
                   title=""
-                  message={formatMessage(m.errorDefault)}
+                  message={
+                    // if problem title is object extract code and use it as key
+                    FORM_ERRORS[
+                      actionData?.problem?.title as keyof typeof FORM_ERRORS
+                    ]
+                      ? formatMessage(
+                          FORM_ERRORS[
+                            actionData?.problem
+                              ?.title as keyof typeof FORM_ERRORS
+                          ],
+                        )
+                      : formatMessage(m.errorDefault)
+                  }
                   type="error"
                 />
               </GridColumn>
@@ -386,13 +437,14 @@ const CreateDelegationScreen = () => {
         toIdentity={toIdentity}
         data={actionData?.data}
         isVisible={showConfirmModal}
+        loading={loading}
         onClose={() => {
           setIsConfirmed(false)
           setShowConfirmModal(false)
         }}
         onConfirm={() => {
           submit(formRef.current)
-          setShowConfirmModal(false)
+          setLoading(true)
         }}
       />
     </Stack>

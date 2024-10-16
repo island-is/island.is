@@ -272,6 +272,31 @@
         "responses": { "204": { "description": "" } }
       }
     },
+    "/api/v1/applications/{id}/involved-parties": {
+      "get": {
+        "operationId": "getInvolvedParties",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationUserInvolvedPartiesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/health": {
       "get": {
         "operationId": "HealthController_",
@@ -623,6 +648,13 @@
           "attachments": { "type": "object", "description": "Attachments" },
           "state": {
             "type": "string",
+            "enum": [
+              "requirements",
+              "draft",
+              "draft_retry",
+              "submitted",
+              "complete"
+            ],
             "example": "draft",
             "description": "State of the application"
           },
@@ -952,6 +984,7 @@
           },
           "title": {
             "type": "string",
+            "enum": ["Frumrit", "Fylgiskjöl"],
             "description": "Title of the attachment type"
           },
           "slug": {
@@ -1012,6 +1045,38 @@
           }
         },
         "required": ["attachments"]
+      },
+      "Institution": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID for the institution, GUID format.",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the institution",
+            "example": "Dómsmálaráðuneytið"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug of the institution, used in URLs and API requests.",
+            "example": "domsmalaraduneytid"
+          }
+        },
+        "required": ["id", "title", "slug"]
+      },
+      "ApplicationUserInvolvedPartiesResponse": {
+        "type": "object",
+        "properties": {
+          "involvedParties": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Institution" }
+          }
+        },
+        "required": ["involvedParties"]
       },
       "StreamableFile": { "type": "object", "properties": {} },
       "GetPdfUrlResponse": {

@@ -73,7 +73,6 @@ const IndictmentOverview = () => {
             {formatMessage(strings.verdictTitle)}
           </Text>
           <RenderFiles
-            workingCase={workingCase}
             onOpenFile={onOpen}
             caseFiles={
               workingCase.caseFiles?.filter(

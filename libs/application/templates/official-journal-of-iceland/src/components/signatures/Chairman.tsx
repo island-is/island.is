@@ -13,6 +13,7 @@ import { SignatureMember } from './Member'
 import set from 'lodash/set'
 import * as styles from './Signatures.css'
 import * as z from 'zod'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -26,6 +27,8 @@ export const Chairman = ({ applicationId, member }: Props) => {
   const { application, debouncedOnUpdateApplicationHandler } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
 
   const handleChairmanChange = (value: string, key: keyof MemberProperties) => {
     const { signature, currentAnswers } = getCommitteeAnswers(
@@ -57,6 +60,8 @@ export const Chairman = ({ applicationId, member }: Props) => {
         updatedCommitteeSignature,
       )
 
+      setValue(InputFields.signature.committee, updatedCommitteeSignature)
+
       return updatedSignatures
     }
 
@@ -85,24 +90,24 @@ export const Chairman = ({ applicationId, member }: Props) => {
             }
           />
           <SignatureMember
-            name={`signature.comittee.member.after`}
-            label={f(signatures.inputs.after.label)}
-            defaultValue={member.after}
-            onChange={(e) =>
-              debouncedOnUpdateApplicationHandler(
-                handleChairmanChange(e.target.value, 'after'),
-              )
-            }
-          />
-        </Box>
-        <Box className={styles.inputWrapper}>
-          <SignatureMember
             name={`signature.comittee.member.name`}
             label={f(signatures.inputs.name.label)}
             defaultValue={member.name}
             onChange={(e) =>
               debouncedOnUpdateApplicationHandler(
                 handleChairmanChange(e.target.value, 'name'),
+              )
+            }
+          />
+        </Box>
+        <Box className={styles.inputWrapper}>
+          <SignatureMember
+            name={`signature.comittee.member.after`}
+            label={f(signatures.inputs.after.label)}
+            defaultValue={member.after}
+            onChange={(e) =>
+              debouncedOnUpdateApplicationHandler(
+                handleChairmanChange(e.target.value, 'after'),
               )
             }
           />

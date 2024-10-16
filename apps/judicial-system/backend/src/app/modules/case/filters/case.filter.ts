@@ -6,6 +6,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  EventType,
   getIndictmentVerdictAppealDeadlineStatus,
   IndictmentCaseReviewDecision,
   isCourtOfAppealsUser,
@@ -19,7 +20,6 @@ import {
   isRequestCase,
   isRestrictionCase,
   RequestSharedWithDefender,
-  ServiceRequirement,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -84,6 +84,27 @@ const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
 
   // Check case state access
   if (theCase.state !== CaseState.COMPLETED) {
+    return false
+  }
+
+  // Check indictment ruling decision access
+  if (
+    !theCase.indictmentRulingDecision ||
+    ![
+      CaseIndictmentRulingDecision.FINE,
+      CaseIndictmentRulingDecision.RULING,
+    ].includes(theCase.indictmentRulingDecision)
+  ) {
+    return false
+  }
+
+  // Make sure the indictment has been sent to the public prosecutor
+  if (
+    !theCase.eventLogs?.some(
+      (eventLog) =>
+        eventLog.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+    )
+  ) {
     return false
   }
 
@@ -267,21 +288,19 @@ const canPrisonAdminUserAccessCase = (
     ) {
       return false
     }
+  }
 
-    // Check defendant verdict appeal deadline access
-    const verdictInfo = theCase.defendants?.map<[boolean, Date | undefined]>(
-      (defendant) => [
-        defendant.serviceRequirement !== ServiceRequirement.NOT_REQUIRED,
-        defendant.verdictViewDate,
-      ],
-    )
+  // Check defendant verdict appeal deadline access
+  const canAppealVerdict = true
+  const verdictInfo = (theCase.defendants || []).map<
+    [boolean, Date | undefined]
+  >((defendant) => [canAppealVerdict, defendant.verdictViewDate])
 
-    const [_, indictmentVerdictAppealDeadlineExpired] =
-      getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
+  const [_, indictmentVerdictAppealDeadlineExpired] =
+    getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
 
-    if (!indictmentVerdictAppealDeadlineExpired) {
-      return false
-    }
+  if (!indictmentVerdictAppealDeadlineExpired) {
+    return false
   }
 
   return true

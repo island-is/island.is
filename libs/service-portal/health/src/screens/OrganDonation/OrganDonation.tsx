@@ -30,6 +30,12 @@ const OrganDonation = () => {
       : formatMessage(m.iAmOrganDonorText)
     : formatMessage(m.iAmNotOrganDonorText)
 
+  const heading = donorStatus?.isDonor
+    ? donorStatus.limitations?.hasLimitations
+      ? formatMessage(m.iAmOrganDonorWithExceptions)
+      : formatMessage(m.iAmOrganDonor)
+    : formatMessage(m.iAmNotOrganDonor)
+
   return (
     <Box>
       <IntroHeader
@@ -57,13 +63,7 @@ const OrganDonation = () => {
             {formatMessage(m.takeOnOrganDonation)}
           </Text>
           <ActionCard
-            heading={
-              donorStatus?.isDonor
-                ? donorStatus.limitations?.hasLimitations
-                  ? formatMessage(m.iAmOrganDonorWithExceptions)
-                  : formatMessage(m.iAmOrganDonor)
-                : formatMessage(m.iAmNotOrganDonor)
-            }
+            heading={heading}
             text={cardText}
             cta={{
               url: HealthPaths.HealthOrganDonationRegistration,

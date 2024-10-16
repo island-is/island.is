@@ -86,6 +86,7 @@ export const Form2 = () => {
           isDonor: radioValue === OPT_IN || radioValue === OPT_IN_EXCEPTIONS,
           organLimitations: radioValue === OPT_IN_EXCEPTIONS ? limitations : [],
         },
+        locale: lang,
       },
     })
   }

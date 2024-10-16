@@ -14,6 +14,7 @@ import { memberItemSchema } from '../../lib/dataSchema'
 import { SignatureMember } from './Member'
 import * as z from 'zod'
 import { RemoveCommitteeMember } from './RemoveComitteeMember'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -32,6 +33,8 @@ export const CommitteeMember = ({
   const { debouncedOnUpdateApplicationHandler, application } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
 
   const handleMemberChange = (
     value: string,
@@ -76,6 +79,8 @@ export const CommitteeMember = ({
         InputFields.signature.committee,
         updatedCommitteeSignature,
       )
+
+      setValue(InputFields.signature.committee, updatedCommitteeSignature)
 
       return updatedSignatures
     }

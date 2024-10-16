@@ -98,13 +98,15 @@ const Signees = () => {
                         </T.Data>
                         <T.Data text={{ variant: 'medium' }}>
                           {!s.isDigital && (
-                            <Box display={'flex'}>
-                              <Icon
-                                icon="document"
-                                type="outline"
-                                color="blue400"
-                              />
+                            <Box display="flex">
                               <Text>{s.pageNumber}</Text>
+                              <Box marginLeft={1}>
+                                <Icon
+                                  icon="document"
+                                  type="outline"
+                                  color="blue400"
+                                />
+                              </Box>
                             </Box>
                           )}
                         </T.Data>

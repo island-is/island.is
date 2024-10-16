@@ -1,16 +1,29 @@
+import { Base64 } from 'js-base64'
 import { Includeable, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
-import { forwardRef, Inject, Injectable } from '@nestjs/common'
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotImplementedException,
+} from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import type { User } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  isTrafficViolationCase,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
+import { PdfService } from '../case/pdf.service'
 import { Defendant } from '../defendant/models/defendant.model'
+import { FileService } from '../file'
 import { PoliceService } from '../police'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
@@ -26,16 +39,46 @@ export class SubpoenaService {
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
+    private readonly pdfService: PdfService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
+    @Inject(forwardRef(() => FileService))
+    private readonly fileService: FileService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async createSubpoena(defendant: Defendant): Promise<Subpoena> {
-    return await this.subpoenaModel.create({
-      defendantId: defendant.id,
-      caseId: defendant.caseId,
-    })
+  async createSubpoena(
+    defendantId: string,
+    caseId: string,
+    transaction: Transaction,
+    arraignmentDate?: Date,
+    location?: string,
+  ): Promise<Subpoena> {
+    return this.subpoenaModel.create(
+      {
+        defendantId,
+        caseId,
+        arraignmentDate,
+        location,
+      },
+      { transaction },
+    )
+  }
+
+  async setHash(id: string, hash: string): Promise<void> {
+    const [numberOfAffectedRows] = await this.subpoenaModel.update(
+      { hash },
+      { where: { id } },
+    )
+
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena hash for subpoena ${id}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(`Could not update subpoena ${id}`)
+    }
   }
 
   async update(
@@ -49,6 +92,9 @@ export class SubpoenaService {
       defenderEmail,
       defenderPhoneNumber,
       defenderName,
+      requestedDefenderChoice,
+      requestedDefenderNationalId,
+      requestedDefenderName,
     } = update
 
     const [numberOfAffectedRows] = await this.subpoenaModel.update(update, {
@@ -58,13 +104,21 @@ export class SubpoenaService {
     })
     let defenderAffectedRows = 0
 
-    if (defenderChoice || defenderNationalId) {
+    if (
+      defenderChoice ||
+      defenderNationalId ||
+      requestedDefenderChoice ||
+      requestedDefenderNationalId
+    ) {
       const defendantUpdate: Partial<Defendant> = {
         defenderChoice,
         defenderNationalId,
         defenderName,
         defenderEmail,
         defenderPhoneNumber,
+        requestedDefenderChoice,
+        requestedDefenderNationalId,
+        requestedDefenderName,
       }
 
       const [defenderUpdateAffectedRows] = await this.defendantModel.update(
@@ -85,6 +139,7 @@ export class SubpoenaService {
     }
 
     const updatedSubpoena = await this.findBySubpoenaId(subpoena.subpoenaId)
+
     return updatedSubpoena
   }
 
@@ -99,42 +154,85 @@ export class SubpoenaService {
     })
 
     if (!subpoena) {
-      throw new Error(`Subpoena with id ${subpoenaId} not found`)
+      throw new Error(`Subpoena with subpoena id ${subpoenaId} not found`)
     }
 
     return subpoena
   }
 
+  async getIndictmentPdf(theCase: Case): Promise<Buffer> {
+    if (isTrafficViolationCase(theCase)) {
+      return await this.pdfService.getIndictmentPdf(theCase)
+    }
+
+    const indictmentCaseFile = theCase.caseFiles?.find(
+      (caseFile) =>
+        caseFile.category === CaseFileCategory.INDICTMENT && caseFile.key,
+    )
+
+    if (!indictmentCaseFile) {
+      // This shouldn't ever happen
+      this.logger.error(
+        `No indictment found for case ${theCase.id} so cannot deliver subpoena to police`,
+      )
+      throw new Error(`No indictment found for case ${theCase.id}`)
+    }
+
+    return await this.fileService.getCaseFileFromS3(theCase, indictmentCaseFile)
+  }
+
   async deliverSubpoenaToPolice(
     theCase: Case,
     defendant: Defendant,
-    subpoenaFile: string,
+    subpoena: Subpoena,
     user: User,
   ): Promise<DeliverResponse> {
     try {
-      const subpoena = await this.createSubpoena(defendant)
+      const subpoenaPdf = await this.pdfService.getSubpoenaPdf(
+        theCase,
+        defendant,
+        subpoena,
+      )
+
+      const indictmentPdf = await this.getIndictmentPdf(theCase)
 
       const createdSubpoena = await this.policeService.createSubpoena(
         theCase,
         defendant,
-        subpoenaFile,
+        Base64.btoa(subpoenaPdf.toString('binary')),
+        Base64.btoa(indictmentPdf.toString('binary')),
         user,
       )
 
       if (!createdSubpoena) {
         this.logger.error('Failed to create subpoena file for police')
+
         return { delivered: false }
       }
 
-      await this.subpoenaModel.update(
+      const [numberOfAffectedRows] = await this.subpoenaModel.update(
         { subpoenaId: createdSubpoena.subpoenaId },
         { where: { id: subpoena.id } },
       )
 
+      if (numberOfAffectedRows < 1) {
+        this.logger.error(
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena for subpoena ${subpoena.id}`,
+        )
+      }
+
       return { delivered: true }
     } catch (error) {
-      this.logger.error('Error delivering subpoena to police', error)
-      return { delivered: false }
+      if (error instanceof NotImplementedException) {
+        this.logger.info(
+          'Failed to deliver subpoena to police due to lack of implementation',
+          error,
+        )
+        return { delivered: true }
+      } else {
+        this.logger.error('Error delivering subpoena to police', error)
+        return { delivered: false }
+      }
     }
   }
 }

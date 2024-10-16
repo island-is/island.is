@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from 'react'
+import { Dispatch, FC, ReactNode, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
@@ -17,7 +17,11 @@ import { strings } from './SubpoenaType.strings'
 import * as styles from '../../Indictments/Subpoena/Subpoena.css'
 
 interface SubpoenaTypeProps {
-  defendants: Defendant[]
+  subpoenaItems: {
+    defendant: Defendant
+    disabled?: boolean
+    children?: ReactNode
+  }[]
   workingCase: Case
   setWorkingCase: Dispatch<SetStateAction<Case>>
   updateDefendantState: (
@@ -28,70 +32,79 @@ interface SubpoenaTypeProps {
 }
 
 const SubpoenaType: FC<SubpoenaTypeProps> = ({
-  defendants,
+  subpoenaItems,
   workingCase,
   setWorkingCase,
   updateDefendantState,
   required = true,
 }) => {
   const { formatMessage } = useIntl()
-  const isArraignmentDone = Boolean(workingCase.indictmentDecision)
+
   return (
     <>
       <SectionHeading
         title={formatMessage(strings.title)}
         required={required}
       />
-      {defendants.map((defendant, index) => (
+      {subpoenaItems.map((item, index) => (
         <Box
-          key={defendant.id}
-          marginBottom={index === defendants.length ? 0 : 3}
+          key={item.defendant.id}
+          marginBottom={
+            index === subpoenaItems.length - 1 ? 0 : item.children ? 5 : 3
+          }
         >
-          <BlueBox>
-            <Text as="h4" variant="h4" marginBottom={2}>
-              {defendant.name}
-            </Text>
-            <Box className={styles.subpoenaTypeGrid}>
-              <RadioButton
-                large
-                name="subpoenaType"
-                id={`subpoenaTypeAbsence${defendant.id}`}
-                backgroundColor="white"
-                label={formatMessage(strings.absence)}
-                checked={defendant.subpoenaType === SubpoenaTypeEnum.ABSENCE}
-                onChange={() => {
-                  updateDefendantState(
-                    {
-                      caseId: workingCase.id,
-                      defendantId: defendant.id,
-                      subpoenaType: SubpoenaTypeEnum.ABSENCE,
-                    },
-                    setWorkingCase,
-                  )
-                }}
-                disabled={isArraignmentDone}
-              />
-              <RadioButton
-                large
-                name="subpoenaType"
-                id={`subpoenaTypeArrest${defendant.id}`}
-                backgroundColor="white"
-                label={formatMessage(strings.arrest)}
-                checked={defendant.subpoenaType === SubpoenaTypeEnum.ARREST}
-                onChange={() => {
-                  updateDefendantState(
-                    {
-                      caseId: workingCase.id,
-                      defendantId: defendant.id,
-                      subpoenaType: SubpoenaTypeEnum.ARREST,
-                    },
-                    setWorkingCase,
-                  )
-                }}
-                disabled={isArraignmentDone}
-              />
-            </Box>
-          </BlueBox>
+          <Box marginBottom={item.children ? 2 : 0}>
+            <BlueBox>
+              <Text as="h4" variant="h4" marginBottom={2}>
+                {item.defendant.name}
+              </Text>
+              <Box className={styles.subpoenaTypeGrid}>
+                <RadioButton
+                  large
+                  name="subpoenaType"
+                  id={`subpoenaTypeAbsence${item.defendant.id}`}
+                  backgroundColor="white"
+                  label={formatMessage(strings.absence)}
+                  checked={
+                    item.defendant.subpoenaType === SubpoenaTypeEnum.ABSENCE
+                  }
+                  onChange={() => {
+                    updateDefendantState(
+                      {
+                        caseId: workingCase.id,
+                        defendantId: item.defendant.id,
+                        subpoenaType: SubpoenaTypeEnum.ABSENCE,
+                      },
+                      setWorkingCase,
+                    )
+                  }}
+                  disabled={item.disabled}
+                />
+                <RadioButton
+                  large
+                  name="subpoenaType"
+                  id={`subpoenaTypeArrest${item.defendant.id}`}
+                  backgroundColor="white"
+                  label={formatMessage(strings.arrest)}
+                  checked={
+                    item.defendant.subpoenaType === SubpoenaTypeEnum.ARREST
+                  }
+                  onChange={() => {
+                    updateDefendantState(
+                      {
+                        caseId: workingCase.id,
+                        defendantId: item.defendant.id,
+                        subpoenaType: SubpoenaTypeEnum.ARREST,
+                      },
+                      setWorkingCase,
+                    )
+                  }}
+                  disabled={item.disabled}
+                />
+              </Box>
+            </BlueBox>
+          </Box>
+          {item.children}
         </Box>
       ))}
     </>
