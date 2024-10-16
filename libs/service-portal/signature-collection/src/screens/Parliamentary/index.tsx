@@ -9,12 +9,15 @@ import { m } from '../../lib/messages'
 import OwnerView from './OwnerView'
 import SigneeView from '../shared/SigneeView'
 import { useGetCurrentCollection, useIsOwner } from '../../hooks'
+import { useUserInfo } from '@island.is/auth/react'
+import { AuthDelegationType } from '../../types/schema'
 
 const SignatureListsParliamentary = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
 
   const { isOwner, loadingIsOwner } = useIsOwner()
+  const userInfo = useUserInfo()
   const { currentCollection, loadingCurrentCollection } =
     useGetCurrentCollection()
 
@@ -30,7 +33,15 @@ const SignatureListsParliamentary = () => {
         <Box>
           {!currentCollection?.isPresidential ? (
             isOwner.success ? (
-              <OwnerView currentCollection={currentCollection} />
+              <OwnerView
+                currentCollection={currentCollection}
+                isListHolder={
+                  !userInfo?.profile?.delegationType ||
+                  userInfo?.profile?.delegationType?.includes(
+                    AuthDelegationType.ProcurationHolder,
+                  )
+                }
+              />
             ) : (
               <SigneeView currentCollection={currentCollection} />
             )
