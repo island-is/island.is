@@ -25,6 +25,7 @@ import { getModelToken } from '@nestjs/sequelize'
 import { faker } from '@island.is/shared/mocking'
 import { TicketStatus, ZendeskService } from '@island.is/clients/zendesk'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { ErrorCodes } from '@island.is/shared/utils'
 
 const currentUser = createCurrentUser({
   scope: [DelegationAdminScopes.read, DelegationAdminScopes.admin],
@@ -373,7 +374,7 @@ describe('DelegationAdmin - With authentication', () => {
       expect(res.body).toMatchObject({
         status: 400,
         type: 'https://httpstatuses.org/400',
-        title: 'COULD_NOT_CREATE_DELEGATION',
+        title: ErrorCodes.COULD_NOT_CREATE_DELEGATION,
         detail: 'Could not create delegation',
       })
     })
@@ -413,7 +414,7 @@ describe('DelegationAdmin - With authentication', () => {
       expect(res.body).toMatchObject({
         status: 400,
         type: 'https://httpstatuses.org/400',
-        title: 'REFERENCE_ID_ALREADY_EXISTS',
+        title: ErrorCodes.REFERENCE_ID_ALREADY_EXISTS,
         detail: 'Delegation with the same reference id already exists',
       })
     })

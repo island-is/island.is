@@ -161,7 +161,7 @@ export const m = defineMessages({
   },
   couldNotCreateDelegationError: {
     id: 'admin.delegationAdmin:couldNotCreateDelegationError',
-    defaultMessage: 'Umboð var ekki hægt að skrá',
+    defaultMessage: 'Ekki tókst að skrá umboð',
   },
   referenceIdAlreadyExistsError: {
     id: 'admin.delegationAdmin:referenceIdAlreadyExistsError',
