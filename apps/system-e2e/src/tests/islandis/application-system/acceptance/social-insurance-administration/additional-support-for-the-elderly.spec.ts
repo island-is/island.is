@@ -44,7 +44,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
 
 applicationTest.describe('Additional support for the elderly', () => {
   applicationTest(
-    'Should be able to create application',
+    'Should complete Additional support for the elderly application successfully',
     async ({ applicationPage }) => {
       const page = applicationPage
 

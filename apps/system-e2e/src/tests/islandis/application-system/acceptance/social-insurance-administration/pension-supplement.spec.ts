@@ -44,7 +44,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
 
 applicationTest.describe('Pension Supplement', () => {
   applicationTest(
-    'Should be able to create application',
+    'Should complete Pension Supplement application successfully',
     async ({ applicationPage }) => {
       const page = applicationPage
       const { proceed } = helpers(page)

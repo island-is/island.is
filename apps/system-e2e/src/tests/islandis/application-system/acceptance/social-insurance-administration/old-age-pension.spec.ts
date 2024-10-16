@@ -127,7 +127,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
 
 applicationTest.describe('Old Age Pension', () => {
   applicationTest(
-    'Should be able to create application',
+    'Should complete Old Age Pension application successfully',
     async ({ applicationPage }) => {
       const page = applicationPage
       const { proceed } = helpers(page)
@@ -195,7 +195,7 @@ applicationTest.describe('Old Age Pension', () => {
 
 applicationTest.describe('Half Old Age Pension', () => {
   applicationTest(
-    'Should be able to create application',
+    'Should complete Half Old Age Pension application successfully',
     async ({ applicationPage }) => {
       const page = applicationPage
       const { proceed } = helpers(page)
