@@ -34,6 +34,7 @@ import {
   DataDto,
   WorkAccidentClientService,
 } from '@island.is/clients/work-accident-ver'
+import { getDateAndTime } from './work-accident-notification.utils'
 
 @Injectable()
 export class WorkAccidentNotificationTemplateService extends BaseTemplateApiService {
@@ -85,21 +86,38 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
 
     await this.workAccidentClientService.createAccident(auth, {
       accidentForCreationDto: {
-        companySSN: '', // TODO
-        sizeOfEnterprise: 0, // TODO
-        nameOfBranchOrDepartment: '', // TODO
-        address: '', // TODO
-        postcode: '', // TODO
-        workplaceHealthAndSafety: [], // TODO
-        buyersSSN: '', // TODO
-        dateAndTimeOfAccident: new Date(), // TODO
-        aoshCame: true, // TODO
-        policeCame: true, // TODO
-        numberOfVictims: 0, // TODO
-        municipalityWhereAccidentOccured: '', // TODO
-        specificLocationOfAccident: '', // TODO
-        detailedDescriptionOfAccident: '', // TODO
-        workingEnvironment: '', // TODO
+        companySSN: answers.companyInformation.nationalId,
+        sizeOfEnterprise: parseInt(
+          answers.companyInformation.numberOfEmployees,
+          10,
+        ),
+        nameOfBranchOrDepartment: answers.companyInformation.nameOfBranch,
+        address: answers.companyInformation.address,
+        postcode: answers.companyInformation.postnumber,
+        workplaceHealthAndSafety:
+          answers.companyLaborProtection.workhealthAndSafetyOccupation?.map(
+            (code: string) => {
+              return parseInt(code, 10)
+            },
+          ),
+        buyersSSN: '', // TODO ????
+        dateAndTimeOfAccident: getDateAndTime(
+          answers.accident.date,
+          answers.accident.time.split(':')[0],
+          answers.accident.time.split(':')[1],
+        ),
+        aoshCame: answers.accident.didAoshCome === 'yes',
+        policeCame: answers.accident.didPoliceCome === 'yes',
+        numberOfVictims: 0, // TODO: Add victims.length
+        municipalityWhereAccidentOccured: answers.accident.municipality, // Vilja þau code eða name til baka?
+        specificLocationOfAccident: answers.accident.exactLocation,
+        detailedDescriptionOfAccident: answers.accident.wasDoing.concat(
+          '. ',
+          answers.accident.wentWrong,
+          '. ',
+          answers.accident.how,
+        ),
+        workingEnvironment: answers.accident.accidentLocation.value,
         victims: [
           {
             victimsSSN: '',
@@ -125,7 +143,7 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
             typeOfInjuryMostSevere: '',
           },
         ], // TODO
-        userPhoneNumber: '', // TODO
+        userPhoneNumber: '', // TODO: Þetta kemur ekki fram í umsókn og því ekki víst að þetta sé til staðar?
         userEmail: '', // TODO
       },
     })
