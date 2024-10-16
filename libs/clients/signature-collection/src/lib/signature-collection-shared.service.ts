@@ -90,9 +90,7 @@ export class SignatureCollectionSharedClientService {
     const signatures = await api.medmaelalistarIDMedmaeliGet({
       iD: parseInt(listId),
     })
-    return signatures
-      .map((signature) => mapSignature(signature))
-      .filter((s) => s.valid)
+    return signatures.map((signature) => mapSignature(signature))
   }
 
   canCreate({

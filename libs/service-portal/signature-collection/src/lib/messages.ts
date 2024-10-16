@@ -361,6 +361,11 @@ export const m = defineMessages({
     defaultMessage: 'Umsjónaraðilar',
     description: '',
   },
+  noSupervisors: {
+    id: 'sp.signatureCollection:noSupervisors',
+    defaultMessage: 'Enginn umsjónaraðili skráður',
+    description: '',
+  },
   supervisorsTooltip: {
     id: 'sp.signatureCollection:supervisorsTooltip',
     defaultMessage:
