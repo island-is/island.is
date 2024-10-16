@@ -1,15 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import initApollo from '@island.is/consultation-portal/graphql/client'
-import { SUB_GET_CASES } from '@island.is/consultation-portal/graphql/queries.graphql'
+import initApollo from '../../graphql/client'
+import { SUB_GET_CASES } from '../../graphql/queries.graphql'
 import RSS from 'rss'
 import { SubGetCasesQuery } from '../../graphql/queries.graphql.generated'
-import {
-  SUB_PAGE_SIZE,
-  SUB_STATUSES_TO_FETCH,
-} from '@island.is/consultation-portal/utils/consts/consts'
+import { SUB_PAGE_SIZE, SUB_STATUSES_TO_FETCH } from '../../utils/consts/consts'
 
 export default async function handler(
-  _req: NextApiRequest,
+  req: NextApiRequest,
   res: NextApiResponse,
 ) {
   const client = initApollo()
@@ -35,12 +32,16 @@ export default async function handler(
       return
     }
 
+    const host: string = req.headers.host
+    const protocol = `http${host.startsWith('localhost') ? '' : 's'}://`
+    const baseUrl = `${protocol}${host}`
+
     const feed = new RSS({
       title: 'Samráðsgátt - RSS Feed',
       description: 'Áskrift af málum',
       language: 'is',
-      feed_url: 'https://island.is/samradsgatt/api/rss',
-      site_url: 'https://island.is/samradsgatt',
+      feed_url: `${baseUrl}/samradsgatt/api/rss`,
+      site_url: `${baseUrl}/samradsgatt`,
       copyright: `Allur réttur áskilinn ${new Date().getFullYear()}, Island.is`,
     })
 
@@ -48,7 +49,7 @@ export default async function handler(
       feed.item({
         title: post.name,
         description: '',
-        url: `https://island.is/samradsgatt/mal/${post.id}`,
+        url: `${baseUrl}/samradsgatt/mal/${post.id}`,
         date: '',
         custom_elements: [
           { caseNumber: post.caseNumber },
@@ -59,7 +60,6 @@ export default async function handler(
     })
 
     const rss = feed.xml({ indent: true })
-    console.log('RSS', rss)
     res.setHeader('Content-Type', 'application/xml')
     res.status(200).send(rss)
   } catch (error) {
