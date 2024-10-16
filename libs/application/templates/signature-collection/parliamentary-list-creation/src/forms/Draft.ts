@@ -9,7 +9,6 @@ import {
   buildPhoneField,
   buildSection,
   buildSubmitField,
-  buildTableRepeaterField,
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -20,7 +19,6 @@ import Logo from '../../assets/Logo'
 
 import { m } from '../lib/messages'
 import { formatPhone } from '../lib/utils'
-import { Manager, Supervisor } from '../lib/constants'
 import { Collection } from '@island.is/clients/signature-collection'
 import { Signee } from '@island.is/clients/signature-collection'
 
@@ -280,7 +278,10 @@ export const Draft: Form = buildForm({
               title: '',
               items: ({ answers }) => {
                 return (answers.constituency as string[]).map((c: string) => ({
-                  heading: 'Flokkur 1 - ' + c.split('|')[1],
+                  heading:
+                    getValueViaPath(answers, 'list.name') +
+                    ' - ' +
+                    c.split('|')[1],
                   progressMeter: {
                     currentProgress: 0,
                     maxProgress: 350,
@@ -289,68 +290,6 @@ export const Draft: Form = buildForm({
                 }))
               },
             }),
-            /*buildDescriptionField({
-              id: 'space4',
-              title: '',
-              space: 'gutter',
-            }),
-            buildDescriptionField({
-              id: 'managersHeader',
-              title: m.managers,
-              titleVariant: 'h3',
-              space: 'gutter',
-              marginBottom: 3,
-              condition: (answers) =>
-                !!(answers.managers as Array<Manager>)?.length,
-            }),
-            buildKeyValueField({
-              label: '',
-              width: 'full',
-              value: ({ answers }) => {
-                return (answers.managers as Array<Manager>)
-                  .map(
-                    (m: Manager) =>
-                      m.manager.name +
-                      ' - ' +
-                      formatNationalId(m.manager.nationalId) +
-                      ' - ' +
-                      m.constituency,
-                  )
-                  .join('\n')
-              },
-            }),
-            buildDescriptionField({
-              id: 'space5',
-              title: '',
-              space: 'gutter',
-            }),
-            buildDescriptionField({
-              id: 'supervisorsHeader',
-              title: m.supervisors,
-              titleVariant: 'h3',
-              space: 'gutter',
-              marginBottom: 3,
-              condition: (answers) =>
-                !!(answers.supervisors as Array<Supervisor>)?.length,
-            }),
-            buildKeyValueField({
-              label: '',
-              width: 'full',
-              value: ({ answers }) => {
-                return (answers.supervisors as Array<Supervisor>)
-                  .map(
-                    (s: Supervisor) =>
-                      s.supervisor.name +
-                      ' - ' +
-                      formatNationalId(s.supervisor.nationalId) +
-                      ' - ' +
-                      (s.constituency as unknown as string[])
-                        .map((c) => c.split('|')[1])
-                        .join(', '),
-                  )
-                  .join('\n')
-              },
-            }),*/
             buildSubmitField({
               id: 'submit',
               placement: 'footer',

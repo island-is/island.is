@@ -59,6 +59,24 @@ const Advocates = () => {
             message={formatMessage(strings.alertBannerText)}
             type="info"
           />
+          {workingCase.defendants
+            ?.filter((defendant) => defendant.requestedDefenderChoice)
+            .map((defendant) => (
+              <Box marginTop={2}>
+                <AlertMessage
+                  title={formatMessage(strings.defenderChoiceAlertTitle, {
+                    defendantName: defendant.name,
+                  })}
+                  message={formatMessage(strings.defenderChoiceAlertMessage, {
+                    requestedDefenderChoice: defendant.requestedDefenderChoice,
+                    requestedDefenderName: defendant.requestedDefenderName,
+                    requestedDefenderNationalId:
+                      defendant.requestedDefenderNationalId,
+                  })}
+                  type="warning"
+                />
+              </Box>
+            ))}
         </Box>
         <Box component="section" marginBottom={hasCivilClaimants ? 5 : 10}>
           <SectionHeading
