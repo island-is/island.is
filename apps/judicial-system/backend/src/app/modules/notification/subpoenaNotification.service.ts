@@ -1,3 +1,5 @@
+import { MessageDescriptor } from 'react-intl'
+
 import {
   Inject,
   Injectable,
@@ -48,17 +50,26 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     )
   }
 
-  private getEmailContents(notificationType: subpoenaNotificationType) {
+  private getEmailContents(notificationType: subpoenaNotificationType): {
+    subject: MessageDescriptor
+    body: MessageDescriptor
+  } {
     switch (notificationType) {
       case NotificationType.SERVICE_SUCCESSFUL:
-        return [strings.serviceSuccessfulSubject, strings.serviceSuccessfulBody]
+        return {
+          subject: strings.serviceSuccessfulSubject,
+          body: strings.serviceSuccessfulBody,
+        }
       case NotificationType.SERVICE_FAILED:
-        return [strings.serviceFailedSubject, strings.serviceFailedBody]
+        return {
+          subject: strings.serviceFailedSubject,
+          body: strings.serviceFailedBody,
+        }
       case NotificationType.DEFENDANT_SELECTED_DEFENDER:
-        return [
-          strings.defendantSelectedDefenderSubject,
-          strings.defendantSelectedDefenderBody,
-        ]
+        return {
+          subject: strings.defendantSelectedDefenderSubject,
+          body: strings.defendantSelectedDefenderBody,
+        }
       default:
         throw new InternalServerErrorException('Email contents not found')
     }
@@ -105,13 +116,13 @@ export class SubpoenaNotificationService extends BaseNotificationService {
 
     await this.refreshFormatMessage()
 
-    const [subject, body] = this.getEmailContents(notificationType)
+    const emailContents = this.getEmailContents(notificationType)
 
-    const formattedSubject = this.formatMessage(subject, {
+    const formattedSubject = this.formatMessage(emailContents.subject, {
       courtCaseNumber: theCase.courtCaseNumber,
     })
 
-    const formattedBody = this.formatMessage(body, {
+    const formattedBody = this.formatMessage(emailContents.body, {
       courtCaseNumber: theCase.courtCaseNumber,
       linkStart: `<a href="${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}">`,
       linkEnd: '</a>',
