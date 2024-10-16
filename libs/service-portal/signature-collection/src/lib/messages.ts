@@ -116,6 +116,17 @@ export const m = defineMessages({
   },
 
   /* Signee View */
+  noUserFound: {
+    id: 'sp.signatureCollection:noUserFound',
+    defaultMessage: 'Þú fannst ekki í kjörskrá',
+    description: '',
+  },
+  noUserFoundDescription: {
+    id: 'sp.signatureCollection:noUserFoundDescription#markdown',
+    defaultMessage:
+      'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við Þjóðskrá Íslands.',
+    description: '',
+  },
   noCollectionIsActive: {
     id: 'sp.signatureCollection:noCollectionIsActive',
     defaultMessage: 'Engin söfnun í gangi',

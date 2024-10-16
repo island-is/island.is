@@ -53,7 +53,7 @@ export const errorMessages = {
   active: defineMessages({
     title: {
       id: 'pls.application:error.active.title',
-      defaultMessage: 'Ekki er hægt að mæla með framboði.',
+      defaultMessage: 'Ekki er hægt að mæla með framboði',
       description: '',
     },
     summary: {
@@ -101,7 +101,7 @@ export const errorMessages = {
   maxReached: defineMessages({
     title: {
       id: 'pls.application:error.maxReached.title',
-      defaultMessage: 'Framboð hefur náð hámarksfjölda meðmæla.',
+      defaultMessage: 'Framboð hefur náð hámarksfjölda meðmæla',
       description: '',
     },
     summary: {
@@ -119,6 +119,19 @@ export const errorMessages = {
     summary: {
       id: 'pls.application:error.submitFailure.summary',
       defaultMessage: 'Tókst ekki að skrá meðmæli.',
+      description: '',
+    },
+  }),
+  singeeNotFound: defineMessages({
+    title: {
+      id: 'pls.application:error.singeeNotFound.title',
+      defaultMessage: 'Þú fannst ekki í kjörskrá',
+      description: '',
+    },
+    summary: {
+      id: 'pls.application:error.singeeNotFound.summary',
+      defaultMessage:
+        'Hægt er að hafa samband við Þjóðskrá fyrir nánari upplýsingar.',
       description: '',
     },
   }),

@@ -36,7 +36,8 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
   }
 
   async canSign({ auth }: TemplateApiModuleActionProps) {
-    const signee = await this.signatureCollectionClientService.getSignee(auth)
+    try {
+       const signee = await this.signatureCollectionClientService.getSignee(auth)
     const { canSign, canSignInfo } = signee
     if (canSign) {
       return signee
@@ -64,6 +65,13 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
       }
     })
     throw new TemplateApiError(errors, 405)
+    } catch (error) {
+      if(error.status === 404) {
+        throw new TemplateApiError(errorMessages.singeeNotFound, 404)
+      }
+      throw new TemplateApiError(errorMessages.deniedByService, 400)
+    }
+   
   }
 
   async getList({ auth, application }: TemplateApiModuleActionProps) {

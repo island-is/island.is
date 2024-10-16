@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import {
   FrambodApi,
   FrambodDTO,
@@ -10,7 +10,6 @@ import {
   GetListInput,
   CreateListInput,
   ReasonKey,
-  CanCreateInput,
   CanSignInput,
   CreateParliamentaryCandidacyInput,
   AddListsInput,
@@ -20,7 +19,6 @@ import {
   List,
   SignedList,
   getSlug,
-  mapList,
   mapListBase,
 } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
@@ -420,14 +418,16 @@ export class SignatureCollectionClientService {
   async getSignee(auth: User, nationalId?: string): Promise<Signee> {
     const collection = await this.currentCollection()
     const { id, isPresidential, isActive, areas } = collection
-    const user = await this.getApiWithAuth(
+    try {
+      const user = await this.getApiWithAuth(
       this.collectionsApi,
       auth,
     ).medmaelasofnunIDEinsInfoKennitalaGet({
       kennitala: nationalId ?? auth.nationalId,
       iD: parseInt(id),
     })
-
+ 
+    
     const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
     const activeSignature = user.medmaeli?.find((signature) => signature.valid)
     const signatures = user.medmaeli?.map((signature) =>
@@ -477,6 +477,10 @@ export class SignatureCollectionClientService {
         name: user.listabokstafur?.frambodNafn ?? '',
       },
     }
+  } catch (e) {
+
+    throw new NotFoundException('User not found')
+  }
   }
 
   async isCandidateId(candidateId: string, auth: User): Promise<boolean> {
