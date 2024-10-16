@@ -34,7 +34,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'plc.application:error.alreadyCandidate.summary',
-      defaultMessage: 'Þú ert nú þegar með framboð',
+      defaultMessage: 'Þú ert nú þegar með framboð. Þú getur nálgast nánari upplýsingar um þína meðmælasöfnun á Mínum Síðum.',
       description: '',
     },
   }),
