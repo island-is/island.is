@@ -277,23 +277,29 @@ export class SignatureCollectionClientService {
       pageNumber,
     }: { listId: string; nationalId: string; pageNumber: number },
   ): Promise<Success> {
-    const newSignature = await this.getApiWithAuth(
-      this.listsApi,
-      auth,
-    ).medmaelalistarIDMedmaeliBulkPost({
-      medmaeliBulkRequestDTO: {
-        medmaeli: [
-          {
-            kennitala: nationalId,
-            bladsida: pageNumber,
-          },
-        ],
-      },
-      iD: parseInt(listId),
-    })
+    try {
+      await this.getApiWithAuth(
+        this.listsApi,
+        auth,
+      ).medmaelalistarIDMedmaeliBulkPost({
+        medmaeliBulkRequestDTO: {
+          medmaeli: [
+            {
+              kennitala: nationalId,
+              bladsida: pageNumber,
+            },
+          ],
+        },
+        iD: parseInt(listId),
+      })
 
-    return {
-      success: !!newSignature.medmaeliKenn?.includes(nationalId),
+      return {
+        success: true,
+      }
+    } catch {
+      return {
+        success: false,
+      }
     }
   }
 

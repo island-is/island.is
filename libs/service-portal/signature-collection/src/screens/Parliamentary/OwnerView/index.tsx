@@ -11,7 +11,7 @@ import {
   toast,
   Button,
 } from '@island.is/island-ui/core'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
@@ -37,6 +37,8 @@ const OwnerView = ({
   currentCollection: SignatureCollection
 }) => {
   const navigate = useNavigate()
+  const location = useLocation()
+
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
     useGetListsForOwner(currentCollection?.id || '')
@@ -104,61 +106,73 @@ const OwnerView = ({
                   withLabel: true,
                 }}
                 eyebrow={list.title.split(' - ')[0]}
-                cta={{
-                  label: formatMessage(m.viewList),
-                  variant: 'text',
-                  icon: 'arrowForward',
-                  onClick: () => {
-                    navigate(
-                      SignatureCollectionPaths.ViewParliamentaryList.replace(
-                        ':id',
-                        list.id,
-                      ),
-                      {
-                        state: {
-                          collectionId: currentCollection?.id || '',
+                cta={
+                  list.active
+                    ? {
+                        label: formatMessage(m.viewList),
+                        variant: 'text',
+                        icon: 'arrowForward',
+                        onClick: () => {
+                          const path = location.pathname.includes('fyrirtaeki')
+                            ? SignatureCollectionPaths.CompanyViewParliamentaryList
+                            : SignatureCollectionPaths.ViewParliamentaryList
+                          navigate(path.replace(':id', list.id), {
+                            state: {
+                              collectionId: currentCollection?.id || '',
+                            },
+                          })
                         },
-                      },
-                    )
-                  },
-                }}
-                tag={{
-                  label: 'Cancel collection',
-                  renderTag: () => (
-                    <DialogPrompt
-                      baseId="cancel_collection_dialog"
-                      title={
-                        formatMessage(m.cancelCollectionButton) +
-                        ' - ' +
-                        list.area?.name
                       }
-                      description={formatMessage(
-                        m.cancelCollectionModalMessage,
-                      )}
-                      ariaLabel="delete"
-                      disclosureElement={
-                        <Tag outlined variant="red">
-                          <Box display="flex" alignItems="center">
-                            <Icon icon="trash" size="small" type="outline" />
-                          </Box>
-                        </Tag>
+                    : undefined
+                }
+                tag={
+                  list.active
+                    ? {
+                        label: 'Cancel collection',
+                        renderTag: () => (
+                          <DialogPrompt
+                            baseId="cancel_collection_dialog"
+                            title={
+                              formatMessage(m.cancelCollectionButton) +
+                              ' - ' +
+                              list.area?.name
+                            }
+                            description={formatMessage(
+                              m.cancelCollectionModalMessage,
+                            )}
+                            ariaLabel="delete"
+                            disclosureElement={
+                              <Tag outlined variant="red">
+                                <Box display="flex" alignItems="center">
+                                  <Icon
+                                    icon="trash"
+                                    size="small"
+                                    type="outline"
+                                  />
+                                </Box>
+                              </Tag>
+                            }
+                            onConfirm={() => {
+                              onCancelCollection(list.id)
+                            }}
+                            buttonTextConfirm={formatMessage(
+                              m.cancelCollectionModalConfirmButton,
+                            )}
+                            buttonPropsConfirm={{
+                              variant: 'primary',
+                              colorScheme: 'destructive',
+                            }}
+                            buttonTextCancel={formatMessage(
+                              m.cancelCollectionModalCancelButton,
+                            )}
+                          />
+                        ),
                       }
-                      onConfirm={() => {
-                        onCancelCollection(list.id)
-                      }}
-                      buttonTextConfirm={formatMessage(
-                        m.cancelCollectionModalConfirmButton,
-                      )}
-                      buttonPropsConfirm={{
-                        variant: 'primary',
-                        colorScheme: 'destructive',
-                      }}
-                      buttonTextCancel={formatMessage(
-                        m.cancelCollectionModalCancelButton,
-                      )}
-                    />
-                  ),
-                }}
+                    : {
+                        label: formatMessage(m.listSubmitted),
+                        variant: 'blueberry',
+                      }
+                }
               />
             </Box>
           ))
@@ -173,7 +187,11 @@ const OwnerView = ({
         >
           <Text variant="h4">
             {formatMessage(m.supervisors) + ' '}
-            <Tooltip placement="right" text="info" color="blue400" />
+            <Tooltip
+              placement="right"
+              text={formatMessage(m.supervisorsTooltip)}
+              color="blue400"
+            />
           </Text>
         </Box>
         <T.Table>
