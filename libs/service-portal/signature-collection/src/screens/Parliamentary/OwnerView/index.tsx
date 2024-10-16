@@ -11,7 +11,7 @@ import {
   toast,
   Button,
 } from '@island.is/island-ui/core'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
@@ -33,10 +33,15 @@ import { formatNationalId } from '@island.is/portals/core'
 
 const OwnerView = ({
   currentCollection,
+  // list holder is an individual who owns a list or has a delegation of type Procuration Holder
+  isListHolder,
 }: {
   currentCollection: SignatureCollection
+  isListHolder: boolean
 }) => {
   const navigate = useNavigate()
+  const location = useLocation()
+
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
     useGetListsForOwner(currentCollection?.id || '')
@@ -78,7 +83,8 @@ const OwnerView = ({
               color="blue400"
             />
           </Text>
-          {!loadingOwnerLists &&
+          {isListHolder &&
+            !loadingOwnerLists &&
             listsForOwner?.length < currentCollection?.areas.length && (
               <AddConstituency
                 lists={listsForOwner}
@@ -104,61 +110,75 @@ const OwnerView = ({
                   withLabel: true,
                 }}
                 eyebrow={list.title.split(' - ')[0]}
-                cta={{
-                  label: formatMessage(m.viewList),
-                  variant: 'text',
-                  icon: 'arrowForward',
-                  onClick: () => {
-                    navigate(
-                      SignatureCollectionPaths.ViewParliamentaryList.replace(
-                        ':id',
-                        list.id,
-                      ),
-                      {
-                        state: {
-                          collectionId: currentCollection?.id || '',
+                cta={
+                  list.active
+                    ? {
+                        label: formatMessage(m.viewList),
+                        variant: 'text',
+                        icon: 'arrowForward',
+                        onClick: () => {
+                          const path = location.pathname.includes('fyrirtaeki')
+                            ? SignatureCollectionPaths.CompanyViewParliamentaryList
+                            : SignatureCollectionPaths.ViewParliamentaryList
+                          navigate(path.replace(':id', list.id), {
+                            state: {
+                              collectionId: currentCollection?.id || '',
+                            },
+                          })
                         },
-                      },
-                    )
-                  },
-                }}
-                tag={{
-                  label: 'Cancel collection',
-                  renderTag: () => (
-                    <DialogPrompt
-                      baseId="cancel_collection_dialog"
-                      title={
-                        formatMessage(m.cancelCollectionButton) +
-                        ' - ' +
-                        list.area?.name
                       }
-                      description={formatMessage(
-                        m.cancelCollectionModalMessage,
-                      )}
-                      ariaLabel="delete"
-                      disclosureElement={
-                        <Tag outlined variant="red">
-                          <Box display="flex" alignItems="center">
-                            <Icon icon="trash" size="small" type="outline" />
-                          </Box>
-                        </Tag>
+                    : undefined
+                }
+                tag={
+                  list.active && isListHolder
+                    ? {
+                        label: 'Cancel collection',
+                        renderTag: () => (
+                          <DialogPrompt
+                            baseId="cancel_collection_dialog"
+                            title={
+                              formatMessage(m.cancelCollectionButton) +
+                              ' - ' +
+                              list.area?.name
+                            }
+                            description={formatMessage(
+                              m.cancelCollectionModalMessage,
+                            )}
+                            ariaLabel="delete"
+                            disclosureElement={
+                              <Tag outlined variant="red">
+                                <Box display="flex" alignItems="center">
+                                  <Icon
+                                    icon="trash"
+                                    size="small"
+                                    type="outline"
+                                  />
+                                </Box>
+                              </Tag>
+                            }
+                            onConfirm={() => {
+                              onCancelCollection(list.id)
+                            }}
+                            buttonTextConfirm={formatMessage(
+                              m.cancelCollectionModalConfirmButton,
+                            )}
+                            buttonPropsConfirm={{
+                              variant: 'primary',
+                              colorScheme: 'destructive',
+                            }}
+                            buttonTextCancel={formatMessage(
+                              m.cancelCollectionModalCancelButton,
+                            )}
+                          />
+                        ),
                       }
-                      onConfirm={() => {
-                        onCancelCollection(list.id)
-                      }}
-                      buttonTextConfirm={formatMessage(
-                        m.cancelCollectionModalConfirmButton,
-                      )}
-                      buttonPropsConfirm={{
-                        variant: 'primary',
-                        colorScheme: 'destructive',
-                      }}
-                      buttonTextCancel={formatMessage(
-                        m.cancelCollectionModalCancelButton,
-                      )}
-                    />
-                  ),
-                }}
+                    : !list.active
+                    ? {
+                        label: formatMessage(m.listSubmitted),
+                        variant: 'blueberry',
+                      }
+                    : undefined
+                }
               />
             </Box>
           ))
@@ -173,7 +193,11 @@ const OwnerView = ({
         >
           <Text variant="h4">
             {formatMessage(m.supervisors) + ' '}
-            <Tooltip placement="right" text="info" color="blue400" />
+            <Tooltip
+              placement="right"
+              text={formatMessage(m.supervisorsTooltip)}
+              color="blue400"
+            />
           </Text>
         </Box>
         <T.Table>
@@ -193,13 +217,15 @@ const OwnerView = ({
                   <CollectorSkeleton />
                 </T.Data>
               </T.Row>
-            ) : (
+            ) : collectors.length ? (
               collectors.map((collector) => (
                 <T.Row key={collector.nationalId}>
                   <T.Data width={'35%'}>{collector.name}</T.Data>
                   <T.Data>{formatNationalId(collector.nationalId)}</T.Data>
                 </T.Row>
               ))
+            ) : (
+              <Text marginTop={2}>{formatMessage(m.noSupervisors)}</Text>
             )}
           </T.Body>
         </T.Table>

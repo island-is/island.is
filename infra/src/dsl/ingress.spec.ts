@@ -27,7 +27,7 @@ describe('Ingress definitions', () => {
         host: { dev: 'a', staging: 'a', prod: 'a' },
         paths: ['/api'],
       },
-      secondary: {
+      internal: {
         host: { dev: 'b', staging: 'b', prod: 'b' },
         paths: ['/'],
       },
@@ -47,7 +47,7 @@ describe('Ingress definitions', () => {
         },
         hosts: [{ host: 'a.staging01.devland.is', paths: ['/api'] }],
       },
-      'secondary-alb': {
+      'internal-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
           'nginx.ingress.kubernetes.io/service-upstream': 'true',
@@ -97,7 +97,7 @@ describe('Ingress definitions', () => {
         },
         paths: ['/api'],
       },
-      secondary: {
+      internal: {
         host: {
           dev: MissingSetting,
           staging: MissingSetting,
