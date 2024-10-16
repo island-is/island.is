@@ -3,9 +3,11 @@ import PDFDocument from 'pdfkit'
 import { FormatMessage } from '@island.is/cms-translations'
 
 import {
+  capitalize,
   formatDate,
   formatDOB,
-  lowercase,
+  getWordByGender,
+  Word,
 } from '@island.is/judicial-system/formatters'
 import { SubpoenaType } from '@island.is/judicial-system/types'
 
@@ -59,6 +61,8 @@ export const createServiceCertificate = (
     addEmptyLines(doc, 5)
   }
 
+  console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', defendant.name)
+
   arraignmentDate = arraignmentDate ?? subpoena?.arraignmentDate
   location = location ?? subpoena?.location
   subpoenaType = subpoenaType ?? defendant.subpoenaType
@@ -89,7 +93,13 @@ export const createServiceCertificate = (
 
   addEmptyLines(doc, 2)
 
-  addNormalText(doc, 'TODO--MAKE GENDERED Ákærði: ', 'Times-Bold', true)
+  console.log(defendant, subpoena)
+  addNormalText(
+    doc,
+    `${capitalize(getWordByGender(Word.AKAERDI, defendant?.gender))}: `,
+    'Times-Bold',
+    true,
+  )
   addNormalText(
     doc,
     `${subpoena?.defendant?.name}, ${formatDOB(
