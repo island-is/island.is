@@ -3,7 +3,6 @@ import * as kennitala from 'kennitala'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   ApplicantChildCustodyInformation,
-  Application,
   ApplicationContext,
   ExternalData,
   FormValue,
@@ -31,8 +30,7 @@ export const isValidPhone = (value: string) => {
 export const isValidNationalId = (value: string) => kennitala.isValid(value)
 
 export function hasSpouseCheck(context: ApplicationContext) {
-  const { externalData, answers } =
-    context.application as unknown as Application
+  const { externalData, answers } = context.application
   return hasSpouse(answers, externalData)
 }
 
