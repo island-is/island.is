@@ -1,16 +1,9 @@
 import { Module } from '@nestjs/common'
-import { RannisGrantService } from './clients/rannis/src'
-import { GrantService } from './grants.service'
-import { GRANT_PROVIDER_FACTORY } from './grants.types'
+import { RannisGrantService } from './clients/rannis/src/lib/rannisGrants.service'
+import { GrantsService } from './grants.service'
 
 @Module({
-  providers: [
-    GrantService,
-    {
-      provide: GRANT_PROVIDER_FACTORY,
-      useClass: RannisGrantService,
-    },
-  ],
-  exports: [GrantService],
+  providers: [GrantsService, RannisGrantService],
+  exports: [GrantsService],
 })
-export class ClientsGrantsModule {}
+export class GrantsClientModule {}

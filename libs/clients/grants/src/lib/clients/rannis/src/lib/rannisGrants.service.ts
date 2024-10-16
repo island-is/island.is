@@ -1,21 +1,20 @@
-import { User } from '@island.is/auth-nest-tools'
-import { GrantDto } from './dto/grant.dto'
-import { GRANTS } from './mocks/grants.mock'
+import { GRANTS } from '../../../../mocks/grants.mock'
+import { GrantDto } from '../../../../dto/grant.dto'
 import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class RannisGrantService {
   constructor() {}
 
-  getGrants = (user: User): Promise<Array<GrantDto>> => {
+  getGrants = (): Promise<Array<GrantDto>> => {
     return Promise.resolve(GRANTS)
   }
 
-  getGrantsByFund = (user: User, fundId: string): Promise<Array<GrantDto>> => {
-    return Promise.resolve(GRANTS.filter((g) => g.fundId === fundId))
+  getGrantsByFund = (fundId: string): Promise<Array<GrantDto>> => {
+    return Promise.resolve(GRANTS.filter((g) => g.applicationId === fundId))
   }
 
-  getGrant = (user: User, grantId: string): Promise<GrantDto | undefined> => {
+  getGrant = (grantId: string): Promise<GrantDto | undefined> => {
     return Promise.resolve(GRANTS.find((g) => g.id === grantId))
   }
 }

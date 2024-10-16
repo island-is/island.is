@@ -1,17 +1,22 @@
 import { Injectable } from '@nestjs/common'
-import { createClient as createManagementClient } from 'contentful-management'
+import {
+  Entry,
+  createClient as createManagementClient,
+} from 'contentful-management'
 import { ClientAPI } from 'contentful-management/dist/typings/create-contentful-api'
+import { CmsGrant } from './app.types'
+import { GrantType } from './dto/grantType.dto'
+import { isDefined } from '@island.is/shared/utils'
 
 const SPACE_ID = '8k0h54kbe6bj'
 const ENVIRONMENT = process.env.CONTENTFUL_ENVIRONMENT || 'master'
 const CONTENT_TYPE = 'grant'
-const LIMIT = 10
 
 @Injectable()
 export class AppRepository {
   private managementClient!: ClientAPI
 
-  private getManagementClient() {
+  private getManagementClient = () => {
     if (!this.managementClient) {
       this.managementClient = createManagementClient({
         accessToken: process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN as string,
@@ -20,61 +25,84 @@ export class AppRepository {
     }
   }
 
-  async getGrants() {
+  getGrants = async (): Promise<Array<CmsGrant>> => {
     const client = this.getManagementClient()
     if (!client) {
-      return
+      return []
     }
 
-    const entries = client
-      .getSpace(SPACE_ID)
-      .then((space) => space.getEnvironment(ENVIRONMENT))
-      .then((environment) =>
-        environment.getEntries({ content_type: CONTENT_TYPE, limit: LIMIT }),
-      )
+    const collection: Array<{ id: string; applicationId: string }> =
+      await client
+        .getSpace(SPACE_ID)
+        .then((space) => space.getEnvironment(ENVIRONMENT))
+        .then((environment) =>
+          environment.getEntries({
+            content_type: CONTENT_TYPE,
+            select: 'sys.id,fields.grantApplicationId',
+          }),
+        )
+        .then((entry) => {
+          return entry.items
+            .map((e) => {
+              const applicationId =
+                e.fields?.['grantApplicationId']?.['is-IS'] ?? -1
+              if (applicationId < 0) {
+                return
+              }
+              return {
+                id: e.sys.id,
+                applicationId,
+              }
+            })
+            .filter(isDefined)
+        })
 
-    return entries
+    return collection
   }
 
-  async getGrant(id: string) {
+  updateGrant = async (
+    id: string,
+    inputFields: Array<{ key: string; value: unknown }>,
+  ): Promise<{ ok: 'success' | 'error'; message?: string }> => {
+    console.log('Updating grant...')
     const client = this.getManagementClient()
+    console.log(client)
     if (!client) {
-      return
-    }
-
-    const entry = await client
-      .getSpace(SPACE_ID)
-      .then((space) => space.getEnvironment(ENVIRONMENT))
-      .then((environment) => environment.getEntry(id))
-
-    return entry
-  }
-
-  async updateGrant(getEntry: string) {}
-
-  async createGrant(
-    data: Array<{ field: string; value: { en: string; 'is-IS': string } }>,
-  ) {
-    const client = this.getManagementClient()
-    if (!client) {
-      return
+      return { ok: 'error', message: 'no clinet gotten' }
     }
 
     const environment = await client
       .getSpace(SPACE_ID)
       .then((space) => space.getEnvironment(ENVIRONMENT))
 
-    const contentType = await environment.getContentType(CONTENT_TYPE)
-    const inputFields = contentType.fields.map((f) => f.name)
+    const contentTypeFields = (await environment.getContentType(CONTENT_TYPE))
+      .fields
 
-    const validInput = data.filter((d) => inputFields.includes(d.field))
+    let entry: Entry | null
+    try {
+      entry = await environment.getEntry(id)
+    } catch (e) {
+      entry = null
+    }
 
-    const entry = await environment.createEntry(CONTENT_TYPE, {
-      fields: {
-        ...validInput,
-      },
-    })
+    if (!entry) {
+      return { ok: 'error' }
+    }
 
-    return entry
+    console.log(JSON.stringify(entry))
+
+    for (const inputField of inputFields) {
+      if (contentTypeFields.find((ctf) => ctf.name === inputField.key)) {
+        entry.fields[inputField.key] = inputField.value
+      }
+    }
+
+    try {
+      entry.update()
+    } catch (e) {
+      console.error('Update failed:' + e.message)
+      return { ok: 'error' }
+    }
+    return { ok: 'success' }
   }
 }
