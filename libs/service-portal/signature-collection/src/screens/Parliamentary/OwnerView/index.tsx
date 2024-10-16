@@ -85,9 +85,7 @@ const OwnerView = ({
           alignItems="baseline"
           marginTop={[5, 10]}
         >
-          <Text variant="h4">
-            {formatMessage(m.myListsDescription) + ' '}
-          </Text>
+          <Text variant="h4">{formatMessage(m.myListsDescription) + ' '}</Text>
           {isListHolder &&
             !loadingOwnerLists &&
             listsForOwner?.length < currentCollection?.areas.length && (
