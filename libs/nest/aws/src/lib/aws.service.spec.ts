@@ -28,7 +28,7 @@ describe('AwsService', () => {
           provide: LOGGER_PROVIDER,
           useValue: {
             error: jest.fn(),
-          }
+          },
         },
         {
           provide: S3Client,
@@ -39,7 +39,7 @@ describe('AwsService', () => {
 
     awsService = module.get<AwsService>(AwsService)
     logger = module.get<Logger>(LOGGER_PROVIDER)
-    
+
     s3Mock.reset()
   })
 
