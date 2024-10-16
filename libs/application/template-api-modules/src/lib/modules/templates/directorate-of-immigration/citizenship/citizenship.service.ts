@@ -356,22 +356,28 @@ export class CitizenshipService extends BaseTemplateApiService {
           ),
         },
         supportingDocuments: {
-          birthCertificate: await this.getFilesFromAttachment(
+          birthCertificate: await this.getUrlForAttachment(
+            application,
             answers?.supportingDocuments?.birthCertificate,
           ),
-          subsistenceCertificate: await this.getFilesFromAttachment(
+          subsistenceCertificate: await this.getUrlForAttachment(
+            application,
             answers?.supportingDocuments?.subsistenceCertificate,
           ),
-          subsistenceCertificateForTown: await this.getFilesFromAttachment(
+          subsistenceCertificateForTown: await this.getUrlForAttachment(
+            application,
             answers?.supportingDocuments?.subsistenceCertificateForTown,
           ),
-          certificateOfLegalResidenceHistory: await this.getFilesFromAttachment(
+          certificateOfLegalResidenceHistory: await this.getUrlForAttachment(
+            application,
             answers?.supportingDocuments?.certificateOfLegalResidenceHistory,
           ),
-          icelandicTestCertificate: await this.getFilesFromAttachment(
+          icelandicTestCertificate: await this.getUrlForAttachment(
+            application,
             answers?.supportingDocuments?.icelandicTestCertificate,
           ),
-          criminalRecord: await this.getFilesFromAttachment(
+          criminalRecord: await this.getUrlForAttachment(
+            application,
             applicantCriminalRecordAttachments,
           ),
         },
@@ -390,65 +396,31 @@ export class CitizenshipService extends BaseTemplateApiService {
             passportNumber: p.passportNumber,
             passportTypeId: parseInt(p.passportTypeId),
             countryIdOfIssuer: p.countryOfIssuerId,
-            file: await this.getFilesFromAttachment(p.attachment),
+            file: await this.getUrlForAttachment(application, p.attachment),
           })) || [],
         ),
         childrenSupportingDocuments: await Promise.all(
           answers.childrenSupportingDocuments?.map(async (d) => ({
             nationalId: d.nationalId,
-            birthCertificate: await this.getFilesFromAttachment(
+            birthCertificate: await this.getUrlForAttachment(
+              application,
               d.birthCertificate,
             ),
-            writtenConsentFromChild: await this.getFilesFromAttachment(
+            writtenConsentFromChild: await this.getUrlForAttachment(
+              application,
               d.writtenConsentFromChild,
             ),
-            writtenConsentFromOtherParent: await this.getFilesFromAttachment(
+            writtenConsentFromOtherParent: await this.getUrlForAttachment(
+              application,
               d.writtenConsentFromOtherParent,
             ),
-            custodyDocuments: await this.getFilesFromAttachment(
+            custodyDocuments: await this.getUrlForAttachment(
+              application,
               d.custodyDocuments,
             ),
           })) || [],
         ),
       },
-    )
-  }
-
-  // private async getFilesFromAttachment(
-  //   application: ApplicationWithAttachments,
-  //   attachments?: { name: string; key: string; countryId?: string }[],
-  // ): Promise<{ filename: string; base64: string; countryId: string }[]> {
-  //   return await Promise.all(
-  //     attachments?.map(async (file) => {
-  //       const base64 =
-  //         await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
-  //           application,
-  //           file.key,
-  //         )
-  //       return {
-  //         filename: file.name,
-  //         base64,
-  //         countryId: file.countryId || '',
-  //       }
-  //     }) || [],
-  //   )
-  // }
-
-  private async getFilesFromAttachment(
-    attachments?: { name: string; key: string; countryId?: string }[],
-  ): Promise<{ filename: string; fileUrl: string; countryId: string }[]> {
-    return await Promise.all(
-      attachments?.map(async (file) => {
-        const fileUrl = await this.sharedTemplateAPIService.getAttachmentUrl(
-          file.key,
-          300000,
-        )
-        return {
-          filename: file.name,
-          fileUrl,
-          countryId: file.countryId || '',
-        }
-      }) || [],
     )
   }
 

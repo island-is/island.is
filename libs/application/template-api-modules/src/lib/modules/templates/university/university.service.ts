@@ -4,6 +4,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationTypes,
+  ApplicationWithAttachments,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 
@@ -147,6 +148,7 @@ export class UniversityService extends BaseTemplateApiService {
       educationOptionChosen === UniversityApplicationTypes.EXEMPTION
         ? {
             degreeAttachments: await this.getAttachmentUrls(
+              application,
               answers.educationDetails.exemptionDetails?.degreeAttachments?.map(
                 (x, i) => {
                   const type = this.mapFileTypes(i)
@@ -177,6 +179,7 @@ export class UniversityService extends BaseTemplateApiService {
             moreDetails:
               answers.educationDetails.thirdLevelDetails?.moreDetails,
             degreeAttachments: await this.getAttachmentUrls(
+              application,
               answers.educationDetails.thirdLevelDetails?.degreeAttachments?.map(
                 (x, i) => {
                   const type = this.mapFileTypes(i)
@@ -196,6 +199,7 @@ export class UniversityService extends BaseTemplateApiService {
           return {
             ...item,
             degreeAttachments: await this.getAttachmentUrls(
+              application,
               item.degreeAttachments?.map((x, i) => {
                 const type = this.mapFileTypes(i)
                 return {
@@ -267,6 +271,7 @@ export class UniversityService extends BaseTemplateApiService {
   }
 
   private async getAttachmentUrls(
+    application: ApplicationWithAttachments,
     attachments?: { name: string; key: string; type: string }[],
   ): Promise<{ fileName: string; fileType: string; url: string }[]> {
     const expiry = 36000
@@ -276,7 +281,8 @@ export class UniversityService extends BaseTemplateApiService {
         return {
           fileName: file.name,
           fileType: file.type,
-          url: await this.sharedTemplateAPIService.getAttachmentUrl(
+          url: await this.sharedTemplateAPIService.getAttachmentUrl2(
+            application,
             file.key,
             expiry,
           ),
