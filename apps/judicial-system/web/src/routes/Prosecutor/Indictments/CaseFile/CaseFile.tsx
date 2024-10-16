@@ -16,7 +16,10 @@ import {
   PdfButton,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFile as TCaseFile,
+  CaseFileCategory,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { caseFile as m } from './CaseFile.strings'
 
@@ -25,14 +28,14 @@ const CaseFile = () => {
     useContext(FormContext)
 
   const caseFiles = useMemo(() => {
-    return new Map(
+    return new Map<string, TCaseFile[]>(
       workingCase.policeCaseNumbers?.map((policeCaseNumber) => [
         policeCaseNumber,
         workingCase.caseFiles?.filter(
           (caseFile) =>
             caseFile.policeCaseNumber === policeCaseNumber &&
             caseFile.category === CaseFileCategory.CASE_FILE_RECORD,
-        ),
+        ) ?? [],
       ]),
     )
   }, [workingCase.caseFiles, workingCase.policeCaseNumbers])
