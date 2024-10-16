@@ -7,12 +7,17 @@ import { FC } from 'react'
 
 export const CopyLink: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
+  const { slug } = application.externalData.createLists.data as { slug: string }
+
   return (
     <Box>
       <Text variant="h4" marginBottom={2}>
         {formatMessage(m.shareList)}
       </Text>
-      <Copy linkUrl={'TBD'} buttonTitle={formatMessage(m.copyLink)} />
+      <Copy
+        linkUrl={`${document.location.origin}${slug}`}
+        buttonTitle={formatMessage(m.copyLink)}
+      />
     </Box>
   )
 }
