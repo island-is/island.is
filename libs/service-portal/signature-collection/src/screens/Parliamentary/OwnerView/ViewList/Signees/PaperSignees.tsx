@@ -7,6 +7,7 @@ import {
   GridContainer,
   AlertMessage,
   Input,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useIdentityQuery } from '@island.is/service-portal/graphql'
@@ -72,7 +73,7 @@ export const PaperSignees = ({
         },
       },
       onCompleted: (res) => {
-        if (res.success) {
+        if (res.signatureCollectionUploadPaperSignature?.success) {
           toast.success(formatMessage(m.paperSigneeSuccess))
           refetchSignees()
         } else {
@@ -93,9 +94,14 @@ export const PaperSignees = ({
 
   return (
     <Box marginTop={8}>
-      <Box display={'flex'} justifyContent={'spaceBetween'}>
+      <Box display="flex" justifyContent={'spaceBetween'}>
         <Text variant="h4" marginBottom={2}>
-          {formatMessage(m.paperSigneesHeader)}
+          {formatMessage(m.paperSigneesHeader) + ' '}
+          <Tooltip
+            placement="right"
+            color="blue400"
+            text={formatMessage(m.paperSigneesTooltip)}
+          />
         </Text>
         <Box>
           <Button

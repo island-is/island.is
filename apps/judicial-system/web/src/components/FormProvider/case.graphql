@@ -22,6 +22,9 @@ query Case($input: CaseQueryInput!) {
       defenderPhoneNumber
       defenderChoice
       defendantPlea
+      requestedDefenderChoice
+      requestedDefenderNationalId
+      requestedDefenderName
       serviceRequirement
       verdictViewDate
       verdictAppealDeadline
