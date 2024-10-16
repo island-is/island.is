@@ -114,6 +114,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:delegation-to',
     defaultMessage: 'Aðgangsveitandi',
   },
+  createdBy: {
+    id: 'sp.access-control-delegations:created-by',
+    defaultMessage: 'Skráð af',
+  },
   accessScopes: {
     id: 'sp.access-control-delegations:access-title',
     defaultMessage: 'Réttindi',
@@ -227,8 +231,20 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:access-valid-to',
     defaultMessage: 'Í gildi til',
   },
+  noValidToDate: {
+    id: 'sp.access-control-delegations:no-valid-to-date',
+    defaultMessage: 'Gildistími óendanlegur',
+  },
+  referenceId: {
+    id: 'sp.access-control-delegations:reference-id',
+    defaultMessage: 'Númer máls í Zendesk',
+  },
   accessCreationSuccess: {
     id: 'sp.access-control-delegations:access-creation-success',
     defaultMessage: 'Umboð stofnað',
+  },
+  viewDelegationModalTitle: {
+    id: 'sp.access-control-delegations:view-delegation-modal-title',
+    defaultMessage: 'Upplýsingar um umboð',
   },
 })

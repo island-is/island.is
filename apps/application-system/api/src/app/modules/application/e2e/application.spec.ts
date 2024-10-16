@@ -18,6 +18,7 @@ import { MockFeatureFlagService } from './mockFeatureFlagService'
 import * as uuid from 'uuidv4'
 import jwt from 'jsonwebtoken'
 import { coreHistoryMessages } from '@island.is/application/core'
+import { sharedModuleConfig } from '@island.is/application/template-api-modules'
 
 let app: INestApplication
 
@@ -56,6 +57,35 @@ class MockContentfulRepository {
   }
 }
 
+const mockConfig = {
+  clientLocationOrigin: 'http://localhost:4242',
+  baseApiUrl: 'http://localhost:4444',
+  attachmentBucket: 'attachmentBucket',
+  templateApi: {
+    clientLocationOrigin: 'http://localhost:4242/umsoknir',
+    email: {
+      sender: 'Devland.is',
+      address: 'development@island.is',
+    },
+    jwtSecret: 'supersecret',
+    xRoadBasePathWithEnv: '',
+    baseApiUrl: 'http://localhost:4444',
+    presignBucket: '',
+    attachmentBucket: 'island-is-dev-storage-application-system',
+    generalPetition: {
+      endorsementApiBasePath: 'http://localhost:4246',
+    },
+    userProfile: {
+      serviceBasePath: 'http://localhost:3366',
+    },
+    islykill: {
+      cert: '',
+      passphrase: '',
+      basePath: '',
+    },
+  },
+}
+
 let server: request.SuperTest<request.Test>
 // eslint-disable-next-line local-rules/disallow-kennitalas
 const nationalId = '1234564321'
@@ -74,6 +104,8 @@ beforeAll(async () => {
         .useClass(MockFeatureFlagService)
         .overrideProvider(EmailService)
         .useClass(MockEmailService)
+        .overrideProvider(sharedModuleConfig.KEY)
+        .useValue(mockConfig)
         .overrideGuard(IdsUserGuard)
         .useValue(mockAuthGuard),
   })
