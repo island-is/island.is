@@ -427,7 +427,7 @@ export const sanitize = (str: string) => {
 export enum Word {
   AKAERDI = 'AKAERDI',
 }
-export const getWordByGender = (word: Word, gender: Gender): string | null => {
+export const getWordByGender = (word: Word, gender?: Gender): string | null => {
   switch (word) {
     case Word.AKAERDI:
       return gender === Gender.MALE

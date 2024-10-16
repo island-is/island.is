@@ -148,9 +148,7 @@ export const createSubpoena = (
   addEmptyLines(doc)
   addNormalText(
     doc,
-    `${capitalize(
-      getWordByGender(Word.AKAERDI, defendant.gender || Gender.MALE),
-    )}: `,
+    `${capitalize(getWordByGender(Word.AKAERDI, defendant.gender))}: `,
     'Times-Bold',
     true,
   )
