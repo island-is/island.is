@@ -11,24 +11,24 @@ export const getEstimationConstants = (
     string,
     unknown
   >
-  const individualAid = getValueViaPath(
+  const individualAid = getValueViaPath<Aid>(
     municipalityData,
     'data.individualAid',
-  ) as Aid
-  const cohabitationAid = getValueViaPath(
+  )
+  const cohabitationAid = getValueViaPath<Aid>(
     municipalityData,
     'cohabitationAid',
-  ) as Aid
+  )
 
   if (answers) {
-    const homeCircumstances = getValueViaPath(
+    const homeCircumstances = getValueViaPath<HomeCircumstances>(
       answers,
       'homeCircumstances.type',
-    ) as HomeCircumstances | undefined
-    const personalTaxCredit = getValueViaPath(
+    )
+    const personalTaxCredit = getValueViaPath<ApproveOptions>(
       answers,
       'personalTaxCredit.type',
-    ) as ApproveOptions | undefined
+    )
 
     return {
       individualAid,
