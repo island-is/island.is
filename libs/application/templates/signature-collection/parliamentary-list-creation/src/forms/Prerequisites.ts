@@ -111,11 +111,6 @@ export const Prerequisites: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'screen5',
-      title: m.managersAndSupervisors,
-      children: [],
-    }),
-    buildSection({
       id: 'screen6',
       title: m.overview,
       children: [],
