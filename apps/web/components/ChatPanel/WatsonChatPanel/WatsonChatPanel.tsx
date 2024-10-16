@@ -30,7 +30,6 @@ import { SUBMIT_WATSON_ASSISTANT_CHAT_FEEDBACK } from '@island.is/web/screens/qu
 import { ChatBubble } from '../ChatBubble'
 import { WatsonChatPanelProps } from '../types'
 import type { WatsonInstance, WatsonInstanceEvent } from './types'
-import { onAuthenticatedWatsonAssistantChatLoad } from './utils'
 import * as styles from './WatsonChatPanel.css'
 
 const chatLog: WatsonInstanceEvent[] = []
@@ -334,7 +333,8 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
             if (
               // Útlendingastofnun
-              props.integrationID !== '89a03e83-5c73-4642-b5ba-cd3771ceca54'
+              props.integrationID !== '89a03e83-5c73-4642-b5ba-cd3771ceca54' &&
+              props.integrationID !== '9e320784-ad44-4da9-9eb3-f305057a196a'
             ) {
               // Keep the chat log in memory
               instance.on({
@@ -368,18 +368,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
                   }
                 },
               })
-            }
-
-            if (
-              // Askur - Útlendingastofnun
-              props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54'
-            ) {
-              onAuthenticatedWatsonAssistantChatLoad(
-                instance,
-                namespace,
-                activeLocale,
-                'directorateOfImmigration',
-              )
             }
 
             if (onLoad) {
