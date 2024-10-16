@@ -206,6 +206,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:grant-same-ssn',
     defaultMessage: 'Ekki má veita sjálfum sér umboð',
   },
+  grantActorSsn: {
+    id: 'sp.access-control-delegations:grant-actor-ssn',
+    defaultMessage: 'Sem umboðshafi má ekki veita sjálfum sér umboð',
+  },
   grantCompanySsn: {
     id: 'sp.access-control-delegations:grant-company-ssn',
     defaultMessage: 'Ekki má veita fyrirtækjum umboð',
