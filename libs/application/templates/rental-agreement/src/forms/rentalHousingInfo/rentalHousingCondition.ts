@@ -6,8 +6,9 @@ import {
   buildTextField,
   buildFileUploadField,
 } from '@island.is/application/core'
+import { getApplicationAnswers, getInspectorOptions } from '../../lib/utils'
 import * as m from '../../lib/messages'
-import build from 'next/dist/build'
+import { rentalHousingConditionInspector } from '../../lib/constants'
 
 export const RentalHousingCondition = buildSubSection({
   id: 'rentalHousingCondition',
@@ -28,16 +29,7 @@ export const RentalHousingCondition = buildSubSection({
           id: 'rentalHousingConditionInspector',
           title: '',
           description: m.housingCondition.inspectorDescription,
-          options: [
-            {
-              value: 'contractParties',
-              label: m.housingCondition.inspectorOptionContractParties,
-            },
-            {
-              value: 'independentParty',
-              label: m.housingCondition.inspectorOptionIndependentParty,
-            },
-          ],
+          options: getInspectorOptions(),
           defaultValue: 'contractParties',
           width: 'half',
         }),
@@ -45,8 +37,13 @@ export const RentalHousingCondition = buildSubSection({
           id: 'rentalHousingConditionInspectorName',
           title: m.housingCondition.independantInspectorNameLabel,
           placeholder: m.housingCondition.independantInspectorNamePlaceholder,
-          condition: (answers) =>
-            answers.rentalHousingConditionInspector === 'independentParty',
+          condition: (answers) => {
+            const { inspectorOptions } = getApplicationAnswers(answers)
+            return (
+              inspectorOptions ===
+              rentalHousingConditionInspector.INDEPENDENT_PARTY
+            )
+          },
           required: true,
         }),
         buildDescriptionField({
@@ -62,10 +59,9 @@ export const RentalHousingCondition = buildSubSection({
           placeholder: m.housingCondition.inspectionResultsInputPlaceholder,
           variant: 'textarea',
           rows: 8,
-          minLength: 1,
         }),
         buildFileUploadField({
-          id: 'fileUpload.housingCondition',
+          id: 'asdf',
           title: m.housingCondition.fileUploadTitle,
           uploadHeader: m.housingCondition.fileUploadTitle,
           uploadDescription: m.housingCondition.fileUploadDescription,

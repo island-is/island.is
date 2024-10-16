@@ -17,7 +17,5 @@ export const dataSchema = z.object({
         params: m.dataSchema.nationalId,
       }),
   }),
-  fileUpload: z.object({
-    housingCondition: z.array(FileSchema).optional(),
-  }),
+  asdf: z.array(FileSchema),
 })
