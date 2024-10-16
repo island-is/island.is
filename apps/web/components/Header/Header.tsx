@@ -120,6 +120,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                         buttonColorScheme={buttonColorScheme}
                         onMenuOpen={webMenuButtonClicked}
                         organizationSearchFilter={organizationSearchFilter}
+                        languageToggleQueryParams={languageToggleQueryParams}
                       />
                     </Box>
                   </Box>

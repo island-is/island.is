@@ -54,7 +54,7 @@ export const applicant = buildSection({
           title: m.phone,
           width: 'half',
           required: true,
-          disableDropdown: false,
+          enableCountrySelector: true,
           defaultValue: (application: Application) => {
             const phone =
               (

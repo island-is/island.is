@@ -354,6 +354,11 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:select-ministry',
     defaultMessage: 'Veldu ráðuneyti',
   },
+  publishEffectiveWarning: {
+    id: 'ap.regulations-admin:publish-effective-warning',
+    defaultMessage:
+      'Valinn gildistökudagur er á undan útgáfudegi. Almennt er miðað við að reglugerð öðlist gildi eftir birtingu.',
+  },
 })
 
 export const impactMsgs = defineMessages({

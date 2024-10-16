@@ -14,11 +14,16 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import type { User } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  isTrafficViolationCase,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
 import { Defendant } from '../defendant/models/defendant.model'
+import { FileService } from '../file'
 import { PoliceService } from '../police'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
@@ -37,6 +42,8 @@ export class SubpoenaService {
     private readonly pdfService: PdfService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
+    @Inject(forwardRef(() => FileService))
+    private readonly fileService: FileService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -85,6 +92,9 @@ export class SubpoenaService {
       defenderEmail,
       defenderPhoneNumber,
       defenderName,
+      requestedDefenderChoice,
+      requestedDefenderNationalId,
+      requestedDefenderName,
     } = update
 
     const [numberOfAffectedRows] = await this.subpoenaModel.update(update, {
@@ -94,13 +104,21 @@ export class SubpoenaService {
     })
     let defenderAffectedRows = 0
 
-    if (defenderChoice || defenderNationalId) {
+    if (
+      defenderChoice ||
+      defenderNationalId ||
+      requestedDefenderChoice ||
+      requestedDefenderNationalId
+    ) {
       const defendantUpdate: Partial<Defendant> = {
         defenderChoice,
         defenderNationalId,
         defenderName,
         defenderEmail,
         defenderPhoneNumber,
+        requestedDefenderChoice,
+        requestedDefenderNationalId,
+        requestedDefenderName,
       }
 
       const [defenderUpdateAffectedRows] = await this.defendantModel.update(
@@ -142,6 +160,27 @@ export class SubpoenaService {
     return subpoena
   }
 
+  async getIndictmentPdf(theCase: Case): Promise<Buffer> {
+    if (isTrafficViolationCase(theCase)) {
+      return await this.pdfService.getIndictmentPdf(theCase)
+    }
+
+    const indictmentCaseFile = theCase.caseFiles?.find(
+      (caseFile) =>
+        caseFile.category === CaseFileCategory.INDICTMENT && caseFile.key,
+    )
+
+    if (!indictmentCaseFile) {
+      // This shouldn't ever happen
+      this.logger.error(
+        `No indictment found for case ${theCase.id} so cannot deliver subpoena to police`,
+      )
+      throw new Error(`No indictment found for case ${theCase.id}`)
+    }
+
+    return await this.fileService.getCaseFileFromS3(theCase, indictmentCaseFile)
+  }
+
   async deliverSubpoenaToPolice(
     theCase: Case,
     defendant: Defendant,
@@ -155,7 +194,7 @@ export class SubpoenaService {
         subpoena,
       )
 
-      const indictmentPdf = await this.pdfService.getIndictmentPdf(theCase)
+      const indictmentPdf = await this.getIndictmentPdf(theCase)
 
       const createdSubpoena = await this.policeService.createSubpoena(
         theCase,
@@ -171,11 +210,16 @@ export class SubpoenaService {
         return { delivered: false }
       }
 
-      // TODO: Improve error handling by checking how many rows were affected and posting error event
-      await this.subpoenaModel.update(
+      const [numberOfAffectedRows] = await this.subpoenaModel.update(
         { subpoenaId: createdSubpoena.subpoenaId },
         { where: { id: subpoena.id } },
       )
+
+      if (numberOfAffectedRows < 1) {
+        this.logger.error(
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena for subpoena ${subpoena.id}`,
+        )
+      }
 
       return { delivered: true }
     } catch (error) {
