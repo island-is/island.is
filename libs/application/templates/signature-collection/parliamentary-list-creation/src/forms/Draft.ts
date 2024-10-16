@@ -278,17 +278,17 @@ export const Draft: Form = buildForm({
               doesNotRequireAnswer: true,
               title: '',
               items: ({ answers }) => {
-                return (answers.constituency as string[]).map((c: string) => ({
-                  heading:
-                    getValueViaPath(answers, 'list.name') +
-                    ' - ' +
-                    c.split('|')[1],
-                  progressMeter: {
-                    currentProgress: 0,
-                    maxProgress: 350,
-                    withLabel: true,
-                  },
-                }))
+                return (answers.constituency as string[]).map(
+                  (constituency: string) => ({
+                    heading: constituency.split('|')[1],
+                    eyebrow: getValueViaPath(answers, 'list.name'),
+                    progressMeter: {
+                      currentProgress: 0,
+                      maxProgress: 350,
+                      withLabel: true,
+                    },
+                  }),
+                )
               },
             }),
             buildSubmitField({

@@ -563,6 +563,7 @@ export type ActionCardListField = BaseField & {
 export type ApplicationActionCardProps = Modify<
   ActionCardProps,
   {
+    eyebrow?: string
     heading?: FormText
     text?: FormText
     tag?: Modify<ActionCardProps['tag'], { label: FormText }>
