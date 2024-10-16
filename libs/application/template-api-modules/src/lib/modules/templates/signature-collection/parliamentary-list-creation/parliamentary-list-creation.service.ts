@@ -43,9 +43,7 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     return candidate
   }
 
-  async parliamentaryCollection({
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async parliamentaryCollection({ auth }: TemplateApiModuleActionProps) {
     const currentCollection =
       await this.signatureCollectionClientService.currentCollection()
     if (currentCollection.collectionType !== CollectionType.Parliamentary) {
