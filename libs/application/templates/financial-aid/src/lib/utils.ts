@@ -34,20 +34,6 @@ export function hasSpouseCheck(context: ApplicationContext) {
   return hasSpouse(answers, externalData)
 }
 
-export const hasSpouse = (answers: FormValue, externalData: ExternalData) => {
-  const nationalRegistrySpouse = externalData.nationalRegistrySpouse.data
-
-  const unregisteredCohabitation = getValueViaPath<string>(
-    answers,
-    'relationshipStatus.unregisteredCohabitation',
-  )
-
-  return (
-    Boolean(nationalRegistrySpouse) ||
-    unregisteredCohabitation === ApproveOptions.Yes
-  )
-}
-
 export function isMunicipalityNotRegistered(context: ApplicationContext) {
   const { externalData } = context.application
 
@@ -125,11 +111,13 @@ export const sortChildrenUnderAgeByAge = (
   })
 }
 
-export const hasSpouse2 = (answers: FormValue, externalData: ExternalData) => {
+export const hasSpouse = (answers: FormValue, externalData: ExternalData) => {
   const nationalRegistrySpouse = externalData.nationalRegistrySpouse.data
 
-  const unregisteredCohabitation = (answers?.relationshipStatus as any)
-    ?.unregisteredCohabitation
+  const unregisteredCohabitation = getValueViaPath<string>(
+    answers,
+    'relationshipStatus.unregisteredCohabitation',
+  )
 
   return (
     Boolean(nationalRegistrySpouse) ||
@@ -141,7 +129,7 @@ export const getNextStepsDescription = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
-  const applicantHasSpouse = hasSpouse2(answers, externalData)
+  const applicantHasSpouse = hasSpouse(answers, externalData)
   const missingIncomeFiles =
     answers.income === ApproveOptions.Yes &&
     !hasFiles('incomeFiles', answers as unknown as AnswersSchema)

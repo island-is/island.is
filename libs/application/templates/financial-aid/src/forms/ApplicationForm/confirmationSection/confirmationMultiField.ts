@@ -11,7 +11,7 @@ import * as m from '../../../lib/messages'
 import {
   getNextStepsDescription,
   hasIncomeFiles,
-  hasSpouse2,
+  hasSpouse,
 } from '../../../lib/utils'
 import { Application, FormValue } from '@island.is/application/types'
 import { ConfirmationImage } from '../../../assets/ConfirmationImage'
@@ -52,7 +52,7 @@ export const confirmationMultiField = buildMultiField({
       },
       alertType: 'warning',
       condition: (answers, externalData) => {
-        return hasSpouse2(answers, externalData)
+        return hasSpouse(answers, externalData)
       },
     }),
     buildDescriptionField({
@@ -93,7 +93,8 @@ export const confirmationMultiField = buildMultiField({
         return {
           ...m.confirmation.links.content,
           values: {
-            statusPage: typeof window !== 'undefined' ? window.location.href : '',
+            statusPage:
+              typeof window !== 'undefined' ? window.location.href : '',
             homePage: url ?? '',
           },
         }
