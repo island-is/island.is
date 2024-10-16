@@ -62,24 +62,31 @@ export class EndorsementService {
   
 
   async updateEndorsementCountOnList(listId: string): Promise<void> {
-    const count = await this.endorsementModel.count({
-      where: { endorsementListId: listId },
-    })
-    const [affectedRows, updatedList] = await this.endorsementListModel.update(
-      { endorsementCount: count },
-      {
-        where: { id: listId },
-        returning: true,
-      },
-    )
-    if (affectedRows > 0 && updatedList[0].endorsementCount === count) {
-      this.logger.info(
-        `Successfully updated endorsement count for list "${listId}" to ${count}`,
+    try {
+      const count = await this.endorsementModel.count({
+        where: { endorsementListId: listId },
+      })
+      const [affectedRows, updatedList] = await this.endorsementListModel.update(
+        { endorsementCount: count },
+        {
+          where: { id: listId },
+          returning: true,
+        },
       )
-    } else {
-      this.logger.warn(
-        `Failed to update endorsement count for list "${listId}". The count was not updated correctly.`,
+      if (affectedRows > 0 && updatedList[0].endorsementCount === count) {
+        this.logger.info(
+          `Successfully updated endorsement count for list "${listId}" to ${count}`,
+        )
+      } else {
+        this.logger.error(
+          `Failed to update endorsement count for list "${listId}". The count was not updated correctly.`,
+        )
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error updating endorsement count for list "${listId}": ${error.message}`,
       )
+      throw error;
     }
   }
 
