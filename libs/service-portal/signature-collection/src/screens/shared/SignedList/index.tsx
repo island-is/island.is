@@ -12,7 +12,6 @@ import {
   SignatureCollectionSignedList,
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
-import { SingleListSkeleton } from '../../../skeletons'
 
 const SignedList = ({
   currentCollection,
@@ -62,11 +61,6 @@ const SignedList = ({
 
   return (
     <Box>
-      {loadingSignedLists && (
-        <Box marginTop={10}>
-          <SingleListSkeleton />
-        </Box>
-      )}
       {!loadingSignedLists && !!signedLists?.length && (
         <Box marginTop={[5, 7]}>
           <Text marginBottom={2} variant="h4">

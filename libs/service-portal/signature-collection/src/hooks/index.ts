@@ -79,6 +79,7 @@ export const useGetListsForUser = (collectionId?: string) => {
     data: getListsForUser,
     loading: loadingUserLists,
     refetch: refetchListsForUser,
+    error: getListsForUserError,
   } = useQuery<{
     signatureCollectionListsForUser?: SignatureCollectionListBase[]
   }>(GetListsForUser, {
@@ -93,7 +94,12 @@ export const useGetListsForUser = (collectionId?: string) => {
   const listsForUser =
     (getListsForUser?.signatureCollectionListsForUser as SignatureCollectionListBase[]) ??
     []
-  return { listsForUser, loadingUserLists, refetchListsForUser }
+  return {
+    listsForUser,
+    loadingUserLists,
+    refetchListsForUser,
+    getListsForUserError,
+  }
 }
 
 export const useGetListsForOwner = (collectionId: string) => {
