@@ -1,7 +1,6 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextApiRequest } from 'next'
 import initApollo from '../../graphql/client'
 import { SUB_GET_CASES } from '../../graphql/queries.graphql'
-import RSS from 'rss'
 import { SubGetCasesQuery } from '../../graphql/queries.graphql.generated'
 import { SUB_PAGE_SIZE, SUB_STATUSES_TO_FETCH } from '../../utils/consts/consts'
 
@@ -13,47 +12,7 @@ type CaseItem = {
   policyAreaName?: string | null
 }
 
-const generateBaseUrl = (req: NextApiRequest): string => {
-  const host: string = req.headers.host
-  const protocol = `http${host.startsWith('localhost') ? '' : 's'}://`
-  return `${protocol}${host}`
-}
-
-const generateRssFeed = (baseUrl: string, cases: CaseItem[]): string => {
-  const feed = new RSS({
-    title: 'Samráðsgátt - RSS Feed',
-    description: cases.length
-      ? 'Áskrift af málum'
-      : 'Engin mál eru skráð þessa stundina.',
-    language: 'is',
-    feed_url: `${baseUrl}/samradsgatt/api/rss`,
-    site_url: `${baseUrl}/samradsgatt`,
-    copyright: `Allur réttur áskilinn ${new Date().getFullYear()}, Island.is`,
-  })
-
-  if (cases.length) {
-    cases.forEach((post) => {
-      feed.item({
-        title: post.name,
-        description: '', // Posts do not have a description
-        url: `${baseUrl}/samradsgatt/mal/${post.id}`,
-        date: '', // Posts do not have a date
-        custom_elements: [
-          { caseNumber: post.caseNumber },
-          { institutionName: post.institutionName },
-          { policyAreaName: post.policyAreaName },
-        ],
-      })
-    })
-  }
-
-  return feed.xml({ indent: true })
-}
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export default async function handler(req: NextApiRequest, res) {
   const client = initApollo()
   try {
     const {
@@ -68,14 +27,29 @@ export default async function handler(
       },
     })
 
-    const baseUrl = generateBaseUrl(req)
-    const rss = generateRssFeed(
-      baseUrl,
-      consultationPortalGetCases?.cases || [],
-    )
+    const host: string = req.headers.host
+    const protocol = `http${host.startsWith('localhost') ? '' : 's'}://`
+    const baseUrl = `${protocol}${host}`
 
-    res.setHeader('Content-Type', 'application/xml')
-    res.status(200).send(rss)
+    const getCases = (post: CaseItem) => {
+      return `<item>
+          <title>${post.name}</title>
+          <description>${post.name}</description>
+          <link>${baseUrl}/samradsgatt/mal/${post.id}</link>
+        </item>`
+    }
+
+    const feed = `<?xml version="1.0" encoding="UTF-8" ?>
+    <rss version="2.0">
+      <channel>
+        <title>Samráðsgátt - Áskriftir RSS Veita</title>
+        <description>Island.is</description>
+        ${consultationPortalGetCases.cases.map((i) => getCases(i)).join('')}
+      </channel>
+    </rss>`
+
+    res.set('Content-Type', 'text/xml;charset=UTF-8')
+    return res.status(200).send(feed)
   } catch (error) {
     if (error.networkError) {
       res.status(500).send('Network error')
