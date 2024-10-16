@@ -81,11 +81,6 @@ const OwnerView = ({
         <Box display="flex" justifyContent="spaceBetween" alignItems="baseline">
           <Text variant="h4">
             {formatMessage(m.myListsDescription) + ' '}
-            <Tooltip
-              placement="right"
-              text={formatMessage(m.myListsInfo)}
-              color="blue400"
-            />
           </Text>
           {isListHolder &&
             !loadingOwnerLists &&
@@ -198,9 +193,8 @@ const OwnerView = ({
           <Text variant="h4">
             {formatMessage(m.supervisors) + ' '}
             <Tooltip
-              placement="right"
+              placement="bottom"
               text={formatMessage(m.supervisorsTooltip)}
-              color="blue400"
             />
           </Text>
         </Box>
