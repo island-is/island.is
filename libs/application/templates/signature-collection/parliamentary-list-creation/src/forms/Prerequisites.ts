@@ -21,6 +21,7 @@ import {
   ParliamentaryCollectionApi,
   CandidateApi,
   ParliamentaryIdentityApi,
+  IsDelegatedToCompanyApi,
 } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
@@ -88,6 +89,11 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: CandidateApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: IsDelegatedToCompanyApi,
               title: '',
               subTitle: '',
             }),

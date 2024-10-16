@@ -60,11 +60,30 @@ export const Done: Form = buildForm({
               component: 'CopyLink',
             }),
             buildMessageWithLinkButtonField({
+              condition: (_, externalData) =>
+                !(
+                  externalData?.isDelegatedToCompany.data as {
+                    delegatedToCompany: boolean
+                  }
+                ).delegatedToCompany,
               id: 'done.goToServicePortal',
               title: '',
               url: '/minarsidur/min-gogn/listar/althingis-medmaelasofnun',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
+            }),
+            buildMessageWithLinkButtonField({
+              condition: (_, externalData) =>
+                (
+                  externalData?.isDelegatedToCompany.data as {
+                    delegatedToCompany: boolean
+                  }
+                ).delegatedToCompany,
+              id: 'done.goToServicePortalCompany',
+              title: '',
+              url: '/minarsidur/min-gogn/listar/fyrirtaekjaskra',
+              buttonTitle: m.linkFieldButtonCompanyTitle,
+              message: m.linkFieldCompanyMessage,
             }),
           ],
         }),

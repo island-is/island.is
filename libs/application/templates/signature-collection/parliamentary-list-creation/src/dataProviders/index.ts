@@ -11,3 +11,7 @@ export const ParliamentaryCollectionApi = defineTemplateApi({
 export const ParliamentaryIdentityApi = defineTemplateApi({
   action: 'parliamentaryIdentity',
 })
+
+export const IsDelegatedToCompanyApi = defineTemplateApi({
+  action: 'delegatedToCompany',
+})
