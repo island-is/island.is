@@ -157,7 +157,7 @@ const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
         <ChildrenInfo
           childrenSchoolInfo={childrenSchoolInfo}
           goToScreen={goToScreen}
-          childrenComment={answers?.childrenComment as string | undefined}
+          childrenComment={answersSchema?.childrenComment}
         />
       )}
 

@@ -21,12 +21,10 @@ export const getSpouseSummaryConstants = (
   externalData: ExternalData,
 ) => {
   const nationalId =
-    (getValueViaPath(externalData, 'nationalRegistrySpouse.data.nationalId') as
-      | string
-      | undefined) ||
-    (getValueViaPath(answers, 'relationshipStatus.spouseNationalId') as
-      | string
-      | undefined)
+    getValueViaPath<string>(
+      externalData,
+      'nationalRegistrySpouse.data.nationalId',
+    ) || getValueViaPath<string>(answers, 'relationshipStatus.spouseNationalId')
 
   const data = getValueViaPath(externalData, 'nationalRegistrySpouse.data') as
     | NationalRegistryIndividual
