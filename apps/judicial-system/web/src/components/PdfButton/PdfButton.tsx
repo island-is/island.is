@@ -18,6 +18,7 @@ interface Props {
     | 'custodyNotice'
     | 'indictment'
     | 'subpoena'
+    | 'serviceCertificate'
 
   disabled?: boolean
   renderAs?: 'button' | 'row'
@@ -53,6 +54,8 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
     const url = `${api.apiUrl}/api/case/${
       connectedCaseParentId ?? caseId
     }/${prefix}${pdfType}${postfix}${query}`
+
+    console.log(url)
 
     window.open(url, '_blank')
   }

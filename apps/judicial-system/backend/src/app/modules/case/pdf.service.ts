@@ -26,6 +26,7 @@ import {
   Confirmation,
   createCaseFilesRecord,
   createIndictment,
+  createServiceCertificate,
   createSubpoena,
   getCourtRecordPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
@@ -352,6 +353,32 @@ export class PdfService {
           ),
         )
     }
+
+    return generatedPdf
+  }
+
+  async getServiceCertificatePdf(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena?: Subpoena,
+    arraignmentDate?: Date,
+    location?: string,
+    subpoenaType?: SubpoenaType,
+  ): Promise<Buffer> {
+    const confirmation: Confirmation | undefined = undefined
+
+    await this.refreshFormatMessage()
+
+    const generatedPdf = await createServiceCertificate(
+      theCase,
+      defendant,
+      this.formatMessage,
+      subpoena,
+      arraignmentDate,
+      location,
+      subpoenaType,
+      confirmation,
+    )
 
     return generatedPdf
   }
