@@ -218,10 +218,7 @@ const Subpoena: FC = () => {
                     caseId={workingCase.id}
                     title={`Birtingarvottord - ${defendant.name}`}
                     pdfType="serviceCertificate"
-                    elementId={[
-                      defendant.id,
-                      ...(subpoena.subpoenaId ? [subpoena.id] : []),
-                    ]}
+                    elementId={[defendant.id, subpoena.id]}
                   />
                 </Box>
               ))}

@@ -42,7 +42,7 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
   queryParameters,
 }) => {
   const { limitedAccess } = useContext(UserContext)
-
+  console.log(elementId)
   const handlePdfClick = async () => {
     const prefix = `${limitedAccess ? 'limitedAccess/' : ''}${
       connectedCaseParentId ? `mergedCase/${caseId}/` : ''

@@ -30,6 +30,18 @@ import {
   setTitle,
 } from './pdfHelpers'
 
+const getSubpoenaType = (subpoenaType?: SubpoenaType): string => {
+  switch (subpoenaType) {
+    case SubpoenaType.ABSENCE:
+      return 'Útivistarfyrirkall'
+    case SubpoenaType.ARREST:
+      return 'Handtökufyrirkall'
+    default:
+      // Should never happen
+      return 'Ekki skráð'
+  }
+}
+
 export const createServiceCertificate = (
   theCase: Case,
   defendant: Defendant,
@@ -61,21 +73,25 @@ export const createServiceCertificate = (
     addEmptyLines(doc, 5)
   }
 
-  console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', defendant.name)
-
   arraignmentDate = arraignmentDate ?? subpoena?.arraignmentDate
   location = location ?? subpoena?.location
   subpoenaType = subpoenaType ?? defendant.subpoenaType
 
   addHugeHeading(doc, formatMessage(strings.title).toUpperCase(), 'Times-Bold')
-  addMediumCenteredText(doc, `Mál nr. ${theCase.courtCaseNumber}`, 'Times-Bold')
+  addMediumCenteredText(
+    doc,
+    `Mál nr. ${theCase.courtCaseNumber || ''}`,
+    'Times-Bold',
+  )
   addNormalCenteredText(doc, theCase.court?.name || '', 'Times-Bold')
 
   addEmptyLines(doc, 2)
 
   addMediumCenteredText(
     doc,
-    `Birting tókst ${formatDate(subpoena?.serviceDate, 'PPp')}`,
+    `Birting tókst ${
+      subpoena?.serviceDate ? formatDate(subpoena?.serviceDate, 'PPp') : ''
+    }`,
     'Times-Bold',
   )
 
@@ -83,31 +99,31 @@ export const createServiceCertificate = (
 
   if (subpoena?.servedBy) {
     addNormalText(doc, 'Birtingaraðili: ', 'Times-Bold', true)
-    addNormalText(doc, subpoena?.servedBy, 'Times-Roman')
+    addNormalText(doc, subpoena.servedBy, 'Times-Roman')
   }
 
   if (subpoena?.comment) {
     addNormalText(doc, 'Athugasemd: ', 'Times-Bold', true)
-    addNormalText(doc, subpoena?.comment, 'Times-Roman')
+    addNormalText(doc, subpoena.comment, 'Times-Roman')
   }
 
   addEmptyLines(doc, 2)
 
-  console.log(defendant, subpoena)
   addNormalText(
     doc,
-    `${capitalize(getWordByGender(Word.AKAERDI, defendant?.gender))}: `,
+    `${capitalize(getWordByGender(Word.AKAERDI, defendant.gender))}: `,
     'Times-Bold',
     true,
   )
   addNormalText(
     doc,
-    `${subpoena?.defendant?.name}, ${formatDOB(
-      subpoena?.defendant?.nationalId,
-      subpoena?.defendant?.noNationalId,
-    )}, ${subpoena?.defendant?.address}`,
-    'Times-Bold',
-    true,
+    defendant.name && defendant.nationalId && defendant.address
+      ? `${defendant.name}, ${formatDOB(
+          defendant.nationalId,
+          defendant.noNationalId,
+        )}, ${defendant.address}`
+      : 'Ekki skráður',
+    'Times-Roman',
   )
 
   addEmptyLines(doc, 2)
@@ -130,35 +146,19 @@ export const createServiceCertificate = (
 
   addEmptyLines(doc)
 
-  if (arraignmentDate) {
-    addNormalText(doc, 'Þingfesting: ', 'Times-Bold', true)
-    addNormalText(
-      doc,
-      formatDate(new Date(arraignmentDate), 'PPPp') || '',
-      'Times-Roman',
-    )
-  }
+  addNormalText(doc, 'Þingfesting: ', 'Times-Bold', true)
+  addNormalText(
+    doc,
+    formatDate(arraignmentDate ? new Date(arraignmentDate) : null, 'Pp') ||
+      'Ekki skráð',
+    'Times-Roman',
+  )
 
-  if (location) {
-    addNormalText(
-      doc,
-      formatMessage(strings.courtRoom, {
-        courtRoom: location,
-      }),
-      'Times-Roman',
-    )
-  }
+  addNormalText(doc, 'Staður: ', 'Times-Bold', true)
+  addNormalText(doc, location || 'Ekki skáður', 'Times-Roman')
 
-  if (subpoena?.defendant?.subpoenaType) {
-    addNormalText(doc, 'Tegund fyrirkalls: ', 'Times-Bold', true)
-    addNormalText(
-      doc,
-      subpoena?.defendant?.subpoenaType === SubpoenaType.ABSENCE
-        ? 'Útivistarfyrirkall'
-        : 'Handtökufyrirkall',
-      'Times-Roman',
-    )
-  }
+  addNormalText(doc, 'Tegund fyrirkalls: ', 'Times-Bold', true)
+  addNormalText(doc, getSubpoenaType(defendant.subpoenaType), 'Times-Roman')
 
   addFooter(doc)
 
