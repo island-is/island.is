@@ -31,7 +31,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { AnswersSchema } from '../../lib/dataSchema'
 import { getSummaryConstants } from './utils'
 
-const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
+export const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
 
@@ -210,5 +210,3 @@ const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
     </>
   )
 }
-
-export default SummaryForm

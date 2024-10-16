@@ -14,7 +14,10 @@ import MoreActions from '../../components/Status/MoreActions/MoreActions'
 import { FieldBaseProps } from '@island.is/application/types'
 import { getApplicantStatusConstants } from './util'
 
-const ApplicantStatus = ({ application, goToScreen }: FieldBaseProps) => {
+export const ApplicantStatus = ({
+  application,
+  goToScreen,
+}: FieldBaseProps) => {
   const { answers, externalData } = application
   const {
     currentApplicationId,
@@ -82,5 +85,3 @@ const ApplicantStatus = ({ application, goToScreen }: FieldBaseProps) => {
     </Box>
   )
 }
-
-export default ApplicantStatus

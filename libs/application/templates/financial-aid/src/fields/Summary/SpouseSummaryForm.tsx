@@ -17,7 +17,10 @@ import UserInfo from '../../components/Summary/UserInfo'
 import { FieldBaseProps } from '@island.is/application/types'
 import { getSpouseSummaryConstants } from './utils'
 
-const SpouseSummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
+export const SpouseSummaryForm = ({
+  application,
+  goToScreen,
+}: FieldBaseProps) => {
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.SPOUSEFORMCOMMENT
 
@@ -106,5 +109,3 @@ const SpouseSummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
     </>
   )
 }
-
-export default SpouseSummaryForm

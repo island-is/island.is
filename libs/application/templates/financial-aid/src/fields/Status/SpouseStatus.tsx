@@ -10,7 +10,7 @@ import MoreActions from '../../components/Status/MoreActions/MoreActions'
 import { FieldBaseProps } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 
-const SpouseStatus = ({ application, goToScreen }: FieldBaseProps) => {
+export const SpouseStatus = ({ application, goToScreen }: FieldBaseProps) => {
   const { answers, externalData } = application
   const currentApplicationId = getValueViaPath<string>(
     answers,
@@ -52,5 +52,3 @@ const SpouseStatus = ({ application, goToScreen }: FieldBaseProps) => {
     </Box>
   )
 }
-
-export default SpouseStatus

@@ -13,7 +13,11 @@ import {
   FieldBaseProps,
 } from '@island.is/application/types'
 
-const ChildrenForm = ({ application, field, errors }: FieldBaseProps) => {
+export const ChildrenForm = ({
+  application,
+  field,
+  errors,
+}: FieldBaseProps) => {
   const { setValue, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -76,5 +80,3 @@ const ChildrenForm = ({ application, field, errors }: FieldBaseProps) => {
     </>
   )
 }
-
-export default ChildrenForm

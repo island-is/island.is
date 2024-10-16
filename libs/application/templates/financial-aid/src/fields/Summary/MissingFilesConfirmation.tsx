@@ -9,7 +9,10 @@ import { RecordObject } from '@island.is/shared/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 
-const MissingFilesConfirmation = ({ application, field }: FieldBaseProps) => {
+export const MissingFilesConfirmation = ({
+  application,
+  field,
+}: FieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { getValues } = useFormContext()
 
@@ -47,5 +50,3 @@ const MissingFilesConfirmation = ({ application, field }: FieldBaseProps) => {
     </>
   )
 }
-
-export default MissingFilesConfirmation
