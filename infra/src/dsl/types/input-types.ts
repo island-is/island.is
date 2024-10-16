@@ -133,15 +133,15 @@ export type ServiceDefinitionForEnv = ServiceDefinitionCore & {
   extraAttributes?: ExtraValuesForEnv
 }
 
+export type ExtraAnnotation = { [annotation: string]: string | null }
+export type ExtraAnnotations = Partial<{ [env in OpsEnv]: ExtraAnnotation }>
 export interface Ingress {
   host: {
     [env in OpsEnv]: string | string[]
   }
   paths: string[]
   public?: boolean
-  extraAnnotations?: {
-    [env in OpsEnv]: { [annotation: string]: string | null }
-  }
+  extraAnnotations?: ExtraAnnotations
 }
 
 export interface IngressForEnv {
