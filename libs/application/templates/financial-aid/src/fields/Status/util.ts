@@ -13,10 +13,6 @@ export const getApplicantStatusConstants = (
     externalData,
     'sendSpouseEmail.data.success',
   )
-  const rulesPage = getValueViaPath<string>(
-    externalData,
-    'municipality.data.rulesHomepage',
-  )
   const homepage = getValueViaPath<string>(
     externalData,
     'municipality.data.homepage',
@@ -30,7 +26,6 @@ export const getApplicantStatusConstants = (
   return {
     currentApplicationId,
     showCopyUrl,
-    rulesPage,
     homepage,
     email,
     rulesHomepage,

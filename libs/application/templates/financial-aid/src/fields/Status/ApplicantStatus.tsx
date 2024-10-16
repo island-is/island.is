@@ -19,14 +19,8 @@ export const ApplicantStatus = ({
   goToScreen,
 }: FieldBaseProps) => {
   const { answers, externalData } = application
-  const {
-    currentApplicationId,
-    showCopyUrl,
-    rulesPage,
-    homepage,
-    email,
-    rulesHomepage,
-  } = getApplicantStatusConstants(answers, externalData)
+  const { currentApplicationId, showCopyUrl, homepage, email, rulesHomepage } =
+    getApplicantStatusConstants(answers, externalData)
 
   const { currentApplication, loading } = useApplication(currentApplicationId)
   const { municipality } = application.externalData
@@ -51,7 +45,7 @@ export const ApplicantStatus = ({
       {state === ApplicationState.REJECTED && (
         <RejectionMessage
           rejectionComment={currentApplication?.rejection}
-          rulesPage={rulesPage}
+          rulesPage={rulesHomepage}
           homepage={homepage}
           email={email}
         />
