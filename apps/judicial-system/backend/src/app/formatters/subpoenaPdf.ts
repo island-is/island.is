@@ -1,4 +1,5 @@
 import PDFDocument from 'pdfkit'
+import { MessageDescriptor } from 'react-intl'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
@@ -29,7 +30,13 @@ import {
   setTitle,
 } from './pdfHelpers'
 
-const getIntro = (gender?: Gender) => {
+const getIntro = (
+  gender?: Gender,
+): {
+  intro: MessageDescriptor
+  absenceIntro: MessageDescriptor
+  arrestIntro: MessageDescriptor
+} => {
   switch (gender) {
     case Gender.MALE:
       return {
