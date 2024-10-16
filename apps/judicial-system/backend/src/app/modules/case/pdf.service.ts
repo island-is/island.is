@@ -365,8 +365,6 @@ export class PdfService {
     location?: string,
     subpoenaType?: SubpoenaType,
   ): Promise<Buffer> {
-    const confirmation: Confirmation | undefined = undefined
-
     await this.refreshFormatMessage()
 
     const generatedPdf = await createServiceCertificate(
@@ -377,7 +375,6 @@ export class PdfService {
       arraignmentDate,
       location,
       subpoenaType,
-      confirmation,
     )
 
     return generatedPdf

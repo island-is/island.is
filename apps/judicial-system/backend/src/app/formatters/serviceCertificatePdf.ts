@@ -11,7 +11,6 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { SubpoenaType } from '@island.is/judicial-system/types'
 
-import { nowFactory } from '../factories/date.factory'
 import { serviceCertificate as strings } from '../messages'
 import { Case } from '../modules/case'
 import { Defendant } from '../modules/defendant'
@@ -22,11 +21,8 @@ import {
   addFooter,
   addHugeHeading,
   addMediumCenteredText,
-  addMediumText,
   addNormalCenteredText,
-  addNormalRightAlignedText,
   addNormalText,
-  Confirmation,
   setTitle,
 } from './pdfHelpers'
 
@@ -50,7 +46,6 @@ export const createServiceCertificate = (
   arraignmentDate?: Date,
   location?: string,
   subpoenaType?: SubpoenaType,
-  confirmation?: Confirmation,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -68,10 +63,6 @@ export const createServiceCertificate = (
   doc.on('data', (chunk) => sinc.push(chunk))
 
   setTitle(doc, formatMessage(strings.title))
-
-  if (confirmation) {
-    addEmptyLines(doc, 5)
-  }
 
   arraignmentDate = arraignmentDate ?? subpoena?.arraignmentDate
   location = location ?? subpoena?.location
@@ -161,11 +152,6 @@ export const createServiceCertificate = (
   addNormalText(doc, getSubpoenaType(defendant.subpoenaType), 'Times-Roman')
 
   addFooter(doc)
-
-  if (confirmation) {
-    addConfirmation(doc, confirmation)
-  }
-
   doc.end()
 
   return new Promise<Buffer>((resolve) =>
