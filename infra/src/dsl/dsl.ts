@@ -21,6 +21,9 @@ import {
 } from './types/input-types'
 import { logger } from '../logging'
 import { COMMON_SECRETS } from './consts'
+export const OVERRIDE_ANNOTATIONS: { [key: string]: string } = {
+  'nginx.ingress.kubernetes.io/enable-global-auth': 'true',
+}
 
 /**
  * Allows you to make some properties of a type optional.
@@ -460,12 +463,10 @@ export class ServiceBuilder<ServiceType extends string> {
 
   /**
    * You can allow ingress traffic (traffic from the internet) to your service by creating an ingress controller. Mapped to an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#what-is-ingress).
+   * Some `extraAnnotations` are overridden. See `OVERRIDE_ANNOTATIONS` for the list of overrides.
    * @param ingresses - Ingress parameters
    */
   ingress(ingresses: IngressMapping): this {
-    const FORCED_ANNOTATIONS: { [key: string]: string } = {
-      'nginx.ingress.kubernetes.io/enable-global-auth': 'true',
-    }
     this.serviceDef.ingress = ingresses
 
     if (!ingresses.primary) {
@@ -477,12 +478,12 @@ export class ServiceBuilder<ServiceType extends string> {
       ingressAnnotations ?? {},
     )) {
       for (const annotation of Object.keys(annotations)) {
-        if (!(annotation in FORCED_ANNOTATIONS)) {
+        if (!(annotation in OVERRIDE_ANNOTATIONS)) {
           continue
         }
-        // Apply any forced annotations
+        // Apply overrides
         annotations[annotation] =
-          FORCED_ANNOTATIONS[annotation] ?? annotations[annotation]
+          OVERRIDE_ANNOTATIONS[annotation] ?? annotations[annotation]
       }
     }
     return this
