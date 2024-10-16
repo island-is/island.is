@@ -367,8 +367,8 @@ export class SignatureCollectionClientService {
   }
 
   private async checkIfRemoveCandidate(id: string, auth: User) {
-    const { ownedLists} = await this.getSignee(auth)
-    if (!ownedLists || (ownedLists.length === 0 )) {
+    const { ownedLists, candidate} = await this.getSignee(auth)
+    if ((!ownedLists || (ownedLists.length === 0 )) && candidate?.id) {
       await this.getApiWithAuth(this.candidateApi, auth).frambodIDDelete({
         iD: parseInt(id),
       })
