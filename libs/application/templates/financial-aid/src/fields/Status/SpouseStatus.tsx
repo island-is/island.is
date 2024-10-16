@@ -11,10 +11,10 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 
 export const SpouseStatus = ({ application, goToScreen }: FieldBaseProps) => {
-  const { answers, externalData } = application
+  const { externalData } = application
   const currentApplicationId = getValueViaPath<string>(
-    answers,
-    'externalData.currentApplication.data.currentApplicationId',
+    externalData,
+    'currentApplication.data.currentApplicationId',
   )
   const rulesHomepage = getValueViaPath<string>(
     externalData,
