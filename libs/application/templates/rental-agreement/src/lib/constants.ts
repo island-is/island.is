@@ -12,6 +12,11 @@ export enum Roles {
   APPLICANT = 'applicant',
 }
 
+export enum rentalHousingConditionInspector {
+  CONTRACT_PARTIES = 'contractParties',
+  INDEPENDENT_PARTY = 'independentParty',
+}
+
 export const pruneAfterDays = (Days: number): StateLifeCycle => {
   return {
     shouldBeListed: false,
