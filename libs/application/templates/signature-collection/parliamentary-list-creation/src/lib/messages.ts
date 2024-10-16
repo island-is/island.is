@@ -238,7 +238,7 @@ export const m = defineMessages({
     description: '',
   },
   listsOverviewHeader: {
-    id: 'plc.application:listOverviewHeader',
+    id: 'plc.application:listsOverviewHeader',
     defaultMessage: 'Upplýsingar um meðmælalista',
     description: '',
   },
@@ -305,7 +305,7 @@ export const m = defineMessages({
 
   /* Action Card logs */
   logListCreated: {
-    id: 'plc.application:listCreated',
+    id: 'plc.application:logListCreated',
     defaultMessage: 'Meðmælalisti stofnaður',
     description: '',
   },
