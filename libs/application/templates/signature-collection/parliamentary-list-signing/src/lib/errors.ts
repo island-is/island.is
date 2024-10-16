@@ -125,7 +125,7 @@ export const errorMessages = {
   singeeNotFound: defineMessages({
     title: {
       id: 'pls.application:error.singeeNotFound.title',
-      defaultMessage: 'Þú fannst ekki í kjörskrá',
+      defaultMessage: 'Notandi uppfyllir ekki skilyrði til að framkvæma þessa aðgerð',
       description: '',
     },
     summary: {
