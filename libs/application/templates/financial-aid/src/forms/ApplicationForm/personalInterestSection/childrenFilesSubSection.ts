@@ -10,11 +10,9 @@ import { ApplicantChildCustodyInformation } from '@island.is/application/types'
 
 export const childrenFilesSubSection = buildSubSection({
   condition: (_, externalData) => {
-    const childWithInfo = getValueViaPath(
-      externalData,
-      'childrenCustodyInformation.data',
-      [],
-    ) as ApplicantChildCustodyInformation[]
+    const childWithInfo = getValueViaPath<
+      Array<ApplicantChildCustodyInformation>
+    >(externalData, 'childrenCustodyInformation.data', [])
 
     return Boolean(childWithInfo?.length)
   },

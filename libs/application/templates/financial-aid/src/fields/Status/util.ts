@@ -5,30 +5,27 @@ export const getApplicantStatusConstants = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
-  const currentApplicationId = getValueViaPath(
+  const currentApplicationId = getValueViaPath<string>(
     answers,
     'externalData.currentApplication.data.currentApplicationId',
-  ) as string
-  const showCopyUrl = getValueViaPath(
+  )
+  const showCopyUrl = getValueViaPath<boolean>(
     externalData,
     'sendSpouseEmail.data.success',
-  ) as boolean
-  const rulesPage = getValueViaPath(
+  )
+  const rulesPage = getValueViaPath<string>(
     externalData,
     'municipality.data.rulesHomepage',
-  ) as string
-  const homepage = getValueViaPath(
+  )
+  const homepage = getValueViaPath<string>(
     externalData,
     'municipality.data.homepage',
-  ) as string
-  const email = getValueViaPath(
-    externalData,
-    'municipality.data.email',
-  ) as string
-  const rulesHomepage = getValueViaPath(
+  )
+  const email = getValueViaPath<string>(externalData, 'municipality.data.email')
+  const rulesHomepage = getValueViaPath<string>(
     externalData,
     'municipality.data.rulesHomepage',
-  ) as string
+  )
 
   return {
     currentApplicationId,

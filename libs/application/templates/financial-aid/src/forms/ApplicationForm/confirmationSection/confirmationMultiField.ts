@@ -42,7 +42,7 @@ export const confirmationMultiField = buildMultiField({
       id: 'confirmationAlert-3',
       title: m.confirmation.alertMessagesInRelationship.dataNeeded,
       message: (application) => {
-        const spouse = getValueViaPath(
+        const spouse = getValueViaPath<boolean>(
           application.externalData,
           'sendSpouseEmail.data.success',
         )
@@ -86,7 +86,7 @@ export const confirmationMultiField = buildMultiField({
       title: m.confirmation.links.title,
       titleVariant: 'h3',
       description: (application) => {
-        const url = getValueViaPath(
+        const url = getValueViaPath<string>(
           application.externalData,
           'municipality.data.homepage',
         )

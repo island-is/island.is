@@ -14,11 +14,9 @@ import { SummaryComment } from '../../../lib/types'
 
 export const childrenSubSection = buildSubSection({
   condition: (_, externalData) => {
-    const childWithInfo = getValueViaPath(
-      externalData,
-      'childrenCustodyInformation.data',
-      [],
-    ) as Array<ApplicantChildCustodyInformation>
+    const childWithInfo = getValueViaPath<
+      Array<ApplicantChildCustodyInformation>
+    >(externalData, 'childrenCustodyInformation.data', [])
 
     return Boolean(childWithInfo?.length)
   },

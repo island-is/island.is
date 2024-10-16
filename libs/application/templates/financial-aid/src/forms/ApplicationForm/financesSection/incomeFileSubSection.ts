@@ -10,7 +10,7 @@ import * as m from '../../../lib/messages'
 
 export const incomeFilesSubSection = buildSubSection({
   condition: (answers) => {
-    const income = getValueViaPath(answers, 'income.type')
+    const income = getValueViaPath<ApproveOptions>(answers, 'income.type')
 
     return income === ApproveOptions.Yes
   },

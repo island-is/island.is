@@ -27,7 +27,7 @@ export const informationSection = buildSection({
           title: '',
           description: (application) => {
             const { externalData } = application
-            const spouseName = getValueViaPath(
+            const spouseName = getValueViaPath<string>(
               externalData,
               'nationalRegistry.data.fullName',
             )
@@ -46,7 +46,7 @@ export const informationSection = buildSection({
           id: `${Routes.SPOUSEACCECPTCONTRACT}-accordion`,
           title: m.privacyPolicyAccordion.general.sectionTitle,
           accordionItems: (application) => {
-            const url = getValueViaPath(
+            const url = getValueViaPath<string>(
               application.externalData,
               'municipality.data.homepage',
             )

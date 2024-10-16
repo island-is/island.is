@@ -10,7 +10,7 @@ import * as m from '../../lib/messages'
 
 export const spouseTaxReturnFilesSection = buildSection({
   condition: (_, externalData) => {
-    const spouseTaxSuccess = getValueViaPath(
+    const spouseTaxSuccess = getValueViaPath<boolean>(
       externalData,
       'taxDataSpouse.data.municipalitiesDirectTaxPayments.success',
     )

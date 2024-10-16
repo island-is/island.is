@@ -13,7 +13,10 @@ const MissingFilesConfirmation = ({ application, field }: FieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { getValues } = useFormContext()
 
-  const isSpouse = getValueViaPath(field as RecordObject<any>, 'props.isSpouse')
+  const isSpouse = getValueViaPath<boolean>(
+    field as RecordObject<any>,
+    'props.isSpouse',
+  )
   const fileType: UploadFileType = isSpouse
     ? 'missingFilesSpouse'
     : 'missingFiles'

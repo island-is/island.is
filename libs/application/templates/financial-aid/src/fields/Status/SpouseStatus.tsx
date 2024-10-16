@@ -12,17 +12,15 @@ import { getValueViaPath } from '@island.is/application/core'
 
 const SpouseStatus = ({ application, goToScreen }: FieldBaseProps) => {
   const { answers, externalData } = application
-  const currentApplicationId = getValueViaPath(
+  const currentApplicationId = getValueViaPath<string>(
     answers,
     'externalData.currentApplication.data.currentApplicationId',
-  ) as string | undefined
-  const rulesHomepage = getValueViaPath(
+  )
+  const rulesHomepage = getValueViaPath<string>(
     externalData,
     'municipality.data.rulesHomepage',
-  ) as string | undefined
-  const email = getValueViaPath(externalData, 'municipality.data.email') as
-    | string
-    | undefined
+  )
+  const email = getValueViaPath<string>(externalData, 'municipality.data.email')
 
   const { currentApplication, loading } = useApplication(currentApplicationId)
   const state = currentApplication?.state

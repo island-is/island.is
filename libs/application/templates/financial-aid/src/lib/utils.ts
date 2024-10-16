@@ -39,10 +39,10 @@ export function hasSpouseCheck(context: ApplicationContext) {
 export const hasSpouse = (answers: FormValue, externalData: ExternalData) => {
   const nationalRegistrySpouse = externalData.nationalRegistrySpouse.data
 
-  const unregisteredCohabitation = getValueViaPath(
+  const unregisteredCohabitation = getValueViaPath<string>(
     answers,
     'relationshipStatus.unregisteredCohabitation',
-  ) as string | undefined
+  )
 
   return (
     Boolean(nationalRegistrySpouse) ||
@@ -53,10 +53,10 @@ export const hasSpouse = (answers: FormValue, externalData: ExternalData) => {
 export function isMunicipalityNotRegistered(context: ApplicationContext) {
   const { externalData } = context.application
 
-  const municipality = getValueViaPath(
+  const municipality = getValueViaPath<Municipality>(
     externalData,
     `municipality.data`,
-  ) as Municipality | null
+  )
   return municipality == null || !municipality.active
 }
 
@@ -67,14 +67,14 @@ export function findFamilyStatus(
   answers: FormValue,
   externalData: ExternalData,
 ) {
-  const maritalStatus = getValueViaPath(
+  const maritalStatus = getValueViaPath<string>(
     externalData,
     'nationalRegistrySpouse.data.maritalStatus',
-  ) as string | undefined
-  const unregisteredCohabitation = getValueViaPath(
+  )
+  const unregisteredCohabitation = getValueViaPath<string>(
     answers,
     'relationshipStatus.unregisteredCohabitation',
-  ) as string | undefined
+  )
 
   if (
     martialStatusTypeFromMartialCode(maritalStatus) ===
@@ -96,10 +96,10 @@ export function findFamilyStatus(
 
 export function hasActiveCurrentApplication(context: ApplicationContext) {
   const { externalData } = context.application
-  const currentApplication = getValueViaPath(
+  const currentApplication = getValueViaPath<CurrentApplication>(
     externalData,
     'currentApplication.data',
-  ) as CurrentApplication
+  )
 
   return currentApplication?.currentApplicationId != null
 }

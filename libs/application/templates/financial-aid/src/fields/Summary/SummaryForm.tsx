@@ -7,15 +7,11 @@ import {
   aidCalculator,
   FamilyStatus,
   ChildrenAid,
-  HomeCircumstances,
-  Aid,
-  DirectTaxPayment,
 } from '@island.is/financial-aid/shared/lib'
 import { useLocale } from '@island.is/localization'
 import * as m from '../../lib/messages'
 import {
   ApproveOptions,
-  ChildrenSchoolInfo,
   SummaryComment as SummaryCommentType,
 } from '../../lib/types'
 import { Routes } from '../../lib/constants'
@@ -31,13 +27,9 @@ import Files from '../../components/Summary/Files'
 import FormInfo from '../../components/Summary/FormInfo'
 import DirectTaxPaymentCell from '../../components/Summary/DirectTaxPaymentCell'
 import UserInfo from '../../components/Summary/UserInfo'
-import {
-  ApplicantChildCustodyInformation,
-  FieldBaseProps,
-  NationalRegistryIndividual,
-} from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { AnswersSchema } from '../../lib/dataSchema'
+import { getSummaryConstants } from './utils'
 
 const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -48,23 +40,23 @@ const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
   const summaryCommentType = SummaryCommentType.FORMCOMMENT
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const homeCircumstances = getValueViaPath(
-    answers,
-    'homeCircumstances.type',
-  ) as HomeCircumstances
-
-  const individualAid = getValueViaPath(
-    externalData,
-    'municipality.data.individualAid',
-  ) as Aid
-
-  const cohabitationAid = getValueViaPath(
-    externalData,
-    'municipality.data.cohabitationAid',
-  ) as Aid
+  const {
+    homeCircumstances,
+    individualAid,
+    cohabitationAid,
+    childrenSchoolInfo,
+    municipalitiesDirectTaxPaymentsSuccess,
+    municipalitiesDirectTaxPayments,
+    fetchDate,
+    personalTaxReturn,
+    personalTaxCreditType,
+    childrenCustodyData,
+    childrenAid,
+    nationalRegistryData,
+  } = getSummaryConstants(answers, externalData)
 
   const aidAmount = useMemo(() => {
-    if (externalData.municipality.data && answers.homeCircumstances) {
+    if (externalData.municipality.data && homeCircumstances) {
       return aidCalculator(
         homeCircumstances,
         findFamilyStatus(answers, externalData) ===
@@ -75,28 +67,10 @@ const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
     }
   }, [externalData.municipality.data])
 
-  const childrenCustodyData = getValueViaPath(
-    externalData,
-    'childrenCustodyInformation.data',
-  ) as Array<ApplicantChildCustodyInformation>
-
-  const childrenAid = getValueViaPath(
-    externalData,
-    'municipality.data.childrenAid',
-  ) as ChildrenAid
-
-  const nationalRegistryData = getValueViaPath(
-    externalData,
-    'nationalRegistry.data',
-  ) as NationalRegistryIndividual
-
   const showAlertMessageAboutChildrenAid =
-    childrenCustodyData?.length > 0 && childrenAid !== ChildrenAid.NOTDEFINED
-
-  const personalTaxCreditType = getValueViaPath(
-    answers,
-    'personalTaxCredit.type',
-  ) as ApproveOptions
+    childrenCustodyData &&
+    childrenCustodyData?.length > 0 &&
+    childrenAid !== ChildrenAid.NOTDEFINED
 
   const findFilesRouteFrom = (
     childrenFiles: UploadFile[],
@@ -111,31 +85,6 @@ const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
 
     return Routes.TAXRETURNFILES
   }
-
-  const childrenSchoolInfo = getValueViaPath(
-    answers,
-    'childrenSchoolInfo',
-  ) as Array<ChildrenSchoolInfo>
-
-  const municipalitiesDirectTaxPaymentsSuccess = getValueViaPath(
-    externalData,
-    'taxData.data.municipalitiesDirectTaxPayments.success',
-  ) as boolean
-
-  const municipalitiesDirectTaxPayments = getValueViaPath(
-    externalData,
-    'taxData.data.municipalitiesDirectTaxPayments.directTaxPayments',
-  ) as Array<DirectTaxPayment>
-
-  const fetchDate = getValueViaPath(
-    externalData,
-    'nationalRegistry.date',
-  ) as string
-
-  const personalTaxReturn = getValueViaPath(
-    externalData,
-    'taxData.data.municipalitiesPersonalTaxReturn.personalTaxReturn',
-  ) as UploadFile
 
   return (
     <>
@@ -199,8 +148,8 @@ const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
       </Box>
 
       <UserInfo
-        name={nationalRegistryData.fullName}
-        nationalId={nationalRegistryData.nationalId}
+        name={nationalRegistryData?.fullName}
+        nationalId={nationalRegistryData?.nationalId}
         address={formatAddress(nationalRegistryData)}
       />
 
@@ -219,8 +168,8 @@ const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
 
       <DirectTaxPaymentCell
         setIsModalOpen={setIsModalOpen}
-        hasFetchedPayments={municipalitiesDirectTaxPaymentsSuccess}
-        directTaxPayments={municipalitiesDirectTaxPayments}
+        hasFetchedPayments={municipalitiesDirectTaxPaymentsSuccess ?? false}
+        directTaxPayments={municipalitiesDirectTaxPayments ?? []}
       />
 
       <ContactInfo
@@ -251,8 +200,8 @@ const SummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
       />
 
       <DirectTaxPaymentModal
-        items={municipalitiesDirectTaxPayments}
-        dateDataWasFetched={fetchDate}
+        items={municipalitiesDirectTaxPayments ?? []}
+        dateDataWasFetched={fetchDate ?? ''}
         isVisible={isModalOpen}
         onVisibilityChange={(isOpen: boolean) => {
           setIsModalOpen(isOpen)

@@ -41,7 +41,7 @@ const ApplicantStatus = ({ application, goToScreen }: FieldBaseProps) => {
   return (
     <Box paddingBottom={5}>
       <Header state={state} />
-      {isWaitingForSpouse && <SpouseAlert showCopyUrl={showCopyUrl} />}
+      {isWaitingForSpouse && <SpouseAlert showCopyUrl={showCopyUrl ?? false} />}
       {state === ApplicationState.APPROVED && (
         <ApprovedAlert events={currentApplication?.applicationEvents} />
       )}

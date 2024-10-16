@@ -145,12 +145,12 @@ export const formItems = (answers: FormValue, externalData: ExternalData) => {
 }
 
 export const spouseFormItems = (answers: FormValue) => {
-  const type = getValueViaPath(answers, 'spouseIncome.type') as ApproveOptions
+  const type = getValueViaPath<ApproveOptions>(answers, 'spouseIncome.type')
   return [
     {
       route: Routes.SPOUSEINCOME,
       label: m.incomeForm.general.sectionTitle,
-      info: getMessageApproveOptionsForIncome[type],
+      info: getMessageApproveOptionsForIncome[type ?? ApproveOptions.No],
     },
   ]
 }

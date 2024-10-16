@@ -12,7 +12,7 @@ export const taxReturnFilesSubSection = buildSubSection({
   id: Routes.TAXRETURNFILES,
   title: m.taxReturnForm.general.sectionTitle,
   condition: (_, externalData) => {
-    const personalTaxSuccess = getValueViaPath(
+    const personalTaxSuccess = getValueViaPath<boolean>(
       externalData,
       'taxData.data.municipalitiesDirectTaxPayments.success',
     )

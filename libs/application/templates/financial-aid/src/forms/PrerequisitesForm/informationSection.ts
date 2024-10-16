@@ -35,7 +35,7 @@ export const informationSection = buildSection({
           id: `${Routes.ACCECPTCONTRACT}-accordion`,
           title: m.privacyPolicyAccordion.general.sectionTitle,
           accordionItems: (application) => {
-            const url = getValueViaPath(
+            const url = getValueViaPath<string>(
               application.externalData,
               'municipality.data.homepage',
             )
