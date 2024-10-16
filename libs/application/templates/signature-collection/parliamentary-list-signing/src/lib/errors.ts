@@ -69,7 +69,7 @@ export const errorMessages = {
       description: '',
     },
     summary: {
-      id: 'pls.application:error.acinvalidSignatureive.summary',
+      id: 'pls.application:error.invalidSignatureive.summary',
       defaultMessage: 'Nánari upplýsingar á mínum síðum.',
       description: '',
     },
