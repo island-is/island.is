@@ -78,11 +78,11 @@ import { mapImage } from './models/image.model'
 import { EmailSignup, mapEmailSignup } from './models/emailSignup.model'
 import { GetTabSectionInput } from './dto/getTabSection.input'
 import { mapTabSection, TabSection } from './models/tabSection.model'
-import { GetGenericTagsInput } from './dto/getGenericTags.input'
 import { GenericTag, mapGenericTag } from './models/genericTag.model'
 import { GetEmailSignupInput } from './dto/getEmailSignup.input'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
 import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
+import { GetGenericTagInTagGroupInput } from './dto/getGenericTags.input'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -1035,11 +1035,14 @@ export class CmsContentfulService {
     return (result.items as types.IGenericTag[]).map(mapGenericTag)[0] ?? null
   }
 
-  async getGenericTags({
+  async getGenericTagsInTagGroup({
     lang = 'is',
-  }: GetGenericTagsInput): Promise<Array<GenericTag> | null> {
+    tagGroupSlug,
+  }: GetGenericTagInTagGroupInput): Promise<Array<GenericTag> | null> {
     const params = {
       ['content_type']: 'genericTag',
+      'fields.genericTagGroup.fields.slug': tagGroupSlug,
+      'fields.genericTagGroup.sys.contentType.sys.id': 'genericTagGroup',
     }
 
     const result = await this.contentfulRepository

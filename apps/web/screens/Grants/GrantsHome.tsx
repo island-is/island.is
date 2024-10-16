@@ -17,9 +17,10 @@ import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
+  GenericTag,
   GenericTagGroup,
   Query,
-  QueryGetGenericTagsArgs,
+  QueryGetGenericTagsInTagGroupArgs,
   QueryGetOrganizationArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
@@ -35,12 +36,12 @@ import {
   withCustomPageWrapper,
 } from '../CustomPage/CustomPageWrapper'
 import { GET_ORGANIZATION_QUERY } from '../queries'
-import { GET_GENERIC_TAGS_QUERY } from '../queries/GenericTag'
+import { GET_GENERIC_TAG_IN_TAG_GROUP_QUERY } from '../queries/GenericTag'
 import { m } from './messages'
 
 const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   organization,
-  category,
+  categories,
   locale,
 }) => {
   const { formatMessage } = useIntl()
@@ -133,140 +134,19 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
             </Box>
 
             <GridRow>
-              {category?.title}
-
-              <GridColumn
-                span={['1/1', '1/2', '1/2', '1/3']}
-                paddingTop={3}
-                paddingBottom={3}
-              >
-                <CategoryCard
-                  href={`${categoriesUrl}?yfirflokkur=veitekki`}
-                  heading={'Flokkur'}
-                  text={'Flokka lýsing'}
-                />
-              </GridColumn>
-              <GridColumn
-                span={['1/1', '1/2', '1/2', '1/3']}
-                paddingTop={3}
-                paddingBottom={3}
-              >
-                <CategoryCard
-                  href={`${categoriesUrl}?yfirflokkur=veitekki`}
-                  heading={'Flokkur'}
-                  text={'Flokka lýsing'}
-                />
-              </GridColumn>
-              <GridColumn
-                span={['1/1', '1/2', '1/2', '1/3']}
-                paddingTop={3}
-                paddingBottom={3}
-              >
-                <CategoryCard
-                  href={`${categoriesUrl}?yfirflokkur=veitekki`}
-                  heading={'Flokkur'}
-                  text={'Flokka lýsing'}
-                />
-              </GridColumn>
-              <GridColumn
-                span={['1/1', '1/2', '1/2', '1/3']}
-                paddingTop={3}
-                paddingBottom={3}
-              >
-                <CategoryCard
-                  href={`${categoriesUrl}?yfirflokkur=veitekki`}
-                  heading={'Flokkur'}
-                  text={'Flokka lýsing'}
-                />
-              </GridColumn>
-              <GridColumn
-                span={['1/1', '1/2', '1/2', '1/3']}
-                paddingTop={3}
-                paddingBottom={3}
-              >
-                <CategoryCard
-                  href={`${categoriesUrl}?yfirflokkur=veitekki`}
-                  heading={'Flokkur'}
-                  text={'Flokka lýsing'}
-                />
-              </GridColumn>
-              <GridColumn
-                span={['1/1', '1/2', '1/2', '1/3']}
-                paddingTop={3}
-                paddingBottom={3}
-              >
-                <CategoryCard
-                  href={`${categoriesUrl}?yfirflokkur=veitekki`}
-                  heading={'Flokkur'}
-                  text={'Flokka lýsing'}
-                />
-              </GridColumn>
-              <GridColumn
-                span={['1/1', '1/2', '1/2', '1/3']}
-                paddingTop={3}
-                paddingBottom={3}
-              >
-                <CategoryCard
-                  href={`${categoriesUrl}?yfirflokkur=veitekki`}
-                  heading={'Flokkur'}
-                  text={'Flokka lýsing'}
-                />
-              </GridColumn>
-              <GridColumn
-                span={['1/1', '1/2', '1/2', '1/3']}
-                paddingTop={3}
-                paddingBottom={3}
-              >
-                <CategoryCard
-                  href={`${categoriesUrl}?yfirflokkur=veitekki`}
-                  heading={'Flokkur'}
-                  text={'Flokka lýsing'}
-                />
-              </GridColumn>
-              <GridColumn
-                span={['1/1', '1/2', '1/2', '1/3']}
-                paddingTop={3}
-                paddingBottom={3}
-              >
-                <CategoryCard
-                  href={`${categoriesUrl}?yfirflokkur=veitekki`}
-                  heading={'Flokkur'}
-                  text={'Flokka lýsing'}
-                />
-              </GridColumn>
-              <GridColumn
-                span={['1/1', '1/2', '1/2', '1/3']}
-                paddingTop={3}
-                paddingBottom={3}
-              >
-                <CategoryCard
-                  href={`${categoriesUrl}?yfirflokkur=veitekki`}
-                  heading={'Flokkur'}
-                  text={'Flokka lýsing'}
-                />
-              </GridColumn>
-              <GridColumn
-                span={['1/1', '1/2', '1/2', '1/3']}
-                paddingTop={3}
-                paddingBottom={3}
-              >
-                <CategoryCard
-                  href={`${categoriesUrl}?yfirflokkur=veitekki`}
-                  heading={'Flokkur'}
-                  text={'Flokka lýsing'}
-                />
-              </GridColumn>
-              <GridColumn
-                span={['1/1', '1/2', '1/2', '1/3']}
-                paddingTop={3}
-                paddingBottom={3}
-              >
-                <CategoryCard
-                  href={`${categoriesUrl}?yfirflokkur=veitekki`}
-                  heading={'Flokkur'}
-                  text={'Flokka lýsing'}
-                />
-              </GridColumn>
+              {categories?.map((c) => (
+                <GridColumn
+                  span={['1/1', '1/2', '1/2', '1/3']}
+                  paddingTop={3}
+                  paddingBottom={3}
+                >
+                  <CategoryCard
+                    href={`${categoriesUrl}?yfirflokkur=${c.slug}`}
+                    heading={c.title}
+                    text={'Flokka lýsing'}
+                  />
+                </GridColumn>
+              ))}
 
               {/* ))} */}
             </GridRow>
@@ -279,19 +159,19 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
 
 interface GrantsHomeProps {
   organization?: Query['getOrganization']
-  category?: GenericTagGroup
+  categories?: Array<GenericTag>
   locale: Locale
 }
 
 const GrantsHome: CustomScreen<GrantsHomeProps> = ({
-  category,
+  categories,
   organization,
   customPageData,
   locale,
 }) => {
   return (
     <GrantsHomePage
-      category={category}
+      categories={categories}
       organization={organization}
       locale={locale}
       customPageData={customPageData}
@@ -309,7 +189,7 @@ GrantsHome.getProps = async ({ apolloClient, locale }) => {
       data: { getOrganization },
     },
     {
-      data: { getGenericTags: tags },
+      data: { getGenericTagsInTagGroup: tags },
     },
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationArgs>({
@@ -321,27 +201,20 @@ GrantsHome.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetGenericTagsArgs>({
-      query: GET_GENERIC_TAGS_QUERY,
+    apolloClient.query<Query, QueryGetGenericTagsInTagGroupArgs>({
+      query: GET_GENERIC_TAG_IN_TAG_GROUP_QUERY,
       variables: {
         input: {
           lang: locale as ContentLanguage,
+          tagGroupSlug: tagGroupCategory,
         },
       },
     }),
   ])
 
-  if (!getOrganization?.hasALandingPage) {
-    throw new CustomNextError(404, 'Organization page not found')
-  }
-
-  console.log('TAGS ARE HERE ------------------_>', tags)
-  const category = tags?.find(
-    (tag) => tag.genericTagGroup?.slug === tagGroupCategory,
-  )?.genericTagGroup
   return {
     organization: getOrganization,
-    category: category ?? undefined,
+    categories: tags ?? [],
     locale: locale as Locale,
     showSearchInHeader: false,
     themeConfig: {

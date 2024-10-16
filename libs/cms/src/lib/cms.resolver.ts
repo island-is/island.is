@@ -121,7 +121,7 @@ import { TeamMemberResponse } from './models/teamMemberResponse.model'
 import { TeamList } from './models/teamList.model'
 import { TeamMember } from './models/teamMember.model'
 import { LatestGenericListItems } from './models/latestGenericListItems.model'
-import { GetGenericTagsInput } from './dto/getGenericTags.input'
+import { GetGenericTagInTagGroupInput } from './dto/getGenericTags.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -618,10 +618,10 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => [GenericTag], { nullable: true })
-  getGenericTags(
-    @Args('input') input: GetGenericTagsInput,
+  getGenericTagsInTagGroup(
+    @Args('input') input: GetGenericTagInTagGroupInput,
   ): Promise<Array<GenericTag> | null> {
-    return this.cmsContentfulService.getGenericTags(input)
+    return this.cmsContentfulService.getGenericTagsInTagGroup(input)
   }
 
   @CacheControl(defaultCache)
