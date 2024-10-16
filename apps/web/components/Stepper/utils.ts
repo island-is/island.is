@@ -77,10 +77,6 @@ interface StateMeta {
   stepSlug: string
 }
 
-interface StateMeta {
-  stepSlug: string
-}
-
 const getStepBySlug = (stepper: Stepper, slug: string): Step | undefined => {
   return stepper.steps?.find((step) => step.slug === slug)
 }
