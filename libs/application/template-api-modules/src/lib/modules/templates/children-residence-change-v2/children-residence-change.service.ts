@@ -174,7 +174,7 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
 
     const applicant = nationalRegistry.data
     const otherParent = childrenCustodyInformation.data[0].otherParent
-    const applicationLink = await this.getApplicationLink(application)
+    const contractLink = await this.getApplicationLink(application)
 
     if (otherParent) {
       this.notificationsService.sendNotification({
@@ -185,7 +185,7 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
         },
         args: {
           applicantName: applicant.fullName,
-          contractLink: applicationLink,
+          contractLink,
         },
       })
     }
