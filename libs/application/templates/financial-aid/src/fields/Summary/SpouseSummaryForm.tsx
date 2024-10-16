@@ -41,6 +41,7 @@ const SpouseSummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
     directTaxPayments,
     fetchDate,
     spouseTaxReturnFiles,
+    spouseFormComment,
     spouseIncomeFiles,
   } = getSpouseSummaryConstants(answers, externalData)
 
@@ -61,17 +62,19 @@ const SpouseSummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
       {externalData?.taxDataSpouse && (
         <DirectTaxPaymentCell
           setIsModalOpen={setIsModalOpen}
-          hasFetchedPayments={taxData?.municipalitiesDirectTaxPayments?.success}
+          hasFetchedPayments={
+            taxData?.municipalitiesDirectTaxPayments?.success ?? false
+          }
           directTaxPayments={
-            taxData?.municipalitiesDirectTaxPayments?.directTaxPayments
+            taxData?.municipalitiesDirectTaxPayments?.directTaxPayments ?? []
           }
         />
       )}
 
       <ContactInfo
         route={Routes.SPOUSECONTACTINFO}
-        email={sposeEmail}
-        phone={sposePhone}
+        email={sposeEmail ?? ''}
+        phone={sposePhone ?? ''}
         goToScreen={goToScreen}
       />
 
@@ -87,13 +90,13 @@ const SpouseSummaryForm = ({ application, goToScreen }: FieldBaseProps) => {
 
       <SummaryComment
         commentId={summaryCommentType}
-        comment={answers?.spouseFormComment as string}
+        comment={spouseFormComment}
       />
 
       {directTaxPayments && (
         <DirectTaxPaymentModal
           items={directTaxPayments}
-          dateDataWasFetched={fetchDate}
+          dateDataWasFetched={fetchDate ?? ''}
           isVisible={isModalOpen}
           onVisibilityChange={(isOpen: boolean) => {
             setIsModalOpen(isOpen)

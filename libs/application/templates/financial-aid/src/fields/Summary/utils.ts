@@ -32,52 +32,51 @@ export const getSpouseSummaryConstants = (
     | NationalRegistryIndividual
     | undefined
 
-  const taxData = getValueViaPath(externalData, 'taxDataSpouse.data') as TaxData
+  const taxData = getValueViaPath<TaxData>(externalData, 'taxDataSpouse.data')
 
-  const sposeEmail = getValueViaPath(
-    answers,
-    'spouseContactInfo.email',
-  ) as string
+  const sposeEmail = getValueViaPath<string>(answers, 'spouseContactInfo.email')
 
-  const sposePhone = getValueViaPath(
-    answers,
-    'spouseContactInfo.phone',
-  ) as string
+  const sposePhone = getValueViaPath<string>(answers, 'spouseContactInfo.phone')
 
-  const spouseIncomeType = getValueViaPath(
+  const spouseIncomeType = getValueViaPath<ApproveOptions>(
     answers,
     'spouseIncome.type',
-  ) as ApproveOptions
+  )
 
   const route =
     spouseIncomeType === ApproveOptions.Yes
       ? Routes.SPOUSEINCOMEFILES
       : Routes.SPOUSETAXRETURNFILES
 
-  const personalTaxReturn = getValueViaPath(
+  const personalTaxReturn = getValueViaPath<PersonalTaxReturn>(
     externalData,
     'taxDataSpouse.data.municipalitiesPersonalTaxReturn.personalTaxReturn',
-  ) as PersonalTaxReturn
+  )
 
-  const directTaxPayments = getValueViaPath(
+  const directTaxPayments = getValueViaPath<Array<DirectTaxPayment>>(
     externalData,
     'taxDataSpouse.data.municipalitiesDirectTaxPayments.directTaxPayments',
-  ) as DirectTaxPayment[]
+  )
 
-  const fetchDate = getValueViaPath(
+  const fetchDate = getValueViaPath<string>(
     externalData,
     'nationalRegistry?.date',
-  ) as string
+  )
 
-  const spouseTaxReturnFiles = getValueViaPath(
+  const spouseTaxReturnFiles = getValueViaPath<Array<UploadFile>>(
     answers,
     'spouseTaxReturnFiles',
-  ) as Array<UploadFile>
+  )
 
-  const spouseIncomeFiles = getValueViaPath(
+  const spouseFormComment = getValueViaPath<string>(
+    answers,
+    'spouseFormComment',
+  )
+
+  const spouseIncomeFiles = getValueViaPath<Array<UploadFile>>(
     answers,
     'spouseIncomeFiles',
-  ) as Array<UploadFile>
+  )
 
   return {
     nationalId,
@@ -90,6 +89,7 @@ export const getSpouseSummaryConstants = (
     directTaxPayments,
     fetchDate,
     spouseTaxReturnFiles,
+    spouseFormComment,
     spouseIncomeFiles,
   }
 }
