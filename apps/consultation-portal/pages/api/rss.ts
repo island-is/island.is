@@ -79,6 +79,7 @@ export default async function handler(
   } catch (error) {
     if (error.networkError) {
       res.status(500).send('Network error')
+      return
     } else {
       res.status(500).send('Internal Server Error')
     }
