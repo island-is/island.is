@@ -169,52 +169,6 @@ export const m = defineMessages({
     description: '',
   },
 
-  /* Ábyrgðaraðilar */
-  managersAndSupervisors: {
-    id: 'plc.application:managersAndSupervisors',
-    defaultMessage: 'Ábyrgðar-/umsjónaraðilar',
-    description: '',
-  },
-  managersAndSupervisorsTitle: {
-    id: 'plc.application:managersAndSupervisorsTitle',
-    defaultMessage: 'Veljið ábyrgðar- og umsjónaraðila',
-    description: '',
-  },
-  managers: {
-    id: 'plc.application:managers',
-    defaultMessage: 'Ábyrgðaraðilar',
-    description: '',
-  },
-  managersDescription: {
-    id: 'plc.application:managersDescription',
-    defaultMessage:
-      'Ábyrgðaraðili hefur aðgang að söfnunum í öllum kjördæmum og getur bætt við og eytt umsjónaraðilum. Ábyrgðaraðili getur slegið inn kennitölur meðmælenda af blaði í viðeigandi kjördæmum.',
-    description: '',
-  },
-  addManager: {
-    id: 'plc.application:addManager',
-    defaultMessage: 'Bæta við ábyrgðaraðila',
-    description: '',
-  },
-
-  /* Umsjónaraðilar */
-  supervisors: {
-    id: 'plc.application:supervisors',
-    defaultMessage: 'Umsjónaraðilar',
-    description: '',
-  },
-  supervisorsDescription: {
-    id: 'plc.application:supervisorsDescription',
-    defaultMessage:
-      'Umsjónaraðili sér aðeins þau kjördæmi sem honum hefur verið úthlutað og getur slegið inn kennitölur meðmælenda af blaði í þeim kjördæmum.',
-    description: '',
-  },
-  addSupervisor: {
-    id: 'plc.application:addSupervisor',
-    defaultMessage: 'Bæta við umsjónaraðila',
-    description: '',
-  },
-
   /* Yfirlit */
   overview: {
     id: 'plc.application:overview',
