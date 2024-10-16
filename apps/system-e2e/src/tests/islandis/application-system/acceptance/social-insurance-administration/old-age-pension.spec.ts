@@ -18,87 +18,182 @@ import {
   writeComment,
 } from './shared'
 
-const agreeToDataProviders = async (page: Page) => {
+const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
   const { proceed } = helpers(page)
 
-  await expect(
-    page.getByRole('heading', {
-      name: label(socialInsuranceAdministrationMessage.pre.externalDataSection),
-    }),
-  ).toBeVisible()
-  await page.getByTestId('agree-to-data-providers').click()
-  await proceed()
-}
+  await applicationTest.step('Select type of application', async () => {
+    await expect(
+      page.getByRole('heading', {
+        name: label(oldAgePensionFormMessage.pre.applicationTypeTitle),
+      }),
+    ).toBeVisible()
+    await page.getByTestId(applicationType).click()
+    await proceed()
+  })
 
-const pensionFunds = async (page: Page) => {
-  await expect(
-    page.getByRole('heading', {
-      name: label(oldAgePensionFormMessage.pre.questionTitle),
-    }),
-  ).toBeVisible()
-  await page
-    .getByRole('radio', {
-      name: label(socialInsuranceAdministrationMessage.shared.yes),
-    })
-    .click()
-  await page
-    .getByRole('button', {
-      name: label(socialInsuranceAdministrationMessage.pre.startApplication),
-    })
-    .click()
-}
-
-const onePaymentPerYear = async (page: Page) => {
-  const { proceed } = helpers(page)
-
-  await expect(
-    page.getByRole('heading', {
-      name: label(
-        oldAgePensionFormMessage.onePaymentPerYear.onePaymentPerYearTitle,
-      ),
-    }),
-  ).toBeVisible()
-  await page
-    .getByRole('radio', {
-      name: label(socialInsuranceAdministrationMessage.shared.no),
-    })
-    .click()
-  await proceed()
-}
-
-const viewResidenceHistory = async (page: Page) => {
-  const { proceed } = helpers(page)
-
-  await expect(
-    page.getByRole('heading', {
-      name: label(oldAgePensionFormMessage.residence.residenceHistoryTitle),
-    }),
-  ).toBeVisible()
-  await proceed()
-}
-
-const pensionPaymentsAttachments = async (page: Page) => {
-  const { proceed } = helpers(page)
-
-  await expect(
-    page.getByRole('heading', {
-      name: label(oldAgePensionFormMessage.fileUpload.pensionFileTitle),
-    }),
-  ).toBeVisible()
-  await proceed()
-}
-
-const conclusionScreen = async (page: Page) => {
-  await expect(
-    page
-      .getByRole('heading', {
+  await applicationTest.step('Agree to data providers', async () => {
+    await expect(
+      page.getByRole('heading', {
         name: label(
-          socialInsuranceAdministrationMessage.conclusionScreen
-            .receivedAwaitingIncomePlanTitle,
+          socialInsuranceAdministrationMessage.pre.externalDataSection,
         ),
+      }),
+    ).toBeVisible()
+    await page.getByTestId('agree-to-data-providers').click()
+    await proceed()
+  })
+
+  await applicationTest.step(
+    'Answer pension fund question and start application',
+    async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: label(oldAgePensionFormMessage.pre.questionTitle),
+        }),
+      ).toBeVisible()
+      await page
+        .getByRole('radio', {
+          name: label(socialInsuranceAdministrationMessage.shared.yes),
+        })
+        .click()
+      await page
+        .getByRole('button', {
+          name: label(
+            socialInsuranceAdministrationMessage.pre.startApplication,
+          ),
+        })
+        .click()
+    },
+  )
+
+  await applicationTest.step('Fill in applicant info', () =>
+    fillApplicantInfo(page),
+  )
+
+  await applicationTest.step('Fill in payment information', () =>
+    fillPaymentInfo(page, true),
+  )
+
+  await applicationTest.step('One payment per year', async () => {
+    await expect(
+      page.getByRole('heading', {
+        name: label(
+          oldAgePensionFormMessage.onePaymentPerYear.onePaymentPerYearTitle,
+        ),
+      }),
+    ).toBeVisible()
+    await page
+      .getByRole('radio', {
+        name: label(socialInsuranceAdministrationMessage.shared.no),
       })
-      .first(),
-  ).toBeVisible()
+      .click()
+    await proceed()
+  })
+
+  await applicationTest.step('View residence history', async () => {
+    await expect(
+      page.getByRole('heading', {
+        name: label(oldAgePensionFormMessage.residence.residenceHistoryTitle),
+      }),
+    ).toBeVisible()
+    await proceed()
+  })
+
+  if (applicationType === 'half-old-age-pension') {
+    await applicationTest.step('Self-employed or employee', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: label(
+            oldAgePensionFormMessage.employer.selfEmployedOrEmployeeTitle,
+          ),
+        }),
+      ).toBeVisible()
+
+      await page
+        .getByRole('radio', {
+          name: label(oldAgePensionFormMessage.employer.employee),
+        })
+        .click()
+      await proceed()
+    })
+
+    await applicationTest.step('Employer registration', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: label(oldAgePensionFormMessage.employer.registrationTitle),
+        }),
+      ).toBeVisible()
+
+      const employerEmail = page.getByRole('textbox', {
+        name: label(oldAgePensionFormMessage.employer.email),
+      })
+      await employerEmail.selectText()
+      await employerEmail.fill('mockEmail@mail.is')
+
+      await page
+        .getByRole('radio', {
+          name: label(oldAgePensionFormMessage.employer.ratioYearly),
+        })
+        .click()
+
+      const employmentRatio = page.getByRole('textbox', {
+        name: label(oldAgePensionFormMessage.employer.ratio),
+      })
+      await employmentRatio.selectText()
+      await employmentRatio.fill('50')
+      await proceed()
+    })
+
+    await applicationTest.step('Employers', async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: label(oldAgePensionFormMessage.employer.employerTitle),
+        }),
+      ).toBeVisible()
+      await proceed()
+    })
+  }
+
+  await applicationTest.step('Select period', () => selectPeriod(page))
+
+  await applicationTest.step(
+    'Check that attachments for pension payments header is visible',
+    async () => {
+      await expect(
+        page.getByRole('heading', {
+          name: label(oldAgePensionFormMessage.fileUpload.pensionFileTitle),
+        }),
+      ).toBeVisible()
+      await proceed()
+    },
+  )
+
+  await applicationTest.step(
+    'Check that additional documents header is visible',
+    () => additionalAttachments(page),
+  )
+
+  await applicationTest.step('Write comment', () => writeComment(page))
+
+  await applicationTest.step('Submit application', () =>
+    submitApplication(page),
+  )
+
+  await applicationTest.step(
+    'Check that conclusion screen header is visible',
+    async () => {
+      await expect(
+        page
+          .getByRole('heading', {
+            name: label(
+              socialInsuranceAdministrationMessage.conclusionScreen
+                .receivedAwaitingIncomePlanTitle,
+            ),
+          })
+          .first(),
+      ).toBeVisible()
+    },
+  )
 }
 
 const homeUrl = '/umsoknir/ellilifeyrir'
@@ -130,65 +225,8 @@ applicationTest.describe('Old Age Pension', () => {
     'Should complete Old Age Pension application successfully',
     async ({ applicationPage }) => {
       const page = applicationPage
-      const { proceed } = helpers(page)
 
-      await applicationTest.step('Select type of application', async () => {
-        await expect(
-          page.getByRole('heading', {
-            name: label(oldAgePensionFormMessage.pre.applicationTypeTitle),
-          }),
-        ).toBeVisible()
-        await page.getByTestId('old-age-pension').click()
-        await proceed()
-      })
-
-      await applicationTest.step('Agree to data providers', () =>
-        agreeToDataProviders(page),
-      )
-
-      await applicationTest.step(
-        'Answer pension fund question and start application',
-        () => pensionFunds(page),
-      )
-
-      await applicationTest.step('Fill in applicant info', () =>
-        fillApplicantInfo(page),
-      )
-
-      await applicationTest.step('Fill in payment information', () =>
-        fillPaymentInfo(page, true),
-      )
-
-      await applicationTest.step('One payment per year', () =>
-        onePaymentPerYear(page),
-      )
-
-      await applicationTest.step('View residence history', () =>
-        viewResidenceHistory(page),
-      )
-
-      await applicationTest.step('Select period', () => selectPeriod(page))
-
-      await applicationTest.step(
-        'Check that attachments for pension payments header is visible',
-        () => pensionPaymentsAttachments(page),
-      )
-
-      await applicationTest.step(
-        'Check that additional documents header is visible',
-        () => additionalAttachments(page),
-      )
-
-      await applicationTest.step('Write comment', () => writeComment(page))
-
-      await applicationTest.step('Submit application', () =>
-        submitApplication(page),
-      )
-
-      await applicationTest.step(
-        'Check that conclusion screen header is visible',
-        () => conclusionScreen(page),
-      )
+      await oldAgeApplicationTest(page, 'old-age-pension')
     },
   )
 })
@@ -198,118 +236,8 @@ applicationTest.describe('Half Old Age Pension', () => {
     'Should complete Half Old Age Pension application successfully',
     async ({ applicationPage }) => {
       const page = applicationPage
-      const { proceed } = helpers(page)
 
-      await applicationTest.step('Select type of application', async () => {
-        await expect(
-          page.getByRole('heading', {
-            name: label(oldAgePensionFormMessage.pre.applicationTypeTitle),
-          }),
-        ).toBeVisible()
-        await page.getByTestId('half-old-age-pension').click()
-        await proceed()
-      })
-
-      await applicationTest.step('Agree to data providers', () =>
-        agreeToDataProviders(page),
-      )
-
-      await applicationTest.step(
-        'Answer pension fund question and start application',
-        () => pensionFunds(page),
-      )
-
-      await applicationTest.step('Fill in applicant info', () =>
-        fillApplicantInfo(page),
-      )
-
-      await applicationTest.step('Fill in payment information', () =>
-        fillPaymentInfo(page, true),
-      )
-
-      await applicationTest.step('One payment per year', () =>
-        onePaymentPerYear(page),
-      )
-
-      await applicationTest.step('View residence history', () =>
-        viewResidenceHistory(page),
-      )
-
-      await applicationTest.step('Self-employed or employee', async () => {
-        await expect(
-          page.getByRole('heading', {
-            name: label(
-              oldAgePensionFormMessage.employer.selfEmployedOrEmployeeTitle,
-            ),
-          }),
-        ).toBeVisible()
-
-        await page
-          .getByRole('radio', {
-            name: label(oldAgePensionFormMessage.employer.employee),
-          })
-          .click()
-        await proceed()
-      })
-
-      await applicationTest.step('Employer registration', async () => {
-        await expect(
-          page.getByRole('heading', {
-            name: label(oldAgePensionFormMessage.employer.registrationTitle),
-          }),
-        ).toBeVisible()
-
-        const employerEmail = page.getByRole('textbox', {
-          name: label(oldAgePensionFormMessage.employer.email),
-        })
-        await employerEmail.selectText()
-        await employerEmail.fill('mockEmail@mail.is')
-
-        await page
-          .getByRole('radio', {
-            name: label(oldAgePensionFormMessage.employer.ratioYearly),
-          })
-          .click()
-
-        const employmentRatio = page.getByRole('textbox', {
-          name: label(oldAgePensionFormMessage.employer.ratio),
-        })
-        await employmentRatio.selectText()
-        await employmentRatio.fill('50')
-        await proceed()
-      })
-
-      await applicationTest.step('Employers', async () => {
-        await expect(
-          page.getByRole('heading', {
-            name: label(oldAgePensionFormMessage.employer.employerTitle),
-          }),
-        ).toBeVisible()
-        await proceed()
-      })
-
-      await applicationTest.step('Select period', () => selectPeriod(page))
-
-      await applicationTest.step(
-        'Check that attachments for pension payments header is visible',
-        () => pensionPaymentsAttachments(page),
-      )
-
-      await applicationTest.step(
-        'Check that additional documents header is visible',
-        () => additionalAttachments(page),
-      )
-
-      await applicationTest.step('Write comment', () => writeComment(page))
-
-      await applicationTest.step('Submit application', () =>
-        submitApplication(page),
-      )
-
-      await applicationTest.step(
-        'Check that conclusion screen header is visible',
-        () => conclusionScreen(page),
-      )
+      await oldAgeApplicationTest(page, 'half-old-age-pension')
     },
   )
 })
