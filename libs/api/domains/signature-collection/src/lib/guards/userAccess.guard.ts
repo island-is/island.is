@@ -57,10 +57,7 @@ export class UserAccessGuard implements CanActivate {
     const restrictGuarantors = m.getMetadataIfExists<boolean>(
       RESTRICT_GUARANTOR_KEY,
     )
-    console.log('isOwnerRestriction', isOwnerRestriction)
-    console.log('bypassAuth', bypassAuth)
-    console.log('allowDelegation', allowDelegation)
-    console.log('restrictGuarantors', restrictGuarantors)
+
     if (bypassAuth) {
       return true
     }
@@ -87,19 +84,17 @@ export class UserAccessGuard implements CanActivate {
     // IsOwner needs signee
     const signee = await this.signatureCollectionService.signee(user)
     request.body = { ...request.body, signee }
-    console.log('signee', signee)
+
     const { candidate } = signee
 
     if (isOwnerRestriction) {
       if (signee.isOwner && candidate) {
         // Check if user is an actor for owner and if so check if registered collector, if not actor will be added as collector
         if (isDelegatedUser && allowDelegation) {
-          console.log('calling is collector')
           const isCollector = await this.signatureCollectionService.isCollector(
             candidate.id,
             user,
           )
-          console.log('is collector', isCollector)
           return isCollector
         }
       }
