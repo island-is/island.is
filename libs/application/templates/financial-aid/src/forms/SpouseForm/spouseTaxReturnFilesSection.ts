@@ -48,7 +48,7 @@ export const spouseTaxReturnFilesSection = buildSection({
           description: m.taxReturnForm.instructions.findTaxReturn,
         }),
         buildDescriptionField({
-          id: `${Routes.SPOUSETAXRETURNFILES}.findTaxReturn`,
+          id: `${Routes.SPOUSETAXRETURNFILES}.findTaxReturn2`,
           title: m.taxReturnForm.instructions.findDirectTaxPaymentsTitle,
           titleVariant: 'h3',
           marginTop: 3,
