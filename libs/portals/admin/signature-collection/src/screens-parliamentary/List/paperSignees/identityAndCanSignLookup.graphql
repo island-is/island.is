@@ -6,6 +6,11 @@ query Identity($input: IdentityInput!) {
   }
 }
 
-query CanSign($input: SignatureCollectionCanSignFromPaperInput!) {
-  signatureCollectionCanSignFromPaper(input: $input)
+query SignatureCollectionAdminCanSignInfo(
+  $input: SignatureCollectionCanSignFromPaperInput!
+) {
+  signatureCollectionAdminCanSignInfo(input: $input) {
+    reasons
+    success
+  }
 }

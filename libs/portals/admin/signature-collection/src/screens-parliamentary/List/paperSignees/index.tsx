@@ -16,7 +16,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import { m } from '../../../lib/messages'
 import {
-  useCanSignQuery,
+  useSignatureCollectionAdminCanSignInfoQuery,
   useIdentityQuery,
 } from './identityAndCanSignLookup.generated'
 import { useSignatureCollectionUploadPaperSignatureMutation } from './uploadPaperSignee.generated'
@@ -37,15 +37,16 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
     onCompleted: (data) => setName(data.identity?.name || ''),
   })
 
-  const { data: canSign, loading: loadingCanSign } = useCanSignQuery({
-    variables: {
-      input: {
-        signeeNationalId: nationalIdInput,
-        listId,
+  const { data: canSign, loading: loadingCanSign } =
+    useSignatureCollectionAdminCanSignInfoQuery({
+      variables: {
+        input: {
+          signeeNationalId: nationalIdInput,
+          listId,
+        },
       },
-    },
-    skip: !nationalId.isValid(nationalIdInput) || !name,
-  })
+      skip: !nationalId.isValid(nationalIdInput) || !name,
+    })
 
   useEffect(() => {
     if (nationalIdInput.length === 10) {
@@ -126,7 +127,11 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
                 }}
                 error={nationalIdTypo ? ' ' : undefined}
                 loading={loading || loadingCanSign}
-                icon={name && canSign ? 'checkmark' : undefined}
+                icon={
+                  name && canSign?.signatureCollectionAdminCanSignInfo?.success
+                    ? 'checkmark'
+                    : undefined
+                }
               />
             </GridColumn>
             <GridColumn span={['5/12', '4/12']}>
@@ -157,7 +162,9 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
             <Button
               variant="ghost"
               size="small"
-              disabled={!canSign || !page}
+              disabled={
+                !canSign?.signatureCollectionAdminCanSignInfo?.success || !page
+              }
               onClick={() => uploadPaperSignee()}
               loading={uploadingPaperSignature}
             >
@@ -175,15 +182,17 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
           />
         </Box>
       )}
-      {name && !loadingCanSign && !canSign && (
-        <Box marginTop={5}>
-          <AlertMessage
-            type="error"
-            title={formatMessage(m.paperSigneeCantSignTitle)}
-            message={formatMessage(m.paperSigneeCantSignMessage)}
-          />
-        </Box>
-      )}
+      {name &&
+        !loadingCanSign &&
+        !canSign?.signatureCollectionAdminCanSignInfo?.success && (
+          <Box marginTop={5}>
+            <AlertMessage
+              type="error"
+              title={formatMessage(m.paperSigneeCantSignTitle)}
+              message={formatMessage(m.paperSigneeCantSignMessage)}
+            />
+          </Box>
+        )}
     </Box>
   )
 }

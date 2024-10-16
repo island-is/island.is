@@ -389,8 +389,7 @@ describe('getCasesQueryFilter', () => {
             [Op.notIn]: Sequelize.literal(`
             (SELECT case_id
               FROM defendant
-              WHERE service_requirement <> 'NOT_REQUIRED'
-              AND (verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '28 days'))
+              WHERE (verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '28 days'))
           `),
           },
         },

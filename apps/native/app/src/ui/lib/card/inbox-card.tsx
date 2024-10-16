@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { ImageSourcePropType } from 'react-native'
 import { useTheme } from 'styled-components/native'
 import { PressableHighlight } from '../../../components/pressable-highlight/pressable-highlight'
 import { ListItem } from '../list/list-item'
-import { toggleAction } from '../../../lib/post-mail-action'
 
 interface InboxCardProps {
   id: string
@@ -12,7 +11,6 @@ interface InboxCardProps {
   subject: string
   unread?: boolean
   senderName?: string | null
-  bookmarked?: boolean | null
   isUrgent?: boolean | null
   testID?: string
   onPress(id: string): void
@@ -25,13 +23,10 @@ export function InboxCard({
   publicationDate,
   icon,
   unread,
-  bookmarked,
   senderName,
   isUrgent = false,
 }: InboxCardProps) {
   const theme = useTheme()
-  const [starred, setStarred] = useState<boolean>(false)
-  useEffect(() => setStarred(!!bookmarked), [bookmarked])
   return (
     <PressableHighlight
       highlightColor={theme.shade.shade400}
@@ -42,11 +37,6 @@ export function InboxCard({
         subtitle={subject}
         date={publicationDate ? new Date(publicationDate) : undefined}
         unread={unread}
-        starred={starred}
-        onStarPress={() => {
-          toggleAction(!bookmarked ? 'bookmark' : 'unbookmark', id)
-          setStarred(!bookmarked)
-        }}
         urgent={!!isUrgent}
         icon={icon}
       />
