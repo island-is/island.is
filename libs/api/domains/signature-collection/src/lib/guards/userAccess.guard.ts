@@ -28,7 +28,6 @@ export class UserAccessGuard implements CanActivate {
   private determineUserDelegationContext(
     user: Express.User & User,
   ): UserDelegationContext {
-    console.log('user', user)
     // If actor found on user, then user is delegated
     if (user.actor?.nationalId) {
       // If delegation is from person to person
@@ -72,7 +71,7 @@ export class UserAccessGuard implements CanActivate {
       UserDelegationContext.PersonDelegatedToCompany,
       UserDelegationContext.PersonDelegatedToPerson,
     ].includes(delegationContext)
-    console.log('delegationContext', delegationContext)
+
     if (isDelegatedUser && !allowDelegation) {
       return false
     }
