@@ -281,7 +281,7 @@ export class UniversityService extends BaseTemplateApiService {
         return {
           fileName: file.name,
           fileType: file.type,
-          url: await this.sharedTemplateAPIService.getAttachmentUrl2(
+          url: await this.sharedTemplateAPIService.getAttachmentUrl(
             application,
             file.key,
             expiry,

@@ -430,7 +430,7 @@ export class CitizenshipService extends BaseTemplateApiService {
   ): Promise<{ filename: string; fileUrl: string; countryId: string }[]> {
     return await Promise.all(
       attachments?.map(async (file) => {
-        const fileUrl = await this.sharedTemplateAPIService.getAttachmentUrl2(
+        const fileUrl = await this.sharedTemplateAPIService.getAttachmentUrl(
           application,
           file.key,
           300000,
