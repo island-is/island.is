@@ -360,7 +360,7 @@ export class SignatureCollectionClientService {
         }),
       ),
     )
-    // If no lists remain remove Candidate so that they can start a cnew collection through applications again
+    // If no lists remain remove Candidate so that they can start a new collection through applications again
     await this.checkIfRemoveCandidate(candidate.id, auth)
 
     return { success: true }
