@@ -253,10 +253,20 @@ export const m = defineMessages({
   linkFieldMessage: {
     id: 'plc.application:linkFieldMessage',
     defaultMessage:
-      'Á mínum síðum sést hve mörgum meðmælum hefur verið safnað í hverjum landsfjórðungi.',
+      'Á mínum síðum sést hve mörgum meðmælum hefur verið safnað í hverju kjördæmi.',
     description: '',
   },
-
+  linkFieldButtonCompanyTitle: {
+    id: 'plc.application:linkFieldButtonCompanyTitle',
+    defaultMessage: 'Mínar síður (fyrirtæki)',
+    description: '',
+  },
+  linkFieldCompanyMessage: {
+    id: 'plc.application:linkFieldCompanyMessage',
+    defaultMessage:
+      'Á mínum síðum fyrirtækja sést hve mörgum meðmælum hefur verið safnað í hverju kjördæmi.',
+    description: '',
+  },
   /* Action Card logs */
   logListCreated: {
     id: 'plc.application:logListCreated',
