@@ -118,4 +118,15 @@ export class EndorsementList extends Model {
   })
   @UpdatedAt
   readonly modified!: Date
+
+  @ApiProperty({
+    type: Number,
+    description: 'The number of endorsements in the list',
+  })
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  endorsementCount!: number
 }

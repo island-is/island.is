@@ -96,15 +96,7 @@ export class AppService {
     subpoenaId: string,
     updateSubpoena: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
-    let defenderInfo: {
-      defenderName: string | undefined
-      defenderEmail: string | undefined
-      defenderPhoneNumber: string | undefined
-    } = {
-      defenderName: undefined,
-      defenderEmail: undefined,
-      defenderPhoneNumber: undefined,
-    }
+    let defenderName = undefined
 
     if (
       updateSubpoena.defenderChoice === DefenderChoice.CHOOSE &&
@@ -120,11 +112,8 @@ export class AppService {
         const chosenLawyer = await this.lawyersService.getLawyer(
           updateSubpoena.defenderNationalId,
         )
-        defenderInfo = {
-          defenderName: chosenLawyer.Name,
-          defenderEmail: chosenLawyer.Email,
-          defenderPhoneNumber: chosenLawyer.Phone,
-        }
+
+        defenderName = chosenLawyer.Name
       } catch (reason) {
         // TODO: Reconsider throwing - what happens if registry is down?
         this.logger.error(
@@ -152,11 +141,9 @@ export class AppService {
       comment: updateSubpoena.comment,
       servedBy: updateSubpoena.servedBy,
       serviceDate: updateSubpoena.servedAt,
-      defenderChoice: updateSubpoena.defenderChoice,
-      defenderNationalId: updateSubpoena.defenderNationalId,
-      defenderName: defenderInfo.defenderName,
-      defenderEmail: defenderInfo.defenderEmail,
-      defenderPhoneNumber: defenderInfo.defenderPhoneNumber,
+      requestedDefenderChoice: updateSubpoena.defenderChoice,
+      requestedDefenderNationalId: updateSubpoena.defenderNationalId,
+      requestedDefenderName: defenderName,
     }
 
     try {
@@ -178,8 +165,8 @@ export class AppService {
         return {
           subpoenaComment: response.comment,
           defenderInfo: {
-            defenderChoice: response.defendant.defenderChoice,
-            defenderName: response.defendant.defenderName,
+            defenderChoice: response.defendant.requestedDefenderChoice,
+            defenderName: response.defendant.requestedDefenderName,
           },
         } as SubpoenaResponse
       }

@@ -96,8 +96,9 @@ export class SubpoenaResponse {
         ),
     )
 
-    const waivedRight = defendantInfo?.defenderChoice === DefenderChoice.WAIVE
-    const hasDefender = defendantInfo?.defenderName !== null
+    const waivedRight =
+      defendantInfo?.requestedDefenderChoice === DefenderChoice.WAIVE
+    const hasDefender = defendantInfo?.requestedDefenderNationalId !== null
     const subpoenas = defendantInfo?.subpoenas ?? []
     const hasBeenServed =
       subpoenas.length > 0 &&
@@ -121,8 +122,8 @@ export class SubpoenaResponse {
         subtitle: courtNameAndAddress,
         hasBeenServed: hasBeenServed,
         hasChosenDefender: Boolean(
-          defendantInfo?.defenderChoice &&
-            defendantInfo.defenderChoice !== DefenderChoice.DELAY,
+          defendantInfo?.requestedDefenderChoice &&
+            defendantInfo.requestedDefenderChoice !== DefenderChoice.DELAY,
         ),
         defaultDefenderChoice: DefenderChoice.DELAY,
         alerts: [
@@ -160,12 +161,12 @@ export class SubpoenaResponse {
         ],
       },
 
-      defenderInfo: defendantInfo?.defenderChoice
+      defenderInfo: defendantInfo?.requestedDefenderChoice
         ? {
-            defenderChoice: defendantInfo?.defenderChoice,
+            defenderChoice: defendantInfo?.requestedDefenderChoice,
             defenderName:
               !waivedRight && hasDefender
-                ? defendantInfo?.defenderName
+                ? defendantInfo?.requestedDefenderName
                 : undefined,
             canEdit: canChangeDefenseChoice,
             courtContactInfo: canChangeDefenseChoice

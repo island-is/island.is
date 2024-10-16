@@ -36,6 +36,6 @@ export type OpsEnvName =
   | 'prod'
   | 'prod-ids'
 
-export type EnvironmentServices = { [name in OpsEnv]: ServiceBuilder<any>[] }
+export type EnvironmentServices = { [env in OpsEnv]: ServiceBuilder<any>[] }
 
 export type EnvironmentConfigs = { [name in OpsEnvName]: EnvironmentConfig }

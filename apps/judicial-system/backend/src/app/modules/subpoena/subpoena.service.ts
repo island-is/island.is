@@ -98,7 +98,13 @@ export class SubpoenaService {
       defenderEmail,
       defenderPhoneNumber,
       defenderName,
+<<<<<<< HEAD
       serviceStatus,
+=======
+      requestedDefenderChoice,
+      requestedDefenderNationalId,
+      requestedDefenderName,
+>>>>>>> 2bd7d23d979dba86963254c14bdc066bd8e0ae63
     } = update
 
     const notificationType = isSuccessfulServiceStatus(serviceStatus)
@@ -116,13 +122,21 @@ export class SubpoenaService {
     })
     let defenderAffectedRows = 0
 
-    if (defenderChoice || defenderNationalId) {
+    if (
+      defenderChoice ||
+      defenderNationalId ||
+      requestedDefenderChoice ||
+      requestedDefenderNationalId
+    ) {
       const defendantUpdate: Partial<Defendant> = {
         defenderChoice,
         defenderNationalId,
         defenderName,
         defenderEmail,
         defenderPhoneNumber,
+        requestedDefenderChoice,
+        requestedDefenderNationalId,
+        requestedDefenderName,
       }
 
       const [defenderUpdateAffectedRows] = await this.defendantModel.update(
