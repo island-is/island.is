@@ -33,10 +33,12 @@ import { formatNationalId } from '@island.is/portals/core'
 import SignedList from '../../shared/SignedList'
 
 const OwnerView = ({
+  refetchIsOwner,
   currentCollection,
   // list holder is an individual who owns a list or has a delegation of type Procuration Holder
   isListHolder,
 }: {
+  refetchIsOwner: () => void
   currentCollection: SignatureCollection
   isListHolder: boolean
 }) => {
@@ -54,6 +56,7 @@ const OwnerView = ({
       onCompleted: () => {
         toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
         refetchListsForOwner()
+        refetchIsOwner()
       },
       onError: () => {
         toast.error(formatMessage(m.cancelCollectionModalToastError))
@@ -145,9 +148,13 @@ const OwnerView = ({
                               ' - ' +
                               list.area?.name
                             }
-                            description={formatMessage(
-                              m.cancelCollectionModalMessage,
-                            )}
+                            description={
+                              listsForOwner.length === 1
+                                ? formatMessage(
+                                    m.cancelCollectionModalMessageLastList,
+                                  )
+                                : formatMessage(m.cancelCollectionModalMessage)
+                            }
                             ariaLabel="delete"
                             disclosureElement={
                               <Tag outlined variant="red">
@@ -164,7 +171,9 @@ const OwnerView = ({
                               onCancelCollection(list.id)
                             }}
                             buttonTextConfirm={formatMessage(
-                              m.cancelCollectionModalConfirmButton,
+                              listsForOwner.length === 1
+                                ? m.cancelCollectionModalConfirmButtonLastList
+                                : m.cancelCollectionModalConfirmButton,
                             )}
                             buttonPropsConfirm={{
                               variant: 'primary',
