@@ -24,6 +24,7 @@ import nationalRegistryLogo from '../../assets/nationalRegistry.svg'
 import { useState } from 'react'
 import { useSignatureCollectionSignatureLookupQuery } from './findSignature.generated'
 import { SkeletonSingleRow } from '../shared-components/compareLists/skeleton'
+import { useSignatureCollectionAdminRemoveCandidateMutation } from '../screens-presidential/AllLists/components/reviewCandidates/removeCandidate.generated'
 
 const ParliamentaryRoot = ({
   allowedToProcess,
@@ -46,6 +47,22 @@ const ParliamentaryRoot = ({
     },
     skip: searchTerm.replace(/[^0-9]/g, '').length !== 10,
   })
+
+  const [removeCandidate] = useSignatureCollectionAdminRemoveCandidateMutation()
+
+  const deleteBoi = (v: string) => {
+    if (v.length === 7) {
+      removeCandidate({
+        variables: {
+          input: {
+            candidateId: v,
+          },
+        },
+      }).then(() => {
+        alert('DELETED WOWEEEEEEEEEEEEEEEE')
+      })
+    }
+  }
 
   return (
     <GridContainer>
@@ -202,6 +219,23 @@ const ParliamentaryRoot = ({
               />
             ))}
           </Stack>
+          <Stack space={3}>
+            <p>Viðbót er 1000026</p>
+            <p>Gervi grænir (0101305069) er 1000031</p>
+            <p>Gervimannaflokkurinn (0101307789) er 1000033</p>
+            <Box width="half">
+              <FilterInput
+                name="searchSignee"
+                value={searchTerm}
+                onChange={(v) => {
+                  deleteBoi(v)
+                }}
+                placeholder={'setja inn candidate-id til að eyða út wowee'}
+                backgroundColor="blue"
+              />
+            </Box>
+          </Stack>
+
           <CompareLists collectionId={collection?.id} />
         </GridColumn>
       </GridRow>
