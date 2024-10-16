@@ -18,7 +18,7 @@ export const loadNationalRegistryXroadMocks = async () => {
       fulltNafn: 'Gervimaður Afríka',
       kynkodi: '1',
       bannmerking: false,
-      faedingardagur: new Date('1930-01-01T00:00:00'),
+      faedingardagur: '1930-01-01T00:00:00',
       logheimili: {
         heiti: 'Engihjalli 3',
         postnumer: '200',
@@ -106,7 +106,7 @@ export const loadNationalRegistryXroadMocks = async () => {
       fulltNafn: 'Gervimaður útlönd',
       kynkodi: '1',
       bannmerking: false,
-      faedingardagur: new Date('1930-01-01T00:00:00'),
+      faedingardagur: '1930-01-01T00:00:00',
       logheimili: {
         heiti: 'Engihjalli 3',
         postnumer: '200',
