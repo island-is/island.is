@@ -70,8 +70,6 @@ export class SubpoenaNotificationService extends BaseNotificationService {
   ): Promise<unknown> {
     const theCase = subpoena.case
 
-    console.log('!!!!!!!!!!!!!!!!!!!!!!!!', { name: theCase?.judge })
-
     if (!theCase) {
       throw new InternalServerErrorException('Missing case')
     }
