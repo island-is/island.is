@@ -3,6 +3,7 @@ import {
   buildCustomField,
   buildFileUploadField,
   buildForm,
+  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildRadioField,
   buildRepeater,
@@ -12,6 +13,23 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import {
+  BankAccountType,
+  fileUploadSharedProps,
+  IS,
+  TaxLevelOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
+  friendlyFormatIBAN,
+  friendlyFormatSWIFT,
+  getBankIsk,
+  getCurrencies,
+  getTaxOptions,
+  getYesNoOptions,
+  typeOfBankInfo,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   Application,
   DefaultEvents,
@@ -21,37 +39,20 @@ import {
   NO,
   YES,
 } from '@island.is/application/types'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { oldAgePensionFormMessage } from '../lib/messages'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { ApplicationType, Employment, RatioType } from '../lib/constants'
-import {
-  getApplicationAnswers,
-  getApplicationExternalData,
-  getAvailableYears,
-  isEarlyRetirement,
-} from '../lib/oldAgePensionUtils'
-import {
-  friendlyFormatIBAN,
-  friendlyFormatSWIFT,
-  getBankIsk,
-  getCurrencies,
-  typeOfBankInfo,
-  getYesNoOptions,
-  getTaxOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   applicantInformationMultiField,
   buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
+import { ApplicationType, Employment, RatioType } from '../lib/constants'
+import { oldAgePensionFormMessage } from '../lib/messages'
 import {
-  BankAccountType,
-  fileUploadSharedProps,
-  IS,
-  MONTHS,
-  TaxLevelOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getAvailableMonths,
+  getAvailableYears,
+  isEarlyRetirement,
+} from '../lib/oldAgePensionUtils'
 
 export const OldAgePensionForm: Form = buildForm({
   id: 'OldAgePensionDraft',
@@ -586,7 +587,24 @@ export const OldAgePensionForm: Form = buildForm({
               width: 'half',
               placeholder:
                 socialInsuranceAdministrationMessage.period.monthDefaultText,
-              options: MONTHS,
+              options: (application: Application) => {
+                const { selectedYear } = getApplicationAnswers(
+                  application.answers,
+                )
+
+                return getAvailableMonths(application, selectedYear)
+              },
+              condition: (answers) => {
+                const { selectedYear, selectedYearHiddenInput } =
+                  getApplicationAnswers(answers)
+
+                return selectedYear === selectedYearHiddenInput
+              },
+            }),
+            buildHiddenInputWithWatchedValue({
+              // Needed to trigger an update on options in the select above
+              id: 'period.hiddenInput',
+              watchValue: 'period.year',
             }),
             buildAlertMessageField({
               id: 'period.alert',

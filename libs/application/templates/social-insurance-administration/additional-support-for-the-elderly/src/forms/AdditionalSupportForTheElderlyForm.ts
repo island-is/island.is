@@ -3,14 +3,31 @@ import {
   buildCustomField,
   buildFileUploadField,
   buildForm,
+  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildRadioField,
   buildSection,
   buildSelectField,
-  buildSubSection,
   buildSubmitField,
+  buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import {
+  BankAccountType,
+  fileUploadSharedProps,
+  TaxLevelOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
+  friendlyFormatIBAN,
+  friendlyFormatSWIFT,
+  getBankIsk,
+  getCurrencies,
+  getTaxOptions,
+  getYesNoOptions,
+  typeOfBankInfo,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   Application,
   DefaultEvents,
@@ -20,33 +37,17 @@ import {
   YES,
 } from '@island.is/application/types'
 import {
-  friendlyFormatIBAN,
-  friendlyFormatSWIFT,
-  getBankIsk,
-  typeOfBankInfo,
-  getCurrencies,
-  getYesNoOptions,
-  getTaxOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import {
-  BankAccountType,
-  fileUploadSharedProps,
-  MONTHS,
-  TaxLevelOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import {
-  getApplicationExternalData,
-  getAvailableYears,
-} from '../lib/additionalSupportForTheElderlyUtils'
-import {
   applicantInformationMultiField,
   buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
-import { getApplicationAnswers } from '../lib/additionalSupportForTheElderlyUtils'
 import isEmpty from 'lodash/isEmpty'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getAvailableMonths,
+  getAvailableYears,
+} from '../lib/additionalSupportForTheElderlyUtils'
+import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 
 export const AdditionalSupportForTheElderlyForm: Form = buildForm({
   id: 'AdditionalSupportForTheElderlyDraft',
@@ -352,7 +353,24 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
               width: 'half',
               placeholder:
                 socialInsuranceAdministrationMessage.period.monthDefaultText,
-              options: MONTHS,
+              options: (application: Application) => {
+                const { selectedYear } = getApplicationAnswers(
+                  application.answers,
+                )
+
+                return getAvailableMonths(selectedYear)
+              },
+              condition: (answers) => {
+                const { selectedYear, selectedYearHiddenInput } =
+                  getApplicationAnswers(answers)
+
+                return selectedYear === selectedYearHiddenInput
+              },
+            }),
+            buildHiddenInputWithWatchedValue({
+              // Needed to trigger an update on options in the select above
+              id: 'period.hiddenInput',
+              watchValue: 'period.year',
             }),
           ],
         }),
