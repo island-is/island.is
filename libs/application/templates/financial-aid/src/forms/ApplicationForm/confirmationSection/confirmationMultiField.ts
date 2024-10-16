@@ -19,7 +19,7 @@ import { getNextPeriod } from '@island.is/financial-aid/shared/lib'
 
 export const confirmationMultiField = buildMultiField({
   id: Routes.CONFIRMATION,
-  title: m.confirmation.general.pageTitle, // condition has spouse
+  title: m.confirmation.general.pageTitle,
   children: [
     buildAlertMessageField({
       id: 'confirmationAlert-1',

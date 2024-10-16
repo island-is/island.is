@@ -132,7 +132,7 @@ export const getNextStepsDescription = (
   const applicantHasSpouse = hasSpouse(answers, externalData)
   const missingIncomeFiles =
     answers.income === ApproveOptions.Yes &&
-    !hasFiles('incomeFiles', answers as unknown as AnswersSchema)
+    !hasFiles('incomeFiles', answers as AnswersSchema)
 
   if (applicantHasSpouse && missingIncomeFiles) {
     return m.confirmation.nextSteps.contentBothMissingFiles
