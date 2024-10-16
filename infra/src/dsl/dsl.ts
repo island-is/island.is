@@ -66,7 +66,7 @@ export class ServiceBuilder<ServiceType extends string> {
       grantNamespaces: [],
       grantNamespacesEnabled: false,
       secrets: COMMON_SECRETS,
-      ingress: {} as IngressMapping, // Force type conformance for initialization
+      ingress: {},
       namespace: 'islandis',
       serviceAccountEnabled: false,
       securityContext: {
