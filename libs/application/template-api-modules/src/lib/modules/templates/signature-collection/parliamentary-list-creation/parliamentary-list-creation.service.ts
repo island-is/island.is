@@ -19,6 +19,7 @@ import { FetchError } from '@island.is/clients/middlewares'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { isCompany } from 'kennitala'
 import { coreErrorMessages } from '@island.is/application/core'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 @Injectable()
 export class ParliamentaryListCreationService extends BaseTemplateApiService {
@@ -82,6 +83,15 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     }
 
     return identity
+  }
+
+  async delegatedToCompany({ auth }: TemplateApiModuleActionProps) {
+    const data = {
+      delegatedToCompany:
+        auth.delegationType?.includes(AuthDelegationType.ProcurationHolder) ??
+        false,
+    }
+    return data
   }
 
   async submit({ application, auth }: TemplateApiModuleActionProps) {
