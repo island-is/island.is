@@ -50,7 +50,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 
 #### States
 
-States have `title` and `description`:
+States have `title` and `description`, which are displayed on the application card:
 
 ```diff
 [States.draft]: {
@@ -107,7 +107,16 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 
 #### DataSchema
 
-Use Zod for validation:
+Use [Zod](https://github.com/vriad/zod) for validation:
+
+```typescript
+const schema = z.object({
+  name: z.string().min(1),
+  age: z.number().min(18),
+})
+```
+
+For custom error messages, pass a translation object to params:
 
 ```typescript
 .refine((n) => n && !kennitala.isValid(n), {
@@ -121,7 +130,7 @@ Use for custom server-side validation.
 
 ### Application Type
 
-Add enum values to `ApplicationTypes` for new templates.
+Add enum values to [`ApplicationTypes`](https://github.com/island-is/island.is/blob/main/libs/application/types/src/lib/ApplicationTypes.ts) for new templates.
 
 ### Data Schema
 
@@ -133,7 +142,13 @@ Use `application-core` types, leveraging [xstate](https://xstate.js.org/docs/).
 
 ### States
 
-Define as needed, representing system time points.
+See [xstate](https://xstate.js.org/docs/guides/states.html) for detailed documentation.
+
+> A state is an abstract representation of a system (such as an application) at a specific point in time. As an application is interacted with, events cause it to change state. A finite state machine can be in only one of a finite number of states at any given time.
+
+Each state describes what `roles` can access it, and what each role can do in said state.
+
+[Example](https://github.com/island-is/island.is/blob/2bd7d23d979dba86963254c14bdc066bd8e0ae63/libs/application/templates/reference-template/src/lib/ReferenceApplicationTemplate.ts#L88) from `reference-template`.
 
 #### Status
 
@@ -176,17 +191,121 @@ type StateLifeCycle =
     }
 ```
 
+By default states will not be pruned and will always be listed.
+
 ### Roles
 
-Define `read`/`write` permissions; roles specify `formLoader` for state-based rendering.
+Define `read`/`write` permissions; roles specify `formLoader` for state-based rendering of forms.
+
+Example of different roles with different form loaders:
+
+```typescript
+stateMachineConfig: {
+  states: {
+    ...
+    inReview: {
+      meta: {
+        name: 'In Review',
+        roles: [
+          {
+            id: 'reviewer',
+            formLoader: () =>
+              import('../forms/ReviewApplication').then((val) =>
+                Promise.resolve(val.ReviewApplication),
+              ),
+            actions: [
+              { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
+              { event: 'REJECT', name: 'Hafna', type: 'reject' },
+            ],
+            read: 'all',
+            write: {
+              answers: ['reviewerComment'],
+            },
+          },
+          {
+            id: 'applicant',
+            formLoader: () =>
+              import('../forms/PendingReview').then((val) =>
+                Promise.resolve(val.PendingReview),
+              ),
+            read: 'all',
+          },
+        ],
+      },
+      on: {
+        APPROVE: { target: 'approved' },
+        REJECT: { target: 'rejected' },
+      },
+    },
+    ...
+  },
+},
+```
 
 ### Pending Action
 
 Specify `pendingAction` for state, customizable by role and application answers.
 
+```typescript
+[States.waitingToAssign]: {
+  meta: {
+    name: 'Waiting to assign',
+    ...
+    actionCard: {
+      pendingAction: {
+        title: 'Waiting for reviewer',
+        content:
+          'The application is now waiting for a reviewer to be assigned.',
+        displayStatus: 'warning',
+      },
+      ...
+    },
+```
+
+You can pass a function that uses the application answers and the user's role to determine the color, content, and title of the box to display to the user.
+
+```typescript
+  ...
+    actionCard: {
+      pendingAction: (answers, role) => {
+        let title, content, displayStatus
+        if (role === 'applicant') {
+          title = 'Waiting for Reviewer'
+          content =
+            'Your application is waiting for a reviewer to be assigned.'
+          displayStatus = 'info'
+        } else if (role === 'reviewer') {
+          title = 'Applications to Review'
+          content = 'You have applications waiting to be reviewed.'
+          displayStatus = 'warning'
+        }
+        return { title, content, displayStatus }
+      },
+  ...
+```
+
 ### Application History
 
 Log event-triggered history for each state.
+
+Example:
+
+```typescript
+[States.inReview]: {
+  meta: {
+    name: 'In review',
+    ...
+    actionCard: {
+      ...
+      historyLogs: [
+        {
+          onEvent: DefaultEvents.SUBMIT,
+          logMessage: application.applicationSubmitted,
+        }
+      ],
+      ...
+    },
+```
 
 ### Delete Application
 
@@ -194,7 +313,7 @@ Set `delete: true` for role in a state to enable deletions.
 
 ## Form
 
-Describes flow via JSON for `application-ui-shell`.
+The form describes UI flow via JSON which feeds into `application-ui-shell`.
 
 ### Fields
 
@@ -202,17 +321,55 @@ Questions/information with predefined/custom components; validate with `dataSche
 
 ### Creating a New Field Component
 
-1. Add name to `FieldTypes`/`FieldComponents`.
+1. Add name to [`FieldTypes` and `FieldComponents`](https://github.com/island-is/island.is/blob/main/libs/application/types/src/lib/Fields.ts).
 2. Extend `BaseField`.
 3. Add to `Field` type.
-4. Create builder in `fieldBuilders.ts`.
-5. Create React component.
+4. Create builder in [`fieldBuilders.ts`](https://github.com/island-is/island.is/blob/main/libs/application/core/src/lib/fieldBuilders.ts).
+5. Create React component in [`ui-fields` library](https://github.com/island-is/island.is/tree/main/libs/application/ui-fields/src/lib).
 6. Export in `index.ts`.
 7. Implement in forms.
 
+```typescript
+// application/types/src/lib/Fields.ts
+export interface NewField extends BaseField {
+  readonly type: FieldTypes.NEW_FIELD
+  component: FieldComponents.NEW_FIELD
+  myProp: string
+  myOtherProp: number
+}
+```
+
+```typescript
+// application/core/src/lib/fieldBuilders.ts
+export const buildNewField = (
+  data: Omit<NewField, 'type' | 'component' | 'children'>,
+): NewField => {
+  const { myProp, myOtherProp } = data
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    myProp,
+    myOtherProp,
+    type: FieldTypes.NEW_FIELD,
+    component: FieldComponents.NEW_FIELD,
+  }
+}
+```
+
+```typescript
+// ui-fields/src/lib/NewFormField.tsx
+interface Props extends FieldBaseProps {
+  field: NewField
+}
+
+export const NewFormField: FC<Props> = ({ application, field }) => {
+  return <Box>Your new component.</Box>
+}
+```
+
 ### Conditions
 
-Show/hide fields based on logic.
+Show/hide fields based on dynamic or static logic.
 
 ### Sections and SubSections
 
@@ -228,7 +385,7 @@ Display errors with provider-specific messages.
 
 ### Dynamic Application Names
 
-Use `name` function for dynamic naming.
+Use `name` function on template for dynamic naming based on application context.
 
 ### Draft Status Bar
 
