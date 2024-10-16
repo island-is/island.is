@@ -13,7 +13,7 @@ import { InputFields, OJOIApplication, RequiredInputFieldsNames } from './types'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { SignatureTypes } from './constants'
+import { SignatureTypes, OJOI_DF } from './constants'
 import { MessageDescriptor } from 'react-intl'
 
 export const countDaysAgo = (date: Date) => {
@@ -211,7 +211,7 @@ const signatureTemplate = (
       }
 
       const date = signature.date
-        ? format(new Date(signature.date), 'dd. MMM yyyy.', { locale: is })
+        ? format(new Date(signature.date), OJOI_DF, { locale: is })
         : ''
 
       const chairmanMarkup = chairman

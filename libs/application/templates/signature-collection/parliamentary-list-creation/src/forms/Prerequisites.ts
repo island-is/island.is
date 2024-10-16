@@ -11,7 +11,6 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 
@@ -103,11 +102,6 @@ export const Prerequisites: Form = buildForm({
     buildSection({
       id: 'screen4',
       title: m.constituency,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen5',
-      title: m.managersAndSupervisors,
       children: [],
     }),
     buildSection({

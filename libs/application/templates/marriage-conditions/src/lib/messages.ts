@@ -96,6 +96,12 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar um hjónaefni',
     description: 'Information section title',
   },
+  informationDescription: {
+    id: 'mac.application:informationDescription',
+    defaultMessage:
+      'Beiðni um könnun hjónavígsluskilyrða mun ekki hljóta efnismeðeferð fyrr en hjónaefni hafa bæði veitt rafræna undirskrift. Vinsamlegast gangið því úr skugga um að símanúmer og netföng séu rétt rituð.',
+    description: 'Information section title',
+  },
   informationSectionTitle: {
     id: 'mac.application:informationTitle',
     defaultMessage: 'Upplýsingar',
@@ -492,7 +498,11 @@ export const m = defineMessages({
       'Kennitala hjá hjónaefni 2 má ekki vera sú sama og hjá hjónaefni 1',
     description: '',
   },
-
+  nationalIdWitnessUnderageError: {
+    id: 'mac.application:nationalIdWitnessUnderageError',
+    defaultMessage: 'Svaramaður þarf að hafa náð 18 ára aldri',
+    description: '',
+  },
   /* History logs */
   waitingForConfirmationSpouse2Title: {
     id: 'pa.application:history.waitingForConfirmationSpouse2Title',

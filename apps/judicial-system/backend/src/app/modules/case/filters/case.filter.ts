@@ -20,7 +20,6 @@ import {
   isRequestCase,
   isRestrictionCase,
   RequestSharedWithDefender,
-  ServiceRequirement,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -289,21 +288,19 @@ const canPrisonAdminUserAccessCase = (
     ) {
       return false
     }
+  }
 
-    // Check defendant verdict appeal deadline access
-    const verdictInfo = theCase.defendants?.map<[boolean, Date | undefined]>(
-      (defendant) => [
-        defendant.serviceRequirement !== ServiceRequirement.NOT_REQUIRED,
-        defendant.verdictViewDate,
-      ],
-    )
+  // Check defendant verdict appeal deadline access
+  const canAppealVerdict = true
+  const verdictInfo = (theCase.defendants || []).map<
+    [boolean, Date | undefined]
+  >((defendant) => [canAppealVerdict, defendant.verdictViewDate])
 
-    const [_, indictmentVerdictAppealDeadlineExpired] =
-      getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
+  const [_, indictmentVerdictAppealDeadlineExpired] =
+    getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
 
-    if (!indictmentVerdictAppealDeadlineExpired) {
-      return false
-    }
+  if (!indictmentVerdictAppealDeadlineExpired) {
+    return false
   }
 
   return true

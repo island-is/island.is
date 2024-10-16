@@ -85,31 +85,41 @@ const cli = yargs(process.argv.slice(2))
     },
   )
   .command(
-    'run-local-env',
+    'run-local-env [services...]',
     'Render environment and run the local environment.\nThis is to be used when developing locally and loading of the environment variables for "dev" environment is needed.',
     (yargs) => {
-      return yargs
-        .positional('services', {
-          type: 'string',
-          array: true,
-          demandOption: true,
-        })
-        .option('dependencies', { array: true, type: 'string', default: [] })
-        .option('json', { type: 'boolean', default: false })
-        .option('dry', { type: 'boolean', default: false })
-        .option('no-update-secrets', {
-          type: 'boolean',
-          default: false,
-          alias: ['nosecrets', 'no-secrets'],
-        })
-        .option('print', { type: 'boolean', default: false })
-        .option('proxies', { type: 'boolean', default: false })
-        .option('never-fail', {
-          alias: 'nofail',
-          type: 'boolean',
-          default: false,
-        })
-        .demandCommand(1, 'You must pass at least one service to run!')
+      return (
+        yargs
+          .positional('services', {
+            type: 'string',
+            array: true,
+            demandOption: true,
+          })
+          .option('dependencies', { array: true, type: 'string', default: [] })
+          .option('json', { type: 'boolean', default: false })
+          .option('dry', { type: 'boolean', default: false })
+          .option('no-update-secrets', {
+            type: 'boolean',
+            default: false,
+            alias: ['nosecrets', 'no-secrets'],
+          })
+          .option('print', { type: 'boolean', default: false })
+          .option('proxies', { type: 'boolean', default: false })
+          .option('never-fail', {
+            alias: 'nofail',
+            type: 'boolean',
+            default: false,
+          })
+          // Custom check for 'services' since yargs lack built-in validation
+          .check((argv) => {
+            const svc = argv.services
+            if (svc.length < 1) {
+              throw new Error('You must pass at least one service to run!')
+            } else {
+              return true
+            }
+          })
+      )
     },
     async (argv) =>
       await runLocalServices(argv.services, argv.dependencies, {
