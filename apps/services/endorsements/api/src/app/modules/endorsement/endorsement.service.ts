@@ -58,9 +58,6 @@ export class EndorsementService {
     private readonly awsService: AwsService,
   ) {}
 
-
-  
-
   async updateEndorsementCountOnList(listId: string): Promise<void> {
     try {
       const count = await this.endorsementModel.count({
