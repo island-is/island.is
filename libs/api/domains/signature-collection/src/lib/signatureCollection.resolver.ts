@@ -22,7 +22,6 @@ import {
   SignatureCollectionUploadPaperSignatureInput,
 } from './dto'
 import {
-  AllowDelegation,
   AllowManager,
   CurrentSignee,
   IsOwner,
@@ -185,6 +184,7 @@ export class SignatureCollectionResolver {
 
   @Scopes(ApiScope.signatureCollection)
   @IsOwner()
+  @AllowManager()
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionUploadPaperSignature(
