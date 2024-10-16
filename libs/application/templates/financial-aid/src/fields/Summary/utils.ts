@@ -32,9 +32,15 @@ export const getSpouseSummaryConstants = (
 
   const taxData = getValueViaPath<TaxData>(externalData, 'taxDataSpouse.data')
 
-  const sposeEmail = getValueViaPath<string>(answers, 'spouseContactInfo.email')
+  const spouseEmail = getValueViaPath<string>(
+    answers,
+    'spouseContactInfo.email',
+  )
 
-  const sposePhone = getValueViaPath<string>(answers, 'spouseContactInfo.phone')
+  const spousePhone = getValueViaPath<string>(
+    answers,
+    'spouseContactInfo.phone',
+  )
 
   const spouseIncomeType = getValueViaPath<ApproveOptions>(
     answers,
@@ -80,8 +86,8 @@ export const getSpouseSummaryConstants = (
     nationalId,
     data,
     taxData,
-    sposeEmail,
-    sposePhone,
+    spouseEmail,
+    spousePhone,
     route,
     personalTaxReturn,
     directTaxPayments,

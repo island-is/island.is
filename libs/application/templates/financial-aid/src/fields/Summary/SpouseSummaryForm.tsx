@@ -37,8 +37,8 @@ export const SpouseSummaryForm = ({
     nationalId,
     data,
     taxData,
-    sposeEmail,
-    sposePhone,
+    spouseEmail,
+    spousePhone,
     route,
     personalTaxReturn,
     directTaxPayments,
@@ -76,8 +76,8 @@ export const SpouseSummaryForm = ({
 
       <ContactInfo
         route={Routes.SPOUSECONTACTINFO}
-        email={sposeEmail ?? ''}
-        phone={sposePhone ?? ''}
+        email={spouseEmail ?? ''}
+        phone={spousePhone ?? ''}
         goToScreen={goToScreen}
       />
 
