@@ -13,30 +13,40 @@ export type Options = {
   value: string
 }
 
+interface OccupationProps {
+  field: {
+    props: {
+      index: number
+    }
+  }
+}
+
 type EventOption = {
   value?: string | null | undefined
   label?: string
 }
 
-export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
-  props,
-) => {
+export const Occupation: FC<
+  React.PropsWithChildren<OccupationProps & FieldBaseProps>
+> = (props) => {
+  const idx = props.field?.props?.index // Null check ???
   const { formatMessage, lang } = useLocale()
   const { application } = props
   const answers = application.answers as WorkAccidentNotification
   const { setValue } = useFormContext()
+
   const [selectedMajorGroup, setSelectedMajorGroup] = useState<Options | null>(
-    answers?.employee?.victimsOccupationMajor || null,
+    answers?.employee?.[idx]?.victimsOccupationMajor || null,
   )
   const [selectedSubMajorGroup, setSelectedSubMajorGroup] =
     useState<Options | null>(
-      answers?.employee?.victimsOccupationSubMajor || null,
+      answers?.employee?.[idx]?.victimsOccupationSubMajor || null,
     )
   const [selectedMinorGroup, setSelectedMinorGroup] = useState<Options | null>(
-    answers?.employee?.victimsOccupationMinor || null,
+    answers?.employee?.[idx]?.victimsOccupationMinor || null,
   )
   const [selectedUnitGroup, setSelectedUnitGroup] = useState<Options | null>(
-    answers?.employee?.victimsOccupationUnit || null,
+    answers?.employee?.[idx]?.victimsOccupationUnit || null,
   )
   const [selectedSearchGroup, setSelectedSearchGroup] =
     useState<Options | null>(null)
@@ -136,7 +146,7 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
     )
     const chosenGroup = allGroups.find((group) => group.code === value)
     if (chosenGroup)
-      setValue('employee.victimsOccupation', {
+      setValue(`employee[${idx}].victimsOccupation`, {
         value: chosenGroup.code,
         label: chosenGroup.name,
       })
@@ -157,10 +167,10 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
       ),
     )
 
-    setValue('employee.victimsOccupationMajor', selectedGroup)
+    setValue(`employee[${idx}].victimsOccupationMajor`, selectedGroup)
     const chosenMajorGroup = findGroupByCode(majorGroupOptions, value.value)
     if (chosenMajorGroup?.validToSelect) {
-      setValue('employee.victimsOccupation', selectedGroup)
+      setValue(`employee[${idx}].victimsOccupation`, selectedGroup)
     }
 
     setSelectedSubMajorGroup(null)
@@ -189,9 +199,9 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
       value.value,
     )
 
-    setValue('employee.victimsOccupationSubMajor', selectedGroup)
+    setValue(`employee[${idx}].victimsOccupationSubMajor`, selectedGroup)
     if (chosenSubMajorGroup?.validToSelect) {
-      setValue('employee.victimsOccupation', selectedGroup)
+      setValue(`employee[${idx}].victimsOccupation`, selectedGroup)
     }
 
     setSelectedMinorGroup(null)
@@ -212,10 +222,10 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
       ),
     )
 
-    setValue('employee.victimsOccupationMinor', selectedGroup)
+    setValue(`employee[${idx}].victimsOccupationMinor`, selectedGroup)
     const chosenMinorGroup = findGroupByCode(minorGroupOptions, value.value)
     if (chosenMinorGroup?.validToSelect) {
-      setValue('employee.victimsOccupation', selectedGroup)
+      setValue(`employee[${idx}].victimsOccupation`, selectedGroup)
     }
 
     setSelectedUnitGroup(null)
@@ -225,7 +235,7 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
     if (!selectedMajorGroup) return
 
     if (selectedSearchGroup) {
-      setValue('employee.victimsOccupationMajor', selectedMajorGroup)
+      setValue(`employee[${idx}].victimsOccupationMajor`, selectedMajorGroup)
 
       const codeString: string = selectedSearchGroup.value
       const subMajorGroup = victimsOccupationSubMajorGroups.find(
@@ -254,7 +264,10 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
     if (!selectedSubMajorGroup) return
 
     if (selectedSearchGroup) {
-      setValue('employee.victimsOccupationSubMajor', selectedSubMajorGroup)
+      setValue(
+        `employee[${idx}].victimsOccupationSubMajor`,
+        selectedSubMajorGroup,
+      )
 
       const codeString = selectedSearchGroup.value
       const minorGroup = victimOccupationMinorGroups.find(
@@ -283,7 +296,7 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
     if (!selectedMinorGroup) return
 
     if (selectedSearchGroup) {
-      setValue('employee.victimsOccupationMinor', selectedMinorGroup)
+      setValue(`employee[${idx}].victimsOccupationMinor`, selectedMinorGroup)
 
       const codeString = selectedSearchGroup.value
       const unitGroup = victimsOccupationUnitGroups.find(
@@ -291,14 +304,17 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
       )
       if (!unitGroup || !unitGroup.code || !unitGroup.name) {
         setSelectedUnitGroup({ value: '', label: '' })
-        setValue('employee.victimsOccupationUnit', { value: '', label: '' })
+        setValue(`employee[${idx}].victimsOccupationUnit`, {
+          value: '',
+          label: '',
+        })
       } else {
         const selectedUnitGroup: Options = {
           value: unitGroup.code,
           label: unitGroup.name,
         }
         setSelectedUnitGroup(selectedUnitGroup)
-        setValue('employee.victimsOccupationUnit', selectedUnitGroup)
+        setValue(`employee[${idx}].victimsOccupationUnit`, selectedUnitGroup)
       }
       setUnitGroupOptions(
         victimsOccupationUnitGroups.filter(
@@ -470,8 +486,11 @@ export const Occupation: FC<React.PropsWithChildren<FieldBaseProps>> = (
                     label: value?.label,
                   }
                   setSelectedUnitGroup(selectedGroup)
-                  setValue('employee.victimsOccupation', selectedGroup)
-                  setValue('employee.victimsOccupationUnit', selectedGroup)
+                  setValue(`employee[${idx}].victimsOccupation`, selectedGroup)
+                  setValue(
+                    `employee[${idx}].victimsOccupationUnit`,
+                    selectedGroup,
+                  )
                 }}
               />
             )

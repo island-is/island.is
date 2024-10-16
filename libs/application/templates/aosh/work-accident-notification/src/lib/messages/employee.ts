@@ -73,15 +73,10 @@ export const employee = {
       defaultMessage: 'Tilhögun á vinnutíma',
       description: 'Employees work hour arrangement',
     },
-    date: {
-      id: 'aosh.wan.application:employee.date',
-      defaultMessage: 'Dagsetning slyss',
-      description: 'Date of accident',
-    },
     time: {
       id: 'aosh.wan.application:employee.time',
-      defaultMessage: 'Tímasetning slyss',
-      description: 'Time of accident',
+      defaultMessage: 'Byrjun starfsdags',
+      description: 'Start of employees workday',
     },
     timePlaceholder: {
       id: 'aosh.wan.application:employee.timePlaceholder',

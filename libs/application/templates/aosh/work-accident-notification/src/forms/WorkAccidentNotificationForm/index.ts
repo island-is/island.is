@@ -1,6 +1,7 @@
 import {
   buildDescriptionField,
   buildForm,
+  buildHiddenInput,
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
@@ -42,7 +43,7 @@ export const WorkAccidentNotificationForm: Form = buildForm({
               marginBottom: 3,
             }),
             buildDescriptionField({
-              id: 'externalDataDescription',
+              id: 'externalData.Description',
               title: '',
               description: externalData.dataProvider.announcementDescription,
               titleVariant: 'h4',

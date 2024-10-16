@@ -4,6 +4,7 @@ import {
   buildDataProviderItem,
   buildSubmitField,
   coreMessages,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import { externalData } from '../../lib/messages'
 import {
@@ -51,6 +52,10 @@ export const prerequisitesSection = buildSection({
           title: '',
         }),
       ],
+    }),
+    buildHiddenInput({
+      id: 'employeeAmount',
+      defaultValue: 1,
     }),
   ],
 })
