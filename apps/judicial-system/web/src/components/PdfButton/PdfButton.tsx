@@ -42,7 +42,7 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
   queryParameters,
 }) => {
   const { limitedAccess } = useContext(UserContext)
-  console.log(elementId)
+
   const handlePdfClick = async () => {
     const prefix = `${limitedAccess ? 'limitedAccess/' : ''}${
       connectedCaseParentId ? `mergedCase/${caseId}/` : ''
@@ -54,8 +54,6 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
     const url = `${api.apiUrl}/api/case/${
       connectedCaseParentId ?? caseId
     }/${prefix}${pdfType}${postfix}${query}`
-
-    console.log(url)
 
     window.open(url, '_blank')
   }

@@ -5,6 +5,7 @@ import {
   Get,
   Header,
   Inject,
+  InternalServerErrorException,
   Param,
   Query,
   Res,
@@ -131,21 +132,19 @@ export class SubpoenaController {
     @CurrentDefendant() defendant: Defendant,
     @Res() res: Response,
     @CurrentSubpoena() subpoena?: Subpoena,
-    @Query('arraignmentDate') arraignmentDate?: Date,
-    @Query('location') location?: string,
-    @Query('subpoenaType') subpoenaType?: SubpoenaType,
   ): Promise<void> {
     this.logger.debug(
       `Getting service certificate for defendant ${defendantId} in subpoena ${subpoenaId} of case ${caseId} as a pdf document`,
     )
 
+    if (!subpoena) {
+      throw new InternalServerErrorException('Missing subpoena')
+    }
+
     const pdf = await this.pdfService.getServiceCertificatePdf(
       theCase,
       defendant,
       subpoena,
-      arraignmentDate,
-      location,
-      subpoenaType,
     )
 
     res.end(pdf)

@@ -360,21 +360,15 @@ export class PdfService {
   async getServiceCertificatePdf(
     theCase: Case,
     defendant: Defendant,
-    subpoena?: Subpoena,
-    arraignmentDate?: Date,
-    location?: string,
-    subpoenaType?: SubpoenaType,
+    subpoena: Subpoena,
   ): Promise<Buffer> {
     await this.refreshFormatMessage()
 
     const generatedPdf = await createServiceCertificate(
       theCase,
       defendant,
-      this.formatMessage,
       subpoena,
-      arraignmentDate,
-      location,
-      subpoenaType,
+      this.formatMessage,
     )
 
     return generatedPdf

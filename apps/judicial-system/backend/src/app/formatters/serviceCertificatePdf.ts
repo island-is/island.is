@@ -41,11 +41,8 @@ const getSubpoenaType = (subpoenaType?: SubpoenaType): string => {
 export const createServiceCertificate = (
   theCase: Case,
   defendant: Defendant,
+  subpoena: Subpoena,
   formatMessage: FormatMessage,
-  subpoena?: Subpoena,
-  arraignmentDate?: Date,
-  location?: string,
-  subpoenaType?: SubpoenaType,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -64,10 +61,6 @@ export const createServiceCertificate = (
 
   setTitle(doc, formatMessage(strings.title))
 
-  arraignmentDate = arraignmentDate ?? subpoena?.arraignmentDate
-  location = location ?? subpoena?.location
-  subpoenaType = subpoenaType ?? defendant.subpoenaType
-
   addHugeHeading(doc, formatMessage(strings.title).toUpperCase(), 'Times-Bold')
   addMediumCenteredText(
     doc,
@@ -81,19 +74,19 @@ export const createServiceCertificate = (
   addMediumCenteredText(
     doc,
     `Birting tókst ${
-      subpoena?.serviceDate ? formatDate(subpoena?.serviceDate, 'PPp') : ''
+      subpoena.serviceDate ? formatDate(subpoena.serviceDate, 'PPp') : ''
     }`,
     'Times-Bold',
   )
 
   addEmptyLines(doc)
 
-  if (subpoena?.servedBy) {
+  if (subpoena.servedBy) {
     addNormalText(doc, 'Birtingaraðili: ', 'Times-Bold', true)
     addNormalText(doc, subpoena.servedBy, 'Times-Roman')
   }
 
-  if (subpoena?.comment) {
+  if (subpoena.comment) {
     addNormalText(doc, 'Athugasemd: ', 'Times-Bold', true)
     addNormalText(doc, subpoena.comment, 'Times-Roman')
   }
@@ -140,13 +133,15 @@ export const createServiceCertificate = (
   addNormalText(doc, 'Þingfesting: ', 'Times-Bold', true)
   addNormalText(
     doc,
-    formatDate(arraignmentDate ? new Date(arraignmentDate) : null, 'Pp') ||
-      'Ekki skráð',
+    formatDate(
+      subpoena.arraignmentDate ? new Date(subpoena.arraignmentDate) : null,
+      'Pp',
+    ) || 'Ekki skráð',
     'Times-Roman',
   )
 
   addNormalText(doc, 'Staður: ', 'Times-Bold', true)
-  addNormalText(doc, location || 'Ekki skáður', 'Times-Roman')
+  addNormalText(doc, subpoena.location || 'Ekki skáður', 'Times-Roman')
 
   addNormalText(doc, 'Tegund fyrirkalls: ', 'Times-Bold', true)
   addNormalText(doc, getSubpoenaType(defendant.subpoenaType), 'Times-Roman')
