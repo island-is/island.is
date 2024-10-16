@@ -360,7 +360,19 @@ export class SignatureCollectionClientService {
         }),
       ),
     )
+    // If no lists remain remove Candidate so that they can start a new collection through applications again
+    await this.checkIfRemoveCandidate(candidate.id, auth)
+
     return { success: true }
+  }
+
+  private async checkIfRemoveCandidate(id: string, auth: User) {
+    const { ownedLists, candidate } = await this.getSignee(auth)
+    if ((!ownedLists || ownedLists.length === 0) && candidate?.id) {
+      await this.getApiWithAuth(this.candidateApi, auth).frambodIDDelete({
+        iD: parseInt(id),
+      })
+    }
   }
 
   async getSignedList(auth: User): Promise<SignedList[] | null> {
@@ -404,7 +416,7 @@ export class SignatureCollectionClientService {
   }: CanSignInput): Promise<Success> {
     // User is not allowed to have more than one signature
     // They are marked as invalid but count as participation
-    const noInvalidSignature = !signatures?.find((s) => !s.valid) ?? true
+    const noInvalidSignature = !signatures?.find((s) => !s.valid)
 
     const reasons = mapReasons({
       ...canSignInfo,
