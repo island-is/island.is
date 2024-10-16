@@ -63,13 +63,14 @@ export class EndorsementService {
       const count = await this.endorsementModel.count({
         where: { endorsementListId: listId },
       })
-      const [affectedRows, updatedList] = await this.endorsementListModel.update(
-        { endorsementCount: count },
-        {
-          where: { id: listId },
-          returning: true,
-        },
-      )
+      const [affectedRows, updatedList] =
+        await this.endorsementListModel.update(
+          { endorsementCount: count },
+          {
+            where: { id: listId },
+            returning: true,
+          },
+        )
       if (affectedRows > 0 && updatedList[0].endorsementCount === count) {
         this.logger.info(
           `Successfully updated endorsement count for list "${listId}" to ${count}`,
@@ -83,7 +84,7 @@ export class EndorsementService {
       this.logger.error(
         `Error updating endorsement count for list "${listId}": ${error.message}`,
       )
-      throw error;
+      throw error
     }
   }
 
