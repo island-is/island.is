@@ -11,6 +11,6 @@ import { S3Client } from '@aws-sdk/client-s3'
       useValue: new S3Client(),
     },
   ],
-  exports: [AwsService, S3Client],
+  exports: [AwsService],
 })
 export class AwsModule {}
