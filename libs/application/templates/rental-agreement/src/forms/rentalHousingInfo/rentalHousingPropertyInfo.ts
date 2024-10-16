@@ -7,9 +7,19 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import * as m from '../../lib/messages'
 import { SubSection } from '@island.is/application/types'
 import { postalCodes } from '@island.is/shared/utils'
+import {
+  rentalHousingCategoryClass,
+  rentalHousingCategoryTypes,
+} from '../../lib/constants'
+import {
+  getApplicationAnswers,
+  getPropertyCategoryClassGroupOptions,
+  getPropertyCategoryClassOptions,
+  getPropertyCategoryTypeOptions,
+} from '../../lib/utils'
+import * as m from '../../lib/messages'
 
 const messagesInfo = m.registerProperty.info
 const messagesInfoSummary = m.registerProperty.infoSummary
@@ -136,38 +146,16 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           id: 'registerPropertyCategoryType',
           title: messagesCategory.typeTitle,
           description: messagesCategory.typeDescription,
-          options: [
-            {
-              value: 'entireHome',
-              label: messagesCategory.typeSelectLabelEntireHome,
-            },
-            {
-              value: 'Room',
-              label: messagesCategory.typeSelectLabelRoom,
-            },
-            {
-              value: 'commercial',
-              label: messagesCategory.typeSelectLabelCommercial,
-            },
-          ],
-          defaultValue: 'entireHome',
+          options: getPropertyCategoryTypeOptions(),
+          defaultValue: rentalHousingCategoryTypes.ENTIRE_HOME,
           required: true,
         }),
         buildRadioField({
           id: 'registerPropertyCategoryClass',
           title: messagesCategory.classTitle,
           description: messagesCategory.classDescription,
-          options: [
-            {
-              value: 'generalMarket',
-              label: messagesCategory.classSelectLabelGeneralMarket,
-            },
-            {
-              value: 'specialGroups',
-              label: messagesCategory.classSelectLabelSpecialGroups,
-            },
-          ],
-          defaultValue: 'generalMarket',
+          options: getPropertyCategoryClassOptions(),
+          defaultValue: rentalHousingCategoryClass.GENERAL_MARKET,
           required: true,
           width: 'half',
           space: 5,
@@ -176,38 +164,15 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           id: 'registerPropertyCategoryClassGroup',
           title: messagesCategory.classGroupLabel,
           placeholder: messagesCategory.classGroupPlaceholder,
-          condition: (answers) =>
-            answers.registerPropertyCategoryClass === 'specialGroups',
-          options: [
-            {
-              value: 'studentHousing',
-              label: messagesCategory.classGroupSelectLabelStudentHousing,
-            },
-            {
-              value: 'seniorCitizenHousing',
-              label: messagesCategory.classGroupSelectLabelSeniorCitizenHousing,
-            },
-            {
-              value: 'commune',
-              label: messagesCategory.classGroupSelectLabelCommune,
-            },
-            {
-              value: 'halfwayHouse',
-              label: messagesCategory.classGroupSelectLabelHalfwayHouse,
-            },
-            {
-              value: 'socialHousing',
-              label: messagesCategory.classGroupSelectLabelSocialHousing,
-            },
-            {
-              value: 'incomeBasedHousing',
-              label: messagesCategory.classGroupSelectLabelIncomeBasedHousing,
-            },
-            {
-              value: 'employeeHousing',
-              label: messagesCategory.classGroupSelectLabelEmployeeHousing,
-            },
-          ],
+          condition: (answers) => {
+            const { propertyCategoryClassOptions } =
+              getApplicationAnswers(answers)
+            return (
+              propertyCategoryClassOptions ===
+              rentalHousingCategoryClass.SPECIAL_GROUPS
+            )
+          },
+          options: getPropertyCategoryClassGroupOptions(),
         }),
       ],
     }),

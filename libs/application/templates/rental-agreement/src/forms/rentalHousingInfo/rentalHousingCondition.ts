@@ -30,7 +30,7 @@ export const RentalHousingCondition = buildSubSection({
           title: '',
           description: m.housingCondition.inspectorDescription,
           options: getInspectorOptions(),
-          defaultValue: 'contractParties',
+          defaultValue: rentalHousingConditionInspector.CONTRACT_PARTIES,
           width: 'half',
         }),
         buildTextField({
