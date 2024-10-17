@@ -9,7 +9,7 @@ import { mockClient } from 'aws-sdk-client-mock'
 import { Readable } from 'stream'
 import { sdkStreamMixin } from '@smithy/util-stream'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { AwsService, EncodingString } from './aws.service'
+import { S3Service, EncodingString } from './aws.service'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { Logger } from '@nestjs/common'
 
@@ -17,13 +17,13 @@ jest.mock('@aws-sdk/s3-request-presigner')
 const s3Mock = mockClient(S3Client)
 
 describe('AwsService', () => {
-  let awsService: AwsService
+  let awsService: S3Service
   let logger: Logger
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AwsService,
+        S3Service,
         {
           provide: LOGGER_PROVIDER,
           useValue: {
@@ -37,7 +37,7 @@ describe('AwsService', () => {
       ],
     }).compile()
 
-    awsService = module.get<AwsService>(AwsService)
+    awsService = module.get<S3Service>(S3Service)
     logger = module.get<Logger>(LOGGER_PROVIDER)
 
     s3Mock.reset()

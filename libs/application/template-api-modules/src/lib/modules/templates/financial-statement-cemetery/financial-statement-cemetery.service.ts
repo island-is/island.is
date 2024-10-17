@@ -1,4 +1,3 @@
-import { S3 } from 'aws-sdk'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { Inject } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
@@ -13,7 +12,6 @@ import {
   ApplicationWithAttachments as Application,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import AmazonS3URI from 'amazon-s3-uri'
 import { TemplateApiModuleActionProps } from '../../../types'
 import * as kennitala from 'kennitala'
 import {
@@ -22,6 +20,7 @@ import {
   mapContactsAnswersToContacts,
   mapDigitalSignee,
 } from '../financial-statement-cemetery/mappers/mapValuesToUserType'
+import { S3Service } from '@island.is/nest/aws'
 
 export type AttachmentData = {
   key: string
@@ -47,13 +46,12 @@ export const getCurrentUserType = (
 }
 
 export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiService {
-  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementClientService: FinancialStatementsInaoClientService,
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY)
-    this.s3 = new S3()
   }
 
   private async getAttachments(application: Application): Promise<string> {
@@ -74,18 +72,10 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
       return Promise.reject({})
     }
 
-    const { bucket, key } = AmazonS3URI(fileName)
-
-    const uploadBucket = bucket
     try {
-      const file = await this.s3
-        .getObject({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent.toString('base64') || ''
+      const fileContent = await this.s3Service
+        .getFileContent(fileName, 'base64')
+      return fileContent || ''
     } catch (error) {
       throw new Error('Error occurred while fetching attachment')
     }

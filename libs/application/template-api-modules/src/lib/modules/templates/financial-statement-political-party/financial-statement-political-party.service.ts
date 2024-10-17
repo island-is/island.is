@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { S3 } from 'aws-sdk'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
@@ -15,10 +14,10 @@ import {
   PoliticalPartyFinancialStatementValues,
 } from '@island.is/clients/financial-statements-inao'
 import { getValueViaPath } from '@island.is/application/core'
-import AmazonS3Uri from 'amazon-s3-uri'
 import { TemplateApiModuleActionProps } from '../../../types'
 import * as kennitala from 'kennitala'
 import { mapValuesToPartyTypes } from './mappers/mapValuesToPartyTypes'
+import { S3Service } from '@island.is/nest/aws'
 
 export interface AttachmentData {
   key: string
@@ -50,13 +49,12 @@ const PARTY_USER_TYPE = 150000001
 
 @Injectable()
 export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplateApiService {
-  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementClientService: FinancialStatementsInaoClientService,
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENT_POLITICAL_PARTY)
-    this.s3 = new S3()
   }
 
   private async getAttachment(application: Application): Promise<string> {
@@ -81,15 +79,10 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
       throw new Error('Attachment file name not found')
     }
 
-    const { bucket, key } = AmazonS3Uri(fileName)
-
-    const uploadBucket = bucket
     try {
-      const file = await this.s3
-        .getObject({ Bucket: uploadBucket, Key: key })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent?.toString('base64') || ''
+      const fileContent = await this.s3Service
+        .getFileContent(fileName, 'base64')
+      return fileContent || ''
     } catch (error) {
       this.logger.error('Error retrieving attachment from S3', error)
       throw new Error('Failed to retrieve attachment from S3')

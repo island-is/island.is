@@ -1,2 +1,2 @@
 export * from './lib/aws.module'
-export * from './lib/aws.service'
+export * from './lib/s3.service'
