@@ -4,9 +4,8 @@ import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import { AccidentNotificationService } from './accident-notification.service'
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
 import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
-import { S3 } from 'aws-sdk'
-import { S3Service } from './attachments/s3.service'
 import { RightsPortalClientModule } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { AwsModule } from '@island.is/nest/aws'
 
 const applicationRecipientName =
   process.env.ACCIDENT_NOTIFICATION_APPLICATION_RECIPIENT_NAME ?? ''
@@ -20,7 +19,11 @@ const applicationSenderName = process.env.EMAIL_FROM_NAME ?? ''
 const applicationSenderEmail = process.env.EMAIL_FROM ?? 'development@island.is'
 
 @Module({
-  imports: [SharedTemplateAPIModule, RightsPortalClientModule],
+  imports: [
+    SharedTemplateAPIModule, 
+    AwsModule, 
+    RightsPortalClientModule
+  ],
   providers: [
     {
       provide: ACCIDENT_NOTIFICATION_CONFIG,
@@ -34,11 +37,6 @@ const applicationSenderEmail = process.env.EMAIL_FROM ?? 'development@island.is'
     AccidentNotificationService,
     ApplicationAttachmentService,
     AccidentNotificationAttachmentProvider,
-    S3Service,
-    {
-      provide: S3,
-      useValue: new S3(),
-    },
   ],
   exports: [AccidentNotificationService],
 })
