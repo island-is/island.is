@@ -1,30 +1,5 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
-  oldAgePensionAge,
-  earlyRetirementMinAge,
-  earlyRetirementMaxAge,
-  ApplicationType,
-  Employment,
-  AttachmentLabel,
-  AttachmentTypes,
-} from './constants'
-import {
-  Application,
-  NationalRegistryResidenceHistory,
-  YesOrNo,
-} from '@island.is/application/types'
-import { oldAgePensionFormMessage } from './messages'
-import * as kennitala from 'kennitala'
-import addYears from 'date-fns/addYears'
-import addMonths from 'date-fns/addMonths'
-import {
-  CombinedResidenceHistory,
-  Employer,
-  IncompleteEmployer,
-  SelfEmployed,
-  FileUpload,
-} from '../types'
-import {
   BankAccountType,
   MONTHS,
   TaxLevelOptions,
@@ -35,6 +10,31 @@ import {
   FileType,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
+import {
+  Application,
+  NationalRegistryResidenceHistory,
+  YesOrNo,
+} from '@island.is/application/types'
+import addMonths from 'date-fns/addMonths'
+import addYears from 'date-fns/addYears'
+import * as kennitala from 'kennitala'
+import {
+  CombinedResidenceHistory,
+  Employer,
+  FileUpload,
+  IncompleteEmployer,
+  SelfEmployed,
+} from '../types'
+import {
+  ApplicationType,
+  AttachmentLabel,
+  AttachmentTypes,
+  earlyRetirementMaxAge,
+  earlyRetirementMinAge,
+  Employment,
+  oldAgePensionAge,
+} from './constants'
+import { oldAgePensionFormMessage } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const pensionFundQuestion = getValueViaPath(
@@ -50,6 +50,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const selectedYear = getValueViaPath(answers, 'period.year') as string
 
   const selectedMonth = getValueViaPath(answers, 'period.month') as string
+
+  const selectedYearHiddenInput = getValueViaPath(
+    answers,
+    'period.hiddenInput',
+  ) as string
 
   const applicantPhonenumber = getValueViaPath(
     answers,
@@ -154,6 +159,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     applicationType,
     selectedYear,
     selectedMonth,
+    selectedYearHiddenInput,
     applicantPhonenumber,
     bank,
     residenceHistoryQuestion,

@@ -1,42 +1,24 @@
 import {
+  buildAlertMessageField,
+  buildCheckboxField,
+  buildCustomField,
+  buildFileUploadField,
   buildForm,
+  buildHiddenInputWithWatchedValue,
   buildMultiField,
+  buildRadioField,
   buildSection,
+  buildSelectField,
+  buildSubmitField,
   buildSubSection,
   buildTextField,
-  buildCustomField,
-  buildSubmitField,
-  buildCheckboxField,
-  buildFileUploadField,
-  buildAlertMessageField,
-  buildRadioField,
-  buildSelectField,
 } from '@island.is/application/core'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import {
-  applicantInformationMultiField,
-  buildFormConclusionSection,
-} from '@island.is/application/ui-forms'
-import {
-  Application,
-  DefaultEvents,
-  Form,
-  FormModes,
-  FormValue,
-} from '@island.is/application/types'
-import { pensionSupplementFormMessage } from '../lib/messages'
-import {
-  getApplicationReasonOptions,
-  getApplicationAnswers,
-  getApplicationExternalData,
-  getAvailableYears,
-} from '../lib/pensionSupplementUtils'
-import { ApplicationReason } from '../lib/constants'
-import {
-  MONTHS,
+  BankAccountType,
   fileUploadSharedProps,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import isEmpty from 'lodash/isEmpty'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
@@ -44,8 +26,27 @@ import {
   getCurrencies,
   typeOfBankInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+  FormValue,
+} from '@island.is/application/types'
+import {
+  applicantInformationMultiField,
+  buildFormConclusionSection,
+} from '@island.is/application/ui-forms'
+import isEmpty from 'lodash/isEmpty'
+import { ApplicationReason } from '../lib/constants'
+import { pensionSupplementFormMessage } from '../lib/messages'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getApplicationReasonOptions,
+  getAvailableMonths,
+  getAvailableYears,
+} from '../lib/pensionSupplementUtils'
 
 export const PensionSupplementForm: Form = buildForm({
   id: 'PensionSupplementDraft',
@@ -312,7 +313,24 @@ export const PensionSupplementForm: Form = buildForm({
               width: 'half',
               placeholder:
                 socialInsuranceAdministrationMessage.period.monthDefaultText,
-              options: MONTHS,
+              options: (application: Application) => {
+                const { selectedYear } = getApplicationAnswers(
+                  application.answers,
+                )
+
+                return getAvailableMonths(selectedYear)
+              },
+              condition: (answers) => {
+                const { selectedYear, selectedYearHiddenInput } =
+                  getApplicationAnswers(answers)
+
+                return selectedYear === selectedYearHiddenInput
+              },
+            }),
+            buildHiddenInputWithWatchedValue({
+              // Needed to trigger an update on options in the select above
+              id: 'period.hiddenInput',
+              watchValue: 'period.year',
             }),
           ],
         }),
