@@ -13,9 +13,7 @@ export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
         },
         paths: ['/'],
         extraAnnotations: {
-          dev: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
+          dev: {},
           staging: {},
           prod: {},
         },
