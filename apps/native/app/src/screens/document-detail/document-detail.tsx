@@ -318,7 +318,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const showAlert =
     showConfirmedAlert ||
     (hasAlert && !hasConfirmation) ||
-    (hasActions && !showConfirmationAlert)
+    (hasActions && !showConfirmedAlert)
 
   const loading = docRes.loading || !accessToken
   const fileTypeLoaded = !!Document?.content?.type
@@ -487,27 +487,24 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               />
             ) : hasPdf ? (
               <PdfWrapper>
-                {visible &&
-                  accessToken &&
-                  (shouldIncludeDocument ||
-                    (!shouldIncludeDocument && showAlert)) && (
-                    <PdfViewer
-                      url={`data:application/pdf;base64,${Document.content?.value}`}
-                      body={`documentId=${Document.id}&__accessToken=${accessToken}`}
-                      onLoaded={(filePath: any) => {
-                        setPdfUrl(filePath)
-                        // Make sure to not set document as loaded until actions have been fetched
-                        // To prevent top of first page not being shown
-                        if (shouldIncludeDocument) {
-                          setLoaded(true)
-                        }
-                      }}
-                      onError={() => {
+                {visible && accessToken && loaded && (
+                  <PdfViewer
+                    url={`data:application/pdf;base64,${Document.content?.value}`}
+                    body={`documentId=${Document.id}&__accessToken=${accessToken}`}
+                    onLoaded={(filePath: any) => {
+                      setPdfUrl(filePath)
+                      // Make sure to not set document as loaded until actions have been fetched
+                      // To prevent top of first page not being shown
+                      if (shouldIncludeDocument) {
                         setLoaded(true)
-                        setError(true)
-                      }}
-                    />
-                  )}
+                      }
+                    }}
+                    onError={() => {
+                      setLoaded(true)
+                      setError(true)
+                    }}
+                  />
+                )}
               </PdfWrapper>
             ) : (
               <WebView
