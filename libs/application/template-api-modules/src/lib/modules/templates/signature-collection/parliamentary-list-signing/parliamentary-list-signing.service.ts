@@ -36,41 +36,43 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
   }
 
   async canSign({ auth }: TemplateApiModuleActionProps) {
+    let signee 
     try {
-      const signee = await this.signatureCollectionClientService.getSignee(auth)
-      const { canSign, canSignInfo } = signee
-      if (canSign) {
-        return signee
-      }
-      if (!canSignInfo) {
-        // canCreateInfo will always be defined if canCreate is false but we need to check for typescript
-        throw new TemplateApiError(errorMessages.deniedByService, 400)
-      }
-      const errors: ProviderErrorReason[] = canSignInfo?.map((key) => {
-        switch (key) {
-          case ReasonKey.UnderAge:
-            return errorMessages.age
-          case ReasonKey.NoCitizenship:
-            return errorMessages.citizenship
-          case ReasonKey.NotISResidency:
-            return errorMessages.residency
-          case ReasonKey.CollectionNotOpen:
-            return errorMessages.active
-          case ReasonKey.AlreadySigned:
-            return errorMessages.signer
-          case ReasonKey.noInvalidSignature:
-            return errorMessages.invalidSignature
-          default:
-            return errorMessages.deniedByService
-        }
-      })
-      throw new TemplateApiError(errors, 405)
-    } catch (error) {
-      if (error.status === 404) {
-        throw new TemplateApiError(errorMessages.singeeNotFound, 404)
-      }
+      signee = await this.signatureCollectionClientService.getSignee(auth)
+    } catch (e) {
+      throw new TemplateApiError(errorMessages.singeeNotFound, 404)
+    }
+    
+    const { canSign, canSignInfo } = signee
+    if (canSign) {
+      return signee
+    }
+    if (!canSignInfo) {
+      // canCreateInfo will always be defined if canCreate is false but we need to check for typescript
       throw new TemplateApiError(errorMessages.deniedByService, 400)
     }
+    const errors: ProviderErrorReason[] = canSignInfo?.map((key) => {
+      switch (key) {
+        case ReasonKey.UnderAge:
+          return errorMessages.age
+        case ReasonKey.NoCitizenship:
+          return errorMessages.citizenship
+        case ReasonKey.NotISResidency:
+          return errorMessages.residency
+        case ReasonKey.CollectionNotOpen:
+          return errorMessages.active
+        case ReasonKey.AlreadySigned:
+          return errorMessages.signer
+        case ReasonKey.noInvalidSignature:
+          return errorMessages.invalidSignature
+        case ReasonKey.notFound:
+          return errorMessages.singeeNotFound
+
+        default:
+          return errorMessages.deniedByService
+      }
+    })
+    throw new TemplateApiError(errors, 405)
   }
 
   async getList({ auth, application }: TemplateApiModuleActionProps) {
