@@ -44,7 +44,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     private readonly criminalRecordService: CriminalRecordService,
     private readonly financeService: FinanceClientService,
     private readonly judicialAdministrationService: JudicialAdministrationService,
-    private readonly s3Service: S3Service
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.OPERATING_LICENSE)
   }
@@ -331,7 +331,10 @@ export class OperatingLicenseService extends BaseTemplateApiService {
 
   private async getFileContentBase64(fileName: string): Promise<string> {
     try {
-      const fileContent = await this.s3Service.getFileContent(fileName, 'base64')
+      const fileContent = await this.s3Service.getFileContent(
+        fileName,
+        'base64',
+      )
       return fileContent || ''
     } catch (e) {
       return 'err'

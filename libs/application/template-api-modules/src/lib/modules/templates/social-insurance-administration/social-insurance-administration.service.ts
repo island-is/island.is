@@ -378,7 +378,10 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getPdf(key: string) {
-    const fileContent = await this.s3Service.getFileContent({bucket: this.config.templateApi.attachmentBucket, key}, 'base64')
+    const fileContent = await this.s3Service.getFileContent(
+      { bucket: this.config.templateApi.attachmentBucket, key },
+      'base64',
+    )
 
     if (!fileContent) {
       throw new Error('File content was undefined')

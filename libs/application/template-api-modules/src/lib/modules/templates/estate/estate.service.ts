@@ -41,7 +41,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
-    private readonly s3Service: S3Service
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.ESTATE)
   }
@@ -268,10 +268,13 @@ export class EstateTemplateService extends BaseTemplateApiService {
     }
     return { sucess: result.success, id: result.caseNumber }
   }
-  
+
   private async getFileContentBase64(fileName: string): Promise<string> {
     try {
-      const fileContent = await this.s3Service.getFileContent(fileName, 'base64')
+      const fileContent = await this.s3Service.getFileContent(
+        fileName,
+        'base64',
+      )
       return fileContent || ''
     } catch (e) {
       this.logger.warn('[estate]: Failed to get file content - ', e)
