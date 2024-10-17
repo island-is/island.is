@@ -1,105 +1,78 @@
-import { Inject, Injectable } from '@nestjs/common'
 import { AppRepository } from './app.repository'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { GrantsService } from '@island.is/clients/grants'
-import { GrantType } from './dto/grantType.dto'
+import { GrantDto, GrantsService } from '@island.is/clients/grants'
 import { CmsGrant } from './app.types'
+import { logger } from '@island.is/logging'
+import { Injectable } from '@nestjs/common'
+import { createClient as createManagementClient } from 'contentful-management'
+import { isGrantAvailable } from './utils/isGrantAvailable'
 
 @Injectable()
 export class AppService {
   constructor(
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly repository: AppRepository,
     private readonly grantsService: GrantsService,
   ) {}
 
   public async run() {
-    this.logger.debug('Starting cms import worker...')
-    await this.updateGrants()
-    this.logger.debug('Cms import worker done.')
-  }
-
-  async getGrants() {
-    return this.grantsService.getGrants()
-  }
-
-  async updateGrants() {
-    const grants = await this.getGrants()
-    const cmsGrants = await this.repository.getGrants()
-
-    const parseIsOpen = (
-      dateFrom?: string,
-      dateTo?: string,
-    ): boolean | undefined => {
-      if (!dateFrom) {
-        return false
-      }
-      const typedDateFrom = new Date(dateFrom)
-
-      //invalid date format
-      if (Number.isNaN(typedDateFrom)) {
-        return
-      }
-
-      const today = new Date()
-
-      //if today is earlier than date from, it's not open
-      if (today < typedDateFrom) {
-        return false
-      }
-
-      //if no date to, it's endless
-      if (!dateTo) {
-        return true
-      }
-
-      const typedDateTo = new Date(dateTo)
-
-      if (Number.isNaN(typedDateFrom)) {
-        return
-      }
-
-      return today < typedDateTo
-    }
-
-    const grantUpdates = grants.map((g) => {
-      const isOpen = parseIsOpen(g.dateFrom, g.dateTo)
-
-      const inputFields: Array<{ key: string; value: unknown }> = []
-      if (g.dateFrom) {
-        inputFields.push({ key: 'grantDateFrom', value: g.dateFrom })
-      }
-      if (g.dateTo) {
-        inputFields.push({ key: 'grantDateTo', value: g.dateTo })
-      }
-      if (isOpen) {
-        inputFields.push({ key: 'grantIsOpen', value: isOpen })
-      }
-
-      this.updateContentfulGrantEntry(g.applicationId, inputFields, cmsGrants)
+    logger.debug('Starting cms import worker...')
+    const client = createManagementClient({
+      accessToken: process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN as string,
     })
 
-    return grantUpdates
+    const grants = (await this.grantsService.getGrants()).map((g) => {
+      return {
+        ...g,
+        inputFields: this.parseGrantInputFields(g),
+      }
+    })
+
+    const promises = grants.map((u) =>
+      this.updateContentfulGrantEntry(u.applicationId, u.inputFields),
+    )
+
+    logger.debug('Cms import worker done.')
+  }
+
+  private parseGrantInputFields = (grant: GrantDto) => {
+    const isOpen = isGrantAvailable(grant.dateFrom, grant.dateTo)
+    const inputFields: Array<{ key: string; value: unknown }> = []
+
+    if (grant.dateFrom) {
+      inputFields.push({ key: 'grantDateFrom', value: grant.dateFrom })
+    }
+    if (grant.dateTo) {
+      inputFields.push({ key: 'grantDateTo', value: grant.dateTo })
+    }
+    if (isOpen) {
+      inputFields.push({ key: 'grantIsOpen', value: isOpen })
+    }
+    return inputFields
   }
 
   async updateContentfulGrantEntry(
     applicationId: string,
     inputFields: Array<{ key: string; value: unknown }>,
-    cmsGrants: Array<CmsGrant>,
   ) {
-    const cmsId = cmsGrants.find((cg) => cg.applicationId === applicationId)
-
-    if (!cmsId) {
-      this.logger.warn('Grant with provided applicationId not found', {
-        applicationId: applicationId,
-      })
-      return null
+    let res: {
+      ok: 'success' | 'error'
+      message?: string
+    }
+    try {
+      res = await this.repository.updateGrant(applicationId, inputFields)
+    } catch (e) {
+      logger.warn(e.message)
+      res = {
+        ok: 'error',
+        message: e.message,
+      }
     }
 
-    this.logger.debug(`Updating contentful entry ${cmsId.id}`)
+    if (res.ok === 'success') {
+      logger.debug(`Contentufl entry updated. Data: ${res.message}`)
+      return
+    }
 
-    const result = await this.repository.updateGrant(applicationId, inputFields)
-
-    console.log(`update result ${JSON.stringify(result)}`)
+    logger.debug(`Contentufl entry update failed. ${res.message}`)
+    return
   }
 }
