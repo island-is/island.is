@@ -98,8 +98,7 @@ export const PaperSignees = ({
         <Text variant="h4" marginBottom={2}>
           {formatMessage(m.paperSigneesHeader) + ' '}
           <Tooltip
-            placement="right"
-            color="blue400"
+            placement="bottom"
             text={formatMessage(m.paperSigneesTooltip)}
           />
         </Text>
