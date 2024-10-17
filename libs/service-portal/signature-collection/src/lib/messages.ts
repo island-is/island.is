@@ -116,6 +116,18 @@ export const m = defineMessages({
   },
 
   /* Signee View */
+  noUserFound: {
+    id: 'sp.signatureCollection:noUserFound',
+    defaultMessage:
+      'Þú uppfyllir ekki skilyrði til að taka þátt í meðmælasöfnunum',
+    description: '',
+  },
+  noUserFoundDescription: {
+    id: 'sp.signatureCollection:noUserFoundDescription#markdown',
+    defaultMessage:
+      'Ef þú telur þessar upplýsingar rangar, vinsamlegast hafðu samband við Þjóðskrá Íslands.',
+    description: '',
+  },
   noCollectionIsActive: {
     id: 'sp.signatureCollection:noCollectionIsActive',
     defaultMessage: 'Engin söfnun í gangi',
@@ -190,9 +202,20 @@ export const m = defineMessages({
     defaultMessage: 'Þú ert að fara að hætta við söfnun meðmæla. Ertu viss?',
     description: '',
   },
+  cancelCollectionModalMessageLastList: {
+    id: 'sp.signatureCollection:cancelCollectionModalMessageLastList',
+    defaultMessage:
+      'Þú ert að fara að hætta við söfnun meðmæla í þessu kjördæmi. Þau meðmæli sem þú hefur nú þegar safnað munu eyðast. Athugaðu að með því að hætta við síðustu söfnun framboðsins verður framboðinu einnig eytt. Ertu viss um að þú viljir hætta við söfnun og eyða framboði?',
+    description: '',
+  },
   cancelCollectionModalConfirmButton: {
     id: 'sp.signatureCollection:modalConfirmButton',
     defaultMessage: 'Já, hætta við',
+    description: '',
+  },
+  cancelCollectionModalConfirmButtonLastList: {
+    id: 'sp.signatureCollection:cancelCollectionModalConfirmButtonLastList',
+    defaultMessage: 'Já, hætta við söfnun of eyða framboði',
     description: '',
   },
   cancelCollectionModalCancelButton: {
@@ -359,6 +382,11 @@ export const m = defineMessages({
   supervisors: {
     id: 'sp.signatureCollection:supervisors',
     defaultMessage: 'Umsjónaraðilar',
+    description: '',
+  },
+  noSupervisors: {
+    id: 'sp.signatureCollection:noSupervisors',
+    defaultMessage: 'Enginn umsjónaraðili skráður',
     description: '',
   },
   supervisorsTooltip: {
