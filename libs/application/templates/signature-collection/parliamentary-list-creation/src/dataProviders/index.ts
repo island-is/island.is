@@ -14,3 +14,7 @@ export const ParliamentaryIdentityApi = defineTemplateApi({
   action: 'parliamentaryIdentity',
   order: 2,
 })
+
+export const IsDelegatedToCompanyApi = defineTemplateApi({
+  action: 'delegatedToCompany',
+})
