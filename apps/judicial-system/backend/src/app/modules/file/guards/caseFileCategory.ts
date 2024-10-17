@@ -86,7 +86,7 @@ const canDefenceUserViewCaseFileOfIndictmentCase = (
   )
 }
 
-const canDefenceUsaerViewCaseFile = (
+const canDefenceUserViewCaseFile = (
   nationalId: string,
   caseType: CaseType,
   caseState: CaseState,
@@ -130,7 +130,7 @@ const canPrisonAdminUserViewCaseFile = (
   )
 }
 
-export const canLimitedAcccessUserViewCaseFile = (
+export const canLimitedAccessUserViewCaseFile = (
   user: User,
   caseType: CaseType,
   caseState: CaseState,
@@ -143,7 +143,7 @@ export const canLimitedAcccessUserViewCaseFile = (
   }
 
   if (isDefenceUser(user)) {
-    return canDefenceUsaerViewCaseFile(
+    return canDefenceUserViewCaseFile(
       user.nationalId,
       caseType,
       caseState,

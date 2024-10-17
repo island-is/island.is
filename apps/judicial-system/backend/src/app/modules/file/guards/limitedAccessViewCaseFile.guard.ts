@@ -10,7 +10,7 @@ import { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
 import { CaseFile } from '../models/file.model'
-import { canLimitedAcccessUserViewCaseFile } from './caseFileCategory'
+import { canLimitedAccessUserViewCaseFile } from './caseFileCategory'
 
 @Injectable()
 export class LimitedAccessViewCaseFileGuard implements CanActivate {
@@ -36,7 +36,7 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
     }
 
     if (
-      canLimitedAcccessUserViewCaseFile(
+      canLimitedAccessUserViewCaseFile(
         user,
         theCase.type,
         theCase.state,
