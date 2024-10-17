@@ -49,11 +49,6 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
           staging: ['loftbru', 'loftbru-cf'],
           prod: 'loftbru',
         },
-        extraAnnotations: {
-          dev: {},
-          staging: {},
-          prod: {},
-        },
         paths: ['/api/swagger', '/api/public'],
       },
     })
