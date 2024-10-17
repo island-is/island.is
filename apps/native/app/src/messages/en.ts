@@ -622,7 +622,7 @@ export const en: TranslatedMessages = {
   'health.overview.insuredFrom': 'Insured from',
   'health.overview.status': 'Status',
   'health.overview.notInsured': 'You do not have health insurance',
-  'health.overview.payments': 'Payments',
+  'health.overview.coPayments': 'Co-payment',
   'health.overview.maxMonthlyPayment': 'Max monthly payment',
   'health.overview.paymentLimit': 'Payment Limit',
   'health.overview.paymentCredit': 'Credit',
