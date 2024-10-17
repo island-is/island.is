@@ -2,7 +2,8 @@ import { uuid } from 'uuidv4'
 
 import {
   CaseState,
-  completedCaseStates,
+  completedIndictmentCaseStates,
+  completedRequestCaseStates,
   DateType,
   defenceRoles,
   indictmentCases,
@@ -13,19 +14,21 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../models/case.model'
-import { verifyFullAccess, verifyNoAccess } from './verify'
+import { verifyFullAccess, verifyNoAccess, verifyReadAccess } from './verify'
+
+// TODO: Fix defender indictment tests
+//       Add spokesperson tests
 
 describe.each(defenceRoles)('defence user %s', (role) => {
   const user = { role, nationalId: uuid() } as User
 
   describe.each([...restrictionCases, ...investigationCases])(
-    `r-case type %s`,
+    `defender r-case type %s`,
     (type) => {
       const accessibleCaseStates = [
-        CaseState.WAITING_FOR_CANCELLATION,
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
-        ...completedCaseStates,
+        ...completedRequestCaseStates,
       ]
 
       describe.each(
@@ -169,11 +172,11 @@ describe.each(defenceRoles)('defence user %s', (role) => {
     },
   )
 
-  describe.each(indictmentCases)(`s-case type %s`, (type) => {
+  describe.each(indictmentCases)(`defender s-case type %s`, (type) => {
     const accessibleCaseStates = [
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
-      ...completedCaseStates,
+      ...completedIndictmentCaseStates,
     ]
 
     describe.each(
@@ -201,9 +204,78 @@ describe.each(defenceRoles)('defence user %s', (role) => {
           type,
           state,
           defendants: [{}, { defenderNationalId: user.nationalId }, {}],
+          dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
         } as Case
 
         verifyFullAccess(theCase, user)
+      })
+    })
+  })
+
+  describe.each([...restrictionCases, ...investigationCases])(
+    'spokesperson inaccessible r-case type %s',
+    (type) => {
+      const theCase = {
+        type,
+      } as Case
+
+      verifyNoAccess(theCase, user)
+    },
+  )
+
+  describe.each(indictmentCases)(`spokesperson s-case type %s`, (type) => {
+    const accessibleCaseStates = [
+      CaseState.WAITING_FOR_CANCELLATION,
+      CaseState.RECEIVED,
+      ...completedIndictmentCaseStates,
+    ]
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !accessibleCaseStates.includes(state),
+      ),
+    )('inaccessible case state %s', (state) => {
+      const theCase = {
+        type,
+        state,
+        civilClaimants: [
+          {},
+          { hasSpokesperson: true, spokespersonNationalId: user.nationalId },
+          {},
+        ],
+      } as Case
+
+      verifyNoAccess(theCase, user)
+    })
+
+    describe.each(accessibleCaseStates)('accessible case state %s', (state) => {
+      describe('spokesperson not assigned to case', () => {
+        const theCase = {
+          type,
+          state,
+          civilClaimants: [
+            {},
+            { hasSpokesperson: false, spokespersonNationalId: user.nationalId },
+            {},
+          ],
+        } as Case
+
+        verifyNoAccess(theCase, user)
+      })
+
+      describe('spokesperson assigned to case', () => {
+        const theCase = {
+          type,
+          state,
+          civilClaimants: [
+            {},
+            { hasSpokesperson: true, spokespersonNationalId: user.nationalId },
+            {},
+          ],
+          dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
+        } as Case
+
+        verifyReadAccess(theCase, user)
       })
     })
   })

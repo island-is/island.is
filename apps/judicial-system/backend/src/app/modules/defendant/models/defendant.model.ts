@@ -12,6 +12,7 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   DefendantPlea,
   DefenderChoice,
@@ -28,6 +29,19 @@ import { Subpoena } from '../../subpoena/models/subpoena.model'
   timestamps: true,
 })
 export class Defendant extends Model {
+  static isDefenderOfDefendant(
+    defenderNationalId: string,
+    defendants?: Defendant[],
+  ) {
+    return defendants?.some(
+      (defendant) =>
+        defendant.defenderNationalId &&
+        normalizeAndFormatNationalId(defenderNationalId).includes(
+          defendant.defenderNationalId,
+        ),
+    )
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,

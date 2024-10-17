@@ -9,7 +9,7 @@ import {
 
 import { CaseFileCategory, User } from '@island.is/judicial-system/types'
 
-import { canLimitedAcccessUserViewCaseFile } from '../../file'
+import { canLimitedAccessUserViewCaseFile } from '../../file'
 
 @Injectable()
 export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
@@ -21,11 +21,13 @@ export class LimitedAccessCaseFileInterceptor implements NestInterceptor {
       map((theCase) => {
         const caseFiles = theCase.caseFiles?.filter(
           ({ category }: { category: CaseFileCategory }) =>
-            canLimitedAcccessUserViewCaseFile(
+            canLimitedAccessUserViewCaseFile(
               user,
               theCase.type,
               theCase.state,
               category,
+              theCase.defendants,
+              theCase.civilClaimants,
             ),
         )
 

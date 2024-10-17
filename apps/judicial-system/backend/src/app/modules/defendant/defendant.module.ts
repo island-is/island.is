@@ -26,6 +26,6 @@ import { InternalDefendantController } from './internalDefendant.controller'
     CivilClaimantController,
   ],
   providers: [DefendantService, CivilClaimantService],
-  exports: [DefendantService],
+  exports: [DefendantService, CivilClaimantService],
 })
 export class DefendantModule {}
