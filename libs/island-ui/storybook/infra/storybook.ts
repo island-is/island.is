@@ -19,12 +19,8 @@ export const serviceSetup =
       .ingress({
         primary: {
           extraAnnotations: {
-            dev: {
-              'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-            },
-            staging: {
-              'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-            },
+            dev: {},
+            staging: {},
             prod: {},
           },
           host: {
