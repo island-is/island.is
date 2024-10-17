@@ -2,6 +2,7 @@ import { INestApplication, NestInterceptor, Type } from '@nestjs/common'
 import { OpenAPIObject } from '@nestjs/swagger'
 import { Server } from 'http'
 
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface'
 import { HealthCheckOptions } from './infra/health/types'
 
 export type RunServerOptions = {
@@ -73,6 +74,11 @@ export type RunServerOptions = {
    * Otherwise an object can be provided to override specific options.
    */
   healthCheck?: boolean | HealthCheckOptions
+
+  /**
+   * Enables CORS (Cross-Origin Resource Sharing)
+   */
+  enableCors?: CorsOptions
 
   /**
    * Hook to run before app is initialized.

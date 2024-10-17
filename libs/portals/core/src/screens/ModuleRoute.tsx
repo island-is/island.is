@@ -5,7 +5,7 @@ import { PortalRoute } from '../types/portalCore'
 import { usePortalMeta } from '../components/PortalProvider'
 import { plausiblePageviewDetail } from '../utils/plausible'
 import { Box } from '@island.is/island-ui/core'
-import { useAuth } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 type ModuleRouteProps = {
   route: PortalRoute
@@ -14,7 +14,7 @@ type ModuleRouteProps = {
 export const ModuleRoute = React.memo(({ route }: ModuleRouteProps) => {
   const location = useLocation()
   const { basePath, portalTitle } = usePortalMeta()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
 
   useEffect(() => {
