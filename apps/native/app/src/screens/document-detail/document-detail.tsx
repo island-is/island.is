@@ -315,10 +315,10 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const hasConfirmation = !!Document.confirmation
   const hasAlert =
     !!Document.alert && (Document.alert?.title || Document.alert?.data)
-  const showAlert =
+  const showAdditionalInfo =
     showConfirmedAlert ||
     (hasAlert && !hasConfirmation) ||
-    (hasActions && !showConfirmedAlert)
+    (hasActions && !showConfirmedAlert && !hasConfirmation)
 
   const loading = docRes.loading || !accessToken
   const fileTypeLoaded = !!Document?.content?.type
@@ -438,7 +438,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           label={isUrgent ? intl.formatMessage({ id: 'inbox.urgent' }) : ''}
         />
       </Host>
-      {showAlert && (
+      {showAdditionalInfo && (
         <ActionsWrapper>
           {showConfirmedAlert && (
             <Alert
