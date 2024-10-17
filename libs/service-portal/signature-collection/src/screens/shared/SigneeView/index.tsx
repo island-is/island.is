@@ -23,31 +23,38 @@ const SigneeView = ({
   const { userInfo: user } = useAuth()
   const { formatMessage } = useLocale()
   const { signedLists, loadingSignedLists } = useGetSignedList()
-  const { listsForUser, loadingUserLists } = useGetListsForUser(
-    currentCollection?.id,
-  )
+  const { listsForUser, loadingUserLists, getListsForUserError } =
+    useGetListsForUser(currentCollection?.id)
+
+  if (getListsForUserError !== undefined) {
+    return (
+      <EmptyState
+        title={m.noUserFound}
+        description={m.noUserFoundDescription}
+      />
+    )
+  }
 
   return (
     <Box>
       {!user?.profile.actor && !loadingSignedLists && !loadingUserLists ? (
         <Box>
-          {currentCollection?.isPresidential &&
-            listsForUser.length === 0 &&
-            signedLists.length === 0 && (
-              <Box marginTop={10}>
-                <EmptyState
-                  title={m.noCollectionIsActive}
-                  description={m.noCollectionIsActiveDescription}
-                />
-              </Box>
-            )}
+          {listsForUser?.length === 0 && signedLists?.length === 0 && (
+            <Box marginTop={10}>
+              <EmptyState
+                title={m.noCollectionIsActive}
+                description={m.noCollectionIsActiveDescription}
+              />
+            </Box>
+          )}
+
           <Box marginTop={[2, 7]}>
             {/* Signed list */}
             <SignedList currentCollection={currentCollection} />
 
             {/* Other available lists */}
             <Box marginTop={[5, 10]}>
-              {listsForUser.length > 0 && (
+              {listsForUser?.length > 0 && (
                 <Text marginBottom={2} variant="h4">
                   {formatMessage(m.mySigneeListsByAreaHeader)}
                 </Text>

@@ -30,11 +30,17 @@ import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
 import copyToClipboard from 'copy-to-clipboard'
 import { formatNationalId } from '@island.is/portals/core'
+import SignedList from '../../shared/SignedList'
 
 const OwnerView = ({
+  refetchIsOwner,
   currentCollection,
+  // list holder is an individual who owns a list or has a delegation of type Procuration Holder
+  isListHolder,
 }: {
+  refetchIsOwner: () => void
   currentCollection: SignatureCollection
+  isListHolder: boolean
 }) => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -50,6 +56,7 @@ const OwnerView = ({
       onCompleted: () => {
         toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
         refetchListsForOwner()
+        refetchIsOwner()
       },
       onError: () => {
         toast.error(formatMessage(m.cancelCollectionModalToastError))
@@ -71,16 +78,16 @@ const OwnerView = ({
   return (
     <Stack space={8}>
       <Box marginTop={5}>
-        <Box display="flex" justifyContent="spaceBetween" alignItems="baseline">
-          <Text variant="h4">
-            {formatMessage(m.myListsDescription) + ' '}
-            <Tooltip
-              placement="right"
-              text={formatMessage(m.myListsInfo)}
-              color="blue400"
-            />
-          </Text>
-          {!loadingOwnerLists &&
+        <SignedList currentCollection={currentCollection} />
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="baseline"
+          marginTop={[5, 10]}
+        >
+          <Text variant="h4">{formatMessage(m.myListsDescription) + ' '}</Text>
+          {isListHolder &&
+            !loadingOwnerLists &&
             listsForOwner?.length < currentCollection?.areas.length && (
               <AddConstituency
                 lists={listsForOwner}
@@ -126,7 +133,7 @@ const OwnerView = ({
                     : undefined
                 }
                 tag={
-                  list.active
+                  list.active && isListHolder
                     ? {
                         label: 'Cancel collection',
                         renderTag: () => (
@@ -137,9 +144,13 @@ const OwnerView = ({
                               ' - ' +
                               list.area?.name
                             }
-                            description={formatMessage(
-                              m.cancelCollectionModalMessage,
-                            )}
+                            description={
+                              listsForOwner.length === 1
+                                ? formatMessage(
+                                    m.cancelCollectionModalMessageLastList,
+                                  )
+                                : formatMessage(m.cancelCollectionModalMessage)
+                            }
                             ariaLabel="delete"
                             disclosureElement={
                               <Tag outlined variant="red">
@@ -156,7 +167,9 @@ const OwnerView = ({
                               onCancelCollection(list.id)
                             }}
                             buttonTextConfirm={formatMessage(
-                              m.cancelCollectionModalConfirmButton,
+                              listsForOwner.length === 1
+                                ? m.cancelCollectionModalConfirmButtonLastList
+                                : m.cancelCollectionModalConfirmButton,
                             )}
                             buttonPropsConfirm={{
                               variant: 'primary',
@@ -168,10 +181,12 @@ const OwnerView = ({
                           />
                         ),
                       }
-                    : {
+                    : !list.active
+                    ? {
                         label: formatMessage(m.listSubmitted),
                         variant: 'blueberry',
                       }
+                    : undefined
                 }
               />
             </Box>
@@ -188,9 +203,8 @@ const OwnerView = ({
           <Text variant="h4">
             {formatMessage(m.supervisors) + ' '}
             <Tooltip
-              placement="right"
-              text={formatMessage(m.supervisorsInfo)}
-              color="blue400"
+              placement="bottom"
+              text={formatMessage(m.supervisorsTooltip)}
             />
           </Text>
         </Box>
@@ -211,13 +225,15 @@ const OwnerView = ({
                   <CollectorSkeleton />
                 </T.Data>
               </T.Row>
-            ) : (
+            ) : collectors.length ? (
               collectors.map((collector) => (
                 <T.Row key={collector.nationalId}>
                   <T.Data width={'35%'}>{collector.name}</T.Data>
                   <T.Data>{formatNationalId(collector.nationalId)}</T.Data>
                 </T.Row>
               ))
+            ) : (
+              <Text marginTop={2}>{formatMessage(m.noSupervisors)}</Text>
             )}
           </T.Body>
         </T.Table>

@@ -30,6 +30,9 @@ interface Defendant {
   defenderPhoneNumber?: string
   defenderChoice?: DefenderChoice
   subpoenas?: Subpoena[]
+  requestedDefenderChoice?: DefenderChoice
+  requestedDefenderNationalId?: string
+  requestedDefenderName?: string
 }
 
 interface DateLog {

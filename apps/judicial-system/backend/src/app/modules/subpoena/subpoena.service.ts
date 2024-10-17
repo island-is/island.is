@@ -20,7 +20,6 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { indictment } from '../../messages'
 import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
 import { Defendant } from '../defendant/models/defendant.model'
@@ -93,6 +92,9 @@ export class SubpoenaService {
       defenderEmail,
       defenderPhoneNumber,
       defenderName,
+      requestedDefenderChoice,
+      requestedDefenderNationalId,
+      requestedDefenderName,
     } = update
 
     const [numberOfAffectedRows] = await this.subpoenaModel.update(update, {
@@ -102,13 +104,21 @@ export class SubpoenaService {
     })
     let defenderAffectedRows = 0
 
-    if (defenderChoice || defenderNationalId) {
+    if (
+      defenderChoice ||
+      defenderNationalId ||
+      requestedDefenderChoice ||
+      requestedDefenderNationalId
+    ) {
       const defendantUpdate: Partial<Defendant> = {
         defenderChoice,
         defenderNationalId,
         defenderName,
         defenderEmail,
         defenderPhoneNumber,
+        requestedDefenderChoice,
+        requestedDefenderNationalId,
+        requestedDefenderName,
       }
 
       const [defenderUpdateAffectedRows] = await this.defendantModel.update(
