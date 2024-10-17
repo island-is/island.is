@@ -163,8 +163,6 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
           )
         }
 
-        console.log('!!!Hér2: ', resp)
-
         return resp
       } catch (error) {
         this.logger.error('EHIC.API error getCardResponse', error)
@@ -196,8 +194,6 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
           cardtype: CardType.PLASTIC,
         })
         cardResponses.push(res)
-
-        console.log('!!!Hér4: ', res)
       } catch (error) {
         this.logger.error('EHIC.API error applyForPhysicalCard', error)
         throw error
@@ -221,8 +217,6 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
           applicantnationalid: applicants[i],
           cardtype: CardType.PDF,
         })
-
-        console.log('!!!Hér6: ', res)
       } catch (error) {
         this.logger.error('EHIC.API error applyForTemporaryCard', error)
         throw error
