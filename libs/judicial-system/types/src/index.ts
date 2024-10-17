@@ -8,6 +8,7 @@ export {
   ServiceRequirement,
   ServiceStatus,
   isSuccessfulServiceStatus,
+  isFailedServiceStatus,
 } from './lib/defendant'
 export { InstitutionType } from './lib/institution'
 export { NotificationType } from './lib/notification'

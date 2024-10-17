@@ -20,11 +20,12 @@ import {
 import { Case, CaseHasExistedGuard, CurrentCase } from '../case'
 import { CaseNotificationDto } from './dto/caseNotification.dto'
 import { InstitutionNotificationDto } from './dto/institutionNotification.dto'
-import { NotificationDto } from './dto/notification.dto'
+import { SubpoenaNotificationDto } from './dto/subpoenaNotification.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { InstitutionNotificationService } from './institutionNotification.service'
 import { InternalNotificationService } from './internalNotification.service'
 import { NotificationDispatchService } from './notificationDispatch.service'
+import { SubpoenaNotificationService } from './subpoenaNotification.service'
 
 @UseGuards(TokenGuard)
 @Controller('api/internal')
@@ -34,6 +35,7 @@ export class InternalNotificationController {
     private readonly internalNotificationService: InternalNotificationService,
     private readonly notificationDispatchService: NotificationDispatchService,
     private readonly institutionNotificationService: InstitutionNotificationService,
+    private readonly subpoenaNotificationService: SubpoenaNotificationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -75,13 +77,29 @@ export class InternalNotificationController {
     )
   }
 
+  @Post(messageEndpoint[MessageType.SUBPOENA_NOTIFICATION])
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Sends a new notification',
+  })
+  sendSubpoenaNotification(
+    @Body() notificationDto: SubpoenaNotificationDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Sending ${notificationDto.type} notification`)
+
+    return this.subpoenaNotificationService.sendNotification(
+      notificationDto.type,
+      notificationDto.subpoena,
+    )
+  }
+
   @Post(messageEndpoint[MessageType.NOTIFICATION_DISPATCH])
   @ApiCreatedResponse({
     type: DeliverResponse,
     description: 'Dispatches notifications',
   })
   dispatchNotification(
-    @Body() notificationDto: NotificationDto,
+    @Body() notificationDto: InstitutionNotificationDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Dispatching ${notificationDto.type} notification`)
 
