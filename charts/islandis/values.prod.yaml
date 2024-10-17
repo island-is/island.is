@@ -42,7 +42,6 @@ air-discount-scheme-api:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'loftbru.island.is'
@@ -128,7 +127,6 @@ air-discount-scheme-backend:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'loftbru.island.is'
@@ -1193,7 +1191,6 @@ contentful-entry-tagger-service:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'contentful-entry-tagger-service.devland.is'
@@ -1915,7 +1912,6 @@ search-indexer-service:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'search-indexer-service.devland.is'
@@ -3246,7 +3242,6 @@ web:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
