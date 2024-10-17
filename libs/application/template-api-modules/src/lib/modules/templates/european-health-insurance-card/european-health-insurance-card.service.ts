@@ -213,7 +213,7 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
 
     for (let i = 0; i < applicants?.length; i++) {
       try {
-        const res = await this.ehicApiWithAuth(auth).requestEhicCard({
+        await this.ehicApiWithAuth(auth).requestEhicCard({
           applicantnationalid: applicants[i],
           cardtype: CardType.PDF,
         })
