@@ -230,9 +230,13 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
 
     for (let i = 0; i < applicants?.length; i++) {
       try {
+        const { nationalId, cardNumber } = applicants[i]
+        if (!nationalId || !cardNumber) {
+          throw new Error('National ID or card number is missing')
+        }
         const res = await this.ehicApiWithAuth(auth).fetchTempEhicPDFCard({
-          applicantnationalid: applicants[i].nationalId ?? '',
-          cardnumber: applicants[i].cardNumber ?? '',
+          applicantnationalid: nationalId,
+          cardnumber: cardNumber,
         })
         pdfArray.push(res)
       } catch (error) {
