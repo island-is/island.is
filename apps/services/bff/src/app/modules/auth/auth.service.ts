@@ -493,6 +493,10 @@ export class AuthService {
   async callbackLogout(res: Response, body: CallbackLogoutDto) {
     const logoutToken = body.logout_token
 
+    this.logger.info('Callback backchannel logout initiated', {
+      logoutToken,
+    })
+
     if (!logoutToken) {
       const errorMessage = 'No param "logout_token" provided!'
       this.logger.error(errorMessage)
