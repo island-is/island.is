@@ -1,17 +1,18 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildMultiField,
   buildSelectField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
 import { getAllCountryCodes } from '@island.is/shared/utils'
-import { ReasonForApplicationOptions } from '../../../lib/constants'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
-  getApplicationAnswers,
-  getReasonForApplicationOptions,
-} from '../../../lib/newPrimarySchoolUtils'
+  OptionsType,
+  ReasonForApplicationOptions,
+} from '../../../lib/constants'
+import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 
 export const reasonForApplicationSubSection = buildSubSection({
   id: 'reasonForApplicationSubSection',
@@ -26,17 +27,22 @@ export const reasonForApplicationSubSection = buildSubSection({
       description:
         newPrimarySchoolMessages.primarySchool.reasonForApplicationDescription,
       children: [
-        buildSelectField({
-          id: 'reasonForApplication.reason',
-          dataTestId: 'reason-for-application',
-          title:
-            newPrimarySchoolMessages.primarySchool
-              .reasonForApplicationSubSectionTitle,
-          placeholder:
-            newPrimarySchoolMessages.primarySchool
-              .reasonForApplicationPlaceholder,
-          options: getReasonForApplicationOptions(),
-        }),
+        buildCustomField(
+          {
+            id: 'reasonForApplication.reason',
+            title:
+              newPrimarySchoolMessages.primarySchool
+                .reasonForApplicationSubSectionTitle,
+            component: 'FriggOptionsAsyncSelectField',
+            dataTestId: 'reason-for-application',
+          },
+          {
+            optionsType: OptionsType.REASON,
+            placeholder:
+              newPrimarySchoolMessages.primarySchool
+                .reasonForApplicationPlaceholder,
+          },
+        ),
         buildSelectField({
           id: 'reasonForApplication.movingAbroad.country',
           dataTestId: 'reason-for-application-country',
@@ -70,7 +76,7 @@ export const reasonForApplicationSubSection = buildSubSection({
 
             return (
               reasonForApplication ===
-              ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+              ReasonForApplicationOptions.MOVING_MUNICIPALITY
             )
           },
         }),
@@ -85,7 +91,7 @@ export const reasonForApplicationSubSection = buildSubSection({
 
             return (
               reasonForApplication ===
-              ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+              ReasonForApplicationOptions.MOVING_MUNICIPALITY
             )
           },
         }),
@@ -103,7 +109,7 @@ export const reasonForApplicationSubSection = buildSubSection({
 
             return (
               reasonForApplication ===
-                ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE ||
+                ReasonForApplicationOptions.MOVING_MUNICIPALITY ||
               (reasonForApplication ===
                 ReasonForApplicationOptions.MOVING_ABROAD &&
                 reasonForApplicationCountry !== undefined)
