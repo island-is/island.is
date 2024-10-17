@@ -120,6 +120,15 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           prod: 'search-indexer-service.devland.is',
         },
         paths: ['/'],
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          prod: {},
+        },
       },
     })
     .replicaCount({
