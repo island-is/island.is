@@ -4,7 +4,10 @@ import { useIntl } from 'react-intl'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { TagCaseState } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import {
+  ContextMenuItem,
+  useContextMenu,
+} from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import { contextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
 import {
   ColumnCaseType,
@@ -19,10 +22,11 @@ import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema
 interface Props {
   cases: CaseListEntry[]
   onContextMenuDeleteClick: (id: string) => void
+  canDeleteCase: (caseToDelete: CaseListEntry) => boolean
 }
 
 const ActiveCases: FC<Props> = (props) => {
-  const { cases, onContextMenuDeleteClick } = props
+  const { cases, onContextMenuDeleteClick, canDeleteCase } = props
   const { formatMessage } = useIntl()
   const { openCaseInNewTabMenuItem } = useContextMenu()
 
@@ -56,13 +60,17 @@ const ActiveCases: FC<Props> = (props) => {
       generateContextMenuItems={(row) => {
         return [
           openCaseInNewTabMenuItem(row.id),
-          {
-            title: formatMessage(contextMenu.deleteCase),
-            onClick: () => {
-              onContextMenuDeleteClick(row.id)
-            },
-            icon: 'trash',
-          },
+          ...(canDeleteCase(row)
+            ? [
+                {
+                  title: formatMessage(contextMenu.deleteCase),
+                  onClick: () => {
+                    onContextMenuDeleteClick(row.id)
+                  },
+                  icon: 'trash',
+                } as ContextMenuItem,
+              ]
+            : []),
         ]
       }}
       columns={[
