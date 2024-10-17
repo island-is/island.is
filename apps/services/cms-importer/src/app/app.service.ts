@@ -1,9 +1,7 @@
 import { AppRepository } from './app.repository'
 import { GrantDto, GrantsService } from '@island.is/clients/grants'
-import { CmsGrant } from './app.types'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
-import { createClient as createManagementClient } from 'contentful-management'
 import { isGrantAvailable } from './utils/isGrantAvailable'
 
 @Injectable()
@@ -15,21 +13,15 @@ export class AppService {
 
   public async run() {
     logger.debug('Starting cms import worker...')
-    const client = createManagementClient({
-      accessToken: process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN as string,
-    })
 
     const grants = (await this.grantsService.getGrants()).map((g) => {
       return {
-        ...g,
+        applicationId: g.applicationId,
         inputFields: this.parseGrantInputFields(g),
       }
     })
 
-    const promises = grants.map((u) =>
-      this.updateContentfulGrantEntry(u.applicationId, u.inputFields),
-    )
-
+    await this.repository.updateGrants(grants)
     logger.debug('Cms import worker done.')
   }
 
@@ -47,32 +39,5 @@ export class AppService {
       inputFields.push({ key: 'grantIsOpen', value: isOpen })
     }
     return inputFields
-  }
-
-  async updateContentfulGrantEntry(
-    applicationId: string,
-    inputFields: Array<{ key: string; value: unknown }>,
-  ) {
-    let res: {
-      ok: 'success' | 'error'
-      message?: string
-    }
-    try {
-      res = await this.repository.updateGrant(applicationId, inputFields)
-    } catch (e) {
-      logger.warn(e.message)
-      res = {
-        ok: 'error',
-        message: e.message,
-      }
-    }
-
-    if (res.ok === 'success') {
-      logger.debug(`Contentufl entry updated. Data: ${res.message}`)
-      return
-    }
-
-    logger.debug(`Contentufl entry update failed. ${res.message}`)
-    return
   }
 }

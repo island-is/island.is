@@ -1,163 +1,140 @@
 import { Inject, Injectable } from '@nestjs/common'
-import {
-  createClient as createManagementClient,
-  ClientAPI,
-  Organization,
-  Entry,
-} from 'contentful-management'
 import { CmsGrant } from './app.types'
 import { isDefined } from '@island.is/shared/utils'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-
-const SPACE_ID = '8k0h54kbe6bj'
-const ENVIRONMENT = process.env.CONTENTFUL_ENVIRONMENT || 'master'
-const CONTENT_TYPE = 'grant'
+import { ManagementClientService } from './modules/managementClient/managementClient.service'
+import { ContentFields, Entry, KeyValueMap } from 'contentful-management'
+import { CONTENT_TYPE, LOCALE } from './modules/managementClient/constants'
 
 @Injectable()
 export class AppRepository {
-  constructor(@Inject(LOGGER_PROVIDER) private readonly logger: Logger) {}
-
-  private managementClient!: ClientAPI
-
-  private getManagementClient() {
-    if (!this.managementClient)
-      this.managementClient = createManagementClient({
-        accessToken: process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN as string,
-      })
-    return this.managementClient
-  }
+  constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private readonly managementClient: ManagementClientService,
+  ) {}
 
   getGrants = async (): Promise<Array<CmsGrant>> => {
-    const client = this.getManagementClient()
-    if (!client) {
-      this.logger.warn('no client found')
+    const entryResponse = await this.managementClient.getEntries({
+      content_type: CONTENT_TYPE,
+    })
+
+    if (entryResponse.ok) {
+      return entryResponse.data.items
+        .map((e) => {
+          const applicationId =
+            e.fields?.['grantApplicationId']?.['is-IS'] ?? -1
+          const dateFrom = e.fields?.['grantDateFrom']?.['is-IS'] ?? -1
+          const dateTo = e.fields?.['grantDateTo']?.['is-IS'] ?? -1
+          const isOpen = e.fields?.['grantIsOpen']?.['is-IS'] ?? undefined
+
+          if (applicationId < 0) {
+            return
+          }
+          return {
+            entry: e,
+            id: e.sys.id,
+            applicationId,
+            dateFrom,
+            dateTo,
+            isOpen,
+          }
+        })
+        .filter(isDefined)
+    } else {
+      this.logger.warn(`cms service failed to fetch grants`, {
+        error: entryResponse.error,
+      })
       return []
     }
-
-    const collection: Array<{ id: string; applicationId: string }> =
-      await client
-        .getSpace(SPACE_ID)
-        .then((space) => space.getEnvironment(ENVIRONMENT))
-        .then((environment) =>
-          environment.getEntries({
-            content_type: CONTENT_TYPE,
-            select:
-              'sys.id,fields.grantApplicationId,grantDateFrom,grantDateTo,grantIsOpen',
-          }),
-        )
-        .then((entry) => {
-          return entry.items
-            .map((e) => {
-              const applicationId =
-                e.fields?.['grantApplicationId']?.['is-IS'] ?? -1
-
-              const dateFrom = e.fields?.['grantDateFrom']?.['is-IS'] ?? -1
-              const dateTo = e.fields?.['grantDateTo']?.['is-IS'] ?? -1
-              const isOpen = e.fields?.['grantIsOpen']?.['is-IS'] ?? undefined
-
-              if (applicationId < 0) {
-                return
-              }
-              return {
-                id: e.sys.id,
-                applicationId,
-                dateFrom,
-                dateTo,
-                isOpen,
-              }
-            })
-            .filter(isDefined)
-        })
-    return collection
   }
 
-  updateGrant = async (
-    id: string,
-    inputFields: Array<{ key: string; value: unknown }>,
-  ): Promise<{ ok: 'success' | 'error'; message?: string }> => {
-    const client = this.getManagementClient()
-    if (!client) {
-      return { ok: 'error', message: 'no client gotten' }
+  updateGrants = async (
+    grantsToUpdate: Array<{
+      applicationId: string
+      inputFields: Array<{ key: string; value: unknown }>
+    }>,
+  ) => {
+    const applicationIds = grantsToUpdate.map((g) => g.applicationId)
+    const entriesResponse = await this.getGrants()
+
+    if (!entriesResponse.length) {
+      this.logger.warn('no entries to update')
+      return {
+        ok: false,
+      }
     }
 
-    const collection: Array<{ id: string; applicationId: string }> =
-      await client
-        .getSpace(SPACE_ID)
-        .then((space) => space.getEnvironment(ENVIRONMENT))
-        .then((environment) =>
-          environment.getEntries({
-            content_type: CONTENT_TYPE,
-            select: 'sys.id,fields.grantApplicationId',
-          }),
+    const contentTypeResponse = await this.managementClient.getContentType(
+      CONTENT_TYPE,
+    )
+
+    if (!contentTypeResponse.ok) {
+      this.logger.warn('cms content type fetch failed', {
+        error: contentTypeResponse.error,
+      })
+      return {
+        ok: false,
+      }
+    }
+
+    const promises = entriesResponse
+      .filter((i) => applicationIds.includes(i.applicationId))
+      .map((i) => {
+        const grant = grantsToUpdate.find(
+          (g) => g.applicationId === i.applicationId,
         )
-        .then((entry) => {
-          return entry.items
-            .map((e) => {
-              const applicationId =
-                e.fields?.['grantApplicationId']?.['is-IS'] ?? -1
-              if (applicationId < 0) {
-                return
-              }
-              return {
-                id: e.sys.id,
-                applicationId,
-              }
+        if (!grant?.inputFields) {
+          this.logger.warn('No input fields to update')
+          return
+        }
+        return this.updateEntry(
+          i.entry,
+          contentTypeResponse.data?.fields,
+          grant?.inputFields,
+        )
+          .then((entry) => {
+            return { ok: true as const, entry }
+          })
+          .catch((error) => {
+            this.logger.warn('Entry update failed', {
+              id: grant.applicationId,
+              error,
             })
-            .filter(isDefined)
-        })
-    this.logger.warn('collection', collection)
+            return { ok: false as const }
+          })
+      })
+      .filter(isDefined)
 
-    return { ok: 'success', message: 'hello frends' }
-    /*
-    const environment = await client
-      .getSpace(SPACE_ID)
-      .then((space) => space.getEnvironment(ENVIRONMENT))
-      .catch(() => null)
+    const promiseRes = await Promise.all(promises)
 
-    if (!environment) {
-      return {
-        ok: 'error',
-        message: `error while fetching contentful environment`,
-      }
+    if (promiseRes.some((pr) => !pr.ok)) {
+      this.logger.warn('Some updates failed')
     }
 
-    const contentType = await environment
-      .getContentType(CONTENT_TYPE)
-      .catch(() => null)
+    this.logger.debug('update successful')
+    return promiseRes
+  }
 
-    if (!contentType) {
-      return {
-        ok: 'error',
-        message: `error while fetching contentful content type`,
-      }
-    }
-
-    const contentTypeFields = contentType?.fields
-
-    let entry: Entry | null
-    try {
-      entry = await environment.getEntry(id)
-    } catch (e) {
-      return {
-        ok: 'error',
-        message: `error while fetching contentful entry ${id}`,
-      }
-    }
-
-    if (!entry) {
-      return { ok: 'error', message: `no entry found for ${id}` }
-    }
+  private updateEntry = (
+    entry: Entry,
+    contentFields: Array<ContentFields<KeyValueMap>>,
+    inputFields: Array<{ key: string; value: unknown }>,
+  ) => {
+    let hasChanges = false
     for (const inputField of inputFields) {
-      if (contentTypeFields.find((ctf) => ctf.name === inputField.key)) {
-        entry.fields[inputField.key] = inputField.value
+      if (contentFields.find((ctf) => ctf.id === inputField.key)) {
+        if (entry.fields[inputField.key][LOCALE] !== inputField.value) {
+          hasChanges = true
+          entry.fields[inputField.key][LOCALE] = inputField.value
+        }
       }
     }
-
-    try {
-      entry.update()
-    } catch (e) {
-      return { ok: 'error', message: e.message }
+    if (hasChanges) {
+      this.logger.debug('Updating values')
+      return entry.update()
     }
-    return { ok: 'success', message: JSON.stringify(entry) } */
+
+    this.logger.debug('Values unchanged, aborting update')
+    return Promise.resolve(entry)
   }
 }
