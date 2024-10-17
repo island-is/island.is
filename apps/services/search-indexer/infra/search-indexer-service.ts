@@ -3,10 +3,12 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 const envs = {
   APPLICATION_URL: 'http://search-indexer-service',
   ELASTIC_NODE: {
-    dev: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com',
+    dev:
+      'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com',
     staging:
       'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com',
-    prod: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com',
+    prod:
+      'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com',
   },
   ELASTIC_INDEX: 'island-is',
   CONTENTFUL_SPACE: '8k0h54kbe6bj',
@@ -120,11 +122,6 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           prod: 'search-indexer-service.devland.is',
         },
         paths: ['/'],
-        extraAnnotations: {
-          dev: {},
-          staging: {},
-          prod: {},
-        },
       },
     })
     .replicaCount({

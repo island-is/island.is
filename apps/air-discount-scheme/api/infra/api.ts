@@ -23,10 +23,12 @@ export const serviceSetup = (services: {
         prod: 'https://innskra.island.is',
       },
       ELASTIC_NODE: {
-        dev: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com',
+        dev:
+          'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com',
         staging:
           'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com',
-        prod: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com',
+        prod:
+          'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com',
       },
       BACKEND_URL: ref((h) => `http://${h.svc(services.adsBackend)}`),
       CONTENTFUL_HOST: {
@@ -49,11 +51,6 @@ export const serviceSetup = (services: {
           dev: ['loftbru', 'loftbru-cf'],
           staging: ['loftbru', 'loftbru-cf'],
           prod: ['loftbru'],
-        },
-        extraAnnotations: {
-          dev: {},
-          staging: {},
-          prod: {},
         },
         paths: ['/api/graphql'],
         public: true,
