@@ -35,6 +35,7 @@ import { GetRegistryPersonInput } from './dto/getRegistryPerson.input'
 import { JourneymanLicencesResponse } from './models/journeymanLicence'
 import { ProfessionRightsResponse } from './models/professionRights'
 import { ManyPropertyDetail } from './models/manyPropertyDetail'
+import { GetElectronicIDInput } from './dto/getElectronicID.input'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -208,5 +209,17 @@ export class SyslumennResolver {
   async getProfessionRights(): Promise<ProfessionRightsResponse> {
     const professionRights = await this.syslumennService.getProfessionRights()
     return { list: professionRights }
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => Boolean)
+  @BypassAuth()
+  async getSyslumennElectronicIDStatus(
+    @Args('input') input: GetElectronicIDInput,
+  ): Promise<boolean> {
+    return this.syslumennService.getElectronicID(
+      input.nationalId,
+      input.phoneNumber,
+    )
   }
 }

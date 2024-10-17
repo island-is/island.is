@@ -6,6 +6,7 @@ import {
   UserProfileApi,
   ReligionCodesApi,
   DistrictCommissionersPaymentCatalogApi,
+  BirthCertificateApi,
 } from '../../dataProviders'
 import { m } from '../../lib/messages'
 
@@ -24,6 +25,11 @@ export const dataCollection = [
     provider: MaritalStatusApi,
     title: m.dataCollectionMaritalStatusTitle,
     subTitle: m.dataCollectionMaritalStatusDescription,
+  }),
+  buildDataProviderItem({
+    provider: BirthCertificateApi,
+    title: m.dataCollectionBirthCertificateTitle,
+    subTitle: m.dataCollectionBirthCertificateDescription,
   }),
   buildDataProviderItem({
     provider: DistrictsApi,

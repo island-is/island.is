@@ -22,9 +22,10 @@ import { getSpouseNationalId } from './utils'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
   getApplicationFeatureFlags,
-  MarriageCondtionsFeatureFlags,
+  MarriageConditionsFeatureFlags,
 } from './getApplicationFeatureFlags'
 import {
+  BirthCertificateApi,
   DistrictCommissionersPaymentCatalogApi,
   MaritalStatusApi,
   ReligionCodesApi,
@@ -72,14 +73,14 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                   Promise.resolve(
                     val.getApplication({
                       allowFakeData:
-                        featureFlags[MarriageCondtionsFeatureFlags.ALLOW_FAKE],
+                        featureFlags[MarriageConditionsFeatureFlags.ALLOW_FAKE],
                     }),
                   ),
                 )
               },
               actions: [
                 {
-                  event: DefaultEvents.PAYMENT,
+                  event: DefaultEvents.SUBMIT,
                   name: '',
                   type: 'primary',
                 },
@@ -92,6 +93,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 MaritalStatusApi,
                 ReligionCodesApi,
                 DistrictCommissionersPaymentCatalogApi,
+                BirthCertificateApi,
               ],
               delete: true,
             },
@@ -100,20 +102,15 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 logMessage: coreHistoryMessages.applicationStarted,
-                onEvent: DefaultEvents.PAYMENT,
+                onEvent: DefaultEvents.SUBMIT,
               },
             ],
           },
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: { target: States.SPOUSE_CONFIRM },
         },
       },
-      [States.PAYMENT]: buildPaymentState({
-        organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: ['AY129'],
-        submitTarget: States.SPOUSE_CONFIRM,
-      }),
       [States.SPOUSE_CONFIRM]: {
         entry: 'assignToSpouse',
         meta: {
@@ -143,13 +140,13 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                   Promise.resolve(
                     val.spouseConfirmation({
                       allowFakeData:
-                        featureFlags[MarriageCondtionsFeatureFlags.ALLOW_FAKE],
+                        featureFlags[MarriageConditionsFeatureFlags.ALLOW_FAKE],
                     }),
                   ),
                 )
               },
               actions: [
-                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
+                { event: DefaultEvents.PAYMENT, name: '', type: 'primary' },
               ],
               write: 'all',
               api: [
@@ -159,6 +156,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 MaritalStatusApi,
                 ReligionCodesApi,
                 DistrictCommissionersPaymentCatalogApi,
+                BirthCertificateApi,
               ],
             },
           ],
@@ -166,7 +164,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 logMessage: m.confirmedBySpouse2,
-                onEvent: DefaultEvents.SUBMIT,
+                onEvent: DefaultEvents.PAYMENT,
               },
             ],
             pendingAction: {
@@ -177,9 +175,14 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           },
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
+          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
         },
       },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: ['AY129'],
+        submitTarget: States.DONE,
+      }),
       [States.DONE]: {
         meta: {
           name: 'Done',
