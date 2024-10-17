@@ -20,11 +20,6 @@ export const serviceSetup =
             prod: 'contentful-entry-tagger-service.devland.is',
           },
           paths: ['/'],
-          extraAnnotations: {
-            dev: {},
-            staging: {},
-            prod: {},
-          },
         },
       })
       .liveness('/liveness')
