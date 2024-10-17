@@ -23,7 +23,7 @@ import { BaseNotificationService } from './baseNotification.service'
 import { notificationModuleConfig } from './notification.config'
 import { strings } from './subpoenaNotification.strings'
 
-type subpoenaNotificationType =
+type SubpoenaNotificationType =
   | NotificationType.SERVICE_SUCCESSFUL
   | NotificationType.SERVICE_FAILED
   | NotificationType.DEFENDANT_SELECTED_DEFENDER
@@ -50,7 +50,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     )
   }
 
-  private getEmailContents(notificationType: subpoenaNotificationType): {
+  private getEmailContents(notificationType: SubpoenaNotificationType): {
     subject: MessageDescriptor
     body: MessageDescriptor
   } {
@@ -76,7 +76,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
   }
 
   private async sendSubpoenaNotification(
-    notificationType: subpoenaNotificationType,
+    notificationType: SubpoenaNotificationType,
     subpoena: Subpoena,
   ): Promise<unknown> {
     const theCase = subpoena.case
@@ -142,7 +142,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
 
   private async sendEmails(
     caseId: string,
-    notificationType: subpoenaNotificationType,
+    notificationType: SubpoenaNotificationType,
     subject: string,
     body: string,
     judgeName?: string,
@@ -182,7 +182,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     try {
       await this.sendSubpoenaNotification(
-        type as subpoenaNotificationType,
+        type as SubpoenaNotificationType,
         subpoena,
       )
     } catch (error) {
