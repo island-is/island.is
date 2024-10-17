@@ -6,8 +6,8 @@ import union from 'lodash/union'
 import { Op } from 'sequelize'
 
 import { Auth, User } from '@island.is/auth-nest-tools'
-import { AuditService } from '@island.is/nest/audit'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { AuditService } from '@island.is/nest/audit'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
@@ -30,6 +30,7 @@ import {
 import { DelegationDTO } from './dto/delegation.dto'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
 import { DelegationIndex } from './models/delegation-index.model'
+import { DelegationTypeModel } from './models/delegation-type.model'
 import { DelegationDirection } from './types/delegationDirection'
 import {
   DelegationRecordType,
@@ -379,6 +380,7 @@ export class DelegationsIndexService {
           type: types,
           validTo: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
         },
+        include: [{ model: DelegationTypeModel }],
       })
       .then((d) => d.map((d) => d.toDTO()))
   }
@@ -649,6 +651,7 @@ export class DelegationsIndexService {
           customDelegationScopes: { [Op.contains]: [scope.name] },
           validTo: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
         },
+        include: [{ model: DelegationTypeModel }],
       })
       .then((d) => d.map((d) => d.toDTO()))
   }
@@ -684,6 +687,7 @@ export class DelegationsIndexService {
           provider: AuthDelegationProvider.PersonalRepresentativeRegistry,
           validTo: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
         },
+        include: [{ model: DelegationTypeModel }],
       })
       .then((d) => d.map((d) => d.toDTO()))
   }
@@ -710,6 +714,7 @@ export class DelegationsIndexService {
           provider: AuthDelegationProvider.CompanyRegistry,
           validTo: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
         },
+        include: [{ model: DelegationTypeModel }],
       })
       .then((d) => d.map((d) => d.toDTO()))
   }
@@ -738,6 +743,7 @@ export class DelegationsIndexService {
           provider: AuthDelegationProvider.NationalRegistry,
           validTo: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
         },
+        include: [{ model: DelegationTypeModel }],
       })
       .then((d) => d.map((d) => d.toDTO()))
   }
