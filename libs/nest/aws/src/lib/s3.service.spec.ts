@@ -9,7 +9,7 @@ import { mockClient } from 'aws-sdk-client-mock'
 import { Readable } from 'stream'
 import { sdkStreamMixin } from '@smithy/util-stream'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { S3Service, EncodingString } from './aws.service'
+import { S3Service, EncodingString } from './s3.service'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { Logger } from '@nestjs/common'
 
