@@ -11,6 +11,7 @@ import {
   isProsecutionUser,
   isPublicProsecutor,
   isPublicProsecutorUser,
+  isSuccessfulServiceStatus,
   isTrafficViolationCase,
 } from '@island.is/judicial-system/types'
 import {
@@ -240,6 +241,17 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   elementId={[defendant.id, subpoena.id]}
                   renderAs="row"
                 />
+                {isSuccessfulServiceStatus(subpoena.serviceStatus) && (
+                  <PdfButton
+                    caseId={workingCase.id}
+                    title={formatMessage(strings.serviceCertificateButtonText, {
+                      name: defendant.name,
+                    })}
+                    pdfType="serviceCertificate"
+                    elementId={[defendant.id, subpoena.id]}
+                    renderAs="row"
+                  />
+                )}
               </Box>
             )),
           )}

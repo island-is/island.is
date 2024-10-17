@@ -214,12 +214,6 @@ const Subpoena: FC = () => {
                     pdfType="subpoena"
                     elementId={[defendant.id, subpoena.id]}
                   />
-                  <PdfButton
-                    caseId={workingCase.id}
-                    title={`Birtingarvottord - ${defendant.name}`}
-                    pdfType="serviceCertificate"
-                    elementId={[defendant.id, subpoena.id]}
-                  />
                 </Box>
               ))}
             </>
