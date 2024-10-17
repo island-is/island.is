@@ -222,7 +222,7 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/SpouseSubmittedForm/index.ts').then((module) =>
+                import('../forms/SpouseSubmittedForm').then((module) =>
                   Promise.resolve(module.SpouseSubmitted),
                 ),
               read: 'all',
