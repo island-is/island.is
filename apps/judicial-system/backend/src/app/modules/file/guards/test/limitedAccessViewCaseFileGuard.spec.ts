@@ -267,7 +267,7 @@ describe('Limited Access View Case File Guard', () => {
                   civilClaimants: [
                     {
                       hasSpokesperson: true,
-                      spokesPersonNationalId: nationalId,
+                      spokespersonNationalId: nationalId,
                       caseFilesSharedWithSpokesperson: true,
                     },
                   ],
@@ -395,7 +395,7 @@ describe('Limited Access View Case File Guard', () => {
                   civilClaimants: [
                     {
                       hasSpokesperson: true,
-                      spokesPersonNationalId: nationalId,
+                      spokespersonNationalId: nationalId,
                     },
                   ],
                 },
