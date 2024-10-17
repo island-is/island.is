@@ -49,6 +49,15 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
           staging: ['loftbru', 'loftbru-cf'],
           prod: 'loftbru',
         },
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          prod: {},
+        },
         paths: ['/api/swagger', '/api/public'],
       },
     })
