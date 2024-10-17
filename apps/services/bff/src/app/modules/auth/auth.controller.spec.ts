@@ -15,48 +15,8 @@ import {
 const SID_VALUE = 'fake_uuid'
 const SESSION_COOKIE_NAME = 'sid'
 const KID = 'test-kid'
-const TEST_PRIVATE_KEY = `
------BEGIN PRIVATE KEY-----
-MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC7uKPR7Gq2Cz3u
-BDzUfTYirK6SaK9TnHD8KuOhCDp91j982NIivA/6SwfJhXAfqPdlbgxCsdk0R48E
-ZwVuOCXbS4d4V39F+BpgEtuYelc56Ag0n3FuTpKgKiEQePkJSXzmgFD9W1ghXFNu
-9cYmoPe7EfN7oFjZFCVn41ooztJZNpFyyJNnMR5m/IWKVPD4JGOjJDvfsyz17hP+
-dKsbxKLstzh9ziBoLzrlq/N5AGdaaYTLr2dbMS1wiuCdESQkIRJw8yh8Emu3rtf4
-X/p0VHbd/6MErxJE7OuPNnaJuc8D5Fc2vpQUTqoS6oY/THRVXdosbgAG19jwEGTY
-31OYE2YbAgMBAAECggEADVZZHh7P41I/wRImmxEWw3aFMRxkXiqBy1cywavnfmEc
-zqTko5iJnBNjoL/gNc4LK11nwpjtoTpdh21x/dRAbRwow/YxGHDZuUftt5/AypNZ
-R3/cKJjgvKXYBo18+1nWZW9Qq2EnjR5vRE8MmCcDCUgFU09fsKcVR0dodJJi1vkb
-cLFQExaU4kmcnvqxV2FazXuQaC8EbTtMcS6WHKNSCIYbd64hAcu906c7JgdC9Uvc
-myaU0MLeb7WAlmN3Xpvyg6bCxwMLKjTdAr5p4J7/Tv/rimVPIOEsqI0NVP5Ajx/p
-+w9kKanQ3L/7lt8+Q094U1iZ80zvBNh4XaAqUvhQQQKBgQDpDUMQHv29oilYiL73
-+A70K4X2LptcH5fOGa/EHE8AeM9vlJm0HAnsOT+iERFsl6peD3bcoiyV84z72Q7P
-WNddA+rynB4gBu8ymUS/CpXwZQSi33xxT55rB7hLJK+22udVDXzCrNcSQPd4Gwn3
-lNqSUYf+8tv7Ub0Qm1R5lJYswQKBgQDONLEH3U/5aNV0/E0zcd0SVI9OtKu8qDxJ
-J6v/P3bwbWvOmLRON4gFeAqK8awrYZd6Zupsdx15uqu/0Ikym/0C5bOzQa3E/9tT
-vOZRoNch416J0AKY9wFemwxkDcheiOxSanP8PbNZPp0N86JehuXxy41guEu41qWZ
-dDvrrpld2wKBgEqXZA+U28IGVRVxLy5Oxvp/s7DH2hHySrQ8pHUwWljcUgh0l31+
-O+7Po/5LWDhZkr3oVTLo9TxJZ6Z0IrlaxhOPXXOpZDr7/TNEuywqRzNaIdG/liTu
-RtYa8nGanGL6TXB7kKL+jxfYk1xtyxLjIdITJmQDd0VJNCpMjQ0c8bQBAoGBAKn3
-/MRCxB0NMIWRQgFZpaPqV4XEnpqPAcI7FSb8JQng57APZu/iDhiT7fzBX+0SME4Q
-bsKhHIauO8uMFMrGkTLGK+1iAd4UF7FaT26RaULhq5dlAf8b+uEEZJ5EThi+PC1i
-2d/c6+xwE/zgCcJo5zj7U7mZr7DYHP/0Mz/9VyVpAoGBALvLo78LnijdHTf8mrWT
-AlSQjhcJtHb1er4VKlPDF7p3hcVtrpgQaxnGL67DeLl4tt4dU4DoMMQKL/AyVDzI
-gjQdXRT3AQDbB39P43an+11pXZOcyE1hCmW1VntOxY2DSD2GK45sh2eDQ6kuClbP
-VIQ36zUj7NhPnYWM6aUHNLwA
------END PRIVATE KEY-----
-`
-
-const TEST_PUBLIC_KEY = `
------BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAu7ij0exqtgs97gQ81H02
-IqyukmivU5xw/CrjoQg6fdY/fNjSIrwP+ksHyYVwH6j3ZW4MQrHZNEePBGcFbjgl
-20uHeFd/RfgaYBLbmHpXOegINJ9xbk6SoCohEHj5CUl85oBQ/VtYIVxTbvXGJqD3
-uxHze6BY2RQlZ+NaKM7SWTaRcsiTZzEeZvyFilTw+CRjoyQ737Ms9e4T/nSrG8Si
-7Lc4fc4gaC865avzeQBnWmmEy69nWzEtcIrgnREkJCEScPMofBJrt67X+F/6dFR2
-3f+jBK8SROzrjzZ2ibnPA+RXNr6UFE6qEuqGP0x0VV3aLG4ABtfY8BBk2N9TmBNm
-GwIDAQAB
------END PUBLIC KEY-----
-`
+const ALGORITM_TYPE = 'HS256'
+const SECRET_KEY = 'mock_secret'
 
 jest.mock('uuid', () => ({
   v4: jest.fn().mockReturnValue('fake_uuid'),
@@ -64,14 +24,14 @@ jest.mock('uuid', () => ({
 
 const validSigningKey = {
   kid: KID,
-  alg: 'RS256',
-  getPublicKey: jest.fn().mockReturnValue(TEST_PUBLIC_KEY),
+  alg: ALGORITM_TYPE,
+  getPublicKey: jest.fn().mockReturnValue(SECRET_KEY),
 }
 
 const noMatchKidSigningKey = {
   kid: 'invalid-kid',
-  alg: 'RS256',
-  getPublicKey: jest.fn().mockReturnValue(TEST_PUBLIC_KEY),
+  alg: ALGORITM_TYPE,
+  getPublicKey: jest.fn().mockReturnValue(SECRET_KEY),
 }
 
 const mockedSigningKeys = jest.fn().mockReturnValue([validSigningKey])
@@ -106,7 +66,7 @@ const tokensResponse: TokenResponse = {
       sid: SID_VALUE,
     },
     'mockSecret',
-    { algorithm: 'HS256' },
+    { algorithm: ALGORITM_TYPE },
   ),
   refresh_token: 'mockRefreshToken1234567890',
   scope: 'openid profile email',
@@ -542,8 +502,8 @@ describe('AuthController', () => {
       // Arrange
       mockedSigningKeys.mockImplementationOnce(() => [noMatchKidSigningKey])
 
-      const invalidToken = jwt.sign(tokenPayload, TEST_PRIVATE_KEY, {
-        algorithm: 'RS256',
+      const invalidToken = jwt.sign(tokenPayload, SECRET_KEY, {
+        algorithm: ALGORITM_TYPE,
         header: { kid: KID },
       })
 
@@ -563,9 +523,9 @@ describe('AuthController', () => {
           ...tokenPayload,
           sid: undefined,
         },
-        TEST_PRIVATE_KEY,
+        SECRET_KEY,
         {
-          algorithm: 'RS256',
+          algorithm: ALGORITM_TYPE,
           header: { kid: KID },
         },
       )
@@ -581,8 +541,8 @@ describe('AuthController', () => {
 
     it('should return a 200 success response', async () => {
       // Arrange
-      const validToken = jwt.sign(tokenPayload, TEST_PRIVATE_KEY, {
-        algorithm: 'RS256',
+      const validToken = jwt.sign(tokenPayload, SECRET_KEY, {
+        algorithm: ALGORITM_TYPE,
         header: { kid: KID },
       })
 
