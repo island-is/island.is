@@ -1,8 +1,8 @@
 import { gql, useMutation, useQuery } from '@apollo/client'
 import {
-  Application,
   ApplicationEventType,
   ApplicationState,
+  Application as FinancialAidAnswers,
 } from '@island.is/financial-aid/shared/lib'
 
 export const ApplicationQuery = gql`
@@ -57,7 +57,7 @@ export const ApplicationMutation = gql`
 
 const useApplication = (id?: string) => {
   const { data, loading } = useQuery<{
-    municipalitiesFinancialAidApplication: Application
+    municipalitiesFinancialAidApplication: FinancialAidAnswers
   }>(ApplicationQuery, {
     variables: { input: { id } },
     fetchPolicy: 'no-cache',
@@ -65,7 +65,7 @@ const useApplication = (id?: string) => {
   })
 
   const [updateApplicationMutation] = useMutation<{
-    updateMunicipalitiesFinancialAidApplication: Application
+    updateMunicipalitiesFinancialAidApplication: FinancialAidAnswers
   }>(ApplicationMutation)
 
   const updateApplication = async (

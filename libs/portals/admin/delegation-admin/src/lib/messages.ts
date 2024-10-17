@@ -159,4 +159,12 @@ export const m = defineMessages({
     id: 'admin.delegationAdmin:invalidDateFormatError',
     defaultMessage: 'Dagsetning er ekki á réttu sniði',
   },
+  couldNotCreateDelegationError: {
+    id: 'admin.delegationAdmin:couldNotCreateDelegationError',
+    defaultMessage: 'Ekki tókst að skrá umboð',
+  },
+  referenceIdAlreadyExistsError: {
+    id: 'admin.delegationAdmin:referenceIdAlreadyExistsError',
+    defaultMessage: 'Númer máls í Zendesk er þegar til',
+  },
 })
