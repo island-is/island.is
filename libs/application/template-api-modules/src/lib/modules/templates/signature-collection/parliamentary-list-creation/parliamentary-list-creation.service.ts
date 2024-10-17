@@ -82,8 +82,8 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     }
 
     return identity
-  }  
-  
+  }
+
   async delegatedToCompany({ auth }: TemplateApiModuleActionProps) {
     const data = {
       delegatedToCompany:
