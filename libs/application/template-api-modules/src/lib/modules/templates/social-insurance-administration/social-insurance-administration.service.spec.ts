@@ -6,6 +6,7 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { ApplicationTypes } from '@island.is/application/types'
 import { sharedModuleConfig } from '../../shared'
+import { S3Service } from '@island.is/nest/aws'
 
 const mockConfig = {
   SharedModuleConfig: {
@@ -29,6 +30,10 @@ describe('SocialInsuranceAdministrationService', () => {
         {
           provide: sharedModuleConfig.KEY,
           useValue: mockConfig,
+        },
+        {
+          provide: S3Service,
+          useValue: {},
         },
         {
           provide: SocialInsuranceAdministrationClientService,

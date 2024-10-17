@@ -14,7 +14,6 @@ import { EndorsementTag } from '../endorsementList/constants'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
-import { AwsService } from '@island.is/nest/aws'
 
 interface FindEndorsementInput {
   listId: string
@@ -55,7 +54,6 @@ export class EndorsementService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
-    private readonly awsService: AwsService,
   ) {}
 
   async updateEndorsementCountOnList(listId: string): Promise<void> {
