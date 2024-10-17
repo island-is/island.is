@@ -74,12 +74,6 @@ const noMatchKidSigningKey = {
   getPublicKey: jest.fn().mockReturnValue(TEST_PUBLIC_KEY),
 }
 
-const invalidPublicKeySigningKey = {
-  kid: KID,
-  alg: 'RS256',
-  getPublicKey: jest.fn().mockReturnValue('invalid-public-key'),
-}
-
 const mockedSigningKeys = jest.fn().mockReturnValue([validSigningKey])
 
 jest.mock('jwks-rsa', () => {
