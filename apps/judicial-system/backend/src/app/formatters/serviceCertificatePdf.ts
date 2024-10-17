@@ -9,14 +9,13 @@ import {
   getWordByGender,
   Word,
 } from '@island.is/judicial-system/formatters'
-import { SubpoenaType } from '@island.is/judicial-system/types'
+import { ServiceStatus, SubpoenaType } from '@island.is/judicial-system/types'
 
 import { serviceCertificate as strings } from '../messages'
 import { Case } from '../modules/case'
 import { Defendant } from '../modules/defendant'
 import { Subpoena } from '../modules/subpoena'
 import {
-  addConfirmation,
   addEmptyLines,
   addFooter,
   addHugeHeading,
@@ -81,14 +80,26 @@ export const createServiceCertificate = (
 
   addEmptyLines(doc)
 
-  if (subpoena.servedBy) {
-    addNormalText(doc, 'Birtingaraðili: ', 'Times-Bold', true)
-    addNormalText(doc, subpoena.servedBy, 'Times-Roman')
-  }
+  addNormalText(doc, 'Birtingaraðili: ', 'Times-Bold', true)
+  addNormalText(
+    doc,
+    subpoena.serviceStatus === ServiceStatus.ELECTRONICALLY
+      ? 'Rafrænt pósthólf island.is'
+      : subpoena.servedBy || '',
+    'Times-Roman',
+  )
 
-  if (subpoena.comment) {
+  if (subpoena.serviceStatus !== ServiceStatus.ELECTRONICALLY) {
     addNormalText(doc, 'Athugasemd: ', 'Times-Bold', true)
-    addNormalText(doc, subpoena.comment, 'Times-Roman')
+    addNormalText(
+      doc,
+      subpoena.serviceStatus === ServiceStatus.DEFENDER
+        ? `Birt fyrir verjanda ${
+            defendant.defenderName ? `- ${defendant.defenderName}` : ''
+          }`
+        : subpoena.comment || '',
+      'Times-Roman',
+    )
   }
 
   addEmptyLines(doc, 2)
