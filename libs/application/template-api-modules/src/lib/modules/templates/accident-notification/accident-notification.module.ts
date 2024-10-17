@@ -19,11 +19,7 @@ const applicationSenderName = process.env.EMAIL_FROM_NAME ?? ''
 const applicationSenderEmail = process.env.EMAIL_FROM ?? 'development@island.is'
 
 @Module({
-  imports: [
-    SharedTemplateAPIModule, 
-    AwsModule, 
-    RightsPortalClientModule
-  ],
+  imports: [SharedTemplateAPIModule, AwsModule, RightsPortalClientModule],
   providers: [
     {
       provide: ACCIDENT_NOTIFICATION_CONFIG,
