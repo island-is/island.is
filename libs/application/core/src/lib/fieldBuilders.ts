@@ -318,7 +318,7 @@ export const buildPhoneField = (
     readOnly,
     rightAlign,
     allowedCountryCodes,
-    disableDropdown,
+    enableCountrySelector,
   } = data
   return {
     ...extractCommonFields(data),
@@ -328,7 +328,7 @@ export const buildPhoneField = (
     required,
     readOnly,
     allowedCountryCodes,
-    disableDropdown,
+    enableCountrySelector,
     rightAlign,
     type: FieldTypes.PHONE,
     component: FieldComponents.PHONE,
@@ -569,6 +569,7 @@ export const buildMessageWithLinkButtonField = (
 ): MessageWithLinkButtonField => {
   const { id, title, url, message, buttonTitle, marginBottom, marginTop } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
     id,
     title,

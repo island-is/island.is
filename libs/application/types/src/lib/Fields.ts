@@ -385,7 +385,7 @@ export interface PhoneField extends BaseField {
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
   allowedCountryCodes?: string[]
-  disableDropdown?: boolean
+  enableCountrySelector?: boolean
   required?: boolean
   onChange?: (...event: any[]) => void
 }
@@ -591,6 +591,7 @@ export type ActionCardListField = BaseField & {
 export type ApplicationActionCardProps = Modify<
   ActionCardProps,
   {
+    eyebrow?: string
     heading?: FormText
     text?: FormText
     tag?: Modify<ActionCardProps['tag'], { label: FormText }>
