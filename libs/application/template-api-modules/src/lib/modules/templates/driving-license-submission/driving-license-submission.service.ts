@@ -3,6 +3,7 @@ import {
   DrivingLicenseCategory,
   DrivingLicenseService,
   NewDrivingLicenseResult,
+  Pickup,
 } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -148,6 +149,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const jurisdictionId = answers.jurisdiction
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
+    const pickup = answers.pickup ? (answers.pickup as Pickup) : undefined
     const phone = formatPhoneNumber(answers.phone as string)
 
     const postHealthDeclaration = async (
@@ -173,6 +175,15 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     if (applicationFor === 'B-full-renewal-65') {
       return this.drivingLicenseService.renewDrivingLicense65AndOver(
         auth.authorization.replace('Bearer ', ''),
+        {
+          ...(jurisdictionId && { districtId: jurisdictionId as number }),
+          ...(pickup
+            ? {
+                pickupPlasticAtDistrict: pickup === Pickup.DISTRICT,
+                sendPlasticToPerson: pickup === Pickup.POST,
+              }
+            : {}),
+        },
       )
     } else if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
