@@ -15,17 +15,16 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CollectionType } from '@island.is/clients/signature-collection'
 import { CreateListSchema } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
-import { FetchError } from '@island.is/clients/middlewares'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { isCompany } from 'kennitala'
 import { coreErrorMessages } from '@island.is/application/core'
+import { generateApplicationSubmittedEmail } from './emailGenerators'
 import { AuthDelegationType } from '@island.is/shared/types'
-
 @Injectable()
 export class ParliamentaryListCreationService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly _sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private signatureCollectionClientService: SignatureCollectionClientService,
     private nationalRegisryClientService: NationalRegistryClientService,
   ) {
@@ -83,8 +82,8 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     }
 
     return identity
-  }
-
+  }  
+  
   async delegatedToCompany({ auth }: TemplateApiModuleActionProps) {
     const data = {
       delegatedToCompany:
@@ -153,6 +152,19 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
           500,
         )
       })
+
+    try {
+      // Use the shared service to send an email using a custom email generator
+      await this.sharedTemplateAPIService.sendEmail(
+        generateApplicationSubmittedEmail,
+        application,
+      )
+    } catch (e) {
+      this.logger.warn(
+        'Could not send submit email to admins for parlimentary list creation application: ',
+        application.id,
+      )
+    }
 
     return {
       success: true,
