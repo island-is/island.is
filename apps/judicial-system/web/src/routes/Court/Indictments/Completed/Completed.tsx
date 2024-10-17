@@ -60,11 +60,11 @@ const Completed: FC = () => {
   )
 
   const handleNextButtonClick = useCallback(async () => {
-    const allSucceeded = await handleUpload(
+    const uploadResult = await handleUpload(
       uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
-    if (!allSucceeded) {
+    if (uploadResult !== 'ALL_SUCCEEDED') {
       return
     }
 

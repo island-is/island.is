@@ -1545,7 +1545,9 @@ export class InternalNotificationService extends BaseNotificationService {
           SessionArrangements.ALL_PRESENT_SPOKESPERSON,
         ].includes(theCase.sessionArrangements)
 
-      if (!isDefenderIncludedInSessionArrangements) return false
+      if (!isDefenderIncludedInSessionArrangements) {
+        return false
+      }
     } else {
       const hasDefenderBeenNotified = this.hasReceivedNotification(
         [
@@ -1633,10 +1635,11 @@ export class InternalNotificationService extends BaseNotificationService {
           } = civilClaimant
 
           const shouldSend =
+            hasSpokesperson &&
             this.shouldSendAdvocateAssignedNotification(
               theCase,
               spokespersonEmail,
-            ) && hasSpokesperson
+            )
 
           if (shouldSend === true) {
             promises.push(
