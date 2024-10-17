@@ -4,6 +4,11 @@ import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 
+const CompulsorySchoolStudentAssessmentOverview = lazy(() =>
+  import(
+    '../../education/src/screens/CompulsorySchoolFamilyExamOverview/CompulsorySchoolFamilyExamOverview'
+  ),
+)
 const EducationCareer = lazy(() =>
   import('../../education-career/src/screens/EducationCareer/EducationCareer'),
 )
@@ -64,7 +69,7 @@ export const educationModule: PortalModule = {
       name: 'Námsmat',
       path: EducationPaths.EducationAssessment,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <EducationCareer />,
+      element: <CompulsorySchoolStudentAssessmentOverview />,
     },
 
     // Framhaldsskóli - Secondary education
