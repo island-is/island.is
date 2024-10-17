@@ -17,11 +17,12 @@ import {
   XRoadConfig,
 } from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
+import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 
 import { environment } from '../environments'
+import { PersonalRepresentativeTypesModule } from './modules/personalRepresentativeTypes/personalRepresentativeTypes.module'
 import { AccessLogsModule } from './modules/accessLogs/accessLogs.module'
 import { PersonalRepresentativesModule } from './modules/personalRepresentatives/personalRepresentatives.module'
-import { PersonalRepresentativeTypesModule } from './modules/personalRepresentativeTypes/personalRepresentativeTypes.module'
 import { RightTypesModule } from './modules/rightTypes/rightTypes.module'
 
 @Module({
@@ -42,6 +43,7 @@ import { RightTypesModule } from './modules/rightTypes/rightTypes.module'
         XRoadConfig,
         FeatureFlagConfig,
         SyslumennClientConfig,
+        ZendeskServiceConfig,
       ],
     }),
     RightTypesModule,
