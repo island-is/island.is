@@ -1,3 +1,4 @@
+import { NO, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { EstateAsset, Advocate } from '@island.is/clients/syslumenn'
 
@@ -49,7 +50,7 @@ export type Answers = {
     encountered?: boolean
   }
   financesDataCollectionPermission?: boolean
-  knowledgeOfOtherWills: 'yes' | 'no'
+  knowledgeOfOtherWills: typeof YES | typeof NO
   marriageSettlement: boolean
   occupationRightViaCondominium: boolean
   otherProperties: PropertiesEnum
@@ -69,8 +70,8 @@ export interface EstateMember {
   initial?: boolean
   dateOfBirth?: string
   custodian?: string
-  foreignCitizenship?: ('yes' | 'no')[]
-  noContactInfo?: ('Yes' | 'No')[]
+  foreignCitizenship?: (typeof YES | typeof NO)[]
+  noContactInfo?: (typeof YES | typeof NO)[]
   enabled?: boolean
   phone?: string
   email?: string
