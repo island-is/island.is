@@ -2,6 +2,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   BadRequestException,
+  HttpStatus,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -489,7 +490,7 @@ export class AuthService {
     }
   }
 
-  async callbackLogout(body: CallbackLogoutDto) {
+  async callbackLogout(res: Response, body: CallbackLogoutDto) {
     const logoutToken = body.logout_token
 
     if (!logoutToken) {
@@ -521,10 +522,10 @@ export class AuthService {
 
       await this.cacheService.delete(cacheKey)
 
-      return {
+      return res.status(HttpStatus.OK).json({
         status: 'success',
-        message: 'Logout successful and cache cleared.',
-      }
+        message: 'Logout successful!',
+      })
     } catch (error) {
       // Check if error is an UnauthorizedException and just throw it,
       // since it is already being logged in the validateLogoutToken method.

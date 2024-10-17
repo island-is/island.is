@@ -5,7 +5,13 @@ import type { EnhancedFetchAPI } from '@island.is/clients/middlewares'
 import { BffConfig } from '../../bff.config'
 import { CryptoService } from '../../services/crypto.service'
 import { ENHANCED_FETCH_PROVIDER_KEY } from '../enhancedFetch/enhanced-fetch.provider'
-import { ApiResponse, ErrorRes, ParResponse, TokenResponse } from './ids.types'
+import {
+  ApiResponse,
+  ErrorRes,
+  GetLoginSearchParamsReturnValue,
+  ParResponse,
+  TokenResponse,
+} from './ids.types'
 
 @Injectable()
 export class IdsService {
@@ -94,18 +100,7 @@ export class IdsService {
     codeChallenge: string
     loginHint?: string
     prompt?: string
-  }): {
-    client_id: string
-    redirect_uri: string
-    response_type: string
-    response_mode: string
-    scope: string
-    state: string
-    code_challenge: string
-    code_challenge_method: string
-    login_hint?: string
-    prompt?: string
-  } {
+  }): GetLoginSearchParamsReturnValue {
     const { ids } = this.config
     return {
       client_id: ids.clientId,

@@ -53,12 +53,14 @@ export class AuthController {
 
   @Post('callbacks/logout')
   async callbackBackchannelLogout(
-    @Req() req: Request,
+    @Res() res: Response,
     @Body() body: CallbackLogoutDto,
-  ): Promise<{
-    status: string
-    message: string
-  }> {
-    return this.authService.callbackLogout(body)
+  ): Promise<
+    Response<{
+      status: string
+      message: string
+    }>
+  > {
+    return this.authService.callbackLogout(res, body)
   }
 }

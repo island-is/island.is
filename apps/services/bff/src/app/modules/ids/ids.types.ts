@@ -1,3 +1,16 @@
+export type GetLoginSearchParamsReturnValue = {
+  client_id: string
+  redirect_uri: string
+  response_type: string
+  response_mode: string
+  scope: string
+  state: string
+  code_challenge: string
+  code_challenge_method: string
+  login_hint?: string
+  prompt?: string
+}
+
 export interface ErrorResponse {
   // Error code, e.g. invalid_grant, invalid_request, ...
   error: string
