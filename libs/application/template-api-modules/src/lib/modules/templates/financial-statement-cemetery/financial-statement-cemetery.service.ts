@@ -73,8 +73,10 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
     }
 
     try {
-      const fileContent = await this.s3Service
-        .getFileContent(fileName, 'base64')
+      const fileContent = await this.s3Service.getFileContent(
+        fileName,
+        'base64',
+      )
       return fileContent || ''
     } catch (error) {
       throw new Error('Error occurred while fetching attachment')

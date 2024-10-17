@@ -52,11 +52,10 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const { nationalRegistry } = externalData
     const applicant = nationalRegistry.data
     const s3FileName = `children-residence-change/${application.id}.pdf`
-    const fileContentRaw = await this.s3Service
-      .getFileContent({
-        bucket: this.config.templateApi.presignBucket,
-        key: s3FileName,
-      })
+    const fileContentRaw = await this.s3Service.getFileContent({
+      bucket: this.config.templateApi.presignBucket,
+      key: s3FileName,
+    })
 
     if (!fileContentRaw) {
       throw new Error('File content was undefined')

@@ -80,8 +80,10 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
     }
 
     try {
-      const fileContent = await this.s3Service
-        .getFileContent(fileName, 'base64')
+      const fileContent = await this.s3Service.getFileContent(
+        fileName,
+        'base64',
+      )
       return fileContent || ''
     } catch (error) {
       this.logger.error('Error retrieving attachment from S3', error)
