@@ -11,7 +11,7 @@ export {
   isFailedServiceStatus,
 } from './lib/defendant'
 export { InstitutionType } from './lib/institution'
-export { NotificationType } from './lib/notification'
+export { NotificationType, SubpoenaNotificationType } from './lib/notification'
 export type { Institution } from './lib/institution'
 export { EventType } from './lib/eventLog'
 export { DateType } from './lib/dateLog'

@@ -22,3 +22,8 @@ export enum NotificationType {
   SERVICE_FAILED = 'SERVICE_FAILED',
   DEFENDANT_SELECTED_DEFENDER = 'DEFENDANT_SELECTED_DEFENDER',
 }
+
+export type subpoenaNotificationType =
+  | NotificationType.SERVICE_SUCCESSFUL
+  | NotificationType.SERVICE_FAILED
+  | NotificationType.DEFENDANT_SELECTED_DEFENDER
