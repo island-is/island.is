@@ -36,13 +36,13 @@ export class ParliamentaryListSigningService extends BaseTemplateApiService {
   }
 
   async canSign({ auth }: TemplateApiModuleActionProps) {
-    let signee 
+    let signee
     try {
       signee = await this.signatureCollectionClientService.getSignee(auth)
     } catch (e) {
       throw new TemplateApiError(errorMessages.singeeNotFound, 404)
     }
-    
+
     const { canSign, canSignInfo } = signee
     if (canSign) {
       return signee
