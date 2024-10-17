@@ -9,24 +9,3 @@ export const serviceSetup = (): ServiceBuilder<'cms-importer-service'> =>
       CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
         '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
     })
-    .ingress({
-      primary: {
-        host: {
-          dev: 'cms-importer-service',
-          staging: 'cms-importer-service',
-          prod: 'cms-importer-service.devland.is',
-        },
-        paths: ['/'],
-        extraAnnotations: {
-          dev: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
-          staging: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
-          prod: { 'nginx.ingress.kubernetes.io/enable-global-auth': 'false' },
-        },
-      },
-    })
-    .liveness('/liveness')
-    .readiness('/readiness')
