@@ -7,6 +7,7 @@ import { OrganizationTag, mapOrganizationTag } from './organizationTag.model'
 import { FooterItem, mapFooterItem } from './footerItem.model'
 import { mapNamespace, Namespace } from './namespace.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
+import { AlertBanner, mapAlertBanner } from './alertBanner.model'
 
 @ObjectType()
 export class Organization {
@@ -75,6 +76,9 @@ export class Organization {
 
   @Field({ nullable: true })
   referenceIdentifier?: string
+
+  @CacheField(() => AlertBanner, { nullable: true })
+  alertBanner?: AlertBanner | null
 }
 
 export const mapOrganization = ({
@@ -109,5 +113,6 @@ export const mapOrganization = ({
     hasALandingPage: fields.hasALandingPage ?? true,
     trackingDomain: fields.trackingDomain ?? '',
     referenceIdentifier: fields.referenceIdentifier,
+    alertBanner: fields.alertBanner ? mapAlertBanner(fields.alertBanner) : null,
   }
 }
