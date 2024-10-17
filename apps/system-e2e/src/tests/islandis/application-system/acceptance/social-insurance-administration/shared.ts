@@ -78,7 +78,6 @@ export const selectPeriod = async (page: Page) => {
   await page.getByTestId('select-period.year').click()
   await page.keyboard.press('Enter')
 
-  // TODO: Need to look into this, it may happen that a month is not valid
   await page.getByTestId('select-period.month').click()
   await page.keyboard.press('ArrowUp')
   await page.keyboard.press('Enter')
