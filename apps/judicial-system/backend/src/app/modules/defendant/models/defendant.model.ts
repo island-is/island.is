@@ -151,4 +151,20 @@ export class Defendant extends Model {
   @HasMany(() => Subpoena, { foreignKey: 'defendantId' })
   @ApiPropertyOptional({ type: () => Subpoena, isArray: true })
   subpoenas?: Subpoena[]
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(DefenderChoice),
+  })
+  @ApiPropertyOptional({ enum: DefenderChoice })
+  requestedDefenderChoice?: DefenderChoice
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  requestedDefenderNationalId?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  requestedDefenderName?: string
 }
