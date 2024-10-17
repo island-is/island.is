@@ -28,24 +28,22 @@ import {
   AttachmentPaths,
   ApplicationFile,
 } from './types/attachments'
-import AmazonS3Uri from 'amazon-s3-uri'
-import { S3 } from 'aws-sdk'
 import kennitala from 'kennitala'
 import { EstateTypes } from './consts'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { S3Service } from '@island.is/nest/aws'
 
 type EstateSchema = zinfer<typeof estateSchema>
 
 @Injectable()
 export class EstateTemplateService extends BaseTemplateApiService {
-  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
+    private readonly s3Service: S3Service
   ) {
     super(ApplicationTypes.ESTATE)
-    this.s3 = new S3()
   }
 
   async estateProvider({
@@ -270,19 +268,11 @@ export class EstateTemplateService extends BaseTemplateApiService {
     }
     return { sucess: result.success, id: result.caseNumber }
   }
+  
   private async getFileContentBase64(fileName: string): Promise<string> {
-    const { bucket, key } = AmazonS3Uri(fileName)
-
-    const uploadBucket = bucket
     try {
-      const file = await this.s3
-        .getObject({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent?.toString('base64') || ''
+      const fileContent = await this.s3Service.getFileContent(fileName, 'base64')
+      return fileContent || ''
     } catch (e) {
       this.logger.warn('[estate]: Failed to get file content - ', e)
       return 'err'
