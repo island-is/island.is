@@ -119,12 +119,7 @@ export const EditMeta = () => {
               size="sm"
               label={t(msg.effectiveDate)}
               placeholderText={t(msg.effectiveDate_default)}
-              minDate={draft.idealPublishDate.value || null}
-              selected={
-                draft.effectiveDate.value
-                  ? getNextWorkday(draft.effectiveDate.value)
-                  : undefined
-              }
+              selected={draft.effectiveDate.value}
               handleChange={(date: Date) => {
                 actions.updateState('effectiveDate', date)
                 setHasSetDate(true)
