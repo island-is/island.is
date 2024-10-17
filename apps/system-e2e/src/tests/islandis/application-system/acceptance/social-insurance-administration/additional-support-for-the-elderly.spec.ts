@@ -9,6 +9,7 @@ import { session } from '../../../../../support/session'
 import { setupXroadMocks } from '../setup-xroad.mocks'
 import {
   additionalAttachments,
+  expectHeadingToBeVisible,
   fillApplicantInfo,
   fillPaymentInfo,
   selectPeriod,
@@ -49,13 +50,10 @@ applicationTest.describe('Additional support for the elderly', () => {
       const page = applicationPage
 
       await applicationTest.step('Agree to data providers', async () => {
-        await expect(
-          page.getByRole('heading', {
-            name: label(
-              socialInsuranceAdministrationMessage.pre.externalDataSection,
-            ),
-          }),
-        ).toBeVisible()
+        await expectHeadingToBeVisible(
+          page,
+          socialInsuranceAdministrationMessage.pre.externalDataSection,
+        )
         await page.getByTestId('agree-to-data-providers').click()
         await page
           .getByRole('button', {

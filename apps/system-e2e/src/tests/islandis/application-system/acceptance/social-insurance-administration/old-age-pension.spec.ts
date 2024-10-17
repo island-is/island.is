@@ -11,6 +11,7 @@ import { session } from '../../../../../support/session'
 import { setupXroadMocks } from '../setup-xroad.mocks'
 import {
   additionalAttachments,
+  expectHeadingToBeVisible,
   fillApplicantInfo,
   fillPaymentInfo,
   selectPeriod,
@@ -22,23 +23,19 @@ const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
   const { proceed } = helpers(page)
 
   await applicationTest.step('Select type of application', async () => {
-    await expect(
-      page.getByRole('heading', {
-        name: label(oldAgePensionFormMessage.pre.applicationTypeTitle),
-      }),
-    ).toBeVisible()
+    await expectHeadingToBeVisible(
+      page,
+      oldAgePensionFormMessage.pre.applicationTypeTitle,
+    )
     await page.getByTestId(applicationType).click()
     await proceed()
   })
 
   await applicationTest.step('Agree to data providers', async () => {
-    await expect(
-      page.getByRole('heading', {
-        name: label(
-          socialInsuranceAdministrationMessage.pre.externalDataSection,
-        ),
-      }),
-    ).toBeVisible()
+    await expectHeadingToBeVisible(
+      page,
+      socialInsuranceAdministrationMessage.pre.externalDataSection,
+    )
     await page.getByTestId('agree-to-data-providers').click()
     await proceed()
   })
@@ -46,11 +43,10 @@ const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
   await applicationTest.step(
     'Answer pension fund question and start application',
     async () => {
-      await expect(
-        page.getByRole('heading', {
-          name: label(oldAgePensionFormMessage.pre.questionTitle),
-        }),
-      ).toBeVisible()
+      await expectHeadingToBeVisible(
+        page,
+        oldAgePensionFormMessage.pre.questionTitle,
+      )
       await page
         .getByRole('radio', {
           name: label(socialInsuranceAdministrationMessage.shared.yes),
@@ -75,13 +71,10 @@ const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
   )
 
   await applicationTest.step('One payment per year', async () => {
-    await expect(
-      page.getByRole('heading', {
-        name: label(
-          oldAgePensionFormMessage.onePaymentPerYear.onePaymentPerYearTitle,
-        ),
-      }),
-    ).toBeVisible()
+    await expectHeadingToBeVisible(
+      page,
+      oldAgePensionFormMessage.onePaymentPerYear.onePaymentPerYearTitle,
+    )
     await page
       .getByRole('radio', {
         name: label(socialInsuranceAdministrationMessage.shared.no),
@@ -91,23 +84,19 @@ const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
   })
 
   await applicationTest.step('View residence history', async () => {
-    await expect(
-      page.getByRole('heading', {
-        name: label(oldAgePensionFormMessage.residence.residenceHistoryTitle),
-      }),
-    ).toBeVisible()
+    await expectHeadingToBeVisible(
+      page,
+      oldAgePensionFormMessage.residence.residenceHistoryTitle,
+    )
     await proceed()
   })
 
   if (applicationType === 'half-old-age-pension') {
     await applicationTest.step('Self-employed or employee', async () => {
-      await expect(
-        page.getByRole('heading', {
-          name: label(
-            oldAgePensionFormMessage.employer.selfEmployedOrEmployeeTitle,
-          ),
-        }),
-      ).toBeVisible()
+      await expectHeadingToBeVisible(
+        page,
+        oldAgePensionFormMessage.employer.selfEmployedOrEmployeeTitle,
+      )
 
       await page
         .getByRole('radio', {
@@ -118,11 +107,10 @@ const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
     })
 
     await applicationTest.step('Employer registration', async () => {
-      await expect(
-        page.getByRole('heading', {
-          name: label(oldAgePensionFormMessage.employer.registrationTitle),
-        }),
-      ).toBeVisible()
+      await expectHeadingToBeVisible(
+        page,
+        oldAgePensionFormMessage.employer.registrationTitle,
+      )
 
       const employerEmail = page.getByRole('textbox', {
         name: label(oldAgePensionFormMessage.employer.email),
@@ -145,11 +133,10 @@ const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
     })
 
     await applicationTest.step('Employers', async () => {
-      await expect(
-        page.getByRole('heading', {
-          name: label(oldAgePensionFormMessage.employer.employerTitle),
-        }),
-      ).toBeVisible()
+      await expectHeadingToBeVisible(
+        page,
+        oldAgePensionFormMessage.employer.employerTitle,
+      )
       await proceed()
     })
   }
@@ -159,11 +146,10 @@ const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
   await applicationTest.step(
     'Check that attachments for pension payments header is visible',
     async () => {
-      await expect(
-        page.getByRole('heading', {
-          name: label(oldAgePensionFormMessage.fileUpload.pensionFileTitle),
-        }),
-      ).toBeVisible()
+      await expectHeadingToBeVisible(
+        page,
+        oldAgePensionFormMessage.fileUpload.pensionFileTitle,
+      )
       await proceed()
     },
   )

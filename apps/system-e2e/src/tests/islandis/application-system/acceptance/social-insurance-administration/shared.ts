@@ -1,18 +1,27 @@
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { expect, Page } from '@playwright/test'
+import { MessageDescriptor } from 'react-intl'
 import { label } from '../../../../../support/i18n'
 import { helpers } from '../../../../../support/locator-helpers'
+
+export const expectHeadingToBeVisible = async (
+  page: Page,
+  message: MessageDescriptor,
+) => {
+  await expect(
+    page.getByRole('heading', {
+      name: label(message),
+    }),
+  ).toBeVisible()
+}
 
 export const fillApplicantInfo = async (page: Page) => {
   const { proceed } = helpers(page)
 
-  await expect(
-    page.getByRole('heading', {
-      name: label(
-        socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
-      ),
-    }),
-  ).toBeVisible()
+  await expectHeadingToBeVisible(
+    page,
+    socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
+  )
 
   const phoneNumber = page.getByRole('textbox', {
     name: label(socialInsuranceAdministrationMessage.info.applicantPhonenumber),
@@ -25,11 +34,10 @@ export const fillApplicantInfo = async (page: Page) => {
 export const fillPaymentInfo = async (page: Page, includeTax: boolean) => {
   const { proceed } = helpers(page)
 
-  await expect(
-    page.getByRole('heading', {
-      name: label(socialInsuranceAdministrationMessage.payment.title),
-    }),
-  ).toBeVisible()
+  await expectHeadingToBeVisible(
+    page,
+    socialInsuranceAdministrationMessage.payment.title,
+  )
   const paymentBank = page.getByRole('textbox', {
     name: label(socialInsuranceAdministrationMessage.payment.bank),
   })
@@ -69,11 +77,10 @@ export const fillPaymentInfo = async (page: Page, includeTax: boolean) => {
 export const selectPeriod = async (page: Page) => {
   const { proceed } = helpers(page)
 
-  await expect(
-    page.getByRole('heading', {
-      name: label(socialInsuranceAdministrationMessage.period.title),
-    }),
-  ).toBeVisible()
+  await expectHeadingToBeVisible(
+    page,
+    socialInsuranceAdministrationMessage.period.title,
+  )
 
   await page.getByTestId('select-period.year').click()
   await page.keyboard.press('Enter')
@@ -87,26 +94,20 @@ export const selectPeriod = async (page: Page) => {
 export const additionalAttachments = async (page: Page) => {
   const { proceed } = helpers(page)
 
-  await expect(
-    page.getByRole('heading', {
-      name: label(
-        socialInsuranceAdministrationMessage.fileUpload.additionalFileTitle,
-      ),
-    }),
-  ).toBeVisible()
+  await expectHeadingToBeVisible(
+    page,
+    socialInsuranceAdministrationMessage.fileUpload.additionalFileTitle,
+  )
   await proceed()
 }
 
 export const writeComment = async (page: Page) => {
   const { proceed } = helpers(page)
 
-  await expect(
-    page.getByRole('heading', {
-      name: label(
-        socialInsuranceAdministrationMessage.additionalInfo.commentSection,
-      ),
-    }),
-  ).toBeVisible()
+  await expectHeadingToBeVisible(
+    page,
+    socialInsuranceAdministrationMessage.additionalInfo.commentSection,
+  )
   await page
     .getByPlaceholder(
       label(

@@ -11,6 +11,7 @@ import { session } from '../../../../../support/session'
 import { setupXroadMocks } from '../setup-xroad.mocks'
 import {
   additionalAttachments,
+  expectHeadingToBeVisible,
   fillApplicantInfo,
   fillPaymentInfo,
   selectPeriod,
@@ -50,13 +51,10 @@ applicationTest.describe('Household Supplement', () => {
       const { proceed } = helpers(page)
 
       await applicationTest.step('Agree to data providers', async () => {
-        await expect(
-          page.getByRole('heading', {
-            name: label(
-              socialInsuranceAdministrationMessage.pre.externalDataSection,
-            ),
-          }),
-        ).toBeVisible()
+        await expectHeadingToBeVisible(
+          page,
+          socialInsuranceAdministrationMessage.pre.externalDataSection,
+        )
         await page.getByTestId('agree-to-data-providers').click()
         await page
           .getByRole('button', {
@@ -76,13 +74,10 @@ applicationTest.describe('Household Supplement', () => {
       )
 
       await applicationTest.step('Household supplement', async () => {
-        await expect(
-          page.getByRole('heading', {
-            name: label(
-              householdSupplementFormMessage.shared.householdSupplement,
-            ),
-          }),
-        ).toBeVisible()
+        await expectHeadingToBeVisible(
+          page,
+          householdSupplementFormMessage.shared.householdSupplement,
+        )
 
         await page
           .getByRole('region', {
