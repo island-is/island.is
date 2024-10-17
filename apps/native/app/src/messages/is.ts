@@ -609,7 +609,7 @@ export const is = {
   'updateApp.button': 'Uppfæra',
   'updateApp.buttonSkip': 'Sleppa',
 
-  // health
+  // health - overview
   'health.overview.screenTitle': 'Heilsa',
   'health.overview.title': 'Heilsan mín',
   'health.overview.description':
@@ -629,4 +629,18 @@ export const is = {
   'health.overview.paymentDebt': 'Skuld',
   'health.overview.therapy': 'Þjálfun',
   'health.overview.aidsAndNutrition': 'Hjálpartæki og næring',
+
+  // health - organ donation
+  'health.organDonation': 'Líffæragjöf',
+  'health.organDonation.change': 'Breyta afstöðu',
+  'health.organDonation.isDonor': 'Ég er líffæragjafi',
+  'health.organDonation.isDonorWithLimitations':
+    'Ég heimila líffæragjöf, með takmörkunum.',
+  'health.organDonation.isNotDonor': 'Ég heimila ekki líffæragjöf',
+  'health.organDonation.isDonorDescription':
+    'Öll líffærin mín má nota til ígræðslu.',
+  'health.organDonation.isNotDonorDescription':
+    'Engin líffæri má nota til ígræðslu.',
+  'health.organDonation.isDonorWithLimitationsDescription':
+    'Öll líffærin mín má nota til ígræðslu fyrir utan: {limitations}.',
 }
