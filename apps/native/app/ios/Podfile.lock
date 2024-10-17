@@ -1552,7 +1552,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNShare (7.1.1):
+  - RNShare (10.2.1):
     - React-Core
   - RNSVG (15.2.0):
     - React-Core
@@ -2031,7 +2031,7 @@ SPEC CHECKSUMS:
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
   RNReanimated: f9192536fa8a312c737eaf15c905f78831193ef1
-  RNShare: a22398d8d02336133e28bf8b6e0b47b31abade41
+  RNShare: 0fad69ae2d71de9d1f7b9a43acf876886a6cb99c
   RNSVG: 43b64ed39c14ce830d840903774154ca0c1f27ec
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9

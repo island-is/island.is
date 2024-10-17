@@ -9,7 +9,7 @@ interface ShareFileProps {
   pdfUrl?: string
 }
 
-export const shareFile = ({ document, pdfUrl }: ShareFileProps) => {
+export const shareFile = async ({ document, pdfUrl }: ShareFileProps) => {
   if (!document || !document.subject || !document.sender) {
     return
   }
@@ -18,11 +18,15 @@ export const shareFile = ({ document, pdfUrl }: ShareFileProps) => {
     authStore.setState({ noLockScreenUntilNextAppStateActive: true })
   }
 
-  Share.open({
-    title: document.subject,
-    subject: document.subject,
-    message: `${document.sender.name} \n ${document.subject}`,
-    type: pdfUrl ? 'application/pdf' : undefined,
-    url: pdfUrl ? `file://${pdfUrl}` : document.downloadUrl!,
-  })
+  try {
+    await Share.open({
+      title: document.subject,
+      subject: document.subject,
+      message: `${document.sender.name} \n ${document.subject}`,
+      type: pdfUrl ? 'application/pdf' : undefined,
+      url: pdfUrl ? `file://${pdfUrl}` : document.downloadUrl!,
+    })
+  } catch (error) {
+    // noop
+  }
 }
