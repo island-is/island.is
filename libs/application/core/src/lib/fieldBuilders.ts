@@ -41,6 +41,8 @@ import {
   StaticTableField,
   HiddenInputWithWatchedValueField,
   HiddenInputField,
+  AccordionField,
+  BankAccountField,
   SliderField,
 } from '@island.is/application/types'
 
@@ -446,6 +448,49 @@ export const buildKeyValueField = (data: {
     paddingX,
     paddingY,
     paddingBottom,
+  }
+}
+
+export const buildAccordionField = (
+  data: Omit<AccordionField, 'type' | 'component' | 'children'>,
+): AccordionField => {
+  const {
+    accordionItems,
+    title,
+    titleVariant,
+    id,
+    marginTop,
+    marginBottom,
+    condition,
+  } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    titleVariant,
+    marginTop,
+    marginBottom,
+    accordionItems,
+    condition,
+    type: FieldTypes.ACCORDION,
+    component: FieldComponents.ACCORDION,
+  }
+}
+
+export const buildBankAccountField = (
+  data: Omit<BankAccountField, 'type' | 'component' | 'children'>,
+): BankAccountField => {
+  const { title, id, marginBottom, marginTop, titleVariant } = data
+
+  return {
+    children: undefined,
+    id,
+    title,
+    marginBottom,
+    marginTop,
+    titleVariant,
+    type: FieldTypes.BANK_ACCOUNT,
+    component: FieldComponents.BANK_ACCOUNT,
   }
 }
 
