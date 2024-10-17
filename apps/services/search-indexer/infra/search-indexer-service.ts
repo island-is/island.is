@@ -121,8 +121,12 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
         },
         paths: ['/'],
         extraAnnotations: {
-          dev: {},
-          staging: {},
+          dev: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
+          },
           prod: {},
         },
       },
