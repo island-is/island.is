@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { EhicApi } from '@island.is/clients/ehic-client-v1'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
@@ -18,7 +17,7 @@ import {
 } from './types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
-
+import { EhicApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 @Injectable()
 export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   constructor(
@@ -27,6 +26,10 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     private logger: Logger,
   ) {
     super(ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD)
+  }
+
+  private ehicApiWithAuth(auth: Auth) {
+    return this.ehicApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   /** Returns unique values of an array */
@@ -149,11 +152,9 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     const nridArr = this.getApplicants(application)
     if (nridArr?.length > 0) {
       try {
-        const resp = await this.ehicApi
-          .withMiddleware(new AuthMiddleware(auth as Auth))
-          .cardStatus({
-            applicantnationalids: this.toCommaDelimitedList(nridArr),
-          })
+        const resp = await this.ehicApiWithAuth(auth).getEhicCardStatus({
+          applicantnationalids: this.toCommaDelimitedList(nridArr),
+        })
 
         if (!resp) {
           this.logger.error(
@@ -161,6 +162,8 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
             resp,
           )
         }
+
+        console.log('!!!Hér2: ', resp)
 
         return resp
       } catch (error) {
@@ -188,13 +191,13 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
 
     for (let i = 0; i < applicants?.length; i++) {
       try {
-        const res = await this.ehicApi
-          .withMiddleware(new AuthMiddleware(auth as Auth))
-          .requestCard({
-            applicantnationalid: applicants[i],
-            cardtype: CardType.PLASTIC,
-          })
+        const res = await this.ehicApiWithAuth(auth).requestEhicCard({
+          applicantnationalid: applicants[i],
+          cardtype: CardType.PLASTIC,
+        })
         cardResponses.push(res)
+
+        console.log('!!!Hér4: ', res)
       } catch (error) {
         this.logger.error('EHIC.API error applyForPhysicalCard', error)
         throw error
@@ -214,12 +217,12 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
 
     for (let i = 0; i < applicants?.length; i++) {
       try {
-        await this.ehicApi
-          .withMiddleware(new AuthMiddleware(auth as Auth))
-          .requestCard({
-            applicantnationalid: applicants[i],
-            cardtype: CardType.PDF,
-          })
+        const res = await this.ehicApiWithAuth(auth).requestEhicCard({
+          applicantnationalid: applicants[i],
+          cardtype: CardType.PDF,
+        })
+
+        console.log('!!!Hér6: ', res)
       } catch (error) {
         this.logger.error('EHIC.API error applyForTemporaryCard', error)
         throw error
@@ -233,12 +236,10 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
 
     for (let i = 0; i < applicants?.length; i++) {
       try {
-        const res = await this.ehicApi
-          .withMiddleware(new AuthMiddleware(auth as Auth))
-          .fetchTempPDFCard({
-            applicantnationalid: applicants[i].nationalId ?? '',
-            cardnumber: applicants[i].cardNumber ?? '',
-          })
+        const res = await this.ehicApiWithAuth(auth).fetchTempEhicPDFCard({
+          applicantnationalid: applicants[i].nationalId ?? '',
+          cardnumber: applicants[i].cardNumber ?? '',
+        })
         pdfArray.push(res)
       } catch (error) {
         this.logger.error('EHIC.API error getTemporaryCard', error)
