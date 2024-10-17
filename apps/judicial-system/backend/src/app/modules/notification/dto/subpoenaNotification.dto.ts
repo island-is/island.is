@@ -2,15 +2,15 @@ import { IsEnum, IsNotEmpty } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { SubpoenaNotificationType } from '@island.is/judicial-system/types'
+import { NotificationType } from '@island.is/judicial-system/types'
 
 import { Subpoena } from '../../subpoena'
 
 export class SubpoenaNotificationDto {
   @IsNotEmpty()
-  @IsEnum(SubpoenaNotificationType)
-  @ApiProperty({ enum: SubpoenaNotificationType })
-  readonly type!: SubpoenaNotificationType
+  @IsEnum(NotificationType)
+  @ApiProperty({ enum: NotificationType })
+  readonly type!: NotificationType
 
   @IsNotEmpty()
   @ApiProperty({ type: Subpoena })

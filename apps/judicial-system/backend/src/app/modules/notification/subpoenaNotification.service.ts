@@ -13,7 +13,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
-import { SubpoenaNotificationType } from '@island.is/judicial-system/types'
+import { NotificationType } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
 import { Subpoena } from '../subpoena'
@@ -22,6 +22,11 @@ import { Notification, Recipient } from './models/notification.model'
 import { BaseNotificationService } from './baseNotification.service'
 import { notificationModuleConfig } from './notification.config'
 import { strings } from './subpoenaNotification.strings'
+
+type subpoenaNotificationType =
+  | NotificationType.SERVICE_SUCCESSFUL
+  | NotificationType.SERVICE_FAILED
+  | NotificationType.DEFENDANT_SELECTED_DEFENDER
 
 @Injectable()
 export class SubpoenaNotificationService extends BaseNotificationService {
@@ -45,22 +50,22 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     )
   }
 
-  private getEmailContents(notificationType: SubpoenaNotificationType): {
+  private getEmailContents(notificationType: subpoenaNotificationType): {
     subject: MessageDescriptor
     body: MessageDescriptor
   } {
     switch (notificationType) {
-      case SubpoenaNotificationType.SERVICE_SUCCESSFUL:
+      case NotificationType.SERVICE_SUCCESSFUL:
         return {
           subject: strings.serviceSuccessfulSubject,
           body: strings.serviceSuccessfulBody,
         }
-      case SubpoenaNotificationType.SERVICE_FAILED:
+      case NotificationType.SERVICE_FAILED:
         return {
           subject: strings.serviceFailedSubject,
           body: strings.serviceFailedBody,
         }
-      case SubpoenaNotificationType.DEFENDANT_SELECTED_DEFENDER:
+      case NotificationType.DEFENDANT_SELECTED_DEFENDER:
         return {
           subject: strings.defendantSelectedDefenderSubject,
           body: strings.defendantSelectedDefenderBody,
@@ -71,7 +76,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
   }
 
   private async sendSubpoenaNotification(
-    notificationType: SubpoenaNotificationType,
+    notificationType: subpoenaNotificationType,
     subpoena: Subpoena,
   ): Promise<unknown> {
     const theCase = subpoena.case
@@ -82,25 +87,23 @@ export class SubpoenaNotificationService extends BaseNotificationService {
 
     const hasSentSuccessfulServiceNotification = Boolean(
       this.hasSentNotification(
-        SubpoenaNotificationType.SERVICE_SUCCESSFUL,
+        NotificationType.SERVICE_SUCCESSFUL,
         theCase.notifications,
-      ) && notificationType === SubpoenaNotificationType.SERVICE_SUCCESSFUL,
+      ) && notificationType === NotificationType.SERVICE_SUCCESSFUL,
     )
 
     const hasSentFailedServiceNotification = Boolean(
       this.hasSentNotification(
-        SubpoenaNotificationType.SERVICE_FAILED,
+        NotificationType.SERVICE_FAILED,
         theCase.notifications,
-      ) && notificationType === SubpoenaNotificationType.SERVICE_FAILED,
+      ) && notificationType === NotificationType.SERVICE_FAILED,
     )
 
     const hasSendDefendantSelectedDefenderNotification = Boolean(
       this.hasSentNotification(
-        SubpoenaNotificationType.DEFENDANT_SELECTED_DEFENDER,
+        NotificationType.DEFENDANT_SELECTED_DEFENDER,
         theCase.notifications,
-      ) &&
-        notificationType ===
-          SubpoenaNotificationType.DEFENDANT_SELECTED_DEFENDER,
+      ) && notificationType === NotificationType.DEFENDANT_SELECTED_DEFENDER,
     )
 
     if (
@@ -139,7 +142,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
 
   private async sendEmails(
     caseId: string,
-    notificationType: SubpoenaNotificationType,
+    notificationType: subpoenaNotificationType,
     subject: string,
     body: string,
     judgeName?: string,
@@ -174,11 +177,14 @@ export class SubpoenaNotificationService extends BaseNotificationService {
   }
 
   async sendNotification(
-    type: SubpoenaNotificationType,
+    type: NotificationType,
     subpoena: Subpoena,
   ): Promise<DeliverResponse> {
     try {
-      await this.sendSubpoenaNotification(type, subpoena)
+      await this.sendSubpoenaNotification(
+        type as subpoenaNotificationType,
+        subpoena,
+      )
     } catch (error) {
       this.logger.error('Failed to send notification', error)
 
