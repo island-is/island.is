@@ -14,11 +14,11 @@ import { useGetDonorStatusQuery } from './OrganDonation.generated'
 const OrganDonation = () => {
   useNamespaces('sp.health')
 
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { data, loading, error } = useGetDonorStatusQuery({
     fetchPolicy: 'no-cache',
     variables: {
-      locale,
+      locale: lang,
     },
   })
   const donorStatus = data?.healthDirectorateOrganDonation.donor
