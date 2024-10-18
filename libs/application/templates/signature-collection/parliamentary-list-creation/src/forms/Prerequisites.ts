@@ -11,7 +11,6 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 
@@ -21,6 +20,7 @@ import {
   ParliamentaryCollectionApi,
   CandidateApi,
   ParliamentaryIdentityApi,
+  IsDelegatedToCompanyApi,
 } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
@@ -91,6 +91,11 @@ export const Prerequisites: Form = buildForm({
               title: '',
               subTitle: '',
             }),
+            buildDataProviderItem({
+              provider: IsDelegatedToCompanyApi,
+              title: '',
+              subTitle: '',
+            }),
           ],
         }),
       ],
@@ -103,11 +108,6 @@ export const Prerequisites: Form = buildForm({
     buildSection({
       id: 'screen4',
       title: m.constituency,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen5',
-      title: m.managersAndSupervisors,
       children: [],
     }),
     buildSection({
