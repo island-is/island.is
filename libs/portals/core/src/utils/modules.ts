@@ -1,6 +1,6 @@
 import { FormatMessage } from '@island.is/localization'
 import flatten from 'lodash/flatten'
-import type { User } from '@island.is/shared/types'
+import type { BffUser } from '@island.is/shared/types'
 import { FeatureFlagClient } from '@island.is/react/feature-flags'
 import type { PortalModule, PortalRoute } from '../types/portalCore'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
@@ -8,7 +8,7 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 interface FilterEnabledModulesArgs {
   modules: PortalModule[]
   featureFlagClient: FeatureFlagClient
-  userInfo: User
+  userInfo: BffUser
 }
 
 export const filterEnabledModules = async ({
@@ -41,7 +41,7 @@ export const filterEnabledModules = async ({
 }
 
 interface ArrangeRoutesArgs {
-  userInfo: User
+  userInfo: BffUser
   modules: PortalModule[]
   featureFlagClient: FeatureFlagClient
   client: ApolloClient<NormalizedCacheObject>
