@@ -64,11 +64,6 @@ export const serviceSetup = (services: {
           prod: ['api'],
         },
         paths: ['/download'],
-        extraAnnotations: {
-          dev: {},
-          staging: {},
-          prod: {},
-        },
         public: true,
       },
     })
