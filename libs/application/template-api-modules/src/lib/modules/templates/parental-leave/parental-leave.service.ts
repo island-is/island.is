@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { S3 } from 'aws-sdk'
-
+import { AwsService } from '@island.is/nest/aws'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   ADOPTION,
@@ -55,17 +54,16 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { ConfigService } from '@nestjs/config'
+import { ConfigService, ConfigType } from '@nestjs/config'
 import {
-  BaseTemplateAPIModuleConfig,
+  SharedModuleConfig,
   TemplateApiModuleActionProps,
 } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { SharedTemplateApiService } from '../../shared'
+import { SharedTemplateApiService, sharedModuleConfig } from '../../shared'
 import { getConfigValue } from '../../shared/shared.utils'
 import { ChildrenService } from './children/children.service'
 import {
-  APPLICATION_ATTACHMENT_BUCKET,
   SIX_MONTHS_IN_SECONDS_EXPIRES,
   apiConstants,
   rightsDescriptions,
@@ -103,18 +101,17 @@ interface VMSTError {
 
 @Injectable()
 export class ParentalLeaveService extends BaseTemplateApiService {
-  s3 = new S3()
-
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private parentalLeaveApi: ParentalLeaveApi,
     private applicationInformationAPI: ApplicationInformationApi,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    @Inject(APPLICATION_ATTACHMENT_BUCKET)
-    private readonly attachmentBucket: string,
-    private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
+    private readonly configService: ConfigService<SharedModuleConfig>,
     private readonly childrenService: ChildrenService,
     private readonly nationalRegistryApi: NationalRegistryClientService,
+    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.PARENTAL_LEAVE)
   }
@@ -385,16 +382,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       )
 
       const Key = `${application.id}/${filename}`
-      const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
-        .promise()
-      const fileContent = file.Body as Buffer
+      const fileContent = await this.awsService.getFileContent(
+        {
+          bucket: this.config.templateApi.attachmentBucket,
+          key: Key,
+        },
+        'base64',
+      )
 
       if (!fileContent) {
         throw new Error('File content was undefined')
       }
 
-      return fileContent.toString('base64')
+      return fileContent
     } catch (e) {
       this.logger.error('Cannot get ' + fileUpload + ' attachment', { e })
       throw new Error('Failed to get the ' + fileUpload + ' attachment')

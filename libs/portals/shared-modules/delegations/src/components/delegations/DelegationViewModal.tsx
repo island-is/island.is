@@ -138,6 +138,9 @@ export const DelegationViewModal = ({
                 <IdentityCard
                   label={formatMessage(m.createdBy)}
                   title={delegation.createdBy.name}
+                  description={formatNationalId(
+                    delegation.createdBy.nationalId,
+                  )}
                 />
               )}
             </Box>
@@ -151,7 +154,7 @@ export const DelegationViewModal = ({
               <IdentityCard
                 label={formatMessage(m.validTo)}
                 title={
-                  delegation?.validTo && isValid(delegation.validTo)
+                  delegation?.validTo && isValid(new Date(delegation.validTo))
                     ? format(new Date(delegation?.validTo), 'dd.MM.yyyy')
                     : formatMessage(m.noValidToDate)
                 }

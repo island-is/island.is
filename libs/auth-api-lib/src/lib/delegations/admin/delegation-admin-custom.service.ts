@@ -29,6 +29,7 @@ import { DelegationDelegationType } from '../models/delegation-delegation-type.m
 import { DelegationsIncomingCustomService } from '../delegations-incoming-custom.service'
 import { DelegationValidity } from '../types/delegationValidity'
 import { ErrorCodes } from '@island.is/shared/utils'
+import { Op } from 'sequelize'
 
 @Injectable()
 export class DelegationAdminCustomService {
@@ -153,7 +154,7 @@ export class DelegationAdminCustomService {
     }
   }
 
-  async createDelegationByZendeskId(zendeskId: string): Promise<void> {
+  async createDelegationByZendeskId(zendeskId: string): Promise<DelegationDTO> {
     const zendeskCase = await this.zendeskService.getTicket(zendeskId)
 
     const {
@@ -181,13 +182,15 @@ export class DelegationAdminCustomService {
 
     this.verifyTicketCompletion(zendeskCase)
 
-    await this.insertDelegation({
+    const resp = await this.insertDelegation({
       fromNationalId,
       toNationalId,
       referenceId: zendeskId,
       validTo: this.formatZendeskDate(validTo),
       createdBy: createdByNationalId,
     })
+
+    return resp.toDTO(AuthDelegationType.GeneralMandate)
   }
 
   async createDelegation(
@@ -300,6 +303,36 @@ export class DelegationAdminCustomService {
       this.namesService.getPersonName(delegation.fromNationalId),
       this.namesService.getPersonName(delegation.toNationalId),
     ])
+
+    const existingDelegation = await this.delegationModel.findOne({
+      where: {
+        [Op.or]: [
+          {
+            fromNationalId: delegation.fromNationalId,
+            toNationalId: delegation.toNationalId,
+          },
+          {
+            referenceId: delegation.referenceId,
+          },
+        ],
+      },
+    })
+
+    if (existingDelegation) {
+      // Throw error if reference ID already exists in db.
+      if (existingDelegation.referenceId === delegation.referenceId) {
+        throw new BadRequestException({
+          message: 'Delegation with the same reference id already exists',
+          error: ErrorCodes.REFERENCE_ID_ALREADY_EXISTS,
+        })
+      } else {
+        // Throw generic error if delegation already exists.
+        throw new BadRequestException({
+          message: 'Could not create delegation',
+          error: ErrorCodes.COULD_NOT_CREATE_DELEGATION,
+        })
+      }
+    }
 
     return this.sequelize.transaction(async (transaction) => {
       return this.delegationModel.create(

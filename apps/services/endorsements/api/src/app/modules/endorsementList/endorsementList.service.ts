@@ -810,10 +810,10 @@ export class EndorsementListService {
       await this.uploadFileToS3(fileBuffer, filename, fileType)
 
       // Generate presigned URL with 60 minutes expiration
-      const url = await this.awsService.getPresignedUrl(
-        environment.exportsBucketName,
-        filename,
-      )
+      const url = await this.awsService.getPresignedUrl({
+        bucket: environment.exportsBucketName,
+        key: filename,
+      })
       return { url }
     } catch (error) {
       this.logger.error(`Failed to export list ${listId}`, { error })
@@ -878,8 +878,7 @@ export class EndorsementListService {
     try {
       await this.awsService.uploadFile(
         fileBuffer,
-        environment.exportsBucketName,
-        filename,
+        { bucket: environment.exportsBucketName, key: filename },
         {
           ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
         },

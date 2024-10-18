@@ -121,15 +121,11 @@ export const DelegationsOutgoing = () => {
                     <AccessCard
                       key={delegation.id}
                       delegation={delegation}
-                      onDelete={
-                        !isGeneralMandate
-                          ? (delegation) => {
-                              setDelegation(
-                                delegation as AuthCustomDelegationOutgoing,
-                              )
-                            }
-                          : undefined
-                      }
+                      onDelete={(delegation) => {
+                        setDelegation(
+                          delegation as AuthCustomDelegationOutgoing,
+                        )
+                      }}
                       onEdit={
                         !isGeneralMandate
                           ? (delegation) =>

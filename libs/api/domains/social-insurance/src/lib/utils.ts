@@ -21,6 +21,7 @@ const basePensionTypeMapping: Record<BasePensionType, number> = {
   [BasePensionType.Disability]: 3, // Örorkulífeyrir
   [BasePensionType.Rehabilitation]: 4, // Endurhæfingarlífeyrir
   [BasePensionType.HalfRetirement]: 5, // Hálfur Ellilífeyrir
+  [BasePensionType.NewSystem]: 6, // Nýtt kerfi sem tekur gildi 1. september 2025
 }
 
 const livingConditionMapping: Record<LivingCondition, number> = {
