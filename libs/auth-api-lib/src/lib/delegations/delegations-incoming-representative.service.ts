@@ -1,9 +1,5 @@
 import { Inject, Logger } from '@nestjs/common'
 
-import {
-  IndividualDto,
-  NationalRegistryClientService,
-} from '@island.is/clients/national-registry-v2'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AuditService } from '@island.is/nest/audit'
 import {
@@ -14,10 +10,10 @@ import { isDefined } from '@island.is/shared/utils'
 
 import { PersonalRepresentativeDTO } from '../personal-representative/dto/personal-representative.dto'
 import { PersonalRepresentativeService } from '../personal-representative/services/personalRepresentative.service'
+import { AliveStatusService } from './alive-status.service'
 import { UNKNOWN_NAME } from './constants/names'
 import { ApiScopeInfo } from './delegations-incoming.service'
 import { DelegationDTO } from './dto/delegation.dto'
-import { partitionWithIndex } from './utils/partitionWithIndex'
 
 type FindAllIncomingOptions = {
   nationalId: string
@@ -28,7 +24,7 @@ type FindAllIncomingOptions = {
 export class DelegationsIncomingRepresentativeService {
   constructor(
     private prService: PersonalRepresentativeService,
-    private nationalRegistryClient: NationalRegistryClientService,
+    private aliveStatusService: AliveStatusService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private auditService: AuditService,
@@ -95,42 +91,28 @@ export class DelegationsIncomingRepresentativeService {
         }
       })
 
-      const personPromises = personalRepresentatives.map(
-        ({ nationalIdRepresentedPerson }) =>
-          this.nationalRegistryClient
-            .getIndividual(nationalIdRepresentedPerson)
-            .catch(this.handlerGetIndividualError),
-      )
+      const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
+        await this.aliveStatusService.getStatus(
+          personalRepresentatives.map((d) => d.nationalIdRepresentedPerson),
+        )
 
-      const persons = await Promise.all(personPromises)
-      const personsValues = persons.filter((person) => person !== undefined)
-      const personsValuesNoError = personsValues.filter(this.isNotError)
-
-      // Divide personal representatives into alive or deceased.
-      const [alive, deceased] = partitionWithIndex(
-        personalRepresentatives,
-        ({ nationalIdRepresentedPerson }, index) =>
-          // Pass through although Þjóðskrá API throws an error since it is not required to view the personal representative.
-          persons[index] instanceof Error ||
-          // Make sure we can match the person to the personal representatives, i.e. not deceased
-          (persons[index] as IndividualDto)?.nationalId ===
-            nationalIdRepresentedPerson,
-      )
-
-      if (deceased.length > 0) {
+      if (deceasedNationalIds.length > 0) {
+        const deceased = personalRepresentatives.filter((pr) =>
+          deceasedNationalIds.includes(pr.nationalIdRepresentedPerson),
+        )
         await this.makePersonalRepresentativesInactive(deceased)
       }
 
-      return alive
-        .map((pr) => {
-          const person = this.getPersonByNationalId(
-            personsValuesNoError,
-            pr.nationalIdRepresentedPerson,
-          )
+      const alive = personalRepresentatives.filter((pr) =>
+        aliveNationalIds.includes(pr.nationalIdRepresentedPerson),
+      )
 
-          return toDelegationDTO(person?.name ?? UNKNOWN_NAME, pr)
-        })
-        .filter(isDefined)
+      return alive.map((pr) => {
+        const person = aliveNameInfo.find(
+          (n) => n.nationalId === pr.nationalIdRepresentedPerson,
+        )
+        return toDelegationDTO(person?.name ?? UNKNOWN_NAME, pr)
+      })
     } catch (error) {
       this.logger.error('Error in findAllRepresentedPersons', error)
     }
@@ -153,26 +135,5 @@ export class DelegationsIncomingRepresentativeService {
       resources: personalRepresentatives.map(({ id }) => id).filter(isDefined),
       system: true,
     })
-  }
-
-  private handlerGetIndividualError(error: null | Error) {
-    return error
-  }
-
-  /**
-   * Finds person by nationalId.
-   */
-  private getPersonByNationalId(
-    persons: Array<IndividualDto | null>,
-    nationalId: string,
-  ) {
-    return persons.find((person) => person?.nationalId === nationalId)
-  }
-
-  /**
-   * Checks if item is not an instance of Error
-   */
-  private isNotError<T>(item: T | Error): item is T {
-    return item instanceof Error === false
   }
 }
