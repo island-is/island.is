@@ -13,7 +13,7 @@ export const workerSetup = (): ServiceBuilder<'cms-importer-worker'> =>
     .args('main.js')
     .extraAttributes({
       // Schedule to run daily at 15:00 and midnight.
-      dev: { schedule: '0 15 * * *' },
-      staging: { schedule: '0 15 * * *' },
-      prod: { schedule: '0 15 * * *' },
+      dev: { schedule: '0 15,0 * * *' },
+      staging: { schedule: '0 15,0 * * *' },
+      prod: { schedule: '0 15,0 * * *' },
     })
