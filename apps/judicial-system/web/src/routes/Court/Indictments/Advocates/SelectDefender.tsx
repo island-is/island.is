@@ -1,7 +1,7 @@
 import { ChangeEvent, FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Checkbox, Text } from '@island.is/island-ui/core'
+import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -9,6 +9,7 @@ import {
   DefenderNotFound,
   FormContext,
   InputAdvocate,
+  Modal,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Defendant,
@@ -26,6 +27,8 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { setAndSendDefendantToServer } = useDefendants()
+
+  const [displayModal, setDisplayModal] = useState<boolean>(false)
 
   const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
   const gender = defendant.gender || 'NONE'
@@ -54,12 +57,49 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
         defenderChoice:
           defendantWaivesRightToCounsel === true
             ? DefenderChoice.WAIVE
-            : undefined,
+            : DefenderChoice.DELAY,
       }
 
       setAndSendDefendantToServer(updateDefendantInput, setWorkingCase)
     },
     [setWorkingCase, setAndSendDefendantToServer],
+  )
+
+  const toggleDefenderChoiceConfirmed = useCallback(
+    (
+      caseId: string,
+      defendant: Defendant,
+      isDefenderChoiceConfirmed: boolean,
+    ) => {
+      const shouldChangeDefenderChoice =
+        isDefenderChoiceConfirmed &&
+        defendant.defenderChoice !== DefenderChoice.WAIVE &&
+        defendant.defenderChoice !== DefenderChoice.DELEGATE
+
+      const updateDefendantInput = {
+        caseId,
+        defendantId: defendant.id,
+        isDefenderChoiceConfirmed,
+        defenderChoice: shouldChangeDefenderChoice
+          ? DefenderChoice.CHOOSE
+          : defendant.defenderChoice,
+      }
+
+      setAndSendDefendantToServer(updateDefendantInput, setWorkingCase)
+      setDisplayModal(false)
+    },
+    [setWorkingCase, setAndSendDefendantToServer],
+  )
+
+  const confirmDefenderChoiceModalText = formatMessage(
+    defendant.isDefenderChoiceConfirmed
+      ? strings.changeDefenderChoiceModalText
+      : defendant.defenderChoice === DefenderChoice.WAIVE
+      ? strings.confirmDefenderWaivedModalText
+      : !defendant.defenderName
+      ? strings.confirmDefenderDelayModalText
+      : strings.confirmDefenderChoiceModalText,
+    { defenderName: defendant?.defenderName },
   )
 
   return (
@@ -94,14 +134,55 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             }}
             filled
             large
+            disabled={defendant.isDefenderChoiceConfirmed === true}
           />
         </Box>
         <InputAdvocate
-          disabled={defendant.defenderChoice === DefenderChoice.WAIVE}
+          disabled={
+            defendant.defenderChoice === DefenderChoice.WAIVE ||
+            defendant.isDefenderChoiceConfirmed === true
+          }
           onAdvocateNotFound={setDefenderNotFound}
           clientId={defendant.id}
         />
+        <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+          <Button
+            variant="text"
+            colorScheme={
+              defendant.isDefenderChoiceConfirmed ? 'destructive' : 'default'
+            }
+            onClick={() => {
+              setDisplayModal(true)
+            }}
+          >
+            {defendant.isDefenderChoiceConfirmed
+              ? formatMessage(strings.changeDefenderChoice)
+              : formatMessage(strings.confirmDefenderChoice)}
+          </Button>
+        </Box>
       </BlueBox>
+      {displayModal && (
+        <Modal
+          title={formatMessage(strings.confirmDefenderChoiceModalTitle, {
+            isDefenderChoiceConfirmed: defendant.isDefenderChoiceConfirmed,
+          })}
+          text={confirmDefenderChoiceModalText}
+          primaryButtonText={formatMessage(
+            strings.confirmDefenderChoiceModalPrimaryButtonText,
+          )}
+          onPrimaryButtonClick={() =>
+            toggleDefenderChoiceConfirmed(
+              workingCase.id,
+              defendant,
+              !defendant.isDefenderChoiceConfirmed,
+            )
+          }
+          secondaryButtonText={formatMessage(
+            strings.confirmDefenderChoiceModalSecondaryButtonText,
+          )}
+          onSecondaryButtonClick={() => setDisplayModal(false)}
+        />
+      )}
     </Box>
   )
 }

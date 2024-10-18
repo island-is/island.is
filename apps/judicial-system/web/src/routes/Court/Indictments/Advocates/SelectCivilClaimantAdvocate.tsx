@@ -1,4 +1,4 @@
-import { FC, useContext } from 'react'
+import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -14,6 +14,7 @@ import {
   BlueBox,
   FormContext,
   InputAdvocate,
+  Modal,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CivilClaimant,
@@ -28,10 +29,11 @@ interface Props {
 }
 
 const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
-  const { setAndSendCivilClaimantToServer } = useCivilClaimants()
   const { workingCase, setWorkingCase } = useContext(FormContext)
-
   const { formatMessage } = useIntl()
+  const { setAndSendCivilClaimantToServer } = useCivilClaimants()
+
+  const [displayModal, setDisplayModal] = useState<boolean>(false)
 
   const updateCivilClaimant = (update: UpdateCivilClaimantInput) => {
     setAndSendCivilClaimantToServer(
@@ -65,6 +67,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
                     spokespersonIsLawyer: true,
                   } as UpdateCivilClaimantInput)
                 }
+                disabled={Boolean(civilClaimant.isSpokespersonConfirmed)}
               />
             </Box>
             <Box width="half" marginLeft={1}>
@@ -80,6 +83,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
                     spokespersonIsLawyer: false,
                   } as UpdateCivilClaimantInput)
                 }
+                disabled={Boolean(civilClaimant.isSpokespersonConfirmed)}
               />
             </Box>
           </Box>
@@ -93,7 +97,8 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
               }
               disabled={
                 civilClaimant.spokespersonIsLawyer === null ||
-                civilClaimant.spokespersonIsLawyer === undefined
+                civilClaimant.spokespersonIsLawyer === undefined ||
+                civilClaimant.isSpokespersonConfirmed
               }
               isCivilClaim={true}
             />
@@ -132,30 +137,82 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
         />
       )}
       <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-        <Button
-          variant="text"
-          colorScheme={
-            civilClaimant.hasSpokesperson ? 'destructive' : 'default'
-          }
-          onClick={() => {
-            updateCivilClaimant({
-              hasSpokesperson: !civilClaimant.hasSpokesperson,
-              spokespersonEmail: null,
-              spokespersonPhoneNumber: null,
-              spokespersonName: null,
-              spokespersonIsLawyer: null,
-              spokespersonNationalId: null,
-              caseFilesSharedWithSpokesperson: null,
-            } as UpdateCivilClaimantInput)
-          }}
-        >
-          {civilClaimant.hasSpokesperson
-            ? formatMessage(strings.removeCivilClaimantAdvocate, {
-                defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
-              })
-            : formatMessage(strings.addCivilClaimantAdvocate)}
-        </Button>
+        {civilClaimant.hasSpokesperson && (
+          <Box marginRight={2}>
+            <Button
+              variant="text"
+              colorScheme={
+                civilClaimant.isSpokespersonConfirmed
+                  ? 'destructive'
+                  : 'default'
+              }
+              onClick={() => {
+                setDisplayModal(true)
+              }}
+            >
+              {civilClaimant.isSpokespersonConfirmed
+                ? formatMessage(strings.changeSpokespersonChoice, {
+                    spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
+                  })
+                : formatMessage(strings.confirmSpokespersonChoice, {
+                    spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
+                  })}
+            </Button>
+          </Box>
+        )}
+
+        <Box>
+          <Button
+            variant="text"
+            colorScheme={
+              civilClaimant.hasSpokesperson ? 'destructive' : 'default'
+            }
+            onClick={() => {
+              updateCivilClaimant({
+                hasSpokesperson: !civilClaimant.hasSpokesperson,
+                spokespersonEmail: null,
+                spokespersonPhoneNumber: null,
+                spokespersonName: null,
+                spokespersonIsLawyer: null,
+                spokespersonNationalId: null,
+                caseFilesSharedWithSpokesperson: null,
+                isSpokespersonConfirmed: false,
+              } as UpdateCivilClaimantInput)
+            }}
+          >
+            {civilClaimant.hasSpokesperson
+              ? formatMessage(strings.removeCivilClaimantAdvocate, {
+                  defenderIsLawyer: civilClaimant.spokespersonIsLawyer,
+                })
+              : formatMessage(strings.addCivilClaimantAdvocate)}
+          </Button>
+        </Box>
       </Box>
+      {displayModal && (
+        <Modal
+          title={formatMessage(strings.confirmSpokespersonModalTitle, {
+            isSpokespersonConfirmed: civilClaimant.isSpokespersonConfirmed,
+            spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
+          })}
+          text={formatMessage(strings.confirmSpokespersonModalText, {
+            isSpokespersonConfirmed: civilClaimant.isSpokespersonConfirmed,
+            spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
+          })}
+          primaryButtonText={formatMessage(
+            strings.confirmSpokespersonModalPrimaryButtonText,
+          )}
+          onPrimaryButtonClick={() => {
+            updateCivilClaimant({
+              isSpokespersonConfirmed: !civilClaimant.isSpokespersonConfirmed,
+            } as UpdateCivilClaimantInput)
+            setDisplayModal(false)
+          }}
+          secondaryButtonText={formatMessage(
+            strings.confirmSpokespersonModalSecondaryButtonText,
+          )}
+          onSecondaryButtonClick={() => setDisplayModal(false)}
+        />
+      )}
     </BlueBox>
   )
 }

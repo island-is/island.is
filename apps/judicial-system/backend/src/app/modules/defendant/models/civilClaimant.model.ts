@@ -110,4 +110,11 @@ export class CivilClaimant extends Model {
   })
   @ApiPropertyOptional({ type: Boolean })
   caseFilesSharedWithSpokesperson?: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: Boolean })
+  isSpokespersonConfirmed?: boolean
 }

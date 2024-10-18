@@ -21,6 +21,7 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
+  isDistrictCourtUser,
   NotificationType,
 } from '@island.is/judicial-system/types'
 
@@ -200,7 +201,16 @@ export class DefendantService {
     caseId: string,
     defendantNationalId: string,
     update: UpdateDefendantDto,
+    user?: User,
   ): Promise<Defendant> {
+    const isDefenderChoiceConfirmed = Boolean(
+      user &&
+        isDistrictCourtUser(user) &&
+        update.isDefenderChoiceConfirmed === true,
+    )
+
+    update = { ...update, isDefenderChoiceConfirmed: isDefenderChoiceConfirmed }
+
     const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
       update,
       {
