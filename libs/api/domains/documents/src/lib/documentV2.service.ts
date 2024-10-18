@@ -26,6 +26,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { getBirthday } from './helpers/getBirthday'
 import differceInYears from 'date-fns/differenceInYears'
+import type { Locale } from '@island.is/shared/types'
 
 const LOG_CATEGORY = 'documents-api-v2'
 @Injectable()
@@ -85,7 +86,7 @@ export class DocumentServiceV2 {
   async findDocumentByIdV3(
     nationalId: string,
     documentId: string,
-    locale?: string,
+    locale?: Locale,
     includeDocument?: boolean,
   ): Promise<Document | null> {
     const document = await this.documentService.getCustomersDocument(
@@ -114,9 +115,18 @@ export class DocumentServiceV2 {
         type = FileType.UNKNOWN
     }
     // Data for the confirmation modal
-    const confirmation = document.actions?.find(
+    let confirmation = document.actions?.find(
       (action) => action.type === 'confirmation',
     )
+    if (
+      !isDefined(confirmation?.title) ||
+      confirmation?.title === '' ||
+      confirmation?.data === '' ||
+      !isDefined(confirmation?.data)
+    ) {
+      confirmation = undefined
+    }
+
     // Data for the alert box
     const alert = document.actions?.find((action) => action.type === 'alert')
     const actions = document.actions?.filter(

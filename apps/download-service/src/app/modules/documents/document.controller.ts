@@ -8,7 +8,15 @@ import {
 import { DocumentsScope } from '@island.is/auth/scopes'
 import { DocumentClient } from '@island.is/clients/documents'
 import { AuditService } from '@island.is/nest/audit'
-import { Controller, Header, Param, Post, Res, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Header,
+  Param,
+  Post,
+  Res,
+  UseGuards,
+  Query,
+} from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
 
@@ -32,6 +40,7 @@ export class DocumentController {
     @Param('pdfId') pdfId: string,
     @CurrentUser() user: User,
     @Res() res: Response,
+    @Query('action') action: string,
   ) {
     const rawDocumentDTO = await this.documentClient.customersDocument({
       kennitala: user.nationalId,
@@ -54,7 +63,9 @@ export class DocumentController {
     res.header('Content-length', buffer.length.toString())
     res.header(
       'Content-Disposition',
-      `inline; filename=${rawDocumentDTO.fileName}.pdf`,
+      `${action === 'download' ? 'attachment' : 'inline'}; filename=${
+        rawDocumentDTO.fileName
+      }.pdf`,
     )
     res.header('Pragma: no-cache')
     res.header('Cache-Control: no-cache')

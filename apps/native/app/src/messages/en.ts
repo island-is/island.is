@@ -176,7 +176,7 @@ export const en: TranslatedMessages = {
   'home.onboardingModule.card2':
     'The app’s purpose is to provide faster access to your documents, applications, and other dealings with governmental institutions.',
   'home.onboardingModule.card3':
-    'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at',
+    'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at island@island.is',
   'home.onboardingModule.card4':
     'We encourage our users to read Digital Iceland’s privacy policy on',
   'home.vehicleModule.summary':
@@ -594,6 +594,9 @@ export const en: TranslatedMessages = {
     'You are opening Island.is in a browser. Do you want to create a passkey to sign in automatically with the app?',
   'passkeys.headingSubtitle':
     'Do you want to create a passkey to sign in automatically with the app?',
+  'passkeys.settings':
+    'In settings it is always possible to delete or add a passkey',
+  'passkeys.furtherInformation': 'More about passkeys',
   'passkeys.createButton': 'Create a passkey',
   'passkeys.skipButton': 'Skip',
   'passkeys.errorRegistering': 'Error',
@@ -619,7 +622,7 @@ export const en: TranslatedMessages = {
   'health.overview.insuredFrom': 'Insured from',
   'health.overview.status': 'Status',
   'health.overview.notInsured': 'You do not have health insurance',
-  'health.overview.payments': 'Payments',
+  'health.overview.coPayments': 'Co-payment',
   'health.overview.maxMonthlyPayment': 'Max monthly payment',
   'health.overview.paymentLimit': 'Payment Limit',
   'health.overview.paymentCredit': 'Credit',

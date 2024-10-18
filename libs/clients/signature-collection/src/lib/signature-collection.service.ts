@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import {
   FrambodApi,
   FrambodDTO,
@@ -10,19 +10,12 @@ import {
   GetListInput,
   CreateListInput,
   ReasonKey,
-  CanCreateInput,
   CanSignInput,
   CreateParliamentaryCandidacyInput,
   AddListsInput,
 } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
-import {
-  List,
-  SignedList,
-  getSlug,
-  mapList,
-  mapListBase,
-} from './types/list.dto'
+import { List, SignedList, getSlug, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { Signee } from './types/user.dto'
 import { Success, mapReasons } from './types/success.dto'
@@ -277,23 +270,29 @@ export class SignatureCollectionClientService {
       pageNumber,
     }: { listId: string; nationalId: string; pageNumber: number },
   ): Promise<Success> {
-    const newSignature = await this.getApiWithAuth(
-      this.listsApi,
-      auth,
-    ).medmaelalistarIDMedmaeliBulkPost({
-      medmaeliBulkRequestDTO: {
-        medmaeli: [
-          {
-            kennitala: nationalId,
-            bladsida: pageNumber,
-          },
-        ],
-      },
-      iD: parseInt(listId),
-    })
+    try {
+      await this.getApiWithAuth(
+        this.listsApi,
+        auth,
+      ).medmaelalistarIDMedmaeliBulkPost({
+        medmaeliBulkRequestDTO: {
+          medmaeli: [
+            {
+              kennitala: nationalId,
+              bladsida: pageNumber,
+            },
+          ],
+        },
+        iD: parseInt(listId),
+      })
 
-    return {
-      success: !!newSignature.medmaeliKenn?.includes(nationalId),
+      return {
+        success: true,
+      }
+    } catch {
+      return {
+        success: false,
+      }
     }
   }
 
@@ -354,7 +353,19 @@ export class SignatureCollectionClientService {
         }),
       ),
     )
+    // If no lists remain remove Candidate so that they can start a new collection through applications again
+    await this.checkIfRemoveCandidate(candidate.id, auth)
+
     return { success: true }
+  }
+
+  private async checkIfRemoveCandidate(id: string, auth: User) {
+    const { ownedLists, candidate } = await this.getSignee(auth)
+    if ((!ownedLists || ownedLists.length === 0) && candidate?.id) {
+      await this.getApiWithAuth(this.candidateApi, auth).frambodIDDelete({
+        iD: parseInt(id),
+      })
+    }
   }
 
   async getSignedList(auth: User): Promise<SignedList[] | null> {
@@ -398,7 +409,7 @@ export class SignatureCollectionClientService {
   }: CanSignInput): Promise<Success> {
     // User is not allowed to have more than one signature
     // They are marked as invalid but count as participation
-    const noInvalidSignature = !signatures?.find((s) => !s.valid) ?? true
+    const noInvalidSignature = !signatures?.find((s) => !s.valid)
 
     const reasons = mapReasons({
       ...canSignInfo,
@@ -414,62 +425,68 @@ export class SignatureCollectionClientService {
   async getSignee(auth: User, nationalId?: string): Promise<Signee> {
     const collection = await this.currentCollection()
     const { id, isPresidential, isActive, areas } = collection
-    const user = await this.getApiWithAuth(
-      this.collectionsApi,
-      auth,
-    ).medmaelasofnunIDEinsInfoKennitalaGet({
-      kennitala: nationalId ?? auth.nationalId,
-      iD: parseInt(id),
-    })
-
-    const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
-    const activeSignature = user.medmaeli?.find((signature) => signature.valid)
-    const signatures = user.medmaeli?.map((signature) =>
-      mapSignature(signature),
-    )
-    const ownedLists =
-      user.medmaelalistar && candidate
-        ? user.medmaelalistar?.map((list) => mapListBase(list))
-        : []
-
-    const { success: canCreate, reasons: canCreateInfo } =
-      await this.sharedService.canCreate({
-        requirementsMet: user.maFrambod,
-        canCreateInfo: user.maFrambodInfo,
-        ownedLists,
-        isPresidential,
-        isActive,
-        areas,
+    try {
+      const user = await this.getApiWithAuth(
+        this.collectionsApi,
+        auth,
+      ).medmaelasofnunIDEinsInfoKennitalaGet({
+        kennitala: nationalId ?? auth.nationalId,
+        iD: parseInt(id),
       })
 
-    const { success: canSign, reasons: canSignInfo } = await this.canSign({
-      requirementsMet: user.maKjosa,
-      canSignInfo: user.maKjosaInfo,
-      activeSignature,
-      signatures,
-    })
+      const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
+      const activeSignature = user.medmaeli?.find(
+        (signature) => signature.valid,
+      )
+      const signatures = user.medmaeli?.map((signature) =>
+        mapSignature(signature),
+      )
+      const ownedLists =
+        user.medmaelalistar && candidate
+          ? user.medmaelalistar?.map((list) => mapListBase(list))
+          : []
 
-    return {
-      nationalId: user.kennitala ?? '',
-      name: user.nafn ?? '',
-      electionName: user.kosningNafn ?? '',
-      canSign,
-      canSignInfo,
-      canCreate,
-      canCreateInfo,
-      area: user.svaedi && {
-        id: user.svaedi?.id?.toString() ?? '',
-        name: user.svaedi?.nafn?.toString() ?? '',
-      },
-      signatures,
-      ownedLists,
-      isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,
-      candidate,
-      hasPartyBallotLetter: !!user.maFrambodInfo?.medListabokstaf,
-      partyBallotLetterInfo: {
-        letter: user.listabokstafur?.stafur ?? '',
-        name: user.listabokstafur?.frambodNafn ?? '',
-      },
+      const { success: canCreate, reasons: canCreateInfo } =
+        await this.sharedService.canCreate({
+          requirementsMet: user.maFrambod,
+          canCreateInfo: user.maFrambodInfo,
+          ownedLists,
+          isPresidential,
+          isActive,
+          areas,
+        })
+
+      const { success: canSign, reasons: canSignInfo } = await this.canSign({
+        requirementsMet: user.maKjosa,
+        canSignInfo: user.maKjosaInfo,
+        activeSignature,
+        signatures,
+      })
+
+      return {
+        nationalId: user.kennitala ?? '',
+        name: user.nafn ?? '',
+        electionName: user.kosningNafn ?? '',
+        canSign,
+        canSignInfo,
+        canCreate,
+        canCreateInfo,
+        area: user.svaedi && {
+          id: user.svaedi?.id?.toString() ?? '',
+          name: user.svaedi?.nafn?.toString() ?? '',
+        },
+        signatures,
+        ownedLists,
+        isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,
+        candidate,
+        hasPartyBallotLetter: !!user.maFrambodInfo?.medListabokstaf,
+        partyBallotLetterInfo: {
+          letter: user.listabokstafur?.stafur ?? '',
+          name: user.listabokstafur?.frambodNafn ?? '',
+        },
+      }
+    } catch (e) {
+      throw new NotFoundException('User not found')
     }
   }
 

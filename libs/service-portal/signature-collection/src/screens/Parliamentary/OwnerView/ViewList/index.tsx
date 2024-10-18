@@ -19,24 +19,20 @@ const ViewList = () => {
           <Box>
             <Text variant="h3">{listInfo.title}</Text>
           </Box>
-          <Box display={['block', 'flex']} justifyContent="spaceBetween">
+          <Box display="block">
             <Box>
-              <Text variant="h5">{formatMessage(m.listPeriod)}</Text>
+              <Text variant="h4">{formatMessage(m.listPeriod)}</Text>
               <Text>
                 {format(new Date(listInfo.startTime), 'dd.MM.yyyy') +
                   ' - ' +
                   format(new Date(listInfo.endTime), 'dd.MM.yyyy')}
               </Text>
             </Box>
-            <Box marginTop={[2, 0]}>
-              <Text variant="h5">{formatMessage(m.numberOfSigns)}</Text>
-              <Text>{listInfo?.numberOfSignatures}</Text>
-            </Box>
-            <Box marginTop={[2, 0]}>
+            <Box marginTop={5}>
               {!!listInfo?.collectors?.length && (
                 <>
-                  <Text marginTop={[2, 0]} variant="h5">
-                    {formatMessage(m.supervisors)}
+                  <Text marginTop={[2, 0]} variant="h4">
+                    {formatMessage(m.coOwners)}
                   </Text>
                   {listInfo?.collectors?.map((collector) => (
                     <Box
