@@ -75,6 +75,16 @@ export class UpdateFieldSettingsDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
+  isRequired?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isLarge?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
   hasPropertyInput?: boolean
 
   @IsOptional()

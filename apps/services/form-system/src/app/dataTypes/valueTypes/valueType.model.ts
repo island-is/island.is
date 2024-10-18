@@ -1,8 +1,6 @@
-import { IsJSON } from 'class-validator'
-
-export class ValueType {}
-
-export class StringType extends ValueType {
-  @IsJSON()
-  value!: string
+export class Textbox {
+  minLength?: number
+  maxLength?: number
+  isLarge!: boolean
+  isRequired!: boolean
 }

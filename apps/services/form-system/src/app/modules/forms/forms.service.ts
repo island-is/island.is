@@ -19,8 +19,8 @@ import { ListType } from '../lists/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { Section } from '../sections/models/section.model'
-import { CertificationTypeDto } from '../certifications/models/dto/certificationType.dto'
-import { CertificationType } from '../certifications/models/certificationType.model'
+import { CertificationDto } from '../certifications/models/dto/certification.dto'
+import { Certification } from '../certifications/models/certification.model'
 import { CreateFormDto } from './models/dto/createForm.dto'
 import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
@@ -210,16 +210,16 @@ export class FormsService {
 
   private async getCertificationTypes(
     organizationId: string,
-  ): Promise<CertificationTypeDto[]> {
+  ): Promise<CertificationDto[]> {
     const organizationSpecificCertificationTypes =
       await this.organizationModel.findByPk(organizationId, {
-        include: [CertificationType],
+        include: [Certification],
       })
 
     const organizationCertificationTypes =
-      organizationSpecificCertificationTypes?.organizationCertificationTypes as CertificationType[]
+      organizationSpecificCertificationTypes?.organizationCertificationTypes as Certification[]
 
-    const certificationTypesDto: CertificationTypeDto[] = []
+    const certificationTypesDto: CertificationDto[] = []
 
     const keys = ['id', 'type', 'name', 'description']
     organizationCertificationTypes?.map((certificationType) => {
@@ -227,7 +227,7 @@ export class FormsService {
         defaults(
           pick(certificationType, keys),
           zipObject(keys, Array(keys.length).fill(null)),
-        ) as CertificationTypeDto,
+        ) as CertificationDto,
       )
     })
 
@@ -335,7 +335,7 @@ export class FormsService {
             formCertificationTypeKeys,
             Array(formCertificationTypeKeys.length).fill(null),
           ),
-        ) as CertificationTypeDto,
+        ) as CertificationDto,
       )
     })
 

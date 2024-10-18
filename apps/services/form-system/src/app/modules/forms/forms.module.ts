@@ -7,7 +7,7 @@ import { FieldType } from '../fields/models/fieldType.model'
 import { ListType } from '../lists/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
 import { Section } from '../sections/models/section.model'
-import { CertificationType } from '../certifications/models/certificationType.model'
+import { Certification } from '../certifications/models/certification.model'
 import { FormsController } from './forms.controller'
 import { FormsService } from './forms.service'
 import { Form } from './models/form.model'
@@ -23,7 +23,7 @@ import { ListItem } from '../listItems/models/listItem.model'
       Screen,
       Organization,
       FieldType,
-      CertificationType,
+      Certification,
       ListType,
       ListItem,
     ]),
