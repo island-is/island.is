@@ -99,17 +99,6 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
     [setWorkingCase, setAndSendDefendantToServer],
   )
 
-  const confirmDefenderChoiceModalText = formatMessage(
-    defendant.isDefenderChoiceConfirmed
-      ? strings.changeDefenderChoiceModalText
-      : defendant.defenderChoice === DefenderChoice.WAIVE
-      ? strings.confirmDefenderWaivedModalText
-      : !defendant.defenderName
-      ? strings.confirmDefenderDelayModalText
-      : strings.confirmDefenderChoiceModalText,
-    { defenderName: defendant?.defenderName },
-  )
-
   return (
     <Box component="section" marginBottom={5}>
       {defenderNotFound && !workingCase.defendantWaivesRightToCounsel && (
@@ -174,7 +163,16 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
           title={formatMessage(strings.confirmDefenderChoiceModalTitle, {
             isDefenderChoiceConfirmed: defendant.isDefenderChoiceConfirmed,
           })}
-          text={confirmDefenderChoiceModalText}
+          text={formatMessage(
+            defendant.isDefenderChoiceConfirmed
+              ? strings.changeDefenderChoiceModalText
+              : defendant.defenderChoice === DefenderChoice.WAIVE
+              ? strings.confirmDefenderWaivedModalText
+              : !defendant.defenderName
+              ? strings.confirmDefenderDelayModalText
+              : strings.confirmDefenderChoiceModalText,
+            { defenderName: defendant?.defenderName },
+          )}
           primaryButtonText={formatMessage(
             strings.confirmModalPrimaryButtonText,
           )}
