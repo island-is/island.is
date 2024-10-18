@@ -21,19 +21,11 @@ export const incomeForm = {
     },
   }),
   examplesOfIncome: defineMessages({
-    leftSidedList: {
-      id: 'fa.application:section.incomeForm.examplesOfIncome.leftSidedList#markdown',
+    incomeExampleList: {
+      id: 'fa.application:section.incomeForm.examplesOfIncome.incomeExampleList#markdown',
       defaultMessage:
-        '* Greiðslur frá atvinnurekanda \n* Greiðslur frá Vinnumálastofnun \n* Greiðslur frá Tryggingastofnun',
-      description:
-        'Income form bullet list of examples of income, list is on the left side until window size is mobile',
-    },
-    rightSidedList: {
-      id: 'fa.application:section.incomeForm.examplesOfIncome.rightSidedList#markdown',
-      defaultMessage:
-        '* Greiðslur frá fæðingarorlofssjóði \n* Greiðslur frá Sjúkratryggingum Íslands  \n* Styrkir frá lífeyrissjóðum',
-      description:
-        'Income form bullet list of examples of income, list is on the right side until window size is mobile',
+        '* Greiðslur frá atvinnurekanda \n* Greiðslur frá Vinnumálastofnun \n* Greiðslur frá Tryggingastofnun \n* Greiðslur frá fæðingarorlofssjóði \n* Greiðslur frá Sjúkratryggingum Íslands  \n* Styrkir frá lífeyrissjóðum',
+      description: 'Income form bullet list of examples of income',
     },
   }),
   summary: defineMessages({
