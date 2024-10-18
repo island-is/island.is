@@ -15,7 +15,7 @@ export const externalData = {
     bulletOne: {
       id: 'an.application:section.agreementDescription.BulletOne',
       defaultMessage:
-        'Þegar tilkynning um slys er send Sjúkratryggingum Íslands mun stofnunin miðla upplýsingum um afstöðu til bótaskyldu með þeim atvinnurekanda eða íþróttafélagi sem á í hlut. Ástæðan þess er að umræddir aðilar kunna að eiga rétt á endurgreiðslu útlagðs kostnaðar og/eða dagpeningum ef greidd hafa verið laun í veikindaforföllum vegna slyssins. Þessir aðilar fá aldrei afhentar heilsufars- eða sjúkraskrárupplýsingar.',
+        'Þegar tilkynning um slys er send Sjúkratryggingum Íslands mun stofnunin miðla upplýsingum um afstöðu til bótaskyldu með þeim atvinnurekanda eða íþróttafélagi sem á í hlut. Ástæða þess er að umræddir aðilar kunna að eiga rétt á endurgreiðslu útlagðs kostnaðar og/eða dagpeningum ef greidd hafa verið laun í veikindaforföllum vegna slyssins. Þessir aðilar fá aldrei afhentar heilsufars- eða sjúkraskrárupplýsingar.',
       description: 'List item 1 on data gathering information',
     },
     bulletTwo: {
@@ -71,6 +71,16 @@ export const externalData = {
       defaultMessage:
         'Upplýsingar um nafn, kennitölu og heimilisfang. Upplýsingar um börn og maka.',
       description: 'Description: National Registry',
+    },
+    procureDescription: {
+      id: 'an.application:section.externalData.nationalRegistry.procureDescription',
+      defaultMessage: 'Upplýsingar um nafn, kennitölu og heimilisfang.',
+      description: 'Description: National Registry for procure holder',
+    },
+    subTitle: {
+      id: 'an.application:section.externalData.nationalRegistry.subTitle',
+      defaultMessage: 'Hér sækjum við nafn, kennitölu og heimilisfang',
+      description: 'We will fetch name, national id and address',
     },
   }),
   accidentProvider: defineMessages({
