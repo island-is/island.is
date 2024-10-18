@@ -1,8 +1,5 @@
 import { DefaultEvents } from '@island.is/application/types'
 
-export const YES = 'Yes'
-export const NO = 'No'
-
 export const JA = 'Já'
 export const NEI = 'Nei'
 
