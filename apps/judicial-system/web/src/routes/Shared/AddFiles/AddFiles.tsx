@@ -92,7 +92,7 @@ const AddFiles: FC = () => {
       updateUploadFile,
     )
 
-    if (uploadResult === 'NONE_SUCCEEDED') {
+    if (uploadResult !== 'NONE_SUCCEEDED') {
       // Some files were added successfully so we send a notification
       sendNotification(workingCase.id, NotificationType.CASE_FILES_UPDATED)
     }
