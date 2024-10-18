@@ -11,12 +11,13 @@ import { AbsenceDueToAccidentDto } from '@island.is/clients/work-accident-ver'
 
 export const absenceSection = (index: number) =>
   buildSubSection({
-    id: 'absence',
+    id: `absenceSection[${index}]`,
     title: sections.draft.absence,
     children: [
       buildMultiField({
         title: causeAndConsequences.absence.title,
         description: causeAndConsequences.absence.description,
+        id: `absenceMultiField[${index}]`,
         children: [
           buildAlertMessageField({
             id: `absence[${index}].alertMessageField`,
@@ -25,7 +26,7 @@ export const absenceSection = (index: number) =>
             alertType: 'info',
           }),
           buildSelectField({
-            id: `absence[${index}].absenceDueToAccident`,
+            id: `absence[${index}]`,
             title: causeAndConsequences.absence.absenceDueToAccident,
             options: (application) => {
               const absenceDueToAccident = getValueViaPath(

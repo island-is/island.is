@@ -135,9 +135,7 @@ const partOfBodyInjuredSchema = createCauseAndEffectSchema(
   'partOfBodyInjuredMostSerious',
 )
 
-const absenceSchema = z.object({
-  absenceDueToAccident: z.string(),
-})
+const absenceSchema = z.string()
 
 const companyLaborProtectionSchema = z.object({
   workhealthAndSafetyOccupation: z.array(z.string()).optional(),

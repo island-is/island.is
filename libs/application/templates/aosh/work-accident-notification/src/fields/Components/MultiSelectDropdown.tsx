@@ -72,7 +72,7 @@ export const MultiSelectDropdown: FC<
             />
           )
         }}
-        name={'group'}
+        name={`group-${group.code}`}
       />
     </Box>
   )
