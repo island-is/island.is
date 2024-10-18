@@ -10,6 +10,7 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
+import { MessageService } from '@island.is/judicial-system/message'
 
 import { CaseService, PdfService } from '../../case'
 import { Defendant } from '../../defendant'
@@ -27,6 +28,7 @@ jest.mock('../../case/case.service')
 jest.mock('../../case/pdf.service')
 jest.mock('../../police/police.service')
 jest.mock('../../file/file.service')
+jest.mock('@island.is/judicial-system/message')
 
 export const createTestingSubpoenaModule = async () => {
   const subpoenaModule = await Test.createTestingModule({
@@ -75,6 +77,7 @@ export const createTestingSubpoenaModule = async () => {
         },
       },
       SubpoenaService,
+      MessageService,
     ],
   }).compile()
 
