@@ -30,9 +30,7 @@ import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { useSignatureCollectionAdminRemoveListMutation } from './removeList.generated'
 import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCandidate.generated'
-import {
-  SignatureCollectionList,
-} from '@island.is/api/schema'
+import { SignatureCollectionList } from '@island.is/api/schema'
 
 export const Constituency = ({
   allowedToProcess,
