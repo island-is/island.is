@@ -2,8 +2,8 @@ import { getValueViaPath } from '@island.is/application/core'
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 
 import { logger } from '@island.is/logging'
+import { S3Service } from '@island.is/nest/aws'
 import { Injectable } from '@nestjs/common'
-import { S3Service } from './s3.service'
 
 export interface AttachmentData {
   key: string
@@ -62,7 +62,7 @@ export class ApplicationAttachmentService {
           return { key: '', fileContent: '', answerKey, fileName: '' }
         }
         const fileContent =
-          (await this.s3Service.getFilecontentAsBase64(url)) ?? ''
+          (await this.s3Service.getFileContent(url, 'base64')) ?? ''
 
         return { key, fileContent, answerKey, fileName: name }
       }),
