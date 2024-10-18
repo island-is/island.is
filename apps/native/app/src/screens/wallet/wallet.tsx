@@ -17,7 +17,6 @@ import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 
 import illustrationSrc from '../../assets/illustrations/le-retirement-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,
   GenericUserLicense,
@@ -30,7 +29,6 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { isIos } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
-import { isDefined } from '../../utils/is-defined'
 import { testIDs } from '../../utils/test-ids'
 import { WalletItem } from './components/wallet-item'
 
@@ -100,13 +98,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const { dismiss, dismissed } = usePreferencesStore()
   const [hiddenContent, setHiddenContent] = useState(isIos)
 
-  // Feature flags
-  const showPassport = useFeatureFlag('isPassportEnabled', false)
-  const showDisability = useFeatureFlag('isDisabilityFlagEnabled', false)
-  const showPCard = useFeatureFlag('isPCardEnabled', false)
-  const showEhic = useFeatureFlag('isEhicEnabled', false)
-  const showHuntingLicense = useFeatureFlag('isHuntingLicenseEnabled', false)
-
   // Query list of licenses
   const res = useListLicensesQuery({
     variables: {
@@ -116,11 +107,11 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           GenericLicenseType.AdrLicense,
           GenericLicenseType.MachineLicense,
           GenericLicenseType.FirearmLicense,
-          showDisability ? GenericLicenseType.DisabilityLicense : null,
-          showPCard ? GenericLicenseType.PCard : null,
-          showEhic ? GenericLicenseType.Ehic : null,
-          showHuntingLicense ? GenericLicenseType.HuntingLicense : null,
-        ].filter(isDefined),
+          GenericLicenseType.DisabilityLicense,
+          GenericLicenseType.PCard,
+          GenericLicenseType.Ehic,
+          GenericLicenseType.HuntingLicense,
+        ],
       },
     },
   })
@@ -142,24 +133,12 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         if (license.status === 'Unknown') {
           return false
         }
-        if (license.type === GenericLicenseType.DisabilityLicense) {
-          return showDisability
-        }
-        if (license.type === GenericLicenseType.PCard) {
-          return showPCard
-        }
-        if (license.type === GenericLicenseType.Ehic) {
-          return showEhic
-        }
-        if (license.type === GenericLicenseType.HuntingLicense) {
-          return showHuntingLicense
-        }
         return true
       })
     }
 
     return []
-  }, [res, showDisability, showPCard, showEhic, showHuntingLicense])
+  }, [res])
 
   // indexing list for spotlight search IOS
   useEffect(() => {
@@ -245,9 +224,9 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
     return [
       ...licenseItems,
-      ...(showPassport ? resPassport?.data?.getIdentityDocument ?? [] : []),
+      ...(resPassport?.data?.getIdentityDocument ?? []),
     ] as FlatListItem[]
-  }, [licenseItems, resPassport, showPassport, res.loading, res.data])
+  }, [licenseItems, resPassport, res.loading, res.data])
 
   // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
   if (hiddenContent) {
