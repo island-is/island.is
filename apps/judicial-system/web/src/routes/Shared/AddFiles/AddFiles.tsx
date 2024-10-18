@@ -18,8 +18,12 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
-import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  CaseFileCategory,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  useCase,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -47,6 +51,7 @@ const AddFiles: FC = () => {
     updateUploadFile,
   } = useUploadFiles()
   const { handleUpload } = useS3Upload(workingCase.id)
+  const { sendNotification } = useCase()
 
   const caseFileCategory = isDefenceUser(user)
     ? CaseFileCategory.DEFENDANT_CASE_FILE
@@ -82,15 +87,26 @@ const AddFiles: FC = () => {
   )
 
   const handleNextButtonClick = useCallback(async () => {
-    const allSucceeded = await handleUpload(
+    const uploadResult = await handleUpload(
       uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
 
-    if (allSucceeded) {
+    if (uploadResult !== 'NONE_SUCCEEDED') {
+      // Some files were added successfully so we send a notification
+      sendNotification(workingCase.id, NotificationType.CASE_FILES_UPDATED)
+    }
+
+    if (uploadResult === 'ALL_SUCCEEDED') {
       setVisibleModal('sendFiles')
     }
-  }, [handleUpload, updateUploadFile, uploadFiles])
+  }, [
+    handleUpload,
+    sendNotification,
+    updateUploadFile,
+    uploadFiles,
+    workingCase.id,
+  ])
 
   return (
     <PageLayout
