@@ -5,11 +5,11 @@ import { useLocale } from '@island.is/localization'
 import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
-import BottomBar from '../../components/BottomBar'
 import { useFormContext } from 'react-hook-form'
 import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
 import { ELECTIONLIMIT, GREATER } from '../../utils/constants'
 import { formatNumber } from '../../utils/helpers'
+import { BottomBar } from '../../../../shared/components/BottomBar'
 
 export const ElectionStatement = ({
   application,
@@ -77,7 +77,8 @@ export const ElectionStatement = ({
         loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
-        sendText={formatMessage(m.sendStatement)}
+        goBack={m.goBack}
+        send={m.sendStatement}
       />
     </Box>
   )

@@ -98,8 +98,3 @@ export const possibleOperatingYears = (
 export const getConfigInfoForKey = (config: Config[], configKey: string) => {
   return config?.filter((config: Config) => config.key === configKey)[0].value
 }
-
-export const formatCurrency = (answer?: string) => {
-  if (!answer) return '0. kr'
-  return answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
-}

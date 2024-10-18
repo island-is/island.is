@@ -21,7 +21,7 @@ import {
   VALIDATOR,
 } from '../../lib/utils/constants'
 import { m } from '../../lib/utils/messages'
-import { Total } from '../IndividualElectionOperatingIncome/Total'
+import { Total } from '../../../../shared/components/Total'
 
 export const ElectionEquities = ({
   setBeforeSubmitCallback,

@@ -14,18 +14,18 @@ import {
 import { Controller, useFormContext } from 'react-hook-form'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
-import { formatCurrency } from '../../lib/utils/helpers'
+import { formatCurrency } from '../../../../shared/utils/formatCurrency'
 import { starterColumnStyle, sectionColumn } from './overviewStyles.css'
 import { FinancialStatementIndividualElection } from '../../lib/utils/dataSchema'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { GREATER } from '../../lib/utils/constants'
 import { m } from '../../lib/utils/messages'
-import { AboutOverview } from './AboutOverview'
-import { ValueLine } from './ValueLine'
-import { CapitalNumberOverview } from './CapitalNumbersOverview'
+import { CapitalNumberOverview } from '../../../../shared/components/CapitalNumbersOverview'
 import { AssetDebtEquityOverview } from './AssetDebtEquityOverview'
-import { FileValueLine } from './FileValueLine'
-import BottomBar from './BottomBar'
+import { FileValueLine } from '../../../../shared/components/FileValueLine'
+import { AboutOverview } from '../../../../shared/components/AboutOverview'
+import { ValueLine } from '../../../../shared/components/ValueLine'
+import { BottomBar } from '../../../../shared/components/BottomBar'
 
 export const Overview = ({
   application,
@@ -74,7 +74,15 @@ export const Overview = ({
     <Box marginBottom={2}>
       <Divider />
       <Box paddingY={3}>
-        <AboutOverview answers={answers} />
+        <AboutOverview
+          about={answers.about}
+          fullName={m.fullName}
+          nationalId={m.nationalId}
+          powerOfAttorneyName={m.powerOfAttorneyName}
+          powerOfAttorneyNationalId={m.powerOfAttorneyNationalId}
+          email={m.email}
+          phoneNumber={m.phoneNumber}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>
@@ -151,7 +159,12 @@ export const Overview = ({
       </Box>
       <Divider />
       <Box paddingY={3}>
-        <CapitalNumberOverview answers={answers} />
+        <CapitalNumberOverview
+          capitalNumbers={answers.capitalNumbers}
+          capitalIncome={m.capitalIncome}
+          capitalCost={m.capitalCost}
+          totalCapital={m.totalCapital}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>
@@ -167,7 +180,10 @@ export const Overview = ({
       <Box paddingY={3}>
         {fileName ? (
           <>
-            <FileValueLine label={answers.attachments?.file?.[0]?.name} />
+            <FileValueLine
+              label={answers.attachments?.file?.[0]?.name}
+              files={m.files}
+            />
             <Divider />
           </>
         ) : null}
@@ -218,6 +234,8 @@ export const Overview = ({
         loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
+        goBack={m.goBack}
+        send={m.send}
       />
     </Box>
   )

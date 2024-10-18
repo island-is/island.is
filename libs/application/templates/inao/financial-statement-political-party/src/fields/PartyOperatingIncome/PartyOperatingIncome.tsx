@@ -16,9 +16,9 @@ import { PartyExpenses } from './PartyExpenses'
 import { TaxInfoQuery } from '../../graphql'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Total } from '../../components/Total'
 import { useTotals } from '../../hooks/useTotals'
 import { OPERATINGCOST, PARTYOPERATIONIDS } from '../../utils/constants'
+import { Total } from '../../../../shared/components/Total'
 
 export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
   const { answers } = application

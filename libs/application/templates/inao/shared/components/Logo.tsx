@@ -1,17 +1,22 @@
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
-import { m } from '../lib/messages'
+import { MessageDescriptor } from 'react-intl'
 
-const Logo = () => {
+type Props = {
+  serviceProvider?: MessageDescriptor
+  inao?: MessageDescriptor
+}
+
+const Logo = ({ serviceProvider, inao }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
     <Box>
       <Text variant="eyebrow" as="p" color="purple600">
-        {formatMessage(m.serviceProvider)}
+        {serviceProvider ? formatMessage(serviceProvider) : 'Ríkisendurskoðun'}
       </Text>
       <Text variant="h3" as="p" color="purple600">
-        {formatMessage(m.inao).toUpperCase()}
+        {inao ? formatMessage(inao).toUpperCase() : 'RÍKISENDURSKOÐUN'}
       </Text>
     </Box>
   )

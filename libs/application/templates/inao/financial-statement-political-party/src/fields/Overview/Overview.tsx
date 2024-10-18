@@ -16,9 +16,7 @@ import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
-import BottomBar from '../../components/BottomBar'
 import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
-import { AboutOverview } from '../../components/AboutOverview'
 import { GREATER } from '../../utils/constants'
 import {
   sectionColumn,
@@ -26,7 +24,9 @@ import {
 } from '../../components/css/overviewStyles.css'
 import { CapitalNumberOverview } from '../../components/CapitalNumberOverview'
 import { AssetDebtEquityOverview } from '../../components/AssetDebtEquityOverview'
-import { FileValueLine } from '../../components/FileValueLine'
+import { FileValueLine } from '../../../../shared/components/FileValueLine'
+import { AboutOverview } from '../../../../shared/components/AboutOverview'
+import { BottomBar } from '../../../../shared/components/BottomBar'
 
 export const Overview = ({
   application,
@@ -76,7 +76,15 @@ export const Overview = ({
     <Box marginBottom={2}>
       <Divider />
       <Box paddingY={3}>
-        <AboutOverview answers={answers} />
+        <AboutOverview
+          about={answers.about}
+          fullName={m.fullName}
+          nationalId={m.nationalId}
+          powerOfAttorneyName={m.powerOfAttorneyName}
+          powerOfAttorneyNationalId={m.powerOfAttorneyNationalId}
+          email={m.email}
+          phoneNumber={m.phoneNumber}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>
@@ -113,7 +121,10 @@ export const Overview = ({
       <Box paddingY={3}>
         {fileName ? (
           <>
-            <FileValueLine label={answers.attachments?.file?.[0]?.name} />
+            <FileValueLine
+              label={answers.attachments?.file?.[0]?.name}
+              files={m.files}
+            />
             <Divider />
           </>
         ) : null}
@@ -164,6 +175,8 @@ export const Overview = ({
         loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
+        goBack={m.goBack}
+        send={m.send}
       />
     </Box>
   )

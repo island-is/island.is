@@ -36,9 +36,6 @@ export const getTotal = (values: Record<string, string>, key: string) => {
   return total
 }
 
-export const formatCurrency = (answer: string) =>
-  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
-
 export const formatNumber = (num: number) => num.toLocaleString('de-DE')
 
 export const checkIfNegative = (inputNumber: string) => Number(inputNumber) >= 0
