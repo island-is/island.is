@@ -10,6 +10,17 @@ if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
 : "${RESTART_MAX_RETRIES:=3}"
 : "${LOCAL_PORT:=}"
 : "${DRY:=}"
+: "${AWS_PROFILE:=islandis-dev}"
+: "${CLUSTER:="$(
+  echo "CLUSTER environment variable is not set. Setting using \`kubectl\` and \`aws sts get-caller-identity\`" >&2
+  CONTEXT="$(kubectl config get-contexts -o name | grep -o ".*:cluster/${AWS_PROFILE##islandis-}-cluster.*")"
+  kubectl config use-context "${CONTEXT}" >&2
+  kubectl config current-context | sed 's/.*\///' >/dev/null
+  echo "${CONTEXT}"
+)"}"
+
+echo "AWS_PROFILE=${AWS_PROFILE}" >&2
+echo "CLUSTER=$CLUSTER" >&2
 
 ARGS=()
 PROXIES=()
@@ -240,7 +251,7 @@ run-proxy() {
     --service "${service}" \
     --port "${service_port}" \
     --proxy-port "${host_port}" \
-    --cluster "${CLUSTER:-dev-cluster01}"
+    --cluster "${CLUSTER}"
 }
 run-db-proxy() {
   run-proxy 5432 "${LOCAL_PORT:=5432}" db
