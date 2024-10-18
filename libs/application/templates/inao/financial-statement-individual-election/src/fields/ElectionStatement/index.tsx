@@ -7,10 +7,9 @@ import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { useFormContext } from 'react-hook-form'
 import { FinancialStatementIndividualElection } from '../../lib/utils/dataSchema'
 import { ELECTIONLIMIT, GREATER } from '../../lib/utils/constants'
-import BottomBar from '../Overview/BottomBar'
 import { m } from '../../lib/utils/messages'
 import { formatNumber } from '../../lib/utils/helpers'
-
+import { BottomBar } from '../../../../shared/components/BottomBar'
 export const ElectionStatement = ({
   application,
   goToScreen,
@@ -77,7 +76,8 @@ export const ElectionStatement = ({
         loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
-        sendText={formatMessage(m.sendStatement)}
+        goBack={m.goBack}
+        send={m.sendStatement}
       />
     </Box>
   )

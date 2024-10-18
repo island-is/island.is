@@ -22,7 +22,6 @@ import { currencyStringToNumber, formatCurrency } from '../../utils/helpers'
 import { CapitalNumberOverview } from './CapitalNumbersOverview'
 import { BOARDMEMEBER } from '../../utils/constants'
 import { FileValueLine } from './FileValueLine'
-import BottomBar from './BottomBar'
 import {
   columnStyle,
   sectionColumn,
@@ -30,6 +29,7 @@ import {
 } from './overviewStyles.css'
 import { AboutOverview } from '../../../../shared/components/AboutOverview'
 import { ValueLine } from '../../../../shared/components/ValueLine'
+import { BottomBar } from '../../../../shared/components/BottomBar'
 
 export const CemeteryOverview = ({
   application,
@@ -380,6 +380,8 @@ export const CemeteryOverview = ({
         loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
+        goBack={m.goBack}
+        send={m.send}
       />
     </Box>
   )

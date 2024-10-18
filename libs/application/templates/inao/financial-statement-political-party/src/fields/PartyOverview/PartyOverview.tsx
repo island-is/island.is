@@ -19,7 +19,6 @@ import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
 import { formatCurrency } from '../../utils/helpers'
 import { FileValueLine } from '../../components/FileValueLine'
 import { AssetDebtEquityOverview } from '../../components/AssetDebtEquityOverview'
-import BottomBar from '../../components/BottomBar'
 import {
   sectionColumn,
   starterColumnStyle,
@@ -27,6 +26,7 @@ import {
 import { CapitalNumberOverview } from '../../components/CapitalNumberOverview'
 import { AboutOverview } from '../../../../shared/components/AboutOverview'
 import { ValueLine } from '../../../../shared/components/ValueLine'
+import { BottomBar } from '../../../../shared/components/BottomBar'
 
 export const PartyOverview = ({
   application,
@@ -224,6 +224,8 @@ export const PartyOverview = ({
         loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
+        goBack={m.goBack}
+        send={m.send}
       />
     </Box>
   )

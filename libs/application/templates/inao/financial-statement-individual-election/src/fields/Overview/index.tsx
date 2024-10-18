@@ -23,9 +23,9 @@ import { m } from '../../lib/utils/messages'
 import { CapitalNumberOverview } from './CapitalNumbersOverview'
 import { AssetDebtEquityOverview } from './AssetDebtEquityOverview'
 import { FileValueLine } from './FileValueLine'
-import BottomBar from './BottomBar'
 import { AboutOverview } from '../../../../shared/components/AboutOverview'
 import { ValueLine } from '../../../../shared/components/ValueLine'
+import { BottomBar } from '../../../../shared/components/BottomBar'
 
 export const Overview = ({
   application,
@@ -226,6 +226,8 @@ export const Overview = ({
         loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
+        goBack={m.goBack}
+        send={m.send}
       />
     </Box>
   )

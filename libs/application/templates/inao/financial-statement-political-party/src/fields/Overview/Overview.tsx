@@ -16,7 +16,6 @@ import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
-import BottomBar from '../../components/BottomBar'
 import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
 import { GREATER } from '../../utils/constants'
 import {
@@ -27,6 +26,7 @@ import { CapitalNumberOverview } from '../../components/CapitalNumberOverview'
 import { AssetDebtEquityOverview } from '../../components/AssetDebtEquityOverview'
 import { FileValueLine } from '../../components/FileValueLine'
 import { AboutOverview } from '../../../../shared/components/AboutOverview'
+import { BottomBar } from '../../../../shared/components/BottomBar'
 
 export const Overview = ({
   application,
@@ -172,6 +172,8 @@ export const Overview = ({
         loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
+        goBack={m.goBack}
+        send={m.send}
       />
     </Box>
   )
