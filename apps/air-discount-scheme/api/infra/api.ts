@@ -50,11 +50,6 @@ export const serviceSetup = (services: {
           staging: ['loftbru', 'loftbru-cf'],
           prod: ['loftbru'],
         },
-        extraAnnotations: {
-          dev: {},
-          staging: {},
-          prod: {},
-        },
         paths: ['/api/graphql'],
         public: true,
       },

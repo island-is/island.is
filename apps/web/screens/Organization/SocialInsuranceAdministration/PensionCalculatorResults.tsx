@@ -637,6 +637,8 @@ PensionCalculatorResults.getProps = async ({
         input: calculationInput,
       },
     }),
+    calculationInput.typeOfBasePension ===
+      SocialInsurancePensionCalculationBasePensionType.Disability &&
     is2025PreviewActive(customPageData)
       ? apolloClient.query<Query, QueryGetPensionCalculationArgs>({
           query: GET_PENSION_CALCULATION,
@@ -645,6 +647,8 @@ PensionCalculatorResults.getProps = async ({
               ...calculationInput,
               startYear: 2025,
               startMonth: 9,
+              typeOfBasePension:
+                SocialInsurancePensionCalculationBasePensionType.NewSystem,
             },
           },
         })

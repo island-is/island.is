@@ -78,11 +78,6 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
         },
         paths: ['/'],
         public: false,
-        extraAnnotations: {
-          dev: {},
-          staging: {},
-          prod: {},
-        },
       },
     })
     .replicaCount({
