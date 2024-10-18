@@ -176,7 +176,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
           })}
           text={confirmDefenderChoiceModalText}
           primaryButtonText={formatMessage(
-            strings.confirmDefenderChoiceModalPrimaryButtonText,
+            strings.confirmModalPrimaryButtonText,
           )}
           onPrimaryButtonClick={() =>
             toggleDefenderChoiceConfirmed(
@@ -186,7 +186,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             )
           }
           secondaryButtonText={formatMessage(
-            strings.confirmDefenderChoiceModalSecondaryButtonText,
+            strings.confirmModalSecondaryButtonText,
           )}
           onSecondaryButtonClick={() => setDisplayModal(false)}
         />

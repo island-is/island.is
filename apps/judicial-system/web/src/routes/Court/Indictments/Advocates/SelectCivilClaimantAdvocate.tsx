@@ -199,7 +199,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
           })}
           primaryButtonText={formatMessage(
-            strings.confirmSpokespersonModalPrimaryButtonText,
+            strings.confirmModalPrimaryButtonText,
           )}
           onPrimaryButtonClick={() => {
             updateCivilClaimant({
@@ -208,7 +208,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
             setDisplayModal(false)
           }}
           secondaryButtonText={formatMessage(
-            strings.confirmSpokespersonModalSecondaryButtonText,
+            strings.confirmModalSecondaryButtonText,
           )}
           onSecondaryButtonClick={() => setDisplayModal(false)}
         />
