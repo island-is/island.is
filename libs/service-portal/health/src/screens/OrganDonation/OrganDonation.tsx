@@ -14,9 +14,12 @@ import { useGetDonorStatusQuery } from './OrganDonation.generated'
 const OrganDonation = () => {
   useNamespaces('sp.health')
 
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const { data, loading, error } = useGetDonorStatusQuery({
     fetchPolicy: 'no-cache',
+    variables: {
+      locale,
+    },
   })
   const donorStatus = data?.healthDirectorateOrganDonation.donor
   const cardText: string = donorStatus?.isDonor
@@ -26,7 +29,7 @@ const OrganDonation = () => {
           donorStatus?.limitations.limitedOrgansList
             ?.map((organ) => organ.name)
             .join(', '),
-        ].join(' ') + '.' ?? ''
+        ].join(' ') + '.'
       : formatMessage(m.iAmOrganDonorText)
     : formatMessage(m.iAmNotOrganDonorText)
 
