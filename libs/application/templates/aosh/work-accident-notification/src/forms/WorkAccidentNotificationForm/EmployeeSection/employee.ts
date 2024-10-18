@@ -33,7 +33,7 @@ export const employeeSubSection = (index: number) =>
     },
     children: [
       buildMultiField({
-        id: 'employeeInformation',
+        id: `employeeInformation[${index}]`,
         title: employee.employee.pageTitle,
         description: employee.employee.description,
         children: [

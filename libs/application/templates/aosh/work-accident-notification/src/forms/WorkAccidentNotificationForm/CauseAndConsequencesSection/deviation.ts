@@ -8,12 +8,13 @@ import { causeAndConsequences, sections } from '../../../lib/messages'
 
 export const deviationSection = (index: number) =>
   buildSubSection({
-    id: 'deviations',
+    id: `deviations[${index}]`,
     title: sections.draft.deviation,
     children: [
       buildMultiField({
         title: causeAndConsequences.deviations.title,
         description: causeAndConsequences.deviations.description,
+        id: `deviationsMultiField[${index}]`,
         children: [
           buildHiddenInput({
             id: `deviations[${index}].workDeviationsMostSerious`,

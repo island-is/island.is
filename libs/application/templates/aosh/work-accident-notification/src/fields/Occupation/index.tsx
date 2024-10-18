@@ -30,10 +30,10 @@ export const Occupation: FC<
   React.PropsWithChildren<OccupationProps & FieldBaseProps>
 > = (props) => {
   const idx = props.field?.props?.index
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
   const { application } = props
   const answers = application.answers as WorkAccidentNotification
-  const { setValue, getValues } = useFormContext()
+  const { setValue } = useFormContext()
 
   const [selectedMajorGroup, setSelectedMajorGroup] = useState<Options | null>(
     answers?.employee?.[idx]?.victimsOccupationMajor || null,
@@ -322,6 +322,8 @@ export const Occupation: FC<
       )
     }
   }, [selectedMinorGroup])
+
+  console.log('WHY AM I HERE')
 
   return (
     <Box>
