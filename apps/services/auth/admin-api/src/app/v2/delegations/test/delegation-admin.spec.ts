@@ -25,6 +25,7 @@ import { getModelToken } from '@nestjs/sequelize'
 import { faker } from '@island.is/shared/mocking'
 import { TicketStatus, ZendeskService } from '@island.is/clients/zendesk'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { ErrorCodes } from '@island.is/shared/utils'
 
 const currentUser = createCurrentUser({
   scope: [DelegationAdminScopes.read, DelegationAdminScopes.admin],
@@ -337,6 +338,85 @@ describe('DelegationAdmin - With authentication', () => {
 
       // Assert
       expect(res.status).toEqual(400)
+    })
+
+    it('POST /delegation-admin should not create delegation since it already exists', async () => {
+      // Arrange
+      const { toNationalId, fromNationalId } = {
+        toNationalId: '0101302399',
+        fromNationalId: '0101307789',
+      }
+
+      mockZendeskService(toNationalId, fromNationalId)
+
+      const existingDelegation = await factory.createCustomDelegation({
+        fromNationalId,
+        toNationalId,
+        domainName: null,
+        scopes: [{ scopeName: 's1' }],
+        referenceId: 'ref1',
+      })
+
+      const delegation: CreatePaperDelegationDto = {
+        toNationalId: existingDelegation.toNationalId,
+        fromNationalId: existingDelegation.fromNationalId,
+        referenceId: 'ref2',
+      }
+
+      // Act
+      const res = await getRequestMethod(
+        server,
+        'POST',
+      )('/delegation-admin').send(delegation)
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        status: 400,
+        type: 'https://httpstatuses.org/400',
+        title: ErrorCodes.COULD_NOT_CREATE_DELEGATION,
+        detail: 'Could not create delegation',
+      })
+    })
+
+    it('POST /delegation-admin should not create delegation since the delegation id already exists', async () => {
+      // Arrange
+      const { toNationalId, fromNationalId } = {
+        toNationalId: '0101302399',
+        fromNationalId: '0101307789',
+      }
+
+      mockZendeskService(fromNationalId, toNationalId)
+
+      const existingDelegation = await factory.createCustomDelegation({
+        fromNationalId,
+        toNationalId,
+        domainName: null,
+        scopes: [{ scopeName: 's1' }],
+        referenceId: 'ref1',
+      })
+
+      // Send in opposite national ids so they will not exist in db
+      const delegation: CreatePaperDelegationDto = {
+        toNationalId: existingDelegation.fromNationalId,
+        fromNationalId: existingDelegation.toNationalId,
+        referenceId: 'ref1',
+      }
+
+      // Act
+      const res = await getRequestMethod(
+        server,
+        'POST',
+      )('/delegation-admin').send(delegation)
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        status: 400,
+        type: 'https://httpstatuses.org/400',
+        title: ErrorCodes.REFERENCE_ID_ALREADY_EXISTS,
+        detail: 'Delegation with the same reference id already exists',
+      })
     })
 
     it('POST /delegation-admin should not create delegation with incorrect zendesk ticket status', async () => {

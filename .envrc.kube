@@ -17,7 +17,7 @@ set-kubectx() {
   echo "Setting kube context..." >&2
   AWS_ACCOUNT_ID="$(aws sts get-caller-identity | jq -r '.Account')"
   kubectx "$(kubectx | grep "${AWS_ACCOUNT_ID}")"
-  CLUSTER="$(kubectl config current-context | grep -oP '(?<=/).*')"
+  CLUSTER="$(kubectl config current-context | sed 's/.*\///')"
   export CLUSTER
 }
 

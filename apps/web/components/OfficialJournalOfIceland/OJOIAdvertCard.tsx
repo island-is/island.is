@@ -59,9 +59,15 @@ export const OJOIAdvertCard = ({
           <Text>{title}</Text>
         </Box>
       )}
-      <Box display="flex" justifyContent="spaceBetween" marginTop={2}>
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        justifyContent="spaceBetween"
+        marginTop={2}
+        rowGap={1}
+      >
         {categories && categories.length && (
-          <Box display="flex" rowGap={1} columnGap={1}>
+          <Box display="flex" rowGap={1} columnGap={1} flexWrap="wrap">
             {categories.map((cat) => {
               return (
                 <Tag key={cat} variant="blue" outlined disabled>
