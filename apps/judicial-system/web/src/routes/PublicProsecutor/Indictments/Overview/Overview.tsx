@@ -210,9 +210,14 @@ export const Overview = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.CASES_ROUTE}`}
+          previousUrl={constants.CASES_ROUTE}
           nextIsLoading={isLoadingWorkingCase}
-          nextIsDisabled={!selectedIndictmentReviewer || isLoadingWorkingCase}
+          nextIsDisabled={
+            !selectedIndictmentReviewer ||
+            selectedIndictmentReviewer.value ===
+              workingCase.indictmentReviewer?.id ||
+            isLoadingWorkingCase
+          }
           onNextButtonClick={assignReviewer}
           nextButtonText={fm(core.continue)}
         />
@@ -228,7 +233,6 @@ export const Overview = () => {
           onSecondaryButtonClick={() => router.push(constants.CASES_ROUTE)}
         />
       )}
-
       {modalVisible === 'DEFENDANT_VIEWS_VERDICT' && (
         <Modal
           title={fm(strings.defendantViewsVerdictModalTitle)}
