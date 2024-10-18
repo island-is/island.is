@@ -13,34 +13,26 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
+import { GrantSearchSection, GrantWrapper } from '@island.is/web/components'
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
   GenericTag,
-  GenericTagGroup,
   Query,
   QueryGetGenericTagsInTagGroupArgs,
-  QueryGetOrganizationArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { CustomNextError } from '@island.is/web/units/errors'
 
-import {
-  OJOIHomeIntro,
-  OJOIWrapper,
-} from '../../components/OfficialJournalOfIceland'
 import {
   CustomScreen,
   withCustomPageWrapper,
-} from '../CustomPage/CustomPageWrapper'
-import { GET_ORGANIZATION_QUERY } from '../queries'
-import { GET_GENERIC_TAG_IN_TAG_GROUP_QUERY } from '../queries/GenericTag'
-import { m } from './messages'
+} from '../../CustomPage/CustomPageWrapper'
+import { GET_GENERIC_TAG_IN_TAG_GROUP_QUERY } from '../../queries/GenericTag'
+import { m } from '../messages'
 
-const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
-  organization,
+const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   categories,
   locale,
 }) => {
@@ -57,21 +49,23 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
       href: linkResolver('homepage', [], locale).href,
     },
     {
-      title: organization?.title ?? '',
+      title: 'Styrkjatorg',
       href: baseUrl,
     },
   ]
 
   return (
-    <OJOIWrapper
-      pageTitle={organization?.title ?? ''}
+    <GrantWrapper
+      pageTitle={'Styrkjatorg'}
       pageDescription={formatMessage(m.home.description)}
-      organization={organization ?? undefined}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
     >
       <Stack space={SLICE_SPACING}>
-        <OJOIHomeIntro
-          organization={organization ?? undefined}
+        <GrantSearchSection
+          title={'Styrkjatorg'}
+          description={
+            'Non scelerisque risus amet tincidunt. Sit sed quis cursus hendrerit nulla egestas interdum. In varius quisque.'
+          }
           searchPlaceholder={formatMessage(m.home.inputPlaceholder)}
           searchUrl={searchUrl}
           shortcutsTitle={formatMessage(m.home.mostVisited)}
@@ -147,13 +141,11 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
                   />
                 </GridColumn>
               ))}
-
-              {/* ))} */}
             </GridRow>
           </GridContainer>
         </Box>
       </Stack>
-    </OJOIWrapper>
+    </GrantWrapper>
   )
 }
 
@@ -163,14 +155,14 @@ interface GrantsHomeProps {
   locale: Locale
 }
 
-const GrantsHome: CustomScreen<GrantsHomeProps> = ({
+const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
   categories,
   organization,
   customPageData,
   locale,
 }) => {
   return (
-    <GrantsHomePage
+    <GrantsSearchResultsPage
       categories={categories}
       organization={organization}
       locale={locale}
@@ -179,41 +171,23 @@ const GrantsHome: CustomScreen<GrantsHomeProps> = ({
   )
 }
 
-GrantsHome.getProps = async ({ apolloClient, locale }) => {
-  const organizationSlug = 'rannsoknamidstoed-islands-rannis'
+GrantsSearchResults.getProps = async ({ apolloClient, locale }) => {
   const tagGroupCategory = 'grant-category'
   //Todo: add more organizations ??
 
-  const [
-    {
-      data: { getOrganization },
-    },
-    {
-      data: { getGenericTagsInTagGroup: tags },
-    },
-  ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationArgs>({
-      query: GET_ORGANIZATION_QUERY,
-      variables: {
-        input: {
-          slug: organizationSlug,
-          lang: locale as ContentLanguage,
-        },
+  const {
+    data: { getGenericTagsInTagGroup: tags },
+  } = await apolloClient.query<Query, QueryGetGenericTagsInTagGroupArgs>({
+    query: GET_GENERIC_TAG_IN_TAG_GROUP_QUERY,
+    variables: {
+      input: {
+        lang: locale as ContentLanguage,
+        tagGroupSlug: tagGroupCategory,
       },
-    }),
-    apolloClient.query<Query, QueryGetGenericTagsInTagGroupArgs>({
-      query: GET_GENERIC_TAG_IN_TAG_GROUP_QUERY,
-      variables: {
-        input: {
-          lang: locale as ContentLanguage,
-          tagGroupSlug: tagGroupCategory,
-        },
-      },
-    }),
-  ])
+    },
+  })
 
   return {
-    organization: getOrganization,
     categories: tags ?? [],
     locale: locale as Locale,
     showSearchInHeader: false,
@@ -224,5 +198,5 @@ GrantsHome.getProps = async ({ apolloClient, locale }) => {
 }
 
 export default withMainLayout(
-  withCustomPageWrapper(CustomPageUniqueIdentifier.Grants, GrantsHome),
+  withCustomPageWrapper(CustomPageUniqueIdentifier.Grants, GrantsSearchResults),
 )
