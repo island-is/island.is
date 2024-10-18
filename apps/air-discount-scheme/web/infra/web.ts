@@ -60,6 +60,7 @@ export const serviceSetup = (services: {
           prod: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
             'nginx.ingress.kubernetes.io/configuration-snippet':
               'rewrite /$ https://island.is/loftbru; rewrite /en$ https://island.is/en/lower-airfares-for-residents-in-rural-areas;',
           },
