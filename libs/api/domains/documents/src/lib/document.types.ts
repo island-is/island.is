@@ -1,6 +1,7 @@
 import { FileType } from './models/v2/documentContent.model'
 
 export const HEALTH_CATEGORY_ID = '3'
+export const LAW_AND_ORDER_CATEGORY_ID = '10'
 
 export class DocumentTypeFilter {
   senderName!: string

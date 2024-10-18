@@ -101,9 +101,4 @@ export class DocumentsInput {
   @IsOptional()
   @IsInt()
   readonly pageSize?: number
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsBoolean()
-  isLegalGuardian?: boolean
 }
