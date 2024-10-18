@@ -37,6 +37,7 @@ export const Form2 = () => {
 
   const { data, loading } = useGetOrgansListQuery({
     variables: { locale: lang },
+    fetchPolicy: 'no-cache',
   })
 
   const isDonor = data?.healthDirectorateOrganDonation.donor?.isDonor
