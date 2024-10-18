@@ -156,11 +156,15 @@ export const Overview = () => {
             }
           />
         </Box>
+        {/* 
+        NOTE: Temporarily hidden while list of laws broken is not complete in
+        indictment cases
+        
         {lawsBroken.size > 0 && (
           <Box marginBottom={5}>
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
-        )}
+        )} */}
         {workingCase.caseFiles && (
           <Box component="section" marginBottom={5}>
             <IndictmentCaseFilesList workingCase={workingCase} />

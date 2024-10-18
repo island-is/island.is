@@ -36,7 +36,7 @@ export class OfficialJournalOfIcelandApplicationResolver {
   ) {}
 
   @Query(() => GetCommentsResponse, {
-    name: 'officialJournalOfIcelandApplicationGetComments',
+    name: 'OJOIAGetComments',
   })
   getComments(
     @Args('input') input: GetCommentsInput,
@@ -46,7 +46,7 @@ export class OfficialJournalOfIcelandApplicationResolver {
   }
 
   @Mutation(() => PostCommentResponse, {
-    name: 'officialJournalOfIcelandApplicationPostComment',
+    name: 'OJOIAPostComment',
   })
   postComment(
     @Args('input') input: PostCommentInput,

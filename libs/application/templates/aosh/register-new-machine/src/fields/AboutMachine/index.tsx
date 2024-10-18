@@ -260,9 +260,15 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
                     option && setSubCategory(option.value)
                     option &&
                       setRegistrationNumberPrefix(
-                        subCategories.find(
-                          ({ subCat }) => subCat.nameIs === option.value.nameIs,
-                        )?.registrationNumberPrefix ?? '',
+                        fromService && categoriesFromService.length
+                          ? categoriesFromService.find(
+                              ({ subcategoryIs }) =>
+                                subcategoryIs === option.value.nameIs,
+                            )?.registrationNumberPrefix ?? ''
+                          : subCategories.find(
+                              ({ subCat }) =>
+                                subCat.nameIs === option.value.nameIs,
+                            )?.registrationNumberPrefix ?? '',
                       )
                     fromService &&
                       categoriesFromService.length &&
