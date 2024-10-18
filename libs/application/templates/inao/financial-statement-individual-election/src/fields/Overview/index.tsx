@@ -22,7 +22,7 @@ import { GREATER } from '../../lib/utils/constants'
 import { m } from '../../lib/utils/messages'
 import { CapitalNumberOverview } from './CapitalNumbersOverview'
 import { AssetDebtEquityOverview } from './AssetDebtEquityOverview'
-import { FileValueLine } from './FileValueLine'
+import { FileValueLine } from '../../../../shared/components/FileValueLine'
 import { AboutOverview } from '../../../../shared/components/AboutOverview'
 import { ValueLine } from '../../../../shared/components/ValueLine'
 import { BottomBar } from '../../../../shared/components/BottomBar'
@@ -175,7 +175,10 @@ export const Overview = ({
       <Box paddingY={3}>
         {fileName ? (
           <>
-            <FileValueLine label={answers.attachments?.file?.[0]?.name} />
+            <FileValueLine
+              label={answers.attachments?.file?.[0]?.name}
+              files={m.files}
+            />
             <Divider />
           </>
         ) : null}

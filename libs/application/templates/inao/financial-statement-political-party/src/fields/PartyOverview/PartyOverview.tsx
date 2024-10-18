@@ -17,7 +17,7 @@ import { m } from '../../lib/messages'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
 import { formatCurrency } from '../../utils/helpers'
-import { FileValueLine } from '../../components/FileValueLine'
+import { FileValueLine } from '../../../../shared/components/FileValueLine'
 import { AssetDebtEquityOverview } from '../../components/AssetDebtEquityOverview'
 import {
   sectionColumn,
@@ -175,7 +175,10 @@ export const PartyOverview = ({
       <Divider />
       {fileName ? (
         <>
-          <FileValueLine label={answers.attachments?.file?.[0]?.name} />
+          <FileValueLine
+            label={answers.attachments?.file?.[0]?.name}
+            files={m.files}
+          />
           <Divider />
         </>
       ) : null}

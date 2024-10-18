@@ -21,7 +21,6 @@ import { FinancialStatementCemetery } from '../../lib/dataSchema'
 import { currencyStringToNumber, formatCurrency } from '../../utils/helpers'
 import { CapitalNumberOverview } from './CapitalNumbersOverview'
 import { BOARDMEMEBER } from '../../utils/constants'
-import { FileValueLine } from './FileValueLine'
 import {
   columnStyle,
   sectionColumn,
@@ -30,6 +29,7 @@ import {
 import { AboutOverview } from '../../../../shared/components/AboutOverview'
 import { ValueLine } from '../../../../shared/components/ValueLine'
 import { BottomBar } from '../../../../shared/components/BottomBar'
+import { FileValueLine } from '../../../../shared/components/FileValueLine'
 
 export const CemeteryOverview = ({
   application,
@@ -317,7 +317,10 @@ export const CemeteryOverview = ({
       ) : null}
       {fileName ? (
         <>
-          <FileValueLine label={answers.attachments?.file?.[0]?.name} />
+          <FileValueLine
+            label={answers.attachments?.file?.[0]?.name}
+            files={m.files}
+          />
           <Divider />
         </>
       ) : null}

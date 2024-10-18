@@ -1,17 +1,18 @@
 import { ActionCard, Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../lib/messages'
+import { MessageDescriptor } from 'react-intl'
 
 type Props = {
   label?: string
+  files: MessageDescriptor
 }
 
-export const FileValueLine = ({ label = '' }: Props) => {
+export const FileValueLine = ({ label = '', files }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
     <Box paddingY={2}>
-      <Text variant="h3">{formatMessage(m.files)}</Text>
+      <Text variant="h3">{formatMessage(files)}</Text>
       <Box paddingY={2}>
         <ActionCard
           heading={label}

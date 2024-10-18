@@ -24,7 +24,7 @@ import {
 } from '../../components/css/overviewStyles.css'
 import { CapitalNumberOverview } from '../../components/CapitalNumberOverview'
 import { AssetDebtEquityOverview } from '../../components/AssetDebtEquityOverview'
-import { FileValueLine } from '../../components/FileValueLine'
+import { FileValueLine } from '../../../../shared/components/FileValueLine'
 import { AboutOverview } from '../../../../shared/components/AboutOverview'
 import { BottomBar } from '../../../../shared/components/BottomBar'
 
@@ -121,7 +121,10 @@ export const Overview = ({
       <Box paddingY={3}>
         {fileName ? (
           <>
-            <FileValueLine label={answers.attachments?.file?.[0]?.name} />
+            <FileValueLine
+              label={answers.attachments?.file?.[0]?.name}
+              files={m.files}
+            />
             <Divider />
           </>
         ) : null}
