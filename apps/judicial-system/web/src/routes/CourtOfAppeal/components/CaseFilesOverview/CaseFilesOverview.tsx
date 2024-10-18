@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -12,7 +12,7 @@ import {
 
 import { strings } from './CaseFilesOverview.strings'
 
-const CaseFilesOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
+const CaseFilesOverview = () => {
   const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()

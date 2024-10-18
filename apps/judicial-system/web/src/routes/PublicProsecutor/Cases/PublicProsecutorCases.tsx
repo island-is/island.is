@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage } from '@island.is/island-ui/core'
@@ -9,14 +9,17 @@ import {
   PageHeader,
   SharedPageLayout,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseIndictmentRulingDecision,
+  CaseListEntry,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCasesQuery } from '../../Shared/Cases/cases.generated'
 import CasesForReview from '../Tables/CasesForReview'
 import CasesReviewComplete from '../Tables/CasesReviewed'
 import * as styles from '../../Shared/Cases/Cases.css'
 
-export const PublicProsecutorCases: React.FC = () => {
+export const PublicProsecutorCases: FC = () => {
   const { formatMessage } = useIntl()
 
   const { data, error, loading } = useCasesQuery({
@@ -32,7 +35,12 @@ export const PublicProsecutorCases: React.FC = () => {
         if (
           c.state &&
           isCompletedCase(c.state) &&
-          !c.indictmentReviewDecision
+          !c.indictmentReviewDecision &&
+          c.indictmentRulingDecision &&
+          [
+            CaseIndictmentRulingDecision.RULING,
+            CaseIndictmentRulingDecision.FINE,
+          ].includes(c.indictmentRulingDecision)
         ) {
           acc.casesForReview.push(c)
         } else if (c.indictmentReviewDecision) {

@@ -76,6 +76,7 @@ export enum FileType {
   INCOME = 'Income',
   OTHER = 'Other',
   SPOUSEFILES = 'SpouseFiles',
+  CHILDRENFILES = 'ChildrenFiles',
 }
 
 export enum StaffRole {

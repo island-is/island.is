@@ -57,4 +57,7 @@ export class MunicipalityModel implements Municipality {
 
   @Field(() => String)
   readonly childrenAid!: ChildrenAid
+
+  @Field()
+  readonly decemberCompensation!: number
 }

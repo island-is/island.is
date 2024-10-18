@@ -154,6 +154,7 @@ export const withAutoAuth = ({
     if (options.mode === 'tokenExchange' && !auth) {
       const message = `Fetch failure (${name}): Could not perform token exchange. Auth object was missing.`
       logger.error({
+        fetch: { name },
         url: request.url,
         message,
       })

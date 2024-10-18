@@ -24,14 +24,16 @@ If you want to contribute to the repository, please make sure to follow [this gu
 
 ## Prerequisites
 
-- You have Node installed `^14.17.0` and Yarn at `^1.22.0`.
+- You have Node installed `^20.15.0` and Yarn at `^3.2.3`.
 - You have [Docker](https://docs.docker.com/desktop/) installed.
 - You have [direnv](https://direnv.net/) installed.
 - You have [Java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).
+- You have [CMake](https://cmake.org/) installed.
+- You have [gcc](https://gcc.gnu.org/) installed (Linux MacOs).
+- You have [g++](https://gcc.gnu.org/) installed (Linux MacOs).
 
-{% hint style="info" %}
-If you are running on Windows we recommend using [Docker and WSL2](https://docs.docker.com/desktop/windows/wsl/)
-{% endhint %}
+> [!NOTE]
+> If you are running on Windows we recommend using [Docker and WSL2](https://docs.docker.com/desktop/windows/wsl/)
 
 ### For fetching secrets
 
@@ -40,7 +42,30 @@ If you are running on Windows we recommend using [Docker and WSL2](https://docs.
 - You have [jq](https://stedolan.github.io/jq/) installed.
   - `brew install jq`
 
-## Usage
+## Devcontainers
+
+Devcontainers provide a consistent development environment using Docker containers, ensuring all developers have the same setup.
+
+### Setup
+
+1. **Requirements**:
+
+   - Docker
+   - Visual Studio Code (VS Code) with the Remote - Containers extension
+
+2. **Using Devcontainers**:
+   - Refer to the [Devcontainers documentation](https://code.visualstudio.com/docs/remote/containers) for detailed instructions on setting up and using Devcontainers with VS Code.
+
+### devcontainers-cli Tool
+
+`devcontainers-cli` offers command-line management of devcontainers.
+
+1. **Installation and Usage**:
+   - Refer to the [devcontainers-cli documentation](https://github.com/devcontainers/cli) for detailed instructions on installation and usage.
+
+Using Devcontainers and the `devcontainers-cli` tool ensures a uniform development environment, reducing setup time and discrepancies between machines.
+
+## Setting up Digital Iceland
 
 There are many projects that can be built and run. [Click here to see the full list](https://github.com/island-is/island.is/blob/main/nx.json).
 

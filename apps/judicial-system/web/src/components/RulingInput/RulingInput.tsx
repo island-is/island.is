@@ -1,4 +1,4 @@
-import React from 'react'
+import { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
@@ -12,12 +12,11 @@ import { useCase, useDeb } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   rows?: number
 }
 
-const RulingInput: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { workingCase, setWorkingCase, rows } = props
+const RulingInput: FC<Props> = ({ workingCase, setWorkingCase, rows }) => {
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
 

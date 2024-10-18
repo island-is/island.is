@@ -3,34 +3,41 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/passports/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/clients/passports/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/passports"],
       "options": {
-        "jestConfig": "libs/clients/passports/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/passports/jest.config.ts"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10001/SKRA-Cloud-Protected/getOpenAPI?serviceCode=Forskraning-V1 -H 'Accept: application/json' > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/passports"
       }
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn openapi-generator -o libs/clients/passports/gen/fetch -i libs/clients/passports/src/clientConfig.yaml",
-          "prettier --write libs/clients/passports/src/clientConfig.yaml"
+          "yarn openapi-generator -o libs/clients/passports/gen/fetch -i libs/clients/passports/src/clientConfig.json",
+          "prettier --write libs/clients/passports/src/clientConfig.json"
         ]
       },
       "outputs": [
         "{projectRoot}/gen/fetch",
-        "{projectRoot}/src/clientConfig.yaml"
+        "{projectRoot}/src/clientConfig.json"
       ]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/web",
   "projectType": "application",
+  "tags": ["scope:react-next"],
   "generators": {},
   "targets": {
     "build": {
@@ -51,7 +52,8 @@
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
-        "target": "node"
+        "target": "node",
+        "webpackConfig": "apps/web/webpack.config.js"
       },
       "configurations": {
         "development": {},
@@ -80,7 +82,7 @@
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/web/screens/**/*.{js,ts,tsx}'"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/web/{screens,components}/**/!(*.d).{js,ts,tsx}'"
       }
     },
     "export": {
@@ -90,16 +92,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/web/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/web/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/web/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/web"]
     },
@@ -138,7 +136,8 @@
         "parallel": true
       }
     },
-    "docker-next": {}
-  },
-  "tags": ["scope:react-next"]
+    "docker-next": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
+    }
+  }
 }

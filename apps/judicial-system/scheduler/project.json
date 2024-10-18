@@ -4,6 +4,7 @@
   "sourceRoot": "apps/judicial-system/scheduler/src",
   "projectType": "application",
   "prefix": "judicial-system-scheduler",
+  "tags": ["scope:judicial-system-api"],
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
@@ -29,22 +30,17 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/judicial-system/scheduler/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/scheduler"],
       "options": {
-        "jestConfig": "apps/judicial-system/scheduler/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/judicial-system/scheduler/jest.config.ts"
       }
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:judicial-system-api"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

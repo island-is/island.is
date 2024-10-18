@@ -290,63 +290,56 @@ const ViewStudent = ({
 
           {doesStudentBelongToUser && (
             <>
-              <GridRow>
-                {/* Completed hours */}
-                <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 0]}>
-                  <Text variant="h4">
-                    {formatMessage(m.viewStudentCompleteHours)}
-                  </Text>
-                  <Text variant="default">
-                    {student.book?.totalLessonCount % 2 === 0
-                      ? student.book?.totalLessonCount
-                      : student.book?.totalLessonCount.toFixed(2) ?? 0}
-                  </Text>
-                </GridColumn>
-                {/* Has permission for practice driving */}
-                <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 0]}>
-                  <Text variant="h4">
-                    {formatMessage(m.viewStudentPracticeDrivingTitle)}
-                  </Text>
-                  <Text variant="default">
-                    {student.book?.practiceDriving
-                      ? formatMessage(m.viewStudentYes)
-                      : formatMessage(m.viewStudentNo)}
-                  </Text>
-                </GridColumn>
-              </GridRow>
-              <GridRow className={styles.hideRow}>
-                {/* Completed schools */}
-                <GridColumn span={['12/12', '6/12']}>
-                  <Text variant="h4">
-                    {formatMessage(m.viewStudentCompleteSchools)}
-                  </Text>
-                  {completedSchools.length > 0 ? (
-                    completedSchools?.map((school, key) => {
-                      const textStr = getExamString({
-                        name: school.schoolTypeName,
-                        examDate: school.examDate,
-                        status: school.statusName,
+              {licenseCategory !== 'BE' && (
+                <GridRow>
+                  {/* Completed schools */}
+                  <GridColumn span={['12/12', '6/12']}>
+                    <Text variant="h4">
+                      {formatMessage(m.viewStudentCompleteSchools)}
+                    </Text>
+                    {completedSchools.length > 0 ? (
+                      completedSchools?.map((school, key) => {
+                        const textStr = getExamString({
+                          name: school.schoolTypeName,
+                          examDate: school.examDate,
+                          status: school.statusName,
+                        })
+                        return (
+                          <BulletList type="ul" color="dark300">
+                            <Bullet>
+                              <Text key={key} variant="default">
+                                {textStr}
+                              </Text>
+                            </Bullet>
+                          </BulletList>
+                        )
                       })
-                      return (
-                        <BulletList type="ul" color="dark300">
-                          <Bullet>
-                            <Text key={key} variant="default">
-                              {textStr}
-                            </Text>
-                          </Bullet>
-                        </BulletList>
-                      )
-                    })
-                  ) : (
-                    <BulletList type="ul" color="dark300">
-                      <Bullet>
-                        <Text variant="default">
-                          {formatMessage(m.viewStudentNoCompleteSchools)}
-                        </Text>
-                      </Bullet>
-                    </BulletList>
-                  )}
-                </GridColumn>
+                    ) : (
+                      <BulletList type="ul" color="dark300">
+                        <Bullet>
+                          <Text variant="default">
+                            {formatMessage(m.viewStudentNoCompleteSchools)}
+                          </Text>
+                        </Bullet>
+                      </BulletList>
+                    )}
+                  </GridColumn>
+
+                  {/* Has permission for practice driving */}
+                  <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 0]}>
+                    <Text variant="h4">
+                      {formatMessage(m.viewStudentPracticeDrivingTitle)}
+                    </Text>
+                    <Text variant="default">
+                      {student.book?.practiceDriving
+                        ? formatMessage(m.viewStudentYes)
+                        : formatMessage(m.viewStudentNo)}
+                    </Text>
+                  </GridColumn>
+                </GridRow>
+              )}
+
+              <GridRow className={styles.hideRow}>
                 {/* Completed exams */}
                 <GridColumn span={['12/12', '6/12']}>
                   <Text variant="h4">
@@ -381,6 +374,18 @@ const ViewStudent = ({
                       </Bullet>
                     </BulletList>
                   )}
+                </GridColumn>
+
+                {/* Completed hours */}
+                <GridColumn span={['12/12', '6/12']} paddingBottom={[2, 0]}>
+                  <Text variant="h4">
+                    {formatMessage(m.viewStudentCompleteHours)}
+                  </Text>
+                  <Text variant="default">
+                    {student.book?.totalLessonCount % 2 === 0
+                      ? student.book?.totalLessonCount
+                      : student.book?.totalLessonCount.toFixed(2) ?? 0}
+                  </Text>
                 </GridColumn>
               </GridRow>
               {/* Allow practice driving button */}

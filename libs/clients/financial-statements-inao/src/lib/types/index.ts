@@ -48,6 +48,11 @@ export enum ContactType {
   Inspector = 2,
 }
 
+export enum ClientRoles {
+  Individual = 'Einstaklingur',
+  BoardMember = 'Stjórnarmaður',
+}
+
 export type Client = {
   nationalId: string
   name?: string

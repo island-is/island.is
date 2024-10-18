@@ -1,10 +1,11 @@
 import { getModelToken } from '@nestjs/sequelize'
-import request from 'supertest'
 import times from 'lodash/times'
+import request from 'supertest'
 
 import {
-  Client,
+  ClientDelegationType,
   Delegation,
+  DelegationDelegationType,
   DelegationDTO,
   DelegationDTOMapper,
   DelegationProviderModel,
@@ -17,29 +18,30 @@ import {
   PersonalRepresentativeRightType,
   PersonalRepresentativeType,
 } from '@island.is/auth-api-lib'
+import { AuthScope } from '@island.is/auth/scopes'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import {
+  createClient,
+  createDelegation,
+  createDelegationModels,
+  getFakeName,
+} from '@island.is/services/auth/testing'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
   getPersonalRepresentativeDelegationType,
+  NationalRegistryClientPerson,
 } from '@island.is/shared/types'
-import { AuthScope } from '@island.is/auth/scopes'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import {
   createCurrentUser,
   createNationalId,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
-import { TestApp, getRequestMethod } from '@island.is/testing/nest'
-import { NationalRegistryClientPerson } from '@island.is/shared/types'
-import {
-  createDelegation,
-  getFakeName,
-  createDelegationModels,
-  createClient,
-} from '@island.is/services/auth/testing'
+import { getRequestMethod, TestApp } from '@island.is/testing/nest'
 
 import {
+  delegationTypes,
   Scopes,
   setupWithAuth,
   setupWithoutAuth,
@@ -84,6 +86,12 @@ const client = createClient({
   supportsLegalGuardians: true,
   supportsProcuringHolders: true,
   supportsPersonalRepresentatives: true,
+  supportedDelegationTypes: [
+    AuthDelegationType.Custom,
+    AuthDelegationType.LegalGuardian,
+    AuthDelegationType.ProcurationHolder,
+    AuthDelegationType.PersonalRepresentative,
+  ],
 })
 
 const user = createCurrentUser({
@@ -144,7 +152,8 @@ describe('ActorDelegationsController', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
     let delegationModel: typeof Delegation
-    let clientModel: typeof Client
+    let delegationDelegationTypeModel: typeof DelegationDelegationType
+    let clientDelegationTypeModel: typeof ClientDelegationType
     let nationalRegistryApi: NationalRegistryClientService
 
     beforeAll(async () => {
@@ -162,19 +171,24 @@ describe('ActorDelegationsController', () => {
 
       // Get reference on Delegation and Client models to seed DB
       delegationModel = app.get<typeof Delegation>(getModelToken(Delegation))
-      clientModel = app.get<typeof Client>(getModelToken(Client))
+      clientDelegationTypeModel = app.get<typeof ClientDelegationType>(
+        getModelToken(ClientDelegationType),
+      )
+      delegationDelegationTypeModel = app.get<typeof DelegationDelegationType>(
+        getModelToken(DelegationDelegationType),
+      )
       nationalRegistryApi = app.get(NationalRegistryClientService)
     })
 
     beforeEach(() => {
-      return clientModel.update(
+      return clientDelegationTypeModel.bulkCreate(
+        delegationTypes.map((type) => ({
+          clientId: client.clientId,
+          delegationType: type,
+        })),
         {
-          supportsCustomDelegation: true,
-          supportsLegalGuardians: true,
-          supportsProcuringHolders: true,
-          supportsPersonalRepresentatives: true,
+          updateOnDuplicate: ['modified'],
         },
-        { where: { clientId: client.clientId } },
       )
     })
 
@@ -282,31 +296,79 @@ describe('ActorDelegationsController', () => {
         )
       })
 
-      it('should return custom delegations when the delegationTypes filter has custom type', async () => {
+      it('should return custom delegations and general mandate when the delegationTypes filter has both types and delegation exists for both', async () => {
         // Arrange
+        const delegation = createDelegation({
+          fromNationalId: nationalRegistryUser.nationalId,
+          toNationalId: user.nationalId,
+          scopes: [],
+        })
+
+        await delegationModel.create(delegation)
+
+        await delegationDelegationTypeModel.create({
+          delegationId: delegation.id,
+          delegationTypeId: AuthDelegationType.GeneralMandate,
+        })
+
         await createDelegationModels(delegationModel, [
           mockDelegations.incomingWithOtherDomain,
         ])
-        const expectedModel = await findExpectedMergedDelegationModels(
-          delegationModel,
-          mockDelegations.incomingWithOtherDomain.id,
-          [Scopes[0].name],
-        )
 
         // Act
         const res = await server.get(
-          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}`,
+          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&delegationTypes=${AuthDelegationType.GeneralMandate}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(2)
+        expect(
+          res.body
+            .map((d: MergedDelegationDTO) => d.types)
+            .flat()
+            .sort(),
+        ).toEqual(
+          [AuthDelegationType.Custom, AuthDelegationType.GeneralMandate].sort(),
+        )
+      })
+
+      it('should return a merged object with both Custom and GeneralMandate types', async () => {
+        // Arrange
+        const delegation = createDelegation({
+          fromNationalId:
+            mockDelegations.incomingWithOtherDomain.fromNationalId,
+          toNationalId: user.nationalId,
+          domainName: null,
+          scopes: [],
+        })
+
+        await delegationModel.create(delegation)
+
+        await delegationDelegationTypeModel.create({
+          delegationId: delegation.id,
+          delegationTypeId: AuthDelegationType.GeneralMandate,
+        })
+
+        await createDelegationModels(delegationModel, [
+          mockDelegations.incomingWithOtherDomain,
+        ])
+
+        // Act
+        const res = await server.get(
+          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&delegationTypes=${AuthDelegationType.GeneralMandate}`,
         )
 
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingMergedDelegations(
-          res.body[0],
-          updateDelegationFromNameToPersonName(
-            expectedModel,
-            nationalRegistryUsers,
-          ),
+        expect(
+          res.body
+            .map((d: MergedDelegationDTO) => d.types)
+            .flat()
+            .sort(),
+        ).toEqual(
+          [AuthDelegationType.Custom, AuthDelegationType.GeneralMandate].sort(),
         )
       })
 
@@ -324,6 +386,34 @@ describe('ActorDelegationsController', () => {
         // Act
         const res = await server.get(
           `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&otherUser=${mockDelegations.incoming.fromNationalId}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(1)
+        expectMatchingMergedDelegations(
+          res.body[0],
+          updateDelegationFromNameToPersonName(
+            expectedModel,
+            nationalRegistryUsers,
+          ),
+        )
+      })
+
+      it('should return only delegations related to the provided otherUser national id without the general mandate since there is none', async () => {
+        // Arrange
+        await createDelegationModels(delegationModel, [
+          mockDelegations.incoming,
+        ])
+        const expectedModel = await findExpectedMergedDelegationModels(
+          delegationModel,
+          mockDelegations.incoming.id,
+          [Scopes[0].name],
+        )
+
+        // Act
+        const res = await server.get(
+          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&delegationTypes${AuthDelegationType.GeneralMandate}&otherUser=${mockDelegations.incoming.fromNationalId}`,
         )
 
         // Assert
@@ -569,10 +659,12 @@ describe('ActorDelegationsController', () => {
         await createDelegationModels(delegationModel, [
           mockDelegations.incoming,
         ])
-        await clientModel.update(
-          { supportsCustomDelegation: false },
-          { where: { clientId: client.clientId } },
-        )
+        await clientDelegationTypeModel.destroy({
+          where: {
+            clientId: client.clientId,
+            delegationType: AuthDelegationType.Custom,
+          },
+        })
 
         // Act
         const res = await server.get(`${path}${query}`)
@@ -616,11 +708,12 @@ describe('ActorDelegationsController', () => {
         })
 
         it('should not return delegations when client does not support legal guardian delegations', async () => {
-          // Arrange
-          await clientModel.update(
-            { supportsLegalGuardians: false },
-            { where: { clientId: client.clientId } },
-          )
+          await clientDelegationTypeModel.destroy({
+            where: {
+              clientId: client.clientId,
+              delegationType: AuthDelegationType.LegalGuardian,
+            },
+          })
 
           // Act
           const res = await server.get(`${path}${query}`)
@@ -698,10 +791,12 @@ describe('ActorDelegationsController', () => {
 
         it('should not return delegations when client does not support procuring holder delegations', async () => {
           // Arrange
-          await clientModel.update(
-            { supportsProcuringHolders: false },
-            { where: { clientId: client.clientId } },
-          )
+          await clientDelegationTypeModel.destroy({
+            where: {
+              clientId: client.clientId,
+              delegationType: AuthDelegationType.ProcurationHolder,
+            },
+          })
 
           // Act
           const res = await server.get(`${path}${query}`)
@@ -783,15 +878,9 @@ describe('ActorDelegationsController', () => {
             externalUserId: '1',
           })
 
-          const dp = await delegationProviderModel.create({
-            id: AuthDelegationProvider.PersonalRepresentativeRegistry,
-            name: 'Talsmannagrunnur',
-            description: 'Talsmannagrunnur',
-          })
-
           const dt = await delegationTypeModel.create({
             id: getPersonalRepresentativeDelegationType('prRightType'),
-            providerId: dp.id,
+            providerId: AuthDelegationProvider.PersonalRepresentativeRegistry,
             name: `Personal Representative: prRightType`,
             description: `Personal representative delegation type for right type prRightType`,
           })
@@ -861,10 +950,12 @@ describe('ActorDelegationsController', () => {
 
         it('should not return delegations when client does not support personal representative delegations', async () => {
           // Prepare
-          await clientModel.update(
-            { supportsPersonalRepresentatives: false },
-            { where: { clientId: client.clientId } },
-          )
+          await clientDelegationTypeModel.destroy({
+            where: {
+              clientId: client.clientId,
+              delegationType: AuthDelegationType.PersonalRepresentative,
+            },
+          })
 
           // Act
           const res = await server.get(`${path}${query}`)

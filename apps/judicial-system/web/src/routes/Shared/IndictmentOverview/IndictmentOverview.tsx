@@ -1,20 +1,24 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box } from '@island.is/island-ui/core'
+import { Accordion, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { isCompletedCase } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isDefenceUser,
+} from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
+  IndictmentCaseScheduledCard,
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
-  InfoCardCaseScheduledIndictment,
   InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
@@ -23,14 +27,16 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseIndictmentRulingDecision,
   CaseState,
+  IndictmentDecision,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { ReviewDecision } from '../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import { strings } from './IndictmentOverview.strings'
 
-const IndictmentOverview = () => {
+const IndictmentOverview: FC = () => {
   const router = useRouter()
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -47,12 +53,21 @@ const IndictmentOverview = () => {
     useState(false)
   const shouldDisplayReviewDecision =
     isCompletedCase(workingCase.state) &&
-    workingCase.indictmentReviewer?.id === user?.id
+    workingCase.indictmentReviewer?.id === user?.id &&
+    Boolean(!workingCase.indictmentReviewDecision)
+  const canAddFiles =
+    isDefenceUser(user) &&
+    workingCase.indictmentDecision !==
+      IndictmentDecision.POSTPONING_UNTIL_VERDICT
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
+
+  const hasLawsBroken = lawsBroken.size > 0
+  const hasMergeCases =
+    workingCase.mergedCases && workingCase.mergedCases.length > 0
 
   return (
     <PageLayout
@@ -78,38 +93,79 @@ const IndictmentOverview = () => {
             : formatMessage(strings.inProgressTitle)}
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        {caseHasBeenReceivedByCourt && workingCase.court && latestDate?.date && (
-          <Box component="section" marginBottom={5}>
-            <InfoCardCaseScheduledIndictment
-              court={workingCase.court}
-              courtDate={latestDate.date}
-              courtRoom={latestDate.location}
-              postponedIndefinitelyExplanation={
-                workingCase.postponedIndefinitelyExplanation
-              }
-            />
-          </Box>
-        )}
+        {caseHasBeenReceivedByCourt &&
+          workingCase.court &&
+          latestDate?.date &&
+          workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
+          workingCase.indictmentDecision !==
+            IndictmentDecision.REDISTRIBUTING && (
+            <Box component="section" marginBottom={5}>
+              <IndictmentCaseScheduledCard
+                court={workingCase.court}
+                indictmentDecision={workingCase.indictmentDecision}
+                courtDate={latestDate.date}
+                courtRoom={latestDate.location}
+                postponedIndefinitelyExplanation={
+                  workingCase.postponedIndefinitelyExplanation
+                }
+                courtSessionType={workingCase.courtSessionType}
+              />
+            </Box>
+          )}
         <Box component="section" marginBottom={5}>
           {caseIsClosed ? (
             <InfoCardClosedIndictment
-              displayAppealExpirationInfo={user?.role === UserRole.DEFENDER}
+              displayAppealExpirationInfo={
+                workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING &&
+                (user?.role === UserRole.DEFENDER ||
+                  workingCase.indictmentReviewer?.id === user?.id)
+              }
             />
           ) : (
             <InfoCardActiveIndictment />
           )}
         </Box>
-        {lawsBroken.size > 0 && (
+        {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
-            <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            {hasLawsBroken && (
+              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            )}
+            {hasMergeCases && (
+              <Accordion>
+                {workingCase.mergedCases?.map((mergedCase) => (
+                  <Box key={mergedCase.id}>
+                    <ConnectedCaseFilesAccordionItem
+                      connectedCaseParentId={workingCase.id}
+                      connectedCase={mergedCase}
+                    />
+                  </Box>
+                ))}
+              </Accordion>
+            )}
           </Box>
         )}
         {workingCase.caseFiles && (
           <Box
             component="section"
-            marginBottom={shouldDisplayReviewDecision ? 5 : 10}
+            marginBottom={shouldDisplayReviewDecision || canAddFiles ? 5 : 10}
           >
             <IndictmentCaseFilesList workingCase={workingCase} />
+          </Box>
+        )}
+        {canAddFiles && (
+          <Box display="flex" justifyContent="flexEnd" marginBottom={10}>
+            <Button
+              size="small"
+              icon="add"
+              onClick={() =>
+                router.push(
+                  `${constants.DEFENDER_ADD_FILES_ROUTE}/${workingCase.id}`,
+                )
+              }
+            >
+              {formatMessage(strings.addDocumentsButtonText)}
+            </Button>
           </Box>
         )}
         {shouldDisplayReviewDecision && (

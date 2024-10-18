@@ -4,6 +4,7 @@
   "sourceRoot": "apps/services/xroad-collector/src",
   "projectType": "application",
   "prefix": "services-xroad-collector",
+  "tags": ["scope:nest"],
   "generators": {},
   "targets": {
     "build": {
@@ -31,22 +32,17 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/services/xroad-collector/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/services/xroad-collector/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/xroad-collector/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/xroad-collector"]
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

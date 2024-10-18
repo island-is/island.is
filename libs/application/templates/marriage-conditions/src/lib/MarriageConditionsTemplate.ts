@@ -15,6 +15,7 @@ import {
   UserProfileApi,
   DistrictsApi,
   InstitutionNationalIds,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { assign } from 'xstate'
 import { getSpouseNationalId } from './utils'
@@ -39,6 +40,9 @@ const pruneAfter = (time: number) => {
   }
 }
 
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.MARRIAGE_CONDITIONS]
+
 const MarriageConditionsTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -47,6 +51,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
   type: ApplicationTypes.MARRIAGE_CONDITIONS,
   name: m.applicationTitle,
   dataSchema: dataSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

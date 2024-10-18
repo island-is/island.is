@@ -90,7 +90,6 @@ describe('InternalCaseController - Deliver indictment to court', () => {
     it('should deliver the indictment', () => {
       expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
         theCase.type,
-        theCase.state,
         `${theCase.id}/indictment.pdf`,
       )
       expect(createIndictment).toHaveBeenCalledWith(

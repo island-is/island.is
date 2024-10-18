@@ -71,7 +71,6 @@ describe('CaseController - Get indictment pdf', () => {
     it('should generate pdf after failing to get it from AWS S3', () => {
       expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
         theCase.type,
-        theCase.state,
         `${caseId}/indictment.pdf`,
       )
       expect(createIndictment).toHaveBeenCalledWith(

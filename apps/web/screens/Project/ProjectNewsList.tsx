@@ -1,4 +1,8 @@
+import capitalize from 'lodash/capitalize'
+import { useRouter } from 'next/router'
+
 import { BreadCrumbItem } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import { HeadWithSocialSharing, NewsList } from '@island.is/web/components'
 import { NewsListSidebar } from '@island.is/web/components'
 import {
@@ -23,9 +27,8 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { Locale } from 'locale'
-import capitalize from 'lodash/capitalize'
-import { useRouter } from 'next/router'
+import { getIntParam } from '@island.is/web/utils/queryParams'
+
 import {
   GET_CONTENT_SLUG,
   GET_NAMESPACE_QUERY,
@@ -198,22 +201,12 @@ const createDatesMap = (datesList: string[]) => {
   )
 }
 
-const getIntParam = (s: string | string[]) => {
-  const i = parseInt(Array.isArray(s) ? s[0] : s, 10)
-  if (!isNaN(i)) return i
-}
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
 ProjectNewsList.getProps = async ({ apolloClient, query, locale }) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  const year = getIntParam(query.y)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  const month = year && getIntParam(query.m)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  const selectedPage = getIntParam(query.page) ?? 1
+  const year = getIntParam(query.y, { minValue: 1000, maxValue: 9999 })
+  const month = year && getIntParam(query.m, { minValue: 1, maxValue: 12 })
+  const selectedPage = getIntParam(query.page, { minValue: 1 }) ?? 1
 
   const projectPage = (
     await Promise.resolve(
@@ -300,9 +293,7 @@ ProjectNewsList.getProps = async ({ apolloClient, query, locale }) => {
       })
       // map data here to reduce data processing in component
       .then((variables) =>
-        variables.data.getNamespace?.fields
-          ? JSON.parse(variables.data.getNamespace.fields)
-          : {},
+        JSON.parse(variables?.data?.getNamespace?.fields || '{}'),
       ),
   ])
 

@@ -163,11 +163,11 @@ export const PhoneInput = forwardRef(
       : mapBlue(backgroundColor as InputBackgroundColor)
 
     /**
-      Used to handle autofill and paste events.
-      Value cannot start with '+' unless it is from autofill or paste,
-      because NumberFormat doesn't allow it.
-      So we know that if the value starts with '+', then we need to
-      extract the country code from it and set it as the selected country code.
+     Used to handle autofill and paste events.
+     Value cannot start with '+' unless it is from autofill or paste,
+     because NumberFormat doesn't allow it.
+     So we know that if the value starts with '+', then we need to
+     extract the country code from it and set it as the selected country code.
      */
     const handleInputChange = (e: SyntheticEvent<HTMLInputElement>) => {
       if (e.currentTarget.value.startsWith('+')) {
@@ -265,9 +265,6 @@ export const PhoneInput = forwardRef(
                 </label>
               )}
               <Box display="flex">
-                {/**
-                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict*/}
                 <CountryCodeSelect
                   id={selectId}
                   name={selectId}

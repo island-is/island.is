@@ -1,9 +1,9 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-/dist
-/tmp
-/out-tsc
+dist/
+tmp/
+out-tsc/
 **/tsconfig.tsbuildinfo
 infra/mountebank-imposter-config.json
 infra/helm/**/*.tgz
@@ -97,5 +97,3 @@ apps/**/index.html
 .next
 
 .nx/
-
-

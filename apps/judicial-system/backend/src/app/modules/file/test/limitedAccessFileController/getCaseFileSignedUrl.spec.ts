@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { NotFoundException } from '@nestjs/common'
 
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
@@ -60,7 +60,6 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const theCase = {
       id: caseId,
       type: CaseType.INTERNET_USAGE,
-      state: CaseState.ACCEPTED,
     } as Case
 
     beforeEach(async () => {
@@ -70,7 +69,6 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     it('should check if the file exists in AWS S3', () => {
       expect(mockAwsS3Service.objectExists).toHaveBeenCalledWith(
         theCase.type,
-        theCase.state,
         key,
       )
     })
@@ -84,7 +82,6 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     const theCase = {
       id: uuid(),
       type: CaseType.PHONE_TAPPING,
-      state: CaseState.SUBMITTED,
     } as Case
 
     beforeEach(async () => {
@@ -97,9 +94,9 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     it('should get signed url from AWS S3', () => {
       expect(mockAwsS3Service.getSignedUrl).toHaveBeenCalledWith(
         theCase.type,
-        theCase.state,
         key,
         undefined,
+        false,
       )
     })
   })

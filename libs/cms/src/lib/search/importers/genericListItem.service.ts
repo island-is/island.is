@@ -6,6 +6,7 @@ import { ILink, IGenericListItem } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapGenericListItem } from '../../models/genericListItem.model'
 import {
+  extractChildEntryIds,
   extractStringsFromObject,
   pruneNonSearchableSliceUnionFields,
 } from './utils'
@@ -38,7 +39,11 @@ export class GenericListItemSyncService
             2,
           )
 
-          const tags: MappedData['tags'] = []
+          const tags: MappedData['tags'] =
+            mapped.filterTags?.map((tag) => ({
+              type: 'genericTag',
+              key: tag.slug,
+            })) ?? []
 
           if (mapped.genericList) {
             tags.push({
@@ -48,6 +53,15 @@ export class GenericListItemSyncService
           }
           if (mapped.slug) {
             tags.push({ type: 'slug', key: mapped.slug })
+          }
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+          for (const id of childEntryIds) {
+            tags.push({
+              key: id,
+              type: 'hasChildEntryWithId',
+            })
           }
 
           return {

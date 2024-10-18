@@ -3,14 +3,10 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/operating-license/src",
   "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/operating-license/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "extract-strings": {
       "executor": "nx:run-commands",
@@ -24,6 +20,5 @@
         "command": "graphql-codegen --config libs/application/templates/operating-license/codegen.yml"
       }
     }
-  },
-  "tags": ["scope:application-system", "lib:application-system"]
+  }
 }

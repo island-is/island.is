@@ -72,7 +72,7 @@ export class ApplicationService {
         COUNT(*) FILTER (WHERE status = 'rejected') AS rejected,	
         COUNT(*) FILTER (WHERE status = 'approved') AS approved 
       FROM public.application 
-      WHERE created BETWEEN :startDate AND :endDate 
+      WHERE modified BETWEEN :startDate AND :endDate 
       GROUP BY typeid;`
 
     return this.sequelize.query<ApplicationsStatistics>(query, {
@@ -299,6 +299,7 @@ export class ApplicationService {
         | 'applicantActors'
         | 'draftTotalSteps'
         | 'draftFinishedSteps'
+        | 'pruneAt'
       >
     >,
   ) {

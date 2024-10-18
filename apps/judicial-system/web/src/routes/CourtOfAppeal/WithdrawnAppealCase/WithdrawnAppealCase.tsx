@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -73,7 +73,9 @@ const WithdrawnAppealCase = () => {
             buttonLabel={formatMessage(strings.uploadBoxButtonLabel)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(files, CaseFileCategory.APPEAL_COURT_RECORD),
+                addUploadFiles(files, {
+                  category: CaseFileCategory.APPEAL_COURT_RECORD,
+                }),
                 updateUploadFile,
               )
             }

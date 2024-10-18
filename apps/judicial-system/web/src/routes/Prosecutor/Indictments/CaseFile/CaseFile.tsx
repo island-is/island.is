@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { LayoutGroup } from 'framer-motion'
 import router from 'next/router'
@@ -23,7 +23,18 @@ import { caseFile as m } from './CaseFile.strings'
 const CaseFile = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+
+  const caseFiles = useMemo(() => {
+    return (
+      workingCase.caseFiles?.filter(
+        (caseFile) => caseFile.category === CaseFileCategory.CASE_FILE_RECORD,
+      ) ?? []
+    )
+  }, [workingCase.caseFiles])
+
   const { formatMessage } = useIntl()
+  const [editCount, setEditCount] = useState<number>(0)
+
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
@@ -55,23 +66,20 @@ const CaseFile = () => {
         <Box marginBottom={5}>
           <LayoutGroup>
             <Accordion singleExpand>
-              {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
-                <IndictmentsCaseFilesAccordionItem
-                  key={index}
-                  caseId={workingCase.id}
-                  policeCaseNumber={policeCaseNumber}
-                  shouldStartExpanded={index === 0}
-                  caseFiles={
-                    workingCase.caseFiles?.filter(
-                      (caseFile) =>
-                        caseFile.policeCaseNumber === policeCaseNumber &&
-                        caseFile.category === CaseFileCategory.CASE_FILE,
-                    ) ?? []
-                  }
-                  subtypes={workingCase.indictmentSubtypes}
-                  crimeScenes={workingCase.crimeScenes}
-                />
-              ))}
+              {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => {
+                return (
+                  <IndictmentsCaseFilesAccordionItem
+                    key={index}
+                    caseId={workingCase.id}
+                    policeCaseNumber={policeCaseNumber}
+                    shouldStartExpanded={index === 0}
+                    caseFiles={caseFiles}
+                    subtypes={workingCase.indictmentSubtypes}
+                    crimeScenes={workingCase.crimeScenes}
+                    setEditCount={setEditCount}
+                  />
+                )
+              })}
             </Accordion>
           </LayoutGroup>
         </Box>
@@ -84,7 +92,7 @@ const CaseFile = () => {
                   policeCaseNumber: policeCaseNumber,
                 })}
                 pdfType="caseFilesRecord"
-                policeCaseNumber={policeCaseNumber}
+                elementId={policeCaseNumber}
               />
             </Box>
           ))}
@@ -98,6 +106,7 @@ const CaseFile = () => {
             handleNavigationTo(constants.INDICTMENTS_PROCESSING_ROUTE)
           }
           nextIsLoading={isLoadingWorkingCase}
+          nextIsDisabled={editCount > 0}
         />
       </FormContentContainer>
     </PageLayout>

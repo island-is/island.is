@@ -11,7 +11,8 @@ import {
   IntroHeader,
   m,
   THJODSKRA_SLUG,
-  UserInfoLine,
+  InfoLine,
+  InfoLineStack,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
 
@@ -54,71 +55,68 @@ const SubjectInfo = () => {
         />
       )}
       {!error && (loading || data?.nationalRegistryPerson) && (
-        <Stack space={2}>
-          <UserInfoLine
-            title={formatMessage(m.myRegistration)}
-            label={m.fullName}
-            loading={loading}
-            content={nationalRegistryPerson?.fullName ?? ''}
-            translate="no"
-            tooltip={formatNameBreaks(
-              nationalRegistryPerson?.name ?? undefined,
-              {
-                givenName: formatMessage(spmm.givenName),
-                middleName: formatMessage(spmm.middleName),
-                lastName: formatMessage(spmm.lastName),
-              },
-            )}
-            tooltipFull
-            editLink={{
-              external: true,
-              title: spmm.changeInNationalReg,
-              url: formatMessage(urls.editAdult),
-            }}
-          />
-          <Divider />
-          <UserInfoLine
-            label={m.natreg}
-            loading={loading}
-            content={formatNationalId(userInfo.profile.nationalId)}
-          />
-          <Divider />
+        <>
+          <InfoLineStack label={formatMessage(m.myRegistration)}>
+            <InfoLine
+              label={m.fullName}
+              loading={loading}
+              content={nationalRegistryPerson?.fullName ?? ''}
+              translate="no"
+              tooltip={formatNameBreaks(
+                nationalRegistryPerson?.name ?? undefined,
+                {
+                  givenName: formatMessage(spmm.givenName),
+                  middleName: formatMessage(spmm.middleName),
+                  lastName: formatMessage(spmm.lastName),
+                },
+              )}
+              tooltipFull
+              button={{
+                type: 'link',
+                label: spmm.changeInNationalReg,
+                to: formatMessage(urls.editAdult),
+              }}
+            />
 
-          <UserInfoLine
-            label={m.legalResidence}
-            content={
-              formatAddress(nationalRegistryPerson?.housing?.address ?? null) ||
-              ''
-            }
-            loading={loading}
-            editLink={{
-              external: true,
-              title: spmm.changeInNationalReg,
-              url: formatMessage(urls.editResidence),
-            }}
-          />
-          <Divider />
-          <Box marginY={3} />
-          <UserInfoLine
-            title={formatMessage(m.baseInfo)}
-            label={m.birthPlace}
-            content={nationalRegistryPerson?.birthplace?.location || ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={m.familyNumber}
-            content={nationalRegistryPerson?.housing?.domicileId || ''}
-            loading={loading}
-            tooltip={formatMessage({
-              id: 'sp.family:family-number-tooltip',
-              defaultMessage: `Lögheimilistengsl er samtenging á milli einstaklinga á lögheimili, en veitir ekki upplýsingar um hverjir eru foreldrar barns eða forsjáraðilar.`,
-            })}
-          />
-          {isUserAdult ? (
-            <>
-              <Divider />
-              <UserInfoLine
+            <InfoLine
+              label={m.natreg}
+              loading={loading}
+              content={formatNationalId(userInfo.profile.nationalId)}
+            />
+
+            <InfoLine
+              label={m.legalResidence}
+              content={
+                formatAddress(
+                  nationalRegistryPerson?.housing?.address ?? null,
+                ) || ''
+              }
+              loading={loading}
+              button={{
+                type: 'link',
+                label: spmm.changeInNationalReg,
+                to: formatMessage(urls.editResidence),
+              }}
+            />
+          </InfoLineStack>
+          <InfoLineStack label={formatMessage(m.baseInfo)}>
+            <InfoLine
+              label={m.birthPlace}
+              content={nationalRegistryPerson?.birthplace?.location || ''}
+              loading={loading}
+            />
+
+            <InfoLine
+              label={m.familyNumber}
+              content={nationalRegistryPerson?.housing?.domicileId || ''}
+              loading={loading}
+              tooltip={formatMessage({
+                id: 'sp.family:family-number-tooltip',
+                defaultMessage: `Lögheimilistengsl er samtenging á milli einstaklinga á lögheimili, en veitir ekki upplýsingar um hverjir eru foreldrar barns eða forsjáraðilar.`,
+              })}
+            />
+            {isUserAdult && (
+              <InfoLine
                 label={m.maritalStatus}
                 content={
                   nationalRegistryPerson?.maritalStatus
@@ -131,99 +129,93 @@ const SubjectInfo = () => {
                 }
                 loading={loading}
               />
-            </>
-          ) : null}
+            )}
 
-          <Divider />
-          <UserInfoLine
-            label={defineMessage(m.religion)}
-            content={nationalRegistryPerson?.religion || ''}
-            loading={loading}
-            editLink={{
-              external: true,
-              title: spmm.changeInNationalReg,
-              url: formatMessage(urls.editReligion),
-            }}
-          />
-          <Divider />
-          <UserInfoLine
-            label={m.banMarking}
-            content={
-              nationalRegistryPerson?.exceptionFromDirectMarketing
-                ? formatMessage({
-                    id: 'sp.family:yes',
-                    defaultMessage: 'Já',
-                  })
-                : formatMessage({
-                    id: 'sp.family:no',
-                    defaultMessage: 'Nei',
-                  })
-            }
-            tooltip={formatMessage({
-              id: 'sp.family:ban-marking-tooltip',
-              defaultMessage:
-                'Bannmerktir einstaklingar koma t.d. ekki fram á úrtakslistum úr þjóðskrá og öðrum úrtökum í markaðssetningarskyni.',
-            })}
-            loading={loading}
-            editLink={{
-              external: true,
-              title: spmm.changeInNationalReg,
-              url: formatMessage(urls.editBanmarking),
-            }}
-          />
-          <Divider />
-          <UserInfoLine
-            label={m.gender}
-            content={
-              nationalRegistryPerson?.gender
-                ? formatMessage(
-                    natRegGenderMessageDescriptorRecord[
-                      nationalRegistryPerson.gender
-                    ],
-                  )
-                : ''
-            }
-            loading={loading}
-          />
-          {nationalRegistryPerson?.citizenship?.name ? (
-            <>
-              <Divider />
-              <UserInfoLine
+            <InfoLine
+              label={defineMessage(m.religion)}
+              content={nationalRegistryPerson?.religion || ''}
+              loading={loading}
+              button={{
+                type: 'link',
+                label: spmm.changeInNationalReg,
+                to: formatMessage(urls.editReligion),
+              }}
+            />
+
+            <InfoLine
+              label={m.banMarking}
+              content={
+                nationalRegistryPerson?.exceptionFromDirectMarketing
+                  ? formatMessage({
+                      id: 'sp.family:yes',
+                      defaultMessage: 'Já',
+                    })
+                  : formatMessage({
+                      id: 'sp.family:no',
+                      defaultMessage: 'Nei',
+                    })
+              }
+              tooltip={formatMessage({
+                id: 'sp.family:ban-marking-tooltip',
+                defaultMessage:
+                  'Bannmerktir einstaklingar koma t.d. ekki fram á úrtakslistum úr þjóðskrá og öðrum úrtökum í markaðssetningarskyni.',
+              })}
+              loading={loading}
+              button={{
+                type: 'link',
+                label: spmm.changeInNationalReg,
+                to: formatMessage(urls.editBanmarking),
+              }}
+            />
+
+            <InfoLine
+              label={m.gender}
+              content={
+                nationalRegistryPerson?.gender
+                  ? formatMessage(
+                      natRegGenderMessageDescriptorRecord[
+                        nationalRegistryPerson.gender
+                      ],
+                    )
+                  : ''
+              }
+              loading={loading}
+            />
+            {nationalRegistryPerson?.citizenship?.name && (
+              <InfoLine
                 label={m.citizenship}
                 content={nationalRegistryPerson.citizenship.name}
                 loading={loading}
               />
-            </>
-          ) : null}
+            )}
+          </InfoLineStack>
           {!isDelegation && (
-            <>
-              <Divider />
-              <Box marginY={3} />
-              <UserInfoLine
-                title={formatMessage(spmm.userFamilyMembersOnNumber)}
+            <InfoLineStack
+              label={formatMessage(spmm.userFamilyMembersOnNumber)}
+            >
+              <InfoLine
                 label={userInfo.profile.name}
                 translateLabel="no"
                 content={formatNationalId(userInfo.profile.nationalId)}
                 loading={loading}
               />
-              <Divider />
+
               {nationalRegistryPerson?.housing?.domicileInhabitants?.map(
                 (item) => (
-                  <React.Fragment key={item.nationalId}>
-                    <UserInfoLine
-                      translateLabel="no"
-                      label={item.fullName ?? ''}
-                      content={formatNationalId(item.nationalId)}
-                      loading={loading}
-                    />
-                    <Divider />
-                  </React.Fragment>
+                  <InfoLine
+                    key={item.nationalId}
+                    translateLabel="no"
+                    label={item.fullName ?? ''}
+                    content={formatNationalId(item.nationalId)}
+                    loading={loading}
+                  />
                 ),
               )}
-            </>
+            </InfoLineStack>
           )}
-        </Stack>
+        </>
       )}
+
       <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
     </>
   )

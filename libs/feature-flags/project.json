@@ -3,22 +3,18 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/feature-flags/src",
   "projectType": "library",
+  "tags": ["lib:js", "scope:js"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/feature-flags/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/feature-flags/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/feature-flags/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/feature-flags"]
     }
-  },
-  "tags": ["lib:js", "scope:js"]
+  }
 }

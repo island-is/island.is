@@ -7,7 +7,9 @@ import differenceInYears from 'date-fns/differenceInYears'
 
 export const pageSize = 10
 
-export const useDocumentList = () => {
+type UseDocumentListProps = { defaultPageSize?: number }
+
+export const useDocumentList = (props?: UseDocumentListProps) => {
   const {
     filterValue,
     page,
@@ -41,16 +43,24 @@ export const useDocumentList = () => {
       typeId: null,
       opened: filterValue.showUnread ? false : null,
       page: page,
-      pageSize: pageSize,
+      pageSize: props?.defaultPageSize ?? pageSize,
       isLegalGuardian: hideHealthData,
       archived: filterValue.archived,
       bookmarked: filterValue.bookmarked,
     },
   }
 
-  const { data, loading, error, refetch } = useDocumentsV2Query({
+  const { data, loading, error, client, refetch } = useDocumentsV2Query({
     variables: fetchObject,
   })
+
+  const invalidateCache = async () => {
+    client.cache.evict({
+      id: 'ROOT_QUERY',
+      fieldName: 'documentsV2',
+    })
+    client.cache.gc()
+  }
 
   useEffect(() => {
     if (
@@ -85,11 +95,12 @@ export const useDocumentList = () => {
     filteredDocuments,
     totalCount,
     totalPages,
+    fetchObject,
 
     data,
     loading,
     error,
     refetch,
-    fetchObject,
+    invalidateCache,
   }
 }

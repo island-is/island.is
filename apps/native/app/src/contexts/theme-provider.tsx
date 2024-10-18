@@ -37,7 +37,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     overrideUserInterfaceStyle(
       preferences.appearanceMode === 'automatic'
-        ? 'automatic'
+        ? 'light' // default to light, change back to 'automatic' when dark mode is ready
         : selectedTheme.isDark
         ? 'dark'
         : 'light',

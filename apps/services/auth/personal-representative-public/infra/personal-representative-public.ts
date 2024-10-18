@@ -26,26 +26,17 @@ export const serviceSetup =
           paths: ['/'],
           public: false,
         },
-        demo: {
-          host: {
-            dev: 'personal-representative-public-xrd.dev01.devland.is',
-            staging: '',
-            prod: '',
-          },
-          paths: ['/'],
-          public: true,
-        },
       })
       .readiness('/health/check')
       .liveness('/liveness')
       .resources({
         limits: {
           cpu: '400m',
-          memory: '256Mi',
+          memory: '512Mi',
         },
         requests: {
           cpu: '100m',
-          memory: '192Mi',
+          memory: '256Mi',
         },
       })
       .replicaCount({

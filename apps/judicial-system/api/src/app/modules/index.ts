@@ -13,3 +13,7 @@ export { IndictmentCountModule } from './indictment-count/indictmentCount.module
 export { DefenderModule } from './defender/defender.module'
 export { CaseListModule } from './case-list/caseList.module'
 export { defenderModuleConfig } from './defender/defender.config'
+export { EventLogModule } from './event-log/eventLog.module'
+export { backendModuleConfig } from './backend/backend.config'
+export { BackendService } from './backend/backend.service'
+export { BackendModule } from './backend/backend.module'

@@ -5,7 +5,7 @@ import {
   getErrorViaPath,
 } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { m } from '../../../forms/messages'
+import { m } from '../../../lib/messages'
 import { useFormContext, Controller } from 'react-hook-form'
 import { Box, Text, Checkbox } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'

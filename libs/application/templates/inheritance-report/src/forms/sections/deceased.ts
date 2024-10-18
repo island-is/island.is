@@ -1,12 +1,12 @@
 import {
   NO,
   YES,
+  buildCustomField,
   buildDescriptionField,
   buildKeyValueField,
   buildMultiField,
   buildRadioField,
   buildSection,
-  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
@@ -66,7 +66,7 @@ export const deceased = buildSection({
         }),
         buildDescriptionField({
           id: 'space2',
-          space: 'gutter',
+          space: 'containerGutter',
           title: '',
         }),
         buildRadioField({
@@ -101,20 +101,26 @@ export const deceased = buildSection({
             { value: YES, label: m.spouseSharePart },
           ],
         }),
-        buildTextField({
-          id: 'customShare.customSpouseSharePercentage',
-          title: m.deceasedShare,
-          width: 'half',
-          placeholder: '50%',
-          suffix: '%',
-          variant: 'number',
-          condition: (answers) =>
-            getValueViaPath(
-              answers,
-              'customShare.hasCustomSpouseSharePercentage',
-            ) === YES &&
-            getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES,
-        }),
+        buildCustomField(
+          {
+            id: 'customShare.customSpouseSharePercentage',
+            title: '',
+            width: 'half',
+            component: 'ShareInput',
+            condition: (answers) =>
+              getValueViaPath(
+                answers,
+                'customShare.hasCustomSpouseSharePercentage',
+              ) === YES &&
+              getValueViaPath(answers, 'customShare.deceasedWasMarried') ===
+                YES,
+          },
+          {
+            name: 'customShare.customSpouseSharePercentage',
+            placeholder: '50%',
+            label: m.deceasedShare.defaultMessage,
+          },
+        ),
         buildDescriptionField({
           id: 'space4',
           space: 'gutter',

@@ -46,3 +46,4 @@ export type OrganizationSlugType =
   | 'landlaeknir'
   | 'hugverkastofan'
   | 'geislavarnir-rikisins'
+  | 'umbodsmadur-skuldara'

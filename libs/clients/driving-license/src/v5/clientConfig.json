@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "RLS driver licence Rest API",
-    "description": "RESTFul services for driver licences. Programmed in ASP.NET Core 3 API ",
+    "description": "RESTFul services for driver licences. Programmed in .NET 8",
     "contact": { "name": "TMD", "email": "tmd@tmd.is" },
     "version": "5.0"
   },
@@ -45,7 +45,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -110,7 +110,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -168,7 +168,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -215,7 +215,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -262,7 +262,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -315,7 +315,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -368,7 +368,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "type": "integer", "format": "int32" }
@@ -412,7 +412,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "type": "integer", "format": "int32" }
@@ -456,7 +456,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "type": "string", "format": "byte" }
@@ -499,7 +499,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "type": "string", "format": "byte" }
@@ -543,7 +543,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -594,7 +594,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/DriverLicenseDto" }
@@ -704,7 +704,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -763,7 +763,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "type": "integer", "format": "int32" }
@@ -887,7 +887,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/DeprivationDto" }
@@ -1088,7 +1088,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1158,7 +1158,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/PenaltyPointsDto" }
@@ -1201,7 +1201,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1274,7 +1274,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "type": "integer", "format": "int32" }
@@ -1319,7 +1319,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1369,7 +1369,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "type": "integer", "format": "int32" }
@@ -1413,7 +1413,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "type": "integer", "format": "int32" }
@@ -1457,7 +1457,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "type": "string", "format": "byte" }
@@ -1500,7 +1500,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "type": "string", "format": "byte" }
@@ -1542,7 +1542,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1639,7 +1639,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1697,7 +1697,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1752,7 +1752,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/LicenseStatusDto" }
@@ -1810,7 +1810,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/CategoryValidDto" }
@@ -1861,7 +1861,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -1919,7 +1919,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
@@ -1985,7 +1985,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
@@ -2009,6 +2009,56 @@
               },
               "text/json": {
                 "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v5/canapplyfor/renewal65": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Check if person over 65 years old can apply for renewal of drivers license",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with person social security number",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "5.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MayApplyForRenewal65"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MayApplyForRenewal65"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MayApplyForRenewal65"
+                }
               }
             }
           }
@@ -2051,7 +2101,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/Renewal65AndOver" }
@@ -2117,7 +2167,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2184,7 +2234,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2251,7 +2301,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2318,7 +2368,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2385,7 +2435,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2452,7 +2502,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2518,7 +2568,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2987,6 +3037,11 @@
             "type": "string",
             "description": "Origin of creation",
             "nullable": true
+          },
+          "districtId": {
+            "type": "integer",
+            "description": "District id",
+            "format": "int32"
           }
         },
         "additionalProperties": false,
@@ -3284,6 +3339,22 @@
         "additionalProperties": false,
         "description": "Data transfer object for results for person applying for\r\nfull license"
       },
+      "MayApplyForRenewal65": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "boolean",
+            "description": "Can person apply for full license for 65+ years old"
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "Error code if can not apply",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Can person apply for renewal of license for 65+ years old"
+      },
       "MayApplyForTemporaryLicenseDto": {
         "type": "object",
         "properties": {
@@ -3406,10 +3477,33 @@
             "description": "UserId",
             "nullable": true
           },
+          "instructorSSN": {
+            "type": "string",
+            "description": "Driving instructor social security number",
+            "nullable": true
+          },
+          "primaryPhoneNumber": {
+            "type": "string",
+            "description": "Primary phone number",
+            "nullable": true
+          },
+          "studentEmail": {
+            "type": "string",
+            "description": "Student email",
+            "nullable": true
+          },
           "districtId": {
             "type": "integer",
             "description": "Ordering district",
             "format": "int32"
+          },
+          "contentList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RLSApplicationContentModel"
+            },
+            "description": "Content list",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -3748,6 +3842,38 @@
         },
         "additionalProperties": false
       },
+      "RLSApplicationContentModel": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "description": "File name",
+            "nullable": true
+          },
+          "fileExtension": {
+            "type": "string",
+            "description": "File extension",
+            "nullable": true
+          },
+          "contentType": {
+            "type": "string",
+            "description": "Content type",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "description": "Content data",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "File description",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "RLS Application content"
+      },
       "Renewal65AndOver": {
         "type": "object",
         "properties": {
@@ -3850,6 +3976,11 @@
             "type": "string",
             "description": "Origin of creation",
             "nullable": true
+          },
+          "districtId": {
+            "type": "integer",
+            "description": "District id",
+            "format": "int32"
           }
         },
         "additionalProperties": false,

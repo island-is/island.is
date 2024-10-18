@@ -10,6 +10,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Notification } from './types'
 import { FIREBASE_PROVIDER } from '../../../constants'
 import { V2UsersApi } from '@island.is/clients/user-profile'
+import type { FirebaseError } from 'firebase-admin/lib/utils/error'
 
 @Injectable()
 export class NotificationDispatchService {
@@ -23,10 +24,12 @@ export class NotificationDispatchService {
     notification,
     nationalId,
     messageId,
+    notificationId,
   }: {
     notification: Notification
     nationalId: string
     messageId: string
+    notificationId?: number | null
   }): Promise<void> {
     const tokens = await this.getDeviceTokens(nationalId, messageId)
 
@@ -41,7 +44,12 @@ export class NotificationDispatchService {
 
     for (const token of tokens) {
       try {
-        await this.sendNotificationToToken(notification, token, messageId)
+        await this.sendNotificationToToken(
+          notification,
+          token,
+          messageId,
+          notificationId,
+        )
       } catch (error) {
         await this.handleSendError(error, nationalId, token, messageId)
       }
@@ -81,30 +89,18 @@ export class NotificationDispatchService {
     notification: Notification,
     token: string,
     messageId: string,
+    notificationId?: number | null,
   ): Promise<void> {
     const message = {
       token,
       notification: {
         title: notification.title,
-        body: notification.body,
+        body: notification.externalBody,
       },
-      ...(notification.category && {
-        apns: {
-          payload: {
-            aps: {
-              category: notification.category,
-            },
-          },
-        },
-      }),
       data: {
-        createdAt: new Date().toISOString(),
         messageId,
-        ...(notification.appURI && {
-          url: notification.appURI,
-          islandIsUrl: notification.appURI,
-        }),
-        ...(notification.dataCopy && { copy: notification.dataCopy }),
+        clickActionUrl: notification.clickActionUrl,
+        ...(notificationId && { notificationId: String(notificationId) }),
       },
     }
 
@@ -115,16 +111,23 @@ export class NotificationDispatchService {
   }
 
   private async handleSendError(
-    error: any,
+    error: FirebaseError,
     nationalId: string,
     token: string,
     messageId: string,
   ): Promise<void> {
-    this.logger.error('Push notification error', { error, messageId })
     switch (error.code) {
       case 'messaging/invalid-argument':
       case 'messaging/registration-token-not-registered':
       case 'messaging/invalid-recipient':
+      case 'messaging/mismatched-credential':
+        this.logger.warn(
+          'Firebase response.error calls for removing deviceToken',
+          {
+            error,
+            messageId,
+          },
+        )
         await this.removeInvalidToken(nationalId, token, messageId)
         break
       case 'messaging/invalid-payload':
@@ -161,6 +164,7 @@ export class NotificationDispatchService {
       case 'internal-error':
       case 'messaging/unknown-error':
       default:
+        this.logger.error('Push notification error', { error, messageId })
         throw new InternalServerErrorException(error.code)
     }
   }

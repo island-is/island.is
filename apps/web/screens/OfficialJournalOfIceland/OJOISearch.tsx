@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Locale } from 'locale'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
@@ -16,6 +15,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { debounceTime } from '@island.is/shared/constants'
+import { Locale } from '@island.is/shared/types'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
@@ -487,7 +487,7 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
   }
 
   return {
-    initialAdverts: officialJournalOfIcelandAdverts.adverts,
+    initialAdverts: officialJournalOfIcelandAdverts?.adverts,
     categories: officialJournalOfIcelandCategories?.categories,
     departments: officialJournalOfIcelandDepartments?.departments,
     types: officialJournalOfIcelandTypes?.types,

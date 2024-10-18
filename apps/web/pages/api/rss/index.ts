@@ -1,16 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { Locale } from 'locale'
+
+import { defaultLanguage } from '@island.is/shared/constants'
+import type { Locale } from '@island.is/shared/types'
+import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
+import initApollo from '@island.is/web/graphql/client'
 import {
   ContentLanguage,
   GetNewsQuery,
   QueryGetNewsArgs,
 } from '@island.is/web/graphql/schema'
-import { GET_NEWS_QUERY } from '@island.is/web/screens/queries'
-import initApollo from '@island.is/web/graphql/client'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
-import { isLocale } from '@island.is/web/i18n/I18n'
-import { defaultLanguage } from '@island.is/shared/constants'
 import { linkResolver } from '@island.is/web/hooks'
+import { isLocale } from '@island.is/web/i18n/I18n'
+import { GET_NEWS_QUERY } from '@island.is/web/screens/queries'
 
 const extractTagsFromQuery = (query: NextApiRequest['query']) => {
   if (typeof query?.tags === 'string') {

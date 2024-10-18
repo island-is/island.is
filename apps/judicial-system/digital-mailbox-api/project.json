@@ -4,6 +4,7 @@
   "sourceRoot": "apps/judicial-system/digital-mailbox-api/src",
   "projectType": "application",
   "prefix": "judicial-system-digital-mailbox-api",
+  "tags": ["scope:judicial-system-api"],
   "generators": {},
   "targets": {
     "build": {
@@ -30,18 +31,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/judicial-system/digital-mailbox-api/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/judicial-system/digital-mailbox-api/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/judicial-system/digital-mailbox-api/jest.config.ts"
       }
     },
     "codegen/backend-schema": {
@@ -51,7 +46,8 @@
       },
       "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:judicial-system-api"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

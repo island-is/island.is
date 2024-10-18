@@ -1589,6 +1589,11 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Eyða vinnuveitanda',
       description: 'Remove employer',
     },
+    editEmployer: {
+      id: 'pl.application:employer.editEmployer',
+      defaultMessage: 'Breyta vinnuveitanda',
+      description: 'Edit employer',
+    },
   }),
 
   selfEmployed: defineMessages({
@@ -2083,25 +2088,32 @@ export const parentalLeaveFormMessages = {
   finalScreen: defineMessages({
     title: {
       id: 'pl.application:finalscreen.title',
-      defaultMessage: 'Til hamingju, hér að neðan eru næstu skref',
-      description: 'Congratulations, below are the next steps',
+      defaultMessage: 'Umsókn send',
+      description: 'Application sent',
+    },
+    alertTitle: {
+      id: 'pl.application:finalscreen.alert.title',
+      defaultMessage: 'Umsókn hefur verið send áfram',
+      description: 'The application has been forwarded',
     },
     description: {
-      id: 'pl.application:finalscreen.description#markdown',
-      defaultMessage: `Hitt foreldrið þarf að samþykkja umsókn þína ef þú óskaðir eftir yfirfærslu á
-        hluta réttinda þess til þín, eða nýtingu á persónuafslætti þess. Síðan þarf
-        vinnuveitandinn þinn að samþykkja tilhögun þína til fæðingarorlofs. Að lokum
-        fer umsóknin á borð Fæðingarorlofssjóðs þar sem lokaúrvinnsla hennar fer fram.`,
-      description: `The other parent will need to approve your request to use their shared month
-        (if you did so). Then, your employer will approve your parental leave dates.
-        And finally Vinnumálastofnun will review your application.`,
+      id: 'pl.application:finalscreen.description',
+      defaultMessage:
+        'Umsókn fer í samþykktarferli til hins foreldrisins og/eða atvinnveitanda, sé þess þörf, áður en hún fer til vinnslu hjá Fæðingarorlofssjóði.',
+      description:
+        'The application goes through an approval process to the other parent and/or employer, if necessary, before it is processed by the Parental leave Fund.',
+    },
+    expandableIntro: {
+      id: 'pl.application:finalscreen.expandable.intro',
+      defaultMessage: 'Hér fyrir neðan sérðu ferli umsóknar.',
+      description: 'Below you can see the application process.',
     },
     step3: {
       id: 'pl.application:finalscreen.step3',
       defaultMessage:
-        'Að lokum fer umsóknin á borð Fæðingarorlofssjóðs þar sem lokaúrvinnsla hennar fer fram.',
+        'Umsóknin fer til Fæðingarorlofssjóðs þar sem lokaúrvinnsla hennar fer fram.',
       description:
-        'Finally, the application goes to the Parental Leave Fund, where its final processing takes place.',
+        'The application is sent to the Parental Leave Fund where it will be processed.',
     },
     startDateInThePast: {
       id: 'pl.application:finalscreen.start.date.in.the.past',

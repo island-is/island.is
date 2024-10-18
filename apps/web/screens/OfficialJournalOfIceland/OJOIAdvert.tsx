@@ -1,7 +1,7 @@
 import { useIntl } from 'react-intl'
-import { Locale } from 'locale'
 
 import { Box, Button, Link, Stack, Text } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,

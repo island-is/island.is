@@ -32,8 +32,8 @@ fragment NotificationDataFields on Notification {
   }
 }
 
-query GetUserNotifications($input: NotificationsInput!) {
-  userNotifications(input: $input) {
+query GetUserNotificationsList($input: NotificationsInput!, $locale: String) {
+  userNotifications(input: $input, locale: $locale) {
     data {
       ...NotificationDataFields
       recipient {
@@ -52,8 +52,11 @@ query GetUserNotifications($input: NotificationsInput!) {
   }
 }
 
-query GetUserNotificationsOverview($input: NotificationsInput!) {
-  userNotificationsOverview: userNotifications(input: $input) {
+query GetUserNotificationsOverview(
+  $input: NotificationsInput!
+  $locale: String
+) {
+  userNotificationsOverview: userNotifications(input: $input, locale: $locale) {
     data {
       ...NotificationDataFields
     }

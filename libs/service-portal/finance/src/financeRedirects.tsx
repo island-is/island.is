@@ -11,6 +11,14 @@ export const redirects: PortalRoute[] = [
     element: <Navigate to={FinancePaths.FinancePaymentsBills} replace />,
   },
   {
+    name: m.financeTransactions,
+    path: FinancePaths.FinanceTransactions,
+    enabled: true,
+    element: (
+      <Navigate to={FinancePaths.FinanceTransactionCategories} replace />
+    ),
+  },
+  {
     name: m.financeBills,
     path: FinancePaths.FinanceBills,
     enabled: true,

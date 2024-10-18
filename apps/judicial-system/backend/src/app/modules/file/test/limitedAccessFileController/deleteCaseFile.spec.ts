@@ -1,10 +1,6 @@
 import { uuid } from 'uuidv4'
 
-import {
-  CaseFileState,
-  CaseState,
-  CaseType,
-} from '@island.is/judicial-system/types'
+import { CaseFileState, CaseType } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
@@ -60,8 +56,7 @@ describe('LimitedAccessFileController - Delete case file', () => {
   describe('case file deleted', () => {
     const caseId = uuid()
     const caseType = CaseType.RESTRAINING_ORDER
-    const caseState = CaseState.DRAFT
-    const theCase = { id: caseId, type: caseType, state: caseState } as Case
+    const theCase = { id: caseId, type: caseType } as Case
     const fileId = uuid()
     const key = `${uuid()}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
@@ -79,11 +74,7 @@ describe('LimitedAccessFileController - Delete case file', () => {
         { state: CaseFileState.DELETED, key: null },
         { where: { id: fileId } },
       )
-      expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(
-        caseType,
-        caseState,
-        key,
-      )
+      expect(mockAwsS3Service.deleteObject).toHaveBeenCalledWith(caseType, key)
       expect(then.result).toEqual({ success: true })
     })
   })
@@ -91,8 +82,7 @@ describe('LimitedAccessFileController - Delete case file', () => {
   describe('AWS S3 removal skipped', () => {
     const caseId = uuid()
     const caseType = CaseType.CUSTODY
-    const caseSate = CaseState.SUBMITTED
-    const theCase = { id: caseId, type: caseType, state: caseSate } as Case
+    const theCase = { id: caseId, type: caseType } as Case
     const fileId = uuid()
     const caseFile = { id: fileId } as CaseFile
 

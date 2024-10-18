@@ -1,29 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger'
 
+import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  DateType,
+  isSuccessfulServiceStatus,
+} from '@island.is/judicial-system/types'
+
 import { InternalCaseResponse } from './internal/internalCase.response'
-
-class Items {
-  @ApiProperty({ type: String })
-  label!: string
-
-  @ApiProperty({ type: String })
-  value?: string
-
-  @ApiProperty({ type: String, enum: ['email', 'tel'] })
-  linkType?: 'email' | 'tel'
-}
-
-class Groups {
-  @ApiProperty({ type: String })
-  label!: string
-
-  @ApiProperty({ type: [Items] })
-  items!: Items[]
-}
+import { Groups } from './shared/groups.model'
+import { getTranslations } from './utils/translations.strings'
 
 class IndictmentCaseData {
   @ApiProperty({ type: String })
   caseNumber!: string
+
+  @ApiProperty({ type: Boolean })
+  hasBeenServed?: boolean
 
   @ApiProperty({ type: [Groups] })
   groups!: Groups[]
@@ -37,84 +29,76 @@ export class CaseResponse {
   data!: IndictmentCaseData
 
   static fromInternalCaseResponse(
-    res: InternalCaseResponse,
+    internalCase: InternalCaseResponse,
     lang?: string,
   ): CaseResponse {
-    const language = lang?.toLowerCase()
-    const defendant = res.defendants[0]
+    const t = getTranslations(lang)
+    const defendant = internalCase.defendants[0] ?? {}
+    const subpoenaDateLog = internalCase.dateLogs?.find(
+      (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
+    )
+    const subpoenaCreatedDate = subpoenaDateLog?.created?.toString() ?? '' //TODO: Change to created from subpoena db entry?
+    const subpoenas = defendant.subpoenas ?? []
 
     return {
-      caseId: res.id,
+      caseId: internalCase.id,
       data: {
-        caseNumber:
-          language === 'en'
-            ? `Case number ${res.courtCaseNumber}`
-            : `Málsnúmer ${res.courtCaseNumber}`,
+        caseNumber: `${t.caseNumber} ${internalCase.courtCaseNumber}`,
+        hasBeenServed:
+          subpoenas.length > 0
+            ? isSuccessfulServiceStatus(subpoenas[0].serviceStatus)
+            : false,
         groups: [
           {
-            label: language === 'en' ? 'Defendant' : 'Varnaraðili',
+            label: t.defendant,
             items: [
-              [language === 'en' ? 'Name' : 'Nafn', defendant.name],
-              [
-                language === 'en' ? 'National ID' : 'Kennitala',
-                defendant.nationalId,
-              ],
-              [
-                language === 'en' ? 'Address' : 'Heimilisfang',
-                defendant.address,
-              ],
+              [t.name, defendant.name],
+              [t.nationalId, defendant.nationalId],
+              [t.address, defendant.address],
+              [t.subpoenaSent, formatDate(subpoenaCreatedDate, 'PP')],
             ].map((item) => ({
               label: item[0] ?? '',
-              value: item[1] ?? (language === 'en' ? 'N/A' : 'Ekki skráð'),
+              value: item[1] ?? t.notAvailable,
             })),
           },
           {
-            label: language === 'en' ? 'Defender' : 'Verjandi',
+            label: t.defender,
             items: [
-              [language === 'en' ? 'Name' : 'Nafn', defendant.defenderName],
-              [
-                language === 'en' ? 'Email' : 'Netfang',
-                defendant.defenderEmail,
-                'email',
-              ],
-              [
-                language === 'en' ? 'Phone Nr.' : 'Símanúmer',
-                defendant.defenderPhoneNumber,
-                'tel',
-              ],
+              [t.name, defendant.defenderName],
+              [t.email, defendant.defenderEmail, 'email'],
+              [t.phoneNumber, defendant.defenderPhoneNumber, 'tel'],
             ].map((item) => ({
               label: item[0] ?? '',
-              value: item[1] ?? (language === 'en' ? 'N/A' : 'Ekki skráð'),
+              value: item[1] ?? t.notAvailable,
               linkType: item[2] ?? undefined,
             })),
           },
           {
-            label: language === 'en' ? 'Information' : 'Málsupplýsingar',
+            label: t.information,
             items: [
               {
-                label: language === 'en' ? 'Type' : 'Tegund',
-                value: language === 'en' ? 'Indictment' : 'Ákæra',
+                label: t.type,
+                value: t.indictment,
               },
               {
-                label:
-                  language === 'en' ? 'Case number' : 'Málsnúmer héraðsdóms',
-                value: res.courtCaseNumber,
+                label: t.courtCaseNumber,
+                value: internalCase.courtCaseNumber,
               },
               {
-                label: language === 'en' ? 'Court' : 'Dómstóll',
-                value: res.court.name,
+                label: t.court,
+                value: internalCase.court.name,
               },
               {
-                label: language === 'en' ? 'Judge' : 'Dómari',
-                value: res.judge.name,
+                label: t.judge,
+                value: internalCase.judge.name,
               },
               {
-                label: language === 'en' ? 'Institution' : 'Embætti',
-                value: res.prosecutorsOffice.name,
+                label: t.institution,
+                value: internalCase.prosecutorsOffice.name,
               },
               {
-                label: language === 'en' ? 'Prosecutor' : 'Ákærandi',
-                value: res.prosecutor.name,
+                label: t.prosecutor,
+                value: internalCase.prosecutor.name,
               },
             ],
           },

@@ -88,30 +88,28 @@ export const FirearmApplicant: FC<
   }, [nationalId, name, getIdentity, setValue])
 
   return (
-    <Box marginTop={5}>
+    <Box marginTop={3}>
       <Text>
-        {formatText(m.delegateRoleDisclaimer, application, formatMessage)}
+        {formatText(m.firearmsApplicantHeader, application, formatMessage)}
       </Text>
       <GridRow marginBottom={2} marginTop={2}>
         <GridColumn span="6/12">
           <InputController
             id={fieldNames.firearmApplicantNationalId}
             name={fieldNames.firearmApplicantNationalId}
-            label={formatText(m.delegateRoleSSN, application, formatMessage)}
+            label={formatText(
+              m.firearmsApplicantNationalId,
+              application,
+              formatMessage,
+            )}
             format="######-####"
             defaultValue=""
             backgroundColor="blue"
             icon={name ? 'checkmarkCircle' : undefined}
             loading={queryLoading}
+            required
             error={
-              getErrorViaPath(
-                errors,
-                'pickRole.electPerson.lookupError.message',
-              ) ||
-              getErrorViaPath(
-                errors,
-                'pickRole.electPerson.electedPersonNationalId',
-              ) ||
+              getErrorViaPath(errors, 'firearmApplicant.nationalId') ||
               undefined
             }
           />
@@ -120,7 +118,12 @@ export const FirearmApplicant: FC<
           <InputController
             id={fieldNames.firearmApplicantName}
             name={fieldNames.firearmApplicantName}
-            label={formatText(m.delegateRoleName, application, formatMessage)}
+            label={formatText(
+              m.firearmsApplicantName,
+              application,
+              formatMessage,
+            )}
+            readOnly
           />
         </GridColumn>
       </GridRow>
@@ -134,6 +137,10 @@ export const FirearmApplicant: FC<
               application,
               formatMessage,
             )}
+            error={
+              getErrorViaPath(errors, 'firearmApplicant.phone') || undefined
+            }
+            required
           />
         </GridColumn>
         <GridColumn span="6/12">
@@ -141,6 +148,10 @@ export const FirearmApplicant: FC<
             id={fieldNames.firearmApplicantEmail}
             name={fieldNames.firearmApplicantEmail}
             label={formatText(m.applicantsEmail, application, formatMessage)}
+            error={
+              getErrorViaPath(errors, 'firearmApplicant.email') || undefined
+            }
+            required
           />
         </GridColumn>
       </GridRow>

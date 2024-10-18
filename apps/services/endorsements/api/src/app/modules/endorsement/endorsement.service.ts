@@ -14,6 +14,7 @@ import { EndorsementTag } from '../endorsementList/constants'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
+import { AwsService } from '@island.is/nest/aws'
 
 interface FindEndorsementInput {
   listId: string
@@ -54,7 +55,38 @@ export class EndorsementService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
+    private readonly awsService: AwsService,
   ) {}
+
+  async updateEndorsementCountOnList(listId: string): Promise<void> {
+    try {
+      const count = await this.endorsementModel.count({
+        where: { endorsementListId: listId },
+      })
+      const [affectedRows, updatedList] =
+        await this.endorsementListModel.update(
+          { endorsementCount: count },
+          {
+            where: { id: listId },
+            returning: true,
+          },
+        )
+      if (affectedRows > 0 && updatedList[0].endorsementCount === count) {
+        this.logger.info(
+          `Successfully updated endorsement count for list "${listId}" to ${count}`,
+        )
+      } else {
+        this.logger.error(
+          `Failed to update endorsement count for list "${listId}". The count was not updated correctly.`,
+        )
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error updating endorsement count for list "${listId}": ${error.message}`,
+      )
+      throw error
+    }
+  }
 
   async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
     this.logger.info(`Finding endorsements by list id "${listId}"`)
@@ -109,7 +141,6 @@ export class EndorsementService {
     return { hasEndorsed: true }
   }
 
-  // FIXME: Find a way to combine with create bulk endorsements
   async createEndorsementOnList({
     endorsementList,
     nationalId,
@@ -129,25 +160,25 @@ export class EndorsementService {
       endorsementListId: endorsementList.id,
       meta: {
         fullName: person?.fulltNafn?.fulltNafn,
-        locality: person?.rikisfang?.rikisfangKodi,
+        locality: person?.heimilisfang?.sveitarfelag,
         showName,
       },
     }
 
-    return this.endorsementModel.create(endorsement).catch((error) => {
-      // map meaningful sequelize errors to custom errors, else return error
-      switch (error.constructor) {
-        case UniqueConstraintError: {
-          this.logger.warn('Endorsement already exists in list')
-          throw new MethodNotAllowedException([
-            'Endorsement already exists in list',
-          ])
-        }
-        default: {
-          throw error
-        }
+    try {
+      const createdEndorsement = await this.endorsementModel.create(endorsement)
+      await this.updateEndorsementCountOnList(endorsementList.id)
+      return createdEndorsement
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) {
+        this.logger.warn('Endorsement already exists in list')
+        throw new MethodNotAllowedException([
+          'Endorsement already exists in list',
+        ])
+      } else {
+        throw error
       }
-    })
+    }
   }
 
   async deleteFromListByNationalId({
@@ -180,5 +211,6 @@ export class EndorsementService {
       )
       throw new NotFoundException(["This endorsement doesn't exist"])
     }
+    await this.updateEndorsementCountOnList(endorsementList.id)
   }
 }

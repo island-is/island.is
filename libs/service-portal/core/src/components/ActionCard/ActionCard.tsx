@@ -27,6 +27,8 @@ type ActionCardProps = {
   eyebrow?: string
   loading?: boolean
   backgroundColor?: 'white' | 'blue' | 'red' | 'blueberry'
+  borderColor?: 'red100' | 'blue100' | 'blue200'
+  headingColor?: 'blue400' | 'blue600' | 'currentColor'
   tag?: {
     label: string
     variant?: TagVariant
@@ -82,6 +84,8 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   text,
   subText,
   secondaryText,
+  borderColor,
+  headingColor,
   eyebrow,
   loading,
   backgroundColor = 'white',
@@ -124,7 +128,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
             capitalizeFirstLetter={capitalizeHeading}
             variant="h3"
             as="p"
-            color="blue400"
+            color={headingColor ?? 'blue400'}
           >
             {getTitleAbbreviation(heading)}
           </Text>
@@ -142,7 +146,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           marginRight={[2, 3]}
           borderRadius="circle"
         >
-          <img className={styles.image} src={image.url} alt="action-card" />
+          <img className={styles.image} src={image.url} alt="" />
         </Box>
       )
     }
@@ -158,7 +162,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           background={image.active ? 'white' : 'blue100'}
           className={cn(styles.avatar, styles.image)}
         >
-          <img className={styles.circleImg} src={image.url} alt="action-card" />
+          <img className={styles.circleImg} src={image.url} alt="" />
         </Box>
       )
     }
@@ -248,7 +252,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
     return (
       !!hasCTA && (
         <Box
-          paddingTop={tag.label ? 'gutter' : 0}
+          paddingTop={tag.label || secondaryTag?.label ? 'gutter' : 0}
           display="flex"
           justifyContent={['flexStart', 'flexEnd']}
           alignItems="center"
@@ -275,11 +279,11 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                     icon={isExternalLink(cta.url) ? 'open' : cta.icon}
                     colorScheme="default"
                     iconType="outline"
-                    size="small"
+                    size={cta.size ?? 'small'}
                     type="span"
                     unfocusable
                     as="span"
-                    variant="text"
+                    variant={cta.variant ?? 'text'}
                   >
                     {cta.label}
                   </Button>
@@ -287,7 +291,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
               ) : (
                 <Button
                   variant={cta.variant}
-                  size="small"
+                  size={cta.size ?? 'small'}
                   onClick={cta.onClick}
                   disabled={cta.disabled}
                   icon={cta.icon}
@@ -315,11 +319,12 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
       display="flex"
       flexDirection="column"
       borderColor={
-        backgroundColor === 'red'
-          ? 'red200'
+        borderColor ??
+        (backgroundColor === 'red'
+          ? 'black'
           : backgroundColor === 'blue'
           ? 'blue100'
-          : 'blue200'
+          : 'blue200')
       }
       borderRadius="large"
       borderWidth="standard"
@@ -339,13 +344,13 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         {/* Checking image type so the image is placed correctly */}
         {image?.type !== 'logo' && renderImage()}
         <Box flexDirection="row" width="full">
-          {heading && (
-            <Box
-              display="flex"
-              flexDirection="row"
-              justifyContent="spaceBetween"
-              alignItems={['flexStart', 'flexStart', 'flexEnd']}
-            >
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="spaceBetween"
+            alignItems={['flexStart', 'flexStart', 'flexEnd']}
+          >
+            {heading && (
               <Box
                 display="flex"
                 flexDirection="row"
@@ -359,23 +364,27 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                   variant="h4"
                   translate={translateLabel}
                   color={
-                    backgroundColor === 'blue' ? 'blue600' : 'currentColor'
+                    headingColor ??
+                    (backgroundColor === 'blue' ? 'blue600' : 'currentColor')
                   }
                 >
                   {heading}
                 </Text>
               </Box>
-              <Hidden above="xs">
-                {secondaryTag && (
-                  <Box marginRight="smallGutter">
-                    {!date && !eyebrow && renderTag(secondaryTag)}
-                  </Box>
-                )}
-                <Box>{!date && !eyebrow && renderTag(tag)}</Box>
-              </Hidden>
-            </Box>
-          )}
-          {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
+            )}
+            {!heading && text && (
+              <Text paddingTop={heading ? 1 : 0}>{text}</Text>
+            )}
+            <Hidden above="xs">
+              {secondaryTag && (
+                <Box marginRight="smallGutter">
+                  {!date && !eyebrow && renderTag(secondaryTag)}
+                </Box>
+              )}
+              <Box>{!date && !eyebrow && renderTag(tag)}</Box>
+            </Hidden>
+          </Box>
+          {heading && text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
           {subText && <Text>{subText}</Text>}
         </Box>
         <Box

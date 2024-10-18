@@ -1,0 +1,25 @@
+schema:
+  - ./libs/clients/cms/schema.graphql
+generates:
+  libs/clients/cms/gen/schema.ts:
+    plugins:
+      - typescript
+    config:
+      namingConvention:
+        enumValues: keep
+  libs/clients/cms/:
+    documents:
+      - libs/clients/cms/src/**/*.graphql
+    preset: 'near-operation-file'
+    presetConfig:
+      baseTypesPath: './gen/schema'
+    plugins:
+      - typescript-operations
+      - typescript-document-nodes
+    config:
+      namingConvention:
+        enumValues: keep
+      skipTypename: true
+hooks:
+  afterAllFileWrite:
+    - prettier --write

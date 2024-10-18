@@ -1,8 +1,7 @@
 import {
-  JournalControllerAdvertsRequest,
+  GetAdvertsRequest,
   OfficialJournalOfIcelandClientService,
 } from '@island.is/clients/official-journal-of-iceland'
-import { mapAdvertStatus } from './mapper'
 import { Injectable } from '@nestjs/common'
 import {
   AdvertSingleParams,
@@ -25,63 +24,45 @@ export class OfficialJournalOfIcelandService {
     private readonly ojoiService: OfficialJournalOfIcelandClientService,
   ) {}
 
-  async department(params: AdvertSingleParams) {
-    return await this.ojoiService.department(params)
+  async getDepartmentById(params: AdvertSingleParams) {
+    return await this.ojoiService.getDepartmentById(params)
   }
 
-  async departments(params: QueryParams): Promise<AdvertDepartmentsResponse> {
-    return await this.ojoiService.departments(params)
+  async getDepartments(
+    params: QueryParams,
+  ): Promise<AdvertDepartmentsResponse> {
+    return await this.ojoiService.getDepartments(params)
   }
 
-  async mainCategories(
+  async getMainCategories(
     params: QueryParams,
   ): Promise<AdvertMainCategoriesResponse> {
-    return await this.ojoiService.mainCategories(params)
+    return await this.ojoiService.getMainCategories(params)
   }
 
-  async categories(params: QueryParams): Promise<AdvertCategoryResponse> {
-    return await this.ojoiService.categories(params)
+  async getCategories(params: QueryParams): Promise<AdvertCategoryResponse> {
+    return await this.ojoiService.getCategories(params)
   }
 
-  async type(params: AdvertSingleParams) {
-    return await this.ojoiService.type(params)
+  async getAdvertTypeById(params: AdvertSingleParams) {
+    return await this.ojoiService.getAdvertTypeById(params)
   }
 
-  async types(params: TypeQueryParams): Promise<AdvertTypesResponse> {
-    return await this.ojoiService.types(params)
+  async getAdvertTypes(params: TypeQueryParams): Promise<AdvertTypesResponse> {
+    return await this.ojoiService.getAdvertTypes(params)
   }
 
-  async institutions(params: QueryParams): Promise<AdvertInstitutionsResponse> {
-    return await this.ojoiService.institutions(params)
+  async getInstitutions(
+    params: QueryParams,
+  ): Promise<AdvertInstitutionsResponse> {
+    return await this.ojoiService.getInstitutions(params)
   }
 
-  async advert(params: AdvertSingleParams): Promise<AdvertResponse> {
-    const { advert } = await this.ojoiService.advert(params)
-    return {
-      advert: {
-        ...advert,
-        status: mapAdvertStatus(advert.status),
-      },
-    }
+  async getAdvertById(params: AdvertSingleParams): Promise<AdvertResponse> {
+    return await this.ojoiService.getAdvertById(params)
   }
 
-  async adverts(
-    input: JournalControllerAdvertsRequest,
-  ): Promise<AdvertsResponse> {
-    const adverts = await this.ojoiService.adverts(input)
-
-    const mappedAdverts = adverts.adverts.map((advert) => {
-      return {
-        ...advert,
-        status: mapAdvertStatus(advert.status),
-      }
-    })
-
-    const response: AdvertsResponse = {
-      adverts: mappedAdverts,
-      paging: adverts.paging,
-    }
-
-    return response
+  async getAdverts(input: GetAdvertsRequest): Promise<AdvertsResponse> {
+    return await this.ojoiService.getAdverts(input)
   }
 }

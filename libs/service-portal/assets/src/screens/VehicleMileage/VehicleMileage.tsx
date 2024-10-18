@@ -138,20 +138,24 @@ const VehicleMileage = () => {
       <Box marginBottom={[2, 2, 6]}>
         <IntroHeader
           title={m.vehicleMileage}
-          introComponent={formatMessage(messages.vehicleMileageIntro, {
-            href: (str: React.ReactNode) => (
-              <span>
-                <a
-                  href={formatMessage(messages.mileageExtLink)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={styles.link}
-                >
-                  {str}
-                </a>
-              </span>
-            ),
-          })}
+          introComponent={
+            <Text>
+              {formatMessage(messages.vehicleMileageIntro, {
+                href: (str: React.ReactNode) => (
+                  <span>
+                    <a
+                      href={formatMessage(messages.mileageExtLink)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={styles.link}
+                    >
+                      {str}
+                    </a>
+                  </span>
+                ),
+              })}
+            </Text>
+          }
           serviceProviderSlug={SAMGONGUSTOFA_SLUG}
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
         />
@@ -245,7 +249,8 @@ const VehicleMileage = () => {
                               : [...details]
 
                             const latestRegistration =
-                              detailArray[0].mileageNumber ?? 0
+                              detailArray?.[0]?.mileageNumber ?? 0
+
                             if (latestRegistration > value) {
                               return formatMessage(messages.mileageInputTooLow)
                             }

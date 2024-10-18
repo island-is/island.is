@@ -54,13 +54,13 @@ runs:
         # force-cache-save: ${{ inputs.force-cache-save }}
 
     - name: Give cache server a bit of time to recover
-      if: always() && inputs.retry > 0 && steps.cache_try_number_one.outputs.success != 'true'
+      if: ${{ !cancelled() && inputs.retry > 0 && steps.cache_try_number_one.outputs.success != 'true' }}
       shell: bash
       run: sleep 10
 
     - name: Cache try number two
       id: cache_try_number_two
-      if: always() && inputs.retry > 0 && steps.cache_try_number_one.outputs.success != 'true'
+      if: ${{ !cancelled() && inputs.retry > 0 && steps.cache_try_number_one.outputs.success != 'true' }}
       uses: island-is/cache@v0.3
       with:
         path: ${{ inputs.path }}
@@ -68,13 +68,13 @@ runs:
         # force-cache-save: ${{ inputs.force-cache-save }}
 
     - name: Give cache server a bit of time to recover
-      if: always() && inputs.retry > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true'
+      if: ${{ !cancelled() && inputs.retry > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true' }}
       shell: bash
       run: sleep 10
 
     - name: Cache try number three
       id: cache_try_number_three
-      if: always() && inputs.retry > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true'
+      if: ${{ !cancelled() && inputs.retry > 1 && steps.cache_try_number_one.outputs.success != 'true' && steps.cache_try_number_two.outputs.success != 'true' }}
       uses: island-is/cache@v0.3
       with:
         path: ${{ inputs.path }}
@@ -83,7 +83,7 @@ runs:
 
     - name: Gather outputs
       id: computed_outputs
-      if: always()
+      if: ${{ always() }} # We want to always report status, even when cancelled
       shell: bash
       run: |
         if [[ "${{ steps.cache_try_number_one.outputs.success }}" == "true" ]] || \

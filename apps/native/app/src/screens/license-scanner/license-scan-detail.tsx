@@ -7,6 +7,7 @@ import {
 } from 'react-native-navigation'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks/dist'
 import styled from 'styled-components/native'
+import { LICENSE_SCANNER_DONE } from '../../constants/navigation-buttons'
 import {
   VerifyLicenseBarcodeError,
   VerifyLicenseBarcodeMutation,
@@ -16,7 +17,7 @@ import { StackRegistry } from '../../utils/component-registry'
 
 const RIGHT_BUTTONS: OptionsTopBarButton[] = [
   {
-    id: 'LICENSE_SCANNER_DONE',
+    id: LICENSE_SCANNER_DONE,
     systemItem: 'done',
   },
 ]
@@ -41,7 +42,7 @@ export const LicenseScanDetailScreen: NavigationFunctionComponent<
   const isExpired = error === VerifyLicenseBarcodeError.Expired
 
   useNavigationButtonPress(({ buttonId }) => {
-    if (buttonId === 'LICENSE_SCANNER_DONE') {
+    if (buttonId === LICENSE_SCANNER_DONE) {
       Navigation.dismissModal(StackRegistry.LicenseScannerStack)
     }
   })

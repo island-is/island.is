@@ -11,7 +11,6 @@ import SpotlightSearch from 'react-native-spotlight-search'
 import { evaluateUrl, navigateTo } from '../../lib/deep-linking'
 import { authStore } from '../../stores/auth-store'
 import { environmentStore } from '../../stores/environment-store'
-import { notificationsStore } from '../../stores/notifications-store'
 import { offlineStore } from '../../stores/offline-store'
 import { preferencesStore } from '../../stores/preferences-store'
 import { uiStore } from '../../stores/ui-store'
@@ -29,13 +28,6 @@ let backgroundAppLockTimeout: ReturnType<typeof setTimeout>
 export function setupEventHandlers() {
   // Listen for url events through iOS and Android's Linking library
   Linking.addEventListener('url', ({ url }) => {
-    console.log('URL', url)
-    Linking.canOpenURL(url).then((supported) => {
-      if (supported) {
-        evaluateUrl(url)
-      }
-    })
-
     // Handle Cognito
     if (/cognito/.test(url)) {
       const [, hash] = url.split('#')
@@ -67,15 +59,6 @@ export function setupEventHandlers() {
     })
   }
 
-  // Get initial url and pass to the opener
-  Linking.getInitialURL()
-    .then((url) => {
-      if (url) {
-        Linking.openURL(url)
-      }
-    })
-    .catch((err) => console.error('An error occurred in getInitialURL: ', err))
-
   Navigation.events().registerBottomTabSelectedListener((e) => {
     uiStore.setState({
       unselectedTab: e.unselectedTabIndex,
@@ -84,51 +67,51 @@ export function setupEventHandlers() {
   })
 
   AppState.addEventListener('change', (status: AppStateStatus) => {
-    const {
-      lockScreenComponentId,
-      lockScreenActivatedAt,
-      noLockScreenUntilNextAppStateActive,
-    } = authStore.getState()
+    const { noLockScreenUntilNextAppStateActive } = authStore.getState()
     const { appLockTimeout } = preferencesStore.getState()
-
-    if (status === 'active') {
-      void notificationsStore.getState().checkUnseen()
-    }
 
     if (!skipAppLock()) {
       if (noLockScreenUntilNextAppStateActive) {
         authStore.setState({ noLockScreenUntilNextAppStateActive: false })
         return
       }
+      clearTimeout(backgroundAppLockTimeout)
 
       if (status === 'background' || status === 'inactive') {
+        // Add a small delay for those accidental backgrounds in iOS
         if (isIos) {
-          // Add a small delay for those accidental backgrounds in iOS
           backgroundAppLockTimeout = setTimeout(() => {
-            if (!lockScreenComponentId) {
+            const { lockScreenComponentId, lockScreenActivatedAt } =
+              authStore.getState()
+
+            if (!lockScreenComponentId && !lockScreenActivatedAt) {
               showAppLockOverlay({ status })
-            } else {
+            } else if (lockScreenComponentId) {
               Navigation.updateProps(lockScreenComponentId, { status })
             }
           }, 100)
         } else {
-          if (!lockScreenComponentId) {
+          // set timeout does not work properly on android when app is in background
+          const { lockScreenComponentId, lockScreenActivatedAt } =
+            authStore.getState()
+
+          if (!lockScreenComponentId && !lockScreenActivatedAt) {
             showAppLockOverlay({ status })
-          } else {
+          } else if (lockScreenComponentId) {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
         }
       }
 
       if (status === 'active') {
-        clearTimeout(backgroundAppLockTimeout)
-
+        const { lockScreenComponentId, lockScreenActivatedAt } =
+          authStore.getState()
         if (lockScreenComponentId) {
           if (
             lockScreenActivatedAt !== undefined &&
             lockScreenActivatedAt + appLockTimeout > Date.now()
           ) {
-            hideAppLockOverlay()
+            hideAppLockOverlay(lockScreenComponentId)
           } else {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
@@ -165,6 +148,8 @@ export function setupEventHandlers() {
           return navigateTo('/license-scanner')
         case ButtonRegistry.OfflineButton:
           return handleOfflineButtonClick()
+        case ButtonRegistry.HomeScreenOptionsButton:
+          return navigateTo('/home-options')
       }
     },
   )

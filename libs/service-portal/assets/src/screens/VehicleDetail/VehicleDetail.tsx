@@ -27,6 +27,7 @@ import {
   IntroHeader,
   SAMGONGUSTOFA_SLUG,
   LinkButton,
+  getDateLocale,
 } from '@island.is/service-portal/core'
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
@@ -44,7 +45,6 @@ import {
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import AxleTable from '../../components/DetailTable/AxleTable'
 import Dropdown from '../../components/Dropdown/Dropdown'
-import { getDateLocale } from '../../utils/constants'
 import { useGetUsersVehiclesDetailQuery } from './VehicleDetail.generated'
 import { AssetsPaths } from '../../lib/paths'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
@@ -224,7 +224,7 @@ const VehicleDetail = () => {
                           : ''
                       }
                       icon="pencil"
-                      variant="button"
+                      variant="utility"
                       text={formatMessage(messages.vehicleMileageInputTitle)}
                     />
                   </Box>

@@ -1,0 +1,72 @@
+query getCustomDelegationsAdmin($nationalId: String!) {
+  authAdminDelegationAdmin(nationalId: $nationalId) {
+    name
+    nationalId
+    incoming {
+      id
+      validTo
+      referenceId
+      domain {
+        name
+        organisationLogoKey
+        organisationLogoUrl
+        displayName
+        nationalId
+      }
+      type
+      from {
+        name
+        nationalId
+      }
+      to {
+        name
+        nationalId
+      }
+      createdBy {
+        name
+        nationalId
+      }
+      scopes {
+        name
+        displayName
+        id
+        validTo
+      }
+    }
+    outgoing {
+      id
+      validTo
+      referenceId
+      domain {
+        name
+        organisationLogoKey
+        organisationLogoUrl
+        displayName
+        nationalId
+      }
+      type
+      from {
+        name
+        nationalId
+      }
+      to {
+        name
+        nationalId
+      }
+      createdBy {
+        name
+        nationalId
+      }
+      scopes {
+        name
+        displayName
+        id
+        validTo
+      }
+    }
+  }
+}
+
+mutation deleteCustomDelegationAdmin($id: String!) {
+  authDeleteAdminDelegation(id: $id)
+}

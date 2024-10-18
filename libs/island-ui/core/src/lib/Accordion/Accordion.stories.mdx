@@ -36,7 +36,7 @@ We wrap all the `<AccordionItem />` inside a `<Accordion />` component.
 <Canvas>
   <Story name="Default">
     <Accordion singleExpand>
-      <AccordionItem id="id_1" label="Hvenær þarf að skila umsókn?">
+      <AccordionItem id="id_1" label={'Hvenær þarf að skila umsókn?'}>
         <Text>
           Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða
           faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum
@@ -45,7 +45,7 @@ We wrap all the `<AccordionItem />` inside a `<Accordion />` component.
       </AccordionItem>
       <AccordionItem
         id="id_2"
-        label="Er hægt að leggja inn greiðslur á bankareikning maka?"
+        label={'Er hægt að leggja inn greiðslur á bankareikning maka?'}
       >
         <Text>
           Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða
@@ -53,7 +53,7 @@ We wrap all the `<AccordionItem />` inside a `<Accordion />` component.
           frumritið.
         </Text>
       </AccordionItem>
-      <AccordionItem id="id_3" label="Hvernig kem ég umsókninni til ykkar?">
+      <AccordionItem id="id_3" label={'Hvernig kem ég umsókninni til ykkar?'}>
         <Text>
           Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða
           faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum
@@ -74,7 +74,7 @@ control the size.
     <Accordion singleExpand>
       <AccordionItem
         id="id_1"
-        label="Hvenær þarf að skila umsókn?"
+        label={'Hvenær þarf að skila umsókn?'}
         labelUse="h5"
         labelVariant="h5"
         iconVariant="small"
@@ -87,7 +87,7 @@ control the size.
       </AccordionItem>
       <AccordionItem
         id="id_2"
-        label="Er hægt að leggja inn greiðslur á bankareikning maka?"
+        label={'Er hægt að leggja inn greiðslur á bankareikning maka?'}
         labelUse="h5"
         labelVariant="h5"
         iconVariant="small"
@@ -100,7 +100,7 @@ control the size.
       </AccordionItem>
       <AccordionItem
         id="id_3"
-        label="Hvernig kem ég umsókninni til ykkar?"
+        label={'Hvernig kem ég umsókninni til ykkar?'}
         labelUse="h5"
         labelVariant="h5"
         iconVariant="small"
@@ -124,7 +124,7 @@ We can use `labelColor` to change the color on the label for the `AccordionItem`
     <Accordion singleExpand>
       <AccordionItem
         id="id_1"
-        label="Hvenær þarf að skila umsókn?"
+        label={'Hvenær þarf að skila umsókn?'}
         labelColor="blue400"
       >
         <Text>
@@ -135,7 +135,7 @@ We can use `labelColor` to change the color on the label for the `AccordionItem`
       </AccordionItem>
       <AccordionItem
         id="id_2"
-        label="Er hægt að leggja inn greiðslur á bankareikning maka?"
+        label={'Er hægt að leggja inn greiðslur á bankareikning maka?'}
         labelColor="blue400"
       >
         <Text>
@@ -146,7 +146,7 @@ We can use `labelColor` to change the color on the label for the `AccordionItem`
       </AccordionItem>
       <AccordionItem
         id="id_3"
-        label="Hvernig kem ég umsókninni til ykkar?"
+        label={'Hvernig kem ég umsókninni til ykkar?'}
         labelColor="blue400"
       >
         <Text>
@@ -169,7 +169,7 @@ We use the standalone `<AccordionCard />` component
       <Box paddingY={[1, 2]}>
         <AccordionCard
           id="id_1"
-          label="Hvenær þarf að skila umsókn?"
+          label={'Hvenær þarf að skila umsókn?'}
           visibleContent={
             <Box paddingY={2} paddingBottom={1}>
               <Text>
@@ -223,7 +223,7 @@ We use the standalone `<SidebarAccordion />` component
     <ContentBlock>
       <div style={{ maxWidth: 300 }}>
         <Box paddingY={[1, 2]}>
-          <SidebarAccordion id="mini_accordion" label="Sýna flokka">
+          <SidebarAccordion id="mini_accordion" label={'Sýna flokka'}>
             <Stack space={[1, 1, 2]}>
               <Text>Flokkur 1</Text>
               <Text>Flokkur 1</Text>

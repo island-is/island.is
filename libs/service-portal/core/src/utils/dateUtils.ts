@@ -81,3 +81,6 @@ export const displayMonthOrYear = (date: string, l: Locale) => {
     return date
   }
 }
+
+export const getDateLocale = (locale: Locale) =>
+  locale === 'en' ? 'en-US' : 'is-IS'

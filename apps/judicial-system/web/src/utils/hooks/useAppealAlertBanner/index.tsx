@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { ReactElement, useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -85,7 +85,7 @@ const useAppealAlertBanner = (
 
   let title = ''
   let description: string | undefined = undefined
-  let child: React.ReactElement | null = null
+  let child: ReactElement | null = null
 
   const {
     prosecutorStatementDate,

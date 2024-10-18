@@ -11,7 +11,7 @@ import {
 import { serviceSetup as appSystemFormSetup } from '../../../apps/application-system/form/infra/application-system-form'
 
 import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
-import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
+import { serviceSetup as servicePortalSetup } from '../../../apps/portals/my-pages/infra/portals-my-pages'
 
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
 import { serviceSetup as consultationPortalSetup } from '../../../apps/consultation-portal/infra/samradsgatt'
@@ -67,14 +67,16 @@ const skilavottordWs = skilavottordWsSetup()
 const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 
 const documentsService = serviceDocumentsSetup()
+const servicePortalApi = servicePortalApiSetup()
+
 const appSystemApi = appSystemApiSetup({
   documentsService,
   servicesEndorsementApi: endorsement,
   skilavottordWs,
+  servicePortalApi,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
-const servicePortalApi = servicePortalApiSetup()
 const adminPortal = adminPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 

@@ -1,7 +1,7 @@
-import { Locale } from 'locale'
 import { uuid } from 'uuidv4'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
+import { Locale } from '@island.is/shared/types'
 import { storageFactory } from '@island.is/shared/utils'
 import initApollo from '@island.is/web/graphql/client'
 import {

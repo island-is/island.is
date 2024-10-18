@@ -4,6 +4,7 @@
   "sourceRoot": "apps/judicial-system/backend/src",
   "projectType": "application",
   "prefix": "judicial-system-backend",
+  "tags": ["scope:judicial-system-api"],
   "generators": {},
   "targets": {
     "build": {
@@ -48,19 +49,13 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/judicial-system/backend/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/judicial-system/backend/jest.config.ts",
         "logHeapUsage": true,
-        "passWithNoTests": true,
         "workerIdleMemoryLimit": "1028"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/backend"]
@@ -68,7 +63,7 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
+        "command": "docker compose up -d",
         "cwd": "apps/judicial-system/backend"
       }
     },
@@ -107,13 +102,14 @@
         "cwd": "apps/judicial-system/backend"
       }
     },
-    "docker-express": {},
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    },
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/backend/src/app/messages/**/*.ts'"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/backend/src/app/{messages/**/*,**/*.strings}.ts'"
       }
     }
-  },
-  "tags": ["scope:judicial-system-api"]
+  }
 }

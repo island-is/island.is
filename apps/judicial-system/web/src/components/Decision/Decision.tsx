@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { FC, useState } from 'react'
 
 import { Box, RadioButton } from '@island.is/island-ui/core'
 import {
@@ -20,7 +20,7 @@ interface Props {
   disabled?: boolean
 }
 
-const Decision: React.FC<React.PropsWithChildren<Props>> = ({
+const Decision: FC<Props> = ({
   workingCase,
   acceptedLabelText,
   acceptingAlternativeTravelBanLabelText,

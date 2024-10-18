@@ -49,6 +49,9 @@ export type WatsonIntegration =
   // Útlendingastofnun
   | '89a03e83-5c73-4642-b5ba-cd3771ceca54'
 
+  // Útlendingastofnun - english
+  | '9e320784-ad44-4da9-9eb3-f305057a196a'
+
   // Sjúkratryggingar
   | 'e625e707-c9ce-4048-802c-c12b905c28be'
 
@@ -71,11 +74,13 @@ export type WatsonIntegration =
   | '98ba51da-1677-4881-a133-7ea019ae7b87'
 
   // Samgöngustofa
-  | 'fe12e960-329c-46d5-9ae1-8bd8b8219f43'
+  | 'b0b445a4-4c49-4c79-9731-8d03f49c8cac'
 
   // Samgöngustofa - english
-  | '1e649a3f-9476-4995-ba24-0e72040b0cc0'
+  | 'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b'
 
 export type WatsonServiceInstance =
   // Askur
-  'bc3d8312-d862-4750-b8bf-529db282050a'
+  | 'bc3d8312-d862-4750-b8bf-529db282050a'
+  // Útlendingastofnun - english
+  | '2529638b-503c-4374-955c-0310139ec177'

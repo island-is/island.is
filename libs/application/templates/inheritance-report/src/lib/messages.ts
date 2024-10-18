@@ -61,6 +61,11 @@ export const m = defineMessages({
     defaultMessage: 'Dánarbú',
     description: '',
   },
+  preDataCollectionApplicationForDefaultTooltip: {
+    id: 'ir.application:preDataCollectionApplicationForDefaultTooltip',
+    defaultMessage: 'Ekki er búið að opna fyrir umsóknir af þessari gerð.',
+    description: '',
+  },
   // Application begin
   applicationName: {
     id: 'ir.application:applicationName',
@@ -197,6 +202,16 @@ export const m = defineMessages({
     id: 'ir.application:settingsInfoProviderSubtitle',
     defaultMessage:
       'Persónustillingar þínar (sími og netfang) þínar frá Ísland.is.',
+    description: '',
+  },
+  maritalStatusProviderTitle: {
+    id: 'ir.application:maritalStatusProviderTitle',
+    defaultMessage: 'Hjúskaparstaða',
+    description: '',
+  },
+  maritalStatusProviderSubtitle: {
+    id: 'ir.application:maritalStatusProviderSubtitle',
+    defaultMessage: 'Hjúskaparstaða falleg lýsing kemur hér.',
     description: '',
   },
 
@@ -659,7 +674,7 @@ export const m = defineMessages({
     description: '',
   },
   stocksDescriptionPrePaid: {
-    id: 'ir.application:stocksDescriptionPrePaid',
+    id: 'ir.application:stocksDescriptionPrePaid#markdown',
     defaultMessage:
       'Upplýsingar um nafnverð hlutabréfa má finna í síðasta skattframtali. Upplýsingar um gengi hlutabréfa er hægt að fá hjá bönkum, félaginu sjálfu eða miða við síðasta ársreikning félagsins sem sækja má á heimasíðu Skattsins, www.skatturinn.is/fyrirtaekjaskra',
     description: '',
@@ -820,6 +835,24 @@ export const m = defineMessages({
     id: 'ir.application:assetOverviewDescription',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
+    description: '',
+  },
+  assetsOverviewConfirmation: {
+    id: 'ir.application:assetsOverviewConfirmation',
+    defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um eignir eftir minni bestu vitund.',
+    description: '',
+  },
+  debtsOverviewConfirmation: {
+    id: 'ir.application:debtsOverviewConfirmation',
+    defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um skuldir eftir minni bestu vitund.',
+    description: '',
+  },
+  heirsOverviewConfirmation: {
+    id: 'ir.application:heirsOverviewConfirmation',
+    defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um eign til skipta og erfingja eftir minni bestu vitund.',
     description: '',
   },
   realEstateEstimation: {
@@ -1203,11 +1236,6 @@ export const m = defineMessages({
   },
   deceasedShare: {
     id: 'ir.application:deceasedShare',
-    defaultMessage: 'Hlutfall séreignar',
-    description: '',
-  },
-  deceasedSharePart: {
-    id: 'ir.application:deceasedSharePart',
     defaultMessage: 'Hlutfall séreignar',
     description: '',
   },
@@ -1708,15 +1736,30 @@ export const m = defineMessages({
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet urna nec nunc ultricies ultricies.',
     description: '',
   },
-  nextSteps: {
-    id: 'ir.application:nextSteps',
-    defaultMessage: 'Næstu skref',
-    description: '',
-  },
   errorRelation: {
     id: 'ir.application:error.errorRelation',
     defaultMessage: 'Tengsl virðast ekki vera rétt',
     description: 'Relation is invalid',
+  },
+  expandableHeaderEFS: {
+    id: 'ir.application:expandableHeaderEFS',
+    defaultMessage: 'Næstu skref',
+    description: '',
+  },
+  expandableHeaderPrepaid: {
+    id: 'ir.application:expandableHeaderPrepaid',
+    defaultMessage: 'Næstu skref',
+    description: '',
+  },
+  expandableIntroEFS: {
+    id: 'ir.application:expandableIntroEFS',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    description: '',
+  },
+  expandableIntroPrepaid: {
+    id: 'ir.application:expandableIntroPrepaid',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    description: '',
   },
 
   // Tax Free Limit

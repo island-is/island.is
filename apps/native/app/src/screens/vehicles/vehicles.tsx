@@ -1,4 +1,4 @@
-import { EmptyList, Skeleton, TopLine } from '@ui'
+import { EmptyList, GeneralCardSkeleton, TopLine } from '@ui'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import {
@@ -11,16 +11,14 @@ import {
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
-import illustrationSrc from '../../assets/illustrations/moving.png'
+import illustrationSrc from '../../assets/illustrations/le-moving-s4.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   ListVehiclesQuery,
   useListVehiclesQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { VehicleItem } from './components/vehicle-item'
 
@@ -60,31 +58,6 @@ const Empty = () => (
   </View>
 )
 
-const SkeletonItem = () => {
-  const theme = useTheme()
-  return (
-    <View style={{ paddingHorizontal: 16 }}>
-      <Skeleton
-        active
-        backgroundColor={{
-          dark: theme.shades.dark.shade300,
-          light: theme.color.blue100,
-        }}
-        overlayColor={{
-          dark: theme.shades.dark.shade200,
-          light: theme.color.blue200,
-        }}
-        overlayOpacity={1}
-        height={156}
-        style={{
-          borderRadius: 16,
-          marginBottom: 16,
-        }}
-      />
-    </View>
-  )
-}
-
 const input = {
   page: 1,
   pageSize: 10,
@@ -96,6 +69,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+  const theme = useTheme()
 
   const flatListRef = useRef<FlatList>(null)
   const [refetching, setRefetching] = useState(false)
@@ -114,12 +88,6 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
     queryResult: res,
     refetching,
   })
-
-  // Get feature flag for mileage
-  const isMileageEnabled = useFeatureFlag(
-    'isServicePortalVehicleMileagePageEnabled',
-    false,
-  )
 
   // What to do when refreshing
   const onRefresh = useCallback(() => {
@@ -152,14 +120,16 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
   const renderItem = useCallback(
     ({ item, index }: { item: ListItem; index: number }) => {
       if (item.__typename === 'Skeleton') {
-        return <SkeletonItem />
+        return (
+          <View style={{ paddingHorizontal: theme.spacing[2] }}>
+            <GeneralCardSkeleton height={156} />
+          </View>
+        )
       }
 
-      return (
-        <VehicleItem mileage={isMileageEnabled} item={item} index={index} />
-      )
+      return <VehicleItem item={item} index={index} />
     },
-    [isMileageEnabled],
+    [],
   )
 
   // Extract key of data

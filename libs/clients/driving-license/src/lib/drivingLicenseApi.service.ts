@@ -14,6 +14,7 @@ import {
   RemarkCode,
   DrivingLicenseV4V5Dto,
   Jurisdiction,
+  Remark,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
 import { PracticePermitDto, DriverLicenseWithoutImagesDto } from '../v5'
@@ -104,10 +105,11 @@ export class DrivingLicenseApi {
 
     if (license?.comments) {
       const remarks = await this.getRemarksCodeTable()
-      const licenseRemarks: string[] = license.comments.map(
-        (remark) =>
+      const licenseRemarks: Remark[] = license.comments.map((remark) => ({
+        code: remark.nr ?? '',
+        description:
           remarks?.find((r) => r.index === remark?.nr?.toString())?.name ?? '',
-      )
+      }))
       return {
         ...DrivingLicenseApi.normalizeDrivingLicenseDTO(license),
         remarks: licenseRemarks,
@@ -136,17 +138,31 @@ export class DrivingLicenseApi {
           apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
           apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
         })
-        const licenseRemarks: string[] = licenseRaw.comments
+        const licenseRemarks: Remark[] = licenseRaw.comments
           .filter((remark) => remark.id === licenseRaw.id && !!remark.nr)
-          .map((remark) => remark.nr || '')
-        const filteredRemarks: string[] = remarks
+          .map((remark) => ({
+            code: remark.comment ?? '',
+            description: remark.nr || '',
+          }))
+
+        const filteredRemarks: Remark[] = remarks
           .filter(
             (remark) =>
               !!remark.heiti &&
-              licenseRemarks.includes(remark.nr || ('' && !remark.athugasemd)),
+              licenseRemarks.some((lremark) =>
+                lremark.description.includes(
+                  remark.nr || ('' && !remark.athugasemd),
+                ),
+              ),
           )
-          .map((remark) => remark.heiti || '')
-        return { ...license, remarks: filteredRemarks }
+          .map((remark) => ({
+            code: remark.nr || '',
+            description: remark.heiti || '',
+          }))
+        return {
+          ...license,
+          remarks: filteredRemarks,
+        }
       }
 
       return license
@@ -356,6 +372,23 @@ export class DrivingLicenseApi {
     }
   }
 
+  public async getCanApplyForRenewal65(params: {
+    token: string
+  }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBFull>> {
+    const response = await this.v5.apiDrivinglicenseV5CanapplyforRenewal65Get({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token,
+    })
+
+    return {
+      result: !!response.result,
+      errorCode: response.errorCode
+        ? (response.errorCode as CanApplyErrorCodeBFull)
+        : undefined,
+    }
+  }
+
   public async getCanApplyForCategoryTemporary(params: {
     token: string
   }): Promise<CanApplyForCategoryResult<CanApplyErrorCodeBTemporary>> {
@@ -476,10 +509,25 @@ export class DrivingLicenseApi {
     return handledResponse.success
   }
 
+  async postRenewLicenseOver65(params: { auth: string }) {
+    return await this.v5.apiDrivinglicenseV5ApplicationsRenewal65Post({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.auth,
+      postRenewal65AndOver: {
+        renewalDate: new Date(),
+        userId: v5.DRIVING_LICENSE_API_USER_ID,
+      },
+    })
+  }
+
   async postApplyForBELicense(params: {
     nationalIdApplicant: string
     token: string
     jurisdictionId: number
+    instructorSSN: string
+    phoneNumber: string
+    email: string
   }): Promise<boolean> {
     const response = await this.applicationV5.apiApplicationsV5ApplyforBePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -488,6 +536,9 @@ export class DrivingLicenseApi {
       postApplicationForBEModel: {
         districtId: params.jurisdictionId,
         userId: v5.DRIVING_LICENSE_API_USER_ID,
+        instructorSSN: params.instructorSSN,
+        primaryPhoneNumber: params.phoneNumber,
+        studentEmail: params.email,
       },
     })
 

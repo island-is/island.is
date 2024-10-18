@@ -7,7 +7,6 @@ import {
   PaymentPlanApi,
   PensionCalculatorApi,
   TestApi,
-  TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
 } from '../../gen/fetch'
 
 export type Scope =
@@ -83,23 +82,31 @@ export interface Months {
   december?: number
 }
 
-export interface ApplicationDTO {
-  period?: Period
-  comment?: string
-  reasons?: Array<string>
-  applicationId?: string
-  domesticBankInfo?: DomesticBankInfo
-  foreignBankInfo?: ForeignBankInfo
-  taxInfo?: TaxInfo
-  applicantInfo?: ApplicantInfo
-  hasAbroadResidence?: boolean
-  hasOneTimePayment?: boolean
-  isSailorPension?: boolean
-  isRental?: boolean
-  hasAStudyingAdolescenceResident?: boolean
-  uploads?: Array<TrWebCommonsExternalPortalsApiModelsDocumentsDocument>
-  employment?: string
-  employers?: Array<Employer>
+export interface IncomePlanInfo {
+  incomeYear: number
+  incomeTypes: Array<IncomeTypes>
+}
+
+export interface IncomeTypes {
+  incomeTypeNumber: number
+  incomeTypeCode: string
+  incomeTypeName: string
+  currencyCode: string
+  incomeCategoryNumber: number
+  incomeCategoryCode: string
+  incomeCategoryName: string
+  amountJan: number
+  amountFeb: number
+  amountMar: number
+  amountApr: number
+  amountMay: number
+  amountJun: number
+  amountJul: number
+  amountAug: number
+  amountSep: number
+  amountOct: number
+  amountNov: number
+  amountDec: number
 }
 
 export enum DocumentTypeEnum {
@@ -117,3 +124,5 @@ export enum DocumentTypeEnum {
   HOUSE_RENT_AGREEMENT = 'houseRentAgreement',
   HOUSE_RENT_ALLOWANCE = 'houseRentAllowance',
 }
+
+export type IncomePlanStatus = 'Accepted' | 'Cancelled' | 'InProgress'

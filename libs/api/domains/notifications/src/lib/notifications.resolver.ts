@@ -13,7 +13,6 @@ import {
 } from './notifications.model'
 import type { Locale } from '@island.is/shared/types'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { FeatureFlag, Features } from '@island.is/nest/feature-flags'
 
 const LOG_CATEGORY = 'notifications-resolver'
 export const AUDIT_NAMESPACE = 'notifications-resolver'
@@ -22,7 +21,6 @@ export const AUDIT_NAMESPACE = 'notifications-resolver'
 @Resolver()
 @Audit({ namespace: AUDIT_NAMESPACE })
 @Scopes(DocumentsScope.main)
-@FeatureFlag(Features.ServicePortalNotificationsEnabled)
 export class NotificationsResolver {
   constructor(
     private readonly service: NotificationsService,

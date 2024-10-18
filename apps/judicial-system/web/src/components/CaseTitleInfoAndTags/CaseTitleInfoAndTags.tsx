@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -17,7 +17,7 @@ import RulingDateLabel from '../RulingDateLabel/RulingDateLabel'
 import { UserContext } from '../UserProvider/UserProvider'
 import { CaseTitleInfoAndTags as strings } from './CaseTitleInfoAndTags.strings'
 
-const CaseTitleInfoAndTags: React.FC = () => {
+const CaseTitleInfoAndTags: FC = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)

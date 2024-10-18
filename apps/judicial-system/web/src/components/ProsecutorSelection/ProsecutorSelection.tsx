@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Option, Select } from '@island.is/island-ui/core'
@@ -13,10 +13,7 @@ interface Props {
   onChange: (prosecutorId: string) => boolean
 }
 
-const ProsecutorSelection: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
-  const { onChange } = props
+const ProsecutorSelection: FC<Props> = ({ onChange }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 

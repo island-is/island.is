@@ -3,13 +3,10 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/vehicle-service-fjs-v1/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/clients/vehicle-service-fjs-v1/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -17,8 +14,7 @@
         "{workspaceRoot}/coverage/libs/clients/vehicle-service-fjs-v1"
       ],
       "options": {
-        "jestConfig": "libs/clients/vehicle-service-fjs-v1/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/vehicle-service-fjs-v1/jest.config.ts"
       }
     },
     "update-openapi-document": {
@@ -38,6 +34,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

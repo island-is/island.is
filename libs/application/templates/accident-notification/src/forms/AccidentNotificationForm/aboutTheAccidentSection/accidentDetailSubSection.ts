@@ -1,6 +1,7 @@
 import {
   buildAlertMessageField,
   buildCustomField,
+  buildDateField,
   buildDescriptionField,
   buildMultiField,
   buildSubSection,
@@ -81,11 +82,11 @@ export const accidentDetailsSubSection = buildSubSection({
           title: accidentDetails.labels.doctorVisit,
           width: 'full',
         }),
-        buildCustomField({
+        buildDateField({
           id: 'accidentDetails.dateOfDoctorVisit',
           title: accidentDetails.labels.date,
-          component: 'DateOfAccident',
           width: 'half',
+          placeholder: accidentDetails.placeholder.date,
         }),
         buildTextField({
           id: 'accidentDetails.timeOfDoctorVisit',

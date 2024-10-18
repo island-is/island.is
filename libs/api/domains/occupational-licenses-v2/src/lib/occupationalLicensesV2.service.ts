@@ -69,11 +69,9 @@ export class OccupationalLicensesV2Service {
             }
             return {
               licenseId: addLicenseTypePrefix(l.id, 'DistrictCommissioners'),
-              licenseNumber: l.id,
               type: LicenseType.DISTRICT_COMMISSIONERS,
               issuer: l.issuerId,
               issuerTitle: l.issuerTitle,
-              profession: l.title,
               permit: l.title,
               dateOfBirth: info(user.nationalId).birthday,
               validFrom: l.validFrom,
@@ -110,9 +108,7 @@ export class OccupationalLicensesV2Service {
         ),
         type: LicenseType.DISTRICT_COMMISSIONERS,
         licenseHolderName: license.holderName,
-        licenseNumber: license.licenseInfo.id,
         issuer: license.licenseInfo.issuerId,
-        profession: license.licenseInfo.title,
         dateOfBirth: info(user.nationalId).birthday,
         validFrom: license.licenseInfo.validFrom,
         status: mapDistrictCommissionersLicenseStatusToStatus(
@@ -272,7 +268,6 @@ export class OccupationalLicensesV2Service {
       permit: data.practice,
       licenseHolderName: data.licenseHolderName,
       licenseHolderNationalId: data.licenseHolderNationalId,
-      dateOfBirth: info(data.licenseHolderNationalId).birthday,
       validFrom: data.validFrom,
       title: `${data.profession} - ${data.practice}`,
       status,
@@ -283,7 +278,6 @@ export class OccupationalLicensesV2Service {
     const issuer: OrganizationSlugType = 'haskoli-islands'
     return {
       licenseId: addLicenseTypePrefix(data.id, 'Education'),
-      licenseNumber: data.id,
       type: LicenseType.EDUCATION,
       issuer,
       issuerTitle: data.issuer,

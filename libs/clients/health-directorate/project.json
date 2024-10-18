@@ -2,40 +2,39 @@
   "name": "clients-health-directorate",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/health-directorate/src",
+  "tags": ["scope:client", "lib:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/clients/health-directorate/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/health-directorate"],
       "options": {
-        "jestConfig": "libs/clients/health-directorate/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/health-directorate/jest.config.ts"
       }
     },
     "update-openapi-document": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' http://localhost:8081/r1/IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/getOpenAPI?serviceCode=landlaeknir > src/clientConfig.json",
-          "prettier --write src/clientConfig.json"
+          "curl -H 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' http://localhost:8081/r1/IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/getOpenAPI?serviceCode=landlaeknir > src/lib/clients/organ-donation/clientConfig.json",
+          "prettier --write src/lib/clients/organ-donation/clientConfig.json"
         ],
         "parallel": false,
-        "cwd": "libs/clients/health-directorate"
+        "cwd": "libs/clients/health-directorate/src/lib/clients/organ-donation"
       }
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/health-directorate/gen/fetch -i libs/clients/health-directorate/src/clientConfig.json"
+        "commands": [
+          "yarn openapi-generator -o libs/clients/health-directorate/src/lib/clients/organ-donation/gen/fetch -i libs/clients/health-directorate/src/lib/clients/organ-donation/clientConfig.json",
+          "yarn openapi-generator -o libs/clients/health-directorate/src/lib/clients/vaccinations/gen/fetch -i libs/clients/health-directorate/src/lib/clients/vaccinations/clientConfig.json",
+          "yarn openapi-generator -o libs/clients/health-directorate/src/lib/clients/occupational-license/gen/fetch -i libs/clients/health-directorate/src/lib/clients/occupational-license/clientConfig.json"
+        ]
       },
-      "outputs": ["{projectRoot}/gen/fetch"]
+      "outputs": ["{projectRoot}/**/gen/fetch"]
     }
-  },
-  "tags": ["scope:client", "lib:client"]
+  }
 }

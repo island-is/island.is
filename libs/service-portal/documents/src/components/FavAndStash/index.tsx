@@ -39,7 +39,7 @@ export const FavAndStash: React.FC<FavAndStashProps> = ({
         >
           <Button
             circle
-            icon="archive"
+            icon="fileTrayEmpty"
             iconType={archived ? 'filled' : 'outline'}
             onClick={onStash}
             size="small"

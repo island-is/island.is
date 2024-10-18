@@ -60,8 +60,8 @@ export const InstitutionPanel = ({
         ) : (
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box
-              component="img"
               alt=""
+              component="img"
               src={img ? img : './assets/images/skjaldarmerki.svg'}
               width={isMobile ? undefined : 'full'}
               height={isMobile ? undefined : 'full'}
@@ -91,7 +91,7 @@ export const InstitutionPanel = ({
   return linkHref !== '' ? (
     <a
       href={linkHref}
-      aria-label={linkLabel}
+      aria-label={linkLabel ?? tooltipText ?? title}
       target="_blank"
       rel="noreferrer noopener"
       className={styles.link}

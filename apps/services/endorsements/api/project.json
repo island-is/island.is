@@ -4,6 +4,7 @@
   "sourceRoot": "apps/services/endorsements/api/src",
   "projectType": "application",
   "prefix": "services-endorsements-api",
+  "tags": ["scope:nest"],
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
@@ -50,26 +51,20 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/services/endorsements/api/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/services/endorsements/api"],
       "options": {
         "jestConfig": "apps/services/endorsements/api/jest.config.ts",
-        "runInBand": true,
-        "passWithNoTests": true
+        "runInBand": true
       }
     },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d --build",
+        "command": "docker compose up -d --build",
         "cwd": "apps/services/endorsements/api"
       }
     },
@@ -130,8 +125,9 @@
         "cwd": "apps/services/endorsements/api"
       }
     },
-    "docker-express": {},
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    },
     "service-endorsement-system-api": {}
-  },
-  "tags": ["scope:nest"]
+  }
 }

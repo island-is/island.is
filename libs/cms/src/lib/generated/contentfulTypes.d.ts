@@ -455,6 +455,9 @@ export interface IBigBulletListFields {
 
   /** Bullets */
   bullets: (IIconBullet | INumberBulletSection)[]
+
+  /** Divider On Top */
+  dividerOnTop?: boolean | undefined
 }
 
 export interface IBigBulletList extends Entry<IBigBulletListFields> {
@@ -577,6 +580,9 @@ export interface IChartFields {
 
   /** X Axis Format */
   xAxisFormat?: string | undefined
+
+  /** Y Axis Label */
+  yAxisLabel?: string | undefined
 
   /** Custom Style Config */
   customStyleConfig?: Record<string, any> | undefined
@@ -750,14 +756,15 @@ export interface ICustomPageFields {
   /** Title */
   title?: string | undefined
 
+  /** Slug */
+  slug?: string | undefined
+
   /** Unique Identifier */
-  uniqueIdentifier:
+  uniqueIdentifier?:
     | 'PensionCalculator'
     | 'OfficialJournalOfIceland'
     | 'Vacancies'
-
-  /** Slug */
-  slug?: string | undefined
+    | undefined
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
@@ -847,7 +854,7 @@ export interface IEmailSignupFields {
   formFields?: IFormField[] | undefined
 
   /** Signup Type */
-  signupType?: 'mailchimp' | 'zenter' | undefined
+  signupType?: 'mailchimp' | 'zenter' | 'campaign monitor' | undefined
 
   /** Configuration */
   configuration?: Record<string, any> | undefined
@@ -1158,6 +1165,9 @@ export interface IFeaturedArticlesFields {
   /** Title */
   title: string
 
+  /** Intro text */
+  introText?: Document | undefined
+
   /** Image */
   image?: Asset | undefined
 
@@ -1190,9 +1200,6 @@ export interface IFeaturedArticlesFields {
 
   /** Has Border Above */
   hasBorderAbove?: boolean | undefined
-
-  /** Intro text */
-  introText?: Document | undefined
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
@@ -1326,7 +1333,7 @@ export interface IFormFields {
   intro?: string | undefined
 
   /** Recipient */
-  recipient: string
+  recipient?: string | undefined
 
   /** Default field namespace */
   defaultFieldNamespace?: Record<string, any> | undefined
@@ -1548,6 +1555,9 @@ export interface IGenericListFields {
 
   /** Item Type */
   itemType?: 'Non-clickable' | 'Clickable' | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
 }
 
 /** A list of items which can be embedded into rich text */
@@ -1585,11 +1595,20 @@ export interface IGenericListItemFields {
   /** Card Intro */
   cardIntro?: Document | undefined
 
+  /** Slug */
+  slug?: string | undefined
+
   /** Content */
   content?: Document | undefined
 
-  /** Slug */
-  slug?: string | undefined
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
+
+  /** Asset */
+  asset?: Asset | undefined
+
+  /** External Link */
+  externalLink?: ILinkUrl | undefined
 }
 
 /** An item that belongs to a generic list */
@@ -1822,16 +1841,16 @@ export interface IHnippTemplateFields {
   /** TemplateId */
   templateId: string
 
-  /** Notification Title */
+  /** Title */
   notificationTitle: string
 
-  /** Notification Body */
+  /** External Body */
   notificationBody: string
 
-  /** Notification Data Copy */
+  /** Internal Body */
   notificationDataCopy?: string | undefined
 
-  /** Category */
+  /** Category DEPRECATED */
   category?: 'NEW_DOCUMENT' | 'ISLANDIS_LINK' | undefined
 
   /** Args */
@@ -1968,6 +1987,41 @@ export interface ILatestEventsSlice extends Entry<ILatestEventsSliceFields> {
     contentType: {
       sys: {
         id: 'latestEventsSlice'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILatestGenericListItemsFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Title */
+  title?: string | undefined
+
+  /** Generic List */
+  genericList?: IGenericList | undefined
+
+  /** See more page */
+  seeMorePage?: IOrganizationSubpage | undefined
+
+  /** See more link text */
+  seeMoreLinkText?: string | undefined
+}
+
+export interface ILatestGenericListItems
+  extends Entry<ILatestGenericListItemsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'latestGenericListItems'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2921,6 +2975,7 @@ export interface IOrganizationPageFields {
         | ISectionWithVideo
         | IAnchorPageList
         | ISectionWithImage
+        | IChartNumberBox
       )[]
     | undefined
 
@@ -3643,11 +3698,11 @@ export interface IServiceWebPageFields {
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
-  /** Email Config */
-  emailConfig?: Record<string, any> | undefined
-
   /** Contact Form Disclaimer */
   contactFormDisclaimer?: Document | undefined
+
+  /** Email Config */
+  emailConfig?: Record<string, any> | undefined
 }
 
 export interface IServiceWebPage extends Entry<IServiceWebPageFields> {
@@ -3746,6 +3801,7 @@ export interface ISliceConnectedComponentFields {
     | 'KilometerFee'
     | 'SpecificHousingBenefitSupportCalculator'
     | 'GrindavikResidentialPropertyPurchaseCalculator'
+    | 'Ums/CostOfLivingCalculator'
     | undefined
 
   /** Localized JSON */
@@ -3753,6 +3809,9 @@ export interface ISliceConnectedComponentFields {
 
   /** Config */
   config?: Record<string, any> | undefined
+
+  /** Translation namespace */
+  translationNamespace?: INamespace | undefined
 }
 
 export interface ISliceConnectedComponent
@@ -4304,11 +4363,20 @@ export interface ITabSection extends Entry<ITabSectionFields> {
 }
 
 export interface ITeamListFields {
-  /** Title */
+  /** Internal Title */
   title?: string | undefined
 
   /** Team members */
   teamMembers?: ITeamMember[] | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
+
+  /** Filter groups */
+  filterGroups?: IGenericTagGroup[] | undefined
+
+  /** Variant */
+  variant?: 'card' | 'accordion' | undefined
 }
 
 /** list of team members */
@@ -4337,11 +4405,23 @@ export interface ITeamMemberFields {
   /** Title */
   title: string
 
-  /** Mynd */
+  /** Image */
   mynd: Asset
 
-  /** Image On Select */
+  /** Image On Hover */
   imageOnSelect?: Asset | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
+
+  /** Accordion email */
+  email?: string | undefined
+
+  /** Accordion phone */
+  phone?: string | undefined
+
+  /** Accordion free text */
+  intro?: Document | undefined
 }
 
 export interface ITeamMember extends Entry<ITeamMemberFields> {
@@ -4560,6 +4640,9 @@ export interface ITimelineEvent extends Entry<ITimelineEventFields> {
 export interface ITwoColumnTextFields {
   /** Left Title */
   leftTitle?: string | undefined
+
+  /** Only use left title */
+  onlyUseOneTitle?: boolean | undefined
 
   /** Left Content */
   leftContent?: Document | undefined
@@ -4978,6 +5061,7 @@ export type CONTENT_TYPE =
   | 'iconBullet'
   | 'introLinkImage'
   | 'latestEventsSlice'
+  | 'latestGenericListItems'
   | 'latestNewsSlice'
   | 'lifeEventPage'
   | 'link'

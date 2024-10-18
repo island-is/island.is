@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import { ApolloError } from '@apollo/client'
 
 import {
@@ -35,7 +41,7 @@ export interface CaseFileWithStatus extends CaseFile {
 
 export const useCourtUpload = (
   workingCase: Case,
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+  setWorkingCase: Dispatch<SetStateAction<Case>>,
 ) => {
   const [uploadState, setUploadState] = useState<UploadState>()
   const [uploadFileToCourtMutation] = useUploadFileToCourtMutation()

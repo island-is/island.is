@@ -2,10 +2,12 @@ import { apiDomainsHealthInsurance } from './api-domains-health-insurance'
 import { Test } from '@nestjs/testing'
 import { HealthInsuranceService } from './healthInsurance.service'
 import {
-  HealthInsuranceV2Client,
-  HealthInsuranceV2Options,
+  HealthInsuranceV2ClientConfig,
+  HealthInsuranceV2ClientModule,
 } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule } from '@nestjs/config'
+import { XRoadConfig } from '@island.is/nest/config'
 
 describe('apiDomainsHealthInsurance', () => {
   it('should work', () => {
@@ -14,22 +16,16 @@ describe('apiDomainsHealthInsurance', () => {
 })
 
 describe('healthInsuranceTest', () => {
-  interface HealthInsuranceOptions {
-    clientV2Config: HealthInsuranceV2Options
-  }
-  const options: HealthInsuranceOptions = {
-    clientV2Config: {
-      xRoadBaseUrl: 'http://localhost:8080',
-      password: '',
-      username: '',
-      xRoadClientId: '',
-      xRoadProviderId: '',
-    },
-  }
   let service: HealthInsuranceService
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [HealthInsuranceV2Client.register(options.clientV2Config)],
+      imports: [
+        HealthInsuranceV2ClientModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [HealthInsuranceV2ClientConfig, XRoadConfig],
+        }),
+      ],
       providers: [
         {
           provide: LOGGER_PROVIDER,

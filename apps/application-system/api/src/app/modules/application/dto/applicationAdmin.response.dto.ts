@@ -77,4 +77,9 @@ export class ApplicationStatistics {
   @Expose()
   @IsNumber()
   approved!: number
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  name?: string
 }

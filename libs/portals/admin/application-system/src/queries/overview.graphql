@@ -109,5 +109,6 @@ query getApplicationStatistics(
     completed
     rejected
     approved
+    name
   }
 }

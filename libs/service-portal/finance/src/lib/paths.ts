@@ -2,6 +2,7 @@ export enum FinancePaths {
   FinanceRoot = '/fjarmal',
   FinanceStatus = '/fjarmal/stada',
   FinanceTransactions = '/fjarmal/faerslur',
+  FinanceTransactionCategories = '/fjarmal/faerslur/flokkar',
   FinanceTransactionPeriods = '/fjarmal/faerslur/timabil',
   FinanceEmployeeClaims = '/fjarmal/laungreidendakrofur',
   FinanceLocalTax = '/fjarmal/utsvar',

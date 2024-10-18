@@ -1,4 +1,4 @@
-import { Box, Text, Stack, ActionCard, Button } from '@island.is/island-ui/core'
+import { Box, Text, Stack, ActionCard } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import { useGetPetitionLists } from './useGetPetitionLists'
 import format from 'date-fns/format'
@@ -18,53 +18,22 @@ const formatDate = (date: string) => {
   }
 }
 
-const getBaseUrl = () => {
-  const baseUrl =
-    window.location.origin === 'http://localhost:4200'
-      ? 'http://localhost:4242'
-      : window.location.origin
-
-  return `${baseUrl}/umsoknir/undirskriftalisti`
-}
-
 export const GeneralPetitionLists: FC<
   React.PropsWithChildren<GeneralPetitionProps>
 > = ({ slice }) => {
   const router = useRouter()
-  const {
-    data: petitionLists,
-    loading: petitionLoading,
-    error: petitionError,
-    loadNextPage,
-    loadPreviousPage,
-    pageInfo: petitionPageInfo,
-  } = useGetPetitionLists()
+  const { data: petitionLists, loading } = useGetPetitionLists()
   const t = useLocalization(slice.json)
 
   return (
-    <>
-      <Box marginY={5}>
-        <ActionCard
-          heading={t('createList', 'Stofna undirskriftalista')}
-          backgroundColor="blue"
-          cta={{
-            label: t('logIn', 'Innskráning'),
-            variant: 'primary',
-            icon: 'open',
-            iconType: 'outline',
-            size: 'small',
-            onClick: () => window.open(getBaseUrl(), '_blank'),
-          }}
-        />
-      </Box>
+    <Box>
       {petitionLists?.length > 0 && (
         <Box marginTop={10} marginBottom={3}>
           <Text variant="h4">{t('title', 'Virkir listar')}</Text>
         </Box>
       )}
-      <Stack space={4}>
-        {!petitionLoading &&
-          !petitionError &&
+      <Stack space={3}>
+        {!loading &&
           petitionLists?.map((petition: EndorsementList) => {
             return (
               <ActionCard
@@ -88,23 +57,7 @@ export const GeneralPetitionLists: FC<
             )
           })}
       </Stack>
-      <Box display="flex" justifyContent="center" marginTop={5}>
-        {petitionPageInfo?.hasPreviousPage ? (
-          <Box marginRight={2}>
-            <Button variant="ghost" size="small" onClick={loadPreviousPage}>
-              {t('previous', 'Fyrri síða')}
-            </Button>
-          </Box>
-        ) : undefined}
-        {petitionPageInfo?.hasNextPage ? (
-          <Box marginLeft={2}>
-            <Button variant="ghost" size="small" onClick={loadNextPage}>
-              {t('next', 'Næsta síða')}
-            </Button>
-          </Box>
-        ) : undefined}
-      </Box>
-    </>
+    </Box>
   )
 }
 

@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing'
 
 import { LoggingModule } from '@island.is/logging'
+import { ConfigModule } from '@island.is/nest/config'
 
-import { NovaError, SmsService, SMS_OPTIONS } from './sms.service'
+import { smsModuleConfig } from './sms.config'
+import { NovaError, SmsService } from './sms.service'
 
 const testLogin = 'Login'
 const testToken = 'Test Token'
@@ -18,30 +20,32 @@ const a = jest
   .mockImplementationOnce(() => {
     throw { extensions: { response: { status: 401 } } }
   })
-const postMock = jest.fn(function (
-  path: string,
-  body: { request?: { Recipients?: string[] } },
-  // The init argument is needed for the mock to work
-  init?: RequestInit, // eslint-disable-line @typescript-eslint/no-unused-vars
-) {
-  switch (path) {
-    case testLogin:
-      return { Token: testToken }
-    case testSendSms: {
-      if (body?.request?.Recipients?.includes(testNumber)) {
-        return { Code: testCode }
-      }
+const postMock = jest.fn(
+  (
+    path: string,
+    body: { request?: { Recipients?: string[] } },
+    // The init argument is needed for the mock to work
+    init?: RequestInit, // eslint-disable-line @typescript-eslint/no-unused-vars
+  ) => {
+    switch (path) {
+      case testLogin:
+        return { Token: testToken }
+      case testSendSms: {
+        if (body?.request?.Recipients?.includes(testNumber)) {
+          return { Code: testCode }
+        }
 
-      if (body?.request?.Recipients?.includes(failOnceTestNumber)) {
-        return a()
-      }
+        if (body?.request?.Recipients?.includes(failOnceTestNumber)) {
+          return a()
+        }
 
-      throw new Error()
+        throw new Error()
+      }
+      default:
+        throw new Error()
     }
-    default:
-      throw new Error()
-  }
-})
+  },
+)
 jest.mock('apollo-datasource-rest', () => {
   class MockRESTDataSource {
     post = postMock
@@ -51,11 +55,6 @@ jest.mock('apollo-datasource-rest', () => {
   return { RESTDataSource: MockRESTDataSource }
 })
 
-const testOptions = {
-  url: 'Test Url',
-  username: 'Test User',
-  password: 'Test Password',
-}
 const testMessage = 'Test Message'
 
 describe('SmsService', () => {
@@ -65,14 +64,13 @@ describe('SmsService', () => {
     postMock.mockClear()
 
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggingModule],
-      providers: [
-        {
-          provide: SMS_OPTIONS,
-          useValue: testOptions,
-        },
-        SmsService,
+      imports: [
+        ConfigModule.forRoot({
+          load: [smsModuleConfig],
+        }),
+        LoggingModule,
       ],
+      providers: [SmsService],
     }).compile()
 
     smsService = module.get<SmsService>(SmsService)
@@ -87,8 +85,8 @@ describe('SmsService', () => {
     // Verify login
     expect(postMock).toHaveBeenCalledWith(testLogin, undefined, {
       headers: {
-        username: testOptions.username,
-        password: testOptions.password,
+        username: 'IslandIs_User_Development',
+        password: '',
       },
     })
 
@@ -127,8 +125,8 @@ describe('SmsService', () => {
     // Verify login
     expect(postMock).toHaveBeenCalledWith(testLogin, undefined, {
       headers: {
-        username: testOptions.username,
-        password: testOptions.password,
+        username: 'IslandIs_User_Development',
+        password: '',
       },
     })
 

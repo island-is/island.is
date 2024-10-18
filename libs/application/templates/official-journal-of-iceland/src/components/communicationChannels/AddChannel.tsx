@@ -1,22 +1,53 @@
 import { Box, Button, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { general, publishing } from '../../lib/messages'
 import * as styles from './AddChannel.css'
-import { Channel } from './Channel'
 import { FormGroup } from '../form/FormGroup'
+import { useApplication } from '../../hooks/useUpdateApplication'
+import set from 'lodash/set'
+import { InputFields } from '../../lib/types'
+
 type Props = {
-  onAdd: (channel: Channel) => void
-  state: Channel
-  setState: React.Dispatch<React.SetStateAction<Channel>>
+  applicationId: string
+  defaultEmail?: string
+  defaultPhone?: string
+  defaultVisible?: boolean
 }
 
-export const AddChannel = ({ onAdd, state, setState }: Props) => {
+export const AddChannel = ({
+  applicationId,
+  defaultEmail,
+  defaultPhone,
+  defaultVisible,
+}: Props) => {
+  const { application, updateApplication } = useApplication({
+    applicationId,
+  })
   const { formatMessage: f } = useLocale()
 
-  const phoneRef = useRef<HTMLInputElement>(null)
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [isVisible, setIsVisible] = useState(defaultVisible ?? false)
 
-  const [isVisible, setIsVisible] = useState(false)
+  useEffect(() => {
+    setEmail(defaultEmail ?? email)
+    setPhone(defaultPhone ?? phone)
+    setIsVisible(defaultVisible ?? false)
+  }, [defaultEmail, defaultPhone, defaultVisible])
+
+  const onAddChannel = () => {
+    const currentAnswers = structuredClone(application.answers)
+    const currentChannels = currentAnswers.advert?.channels ?? []
+    const updatedAnswers = set(currentAnswers, InputFields.advert.channels, [
+      ...currentChannels,
+      { email, phone },
+    ])
+
+    updateApplication(updatedAnswers)
+    setEmail('')
+    setPhone('')
+  }
 
   return (
     <FormGroup>
@@ -32,19 +63,18 @@ export const AddChannel = ({ onAdd, state, setState }: Props) => {
               size="xs"
               name="email"
               type="email"
-              value={state.email}
+              value={email}
               label={f(general.email)}
-              onChange={(e) => setState({ ...state, email: e.target.value })}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </Box>
           <Box className={styles.phoneWrap}>
             <Input
-              ref={phoneRef}
               size="xs"
               name="tel"
-              value={state.phone}
+              value={phone}
               label={f(general.phoneNumber)}
-              onChange={(e) => setState({ ...state, phone: e.target.value })}
+              onChange={(e) => setPhone(e.target.value)}
             />
           </Box>
         </Box>
@@ -54,19 +84,13 @@ export const AddChannel = ({ onAdd, state, setState }: Props) => {
             variant="ghost"
             onClick={() => {
               setIsVisible(!isVisible)
-              setState({ email: '', phone: '' })
+              setEmail('')
+              setPhone('')
             }}
           >
             {f(general.cancel)}
           </Button>
-          <Button
-            disabled={!state.email}
-            onClick={() => {
-              onAdd(state)
-              setState({ email: '', phone: '' })
-            }}
-            size="small"
-          >
+          <Button disabled={!email.length} size="small" onClick={onAddChannel}>
             {f(general.saveChanges)}
           </Button>
         </Box>

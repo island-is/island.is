@@ -38,7 +38,7 @@ export const externalData = {
         'Title: External Info about applicant from the National Registry',
     },
     subTitle: {
-      id: 'fa.application:section.backgroundInformation.externalData.applicant.subTitle#markdown',
+      id: 'fa.application:section.backgroundInformation.externalData.applicant.subTitle-2#markdown',
       defaultMessage: 'Lögheimili, hjúskaparstaða og börn í þinni forsjá.',
       description:
         'Subtitle: External Info about applicant from the National Registry',

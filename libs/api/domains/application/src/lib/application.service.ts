@@ -41,12 +41,18 @@ export class ApplicationService {
   }
 
   async findOne(id: string, auth: Auth, locale: Locale) {
-    return await this.applicationApiWithAuth(auth).applicationControllerFindOne(
-      {
-        id,
-        locale,
-      },
-    )
+    const data = await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerFindOne({
+      id,
+      locale,
+    })
+
+    if (data.pruned) {
+      return { ...data, answers: {}, attachments: {}, externalData: {} }
+    }
+
+    return data
   }
 
   async getPaymentStatus(
@@ -109,6 +115,7 @@ export class ApplicationService {
       to: input.to,
     })
   }
+
   async create(input: CreateApplicationInput, auth: Auth) {
     return this.applicationApiWithAuth(auth).applicationControllerCreate({
       createApplicationDto: input,
@@ -194,7 +201,6 @@ export class ApplicationService {
   async deleteApplication(input: DeleteApplicationInput, auth: Auth) {
     return this.applicationApiWithAuth(auth).applicationControllerDelete({
       id: input.id,
-      authorization: auth.authorization,
     })
   }
 

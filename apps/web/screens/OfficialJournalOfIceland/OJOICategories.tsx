@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Locale } from 'locale'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
 
@@ -18,6 +17,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { debounceTime } from '@island.is/shared/constants'
+import { Locale } from '@island.is/shared/types'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,

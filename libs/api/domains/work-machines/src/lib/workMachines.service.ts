@@ -1,4 +1,11 @@
-import { WorkMachinesClientService } from '@island.is/clients/work-machines'
+import {
+  MachineModelDto,
+  MachineParentCategoryDetailsDto,
+  MachineSubCategoryDto,
+  TechInfoItemDto,
+  WorkMachinesClientService,
+} from '@island.is/clients/work-machines'
+import { isDefined } from '@island.is/shared/utils'
 import { User } from '@island.is/auth-nest-tools'
 import {
   WorkMachine,
@@ -12,6 +19,9 @@ import { GetDocumentsInput } from './dto/getDocuments.input'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { MachineDto } from '@island.is/clients/work-machines'
+import { GetMachineParentCategoryByTypeAndModelInput } from './dto/getMachineParentCategoryByTypeAndModel.input'
+import isValid from 'date-fns/isValid'
+
 @Injectable()
 export class WorkMachinesService {
   constructor(
@@ -68,14 +78,22 @@ export class WorkMachinesService {
       )
     }
 
-    const value = data.value?.map(
-      (v) =>
-        ({
-          ...v,
-          ownerName: v.owner,
-          supervisorName: v.supervisor,
-        } as WorkMachine),
-    ) as Array<WorkMachine>
+    const workMachines: Array<WorkMachine> =
+      data.value
+        ?.map((v) => {
+          const inspectionDate = v.dateLastInspection
+            ? new Date(v.dateLastInspection)
+            : undefined
+          return {
+            ...v,
+            dateLastInspection: isValid(inspectionDate)
+              ? inspectionDate
+              : undefined,
+            ownerName: v.owner,
+            supervisorName: v.supervisor,
+          }
+        })
+        .filter(isDefined) ?? []
 
     const links = data.links?.length
       ? data.links.map((l) => {
@@ -87,7 +105,7 @@ export class WorkMachinesService {
       : null
 
     return {
-      data: value,
+      data: workMachines,
       links,
       labels: data.labels,
       totalCount: data.pagination?.totalCount ?? 0,
@@ -123,8 +141,13 @@ export class WorkMachinesService {
         })
       : null
 
+    const inspectionDate = data.dateLastInspection
+      ? new Date(data.dateLastInspection)
+      : undefined
+
     return {
       ...data,
+      dateLastInspection: isValid(inspectionDate) ? inspectionDate : undefined,
       links,
     }
   }
@@ -145,12 +168,46 @@ export class WorkMachinesService {
     regNumber: string,
     rel: string,
   ): Promise<MachineDto> {
-    return this.machineService.getMachineByRegno(auth, regNumber, rel)
+    return this.machineService.getMachineByRegno(auth, regNumber, rel, {
+      showDeregisteredMachines: true,
+    })
   }
 
   async isPaymentRequired(auth: User, regNumber: string): Promise<boolean> {
     return (
       (await this.machineService.isPaymentRequired(auth, regNumber)) || false
     )
+  }
+
+  async getMachineModels(auth: User, type: string): Promise<MachineModelDto[]> {
+    return this.machineService.getMachineModels(auth, { tegund: type })
+  }
+
+  async getMachineParentCategoriesTypeModelGet(
+    auth: User,
+    input: GetMachineParentCategoryByTypeAndModelInput,
+  ): Promise<MachineParentCategoryDetailsDto[]> {
+    return this.machineService.getMachineParentCategoriesTypeModel(auth, {
+      type: input.type,
+      model: input.model,
+    })
+  }
+
+  async getMachineSubCategories(
+    auth: User,
+    parentCategory: string,
+  ): Promise<MachineSubCategoryDto[]> {
+    return this.machineService.getMachineSubCategories(auth, { parentCategory })
+  }
+
+  async getTechnicalInfoInputs(
+    auth: User,
+    parentCategory: string,
+    subCategory: string,
+  ): Promise<TechInfoItemDto[]> {
+    return this.machineService.getTechnicalInfoInputs(auth, {
+      parentCategory,
+      subCategory,
+    })
   }
 }

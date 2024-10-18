@@ -170,7 +170,7 @@ export class AuthService {
     nationalId: string,
     userRole?: UserRole,
   ) {
-    await fetch(`${this.config.backendUrl}/api/event-log/log-event`, {
+    await fetch(`${this.config.backendUrl}/api/eventLog/event`, {
       method: 'POST',
       headers: {
         authorization: `Bearer ${this.config.secretToken}`,

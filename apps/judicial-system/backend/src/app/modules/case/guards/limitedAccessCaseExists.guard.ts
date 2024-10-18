@@ -14,7 +14,7 @@ export class LimitedAccessCaseExistsGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
 
-    const caseId = request.params.caseId
+    const caseId: string = request.params.caseId
 
     if (!caseId) {
       throw new BadRequestException('Missing case id')

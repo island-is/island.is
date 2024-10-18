@@ -1,3 +1,5 @@
+import { Nam } from './clients/occupational-license/gen/fetch'
+
 export interface HealthcareLicense {
   professionId: string
   professionNameIs: string
@@ -43,4 +45,21 @@ export interface HealthDirectorateLicenseToPractice {
   validFrom: Date
   validTo?: Date
   status: HealthDirectorateLicenseStatus
+}
+export interface HealthcareWorkPermitRequest {
+  name: string
+  dateOfBirth: Date
+  email: string
+  phone: string
+  idProfession: string
+  citizenship: string
+  education: Nam[]
+}
+
+export type Scope = '@landlaeknir.is/starfsleyfi'
+
+export enum HealthDirectorateApisId {
+  ORGAN_DONATION = 'organDonation',
+  VACCINATIONS = 'vaccinations',
+  OCCUPATIONAL_LICENSE = 'occupational-license-and-certificate',
 }

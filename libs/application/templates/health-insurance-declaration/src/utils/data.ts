@@ -134,6 +134,23 @@ export const getChildrenAsOptions = (externalData: ExternalData): Option[] => {
   return []
 }
 
+export const getApplicantFromExternalData = (
+  externalData: ExternalData,
+): NationalRegistryIndividual => {
+  return externalData.nationalRegistry?.data as NationalRegistryIndividual
+}
+
+export const getApplicantAsOption = (externalData: ExternalData): Option[] => {
+  const individual = getApplicantFromExternalData(externalData)
+  return [
+    {
+      value: individual?.nationalId,
+      label: individual?.fullName,
+      subLabel: `${format(individual?.nationalId)}`,
+    },
+  ]
+}
+
 export const getSpouseAsOptions = (externalData: ExternalData): Option[] => {
   const spouse = getSpouseFromExternalData(externalData)
 
@@ -150,16 +167,33 @@ export const getSpouseAsOptions = (externalData: ExternalData): Option[] => {
   return []
 }
 
-export const getSelectedFamily = (
+export const getSelectedApplicants = (
   answers: HealthInsuranceDeclaration,
   externalData: ExternalData,
 ) => {
+  const applicant = getApplicantFromExternalData(externalData)
   const spouse = getSpouseFromExternalData(externalData)
   const children = getChildrenFromExternalData(externalData)
-  let selectedFamily: StaticText[][] = []
+  let selectedApplicants: StaticText[][] = []
+
+  selectedApplicants = selectedApplicants.concat(
+    answers.selectedApplicants?.registerPersonsApplicantCheckboxField
+      ? answers.selectedApplicants?.registerPersonsApplicantCheckboxField?.map(
+          (a) => {
+            if (a === applicant.nationalId) {
+              return [
+                applicant.fullName,
+                applicant.nationalId,
+                m.overview.familyTableRelationApplicantText,
+              ]
+            } else return []
+          },
+        )
+      : [],
+  )
 
   if (spouse) {
-    selectedFamily = selectedFamily.concat(
+    selectedApplicants = selectedApplicants.concat(
       answers.selectedApplicants?.registerPersonsSpouseCheckboxField
         ? answers.selectedApplicants?.registerPersonsSpouseCheckboxField?.map(
             (s) => {
@@ -187,11 +221,10 @@ export const getSelectedFamily = (
         ]
       },
     )
-
   if (selectedChildren) {
-    selectedFamily.concat(selectedChildren)
+    selectedApplicants = selectedApplicants.concat(selectedChildren)
   }
-  return selectedFamily
+  return selectedApplicants
 }
 
 export const getInsuranceStatementDataFromExternalData = (

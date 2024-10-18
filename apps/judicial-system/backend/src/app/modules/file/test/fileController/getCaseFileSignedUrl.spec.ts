@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { NotFoundException } from '@nestjs/common'
 
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
 
@@ -60,7 +60,6 @@ describe('FileController - Get case file signed url', () => {
     const theCase = {
       id: uuid(),
       type: CaseType.ADMISSION_TO_FACILITY,
-      state: CaseState.RECEIVED,
     } as Case
     const url = `uploads/${key}`
     let then: Then
@@ -77,14 +76,13 @@ describe('FileController - Get case file signed url', () => {
     it('should create a signed url', () => {
       expect(mockAwsS3Service.objectExists).toHaveBeenCalledWith(
         theCase.type,
-        theCase.state,
         key,
       )
       expect(mockAwsS3Service.getSignedUrl).toHaveBeenCalledWith(
         theCase.type,
-        theCase.state,
         key,
         undefined,
+        false,
       )
       expect(then.result).toEqual({ url })
     })
@@ -98,7 +96,6 @@ describe('FileController - Get case file signed url', () => {
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
-      state: CaseState.DRAFT,
     } as Case
     let mockUpdate: jest.Mock
     let then: Then

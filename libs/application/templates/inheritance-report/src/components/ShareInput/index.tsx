@@ -1,9 +1,10 @@
-import { Input } from '@island.is/island-ui/core'
+import { Input, Box } from '@island.is/island-ui/core'
 import { FocusEvent, useRef, useEffect } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { Controller, useFormContext, useFormState } from 'react-hook-form'
 import { valueToNumber } from '../../lib/utils/helpers'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { getErrorViaPath } from '@island.is/application/core'
 
 interface ShareInputProps {
   name: string
@@ -15,6 +16,14 @@ interface ShareInputProps {
   required?: boolean
   readOnly?: boolean
   hasError?: boolean
+  // if component is used as a field in a form
+  field?: {
+    props: {
+      name: string
+      placeholder?: string
+      label?: string
+    }
+  }
 }
 
 const onFocusInput = (
@@ -57,11 +66,18 @@ export const ShareInput = ({
   required,
   readOnly,
   hasError,
+  field,
 }: ShareInputProps) => {
   const ref = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
   const prevLen = useRef(0)
   const { control, watch } = useFormContext()
   const { formatMessage } = useLocale()
+
+  const { errors } = useFormState()
+  const errorFromField = getErrorViaPath(
+    errors,
+    'customShare.customSpouseSharePercentage',
+  )
 
   const watchedField = watch(name)
 
@@ -107,65 +123,65 @@ export const ShareInput = ({
   }, [ref])
 
   return (
-    <Controller
-      control={control}
-      name={name}
-      defaultValue={'0'}
-      render={({ field: { onChange, value, name } }) => (
-        <Input
-          ref={ref}
-          label={label}
-          placeholder={placeholder}
-          id={name}
-          name={name}
-          backgroundColor="blue"
-          value={`${(value || '0')?.replace('.', ',')}%`}
-          onFocus={onFocusInput}
-          onBlur={(e) => {
-            const val = e.target.value ?? ''
-            if (val.endsWith(',%')) {
-              const newVal = val.replace(',%', '')
-              onChange(newVal)
+    <Box marginTop={field?.props ? 2 : 0}>
+      <Controller
+        control={control}
+        name={name ?? field?.props.name}
+        render={({ field: { onChange, value, name } }) => (
+          <Input
+            ref={ref}
+            label={label ?? field?.props.label}
+            placeholder={placeholder ?? field?.props.placeholder}
+            id={name}
+            name={name}
+            backgroundColor="blue"
+            value={value ? `${(value || '0')?.replace('.', ',')}%` : undefined}
+            onFocus={onFocusInput}
+            onBlur={(e) => {
+              const val = e.target.value ?? ''
+              if (val.endsWith(',%')) {
+                const newVal = val.replace(',%', '')
+                onChange(newVal)
+              }
+            }}
+            onChange={(e) => {
+              e.preventDefault()
+              let val = (e.target.value || '').replace('%', '') ?? ''
+
+              const len = val.length ?? 0
+
+              if (len > 1 && val[1] !== ',' && val.startsWith('0')) {
+                val = val.substring(1)
+              }
+
+              const validInput = percentageRegex.test(val)
+              const numberValue = valueToNumber(val, ',')
+              const isRemoving = len < prevLen.current
+              prevLen.current = len
+
+              if (val === '') {
+                onChange('0')
+                return onAfterChange?.(numberValue)
+              }
+
+              if (isRemoving || validInput) {
+                onChange(val.replace(',', '.'))
+                return onAfterChange?.(numberValue)
+              }
+            }}
+            hasError={((!disabled && hasError) || !!errorFromField) ?? false}
+            errorMessage={
+              errorFromField
+                ? errorFromField
+                : formatMessage(m.invalidShareValue)
             }
-          }}
-          onChange={(e) => {
-            e.preventDefault()
-
-            const initial = e.target.value
-
-            let val = (initial || '').replace('%', '') ?? ''
-
-            const len = val.length ?? 0
-
-            if (len > 1 && val[1] !== ',' && val.startsWith('0')) {
-              val = val.substring(1)
-            }
-
-            const validInput = percentageRegex.test(val)
-            const numberValue = valueToNumber(val, ',')
-
-            const isRemoving = len < prevLen.current
-
-            prevLen.current = len
-
-            if (val === '') {
-              onChange('0')
-              return onAfterChange?.(numberValue)
-            }
-
-            if (isRemoving || validInput) {
-              onChange(val.replace(',', '.'))
-              return onAfterChange?.(numberValue)
-            }
-          }}
-          hasError={(!disabled && hasError) ?? false}
-          errorMessage={formatMessage(m.invalidShareValue)}
-          disabled={disabled}
-          required={required}
-          readOnly={readOnly}
-        />
-      )}
-    />
+            disabled={disabled}
+            required={required}
+            readOnly={readOnly}
+          />
+        )}
+      />
+    </Box>
   )
 }
 

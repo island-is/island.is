@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react'
+import { Dispatch, SetStateAction, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 import isNil from 'lodash/isNil'
@@ -48,6 +48,7 @@ type ChildKeys = Pick<
   | 'appealJudge2Id'
   | 'appealJudge3Id'
   | 'indictmentReviewerId'
+  | 'mergeCaseId'
 >
 
 export type UpdateCase = Omit<UpdateCaseInput, 'id'> & {
@@ -66,6 +67,7 @@ const isChildKey = (key: keyof UpdateCaseInput): key is keyof ChildKeys => {
     'appealJudge2Id',
     'appealJudge3Id',
     'indictmentReviewerId',
+    'mergeCaseId',
   ].includes(key)
 }
 
@@ -80,6 +82,7 @@ const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
   appealJudge2Id: 'appealJudge2',
   appealJudge3Id: 'appealJudge3',
   indictmentReviewerId: 'indictmentReviewer',
+  mergeCaseId: 'mergeCase',
 }
 
 const overwrite = (update: UpdateCase): UpdateCase => {
@@ -208,7 +211,7 @@ const useCase = () => {
     () =>
       async (
         workingCase: Case,
-        setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+        setWorkingCase: Dispatch<SetStateAction<Case>>,
       ): Promise<string> => {
         try {
           if (isCreatingCourtCase === false) {
@@ -269,7 +272,7 @@ const useCase = () => {
       async (
         caseId: string,
         transition: CaseTransition,
-        setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
+        setWorkingCase?: Dispatch<SetStateAction<Case>>,
       ): Promise<boolean> => {
         const mutation = limitedAccess
           ? limitedAccessTransitionCaseMutation
@@ -363,7 +366,7 @@ const useCase = () => {
   const setAndSendCaseToServer = async (
     updates: UpdateCase[],
     workingCase: Case,
-    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<Case>>,
   ) => {
     try {
       const updatesToCase: UpdateCase = formatUpdates(updates, workingCase)

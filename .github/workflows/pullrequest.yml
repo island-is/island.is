@@ -48,31 +48,39 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
       - name: Check node version
         run: |
+          set -euo pipefail
           node -v
           ls -l `which node`
       - name: Checking out relevant branches
         run: |
-          git checkout $GITHUB_HEAD_REF
-          git checkout $GITHUB_BASE_REF
-          git checkout $GITHUB_SHA
+          set -euo pipefail
+          git checkout "$GITHUB_HEAD_REF"
+          git checkout "$GITHUB_BASE_REF"
+          git checkout "$GITHUB_SHA"
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
-          BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
-          HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
-          echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
+          BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
+          HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+          echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
+      # This is to increase the retention days for our GitHub Actions run events
+      # See this for more information:
+      # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
       - name: Keep PR run event
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
         with:
           name: pr-event
           path: event.json
-          retention-days: 60
+          retention-days: 90
+          include-hidden-files: true
+          if-no-files-found: error
+
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -81,15 +89,16 @@ jobs:
           enable-cache: 'node_modules,cypress,generated-files'
 
       - run: |
-          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          set -euo pipefail
+          echo "HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
           export HEAD_REF="$GITHUB_HEAD_REF"
           export BASE_REF="$GITHUB_BASE_REF"
-          export PR_REF=$GITHUB_SHA
+          export PR_REF="$GITHUB_SHA"
           export SHELL=/usr/bin/bash
           export WORKFLOW_ID=pullrequest
-          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
-          git checkout $GITHUB_SHA
-          echo "BASE=$BASE" >> $GITHUB_ENV
+          source ./scripts/ci/00_prepare-base-tags.sh "$(git merge-base HEAD "$GITHUB_BASE_REF")"
+          git checkout "$GITHUB_SHA"
+          echo "BASE=$BASE" >> "$GITHUB_ENV"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HTML_URL: ${{ github.event.pull_request.html_url }}
@@ -106,28 +115,30 @@ jobs:
       - name: Set magic env if test-everything label is set
         if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] == 'admin' }}
         run: |
-          echo "AFFECTED_ALL=7913-$GITHUB_HEAD_REF" >> $GITHUB_ENV
+          echo "AFFECTED_ALL=7913-$GITHUB_HEAD_REF" >> "$GITHUB_ENV"
 
       - name: Warn if user does not have the required permissions
         if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] != 'admin' }}
         run: |
           echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
-          echo "User $GITHUB_ACTOR does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
+          echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Prepare lint targets
         id: lint_projects
         run: |
-          CHUNKS=$(./scripts/ci/generate-chunks.sh lint)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare test targets
         id: test_projects
         run: |
-          CHUNKS=$(./scripts/ci/generate-chunks.sh test)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare e2e targets
@@ -135,20 +146,22 @@ jobs:
         env:
           CHUNK_SIZE: 1
         run: |
-          CHUNKS=$(./scripts/ci/generate-chunks.sh e2e-ci)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
-          echo "BUILD_ID=$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> $GITHUB_OUTPUT
+          echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
 
       - name: Prepare build targets
         id: build_projects
         env:
           CHUNK_SIZE: 4
         run: |
-          CHUNKS=$(./scripts/ci/generate-chunks.sh build)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
       - name: Check release-manager approval
         id: check-release-manager-approval
@@ -156,6 +169,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           node -r esbuild-register .github/actions/check-team-approval.ts release-managers
   tests:
     needs:
@@ -167,7 +181,7 @@ jobs:
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 3
+      MAX_JOBS: 1
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
@@ -181,7 +195,7 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
       - name: Get cache
         id: get-cache
@@ -225,7 +239,7 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
       - name: Get cache
         id: get-cache
@@ -236,7 +250,7 @@ jobs:
           enable-cache: 'node_modules,cypress,generated-files'
 
       - name: Running e2e tests
-        run: ./scripts/ci/40_e2e.sh ${AFFECTED_PROJECT}
+        run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
 
   linting-workspace:
     needs:
@@ -251,7 +265,7 @@ jobs:
         with:
           node-version-file: 'package.json'
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -270,13 +284,14 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@2.0.0
+      - uses: reviewdog/action-shellcheck@v1
         with:
-          ignore_paths: >-
-            node_modules
-            apps/native/app/android
-          severity: warning
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-review
+          fail_on_error: true
+          level: info
+          exclude: >-
+            */node_modules/*
 
   formatting:
     needs:
@@ -299,7 +314,7 @@ jobs:
         with:
           node-version-file: 'package.json'
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
       - name: Get cache
         id: get-cache
@@ -340,7 +355,7 @@ jobs:
         with:
           node-version-file: 'package.json'
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -371,7 +386,7 @@ jobs:
         with:
           node-version-file: 'package.json'
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -387,7 +402,7 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    if: always()
+    if: ${{ !cancelled() }}
     needs:
       - prepare
       - linting-workspace

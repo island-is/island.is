@@ -3,24 +3,34 @@ import {
   PaymentCatalogItem,
   PaymentCatalogParameters,
 } from '@island.is/application/types'
-import { TemplateApiModuleActionProps } from '../../../../types'
+import {
+  SharedModuleConfig,
+  TemplateApiModuleActionProps,
+} from '../../../../types'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { PaymentService as PaymentModelService } from '@island.is/application/api/payment'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { getSlugFromType } from '@island.is/application/core'
+import { getConfigValue } from '../../shared.utils'
+import { ConfigService } from '@nestjs/config'
+import { uuid } from 'uuidv4'
 
 @Injectable()
 export class PaymentService extends BaseTemplateApiService {
   constructor(
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly paymentModelService: PaymentModelService,
+    @Inject(ConfigService)
+    private readonly configService: ConfigService<SharedModuleConfig>,
   ) {
     super('Payment')
   }
 
   async paymentCatalog({
     params,
+    application,
   }: TemplateApiModuleActionProps<PaymentCatalogParameters>): Promise<
     PaymentCatalogItem[]
   > {
@@ -40,6 +50,49 @@ export class PaymentService extends BaseTemplateApiService {
     params,
   }: TemplateApiModuleActionProps<CreateChargeParameters>) {
     const { organizationId, chargeItemCodes, extraData } = params ?? {}
+    const { shouldUseMockPayment } = application.answers
+
+    if (shouldUseMockPayment) {
+      const list = [
+        {
+          performingOrgID: organizationId ?? 'string',
+          chargeType: ' string',
+          chargeItemCode: 'string',
+          chargeItemName: 'string',
+          priceAmount: 123123,
+        },
+      ]
+
+      const result = await this.paymentModelService.createPaymentModel(
+        list,
+        application.id,
+        organizationId ?? 'string',
+      )
+
+      await this.paymentModelService.setUser4(
+        application.id,
+        result.id,
+        'newser4',
+      )
+
+      await this.paymentModelService.fulfillPayment(
+        result.id,
+        result.reference_id ?? uuid(),
+        application.id,
+      )
+
+      const slug = getSlugFromType(application.typeId)
+
+      const clientLocationOrigin = getConfigValue(
+        this.configService,
+        'clientLocationOrigin',
+      ) as string
+
+      return {
+        id: result.id,
+        paymentUrl: `${clientLocationOrigin}/${slug}/${application.id}`,
+      }
+    }
 
     if (!organizationId) throw Error('Missing performing organization ID')
     if (!chargeItemCodes) throw Error('No selected charge item code')

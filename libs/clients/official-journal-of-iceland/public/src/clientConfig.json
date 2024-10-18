@@ -3,30 +3,21 @@
   "paths": {
     "/api/v1/adverts/{id}": {
       "get": {
-        "operationId": "JournalController_advert",
+        "operationId": "getAdvertById",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "Advert ID.",
             "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Advert by ID.",
+          "default": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/GetAdvertResponse" }
-              }
-            }
-          },
-          "404": {
-            "description": "Advert not found.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/AdvertNotFound" }
               }
             }
           }
@@ -35,86 +26,78 @@
     },
     "/api/v1/adverts": {
       "get": {
-        "operationId": "JournalController_adverts",
+        "operationId": "getAdverts",
         "parameters": [
           {
             "name": "search",
+            "description": "String to search for in adverts.",
             "required": false,
             "in": "query",
-            "description": "String to search for in adverts.",
             "schema": { "type": "string" }
           },
           {
             "name": "page",
+            "description": "Page number to return.",
             "required": false,
             "in": "query",
-            "description": "Page number to return.",
             "schema": { "type": "number" }
           },
           {
             "name": "pageSize",
+            "description": "Page size to return.",
             "required": false,
             "in": "query",
-            "description": "Page size to return.",
             "schema": { "type": "number" }
           },
           {
             "name": "department",
+            "description": "One or more departments (by `slug`) to filter on.",
             "required": false,
             "in": "query",
-            "description": "One or more departments (by `slug`) to filter on.",
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
             "name": "type",
+            "description": "One or more types (by `slug`) to filter on.",
             "required": false,
             "in": "query",
-            "description": "One or more types (by `slug`) to filter on.",
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
             "name": "category",
+            "description": "One or more categories (by `slug`) to filter on.",
             "required": false,
             "in": "query",
-            "description": "One or more categories (by `slug`) to filter on.",
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
             "name": "involvedParty",
+            "description": "One or more involved parties (by `slug`) to filter on.",
             "required": false,
             "in": "query",
-            "description": "One or more involved parties (by `slug`) to filter on.",
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
             "name": "dateFrom",
+            "description": "Date from which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "required": false,
             "in": "query",
-            "description": "Date from which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "schema": { "format": "date-time", "type": "string" }
           },
           {
             "name": "dateTo",
+            "description": "Date to which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "required": false,
             "in": "query",
-            "description": "Date to which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "schema": { "format": "date-time", "type": "string" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "List of adverts, optional query parameters.",
+          "default": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/GetAdvertsResponse" }
-              }
-            }
-          },
-          "400": {
-            "description": "Query string validation failed.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ValidationResponse" }
               }
             }
           }
@@ -123,19 +106,18 @@
     },
     "/api/v1/departments/{id}": {
       "get": {
-        "operationId": "JournalController_department",
+        "operationId": "getDepartmentById",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "Department ID.",
             "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Department by ID.",
+          "default": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -149,46 +131,38 @@
     },
     "/api/v1/departments": {
       "get": {
-        "operationId": "JournalController_departments",
+        "operationId": "getDepartments",
         "parameters": [
           {
             "name": "search",
+            "description": "String to search for in departments.",
             "required": false,
             "in": "query",
-            "description": "String to search for in departments.",
             "schema": { "type": "string" }
           },
           {
             "name": "page",
+            "description": "Page number to return.",
             "required": false,
             "in": "query",
-            "description": "Page number to return.",
             "schema": { "type": "number" }
           },
           {
             "name": "pageSize",
+            "description": "Page size number to return.",
             "required": false,
             "in": "query",
-            "description": "Page size number to return.",
             "schema": { "type": "number" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "List of departments.",
+          "default": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetDepartmentsResponse"
                 }
-              }
-            }
-          },
-          "400": {
-            "description": "Query string validation failed.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ValidationResponse" }
               }
             }
           }
@@ -197,19 +171,18 @@
     },
     "/api/v1/types/{id}": {
       "get": {
-        "operationId": "JournalController_type",
+        "operationId": "getAdvertTypeById",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "Advert type ID.",
             "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "Advert type by ID.",
+          "default": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -223,53 +196,45 @@
     },
     "/api/v1/types": {
       "get": {
-        "operationId": "JournalController_types",
+        "operationId": "getAdvertTypes",
         "parameters": [
           {
             "name": "department",
+            "description": "Department slug to get categories for.",
             "required": false,
             "in": "query",
-            "description": "Department slug to get categories for.",
             "schema": { "type": "string" }
           },
           {
             "name": "search",
+            "description": "String to search for in types.",
             "required": false,
             "in": "query",
-            "description": "String to search for in types.",
             "schema": { "type": "string" }
           },
           {
             "name": "page",
+            "description": "Page number to return.",
             "required": false,
             "in": "query",
-            "description": "Page number to return.",
             "schema": { "type": "number" }
           },
           {
             "name": "pageSize",
+            "description": "Number of items per page.",
             "required": false,
             "in": "query",
-            "description": "Number of items per page.",
             "schema": { "type": "number" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "List of advert types.",
+          "default": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetAdvertTypesResponse"
                 }
-              }
-            }
-          },
-          "400": {
-            "description": "Query string validation failed.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ValidationResponse" }
               }
             }
           }
@@ -278,46 +243,38 @@
     },
     "/api/v1/maincategories": {
       "get": {
-        "operationId": "JournalController_mainCategories",
+        "operationId": "getMainCategories",
         "parameters": [
           {
             "name": "search",
+            "description": "String to search for",
             "required": false,
             "in": "query",
-            "description": "String to search for in main categories.",
             "schema": { "type": "string" }
           },
           {
             "name": "page",
+            "description": "Page number to return.",
             "required": false,
             "in": "query",
-            "description": "Page number to return.",
             "schema": { "type": "number" }
           },
           {
             "name": "pageSize",
+            "description": "Page size number to return.",
             "required": false,
             "in": "query",
-            "description": "Page size number to return.",
             "schema": { "type": "number" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "List of main categories.",
+          "default": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetMainCategoriesResponse"
                 }
-              }
-            }
-          },
-          "400": {
-            "description": "Query string validation failed.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ValidationResponse" }
               }
             }
           }
@@ -326,46 +283,38 @@
     },
     "/api/v1/categories": {
       "get": {
-        "operationId": "JournalController_categories",
+        "operationId": "getCategories",
         "parameters": [
           {
             "name": "search",
+            "description": "String to search for",
             "required": false,
             "in": "query",
-            "description": "String to search for in categories.",
             "schema": { "type": "string" }
           },
           {
             "name": "page",
+            "description": "Page number to return.",
             "required": false,
             "in": "query",
-            "description": "Page number to return.",
             "schema": { "type": "number" }
           },
           {
             "name": "pageSize",
+            "description": "Page size number to return.",
             "required": false,
             "in": "query",
-            "description": "Page size number to return.",
             "schema": { "type": "number" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "List of advert categories.",
+          "default": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetCategoriesResponse"
                 }
-              }
-            }
-          },
-          "400": {
-            "description": "Query string validation failed.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ValidationResponse" }
               }
             }
           }
@@ -374,46 +323,38 @@
     },
     "/api/v1/institutions": {
       "get": {
-        "operationId": "JournalController_institutions",
+        "operationId": "getInstitutions",
         "parameters": [
           {
             "name": "search",
+            "description": "String to search for",
             "required": false,
             "in": "query",
-            "description": "String to search for in institutions.",
             "schema": { "type": "string" }
           },
           {
             "name": "page",
+            "description": "Page number to return.",
             "required": false,
             "in": "query",
-            "description": "Page number to return.",
             "schema": { "type": "number" }
           },
           {
             "name": "pageSize",
+            "description": "Page size number to return.",
             "required": false,
             "in": "query",
-            "description": "Page size number to return.",
             "schema": { "type": "number" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "List of institutions.",
+          "default": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetInstitutionsResponse"
                 }
-              }
-            }
-          },
-          "400": {
-            "description": "Query string validation failed.",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ValidationResponse" }
               }
             }
           }
@@ -422,42 +363,42 @@
     },
     "/api/v1/signatures": {
       "get": {
-        "operationId": "JournalController_signatures",
+        "operationId": "getSignatures",
         "parameters": [
           {
-            "name": "id",
-            "required": false,
-            "in": "query",
             "description": "Search for a specific signature by id",
+            "required": false,
+            "name": "id",
+            "in": "query",
             "schema": { "type": "string" }
           },
           {
-            "name": "type",
-            "required": false,
-            "in": "query",
             "description": "Search for a specific signature by type",
             "example": "Regular",
+            "required": false,
+            "name": "type",
+            "in": "query",
             "schema": { "type": "string" }
           },
           {
-            "name": "search",
-            "required": false,
-            "in": "query",
             "description": "Search for a specific signature",
             "example": "Dagur B. Eggertsson",
+            "required": false,
+            "name": "search",
+            "in": "query",
             "schema": { "type": "string" }
           },
           {
             "name": "page",
+            "description": "Page number to return.",
             "required": false,
             "in": "query",
-            "description": "Page number to return.",
             "schema": { "type": "number" }
           }
         ],
         "responses": {
-          "200": {
-            "description": "List of signatures",
+          "default": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -465,9 +406,17 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Query string validation failed.",
+          }
+        }
+      }
+    },
+    "/api/v1/error": {
+      "get": {
+        "operationId": "error",
+        "parameters": [],
+        "responses": {
+          "default": {
+            "description": "",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ValidationResponse" }
@@ -477,20 +426,9 @@
         }
       }
     },
-    "/api/v1/error": {
-      "get": {
-        "operationId": "JournalController_error",
-        "parameters": [],
-        "responses": {
-          "500": {
-            "description": "Explicit error from service to test logging."
-          }
-        }
-      }
-    },
     "/api/v1/health": {
       "get": {
-        "operationId": "HealthController_health",
+        "operationId": "HealthController_",
         "parameters": [],
         "responses": { "200": { "description": "Health check endpoint." } }
       }
@@ -924,17 +862,6 @@
         },
         "required": ["advert"]
       },
-      "AdvertNotFound": {
-        "type": "object",
-        "properties": {
-          "statusCode": {
-            "type": "number",
-            "description": "HTTP status code of response"
-          },
-          "message": { "type": "string", "description": "Response message" }
-        },
-        "required": ["statusCode", "message"]
-      },
       "Paging": {
         "type": "object",
         "properties": {
@@ -977,30 +904,6 @@
           }
         },
         "required": ["adverts", "paging"]
-      },
-      "ValidationResponse": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "description": "Array of error messages",
-            "example": [
-              "message must be shorter than or equal to 10 characters"
-            ],
-            "type": "array",
-            "items": { "type": "string" }
-          },
-          "error": {
-            "type": "string",
-            "description": "Error type",
-            "example": "Bad Request"
-          },
-          "statusCode": {
-            "type": "number",
-            "description": "HTTP status code of response",
-            "example": 400
-          }
-        },
-        "required": ["message", "statusCode"]
       },
       "GetDepartmentResponse": {
         "type": "object",
@@ -1113,6 +1016,30 @@
           }
         },
         "required": ["items", "paging"]
+      },
+      "ValidationResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "description": "Array of error messages",
+            "example": [
+              "message must be shorter than or equal to 10 characters"
+            ],
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "error": {
+            "type": "string",
+            "description": "Error type",
+            "example": "Bad Request"
+          },
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code of response",
+            "example": 400
+          }
+        },
+        "required": ["message", "statusCode"]
       }
     }
   }

@@ -5,16 +5,15 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
-  CaseMessage,
+  Message,
   MessageService,
   MessageType,
 } from '@island.is/judicial-system/message'
@@ -44,7 +43,7 @@ export class DefendantService {
   private getMessageForSendDefendantsNotUpdatedAtCourtNotification(
     theCase: Case,
     user: User,
-  ): CaseMessage {
+  ): Message {
     return {
       type: MessageType.NOTIFICATION,
       user,
@@ -56,7 +55,7 @@ export class DefendantService {
   private getMessageForDeliverDefendantToCourt(
     defendant: Defendant,
     user: User,
-  ): CaseMessage {
+  ): Message {
     const message = {
       type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
       user,
@@ -202,17 +201,12 @@ export class DefendantService {
     defendantNationalId: string,
     update: UpdateDefendantDto,
   ): Promise<Defendant> {
-    const formattedNationalId = formatNationalId(defendantNationalId)
-
     const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
       update,
       {
         where: {
           caseId,
-          [Op.or]: [
-            { national_id: formattedNationalId },
-            { national_id: defendantNationalId },
-          ],
+          national_id: normalizeAndFormatNationalId(defendantNationalId),
         },
         returning: true,
       },

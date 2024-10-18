@@ -172,7 +172,7 @@ const PassportSchema = z
     passportNumber: z.string().min(1),
     passportTypeId: z.string().min(1),
     countryOfIssuerId: z.string().min(1),
-    attachment: z.array(FileDocumentSchema),
+    attachment: z.array(FileDocumentSchema).min(1),
   })
   .refine(
     ({ expirationDate, publishDate }) => {
@@ -199,7 +199,7 @@ const ChildrenPassportSchema = z
     passportNumber: z.string().min(1),
     passportTypeId: z.string().min(1),
     countryOfIssuerId: z.string().min(1),
-    attachment: z.array(FileDocumentSchema).optional(),
+    attachment: z.array(FileDocumentSchema).min(1),
   })
   .refine(
     ({ expirationDate, publishDate }) => {
@@ -230,25 +230,79 @@ const MaritalStatusSchema = z.object({
 
 const CriminalRecordSchema = z.object({
   countryId: z.string().min(1),
-  attachment: z.array(FileDocumentSchema).optional(),
+  attachment: z.array(FileDocumentSchema).min(1),
 })
 
-const SupportingDocumentsSchema = z.object({
-  birthCertificate: z.array(FileDocumentSchema).optional(),
-  subsistenceCertificate: z.array(FileDocumentSchema).optional(),
-  subsistenceCertificateForTown: z.array(FileDocumentSchema).optional(),
-  certificateOfLegalResidenceHistory: z.array(FileDocumentSchema).optional(),
-  icelandicTestCertificate: z.array(FileDocumentSchema).optional(),
-  criminalRecord: z.array(CriminalRecordSchema).optional(),
-})
+const SupportingDocumentsSchema = z
+  .object({
+    birthCertificateRequired: z.string().min(1),
+    birthCertificate: z.array(FileDocumentSchema).optional(),
+    subsistenceCertificate: z.array(FileDocumentSchema).min(1),
+    subsistenceCertificateForTown: z.array(FileDocumentSchema).min(1),
+    certificateOfLegalResidenceHistory: z.array(FileDocumentSchema).min(1),
+    icelandicTestCertificate: z.array(FileDocumentSchema).min(1),
+    criminalRecord: z.array(CriminalRecordSchema).optional(),
+  })
+  .refine(
+    ({ birthCertificateRequired, birthCertificate }) => {
+      return (
+        birthCertificateRequired === 'false' ||
+        (birthCertificate && birthCertificate.length > 0)
+      )
+    },
+    {
+      path: ['birthCertificate'],
+    },
+  )
 
-const ChildrenSupportingDocumentsSchema = z.object({
-  nationalId: z.string().min(1),
-  birthCertificate: z.array(FileDocumentSchema).optional(),
-  writtenConsentFromChild: z.array(FileDocumentSchema).optional(),
-  writtenConsentFromOtherParent: z.array(FileDocumentSchema).optional(),
-  custodyDocuments: z.array(FileDocumentSchema).optional(),
-})
+const ChildrenSupportingDocumentsSchema = z
+  .object({
+    nationalId: z.string().min(1),
+    birthCertificate: z.array(FileDocumentSchema).min(1),
+    writtenConsentFromChildRequired: z.string().min(1),
+    writtenConsentFromChild: z.array(FileDocumentSchema).optional(),
+    writtenConsentFromOtherParentRequired: z.string().min(1),
+    writtenConsentFromOtherParent: z.array(FileDocumentSchema).optional(),
+    custodyDocumentsRequired: z.string().min(1),
+    custodyDocuments: z.array(FileDocumentSchema).optional(),
+  })
+  .refine(
+    ({ writtenConsentFromChildRequired, writtenConsentFromChild }) => {
+      return (
+        writtenConsentFromChildRequired === 'false' ||
+        (writtenConsentFromChild && writtenConsentFromChild.length > 0)
+      )
+    },
+    {
+      path: ['writtenConsentFromChild'],
+    },
+  )
+  .refine(
+    ({
+      writtenConsentFromOtherParentRequired,
+      writtenConsentFromOtherParent,
+    }) => {
+      return (
+        writtenConsentFromOtherParentRequired === 'false' ||
+        (writtenConsentFromOtherParent &&
+          writtenConsentFromOtherParent.length > 0)
+      )
+    },
+    {
+      path: ['writtenConsentFromOtherParent'],
+    },
+  )
+  .refine(
+    ({ custodyDocumentsRequired, custodyDocuments }) => {
+      return (
+        custodyDocumentsRequired === 'false' ||
+        (custodyDocuments && custodyDocuments.length > 0)
+      )
+    },
+    {
+      path: ['custodyDocuments'],
+    },
+  )
 
 export const SelectedChildSchema = z
   .object({
@@ -294,7 +348,7 @@ export const CitizenshipSchema = z.object({
   passport: PassportSchema,
   childrenPassport: z.array(ChildrenPassportSchema).optional(),
   maritalStatus: MaritalStatusSchema,
-  formerIcelander: z.enum([YES, NO]).refine((v) => v === YES),
+  formerIcelander: z.enum([YES, NO]), //.refine((v) => v === YES) // TODO REVERT WHEN UTL FIXED SERVICES
   supportingDocuments: SupportingDocumentsSchema,
   childrenSupportingDocuments: z
     .array(ChildrenSupportingDocumentsSchema)

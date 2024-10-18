@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -32,9 +32,7 @@ import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-syste
 
 import { rcHearingArrangements as m } from './HearingArrangements.strings'
 
-export const HearingArrangements: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+export const HearingArrangements = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -62,7 +60,10 @@ export const HearingArrangements: React.FC<
 
   const initialize = useCallback(() => {
     if (!workingCase.arraignmentDate?.date && workingCase.requestedCourtDate) {
-      handleCourtDateChange(new Date(workingCase.requestedCourtDate))
+      setWorkingCase((theCase) => ({
+        ...theCase,
+        arraignmentDate: { date: theCase.requestedCourtDate },
+      }))
     }
 
     setAndSendCaseToServer(
@@ -91,12 +92,7 @@ export const HearingArrangements: React.FC<
       workingCase,
       setWorkingCase,
     )
-  }, [
-    handleCourtDateChange,
-    setAndSendCaseToServer,
-    setWorkingCase,
-    workingCase,
-  ])
+  }, [setAndSendCaseToServer, setWorkingCase, workingCase])
 
   useOnceOn(isCaseUpToDate, initialize)
 
@@ -131,7 +127,7 @@ export const HearingArrangements: React.FC<
 
   const stepIsValid = isCourtHearingArrangemenstStepValidRC(
     workingCase,
-    courtDate?.date,
+    courtDate,
   )
 
   const isCorrectingRuling = workingCase.notifications?.some(
@@ -175,7 +171,7 @@ export const HearingArrangements: React.FC<
             <CourtArrangements
               handleCourtDateChange={handleCourtDateChange}
               handleCourtRoomChange={handleCourtRoomChange}
-              courtDate={courtDate}
+              courtDate={workingCase.arraignmentDate}
               courtRoomDisabled={isCorrectingRuling}
               dateTimeDisabled={isCorrectingRuling}
             />

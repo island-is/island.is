@@ -12,7 +12,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
-import Slider from '../components/Slider'
+import { Slider } from '@island.is/application/ui-components'
 import {
   getApplicationAnswers,
   calculateEndDateForPeriodWithStartAndLength,
@@ -80,8 +80,9 @@ export const Duration: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   useEffect(() => {
     if (chosenEndDate) {
       setValue(`periods[${currentIndex}].endDate`, chosenEndDate)
+      setValue(`periods[${currentIndex}].months`, chosenDuration)
     }
-  }, [chosenEndDate, setValue, currentIndex])
+  }, [chosenEndDate, setValue, currentIndex, chosenDuration])
 
   const handleChange = async (months: number) => {
     clearErrors([id, 'component'])

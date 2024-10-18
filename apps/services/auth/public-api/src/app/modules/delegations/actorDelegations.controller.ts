@@ -21,9 +21,9 @@ import {
 import { AuthScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 import type { User } from '@island.is/auth-nest-tools'
-import { AuthDelegationType } from '@island.is/shared/types'
 const namespace = '@island.is/auth-public-api/actor/delegations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -96,6 +96,10 @@ export class ActorDelegationsController {
       throw new BadRequestException(
         `'direction' can only be set to ${DelegationDirection.INCOMING} for the /actor alias`,
       )
+    }
+
+    if (delegationTypes && !Array.isArray(delegationTypes)) {
+      delegationTypes = [delegationTypes]
     }
 
     return this.delegationsIncomingService.findAllAvailable({

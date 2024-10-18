@@ -32,7 +32,7 @@ export const prePaidHeirs = buildSection({
                 title: '',
                 id: 'heirs.data',
                 doesNotRequireAnswer: false,
-                component: 'HeirsAndPartitionRepeater',
+                component: 'HeirsRepeater',
               },
               {
                 customFields: [

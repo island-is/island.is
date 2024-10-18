@@ -7,6 +7,7 @@ import { retry } from './_utils.mjs'
 
 export async function restoreCache({ key, path }) {
   let cache
+  console.log(`Restoring cache for ${key}`)
   if (!process.env.CI) {
     // For testing
     return false
@@ -17,7 +18,13 @@ export async function restoreCache({ key, path }) {
   try {
     cache = await retry(() => _restoreCache(paths, key, [], {}, true))
   } catch (e) {
+    console.log(`Failed to restore cache for ${key}: ${e.message}`)
     return false
   }
+  console.log(
+    cache !== undefined
+      ? `Restored cache for ${key}`
+      : `Cache not found for ${key}`,
+  )
   return cache != undefined
 }

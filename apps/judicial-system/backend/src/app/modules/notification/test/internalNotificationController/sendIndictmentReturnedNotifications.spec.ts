@@ -11,9 +11,8 @@ import {
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
-import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
+import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification } from '../../models/notification.model'
 
 jest.mock('../../../../factories')
 
@@ -24,7 +23,7 @@ interface Then {
 
 type GivenWhenThen = (
   theCase: Case,
-  notificationDto: SendInternalNotificationDto,
+  notificationDto: CaseNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send indictment returned notification', () => {
@@ -36,22 +35,17 @@ describe('InternalNotificationController - Send indictment returned notification
   const courtName = uuid()
 
   let mockEmailService: EmailService
-  let mockNotificationModel: typeof Notification
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { emailService, internalNotificationController, notificationModel } =
+    const { emailService, internalNotificationController } =
       await createTestingNotificationModule()
 
     mockEmailService = emailService
-    mockNotificationModel = notificationModel
-
-    const mockFindAll = mockNotificationModel.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
 
     givenWhenThen = async (
       theCase: Case,
-      notificationDto: SendInternalNotificationDto,
+      notificationDto: CaseNotificationDto,
     ) => {
       const then = {} as Then
 
@@ -67,7 +61,7 @@ describe('InternalNotificationController - Send indictment returned notification
   describe('notification sent', () => {
     let then: Then
 
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.INDICTMENT_RETURNED,
     }
@@ -81,9 +75,6 @@ describe('InternalNotificationController - Send indictment returned notification
     } as Case
 
     beforeEach(async () => {
-      const mockFindAll = mockNotificationModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce([])
-
       then = await givenWhenThen(theCase, notificationDto)
     })
 

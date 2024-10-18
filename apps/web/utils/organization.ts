@@ -1,4 +1,4 @@
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 
 import { OrganizationPage, OrganizationTheme } from '../graphql/schema'
 import { linkResolver, pathIsRoute } from '../hooks'

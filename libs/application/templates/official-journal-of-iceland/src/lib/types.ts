@@ -1,101 +1,54 @@
 import { Application, FieldBaseProps } from '@island.is/application/types'
-import { type answerSchemas } from './dataSchema'
-import { INSTITUTION_INDEX, MEMBER_INDEX, Routes } from './constants'
+import { Routes } from './constants'
 import {
-  OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertEntity,
   OfficialJournalOfIcelandPaging,
 } from '@island.is/api/schema'
+import { partialSchema } from './dataSchema'
 
 export const InputFields = {
-  [Routes.TEST]: {
-    name: 'test.name',
-    department: 'test.department',
-    job: 'test.job',
-  },
   [Routes.REQUIREMENTS]: {
     approveExternalData: 'requirements.approveExternalData',
   },
   [Routes.ADVERT]: {
-    department: 'advert.department',
-    type: 'advert.type',
-    subType: 'advert.subType',
+    departmentId: 'advert.departmentId',
+    typeId: 'advert.typeId',
     title: 'advert.title',
-    template: 'advert.template',
-    document: 'advert.document',
+    html: 'advert.html',
+    requestedDate: 'advert.requestedDate',
+    categories: 'advert.categories',
+    channels: 'advert.channels',
+    message: 'advert.message',
+    involvedPartyId: 'advert.involvedPartyId',
   },
   [Routes.SIGNATURE]: {
-    type: 'signature.type',
-    contents: 'signature.contents',
-    regular: {
-      institution: `signature.regular-${INSTITUTION_INDEX}.institution`,
-      date: `signature.regular-${INSTITUTION_INDEX}.date`,
-      members: {
-        above: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.above`,
-        name: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.name`,
-        below: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.below`,
-        after: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.after`,
-      },
+    regular: 'signatures.regular',
+    committee: 'signatures.committee',
+    additionalSignature: {
+      regular: 'signatures.additionalSignature.regular',
+      committee: 'signatures.additionalSignature.committee',
     },
-    committee: {
-      institution: 'signature.committee.institution',
-      date: 'signature.committee.date',
-      chairman: {
-        above: 'signature.committee.chairman.above',
-        name: 'signature.committee.chairman.name',
-        after: 'signature.committee.chairman.after',
-        below: 'signature.committee.chairman.below',
-      },
-      members: {
-        name: `signature.committee.members-${MEMBER_INDEX}.name`,
-        below: `signature.committee.members-${MEMBER_INDEX}.below`,
-      },
-    },
-    additonalSignature: 'signature.additonalSignature',
   },
-  [Routes.ATTACHMENTS]: {
-    files: 'additionsAndDocuments.files',
-    fileNames: 'additionsAndDocuments.fileNames',
-  },
-  [Routes.ORIGINAL]: {
-    files: 'original.files',
-  },
-  [Routes.PUBLISHING]: {
-    date: 'publishing.date',
-    fastTrack: 'publishing.fastTrack',
-    contentCategories: 'publishing.contentCategories',
-    communicationChannels: 'publishing.communicationChannels',
-    message: 'publishing.message',
+  [Routes.MISC]: {
+    signatureType: 'misc.signatureType',
+    selectedTemplate: 'misc.selectedTemplate',
   },
 }
 
-export type LocalError = {
-  type: string
-  message: string
+export const RequiredInputFieldsNames = {
+  [Routes.ADVERT]: {
+    departmentId: 'Deild',
+    typeId: 'Tegund',
+    title: 'Titill',
+    html: 'Auglýsing',
+    requestedDate: 'Útgáfudagur',
+    categories: 'Efnisflokkar',
+  },
 }
-
-type Option = {
-  id: string
-  title: string
-  slug: string
-}
-
-export type AdvertOption<Key extends string> = {
-  [key in Key]: Array<Option>
-}
-
-export type SignatureType = 'regular' | 'committee'
-
-export type RegularSignatureState = NonNullable<
-  answerSchemas['signature']['regular']
->
-export type CommitteeSignatureState = NonNullable<
-  answerSchemas['signature']['committee']
->
 
 export enum TemplateApiActions {
-  departments = 'departments',
-  types = 'types',
+  departments = 'getDepartments',
+  types = 'getAdvertTypes',
   postApplication = 'postApplication',
 }
 
@@ -107,34 +60,12 @@ export type NestedType<T> = {
 
 export type Override<T1, T2> = Omit<T1, keyof T2> & T2
 
-type StatusProvider = 'success' | 'failure'
-
-export type ErrorSchema = NestedType<answerSchemas>
-
-export interface ExternalData {
-  departments: {
-    data: AdvertOption<'departments'>
-    date: string
-    status: StatusProvider
-  }
-
-  types: {
-    data: AdvertOption<'types'>
-    date: string
-    status: StatusProvider
-  }
-  submitApplication: {
-    data: { application: OfficialJournalOfIcelandAdvert }
-    date: string
-    status: StatusProvider
-  }
-}
+export type ErrorSchema = NestedType<partialSchema>
 
 export type OJOIApplication = Override<
   Application,
   {
-    answers: Partial<answerSchemas>
-    externalData: ExternalData
+    answers: partialSchema
   }
 >
 

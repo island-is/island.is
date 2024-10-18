@@ -5,6 +5,7 @@ query getOccupationalLicenseById($input: OccupationalLicensesV2LicenseInput!) {
       __typename
       type
       licenseId
+      licenseNumber
       profession
       licenseHolderName
       dateOfBirth

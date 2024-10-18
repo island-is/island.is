@@ -5,7 +5,10 @@ import { isCompany } from 'kennitala'
 
 import { User } from '@island.is/auth-nest-tools'
 import { DocumentsScope } from '@island.is/auth/scopes'
-import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
+import {
+  EinstaklingurDTONafnAllt,
+  NationalRegistryV3ClientService,
+} from '@island.is/clients/national-registry-v3'
 import {
   UserProfileDto,
   V2UsersApi,
@@ -32,6 +35,10 @@ import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
 import { NotificationsService } from '../notifications.service'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 import { Notification } from '../notification.model'
+import {
+  CompanyExtendedInfo,
+  CompanyRegistryClientService,
+} from '@island.is/clients/rsk/company-registry'
 
 const WORK_STARTING_HOUR = 8 // 8 AM
 const WORK_ENDING_HOUR = 23 // 11 PM
@@ -44,6 +51,7 @@ type HandleNotification = {
     emailNotifications: boolean
     locale?: string
   }
+  notificationId?: number | null
   messageId: string
   message: CreateHnippNotificationDto
 }
@@ -57,6 +65,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     private readonly userProfileApi: V2UsersApi,
     private readonly delegationsApi: DelegationsApi,
     private readonly nationalRegistryService: NationalRegistryV3ClientService,
+    private readonly companyRegistryService: CompanyRegistryClientService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly emailService: EmailService,
 
@@ -85,6 +94,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
   async handleDocumentNotification({
     profile,
     messageId,
+    notificationId,
     message,
   }: HandleNotification) {
     // don't send message unless user wants this type of notification and national id is a person.
@@ -118,6 +128,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       nationalId: profile.nationalId,
       notification,
       messageId,
+      notificationId,
     })
   }
 
@@ -143,7 +154,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         {
           component: 'Image',
           context: {
-            src: join(__dirname, `./assets/images/logo.jpg`),
+            src: join(__dirname, `./assets/images/island-2x-logo.png`),
             alt: 'Ísland.is logo',
           },
         },
@@ -156,13 +167,13 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         {
           component: 'Heading',
           context: {
-            copy: formattedTemplate.notificationTitle,
+            copy: formattedTemplate.title,
           },
         },
         {
           component: 'Copy',
           context: {
-            copy: formattedTemplate.notificationBody,
+            copy: formattedTemplate.externalBody,
           },
         },
         {
@@ -171,9 +182,15 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         ...(formattedTemplate.clickActionUrl
           ? [
               {
-                component: 'Button',
+                component: 'ImageWithLink',
                 context: {
-                  copy: `${isEnglish ? 'View on' : 'Skoða á'} island.is`,
+                  src: join(
+                    __dirname,
+                    `./assets/images/${
+                      isEnglish ? 'en' : 'is'
+                    }-button-open.png`,
+                  ),
+                  alt: isEnglish ? 'Open mailbox' : 'Opna Pósthólf',
                   href: this.getClickActionUrl(formattedTemplate, subjectId),
                 },
               },
@@ -206,9 +223,9 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         name: fullName,
         address: recipientEmail,
       },
-      subject: formattedTemplate.notificationTitle,
+      subject: formattedTemplate.title,
       template: {
-        title: formattedTemplate.notificationTitle,
+        title: formattedTemplate.title,
         body: generateBody(),
       },
     }
@@ -234,10 +251,13 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       return
     }
 
-    if (!profile.email && !profile.emailNotifications) {
-      this.logger.info('User does not have email notifications enabled', {
-        messageId,
-      })
+    if (!profile.email || !profile.emailNotifications) {
+      this.logger.info(
+        'User does not have registered email or email notifications enabled',
+        {
+          messageId,
+        },
+      )
 
       return
     }
@@ -260,13 +280,15 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
     const isEnglish = profile.locale === 'en'
 
-    const formattedTemplate = this.notificationsService.formatArguments(
+    const formattedTemplate = await this.notificationsService.formatArguments(
       message.args,
       // We need to shallow copy the template here so that the
       // in-memory cache is not modified.
       {
         ...template,
       },
+      message?.senderId,
+      profile.locale as Locale,
     )
 
     try {
@@ -323,12 +345,13 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         await this.sleepOutsideWorkingHours(messageId)
 
         const notification = { messageId, ...message }
-        const messageIdExists = await this.notificationModel.count({
+        let dbNotification = await this.notificationModel.findOne({
           where: { messageId },
+          attributes: ['id'],
         })
 
-        if (messageIdExists > 0) {
-          // messageId exists do nothing
+        if (dbNotification) {
+          // messageId exists in db, do nothing
           this.logger.info('notification with messageId already exists in db', {
             messageId,
           })
@@ -336,8 +359,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
           // messageId does not exist
           // write to db
           try {
-            const res = await this.notificationModel.create(notification)
-            if (res) {
+            dbNotification = await this.notificationModel.create(notification)
+            if (dbNotification) {
               this.logger.info('notification written to db', {
                 notification,
                 messageId,
@@ -379,6 +402,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         const handleNotificationArgs: HandleNotification = {
           profile: { ...profile, nationalId: message.recipient },
           messageId,
+          notificationId: dbNotification?.id,
           message,
         }
 
@@ -445,8 +469,15 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
   }
 
   private async getFullName(nationalId: string): Promise<string> {
-    const individual = await this.nationalRegistryService.getName(nationalId)
-    return individual?.fulltNafn ?? ''
+    let identity: CompanyExtendedInfo | EinstaklingurDTONafnAllt | null
+
+    if (isCompany(nationalId)) {
+      identity = await this.companyRegistryService.getCompany(nationalId)
+      return identity?.name ?? ''
+    }
+
+    identity = await this.nationalRegistryService.getName(nationalId)
+    return identity?.fulltNafn ?? ''
   }
 
   /* Private methods */

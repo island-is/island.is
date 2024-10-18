@@ -6,7 +6,7 @@ import {
 export interface InstitutionProps {
   id: UniversityId
   shortId: UniversityIdShort
-  displayName: string
+  displayName?: string
   logoUrl?: string
 }
 

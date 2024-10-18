@@ -72,7 +72,6 @@ describe('LimitedCaseController - Get indictment pdf', () => {
     it('should generate pdf', () => {
       expect(mockawsS3Service.getObject).toHaveBeenCalledWith(
         theCase.type,
-        theCase.state,
         `${caseId}/indictment.pdf`,
       )
       expect(createIndictment).toHaveBeenCalledWith(

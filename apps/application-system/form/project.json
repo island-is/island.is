@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/application-system/form/src",
   "projectType": "application",
+  "tags": ["scope:application-system-web"],
   "generators": {},
   "targets": {
     "build": {
@@ -77,18 +78,12 @@
       ]
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/application-system/form/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/application-system/form/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/application-system/form/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/application-system/form"]
     },
@@ -118,7 +113,8 @@
         "parallel": true
       }
     },
-    "docker-static": {}
-  },
-  "tags": ["scope:application-system-web"]
+    "docker-static": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-static`"
+    }
+  }
 }

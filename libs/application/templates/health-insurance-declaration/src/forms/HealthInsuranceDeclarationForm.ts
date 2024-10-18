@@ -34,7 +34,8 @@ import {
   getCountryNameFromCode,
   getFullNameFromExternalData,
   getInsuranceStatus,
-  getSelectedFamily,
+  getSelectedApplicants,
+  getApplicantAsOption,
   getSpouseAsOptions,
   hasFamilySelected,
 } from '../utils'
@@ -46,6 +47,7 @@ import {
   removeCountryCode,
 } from '@island.is/application/ui-components'
 import format from 'date-fns/format'
+import sub from 'date-fns/sub'
 import { ApplicantType } from '../shared/constants'
 
 export const HealthInsuranceDeclarationForm: Form = buildForm({
@@ -268,6 +270,14 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           title: m.application.registerPersons.sectionDescription,
           children: [
             buildCheckboxField({
+              id: 'selectedApplicants.registerPersonsApplicantCheckboxField',
+              title: m.application.registerPersons.applicantTitle,
+              defaultValue: (application: any) => [
+                getApplicantAsOption(application.externalData)[0]?.value,
+              ],
+              options: ({ externalData }) => getApplicantAsOption(externalData),
+            }),
+            buildCheckboxField({
               id: 'selectedApplicants.registerPersonsSpouseCheckboxField',
               title: m.application.registerPersons.spousetitle,
               options: ({ externalData }) => getSpouseAsOptions(externalData),
@@ -292,8 +302,6 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           ],
         }),
       ],
-      condition: (answers: FormValue) =>
-        !!(answers.hasSpouse || answers.hasChildren),
     }),
     buildSection({
       id: 'residencySectionTourist',
@@ -378,6 +386,11 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           children: [
             buildDateField({
               id: 'period.dateFieldFrom',
+              minDate: (application) =>
+                application.answers.studentOrTouristRadioFieldTourist ===
+                ApplicantType.STUDENT
+                  ? sub(new Date(), { years: 1 })
+                  : new Date(0),
               title: m.application.date.dateFromTitle,
               placeholder: m.application.date.datePlaceholderText,
               required: true,
@@ -391,6 +404,15 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               required: true,
               width: 'half',
               defaultValue: '',
+            }),
+            buildAlertMessageField({
+              id: 'dateAlertMessage',
+              alertType: 'warning',
+              title: m.application.date.studentMinDateWarningTitle,
+              message: m.application.date.studentMinDateWarning,
+              condition: (answers) =>
+                answers.studentOrTouristRadioFieldTourist ===
+                ApplicantType.STUDENT,
             }),
           ],
         }),
@@ -474,11 +496,11 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                 ),
             }),
             buildDividerField({}),
-            // Family table
+            // Applicants table
             buildStaticTableField({
-              title: m.application.overview.familyTableTitle,
+              title: m.application.overview.applicantsTableTitle,
               rows: ({ answers, externalData }) =>
-                getSelectedFamily(
+                getSelectedApplicants(
                   answers as HealthInsuranceDeclaration,
                   externalData,
                 ),
@@ -487,8 +509,6 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                 applicantInformationMessages.labels.nationalId,
                 'Tengsl',
               ],
-              condition: (answers) =>
-                hasFamilySelected(answers as HealthInsuranceDeclaration),
             }),
             buildDividerField({
               condition: (answers) =>

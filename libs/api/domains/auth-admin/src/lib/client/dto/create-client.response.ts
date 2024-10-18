@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Environment } from 'environment'
+import { Environment } from '@island.is/shared/types'
 
 @ObjectType('AuthAdminCreateClientResponse')
 export class CreateClientResponse {

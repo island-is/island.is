@@ -1,10 +1,10 @@
 import { ReactNode, useMemo, useState } from 'react'
-import type { Locale } from 'locale'
 import { useQuery } from '@apollo/client'
 
 import { EmbeddedVideo } from '@island.is/island-ui/contentful'
 import { Box, Hidden, Icon, Text } from '@island.is/island-ui/core'
 import { Modal } from '@island.is/react/components'
+import type { Locale } from '@island.is/shared/types'
 import { Query, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
@@ -44,7 +44,7 @@ export const SignLanguageButton = ({
   )
 
   const namespace = useMemo(
-    () => JSON.parse(data?.getNamespace?.fields ?? '{}'),
+    () => JSON.parse(data?.getNamespace?.fields || '{}'),
     [data?.getNamespace?.fields],
   )
 

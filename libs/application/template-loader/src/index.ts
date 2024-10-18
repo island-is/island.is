@@ -25,9 +25,9 @@ type TemplateLibraryModule = {
 }
 const loadedTemplateLibs: Record<string, TemplateLibraryModule> = {}
 
-async function loadTemplateLib(
+const loadTemplateLib = async (
   templateId: ApplicationTypes,
-): Promise<TemplateLibraryModule> {
+): Promise<TemplateLibraryModule> => {
   const hasLoadedTemplateLib = Object.prototype.hasOwnProperty.call(
     loadedTemplateLibs,
     templateId,
@@ -53,13 +53,13 @@ async function loadTemplateLib(
   }
 }
 
-export async function getApplicationTemplateByTypeId<
+export const getApplicationTemplateByTypeId = async <
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
   TEvents extends EventObject,
 >(
   templateId: ApplicationTypes,
-): Promise<ApplicationTemplate<TContext, TStateSchema, TEvents>> {
+): Promise<ApplicationTemplate<TContext, TStateSchema, TEvents>> => {
   const templateLib = await loadTemplateLib(templateId)
   return templateLib.default as ApplicationTemplate<
     TContext,
@@ -68,9 +68,9 @@ export async function getApplicationTemplateByTypeId<
   >
 }
 
-export async function getApplicationUIFields(
+export const getApplicationUIFields = async (
   templateId: ApplicationTypes,
-): Promise<UIFields> {
+): Promise<UIFields> => {
   const templateLib = await loadTemplateLib(templateId)
   if (templateLib.getFields) {
     return await templateLib.getFields()
@@ -78,9 +78,9 @@ export async function getApplicationUIFields(
   return Promise.resolve({})
 }
 
-export async function getApplicationDataProviders(
+export const getApplicationDataProviders = async (
   templateId: ApplicationTypes,
-): Promise<Record<string, new () => BasicDataProvider>> {
+): Promise<Record<string, new () => BasicDataProvider>> => {
   const templateLib = await loadTemplateLib(templateId)
   if (templateLib.getDataProviders) {
     return await templateLib.getDataProviders()
@@ -88,9 +88,9 @@ export async function getApplicationDataProviders(
   return Promise.resolve({})
 }
 
-export async function getApplicationStateInformation(
+export const getApplicationStateInformation = async (
   application: Application,
-): Promise<ApplicationStateMeta | null> {
+): Promise<ApplicationStateMeta | null> => {
   const template = await getApplicationTemplateByTypeId(application.typeId)
   if (!template) {
     return null
@@ -99,9 +99,9 @@ export async function getApplicationStateInformation(
   return helper.getApplicationStateInformation() || null
 }
 
-export async function getApplicationTranslationNamespaces(
+export const getApplicationTranslationNamespaces = async (
   application: Application,
-): Promise<string[]> {
+): Promise<string[]> => {
   const template = await getApplicationTemplateByTypeId(application.typeId)
 
   // We load the core namespace for the application system + the ones defined in the application template

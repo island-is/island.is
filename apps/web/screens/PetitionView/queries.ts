@@ -4,6 +4,7 @@ import {
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/web/graphql/schema'
+import { pageSize } from './utils'
 
 const GetGeneralPetitionList = gql`
   query endorsementSystemGetGeneralPetitionList(
@@ -82,7 +83,7 @@ export const useGetPetitionListEndorsements = (
         before: pageDirection === 'before' ? cursor : '',
         after: pageDirection === 'after' ? cursor : '',
         listId: listId,
-        limit: 10,
+        limit: pageSize,
       },
     },
   })

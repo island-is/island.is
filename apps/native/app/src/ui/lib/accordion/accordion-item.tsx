@@ -1,30 +1,20 @@
 import React, { useRef, useState } from 'react'
 import { Animated, Image, LayoutAnimation, Pressable, View } from 'react-native'
-import styled from 'styled-components/native'
-import chevron from '../../assets/icons/chevron-down.png'
-import { dynamicColor, font } from '../../utils'
+import styled, { useTheme } from 'styled-components/native'
+import plus from '../../assets/icons/plus.png'
+import minus from '../../assets/icons/minus.png'
+import { dynamicColor } from '../../utils'
+import { Typography } from '../typography/typography'
 
 const Host = styled.View<{ isOpen: boolean }>`
-  border-radius: ${({ theme }) => theme.border.radius.large};
-  border-width: ${({ theme, isOpen }) =>
-    isOpen ? theme.border.width.xl : theme.border.width.standard}px;
-  border-color: ${dynamicColor(({ theme, isOpen }) => ({
-    light: isOpen ? theme.color.mint400 : theme.color.blue200,
-    dark: isOpen ? theme.color.mint400 : theme.color.blue200,
-  }))};
   background-color: ${dynamicColor('background')};
   overflow: hidden;
-  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
 `
 const Header = styled.Pressable`
-  padding: 10px 16px;
-`
-
-const Title = styled.Text`
-  ${font({
-    fontSize: 16,
-    fontWeight: '600',
-  })}
+  padding-vertical: ${({ theme }) => theme.spacing[1]}px;
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Icon = styled(Animated.View)`
@@ -33,19 +23,21 @@ const Icon = styled(Animated.View)`
   margin-right: ${({ theme }) => theme.spacing[1]}px;
 `
 
-const Chevron = styled(Animated.View)`
-  height: 25px;
-  width: 25px;
+const PlusMinus = styled(Animated.View)`
+  height: ${({ theme }) => theme.spacing[3]}px;
+  width: ${({ theme }) => theme.spacing[3]}px;
+  background-color: ${({ theme }) => theme.color.blue100};
+  border-radius: ${({ theme }) => theme.border.radius.circle};
+  justify-content: center;
+  align-items: center;
 `
 
-const Content = styled.View`
-  border-top-width: ${({ theme }) => theme.border.width.standard}px;
-  border-top-color: ${({ theme }) => theme.color.blue200};
-`
+const Content = styled.View``
 
 interface AccordionItemProps {
   children: React.ReactNode
   title: string
+  startOpen?: boolean
   icon?: React.ReactNode
 }
 
@@ -63,8 +55,15 @@ const toggleAnimation = {
   },
 }
 
-export function AccordionItem({ children, title, icon }: AccordionItemProps) {
-  const [isOpen, setIsOpen] = useState(false)
+export function AccordionItem({
+  children,
+  title,
+  icon,
+  startOpen = false,
+}: AccordionItemProps) {
+  const theme = useTheme()
+  const [isOpen, setIsOpen] = useState(startOpen)
+  const [shouldStartOpen, setStartOpen] = useState(startOpen)
   const animationController = useRef(new Animated.Value(0)).current
 
   const toggleListItem = () => {
@@ -75,6 +74,9 @@ export function AccordionItem({ children, title, icon }: AccordionItemProps) {
     }
     Animated.timing(animationController, config).start()
     LayoutAnimation.configureNext(toggleAnimation)
+    if (startOpen && isOpen) {
+      setStartOpen(false)
+    }
     setIsOpen(!isOpen)
   }
 
@@ -91,16 +93,25 @@ export function AccordionItem({ children, title, icon }: AccordionItemProps) {
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
-            margin: isOpen ? -2 : 0,
+            margin: 0,
           }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {icon && <Icon>{icon}</Icon>}
-            <Title>{title}</Title>
+            <Typography variant="heading4">{title}</Typography>
           </View>
-          <Chevron style={{ transform: [{ rotate: arrowTransform }] }}>
-            <Image source={chevron} style={{ width: 24, height: 24 }} />
-          </Chevron>
+          <PlusMinus
+            style={{
+              // If accordion should start open, don't transform the icon since then
+              // the minus will be displayed transformed to -90deg
+              transform: shouldStartOpen ? [] : [{ rotate: arrowTransform }],
+            }}
+          >
+            <Image
+              source={isOpen ? minus : plus}
+              style={{ width: theme.spacing[2], height: theme.spacing[2] }}
+            />
+          </PlusMinus>
         </Pressable>
       </Header>
       {isOpen && <Content>{children}</Content>}

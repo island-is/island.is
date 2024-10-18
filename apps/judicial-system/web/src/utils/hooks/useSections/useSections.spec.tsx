@@ -1,4 +1,3 @@
-import React from 'react'
 import { IntlProvider } from 'react-intl'
 import faker from 'faker'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
@@ -141,6 +140,24 @@ describe('useSections getSections', () => {
     expect(result.current.getSections(c, u)).toStrictEqual([
       { children: [], isActive: false, name: expect.any(String) },
       { children: [], isActive: true, name: expect.any(String) },
+      { children: [], isActive: false, name: expect.any(String) },
+    ])
+  })
+
+  it('should return the correct sections for indictment cases in WAITING_FOR_CANCELLATION state', () => {
+    const { result } = renderHook(() => useSections(), { wrapper })
+    const c: Case = {
+      type: CaseType.INDICTMENT,
+      created: faker.date.past().toISOString(),
+      modified: faker.date.past().toISOString(),
+      id: faker.datatype.uuid(),
+      state: CaseState.WAITING_FOR_CANCELLATION,
+      policeCaseNumbers: [],
+    }
+
+    expect(result.current.getSections(c, u)).toStrictEqual([
+      { children: [], isActive: true, name: expect.any(String) },
+      { children: [], isActive: false, name: expect.any(String) },
       { children: [], isActive: false, name: expect.any(String) },
     ])
   })

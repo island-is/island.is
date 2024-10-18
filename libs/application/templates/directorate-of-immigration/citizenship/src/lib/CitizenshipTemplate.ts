@@ -120,7 +120,7 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: pruneAfterDays(1),
+          lifecycle: pruneAfterDays(30),
           onExit: defineTemplateApi({
             action: ApiActions.validateApplication,
           }),

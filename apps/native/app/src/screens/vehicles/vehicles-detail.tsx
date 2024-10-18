@@ -3,7 +3,6 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { ScrollView, Text, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { useGetVehicleQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -24,12 +23,6 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
   useNavigationOptions(componentId)
 
   const intl = useIntl()
-
-  // Get feature flag for mileage
-  const isMileageEnabled = useFeatureFlag(
-    'isServicePortalVehicleMileagePageEnabled',
-    false,
-  )
 
   const { data, loading, error } = useGetVehicleQuery({
     variables: {
@@ -56,8 +49,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
 
   const isError = !!error
   const noInfo = data?.vehiclesDetail === null
-  const isMileageRequired =
-    mainInfo?.requiresMileageRegistration && isMileageEnabled
+  const isMileageRequired = mainInfo?.requiresMileageRegistration
 
   if (noInfo && !loading) {
     return (
@@ -163,7 +155,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
             <Input
               loading={inputLoading}
               label={intl.formatMessage({ id: 'vehicleDetail.vehicleWeight' })}
-              value={`${technicalInfo?.vehicleWeight} kg`}
+              value={`${technicalInfo?.vehicleWeight ?? ''} kg`}
             />
             {technicalInfo?.totalWeight ? (
               <Input

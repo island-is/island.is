@@ -3,19 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/translations/src",
   "projectType": "library",
+  "tags": ["lib:dom", "scope:dom"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/shared/translations/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/shared/translations"],
       "options": {
-        "jestConfig": "libs/shared/translations/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/shared/translations/jest.config.ts"
       }
     },
     "extract-strings": {
@@ -24,6 +21,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/shared/translations/src/lib/*.ts'"
       }
     }
-  },
-  "tags": ["lib:dom", "scope:dom"]
+  }
 }

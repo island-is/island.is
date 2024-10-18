@@ -19,33 +19,48 @@ export const MaritalStatusSubSection = buildSubSection({
   id: Routes.MARITALSTATUS,
   title: information.labels.maritalStatus.subSectionTitle,
   condition: (_, externalData) => {
+    // TODO REVERT THIS WHEN UTL FIXES SERVICES
     // Check if the only residence condition that the applicant can apply for, is related to marital status
-    const residenceConditionInfo = getValueViaPath(
+    // const residenceConditionInfo = getValueViaPath(
+    //   externalData,
+    //   'applicantInformation.data.residenceConditionInfo',
+    //   {},
+    // ) as ApplicantInformation
+
+    // const hasResConMaritalStatus =
+    //   residenceConditionInfo.cohabitationISCitizen5YearDomicile ||
+    //   residenceConditionInfo.cohabitationISCitizen5YrsDomicileMissingDate ||
+    //   residenceConditionInfo.marriedISCitizenDomicile4Years ||
+    //   residenceConditionInfo.marriedISCitizenDomicile4YrsMissingDate
+
+    // const hasOtherValidResidenceConditions =
+    //   residenceConditionInfo.domicileResidence7Years ||
+    //   residenceConditionInfo.asylumSeekerOrHumanitarianResPerm5year ||
+    //   residenceConditionInfo.noNationalityAnd5YearsDomicile ||
+    //   residenceConditionInfo.nordicCitizenship4YearDomicile
+
+    // const spouseIsCitizen = residenceConditionInfo.spouseIsCitizen
+    // const eesResidenceCondition = residenceConditionInfo.eesResidenceCondition
+    // const showThisPage = spouseIsCitizen && !eesResidenceCondition
+
+    // return (
+    //   (!!hasResConMaritalStatus && !hasOtherValidResidenceConditions) ||
+    //   !!showThisPage
+    // )
+
+    // TODO REMOVE THIS WHEN UTL FIXES SERVICES
+    const spouseDetails = getValueViaPath(
       externalData,
-      'applicantInformation.data.residenceConditionInfo',
-      {},
-    ) as ApplicantInformation
+      'spouseDetails.data',
+      undefined,
+    ) as NationalRegistrySpouse | undefined
 
-    const hasResConMaritalStatus =
-      residenceConditionInfo.cohabitationISCitizen5YearDomicile ||
-      residenceConditionInfo.cohabitationISCitizen5YrsDomicileMissingDate ||
-      residenceConditionInfo.marriedISCitizenDomicile4Years ||
-      residenceConditionInfo.marriedISCitizenDomicile4YrsMissingDate
+    const maritalStatus = spouseDetails?.maritalStatus
+    const hasSpouse = !!spouseDetails?.nationalId
+    const isMarriedOrCohabitation =
+      maritalStatus === '3' || (maritalStatus === '1' && hasSpouse)
 
-    const hasOtherValidResidenceConditions =
-      residenceConditionInfo.domicileResidence7Years ||
-      residenceConditionInfo.asylumSeekerOrHumanitarianResPerm5year ||
-      residenceConditionInfo.noNationalityAnd5YearsDomicile ||
-      residenceConditionInfo.nordicCitizenship4YearDomicile
-
-    const spouseIsCitizen = residenceConditionInfo.spouseIsCitizen
-    const eesResidenceCondition = residenceConditionInfo.eesResidenceCondition
-    const showThisPage = spouseIsCitizen && !eesResidenceCondition
-
-    return (
-      (!!hasResConMaritalStatus && !hasOtherValidResidenceConditions) ||
-      !!showThisPage
-    )
+    return isMarriedOrCohabitation
   },
   children: [
     buildMultiField({

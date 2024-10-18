@@ -37,18 +37,9 @@ test.describe('MS - Social Insurance', () => {
       )
 
       const title = page.getByRole('heading', {
-        name: 'Framfærsla',
+        name: 'Greiðsluáætlun',
       })
       await expect(title).toBeVisible()
-
-      await expect(
-        page.getByText('Skattskyldar greiðslutegundir nema arið 2024'),
-      ).toBeVisible()
-
-      const select = page.getByTestId('select-payment-plan-date-picker')
-      await select.click()
-      await page.keyboard.press('ArrowDown')
-      await page.keyboard.press('Enter')
 
       await expect(
         page.getByText('Skattskyldar greiðslutegundir'),

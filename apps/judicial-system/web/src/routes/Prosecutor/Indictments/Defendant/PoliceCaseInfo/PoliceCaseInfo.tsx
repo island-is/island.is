@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
@@ -57,22 +57,18 @@ interface Props {
   policeCaseNumberImmutable: boolean
 }
 
-export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
-  const {
-    index,
-    policeCaseNumbers,
-    policeCaseNumberPrefix,
-    subtypes,
-    crimeScene,
-    setPoliceCase,
-    deletePoliceCase,
-    updatePoliceCase,
-    policeCaseNumberImmutable = false,
-    updateIndictmentCount,
-  } = props
-
+export const PoliceCaseInfo: FC<Props> = ({
+  index,
+  policeCaseNumbers,
+  policeCaseNumberPrefix,
+  subtypes,
+  crimeScene,
+  setPoliceCase,
+  deletePoliceCase,
+  updatePoliceCase,
+  policeCaseNumberImmutable = false,
+  updateIndictmentCount,
+}) => {
   const { formatMessage } = useIntl()
 
   const { user } = useContext(UserContext)

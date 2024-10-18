@@ -1,7 +1,9 @@
 import {
+  DateType,
   DefenderChoice,
   Gender,
   Institution,
+  ServiceStatus,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -13,6 +15,7 @@ export class InternalCaseResponse {
   judge!: User
   prosecutorsOffice!: Institution
   prosecutor!: User
+  dateLogs?: DateLog[]
 }
 
 interface Defendant {
@@ -26,5 +29,22 @@ interface Defendant {
   defenderEmail?: string
   defenderPhoneNumber?: string
   defenderChoice?: DefenderChoice
-  acceptCompensationClaim?: boolean
+  subpoenas?: Subpoena[]
+  requestedDefenderChoice?: DefenderChoice
+  requestedDefenderNationalId?: string
+  requestedDefenderName?: string
+}
+
+interface DateLog {
+  id: string
+  created: Date
+  dateType: DateType
+  date: Date
+  location?: string
+}
+
+interface Subpoena {
+  id: string
+  subpoenaId: string
+  serviceStatus?: ServiceStatus
 }

@@ -34,4 +34,7 @@ export class TemporaryEventLicence {
 
   @Field({ nullable: true })
   estimatedNumberOfGuests?: number
+
+  @Field({ nullable: true })
+  location?: string
 }

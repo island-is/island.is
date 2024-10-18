@@ -14,6 +14,8 @@ import {
 } from '@island.is/shared/types'
 
 import { setupWithAuth } from '../../../../../test/setup'
+import kennitala from 'kennitala'
+import addYears from 'date-fns/addYears'
 
 const path = '/v1/delegation-index/.id'
 const testNationalId = createNationalId('person')
@@ -441,9 +443,20 @@ describe('DelegationIndexController', () => {
 
     it('PUT - should create LegalGuardianMinor delegation record if creating LegalGuardian delegation for child under 16', async () => {
       // Arrange
+      const DATE_OF_BIRTH = new Date(addYears(new Date(), -15).toDateString())
+      jest.spyOn(kennitala, 'isValid').mockReturnValue(true)
+      jest.spyOn(kennitala, 'info').mockReturnValue({
+        kt: '0101302399',
+        valid: true,
+        type: 'person',
+        birthday: DATE_OF_BIRTH,
+        birthdayReadable: 'any',
+        age: 15,
+      })
+
       const { toNationalId, fromNationalId, type } = {
         toNationalId: user.nationalId,
-        fromNationalId: '2101188290',
+        fromNationalId: '0101302399',
         type: AuthDelegationType.LegalGuardian,
       }
 
@@ -452,7 +465,7 @@ describe('DelegationIndexController', () => {
         .put(path)
         .set('X-Param-Id', `${type}_${toNationalId}_${fromNationalId}`)
         .send()
-      console.log(response.body)
+
       // Assert
       const legalGuardianDelegation = await delegationIndexModel.findOne({
         where: {
@@ -477,11 +490,15 @@ describe('DelegationIndexController', () => {
       expect(legalGuardianDelegation).toBeDefined()
       expect(legalGuardianMinorDelegation).toBeDefined()
       expect(legalGuardianDelegation?.validTo).toStrictEqual(
-        new Date(2036, 0, 21),
+        // 18 years from kid's birthday
+        addYears(DATE_OF_BIRTH, 18),
       )
       expect(legalGuardianMinorDelegation?.validTo).toStrictEqual(
-        new Date(2034, 0, 21),
+        // 16 years from kid's birthday
+        addYears(DATE_OF_BIRTH, 16),
       )
+
+      jest.resetAllMocks()
     })
   })
 })

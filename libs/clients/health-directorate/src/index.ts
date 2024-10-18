@@ -1,5 +1,16 @@
-export { HealthDirectorateClientConfig } from './lib/healthDirectorateClient.config'
 export { HealthDirectorateClientModule } from './lib/healthDirectorateClient.module'
-export { HealthDirectorateClientService } from './lib/healthDirectorateClient.service'
 export * from './lib/healthDirectorateClient.types'
-export * from '../gen/fetch/models'
+export * from './lib/clients/occupational-license/gen/fetch/models'
+export {
+  HealthDirectorateVaccinationsClientConfig,
+  HealthDirectorateOrganDonationClientConfig,
+  HealthDirectorateClientConfig,
+  HealthDirectorateClientService,
+  HealthDirectorateOrganDonationService,
+  HealthDirectorateVaccinationsService,
+  OrganDonorDto,
+  Locale,
+  organLocale,
+  VaccinationDto,
+  DiseaseVaccinationDtoVaccinationStatusEnum,
+} from './lib/clients'

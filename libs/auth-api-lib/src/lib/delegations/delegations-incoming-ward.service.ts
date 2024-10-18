@@ -1,17 +1,20 @@
+import { Inject, Injectable, Logger } from '@nestjs/common'
+
+import { isUnderXAge } from './utils/isUnderXAge'
+import { ApiScopeInfo } from './delegations-incoming.service'
+import { DelegationDTO } from './dto/delegation.dto'
+
 import { User } from '@island.is/auth-nest-tools'
 import {
   IndividualDto,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable, Logger } from '@nestjs/common'
-import { ApiScopeInfo } from './delegations-incoming.service'
-import { DelegationDTO } from './dto/delegation.dto'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
-import { isUnderXAge } from './utils/isUnderXAge'
+
 @Injectable()
 export class DelegationsIncomingWardService {
   constructor(
@@ -29,7 +32,10 @@ export class DelegationsIncomingWardService {
       requireApiScopes &&
       clientAllowedApiScopes &&
       !clientAllowedApiScopes.some(
-        (s) => s.grantToLegalGuardians && !s.isAccessControlled,
+        (s) =>
+          s.supportedDelegationTypes?.some(
+            (dt) => dt.delegationType == AuthDelegationType.LegalGuardian,
+          ) && !s.isAccessControlled,
       )
     ) {
       return []

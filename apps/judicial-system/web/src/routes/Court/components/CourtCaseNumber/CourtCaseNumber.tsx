@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -8,7 +8,7 @@ import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import CourtCaseNumberInput from './CourtCaseNumberInput'
 import { courtCaseNumber } from './CourtCaseNumber.strings'
 
-const CourtCaseNumber: React.FC = () => {
+const CourtCaseNumber: FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase } = useContext(FormContext)
 
@@ -23,8 +23,7 @@ const CourtCaseNumber: React.FC = () => {
         <Text>
           {workingCase.state !== CaseState.SUBMITTED &&
           workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
-          workingCase.state !== CaseState.RECEIVED &&
-          workingCase.state !== CaseState.MAIN_HEARING
+          workingCase.state !== CaseState.RECEIVED
             ? formatMessage(courtCaseNumber.explanationDisabled)
             : formatMessage(courtCaseNumber.explanation)}
         </Text>

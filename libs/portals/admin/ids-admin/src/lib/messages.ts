@@ -111,7 +111,7 @@ export const m = defineMessages({
     defaultMessage: 'Name',
   },
   displayNameDescription: {
-    id: 'ap.ids-admin:display-name',
+    id: 'ap.ids-admin:display-name-description',
     defaultMessage: 'Users see this when they sign in, and manage consents.',
   },
   description: {
@@ -766,7 +766,8 @@ export const m = defineMessages({
   },
   isAccessControlledDescription: {
     id: 'ap.ids-admin:is-access-controlled-description',
-    defaultMessage: 'Only allow specific national ids',
+    defaultMessage:
+      'Authorize a list of national ids for this permission. Request support from island.is to manage the list.',
   },
   grantToAuthenticatedUser: {
     id: 'ap.ids-admin:grant-to-authenticated-user',
@@ -774,7 +775,8 @@ export const m = defineMessages({
   },
   grantToAuthenticatedUserDescription: {
     id: 'ap.ids-admin:grant-to-authenticated-user-description',
-    defaultMessage: 'Should the authenticated user get this scope',
+    defaultMessage:
+      'Should the authenticated individual get this scope (uncheck if only delegated users should be allowed).',
   },
   grantToProcuringHolders: {
     id: 'ap.ids-admin:grant-to-procuring-holders',
@@ -926,16 +928,29 @@ export const m = defineMessages({
     id: 'ap.ids-admin:client-delegation-type-personal-representative-postholf-name',
     defaultMessage: 'Documents (ísl. pósthólf)',
   },
+  clientDelegationProviderSyslumennName: {
+    id: 'ap.ids-admin:client-delegation-provider-syslumenn-name',
+    defaultMessage: 'District Commissioner',
+  },
+  clientDelegationProviderSyslumennDescription: {
+    id: 'ap.ids-admin:client-delegation-provider-syslumenn-description',
+    defaultMessage:
+      'Allow users to sign into this application using delegation types managed by the District Commissioner.',
+  },
+  clientDelegationTypeLegalRepresentativeName: {
+    id: 'ap.ids-admin:client-delegation-type-legal-representative-name',
+    defaultMessage: 'Legal representative',
+  },
   apiScopeDelegationProviderDelegationdbName: {
-    id: 'ap.ids-admin:client-delegation-provider-custom-name',
+    id: 'ap.ids-admin:api-scope-delegation-provider-custom-name',
     defaultMessage: 'Island.is',
   },
   apiScopeDelegationTypeCustomName: {
-    id: 'ap.ids-admin:client-delegation-type-custom-name',
+    id: 'ap.ids-admin:api-scope-delegation-type-custom-name',
     defaultMessage: 'Custom delegations',
   },
   apiScopeDelegationTypeCustomDescription: {
-    id: 'ap.ids-admin:client-delegation-type-custom-description',
+    id: 'ap.ids-admin:api-scope-delegation-type-custom-description',
     defaultMessage:
       'Should users be able to grant other users custom delegation for this permission.',
   },
@@ -985,6 +1000,19 @@ export const m = defineMessages({
   apiScopeDelegationTypePersonalRepresentativepostholfDescription: {
     id: 'ap.ids-admin:api-scope-delegation-type-personal-representative-postholf-description',
     defaultMessage:
-      'Should personal representatives automatically get this permission for their clients',
+      'Should personal representatives automatically get this permission for their clients.',
+  },
+  apiScopeDelegationProviderSyslumennName: {
+    id: 'ap.ids-admin:api-scope-delegation-provider-syslumenn-name',
+    defaultMessage: 'District Commissioner',
+  },
+  apiScopeDelegationTypeLegalRepresentativeName: {
+    id: 'ap.ids-admin:api-scope-delegation-type-legal-representative-name',
+    defaultMessage: 'Legal representative',
+  },
+  apiScopeDelegationTypeLegalRepresentativeDescription: {
+    id: 'ap.ids-admin:api-scope-delegation-type-legal-representative-description',
+    defaultMessage:
+      'Should legal representative automatically get this permission for their clients.',
   },
 })

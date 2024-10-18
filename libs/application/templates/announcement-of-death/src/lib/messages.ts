@@ -52,7 +52,7 @@ export const m = defineMessages({
     description: 'National registry subtitle',
   },
   dataCollectionUserProfileTitle: {
-    id: 'cr.application:dataCollectionUserProfileTitle',
+    id: 'aod.application:dataCollectionUserProfileTitle',
     defaultMessage: 'Mínar síður á Ísland.is/stillingar',
     description: 'Your user profile information',
   },
@@ -208,7 +208,7 @@ export const m = defineMessages({
   firearmsDescription: {
     id: 'aod.application:firearmsDescription#markdown',
     defaultMessage: `Skrá þarf upplýsingar um skotvopn látna og nafn og kennitölu þess sem hefur samþykkt að taka við vörslu þeirra.
-      Vörsluaðili þarf að vera með gilt leyfi til að varsla skotvopnin. 
+      Vörsluaðili þarf að vera með gilt leyfi til að varsla skotvopnin.
       Hann fær sms/tölvupóst með beiðni um að samþykkja að taka við vörslu skotvopnanna.`,
     description: 'Firearms step description',
   },
@@ -227,10 +227,20 @@ export const m = defineMessages({
     defaultMessage: 'Nei',
     description: 'Firearms step answer no',
   },
-  firearmsApplicantTitle: {
-    id: 'aod.application:firearmsApplicantTitle',
-    defaultMessage: 'Upplýsingar um umsækjanda',
-    description: 'Firearms step applicant title',
+  firearmsApplicantHeader: {
+    id: 'aod.application:firearmsApplicantHeader#markdown',
+    defaultMessage: 'Skráning vörsluaðila:',
+    description: '',
+  },
+  firearmsApplicant: {
+    id: 'aod.application:firearmsApplicant',
+    defaultMessage: 'Skráður vörsluaðili',
+    description: '',
+  },
+  firearmsApplicantOverviewHeader: {
+    id: 'aod.application:firearmsApplicantOverviewHeader',
+    defaultMessage: 'Skotvopn',
+    description: '',
   },
   firearmsApplicantName: {
     id: 'aod.application:firearmsApplicantName',
@@ -318,6 +328,18 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage: 'Fæðingardagur',
     description: 'Day of birth label',
   },
+  inheritanceConfirmationDescription: {
+    id: 'aod.application:inheritanceConfirmationDescription#markdown',
+    defaultMessage:
+      'Ath. Það þarf alltaf að fylla út upplýsingar um alla erfingja, til dæmis þótt maki ætli að sitja í óskiptu búi. Ef barn hins látna var fallið frá á undan þarf að gefa upplýsingar um barnabörn. Ef látni sat í óskiptu búi þarf að veita upplýsingar um stjúpbörn.',
+    description: 'Inheritance confirmation',
+  },
+  inheritanceConfirmation: {
+    id: 'aod.application:inheritanceConfirmation',
+    defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um alla erfingja',
+    description: 'Inheritance confirmation',
+  },
 
   /* Properties step */
   propertiesTitle: {
@@ -327,8 +349,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
   },
   propertiesDescription: {
     id: 'aod.application:propertiesDescription',
-    defaultMessage:
-      'Upplýsingar um eignir og ökutæki hafa verið sóttar rafrænt. Vinsamlega bætið við upplýsingum ef eitthvað vantar. Taktu þér góðan tíma í að fylla þetta út eftir bestu getu. ',
+    defaultMessage: 'Merktu við það sem á við eftir bestu vitund.',
     description: 'Properties description',
   },
   realEstatesTitle: {
@@ -336,35 +357,25 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage: 'Fasteignir',
     description: 'Real estates and lands title',
   },
-  realEstatesDescription: {
-    id: 'aod.application:realEstatesDescription',
-    defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
-    description: 'Real estates and lands description',
-  },
   vehiclesTitle: {
     id: 'aod.application:vehiclesTitle',
     defaultMessage: 'Faratæki',
     description: 'Vehicles title',
-  },
-  vehiclesDescription: {
-    id: 'aod.application:vehiclesDescription',
-    defaultMessage: 'Til dæmis bifreiðar, flugvélar og bátar.',
-    description: 'Vehicles description',
   },
   vehiclesPlaceholder: {
     id: 'aod.application:vehiclesPlaceholder',
     defaultMessage: 't.d. Toyota Yaris',
     description: 'Placeholder for vehicles type',
   },
-  otherPropertiesTitle: {
-    id: 'aod.application:otherPropertiesTitle',
-    defaultMessage: 'Aðrar eignir',
-    description: 'Other properties title',
+  propertiesRealEstate: {
+    id: 'aod.application:propertiesRealEstate',
+    defaultMessage: 'Fasteignir',
+    description: 'Properties option: Real estate',
   },
-  otherPropertiesDescription: {
-    id: 'aod.application:otherPropertiesDescription',
-    defaultMessage: 'Merktu við það sem á við eftir bestu vitund.',
-    description: 'Other properties description',
+  propertiesVehicles: {
+    id: 'aod.application:propertiesVehicles',
+    defaultMessage: 'Faratæki',
+    description: 'Properties option: Vehicles',
   },
   otherPropertiesAccounts: {
     id: 'aod.application:otherPropertiesAccounts',
@@ -547,6 +558,11 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage: 'Númer má ekki vera tómt',
     description: 'Invalid general asset number error message',
   },
+  errorNoDateOfBirthProvided: {
+    id: 'aod.application:error.errorNoDateOfBirthProvided',
+    defaultMessage: 'Fæðingardagur þarf að vera fylltur út',
+    description: 'Date of birth is required',
+  },
 
   /* Announcement */
   announcementTitle: {
@@ -675,7 +691,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
   },
   nextStepsText: {
     id: 'aod.application:nextStepsText#markdown',
-    defaultMessage: `* Þegar búið er að staðfesta tilkynninguna og móttöku dánarvottorðs getur útför farið fram. 
+    defaultMessage: `* Þegar búið er að staðfesta tilkynninguna og móttöku dánarvottorðs getur útför farið fram.
     * Heimildir verða sendar í pósthólf á Mínar síður á Ísland.is hjá þeim aðilum sem óskað var eftir.
     * Erfingjar þurfa að taka ákvörðun um frágang dánarbúsins innan fjögurra mánaða frá dánardegi. Nánari upplýsingar má finna á vefsíðu sýslumanns.
     * Mikilvægt er að koma frumriti af erfðaskrám til sýslumanns sem fyrst þar sem innihald hennar getur haft áhrif á dánarbú hins látna.

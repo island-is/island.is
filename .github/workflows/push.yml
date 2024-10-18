@@ -58,53 +58,55 @@ jobs:
       - name: Get git branch
         id: git-branch
         run: |
+          set -euo pipefail
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          echo "GIT_BRANCH=${GIT_BRANCH}" >> $GITHUB_OUTPUT
-          echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
+          echo GIT_BRANCH="${GIT_BRANCH}" >> "$GITHUB_OUTPUT"
+          echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
       - name: Generate deployment branch name
         id: git-branch-deploy
         run: |
-          export GIT_BRANCH_DEPLOY=$GIT_BRANCH
+          set -euo pipefail
+          export GIT_BRANCH_DEPLOY="$GIT_BRANCH"
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
             if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
               # If event is pull request but branch is not prefixed with feature/
-              GIT_BRANCH_DEPLOY=feature/$GIT_BRANCH_DEPLOY
+              GIT_BRANCH_DEPLOY="feature/$GIT_BRANCH_DEPLOY"
             fi
             # Avoid too long resource names
-            GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY:0:50}
+            GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
           fi
-          echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_OUTPUT
-          echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
-          echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
+          echo GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY}" >> "$GITHUB_OUTPUT"
+          echo GIT_BRANCH_DEPLOY="$GIT_BRANCH_DEPLOY" >> "$GITHUB_ENV"
+          echo FEATURE_NAME="$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> "$GITHUB_OUTPUT"
       - name: Check if we want to run workflow
         id: should-run
         env:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
           echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
-          echo "PRE_RELEASE=false" >> $GITHUB_OUTPUT
+          echo "PRE_RELEASE=false" >> "$GITHUB_OUTPUT"
 
           if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
             echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
 
-            for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
+            for pre_pattern in $(echo "$PRE_RELEASE_PATTERN" | sed "s/,/ /g")
             do
                 echo "Checking branch against pre_release_pattern '$pre_pattern'"
                 echo "Check if this is a pre-release and if it should generate a feature-deploy"
                 if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
                   echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
-                  echo "PRE_CHECK=feature-deploy" >> $GITHUB_OUTPUT
-                  echo "PRE_RELEASE=true" >> $GITHUB_OUTPUT
+                  echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+                  echo "PRE_RELEASE=true" >> "$GITHUB_OUTPUT"
                   exit 0
                 fi
             done
 
-            for pattern in $(echo $CREATE_PATTERNS | sed "s/,/ /g")
+            for pattern in $(echo "$CREATE_PATTERNS" | sed "s/,/ /g")
             do
                 echo "Checking branch against pattern '$pattern'"
                 if [[ "$GIT_BRANCH" =~ $pattern ]]; then
                   echo "'$GIT_BRANCH' matches '$pattern', continuing with build"
-                  echo "PRE_CHECK=push" >> $GITHUB_OUTPUT
+                  echo "PRE_CHECK=push" >> "$GITHUB_OUTPUT"
                   exit 0
                 fi
             done
@@ -114,31 +116,31 @@ jobs:
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
             if [[ "${{ github.event.action }}" == "labeled" ]]; then
               echo "Action is labeled, using label that was applied: '${{ github.event.label.name }}'"
-              deployFeature=$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )
+              deployFeature="$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )"
             else
               echo "Action is ${{ github.event.action }}, using labels on PR"
               deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
             fi
             if [[ "$deployFeature" == "true" ]]; then
               echo "Pull request contains deploy-feature label, continuing with feature deployment"
-              echo "PRE_CHECK=feature-deploy" >> $GITHUB_OUTPUT
+              echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             echo "Pull request does not have deploy-feature label, exiting..."
             exit 0
           fi
-          for pre_pattern in $(echo $PRE_RELEASE_PATTERN | sed "s/,/ /g")
+          for pre_pattern in $(echo "$PRE_RELEASE_PATTERN" | sed "s/,/ /g")
             do
                 echo "Checking branch against pre_release_pattern '$pre_pattern'"
                 echo "Check if this is a pre-release and if it should generate a feature-deploy"
                 if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
                   echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
-                  echo "PRE_CHECK=feature-deploy" >> $GITHUB_OUTPUT
-                  echo "PRE_RELEASE=true" >> $GITHUB_OUTPUT
+                  echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+                  echo "PRE_RELEASE=true" >> "$GITHUB_OUTPUT"
                   exit 0
                 fi
             done
-          echo "PRE_CHECK=push" >> $GITHUB_OUTPUT
+          echo "PRE_CHECK=push" >> "$GITHUB_OUTPUT"
 
   prepare:
     runs-on: ec2-runners
@@ -174,36 +176,38 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
       - name: Check node version
         run: |
+          set -euo pipefail
           node -v
           ls -l `which node`
 
       - name: Git refs
         id: git_refs
         run: |
+          set -euo pipefail
           if [[ -n "$GITHUB_BASE_REF" ]]
           then
            # a PR
-           GIT_BASE_BRANCH=$GITHUB_BASE_REF
+           GIT_BASE_BRANCH="$GITHUB_BASE_REF"
           else
            # on main
            GIT_BASE_BRANCH=main
           fi
-          echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
-          echo "GIT_BASE_BRANCH=$GIT_BASE_BRANCH" >> $GITHUB_ENV
+          echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
+          echo GIT_BASE_BRANCH="$GIT_BASE_BRANCH" >> "$GITHUB_ENV"
           echo "Base branch is '${GIT_BASE_BRANCH}'"
           echo "Branch is '${GIT_BRANCH}'"
 
       - name: Checking out relevant branches for a pre-release
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_RELEASE == 'true'
         run: |
-          echo "Feature Name: $FEATURE_NAME"
+          echo "Feature Name: '$FEATURE_NAME'"
 
           git checkout main
-          git checkout $GITHUB_SHA
+          git checkout "$GITHUB_SHA"
 
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
@@ -211,56 +215,65 @@ jobs:
       - name: Checking out relevant branches for a PR
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         run: |
-          git checkout $GITHUB_HEAD_REF
-          git checkout $GITHUB_BASE_REF
-          git checkout $GITHUB_SHA
+          set -euo pipefail
+          git checkout "$GITHUB_HEAD_REF"
+          git checkout "$GITHUB_BASE_REF"
+          git checkout "$GITHUB_SHA"
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
-          BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
-          HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
-          echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
+          BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
+          HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+          echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
       - name: Checking out relevant branches for a branch build
         if: ${{ !(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy') }}
         run: |
+          set -euo pipefail
           git checkout main
-          git checkout $GITHUB_SHA
+          git checkout "$GITHUB_SHA"
 
+      # This is to increase the retention days for our GitHub Actions run events
+      # See this for more information:
+      # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
       - name: Keep PR run event
-        uses: actions/upload-artifact@v2
-        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
+        uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
+        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         with:
           name: pr-event
           path: event.json
-          retention-days: 60
+          retention-days: 90
+          include-hidden-files: true
+          if-no-files-found: error
 
       - name: Generate nodejs image tag
         id: nodejs_image
         continue-on-error: false
         run: |
+          set -euo pipefail
           export NODE_IMAGE_TAG="$(./scripts/ci/get-node-version.mjs)"
-          echo "NODE_IMAGE_TAG: ${NODE_IMAGE_TAG}"
-          echo "NODE_IMAGE_TAG=${NODE_IMAGE_TAG}" >> $GITHUB_OUTPUT
-          echo "NODE_IMAGE_TAG=${NODE_IMAGE_TAG}" >> $GITHUB_ENV
-          echo "**NODE_IMAGE_TAG** ${NODE_IMAGE_TAG}" >> $GITHUB_STEP_SUMMARY
+          echo "NODE_IMAGE_TAG: '${NODE_IMAGE_TAG}'"
+          echo NODE_IMAGE_TAG="${NODE_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+          echo NODE_IMAGE_TAG="${NODE_IMAGE_TAG}" >> "$GITHUB_ENV"
+          echo "**NODE_IMAGE_TAG** '${NODE_IMAGE_TAG}'" >> "$GITHUB_STEP_SUMMARY"
       - name: Generate docker image tag
         id: docker_tags
         run: |
-          export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH:0:45} | tr "/." "-" )
+          set -euo pipefail
+          export DOCKER_BRANCH_TAG="$(echo "${GIT_BRANCH:0:45}" | tr "/." "-" )"
           SHA="${{ github.event.pull_request.head.sha }}"
           echo "SHA='$SHA' retrieved from event"
           if [[ "$SHA" == "" ]]; then
-            SHA=$GITHUB_SHA
+            SHA="$GITHUB_SHA"
             echo "SHA='$SHA', retrived from action environment"
           fi
           echo "Using SHA='$SHA' as docker tag sha"
-          export DOCKER_TAG=${DOCKER_BRANCH_TAG}_${SHA:0:7}_${GITHUB_RUN_NUMBER}
-          echo "Docker tag will be ${DOCKER_TAG}"
-          echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_OUTPUT
-          echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
-          echo "**Monorepo tag:** ${DOCKER_TAG}" >> $GITHUB_STEP_SUMMARY
+          export DOCKER_TAG="${DOCKER_BRANCH_TAG}_${SHA:0:10}_${GITHUB_RUN_NUMBER}"
+          echo "Docker tag will be '${DOCKER_TAG}'"
+          echo DOCKER_TAG="${DOCKER_TAG}" >> "$GITHUB_OUTPUT"
+          echo DOCKER_TAG="$DOCKER_TAG" >> "$GITHUB_ENV"
+          echo "**Monorepo tag:** '${DOCKER_TAG}'" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Send Slack notification
         id: slack
@@ -280,7 +293,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASE_WEBHOOK_URL }} # required
 
       - run: |
-          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          echo HEAD="$GITHUB_SHA" >> "$GITHUB_ENV"
         id: git_nx_head
         name: Preparing HEAD tag
 
@@ -293,11 +306,11 @@ jobs:
 
       - name: Set Test Everything true
         run: |
-          echo "TEST_EVERYTHING=true" >> $GITHUB_ENV
+          echo "TEST_EVERYTHING=true" >> "$GITHUB_ENV"
         if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'test everything')
 
       - name: Set Test Everything false
-        run: echo "TEST_EVERYTHING=false" >> $GITHUB_ENV
+        run: echo "TEST_EVERYTHING=false" >> "$GITHUB_ENV"
         if: github.event_name != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'test everything')
 
       - name: Preparing BASE tags
@@ -307,10 +320,11 @@ jobs:
           HTML_URL: ${{ github.event.pull_request.html_url }}
           ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
         run: |
+          set -euo pipefail
           if [[ "${{needs.pre-checks.outputs.PRE_CHECK}}" == 'feature-deploy' && "${{needs.pre-checks.outputs.PRE_RELEASE}}" == 'false' ]]; then
             export HEAD_REF="$GITHUB_HEAD_REF"
             export BASE_REF="$GITHUB_BASE_REF"
-            export PR_REF=$GITHUB_SHA
+            export PR_REF="$GITHUB_SHA"
           else
             export HEAD_REF="$GIT_BRANCH"
             export BASE_REF="$GIT_BASE_BRANCH"
@@ -318,10 +332,10 @@ jobs:
           fi
           export WORKFLOW_ID=push
           export SHELL=/usr/bin/bash
-          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
-          git checkout $GITHUB_SHA
-          echo "BASE=$BASE" >> $GITHUB_ENV
-          echo "LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_DOCKER_TAG}" >> $GITHUB_OUTPUT
+          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD "$GITHUB_BASE_REF")
+          git checkout "$GITHUB_SHA"
+          echo BASE="$BASE" >> "$GITHUB_ENV"
+          echo LAST_GOOD_BUILD_DOCKER_TAG="${LAST_GOOD_BUILD_DOCKER_TAG}" >> "$GITHUB_OUTPUT"
       - name: Docker login to ECR repo
         run: ./scripts/ci/docker-login-ecr.sh
         env:
@@ -366,14 +380,15 @@ jobs:
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
       - name: set BRANCH env var
-        run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
+        run: echo BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
 
       - name: Prepare test targets
         id: test_projects
         run: |
-          CHUNKS=$(./scripts/ci/generate-chunks.sh test)
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo CHUNKS="{\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
         env:
           SKIP_TESTS_ON_BRANCH: ${{ secrets.SKIP_TESTS_ON_BRANCH }}
@@ -381,32 +396,35 @@ jobs:
       - name: Prepare docker build targets
         id: build_map
         run: |
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
+          set -euo pipefail
+          CHUNKS="$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "BUILD_CHUNKS=$CHUNKS" >> $GITHUB_OUTPUT
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo BUILD_CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Gather unaffected docker images
         id: unaffected
         run: |
-          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)
-          echo "UNAFFECTED=$UNAFFECTED" >> $GITHUB_OUTPUT
+          set -euo pipefail
+          UNAFFECTED="$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)"
+          echo UNAFFECTED="$UNAFFECTED" >> "$GITHUB_OUTPUT"
 
       - name: check pre-release
         if: needs.pre-checks.outputs.PRE_RELEASE == 'true'
         run: |
-          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_ENV
+          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> "$GITHUB_ENV"
 
       - name: Prepare deployment targets
         id: deploy_map
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
-          export BASE=$(git merge-base HEAD $GITHUB_BASE_REF)
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
+          set -euo pipefail
+          export BASE="$(git merge-base HEAD "$GITHUB_BASE_REF")"
+          CHUNKS="$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
-          if [[ $CHUNKS != "[]" ]]; then
-            echo "IMAGES=$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')" >> $GITHUB_OUTPUT
+          if [[ "$CHUNKS" != "[]" ]]; then
+            echo "IMAGES="$(echo "$CHUNKS" | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"" >> "$GITHUB_OUTPUT"
           fi
 
   tests:
@@ -419,7 +437,7 @@ jobs:
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 3
+      MAX_JOBS: 1
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
@@ -433,7 +451,7 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
       - name: Get cache
         id: get-cache
@@ -474,10 +492,11 @@ jobs:
       - name: Gather apps
         id: gather
         run: |
-          AFFECTED_PROJECTS=$(echo '${{ matrix.chunk }}' | jq -r '.projects')
-          DOCKER_TYPE=$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')
-          echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
-          echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
+          set -euo pipefail
+          AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
+          DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
+          echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
+          echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
         continue-on-error: true
       - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
@@ -487,7 +506,7 @@ jobs:
         if: steps.gather.outcome == 'success'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
         if: steps.gather.outcome == 'success'
 
       - name: Get cache
@@ -545,9 +564,9 @@ jobs:
           SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
-          echo Node image tag is: $NODE_IMAGE_TAG
+          echo "Node image tag is: '$NODE_IMAGE_TAG'"
           export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
-          ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
+          ./scripts/ci/run-in-parallel.sh "90_$DOCKER_TYPE"
 
       - name: Building Docker images Retry
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
@@ -556,9 +575,9 @@ jobs:
           SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
-          echo Node image tag is: $NODE_IMAGE_TAG
+          echo "Node image tag is: '$NODE_IMAGE_TAG'"
           export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
-          ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
+          ./scripts/ci/run-in-parallel.sh "90_$DOCKER_TYPE"
 
   helm-docker-build:
     needs:
@@ -584,7 +603,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
@@ -596,11 +615,11 @@ jobs:
           echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
           echo Image tag is: ${{env.NODE_IMAGE_TAG}}
           export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{env.DOCKER_BASE_IMAGE_REGISTRY}} --build-arg NODE_IMAGE_TAG=${{env.NODE_IMAGE_TAG}}"
-          ./scripts/build-docker-container.sh $DOCKER_TAG
-          echo "COMMENT<<EOF" >> $GITHUB_ENV
-          echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> $GITHUB_ENV
-          docker run --rm ${DOCKER_REGISTRY}helm-config:$DOCKER_TAG ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature=$FEATURE_NAME >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+          ./scripts/build-docker-container.sh "$DOCKER_TAG"
+          echo "COMMENT<<EOF" >> "$GITHUB_ENV"
+          echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> "$GITHUB_ENV"
+          docker run --rm "${DOCKER_REGISTRY}helm-config:$DOCKER_TAG" ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature="$FEATURE_NAME" >> "$GITHUB_ENV"
+          echo 'EOF' >> "$GITHUB_ENV"
         env:
           PUBLISH: 'true'
 
@@ -614,9 +633,9 @@ jobs:
 
       - name: Comment on PR
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const updateComment = require('./.github/actions/update-comment.js')
             const { COMMENT } = process.env
@@ -627,7 +646,7 @@ jobs:
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
-    if: always() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped'
+    if: ${{ !cancelled() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped' }}
     needs:
       - pre-checks
       - docker-build
@@ -645,7 +664,7 @@ jobs:
         run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
       - uses: actions/checkout@v3
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -657,7 +676,7 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure'
+    if: ${{ !cancelled() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure' }}
     needs:
       - retag-unaffected
       - pre-checks
@@ -675,7 +694,7 @@ jobs:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
           echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
-          curl $SPINNAKER_URL/webhooks/webhook/islandis -H "content-type: application/json" --data-binary @- <<BODY
+          curl "$SPINNAKER_URL/webhooks/webhook/islandis" -H "content-type: application/json" --data-binary @- <<BODY
           {
             "token": "$SPINNAKER_WEBHOOK_TOKEN",
             "branch": "$GIT_BRANCH_DEPLOY",
@@ -683,7 +702,7 @@ jobs:
               "docker_tag": "$DOCKER_TAG",
               "feature_name": "$FEATURE_NAME",
               "images": "$IMAGES",
-              "pull_request_number": "$(echo $GITHUB_REF | cut -d'/' -f3)"
+              "pull_request_number": "$(echo "$GITHUB_REF" | cut -d'/' -f3)"
             }
           }
           BODY
@@ -694,11 +713,12 @@ jobs:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
           GH_PRIVATE_REPO_TOKEN: ${{secrets.GH_PRIVATE_REPO_TOKEN}}
         run: |
+          set -euo pipefail
           if read -d "\n" IDENTITY_SERVER_HEAD_SHA IDENTITY_SERVER_RUN_NUMBER; then :; fi <<<$(curl -H "Authorization: token $GH_PRIVATE_REPO_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/island-is/identity-server.web/actions/workflows/build.yml/runs\?branch\=main\&status\=success\&per_page\=1\&event\=push | jq '.workflow_runs[] | .head_sha, .run_number' | tr -d \")
-          export IDENTITY_SERVER_DOCKER_TAG=main_${IDENTITY_SERVER_HEAD_SHA:0:7}_${IDENTITY_SERVER_RUN_NUMBER}
+          export IDENTITY_SERVER_DOCKER_TAG="main_${IDENTITY_SERVER_HEAD_SHA:0:10}_${IDENTITY_SERVER_RUN_NUMBER}"
           echo "Deploying with identity-server docker tag: '$IDENTITY_SERVER_DOCKER_TAG'"
           echo "Sending webhook with branch: '$GIT_BRANCH_DEPLOY'"
-          curl $SPINNAKER_URL/webhooks/webhook/ids-dev -H "content-type: application/json" --data-binary @- <<BODY
+          curl "$SPINNAKER_URL/webhooks/webhook/ids-dev" -H "content-type: application/json" --data-binary @- <<BODY
           {
             "token": "$SPINNAKER_WEBHOOK_TOKEN",
             "branch": "$GIT_BRANCH_DEPLOY",
@@ -712,7 +732,7 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    if: always()
+    if: ${{ !cancelled() }}
     needs:
       - pre-checks
       - retag-unaffected

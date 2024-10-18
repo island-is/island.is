@@ -33,27 +33,26 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { formatMessage } = useLocale()
   const { answers } = application
   const isPrePaid = answers.applicationFor === PREPAID_INHERITANCE
-  const { isRealEstate, isStocks, isMoney, isOther } =
-    getPrePaidOverviewSectionsToDisplay(answers)
+  const { includeRealEstate, includeStocks, includeMoney, includeOtherAssets } =
+    getPrePaidOverviewSectionsToDisplay(isPrePaid, answers)
 
   const sections: SectionType[] = []
 
   // Real estate
-  if (isRealEstate) {
-    const realEstateDataRow = getRealEstateDataRow(answers)
-    const realEstateDataTotal = formatCurrency(
-      String(getValueViaPath(answers, 'assets.realEstate.total')) ?? '',
-    )
+  const realEstateDataRow = getRealEstateDataRow(answers)
+  const totalRealEstate = formatCurrency(
+    String(getValueViaPath(answers, 'assets.realEstate.total')) ?? '',
+  )
 
+  includeRealEstate &&
     sections.push({
       title: m.realEstate,
       data: realEstateDataRow,
-      total: realEstateDataTotal,
+      total: totalRealEstate,
       totalTitle: isPrePaid
         ? m.realEstateEstimationPrePaid
         : m.realEstateEstimation,
     })
-  }
 
   if (!isPrePaid) {
     // Vehicles
@@ -124,52 +123,46 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   }
 
   // Stocks
-  if (isStocks) {
-    const stocksDataRow = getStocksDataRow(answers)
-    const stocksDataTotal = formatCurrency(
-      String(getValueViaPath(answers, 'assets.stocks.total')) ?? '',
-    )
+  const stocksDataRow = getStocksDataRow(answers)
+  const totalStocks = formatCurrency(
+    String(getValueViaPath(answers, 'assets.stocks.total')) ?? '',
+  )
 
+  includeStocks &&
     sections.push({
       title: m.stocksTitle,
       data: stocksDataRow,
-      total: stocksDataTotal,
+      total: totalStocks,
       totalTitle: isPrePaid ? m.totalValuePrePaid : m.totalValue,
     })
-  }
 
   // Money
-  if (isMoney) {
-    const moneyDataRow = getMoneyDataRow(answers)
+  const moneyDataRow = getMoneyDataRow(answers)
+
+  includeMoney &&
     sections.push({
       title: isPrePaid ? m.moneyTitlePrePaid : m.moneyTitle,
       data: moneyDataRow,
     })
-  }
 
   // Other assets
-  if (isOther) {
-    const otherAssetsDataRow = getOtherAssetsDataRow(answers)
-    const otherAssetsDataTotal = formatCurrency(
-      String(getValueViaPath(answers, 'assets.otherAssets.total')) ?? '',
-    )
+  const otherAssetsDataRow = getOtherAssetsDataRow(answers)
+  const totalOtherAssets = formatCurrency(
+    String(getValueViaPath(answers, 'assets.otherAssets.total')) ?? '',
+  )
 
+  includeOtherAssets &&
     sections.push({
       title: m.otherAssetsTitle,
       data: otherAssetsDataRow,
-      total: otherAssetsDataTotal,
+      total: totalOtherAssets,
       totalTitle: isPrePaid ? m.totalValuePrePaid : m.totalValue,
     })
-  }
 
   const totalAssets = calculateTotalAssets(answers)
 
   return (
     <Box>
-      <Box marginTop={2} as="p">
-        <Text>{formatMessage(m.assetOverviewDescription)}</Text>
-      </Box>
-      <Box marginTop={6} />
       {sections.map(
         ({ data, title, total, totalTitle, showTotalFirst }, index) => {
           const totalRow = totalTitle && total && (

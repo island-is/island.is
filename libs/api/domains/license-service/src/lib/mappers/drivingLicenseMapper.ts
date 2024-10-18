@@ -1,69 +1,78 @@
-import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
+import {
+  DEFAULT_LICENSE_ID,
+  LICENSE_NAMESPACE,
+} from '../licenseService.constants'
 import {
   GenericLicenseDataFieldType,
-  GenericLicenseLabels,
+  GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
-  GenericUserLicensePayload,
+  GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
-import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
 import { DriverLicenseDto as DriversLicense } from '@island.is/clients/driving-license'
 import { isDefined } from '@island.is/shared/utils'
+import { IntlService } from '@island.is/cms-translations'
+import { m } from '../messages'
+import { formatDate, expiryTag } from '../utils'
 
 @Injectable()
 export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
-  parsePayload(
+  constructor(private readonly intlService: IntlService) {}
+  async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
-    labels?: GenericLicenseLabels,
-  ): Array<GenericUserLicensePayload> {
-    if (!payload) return []
+  ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
+    if (!payload) return Promise.resolve([])
 
     const typedPayload = payload as Array<DriversLicense>
 
-    const label = labels?.labels
+    const { formatMessage } = await this.intlService.useIntl(
+      [LICENSE_NAMESPACE],
+      locale,
+    )
 
     // Parse license data into the fields as they're displayed on the physical drivers license
     // see: https://www.reglugerd.is/reglugerdir/eftir-raduneytum/srn/nr/18033
 
-    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
-      (t) => {
-        const expired = t.dateValidTo
+    const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
+      typedPayload.map((t) => {
+        const isExpired = t.dateValidTo
           ? !isAfter(new Date(t.dateValidTo), new Date())
-          : null
+          : undefined
 
         const data = [
           {
-            name: getLabel('basicInfoLicense', locale, label),
+            name: formatMessage(m.basicInfoLicense),
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('licenseNumber', locale, label),
+            label: formatMessage(m.licenseNumber),
             value: (t.id ?? '').toString(),
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('fullName', locale, label),
+            label: formatMessage(m.fullName),
             value: t.name ?? '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('publisher', locale, label),
+            label: formatMessage(m.publisher),
             value: 'Ríkislögreglustjóri',
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('publishedDate', locale, label),
-            value: t.publishDate ? new Date(t.publishDate).toISOString() : '',
+            label: formatMessage(m.publishedDate),
+            value: t.publishDate ? formatDate(t.publishDate) : '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('validTo', locale, label),
-            value: t.dateValidTo ? new Date(t.dateValidTo).toISOString() : '',
+            label: formatMessage(m.validTo),
+            value: t.dateValidTo ? formatDate(t.dateValidTo) : '',
+            tag: expiryTag(formatMessage, isExpired),
           },
           {
             type: GenericLicenseDataFieldType.Group,
-            label: getLabel('classesOfRights', locale, label),
+            label: formatMessage(m.classesOfRights),
             fields: (t.categories ?? []).map((field) => ({
               type: GenericLicenseDataFieldType.Category,
               name: field.nr ?? '',
@@ -71,20 +80,18 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
               fields: [
                 {
                   type: GenericLicenseDataFieldType.Value,
-                  label: getLabel('expiryDate', locale, label),
-                  value: field.dateTo ? field.dateTo.toISOString() : '',
+                  label: formatMessage(m.expiryDate),
+                  value: field.dateTo ? formatDate(field.dateTo) : '',
                 },
                 {
                   type: GenericLicenseDataFieldType.Value,
-                  label: getLabel('publishedDate', locale, label),
-                  value: field.publishDate
-                    ? field.publishDate.toISOString()
-                    : '',
+                  label: formatMessage(m.publishedDate),
+                  value: field.publishDate ? formatDate(field.publishDate) : '',
                 },
                 field.comment
                   ? {
                       type: GenericLicenseDataFieldType.Value,
-                      label: getLabel('comment', locale, label),
+                      label: formatMessage(m.comments),
                       value: field.comment ?? '',
                     }
                   : undefined,
@@ -94,23 +101,47 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
         ]
 
         return {
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.id?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired,
-            expireDate: t.dateValidTo?.toISOString() ?? undefined,
-            links: [
-              {
-                label: getLabel('renewDrivingLicense', locale, label),
-                value: 'https://island.is/endurnyjun-okuskirteina',
-              },
-            ],
+          licenseName: formatMessage(m.drivingLicense),
+          type: 'user',
+          payload: {
+            data,
+            rawData: JSON.stringify(t),
+            metadata: {
+              links: [
+                {
+                  label: formatMessage(m.renewLicense, {
+                    arg: formatMessage(m.drivingLicense).toLowerCase(),
+                  }),
+                  value: 'https://island.is/endurnyjun-okuskirteina',
+                  type: GenericUserLicenseMetaLinksType.External,
+                },
+              ],
+              licenseNumber: t.id?.toString() ?? '',
+              subtitle: formatMessage(m.licenseNumberVariant, {
+                arg: t.id?.toString() ?? formatMessage(m.unknown),
+              }),
+              licenseId: DEFAULT_LICENSE_ID,
+              expired: isExpired,
+              expireDate: t.dateValidTo?.toISOString() ?? undefined,
+              displayTag:
+                isExpired !== undefined && t.dateValidTo
+                  ? expiryTag(
+                      formatMessage,
+                      isExpired,
+                      formatMessage(m.validUntil, {
+                        arg: formatDate(t.dateValidTo),
+                      }),
+                    )
+                  : undefined,
+              name: formatMessage(m.drivingLicense),
+              title: formatMessage(m.yourDrivingLicense),
+              description: [
+                { text: formatMessage(m.yourDrivingLicenseDescription) },
+              ],
+            },
           },
         }
-      },
-    )
+      })
     return mappedPayload
   }
 }

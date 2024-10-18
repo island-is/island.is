@@ -34,3 +34,6 @@ export const resolveLink = (link: NotificationLink): string => {
   }
   return link.url ?? ''
 }
+
+export const COAT_OF_ARMS =
+  'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'

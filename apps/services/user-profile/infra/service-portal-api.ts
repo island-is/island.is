@@ -88,7 +88,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
     })
     .resources({
       limits: { cpu: '800m', memory: '1024Mi' },
-      requests: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '100m', memory: '512Mi' },
     })
     .db()
     .grantNamespaces(
@@ -96,4 +96,5 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
       'islandis',
       'user-notification',
       'identity-server',
+      'application-system',
     )

@@ -59,7 +59,7 @@ export type UpdateCaseWithDefendantArgs = Omit<
   'authenticationToken'
 >
 
-function injectAgentMiddleware(agent: Agent) {
+const injectAgentMiddleware = (agent: Agent) => {
   return async (context: RequestContext): Promise<FetchParams> => {
     const { url, init } = context
 
@@ -67,7 +67,7 @@ function injectAgentMiddleware(agent: Agent) {
   }
 }
 
-function stripResult(str: string): string {
+const stripResult = (str: string): string => {
   if (str[0] !== '"') {
     return str
   }
@@ -291,7 +291,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
 
   private handleUnknownError(
     courtId: string,
-    reason: { status: string; message: string },
+    reason: { status: string; message: unknown },
   ) {
     // Get the connection state
     const connectionState = this.getConnectionState(courtId)
@@ -308,10 +308,13 @@ export class CourtClientServiceImplementation implements CourtClientService {
 
   private handleCaseError(
     courtId: string,
-    reason: { status: string; message: string },
+    reason: { status: string; message: unknown },
   ): Error {
     // Check for known errors
-    if (reason.message?.startsWith('Case Not Found')) {
+    if (
+      typeof reason.message === 'string' &&
+      reason.message.startsWith('Case Not Found')
+    ) {
       return new NotFoundException(reason)
     }
 
@@ -320,10 +323,13 @@ export class CourtClientServiceImplementation implements CourtClientService {
 
   private handleParticipantError(
     courtId: string,
-    reason: { status: string; message: string },
+    reason: { status: string; message: unknown },
   ): Error {
     // Check for known errors
-    if (reason.message?.startsWith("Incorrect 'CaseId/Number'")) {
+    if (
+      typeof reason.message === 'string' &&
+      reason.message.startsWith("Incorrect 'CaseId/Number'")
+    ) {
       return new NotFoundException({
         ...reason,
         message: 'Case not found',
@@ -362,7 +368,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
       this.createDocumentApi.createDocument({
         createDocumentData: { ...args, authenticationToken },
       }),
-    ).catch((reason: { status: string; message: string }) => {
+    ).catch((reason: { status: string; message: unknown }) => {
       this.logger.warn('Court client error - createDocument', {
         courtId,
         reason,
@@ -478,13 +484,16 @@ export class CourtClientServiceImplementation implements CourtClientService {
       this.updateCaseWithDefendantApi.updateCaseWithDefendant({
         updateCaseWithDefendantData: { ...args, authenticationToken },
       }),
-    ).catch((reason: { status: string; message: string }) => {
+    ).catch((reason: { status: string; message: unknown }) => {
       this.logger.warn('Court client error - updateCaseWithDefendant', {
         courtId,
         reason,
       })
 
-      if (reason.message.startsWith("Can't find defendant with IdNumber")) {
+      if (
+        typeof reason.message === 'string' &&
+        reason.message.startsWith("Can't find defendant with IdNumber")
+      ) {
         throw new NotFoundException(reason)
       }
 

@@ -1,24 +1,22 @@
 import { useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
+
 import { Box, Inline, LoadingDots, Text } from '@island.is/island-ui/core'
-import { useNamespace } from '@island.is/web/hooks'
 import { GET_SINGLE_SHIP } from '@island.is/web/screens/queries/Fiskistofa'
 
+import { translation as translationStrings } from './translation.strings'
 import * as styles from './SelectedShip.css'
 
-interface SelectedShipProps {
-  namespace?: Record<string, string>
-}
-
-const SelectedShip = ({ namespace }: SelectedShipProps) => {
+const SelectedShip = () => {
   const [shipNumber, setShipNumber] = useState<number | null>(null)
   const router = useRouter()
 
   // TODO: figure out how to not call endpoint when nothing is selected
   const [getSingleShip, { data, error, loading }] =
     useLazyQuery(GET_SINGLE_SHIP)
-  const n = useNamespace(namespace)
+  const { formatMessage } = useIntl()
 
   useEffect(() => {
     if (router.query.nr && !isNaN(Number(router.query.nr))) {
@@ -47,7 +45,7 @@ const SelectedShip = ({ namespace }: SelectedShipProps) => {
   if (!data || error) {
     return (
       <Box className={styles.container}>
-        <Text>{n('noShipSelected', 'Ekkert skip valið')}</Text>
+        <Text>{formatMessage(translationStrings.noShipSelected)}</Text>
       </Box>
     )
   }
@@ -58,7 +56,7 @@ const SelectedShip = ({ namespace }: SelectedShipProps) => {
         {ship?.name ? (
           <Text variant="h2">{ship?.name}</Text>
         ) : (
-          <Text>{n('shipCouldNotBeFetched', 'Ekki tókst að sækja skip')}</Text>
+          <Text>{formatMessage(translationStrings.shipCouldNotBeFetched)}</Text>
         )}
 
         <Box className={styles.shipNumber}>

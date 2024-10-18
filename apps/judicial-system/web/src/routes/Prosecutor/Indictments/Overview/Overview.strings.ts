@@ -129,4 +129,10 @@ export const overview = {
     description:
       'Texti í hætta við takka í afturkalla modal glugga á Yfirlit ákæru skefi í ákærum.',
   }),
+  addDocumentsButtonText: defineMessage({
+    id: 'judicial.system.indictments:overview.add_documents_button_text',
+    defaultMessage: 'Bæta við gögnum',
+    description:
+      'Texti á takka til að bæta við skjölum á Yfirlit ákæru skefi í ákærum.',
+  }),
 }

@@ -20,15 +20,13 @@ export const OfflineHoc = ({ children }: OfflineHocProps) => {
   const lockScreenActivatedAt = useAuthStore(
     ({ lockScreenActivatedAt }) => lockScreenActivatedAt,
   )
-  const userInfo = useAuthStore(({ userInfo }) => userInfo)
 
   useEffect(() => {
     if (
       bannerVisible &&
       !bannerHasBeenShown &&
       !isConnected &&
-      !lockScreenActivatedAt &&
-      userInfo
+      !lockScreenActivatedAt
     ) {
       void impactAsync(ImpactFeedbackStyle.Heavy)
       void Navigation.showOverlay({
@@ -39,13 +37,7 @@ export const OfflineHoc = ({ children }: OfflineHocProps) => {
       })
       setBannerHasBeenShown(true)
     }
-  }, [
-    bannerVisible,
-    bannerHasBeenShown,
-    isConnected,
-    lockScreenActivatedAt,
-    userInfo,
-  ])
+  }, [bannerVisible, bannerHasBeenShown, isConnected, lockScreenActivatedAt])
 
   return <>{children}</>
 }

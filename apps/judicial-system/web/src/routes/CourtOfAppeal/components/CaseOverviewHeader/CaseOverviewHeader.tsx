@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -28,7 +28,7 @@ interface Props {
   alerts?: { message: string }[]
 }
 
-const CaseOverviewHeader: React.FC<Props> = (props) => {
+const CaseOverviewHeader: FC<Props> = (props) => {
   const { alerts } = props
   const { workingCase } = useContext(FormContext)
 

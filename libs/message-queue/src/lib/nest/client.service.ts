@@ -12,9 +12,10 @@ import {
   SendMessageCommand,
   SetQueueAttributesCommand,
   Message,
+  QueueAttributeName,
 } from '@aws-sdk/client-sqs'
 import { AbortController } from '@aws-sdk/abort-controller'
-import type { Logger } from '@island.is/logging'
+import { type Logger } from '@island.is/logging'
 
 @Injectable()
 export class ClientService {
@@ -76,7 +77,7 @@ export class ClientService {
 
   async getQueueAttributes(
     url: string,
-    attributes: string[],
+    attributes: QueueAttributeName[],
   ): Promise<Record<string, string>> {
     const r = await this.client.send(
       new GetQueueAttributesCommand({
@@ -132,7 +133,12 @@ export class ClientService {
     url: string,
     attributes: Record<string, string>,
   ): Promise<void> {
-    const current = await this.getQueueAttributes(url, Object.keys(attributes))
+    const current = await this.getQueueAttributes(
+      url,
+      Object.keys(attributes).filter(
+        (a) => a in QueueAttributeName,
+      ) as QueueAttributeName[],
+    )
 
     const areNotEqual = (k: string) => attributes[k] !== current[k]
     if (Object.keys(attributes).some(areNotEqual)) {

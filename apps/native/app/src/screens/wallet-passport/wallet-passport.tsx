@@ -27,7 +27,7 @@ import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { useGetIdentityDocumentQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { openBrowser } from '../../lib/rn-island'
+import { useBrowser } from '../../lib/use-browser'
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -93,6 +93,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
 }> = ({ id, componentId, cardHeight = 140 }) => {
   useNavigationOptions(componentId)
   useConnectivityIndicator({ componentId })
+  const { openBrowser } = useBrowser()
   const showChildrenPassport = useFeatureFlag(
     'isChildrenPassportEnabled',
     false,
@@ -159,7 +160,6 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
               loading={loading}
               error={!!error}
               size="big"
-              borderDark
             />
           </InputRow>
 
@@ -330,6 +330,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                               })}
                             </Label>
                             <TouchableOpacity
+                              style={{ flexWrap: 'wrap' }}
                               onPress={() =>
                                 openBrowser(
                                   `https://island.is/vegabref`,

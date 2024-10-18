@@ -1,5 +1,5 @@
 import React, { useMemo, useRef } from 'react'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { parseAsBoolean } from 'next-usequerystate'
@@ -202,6 +202,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                             const cardUrl = linkResolver(
                               thing?.type as LinkType,
                               [thing?.slug ?? ''],
+                              locale,
                             )
                             return cardUrl?.href && cardUrl?.href.length > 0 ? (
                               <Tag

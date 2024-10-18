@@ -33,17 +33,19 @@ import {
 } from '@island.is/shared/problem'
 import { DelegationsScreen } from '../components/DelegationsScreen'
 
-const ApplicationLoader: FC<
-  React.PropsWithChildren<{
-    applicationId: string
-    nationalRegistryId: string
-    slug: string
-  }>
-> = ({ applicationId, nationalRegistryId, slug }) => {
+type Props = {
+  applicationId: string
+  nationalRegistryId: string
+  slug: string
+}
+
+const ApplicationLoader = ({
+  applicationId,
+  nationalRegistryId,
+  slug,
+}: Props) => {
   const type = getTypeFromSlug(slug)
-  const [delegationsChecked, setDelegationsChecked] = useState(
-    type ? false : true,
-  )
+  const [delegationsChecked, setDelegationsChecked] = useState(!type)
 
   const { lang: locale } = useLocale()
   const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {
@@ -70,6 +72,10 @@ const ApplicationLoader: FC<
   const currentTypeId: ApplicationTypes = application?.typeId
   if (ApplicationConfigurations[currentTypeId]?.slug !== slug) {
     return <ErrorShell errorType="idNotFound" />
+  }
+
+  if (application.pruned) {
+    return <ErrorShell errorType="pruned" />
   }
 
   if (!applicationId || error) {
@@ -121,7 +127,7 @@ const ShellWrapper: FC<
   useApplicationNamespaces(application.typeId)
 
   useEffect(() => {
-    async function populateForm() {
+    const populateForm = async () => {
       if (dataSchema === undefined && form === undefined) {
         const template = await getApplicationTemplateByTypeId(
           application.typeId,
@@ -184,13 +190,11 @@ const ShellWrapper: FC<
   )
 }
 
-export const ApplicationForm: FC<
-  React.PropsWithChildren<{
-    applicationId: string
-    nationalRegistryId: string
-    slug: string
-  }>
-> = ({ applicationId, nationalRegistryId, slug }) => {
+export const ApplicationForm = ({
+  applicationId,
+  nationalRegistryId,
+  slug,
+}: Props) => {
   return (
     <FieldProvider>
       <ApplicationLoader

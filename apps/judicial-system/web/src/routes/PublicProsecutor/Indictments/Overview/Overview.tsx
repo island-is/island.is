@@ -1,11 +1,10 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Option, Select, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { isCompletedCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -25,7 +24,11 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
-import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseIndictmentRulingDecision,
+  Defendant,
+  ServiceRequirement,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   formatDateForServer,
   useCase,
@@ -34,6 +37,13 @@ import {
 
 import { strings } from './Overview.strings'
 type VisibleModal = 'REVIEWER_ASSIGNED' | 'DEFENDANT_VIEWS_VERDICT'
+
+export const isDefendantInfoActionButtonDisabled = (defendant: Defendant) => {
+  return (
+    defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED ||
+    Boolean(defendant.verdictViewDate)
+  )
+}
 
 export const Overview = () => {
   const router = useRouter()
@@ -74,7 +84,7 @@ export const Overview = () => {
     const updatedDefendant = {
       caseId: workingCase.id,
       defendantId: selectedDefendant.id,
-      verdictViewDate: formatDateForServer(new Date()),
+      verdictViewDate: formatDateForServer(new Date()), // TODO: Let the server override this date as we cannot trust the client date
     }
 
     setAndSendDefendantToServer(updatedDefendant, setWorkingCase)
@@ -129,8 +139,8 @@ export const Overview = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment
             defendantInfoActionButton={
-              isCompletedCase(workingCase.state) &&
-              workingCase.indictmentReviewer !== null
+              workingCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.RULING
                 ? {
                     text: fm(strings.displayVerdict),
                     onClick: (defendant) => {
@@ -138,12 +148,14 @@ export const Overview = () => {
                       setModalVisible('DEFENDANT_VIEWS_VERDICT')
                     },
                     icon: 'mailOpen',
-                    isDisabled: (defendant) =>
-                      defendant.verdictViewDate !== null,
+                    isDisabled: isDefendantInfoActionButtonDisabled,
                   }
                 : undefined
             }
-            displayAppealExpirationInfo={true}
+            displayAppealExpirationInfo={
+              workingCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.RULING
+            }
           />
         </Box>
         {lawsBroken.size > 0 && (
@@ -165,7 +177,6 @@ export const Overview = () => {
                   {fm(strings.reviewerSubtitle, {
                     indictmentAppealDeadline: formatDate(
                       workingCase.indictmentAppealDeadline,
-                      'P',
                     ),
                   })}
                 </Text>

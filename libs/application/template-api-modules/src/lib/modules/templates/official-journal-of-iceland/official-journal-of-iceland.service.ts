@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common'
 
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { OfficialJournalOfIcelandService } from '@island.is/api/domains/official-journal-of-iceland'
+import {
+  OfficialJournalOfIcelandService,
+  QueryParams,
+  TypeQueryParams,
+} from '@island.is/api/domains/official-journal-of-iceland'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { OJOIApplication } from '@island.is/application/templates/official-journal-of-iceland'
 import { OfficialJournalOfIcelandApplicationService } from '@island.is/api/domains/official-journal-of-iceland-application'
@@ -20,19 +24,22 @@ export class OfficialJournalOfIcelandTemaplateService extends BaseTemplateApiSer
     super(ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND)
   }
 
-  async departments() {
-    return this.ojoiService.departments({})
+  async getDepartments(params: QueryParams) {
+    return this.ojoiService.getDepartments(params)
   }
 
-  async types() {
-    return this.ojoiService.types({})
+  async getAdvertTypes(params: TypeQueryParams) {
+    return this.ojoiService.getAdvertTypes(params)
   }
 
   async postApplication({ application, auth }: Props): Promise<boolean> {
     try {
-      return await this.ojoiApplicationService.postApplication({
-        id: application.id,
-      })
+      return await this.ojoiApplicationService.postApplication(
+        {
+          id: application.id,
+        },
+        auth,
+      )
     } catch (error) {
       return false
     }

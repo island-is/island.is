@@ -17,6 +17,7 @@ type GridItemsProps = {
   mobileItemsRows?: number
   half?: boolean
   quarter?: boolean
+  third?: boolean
 }
 
 export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
@@ -29,6 +30,7 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
   mobileItemsRows = 3,
   half = false,
   quarter = false,
+  third = false,
   children,
 }) => {
   const { width } = useWindowSize()
@@ -71,6 +73,7 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
           className={cx(styles.wrapper, {
             [styles.half]: half,
             [styles.quarter]: quarter,
+            [styles.third]: third,
           })}
           {...(style && { style })}
         >

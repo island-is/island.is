@@ -1,0 +1,33 @@
+query GetTemplateByTemplateId($templateId: String!, $locale: String!) {
+  hnippTemplateCollection(where: { templateId: $templateId }, locale: $locale) {
+    items {
+      templateId
+      title: notificationTitle
+      externalBody: notificationBody
+      internalBody: notificationDataCopy
+      clickActionUrl
+      args
+    }
+  }
+}
+
+query GetTemplates($locale: String!) {
+  hnippTemplateCollection(locale: $locale, limit: 1000) {
+    items {
+      templateId
+      title: notificationTitle
+      externalBody: notificationBody
+      internalBody: notificationDataCopy
+      clickActionUrl
+      args
+    }
+  }
+}
+
+query GetOrganizationByNationalId($nationalId: String!, $locale: String!) {
+  organizationCollection(where: { kennitala: $nationalId }, locale: $locale) {
+    items {
+      title
+    }
+  }
+}

@@ -23,6 +23,7 @@ export type DeceasedShareProps = {
   pushRight?: boolean
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
+  disabled?: boolean
 }
 
 export const DeceasedShare = ({
@@ -35,6 +36,7 @@ export const DeceasedShare = ({
   pushRight,
   paddingTop = 'none',
   paddingBottom = 'none',
+  disabled = false,
 }: DeceasedShareProps) => {
   const { errors } = useFormState()
   const { setValue, watch } = useFormContext()
@@ -66,7 +68,7 @@ export const DeceasedShare = ({
         paddingBottom={paddingBottom}
       >
         <Box width="full">
-          <Box paddingBottom={checked ? 5 : 0} width="full">
+          <Box paddingBottom={checked ? 3 : 0} width="full">
             <CheckboxController
               name={checkboxFieldName}
               large={false}
@@ -74,6 +76,7 @@ export const DeceasedShare = ({
               labelVariant="default"
               strong={checked}
               defaultValue={watchedCheckboxField}
+              disabled={disabled}
               options={[
                 {
                   label: formatMessage(labelCheck),

@@ -2,10 +2,13 @@ import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ConfigModule } from '@island.is/nest/config'
 
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import {
+  SharedAuthModule,
+  sharedAuthModuleConfig,
+} from '@island.is/judicial-system/auth'
 
-import { environment } from '../../../../environments'
 import { CaseService } from '../../case'
 import { IndictmentCountController } from '../indictmentCount.controller'
 import { IndictmentCountService } from '../indictmentCount.service'
@@ -16,14 +19,10 @@ jest.mock('../../case/case.service')
 
 export const createTestingIndictmentCountModule = async () => {
   const indictmentCountModule = await Test.createTestingModule({
-    imports: [
-      SharedAuthModule.register({
-        jwtSecret: environment.auth.jwtSecret,
-        secretToken: environment.auth.secretToken,
-      }),
-    ],
+    imports: [ConfigModule.forRoot({ load: [sharedAuthModuleConfig] })],
     controllers: [IndictmentCountController],
     providers: [
+      SharedAuthModule,
       CaseService,
       {
         provide: LOGGER_PROVIDER,

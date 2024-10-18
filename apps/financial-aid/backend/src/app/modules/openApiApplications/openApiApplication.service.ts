@@ -68,6 +68,7 @@ export class OpenApiApplicationService {
           attributes: [
             'aidAmount',
             'childrenAidAmount',
+            'decemberAidAmount',
             'income',
             'personalTaxCredit',
             'tax',

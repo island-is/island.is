@@ -24,7 +24,7 @@ export const financeNavigation: PortalNavigationItem = {
         {
           name: m.financeTransactionsCategories,
           description: m.financeTransactionsDescription,
-          path: FinancePaths.FinanceTransactions,
+          path: FinancePaths.FinanceTransactionCategories,
         },
         {
           name: m.financeTransactionPeriods,

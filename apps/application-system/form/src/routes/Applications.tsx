@@ -197,7 +197,9 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
               flexDirection={['column', 'row']}
             >
               <Text variant="h1">
-                {formatMessage(coreMessages.applications)}
+                {template.applicationText
+                  ? formatMessage(template.applicationText)
+                  : formatMessage(coreMessages.applications)}
               </Text>
               {shouldRenderNewApplicationButton ? (
                 <Box marginTop={[2, 0]}>
@@ -205,7 +207,9 @@ export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
                     onClick={createApplication}
                     data-testid="create-new-application"
                   >
-                    {formatMessage(coreMessages.newApplication)}
+                    {template.newApplicationButtonLabel
+                      ? formatMessage(template.newApplicationButtonLabel)
+                      : formatMessage(coreMessages.newApplication)}
                   </Button>
                 </Box>
               ) : null}

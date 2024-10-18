@@ -4,7 +4,6 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationTypes,
-  ApplicationWithAttachments,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 
@@ -23,7 +22,10 @@ import {
   CreateApplicationDtoEducationOptionEnum,
 } from '@island.is/clients/university-gateway-api'
 
-import { UniversityAnswers } from '@island.is/application/templates/university'
+import {
+  UniversityAnswers,
+  UniversityGatewayProgram,
+} from '@island.is/application/templates/university'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { InnaClientService } from '@island.is/clients/inna'
 
@@ -120,6 +122,14 @@ export class UniversityService extends BaseTemplateApiService {
       email: userFromAnswers.email,
       phone: userFromAnswers.phone,
     }
+    const programs = externalData.programs
+      ?.data as Array<UniversityGatewayProgram>
+    const modesOfDeliveryFromChosenProgram = programs.find(
+      (x) => x.id === answers.programInformation.program,
+    )
+    const defaultModeOfDelivery = modesOfDeliveryFromChosenProgram
+      ?.modeOfDelivery[0]
+      .modeOfDelivery as CreateApplicationDtoModeOfDeliveryEnum
 
     //all possible types of education data from the application answers
     const educationOptionChosen =
@@ -136,8 +146,7 @@ export class UniversityService extends BaseTemplateApiService {
     const exemptionData =
       educationOptionChosen === UniversityApplicationTypes.EXEMPTION
         ? {
-            degreeAttachments: await this.getFilesFromAttachment(
-              application,
+            degreeAttachments: await this.getAttachmentUrls(
               answers.educationDetails.exemptionDetails?.degreeAttachments?.map(
                 (x, i) => {
                   const type = this.mapFileTypes(i)
@@ -167,8 +176,7 @@ export class UniversityService extends BaseTemplateApiService {
             degreeEndDate: answers.educationDetails.thirdLevelDetails?.endDate,
             moreDetails:
               answers.educationDetails.thirdLevelDetails?.moreDetails,
-            degreeAttachments: await this.getFilesFromAttachment(
-              application,
+            degreeAttachments: await this.getAttachmentUrls(
               answers.educationDetails.thirdLevelDetails?.degreeAttachments?.map(
                 (x, i) => {
                   const type = this.mapFileTypes(i)
@@ -187,8 +195,7 @@ export class UniversityService extends BaseTemplateApiService {
         answers.educationDetails.finishedDetails.map(async (item) => {
           return {
             ...item,
-            degreeAttachments: await this.getFilesFromAttachment(
-              application,
+            degreeAttachments: await this.getAttachmentUrls(
               item.degreeAttachments?.map((x, i) => {
                 const type = this.mapFileTypes(i)
                 return {
@@ -238,7 +245,8 @@ export class UniversityService extends BaseTemplateApiService {
           universityId: answers.programInformation.university,
           programId: answers.programInformation.program,
           modeOfDelivery: mapStringToEnum(
-            answers.modeOfDeliveryInformation.chosenMode,
+            answers.modeOfDeliveryInformation?.chosenMode ||
+              defaultModeOfDelivery,
             CreateApplicationDtoModeOfDeliveryEnum,
             'CreateApplicationDtoModeOfDeliveryEnum',
           ),
@@ -258,21 +266,20 @@ export class UniversityService extends BaseTemplateApiService {
     ).universityApplicationControllerCreateApplication(createApplicationDto)
   }
 
-  private async getFilesFromAttachment(
-    application: ApplicationWithAttachments,
+  private async getAttachmentUrls(
     attachments?: { name: string; key: string; type: string }[],
-  ): Promise<{ fileName: string; fileType: string; blob: Blob }[]> {
+  ): Promise<{ fileName: string; fileType: string; url: string }[]> {
+    const expiry = 36000
+
     return await Promise.all(
       attachments?.map(async (file) => {
-        const blob =
-          await this.sharedTemplateAPIService.getAttachmentContentAsBlob(
-            application,
-            file.key,
-          )
         return {
           fileName: file.name,
           fileType: file.type,
-          blob,
+          url: await this.sharedTemplateAPIService.getAttachmentUrl(
+            file.key,
+            expiry,
+          ),
         }
       }) || [],
     )

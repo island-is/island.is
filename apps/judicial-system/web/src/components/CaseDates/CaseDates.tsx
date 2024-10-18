@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
@@ -22,7 +22,7 @@ export interface Props {
   }
 }
 
-const CaseDates: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const CaseDates: FC<Props> = (props) => {
   const { workingCase, button } = props
   const { formatMessage } = useIntl()
 

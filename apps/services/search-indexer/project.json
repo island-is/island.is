@@ -4,6 +4,7 @@
   "sourceRoot": "apps/services/search-indexer/src",
   "projectType": "application",
   "prefix": "services-search-indexer",
+  "tags": ["scope:nest"],
   "generators": {},
   "targets": {
     "build": {
@@ -45,7 +46,7 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose -f docker-compose.yml up -d --build",
+        "command": "docker compose -f docker-compose.yml up -d --build",
         "cwd": "apps/services/search-indexer/dev-services"
       }
     },
@@ -61,22 +62,17 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/services/search-indexer/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/services/search-indexer/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/search-indexer/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/search-indexer"]
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

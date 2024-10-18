@@ -1,11 +1,10 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize } from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
+import { isInvestigationCase } from '@island.is/judicial-system/types'
 import {
   AlertBanner,
   CaseFilesAccordionItem,
@@ -19,7 +18,7 @@ import {
   PageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { shouldUseAppealWithdrawnRoutes } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
@@ -28,9 +27,7 @@ import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview
 import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 import { overview as strings } from './Overview.strings'
 
-const CourtOfAppealOverview: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+const CourtOfAppealOverview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
@@ -39,6 +36,17 @@ const CourtOfAppealOverview: React.FC<
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { user } = useContext(UserContext)
+  const {
+    defendants,
+    policeCaseNumbers,
+    courtCaseNumber,
+    prosecutor,
+    prosecutorsOffice,
+    court,
+    judge,
+    registrar,
+    caseType,
+  } = useInfoCardItems()
 
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
@@ -75,72 +83,27 @@ const CourtOfAppealOverview: React.FC<
           />
           <Box marginBottom={5}>
             <InfoCard
-              defendants={
-                workingCase.defendants
-                  ? {
-                      title: capitalize(
-                        formatMessage(core.defendant, {
-                          suffix:
-                            workingCase.defendants.length > 1 ? 'ar' : 'i',
-                        }),
-                      ),
-                      items: workingCase.defendants,
-                    }
-                  : undefined
-              }
-              defenders={[
+              sections={[
                 {
-                  name: workingCase.defenderName ?? '',
-                  defenderNationalId: workingCase.defenderNationalId,
-                  sessionArrangement: workingCase.sessionArrangements,
-                  email: workingCase.defenderEmail,
-                  phoneNumber: workingCase.defenderPhoneNumber,
-                },
-              ]}
-              data={[
-                {
-                  title: formatMessage(core.policeCaseNumber),
-                  value: workingCase.policeCaseNumbers?.map((n) => (
-                    <Text key={n}>{n}</Text>
-                  )),
+                  id: 'defendants-section',
+                  items: [defendants(workingCase.type)],
                 },
                 {
-                  title: formatMessage(core.courtCaseNumber),
-                  value: workingCase.courtCaseNumber,
+                  id: 'case-info-section',
+                  items: [
+                    policeCaseNumbers,
+                    courtCaseNumber,
+                    prosecutorsOffice,
+                    court,
+                    prosecutor(workingCase.type),
+                    judge,
+                    ...(isInvestigationCase(workingCase.type)
+                      ? [caseType]
+                      : []),
+                    ...(workingCase.registrar ? [registrar] : []),
+                  ],
+                  columns: 2,
                 },
-                {
-                  title: formatMessage(core.prosecutor),
-                  value: `${workingCase.prosecutorsOffice?.name}`,
-                },
-                {
-                  title: formatMessage(core.court),
-                  value: workingCase.court?.name,
-                },
-                {
-                  title: formatMessage(core.prosecutorPerson),
-                  value: NameAndEmail(
-                    workingCase.prosecutor?.name,
-                    workingCase.prosecutor?.email,
-                  ),
-                },
-                {
-                  title: formatMessage(core.judge),
-                  value: NameAndEmail(
-                    workingCase.judge?.name,
-                    workingCase.judge?.email,
-                  ),
-                },
-                ...(workingCase.registrar
-                  ? [
-                      {
-                        title: formatMessage(core.registrar),
-                        value: NameAndEmail(
-                          workingCase.registrar?.name,
-                          workingCase.registrar.email,
-                        ),
-                      },
-                    ]
-                  : []),
               ]}
             />
           </Box>

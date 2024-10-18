@@ -3,20 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/ui-forms/src",
   "projectType": "library",
+  "tags": ["lib:application-system", "scope:application-system"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/application/ui-forms/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/application/ui-forms"],
       "options": {
-        "jestConfig": "libs/application/ui-forms/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/ui-forms/jest.config.ts"
       }
     },
     "extract-strings": {
@@ -25,6 +21,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/ui-forms/src/**/*.{js,ts,tsx}'"
       }
     }
-  },
-  "tags": ["lib:application-system", "scope:application-system"]
+  }
 }

@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
 import Select, {
   ClearIndicatorProps,
@@ -27,11 +27,10 @@ import * as styles from './CourtDocuments.css'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
 }
 
-const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
-  const { workingCase, setWorkingCase } = props
+const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer, isUpdatingCase } = useCase()
   const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] = useState<number>(-1)

@@ -1,8 +1,9 @@
 import { useIntl } from 'react-intl'
-import { Locale } from 'locale'
 import NextLink from 'next/link'
+import { useQuery } from '@apollo/client'
 
 import {
+  AlertMessage,
   ArrowLink,
   Box,
   Breadcrumbs,
@@ -10,16 +11,20 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  SkeletonLoader,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
   OfficialJournalOfIcelandAdvertMainCategory,
+  OfficialJournalOfIcelandAdvertsResponse,
   Query,
   QueryGetOrganizationArgs,
+  QueryOfficialJournalOfIcelandAdvertsArgs,
   QueryOfficialJournalOfIcelandMainCategoriesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
@@ -27,7 +32,10 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
+  OJOIAdvertCard,
+  OJOIAdvertCards,
   OJOIHomeIntro,
+  OJOISearchListView,
   OJOIWrapper,
 } from '../../components/OfficialJournalOfIceland'
 import {
@@ -35,7 +43,10 @@ import {
   withCustomPageWrapper,
 } from '../CustomPage/CustomPageWrapper'
 import { GET_ORGANIZATION_QUERY } from '../queries'
-import { MAIN_CATEGORIES_QUERY } from '../queries/OfficialJournalOfIceland'
+import {
+  ADVERTS_QUERY,
+  MAIN_CATEGORIES_QUERY,
+} from '../queries/OfficialJournalOfIceland'
 import { m } from './messages'
 
 const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
@@ -60,6 +71,23 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
       href: baseUrl,
     },
   ]
+
+  const { data, loading, error } = useQuery<
+    {
+      officialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsResponse
+    },
+    QueryOfficialJournalOfIcelandAdvertsArgs
+  >(ADVERTS_QUERY, {
+    variables: {
+      input: {
+        page: 1,
+        pageSize: 5,
+      },
+    },
+    fetchPolicy: 'no-cache',
+  })
+
+  const adverts = data?.officialJournalOfIcelandAdverts.adverts
 
   return (
     <OJOIWrapper
@@ -124,16 +152,54 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
 
         <Box background="blue100" paddingTop={8} paddingBottom={8}>
           <GridContainer>
-            <Box
-              display={'flex'}
-              justifyContent={'spaceBetween'}
-              alignItems="flexEnd"
-            >
-              <Text variant="h3">{formatMessage(m.home.mainCategories)}</Text>
-              <ArrowLink href={categoriesUrl}>
-                {formatMessage(m.home.allCategories)}
-              </ArrowLink>
-            </Box>
+            <GridRow>
+              <GridColumn span="12/12">
+                <Box
+                  display={'flex'}
+                  justifyContent={'spaceBetween'}
+                  alignItems="flexEnd"
+                  marginBottom={3}
+                >
+                  <Text variant="h3">
+                    {formatMessage(m.home.mainCategories)}
+                  </Text>
+                  <ArrowLink href={categoriesUrl}>
+                    {formatMessage(m.home.allCategories)}
+                  </ArrowLink>
+                </Box>
+              </GridColumn>
+            </GridRow>
+
+            <GridRow>
+              <GridColumn span="12/12">
+                <Text marginBottom={3} variant="h3">
+                  {formatMessage(m.home.latestAdverts)}
+                </Text>
+
+                <Stack space={3}>
+                  {loading && <SkeletonLoader repeat={4} height={200} />}
+                  {error && (
+                    <AlertMessage
+                      type="warning"
+                      message={formatMessage(
+                        m.search.errorFetchingAdvertsMessage,
+                      )}
+                      title={formatMessage(m.search.errorFetchingAdvertsTitle)}
+                    />
+                  )}
+                  {!error && !adverts?.length && (
+                    <AlertMessage
+                      type="info"
+                      message={formatMessage(m.search.emptySearchResult)}
+                    />
+                  )}
+
+                  {adverts && (
+                    <OJOIAdvertCards adverts={adverts} locale={locale} />
+                  )}
+                </Stack>
+              </GridColumn>
+            </GridRow>
 
             <GridRow>
               {mainCategories?.map((y, i) => (

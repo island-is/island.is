@@ -22,8 +22,19 @@ query ListDocuments($input: DocumentsV2DocumentsInput!) {
   }
 }
 
-query GetDocument($input: DocumentInput!) {
-  documentV2(input: $input) {
+query GetDocumentsCategoriesAndSenders {
+  getDocumentCategories {
+    id
+    name
+  }
+  getDocumentSenders {
+    id
+    name
+  }
+}
+
+query GetDocument($input: DocumentInput!, $locale: String) {
+  documentV2(input: $input, locale: $locale) {
     ...ListDocument
     content {
       type

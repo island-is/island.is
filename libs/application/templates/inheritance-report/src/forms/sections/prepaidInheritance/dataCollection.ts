@@ -31,10 +31,9 @@ export const prePaidDataCollection = buildSection({
           subTitle: m.settingsInfoProviderSubtitle,
         }),
         buildDataProviderItem({
-          //provider: TBD,
           provider: MaritalStatusApi,
-          title: 'Hjúskaparstaða',
-          subTitle: 'Hjúskaparstaða falleg lýsing kemur hér.',
+          title: m.maritalStatusProviderTitle,
+          subTitle: m.maritalStatusProviderSubtitle,
         }),
       ],
     }),

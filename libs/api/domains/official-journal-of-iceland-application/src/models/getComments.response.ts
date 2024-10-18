@@ -1,5 +1,16 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
+@ObjectType('OfficialJournalOfIcelandApplicationEntity')
+export class CaseCommentEntity {
+  @Field(() => ID)
+  id!: string
+
+  @Field()
+  title!: string
+
+  @Field()
+  slug!: string
+}
 @ObjectType('OfficialJournalOfIcelandApplicationCommentTask')
 export class CaseCommentTask {
   @Field(() => String, { nullable: true })
@@ -8,31 +19,32 @@ export class CaseCommentTask {
   @Field(() => String, { nullable: true })
   to!: string | null
 
-  @Field(() => String)
-  title!: string
+  @Field(() => CaseCommentEntity)
+  title!: CaseCommentEntity
+
   @Field(() => String, { nullable: true })
   comment!: string | null
 }
 
 @ObjectType('OfficialJournalOfIcelandApplicationComment')
 export class CaseComment {
-  @Field(() => String)
+  @Field(() => ID)
   id!: string
 
-  @Field(() => String)
+  @Field()
   createdAt!: string
 
-  @Field(() => Boolean)
+  @Field()
   internal!: boolean
 
-  @Field(() => String)
-  type!: string
+  @Field(() => CaseCommentEntity)
+  type!: CaseCommentEntity
 
-  @Field(() => String)
-  caseStatus!: string
+  @Field(() => CaseCommentEntity)
+  status!: CaseCommentEntity
 
-  @Field(() => String)
-  state!: string
+  @Field(() => String, { nullable: true })
+  state!: string | null
 
   @Field(() => CaseCommentTask)
   task!: CaseCommentTask

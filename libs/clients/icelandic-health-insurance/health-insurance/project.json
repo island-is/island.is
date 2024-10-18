@@ -3,14 +3,10 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/icelandic-health-insurance/health-insurance/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/clients/icelandic-health-insurance/health-insurance/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -18,8 +14,7 @@
         "{workspaceRoot}/coverage/libs/clients/icelandic-health-insurance/health-insurance"
       ],
       "options": {
-        "jestConfig": "libs/clients/icelandic-health-insurance/health-insurance/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/icelandic-health-insurance/health-insurance/jest.config.ts"
       }
     },
     "codegen/backend-client": {
@@ -29,6 +24,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

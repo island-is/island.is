@@ -6,11 +6,7 @@
   "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/service-portal/consent/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "extract-strings": {
       "executor": "nx:run-commands",
@@ -29,8 +25,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/service-portal/consent"],
       "options": {
-        "jestConfig": "libs/service-portal/consent/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/consent/jest.config.ts"
       }
     }
   }

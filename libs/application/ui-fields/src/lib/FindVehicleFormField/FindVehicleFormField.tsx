@@ -178,11 +178,11 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
   const [energyDetails, setEnergyDetails] =
     useState<EnergyFundVehicleDetailsWithGrant | null>(null)
 
-  const MAX_LENGTH = isMachine ? 6 : 5
   const [submitButtonDisabledCalled, setSubmitButtonDisabledCalled] =
     useState(false)
   const updateInputState = (value: string) => {
-    setButtonDisabled(value.length !== MAX_LENGTH)
+    const maxLength = isMachine ? 7 : 5
+    setButtonDisabled(value.length !== maxLength && value.length !== 6)
     setPlate(value)
   }
   const findVehicleByPlate = async () => {
@@ -318,7 +318,7 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
       setSubmitButtonDisabled && setSubmitButtonDisabled(true)
       setSubmitButtonDisabledCalled(true)
     }
-    if (plate.length === MAX_LENGTH) {
+    if (plate.length === 5 || plate.length === 6 || plate.length === 7) {
       setButtonDisabled(false)
     }
     if (machineDetails && machineDetails.disabled) {
@@ -346,13 +346,19 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
             rules={{
               required: true,
               validate: (value) => {
-                if (value.length !== MAX_LENGTH) {
-                  return false
+                if (isMachine) {
+                  if (value.length !== 6 && value.length !== 7) {
+                    return false
+                  }
+                } else {
+                  if (value.length !== 5) {
+                    return false
+                  }
                 }
                 return true
               },
             }}
-            maxLength={MAX_LENGTH}
+            maxLength={isMachine ? 7 : 5}
           />
         </Box>
         <Button onClick={findVehicleByPlate} disabled={buttonDisabled}>

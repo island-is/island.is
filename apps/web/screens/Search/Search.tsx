@@ -66,7 +66,10 @@ import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { AnchorPageType } from '@island.is/web/utils/anchorPage'
+import {
+  AnchorPageType,
+  extractAnchorPageLinkType,
+} from '@island.is/web/utils/anchorPage'
 import { hasProcessEntries } from '@island.is/web/utils/article'
 
 import { Screen } from '../../types'
@@ -314,11 +317,8 @@ const Search: Screen<CategoryProps> = ({
   }, [countResults.typesCount, getArticleCount, tagTitles])
 
   const getItemLink = (item: SearchEntryType) => {
-    if (
-      item.__typename === 'AnchorPage' &&
-      item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
-    ) {
-      return linkResolver('digitalicelandservicesdetailpage', [item.slug])
+    if (item.__typename === 'AnchorPage') {
+      return linkResolver(extractAnchorPageLinkType(item), [item.slug])
     }
 
     if (item.__typename === 'ManualChapterItem') {
@@ -604,7 +604,13 @@ const Search: Screen<CategoryProps> = ({
                             active={!query?.type?.length}
                             onClick={() => {
                               dispatch({
-                                type: ActionType.RESET_SEARCH,
+                                type: ActionType.SET_PARAMS,
+                                payload: {
+                                  query: {
+                                    type: [],
+                                    processentry: false,
+                                  },
+                                },
                               })
                             }}
                           >
@@ -628,8 +634,6 @@ const Search: Screen<CategoryProps> = ({
                                     query: {
                                       processentry: false,
                                       ...getSearchParams(key),
-                                      category: [],
-                                      organization: [],
                                     },
                                     searchLocked: false,
                                   },
@@ -676,7 +680,6 @@ const Search: Screen<CategoryProps> = ({
                         type: ActionType.SET_PARAMS,
                         payload: {
                           query: {
-                            ...getSearchParams('webArticle'),
                             ...payload,
                           },
                         },

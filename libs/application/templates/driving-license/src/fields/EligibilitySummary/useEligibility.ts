@@ -1,12 +1,21 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { ApplicationEligibility, RequirementKey } from '../../types/schema'
+import {
+  ApplicationEligibility,
+  ApplicationEligibilityRequirement,
+  RequirementKey,
+} from '../../types/schema'
 import { useQuery, gql } from '@apollo/client'
 import {
   B_FULL,
+  B_FULL_RENEWAL_65,
   BE,
+  codesExtendedLicenseCategories,
+  codesRequiringHealthCertificate,
   DrivingLicenseApplicationFor,
   DrivingLicenseFakeData,
+  otherLicenseCategories,
+  remarksCannotRenew65,
   YES,
 } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
@@ -69,28 +78,40 @@ export const useEligibility = (
     'currentLicense.data',
   )
   const hasQualityPhoto =
-    getValueViaPath<boolean>(application.externalData, 'qualityPhoto.data') ??
-    false
-  const hasOtherLicenseCategories = (
+    getValueViaPath<boolean>(
+      application.externalData,
+      'qualityPhoto.data.hasQualityPhoto',
+    ) ?? false
+
+  const hasOtherCategoryOrHealthRemarks = (
     currentLicense: DrivingLicense | undefined,
   ) => {
     return (
-      (currentLicense?.categories.some(
-        (license) =>
-          license.nr === 'C' ||
-          license.nr === 'C1' ||
-          license.nr === 'CE' ||
-          license.nr === 'D' ||
-          license.nr === 'D1' ||
-          license.nr === 'DE',
+      (currentLicense?.categories.some((license) =>
+        otherLicenseCategories.includes(license.nr),
       ) ??
         false) ||
-      currentLicense?.remarks?.some((x) =>
-        x.includes(
-          'Réttindi til farþegaflutninga í atvinnuskyni fyrir B-flokk.',
-        ),
+      currentLicense?.remarks?.some((remark) =>
+        codesRequiringHealthCertificate.includes(remark.code),
       )
     )
+  }
+
+  const hasExtendedDrivingLicense = (
+    currentLicense: DrivingLicense | undefined,
+    drivingLicenseIssued: string | undefined,
+  ): boolean => {
+    if (!drivingLicenseIssued) return false
+
+    const relevantCategories = currentLicense?.categories?.filter((x) =>
+      codesExtendedLicenseCategories.includes(x.nr),
+    )
+
+    if (!relevantCategories?.length) return false
+
+    // Check if any category was issued on a different date than the 'B' license
+    // (indicating an extended license)
+    return relevantCategories.some((x) => x.issued !== drivingLicenseIssued)
   }
 
   if (usingFakeData) {
@@ -108,20 +129,17 @@ export const useEligibility = (
 
   if (error) {
     console.error(error)
-    // TODO: m.
     return {
       loading: false,
       error: error,
     }
   }
 
+  const eligibility: ApplicationEligibilityRequirement[] =
+    data.drivingLicenseApplicationEligibility?.requirements ?? []
+
   //TODO: Remove when RLS/SGS supports health certificate in BE license
   if (application.answers.applicationFor === BE) {
-    const eligibility =
-      data.drivingLicenseApplicationEligibility === undefined
-        ? []
-        : (data.drivingLicenseApplicationEligibility as ApplicationEligibility)
-            .requirements
     return {
       loading: loading,
       eligibility: {
@@ -130,19 +148,65 @@ export const useEligibility = (
           : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
             !hasGlasses &&
             hasQualityPhoto &&
-            !hasOtherLicenseCategories(currentLicense),
+            !hasOtherCategoryOrHealthRemarks(currentLicense),
         requirements: [
           ...eligibility,
           {
             key: RequirementKey.BeRequiresHealthCertificate,
             requirementMet:
-              !hasGlasses && !hasOtherLicenseCategories(currentLicense),
+              !hasGlasses && !hasOtherCategoryOrHealthRemarks(currentLicense),
           },
           {
             key: RequirementKey.HasNoPhoto,
             requirementMet: hasQualityPhoto,
           },
         ],
+      },
+    }
+  }
+
+  if (application.answers.applicationFor === B_FULL_RENEWAL_65) {
+    const licenseB = currentLicense?.categories?.find(
+      (license) => license.nr === 'B',
+    )
+    const drivingLicenseIssued = licenseB?.issued
+
+    const hasExtendedLicense = hasExtendedDrivingLicense(
+      currentLicense,
+      drivingLicenseIssued,
+    )
+
+    const hasAnyInvalidRemarks =
+      currentLicense?.remarks?.some((remark) =>
+        remarksCannotRenew65.includes(remark.code),
+      ) ?? false
+
+    const requirements = [
+      ...eligibility,
+      {
+        key: RequirementKey.HasNoPhoto,
+        requirementMet: hasQualityPhoto,
+      },
+      ...(hasExtendedLicense
+        ? [
+            {
+              key: RequirementKey.NoExtendedDrivingLicense,
+              requirementMet: false,
+            },
+          ]
+        : []),
+    ]
+
+    return {
+      loading: loading,
+      eligibility: {
+        isEligible: loading
+          ? undefined
+          : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
+            hasQualityPhoto &&
+            !hasExtendedLicense &&
+            !hasAnyInvalidRemarks,
+        requirements,
       },
     }
   }

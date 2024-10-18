@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 import {
   Application,
@@ -7,15 +7,12 @@ import {
   GraphqlGatewayResponse,
 } from '@island.is/application/types'
 import {
-  BaseTemplateAPIModuleConfig,
-  EmailTemplateGenerator,
   AssignmentEmailTemplateGenerator,
-  AttachmentEmailTemplateGenerator,
-  BaseTemplateApiApplicationService,
   AssignmentSmsTemplateGenerator,
+  AttachmentEmailTemplateGenerator,
+  EmailTemplateGenerator,
   SmsTemplateGenerator,
 } from '../../types'
-import { getConfigValue } from './shared.utils'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
@@ -24,6 +21,11 @@ import AmazonS3URI from 'amazon-s3-uri'
 import { PaymentService } from '@island.is/application/api/payment'
 import { User } from '@island.is/auth-nest-tools'
 import { ExtraData } from '@island.is/clients/charge-fjs-v2'
+import { sharedModuleConfig } from './shared.config'
+import { ApplicationService } from '@island.is/application/api/core'
+import jwt from 'jsonwebtoken'
+import { uuid } from 'uuidv4'
+import { AwsService } from '@island.is/nest/aws'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -35,19 +37,19 @@ export class SharedTemplateApiService {
     private readonly emailService: EmailService,
     @Inject(SmsService)
     private readonly smsService: SmsService,
-    @Inject(ConfigService)
-    private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
-    @Inject(BaseTemplateApiApplicationService)
-    private readonly applicationService: BaseTemplateApiApplicationService,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
+    private readonly applicationService: ApplicationService,
     private readonly paymentService: PaymentService,
+    private readonly awsService: AwsService,
   ) {
     this.s3 = new S3()
   }
 
   async createAssignToken(application: Application, expiresIn: number) {
-    const token = await this.applicationService.createAssignToken(
+    const token = await this.createToken(
       application,
-      getConfigValue(this.configService, 'jwtSecret'),
+      this.config.templateApi.jwtSecret,
       expiresIn,
     )
 
@@ -57,11 +59,8 @@ export class SharedTemplateApiService {
   async sendSms(
     smsTemplateGenerator: SmsTemplateGenerator,
     application: Application,
-  ) {
-    const clientLocationOrigin = getConfigValue(
-      this.configService,
-      'clientLocationOrigin',
-    ) as string
+  ): Promise<any> {
+    const clientLocationOrigin = this.config.templateApi.clientLocationOrigin
 
     const { phoneNumber, message } = smsTemplateGenerator(application, {
       clientLocationOrigin,
@@ -74,11 +73,8 @@ export class SharedTemplateApiService {
     smsTemplateGenerator: AssignmentSmsTemplateGenerator,
     application: Application,
     token: string,
-  ) {
-    const clientLocationOrigin = getConfigValue(
-      this.configService,
-      'clientLocationOrigin',
-    ) as string
+  ): Promise<any> {
+    const clientLocationOrigin = this.config.templateApi.clientLocationOrigin
 
     const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
 
@@ -95,15 +91,9 @@ export class SharedTemplateApiService {
     application: Application,
     locale = 'is',
   ) {
-    const clientLocationOrigin = getConfigValue(
-      this.configService,
-      'clientLocationOrigin',
-    ) as string
+    const clientLocationOrigin = this.config.templateApi.clientLocationOrigin
 
-    const email = getConfigValue(
-      this.configService,
-      'email',
-    ) as BaseTemplateAPIModuleConfig['email']
+    const email = this.config.templateApi.email
 
     const template = templateGenerator({
       application,
@@ -123,15 +113,8 @@ export class SharedTemplateApiService {
     token: string,
     locale = 'is',
   ) {
-    const clientLocationOrigin = getConfigValue(
-      this.configService,
-      'clientLocationOrigin',
-    ) as string
-
-    const email = getConfigValue(
-      this.configService,
-      'email',
-    ) as BaseTemplateAPIModuleConfig['email']
+    const clientLocationOrigin = this.config.templateApi.clientLocationOrigin
+    const email = this.config.templateApi.email
 
     const assignLink = `${clientLocationOrigin}/tengjast-umsokn?token=${token}`
 
@@ -157,15 +140,8 @@ export class SharedTemplateApiService {
     recipientEmail: string,
     locale = 'is',
   ) {
-    const clientLocationOrigin = getConfigValue(
-      this.configService,
-      'clientLocationOrigin',
-    ) as string
-
-    const email = getConfigValue(
-      this.configService,
-      'email',
-    ) as BaseTemplateAPIModuleConfig['email']
+    const clientLocationOrigin = this.config.templateApi.clientLocationOrigin
+    const email = this.config.templateApi.email
 
     const template = templateGenerator(
       {
@@ -188,10 +164,7 @@ export class SharedTemplateApiService {
     query: string,
     variables?: Record<string, unknown>,
   ): Promise<GraphqlGatewayResponse<T>> {
-    const baseApiUrl = getConfigValue(
-      this.configService,
-      'baseApiUrl',
-    ) as string
+    const baseApiUrl = this.config.baseApiUrl
 
     return fetch(`${baseApiUrl}/api/graphql`, {
       method: 'POST',
@@ -234,7 +207,7 @@ export class SharedTemplateApiService {
       ContentEncoding?: string
     },
   ): Promise<string> {
-    return this.applicationService.saveAttachmentToApplicaton(
+    return this.saveAttachmentToApplicaton(
       application,
       fileName,
       buffer,
@@ -252,21 +225,21 @@ export class SharedTemplateApiService {
       }
     )[attachmentKey]
     const { bucket, key } = AmazonS3URI(fileName)
-    const uploadBucket = bucket
     const file = await this.s3
       .getObject({
-        Bucket: uploadBucket,
+        Bucket: bucket,
         Key: key,
       })
       .promise()
-    return file.Body as Buffer
+    return file
   }
 
   async getAttachmentContentAsBase64(
     application: ApplicationWithAttachments,
     attachmentKey: string,
   ): Promise<string> {
-    const fileContent = await this.getS3File(application, attachmentKey)
+    const fileContent = (await this.getS3File(application, attachmentKey))
+      ?.Body as Buffer
     return fileContent?.toString('base64') || ''
   }
 
@@ -274,8 +247,90 @@ export class SharedTemplateApiService {
     application: ApplicationWithAttachments,
     attachmentKey: string,
   ): Promise<Blob> {
-    const fileContent = await this.getS3File(application, attachmentKey)
-    const blob: Blob = new Blob([fileContent], { type: 'multipart/form-data' })
-    return blob
+    const file = await this.getS3File(application, attachmentKey)
+    return new Blob([file.Body as ArrayBuffer], { type: file.ContentType })
+  }
+
+  async getAttachmentUrl(key: string, expiration: number): Promise<string> {
+    if (expiration <= 0) {
+      return Promise.reject('expiration must be positive')
+    }
+
+    const bucket = this.config.templateApi.attachmentBucket
+
+    if (bucket == undefined) {
+      return Promise.reject('could not find s3 bucket')
+    }
+
+    return this.s3.getSignedUrlPromise('getObject', {
+      Bucket: bucket,
+      Key: key,
+      Expires: expiration,
+    })
+  }
+
+  async saveAttachmentToApplicaton(
+    application: ApplicationWithAttachments,
+    fileName: string,
+    buffer: Buffer,
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string> {
+    const uploadBucket = this.config.templateApi.attachmentBucket
+    if (!uploadBucket) throw new Error('No attachment bucket configured')
+
+    const fileId = uuid()
+    const attachmentKey = `${fileId}-${fileName}`
+    const s3key = `${application.id}/${attachmentKey}`
+    const url = await this.awsService.uploadFile(
+      buffer,
+      uploadBucket,
+      s3key,
+      uploadParameters,
+    )
+
+    await this.applicationService.update(application.id, {
+      attachments: {
+        ...application.attachments,
+        [attachmentKey]: url,
+      },
+    })
+
+    return attachmentKey
+  }
+
+  async storeNonceForApplication(application: Application): Promise<string> {
+    const nonce = uuid()
+
+    const applicationToUpdate = await this.applicationService.findOneById(
+      application.id,
+    )
+
+    if (!applicationToUpdate) throw new Error('Application not found')
+
+    await this.applicationService.addNonce(applicationToUpdate, nonce)
+
+    return nonce
+  }
+
+  async createToken(
+    application: Application,
+    secret: string,
+    expiresIn: number,
+  ): Promise<string> {
+    const nonce = await this.storeNonceForApplication(application)
+    const token = jwt.sign(
+      {
+        applicationId: application.id,
+        state: application.state,
+        nonce,
+      },
+      secret,
+      { expiresIn },
+    )
+    return token
   }
 }

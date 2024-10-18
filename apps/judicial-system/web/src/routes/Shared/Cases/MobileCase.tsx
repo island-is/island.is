@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC, PropsWithChildren, ReactNode } from 'react'
 import { useIntl } from 'react-intl'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
@@ -18,15 +18,19 @@ import { displayCaseType } from './utils'
 import * as styles from './MobileCase.css'
 
 interface CategoryCardProps {
-  heading: string | React.ReactNode
-  tags?: React.ReactNode
+  heading: string | ReactNode
+  tags?: ReactNode
   onClick: () => void
   isLoading?: boolean
 }
 
-export const CategoryCard: React.FC<
-  React.PropsWithChildren<CategoryCardProps>
-> = ({ heading, onClick, tags, children, isLoading = false }) => {
+export const CategoryCard: FC<PropsWithChildren<CategoryCardProps>> = ({
+  heading,
+  onClick,
+  tags,
+  children,
+  isLoading = false,
+}) => {
   const { LoadingIndicator } = useCaseList()
 
   return (
@@ -57,7 +61,7 @@ interface Props {
   isLoading?: boolean
 }
 
-const MobileCase: React.FC<React.PropsWithChildren<Props>> = ({
+const MobileCase: FC<PropsWithChildren<Props>> = ({
   theCase,
   onClick,
   isCourtRole,
@@ -79,6 +83,7 @@ const MobileCase: React.FC<React.PropsWithChildren<Props>> = ({
           isValidToDateInThePast={theCase.isValidToDateInThePast}
           courtDate={theCase.courtDate}
           indictmentRulingDecision={theCase.indictmentRulingDecision}
+          indictmentDecision={theCase.indictmentDecision}
         />,
       ]}
       isLoading={isLoading}

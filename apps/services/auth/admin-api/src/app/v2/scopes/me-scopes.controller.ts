@@ -86,8 +86,9 @@ export class MeScopesController {
   create(
     @Param('tenantId') tenantId: string,
     @Body() input: AdminCreateScopeDto,
+    @CurrentUser() user: User,
   ): Promise<AdminScopeDTO> {
-    return this.adminScopeService.createScope(tenantId, input)
+    return this.adminScopeService.createScope(tenantId, input, user)
   }
 
   @Patch(':scopeName')

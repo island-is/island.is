@@ -3,21 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/social-insurance-administration/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/clients/social-insurance-administration/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/clients/social-insurance-administration/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/social-insurance-administration/jest.config.ts"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/clients/social-insurance-administration"
@@ -45,6 +40,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

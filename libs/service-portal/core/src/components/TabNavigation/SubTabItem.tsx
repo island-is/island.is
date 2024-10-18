@@ -18,9 +18,10 @@ export interface SubTabItemProps {
 export const SubTabItem = forwardRef<HTMLElement, SubTabItemProps>(
   ({ active = false, onClick, isPrevTabToActive, onKeyDown, name }, ref) => (
     <FocusableBox
-      component={'button'}
+      component="button"
       borderRadius="standard"
       aria-selected={active}
+      role="tab"
       tabIndex={active ? 0 : -1}
       onClick={onClick}
       onKeyDown={(e) => onKeyDown(e.code)}

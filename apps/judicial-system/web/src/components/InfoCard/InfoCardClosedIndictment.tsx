@@ -1,104 +1,91 @@
-import React, { useContext } from 'react'
-import { useIntl } from 'react-intl'
+import { FC, useContext } from 'react'
 
-import { Text } from '@island.is/island-ui/core'
-import {
-  capitalize,
-  readableIndictmentSubtypes,
-} from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
-
+import { EventType } from '../../graphql/schema'
 import { FormContext } from '../FormProvider/FormProvider'
 import { DefendantInfoActionButton } from './DefendantInfo/DefendantInfo'
-import InfoCard, { NameAndEmail } from './InfoCard'
-import { strings } from './InfoCardIndictment.strings'
+import InfoCard from './InfoCard'
+import useInfoCardItems from './useInfoCardItems'
 
 export interface Props {
   defendantInfoActionButton?: DefendantInfoActionButton
   displayAppealExpirationInfo?: boolean
+  displayVerdictViewDate?: boolean
 }
 
-const InfoCardClosedIndictment: React.FC<Props> = (props) => {
+const InfoCardClosedIndictment: FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
-  const { formatMessage } = useIntl()
 
-  const { defendantInfoActionButton, displayAppealExpirationInfo } = props
+  const {
+    defendants,
+    policeCaseNumbers,
+    courtCaseNumber,
+    prosecutorsOffice,
+    mergeCase,
+    court,
+    prosecutor,
+    judge,
+    offence,
+    indictmentReviewer,
+    indictmentReviewDecision,
+    indictmentReviewedDate,
+    civilClaimants,
+  } = useInfoCardItems()
+
+  const {
+    defendantInfoActionButton,
+    displayAppealExpirationInfo,
+    displayVerdictViewDate,
+  } = props
+
+  const reviewedDate = workingCase.eventLogs?.find(
+    (log) => log.eventType === EventType.INDICTMENT_REVIEWED,
+  )?.created
 
   return (
     <InfoCard
-      data={[
+      sections={[
         {
-          title: formatMessage(core.policeCaseNumber),
-          value: workingCase.policeCaseNumbers?.map((n) => (
-            <Text key={n}>{n}</Text>
-          )),
-        },
-        {
-          title: formatMessage(core.courtCaseNumber),
-          value: workingCase.courtCaseNumber,
-        },
-        {
-          title: formatMessage(core.prosecutor),
-          value: `${workingCase.prosecutorsOffice?.name}`,
-        },
-        {
-          title: formatMessage(core.court),
-          value: workingCase.court?.name,
-        },
-        {
-          title: formatMessage(strings.prosecutor),
-          value: NameAndEmail(
-            workingCase.prosecutor?.name,
-            workingCase.prosecutor?.email,
-          ),
-        },
-        {
-          title: formatMessage(core.judge),
-          value: NameAndEmail(
-            workingCase.judge?.name,
-            workingCase.judge?.email,
-          ),
-        },
-        {
-          title: formatMessage(strings.offence),
-          value: (
-            <>
-              {readableIndictmentSubtypes(
-                workingCase.policeCaseNumbers,
-                workingCase.indictmentSubtypes,
-              ).map((subtype) => (
-                <Text key={subtype}>{capitalize(subtype)}</Text>
-              ))}
-            </>
-          ),
-        },
-      ]}
-      defendants={
-        workingCase.defendants
-          ? {
-              title: capitalize(
-                workingCase.defendants.length > 1
-                  ? formatMessage(strings.indictmentDefendants)
-                  : formatMessage(strings.indictmentDefendant, {
-                      gender: workingCase.defendants[0].gender,
-                    }),
-              ),
-              items: workingCase.defendants,
-              defendantInfoActionButton: defendantInfoActionButton,
+          id: 'defendants-section',
+          items: [
+            defendants(
+              workingCase.type,
               displayAppealExpirationInfo,
-            }
-          : undefined
-      }
-      additionalDataSections={[
+              defendantInfoActionButton,
+              displayVerdictViewDate,
+            ),
+          ],
+        },
+        ...(workingCase.hasCivilClaims
+          ? [{ id: 'civil-claimant-section', items: [civilClaimants] }]
+          : []),
+        {
+          id: 'case-info-section',
+          items: [
+            policeCaseNumbers,
+            courtCaseNumber,
+            prosecutorsOffice,
+            ...(workingCase.mergeCase ? [mergeCase] : []),
+            court,
+            prosecutor(workingCase.type),
+            judge,
+            offence,
+          ],
+          columns: 2,
+        },
         ...(workingCase.indictmentReviewer?.name
           ? [
               {
-                data: [
-                  {
-                    title: formatMessage(strings.indictmentReviewer),
-                    value: workingCase.indictmentReviewer?.name,
-                  },
+                id: 'additional-data-section',
+                items: [
+                  indictmentReviewer,
+                  ...(workingCase.indictmentReviewDecision
+                    ? [indictmentReviewDecision]
+                    : []),
+                  ...(indictmentReviewedDate
+                    ? [indictmentReviewedDate(reviewedDate)]
+                    : []),
                 ],
+                columns: 2,
               },
             ]
           : []),

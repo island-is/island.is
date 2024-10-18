@@ -7,7 +7,7 @@ import {
   UseGuards,
   Inject,
 } from '@nestjs/common'
-import { ApiTags, ApiHeader } from '@nestjs/swagger'
+import { ApiTags, ApiHeader, ApiBearerAuth } from '@nestjs/swagger'
 
 import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
@@ -24,14 +24,14 @@ import {
   ApplicationListAdminResponseDto,
   ApplicationStatistics,
 } from './dto/applicationAdmin.response.dto'
-import { ApplicationAdminSerializer } from './tools/applicationAdmin.serializer'
+import {
+  ApplicationAdminSerializer,
+  ApplicationAdminStatisticsSerializer,
+} from './tools/applicationAdmin.serializer'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
-@ApiHeader({
-  name: 'authorization',
-  description: 'Bearer token authorization',
-})
+@ApiBearerAuth()
 @ApiHeader({
   name: 'locale',
   description: 'Front-end language selected',
@@ -46,6 +46,7 @@ export class AdminController {
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   @BypassDelegation()
   @Get('admin/applications-statistics')
+  @UseInterceptors(ApplicationAdminStatisticsSerializer)
   @Documentation({
     description: 'Get applications statistics',
     response: {

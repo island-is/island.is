@@ -1,4 +1,10 @@
-import React, { createContext, useEffect, useState } from 'react'
+import {
+  createContext,
+  FC,
+  PropsWithChildren,
+  useEffect,
+  useState,
+} from 'react'
 import Cookies from 'js-cookie'
 
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
@@ -25,7 +31,7 @@ interface Props {
   authenticated?: boolean
 }
 
-export const UserProvider: React.FC<React.PropsWithChildren<Props>> = ({
+export const UserProvider: FC<PropsWithChildren<Props>> = ({
   children,
   authenticated = false,
 }) => {

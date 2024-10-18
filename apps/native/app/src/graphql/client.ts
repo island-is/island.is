@@ -13,13 +13,14 @@ import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
 import { config, getConfig } from '../config'
-import { openBrowser } from '../lib/rn-island'
+import { openNativeBrowser } from '../lib/rn-island'
 import { cognitoAuthUrl } from '../screens/cognito-auth/config-switcher'
 import { authStore } from '../stores/auth-store'
 import { environmentStore } from '../stores/environment-store'
 import { createMMKVStorage } from '../stores/mmkv'
 import { offlineStore } from '../stores/offline-store'
 import { MainBottomTabs } from '../utils/component-registry'
+import { getCustomUserAgent } from '../utils/user-agent'
 
 const apolloMMKVStorage = createMMKVStorage({ withEncryption: true })
 
@@ -105,7 +106,7 @@ const errorLink = onError(
         ) {
           authStore.setState({ cognitoAuthUrl: redirectUrl })
           if (config.isTestingApp && authStore.getState().authorizeResult) {
-            void openBrowser(cognitoAuthUrl(), MainBottomTabs)
+            openNativeBrowser(cognitoAuthUrl(), MainBottomTabs)
           }
         }
       }
@@ -134,6 +135,7 @@ const authLink = setContext(async (_, { headers }) => ({
     'X-Cognito-Token': `Bearer ${
       environmentStore.getState().cognito?.accessToken
     }`,
+    'User-Agent': getCustomUserAgent(),
     cookie: [authStore.getState().cookies]
       .filter((x) => String(x) !== '')
       .join('; '),
@@ -157,6 +159,9 @@ const cache = new InMemoryCache({
     Query: {
       fields: {
         userNotifications: {
+          merge: true,
+        },
+        getUserProfile: {
           merge: true,
         },
       },

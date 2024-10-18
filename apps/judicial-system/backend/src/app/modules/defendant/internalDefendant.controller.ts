@@ -65,16 +65,15 @@ export class InternalDefendantController {
   @Patch('defense/:defendantNationalId')
   @ApiOkResponse({
     type: Defendant,
-    description:
-      'Assigns defense choice and compensation claim decision to defendant',
+    description: 'Updates defendant information by case and national id',
   })
-  async assignDefender(
+  async updateDefendant(
     @Param('caseId') caseId: string,
     @Param('defendantNationalId') defendantNationalId: string,
     @CurrentCase() theCase: Case,
     @Body() updatedDefendantChoice: UpdateDefendantDto,
   ): Promise<Defendant> {
-    this.logger.debug(`Assigning defense choice to defendant in case ${caseId}`)
+    this.logger.debug(`Updating defendant info for ${caseId}`)
 
     const updatedDefendant = await this.defendantService.updateByNationalId(
       theCase.id,

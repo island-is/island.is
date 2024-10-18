@@ -11,17 +11,17 @@ export enum Features {
   passportApplication = 'isPassportApplicationEnabled',
   passportAnnulmentApplication = 'isPassportAnnulmentApplicationEnabled',
   financialStatementInao = 'financialStatementInao',
-  inheritanceReport = 'isInheritanceReportApplicationEnabled',
   transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
   transportAuthorityDigitalTachographWorkshopCard = 'isTransportAuthorityDigitalTachographWorkshopCardEnabled',
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
-  signatureListCreation = 'isSignatureListCreationEnabled',
   citizenship = 'isCitizenshipEnabled',
   energyFunds = 'isEnergyFundsEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
   healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
+  healthcareWorkPermit = 'ishealthcareworkpermitenabled',
+  pensionSupplementApplication = 'isPensionSupplementEnable',
   transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
   university = 'isUniversityEnabled',
   homeSupport = 'isHomeSupportEnabled',
@@ -30,8 +30,16 @@ export enum Features {
   grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
   RequestInspection = 'isRequestInspectionForMachineEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
+  idCardApplication = 'isIdCardApplicationEnabled',
   StreetRegistration = 'isStreetRegistrationEnabled',
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
+  newPrimarySchool = 'isNewPrimarySchoolEnabled',
+  registerNewMachine = 'isRegisterNewMachineEnabled',
+  FinancialStatementCemetery = 'isFinancialStatementCemeteryEnabled',
+  ParliamentaryElectionApplication = 'isParliamentaryElectionApplicationEnabled',
+  FinancialStatementIndividualElectionEnabled = 'isFinancialStatementIndividualElectionEnabled',
+  FinancialStatementPoliticalPartyEnabled = 'isFinancialStatementPoliticalPartyEnabled',
+  IncomePlanEnabled = 'isIncomePlanEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -43,14 +51,22 @@ export enum Features {
   servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
   servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
   servicePortalVehicleMileagePageEnabled = 'isServicePortalVehicleMileagePageEnabled',
+  servicePortalVehicleBulkMileagePageEnabled = 'isServicePortalVehicleBulkMileagePageEnabled',
   servicePortalSocialInsurancePageEnabled = 'isServicePortalSocialInsurancePageEnabled',
-  ServicePortalNotificationsEnabled = 'isServicePortalNotificationsPageEnabled',
+  servicePortalSocialInsuranceIncomePlanPageEnabled = 'isServicePortalSocialInsuranceIncomePlanPageEnabled',
 
+  ServicePortalNotificationsEnabled = 'isServicePortalNotificationsPageEnabled',
+  servicePortalLawAndOrderModuleEnabled = 'isServicePortalLawAndOrderModuleEnabled',
+  servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
+  isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',
+
+  //New License service fetch enabled
+  licensesV2 = 'isLicensesV2Enabled',
 
   //Possible universities
   isUniversityOfAkureyriEnabled = 'isUniversityOfAkureyriEnabled',
@@ -88,6 +104,16 @@ export enum Features {
   isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',
 
   shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
+
+  // Single sign on passkeys
+  isPasskeyRegistrationEnabled = 'isPasskeyRegistrationEnabled',
+  isPasskeyAuthEnabled = 'isPasskeyAuthEnabled',
+
+  // Legal represantative delegation type
+  isLegalRepresentativeDelegationEnabled = 'isLegalRepresentativeDelegationEnabled',
+
+  // General mandate delegation type
+  isGeneralMandateDelegationEnabled = 'isGeneralMandateDelegationEnabled',
 }
 
 export enum ServerSideFeature {

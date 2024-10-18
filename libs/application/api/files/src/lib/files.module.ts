@@ -25,7 +25,7 @@ import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 })
 export class ApplicationFilesModule {}
 
-export function createBullModule() {
+export const createBullModule = () => {
   if (process.env.INIT_SCHEMA === 'true') {
     return NestBullModule.registerQueueAsync()
   } else {

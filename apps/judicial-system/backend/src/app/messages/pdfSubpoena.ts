@@ -12,8 +12,8 @@ export const subpoena = {
     description: 'Notaður sem texti fyrir dagsetningu dómþings.',
   }),
   courtRoom: defineMessage({
-    id: 'judicial.system.backend:pdf.subpoena.court_room',
-    defaultMessage: 'Staður: {courtRoom}',
+    id: 'judicial.system.backend:pdf.subpoena.court_room_v1',
+    defaultMessage: 'Staður: Dómsalur {courtRoom}',
     description: 'Notaður sem texti fyrir stað.',
   }),
   type: defineMessage({

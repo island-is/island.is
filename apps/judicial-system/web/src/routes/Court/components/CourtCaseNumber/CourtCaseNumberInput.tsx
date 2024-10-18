@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Button, Input } from '@island.is/island-ui/core'
@@ -79,8 +79,7 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
               disabled={Boolean(
                 (workingCase.state !== CaseState.SUBMITTED &&
                   workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
-                  workingCase.state !== CaseState.RECEIVED &&
-                  workingCase.state !== CaseState.MAIN_HEARING) ||
+                  workingCase.state !== CaseState.RECEIVED) ||
                   workingCase.courtCaseNumber,
               )}
               fluid
@@ -144,8 +143,7 @@ const CourtCaseNumberInput: FC<Props> = (props) => {
               disabled={
                 workingCase.state !== CaseState.SUBMITTED &&
                 workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
-                workingCase.state !== CaseState.RECEIVED &&
-                workingCase.state !== CaseState.MAIN_HEARING
+                workingCase.state !== CaseState.RECEIVED
               }
               required
             />

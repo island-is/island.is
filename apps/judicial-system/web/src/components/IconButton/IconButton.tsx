@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import { forwardRef, MouseEvent } from 'react'
 import cn from 'classnames'
 import { Button } from 'reakit'
 
@@ -9,7 +9,7 @@ import * as styles from './IconButton.css'
 interface Props {
   icon: IconMapIcon
   colorScheme: 'blue' | 'red' | 'transparent'
-  onClick?: (evt: React.MouseEvent) => void
+  onClick?: (evt: MouseEvent) => void
   disabled?: boolean
 }
 

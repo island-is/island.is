@@ -52,6 +52,7 @@ export const Select = <
   isClearable,
   dataTestId,
   filterConfig,
+  isLoading = false,
 }: SelectProps<OptionType<Value>, IsMulti, Group>) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -72,9 +73,6 @@ export const Select = <
       })}
       data-testid={`creatable-select-${name}`}
     >
-      {/**
-       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict*/}
       <CreatableReactSelect<OptionType<Value>, IsMulti, Group>
         instanceId={id}
         aria-labelledby={id}
@@ -86,6 +84,7 @@ export const Select = <
         styles={customStyles()}
         classNamePrefix="island-select"
         onChange={onChange}
+        isLoading={isLoading}
         options={options}
         label={label}
         value={value}
@@ -138,15 +137,13 @@ export const Select = <
       })}
       data-testid={`select-${name}`}
     >
-      {/**
-       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict*/}
       <ReactSelect<OptionType<Value>, IsMulti, Group>
         instanceId={id}
         aria-labelledby={id}
         ariaError={ariaError}
         noOptionsMessage={() => noOptionsMessage || null}
         id={id}
+        isLoading={isLoading}
         name={name}
         isDisabled={isDisabled}
         styles={customStyles()}

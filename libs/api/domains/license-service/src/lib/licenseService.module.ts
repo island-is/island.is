@@ -1,31 +1,31 @@
 import { LicenseClientModule } from '@island.is/clients/license-client'
-import { CmsModule } from '@island.is/cms'
 import { LicenseModule } from '@island.is/services/license'
 import { Module } from '@nestjs/common'
-import { CacheModule } from '@nestjs/cache-manager'
-
-import { LicenseServiceResolver } from './licenseService.resolver'
-import { LicenseServiceService } from './licenseService.service'
 import { LicenseMapperModule } from './mappers/licenseMapper.module'
-
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import { LicenseCollectionResolver } from './resolvers/licenseCollection.resolver'
+import { PkPassResolver } from './resolvers/pkPass.resolver'
+import { UserLicenseResolver } from './resolvers/userLicense.resolver'
+import { LicenseProviderResolver } from './resolvers/provider.resolver'
 import { LicenseMapperProvider, LoggerProvider } from './providers'
+import { LicenseService } from './licenseService.service'
 
 @Module({
   imports: [
     LicenseClientModule,
     LicenseMapperModule,
-    CmsModule,
     LicenseModule,
-    CacheModule.register({
-      ttl: 60 * 10 * 1000, // 10 minutes
-    }),
+    FeatureFlagModule,
   ],
   providers: [
-    LicenseServiceResolver,
-    LicenseServiceService,
+    LicenseService,
     LoggerProvider,
     LicenseMapperProvider,
+    LicenseCollectionResolver,
+    PkPassResolver,
+    UserLicenseResolver,
+    LicenseProviderResolver,
   ],
-  exports: [LicenseServiceService],
+  exports: [LicenseService],
 })
 export class LicenseServiceModule {}

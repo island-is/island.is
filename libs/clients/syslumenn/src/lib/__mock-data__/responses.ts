@@ -3,7 +3,6 @@ import {
   VirkarHeimagistingar,
   VirkLeyfi,
   Skilabod,
-  VedbandayfirlitReguverkiSvarSkeyti,
   SkraningaradiliDanarbusSkeyti,
   Fasteignasalar,
   Logmenn,
@@ -11,6 +10,7 @@ import {
   Taekifaerisleyfi,
   Verdbrefamidlari,
   ThjodskraSvarSkeyti,
+  VedbandayfirlitRegluverkGeneralSvar,
 } from '../../../gen/fetch'
 import { AssetName, SyslumennApiPaginationInfo } from '../syslumennClient.types'
 
@@ -128,7 +128,7 @@ export const OPERATING_LICENSE_SERVICE_RES = [
     afgr_Afgengis_Virkirdagar_Utiveitingar: 'string',
     afgr_Afgengis_Adfaranott_Fridaga_Utiveitingar: 'string',
   },
-] as any[] // This return object has no type, see clientConfig.json
+] as const // This return object has no type, see clientConfig.json
 
 export const ALCOHOL_LICENCES = [
   {
@@ -168,21 +168,25 @@ export const DATA_UPLOAD: Skilabod = {
   malsnumer: 'string',
 }
 
-export const VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE: Array<VedbandayfirlitReguverkiSvarSkeyti> =
-  [
-    {
-      fastnum: 'string',
-      landNr: 123456,
-      heiti: 'Hvergiland',
-      svfn: 'string',
-      svetiarfelag: 'string',
-      notkun: 'string',
-      eining: 'string',
-      byggd: 'string',
-      embaetti: 'string',
-      embaettiNumer: 'string',
-    },
-  ]
+export const VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE: VedbandayfirlitRegluverkGeneralSvar =
+  {
+    fastanum: '135791',
+    tegundEignar: '0',
+    fasteign: [
+      {
+        fastnum: 'string',
+        landNr: 123456,
+        heiti: 'Hvergiland',
+        svfn: 'string',
+        svetiarfelag: 'string',
+        notkun: 'string',
+        eining: 'string',
+        byggd: 'string',
+        embaetti: 'string',
+        embaettiNumer: 'string',
+      },
+    ],
+  }
 
 export const ESTATE_REGISTRANT_RESPONSE: Array<SkraningaradiliDanarbusSkeyti> =
   [

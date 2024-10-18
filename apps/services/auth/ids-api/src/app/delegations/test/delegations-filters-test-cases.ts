@@ -1,3 +1,7 @@
+import { createClient } from '@island.is/services/auth/testing'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { createNationalId } from '@island.is/testing/fixtures'
+
 import {
   clientId,
   customScopes,
@@ -6,8 +10,6 @@ import {
   representativeScopes,
   TestCase,
 } from './delegations-filters-types'
-import { createNationalId } from '@island.is/testing/fixtures'
-import { createClient } from '@island.is/services/auth/testing'
 
 const person1 = createNationalId('person')
 const person2 = createNationalId('person')
@@ -19,12 +21,13 @@ export const testCases: Record<string, TestCase> = {
   ward1: new TestCase(
     createClient({
       clientId: clientId,
-      supportsLegalGuardians: true,
+      supportedDelegationTypes: [AuthDelegationType.LegalGuardian],
     }),
     {
       fromChildren: [person1, person2],
       protectedScopes: [],
       expectedFrom: [person1, person2],
+      expectedTypes: [AuthDelegationType.LegalGuardian],
     },
   ),
   // Even though individual delegations should not have protected scopes
@@ -32,12 +35,13 @@ export const testCases: Record<string, TestCase> = {
   ward2: new TestCase(
     createClient({
       clientId: clientId,
-      supportsLegalGuardians: true,
+      supportedDelegationTypes: [AuthDelegationType.LegalGuardian],
     }),
     {
       fromChildren: [person1, person2],
       protectedScopes: legalGuardianScopes,
       expectedFrom: [person1, person2],
+      expectedTypes: [AuthDelegationType.LegalGuardian],
     },
   ),
   // If client has no legal guardian scopes and requireApiScopes is set
@@ -45,7 +49,7 @@ export const testCases: Record<string, TestCase> = {
   ward3: new TestCase(
     createClient({
       clientId: clientId,
-      supportsLegalGuardians: true,
+      supportedDelegationTypes: [AuthDelegationType.LegalGuardian],
       requireApiScopes: true,
     }),
     {
@@ -64,7 +68,7 @@ export const testCases: Record<string, TestCase> = {
   ward4: new TestCase(
     createClient({
       clientId: clientId,
-      supportsLegalGuardians: true,
+      supportedDelegationTypes: [AuthDelegationType.LegalGuardian],
       requireApiScopes: true,
     }),
     {
@@ -77,12 +81,13 @@ export const testCases: Record<string, TestCase> = {
   company1: new TestCase(
     createClient({
       clientId: clientId,
-      supportsProcuringHolders: true,
+      supportedDelegationTypes: [AuthDelegationType.ProcurationHolder],
     }),
     {
       fromCompanies: [company1, company2],
       protectedScopes: [],
       expectedFrom: [company1, company2],
+      expectedTypes: [AuthDelegationType.ProcurationHolder],
     },
   ),
   // If client has no procuration holder scopes and requireApiScop is set
@@ -90,7 +95,7 @@ export const testCases: Record<string, TestCase> = {
   company2: new TestCase(
     createClient({
       clientId: clientId,
-      supportsProcuringHolders: true,
+      supportedDelegationTypes: [AuthDelegationType.ProcurationHolder],
       requireApiScopes: true,
     }),
     {
@@ -109,7 +114,7 @@ export const testCases: Record<string, TestCase> = {
   company3: new TestCase(
     createClient({
       clientId: clientId,
-      supportsProcuringHolders: true,
+      supportedDelegationTypes: [AuthDelegationType.ProcurationHolder],
       requireApiScopes: true,
     }),
     {
@@ -123,7 +128,7 @@ export const testCases: Record<string, TestCase> = {
   company4: new TestCase(
     createClient({
       clientId: clientId,
-      supportsProcuringHolders: true,
+      supportedDelegationTypes: [AuthDelegationType.ProcurationHolder],
       requireApiScopes: true,
     }),
     {
@@ -131,6 +136,7 @@ export const testCases: Record<string, TestCase> = {
       scopes: procurationHolderScopes,
       protectedScopes: [procurationHolderScopes[0]],
       expectedFrom: [company1, company2],
+      expectedTypes: [AuthDelegationType.ProcurationHolder],
     },
   ),
   // If all procuration holder scopes are protected and some access
@@ -138,7 +144,7 @@ export const testCases: Record<string, TestCase> = {
   company5: new TestCase(
     createClient({
       clientId: clientId,
-      supportsProcuringHolders: true,
+      supportedDelegationTypes: [AuthDelegationType.ProcurationHolder],
       requireApiScopes: true,
     }),
     {
@@ -147,18 +153,20 @@ export const testCases: Record<string, TestCase> = {
       protectedScopes: procurationHolderScopes,
       scopeAccess: [[company1, procurationHolderScopes[0]]],
       expectedFrom: [company1],
+      expectedTypes: [AuthDelegationType.ProcurationHolder],
     },
   ),
   // Returns available delegations for custom delegations
   custom1: new TestCase(
     createClient({
       clientId: clientId,
-      supportsCustomDelegation: true,
+      supportedDelegationTypes: [AuthDelegationType.Custom],
     }),
     {
       fromCustom: [person1, person2],
       protectedScopes: [],
       expectedFrom: [person1, person2],
+      expectedTypes: [AuthDelegationType.Custom],
     },
   ),
   // If client has no custom scope and requireApiScope is set
@@ -166,7 +174,7 @@ export const testCases: Record<string, TestCase> = {
   custom2: new TestCase(
     createClient({
       clientId: clientId,
-      supportsCustomDelegation: true,
+      supportedDelegationTypes: [AuthDelegationType.Custom],
       requireApiScopes: true,
     }),
     {
@@ -185,7 +193,7 @@ export const testCases: Record<string, TestCase> = {
   custom3: new TestCase(
     createClient({
       clientId: clientId,
-      supportsCustomDelegation: true,
+      supportedDelegationTypes: [AuthDelegationType.Custom],
       requireApiScopes: true,
     }),
     {
@@ -199,7 +207,7 @@ export const testCases: Record<string, TestCase> = {
   custom4: new TestCase(
     createClient({
       clientId: clientId,
-      supportsCustomDelegation: true,
+      supportedDelegationTypes: [AuthDelegationType.Custom],
       requireApiScopes: true,
     }),
     {
@@ -207,6 +215,7 @@ export const testCases: Record<string, TestCase> = {
       scopes: customScopes,
       protectedScopes: [customScopes[0]],
       expectedFrom: [person1, person2],
+      expectedTypes: [AuthDelegationType.Custom],
     },
   ),
   // If all custom scopes are protected and some company has access
@@ -214,7 +223,7 @@ export const testCases: Record<string, TestCase> = {
   custom5: new TestCase(
     createClient({
       clientId: clientId,
-      supportsCustomDelegation: true,
+      supportedDelegationTypes: [AuthDelegationType.Custom],
       requireApiScopes: true,
     }),
     {
@@ -223,6 +232,7 @@ export const testCases: Record<string, TestCase> = {
       protectedScopes: customScopes,
       scopeAccess: [[company1, customScopes[0]]],
       expectedFrom: [company1],
+      expectedTypes: [AuthDelegationType.Custom],
     },
   ),
   // If all custom scopes are protected and some person has access
@@ -230,7 +240,7 @@ export const testCases: Record<string, TestCase> = {
   custom6: new TestCase(
     createClient({
       clientId: clientId,
-      supportsCustomDelegation: true,
+      supportedDelegationTypes: [AuthDelegationType.Custom],
       requireApiScopes: true,
     }),
     {
@@ -246,7 +256,7 @@ export const testCases: Record<string, TestCase> = {
   custom7: new TestCase(
     createClient({
       clientId: clientId,
-      supportsCustomDelegation: true,
+      supportedDelegationTypes: [AuthDelegationType.Custom],
     }),
     {
       fromCustom: [person1, company2],
@@ -254,6 +264,40 @@ export const testCases: Record<string, TestCase> = {
       protectedScopes: customScopes,
       scopeAccess: [[person1, customScopes[0]]],
       expectedFrom: [person1, company2],
+      expectedTypes: [AuthDelegationType.Custom],
+    },
+  ),
+  customAndWard1: new TestCase(
+    createClient({
+      clientId: clientId,
+      supportedDelegationTypes: [
+        AuthDelegationType.Custom,
+        AuthDelegationType.LegalGuardian,
+      ],
+    }),
+    {
+      fromCustom: [person1],
+      fromChildren: [person1],
+      scopes: [...customScopes, ...legalGuardianScopes],
+      protectedScopes: [],
+      expectedFrom: [person1],
+      expectedTypes: [
+        AuthDelegationType.Custom,
+        AuthDelegationType.LegalGuardian,
+      ],
+    },
+  ),
+  // Returns available delegations for legal representatives
+  legalRepresentative1: new TestCase(
+    createClient({
+      clientId: clientId,
+      supportedDelegationTypes: [AuthDelegationType.LegalRepresentative],
+    }),
+    {
+      fromLegalRepresentative: [person1, person2],
+      protectedScopes: [],
+      expectedFrom: [person1, person2],
+      expectedTypes: [AuthDelegationType.LegalRepresentative],
     },
   ),
 }

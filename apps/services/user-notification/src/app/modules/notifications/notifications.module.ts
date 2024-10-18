@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { CacheModule } from '@nestjs/cache-manager'
 import * as firebaseAdmin from 'firebase-admin'
 
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
+import { CmsModule } from '@island.is/clients/cms'
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
+import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { UserProfileClientModule } from '@island.is/clients/user-profile'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { EmailModule } from '@island.is/email-service'
@@ -28,10 +29,6 @@ import { MessageProcessorService } from './messageProcessor.service'
   exports: [NotificationsService],
   imports: [
     SequelizeModule.forFeature([Notification]),
-    CacheModule.register({
-      ttl: 60 * 10 * 1000, // 10 minutes
-      max: 1000, // 1000 items max
-    }),
     LoggingModule,
     CmsTranslationsModule,
     QueueModule.register({
@@ -45,10 +42,12 @@ import { MessageProcessorService } from './messageProcessor.service'
       },
     }),
     UserProfileClientModule,
-    EmailModule.register(environment.emailOptions),
+    EmailModule,
     FeatureFlagModule,
     NationalRegistryV3ClientModule,
     AuthDelegationApiClientModule,
+    CmsModule,
+    CompanyRegistryClientModule,
   ],
   controllers: [NotificationsController, MeNotificationsController],
   providers: [

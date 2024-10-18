@@ -2,6 +2,7 @@ import CryptoJS from 'crypto-js'
 
 import {
   BadRequestException,
+  forwardRef,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -22,27 +23,31 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
+  Confirmation,
   createCaseFilesRecord,
   createIndictment,
+  createSubpoena,
   getCourtRecordPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
   getRequestPdfAsBuffer,
   getRulingPdfAsBuffer,
-  IndictmentConfirmation,
 } from '../../formatters'
-import { createSubpoenaPDF } from '../../formatters/subpoenaPdf'
 import { AwsS3Service } from '../aws-s3'
+import { Defendant } from '../defendant'
+import { Subpoena, SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
 import { Case } from './models/case.model'
 
 @Injectable()
-export class PDFService {
+export class PdfService {
   private throttle = Promise.resolve(Buffer.from(''))
 
   constructor(
     private readonly awsS3Service: AwsS3Service,
     private readonly intlService: IntlService,
     private readonly userService: UserService,
+    @Inject(forwardRef(() => SubpoenaService))
+    private readonly subpoenaService: SubpoenaService,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -77,7 +82,7 @@ export class PDFService {
       ?.filter(
         (caseFile) =>
           caseFile.policeCaseNumber === policeCaseNumber &&
-          caseFile.category === CaseFileCategory.CASE_FILE &&
+          caseFile.category === CaseFileCategory.CASE_FILE_RECORD &&
           caseFile.type === 'application/pdf' &&
           caseFile.key &&
           caseFile.chapter !== null &&
@@ -91,7 +96,7 @@ export class PDFService {
       )
       ?.map((caseFile) => async () => {
         const buffer = await this.awsS3Service
-          .getObject(theCase.type, theCase.state, caseFile.key)
+          .getObject(theCase.type, caseFile.key)
           .catch((reason) => {
             // Tolerate failure, but log error
             this.logger.error(
@@ -132,7 +137,7 @@ export class PDFService {
   async getCourtRecordPdf(theCase: Case, user: TUser): Promise<Buffer> {
     if (theCase.courtRecordSignatureDate) {
       try {
-        return await this.awsS3Service.getGeneratedObject(
+        return await this.awsS3Service.getGeneratedRequestCaseObject(
           theCase.type,
           `${theCase.id}/courtRecord.pdf`,
         )
@@ -158,7 +163,7 @@ export class PDFService {
   async getRulingPdf(theCase: Case): Promise<Buffer> {
     if (theCase.rulingSignatureDate) {
       try {
-        return await this.awsS3Service.getGeneratedObject(
+        return await this.awsS3Service.getGeneratedRequestCaseObject(
           theCase.type,
           `${theCase.id}/ruling.pdf`,
         )
@@ -186,13 +191,13 @@ export class PDFService {
     key: string,
   ): Promise<Buffer | undefined> {
     return await this.awsS3Service
-      .getObject(theCase.type, theCase.state, key)
+      .getObject(theCase.type, key)
       .catch(() => undefined) // Ignore errors and return undefined
   }
 
   private tryUploadPdfToS3(theCase: Case, key: string, pdf: Buffer) {
     this.awsS3Service
-      .putObject(theCase.type, theCase.state, key, pdf.toString('binary'))
+      .putObject(theCase.type, key, pdf.toString('binary'))
       .catch((reason) => {
         this.logger.error(`Failed to upload pdf ${key} to AWS S3`, { reason })
       })
@@ -205,7 +210,7 @@ export class PDFService {
       )
     }
 
-    let confirmation: IndictmentConfirmation | undefined = undefined
+    let confirmation: Confirmation | undefined = undefined
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
       if (theCase.indictmentHash) {
@@ -286,5 +291,68 @@ export class PDFService {
     )
 
     return await this.throttle
+  }
+
+  async getSubpoenaPdf(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena?: Subpoena,
+    arraignmentDate?: Date,
+    location?: string,
+    subpoenaType?: SubpoenaType,
+  ): Promise<Buffer> {
+    let confirmation: Confirmation | undefined = undefined
+
+    if (subpoena) {
+      if (subpoena.hash) {
+        const existingPdf = await this.tryGetPdfFromS3(
+          theCase,
+          `${theCase.id}/subpoena/${subpoena.id}.pdf`,
+        )
+
+        if (existingPdf) {
+          return existingPdf
+        }
+      }
+
+      confirmation = {
+        actor: theCase.judge?.name ?? '',
+        title: theCase.judge?.title,
+        institution: theCase.judge?.institution?.name ?? '',
+        date: subpoena.created,
+      }
+    }
+
+    await this.refreshFormatMessage()
+
+    const generatedPdf = await createSubpoena(
+      theCase,
+      defendant,
+      this.formatMessage,
+      subpoena,
+      arraignmentDate,
+      location,
+      subpoenaType,
+      confirmation,
+    )
+
+    if (subpoena) {
+      const subpoenaHash = CryptoJS.MD5(
+        generatedPdf.toString('binary'),
+      ).toString(CryptoJS.enc.Hex)
+
+      // No need to wait for this to finish
+      this.subpoenaService
+        .setHash(subpoena.id, subpoenaHash)
+        .then(() =>
+          this.tryUploadPdfToS3(
+            theCase,
+            `${theCase.id}/subpoena/${subpoena.id}.pdf`,
+            generatedPdf,
+          ),
+        )
+    }
+
+    return generatedPdf
   }
 }

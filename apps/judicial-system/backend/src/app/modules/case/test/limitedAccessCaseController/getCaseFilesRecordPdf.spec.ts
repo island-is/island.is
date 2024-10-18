@@ -31,7 +31,7 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
   const caseFiles = [
     {
       policeCaseNumber,
-      category: CaseFileCategory.CASE_FILE,
+      category: CaseFileCategory.CASE_FILE_RECORD,
       type: 'application/pdf',
       key: uuid(),
       chapter: 0,
@@ -92,7 +92,6 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
     it('should generate pdf after failing to get it from AWS S3', () => {
       expect(mockawsS3Service.getObject).toHaveBeenCalledWith(
         theCase.type,
-        theCase.state,
         `${caseId}/${policeCaseNumber}/caseFilesRecord.pdf`,
       )
       expect(createCaseFilesRecord).toHaveBeenCalledWith(
@@ -103,7 +102,6 @@ describe('LimitedAccessCaseController - Get case files record pdf', () => {
       )
       expect(mockawsS3Service.putObject).toHaveBeenCalledWith(
         theCase.type,
-        theCase.state,
         `${caseId}/${policeCaseNumber}/caseFilesRecord.pdf`,
         pdf.toString('binary'),
       )

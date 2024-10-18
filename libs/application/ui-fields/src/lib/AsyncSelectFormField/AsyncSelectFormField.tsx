@@ -42,7 +42,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
   const [hasLoadingError, setHasLoadingError] = useState<boolean>(false)
 
   useEffect(() => {
-    async function load() {
+    const load = async () => {
       try {
         setHasLoadingError(false)
         const loaded = await loadOptions({ application, apolloClient })

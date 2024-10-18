@@ -1,4 +1,3 @@
-import React from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -36,7 +35,7 @@ const user: User = {
   canConfirmIndictment: false,
 }
 
-export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const NewUser = () => {
   const router = useRouter()
 
   const {

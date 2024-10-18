@@ -9,7 +9,7 @@ import {
 import { buildTextField } from '../lib/fieldBuilders'
 import { shouldShowFormItem } from './conditionUtils'
 import { buildSection, buildSubSection } from './formBuilders'
-import { User } from 'user'
+import { User } from '@island.is/shared/types'
 import { createOpenIDUser } from '@island.is/testing/fixtures'
 
 const createRandomUser = (): User => {

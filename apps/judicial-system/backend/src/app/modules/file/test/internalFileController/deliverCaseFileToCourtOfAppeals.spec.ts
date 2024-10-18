@@ -4,7 +4,6 @@ import { type ConfigType } from '@island.is/nest/config'
 
 import {
   CaseFileCategory,
-  CaseState,
   CaseType,
   User,
 } from '@island.is/judicial-system/types'
@@ -48,7 +47,6 @@ describe('InternalFileController - Deliver case file to court of appeals', () =>
   const theCase = {
     id: caseId,
     type: CaseType.CUSTODY,
-    state: CaseState.ACCEPTED,
     appealCaseNumber,
     caseFiles: [caseFile],
   } as Case
@@ -102,14 +100,13 @@ describe('InternalFileController - Deliver case file to court of appeals', () =>
     it('should return success', () => {
       expect(mockAwsS3Service.objectExists).toHaveBeenCalledWith(
         theCase.type,
-        theCase.state,
         key,
       )
       expect(mockAwsS3Service.getSignedUrl).toHaveBeenCalledWith(
         theCase.type,
-        theCase.state,
         key,
         mockFileConfig.robotS3TimeToLiveGet,
+        true,
       )
       expect(mockCourtService.updateAppealCaseWithFile).toHaveBeenCalledWith(
         user,

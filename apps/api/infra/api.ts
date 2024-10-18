@@ -25,7 +25,6 @@ import {
   Properties,
   RskCompanyInfo,
   TransportAuthority,
-  UniversityOfIceland,
   Vehicles,
   VehiclesMileage,
   VehicleServiceFjsV1,
@@ -47,6 +46,10 @@ import {
   UniversityCareers,
   OfficialJournalOfIceland,
   OfficialJournalOfIcelandApplication,
+  JudicialSystemServicePortal,
+  Frigg,
+  HealthDirectorateOrganDonation,
+  HealthDirectorateVaccination,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -192,6 +195,11 @@ export const serviceSetup = (services: {
         staging: 'https://api-staging.thinglysing.is/business/tolfraedi',
         prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
+      FORM_SYSTEM_API_BASE_PATH: {
+        dev: 'https://profun.island.is/umsoknarkerfi',
+        staging: '',
+        prod: '',
+      },
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
         staging: 'https://samradapi-test.devland.is',
@@ -200,6 +208,11 @@ export const serviceSetup = (services: {
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
       HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
       SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
+      AUTH_ADMIN_API_PATH: {
+        dev: 'https://identity-server.dev01.devland.is/backend',
+        staging: 'https://identity-server.staging01.devland.is/backend',
+        prod: 'https://innskra.island.is/backend',
+      },
       AUTH_ADMIN_API_PATHS: {
         dev: json({
           development: 'https://identity-server.dev01.devland.is/backend',
@@ -371,6 +384,10 @@ export const serviceSetup = (services: {
       LICENSE_SERVICE_BARCODE_SECRET_KEY:
         '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY',
       ULTRAVIOLET_RADIATION_API_KEY: '/k8s/api/ULTRAVIOLET_RADIATION_API_KEY',
+      UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL:
+        '/k8s/api/UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL',
+      VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY:
+        '/k8s/api/VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY',
     })
     .xroad(
       AdrAndMachine,
@@ -406,7 +423,6 @@ export const serviceSetup = (services: {
       TransportAuthority,
       ChargeFjsV2,
       EnergyFunds,
-      UniversityOfIceland,
       UniversityCareers,
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
@@ -419,7 +435,11 @@ export const serviceSetup = (services: {
       SignatureCollection,
       SocialInsuranceAdministration,
       OfficialJournalOfIceland,
+      JudicialSystemServicePortal,
       OfficialJournalOfIcelandApplication,
+      Frigg,
+      HealthDirectorateOrganDonation,
+      HealthDirectorateVaccination,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
@@ -443,8 +463,8 @@ export const serviceSetup = (services: {
     .readiness('/health')
     .liveness('/liveness')
     .resources({
-      limits: { cpu: '1200m', memory: '2048Mi' },
-      requests: { cpu: '350m', memory: '896Mi' },
+      limits: { cpu: '1200m', memory: '3200Mi' },
+      requests: { cpu: '400m', memory: '896Mi' },
     })
     .replicaCount({
       default: 2,

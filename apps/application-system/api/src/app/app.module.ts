@@ -38,6 +38,28 @@ import { SignatureCollectionClientConfig } from '@island.is/clients/signature-co
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/official-journal-of-iceland'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
+import {
+  HealthDirectorateClientConfig,
+  HealthDirectorateVaccinationsClientConfig,
+  HealthDirectorateOrganDonationClientConfig,
+} from '@island.is/clients/health-directorate'
+import {
+  AgriculturalUniversityOfIcelandCareerClientConfig,
+  BifrostUniversityCareerClientConfig,
+  HolarUniversityCareerClientConfig,
+  IcelandUniversityOfTheArtsCareerClientConfig,
+  UniversityOfAkureyriCareerClientConfig,
+  UniversityOfIcelandCareerClientConfig,
+} from '@island.is/clients/university-careers'
+import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
+import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
+import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
+import { VmstClientConfig } from '@island.is/clients/vmst'
+import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { FriggClientConfig } from '@island.is/clients/mms/frigg'
+import { smsModuleConfig } from '@island.is/nova-sms'
+import { emailModuleConfig } from '@island.is/email-service'
+import { sharedModuleConfig } from '@island.is/application/template-api-modules'
 
 @Module({
   imports: [
@@ -79,6 +101,24 @@ import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clie
         InnaClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
+        HealthDirectorateVaccinationsClientConfig,
+        HealthDirectorateOrganDonationClientConfig,
+        HealthDirectorateClientConfig,
+        AgriculturalUniversityOfIcelandCareerClientConfig,
+        BifrostUniversityCareerClientConfig,
+        UniversityOfAkureyriCareerClientConfig,
+        UniversityOfIcelandCareerClientConfig,
+        HolarUniversityCareerClientConfig,
+        IcelandUniversityOfTheArtsCareerClientConfig,
+        DataProtectionComplaintClientConfig,
+        CriminalRecordClientConfig,
+        HealthInsuranceV2ClientConfig,
+        VmstClientConfig,
+        RightsPortalClientConfig,
+        FriggClientConfig,
+        smsModuleConfig,
+        emailModuleConfig,
+        sharedModuleConfig,
       ],
     }),
   ],

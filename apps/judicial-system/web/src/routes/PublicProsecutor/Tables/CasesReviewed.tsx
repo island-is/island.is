@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -41,16 +41,14 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
   }
 
   const getVerdictViewTag = (row: CaseListEntry) => {
-    const today = new Date()
-    const deadline = new Date(row.indictmentVerdictAppealDeadline ?? '')
     const variant = !row.indictmentVerdictViewedByAll
       ? 'red'
-      : today > deadline
+      : row.indictmentVerdictAppealDeadlineExpired
       ? 'mint'
       : 'blue'
     const message = !row.indictmentVerdictViewedByAll
       ? strings.tagVerdictUnviewed
-      : today > deadline
+      : row.indictmentVerdictAppealDeadlineExpired
       ? strings.tagVerdictViewComplete
       : strings.tagVerdictViewOnDeadline
     return (
@@ -75,7 +73,7 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendant' },
+                  sortable: { isSortable: true, key: 'defendants' },
                 },
                 { title: formatMessage(tables.reviewDecision) },
                 { title: formatMessage(tables.verdictViewState) },

@@ -10,10 +10,12 @@ import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
 
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import {
+  SharedAuthModule,
+  sharedAuthModuleConfig,
+} from '@island.is/judicial-system/auth'
 import { MessageService } from '@island.is/judicial-system/message'
 
-import { environment } from '../../../../environments'
 import { AwsS3Service } from '../../aws-s3'
 import { CourtService } from '../../court'
 import { DefendantService } from '../../defendant'
@@ -31,9 +33,9 @@ import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 import { LimitedAccessCaseService } from '../limitedAccessCase.service'
 import { Case } from '../models/case.model'
 import { CaseArchive } from '../models/caseArchive.model'
+import { CaseString } from '../models/caseString.model'
 import { DateLog } from '../models/dateLog.model'
-import { ExplanatoryComment } from '../models/explanatoryComment.model'
-import { PDFService } from '../pdf.service'
+import { PdfService } from '../pdf.service'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../court/court.service')
@@ -48,11 +50,9 @@ jest.mock('../../indictment-count/indictmentCount.service')
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
     imports: [
-      SharedAuthModule.register({
-        jwtSecret: environment.auth.jwtSecret,
-        secretToken: environment.auth.secretToken,
+      ConfigModule.forRoot({
+        load: [sharedAuthModuleConfig, signingModuleConfig, caseModuleConfig],
       }),
-      ConfigModule.forRoot({ load: [signingModuleConfig, caseModuleConfig] }),
     ],
     controllers: [
       CaseController,
@@ -60,6 +60,7 @@ export const createTestingCaseModule = async () => {
       LimitedAccessCaseController,
     ],
     providers: [
+      SharedAuthModule,
       MessageService,
       CourtService,
       PoliceService,
@@ -113,16 +114,17 @@ export const createTestingCaseModule = async () => {
         },
       },
       {
-        provide: getModelToken(ExplanatoryComment),
+        provide: getModelToken(CaseString),
         useValue: {
           create: jest.fn(),
           findOne: jest.fn(),
+          update: jest.fn(),
         },
       },
       CaseService,
       InternalCaseService,
       LimitedAccessCaseService,
-      PDFService,
+      PdfService,
     ],
   })
     .useMocker((token) => {
@@ -162,8 +164,8 @@ export const createTestingCaseModule = async () => {
 
   const dateLogModel = caseModule.get<typeof DateLog>(getModelToken(DateLog))
 
-  const explanatoryCommentModel = caseModule.get<typeof ExplanatoryComment>(
-    getModelToken(ExplanatoryComment),
+  const caseStringModel = caseModule.get<typeof CaseString>(
+    getModelToken(CaseString),
   )
 
   const caseConfig = caseModule.get<ConfigType<typeof caseModuleConfig>>(
@@ -201,7 +203,7 @@ export const createTestingCaseModule = async () => {
     caseModel,
     caseArchiveModel,
     dateLogModel,
-    explanatoryCommentModel,
+    caseStringModel,
     caseConfig,
     caseService,
     limitedAccessCaseService,

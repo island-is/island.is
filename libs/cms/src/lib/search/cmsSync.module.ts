@@ -31,6 +31,8 @@ import { ManualSyncService } from './importers/manual.service'
 import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
 import { CustomPageSyncService } from './importers/customPage.service'
 import { GenericListItemSyncService } from './importers/genericListItem.service'
+import { TeamListSyncService } from './importers/teamList.service'
+import { MappingService } from './mapping.service'
 
 @Module({
   imports: [
@@ -67,6 +69,8 @@ import { GenericListItemSyncService } from './importers/genericListItem.service'
     ManualChapterItemSyncService,
     CustomPageSyncService,
     GenericListItemSyncService,
+    TeamListSyncService,
+    MappingService,
   ],
   exports: [CmsSyncService],
 })

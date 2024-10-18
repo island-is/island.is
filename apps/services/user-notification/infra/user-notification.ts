@@ -2,6 +2,7 @@ import {
   Base,
   Client,
   NationalRegistryB2C,
+  RskCompanyInfo,
 } from '../../../../infra/src/dsl/xroad'
 import {
   json,
@@ -45,6 +46,7 @@ const getEnv = (services: {
     staging: 'development@island.is',
     prod: 'noreply@island.is',
   },
+  REDIS_USE_SSL: 'true',
 })
 
 export const userNotificationServiceSetup = (services: {
@@ -57,6 +59,7 @@ export const userNotificationServiceSetup = (services: {
     .db()
     .command('node')
     .args('--no-experimental-fetch', 'main.js')
+    .redis()
     .env(getEnv(services))
     .secrets({
       FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
@@ -66,7 +69,7 @@ export const userNotificationServiceSetup = (services: {
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
-    .xroad(Base, Client, NationalRegistryB2C)
+    .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .liveness('/liveness')
     .readiness('/health/check')
     .ingress({
@@ -121,6 +124,7 @@ export const userNotificationWorkerSetup = (services: {
     .args('--no-experimental-fetch', 'main.js', '--job=worker')
     .db()
     .migrations()
+    .redis()
     .env({
       ...getEnv(services),
       EMAIL_REGION: 'eu-west-1',
@@ -153,7 +157,7 @@ export const userNotificationWorkerSetup = (services: {
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
-    .xroad(Base, Client, NationalRegistryB2C)
+    .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .liveness('/liveness')
     .readiness('/health/check')
 

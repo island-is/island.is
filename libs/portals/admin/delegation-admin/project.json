@@ -1,0 +1,32 @@
+{
+  "name": "delegation-admin",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portals/admin/delegation-admin/src",
+  "projectType": "library",
+  "tags": ["scope:portals-admin", "lib:portals-admin"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/portals/admin/delegation-admin/jest.config.ts"
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/portals/admin/delegation-admin/src/**/*.{ts,tsx}'"
+      }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/portals/admin/delegation-admin/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/portals/admin/delegation-admin/codegen.yml"
+      }
+    }
+  }
+}

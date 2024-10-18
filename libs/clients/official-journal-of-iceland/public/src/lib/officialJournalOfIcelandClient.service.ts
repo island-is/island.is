@@ -1,63 +1,54 @@
 import { Injectable } from '@nestjs/common'
 import {
   DefaultApi as OfficialJournalOfIcelandApi,
-  JournalControllerAdvertRequest,
-  JournalControllerAdvertsRequest,
-  JournalControllerCategoriesRequest,
-  JournalControllerDepartmentsRequest,
-  JournalControllerInstitutionsRequest,
-  JournalControllerMainCategoriesRequest,
-  JournalControllerTypesRequest,
-  JournalControllerDepartmentRequest,
-  JournalControllerTypeRequest,
+  GetAdvertByIdRequest,
+  GetAdvertsRequest,
+  GetCategoriesRequest,
+  GetDepartmentsRequest,
+  GetInstitutionsRequest,
+  GetMainCategoriesRequest,
+  GetAdvertTypesRequest,
+  GetDepartmentByIdRequest,
+  GetAdvertTypeByIdRequest,
 } from '../../gen/fetch/apis'
 
 @Injectable()
 export class OfficialJournalOfIcelandClientService {
   constructor(private readonly api: OfficialJournalOfIcelandApi) {}
 
-  public async advert(params: JournalControllerAdvertRequest) {
-    return this.api.journalControllerAdvert(params)
+  public async getAdvertById(params: GetAdvertByIdRequest) {
+    return this.api.getAdvertById(params)
   }
 
-  public async adverts(input: JournalControllerAdvertsRequest) {
-    return this.api.journalControllerAdverts(input)
+  public async getAdverts(input: GetAdvertsRequest) {
+    return this.api.getAdverts(input)
   }
 
-  public async department(params: JournalControllerDepartmentRequest) {
-    return this.api.journalControllerDepartment(params)
+  public async getDepartmentById(params: GetDepartmentByIdRequest) {
+    return this.api.getDepartmentById(params)
   }
 
-  public async departments(params: JournalControllerDepartmentsRequest) {
-    return this.api.journalControllerDepartments(params ?? {})
+  public async getDepartments(params: GetDepartmentsRequest) {
+    return this.api.getDepartments(params ?? {})
   }
 
-  public async type(params: JournalControllerTypeRequest) {
-    return this.api.journalControllerType(params)
+  public async getAdvertTypeById(params: GetAdvertTypeByIdRequest) {
+    return this.api.getAdvertTypeById(params)
   }
 
-  public async types(params: JournalControllerTypesRequest) {
-    try {
-      const result = await this.api.journalControllerTypes(params)
-
-      console.log(result)
-
-      return result
-    } catch (error) {
-      console.error(error)
-      throw new Error('Something went wrong')
-    }
+  public async getAdvertTypes(params: GetAdvertTypesRequest) {
+    return this.api.getAdvertTypes(params)
   }
 
-  public async mainCategories(params: JournalControllerMainCategoriesRequest) {
-    return this.api.journalControllerMainCategories(params)
+  public async getMainCategories(params: GetMainCategoriesRequest) {
+    return this.api.getMainCategories(params)
   }
 
-  public async categories(params: JournalControllerCategoriesRequest) {
-    return this.api.journalControllerCategories(params)
+  public async getCategories(params: GetCategoriesRequest) {
+    return this.api.getCategories(params)
   }
 
-  public async institutions(params: JournalControllerInstitutionsRequest) {
-    return this.api.journalControllerInstitutions(params)
+  public async getInstitutions(params: GetInstitutionsRequest) {
+    return this.api.getInstitutions(params)
   }
 }

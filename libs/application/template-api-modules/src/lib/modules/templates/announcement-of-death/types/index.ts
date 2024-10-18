@@ -22,7 +22,7 @@ export interface RealEstateAddress {
 export type PickRole = {
   roleConfirmation: RoleConfirmationEnum
   electPerson: {
-    electedPersonNationalId: string
-    electedPersonName: string
+    nationalId: string
+    name: string
   }
 }

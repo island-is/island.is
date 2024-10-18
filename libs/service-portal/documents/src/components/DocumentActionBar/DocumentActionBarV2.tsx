@@ -78,7 +78,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
             >
               <Button
                 circle
-                icon="archive"
+                icon="fileTrayEmpty"
                 iconType={isArchived ? 'filled' : 'outline'}
                 onClick={async () => {
                   await submitMailAction(
@@ -118,30 +118,40 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
             <LoadingDots />
           </Box>
         )}
-        {activeDocument && activeDocument.document.value && (
-          <Tooltip as="span" text={formatMessage(m.download)}>
-            <a
-              download={`${activeDocument.subject}${
-                activeDocument.document.type === 'HTML' ? '.html' : '.pdf'
-              }`}
-              href={getDocumentLink(
-                activeDocument,
-                activeDocument.document.type === 'HTML' ? 'html' : 'pdf',
-              )}
-              aria-label={formatMessage(m.getDocument)}
-            >
+        {activeDocument && activeDocument.document.value ? (
+          activeDocument.document.type === 'HTML' ? (
+            <Tooltip as="span" text={formatMessage(m.download)}>
+              <a
+                download={`${activeDocument.subject}.html`}
+                href={getDocumentLink(activeDocument, 'html')}
+                aria-label={formatMessage(m.getDocument)}
+              >
+                <Button
+                  as="span"
+                  unfocusable
+                  circle
+                  icon="download"
+                  iconType="outline"
+                  size="medium"
+                  colorScheme="light"
+                />
+              </a>
+            </Tooltip>
+          ) : (
+            <Tooltip text={formatMessage(m.download)}>
               <Button
-                as="span"
-                unfocusable
                 circle
                 icon="download"
-                iconType="outline"
+                iconType={'outline'}
+                onClick={() =>
+                  downloadFile(activeDocument, userInfo, 'download')
+                }
                 size="medium"
                 colorScheme="light"
               />
-            </a>
-          </Tooltip>
-        )}
+            </Tooltip>
+          )
+        ) : undefined}
         {activeDocument && (
           <Tooltip text={formatMessage(m.print)}>
             <Button

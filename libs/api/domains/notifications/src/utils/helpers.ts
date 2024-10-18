@@ -1,6 +1,13 @@
 import { RenderedNotificationDto } from '@island.is/clients/user-notification'
 import { Notification } from '../lib/notifications.model'
 
+const cleanString = (str?: string) => {
+  if (!str) {
+    return ''
+  }
+  return str.replace(/\s+/g, ' ').trim()
+}
+
 export const notificationMapper = (
   notification: RenderedNotificationDto,
 ): Notification => ({
@@ -20,10 +27,14 @@ export const notificationMapper = (
     nationalId: undefined,
   },
   message: {
-    title: notification.title,
-    body: notification.body,
-    dataCopy: notification.dataCopy,
-    displayBody: notification.dataCopy ?? notification.body,
+    title: cleanString(notification.title),
+    body: cleanString(notification.externalBody),
+    dataCopy: notification.internalBody
+      ? cleanString(notification.internalBody)
+      : undefined,
+    displayBody: cleanString(
+      notification.internalBody ?? notification.externalBody,
+    ),
     link: {
       url: notification.clickActionUrl,
     },

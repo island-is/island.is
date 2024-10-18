@@ -23,6 +23,7 @@ import { getCurrentUser } from '@island.is/auth-nest-tools'
 import {
   Application,
   ApplicationPaginatedResponse,
+  ApplicationsStatistics,
 } from '@island.is/application/api/core'
 import { getCurrentLocale } from '../utils/currentLocale'
 import {
@@ -35,6 +36,7 @@ import { PaymentService } from '@island.is/application/api/payment'
 import {
   getApplicantName,
   getApplicationNameTranslationString,
+  getApplicationStatisticsNameTranslationString,
   getPaymentStatusForAdmin,
 } from '../utils/application'
 import { ApplicationListAdminResponseDto } from '../dto/applicationAdmin.response.dto'
@@ -205,5 +207,68 @@ export class ApplicationAdminSerializer
         ),
       ),
     )
+  }
+}
+
+@Injectable()
+export class ApplicationAdminStatisticsSerializer
+  implements NestInterceptor<ApplicationsStatistics, Promise<unknown>>
+{
+  constructor(private intlService: IntlService) {}
+
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler<ApplicationsStatistics>,
+  ): Observable<Promise<unknown>> {
+    const locale = getCurrentLocale(context)
+
+    return next.handle().pipe(
+      map(
+        async (res: ApplicationsStatistics | Array<ApplicationsStatistics>) => {
+          const isArray = Array.isArray(res)
+
+          if (isArray) {
+            const applications = res as Array<ApplicationsStatistics>
+            return this.serializeArray(applications, locale)
+          }
+        },
+      ),
+    )
+  }
+
+  async serialize(model: ApplicationsStatistics, locale: Locale) {
+    const template = await getApplicationTemplateByTypeId(
+      model.typeid as ApplicationTypes,
+    )
+    const namespaces = [
+      'application.system',
+      ...(template?.translationNamespaces ?? []),
+    ]
+    const intl = await this.intlService.useIntl(namespaces, locale)
+    const name = getApplicationStatisticsNameTranslationString(
+      template,
+      model,
+      intl.formatMessage,
+    )
+
+    const dto = plainToInstance(ApplicationListAdminResponseDto, {
+      ...model,
+      name: name ?? '',
+    })
+
+    return instanceToPlain(dto)
+  }
+
+  async serializeArray(applications: ApplicationsStatistics[], locale: Locale) {
+    return (
+      await Promise.allSettled(
+        applications.map((item) => this.serialize(item, locale)),
+      )
+    )
+      .filter(
+        (item): item is PromiseFulfilledResult<Record<string, any>> =>
+          item.status === 'fulfilled',
+      )
+      .map((item) => item.value)
   }
 }

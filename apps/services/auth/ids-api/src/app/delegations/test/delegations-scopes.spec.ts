@@ -4,8 +4,8 @@ import faker from 'faker'
 import { Sequelize } from 'sequelize-typescript'
 import request from 'supertest'
 
-import { DelegationType } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
+import { AuthDelegationType } from '@island.is/shared/types'
 import {
   createCurrentUser,
   createNationalId,
@@ -22,12 +22,14 @@ const legalGuardianScopes = ['lg1', 'lg2']
 const procurationHolderScopes = ['ph1', 'ph2']
 const customScopes1 = ['cu1', 'cu2']
 const customScopes2 = ['cu3', 'cu4']
+const legalRepresentativeScopes = ['lr1', 'lr2']
 
 const apiScopes = [
   ...legalGuardianScopes,
   ...procurationHolderScopes,
   ...customScopes1,
   ...customScopes2,
+  ...legalRepresentativeScopes,
 ]
 
 const fromCustom = [
@@ -36,31 +38,52 @@ const fromCustom = [
   { nationalId: createNationalId('person'), scopes: [] },
 ]
 
+const supportedDelegationTypes = (scopeName: string): AuthDelegationType[] => {
+  const result = []
+
+  if (legalGuardianScopes.includes(scopeName)) {
+    result.push(AuthDelegationType.LegalGuardian)
+  }
+  if (procurationHolderScopes.includes(scopeName)) {
+    result.push(AuthDelegationType.ProcurationHolder)
+  }
+  if (customScopes1.includes(scopeName) || customScopes2.includes(scopeName)) {
+    result.push(AuthDelegationType.Custom)
+  }
+  if (legalRepresentativeScopes.includes(scopeName)) {
+    result.push(AuthDelegationType.LegalRepresentative)
+  }
+  return result
+}
+
 interface TestCase {
   fromNationalId: string
-  delegationType: DelegationType[]
+  delegationType: AuthDelegationType[]
   expected: string[]
 }
 
 const testCases: Record<string, TestCase> = {
   '1': {
     fromNationalId: createNationalId('person'),
-    delegationType: [DelegationType.LegalGuardian],
+    delegationType: [AuthDelegationType.LegalGuardian],
     expected: [...legalGuardianScopes, ...identityResources],
   },
   '2': {
     fromNationalId: createNationalId('company'),
-    delegationType: [DelegationType.ProcurationHolder],
+    delegationType: [AuthDelegationType.ProcurationHolder],
     expected: [...procurationHolderScopes, ...identityResources],
   },
   '3': {
     fromNationalId: fromCustom[0].nationalId,
-    delegationType: [DelegationType.Custom],
+    delegationType: [AuthDelegationType.Custom],
     expected: [...fromCustom[0].scopes, ...identityResources],
   },
   '4': {
     fromNationalId: fromCustom[0].nationalId,
-    delegationType: [DelegationType.LegalGuardian, DelegationType.Custom],
+    delegationType: [
+      AuthDelegationType.LegalGuardian,
+      AuthDelegationType.Custom,
+    ],
     expected: [
       ...legalGuardianScopes,
       ...fromCustom[0].scopes,
@@ -69,13 +92,21 @@ const testCases: Record<string, TestCase> = {
   },
   '5': {
     fromNationalId: fromCustom[2].nationalId,
-    delegationType: [DelegationType.Custom],
+    delegationType: [AuthDelegationType.Custom],
     expected: [],
   },
   '6': {
     fromNationalId: fromCustom[2].nationalId,
-    delegationType: [DelegationType.LegalGuardian, DelegationType.Custom],
+    delegationType: [
+      AuthDelegationType.LegalGuardian,
+      AuthDelegationType.Custom,
+    ],
     expected: [...legalGuardianScopes, ...identityResources],
+  },
+  '7': {
+    fromNationalId: createNationalId('person'),
+    delegationType: [AuthDelegationType.LegalRepresentative],
+    expected: [...legalRepresentativeScopes, ...identityResources],
   },
 }
 
@@ -143,6 +174,7 @@ describe('DelegationsController', () => {
               automaticDelegationGrant: false,
               grantToPersonalRepresentatives: false,
               isAccessControlled: false,
+              supportedDelegationTypes: supportedDelegationTypes(s),
             }),
           ),
         )

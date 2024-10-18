@@ -36,7 +36,7 @@ import { Application } from '@island.is/application/types'
 import { Problem } from '@island.is/react-spa/shared'
 
 const defaultInstitution: InstitutionOption = {
-  label: 'Allar stofnanir',
+  label: '',
   value: '',
 }
 
@@ -48,13 +48,21 @@ const defaultFilterValues: FilterValues = {
 const Overview = () => {
   useNamespaces('sp.applications')
   useNamespaces('application.system')
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const { data: applications, loading, error, refetch } = useApplications()
   const location = useLocation()
   const statusToShow = mapLinkToStatus(location.pathname)
   let focusedApplication: Application | undefined
 
-  const { data: orgData, loading: loadingOrg } = useGetOrganizationsQuery()
+  const { data: orgData, loading: loadingOrg } = useGetOrganizationsQuery({
+    variables: {
+      input: {
+        lang: locale,
+      },
+    },
+  })
+
+  defaultInstitution.label = formatMessage(m.defaultInstitutionLabel)
 
   const [filterValue, setFilterValue] =
     useState<FilterValues>(defaultFilterValues)

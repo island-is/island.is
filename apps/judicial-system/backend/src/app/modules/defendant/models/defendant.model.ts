@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -20,6 +21,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
+import { Subpoena } from '../../subpoena/models/subpoena.model'
 
 @Table({
   tableName: 'defendant',
@@ -120,16 +122,9 @@ export class Defendant extends Model {
   @ApiProperty({ enum: ServiceRequirement })
   serviceRequirement?: ServiceRequirement
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  verdictViewDate?: string
-
-  @Column({ type: DataType.BOOLEAN, allowNull: true })
-  @ApiPropertyOptional({ type: Boolean })
-  acceptCompensationClaim?: boolean
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  verdictViewDate?: Date
 
   @Column({
     type: DataType.ENUM,
@@ -138,4 +133,24 @@ export class Defendant extends Model {
   })
   @ApiPropertyOptional({ enum: SubpoenaType })
   subpoenaType?: SubpoenaType
+
+  @HasMany(() => Subpoena, { foreignKey: 'defendantId' })
+  @ApiPropertyOptional({ type: () => Subpoena, isArray: true })
+  subpoenas?: Subpoena[]
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(DefenderChoice),
+  })
+  @ApiPropertyOptional({ enum: DefenderChoice })
+  requestedDefenderChoice?: DefenderChoice
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  requestedDefenderNationalId?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  requestedDefenderName?: string
 }

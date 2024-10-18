@@ -36,8 +36,6 @@ type FieldProps = {
   }
 }
 
-const MARGIN_BOTTOM = 2
-
 export const FuneralCost: FC<
   PropsWithChildren<FieldBaseProps<Answers> & FieldProps>
 > = ({ field, errors }) => {
@@ -139,7 +137,7 @@ export const FuneralCost: FC<
 
         return (
           <GridColumn key={index} span={['1/1', '1/2']}>
-            <Box marginBottom={MARGIN_BOTTOM}>
+            <Box marginBottom={2}>
               <InputController
                 id={fieldName}
                 name={fieldName}
@@ -181,7 +179,7 @@ export const FuneralCost: FC<
       {hasOther && (
         <Fragment>
           <GridColumn span="1/1">
-            <Box marginBottom={MARGIN_BOTTOM}>
+            <Box marginBottom={2}>
               <InputController
                 id={otherField}
                 name={otherField}
@@ -202,7 +200,7 @@ export const FuneralCost: FC<
             </Box>
           </GridColumn>
           <GridColumn span="1/1">
-            <Box marginBottom={MARGIN_BOTTOM}>
+            <Box marginBottom={2}>
               <InputController
                 id={otherDetailsField}
                 name={otherDetailsField}

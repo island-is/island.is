@@ -1,0 +1,8 @@
+mutation SignatureCollectionUploadPaperSignature(
+  $input: SignatureCollectionUploadPaperSignatureInput!
+) {
+  signatureCollectionUploadPaperSignature(input: $input) {
+    success
+    reasons
+  }
+}

@@ -40,6 +40,8 @@
     "lru-cache",
     "safer-buffer",
     "swagger-ui-dist",
+    "pdfkit",
+    "get-stream",
     "@mikro-orm/core"
   ],
   "keepNames": true

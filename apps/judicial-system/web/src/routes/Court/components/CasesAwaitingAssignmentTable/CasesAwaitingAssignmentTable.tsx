@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -29,9 +29,9 @@ interface CasesAwaitingAssignmentTableProps {
   cases: CaseListEntry[]
 }
 
-const CasesAwaitingAssignmentTable: React.FC<
-  CasesAwaitingAssignmentTableProps
-> = (props) => {
+const CasesAwaitingAssignmentTable: FC<CasesAwaitingAssignmentTableProps> = (
+  props,
+) => {
   const { formatMessage } = useIntl()
   const { openCaseInNewTabMenuItem } = useContextMenu()
 
@@ -51,7 +51,7 @@ const CasesAwaitingAssignmentTable: React.FC<
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendant' },
+                  sortable: { isSortable: true, key: 'defendants' },
                 },
                 {
                   title: formatMessage(tables.type),
@@ -60,7 +60,7 @@ const CasesAwaitingAssignmentTable: React.FC<
                   title: capitalize(
                     formatMessage(tables.created, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'createdAt' },
+                  sortable: { isSortable: true, key: 'created' },
                 },
                 { title: formatMessage(tables.state) },
               ]}
@@ -89,7 +89,11 @@ const CasesAwaitingAssignmentTable: React.FC<
                 },
                 {
                   cell: (row) => (
-                    <TagCaseState caseState={row.state} isCourtRole={true} />
+                    <TagCaseState
+                      caseState={row.state}
+                      isCourtRole={true}
+                      indictmentDecision={row.indictmentDecision}
+                    />
                   ),
                 },
               ]}

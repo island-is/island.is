@@ -10,7 +10,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
 import { ZodTypeAny } from 'zod'
 import { Answers } from '../../types'
-import { ESTATE_INHERITANCE } from '../constants'
+import { ESTATE_INHERITANCE, PrePaidInheritanceOptions } from '../constants'
 import { InheritanceReport } from '../dataSchema'
 
 export const currencyStringToNumber = (str: string) => {
@@ -21,8 +21,9 @@ export const currencyStringToNumber = (str: string) => {
   return parseInt(cleanString, 10)
 }
 
-export const isValidString = (string: string | undefined) =>
-  string && /\S/.test(string)
+export const isValidString = (string: string | undefined) => {
+  return string && /\S/.test(string)
+}
 
 export const getEstateDataFromApplication = (
   application: Application<FormValue>,
@@ -53,33 +54,28 @@ export const getSpouseFromExternalData = (
 }
 
 export const getPrePaidOverviewSectionsToDisplay = (
+  isPrePaid: boolean,
   answers: FormValue,
-): {
-  isMoney: boolean
-  isOther: boolean
-  isStocks: boolean
-  isRealEstate: boolean
-} => {
-  if (answers.applicationFor === ESTATE_INHERITANCE) {
-    return {
-      isMoney: true,
-      isOther: true,
-      isStocks: true,
-      isRealEstate: true,
-    }
-  }
+) => {
+  const selectedOptions = getValueViaPath<string[]>(
+    answers,
+    'prepaidInheritance',
+    [],
+  )
 
-  const { money, stocks, other, realEstate } = answers.prepaidInheritance as {
-    money: []
-    stocks: []
-    other: []
-    realEstate: []
-  }
   return {
-    isMoney: money.length > 0,
-    isOther: other.length > 0,
-    isStocks: stocks.length > 0,
-    isRealEstate: realEstate.length > 0,
+    includeRealEstate: isPrePaid
+      ? selectedOptions?.includes(PrePaidInheritanceOptions.REAL_ESTATE)
+      : true,
+    includeStocks: isPrePaid
+      ? selectedOptions?.includes(PrePaidInheritanceOptions.STOCKS)
+      : true,
+    includeMoney: isPrePaid
+      ? selectedOptions?.includes(PrePaidInheritanceOptions.MONEY)
+      : true,
+    includeOtherAssets: isPrePaid
+      ? selectedOptions?.includes(PrePaidInheritanceOptions.OTHER_ASSETS)
+      : true,
   }
 }
 

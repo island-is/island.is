@@ -1,13 +1,17 @@
-import React, { ReactNode } from 'react'
-import { IntlProvider } from 'react-intl'
+import { FC, PropsWithChildren, ReactNode } from 'react'
+import { createIntl, IntlProvider } from 'react-intl'
+import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 
 import { FormContext, UserContext } from '../components'
-import { UserRole } from '../graphql/schema'
-import { TempCase } from '../types'
+import { Case, UserRole } from '../graphql/schema'
 import { mockUser } from './mocks'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const IntlProviderWrapper = ({ children }: any) => {
+export const formatMessage = createIntl({
+  locale: 'is',
+  onError: jest.fn,
+}).formatMessage
+
+export const IntlProviderWrapper: FC<PropsWithChildren> = ({ children }) => {
   return (
     <IntlProvider
       locale="is"
@@ -24,13 +28,17 @@ export const IntlProviderWrapper = ({ children }: any) => {
   )
 }
 
-export const FormContextWrapper = ({
-  theCase,
-  children,
-}: {
-  theCase: TempCase
-  children?: ReactNode
-}) => {
+export const ApolloProviderWrapper: FC<PropsWithChildren> = ({ children }) => {
+  return (
+    <ApolloProvider client={new ApolloClient({ cache: new InMemoryCache() })}>
+      {children}
+    </ApolloProvider>
+  )
+}
+
+export const FormContextWrapper: FC<
+  PropsWithChildren<{ theCase: Case; children: ReactNode }>
+> = ({ theCase, children }) => {
   return (
     <FormContext.Provider
       value={{
@@ -48,13 +56,9 @@ export const FormContextWrapper = ({
   )
 }
 
-export const UserContextWrapper = ({
-  children,
-  userRole,
-}: {
-  children: ReactNode
-  userRole: UserRole
-}) => {
+export const UserContextWrapper: FC<
+  PropsWithChildren<{ userRole: UserRole; children: ReactNode }>
+> = ({ userRole, children }) => {
   return (
     <UserContext.Provider
       value={{

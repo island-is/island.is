@@ -1,3 +1,4 @@
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { RulingModifiedModal as BaseModal } from '@island.is/judicial-system-web/src/components'
@@ -10,7 +11,7 @@ interface Props {
   continueDisabled?: boolean
 }
 
-const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
+const RulingModifiedModal: FC<Props> = ({
   onCancel,
   onContinue,
   continueDisabled,

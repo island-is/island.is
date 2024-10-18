@@ -6,19 +6,23 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 
-export const SECRET_TOKEN = 'SECRET_TOKEN'
+import { type ConfigType } from '@island.is/nest/config'
+
+import { sharedAuthModuleConfig } from '../auth.config'
 
 @Injectable()
 export class TokenGuard implements CanActivate {
   constructor(
-    @Inject(SECRET_TOKEN)
-    private secretToken: string,
+    @Inject(sharedAuthModuleConfig.KEY)
+    private readonly config: ConfigType<typeof sharedAuthModuleConfig>,
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
-    if (`Bearer ${this.secretToken}` !== request.headers['authorization']) {
+    if (
+      `Bearer ${this.config.secretToken}` !== request.headers['authorization']
+    ) {
       throw new UnauthorizedException('Unauthorized')
     }
 

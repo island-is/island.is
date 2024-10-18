@@ -171,7 +171,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               logMessage: coreHistoryMessages.applicationSent,
             },
           },
-          lifecycle: pruneAfterDays(90),
+          lifecycle: pruneAfterDays(970), //pruneAfterDays(90),
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
             throwOnError: true,
@@ -233,7 +233,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           onEntry: defineTemplateApi({
             action: ApiModuleActions.assignOtherParent,
             throwOnError: true,
@@ -312,7 +312,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               logMessage: statesMessages.editHistoryLogMessage,
             },
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           onEntry: defineTemplateApi({
             action: ApiModuleActions.notifyApplicantOfRejectionFromOtherParent,
             throwOnError: true,
@@ -349,7 +349,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           onEntry: defineTemplateApi({
             action: ApiModuleActions.assignEmployer,
             throwOnError: true,
@@ -394,7 +394,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -474,7 +474,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               logMessage: statesMessages.editHistoryLogMessage,
             },
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           onEntry: defineTemplateApi({
             action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,
@@ -531,7 +531,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           onEntry: [
             defineTemplateApi({
               triggerEvent: DefaultEvents.SUBMIT,
@@ -614,7 +614,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               logMessage: statesMessages.editHistoryLogMessage,
             },
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -663,7 +663,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 statesMessages.additionalDocumentRequiredApproveHistoryLogMessage,
             },
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -705,7 +705,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               displayStatus: 'warning',
             },
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           onEntry: defineTemplateApi({
             action: ApiModuleActions.setBirthDate,
             externalDataId: 'dateOfBirth',
@@ -765,7 +765,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
             triggerEvent: DefaultEvents.APPROVE,
@@ -826,7 +826,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           onExit: [
             defineTemplateApi({
               action: ApiModuleActions.setBirthDate,
@@ -938,7 +938,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           onExit: defineTemplateApi({
             triggerEvent: DefaultEvents.SUBMIT,
             action: ApiModuleActions.validateApplication,
@@ -1004,7 +1004,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             pendingAction: employerApprovalStatePendingAction,
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           onEntry: defineTemplateApi({
             action: ApiModuleActions.assignEmployer,
             throwOnError: true,
@@ -1055,7 +1055,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           roles: [
             {
               id: Roles.ASSIGNEE,
@@ -1140,7 +1140,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           onEntry: defineTemplateApi({
             action: ApiModuleActions.notifyApplicantOfRejectionFromEmployer,
             throwOnError: true,
@@ -1231,7 +1231,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           onEntry: [
             defineTemplateApi({
               triggerEvent: DefaultEvents.APPROVE,
@@ -1321,7 +1321,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               },
             ],
           },
-          lifecycle: birthDayLifeCycle,
+          lifecycle: pruneAfterDays(970),
           onExit: defineTemplateApi({
             action: ApiModuleActions.setVMSTPeriods,
             triggerEvent: DefaultEvents.EDIT,

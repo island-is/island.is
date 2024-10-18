@@ -11,7 +11,7 @@
           {
             "enforceBuildableLibDependency": true,
             "allowCircularSelfDependency": true,
-            "allow": [],
+            "allow": ["../../../infra/src/dsl"],
             "depConstraints": [
               {
                 "sourceTag": "*",
@@ -22,7 +22,13 @@
         ]
       }
     },
-    { "files": ["*.ts", "*.tsx"], "rules": {} },
-    { "files": ["*.js", "*.jsx"], "rules": {} }
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
+    }
   ]
 }

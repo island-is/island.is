@@ -22,8 +22,6 @@ export default function StatisticsTable({ data }: Props) {
             <T.Head>
               <T.Row>
                 <T.HeadData>{formatMessage(m.tableHeaderType)}</T.HeadData>
-                <T.HeadData>{formatMessage(m.tableHeaderTotal)}</T.HeadData>
-                <T.HeadData>{formatMessage(m.tableHeaderDraft)}</T.HeadData>
                 <T.HeadData>
                   {formatMessage(m.tableHeaderInProgress)}
                 </T.HeadData>
@@ -33,19 +31,15 @@ export default function StatisticsTable({ data }: Props) {
               </T.Row>
             </T.Head>
             <T.Body>
-              {data.applicationApplicationsAdminStatistics?.map((row, i) => {
-                return (
-                  <T.Row key={`${row.typeid}-${i}`}>
-                    <T.Data>{row.typeid}</T.Data>
-                    <T.Data>{row.count}</T.Data>
-                    <T.Data>{row.draft}</T.Data>
-                    <T.Data>{row.inprogress}</T.Data>
-                    <T.Data>{row.completed}</T.Data>
-                    <T.Data>{row.rejected}</T.Data>
-                    <T.Data>{row.approved}</T.Data>
-                  </T.Row>
-                )
-              })}
+              {data.applicationApplicationsAdminStatistics?.map((row, i) => (
+                <T.Row key={`${row.typeid}-${i}`}>
+                  <T.Data>{row.name || row.typeid}</T.Data>
+                  <T.Data>{row.inprogress}</T.Data>
+                  <T.Data>{row.completed}</T.Data>
+                  <T.Data>{row.rejected}</T.Data>
+                  <T.Data>{row.approved}</T.Data>
+                </T.Row>
+              ))}
             </T.Body>
           </T.Table>
         </Box>

@@ -12,11 +12,11 @@ export const cleanPhoneNumber = (phoneNumber: string) => {
 export const mapPlateSize = (value: string): PlateSize | undefined => {
   switch (value) {
     case 'A':
-      return PlateSize.A
+      return PlateSize.NUMBER_1
     case 'B':
-      return PlateSize.B
+      return PlateSize.NUMBER_2
     case 'D':
-      return PlateSize.D
+      return PlateSize.NUMBER_3
     default:
       return undefined
   }

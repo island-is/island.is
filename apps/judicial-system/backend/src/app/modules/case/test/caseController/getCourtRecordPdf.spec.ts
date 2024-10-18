@@ -38,7 +38,7 @@ describe('CaseController - Get court record pdf', () => {
     mockLogger = logger
 
     const mockGetGeneratedObject =
-      mockAwsS3Service.getGeneratedObject as jest.Mock
+      mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
     mockGetGeneratedObject.mockRejectedValue(new Error('Some error'))
     const getMock = getCourtRecordPdfAsBuffer as jest.Mock
     getMock.mockRejectedValue(new Error('Some error'))
@@ -77,17 +77,16 @@ describe('CaseController - Get court record pdf', () => {
 
     beforeEach(async () => {
       const mockGetGeneratedObject =
-        mockAwsS3Service.getGeneratedObject as jest.Mock
+        mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
       mockGetGeneratedObject.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, user, theCase, res)
     })
 
     it('should lookup pdf', () => {
-      expect(mockAwsS3Service.getGeneratedObject).toHaveBeenCalledWith(
-        caseType,
-        `${caseId}/courtRecord.pdf`,
-      )
+      expect(
+        mockAwsS3Service.getGeneratedRequestCaseObject,
+      ).toHaveBeenCalledWith(caseType, `${caseId}/courtRecord.pdf`)
       expect(res.end).toHaveBeenCalledWith(pdf)
     })
   })

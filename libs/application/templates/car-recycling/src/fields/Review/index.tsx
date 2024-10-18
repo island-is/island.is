@@ -56,8 +56,9 @@ export const Review: FC<ReviewScreenProps> = ({
   )
 
   const handleSubmit = async (event: string) => {
-    const { selectedVehicles, allVehicles, canceledVehicles } =
-      getApplicationAnswers(application.answers)
+    const { selectedVehicles, canceledVehicles } = getApplicationAnswers(
+      application.answers,
+    )
 
     // Mark the selected vehicles as selected for recycling
     const selectedVehiclesList = selectedVehicles.map((vehicle: VehicleDto) => {
@@ -71,7 +72,6 @@ export const Review: FC<ReviewScreenProps> = ({
           event,
           answers: {
             vehicles: {
-              allVehicles,
               selectedVehicles: selectedVehiclesList,
               canceledVehicles,
             },

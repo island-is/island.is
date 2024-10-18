@@ -39,7 +39,7 @@ describe('CaseController - Get court record signature confirmation', () => {
     mockCaseModel = caseModel
 
     const mockPutGeneratedObject =
-      mockAwsS3Service.putGeneratedObject as jest.Mock
+      mockAwsS3Service.putGeneratedRequestCaseObject as jest.Mock
     mockPutGeneratedObject.mockRejectedValue(new Error('Some error'))
     const mockUpdate = mockCaseModel.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
@@ -101,7 +101,7 @@ describe('CaseController - Get court record signature confirmation', () => {
 
       beforeEach(async () => {
         const mockPutGeneratedObject =
-          mockAwsS3Service.putGeneratedObject as jest.Mock
+          mockAwsS3Service.putGeneratedRequestCaseObject as jest.Mock
         mockPutGeneratedObject.mockResolvedValueOnce(Promise.resolve())
         const mockUpdate = mockCaseModel.update as jest.Mock
         mockUpdate.mockResolvedValueOnce([1, [theCase]])
@@ -145,7 +145,7 @@ describe('CaseController - Get court record signature confirmation', () => {
 
       beforeEach(async () => {
         const mockPutGeneratedObject =
-          mockAwsS3Service.putGeneratedObject as jest.Mock
+          mockAwsS3Service.putGeneratedRequestCaseObject as jest.Mock
         mockPutGeneratedObject.mockResolvedValueOnce(Promise.resolve())
 
         then = await givenWhenThen(caseId, user, theCase, documentToken)

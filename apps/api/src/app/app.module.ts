@@ -23,11 +23,13 @@ import { DocumentModule } from '@island.is/api/domains/documents'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
 import { EducationModule } from '@island.is/api/domains/education'
+import { EducationV2Module } from '@island.is/api/domains/education'
 import { SocialInsuranceModule } from '@island.is/api/domains/social-insurance'
 import { ElectronicRegistrationsModule } from '@island.is/api/domains/electronic-registration-statistics'
 import {
   EmailSignupModule,
   ZenterSignupConfig,
+  CampaignMonitorSignupConfig,
 } from '@island.is/api/domains/email-signup'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { EnergyFundsServiceModule } from '@island.is/api/domains/energy-funds'
@@ -100,16 +102,15 @@ import { UniversityCareersModule } from '@island.is/api/domains/university-caree
 import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 import {
   HealthDirectorateClientConfig,
+  HealthDirectorateVaccinationsClientConfig,
+  HealthDirectorateOrganDonationClientConfig,
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
 import {
   OfficialJournalOfIcelandClientConfig,
   OfficialJournalOfIcelandClientModule,
 } from '@island.is/clients/official-journal-of-iceland'
-import {
-  OfficialJournalOfIcelandApplicationClientConfig,
-  OfficialJournalOfIcelandApplicationClientModule,
-} from '@island.is/clients/official-journal-of-iceland/application'
+import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
 import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
@@ -140,7 +141,7 @@ import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { HuntingLicenseClientConfig } from '@island.is/clients/hunting-license'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
-import { CmsModule, PowerBiConfig } from '@island.is/cms'
+import { CmsModule, Form, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
@@ -168,6 +169,10 @@ import { DistrictCommissionersLicensesClientConfig } from '@island.is/clients/di
 import { StatisticsClientConfig } from '@island.is/clients/statistics'
 import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/social-insurance-administration'
 import { UniversityGatewayApiClientConfig } from '@island.is/clients/university-gateway-api'
+import { FormSystemClientConfig } from '@island.is/clients/form-system'
+import { FormSystemModule } from '@island.is/api/domains/form-system'
+import { HealthDirectorateModule } from '@island.is/api/domains/health-directorate'
+
 import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage'
 import { getConfig } from './environments'
 import { GraphqlOptionsFactory } from './graphql-options.factory'
@@ -184,7 +189,17 @@ import {
 } from '@island.is/clients/university-careers'
 import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
+import { LawAndOrderModule } from '@island.is/api/domains/law-and-order'
 import { UltravioletRadiationClientConfig } from '@island.is/clients/ultraviolet-radiation'
+import { JudicialSystemSPClientConfig } from '@island.is/clients/judicial-system-sp'
+import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
+import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
+import { VmstClientConfig } from '@island.is/clients/vmst'
+import { FriggClientConfig } from '@island.is/clients/mms/frigg'
+import { GradeClientConfig } from '@island.is/clients/mms/grade'
+import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-skuldara'
+import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
+import { emailModuleConfig } from '@island.is/email-service'
 
 const environment = getConfig
 
@@ -205,6 +220,7 @@ const environment = getConfig
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
     ConsultationPortalModule,
+    FormSystemModule,
     CmsModule,
     DrivingLicenseModule,
     DrivingLicenseBookModule,
@@ -219,11 +235,12 @@ const environment = getConfig
       },
       fileDownloadBucket: environment.education.fileDownloadBucket!,
     }),
+    EducationV2Module,
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
     LicenseServiceModule,
-    DirectorateOfLabourModule.register(),
+    DirectorateOfLabourModule,
     FileUploadModule,
     DocumentModule,
     DocumentProviderModule.register({
@@ -246,15 +263,7 @@ const environment = getConfig
     }),
     CmsTranslationsModule,
     TerminusModule,
-    HealthInsuranceModule.register({
-      clientV2Config: {
-        xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl!,
-        xRoadProviderId: environment.healthInsuranceV2.xRoadProviderId!,
-        xRoadClientId: environment.healthInsuranceV2.xRoadClientId!,
-        username: environment.healthInsuranceV2.username!,
-        password: environment.healthInsuranceV2.password!,
-      },
-    }),
+    HealthInsuranceModule,
     UserProfileModule.register({
       islykill: {
         cert: environment.islykill.cert!,
@@ -309,13 +318,7 @@ const environment = getConfig
     ApiDomainsPaymentModule,
     PaymentScheduleModule,
     ProblemModule,
-    CriminalRecordModule.register({
-      clientConfig: {
-        xroadBaseUrl: environment.xroad.baseUrl!,
-        xroadClientId: environment.xroad.clientId!,
-        xroadPath: environment.criminalRecord.xroadPath!,
-      },
-    }),
+    CriminalRecordModule,
     MunicipalitiesFinancialAidModule,
     FishingLicenseModule,
     MortgageCertificateModule,
@@ -328,9 +331,13 @@ const environment = getConfig
     AuthAdminModule,
     HousingBenefitCalculatorModule,
     SignatureCollectionModule,
+    LawAndOrderModule,
+    UmbodsmadurSkuldaraModule,
+    HealthDirectorateModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
+        FormSystemClientConfig,
         WorkMachinesClientConfig,
         AirDiscountSchemeClientConfig,
         ConsultationPortalClientConfig,
@@ -384,10 +391,13 @@ const environment = getConfig
         DocumentClientConfig,
         DocumentsClientV2Config,
         ZenterSignupConfig,
+        CampaignMonitorSignupConfig,
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,
         CommunicationsConfig,
         HealthDirectorateClientConfig,
+        HealthDirectorateVaccinationsClientConfig,
+        HealthDirectorateOrganDonationClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
         InnaClientConfig,
@@ -414,6 +424,14 @@ const environment = getConfig
         LicenseConfig,
         UserProfileClientConfig,
         UltravioletRadiationClientConfig,
+        JudicialSystemSPClientConfig,
+        FriggClientConfig,
+        GradeClientConfig,
+        VmstClientConfig,
+        CriminalRecordClientConfig,
+        HealthInsuranceV2ClientConfig,
+        UmbodsmadurSkuldaraClientConfig,
+        emailModuleConfig,
       ],
     }),
   ],

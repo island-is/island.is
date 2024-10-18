@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -23,14 +24,19 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseEvent, EventService } from '../event'
+import { EventService } from '../event'
 import { DeliverDto } from './dto/deliver.dto'
+import { DeliverCancellationNoticeDto } from './dto/deliverCancellationNotice.dto'
 import { InternalCasesDto } from './dto/internalCases.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
+import {
+  CaseInterceptor,
+  CasesInterceptor,
+} from './interceptors/case.interceptor'
 import { ArchiveResponse } from './models/archive.response'
 import { Case } from './models/case.model'
 import { DeliverResponse } from './models/deliver.response'
@@ -46,6 +52,7 @@ export class InternalCaseController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  @UseInterceptors(CaseInterceptor)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   async create(@Body() caseToCreate: InternalCreateCaseDto): Promise<Case> {
@@ -53,7 +60,7 @@ export class InternalCaseController {
 
     const createdCase = await this.internalCaseService.create(caseToCreate)
 
-    this.eventService.postEvent(CaseEvent.CREATE_XRD, createdCase as Case)
+    this.eventService.postEvent('CREATE_XRD', createdCase as Case)
 
     return createdCase
   }
@@ -75,6 +82,7 @@ export class InternalCaseController {
     isArray: true,
     description: 'Gets all indictment cases',
   })
+  @UseInterceptors(CasesInterceptor)
   getIndictmentCases(
     @Body() internalCasesDto: InternalCasesDto,
   ): Promise<Case[]> {
@@ -85,15 +93,16 @@ export class InternalCaseController {
     )
   }
 
-  @Post('cases/indictment/:caseId')
+  @Post('case/indictment/:caseId')
   @ApiOkResponse({
     type: Case,
     description: 'Gets indictment case by id',
   })
+  @UseInterceptors(CaseInterceptor)
   getIndictmentCase(
     @Param('caseId') caseId: string,
     @Body() internalCasesDto: InternalCasesDto,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
     this.logger.debug(`Getting indictment case ${caseId}`)
 
     return this.internalCaseService.getIndictmentCase(
@@ -197,6 +206,61 @@ export class InternalCaseController {
   @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
   @Post(
     `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES]
+    }/:nationalId`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers assigned roles in indictment case to court',
+  })
+  deliverIndictmentAssignedRoleToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+    @Param('nationalId') nationalId: string,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the assigned roles of indictment case ${caseId} to court`,
+    )
+
+    return this.internalCaseService.deliverIndictmentAssignedRolesToCourt(
+      theCase,
+      deliverDto.user,
+      nationalId,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[
+        MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE
+      ]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers an indictment cancellation notice to court',
+  })
+  deliverIndictmentCancellationNoticeToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverCancellationNoticeDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the cancellation notice for indictment case ${caseId} to court`,
+    )
+
+    return this.internalCaseService.deliverIndictmentCancellationNoticeToCourt(
+      theCase,
+      deliverDto.withCourtCaseNumber,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post(
+    `case/:caseId/${
       messageEndpoint[MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD]
     }/:policeCaseNumber`,
   )
@@ -224,37 +288,6 @@ export class InternalCaseController {
       theCase,
       policeCaseNumber,
       deliverDto.user,
-    )
-  }
-
-  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
-  @Post(
-    `case/:caseId/${
-      messageEndpoint[MessageType.ARCHIVING_CASE_FILES_RECORD]
-    }/:policeCaseNumber`,
-  )
-  @ApiOkResponse({
-    type: DeliverResponse,
-    description: 'Archives a case files record',
-  })
-  async archiveCaseFilesRecord(
-    @Param('caseId') caseId: string,
-    @Param('policeCaseNumber') policeCaseNumber: string,
-    @CurrentCase() theCase: Case,
-  ): Promise<DeliverResponse> {
-    this.logger.debug(
-      `Archiving the case files record for case ${caseId} and police case ${policeCaseNumber}`,
-    )
-
-    if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
-      throw new BadRequestException(
-        `Case ${caseId} does not include police case number ${policeCaseNumber}`,
-      )
-    }
-
-    return this.internalCaseService.archiveCaseFilesRecord(
-      theCase,
-      policeCaseNumber,
     )
   }
 

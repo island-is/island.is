@@ -10,6 +10,7 @@ export {
   default as CheckboxList,
   type CheckboxInfo,
 } from './CheckboxList/CheckboxList'
+export { default as ConnectedCaseFilesAccordionItem } from './AccordionItems/ConnectedCaseFilesAccordionItem/ConnectedCaseFilesAccordionItem'
 export { default as CommentsAccordionItem } from './AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 export { default as ConclusionDraft } from './ConclusionDraft/ConclusionDraft'
 export { default as ContextMenu } from './ContextMenu/ContextMenu'
@@ -22,7 +23,6 @@ export { default as CourtRecordAccordionItem } from './AccordionItems/CourtRecor
 export { default as DateTime } from './DateTime/DateTime'
 export { default as Decision } from './Decision/Decision'
 export { default as DefenderInfo } from './DefenderInfo/DefenderInfo'
-export { default as DefenderInput } from './DefenderInfo/DefenderInput'
 export { default as DefenderNotFound } from './DefenderInfo/DefenderNotFound'
 export {
   default as FeatureProvider,
@@ -36,11 +36,15 @@ export { default as HideableText } from './HideableText/HideableText'
 export { default as IndictmentInfo } from './IndictmentInfo/IndictmentInfo'
 export { default as IndictmentsCaseFilesAccordionItem } from './AccordionItems/IndictmentsCaseFilesAccordionItem/IndictmentsCaseFilesAccordionItem'
 export { default as InfoBox } from './InfoBox/InfoBox'
+export { default as BlueBoxWithIcon } from './BlueBoxWithIcon/BlueBoxWithIcon'
 export { default as InfoCard } from './InfoCard/InfoCard'
 export { default as InfoCardActiveIndictment } from './InfoCard/InfoCardActiveIndictment'
 export { default as InfoCardClosedIndictment } from './InfoCard/InfoCardClosedIndictment'
-export { default as InfoCardCaseScheduled } from './InfoCard/InfoCardCaseScheduled'
-export { default as InfoCardCaseScheduledIndictment } from './InfoCard/InfoCardCaseScheduledIndictment'
+export { default as CaseScheduledCard } from './BlueBoxWithIcon/CaseScheduledCard'
+export { default as IndictmentCaseScheduledCard } from './BlueBoxWithIcon/IndictmentCaseScheduledCard'
+export { default as InputAdvocate } from './Inputs/InputAdvocate'
+export { default as InputName } from './Inputs/InputName'
+export { default as InputNationalId } from './Inputs/InputNationalId'
 export { default as Loading } from './Loading/Loading'
 export { default as Logo } from './Logo/Logo'
 export { default as MarkdownWrapper } from './MarkdownWrapper/MarkdownWrapper'
@@ -58,12 +62,17 @@ export { default as RestrictionTags } from './RestrictionTags/RestrictionTags'
 export { default as RulingAccordionItem } from './AccordionItems/RulingAccordionItem/RulingAccordionItem'
 export { default as RulingInput } from './RulingInput/RulingInput'
 export { default as SectionHeading } from './SectionHeading/SectionHeading'
+export { default as ServiceAnnouncement } from './ServiceAnnouncement/ServiceAnnouncement'
 export { default as ServiceInterruptionBanner } from './ServiceInterruptionBanner/ServiceInterruptionBanner'
 export { default as SignedDocument } from './SignedDocument/SignedDocument'
 export { default as OverviewHeader } from './OverviewHeader/OverviewHeader'
 export { default as TagAppealState } from './TagAppealState/TagAppealState'
 export { default as TagCaseState } from './TagCaseState/TagCaseState'
-
+export { default as CaseTag } from './Tags/CaseTag'
+export {
+  getIndictmentRulingDecisionTag,
+  getIndictmentCaseStateTag,
+} from './Tags/utils'
 export {
   SigningModal,
   useRequestRulingSignature,

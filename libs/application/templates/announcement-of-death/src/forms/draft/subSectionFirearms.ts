@@ -3,6 +3,8 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubSection,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 
@@ -20,24 +22,23 @@ export const subSectionFirearms = buildSubSection({
           title: m.firearmsHadFirearms,
           width: 'full',
           largeButtons: false,
-          defaultValue: 'no',
+          defaultValue: NO,
           options: [
             {
-              value: 'yes',
-              label: m.firearmsYes,
+              value: NO,
+              label: m.firearmsNo,
             },
             {
-              value: 'no',
-              label: m.firearmsNo,
+              value: YES,
+              label: m.firearmsYes,
             },
           ],
         }),
         buildCustomField({
           title: '',
           id: 'firearmApplicant',
-          description: m.firearmsApplicantTitle,
           component: 'FirearmApplicant',
-          condition: (formValue) => formValue.hadFirearms === 'yes',
+          condition: (formValue) => formValue.hadFirearms === YES,
         }),
       ],
     }),

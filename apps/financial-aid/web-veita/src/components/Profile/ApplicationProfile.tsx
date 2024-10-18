@@ -306,11 +306,12 @@ const ApplicationProfile = ({
           homeCircumstances={application.homeCircumstances}
           familyStatus={application.familyStatus}
           setIsLoading={setIsLoading}
-          applicationCreated={application.appliedDate}
+          applicationAppliedDate={application.appliedDate}
           applicationMunicipality={applicationMunicipality}
           hasApplicantChildren={
             !application?.children || application?.children.length > 0
           }
+          decemberCompensation={applicationMunicipality.decemberCompensation}
         />
       )}
 

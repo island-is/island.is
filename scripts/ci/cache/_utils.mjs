@@ -2,33 +2,10 @@
 import { arch, platform } from 'node:os'
 import crypto from 'node:crypto'
 import { ROOT } from './_common.mjs'
-import { spawn, exec } from 'node:child_process'
+import { spawn } from 'node:child_process'
 import { resolve, join } from 'node:path'
 import { readFile, readdir, stat } from 'node:fs/promises'
-import { HASH_GENERATE_FILES_SCRIPT } from './_const.mjs'
 
-const GENERATE_HASH_GENERATED_FILES_SCRIPT = resolve(
-  ROOT,
-  ...HASH_GENERATE_FILES_SCRIPT.split('/'),
-)
-export async function getGeneratedFileHash(
-  scriptPath = GENERATE_HASH_GENERATED_FILES_SCRIPT,
-) {
-  return new Promise((resolve, reject) => {
-    exec(`bash "${scriptPath}"`, (error, stdout, stderr) => {
-      if (error) {
-        reject(`Error: ${error.message}`)
-        return
-      }
-      if (stderr) {
-        reject(`Stderr: ${stderr}`)
-        return
-      }
-      console.log(stdout)
-      resolve(stdout)
-    })
-  })
-}
 export async function getNodeVersionString() {
   const content = await getPackageJSON()
   const nodeVersion = content?.engines?.node
@@ -78,7 +55,7 @@ export async function getFileHash(file) {
 
 export async function getFilesHash(files = []) {
   const contents = await Promise.all(
-    files.map((file) => readFile(file, 'utf-8')),
+    files.sort().map((file) => readFile(file, 'utf-8')),
   )
   const combinedContent = contents.join('')
   return crypto.createHash('sha256').update(combinedContent).digest('hex')
@@ -176,7 +153,7 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
     const outputChunks = []
 
     childProcess.stdout.on('data', (data) => {
-      console.log(data.toString())
+      // console.log(data.toString())
       outputChunks.push(data.toString())
     })
 
@@ -225,6 +202,7 @@ export function arrayIncludesOneOf(array, values) {
 export function retry(fn, retries = 5, delay = 2000) {
   return new Promise((resolve, reject) => {
     const attempt = async (n) => {
+      console.log(`Retrying ${fn.name} - ${n} attempts left`)
       try {
         const value = await fn()
         resolve(value)

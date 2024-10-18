@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -24,11 +24,11 @@ interface Props {
   caseId: string
   indictmentAppealDeadline?: string
   modalVisible?: boolean
-  setModalVisible: React.Dispatch<React.SetStateAction<boolean>>
+  setModalVisible: Dispatch<SetStateAction<boolean>>
   onSelect?: () => void
 }
 
-export const ReviewDecision: React.FC<Props> = (props) => {
+export const ReviewDecision: FC<Props> = (props) => {
   const { user } = useContext(UserContext)
   const router = useRouter()
   const { formatMessage: fm } = useIntl()
@@ -78,12 +78,9 @@ export const ReviewDecision: React.FC<Props> = (props) => {
       <SectionHeading
         title={fm(strings.title)}
         description={
-          <Text variant="eyebrow">
+          <Text variant="eyebrow" as="span">
             {fm(strings.subtitle, {
-              indictmentAppealDeadline: formatDate(
-                indictmentAppealDeadline,
-                'P',
-              ),
+              indictmentAppealDeadline: formatDate(indictmentAppealDeadline),
             })}
           </Text>
         }
@@ -93,6 +90,7 @@ export const ReviewDecision: React.FC<Props> = (props) => {
           {options.map((item, index) => {
             return (
               <RadioButton
+                key={item.label}
                 name={`reviewOption-${index}`}
                 label={item.label}
                 value={item.value}

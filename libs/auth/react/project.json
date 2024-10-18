@@ -3,21 +3,17 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/auth/react/src",
   "projectType": "library",
+  "tags": ["lib:react-spa", "scope:react-spa"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/auth/react/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/auth/react"],
       "options": {
-        "jestConfig": "libs/auth/react/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/auth/react/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:react-spa", "scope:react-spa"]
+  }
 }

@@ -260,7 +260,6 @@ describe('InternalCaseController - Create', () => {
           origin: CaseOrigin.LOKE,
           state: CaseState.DRAFT,
           creatingProsecutorId: userId,
-          courtId,
           prosecutorsOfficeId,
         },
         {

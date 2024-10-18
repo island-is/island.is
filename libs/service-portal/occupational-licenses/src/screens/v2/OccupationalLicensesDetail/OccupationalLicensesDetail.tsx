@@ -1,5 +1,12 @@
 import { useParams } from 'react-router-dom'
-import { Box, Button, Icon, Inline, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Icon,
+  Inline,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   FootNote,
   IntroHeader,
@@ -15,11 +22,16 @@ import { useGetOccupationalLicenseByIdQuery } from './OccupationalLicensesDetail
 import { Problem } from '@island.is/react-spa/shared'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 import { useOrganization } from '@island.is/service-portal/graphql'
-import { OccupationalLicensesV2LinkType } from '@island.is/api/schema'
+import {
+  OccupationalLicenseV2LicenseType,
+  OccupationalLicensesV2LinkType,
+} from '@island.is/api/schema'
 
 type UseParams = {
   id: string
 }
+
+const EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF = new Date(2020, 0, 1)
 
 const OccupationalLicenseDetail = () => {
   const { id } = useParams() as UseParams
@@ -39,6 +51,11 @@ const OccupationalLicenseDetail = () => {
   const res = data?.occupationalLicenseV2
   const license = res?.license
 
+  const isOldEducationLicense =
+    license?.type === OccupationalLicenseV2LicenseType.EDUCATION &&
+    license.validFrom &&
+    new Date(license.validFrom) < EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF
+
   return (
     <>
       <IntroHeader
@@ -47,7 +64,7 @@ const OccupationalLicenseDetail = () => {
         intro={res?.headerText ?? ''}
         serviceProviderSlug={license?.issuer as OrganizationSlugType}
       >
-        {res?.actions && (
+        {!isOldEducationLicense && res?.actions && (
           <Box paddingTop={3}>
             {
               <Inline space={1} collapseBelow="sm">
@@ -55,7 +72,6 @@ const OccupationalLicenseDetail = () => {
                   if (!a) {
                     return null
                   }
-
                   if (a.type === OccupationalLicensesV2LinkType.FILE) {
                     return (
                       <Button
@@ -77,7 +93,7 @@ const OccupationalLicenseDetail = () => {
                   return (
                     <LinkButton
                       key={`button-link-${index}`}
-                      variant="button"
+                      variant="utility"
                       to={
                         a.type === OccupationalLicensesV2LinkType.DOCUMENT
                           ? DocumentsPaths.ElectronicDocumentSingle.replace(
@@ -101,6 +117,15 @@ const OccupationalLicenseDetail = () => {
         )}
       </IntroHeader>
       {error && !loading && <Problem noBorder={false} error={error} />}
+      {!error && !loading && isOldEducationLicense && (
+        <AlertMessage
+          type="warning"
+          title={formatMessage(om.educationLicenseDigitalUnavailable)}
+          message={formatMessage(
+            om.educationLicenseDigitalUnavailableDescription,
+          )}
+        />
+      )}
       {!error && (loading || data?.occupationalLicenseV2) && (
         <StackWithBottomDivider space={2} box={{ marginTop: [2, 3, 6] }}>
           <UserInfoLine
@@ -108,7 +133,14 @@ const OccupationalLicenseDetail = () => {
             label={formatMessage(om.nameOfIndividual)}
             content={license?.licenseHolderName ?? ''}
           />
-          {(license?.dateOfBirth || loading) && (
+          {license?.licenseNumber && (
+            <UserInfoLine
+              loading={loading}
+              label={formatMessage(om.licenseNumber)}
+              content={license?.licenseNumber ?? ''}
+            />
+          )}
+          {license?.dateOfBirth && (
             <UserInfoLine
               loading={loading}
               label={formatMessage(om.dateOfBirth)}
@@ -151,7 +183,7 @@ const OccupationalLicenseDetail = () => {
               }
             />
           )}
-          {(license?.status || loading) && (
+          {(license?.status || loading) && !isOldEducationLicense && (
             <UserInfoLine
               loading={loading}
               label={formatMessage(om.licenseStatus)}

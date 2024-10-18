@@ -8,13 +8,13 @@ registerEnumType(GenericUserLicenseMetaLinksType, {
 
 @ObjectType()
 export class GenericUserLicenseMetaLinks {
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   label?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   value?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   name?: string
 
   @Field(() => GenericUserLicenseMetaLinksType, { nullable: true })

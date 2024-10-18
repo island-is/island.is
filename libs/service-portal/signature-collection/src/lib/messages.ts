@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  /* Forsetakosningar */
   pageTitle: {
     id: 'sp.signatureCollection:title',
     defaultMessage: 'Meðmælasöfnun',
@@ -15,7 +16,7 @@ export const m = defineMessages({
   pageDescriptionSignee: {
     id: 'sp.signatureCollection:pageDescriptionSignee',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet, dui eget iaculis vehicula, purus nibh lobortis urna, sit amet dignissim lacus metus non arcu.',
+      'Aðeins er hægt að mæla með einu framboði. Hægt er að afturkalla meðmæli þangað til söfnun lokar og mæla með öðrum frambjóðanda ef vill.',
     description: '',
   },
   createListButton: {
@@ -28,9 +29,19 @@ export const m = defineMessages({
     defaultMessage: 'Forsetakosningar 2024',
     description: '',
   },
+  collectionTitleParliamentary: {
+    id: 'sp.signatureCollection:collectionTitleParliamentary',
+    defaultMessage: 'Alþingiskosningar',
+    description: '',
+  },
   myListsDescription: {
     id: 'sp.signatureCollection:myListsDescription',
-    defaultMessage: 'Yfirlit safnanna sem þú hefur stofnað:',
+    defaultMessage: 'Yfirlit safnana sem þú hefur stofnað',
+    description: '',
+  },
+  myListsInfo: {
+    id: 'sp.signatureCollection:myListsInfo#markdown',
+    defaultMessage: 'Norðvesturkjördæmi - 7 þingsæti. 210 - 280 meðmæli.',
     description: '',
   },
   copyLinkButton: {
@@ -40,7 +51,7 @@ export const m = defineMessages({
   },
   copyLinkDescription: {
     id: 'sp.signatureCollection:copyLinkDescription',
-    defaultMessage: 'Hér getur þú afritað hlekk á þitt framboð til að deila.',
+    defaultMessage: 'Hér getur þú afritað hlekk á þitt framboð til að deila',
     description: '',
   },
   copyLinkSuccess: {
@@ -88,9 +99,19 @@ export const m = defineMessages({
     defaultMessage: 'Meðmæli lesin inn',
     description: '',
   },
+  digitalSignature: {
+    id: 'sp.signatureCollection:digitalSignature',
+    defaultMessage: 'Skrifað undir: ',
+    description: '',
+  },
   signatureIsInvalid: {
     id: 'sp.signatureCollection:signatureIsInvalid',
     defaultMessage: 'Ógilt meðmæli',
+    description: '',
+  },
+  listSubmitted: {
+    id: 'sp.signatureCollection:listSubmitted',
+    defaultMessage: 'Lista skilað',
     description: '',
   },
 
@@ -152,8 +173,9 @@ export const m = defineMessages({
     description: '',
   },
   actorNoAccessDescription: {
-    id: 'sp.signatureCollection:actorNoAccessDescription',
-    defaultMessage: 'Þú hefur ekki réttindi til að sjá þessar upplýsingar.',
+    id: 'sp.signatureCollection:actorNoAccessDescription#markdown',
+    defaultMessage:
+      'Eingöngu kennitölur sem hafa skráðan listabókstaf geta stofnað meðmælendasöfnun. Ef þú átt listabókstaf geturðu stofnað meðmælendasöfnun hér.',
     description: '',
   },
 
@@ -170,7 +192,12 @@ export const m = defineMessages({
   },
   cancelCollectionModalConfirmButton: {
     id: 'sp.signatureCollection:modalConfirmButton',
-    defaultMessage: 'Já, hætta við söfnun meðmæla',
+    defaultMessage: 'Já, hætta við',
+    description: '',
+  },
+  cancelCollectionModalCancelButton: {
+    id: 'sp.signatureCollection:cancelCollectionModalCancelButton',
+    defaultMessage: 'Nei, hætta við',
     description: '',
   },
   cancelCollectionModalToastError: {
@@ -197,7 +224,7 @@ export const m = defineMessages({
   },
   coOwners: {
     id: 'sp.signatureCollection:coOwners',
-    defaultMessage: 'Umboðsaðilar:',
+    defaultMessage: 'Umsjónaraðilar:',
     description: '',
   },
   copyLink: {
@@ -243,6 +270,157 @@ export const m = defineMessages({
   signeeAddress: {
     id: 'sp.signatureCollection:signeeAddress',
     defaultMessage: 'Heimilisfang',
+    description: '',
+  },
+  paperSigneesHeader: {
+    id: 'sp.signatureCollection:paperSigneesHeader',
+    defaultMessage: 'Skrá meðmæli af blaði',
+    description: '',
+  },
+  paperSigneesTooltip: {
+    id: 'sp.signatureCollection:paperSigneesTooltip',
+    defaultMessage:
+      'Athugið að ógild meðmæli skrást inn en teljast ekki með í heildartölu meðmæla. Dæmi slegnar eru inn 10 kennitölur en kerfið telur aðeins 8 gildar.',
+    description: '',
+  },
+  paperSigneesClearButton: {
+    id: 'sp.signatureCollection:paperSigneesClearButton',
+    defaultMessage: 'Hreinsa',
+    description: '',
+  },
+  paperNumber: {
+    id: 'sp.signatureCollection:paperNumber',
+    defaultMessage: 'Blaðsíðunúmer',
+    description: '',
+  },
+  paperSigneeName: {
+    id: 'sp.signatureCollection:paperSigneeName',
+    defaultMessage: 'Nafn meðmælanda',
+    description: '',
+  },
+  signPaperSigneeButton: {
+    id: 'sp.signatureCollection:signPaperSigneeButton',
+    defaultMessage: 'Skrá meðmæli á lista',
+    description: '',
+  },
+  paperSigneeTypoTitle: {
+    id: 'sp.signatureCollection:paperSigneeTypoTitle',
+    defaultMessage: 'Kennitala ekki á réttu formi',
+    description: '',
+  },
+  paperSigneeTypoMessage: {
+    id: 'sp.signatureCollection:paperSigneeTypoMessage',
+    defaultMessage: 'Vinsamlegast athugið kennitöluna og reynið aftur',
+    description: '',
+  },
+  paperSigneeCantSignTitle: {
+    id: 'sp.signatureCollection:paperSigneeCantSignTitle',
+    defaultMessage: 'Ekki er hægt að skrá meðmæli',
+    description: '',
+  },
+  paperSigneeCantSignMessage: {
+    id: 'sp.signatureCollection:paperSigneeCantSign',
+    defaultMessage: 'Kennitala uppfyllir ekki skilyrði fyrir að skrá meðmæli',
+    description: '',
+  },
+  paperSigneeSuccess: {
+    id: 'sp.signatureCollection:paperSigneeSuccess',
+    defaultMessage: 'Meðmæli skráð',
+    description: '',
+  },
+  paperSigneeError: {
+    id: 'sp.signatureCollection:paperSigneeError',
+    defaultMessage: 'Ekki tókst að skrá meðmæli',
+    description: '',
+  },
+
+  /* Parliamentary */
+  parliamentaryElectionsTitle: {
+    id: 'sp.signatureCollection:parliamentaryElectionsTitle',
+    defaultMessage: 'Alþingiskosningar',
+    description: '',
+  },
+  pageTitleParliamentary: {
+    id: 'sp.signatureCollection:pageTitleParliamentary',
+    defaultMessage: 'Meðmælasöfnun fyrir Alþingiskosningar',
+    description: '',
+  },
+  pageDescriptionParliamentary: {
+    id: 'sp.signatureCollection:pageDescriptionParliamentary',
+    defaultMessage:
+      'Hægt er að gera einstaklinga að umsjónaraðilum hér að neðan. Fjöldi meðmælenda er margfeldi af þingsætatölu hvers kjördæmis og 30 að lágmarki og 40 að hámarki. Söfnun lýkur 16.10.2024.',
+    description: '',
+  },
+  infoProviderTooltip: {
+    id: 'sp.signatureCollection:infoProviderTooltip',
+    defaultMessage:
+      'Þjóðskrá Íslands hefur umsjón með gögnum um meðmælasöfnun.',
+  },
+  supervisors: {
+    id: 'sp.signatureCollection:supervisors',
+    defaultMessage: 'Umsjónaraðilar',
+    description: '',
+  },
+  noSupervisors: {
+    id: 'sp.signatureCollection:noSupervisors',
+    defaultMessage: 'Enginn umsjónaraðili skráður',
+    description: '',
+  },
+  supervisorsTooltip: {
+    id: 'sp.signatureCollection:supervisorsTooltip',
+    defaultMessage:
+      'Umsjónaraðilar hafa aðgang að öllum upplýsingum safnananna en geta ekki eytt söfnununum.',
+    description: '',
+  },
+  add: {
+    id: 'sp.signatureCollection:add',
+    defaultMessage: 'Bæta við',
+    description: '',
+  },
+  personName: {
+    id: 'sp.signatureCollection:personName',
+    defaultMessage: 'Nafn',
+    description: '',
+  },
+  personNationalId: {
+    id: 'sp.signatureCollection:personNationalId',
+    defaultMessage: 'Kennitala',
+    description: '',
+  },
+  nationalIdInvalid: {
+    id: 'sp.signatureCollection:nationalIdInvalid',
+    defaultMessage: 'Ógild kennitala',
+    description: '',
+  },
+  constituency: {
+    id: 'sp.signatureCollection:constituency',
+    defaultMessage: 'Kjördæmi',
+    description: '',
+  },
+  allConstituencies: {
+    id: 'sp.signatureCollection:allConstituencies',
+    defaultMessage: 'Öll kjördæmi',
+    description: '',
+  },
+  addConstituency: {
+    id: 'sp.signatureCollection:addConstituency',
+    defaultMessage: 'Bæta við kjördæmi',
+    description: '',
+  },
+  addConstituencyDescription: {
+    id: 'sp.signatureCollection:addConstituencyDescription',
+    defaultMessage:
+      'Veldu viðeigandi kjördæmi sem þú vilt stofna meðmælendasöfnun í.',
+    description: '',
+  },
+  addConstituencySuccess: {
+    id: 'sp.signatureCollection:addConstituencySuccess',
+    defaultMessage: 'Kjördæmi bætt við',
+    description: '',
+  },
+  addConstituencyError: {
+    id: 'sp.signatureCollection:addConstituencyError',
+    defaultMessage: 'Ekki tókst að bæta við kjördæmi',
     description: '',
   },
 })

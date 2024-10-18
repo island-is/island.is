@@ -4,20 +4,23 @@ import { Strategy } from 'passport-jwt'
 import { Inject, Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 
-import type { User } from '@island.is/judicial-system/types'
+import { type ConfigType } from '@island.is/nest/config'
 
+import { type User } from '@island.is/judicial-system/types'
+
+import { sharedAuthModuleConfig } from './auth.config'
 import { Credentials } from './auth.types'
 import { cookieExtractor } from './cookieExtractor'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    @Inject('JWT_SECRET')
-    jwtSecret: string,
+    @Inject(sharedAuthModuleConfig.KEY)
+    private readonly config: ConfigType<typeof sharedAuthModuleConfig>,
   ) {
     super({
       jwtFromRequest: cookieExtractor,
-      secretOrKey: jwtSecret,
+      secretOrKey: config.jwtSecret,
       passReqToCallback: true,
     })
   }

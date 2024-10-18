@@ -1,26 +1,7 @@
 {
-  "compileOnSave": false,
+  "extends": "./tsconfig.shared.json",
   "compilerOptions": {
-    "useUnknownInCatchVariables": false,
-    "rootDir": ".",
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "target": "es2015",
-    "module": "esnext",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2019", "dom", "dom.iterable"],
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "baseUrl": ".",
-    "strict": true,
     "paths": {
-      "*": ["libs/shared/types/src/lib/*"],
       "@island.is/air-discount-scheme-web/*": [
         "apps/air-discount-scheme/web/*"
       ],
@@ -117,6 +98,9 @@
       "@island.is/api/domains/finance": [
         "libs/api/domains/finance/src/index.ts"
       ],
+      "@island.is/api/domains/financial-statement-individual-election": [
+        "libs/api/domains/financial-statement-individual-election/src/index.ts"
+      ],
       "@island.is/api/domains/financial-statements-inao": [
         "libs/api/domains/financial-statements-inao/src/index.ts"
       ],
@@ -125,6 +109,12 @@
       ],
       "@island.is/api/domains/fiskistofa": [
         "libs/api/domains/fiskistofa/src/index.ts"
+      ],
+      "@island.is/api/domains/form-system": [
+        "libs/api/domains/form-system/src/index.ts"
+      ],
+      "@island.is/api/domains/health-directorate": [
+        "libs/api/domains/health-directorate/src/index.ts"
       ],
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
@@ -155,6 +145,9 @@
       ],
       "@island.is/api/domains/islykill": [
         "libs/api/domains/islykill/src/index.ts"
+      ],
+      "@island.is/api/domains/law-and-order": [
+        "libs/api/domains/law-and-order/src/index.ts"
       ],
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
@@ -231,6 +224,9 @@
       "@island.is/api/domains/transport-authority": [
         "libs/api/domains/transport-authority/src/index.ts"
       ],
+      "@island.is/api/domains/umbodsmadur-skuldara": [
+        "libs/api/domains/umbodsmadur-skuldara/src/index.ts"
+      ],
       "@island.is/api/domains/university-careers": [
         "libs/api/domains/university-careers/src/index.ts"
       ],
@@ -297,6 +293,9 @@
       ],
       "@island.is/application/templates/aosh/deregister-machine": [
         "libs/application/templates/aosh/deregister-machine/src/index.ts"
+      ],
+      "@island.is/application/templates/aosh/register-new-machine": [
+        "libs/application/templates/aosh/register-new-machine/src/index.ts"
       ],
       "@island.is/application/templates/aosh/request-for-inspection": [
         "libs/application/templates/aosh/request-for-inspection/src/index.ts"
@@ -379,6 +378,18 @@
       "@island.is/application/templates/financial-aid": [
         "libs/application/templates/financial-aid/src/index.ts"
       ],
+      "@island.is/application/templates/financial-statement-cemetery": [
+        "libs/application/templates/inao/financial-statement-cemetery/src/index.ts"
+      ],
+      "@island.is/application/templates/financial-statement-individual-election": [
+        "libs/application/templates/inao/financial-statement-individual-election/src/index.ts"
+      ],
+      "@island.is/application/templates/financial-statement-individual-election/types": [
+        "libs/application/templates/inao/financial-statement-individual-election/src/types/types.ts"
+      ],
+      "@island.is/application/templates/financial-statement-political-party": [
+        "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
+      ],
       "@island.is/application/templates/financial-statements-inao": [
         "libs/application/templates/financial-statements-inao/src/index.ts"
       ],
@@ -406,8 +417,14 @@
       "@island.is/application/templates/healthcare-license-certificate": [
         "libs/application/templates/healthcare-license-certificate/src/index.ts"
       ],
+      "@island.is/application/templates/healthcare-work-permit": [
+        "libs/application/templates/healthcare-work-permit/src/index.ts"
+      ],
       "@island.is/application/templates/home-support": [
         "libs/application/templates/home-support/src/index.ts"
+      ],
+      "@island.is/application/templates/id-card": [
+        "libs/application/templates/id-card/src/index.ts"
       ],
       "@island.is/application/templates/inheritance-report": [
         "libs/application/templates/inheritance-report/src/index.ts"
@@ -432,6 +449,9 @@
       ],
       "@island.is/application/templates/mortgage-certificate": [
         "libs/application/templates/mortgage-certificate/src/index.ts"
+      ],
+      "@island.is/application/templates/new-primary-school": [
+        "libs/application/templates/new-primary-school/src/index.ts"
       ],
       "@island.is/application/templates/no-debt-certificate": [
         "libs/application/templates/no-debt-certificate/src/index.ts"
@@ -466,11 +486,17 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
-      "@island.is/application/templates/signature-collection/signature-list-creation": [
-        "libs/application/templates/signature-collection/signature-list-creation/src/index.ts"
+      "@island.is/application/templates/signature-collection/parliamentary-list-creation": [
+        "libs/application/templates/signature-collection/parliamentary-list-creation/src/index.ts"
       ],
-      "@island.is/application/templates/signature-collection/signature-list-signing": [
-        "libs/application/templates/signature-collection/signature-list-signing/src/index.ts"
+      "@island.is/application/templates/signature-collection/parliamentary-list-signing": [
+        "libs/application/templates/signature-collection/parliamentary-list-signing/src/index.ts"
+      ],
+      "@island.is/application/templates/signature-collection/presidential-list-creation": [
+        "libs/application/templates/signature-collection/presidential-list-creation/src/index.ts"
+      ],
+      "@island.is/application/templates/signature-collection/presidential-list-signing": [
+        "libs/application/templates/signature-collection/presidential-list-signing/src/index.ts"
       ],
       "@island.is/application/templates/social-insurance-administration-core/*": [
         "libs/application/templates/social-insurance-administration/core/src/*"
@@ -480,6 +506,9 @@
       ],
       "@island.is/application/templates/social-insurance-administration/household-supplement": [
         "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
+      ],
+      "@island.is/application/templates/social-insurance-administration/income-plan": [
+        "libs/application/templates/social-insurance-administration/income-plan/src/index.ts"
       ],
       "@island.is/application/templates/social-insurance-administration/old-age-pension": [
         "libs/application/templates/social-insurance-administration/old-age-pension/src/index.ts"
@@ -583,6 +612,7 @@
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
       ],
+      "@island.is/clients/cms": ["libs/clients/cms/src/index.ts"],
       "@island.is/clients/consultation-portal": [
         "libs/clients/consultation-portal/src/index.ts"
       ],
@@ -636,6 +666,9 @@
         "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
+      "@island.is/clients/form-system": [
+        "libs/clients/form-system/src/index.ts"
+      ],
       "@island.is/clients/health-directorate": [
         "libs/clients/health-directorate/src/index.ts"
       ],
@@ -667,13 +700,18 @@
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"
       ],
+      "@island.is/clients/judicial-system-sp": [
+        "libs/clients/judicial-system-sp/src/index.ts"
+      ],
       "@island.is/clients/license-client": [
         "libs/clients/license-client/src/index.ts"
       ],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
-      "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
+      "@island.is/clients/mms": ["libs/clients/mms/general/src/index.ts"],
+      "@island.is/clients/mms/frigg": ["libs/clients/mms/frigg/src/index.ts"],
+      "@island.is/clients/mms/grade": ["libs/clients/mms/grade/src/index.ts"],
       "@island.is/clients/municipalities-financial-aid": [
         "libs/clients/municipalities-financial-aid/src/index.ts"
       ],
@@ -716,6 +754,9 @@
       "@island.is/clients/signature-collection": [
         "libs/clients/signature-collection/src/index.ts"
       ],
+      "@island.is/clients/smart-solutions-v2": [
+        "libs/clients/smart-solutions-v2/src/index.ts"
+      ],
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
       ],
@@ -750,6 +791,9 @@
       ],
       "@island.is/clients/ultraviolet-radiation": [
         "libs/clients/ultraviolet-radiation/src/index.ts"
+      ],
+      "@island.is/clients/ums-cost-of-living-calculator": [
+        "libs/clients/ums-cost-of-living-calculator/src/index.ts"
       ],
       "@island.is/clients/university-application/agricultural-university-of-iceland": [
         "libs/clients/university-application/agricultural-university-of-iceland/src/index.ts"
@@ -837,6 +881,7 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
+      "@island.is/form-system": ["libs/portals/admin/form-system/src/index.ts"],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
       ],
@@ -1013,6 +1058,9 @@
       "@island.is/service-portal/information/messages": [
         "libs/service-portal/information/src/lib/messages.ts"
       ],
+      "@island.is/service-portal/law-and-order": [
+        "libs/service-portal/law-and-order/src/index.ts"
+      ],
       "@island.is/service-portal/licenses": [
         "libs/service-portal/licenses/src/index.ts"
       ],
@@ -1067,13 +1115,20 @@
       ],
       "@island.is/skilavottord/types": ["libs/skilavottord/types/src/index.ts"],
       "@island.is/testing/containers": ["libs/testing/containers/src/index.ts"],
+      "@island.is/testing/e2e": ["libs/testing/e2e/src/index.ts"],
       "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
       "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
       "@island.is/university-gateway": ["libs/university-gateway/src/index.ts"],
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
-      "@island.is/web/component*": ["apps/web/component*/real.ts"]
+      "@island.is/web/component*": ["apps/web/component*/real.ts"],
+      "api/domains/financial-statement-cemetery": [
+        "libs/api/domains/financial-statement-cemetery/src/index.ts"
+      ],
+      "application/templates/inao/financial-statement-political-party": [
+        "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
+      ],
+      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
     }
-  },
-  "exclude": ["node_modules", "tmp"]
+  }
 }

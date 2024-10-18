@@ -16,6 +16,7 @@ import { useWindowSize } from 'react-use'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
 import * as styles from './TabNavigation.css'
 import { TabBar } from './TabBar'
+import { TabNavigationInstitutionPanel } from './TabNavigationInstitutionPanel'
 
 interface Props {
   pathname?: string
@@ -50,14 +51,10 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
       navigate(id)
     }
   }
-
-  const { data: organization, loading } = useOrganization(
-    activePath?.activeChild?.serviceProvider ?? activePath.serviceProvider,
-  )
-
+  const serviceProvider =
+    activePath?.activeChild?.serviceProvider ?? activePath.serviceProvider
   const descriptionText =
     activePath.activeChild?.description ?? activePath?.description
-
   const tooltipText =
     activePath.activeChild?.serviceProviderTooltip ??
     activePath.serviceProviderTooltip
@@ -105,7 +102,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
                 <Box printHidden className={styles.description}>
                   <TabBar
                     label={formatMessage(activePath.name)}
-                    variant={'alternative'}
+                    variant="alternative"
                     tabs={
                       activePath.children?.map((itemChild, ii) => {
                         const activeChild = itemChild.path
@@ -157,22 +154,13 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
                 </Box>
               </GridColumn>
             )}
-            {(activePath.displayServiceProviderLogo ||
-              activePath?.displayServiceProviderLogo) &&
+            {activePath?.displayServiceProviderLogo &&
+              serviceProvider &&
               !isMobile && (
-                <GridColumn span="1/8" offset="1/8">
-                  {organization?.logo && (
-                    <InstitutionPanel
-                      loading={loading}
-                      linkHref={organization.link ?? ''}
-                      img={organization.logo?.url ?? ''}
-                      tooltipText={
-                        tooltipText ? formatMessage(tooltipText) : ''
-                      }
-                      imgContainerDisplay={isMobile ? 'block' : 'flex'}
-                    />
-                  )}
-                </GridColumn>
+                <TabNavigationInstitutionPanel
+                  serviceProvider={serviceProvider}
+                  tooltipText={tooltipText}
+                />
               )}
           </GridRow>
         </GridContainer>

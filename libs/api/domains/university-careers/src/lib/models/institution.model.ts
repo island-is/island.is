@@ -12,9 +12,9 @@ export class Institution {
   @Field(() => String)
   shortId!: UniversityIdShort
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   displayName?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   logoUrl?: string
 }

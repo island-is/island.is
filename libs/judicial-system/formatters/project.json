@@ -3,24 +3,18 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/judicial-system/formatters/src",
   "projectType": "library",
+  "tags": ["scope:judicial-system", "lib:judicial-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/judicial-system/formatters/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/judicial-system/formatters/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/judicial-system/formatters/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/judicial-system/formatters"]
     }
-  },
-  "tags": ["scope:judicial-system", "lib:judicial-system"]
+  }
 }

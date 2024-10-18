@@ -51,6 +51,7 @@ const FinanceIntro = ({
               <InstitutionPanel
                 loading={loading}
                 linkHref={organization.link ?? ''}
+                linkLabel={organization.title ?? ''}
                 img={organization.logo?.url ?? ''}
                 imgContainerDisplay={isMobile ? 'block' : 'flex'}
                 tooltipText={serviceProviderTooltip}

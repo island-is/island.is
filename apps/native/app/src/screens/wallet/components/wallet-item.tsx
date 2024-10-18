@@ -1,6 +1,6 @@
 import { CustomLicenseType, LicenseCard } from '@ui'
 import React from 'react'
-import { SafeAreaView } from 'react-native'
+import { SafeAreaView, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 import { Pressable as PressableRaw } from '../../../components/pressable/pressable'
 import {
@@ -20,7 +20,13 @@ const Pressable = styled(PressableRaw)`
 `
 
 export const WalletItem = React.memo(
-  ({ item }: { item: GenericUserLicense | IdentityDocumentModel }) => {
+  ({
+    item,
+    style,
+  }: {
+    item: GenericUserLicense | IdentityDocumentModel
+    style?: ViewStyle
+  }) => {
     let cardHeight = 140
     const type = item.__typename
 
@@ -30,11 +36,13 @@ export const WalletItem = React.memo(
 
       return (
         <Container
+          style={style}
           onLayout={(e) => {
             cardHeight = Math.round(e.nativeEvent.layout.height)
           }}
         >
           <Pressable
+            style={style}
             onPress={() => {
               navigateTo(`/walletpassport/${item?.number}`, {
                 fromId: `license-${CustomLicenseType.Passport}_source`,
@@ -61,6 +69,7 @@ export const WalletItem = React.memo(
     } else if (type === 'GenericUserLicense') {
       return (
         <Container
+          style={style}
           onLayout={(e) => {
             cardHeight = Math.round(e.nativeEvent.layout.height)
           }}

@@ -4,7 +4,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { ITwoColumnText } from '../generated/contentfulTypes'
 
 import { Link, mapLink } from './link.model'
-import { SystemMetadata } from 'api-cms-domain'
+import { SystemMetadata } from '@island.is/shared/types'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
@@ -32,6 +32,9 @@ export class TwoColumnText {
 
   @Field(() => Boolean, { nullable: true })
   dividerOnTop?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  onlyUseOneTitle?: boolean
 }
 
 export const mapTwoColumnText = ({
@@ -51,4 +54,5 @@ export const mapTwoColumnText = ({
     : [],
   leftLink: fields.leftLink ? mapLink(fields.leftLink) : null,
   dividerOnTop: fields.dividerOnTop ?? true,
+  onlyUseOneTitle: fields.onlyUseOneTitle ?? false,
 })

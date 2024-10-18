@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { FetchResult, MutationFunctionOptions } from '@apollo/client'
 
@@ -68,7 +68,7 @@ interface Props {
   ) => Promise<FetchResult<RequestRulingSignatureMutation>>
 }
 
-const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
+const CaseDocuments: FC<Props> = ({
   isRequestingCourtRecordSignature,
   handleRequestCourtRecordSignature,
   isRequestingRulingSignature,

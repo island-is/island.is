@@ -1,72 +1,83 @@
-import {
-  AlcoholLicence,
-  SyslumennAuction,
-  Homestay,
-  PaginatedOperatingLicenses,
-  OperatingLicensesCSV,
-  CertificateInfoResponse,
-  DistrictCommissionerAgencies,
-  DataUploadResponse,
-  Person,
-  Attachment,
-  AssetType,
-  MortgageCertificate,
-  MortgageCertificateValidation,
-  AssetName,
-  EstateRegistrant,
-  EstateRelations,
-  EstateInfo,
-  RealEstateAgent,
-  Lawyer,
-  Broker,
-  PropertyDetail,
-  TemporaryEventLicence,
-  VehicleRegistration,
-  RegistryPerson,
-  InheritanceTax,
-  InheritanceReportInfo,
-} from './syslumennClient.types'
-import {
-  mapSyslumennAuction,
-  mapHomestay,
-  mapPaginatedOperatingLicenses,
-  mapOperatingLicensesCSV,
-  mapCertificateInfo,
-  mapDistrictCommissionersAgenciesResponse,
-  mapDataUploadResponse,
-  constructUploadDataObject,
-  mapAssetName,
-  mapEstateRegistrant,
-  mapEstateInfo,
-  mapRealEstateAgent,
-  mapLawyer,
-  mapBroker,
-  mapAlcoholLicence,
-  cleanPropertyNumber,
-  mapTemporaryEventLicence,
-  mapMasterLicence,
-  mapVehicle,
-  mapDepartedToRegistryPerson,
-  mapInheritanceTax,
-  mapEstateToInheritanceReportInfo,
-} from './syslumennClient.utils'
-import { Injectable, Inject } from '@nestjs/common'
-import {
-  SyslumennApi,
-  SvarSkeyti,
-  Configuration,
-  VirkLeyfiGetRequest,
-  VedbandayfirlitReguverkiSvarSkeyti,
-  VedbondTegundAndlags,
-  Skilabod,
-} from '../../gen/fetch'
-import { SyslumennClientConfig } from './syslumennClient.config'
-import type { ConfigType } from '@island.is/nest/config'
+import { Inject, Injectable } from '@nestjs/common'
+import startOfDay from 'date-fns/startOfDay'
+
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
-const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
+import {
+  Configuration,
+  InnsigludSkjol,
+  LogradamadurSvar,
+  Skilabod,
+  SvarSkeyti,
+  SyslumennApi,
+  VedbandayfirlitRegluverkGeneralSvar,
+  VedbondTegundAndlags,
+  VirkLeyfiGetRequest,
+} from '../../gen/fetch'
+import { SyslumennClientConfig } from './syslumennClient.config'
+import {
+  AlcoholLicence,
+  AssetName,
+  AssetType,
+  Attachment,
+  Broker,
+  CertificateInfoResponse,
+  DataUploadResponse,
+  DistrictCommissionerAgencies,
+  EstateInfo,
+  EstateRegistrant,
+  EstateRelations,
+  Homestay,
+  InheritanceReportInfo,
+  InheritanceTax,
+  Lawyer,
+  ManyPropertyDetail,
+  MortgageCertificate,
+  MortgageCertificateValidation,
+  OperatingLicensesCSV,
+  PaginatedOperatingLicenses,
+  Person,
+  PropertyDetail,
+  RealEstateAgent,
+  RegistryPerson,
+  SyslumennAuction,
+  TemporaryEventLicence,
+  VehicleRegistration,
+} from './syslumennClient.types'
+import {
+  cleanPropertyNumber,
+  constructUploadDataObject,
+  mapAlcoholLicence,
+  mapAssetName,
+  mapBroker,
+  mapCertificateInfo,
+  mapDataUploadResponse,
+  mapDepartedToRegistryPerson,
+  mapDistrictCommissionersAgenciesResponse,
+  mapEstateInfo,
+  mapEstateRegistrant,
+  mapEstateToInheritanceReportInfo,
+  mapHomestay,
+  mapInheritanceTax,
+  mapJourneymanLicence,
+  mapLawyer,
+  mapMasterLicence,
+  mapOperatingLicensesCSV,
+  mapPaginatedOperatingLicenses,
+  mapProfessionRight,
+  mapPropertyCertificate,
+  mapRealEstateAgent,
+  mapRealEstateResponse,
+  mapShipResponse,
+  mapSyslumennAuction,
+  mapTemporaryEventLicence,
+  mapVehicle,
+  mapVehicleResponse,
+} from './syslumennClient.utils'
 
+import type { ConfigType } from '@island.is/nest/config'
+const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 @Injectable()
 export class SyslumennService {
   constructor(
@@ -96,7 +107,7 @@ export class SyslumennService {
     }
 
     const { audkenni, accessToken } = await api.innskraningPost({
-      notandi: config,
+      apiNotandi: config,
     })
     if (audkenni && accessToken) {
       return {
@@ -240,13 +251,25 @@ export class SyslumennService {
     return (temporaryEventLicences ?? []).map(mapTemporaryEventLicence)
   }
 
+  async sealDocuments(documents: string[]): Promise<InnsigludSkjol> {
+    const { id, api } = await this.createApi()
+    const explanation = 'Rafrænt undirritað vottorð'
+    return await api.innsiglaSkjolPost({
+      innsiglaSkjolSkeyti: {
+        audkenni: id,
+        skyring: explanation,
+        skjol: documents,
+      },
+    })
+  }
+
   async sealDocument(document: string): Promise<SvarSkeyti> {
     const { id, api } = await this.createApi()
-    const explination = 'Rafrænt undirritað vottorð'
+    const explanation = 'Rafrænt undirritað vottorð'
     return await api.innsiglunPost({
-      skeyti: {
+      innsiglaSkeyti: {
         audkenni: id,
-        skyring: explination,
+        skyring: explanation,
         skjal: document,
       },
     })
@@ -337,25 +360,25 @@ export class SyslumennService {
   async getAsset(
     assetId: string,
     assetType: AssetType,
-    assetMapper: (res: VedbandayfirlitReguverkiSvarSkeyti) => AssetName,
+    assetMapper: (res: VedbandayfirlitRegluverkGeneralSvar) => AssetName,
   ): Promise<Array<AssetName>> {
     const { id, api } = await this.createApi()
     const response = await api
       .vedbokavottordRegluverkiPost({
-        skilabod: {
+        vedbandayfirlitSkeyti: {
           audkenni: id,
           fastanumer: cleanPropertyNumber(assetId),
-          tegundAndlags: assetType as number,
+          tegundAndlags: assetType as unknown as VedbondTegundAndlags,
         },
       })
       .catch((e) => {
         if ((e as { status: number })?.status === 404) {
-          return []
+          return null
         }
         throw e
       })
 
-    return response.map(assetMapper)
+    return response ? [assetMapper(response)] : []
   }
 
   async getRealEstateAddress(realEstateId: string): Promise<Array<AssetName>> {
@@ -380,83 +403,131 @@ export class SyslumennService {
   }
 
   async getMortgageCertificate(
-    propertyNumber: string,
-  ): Promise<MortgageCertificate> {
+    properties: {
+      propertyNumber: string
+      propertyType: string
+    }[],
+  ): Promise<MortgageCertificate[]> {
     const { id, api } = await this.createApi()
 
-    const res = await api.vedbokarvottordPost({
-      skilabod: {
+    const res = await api.vedbokarvottord2Post({
+      vedbandayfirlitMargirSkeyti: {
         audkenni: id,
-        fastanumer: cleanPropertyNumber(propertyNumber),
-        tegundAndlags: VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
+        eignir: properties.map(({ propertyNumber, propertyType }) => {
+          return {
+            fastanumer: propertyNumber,
+            tegundAndlags:
+              propertyType === '1'
+                ? VedbondTegundAndlags.NUMBER_1 // 1 = Vehicle
+                : propertyType === '2'
+                ? VedbondTegundAndlags.NUMBER_2 // 2 = Ship
+                : VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
+          }
+        }),
       },
     })
-    const contentBase64 = res.vedbandayfirlitPDFSkra || ''
 
-    const certificate: MortgageCertificate = {
-      contentBase64: contentBase64,
-      apiMessage: res.skilabod,
-    }
+    const certificates: MortgageCertificate[] =
+      res.skilabodOgSkra?.map((resultItem) => {
+        const contentBase64 = resultItem.vedbandayfirlitPDFSkra || ''
+        return {
+          contentBase64: contentBase64,
+          apiMessage: resultItem.skilabod ?? undefined,
+          propertyNumber: resultItem.fastanumer ?? undefined,
+        }
+      }) ?? []
 
-    return certificate
+    return certificates
   }
 
   async validateMortgageCertificate(
-    propertyNumber: string,
-    isFromSearch: boolean | undefined,
-  ): Promise<MortgageCertificateValidation> {
+    properties: {
+      propertyNumber: string
+      propertyType: string
+    }[],
+  ): Promise<MortgageCertificateValidation[]> {
     try {
       // Note: this function will throw an error if something goes wrong
-      const certificate = await this.getMortgageCertificate(propertyNumber)
-
-      const exists = certificate.contentBase64.length !== 0
-      const hasKMarking =
-        exists && certificate.contentBase64 !== 'Precondition Required'
+      const certificates = await this.getMortgageCertificate(properties)
 
       // Note: we are saving propertyNumber and isFromSearch also in externalData,
       // since it is not saved in answers if we go from state DRAFT -> DRAFT
-      return {
-        propertyNumber: propertyNumber,
-        isFromSearch: isFromSearch,
-        exists: exists,
-        hasKMarking: hasKMarking,
-      }
+      return certificates.map(mapPropertyCertificate)
     } catch (exception) {
-      return {
-        propertyNumber: propertyNumber,
-        isFromSearch: isFromSearch,
-        exists: false,
-        hasKMarking: false,
-      }
+      throw new Error(
+        `Validation failed for properties: ${JSON.stringify(properties)}`,
+      )
     }
   }
 
   async getPropertyDetails(propertyNumber: string): Promise<PropertyDetail> {
     const { id, api } = await this.createApi()
 
-    const res = await api.vedbokavottordRegluverkiPost({
-      skilabod: {
-        audkenni: id,
-        fastanumer: cleanPropertyNumber(propertyNumber),
-        tegundAndlags: VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
+    const res = await api
+      .vedbokavottordRegluverkiPost({
+        vedbandayfirlitSkeyti: {
+          audkenni: id,
+          fastanumer: cleanPropertyNumber(propertyNumber),
+          tegundAndlags: VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
+        },
+      })
+      .catch(() => {
+        throw new Error(
+          `Failed to get propertyDetail for property number: ${propertyNumber}`,
+        )
+      })
+
+    const fasteign = res.fasteign?.length ? res.fasteign[0] : undefined
+
+    return {
+      propertyNumber: propertyNumber,
+      defaultAddress: {
+        display: fasteign?.heiti || '',
       },
-    })
-    if (res.length > 0) {
-      return {
-        propertyNumber: propertyNumber,
-        defaultAddress: {
-          display: res[0].heiti,
+      unitsOfUse: {
+        unitsOfUse: [
+          {
+            explanation: fasteign?.notkun ?? undefined,
+          },
+        ],
+      },
+    }
+  }
+
+  async getAllPropertyDetails(
+    propertyNumber: string,
+    propertyType: string,
+  ): Promise<ManyPropertyDetail> {
+    const { id, api } = await this.createApi()
+
+    const res = await api
+      .vedbokavottordRegluverkiPost({
+        vedbandayfirlitSkeyti: {
+          audkenni: id,
+          fastanumer:
+            propertyType === '0'
+              ? cleanPropertyNumber(propertyNumber)
+              : propertyNumber,
+          tegundAndlags:
+            propertyType === '1'
+              ? VedbondTegundAndlags.NUMBER_1 // 1 = Vehicle
+              : propertyType === '2'
+              ? VedbondTegundAndlags.NUMBER_2 // 2 = Ship
+              : VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
         },
-        unitsOfUse: {
-          unitsOfUse: [
-            {
-              explanation: res[0].notkun,
-            },
-          ],
-        },
-      }
-    } else {
-      throw new Error()
+      })
+      .catch(() => {
+        throw new Error(
+          `Failed to get all properties for property number: ${propertyNumber}`,
+        )
+      })
+
+    return {
+      propertyNumber: res.fastanum ?? undefined, // Removes nulls with ?? undefined
+      propertyType: res.tegundEignar ?? undefined,
+      realEstate: res.fasteign ? res.fasteign.map(mapRealEstateResponse) : [],
+      vehicle: res.okutaeki ? mapVehicleResponse(res.okutaeki) : undefined,
+      ship: res.skip ? mapShipResponse(res.skip) : undefined,
     }
   }
 
@@ -491,7 +562,7 @@ export class SyslumennService {
   async getRegistryPerson(nationalId: string): Promise<RegistryPerson> {
     const { id, api } = await this.createApi()
     const res = await api.leitaAdKennitoluIThjodskraPost({
-      skeyti: {
+      thjodskraSkeyti: {
         audkenni: id,
         kennitala: nationalId,
       },
@@ -500,11 +571,11 @@ export class SyslumennService {
     return mapDepartedToRegistryPerson(res)
   }
 
-  async getInheritanceTax(dateOfDeath: Date): Promise<InheritanceTax> {
+  async getInheritanceTax(caseNumber: string): Promise<InheritanceTax> {
     const { id, api } = await this.createApi()
     const res = await api.erfdafjarskatturGet({
       audkenni: id,
-      danardagur: dateOfDeath,
+      malsnumer: caseNumber,
     })
 
     return mapInheritanceTax(res)
@@ -532,7 +603,7 @@ export class SyslumennService {
   ): Promise<unknown> {
     const { id, api } = await this.createApi()
     const res = await api.skiptaUmSkraningaradilaDanarbusPost({
-      payload: {
+      skiptaUmSkraningaradili: {
         audkenni: id,
         kennitalaFra: currentRegistrantNationalId,
         kennitalaTil: newRegistrantNationalId,
@@ -576,11 +647,52 @@ export class SyslumennService {
       .filter((licence) => Boolean(licence.name) && Boolean(licence.profession))
   }
 
+  async getJourneymanLicences() {
+    const { id, api } = await this.createApi()
+    const res = await api.sveinsbrefGet({
+      audkenni: id,
+    })
+    return res
+      .map(mapJourneymanLicence)
+      .filter((licence) => Boolean(licence.name) && Boolean(licence.profession))
+  }
+
+  async getProfessionRights() {
+    const { id, api } = await this.createApi()
+    const res = await api.starfsrettindiGet({
+      audkenni: id,
+    })
+    return res
+      .map(mapProfessionRight)
+      .filter(
+        (professionRight) =>
+          Boolean(professionRight.name) && Boolean(professionRight.profession),
+      )
+  }
+
   async checkCriminalRecord(nationalId: string) {
     const { id, api } = await this.createApi()
     return await api.kannaSakavottordGet({
       audkenni: id,
       kennitala: nationalId,
     })
+  }
+
+  async checkIfDelegationExists(
+    toNationalId: string,
+    fromNationalId: string,
+  ): Promise<boolean> {
+    const { id, api } = await this.createApi()
+    const delegations: LogradamadurSvar[] = await api.logradamadurGet({
+      audkenni: id,
+      kennitala: toNationalId,
+    })
+
+    return delegations.some(
+      (delegation) =>
+        delegation.kennitala === fromNationalId &&
+        (!delegation.gildirTil ||
+          delegation.gildirTil > startOfDay(new Date())),
+    )
   }
 }

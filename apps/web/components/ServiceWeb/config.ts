@@ -1,5 +1,4 @@
-import { Locale } from 'locale'
-
+import { Locale } from '@island.is/shared/types'
 import { WatsonChatPanelProps } from '@island.is/web/components'
 
 import { BackgroundVariations, Options } from './types'
@@ -66,6 +65,9 @@ enum Organization {
 
   /** Útlendingastofnun */
   DIRECTORATE_OF_IMMIGRATION = '77rXck3sISbMsUv7BO1PG2',
+
+  /** Samgöngustofa */
+  TRANSPORT_AUTHORITY = '6IZT17s7stKJAmtPutjpD7',
 }
 
 export const watsonConfig: Record<
@@ -105,6 +107,14 @@ export const watsonConfig: Record<
       carbonTheme: 'g10',
       namespaceKey: 'default',
     },
+    [Organization.TRANSPORT_AUTHORITY]: {
+      integrationID: 'b0b445a4-4c49-4c79-9731-8d03f49c8cac',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
   },
   en: {
     [Organization.DIGITAL_ICELAND]: {
@@ -124,7 +134,15 @@ export const watsonConfig: Record<
       namespaceKey: 'default',
     },
     [Organization.DIRECTORATE_OF_IMMIGRATION]: {
-      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
+      integrationID: '9e320784-ad44-4da9-9eb3-f305057a196a',
+      region: 'eu-gb',
+      serviceInstanceID: '2529638b-503c-4374-955c-0310139ec177',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+    [Organization.TRANSPORT_AUTHORITY]: {
+      integrationID: 'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b',
       region: 'eu-gb',
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,

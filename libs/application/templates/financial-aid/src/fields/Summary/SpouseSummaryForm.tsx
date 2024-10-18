@@ -87,6 +87,7 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         }
         taxFiles={answers.spouseTaxReturnFiles ?? []}
         incomeFiles={answers.spouseIncomeFiles ?? []}
+        childrenFiles={[]}
         applicationId={id}
       />
 

@@ -6,31 +6,34 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
 import {
-  CaseState,
   CaseType,
-  isCompletedCase,
   isIndictmentCase,
+  isRequestCase,
 } from '@island.is/judicial-system/types'
 
 import { awsS3ModuleConfig } from './awsS3.config'
 
 const requestPrefix = 'uploads/'
-const generatedPrefix = 'generated/'
+const generatedRequestPrefix = 'generated/'
 const indictmentPrefix = 'indictments/'
-const completedIndictmentPrefix = 'indictments/completed/'
 
-const formatConfirmedKey = (key: string) =>
+const formatGeneratedRequestCaseKey = (key: string) =>
+  `${generatedRequestPrefix}${key}`
+const formatConfirmedIndictmentCaseKey = (key: string) =>
   key.replace(/\/([^/]*)$/, '/confirmed/$1')
-const formatS3RequestKey = (key: string) => `${requestPrefix}${key}`
-const formatS3IndictmentKey = (key: string) => `${indictmentPrefix}${key}`
-const formatS3CompletedIndictmentKey = (key: string) =>
-  `${completedIndictmentPrefix}${key}`
-const formatS3Key = (caseType: CaseType, caseState: CaseState, key: string) =>
-  isIndictmentCase(caseType)
-    ? isCompletedCase(caseState)
-      ? formatS3CompletedIndictmentKey(key)
-      : formatS3IndictmentKey(key)
-    : formatS3RequestKey(key)
+const formatS3RequestCaseKey = (key: string) => `${requestPrefix}${key}`
+const formatS3IndictmentCaseKey = (key: string) => `${indictmentPrefix}${key}`
+const formatS3Key = (caseType: CaseType, key: string) => {
+  if (isRequestCase(caseType)) {
+    return formatS3RequestCaseKey(key)
+  }
+
+  if (isIndictmentCase(caseType)) {
+    return formatS3IndictmentCaseKey(key)
+  }
+
+  throw new Error('Unknown case type')
+}
 
 @Injectable()
 export class AwsS3Service {
@@ -46,7 +49,6 @@ export class AwsS3Service {
 
   createPresignedPost(
     caseType: CaseType,
-    caseState: CaseState,
     key: string,
     type: string,
   ): Promise<S3.PresignedPost> {
@@ -56,7 +58,7 @@ export class AwsS3Service {
           Bucket: this.config.bucket,
           Expires: this.config.timeToLivePost,
           Fields: {
-            key: formatS3Key(caseType, caseState, key),
+            key: formatS3Key(caseType, key),
             'content-type': type,
             'Content-Disposition': 'inline',
           },
@@ -72,11 +74,11 @@ export class AwsS3Service {
     })
   }
 
-  private objectExistsInS3(key: string): Promise<boolean> {
+  objectExists(caseType: CaseType, key: string): Promise<boolean> {
     return this.s3
       .headObject({
         Bucket: this.config.bucket,
-        Key: key,
+        Key: formatS3Key(caseType, key),
       })
       .promise()
       .then(
@@ -91,43 +93,54 @@ export class AwsS3Service {
       )
   }
 
-  private requestObjectExists(key: string): Promise<boolean> {
-    return this.objectExistsInS3(formatS3RequestKey(key))
+  private async putObjectToS3(key: string, content: string): Promise<string> {
+    return this.s3
+      .putObject({
+        Bucket: this.config.bucket,
+        Key: key,
+        Body: Buffer.from(content, 'binary'),
+        ContentType: 'application/pdf',
+      })
+      .promise()
+      .then(() => key)
   }
 
-  private async indictmentObjectExists(
-    caseSate: CaseState,
+  putObject(caseType: CaseType, key: string, content: string): Promise<string> {
+    return this.putObjectToS3(formatS3Key(caseType, key), content)
+  }
+
+  putGeneratedRequestCaseObject(
+    caseType: CaseType,
     key: string,
-  ): Promise<boolean> {
-    if (isCompletedCase(caseSate)) {
-      if (await this.objectExistsInS3(formatS3CompletedIndictmentKey(key))) {
-        return true
-      }
+    content: string,
+  ): Promise<string> {
+    if (!isRequestCase(caseType)) {
+      throw new Error('Only request case objects can be generated')
     }
 
-    return this.objectExistsInS3(formatS3IndictmentKey(key))
+    return this.putObjectToS3(formatGeneratedRequestCaseKey(key), content)
   }
 
-  objectExists(
+  getSignedUrl(
     caseType: CaseType,
-    caseState: CaseState,
-    key: string,
-  ): Promise<boolean> {
-    return isIndictmentCase(caseType)
-      ? this.indictmentObjectExists(caseState, key)
-      : this.requestObjectExists(key)
-  }
-
-  private getSignedUrlFromS3(
-    key: string,
+    key?: string,
     timeToLive?: number,
+    useFreshSession = false,
   ): Promise<string> {
+    if (!key) {
+      throw new Error('Key is required')
+    }
+
     return new Promise((resolve, reject) => {
-      this.s3.getSignedUrl(
+      const s3 = useFreshSession
+        ? new S3({ region: this.config.region })
+        : this.s3
+
+      s3.getSignedUrl(
         'getObject',
         {
           Bucket: this.config.bucket,
-          Key: key,
+          Key: formatS3Key(caseType, key),
           Expires: timeToLive ?? this.config.timeToLiveGet,
         },
         (err, url) => {
@@ -141,51 +154,13 @@ export class AwsS3Service {
     })
   }
 
-  private getRequestSignedUrl(
-    key: string,
-    timeToLive?: number,
-  ): Promise<string> {
-    return this.getSignedUrlFromS3(formatS3RequestKey(key), timeToLive)
-  }
-
-  private async getIndictmentSignedUrl(
-    caseSate: CaseState,
-    key: string,
-    timeToLive?: number,
-  ): Promise<string> {
-    if (isCompletedCase(caseSate)) {
-      const completedKey = formatS3CompletedIndictmentKey(key)
-
-      if (await this.objectExistsInS3(completedKey)) {
-        return await this.getSignedUrlFromS3(completedKey, timeToLive)
-      }
-    }
-
-    return this.getSignedUrlFromS3(formatS3IndictmentKey(key), timeToLive)
-  }
-
-  getSignedUrl(
+  async getConfirmedIndictmentCaseSignedUrl(
     caseType: CaseType,
-    caseState: CaseState,
-    key?: string,
-    timeToLive?: number,
-  ): Promise<string> {
-    if (!key) {
-      throw new Error('Key is required')
-    }
-
-    return isIndictmentCase(caseType)
-      ? this.getIndictmentSignedUrl(caseState, key, timeToLive)
-      : this.getRequestSignedUrl(key, timeToLive)
-  }
-
-  async getConfirmedSignedUrl(
-    caseType: CaseType,
-    caseState: CaseState,
     key: string | undefined,
     force: boolean,
     confirmContent: (content: Buffer) => Promise<string | undefined>,
     timeToLive?: number,
+    useFreshSession = false,
   ): Promise<string> {
     if (!key) {
       throw new Error('Key is required')
@@ -195,31 +170,27 @@ export class AwsS3Service {
       throw new Error('Only indictment case objects can be confirmed')
     }
 
-    const confirmedKey = formatConfirmedKey(key)
+    const confirmedKey = formatConfirmedIndictmentCaseKey(key)
 
-    if (
-      !force &&
-      (await this.indictmentObjectExists(caseState, confirmedKey))
-    ) {
-      return this.getIndictmentSignedUrl(caseState, confirmedKey, timeToLive)
+    if (!force && (await this.objectExists(caseType, confirmedKey))) {
+      return this.getSignedUrl(
+        caseType,
+        confirmedKey,
+        timeToLive,
+        useFreshSession,
+      )
     }
 
-    const confirmedContent = await this.getIndictmentObject(
-      caseState,
-      key,
-    ).then((content) => confirmContent(content))
+    const confirmedContent = await this.getObject(caseType, key).then(
+      (content) => confirmContent(content),
+    )
 
     if (!confirmedContent) {
-      return this.getIndictmentSignedUrl(caseState, key, timeToLive)
+      return this.getSignedUrl(caseType, key, timeToLive, useFreshSession)
     }
 
-    return this.putConfirmedObject(
-      caseType,
-      caseState,
-      key,
-      confirmedContent,
-    ).then(() =>
-      this.getIndictmentSignedUrl(caseState, confirmedKey, timeToLive),
+    return this.putObject(caseType, confirmedKey, confirmedContent).then(() =>
+      this.getSignedUrl(caseType, confirmedKey, timeToLive, useFreshSession),
     )
   }
 
@@ -233,50 +204,27 @@ export class AwsS3Service {
       .then((data) => data.Body as Buffer)
   }
 
-  private getRequestObject(key: string): Promise<Buffer> {
-    return this.getObjectFromS3(formatS3RequestKey(key))
-  }
-
-  private async getIndictmentObject(
-    caseSate: CaseState,
-    key: string,
-  ): Promise<Buffer> {
-    if (isCompletedCase(caseSate)) {
-      const completedKey = formatS3CompletedIndictmentKey(key)
-
-      if (await this.objectExistsInS3(completedKey)) {
-        return await this.getObjectFromS3(completedKey)
-      }
-    }
-
-    return this.getObjectFromS3(formatS3IndictmentKey(key))
-  }
-
-  async getObject(
-    caseType: CaseType,
-    caseState: CaseState,
-    key?: string,
-  ): Promise<Buffer> {
+  async getObject(caseType: CaseType, key?: string): Promise<Buffer> {
     if (!key) {
       throw new Error('Key is required')
     }
 
-    return isIndictmentCase(caseType)
-      ? this.getIndictmentObject(caseState, key)
-      : this.getRequestObject(key)
+    return this.getObjectFromS3(formatS3Key(caseType, key))
   }
 
-  getGeneratedObject(caseType: CaseType, key: string): Promise<Buffer> {
-    if (isIndictmentCase(caseType)) {
+  getGeneratedRequestCaseObject(
+    caseType: CaseType,
+    key: string,
+  ): Promise<Buffer> {
+    if (!isRequestCase(caseType)) {
       throw new Error('Only request case objects can be generated')
     }
 
-    return this.getObjectFromS3(`${generatedPrefix}${key}`)
+    return this.getObjectFromS3(formatGeneratedRequestCaseKey(key))
   }
 
-  async getConfirmedObject(
+  async getConfirmedIndictmentCaseObject(
     caseType: CaseType,
-    caseState: CaseState,
     key: string | undefined,
     force: boolean,
     confirmContent: (content: Buffer) => Promise<string | undefined>,
@@ -289,178 +237,56 @@ export class AwsS3Service {
       throw new Error('Only indictment case objects can be confirmed')
     }
 
-    const confirmedKey = formatConfirmedKey(key)
+    const confirmedKey = formatConfirmedIndictmentCaseKey(key)
 
-    if (
-      !force &&
-      (await this.indictmentObjectExists(caseState, confirmedKey))
-    ) {
-      return this.getIndictmentObject(caseState, confirmedKey)
+    if (!force && (await this.objectExists(caseType, confirmedKey))) {
+      return this.getObject(caseType, confirmedKey)
     }
 
-    const content = await this.getIndictmentObject(caseState, key)
+    const content = await this.getObject(caseType, key)
 
     const confirmedContent = await confirmContent(content)
 
     if (!confirmedContent) {
-      return this.getIndictmentObject(caseState, key)
+      return content
     }
 
-    return this.putConfirmedObject(
-      caseType,
-      caseState,
-      key,
-      confirmedContent,
-    ).then(() => this.getIndictmentObject(caseState, confirmedKey))
+    return this.putObject(caseType, confirmedKey, confirmedContent).then(() =>
+      this.getObject(caseType, confirmedContent),
+    )
   }
 
-  private async putObjectToS3(key: string, content: string): Promise<string> {
-    return this.s3
-      .putObject({
-        Bucket: this.config.bucket,
-        Key: key,
-        Body: Buffer.from(content, 'binary'),
-        ContentType: 'application/pdf',
-      })
-      .promise()
-      .then(() => key)
-  }
+  async deleteObject(caseType: CaseType, key: string): Promise<boolean> {
+    const s3Key = formatS3Key(caseType, key)
 
-  async putObject(
-    caseType: CaseType,
-    caseState: CaseState,
-    key: string,
-    content: string,
-  ): Promise<string> {
-    return this.putObjectToS3(formatS3Key(caseType, caseState, key), content)
-  }
-
-  putGeneratedObject(
-    caseType: CaseType,
-    key: string,
-    content: string,
-  ): Promise<string> {
-    if (isIndictmentCase(caseType)) {
-      throw new Error('Only request case objects can be generated')
-    }
-
-    return this.putObjectToS3(`${generatedPrefix}${key}`, content)
-  }
-
-  putConfirmedObject(
-    caseType: CaseType,
-    caseState: CaseState,
-    key: string,
-    content: string,
-  ): Promise<string> {
-    if (!isIndictmentCase(caseType)) {
-      throw new Error('Only indictment case objects can be confirmed')
-    }
-
-    return this.putObject(caseType, caseState, formatConfirmedKey(key), content)
-  }
-
-  private async deleteObjectFromS3(key: string): Promise<boolean> {
     return this.s3
       .deleteObject({
         Bucket: this.config.bucket,
-        Key: key,
+        Key: s3Key,
       })
       .promise()
       .then(() => true)
       .catch((reason) => {
         // Tolerate failure, but log error
-        this.logger.error(`Failed to delete object ${key} from AWS S3`, {
+        this.logger.error(`Failed to delete object ${s3Key} from AWS S3`, {
           reason,
         })
+
         return false
       })
   }
 
-  private deleteRequestObject(key: string): Promise<boolean> {
-    return this.deleteObjectFromS3(formatS3RequestKey(key))
-  }
-
-  private async deleteIndictmentObject(
-    caseSate: CaseState,
+  deleteConfirmedIndictmentCaseObject(
+    caseType: CaseType,
     key: string,
   ): Promise<boolean> {
-    if (isCompletedCase(caseSate)) {
-      const completedKey = formatS3CompletedIndictmentKey(key)
-
-      if (await this.objectExistsInS3(completedKey)) {
-        // No need to wait for the delete to finish
-        this.deleteObjectFromS3(formatConfirmedKey(completedKey))
-
-        return await this.deleteObjectFromS3(completedKey)
-      }
-    }
-
-    const originalKey = formatS3IndictmentKey(key)
-
-    // No need to wait for the delete to finish
-    this.deleteObjectFromS3(formatConfirmedKey(originalKey))
-
-    return this.deleteObjectFromS3(originalKey)
-  }
-
-  async deleteObject(
-    caseType: CaseType,
-    caseState: CaseState,
-    key: string,
-  ): Promise<boolean> {
-    return isIndictmentCase(caseType)
-      ? this.deleteIndictmentObject(caseState, key)
-      : this.deleteRequestObject(key)
-  }
-
-  private async copyObject(key: string, newKey: string): Promise<string> {
-    return this.s3
-      .copyObject({
-        Bucket: this.config.bucket,
-        Key: newKey,
-        CopySource: encodeURIComponent(`${this.config.bucket}/${key}`),
-      })
-      .promise()
-      .then(() => newKey)
-  }
-
-  async archiveObject(
-    caseType: CaseType,
-    caseState: CaseState,
-    key: string,
-  ): Promise<string> {
     if (!isIndictmentCase(caseType)) {
-      throw new Error('Only indictment case objects can be archived')
-    }
-
-    if (!isCompletedCase(caseState)) {
-      throw new Error('Only completed indictment case objects can be archived')
-    }
-
-    const oldKey = formatS3IndictmentKey(key)
-    const newKey = formatS3CompletedIndictmentKey(key)
-
-    const oldConfirmedKey = formatConfirmedKey(oldKey)
-
-    if (await this.objectExistsInS3(oldConfirmedKey)) {
-      const newConfirmedKey = formatConfirmedKey(newKey)
-
-      if (!(await this.objectExistsInS3(newConfirmedKey))) {
-        await this.copyObject(oldConfirmedKey, newConfirmedKey)
-      }
-
-      // No need to wait for the delete to finish
-      this.deleteObjectFromS3(oldConfirmedKey)
-    }
-
-    if (!(await this.objectExistsInS3(newKey))) {
-      await this.copyObject(oldKey, newKey)
+      throw new Error('Only indictment case objects can be confirmed')
     }
 
     // No need to wait for the delete to finish
-    this.deleteObjectFromS3(oldKey)
+    this.deleteObject(caseType, formatConfirmedIndictmentCaseKey(key))
 
-    return newKey
+    return this.deleteObject(caseType, key)
   }
 }

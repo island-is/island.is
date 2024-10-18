@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC, ReactNode } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -12,13 +12,13 @@ import { CategoryCard } from '@island.is/judicial-system-web/src/routes/Shared/C
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 
 interface Props {
-  children: React.ReactNode
+  children: ReactNode
   theCase: CaseListEntry
   onClick: () => void
   isLoading?: boolean
 }
 
-const MobileAppealCase: React.FC<Props> = ({
+const MobileAppealCase: FC<Props> = ({
   theCase,
   onClick,
   children,

@@ -153,7 +153,7 @@ export class CmsContentfulService {
 
     const params = {
       ['content_type']: 'organization',
-      include: 10,
+      include: 4,
       limit: 1000,
       ...organizationTitles,
       ...organizationReferenceIdentifiers,
@@ -310,11 +310,19 @@ export class CmsContentfulService {
     )
   }
 
-  async getOrganization(slug: string, lang: string): Promise<Organization> {
+  async getOrganization(
+    slug: string,
+    lang: string,
+  ): Promise<Organization | null> {
+    if (!slug) {
+      return null
+    }
+
     const params = {
       ['content_type']: 'organization',
       include: 10,
       'fields.slug': slug,
+      limit: 1,
     }
 
     const result = await this.contentfulRepository
@@ -730,7 +738,7 @@ export class CmsContentfulService {
     )
   }
 
-  async getLifeEvents(lang: string): Promise<LifeEventPage[]> {
+  async getLifeEventsForOverview(lang: string): Promise<LifeEventPage[]> {
     const params = {
       ['content_type']: 'lifeEventPage',
       order: 'sys.createdAt',

@@ -5,11 +5,10 @@ import { theme } from '@island.is/island-ui/theme'
 const baseGridRow = style({
   display: 'grid',
   gridGap: theme.spacing[1],
-  marginBottom: theme.spacing[2],
 })
 
 export const gridRow = styleVariants({
-  withButton: [baseGridRow, { gridTemplateColumns: '5fr 1fr' }],
+  withButton: [baseGridRow, { gridTemplateColumns: '5fr auto' }],
   withoutButton: [baseGridRow, { gridTemplateColumns: '1fr' }],
 })
 

@@ -7,6 +7,12 @@ export const serviceSetup = (services: {
     .namespace('skilavottord')
     .liveness('/liveness')
     .readiness('/liveness')
+    .replicaCount({
+      default: 2,
+      max: 10,
+      min: 2,
+      scalingMagicNumber: 8,
+    })
     .resources({
       limits: {
         cpu: '200m',

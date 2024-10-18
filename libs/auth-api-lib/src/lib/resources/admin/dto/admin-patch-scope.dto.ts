@@ -3,6 +3,7 @@ import { IsArray, IsBoolean, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 
 import { TranslatedValueDto } from '../../../translation/dto/translated-value.dto'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 export class AdminPatchScopeDto {
   @ApiPropertyOptional({
@@ -95,7 +96,7 @@ export class AdminPatchScopeDto {
     type: [String],
     example: ['Custom'],
   })
-  addedDelegationTypes?: string[]
+  addedDelegationTypes?: AuthDelegationType[]
 
   @IsArray()
   @IsOptional()
@@ -103,14 +104,16 @@ export class AdminPatchScopeDto {
     type: [String],
     example: ['Custom'],
   })
-  removedDelegationTypes?: string[]
+  removedDelegationTypes?: AuthDelegationType[]
 }
 
-export const superUserScopeFields = [
-  'grantToAuthenticatedUser',
-  'grantToLegalGuardians',
-  'grantToProcuringHolders',
-  'allowExplicitDelegationGrant',
-  'isAccessControlled',
-  'grantToPersonalRepresentatives',
-]
+/**
+ * Here we can define properties that should only be editable by a super user
+ *
+ * For example:
+ * export const superUserScopeFields = [
+ *   'isAccessControlled',
+ *   'grantToAuthenticatedUser',
+ * ]
+ */
+export const superUserScopeFields: string[] = []

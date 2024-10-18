@@ -5,11 +5,7 @@ import {
 } from './dataHeaders'
 import isValid from 'date-fns/isValid'
 import { LOCALE } from './constants'
-import {
-  Query,
-  VehicleUserTypeEnum,
-  VehiclesDetail,
-} from '@island.is/api/schema'
+import { VehicleUserTypeEnum, VehiclesDetail } from '@island.is/api/schema'
 
 export const exportVehicleOwnedDocument = async (
   data: Array<VehiclesDetail>,
@@ -30,12 +26,12 @@ export const exportVehicleOwnedDocument = async (
   )
 }
 
-function filterOwners(
+const filterOwners = (
   role: VehicleUserTypeEnum,
   vehicles: Array<VehiclesDetail>,
   nationalId: string,
   name: string,
-) {
+) => {
   let filteredVehicles
 
   switch (role) {

@@ -22,10 +22,24 @@ query Case($input: CaseQueryInput!) {
       defenderPhoneNumber
       defenderChoice
       defendantPlea
+      requestedDefenderChoice
+      requestedDefenderNationalId
+      requestedDefenderName
       serviceRequirement
       verdictViewDate
       verdictAppealDeadline
       subpoenaType
+      subpoenas {
+        id
+        created
+        serviceStatus
+        serviceDate
+        servedBy
+        comment
+        defenderNationalId
+        caseId
+        subpoenaId
+      }
     }
     defenderName
     defenderNationalId
@@ -171,6 +185,7 @@ query Case($input: CaseQueryInput!) {
       userGeneratedFilename
       displayDate
       policeFileId
+      submittedBy
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired
@@ -263,7 +278,70 @@ query Case($input: CaseQueryInput!) {
     }
     indictmentAppealDeadline
     indictmentVerdictViewedByAll
-    indictmentVerdictAppealDeadline
+    indictmentVerdictAppealDeadlineExpired
     indictmentDecision
+    indictmentReviewDecision
+    indictmentCompletedDate
+    courtSessionType
+    mergeCase {
+      id
+      courtCaseNumber
+    }
+    mergedCases {
+      id
+      courtCaseNumber
+      type
+      court {
+        id
+        name
+      }
+      judge {
+        id
+        name
+        title
+        email
+      }
+      prosecutor {
+        id
+        name
+        email
+      }
+      prosecutorsOffice {
+        id
+        name
+      }
+      caseFiles {
+        id
+        created
+        modified
+        name
+        type
+        category
+        state
+        key
+        size
+        userGeneratedFilename
+        displayDate
+        submittedBy
+      }
+      policeCaseNumbers
+      indictmentSubtypes
+    }
+    civilClaimants {
+      id
+      caseId
+      name
+      nationalId
+      noNationalId
+      hasSpokesperson
+      spokespersonIsLawyer
+      spokespersonNationalId
+      spokespersonName
+      spokespersonEmail
+      spokespersonPhoneNumber
+      caseFilesSharedWithSpokesperson
+    }
+    civilDemands
+    hasCivilClaims
   }
 }

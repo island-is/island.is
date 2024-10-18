@@ -161,7 +161,7 @@ export const deserialize = (
 
 export const unifyAndDeserialize = (markdown?: string): Node[] => {
   // We start by checking if the markdown is undefined
-  if (!markdown) {
+  if (!markdown?.trim()) {
     return EMPTY_STATE
   }
 

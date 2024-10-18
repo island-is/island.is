@@ -10,6 +10,11 @@ import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { EmailService } from '@island.is/email-service'
 import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
+import { CmsService } from '@island.is/clients/cms'
+import {
+  CompanyExtendedInfo,
+  CompanyRegistryClientService,
+} from '@island.is/clients/rsk/company-registry'
 
 import { UserNotificationsConfig } from '../../../../config'
 import { FIREBASE_PROVIDER } from '../../../../constants'
@@ -18,12 +23,15 @@ import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { NotificationDispatchService } from '../notificationDispatch.service'
 import { Notification } from '../notification.model'
 import { NotificationsService } from '../notifications.service'
+import { NotificationsWorkerService } from './notificationsWorker.service'
 import { wait } from './helpers'
 import {
   MockDelegationsService,
   MockFeatureFlagService,
   MockNationalRegistryV3ClientService,
   MockUserNotificationsConfig,
+  companyUser,
+  userWithNoEmail,
   userWithDelegations,
   userWithDelegations2,
   userWithDocumentNotificationsDisabled,
@@ -62,7 +70,9 @@ export const MockV2UsersApi = {
     },
   ),
 }
-
+const mockContentfulGraphQLClientService = {
+  fetchData: jest.fn(),
+}
 describe('NotificationsWorkerService', () => {
   let app: INestApplication
   let sequelize: Sequelize
@@ -71,7 +81,10 @@ describe('NotificationsWorkerService', () => {
   let queue: QueueService
   let notificationModel: typeof Notification
   let notificationsService: NotificationsService
+  let notificationsWorkerService: NotificationsWorkerService
   let userProfileApi: V2UsersApi
+  let nationalRegistryService: NationalRegistryV3ClientService
+  let companyRegistryService: CompanyRegistryClientService
 
   beforeAll(async () => {
     app = await testServer({
@@ -89,21 +102,24 @@ describe('NotificationsWorkerService', () => {
           .overrideProvider(UserNotificationsConfig.KEY)
           .useValue(MockUserNotificationsConfig)
           .overrideProvider(FIREBASE_PROVIDER)
-          .useValue({}),
+          .useValue({})
+          .overrideProvider(CmsService)
+          .useValue(mockContentfulGraphQLClientService),
       hooks: [
         useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
       ],
     })
 
     sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
-    notificationDispatch = app.get<NotificationDispatchService>(
-      NotificationDispatchService,
-    )
-    emailService = app.get<EmailService>(EmailService)
-    queue = app.get<QueueService>(getQueueServiceToken('notifications'))
+    notificationDispatch = app.get(NotificationDispatchService)
+    emailService = app.get(EmailService)
+    queue = app.get(getQueueServiceToken('notifications'))
     notificationModel = app.get(getModelToken(Notification))
-    notificationsService = app.get<NotificationsService>(NotificationsService)
+    notificationsService = app.get(NotificationsService)
+    notificationsWorkerService = app.get(NotificationsWorkerService)
     userProfileApi = app.get(V2UsersApi)
+    nationalRegistryService = app.get(NationalRegistryV3ClientService)
+    companyRegistryService = app.get(CompanyRegistryClientService)
   })
 
   beforeEach(async () => {
@@ -126,10 +142,21 @@ describe('NotificationsWorkerService', () => {
     jest
       .spyOn(notificationsService, 'getTemplate')
       .mockReturnValue(Promise.resolve(getMockHnippTemplate({})))
-  })
+    jest.spyOn(notificationsWorkerService, 'createEmail')
 
-  afterAll(async () => {
-    await app.close()
+    jest.spyOn(nationalRegistryService, 'getName')
+
+    jest.spyOn(companyRegistryService, 'getCompany').mockReturnValue(
+      Promise.resolve<CompanyExtendedInfo>({
+        nationalId: '1234567890',
+        name: 'Test Company',
+        formOfOperation: [],
+        addresses: [],
+        relatedParty: [],
+        vat: [],
+        status: 'somestatus',
+      }),
+    )
   })
 
   afterEach(async () => {
@@ -162,7 +189,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: 'https://island.is/minarsidur/postholf',
               }),
@@ -184,7 +211,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: 'https://island.is/minarsidur/postholf',
               }),
@@ -196,17 +223,22 @@ describe('NotificationsWorkerService', () => {
 
     expect(emailService.sendEmail).toHaveBeenCalledTimes(2)
 
+    // should write the messages to db
+    const messages = await notificationModel.findAll()
+    const recipientMessage = messages.find(
+      (message) => message.recipient === userWithDelegations.nationalId,
+    )
+    expect(messages).toHaveLength(2)
+    expect(recipientMessage).toBeDefined()
+
     // should only send push notification for primary recipient
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         nationalId: userWithDelegations.nationalId,
+        notificationId: recipientMessage.id,
       }),
     )
-
-    // should write the messages to db
-    const messages = await notificationModel.findAll()
-    expect(messages).toHaveLength(2)
 
     // should have gotten user profile for primary recipient
     expect(
@@ -245,7 +277,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: 'https://island.is/minarsidur/postholf',
               }),
@@ -267,7 +299,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: `https://island.is/minarsidur/login?login_hint=${delegationSubjectId}&target_link_uri=https://island.is/minarsidur/postholf`,
               }),
@@ -302,7 +334,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: notServicePortalUrl,
               }),
@@ -324,7 +356,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: notServicePortalUrl,
               }),
@@ -356,6 +388,7 @@ describe('NotificationsWorkerService', () => {
   it('should not send email or push notification if no profile is found for recipient', async () => {
     await addToQueue('1234567890')
 
+    expect(notificationsWorkerService.createEmail).not.toHaveBeenCalled()
     expect(emailService.sendEmail).not.toHaveBeenCalled()
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
   })
@@ -374,6 +407,14 @@ describe('NotificationsWorkerService', () => {
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
   })
 
+  it('should not send email if user has no email registered', async () => {
+    await addToQueue(userWithNoEmail.nationalId)
+
+    expect(notificationsWorkerService.createEmail).not.toHaveBeenCalled()
+    expect(emailService.sendEmail).not.toHaveBeenCalled()
+    expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
+  })
+
   it('should not send email if user has email notifications disabled', async () => {
     await addToQueue(userWithEmailNotificationsDisabled.nationalId)
 
@@ -384,6 +425,24 @@ describe('NotificationsWorkerService', () => {
   it('should not send push notifications if user has document notifications disabled', async () => {
     await addToQueue(userWithDocumentNotificationsDisabled.nationalId)
 
+    expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
+    expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
+  })
+
+  it('should call national registry for persons', async () => {
+    await addToQueue(userWithNoDelegations.nationalId)
+
+    expect(nationalRegistryService.getName).toHaveBeenCalledTimes(1)
+    expect(companyRegistryService.getCompany).not.toHaveBeenCalled()
+    expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
+    expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
+  })
+
+  it('should call company registry for companies', async () => {
+    await addToQueue(companyUser.nationalId)
+
+    expect(nationalRegistryService.getName).not.toHaveBeenCalled()
+    expect(companyRegistryService.getCompany).toHaveBeenCalledTimes(1)
     expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
   })

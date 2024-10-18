@@ -1,36 +1,36 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { NoContentException } from '@island.is/nest/problem'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
+import sha256 from 'crypto-js/sha256'
+import { BulkCreateOptions, DestroyOptions } from 'sequelize'
 
-import { ClientDTO } from './dto/client.dto'
-import { ClientUpdateDTO } from './dto/client-update.dto'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { NoContentException } from '@island.is/nest/problem'
+import { AuthDelegationType } from '@island.is/shared/types'
+
+import { ClientsTranslationService } from './clients-translation.service'
+import { ClientAllowedCorsOriginDTO } from './dto/client-allowed-cors-origin.dto'
+import { ClientAllowedScopeDTO } from './dto/client-allowed-scope.dto'
+import { ClientClaimDTO } from './dto/client-claim.dto'
+import { ClientGrantTypeDTO } from './dto/client-grant-type.dto'
 import { ClientIdpRestrictionDTO } from './dto/client-idp-restriction.dto'
+import { ClientPostLogoutRedirectUriDTO } from './dto/client-post-logout-redirect-uri.dto'
+import { ClientRedirectUriDTO } from './dto/client-redirect-uri.dto'
+import { ClientSecretDTO } from './dto/client-secret.dto'
+import { ClientUpdateDTO } from './dto/client-update.dto'
+import { ClientDTO } from './dto/client.dto'
 import { ClientAllowedCorsOrigin } from './models/client-allowed-cors-origin.model'
 import { ClientAllowedScope } from './models/client-allowed-scope.model'
 import { ClientClaim } from './models/client-claim.model'
+import { ClientDelegationType } from './models/client-delegation-type.model'
 import { ClientGrantType } from './models/client-grant-type.model'
 import { ClientIdpRestrictions } from './models/client-idp-restrictions.model'
 import { ClientPostLogoutRedirectUri } from './models/client-post-logout-redirect-uri.model'
 import { ClientRedirectUri } from './models/client-redirect-uri.model'
 import { ClientSecret } from './models/client-secret.model'
 import { Client } from './models/client.model'
-import { ClientAllowedCorsOriginDTO } from './dto/client-allowed-cors-origin.dto'
-import { ClientRedirectUriDTO } from './dto/client-redirect-uri.dto'
-import { ClientGrantTypeDTO } from './dto/client-grant-type.dto'
-import { ClientAllowedScopeDTO } from './dto/client-allowed-scope.dto'
-import { ClientClaimDTO } from './dto/client-claim.dto'
-import { ClientPostLogoutRedirectUriDTO } from './dto/client-post-logout-redirect-uri.dto'
-import { ClientSecretDTO } from './dto/client-secret.dto'
-import { ClientsTranslationService } from './clients-translation.service'
-import { BulkCreateOptions, DestroyOptions } from 'sequelize'
-import { ClientDelegationType } from './models/client-delegation-type.model'
-import { AuthDelegationProvider, AuthDelegationType } from 'delegation'
-import { DelegationTypeModel } from '../delegations/models/delegation-type.model'
 
 @Injectable()
 export class ClientsService {
@@ -53,13 +53,9 @@ export class ClientsService {
     private clientClaim: typeof ClientClaim,
     @InjectModel(ClientDelegationType)
     private readonly clientDelegationType: typeof ClientDelegationType,
-    @InjectModel(DelegationTypeModel)
-    private readonly delegationTypeModel: typeof DelegationTypeModel,
     @InjectModel(ClientPostLogoutRedirectUri)
     private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
-
     private readonly clientsTranslationService: ClientsTranslationService,
-
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -117,33 +113,26 @@ export class ClientsService {
   }
 
   /** Gets a client by its id */
-  async findClientById(id: string): Promise<Client | null> {
+  findClientById(id: string): Promise<Client | null> {
     this.logger.debug(`Finding client for id - "${id}"`)
 
     if (!id) {
       throw new BadRequestException('Id must be provided')
     }
 
-    const client = await this.clientModel.findByPk(id, { raw: true })
-
-    if (client) {
-      await this.findAssociations(client)
-        .then<any, never>((result: any) => {
-          client.allowedScopes = result[0]
-          client.allowedCorsOrigins = result[1]
-          client.redirectUris = result[2]
-          client.identityProviderRestrictions = result[3]
-          client.clientSecrets = result[4]
-          client.postLogoutRedirectUris = result[5]
-          client.allowedGrantTypes = result[6]
-          client.claims = result[7]
-        })
-        .catch((error) =>
-          this.logger.error(`Error in findAssociations: ${error}`),
-        )
-    }
-
-    return client
+    return this.clientModel.findByPk(id, {
+      include: [
+        { model: ClientAllowedScope, separate: true },
+        { model: ClientAllowedCorsOrigin, separate: true },
+        { model: ClientRedirectUri, separate: true },
+        { model: ClientIdpRestrictions, separate: true },
+        { model: ClientSecret, separate: true },
+        { model: ClientPostLogoutRedirectUri, separate: true },
+        { model: ClientGrantType, separate: true },
+        { model: ClientClaim, separate: true },
+        { model: ClientDelegationType, separate: true },
+      ],
+    })
   }
 
   /** Find clients by search string and returns with paging */
@@ -209,44 +198,6 @@ export class ClientsService {
       offset: offset,
       distinct: true,
     })
-  }
-
-  /** Gets all associations for Client */
-  private findAssociations(client: Client): Promise<any> {
-    return Promise.all([
-      this.clientAllowedScope.findAll({
-        where: { clientId: client.clientId },
-        raw: true,
-      }), // 0
-      this.clientAllowedCorsOrigin.findAll({
-        where: { clientId: client.clientId },
-        raw: true,
-      }), // 1
-      this.clientRedirectUri.findAll({
-        where: { clientId: client.clientId },
-        raw: true,
-      }), // 2
-      this.clientIdpRestriction.findAll({
-        where: { clientId: client.clientId },
-        raw: true,
-      }), // 3
-      this.clientSecret.findAll({
-        where: { clientId: client.clientId },
-        raw: true,
-      }), // 4
-      this.clientPostLogoutUri.findAll({
-        where: { clientId: client.clientId },
-        raw: true,
-      }), // 5
-      this.clientGrantType.findAll({
-        where: { clientId: client.clientId },
-        raw: true,
-      }), // 6
-      this.clientClaim.findAll({
-        where: { clientId: client.clientId },
-        raw: true,
-      }), // 7
-    ])
   }
 
   /** Creates a new client */
@@ -653,10 +604,12 @@ export class ClientsService {
     ) {
       await this.clientModel.update(
         {
-          supportsCustomDelegation,
-          supportsLegalGuardians,
-          supportsProcuringHolders,
-          supportsPersonalRepresentatives,
+          ...(supportsLegalGuardians ? { supportsLegalGuardians } : {}),
+          ...(supportsPersonalRepresentatives
+            ? { supportsPersonalRepresentatives }
+            : {}),
+          ...(supportsProcuringHolders ? { supportsProcuringHolders } : {}),
+          ...(supportsCustomDelegation ? { supportsCustomDelegation } : {}),
         },
         {
           ...options,
@@ -665,6 +618,10 @@ export class ClientsService {
           },
         },
       )
+    }
+
+    if (supportsCustomDelegation) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
     }
 
     return Promise.all(
@@ -732,6 +689,10 @@ export class ClientsService {
           },
         },
       )
+    }
+
+    if (delegationTypes.includes(AuthDelegationType.Custom)) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
     }
 
     return Promise.all(

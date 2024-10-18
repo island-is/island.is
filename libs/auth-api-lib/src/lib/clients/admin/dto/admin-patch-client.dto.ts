@@ -12,6 +12,7 @@ import {
 import { TranslatedValueDto } from '../../../translation/dto/translated-value.dto'
 import { RefreshTokenExpiration } from '../../../types'
 import { AdminClientClaimDto } from './admin-client-claim.dto'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 export class AdminPatchClientDto {
   @ApiPropertyOptional({
@@ -72,14 +73,14 @@ export class AdminPatchClientDto {
   })
   @IsOptional()
   @IsArray()
-  addedDelegationTypes?: string[]
+  addedDelegationTypes?: AuthDelegationType[]
 
   @ApiPropertyOptional({
     description: 'Only super users can update this value.',
   })
   @IsOptional()
   @IsArray()
-  removedDelegationTypes?: string[]
+  removedDelegationTypes?: AuthDelegationType[]
 
   @ApiPropertyOptional({
     deprecated: true,
@@ -210,15 +211,6 @@ export class AdminPatchClientDto {
 }
 
 export const superUserFields = [
-  'supportsCustomDelegation',
-  'supportsLegalGuardians',
-  'supportsProcuringHolders',
-  'supportsPersonalRepresentatives',
-  'supportedDelegationTypes',
-  'addedDelegationTypes',
-  'removedDelegationTypes',
-  'promptDelegations',
-  'requireApiScopes',
   'requireConsent',
   'allowOfflineAccess',
   'requirePkce',

@@ -14,11 +14,11 @@ import {
   NationalRegistryUserApi,
   HealthInsuranceApi,
   UserProfileApi,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
-import { API_MODULE } from '../shared'
-import { answerValidators } from './answerValidators'
-import { m } from '../forms/messages'
-import { HealthInsuranceSchema } from './dataSchema'
+import { m } from './messages/messages'
+import { dataSchema } from './dataSchema'
+import { API_MODULE } from '../utils/constants'
 
 type Events = { type: DefaultEvents.SUBMIT }
 
@@ -34,6 +34,9 @@ enum ApplicationStates {
 
 const applicationName = m.formTitle.defaultMessage
 
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.HEALTH_INSURANCE]
+
 const HealthInsuranceTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -41,7 +44,8 @@ const HealthInsuranceTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.HEALTH_INSURANCE,
   name: applicationName,
-  dataSchema: HealthInsuranceSchema,
+  dataSchema,
+  translationNamespaces: [configuration.translation],
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUESITES,
@@ -167,7 +171,6 @@ const HealthInsuranceTemplate: ApplicationTemplate<
     }
     return undefined
   },
-  answerValidators,
 }
 
 export default HealthInsuranceTemplate

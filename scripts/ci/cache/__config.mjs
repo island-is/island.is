@@ -6,7 +6,6 @@ import {
   getYarnLockHash,
   getPackageHash,
   getNodeVersionString,
-  getGeneratedFileHash,
   folderSizeIsEqualOrGreaterThan,
   runCommand,
   fileSizeIsEqualOrGreaterThan,
@@ -20,10 +19,10 @@ import {
   ENV_CACHE_SUCCESS,
 } from './_const.mjs'
 import { keyStorage } from './_key_storage.mjs'
+import { getGeneratedFilesHash } from './_generated_files.mjs'
 
 // When testing this is good to manipulate
 const HASH_VERSION = `newcache-${6}`
-const GENERATED_FILES_FORCE = `20240613`
 
 export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
   .split(',')
@@ -34,7 +33,7 @@ export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
     return a
   }, {})
 
-export const cypressPath = '/github/home/.cache/Cypress'
+export const cypressPath = '/github/home/.cypress-cache'
 export const cacheSuccess = JSON.parse(process.env[ENV_CACHE_SUCCESS] ?? '{}')
 export const initCache = process.env[ENV_INIT_CACHE] === 'true'
 
@@ -86,7 +85,7 @@ export const caches = [
     enabled: ENABLED_MODULES['generated-files'],
     hash: async () =>
       keyStorage.getKey('generated-files') ??
-      `generated-files-${GENERATED_FILES_FORCE}-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getGeneratedFileHash()}`,
+      `generated-files-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getGeneratedFilesHash()}`,
     name: 'Cache Generated Files',
     id: 'generated-files',
     path: 'generated_files.tar.gz',
@@ -148,7 +147,7 @@ export const caches = [
       }
       const pkg = await getPackageJSON()
       const cypressVersion = pkg?.devDependencies?.cypress
-      return `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${cypressVersion}`
+      return `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${cypressVersion}-2`
     },
     name: 'Cache Cypress',
     id: 'cypress',
@@ -168,6 +167,7 @@ export const caches = [
       const cypressVersion = pkg?.devDependencies?.cypress
       await runCommand('npx cypress install', ROOT, {
         CYPRESS_INSTALL_BINARY: cypressVersion,
+        CYPRESS_CACHE_FOLDER: cypressPath,
       })
     },
     path: cypressPath || '',

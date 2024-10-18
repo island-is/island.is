@@ -25,9 +25,12 @@ import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { AuthDelegationProvider, AuthDelegationType } from 'delegation'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScopeDelegationType } from '../models/api-scope-delegation-type.model'
-import { DelegationTypeModel } from '../../delegations/models/delegation-type.model'
+import {
+  delegationTypeSuperUserFilter,
+  SUPER_USER_DELEGATION_TYPES,
+} from '../utils/filters'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -41,8 +44,6 @@ export class AdminScopeService {
     private readonly apiScopeUserClaim: typeof ApiScopeUserClaim,
     @InjectModel(ApiScopeDelegationType)
     private readonly apiScopeDelegationType: typeof ApiScopeDelegationType,
-    @InjectModel(DelegationTypeModel)
-    private readonly delegationTypeModel: typeof DelegationTypeModel,
     private readonly adminTranslationService: AdminTranslationService,
     private readonly translationService: TranslationService,
     private sequelize: Sequelize,
@@ -117,6 +118,7 @@ export class AdminScopeService {
   async createScope(
     tenantId: string,
     input: AdminCreateScopeDto,
+    user: User,
   ): Promise<AdminScopeDTO> {
     if (
       !validatePermissionId({
@@ -157,6 +159,19 @@ export class AdminScopeService {
 
     if (!displayName || !description) {
       throw new BadRequestException(translatedValuesErrorMsg)
+    }
+
+    // If user is not super admin, we remove the super admin fields from the input to default to the client base attributes
+    if (!this.isSuperAdmin(user)) {
+      input = {
+        ...input,
+        // Remove defined super admin fields
+        ...omit(input, superUserScopeFields),
+        // Remove personal representative from delegation types since it is not allowed for non-super admins
+        supportedDelegationTypes: delegationTypeSuperUserFilter(
+          input.supportedDelegationTypes ?? [],
+        ),
+      }
     }
 
     await this.sequelize.transaction(async (transaction) => {
@@ -209,6 +224,7 @@ export class AdminScopeService {
       include: [
         { model: ApiScopeDelegationType, as: 'supportedDelegationTypes' },
       ],
+      useMaster: true,
     })
 
     if (!apiScope) {
@@ -390,7 +406,22 @@ export class AdminScopeService {
   ): Promise<boolean> {
     const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
 
+    // Check if none SuperUser is trying to update PersonalRepresentative fields
+    const allDelegationTypes = [
+      ...(input.addedDelegationTypes ?? []),
+      ...(input.removedDelegationTypes ?? []),
+    ]
+
+    const hasSuperUserDelegationType = allDelegationTypes.some(
+      (delegationType) => SUPER_USER_DELEGATION_TYPES.includes(delegationType),
+    )
+
+    if (!isSuperUser && hasSuperUserDelegationType) {
+      return false
+    }
+
     const updatedFields = Object.keys(input)
+
     const superUserUpdatedFields = updatedFields.filter((field) =>
       superUserScopeFields.includes(field),
     )
@@ -427,7 +458,11 @@ export class AdminScopeService {
       AuthDelegationType.Custom,
     )
 
-    // create delegation type rows
+    if (allowExplicitDelegationGrant) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
+    }
+
+    // add delegation type rows
     await Promise.all(
       delegationTypes.map((delegationType) =>
         this.apiScopeDelegationType.upsert(
@@ -449,10 +484,14 @@ export class AdminScopeService {
     ) {
       await this.apiScope.update(
         {
-          grantToLegalGuardians,
-          grantToPersonalRepresentatives,
-          grantToProcuringHolders,
-          allowExplicitDelegationGrant,
+          ...(grantToLegalGuardians ? { grantToLegalGuardians } : {}),
+          ...(grantToPersonalRepresentatives
+            ? { grantToPersonalRepresentatives }
+            : {}),
+          ...(grantToProcuringHolders ? { grantToProcuringHolders } : {}),
+          ...(allowExplicitDelegationGrant
+            ? { allowExplicitDelegationGrant }
+            : {}),
         },
         {
           transaction,
@@ -496,6 +535,10 @@ export class AdminScopeService {
       ? false
       : undefined
 
+    if (delegationTypes.includes(AuthDelegationType.Custom)) {
+      delegationTypes.push(AuthDelegationType.GeneralMandate)
+    }
+
     // remove delegation type rows
     await Promise.all(
       delegationTypes.map((delegationType) =>
@@ -531,5 +574,9 @@ export class AdminScopeService {
         },
       )
     }
+  }
+
+  private isSuperAdmin = (user: User) => {
+    return user.scope.includes(AdminPortalScope.idsAdminSuperUser)
   }
 }

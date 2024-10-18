@@ -23,10 +23,11 @@ import {
   CaseFileState,
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
+  isCompletedCase,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import { createConfirmedIndictment } from '../../formatters'
+import { createConfirmedPdf } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { CourtDocumentFolder, CourtService } from '../court'
@@ -101,8 +102,26 @@ export class FileService {
       return true
     }
 
+    if (
+      isIndictmentCase(theCase.type) &&
+      file.category === CaseFileCategory.INDICTMENT
+    ) {
+      // The file may have been confirmed
+      return this.awsS3Service
+        .deleteConfirmedIndictmentCaseObject(theCase.type, file.key)
+        .catch((reason) => {
+          // Tolerate failure, but log what happened
+          this.logger.error(
+            `Could not delete confirmed file ${file.id} of case ${file.caseId} from AWS S3`,
+            { reason },
+          )
+
+          return false
+        })
+    }
+
     return this.awsS3Service
-      .deleteObject(theCase.type, theCase.state, file.key)
+      .deleteObject(theCase.type, file.key)
       .catch((reason) => {
         // Tolerate failure, but log what happened
         this.logger.error(
@@ -118,7 +137,6 @@ export class FileService {
     let courtDocumentFolder: CourtDocumentFolder
 
     switch (file.category) {
-      case CaseFileCategory.COVER_LETTER:
       case CaseFileCategory.INDICTMENT:
       case CaseFileCategory.CRIMINAL_RECORD:
       case CaseFileCategory.COST_BREAKDOWN:
@@ -164,18 +182,43 @@ export class FileService {
 
     return this.userService
       .findByNationalId(confirmationEvent.nationalId)
-      .then((user) =>
-        createConfirmedIndictment(
-          {
-            actor: user.name,
-            title: user.title,
-            institution: user.institution?.name ?? '',
-            date: confirmationEvent.created,
-          },
-          pdf,
-        ),
-      )
+      .then((user) => {
+        if (file.category === CaseFileCategory.INDICTMENT) {
+          return createConfirmedPdf(
+            {
+              actor: user.name,
+              title: user.title,
+              institution: user.institution?.name ?? '',
+              date: confirmationEvent.created,
+            },
+            pdf,
+            CaseFileCategory.INDICTMENT,
+          )
+        }
+
+        if (
+          (file.category === CaseFileCategory.RULING ||
+            file.category === CaseFileCategory.COURT_RECORD) &&
+          isCompletedCase(theCase.state) &&
+          theCase.rulingDate
+        ) {
+          return createConfirmedPdf(
+            {
+              actor: theCase.judge?.name ?? '',
+              title: theCase.judge?.title,
+              institution: theCase.judge?.institution?.name ?? '',
+              date: theCase.rulingDate,
+            },
+            pdf,
+            file.category,
+          )
+        }
+      })
       .then((confirmedPdf) => {
+        if (!confirmedPdf) {
+          throw new Error('Failed to create confirmed PDF')
+        }
+
         const binaryPdf = confirmedPdf.toString('binary')
         const hash = CryptoJS.MD5(binaryPdf).toString(CryptoJS.enc.Hex)
 
@@ -194,15 +237,37 @@ export class FileService {
       })
   }
 
-  async getCaseFileFromS3(theCase: Case, file: CaseFile): Promise<Buffer> {
+  private shouldGetConfirmedDocument = (file: CaseFile, theCase: Case) => {
+    // Only case files in indictment cases can be confirmed
+    if (!isIndictmentCase(theCase.type)) {
+      return false
+    }
+
+    // Only indictments that have been submitted to court can be confirmed
     if (
-      isIndictmentCase(theCase.type) &&
-      hasIndictmentCaseBeenSubmittedToCourt(theCase.state) &&
-      file.category === CaseFileCategory.INDICTMENT
+      file.category === CaseFileCategory.INDICTMENT &&
+      hasIndictmentCaseBeenSubmittedToCourt(theCase.state)
     ) {
-      return this.awsS3Service.getConfirmedObject(
+      return true
+    }
+
+    // Rulings and court records are only confirmed when a case is completed
+    if (
+      (file.category === CaseFileCategory.RULING ||
+        file.category === CaseFileCategory.COURT_RECORD) &&
+      isCompletedCase(theCase.state)
+    ) {
+      return true
+    }
+
+    // Don't get confirmed document for any other file categories
+    return false
+  }
+
+  async getCaseFileFromS3(theCase: Case, file: CaseFile): Promise<Buffer> {
+    if (this.shouldGetConfirmedDocument(file, theCase)) {
+      return this.awsS3Service.getConfirmedIndictmentCaseObject(
         theCase.type,
-        theCase.state,
         file.key,
         !file.hash,
         (content: Buffer) =>
@@ -210,7 +275,7 @@ export class FileService {
       )
     }
 
-    return this.awsS3Service.getObject(theCase.type, theCase.state, file.key)
+    return this.awsS3Service.getObject(theCase.type, file.key)
   }
 
   private async throttleUpload(
@@ -254,7 +319,7 @@ export class FileService {
     return caseFile
   }
 
-  createPresignedPost(
+  async createPresignedPost(
     theCase: Case,
     createPresignedPost: CreatePresignedPostDto,
   ): Promise<PresignedPost> {
@@ -263,7 +328,7 @@ export class FileService {
     const key = `${theCase.id}/${uuid()}/${fileName}`
 
     return this.awsS3Service
-      .createPresignedPost(theCase.type, theCase.state, key, type)
+      .createPresignedPost(theCase.type, key, type)
       .then((presignedPost) => ({
         ...presignedPost,
         key,
@@ -292,7 +357,9 @@ export class FileService {
       state: CaseFileState.STORED_IN_RVG,
       caseId: theCase.id,
       name: fileName,
-      userGeneratedFilename: fileName.replace(/\.pdf$/, ''),
+      userGeneratedFilename:
+        createFile.userGeneratedFilename ?? fileName.replace(/\.pdf$/, ''),
+      submittedBy: user.name,
     })
 
     if (
@@ -324,11 +391,7 @@ export class FileService {
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
 
-    const exists = await this.awsS3Service.objectExists(
-      theCase.type,
-      theCase.state,
-      file.key,
-    )
+    const exists = await this.awsS3Service.objectExists(theCase.type, file.key)
 
     if (!exists) {
       // Fire and forget, no need to wait for the result
@@ -342,28 +405,25 @@ export class FileService {
     theCase: Case,
     file: CaseFile,
     timeToLive?: number,
+    useFreshSession = false,
   ): Promise<string> {
-    if (
-      isIndictmentCase(theCase.type) &&
-      hasIndictmentCaseBeenSubmittedToCourt(theCase.state) &&
-      file.category === CaseFileCategory.INDICTMENT
-    ) {
-      return this.awsS3Service.getConfirmedSignedUrl(
+    if (this.shouldGetConfirmedDocument(file, theCase)) {
+      return this.awsS3Service.getConfirmedIndictmentCaseSignedUrl(
         theCase.type,
-        theCase.state,
         file.key,
         !file.hash,
         (content: Buffer) =>
           this.confirmIndictmentCaseFile(theCase, file, content),
         timeToLive,
+        useFreshSession,
       )
     }
 
     return this.awsS3Service.getSignedUrl(
       theCase.type,
-      theCase.state,
       file.key,
       timeToLive,
+      useFreshSession,
     )
   }
 
@@ -481,24 +541,6 @@ export class FileService {
     })
   }
 
-  async archive(theCase: Case, file: CaseFile): Promise<boolean> {
-    if (!file.key) {
-      return true
-    }
-
-    return this.awsS3Service
-      .archiveObject(theCase.type, theCase.state, file.key)
-      .then(() => true)
-      .catch((reason) => {
-        this.logger.error(
-          `Failed to archive file ${file.id} of case ${file.caseId}`,
-          { reason },
-        )
-
-        return false
-      })
-  }
-
   resetCaseFileStates(caseId: string, transaction: Transaction) {
     return this.fileModel.update(
       { state: CaseFileState.STORED_IN_RVG },
@@ -524,6 +566,7 @@ export class FileService {
       theCase,
       file,
       this.config.robotS3TimeToLiveGet,
+      true,
     )
 
     return this.courtService
