@@ -30,7 +30,9 @@ import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { useSignatureCollectionAdminRemoveListMutation } from './removeList.generated'
 import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCandidate.generated'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import {
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 
 export const Constituency = ({
   allowedToProcess,
@@ -142,18 +144,22 @@ export const Constituency = ({
                       maxProgress: list.area.min,
                       withLabel: true,
                     }}
-                    cta={{
-                      label: formatMessage(m.viewList),
-                      variant: 'text',
-                      onClick: () => {
-                        navigate(
-                          SignatureCollectionPaths.ParliamentaryConstituencyList.replace(
-                            ':constituencyName',
-                            constituencyName,
-                          ).replace(':listId', list.id),
-                        )
-                      },
-                    }}
+                    cta={
+                      (allowedToProcess && !list.active) || !allowedToProcess
+                        ? {
+                            label: formatMessage(m.viewList),
+                            variant: 'text',
+                            onClick: () => {
+                              navigate(
+                                SignatureCollectionPaths.ParliamentaryConstituencyList.replace(
+                                  ':constituencyName',
+                                  constituencyName,
+                                ).replace(':listId', list.id),
+                              )
+                            },
+                          }
+                        : undefined
+                    }
                     tag={
                       !list.reviewed
                         ? {
