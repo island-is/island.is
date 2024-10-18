@@ -978,7 +978,11 @@ application-system-form:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-cms-importer-service:
+cms-importer-worker:
+  args:
+    - 'main.js'
+  command:
+    - 'node'
   enabled: true
   env:
     LOG_LEVEL: 'info'
@@ -1004,12 +1008,10 @@ cms-importer-service:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms'
   namespace: 'cms-importer'
   podDisruptionBudget:
     maxUnavailable: 1
-  podSecurityContext:
-    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -1022,17 +1024,13 @@ cms-importer-service:
     requests:
       cpu: '100m'
       memory: '128Mi'
+  schedule: '0 15,0 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/cms-importer'
-    create: true
-    name: 'cms-importer'
 consultation-portal:
   enabled: true
   env:
