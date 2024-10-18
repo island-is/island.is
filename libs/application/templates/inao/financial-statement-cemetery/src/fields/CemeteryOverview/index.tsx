@@ -18,8 +18,7 @@ import { format as formatNationalId } from 'kennitala'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { m } from '../../lib/messages'
 import { FinancialStatementCemetery } from '../../lib/dataSchema'
-import { currencyStringToNumber, formatCurrency } from '../../utils/helpers'
-import { CapitalNumberOverview } from './CapitalNumbersOverview'
+import { currencyStringToNumber } from '../../utils/helpers'
 import { BOARDMEMEBER } from '../../utils/constants'
 import {
   columnStyle,
@@ -30,6 +29,8 @@ import { AboutOverview } from '../../../../shared/components/AboutOverview'
 import { ValueLine } from '../../../../shared/components/ValueLine'
 import { BottomBar } from '../../../../shared/components/BottomBar'
 import { FileValueLine } from '../../../../shared/components/FileValueLine'
+import { formatCurrency } from '../../../../shared/utils/formatCurrency'
+import { CapitalNumberOverview } from '../../../../shared/components/CapitalNumbersOverview'
 
 export const CemeteryOverview = ({
   application,
@@ -183,7 +184,12 @@ export const CemeteryOverview = ({
       <Divider />
 
       <Box paddingY={3}>
-        <CapitalNumberOverview answers={answers} />
+        <CapitalNumberOverview
+          capitalNumbers={answers.capitalNumbers}
+          capitalIncome={m.capitalIncome}
+          capitalCost={m.capitalCost}
+          totalCapital={m.totalCapital}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>

@@ -16,14 +16,14 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
-import { formatCurrency } from '../../utils/helpers'
+import { formatCurrency } from '../../../../shared/utils/formatCurrency'
 import { FileValueLine } from '../../../../shared/components/FileValueLine'
 import { AssetDebtEquityOverview } from '../../components/AssetDebtEquityOverview'
 import {
   sectionColumn,
   starterColumnStyle,
 } from '../../components/css/overviewStyles.css'
-import { CapitalNumberOverview } from '../../components/CapitalNumberOverview'
+import { CapitalNumberOverview } from '../../../../shared/components/CapitalNumbersOverview'
 import { AboutOverview } from '../../../../shared/components/AboutOverview'
 import { ValueLine } from '../../../../shared/components/ValueLine'
 import { BottomBar } from '../../../../shared/components/BottomBar'
@@ -160,7 +160,12 @@ export const PartyOverview = ({
       </Box>
       <Divider />
       <Box paddingY={3}>
-        <CapitalNumberOverview answers={answers} />
+        <CapitalNumberOverview
+          capitalNumbers={answers.capitalNumbers}
+          capitalIncome={m.capitalIncome}
+          capitalCost={m.capitalCost}
+          totalCapital={m.totalCapital}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>

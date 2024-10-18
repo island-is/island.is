@@ -1,6 +1,6 @@
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatCurrency } from '../utils/helpers'
+import { formatCurrency } from '../../../shared/utils/formatCurrency'
 import { m } from '../lib/messages'
 import { FinancialStatementPoliticalParty } from '../lib/dataSchema'
 import { sectionColumn } from './css/overviewStyles.css'

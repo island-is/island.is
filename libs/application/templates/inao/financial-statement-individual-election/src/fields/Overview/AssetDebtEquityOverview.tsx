@@ -1,9 +1,9 @@
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { formatCurrency } from '../../lib/utils/helpers'
 import { sectionColumn } from './overviewStyles.css'
 import { FinancialStatementIndividualElection } from '../../lib/utils/dataSchema'
 import { m } from '../../lib/utils/messages'
+import { useLocale } from '@island.is/localization'
+import { formatCurrency } from '../../../../shared/utils/formatCurrency'
 import { ValueLine } from '../../../../shared/components/ValueLine'
 
 type Props = {

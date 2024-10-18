@@ -14,13 +14,13 @@ import {
 import { Controller, useFormContext } from 'react-hook-form'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
-import { formatCurrency } from '../../lib/utils/helpers'
+import { formatCurrency } from '../../../../shared/utils/formatCurrency'
 import { starterColumnStyle, sectionColumn } from './overviewStyles.css'
 import { FinancialStatementIndividualElection } from '../../lib/utils/dataSchema'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { GREATER } from '../../lib/utils/constants'
 import { m } from '../../lib/utils/messages'
-import { CapitalNumberOverview } from './CapitalNumbersOverview'
+import { CapitalNumberOverview } from '../../../../shared/components/CapitalNumbersOverview'
 import { AssetDebtEquityOverview } from './AssetDebtEquityOverview'
 import { FileValueLine } from '../../../../shared/components/FileValueLine'
 import { AboutOverview } from '../../../../shared/components/AboutOverview'
@@ -159,7 +159,12 @@ export const Overview = ({
       </Box>
       <Divider />
       <Box paddingY={3}>
-        <CapitalNumberOverview answers={answers} />
+        <CapitalNumberOverview
+          capitalNumbers={answers.capitalNumbers}
+          capitalIncome={m.capitalIncome}
+          capitalCost={m.capitalCost}
+          totalCapital={m.totalCapital}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>

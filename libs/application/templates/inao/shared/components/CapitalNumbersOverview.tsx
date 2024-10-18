@@ -1,36 +1,47 @@
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FinancialStatementPoliticalParty } from '../lib/dataSchema'
-import { formatCurrency } from '../utils/helpers'
-import { m } from '../lib/messages'
+import { formatCurrency } from '../utils/formatCurrency'
 import { sectionColumn, starterColumnStyle } from './css/overviewStyles.css'
-import { ValueLine } from '../../../shared/components/ValueLine'
+import { ValueLine } from './ValueLine'
+import { MessageDescriptor } from 'react-intl'
 
 type Props = {
-  answers: FinancialStatementPoliticalParty
+  capitalNumbers: {
+    capitalIncome?: string
+    capitalCost?: string
+    total?: string
+  }
+  capitalIncome: MessageDescriptor
+  capitalCost: MessageDescriptor
+  totalCapital: MessageDescriptor
 }
 
-export const CapitalNumberOverview = ({ answers }: Props) => {
+export const CapitalNumberOverview = ({
+  capitalNumbers,
+  capitalIncome,
+  capitalCost,
+  totalCapital,
+}: Props) => {
   const { formatMessage } = useLocale()
   return (
     <>
       <Box className={starterColumnStyle}>
         <Text variant="h3" as="h3">
-          {formatMessage(m.capitalNumbers)}
+          {formatMessage(capitalNumbers)}
         </Text>
       </Box>
       <GridRow>
         <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
           <ValueLine
-            label={m.capitalIncome}
-            value={formatCurrency(answers.capitalNumbers.capitalIncome)}
+            label={capitalIncome}
+            value={formatCurrency(capitalNumbers.capitalIncome)}
           />
         </GridColumn>
-        {answers.capitalNumbers?.capitalCost ? (
+        {capitalNumbers?.capitalCost ? (
           <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <ValueLine
-              label={m.capitalCost}
-              value={formatCurrency(answers.capitalNumbers.capitalCost)}
+              label={capitalCost}
+              value={formatCurrency(capitalNumbers.capitalCost)}
             />
           </GridColumn>
         ) : null}
@@ -39,8 +50,8 @@ export const CapitalNumberOverview = ({ answers }: Props) => {
         <GridColumn className={sectionColumn}>
           <ValueLine
             isTotal
-            label={m.totalCapital}
-            value={formatCurrency(answers.capitalNumbers?.total)}
+            label={totalCapital}
+            value={formatCurrency(capitalNumbers?.total)}
           />
         </GridColumn>
       </GridRow>

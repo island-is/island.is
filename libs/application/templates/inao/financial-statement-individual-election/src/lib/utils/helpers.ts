@@ -48,7 +48,5 @@ export const getTotal = (values: Record<string, string>, key: string) => {
     }, 0)
   return total
 }
-export const formatCurrency = (answer: string) =>
-  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
 export const formatNumber = (num: number) => num.toLocaleString('de-DE')
