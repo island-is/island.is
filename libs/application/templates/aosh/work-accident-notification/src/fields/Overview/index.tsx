@@ -9,6 +9,7 @@ import { useLocale } from '@island.is/localization'
 import { ReviewGroup } from '../Components/ReviewGroup'
 import { KeyValueFormField } from '@island.is/application/ui-fields'
 import { information, overview, sections } from '../../lib/messages'
+import { getCompanyInformationForOverview } from '../../utils'
 // import {
 //   information,
 //   licensePlate,
@@ -50,7 +51,11 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             component: FieldComponents.KEY_VALUE,
             title: '',
             label: formatMessage(information.labels.company.pageTitle),
-            value: '',
+            value: getCompanyInformationForOverview(
+              application.answers,
+              application.externalData,
+              formatMessage,
+            ),
           }}
         />
       </ReviewGroup>

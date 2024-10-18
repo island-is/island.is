@@ -80,32 +80,24 @@ export const companySection = buildSubSection({
             return streetAddress
           },
         }),
-        buildSelectField({
+        buildTextField({
           id: 'companyInformation.postnumber',
           title: information.labels.company.postNumberAndTown,
+          backgroundColor: 'white',
           width: 'half',
-          options: (application) => {
-            const postCodes = getValueViaPath(
-              application.externalData,
-              'aoshData.data.postCode',
-              [],
-            ) as PostCodeDto[]
-
-            return postCodes
-              .filter((postCode) => postCode?.code && postCode?.name)
-              .map(({ code, name }) => ({
-                label: `${code} - ${name}`,
-                value: code || '',
-              }))
-          },
           defaultValue: (application: Application) => {
             const postalCode = getValueViaPath(
               application.externalData,
               'identity.data.address.postalCode',
               undefined,
             ) as string | undefined
+            const city = getValueViaPath(
+              application.externalData,
+              'identity.data.address.city',
+              undefined,
+            ) as string | undefined
 
-            return postalCode
+            return `${postalCode} - ${city}`
           },
         }),
         buildSelectField({

@@ -47,6 +47,7 @@ const companySchema = z.object({
   numberOfEmployees: z.string(),
   postnumber: z.string(),
   postnumberOfBranch: z.string().optional(),
+  industryClassification: z.string().optional(),
 })
 
 const employeeSchema = z.object({
@@ -175,4 +176,8 @@ export const WorkAccidentNotificationAnswersSchema = z.object({
 
 export type WorkAccidentNotification = z.TypeOf<
   typeof WorkAccidentNotificationAnswersSchema
+>
+export type CompanyType = z.TypeOf<typeof companySchema>
+export type CompanyLaborProtectionType = z.TypeOf<
+  typeof companyLaborProtectionSchema
 >
