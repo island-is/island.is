@@ -8,7 +8,7 @@ interface Props {
   successMessage: string
 }
 
-const CopyUrl = ({ inputLabel, buttonLabel, successMessage }: Props) => {
+export const CopyUrl = ({ inputLabel, buttonLabel, successMessage }: Props) => {
   const [currentUrl, setCurrentUrl] = useState<string | undefined>(undefined)
 
   const copyToClipboard = (val: string) => {
@@ -70,5 +70,3 @@ const CopyUrl = ({ inputLabel, buttonLabel, successMessage }: Props) => {
     </Box>
   )
 }
-
-export default CopyUrl
