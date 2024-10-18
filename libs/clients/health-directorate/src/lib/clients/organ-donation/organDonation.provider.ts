@@ -8,19 +8,19 @@ import {
 import { HealthDirectorateOrganDonationClientConfig } from './organDonation.config'
 import {
   Configuration,
-  MeDonorStatusApi,
+  MeOrganDonorStatusApi,
   DonationExceptionsApi,
 } from './gen/fetch'
 
 export const OrganDonorApiProvider = {
-  provide: MeDonorStatusApi,
+  provide: MeOrganDonorStatusApi,
   scope: LazyDuringDevScope,
   useFactory: (
     xRoadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof HealthDirectorateOrganDonationClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) => {
-    return new MeDonorStatusApi(
+    return new MeOrganDonorStatusApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-health-directorate-organ-donation',

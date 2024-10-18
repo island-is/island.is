@@ -4,7 +4,7 @@ export enum ApplicationStates {
   SUBMITTED = 'submitted',
   SPOUSE = 'spouse',
   PREREQUISITESSPOUSE = 'prerequisitesSpouse',
-  MUNCIPALITYNOTREGISTERED = 'muncipalityNotRegistered',
+  MUNICIPALITYNOTREGISTERED = 'municipalityNotRegistered',
 }
 
 export enum Roles {
@@ -16,12 +16,14 @@ export const ONE_MONTH = 24 * 3600 * 1000 * 31
 export const ONE_DAY = 24 * 3600 * 1000
 
 export enum Routes {
+  PERSONALINTEREST = 'personalInterest',
   ACCECPTCONTRACT = 'acceptContract',
   INRELATIONSHIP = 'inRelationship',
   UNKNOWNRELATIONSHIP = 'unknownRelationship',
   HOMECIRCUMSTANCES = 'homeCircumstances',
   STUDENT = 'student',
   EMPLOYMENT = 'employment',
+  FINANCES = 'finances',
   INCOME = 'income',
   PERSONALTAXCREDIT = 'personalTaxCredit',
   BANKINFO = 'bankInfo',
@@ -40,6 +42,7 @@ export enum Routes {
   SPOUSESUMMARY = 'spouseSummary',
   SPOUSECONFIRMATION = 'spouseConfirmation',
   MISSINGFILES = 'missingFiles',
+  MISSINGFILESSPOUSE = 'missingFilesSpouse',
   APPLICANTSTATUS = 'applicantStatus',
   MISSINGFILESCONFIRMATION = 'missingFilesConfirmation',
   SPOUSESTATUS = 'spouseStatus',
@@ -54,14 +57,6 @@ export enum ApiActions {
   SENDSPOUSEEMAIL = 'sendSpouseEmail',
 }
 
-export const UPLOAD_ACCEPT = [
-  '.pdf',
-  '.doc',
-  '.docx',
-  '.rtf',
-  '.jpg',
-  '.jpeg',
-  '.png',
-  '.heic',
-]
+export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic'
+
 export const FILE_SIZE_LIMIT = 10000000 // 10MB

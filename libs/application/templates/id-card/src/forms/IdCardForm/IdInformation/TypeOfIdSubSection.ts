@@ -5,14 +5,13 @@ import {
   buildAlertMessageField,
   getValueViaPath,
 } from '@island.is/application/core'
-import {
-  IdentityDocument,
-  IdentityDocumentChild,
-  Routes,
-} from '../../../lib/constants'
+import { IdentityDocumentChild, Routes } from '../../../lib/constants'
 import { idInformation } from '../../../lib/messages/idInformation'
-import { getChosenApplicant, isAvailableForApplication } from '../../../utils'
-import { NationalRegistryIndividual } from '@island.is/application/types'
+import {
+  getChosenApplicant,
+  getCombinedApplicantInformation,
+  isAvailableForApplication,
+} from '../../../utils'
 
 export const TypeOfIdSubSection = buildSubSection({
   id: Routes.TYPEOFID,
@@ -29,65 +28,90 @@ export const TypeOfIdSubSection = buildSubSection({
           width: 'half',
           required: true,
           options: (application) => {
-            const applicantNationalRegistry = getValueViaPath(
+            const combinedAppplicantInformation =
+              getCombinedApplicantInformation(application.externalData)
+            const radioAnswerApplicant = getValueViaPath(
+              application.answers,
+              'chosenApplicants',
+            ) as string
+            const chosenApplicant = getChosenApplicant(
               application.externalData,
-              'nationalRegistry.data',
-              {},
-            ) as NationalRegistryIndividual
-            const chosenApplicant = getChosenApplicant(application)
-            let applicantPassport: IdentityDocument | undefined
-            if (
-              chosenApplicant.nationalId ===
-              applicantNationalRegistry.nationalId
-            ) {
-              applicantPassport = getValueViaPath(
-                application.externalData,
-                'identityDocument.data.userPassport',
-                undefined,
-              ) as IdentityDocument | undefined
-            } else {
+              radioAnswerApplicant,
+            )
+
+            if (!chosenApplicant.isApplicant) {
               const childPassports = getValueViaPath(
                 application.externalData,
                 'identityDocument.data.childPassports',
                 undefined,
               ) as Array<IdentityDocumentChild> | undefined
 
-              applicantPassport =
-                childPassports &&
-                childPassports.find(
-                  (x) => x.childNationalId === chosenApplicant.nationalId,
-                )?.passports?.[0]
+              combinedAppplicantInformation.passport = childPassports?.find(
+                (x) => x.childNationalId === chosenApplicant.nationalId,
+              )?.passports?.[0]
             }
-            const IIDisabled = applicantPassport
-              ? !isAvailableForApplication(
-                  applicantPassport.expirationDate,
-                  'II',
-                  `${applicantPassport.type}${applicantPassport.subType}`,
-                  applicantNationalRegistry.age,
-                )
-              : false
 
-            const IDDisabled = applicantPassport
-              ? !isAvailableForApplication(
-                  applicantPassport.expirationDate,
-                  'ID',
-                  `${applicantPassport.type}${applicantPassport.subType}`,
-                  applicantNationalRegistry.age,
-                )
-              : false
+            const IIDisabled = !isAvailableForApplication(
+              'II',
+              combinedAppplicantInformation,
+            )
+
+            const IDDisabled = !isAvailableForApplication(
+              'ID',
+              combinedAppplicantInformation,
+            )
             return [
               //II = Nafnskírteini ekki sem ferðaskilríki, ID = Nafnskírteini sem ferðaskilríki
-              {
-                label: idInformation.labels.typeOfIdRadioAnswerOne,
-                value: 'II',
-                disabled: IIDisabled,
-              },
               {
                 label: idInformation.labels.typeOfIdRadioAnswerTwo,
                 value: 'ID',
                 disabled: IDDisabled,
               },
+              {
+                label: idInformation.labels.typeOfIdRadioAnswerOne,
+                value: 'II',
+                disabled: IIDisabled,
+              },
             ]
+          },
+        }),
+        buildAlertMessageField({
+          id: `${Routes.TYPEOFID}.alertField`,
+          title: '',
+          alertType: 'warning',
+          message: idInformation.labels.warningText,
+          condition: (answers, externalData) => {
+            const combinedAppplicantInformation =
+              getCombinedApplicantInformation(externalData)
+            const radioAnswerApplicant = getValueViaPath(
+              answers,
+              'chosenApplicants',
+            ) as string
+            const chosenApplicant = getChosenApplicant(
+              externalData,
+              radioAnswerApplicant,
+            )
+            if (!chosenApplicant.isApplicant) {
+              const childPassports = getValueViaPath(
+                externalData,
+                'identityDocument.data.childPassports',
+                undefined,
+              ) as Array<IdentityDocumentChild> | undefined
+
+              combinedAppplicantInformation.passport = childPassports?.find(
+                (x) => x.childNationalId === chosenApplicant.nationalId,
+              )?.passports?.[0]
+            }
+            const IIDisabled = !isAvailableForApplication(
+              'II',
+              combinedAppplicantInformation,
+            )
+
+            const IDDisabled = !isAvailableForApplication(
+              'ID',
+              combinedAppplicantInformation,
+            )
+            return IIDisabled || IDDisabled
           },
         }),
         buildAlertMessageField({

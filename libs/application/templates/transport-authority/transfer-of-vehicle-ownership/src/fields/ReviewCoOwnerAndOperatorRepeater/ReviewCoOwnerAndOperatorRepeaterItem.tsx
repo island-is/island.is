@@ -69,6 +69,7 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
         name,
         type: userMessageId as 'operator' | 'coOwner',
         wasRemoved: repeaterField.wasRemoved,
+        needsAgeValidation: repeaterField.needsAgeValidation,
       }
       temp[index] = itemValue
       setCoOwnersAndOperators(temp)

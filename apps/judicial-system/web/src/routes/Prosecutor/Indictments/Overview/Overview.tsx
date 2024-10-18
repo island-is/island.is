@@ -4,6 +4,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
 
 import {
+  Accordion,
   AlertMessage,
   Box,
   Button,
@@ -15,6 +16,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  ConnectedCaseFilesAccordionItem,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -27,6 +29,7 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
   SectionHeading,
+  ServiceAnnouncement,
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -61,7 +64,8 @@ const Overview: FC = () => {
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
-  const isIndictmentNew = workingCase.state === CaseState.DRAFT
+  const isIndictmentNew =
+    workingCase.state === CaseState.DRAFT || modal !== 'noModal'
   const isIndictmentWaitingForConfirmation =
     workingCase.state === CaseState.WAITING_FOR_CONFIRMATION
   const isIndictmentSubmitted = workingCase.state === CaseState.SUBMITTED
@@ -70,7 +74,9 @@ const Overview: FC = () => {
   const isIndictmentReceived = workingCase.state === CaseState.RECEIVED
 
   const userCanSendIndictmentToCourt =
-    Boolean(user?.canConfirmIndictment) && isIndictmentWaitingForConfirmation
+    Boolean(user?.canConfirmIndictment) &&
+    isIndictmentWaitingForConfirmation &&
+    modal === 'noModal'
   const userCanCancelIndictment =
     (isIndictmentSubmitted || isIndictmentReceived) &&
     !workingCase.indictmentDecision
@@ -150,6 +156,10 @@ const Overview: FC = () => {
     router.push(constants.CASES_ROUTE)
   }
 
+  const hasLawsBroken = lawsBroken.size > 0
+  const hasMergeCases =
+    workingCase.mergedCases && workingCase.mergedCases.length > 0
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -184,6 +194,18 @@ const Overview: FC = () => {
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
+        {workingCase.defendants?.map((defendant) =>
+          defendant.subpoenas?.map(
+            (subpoena) =>
+              subpoena.subpoenaId && (
+                <ServiceAnnouncement
+                  key={`${subpoena.id}-${subpoena.created}`}
+                  subpoena={subpoena}
+                  defendantName={defendant.name}
+                />
+              ),
+          ),
+        )}
         {workingCase.court &&
           latestDate?.date &&
           workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
@@ -205,18 +227,28 @@ const Overview: FC = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardActiveIndictment />
         </Box>
-        {lawsBroken.size > 0 && (
+        {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
-            <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            {hasLawsBroken && (
+              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            )}
+            {hasMergeCases && (
+              <Accordion>
+                {workingCase.mergedCases?.map((mergedCase) => (
+                  <Box key={mergedCase.id}>
+                    <ConnectedCaseFilesAccordionItem
+                      connectedCaseParentId={workingCase.id}
+                      connectedCase={mergedCase}
+                    />
+                  </Box>
+                ))}
+              </Accordion>
+            )}
           </Box>
         )}
         <Box
           marginBottom={
-            workingCase.indictmentDecision !==
-              IndictmentDecision.POSTPONING_UNTIL_VERDICT ||
-            userCanSendIndictmentToCourt
-              ? 5
-              : 10
+            userCanAddDocuments || userCanSendIndictmentToCourt ? 5 : 10
           }
         >
           <IndictmentCaseFilesList workingCase={workingCase} />

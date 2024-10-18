@@ -10,6 +10,7 @@ import {
   UserProfileApi,
   CurrentLicenseApi,
   DrivingAssessmentApi,
+  JurisdictionApi,
   QualityPhotoApi,
   ExistingApplicationApi,
 } from '@island.is/application/types'
@@ -26,6 +27,7 @@ export const sectionExternalData = buildSubSection({
       id: 'approveExternalData',
       subTitle: m.externalDataSubTitle,
       checkboxLabel: m.externalDataAgreement,
+      enableMockPayment: true,
       dataProviders: [
         buildDataProviderItem({
           provider: NationalRegistryUserApi,
@@ -54,6 +56,10 @@ export const sectionExternalData = buildSubSection({
         }),
         buildDataProviderItem({
           provider: DrivingAssessmentApi,
+          title: '',
+        }),
+        buildDataProviderItem({
+          provider: JurisdictionApi,
           title: '',
         }),
         buildDataProviderItem({

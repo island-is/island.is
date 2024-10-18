@@ -281,16 +281,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
           )
           .catch((e) => {
             this.logger.error(
-              `Error sending email about initReview in application: ID: ${
-                application.id
-              }, 
-            role: ${
-              recipientList[i].ssn === application.applicant
-                ? 'Applicant'
-                : `Assignee index ${application.assignees.findIndex(
-                    (assignee) => assignee === recipientList[i].ssn,
-                  )}`
-            }`,
+              `Error sending email about initReview in application: ID: ${application.id}, 
+            role: ${recipientList[i].role}`,
               e,
             )
           })
@@ -307,13 +299,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
             this.logger.error(
               `Error sending sms about initReview to 
               a phonenumber in application: ID: ${application.id}, 
-              role: ${
-                recipientList[i].ssn === application.applicant
-                  ? 'Applicant'
-                  : `Assignee index ${application.assignees.findIndex(
-                      (assignee) => assignee === recipientList[i].ssn,
-                    )}`
-              }`,
+              role: ${recipientList[i].role}`,
               e,
             )
           })
@@ -355,16 +341,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
           )
           .catch((e) => {
             this.logger.error(
-              `Error sending email about rejectApplication in application: ID: ${
-                application.id
-              }, 
-            role: ${
-              recipientList[i].ssn === application.applicant
-                ? 'Applicant'
-                : `Assignee index ${application.assignees.findIndex(
-                    (assignee) => assignee === recipientList[i].ssn,
-                  )}`
-            }`,
+              `Error sending email about rejectApplication in application: ID: ${application.id}, 
+            role: ${recipientList[i].role}`,
               e,
             )
           })
@@ -385,13 +363,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
             this.logger.error(
               `Error sending sms about rejectApplication to 
               a phonenumber in application: ID: ${application.id}, 
-              role: ${
-                recipientList[i].ssn === application.applicant
-                  ? 'Applicant'
-                  : `Assignee index ${application.assignees.findIndex(
-                      (assignee) => assignee === recipientList[i].ssn,
-                    )}`
-              }`,
+              role: ${recipientList[i].role}`,
               e,
             )
           })
@@ -512,16 +484,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
           )
           .catch(() => {
             this.logger.error(
-              `Error sending email about submitApplication in application: ID: ${
-                application.id
-              }, 
-            role: ${
-              recipientList[i].ssn === application.applicant
-                ? 'Applicant'
-                : `Assignee index ${application.assignees.findIndex(
-                    (assignee) => assignee === recipientList[i].ssn,
-                  )}`
-            }`,
+              `Error sending email about submitApplication in application: ID: ${application.id}, 
+            role: ${recipientList[i].role}`,
             )
           })
       }
@@ -537,13 +501,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
             this.logger.error(
               `Error sending sms about submitApplication to 
               a phonenumber in application: ID: ${application.id}, 
-              role: ${
-                recipientList[i].ssn === application.applicant
-                  ? 'Applicant'
-                  : `Assignee index ${application.assignees.findIndex(
-                      (assignee) => assignee === recipientList[i].ssn,
-                    )}`
-              }`,
+              role: ${recipientList[i].role}`,
               e,
             )
           })

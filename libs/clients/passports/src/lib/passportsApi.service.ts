@@ -152,6 +152,7 @@ export class PassportsService {
           passports: child.identityDocumentResponses
             ? this.resolvePassports(child.identityDocumentResponses)
             : undefined,
+          citizenship: child.rikisfang,
         }
       })
 

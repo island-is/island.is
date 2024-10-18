@@ -1,80 +1,83 @@
-import {
-  AlcoholLicence,
-  SyslumennAuction,
-  Homestay,
-  PaginatedOperatingLicenses,
-  OperatingLicensesCSV,
-  CertificateInfoResponse,
-  DistrictCommissionerAgencies,
-  DataUploadResponse,
-  Person,
-  Attachment,
-  AssetType,
-  MortgageCertificate,
-  MortgageCertificateValidation,
-  AssetName,
-  EstateRegistrant,
-  EstateRelations,
-  EstateInfo,
-  RealEstateAgent,
-  Lawyer,
-  Broker,
-  PropertyDetail,
-  TemporaryEventLicence,
-  VehicleRegistration,
-  RegistryPerson,
-  InheritanceTax,
-  InheritanceReportInfo,
-  ManyPropertyDetail,
-} from './syslumennClient.types'
-import {
-  mapSyslumennAuction,
-  mapHomestay,
-  mapPaginatedOperatingLicenses,
-  mapOperatingLicensesCSV,
-  mapCertificateInfo,
-  mapDistrictCommissionersAgenciesResponse,
-  mapDataUploadResponse,
-  constructUploadDataObject,
-  mapAssetName,
-  mapEstateRegistrant,
-  mapEstateInfo,
-  mapRealEstateAgent,
-  mapLawyer,
-  mapBroker,
-  mapAlcoholLicence,
-  cleanPropertyNumber,
-  mapTemporaryEventLicence,
-  mapMasterLicence,
-  mapVehicle,
-  mapDepartedToRegistryPerson,
-  mapInheritanceTax,
-  mapEstateToInheritanceReportInfo,
-  mapJourneymanLicence,
-  mapProfessionRight,
-  mapVehicleResponse,
-  mapRealEstateResponse,
-  mapShipResponse,
-  mapPropertyCertificate,
-} from './syslumennClient.utils'
-import { Injectable, Inject } from '@nestjs/common'
-import {
-  SyslumennApi,
-  SvarSkeyti,
-  Configuration,
-  VirkLeyfiGetRequest,
-  VedbondTegundAndlags,
-  Skilabod,
-  VedbandayfirlitRegluverkGeneralSvar,
-  InnsigludSkjol,
-} from '../../gen/fetch'
-import { SyslumennClientConfig } from './syslumennClient.config'
-import type { ConfigType } from '@island.is/nest/config'
+import { Inject, Injectable } from '@nestjs/common'
+import startOfDay from 'date-fns/startOfDay'
+
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
-const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
+import {
+  Configuration,
+  InnsigludSkjol,
+  LogradamadurSvar,
+  Skilabod,
+  SvarSkeyti,
+  SyslumennApi,
+  VedbandayfirlitRegluverkGeneralSvar,
+  VedbondTegundAndlags,
+  VirkLeyfiGetRequest,
+} from '../../gen/fetch'
+import { SyslumennClientConfig } from './syslumennClient.config'
+import {
+  AlcoholLicence,
+  AssetName,
+  AssetType,
+  Attachment,
+  Broker,
+  CertificateInfoResponse,
+  DataUploadResponse,
+  DistrictCommissionerAgencies,
+  EstateInfo,
+  EstateRegistrant,
+  EstateRelations,
+  Homestay,
+  InheritanceReportInfo,
+  InheritanceTax,
+  Lawyer,
+  ManyPropertyDetail,
+  MortgageCertificate,
+  MortgageCertificateValidation,
+  OperatingLicensesCSV,
+  PaginatedOperatingLicenses,
+  Person,
+  PropertyDetail,
+  RealEstateAgent,
+  RegistryPerson,
+  SyslumennAuction,
+  TemporaryEventLicence,
+  VehicleRegistration,
+} from './syslumennClient.types'
+import {
+  cleanPropertyNumber,
+  constructUploadDataObject,
+  mapAlcoholLicence,
+  mapAssetName,
+  mapBroker,
+  mapCertificateInfo,
+  mapDataUploadResponse,
+  mapDepartedToRegistryPerson,
+  mapDistrictCommissionersAgenciesResponse,
+  mapEstateInfo,
+  mapEstateRegistrant,
+  mapEstateToInheritanceReportInfo,
+  mapHomestay,
+  mapInheritanceTax,
+  mapJourneymanLicence,
+  mapLawyer,
+  mapMasterLicence,
+  mapOperatingLicensesCSV,
+  mapPaginatedOperatingLicenses,
+  mapProfessionRight,
+  mapPropertyCertificate,
+  mapRealEstateAgent,
+  mapRealEstateResponse,
+  mapShipResponse,
+  mapSyslumennAuction,
+  mapTemporaryEventLicence,
+  mapVehicle,
+  mapVehicleResponse,
+} from './syslumennClient.utils'
 
+import type { ConfigType } from '@island.is/nest/config'
+const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 @Injectable()
 export class SyslumennService {
   constructor(
@@ -104,7 +107,7 @@ export class SyslumennService {
     }
 
     const { audkenni, accessToken } = await api.innskraningPost({
-      notandi: config,
+      apiNotandi: config,
     })
     if (audkenni && accessToken) {
       return {
@@ -252,7 +255,7 @@ export class SyslumennService {
     const { id, api } = await this.createApi()
     const explanation = 'Rafrænt undirritað vottorð'
     return await api.innsiglaSkjolPost({
-      skeyti: {
+      innsiglaSkjolSkeyti: {
         audkenni: id,
         skyring: explanation,
         skjol: documents,
@@ -264,7 +267,7 @@ export class SyslumennService {
     const { id, api } = await this.createApi()
     const explanation = 'Rafrænt undirritað vottorð'
     return await api.innsiglunPost({
-      skeyti: {
+      innsiglaSkeyti: {
         audkenni: id,
         skyring: explanation,
         skjal: document,
@@ -362,10 +365,10 @@ export class SyslumennService {
     const { id, api } = await this.createApi()
     const response = await api
       .vedbokavottordRegluverkiPost({
-        skilabod: {
+        vedbandayfirlitSkeyti: {
           audkenni: id,
           fastanumer: cleanPropertyNumber(assetId),
-          tegundAndlags: assetType as number,
+          tegundAndlags: assetType as unknown as VedbondTegundAndlags,
         },
       })
       .catch((e) => {
@@ -408,7 +411,7 @@ export class SyslumennService {
     const { id, api } = await this.createApi()
 
     const res = await api.vedbokarvottord2Post({
-      skilabod: {
+      vedbandayfirlitMargirSkeyti: {
         audkenni: id,
         eignir: properties.map(({ propertyNumber, propertyType }) => {
           return {
@@ -429,8 +432,8 @@ export class SyslumennService {
         const contentBase64 = resultItem.vedbandayfirlitPDFSkra || ''
         return {
           contentBase64: contentBase64,
-          apiMessage: resultItem.skilabod,
-          propertyNumber: resultItem.fastanumer,
+          apiMessage: resultItem.skilabod ?? undefined,
+          propertyNumber: resultItem.fastanumer ?? undefined,
         }
       }) ?? []
 
@@ -462,7 +465,7 @@ export class SyslumennService {
 
     const res = await api
       .vedbokavottordRegluverkiPost({
-        skilabod: {
+        vedbandayfirlitSkeyti: {
           audkenni: id,
           fastanumer: cleanPropertyNumber(propertyNumber),
           tegundAndlags: VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
@@ -484,7 +487,7 @@ export class SyslumennService {
       unitsOfUse: {
         unitsOfUse: [
           {
-            explanation: fasteign?.notkun,
+            explanation: fasteign?.notkun ?? undefined,
           },
         ],
       },
@@ -499,7 +502,7 @@ export class SyslumennService {
 
     const res = await api
       .vedbokavottordRegluverkiPost({
-        skilabod: {
+        vedbandayfirlitSkeyti: {
           audkenni: id,
           fastanumer:
             propertyType === '0'
@@ -520,8 +523,8 @@ export class SyslumennService {
       })
 
     return {
-      propertyNumber: res.fastanum,
-      propertyType: res.tegundEignar,
+      propertyNumber: res.fastanum ?? undefined, // Removes nulls with ?? undefined
+      propertyType: res.tegundEignar ?? undefined,
       realEstate: res.fasteign ? res.fasteign.map(mapRealEstateResponse) : [],
       vehicle: res.okutaeki ? mapVehicleResponse(res.okutaeki) : undefined,
       ship: res.skip ? mapShipResponse(res.skip) : undefined,
@@ -559,7 +562,7 @@ export class SyslumennService {
   async getRegistryPerson(nationalId: string): Promise<RegistryPerson> {
     const { id, api } = await this.createApi()
     const res = await api.leitaAdKennitoluIThjodskraPost({
-      skeyti: {
+      thjodskraSkeyti: {
         audkenni: id,
         kennitala: nationalId,
       },
@@ -600,7 +603,7 @@ export class SyslumennService {
   ): Promise<unknown> {
     const { id, api } = await this.createApi()
     const res = await api.skiptaUmSkraningaradilaDanarbusPost({
-      payload: {
+      skiptaUmSkraningaradili: {
         audkenni: id,
         kennitalaFra: currentRegistrantNationalId,
         kennitalaTil: newRegistrantNationalId,
@@ -673,5 +676,23 @@ export class SyslumennService {
       audkenni: id,
       kennitala: nationalId,
     })
+  }
+
+  async checkIfDelegationExists(
+    toNationalId: string,
+    fromNationalId: string,
+  ): Promise<boolean> {
+    const { id, api } = await this.createApi()
+    const delegations: LogradamadurSvar[] = await api.logradamadurGet({
+      audkenni: id,
+      kennitala: toNationalId,
+    })
+
+    return delegations.some(
+      (delegation) =>
+        delegation.kennitala === fromNationalId &&
+        (!delegation.gildirTil ||
+          delegation.gildirTil > startOfDay(new Date())),
+    )
   }
 }

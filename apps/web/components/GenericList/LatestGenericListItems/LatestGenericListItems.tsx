@@ -19,8 +19,6 @@ export const LatestGenericListItems = ({
     return null
   }
 
-  const itemsAreClickable = slice.genericList?.itemType === 'Clickable'
-
   // Only allow organization subpage links as is
   let seeMoreLinkHref = ''
   if (
@@ -33,6 +31,11 @@ export const LatestGenericListItems = ({
       slice.seeMorePage.slug,
     ]).href
   }
+
+  const itemsAreClickable =
+    slice.genericList?.itemType === 'Clickable' &&
+    slice.seeMoreLinkText &&
+    seeMoreLinkHref
 
   return (
     <Stack space={6}>

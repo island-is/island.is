@@ -121,7 +121,7 @@ export const notificationsStore = create<NotificationsStore>(
           topBar: {
             rightButtons: getRightButtons({
               unseenCount,
-              icons: ['notifications'],
+              icons: ['notifications', 'options'],
             }),
           },
         })

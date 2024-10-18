@@ -2,12 +2,14 @@ import {
   buildDescriptionField,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSubmitField,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { Application } from '@island.is/api/schema'
+import { Application, SignatureCollectionList } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 import Logo from '../../assets/Logo'
 
@@ -18,7 +20,7 @@ export const Draft: Form = buildForm({
   title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
+  renderLastScreenBackButton: false,
   logo: Logo,
   children: [
     buildSection({
@@ -31,6 +33,60 @@ export const Draft: Form = buildForm({
       title: m.dataCollection,
       children: [],
     }),
+    /* section used for testing purposes */
+    buildSection({
+      id: 'selectCandidateSection',
+      title: m.selectCandidate,
+      condition: (_, externalData) => {
+        const lists = getValueViaPath(
+          externalData,
+          'getList.data',
+          [],
+        ) as SignatureCollectionList[]
+        return lists.length > 1
+      },
+      children: [
+        buildMultiField({
+          id: 'selectCandidateSection',
+          title: m.selectCandidate,
+          description: m.selectCandidateDescription,
+          children: [
+            buildRadioField({
+              id: 'listId',
+              title: '',
+              defaultValue: '',
+              required: true,
+              options: ({
+                externalData: {
+                  getList: { data },
+                },
+              }) => {
+                return (data as SignatureCollectionList[]).map((list) => ({
+                  value: list.id,
+                  label: list.candidate.name,
+                  disabled:
+                    list.maxReached || new Date(list.endTime) < new Date(),
+                  tag: list.maxReached
+                    ? {
+                        label: m.selectCandidateMaxReached.defaultMessage,
+                        variant: 'red',
+                        outlined: true,
+                      }
+                    : new Date(list.endTime) < new Date()
+                    ? {
+                        label: m.selectCandidateListExpired.defaultMessage,
+                        variant: 'red',
+                        outlined: true,
+                      }
+                    : undefined,
+                }))
+              },
+            }),
+          ],
+        }),
+      ],
+    }),
+    /* ------------------------------- */
     buildSection({
       id: 'signListInformationSection',
       title: m.information,
@@ -45,19 +101,56 @@ export const Draft: Form = buildForm({
               title: m.listHeader,
               titleVariant: 'h3',
             }),
+
             buildTextField({
               id: 'list.name',
               title: m.listName,
               width: 'half',
               readOnly: true,
-              defaultValue: 'Flokkur 1',
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists = getValueViaPath(
+                  externalData,
+                  'getList.data',
+                  [],
+                ) as SignatureCollectionList[]
+
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.candidate?.name
+              },
             }),
             buildTextField({
               id: 'list.letter',
               title: m.listLetter,
               width: 'half',
               readOnly: true,
-              defaultValue: 'F',
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists = getValueViaPath(
+                  externalData,
+                  'getList.data',
+                  [],
+                ) as SignatureCollectionList[]
+
+                const initialQuery = getValueViaPath(
+                  answers,
+                  'initialQuery',
+                  '',
+                )
+
+                return lists.find((list) =>
+                  initialQuery
+                    ? list.candidate.id === initialQuery
+                    : list.id === answers.listId,
+                )?.candidate?.partyBallotLetter
+              },
             }),
             buildDescriptionField({
               id: 'signeeHeader',

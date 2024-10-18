@@ -16,7 +16,7 @@ export const m = defineMessages({
   pageDescriptionSignee: {
     id: 'sp.signatureCollection:pageDescriptionSignee',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet, dui eget iaculis vehicula, purus nibh lobortis urna, sit amet dignissim lacus metus non arcu.',
+      'Aðeins er hægt að mæla með einu framboði. Hægt er að afturkalla meðmæli þangað til söfnun lokar og mæla með öðrum frambjóðanda ef vill.',
     description: '',
   },
   createListButton: {
@@ -27,6 +27,11 @@ export const m = defineMessages({
   collectionTitle: {
     id: 'sp.signatureCollection:collectionTitle',
     defaultMessage: 'Forsetakosningar 2024',
+    description: '',
+  },
+  collectionTitleParliamentary: {
+    id: 'sp.signatureCollection:collectionTitleParliamentary',
+    defaultMessage: 'Alþingiskosningar',
     description: '',
   },
   myListsDescription: {
@@ -46,7 +51,7 @@ export const m = defineMessages({
   },
   copyLinkDescription: {
     id: 'sp.signatureCollection:copyLinkDescription',
-    defaultMessage: 'Hér getur þú afritað hlekk á þitt framboð til að deila.',
+    defaultMessage: 'Hér getur þú afritað hlekk á þitt framboð til að deila',
     description: '',
   },
   copyLinkSuccess: {
@@ -94,13 +99,35 @@ export const m = defineMessages({
     defaultMessage: 'Meðmæli lesin inn',
     description: '',
   },
+  digitalSignature: {
+    id: 'sp.signatureCollection:digitalSignature',
+    defaultMessage: 'Skrifað undir: ',
+    description: '',
+  },
   signatureIsInvalid: {
     id: 'sp.signatureCollection:signatureIsInvalid',
     defaultMessage: 'Ógilt meðmæli',
     description: '',
   },
+  listSubmitted: {
+    id: 'sp.signatureCollection:listSubmitted',
+    defaultMessage: 'Lista skilað',
+    description: '',
+  },
 
   /* Signee View */
+  noUserFound: {
+    id: 'sp.signatureCollection:noUserFound',
+    defaultMessage:
+      'Þú uppfyllir ekki skilyrði til að taka þátt í meðmælasöfnunum',
+    description: '',
+  },
+  noUserFoundDescription: {
+    id: 'sp.signatureCollection:noUserFoundDescription#markdown',
+    defaultMessage:
+      'Ef þú telur þessar upplýsingar rangar, vinsamlegast hafðu samband við Þjóðskrá Íslands.',
+    description: '',
+  },
   noCollectionIsActive: {
     id: 'sp.signatureCollection:noCollectionIsActive',
     defaultMessage: 'Engin söfnun í gangi',
@@ -158,8 +185,9 @@ export const m = defineMessages({
     description: '',
   },
   actorNoAccessDescription: {
-    id: 'sp.signatureCollection:actorNoAccessDescription',
-    defaultMessage: 'Þú hefur ekki réttindi til að sjá þessar upplýsingar.',
+    id: 'sp.signatureCollection:actorNoAccessDescription#markdown',
+    defaultMessage:
+      'Eingöngu kennitölur sem hafa skráðan listabókstaf geta stofnað meðmælendasöfnun. Ef þú átt listabókstaf geturðu stofnað meðmælendasöfnun hér.',
     description: '',
   },
 
@@ -174,9 +202,25 @@ export const m = defineMessages({
     defaultMessage: 'Þú ert að fara að hætta við söfnun meðmæla. Ertu viss?',
     description: '',
   },
+  cancelCollectionModalMessageLastList: {
+    id: 'sp.signatureCollection:cancelCollectionModalMessageLastList',
+    defaultMessage:
+      'Þú ert að fara að hætta við söfnun meðmæla í þessu kjördæmi. Þau meðmæli sem þú hefur nú þegar safnað munu eyðast. Athugaðu að með því að hætta við síðustu söfnun framboðsins verður framboðinu einnig eytt. Ertu viss um að þú viljir hætta við söfnun og eyða framboði?',
+    description: '',
+  },
   cancelCollectionModalConfirmButton: {
     id: 'sp.signatureCollection:modalConfirmButton',
-    defaultMessage: 'Já, hætta við söfnun meðmæla',
+    defaultMessage: 'Já, hætta við',
+    description: '',
+  },
+  cancelCollectionModalConfirmButtonLastList: {
+    id: 'sp.signatureCollection:cancelCollectionModalConfirmButtonLastList',
+    defaultMessage: 'Já, hætta við söfnun of eyða framboði',
+    description: '',
+  },
+  cancelCollectionModalCancelButton: {
+    id: 'sp.signatureCollection:cancelCollectionModalCancelButton',
+    defaultMessage: 'Nei, hætta við',
     description: '',
   },
   cancelCollectionModalToastError: {
@@ -203,7 +247,7 @@ export const m = defineMessages({
   },
   coOwners: {
     id: 'sp.signatureCollection:coOwners',
-    defaultMessage: 'Umboðsaðilar:',
+    defaultMessage: 'Umsjónaraðilar:',
     description: '',
   },
   copyLink: {
@@ -251,6 +295,67 @@ export const m = defineMessages({
     defaultMessage: 'Heimilisfang',
     description: '',
   },
+  paperSigneesHeader: {
+    id: 'sp.signatureCollection:paperSigneesHeader',
+    defaultMessage: 'Skrá meðmæli af blaði',
+    description: '',
+  },
+  paperSigneesTooltip: {
+    id: 'sp.signatureCollection:paperSigneesTooltip',
+    defaultMessage:
+      'Athugið að ógild meðmæli skrást inn en teljast ekki með í heildartölu meðmæla. Dæmi slegnar eru inn 10 kennitölur en kerfið telur aðeins 8 gildar.',
+    description: '',
+  },
+  paperSigneesClearButton: {
+    id: 'sp.signatureCollection:paperSigneesClearButton',
+    defaultMessage: 'Hreinsa',
+    description: '',
+  },
+  paperNumber: {
+    id: 'sp.signatureCollection:paperNumber',
+    defaultMessage: 'Blaðsíðunúmer',
+    description: '',
+  },
+  paperSigneeName: {
+    id: 'sp.signatureCollection:paperSigneeName',
+    defaultMessage: 'Nafn meðmælanda',
+    description: '',
+  },
+  signPaperSigneeButton: {
+    id: 'sp.signatureCollection:signPaperSigneeButton',
+    defaultMessage: 'Skrá meðmæli á lista',
+    description: '',
+  },
+  paperSigneeTypoTitle: {
+    id: 'sp.signatureCollection:paperSigneeTypoTitle',
+    defaultMessage: 'Kennitala ekki á réttu formi',
+    description: '',
+  },
+  paperSigneeTypoMessage: {
+    id: 'sp.signatureCollection:paperSigneeTypoMessage',
+    defaultMessage: 'Vinsamlegast athugið kennitöluna og reynið aftur',
+    description: '',
+  },
+  paperSigneeCantSignTitle: {
+    id: 'sp.signatureCollection:paperSigneeCantSignTitle',
+    defaultMessage: 'Ekki er hægt að skrá meðmæli',
+    description: '',
+  },
+  paperSigneeCantSignMessage: {
+    id: 'sp.signatureCollection:paperSigneeCantSign',
+    defaultMessage: 'Kennitala uppfyllir ekki skilyrði fyrir að skrá meðmæli',
+    description: '',
+  },
+  paperSigneeSuccess: {
+    id: 'sp.signatureCollection:paperSigneeSuccess',
+    defaultMessage: 'Meðmæli skráð',
+    description: '',
+  },
+  paperSigneeError: {
+    id: 'sp.signatureCollection:paperSigneeError',
+    defaultMessage: 'Ekki tókst að skrá meðmæli',
+    description: '',
+  },
 
   /* Parliamentary */
   parliamentaryElectionsTitle: {
@@ -274,29 +379,25 @@ export const m = defineMessages({
     defaultMessage:
       'Þjóðskrá Íslands hefur umsjón með gögnum um meðmælasöfnun.',
   },
-  managers: {
-    id: 'sp.signatureCollection:managers',
-    defaultMessage: 'Ábyrgðaraðilar',
-    description: '',
-  },
-  addManager: {
-    id: 'sp.signatureCollection:addManager',
-    defaultMessage: 'Bæta við ábyrgðaraðila',
-    description: '',
-  },
   supervisors: {
     id: 'sp.signatureCollection:supervisors',
     defaultMessage: 'Umsjónaraðilar',
     description: '',
   },
+  noSupervisors: {
+    id: 'sp.signatureCollection:noSupervisors',
+    defaultMessage: 'Enginn umsjónaraðili skráður',
+    description: '',
+  },
+  supervisorsTooltip: {
+    id: 'sp.signatureCollection:supervisorsTooltip',
+    defaultMessage:
+      'Umsjónaraðilar hafa aðgang að öllum upplýsingum safnananna en geta ekki eytt söfnununum.',
+    description: '',
+  },
   add: {
     id: 'sp.signatureCollection:add',
     defaultMessage: 'Bæta við',
-    description: '',
-  },
-  addSupervisor: {
-    id: 'sp.signatureCollection:addSupervisor',
-    defaultMessage: 'Bæta við umsjónaraðila',
     description: '',
   },
   personName: {
@@ -335,31 +436,14 @@ export const m = defineMessages({
       'Veldu viðeigandi kjördæmi sem þú vilt stofna meðmælendasöfnun í.',
     description: '',
   },
-  addConstituencyAlertInfo: {
-    id: 'sp.signatureCollection:addConstituencyAlertInfo',
-    defaultMessage:
-      'Athugið að skrá þarf viðeigandi ábyrgðar-/umsjónaraðila á yfirlitssíðu fyrir ný kjördæmi.',
+  addConstituencySuccess: {
+    id: 'sp.signatureCollection:addConstituencySuccess',
+    defaultMessage: 'Kjördæmi bætt við',
     description: '',
   },
-  deleteManager: {
-    id: 'sp.signatureCollection:deleteManager',
-    defaultMessage: 'Eyða umsjónaraðila',
-    description: '',
-  },
-  deleteManagerDescription: {
-    id: 'sp.signatureCollection:deleteManagerDescription',
-    defaultMessage:
-      'Þú ert að fara að taka Nafna Nafnason af lista yfir umsjónaraðila. Ertu viss um að þú viljir halda áfram?',
-    description: '',
-  },
-  delete: {
-    id: 'sp.signatureCollection:delete',
-    defaultMessage: 'Eyða',
-    description: '',
-  },
-  save: {
-    id: 'sp.signatureCollection:save',
-    defaultMessage: 'Vista',
+  addConstituencyError: {
+    id: 'sp.signatureCollection:addConstituencyError',
+    defaultMessage: 'Ekki tókst að bæta við kjördæmi',
     description: '',
   },
 })

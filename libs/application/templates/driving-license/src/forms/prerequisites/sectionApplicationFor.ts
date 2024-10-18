@@ -6,9 +6,18 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { DrivingLicense } from '../../lib/types'
-import { B_FULL, B_TEMP, BE, DrivingLicenseFakeData } from '../../lib/constants'
+import {
+  B_FULL,
+  B_FULL_RENEWAL_65,
+  B_TEMP,
+  BE,
+  DrivingLicenseFakeData,
+} from '../../lib/constants'
 
-export const sectionApplicationFor = (allowBELicense = false) =>
+export const sectionApplicationFor = (
+  allowBELicense = false,
+  allow65Renewal = false,
+) =>
   buildSubSection({
     id: 'applicationFor',
     title: m.applicationDrivingLicenseTitle,
@@ -34,7 +43,7 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                 'currentLicense.data',
               ) ?? { categories: null }
 
-              const age =
+              let age =
                 getValueViaPath<number>(
                   app.externalData,
                   'nationalRegistry.data.age',
@@ -44,6 +53,7 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                 app.answers,
                 'fakeData',
               )
+
               if (fakeData?.useFakeData === 'yes') {
                 currentLicense = fakeData.currentLicense ?? null
                 categories =
@@ -57,6 +67,8 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                         { nr: 'BE', validToCode: 9 },
                       ]
                     : []
+
+                age = fakeData?.age
               }
 
               let options = [
@@ -75,6 +87,16 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                   disabled: !currentLicense,
                 },
               ]
+
+              if (allow65Renewal) {
+                options = options.concat({
+                  label: m.applicationForRenewalLicenseTitle,
+                  subLabel:
+                    m.applicationForRenewalLicenseDescription.defaultMessage,
+                  value: B_FULL_RENEWAL_65,
+                  disabled: !currentLicense || age < 65,
+                })
+              }
 
               if (allowBELicense) {
                 options = options.concat({

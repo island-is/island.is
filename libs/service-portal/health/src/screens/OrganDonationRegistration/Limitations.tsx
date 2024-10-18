@@ -1,28 +1,16 @@
-import {
-  Box,
-  Checkbox,
-  Divider,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Input,
-  Stack,
-} from '@island.is/island-ui/core'
+import { Box, Checkbox, Divider, Stack } from '@island.is/island-ui/core'
 import React, { useState } from 'react'
-import { OptionsLimitations } from '../../utils/OrganDonationMock'
-import { messages } from '../..'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { HealthDirectorateOrganDonationExceptionObject } from '@island.is/api/schema'
+import { useNamespaces } from '@island.is/localization'
+import { HealthDirectorateOrganDonationOrgan } from '@island.is/api/schema'
 
 interface LimitationsProps {
-  data: HealthDirectorateOrganDonationExceptionObject[]
+  data: HealthDirectorateOrganDonationOrgan[]
+  selected?: string[] | null
 }
 
-const Limitations = ({ data }: LimitationsProps) => {
+const Limitations = ({ data, selected }: LimitationsProps) => {
   useNamespaces('sp.health')
-  const { formatMessage } = useLocale()
-  const [checked, setChecked] = useState<Array<string>>([])
-
+  const [checked, setChecked] = useState<Array<string>>(selected ?? [])
   const handleCheckboxChange = (id: string, isChecked: boolean) => {
     setChecked((prevState) =>
       isChecked ? [...prevState, id] : prevState.filter((item) => item !== id),
@@ -39,22 +27,21 @@ const Limitations = ({ data }: LimitationsProps) => {
           {data?.map(
             (y, yi) => (
               // y.type === 'checkbox' && (
+
               <Box
                 key={`organ-donation-limitation-${yi}`}
                 width="half"
                 marginY="smallGutter"
               >
                 <Checkbox
-                  id={`organ-registration-form-${y.name?.toLowerCase() ?? ''}`}
-                  name={`selected-limitations-${y.name?.toLowerCase() ?? ''}`}
+                  id={y.id?.toString()}
+                  name={`selected-limitations-${y.id}`}
                   label={y.name}
-                  value={y.name?.toLowerCase() ?? ''}
+                  value={y.id ?? ''}
                   onChange={(e) =>
-                    handleCheckboxChange(
-                      y.name?.toLowerCase() ?? '',
-                      e.target.checked,
-                    )
+                    handleCheckboxChange(y.id ?? '', e.target.checked)
                   }
+                  checked={checked.includes(y.id ?? '')}
                 />
               </Box>
             ),

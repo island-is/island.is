@@ -1,4 +1,5 @@
 import formatISO from 'date-fns/formatISO'
+import { Base64 } from 'js-base64'
 import { Sequelize } from 'sequelize-typescript'
 import { ConfidentialClientApplication } from '@azure/msal-node'
 
@@ -581,6 +582,7 @@ export class CourtService {
         subtypes,
         defendants,
         prosecutor,
+        courtName,
       })
 
       return this.sendToRobot(
@@ -623,7 +625,7 @@ export class CourtService {
       }))
 
       const subject = `${courtName} - ${courtCaseNumber} - verjanda upplýsingar`
-      const content = JSON.stringify(defendantInfo)
+      const content = JSON.stringify({ defendants: defendantInfo, courtName })
 
       return this.sendToRobot(
         subject,
@@ -656,7 +658,7 @@ export class CourtService {
   ): Promise<unknown> {
     try {
       const subject = `${courtName} - ${courtCaseNumber} - úthlutun`
-      const content = JSON.stringify(assignedRole)
+      const content = JSON.stringify({ ...assignedRole, courtName })
 
       return this.sendToRobot(
         subject,
@@ -688,7 +690,11 @@ export class CourtService {
     noticeText?: string,
   ): Promise<unknown> {
     const subject = `${courtName} - ${courtCaseNumber} - afturköllun`
-    const content = JSON.stringify({ subject: noticeSubject, text: noticeText })
+    const content = JSON.stringify({
+      subject: noticeSubject,
+      text: noticeText,
+      courtName,
+    })
 
     return this.sendToRobot(
       subject,
@@ -840,7 +846,12 @@ export class CourtService {
   ): Promise<unknown> {
     try {
       const subject = `Landsréttur - ${appealCaseNumber} - skjal`
-      const content = JSON.stringify({ category, name, dateSent, url })
+      const content = JSON.stringify({
+        category,
+        name,
+        dateSent,
+        url: url && Base64.encode(url),
+      })
 
       return this.sendToRobot(
         subject,

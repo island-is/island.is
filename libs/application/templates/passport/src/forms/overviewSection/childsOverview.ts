@@ -8,7 +8,6 @@ import { Application } from '@island.is/application/types'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import {
   ChildsPersonalInfo,
-  DistrictCommissionerAgencies,
   Passport,
   Service,
   Services,
@@ -237,17 +236,7 @@ export const childsOverview = buildMultiField({
     buildKeyValueField({
       label: m.dropLocation,
       width: 'half',
-      value: ({
-        externalData: {
-          deliveryAddress: { data },
-        },
-        answers,
-      }) => {
-        const district = (data as DistrictCommissionerAgencies[]).find(
-          (d) => d.key === (answers.service as Service).dropLocation,
-        )
-        return `${district?.name}`
-      },
+      value: m.dropLocationTitleFixedValue,
     }),
   ],
 })

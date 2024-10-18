@@ -841,6 +841,17 @@ export const UniversityGatewayReykjavikUniversity = new XroadConf({
   },
 })
 
+export const JudicialSystemServicePortal = new XroadConf({
+  env: {
+    XROAD_JUDICIAL_SYSTEM_SP_PATH: {
+      dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      staging:
+        'IS-TEST/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      prod: 'IS-GOV/GOV/5804170510/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+    },
+  },
+})
+
 export const SocialInsuranceAdministration = new XroadConf({
   env: {
     XROAD_TR_PATH: {
@@ -884,9 +895,30 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
 export const Frigg = new XroadConf({
   env: {
     XROAD_MMS_FRIGG_PATH: {
-      dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
-      staging: 'IS-TEST/GOV/10066/MMS-Protected/frigg-api',
-      prod: 'IS/GOV/10066/MMS-Protected/frigg-api',
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-service',
+      staging: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-service',
+      prod: 'IS/GOV/10066/MMS-Protected/frigg-form-service',
+    },
+  },
+})
+
+export const HealthDirectorateOrganDonation = new XroadConf({
+  env: {
+    XROAD_HEALTH_DIRECTORATE_ORGAN_DONATION_PATH: {
+      dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1',
+      staging:
+        'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/organ-donation-v1',
+      prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/organ-donation-v1',
+    },
+  },
+})
+
+export const HealthDirectorateVaccination = new XroadConf({
+  env: {
+    XROAD_HEALTH_DIRECTORATE_VACCINATION_PATH: {
+      dev: 'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1',
+      staging: 'IS-TEST/GOV/10015/EmbaettiLandlaeknis-Protected/vaccination-v1',
+      prod: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/vaccination-v1',
     },
   },
 })

@@ -7,3 +7,13 @@ export const OwnerRequirementsApi = defineTemplateApi({
 export const CurrentCollectionApi = defineTemplateApi({
   action: 'currentCollection',
 })
+
+export const CanSignApi = defineTemplateApi({
+  action: 'canSign',
+  order: 0,
+})
+
+export const GetListApi = defineTemplateApi({
+  action: 'getList',
+  order: 1,
+})

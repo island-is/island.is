@@ -6,6 +6,7 @@ import {
   BoxProps,
   GridColumn,
   GridRow,
+  Inline,
   ProfileCard,
   Stack,
   Text,
@@ -17,15 +18,26 @@ import * as styles from './TeamList.css'
 const imagePostfix = '?w=400'
 
 export interface TeamListProps {
+  variant?: 'card' | 'accordion'
+  prefixes?: {
+    email?: string
+    phone?: string
+  }
   teamMembers: {
     title: string
     name: string
     image?: { url: string }
     imageOnSelect?: { url: string } | null
-    /** Field is only visible if variant is set to "accordion" */
+
+    /** Fields below are only visible if variant is set to "accordion" */
     intro?: SliceType[] | null
+    email?: string
+    phone?: string
+    tagGroups?: {
+      groupLabel: string
+      tagLabels: string[]
+    }[]
   }[]
-  variant?: 'card' | 'accordion'
 }
 
 const loadedImageUrls = new Map<string, boolean>()
@@ -128,11 +140,12 @@ export const TeamMemberCardList = ({
 
 const TeamMemberAccordionList = ({
   teamMembers,
-}: Pick<TeamListProps, 'teamMembers'>) => {
+  prefixes,
+}: Pick<TeamListProps, 'teamMembers' | 'prefixes'>) => {
   return (
-    <Accordion>
-      {teamMembers.map((member) => {
-        const id = `${member.name}-${member.title}`
+    <Accordion singleExpand={false}>
+      {teamMembers.map((member, index) => {
+        const id = `${member.name}-${member.title}-${index}`
         return (
           <AccordionItem
             key={id}
@@ -146,20 +159,51 @@ const TeamMemberAccordionList = ({
             labelUse="div"
           >
             <GridRow rowGap={1}>
-              <GridColumn span={['1/1', '1/1', '1/1', '1/1', '3/12']}>
-                <TeamMemberImageUrlProvider
-                  member={member}
-                  consumer={(imageUrl) => (
-                    <img
-                      src={imageUrl}
-                      className={styles.teamMemberImage}
-                      alt=""
-                    />
-                  )}
-                />
-              </GridColumn>
+              {member.image?.url && (
+                <GridColumn span={['1/1', '1/1', '1/1', '1/1', '3/12']}>
+                  <TeamMemberImageUrlProvider
+                    member={member}
+                    consumer={(imageUrl) => (
+                      <img
+                        src={imageUrl}
+                        className={styles.teamMemberImage}
+                        alt=""
+                      />
+                    )}
+                  />
+                </GridColumn>
+              )}
               <GridColumn span={['1/1', '1/1', '1/1', '1/1', '9/12']}>
-                <Text as="div">{richText(member.intro ?? [])}</Text>
+                <Stack space={1}>
+                  {member.email && (
+                    <Inline space={1} alignY="center">
+                      <Text fontWeight="semiBold">
+                        {prefixes?.email ?? 'Netfang:'}
+                      </Text>
+                      <Text>
+                        <span className={styles.email}>{member.email}</span>
+                      </Text>
+                    </Inline>
+                  )}
+                  {member.phone && (
+                    <Inline space={1} alignY="center">
+                      <Text fontWeight="semiBold">
+                        {prefixes?.phone ?? 'Sími:'}
+                      </Text>
+                      <Text>{member.phone}</Text>
+                    </Inline>
+                  )}
+                  {member.tagGroups?.map((tagGroup) => (
+                    <Inline key={tagGroup.groupLabel} space={1} alignY="center">
+                      <Text fontWeight="semiBold">{tagGroup.groupLabel}</Text>
+                      <Inline space={1}>
+                        <Text>{tagGroup.tagLabels.join(', ')}</Text>
+                      </Inline>
+                    </Inline>
+                  ))}
+
+                  <Text as="div">{richText(member.intro ?? [])}</Text>
+                </Stack>
               </GridColumn>
             </GridRow>
           </AccordionItem>

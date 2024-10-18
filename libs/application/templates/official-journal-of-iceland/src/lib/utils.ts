@@ -5,6 +5,7 @@ import {
   committeeSignatureSchema,
   memberItemSchema,
   partialSchema,
+  regularSignatureItemSchema,
   regularSignatureSchema,
 } from './dataSchema'
 import { getValueViaPath } from '@island.is/application/core'
@@ -12,7 +13,7 @@ import { InputFields, OJOIApplication, RequiredInputFieldsNames } from './types'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { SignatureTypes } from './constants'
+import { SignatureTypes, OJOI_DF } from './constants'
 import { MessageDescriptor } from 'react-intl'
 
 export const countDaysAgo = (date: Date) => {
@@ -210,7 +211,7 @@ const signatureTemplate = (
       }
 
       const date = signature.date
-        ? format(new Date(signature.date), 'dd. MMM yyyy.', { locale: is })
+        ? format(new Date(signature.date), OJOI_DF, { locale: is })
         : ''
 
       const chairmanMarkup = chairman
@@ -242,7 +243,7 @@ const signatureTemplate = (
   return `${markup}${additionalMarkup}` as HTMLText
 }
 
-export const getSignatureMarkup = ({
+export const getSignaturesMarkup = ({
   signatures,
   type,
 }: {
@@ -310,4 +311,12 @@ export const parseZodIssue = (issue: z.ZodCustomIssue) => {
     name: getValueViaPath(RequiredInputFieldsNames, path) as string,
     message: issue?.params as MessageDescriptor,
   }
+}
+
+export const getSingleSignatureMarkup = (
+  signature: z.infer<typeof regularSignatureItemSchema>,
+  additionalSignature?: string,
+  chairman?: z.infer<typeof memberItemSchema>,
+) => {
+  return signatureTemplate([signature], additionalSignature, chairman)
 }

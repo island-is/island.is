@@ -10,7 +10,7 @@ type CommentsResponse = {
   officialJournalOfIcelandApplicationGetComments: OfficialJournalOfIcelandApplicationGetCommentsResponse
 }
 
-type AddCommentVariables = {
+export type AddCommentVariables = {
   comment: string
 }
 
@@ -29,6 +29,7 @@ export const useComments = ({ applicationId }: Props) => {
           id: applicationId,
         },
       },
+      fetchPolicy: 'no-cache',
     },
   )
 
@@ -45,7 +46,7 @@ export const useComments = ({ applicationId }: Props) => {
     },
   })
 
-  const addComment = (variables: AddCommentVariables) => {
+  const addComment = (variables: AddCommentVariables, cb?: () => void) => {
     addCommentMutation({
       variables: {
         input: {
@@ -54,12 +55,15 @@ export const useComments = ({ applicationId }: Props) => {
         },
       },
     })
+
+    cb && cb()
   }
 
   return {
     comments: data?.officialJournalOfIcelandApplicationGetComments.comments,
     loading,
     error,
+    refetchComments: refetch,
     addComment,
     addCommentLoading,
     addCommentError,

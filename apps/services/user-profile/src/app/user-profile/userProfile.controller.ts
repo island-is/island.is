@@ -458,7 +458,10 @@ export class UserProfileController {
     } else {
       // findOrCreateUserProfile for edge cases - fragmented onboarding
       await this.findOrCreateUserProfile(nationalId, user)
-      return await this.userProfileService.addDeviceToken(body, user)
+      // The behaviour of returning the token if it already exists is not following API Design Guide
+      // It should respond with 303 See Other and a Location header to the existing resource
+      // But as the v1 of the user profile is not following this, we will keep the same behaviour.
+      return this.userProfileService.addDeviceToken(body, user)
     }
   }
 

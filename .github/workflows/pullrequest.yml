@@ -73,11 +73,13 @@ jobs:
       # See this for more information:
       # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
       - name: Keep PR run event
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
         with:
           name: pr-event
           path: event.json
           retention-days: 90
+          include-hidden-files: true
+          if-no-files-found: error
 
       - name: Get cache
         id: get-cache
@@ -282,13 +284,14 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Run ShellCheck
-        uses: ludeeus/action-shellcheck@2.0.0
+      - uses: reviewdog/action-shellcheck@v1
         with:
-          ignore_paths: >-
-            node_modules
-            apps/native/app/android
-          severity: warning
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-review
+          fail_on_error: true
+          level: info
+          exclude: >-
+            */node_modules/*
 
   formatting:
     needs:

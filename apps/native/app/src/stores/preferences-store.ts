@@ -25,6 +25,14 @@ export interface PreferencesStore extends State {
   hasAcceptedBiometrics: boolean
   hasOnboardedPasskeys: boolean
   hasCreatedPasskey: boolean
+  graphicWidgetEnabled: boolean
+  inboxWidgetEnabled: boolean
+  applicationsWidgetEnabled: boolean
+  licensesWidgetEnabled: boolean
+  vehiclesWidgetEnabled: boolean
+  airDiscountWidgetEnabled: boolean
+  widgetsInitialised: boolean
+  skippedSoftUpdate: boolean
   lastUsedPasskey: number
   notificationsNewDocuments: boolean
   notificationsAppUpdates: boolean
@@ -39,6 +47,7 @@ export interface PreferencesStore extends State {
   setAppearanceMode(appearanceMode: AppearanceMode): void
   setUseBiometrics(useBiometrics: boolean): void
   dismiss(key: string, value?: boolean): void
+  resetHomeScreenWidgets(): void
   reset(): void
 }
 
@@ -56,6 +65,14 @@ const defaultPreferences = {
   hasAcceptedBiometrics: false,
   hasOnboardedPasskeys: false,
   hasCreatedPasskey: false,
+  graphicWidgetEnabled: true,
+  inboxWidgetEnabled: true,
+  applicationsWidgetEnabled: true,
+  licensesWidgetEnabled: true,
+  vehiclesWidgetEnabled: true,
+  airDiscountWidgetEnabled: true,
+  widgetsInitialised: false,
+  skippedSoftUpdate: false,
   lastUsedPasskey: 0,
   notificationsNewDocuments: true,
   notificationsAppUpdates: true,
@@ -105,6 +122,17 @@ export const preferencesStore = create<PreferencesStore>(
         } else {
           set({ dismissed: [...now.filter((k) => k !== key)] })
         }
+      },
+      resetHomeScreenWidgets() {
+        set({
+          graphicWidgetEnabled: true,
+          inboxWidgetEnabled: true,
+          applicationsWidgetEnabled: true,
+          licensesWidgetEnabled: true,
+          vehiclesWidgetEnabled: true,
+          airDiscountWidgetEnabled: true,
+          widgetsInitialised: false,
+        })
       },
       reset() {
         set(defaultPreferences as PreferencesStore)

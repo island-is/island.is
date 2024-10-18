@@ -1,10 +1,10 @@
 import { User } from '@island.is/auth-nest-tools'
 import { Application } from '@island.is/application/types'
 
-export function isNewActor(
+export const isNewActor = (
   application: Pick<Application, 'applicantActors' | 'applicant'>,
   user: User,
-) {
+) => {
   if (!user.actor) {
     return false
   } else if (

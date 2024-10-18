@@ -29,10 +29,7 @@ const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
 const UNAUTHORIZED_USER_INFO = 'Got 401 when fetching user info'
 
 // Optional scopes (not required for all users so we do not want to force a logout)
-const OPTIONAL_SCOPES = [
-  '@island.is/licenses:barcode',
-  '@island.is/auth/passkeys',
-]
+const OPTIONAL_SCOPES: string[] = []
 
 interface UserInfo {
   sub: string
@@ -68,21 +65,32 @@ const getAppAuthConfig = () => {
   }
 }
 
-const clearPasskey = async () => {
+const clearPasskey = async (userNationalId?: string) => {
   // Clear passkey if exists
-  preferencesStore.setState({
-    hasCreatedPasskey: false,
-    hasOnboardedPasskeys: false,
-    lastUsedPasskey: 0,
-  })
+  const isPasskeyEnabled = await featureFlagClient?.getValueAsync(
+    'isPasskeyEnabled',
+    false,
+    userNationalId ? { identifier: userNationalId } : undefined,
+  )
 
-  const client = await getApolloClientAsync()
-  try {
-    await client.mutate<DeletePasskeyMutation, DeletePasskeyMutationVariables>({
-      mutation: DeletePasskeyDocument,
+  if (isPasskeyEnabled) {
+    preferencesStore.setState({
+      hasCreatedPasskey: false,
+      hasOnboardedPasskeys: false,
+      lastUsedPasskey: 0,
     })
-  } catch (e) {
-    console.error('Failed to delete passkey', e)
+
+    const client = await getApolloClientAsync()
+    try {
+      await client.mutate<
+        DeletePasskeyMutation,
+        DeletePasskeyMutationVariables
+      >({
+        mutation: DeletePasskeyDocument,
+      })
+    } catch (e) {
+      console.error('Failed to delete passkey', e)
+    }
   }
 }
 
@@ -188,7 +196,8 @@ export const authStore = create<AuthStore>((set, get) => ({
     notificationsStore.getState().reset()
 
     // Clear passkey if exists
-    await clearPasskey()
+    const userNationalId = get().userInfo?.nationalId
+    await clearPasskey(userNationalId)
 
     const appAuthConfig = getAppAuthConfig()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -214,6 +223,8 @@ export const authStore = create<AuthStore>((set, get) => ({
       }),
       true,
     )
+    // Reset home screen widgets
+    preferencesStore.getState().resetHomeScreenWidgets()
     return true
   },
 }))

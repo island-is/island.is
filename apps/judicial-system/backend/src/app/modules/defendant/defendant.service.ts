@@ -11,7 +11,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   Message,
   MessageService,
@@ -201,17 +201,12 @@ export class DefendantService {
     defendantNationalId: string,
     update: UpdateDefendantDto,
   ): Promise<Defendant> {
-    const formattedNationalId = formatNationalId(defendantNationalId)
-
     const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
       update,
       {
         where: {
           caseId,
-          [Op.or]: [
-            { national_id: formattedNationalId },
-            { national_id: defendantNationalId },
-          ],
+          national_id: normalizeAndFormatNationalId(defendantNationalId),
         },
         returning: true,
       },
@@ -303,7 +298,7 @@ export class DefendantService {
           },
         },
       ],
-      where: { defenderNationalId: nationalId },
+      where: { defenderNationalId: normalizeAndFormatNationalId(nationalId) },
       order: [['created', 'DESC']],
     })
   }

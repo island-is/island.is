@@ -268,7 +268,6 @@ export class OccupationalLicensesV2Service {
       permit: data.practice,
       licenseHolderName: data.licenseHolderName,
       licenseHolderNationalId: data.licenseHolderNationalId,
-      dateOfBirth: info(data.licenseHolderNationalId).birthday,
       validFrom: data.validFrom,
       title: `${data.profession} - ${data.practice}`,
       status,

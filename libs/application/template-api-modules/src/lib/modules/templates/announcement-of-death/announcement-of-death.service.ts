@@ -12,7 +12,6 @@ import {
 } from '@island.is/clients/syslumenn'
 import {
   Answers as aodAnswers,
-  FirearmApplicant,
   PropertiesEnum,
 } from '@island.is/application/templates/announcement-of-death/types'
 import { NationalRegistry, RoleConfirmationEnum, PickRole } from './types'
@@ -24,12 +23,10 @@ import {
 
 import { isPerson } from 'kennitala'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { Application, ApplicationTypes } from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import { coreErrorMessages, YES } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { generateFirearmApplicantEmail } from './emailGenerators/firearmApplicantNotification'
 import { SharedTemplateApiService } from '../../shared'
-import { generateRequestReviewSms } from './smsGenerators/requestReviewSms'
 
 @Injectable()
 export class AnnouncementOfDeathService extends BaseTemplateApiService {
@@ -119,41 +116,6 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
       )
     } catch (e) {
       return { success: false }
-    }
-  }
-
-  private async notifyApplicant(answers: aodAnswers, application: Application) {
-    const applicant = answers.firearmApplicant
-
-    if (!applicant) return
-
-    if (applicant.phone) {
-      await this.sendSmsNotification(applicant.phone, application)
-    }
-    if (applicant.email) {
-      await this.sendEmailNotification(applicant.email, application)
-    }
-  }
-
-  private async sendSmsNotification(phone: string, application: Application) {
-    try {
-      await this.sharedTemplateAPIService.sendSms(
-        (_) => generateRequestReviewSms(application),
-        application,
-      )
-    } catch (error) {
-      this.logger.error(`Error sending SMS to ${phone}`, error)
-    }
-  }
-
-  private async sendEmailNotification(email: string, application: Application) {
-    try {
-      await this.sharedTemplateAPIService.sendEmail(
-        (props) => generateFirearmApplicantEmail(props),
-        application,
-      )
-    } catch (error) {
-      this.logger.error(`Error sending email to ${email}`, error)
     }
   }
 
@@ -294,9 +256,6 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
         throw new Error(
           'Application submission failed on syslumadur upload data',
         )
-      }
-      if (answers.firearmApplicant) {
-        this.notifyApplicant(answers, application)
       }
       return { success: result.success, id: result.caseNumber }
     }

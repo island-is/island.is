@@ -24,7 +24,9 @@ import { DistrictCommissionerLogo } from '../assets/logo'
 
 const TEMPORARY = 'temporary'
 
-export async function generateResidenceChangePdf(application: CRCApplication) {
+export const generateResidenceChangePdf = async (
+  application: CRCApplication,
+) => {
   const {
     answers,
     externalData: { nationalRegistry },

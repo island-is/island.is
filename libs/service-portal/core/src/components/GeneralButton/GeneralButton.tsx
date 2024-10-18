@@ -10,6 +10,7 @@ type Props = Pick<
   | 'icon'
   | 'iconType'
   | 'as'
+  | 'disabled'
 >
 
 export const GeneralButton = ({

@@ -73,9 +73,9 @@ export const strings = defineMessages({
     description: 'Notað sem merki þegar mál í stöðu "Dómtekið" í málalista',
   },
   completed: {
-    id: 'judicial.system.core:tag_case_state.completed',
+    id: 'judicial.system.core:tag_case_state.completed_v2',
     defaultMessage:
-      '{indictmentRulingDecision, select, RULING {Dómur} FINE {Viðurlagaákvörðun} DISMISSAL {Frávísun} CANCELLATION {Niðurfelling} other {Lokið}}',
+      '{indictmentRulingDecision, select, RULING {Dómur} FINE {Viðurlagaákvörðun} DISMISSAL {Frávísun} CANCELLATION {Niðurfelling} MERGE {Sameinað} other {Lokið}}',
     description: 'Notað sem merki þegar mál í stöðu "Dómþulur" í málalista',
   },
   recalled: {

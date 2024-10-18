@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const translationStrings = defineMessages({
+  isTurnedOff: {
+    id: 'web.pensionCalculator:isTurnedOff',
+    defaultMessage: 'Reiknivélin er ekki virk að svo stöddu',
+    description: 'Upplýsingar efst á fyrstu síðu ef slökkt er á reiknivél',
+  },
   introduction: {
     id: 'web.pensionCalculator:introduction#markdown',
     defaultMessage:
@@ -423,10 +428,22 @@ export const translationStrings = defineMessages({
       'Vinsamlega hafðu í huga að reiknivélin reiknar greiðslur miðað við þær forsendur sem þú gefur upp. Líkanið er einungis til leiðbeiningar en veitir ekki bindandi upplýsingar um endanlega afgreiðslu máls eða greiðslufjárhæðir',
     description: 'Fyrirvari á niðurstöðuskjá',
   },
+  result2025Disclaimer: {
+    id: 'web.pensionCalculator:result2025Disclaimer',
+    defaultMessage:
+      'Reiknivélinni byggir á þeim forsendum sem þú gafst upp. Upphæðir eru aðeins leiðbeinandi og veita ekki bindandi upplýsingar um endanlega afgreiðslu mála eða greiðsluupphæða. Annars vegar eru niðurstöður birtar fyrir árið núna og hins vegar í nýju kerfi eftir 1. september 2025',
+    description:
+      'Fyrirvari á niðurstöðuskjá fyrir örorkulífeyrissamanburð eftir 1. september 2025',
+  },
   highlightedResultItemHeading: {
     id: 'web.pensionCalculator:highlighedResultItemHeading',
     defaultMessage: 'Samtals greiðslur frá TR eftir skatt',
     description: 'H2, Samtals greiðslur frá TR eftir skatt',
+  },
+  highlightedResult2025ItemHeading: {
+    id: 'web.pensionCalculator:highlighedResult2025ItemHeading',
+    defaultMessage: 'Samtals ráðstöfunartekjur eftir skatt',
+    description: 'H2, Samtals ráðstöfunartekjur eftir skatt',
   },
   changeAssumptions: {
     id: 'web.pensionCalculator:changeAssumptions',
@@ -437,6 +454,16 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:resultDetailsLabel',
     defaultMessage: 'Sundurliðun',
     description: 'Sundurliðun',
+  },
+  resultDetails2024Label: {
+    id: 'web.pensionCalculator:resultDetails2024Label',
+    defaultMessage: 'Sundurliðun upphæða 2024',
+    description: 'Sundurliðun upphæða 2024',
+  },
+  result2025DetailsLabel: {
+    id: 'web.pensionCalculator:result2025DetailsLabel',
+    defaultMessage: 'Sundurliðun upphæða eftir 1. september 2025',
+    description: 'Sundurliðun upphæða eftir 1. september 2025',
   },
   print: {
     id: 'web.pensionCalculator:print',
@@ -557,6 +584,21 @@ export const translationStrings = defineMessages({
     description:
       'Lýsing fyrir ofan mánuð og ár reit varðandi hvenær notandi vill hefja töku á ellilífeyri',
   },
+  after1stSeptember2025: {
+    id: 'web.pensionCalculator:after1stSeptember2025',
+    defaultMessage: 'Eftir 1. september 2025',
+    description: 'Eftir 1. september 2025',
+  },
+  after1stSeptember2025Calculate: {
+    id: 'web.pensionCalculator:after1stSeptember2025Calculate',
+    defaultMessage: 'Reikna',
+    description: 'Reikna',
+  },
+  after1stSeptember2025Description: {
+    id: 'web.pensionCalculator:after1stSeptember2025Description',
+    defaultMessage: 'Sjá útreikning örorkulífeyris í nýju kerfi',
+    description: 'Sjá útreikning örorkulífeyris í nýju kerfi',
+  },
   birthMonthLabel: {
     id: 'web.pensionCalculator:birthMonthLabel',
     defaultMessage: 'Mánuður',
@@ -617,6 +659,16 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Samtals frá TR fyrir skatt',
     description: 'Niðurstöðuskjár, Samtals frá TR fyrir skatt',
   },
+  'REIKNH.FRADRSKATTUR': {
+    id: 'web.pensionCalculator:REIKNH.FRADRSKATTUR',
+    defaultMessage: 'Frádreginn skattur af öðrum greiðslum',
+    description: 'Niðurstöðuskjár, Frádreginn skattur af öðrum greiðslum',
+  },
+  'REIKNH.FRADRSKATTURTR': {
+    id: 'web.pensionCalculator:REIKNH.FRADRSKATTURTR',
+    defaultMessage: 'Frádreginn skattur af greiðslum TR',
+    description: 'Niðurstöðuskjár, Frádreginn skattur af greiðslum TR',
+  },
   'REIKNH.FRADRSKATTURTR1': {
     id: 'web.pensionCalculator:REIKNH.FRADRSKATTURTR1',
     defaultMessage: 'Frádreginn skattur TR (1. og 2. skattþrep)',
@@ -636,6 +688,11 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:REIKNH.SAMTALSTREFTIRSK',
     defaultMessage: 'Samtals frá TR eftir skatt',
     description: 'Niðurstöðuskjár, Samtals frá TR eftir skatt',
+  },
+  'REIKNH.SAMTALS': {
+    id: 'web.pensionCalculator:REIKNH.SAMTALS',
+    defaultMessage: 'Samtals',
+    description: 'Niðurstöðuskjár, Samtals',
   },
   'REIKNH.TEKJURAFATVINNU': {
     id: 'web.pensionCalculator:REIKNH.TEKJURAFATVINNU',
@@ -833,12 +890,12 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Meðlag',
     description: 'Niðurstöðuskjár, Meðlag',
   },
-  'REIKNH.PERSAFSLMINNA	': {
+  'REIKNH.PERSAFSLMINNA': {
     id: 'web.pensionCalculator:REIKNH.PERSAFSLMINNA',
     defaultMessage: 'Persónuafsláttur',
     description: 'Niðurstöðuskjár, Persónuafsláttur minna',
   },
-  'REIKNH.SAMANBBOTAFLOKKUR	': {
+  'REIKNH.SAMANBBOTAFLOKKUR': {
     id: 'web.pensionCalculator:REIKNH.SAMANBBOTAFLOKKUR',
     defaultMessage: 'Samanburðarbótaflokkur við eldra kerfi',
     description: 'Niðurstöðuskjár, Samanburðarbótaflokkur við eldra kerfi ',
@@ -847,6 +904,21 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:REIKNH.UPPBVREKSTURSBIFR',
     defaultMessage: 'Uppbót v/reksturs bifreiðar (óskattskyld)',
     description: 'Niðurstöðuskjár, Uppbót v/reksturs bifreiðar (óskattskyld) ',
+  },
+  'REIKNH.GRUNNLIFORORKA2025': {
+    id: 'web.pensionCalculator:REIKNH.GRUNNLIFORORKA2025',
+    defaultMessage: 'Örorkulífeyrir',
+    description: 'Niðurstöðuskjár, Örorkulífeyrir 2025',
+  },
+  'REIKNH.ORHEIMILISUPPB2025': {
+    id: 'web.pensionCalculator:REIKNH.ORHEIMILISUPPB2025',
+    defaultMessage: 'Heimilisuppbót',
+    description: 'Niðurstöðuskjár, Heimilisuppbót 2025',
+  },
+  'REIKNH.ORALDURSVIDBOT2025': {
+    id: 'web.pensionCalculator:REIKNH.ORALDURSVIDBOT2025',
+    defaultMessage: 'Aldursviðbót',
+    description: 'Niðurstöðuskjár, Aldursviðbót 2025',
   },
   highlighedResultItemHeadingForTotalAfterTaxFromTR: {
     id: 'web.pensionCalculator:REIKNH.highlighedResultItemHeadingForTotalAfterTaxFromTR',

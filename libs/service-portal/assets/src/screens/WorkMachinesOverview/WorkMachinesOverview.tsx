@@ -124,22 +124,6 @@ const WorkMachinesOverview = () => {
       },
     })
   }
-  const generateCardText = (wm: WorkMachine): string | undefined => {
-    let text = wm.registrationNumber ?? undefined
-    const inspectionText = wm.dateLastInspection
-      ? `${formatMessage(vehicleMessage.lastInspection)}: ${formatDate(
-          wm.dateLastInspection,
-        )}`
-      : undefined
-
-    if (wm.dateLastInspection) {
-      text = wm.registrationNumber
-        ? `${text}, ${inspectionText}`
-        : inspectionText
-    }
-
-    return text
-  }
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -273,7 +257,11 @@ const WorkMachinesOverview = () => {
           return (
             <Box marginBottom={3} key={index}>
               <ActionCard
-                text={generateCardText(wm)}
+                text={`${formatMessage(vehicleMessage.lastInspection)}: ${
+                  wm.dateLastInspection
+                    ? formatDate(wm.dateLastInspection)
+                    : formatMessage(messages.noInspection)
+                }`}
                 heading={wm.type ?? ''}
                 cta={{
                   label: formatMessage(m.seeDetails),

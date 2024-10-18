@@ -54,6 +54,23 @@ const VehicleMileage = lazy(() =>
   import('./screens/VehicleMileage/VehicleMileage'),
 )
 
+const VehicleBulkMileage = lazy(() =>
+  import('./screens/VehicleBulkMileage/VehicleBulkMileage'),
+)
+
+const VehicleBulkMileageUpload = lazy(() =>
+  import('./screens/VehicleBulkMileageUpload/VehicleBulkMileageUpload'),
+)
+
+const VehicleBulkMileageJobOverview = lazy(() =>
+  import(
+    './screens/VehicleBulkMileageJobOverview/VehicleBulkMileageJobOverview'
+  ),
+)
+const VehicleBulkMileageJobDetail = lazy(() =>
+  import('./screens/VehicleBulkMileageJobDetail/VehicleBulkMileageJobDetail'),
+)
+
 export const assetsModule: PortalModule = {
   name: 'Fasteignir',
   routes: ({ userInfo, ...rest }) => {
@@ -127,6 +144,34 @@ export const assetsModule: PortalModule = {
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
         key: 'VehicleMileage',
         element: <VehicleMileage />,
+      },
+      {
+        name: m.vehiclesBulkMileage,
+        path: AssetsPaths.AssetsVehiclesBulkMileage,
+        enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        key: 'VehicleBulkMileage',
+        element: <VehicleBulkMileage />,
+      },
+      {
+        name: m.vehiclesBulkMileageUpload,
+        path: AssetsPaths.AssetsVehiclesBulkMileageUpload,
+        enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        key: 'VehicleBulkMileage',
+        element: <VehicleBulkMileageUpload />,
+      },
+      {
+        name: m.vehiclesBulkMileageJobOverview,
+        path: AssetsPaths.AssetsVehiclesBulkMileageJobOverview,
+        enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        key: 'VehicleBulkMileage',
+        element: <VehicleBulkMileageJobOverview />,
+      },
+      {
+        name: m.vehiclesBulkMileageJobDetail,
+        path: AssetsPaths.AssetsVehiclesBulkMileageJobDetail,
+        enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        key: 'VehicleBulkMileage',
+        element: <VehicleBulkMileageJobDetail />,
       },
       {
         name: m.vehiclesLookup,

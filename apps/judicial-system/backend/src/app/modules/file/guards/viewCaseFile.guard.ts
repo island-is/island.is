@@ -12,7 +12,6 @@ import {
   isCompletedCase,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
-  isPrisonSystemUser,
   isProsecutionUser,
   isPublicProsecutorUser,
   User,
@@ -36,10 +35,6 @@ export class ViewCaseFileGuard implements CanActivate {
     if (!theCase) {
       throw new InternalServerErrorException('Missing case')
     }
-
-    // TODO: Limit access based on a combination of
-    // case type, case state, appeal case state and case file category
-    // to get accurate case file permissions
 
     if (isProsecutionUser(user)) {
       return true
@@ -66,14 +61,6 @@ export class ViewCaseFileGuard implements CanActivate {
         CaseAppealState.COMPLETED,
         CaseAppealState.WITHDRAWN,
       ].includes(theCase.appealState)
-    ) {
-      return true
-    }
-
-    if (
-      isPrisonSystemUser(user) &&
-      theCase.appealState &&
-      [CaseAppealState.COMPLETED].includes(theCase.appealState)
     ) {
       return true
     }

@@ -14,7 +14,7 @@ const ViewList = () => {
   const { listInfo, loadingList } = useGetSignatureList(listId)
 
   return (
-    <>
+    <Box>
       {!loadingList && !!listInfo && (
         <Stack space={5}>
           <Box>
@@ -58,7 +58,7 @@ const ViewList = () => {
           <Signees />
         </Stack>
       )}
-    </>
+    </Box>
   )
 }
 

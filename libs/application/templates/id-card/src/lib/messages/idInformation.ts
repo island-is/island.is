@@ -50,6 +50,12 @@ export const idInformation = {
       defaultMessage: 'Nafnskírteini sem ferðaskilríki',
       description: 'Type of id radio answer id card travel rights',
     },
+    warningText: {
+      id: 'id.application:idInformation.labels.warningText',
+      defaultMessage:
+        'Þú uppfyllir ekki skilyrði fyrir báðum útgáfum af nafnskírteini',
+      description: 'Warning alert for type of ID',
+    },
     infoAlert: {
       id: 'id.application:idInformation.labels.infoAlert',
       defaultMessage:
@@ -57,7 +63,7 @@ export const idInformation = {
       description: 'Information alert for type of ID',
     },
     chosenApplicantsDescription: {
-      id: 'id.application:idInformation.labels.chosenApplicantsDescription',
+      id: 'id.application:idInformation.labels.chosenApplicantsDescription#markdown',
       defaultMessage:
         'Þú getur sótt um nafnskírteini / ferðaskilríki fyrir þig og eftirfarandi einstaklinga í þinni umsjón. Veldu þann einstakling sem þú vilt hefja umsókn fyrir og haltu síðan áfram í næsta skref.',
       description: 'description of chosen applicants page',
@@ -80,12 +86,7 @@ export const idInformation = {
     },
     conditionDescription: {
       id: 'id.application:idInformation.labels.conditionDescription#markdown',
-      defaultMessage: `Þegar sótt er um fyrir barn þurfa **báðir forsjáraðilar** að 
-        samþykkja umsóknina innan **7 daga**. Viðkomandi fær tilkynningu 
-        um undirritun og getur samþykkt með rafrænum hætti.
-        \n\nSamþykkið er **vistað rafrænt** hjá Þjóðskrá Íslands.
-        \n\nSéu rafræn skilríki ekki fyrir hendi er hægt að skila inn 
-        **skriflegu samþykki til Sýslumanns/Þjóðskrár.**`,
+      defaultMessage: `Þegar sótt er um fyrir barn þurfa báðir forsjáraðilar að samþykkja umsóknina. Þegar þú hefur klárað umsóknina mun {parentBName} fá tilkynningu um að samþykkja þurfi þessa umsókn inni á island.is með rafrænum skilríkjum. {parentBName} hefur 7 daga til að ganga frá samþykkinu og það verður síðan vistað rafrænt hjá Þjóðskrá Íslands. Ef rafræn skilríki eru ekki fyrir hendi er ekki hægt að klára forskráningu hér og sækja verður um á umsóknarstað.`,
       description: 'Description on condition page',
     },
   }),

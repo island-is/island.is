@@ -131,8 +131,10 @@ const Delegation = ({
         {providers.map((provider) =>
           !provider ||
           (!isSuperAdmin &&
-            provider.id ===
-              AuthDelegationProvider.PersonalRepresentativeRegistry) ? null : (
+            (provider.id ===
+              AuthDelegationProvider.PersonalRepresentativeRegistry ||
+              provider.id ===
+                AuthDelegationProvider.DistrictCommissionersRegistry)) ? null : (
             <Stack space={2} key={provider.id}>
               <div>
                 <Text variant="h5" as="h4" paddingBottom={1}>

@@ -12,7 +12,7 @@ import { signatureConfig } from '../components/htmlEditor/config/signatureConfig
 import { OJOIFieldBaseProps } from '../lib/types'
 import { useLocale } from '@island.is/localization'
 import { HTMLText } from '@island.is/regulations-tools/types'
-import { getAdvertMarkup, getSignatureMarkup } from '../lib/utils'
+import { getAdvertMarkup, getSignaturesMarkup } from '../lib/utils'
 import { SignatureTypes } from '../lib/constants'
 import { useApplication } from '../hooks/useUpdateApplication'
 import { advert, error, preview } from '../lib/messages'
@@ -39,7 +39,7 @@ export const Preview = ({ application }: OJOIFieldBaseProps) => {
     )
   }
 
-  const signatureMarkup = getSignatureMarkup({
+  const signatureMarkup = getSignaturesMarkup({
     signatures: currentApplication.answers.signatures,
     type: currentApplication.answers.misc?.signatureType as SignatureTypes,
   })

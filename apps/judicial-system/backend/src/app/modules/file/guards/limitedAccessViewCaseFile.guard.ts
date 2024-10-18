@@ -6,22 +6,11 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import {
-  isCompletedCase,
-  isDefenceUser,
-  isIndictmentCase,
-  isPrisonAdminUser,
-  isRequestCase,
-  User,
-} from '@island.is/judicial-system/types'
+import { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
 import { CaseFile } from '../models/file.model'
-import {
-  defenderCaseFileCategoriesForIndictmentCases,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
-  prisonAdminCaseFileCategories,
-} from './caseFileCategory'
+import { canLimitedAccessUserViewCaseFile } from './caseFileCategory'
 
 @Injectable()
 export class LimitedAccessViewCaseFileGuard implements CanActivate {
@@ -46,30 +35,15 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case file')
     }
 
-    if (isDefenceUser(user) && caseFile.category) {
-      if (
-        isRequestCase(theCase.type) &&
-        isCompletedCase(theCase.state) &&
-        defenderCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
-          caseFile.category,
-        )
-      ) {
-        return true
-      }
-
-      if (
-        isIndictmentCase(theCase.type) &&
-        defenderCaseFileCategoriesForIndictmentCases.includes(caseFile.category)
-      ) {
-        return true
-      }
-    }
-
     if (
-      caseFile.category &&
-      isCompletedCase(theCase.state) &&
-      isPrisonAdminUser(user) &&
-      prisonAdminCaseFileCategories.includes(caseFile.category)
+      canLimitedAccessUserViewCaseFile(
+        user,
+        theCase.type,
+        theCase.state,
+        caseFile.category,
+        theCase.defendants,
+        theCase.civilClaimants,
+      )
     ) {
       return true
     }

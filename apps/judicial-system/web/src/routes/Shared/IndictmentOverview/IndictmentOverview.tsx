@@ -2,14 +2,16 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Button } from '@island.is/island-ui/core'
+import { Accordion, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isDefenceUser,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
@@ -26,6 +28,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseIndictmentRulingDecision,
   CaseState,
   IndictmentDecision,
   UserRole,
@@ -54,14 +57,43 @@ const IndictmentOverview: FC = () => {
     workingCase.indictmentReviewer?.id === user?.id &&
     Boolean(!workingCase.indictmentReviewDecision)
   const canAddFiles =
+    !isCompletedCase(workingCase.state) &&
     isDefenceUser(user) &&
+    workingCase.defendants?.some(
+      (defendant) =>
+        defendant?.defenderNationalId &&
+        normalizeAndFormatNationalId(user?.nationalId).includes(
+          defendant.defenderNationalId,
+        ),
+    ) &&
     workingCase.indictmentDecision !==
       IndictmentDecision.POSTPONING_UNTIL_VERDICT
+  const shouldDisplayGeneratedPDFs =
+    workingCase.defendants?.some(
+      (defendant) =>
+        defendant.defenderNationalId &&
+        normalizeAndFormatNationalId(user?.nationalId).includes(
+          defendant.defenderNationalId,
+        ),
+    ) ||
+    workingCase.civilClaimants?.some(
+      (civilClaimant) =>
+        civilClaimant.hasSpokesperson &&
+        civilClaimant.spokespersonNationalId &&
+        normalizeAndFormatNationalId(user?.nationalId).includes(
+          civilClaimant.spokespersonNationalId,
+        ) &&
+        civilClaimant.caseFilesSharedWithSpokesperson,
+    )
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
+
+  const hasLawsBroken = lawsBroken.size > 0
+  const hasMergeCases =
+    workingCase.mergedCases && workingCase.mergedCases.length > 0
 
   return (
     <PageLayout
@@ -110,25 +142,44 @@ const IndictmentOverview: FC = () => {
           {caseIsClosed ? (
             <InfoCardClosedIndictment
               displayAppealExpirationInfo={
-                user?.role === UserRole.DEFENDER ||
-                workingCase.indictmentReviewer?.id === user?.id
+                workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING &&
+                (user?.role === UserRole.DEFENDER ||
+                  workingCase.indictmentReviewer?.id === user?.id)
               }
             />
           ) : (
             <InfoCardActiveIndictment />
           )}
         </Box>
-        {lawsBroken.size > 0 && (
+        {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
-            <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            {hasLawsBroken && (
+              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            )}
+            {hasMergeCases && (
+              <Accordion>
+                {workingCase.mergedCases?.map((mergedCase) => (
+                  <Box key={mergedCase.id}>
+                    <ConnectedCaseFilesAccordionItem
+                      connectedCaseParentId={workingCase.id}
+                      connectedCase={mergedCase}
+                    />
+                  </Box>
+                ))}
+              </Accordion>
+            )}
           </Box>
         )}
-        {workingCase.caseFiles && (
+        {workingCase.caseFiles && ( // TODO: Find a more accurate condition, there may be generated PDFs to display even if there are no uploaded files to display
           <Box
             component="section"
             marginBottom={shouldDisplayReviewDecision || canAddFiles ? 5 : 10}
           >
-            <IndictmentCaseFilesList workingCase={workingCase} />
+            <IndictmentCaseFilesList
+              workingCase={workingCase}
+              displayGeneratedPDFs={shouldDisplayGeneratedPDFs}
+            />
           </Box>
         )}
         {canAddFiles && (

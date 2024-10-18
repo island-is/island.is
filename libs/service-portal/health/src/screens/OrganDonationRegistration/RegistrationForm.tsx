@@ -5,6 +5,7 @@ import {
   Text,
   Button,
   toast,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -20,67 +21,73 @@ import * as styles from './OrganDonationRegistration.css'
 import Limitations from './Limitations'
 import { useNavigate } from 'react-router-dom'
 import {
-  useGetDonorStatusQuery,
-  useGetOrganDonationExceptionsQuery,
+  useGetOrgansListQuery,
   useUpdateOrganDonationInfoMutation,
 } from '../OrganDonation/OrganDonation.generated'
+import { Loader } from './Loader'
+
+const OPT_IN = 'opt-in'
+const OPT_IN_EXCEPTIONS = 'opt-in-exceptions'
+const OPT_OUT = 'opt-out'
 
 export const Form2 = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
 
-  const OPT_IN = 'opt-in'
-  const OPT_IN_EXCEPTIONS = 'opt-in-exceptions'
-  const OPT_OUT = 'opt-out'
-
-  const { data, loading } = useGetOrganDonationExceptionsQuery({
+  const { data, loading } = useGetOrgansListQuery({
     variables: { locale: lang },
   })
 
-  const [updateDonorStatus] = useUpdateOrganDonationInfoMutation({
-    onCompleted: () => {
-      toast.success(formatMessage(messages.registrationComplete))
-      navigate(HealthPaths.HealthOrganDonation, { replace: true })
-    },
-    onError: () => {
-      toast.error(formatMessage(messages.registrationFailed))
-    },
-  })
-  const { data: status } = useGetDonorStatusQuery()
+  const isDonor = data?.healthDirectorateOrganDonation.donor?.isDonor
+  const hasLimitations =
+    data?.healthDirectorateOrganDonation.donor?.limitations?.hasLimitations
+  const allLimitations = data?.healthDirectorateOrganDonation.organList
+  const selectedLimitations =
+    data?.healthDirectorateOrganDonation.donor?.limitations?.limitedOrgansList?.map(
+      (item) => item.id,
+    )
+  const donorStatus = isDonor
+    ? hasLimitations
+      ? OPT_IN_EXCEPTIONS
+      : OPT_IN
+    : OPT_OUT
+  const [radioValue, setRadioValue] = useState<string | undefined>(donorStatus)
 
-  const exceptions =
-    data?.HealthDirectorateOrganDonationGetDonationExceptions.values
-  const [radioValue, setRadioValue] = useState<string | undefined>()
+  const [updateDonorStatus, { loading: submitLoading }] =
+    useUpdateOrganDonationInfoMutation({
+      onCompleted: () => {
+        toast.success(formatMessage(messages.registrationComplete))
+        navigate(HealthPaths.HealthOrganDonation, { replace: true })
+      },
+      onError: () => {
+        toast.error(formatMessage(messages.registrationFailed))
+      },
+    })
 
   useEffect(() => {
-    if (radioValue === undefined) {
-      setRadioValue(
-        status?.HealthDirectorateOrganDonationGetDonorStatus.isDonor
-          ? OPT_IN
-          : (status?.HealthDirectorateOrganDonationGetDonorStatus
-              ?.exceptionComment?.length ?? 0) > 0
-          ? OPT_IN_EXCEPTIONS
-          : OPT_OUT,
-      )
+    if (radioValue !== donorStatus) {
+      setRadioValue(donorStatus)
     }
-  }, [status])
+  }, [donorStatus])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     const data = Object.fromEntries(formData.entries())
 
-    const idKey = 'organ-donation-limitation-'
+    const idKey = 'selected-limitations-'
     const limitations = Object.keys(data)
       .filter((key) => key.includes(idKey))
       .map((key) => key.replace(idKey, '').toLowerCase())
+
     await updateDonorStatus({
       variables: {
         input: {
           isDonor: radioValue === OPT_IN || radioValue === OPT_IN_EXCEPTIONS,
-          exceptions: radioValue === OPT_IN_EXCEPTIONS ? limitations : [],
+          organLimitations: radioValue === OPT_IN_EXCEPTIONS ? limitations : [],
         },
+        locale: lang,
       },
     })
   }
@@ -94,84 +101,91 @@ export const Form2 = () => {
       <Text variant="eyebrow" color="purple400" marginBottom={1}>
         {formatMessage(messages.changeTake)}
       </Text>
-
-      <form onSubmit={onSubmit}>
-        <Stack space={2}>
+      {loading && <Loader />}
+      {!loading && (
+        <form onSubmit={onSubmit}>
+          <Stack space={2}>
+            <Box
+              background="blue100"
+              borderRadius="large"
+              border="standard"
+              borderColor="blue200"
+              padding={3}
+            >
+              <RadioButton
+                id={`organ-donation-0`}
+                name="organ-registration-value"
+                label={formatMessage(messages.organDonationRegistrationOptIn)}
+                value={OPT_IN}
+                checked={radioValue === OPT_IN}
+                onChange={() => setRadioValue(OPT_IN)}
+              />
+            </Box>
+            <Box
+              background="blue100"
+              borderRadius="large"
+              border="standard"
+              borderColor="blue200"
+              padding={3}
+            >
+              <RadioButton
+                id={`organ-donation-1`}
+                name="organ-registration-value"
+                label={formatMessage(
+                  messages.organDonationRegistrationException,
+                )}
+                value={OPT_IN_EXCEPTIONS}
+                checked={radioValue === OPT_IN_EXCEPTIONS}
+                onChange={() => setRadioValue(OPT_IN_EXCEPTIONS)}
+              />
+              {allLimitations &&
+                allLimitations.length > 0 &&
+                radioValue === OPT_IN_EXCEPTIONS && (
+                  <Limitations
+                    data={allLimitations}
+                    selected={selectedLimitations ?? []}
+                  />
+                )}
+            </Box>
+            <Box
+              background="blue100"
+              borderRadius="large"
+              border="standard"
+              borderColor="blue200"
+              padding={3}
+            >
+              <RadioButton
+                id={`organ-donation-2`}
+                name="organ-registration-value"
+                label={formatMessage(messages.organDonationRegistrationOptOut)}
+                value={OPT_OUT}
+                checked={radioValue === OPT_OUT}
+                onChange={() => setRadioValue(OPT_OUT)}
+              />
+            </Box>
+          </Stack>
           <Box
-            background="blue100"
-            borderRadius="large"
-            border="standard"
-            borderColor="blue200"
-            padding={3}
+            display="flex"
+            justifyContent="flexEnd"
+            marginTop={3}
+            className={styles.buttonContainer}
           >
-            <RadioButton
-              id={`organ-donation-0`}
-              name="organ-registration-value"
-              label={formatMessage(messages.organDonationRegistrationOptIn)}
-              value={OPT_IN}
-              checked={radioValue === OPT_IN}
-              onChange={() => setRadioValue(OPT_IN)}
-            />
-          </Box>
-          <Box
-            background="blue100"
-            borderRadius="large"
-            border="standard"
-            borderColor="blue200"
-            padding={3}
-          >
-            <RadioButton
-              id={`organ-donation-1`}
-              name="organ-registration-value"
-              label={formatMessage(messages.organDonationRegistrationException)}
-              value={OPT_IN_EXCEPTIONS}
-              checked={radioValue === OPT_IN_EXCEPTIONS}
-              onChange={() => setRadioValue(OPT_IN_EXCEPTIONS)}
-            />
-            {exceptions &&
-              exceptions.length > 0 &&
-              radioValue === OPT_IN_EXCEPTIONS && (
-                <Limitations data={exceptions} />
-              )}
-          </Box>
-          <Box
-            background="blue100"
-            borderRadius="large"
-            border="standard"
-            borderColor="blue200"
-            padding={3}
-          >
-            <RadioButton
-              id={`organ-donation-2`}
-              name="organ-registration-value"
-              label={formatMessage(messages.organDonationRegistrationOptOut)}
-              value={OPT_OUT}
-              checked={radioValue === OPT_OUT}
-              onChange={() => setRadioValue(OPT_OUT)}
-            />
-          </Box>
-        </Stack>
-        <Box
-          display="flex"
-          justifyContent="flexEnd"
-          marginTop={3}
-          className={styles.buttonContainer}
-        >
-          <LinkResolver href={HealthPaths.HealthOrganDonation}>
-            <Button size="small" variant="ghost">
-              {formatMessage(coreMessages.buttonCancel)}
+            <LinkResolver href={HealthPaths.HealthOrganDonation}>
+              <Button size="small" variant="ghost">
+                {formatMessage(coreMessages.buttonCancel)}
+              </Button>
+            </LinkResolver>
+            <Button
+              size="small"
+              type="submit"
+              loading={loading}
+              disabled={radioValue === undefined || submitLoading}
+            >
+              {formatMessage(coreMessages.codeConfirmation)}
             </Button>
-          </LinkResolver>
-          <Button
-            size="small"
-            type="submit"
-            loading={loading}
-            disabled={radioValue === undefined}
-          >
-            {formatMessage(coreMessages.codeConfirmation)}
-          </Button>
-        </Box>
-      </form>
+          </Box>
+        </form>
+      )}
     </Box>
   )
 }

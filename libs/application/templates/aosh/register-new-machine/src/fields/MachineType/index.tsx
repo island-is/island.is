@@ -116,19 +116,51 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
   setBeforeSubmitCallback?.(async () => {
     // Call updateApplication for basicInformation.type and basicInformation.model
     // Get information for basicInformation here and updateApplication
-    const response =
-      type && model && type !== 'unknown' && model !== 'unknown'
-        ? await getMachineCategoryCallback(type, model)
-        : undefined
+    if (modelFromAnswers === model && typeFromAnswers === type) {
+      return [true, null]
+    }
+    let response = undefined
+    try {
+      response =
+        type && model && type !== 'unknown' && model !== 'unknown'
+          ? await getMachineCategoryCallback(type, model)
+          : undefined
+    } catch (e) {
+      console.error('Could not get machine category', e)
+    }
 
-    const category =
-      response?.getMachineParentCategoryByTypeAndModel?.name ?? ''
-    const subcategory =
-      response?.getMachineParentCategoryByTypeAndModel?.subCategoryName ?? ''
+    const categoryIs =
+      response?.getMachineParentCategoryByTypeAndModel[0]?.name ?? ''
+    const categoryEn =
+      response?.getMachineParentCategoryByTypeAndModel[0]?.nameEn ?? categoryIs
+    const subcategoryIs =
+      response?.getMachineParentCategoryByTypeAndModel[0]?.subCategoryName ?? ''
+    const subcategoryEn =
+      response?.getMachineParentCategoryByTypeAndModel[0]?.subCategoryNameEn ??
+      subcategoryIs
     const registrationNumberPrefix =
-      response?.getMachineParentCategoryByTypeAndModel
+      response?.getMachineParentCategoryByTypeAndModel[0]
         ?.registrationNumberPrefix ?? ''
 
+    const categories = response?.getMachineParentCategoryByTypeAndModel?.map(
+      ({
+        name,
+        nameEn,
+        subCategoryName,
+        subCategoryNameEn,
+        registrationNumberPrefix,
+      }) => {
+        return {
+          categoryIs: name ?? '',
+          categoryEn: nameEn ?? name ?? '',
+          subcategoryIs: subCategoryName ?? '',
+          subcategoryEn: subCategoryNameEn ?? subCategoryName ?? '',
+          registrationNumberPrefix: registrationNumberPrefix ?? '',
+        }
+      },
+    )
+
+    setValue('machine.aboutMachine.categories', categories)
     setValue(
       'machine.aboutMachine.type',
       type && type !== 'unknown' ? type : '',
@@ -137,15 +169,17 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
       'machine.aboutMachine.model',
       model && model !== 'unknown' ? model : '',
     )
-    setValue('machine.aboutMachine.category', category)
-    setValue('machine.aboutMachine.subcategory', subcategory)
+    setValue('machine.aboutMachine.category.nameIs', categoryIs)
+    setValue('machine.aboutMachine.category.nameEn', categoryEn)
+    setValue('machine.aboutMachine.subcategory.nameIs', subcategoryIs)
+    setValue('machine.aboutMachine.subcategory.nameEn', subcategoryEn)
     setValue(
       'machine.aboutMachine.registrationNumberPrefix',
       registrationNumberPrefix,
     )
     setValue(
       'machine.aboutMachine.fromService',
-      !!(category.length && subcategory.length),
+      !!(categoryIs.length && categories),
     )
     const res = await updateApplication({
       variables: {
@@ -157,10 +191,17 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
               aboutMachine: {
                 type: type && type !== 'unknown' ? type : '',
                 model: model && model !== 'unknown' ? model : '',
-                category,
-                subcategory,
+                category: {
+                  nameIs: categoryIs,
+                  nameEn: categoryEn,
+                },
+                categories: categories,
+                subcategory: {
+                  nameIs: subcategoryIs,
+                  nameEn: subcategoryEn,
+                },
                 registrationNumberPrefix: registrationNumberPrefix,
-                fromService: !!(category.length && subcategory.length),
+                fromService: !!(categoryIs.length && categories),
               },
               machineType: {
                 type: type ?? '',
@@ -185,8 +226,8 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
           {formatMessage(machine.labels.machineType.inputTitle)}
         </Text>
       </Box>
-      <GridRow marginBottom={5}>
-        <GridColumn span={['1/1', '1/2']}>
+      <GridRow marginBottom={3}>
+        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <Controller
             name={`${field.id}.type`}
             defaultValue={type}

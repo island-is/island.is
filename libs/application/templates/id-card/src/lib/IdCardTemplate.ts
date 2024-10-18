@@ -1,5 +1,6 @@
 import {
   coreHistoryMessages,
+  corePendingActionMessages,
   EphemeralStateLifeCycle,
   getValueViaPath,
   pruneAfterDays,
@@ -17,26 +18,71 @@ import {
   DistrictsApi,
   InstitutionNationalIds,
   PassportsApi,
+  PendingAction,
+  StaticText,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import {
-  // SyslumadurPaymentCatalogApi,
   DeliveryAddressApi,
   UserInfoApi,
   NationalRegistryUser,
   SyslumadurPaymentCatalogApi,
   IdentityDocumentApi,
+  NationalRegistryUserParentB,
 } from '../dataProviders'
 import { application as applicationMessage } from './messages'
 import { Events, Roles, States, ApiActions, Routes } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItemCodes, hasReviewer } from '../utils'
+import { getChargeItemCodes, hasReviewer, hasReviewerApproved } from '../utils'
 
 export const needsReview = (context: ApplicationContext) => {
   const { answers, externalData } = context.application
   return hasReviewer(answers, externalData)
+}
+
+export const determineMessageFromApplicationAnswers = (
+  application: Application,
+): StaticText => {
+  const name = getValueViaPath(
+    application.answers,
+    'applicantInformation.name',
+    ' ',
+  ) as string
+
+  const nameObject = { id: applicationMessage.name.id, values: { name: name } }
+
+  return nameObject
+}
+
+const reviewStatePendingAction = (
+  application: Application,
+  nationalId: string,
+): PendingAction => {
+  const firstGuardianNationalId = getValueViaPath(
+    application.answers,
+    'firstGuardianInformation.nationalId',
+    undefined,
+  ) as string | undefined
+
+  if (
+    nationalId &&
+    firstGuardianNationalId !== nationalId &&
+    !hasReviewerApproved(application.answers)
+  ) {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.youNeedToReviewDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.waitingForReviewDescription,
+      displayStatus: 'info',
+    }
+  }
 }
 
 const IdCardTemplate: ApplicationTemplate<
@@ -45,7 +91,7 @@ const IdCardTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.ID_CARD,
-  name: applicationMessage.name,
+  name: applicationMessage.name, // TODO make dynamic if possible
   featureFlag: Features.idCardApplication,
   dataSchema: IdCardSchema,
   translationNamespaces: [ApplicationConfigurations.IdCard.translation],
@@ -149,7 +195,7 @@ const IdCardTemplate: ApplicationTemplate<
         entry: 'assignToParentB',
         meta: {
           name: 'ParentB',
-          status: 'draft',
+          status: 'inprogress',
           lifecycle: pruneAfterDays(7),
           onEntry: defineTemplateApi({
             action: ApiActions.assignParentB,
@@ -166,22 +212,28 @@ const IdCardTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/Review').then((val) =>
-                  Promise.resolve(val.Review),
+                import('../forms/ParentB').then((val) =>
+                  Promise.resolve(val.ParentB),
                 ),
               actions: [
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
+              api: [NationalRegistryUserParentB],
             },
           ],
           actionCard: {
+            tag: {
+              label: applicationMessage.actionCardDraft,
+              variant: 'blue',
+            },
             historyLogs: [
               {
                 logMessage: applicationMessage.historyWaitingForParentB,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],
+            pendingAction: reviewStatePendingAction,
           },
         },
         on: {
@@ -193,7 +245,7 @@ const IdCardTemplate: ApplicationTemplate<
         meta: {
           name: 'Rejected',
           status: 'rejected',
-          lifecycle: pruneAfterDays(3 * 30), // TODO HOW MANY DAYS SHOULD THIS BE?
+          lifecycle: pruneAfterDays(3 * 30),
           onEntry: defineTemplateApi({
             action: ApiActions.rejectApplication,
           }),
@@ -219,7 +271,7 @@ const IdCardTemplate: ApplicationTemplate<
         meta: {
           name: 'Completed',
           status: 'completed',
-          lifecycle: pruneAfterDays(3 * 30), // TODO HOW MANY DAYS SHOULD THIS BE?
+          lifecycle: pruneAfterDays(3 * 30),
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),

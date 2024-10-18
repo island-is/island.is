@@ -4,6 +4,7 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
   completedIndictmentCaseStates,
@@ -11,6 +12,7 @@ import {
   courtOfAppealsRoles,
   DateType,
   districtCourtRoles,
+  EventType,
   IndictmentCaseReviewDecision,
   indictmentCases,
   InstitutionType,
@@ -41,7 +43,14 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
-        { isArchived: false },
+        { is_archived: false },
+        {
+          type: [
+            ...restrictionCases,
+            ...investigationCases,
+            ...indictmentCases,
+          ],
+        },
         {
           state: [
             CaseState.NEW,
@@ -72,13 +81,6 @@ describe('getCasesQueryFilter', () => {
             { prosecutor_id: 'Prosecutor Id' },
           ],
         },
-        {
-          type: [
-            ...restrictionCases,
-            ...investigationCases,
-            ...indictmentCases,
-          ],
-        },
       ],
     })
   })
@@ -100,7 +102,8 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
-        { isArchived: false },
+        { is_archived: false },
+        { type: indictmentCases },
         {
           state: [
             CaseState.NEW,
@@ -130,7 +133,6 @@ describe('getCasesQueryFilter', () => {
             { prosecutor_id: user.id },
           ],
         },
-        { type: indictmentCases },
       ],
     })
   })
@@ -152,7 +154,7 @@ describe('getCasesQueryFilter', () => {
       // Assert
       expect(res).toStrictEqual({
         [Op.and]: [
-          { isArchived: false },
+          { is_archived: false },
           {
             [Op.or]: [
               { court_id: { [Op.is]: null } },
@@ -218,7 +220,7 @@ describe('getCasesQueryFilter', () => {
       // Assert
       expect(res).toStrictEqual({
         [Op.and]: [
-          { isArchived: false },
+          { is_archived: false },
           {
             [Op.or]: [
               { court_id: { [Op.is]: null } },
@@ -256,7 +258,7 @@ describe('getCasesQueryFilter', () => {
       // Assert
       expect(res).toStrictEqual({
         [Op.and]: [
-          { isArchived: false },
+          { is_archived: false },
           { type: [...restrictionCases, ...investigationCases] },
           {
             state: [
@@ -304,12 +306,18 @@ describe('getCasesQueryFilter', () => {
       // Assert
       expect(res).toStrictEqual({
         [Op.and]: [
-          { isArchived: false },
+          { is_archived: false },
+          { type: indictmentCases },
+          { state: CaseState.COMPLETED },
           {
-            state: [CaseState.COMPLETED],
+            indictment_ruling_decision: [
+              CaseIndictmentRulingDecision.FINE,
+              CaseIndictmentRulingDecision.RULING,
+            ],
           },
           {
-            type: indictmentCases,
+            '$eventLogs.event_type$':
+              EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
           },
         ],
       })
@@ -333,7 +341,7 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
-        { isArchived: false },
+        { is_archived: false },
         { state: CaseState.ACCEPTED },
         {
           type: [
@@ -365,41 +373,25 @@ describe('getCasesQueryFilter', () => {
 
     // Assert
     expect(res).toStrictEqual({
-      [Op.and]: [
-        { isArchived: false },
+      is_archived: false,
+
+      [Op.or]: [
         {
-          [Op.or]: [
-            {
-              [Op.and]: [
-                { state: CaseState.ACCEPTED },
-                {
-                  type: [
-                    CaseType.CUSTODY,
-                    CaseType.ADMISSION_TO_FACILITY,
-                    CaseType.PAROLE_REVOCATION,
-                    CaseType.TRAVEL_BAN,
-                  ],
-                },
-              ],
-            },
-            {
-              [Op.and]: [
-                {
-                  type: CaseType.INDICTMENT,
-                  state: CaseState.COMPLETED,
-                  indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
-                  id: {
-                    [Op.notIn]: Sequelize.literal(`
-                        (SELECT "case_id"
-                          FROM "defendant"
-                          WHERE "defendant"."verdict_view_date" IS NULL
-                          OR "defendant"."verdict_view_date" > NOW() - INTERVAL '28 days')
-                        `),
-                  },
-                },
-              ],
-            },
-          ],
+          state: CaseState.ACCEPTED,
+          type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
+        },
+        {
+          type: indictmentCases,
+          state: CaseState.COMPLETED,
+          indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+          indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
+          id: {
+            [Op.notIn]: Sequelize.literal(`
+            (SELECT case_id
+              FROM defendant
+              WHERE (verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '28 days'))
+          `),
+          },
         },
       ],
     })
@@ -419,7 +411,7 @@ describe('getCasesQueryFilter', () => {
     // Assert
     expect(res).toStrictEqual({
       [Op.and]: [
-        { isArchived: false },
+        { is_archived: false },
         {
           [Op.or]: [
             {
@@ -461,9 +453,25 @@ describe('getCasesQueryFilter', () => {
                   ],
                 },
                 {
-                  '$defendants.defender_national_id$': [
-                    user.nationalId,
-                    user.nationalId,
+                  [Op.or]: [
+                    {
+                      id: {
+                        [Op.in]: Sequelize.literal(`
+                      (SELECT case_id
+                        FROM defendant
+                        WHERE defender_national_id in ('${user.nationalId}', '${user.nationalId}'))
+                    `),
+                      },
+                    },
+                    {
+                      id: {
+                        [Op.in]: Sequelize.literal(`
+                      (SELECT case_id
+                        FROM civil_claimant
+                        WHERE has_spokesperson = true AND spokesperson_national_id in ('${user.nationalId}', '${user.nationalId}'))
+                    `),
+                      },
+                    },
                   ],
                 },
               ],

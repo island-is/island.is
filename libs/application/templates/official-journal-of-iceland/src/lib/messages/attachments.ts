@@ -4,7 +4,7 @@ export const attachments = {
   general: defineMessages({
     title: {
       id: 'ojoi.application:attachments.general.title',
-      defaultMessage: 'Viðaukar og fylgirit',
+      defaultMessage: 'Viðaukar og fylgiskjöl',
       description: 'Title of the addition and documents form',
     },
     intro: {
@@ -15,7 +15,7 @@ export const attachments = {
     },
     section: {
       id: 'ojoi.application:attachments.general.section',
-      defaultMessage: 'Viðaukar og fylgirit',
+      defaultMessage: 'Viðaukar og fylgiskjöl',
       description: 'Title of the addition and documents section',
     },
   }),
@@ -55,7 +55,7 @@ export const attachments = {
       documents: defineMessages({
         label: {
           id: 'ojoi.application:attachments.radio.documents.label',
-          defaultMessage: 'Fylgirit (I, II, III..)',
+          defaultMessage: 'Fylgiskjöl (I, II, III..)',
           description: 'Label of the documents radio button',
         },
       }),
