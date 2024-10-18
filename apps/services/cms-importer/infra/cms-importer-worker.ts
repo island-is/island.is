@@ -2,9 +2,8 @@ import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 export const workerSetup = (): ServiceBuilder<'cms-importer-worker'> =>
   service('cms-importer-worker')
-    .image('services-cms-worker')
+    .image('services-cms')
     .namespace('cms-importer')
-    .serviceAccount('cms-importer-worker') //todo
     .secrets({
       CONTENTFUL_MANAGEMENT_ACCESS_TOKEN:
         '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
