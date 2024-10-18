@@ -17,11 +17,12 @@ import {
   useWatch,
 } from 'react-hook-form'
 import { useLazyQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
-import { GET_REAL_ESTATE_ADDRESS } from '../../graphql'
+import { Query, SearchForPropertyInput } from '@island.is/api/schema'
+import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import { PropertyField } from '../../lib/constants'
 import * as styles from './PropertyRepeater.css'
 import { formatText, getValueViaPath } from '@island.is/application/core'
+import { isValidRealEstate } from '../../lib/utils'
 import { error as errorMsg } from '../../lib/error'
 
 export const PropertyRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
@@ -114,35 +115,45 @@ const PropertyItem = ({
   const spaceNumber = useWatch({ name: spaceNumberField })
   const customerCount = useWatch({ name: customerCountField })
 
-  const { control, setValue } = useFormContext()
+  const { control, setValue, clearErrors, setError } = useFormContext()
   const { formatMessage } = useLocale()
 
   const [getProperty, { loading: queryLoading, error: _queryError }] =
-    useLazyQuery<Query, { input: string }>(GET_REAL_ESTATE_ADDRESS, {
-      onCompleted: (data) => {
-        setValue(
-          addressField,
-          data.getRealEstateAddress[0]?.name ??
-            formatMessage(m.propertyNameNotFound),
-        )
+    useLazyQuery<Query, { input: SearchForPropertyInput }>(
+      SEARCH_FOR_PROPERTY_QUERY,
+      {
+        onCompleted: (data) => {
+          clearErrors([addressField, spaceNumberField, customerCountField])
+          setValue(
+            addressField,
+            data.searchForProperty?.defaultAddress?.display ?? '',
+          )
+        },
+        fetchPolicy: 'network-only',
       },
-    })
+    )
 
   useEffect(() => {
-    // According to Skra.is:
-    // https://www.skra.is/um-okkur/frettir/frett/2018/03/01/Nytt-fasteignanumer-og-itarlegri-skraning-stadfanga/
-    // The property number is a seven digit informationless sequence.
-    // Has the prefix F.
-    if (/^[Ff]?\d{7}$/.test(propertyNumberInput.trim())) {
+    const propertyNumber: string = propertyNumberInput.trim().toUpperCase()
+    setValue(address, '') // Reset address when property number changes
+
+    if (isValidRealEstate(propertyNumber)) {
       getProperty({
         variables: {
-          input: propertyNumberInput,
+          input: {
+            propertyNumber,
+          },
         },
       })
     } else {
-      setValue(addressField, '')
+      setError(address, {
+        message: formatMessage(m.errorPropertyNumber),
+        type: 'validate',
+      })
     }
-  }, [getProperty, address, addressField, propertyNumberInput, setValue])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getProperty, propertyNumberInput, setError, setValue, addressField])
+
   const hasPropertyNumberButEmptyAddress = propertyNumberInput && !address
 
   return (
@@ -183,7 +194,7 @@ const PropertyItem = ({
               hasPropertyNumberButEmptyAddress && !queryLoading
                 ? formatMessage(errorMsg.missingAddressForPropertyNumber)
                 : !propertyNumberInput
-                ? error
+                ? (error as string)
                 : undefined
             }
             placeholder="F1234567"
@@ -208,7 +219,11 @@ const PropertyItem = ({
             backgroundColor="blue"
             format="#########"
             defaultValue={field.spaceNumber?.toString()}
-            error={(error && !spaceNumber) ?? error}
+            error={
+              !spaceNumber && error && typeof error === 'string'
+                ? error
+                : undefined
+            }
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
