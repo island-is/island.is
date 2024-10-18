@@ -308,7 +308,7 @@ export class DefendantService {
           },
         },
       ],
-      where: { defenderNationalId: nationalId },
+      where: { defenderNationalId: normalizeAndFormatNationalId(nationalId) },
       order: [['created', 'DESC']],
     })
   }
