@@ -5,27 +5,31 @@ import { Option } from '../Components/types'
 import { WorkAccidentNotification } from '../../lib/dataSchema'
 import { CausesAndEffects } from '../Components/CausesAndEffects'
 
-export type OptionAndKey = {
-  option: Option
-  key: string
+interface InjuredBodyPartsProps {
+  field: {
+    props: {
+      index: number
+    }
+  }
 }
 
-export const InjuredBodyParts: FC<React.PropsWithChildren<FieldBaseProps>> = (
-  props,
-) => {
+export const InjuredBodyParts: FC<
+  React.PropsWithChildren<InjuredBodyPartsProps & FieldBaseProps>
+> = (props) => {
   const { application } = props
   const answers = application.answers as WorkAccidentNotification
+  const idx = props.field?.props?.index
 
   return (
     <CausesAndEffects
       externalDataKey={'aoshData.data.partOfBodyInjured'}
       heading={causeAndConsequences.injuredBodyParts.heading}
       subHeading={causeAndConsequences.injuredBodyParts.subHeading}
-      answerId={'injuredBodyParts.partOfBodyInjured'}
-      mostSeriousAnswerId={'injuredBodyParts.partOfBodyInjuredMostSerious'}
+      answerId={`injuredBodyParts[${idx}].partOfBodyInjured`}
+      mostSeriousAnswerId={`injuredBodyParts[${idx}].partOfBodyInjuredMostSerious`}
       screenId={'injuredBodyParts'}
       mostSeriousAnswer={
-        (answers?.injuredBodyParts?.partOfBodyInjured as string) || ''
+        (answers?.injuredBodyParts?.[idx]?.partOfBodyInjured as string) || ''
       }
       {...props}
     />

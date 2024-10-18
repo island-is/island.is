@@ -56,7 +56,7 @@ export const sections = {
     },
     causes: {
       id: 'aosh.wan.application:sections.draft.causes',
-      defaultMessage: 'Orsakir/Afleiðingar',
+      defaultMessage: 'Orsakir/Afleiðingar - {number}',
       description:
         'Title of causes/consequences in accident sub section (right side panel)',
     },
@@ -98,7 +98,7 @@ export const sections = {
     },
     employee: {
       id: 'aosh.wan.application:sections.draft.employee',
-      defaultMessage: 'Starfsmaður',
+      defaultMessage: 'Starfsmaður {number}',
       description: 'Title of employee section (right side panel)',
     },
     overview: {

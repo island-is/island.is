@@ -1,24 +1,18 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 
-// const TimeRefine = z.object({
-//   from: z.string().refine((x) => (x ? isValid24HFormatTime(x) : false), {
-//     params: error.invalidValue,
-//   }),
-//   to: z.string().refine((x) => (x ? isValid24HFormatTime(x) : false), {
-//     params: error.invalidValue,
-//   }),
-// })
+const isValid24HFormatTime = (value: string) => {
+  if (value.length !== 4) return false
+  const hours = parseInt(value.slice(0, 2))
+  const minutes = parseInt(value.slice(2, 4))
+  if (hours > 23) return false
+  if (minutes > 59) return false
+  return true
+}
 
-// const OpeningHoursRefine = z.object({
-//   weekdays: TimeRefine,
-//   weekends: TimeRefine,
-// })
-
-// const Time = z.object({
-//   from: z.string().optional(),
-//   to: z.string().optional(),
-// })
+const TimeWithRefine = z
+  .string()
+  .refine((x) => (x ? isValid24HFormatTime(x) : false), {})
 
 const option = z.object({
   value: z.string(),
@@ -28,13 +22,13 @@ const option = z.object({
 const accidentSchema = z.object({
   accidentLocation: option,
   accidentLocationParentGroup: option.optional(),
-  date: z.string(), // Validate a date string
   didAoshCome: z.string(), // Boolean ?
   didPoliceCome: z.string(),
   exactLocation: z.string(),
   how: z.string(),
   municipality: z.string(),
-  time: z.string(), // Need to use time refiner here, see commented code above
+  date: z.string(), // Validate a date string
+  time: TimeWithRefine,
   wasDoing: z.string(),
   wentWrong: z.string(),
 })
@@ -46,31 +40,32 @@ const companySchema = z.object({
       (nationalId) =>
         nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId),
     ),
-  address: z.string().optional(),
+  address: z.string(),
   addressOfBranch: z.string().optional(),
-  name: z.string().optional(),
-  nameOfBranch: z.string().optional(),
+  name: z.string(),
+  nameOfBranch: z.string(),
   numberOfEmployees: z.string(),
-  postnumber: z.string().optional(),
+  postnumber: z.string(),
   postnumberOfBranch: z.string().optional(),
 })
 
 const employeeSchema = z.object({
   // TODO A lot of this optional stuff is to ease developement, go over what is and isn't required
-  victimsOccupation: option.optional(),
+  victimsOccupation: option,
   victimsOccupationMajor: option.optional().nullish(),
   victimsOccupationSubMajor: option.optional().nullish(),
   victimsOccupationMinor: option.optional().nullish(),
   victimsOccupationUnit: option.optional().nullish(),
   address: z.string(),
-  dateOfAccident: z.string(), // date string, need to validate here or is the prebuilt date component enough ?
-  employmentStatus: z.string(),
+  employmentStatus: z.string().optional(),
   employmentTime: z.string(),
+  employmentRate: z.string().min(1).max(100),
   //nationalField: TODO .... name and nationalId
   nationality: z.string(),
   postnumberAndMunicipality: z.string(),
-  startDate: z.string(), // date string
-  tempEmploymentSSN: z.string(), // Starfsmannaleiga
+  startTime: TimeWithRefine,
+  startDate: z.string(),
+  tempEmploymentSSN: z.string().optional(), // Starfsmannaleiga, TODO(balli) Setja condition að ef starfsmannaleiga er valið þá er þetta must
   workstation: z.string(), // starfsstöð
 })
 
@@ -167,14 +162,15 @@ export const WorkAccidentNotificationAnswersSchema = z.object({
   companyInformation: companySchema,
   companyLaborProtection: companyLaborProtectionSchema,
   accident: accidentSchema,
-  absence: absenceSchema,
-  employee: employeeSchema,
+  absence: z.array(absenceSchema),
+  employee: z.array(employeeSchema),
   projectPurchase: projectPurchaseSchema,
-  circumstances: circumstancesSchema,
-  deviations: workDeviationsSchema,
-  causeOfInjury: contactModeOfInjurySchema,
-  typeOfInjury: typeOfInjurySchema,
-  injuredBodyParts: partOfBodyInjuredSchema,
+  circumstances: z.array(circumstancesSchema),
+  deviations: z.array(workDeviationsSchema),
+  causeOfInjury: z.array(contactModeOfInjurySchema),
+  typeOfInjury: z.array(typeOfInjurySchema),
+  injuredBodyParts: z.array(partOfBodyInjuredSchema),
+  employeeAmount: z.number().min(1),
 })
 
 export type WorkAccidentNotification = z.TypeOf<

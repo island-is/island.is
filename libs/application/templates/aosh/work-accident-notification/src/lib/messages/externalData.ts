@@ -36,7 +36,7 @@ export const externalData = {
     announcementHeadingSecond: {
       id: 'aosh.wan.application:externalData.dataProvider.announcementHeadingSecond',
       defaultMessage:
-        'Ef engin kennitala fyrirtækis er skráð í reitinn hér fyrir neðan þá verður slysið skráð á Notanda TODO User´s name (xxxxxx-xxxx)',
+        'Ef engin kennitala fyrirtækis er skráð í reitinn hér fyrir neðan þá verður slysið skráð á {notandi}',
       description: 'Second heading of announcement page',
     },
     announcementDescription: {

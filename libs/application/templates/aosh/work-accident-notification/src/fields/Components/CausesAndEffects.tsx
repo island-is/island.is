@@ -48,8 +48,7 @@ export const CausesAndEffects: FC<
     mostSeriousAnswerId,
     errors,
   } = props
-  //const answers = application.answers as WorkAccidentNotification
-  const { setValue, getValues } = useFormContext()
+  const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const [mostSerious, setMostSeriousList] = useState<Option[]>([])
   const [mostSeriousChosen, setMostSeriousChosen] = useState<string>(
@@ -76,8 +75,6 @@ export const CausesAndEffects: FC<
       setValue(mostSeriousAnswerId, undefined)
       setMostSeriousChosen('')
     }
-    // Check if mostSeriousChosen exists in the options list.
-    // If it does not exists. Remove if from answers.
 
     setMostSeriousList(options)
   }
@@ -88,7 +85,6 @@ export const CausesAndEffects: FC<
     }
   }, [mostSeriousAnswer, mostSeriousAnswerId, setValue])
 
-  // TODO(balli) Need to cover case where user chooses a most serious circumstance and then removes that option from the list
   return (
     <Box>
       <Box marginBottom={2} marginTop={2}>

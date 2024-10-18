@@ -7,22 +7,29 @@ import { typeOfInjurySection } from './typeOfInjury'
 import { injuredBodyPartsSection } from './injuredBodyParts'
 import { deviationSection } from './deviation'
 import { FormValue } from '@island.is/application/types'
+import { WorkAccidentNotification } from '../../../lib/dataSchema'
 
 export const causeAndConsequencesSection = (index: number) =>
   buildSection({
     id: `causeAndConsequencesSection ${index}`,
-    title: sections.draft.causes,
+    title: () => {
+      return {
+        ...sections.draft.causes,
+        values: {
+          number: index + 1,
+        },
+      }
+    },
     condition: (formValue: FormValue, externalData, user) => {
-      // TODO Nonsense condition for testing,
-      // Potentially could look into answers here to determine if this section should be displayed i.e employee nr. x
-      return index === 0
+      const answers = formValue as WorkAccidentNotification
+      return index < answers.employeeAmount || index === 0
     },
     children: [
-      absenceSection,
-      circumstancesSection,
-      deviationSection,
-      causeOfInjurySection,
-      typeOfInjurySection,
-      injuredBodyPartsSection,
+      absenceSection(index),
+      circumstancesSection(index),
+      deviationSection(index),
+      causeOfInjurySection(index),
+      typeOfInjurySection(index),
+      injuredBodyPartsSection(index),
     ],
   })

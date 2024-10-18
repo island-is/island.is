@@ -88,12 +88,12 @@ export const information = {
           'Skráðu nafn útibús og eða deildar. Ef útibú/deild er með annað heimilisfang en höfuðstöð þá þarf að skrá það hér fyrir neðan.',
         description: 'Company information alert message',
       },
-      nameOfbranch: {
-        id: 'aosh.wan.application:information.company.nameOfbranch',
+      nameOfBranch: {
+        id: 'aosh.wan.application:information.company.nameOfBranch',
         defaultMessage: 'Nafn útibús/deildar',
         description: 'Name of company branch',
       },
-      addressOfbranch: {
+      addressOfBranch: {
         id: 'aosh.wan.application:information.company.addressOfbranch',
         defaultMessage: 'Heimilisfang útibús/deildar',
         description: 'Address of company branch',

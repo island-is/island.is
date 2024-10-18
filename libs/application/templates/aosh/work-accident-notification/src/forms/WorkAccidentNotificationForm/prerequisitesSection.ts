@@ -4,6 +4,7 @@ import {
   buildDataProviderItem,
   buildSubmitField,
   coreMessages,
+  buildHiddenInput,
 } from '@island.is/application/core'
 import { externalData } from '../../lib/messages'
 import {

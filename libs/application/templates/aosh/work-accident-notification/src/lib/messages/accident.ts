@@ -20,12 +20,12 @@ export const accident = {
     },
     date: {
       id: 'aosh.wan.application:accident.about.date',
-      defaultMessage: 'Dagsetning',
+      defaultMessage: 'Dagsetning slyss',
       description: 'Label of date input field',
     },
     time: {
       id: 'aosh.wan.application:accident.about.time',
-      defaultMessage: 'Tímasetning',
+      defaultMessage: 'Tímasetning slyss',
       description: 'Label of time input field',
     },
     timePlaceholder: {
