@@ -217,7 +217,7 @@ export class SyslumennResolver {
   async getSyslumennElectronicIDStatus(
     @Args('input') input: GetElectronicIDInput,
   ): Promise<boolean> {
-    return this.syslumennService.getElectronicID(
+    return this.syslumennService.hasElectronicID(
       input.nationalId,
       input.phoneNumber,
     )

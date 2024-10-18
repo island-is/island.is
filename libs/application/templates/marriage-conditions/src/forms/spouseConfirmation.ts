@@ -133,7 +133,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     width: 'half',
                     backgroundColor: 'blue',
                     readOnly: true,
-                    disableDropdown: true,
                     defaultValue: (application: Application) => {
                       const data = application.externalData.userProfile
                         .data as UserProfile
@@ -187,7 +186,6 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     title: m.phone,
                     width: 'half',
                     backgroundColor: 'blue',
-                    disableDropdown: true,
                     defaultValue: (application: Application) => {
                       const info = application.answers.spouse as Individual
                       return removeCountryCode(info?.phone ?? '')
