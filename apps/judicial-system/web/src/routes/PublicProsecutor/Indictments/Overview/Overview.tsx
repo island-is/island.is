@@ -105,10 +105,7 @@ export const Overview = () => {
       return []
     }
     return data.users.reduce(
-      (
-        acc: { label: string; value: string; isDisabled?: boolean }[],
-        prosecutor,
-      ) => {
+      (acc: { label: string; value: string }[], prosecutor) => {
         if (prosecutor.institution?.id === user?.institution?.id) {
           acc.push({
             label: prosecutor.name ?? '',
