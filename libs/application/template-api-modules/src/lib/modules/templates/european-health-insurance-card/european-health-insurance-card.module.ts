@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../shared'
 import { EuropeanHealthInsuranceCardService } from './european-health-insurance-card.service'
-import { EhicClientModule } from '@island.is/clients/ehic-client-v1'
+import { RightsPortalClientModule } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 
 @Module({
-  imports: [EhicClientModule, SharedTemplateAPIModule],
+  imports: [SharedTemplateAPIModule, RightsPortalClientModule],
   providers: [EuropeanHealthInsuranceCardService],
   exports: [EuropeanHealthInsuranceCardService],
 })
