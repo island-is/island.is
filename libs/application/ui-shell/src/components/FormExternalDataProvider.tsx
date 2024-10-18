@@ -297,6 +297,7 @@ const FormExternalDataProvider: FC<
 
   useEffect(() => {
     activateBeforeSubmitCallback(hasApproved, shouldUseMockPayment)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasApproved, shouldUseMockPayment])
 
   return (
