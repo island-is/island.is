@@ -320,8 +320,6 @@ export class DelegationsIndexService {
       this.delegationIndexModel.upsert(delegation),
     )
 
-
-
     return updatedDelegation.toDTO()
   }
 
