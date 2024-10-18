@@ -12,11 +12,6 @@ export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
           prod: 'contentful-apps',
         },
         paths: ['/'],
-        extraAnnotations: {
-          dev: {},
-          staging: {},
-          prod: {},
-        },
       },
     })
     .replicaCount({
