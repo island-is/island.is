@@ -1807,7 +1807,7 @@ export class InternalNotificationService extends BaseNotificationService {
     return this.sendEmail(subject, html, name, email, undefined, !link)
   }
 
-  private async sendCaseFilesAddedNotifications(
+  private async sendCaseFilesUpdatedNotifications(
     theCase: Case,
     user: User,
   ): Promise<DeliverResponse> {
@@ -2698,7 +2698,7 @@ export class InternalNotificationService extends BaseNotificationService {
         case NotificationType.INDICTMENT_RETURNED:
           return this.sendIndictmentReturnedNotifications(theCase)
         case NotificationType.CASE_FILES_UPDATED:
-          return this.sendCaseFilesAddedNotifications(theCase, user)
+          return this.sendCaseFilesUpdatedNotifications(theCase, user)
         default:
           throw new InternalServerErrorException(
             `Invalid notification type ${type}`,
