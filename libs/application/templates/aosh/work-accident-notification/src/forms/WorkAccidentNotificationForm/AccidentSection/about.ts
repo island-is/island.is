@@ -20,6 +20,7 @@ export const aboutSection = buildSubSection({
   title: sections.draft.about,
   children: [
     buildMultiField({
+      id: 'accidentMultiField',
       title: accident.about.pageTitle,
       description: accident.about.description,
       children: [

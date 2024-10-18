@@ -11,6 +11,7 @@ import { Logo } from '../../assets/Logo'
 import { externalData } from '../../lib/messages'
 import { accidentSection } from './AccidentSection'
 import { EmployeeAndAccidentInformationSection } from '../RepeatableSection'
+import { overviewSection } from './OverviewSection'
 
 const buildRepeatableSections = (): Section[] => {
   const sections = [...Array(2)].map((_key, index) => {
@@ -64,5 +65,6 @@ export const WorkAccidentNotificationForm: Form = buildForm({
     ...buildRepeatableSections(),
     //employeeSection,
     //causeAndConsequencesSection,
+    overviewSection,
   ],
 })

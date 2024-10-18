@@ -112,9 +112,9 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
         municipalityWhereAccidentOccured: answers.accident.municipality, // Vilja þau code eða name til baka?
         specificLocationOfAccident: answers.accident.exactLocation,
         detailedDescriptionOfAccident: answers.accident.wasDoing.concat(
-          '. ',
+          '\n',
           answers.accident.wentWrong,
-          '. ',
+          '\n',
           answers.accident.how,
         ),
         workingEnvironment: answers.accident.accidentLocation.value,

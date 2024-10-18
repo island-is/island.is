@@ -1,0 +1,1 @@
+export { getCompanyInformationForOverview } from './getCompanyInformationForOverview'

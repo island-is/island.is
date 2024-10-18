@@ -101,5 +101,10 @@ export const sections = {
       defaultMessage: 'Starfsmaður',
       description: 'Title of employee section (right side panel)',
     },
+    overview: {
+      id: 'aosh.wan.application:sections.draft.overview',
+      defaultMessage: 'Yfirlit',
+      description: 'Title of overview section (right side panel)',
+    },
   }),
 }
