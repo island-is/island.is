@@ -237,7 +237,7 @@ export const m = defineMessages({
   ceremonyPeriodDescription: {
     id: 'mac.application:ceremonyPeriodDescription',
     defaultMessage:
-      'Ef áætlaður dagur liggur ekki fyrir, þá þarf samt að velja áætlað tímabil hjónavíglsu.',
+      'Ef áætlaður dagur liggur ekki fyrir, þá þarf samt að velja áætlað tímabil hjónavíglsu:',
     description: '',
   },
   ceremonyPeriodFrom: {
@@ -406,6 +406,12 @@ export const m = defineMessages({
       'Beiðni þín um könnun hjónavígsluskilyrða hefur nú verið send á þinn maka.',
     description: '',
   },
+  nextStepsDescriptionWithSpouseName: {
+    id: 'mac.application:nextStepsDescriptionWithSpouseName#markdown',
+    defaultMessage:
+      'Beiðni þín um könnun hjónavígsluskilyrða hefur nú verið send á **{spouseName}**.',
+    description: '',
+  },
   nextSteps: {
     id: 'mac.application:nextSteps',
     defaultMessage: 'Næstu skref',
@@ -492,10 +498,22 @@ export const m = defineMessages({
     defaultMessage: 'Lokadagsetning má ekki vera á undan upphafsdagsetningu',
     description: 'Error message if date is empty',
   },
-  nationalIdDuplicateError: {
-    id: 'mac.application:nationalIdDuplicateError',
+  nationalIdDuplicateErrorSpouse: {
+    id: 'mac.application:nationalIdDuplicateErrorSpouse',
     defaultMessage:
       'Kennitala hjá hjónaefni 2 má ekki vera sú sama og hjá hjónaefni 1',
+    description: '',
+  },
+  nationalIdDuplicateErrorWitness: {
+    id: 'mac.application:nationalIdDuplicateErrorWitness',
+    defaultMessage:
+      'Kennitala hjá svaramanni 2 má ekki vera sú sama og hjá svaramanni 1',
+    description: '',
+  },
+  nationalIdDuplicateErrorMaritalSideVsWitness: {
+    id: 'mac.application:nationalIdDuplicateErrorMaritalSideVsWitness',
+    defaultMessage:
+      'Kennitala hjá svaramanni má ekki vera sú sama og hjá hjónaefni',
     description: '',
   },
   nationalIdWitnessUnderageError: {
