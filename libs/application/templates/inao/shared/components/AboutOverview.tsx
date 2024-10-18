@@ -66,12 +66,14 @@ export const AboutOverview = ({
         <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
           <ValueLine label={email} value={about.email} />
         </GridColumn>
-        <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
-          <ValueLine
-            label={phoneNumber}
-            value={formatPhoneNumber(about.phoneNumber)}
-          />
-        </GridColumn>
+        {about.phoneNumber && (
+          <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
+            <ValueLine
+              label={phoneNumber}
+              value={formatPhoneNumber(about.phoneNumber)}
+            />
+          </GridColumn>
+        )}
       </GridRow>
     </>
   )
