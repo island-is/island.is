@@ -878,6 +878,7 @@ ArticleScreen.getProps = async ({ apolloClient, query, locale }) => {
     stepOptionsFromNamespace,
     stepperNamespace,
     ...getThemeConfig(article),
+    customAlertBanner: article.organization?.[0]?.alertBanner,
   }
 }
 
