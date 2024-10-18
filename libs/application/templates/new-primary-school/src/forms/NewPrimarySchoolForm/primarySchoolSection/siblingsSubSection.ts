@@ -23,7 +23,7 @@ export const siblingsSubSection = buildSubSection({
     const { reasonForApplication } = getApplicationAnswers(answers)
     return (
       reasonForApplication ===
-      ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL
+      ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL
     )
   },
   children: [

@@ -160,7 +160,7 @@ export const Review: FC<ReviewScreenProps> = ({
       {reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD && (
         <>
           {reasonForApplication ===
-            ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL && (
+            ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL && (
             <Siblings {...childProps} />
           )}
           <School {...childProps} />
