@@ -13,6 +13,7 @@ import {
   Application,
   VerifyPaymentApi,
   InstitutionNationalIds,
+  MockablePaymentCatalogApi,
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { Events, States, Roles } from './constants'
@@ -68,7 +69,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [PaymentCatalogApi],
+              api: [MockablePaymentCatalogApi, PaymentCatalogApi],
               delete: true,
             },
           ],
