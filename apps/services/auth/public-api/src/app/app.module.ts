@@ -23,6 +23,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { environment } from '../environments'
 import { DelegationsModule } from './modules/delegations/delegations.module'
 import { PasskeysModule } from './modules/passkeys/passkeys.module'
+import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { PasskeysModule } from './modules/passkeys/passkeys.module'
         XRoadConfig,
         PasskeysCoreConfig,
         SyslumennClientConfig,
+        ZendeskServiceConfig,
       ],
     }),
   ],
