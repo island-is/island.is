@@ -77,6 +77,7 @@ export enum ApplicationTypes {
   INCOME_PLAN = 'IncomePlan',
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
   MACHINE_REGISTRATION = 'MachineRegistration',
+  RENTAL_AGREEMENT = 'RentalAgreement',
 }
 
 export const ApplicationConfigurations = {
@@ -395,5 +396,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.MACHINE_REGISTRATION]: {
     slug: 'nyskraning-taekis',
     translation: ['aosh.rnm.application'],
+  },
+  [ApplicationTypes.RENTAL_AGREEMENT]: {
+    slug: 'leigusamningur',
+    translation: 'ra.application',
   },
 }

@@ -24,4 +24,5 @@ export enum InstitutionTypes {
   HASKOLARADUNEYTI = 'haskolaraduneyti',
   DOMSMALARADUNEYTID = 'domsmalaraduneytid',
   MIDSTOD_MENNTUNAR_SKOLATHJONUSTU = 'midstod-menntunar-og-skolathjonustu',
+  HUSNAEDIS_OG_MANNVIRKJASTOFNUN = 'husnaedis-og-mannvirkjastofnun',
 }
