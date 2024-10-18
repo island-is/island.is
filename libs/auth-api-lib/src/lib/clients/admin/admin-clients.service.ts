@@ -631,19 +631,26 @@ export class AdminClientsService {
     switch (client.clientType) {
       case ClientType.web:
       case ClientType.native:
-        scopes.push(...[{
-          clientId: client.clientId,
-          scopeName: 'profile',
-        }, {
-          clientId: client.clientId,
-          scopeName: 'email',
-        }, {
-          clientId: client.clientId,
-          scopeName: 'phone',
-        }, {
-          clientId: client.clientId,
-          scopeName: 'address',
-        }])
+        scopes.push(
+          ...[
+            {
+              clientId: client.clientId,
+              scopeName: 'profile',
+            },
+            {
+              clientId: client.clientId,
+              scopeName: 'email',
+            },
+            {
+              clientId: client.clientId,
+              scopeName: 'phone',
+            },
+            {
+              clientId: client.clientId,
+              scopeName: 'address',
+            },
+          ],
+        )
     }
 
     return scopes
