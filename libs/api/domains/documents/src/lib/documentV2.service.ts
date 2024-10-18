@@ -18,7 +18,7 @@ import { DocumentsInput } from './models/v2/documents.input'
 import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
 import { Sender } from './models/v2/sender.model'
 import { FileType } from './models/v2/documentContent.model'
-import { HEALTH_CATEGORY_ID } from './document.types'
+import { HEALTH_CATEGORY_ID, LAW_AND_ORDER_CATEGORY_ID } from './document.types'
 import { Type } from './models/v2/type.model'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
@@ -153,28 +153,16 @@ export class DocumentServiceV2 {
     //Category is now "1,2,3,...,n"
     const { categoryIds, ...restOfInput } = input
     let mutableCategoryIds = categoryIds ?? []
-
-    const isLegalGuardian = user.delegationType?.includes(
-      AuthDelegationType.LegalGuardian,
-    )
-
-    const birthdate = getBirthday(user.nationalId)
-    let childAgeIsOver15 = false
-    if (birthdate) {
-      childAgeIsOver15 = differceInYears(new Date(), birthdate) > 15
-    }
-    const hideHealthData = isLegalGuardian && childAgeIsOver15
-
-    if (hideHealthData) {
-      if (!mutableCategoryIds.length) {
-        mutableCategoryIds = (
-          await this.getCategories(user.nationalId, true)
-        ).map((c) => c.id)
-      } else {
-        mutableCategoryIds = mutableCategoryIds.filter(
-          (c) => c !== HEALTH_CATEGORY_ID,
-        )
+    if (!mutableCategoryIds.length) {
+      const filteredCategories = await this.getCategories(user)
+      if (isDefined(filteredCategories)) {
+        mutableCategoryIds = filteredCategories.map((c) => c.id)
       }
+    }
+    // If categoryIds are provided, filter out correct data
+    else {
+      const hiddenCategoryIds = this.getHiddenCategoriesIDs(user)
+      mutableCategoryIds.filter((c) => !hiddenCategoryIds.includes(c))
     }
 
     const documents = await this.documentService.getDocumentList({
@@ -220,30 +208,32 @@ export class DocumentServiceV2 {
   }
 
   async listDocumentsV3(
-    nationalId: string,
+    user: User,
     input: DocumentsInput,
   ): Promise<PaginatedDocuments> {
     //If a delegated user is viewing the mailbox, do not return any health related data
     //Category is now "1,2,3,...,n"
     const { categoryIds, ...restOfInput } = input
+    // If no categoryIds are provided, get all categories
     let mutableCategoryIds = categoryIds ?? []
 
-    if (input.isLegalGuardian) {
-      if (!mutableCategoryIds.length) {
-        mutableCategoryIds = (await this.getCategories(nationalId, true)).map(
-          (c) => c.id,
-        )
-      } else {
-        mutableCategoryIds = mutableCategoryIds.filter(
-          (c) => c === HEALTH_CATEGORY_ID,
-        )
+    if (!mutableCategoryIds.length) {
+      const filteredCategories = await this.getCategories(user)
+      if (isDefined(filteredCategories)) {
+        mutableCategoryIds = filteredCategories.map((c) => c.id)
       }
+    }
+    // If categoryIds are provided, filter out correct data
+    else {
+      const hiddenCategoryIds = this.getHiddenCategoriesIDs(user)
+      mutableCategoryIds.filter((c) => !hiddenCategoryIds.includes(c))
     }
 
     const documents = await this.documentService.getDocumentList({
       ...restOfInput,
       categoryId: mutableCategoryIds.join(),
-      nationalId,
+      hiddenCategoryIds: this.getHiddenCategoriesIDs(user).join(),
+      nationalId: user.nationalId,
     })
 
     if (typeof documents?.totalCount !== 'number') {
@@ -273,7 +263,7 @@ export class DocumentServiceV2 {
         .filter(isDefined) ?? []
 
     return {
-      data: documentData,
+      data: documentData, // if empty after category filter then return null
       totalCount: documents?.totalCount ?? 0,
       unreadCount: documents?.unreadCount,
       pageInfo: {
@@ -282,27 +272,34 @@ export class DocumentServiceV2 {
     }
   }
 
-  async getCategories(
-    nationalId: string,
-    filterHealth = false,
-  ): Promise<Array<Category>> {
+  async getCategories(user: User): Promise<Array<Category> | null> {
     const categories = await this.documentService.getCustomersCategories(
-      nationalId,
+      user.nationalId,
     )
 
-    return (
+    const filterOutIds = this.getHiddenCategoriesIDs(user) ?? []
+
+    const filteredCategories =
       categories.categories
         ?.map((c) => {
-          if (!c.id || (filterHealth && c.id === HEALTH_CATEGORY_ID)) {
+          if (
+            !c.id ||
+            (filterOutIds.length > 0 && filterOutIds.includes(c.id))
+          ) {
+            console.log('Filtering out:', c.id)
             return null
-          }
-          return {
-            id: c.id,
-            name: c.name,
+          } else {
+            console.log('else')
+            return {
+              id: c.id,
+              name: c.name,
+            }
           }
         })
         .filter(isDefined) ?? []
-    )
+    if (filteredCategories.length === 0) return null
+
+    return filteredCategories
   }
 
   async getTypes(nationalId: string): Promise<Array<Type>> {
@@ -517,5 +514,29 @@ export class DocumentServiceV2 {
     })
 
     return mapped
+  }
+
+  private getHiddenCategoriesIDs = (user: User) => {
+    const isDelegated = isDefined(user.delegationType)
+    if (!isDelegated) return []
+
+    const isLegalGuardian = user.delegationType?.includes(
+      AuthDelegationType.LegalGuardian,
+    )
+    const birthdate = getBirthday(user.nationalId)
+    const childAgeIs16OrOlder = birthdate
+      ? differceInYears(new Date(), birthdate) > 15
+      : false
+
+    // Hide health data if user is a legal guardian and child is 16 or older
+    const hideHealthData = isLegalGuardian && childAgeIs16OrOlder
+    // Hide law and order data if user is delegated
+    // commented out until we have correct category for law and order files
+    const hideLawAndOrderData = false //isDelegated
+
+    return [
+      ...(hideHealthData ? [HEALTH_CATEGORY_ID] : []),
+      ...(hideLawAndOrderData ? [LAW_AND_ORDER_CATEGORY_ID] : []),
+    ]
   }
 }
