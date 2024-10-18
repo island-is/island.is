@@ -38,13 +38,48 @@ export const ExampleForm: Form = buildForm({
       id: 'intro',
       title: m.introSection,
       children: [
-        buildDescriptionField({
-          id: 'field',
-          title: m.introField,
-          description: (application) => ({
-            ...m.introIntroduction,
-            values: { name: application.answers.name },
-          }),
+        buildMultiField({
+          title: '',
+          children: [
+            buildDescriptionField({
+              id: 'field',
+              title: m.introField,
+              description: (application) => ({
+                ...m.introIntroduction,
+                values: { name: application.answers.name },
+              }),
+            }),
+            buildDescriptionField({
+              id: 'field',
+              title: m.introField,
+              description: (application) => ({
+                ...m.introIntroduction,
+                values: { name: application.answers.name },
+              }),
+            }),
+            buildCheckboxField({
+              id: 'field',
+              title: 'test checkbox',
+              options: [
+                { value: 'test', label: 'test' },
+                { value: 'test', label: 'test' },
+                { value: 'test', label: 'test' },
+                { value: 'test', label: 'test' },
+              ],
+              width: 'half',
+            }),
+            buildCheckboxField({
+              id: 'field',
+              title: 'test checkbox',
+              options: [
+                { value: 'test', label: 'test' },
+                { value: 'test', label: 'test' },
+                { value: 'test', label: 'test' },
+                { value: 'test', label: 'test' },
+              ],
+              width: 'full',
+            }),
+          ],
         }),
         buildMultiField({
           id: 'about',
