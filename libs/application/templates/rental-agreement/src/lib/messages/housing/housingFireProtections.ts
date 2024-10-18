@@ -30,7 +30,7 @@ export const housingFireProtections = defineMessages({
   },
   fireExtinguisherLabel: {
     id: 'ra.application:housingFireProtections.fireExtinguisherLabel',
-    defaultMessage: 'Slökkvutæki',
+    defaultMessage: 'Slökkvitæki',
     description: 'Fire extinguisher label',
   },
   exitFireBlanketRequirements: {
