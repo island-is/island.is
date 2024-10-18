@@ -470,6 +470,14 @@ export const addMediumText = (
   addText(doc, mediumFontSize, text, font)
 }
 
+export const addMediumCenteredText = (
+  doc: PDFKit.PDFDocument,
+  text: string,
+  font?: string,
+) => {
+  addAlignedText(doc, mediumFontSize, text, 'center', font)
+}
+
 export const addNormalPlusText = (
   doc: PDFKit.PDFDocument,
   text: string,
