@@ -286,10 +286,8 @@ export class DocumentServiceV2 {
             !c.id ||
             (filterOutIds.length > 0 && filterOutIds.includes(c.id))
           ) {
-            console.log('Filtering out:', c.id)
             return null
           } else {
-            console.log('else')
             return {
               id: c.id,
               name: c.name,
