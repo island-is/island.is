@@ -23,7 +23,14 @@ import { getAllCountryCodes } from '@island.is/shared/utils'
 export const employeeSubSection = (index: number) =>
   buildSubSection({
     id: `employee[${index}]`,
-    title: sections.draft.employee,
+    title: () => {
+      return {
+        ...sections.draft.employee,
+        values: {
+          number: index + 1,
+        },
+      }
+    },
     children: [
       buildMultiField({
         id: 'employeeInformation',

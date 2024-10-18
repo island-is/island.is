@@ -40,18 +40,18 @@ const companySchema = z.object({
       (nationalId) =>
         nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId),
     ),
-  address: z.string().optional(),
+  address: z.string(),
   addressOfBranch: z.string().optional(),
-  name: z.string().optional(),
-  nameOfBranch: z.string().optional(),
+  name: z.string(),
+  nameOfBranch: z.string(),
   numberOfEmployees: z.string(),
-  postnumber: z.string().optional(),
+  postnumber: z.string(),
   postnumberOfBranch: z.string().optional(),
 })
 
 const employeeSchema = z.object({
   // TODO A lot of this optional stuff is to ease developement, go over what is and isn't required
-  victimsOccupation: option.optional(),
+  victimsOccupation: option,
   victimsOccupationMajor: option.optional().nullish(),
   victimsOccupationSubMajor: option.optional().nullish(),
   victimsOccupationMinor: option.optional().nullish(),
@@ -65,7 +65,7 @@ const employeeSchema = z.object({
   postnumberAndMunicipality: z.string(),
   startTime: TimeWithRefine,
   startDate: z.string(),
-  tempEmploymentSSN: z.string(), // Starfsmannaleiga
+  tempEmploymentSSN: z.string().optional(), // Starfsmannaleiga, TODO(balli) Setja condition að ef starfsmannaleiga er valið þá er þetta must
   workstation: z.string(), // starfsstöð
 })
 
@@ -165,11 +165,11 @@ export const WorkAccidentNotificationAnswersSchema = z.object({
   absence: z.array(absenceSchema),
   employee: z.array(employeeSchema),
   projectPurchase: projectPurchaseSchema,
-  circumstances: circumstancesSchema,
-  deviations: workDeviationsSchema,
-  causeOfInjury: contactModeOfInjurySchema,
-  typeOfInjury: typeOfInjurySchema,
-  injuredBodyParts: partOfBodyInjuredSchema,
+  circumstances: z.array(circumstancesSchema),
+  deviations: z.array(workDeviationsSchema),
+  causeOfInjury: z.array(contactModeOfInjurySchema),
+  typeOfInjury: z.array(typeOfInjurySchema),
+  injuredBodyParts: z.array(partOfBodyInjuredSchema),
   employeeAmount: z.number().min(1),
 })
 

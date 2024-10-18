@@ -29,11 +29,11 @@ type EventOption = {
 export const Occupation: FC<
   React.PropsWithChildren<OccupationProps & FieldBaseProps>
 > = (props) => {
-  const idx = props.field?.props?.index // Null check ???
+  const idx = props.field?.props?.index
   const { formatMessage, lang } = useLocale()
   const { application } = props
   const answers = application.answers as WorkAccidentNotification
-  const { setValue } = useFormContext()
+  const { setValue, getValues } = useFormContext()
 
   const [selectedMajorGroup, setSelectedMajorGroup] = useState<Options | null>(
     answers?.employee?.[idx]?.victimsOccupationMajor || null,
@@ -257,7 +257,6 @@ export const Occupation: FC<
         ),
       )
     }
-    console.log('Running useEffec [selectedMajorGroup]')
   }, [selectedMajorGroup])
 
   useEffect(() => {
@@ -289,7 +288,6 @@ export const Occupation: FC<
         ),
       )
     }
-    console.log('Running useEffec [selectedSubMajorGroup]')
   }, [selectedSubMajorGroup])
 
   useEffect(() => {
@@ -323,7 +321,6 @@ export const Occupation: FC<
         ),
       )
     }
-    console.log('Running useEffec [selectedMinorGroup]')
   }, [selectedMinorGroup])
 
   return (

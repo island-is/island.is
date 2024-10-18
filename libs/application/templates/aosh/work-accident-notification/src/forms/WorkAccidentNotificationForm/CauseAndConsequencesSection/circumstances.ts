@@ -16,13 +16,18 @@ export const circumstancesSection = (index: number) =>
         description: causeAndConsequences.circumstances.description,
         children: [
           buildHiddenInput({
-            id: 'circumstances.physicalActivitiesMostSerious',
+            id: `circumstances[${index}].physicalActivitiesMostSerious`,
           }),
-          buildCustomField({
-            id: 'circumstances.physicalActivities',
-            title: '',
-            component: 'Circumstance',
-          }),
+          buildCustomField(
+            {
+              id: `circumstances[${index}].physicalActivities`,
+              title: '',
+              component: 'Circumstance',
+            },
+            {
+              index: index,
+            },
+          ),
         ],
       }),
     ],

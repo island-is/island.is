@@ -3,8 +3,12 @@ import { FC, useEffect, useState } from 'react'
 import { MultiSelectDropdown } from './MultiSelectDropdown'
 import { Option } from '../Components/types'
 import { useFormContext } from 'react-hook-form'
-import { OptionAndKey } from '../Circumstance'
 import { getValueViaPath } from '@island.is/application/core'
+
+export type OptionAndKey = {
+  option: Option
+  key: string
+}
 
 export type Group = {
   code: string

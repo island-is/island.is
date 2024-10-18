@@ -10,22 +10,32 @@ export type OptionAndKey = {
   key: string
 }
 
-export const CauseOfInjury: FC<React.PropsWithChildren<FieldBaseProps>> = (
-  props,
-) => {
+interface CauseOfInjuryProps {
+  field: {
+    props: {
+      index: number
+    }
+  }
+}
+
+export const CauseOfInjury: FC<
+  React.PropsWithChildren<CauseOfInjuryProps & FieldBaseProps>
+> = (props) => {
   const { application } = props
   const answers = application.answers as WorkAccidentNotification
+  const idx = props.field?.props?.index
 
   return (
     <CausesAndEffects
       externalDataKey={'aoshData.data.contactModeOfInjury'}
       heading={causeAndConsequences.causeOfInjury.heading}
       subHeading={causeAndConsequences.causeOfInjury.subHeading}
-      answerId={'causeOfInjury.contactModeOfInjury'}
-      mostSeriousAnswerId={'causeOfInjury.contactModeOfInjuryMostSerious'}
+      answerId={`causeOfInjury[${idx}].contactModeOfInjury`}
+      mostSeriousAnswerId={`causeOfInjury[${idx}].contactModeOfInjuryMostSerious`}
       screenId={'causeOfInjury'}
       mostSeriousAnswer={
-        (answers?.causeOfInjury?.contactModeOfInjuryMostSerious as string) || ''
+        (answers?.causeOfInjury?.[idx]
+          ?.contactModeOfInjuryMostSerious as string) || ''
       }
       {...props}
     />

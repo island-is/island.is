@@ -53,9 +53,5 @@ export const prerequisitesSection = buildSection({
         }),
       ],
     }),
-    buildHiddenInput({
-      id: 'employeeAmount',
-      defaultValue: 1,
-    }),
   ],
 })

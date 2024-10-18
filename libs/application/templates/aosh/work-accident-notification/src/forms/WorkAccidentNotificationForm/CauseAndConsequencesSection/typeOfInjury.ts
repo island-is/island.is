@@ -16,13 +16,18 @@ export const typeOfInjurySection = (index: number) =>
         description: causeAndConsequences.typeOfInjury.description,
         children: [
           buildHiddenInput({
-            id: 'typeOfInjury.typeOfInjuryMostSerious',
+            id: `typeOfInjury[${index}].typeOfInjuryMostSerious`,
           }),
-          buildCustomField({
-            id: 'typeOfInjury.typeOfInjury',
-            title: '',
-            component: 'TypeOfInjury',
-          }),
+          buildCustomField(
+            {
+              id: `typeOfInjury[${index}].typeOfInjury`,
+              title: '',
+              component: 'TypeOfInjury',
+            },
+            {
+              index: index,
+            },
+          ),
         ],
       }),
     ],

@@ -16,13 +16,18 @@ export const injuredBodyPartsSection = (index: number) =>
         description: causeAndConsequences.injuredBodyParts.description,
         children: [
           buildHiddenInput({
-            id: 'injuredBodyParts.partOfBodyInjuredMostSerious',
+            id: `injuredBodyParts[${index}].partOfBodyInjuredMostSerious`,
           }),
-          buildCustomField({
-            id: 'injuredBodyParts.partOfBodyInjured',
-            title: '',
-            component: 'InjuredBodyParts',
-          }),
+          buildCustomField(
+            {
+              id: `injuredBodyParts[${index}].partOfBodyInjured`,
+              title: '',
+              component: 'InjuredBodyParts',
+            },
+            {
+              index: index,
+            },
+          ),
         ],
       }),
     ],

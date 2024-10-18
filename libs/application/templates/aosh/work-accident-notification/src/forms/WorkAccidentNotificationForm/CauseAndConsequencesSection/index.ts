@@ -1,4 +1,4 @@
-import { buildSection, getValueViaPath } from '@island.is/application/core'
+import { buildSection } from '@island.is/application/core'
 import { sections } from '../../../lib/messages'
 import { absenceSection } from './absence'
 import { circumstancesSection } from './circumstances'
@@ -22,7 +22,7 @@ export const causeAndConsequencesSection = (index: number) =>
     },
     condition: (formValue: FormValue, externalData, user) => {
       const answers = formValue as WorkAccidentNotification
-      return index < answers.employeeAmount
+      return index < answers.employeeAmount || index === 0
     },
     children: [
       absenceSection(index),

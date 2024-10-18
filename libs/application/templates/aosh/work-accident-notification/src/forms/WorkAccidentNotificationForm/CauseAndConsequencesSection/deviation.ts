@@ -16,13 +16,18 @@ export const deviationSection = (index: number) =>
         description: causeAndConsequences.deviations.description,
         children: [
           buildHiddenInput({
-            id: 'deviations.workDeviationsMostSerious',
+            id: `deviations[${index}].workDeviationsMostSerious`,
           }),
-          buildCustomField({
-            id: 'deviations.workDeviations',
-            title: '',
-            component: 'Deviation',
-          }),
+          buildCustomField(
+            {
+              id: `deviations[${index}].workDeviations`,
+              title: '',
+              component: 'Deviation',
+            },
+            {
+              index: index,
+            },
+          ),
         ],
       }),
     ],
