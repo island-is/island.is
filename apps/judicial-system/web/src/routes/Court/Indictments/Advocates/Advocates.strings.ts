@@ -74,4 +74,17 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti þegar enginn lögmaður er skráður í dómaraflæði í ákærum.',
   },
+  defenderChoiceAlertTitle: {
+    id: 'judicial.system.core:court_indictments.advocates.defender_choice_alert_title',
+    defaultMessage: 'Val á verjanda - {defendantName}',
+    description:
+      'Notaður sem texti þegar ákærði hefur valið verjanda í dómaraflæði í ákærum.',
+  },
+  defenderChoiceAlertMessage: {
+    id: 'judicial.system.core:court_indictments.advocates.defender_choice_alert_message',
+    defaultMessage:
+      '{requestedDefenderChoice, select, WAIVE {Ég óska ekki eftir verjanda.} CHOOSE {Ég óska þess að valinn lögmaður verji skipaður verjandi minn: {requestedDefenderName} kt. {requestedDefenderNationalId}.} DELAY {Ég óska eftir fresti fram að þingfestingu til þess að tilnefna verjanda.} DELEGATE {Ég fel dómara málsins að tilnefna og skipa mér verjanda.} other {Ekkert valið.}}',
+    description:
+      'Notaður sem texti þegar ákærði hefur valið verjanda í dómaraflæði í ákærum.',
+  },
 })
