@@ -14,7 +14,7 @@ import { Section } from '../../sections/models/section.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FormApplicant } from '../../formApplicants/models/formApplicant.model'
-import { CertificationType } from '../../certifications/models/certificationType.model'
+import { Certification } from '../../certifications/models/certification.model'
 import { randomUUID } from 'crypto'
 import { Dependency } from '../../../dataTypes/dependency.model'
 
@@ -106,10 +106,10 @@ export class Form extends Model<Form> {
   })
   organizationId!: string
 
-  @BelongsToMany(() => CertificationType, {
+  @BelongsToMany(() => Certification, {
     through: 'form_certification_type',
     foreignKey: 'form_id',
     otherKey: 'certification_type_id',
   })
-  certificationTypes?: NonAttribute<CertificationType[]>
+  certificationTypes?: NonAttribute<Certification[]>
 }

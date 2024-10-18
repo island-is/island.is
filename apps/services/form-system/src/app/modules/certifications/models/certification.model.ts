@@ -13,8 +13,8 @@ import { CertificationTypes } from '../../../enums/certificationTypes'
 import { Organization } from '../../organizations/models/organization.model'
 import { Form } from '../../forms/models/form.model'
 
-@Table({ tableName: 'certification_type' })
-export class CertificationType extends Model<CertificationType> {
+@Table({ tableName: 'certification' })
+export class Certification extends Model<Certification> {
   @Column({
     type: DataType.UUID,
     allowNull: false,
@@ -42,7 +42,7 @@ export class CertificationType extends Model<CertificationType> {
     allowNull: false,
     values: Object.values(CertificationTypes),
   })
-  type!: string
+  certificationType!: string
 
   @CreatedAt
   created!: CreationOptional<Date>
@@ -51,15 +51,15 @@ export class CertificationType extends Model<CertificationType> {
   modified!: CreationOptional<Date>
 
   @BelongsToMany(() => Organization, {
-    through: 'organization_certification_type',
-    foreignKey: 'certification_type_id',
+    through: 'organization_certification',
+    foreignKey: 'certification_id',
     otherKey: 'organization_id',
   })
   organizations?: NonAttribute<Organization[]>
 
   @BelongsToMany(() => Form, {
-    through: 'form_certification_type',
-    foreignKey: 'certification_type_id',
+    through: 'form_certification',
+    foreignKey: 'certification_id',
     otherKey: 'form_id',
   })
   forms?: NonAttribute<Form[]>

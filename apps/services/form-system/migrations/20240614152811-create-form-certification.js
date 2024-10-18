@@ -2,7 +2,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'form_certification_type',
+        'form_certification',
         {
           id: {
             type: Sequelize.UUID,
@@ -28,11 +28,11 @@ module.exports = {
               key: 'id',
             },
           },
-          certification_type_id: {
+          certification_id: {
             type: Sequelize.UUID,
             allowNull: false,
             references: {
-              model: 'certification_type',
+              model: 'certification',
               key: 'id',
             },
           },
@@ -44,7 +44,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('form_certification_type', {
+      queryInterface.dropTable('form_certification', {
         transaction: t,
       }),
     )

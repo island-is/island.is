@@ -16,8 +16,7 @@ export class FieldSettingsMapper {
     fieldSettings: FieldSettings,
     updateFieldSettingsDto: UpdateFieldSettingsDto,
   ): void {
-    ;(fieldSettings.modified = new Date()),
-      (fieldSettings.minValue = updateFieldSettingsDto.minValue ?? null),
+    ;(fieldSettings.minValue = updateFieldSettingsDto.minValue ?? null),
       (fieldSettings.maxValue = updateFieldSettingsDto.maxValue ?? null),
       (fieldSettings.minLength = updateFieldSettingsDto.minLength ?? null),
       (fieldSettings.maxLength = updateFieldSettingsDto.maxLength ?? null),
@@ -29,6 +28,8 @@ export class FieldSettingsMapper {
       (fieldSettings.hasLink = updateFieldSettingsDto.hasLink ?? null),
       (fieldSettings.url = updateFieldSettingsDto.url ?? null),
       (fieldSettings.buttonText = updateFieldSettingsDto.buttonText ?? null),
+      (fieldSettings.isRequired = updateFieldSettingsDto.isRequired ?? null),
+      (fieldSettings.isLarge = updateFieldSettingsDto.isLarge ?? null),
       (fieldSettings.hasPropertyInput =
         updateFieldSettingsDto.hasPropertyInput ?? null),
       (fieldSettings.hasPropertyList =
@@ -47,19 +48,19 @@ export class FieldSettingsMapper {
     let keys: string[]
     switch (fieldType) {
       case FieldTypes.TEXTBOX:
-        keys = ['minLength', 'maxLength']
+        keys = ['minLength', 'maxLength', 'isLarge', 'isRequired']
         return this.pickSettings(fieldSettings, keys)
       case FieldTypes.NUMBERBOX:
-        keys = ['minLength', 'maxLength', 'minValue', 'maxValue']
+        keys = ['minLength', 'maxLength', 'minValue', 'maxValue', 'isRequired']
         return this.pickSettings(fieldSettings, keys)
       case FieldTypes.MESSAGE:
         keys = ['hasLink', 'url', 'buttonText']
         return this.pickSettings(fieldSettings, keys)
       case FieldTypes.DATE_PICKER:
-        keys = ['minDate', 'maxDate']
+        keys = ['minDate', 'maxDate', 'isRequired']
         return this.pickSettings(fieldSettings, keys)
       case FieldTypes.DROPDOWN_LIST: {
-        keys = ['list', 'listType']
+        keys = ['list', 'listType', 'isRequired']
         const dropdownListFieldSettings = this.pickSettings(fieldSettings, keys)
         dropdownListFieldSettings.list = fieldSettings?.list
           ? this.listItemMapper.mapListItemsToListItemsDto(fieldSettings.list)
@@ -67,7 +68,7 @@ export class FieldSettingsMapper {
         return dropdownListFieldSettings
       }
       case FieldTypes.RADIO_BUTTONS: {
-        keys = ['list']
+        keys = ['list', 'isRequired']
         const radioButtonsFieldSettings = this.pickSettings(fieldSettings, keys)
         radioButtonsFieldSettings.list = fieldSettings?.list
           ? this.listItemMapper.mapListItemsToListItemsDto(fieldSettings.list)
@@ -75,16 +76,16 @@ export class FieldSettingsMapper {
         return radioButtonsFieldSettings
       }
       case FieldTypes.ISK_NUMBERBOX:
-        keys = ['minAmount', 'maxAmount']
+        keys = ['minAmount', 'maxAmount', 'isRequired']
         return this.pickSettings(fieldSettings, keys)
       case FieldTypes.PROPERTY_NUMBER:
-        keys = ['hasPropertyInput', 'hasPropertyList']
+        keys = ['hasPropertyInput', 'hasPropertyList', 'isRequired']
         return this.pickSettings(fieldSettings, keys)
       case FieldTypes.DOCUMENT:
-        keys = ['fileTypes', 'fileMaxSize', 'maxFiles']
+        keys = ['fileTypes', 'fileMaxSize', 'maxFiles', 'isRequired']
         return this.pickSettings(fieldSettings, keys)
       case FieldTypes.TIME_INPUT:
-        keys = ['timeInterval']
+        keys = ['timeInterval', 'isRequired']
         return this.pickSettings(fieldSettings, keys)
       default:
         return {}
