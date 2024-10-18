@@ -4,18 +4,18 @@ import { HttpStatus, INestApplication } from '@nestjs/common'
 import jwt from 'jsonwebtoken'
 import request from 'supertest'
 import { setupTestServer } from '../../../../test/setupTestServer'
+import {
+  mockedTokensResponse as tokensResponse,
+  SID_VALUE,
+  SESSION_COOKIE_NAME,
+  ALGORITM_TYPE,
+  getLoginSearchParmsFn,
+} from '../../../../test/sharedConstants'
 import { BffConfig } from '../../bff.config'
 import { IdsService } from '../ids/ids.service'
-import {
-  GetLoginSearchParamsReturnValue,
-  ParResponse,
-  TokenResponse,
-} from '../ids/ids.types'
+import { ParResponse } from '../ids/ids.types'
 
-const SID_VALUE = 'fake_uuid'
-const SESSION_COOKIE_NAME = 'sid'
 const KID = 'test-kid'
-const ALGORITM_TYPE = 'HS256'
 const SECRET_KEY = 'mock_secret'
 
 jest.mock('uuid', () => ({
@@ -55,25 +55,6 @@ const parResponse: ParResponse = {
   expires_in: 600,
 }
 
-const tokensResponse: TokenResponse = {
-  access_token:
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.mockSignature',
-  id_token: jwt.sign(
-    {
-      iss: 'https://example.com',
-      sub: '1234567890',
-      exp: Math.floor(Date.now() / 1000) + 3600, // 1 hour expiration
-      sid: SID_VALUE,
-    },
-    'mockSecret',
-    { algorithm: ALGORITM_TYPE },
-  ),
-  refresh_token: 'mockRefreshToken1234567890',
-  scope: 'openid profile email',
-  token_type: 'Bearer',
-  expires_in: 3600,
-}
-
 const allowedTargetLinkUri = 'http://test-client.com/testclient'
 
 const mockIdsService = {
@@ -88,25 +69,7 @@ const mockIdsService = {
   revokeToken: jest.fn().mockResolvedValue({
     type: 'success',
   }),
-  getLoginSearchParams: jest.fn().mockImplementation(
-    (args: {
-      sid: string
-      codeChallenge: string
-      loginHint?: string
-      prompt?: string
-    }): GetLoginSearchParamsReturnValue => ({
-      client_id: '@test_client_id',
-      redirect_uri: 'http://localhost:3010/testclient/bff/callbacks/login',
-      response_type: 'code',
-      response_mode: 'query',
-      scope: 'test_scope offline_access openid profile',
-      state: SID_VALUE,
-      code_challenge: 'test_code_challenge',
-      code_challenge_method: 'test_code_challenge_method',
-      ...(args.loginHint && { login_hint: args.loginHint }),
-      ...(args.prompt && { prompt: args.prompt }),
-    }),
-  ),
+  getLoginSearchParams: jest.fn().mockImplementation(getLoginSearchParmsFn),
 }
 
 describe('AuthController', () => {
