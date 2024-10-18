@@ -11,6 +11,8 @@ export const FieldSettingsKeys = [
   'hasLink',
   'url',
   'buttonText',
+  'isRequired',
+  'isLarge',
   'hasPropertyInput',
   'hasPropertyList',
   'listType',

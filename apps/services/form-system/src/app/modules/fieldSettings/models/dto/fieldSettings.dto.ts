@@ -40,6 +40,12 @@ export class FieldSettingsDto {
   buttonText?: LanguageType
 
   @ApiPropertyOptional({ type: Boolean })
+  isRequired?: boolean
+
+  @ApiPropertyOptional({ type: Boolean })
+  isLarge?: boolean
+
+  @ApiPropertyOptional({ type: Boolean })
   hasPropertyInput?: boolean
 
   @ApiPropertyOptional({ type: Boolean })

@@ -1,16 +1,13 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { CertificationType } from './models/certificationType.model'
-import { OrganizationCertificationType } from './models/organizationCertificationType.model'
+import { Certification } from './models/certification.model'
+import { OrganizationCertification } from './models/organizationCertification.model'
 import { CertificationsController } from './certifications.controller'
 import { CertificationsService } from './certifications.service'
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([
-      CertificationType,
-      OrganizationCertificationType,
-    ]),
+    SequelizeModule.forFeature([Certification, OrganizationCertification]),
   ],
   controllers: [CertificationsController],
   providers: [CertificationsService],

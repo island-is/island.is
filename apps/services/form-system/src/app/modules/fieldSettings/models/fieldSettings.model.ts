@@ -107,6 +107,18 @@ export class FieldSettings extends Model<FieldSettings> {
     type: DataType.BOOLEAN,
     allowNull: true,
   })
+  isRequired?: boolean | null
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  isLarge?: boolean | null
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
   hasPropertyInput?: boolean | null
 
   @Column({

@@ -68,6 +68,14 @@ module.exports = {
             type: Sequelize.JSON,
             allowNull: true,
           },
+          is_required: {
+            type: Sequelize.BOOLEAN,
+            allowNull: true,
+          },
+          is_large: {
+            type: Sequelize.BOOLEAN,
+            allowNull: true,
+          },
           has_property_input: {
             type: Sequelize.BOOLEAN,
             allowNull: true,
