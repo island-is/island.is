@@ -12,8 +12,8 @@ import {
 import { m } from '../../lib/utils/messages'
 import { Income } from './Income'
 import { Expenses } from './Expenses'
-import { Total } from './Total'
 import { useTotals } from '../../hooks/useTotals'
+import { Total } from '../../../../shared/components/Total'
 
 export const IndividualElectionOperatingIncome = () => {
   const { formatMessage } = useLocale()
