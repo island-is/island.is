@@ -1,10 +1,10 @@
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
-import { ValueLine } from './ValueLine'
 import { useLocale } from '@island.is/localization'
 import { formatCurrency } from '../utils/helpers'
 import { m } from '../lib/messages'
 import { FinancialStatementPoliticalParty } from '../lib/dataSchema'
 import { sectionColumn } from './css/overviewStyles.css'
+import { ValueLine } from '../../../shared/components/ValueLine'
 
 type Props = {
   answers: FinancialStatementPoliticalParty

@@ -1,11 +1,11 @@
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
-import { ValueLine } from './ValueLine'
 import { sectionColumn, starterColumnStyle } from './overviewStyles.css'
 import { useLocale } from '@island.is/localization'
 import { FinancialStatementCemetery } from '../../lib/dataSchema'
 import { formatCurrency } from '../../utils/helpers'
+import { ValueLine } from '../../../../shared/components/ValueLine'
 
 export const CapitalNumberOverview = ({
   answers,

@@ -19,8 +19,6 @@ import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { m } from '../../lib/messages'
 import { FinancialStatementCemetery } from '../../lib/dataSchema'
 import { currencyStringToNumber, formatCurrency } from '../../utils/helpers'
-import { AboutOverview } from './AboutOverview'
-import { ValueLine } from './ValueLine'
 import { CapitalNumberOverview } from './CapitalNumbersOverview'
 import { BOARDMEMEBER } from '../../utils/constants'
 import { FileValueLine } from './FileValueLine'
@@ -30,6 +28,8 @@ import {
   sectionColumn,
   starterColumnStyle,
 } from './overviewStyles.css'
+import { AboutOverview } from '../../../../shared/components/AboutOverview'
+import { ValueLine } from '../../../../shared/components/ValueLine'
 
 export const CemeteryOverview = ({
   application,
@@ -86,7 +86,15 @@ export const CemeteryOverview = ({
     <Box marginBottom={2}>
       <Divider />
       <Box paddingY={3}>
-        <AboutOverview answers={answers} />
+        <AboutOverview
+          about={answers.about}
+          fullName={m.fullName}
+          nationalId={m.nationalId}
+          powerOfAttorneyName={m.powerOfAttorneyName}
+          powerOfAttorneyNationalId={m.powerOfAttorneyNationalId}
+          email={m.email}
+          phoneNumber={m.phoneNumber}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>

@@ -17,16 +17,16 @@ import { m } from '../../lib/messages'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
 import { formatCurrency } from '../../utils/helpers'
-import { ValueLine } from '../../components/ValueLine'
 import { FileValueLine } from '../../components/FileValueLine'
 import { AssetDebtEquityOverview } from '../../components/AssetDebtEquityOverview'
-import { AboutOverview } from '../../components/AboutOverview'
 import BottomBar from '../../components/BottomBar'
 import {
   sectionColumn,
   starterColumnStyle,
 } from '../../components/css/overviewStyles.css'
 import { CapitalNumberOverview } from '../../components/CapitalNumberOverview'
+import { AboutOverview } from '../../../../shared/components/AboutOverview'
+import { ValueLine } from '../../../../shared/components/ValueLine'
 
 export const PartyOverview = ({
   application,
@@ -67,7 +67,15 @@ export const PartyOverview = ({
     <Box marginBottom={2}>
       <Divider />
       <Box paddingY={3}>
-        <AboutOverview answers={answers} />
+        <AboutOverview
+          about={answers.about}
+          fullName={m.fullName}
+          nationalId={m.nationalId}
+          powerOfAttorneyName={m.powerOfAttorneyName}
+          powerOfAttorneyNationalId={m.powerOfAttorneyNationalId}
+          email={m.email}
+          phoneNumber={m.phoneNumber}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>

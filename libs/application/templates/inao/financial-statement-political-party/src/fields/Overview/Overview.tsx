@@ -18,7 +18,6 @@ import { m } from '../../lib/messages'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import BottomBar from '../../components/BottomBar'
 import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
-import { AboutOverview } from '../../components/AboutOverview'
 import { GREATER } from '../../utils/constants'
 import {
   sectionColumn,
@@ -27,6 +26,7 @@ import {
 import { CapitalNumberOverview } from '../../components/CapitalNumberOverview'
 import { AssetDebtEquityOverview } from '../../components/AssetDebtEquityOverview'
 import { FileValueLine } from '../../components/FileValueLine'
+import { AboutOverview } from '../../../../shared/components/AboutOverview'
 
 export const Overview = ({
   application,
@@ -76,7 +76,15 @@ export const Overview = ({
     <Box marginBottom={2}>
       <Divider />
       <Box paddingY={3}>
-        <AboutOverview answers={answers} />
+        <AboutOverview
+          about={answers.about}
+          fullName={m.fullName}
+          nationalId={m.nationalId}
+          powerOfAttorneyName={m.powerOfAttorneyName}
+          powerOfAttorneyNationalId={m.powerOfAttorneyNationalId}
+          email={m.email}
+          phoneNumber={m.phoneNumber}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>

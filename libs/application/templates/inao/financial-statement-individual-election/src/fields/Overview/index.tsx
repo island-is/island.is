@@ -20,12 +20,12 @@ import { FinancialStatementIndividualElection } from '../../lib/utils/dataSchema
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { GREATER } from '../../lib/utils/constants'
 import { m } from '../../lib/utils/messages'
-import { AboutOverview } from './AboutOverview'
-import { ValueLine } from './ValueLine'
 import { CapitalNumberOverview } from './CapitalNumbersOverview'
 import { AssetDebtEquityOverview } from './AssetDebtEquityOverview'
 import { FileValueLine } from './FileValueLine'
 import BottomBar from './BottomBar'
+import { AboutOverview } from '../../../../shared/components/AboutOverview'
+import { ValueLine } from '../../../../shared/components/ValueLine'
 
 export const Overview = ({
   application,
@@ -74,7 +74,15 @@ export const Overview = ({
     <Box marginBottom={2}>
       <Divider />
       <Box paddingY={3}>
-        <AboutOverview answers={answers} />
+        <AboutOverview
+          about={answers.about}
+          fullName={m.fullName}
+          nationalId={m.nationalId}
+          powerOfAttorneyName={m.powerOfAttorneyName}
+          powerOfAttorneyNationalId={m.powerOfAttorneyNationalId}
+          email={m.email}
+          phoneNumber={m.phoneNumber}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>
