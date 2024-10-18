@@ -57,8 +57,6 @@ export const Overview = () => {
   const [modalVisible, setModalVisible] = useState<VisibleModal>()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
-  const displayReviewerChoices = workingCase.indictmentReviewer === null
-
   const [selectedDefendant, setSelectedDefendant] = useState<Defendant | null>()
   const { setAndSendDefendantToServer } = useDefendants()
 
@@ -107,7 +105,10 @@ export const Overview = () => {
       return []
     }
     return data.users.reduce(
-      (acc: { label: string; value: string }[], prosecutor) => {
+      (
+        acc: { label: string; value: string; isDisabled?: boolean }[],
+        prosecutor,
+      ) => {
         if (prosecutor.institution?.id === user?.institution?.id) {
           acc.push({
             label: prosecutor.name ?? '',
@@ -168,51 +169,54 @@ export const Overview = () => {
             <IndictmentCaseFilesList workingCase={workingCase} />
           </Box>
         )}
-        {displayReviewerChoices && (
-          <Box marginBottom={5}>
-            <SectionHeading
-              title={fm(strings.reviewerTitle)}
-              description={
-                <Text variant="eyebrow">
-                  {fm(strings.reviewerSubtitle, {
-                    indictmentAppealDeadline: formatDate(
-                      workingCase.indictmentAppealDeadline,
-                    ),
-                  })}
-                </Text>
-              }
-            />
-            <BlueBox>
-              <Select
-                name="reviewer"
-                label={fm(strings.reviewerLabel)}
-                placeholder={fm(strings.reviewerPlaceholder)}
-                value={selectedIndictmentReviewer}
-                options={publicProsecutors}
-                onChange={(value) => {
-                  setSelectedIndictmentReviewer(value as Option<string>)
-                }}
-                isDisabled={loading}
-                required
-              />
-            </BlueBox>
-          </Box>
-        )}
-      </FormContentContainer>
-
-      {displayReviewerChoices && (
-        <FormContentContainer isFooter>
-          <FormFooter
-            nextButtonIcon="arrowForward"
-            previousUrl={`${constants.CASES_ROUTE}`}
-            nextIsLoading={isLoadingWorkingCase}
-            nextIsDisabled={!selectedIndictmentReviewer || isLoadingWorkingCase}
-            onNextButtonClick={assignReviewer}
-            nextButtonText={fm(core.continue)}
+        <Box marginBottom={5}>
+          <SectionHeading
+            title={fm(strings.reviewerTitle)}
+            description={
+              <Text variant="eyebrow">
+                {fm(strings.reviewerSubtitle, {
+                  indictmentAppealDeadline: formatDate(
+                    workingCase.indictmentAppealDeadline,
+                  ),
+                })}
+              </Text>
+            }
           />
-        </FormContentContainer>
-      )}
-
+          <BlueBox>
+            <Select
+              name="reviewer"
+              label={fm(strings.reviewerLabel)}
+              placeholder={fm(strings.reviewerPlaceholder)}
+              value={
+                selectedIndictmentReviewer
+                  ? selectedIndictmentReviewer
+                  : workingCase.indictmentReviewer
+                  ? {
+                      label: workingCase.indictmentReviewer.name || '',
+                      value: workingCase.indictmentReviewer.id,
+                    }
+                  : undefined
+              }
+              options={publicProsecutors}
+              onChange={(value) => {
+                setSelectedIndictmentReviewer(value as Option<string>)
+              }}
+              isDisabled={loading}
+              required
+            />
+          </BlueBox>
+        </Box>
+      </FormContentContainer>
+      <FormContentContainer isFooter>
+        <FormFooter
+          nextButtonIcon="arrowForward"
+          previousUrl={`${constants.CASES_ROUTE}`}
+          nextIsLoading={isLoadingWorkingCase}
+          nextIsDisabled={!selectedIndictmentReviewer || isLoadingWorkingCase}
+          onNextButtonClick={assignReviewer}
+          nextButtonText={fm(core.continue)}
+        />
+      </FormContentContainer>
       {modalVisible === 'REVIEWER_ASSIGNED' && (
         <Modal
           title={fm(strings.reviewerAssignedModalTitle)}
