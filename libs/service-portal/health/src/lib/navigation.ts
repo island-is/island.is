@@ -87,27 +87,51 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthMedicine,
       children: [
         {
-          name: messages.medicinePurchaseTitle,
-          path: HealthPaths.HealthMedicinePurchase,
-          navHide: true,
+          name: messages.medicinePrescriptions,
+          path: HealthPaths.HealthMedicinePrescription,
+          children: [
+            {
+              name: messages.medicinePrescriptions,
+              path: HealthPaths.HealthMedicinePrescriptionOverview,
+              breadcrumbHide: true,
+            },
+            {
+              name: messages.medicinePrescriptionHistory,
+              path: HealthPaths.HealthMedicinePrescriptionHistory,
+            },
+          ],
         },
         {
-          name: messages.medicineCalculatorTitle,
-          path: HealthPaths.HealthMedicineCalculator,
-          activeIfExact: true,
-          navHide: true,
+          name: messages.medicineDelegation,
+          path: HealthPaths.HealthMedicineDelegation,
         },
         {
-          name: messages.medicineLicenseIntroTitle,
+          name: messages.medicinePaymentParticipation,
+          path: HealthPaths.HealthMedicinePaymentParticipation,
+          children: [
+            {
+              name: messages.medicinePurchaseTitle,
+              path: HealthPaths.HealthMedicinePurchase,
+              activeIfExact: true,
+              navHide: true,
+            },
+            {
+              name: messages.medicineCalculatorTitle,
+              path: HealthPaths.HealthMedicineCalculator,
+              activeIfExact: true,
+              navHide: true,
+            },
+          ],
+        },
+        {
+          name: messages.medicineLicenseTitle,
           path: HealthPaths.HealthMedicineCertificates,
-          activeIfExact: true,
-          navHide: true,
           children: [
             {
               name: messages.medicineLicenseTitle,
               path: HealthPaths.HealthMedicineCertificate,
-              activeIfExact: true,
               navHide: true,
+              breadcrumbHide: true,
             },
           ],
         },

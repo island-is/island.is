@@ -33,7 +33,7 @@ import {
 import { useEffect, useState } from 'react'
 import * as styles from './Medicine.css'
 import { CONTENT_GAP, DATE_FORMAT, SECTION_GAP } from './constants'
-import { MedicineWrapper } from './wrapper/MedicineWrapper'
+import { MedicinePaymentParticipationWrapper } from './wrapper/MedicinePaymentParticipationWrapper'
 import { HealthPaths } from '../../lib/paths'
 import {
   exportMedicineBill,
@@ -97,7 +97,9 @@ export const MedicinePurchase = () => {
   }, [data])
 
   return (
-    <MedicineWrapper pathname={HealthPaths.HealthMedicinePurchase}>
+    <MedicinePaymentParticipationWrapper
+      pathname={HealthPaths.HealthMedicinePurchase}
+    >
       <Box marginBottom={SECTION_GAP}>
         <Text variant="h5" marginBottom={1}>
           {formatMessage(messages.medicinePurchaseTitle)}
@@ -494,7 +496,7 @@ export const MedicinePurchase = () => {
           />
         ) : undefined}
       </Box>
-    </MedicineWrapper>
+    </MedicinePaymentParticipationWrapper>
   )
 }
 
