@@ -22,10 +22,10 @@ export class AppRepository {
       return entryResponse.data.items
         .map((e) => {
           const applicationId =
-            e.fields?.['grantApplicationId']?.['is-IS'] ?? -1
-          const dateFrom = e.fields?.['grantDateFrom']?.['is-IS'] ?? -1
-          const dateTo = e.fields?.['grantDateTo']?.['is-IS'] ?? -1
-          const isOpen = e.fields?.['grantIsOpen']?.['is-IS'] ?? undefined
+            e.fields?.['grantApplicationId']?.[LOCALE] ?? undefined
+          const dateFrom = e.fields?.['grantDateFrom']?.[LOCALE] ?? undefined
+          const dateTo = e.fields?.['grantDateTo']?.[LOCALE] ?? undefined
+          const isOpen = e.fields?.['grantIsOpen']?.[LOCALE] ?? undefined
 
           if (applicationId < 0) {
             return

@@ -26,8 +26,7 @@
     "worker": {
       "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "services-cms-importer:build",
-        "args": ["--job", "worker"]
+        "buildTarget": "services-cms-importer:build"
       }
     },
     "lint": {
