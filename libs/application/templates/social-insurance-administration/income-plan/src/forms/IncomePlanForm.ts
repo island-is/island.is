@@ -113,7 +113,16 @@ export const IncomePlanForm: Form = buildForm({
                   width: 'half',
                   isSearchable: true,
                   updateValueObj: {
-                    valueModifier: () => undefined,
+                    valueModifier: (application, activeField) => {
+                      const options = getTypesOptions(
+                        application.externalData,
+                        activeField?.incomeCategory,
+                      )
+                      const selectedOption = options.find(
+                        (option) => option.value === activeField?.incomeType,
+                      )?.value
+                      return selectedOption ?? null
+                    },
                     watchValues: 'incomeCategory',
                   },
                   options: (application, activeField) => {

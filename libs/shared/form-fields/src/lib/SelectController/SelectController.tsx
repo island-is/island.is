@@ -57,7 +57,7 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
   }
 
   const getValue = (value: Value | Value[]) => {
-    if (value === undefined) {
+    if (value === undefined || value === null) {
       return null
     }
 
