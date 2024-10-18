@@ -5,6 +5,7 @@ import {
 } from 'sequelize'
 import {
   BelongsTo,
+  BelongsToMany,
   Column,
   CreatedAt,
   DataType,
@@ -14,17 +15,16 @@ import {
   PrimaryKey,
   Table,
   UpdatedAt,
-  BelongsToMany,
 } from 'sequelize-typescript'
 
-import { DelegationProviderModel } from './delegation-provider.model'
-import { PersonalRepresentativeDelegationTypeModel } from '../../personal-representative/models/personal-representative-delegation-type.model'
-import { DelegationTypeDto } from '../dto/delegation-type.dto'
 import { ClientDelegationType } from '../../clients/models/client-delegation-type.model'
 import { Client } from '../../clients/models/client.model'
+import { PersonalRepresentativeDelegationTypeModel } from '../../personal-representative/models/personal-representative-delegation-type.model'
 import { ApiScopeDelegationType } from '../../resources/models/api-scope-delegation-type.model'
 import { ApiScope } from '../../resources/models/api-scope.model'
+import { DelegationTypeDto } from '../dto/delegation-type.dto'
 import { DelegationDelegationType } from './delegation-delegation-type.model'
+import { DelegationProviderModel } from './delegation-provider.model'
 
 @Table({
   tableName: 'delegation_type',
@@ -64,6 +64,13 @@ export class DelegationTypeModel extends Model<
     allowNull: false,
   })
   description!: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  actorDiscretionRequired!: boolean
 
   @BelongsToMany(() => Client, () => ClientDelegationType)
   clients!: CreationOptional<Client[]>

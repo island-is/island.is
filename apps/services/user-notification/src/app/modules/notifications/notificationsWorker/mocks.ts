@@ -165,6 +165,7 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
       toNationalId: userWithNoDelegations.nationalId,
       subjectId: null, // test that 3rd party login is not used if subjectId is null
       type: AuthDelegationType.ProcurationHolder,
+      actorDiscretionRequired: false,
     },
   ],
   [userWithDelegations2.nationalId]: [
@@ -173,6 +174,7 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
       toNationalId: userWithDelegations.nationalId,
       subjectId: delegationSubjectId,
       type: AuthDelegationType.ProcurationHolder,
+      actorDiscretionRequired: false,
     },
   ],
   [userWithSendToDelegationsFeatureFlagDisabled.nationalId]: [
@@ -181,6 +183,7 @@ const delegations: Record<string, DelegationRecordDTO[]> = {
       toNationalId: userWithNoDelegations.nationalId,
       subjectId: faker.datatype.uuid(),
       type: AuthDelegationType.ProcurationHolder,
+      actorDiscretionRequired: false,
     },
   ],
 }
