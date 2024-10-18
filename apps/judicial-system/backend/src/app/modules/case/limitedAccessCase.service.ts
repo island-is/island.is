@@ -30,12 +30,14 @@ import {
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
-import { CivilClaimant, Defendant, DefendantService } from '../defendant'
-import { EventLog } from '../event-log'
 import {
-  CaseFile,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
-} from '../file'
+  CivilClaimant,
+  CivilClaimantService,
+  Defendant,
+  DefendantService,
+} from '../defendant'
+import { EventLog } from '../event-log'
+import { CaseFile, defenderCaseFileCategoriesForRequestCases } from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
 import { Subpoena } from '../subpoena'
@@ -281,6 +283,7 @@ export class LimitedAccessCaseService {
   constructor(
     private readonly messageService: MessageService,
     private readonly defendantService: DefendantService,
+    private readonly civilClaimantService: CivilClaimantService,
     private readonly pdfService: PdfService,
     private readonly awsS3Service: AwsS3Service,
     @InjectModel(Case) private readonly caseModel: typeof Case,
@@ -425,6 +428,7 @@ export class LimitedAccessCaseService {
       })
       .then((theCase) => {
         if (theCase) {
+          // The national id is associated with a defender in a request case
           return this.constructDefender(
             nationalId,
             theCase.defenderName,
@@ -437,6 +441,7 @@ export class LimitedAccessCaseService {
           .findLatestDefendantByDefenderNationalId(nationalId)
           .then((defendant) => {
             if (defendant) {
+              // The national id is associated with a defender in an indictment case
               return this.constructDefender(
                 nationalId,
                 defendant.defenderName,
@@ -445,7 +450,21 @@ export class LimitedAccessCaseService {
               )
             }
 
-            throw new NotFoundException('Defender not found')
+            return this.civilClaimantService
+              .findLatestClaimantBySpokespersonNationalId(nationalId)
+              .then((civilClaimant) => {
+                if (civilClaimant) {
+                  // The national id is associated with a spokesperson for a civil claimant in an indictment case
+                  return this.constructDefender(
+                    nationalId,
+                    civilClaimant.spokespersonName,
+                    civilClaimant.spokespersonPhoneNumber,
+                    civilClaimant.spokespersonEmail,
+                  )
+                }
+
+                throw new NotFoundException('Defender not found')
+              })
           })
       })
   }
@@ -488,9 +507,7 @@ export class LimitedAccessCaseService {
         (file) =>
           file.key &&
           file.category &&
-          defenderCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
-            file.category,
-          ),
+          defenderCaseFileCategoriesForRequestCases.includes(file.category),
       ) ?? []
 
     // TODO: speed this up by fetching all files in parallel
