@@ -89,4 +89,7 @@ export class Defendant {
 
   @Field(() => [Subpoena], { nullable: true })
   readonly subpoenas?: Subpoena[]
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isDefenderChoiceConfirmed?: boolean
 }

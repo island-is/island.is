@@ -16,6 +16,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CaseFileCategory,
+  isDistrictCourtUser,
   isTrafficViolationCase,
   type User,
 } from '@island.is/judicial-system/types'
@@ -85,6 +86,7 @@ export class SubpoenaService {
     subpoena: Subpoena,
     update: UpdateSubpoenaDto,
     transaction?: Transaction,
+    user?: User,
   ): Promise<Subpoena> {
     const {
       defenderChoice,
@@ -95,6 +97,7 @@ export class SubpoenaService {
       requestedDefenderChoice,
       requestedDefenderNationalId,
       requestedDefenderName,
+      isDefenderChoiceConfirmed,
     } = update
 
     const [numberOfAffectedRows] = await this.subpoenaModel.update(update, {
@@ -103,6 +106,13 @@ export class SubpoenaService {
       transaction,
     })
     let defenderAffectedRows = 0
+
+    // This is added because the defender choice can only be confirmed by
+    // a district court user. If someone else updates it then we want to
+    // reset the existing confirmation (unless a court user is updating it)
+    const confirmDefenderChoice = Boolean(
+      user && isDistrictCourtUser(user) && isDefenderChoiceConfirmed === true,
+    )
 
     if (
       defenderChoice ||
@@ -119,6 +129,7 @@ export class SubpoenaService {
         requestedDefenderChoice,
         requestedDefenderNationalId,
         requestedDefenderName,
+        isDefenderChoiceConfirmed: confirmDefenderChoice,
       }
 
       const [defenderUpdateAffectedRows] = await this.defendantModel.update(

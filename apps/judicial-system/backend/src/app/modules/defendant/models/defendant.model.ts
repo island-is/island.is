@@ -167,4 +167,8 @@ export class Defendant extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   requestedDefenderName?: string
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isDefenderChoiceConfirmed?: boolean
 }
