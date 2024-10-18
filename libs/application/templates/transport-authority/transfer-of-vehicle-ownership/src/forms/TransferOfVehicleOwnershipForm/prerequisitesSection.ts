@@ -7,9 +7,9 @@ import { externalData } from '../../lib/messages'
 import {
   IdentityApi,
   UserProfileApi,
-  SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
   InsuranceCompaniesApi,
+  MockableSamgongustofaPaymentCatalogApi,
 } from '../../dataProviders'
 
 export const prerequisitesSection = buildSection({
@@ -21,7 +21,6 @@ export const prerequisitesSection = buildSection({
       id: 'approveExternalData',
       subTitle: externalData.dataProvider.subTitle,
       checkboxLabel: externalData.dataProvider.checkboxLabel,
-      enableMockPayment: true,
       dataProviders: [
         buildDataProviderItem({
           provider: IdentityApi,
@@ -39,7 +38,7 @@ export const prerequisitesSection = buildSection({
           subTitle: externalData.currentVehicles.subTitle,
         }),
         buildDataProviderItem({
-          provider: SamgongustofaPaymentCatalogApi,
+          provider: MockableSamgongustofaPaymentCatalogApi,
           title: externalData.payment.title,
           subTitle: externalData.payment.subTitle,
         }),

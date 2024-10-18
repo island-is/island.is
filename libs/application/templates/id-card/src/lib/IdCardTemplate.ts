@@ -27,7 +27,7 @@ import {
   DeliveryAddressApi,
   UserInfoApi,
   NationalRegistryUser,
-  SyslumadurPaymentCatalogApi,
+  MockableSyslumadurPaymentCatalogApi,
   IdentityDocumentApi,
   NationalRegistryUserParentB,
 } from '../dataProviders'
@@ -135,7 +135,7 @@ const IdCardTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUser,
                 UserInfoApi,
-                SyslumadurPaymentCatalogApi,
+                MockableSyslumadurPaymentCatalogApi,
                 PassportsApi,
                 DistrictsApi,
                 DeliveryAddressApi,

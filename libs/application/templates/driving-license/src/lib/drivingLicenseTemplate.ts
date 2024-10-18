@@ -44,7 +44,10 @@ import {
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
 import { hasCompletedPrerequisitesStep } from './utils'
-import { GlassesCheckApi, SyslumadurPaymentCatalogApi } from '../dataProviders'
+import {
+  GlassesCheckApi,
+  MockableSyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 
 const getCodes = (application: Application) => {
@@ -146,7 +149,7 @@ const template: ApplicationTemplate<
                 NationalRegistryUserApi,
                 TeachersApi,
                 UserProfileApi,
-                SyslumadurPaymentCatalogApi,
+                MockableSyslumadurPaymentCatalogApi,
                 GlassesCheckApi,
                 JurisdictionApi,
                 CurrentLicenseApi.configure({

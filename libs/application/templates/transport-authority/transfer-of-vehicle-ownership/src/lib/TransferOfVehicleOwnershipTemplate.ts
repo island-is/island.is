@@ -29,7 +29,7 @@ import set from 'lodash/set'
 import {
   IdentityApi,
   UserProfileApi,
-  SamgongustofaPaymentCatalogApi,
+  MockableSamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
   InsuranceCompaniesApi,
 } from '../dataProviders'
@@ -141,7 +141,7 @@ const template: ApplicationTemplate<
               api: [
                 IdentityApi,
                 UserProfileApi,
-                SamgongustofaPaymentCatalogApi,
+                MockableSamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
                 InsuranceCompaniesApi,
               ],

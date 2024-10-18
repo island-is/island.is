@@ -3,6 +3,7 @@ import { defineTemplateApi } from '../../TemplateApi'
 
 export interface PaymentCatalogParameters {
   organizationId: string
+  enableMockPayment: boolean
 }
 
 export const PaymentCatalogApi = defineTemplateApi<PaymentCatalogParameters>({
@@ -10,5 +11,17 @@ export const PaymentCatalogApi = defineTemplateApi<PaymentCatalogParameters>({
   namespace: 'Payment',
   params: {
     organizationId: InstitutionNationalIds.SYSLUMENN,
+    enableMockPayment: false,
   },
 })
+
+export const MockablePaymentCatalogApi =
+  defineTemplateApi<PaymentCatalogParameters>({
+    externalDataId: 'paymentCatalog',
+    action: 'mockPaymentCatalog',
+    namespace: 'Payment',
+    params: {
+      organizationId: InstitutionNationalIds.SYSLUMENN,
+      enableMockPayment: true,
+    },
+  })
