@@ -5,7 +5,7 @@ import {
   signingModuleConfig,
   SigningService,
 } from '@island.is/dokobit-signing'
-import { AwsService } from '@island.is/nest/aws'
+import { AwsModule, AwsService } from '@island.is/nest/aws'
 import * as pdf from './pdfGenerators'
 import { Application } from '@island.is/application/api/core'
 import { ApplicationTypes, PdfTypes } from '@island.is/application/types'
@@ -115,6 +115,7 @@ describe('FileService', () => {
       imports: [
         LoggingModule,
         SigningModule,
+        AwsModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [
@@ -124,14 +125,14 @@ describe('FileService', () => {
           ],
         }),
       ],
-      providers: [FileService, AwsService],
+      providers: [FileService],
     }).compile()
 
     awsService = module.get(AwsService)
 
     jest
-      .spyOn(awsService, 'getFile')
-      .mockImplementation(() => Promise.resolve({ Body: 'body' }))
+      .spyOn(awsService, 'getFileContent')
+      .mockImplementation(() => Promise.resolve('body'))
 
     jest.spyOn(awsService, 'fileExists').mockResolvedValue(false)
 
@@ -174,8 +175,7 @@ describe('FileService', () => {
 
     expect(awsService.uploadFile).toHaveBeenCalledWith(
       Buffer.from('buffer'),
-      bucket,
-      fileName,
+      { bucket, key: fileName },
       {
         ContentEncoding: 'base64',
         ContentDisposition: 'inline',
@@ -183,7 +183,10 @@ describe('FileService', () => {
       },
     )
 
-    expect(awsService.getPresignedUrl).toHaveBeenCalledWith(bucket, fileName)
+    expect(awsService.getPresignedUrl).toHaveBeenCalledWith({
+      bucket: bucket,
+      key: fileName,
+    })
 
     expect(response).toEqual('url')
   })
@@ -195,9 +198,9 @@ describe('FileService', () => {
       PdfTypes.CHILDREN_RESIDENCE_CHANGE,
     )
 
-    expect(awsService.getFile).toHaveBeenCalledWith(
-      bucket,
-      `children-residence-change/${application.id}.pdf`,
+    expect(awsService.getFileContent).toHaveBeenCalledWith(
+      { bucket, key: `children-residence-change/${application.id}.pdf` },
+      'binary',
     )
 
     expect(signingService.requestSignature).toHaveBeenCalledWith(
@@ -221,8 +224,8 @@ describe('FileService', () => {
     const application = createApplication()
 
     jest
-      .spyOn(awsService, 'getFile')
-      .mockImplementation(() => Promise.resolve({ Body: '' }))
+      .spyOn(awsService, 'getFileContent')
+      .mockImplementation(() => Promise.resolve(''))
 
     const act = async () =>
       await service.requestFileSignature(
@@ -232,9 +235,9 @@ describe('FileService', () => {
 
     await expect(act).rejects.toThrowError(NotFoundException)
 
-    expect(awsService.getFile).toHaveBeenCalledWith(
-      bucket,
-      `children-residence-change/${applicationId}.pdf`,
+    expect(awsService.getFileContent).toHaveBeenCalledWith(
+      { bucket: bucket, key: `children-residence-change/${applicationId}.pdf` },
+      'binary',
     )
 
     expect(signingService.requestSignature).not.toHaveBeenCalled()
@@ -268,7 +271,10 @@ describe('FileService', () => {
       PdfTypes.CHILDREN_RESIDENCE_CHANGE,
     )
 
-    expect(awsService.getPresignedUrl).toHaveBeenCalledWith(bucket, fileName)
+    expect(awsService.getPresignedUrl).toHaveBeenCalledWith({
+      bucket,
+      key: fileName,
+    })
     expect(result).toEqual('url')
   })
 
