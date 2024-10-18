@@ -137,7 +137,7 @@ export const strings = defineMessages({
   confirmDefenderDelayModalText: {
     id: 'judicial.system.core:court_indictments.advocates.confirm_defender_delay_modal_text',
     defaultMessage:
-  'Ákærð fær frest fram að þingfestingu til þess að tilnefna verjanda.',
+      'Ákærð fær frest fram að þingfestingu til þess að tilnefna verjanda.',
     description:
       'Notaður sem texti í staðfesta val á verjanda modal í dómaraflæði í ákærum.',
   },
