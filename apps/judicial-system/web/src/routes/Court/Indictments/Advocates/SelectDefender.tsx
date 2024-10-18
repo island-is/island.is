@@ -71,18 +71,26 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
       defendant: Defendant,
       isDefenderChoiceConfirmed: boolean,
     ) => {
-      const shouldChangeDefenderChoice =
-        isDefenderChoiceConfirmed &&
-        defendant.defenderChoice !== DefenderChoice.WAIVE &&
-        defendant.defenderChoice !== DefenderChoice.DELEGATE
+      const { defenderChoice, defenderName } = defendant
+
+      const isDelaying =
+        !defenderName &&
+        (!defenderChoice || defenderChoice === DefenderChoice.CHOOSE)
+      const isChoosing =
+        defenderName &&
+        (!defenderChoice || defenderChoice === DefenderChoice.DELAY)
+
+      const defenderChoiceUpdate = isDelaying
+        ? DefenderChoice.DELAY
+        : isChoosing
+        ? DefenderChoice.CHOOSE
+        : defenderChoice
 
       const updateDefendantInput = {
         caseId,
         defendantId: defendant.id,
         isDefenderChoiceConfirmed,
-        defenderChoice: shouldChangeDefenderChoice
-          ? DefenderChoice.CHOOSE
-          : defendant.defenderChoice,
+        defenderChoice: defenderChoiceUpdate,
       }
 
       setAndSendDefendantToServer(updateDefendantInput, setWorkingCase)
