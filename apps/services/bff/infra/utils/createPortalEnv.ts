@@ -1,10 +1,11 @@
 /* eslint-disable @nx/enforce-module-boundaries */
-import { json } from '../../../../../infra/src/dsl/dsl'
+import { json, ref } from '../../../../../infra/src/dsl/dsl'
 import {
   adminPortalScopes,
   servicePortalScopes,
 } from '../../../../../libs/auth/scopes/src/index'
 import { FIVE_SECONDS_IN_MS } from '../../src/app/constants/time'
+import { BffInfraServices } from '../admin-portal.infra'
 
 const ONE_HOUR_IN_MS = 60 * 60 * 1000
 const ONE_WEEK_IN_MS = ONE_HOUR_IN_MS * 24 * 7
@@ -24,7 +25,10 @@ const getScopes = (key: PortalKeys) => {
   }
 }
 
-export const createPortalEnv = (key: PortalKeys) => {
+export const createPortalEnv = (
+  key: PortalKeys,
+  services: BffInfraServices,
+) => {
   return {
     // Idenity server
     IDENTITY_SERVER_CLIENT_SCOPES: json(getScopes(key)),
@@ -68,12 +72,7 @@ export const createPortalEnv = (key: PortalKeys) => {
       staging: `https://beta.staging01.devland.is/${key}/bff/callbacks`,
       prod: `https://island.is/${key}/bff/callbacks`,
     },
-    BFF_PROXY_API_ENDPOINT: {
-      local: 'http://localhost:4444/api/graphql',
-      dev: 'https://featbff-beta.dev01.devland.is/api/graphql',
-      staging: 'https://beta.staging01.devland.is/api/graphql',
-      prod: 'https://island.is/api/graphql',
-    },
+    BFF_PROXY_API_ENDPOINT: ref((h) => `http://${h.svc(services.api)}`),
     BFF_ALLOWED_EXTERNAL_API_URLS: {
       local: json(['http://localhost:3377/download/v1']),
       dev: json(['https://api.dev01.devland.is']),

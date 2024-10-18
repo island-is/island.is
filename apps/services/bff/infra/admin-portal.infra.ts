@@ -6,13 +6,19 @@ const clientName = 'portals-admin'
 const serviceName = `${bffName}-${clientName}`
 const key = 'stjornbord'
 
-export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
+export type BffInfraServices = {
+  api: ServiceBuilder<'api'>
+}
+
+export const serviceSetup = (
+  services: BffInfraServices,
+): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .namespace(clientName)
     .image(bffName)
     .redis()
     .serviceAccount(bffName)
-    .env(createPortalEnv(key))
+    .env(createPortalEnv(key, services))
     .secrets({
       // The secret should be a valid 32-byte base64 key.
       // Generate key example: `openssl rand -base64 32`
