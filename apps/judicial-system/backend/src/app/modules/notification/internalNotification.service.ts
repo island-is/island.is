@@ -1794,10 +1794,10 @@ export class InternalNotificationService extends BaseNotificationService {
     name?: string,
     email?: string,
   ) {
-    const subject = this.formatMessage(notifications.caseFilesAdded.subject, {
+    const subject = this.formatMessage(notifications.caseFilesUpdated.subject, {
       courtCaseNumber,
     })
-    const html = this.formatMessage(notifications.caseFilesAdded.body, {
+    const html = this.formatMessage(notifications.caseFilesUpdated.body, {
       courtCaseNumber,
       userHasAccessToRVG: Boolean(link),
       linkStart: `<a href="${link}">`,
