@@ -8,7 +8,7 @@ const baseGridRow = style({
 })
 
 export const gridRow = styleVariants({
-  withButton: [baseGridRow, { gridTemplateColumns: '5fr 1fr' }],
+  withButton: [baseGridRow, { gridTemplateColumns: '5fr auto' }],
   withoutButton: [baseGridRow, { gridTemplateColumns: '1fr' }],
 })
 

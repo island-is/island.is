@@ -58,47 +58,33 @@ export class EndorsementService {
     private readonly awsService: AwsService,
   ) {}
 
-  async onModuleInit() {
-    this.logger.info(
-      'Updating endorsement counts for all lists onModuleInit...',
-    )
+  async updateEndorsementCountOnList(listId: string): Promise<void> {
     try {
-      await this.updateCountsForAllLists()
+      const count = await this.endorsementModel.count({
+        where: { endorsementListId: listId },
+      })
+      const [affectedRows, updatedList] =
+        await this.endorsementListModel.update(
+          { endorsementCount: count },
+          {
+            where: { id: listId },
+            returning: true,
+          },
+        )
+      if (affectedRows > 0 && updatedList[0].endorsementCount === count) {
+        this.logger.info(
+          `Successfully updated endorsement count for list "${listId}" to ${count}`,
+        )
+      } else {
+        this.logger.error(
+          `Failed to update endorsement count for list "${listId}". The count was not updated correctly.`,
+        )
+      }
     } catch (error) {
       this.logger.error(
-        'Error updating endorsement counts for all lists',
-        error,
+        `Error updating endorsement count for list "${listId}": ${error.message}`,
       )
-    }
-  }
-
-  async updateCountsForAllLists(): Promise<void> {
-    const allLists = await this.endorsementListModel.findAll()
-    for (const list of allLists) {
-      await this.updateEndorsementCountOnList(list.id)
-    }
-    this.logger.info('All endorsement counts have been updated.')
-  }
-
-  async updateEndorsementCountOnList(listId: string): Promise<void> {
-    const count = await this.endorsementModel.count({
-      where: { endorsementListId: listId },
-    })
-    const [affectedRows, updatedList] = await this.endorsementListModel.update(
-      { endorsementCount: count },
-      {
-        where: { id: listId },
-        returning: true,
-      },
-    )
-    if (affectedRows > 0 && updatedList[0].endorsementCount === count) {
-      this.logger.info(
-        `Successfully updated endorsement count for list "${listId}" to ${count}`,
-      )
-    } else {
-      this.logger.warn(
-        `Failed to update endorsement count for list "${listId}". The count was not updated correctly.`,
-      )
+      throw error
     }
   }
 
