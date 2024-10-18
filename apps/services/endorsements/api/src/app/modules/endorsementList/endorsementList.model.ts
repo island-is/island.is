@@ -12,6 +12,7 @@ import { Endorsement } from '../endorsement/models/endorsement.model'
 import { EndorsementTag } from './constants'
 import { EndorsementMetadataDto } from './dto/endorsementMetadata.dto'
 
+// remove @ApiProperty from model files .......................................................
 @Table({
   tableName: 'endorsement_list',
 })
@@ -83,7 +84,15 @@ export class EndorsementList extends Model {
     type: DataType.STRING,
     allowNull: false,
   })
-  owner!: string
+  ownerNationalId!: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  ownerName!: string
 
   @ApiProperty()
   @Column({
