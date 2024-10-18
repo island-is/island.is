@@ -45,3 +45,7 @@ export const successfulServiceStatus: string[] = [
 export const isSuccessfulServiceStatus = (status?: ServiceStatus): boolean => {
   return Boolean(status && successfulServiceStatus.includes(status))
 }
+
+export const isFailedServiceStatus = (status?: ServiceStatus): boolean => {
+  return Boolean(status && status === ServiceStatus.FAILED)
+}
