@@ -46,8 +46,6 @@ export const useComments = ({ applicationId }: Props) => {
     },
   })
 
-  console.log('data', data)
-
   const addComment = (variables: AddCommentVariables, cb?: () => void) => {
     addCommentMutation({
       variables: {

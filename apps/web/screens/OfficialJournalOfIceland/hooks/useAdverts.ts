@@ -24,7 +24,7 @@ export type UseAdvertsVariables = {
   dateTo?: Date
 }
 
-export type UserAdvertsInput = {
+export type UseAdvertsInput = {
   input: UseAdvertsVariables
 }
 
@@ -38,7 +38,7 @@ export const useAdverts = ({ vars, fallbackData }: UseAdvertsParams) => {
 
   const { data, loading, error, refetch } = useQuery<
     UseAdvertsResponse,
-    UserAdvertsInput
+    UseAdvertsInput
   >(ADVERTS_QUERY, {
     fetchPolicy: 'no-cache',
     nextFetchPolicy: 'no-cache',

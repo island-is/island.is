@@ -287,7 +287,6 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
               name="q"
               placeholder={formatMessage(m.search.inputPlaceholder)}
               size="xs"
-              defaultValue={searchState.q}
               value={localSearchValue}
               onChange={(e) => {
                 setLocalSearchValue(e.target.value)
@@ -537,21 +536,21 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
   let pageSize: number | undefined
 
   if (query.dagsFra && typeof query.dagsFra === 'string') {
-    const isValid = !isNaN(Date.parse(query.dagsFra))
+    const isValid = !Number.isNaN(Date.parse(query.dagsFra))
     if (isValid) {
       dateFrom = new Date(query.dagsFra).toISOString().split('T')[0]
     }
   }
 
   if (query.dagsTil && typeof query.dagsTil === 'string') {
-    const isValid = !isNaN(Date.parse(query.dagsTil))
+    const isValid = !Number.isNaN(Date.parse(query.dagsTil))
     if (isValid) {
       dateTo = new Date(query.dagsTil).toISOString().split('T')[0]
     }
   }
 
   if (query.sida && typeof query.sida === 'string') {
-    const check = !isNaN(parseInt(query.sida))
+    const check = !Number.isNaN(parseInt(query.sida))
 
     if (check) {
       page = parseInt(query.sida)
@@ -559,7 +558,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
   }
 
   if (query.pageSize && typeof query.pageSize === 'string') {
-    const check = !isNaN(parseInt(query.pageSize))
+    const check = !Number.isNaN(parseInt(query.pageSize))
 
     if (check) {
       pageSize = parseInt(query.pageSize)
