@@ -232,10 +232,9 @@ const FormExternalDataProvider: FC<
   } = externalDataProvider
   const relevantDataProviders = dataProviders.filter((p) => p.action)
   const [suppressProviderErrors, setSuppressProviderErrors] = useState(true)
-  const enableMockPayment =
-    dataProviders.findIndex(
-      (x) => x.action === 'Payment.mockPaymentCatalog',
-    ) !== -1
+  const enableMockPayment = dataProviders.some(
+    (x) => x.action === 'Payment.mockPaymentCatalog',
+  )
 
   // If id is undefined then the error won't be attached to the field with id
   const error = getValueViaPath(errors, id ?? '', undefined) as
