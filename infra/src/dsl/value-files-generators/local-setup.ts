@@ -9,14 +9,43 @@ import { readFile, writeFile } from 'fs/promises'
 import { globSync } from 'glob'
 import { join } from 'path'
 import { rootDir } from '../consts'
-import { logger } from '../../common'
+import { logger } from '../../common/logging'
+import { nxCommand } from '../../common/nx-command'
+import { z } from 'zod'
+import { schemaLoader } from '../../common/schema-loader'
 
-const mapServiceToNXname = async (serviceName: string) => {
-  const projectRootPath = join(__dirname, '..', '..', '..', '..')
-  const projects = globSync(['apps/*/project.json', 'apps/*/*/project.json'], {
-    cwd: projectRootPath,
-  })
-  const nxName = (
+interface ProjectInfo {
+  serviceName: string
+  projectPath: string
+}
+const mapServiceToNXname = async (
+  serviceName: string,
+): Promise<ProjectInfo | null> => {
+  const params = {
+    command: `show project ${serviceName} --json --output-style static`,
+    parseJson: true,
+  }
+  const projectMeta = await nxCommand(params)
+
+  try {
+    const validatedProjectMeta: NxProjectSchema = nxProjectSchema.parse(
+      projectMeta.stdout,
+    )
+    console.log('Validated project metadata:', validatedProjectMeta)
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error('Validation errors:', error.errors)
+    } else {
+      console.error('Unexpected error:', error)
+    }
+  }
+
+  // Handling services-bff logic
+  if (serviceName.startsWith('services-bff-')) {
+    serviceName = 'services-bff'
+  }
+
+  const projectInfo = (
     await Promise.all(
       projects.map(async (path) => {
         const project: {
@@ -27,20 +56,28 @@ const mapServiceToNXname = async (serviceName: string) => {
             encoding: 'utf-8',
           }),
         )
+
+        // Check if the serviceName matches
         return typeof project.targets[`service-${serviceName}`] !== 'undefined'
-          ? project.name
+          ? {
+              serviceName: project.name,
+              projectPath: join(projectRootPath, path),
+            }
           : null
       }),
     )
-  ).filter((name) => name !== null) as string[]
+  ).filter((info) => info !== null) as ProjectInfo[]
 
   if (nxName.length > 1)
     throw new Error(
-      `More then one NX projects found with service name ${serviceName} - ${nxName.join(
-        ',',
-      )}`,
+      `More than one NX project found with service name ${serviceName} - ${projectInfo
+        .map((info) => info.serviceName)
+        .join(', ')}`,
     )
-  return nxName.length === 1 ? nxName[0] : serviceName
+  }
+
+  // Return the service name and project path
+  return projectInfo.length === 1 ? projectInfo[0] : null
 }
 
 /**
@@ -96,8 +133,12 @@ export const getLocalrunValueFile = async (
   await Promise.all(
     Object.entries(dockerComposeServices).map(
       async ([name, svc]: [string, LocalrunService]) => {
-        const serviceNXName = await mapServiceToNXname(name)
-        logger.debug(`Writing env to file for ${name}`, { name, serviceNXName })
+        const result = await mapServiceToNXname(name)
+        if (result === null) {
+          throw new Error('No NX project found for the given service name.')
+        }
+        const { serviceName, projectPath } = result
+        logger.debug(`Writing env to file for ${name}`, { name, serviceName })
         if (options.dryRun) return
         await writeFile(
           join(rootDir, `.env.${serviceNXName}`),
