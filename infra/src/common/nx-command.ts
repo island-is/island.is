@@ -1,57 +1,65 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import { join } from 'path'
+import { rootDir } from '../dsl/consts'
+import { z } from 'zod' // Import Zod for runtime validation
 
 const execPromise = promisify(exec)
 
-/**
- * Executes an NX command from the monorepo root.
- *
- * @param {Object} options - The options for running the NX command.
- * @param {string} options.command - The NX command to run (e.g., 'run my-app:build').
- * @param {boolean} [options.parseJson=false] - If true, the function will parse `stdout` as JSON and return the parsed object.
- * @returns {Promise<{ stdout: string | any, stderr: string }>} - A promise that resolves to an object containing `stdout` (as a string or a parsed object) and `stderr` (as a string).
- *
- * @throws {Error} - Throws an error if the NX command fails to execute.
- *
- * @example
- * // Run NX command and get raw output as string
- * const result = await nxCommand({ command: 'show project portals-admin --json --output-style static' });
- * console.log(result.stdout); // Raw JSON string
- *
- * @example
- * // Run NX command and get parsed output as object
- * const result = await nxCommand({ command: 'show project portals-admin --json --output-style static', parseJson: true });
- * console.log(result.stdout); // Parsed JSON object
- */
-export const nxCommand = async (options: {
+export const nxCommand = async <T>(options: {
   command: string
   parseJson?: boolean
-}): Promise<{ stdout: string | any; stderr: string }> => {
-  const { command, parseJson = false } = options
+  schema?: z.ZodSchema<T> // Accept any Zod schema for runtime validation
+}): Promise<T> => {
+  const { command, parseJson = false, schema } = options
+
   try {
-    const monorepoRoot = join(__dirname, '..', '..', '..')
     const { stdout, stderr } = await execPromise(`yarn nx ${command}`, {
-      cwd: monorepoRoot,
+      cwd: rootDir,
     })
 
     if (stderr) {
-      console.warn(`NX Warning: ${stderr}`)
+      console.warn(stderr)
     }
 
-    if (parseJson) {
-      const parsedJson = JSON.parse(stdout)
-      return { stdout: parsedJson, stderr }
+    // If parseJson is true, validate the JSON output using the provided schema
+    if (parseJson && schema) {
+      return safelyParseAndValidateJson(stdout, schema)
     }
 
-    return { stdout, stderr }
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error(`Failed to run NX command: ${error.message}`)
-      throw error
-    } else {
-      console.error('Unknown error occurred while running NX command.')
-      throw new Error('Unknown error occurred.')
-    }
+    // If not parsing JSON, return raw stdout
+    return (stdout as unknown) as T
+  } catch (error) {
+    handleNxCommandError(error)
+    throw error
+  }
+}
+
+/**
+ * Safely parses JSON and validates it using the provided Zod schema.
+ */
+const safelyParseAndValidateJson = <T>(
+  jsonString: string,
+  schema: z.ZodSchema<T>,
+): T => {
+  try {
+    const parsedJson = JSON.parse(jsonString)
+    return schema.parse(parsedJson) // Validate with the provided schema
+  } catch (error) {
+    console.error(`Failed to parse/validate JSON from NX output: ${error}`)
+    throw new Error(
+      'Invalid JSON format or validation error in NX command output.',
+    )
+  }
+}
+
+/**
+ * Handles errors thrown during the execution of the NX command.
+ */
+const handleNxCommandError = (error: unknown): void => {
+  if (error instanceof Error) {
+    console.error(`Failed to run NX command: ${error.message}`)
+  } else {
+    console.error('An unknown error occurred while running the NX command.')
   }
 }
