@@ -70,6 +70,7 @@ interface SetupOptions {
 export const delegationTypes = [
   AuthDelegationType.Custom,
   AuthDelegationType.LegalGuardian,
+  AuthDelegationType.LegalGuardianMinor,
   AuthDelegationType.ProcurationHolder,
   AuthDelegationType.PersonalRepresentative,
   AuthDelegationType.GeneralMandate,

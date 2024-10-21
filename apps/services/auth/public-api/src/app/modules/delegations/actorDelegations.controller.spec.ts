@@ -1,6 +1,8 @@
 import { getModelToken } from '@nestjs/sequelize'
 import times from 'lodash/times'
 import request from 'supertest'
+import kennitala from 'kennitala'
+import addYears from 'date-fns/addYears'
 
 import {
   ClientDelegationType,
@@ -20,7 +22,10 @@ import {
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import {
+  IndividualDto,
+  NationalRegistryClientService,
+} from '@island.is/clients/national-registry-v2'
 import {
   createClient,
   createDelegation,
@@ -180,8 +185,8 @@ describe('ActorDelegationsController', () => {
       nationalRegistryApi = app.get(NationalRegistryClientService)
     })
 
-    beforeEach(() => {
-      return clientDelegationTypeModel.bulkCreate(
+    beforeEach(async () => {
+      return await clientDelegationTypeModel.bulkCreate(
         delegationTypes.map((type) => ({
           clientId: client.clientId,
           delegationType: type,
@@ -676,10 +681,32 @@ describe('ActorDelegationsController', () => {
 
       describe('with legal guardian delegations', () => {
         let getForsja: jest.SpyInstance
-        beforeAll(() => {
-          const client = app.get(NationalRegistryClientService)
+        let clientInstance: any
+
+        const mockForKt = (kt: string): void => {
+          jest.spyOn(kennitala, 'info').mockReturnValue({
+            kt,
+            age: 16,
+            birthday: addYears(Date.now(), -15),
+            birthdayReadable: '',
+            type: 'person',
+            valid: true,
+          })
+
+          jest.spyOn(clientInstance, 'getIndividual').mockResolvedValueOnce({
+            nationalId: kt,
+            name: nationalRegistryUser.name,
+          } as IndividualDto)
+
+          jest
+            .spyOn(clientInstance, 'getCustodyChildren')
+            .mockResolvedValueOnce([kt])
+        }
+
+        beforeEach(() => {
+          clientInstance = app.get(NationalRegistryClientService)
           getForsja = jest
-            .spyOn(client, 'getCustodyChildren')
+            .spyOn(clientInstance, 'getCustodyChildren')
             .mockResolvedValue([nationalRegistryUser.nationalId])
         })
 
@@ -688,23 +715,29 @@ describe('ActorDelegationsController', () => {
         })
 
         it('should return delegations', async () => {
+          const kt = '1111089030'
+
           // Arrange
-          const expectedDelegation = {
+          mockForKt(kt)
+
+          const expectedDelegation = DelegationDTOMapper.toMergedDelegationDTO({
             fromName: nationalRegistryUser.name,
-            fromNationalId: nationalRegistryUser.nationalId,
-            provider: 'thjodskra',
+            fromNationalId: kt,
+            provider: AuthDelegationProvider.NationalRegistry,
             toNationalId: user.nationalId,
-            type: 'LegalGuardian',
-          } as DelegationDTO
+            type: [
+              AuthDelegationType.LegalGuardian,
+              AuthDelegationType.LegalGuardianMinor,
+            ],
+          } as Omit<DelegationDTO, 'type'> & { type: AuthDelegationType | AuthDelegationType[] })
+
           // Act
           const res = await server.get(`${path}${query}`)
 
           // Assert
           expect(res.status).toEqual(200)
           expect(res.body).toHaveLength(1)
-          expect(res.body[0]).toEqual(
-            DelegationDTOMapper.toMergedDelegationDTO(expectedDelegation),
-          )
+          expect(res.body[0]).toEqual(expectedDelegation)
         })
 
         it('should not return delegations when client does not support legal guardian delegations', async () => {

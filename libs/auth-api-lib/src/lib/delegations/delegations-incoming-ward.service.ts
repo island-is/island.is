@@ -1,5 +1,9 @@
 import { Inject, Injectable, Logger } from '@nestjs/common'
 
+import { isUnderXAge } from './utils/isUnderXAge'
+import { ApiScopeInfo } from './delegations-incoming.service'
+import { DelegationDTO } from './dto/delegation.dto'
+
 import { User } from '@island.is/auth-nest-tools'
 import {
   IndividualDto,
@@ -10,9 +14,6 @@ import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
-
-import { ApiScopeInfo } from './delegations-incoming.service'
-import { DelegationDTO } from './dto/delegation.dto'
 
 @Injectable()
 export class DelegationsIncomingWardService {
@@ -55,7 +56,8 @@ export class DelegationsIncomingWardService {
 
       const result = await Promise.all(resultPromises)
 
-      return result
+      // delegations for legal guardians of children under 18
+      const legalGuardianDelegations = result
         .filter((p): p is IndividualDto => p !== null)
         .map(
           (p) =>
@@ -67,6 +69,16 @@ export class DelegationsIncomingWardService {
               provider: AuthDelegationProvider.NationalRegistry,
             },
         )
+
+      // delegations for legal guardians of children under 16
+      const legalGuardianMinorDelegations = legalGuardianDelegations
+        .filter((delegation) => isUnderXAge(16, delegation.fromNationalId))
+        .map((delegation) => ({
+          ...delegation,
+          type: AuthDelegationType.LegalGuardianMinor,
+        }))
+
+      return [...legalGuardianDelegations, ...legalGuardianMinorDelegations]
     } catch (error) {
       this.logger.error('Error in findAllWards', error)
     }
