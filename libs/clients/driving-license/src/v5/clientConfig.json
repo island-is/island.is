@@ -3649,6 +3649,16 @@
             "type": "string",
             "description": "Healt certificate",
             "nullable": true
+          },
+          "pickupPlasticAtDistrict": {
+            "type": "boolean",
+            "description": "Will person pick plastic up at district",
+            "nullable": true
+          },
+          "sendPlasticToPerson": {
+            "type": "boolean",
+            "description": "Person requests plastic to be sent to him",
+            "nullable": true
           }
         },
         "additionalProperties": false,
