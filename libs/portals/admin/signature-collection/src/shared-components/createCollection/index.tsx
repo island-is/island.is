@@ -153,7 +153,6 @@ const CreateCollection = ({ collectionId }: { collectionId: string }) => {
                 label={formatMessage(m.candidateName)}
                 readOnly
                 value={name}
-                placeholder={loadingCandidate ? 'Sæki nafn...' : ''}
               />
             </Stack>
             {!canCreate && (
@@ -170,7 +169,7 @@ const CreateCollection = ({ collectionId }: { collectionId: string }) => {
                 onClick={() => {
                   createNewCollection()
                 }}
-                disabled={!canCreate}
+                disabled={!canCreate || !name}
                 loading={loading}
               >
                 {formatMessage(m.createCollection)}
