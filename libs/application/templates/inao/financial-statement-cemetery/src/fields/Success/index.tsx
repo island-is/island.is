@@ -9,16 +9,13 @@ import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import format from 'date-fns/format'
 import { m } from '../../lib/messages'
 import { FinancialStatementCemetery } from '../../lib/dataSchema'
-import {
-  getCurrentUserType,
-  isCemetryUnderFinancialLimit,
-} from '../../utils/helpers'
+import { isCemetryUnderFinancialLimit } from '../../utils/helpers'
 
-interface PropTypes extends FieldBaseProps {
+interface Props extends FieldBaseProps {
   field: CustomField
 }
 
-export const Success = ({ application }: PropTypes) => {
+export const Success = ({ application }: Props) => {
   const { answers, externalData } = application
   const applicationAnswers = application.answers as FinancialStatementCemetery
   const { formatMessage } = useLocale()

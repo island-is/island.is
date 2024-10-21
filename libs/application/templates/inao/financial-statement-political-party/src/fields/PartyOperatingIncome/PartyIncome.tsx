@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react'
+import { useEffect } from 'react'
 import debounce from 'lodash/debounce'
 import { RecordObject } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
@@ -8,9 +8,10 @@ import { useLocale } from '@island.is/localization'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { FinancialStatementsInaoTaxInfo } from '@island.is/api/schema'
-import { INPUTCHANGEINTERVAL, PARTYOPERATIONIDS } from '../../utils/constants'
+import { PARTYOPERATIONIDS } from '../../utils/constants'
+import { INPUTCHANGEINTERVAL } from '../../../../shared/utils/constants'
 
-interface PropTypes {
+type Props = {
   data?: {
     financialStatementsInaoTaxInfo: FinancialStatementsInaoTaxInfo[]
   } | null
@@ -19,12 +20,7 @@ interface PropTypes {
   errors: RecordObject<unknown> | undefined
 }
 
-export const PartyIncome = ({
-  data,
-  loading,
-  errors,
-  getSum,
-}: PropTypes): JSX.Element => {
+export const PartyIncome = ({ data, loading, errors, getSum }: Props) => {
   const { formatMessage } = useLocale()
   const { clearErrors, getValues, setValue } = useFormContext()
   useEffect(() => {
@@ -72,7 +68,7 @@ export const PartyIncome = ({
   }, INPUTCHANGEINTERVAL)
 
   return (
-    <Fragment>
+    <>
       <Box paddingY={1}>
         <InputController
           id={PARTYOPERATIONIDS.contributionsFromTheTreasury}
@@ -201,6 +197,6 @@ export const PartyIncome = ({
           }
         />
       </Box>
-    </Fragment>
+    </>
   )
 }

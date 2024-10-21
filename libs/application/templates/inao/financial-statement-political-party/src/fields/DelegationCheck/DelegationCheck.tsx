@@ -2,7 +2,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { AlertBanner, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
-import { VALIDATOR } from '../../utils/constants'
+import { VALIDATOR } from '../../../../shared/utils/constants'
 import { m } from '../../lib/messages'
 import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
 

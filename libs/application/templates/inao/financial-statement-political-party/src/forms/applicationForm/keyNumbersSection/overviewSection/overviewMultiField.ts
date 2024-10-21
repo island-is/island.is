@@ -4,7 +4,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../../../lib/messages'
-import { GREATER, LESS } from '../../../../utils/constants'
+import { GREATER, LESS } from '../../../../../../shared/utils/constants'
 
 export const overviewMultiField = buildMultiField({
   id: 'overview',

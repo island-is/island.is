@@ -16,11 +16,11 @@ import { m } from '../../lib/messages'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import {
   CAPITALNUMBERS,
-  CEMETERYEQUITIESANDLIABILITIESIDS,
   INPUTCHANGEINTERVAL,
   OPERATINGCOST,
   VALIDATOR,
-} from '../../utils/constants'
+} from '../../../../shared/utils/constants'
+import { CEMETERYEQUITIESANDLIABILITIESIDS } from '../../utils/constants'
 import { useTotals } from '../../hooks/useTotals'
 import { getTotal } from '../../utils/helpers'
 import { Total } from '../../../../shared/components/Total'

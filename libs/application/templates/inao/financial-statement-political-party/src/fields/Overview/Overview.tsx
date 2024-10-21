@@ -17,7 +17,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
-import { GREATER } from '../../utils/constants'
+import { GREATER } from '../../../../shared/utils/constants'
 import {
   sectionColumn,
   starterColumnStyle,

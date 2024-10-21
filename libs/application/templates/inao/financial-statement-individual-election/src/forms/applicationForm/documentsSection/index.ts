@@ -4,7 +4,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../../lib/utils/messages'
-import { LESS } from '../../../lib/utils/constants'
+import { LESS } from '../../../../../shared/utils/constants'
 
 export const documentsSection = buildSection({
   id: 'documents',

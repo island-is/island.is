@@ -16,8 +16,7 @@ import {
   APPLICANTASMEMBER,
   ACTORASCARETAKER,
   ACTORLONEBOARDMEMBER,
-} from '../../utils/constants'
-
+} from '../../../../shared/utils/constants'
 import { getBoardmembersAndCaretakers } from '../../utils/helpers'
 import { CaretakerRepeaterItem } from './CemeteryCaretakerRepeaterItem'
 import { BoardMember } from '../../types/types'

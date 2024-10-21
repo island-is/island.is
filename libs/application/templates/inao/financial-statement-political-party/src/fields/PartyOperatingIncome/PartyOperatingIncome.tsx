@@ -1,4 +1,3 @@
-import React from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useQuery } from '@apollo/client'
 import {
@@ -17,8 +16,9 @@ import { TaxInfoQuery } from '../../graphql'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useTotals } from '../../hooks/useTotals'
-import { OPERATINGCOST, PARTYOPERATIONIDS } from '../../utils/constants'
+import { PARTYOPERATIONIDS } from '../../utils/constants'
 import { Total } from '../../../../shared/components/Total'
+import { OPERATINGCOST } from '../../../../shared/utils/constants'
 
 export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
   const { answers } = application

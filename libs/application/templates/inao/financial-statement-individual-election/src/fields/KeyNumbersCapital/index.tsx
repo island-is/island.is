@@ -11,7 +11,10 @@ import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath } from '@island.is/application/core'
-import { CAPITALNUMBERS, INPUTCHANGEINTERVAL } from '../../lib/utils/constants'
+import {
+  CAPITALNUMBERS,
+  INPUTCHANGEINTERVAL,
+} from '../../../../shared/utils/constants'
 import { m } from '../../lib/utils/messages'
 import { Total } from '../../../../shared/components/Total'
 

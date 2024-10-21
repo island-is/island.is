@@ -19,7 +19,7 @@ import {
   EQUITIESANDLIABILITIESIDS,
   INPUTCHANGEINTERVAL,
   VALIDATOR,
-} from '../../lib/utils/constants'
+} from '../../../../shared/utils/constants'
 import { m } from '../../lib/utils/messages'
 import { Total } from '../../../../shared/components/Total'
 

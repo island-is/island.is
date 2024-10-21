@@ -7,7 +7,8 @@ import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { getErrorViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { INPUTCHANGEINTERVAL, PARTYOPERATIONIDS } from '../../utils/constants'
+import { PARTYOPERATIONIDS } from '../../utils/constants'
+import { INPUTCHANGEINTERVAL } from '../../../../shared/utils/constants'
 
 interface PropTypes {
   getSum: () => void

@@ -6,10 +6,12 @@ import { format as formatNationalId } from 'kennitala'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { useFormContext } from 'react-hook-form'
 import { FinancialStatementIndividualElection } from '../../lib/utils/dataSchema'
-import { ELECTIONLIMIT, GREATER } from '../../lib/utils/constants'
+import { ELECTIONLIMIT } from '../../lib/utils/constants'
 import { m } from '../../lib/utils/messages'
 import { formatNumber } from '../../lib/utils/helpers'
 import { BottomBar } from '../../../../shared/components/BottomBar'
+import { GREATER } from '../../../../shared/utils/constants'
+
 export const ElectionStatement = ({
   application,
   goToScreen,

@@ -4,7 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 import { FinancialStatementCemetery } from '../../lib/dataSchema'
 import { m } from '../../lib/messages'
-import { VALIDATOR } from '../../utils/constants'
+import { VALIDATOR } from '../../../../shared/utils/constants'
 
 export const DelegationCheck = ({
   application,

@@ -8,11 +8,8 @@ import { useFormContext } from 'react-hook-form'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { FinancialStatementsInaoTaxInfo } from '@island.is/api/schema'
-import {
-  CEMETERYOPERATIONIDS,
-  INPUTCHANGEINTERVAL,
-  TaxInfoTypes,
-} from '../../utils/constants'
+import { CEMETERYOPERATIONIDS, TaxInfoTypes } from '../../utils/constants'
+import { INPUTCHANGEINTERVAL } from '../../../../shared/utils/constants'
 
 type Props = {
   data?: {

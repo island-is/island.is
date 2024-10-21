@@ -5,11 +5,7 @@ import {
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  ABOUTIDS,
-  PartiesBackwardLimit,
-  PartiesYearAllowed,
-} from '../../utils/constants'
+import { PartiesBackwardLimit, PartiesYearAllowed } from '../../utils/constants'
 import * as styles from './styles.css'
 import { useFormContext } from 'react-hook-form'
 import { getErrorViaPath } from '@island.is/application/core'
@@ -21,6 +17,7 @@ import {
 } from '../../utils/helpers'
 import { auditConfigQuery } from '../../graphql'
 import { m } from '../../lib/messages'
+import { ABOUTIDS } from '../../../../shared/utils/constants'
 
 export const OperatingYear = () => {
   const { data, loading, error } = useQuery(auditConfigQuery)

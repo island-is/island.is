@@ -4,7 +4,7 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { m } from '../../../lib/utils/messages'
-import { ABOUTIDS } from '../../../lib/utils/constants'
+import { ABOUTIDS } from '../../../../../shared/utils/constants'
 
 export const electionInfoSection = buildSection({
   id: 'electionInfo',

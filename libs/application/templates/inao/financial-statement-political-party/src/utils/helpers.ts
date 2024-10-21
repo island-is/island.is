@@ -1,7 +1,7 @@
 import { Config } from '../types/types'
 import subYears from 'date-fns/subYears'
 import getYear from 'date-fns/getYear'
-import { TOTAL } from './constants'
+import { TOTAL } from '../../../shared/utils/constants'
 
 export const getConfigInfoForKey = (config: Config[], configKey: string) => {
   return config?.filter((config: Config) => config.key === configKey)[0].value

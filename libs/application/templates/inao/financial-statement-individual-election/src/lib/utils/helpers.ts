@@ -1,7 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { FSIUSERTYPE } from '../../types/types'
-import { TOTAL } from './constants'
+import { TOTAL } from '../../../../shared/utils/constants'
 
 export const checkIfNegative = (inputNumber: string) => {
   if (Number(inputNumber) < 0) {

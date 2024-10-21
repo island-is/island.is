@@ -14,9 +14,10 @@ import { CemeteryIncomeLimit } from '../CemeteryIncomeLimit/index'
 import { useQuery } from '@apollo/client'
 import { getValueViaPath } from '@island.is/application/core'
 import { taxInfoQuery } from '../../graphql'
-import { CEMETERYOPERATIONIDS, OPERATINGCOST } from '../../utils/constants'
+import { CEMETERYOPERATIONIDS } from '../../utils/constants'
 import { useTotals } from '../../hooks/useTotals'
 import { Total } from '../../../../shared/components/Total'
+import { OPERATINGCOST } from '../../../../shared/utils/constants'
 
 export const CemeteryOperation = ({
   application,

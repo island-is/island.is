@@ -19,10 +19,10 @@ import {
   possibleOperatingYears,
 } from '../../utils/helpers'
 import {
-  ABOUTIDS,
   CemeteriesBackwardLimit,
   CemeteriesYearAllowed,
 } from '../../utils/constants'
+import { ABOUTIDS } from '../../../../shared/utils/constants'
 
 export const OperatingYear = () => {
   const { data, loading, error } = useQuery(getAuditConfig)

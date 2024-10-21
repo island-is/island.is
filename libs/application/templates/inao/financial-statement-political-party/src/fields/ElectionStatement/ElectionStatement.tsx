@@ -7,9 +7,10 @@ import { format as formatNationalId } from 'kennitala'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { useFormContext } from 'react-hook-form'
 import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
-import { ELECTIONLIMIT, GREATER } from '../../utils/constants'
+import { ELECTIONLIMIT } from '../../utils/constants'
 import { formatNumber } from '../../utils/helpers'
 import { BottomBar } from '../../../../shared/components/BottomBar'
+import { GREATER } from '../../../../shared/utils/constants'
 
 export const ElectionStatement = ({
   application,

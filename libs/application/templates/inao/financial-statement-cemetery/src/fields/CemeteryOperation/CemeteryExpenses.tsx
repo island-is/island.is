@@ -7,12 +7,9 @@ import { RecordObject } from '@island.is/application/types'
 import debounce from 'lodash/debounce'
 import { useFormContext } from 'react-hook-form'
 import { m } from '../../lib/messages'
-
 import { FinancialStatementsInaoTaxInfo } from '@island.is/api/schema'
-import {
-  CEMETERYOPERATIONIDS,
-  INPUTCHANGEINTERVAL,
-} from '../../utils/constants'
+import { CEMETERYOPERATIONIDS } from '../../utils/constants'
+import { INPUTCHANGEINTERVAL } from '../../../../shared/utils/constants'
 type Props = {
   data?: {
     financialStatementsInaoTaxInfo: FinancialStatementsInaoTaxInfo[]

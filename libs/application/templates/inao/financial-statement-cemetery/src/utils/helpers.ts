@@ -1,10 +1,11 @@
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import { BOARDMEMEBER, CARETAKER, TOTAL } from './constants'
+import { BOARDMEMEBER, CARETAKER } from './constants'
 import { FinancialStatementCemetery } from '../lib/dataSchema'
 import getYear from 'date-fns/getYear'
 import subYears from 'date-fns/subYears'
 import { BoardMember, Config, FSIUSERTYPE } from '../types/types'
+import { TOTAL } from '../../../shared/utils/constants'
 
 export const getTotal = (values: Record<string, string>, key: string) => {
   if (!values[key]) {

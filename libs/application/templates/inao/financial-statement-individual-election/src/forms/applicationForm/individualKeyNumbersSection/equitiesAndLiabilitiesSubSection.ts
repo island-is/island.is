@@ -3,7 +3,7 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
-import { EQUITIESANDLIABILITIESIDS } from '../../../lib/utils/constants'
+import { EQUITIESANDLIABILITIESIDS } from '../../../../../shared/utils/constants'
 import { m } from '../../../lib/utils/messages'
 
 export const equityAndLiabilitiesSubSection = buildSubSection({

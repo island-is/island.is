@@ -9,7 +9,7 @@ import { useLocale } from '@island.is/localization'
 import { useLazyQuery } from '@apollo/client'
 import { getFinancialLimit } from '../../graphql'
 import { FSIUSERTYPE } from '../../types/types'
-import { ABOUTIDS, GREATER, LESS } from '../../lib/utils/constants'
+import { ABOUTIDS, GREATER, LESS } from '../../../../shared/utils/constants'
 import { m } from '../../lib/utils/messages'
 
 type IncomeLimitProps = {
