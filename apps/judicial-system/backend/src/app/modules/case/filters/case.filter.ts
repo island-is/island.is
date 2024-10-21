@@ -289,19 +289,19 @@ const canPrisonAdminUserAccessCase = (
     ) {
       return false
     }
-  }
 
-  // Check defendant verdict appeal deadline access
-  const canAppealVerdict = true
-  const verdictInfo = (theCase.defendants || []).map<
-    [boolean, Date | undefined]
-  >((defendant) => [canAppealVerdict, defendant.verdictViewDate])
+    // Check defendant verdict appeal deadline access
+    const canAppealVerdict = true
+    const verdictInfo = (theCase.defendants || []).map<
+      [boolean, Date | undefined]
+    >((defendant) => [canAppealVerdict, defendant.verdictViewDate])
 
-  const [_, indictmentVerdictAppealDeadlineExpired] =
-    getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
+    const [_, indictmentVerdictAppealDeadlineExpired] =
+      getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
 
-  if (!indictmentVerdictAppealDeadlineExpired) {
-    return false
+    if (!indictmentVerdictAppealDeadlineExpired) {
+      return false
+    }
   }
 
   return true
