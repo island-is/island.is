@@ -30,7 +30,7 @@ import { ValueLine } from '../../../../shared/components/ValueLine'
 import { BottomBar } from '../../../../shared/components/BottomBar'
 import { FileValueLine } from '../../../../shared/components/FileValueLine'
 import { formatCurrency } from '../../../../shared/utils/formatCurrency'
-import { CapitalNumberOverview } from '../../../../shared/components/CapitalNumbersOverview'
+import { CapitalNumberOverview } from '../../../../shared/components/CapitalNumberOverview'
 
 export const CemeteryOverview = ({
   application,
@@ -185,10 +185,13 @@ export const CemeteryOverview = ({
 
       <Box paddingY={3}>
         <CapitalNumberOverview
-          capitalNumbers={answers.capitalNumbers}
-          capitalIncome={m.capitalIncome}
-          capitalCost={m.capitalCost}
-          totalCapital={m.totalCapital}
+          capitalNumbersMessage={m.capitalNumbers}
+          capitalIncomeMessage={m.capitalIncome}
+          capitalIncome={answers.capitalNumbers.capitalIncome}
+          capitalCostMessage={m.capitalCost}
+          capitalCost={answers.capitalNumbers.capitalCost}
+          totalCapitalMessage={m.totalCapital}
+          total={answers.capitalNumbers.total}
         />
       </Box>
       <Divider />

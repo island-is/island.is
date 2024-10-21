@@ -20,8 +20,8 @@ import { FinancialStatementIndividualElection } from '../../lib/utils/dataSchema
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { GREATER } from '../../lib/utils/constants'
 import { m } from '../../lib/utils/messages'
-import { CapitalNumberOverview } from '../../../../shared/components/CapitalNumbersOverview'
-import { AssetDebtEquityOverview } from './AssetDebtEquityOverview'
+import { CapitalNumberOverview } from '../../../../shared/components/CapitalNumberOverview'
+import { AssetDebtEquityOverview } from '../../../../shared/components/AssetDebtEquityOverview'
 import { FileValueLine } from '../../../../shared/components/FileValueLine'
 import { AboutOverview } from '../../../../shared/components/AboutOverview'
 import { ValueLine } from '../../../../shared/components/ValueLine'
@@ -160,10 +160,13 @@ export const Overview = ({
       <Divider />
       <Box paddingY={3}>
         <CapitalNumberOverview
-          capitalNumbers={answers.capitalNumbers}
-          capitalIncome={m.capitalIncome}
-          capitalCost={m.capitalCost}
-          totalCapital={m.totalCapital}
+          capitalNumbersMessage={m.capitalNumbers}
+          capitalIncomeMessage={m.capitalIncome}
+          capitalIncome={answers.capitalNumbers.capitalIncome}
+          capitalCostMessage={m.capitalCost}
+          capitalCost={answers.capitalNumbers.capitalCost}
+          totalCapitalMessage={m.totalCapital}
+          total={answers.capitalNumbers.total}
         />
       </Box>
       <Divider />
@@ -173,7 +176,22 @@ export const Overview = ({
             {formatMessage(m.propertiesAndDebts)}
           </Text>
         </Box>
-        <AssetDebtEquityOverview answers={answers} />
+        <AssetDebtEquityOverview
+          liability={answers.liability}
+          asset={answers.asset}
+          equity={answers.equity}
+          equityAndLiabilities={answers.equityAndLiabilities}
+          fixedAssetsTotal={m.fixedAssetsTotal}
+          currentAssets={m.currentAssets}
+          totalAssets={m.totalAssets}
+          longTerm={m.longTerm}
+          shortTerm={m.shortTerm}
+          totalLiabilities={m.totalLiabilities}
+          equityTitle={m.equity}
+          debtsAndCash={m.debtsAndCash}
+          properties={m.properties}
+          debtsAndEquity={m.debtsAndEquity}
+        />
       </Box>
       <Divider />
 

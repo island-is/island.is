@@ -18,12 +18,12 @@ import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
 import { formatCurrency } from '../../../../shared/utils/formatCurrency'
 import { FileValueLine } from '../../../../shared/components/FileValueLine'
-import { AssetDebtEquityOverview } from '../../components/AssetDebtEquityOverview'
+import { AssetDebtEquityOverview } from '../../../../shared/components/AssetDebtEquityOverview'
 import {
   sectionColumn,
   starterColumnStyle,
-} from '../../components/css/overviewStyles.css'
-import { CapitalNumberOverview } from '../../../../shared/components/CapitalNumbersOverview'
+} from '../../../../shared/components/css/overviewStyles.css'
+import { CapitalNumberOverview } from '../../../../shared/components/CapitalNumberOverview'
 import { AboutOverview } from '../../../../shared/components/AboutOverview'
 import { ValueLine } from '../../../../shared/components/ValueLine'
 import { BottomBar } from '../../../../shared/components/BottomBar'
@@ -161,10 +161,13 @@ export const PartyOverview = ({
       <Divider />
       <Box paddingY={3}>
         <CapitalNumberOverview
-          capitalNumbers={answers.capitalNumbers}
-          capitalIncome={m.capitalIncome}
-          capitalCost={m.capitalCost}
-          totalCapital={m.totalCapital}
+          capitalNumbersMessage={m.capitalNumbers}
+          capitalIncomeMessage={m.capitalIncome}
+          capitalIncome={answers.capitalNumbers.capitalIncome}
+          capitalCostMessage={m.capitalCost}
+          capitalCost={answers.capitalNumbers.capitalCost}
+          totalCapitalMessage={m.totalCapital}
+          total={answers.capitalNumbers.total}
         />
       </Box>
       <Divider />
@@ -175,7 +178,22 @@ export const PartyOverview = ({
           </Text>
         </Box>
 
-        <AssetDebtEquityOverview answers={answers} />
+        <AssetDebtEquityOverview
+          liability={answers.liability}
+          asset={answers.asset}
+          equity={answers.equity}
+          equityAndLiabilities={answers.equityAndLiabilities}
+          fixedAssetsTotal={m.fixedAssetsTotal}
+          currentAssets={m.currentAssets}
+          totalAssets={m.totalAssets}
+          longTerm={m.longTerm}
+          shortTerm={m.shortTerm}
+          totalLiabilities={m.totalLiabilities}
+          equityTitle={m.equity}
+          debtsAndCash={m.debtsAndCash}
+          properties={m.properties}
+          debtsAndEquity={m.debtsAndEquity}
+        />
       </Box>
       <Divider />
       {fileName ? (

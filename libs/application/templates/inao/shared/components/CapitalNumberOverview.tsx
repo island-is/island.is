@@ -6,42 +6,45 @@ import { ValueLine } from './ValueLine'
 import { MessageDescriptor } from 'react-intl'
 
 type Props = {
-  capitalNumbers: {
-    capitalIncome?: string
-    capitalCost?: string
-    total?: string
-  }
-  capitalIncome: MessageDescriptor
-  capitalCost: MessageDescriptor
-  totalCapital: MessageDescriptor
+  capitalNumbersMessage: MessageDescriptor
+  capitalIncomeMessage: MessageDescriptor
+  capitalIncome: string
+  capitalCostMessage: MessageDescriptor
+  capitalCost: string
+  totalCapitalMessage: MessageDescriptor
+  total: string
 }
 
 export const CapitalNumberOverview = ({
-  capitalNumbers,
+  capitalNumbersMessage,
+  capitalIncomeMessage,
   capitalIncome,
+  capitalCostMessage,
   capitalCost,
-  totalCapital,
+  totalCapitalMessage,
+  total,
 }: Props) => {
   const { formatMessage } = useLocale()
   return (
     <>
+      <p>hér!!!</p>
       <Box className={starterColumnStyle}>
         <Text variant="h3" as="h3">
-          {formatMessage(capitalNumbers)}
+          {formatMessage(capitalNumbersMessage)}
         </Text>
       </Box>
       <GridRow>
         <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
           <ValueLine
-            label={capitalIncome}
-            value={formatCurrency(capitalNumbers.capitalIncome)}
+            label={capitalIncomeMessage}
+            value={formatCurrency(capitalIncome)}
           />
         </GridColumn>
-        {capitalNumbers?.capitalCost ? (
+        {capitalCost ? (
           <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
             <ValueLine
-              label={capitalCost}
-              value={formatCurrency(capitalNumbers.capitalCost)}
+              label={capitalCostMessage}
+              value={formatCurrency(capitalCost)}
             />
           </GridColumn>
         ) : null}
@@ -50,8 +53,8 @@ export const CapitalNumberOverview = ({
         <GridColumn className={sectionColumn}>
           <ValueLine
             isTotal
-            label={totalCapital}
-            value={formatCurrency(capitalNumbers?.total)}
+            label={totalCapitalMessage}
+            value={total && formatCurrency(total)}
           />
         </GridColumn>
       </GridRow>
