@@ -96,7 +96,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
       setAndSendDefendantToServer(updateDefendantInput, setWorkingCase)
       setDisplayModal(false)
     },
-    [setWorkingCase, setAndSendDefendantToServer],
+    [setWorkingCase, setAndSendDefendantToServer, setDisplayModal],
   )
 
   const toggleCaseFilesSharedWithDefender = useCallback(
