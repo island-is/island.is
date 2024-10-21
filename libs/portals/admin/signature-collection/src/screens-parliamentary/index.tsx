@@ -68,9 +68,7 @@ const ParliamentaryRoot = ({
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage(
-                    m.parliamentaryCollectionTitle,
-                  ),
+                  title: formatMessage(m.parliamentaryCollectionTitle),
                 },
               ]}
             />

@@ -173,7 +173,8 @@ export const m = defineMessages({
   },
   parliamentaryCollectionIntro: {
     id: 'admin-portal.signature-collection:parliamentaryCollectionIntro',
-    defaultMessage: 'Hér er yfirlit yfir kjördæmin sex. Ýttu á viðeigandi kjördæmi til að sjá meðmælendalista í því kjördæmi.',
+    defaultMessage:
+      'Hér er yfirlit yfir kjördæmin sex. Ýttu á viðeigandi kjördæmi til að sjá meðmælendalista í því kjördæmi.',
     description: '',
   },
   parliamentaryConstituencyIntro: {
@@ -728,7 +729,6 @@ export const m = defineMessages({
     description: '',
   },
 })
-
 
 export const createCollectionErrorMessages = defineMessages({
   age: {

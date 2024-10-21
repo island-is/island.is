@@ -90,9 +90,7 @@ export const Constituency = ({
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage(
-                    m.parliamentaryCollectionTitle,
-                  ),
+                  title: formatMessage(m.parliamentaryCollectionTitle),
                   href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
                 },
                 {
