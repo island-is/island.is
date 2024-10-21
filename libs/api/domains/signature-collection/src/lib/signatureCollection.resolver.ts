@@ -31,6 +31,7 @@ import {
   SignatureCollectionSignedList,
   SignatureCollectionSignee,
 } from './models'
+import { SignatureCollectionListSummary } from './models/areaSummaryReport.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
@@ -206,5 +207,17 @@ export class SignatureCollectionResolver {
       user,
       signee.candidate?.id,
     )
+  }
+
+  @Scopes(ApiScope.signatureCollection)
+  @IsOwner()
+  @AllowManager()
+  @Query(() => SignatureCollectionListSummary)
+  @Audit()
+  async signatureCollectionListOverview(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionListIdInput,
+  ): Promise<SignatureCollectionListSummary> {
+    return this.signatureCollectionService.listOverview(user, input.listId)
   }
 }
