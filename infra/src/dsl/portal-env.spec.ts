@@ -21,7 +21,7 @@ const key = 'stjornbord'
 export type BffInfraServices = {
   api: ServiceBuilder<'api'>
 }
-const Staging: EnvironmentConfig = {
+const Dev: EnvironmentConfig = {
   auroraHost: 'a',
   redisHost: 'b',
   domain: 'dev01.devland.is',
@@ -40,12 +40,6 @@ describe('BFF PortalEnv serialization', () => {
   const sut = service(serviceName)
     .namespace(clientName)
     .image(bffName)
-    .env({
-      // B: ref(
-      //   (h) =>
-      //     `${h.featureDeploymentName ? 'feature-' : ''}${h.svc(services.api)}`,
-      // ),
-    })
     .redis()
     .serviceAccount(bffName)
     .env(createPortalEnv(key, services))
@@ -102,8 +96,8 @@ describe('BFF PortalEnv serialization', () => {
     result = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
-      runtime: new Kubernetes(Staging),
-      env: Staging,
+      runtime: new Kubernetes(Dev),
+      env: Dev,
     })) as SerializeSuccess<HelmService>
   })
 
@@ -156,12 +150,10 @@ describe('BFF PortalEnv serialization', () => {
       BFF_NAME: 'stjornbord',
       BFF_CLIENT_KEY_PATH: `/${key}`,
       BFF_PAR_SUPPORT_ENABLED: 'false',
-      BFF_ALLOWED_REDIRECT_URIS: json([
-        'https://featbff-beta.dev01.devland.is',
-      ]),
-      BFF_CLIENT_BASE_URL: 'https://featbff-beta.dev01.devland.is',
-      BFF_LOGOUT_REDIRECT_URI: 'https://featbff-beta.dev01.devland.is',
-      BFF_CALLBACKS_BASE_PATH: `https://featbff-beta.dev01.devland.is/${key}/bff/callbacks`,
+      BFF_ALLOWED_REDIRECT_URIS: json(['https://beta.dev01.devland.is']),
+      BFF_CLIENT_BASE_URL: 'https://beta.dev01.devland.is',
+      BFF_LOGOUT_REDIRECT_URI: 'https://beta.dev01.devland.is',
+      BFF_CALLBACKS_BASE_PATH: `https://beta.dev01.devland.is/${key}/bff/callbacks`,
       BFF_PROXY_API_ENDPOINT: 'http://web-api.islandis.svc.cluster.local',
       BFF_ALLOWED_EXTERNAL_API_URLS: json(['https://api.dev01.devland.is']),
       BFF_CACHE_USER_PROFILE_TTL_MS: (
@@ -223,8 +215,8 @@ describe('Env definition defaults', () => {
     result = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
-      runtime: new Kubernetes(Staging),
-      env: Staging,
+      runtime: new Kubernetes(Dev),
+      env: Dev,
     })) as SerializeSuccess<HelmService>
   })
   it('replica max count', () => {
