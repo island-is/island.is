@@ -24,7 +24,7 @@ export const ChildrenPassportSubSection = (index: number) =>
     title: supportingDocuments.labels.passport.subSectionTitle,
     children: [
       buildMultiField({
-        id: Routes.CHILDRENPASSPORT,
+        id: `${Routes.CHILDRENPASSPORT}[${index}]`,
         title: supportingDocuments.labels.passport.pageTitle,
         description: (application: Application) => {
           return {
