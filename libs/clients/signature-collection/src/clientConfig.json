@@ -1076,6 +1076,41 @@
         }
       }
     },
+    "/Medmaelalistar/{ID}/Info": {
+      "get": {
+        "tags": ["Medmaelalistar"],
+        "summary": "Skilar yfirliti fyrir ákveðinn meðmælalista",
+        "description": "Framboð geta sótt yfirlit fyrir sína eigin lista",
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "description": "ID meðmælalista",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedmaelalistiExtendedDTO"
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Medmaelalistar/{ID}/Medmaeli": {
       "get": {
         "tags": ["Medmaelalistar"],
