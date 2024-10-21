@@ -5,6 +5,7 @@ import {
   Get,
   Header,
   Inject,
+  InternalServerErrorException,
   Param,
   Res,
   UseGuards,
@@ -75,6 +76,40 @@ export class LimitedAccessSubpoenaController {
     )
 
     const pdf = await this.pdfService.getSubpoenaPdf(
+      theCase,
+      defendant,
+      subpoena,
+    )
+
+    res.end(pdf)
+  }
+
+  @RolesRules(defenderGeneratedPdfRule)
+  @Get('serviceCertificate')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      'Gets the service certificate for a given defendant as a pdf document',
+  })
+  async getServiceCertificatePdf(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @CurrentSubpoena() subpoena: Subpoena,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting service certificate for defendant ${defendantId} in subpoena ${subpoenaId} of case ${caseId} as a pdf document`,
+    )
+
+    if (!subpoena) {
+      throw new InternalServerErrorException('Missing subpoena')
+    }
+
+    const pdf = await this.pdfService.getServiceCertificatePdf(
       theCase,
       defendant,
       subpoena,
