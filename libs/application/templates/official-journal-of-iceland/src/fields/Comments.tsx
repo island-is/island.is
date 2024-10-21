@@ -70,17 +70,7 @@ export const Comments = ({ application }: OJOIFieldBaseProps) => {
             paddingBottom={5}
             background="blue100"
           >
-            <CommentsList
-              comments={comments?.map((comment) => {
-                return {
-                  task: comment.task.title.title,
-                  comment: comment.task.comment,
-                  from: comment.task.from ?? undefined,
-                  date: comment.createdAt,
-                  type: 'received', // TODO: Implement sent comments
-                }
-              })}
-            />
+            <CommentsList comments={comments} />
           </Box>
         )}
         <AddComment
