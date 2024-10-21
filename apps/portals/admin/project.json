@@ -3,15 +3,11 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/portals/admin/src",
   "projectType": "application",
-  "tags": [
-    "scope:portals-admin"
-  ],
+  "tags": ["scope:portals-admin"],
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
@@ -26,9 +22,7 @@
           "apps/portals/admin/src/mockServiceWorker.js",
           "apps/portals/admin/src/assets"
         ],
-        "styles": [
-          "apps/portals/admin/src/styles.css"
-        ],
+        "styles": ["apps/portals/admin/src/styles.css"],
         "scripts": [],
         "webpackConfig": "apps/portals/admin/webpack.config.js"
       },
@@ -55,9 +49,7 @@
           "node scripts/dockerfile-assets/bash/extract-environment.js apps/portals/admin/src"
         ]
       },
-      "outputs": [
-        "{workspaceRoot}/apps/portals/admin/src/index.html"
-      ]
+      "outputs": ["{workspaceRoot}/apps/portals/admin/src/index.html"]
     },
     "serve": {
       "executor": "@nx/webpack:dev-server",
@@ -83,9 +75,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/apps/portals/admin"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/apps/portals/admin"],
       "options": {
         "jestConfig": "apps/portals/admin/jest.config.ts"
       }
@@ -99,9 +89,7 @@
     "dev-init": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn get-secrets portals-admin"
-        ],
+        "commands": ["yarn get-secrets portals-admin"],
         "parallel": false
       }
     },
