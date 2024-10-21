@@ -58,7 +58,9 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     })
 
     if (!fileContentRaw) {
-      throw new Error(`File content was undefined for key ${s3FileName} in bucket ${this.config.templateApi.presignBucket}`)
+      throw new Error(
+        `File content was undefined for key ${s3FileName} in bucket ${this.config.templateApi.presignBucket}`,
+      )
     }
 
     const fileContentBase64 = Buffer.from(fileContentRaw).toString('base64')
