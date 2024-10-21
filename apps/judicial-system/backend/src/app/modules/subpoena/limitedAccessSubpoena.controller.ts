@@ -47,7 +47,7 @@ import { Subpoena } from './models/subpoena.model'
   DefendantExistsGuard,
   SubpoenaExistsOptionalGuard,
 )
-@ApiTags('limited access defendants')
+@ApiTags('limited access subpoenas')
 export class LimitedAccessSubpoenaController {
   constructor(
     private readonly pdfService: PdfService,
