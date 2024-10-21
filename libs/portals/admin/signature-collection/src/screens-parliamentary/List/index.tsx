@@ -8,7 +8,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
-import { m, parliamentaryMessages } from '../../lib/messages'
+import { m } from '../../lib/messages'
 import { useLoaderData } from 'react-router-dom'
 import { ListStatus, SignatureCollectionList } from '@island.is/api/schema'
 import { PaperSignees } from './paperSignees'
@@ -49,7 +49,7 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               items={[
                 {
                   title: formatMessage(
-                    parliamentaryMessages.signatureListsTitle,
+                    m.parliamentaryCollectionTitle,
                   ),
                   href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
                 },
