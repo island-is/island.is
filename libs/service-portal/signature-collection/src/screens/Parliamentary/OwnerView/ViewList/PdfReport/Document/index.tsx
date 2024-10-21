@@ -22,7 +22,9 @@ const PdfDocument = ({
       {report && (
         <Page style={styles.body} key={report.candidateName}>
           <View>
-            <Text style={styles.pageTitle}>{report.listName?.split(' - ')[1]}</Text>
+            <Text style={styles.pageTitle}>
+              {report.listName?.split(' - ')[1]}
+            </Text>
             <View style={styles.dividerLineBox}>
               <View style={styles.dividerLine} />
             </View>
