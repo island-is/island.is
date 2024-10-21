@@ -32,10 +32,8 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
 import {
-  OJOIAdvertCard,
   OJOIAdvertCards,
   OJOIHomeIntro,
-  OJOISearchListView,
   OJOIWrapper,
 } from '../../components/OfficialJournalOfIceland'
 import {
