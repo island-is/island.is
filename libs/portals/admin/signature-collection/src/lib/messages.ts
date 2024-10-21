@@ -13,7 +13,7 @@ export const m = defineMessages({
     description: '',
   },
   signatureListsTitlePresidential: {
-    id: 'admin-portal.signature-collection-parliamentary:signatureLists',
+    id: 'admin-portal.signature-collection:signatureListsTitlePresidential',
     defaultMessage: 'Forsetakosningar',
     description: '',
   },
@@ -164,6 +164,22 @@ export const m = defineMessages({
   collectionTitle: {
     id: 'admin-portal.signature-collection:collectionTitle',
     defaultMessage: 'Forsetakosningar 2024',
+    description: '',
+  },
+  parliamentaryCollectionTitle: {
+    id: 'admin-portal.signature-collection:parliamentaryCollectionTitle',
+    defaultMessage: 'Alþingiskosningar',
+    description: '',
+  },
+  parliamentaryCollectionIntro: {
+    id: 'admin-portal.signature-collection:parliamentaryCollectionIntro',
+    defaultMessage: 'Hér er yfirlit yfir kjördæmin sex. Ýttu á viðeigandi kjördæmi til að sjá meðmælendalista í því kjördæmi.',
+    description: '',
+  },
+  parliamentaryConstituencyIntro: {
+    id: 'admin-portal.signature-collection:parliamentaryConstituencyIntro',
+    defaultMessage:
+      'Hér er yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið í',
     description: '',
   },
   viewList: {
@@ -713,40 +729,6 @@ export const m = defineMessages({
   },
 })
 
-export const parliamentaryMessages = defineMessages({
-  signatureListsTitle: {
-    id: 'admin-portal.signature-collection-parliamentary:signatureLists',
-    defaultMessage: 'Alþingiskosningar',
-    description: '',
-  },
-  signatureListsDescription: {
-    id: 'admin-portal.signature-collection-parliamentary:signatureListsDescription',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    description: '',
-  },
-  signatureListsIntro: {
-    id: 'admin-portal.signature-collection-parliamentary:signatureListsIntro',
-    defaultMessage:
-      'Hér er yfirlit yfir kjördæmin sex. Ýttu á viðeigandi kjördæmi til að sjá meðmælendalista í því kjördæmi.',
-    description: '',
-  },
-  compareListsButton: {
-    id: 'admin-portal.signature-collection-parliamentary:compareListsButton',
-    defaultMessage: 'Bera saman',
-    description: '',
-  },
-  compareListsDescription: {
-    id: 'admin-portal.signature-collection-parliamentary:compareListsDescription',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-    description: '',
-  },
-  singleConstituencyIntro: {
-    id: 'admin-portal.signature-collection-parliamentary:singleConstituencyIntro',
-    defaultMessage:
-      'Hér er yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið í',
-    description: '',
-  },
-})
 
 export const createCollectionErrorMessages = defineMessages({
   age: {

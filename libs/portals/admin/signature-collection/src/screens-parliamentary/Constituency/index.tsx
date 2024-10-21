@@ -1,7 +1,7 @@
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
-import { m, parliamentaryMessages } from '../../lib/messages'
+import { m } from '../../lib/messages'
 import {
   ActionCard,
   Box,
@@ -91,7 +91,7 @@ export const Constituency = ({
               items={[
                 {
                   title: formatMessage(
-                    parliamentaryMessages.signatureListsTitle,
+                    m.parliamentaryCollectionTitle,
                   ),
                   href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
                 },
@@ -104,7 +104,7 @@ export const Constituency = ({
           <IntroHeader
             title={constituencyName}
             intro={
-              formatMessage(parliamentaryMessages.singleConstituencyIntro) +
+              formatMessage(m.parliamentaryConstituencyIntro) +
               ' ' +
               constituencyName
             }
@@ -231,7 +231,7 @@ export const Constituency = ({
                             }
                           : undefined
                         : {
-                            label: m.confirmListReviewed.defaultMessage,
+                            label: formatMessage(m.confirmListReviewed),
                             variant: 'mint',
                             outlined: false,
                           }

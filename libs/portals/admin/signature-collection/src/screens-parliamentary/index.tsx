@@ -13,7 +13,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../lib/navigation'
-import { m, parliamentaryMessages } from '../lib/messages'
+import { m } from '../lib/messages'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../lib/paths'
 import CompareLists from '../shared-components/compareLists'
@@ -69,15 +69,15 @@ const ParliamentaryRoot = ({
               items={[
                 {
                   title: formatMessage(
-                    parliamentaryMessages.signatureListsTitle,
+                    m.parliamentaryCollectionTitle,
                   ),
                 },
               ]}
             />
           </Box>
           <IntroHeader
-            title={formatMessage(parliamentaryMessages.signatureListsTitle)}
-            intro={formatMessage(parliamentaryMessages.signatureListsIntro)}
+            title={formatMessage(m.parliamentaryCollectionTitle)}
+            intro={formatMessage(m.parliamentaryCollectionIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
             img={
