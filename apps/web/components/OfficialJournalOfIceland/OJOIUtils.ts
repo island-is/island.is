@@ -17,7 +17,9 @@ export const splitArrayIntoGroups = <T>(array: Array<T>, groupSize: number) => {
   )
 }
 
-export const removeEmptyFromObject = (obj: Record<string, string>) => {
+export const removeEmptyFromObject = (
+  obj: Record<string, string | number | Date | undefined>,
+) => {
   return Object.entries(obj)
     .filter(([_, v]) => !!v)
     .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {})
