@@ -11,11 +11,12 @@ import {
 import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 
+import { UserProfileApi } from '@island.is/application/types'
 import {
-  NationalRegistryUserApi,
-  UserProfileApi,
-} from '@island.is/application/types'
-import { ReferenceDataApi, MyMockProvider } from '../dataProviders'
+  ReferenceDataApi,
+  MyMockProvider,
+  NationalRegistryApi,
+} from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
@@ -41,7 +42,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: 'Reference data',
             }),
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryApi,
               title: 'Þjóðskrá',
               subTitle: 'Upplýsingar um þig í Þjóðskrá.',
             }),
