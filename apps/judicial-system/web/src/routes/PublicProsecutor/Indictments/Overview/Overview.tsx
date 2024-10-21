@@ -8,6 +8,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  BlueBoxWithIcon,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
@@ -134,6 +135,12 @@ export const Overview = () => {
       <FormContentContainer>
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        <Box component="section" marginBottom={5}>
+          <BlueBoxWithIcon
+            data={[{ title: 'asdas', value: 'asd' }]}
+            icon="gavel"
+          />
+        </Box>
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment
             defendantInfoActionButton={
