@@ -1,114 +1,109 @@
+import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-    
-    import { Field, ObjectType } from '@nestjs/graphql'
-    
-    
+import { IGrant } from '../generated/contentfulTypes'
+import { Image, mapImage } from './image.model'
+import { LinkUrl } from './linkUrl.model'
+import { Organization, mapOrganization } from './organization.model'
+import { GenericTag, mapGenericTag } from './genericTag.model'
+import { CacheField } from '@island.is/nest/graphql'
+import { Asset, mapAsset } from './asset.model'
 
-    import { IGrant,  } from '../generated/contentfulTypes'
-    import { Image, mapImage } from './image.model'
-    import { LinkUrl } from './linkUrl.model'
-import { Organization } from './organization.model'
-import { GenericTag } from './genericTag.model'
-import { GenericTag } from './genericTag.model'
+@ObjectType()
+export class Grant {
+  @Field(() => ID)
+  id!: string
 
-    @ObjectType()
-    export class Grant {
-      
-      
-        @Field()
-        grantName: string
+  @Field()
+  name!: string
 
-  
-        @Field({ nullable: true })
-        grantDescription?: string
+  @Field({ nullable: true })
+  description?: string
 
-  
-        @Field({ nullable: true })
-        grantApplicationId?: string
+  @Field({ nullable: true })
+  applicationId?: string
 
-  
-        @Field(() => [String])
-        grantApplicationDeadlineText: Array<string>
+  @Field(() => [String], { nullable: true })
+  applicationDeadlineText?: Array<string>
 
-  
-        @Field(() => LinkUrl, { nullable: true })
-        granApplicationUrl?: LinkUrl
+  @CacheField(() => LinkUrl, { nullable: true })
+  applicationUrl?: LinkUrl
 
-  
-        @Field({ nullable: true })
-        grantWhatIsGranted?: string
+  @Field({ nullable: true })
+  whatIsGranted?: string
 
-  
-        @Field({ nullable: true })
-        grantSpecialEmphasis?: string
+  @Field({ nullable: true })
+  specialEmphasis?: string
 
-  
-        @Field({ nullable: true })
-        grantWhoCanApply?: string
+  @Field({ nullable: true })
+  whoCanApply?: string
 
-  
-        @Field({ nullable: true })
-        grantHowToApply?: string
+  @Field({ nullable: true })
+  howToApply?: string
 
-  
-        @Field({ nullable: true })
-        grantApplicationDeadline?: string
+  @Field({ nullable: true })
+  applicationDeadline?: string
 
-  
-        @Field({ nullable: true })
-        grantDateFrom?: string
+  @Field({ nullable: true })
+  dateFrom?: string
 
-  
-        @Field({ nullable: true })
-        grantDateTo?: string
+  @Field({ nullable: true })
+  dateTo?: string
 
-  
-        @Field({ nullable: true })
-        grantIsOpen?: boolean
+  @Field({ nullable: true })
+  isOpen?: boolean
 
-  
-        @Field({ nullable: true })
-        grantStatus?: string
+  @Field({ nullable: true })
+  status?: string
 
-  
-        @Field(() => Organization)
-        grantOrganization: Organization
+  @CacheField(() => Organization)
+  organization?: Organization
 
-  
-        @Field(() => [Image])
-        grantFiles?: Array<Image>
+  @CacheField(() => [Asset], { nullable: true })
+  files?: Array<Asset>
 
-  
-        @Field(() => GenericTag, { nullable: true })
-        grantCategoryTag?: GenericTag
+  @CacheField(() => GenericTag, { nullable: true })
+  categoryTag?: GenericTag
 
-  
-        @Field(() => GenericTag, { nullable: true })
-        grantTypeTag?: GenericTag
-    }
+  @CacheField(() => GenericTag, { nullable: true })
+  typeTag?: GenericTag
+}
 
-    
-    
-      export const mapGrant = ({ fields  }: IGrant): Grant => ({
-        undefined
-        grantName: fields.grantName ,
-  grantDescription: fields.grantDescription && JSON.stringify(fields.grantDescription) ?? null,
-  grantApplicationId: fields.grantApplicationId ?? '',
-  grantApplicationDeadlineText: fields.grantApplicationDeadlineText ,
-  granApplicationUrl: fields.granApplicationUrl?.fields ,
-  grantWhatIsGranted: fields.grantWhatIsGranted && JSON.stringify(fields.grantWhatIsGranted) ?? null,
-  grantSpecialEmphasis: fields.grantSpecialEmphasis && JSON.stringify(fields.grantSpecialEmphasis) ?? null,
-  grantWhoCanApply: fields.grantWhoCanApply && JSON.stringify(fields.grantWhoCanApply) ?? null,
-  grantHowToApply: fields.grantHowToApply && JSON.stringify(fields.grantHowToApply) ?? null,
-  grantApplicationDeadline: fields.grantApplicationDeadline && JSON.stringify(fields.grantApplicationDeadline) ?? null,
-  grantDateFrom: fields.grantDateFrom ?? '',
-  grantDateTo: fields.grantDateTo ?? '',
-  grantIsOpen: fields.grantIsOpen ?? '',
-  grantStatus: fields.grantStatus ?? '',
-  grantOrganization: fields.grantOrganization?.fields ,
-  grantFiles: (fields.grantFiles ?? []).map(mapImage) ?? [],
-  grantCategoryTag: fields.grantCategoryTag?.fields ,
-  grantTypeTag: fields.grantTypeTag?.fields ,
-      })
-    
-  
+export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
+  id: sys.id,
+  name: fields.grantName,
+  description:
+    (fields.grantDescription && JSON.stringify(fields.grantDescription)) ??
+    undefined,
+  applicationId: fields.grantApplicationId ?? '',
+  applicationDeadlineText: fields.grantApplicationDeadlineText,
+  applicationUrl: fields.granApplicationUrl?.fields,
+  whatIsGranted:
+    (fields.grantWhatIsGranted && JSON.stringify(fields.grantWhatIsGranted)) ??
+    undefined,
+  specialEmphasis:
+    (fields.grantSpecialEmphasis &&
+      JSON.stringify(fields.grantSpecialEmphasis)) ??
+    undefined,
+  whoCanApply:
+    (fields.grantWhoCanApply && JSON.stringify(fields.grantWhoCanApply)) ??
+    undefined,
+  howToApply:
+    (fields.grantHowToApply && JSON.stringify(fields.grantHowToApply)) ??
+    undefined,
+  applicationDeadline:
+    (fields.grantApplicationDeadline &&
+      JSON.stringify(fields.grantApplicationDeadline)) ??
+    undefined,
+  dateFrom: fields.grantDateFrom ?? '',
+  dateTo: fields.grantDateTo ?? '',
+  isOpen: fields.grantIsOpen ?? undefined,
+  status: fields.grantStatus ?? '',
+  organization: fields.grantOrganization
+    ? mapOrganization(fields.grantOrganization)
+    : undefined,
+  files: (fields.grantFiles ?? []).map((file) => mapAsset(file)) ?? [],
+  categoryTag: fields.grantCategoryTag
+    ? mapGenericTag(fields.grantCategoryTag)
+    : undefined,
+  typeTag: fields.grantTypeTag ? mapGenericTag(fields.grantTypeTag) : undefined,
+})
