@@ -3,32 +3,32 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType('HmsLoansPaymentHistory')
 export class PaymentHistory {
   @Field(() => Date, { nullable: true })
-  paymentDate?: Date
+  paymentDate?: string | null
 
   @Field(() => Date, { nullable: true })
-  transactionDate?: Date
+  transactionDate?: string | null
 
   @Field(() => Number, { nullable: true })
-  paymentAmount?: number
+  paymentAmount?: number | null
 
   @Field(() => Number, { nullable: true })
-  interest?: number
+  interest?: number | null
 
   @Field(() => Number, { nullable: true })
-  priceImprovementPayment?: number
+  priceImprovementPayment?: number | null
 
   @Field(() => Number, { nullable: true })
-  priceImprovementInterest?: number
+  priceImprovementInterest?: number | null
 
   @Field(() => Number, { nullable: true })
-  costPayment?: number
+  costPayment?: number | null
 
   @Field(() => Number, { nullable: true })
-  defaultInterest?: number
+  defaultInterest?: number | null
 
   @Field(() => Number, { nullable: true })
-  totalPayment?: number
+  totalPayment?: number | null
 
   @Field(() => Number, { nullable: true })
-  loanId?: number
+  loanId?: number | null
 }
