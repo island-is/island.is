@@ -25,52 +25,77 @@ export enum Pickup {
   'DISTRICT' = 'district',
 }
 
-export enum AdvancedLicenses {
+export enum AdvancedLicense {
   'C1' = 'C1',
+  'C1A' = 'C1A',
   'D1' = 'D1',
+  'D1A' = 'D1A',
   'C' = 'C',
+  'CA' = 'CA',
   'D' = 'D',
+  'DA' = 'DA',
   'C1E' = 'C1E',
   'D1E' = 'D1E',
   'CE' = 'CE',
   'DE' = 'DE',
 }
 
-export enum AdvancedSubLicenses {
-  'C1A' = 'C1A',
-  'D1A' = 'D1A',
-  'CA' = 'CA',
-  'DA' = 'DA',
+type AdvancedLicenseMapItem = {
+  minAge: number
+  code: keyof typeof AdvancedLicense
+  professional?: AdvancedLicenseMapItem
 }
 
-export type AdvancedLicense = keyof typeof AdvancedLicenses
-
-export const ADVANCED_LICENSES: [string, ...string[]] = [
-  AdvancedLicenses.C1,
-  AdvancedLicenses.D1,
-  AdvancedLicenses.C,
-  AdvancedLicenses.D,
-  AdvancedLicenses.C1E,
-  AdvancedLicenses.D1E,
-  AdvancedLicenses.CE,
-  AdvancedLicenses.DE,
+export const advancedLicenseMap: AdvancedLicenseMapItem[] = [
+  {
+    code: 'C1',
+    minAge: 18,
+    professional: {
+      code: 'C1A',
+      minAge: 18,
+    },
+  },
+  {
+    code: 'D1',
+    minAge: 21,
+    professional: {
+      code: 'D1A',
+      minAge: 21,
+    },
+  },
+  {
+    code: 'C',
+    minAge: 21,
+    professional: {
+      code: 'CA',
+      minAge: 21,
+    },
+  },
+  {
+    code: 'D',
+    minAge: 21,
+    professional: {
+      code: 'DA',
+      minAge: 23,
+    },
+  },
+  {
+    code: 'C1E',
+    minAge: 18,
+  },
+  {
+    code: 'D1E',
+    minAge: 18,
+  },
+  {
+    code: 'CE',
+    minAge: 18,
+  },
+  {
+    code: 'DE',
+    minAge: 18,
+  },
 ]
-
-export const ADVANCED_SUB_LICENSES: [string, ...string[]] = [
-  AdvancedSubLicenses.C1A,
-  AdvancedSubLicenses.D1A,
-  AdvancedSubLicenses.CA,
-  AdvancedSubLicenses.DA,
-]
-
-export const advancedLicenseToSubLicenseMap: Partial<
-  Record<Partial<AdvancedLicenses>, Partial<AdvancedSubLicenses>>
-> = {
-  [AdvancedLicenses.C1]: AdvancedSubLicenses.C1A,
-  [AdvancedLicenses.D1]: AdvancedSubLicenses.D1A,
-  [AdvancedLicenses.C]: AdvancedSubLicenses.CA,
-  [AdvancedLicenses.D]: AdvancedSubLicenses.DA,
-}
 
 export const CHARGE_ITEM_CODES: Record<string, string> = {
   [B_TEMP]: 'AY114',

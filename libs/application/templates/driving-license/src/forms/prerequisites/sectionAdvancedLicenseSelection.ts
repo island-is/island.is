@@ -1,11 +1,13 @@
 import {
+  buildCustomField,
+  buildKeyValueField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { AdvancedLicenses, LicenseTypes } from '../../lib/constants'
+import { LicenseTypes } from '../../lib/constants'
 
 export const sectionAdvancedLicenseSelection = buildSubSection({
   id: 'sectionAdvancedLicenseSelection',
@@ -24,26 +26,31 @@ export const sectionAdvancedLicenseSelection = buildSubSection({
       title: m.applicationForAdvancedLicenseTitle,
       description: m.applicationForAdvancedLicenseDescription,
       children: [
-        buildRadioField({
+        buildCustomField({
           id: 'advancedLicense',
-          title: '',
-          backgroundColor: 'blue',
-          largeButtons: true,
-          options: (app) => {
-            console.log(app)
-            let options = []
-
-            options = Object.values(AdvancedLicenses).map((license) => {
-              return {
-                label: m[`applicationForAdvancedLicenseApplyFor${license}`],
-                value: AdvancedLicenses[license],
-                disabled: false,
-              }
-            })
-
-            return options
-          },
+          title: 'Advanced License',
+          component: 'AdvancedLicense',
         }),
+        // buildRadioField({
+        //   id: 'advancedLicense',
+        //   title: '',
+        //   backgroundColor: 'blue',
+        //   largeButtons: true,
+        //   options: (app) => {
+        //     console.log(app)
+        //     let options = []
+
+        //     options = Object.values(AdvancedLicenses).map((license) => {
+        //       return {
+        //         label: m[`applicationForAdvancedLicenseApplyFor${license}`],
+        //         value: AdvancedLicenses[license],
+        //         disabled: false,
+        //       }
+        //     })
+
+        //     return options
+        //   },
+        // }),
       ],
     }),
   ],
