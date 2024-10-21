@@ -7,6 +7,9 @@ import {
   BreadCrumbItem,
   Breadcrumbs,
   Button,
+  GridColumn,
+  GridContainer,
+  GridRow,
   LinkV2,
   Text,
 } from '@island.is/island-ui/core'
@@ -28,6 +31,7 @@ type WrapperProps = {
   sidebarContent?: ReactNode
   goBackUrl?: string
   hideTitle?: boolean
+  isHomePage?: boolean
 }
 
 export const OJOIWrapper = ({
@@ -40,6 +44,7 @@ export const OJOIWrapper = ({
   sidebarContent,
   goBackUrl,
   hideTitle,
+  isHomePage,
 }: WrapperProps) => {
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
@@ -133,7 +138,46 @@ export const OJOIWrapper = ({
         </SidebarLayout>
       )}
 
-      {!sidebarContent && children}
+      {!sidebarContent && !isHomePage && (
+        <GridContainer>
+          <GridRow>
+            <GridColumn span="12/12">
+              {breadcrumbItems && (
+                <Breadcrumbs
+                  items={breadcrumbItems ?? []}
+                  renderLink={(link, item) => {
+                    return item?.href ? (
+                      <NextLink href={item?.href} legacyBehavior>
+                        {link}
+                      </NextLink>
+                    ) : (
+                      link
+                    )
+                  }}
+                />
+              )}
+
+              {!hideTitle && (
+                <Text as="h1" variant="h1" marginTop={2} marginBottom={3}>
+                  {pageTitle}
+                </Text>
+              )}
+
+              {pageDescription && (
+                <Box className="rs_read" marginTop={3} paddingBottom={4}>
+                  <Text variant="default">{pageDescription}</Text>
+                </Box>
+              )}
+
+              <Box className="rs_read" marginBottom={'containerGutter'}>
+                {children}
+              </Box>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      )}
+
+      {!sidebarContent && isHomePage && children}
 
       <Box className="rs_read" background="blue100">
         <WebFooter

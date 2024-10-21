@@ -10,6 +10,7 @@ import {
   GetAdvertTypesRequest,
   GetDepartmentByIdRequest,
   GetAdvertTypeByIdRequest,
+  GetCasesInProgressRequest,
 } from '../../gen/fetch/apis'
 
 @Injectable()
@@ -50,5 +51,9 @@ export class OfficialJournalOfIcelandClientService {
 
   public async getInstitutions(params: GetInstitutionsRequest) {
     return this.api.getInstitutions(params)
+  }
+
+  public async getCasesInProgress(params: GetCasesInProgressRequest) {
+    return this.api.getCasesInProgress(params)
   }
 }
