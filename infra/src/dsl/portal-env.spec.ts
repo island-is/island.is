@@ -32,13 +32,17 @@ const Staging: EnvironmentConfig = {
   global: {},
 }
 
+const services = {
+  api: service('api'),
+}
+
 describe('BFF PortalEnv serialization', () => {
   const sut = service(serviceName)
     .namespace(clientName)
     .image(bffName)
     .redis()
     .serviceAccount(bffName)
-    .env(createPortalEnv(bffType))
+    .env(createPortalEnv(bffType, services))
     .secrets({
       BFF_TOKEN_SECRET_BASE64: `/k8s/${bffName}/${clientName}/BFF_TOKEN_SECRET_BASE64`,
       IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${bffName}/${clientName}/IDENTITY_SERVER_CLIENT_SECRET`,
@@ -152,8 +156,7 @@ describe('BFF PortalEnv serialization', () => {
       BFF_CLIENT_BASE_URL: 'https://featbff-beta.dev01.devland.is',
       BFF_LOGOUT_REDIRECT_URI: 'https://featbff-beta.dev01.devland.is',
       BFF_CALLBACKS_BASE_PATH: `https://featbff-beta.dev01.devland.is/${bffType}/bff/callbacks`,
-      BFF_PROXY_API_ENDPOINT:
-        'https://featbff-beta.dev01.devland.is/api/graphql',
+      BFF_PROXY_API_ENDPOINT: 'http://web-api.islandis.svc.cluster.local',
       BFF_ALLOWED_EXTERNAL_API_URLS: json(['https://api.dev01.devland.is']),
       BFF_CACHE_USER_PROFILE_TTL_MS: (
         ONE_HOUR_IN_MS - FIVE_SECONDS_IN_MS
