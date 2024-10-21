@@ -13,7 +13,7 @@ import addYears from 'date-fns/addYears'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInYears from 'date-fns/differenceInYears'
 import { CustomPage } from '@island.is/cms'
-import { PensionCalculationResponse } from './models/pensionCalculation.model'
+import { PensionCalculationResponse } from './models/pension/pensionCalculation.model'
 
 const basePensionTypeMapping: Record<BasePensionType, number> = {
   [BasePensionType.Retirement]: 1, // Ellilífeyrir
@@ -21,6 +21,7 @@ const basePensionTypeMapping: Record<BasePensionType, number> = {
   [BasePensionType.Disability]: 3, // Örorkulífeyrir
   [BasePensionType.Rehabilitation]: 4, // Endurhæfingarlífeyrir
   [BasePensionType.HalfRetirement]: 5, // Hálfur Ellilífeyrir
+  [BasePensionType.NewSystem]: 6, // Nýtt kerfi sem tekur gildi 1. september 2025
 }
 
 const livingConditionMapping: Record<LivingCondition, number> = {

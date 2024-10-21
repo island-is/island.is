@@ -4,7 +4,7 @@ import { isDefendantInfoActionButtonDisabled } from './Overview'
 
 describe('Overview', () => {
   describe('isDefendantInfoActionButtonDisabled', () => {
-    test('should return true if defendant vervidictViewDate is not null', () => {
+    test('should return true if defendant service requirement is REQUIRED and defendant vervidictViewDate is not null', () => {
       const verdictViewDate = '2024-07-08'
       const serviceRequirement = ServiceRequirement.REQUIRED
 
@@ -17,8 +17,21 @@ describe('Overview', () => {
       expect(res).toEqual(true)
     })
 
-    test('should return true if defendant service requirement is NOT_APPLICABLE', () => {
+    test('should return true if defendant service requirement is REQUIRED and defendant vervidictViewDate is null', () => {
       const verdictViewDate = null
+      const serviceRequirement = ServiceRequirement.REQUIRED
+
+      const res = isDefendantInfoActionButtonDisabled({
+        id: 'id',
+        verdictViewDate,
+        serviceRequirement,
+      })
+
+      expect(res).toEqual(false)
+    })
+
+    test('should return true if defendant service requirement is NOT_APPLICABLE and defendant vervidictViewDate is not null', () => {
+      const verdictViewDate = '2024-07-09'
       const serviceRequirement = ServiceRequirement.NOT_APPLICABLE
 
       const res = isDefendantInfoActionButtonDisabled({
@@ -28,6 +41,19 @@ describe('Overview', () => {
       })
 
       expect(res).toEqual(true)
+    })
+
+    test('should return true if defendant service requirement is NOT_APPLICABLE and defendant vervidictViewDate is null', () => {
+      const verdictViewDate = null
+      const serviceRequirement = ServiceRequirement.NOT_APPLICABLE
+
+      const res = isDefendantInfoActionButtonDisabled({
+        id: 'id',
+        verdictViewDate,
+        serviceRequirement,
+      })
+
+      expect(res).toEqual(false)
     })
 
     test('should return true if defendant service requirement is NOT_REQUIRED', () => {

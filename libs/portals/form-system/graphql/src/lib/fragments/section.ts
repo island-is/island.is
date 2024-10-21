@@ -14,6 +14,7 @@ export const SectionFragment = gql`
     screens {
       ...Screen
     }
+    sectionType
   }
   ${LanguageFields}
   ${ScreenFragment}

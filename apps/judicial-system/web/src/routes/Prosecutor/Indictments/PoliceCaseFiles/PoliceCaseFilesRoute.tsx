@@ -1,4 +1,4 @@
-import React, {
+import {
   FC,
   memo,
   useCallback,
@@ -198,6 +198,17 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
     let currentChapter: number | undefined | null
     let currentOrderWithinChapter: number | undefined | null
 
+    const getCategory = (file: PoliceCaseFileCheck) => {
+      switch (file.type) {
+        case 'RVSK':
+          return CaseFileCategory.COST_BREAKDOWN
+        case 'REIKN':
+          return CaseFileCategory.CASE_FILE
+        default:
+          return CaseFileCategory.CASE_FILE_RECORD
+      }
+    }
+
     const filesToUpload = policeCaseFileList
       .filter((p) => selectedFiles.some((f) => f.id === p.id))
       .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
@@ -220,7 +231,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
           id: f.id,
           name: f.name,
           type: 'application/pdf',
-          category: CaseFileCategory.CASE_FILE,
+          category: getCategory(f),
           policeCaseNumber: f.policeCaseNumber,
           chapter: f.chapter ?? undefined,
           orderWithinChapter:
@@ -230,6 +241,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
               : undefined,
           displayDate: f.displayDate ?? undefined,
           policeFileId: f.id,
+          policeType: f.type,
         }
       })
 
@@ -256,12 +268,10 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
         buttonLabel={formatMessage(strings.inputFileUpload.buttonLabel)}
         onChange={(files) =>
           handleUpload(
-            addUploadFiles(
-              files,
-              CaseFileCategory.CASE_FILE,
-              undefined,
+            addUploadFiles(files, {
+              category: CaseFileCategory.CASE_FILE_RECORD,
               policeCaseNumber,
-            ),
+            }),
             updateUploadFile,
           )
         }
@@ -303,6 +313,7 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
     caseOrigin,
   }) => {
     const { formatMessage } = useIntl()
+
     return (
       <Box paddingBottom={4}>
         {policeCaseNumbers?.map((policeCaseNumber, index) => (

@@ -1,11 +1,13 @@
-import React, { FC, useContext, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
 
 import {
+  Accordion,
   AlertMessage,
   Box,
+  Button,
   RadioButton,
   Text,
   toast,
@@ -14,18 +16,20 @@ import * as constants from '@island.is/judicial-system/consts'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  ConnectedCaseFilesAccordionItem,
   FormContentContainer,
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
+  IndictmentCaseScheduledCard,
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
-  InfoCardCaseScheduledIndictment,
   Modal,
   PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
   SectionHeading,
+  ServiceAnnouncement,
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -40,7 +44,7 @@ import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCas
 import { overview as strings } from './Overview.strings'
 import * as styles from './Overview.css'
 
-const Overview: FC<unknown> = () => {
+const Overview: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)
@@ -60,7 +64,10 @@ const Overview: FC<unknown> = () => {
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
 
-  const isIndictmentNew = workingCase.state === CaseState.DRAFT
+  const isIndictmentNew =
+    workingCase.state === CaseState.DRAFT || modal !== 'noModal'
+  const isIndictmentWaitingForConfirmation =
+    workingCase.state === CaseState.WAITING_FOR_CONFIRMATION
   const isIndictmentSubmitted = workingCase.state === CaseState.SUBMITTED
   const isIndictmentWaitingForCancellation =
     workingCase.state === CaseState.WAITING_FOR_CANCELLATION
@@ -68,11 +75,17 @@ const Overview: FC<unknown> = () => {
 
   const userCanSendIndictmentToCourt =
     Boolean(user?.canConfirmIndictment) &&
-    workingCase.state === CaseState.WAITING_FOR_CONFIRMATION
+    isIndictmentWaitingForConfirmation &&
+    modal === 'noModal'
   const userCanCancelIndictment =
-    (workingCase.state === CaseState.SUBMITTED ||
-      workingCase.state === CaseState.RECEIVED) &&
+    (isIndictmentSubmitted || isIndictmentReceived) &&
     !workingCase.indictmentDecision
+  const userCanAddDocuments =
+    isIndictmentSubmitted ||
+    (isIndictmentReceived &&
+      workingCase.indictmentDecision !==
+        IndictmentDecision.POSTPONING_UNTIL_VERDICT &&
+      workingCase.indictmentDecision !== IndictmentDecision.COMPLETING)
 
   const handleTransition = async (transitionType: CaseTransition) => {
     const caseTransitioned = await transitionCase(
@@ -143,6 +156,10 @@ const Overview: FC<unknown> = () => {
     router.push(constants.CASES_ROUTE)
   }
 
+  const hasLawsBroken = lawsBroken.size > 0
+  const hasMergeCases =
+    workingCase.mergedCases && workingCase.mergedCases.length > 0
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -177,13 +194,25 @@ const Overview: FC<unknown> = () => {
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
+        {workingCase.defendants?.map((defendant) =>
+          defendant.subpoenas?.map(
+            (subpoena) =>
+              subpoena.subpoenaId && (
+                <ServiceAnnouncement
+                  key={`${subpoena.id}-${subpoena.created}`}
+                  subpoena={subpoena}
+                  defendantName={defendant.name}
+                />
+              ),
+          ),
+        )}
         {workingCase.court &&
           latestDate?.date &&
           workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
           workingCase.indictmentDecision !==
             IndictmentDecision.REDISTRIBUTING && (
             <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduledIndictment
+              <IndictmentCaseScheduledCard
                 court={workingCase.court}
                 indictmentDecision={workingCase.indictmentDecision}
                 courtDate={latestDate.date}
@@ -198,14 +227,55 @@ const Overview: FC<unknown> = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardActiveIndictment />
         </Box>
-        {lawsBroken.size > 0 && (
+        {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
-            <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            {/* 
+            NOTE: Temporarily hidden while list of laws broken is not complete in
+            indictment cases
+            
+            {hasLawsBroken && (
+              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            )} */}
+            {hasMergeCases && (
+              <Accordion>
+                {workingCase.mergedCases?.map((mergedCase) => (
+                  <Box key={mergedCase.id}>
+                    <ConnectedCaseFilesAccordionItem
+                      connectedCaseParentId={workingCase.id}
+                      connectedCase={mergedCase}
+                    />
+                  </Box>
+                ))}
+              </Accordion>
+            )}
           </Box>
         )}
-        <Box marginBottom={userCanSendIndictmentToCourt ? 5 : 10}>
+        <Box
+          marginBottom={
+            userCanAddDocuments || userCanSendIndictmentToCourt ? 5 : 10
+          }
+        >
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
+        {userCanAddDocuments && (
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+            marginBottom={userCanSendIndictmentToCourt ? 5 : 10}
+          >
+            <Button
+              size="small"
+              icon="add"
+              onClick={() =>
+                router.push(
+                  `${constants.INDICTMENTS_ADD_FILES_ROUTE}/${workingCase.id}`,
+                )
+              }
+            >
+              {formatMessage(strings.addDocumentsButtonText)}
+            </Button>
+          </Box>
+        )}
         {userCanSendIndictmentToCourt && (
           <Box marginBottom={10}>
             <SectionHeading

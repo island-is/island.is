@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger'
 import { CreationOptional } from 'sequelize'
 import {
   Column,
@@ -19,15 +18,12 @@ export class Application extends Model<Application> {
     primaryKey: true,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
   id!: string
 
   @CreatedAt
-  @ApiProperty({ type: Date })
   created!: CreationOptional<Date>
 
   @UpdatedAt
-  @ApiProperty({ type: Date })
   modified!: CreationOptional<Date>
 
   @ForeignKey(() => Form)

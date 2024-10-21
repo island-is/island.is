@@ -115,6 +115,7 @@ export class ApplicationService {
       to: input.to,
     })
   }
+
   async create(input: CreateApplicationInput, auth: Auth) {
     return this.applicationApiWithAuth(auth).applicationControllerCreate({
       createApplicationDto: input,
@@ -200,7 +201,6 @@ export class ApplicationService {
   async deleteApplication(input: DeleteApplicationInput, auth: Auth) {
     return this.applicationApiWithAuth(auth).applicationControllerDelete({
       id: input.id,
-      authorization: auth.authorization,
     })
   }
 

@@ -11,7 +11,7 @@ export const ScreenFragment = gql`
     }
     displayOrder
     isHidden
-    multiSet
+    multiset
     callRuleset
     fields {
       ...Field

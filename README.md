@@ -32,9 +32,8 @@ If you want to contribute to the repository, please make sure to follow [this gu
 - You have [gcc](https://gcc.gnu.org/) installed (Linux MacOs).
 - You have [g++](https://gcc.gnu.org/) installed (Linux MacOs).
 
-{% hint style="info" %}
-If you are running on Windows we recommend using [Docker and WSL2](https://docs.docker.com/desktop/windows/wsl/)
-{% endhint %}
+> [!NOTE]
+> If you are running on Windows we recommend using [Docker and WSL2](https://docs.docker.com/desktop/windows/wsl/)
 
 ### For fetching secrets
 

@@ -18,7 +18,7 @@ import { ListItem } from '../../models/listItem.model'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class ListItemsResolver {
-  constructor(private readonly listItemsService: ListItemsService) {}
+  constructor(private readonly listItemsService: ListItemsService) { }
 
   @Mutation(() => ListItem, {
     name: 'formSystemCreateListItem',
@@ -33,6 +33,7 @@ export class ListItemsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemDeleteListItem',
+    nullable: true
   })
   async deleteListItem(
     @Args('input', { type: () => DeleteListItemInput })
@@ -44,6 +45,7 @@ export class ListItemsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemUpdateListItem',
+    nullable: true
   })
   async updateListItem(
     @Args('input', { type: () => UpdateListItemInput })
@@ -55,6 +57,7 @@ export class ListItemsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemUpdateListItemsDisplayOrder',
+    nullable: true
   })
   async updateListItemsDisplayOrder(
     @Args('input', { type: () => UpdateListItemInput })

@@ -2,63 +2,63 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 import { ListItemDto } from '../../../listItems/models/dto/listItem.dto'
 
 export class FieldSettingsDto {
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   minValue?: number
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   maxValue?: number
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   minLength?: number
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   maxLength?: number
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Date })
   minDate?: Date
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Date })
   maxDate?: Date
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   minAmount?: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   maxAmount?: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   year?: number
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   hasLink?: boolean
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   url?: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   buttonText?: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   hasPropertyInput?: boolean
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   hasPropertyList?: boolean
 
   @ApiPropertyOptional({ type: [ListItemDto] })
   list?: ListItemDto[]
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   listType?: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   fileTypes?: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   fileMaxSize?: number
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   maxFiles?: number
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   timeInterval?: string
 }

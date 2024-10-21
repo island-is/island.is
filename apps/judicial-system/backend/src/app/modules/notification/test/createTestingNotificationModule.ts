@@ -18,14 +18,20 @@ import {
 import { MessageService } from '@island.is/judicial-system/message'
 
 import { awsS3ModuleConfig, AwsS3Service } from '../../aws-s3'
+import { InternalCaseService } from '../../case'
 import { CourtService } from '../../court'
 import { DefendantService } from '../../defendant'
 import { eventModuleConfig, EventService } from '../../event'
+import { InstitutionService } from '../../institution'
+import { UserService } from '../../user'
+import { InstitutionNotificationService } from '../institutionNotification.service'
 import { InternalNotificationController } from '../internalNotification.controller'
+import { InternalNotificationService } from '../internalNotification.service'
 import { Notification } from '../models/notification.model'
 import { notificationModuleConfig } from '../notification.config'
 import { NotificationController } from '../notification.controller'
 import { NotificationService } from '../notification.service'
+import { NotificationDispatchService } from '../notificationDispatch.service'
 
 jest.mock('@island.is/judicial-system/message')
 
@@ -50,12 +56,7 @@ export const createTestingNotificationModule = async () => {
     providers: [
       SharedAuthModule,
       MessageService,
-      {
-        provide: CourtService,
-        useValue: {
-          createDocument: jest.fn(),
-        },
-      },
+      { provide: CourtService, useValue: { createDocument: jest.fn() } },
       AwsS3Service,
       {
         provide: SmsService,
@@ -65,11 +66,20 @@ export const createTestingNotificationModule = async () => {
         provide: EmailService,
         useValue: { sendEmail: jest.fn(async () => uuid()) },
       },
-      EventService,
       {
         provide: IntlService,
+        useValue: { useIntl: async () => ({ formatMessage }) },
+      },
+      {
+        provide: InternalCaseService,
         useValue: {
-          useIntl: async () => ({ formatMessage }),
+          countIndictmentsWaitingForConfirmation: jest.fn(),
+        },
+      },
+      {
+        provide: UserService,
+        useValue: {
+          getUsersWhoCanConfirmIndictments: jest.fn(),
         },
       },
       {
@@ -81,19 +91,17 @@ export const createTestingNotificationModule = async () => {
           error: jest.fn(),
         },
       },
-      {
-        provide: getModelToken(Notification),
-        useValue: {
-          create: jest.fn(),
-        },
-      },
-      NotificationService,
+      { provide: getModelToken(Notification), useValue: { create: jest.fn() } },
       {
         provide: DefendantService,
-        useValue: {
-          isDefendantInActiveCustody: jest.fn(),
-        },
+        useValue: { isDefendantInActiveCustody: jest.fn() },
       },
+      { provide: InstitutionService, useValue: { getAll: jest.fn() } },
+      EventService,
+      NotificationService,
+      InternalNotificationService,
+      NotificationDispatchService,
+      InstitutionNotificationService,
     ],
   })
     .useMocker((token) => {
@@ -104,25 +112,24 @@ export const createTestingNotificationModule = async () => {
     .compile()
 
   const context = {
-    messageService: notificationModule.get<MessageService>(MessageService),
-    defendantService:
-      notificationModule.get<DefendantService>(DefendantService),
-    emailService: notificationModule.get<EmailService>(EmailService),
-    smsService: notificationModule.get<SmsService>(SmsService),
-    courtService: notificationModule.get<CourtService>(CourtService),
+    userService: notificationModule.get(UserService),
+    internalCaseService: notificationModule.get(InternalCaseService),
+    messageService: notificationModule.get(MessageService),
+    defendantService: notificationModule.get(DefendantService),
+    emailService: notificationModule.get(EmailService),
+    smsService: notificationModule.get(SmsService),
+    courtService: notificationModule.get(CourtService),
+    institutionService: notificationModule.get(InstitutionService),
     notificationConfig: notificationModule.get<
       ConfigType<typeof notificationModuleConfig>
     >(notificationModuleConfig.KEY),
     notificationModel: notificationModule.get<typeof Notification>(
       getModelToken(Notification),
     ),
-    notificationController: notificationModule.get<NotificationController>(
-      NotificationController,
+    notificationController: notificationModule.get(NotificationController),
+    internalNotificationController: notificationModule.get(
+      InternalNotificationController,
     ),
-    internalNotificationController:
-      notificationModule.get<InternalNotificationController>(
-        InternalNotificationController,
-      ),
   }
 
   notificationModule.close()

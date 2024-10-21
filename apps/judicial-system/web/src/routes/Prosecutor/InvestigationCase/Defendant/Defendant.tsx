@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/router'
@@ -64,7 +64,7 @@ const Defendant = () => {
   // This state is needed because type is initially set to OHTER on the
   // workingCase and we need to validate that the user selects an option
   // from the case type list to allow the user to continue.
-  const [caseType, setCaseType] = React.useState<CaseType | null>()
+  const [caseType, setCaseType] = useState<CaseType | null>()
 
   useEffect(() => {
     if (workingCase.id) {

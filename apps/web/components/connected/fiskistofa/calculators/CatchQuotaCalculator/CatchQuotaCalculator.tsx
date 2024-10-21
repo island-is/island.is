@@ -1,7 +1,10 @@
-import { useRouter } from 'next/router'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useMachine } from '@xstate/react'
+import { useIntl } from 'react-intl'
 import cn from 'classnames'
+import { useRouter } from 'next/router'
+import { useMachine } from '@xstate/react'
+
+import { FiskistofaExtendedCatchQuotaCategory as ExtendedCatchQuotaCategory } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -11,18 +14,17 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { useNamespace } from '@island.is/web/hooks'
-import { FiskistofaExtendedCatchQuotaCategory as ExtendedCatchQuotaCategory } from '@island.is/api/schema'
+
 import {
   formattedNumberStringToNumber,
   generateTimePeriodOptions,
+  isNumberBelowZero,
+  numberFormatter,
   sevenFractionDigitNumberFormatter,
   TimePeriodOption,
-  numberFormatter,
-  isNumberBelowZero,
 } from '../utils'
-import { Context, machine, Event as EventType } from './machine'
-
+import { Context, Event as EventType, machine } from './machine'
+import { translation as translationStrings } from './translation.strings'
 import * as styles from './CatchQuotaCalculator.css'
 
 const QUOTA_CHANGE_DEBOUNCE_TIME = 1000
@@ -81,13 +83,10 @@ interface QuotaStateChangeMetadata {
   timerId: number | null
 }
 
-interface CatchQuotaCalculatorProps {
-  namespace: Record<string, string>
-}
-
-const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
+const CatchQuotaCalculator = () => {
   const timePeriodOptions = useMemo(() => generateTimePeriodOptions(), [])
-  const n = useNamespace(namespace)
+  const { formatMessage } = useIntl()
+
   const [selectedTimePeriod, setSelectedTimePeriod] = useState(
     timePeriodOptions[0],
   )
@@ -357,7 +356,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
             <Select
               isDisabled={loading}
               size="sm"
-              label={n('timeperiod', 'Tímabil')}
+              label={formatMessage(translationStrings.timeperiod)}
               name="time-period-select"
               options={timePeriodOptions}
               value={selectedTimePeriod}
@@ -373,7 +372,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
               isDisabled={loading}
               value={emptyValue}
               size="sm"
-              label={n('addType', 'Bæta við tegund')}
+              label={formatMessage(translationStrings.addType)}
               name="tegund-fiskur-select"
               options={quotaTypes}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -401,7 +400,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
               size="small"
               disabled={loading}
             >
-              {n('reset', 'Frumstilla')}
+              {formatMessage(translationStrings.reset)}
             </Button>
             <Button
               onClick={calculate}
@@ -413,14 +412,18 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                   JSON.stringify(prevChangesRef.current)
               }
             >
-              {loading ? <LoadingDots /> : n('calculate', 'Reikna')}
+              {loading ? (
+                <LoadingDots />
+              ) : (
+                formatMessage(translationStrings.calculate)
+              )}
             </Button>
           </Inline>
         </Box>
       </Box>
 
       <Text variant="small">
-        {n('fishingTimePeriod', 'Fiskveiðiárið')} 01.09.
+        {formatMessage(translationStrings.fishingTimePeriod)} 01.09.
         {selectedTimePeriod.startYear} - 31.08.
         {selectedTimePeriod.endYear}
       </Text>
@@ -450,7 +453,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
               size="small"
               colorScheme="default"
             >
-              {n('clearAll', 'Hreinsa allt')}
+              {formatMessage(translationStrings.clearAll)}
             </Button>
           )}
         </Inline>
@@ -458,7 +461,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
 
       <Box width="full" textAlign="center">
         {state.matches('error') && (
-          <Text>{n('aflamarkError', 'Villa kom upp við að sækja gögn')}</Text>
+          <Text>{formatMessage(translationStrings.aflamarkError)}</Text>
         )}
       </Box>
 
@@ -467,7 +470,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
           <table className={styles.tableContainer}>
             <thead className={styles.tableHead}>
               <tr>
-                <th>{n('kvotategund', 'Kvótategund')}</th>
+                <th>{formatMessage(translationStrings.kvotategund)}</th>
                 {state.context.data.catchQuotaCategories.map((category) => {
                   return <th key={category.name}>{category.name}</th>
                 })}
@@ -475,7 +478,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
             </thead>
             <tbody>
               <tr>
-                <td>{n('codEquivalentRatio', 'Þorskígildisstuðull')}</td>
+                <td>{formatMessage(translationStrings.codEquivalentRatio)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td key={category.name}>
                     {category.codEquivalent
@@ -485,7 +488,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                 ))}
               </tr>
               <tr>
-                <td>{n('uthlutun', 'Úthlutun')}</td>
+                <td>{formatMessage(translationStrings.uthlutun)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -498,7 +501,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                 ))}
               </tr>
               <tr>
-                <td>{n('serstokUthlutun', 'Sérst. úthl.')}</td>
+                <td>{formatMessage(translationStrings.serstokUthlutun)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -515,7 +518,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                 ))}
               </tr>
               <tr>
-                <td>{n('milliAra', 'Milli ára')}</td>
+                <td>{formatMessage(translationStrings.milliAra)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -530,7 +533,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                 ))}
               </tr>
               <tr>
-                <td>{n('milliSkipa', 'Milli skipa')}</td>
+                <td>{formatMessage(translationStrings.milliSkipa)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -545,7 +548,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                 ))}
               </tr>
               <tr>
-                <td>{n('aflamarksbreyting', 'Aflamarksbr.')}</td>
+                <td>{formatMessage(translationStrings.aflamarksbreyting)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td key={category.name}>
                     {category.id === 0 ? (
@@ -585,7 +588,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                 ))}
               </tr>
               <tr>
-                <td>{n('aflamark', 'Aflamark')}</td>
+                <td>{formatMessage(translationStrings.aflamark)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -598,7 +601,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                 ))}
               </tr>
               <tr>
-                <td>{n('afli', 'Afli')}</td>
+                <td>{formatMessage(translationStrings.afli)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -611,7 +614,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                 ))}
               </tr>
               <tr>
-                <td>{n('aflabreyting', 'Aflabreyting')}</td>
+                <td>{formatMessage(translationStrings.aflabreyting)}</td>
 
                 {state.context.data.catchQuotaCategories.map((category) => {
                   return (
@@ -653,7 +656,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                 })}
               </tr>
               <tr>
-                <td>{n('stada', 'Staða')}</td>
+                <td>{formatMessage(translationStrings.stada)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -666,7 +669,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                 ))}
               </tr>
               <tr>
-                <td>{n('tilfaersla', 'Tilfærsla')}</td>
+                <td>{formatMessage(translationStrings.tilfaersla)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -681,7 +684,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                 ))}
               </tr>
               <tr>
-                <td>{n('nyStada', 'Ný staða')}</td>
+                <td>{formatMessage(translationStrings.nyStada)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -694,7 +697,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                 ))}
               </tr>
               <tr>
-                <td>{n('aNaestaAr', 'Á næsta ár')}</td>
+                <td>{formatMessage(translationStrings.aNaestaAr)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -707,7 +710,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                 ))}
               </tr>
               <tr>
-                <td>{n('umframafli', 'Umframafli')}</td>
+                <td>{formatMessage(translationStrings.umframafli)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -718,7 +721,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
                 ))}
               </tr>
               <tr>
-                <td>{n('onotad', 'Ónotað')}</td>
+                <td>{formatMessage(translationStrings.onotad)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -733,7 +736,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
 
               <tr>
                 <td className={styles.visualSeparationLine}>
-                  {n('heildaraflamark', 'Heildaraflamark')}
+                  {formatMessage(translationStrings.heildaraflamark)}
                 </td>
                 {state.context.quotaData.map((category) => (
                   <td
@@ -750,7 +753,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
               </tr>
 
               <tr>
-                <td>{n('aaetladAflamark', 'Áætlað aflamark')}</td>
+                <td>{formatMessage(translationStrings.aaetladAflamark)}</td>
                 {state.context.quotaData.map((category) => (
                   <td key={category.id}>
                     {category.id === 0 ? (
@@ -782,7 +785,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
               </tr>
 
               <tr>
-                <td>{n('hlutdeild', 'Hlutdeild')}</td>
+                <td>{formatMessage(translationStrings.hlutdeild)}</td>
                 {state.context.quotaData.map((category) => (
                   <td key={category.id}>
                     {category.id === 0 ? (
@@ -813,7 +816,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
               </tr>
 
               <tr>
-                <td>{n('aNaestaArKvoti', 'Á næsta ár kvóti')}</td>
+                <td>{formatMessage(translationStrings.aNaestaArKvoti)}</td>
 
                 {state.context.quotaData.map((category) => (
                   <td key={category.id}>
@@ -844,7 +847,7 @@ const CatchQuotaCalculator = ({ namespace }: CatchQuotaCalculatorProps) => {
               </tr>
 
               <tr>
-                <td>{n('afNaestaArKvoti', 'Af næsta ári kvóti')}</td>
+                <td>{formatMessage(translationStrings.afNaestaArKvoti)}</td>
                 {state.context.quotaData.map((category) => (
                   <td key={category.id}>
                     {category.id === 0 ? (

@@ -7,10 +7,16 @@ registerEnumType(FieldDtoFieldTypeEnum, {
   name: 'FormSystemFieldDtoFieldTypeEnum',
 })
 
-@InputType('FormSystemCreateFieldInput')
-export class CreateFieldInput {
+@InputType('FormSystemCreateFieldDtoInput')
+export class CreateFieldDtoInput {
   @Field(() => String, { nullable: true })
   screenId?: string
+}
+
+@InputType('FormSystemCreateFieldInput')
+export class CreateFieldInput {
+  @Field(() => CreateFieldDtoInput, { nullable: true })
+  createFieldDto?: CreateFieldDtoInput
 }
 
 @InputType('FormSystemDeleteFieldInput')

@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { FormProvider, useFieldArray, useForm, useWatch } from 'react-hook-form'
+import { useIntl } from 'react-intl'
 import isEqual from 'lodash/isEqual'
 
 import {
@@ -12,10 +13,9 @@ import {
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { ConnectedComponent } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
-import { useI18n } from '@island.is/web/i18n'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
+import { translation as translationStrings } from './translation.strings'
 import * as styles from './GrindavikResidentialPropertyPurchaseCalculator.css'
 
 interface ResultState {
@@ -88,7 +88,7 @@ const focusLoanInput = (index: number, delay = 100) => {
 const GrindavikResidentialPropertyPurchaseCalculator = ({
   slice,
 }: GrindavikResidentialPropertyPurchaseCalculatorProps) => {
-  const n = useNamespace(slice.json ?? {})
+  const { formatMessage } = useIntl()
   const methods = useForm<InputState>({
     defaultValues: { loans: [{ value: undefined }] },
   })
@@ -96,7 +96,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
     name: 'loans',
     control: methods.control,
   })
-  const { activeLocale } = useI18n()
+
   const resultContainerRef = useRef<HTMLDivElement>(null)
 
   const fireInsuranceValue = methods.watch('fireInsuranceValue')
@@ -128,31 +128,18 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
     setResultState(calculateResultState(inputState, thorkatlaPurchasePrice))
   }
 
-  const mainHeading = n(
-    'mainHeading',
-    'Útreikningur vegna uppkaupa fasteigna í Grindavík',
-  )
-  const currencySuffix = n('currencySuffix', ' krónur') as string
+  const mainHeading = formatMessage(translationStrings.mainHeading)
+  const currencySuffix = formatMessage(translationStrings.currencySuffix)
 
   const canCalculate = !isEqual(resultState?.inputState, inputState)
 
   const maxLength = (slice.configJson?.maxLength ?? 11) + currencySuffix.length
 
-  const thorkatlaPaymentDisclaimer = n(
-    'thorkatlaPaymentDisclaimer',
-    'Seljandi getur valið afhendingardagsetningu minnst 1 mánuði frá kaupsamningi og mest 3 mánuðum frá kaupsamningi. Afsal fer fram einum mánuði frá afhendingu.',
+  const thorkatlaPaymentDisclaimer = formatMessage(
+    translationStrings.thorkatlaPaymentDisclaimer,
   )
-  const purchaseAgreementPaymentDisclaimer = n(
-    'purchaseAgreementPaymentDisclaimer',
-    '*Greiðslur frá félaginu fara til eigenda í samræmi við eignarhlutfall.',
-  )
-  const closingResultDisclaimer = n(
-    'closingResultDisclaimer',
-    '**Í afsalsgreiðslu fer fram lögskilauppgjör sem kemur til hækkunar eða lækkunar á afsalsgreiðslu.',
-  )
-  const loanDisclaimer = n(
-    'loanDisclaimer',
-    'Samtal er enn í gangi við lífeyrissjóði um þátttöku þeirra í úrræðinu. Vonast er til þess að niðurstaða liggi fyrir fljótlega',
+  const purchaseAgreementPaymentDisclaimer = formatMessage(
+    translationStrings.purchaseAgreementPaymentDisclaimer,
   )
 
   return (
@@ -168,13 +155,17 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
               {mainHeading && <Text variant="h3">{mainHeading}</Text>}
               <Stack space={3}>
                 <Text variant="h4">
-                  {n('fireInsuranceValueHeading', 'Brunabótamat eignar')}
+                  {formatMessage(translationStrings.fireInsuranceValueHeading)}
                 </Text>
                 <InputController
                   id="fireInsuranceValue"
                   name="fireInsuranceValue"
-                  label={n('fireInsuranceValueLabel', 'Brunabótamat')}
-                  placeholder={n('currencyInputPlaceholder', 'kr.')}
+                  label={formatMessage(
+                    translationStrings.fireInsuranceValueLabel,
+                  )}
+                  placeholder={formatMessage(
+                    translationStrings.currencyInputPlaceholder,
+                  )}
                   currency={true}
                   maxLength={maxLength}
                   type="number"
@@ -186,9 +177,8 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
 
               <Stack space={2}>
                 <Text>
-                  {n(
-                    'thorkatlaPurchasePriceLabel',
-                    'Kaupverð Þórkötlu (95% af brunabótamati)',
+                  {formatMessage(
+                    translationStrings.thorkatlaPurchasePriceLabel,
                   )}
                 </Text>
                 <Text variant="h4" color="blue400">
@@ -197,7 +187,9 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
               </Stack>
 
               <Stack space={3}>
-                <Text variant="h4">{n('loanHeading', 'Áhvílandi lán')}</Text>
+                <Text variant="h4">
+                  {formatMessage(translationStrings.loanHeading)}
+                </Text>
                 <Stack space={2}>
                   {loansFieldArray.fields.map((field, index) => {
                     const name = `loans[${index}].value`
@@ -215,10 +207,14 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                             key={field.id}
                             id={name}
                             name={name}
-                            label={`${n('loanLabel', 'Lán')} ${index + 1}`}
+                            label={`${formatMessage(
+                              translationStrings.loanLabel,
+                            )} ${index + 1}`}
                             currency={true}
                             maxLength={maxLength}
-                            placeholder={n('currencyInputPlaceholder', 'kr.')}
+                            placeholder={formatMessage(
+                              translationStrings.currencyInputPlaceholder,
+                            )}
                             type="number"
                             size="sm"
                             inputMode="numeric"
@@ -241,12 +237,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                           }}
                         >
                           <VisuallyHidden>
-                            {n(
-                              'removeLoan',
-                              activeLocale === 'is'
-                                ? 'Eyða láni'
-                                : 'Remove loan',
-                            )}
+                            {formatMessage(translationStrings.removeLoan)}
                           </VisuallyHidden>
                           <Icon
                             icon="removeCircle"
@@ -273,14 +264,14 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                       size="small"
                       variant="utility"
                     >
-                      {n('appendLoan', 'Bæta við láni')}
+                      {formatMessage(translationStrings.appendLoan)}
                     </Button>
                   </Box>
                 </Stack>
               </Stack>
 
               <Button disabled={!canCalculate} type="submit">
-                {n('calculate', 'Reikna')}
+                {formatMessage(translationStrings.calculate)}
               </Button>
             </Stack>
           </form>
@@ -298,7 +289,9 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
       >
         <Stack space={[5, 5, 8]}>
           <Stack space={3}>
-            <Text variant="h3">{n('resultsHeading', 'Niðurstöður')}</Text>
+            <Text variant="h3">
+              {formatMessage(translationStrings.resultsHeading)}
+            </Text>
             <Stack space={5}>
               <Box
                 columnGap={2}
@@ -308,7 +301,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                 flexDirection={['column', 'row']}
               >
                 <Text variant="h4">
-                  {n('thorkatlaPaymentLabel', 'Greitt úr af Þórkötlu*')}
+                  {formatMessage(translationStrings.thorkatlaPaymentLabel)}
                 </Text>
                 <Text variant="h4" color="blue400" whiteSpace="nowrap">
                   {formatCurrency(
@@ -318,7 +311,9 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                 </Text>
               </Box>
               <Stack space={1}>
-                <Text variant="eyebrow">{n('breakdown', 'Sundurliðun')}</Text>
+                <Text variant="eyebrow">
+                  {formatMessage(translationStrings.breakdown)}
+                </Text>
                 <Stack space={2}>
                   <Box
                     columnGap={2}
@@ -328,9 +323,8 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                     flexDirection={['column', 'row']}
                   >
                     <Text>
-                      {n(
-                        'purchaseAgreementPaymentLabel',
-                        'Greitt við kaupsamning',
+                      {formatMessage(
+                        translationStrings.purchaseAgreementPaymentLabel,
                       )}
                     </Text>
                     <Text whiteSpace="nowrap">
@@ -348,10 +342,7 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
                     flexDirection={['column', 'row']}
                   >
                     <Text>
-                      {n(
-                        'closingPaymentLabel',
-                        'Greitt við afsal (5% af kaupvirði)**',
-                      )}
+                      {formatMessage(translationStrings.closingPaymentLabel)}
                     </Text>
                     <Text whiteSpace="nowrap">
                       {formatCurrency(
@@ -372,10 +363,6 @@ const GrindavikResidentialPropertyPurchaseCalculator = ({
             {purchaseAgreementPaymentDisclaimer && (
               <Text variant="small">{purchaseAgreementPaymentDisclaimer}</Text>
             )}
-            {closingResultDisclaimer && (
-              <Text variant="small">{closingResultDisclaimer}</Text>
-            )}
-            {loanDisclaimer && <Text variant="small">{loanDisclaimer}</Text>}
           </Stack>
         </Stack>
       </Box>

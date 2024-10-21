@@ -24,7 +24,7 @@ export class FieldsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private fieldsApi: FieldsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -32,8 +32,8 @@ export class FieldsService {
       error: JSON.stringify(error),
       category: 'forms-service',
     }
-    this.logger.error(errorDetail || 'Error in fields service', err)
-
+    //this.logger.error(errorDetail || 'Error in fields service', err)
+    console.error(error)
     throw new ApolloError(error.message)
   }
 

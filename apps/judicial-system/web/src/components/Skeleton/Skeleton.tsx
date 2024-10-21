@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 
 import * as styles from './Skeleton.css'

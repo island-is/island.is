@@ -10,6 +10,8 @@ import {
 } from '../nationalRegistry'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { info } from 'kennitala'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 const ONE_WEEK = 604800 // seconds
 const CACHE_KEY = 'userService'
@@ -24,6 +26,8 @@ export class UserService {
   constructor(
     private readonly flightService: FlightService,
     private readonly nationalRegistryService: NationalRegistryService,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
   ) {}
 
@@ -118,9 +122,13 @@ export class UserService {
     const result = (await Promise.all(allUsers)).filter(Boolean) as Array<User>
 
     if (!result || result.length === 0) {
-      throw new Error(
-        'Could not find NationalRegistry records of neither User or relatives.',
+      this.logger.warn(
+        'National Registry records for the user or their relatives could not be found.',
+        {
+          category: 'ads-backend',
+        },
       )
+      return []
     }
 
     return result

@@ -1,4 +1,3 @@
-import React from 'react'
 import { motion } from 'framer-motion'
 
 import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'

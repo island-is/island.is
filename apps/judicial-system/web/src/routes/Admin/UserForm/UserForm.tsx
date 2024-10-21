@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import { FC, SetStateAction, useCallback, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 
 import {
@@ -100,7 +100,7 @@ export const UserForm: FC<Props> = ({
     field: string,
     value: string,
     validations: Validation[],
-    setErrorMessage: (value: React.SetStateAction<string | undefined>) => void,
+    setErrorMessage: (value: SetStateAction<string | undefined>) => void,
   ) => {
     setUser({
       ...user,
@@ -115,7 +115,7 @@ export const UserForm: FC<Props> = ({
   const validateAndSetError = (
     value: string,
     validations: Validation[],
-    setErrorMessage: (value: React.SetStateAction<string | undefined>) => void,
+    setErrorMessage: (value: SetStateAction<string | undefined>) => void,
   ) => {
     const validation = validate([[value, validations]])
 

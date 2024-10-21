@@ -46,6 +46,9 @@ class PendingAction {
 
   @Field(() => String, { nullable: true })
   content?: string
+
+  @Field(() => String, { nullable: true })
+  button?: string
 }
 
 @ObjectType()
@@ -76,11 +79,15 @@ class ActionCardMetaData {
 
   @Field(() => [ApplicationHistory], { nullable: true })
   history?: ApplicationHistory[]
+
   @Field(() => Number, { nullable: true })
   draftFinishedSteps?: number
 
   @Field(() => Number, { nullable: true })
   draftTotalSteps?: number
+
+  @Field(() => String, { nullable: true })
+  historyButton?: string
 }
 
 @ObjectType()

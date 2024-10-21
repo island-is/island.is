@@ -1,8 +1,8 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box } from '@island.is/island-ui/core'
+import { Accordion, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -12,18 +12,16 @@ import {
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
+  IndictmentCaseScheduledCard,
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
-  InfoCardCaseScheduledIndictment,
   PageHeader,
   PageLayout,
   PageTitle,
+  ServiceAnnouncement,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseState,
-  IndictmentDecision,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { IndictmentDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { SubpoenaType } from '../../components'
@@ -41,7 +39,9 @@ const IndictmentOverview = () => {
   const [modalVisible, setModalVisible] = useState<'RETURN_INDICTMENT'>()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
-  const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
+  const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
+
+  // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -78,13 +78,25 @@ const IndictmentOverview = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.defendants?.map((defendant) =>
+          defendant.subpoenas?.map(
+            (subpoena) =>
+              subpoena.subpoenaId && (
+                <ServiceAnnouncement
+                  key={`${subpoena.id}-${subpoena.created}`}
+                  subpoena={subpoena}
+                  defendantName={defendant.name}
+                />
+              ),
+          ),
+        )}
         {workingCase.court &&
           latestDate?.date &&
           workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
           workingCase.indictmentDecision !==
             IndictmentDecision.REDISTRIBUTING && (
             <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduledIndictment
+              <IndictmentCaseScheduledCard
                 court={workingCase.court}
                 indictmentDecision={workingCase.indictmentDecision}
                 courtDate={latestDate.date}
@@ -99,18 +111,27 @@ const IndictmentOverview = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardActiveIndictment />
         </Box>
+        {/* 
+        NOTE: Temporarily hidden while list of laws broken is not complete in
+        indictment cases
+        
         {lawsBroken.size > 0 && (
           <Box marginBottom={5}>
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
+        )} */}
+        {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
+          <Accordion>
+            {workingCase.mergedCases.map((mergedCase) => (
+              <Box marginBottom={5} key={mergedCase.id}>
+                <ConnectedCaseFilesAccordionItem
+                  connectedCaseParentId={workingCase.id}
+                  connectedCase={mergedCase}
+                />
+              </Box>
+            ))}
+          </Accordion>
         )}
-        {workingCase.mergedCases &&
-          workingCase.mergedCases.length > 0 &&
-          workingCase.mergedCases.map((mergedCase) => (
-            <Box marginBottom={5} key={mergedCase.id}>
-              <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
-            </Box>
-          ))}
         {workingCase.caseFiles && (
           <Box component="section" marginBottom={10}>
             <IndictmentCaseFilesList workingCase={workingCase} />
@@ -120,7 +141,10 @@ const IndictmentOverview = () => {
           <Box component="section" marginBottom={5}>
             {
               <SubpoenaType
-                defendants={workingCase.defendants}
+                subpoenaItems={workingCase.defendants.map((defendant) => ({
+                  defendant,
+                  disabled: isArraignmentScheduled,
+                }))}
                 workingCase={workingCase}
                 setWorkingCase={setWorkingCase}
                 updateDefendantState={updateDefendantState}
@@ -141,10 +165,15 @@ const IndictmentOverview = () => {
             )
           }
           nextButtonText={formatMessage(core.continue)}
-          actionButtonText={formatMessage(strings.returnIndictmentButtonText)}
-          actionButtonColorScheme={'destructive'}
-          actionButtonIsDisabled={!caseHasBeenReceivedByCourt}
-          onActionButtonClick={() => setModalVisible('RETURN_INDICTMENT')}
+          /* 
+            The return indictment feature has been removed for the time being but
+            we want to hold on to the functionality for now, since we are likely
+            to change this feature in the future.
+          */
+          // actionButtonText={formatMessage(strings.returnIndictmentButtonText)}
+          // actionButtonColorScheme={'destructive'}
+          // actionButtonIsDisabled={!caseHasBeenReceivedByCourt}
+          // onActionButtonClick={() => setModalVisible('RETURN_INDICTMENT')}
         />
       </FormContentContainer>
       {modalVisible === 'RETURN_INDICTMENT' && (

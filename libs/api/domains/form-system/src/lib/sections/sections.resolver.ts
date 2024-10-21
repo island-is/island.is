@@ -11,7 +11,7 @@ import {
   CreateSectionInput,
   DeleteSectionInput,
   UpdateSectionInput,
-  UpdateSectionsDisplayOrderInput,
+  UpdateSectionsDisplayOrderDtoInput,
 } from '../../dto/section.input'
 import { Section } from '../../models/section.model'
 
@@ -19,7 +19,7 @@ import { Section } from '../../models/section.model'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class SectionsResolver {
-  constructor(private readonly sectionsService: SectionsService) {}
+  constructor(private readonly sectionsService: SectionsService) { }
 
   @Mutation(() => Section, {
     name: 'formSystemCreateSection',
@@ -34,6 +34,7 @@ export class SectionsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemDeleteSection',
+    nullable: true
   })
   async deleteSection(
     @Args('input', { type: () => DeleteSectionInput })
@@ -43,23 +44,24 @@ export class SectionsResolver {
     return this.sectionsService.deleteSection(user, input)
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => Section, {
     name: 'formSystemUpdateSection',
   })
   async updateSection(
     @Args('input', { type: () => UpdateSectionInput })
     input: UpdateSectionInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
+  ): Promise<Section> {
     return this.sectionsService.updateSection(user, input)
   }
 
   @Mutation(() => Boolean, {
     name: 'formSystemUpdateSectionsDisplayOrder',
+    nullable: true,
   })
   async updateSectionsDisplayOrder(
-    @Args('input', { type: () => UpdateSectionsDisplayOrderInput })
-    input: UpdateSectionsDisplayOrderInput,
+    @Args('input', { type: () => UpdateSectionsDisplayOrderDtoInput })
+    input: UpdateSectionsDisplayOrderDtoInput,
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.sectionsService.updateSectionsDisplayOrder(user, input)

@@ -5,8 +5,7 @@ import { ControlContext } from '../../../context/ControlContext'
 import { removeTypename } from '../../../lib/utils/removeTypename'
 import { useIntl } from 'react-intl'
 import { m } from '../../../lib/messages'
-import { useLazyQuery } from '@apollo/client'
-// eslint-disable-next-line @nx/enforce-module-boundaries
+import { useMutation } from '@apollo/client'
 import { CREATE_FIELD, CREATE_SCREEN, DELETE_FIELD, DELETE_SCREEN } from '@island.is/form-system/graphql'
 
 
@@ -33,26 +32,29 @@ export const NavButtons = () => {
     return false
   }
 
-  const createScreen = useLazyQuery(CREATE_SCREEN)
-  const createField = useLazyQuery(CREATE_FIELD)
-  const deleteScreen = useLazyQuery(DELETE_SCREEN)
-  const deleteField = useLazyQuery(DELETE_FIELD)
+  const createScreen = useMutation(CREATE_SCREEN)
+  const createField = useMutation(CREATE_FIELD)
+  const deleteScreen = useMutation(DELETE_SCREEN)
+  const deleteField = useMutation(DELETE_FIELD)
 
   const addItem = async () => {
     if (activeItem.type === 'Section') {
       const newScreen = await createScreen[0]({
         variables: {
           input: {
-            id: activeItem?.data?.id,
+            createScreenDto: {
+              sectionId: activeItem?.data?.id,
+            }
           },
         },
       })
-      if (newScreen) {
+      if (newScreen && !createScreen[1].loading) {
+        console.log('newScreen', newScreen)
         controlDispatch({
           type: 'ADD_SCREEN',
           payload: {
             screen: removeTypename(
-              newScreen.data?.formSystemCreateGroup,
+              newScreen.data?.formSystemCreateScreen,
             ) as FormSystemScreen,
           },
         })
@@ -61,7 +63,9 @@ export const NavButtons = () => {
       const newField = await createField[0]({
         variables: {
           input: {
-            id: activeItem?.data?.id,
+            createFieldDto: {
+              screenId: activeItem?.data?.id,
+            }
           },
         },
       })
@@ -70,7 +74,7 @@ export const NavButtons = () => {
           type: 'ADD_FIELD',
           payload: {
             field: removeTypename(
-              newField.data?.formSystemCreateInput,
+              newField.data?.formSystemCreateField,
             ) as FormSystemField,
           },
         })

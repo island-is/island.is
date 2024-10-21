@@ -31,7 +31,7 @@ describe('CaseController - Get case files record pdf', () => {
   const caseFiles = [
     {
       policeCaseNumber,
-      category: CaseFileCategory.CASE_FILE,
+      category: CaseFileCategory.CASE_FILE_RECORD,
       type: 'application/pdf',
       key: uuid(),
       chapter: 0,

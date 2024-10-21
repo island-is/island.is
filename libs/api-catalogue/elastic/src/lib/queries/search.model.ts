@@ -57,16 +57,7 @@ export const searchQuery = ({
     })
   }
 
-  const result: {
-    query: {
-      bool: {
-        must: Array<object>
-      }
-    }
-    sort: Array<object>
-    size: number
-    search_after?: typeof searchAfter
-  } = {
+  const result: any = {
     query: {
       bool: {
         must: [
@@ -94,7 +85,7 @@ export const searchQuery = ({
   }
 
   if (searchAfter?.length) {
-    result.search_after = searchAfter
+    result['search_after'] = searchAfter
   }
 
   return result

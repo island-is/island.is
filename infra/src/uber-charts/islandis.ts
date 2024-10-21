@@ -11,7 +11,7 @@ import {
 import { serviceSetup as appSystemFormSetup } from '../../../apps/application-system/form/infra/application-system-form'
 
 import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
-import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
+import { serviceSetup as servicePortalSetup } from '../../../apps/portals/my-pages/infra/portals-my-pages'
 
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
 import { serviceSetup as consultationPortalSetup } from '../../../apps/consultation-portal/infra/samradsgatt'
@@ -31,14 +31,11 @@ import { serviceSetup as downloadServiceSetup } from '../../../apps/download-ser
 import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
 import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-actions-cache/infra/github-actions-cache'
 
-import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
-
 import {
   userNotificationServiceSetup,
   userNotificationCleanUpWorkerSetup,
   userNotificationWorkerSetup,
 } from '../../../apps/services/user-notification/infra/user-notification'
-import { endorsementSystemCleanUpWorkerSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
 
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
 import { serviceSetup as adsWebSetup } from '../../../apps/air-discount-scheme/web/infra/web'
@@ -140,9 +137,12 @@ const userNotificationWorkerService = userNotificationWorkerSetup({
 const userNotificationCleanupWorkerService =
   userNotificationCleanUpWorkerSetup()
 
+<<<<<<< HEAD
 const endorsementSystemCleanUpWorkerService =
   endorsementSystemCleanUpWorkerSetup()
 
+=======
+>>>>>>> f031834bf8bbc6843f40e0b62985d36fcbe92f7b
 const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
@@ -174,9 +174,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
-    endorsementSystemCleanUpWorkerService,
     licenseApi,
-    formSystemApi,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -211,9 +209,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
-    endorsementSystemCleanUpWorkerService,
     licenseApi,
-    formSystemApi,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -246,12 +242,10 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
-    endorsementSystemCleanUpWorkerService,
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
     licenseApi,
-    formSystemApi,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -269,7 +263,6 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationService,
   userNotificationWorkerService,
   userNotificationCleanupWorkerService,
-  endorsementSystemCleanUpWorkerService,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,

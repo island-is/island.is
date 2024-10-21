@@ -1,1 +1,0 @@
-export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'

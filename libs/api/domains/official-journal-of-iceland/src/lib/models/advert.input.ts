@@ -45,6 +45,9 @@ export class TypeQueryParams {
 
   @Field(() => Number, { nullable: true })
   page?: number
+
+  @Field(() => Number, { nullable: true })
+  pageSize?: number
 }
 
 @InputType('OfficialJournalOfIcelandAdvertSingleParams')

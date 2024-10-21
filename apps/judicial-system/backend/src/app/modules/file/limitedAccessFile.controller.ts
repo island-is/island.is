@@ -21,6 +21,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
@@ -35,6 +36,7 @@ import {
   CurrentCase,
   LimitedAccessCaseExistsGuard,
 } from '../case'
+import { MergedCaseExistsGuard } from '../case/guards/mergedCaseExists.guard'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
@@ -57,9 +59,12 @@ export class LimitedAccessFileController {
   ) {}
 
   @UseGuards(
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseWriteGuard,
-    CaseCompletedGuard,
   )
   @RolesRules(defenderRule)
   @Post('file/url')
@@ -78,9 +83,12 @@ export class LimitedAccessFileController {
   }
 
   @UseGuards(
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseWriteGuard,
-    CaseCompletedGuard,
     LimitedAccessWriteCaseFileGuard,
   )
   @RolesRules(defenderRule)
@@ -100,9 +108,14 @@ export class LimitedAccessFileController {
     return this.fileService.createCaseFile(theCase, createFile, user)
   }
 
-  @UseGuards(CaseReadGuard, CaseFileExistsGuard, LimitedAccessViewCaseFileGuard)
+  @UseGuards(
+    CaseReadGuard,
+    MergedCaseExistsGuard,
+    CaseFileExistsGuard,
+    LimitedAccessViewCaseFileGuard,
+  )
   @RolesRules(prisonSystemStaffRule, defenderRule)
-  @Get('file/:fileId/url')
+  @Get(['file/:fileId/url', 'mergedCase/:mergedCaseId/file/:fileId/url'])
   @ApiOkResponse({
     type: SignedUrl,
     description: 'Gets a signed url for a case file',

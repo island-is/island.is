@@ -27,9 +27,8 @@ import { removeTypename } from '../../lib/utils/removeTypename'
 import { useIntl } from 'react-intl'
 import { m } from '../../lib/messages'
 import { NavComponent } from '../NavComponent/NavComponent'
-import { useLazyQuery } from '@apollo/client'
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { CREATE_SECTION } from '@island.is/form-system/graphql'
+import { CREATE_SECTION, UPDATE_SECTION_DISPLAY_ORDER } from '@island.is/form-system/graphql'
+import { useMutation } from '@apollo/client'
 
 type DndAction =
   | 'SECTION_OVER_SECTION'
@@ -39,7 +38,7 @@ type DndAction =
   | 'FIELD_OVER_FIELD'
 
 export const Navbar = () => {
-  const { control, controlDispatch, setInSettings, inSettings } =
+  const { control, controlDispatch, setInSettings, inSettings, updateDnD } =
     useContext(ControlContext) as IControlContext
 
   const { formatMessage } = useIntl()
@@ -75,24 +74,40 @@ export const Navbar = () => {
       },
     }),
   )
-  const [createSection] = useLazyQuery(CREATE_SECTION)
+  const [createSection, { loading }] = useMutation(CREATE_SECTION)
+  const [updateDisplayOrder, { loading: updateDO }] = useMutation(UPDATE_SECTION_DISPLAY_ORDER)
 
   const addSection = async () => {
     const newSection = await createSection({
       variables: {
         input: {
-          formId: form.id
+          createSectionDto: {
+            formId: form.id,
+          }
         },
       },
     })
-    if (newSection) {
+    if (newSection && !loading) {
       controlDispatch({
         type: 'ADD_SECTION',
         payload: {
           section: removeTypename(
-            newSection.data?.formSystemCreateStep,
+            newSection.data?.formSystemCreateSection,
           ) as FormSystemSection,
         },
+      })
+      const updatedSections = sections?.map(s => {
+        return {
+          id: s?.id
+        }
+      })
+      console.log('updatedSections', updatedSections)
+      updateDisplayOrder({
+        variables: {
+          input: {
+            sectionsDisplayOrderDto: sections?.map((s) => { s?.id })
+          }
+        }
       })
     }
   }
@@ -191,7 +206,7 @@ export const Navbar = () => {
   }
 
   const onDragEnd = () => {
-    //formUpdate() TODO: Implement form update
+    updateDnD(activeItem.type)
   }
 
   if (inSettings) {

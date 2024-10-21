@@ -3,14 +3,10 @@ import { register } from 'tsconfig-paths'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const tsConfig = require(`../${require('../tsconfig.json').extends}`)
 register({ baseUrl: './', paths: tsConfig.compilerOptions.paths })
+import { startPostgres, startLocalstack } from '@island.is/testing/containers'
 import { CreateQueueCommand, SQSClient } from '@aws-sdk/client-sqs'
 import { environment } from './environment'
 import { logger } from '@island.is/logging'
-import {
-  startPostgres,
-  startLocalstack,
-  startRedis,
-} from '@island.is/testing/containers'
 
 const setupSqsQueue = async () => {
   try {
@@ -41,7 +37,7 @@ const setupSqsQueue = async () => {
 }
 
 export default async () => {
-  await Promise.all([startPostgres(), startLocalstack(), startRedis()])
+  await Promise.all([startPostgres(), startLocalstack()])
 
   // Setting up the SQS queue to prevent concurrent issues between spec files.
   await setupSqsQueue()

@@ -1,7 +1,7 @@
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import { FormSystemFormResponse } from '@island.is/api/schema'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { GET_FORM } from '@island.is/form-system/graphql'
+import { removeTypename } from '../../lib/utils/removeTypename'
 
 export interface FormLoaderResponse {
   formBuilder: FormSystemFormResponse
@@ -32,7 +32,7 @@ export const formLoader: WrappedLoaderFn = ({ client }) => {
       }
 
       return {
-        formBuilder: data.formSystemGetForm,
+        formBuilder: removeTypename(data.formSystemGetForm),
       }
     } catch (error) {
       throw new Error(`Failed to load form: ${error.message}`)

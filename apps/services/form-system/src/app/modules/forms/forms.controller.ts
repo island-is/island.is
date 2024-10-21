@@ -12,8 +12,7 @@ import {
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import { FormsService } from './forms.service'
 import { CreateFormDto } from './models/dto/createForm.dto'
-import { FormResponse } from './models/dto/form.response.dto'
-import { FormsListDto } from './models/dto/formsList.dto'
+import { FormResponseDto } from './models/dto/form.response.dto'
 
 @ApiTags('forms')
 @Controller({ path: 'forms', version: ['1', VERSION_NEUTRAL] })
@@ -22,11 +21,10 @@ export class FormsController {
 
   @Post()
   @ApiCreatedResponse({
-    type: FormResponse,
+    type: FormResponseDto,
     description: 'Create new form',
   })
-  async create(@Body() createFormDto: CreateFormDto): Promise<FormResponse> {
-    console.log('blee')
+  async create(@Body() createFormDto: CreateFormDto): Promise<FormResponseDto> {
     const formResponse = await this.formsService.create(createFormDto)
     if (!formResponse) {
       throw new Error('Error')
@@ -37,20 +35,20 @@ export class FormsController {
   @Get('organization/:organizationId')
   @Documentation({
     description: 'Get all forms belonging to organization',
-    response: { status: 200, type: FormsListDto },
+    response: { status: 200, type: FormResponseDto },
   })
   async findAll(
     @Param('organizationId') organizationId: string,
-  ): Promise<FormsListDto> {
+  ): Promise<FormResponseDto> {
     return await this.formsService.findAll(organizationId)
   }
 
   @Get(':id')
   @Documentation({
     description: 'Get FormResponse by formId',
-    response: { status: 200, type: FormResponse },
+    response: { status: 200, type: FormResponseDto },
   })
-  async findOne(@Param('id') id: string): Promise<FormResponse> {
+  async findOne(@Param('id') id: string): Promise<FormResponseDto> {
     const formResponse = await this.formsService.findOne(id)
     if (!formResponse) {
       throw new NotFoundException(`Form not found`)

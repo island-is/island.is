@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
 import { handle4xx } from '../../utils/errorHandler'
@@ -21,10 +22,10 @@ import { Screen } from '../../models/screen.model'
 @Injectable()
 export class ScreensService {
   constructor(
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
+    // @Inject(LOGGER_PROVIDER)
+    // private logger: Logger,
     private screensApi: ScreensApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -32,7 +33,7 @@ export class ScreensService {
       error: JSON.stringify(error),
       category: 'forms-service',
     }
-    this.logger.error(errorDetail || 'Error in screens service', err)
+    //this.logger.error(errorDetail || 'Error in screens service', err)
 
     throw new ApolloError(error.message)
   }
@@ -49,7 +50,7 @@ export class ScreensService {
     if (!response || response instanceof ApolloError) {
       return {}
     }
-
+    console.log(response)
     return response
   }
 
@@ -61,20 +62,18 @@ export class ScreensService {
     if (!response || response instanceof ApolloError) {
       return
     }
-
-    return
   }
 
-  async updateScreen(auth: User, input: UpdateScreenInput): Promise<void> {
+  async updateScreen(auth: User, input: UpdateScreenInput): Promise<Screen> {
     const response = await this.screensApiWithAuth(auth)
       .screensControllerUpdate(input as ScreensControllerUpdateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to update screen'))
 
     if (!response || response instanceof ApolloError) {
-      return
+      return {}
     }
 
-    return
+    return response
   }
 
   async updateScreensDisplayOrder(

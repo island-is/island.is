@@ -1,11 +1,12 @@
 import { gql } from '@apollo/client'
-import { FormFragment } from '../fragments/form'
+import { ScreenFragment } from '../fragments/screen'
+
 
 export const CREATE_SCREEN = gql`
   mutation FormSystemCreateScreen($input: FormSystemCreateScreenInput!) {
     formSystemCreateScreen(input: $input) {
-      ...Form
+      ...Screen
     }
   }
-  ${FormFragment}
+  ${ScreenFragment}
 `

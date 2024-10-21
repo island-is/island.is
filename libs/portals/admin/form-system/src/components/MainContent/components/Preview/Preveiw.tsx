@@ -1,6 +1,5 @@
 import { FormSystemField, FormSystemFieldDtoFieldTypeEnum } from '@island.is/api/schema'
 import { Box, DatePicker, Text } from '@island.is/island-ui/core'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   Banknumber,
   MessageWithLink,

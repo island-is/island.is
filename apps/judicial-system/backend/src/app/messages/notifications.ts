@@ -195,15 +195,15 @@ export const notifications = {
   }),
   postponedCourtDateEmail: defineMessages({
     subject: {
-      id: 'judicial.system.backend:notifications.postponed_court_date_email.subject',
-      defaultMessage: 'Frestun - nýtt þinghald í máli {courtCaseNumber}',
+      id: 'judicial.system.backend:notifications.postponed_court_date_email.subject_v1',
+      defaultMessage: 'Nýtt þinghald í máli {courtCaseNumber}',
       description:
         'Notaður sem titill á pósti til sækjanda og verjenda þegar þinghaldi er frestað',
     },
     body: {
-      id: 'judicial.system.backend:notifications.postponed_court_date_email.body_v3',
+      id: 'judicial.system.backend:notifications.postponed_court_date_email.body_v4',
       defaultMessage:
-        '{courtName} boðar til þinghalds í máli {courtCaseNumber}.<br />Fyrirtaka mun fara fram {courtDate}.<br /><br />{courtRoomText}<br /><br />{judgeText}<br /><br />{hasAccessToRvg, select, false {Hægt er að nálgast gögn málsins hjá {courtName}} other {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
+        '{courtName} boðar til þinghalds í máli {courtCaseNumber}.<br />Fyrirtaka mun fara fram {courtDate}.<br /><br />Tegund þinghalds: {courtSessionTypeName}.<br /><br />{courtRoomText}<br /><br />{judgeText}<br /><br />{hasAccessToRvg, select, false {Hægt er að nálgast gögn málsins hjá {courtName}} other {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}}}.',
       description:
         'Notaður sem texti á pósti til sækjanda og verjenda þegar þinghaldi er frestað',
     },
@@ -221,7 +221,7 @@ export const notifications = {
       defaultMessage:
         '{court} boðar til þingfestingar í máli {courtCaseNumber}.',
       description:
-        'Notaður sem texti í pósti sem tilgreinir að dómstól boði til þingfestingar',
+        'Notaður sem texti í pósti sem tilgreinir að dómstóll boði til þingfestingar',
     },
     courtDate: {
       id: 'judicial.system.backend:notifications.prosecutor_court_date_email.court_date',
@@ -607,17 +607,29 @@ export const notifications = {
         'Notaður sem texti í tölvupósti til verjanda vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem úrskurðað var í einangrun.',
     },
   }),
-  defenderAssignedEmail: defineMessages({
-    subject: {
-      id: 'judicial.system.backend:notifications.defender_assigned_email.subject',
+  advocateAssignedEmail: defineMessages({
+    subjectAccessToCaseFiles: {
+      id: 'judicial.system.backend:notifications.defender_assigned_email.subject_access_to_case_files',
       defaultMessage: '{court} - aðgangur að málsgögnum',
       description:
         'Fyrirsögn í pósti til verjanda þegar hann er skráður á mál.',
     },
-    body: {
-      id: 'judicial.system.backend:notifications.defender_assigned_email.body_v3',
+    subjectAccess: {
+      id: 'judicial.system.backend:notifications.defender_assigned_email.subject_access',
+      defaultMessage: 'Skráning í máli {courtCaseNumber}',
+      description:
+        'Fyrirsögn í pósti til verjanda þegar hann er skráður á mál.',
+    },
+    bodyAccessToCaseFiles: {
+      id: 'judicial.system.backend:notifications.defender_assigned_email.body_access_to_case_files',
       defaultMessage:
         '{court} hefur skráð þig verjanda í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Gögn málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.',
+      description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
+    },
+    bodyAccess: {
+      id: 'judicial.system.backend:notifications.defender_assigned_email.body_access',
+      defaultMessage:
+        '{court} hefur skráð þig {advocateType, select, LAWYER {lögmann einkaréttarkröfuhafa} LEGAL_RIGHTS_PROTECTOR {réttargæslumann einkaréttarkröfuhafa} other {verjanda}} í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast málið hjá {courtName}.}}.',
       description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
     },
   }),

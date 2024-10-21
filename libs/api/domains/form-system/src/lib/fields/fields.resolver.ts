@@ -33,6 +33,7 @@ export class FieldsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemUpdateField',
+    nullable: true
   })
   async updateField(
     @Args('input', { type: () => UpdateFieldInput }) input: UpdateFieldInput,
@@ -43,6 +44,7 @@ export class FieldsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemDeleteField',
+    nullable: true
   })
   async deleteField(
     @Args('input', { type: () => DeleteFieldInput }) input: DeleteFieldInput,
@@ -53,6 +55,7 @@ export class FieldsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemUpdateFieldsDisplayOrder',
+    nullable: true
   })
   async updateFieldsDisplayOrder(
     @Args('input', { type: () => UpdateFieldsDisplayOrderInput })

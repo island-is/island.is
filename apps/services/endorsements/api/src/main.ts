@@ -5,9 +5,7 @@ import { openApi } from './openApi'
 
 const job = processJob()
 
-if (job === 'cleanup') {
-  import('./cleanup').then((app) => app.cleanup())
-} else if (require.main === module || !environment.production) {
+if (require.main === module || !environment.production) {
   bootstrap({
     appModule: AppModule,
     name: 'services-endorsements-api',

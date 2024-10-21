@@ -188,6 +188,13 @@ export const coreMessages = defineMessages({
     description:
       'Your application is complete. The application has progressed in the process.',
   },
+  draftProgressMeter: {
+    id: 'application.system:application.progress',
+    defaultMessage:
+      'Þú hefur klárað {draftFinishedSteps} af {draftTotalSteps} skrefum',
+    description:
+      'You have completed {draftFinishedSteps} of {draftTotalSteps} steps',
+  },
   notLoggedIn: {
     id: 'application.system:not.logged.id',
     defaultMessage: 'Þú þarft að vera skrá þig inn.',
@@ -290,6 +297,21 @@ export const coreDefaultFieldMessages = defineMessages({
     id: 'application.system:core.default.fileUpload.buttonLabel',
     defaultMessage: 'Veljið skjöl til að hlaða upp',
     description: 'Default file upload button label',
+  },
+  defaultBankAccountBankNumber: {
+    id: 'application.system:core.default.bankAccount.bankNumber',
+    defaultMessage: 'Bankanúmer',
+    description: 'Bank account bank number',
+  },
+  defaultBankAccountLedger: {
+    id: 'application.system:core.default.bankAccount.ledger',
+    defaultMessage: 'Höfuðbók',
+    description: 'Bank account ledger',
+  },
+  defaultBankAccountAccountNumber: {
+    id: 'application.system:core.default.bankAccount.accountNumber',
+    defaultMessage: 'Reikningsnúmer',
+    description: 'Bank account account number',
   },
   defaultDownloadButtonTitle: {
     id: 'application.system:core.default.pdfLinkButtonField.downloadButtonTitle',
@@ -412,6 +434,12 @@ export const coreErrorMessages = defineMessages({
   paymentSubmitFailed: {
     id: 'application.system:core.payment.submitTitle',
     defaultMessage: 'Sending umsóknar mistókst',
+    description: 'Message indicating submission after payment failed',
+  },
+  paymentSubmitFailedDescription: {
+    id: 'application.system:core.payment.submitTitle',
+    defaultMessage:
+      'Villa hefur komið upp við áframhaldandi vinnslu. Vinsamlegast reynið aftur síðar. Ef villa endurtekur sig vinsamlegast hafið samband við island@island.is.',
     description: 'Message indicating submission after payment failed',
   },
   applicationSubmitFailed: {

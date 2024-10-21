@@ -1,6 +1,8 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-export const serviceSetup = (): ServiceBuilder<'portals-form-system'> =>
+export const serviceSetup = (services: {
+  api: ServiceBuilder<'api'>
+}): ServiceBuilder<'portals-form-system'> =>
   service('portals-form-system')
     .namespace('portals-form-system')
     .liveness('/liveness')
@@ -16,6 +18,12 @@ export const serviceSetup = (): ServiceBuilder<'portals-form-system'> =>
     })
     .env({
       BASEPATH: '/form',
+      SI_PUBLIC_GRAPHQL_PATH: {
+        dev: 'http://localhost:4445',
+        prod: '',
+        staging: '',
+        local: ref((h) => `http://${h.svc(services.api)}`),
+      },
       SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',

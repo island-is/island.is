@@ -1,6 +1,5 @@
 import { WrappedLoaderFn } from '@island.is/portals/core'
 import { FormSystemForm, FormSystemFormResponse } from '@island.is/api/schema'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { GET_FORMS } from '@island.is/form-system/graphql'
 import { removeTypename } from '../../lib/utils/removeTypename'
 
@@ -28,9 +27,6 @@ export const formsLoader: WrappedLoaderFn = ({ client }) => {
     if (!data) {
       throw new Error('No forms were found')
     }
-    console.log('formsLoader data', data)
-    const dataForms = data.formSystemGetAllForms?.forms
-    console.log(dataForms)
     return {
       forms: data.formSystemGetAllForms?.forms?.filter(
         (form) => form !== null,

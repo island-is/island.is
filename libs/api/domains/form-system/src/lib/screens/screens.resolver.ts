@@ -19,7 +19,7 @@ import { Screen } from '../../models/screen.model'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class ScreensResolver {
-  constructor(private readonly screensService: ScreensService) {}
+  constructor(private readonly screensService: ScreensService) { }
 
   @Mutation(() => Screen, {
     name: 'formSystemCreateScreen',
@@ -33,6 +33,7 @@ export class ScreensResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemDeleteScreen',
+    nullable: true
   })
   async deleteScreen(
     @Args('input') input: DeleteScreenInput,
@@ -41,18 +42,19 @@ export class ScreensResolver {
     return this.screensService.deleteScreen(user, input)
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => Screen, {
     name: 'formSystemUpdateScreen',
   })
   async updateScreen(
     @Args('input') input: UpdateScreenInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
+  ): Promise<Screen> {
     return this.screensService.updateScreen(user, input)
   }
 
   @Mutation(() => Boolean, {
     name: 'formSystemUpdateScreensDisplayOrder',
+    nullable: true,
   })
   async updateScreensDisplayOrder(
     @Args('input') input: UpdateScreensDisplayOrderInput,

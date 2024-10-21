@@ -9,7 +9,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory, uuidFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
-import { DefendantService } from '../../../defendant'
+import { CivilClaimantService, DefendantService } from '../../../defendant'
 import { User } from '../../../user'
 import { Case } from '../../models/case.model'
 
@@ -32,19 +32,28 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
   const defenderEmail = 'dummy@dummy.dy'
 
   let mockDefendantService: DefendantService
+  let mockCivilClaimantService: CivilClaimantService
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { defendantService, caseModel, limitedAccessCaseController } =
-      await createTestingCaseModule()
+    const {
+      defendantService,
+      civilClaimantService,
+      caseModel,
+      limitedAccessCaseController,
+    } = await createTestingCaseModule()
 
     mockDefendantService = defendantService
+    mockCivilClaimantService = civilClaimantService
     mockCaseModel = caseModel
 
     const mockFindLatestDefendantByDefenderNationalId =
       mockDefendantService.findLatestDefendantByDefenderNationalId as jest.Mock
     mockFindLatestDefendantByDefenderNationalId.mockResolvedValue(null)
+    const mockFindLatestClaimantBySpokespersonNationalId =
+      mockCivilClaimantService.findLatestClaimantBySpokespersonNationalId as jest.Mock
+    mockFindLatestClaimantBySpokespersonNationalId.mockResolvedValue(null)
     const mockFindOne = mockCaseModel.findOne as jest.Mock
     mockFindOne.mockResolvedValue(null)
     const mockToday = nowFactory as jest.Mock
@@ -75,10 +84,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
     it('should look for defender', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         where: {
-          [Op.or]: [
-            { defenderNationalId: formattedDefenderNationalId },
-            { defenderNationalId: defenderNationalId },
-          ],
+          defenderNationalId: [defenderNationalId, formattedDefenderNationalId],
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },
@@ -138,6 +144,39 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
         defenderName,
         defenderPhoneNumber,
         defenderEmail,
+      })
+
+      then = await givenWhenThen(defenderNationalId)
+    })
+
+    it('should return the user', () => {
+      expect(then.result).toEqual({
+        id: defenderId,
+        created: date,
+        modified: date,
+        nationalId: defenderNationalId,
+        name: defenderName,
+        title: 'verjandi',
+        mobileNumber: defenderPhoneNumber,
+        email: defenderEmail,
+        role: UserRole.DEFENDER,
+        active: true,
+        canConfirmIndictment: false,
+      })
+    })
+  })
+
+  describe('defender found in a civil claimant', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFindLatestClaimantBySpokespersonNationalId =
+        mockCivilClaimantService.findLatestClaimantBySpokespersonNationalId as jest.Mock
+      mockFindLatestClaimantBySpokespersonNationalId.mockResolvedValueOnce({
+        spokespersonNationalId: defenderNationalId,
+        spokespersonName: defenderName,
+        spokespersonPhoneNumber: defenderPhoneNumber,
+        spokespersonEmail: defenderEmail,
       })
 
       then = await givenWhenThen(defenderNationalId)

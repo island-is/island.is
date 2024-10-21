@@ -153,6 +153,16 @@ export const MideindTranslationSidebar = () => {
         isDisabled={loading}
         style={{ width: '100%' }}
         onClick={async () => {
+          const shouldContinue = await sdk.dialogs.openConfirm({
+            title: 'Are you sure?',
+            message:
+              'All english text fields will be replaced with a "Miðeind" translation',
+          })
+
+          if (!shouldContinue) {
+            return
+          }
+
           setLoading(true)
           await handleClick(sdk)
           setLoading(false)

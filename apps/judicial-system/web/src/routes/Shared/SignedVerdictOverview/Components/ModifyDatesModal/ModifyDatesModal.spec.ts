@@ -11,7 +11,7 @@ describe('createCaseModifiedExplanation', () => {
 
   it('should append nextExplainantion', () => {
     const previousExplaination =
-      'Föstud. 10. júní 2022 kl. 10:29 - Test Testsen Dómari, Héraðsdómur Reykjavíkur<br/>Ástæða: Testing'
+      'Föstud. 10. júní 2022 kl. 10:29 - Test Testsen dómari, Héraðsdómur Reykjavíkur<br/>Ástæða: Testing'
     const nextExplainantion = 'Testing2'
     const userName = 'Test Testsen'
     const userTitle = 'Dómari'
@@ -29,7 +29,7 @@ describe('createCaseModifiedExplanation', () => {
     )
 
     expect(res).toEqual(
-      'Föstud. 10. júní 2022 kl. 10:29 - Test Testsen Dómari, Héraðsdómur Reykjavíkur<br/>Ástæða: Testing<br/><br/>Mánud. 13. júní 2022 kl. 13:37 - Test Testsen Dómari, Héraðsdómur Reykjavíkur<br/>Ástæða: Testing2',
+      'Föstud. 10. júní 2022 kl. 10:29 - Test Testsen dómari, Héraðsdómur Reykjavíkur<br/>Ástæða: Testing<br/><br/>Mánud. 13. júní 2022 kl. 13:37 - Test Testsen dómari, Héraðsdómur Reykjavíkur<br/>Ástæða: Testing2',
     )
   })
 
@@ -52,7 +52,7 @@ describe('createCaseModifiedExplanation', () => {
     )
 
     expect(res).toEqual(
-      'Mánud. 13. júní 2022 kl. 13:37 - Test Testsen Dómari, Héraðsdómur Reykjavíkur<br/>Ástæða: Testing',
+      'Mánud. 13. júní 2022 kl. 13:37 - Test Testsen dómari, Héraðsdómur Reykjavíkur<br/>Ástæða: Testing',
     )
   })
 })

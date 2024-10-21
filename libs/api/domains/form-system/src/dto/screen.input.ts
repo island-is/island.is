@@ -2,22 +2,37 @@ import { Field, InputType, Int } from '@nestjs/graphql'
 import { LanguageTypeInput } from './languageType.input'
 import { FieldInput } from './field.input'
 
-@InputType('FormSystemCreateScreenInput')
-export class CreateScreenInput {
+@InputType('FormSystemCreateScreenDtoInput')
+export class CreateScreenDtoInput {
   @Field(() => String, { nullable: true })
   sectionId?: string
 }
 
-@InputType('FormSystemUpdateScreenInput')
-export class UpdateScreenInput {
+@InputType('FormSystemCreateScreenInput')
+export class CreateScreenInput {
+  @Field(() => CreateScreenDtoInput, { nullable: true })
+  createScreenDto?: CreateScreenDtoInput
+}
+
+@InputType('FormSystemUpdateScreenDtoInput')
+export class UpdateSectionDtoInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
 
   @Field(() => Int, { nullable: true })
-  multiSet?: number
+  multiset?: number
 
   @Field(() => Boolean, { nullable: true })
   callRuleset?: boolean
+}
+
+@InputType('FormSystemUpdateScreenInput')
+export class UpdateScreenInput {
+  @Field(() => String, { nullable: true })
+  id?: string
+
+  @Field(() => UpdateSectionDtoInput, { nullable: true })
+  updateScreenDto?: UpdateSectionDtoInput
 }
 
 @InputType('FormSystemDeleteScreenInput')
@@ -35,10 +50,16 @@ export class ScreenDisplayOrderInput {
   sectionId?: string
 }
 
-@InputType('FormSystemUpdateScreensDisplayOrderInput')
-export class UpdateScreensDisplayOrderInput {
+@InputType('FormSystemUpdateScreenDisplayOrderDtoInput')
+export class UpdateScreenDisplayOrderDtoInput {
   @Field(() => [ScreenDisplayOrderInput], { nullable: 'itemsAndList' })
   screensDisplayOrderDto?: ScreenDisplayOrderInput[]
+}
+
+@InputType('FormSystemUpdateScreensDisplayOrderInput')
+export class UpdateScreensDisplayOrderInput {
+  @Field(() => UpdateScreenDisplayOrderDtoInput, { nullable: true })
+  updateScreensDisplayOrderDto?: UpdateScreenDisplayOrderDtoInput
 }
 
 @InputType('FormSystemScreenInput')
@@ -59,7 +80,7 @@ export class ScreenInput {
   isHidden?: boolean
 
   @Field(() => Int, { nullable: true })
-  multiSet?: number
+  multiset?: number
 
   @Field(() => Boolean, { nullable: true })
   callRuleset?: boolean

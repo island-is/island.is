@@ -10,6 +10,8 @@ const Forms = lazy(() => import('./screens/Forms/Forms'))
 
 const Form = lazy(() => import('./screens/Form/Form'))
 
+const Application = lazy(() => import('./screens/Application/Application'))
+
 const allowedScopes: string[] = [
   AdminPortalScope.formSystem,
   AdminPortalScope.formSystemSuperUser,
@@ -34,6 +36,11 @@ export const formSystemModule: PortalModule = {
         element: <Form />,
         loader: formLoader(props),
       },
+      {
+        name: m.rootName,
+        path: FormSystemPaths.FormApplications,
+        element: <Application />,
+      }
     ]
   },
 }

@@ -14,7 +14,6 @@ import {
   Image,
   Linking,
   Platform,
-  Pressable,
   ScrollView,
   Switch,
   TouchableOpacity,
@@ -151,6 +150,8 @@ export const SettingsScreen: NavigationFunctionComponent = ({
     }).then(({ selectedItem }: any) => {
       if (selectedItem) {
         setLocale(selectedItem.id)
+        const locale = selectedItem.id === 'is-IS' ? 'is' : 'en'
+        updateLocale(locale)
       }
     })
   }
@@ -166,7 +167,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
     }, 330)
   }, [])
 
-  function updateDocumentNotifications(value: boolean) {
+  const updateDocumentNotifications = (value: boolean) => {
     client
       .mutate<UpdateProfileMutation, UpdateProfileMutationVariables>({
         mutation: UpdateProfileDocument,
@@ -198,7 +199,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
       })
   }
 
-  function updateEmailNotifications(value: boolean) {
+  const updateEmailNotifications = (value: boolean) => {
     client
       .mutate<UpdateProfileMutation, UpdateProfileMutationVariables>({
         mutation: UpdateProfileDocument,
@@ -227,6 +228,30 @@ export const SettingsScreen: NavigationFunctionComponent = ({
             id: 'settings.communication.newNotificationsErrorDescription',
           }),
         )
+      })
+  }
+
+  const updateLocale = (value: string) => {
+    client
+      .mutate<UpdateProfileMutation, UpdateProfileMutationVariables>({
+        mutation: UpdateProfileDocument,
+        update(cache, { data }) {
+          cache.modify({
+            fields: {
+              getUserProfile: (existing) => {
+                return { ...existing, ...data?.updateProfile }
+              },
+            },
+          })
+        },
+        variables: {
+          input: {
+            locale: value,
+          },
+        },
+      })
+      .catch(() => {
+        // noop
       })
   }
 
@@ -516,27 +541,33 @@ export const SettingsScreen: NavigationFunctionComponent = ({
                 items: [
                   {
                     id: '5000',
-                    label: intl.formatNumber(5, {
+                    label: `${intl.formatNumber(5, {
                       style: 'decimal',
                       unitDisplay: 'long',
                       unit: 'second',
-                    }),
+                    })} ${intl.formatMessage({
+                      id: 'settings.security.appLockTimeoutSeconds',
+                    })}`,
                   },
                   {
                     id: '10000',
-                    label: intl.formatNumber(10, {
+                    label: `${intl.formatNumber(10, {
                       style: 'decimal',
                       unitDisplay: 'long',
                       unit: 'second',
-                    }),
+                    })} ${intl.formatMessage({
+                      id: 'settings.security.appLockTimeoutSeconds',
+                    })}`,
                   },
                   {
                     id: '15000',
-                    label: intl.formatNumber(15, {
+                    label: `${intl.formatNumber(15, {
                       style: 'decimal',
                       unitDisplay: 'long',
                       unit: 'second',
-                    }),
+                    })} ${intl.formatMessage({
+                      id: 'settings.security.appLockTimeoutSeconds',
+                    })}`,
                   },
                 ],
                 cancel: true,
@@ -557,11 +588,13 @@ export const SettingsScreen: NavigationFunctionComponent = ({
               })}
               accessory={
                 <TableViewAccessory>
-                  {intl.formatNumber(Math.floor(appLockTimeout / 1000), {
+                  {`${intl.formatNumber(Math.floor(appLockTimeout / 1000), {
                     style: 'decimal',
                     unitDisplay: 'short',
                     unit: 'second',
-                  })}
+                  })} ${intl.formatMessage({
+                    id: 'settings.security.appLockTimeoutSeconds',
+                  })}`}
                 </TableViewAccessory>
               }
             />

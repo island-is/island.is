@@ -14,7 +14,6 @@ import { environment } from '../../../environments'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 
 import { LoggingModule } from '@island.is/logging'
-import { TemplateApiApplicationService } from './template-api.service'
 import { AwsModule } from '@island.is/nest/aws'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
@@ -29,19 +28,13 @@ import { PaymentModule } from '@island.is/application/api/payment'
 import { HistoryModule } from '@island.is/application/api/history'
 import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
 import { ApplicationActionService } from './application-action.service'
-import { TemplateAPIConfig } from '@island.is/application/template-api-modules'
 
 @Module({
   imports: [
     PaymentModule,
     AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
-    TemplateAPIModule.register({
-      // TODO: Update typing to accomodate incomplete module setup
-      // Some modules don't need to configure everything, yet the type requires it.
-      ...(environment.templateApi as TemplateAPIConfig),
-      applicationService: TemplateApiApplicationService,
-    }),
+    TemplateAPIModule.register(environment.templateApi),
     ApplicationApiCoreModule,
     createBullModule(),
     ApplicationFilesModule,

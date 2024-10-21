@@ -29,6 +29,7 @@ export class ApplicantsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemDeleteApplicant',
+    nullable: true
   })
   async deleteApplicant(
     @Args('input') input: DeleteApplicantInput,
@@ -39,6 +40,7 @@ export class ApplicantsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemUpdateApplicant',
+    nullable: true
   })
   async updateApplicant(
     @Args('input') input: UpdateApplicantInput,

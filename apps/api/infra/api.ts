@@ -46,7 +46,10 @@ import {
   UniversityCareers,
   OfficialJournalOfIceland,
   OfficialJournalOfIcelandApplication,
+  JudicialSystemServicePortal,
   Frigg,
+  HealthDirectorateOrganDonation,
+  HealthDirectorateVaccination,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -209,6 +212,11 @@ export const serviceSetup = (services: {
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
       HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK',
       SESSIONS_API_URL: ref((h) => `http://${h.svc(services.sessionsApi)}`),
+      AUTH_ADMIN_API_PATH: {
+        dev: 'https://identity-server.dev01.devland.is/backend',
+        staging: 'https://identity-server.staging01.devland.is/backend',
+        prod: 'https://innskra.island.is/backend',
+      },
       AUTH_ADMIN_API_PATHS: {
         dev: json({
           development: 'https://identity-server.dev01.devland.is/backend',
@@ -382,6 +390,8 @@ export const serviceSetup = (services: {
       ULTRAVIOLET_RADIATION_API_KEY: '/k8s/api/ULTRAVIOLET_RADIATION_API_KEY',
       UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL:
         '/k8s/api/UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL',
+      VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY:
+        '/k8s/api/VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY',
     })
     .xroad(
       AdrAndMachine,
@@ -429,8 +439,11 @@ export const serviceSetup = (services: {
       SignatureCollection,
       SocialInsuranceAdministration,
       OfficialJournalOfIceland,
+      JudicialSystemServicePortal,
       OfficialJournalOfIcelandApplication,
       Frigg,
+      HealthDirectorateOrganDonation,
+      HealthDirectorateVaccination,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
@@ -441,13 +454,6 @@ export const serviceSetup = (services: {
           prod: ['', 'www.island.is'],
         },
         paths: ['/api'],
-        extraAnnotations: {
-          dev: {},
-          staging: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
-          prod: {},
-        },
         public: true,
       },
     })

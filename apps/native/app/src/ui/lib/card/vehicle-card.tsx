@@ -5,7 +5,7 @@ import chevronForward from '../../assets/icons/chevron-forward.png'
 import { dynamicColor } from '../../utils'
 import { Typography } from '../typography/typography'
 
-const Host = styled.View`
+const Host = styled.View<{ minHeight?: number }>`
   display: flex;
   flex-direction: row;
   padding: ${({ theme }) => theme.spacing[3]}px;
@@ -21,6 +21,7 @@ const Host = styled.View`
   )};
   align-items: center;
   justify-content: space-between;
+  min-height: ${({ minHeight }) => (minHeight ? minHeight + 'px' : 'auto')};
 `
 
 const Content = styled.View`
@@ -49,14 +50,27 @@ interface VehicleCardProps {
   title?: string | null
   color?: string | null
   number?: string | null
+  minHeight?: number
   label?: React.ReactNode
 }
 
-export function VehicleCard({ title, color, number, label }: VehicleCardProps) {
+export function VehicleCard({
+  title,
+  color,
+  number,
+  label,
+  minHeight,
+}: VehicleCardProps) {
   return (
-    <Host>
+    <Host minHeight={minHeight}>
       <Content>
-        <Title variant="heading4">{title}</Title>
+        <Title
+          variant="heading4"
+          numberOfLines={minHeight ? 1 : undefined}
+          ellipsizeMode="tail"
+        >
+          {title}
+        </Title>
         <Text>
           {color} - {number}
         </Text>

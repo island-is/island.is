@@ -5,7 +5,6 @@ import { useContext } from 'react'
 import { baseSettingsStep } from '../../../../lib/utils/getBaseSettingsSection'
 import { ControlContext } from '../../../../context/ControlContext'
 import { useIntl } from 'react-intl'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { m } from '@island.is/form-system/ui'
 import { FormSystemSectionDtoSectionTypeEnum } from '@island.is/api/schema'
 

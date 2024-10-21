@@ -117,8 +117,7 @@ export class CaseService {
     defenderAssignment: UpdateSubpoenaDto,
     lang?: string,
   ): Promise<SubpoenaResponse> {
-    let defenderChoice = { ...defenderAssignment }
-
+    let chosenLawyer = null
     if (defenderAssignment.defenderChoice === DefenderChoice.CHOOSE) {
       if (!defenderAssignment.defenderNationalId) {
         throw new NotFoundException(
@@ -126,7 +125,7 @@ export class CaseService {
         )
       }
 
-      const chosenLawyer = await this.lawyersService.getLawyer(
+      chosenLawyer = await this.lawyersService.getLawyer(
         defenderAssignment.defenderNationalId,
       )
 
@@ -135,20 +134,16 @@ export class CaseService {
           'Selected lawyer was not found in the lawyer registry',
         )
       }
-
-      defenderChoice = {
-        ...defenderChoice,
-        ...{
-          defenderName: chosenLawyer.Name,
-          defenderEmail: chosenLawyer.Email,
-          defenderPhoneNumber: chosenLawyer.Phone,
-        },
-      }
     }
 
-    await this.patchSubpoenaInfo(defendantNationalId, caseId, defenderChoice)
-
+    const defenderChoice = {
+      requestedDefenderChoice: defenderAssignment.defenderChoice,
+      requestedDefenderNationalId: defenderAssignment.defenderNationalId,
+      requestedDefenderName: chosenLawyer?.Name,
+    }
+    await this.patchDefenseInfo(defendantNationalId, caseId, defenderChoice)
     const updatedCase = await this.fetchCase(caseId, defendantNationalId)
+
     return SubpoenaResponse.fromInternalCaseResponse(
       updatedCase,
       defendantNationalId,
@@ -190,7 +185,7 @@ export class CaseService {
   ): Promise<InternalCaseResponse> {
     try {
       const res = await fetch(
-        `${this.config.backendUrl}/api/internal/cases/indictment/${id}`,
+        `${this.config.backendUrl}/api/internal/case/indictment/${id}`,
         {
           method: 'POST',
           headers: {
@@ -230,10 +225,14 @@ export class CaseService {
     }
   }
 
-  private async patchSubpoenaInfo(
+  private async patchDefenseInfo(
     defendantNationalId: string,
     caseId: string,
-    defenderChoice: UpdateSubpoenaDto,
+    defenderChoice: {
+      requestedDefenderChoice: DefenderChoice
+      requestedDefenderNationalId: string | undefined
+      requestedDefenderName?: string
+    },
   ): Promise<InternalDefendantResponse> {
     try {
       const response = await fetch(

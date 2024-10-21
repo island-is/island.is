@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -21,15 +20,12 @@ export class ApplicantTypeNameSuggestion extends Model<ApplicantTypeNameSuggesti
     primaryKey: true,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
   id!: string
 
   @CreatedAt
-  @ApiProperty({ type: Date })
   created!: CreationOptional<Date>
 
   @UpdatedAt
-  @ApiProperty({ type: Date })
   modified!: CreationOptional<Date>
 
   @Column({
@@ -37,7 +33,6 @@ export class ApplicantTypeNameSuggestion extends Model<ApplicantTypeNameSuggesti
     allowNull: false,
     defaultValue: () => new LanguageType().toString(),
   })
-  @ApiProperty({ type: LanguageType })
   nameSuggestion!: LanguageType
 
   @Column({
@@ -46,7 +41,6 @@ export class ApplicantTypeNameSuggestion extends Model<ApplicantTypeNameSuggesti
     values: Object.values(ApplicantTypes),
     defaultValue: ApplicantTypes.INDIVIDUAL,
   })
-  @ApiProperty({ enum: ApplicantTypes })
   applicantType!: string
 
   @ForeignKey(() => Organization)

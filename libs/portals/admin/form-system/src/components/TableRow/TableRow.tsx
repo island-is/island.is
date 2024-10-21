@@ -30,6 +30,7 @@ interface Props {
   options?: string
   isHeader: boolean
   translated?: boolean
+  slug?: string
 }
 
 interface ColumnTextProps {
@@ -50,6 +51,7 @@ export const TableRow = ({
   state,
   isHeader,
   translated,
+  slug
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
@@ -157,6 +159,16 @@ export const TableRow = ({
                 },
                 {
                   title: formatMessage(m.getJson),
+                  onClick: () => {
+                    navigate(
+                      FormSystemPaths.FormApplications.replace(':slug', String(slug)),
+                      {
+                        state: {
+                          slug: slug
+                        }
+                      }
+                    )
+                  }
                 },
               ]}
             />

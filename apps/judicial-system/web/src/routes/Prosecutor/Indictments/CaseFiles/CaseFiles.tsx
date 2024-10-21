@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -93,7 +93,9 @@ const CaseFiles = () => {
               buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
               onChange={(files) =>
                 handleUpload(
-                  addUploadFiles(files, CaseFileCategory.INDICTMENT),
+                  addUploadFiles(files, {
+                    category: CaseFileCategory.INDICTMENT,
+                  }),
                   updateUploadFile,
                 )
               }
@@ -116,7 +118,9 @@ const CaseFiles = () => {
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(files, CaseFileCategory.CRIMINAL_RECORD),
+                addUploadFiles(files, {
+                  category: CaseFileCategory.CRIMINAL_RECORD,
+                }),
                 updateUploadFile,
               )
             }
@@ -137,7 +141,9 @@ const CaseFiles = () => {
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(files, CaseFileCategory.COST_BREAKDOWN),
+                addUploadFiles(files, {
+                  category: CaseFileCategory.COST_BREAKDOWN,
+                }),
                 updateUploadFile,
               )
             }
@@ -145,22 +151,25 @@ const CaseFiles = () => {
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box
+          component="section"
+          marginBottom={
+            workingCase.hasCivilClaims || isTrafficViolationCaseCheck ? 5 : 10
+          }
+        >
           <SectionHeading
             title={formatMessage(strings.caseFiles.otherDocumentsSection)}
           />
           <InputFileUpload
             fileList={uploadFiles.filter(
-              (file) =>
-                file.category === CaseFileCategory.CASE_FILE &&
-                !file.policeCaseNumber,
+              (file) => file.category === CaseFileCategory.CASE_FILE,
             )}
             accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(files, CaseFileCategory.CASE_FILE),
+                addUploadFiles(files, { category: CaseFileCategory.CASE_FILE }),
                 updateUploadFile,
               )
             }
@@ -168,6 +177,34 @@ const CaseFiles = () => {
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
+        {workingCase.hasCivilClaims && (
+          <Box
+            component="section"
+            marginBottom={isTrafficViolationCaseCheck ? 5 : 10}
+          >
+            <SectionHeading
+              title={formatMessage(strings.caseFiles.civilClaimSection)}
+            />
+            <InputFileUpload
+              fileList={uploadFiles.filter(
+                (file) => file.category === CaseFileCategory.CIVIL_CLAIM,
+              )}
+              accept={Object.values(fileExtensionWhitelist)}
+              header={formatMessage(strings.caseFiles.inputFieldLabel)}
+              buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
+              onChange={(files) =>
+                handleUpload(
+                  addUploadFiles(files, {
+                    category: CaseFileCategory.CIVIL_CLAIM,
+                  }),
+                  updateUploadFile,
+                )
+              }
+              onRemove={(file) => handleRemove(file, removeUploadFile)}
+              onRetry={(file) => handleRetry(file, updateUploadFile)}
+            />
+          </Box>
+        )}
         {isTrafficViolationCaseCheck && (
           <Box marginBottom={10}>
             <PdfButton

@@ -6,6 +6,7 @@ import {
   capitalize,
   formatDate,
   formatDOB,
+  lowercase,
 } from '@island.is/judicial-system/formatters'
 import { SessionArrangements } from '@island.is/judicial-system/types'
 
@@ -119,7 +120,7 @@ const constructCustodyNoticePdf = (
   addNormalText(
     doc,
     theCase.prosecutor
-      ? `${theCase.prosecutor.name} ${theCase.prosecutor.title}`
+      ? `${theCase.prosecutor.name} ${lowercase(theCase.prosecutor.title)}`
       : 'Ekki skráður',
     'Helvetica',
   )

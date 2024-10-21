@@ -6,6 +6,7 @@ export const GET_PROFESSION_RIGHTS_QUERY = gql`
       list {
         name
         profession
+        nationalId
       }
     }
   }

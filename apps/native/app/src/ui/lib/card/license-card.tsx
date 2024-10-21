@@ -38,11 +38,12 @@ export const LICENSE_CARD_ROW_GAP = theme.spacing.p2
 
 const Host = styled(Animated.View)`
   position: relative;
-  min-height: 112px;
+  min-height: 104px;
   padding: ${({ theme }) => theme.spacing[2]}px;
   row-gap: ${LICENSE_CARD_ROW_GAP}px;
   border-radius: ${({ theme }) => theme.border.radius.extraLarge};
   overflow: hidden;
+  justify-content: center;
 `
 
 const ContentContainer = styled.View`
@@ -130,6 +131,8 @@ const ImgWrap = styled.View`
   flex-shrink: 0;
   align-content: center;
   justify-content: center;
+  height: 72px;
+  width: 72px;
 `
 
 // Todo when we know the status type add to intl
@@ -340,7 +343,7 @@ export function LicenseCard({
             {isString(logo) ? (
               <Base64Image source={{ uri: prefixBase64(logo) }} />
             ) : (
-              <Image source={logo} />
+              <Image source={logo} style={{ height: 72, width: 72 }} />
             )}
           </ImgWrap>
         )}

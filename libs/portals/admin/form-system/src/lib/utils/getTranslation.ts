@@ -1,4 +1,3 @@
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { GET_TRANSLATION } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
 import { FormSystemTranslation } from '@island.is/api/schema'

@@ -13,13 +13,28 @@ export class SectionDisplayOrderInput {
   id?: string
 }
 
-@InputType('FormSystemUpdateSectionInput')
-export class UpdateSectionInput {
+@InputType('FormSystemUpdateSectionsDisplayOrderDtoInput')
+export class UpdateSectionsDisplayOrderDtoInput {
+  @Field(() => [SectionDisplayOrderInput], { nullable: 'itemsAndList' })
+  sectionsDisplayOrderDto?: SectionDisplayOrderInput[]
+}
+
+@InputType('FormSystemUpdateSectionDtoInput')
+export class UpdateSectionDtoInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
 
   @Field(() => LanguageTypeInput, { nullable: true })
   waitingText?: LanguageTypeInput
+}
+
+@InputType('FormSystemUpdateSectionInput')
+export class UpdateSectionInput {
+  @Field(() => String, { nullable: true })
+  id?: string
+
+  @Field(() => UpdateSectionDtoInput, { nullable: true })
+  updateSectionDto?: UpdateSectionDtoInput
 }
 
 @InputType('FormSystemDeleteSectionInput')
@@ -28,16 +43,17 @@ export class DeleteSectionInput {
   id?: string
 }
 
-@InputType('FormSystemUpdateSectionsDisplayOrderInput')
-export class UpdateSectionsDisplayOrderInput {
-  @Field(() => [SectionDisplayOrderInput], { nullable: 'itemsAndList' })
-  sectionsDisplayOrderDto?: SectionDisplayOrderInput[]
+
+@InputType('FormSystemCreateSectionDtoInput')
+export class CreateSectionDtoInput {
+  @Field(() => String, { nullable: true })
+  formId?: string
 }
 
 @InputType('FormSystemCreateSectionInput')
 export class CreateSectionInput {
-  @Field(() => String, { nullable: true })
-  formId?: string
+  @Field(() => CreateSectionDtoInput, { nullable: true })
+  createSectionDto?: CreateSectionDtoInput
 }
 
 @InputType('FormSystemSectionInput')

@@ -20,7 +20,7 @@ export class Screen {
   isHidden?: boolean
 
   @Field(() => Int, { nullable: true })
-  multiSet?: number
+  multiset?: number
 
   @Field(() => Boolean, { nullable: true })
   callRuleset?: boolean

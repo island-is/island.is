@@ -16,6 +16,7 @@ import {
   GridContainer,
   GridRow,
   Icon,
+  type IconProps,
   Inline,
   Pagination,
   Stack,
@@ -71,9 +72,9 @@ interface ItemProps {
   item: GenericListItem
 }
 
-const NonClickableItem = ({ item }: ItemProps) => {
+export const NonClickableItem = ({ item }: ItemProps) => {
   const { format } = useDateUtils()
-
+  const filterTags = item.filterTags ?? []
   return (
     <Box
       padding={[2, 2, 3]}
@@ -95,28 +96,49 @@ const NonClickableItem = ({ item }: ItemProps) => {
             <Box>{webRichText(item.cardIntro ?? [])}</Box>
           )}
         </Stack>
-        <Inline space={1}>
-          {item.filterTags?.map((tag) => (
-            <Tag disabled={true} variant="purple" outlined={true} key={tag.id}>
-              {tag.title}
-            </Tag>
-          ))}
-        </Inline>
+        {filterTags.length > 0 && (
+          <Inline space={1}>
+            {filterTags.map((tag) => (
+              <Tag
+                disabled={true}
+                variant="purple"
+                outlined={true}
+                key={tag.id}
+              >
+                {tag.title}
+              </Tag>
+            ))}
+          </Inline>
+        )}
       </Stack>
     </Box>
   )
 }
 
-const ClickableItem = ({ item }: ItemProps) => {
+interface ClickableItemProps {
+  item: ItemProps['item']
+  baseUrl?: string
+}
+
+export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
   const { format } = useDateUtils()
   const router = useRouter()
 
-  const pathname = new URL(router.asPath, 'https://island.is').pathname
+  const pathname = new URL(baseUrl || router.asPath, 'https://island.is')
+    .pathname
+
+  let icon: IconProps['icon'] | null = null
 
   let href = item.slug ? `${pathname}/${item.slug}` : undefined
   if (item.assetUrl) {
     href = item.assetUrl
+    icon = 'document'
+  } else if (item.externalUrl) {
+    href = item.externalUrl
+    icon = 'open'
   }
+
+  const filterTags = item.filterTags ?? []
 
   return (
     <FocusableBox
@@ -136,12 +158,12 @@ const ClickableItem = ({ item }: ItemProps) => {
                   <Text variant="eyebrow" color="purple400">
                     {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
                   </Text>
-                  {item.assetUrl && (
+                  {icon && (
                     <Icon
                       size="medium"
                       type="outline"
                       color="blue400"
-                      icon="document"
+                      icon={icon}
                     />
                   )}
                 </Inline>
@@ -154,18 +176,20 @@ const ClickableItem = ({ item }: ItemProps) => {
               <Box>{webRichText(item.cardIntro ?? [])}</Box>
             )}
           </Box>
-          <Inline space={1}>
-            {item.filterTags?.map((tag) => (
-              <Tag
-                disabled={true}
-                variant="purple"
-                outlined={true}
-                key={tag.id}
-              >
-                {tag.title}
-              </Tag>
-            ))}
-          </Inline>
+          {filterTags.length > 0 && (
+            <Inline space={1}>
+              {filterTags.map((tag) => (
+                <Tag
+                  disabled={true}
+                  variant="purple"
+                  outlined={true}
+                  key={tag.id}
+                >
+                  {tag.title}
+                </Tag>
+              ))}
+            </Inline>
+          )}
         </Stack>
       </Box>
     </FocusableBox>
@@ -173,22 +197,34 @@ const ClickableItem = ({ item }: ItemProps) => {
 }
 
 interface GenericListProps {
-  id: string
   searchInputPlaceholder?: string | null
-  itemType?: string | null
   filterTags?: GenericTag[] | null
+  searchQueryId: string
+  pageQueryId: string
+  tagQueryId: string
+  fetchListItems: (props: {
+    page: number
+    searchValue: string
+    tags: string[]
+    tagGroups: Record<string, string[]>
+  }) => void
+  loading: boolean
+  totalItems: number
+  displayError: boolean
 }
 
 export const GenericList = ({
-  id,
   searchInputPlaceholder,
-  itemType,
   filterTags,
-}: GenericListProps) => {
-  const searchQueryId = `${id}q`
-  const pageQueryId = `${id}page`
-  const tagQueryId = `${id}tag`
-
+  searchQueryId,
+  pageQueryId,
+  tagQueryId,
+  fetchListItems,
+  totalItems,
+  loading,
+  displayError,
+  children,
+}: React.PropsWithChildren<GenericListProps>) => {
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
   const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
   const [parameters, setParameters] = useQueryState<Record<string, string[]>>(
@@ -211,42 +247,9 @@ export const GenericList = ({
     return categories
   }, [filterTags, parameters])
 
-  const [itemsResponse, setItemsResponse] =
-    useState<GenericListItemResponse | null>(null)
-  const [errorOccurred, setErrorOccurred] = useState(false)
   const ref = useRef<HTMLElement | null>(null)
 
   const { activeLocale } = useI18n()
-
-  const [fetchListItems, { loading }] = useLazyQuery<
-    Query,
-    GetGenericListItemsQueryVariables
-  >(GET_GENERIC_LIST_ITEMS_QUERY, {
-    onCompleted(data) {
-      const searchParams = new URLSearchParams(window.location.search)
-
-      const queryString = searchParams.get(searchQueryId) || ''
-      const pageQuery = searchParams.get(pageQueryId) || '1'
-      const tagQuery = searchParams.get(tagQueryId) || '{}'
-
-      const tags: string[] = flatten(Object.values(JSON.parse(tagQuery)))
-
-      if (
-        // Make sure the response matches the request input
-        queryString === data?.getGenericListItems?.input?.queryString &&
-        pageQuery === data?.getGenericListItems?.input?.page?.toString() &&
-        tags.every((tag) =>
-          (data?.getGenericListItems?.input?.tags ?? []).includes(tag),
-        )
-      ) {
-        setItemsResponse(data.getGenericListItems)
-        setErrorOccurred(false)
-      }
-    },
-    onError(_) {
-      setErrorOccurred(true)
-    },
-  })
 
   useDebounce(
     () => {
@@ -254,19 +257,11 @@ export const GenericList = ({
       filterCategories.forEach((c) =>
         c.selected.forEach((t) => selectedCategories.push(t)),
       )
-
       fetchListItems({
-        variables: {
-          input: {
-            genericListId: id,
-            size: ITEMS_PER_PAGE,
-            lang: activeLocale,
-            page: page ?? 1,
-            queryString: searchValue || '',
-            tags: selectedCategories,
-            tagGroups: getGenericTagGroupHierarchy(filterCategories),
-          },
-        },
+        page: page ?? 1,
+        searchValue: searchValue || '',
+        tags: selectedCategories,
+        tagGroups: getGenericTagGroupHierarchy(filterCategories),
       })
     },
     DEBOUNCE_TIME_IN_MS,
@@ -281,15 +276,10 @@ export const GenericList = ({
     setIsMobile(width < theme.breakpoints.md)
   }, [width])
 
-  const totalItems = itemsResponse?.total ?? 0
-  const items = itemsResponse?.items ?? []
-
   const noResultsFoundText =
     activeLocale === 'is' ? 'Engar niðurstöður fundust' : 'No results found'
 
   const resultsFoundText = getResultsFoundText(totalItems, activeLocale)
-
-  const itemsAreClickable = itemType === 'Clickable'
 
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
 
@@ -309,12 +299,53 @@ export const GenericList = ({
 
   const selectedFilters = extractFilterTags(filterCategories)
 
+  const selectedFiltersComponent = (
+    <Box className={styles.filterTagsContainer}>
+      <Inline space={1} alignY="top">
+        {selectedFilters.length > 0 && (
+          <Text>{activeLocale === 'is' ? 'Síað eftir:' : 'Filtered by:'}</Text>
+        )}
+        <Inline space={1}>
+          {selectedFilters.map(({ value, label, category }) => (
+            <FilterTag
+              key={value}
+              active={true}
+              onClick={() => {
+                setParameters((prevParameters) => {
+                  const updatedParameters = {
+                    ...prevParameters,
+                    [category]: (prevParameters?.[category] ?? []).filter(
+                      (prevValue) => prevValue !== value,
+                    ),
+                  }
+
+                  // Make sure we clear out the query params from the url when there is nothing selected
+                  if (
+                    Object.values(updatedParameters).every(
+                      (s) => !s || s.length === 0,
+                    )
+                  ) {
+                    return null
+                  }
+
+                  return updatedParameters
+                })
+              }}
+            >
+              {label}
+            </FilterTag>
+          ))}
+        </Inline>
+      </Inline>
+    </Box>
+  )
+
   return (
     <Box paddingBottom={3}>
       <GridContainer>
-        <Stack space={5}>
+        <Stack space={4}>
           <Box ref={ref}>
-            {filterCategories.length > 0 && (
+            {filterCategories.length > 1 && (
               <Stack space={4}>
                 <Stack space={3}>
                   {isMobile && filterInputComponent}
@@ -349,6 +380,7 @@ export const GenericList = ({
                     variant={isMobile ? 'dialog' : 'popover'}
                     onFilterClear={() => {
                       setParameters(null)
+                      setPage(null)
                     }}
                     filterInput={filterInputComponent}
                   >
@@ -359,6 +391,7 @@ export const GenericList = ({
                           : 'Clear selection'
                       }
                       onChange={({ categoryId, selected }) => {
+                        setPage(null)
                         setParameters((prevParameters) => {
                           // Make sure we clear out the query params from the url when there is nothing selected
                           if (
@@ -378,6 +411,7 @@ export const GenericList = ({
                         })
                       }}
                       onClear={(categoryId) => {
+                        setPage(null)
                         setParameters((prevParameters) => {
                           const updatedParameters = {
                             ...prevParameters,
@@ -400,42 +434,54 @@ export const GenericList = ({
                     />
                   </Filter>
                 </Stack>
+                {selectedFiltersComponent}
+              </Stack>
+            )}
 
+            {filterCategories.length <= 1 && (
+              <Stack space={4}>
+                <Stack space={3}>
+                  {filterInputComponent}
+                  {selectedFilters.length > 0 && selectedFiltersComponent}
+                </Stack>
                 <Inline space={1}>
-                  {selectedFilters.map(({ value, label, category }) => (
-                    <FilterTag
-                      key={value}
-                      onClick={() => {
-                        setParameters((prevParameters) => {
-                          const updatedParameters = {
-                            ...prevParameters,
-                            [category]: (
-                              prevParameters?.[category] ?? []
-                            ).filter((prevValue) => prevValue !== value),
-                          }
-
-                          // Make sure we clear out the query params from the url when there is nothing selected
-                          if (
-                            Object.values(updatedParameters).every(
-                              (s) => !s || s.length === 0,
-                            )
-                          ) {
-                            return null
-                          }
-
-                          return updatedParameters
-                        })
-                      }}
-                    >
-                      {label}
-                    </FilterTag>
-                  ))}
+                  {filterTags
+                    ?.filter((tag) => {
+                      const isActive = Boolean(
+                        selectedFilters.find(
+                          (filter) => filter.value === tag.slug,
+                        ),
+                      )
+                      return !isActive
+                    })
+                    .map((tag) => {
+                      const category = tag.genericTagGroup?.slug
+                      const value = tag.slug
+                      const label = tag.title
+                      return (
+                        <Tag
+                          key={tag.id}
+                          onClick={() => {
+                            if (!category) {
+                              return
+                            }
+                            setParameters((prevParameters) => ({
+                              ...prevParameters,
+                              [category]: (
+                                prevParameters?.[category] ?? []
+                              ).concat(value),
+                            }))
+                          }}
+                        >
+                          {label}
+                        </Tag>
+                      )
+                    })}
                 </Inline>
               </Stack>
             )}
-            {filterCategories.length === 0 && filterInputComponent}
           </Box>
-          {errorOccurred && (
+          {displayError && (
             <AlertMessage
               type="warning"
               title={activeLocale === 'is' ? 'Villa kom upp' : 'Error occurred'}
@@ -446,10 +492,10 @@ export const GenericList = ({
               }
             />
           )}
-          {itemsResponse && items.length === 0 && (
+          {totalItems === 0 && !displayError && !loading && (
             <Text>{noResultsFoundText}</Text>
           )}
-          {items.length > 0 && (
+          {totalItems > 0 && (
             <Stack space={3}>
               <Inline space={2} justifyContent="spaceBetween" alignY="center">
                 <Text>
@@ -462,28 +508,7 @@ export const GenericList = ({
                   </Text>
                 )}
               </Inline>
-              <GridContainer>
-                <GridRow rowGap={3}>
-                  {!itemsAreClickable &&
-                    items.map((item) => (
-                      <GridColumn
-                        key={item.id}
-                        span={['1/1', '1/1', '1/1', '1/1', '1/2']}
-                      >
-                        <NonClickableItem item={item} />
-                      </GridColumn>
-                    ))}
-                  {itemsAreClickable &&
-                    items.map((item) => (
-                      <GridColumn
-                        key={item.id}
-                        span={['1/1', '1/1', '1/1', '1/1', '1/2']}
-                      >
-                        <ClickableItem item={item} />
-                      </GridColumn>
-                    ))}
-                </GridRow>
-              </GridContainer>
+              {children}
             </Stack>
           )}
 
@@ -516,5 +541,109 @@ export const GenericList = ({
         </Stack>
       </GridContainer>
     </Box>
+  )
+}
+
+interface GenericListWrapperProps {
+  id: string
+  searchInputPlaceholder?: string | null
+  itemType?: string | null
+  filterTags?: GenericTag[] | null
+}
+
+export const GenericListWrapper = ({
+  id,
+  filterTags,
+  itemType,
+  searchInputPlaceholder,
+}: GenericListWrapperProps) => {
+  const searchQueryId = `${id}q`
+  const pageQueryId = `${id}page`
+  const tagQueryId = `${id}tag`
+
+  const { activeLocale } = useI18n()
+
+  const [itemsResponse, setItemsResponse] =
+    useState<GenericListItemResponse | null>(null)
+  const [errorOccurred, setErrorOccurred] = useState(false)
+
+  const [fetchListItems, { loading, called }] = useLazyQuery<
+    Query,
+    GetGenericListItemsQueryVariables
+  >(GET_GENERIC_LIST_ITEMS_QUERY, {
+    onCompleted(data) {
+      const searchParams = new URLSearchParams(window.location.search)
+
+      const queryString = searchParams.get(searchQueryId) || ''
+      const pageQuery = searchParams.get(pageQueryId) || '1'
+      const tagQuery = searchParams.get(tagQueryId) || '{}'
+
+      const tags: string[] = flatten(Object.values(JSON.parse(tagQuery)))
+
+      if (
+        // Make sure the response matches the request input
+        queryString === data?.getGenericListItems?.input?.queryString &&
+        pageQuery === data?.getGenericListItems?.input?.page?.toString() &&
+        tags.every((tag) =>
+          (data?.getGenericListItems?.input?.tags ?? []).includes(tag),
+        )
+      ) {
+        setItemsResponse(data.getGenericListItems)
+        setErrorOccurred(false)
+      }
+    },
+    onError(_) {
+      setErrorOccurred(true)
+    },
+  })
+
+  const totalItems = itemsResponse?.total ?? 0
+  const items = itemsResponse?.items ?? []
+
+  const itemsAreClickable = itemType === 'Clickable'
+
+  return (
+    <GenericList
+      filterTags={filterTags}
+      searchInputPlaceholder={searchInputPlaceholder}
+      displayError={errorOccurred}
+      fetchListItems={({ page, searchValue, tags, tagGroups }) => {
+        fetchListItems({
+          variables: {
+            input: {
+              genericListId: id,
+              size: ITEMS_PER_PAGE,
+              lang: activeLocale,
+              page: page,
+              queryString: searchValue,
+              tags,
+              tagGroups,
+            },
+          },
+        })
+      }}
+      totalItems={totalItems}
+      loading={loading || !called}
+      pageQueryId={pageQueryId}
+      searchQueryId={searchQueryId}
+      tagQueryId={tagQueryId}
+    >
+      <GridContainer>
+        <GridRow rowGap={3}>
+          {!itemsAreClickable &&
+            items.map((item) => (
+              <GridColumn key={item.id} span="1/1">
+                <NonClickableItem item={item} />
+              </GridColumn>
+            ))}
+          {itemsAreClickable &&
+            items.map((item) => (
+              <GridColumn key={item.id} span="1/1">
+                <ClickableItem item={item} />
+              </GridColumn>
+            ))}
+        </GridRow>
+      </GridContainer>
+    </GenericList>
   )
 }

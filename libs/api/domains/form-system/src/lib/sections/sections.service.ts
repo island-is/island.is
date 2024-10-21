@@ -14,7 +14,7 @@ import {
   CreateSectionInput,
   DeleteSectionInput,
   UpdateSectionInput,
-  UpdateSectionsDisplayOrderInput,
+  UpdateSectionsDisplayOrderDtoInput,
 } from '../../dto/section.input'
 import { Section } from '../../models/section.model'
 
@@ -24,7 +24,7 @@ export class SectionsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private sectionsService: SectionsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -65,21 +65,21 @@ export class SectionsService {
     return
   }
 
-  async updateSection(auth: User, input: UpdateSectionInput): Promise<void> {
+  async updateSection(auth: User, input: UpdateSectionInput): Promise<Section> {
     const response = await this.sectionsApiWithAuth(auth)
       .sectionsControllerUpdate(input as SectionsControllerUpdateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to update section'))
 
     if (!response || response instanceof ApolloError) {
-      return
+      return {}
     }
 
-    return
+    return response
   }
 
   async updateSectionsDisplayOrder(
     auth: User,
-    input: UpdateSectionsDisplayOrderInput,
+    input: UpdateSectionsDisplayOrderDtoInput,
   ): Promise<void> {
     const response = await this.sectionsApiWithAuth(auth)
       .sectionsControllerUpdateDisplayOrder(
@@ -94,9 +94,9 @@ export class SectionsService {
       )
 
     if (!response || response instanceof ApolloError) {
-      return
+      return void 0
     }
 
-    return
+    return response
   }
 }

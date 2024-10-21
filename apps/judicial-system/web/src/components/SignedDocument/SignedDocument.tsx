@@ -1,4 +1,3 @@
-import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Icon, Text } from '@island.is/island-ui/core'

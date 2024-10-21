@@ -94,9 +94,9 @@ const constructRestrictionCourtRecordPdf = (
     doc,
     formatMessage(courtRecord.intro, {
       courtDate: formatDate(theCase.courtStartDate, 'PPP'),
-      judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${
-        theCase.judge?.title ?? '?'
-      }`,
+      judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${lowercase(
+        theCase.judge?.title,
+      )}`,
       courtLocation: theCase.courtLocation
         ? ` ${lowercase(
             theCase.courtLocation?.slice(theCase.courtLocation.length - 1) ===
@@ -263,7 +263,9 @@ const constructRestrictionCourtRecordPdf = (
     addNormalJustifiedText(
       doc,
       formatMessage(courtRecord.registrarWitness, {
-        registrarNameAndTitle: `${theCase.registrar.name} ${theCase.registrar.title}`,
+        registrarNameAndTitle: `${theCase.registrar.name} ${lowercase(
+          theCase.registrar.title,
+        )}`,
       }),
     )
   }
@@ -340,9 +342,9 @@ const constructInvestigationCourtRecordPdf = (
     doc,
     formatMessage(courtRecord.intro, {
       courtDate: formatDate(theCase.courtStartDate, 'PPP'),
-      judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${
-        theCase.judge?.title ?? '?'
-      }`,
+      judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${lowercase(
+        theCase.judge?.title,
+      )}`,
       courtLocation: theCase.courtLocation
         ? ` ${lowercase(
             theCase.courtLocation?.slice(theCase.courtLocation.length - 1) ===
@@ -514,7 +516,9 @@ const constructInvestigationCourtRecordPdf = (
     addNormalJustifiedText(
       doc,
       formatMessage(courtRecord.registrarWitness, {
-        registrarNameAndTitle: `${theCase.registrar.name} ${theCase.registrar.title}`,
+        registrarNameAndTitle: `${theCase.registrar.name} ${lowercase(
+          theCase.registrar.title,
+        )}`,
       }),
     )
   }

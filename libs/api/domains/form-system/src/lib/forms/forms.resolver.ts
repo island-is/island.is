@@ -34,6 +34,7 @@ export class FormsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemDeleteForm',
+    nullable: true
   })
   async deleteForm(
     @Args('input', { type: () => DeleteFormInput }) input: DeleteFormInput,
@@ -64,6 +65,7 @@ export class FormsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemUpdateForm',
+    nullable: true
   })
   async updateForm(
     @Args('input', { type: () => UpdateFormInput }) input: UpdateFormInput,

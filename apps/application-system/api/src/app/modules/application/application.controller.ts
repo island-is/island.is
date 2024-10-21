@@ -27,6 +27,7 @@ import {
   ApiTags,
   ApiHeader,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger'
 import {
   ApplicationTemplateHelper,
@@ -103,13 +104,10 @@ import { ApplicationActionService } from './application-action.service'
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
 @ApiHeader({
-  name: 'authorization',
-  description: 'Bearer token authorization',
-})
-@ApiHeader({
   name: 'locale',
   description: 'Front-end language selected',
 })
+@ApiBearerAuth()
 @Controller()
 export class ApplicationController {
   constructor(

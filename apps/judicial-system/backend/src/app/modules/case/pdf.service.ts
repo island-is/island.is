@@ -2,6 +2,7 @@ import CryptoJS from 'crypto-js'
 
 import {
   BadRequestException,
+  forwardRef,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -22,6 +23,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
+  Confirmation,
   createCaseFilesRecord,
   createIndictment,
   createSubpoena,
@@ -29,10 +31,10 @@ import {
   getCustodyNoticePdfAsBuffer,
   getRequestPdfAsBuffer,
   getRulingPdfAsBuffer,
-  IndictmentConfirmation,
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { Defendant } from '../defendant'
+import { Subpoena, SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
 import { Case } from './models/case.model'
 
@@ -44,6 +46,8 @@ export class PdfService {
     private readonly awsS3Service: AwsS3Service,
     private readonly intlService: IntlService,
     private readonly userService: UserService,
+    @Inject(forwardRef(() => SubpoenaService))
+    private readonly subpoenaService: SubpoenaService,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -78,7 +82,7 @@ export class PdfService {
       ?.filter(
         (caseFile) =>
           caseFile.policeCaseNumber === policeCaseNumber &&
-          caseFile.category === CaseFileCategory.CASE_FILE &&
+          caseFile.category === CaseFileCategory.CASE_FILE_RECORD &&
           caseFile.type === 'application/pdf' &&
           caseFile.key &&
           caseFile.chapter !== null &&
@@ -206,7 +210,7 @@ export class PdfService {
       )
     }
 
-    let confirmation: IndictmentConfirmation | undefined = undefined
+    let confirmation: Confirmation | undefined = undefined
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
       if (theCase.indictmentHash) {
@@ -292,19 +296,63 @@ export class PdfService {
   async getSubpoenaPdf(
     theCase: Case,
     defendant: Defendant,
+    subpoena?: Subpoena,
     arraignmentDate?: Date,
     location?: string,
     subpoenaType?: SubpoenaType,
   ): Promise<Buffer> {
+    let confirmation: Confirmation | undefined = undefined
+
+    if (subpoena) {
+      if (subpoena.hash) {
+        const existingPdf = await this.tryGetPdfFromS3(
+          theCase,
+          `${theCase.id}/subpoena/${subpoena.id}.pdf`,
+        )
+
+        if (existingPdf) {
+          return existingPdf
+        }
+      }
+
+      confirmation = {
+        actor: theCase.judge?.name ?? '',
+        title: theCase.judge?.title,
+        institution: theCase.judge?.institution?.name ?? '',
+        date: subpoena.created,
+      }
+    }
+
     await this.refreshFormatMessage()
 
-    return createSubpoena(
+    const generatedPdf = await createSubpoena(
       theCase,
       defendant,
       this.formatMessage,
+      subpoena,
       arraignmentDate,
       location,
       subpoenaType,
+      confirmation,
     )
+
+    if (subpoena) {
+      const subpoenaHash = CryptoJS.MD5(
+        generatedPdf.toString('binary'),
+      ).toString(CryptoJS.enc.Hex)
+
+      // No need to wait for this to finish
+      this.subpoenaService
+        .setHash(subpoena.id, subpoenaHash)
+        .then(() =>
+          this.tryUploadPdfToS3(
+            theCase,
+            `${theCase.id}/subpoena/${subpoena.id}.pdf`,
+            generatedPdf,
+          ),
+        )
+    }
+
+    return generatedPdf
   }
 }

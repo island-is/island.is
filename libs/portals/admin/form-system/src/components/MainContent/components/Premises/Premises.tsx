@@ -1,41 +1,40 @@
 import { Stack, Checkbox, Box, Text } from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
-import { FormSystemDocumentType } from '@island.is/api/schema'
+import { FormSystemFormCertificationType, FormSystemCertificationTypeDtoTypeEnum, FormSystemForm } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
 import { m } from '../../../../lib/messages'
 
 export const Premises = () => {
-  const { control, documentTypes, updateSettings, controlDispatch } =
+  const { control, controlDispatch, certificationTypes: certTypes, formUpdate } =
     useContext(ControlContext)
-  const [formDocumentTypes, setFormDocumentTypes] = useState<
-    FormSystemDocumentType[]
+  const [formCertificationTypes, setFormCertificationTypes] = useState<
+    FormSystemFormCertificationType[]
   >(
-    control.form?.documentTypes?.filter(
-      (d): d is FormSystemDocumentType => d !== null,
+    control.form?.certificationTypes?.filter(
+      (d): d is FormSystemFormCertificationType => d !== null,
     ) ?? [],
   )
 
-  const handleCheckboxChange = (documentTypeId: number) => {
-    if (documentTypeId === -1) return
-    const newDocumentTypes = formDocumentTypes.some(
-      (f) => f?.id === documentTypeId,
+  const handleCheckboxChange = (certificationType?: FormSystemCertificationTypeDtoTypeEnum) => {
+    const newCertificationTypes = formCertificationTypes.some(
+      (f) => f?.type === certificationType,
     )
-      ? formDocumentTypes.filter((f) => f?.id !== documentTypeId)
+      ? formCertificationTypes.filter((f) => f?.type !== certificationType)
       : ([
-          ...formDocumentTypes,
-          documentTypes?.find((d) => d?.id === documentTypeId),
-        ].filter((d) => d !== undefined) as FormSystemDocumentType[])
-    setFormDocumentTypes(newDocumentTypes)
-    updateSettings({ ...control.form, documentTypes: newDocumentTypes })
+        ...formCertificationTypes,
+        certTypes?.find((d) => d?.type === certificationType),
+      ].filter((d) => d !== undefined) as FormSystemFormCertificationType[])
+    setFormCertificationTypes(newCertificationTypes)
+    const updatedForm: FormSystemForm = { ...control.form, certificationTypes: newCertificationTypes }
     controlDispatch({
       type: 'CHANGE_FORM_SETTINGS',
       payload: {
-        newForm: { ...control.form, documentTypes: newDocumentTypes },
+        newForm: updatedForm,
       },
     })
+    formUpdate(updatedForm)
   }
-
   const { formatMessage } = useIntl()
 
   return (
@@ -44,7 +43,7 @@ export const Premises = () => {
         <Text variant="h4">{formatMessage(m.premisesTitle)}</Text>
       </Box>
       <Stack space={2}>
-        {documentTypes?.map((d, i) => {
+        {certTypes?.map((d, i) => {
           return (
             <Checkbox
               key={i}
@@ -54,8 +53,8 @@ export const Premises = () => {
               rightContent={d?.description?.is}
               value={d?.type ?? ''}
               large
-              checked={formDocumentTypes?.some((f) => f?.id === d?.id)}
-              onChange={() => handleCheckboxChange(d?.id ?? -1)}
+              checked={formCertificationTypes?.some((f) => f?.type === d?.type)}
+              onChange={() => handleCheckboxChange(d?.type ?? undefined)}
             />
           )
         })}

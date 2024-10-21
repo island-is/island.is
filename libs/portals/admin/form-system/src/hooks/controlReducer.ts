@@ -5,6 +5,7 @@ import {
   FormSystemListItem,
   FormSystemSection,
   FormSystemFieldSettings,
+  FormSystemSectionDtoSectionTypeEnum,
 } from '@island.is/api/schema'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
@@ -195,18 +196,24 @@ export const controlReducer = (
       }
     }
     // Sections
-    case 'ADD_SECTION':
+    case 'ADD_SECTION': {
+      const newSection = {
+        ...action.payload.section,
+        displayOrder: sections?.length ?? 0,
+        sectionType: FormSystemSectionDtoSectionTypeEnum.Input
+      }
       return {
         ...state,
         activeItem: {
           type: 'Section',
-          data: action.payload.section,
+          data: newSection,
         },
         form: {
           ...form,
-          sections: [...(sections || []), action.payload.section],
+          sections: [...(sections || []), newSection],
         },
       }
+    }
     case 'REMOVE_SECTION': {
       const newSections = state.form.sections?.filter(
         (section) => section?.id !== action.payload.id,
@@ -221,7 +228,8 @@ export const controlReducer = (
     }
 
     // Screens
-    case 'ADD_SCREEN':
+    case 'ADD_SCREEN': {
+      console.log('action.payload.screen', action.payload.screen)
       return {
         ...state,
         activeItem: {
@@ -233,6 +241,7 @@ export const controlReducer = (
           screens: [...(screens || []), action.payload.screen],
         },
       }
+    }
     case 'REMOVE_SCREEN': {
       const newScreens = state.form.screens?.filter(
         (screen) => screen?.id !== action.payload.id,
@@ -448,10 +457,10 @@ export const controlReducer = (
         ...state,
         form: {
           ...form,
-          stopProgressOnValidatingStep: action.payload.value,
+          stopProgressOnValidatingScreen: action.payload.value,
         },
       }
-      action.payload.update({ ...updatedState.form }) // TODO: missing endpoint
+      action.payload.update({ ...updatedState.form })
       return updatedState
     }
 
@@ -514,7 +523,7 @@ export const controlReducer = (
         ...activeItem,
         data: {
           ...currentData,
-          multiSet: action.payload.checked ? 1 : 0,
+          multiset: action.payload.checked ? 1 : 0,
         },
       }
       action.payload.update(newActive)
@@ -831,10 +840,11 @@ export const controlReducer = (
       const overIndex = sections?.findIndex(
         (section) => section?.id === action.payload.overId,
       ) as number
-      const updatedScreens = sections as FormSystemScreen[]
+      const updatedScreens = screens as FormSystemScreen[]
       if (sections && sections[overIndex]) {
         updatedScreens[activeIndex].sectionId = action.payload.overId as string
       }
+      console.log(arrayMove(updatedScreens, activeIndex, overIndex))
       return {
         ...state,
         form: {

@@ -10,7 +10,11 @@ import Reanimated, {
   useAnimatedProps,
   useSharedValue,
 } from 'react-native-reanimated'
-import { Gesture, GestureDetector } from 'react-native-gesture-handler'
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from 'react-native-gesture-handler'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -315,28 +319,30 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#000' }}>
-      {hasPermission && device && (
-        <GestureDetector gesture={gesture}>
-          <ReanimatedCamera
-            style={StyleSheet.absoluteFill}
-            device={device}
-            isActive={active}
-            torch={torch ? 'on' : 'off'}
-            codeScanner={codeScanner}
-            animatedProps={animatedZoom}
-          />
-        </GestureDetector>
-      )}
-      {renderBubble()}
-      <BottomRight>
-        <TouchableOpacity onPress={onFlashlightPress}>
-          <FlashLight>
-            <FlashImg source={flashligth} resizeMode="contain" />
-          </FlashLight>
-        </TouchableOpacity>
-      </BottomRight>
-    </View>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: '#000' }}>
+        {hasPermission && device && (
+          <GestureDetector gesture={gesture}>
+            <ReanimatedCamera
+              style={StyleSheet.absoluteFill}
+              device={device}
+              isActive={active}
+              torch={torch ? 'on' : 'off'}
+              codeScanner={codeScanner}
+              animatedProps={animatedZoom}
+            />
+          </GestureDetector>
+        )}
+        {renderBubble()}
+        <BottomRight>
+          <TouchableOpacity onPress={onFlashlightPress}>
+            <FlashLight>
+              <FlashImg source={flashligth} resizeMode="contain" />
+            </FlashLight>
+          </TouchableOpacity>
+        </BottomRight>
+      </View>
+    </GestureHandlerRootView>
   )
 }
 

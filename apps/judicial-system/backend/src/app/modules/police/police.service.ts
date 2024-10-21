@@ -10,6 +10,7 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  NotImplementedException,
   ServiceUnavailableException,
 } from '@nestjs/common'
 
@@ -21,13 +22,23 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  ServiceStatus,
+} from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
+import { Case } from '../case'
+import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
+import { Subpoena, SubpoenaService } from '../subpoena'
+import { UpdateSubpoenaDto } from '../subpoena/dto/updateSubpoena.dto'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
+import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
@@ -91,6 +102,9 @@ export class PoliceService {
   private agent: Agent
   private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
 
+  private policeCaseFileType = z.object({
+    kodi: z.string().nullish(),
+  })
   private policeCaseFileStructure = z.object({
     rvMalSkjolMals_ID: z.number(),
     heitiSkjals: z.string(),
@@ -98,6 +112,7 @@ export class PoliceService {
     domsSkjalsFlokkun: z.optional(z.string()),
     dagsStofnad: z.optional(z.string()),
     skjalasnid: z.optional(z.string()),
+    tegundSkjals: z.optional(this.policeCaseFileType),
   })
   private readonly crimeSceneStructure = z.object({
     vettvangur: z.optional(z.string()),
@@ -114,6 +129,18 @@ export class PoliceService {
     skjol: z.optional(z.array(this.policeCaseFileStructure)),
     malseinings: z.optional(z.array(this.crimeSceneStructure)),
   })
+  private subpoenaStructure = z.object({
+    acknowledged: z.boolean().nullish(),
+    comment: z.string().nullish(),
+    defenderChoice: z.string().nullish(),
+    defenderNationalId: z.string().nullish(),
+    prosecutedConfirmedSubpoenaThroughIslandis: z.boolean().nullish(),
+    servedBy: z.string().nullish(),
+    servedAt: z.string().nullish(),
+    delivered: z.boolean().nullish(),
+    deliveredOnPaper: z.boolean().nullish(),
+    deliveredToLawyer: z.boolean().nullish(),
+  })
 
   constructor(
     @Inject(policeModuleConfig.KEY)
@@ -122,6 +149,8 @@ export class PoliceService {
     private readonly eventService: EventService,
     @Inject(forwardRef(() => AwsS3Service))
     private readonly awsS3Service: AwsS3Service,
+    @Inject(forwardRef(() => SubpoenaService))
+    private readonly subpoenaService: SubpoenaService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.xRoadPath = createXRoadAPIPath(
@@ -257,6 +286,7 @@ export class PoliceService {
                 policeCaseNumber: file.malsnumer,
                 chapter: getChapter(file.domsSkjalsFlokkun),
                 displayDate: file.dagsStofnad,
+                type: file.tegundSkjals?.kodi ?? undefined,
               })
             }
           })
@@ -302,6 +332,91 @@ export class PoliceService {
         throw new BadGatewayException({
           ...reason,
           message: `Failed to get police case files for case ${caseId}`,
+          detail: reason.message,
+        })
+      })
+  }
+
+  async getSubpoenaStatus(subpoenaId: string, user: User): Promise<Subpoena> {
+    return this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
+    )
+      .then(async (res: Response) => {
+        if (res.ok) {
+          const response: z.infer<typeof this.subpoenaStructure> =
+            await res.json()
+
+          this.subpoenaStructure.parse(response)
+
+          const subpoenaToUpdate = await this.subpoenaService.findBySubpoenaId(
+            subpoenaId,
+          )
+
+          const serviceStatus = response.deliveredToLawyer
+            ? ServiceStatus.DEFENDER
+            : response.prosecutedConfirmedSubpoenaThroughIslandis
+            ? ServiceStatus.ELECTRONICALLY
+            : response.deliveredOnPaper || response.delivered === true
+            ? ServiceStatus.IN_PERSON
+            : response.acknowledged === false && response.delivered === false
+            ? ServiceStatus.FAILED
+            : // TODO: handle expired
+              undefined
+
+          if (serviceStatus === undefined) {
+            return subpoenaToUpdate
+          }
+
+          const updatedSubpoena = await this.subpoenaService.update(
+            subpoenaToUpdate,
+            {
+              comment: response.comment ?? undefined,
+              servedBy: response.servedBy ?? undefined,
+              defenderNationalId: response.defenderNationalId ?? undefined,
+              serviceDate: response.servedAt ?? undefined,
+              serviceStatus,
+            } as UpdateSubpoenaDto,
+          )
+
+          return updatedSubpoena
+        }
+
+        const reason = await res.text()
+
+        // The police system does not provide a structured error response.
+        // When a subpoena does not exist, a stack trace is returned.
+        throw new NotFoundException({
+          message: `Subpoena with id ${subpoenaId} does not exist`,
+          detail: reason,
+        })
+      })
+      .catch((reason) => {
+        if (reason instanceof NotFoundException) {
+          throw reason
+        }
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case does not exist
+          throw new NotFoundException({
+            ...reason,
+            message: `Subpoena ${subpoenaId} does not exist`,
+            detail: reason.message,
+          })
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to get subpoena',
+          {
+            subpoenaId,
+            actor: user.name,
+            institution: user.institution?.name,
+          },
+          reason,
+        )
+
+        throw new BadGatewayException({
+          ...reason,
+          message: `Failed to get subpoena ${subpoenaId}`,
           detail: reason.message,
         })
       })
@@ -499,5 +614,84 @@ export class PoliceService {
 
         return false
       })
+  }
+
+  async createSubpoena(
+    workingCase: Case,
+    defendant: Defendant,
+    subpoena: string,
+    indictment: string,
+    user: User,
+  ): Promise<CreateSubpoenaResponse> {
+    if (!this.config.policeCreateSubpoenaApiAvailable) {
+      throw new NotImplementedException(
+        'Police create subpoena API not available in current environment',
+      )
+    }
+
+    const { courtCaseNumber, dateLogs, prosecutor, policeCaseNumbers, court } =
+      workingCase
+    const { nationalId: defendantNationalId } = defendant
+    const { name: actor } = user
+
+    const normalizedNationalId =
+      normalizeAndFormatNationalId(defendantNationalId)[0]
+
+    const documentName = `Fyrirkall í máli ${workingCase.courtCaseNumber}`
+    const arraignmentInfo = dateLogs?.find(
+      (dateLog) => dateLog.dateType === 'ARRAIGNMENT_DATE',
+    )
+    try {
+      const res = await this.fetchPoliceCaseApi(
+        `${this.xRoadPath}/CreateSubpoena`,
+        {
+          method: 'POST',
+          headers: {
+            accept: '*/*',
+            'Content-Type': 'application/json',
+            'X-Road-Client': this.config.clientId,
+            'X-API-KEY': this.config.policeApiKey,
+          },
+          agent: this.agent,
+          body: JSON.stringify({
+            documentName: documentName,
+            documentsBase64: [subpoena, indictment],
+            courtRegistrationDate: arraignmentInfo?.date,
+            prosecutorSsn: prosecutor?.nationalId,
+            prosecutedSsn: normalizedNationalId,
+            courtAddress: court?.address,
+            courtRoomNumber: arraignmentInfo?.location || '',
+            courtCeremony: 'Þingfesting',
+            lokeCaseNumber: policeCaseNumbers?.[0],
+            courtCaseNumber: courtCaseNumber,
+            fileTypeCode: 'BRTNG',
+            rvgCaseId: workingCase.id,
+          }),
+        } as RequestInit,
+      )
+
+      if (res.ok) {
+        const subpoenaResponse = await res.json()
+        return { subpoenaId: subpoenaResponse.id }
+      }
+
+      throw await res.text()
+    } catch (error) {
+      this.logger.error(`Failed create subpoena for case ${workingCase.id}`, {
+        error,
+      })
+
+      this.eventService.postErrorEvent(
+        'Failed to create subpoena',
+        {
+          caseId: workingCase.id,
+          defendantId: defendant?.id,
+          actor,
+        },
+        error,
+      )
+
+      throw error
+    }
   }
 }

@@ -1,11 +1,12 @@
 import { gql } from '@apollo/client'
-import { FormFragment } from '../fragments/form'
+import { FieldFragment } from '../fragments/field'
+
 
 export const CREATE_FIELD = gql`
   mutation FormSystemCreateField($input: FormSystemCreateFieldInput!) {
     formSystemCreateField(input: $input) {
-      ...Form
+      ...Field
     }
   }
-  ${FormFragment}
+  ${FieldFragment}
 `

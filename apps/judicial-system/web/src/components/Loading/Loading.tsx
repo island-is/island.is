@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { Box, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Loading.css'

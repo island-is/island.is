@@ -2,11 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Section } from './models/section.model'
 import { CreateSectionDto } from './models/dto/createSection.dto'
-import { Screen } from '../screens/models/screen.model'
-import { Field } from '../fields/models/field.model'
 import { UpdateSectionDto } from './models/dto/updateSection.dto'
 import { SectionDto } from './models/dto/section.dto'
 import { UpdateSectionsDisplayOrderDto } from './models/dto/updateSectionsDisplayOrder.dto'
+import defaults from 'lodash/defaults'
+import pick from 'lodash/pick'
+import zipObject from 'lodash/zipObject'
 
 @Injectable()
 export class SectionsService {
@@ -15,39 +16,29 @@ export class SectionsService {
     private readonly sectionModel: typeof Section,
   ) {}
 
-  async findAll(): Promise<Section[]> {
-    return await this.sectionModel.findAll()
-  }
-
-  async findOne(id: string): Promise<Section> {
-    const section = await this.sectionModel.findByPk(id, {
-      include: [
-        {
-          model: Screen,
-          as: 'screens',
-          include: [{ model: Field, as: 'fields' }],
-        },
-      ],
-    })
-
-    if (!section) {
-      throw new NotFoundException(`Section with id '${id}' not found`)
-    }
-
-    return section
-  }
-
-  async create(createSectionDto: CreateSectionDto): Promise<Section> {
+  async create(createSectionDto: CreateSectionDto): Promise<SectionDto> {
     const section = createSectionDto as Section
     const newSection: Section = new this.sectionModel(section)
-    return await newSection.save()
+    await newSection.save()
+
+    const keys = ['id', 'formId']
+    const sectionDto: SectionDto = defaults(
+      pick(newSection, keys),
+      zipObject(keys, Array(keys.length).fill(null)),
+    ) as SectionDto
+
+    return sectionDto
   }
 
   async update(
     id: string,
     updateSectionDto: UpdateSectionDto,
   ): Promise<SectionDto> {
-    const section = await this.findOne(id)
+    const section = await this.sectionModel.findByPk(id)
+
+    if (!section) {
+      throw new NotFoundException(`Section with id '${id}' not found`)
+    }
 
     section.name = updateSectionDto.name
     section.waitingText = updateSectionDto.waitingText
@@ -55,13 +46,11 @@ export class SectionsService {
 
     await section.save()
 
-    const sectionDto: SectionDto = {
-      id: section.id,
-      name: section.name,
-      sectionType: section.sectionType,
-      displayOrder: section.displayOrder,
-      waitingText: section.waitingText,
-    }
+    const keys = ['id', 'name', 'sectionType', 'displayOrder', 'waitingText']
+    const sectionDto: SectionDto = defaults(
+      pick(section, keys),
+      zipObject(keys, Array(keys.length).fill(null)),
+    ) as SectionDto
 
     return sectionDto
   }
@@ -90,7 +79,12 @@ export class SectionsService {
   }
 
   async delete(id: string): Promise<void> {
-    const section = await this.findOne(id)
-    section?.destroy()
+    const section = await this.sectionModel.findByPk(id)
+
+    if (!section) {
+      throw new NotFoundException(`Section with id '${id}' not found`)
+    }
+
+    section.destroy()
   }
 }

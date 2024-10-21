@@ -1,5 +1,4 @@
 import { ApolloProvider } from '@apollo/client'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -26,11 +25,9 @@ export function registerComponent<Props>(
             <NavigationProvider value={{ componentId: props.componentId }}>
               <FeatureFlagProvider>
                 <ApolloProvider client={client}>
-                  <GestureHandlerRootView style={{ flex: 1 }}>
-                    <OfflineHoc>
-                      <Component {...props} />
-                    </OfflineHoc>
-                  </GestureHandlerRootView>
+                  <OfflineHoc>
+                    <Component {...props} />
+                  </OfflineHoc>
                 </ApolloProvider>
               </FeatureFlagProvider>
             </NavigationProvider>

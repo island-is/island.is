@@ -1123,10 +1123,12 @@
         "type": "object",
         "properties": {
           "is": {
-            "type": "string"
+            "type": "string",
+            "default": ""
           },
           "en": {
-            "type": "string"
+            "type": "string",
+            "default": ""
           }
         },
         "required": [

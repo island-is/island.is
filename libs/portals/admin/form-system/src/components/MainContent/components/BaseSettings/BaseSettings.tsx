@@ -110,7 +110,7 @@ export const BaseSettings = () => {
         <Column>
           <Checkbox
             label={formatMessage(m.allowProgress)}
-            checked={form.stopProgressOnValidatingScreen ?? false}
+            checked={form.stopProgressOnValidatingScreen !== null && form.stopProgressOnValidatingScreen !== undefined ? form.stopProgressOnValidatingScreen : false}
             onChange={(e) => {
               controlDispatch({
                 type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN',

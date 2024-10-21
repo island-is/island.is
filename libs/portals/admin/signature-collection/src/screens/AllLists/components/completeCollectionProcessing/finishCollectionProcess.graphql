@@ -1,5 +1,0 @@
-mutation processCollection($input: SignatureCollectionIdInput!) {
-  signatureCollectionAdminProcess(input: $input) {
-    success
-  }
-}

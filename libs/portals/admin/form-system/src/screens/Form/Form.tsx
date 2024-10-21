@@ -10,11 +10,12 @@ export const Form = () => {
   const { formBuilder } = useLoaderData() as FormLoaderResponse
   const { form } = formBuilder
 
-  if (!form) {
+  if (!form || !formBuilder) {
     return <div>Loading...</div>
   }
+  console.log('Form', form)
   return (
-    <FormProvider form={formBuilder}>
+    <FormProvider formBuilder={formBuilder}>
       <FormLayout />
     </FormProvider>
   )

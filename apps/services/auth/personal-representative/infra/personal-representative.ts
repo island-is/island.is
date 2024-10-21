@@ -1,5 +1,4 @@
 import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { MissingSetting } from '../../../../../infra/src/dsl/types/input-types'
 import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
 const REDIS_NODE_CONFIG = {
@@ -42,10 +41,18 @@ export const serviceSetup =
           prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
         },
         COMPANY_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
+        SYSLUMENN_HOST: {
+          dev: 'https://api.syslumenn.is/staging',
+          staging: 'https://api.syslumenn.is/staging',
+          prod: 'https://api.syslumenn.is/api',
+        },
+        SYSLUMENN_TIMEOUT: '3000',
       })
       .secrets({
         IDENTITY_SERVER_CLIENT_SECRET:
           '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
+        SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
+        SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD',
       })
       .xroad(Base, Client, RskProcuring)
       .ingress({
@@ -58,15 +65,6 @@ export const serviceSetup =
           },
           paths: ['/'],
           public: false,
-        },
-        demo: {
-          host: {
-            dev: 'personal-representative-xrd.dev01.devland.is',
-            staging: MissingSetting,
-            prod: MissingSetting,
-          },
-          paths: ['/'],
-          public: true,
         },
       })
       .readiness('/health/check')

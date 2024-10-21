@@ -18,6 +18,7 @@ import { ServicesResolver } from './services/services.resolver'
 import { ServicesService } from './services/services.service'
 import { ApplicantsResolver } from './applicants/applicants.resolver'
 import { ApplicantsService } from './applicants/applicants.service'
+import { LoggingModule } from '@island.is/logging'
 
 @Module({
   providers: [
@@ -41,6 +42,6 @@ import { ApplicantsService } from './applicants/applicants.service'
     ApplicantsService,
   ],
   exports: [],
-  imports: [FormSystemClientModule],
+  imports: [FormSystemClientModule, LoggingModule],
 })
 export class FormSystemModule { }

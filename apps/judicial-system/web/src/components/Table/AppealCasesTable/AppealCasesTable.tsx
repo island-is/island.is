@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react'
+import { FC, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -17,7 +17,6 @@ import {
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCaseList,
-  useSortAppealCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -35,8 +34,8 @@ const AppealCasesTable: FC<Props> = (props) => {
   const { cases, loading, showingCompletedCases } = props
   const { formatMessage } = useIntl()
   const { isOpeningCaseId, handleOpenCase, showLoading } = useCaseList()
-  const { sortedData } = useSortAppealCases('appealedDate', 'descending', cases)
   const { openCaseInNewTabMenuItem } = useContextMenu()
+
   const activeCasesData = useMemo(
     () =>
       cases.sort((a: CaseListEntry, b: CaseListEntry) =>
@@ -92,7 +91,7 @@ const AppealCasesTable: FC<Props> = (props) => {
               : { isSortable: true, key: 'appealedDate' },
           },
         ]}
-        data={sortedData}
+        data={activeCasesData}
         generateContextMenuItems={(row) => {
           return [openCaseInNewTabMenuItem(row.id)]
         }}

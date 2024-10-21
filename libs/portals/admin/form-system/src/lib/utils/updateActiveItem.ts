@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LazyQueryExecFunction, OperationVariables } from '@apollo/client'
+import { ApolloCache, DefaultContext, MutationFunctionOptions, MutationTuple, OperationVariables } from '@apollo/client'
 import { ActiveItem } from './interfaces'
 import {
   FormSystemSection,
@@ -7,14 +7,18 @@ import {
   FormSystemField,
 } from '@island.is/api/schema'
 
-export const updateActiveItemFn = (
+
+export const updateActiveItemFn = async (
   activeItem: ActiveItem,
-  updateSection: LazyQueryExecFunction<any, OperationVariables>,
-  updateScreen: LazyQueryExecFunction<any, OperationVariables>,
-  updateField: LazyQueryExecFunction<any, OperationVariables>,
+  sectionMutation: MutationTuple<any, OperationVariables, DefaultContext, ApolloCache<any>>,
+  screenMutation: MutationTuple<any, OperationVariables, DefaultContext, ApolloCache<any>>,
+  fieldMutation: MutationTuple<any, OperationVariables, DefaultContext, ApolloCache<any>>,
   currentActiveItem?: ActiveItem,
 ) => {
   const { type } = activeItem
+  const [updateSection, { error: sectionError }] = sectionMutation
+  const [updateScreen, { error: screenError }] = screenMutation
+  const [updateField, { error: fieldError }] = fieldMutation
   try {
     if (type === 'Section') {
       const { id, name, waitingText } =
@@ -24,35 +28,35 @@ export const updateActiveItemFn = (
       updateSection({
         variables: {
           input: {
-            stepId: id,
-            stepUpdateDto: {
-              id: id,
-              name: name,
-              type: type,
-              waitingText: waitingText,
-            },
+            id,
+            updateSectionDto: {
+              name,
+              waitingText
+            }
           },
         },
       })
     } else if (type === 'Screen') {
-      const { id, name, displayOrder, multiSet, sectionId } =
+      const { id, name, multiset, callRuleset } =
         currentActiveItem
           ? (currentActiveItem.data as FormSystemScreen)
           : (activeItem.data as FormSystemScreen)
+      console.log('callRuleset', callRuleset)
       updateScreen({
         variables: {
           input: {
-            id: activeItem?.data?.id,
-            screenUpdateDto: {
-              id,
-              name: name,
-              displayOrder,
-              multiSet,
-              sectionId,
+            id,
+            updateScreenDto: {
+              name,
+              multiset: multiset ? multiset : 0,
+              callRuleset
             },
           },
-        },
+        }
       })
+      if (screenError) {
+        console.error('Error updating screen: ', screenError)
+      }
     } else if (type === 'Field') {
       const {
         id,
@@ -81,6 +85,9 @@ export const updateActiveItemFn = (
       })
     }
   } catch (e) {
+    if (e.GraphQLError) {
+      console.error("GraphQL errors:", e.graphQLErrors)
+    }
     console.error('Error updating active item: ', e)
   }
 }

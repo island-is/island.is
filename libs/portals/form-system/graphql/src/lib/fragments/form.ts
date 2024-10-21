@@ -1,11 +1,11 @@
 import { gql } from '@apollo/client'
 import { LanguageFields } from './languageFields'
 import { CertificateTypeFragment } from './certificateType'
-import { ApplicantFragment } from './applicant'
 import { FieldFragment } from './field'
 import { ScreenFragment } from './screen'
 import { SectionFragment } from './section'
 import { DependencyFragment } from './dependency'
+import { FormApplicantFragment } from './formApplicant'
 
 export const FormFragment = gql`
   fragment Form on FormSystemForm {
@@ -29,7 +29,7 @@ export const FormFragment = gql`
       ...CertificateType
     }
     applicants {
-      ...Applicant
+      ...FormApplicant
     }
     sections {
       ...Section
@@ -46,7 +46,7 @@ export const FormFragment = gql`
   }
   ${LanguageFields}
   ${CertificateTypeFragment}
-  ${ApplicantFragment}
+  ${FormApplicantFragment}
   ${SectionFragment}
   ${ScreenFragment}
   ${FieldFragment}

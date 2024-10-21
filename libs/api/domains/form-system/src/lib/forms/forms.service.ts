@@ -1,11 +1,12 @@
 import { Injectable, Inject } from '@nestjs/common'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
 import { handle4xx } from '../../utils/errorHandler'
 import {
+  CreateFormDto,
   FormsApi,
-  FormsControllerCreateRequest,
   FormsControllerDeleteRequest,
   FormsControllerFindAllRequest,
   FormsControllerFindOneRequest,
@@ -23,8 +24,7 @@ import { Form, FormResponse } from '../../models/form.model'
 @Injectable()
 export class FormsService {
   constructor(
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private formsService: FormsApi,
   ) { }
 
@@ -34,8 +34,8 @@ export class FormsService {
       error: JSON.stringify(error),
       category: 'forms-service',
     }
-    this.logger.error(errorDetail || 'Error in forms service', err)
-
+    //this.logger.error(errorDetail || 'Error in forms service', err)
+    console.error(error)
     throw new ApolloError(error.message)
   }
 
@@ -45,7 +45,9 @@ export class FormsService {
 
   async createForm(auth: User, input: CreateFormInput): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
-      .formsControllerCreate(input as FormsControllerCreateRequest)
+      .formsControllerCreate({
+        createFormDto: input as CreateFormDto
+      })
       .catch((e) => handle4xx(e, this.handleError, 'failed to create form'))
 
     if (!response || response instanceof ApolloError) {
@@ -70,6 +72,7 @@ export class FormsService {
   async getForm(auth: User, input: GetFormInput): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
       .formsControllerFindOne(input as FormsControllerFindOneRequest)
+      //.catch((e) => console.error(e))
       .catch((e) => handle4xx(e, this.handleError, 'failed to get form'))
 
     if (!response || response instanceof ApolloError) {
@@ -100,7 +103,7 @@ export class FormsService {
       .catch((e) => handle4xx(e, this.handleError, 'failed to update form'))
 
     if (!response || response instanceof ApolloError) {
-      return
+      return void 0
     }
 
     return response

@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactElement } from 'react'
+import { cloneElement, forwardRef, ReactElement } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { Menu, MenuButton, MenuItem, useMenuState } from 'reakit/Menu'
@@ -98,9 +98,7 @@ const ContextMenu = forwardRef<HTMLElement, ContextMenuProps & TestSupport>(
             {...disclosure.props}
             dataTestId={dataTestId}
           >
-            {(disclosureProps) =>
-              React.cloneElement(disclosure, disclosureProps)
-            }
+            {(disclosureProps) => cloneElement(disclosure, disclosureProps)}
           </MenuButton>
         ) : (
           <MenuButton as={Button} icon="add" {...menu} dataTestId={dataTestId}>

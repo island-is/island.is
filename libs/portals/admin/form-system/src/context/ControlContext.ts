@@ -3,6 +3,7 @@ import { ControlAction, ControlState } from '../hooks/controlReducer'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import {
   FormSystemFieldType,
+  FormSystemForm,
   FormSystemFormCertificationType,
   FormSystemListType,
 } from '@island.is/api/schema'
@@ -29,7 +30,7 @@ export interface IControlContext {
   setSelectStatus: Dispatch<NavbarSelectStatus>
   inListBuilder: boolean
   setInListBuilder: Dispatch<boolean>
-  formUpdate: () => void
+  formUpdate: (updatedForm?: FormSystemForm) => void
 }
 
 export const ControlContext = createContext<IControlContext>({

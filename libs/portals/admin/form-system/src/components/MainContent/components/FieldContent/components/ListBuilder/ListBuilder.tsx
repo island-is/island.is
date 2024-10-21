@@ -25,8 +25,7 @@ import { SortableContext } from '@dnd-kit/sortable'
 import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
 import { m } from '../../../../../../lib/messages'
-import { useLazyQuery } from '@apollo/client'
-// eslint-disable-next-line @nx/enforce-module-boundaries
+import { useMutation } from '@apollo/client'
 import { CREATE_LIST_ITEM, UPDATE_LIST_ITEM_DISPLAY_ORDER } from '@island.is/form-system/graphql'
 
 export const ListBuilder = () => {
@@ -54,8 +53,8 @@ export const ListBuilder = () => {
 
   const { formatMessage } = useIntl()
 
-  const [createListItem] = useLazyQuery(CREATE_LIST_ITEM)
-  const [updateListItemDisplayOrder] = useLazyQuery(UPDATE_LIST_ITEM_DISPLAY_ORDER)
+  const [createListItem] = useMutation(CREATE_LIST_ITEM)
+  const [updateListItemDisplayOrder] = useMutation(UPDATE_LIST_ITEM_DISPLAY_ORDER)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -121,9 +120,11 @@ export const ListBuilder = () => {
     updateListItemDisplayOrder({
       variables: {
         input: {
-          listItemsDisplayOrderDto: listItems.filter(l => l !== null).map(l => l.id)
-        }
-      }
+          listItemsDisplayOrderDto: listItems
+            .filter((l): l is FormSystemListItem => l !== null && l !== undefined)
+            .map((l) => l.id),
+        },
+      },
     })
   }
 

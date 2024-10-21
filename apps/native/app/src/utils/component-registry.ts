@@ -15,8 +15,12 @@ export const ComponentRegistry = {
   OnboardingBiometricsScreen: `${prefix}.screens.OnboardingBiometrics`,
   OnboardingNotificationsScreen: `${prefix}.screens.OnboardingNotifications`,
   HomeScreen: `${prefix}.screens.Home`,
+  HomeOptionsScreen: `${prefix}.screens.HomeOptions`,
   InboxScreen: `${prefix}.screens.Inbox`,
   ApplicationsScreen: `${prefix}.screens.ApplicationsScreen`,
+  ApplicationsCompletedScreen: `${prefix}.screens.ApplicationsCompletedScreen`,
+  ApplicationsInProgressScreen: `${prefix}.screens.ApplicationsInProgressScreen`,
+  ApplicationsIncompleteScreen: `${prefix}.screens.ApplicationsIncompleteScreen`,
   WalletScreen: `${prefix}.screens.Wallet`,
   WalletPassScreen: `${prefix}.screens.WalletPass`,
   WalletPassportScreen: `${prefix}.screens.WalletPassport`,
@@ -43,13 +47,15 @@ export const ComponentRegistry = {
   FinanceStatusDetailScreen: `${prefix}.screens.FinanceStatusDetailScreen`,
   InboxFilterScreen: `${prefix}.screens.InboxFilterScreen`,
   AirDiscountScreen: `${prefix}.screens.AirDiscountScreen`,
+  PasskeyScreen: `${prefix}.screens.PasskeyScreen`,
+  UpdateAppScreen: `${prefix}.screens.UpdateAppScreen`,
+  HealthOverviewScreen: `${prefix}.screens.HealthOverviewScreen`,
 
   // custom navigation icons
   OfflineIcon: `${prefix}.navigation.OfflineIcon`,
 
   // overlays
   OfflineBanner: `${prefix}.overlay.OfflineBanner`,
-  PasskeyScreen: `${prefix}.screens.PasskeyScreen`,
 }
 
 export const ButtonRegistry = {
@@ -64,6 +70,8 @@ export const ButtonRegistry = {
   ScanLicenseDoneButton: `${prefix}.button.ScanLicenseDoneButton`,
   DocumentStarButton: `${prefix}.button.DocumentStarButton`,
   DocumentArchiveButton: `${prefix}.button.DocumentArchiveButton`,
+  InboxFilterClearButton: `${prefix}.button.InboxFilterClearButton`,
+  HomeScreenOptionsButton: `${prefix}.button.HomeScreenOptionsButton`,
 }
 
 export const StackRegistry = {

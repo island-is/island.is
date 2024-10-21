@@ -1,4 +1,4 @@
-import React, { FC, useContext, useMemo } from 'react'
+import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { AnimatePresence } from 'framer-motion'
@@ -36,7 +36,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCaseList,
-  useSortCases,
+  useSort,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -59,8 +59,27 @@ const PastCasesTable: FC<Props> = ({ cases, loading = false, testid }) => {
   const { user } = useContext(UserContext)
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
-  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
-    useSortCases('created', 'descending', cases)
+
+  const getColumnValue = (
+    entry: CaseListEntry,
+    column: keyof CaseListEntry,
+  ) => {
+    if (
+      column === 'defendants' &&
+      entry.defendants &&
+      entry.defendants.length > 0
+    ) {
+      return entry.defendants[0].name ?? ''
+    }
+    return entry.created
+  }
+
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } = useSort(
+    'created',
+    'descending',
+    cases,
+    getColumnValue,
+  )
 
   const {
     withdrawAppealMenuOption,

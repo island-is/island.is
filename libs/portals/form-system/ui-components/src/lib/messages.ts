@@ -31,7 +31,7 @@ export const m = defineMessages({
   },
   nameEnglish: {
     id: 'portals-admin.form-system:name-english',
-    defaultMessage: 'Heiti (enska)',
+    defaultMessage: 'Heiti á ensku',
   },
   applicationName: {
     id: 'portals-admin.form-system:application-name',
@@ -39,7 +39,7 @@ export const m = defineMessages({
   },
   applicationNameEnglish: {
     id: 'portals-admin.form-system:application-name-english',
-    defaultMessage: 'Heiti umsóknar (enska)',
+    defaultMessage: 'Heiti umsóknar á ensku',
   },
   description: {
     id: 'portals-admin.form-system:description',
@@ -47,7 +47,7 @@ export const m = defineMessages({
   },
   descriptionEnglish: {
     id: 'portals-admin.form-system:description-english',
-    defaultMessage: 'Lýsing (enska)',
+    defaultMessage: 'Lýsing á ensku',
   },
   daysUntilExpiration: {
     id: 'portals-admin.form-system:days-until-expiration',
@@ -279,7 +279,7 @@ export const m = defineMessages({
   },
   buttonTextEnglish: {
     id: 'portals-admin.form-system:button-text-english',
-    defaultMessage: 'Hnappatexti (enska)',
+    defaultMessage: 'Hnappatexti á ensku',
   },
   url: {
     id: 'portals-admin.form-system:url',
@@ -303,7 +303,7 @@ export const m = defineMessages({
   },
   infoEnglish: {
     id: 'portals-admin.form-system:info-english',
-    defaultMessage: 'Upplýsingabóla (enska)',
+    defaultMessage: 'Upplýsingabóla á ensku',
   },
   addListItem: {
     id: 'portals-admin.form-system:add-list-item',

@@ -10,96 +10,96 @@ import {
 export class UpdateFieldSettingsDto {
   @IsOptional()
   @IsNumber()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   minValue?: number
 
   @IsOptional()
   @IsNumber()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   maxValue?: number
 
   @IsOptional()
   @IsNumber()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   minLength?: number
 
   @IsOptional()
   @IsNumber()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   maxLength?: number
 
   @IsOptional()
   @IsDate()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Date })
   minDate?: Date
 
   @IsOptional()
   @IsDate()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Date })
   maxDate?: Date
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   minAmount?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   maxAmount?: string
 
   @IsOptional()
   @IsNumber()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   year?: number
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   hasLink?: boolean
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   url?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   buttonText?: string
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   hasPropertyInput?: boolean
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   hasPropertyList?: boolean
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   listType?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   fileTypes?: string
 
   @IsOptional()
   @IsNumber()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   fileMaxSize?: number
 
   @IsOptional()
   @IsNumber()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   maxFiles?: number
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   timeInterval?: string
 }

@@ -30,7 +30,6 @@ import { SUBMIT_WATSON_ASSISTANT_CHAT_FEEDBACK } from '@island.is/web/screens/qu
 import { ChatBubble } from '../ChatBubble'
 import { WatsonChatPanelProps } from '../types'
 import type { WatsonInstance, WatsonInstanceEvent } from './types'
-import { onAuthenticatedWatsonAssistantChatLoad } from './utils'
 import * as styles from './WatsonChatPanel.css'
 
 const chatLog: WatsonInstanceEvent[] = []
@@ -295,6 +294,20 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     const namespaceValue = namespace?.[namespaceKey] ?? {}
     const { cssVariables, ...languagePack } = namespaceValue
 
+    const replaceDirectorateOfImmigrationWebChatWithAI = Boolean(
+      namespace?.replaceDirectorateOfImmigrationWebChatWithAI,
+    )
+
+    const propsCopy = { ...props }
+
+    if (
+      !replaceDirectorateOfImmigrationWebChatWithAI &&
+      props.integrationID === '9e320784-ad44-4da9-9eb3-f305057a196a'
+    ) {
+      propsCopy.integrationID = '89a03e83-5c73-4642-b5ba-cd3771ceca54'
+      propsCopy.serviceInstanceID = 'bc3d8312-d862-4750-b8bf-529db282050a'
+    }
+
     let scriptElement: HTMLScriptElement | null = null
 
     const queryParam = new URLSearchParams(window.location.search).get('wa_lid')
@@ -322,7 +335,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           serviceDesk: {
             skipConnectAgentCard: true,
           },
-          ...props,
+          ...propsCopy,
           onLoad: (instance) => {
             watsonInstance.current = instance
             if (Object.keys(cssVariables).length > 0) {
@@ -335,10 +348,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
             if (
               // Útlendingastofnun
               props.integrationID !== '89a03e83-5c73-4642-b5ba-cd3771ceca54' &&
-              // Samgöngustofa
-              props.integrationID !== 'fe12e960-329c-46d5-9ae1-8bd8b8219f43' &&
-              // Samgöngustofa - english
-              props.integrationID !== '1e649a3f-9476-4995-ba24-0e72040b0cc0'
+              props.integrationID !== '9e320784-ad44-4da9-9eb3-f305057a196a'
             ) {
               // Keep the chat log in memory
               instance.on({
@@ -372,18 +382,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
                   }
                 },
               })
-            }
-
-            if (
-              // Askur - Útlendingastofnun
-              props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54'
-            ) {
-              onAuthenticatedWatsonAssistantChatLoad(
-                instance,
-                namespace,
-                activeLocale,
-                'directorateOfImmigration',
-              )
             }
 
             if (onLoad) {

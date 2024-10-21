@@ -23,7 +23,7 @@ export class FormSystemUpdateApplicantDtoInput {
 
 @InputType('FormSystemCreateApplicantInput')
 export class CreateApplicantInput {
-  @Field(() => String, { nullable: true })
+  @Field(() => FormSystemCreateApplicantDtoInput, { nullable: true })
   createFormApplicantDto?: FormSystemCreateApplicantDtoInput
 }
 

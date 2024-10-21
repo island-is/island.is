@@ -4,7 +4,11 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { CaseFileCategory, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { LimitedAccessWriteCaseFileGuard } from '../limitedAccessWriteCaseFile.guard'
 
@@ -52,6 +56,7 @@ describe('LimitedAccess Write Case File Guard', () => {
         beforeEach(() => {
           mockRequest.mockImplementationOnce(() => ({
             user: { role: UserRole.DEFENDER },
+            case: {},
             body: { category },
           }))
 
@@ -69,6 +74,7 @@ describe('LimitedAccess Write Case File Guard', () => {
         beforeEach(() => {
           mockRequest.mockImplementationOnce(() => ({
             user: { role: UserRole.DEFENDER },
+            case: {},
             caseFile: { category },
           }))
 
@@ -94,6 +100,7 @@ describe('LimitedAccess Write Case File Guard', () => {
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
           user: { role: UserRole.DEFENDER },
+          case: {},
           body: { category },
         }))
 
@@ -112,6 +119,7 @@ describe('LimitedAccess Write Case File Guard', () => {
       beforeEach(() => {
         mockRequest.mockImplementationOnce(() => ({
           user: { role: UserRole.DEFENDER },
+          case: {},
           caseFile: { category },
         }))
 
@@ -137,6 +145,7 @@ describe('LimitedAccess Write Case File Guard', () => {
           beforeEach(() => {
             mockRequest.mockImplementationOnce(() => ({
               user: { role },
+              case: {},
               body: { category },
             }))
 
@@ -155,6 +164,7 @@ describe('LimitedAccess Write Case File Guard', () => {
           beforeEach(() => {
             mockRequest.mockImplementationOnce(() => ({
               user: { role },
+              case: {},
               caseFile: { category },
             }))
 
@@ -174,7 +184,7 @@ describe('LimitedAccess Write Case File Guard', () => {
     let then: Then
 
     beforeEach(() => {
-      mockRequest.mockImplementationOnce(() => ({}))
+      mockRequest.mockImplementationOnce(() => ({ case: {} }))
 
       then = givenWhenThen()
     })
@@ -182,6 +192,21 @@ describe('LimitedAccess Write Case File Guard', () => {
     it('should throw InternalServerErrorException', () => {
       expect(then.error).toBeInstanceOf(InternalServerErrorException)
       expect(then.error.message).toBe('Missing user')
+    })
+  })
+
+  describe('missing case', () => {
+    let then: Then
+
+    beforeEach(() => {
+      mockRequest.mockImplementationOnce(() => ({ user: {} }))
+
+      then = givenWhenThen()
+    })
+
+    it('should throw InternalServerErrorException', () => {
+      expect(then.error).toBeInstanceOf(InternalServerErrorException)
+      expect(then.error.message).toBe('Missing case')
     })
   })
 
@@ -197,6 +222,86 @@ describe('LimitedAccess Write Case File Guard', () => {
     it('should throw InternalServerErrorException', () => {
       expect(then.error).toBeInstanceOf(InternalServerErrorException)
       expect(then.error.message).toBe('Missing case file category')
+    })
+  })
+
+  describe('a defender can view DEFENDANT_CASE_FILE in indictment cases', () => {
+    describe('when creating a case file', () => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          user: { role: UserRole.DEFENDER },
+          case: { type: CaseType.INDICTMENT },
+          body: { category: CaseFileCategory.DEFENDANT_CASE_FILE },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should activate', () => {
+        expect(then.result).toBe(true)
+      })
+    })
+
+    describe('when deleting a case file', () => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          user: { role: UserRole.DEFENDER },
+          case: { type: CaseType.INDICTMENT },
+          caseFile: { category: CaseFileCategory.DEFENDANT_CASE_FILE },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should activate', () => {
+        expect(then.result).toBe(true)
+      })
+    })
+  })
+
+  describe.each(
+    Object.keys(CaseType).filter((ct) => ct !== CaseType.INDICTMENT),
+  )('a defender can not view DEFENDANT_CASE_FILE in %s cases', (caseType) => {
+    describe('when creating a case file', () => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          user: { role: UserRole.DEFENDER },
+          case: { type: caseType },
+          body: { category: CaseFileCategory.DEFENDANT_CASE_FILE },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(then.error.message).toBe(`Forbidden for DEFENDER`)
+      })
+    })
+
+    describe('when deleting a case file', () => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          user: { role: UserRole.DEFENDER },
+          case: { type: caseType },
+          caseFile: { category: CaseFileCategory.DEFENDANT_CASE_FILE },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should throw ForbiddenException', () => {
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(then.error.message).toBe(`Forbidden for DEFENDER`)
+      })
     })
   })
 })

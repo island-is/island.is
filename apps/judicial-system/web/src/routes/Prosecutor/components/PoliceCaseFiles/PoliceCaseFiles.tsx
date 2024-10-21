@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
@@ -34,6 +34,7 @@ export const mapPoliceCaseFileToPoliceCaseFileCheck = (
   policeCaseNumber: file.policeCaseNumber,
   chapter: file.chapter,
   displayDate: file.displayDate,
+  type: file.type,
   checked: false,
 })
 

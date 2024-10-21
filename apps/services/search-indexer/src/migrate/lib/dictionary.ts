@@ -26,19 +26,20 @@ interface Commit {
   sha: string
 }
 
-const getDictionaryFile = async (
+const getDictionaryFile = (
   sha: string,
   locale: ElasticsearchIndexLocale,
   analyzer: string,
-): Promise<NodeJS.ReadableStream> => {
-  const response = await fetch(
+) => {
+  return fetch(
     `https://github.com/${environment.dictRepo}/blob/${sha}/${locale}/${analyzer}.txt?raw=true`,
-  )
-  if (response.ok) {
-    return response.body
-  } else {
-    return null
-  }
+  ).then((response) => {
+    if (response.ok) {
+      return response.body
+    } else {
+      return null
+    }
+  })
 }
 
 // get a list of all latest commits for this repo
