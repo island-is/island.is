@@ -485,6 +485,11 @@ export const m = defineMessages({
     defaultMessage: 'Læsa söfnun',
     description: '',
   },
+  listLocked: {
+    id: 'admin-portal.signature-collection:listLocked',
+    defaultMessage: 'Lista læst',
+    description: '',
+  },
   lockListDescription: {
     id: 'admin-portal.signature-collection:lockListDescription',
     defaultMessage:
