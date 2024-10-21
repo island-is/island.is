@@ -41,7 +41,7 @@ import { NationalRegistryClientService } from '@island.is/clients/national-regis
 import { PaymentService } from '@island.is/application/api/payment'
 import { sharedModuleConfig } from '../../shared/shared.config'
 import { ApplicationService } from '@island.is/application/api/core'
-import { AwsService } from '@island.is/nest/aws'
+import { S3Service } from '@island.is/nest/aws'
 
 const nationalId = '1234564321'
 let id = 0
@@ -239,7 +239,7 @@ describe('ParentalLeaveService', () => {
           useValue: {},
         },
         {
-          provide: AwsService,
+          provide: S3Service,
           useValue: {},
         },
         SharedTemplateApiService,

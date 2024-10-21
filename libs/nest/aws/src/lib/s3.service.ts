@@ -19,7 +19,7 @@ export interface BucketKeyPair {
 export type EncodingString = 'base64' | 'binary'
 
 @Injectable()
-export class AwsService {
+export class S3Service {
   constructor(
     @Inject(S3Client) private s3Client: S3Client,
     @Inject(LOGGER_PROVIDER) protected readonly logger: Logger,

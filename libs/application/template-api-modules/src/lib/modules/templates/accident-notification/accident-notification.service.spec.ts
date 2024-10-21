@@ -9,12 +9,11 @@ import { AccidentNotificationAttachmentProvider } from './attachments/applicatio
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import { S3 } from 'aws-sdk'
-import { S3Service } from './attachments/s3.service'
+import { S3Service } from '@island.is/nest/aws'
 import { SmsService } from '@island.is/nova-sms'
 import { PaymentService } from '@island.is/application/api/payment'
 import { sharedModuleConfig } from '../../shared/shared.config'
 import { ApplicationService } from '@island.is/application/api/core'
-import { AwsService } from '@island.is/nest/aws'
 import { AccidentreportsApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { createApplication } from '@island.is/application/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -133,7 +132,7 @@ describe('AccidentNotificationService', () => {
         {
           provide: S3Service,
           useClass: jest.fn(() => ({
-            getFilecontentAsBase64: jest.fn(),
+            getFileContent: jest.fn(),
           })),
         },
         {
@@ -155,10 +154,6 @@ describe('AccidentNotificationService', () => {
         },
         {
           provide: ApplicationService,
-          useValue: {},
-        },
-        {
-          provide: AwsService,
           useValue: {},
         },
         AccidentNotificationAttachmentProvider,
@@ -255,7 +250,7 @@ describe('AccidentNotificationService', () => {
       }
 
       jest
-        .spyOn(s3Service, 'getFilecontentAsBase64')
+        .spyOn(s3Service, 'getFileContent')
         .mockResolvedValueOnce(
           Buffer.from('some content', 'utf-8') as unknown as string,
         )
