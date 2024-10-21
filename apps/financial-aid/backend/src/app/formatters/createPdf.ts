@@ -16,8 +16,10 @@ import {
   showSpouseData,
 } from '@island.is/financial-aid/shared/lib'
 import { ApplicationModel } from '../modules/application'
+import { getApplicant, getApplicantMoreInfo } from './applicationHelper'
+import { get } from 'lodash'
 
-export const createApplicantPdf = async (application: ApplicationModel) => {
+export const createApplicantPdff = async (application: ApplicationModel) => {
   const pdfDoc = await PDFDocument.create()
 
   // Embed the Times Roman font
@@ -78,13 +80,12 @@ export const createApplicantPdf = async (application: ApplicationModel) => {
 
   // Applicant Info
   drawText('Umsækjandi', sectionHeaderFontSize, true)
-  drawText(`Nafn: ${application.name}`)
-  drawText(`Kennitala: ${application.nationalId}`)
-  drawText(`Sími: ${formatPhoneNumber(application.phoneNumber ?? '')}`)
-  drawText(`Netfang: ${application.email}`)
-  drawText(
-    `Bankareikningur: ${application.bankNumber}-${application.ledger}-${application.accountNumber}`,
-  )
+  const applicant = getApplicant(application)
+
+  applicant.map((item) => {
+    return drawText(`${item.title}: ${item.content}`)
+  })
+
   // Additional Information
   drawText('Þjóðskrá', sectionHeaderFontSize, true)
   drawText(`Lögheimili: ${application.streetName}`)
@@ -120,16 +121,15 @@ export const createApplicantPdf = async (application: ApplicationModel) => {
 
   // Process Information
   drawText('Umsóknarferli', sectionHeaderFontSize, true)
-  drawText(
-    `Búsetuform: ${
-      getHomeCircumstances[application.homeCircumstances as HomeCircumstances]
-    }`,
-  )
-  drawText(
-    `Atvinna: ${getEmploymentStatus[application.employment as Employment]}`,
-  )
-  drawText(`Lánshæft nám: ${application.student ? 'Já' : 'Nei'}`)
-  drawText(`Hefur haft tekjur: ${application.hasIncome ? 'Já' : 'Nei'}`)
+
+  const applicantMoreInfo = getApplicantMoreInfo(application)
+  applicantMoreInfo.map((item) => {
+    if (item?.other) {
+      return drawText(`${item.title}: ${item.content} - ${item.other}`)
+    } else {
+      return drawText(`${item.title}: ${item.content}`)
+    }
+  })
 
   //history of application
   drawText('Saga umsóknar', sectionHeaderFontSize, true)
@@ -144,14 +144,16 @@ export const createApplicantPdf = async (application: ApplicationModel) => {
   //       application.spouseName,
   //     )
   //     const eventCreated = format(new Date(event.created), 'dd/MM/yyyy HH:mm')
-
-  //     drawText(`${eventData.header}`, sectionHeaderFontSize)
-  //     drawText(`${eventData.prefix} ${eventData.text}`)
-  //     drawText(`${eventCreated}`)
+  //     return drawText(`${eventData.header}`, sectionHeaderFontSize)
   //   })
 
   // Save the PDF as a base64 encoded URI
   const pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true })
 
   return pdfDataUri
+}
+
+export const createPdf = async (application: ApplicationModel) => {
+  const pdfDoc = await PDFDocument.create()
+  pdfDoc.setTitle(`Umsókn ${application.id} um fjárhagsaðstoð`)
 }
