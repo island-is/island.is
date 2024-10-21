@@ -265,7 +265,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                         tag={
                           list.reviewed
                             ? {
-                                label: m.confirmListReviewed.defaultMessage,
+                                label: formatMessage(m.confirmListReviewed),
                                 variant: 'mint',
                                 outlined: false,
                               }
