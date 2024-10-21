@@ -28,7 +28,8 @@ const LOG_CATEGORY = 'disability-license-service'
 
 @Injectable()
 export class DisabilityLicenseClient
-  implements LicenseClient<LicenseType.DisabilityLicense> {
+  implements LicenseClient<LicenseType.DisabilityLicense>
+{
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private disabilityLicenseApi: DisabilityLicenseService,

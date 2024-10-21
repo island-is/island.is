@@ -27,7 +27,8 @@ const LOG_CATEGORY = 'hunting-license-service'
 
 @Injectable()
 export class HuntingLicenseClient
-  implements LicenseClient<LicenseType.HuntingLicense> {
+  implements LicenseClient<LicenseType.HuntingLicense>
+{
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private huntingService: HuntingLicenseClientService,
