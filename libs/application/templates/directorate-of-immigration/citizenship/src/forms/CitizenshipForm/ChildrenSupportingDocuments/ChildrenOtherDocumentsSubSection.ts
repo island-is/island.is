@@ -22,11 +22,11 @@ const FILE_SIZE_LIMIT = 10000000
 
 export const ChildrenOtherDocumentsSubSection = (index: number) =>
   buildSubSection({
-    id: Routes.CHILDSUPPORTINGDOCUMENTS,
+    id: `${Routes.CHILDSUPPORTINGDOCUMENTS}[${index}]`,
     title: supportingDocuments.labels.otherDocuments.subSectionTitle,
     children: [
       buildMultiField({
-        id: Routes.CHILDSUPPORTINGDOCUMENTS,
+        id: `${Routes.CHILDSUPPORTINGDOCUMENTS}[${index}]`,
         title: supportingDocuments.labels.otherDocuments.pageTitle,
         description: (application: Application) => {
           return {

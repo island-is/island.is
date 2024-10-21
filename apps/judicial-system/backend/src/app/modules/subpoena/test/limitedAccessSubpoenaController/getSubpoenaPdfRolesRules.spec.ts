@@ -1,4 +1,4 @@
-import { defenderRule } from '../../../../guards'
+import { defenderGeneratedPdfRule } from '../../../case'
 import { LimitedAccessSubpoenaController } from '../../limitedAccessSubpoena.controller'
 
 describe('LimitedAccessSubpoenaController - Get custody notice pdf rules', () => {
@@ -14,6 +14,6 @@ describe('LimitedAccessSubpoenaController - Get custody notice pdf rules', () =>
 
   it('should give permission to roles', () => {
     expect(rules).toHaveLength(1)
-    expect(rules).toContain(defenderRule)
+    expect(rules).toContain(defenderGeneratedPdfRule)
   })
 })

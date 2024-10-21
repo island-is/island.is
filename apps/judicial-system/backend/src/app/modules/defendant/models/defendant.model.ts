@@ -12,6 +12,7 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   DefendantPlea,
   DefenderChoice,
@@ -28,6 +29,19 @@ import { Subpoena } from '../../subpoena/models/subpoena.model'
   timestamps: true,
 })
 export class Defendant extends Model {
+  static isDefenderOfDefendant(
+    defenderNationalId: string,
+    defendants?: Defendant[],
+  ) {
+    return defendants?.some(
+      (defendant) =>
+        defendant.defenderNationalId &&
+        normalizeAndFormatNationalId(defenderNationalId).includes(
+          defendant.defenderNationalId,
+        ),
+    )
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -137,4 +151,20 @@ export class Defendant extends Model {
   @HasMany(() => Subpoena, { foreignKey: 'defendantId' })
   @ApiPropertyOptional({ type: () => Subpoena, isArray: true })
   subpoenas?: Subpoena[]
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(DefenderChoice),
+  })
+  @ApiPropertyOptional({ enum: DefenderChoice })
+  requestedDefenderChoice?: DefenderChoice
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  requestedDefenderNationalId?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  requestedDefenderName?: string
 }
