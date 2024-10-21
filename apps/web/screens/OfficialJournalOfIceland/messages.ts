@@ -262,4 +262,35 @@ export const m = {
       defaultMessage: 'Sækja PDF',
     },
   }),
+
+  casesInProgress: defineMessages({
+    title: {
+      id: 'web.ojoi:casesInProgress.title',
+      defaultMessage: 'Mál í vinnslu',
+    },
+    description: {
+      id: 'web.ojoi:casesInProgress.description',
+      defaultMessage: 'Listi yfir mál sem hafa ekki verið gefin út.',
+    },
+    notFoundMessage: {
+      id: 'web.ojoi:casesInProgress.notFoundMessage',
+      defaultMessage: 'Engin mál í vinnslu',
+    },
+    createdAt: {
+      id: 'web.ojoi:casesInProgress.createdAt',
+      defaultMessage: 'Innsending',
+    },
+    requestedPublicationDate: {
+      id: 'web.ojoi:casesInProgress.requestedPublicationDate',
+      defaultMessage: 'Áætl. útgáfud.',
+    },
+    advertTitle: {
+      id: 'web.ojoi:casesInProgress.advertTitle',
+      defaultMessage: 'Heiti',
+    },
+    involvedParty: {
+      id: 'web.ojoi:casesInProgress.involvedParty',
+      defaultMessage: 'Stofnun',
+    },
+  }),
 }
