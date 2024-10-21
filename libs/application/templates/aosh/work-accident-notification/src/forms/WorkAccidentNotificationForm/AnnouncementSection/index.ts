@@ -52,7 +52,6 @@ export const announcementSection = buildSection({
           titleVariant: 'h4',
           marginBottom: 3,
         }),
-        // TODO ADD company national id input here!
       ],
     }),
   ],
