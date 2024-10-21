@@ -88,7 +88,7 @@ export class SmartSolutionsApi {
 
     if (!res.ok) {
       this.logger.warn('Expected 200 status after fetch', {
-        status: res.status,
+        http: { status: res.status },
         statusText: res.statusText,
         category: LOG_CATEGORY,
         requestId,
@@ -96,7 +96,7 @@ export class SmartSolutionsApi {
 
       if (!res.status) {
         this.logger.warn('Expected 200 status', {
-          status: res.status,
+          http: { status: res.status },
           statusText: res.statusText,
           category: LOG_CATEGORY,
           requestId,

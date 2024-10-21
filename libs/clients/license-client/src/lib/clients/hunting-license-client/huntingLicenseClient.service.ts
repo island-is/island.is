@@ -27,8 +27,7 @@ const LOG_CATEGORY = 'hunting-license-service'
 
 @Injectable()
 export class HuntingLicenseClient
-  implements LicenseClient<LicenseType.HuntingLicense>
-{
+  implements LicenseClient<LicenseType.HuntingLicense> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private huntingService: HuntingLicenseClientService,
@@ -68,7 +67,7 @@ export class HuntingLicenseClient
             data: JSON.stringify(e.body),
           }
           this.logger.warn('Expected 200 or 404 status', {
-            status: e.status,
+            http: { status: e.status },
             statusText: e.statusText,
             category: LOG_CATEGORY,
           })
@@ -81,7 +80,7 @@ export class HuntingLicenseClient
           data: JSON.stringify(unknownError),
         }
         this.logger.warn('Unable to query data', {
-          status: e.status,
+          http: { status: e.status },
           statusText: e.statusText,
           category: LOG_CATEGORY,
         })

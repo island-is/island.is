@@ -31,8 +31,7 @@ const LOG_CATEGORY = 'machinelicense-service'
 
 @Injectable()
 export class MachineLicenseClient
-  implements LicenseClient<LicenseType.MachineLicense>
-{
+  implements LicenseClient<LicenseType.MachineLicense> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private machineApi: VinnuvelaApi,
@@ -72,7 +71,7 @@ export class MachineLicenseClient
             data: JSON.stringify(e.body),
           }
           this.logger.warn('Expected 200 or 404 status', {
-            status: e.status,
+            http: { status: e.status },
             statusText: e.statusText,
             category: LOG_CATEGORY,
           })
@@ -85,7 +84,7 @@ export class MachineLicenseClient
           data: JSON.stringify(unknownError),
         }
         this.logger.warn('Unable to query data', {
-          status: e.status,
+          http: { status: e.status },
           statusText: e.statusText,
           category: LOG_CATEGORY,
         })

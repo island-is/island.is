@@ -31,8 +31,7 @@ const LOG_CATEGORY = 'drivinglicense-service'
 
 @Injectable()
 export class DrivingLicenseClient
-  implements LicenseClient<LicenseType.DrivingLicense>
-{
+  implements LicenseClient<LicenseType.DrivingLicense> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private drivingApi: DrivingLicenseApi,
@@ -103,7 +102,7 @@ export class DrivingLicenseClient
           data: JSON.stringify(e.body),
         }
         this.logger.warn('Expected 200 status', {
-          status: e.status,
+          http: { http: { status: e.status } },
           statusText: e.statusText,
           category: LOG_CATEGORY,
         })
@@ -115,7 +114,7 @@ export class DrivingLicenseClient
           data: JSON.stringify(unknownError),
         }
         this.logger.warn('Unable to query data', {
-          status: e.status,
+          http: { http: { status: e.status } },
           statusText: e.statusText,
           category: LOG_CATEGORY,
         })

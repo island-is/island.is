@@ -28,8 +28,7 @@ const LOG_CATEGORY = 'disability-license-service'
 
 @Injectable()
 export class DisabilityLicenseClient
-  implements LicenseClient<LicenseType.DisabilityLicense>
-{
+  implements LicenseClient<LicenseType.DisabilityLicense> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private disabilityLicenseApi: DisabilityLicenseService,
@@ -74,7 +73,7 @@ export class DisabilityLicenseClient
           data: JSON.stringify(e.body),
         }
         this.logger.warn('Expected 200 status', {
-          status: e.status,
+          http: { http: { status: e.status } },
           statusText: e.statusText,
           category: LOG_CATEGORY,
         })
@@ -86,7 +85,7 @@ export class DisabilityLicenseClient
           data: JSON.stringify(unknownError),
         }
         this.logger.warn('Unable to query data', {
-          status: e.status,
+          http: { http: { status: e.status } },
           statusText: e.statusText,
           category: LOG_CATEGORY,
         })
