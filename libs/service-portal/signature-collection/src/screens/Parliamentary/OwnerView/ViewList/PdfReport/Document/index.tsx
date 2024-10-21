@@ -22,13 +22,13 @@ const PdfDocument = ({
       {report && (
         <Page style={styles.body} key={report.candidateName}>
           <View>
-            <Text style={styles.pageTitle}>{report.candidateName}</Text>
+            <Text style={styles.pageTitle}>{report.listName?.split(' - ')[1]}</Text>
             <View style={styles.dividerLineBox}>
               <View style={styles.dividerLine} />
             </View>
 
-            <Text style={styles.header}>Kjördæmi:</Text>
-            <Text style={styles.text}>{report.listName?.split(' - ')[1]}</Text>
+            <Text style={styles.header}>Flokkur:</Text>
+            <Text style={styles.text}>{report.candidateName}</Text>
 
             <Text style={styles.header}>Dagsetning:</Text>
             <Text style={styles.text}>
@@ -85,7 +85,7 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     right: 60,
     bottom: 50,
-    width: 50,
+    width: 90,
   },
 })
 
