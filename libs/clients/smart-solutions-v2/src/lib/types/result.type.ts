@@ -6,6 +6,7 @@ export interface ServiceError {
   /** Optional data */
   data?: string
 }
+
 /** VERIFY ACTION CODES 1-10 *
  *  SERVICE CODES 10+ *
  * HTTP CODES 100+ */
