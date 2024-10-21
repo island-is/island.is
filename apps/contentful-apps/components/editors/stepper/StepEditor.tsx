@@ -1,7 +1,21 @@
 import { useMemo, useState } from 'react'
+import { useDebounce } from 'react-use'
 import dynamic from 'next/dynamic'
 import { EditorExtensionSDK } from '@contentful/app-sdk'
-import { Box } from '@contentful/f36-components'
+import {
+  Box,
+  Button,
+  FormControl,
+  Stack,
+  Text,
+  TextInput,
+} from '@contentful/f36-components'
+import {
+  ArrowDownwardIcon,
+  ArrowUpwardIcon,
+  DeleteIcon,
+  PlusIcon,
+} from '@contentful/f36-icons'
 import { useSDK } from '@contentful/react-apps-toolkit'
 
 import { mapLocalesToFieldApis } from '../utils'
@@ -62,6 +76,45 @@ interface StateMeta {
   stepSlug: string
 }
 
+const generateOptionSlug = (options: StepOptionCMS[]) => {
+  let highestId = 0
+  for (const option of options) {
+    if (
+      Boolean(option?.optionSlug) &&
+      !Number.isNaN(Number(option.optionSlug))
+    ) {
+      highestId = Number(option.optionSlug)
+    }
+  }
+  return String(highestId + 1)
+}
+
+const Heading = ({ text, locale }: { text: string; locale?: string }) => {
+  return (
+    <Box
+      style={{
+        display: 'flex',
+        flexFlow: 'row nowrap',
+        gap: '6px',
+      }}
+    >
+      <FormControl.Label>{text}</FormControl.Label>
+      {locale && (
+        <Box
+          style={{
+            display: 'flex',
+            flexFlow: 'row nowrap',
+            gap: '6px',
+          }}
+        >
+          <Text fontColor="gray500">|</Text>
+          <Text fontColor="gray500">{locale}</Text>
+        </Box>
+      )}
+    </Box>
+  )
+}
+
 export const StepEditor = () => {
   const sdk = useSDK<EditorExtensionSDK>()
   const localeToFieldMapping = useMemo(() => {
@@ -70,6 +123,14 @@ export const StepEditor = () => {
 
   const [config, setConfig] = useState<StepConfig>(
     sdk.entry.fields.config.getValue(),
+  )
+
+  useDebounce(
+    () => {
+      sdk.entry.fields.config.setValue(config)
+    },
+    100,
+    [config],
   )
 
   return (
@@ -112,12 +173,223 @@ export const StepEditor = () => {
         sdk={sdk}
       />
 
-      {config?.options?.map((option) => (
-        <div key={option?.optionSlug}>
-          Here will be an entrycard showing what happens if user answers this
-          question
+      <div
+        style={{
+          display: 'flex',
+          flexFlow: 'column nowrap',
+          justifyContent: 'center',
+          gap: '48px',
+        }}
+      >
+        {config?.options?.map((option, index) => (
+          <Box
+            key={index}
+            style={{
+              padding: '16px',
+              border: '1px solid #cfd9e0',
+              borderRadius: '4px',
+              display: 'flex',
+              flexFlow: 'column nowrap',
+              gap: '8px',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                flexFlow: 'row nowrap',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  flexFlow: 'row nowrap',
+                  gap: '8px',
+                }}
+              >
+                <Button
+                  style={{
+                    visibility: index > 0 ? 'visible' : 'hidden',
+                  }}
+                  aria-label="Move up"
+                  startIcon={<ArrowUpwardIcon />}
+                  onClick={() => {
+                    setConfig((prevConfig) => {
+                      const updatedOptions = [...prevConfig.options]
+
+                      // Swap places with what is above
+                      const temp = updatedOptions[index - 1]
+                      updatedOptions[index - 1] = updatedOptions[index]
+                      updatedOptions[index] = temp
+
+                      return {
+                        ...prevConfig,
+                        options: updatedOptions,
+                      }
+                    })
+                  }}
+                >
+                  Move up
+                </Button>
+
+                <Button
+                  style={{
+                    visibility:
+                      index < config.options.length - 1 ? 'visible' : 'hidden',
+                  }}
+                  aria-label="Move down"
+                  startIcon={<ArrowDownwardIcon />}
+                  onClick={() => {
+                    setConfig((prevConfig) => {
+                      const updatedOptions = [...prevConfig.options]
+
+                      // Swap places with what is below
+                      const temp = updatedOptions[index + 1]
+                      updatedOptions[index + 1] = updatedOptions[index]
+                      updatedOptions[index] = temp
+
+                      return {
+                        ...prevConfig,
+                        options: updatedOptions,
+                      }
+                    })
+                  }}
+                >
+                  Move down
+                </Button>
+              </div>
+              <Button
+                onClick={async () => {
+                  const shouldRemove = await sdk.dialogs.openConfirm({
+                    message: `${option.labelIS} option will be removed`,
+                    title: 'Are you sure?',
+                  })
+                  if (!shouldRemove) return
+                  setConfig((prevConfig) => ({
+                    ...prevConfig,
+                    options: prevConfig.options.filter(
+                      (_, prevIndex) => prevIndex !== index,
+                    ),
+                  }))
+                }}
+                aria-label="Remove"
+                startIcon={<DeleteIcon />}
+              >
+                Remove
+              </Button>
+            </div>
+            <FormControl>
+              <Stack
+                spacing="spacingL"
+                flexDirection="column"
+                alignItems="flex-start"
+              >
+                <div style={{ width: '100%' }}>
+                  <Heading text="Label" locale="Icelandic (Iceland)" />
+                  <TextInput
+                    value={option.labelIS}
+                    onChange={(event) => {
+                      setConfig((prevConfig) => ({
+                        ...prevConfig,
+                        options: prevConfig.options.map(
+                          (prevOption, prevIndex) => {
+                            if (prevIndex !== index) return prevOption
+                            return {
+                              ...prevOption,
+                              labelIS: event.target.value,
+                            }
+                          },
+                        ),
+                      }))
+                    }}
+                  />
+                </div>
+                <div style={{ width: '100%' }}>
+                  <Heading text="Label" locale="English" />
+                  <TextInput
+                    value={option.labelEN}
+                    onChange={(event) => {
+                      setConfig((prevConfig) => ({
+                        ...prevConfig,
+                        options: prevConfig.options.map(
+                          (prevOption, prevIndex) => {
+                            if (prevIndex !== index) return prevOption
+                            return {
+                              ...prevOption,
+                              labelEN: event.target.value,
+                            }
+                          },
+                        ),
+                      }))
+                    }}
+                  />
+                </div>
+                <div style={{ width: '100%' }}>
+                  <Heading text="Slug" />
+                  <TextInput
+                    value={option.optionSlug}
+                    onChange={(event) => {
+                      setConfig((prevConfig) => ({
+                        ...prevConfig,
+                        options: prevConfig.options.map(
+                          (prevOption, prevIndex) => {
+                            if (prevIndex !== index) return prevOption
+                            return {
+                              ...prevOption,
+                              optionSlug: event.target.value,
+                            }
+                          },
+                        ),
+                      }))
+                    }}
+                  />
+                </div>
+                <div style={{ width: '100%' }}>
+                  <Heading text="Transition name" />
+                  <TextInput
+                    value={option.transition}
+                    onChange={(event) => {
+                      setConfig((prevConfig) => ({
+                        ...prevConfig,
+                        options: prevConfig.options.map(
+                          (prevOption, prevIndex) => {
+                            if (prevIndex !== index) return prevOption
+                            return {
+                              ...prevOption,
+                              transition: event.target.value,
+                            }
+                          },
+                        ),
+                      }))
+                    }}
+                  />
+                </div>
+              </Stack>
+            </FormControl>
+          </Box>
+        ))}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <Button
+            startIcon={<PlusIcon />}
+            onClick={() => {
+              setConfig((prevConfig) => {
+                const optionSlug = generateOptionSlug(config.options)
+                return {
+                  ...prevConfig,
+                  options: (prevConfig?.options ?? []).concat({
+                    labelEN: optionSlug,
+                    labelIS: optionSlug,
+                    optionSlug: optionSlug,
+                    transition: optionSlug,
+                  }),
+                }
+              })
+            }}
+          >
+            Add option
+          </Button>
         </div>
-      ))}
+      </div>
     </Box>
   )
 }
