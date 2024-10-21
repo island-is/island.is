@@ -83,6 +83,7 @@ import { GetEmailSignupInput } from './dto/getEmailSignup.input'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
 import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { GetGenericTagInTagGroupInput } from './dto/getGenericTags.input'
+import { Grant, mapGrant } from './models/grant.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -552,6 +553,19 @@ export class CmsContentfulService {
       .catch(errorHandler('getNews'))
 
     return (result.items as types.INews[]).map(mapNews)[0] ?? null
+  }
+
+  async getGrant(lang: string, slug: string): Promise<Grant | null> {
+    const params = {
+      ['content_type']: 'grant',
+      'fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IGrantFields>(lang, params)
+      .catch(errorHandler('getGrant'))
+
+    return (result.items as types.IGrant[]).map(mapGrant)[0]
   }
 
   async getContentSlug({

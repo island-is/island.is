@@ -46,6 +46,8 @@ import { GetGenericListItemBySlugInput } from './dto/getGenericListItemBySlug.in
 import { GenericListItem } from './models/genericListItem.model'
 import { GetTeamMembersInput } from './dto/getTeamMembers.input'
 import { TeamMemberResponse } from './models/teamMemberResponse.model'
+import { GetGrantsInput } from './dto/getGrants.input'
+import { Grant } from './models/grant.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -603,6 +605,40 @@ export class CmsElasticsearchService {
         JSON.parse(response._source.response ?? 'null'),
       )
       .filter(Boolean)
+  }
+
+  async getGrants(index: string, input: GetGrantsInput): Promise<Grant[]> {
+    const query = {
+      types: ['webGrant'],
+      tags: [] as elasticTagField[],
+      sort: [{ 'title.sort': { order: SortDirection.ASC } }] as sortRule[],
+      size: 100,
+    }
+
+    if (input.category) {
+      query.tags.push({ type: 'category', key: input.category })
+    }
+
+    if (input.type) {
+      query.tags.push({ type: 'type', key: input.type })
+    }
+
+    if (input.organization) {
+      query.tags.push({ type: 'organization', key: input.organization })
+    }
+
+    if (input.status) {
+      query.tags.push({ type: 'status', key: input.status })
+    }
+
+    const grantsResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      query,
+    )
+
+    return grantsResponse.hits.hits.map<Grant>((response) =>
+      JSON.parse(response._source.response ?? '[]'),
+    )
   }
 
   async getPublishedMaterial(

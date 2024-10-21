@@ -1,12 +1,11 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import { IGrant } from '../generated/contentfulTypes'
-import { Image, mapImage } from './image.model'
-import { LinkUrl } from './linkUrl.model'
 import { Organization, mapOrganization } from './organization.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { CacheField } from '@island.is/nest/graphql'
 import { Asset, mapAsset } from './asset.model'
+import { ReferenceLink, mapReferenceLink } from './referenceLink.model'
 
 @ObjectType()
 export class Grant {
@@ -25,8 +24,8 @@ export class Grant {
   @Field(() => [String], { nullable: true })
   applicationDeadlineText?: Array<string>
 
-  @CacheField(() => LinkUrl, { nullable: true })
-  applicationUrl?: LinkUrl
+  @CacheField(() => ReferenceLink, { nullable: true })
+  applicationUrl?: ReferenceLink
 
   @Field({ nullable: true })
   whatIsGranted?: string
@@ -76,7 +75,9 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
     undefined,
   applicationId: fields.grantApplicationId ?? '',
   applicationDeadlineText: fields.grantApplicationDeadlineText,
-  applicationUrl: fields.granApplicationUrl?.fields,
+  applicationUrl: fields.granApplicationUrl?.fields
+    ? mapReferenceLink(fields.granApplicationUrl)
+    : undefined,
   whatIsGranted:
     (fields.grantWhatIsGranted && JSON.stringify(fields.grantWhatIsGranted)) ??
     undefined,

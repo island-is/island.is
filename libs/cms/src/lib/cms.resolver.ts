@@ -122,6 +122,9 @@ import { TeamList } from './models/teamList.model'
 import { TeamMember } from './models/teamMember.model'
 import { LatestGenericListItems } from './models/latestGenericListItems.model'
 import { GetGenericTagInTagGroupInput } from './dto/getGenericTags.input'
+import { Grant } from './models/grant.model'
+import { GetGrantsInput } from './dto/getGrants.input'
+import { GetSingleGrantInput } from './dto/getSingleGrant.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -446,6 +449,33 @@ export class CmsResolver {
       getElasticsearchIndex(input.lang),
       input,
     )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => [Grant])
+  async getGrants(@Args('input') input: GetGrantsInput): Promise<Grant[]> {
+    return this.cmsElasticsearchService.getGrants(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => Grant, { nullable: true })
+  async getSingleGrant(
+    @Args('input') { lang, slug }: GetSingleGrantInput,
+  ): Promise<(Partial<Grant> & { lang: Locale }) | null> {
+    const grant: Grant | null = await this.cmsContentfulService.getGrant(
+      lang,
+      slug,
+    )
+
+    if (!grant) return null
+
+    return {
+      ...grant,
+      lang,
+    }
   }
 
   @CacheControl(defaultCache)

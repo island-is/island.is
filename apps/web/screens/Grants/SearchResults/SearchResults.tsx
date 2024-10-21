@@ -296,6 +296,8 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale }) => {
   const tagGroupCategory = 'grant-category'
   //Todo: add more organizations ??
 
+  const query = (await apolloClient.query) < Query
+
   const {
     data: { getGenericTagsInTagGroup: tags },
   } = await apolloClient.query<Query, QueryGetGenericTagsInTagGroupArgs>({
