@@ -17,3 +17,9 @@ export const dataContainer = style({
     },
   },
 })
+
+export const titleContainer = style({
+  display: 'grid',
+  gap: theme.spacing[2],
+  gridTemplateColumns: '1fr auto',
+})
