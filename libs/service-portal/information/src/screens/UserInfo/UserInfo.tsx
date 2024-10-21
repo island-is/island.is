@@ -39,7 +39,7 @@ const SubjectInfo = () => {
   return (
     <>
       <IntroHeader
-        title={userInfo.profile.name}
+        title={nationalRegistryPerson?.name?.fullName || ''}
         intro={spmm.userInfoDesc}
         serviceProviderSlug={THJODSKRA_SLUG}
         serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
@@ -60,7 +60,7 @@ const SubjectInfo = () => {
             <InfoLine
               label={m.fullName}
               loading={loading}
-              content={nationalRegistryPerson?.fullName ?? ''}
+              content={nationalRegistryPerson?.name?.fullName ?? ''}
               translate="no"
               tooltip={formatNameBreaks(
                 nationalRegistryPerson?.name ?? undefined,
