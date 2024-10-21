@@ -3,9 +3,9 @@ import {
   buildMultiField,
   buildCheckboxField,
   buildSection,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { YES } from '../../lib/constants'
 
 export const approvePrivateDivisionSubmission = buildSection({
   id: 'approveSubmission',
