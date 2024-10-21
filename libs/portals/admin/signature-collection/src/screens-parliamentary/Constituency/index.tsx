@@ -142,18 +142,22 @@ export const Constituency = ({
                       maxProgress: list.area.min,
                       withLabel: true,
                     }}
-                    cta={{
-                      label: formatMessage(m.viewList),
-                      variant: 'text',
-                      onClick: () => {
-                        navigate(
-                          SignatureCollectionPaths.ParliamentaryConstituencyList.replace(
-                            ':constituencyName',
-                            constituencyName,
-                          ).replace(':listId', list.id),
-                        )
-                      },
-                    }}
+                    cta={
+                      (allowedToProcess && !list.active) || !allowedToProcess
+                        ? {
+                            label: formatMessage(m.viewList),
+                            variant: 'text',
+                            onClick: () => {
+                              navigate(
+                                SignatureCollectionPaths.ParliamentaryConstituencyList.replace(
+                                  ':constituencyName',
+                                  constituencyName,
+                                ).replace(':listId', list.id),
+                              )
+                            },
+                          }
+                        : undefined
+                    }
                     tag={
                       !list.reviewed
                         ? allowedToProcess
