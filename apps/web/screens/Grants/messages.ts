@@ -7,6 +7,28 @@ export const m = {
       defaultMessage: 'Skoða nánar',
     },
   }),
+  search: defineMessages({
+    inputPlaceholder: {
+      id: 'web.grants:search.inputPlaceholder',
+      defaultMessage: 'Sía eftir leitarorði',
+    },
+    applicationStatus: {
+      id: 'web.grants:search.applicationStatus',
+      defaultMessage: 'Staða umsóknar',
+    },
+    category: {
+      id: 'web.grants:search.category',
+      defaultMessage: 'Flokkur',
+    },
+    type: {
+      id: 'web.grants:search.type',
+      defaultMessage: 'Tegund',
+    },
+    organization: {
+      id: 'web.grants:search.organization',
+      defaultMessage: 'Stofnun',
+    },
+  }),
   home: defineMessages({
     title: {
       id: 'web.grants:home.title',

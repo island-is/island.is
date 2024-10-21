@@ -1,20 +1,23 @@
+import { useState } from 'react'
 import { useIntl } from 'react-intl'
 import NextLink from 'next/link'
 
 import {
-  ArrowLink,
+  ActionCard,
   Box,
+  BreadCrumbItem,
   Breadcrumbs,
-  CategoryCard,
-  GridColumn,
-  GridContainer,
-  GridRow,
+  Checkbox,
+  Divider,
+  Filter,
+  FilterMultiChoice,
+  Inline,
+  Input,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
-import { GrantSearchSection, GrantWrapper } from '@island.is/web/components'
-import { SLICE_SPACING } from '@island.is/web/constants'
+import { GrantHeaderWithImage, GrantWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
@@ -29,30 +32,41 @@ import {
   CustomScreen,
   withCustomPageWrapper,
 } from '../../CustomPage/CustomPageWrapper'
+import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_GENERIC_TAG_IN_TAG_GROUP_QUERY } from '../../queries/GenericTag'
 import { m } from '../messages'
 
-const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
-  categories,
-  locale,
-}) => {
+const filterState = {
+  status: [],
+  category: [],
+  type: [],
+  organization: [],
+}
+
+const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({ locale }) => {
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
-  const baseUrl = linkResolver('styrkjatorg', [], locale).href
-  const searchUrl = linkResolver('styrkjatorgsearch', [], locale).href
-  const categoriesUrl = linkResolver('ojoicategories', [], locale).href
+  const parentUrl = linkResolver('styrkjatorg', [], locale).href
+  const currentUrl = linkResolver('styrkjatorgsearch', [], locale).href
 
-  const breadcrumbItems = [
+  const breadcrumbItems: Array<BreadCrumbItem> = [
     {
       title: 'Ísland.is',
       href: linkResolver('homepage', [], locale).href,
     },
     {
       title: 'Styrkjatorg',
-      href: baseUrl,
+      href: parentUrl,
+    },
+    {
+      title: 'Leitarniðurstöður',
+      href: currentUrl,
+      isTag: true,
     },
   ]
+
+  const [searchState, setSearchState] = useState({ q: '', filter: filterState })
 
   return (
     <GrantWrapper
@@ -60,91 +74,198 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
       pageDescription={formatMessage(m.home.description)}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
     >
-      <Stack space={SLICE_SPACING}>
-        <GrantSearchSection
-          title={'Styrkjatorg'}
-          description={
-            'Non scelerisque risus amet tincidunt. Sit sed quis cursus hendrerit nulla egestas interdum. In varius quisque.'
-          }
-          searchPlaceholder={formatMessage(m.home.inputPlaceholder)}
-          searchUrl={searchUrl}
-          shortcutsTitle={formatMessage(m.home.mostVisited)}
-          featuredImage={formatMessage(m.home.featuredImage)}
-          quickLinks={[
-            {
-              title: 'Listamannalaun',
-              href: searchUrl + '?deild=a-deild',
-            },
-            {
-              title: 'Barnamenningarsjóður',
-              href: searchUrl + '?deild=b-deild',
-            },
-            {
-              title: 'Tónlistarsjóður',
-              href: searchUrl + '?deild=c-deild',
-            },
-            {
-              title: 'Rannís',
-              href: searchUrl + '?malaflokkur=grindavik',
-              variant: 'purple',
-            },
-            {
-              title: 'Erasmus',
-              href: searchUrl + '?malaflokkur=gjaldskra',
-              variant: 'purple',
-            },
-          ]}
-          breadCrumbs={
-            breadcrumbItems && (
-              <Breadcrumbs
-                items={breadcrumbItems ?? []}
-                renderLink={(link, item) => {
-                  return item?.href ? (
-                    <NextLink href={item?.href} legacyBehavior>
-                      {link}
-                    </NextLink>
-                  ) : (
-                    link
-                  )
-                }}
-              />
-            )
-          }
-        />
+      <GrantHeaderWithImage
+        title={'Styrkjatorg'}
+        description="Non scelerisque risus amet tincidunt. Sit sed quis cursus hendrerit nulla egestas interdum. In varius quisque."
+        featuredImage={formatMessage(m.home.featuredImage)}
+        imageLayout="left"
+        breadcrumbs={
+          breadcrumbItems && (
+            <Breadcrumbs
+              items={breadcrumbItems ?? []}
+              renderLink={(link, item) => {
+                return item?.href ? (
+                  <NextLink href={item?.href} legacyBehavior>
+                    {link}
+                  </NextLink>
+                ) : (
+                  link
+                )
+              }}
+            />
+          )
+        }
+      />
+      <Box background="blue100">
+        <SidebarLayout
+          sidebarContent={
+            <Box component="form" borderRadius="large" action={currentUrl}>
+              <Box marginBottom={[1, 1, 2]}>
+                <Text variant="h4">Leit</Text>
 
-        <Box background="blue100" paddingTop={8} paddingBottom={8}>
-          <GridContainer>
-            <Box
-              display={'flex'}
-              justifyContent={'spaceBetween'}
-              alignItems="flexEnd"
-            >
-              <Text variant="h3">
-                {formatMessage(m.home.popularCategories)}
-              </Text>
-              <ArrowLink href={categoriesUrl}>
-                {formatMessage(m.home.allGrants)}
-              </ArrowLink>
-            </Box>
-
-            <GridRow>
-              {categories?.map((c) => (
-                <GridColumn
-                  span={['1/1', '1/2', '1/2', '1/3']}
-                  paddingTop={3}
-                  paddingBottom={3}
+                <Input
+                  name="q"
+                  placeholder={formatMessage(m.search.inputPlaceholder)}
+                  size="xs"
+                  value={searchState.q}
+                  onChange={(e) => console.log('update search')}
+                />
+              </Box>
+              <Box background="white" padding={[1, 1, 2]}>
+                <Filter
+                  labelClearAll={''}
+                  labelClear={''}
+                  labelOpen={''}
+                  onFilterClear={() => console.log('clear ')}
                 >
-                  <CategoryCard
-                    href={`${categoriesUrl}?yfirflokkur=${c.slug}`}
-                    heading={c.title}
-                    text={'Flokka lýsing'}
+                  <FilterMultiChoice
+                    labelClear={''}
+                    onChange={() => console.log('change')}
+                    onClear={() => console.log('clear')}
+                    categories={[
+                      {
+                        id: 'bleble',
+                        label: 'Staða umsóknar',
+                        selected: [],
+                        filters: [
+                          {
+                            value: 'Opið fyrir umsóknir',
+                            label: 'Opið fyrir umsóknir',
+                          },
+                          {
+                            value: 'Opnar fljótlega',
+                            label: 'Opnar fljótlega',
+                          },
+                          {
+                            value: 'Lokað fyrir umsóknir',
+                            label: 'Lokað fyrir umsóknir',
+                          },
+                          {
+                            value: 'Óvirkur sjóður',
+                            label: 'Óvirkur sjóður',
+                          },
+                        ],
+                      },
+                      {
+                        id: 'bleble2',
+                        label: 'Flokkur',
+                        selected: [],
+                        filters: [
+                          {
+                            value: 'Rannsóknir',
+                            label: 'Rannsóknir',
+                          },
+                          {
+                            value: 'Nýsköpun',
+                            label: 'Nýsköpun',
+                          },
+                          {
+                            value: 'Nám og kennsla',
+                            label: 'Nám og kennsla',
+                          },
+                          {
+                            value: 'Starfs- og símenntun',
+                            label: 'Starfs- og símenntun',
+                          },
+                          {
+                            value: 'Menning og listir',
+                            label: 'Menning og listir',
+                          },
+                          {
+                            value: 'Æskulýðsstarf og íþróttir',
+                            label: 'Æskulýðsstarf og íþróttir',
+                          },
+                          {
+                            value: 'Atvinnulíf',
+                            label: 'Atvinnulíf',
+                          },
+                          {
+                            value: 'Innlent',
+                            label: 'Innlent',
+                          },
+                          {
+                            value: 'Alþjóðlegt',
+                            label: 'Alþjóðlegt',
+                          },
+                        ],
+                      },
+                      {
+                        id: 'bleble4',
+                        label: 'Tegund',
+                        selected: [],
+                        filters: [
+                          {
+                            value: 'Fjármögnun',
+                            label: 'Fjármögnun',
+                          },
+                          {
+                            value: 'Starfslaun',
+                            label: 'Starfslaun',
+                          },
+                          {
+                            value: 'Endurgreiðsla kostnaðar',
+                            label: 'Endurgreiðsla kostnaðar',
+                          },
+                          {
+                            value: 'Skattafrádráttur',
+                            label: 'Skattafrádráttur',
+                          },
+                          {
+                            value: 'Skiptinám',
+                            label: 'Skiptinám',
+                          },
+                          {
+                            value: 'Sjálfboðastörf',
+                            label: 'Sjálfboðastörf',
+                          },
+                          {
+                            value: 'Tengslamyndun',
+                            label: 'Tengslamyndun',
+                          },
+                        ],
+                      },
+                      {
+                        id: 'bleble3',
+                        label: 'Stofnun',
+                        selected: [],
+                        filters: [
+                          {
+                            value: 'Rannís',
+                            label: 'Rannís',
+                          },
+                          {
+                            value: 'Tónlistarmiðstöð',
+                            label: 'Tónlistarmiðstöð',
+                          },
+                          {
+                            value: 'Kvikmyndastöð',
+                            label: 'Kvikmyndastöð',
+                          },
+                          {
+                            value: 'Félags- og vinnumarkaðsráðuneytið',
+                            label: 'Félags- og vinnumarkaðsráðuneytið',
+                          },
+                          {
+                            value: 'Menningar- og viðskiptaráðuneytið',
+                            label: 'Menningar- og viðskiptaráðuneytið',
+                          },
+                        ],
+                      },
+                    ]}
                   />
-                </GridColumn>
-              ))}
-            </GridRow>
-          </GridContainer>
-        </Box>
-      </Stack>
+                </Filter>
+              </Box>
+            </Box>
+          }
+        >
+          <Inline space={2}>
+            <ActionCard heading="bingbong" text="hanblo"></ActionCard>
+            <ActionCard heading="bingbong" text="hanblo"></ActionCard>
+            <ActionCard heading="bingbong" text="hanblo"></ActionCard>
+            <ActionCard heading="bingbong" text="hanblo"></ActionCard>
+          </Inline>
+        </SidebarLayout>
+      </Box>
     </GrantWrapper>
   )
 }

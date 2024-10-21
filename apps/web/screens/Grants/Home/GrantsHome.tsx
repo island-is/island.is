@@ -94,7 +94,7 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
               variant: 'purple',
             },
           ]}
-          breadCrumbs={
+          breadcrumbs={
             breadcrumbItems && (
               <Breadcrumbs
                 items={breadcrumbItems ?? []}
