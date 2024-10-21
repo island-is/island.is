@@ -28,6 +28,7 @@ import csvStringify from 'csv-stringify/lib/sync'
 
 import { AwsService } from '@island.is/nest/aws'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
+import * as path from 'path'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -308,77 +309,203 @@ export class EndorsementListService {
     }
   }
 
-  async createDocumentBuffer(endorsementList: any, ownerName: string) {
-    // build pdf
-    const doc = new PDFDocument()
+  async createDocumentBuffer(
+    endorsementList: any,
+    ownerName: string,
+  ): Promise<Buffer> {
+    const doc = new PDFDocument({ margin: 60 })
     const locale = 'is-IS'
-    const big = 16
-    const regular = 8
-    const fontRegular = 'Helvetica'
-    const fontBold = 'Helvetica-Bold'
+    const buffers: Buffer[] = []
+    doc.on('data', buffers.push.bind(buffers))
+    doc.on('end', () =>
+      this.logger.info(
+        'PDF buffer created successfully for list id ' + endorsementList.id,
+        { listId: endorsementList.id },
+      ),
+    )
 
+    const regularFontPath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-regular.ttf',
+    )
+    const boldFontPath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/ibm-plex-sans-v7-latin-600.ttf',
+    )
+    const headerImagePath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/thjodskra.png',
+    )
+    const footerImagePath = path.join(
+      process.cwd(),
+      'apps/services/endorsements/api/src/assets/island.png',
+    )
+
+    doc.registerFont('Regular', regularFontPath)
+    doc.registerFont('Bold', boldFontPath)
+
+    // Add header image
+    const headerImageHeight = 40
+    doc.image(headerImagePath, 60, 40, { width: 120 })
+
+    let currentYPosition = 40 + headerImageHeight + 20
+
+    // Title and petition details
     doc
-      .fontSize(big)
-      .text('Upplýsingar um meðmælendalista')
-      .moveDown()
-
-      .fontSize(regular)
-      .font(fontBold)
-      .text('Heiti meðmælendalista: ')
-      .font(fontRegular)
-      .text(endorsementList.title)
-      .moveDown()
-
-      .font(fontBold)
-      .text('Um meðmælendalista: ')
-      .font(fontRegular)
-      .text(endorsementList.description)
-      .moveDown()
-
-      .font(fontBold)
-      .text('Ábyrgðarmaður: ')
-      .font(fontRegular)
-      .text(ownerName)
-      .moveDown()
-
-      .font(fontBold)
-      .text('Gildistímabil lista: ')
-      .font(fontRegular)
-      .text(
-        endorsementList.openedDate.toLocaleDateString(locale) +
-          ' - ' +
-          endorsementList.closedDate.toLocaleDateString(locale),
-      )
-      .moveDown()
-
-      .font(fontBold)
-      .text('Fjöldi skráðir: ')
-      .font(fontRegular)
-      .text(endorsementList.endorsements.length)
-      .moveDown(2)
-
-    if (endorsementList.endorsements.length) {
-      doc.fontSize(big).text('Yfirlit meðmæla').fontSize(regular).moveDown()
-      for (const val of endorsementList.endorsements) {
-        doc.text(
-          val.created.toLocaleDateString(locale) +
-            ' ' +
-            (val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint') +
-            ' ' +
-            (val.meta.locality ? val.meta.locality : 'Sveitafélag ótilgreint'),
-        )
-      }
-    }
-    doc
-      .moveDown()
-
-      .fontSize(regular)
+      .font('Bold')
+      .fontSize(24)
+      .text('Upplýsingar um undirskriftalista', 60, currentYPosition, {
+        align: 'left',
+      })
+      .fontSize(12)
       .text(
         'Þetta skjal var framkallað sjálfvirkt þann: ' +
           new Date().toLocaleDateString(locale) +
           ' klukkan ' +
           new Date().toLocaleTimeString(locale),
       )
+    currentYPosition = doc.y + 20 // Adjust vertical space
+
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Heiti undirskriftalista: ', 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(endorsementList.title, 60, currentYPosition, {
+        align: 'left',
+      })
+
+    currentYPosition = doc.y + 15
+
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Um undirskriftalista: ', 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(endorsementList.description, 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 15
+
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Opin til: ', 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(
+        endorsementList.closedDate.toLocaleDateString(locale),
+        60,
+        currentYPosition,
+        { align: 'left' },
+      )
+    currentYPosition = doc.y + 15
+
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Fjöldi undirskrifta: ', 60, currentYPosition, { align: 'left' })
+
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(endorsementList.endorsementCount.toString(), 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 15
+
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Ábyrgðarmaður: ', 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(ownerName, 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 15
+
+    doc
+      .font('Bold')
+      .fontSize(12)
+      .text('Kennitala ábyrgðarmanns: ', 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 5
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(endorsementList.owner, 60, currentYPosition, { align: 'left' })
+    currentYPosition = doc.y + 30
+
+    const dateX = 60 // Column X position for 'Dags. skráð'
+    const nameX = 160 // Column X position for 'Nafn'
+    const localityX = 360 // Column X position for 'Sveitarfélag'
+
+    // Table headers drawing function
+    const drawTableHeaders = () => {
+      doc.font('Bold').fontSize(12)
+      doc.text('Dags. skráð', dateX, currentYPosition, {
+        width: 100,
+        align: 'left',
+      })
+      doc.text('Nafn', nameX, currentYPosition, { width: 200, align: 'left' })
+      doc.text('Sveitarfélag', localityX, currentYPosition, {
+        width: 200,
+        align: 'left',
+      })
+      currentYPosition = doc.y + 5 // Adjust space between header and rows
+    }
+
+    // Endorsements List (Rows)
+    drawTableHeaders()
+    endorsementList.endorsements.forEach((endorsement: Endorsement) => {
+      if (doc.y + 20 > doc.page.height - 100) {
+        // Add a new page if content is about to overflow
+        doc.addPage()
+        currentYPosition = 60 // Reset Y-position for the new page
+        drawTableHeaders() // Draw table headers at the top of the new page
+      }
+
+      // Draw the endorsement data
+      doc.font('Regular').fontSize(10)
+      doc.text(
+        endorsement.created.toLocaleDateString(locale),
+        dateX,
+        currentYPosition,
+        { width: 100, align: 'left' },
+      )
+      doc.text(
+        endorsement.meta.fullName || 'Nafn ótilgreint',
+        nameX,
+        currentYPosition,
+        { width: 200, align: 'left' },
+      )
+      doc.text(
+        endorsement.meta.locality || 'Sveitafélag ótilgreint',
+        localityX,
+        currentYPosition,
+        { width: 200, align: 'left' },
+      )
+
+      currentYPosition = doc.y + 5 // Move down slightly for the next row
+    })
+
+    // Add footer image at the bottom of the page
+    const footerY = doc.page.height - 80
+    doc.image(footerImagePath, 60, footerY, { width: 120 })
+
     doc.end()
     return await getStream.buffer(doc)
   }
@@ -683,10 +810,10 @@ export class EndorsementListService {
       await this.uploadFileToS3(fileBuffer, filename, fileType)
 
       // Generate presigned URL with 60 minutes expiration
-      const url = await this.awsService.getPresignedUrl(
-        environment.exportsBucketName,
-        filename,
-      )
+      const url = await this.awsService.getPresignedUrl({
+        bucket: environment.exportsBucketName,
+        key: filename,
+      })
       return { url }
     } catch (error) {
       this.logger.error(`Failed to export list ${listId}`, { error })
@@ -751,8 +878,7 @@ export class EndorsementListService {
     try {
       await this.awsService.uploadFile(
         fileBuffer,
-        environment.exportsBucketName,
-        filename,
+        { bucket: environment.exportsBucketName, key: filename },
         {
           ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
         },

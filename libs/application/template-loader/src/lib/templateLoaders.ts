@@ -71,6 +71,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/financial-statement-individual-election'
     ),
+  [ApplicationTypes.FINANCIAL_STATEMENT_POLITICAL_PARTY]: () =>
+    import(
+      '@island.is/application/templates/financial-statement-political-party'
+    ),
   [ApplicationTypes.OPERATING_LICENSE]: () =>
     import('@island.is/application/templates/operating-license'),
   [ApplicationTypes.MARRIAGE_CONDITIONS]: () =>

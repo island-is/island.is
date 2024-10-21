@@ -52,10 +52,22 @@ export class SignatureCollectionAdminService {
   async getCanSignInfo(
     auth: User,
     nationalId: string,
-  ): Promise<ReasonKey[] | undefined> {
-    return (
+    listId: string,
+  ): Promise<SignatureCollectionSuccess> {
+    const signatureSignee =
       await this.signatureCollectionBasicService.getSignee(auth, nationalId)
-    ).canSignInfo
+    const list = await this.list(listId, auth)
+    // Current signatures should not prevent paper signatures
+    const canSign =
+      signatureSignee.canSign ||
+      (signatureSignee.canSignInfo?.length === 1 &&
+        (signatureSignee.canSignInfo[0] === ReasonKey.AlreadySigned ||
+          signatureSignee.canSignInfo[0] === ReasonKey.noInvalidSignature))
+
+    return {
+      success: canSign && list.area.id === signatureSignee.area?.id,
+      reasons: canSign ? [] : signatureSignee.canSignInfo,
+    }
   }
 
   async signatures(

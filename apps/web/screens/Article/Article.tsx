@@ -850,7 +850,7 @@ ArticleScreen.getProps = async ({ apolloClient, query, locale }) => {
       })
       .then((content) => {
         // map data here to reduce data processing in component
-        return JSON.parse(content?.data?.getNamespace?.fields ?? '{}')
+        return JSON.parse(content?.data?.getNamespace?.fields || '{}')
       }),
   ])
 
