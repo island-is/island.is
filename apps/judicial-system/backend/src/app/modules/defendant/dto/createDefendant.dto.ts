@@ -59,14 +59,4 @@ export class CreateDefendantDto {
   @IsEnum(DefenderChoice)
   @ApiPropertyOptional({ enum: DefenderChoice })
   readonly defenderChoice?: DefenderChoice
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  readonly isDefenderChoiceConfirmed?: boolean
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  readonly caseFilesSharedWithDefender?: boolean
 }
