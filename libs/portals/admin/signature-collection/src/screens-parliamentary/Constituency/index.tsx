@@ -48,6 +48,8 @@ export const Constituency = ({
     (list) => list.area.name === constituencyName,
   )
 
+  const areaId = collection.areas.find((a) => a.name === constituencyName)?.id
+
   const countCandidatesLists = (allLists: SignatureCollectionList[]) => {
     return allLists?.reduce((acc: any, list: SignatureCollectionList) => {
       acc[list.candidate.id] = (acc[list.candidate.id] || 0) + 1
@@ -126,7 +128,10 @@ export const Constituency = ({
                     constituencyLists.length}
                 </Text>
                 {allowedToProcess && constituencyLists?.length > 0 && (
-                  <CreateCollection collectionId={collection?.id} />
+                  <CreateCollection
+                    collectionId={collection?.id}
+                    areaId={areaId}
+                  />
                 )}
               </Box>
               <Stack space={3}>

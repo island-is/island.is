@@ -163,12 +163,12 @@ export class SignatureCollectionAdminClientService {
     }
     // Candidacy exists, add area
     else {
-      const newAreas = await adminApi.adminMedmaelalistarPost({
+      await adminApi.adminMedmaelalistiPost({
         medmaelalistarRequestDTO: {
           frambodID: candidacy.id,
           medmaelalistar: filteredAreas.map((area) => ({
             svaediID: parseInt(area.id),
-            listiNafn: `${name} - ${area.name}`,
+            listiNafn: `${owner.name} - ${area.name}`,
           })),
         },
       })
