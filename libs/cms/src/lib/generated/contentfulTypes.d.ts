@@ -764,6 +764,7 @@ export interface ICustomPageFields {
     | 'PensionCalculator'
     | 'OfficialJournalOfIceland'
     | 'Vacancies'
+    | 'Grants'
     | undefined
 
   /** Alert Banner */
@@ -1757,6 +1758,85 @@ export interface IGenericTagGroup extends Entry<IGenericTagGroupFields> {
     contentType: {
       sys: {
         id: 'genericTagGroup'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGrantFields {
+  /** Title */
+  grantName: string
+
+  /** Description */
+  grantDescription?: Document | undefined
+
+  /** Grant Application ID */
+  grantApplicationId?: string | undefined
+
+  /** Application deadline text */
+  grantApplicationDeadlineText: string[]
+
+  /** Application Url */
+  granApplicationUrl?: ILinkUrl | undefined
+
+  /** What is granted? */
+  grantWhatIsGranted?: Document | undefined
+
+  /** Special emphasis */
+  grantSpecialEmphasis?: Document | undefined
+
+  /** Who can apply? */
+  grantWhoCanApply?: Document | undefined
+
+  /** How to apply? */
+  grantHowToApply?: Document | undefined
+
+  /** Application deadline */
+  grantApplicationDeadline?: Document | undefined
+
+  /** Date from */
+  grantDateFrom?: string | undefined
+
+  /** Date to */
+  grantDateTo?: string | undefined
+
+  /** Is open? */
+  grantIsOpen?: boolean | undefined
+
+  /** Status */
+  grantStatus?:
+    | 'Opið fyrir umsóknir'
+    | 'Lokað fyrir umsóknir'
+    | 'Opnar fljótlega'
+    | undefined
+
+  /** Organization */
+  grantOrganization: IOrganization
+
+  /** Files */
+  grantFiles?: Asset[] | undefined
+
+  /** Category tag */
+  grantCategoryTag?: IGenericTag | undefined
+
+  /** Type tag */
+  grantTypeTag?: IGenericTag | undefined
+}
+
+/** Grant is a part of "Styrkjatorg". */
+
+export interface IGrant extends Entry<IGrantFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'grant'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -5055,6 +5135,7 @@ export type CONTENT_TYPE =
   | 'genericPage'
   | 'genericTag'
   | 'genericTagGroup'
+  | 'grant'
   | 'graphCard'
   | 'groupedMenu'
   | 'hnippTemplate'
