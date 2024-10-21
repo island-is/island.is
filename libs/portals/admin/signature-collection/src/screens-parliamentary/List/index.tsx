@@ -91,10 +91,18 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             }
             type={listStatus === ListStatus.Reviewed ? 'success' : undefined}
           />
-          <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
+          <ActionExtendDeadline
+            listId={list.id}
+            endTime={list.endTime}
+            allowedToProcess={allowedToProcess}
+          />
           <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
-          <PaperSignees listId={list.id} />
-          <ActionReviewComplete listId={list.id} listStatus={listStatus} />
+          {allowedToProcess && (
+            <Box>
+              <PaperSignees listId={list.id} />
+              <ActionReviewComplete listId={list.id} listStatus={listStatus} />
+            </Box>
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

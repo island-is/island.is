@@ -101,10 +101,12 @@ const ParliamentaryRoot = ({
                 backgroundColor="blue"
               />
             </Box>
-            <DownloadReports
-              areas={collection.areas}
-              collectionId={collection?.id}
-            />
+            {allowedToProcess && (
+              <DownloadReports
+                areas={collection.areas}
+                collectionId={collection?.id}
+              />
+            )}
           </Box>
           {loading && (
             <Box marginBottom={6}>
@@ -202,7 +204,7 @@ const ParliamentaryRoot = ({
               />
             ))}
           </Stack>
-          <CompareLists collectionId={collection?.id} />
+          {allowedToProcess && <CompareLists collectionId={collection?.id} />}
         </GridColumn>
       </GridRow>
     </GridContainer>
