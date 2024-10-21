@@ -47,3 +47,7 @@ export const isSuccessfulServiceStatus = (
 ): boolean => {
   return Boolean(status && successfulServiceStatus.includes(status))
 }
+
+export const isFailedServiceStatus = (status?: ServiceStatus): boolean => {
+  return Boolean(status && status === ServiceStatus.FAILED)
+}

@@ -33,6 +33,7 @@ import { strings } from './IndictmentCaseFilesList.strings'
 
 interface Props {
   workingCase: Case
+  displayGeneratedPDFs?: boolean
   displayHeading?: boolean
   connectedCaseParentId?: string
 }
@@ -64,6 +65,7 @@ export const RenderFiles: FC<RenderFilesProps> = ({
 
 const IndictmentCaseFilesList: FC<Props> = ({
   workingCase,
+  displayGeneratedPDFs = true,
   displayHeading = true,
   connectedCaseParentId,
 }) => {
@@ -75,9 +77,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
   })
 
   const showTrafficViolationCaseFiles = isTrafficViolationCase(workingCase)
-  const showSubpoenaPdf = workingCase.defendants?.some(
-    (defendant) => defendant.subpoenas && defendant.subpoenas.length > 0,
-  )
+  const showSubpoenaPdf =
+    displayGeneratedPDFs &&
+    workingCase.defendants?.some(
+      (defendant) => defendant.subpoenas && defendant.subpoenas.length > 0,
+    )
 
   const cf = workingCase.caseFiles
 
@@ -124,7 +128,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <RenderFiles caseFiles={indictments} onOpenFile={onOpen} />
         </Box>
       )}
-      {showTrafficViolationCaseFiles && (
+      {showTrafficViolationCaseFiles && displayGeneratedPDFs && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(caseFiles.indictmentSection)}
@@ -176,25 +180,27 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <RenderFiles caseFiles={others} onOpenFile={onOpen} />
         </Box>
       )}
-      <Box marginBottom={5}>
-        <Text variant="h4" as="h4" marginBottom={1}>
-          {formatMessage(strings.caseFileTitle)}
-        </Text>
-        {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
-          <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
-            <PdfButton
-              caseId={workingCase.id}
-              connectedCaseParentId={connectedCaseParentId}
-              title={formatMessage(strings.caseFileButtonText, {
-                policeCaseNumber,
-              })}
-              pdfType="caseFilesRecord"
-              elementId={policeCaseNumber}
-              renderAs="row"
-            />
-          </Box>
-        ))}
-      </Box>
+      {displayGeneratedPDFs && (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={1}>
+            {formatMessage(strings.caseFileTitle)}
+          </Text>
+          {workingCase.policeCaseNumbers?.map((policeCaseNumber, index) => (
+            <Box marginBottom={2} key={`${policeCaseNumber}-${index}`}>
+              <PdfButton
+                caseId={workingCase.id}
+                connectedCaseParentId={connectedCaseParentId}
+                title={formatMessage(strings.caseFileButtonText, {
+                  policeCaseNumber,
+                })}
+                pdfType="caseFilesRecord"
+                elementId={policeCaseNumber}
+                renderAs="row"
+              />
+            </Box>
+          ))}
+        </Box>
+      )}
       {courtRecords?.length || rulings?.length ? (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
