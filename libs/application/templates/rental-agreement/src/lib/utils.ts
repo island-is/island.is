@@ -1,3 +1,4 @@
+import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
   AnswerOptions,
@@ -9,7 +10,6 @@ import {
   rentalAmountPaymentDateOptions,
 } from './constants'
 import * as m from './messages'
-import { getValueViaPath } from '@island.is/application/core'
 
 export const insertAt = (str: string, sub: string, pos: number) =>
   `${str.slice(0, pos)}${sub}${str.slice(pos)}`
@@ -18,30 +18,38 @@ export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
-  const propertyCategoryTypeOptions = getValueViaPath(
-    answers,
-    'registerPropertyCategoryType',
-  ) as rentalHousingCategoryTypes
+  const propertyCategoryTypeOptions =
+    getValueViaPath<rentalHousingCategoryTypes>(
+      answers,
+      'registerPropertyCategoryType',
+    )
 
-  const propertyCategoryClassOptions = getValueViaPath(
-    answers,
-    'registerPropertyCategoryClass',
-  ) as rentalHousingCategoryClass
+  const propertyCategoryClassOptions =
+    getValueViaPath<rentalHousingCategoryClass>(
+      answers,
+      'registerPropertyCategoryClass',
+    )
 
-  const inspectorOptions = getValueViaPath(
+  const inspectorOptions = getValueViaPath<rentalHousingConditionInspector>(
     answers,
     'rentalHousingConditionInspector',
-  ) as rentalHousingConditionInspector
+  )
 
-  const isRentalAmountIndexConnected = getValueViaPath(
+  const isRentalAmountIndexConnected = getValueViaPath<AnswerOptions>(
     answers,
     'isRentalAmountIndexConnected',
-  ) as AnswerOptions
+  )
 
-  const rentalAmountIndexTypesOptions = getValueViaPath(
+  const rentalAmountIndexTypesOptions = getValueViaPath<rentalAmountIndexTypes>(
     answers,
     'rentalAmountIndexTypes',
-  ) as rentalAmountIndexTypes
+  )
+
+  const rentalAmountPaymentDateOptions =
+    getValueViaPath<rentalAmountPaymentDateOptions>(
+      answers,
+      'rentalAmountPaymentDate',
+    )
 
   return {
     propertyCategoryTypeOptions,
@@ -49,6 +57,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     inspectorOptions,
     isRentalAmountIndexConnected,
     rentalAmountIndexTypesOptions,
+    rentalAmountPaymentDateOptions,
   }
 }
 

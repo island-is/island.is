@@ -6,8 +6,9 @@ import {
   buildCheckboxField,
   buildSelectField,
   buildDateField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 import {
   AnswerOptions,
   rentalAmountIndexTypes,
@@ -19,24 +20,10 @@ import {
   getRentalAmountPaymentDateOptions,
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
-import { get } from 'lodash'
 
-function rentalAmountIsIndexConnected(answers: Application['answers']) {
+function rentalAmountIndexIsConnected(answers: FormValue) {
   const { isRentalAmountIndexConnected } = getApplicationAnswers(answers)
-  return (
-    isRentalAmountIndexConnected &&
-    isRentalAmountIndexConnected.includes(AnswerOptions.YES)
-  )
-}
-
-function rentalAmountIndexTypeIsSelected(answers: Application['answers']) {
-  const { rentalAmountIndexTypesOptions, isRentalAmountIndexConnected } =
-    getApplicationAnswers(answers)
-  return (
-    isRentalAmountIndexConnected &&
-    isRentalAmountIndexConnected.includes(AnswerOptions.YES) &&
-    rentalAmountIndexTypesOptions !== undefined
-  )
+  return isRentalAmountIndexConnected === AnswerOptions.YES
 }
 
 export const RentalPeriodAmount = buildSubSection({
@@ -77,7 +64,7 @@ export const RentalPeriodAmount = buildSubSection({
           title: m.rentalAmount.indexOptionsLabel,
           options: getRentalAmountIndexTypes(),
           defaultValue: rentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
-          condition: rentalAmountIsIndexConnected,
+          condition: rentalAmountIndexIsConnected,
           width: 'half',
         }),
         buildDateField({
@@ -86,7 +73,7 @@ export const RentalPeriodAmount = buildSubSection({
           maxDate: new Date(),
           defaultValue: new Date().toISOString().substring(0, 10),
           width: 'half',
-          condition: rentalAmountIndexTypeIsSelected,
+          condition: rentalAmountIndexIsConnected,
         }),
         buildTextField({
           id: 'rentalAmountIndexValue',
@@ -94,7 +81,7 @@ export const RentalPeriodAmount = buildSubSection({
           placeholder: m.rentalAmount.indexValuePlaceholder,
           variant: 'number',
           width: 'half',
-          condition: rentalAmountIndexTypeIsSelected,
+          condition: rentalAmountIndexIsConnected,
         }),
         buildDescriptionField({
           id: 'rentalAmountPaymentDateDetails',
@@ -114,7 +101,7 @@ export const RentalPeriodAmount = buildSubSection({
           title: m.rentalAmount.paymentDateOtherOptionLabel,
           placeholder: m.rentalAmount.paymentDateOtherOptionPlaceholder,
           condition: (answers) =>
-            get(answers, 'rentalAmountPaymentDateOptions') ===
+            getValueViaPath(answers, 'rentalAmountPaymentDateOptions') ===
             rentalAmountPaymentDateOptions.OTHER,
         }),
         buildDescriptionField({
