@@ -92,7 +92,9 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           <ActionExtendDeadline
             listId={list.id}
             endTime={list.endTime}
-            allowedToProcess={allowedToProcess}
+            allowedToProcess={
+              allowedToProcess && listStatus === ListStatus.Extendable
+            }
           />
           {(allowedToProcess && !list.active ||
             !allowedToProcess) && (
