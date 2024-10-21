@@ -2,20 +2,135 @@ import {
   buildSubSection,
   buildMultiField,
   buildTextField,
+  buildDescriptionField,
+  buildCheckboxField,
+  buildSelectField,
+  buildDateField,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
+import {
+  AnswerOptions,
+  rentalAmountIndexTypes,
+  rentalAmountPaymentDateOptions,
+} from '../../lib/constants'
+import {
+  getApplicationAnswers,
+  getRentalAmountIndexTypes,
+  getRentalAmountPaymentDateOptions,
+} from '../../lib/utils'
+import * as m from '../../lib/messages'
+import { get } from 'lodash'
+
+function rentalAmountIsIndexConnected(answers: Application['answers']) {
+  const { isRentalAmountIndexConnected } = getApplicationAnswers(answers)
+  return (
+    isRentalAmountIndexConnected &&
+    isRentalAmountIndexConnected.includes(AnswerOptions.YES)
+  )
+}
+
+function rentalAmountIndexTypeIsSelected(answers: Application['answers']) {
+  const { rentalAmountIndexTypesOptions, isRentalAmountIndexConnected } =
+    getApplicationAnswers(answers)
+  return (
+    isRentalAmountIndexConnected &&
+    isRentalAmountIndexConnected.includes(AnswerOptions.YES) &&
+    rentalAmountIndexTypesOptions !== undefined
+  )
+}
 
 export const RentalPeriodAmount = buildSubSection({
-  id: 'rentalPeriodAmount',
-  title: 'Leiguupphæð',
+  id: 'rentalAmount',
+  title: m.rentalAmount.subSectionName,
   children: [
     buildMultiField({
-      id: 'rentalPeriodAmountDetails',
-      title: 'Leiguupphæð',
+      id: 'rentalAmountDetails',
+      title: m.rentalAmount.pageTitle,
+      description: m.rentalAmount.pageDescription,
       children: [
+        buildDescriptionField({
+          id: 'rentalAmountDetailsTitle',
+          title: m.rentalAmount.infoTitle,
+          titleVariant: 'h3',
+          space: 1,
+        }),
         buildTextField({
-          id: 'rentalPeriodAmountInput',
-          title: 'Leiguupphæð',
-          format: 'text',
+          id: 'rentalAmountInput',
+          title: m.rentalAmount.inputLabel,
+          placeholder: m.rentalAmount.inputPlaceholder,
+          variant: 'currency',
+          maxLength: 14,
+        }),
+        buildCheckboxField({
+          id: 'isRentalAmountIndexConnected',
+          title: '',
+          options: [
+            {
+              value: AnswerOptions.YES,
+              label: m.rentalAmount.priceIndexLabel,
+            },
+          ],
+          width: 'half',
+        }),
+        buildSelectField({
+          id: 'rentalAmountIndexTypes',
+          title: m.rentalAmount.indexOptionsLabel,
+          options: getRentalAmountIndexTypes(),
+          defaultValue: rentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
+          condition: rentalAmountIsIndexConnected,
+          width: 'half',
+        }),
+        buildDateField({
+          id: 'rentalAmountIndexDate',
+          title: m.rentalAmount.indexDateLabel,
+          maxDate: new Date(),
+          defaultValue: new Date().toISOString().substring(0, 10),
+          width: 'half',
+          condition: rentalAmountIndexTypeIsSelected,
+        }),
+        buildTextField({
+          id: 'rentalAmountIndexValue',
+          title: m.rentalAmount.indexValueLabel,
+          placeholder: m.rentalAmount.indexValuePlaceholder,
+          width: 'half',
+          condition: rentalAmountIndexTypeIsSelected,
+        }),
+        buildDescriptionField({
+          id: 'rentalAmountPaymentDateDetails',
+          title: m.rentalAmount.paymentDateTitle,
+          titleVariant: 'h4',
+          description: m.rentalAmount.paymentDateDescription,
+          space: 6,
+        }),
+        buildSelectField({
+          id: 'rentalAmountPaymentDateOptions',
+          title: m.rentalAmount.paymentDateOptionsLabel,
+          options: getRentalAmountPaymentDateOptions(),
+          defaultValue: rentalAmountPaymentDateOptions.FIRST_DAY,
+        }),
+        buildTextField({
+          id: 'rentalAmountPaymentDateOther',
+          title: m.rentalAmount.paymentDateOtherOptionLabel,
+          placeholder: m.rentalAmount.paymentDateOtherOptionPlaceholder,
+          condition: (answers) =>
+            get(answers, 'rentalAmountPaymentDateOptions') ===
+            rentalAmountPaymentDateOptions.OTHER,
+        }),
+        buildDescriptionField({
+          id: 'rentalAmountPaymentInsuranceTitle',
+          title: m.rentalAmount.paymentInsuranceTitle,
+          titleVariant: 'h4',
+          space: 6,
+        }),
+        buildCheckboxField({
+          id: 'isRentalAmountPaymentInsuranceRequired',
+          title: '',
+          options: [
+            {
+              value: AnswerOptions.YES,
+              label: m.rentalAmount.paymentInsuranceRequiredLabel,
+            },
+          ],
         }),
       ],
     }),

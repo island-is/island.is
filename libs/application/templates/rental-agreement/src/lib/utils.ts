@@ -1,9 +1,12 @@
 import { Application } from '@island.is/application/types'
 import {
+  AnswerOptions,
+  rentalAmountIndexTypes,
   rentalHousingCategoryClass,
   rentalHousingCategoryClassGroup,
   rentalHousingCategoryTypes,
   rentalHousingConditionInspector,
+  rentalAmountPaymentDateOptions,
 } from './constants'
 import * as m from './messages'
 import { getValueViaPath } from '@island.is/application/core'
@@ -30,10 +33,22 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'rentalHousingConditionInspector',
   ) as rentalHousingConditionInspector
 
+  const isRentalAmountIndexConnected = getValueViaPath(
+    answers,
+    'isRentalAmountIndexConnected',
+  ) as AnswerOptions
+
+  const rentalAmountIndexTypesOptions = getValueViaPath(
+    answers,
+    'rentalAmountIndexTypes',
+  ) as rentalAmountIndexTypes
+
   return {
     propertyCategoryTypeOptions,
     propertyCategoryClassOptions,
     inspectorOptions,
+    isRentalAmountIndexConnected,
+    rentalAmountIndexTypesOptions,
   }
 }
 
@@ -90,7 +105,7 @@ export const getPropertyCategoryClassGroupOptions = () => [
     label: m.registerProperty.category.classGroupSelectLabelIncomeBasedHousing,
   },
   {
-    value: rentalHousingCategoryClassGroup.STUDENT_HOUSING,
+    value: rentalHousingCategoryClassGroup.EMPLOYEE_HOUSING,
     label: m.registerProperty.category.classGroupSelectLabelEmployeeHousing,
   },
 ]
@@ -103,5 +118,35 @@ export const getInspectorOptions = () => [
   {
     value: rentalHousingConditionInspector.INDEPENDENT_PARTY,
     label: m.housingCondition.inspectorOptionIndependentParty,
+  },
+]
+
+export const getRentalAmountIndexTypes = () => [
+  {
+    value: rentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
+    label: m.rentalAmount.indexOptionConsumerPriceIndex,
+  },
+  {
+    value: rentalAmountIndexTypes.CONSTRUCTION_COST_INDEX,
+    label: m.rentalAmount.indexOptionConstructionCostIndex,
+  },
+  {
+    value: rentalAmountIndexTypes.WAGE_INDEX,
+    label: m.rentalAmount.indexOptionWageIndex,
+  },
+]
+
+export const getRentalAmountPaymentDateOptions = () => [
+  {
+    value: rentalAmountPaymentDateOptions.FIRST_DAY,
+    label: m.rentalAmount.paymentDateOptionFirstDay,
+  },
+  {
+    value: rentalAmountPaymentDateOptions.LAST_DAY,
+    label: m.rentalAmount.paymentDateOptionLastDay,
+  },
+  {
+    value: rentalAmountPaymentDateOptions.OTHER,
+    label: m.rentalAmount.paymentDateOptionOther,
   },
 ]

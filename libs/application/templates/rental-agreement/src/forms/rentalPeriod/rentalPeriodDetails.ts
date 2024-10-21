@@ -6,7 +6,7 @@ import {
 
 export const RentalPeriodDetails = buildSubSection({
   id: 'rentalPeriodDetails',
-  title: 'Leigutímabil',
+  title: 'Tímabil',
   children: [
     buildMultiField({
       title: 'Leigutími',
