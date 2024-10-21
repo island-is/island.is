@@ -7,7 +7,7 @@ import { RentalPeriodOtherFees } from './rentalPeriod/rentalPeriodOtherFees'
 
 export const RentalPeriod = buildSection({
   id: 'rentalPeriod',
-  title: 'Tímabil og fjárhæð',
+  title: 'Tímabil og verð',
   children: [
     RentalPeriodDetails,
     RentalPeriodAmount,

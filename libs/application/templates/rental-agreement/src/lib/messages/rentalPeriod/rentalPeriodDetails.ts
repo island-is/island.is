@@ -8,7 +8,7 @@ export const rentalPeriodDetails = defineMessages({
   },
   pageTitle: {
     id: 'ra.application:rentalPeriodDetails.pageTitle',
-    defaultMessage: 'Leigutímabil',
+    defaultMessage: 'Tímabil',
     description: 'Rental period page title',
   },
   pageDescription: {
