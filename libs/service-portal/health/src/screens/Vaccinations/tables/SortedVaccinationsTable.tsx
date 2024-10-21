@@ -88,7 +88,7 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
                         url: vaccination.url ?? '',
                       },
                       {
-                        value: vaccination.comment ?? '',
+                        value: vaccination.location ?? '',
                       },
                     ]
                   },

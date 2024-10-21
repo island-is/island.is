@@ -572,29 +572,6 @@
         "tags": ["diseases"]
       }
     },
-    "/v1/vaccines": {
-      "get": {
-        "operationId": "VaccineController_getVaccines",
-        "parameters": [],
-        "responses": { "200": { "description": "" } },
-        "tags": ["vaccines"]
-      }
-    },
-    "/v1/vaccines/{vaccineId}": {
-      "get": {
-        "operationId": "VaccineController_getVaccineById",
-        "parameters": [
-          {
-            "name": "vaccineId",
-            "required": true,
-            "in": "path",
-            "schema": { "type": "number" }
-          }
-        ],
-        "responses": { "200": { "description": "" } },
-        "tags": ["vaccines"]
-      }
-    },
     "/v1/visualizer/diseases/{diseaseId}": {
       "get": {
         "operationId": "VisualizerController_getStatus",
@@ -713,6 +690,7 @@
             "type": "string",
             "example": "2021-01-01"
           },
+          "vaccinationLocation": { "type": "string" },
           "vaccinationAge": {
             "type": "object",
             "example": { "years": 1, "months": 2 }
@@ -727,10 +705,9 @@
           "vaccineCodingSystem",
           "vaccineCodeDescription",
           "vaccineCodeDescriptionShort",
-          "vaccineUrl",
           "vaccinationDate",
+          "vaccinationLocation",
           "vaccinationAge",
-          "generalComment",
           "rejected"
         ]
       },
@@ -804,24 +781,15 @@
           "comments"
         ]
       },
-      "VaccineDto": {
+      "VaccineDiseaseDto": {
         "type": "object",
         "properties": {
-          "id": { "type": "number" },
           "code": { "type": "string" },
           "codingSystem": { "type": "string", "example": "ATC" },
-          "name": { "type": "string" },
-          "description": { "type": "string" },
-          "diseases": { "type": "array", "items": { "type": "string" } }
+          "diseaseId": { "type": "string" },
+          "useInCalculations": { "type": "boolean" }
         },
-        "required": [
-          "id",
-          "code",
-          "codingSystem",
-          "name",
-          "description",
-          "diseases"
-        ]
+        "required": ["code", "codingSystem", "diseaseId", "useInCalculations"]
       },
       "Locale": { "type": "string", "enum": ["en", "is"] },
       "DiseaseRuleTranslationDto": {
@@ -859,33 +827,14 @@
             }
           }
         },
-        "required": [
-          "id",
-          "diseaseId",
-          "order",
-          "type",
-          "cond1Type",
-          "cond1Min",
-          "cond1Max",
-          "cond2Type",
-          "cond2Min",
-          "cond2Max",
-          "cond3Type",
-          "cond3Min",
-          "cond3Max",
-          "status",
-          "statusName",
-          "internalComment",
-          "publicComment",
-          "translations"
-        ]
+        "required": ["id", "diseaseId", "order", "type", "translations"]
       },
       "DiseaseTranslationDto": {
         "type": "object",
         "properties": {
           "locale": { "$ref": "#/components/schemas/Locale" },
           "name": { "type": "string" },
-          "description": { "type": "string" }
+          "description": { "type": "object" }
         },
         "required": ["locale", "name", "description"]
       },
@@ -895,17 +844,11 @@
           "id": { "type": "string" },
           "name": { "type": "string" },
           "description": { "type": "string" },
-          "doseSchedule": {
-            "description": "Array of numbers representing at which dates (in months) the doses should be administered",
-            "example": [2, 4, 6],
-            "type": "array",
-            "items": { "type": "number" }
-          },
           "isFeatured": { "type": "boolean" },
           "isVisible": { "type": "boolean" },
           "vaccines": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/VaccineDto" }
+            "items": { "$ref": "#/components/schemas/VaccineDiseaseDto" }
           },
           "rules": {
             "type": "array",
@@ -919,8 +862,6 @@
         "required": [
           "id",
           "name",
-          "description",
-          "doseSchedule",
           "isFeatured",
           "isVisible",
           "vaccines",
@@ -934,12 +875,6 @@
           "id": { "type": "string" },
           "name": { "type": "string" },
           "description": { "type": "string" },
-          "doseSchedule": {
-            "description": "Array of numbers representing at which dates (in months) the doses should be administered",
-            "example": [2, 4, 6],
-            "type": "array",
-            "items": { "type": "number" }
-          },
           "isFeatured": { "type": "boolean" },
           "isVisible": { "type": "boolean" },
           "rules": {
@@ -977,24 +912,7 @@
             }
           }
         },
-        "required": [
-          "order",
-          "type",
-          "cond1Type",
-          "cond1Min",
-          "cond1Max",
-          "cond2Type",
-          "cond2Min",
-          "cond2Max",
-          "cond3Type",
-          "cond3Min",
-          "cond3Max",
-          "status",
-          "statusName",
-          "internalComment",
-          "publicComment",
-          "translations"
-        ]
+        "required": ["order", "type", "translations"]
       },
       "UpdateDiseaseRuleDto": {
         "type": "object",
