@@ -8,15 +8,16 @@ import {
 import { Application } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { Total } from '../KeyNumbers'
 import { CemetryIncome } from './CemeteryIncome'
 import { CemeteryExpenses } from './CemeteryExpenses'
 import { CemeteryIncomeLimit } from '../CemeteryIncomeLimit/index'
 import { useQuery } from '@apollo/client'
 import { getValueViaPath } from '@island.is/application/core'
 import { taxInfoQuery } from '../../graphql'
-import { CEMETERYOPERATIONIDS, OPERATINGCOST } from '../../utils/constants'
+import { CEMETERYOPERATIONIDS } from '../../utils/constants'
 import { useTotals } from '../../hooks/useTotals'
+import { Total } from '@island.is/libs/application/templates/inao/shared/components/Total'
+import { OPERATINGCOST } from '@island.is/libs/application/templates/inao/shared/utils/constants'
 
 export const CemeteryOperation = ({
   application,

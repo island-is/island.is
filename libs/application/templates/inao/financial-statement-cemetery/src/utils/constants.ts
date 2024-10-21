@@ -6,20 +6,10 @@ export const CEMETERYCARETAKER = {
 
 export const CARETAKER = 'Skoðunarmaður'
 export const BOARDMEMEBER = 'Stjórnarmaður'
-export const INPUTCHANGEINTERVAL = 300
-export const TOTAL = 'total'
-export const GREATER = 'greater'
-export const LESS = 'less'
 export const PartiesBackwardLimit = 'PartiesBackwardLimit'
 export const CemeteriesBackwardLimit = 'CemeteriesBackwardLimit'
 export const PartiesYearAllowed = 'PartiesYearAllowed'
 export const CemeteriesYearAllowed = 'CemeteriesYearAllowed'
-
-// error helpers
-export const VALIDATOR = 'validator'
-export const APPLICANTASMEMBER = 'applicantasmember'
-export const ACTORASCARETAKER = 'actorascaretaker'
-export const ACTORLONEBOARDMEMBER = 'actorloneboardmember'
 
 export enum TaxInfoTypes {
   CARE_INCOME = 300,
@@ -49,13 +39,6 @@ export const CEMETERYOPERATIONIDS = {
   depreciation: 'cemeteryExpense.depreciation',
 }
 
-export const CAPITALNUMBERS = {
-  capitalPrefix: 'capitalNumbers',
-  capitalIncome: 'capitalNumbers.capitalIncome',
-  capitalCost: 'capitalNumbers.capitalCost',
-  total: 'capitalNumbers.total',
-}
-
 export const CEMETERYEQUITIESANDLIABILITIESIDS = {
   assetPrefix: 'cemeteryAsset',
   liabilityPrefix: 'cemeteryLiability',
@@ -72,15 +55,4 @@ export const CEMETERYEQUITIESANDLIABILITIESIDS = {
   operationResult: 'cemeteryEquity.operationResult',
   equityTotal: 'cemeteryEquity.total',
   totalEquityAndLiabilities: 'equityAndLiabilities.total',
-}
-
-export const OPERATINGCOST = {
-  total: 'operatingCost.total',
-}
-
-export const ABOUTIDS = {
-  operatingYear: 'conditionalAbout.operatingYear',
-  applicationType: 'conditionalAbout.applicationType',
-  powerOfAttorneyNationalId: 'about.powerOfAttorneyNationalId',
-  powerOfAttorneyName: 'about.powerOfAttorneyName',
 }

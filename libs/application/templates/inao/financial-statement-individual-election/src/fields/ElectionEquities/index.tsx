@@ -13,15 +13,15 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath } from '@island.is/application/core'
-import { getTotal } from '../../lib/utils/helpers'
+import { getTotal } from '@island.is/libs/application/templates/inao/shared/utils/helpers'
 import { useTotals } from '../../hooks/useTotals'
 import {
   EQUITIESANDLIABILITIESIDS,
   INPUTCHANGEINTERVAL,
   VALIDATOR,
-} from '../../lib/utils/constants'
+} from '@island.is/libs/application/templates/inao/shared/utils/constants'
 import { m } from '../../lib/utils/messages'
-import { Total } from '../IndividualElectionOperatingIncome/Total'
+import { Total } from '@island.is/libs/application/templates/inao/shared/components/Total'
 
 export const ElectionEquities = ({
   setBeforeSubmitCallback,

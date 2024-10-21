@@ -19,9 +19,9 @@ import {
   EQUITIESANDLIABILITIESIDS,
   INPUTCHANGEINTERVAL,
   VALIDATOR,
-} from '../../utils/constants'
-import { getTotal } from '../../utils/helpers'
-import { Total } from '../../components/Total'
+} from '@island.is/libs/application/templates/inao/shared/utils/constants'
+import { getTotal } from '@island.is/libs/application/templates/inao/shared/utils/helpers'
+import { Total } from '@island.is/libs/application/templates/inao/shared/components/Total'
 
 export const ElectionEquities = ({
   setBeforeSubmitCallback,
