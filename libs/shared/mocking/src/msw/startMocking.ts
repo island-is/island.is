@@ -3,6 +3,19 @@ import { RequestHandler } from 'msw'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export declare type RequestHandlersList = RequestHandler<any, any, any, any>[]
 
+const allowedKeyPaths = ['stjornbord', 'minarsidur']
+
+const extractUniqueKeyPath = (url: string) => {
+  try {
+    const parsedUrl = new URL(url)
+    const pathSegments = parsedUrl.pathname.split('/').filter(Boolean)
+    return pathSegments.length > 0 ? pathSegments[0] : null
+  } catch (error) {
+    // coop
+    return null
+  }
+}
+
 export const startMocking = (requestHandlers: RequestHandlersList) => {
   if (typeof window === 'undefined') {
     // https://github.com/webpack/webpack/issues/8826
@@ -15,10 +28,12 @@ export const startMocking = (requestHandlers: RequestHandlersList) => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { setupWorker } = require('msw')
     const worker = setupWorker(...requestHandlers)
-    if (location.pathname.split('/')[1] === 'minarsidur') {
+    const keyPath = extractUniqueKeyPath(location.href)
+
+    if (keyPath && allowedKeyPaths.includes(keyPath)) {
       worker.start({
         serviceWorker: {
-          url: '/minarsidur/mockServiceWorker.js',
+          url: `/${keyPath}/mockServiceWorker.js`,
         },
       })
     } else {
