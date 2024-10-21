@@ -92,4 +92,7 @@ export class Defendant {
 
   @Field(() => Boolean, { nullable: true })
   readonly isDefenderChoiceConfirmed?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly caseFilesSharedWithDefender?: boolean
 }

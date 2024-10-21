@@ -99,6 +99,26 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
     [setWorkingCase, setAndSendDefendantToServer],
   )
 
+  const toggleCaseFilesSharedWithDefender = useCallback(
+    (
+      caseId: string,
+      defendant: Defendant,
+      caseFilesSharedWithDefender: boolean,
+    ) => {
+      if (defendant) {
+        defendant.caseFilesSharedWithDefender = caseFilesSharedWithDefender
+
+        const updateDefendantInput = {
+          caseId: caseId,
+          defendantId: defendant.id,
+          caseFilesSharedWithDefender,
+        }
+        setAndSendDefendantToServer(updateDefendantInput, setWorkingCase)
+      }
+    },
+    [setWorkingCase, setAndSendDefendantToServer],
+  )
+
   return (
     <Box component="section" marginBottom={5}>
       {defenderNotFound && !workingCase.defendantWaivesRightToCounsel && (
@@ -142,6 +162,25 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
           onAdvocateNotFound={setDefenderNotFound}
           clientId={defendant.id}
         />
+        <Box marginTop={2}>
+          <Checkbox
+            name={`shareFilesWithDefender-${defendant.id}`}
+            label={formatMessage(strings.shareFilesWithDefender)}
+            checked={Boolean(defendant.caseFilesSharedWithDefender)}
+            disabled={!defendant.defenderName}
+            onChange={() => {
+              toggleCaseFilesSharedWithDefender(
+                workingCase.id,
+                defendant,
+                !defendant.caseFilesSharedWithDefender,
+              )
+            }}
+            tooltip={formatMessage(strings.shareFilesWithDefenderTooltip)}
+            backgroundColor="white"
+            large
+            filled
+          />
+        </Box>
         <Box display="flex" justifyContent="flexEnd" marginTop={2}>
           <Button
             variant="text"

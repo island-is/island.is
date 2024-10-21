@@ -26,6 +26,7 @@ query Case($input: CaseQueryInput!) {
       requestedDefenderNationalId
       requestedDefenderName
       isDefenderChoiceConfirmed
+      caseFilesSharedWithDefender
       serviceRequirement
       verdictViewDate
       verdictAppealDeadline

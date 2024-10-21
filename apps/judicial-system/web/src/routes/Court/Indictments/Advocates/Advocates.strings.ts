@@ -174,4 +174,16 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti á takka til að hætta við val á lögmanni eða réttargæslumanni í dómaraflæði í ákærum.',
   },
+  shareFilesWithDefender: {
+    id: 'judicial.system.core:court_indictments.advocates.share_files_with_defender',
+    defaultMessage: 'Deila gögnum með verjanda',
+    description: 'Notaður sem texti á deila kröfum með verjanda takka.',
+  },
+  shareFilesWithDefenderTooltip: {
+    id: 'judicial.system.core:court_indictments.advocates.share_files_with_defender_tooltip',
+    defaultMessage:
+      'Ef hakað er í þennan reit fær lögmaður aðgang að gögnum málsins',
+    description:
+      'Notaður sem texti í tooltip á deila kröfum með verjanda takka.',
+  },
 })

@@ -64,4 +64,9 @@ export class CreateDefendantDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly isDefenderChoiceConfirmed?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly caseFilesSharedWithDefender?: boolean
 }
