@@ -66,7 +66,6 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
         hasBirthCertificate: [
           '3019', // Gervimaður Afríka
           '2399', // Gervimaður Færeyjar
-          '7789', // Gervimaður Útlönd
         ].includes(lastFour),
       }
     }

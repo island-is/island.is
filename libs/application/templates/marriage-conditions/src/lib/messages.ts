@@ -172,6 +172,12 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer',
     description: 'phone',
   },
+  phoneElectronicIdError: {
+    id: 'mac.application:phoneElectronicIdError',
+    defaultMessage:
+      'Rafræn skilríki ekki til staðar fyrir símanúmer og kennitölu',
+    description: 'phone',
+  },
   email: {
     id: 'mac.application:email',
     defaultMessage: 'Netfang',

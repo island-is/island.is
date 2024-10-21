@@ -162,12 +162,17 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     id: 'spouse.nationalIdValidatorApplicant',
                     watchValue: 'applicant.person.nationalId',
                   }),
-                  buildCustomField({
-                    id: 'spouse.phone',
-                    title: m.phone,
-                    component: 'PhoneWithElectronicId',
-                    width: 'half',
-                  }),
+                  buildCustomField(
+                    {
+                      id: 'spouse.phone',
+                      title: m.phone,
+                      component: 'PhoneWithElectronicId',
+                      width: 'half',
+                    },
+                    {
+                      nationalIdPath: 'spouse.person.nationalId',
+                    },
+                  ),
                   buildTextField({
                     id: 'spouse.email',
                     title: m.email,
@@ -405,12 +410,17 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     id: 'witness1.nationalIdValidatorSpouse',
                     watchValue: 'spouse.person.nationalId',
                   }),
-                  buildCustomField({
-                    id: 'witness1.phone',
-                    title: m.phone,
-                    component: 'PhoneWithElectronicId',
-                    width: 'half',
-                  }),
+                  buildCustomField(
+                    {
+                      id: 'witness1.phone',
+                      title: m.phone,
+                      component: 'PhoneWithElectronicId',
+                      width: 'half',
+                    },
+                    {
+                      nationalIdPath: 'witness1.person.nationalId',
+                    },
+                  ),
                   buildTextField({
                     id: 'witness1.email',
                     title: m.email,
@@ -442,12 +452,17 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     id: 'witness2.nationalIdValidatorWitness',
                     watchValue: 'witness1.person.nationalId',
                   }),
-                  buildCustomField({
-                    id: 'witness2.phone',
-                    title: m.phone,
-                    component: 'PhoneWithElectronicId',
-                    width: 'half',
-                  }),
+                  buildCustomField(
+                    {
+                      id: 'witness2.phone',
+                      title: m.phone,
+                      component: 'PhoneWithElectronicId',
+                      width: 'half',
+                    },
+                    {
+                      nationalIdPath: 'witness2.person.nationalId',
+                    },
+                  ),
                   buildTextField({
                     id: 'witness2.email',
                     title: m.email,
@@ -462,24 +477,14 @@ export const getApplication = ({ allowFakeData = false }): Form => {
         ],
       }),
       buildSection({
-        id: 'marriageOverview',
-        title: m.overview,
-        children: [
-          buildMultiField({
-            id: 'applicationOverview',
-            title: m.applicationOverview,
-            description: m.informationSubtitle,
-            children: [
-              buildCustomField({
-                id: 'overview',
-                title: '',
-                component: 'ApplicationOverview',
-              }),
-            ],
-          }),
-        ],
-      }),
-      buildSection({
+        condition: (_, externalData) => {
+          const data = (
+            externalData?.birthCertificate?.data as {
+              hasBirthCertificate?: boolean
+            }
+          )?.hasBirthCertificate
+          return !data
+        },
         id: 'missingInformation',
         title: 'Gögn vantar',
         children: [
@@ -520,6 +525,24 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                       'Ég skil að ég þarf að skila inn fæðingarvottorði til syslumanns.',
                   },
                 ],
+              }),
+            ],
+          }),
+        ],
+      }),
+      buildSection({
+        id: 'marriageOverview',
+        title: m.overview,
+        children: [
+          buildMultiField({
+            id: 'applicationOverview',
+            title: m.applicationOverview,
+            description: m.informationSubtitle,
+            children: [
+              buildCustomField({
+                id: 'overview',
+                title: '',
+                component: 'ApplicationOverview',
               }),
               buildSubmitField({
                 id: 'submitApplication',

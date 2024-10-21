@@ -7,6 +7,8 @@ export const allowFakeCondition =
   (answers: FormValue) =>
     getValueViaPath(answers, 'fakeData.useFakeData') === result
 
+export const fakeDataIsEnabled = allowFakeCondition(YES)
+
 export const getSpouseNationalId = (answers: FormValue): string =>
   getValueViaPath(answers, 'spouse.person.nationalId') as string
 

@@ -28,6 +28,10 @@ const individualInfo = z.object({
   nationalIdValidatorWitness: z.string().optional(),
 })
 
+const individualInfoWithElectronicId = individualInfo.extend({
+  electronicID: z.string().optional(),
+})
+
 const personalInfo = z.object({
   address: z.string().refine((v) => v),
   citizenship: z.string(),
@@ -38,8 +42,8 @@ export const dataSchema = z.object({
   //applicant's part of the application
   approveExternalData: z.boolean().refine((v) => v),
   applicant: individualInfo,
-  spouse: individualInfo.superRefine(
-    ({ person, nationalIdValidatorApplicant }, ctx) => {
+  spouse: individualInfoWithElectronicId.superRefine(
+    ({ person, nationalIdValidatorApplicant, electronicID }, ctx) => {
       if (
         person.nationalId === nationalIdValidatorApplicant?.replace(/\D/g, '')
       ) {
@@ -48,12 +52,23 @@ export const dataSchema = z.object({
           message: m.nationalIdDuplicateErrorSpouse.defaultMessage,
           path: ['person', 'nationalId'],
         })
+      } else if (electronicID === '') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: m.phoneElectronicIdError.defaultMessage,
+          path: ['phone'],
+        })
       }
     },
   ),
-  witness1: individualInfo.superRefine(
+  witness1: individualInfoWithElectronicId.superRefine(
     (
-      { person, nationalIdValidatorApplicant, nationalIdValidatorSpouse },
+      {
+        person,
+        nationalIdValidatorApplicant,
+        nationalIdValidatorSpouse,
+        electronicID,
+      },
       ctx,
     ) => {
       if (
@@ -67,16 +82,23 @@ export const dataSchema = z.object({
             m.nationalIdDuplicateErrorMaritalSideVsWitness.defaultMessage,
           path: ['person', 'nationalId'],
         })
+      } else if (electronicID === '') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: m.phoneElectronicIdError.defaultMessage,
+          path: ['phone'],
+        })
       }
     },
   ),
-  witness2: individualInfo.superRefine(
+  witness2: individualInfoWithElectronicId.superRefine(
     (
       {
         person,
         nationalIdValidatorApplicant,
         nationalIdValidatorSpouse,
         nationalIdValidatorWitness,
+        electronicID,
       },
       ctx,
     ) => {
@@ -98,6 +120,12 @@ export const dataSchema = z.object({
           code: z.ZodIssueCode.custom,
           message: m.nationalIdDuplicateErrorWitness.defaultMessage,
           path: ['person', 'nationalId'],
+        })
+      } else if (electronicID === '') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: m.phoneElectronicIdError.defaultMessage,
+          path: ['phone'],
         })
       }
     },
