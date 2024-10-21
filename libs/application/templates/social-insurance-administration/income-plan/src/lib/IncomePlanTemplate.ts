@@ -237,7 +237,7 @@ const IncomePlanTemplate: ApplicationTemplate<
           actionCard: {
             tag: {
               label: coreMessages.tagsInProgress,
-            },  
+            },
             pendingAction: {
               title: statesMessages.tryggingastofnunInReviewTitle,
               content: statesMessages.tryggingastofnunInReviewContent,
@@ -275,7 +275,7 @@ const IncomePlanTemplate: ApplicationTemplate<
           actionCard: {
             tag: {
               label: coreMessages.tagsDone,
-            },   
+            },
             pendingAction: {
               title: statesMessages.incomePlanProcessed,
               content: statesMessages.incomePlanProcessedDescription,
