@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
@@ -14,7 +14,7 @@ type FallbackIdentity = Partial<Omit<Identity, 'nationalId' | 'type'>>
 @Injectable()
 export class IdentityClientService {
   constructor(
-    private nationalRegistryXRoadService: NationalRegistryClientService,
+    private nationalRegistryXRoadService: NationalRegistryV3ClientService,
     private rskCompanyInfoService: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
@@ -77,7 +77,7 @@ export class IdentityClientService {
   private async getPersonIdentity(
     nationalId: string,
   ): Promise<Identity | null> {
-    const person = await this.nationalRegistryXRoadService.getIndividual(
+    const person = await this.nationalRegistryXRoadService.getAllDataIndividual(
       nationalId,
     )
 
@@ -85,15 +85,16 @@ export class IdentityClientService {
       return null
     }
 
+
     return {
-      nationalId: person.nationalId,
-      givenName: person.givenName,
-      familyName: person.familyName,
-      name: person.name,
-      address: person.legalDomicile && {
-        streetAddress: person.legalDomicile.streetAddress,
-        postalCode: person.legalDomicile.postalCode,
-        city: person.legalDomicile.locality,
+      nationalId: person.kennitala,
+      givenName: person.fulltNafn?.eiginNafn,
+      familyName: person.fulltNafn?.kenniNafn,
+      name: person.nafn,
+      address: person.heimilisfang && {
+        streetAddress: person.heimilisfang.husHeiti,
+        postalCode: person.heimilisfang.postnumer,
+        city: person.heimilisfang.sveitarfelag,
       },
       type: IdentityType.Person,
     } as Identity
