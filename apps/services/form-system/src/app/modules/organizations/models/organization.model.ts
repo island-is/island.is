@@ -14,7 +14,8 @@ import { ApplicantTypeNameSuggestion } from '../../applicants/models/applicantTy
 import { Form } from '../../forms/models/form.model'
 import { FieldType } from '../../fields/models/fieldType.model'
 import { ListType } from '../../lists/models/listType.model'
-import { Certification } from '../../certifications/models/certification.model'
+import { OrganizationCertification } from '../../organizationCertifications/models/organizationCertification.model'
+// import { Certification } from '../../certifications/models/certification.model'
 
 @Table({ tableName: 'organization' })
 export class Organization extends Model<Organization> {
@@ -59,12 +60,8 @@ export class Organization extends Model<Organization> {
   })
   organizationFieldTypes?: NonAttribute<FieldType[]>
 
-  @BelongsToMany(() => Certification, {
-    through: 'organization_certification_type',
-    foreignKey: 'organization_id',
-    otherKey: 'certification_type_id',
-  })
-  organizationCertificationTypes?: NonAttribute<Certification[]>
+  @HasMany(() => OrganizationCertification)
+  organizationCertifications?: OrganizationCertification[]
 
   @BelongsToMany(() => ListType, {
     through: 'organization_list_type',

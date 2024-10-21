@@ -30,11 +30,8 @@ module.exports = {
           },
           certification_id: {
             type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV4,
             allowNull: false,
-            references: {
-              model: 'certification',
-              key: 'id',
-            },
           },
         },
         { transaction: t },

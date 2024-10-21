@@ -1,3 +1,5 @@
+const { randomUUID } = require('crypto')
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
@@ -46,6 +48,11 @@ module.exports = {
           derived_from: {
             type: Sequelize.INTEGER,
             allowNull: false,
+          },
+          is_published_in_changing: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
           },
           stop_progress_on_validating_screen: {
             type: Sequelize.BOOLEAN,

@@ -19,8 +19,8 @@ import { ListType } from '../lists/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { Section } from '../sections/models/section.model'
-import { CertificationDto } from '../certifications/models/dto/certification.dto'
-import { Certification } from '../certifications/models/certification.model'
+import { FormCertificationDto } from '../formCertifications/models/dto/formCertification.dto'
+// import { Certification } from '../certifications/models/certification.model'
 import { CreateFormDto } from './models/dto/createForm.dto'
 import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
@@ -29,6 +29,9 @@ import { ListItem } from '../listItems/models/listItem.model'
 import { createFormTranslations } from '../translations/form'
 import { createSectionTranslations } from '../translations/section'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
+import { OrganizationCertification } from '../organizationCertifications/models/organizationCertification.model'
+import { Certifications } from '../../dataTypes/certificationType.model'
+import { FormCertification } from '../formCertifications/models/formCertification.model'
 
 @Injectable()
 export class FormsService {
@@ -187,6 +190,10 @@ export class FormsService {
             },
           ],
         },
+        {
+          model: FormCertification,
+          as: 'certifications',
+        },
       ],
     })
 
@@ -210,28 +217,28 @@ export class FormsService {
 
   private async getCertificationTypes(
     organizationId: string,
-  ): Promise<CertificationDto[]> {
-    const organizationSpecificCertificationTypes =
-      await this.organizationModel.findByPk(organizationId, {
-        include: [Certification],
-      })
-
-    const organizationCertificationTypes =
-      organizationSpecificCertificationTypes?.organizationCertificationTypes as Certification[]
-
-    const certificationTypesDto: CertificationDto[] = []
-
-    const keys = ['id', 'type', 'name', 'description']
-    organizationCertificationTypes?.map((certificationType) => {
-      certificationTypesDto.push(
-        defaults(
-          pick(certificationType, keys),
-          zipObject(keys, Array(keys.length).fill(null)),
-        ) as CertificationDto,
-      )
+  ): Promise<FormCertificationDto[]> {
+    const organization = await this.organizationModel.findByPk(organizationId, {
+      include: [OrganizationCertification],
     })
 
-    return certificationTypesDto
+    const certificationsDto: FormCertificationDto[] = []
+
+    const keys = ['id', 'type', 'name', 'description']
+    organization?.organizationCertifications?.map((orgCertification) => {
+      Certifications.map((certification) => {
+        if (orgCertification.certificationId === certification.id) {
+          certificationsDto.push(
+            defaults(
+              pick(certification, keys),
+              zipObject(keys, Array(keys.length).fill(null)),
+            ) as FormCertificationDto,
+          )
+        }
+      })
+    })
+
+    return certificationsDto
   }
 
   private async getFieldTypes(organizationId: string): Promise<FieldTypeDto[]> {
@@ -318,7 +325,7 @@ export class FormsService {
         zipObject(formKeys, Array(formKeys.length).fill(null)),
       ),
       {
-        certificationTypes: [],
+        certifications: [],
         applicants: [],
         sections: [],
         screens: [],
@@ -326,18 +333,23 @@ export class FormsService {
       },
     ) as FormDto
 
-    const formCertificationTypeKeys = ['id', 'name', 'description', 'type']
-    form.certificationTypes?.map((certificationType) => {
-      formDto.certificationTypes?.push(
-        defaults(
-          pick(certificationType, formCertificationTypeKeys),
-          zipObject(
-            formCertificationTypeKeys,
-            Array(formCertificationTypeKeys.length).fill(null),
-          ),
-        ) as CertificationDto,
-      )
+    const certificationsDto: FormCertificationDto[] = []
+
+    const keys = ['id', 'type', 'name', 'description']
+    form?.certifications?.map((formCertification) => {
+      Certifications.map((certification) => {
+        if (formCertification.certificationId === certification.id) {
+          certificationsDto.push(
+            defaults(
+              pick({ ...certification, id: formCertification.id }, keys),
+              zipObject(keys, Array(keys.length).fill(null)),
+            ) as FormCertificationDto,
+          )
+        }
+      })
     })
+
+    formDto.certifications = certificationsDto
 
     const applicantKeys = ['id', 'applicantType', 'name']
     form.applicants?.map((applicant) => {

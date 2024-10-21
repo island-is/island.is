@@ -11,12 +11,13 @@ import { FieldsModule } from './modules/fields/fields.module'
 import { ListsModule } from './modules/lists/lists.module'
 import { OrganizationsModule } from './modules/organizations/organizations.module'
 import { SectionsModule } from './modules/sections/sections.module'
-import { CertificationsModule } from './modules/certifications/certifications.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ListItemsModule } from './modules/listItems/listItems.module'
 import { ApplicationsModule } from './modules/applications/applications.module'
 import { ValuesModule } from './modules/values/values.module'
 import { FormApplicantsModule } from './modules/formApplicants/formApplicants.module'
+import { FormCertificationsModule } from './modules/formCertifications/formCertifications.module'
+import { OrganizationCertificationsModule } from './modules/organizationCertifications/organizationCertifications.module'
 
 @Module({
   imports: [
@@ -31,13 +32,14 @@ import { FormApplicantsModule } from './modules/formApplicants/formApplicants.mo
     SectionsModule,
     ScreensModule,
     FieldsModule,
-    CertificationsModule,
     ListsModule,
     FieldSettingsModule,
     ListItemsModule,
     ApplicationsModule,
     ValuesModule,
     FormApplicantsModule,
+    FormCertificationsModule,
+    OrganizationCertificationsModule,
   ],
 })
 export class AppModule {}

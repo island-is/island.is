@@ -20,6 +20,11 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
+          is_test: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+          },
           form_id: {
             type: Sequelize.UUID,
             allowNull: false,

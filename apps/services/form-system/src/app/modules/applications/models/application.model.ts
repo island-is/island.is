@@ -1,5 +1,6 @@
 import { CreationOptional } from 'sequelize'
 import {
+  AllowNull,
   Column,
   CreatedAt,
   DataType,
@@ -25,6 +26,13 @@ export class Application extends Model<Application> {
 
   @UpdatedAt
   modified!: CreationOptional<Date>
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  isTest!: boolean
 
   @ForeignKey(() => Form)
   @Column({
