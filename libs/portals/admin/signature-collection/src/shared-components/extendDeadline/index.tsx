@@ -63,16 +63,15 @@ const ActionExtendDeadline = ({
           readOnly
           value={format(new Date(endDate), 'dd.MM.yyyy HH:mm')}
         />
-        {allowedToProcess && (
-          <Box marginLeft={3}>
-            <Button
-              icon="calendar"
-              iconType="outline"
-              variant="ghost"
-              onClick={() => setModalChangeDateIsOpen(true)}
-            ></Button>
-          </Box>
-        )}
+        <Box marginLeft={3}>
+          <Button
+            icon="calendar"
+            iconType="outline"
+            variant="ghost"
+            disabled={!allowedToProcess}
+            onClick={() => setModalChangeDateIsOpen(true)}
+          ></Button>
+        </Box>
       </Box>
       <Modal
         id="extendDeadline"

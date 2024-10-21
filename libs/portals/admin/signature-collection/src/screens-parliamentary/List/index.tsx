@@ -94,16 +94,17 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           <ActionExtendDeadline
             listId={list.id}
             endTime={list.endTime}
-            allowedToProcess={allowedToProcess}
+            allowedToProcess={
+              allowedToProcess && listStatus === ListStatus.Extendable
+            }
           />
-          {(allowedToProcess && !list.active) || !allowedToProcess && 
-            <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
-          }
+          {(allowedToProcess && !list.active) ||
+            (!allowedToProcess && (
+              <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
+            ))}
           {allowedToProcess && (
             <Box>
-              {!list.active &&
-                <PaperSignees listId={list.id} />
-              }
+              {!list.active && <PaperSignees listId={list.id} />}
               <ActionReviewComplete listId={list.id} listStatus={listStatus} />
             </Box>
           )}

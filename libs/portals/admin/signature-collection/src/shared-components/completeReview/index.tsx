@@ -49,6 +49,7 @@ const ActionReviewComplete = ({
           variant="ghost"
           icon={listReviewed ? 'reload' : 'checkmark'}
           onClick={() => setModalSubmitReviewIsOpen(true)}
+          disabled={listStatus === ListStatus.Active}
         >
           {modalText}
         </Button>
