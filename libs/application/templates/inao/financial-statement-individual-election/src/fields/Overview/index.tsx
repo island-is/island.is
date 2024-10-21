@@ -13,7 +13,7 @@ import {
 import { Controller, useFormContext } from 'react-hook-form'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
-import { formatCurrency } from '../../../../shared/utils/formatCurrency'
+import { formatCurrency } from '../../../../shared/utils/helpers'
 import { starterColumnStyle, sectionColumn } from './overviewStyles.css'
 import { FinancialStatementIndividualElection } from '../../lib/utils/dataSchema'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'

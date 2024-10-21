@@ -44,3 +44,6 @@ export const currencyStringToNumber = (str: string) => {
 export const formatNumber = (num: number) => num.toLocaleString('de-DE')
 
 export const checkIfNegative = (inputNumber: string) => Number(inputNumber) >= 0
+
+export const formatCurrency = (answer: string) =>
+  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'

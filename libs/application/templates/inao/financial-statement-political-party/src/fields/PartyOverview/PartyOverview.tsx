@@ -16,7 +16,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
-import { formatCurrency } from '../../../../shared/utils/formatCurrency'
+import { formatCurrency } from '../../../../shared/utils/helpers'
 import { FileValueLine } from '../../../../shared/components/FileValueLine'
 import { AssetDebtEquityOverview } from '../../../../shared/components/AssetDebtEquityOverview'
 import {

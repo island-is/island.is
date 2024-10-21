@@ -29,7 +29,7 @@ import { AboutOverview } from '../../../../shared/components/AboutOverview'
 import { ValueLine } from '../../../../shared/components/ValueLine'
 import { BottomBar } from '../../../../shared/components/BottomBar'
 import { FileValueLine } from '../../../../shared/components/FileValueLine'
-import { formatCurrency } from '../../../../shared/utils/formatCurrency'
+import { formatCurrency } from '../../../../shared/utils/helpers'
 import { CapitalNumberOverview } from '../../../../shared/components/CapitalNumberOverview'
 
 export const CemeteryOverview = ({

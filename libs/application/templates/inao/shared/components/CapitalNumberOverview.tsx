@@ -1,6 +1,6 @@
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatCurrency } from '../utils/formatCurrency'
+import { formatCurrency } from '../utils/helpers'
 import { sectionColumn, starterColumnStyle } from './css/overviewStyles.css'
 import { ValueLine } from './ValueLine'
 import { MessageDescriptor } from 'react-intl'
