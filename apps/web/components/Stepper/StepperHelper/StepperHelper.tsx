@@ -165,7 +165,9 @@ export const renderStepperAndStepConfigErrors = (
           .map(({ step, errors }, index) => (
             <div key={index} className={styles.border}>
               <Text variant="h5">Step config errors:</Text>
-              <ArrowLink href={getContentfulLink(step)}>Contentful</ArrowLink>
+              {step && (
+                <ArrowLink href={getContentfulLink(step)}>Contentful</ArrowLink>
+              )}
               {renderErrors(Array.from(errors).map((e) => ({ message: e })))}
             </div>
           ))}
