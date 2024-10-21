@@ -61,4 +61,30 @@ export class AppService {
       return res.json()
     })
   }
+
+  async getApplication(
+    apiKey: string,
+    municipalityCode: string,
+    id: string,
+  ): Promise<ApplicationModel> {
+    this.logger.info(
+      `trying to fetching all applications with municipalityCode ${municipalityCode}`,
+      id,
+    )
+
+    const url = new URL(
+      `${this.config.backend.url}/api/financial-aid/open-api-applications/id/${id}`,
+    )
+
+    return fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'API-Key': apiKey,
+        'Municipality-Code': municipalityCode,
+      },
+    }).then(async (res) => {
+      return res.json()
+    })
+  }
 }
