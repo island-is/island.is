@@ -100,12 +100,12 @@ export const companySection = buildSubSection({
             return `${postalCode} - ${city}`
           },
         }),
-        buildSelectField({
-          id: 'companyInformation.industryClassification',
-          title: information.labels.company.industryClassification,
-          width: 'half',
-          options: [],
-        }),
+        // buildSelectField({
+        //   id: 'companyInformation.industryClassification',
+        //   title: information.labels.company.industryClassification,
+        //   width: 'half',
+        //   options: [],
+        // }),
         buildSelectField({
           id: 'companyInformation.numberOfEmployees',
           title: information.labels.company.numberOfEmployees,
