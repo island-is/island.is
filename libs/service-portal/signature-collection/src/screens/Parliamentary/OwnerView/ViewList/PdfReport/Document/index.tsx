@@ -85,7 +85,7 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     right: 60,
     bottom: 50,
-    width: 90,
+    width: 50,
   },
 })
 
