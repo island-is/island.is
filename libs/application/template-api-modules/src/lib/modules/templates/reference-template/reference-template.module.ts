@@ -5,9 +5,9 @@ import { SharedTemplateAPIModule } from '../../shared'
 
 // Here you import your module service
 import { ReferenceTemplateService } from './reference-template.service'
-
+import { ApplicationsNotificationsModule } from '../../../notification/notifications.module'
 @Module({
-  imports: [SharedTemplateAPIModule],
+  imports: [SharedTemplateAPIModule, ApplicationsNotificationsModule],
   providers: [ReferenceTemplateService],
   exports: [ReferenceTemplateService],
 })

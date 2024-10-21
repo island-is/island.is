@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react'
+import { useMemo } from 'react'
 import HtmlParser from 'react-html-parser'
 
 import {
@@ -20,12 +20,12 @@ interface Props extends FieldBaseProps {
   field: CheckboxField
 }
 
-export const CheckboxFormField: FC<React.PropsWithChildren<Props>> = ({
+export const CheckboxFormField = ({
   error,
   showFieldName = false,
   field,
   application,
-}) => {
+}: Props) => {
   const {
     id,
     title,
@@ -68,7 +68,6 @@ export const CheckboxFormField: FC<React.PropsWithChildren<Props>> = ({
           large={large}
           name={`${id}`}
           onSelect={onSelect}
-          split={width === 'half' ? '1/2' : '1/1'}
           backgroundColor={backgroundColor}
           defaultValue={
             ((getValueViaPath(application.answers, id) as string[]) ??
