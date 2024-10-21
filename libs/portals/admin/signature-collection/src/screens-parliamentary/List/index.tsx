@@ -48,9 +48,7 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage(
-                    m.parliamentaryCollectionTitle,
-                  ),
+                  title: formatMessage(m.parliamentaryCollectionTitle),
                   href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
                 },
                 {
