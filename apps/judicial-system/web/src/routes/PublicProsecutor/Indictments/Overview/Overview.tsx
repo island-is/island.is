@@ -8,6 +8,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  BlueBoxWithIcon,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
@@ -23,6 +24,7 @@ import {
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import BlueBoxWithDate from '@island.is/judicial-system-web/src/components/BlueBoxWithIcon/BlueBoxWithDate'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
 import {
   CaseIndictmentRulingDecision,
@@ -134,6 +136,14 @@ export const Overview = () => {
       <FormContentContainer>
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.defendants && (
+          <Box component="section" marginBottom={5}>
+            <BlueBoxWithDate
+              defendant={workingCase.defendants[0]}
+              icon="calendar"
+            />
+          </Box>
+        )}
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment
             defendantInfoActionButton={

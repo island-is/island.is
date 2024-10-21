@@ -4,10 +4,6 @@ import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 
 import * as styles from './BlueBoxWithIcon.css'
 
-export interface DataSection {
-  data: { title: string; value?: ReactNode }[]
-}
-
 interface Props {
   data: { title: string; value?: ReactNode }[]
   icon?: IconMapIcon
@@ -19,28 +15,24 @@ const BlueBoxWithIcon: FC<Props> = (props) => {
   return (
     <Box className={styles.container} padding={[2, 2, 3, 3]}>
       <Box className={styles.dataContainer}>
-        {data.map((dataItem, index) => {
-          return (
-            <Box
-              data-testid={`infoCardDataContainer${index}`}
-              key={dataItem.title}
-              marginBottom={1}
-            >
-              <Text variant="h4">{dataItem.title}</Text>
-              {typeof dataItem.value === 'string' ? (
-                <Text>{dataItem.value}</Text>
-              ) : (
-                dataItem.value
-              )}
-            </Box>
-          )
-        })}
-      </Box>
-      {icon && (
-        <Box position="absolute" top={[2, 2, 3, 3]} right={[2, 2, 3, 3]}>
+        {data.map((dataItem, index) => (
+          <Box
+            data-testid={`infoCardDataContainer${index}`}
+            key={dataItem.title}
+            marginTop={index > 1 ? 1 : 0}
+          >
+            <Text variant="h4">{dataItem.title}</Text>
+            {typeof dataItem.value === 'string' ? (
+              <Text>{dataItem.value}</Text>
+            ) : (
+              dataItem.value
+            )}
+          </Box>
+        ))}
+        {icon && (
           <Icon icon={icon} type="outline" color="blue400" size="large" />
-        </Box>
-      )}
+        )}
+      </Box>
     </Box>
   )
 }
