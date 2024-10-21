@@ -386,7 +386,7 @@ codemagic.yaml                                                                  
 
 
 # System tests
-# Cach-all
+# Catch-all
 /apps/system-e2e/                                                                                        @island-is/qa
 # Islandis
 /apps/system-e2e/src/tests/islandis/admin-portal/                                                        @island-is/aranja
