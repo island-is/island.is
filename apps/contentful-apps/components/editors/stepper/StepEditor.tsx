@@ -6,6 +6,8 @@ import {
   Box,
   Button,
   FormControl,
+  Menu,
+  Modal,
   Stack,
   Text,
   TextInput,
@@ -13,12 +15,14 @@ import {
 import {
   ArrowDownwardIcon,
   ArrowUpwardIcon,
+  ChevronDownIcon,
   DeleteIcon,
   PlusIcon,
 } from '@contentful/f36-icons'
-import { useSDK } from '@contentful/react-apps-toolkit'
+import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
 import { mapLocalesToFieldApis } from '../utils'
+import { EntryListSearch } from '../../EntryListSearch'
 
 const ContentfulField = dynamic(
   () =>
@@ -117,6 +121,7 @@ const Heading = ({ text, locale }: { text: string; locale?: string }) => {
 
 export const StepEditor = () => {
   const sdk = useSDK<EditorExtensionSDK>()
+  const cma = useCMA()
   const localeToFieldMapping = useMemo(() => {
     return createLocaleToFieldMapping(sdk)
   }, [sdk])
@@ -124,6 +129,7 @@ export const StepEditor = () => {
   const [config, setConfig] = useState<StepConfig>(
     sdk.entry.fields.config.getValue(),
   )
+  const [isStepSelectModalOpen, setIsStepSelectModalOpen] = useState(false)
 
   useDebounce(
     () => {
@@ -147,6 +153,37 @@ export const StepEditor = () => {
         maxWidth: '768px',
       }}
     >
+      <Modal
+        onClose={() => setIsStepSelectModalOpen(false)}
+        isShown={isStepSelectModalOpen}
+      >
+        {() => (
+          <>
+            <Modal.Header
+              title="Add existing content"
+              onClose={() => setIsStepSelectModalOpen(false)}
+            />
+            {/* <Modal.Content>
+              <EntryListSearch
+                contentTypeId="step"
+                contentTypeLabel="Step"
+                contentTypeTitleField="title"
+                query={{
+                  'sys.id[in]': sdk.entry.fields.steps
+                    .getValue()
+                    .filter((step) => step.stepType === 'answer')
+                    .map((step) => step.sys.id)
+                    .join(','),
+                }}
+                onEntryClick={(entry) => {
+                  // TODO
+                  setIsStepSelectModalOpen(false)
+                }}
+              />
+            </Modal.Content> */}
+          </>
+        )}
+      </Modal>
       <ContentfulField
         fieldID="title"
         displayName="Title"
@@ -205,6 +242,7 @@ export const StepEditor = () => {
                   display: 'flex',
                   flexFlow: 'row nowrap',
                   gap: '8px',
+                  paddingBottom: '16px',
                 }}
               >
                 <Button
@@ -364,6 +402,68 @@ export const StepEditor = () => {
                     }}
                   />
                 </div>
+
+                <Menu>
+                  <Menu.Trigger>
+                    <Button
+                      startIcon={<PlusIcon />}
+                      endIcon={<ChevronDownIcon />}
+                    >
+                      Next step
+                    </Button>
+                  </Menu.Trigger>
+                  <Menu.List>
+                    <Menu.Item
+                      onClick={async () => {
+                        const newStep = await cma.entry.create(
+                          {
+                            contentTypeId: 'step',
+                          },
+                          {
+                            fields: {},
+                          },
+                        )
+
+                        sdk.entry.fields.steps.setValue({
+                          [sdk.locales.default]: (
+                            sdk.entry.fields.steps.getValue() ?? []
+                          ).concat({
+                            sys: {
+                              ...newStep.sys,
+                            },
+                          }),
+                        })
+
+                        setConfig((prevConfig) => ({
+                          ...prevConfig,
+                          options: prevConfig.options.map(
+                            (prevOption, prevIndex) => {
+                              if (prevIndex !== index) return prevOption
+                              return {
+                                ...prevOption,
+                                optionSlug: newStep.sys.id,
+                                transition: newStep.sys.id,
+                              }
+                            },
+                          ),
+                        }))
+
+                        sdk.navigator.openEntry(newStep.sys.id, {
+                          slideIn: true,
+                        })
+                      }}
+                    >
+                      Create new step
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => {
+                        setIsStepSelectModalOpen(true)
+                      }}
+                    >
+                      Add existing answer
+                    </Menu.Item>
+                  </Menu.List>
+                </Menu>
               </Stack>
             </FormControl>
           </Box>

@@ -16,6 +16,7 @@ import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
 import { EntryListSearch } from '../../EntryListSearch'
 import { mapLocalesToFieldApis } from '../utils'
+import { JsonEditor } from '@contentful/field-editor-json'
 
 const ContentfulField = dynamic(
   () =>
@@ -205,6 +206,11 @@ export const StepperEditor = () => {
           </IconButton>
         </ButtonGroup>
       )}
+
+      <JsonEditor
+        field={localeToFieldMapping.config[sdk.locales.default].field}
+        isInitiallyDisabled={false}
+      />
     </Box>
   )
 }
