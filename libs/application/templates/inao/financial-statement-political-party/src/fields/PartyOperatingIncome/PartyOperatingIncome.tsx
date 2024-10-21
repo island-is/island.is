@@ -15,8 +15,8 @@ import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useTotals } from '../../hooks/useTotals'
 import { PARTYOPERATIONIDS } from '../../utils/constants'
-import { Total } from '../../../../shared/components/Total'
-import { OPERATINGCOST } from '../../../../shared/utils/constants'
+import { Total } from '.@island.is/libs/application/templates/inao/shared/components/Total'
+import { OPERATINGCOST } from '@island.is/libs/application/templates/inao/shared/utils/constants'
 
 export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
   const { answers } = application

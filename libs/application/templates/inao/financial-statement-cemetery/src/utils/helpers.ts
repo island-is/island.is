@@ -7,7 +7,7 @@ import { BoardMember, Config, FSIUSERTYPE } from '../types/types'
 import {
   getCurrentUserType,
   currencyStringToNumber,
-} from '../../../shared/utils/helpers'
+} from '@island.is/libs/application/templates/inao/shared/utils/helpers'
 
 export const getBoardmembersAndCaretakers = (members: Array<BoardMember>) => {
   const careTakers = members

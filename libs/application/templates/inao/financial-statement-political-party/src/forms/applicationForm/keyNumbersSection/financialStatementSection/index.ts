@@ -4,7 +4,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../../../lib/messages'
-import { LESS } from '../../../../../../shared/utils/constants'
+import { LESS } from '@island.is/libs/application/templates/inao/shared/utils/constants'
 
 export const financialStatementSection = buildSection({
   id: 'documents',

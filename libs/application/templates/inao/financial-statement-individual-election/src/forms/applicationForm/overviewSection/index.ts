@@ -4,7 +4,11 @@ import {
   buildSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { ABOUTIDS, GREATER, LESS } from '../../../../../shared/utils/constants'
+import {
+  ABOUTIDS,
+  GREATER,
+  LESS,
+} from '@island.is/libs/application/templates/inao/shared/utils/constants'
 import { m } from '../../../lib/utils/messages'
 
 export const overviewSection = buildSection({

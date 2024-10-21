@@ -7,7 +7,7 @@ import {
 } from '@island.is/application/core'
 import { Application, UserProfile } from '@island.is/application/types'
 import { m } from '../../../lib/messages'
-import { ABOUTIDS } from '../../../../../shared/utils/constants'
+import { ABOUTIDS } from '@island.is/libs/application/templates/inao/shared/utils/constants'
 import { Identity } from '@island.is/api/schema'
 
 export const clientInfoSection = buildSection({

@@ -17,7 +17,7 @@ import { m } from '../../lib/messages'
 import { FieldBaseProps } from '@island.is/application/types'
 import { getErrorViaPath } from '@island.is/application/core'
 import { IdentityQuery } from '../../graphql'
-import { ABOUTIDS } from '../../../../shared/utils/constants'
+import { ABOUTIDS } from '@island.is/libs/application/templates/inao/shared/utils/constants'
 
 export const PowerOfAttorneyFields = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()

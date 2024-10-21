@@ -4,7 +4,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
-import { CAPITALNUMBERS } from '../../../../../shared/utils/constants'
+import { CAPITALNUMBERS } from '@island.is/libs/application/templates/inao/shared/utils/constants'
 
 export const capitalNumberSubSection = buildSubSection({
   id: 'keynumbers.capitalNumbers',

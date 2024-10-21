@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { getTotal } from '../../../shared/utils/helpers'
+import { getTotal } from '@island.is/libs/application/templates/inao/shared/utils/helpers'
 
 const useTotals = (key: string): [() => void, number] => {
   const [total, setTotal] = useState(0)

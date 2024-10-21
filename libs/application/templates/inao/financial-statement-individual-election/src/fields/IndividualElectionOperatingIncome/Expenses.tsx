@@ -6,7 +6,7 @@ import { useLocale } from '@island.is/localization'
 import { getErrorViaPath } from '@island.is/application/core'
 import { INDIVIDUALOPERATIONIDS } from '../../lib/utils/constants'
 import { m } from '../../lib/utils/messages'
-import { INPUTCHANGEINTERVAL } from '../../../../shared/utils/constants'
+import { INPUTCHANGEINTERVAL } from '@island.is/libs/application/templates/inao/shared/utils/constants'
 
 type Props = {
   getSum: () => void

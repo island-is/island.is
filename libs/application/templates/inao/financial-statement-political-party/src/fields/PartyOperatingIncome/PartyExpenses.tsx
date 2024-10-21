@@ -8,7 +8,7 @@ import { useLocale } from '@island.is/localization'
 import { getErrorViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { PARTYOPERATIONIDS } from '../../utils/constants'
-import { INPUTCHANGEINTERVAL } from '../../../../shared/utils/constants'
+import { INPUTCHANGEINTERVAL } from '@island.is/libs/application/templates/inao/shared/utils/constants'
 
 interface PropTypes {
   getSum: () => void

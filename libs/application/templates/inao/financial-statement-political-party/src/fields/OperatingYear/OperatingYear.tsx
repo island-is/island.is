@@ -17,7 +17,7 @@ import {
 } from '../../utils/helpers'
 import { auditConfigQuery } from '../../graphql'
 import { m } from '../../lib/messages'
-import { ABOUTIDS } from '../../../../shared/utils/constants'
+import { ABOUTIDS } from '@island.is/libs/application/templates/inao/shared/utils/constants'
 
 export const OperatingYear = () => {
   const { data, loading, error } = useQuery(auditConfigQuery)

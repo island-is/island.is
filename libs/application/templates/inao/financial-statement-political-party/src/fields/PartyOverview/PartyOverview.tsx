@@ -16,17 +16,17 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
-import { formatCurrency } from '../../../../shared/utils/helpers'
-import { FileValueLine } from '../../../../shared/components/FileValueLine'
-import { AssetDebtEquityOverview } from '../../../../shared/components/AssetDebtEquityOverview'
+import { formatCurrency } from '@island.is/libs/application/templates/inao/shared/utils/helpers'
+import { FileValueLine } from '@island.is/libs/application/templates/inao/shared/components/FileValueLine'
+import { AssetDebtEquityOverview } from '@island.is/libs/application/templates/inao/shared/components/AssetDebtEquityOverview'
 import {
   sectionColumn,
   starterColumnStyle,
-} from '../../../../shared/components/css/overviewStyles.css'
-import { CapitalNumberOverview } from '../../../../shared/components/CapitalNumberOverview'
-import { AboutOverview } from '../../../../shared/components/AboutOverview'
-import { ValueLine } from '../../../../shared/components/ValueLine'
-import { BottomBar } from '../../../../shared/components/BottomBar'
+} from '@island.is/libs/application/templates/inao/shared/components/css/overviewStyles.css'
+import { CapitalNumberOverview } from '@island.is/libs/application/templates/inao/shared/components/CapitalNumberOverview'
+import { AboutOverview } from '@island.is/libs/application/templates/inao/shared/components/AboutOverview'
+import { ValueLine } from '@island.is/libs/application/templates/inao/shared/components/ValueLine'
+import { BottomBar } from '@island.is/libs/application/templates/inao/shared/components/BottomBar'
 
 export const PartyOverview = ({
   application,

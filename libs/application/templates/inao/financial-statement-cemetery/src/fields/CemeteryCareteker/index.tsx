@@ -16,7 +16,7 @@ import {
   APPLICANTASMEMBER,
   ACTORASCARETAKER,
   ACTORLONEBOARDMEMBER,
-} from '../../../../shared/utils/constants'
+} from '@island.is/libs/application/templates/inao/shared/utils/constants'
 import { getBoardmembersAndCaretakers } from '../../utils/helpers'
 import { CaretakerRepeaterItem } from './CemeteryCaretakerRepeaterItem'
 import { BoardMember } from '../../types/types'

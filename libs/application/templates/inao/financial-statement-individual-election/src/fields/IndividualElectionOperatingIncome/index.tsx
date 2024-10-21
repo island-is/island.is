@@ -10,8 +10,8 @@ import { m } from '../../lib/utils/messages'
 import { Income } from './Income'
 import { Expenses } from './Expenses'
 import { useTotals } from '../../hooks/useTotals'
-import { Total } from '../../../../shared/components/Total'
-import { OPERATINGCOST } from '../../../../shared/utils/constants'
+import { Total } from '@island.is/libs/application/templates/inao/shared/components/Total'
+import { OPERATINGCOST } from '@island.is/libs/application/templates/inao/shared/utils/constants'
 
 export const IndividualElectionOperatingIncome = () => {
   const { formatMessage } = useLocale()

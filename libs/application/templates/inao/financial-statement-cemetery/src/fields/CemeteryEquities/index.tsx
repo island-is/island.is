@@ -19,11 +19,11 @@ import {
   INPUTCHANGEINTERVAL,
   OPERATINGCOST,
   VALIDATOR,
-} from '../../../../shared/utils/constants'
+} from '@island.is/libs/application/templates/inao/shared/utils/constants'
 import { CEMETERYEQUITIESANDLIABILITIESIDS } from '../../utils/constants'
 import { useTotals } from '../../hooks/useTotals'
-import { getTotal } from '../../../../shared/utils/helpers'
-import { Total } from '../../../../shared/components/Total'
+import { getTotal } from '@island.is/libs/application/templates/inao/shared/utils/helpers'
+import { Total } from '@island.is/libs/application/templates/inao/shared/components/Total'
 
 export const CemeteryEquities = ({
   application,

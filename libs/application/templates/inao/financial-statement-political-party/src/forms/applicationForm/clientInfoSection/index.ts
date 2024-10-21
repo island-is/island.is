@@ -6,7 +6,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
-import { ABOUTIDS } from '../../../../../shared/utils/constants'
+import { ABOUTIDS } from '@island.is/libs/application/templates/inao/shared/utils/constants'
 import { Application, UserProfile } from '@island.is/application/types'
 import { Identity } from '@island.is/clients/identity'
 

@@ -12,7 +12,7 @@ import { Options } from '../../types/types'
 import { ElectionSelect } from './ElectionSelect'
 import { IncomeLimitFields } from './IncomeLimitFields'
 import { m } from '../../lib/utils/messages'
-import { ABOUTIDS } from '../../../../shared/utils/constants'
+import { ABOUTIDS } from '@island.is/libs/application/templates/inao/shared/utils/constants'
 
 export const ElectionsInfoFields = () => {
   const [state, dispatch] = useReducer(electionReducer, electionInitialState)
