@@ -450,13 +450,6 @@ export const serviceSetup = (services: {
           prod: ['', 'www.island.is'],
         },
         paths: ['/api'],
-        extraAnnotations: {
-          dev: {},
-          staging: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
-          prod: {},
-        },
         public: true,
       },
     })
