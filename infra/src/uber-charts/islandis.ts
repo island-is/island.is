@@ -82,8 +82,6 @@ const appSystemApi = appSystemApiSetup({
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
-const bffAdminPortalService = bffAdminPortalServiceSetup()
-
 const adminPortal = adminPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
@@ -119,12 +117,13 @@ const api = apiSetup({
   userNotificationService,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
-const appSystemForm = appSystemFormSetup({ api: api })
-const web = webSetup({ api: api })
+const bffAdminPortalService = bffAdminPortalServiceSetup({ api })
+const appSystemForm = appSystemFormSetup({ api })
+const web = webSetup({ api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
 const contentfulApps = contentfulAppsSetup()
-const consultationPortal = consultationPortalSetup({ api: api })
+const consultationPortal = consultationPortalSetup({ api })
 
 const xroadCollector = xroadCollectorSetup()
 
