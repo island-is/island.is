@@ -199,6 +199,17 @@ const ParliamentaryRoot = ({
                     )
                   },
                 }}
+                tag={
+                  allLists
+                    .filter((l) => l.area.name === area.name)
+                    .every((l) => l.reviewed === true)
+                    ? {
+                        label: formatMessage(m.confirmListReviewed),
+                        variant: 'mint',
+                        outlined: true,
+                      }
+                    : undefined
+                }
               />
             ))}
           </Stack>
