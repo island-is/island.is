@@ -9,7 +9,6 @@ import { sectionRequirements } from './sectionRequirements'
 import { sectionExistingApplication } from './sectionExistingApplication'
 import { sectionDigitalLicenseInfo } from './sectionDigitalLicenseInfo'
 import { sectionAdvancedLicenseSelection } from './sectionAdvancedLicenseSelection'
-import { sectionAdvancedLicenseSubSelection } from './sectionAdvancedLicenseSubSelection'
 
 export const getForm = ({
   allowFakeData = false,
@@ -43,7 +42,6 @@ export const getForm = ({
               ]
             : []),
           sectionAdvancedLicenseSelection,
-          sectionAdvancedLicenseSubSelection,
           sectionDigitalLicenseInfo,
           sectionRequirements,
         ],
