@@ -27,7 +27,6 @@ export const CapitalNumberOverview = ({
   const { formatMessage } = useLocale()
   return (
     <>
-      <p>hér!!!</p>
       <Box className={starterColumnStyle}>
         <Text variant="h3" as="h3">
           {formatMessage(capitalNumbersMessage)}
