@@ -74,7 +74,7 @@ export class DisabilityLicenseClient
           data: JSON.stringify(e.body),
         }
         this.logger.warn('Expected 200 status', {
-          status: e.status,
+          http: { http: { status: e.status } },
           statusText: e.statusText,
           category: LOG_CATEGORY,
         })
@@ -86,7 +86,7 @@ export class DisabilityLicenseClient
           data: JSON.stringify(unknownError),
         }
         this.logger.warn('Unable to query data', {
-          status: e.status,
+          http: { http: { status: e.status } },
           statusText: e.statusText,
           category: LOG_CATEGORY,
         })

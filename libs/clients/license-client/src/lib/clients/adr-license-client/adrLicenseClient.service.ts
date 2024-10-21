@@ -74,7 +74,9 @@ export class AdrLicenseClient implements LicenseClient<LicenseType.AdrLicense> {
             data: JSON.stringify(e.body),
           }
           this.logger.warn('Expected 200 or 404 status', {
-            status: e.status,
+            http: {
+              status_code: e.status,
+            },
             statusText: e.statusText,
             category: LOG_CATEGORY,
           })
@@ -87,7 +89,7 @@ export class AdrLicenseClient implements LicenseClient<LicenseType.AdrLicense> {
           data: JSON.stringify(unknownError),
         }
         this.logger.warn('Unable to query data', {
-          status: e.status,
+          http: { status: e.status },
           statusText: e.statusText,
           category: LOG_CATEGORY,
         })
