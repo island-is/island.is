@@ -1,10 +1,8 @@
-'use strict'
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'form_certification_type',
+        'value',
         {
           id: {
             type: Sequelize.UUID,
@@ -22,19 +20,25 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
-          form_id: {
+          json: {
+            type: Sequelize.JSON,
+            allowNull: true,
+          },
+          field_id: {
             type: Sequelize.UUID,
+            onDelete: 'CASCADE',
             allowNull: false,
             references: {
-              model: 'form',
+              model: 'field',
               key: 'id',
             },
           },
-          certification_type_id: {
+          application_id: {
             type: Sequelize.UUID,
+            onDelete: 'CASCADE',
             allowNull: false,
             references: {
-              model: 'certification_type',
+              model: 'application',
               key: 'id',
             },
           },
@@ -46,9 +50,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('form_certification_type', {
-        transaction: t,
-      }),
+      queryInterface.dropTable('value', { transaction: t }),
     )
   },
 }

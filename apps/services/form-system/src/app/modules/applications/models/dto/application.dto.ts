@@ -1,6 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import { OrganizationDto } from '../../../organizations/models/dto/organization.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
+import { LanguageType } from '../../../../dataTypes/languageType.model'
 
 export class ApplicationDto {
   @ApiPropertyOptional()
@@ -11,6 +12,9 @@ export class ApplicationDto {
 
   @ApiPropertyOptional()
   formId?: string
+
+  @ApiPropertyOptional({ type: LanguageType })
+  formName?: LanguageType
 
   @ApiPropertyOptional()
   slug?: string
