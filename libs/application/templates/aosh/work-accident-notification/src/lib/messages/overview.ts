@@ -25,41 +25,56 @@ export const overview = {
       defaultMessage: 'Breyta upplýsingum',
       description: 'Edit message for button',
     },
-    pageTitle: {
-      id: 'aosh.wan.application:information.labels.pageTitle',
-      defaultMessage: 'Fyrirtækið',
-      description: 'Title of company information section',
+    dateAndTime: {
+      id: 'aosh.wan.application:information.labels.dateAndTime',
+      defaultMessage: 'Dagsetning og tími slyss',
+      description: 'Date and time label',
     },
-    description: {
-      id: 'aosh.wan.application:overview.labels.description',
+    didAoshCome: {
+      id: 'aosh.wan.application:information.labels.dateAndTime',
+      defaultMessage: 'Kom Vinnueftirlitið?',
+      description: 'Date and time label',
+    },
+    didPoliceCome: {
+      id: 'aosh.wan.application:information.labels.dateAndTime',
+      defaultMessage: 'Kom Lögreglan?',
+      description: 'Date and time label',
+    },
+    injuredAmount: {
+      id: 'aosh.wan.application:information.labels.dateAndTime',
+      defaultMessage: 'Fjöldi slasaðra',
+      description: 'Date and time label',
+    },
+    municipality: {
+      id: 'aosh.wan.application:information.labels.dateAndTime',
+      defaultMessage: 'Sveitarfélag þar sem slysið átti sér stað',
+      description: 'Date and time label',
+    },
+    exactLocation: {
+      id: 'aosh.wan.application:information.labels.dateAndTime',
+      defaultMessage: 'Nákvæm staðsetning slyssins',
+      description: 'Date and time label',
+    },
+    accidentDescription: {
+      id: 'aosh.wan.application:information.labels.dateAndTime',
+      defaultMessage: 'Tildrög slyssins',
+      description: 'Date and time label',
+    },
+    locationOfAccident: {
+      id: 'aosh.wan.application:information.labels.dateAndTime',
+      defaultMessage: 'Vettvangur slyssins',
+      description: 'Date and time label',
+    },
+    employee: {
+      id: 'aosh.wan.application:information.labels.employee',
+      defaultMessage: 'Starfsmaður',
+      description: 'Employee label',
+    },
+    employeeDescription: {
+      id: 'aosh.wan.application:information.labels.employeeDescription',
       defaultMessage:
-        'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
-      description: 'Description of company information page',
-    },
-    descriptionField: {
-      id: 'aosh.wan.application:overview.labels.descriptionField',
-      defaultMessage: 'Grunnupplýsingar',
-      description: 'H5 of company information page',
-    },
-    title: {
-      id: 'aosh.wan.application:overview.labels.title',
-      defaultMessage: 'Grunnupplýsingar',
-      description: 'Company information title',
-    },
-    nationalId: {
-      id: 'aosh.wan.application:overview.labels.nationalId',
-      defaultMessage: 'Kennitala',
-      description: 'Company information national ID label',
-    },
-    name: {
-      id: 'aosh.wan.application:overview.labels.name',
-      defaultMessage: 'Nafn',
-      description: 'Company information name label',
-    },
-    address: {
-      id: 'aosh.wan.application:overview.labels.address',
-      defaultMessage: 'Heimilisfang',
-      description: 'Company information address label',
+        'Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum frumritið.',
+      description: 'Employee description label',
     },
   }),
 }

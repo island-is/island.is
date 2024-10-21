@@ -3,6 +3,7 @@ import { FC } from 'react'
 import { Box, Button, Divider } from '@island.is/island-ui/core'
 
 interface ReviewGroupProps {
+  isFirst?: boolean
   isLast?: boolean
   editMessage?: string
   handleClick?: () => void
@@ -10,13 +11,14 @@ interface ReviewGroupProps {
 
 export const ReviewGroup: FC<React.PropsWithChildren<ReviewGroupProps>> = ({
   children,
+  isFirst,
   isLast,
   editMessage,
   handleClick,
 }) => {
   return (
     <Box>
-      <Divider />
+      {!isFirst && <Divider />}
 
       <Box position="relative" paddingY={4}>
         {editMessage && (

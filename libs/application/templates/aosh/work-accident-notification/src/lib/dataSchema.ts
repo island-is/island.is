@@ -179,3 +179,4 @@ export type CompanyType = z.TypeOf<typeof companySchema>
 export type CompanyLaborProtectionType = z.TypeOf<
   typeof companyLaborProtectionSchema
 >
+export type AccidentType = z.TypeOf<typeof accidentSchema>

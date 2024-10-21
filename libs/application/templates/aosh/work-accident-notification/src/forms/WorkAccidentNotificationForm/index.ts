@@ -25,9 +25,8 @@ export const WorkAccidentNotificationForm: Form = buildForm({
   children: [
     announcementSection,
     informationSection,
-    overviewSection,
     accidentSection,
-    // overviewSection,
+    overviewSection,
     ...buildRepeatableSections(),
     //employeeSection,
     //causeAndConsequencesSection,
