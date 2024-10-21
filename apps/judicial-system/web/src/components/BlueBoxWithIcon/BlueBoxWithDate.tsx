@@ -28,12 +28,15 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     setD(date)
   }
 
+  const handleDateChange2 = () => {
+    setD2HasBeenSet(true)
+  }
   const handleSetDate = () => {
     setDHasBeenSet(true)
   }
 
   const handleSetDate2 = () => {
-    setD2HasBeenSet(true)
+    addNewText()
   }
 
   const addNewText = () => {
@@ -123,11 +126,11 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                       strings.defendantAppealDatePlaceholder,
                     )}
                     size="sm"
-                    onChange={handleDateChange}
+                    onChange={handleDateChange2}
                     blueBox={false}
                     dateOnly
                   />
-                  <Button onClick={addNewText}>
+                  <Button onClick={handleSetDate2} disabled={!d2HasBeenSet}>
                     {formatMessage(strings.defendantAppealDateButtonText)}
                   </Button>
                 </Box>
@@ -157,7 +160,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                   blueBox={false}
                   dateOnly
                 />
-                <Button onClick={handleSetDate}>
+                <Button onClick={handleSetDate} disabled={!d}>
                   {formatMessage(strings.defendantVerdictViewDateButtonText)}
                 </Button>
               </Box>
