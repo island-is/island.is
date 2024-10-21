@@ -469,6 +469,8 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
     workingCase.defendants?.every((defendant) => {
       return (
         defendant.defenderChoice === DefenderChoice.WAIVE ||
+        defendant.defenderChoice === DefenderChoice.DELAY ||
+        !defendant.defenderChoice ||
         validate([
           [defendant.defenderName, ['empty']],
           [defendant.defenderEmail, ['email-format']],

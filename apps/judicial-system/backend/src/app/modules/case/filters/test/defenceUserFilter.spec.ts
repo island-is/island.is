@@ -203,7 +203,31 @@ describe.each(defenceRoles)('defence user %s', (role) => {
         const theCase = {
           type,
           state,
-          defendants: [{}, { defenderNationalId: user.nationalId }, {}],
+          defendants: [
+            {},
+            {
+              defenderNationalId: user.nationalId,
+            },
+            {},
+          ],
+          dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
+        } as Case
+
+        verifyNoAccess(theCase, user)
+      })
+
+      describe('confirmed defender assigned to case', () => {
+        const theCase = {
+          type,
+          state,
+          defendants: [
+            {},
+            {
+              defenderNationalId: user.nationalId,
+              isDefenderChoiceConfirmed: true,
+            },
+            {},
+          ],
           dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
         } as Case
 
@@ -263,13 +287,35 @@ describe.each(defenceRoles)('defence user %s', (role) => {
         verifyNoAccess(theCase, user)
       })
 
-      describe('spokesperson assigned to case', () => {
+      describe('non confirmed spokesperson assigned to case', () => {
         const theCase = {
           type,
           state,
           civilClaimants: [
             {},
-            { hasSpokesperson: true, spokespersonNationalId: user.nationalId },
+            {
+              hasSpokesperson: true,
+              spokespersonNationalId: user.nationalId,
+            },
+            {},
+          ],
+          dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],
+        } as Case
+
+        verifyNoAccess(theCase, user)
+      })
+
+      describe('confirmed spokesperson assigned to case', () => {
+        const theCase = {
+          type,
+          state,
+          civilClaimants: [
+            {},
+            {
+              hasSpokesperson: true,
+              spokespersonNationalId: user.nationalId,
+              isSpokespersonConfirmed: true,
+            },
             {},
           ],
           dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, date: new Date() }],

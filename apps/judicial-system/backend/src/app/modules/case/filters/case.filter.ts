@@ -386,13 +386,18 @@ const canDefenceUserAccessIndictmentCase = (
   }
 
   // Check case defender assignment
-  if (Defendant.isDefenderOfDefendant(user.nationalId, theCase.defendants)) {
+  if (
+    Defendant.isConfirmedDefenderOfDefendant(
+      user.nationalId,
+      theCase.defendants,
+    )
+  ) {
     return true
   }
 
   // Check case spokesperson assignment
   if (
-    CivilClaimant.isSpokespersonOfCivilClaimant(
+    CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
       user.nationalId,
       theCase.civilClaimants,
     ) &&

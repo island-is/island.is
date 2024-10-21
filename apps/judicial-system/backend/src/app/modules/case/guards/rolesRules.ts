@@ -289,12 +289,17 @@ export const defenderGeneratedPdfRule: RolesRule = {
     }
 
     // Allow if the user is a defender of a defendant of the case
-    if (Defendant.isDefenderOfDefendant(user.nationalId, theCase.defendants)) {
+    if (
+      Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
+        user.nationalId,
+        theCase.defendants,
+      )
+    ) {
       return true
     }
 
     if (
-      CivilClaimant.isSpokespersonOfCivilClaimantWithCaseFileAccess(
+      CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
         user.nationalId,
         theCase.civilClaimants,
       )
