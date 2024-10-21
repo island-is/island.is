@@ -105,16 +105,12 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
       defendant: Defendant,
       caseFilesSharedWithDefender: boolean,
     ) => {
-      if (defendant) {
-        defendant.caseFilesSharedWithDefender = caseFilesSharedWithDefender
-
-        const updateDefendantInput = {
-          caseId: caseId,
-          defendantId: defendant.id,
-          caseFilesSharedWithDefender,
-        }
-        setAndSendDefendantToServer(updateDefendantInput, setWorkingCase)
+      const updateDefendantInput = {
+        caseId: caseId,
+        defendantId: defendant.id,
+        caseFilesSharedWithDefender,
       }
+      setAndSendDefendantToServer(updateDefendantInput, setWorkingCase)
     },
     [setWorkingCase, setAndSendDefendantToServer],
   )
@@ -157,7 +153,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
         <InputAdvocate
           disabled={
             defendant.defenderChoice === DefenderChoice.WAIVE ||
-            defendant.isDefenderChoiceConfirmed === true
+            defendant.isDefenderChoiceConfirmed
           }
           onAdvocateNotFound={setDefenderNotFound}
           clientId={defendant.id}
@@ -167,7 +163,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             name={`shareFilesWithDefender-${defendant.id}`}
             label={formatMessage(strings.shareFilesWithDefender)}
             checked={Boolean(defendant.caseFilesSharedWithDefender)}
-            disabled={!defendant.defenderName}
+            disabled={!defendant.defenderName && !defendant.defenderEmail}
             onChange={() => {
               toggleCaseFilesSharedWithDefender(
                 workingCase.id,

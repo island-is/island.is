@@ -137,7 +137,8 @@ export class CaseService {
     }
 
     const defenderChoice = {
-      ...defenderAssignment,
+      defenderChoice: defenderAssignment.defenderChoice,
+      defenderNationalId: defenderAssignment.defenderNationalId,
       defenderName: chosenLawyer?.Name,
       defenderEmail: chosenLawyer?.Email,
       defenderPhoneNumber: chosenLawyer?.Phone,
