@@ -152,7 +152,7 @@ export const createServiceCertificate = (
   )
 
   addNormalText(doc, 'Staður: ', 'Times-Bold', true)
-  addNormalText(doc, subpoena.location || 'Ekki skáður', 'Times-Roman')
+  addNormalText(doc, subpoena.location || 'Ekki skráður', 'Times-Roman')
 
   addNormalText(doc, 'Tegund fyrirkalls: ', 'Times-Bold', true)
   addNormalText(doc, getSubpoenaType(defendant.subpoenaType), 'Times-Roman')
