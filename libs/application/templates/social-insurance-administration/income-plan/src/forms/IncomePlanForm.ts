@@ -146,7 +146,7 @@ export const IncomePlanForm: Form = buildForm({
                         activeField?.incomeType ===
                           INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS ||
                         activeField?.incomeType === DIVIDENDS_IN_FOREIGN_BANKS
-                          ? ''
+                          ? null
                           : ISK
 
                       return defaultCurrency
