@@ -40,6 +40,12 @@ describe('BFF PortalEnv serialization', () => {
   const sut = service(serviceName)
     .namespace(clientName)
     .image(bffName)
+    .env({
+      // B: ref(
+      //   (h) =>
+      //     `${h.featureDeploymentName ? 'feature-' : ''}${h.svc(services.api)}`,
+      // ),
+    })
     .redis()
     .serviceAccount(bffName)
     .env(createPortalEnv(key, services))

@@ -1,5 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { json, ref } from '../../../../../infra/src/dsl/dsl'
+import { Context } from '../../../../../infra/src/dsl/types/input-types'
 import {
   adminPortalScopes,
   servicePortalScopes,
@@ -11,6 +12,14 @@ const ONE_HOUR_IN_MS = 60 * 60 * 1000
 const ONE_WEEK_IN_MS = ONE_HOUR_IN_MS * 24 * 7
 
 type PortalKeys = 'stjornbord' | 'minarsidur'
+type Cluster = 'islandis' | 'ids'
+type Environment = 'local' | 'dev' | 'staging' | 'prod'
+
+interface GetEnvUrlOpts {
+  cluster: Cluster
+  environment: Environment
+  urlPath?: string
+}
 
 const getScopes = (key: PortalKeys) => {
   switch (key) {
@@ -25,6 +34,46 @@ const getScopes = (key: PortalKeys) => {
   }
 }
 
+// FIXME: move to DSL
+const envUrl = {
+  islandis: {
+    local: 'http://localhost:4200',
+    dev: 'https://beta.dev01.devland.is',
+    staging: 'https://beta.staging01.devland.is',
+    prod: 'https://island.is',
+  },
+  ids: {
+    local: 'http://localhost:4200',
+    dev: 'identity-server.dev01.devland.is',
+    staging: 'identity-server.staging01.devland.is',
+    prod: 'innskra.island.is',
+  },
+}
+
+const getEnvUrl = (opts: GetEnvUrlOpts) => {
+  const { cluster, environment, urlPath = '' } = opts
+
+  return ref(
+    (ctx: Context): string =>
+      `${ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''}${
+        envUrl[cluster][environment]
+      }${urlPath}`,
+  )
+}
+const islandisUrls = {
+  local: getEnvUrl({ cluster: 'islandis', environment: 'local' }),
+  dev: getEnvUrl({ cluster: 'islandis', environment: 'dev' }),
+  staging: getEnvUrl({ cluster: 'islandis', environment: 'staging' }),
+  prod: getEnvUrl({ cluster: 'islandis', environment: 'prod' }),
+} as const
+
+const idsUrls = {
+  local: getEnvUrl({ cluster: 'ids', environment: 'local' }),
+  dev: getEnvUrl({ cluster: 'ids', environment: 'dev' }),
+  staging: getEnvUrl({ cluster: 'ids', environment: 'staging' }),
+  prod: getEnvUrl({ cluster: 'ids', environment: 'prod' }),
+} as const
+
 export const createPortalEnv = (
   key: PortalKeys,
   services: BffInfraServices,
@@ -33,12 +82,7 @@ export const createPortalEnv = (
     // Idenity server
     IDENTITY_SERVER_CLIENT_SCOPES: json(getScopes(key)),
     IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-${key}`,
-    IDENTITY_SERVER_ISSUER_URL: {
-      local: 'https://identity-server.dev01.devland.is',
-      dev: 'https://identity-server.dev01.devland.is',
-      staging: 'https://identity-server.staging01.devland.is',
-      prod: 'https://innskra.island.is',
-    },
+    IDENTITY_SERVER_ISSUER_URL: idsUrls,
     // BFF
     BFF_NAME: {
       local: key,
@@ -49,28 +93,32 @@ export const createPortalEnv = (
     BFF_CLIENT_KEY_PATH: `/${key}`,
     BFF_PAR_SUPPORT_ENABLED: 'false',
     BFF_ALLOWED_REDIRECT_URIS: {
-      local: json(['http://localhost:4200/stjornbord']),
-      dev: json(['https://featbff-beta.dev01.devland.is']),
-      staging: json(['https://beta.staging01.devland.is']),
-      prod: json(['https://island.is']),
+      local: json([{ ...islandisUrls.local, urlPath: '/stjornbord' }]),
+      dev: json([islandisUrls.dev]),
+      staging: json([islandisUrls.staging]),
+      prod: json([islandisUrls.prod]),
     },
     BFF_CLIENT_BASE_URL: {
-      local: 'http://localhost:4200',
-      dev: 'https://featbff-beta.dev01.devland.is',
-      staging: 'https://beta.staging01.devland.is',
-      prod: 'https://island.is',
+      local: json([islandisUrls.local]),
+      dev: json([islandisUrls.dev]),
+      staging: json([islandisUrls.staging]),
+      prod: json([islandisUrls.prod]),
     },
     BFF_LOGOUT_REDIRECT_URI: {
-      local: 'http://localhost:4200/stjornbord',
-      dev: 'https://featbff-beta.dev01.devland.is',
-      staging: 'https://beta.staging01.devland.is',
-      prod: 'https://island.is',
+      local: json([islandisUrls.local]),
+      dev: json([islandisUrls.dev]),
+      staging: json([islandisUrls.staging]),
+      prod: json([islandisUrls.prod]),
     },
     BFF_CALLBACKS_BASE_PATH: {
-      local: `http://localhost:3010/${key}/bff/callbacks`,
-      dev: `https://featbff-beta.dev01.devland.is/${key}/bff/callbacks`,
-      staging: `https://beta.staging01.devland.is/${key}/bff/callbacks`,
-      prod: `https://island.is/${key}/bff/callbacks`,
+      local: json([
+        { ...islandisUrls.local, urlPath: `/${key}/bff/callbacks` },
+      ]),
+      dev: json([{ ...islandisUrls.dev, urlPath: `/${key}/bff/callbacks` }]),
+      staging: json([
+        { ...islandisUrls.dev, urlPath: `/${key}/bff/callbacks` },
+      ]),
+      prod: json([{ ...islandisUrls.dev, urlPath: `/${key}/bff/callbacks` }]),
     },
     BFF_PROXY_API_ENDPOINT: ref((h) => `http://${h.svc(services.api)}`),
     BFF_ALLOWED_EXTERNAL_API_URLS: {
