@@ -1,5 +1,5 @@
-import { User } from '@island.is/shared/types'
+import { BffUser, User } from '@island.is/shared/types'
 
-export const checkDelegation = (user: User) => {
+export const checkDelegation = (user: User | BffUser) => {
   return Boolean(user?.profile.actor)
 }
