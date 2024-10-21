@@ -13,7 +13,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath } from '@island.is/application/core'
-import { getTotal } from '../../lib/utils/helpers'
+import { getTotal } from '../../../../shared/utils/helpers'
 import { useTotals } from '../../hooks/useTotals'
 import {
   EQUITIESANDLIABILITIESIDS,

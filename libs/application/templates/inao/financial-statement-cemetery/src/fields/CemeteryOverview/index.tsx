@@ -18,7 +18,7 @@ import { format as formatNationalId } from 'kennitala'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { m } from '../../lib/messages'
 import { FinancialStatementCemetery } from '../../lib/dataSchema'
-import { currencyStringToNumber } from '../../utils/helpers'
+import { currencyStringToNumber } from '../../../../shared/utils/helpers'
 import { BOARDMEMEBER } from '../../utils/constants'
 import {
   columnStyle,

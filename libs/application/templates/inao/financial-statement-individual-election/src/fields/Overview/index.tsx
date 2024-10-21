@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
-
 import {
   AlertBanner,
   Box,

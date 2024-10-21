@@ -1,6 +1,6 @@
 import { buildFileUploadField, buildSection } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
-import { currencyStringToNumber } from '../../../utils/helpers'
+import { currencyStringToNumber } from '../../../../../shared/utils/helpers'
 import { FinancialStatementCemetery } from '../../../lib/dataSchema'
 
 export const cemeteryFinancialStatementSection = buildSection({

@@ -8,7 +8,7 @@ import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { useLazyQuery } from '@apollo/client'
 import { getFinancialLimit } from '../../graphql'
-import { FSIUSERTYPE } from '../../types/types'
+import { FSIUSERTYPE } from '../../../../shared/utils/enums'
 import { ABOUTIDS, GREATER, LESS } from '../../../../shared/utils/constants'
 import { m } from '../../lib/utils/messages'
 

@@ -7,11 +7,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-
 import { m } from '../../lib/messages'
 import { PartyIncome } from './PartyIncome'
 import { PartyExpenses } from './PartyExpenses'
-
 import { TaxInfoQuery } from '../../graphql'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'

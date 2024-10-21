@@ -20,7 +20,7 @@ import {
   INPUTCHANGEINTERVAL,
   VALIDATOR,
 } from '../../../../shared/utils/constants'
-import { getTotal } from '../../utils/helpers'
+import { getTotal } from '../../../../shared/utils/helpers'
 import { Total } from '../../../../shared/components/Total'
 
 export const ElectionEquities = ({

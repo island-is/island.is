@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { m } from './messages'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js/min'
-import { checkIfNegative } from '../utils/helpers'
+import { checkIfNegative } from '../../../shared/utils/helpers'
 
 const requiredNonNegativeString = z
   .string()

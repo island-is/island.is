@@ -22,7 +22,7 @@ import {
 } from '../../../../shared/utils/constants'
 import { CEMETERYEQUITIESANDLIABILITIESIDS } from '../../utils/constants'
 import { useTotals } from '../../hooks/useTotals'
-import { getTotal } from '../../utils/helpers'
+import { getTotal } from '../../../../shared/utils/helpers'
 import { Total } from '../../../../shared/components/Total'
 
 export const CemeteryEquities = ({

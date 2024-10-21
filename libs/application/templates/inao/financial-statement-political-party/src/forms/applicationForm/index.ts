@@ -1,7 +1,6 @@
 import { buildForm } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Form, FormModes } from '@island.is/application/types'
-
 import { clientInfoSection } from './clientInfoSection'
 import { keyNumbersSection } from './keyNumbersSection'
 import { financialStatementSection } from './keyNumbersSection/financialStatementSection'
