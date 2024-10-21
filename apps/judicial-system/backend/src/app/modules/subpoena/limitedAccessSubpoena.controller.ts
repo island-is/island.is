@@ -33,7 +33,10 @@ import {
 } from '../case'
 import { CurrentDefendant, Defendant, DefendantExistsGuard } from '../defendant'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
-import { SubpoenaExistsOptionalGuard } from './guards/subpoenaExists.guard'
+import {
+  SubpoenaExistsGuard,
+  SubpoenaExistsOptionalGuard,
+} from './guards/subpoenaExists.guard'
 import { Subpoena } from './models/subpoena.model'
 
 @Controller([
@@ -46,7 +49,6 @@ import { Subpoena } from './models/subpoena.model'
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
   DefendantExistsGuard,
-  SubpoenaExistsOptionalGuard,
 )
 @ApiTags('limited access subpoenas')
 export class LimitedAccessSubpoenaController {
@@ -55,6 +57,7 @@ export class LimitedAccessSubpoenaController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
+  @UseGuards(SubpoenaExistsOptionalGuard)
   @RolesRules(defenderGeneratedPdfRule)
   @Get()
   @Header('Content-Type', 'application/pdf')
@@ -84,6 +87,7 @@ export class LimitedAccessSubpoenaController {
     res.end(pdf)
   }
 
+  @UseGuards(SubpoenaExistsGuard)
   @RolesRules(defenderGeneratedPdfRule)
   @Get('serviceCertificate')
   @Header('Content-Type', 'application/pdf')
@@ -104,10 +108,6 @@ export class LimitedAccessSubpoenaController {
     this.logger.debug(
       `Getting service certificate for defendant ${defendantId} in subpoena ${subpoenaId} of case ${caseId} as a pdf document`,
     )
-
-    if (!subpoena) {
-      throw new InternalServerErrorException('Missing subpoena')
-    }
 
     const pdf = await this.pdfService.getServiceCertificatePdf(
       theCase,
