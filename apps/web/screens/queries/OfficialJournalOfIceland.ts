@@ -198,6 +198,9 @@ export const CASES_IN_PROGRESS_QUERY = gql`
           title
         }
         advertTitle
+        status {
+          title
+        }
         involvedParty {
           title
         }

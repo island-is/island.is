@@ -280,6 +280,10 @@ export const m = {
       id: 'web.ojoi:casesInProgress.createdAt',
       defaultMessage: 'Innsending',
     },
+    status: {
+      id: 'web.ojoi:casesInProgress.status',
+      defaultMessage: 'Staða',
+    },
     requestedPublicationDate: {
       id: 'web.ojoi:casesInProgress.requestedPublicationDate',
       defaultMessage: 'Áætl. útgáfud.',

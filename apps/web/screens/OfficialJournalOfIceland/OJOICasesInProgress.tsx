@@ -71,6 +71,7 @@ const OJOICasesInProgressPage: CustomScreen<OJOICasesInProgressProps> = ({
               <T.HeadData>
                 {formatMessage(m.casesInProgress.requestedPublicationDate)}
               </T.HeadData>
+              <T.HeadData>{formatMessage(m.casesInProgress.status)}</T.HeadData>
               <T.HeadData>
                 {formatMessage(m.casesInProgress.advertTitle)}
               </T.HeadData>
@@ -84,6 +85,7 @@ const OJOICasesInProgressPage: CustomScreen<OJOICasesInProgressProps> = ({
               <T.Row key={c.id}>
                 <T.Data>{formatDate(c.createdAt)}</T.Data>
                 <T.Data>{formatDate(c.requestedPublicationDate)}</T.Data>
+                <T.Data>{c.status.title}</T.Data>
                 <T.Data>{c.advertType.title + ' ' + c.advertTitle}</T.Data>
                 <T.Data>{c.involvedParty.title}</T.Data>
               </T.Row>
@@ -132,7 +134,9 @@ OJOICasesInProgress.getProps = async ({ apolloClient, locale }) => {
       {
         query: CASES_IN_PROGRESS_QUERY,
         variables: {
-          params: {},
+          params: {
+            pageSize: 30,
+          },
         },
       },
     ),

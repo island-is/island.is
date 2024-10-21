@@ -15,6 +15,9 @@ export class Case {
   @Field(() => AdvertEntity)
   involvedParty!: AdvertEntity | null
 
+  @Field(() => AdvertEntity)
+  status!: AdvertEntity | null
+
   @Field(() => String)
   createdAt!: string | null
 
