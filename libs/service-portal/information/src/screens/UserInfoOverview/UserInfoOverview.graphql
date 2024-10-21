@@ -18,11 +18,3 @@ query UserInfoOverview($useFakeData: Boolean) {
     }
   }
 }
-
-query UserInfoOverviewName($useFakeData: Boolean) {
-  nationalRegistryPerson(useFakeData: $useFakeData) {
-    name {
-      fullName
-    }
-  }
-}
