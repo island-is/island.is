@@ -283,7 +283,7 @@ export const defenderGeneratedPdfRule: RolesRule = {
     const user: User = request.user
     const theCase: Case = request.case
 
-    // Deny if something is missing - shuould never happen
+    // Deny if something is missing - should never happen
     if (!user || !theCase) {
       return false
     }

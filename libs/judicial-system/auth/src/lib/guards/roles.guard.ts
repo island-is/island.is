@@ -37,7 +37,6 @@ export class RolesGuard implements CanActivate {
     if (!rule) {
       return false
     }
-
     // Allow if the rule is simply a user role
     if (typeof rule === 'string') {
       return true
