@@ -4,6 +4,7 @@ import React from 'react'
 import { DirectTaxPayment, NationalRegistryData } from './interfaces'
 import { StaffRole, UserType } from './enums'
 import { Locale } from '@island.is/shared/types'
+import differenceInYears from 'date-fns/differenceInYears'
 
 export const getFileType = (fileName: string) => {
   return fileName?.substring(fileName.lastIndexOf('.') + 1)
@@ -132,4 +133,17 @@ export const truncateString = (str: string, maxLength: number) => {
     return `${str.substring(0, maxLength)}...`
   }
   return str
+}
+
+export const calcAge = (ssn: string) => {
+  const year = ssn.substring(4, 6)
+  const significant = ssn.substring(9, 10)
+
+  const birthDay = new Date(
+    Number(`${Number(significant) < 8 ? '2' : '1'}${significant}${year}`),
+    Number(ssn.substring(2, 4)) - 1,
+    Number(ssn.substring(0, 2)),
+  )
+
+  return differenceInYears(new Date(), birthDay)
 }

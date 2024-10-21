@@ -66,7 +66,7 @@ export class AppService {
     apiKey: string,
     municipalityCode: string,
     id: string,
-  ): Promise<ApplicationModel> {
+  ): Promise<string> {
     this.logger.info(
       `trying to fetching all applications with municipalityCode ${municipalityCode}`,
       id,
