@@ -377,7 +377,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return attachments
   }
 
-  async getPdf(key: string) {
+  async getPdf(key: string): Promise<string> {
     const fileContent = await this.s3Service.getFileContent(
       { bucket: this.config.templateApi.attachmentBucket, key },
       'base64',
