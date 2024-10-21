@@ -20,7 +20,6 @@ import {
   BE,
   CHARGE_ITEM_CODES,
   DELIVERY_FEE,
-  Pickup,
   YES,
 } from '../../lib/constants'
 import {
@@ -29,6 +28,7 @@ import {
   needsHealthCertificateCondition,
 } from '../../lib/utils'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { Pickup } from '../../lib/types'
 
 export const subSectionSummary = buildSubSection({
   id: 'overview',

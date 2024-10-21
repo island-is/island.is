@@ -1,18 +1,33 @@
 import {
+  buildAlertMessageField,
+  buildCustomField,
+  buildDescriptionField,
+  buildFileUploadField,
   buildForm,
+  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildPhoneField,
+  buildRadioField,
   buildSection,
+  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTextField,
-  buildCustomField,
-  buildRadioField,
-  buildFileUploadField,
-  buildAlertMessageField,
-  buildSelectField,
-  buildDescriptionField,
 } from '@island.is/application/core'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import {
+  BankAccountType,
+  fileUploadSharedProps,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
+  friendlyFormatIBAN,
+  friendlyFormatSWIFT,
+  getBankIsk,
+  getCurrencies,
+  getYesNoOptions,
+  typeOfBankInfo,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   Application,
   DefaultEvents,
@@ -22,32 +37,18 @@ import {
   NationalRegistrySpouse,
   YES,
 } from '@island.is/application/types'
-import { householdSupplementFormMessage } from '../lib/messages'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import * as kennitala from 'kennitala'
+import isEmpty from 'lodash/isEmpty'
 import { HouseholdSupplementHousing, maritalStatuses } from '../lib/constants'
 import {
-  isExistsCohabitantOlderThan25,
   getApplicationAnswers,
   getApplicationExternalData,
+  getAvailableMonths,
   getAvailableYears,
+  isExistsCohabitantOlderThan25,
 } from '../lib/householdSupplementUtils'
-import {
-  BankAccountType,
-  MONTHS,
-  fileUploadSharedProps,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import isEmpty from 'lodash/isEmpty'
-import {
-  friendlyFormatIBAN,
-  friendlyFormatSWIFT,
-  getBankIsk,
-  typeOfBankInfo,
-  getCurrencies,
-  getYesNoOptions,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import * as kennitala from 'kennitala'
+import { householdSupplementFormMessage } from '../lib/messages'
 
 export const HouseholdSupplementForm: Form = buildForm({
   id: 'HouseholdSupplementDraft',
@@ -530,7 +531,24 @@ export const HouseholdSupplementForm: Form = buildForm({
               width: 'half',
               placeholder:
                 socialInsuranceAdministrationMessage.period.monthDefaultText,
-              options: MONTHS,
+              options: (application: Application) => {
+                const { selectedYear } = getApplicationAnswers(
+                  application.answers,
+                )
+
+                return getAvailableMonths(selectedYear)
+              },
+              condition: (answers) => {
+                const { selectedYear, selectedYearHiddenInput } =
+                  getApplicationAnswers(answers)
+
+                return selectedYear === selectedYearHiddenInput
+              },
+            }),
+            buildHiddenInputWithWatchedValue({
+              // Needed to trigger an update on options in the select above
+              id: 'period.hiddenInput',
+              watchValue: 'period.year',
             }),
           ],
         }),

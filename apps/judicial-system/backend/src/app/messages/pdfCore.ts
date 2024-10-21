@@ -7,11 +7,6 @@ export const core = {
     defaultMessage: 'og',
     description: 'Notað fyrir orðið og.',
   }),
-  accused: defineMessage({
-    id: 'judicial.system.backend:pdf.core.accused',
-    defaultMessage: 'kærð{suffix}',
-    description: 'Notað fyrir orðið kærði/a.',
-  }),
   defendant: defineMessage({
     id: 'judicial.system.backend:pdf.core.defendant',
     defaultMessage: 'varnaraðil{suffix}',

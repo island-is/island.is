@@ -8,7 +8,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
-import { m, parliamentaryMessages } from '../../lib/messages'
+import { m } from '../../lib/messages'
 import { useLoaderData } from 'react-router-dom'
 import { ListStatus, SignatureCollectionList } from '@island.is/api/schema'
 import { PaperSignees } from './paperSignees'
@@ -48,9 +48,7 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage(
-                    parliamentaryMessages.signatureListsTitle,
-                  ),
+                  title: formatMessage(m.parliamentaryCollectionTitle),
                   href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
                 },
                 {
@@ -91,10 +89,23 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
             }
             type={listStatus === ListStatus.Reviewed ? 'success' : undefined}
           />
-          <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
-          <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
-          <PaperSignees listId={list.id} />
-          <ActionReviewComplete listId={list.id} listStatus={listStatus} />
+          <ActionExtendDeadline
+            listId={list.id}
+            endTime={list.endTime}
+            allowedToProcess={
+              allowedToProcess && listStatus === ListStatus.Extendable
+            }
+          />
+          {(allowedToProcess && !list.active) ||
+            (!allowedToProcess && (
+              <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
+            ))}
+          {allowedToProcess && (
+            <Box>
+              {!list.active && <PaperSignees listId={list.id} />}
+              <ActionReviewComplete listId={list.id} listStatus={listStatus} />
+            </Box>
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

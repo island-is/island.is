@@ -106,4 +106,5 @@ export enum ReasonKey {
   AlreadySigned = 'alreadySigned',
   NotOwner = 'notOwner',
   noInvalidSignature = 'noInvalidSignature',
+  notFound = 'notFound',
 }

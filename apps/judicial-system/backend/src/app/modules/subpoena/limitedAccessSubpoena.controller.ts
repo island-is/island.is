@@ -21,13 +21,13 @@ import {
 } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
-import { defenderRule } from '../../guards'
 import {
   Case,
   CaseExistsGuard,
   CaseReadGuard,
   CaseTypeGuard,
   CurrentCase,
+  defenderGeneratedPdfRule,
   PdfService,
 } from '../case'
 import { CurrentDefendant, Defendant, DefendantExistsGuard } from '../defendant'
@@ -40,21 +40,21 @@ import { Subpoena } from './models/subpoena.model'
 ])
 @UseGuards(
   JwtAuthGuard,
-  RolesGuard,
   CaseExistsGuard,
+  RolesGuard,
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
   DefendantExistsGuard,
   SubpoenaExistsOptionalGuard,
 )
-@ApiTags('limited access defendants')
+@ApiTags('limited access subpoenas')
 export class LimitedAccessSubpoenaController {
   constructor(
     private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @RolesRules(defenderRule)
+  @RolesRules(defenderGeneratedPdfRule)
   @Get()
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
