@@ -1,0 +1,7 @@
+query UserInfoDashboardName($useFakeData: Boolean) {
+  nationalRegistryPerson(useFakeData: $useFakeData) {
+    name {
+      fullName
+    }
+  }
+}

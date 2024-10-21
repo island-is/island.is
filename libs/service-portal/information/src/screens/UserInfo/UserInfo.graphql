@@ -1,7 +1,6 @@
 query NationalRegistryPerson($useFakeData: Boolean) {
   nationalRegistryPerson(useFakeData: $useFakeData) {
     nationalId
-    fullName
     gender
     exceptionFromDirectMarketing
     religion
@@ -9,6 +8,7 @@ query NationalRegistryPerson($useFakeData: Boolean) {
       firstName
       middleName
       lastName
+      fullName
     }
     maritalStatus
     citizenship {
