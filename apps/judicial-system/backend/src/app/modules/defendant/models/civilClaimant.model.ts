@@ -20,7 +20,7 @@ import { Case } from '../../case/models/case.model'
   timestamps: false,
 })
 export class CivilClaimant extends Model {
-  static isSpokespersonOfCivilClaimant(
+  static isConfirmedSpokespersonOfCivilClaimant(
     spokespersonNationalId: string,
     civilClaimants?: CivilClaimant[],
   ) {
@@ -28,13 +28,14 @@ export class CivilClaimant extends Model {
       (civilClaimant) =>
         civilClaimant.hasSpokesperson &&
         civilClaimant.spokespersonNationalId &&
+        civilClaimant.isSpokespersonConfirmed &&
         normalizeAndFormatNationalId(spokespersonNationalId).includes(
           civilClaimant.spokespersonNationalId,
         ),
     )
   }
 
-  static isSpokespersonOfCivilClaimantWithCaseFileAccess(
+  static isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
     spokespersonNationalId: string,
     civilClaimants?: CivilClaimant[],
   ) {
@@ -42,6 +43,7 @@ export class CivilClaimant extends Model {
       (civilClaimant) =>
         civilClaimant.hasSpokesperson &&
         civilClaimant.spokespersonNationalId &&
+        civilClaimant.isSpokespersonConfirmed &&
         normalizeAndFormatNationalId(spokespersonNationalId).includes(
           civilClaimant.spokespersonNationalId,
         ) &&
