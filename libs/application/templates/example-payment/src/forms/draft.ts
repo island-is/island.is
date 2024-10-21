@@ -7,10 +7,14 @@ import {
   buildForm,
   buildSection,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  DefaultEvents,
+  Form,
+  FormModes,
+  MockablePaymentCatalogApi,
+} from '@island.is/application/types'
 import * as m from '../lib/messages'
 import { chargeItemCodeRadioOptions } from '../lib/utils/chargeItemCodeRadioOptions'
-import { PaymentCatalogApi } from '@island.is/application/types'
 
 export const draft: Form = buildForm({
   id: 'ExamplePaymentDraftForm',
@@ -28,10 +32,9 @@ export const draft: Form = buildForm({
           id: 'approveExternalData',
           subTitle: m.draft.externalDataTitle,
           checkboxLabel: m.draft.externalDataTitle,
-          enableMockPayment: true,
           dataProviders: [
             buildDataProviderItem({
-              provider: PaymentCatalogApi,
+              provider: MockablePaymentCatalogApi,
               title: m.draft.feeInfo,
             }),
           ],

@@ -412,8 +412,7 @@ import { SharedApi } from '@island.is/application/types'
 
 ## Enabling payment mocking
 
-To enable payment mocking on dev and local you need to add `enableMockPayment: true` to the arguments object passed to the
-`buildExternalDataProvider` function when constructing your `approveExternalData` field.
+To enable payment mocking on dev and local you need to replace the `PaymentCatalogApi` with `MockablePaymentCatalogApi` in your application. You also need to make sure to update your template in the same manner
 
 A simple example of this can be found in `libs/application/templates/example-payment/src/forms/draft.ts`
 
@@ -423,15 +422,49 @@ buildExternalDataProvider({
           id: 'approveExternalData',
           subTitle: m.draft.externalDataTitle,
           checkboxLabel: m.draft.externalDataTitle,
-          enableMockPayment: true,
           dataProviders: [
             buildDataProviderItem({
-              provider: PaymentCatalogApi,
+              provider: MockablePaymentCatalogApi,
               title: m.draft.feeInfo,
             }),
           ],
         }),
 
+```
+
+and `libs/application/templates/example-payment/src/lib/examplePaymentTemplate.ts`
+
+```typescript
+[States.DRAFT]: {
+        meta: {
+          status: 'draft',
+          name: 'Draft',
+          progress: 0.4,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: async () => (await import('../forms/draft')).draft,
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: m.payUp,
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              api: [MockablePaymentCatalogApi, PaymentCatalogApi],
+              delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.PAYMENT]: {
+            target: States.PAYMENT,
+          },
+        },
+      },
 ```
 
 This will cause a checkbox saying "Enable mock payment" to be shown that if checked will cause the payment step to be skipped.

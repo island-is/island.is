@@ -23,7 +23,6 @@ import { ApiActions } from '../shared'
 import { CitizenshipSchema } from './dataSchema'
 import {
   UserProfileApi,
-  UtlendingastofnunPaymentCatalogApi,
   ChildrenCustodyInformationApi,
   NationalRegistryParentsApi,
   NationalRegistrySpouseDetailsApi,
@@ -33,6 +32,7 @@ import {
   CountriesApi,
   TravelDocumentTypesApi,
   ApplicantInformationApi,
+  MockableUtlendingastofnunPaymentCatalogApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItemCodes } from '../utils'
@@ -93,7 +93,7 @@ const template: ApplicationTemplate<
                 UserProfileApi,
                 ResidenceInIcelandLastChangeDateApi,
                 CountriesApi,
-                UtlendingastofnunPaymentCatalogApi,
+                MockableUtlendingastofnunPaymentCatalogApi,
                 ApplicantInformationApi,
                 TravelDocumentTypesApi,
               ],

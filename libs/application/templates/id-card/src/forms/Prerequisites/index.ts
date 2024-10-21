@@ -24,8 +24,8 @@ import {
 import {
   DeliveryAddressApi,
   IdentityDocumentApi,
+  MockableSyslumadurPaymentCatalogApi,
   NationalRegistryUser,
-  SyslumadurPaymentCatalogApi,
   UserInfoApi,
 } from '../../dataProviders'
 import { priceList } from '../../lib/messages/priceList'
@@ -74,7 +74,6 @@ export const Prerequisites: Form = buildForm({
           title: externalData.dataProvider.pageTitle,
           subTitle: externalData.dataProvider.subTitle,
           checkboxLabel: externalData.dataProvider.checkboxLabel,
-          enableMockPayment: true,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
@@ -110,7 +109,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.identityDocument.subTitle,
             }),
             buildDataProviderItem({
-              provider: SyslumadurPaymentCatalogApi,
+              provider: MockableSyslumadurPaymentCatalogApi,
               title: '',
             }),
           ],

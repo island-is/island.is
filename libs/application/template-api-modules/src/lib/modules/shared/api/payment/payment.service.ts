@@ -34,14 +34,46 @@ export class PaymentService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<PaymentCatalogParameters>): Promise<
     PaymentCatalogItem[]
   > {
-    if (!params?.organizationId) {
-      throw Error('Missing performing organization ID')
-    }
-    const data = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
-      params.organizationId,
-    )
+    const { enableMockPayment } = application.externalData
 
-    return data.item
+    if (enableMockPayment.data) {
+      return [
+        {
+          performingOrgID: params?.organizationId ?? 'string',
+          chargeType: 'string',
+          chargeItemCode: 'Payment',
+          chargeItemName: 'Mock',
+          priceAmount: 123123,
+        },
+      ]
+    } else {
+      if (!params?.organizationId) {
+        throw Error('Missing performing organization ID')
+      }
+      const data =
+        await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
+          params.organizationId,
+        )
+
+      return data.item
+    }
+  }
+
+  async mockPaymentCatalog({
+    params,
+    application,
+  }: TemplateApiModuleActionProps<PaymentCatalogParameters>): Promise<
+    PaymentCatalogItem[]
+  > {
+    return [
+      {
+        performingOrgID: params?.organizationId ?? 'string',
+        chargeType: 'string',
+        chargeItemCode: 'Payment',
+        chargeItemName: 'Mock',
+        priceAmount: 123123,
+      },
+    ]
   }
 
   async createCharge({
