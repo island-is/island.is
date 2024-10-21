@@ -92,6 +92,7 @@ export const RentalPeriodAmount = buildSubSection({
           id: 'rentalAmountIndexValue',
           title: m.rentalAmount.indexValueLabel,
           placeholder: m.rentalAmount.indexValuePlaceholder,
+          variant: 'number',
           width: 'half',
           condition: rentalAmountIndexTypeIsSelected,
         }),
