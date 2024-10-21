@@ -6,7 +6,10 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Ceremony, Individual, PersonalInfo } from '../../types'
 import { format as formatNationalId } from 'kennitala'
 import format from 'date-fns/format'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import {
+  formatPhoneNumber,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
 import { CeremonyPlaces, States, YES } from '../../lib/constants'
 import is from 'date-fns/locale/is'
 
@@ -41,7 +44,7 @@ export const ApplicationOverview: FC<
         <Box display="flex">
           <Box width="half">
             <Text variant="h4">{formatMessage(m.phone)}</Text>
-            <Text>{formatPhoneNumber(side.phone)}</Text>
+            <Text>{formatPhoneNumber(removeCountryCode(side.phone))}</Text>
           </Box>
           <Box width="half">
             <Text variant="h4">{formatMessage(m.email)}</Text>
