@@ -38,7 +38,7 @@ const OJOICasesInProgressPage: CustomScreen<OJOICasesInProgressProps> = ({
 
   const breadcrumbItems = [
     {
-      title: 'Ísland.is',
+      title: formatMessage(m.breadcrumb.frontpage),
       href: linkResolver('homepage', [], locale).href,
     },
     {
@@ -46,7 +46,7 @@ const OJOICasesInProgressPage: CustomScreen<OJOICasesInProgressProps> = ({
       href: baseUrl,
     },
     {
-      title: 'Mál í vinnslu',
+      title: formatMessage(m.casesInProgress.title),
     },
   ]
 

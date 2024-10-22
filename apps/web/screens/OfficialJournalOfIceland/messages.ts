@@ -1,6 +1,12 @@
 import { defineMessages } from 'react-intl'
 
 export const m = {
+  breadcrumb: defineMessages({
+    frontpage: {
+      id: 'web.ojoi.breadcrumb.frontpage',
+      defaultMessage: 'Ísland.is',
+    },
+  }),
   general: defineMessages({
     seeMore: {
       id: 'web.ojoi:general.seeMore',
@@ -58,6 +64,10 @@ export const m = {
       id: 'web.ojoi:search.errorFetchingAdvertsMessage',
       defaultMessage:
         'Ekki náðist samband við vefþjónustur Stjórnartíðinda, reynið aftur síðar.',
+    },
+    breadcrumbTitle: {
+      id: 'web.ojoi:search.breadcrumbTitle',
+      defaultMessage: 'Leitarniðurstöður',
     },
     title: {
       id: 'web.ojoi:search.title',
@@ -167,6 +177,10 @@ export const m = {
   }),
 
   categories: defineMessages({
+    breadcrumbTitle: {
+      id: 'web.ojoi:categories.breadcrumbTitle',
+      defaultMessage: 'Málaflokkar',
+    },
     title: {
       id: 'web.ojoi:categories.title',
       defaultMessage: 'Málaflokkar Stjórnartíðinda',
