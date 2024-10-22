@@ -12,7 +12,7 @@ export const housingCondition = defineMessages({
     description: 'Housing condition inspection page title',
   },
   pageDescription: {
-    id: 'ra.application:housingCondition.pageDescription',
+    id: 'ra.application:housingCondition.pageDescription#markdown',
     defaultMessage:
       'Leigusamningur þarf lögum samkvæmt að innihalda ástandsúttekt á húsnæðinu. Sú úttekt þarf að fara fram við samningsgerðina. Gott er að skoða húsnæðið gaumgæfilega og taka myndir af ástandi. [Sjá nánar hér](https://island.is/skraning-leigusamnings-i-leiguskra#astandsuttekt-og-brunauttekt).',
     description: 'Housing condition inspection page description',
@@ -40,7 +40,7 @@ export const housingCondition = defineMessages({
   },
   independantInspectorNameLabel: {
     id: 'ra.application:housingCondition.independantInspectorNameLabel',
-    defaultMessage: 'Fullt Nafn',
+    defaultMessage: 'Fullt nafn',
     description: 'Housing condition independant inspector name',
   },
   independantInspectorNamePlaceholder: {

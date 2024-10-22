@@ -23,7 +23,7 @@ import * as m from '../../lib/messages'
 
 function rentalAmountIndexIsConnected(answers: FormValue) {
   const { isRentalAmountIndexConnected } = getApplicationAnswers(answers)
-  return isRentalAmountIndexConnected === AnswerOptions.YES
+  return isRentalAmountIndexConnected !== undefined
 }
 
 export const RentalPeriodAmount = buildSubSection({
@@ -58,6 +58,7 @@ export const RentalPeriodAmount = buildSubSection({
             },
           ],
           width: 'half',
+          spacing: 0,
         }),
         buildSelectField({
           id: 'rentalAmountIndexTypes',
