@@ -140,6 +140,10 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: Date })
   verdictViewDate?: Date
 
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  verdictAppealDate?: Date
+
   @Column({
     type: DataType.ENUM,
     allowNull: true,
