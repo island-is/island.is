@@ -221,7 +221,10 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 {lists?.length > 0 &&
                   allowedToProcess &&
                   collectionStatus === CollectionStatus.InInitialReview && (
-                    <CreateCollection collectionId={collection?.id} />
+                    <CreateCollection
+                      collectionId={collection?.id}
+                      areaId={undefined}
+                    />
                   )}
               </Box>
             </GridColumn>
