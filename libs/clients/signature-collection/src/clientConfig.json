@@ -112,6 +112,41 @@
         }
       }
     },
+    "/Admin/Medmaelalisti": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Bætir við nýjum meðmælalistum fyrir þegar stofnað framboð",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedmaelalistarRequestDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Admin/Medmaelalisti/{ID}": {
       "delete": {
         "tags": ["Admin"],
@@ -928,7 +963,9 @@
       },
       "post": {
         "tags": ["Medmaelalistar"],
+        "summary": "Bætir við nýjum meðmælalistum fyrir þegar stofnað framboð",
         "requestBody": {
+          "description": "",
           "content": {
             "application/json": {
               "schema": {
