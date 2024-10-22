@@ -42,11 +42,19 @@ describe('BFF PortalEnv serialization', () => {
     .image(bffName)
     .redis()
     .serviceAccount(bffName)
-    .env(createPortalEnv(key, services))
-    .secrets({
-      BFF_TOKEN_SECRET_BASE64: `/k8s/${bffName}/${clientName}/BFF_TOKEN_SECRET_BASE64`,
-      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${bffName}/${clientName}/IDENTITY_SERVER_CLIENT_SECRET`,
+    .bff({
+      key: 'stjornbord',
+      clientName,
+      services,
+      env: {
+        IDENTITY_SERVER_CLIENT_SCOPES: json(adminPortalScopes),
+      },
     })
+    // .env(createPortalEnv(key, services))
+    // .secrets({
+    //   BFF_TOKEN_SECRET_BASE64: `/k8s/${bffName}/${clientName}/BFF_TOKEN_SECRET_BASE64`,
+    //   IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${bffName}/${clientName}/IDENTITY_SERVER_CLIENT_SECRET`,
+    // })
     .command('node')
     .args('main.js')
     .readiness(`/${key}/bff/health/check`)

@@ -30,20 +30,20 @@ const getScopes = (key: PortalKeys) => {
 }
 
 // FIXME: move to DSL
-const envUrl = {
-  islandis: {
-    local: 'http://localhost:4200',
-    dev: 'https://beta.dev01.devland.is',
-    staging: 'https://beta.staging01.devland.is',
-    prod: 'https://island.is',
-  },
-  ids: {
-    local: 'http://localhost:4200',
-    dev: 'https://identity-server.dev01.devland.is',
-    staging: 'https://identity-server.staging01.devland.is',
-    prod: 'https://innskra.island.is',
-  },
-} as const
+// const envUrl = {
+//   islandis: {
+//     local: 'http://localhost:4200',
+//     dev: 'https://beta.dev01.devland.is',
+//     staging: 'https://beta.staging01.devland.is',
+//     prod: 'https://island.is',
+//   },
+//   ids: {
+//     local: 'http://localhost:4200',
+//     dev: 'https://identity-server.dev01.devland.is',
+//     staging: 'https://identity-server.staging01.devland.is',
+//     prod: 'https://innskra.island.is',
+//   },
+// } as const
 
 const getEnvUrl = (opts: GetEnvUrlOpts) => {
   const { urls, serialize = false } = opts
@@ -66,19 +66,19 @@ const getEnvUrl = (opts: GetEnvUrlOpts) => {
   })
 }
 
-const islandisUrls = {
-  local: getEnvUrl({ urls: envUrl.islandis.local }),
-  dev: getEnvUrl({ urls: envUrl.islandis.dev }),
-  staging: getEnvUrl({ urls: envUrl.islandis.staging }),
-  prod: getEnvUrl({ urls: envUrl.islandis.prod }),
-}
-
-const idsUrls = {
-  local: getEnvUrl({ urls: envUrl.ids.local }),
-  dev: getEnvUrl({ urls: envUrl.ids.dev }),
-  staging: getEnvUrl({ urls: envUrl.ids.staging }),
-  prod: getEnvUrl({ urls: envUrl.ids.prod }),
-}
+// const islandisUrls = {
+//   local: getEnvUrl({ urls: envUrl.islandis.local }),
+//   dev: getEnvUrl({ urls: envUrl.islandis.dev }),
+//   staging: getEnvUrl({ urls: envUrl.islandis.staging }),
+//   prod: getEnvUrl({ urls: envUrl.islandis.prod }),
+// }
+//
+// const idsUrls = {
+//   local: getEnvUrl({ urls: envUrl.ids.local }),
+//   dev: getEnvUrl({ urls: envUrl.ids.dev }),
+//   staging: getEnvUrl({ urls: envUrl.ids.staging }),
+//   prod: getEnvUrl({ urls: envUrl.ids.prod }),
+// }
 
 export const createPortalEnv = (
   key: PortalKeys,
@@ -88,7 +88,11 @@ export const createPortalEnv = (
     // Identity server
     IDENTITY_SERVER_CLIENT_SCOPES: json(getScopes(key)),
     IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-${key}`,
-    IDENTITY_SERVER_ISSUER_URL: idsUrls,
+    IDENTITY_SERVER_ISSUER_URL: {
+      dev: 'https://identity-server.dev01.devland.is',
+      staging: 'https://identity-server.staging01.devland.is',
+      prod: 'https://innskra.island.is',
+    },
     // BFF
     BFF_NAME: {
       local: key,
@@ -98,36 +102,10 @@ export const createPortalEnv = (
     },
     BFF_CLIENT_KEY_PATH: `/${key}`,
     BFF_PAR_SUPPORT_ENABLED: 'false',
-    BFF_ALLOWED_REDIRECT_URIS: {
-      local: getEnvUrl({
-        urls: [envUrl.islandis.local],
-        serialize: true,
-      }),
-      dev: getEnvUrl({
-        urls: [envUrl.islandis.dev],
-        serialize: true,
-      }),
-      staging: getEnvUrl({
-        urls: [envUrl.islandis.staging],
-        serialize: true,
-      }),
-      prod: getEnvUrl({
-        urls: [envUrl.islandis.prod],
-        serialize: true,
-      }),
-    },
-    BFF_CLIENT_BASE_URL: islandisUrls,
-    BFF_LOGOUT_REDIRECT_URI: islandisUrls,
-    BFF_CALLBACKS_BASE_PATH: {
-      local: getEnvUrl({
-        urls: `${envUrl.islandis.local}/${key}/bff/callbacks`,
-      }),
-      dev: getEnvUrl({ urls: `${envUrl.islandis.dev}/${key}/bff/callbacks` }),
-      staging: getEnvUrl({
-        urls: `${envUrl.islandis.staging}/${key}/bff/callbacks`,
-      }),
-      prod: getEnvUrl({ urls: `${envUrl.islandis.prod}/${key}/bff/callbacks` }),
-    },
+    BFF_ALLOWED_REDIRECT_URIS: ref((h) => json([`https://${h.env.domain}`])),
+    BFF_CLIENT_BASE_URL: ref((h) => h.svc(`http://${services.api}`)),
+    BFF_LOGOUT_REDIRECT_URI: ref((h) => json([h.svc(services.api)])),
+    BFF_CALLBACKS_BASE_PATH: ref((h) => json([h.svc(services.api)])),
     BFF_PROXY_API_ENDPOINT: ref((h) => `http://${h.svc(services.api)}`),
     BFF_ALLOWED_EXTERNAL_API_URLS: {
       local: json(['http://localhost:3377/download/v1']),

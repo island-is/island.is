@@ -1,15 +1,28 @@
-import { ServiceBuilder, service } from '../../../../infra/src/dsl/dsl'
-import { createPortalEnv } from './utils/createPortalEnv'
+/* eslint-disable @nx/enforce-module-boundaries */
+import { ServiceBuilder, service, json } from '../../../../infra/src/dsl/dsl'
+import { BffInfraServices } from '../../../../infra/src/dsl/types/input-types'
+import {
+  adminPortalScopes,
+  servicePortalScopes,
+} from '../../../../libs/auth/scopes/src/index'
 
 const bffName = 'services-bff'
 const clientName = 'portals-admin'
 const serviceName = `${bffName}-${clientName}`
 const key = 'stjornbord'
 
-export type BffInfraServices = {
-  api: ServiceBuilder<'api'>
-}
+type PortalKeys = 'stjornbord' | 'minarsidur'
 
+const getScopes = (key: PortalKeys) => {
+  switch (key) {
+    case 'minarsidur':
+      return servicePortalScopes
+    case 'stjornbord':
+      return adminPortalScopes
+    default:
+      throw new Error('Invalid BFF client')
+  }
+}
 export const serviceSetup = (
   services: BffInfraServices,
 ): ServiceBuilder<typeof serviceName> =>
@@ -18,12 +31,13 @@ export const serviceSetup = (
     .image(bffName)
     .redis()
     .serviceAccount(bffName)
-    .env(createPortalEnv(key, services))
-    .secrets({
-      // The secret should be a valid 32-byte base64 key.
-      // Generate key example: `openssl rand -base64 32`
-      BFF_TOKEN_SECRET_BASE64: `/k8s/${bffName}/${clientName}/BFF_TOKEN_SECRET_BASE64`,
-      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${bffName}/${clientName}/IDENTITY_SERVER_CLIENT_SECRET`,
+    .bff({
+      key: 'stjornbord',
+      clientName,
+      services,
+      env: {
+        IDENTITY_SERVER_CLIENT_SCOPES: json(getScopes(key)),
+      },
     })
     .readiness(`/${key}/bff/health/check`)
     .liveness(`/${key}/bff/liveness`)

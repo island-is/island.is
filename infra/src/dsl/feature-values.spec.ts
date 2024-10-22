@@ -6,6 +6,7 @@ import { HelmValueFile } from './types/output-types'
 import { getHelmValueFile } from './value-files-generators/helm-value-file'
 import { renderers } from './upstream-dependencies'
 import { generateOutput } from './processing/rendering-pipeline'
+import { createPortalEnv } from '../../../apps/services/bff/infra/utils/createPortalEnv'
 
 const getEnvironment = (
   options: EnvironmentConfig = {
@@ -49,7 +50,6 @@ describe('Feature-deployment support', () => {
     const dependencyA = service('service-a').namespace('A')
     const dependencyB = service('service-b')
     const dependencyC = service('service-c')
-
     const apiService = service('graphql')
       .env({
         A: ref((h) => `${h.svc(dependencyA)}`),
@@ -76,18 +76,36 @@ describe('Feature-deployment support', () => {
       })
       .db()
 
+    const bff = service('services-bff-portals-admin').env(
+      createPortalEnv('stjornbord', { api: apiService }),
+    )
     dev = getEnvironment()
     const services1 = await getFeatureAffectedServices(
-      [apiService, dependencyA, dependencyB],
-      [dependencyA, dependencyC],
+      [apiService, dependencyA, dependencyB, bff],
+      [dependencyA, dependencyC, bff],
       [dependencyC],
       dev,
     )
     values = await getValues(services1.included, dev)
+    console.debug(JSON.stringify(values, null, 2))
   })
 
   it('dynamic service name generation', () => {
     expect(values.services.graphql.env).toEqual({
+      A: 'web-service-a',
+      B: 'feature-web-service-b.islandis.svc.cluster.local',
+      DB_USER: 'feature_feature_A_graphql',
+      DB_NAME: 'feature_feature_A_graphql',
+      DB_HOST: 'a',
+      DB_REPLICAS_HOST: 'a',
+      NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init',
+      SERVERSIDE_FEATURES_ON: '',
+      LOG_LEVEL: 'info',
+      DB_EXTENSIONS: 'foo',
+    })
+  })
+  it('bff feature env urls', () => {
+    expect(values.services.bff.env).toEqual({
       A: 'web-service-a',
       B: 'feature-web-service-b.islandis.svc.cluster.local',
       DB_USER: 'feature_feature_A_graphql',

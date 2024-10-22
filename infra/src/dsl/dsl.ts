@@ -5,7 +5,6 @@ import {
   ExtraValues,
   Features,
   HealthProbe,
-  Ingress,
   InitContainers,
   MountedFile,
   PersistentVolumeClaim,
@@ -21,6 +20,7 @@ import {
 } from './types/input-types'
 import { logger } from '../logging'
 import { COMMON_SECRETS } from './consts'
+import { type BffConfig, BffConf } from './bff'
 
 /**
  * Allows you to make some properties of a type optional.
@@ -181,6 +181,24 @@ export class ServiceBuilder<ServiceType extends string> {
   env(envs: EnvironmentVariables) {
     this.assertUnset(this.serviceDef.env, envs)
     this.serviceDef.env = { ...this.serviceDef.env, ...envs }
+    return this
+  }
+
+  bff(config: BffConfig): this {
+    const bffConf = new BffConf(config)
+
+    this.serviceDef.env = {
+      ...this.serviceDef.env,
+      ...bffConf.getEnv(),
+    }
+
+    console.debug(JSON.stringify(this.serviceDef.env, null, 2))
+
+    this.serviceDef.secrets = {
+      ...this.serviceDef.secrets,
+      ...bffConf.getSecrets(),
+    }
+
     return this
   }
 

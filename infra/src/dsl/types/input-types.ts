@@ -48,7 +48,9 @@ export type HealthProbe = {
   timeoutSeconds: number
 }
 
-export type Secrets = { [name: string]: string }
+export type Secrets = {
+  [name: string]: string | ValueType
+}
 
 export type EnvironmentVariableValue =
   | Optional<
@@ -139,9 +141,11 @@ export interface Ingress {
   }
   paths: string[]
   public?: boolean
-  extraAnnotations?: Partial<{
-    [env in OpsEnv]: { [annotation: string]: string | null }
-  }>
+  extraAnnotations?: Partial<
+    {
+      [env in OpsEnv]: { [annotation: string]: string | null }
+    }
+  >
 }
 
 export interface IngressForEnv {
@@ -232,3 +236,13 @@ export interface Context {
 
 export type ExtraValuesForEnv = Hash
 export type ExtraValues = { [env in OpsEnv]: Hash | MissingSettingType }
+
+/**
+ * Infrastructure services required by BFF
+ */
+export interface BffInfraServices {
+  /**
+   * Reference to the API service that the BFF will proxy requests to
+   */
+  api: ServiceBuilder<string> | string
+}
