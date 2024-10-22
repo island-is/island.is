@@ -1882,7 +1882,7 @@ export class InternalNotificationService extends BaseNotificationService {
     if (recipients.length > 0) {
       return this.recordNotification(
         theCase.id,
-        NotificationType.APPEAL_JUDGES_ASSIGNED,
+        NotificationType.CASE_FILES_UPDATED,
         recipients,
       )
     }
