@@ -42,7 +42,9 @@ export const successfulServiceStatus: string[] = [
   ServiceStatus.IN_PERSON,
 ]
 
-export const isSuccessfulServiceStatus = (status?: ServiceStatus): boolean => {
+export const isSuccessfulServiceStatus = (
+  status?: ServiceStatus | null,
+): boolean => {
   return Boolean(status && successfulServiceStatus.includes(status))
 }
 
