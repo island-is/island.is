@@ -1,7 +1,7 @@
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
-import { m, parliamentaryMessages } from '../../lib/messages'
+import { m } from '../../lib/messages'
 import {
   ActionCard,
   Box,
@@ -48,6 +48,8 @@ export const Constituency = ({
     (list) => list.area.name === constituencyName,
   )
 
+  const areaId = collection.areas.find((a) => a.name === constituencyName)?.id
+
   const countCandidatesLists = (allLists: SignatureCollectionList[]) => {
     return allLists?.reduce((acc: any, list: SignatureCollectionList) => {
       acc[list.candidate.id] = (acc[list.candidate.id] || 0) + 1
@@ -90,9 +92,7 @@ export const Constituency = ({
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage(
-                    parliamentaryMessages.signatureListsTitle,
-                  ),
+                  title: formatMessage(m.parliamentaryCollectionTitle),
                   href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
                 },
                 {
@@ -104,7 +104,7 @@ export const Constituency = ({
           <IntroHeader
             title={constituencyName}
             intro={
-              formatMessage(parliamentaryMessages.singleConstituencyIntro) +
+              formatMessage(m.parliamentaryConstituencyIntro) +
               ' ' +
               constituencyName
             }
@@ -127,8 +127,11 @@ export const Constituency = ({
                     ': ' +
                     constituencyLists.length}
                 </Text>
-                {constituencyLists?.length > 0 && (
-                  <CreateCollection collectionId={collection?.id} />
+                {allowedToProcess && constituencyLists?.length > 0 && (
+                  <CreateCollection
+                    collectionId={collection?.id}
+                    areaId={areaId}
+                  />
                 )}
               </Box>
               <Stack space={3}>
@@ -142,24 +145,20 @@ export const Constituency = ({
                       maxProgress: list.area.min,
                       withLabel: true,
                     }}
-                    cta={
-                      (allowedToProcess && !list.active) || !allowedToProcess
-                        ? {
-                            label: formatMessage(m.viewList),
-                            variant: 'text',
-                            onClick: () => {
-                              navigate(
-                                SignatureCollectionPaths.ParliamentaryConstituencyList.replace(
-                                  ':constituencyName',
-                                  constituencyName,
-                                ).replace(':listId', list.id),
-                              )
-                            },
-                          }
-                        : undefined
-                    }
+                    cta={{
+                      label: formatMessage(m.viewList),
+                      variant: 'text',
+                      onClick: () => {
+                        navigate(
+                          SignatureCollectionPaths.ParliamentaryConstituencyList.replace(
+                            ':constituencyName',
+                            constituencyName,
+                          ).replace(':listId', list.id),
+                        )
+                      },
+                    }}
                     tag={
-                      !list.reviewed
+                      allowedToProcess && list.active
                         ? {
                             label: 'Cancel collection',
                             renderTag: () => (
@@ -231,11 +230,19 @@ export const Constituency = ({
                               />
                             ),
                           }
-                        : {
-                            label: m.confirmListReviewed.defaultMessage,
+                        : !list.active && !list.reviewed
+                        ? {
+                            label: formatMessage(m.listLocked),
+                            variant: 'blueberry',
+                            outlined: false,
+                          }
+                        : !list.active && list.reviewed
+                        ? {
+                            label: formatMessage(m.confirmListReviewed),
                             variant: 'mint',
                             outlined: false,
                           }
+                        : undefined
                     }
                   />
                 ))}
