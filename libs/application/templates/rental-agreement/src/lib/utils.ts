@@ -1,12 +1,15 @@
+import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
+  AnswerOptions,
+  rentalAmountIndexTypes,
   rentalHousingCategoryClass,
   rentalHousingCategoryClassGroup,
   rentalHousingCategoryTypes,
   rentalHousingConditionInspector,
+  rentalAmountPaymentDateOptions,
 } from './constants'
 import * as m from './messages'
-import { getValueViaPath } from '@island.is/application/core'
 
 export const insertAt = (str: string, sub: string, pos: number) =>
   `${str.slice(0, pos)}${sub}${str.slice(pos)}`
@@ -15,25 +18,46 @@ export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
-  const propertyCategoryTypeOptions = getValueViaPath(
-    answers,
-    'registerPropertyCategoryType',
-  ) as rentalHousingCategoryTypes
+  const propertyCategoryTypeOptions =
+    getValueViaPath<rentalHousingCategoryTypes>(
+      answers,
+      'registerPropertyCategoryType',
+    )
 
-  const propertyCategoryClassOptions = getValueViaPath(
-    answers,
-    'registerPropertyCategoryClass',
-  ) as rentalHousingCategoryClass
+  const propertyCategoryClassOptions =
+    getValueViaPath<rentalHousingCategoryClass>(
+      answers,
+      'registerPropertyCategoryClass',
+    )
 
-  const inspectorOptions = getValueViaPath(
+  const inspectorOptions = getValueViaPath<rentalHousingConditionInspector>(
     answers,
     'rentalHousingConditionInspector',
-  ) as rentalHousingConditionInspector
+  )
+
+  const isRentalAmountIndexConnected = getValueViaPath<AnswerOptions>(
+    answers,
+    'isRentalAmountIndexConnected',
+  )
+
+  const rentalAmountIndexTypesOptions = getValueViaPath<rentalAmountIndexTypes>(
+    answers,
+    'rentalAmountIndexTypes',
+  )
+
+  const rentalAmountPaymentDateOptions =
+    getValueViaPath<rentalAmountPaymentDateOptions>(
+      answers,
+      'rentalAmountPaymentDate',
+    )
 
   return {
     propertyCategoryTypeOptions,
     propertyCategoryClassOptions,
     inspectorOptions,
+    isRentalAmountIndexConnected,
+    rentalAmountIndexTypesOptions,
+    rentalAmountPaymentDateOptions,
   }
 }
 
@@ -90,7 +114,7 @@ export const getPropertyCategoryClassGroupOptions = () => [
     label: m.registerProperty.category.classGroupSelectLabelIncomeBasedHousing,
   },
   {
-    value: rentalHousingCategoryClassGroup.STUDENT_HOUSING,
+    value: rentalHousingCategoryClassGroup.EMPLOYEE_HOUSING,
     label: m.registerProperty.category.classGroupSelectLabelEmployeeHousing,
   },
 ]
@@ -103,5 +127,35 @@ export const getInspectorOptions = () => [
   {
     value: rentalHousingConditionInspector.INDEPENDENT_PARTY,
     label: m.housingCondition.inspectorOptionIndependentParty,
+  },
+]
+
+export const getRentalAmountIndexTypes = () => [
+  {
+    value: rentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
+    label: m.rentalAmount.indexOptionConsumerPriceIndex,
+  },
+  {
+    value: rentalAmountIndexTypes.CONSTRUCTION_COST_INDEX,
+    label: m.rentalAmount.indexOptionConstructionCostIndex,
+  },
+  {
+    value: rentalAmountIndexTypes.WAGE_INDEX,
+    label: m.rentalAmount.indexOptionWageIndex,
+  },
+]
+
+export const getRentalAmountPaymentDateOptions = () => [
+  {
+    value: rentalAmountPaymentDateOptions.FIRST_DAY,
+    label: m.rentalAmount.paymentDateOptionFirstDay,
+  },
+  {
+    value: rentalAmountPaymentDateOptions.LAST_DAY,
+    label: m.rentalAmount.paymentDateOptionLastDay,
+  },
+  {
+    value: rentalAmountPaymentDateOptions.OTHER,
+    label: m.rentalAmount.paymentDateOptionOther,
   },
 ]

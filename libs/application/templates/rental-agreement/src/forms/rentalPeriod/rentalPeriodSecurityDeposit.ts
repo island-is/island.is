@@ -6,7 +6,7 @@ import {
 
 export const RentalPeriodSecurityDeposit = buildSubSection({
   id: 'rentalPeriodSecurityDeposit',
-  title: 'LeiguTrygging',
+  title: 'Trygging',
   children: [
     buildMultiField({
       id: 'rentalPeriodSecurityDepositDetails',

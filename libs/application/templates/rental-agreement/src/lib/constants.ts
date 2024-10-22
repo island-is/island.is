@@ -12,6 +12,11 @@ export enum Roles {
   APPLICANT = 'applicant',
 }
 
+export enum AnswerOptions {
+  YES = 'yes',
+  NO = 'no',
+}
+
 export enum rentalHousingCategoryTypes {
   ENTIRE_HOME = 'entireHome',
   ROOM = 'room',
@@ -36,6 +41,18 @@ export enum rentalHousingCategoryClassGroup {
 export enum rentalHousingConditionInspector {
   CONTRACT_PARTIES = 'contractParties',
   INDEPENDENT_PARTY = 'independentParty',
+}
+
+export enum rentalAmountIndexTypes {
+  CONSUMER_PRICE_INDEX = 'consumerPriceIndex',
+  CONSTRUCTION_COST_INDEX = 'constructionCostIndex',
+  WAGE_INDEX = 'wageIndex',
+}
+
+export enum rentalAmountPaymentDateOptions {
+  FIRST_DAY = 'firstDay',
+  LAST_DAY = 'lastDay',
+  OTHER = 'other',
 }
 
 export const pruneAfterDays = (Days: number): StateLifeCycle => {
