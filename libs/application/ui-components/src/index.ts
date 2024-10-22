@@ -12,6 +12,7 @@ export {
   formatPhoneNumber,
   removeCountryCode,
   formatCurrency,
+  formatCurrencyWithoutSuffix,
 } from './utilities/formatters'
 export { handleServerError } from './utilities/handleServerError'
 export { InputImageUpload } from './components/InputImageUpload/InputImageUpload'
@@ -22,3 +23,4 @@ export { FileUploadController } from './utilities/FileUploadController'
 export * from './hooks/useDeleteApplication'
 export * from './hooks/useOpenApplication'
 export { NationalIdWithName } from './components/NationalIdWithName/NationalIdWithName'
+export { default as Slider } from './components/Slider/Slider'

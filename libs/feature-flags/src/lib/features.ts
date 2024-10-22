@@ -11,7 +11,6 @@ export enum Features {
   passportApplication = 'isPassportApplicationEnabled',
   passportAnnulmentApplication = 'isPassportAnnulmentApplicationEnabled',
   financialStatementInao = 'financialStatementInao',
-  inheritanceReport = 'isInheritanceReportApplicationEnabled',
   transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
   transportAuthorityDigitalTachographWorkshopCard = 'isTransportAuthorityDigitalTachographWorkshopCardEnabled',
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
@@ -35,9 +34,12 @@ export enum Features {
   StreetRegistration = 'isStreetRegistrationEnabled',
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
   newPrimarySchool = 'isNewPrimarySchoolEnabled',
+  registerNewMachine = 'isRegisterNewMachineEnabled',
   FinancialStatementCemetery = 'isFinancialStatementCemeteryEnabled',
   ParliamentaryElectionApplication = 'isParliamentaryElectionApplicationEnabled',
   FinancialStatementIndividualElectionEnabled = 'isFinancialStatementIndividualElectionEnabled',
+  FinancialStatementPoliticalPartyEnabled = 'isFinancialStatementPoliticalPartyEnabled',
+  IncomePlanEnabled = 'isIncomePlanEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -49,9 +51,14 @@ export enum Features {
   servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
   servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
   servicePortalVehicleMileagePageEnabled = 'isServicePortalVehicleMileagePageEnabled',
+  servicePortalVehicleBulkMileagePageEnabled = 'isServicePortalVehicleBulkMileagePageEnabled',
   servicePortalSocialInsurancePageEnabled = 'isServicePortalSocialInsurancePageEnabled',
-  ServicePortalNotificationsEnabled = 'isServicePortalNotificationsPageEnabled',
+  servicePortalSocialInsuranceIncomePlanPageEnabled = 'isServicePortalSocialInsuranceIncomePlanPageEnabled',
 
+  ServicePortalNotificationsEnabled = 'isServicePortalNotificationsPageEnabled',
+  servicePortalLawAndOrderModuleEnabled = 'isServicePortalLawAndOrderModuleEnabled',
+  servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
+  isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
 
@@ -101,6 +108,12 @@ export enum Features {
   // Single sign on passkeys
   isPasskeyRegistrationEnabled = 'isPasskeyRegistrationEnabled',
   isPasskeyAuthEnabled = 'isPasskeyAuthEnabled',
+
+  // Legal represantative delegation type
+  isLegalRepresentativeDelegationEnabled = 'isLegalRepresentativeDelegationEnabled',
+
+  // General mandate delegation type
+  isGeneralMandateDelegationEnabled = 'isGeneralMandateDelegationEnabled',
 }
 
 export enum ServerSideFeature {

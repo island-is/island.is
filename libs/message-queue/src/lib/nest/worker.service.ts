@@ -77,6 +77,7 @@ export class WorkerService implements OnModuleDestroy {
       `Processing ${messages.length} message${messages.length > 1 ? 's' : ''}`,
       {
         messageIds: messages.map((msg) => msg.MessageId),
+        institutions: messages.map((msg) => msg.MessageAttributes?.institution),
       },
     )
 
@@ -88,10 +89,7 @@ export class WorkerService implements OnModuleDestroy {
           await messageHandler(JSON.parse(msg.Body ?? ''), job)
           return true
         } catch (e) {
-          this.logger.error('Worker exception', {
-            messageId: msg.MessageId,
-            error: e,
-          })
+          this.logger.error('Worker exception', e, { messageId: msg.MessageId })
           return false
         }
       }),

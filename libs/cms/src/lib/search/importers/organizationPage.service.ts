@@ -5,6 +5,7 @@ import { Entry } from 'contentful'
 import { IOrganizationPage } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapOrganizationPage } from '../../models/organizationPage.model'
+import { extractChildEntryIds } from './utils'
 
 @Injectable()
 export class OrganizationPageSyncService
@@ -27,6 +28,10 @@ export class OrganizationPageSyncService
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapOrganizationPage(entry)
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -40,6 +45,10 @@ export class OrganizationPageSyncService
                 key: entry.fields?.slug,
                 type: 'slug',
               },
+              ...childEntryIds.map((id) => ({
+                key: id,
+                type: 'hasChildEntryWithId',
+              })),
             ],
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),

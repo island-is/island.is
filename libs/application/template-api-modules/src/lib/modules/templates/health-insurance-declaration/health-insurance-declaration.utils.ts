@@ -56,41 +56,48 @@ const getApplicants = (
   const applicants: InsuranceStatementsApplicantDTO[] = []
 
   // Applicant
-  if (answers.isHealthInsured) {
-    applicants.push({
-      nationalId: answers.applicant.nationalId,
-      name: answers.applicant.name,
-      type: 0,
-    })
-  }
+  answers.selectedApplicants?.registerPersonsApplicantCheckboxField?.forEach(
+    (a) => {
+      applicants.push({
+        nationalId: answers.applicant.nationalId,
+        name: answers.applicant.name,
+        type: 0,
+      })
+    },
+  )
 
   // Spouse
-  answers.selectedApplicants?.registerPersonsSpouseCheckboxField?.map((s) => {
-    const externalSpouse =
-      application.externalData.nationalRegistrySpouse.data.nationalId === s
-        ? application.externalData.nationalRegistrySpouse.data
-        : undefined
-    if (externalSpouse) {
-      applicants.push({
-        nationalId: externalSpouse.nationalId,
-        name: externalSpouse.name,
-        type: 1,
-      })
-    }
-  })
+  answers.selectedApplicants?.registerPersonsSpouseCheckboxField?.forEach(
+    (s) => {
+      const externalSpouse =
+        application.externalData.nationalRegistrySpouse.data.nationalId === s
+          ? application.externalData.nationalRegistrySpouse.data
+          : undefined
+      if (externalSpouse) {
+        applicants.push({
+          nationalId: externalSpouse.nationalId,
+          name: externalSpouse.name,
+          type: 1,
+        })
+      }
+    },
+  )
   // Children
-  answers.selectedApplicants?.registerPersonsChildrenCheckboxField?.map((c) => {
-    const child = application.externalData.childrenCustodyInformation.data.find(
-      (externalChild) => externalChild.nationalId === c,
-    )
-    if (child) {
-      applicants.push({
-        nationalId: child.nationalId,
-        name: child.fullName,
-        type: 2,
-      })
-    }
-  })
+  answers.selectedApplicants?.registerPersonsChildrenCheckboxField?.forEach(
+    (c) => {
+      const child =
+        application.externalData.childrenCustodyInformation.data.find(
+          (externalChild) => externalChild.nationalId === c,
+        )
+      if (child) {
+        applicants.push({
+          nationalId: child.nationalId,
+          name: child.fullName,
+          type: 2,
+        })
+      }
+    },
+  )
   return applicants
 }
 

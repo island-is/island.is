@@ -17,7 +17,7 @@ export class HealthDirectorateService {
   constructor(
     private readonly vaccinationApi: HealthDirectorateVaccinationsService,
     private readonly organDonationApi: HealthDirectorateOrganDonationService,
-  ) {}
+  ) { }
 
   /* Organ Donation */
   async getDonorStatus(auth: Auth, locale: Locale): Promise<Donor | null> {
@@ -99,6 +99,7 @@ export class HealthDirectorateService {
                 url: vaccination.vaccineUrl,
                 comment: vaccination.generalComment,
                 rejected: vaccination.rejected,
+                location: vaccination.vaccinationLocation,
               }
             },
           ),

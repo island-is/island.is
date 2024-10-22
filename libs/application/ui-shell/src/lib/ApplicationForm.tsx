@@ -127,7 +127,7 @@ const ShellWrapper: FC<
   useApplicationNamespaces(application.typeId)
 
   useEffect(() => {
-    async function populateForm() {
+    const populateForm = async () => {
       if (dataSchema === undefined && form === undefined) {
         const template = await getApplicationTemplateByTypeId(
           application.typeId,

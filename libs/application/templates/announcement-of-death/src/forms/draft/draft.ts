@@ -34,9 +34,9 @@ export const draft: Form = buildForm({
       children: [
         subSectionInfo,
         subSectionWillAndTrade,
-        subSectionFirearms,
         subSectionInheritance,
         subSectionProperties,
+        subSectionFirearms,
         subSectionFiles,
       ],
     }),

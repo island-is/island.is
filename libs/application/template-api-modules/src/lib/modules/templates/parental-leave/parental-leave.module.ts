@@ -1,6 +1,5 @@
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { VMSTModule } from '@island.is/clients/vmst'
-import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { SharedTemplateAPIModule } from '../../shared'
 import { ParentalLeaveService } from './parental-leave.service'
 import { SmsModule } from '@island.is/nova-sms'
@@ -10,31 +9,22 @@ import {
   NationalRegistryClientModule,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
-import { APPLICATION_ATTACHMENT_BUCKET } from './constants'
-import { AwsService } from '@island.is/nest/aws'
+import { AwsModule } from '@island.is/nest/aws'
 
-export class ParentalLeaveModule {
-  static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
-    return {
-      module: ParentalLeaveModule,
-      imports: [
-        VMSTModule,
-        SharedTemplateAPIModule.register(config),
-        SmsModule,
-        ApplicationApiCoreModule,
-        NationalRegistryClientModule,
-      ],
-      providers: [
-        AwsService,
-        ChildrenService,
-        ParentalLeaveService,
-        NationalRegistryClientService,
-        {
-          provide: APPLICATION_ATTACHMENT_BUCKET,
-          useFactory: () => config.attachmentBucket,
-        },
-      ],
-      exports: [ParentalLeaveService],
-    }
-  }
-}
+@Module({
+  imports: [
+    VMSTModule,
+    SharedTemplateAPIModule,
+    SmsModule,
+    ApplicationApiCoreModule,
+    NationalRegistryClientModule,
+    AwsModule,
+  ],
+  providers: [
+    ChildrenService,
+    ParentalLeaveService,
+    NationalRegistryClientService,
+  ],
+  exports: [ParentalLeaveService],
+})
+export class ParentalLeaveModule {}

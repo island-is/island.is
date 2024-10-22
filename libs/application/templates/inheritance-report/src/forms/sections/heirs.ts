@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
@@ -9,6 +10,7 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { InheritanceReport } from '../../lib/dataSchema'
@@ -393,6 +395,18 @@ export const heirs = buildSection({
                 )
                 return files.map((file: any) => file.name).join(', ')
               },
+            }),
+            buildDescriptionField({
+              id: 'heirs_space7',
+              title: '',
+              marginBottom: 'containerGutter',
+            }),
+            buildCheckboxField({
+              id: 'heirsConfirmation',
+              title: '',
+              large: false,
+              backgroundColor: 'white',
+              options: [{ value: YES, label: m.heirsOverviewConfirmation }],
             }),
             buildCustomField({
               title: '',

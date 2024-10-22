@@ -137,12 +137,6 @@ const userNotificationWorkerService = userNotificationWorkerSetup({
 const userNotificationCleanupWorkerService =
   userNotificationCleanUpWorkerSetup()
 
-<<<<<<< HEAD
-const endorsementSystemCleanUpWorkerService =
-  endorsementSystemCleanUpWorkerSetup()
-
-=======
->>>>>>> f031834bf8bbc6843f40e0b62985d36fcbe92f7b
 const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()

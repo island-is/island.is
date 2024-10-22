@@ -33,6 +33,16 @@ export type FormText =
   | StaticText
   | ((application: Application) => StaticText | null | undefined)
 
+export type FormComponent =
+  | React.FC<React.PropsWithChildren<unknown>>
+  | ((
+      application: Application,
+    ) =>
+      | React.FC<React.PropsWithChildren<any>>
+      | React.FunctionComponentElement<any>
+      | null
+      | undefined)
+
 export type FormTextArray =
   | StaticText[]
   | ((application: Application) => (StaticText | null | undefined)[])
@@ -62,7 +72,7 @@ export interface Form {
   children: FormChildren[]
   icon?: string
   id: string
-  logo?: React.FC<React.PropsWithChildren<unknown>>
+  logo?: FormComponent
   mode?: FormModes
   renderLastScreenBackButton?: boolean
   renderLastScreenButton?: boolean
@@ -123,6 +133,7 @@ export interface ExternalDataProvider extends FormItem {
   isPartOfRepeater?: boolean
   dataProviders: DataProviderItem[]
   otherPermissions?: DataProviderPermissionItem[]
+  enableMockPayment?: boolean
   checkboxLabel?: StaticText
   subTitle?: StaticText
   description?: StaticText

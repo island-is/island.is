@@ -10,7 +10,7 @@ import { getChargeItemCodes } from '../../utils'
 // import { Logo } from '../../assets/Logo'
 
 export const IdCardForm: Form = buildForm({
-  id: 'UniversityFormDraft',
+  id: 'IdCardFormDraft',
   title: '',
   // logo: Logo,
   mode: FormModes.DRAFT,

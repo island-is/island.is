@@ -48,8 +48,6 @@ describe('QueueModule', () => {
     app.get<QueueService>(getQueueServiceToken('test')).add({ the: 'message' })
     const worker = app.get(MockWorker)
     const start = Date.now()
-
-    // Wait until a message is received or 1 second has passed
     while (Date.now() - start < 1_000 && worker.received.length === 0) {
       await new Promise((r) => setTimeout(r, 10))
     }

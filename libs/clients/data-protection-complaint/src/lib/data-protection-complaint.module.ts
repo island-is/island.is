@@ -6,7 +6,6 @@ import { exportedApis } from './apis'
 import { ApiConfiguration } from './apiConfiguration'
 import { ConfigType } from '@island.is/nest/config'
 import { DataProtectionComplaintClientConfig } from './data-protection-complaint-client.config'
-import { AwsModule, AwsService } from '@island.is/nest/aws'
 
 @Module({
   exports: [...exportedApis, TokenMiddleware],

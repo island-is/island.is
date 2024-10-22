@@ -27,6 +27,7 @@ export enum States {
 
   REJECTED = 'rejected', // SYNJAD = 1281
   APPROVED = 'approved', // AFGREIDD = 563
+  COMPLETED = 'completed',
 }
 
 export enum OAPEvents {

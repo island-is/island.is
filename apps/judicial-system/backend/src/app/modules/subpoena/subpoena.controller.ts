@@ -5,6 +5,7 @@ import {
   Get,
   Header,
   Inject,
+  InternalServerErrorException,
   Param,
   Query,
   Res,
@@ -62,7 +63,7 @@ export class SubpoenaController {
   constructor(
     private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
+  ) { }
 
   @RolesRules(
     prosecutorRule,
@@ -91,8 +92,7 @@ export class SubpoenaController {
     @Query('subpoenaType') subpoenaType?: SubpoenaType,
   ): Promise<void> {
     this.logger.debug(
-      `Getting subpoena ${
-        subpoenaId ?? 'draft'
+      `Getting subpoena ${subpoenaId ?? 'draft'
       } for defendant ${defendantId} of case ${caseId} as a pdf document`,
     )
 
@@ -103,6 +103,47 @@ export class SubpoenaController {
       arraignmentDate,
       location,
       subpoenaType,
+    )
+
+    res.end(pdf)
+  }
+
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Get('serviceCertificate')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      'Gets the service certificate for a given defendant as a pdf document',
+  })
+  async getServiceCertificatePdf(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @Res() res: Response,
+    @CurrentSubpoena() subpoena?: Subpoena,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting service certificate for defendant ${defendantId} in subpoena ${subpoenaId} of case ${caseId} as a pdf document`,
+    )
+
+    if (!subpoena) {
+      throw new InternalServerErrorException('Missing subpoena')
+    }
+
+    const pdf = await this.pdfService.getServiceCertificatePdf(
+      theCase,
+      defendant,
+      subpoena,
     )
 
     res.end(pdf)

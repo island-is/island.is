@@ -1,15 +1,13 @@
 import { GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 
 let postgresContainer: StartedTestContainer
-let redisClusterContainers: StartedTestContainer[]
+let redisClusterContainer: StartedTestContainer
 let localstackContainer: StartedTestContainer
 
 const portConfig = {
-  AWS: parseInt(process.env.AWS_PORT || '4566', 10),
+  SQS: parseInt(process.env.SQS_PORT || '4566', 10),
   postgres: parseInt(process.env.DB_PORT || '5432', 10),
-  redis: process.env.REDIS_PORT
-    ? [parseInt(process.env.REDIS_PORT, 10)]
-    : [6379],
+  redis: [7000, 7001, 7002, 7003, 7004, 7005],
 }
 
 const uniqueName = (name: string) => {
@@ -34,7 +32,6 @@ export const startPostgres = async () => {
       startPeriod: 1000,
     })
     .withWaitStrategy(Wait.forHealthCheck())
-    .withStartupTimeout(20000)
     .withExposedPorts(portConfig.postgres)
     .start()
 
@@ -43,49 +40,22 @@ export const startPostgres = async () => {
   process.env.DB_HOST = postgresContainer.getHost()
 }
 
-export const stopPostgres = async () => {
+export const stopPostgres = async (): Promise<void> => {
   await postgresContainer.stop()
 }
 
-export const startRedis = async () => {
-  redisClusterContainers = await Promise.all(
-    portConfig.redis.slice(1).map(async (port) => {
-      const node = await new GenericContainer(
-        'public.ecr.aws/bitnami/redis:7.0',
-      )
-        .withName(uniqueName('redis'))
-        .withEnv('REDIS_CLUSTER_CREATOR', 'yes')
-        .withExposedPorts(port)
-        .start()
-      process.env[`REDIS_${port}_PORT`] = node.getMappedPort(port).toString()
-      return node
-    }),
+export const startRedisCluster = async () => {
+  redisClusterContainer = await new GenericContainer(
+    'public.ecr.aws/bitnami/redis-cluster:5.0.14',
   )
-
-  redisClusterContainers.push(
-    await new GenericContainer('public.ecr.aws/bitnami/redis:7.0')
-      .withName(uniqueName('redis'))
-      .withEnv('REDIS_CLUSTER_CREATOR', 'yes')
-      .withEnv('REDIS_CLUSTER_REPLICAS', '1')
-      .withEnv(
-        'REDIS_NODES',
-        JSON.stringify(redisClusterContainers.map((n) => n.getHost())),
-      )
-      .withEnv('IP', '0.0.0.0')
-      .withEnv('ALLOW_EMPTY_PASSWORD', 'yes')
-      .withEnv('REDIS_PORT_NUMBER', portConfig.redis[0].toString())
-      .withExposedPorts(...portConfig.redis)
-      .start(),
-  )
-  process.env.REDIS_NODES = JSON.stringify(
-    redisClusterContainers.map(
-      (n) => `${n.getHost()}:${n.getMappedPort(portConfig.redis[0])}`,
-    ),
-  )
+    .withName(uniqueName('redis'))
+    .withEnv('IP', '0.0.0.0')
+    .withExposedPorts(...portConfig.redis)
+    .start()
 }
 
 export const stopRedis = () => {
-  redisClusterContainers.map((c) => c.stop())
+  redisClusterContainer.stop()
 }
 
 export const startLocalstack = async () => {
@@ -93,15 +63,13 @@ export const startLocalstack = async () => {
     'public.ecr.aws/localstack/localstack:3',
   )
     .withName(uniqueName('localstack'))
-    .withExposedPorts(portConfig.AWS)
+    .withExposedPorts(portConfig.SQS)
     .withWaitStrategy(Wait.forLogMessage('Ready.'))
     .start()
 
-  process.env.AWS_ENDPOINT = `http://${localstackContainer.getHost()}:${localstackContainer.getMappedPort(
-    portConfig.AWS,
+  process.env.SQS_ENDPOINT = `http://${localstackContainer.getHost()}:${localstackContainer.getMappedPort(
+    portConfig.SQS,
   )}`
-  process.env.SQS_ENDPOINT = process.env.AWS_ENDPOINT
-  process.env.AWS_REGION = 'eu-west-1'
 }
 
 export const stopLocalstack = async () => {

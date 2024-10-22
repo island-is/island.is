@@ -1,9 +1,20 @@
 import { defineTemplateApi } from '@island.is/application/types'
 
-export const OwnerRequirementsApi = defineTemplateApi({
-  action: 'ownerRequirements',
+export const CandidateApi = defineTemplateApi({
+  action: 'candidate',
+  order: 0,
 })
 
-export const CurrentCollectionApi = defineTemplateApi({
-  action: 'currentCollection',
+export const ParliamentaryCollectionApi = defineTemplateApi({
+  action: 'parliamentaryCollection',
+  order: 1,
+})
+
+export const ParliamentaryIdentityApi = defineTemplateApi({
+  action: 'parliamentaryIdentity',
+  order: 2,
+})
+
+export const IsDelegatedToCompanyApi = defineTemplateApi({
+  action: 'delegatedToCompany',
 })

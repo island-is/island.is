@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const { spawn } = require('child_process')
 const yargs = require('yargs/yargs')
+const { hideBin } = require('yargs/helpers')
 const winston = require('winston')
 const { combine, printf, colorize } = winston.format
 const { Console } = winston.transports
@@ -34,7 +35,7 @@ const logger = winston.createLogger({
   transports: [new Console()],
 })
 
-yargs(process.argv.slice(2))
+yargs(hideBin(process.argv))
   .command({
     command: 'install',
     describe: 'Install infra dependencies',

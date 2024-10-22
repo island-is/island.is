@@ -28,6 +28,7 @@ export const draft: Form = buildForm({
           id: 'approveExternalData',
           subTitle: m.draft.externalDataTitle,
           checkboxLabel: m.draft.externalDataTitle,
+          enableMockPayment: true,
           dataProviders: [
             buildDataProviderItem({
               provider: PaymentCatalogApi,

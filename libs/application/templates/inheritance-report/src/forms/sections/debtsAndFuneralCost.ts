@@ -1,9 +1,11 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildSection,
   buildSubSection,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { DebtTypes } from '../../types'
@@ -181,6 +183,18 @@ export const debtsAndFuneralCost = buildSection({
               id: 'debts.debtsTotal',
               doesNotRequireAnswer: true,
               component: 'CalculateTotalDebts',
+            }),
+            buildDescriptionField({
+              id: 'space',
+              title: '',
+              marginBottom: 'containerGutter',
+            }),
+            buildCheckboxField({
+              id: 'debtsConfirmation',
+              title: '',
+              large: false,
+              backgroundColor: 'white',
+              options: [{ value: YES, label: m.debtsOverviewConfirmation }],
             }),
           ],
         }),

@@ -1,0 +1,25 @@
+query collection {
+  signatureCollectionAdminCurrent {
+    id
+    endTime
+    startTime
+    isActive
+    isPresidential
+    name
+    status
+    areas {
+      id
+      name
+      min
+      max
+    }
+    candidates {
+      id
+      nationalId
+      name
+      phone
+      email
+      collectionId
+    }
+  }
+}

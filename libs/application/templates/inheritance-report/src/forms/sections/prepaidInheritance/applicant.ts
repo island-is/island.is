@@ -1,12 +1,11 @@
 import {
   buildMultiField,
   buildNationalIdWithNameField,
+  buildPhoneField,
   buildSection,
   buildSelectField,
   buildTextField,
 } from '@island.is/application/core'
-import { UserProfile, Application } from '@island.is/api/schema'
-import { removeCountryCode } from '@island.is/application/ui-components'
 import { m } from '../../../lib/messages'
 import { RelationEnum } from '../../../types'
 
@@ -25,32 +24,18 @@ export const prePaidApplicant = buildSection({
           width: 'full',
           required: true,
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'prePaidApplicant.phone',
           title: m.phone,
           width: 'half',
           required: true,
-          format: '###-####',
-          defaultValue: (application: Application) => {
-            const phone =
-              (
-                application.externalData.userProfile?.data as {
-                  mobilePhoneNumber?: string
-                }
-              )?.mobilePhoneNumber ?? ''
-
-            return removeCountryCode(phone)
-          },
+          enableCountrySelector: true,
         }),
         buildTextField({
           id: 'prePaidApplicant.email',
           title: m.email,
           width: 'half',
           required: true,
-          defaultValue: ({ externalData }: Application) => {
-            const data = externalData.userProfile?.data as UserProfile
-            return data?.email
-          },
         }),
         buildSelectField({
           id: 'prePaidApplicant.relation',
@@ -61,6 +46,7 @@ export const prePaidApplicant = buildSection({
             { label: m.heir, value: RelationEnum.HEIR },
             { label: m.representative, value: RelationEnum.REPRESENTATIVE },
             { label: m.grantor, value: RelationEnum.GRANTOR },
+            { label: m.advocate, value: RelationEnum.ADVOCATE },
           ],
         }),
       ],

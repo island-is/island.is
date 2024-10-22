@@ -113,10 +113,14 @@ import { CustomPage } from './models/customPage.model'
 import { GetCustomPageInput } from './dto/getCustomPage.input'
 import { GenericListItemResponse } from './models/genericListItemResponse.model'
 import { GetGenericListItemsInput } from './dto/getGenericListItems.input'
-import { GenericList } from './models/genericList.model'
 import { GetCustomSubpageInput } from './dto/getCustomSubpage.input'
 import { GetGenericListItemBySlugInput } from './dto/getGenericListItemBySlug.input'
 import { GenericListItem } from './models/genericListItem.model'
+import { GetTeamMembersInput } from './dto/getTeamMembers.input'
+import { TeamMemberResponse } from './models/teamMemberResponse.model'
+import { TeamList } from './models/teamList.model'
+import { TeamMember } from './models/teamMember.model'
+import { LatestGenericListItems } from './models/latestGenericListItems.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -677,6 +681,14 @@ export class CmsResolver {
   ): Promise<GenericListItem | null> {
     return this.cmsElasticsearchService.getGenericListItemBySlug(input)
   }
+
+  @CacheControl(defaultCache)
+  @Query(() => TeamMemberResponse, { nullable: true })
+  getTeamMembers(
+    @Args('input') input: GetTeamMembersInput,
+  ): Promise<TeamMemberResponse> {
+    return this.cmsElasticsearchService.getTeamMembers(input)
+  }
 }
 
 @Resolver(() => LatestNewsSlice)
@@ -816,5 +828,29 @@ export class FeaturedEventsResolver {
       // Fallback to empty object in case something goes wrong when fetching or parsing namespace
       return {}
     }
+  }
+}
+
+@Resolver(() => TeamList)
+export class TeamListResolver {
+  @ResolveField(() => [TeamMember])
+  async teamMembers(@Parent() teamList: TeamList) {
+    // The 'accordion' variant has a search so to reduce the inital payload (since it isn't used) we simply return an empty list
+    return teamList?.variant === 'accordion' ? [] : teamList?.teamMembers ?? []
+  }
+}
+
+@Resolver(() => LatestGenericListItems)
+export class LatestGenericListItemsResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => GenericListItemResponse, { nullable: true })
+  async itemResponse(
+    @Parent() { itemResponse: input }: LatestGenericListItems,
+  ) {
+    if (!input) {
+      return null
+    }
+    return this.cmsElasticsearchService.getGenericListItems(input)
   }
 }

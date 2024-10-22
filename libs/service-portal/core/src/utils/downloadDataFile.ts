@@ -24,7 +24,7 @@ export const downloadFile = async (
   if (type === 'csv') {
     const csvData = [header, ...data]
     const filename = `${name}, ${new Date().toISOString().split('T')[0]}.csv`
-    CSVStringify(csvData, (_err, output) => {
+    CSVStringify(csvData, (err, output) => {
       getFile(filename, output)
     })
   } else {

@@ -36,6 +36,7 @@ import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.i
 import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
 import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
 import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
+import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -45,7 +46,7 @@ export class SignatureCollectionAdminResolver {
   constructor(
     private signatureCollectionService: SignatureCollectionAdminService,
     private signatureCollectionManagerService: SignatureCollectionManagerService,
-  ) {}
+  ) { }
 
   @Query(() => SignatureCollectionSuccess)
   async signatureCollectionAdminCanSignInfo(
@@ -286,5 +287,14 @@ export class SignatureCollectionAdminResolver {
     @Args('input') input: SignatureCollectionListIdInput,
   ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.lockList(input, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionAdminUploadPaperSignature(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionUploadPaperSignatureInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.uploadPaperSignature(input, user)
   }
 }

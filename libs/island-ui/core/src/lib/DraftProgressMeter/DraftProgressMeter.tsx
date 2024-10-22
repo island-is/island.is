@@ -12,6 +12,7 @@ type DraftProgressMeterProps = {
   className?: string
   draftTotalSteps: number
   draftFinishedSteps: number
+  progressMessage: string
 }
 
 const colorSchemes = {
@@ -39,7 +40,13 @@ const colorSchemes = {
 
 export const DraftProgressMeter: React.FC<
   React.PropsWithChildren<DraftProgressMeterProps>
-> = ({ draftFinishedSteps, draftTotalSteps, variant = 'blue', className }) => {
+> = ({
+  draftFinishedSteps,
+  draftTotalSteps,
+  progressMessage,
+  variant = 'blue',
+  className,
+}) => {
   return (
     <>
       <Box
@@ -77,7 +84,7 @@ export const DraftProgressMeter: React.FC<
       </Box>
       <Box marginTop={1}>
         <Text variant="small" color="blue400">
-          Þú hefur klárað {draftFinishedSteps} af {draftTotalSteps} skrefum
+          {progressMessage}
         </Text>
       </Box>
     </>

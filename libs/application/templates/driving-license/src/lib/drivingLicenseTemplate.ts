@@ -31,7 +31,10 @@ import {
   BE,
   B_TEMP,
   B_FULL,
+  B_FULL_RENEWAL_65,
   ApiActions,
+  CHARGE_ITEM_CODES,
+  DELIVERY_FEE,
 } from './constants'
 import { dataSchema } from './dataSchema'
 import {
@@ -42,25 +45,37 @@ import { m } from './messages'
 import { hasCompletedPrerequisitesStep } from './utils'
 import { GlassesCheckApi, SyslumadurPaymentCatalogApi } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
+import { Pickup } from './types'
 
 const getCodes = (application: Application) => {
-  const applicationFor = getValueViaPath<'B-full' | 'B-temp' | 'BE'>(
-    application.answers,
-    'applicationFor',
-    'B-full',
-  )
+  const applicationFor = getValueViaPath<
+    'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'
+  >(application.answers, 'applicationFor', 'B-full')
 
-  const chargeItemCode =
-    applicationFor === 'B-full'
-      ? 'AY110'
-      : applicationFor === BE
-      ? 'AY115'
-      : 'AY114'
+  const pickup = getValueViaPath<Pickup>(application.answers, 'pickup')
 
-  if (!chargeItemCode) {
+  const codes: string[] = []
+
+  const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
+
+  const targetCode =
+    typeof applicationFor === 'string'
+      ? CHARGE_ITEM_CODES[applicationFor]
+        ? CHARGE_ITEM_CODES[applicationFor]
+        : DEFAULT_ITEM_CODE
+      : DEFAULT_ITEM_CODE
+
+  codes.push(targetCode)
+
+  if (pickup === Pickup.POST) {
+    codes.push(CHARGE_ITEM_CODES[DELIVERY_FEE])
+  }
+
+  if (!targetCode) {
     throw new Error('No selected charge item code')
   }
-  return [chargeItemCode]
+
+  return codes
 }
 
 const configuration =
@@ -83,6 +98,10 @@ const template: ApplicationTemplate<
       ? m.applicationForDrivingLicense.defaultMessage +
         ' - ' +
         m.applicationForFullLicenseTitle.defaultMessage
+      : application.answers.applicationFor === B_FULL_RENEWAL_65
+      ? m.applicationForDrivingLicense.defaultMessage +
+        ' - ' +
+        m.applicationForRenewalLicenseTitle.defaultMessage
       : m.applicationForDrivingLicense.defaultMessage,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
@@ -117,6 +136,8 @@ const template: ApplicationTemplate<
                     ],
                   allowBELicense:
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
+                  allow65Renewal:
+                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL],
                 })
               },
               write: 'all',
@@ -127,13 +148,13 @@ const template: ApplicationTemplate<
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
                 GlassesCheckApi,
+                JurisdictionApi,
                 CurrentLicenseApi.configure({
                   params: {
                     useLegacyVersion: true,
                   },
                 }),
                 DrivingAssessmentApi,
-                JurisdictionApi,
                 QualityPhotoApi,
                 ExistingApplicationApi.configure({
                   params: {

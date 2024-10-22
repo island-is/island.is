@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   SyslumennService,
@@ -13,8 +13,8 @@ import {
 } from '@island.is/application/templates/family-matters-core/utils'
 import { Override } from '@island.is/application/templates/family-matters-core/types'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
-import { PRESIGNED_BUCKET } from './constants'
-import { SharedTemplateApiService } from '../../shared'
+import { S3 } from 'aws-sdk'
+import { SharedTemplateApiService, sharedModuleConfig } from '../../shared'
 import {
   generateApplicationSubmittedEmail,
   generateSyslumennNotificationEmail,
@@ -25,7 +25,8 @@ import { SmsService } from '@island.is/nova-sms'
 import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { AwsService } from '@island.is/nest/aws'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { ConfigType } from '@nestjs/config'
 
 type props = Override<
   TemplateApiModuleActionProps,
@@ -34,14 +35,18 @@ type props = Override<
 
 @Injectable()
 export class ChildrenResidenceChangeService extends BaseTemplateApiService {
+  s3: S3
+
   constructor(
     private readonly syslumennService: SyslumennService,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    @Inject(PRESIGNED_BUCKET) private readonly presignedBucket: string,
     private readonly smsService: SmsService,
-    private readonly awsService: AwsService,
+    private nationalRegistryApi: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE)
+    this.s3 = new S3()
   }
 
   async submitApplication({ application }: props) {
@@ -49,10 +54,13 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const { nationalRegistry } = externalData
     const applicant = nationalRegistry.data
     const s3FileName = `children-residence-change/${application.id}.pdf`
-    const file = await this.awsService.getFile({
-      bucket: this.presignedBucket,
-      fileName: s3FileName,
-    })
+    const file = await this.s3
+      .getObject({
+        Bucket: this.config.templateApi.presignBucket,
+        Key: s3FileName,
+      })
+      .promise()
+    const fileContent = file.Body as Buffer
 
     const selectedChildren = getSelectedChildrenFromExternalData(
       externalData.childrenCustodyInformation.data,
@@ -68,16 +76,14 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     )
     const currentAddress = childResidenceInfo?.current?.address
 
-    if (!file.Body) {
+    if (!fileContent) {
       throw new Error('File content was undefined')
     }
-    const fileB64 = await file.Body.transformToString('base64')
-    const fileBinary = await file.Body.transformToString('binary')
 
     const attachments: Attachment[] = [
       {
         name: `Lögheimilisbreyting-barns-${applicant.nationalId}.pdf`,
-        content: fileB64,
+        content: fileContent.toString('base64'),
       },
     ]
 
@@ -149,7 +155,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
         await this.sharedTemplateAPIService.sendEmailWithAttachment(
           generateSyslumennNotificationEmail,
           application as unknown as Application,
-          fileBinary,
+          fileContent.toString('binary'),
           syslumennData.email,
         )
         return undefined
@@ -159,7 +165,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
       (props) =>
         generateApplicationSubmittedEmail(
           props,
-          fileBinary,
+          fileContent.toString('binary'),
           answers.parentA.email,
           syslumennData.name,
           response?.caseNumber,
@@ -171,7 +177,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
       (props) =>
         generateApplicationSubmittedEmail(
           props,
-          fileBinary,
+          fileContent.toString('binary'),
           answers.parentB.email,
           syslumennData.name,
           response?.caseNumber,

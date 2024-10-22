@@ -4,6 +4,8 @@ import { caching } from 'cache-manager'
 import type { Config } from 'cache-manager'
 import { redisInsStore } from 'cache-manager-ioredis-yet'
 import { Cluster, ClusterNode, RedisOptions, ClusterOptions } from 'ioredis'
+import { DEFAULT_CLUSTER_OPTIONS } from 'ioredis/built/cluster/ClusterOptions'
+
 import { logger } from '@island.is/logging'
 import Keyv from 'keyv'
 
@@ -140,7 +142,7 @@ export const createRedisApolloCache = (options: Options) => {
   )
 }
 
-export const createRedisCluster = (options: Options): Cluster => {
+export const createRedisCluster = (options: Options) => {
   const nodes = parseNodes(options.nodes)
   logger.info(`Making caching connection with nodes: `, nodes)
   return new Cluster(nodes, getRedisClusterOptions(options))

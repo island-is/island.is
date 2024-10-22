@@ -3,6 +3,7 @@ import {
   DrivingLicenseCategory,
   DrivingLicenseService,
   NewDrivingLicenseResult,
+  Pickup,
 } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -48,11 +49,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const applicationFor = getValueViaPath<'B-full' | 'B-temp' | 'BE'>(
-      answers,
-      'applicationFor',
-      'B-full',
-    )
+    const applicationFor = getValueViaPath<
+      'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'
+    >(answers, 'applicationFor', 'B-full')
 
     const chargeItemCode =
       applicationFor === 'B-full'
@@ -139,8 +138,10 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     auth: User,
   ): Promise<NewDrivingLicenseResult> {
     const applicationFor =
-      getValueViaPath<'B-full' | 'B-temp' | 'BE'>(answers, 'applicationFor') ??
-      'B-full'
+      getValueViaPath<'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'>(
+        answers,
+        'applicationFor',
+      ) ?? 'B-full'
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const remarks = answers.hasHealthRemarks === 'yes'
@@ -148,6 +149,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const jurisdictionId = answers.jurisdiction
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
+    const pickup = answers.pickup ? (answers.pickup as Pickup) : undefined
     const phone = formatPhoneNumber(answers.phone as string)
 
     const postHealthDeclaration = async (
@@ -170,7 +172,20 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         })
     }
 
-    if (applicationFor === 'B-full') {
+    if (applicationFor === 'B-full-renewal-65') {
+      return this.drivingLicenseService.renewDrivingLicense65AndOver(
+        auth.authorization.replace('Bearer ', ''),
+        {
+          ...(jurisdictionId && { districtId: jurisdictionId as number }),
+          ...(pickup
+            ? {
+                pickupPlasticAtDistrict: pickup === Pickup.DISTRICT,
+                sendPlasticToPerson: pickup === Pickup.POST,
+              }
+            : {}),
+        },
+      )
+    } else if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId as number,
         needsToPresentHealthCertificate: needsHealthCert || remarks,

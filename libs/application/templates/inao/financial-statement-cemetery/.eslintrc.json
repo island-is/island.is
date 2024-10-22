@@ -1,0 +1,22 @@
+{
+<<<<<<<< HEAD:apps/portals/my-pages/.eslintrc.json
+  "extends": ["plugin:@nx/react", "../../../.eslintrc.json"],
+========
+  "extends": ["plugin:@nx/react", "../../../../../.eslintrc.json"],
+>>>>>>>> dd03c10c0a65f67627212406bfd78261dec7d631:libs/application/templates/inao/financial-statement-cemetery/.eslintrc.json
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {}
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {}
+    }
+  ]
+}

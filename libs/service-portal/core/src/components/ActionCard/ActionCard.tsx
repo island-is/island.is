@@ -279,11 +279,11 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                     icon={isExternalLink(cta.url) ? 'open' : cta.icon}
                     colorScheme="default"
                     iconType="outline"
-                    size="small"
+                    size={cta.size ?? 'small'}
                     type="span"
                     unfocusable
                     as="span"
-                    variant="text"
+                    variant={cta.variant ?? 'text'}
                   >
                     {cta.label}
                   </Button>
@@ -291,7 +291,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
               ) : (
                 <Button
                   variant={cta.variant}
-                  size="small"
+                  size={cta.size ?? 'small'}
                   onClick={cta.onClick}
                   disabled={cta.disabled}
                   icon={cta.icon}

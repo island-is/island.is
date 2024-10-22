@@ -30,11 +30,20 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -54,7 +63,66 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MachineModels": {
+      "get": {
+        "tags": ["MachineModels"],
+        "parameters": [
+          {
+            "name": "tegund",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MachineModelDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -70,6 +138,17 @@
       "post": {
         "tags": ["MachineOwnerChange"],
         "summary": "An enpoint to post an ownerChange application that hasn't been confirmed by the buyer.",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "description": "",
           "content": {
@@ -105,7 +184,7 @@
             }
           },
           "422": {
-            "description": "Client Error",
+            "description": "Unprocessable Content",
             "content": {
               "application/json": {
                 "schema": {
@@ -119,6 +198,17 @@
       "put": {
         "tags": ["MachineOwnerChange"],
         "summary": "An enpoint that completes the ownerchange process when the buyer has confirmed ownership.",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "description": "",
           "content": {
@@ -154,7 +244,103 @@
             }
           },
           "422": {
-            "description": "Client Error",
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MachineParentCategories": {
+      "get": {
+        "tags": ["MachineParentCategories"],
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "is"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MachineParentCategoryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MachineParentCategories/{type}/{model}": {
+      "get": {
+        "tags": ["MachineParentCategories"],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MachineParentCategoryDetailsDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
             "content": {
               "application/json": {
                 "schema": {
@@ -170,6 +356,17 @@
       "post": {
         "tags": ["MachineRequestInspection"],
         "summary": "Request an inspection for a machine.",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "description": "",
           "content": {
@@ -210,7 +407,7 @@
             }
           },
           "422": {
-            "description": "Client Error",
+            "description": "Unprocessable Content",
             "content": {
               "application/json": {
                 "schema": {
@@ -293,11 +490,20 @@
               "type": "string",
               "default": "is"
             }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "headers": {
               "X-Pagination": {
                 "description": "Paging info",
@@ -427,7 +633,7 @@
             }
           },
           "422": {
-            "description": "Client Error",
+            "description": "Unprocessable Content",
             "content": {
               "application/vnd.ver.machines.hateoas.v1+json": {
                 "schema": {
@@ -447,7 +653,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "application/vnd.ver.machines.hateoas.v1+json": {
                 "schema": {
@@ -459,6 +665,103 @@
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
               },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Machines"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MachineRegistrationCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Not Acceptable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
@@ -490,193 +793,51 @@
               "type": "string",
               "default": "is"
             }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/vnd.ver.machine.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MachineHateoasDto"
-                }
-              },
-              "application/vnd.ver.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MachineHateoasDto"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MachineHateoasDto"
-                }
-              }
-            }
           },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/vnd.ver.machine.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              },
-              "application/vnd.ver.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/vnd.ver.machine.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/vnd.ver.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/vnd.ver.machine.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/vnd.ver.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/vnd.ver.machine.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/vnd.ver.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "406": {
-            "description": "Not Acceptable",
-            "content": {
-              "application/vnd.ver.machine.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/vnd.ver.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Client Error",
-            "content": {
-              "application/vnd.ver.machine.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/vnd.ver.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/vnd.ver.machine.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/vnd.ver.hateoas.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Machines/{id}": {
-      "get": {
-        "tags": ["Machines"],
-        "operationId": "GetMachineDefault",
-        "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "OK",
+            "content": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineHateoasDto"
+                }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineHateoasDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineHateoasDto"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
             "content": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ValidationProblemDetails"
@@ -687,6 +848,16 @@
           "401": {
             "description": "Unauthorized",
             "content": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
@@ -697,6 +868,16 @@
           "403": {
             "description": "Forbidden",
             "content": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
@@ -707,6 +888,16 @@
           "404": {
             "description": "Not Found",
             "content": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
@@ -717,6 +908,16 @@
           "406": {
             "description": "Not Acceptable",
             "content": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
@@ -725,8 +926,18 @@
             }
           },
           "422": {
-            "description": "Client Error",
+            "description": "Unprocessable Content",
             "content": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
@@ -735,8 +946,18 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
@@ -761,11 +982,20 @@
               "type": "string",
               "default": "excel"
             }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/octet-stream": {
                 "schema": {
@@ -816,7 +1046,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "application/octet-stream": {
                 "schema": {
@@ -832,6 +1062,17 @@
       "post": {
         "tags": ["MachineStatusChange"],
         "summary": "Changes the status of the machine.",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "description": "",
           "content": {
@@ -859,7 +1100,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "OK"
           }
         }
       }
@@ -868,6 +1109,17 @@
       "post": {
         "tags": ["MachineStreetRegistration"],
         "summary": "Register a machine for street use.",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json-patch+json": {
@@ -927,7 +1179,7 @@
             }
           },
           "422": {
-            "description": "Client Error",
+            "description": "Unprocessable Content",
             "content": {
               "application/json": {
                 "schema": {
@@ -939,13 +1191,24 @@
         }
       }
     },
-    "/api/MachineStreetRegistration/MustInspectBeforeRegistration": {
+    "/api/MachineStreetRegistration/MayStreetRegister": {
       "get": {
         "tags": ["MachineStreetRegistration"],
         "summary": "Returns a list of registration number prefixes that require an inspection before street registration",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -960,10 +1223,99 @@
         }
       }
     },
+    "/api/MachineStreetRegistration/MustInspectBeforeRegistration": {
+      "get": {
+        "tags": ["MachineStreetRegistration"],
+        "summary": "Returns a list of registration number prefixes that require an inspection before street registration",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MachineSubCategories": {
+      "get": {
+        "tags": ["MachineSubCategories"],
+        "parameters": [
+          {
+            "name": "parentCategory",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "is"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MachineSubCategoryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/MachineSupervisorChange": {
       "post": {
         "tags": ["MachineSupervisorChange"],
         "summary": "Update the supervisor assigned to a machine.",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "description": "",
           "content": {
@@ -1004,7 +1356,58 @@
             }
           },
           "422": {
-            "description": "Client Error",
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MachineTypes": {
+      "get": {
+        "tags": ["MachineTypes"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MachineTypeDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -1020,9 +1423,321 @@
       "get": {
         "tags": ["Openapi"],
         "summary": "Returns the openapi document as a json file",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/Inputs": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "parentCategory",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "subCategory",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "is"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/BearingCables": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/PullingCables": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/Chemicals": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/BaseTypes": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/HeatingEquipment": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/RunningSpeed": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/LiftingEquiptment": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/PowerSource": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1131,6 +1846,9 @@
             "nullable": true
           },
           "paymentRequiredForOwnerChange": {
+            "type": "boolean"
+          },
+          "mayStreetRegister": {
             "type": "boolean"
           }
         },
@@ -1297,6 +2015,16 @@
         },
         "additionalProperties": false
       },
+      "MachineModelDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "MachineOwnerChangeCompleteDto": {
         "type": "object",
         "properties": {
@@ -1387,9 +2115,136 @@
         },
         "additionalProperties": false
       },
+      "MachineParentCategoryDetailsDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "subCategoryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "subCategoryNameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "registrationNumberPrefix": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MachineParentCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nameEn": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MachineRegistrationCreateDto": {
+        "required": [
+          "containerNumber",
+          "countryOfProduction",
+          "importer",
+          "isCECertified",
+          "isPreRegistered",
+          "locationOfMachine",
+          "model",
+          "parentCategory",
+          "serialNumber",
+          "streetRegistrationRequested",
+          "technicalInfo",
+          "type",
+          "used",
+          "yearOfProduction"
+        ],
+        "type": "object",
+        "properties": {
+          "importer": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "supervisor": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "isPreRegistered": {
+            "type": "boolean"
+          },
+          "isCECertified": {
+            "type": "boolean"
+          },
+          "countryOfProduction": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "containerNumber": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "locationOfMachine": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "serialNumber": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "yearOfProduction": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "used": {
+            "type": "boolean"
+          },
+          "type": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "model": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "parentCategory": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "subCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "streetRegistrationRequested": {
+            "type": "boolean"
+          },
+          "plateSize": {
+            "$ref": "#/components/schemas/PlateSize"
+          },
+          "technicalInfo": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "MachineStatusEnum": {
-        "enum": ["Temporary", "Permanent"],
-        "type": "string"
+        "enum": [3, 4],
+        "type": "integer",
+        "format": "int32"
       },
       "MachineStatusUpdateDto": {
         "type": "object",
@@ -1416,6 +2271,14 @@
           },
           "status": {
             "$ref": "#/components/schemas/MachineStatusEnum"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1469,6 +2332,32 @@
         },
         "additionalProperties": false
       },
+      "MachineSubCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nameEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "registrationNumberPrefix": {
+            "type": "string",
+            "nullable": true
+          },
+          "parentCategoryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "parentCategoryNameEn": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "MachineSupervisorChangeDto": {
         "type": "object",
         "properties": {
@@ -1506,6 +2395,16 @@
             "nullable": true
           },
           "moreInfo": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MachineTypeDto": {
+        "type": "object",
+        "properties": {
+          "name": {
             "type": "string",
             "nullable": true
           }
@@ -1564,9 +2463,48 @@
         },
         "additionalProperties": false
       },
+      "PersonDto": {
+        "required": [
+          "address",
+          "email",
+          "gsm",
+          "name",
+          "nationalId",
+          "postalCode"
+        ],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "address": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gsm": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "email": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "PlateSize": {
-        "enum": ["A", "B", "D"],
-        "type": "string"
+        "enum": [1, 2, 3],
+        "type": "integer",
+        "format": "int32"
       },
       "ProblemDetails": {
         "type": "object",
@@ -1589,6 +2527,71 @@
             "nullable": true
           },
           "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechInfoItemDto": {
+        "type": "object",
+        "properties": {
+          "variableName": {
+            "type": "string",
+            "nullable": true
+          },
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "labelEn": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "maxLength": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TechInfoListItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechInfoListItem": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nameEn": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechInfoListItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
             "type": "string",
             "nullable": true
           }

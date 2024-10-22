@@ -9,10 +9,10 @@ import {
   ResponsiveSpace,
   SkeletonLoader,
   ButtonProps,
+  Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { useLocation } from 'react-router-dom'
 import { sharedMessages } from '@island.is/shared/translations'
 
 import * as styles from './UserInfoLine.css'
@@ -27,6 +27,11 @@ export type EditLink = {
   icon?: ButtonProps['icon']
 }
 
+type LineButton = {
+  title: MessageDescriptor | string
+  onClick: () => void
+}
+
 interface Props {
   label: MessageDescriptor | string
   content?: string | JSX.Element
@@ -37,6 +42,7 @@ interface Props {
   valueColumnSpan?: GridColumnProps['span']
   editColumnSpan?: GridColumnProps['span']
   editLink?: EditLink
+  button?: LineButton
   title?: string
   titlePadding?: ResponsiveSpace
   tooltip?: string
@@ -69,8 +75,8 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   translateLabel = 'yes',
   printable = false,
   tooltipFull,
+  button,
 }) => {
-  const { pathname } = useLocation()
   const { formatMessage } = useLocale()
 
   return (
@@ -103,7 +109,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
               as="span"
               lineHeight="lg"
             >
-              {formatMessage(label)}{' '}
+              {formatMessage(label)}
               {tooltip && (
                 <Tooltip
                   placement="top"
@@ -166,7 +172,30 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
                 skipOutboundTrack={editLink.skipOutboundTrack}
               />
             </Box>
-          ) : null}
+          ) : button ? (
+            <Box
+              display="flex"
+              justifyContent={[
+                'flexStart',
+                'flexEnd',
+                'flexStart',
+                'flexStart',
+                'flexEnd',
+              ]}
+              alignItems="center"
+              height="full"
+              printHidden
+            >
+              <Button
+                onClick={button.onClick}
+                icon="pencil"
+                size="small"
+                variant="text"
+              >
+                {formatMessage(button.title)}
+              </Button>
+            </Box>
+          ) : undefined}
         </GridColumn>
       </GridRow>
     </Box>

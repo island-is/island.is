@@ -1,5 +1,7 @@
 import { Client } from '@elastic/elasticsearch'
 import merge from 'lodash/merge'
+import * as AWS from 'aws-sdk'
+import AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { autocompleteTermQuery } from '../queries/autocomplete'
@@ -34,15 +36,14 @@ import { tagAggregationQuery } from '../queries/tagAggregation'
 import { typeAggregationQuery } from '../queries/typeAggregation'
 import { rankEvaluationQuery } from '../queries/rankEvaluation'
 import { filterDoc, getValidBulkRequestChunk } from './utils'
-import {
-  createAWSConnection,
-  awsGetCredentials,
-} from '@acuris/aws-es-connection'
 
-type RequestBodyType<T = Record<string, unknown>> = T | string | Buffer
+type RequestBodyType<T = Record<string, any>> = T | string | Buffer
 type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
 
 const { elastic } = environment
+
+const INITIAL_DELAY = 500
+const MAX_RETRY_COUNT = 3
 
 @Injectable()
 export class ElasticService {
@@ -113,29 +114,50 @@ export class ElasticService {
     requests: Record<string, unknown>[],
     refresh = false,
   ) {
+    const chunkSize = 14
+    let delay = INITIAL_DELAY
+    let retries = MAX_RETRY_COUNT
+
     try {
-      // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
       const client = await this.getClient()
 
-      let requestChunk = getValidBulkRequestChunk(requests)
+      // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
+      let requestChunk = getValidBulkRequestChunk(requests, chunkSize)
 
       while (requestChunk.length) {
-        // wait for request b4 continuing
-        const response = await client.bulk({
-          index: index,
-          body: requestChunk,
-          refresh: refresh ? 'true' : undefined,
-        })
-
-        // not all errors are thrown log if the response has any errors
-        if (response.body.errors) {
-          // Filter HUGE request object
-          filterDoc(response)
-          logger.error('Failed to import some documents in bulk import', {
-            response,
+        try {
+          const response = await client.bulk({
+            index: index,
+            body: requestChunk,
+            refresh: refresh ? 'true' : undefined,
           })
+
+          // not all errors are thrown log if the response has any errors
+          if (response.body.errors) {
+            // Filter HUGE request object
+            filterDoc(response)
+            logger.error('Failed to import some documents in bulk import', {
+              response,
+            })
+          }
+          requestChunk = getValidBulkRequestChunk(requests, chunkSize)
+          delay = INITIAL_DELAY
+          retries = MAX_RETRY_COUNT
+        } catch (e) {
+          if (e?.statusCode === 429 && retries > 0) {
+            logger.info('Retrying Elasticsearch bulk request...', {
+              retriesLeft: retries - 1,
+              delay,
+            })
+            await new Promise((resolve) => {
+              setTimeout(resolve, delay)
+            })
+            delay *= 2
+            retries -= 1
+          } else {
+            throw e
+          }
         }
-        requestChunk = getValidBulkRequestChunk(requests)
       }
 
       return true
@@ -271,7 +293,7 @@ export class ElasticService {
   async getTagAggregation(index: string, query: TagAggregationInput) {
     const requestBody = tagAggregationQuery(query)
     const data = await this.findByQuery<
-      SearchResponse<unknown, TagAggregationResponse>,
+      SearchResponse<any, TagAggregationResponse>,
       typeof requestBody
     >(index, requestBody)
     return data.body
@@ -280,7 +302,7 @@ export class ElasticService {
   async getTypeAggregation(index: string, query: TypeAggregationInput) {
     const requestBody = typeAggregationQuery(query)
     const data = await this.findByQuery<
-      SearchResponse<unknown, TypeAggregationResponse>,
+      SearchResponse<any, TypeAggregationResponse>,
       typeof requestBody
     >(index, requestBody)
     return data.body
@@ -289,7 +311,7 @@ export class ElasticService {
   async getDateAggregation(index: string, query: DateAggregationInput) {
     const requestBody = dateAggregationQuery(query)
     const data = await this.findByQuery<
-      SearchResponse<unknown, DateAggregationResponse>,
+      SearchResponse<any, DateAggregationResponse>,
       typeof requestBody
     >(index, requestBody)
     return data.body
@@ -394,19 +416,19 @@ export class ElasticService {
     }
 
     return new Client({
-      ...createAWSConnection(await awsGetCredentials()),
+      ...AwsConnector(AWS.config),
       node: elastic.node,
     })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static handleError(message: string, context: unknown, error: Error): never {
+  static handleError(message: string, context: any, error: Error): never {
     ElasticService.logError(message, context, error)
     throw error
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static logError(message: string, context: unknown, error: any) {
+  static logError(message: string, context: any, error: any) {
     const errorCtx = {
       error: {
         message: error.message,

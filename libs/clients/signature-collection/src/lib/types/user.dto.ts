@@ -14,6 +14,11 @@ export interface CandidateLookup extends UserBase {
   canCreateInfo?: ReasonKey[]
 }
 
+export interface PartyBallotLetterInfo {
+  name?: string
+  letter?: string
+}
+
 export interface Signee extends CandidateLookup {
   electionName: string
   canSign: boolean
@@ -25,4 +30,6 @@ export interface Signee extends CandidateLookup {
   signatures?: Signature[]
   ownedLists: ListBase[]
   candidate?: Candidate
+  hasPartyBallotLetter?: boolean
+  partyBallotLetterInfo?: PartyBallotLetterInfo
 }

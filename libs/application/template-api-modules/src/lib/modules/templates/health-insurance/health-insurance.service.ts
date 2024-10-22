@@ -10,20 +10,20 @@ import {
   DocumentApi,
   PersonApi,
 } from '@island.is/clients/icelandic-health-insurance/health-insurance'
+import { BucketService } from './bucket/bucket.service'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core/messages'
-import { AwsService } from '@island.is/nest/aws'
 
 @Injectable()
 export class HealthInsuranceService extends BaseTemplateApiService {
   constructor(
     private documentApi: DocumentApi,
+    private bucketService: BucketService,
     private personApi: PersonApi,
-    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.HEALTH_INSURANCE)
   }
@@ -64,7 +64,7 @@ export class HealthInsuranceService extends BaseTemplateApiService {
     const xml = await insuranceToXML(
       inputs.vistaskjal,
       inputs.attachmentNames,
-      this.awsService,
+      this.bucketService,
     )
 
     try {

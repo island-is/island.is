@@ -4,6 +4,7 @@ import {
   buildSection,
   buildMessageWithLinkButtonField,
   buildDescriptionField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
@@ -50,25 +51,41 @@ export const Done: Form = buildForm({
               id: 'nextStepsDescription',
               title: '',
               description: m.nextStepsDescription,
-              titleVariant: 'h3',
+              titleVariant: 'h4',
               marginBottom: 5,
             }),
+            buildCustomField({
+              id: 'copyLink',
+              title: '',
+              component: 'CopyLink',
+            }),
             buildMessageWithLinkButtonField({
+              condition: (_, externalData) => {
+                return !(
+                  externalData?.delegatedToCompany.data as {
+                    delegatedToCompany: boolean
+                  }
+                ).delegatedToCompany
+              },
               id: 'done.goToServicePortal',
               title: '',
-              url: '/minarsidur/min-gogn/listar/medmaelasofnun',
+              url: '/minarsidur/min-gogn/listar/althingis-medmaelasofnun',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
             }),
-            buildDescriptionField({
-              id: 'space',
+            buildMessageWithLinkButtonField({
+              condition: (_, externalData) => {
+                return (
+                  externalData?.delegatedToCompany.data as {
+                    delegatedToCompany: boolean
+                  }
+                ).delegatedToCompany
+              },
+              id: 'done.goToServicePortalCompany',
               title: '',
-              space: 'containerGutter',
-            }),
-            buildDescriptionField({
-              id: 'space1',
-              title: '',
-              space: 'containerGutter',
+              url: '/minarsidur/fyrirtaeki/listar/althingis-medmaelasofnun',
+              buttonTitle: m.linkFieldButtonCompanyTitle,
+              message: m.linkFieldCompanyMessage,
             }),
           ],
         }),

@@ -4,6 +4,7 @@ import {
   ApplicationDTO,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   Employer as TrWebEmployer,
+  IncomeTypes,
 } from '@island.is/clients/social-insurance-administration'
 import {
   ApplicationType,
@@ -33,6 +34,12 @@ import {
   getApplicationAnswers as getPSApplicationAnswers,
   getApplicationExternalData as getPSApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
+
+import {
+  INCOME,
+  getApplicationAnswers as getIPApplicationAnswers,
+  getApplicationExternalData as getIPApplicationExternalData,
+} from '@island.is/application/templates/social-insurance-administration/income-plan'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -296,6 +303,87 @@ export const transformApplicationToPensionSupplementDTO = (
   }
 
   return pensionSupplementDTO
+}
+
+export const transformApplicationToIncomePlanDTO = (
+  application: Application,
+): ApplicationDTO => {
+  const { userProfileEmail, userProfilePhoneNumber, incomePlanConditions } =
+    getIPApplicationExternalData(application.externalData)
+
+  const incomePlanDTO: ApplicationDTO = {
+    applicantInfo: {
+      email: userProfileEmail,
+      phonenumber: userProfilePhoneNumber,
+    },
+    period: {
+      year: new Date().getFullYear(),
+      month: new Date().getMonth(),
+    },
+    applicationId: application.id,
+    incomePlan: {
+      incomeYear: incomePlanConditions.incomePlanYear,
+      incomeTypes: getIncomeTypes(application),
+    },
+  }
+
+  return incomePlanDTO
+}
+
+export const getIncomeTypes = (application: Application): IncomeTypes[] => {
+  const { incomePlan } = getIPApplicationAnswers(application.answers)
+  const { categorizedIncomeTypes } = getIPApplicationExternalData(
+    application.externalData,
+  )
+
+  return incomePlan.map((i) => ({
+    incomeTypeNumber:
+      categorizedIncomeTypes.find((c) => c.incomeTypeName === i.incomeType)
+        ?.incomeTypeNumber ?? 0,
+    incomeTypeCode:
+      categorizedIncomeTypes.find((c) => c.incomeTypeName === i.incomeType)
+        ?.incomeTypeCode ?? '',
+    incomeTypeName: i.incomeType,
+    currencyCode: i.currency,
+    incomeCategoryNumber:
+      categorizedIncomeTypes.find((c) => c.incomeTypeName === i.incomeType)
+        ?.categoryNumber ?? 0,
+    incomeCategoryCode:
+      categorizedIncomeTypes.find((c) => c.incomeTypeName === i.incomeType)
+        ?.categoryCode ?? '',
+    incomeCategoryName: i.incomeCategory,
+    ...(i.income === RatioType.MONTHLY &&
+    i?.incomeCategory === INCOME &&
+    i?.unevenIncomePerYear?.[0] === YES
+      ? {
+          amountJan: Number(i.january),
+          amountFeb: Number(i.february),
+          amountMar: Number(i.march),
+          amountApr: Number(i.april),
+          amountMay: Number(i.may),
+          amountJun: Number(i.june),
+          amountJul: Number(i.july),
+          amountAug: Number(i.august),
+          amountSep: Number(i.september),
+          amountOct: Number(i.october),
+          amountNov: Number(i.november),
+          amountDec: Number(i.december),
+        }
+      : {
+          amountJan: Number(i.incomePerYear) / 12,
+          amountFeb: Number(i.incomePerYear) / 12,
+          amountMar: Number(i.incomePerYear) / 12,
+          amountApr: Number(i.incomePerYear) / 12,
+          amountMay: Number(i.incomePerYear) / 12,
+          amountJun: Number(i.incomePerYear) / 12,
+          amountJul: Number(i.incomePerYear) / 12,
+          amountAug: Number(i.incomePerYear) / 12,
+          amountSep: Number(i.incomePerYear) / 12,
+          amountOct: Number(i.incomePerYear) / 12,
+          amountNov: Number(i.incomePerYear) / 12,
+          amountDec: Number(i.incomePerYear) / 12,
+        }),
+  }))
 }
 
 export const getMonthNumber = (monthName: string): number => {

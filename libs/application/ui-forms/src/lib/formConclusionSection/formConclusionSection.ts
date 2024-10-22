@@ -19,7 +19,7 @@ type Props = Partial<{
   secondButtonLabel: StaticText
   secondButtonMessage: StaticText
   expandableHeader: FormText
-  expandableIntro: StaticText
+  expandableIntro: FormText
   expandableDescription: FormText
   conclusionLinkS3FileKey: FormText
   conclusionLink: string

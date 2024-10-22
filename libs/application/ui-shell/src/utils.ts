@@ -1,21 +1,23 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
+  Application,
   DataProviderItem,
   ExternalData,
   FieldTypes,
+  FormComponent,
   FormItemTypes,
   FormValue,
   RecordObject,
   SubmitField,
 } from '@island.is/application/types'
-import { FormScreen } from './types'
+import { FormScreen, MOCKPAYMENT } from './types'
 import pick from 'lodash/pick'
 import get from 'lodash/get'
 
-export function verifyExternalData(
+export const verifyExternalData = (
   externalData: ExternalData,
   dataProviders: DataProviderItem[],
-): boolean {
+): boolean => {
   for (let i = 0; i < dataProviders.length; i++) {
     const { id } = dataProviders[i]
     const dataProviderResult = externalData[id]
@@ -27,15 +29,15 @@ export function verifyExternalData(
   return true
 }
 
-export function answerIsMissing(answer: unknown) {
+export const answerIsMissing = (answer: unknown) => {
   return answer === undefined
 }
 
-export function getFieldsWithNoAnswer(
+export const getFieldsWithNoAnswer = (
   screen: FormScreen,
   answers: FormValue,
   errorMessage: string,
-): RecordObject<string> {
+): RecordObject<string> => {
   let missingAnswers: RecordObject<string> = {}
 
   if (screen.type === FormItemTypes.MULTI_FIELD) {
@@ -61,7 +63,9 @@ export function getFieldsWithNoAnswer(
   return missingAnswers
 }
 
-export function findSubmitField(screen: FormScreen): SubmitField | undefined {
+export const findSubmitField = (
+  screen: FormScreen,
+): SubmitField | undefined => {
   if (screen.type === FieldTypes.SUBMIT) {
     return screen
   }
@@ -81,10 +85,10 @@ export function findSubmitField(screen: FormScreen): SubmitField | undefined {
   return undefined
 }
 
-export function extractAnswersToSubmitFromScreen(
+export const extractAnswersToSubmitFromScreen = (
   data: FormValue,
   screen: FormScreen,
-): FormValue {
+): FormValue => {
   const screenId = screen.id ?? ''
 
   if (
@@ -114,6 +118,8 @@ export function extractAnswersToSubmitFromScreen(
   }
 
   switch (screen.type) {
+    case FormItemTypes.EXTERNAL_DATA_PROVIDER:
+      return pick(data, [screenId, MOCKPAYMENT])
     case FormItemTypes.MULTI_FIELD:
       return pick(
         data,
@@ -139,7 +145,7 @@ export const isJSONObject = (message?: string): boolean => {
   }
 }
 
-export function parseMessage(message?: string) {
+export const parseMessage = (message?: string) => {
   if (!message) {
     return undefined
   }
@@ -149,4 +155,39 @@ export function parseMessage(message?: string) {
   }
 
   return message
+}
+
+function isFunctionalComponent(
+  component: FormComponent | undefined,
+): component is React.FC<React.PropsWithChildren<unknown>> {
+  if (!component) return false
+  return (
+    typeof component === 'function' &&
+    !(component.prototype && component.prototype.isReactComponent) &&
+    component.length === 0
+  )
+}
+
+function isFunctionReturningComponent(
+  component: FormComponent | undefined,
+): component is (
+  application: Application,
+) => React.FC<React.PropsWithChildren<unknown>> | null | undefined {
+  if (!component) return false
+  return typeof component === 'function' && component.length === 1
+}
+
+export function getFormComponent(
+  component: FormComponent | undefined,
+  application: Application,
+) {
+  if (isFunctionalComponent(component)) {
+    return component
+  }
+
+  if (isFunctionReturningComponent(component)) {
+    return component(application)
+  }
+
+  return null
 }

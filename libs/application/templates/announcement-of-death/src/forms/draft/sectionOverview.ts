@@ -7,11 +7,10 @@ import { DefaultEvents } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import {
   additionalInfo,
-  extraInfo,
+  properties,
   files,
   firearmApplicant,
   inheritance,
-  properties,
   testament,
   theAnnouncer,
   theDeceased,
@@ -30,11 +29,10 @@ export const sectionOverview = buildSection({
         ...theDeceased,
         ...theAnnouncer,
         ...testament,
-        ...firearmApplicant,
         ...inheritance,
         ...properties,
+        ...firearmApplicant,
         ...files,
-        ...extraInfo,
         ...additionalInfo,
         buildSubmitField({
           id: 'submit',

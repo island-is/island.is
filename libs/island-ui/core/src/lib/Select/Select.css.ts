@@ -265,6 +265,7 @@ export const menu = style(
   {
     selectors: {
       [`${wrapper} &`]: {
+        zIndex: theme.zIndex.belowModal,
         marginTop: -3,
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,

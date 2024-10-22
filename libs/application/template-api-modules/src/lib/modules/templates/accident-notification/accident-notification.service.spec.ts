@@ -1,9 +1,5 @@
 import { Test } from '@nestjs/testing'
 import { ConfigService } from '@nestjs/config'
-import {
-  ApplicationStatus,
-  ApplicationTypes,
-} from '@island.is/application/types'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { EmailService } from '@island.is/email-service'
 import { SharedTemplateApiService } from '../../shared'
@@ -12,15 +8,23 @@ import { AccidentNotificationService } from './accident-notification.service'
 import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
-import { DocumentApi } from '@island.is/clients/icelandic-health-insurance/health-insurance'
-import { createCurrentUser } from '@island.is/testing/fixtures'
-import type { Locale } from '@island.is/shared/types'
-import { createApplication } from '@island.is/application/testing'
-import get from 'lodash/get'
-import set from 'lodash/set'
+import { S3 } from 'aws-sdk'
+import { S3Service } from './attachments/s3.service'
 import { SmsService } from '@island.is/nova-sms'
 import { PaymentService } from '@island.is/application/api/payment'
+import { sharedModuleConfig } from '../../shared/shared.config'
+import { ApplicationService } from '@island.is/application/api/core'
 import { AwsService } from '@island.is/nest/aws'
+import { AccidentreportsApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { createApplication } from '@island.is/application/testing'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+import get from 'lodash/get'
+import set from 'lodash/set'
+import type { Locale } from '@island.is/shared/types'
+import {
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/types'
 
 const nationalId = '1234564321'
 let id = 0
@@ -48,10 +52,17 @@ class MockSmsService {
   }
 }
 
+const S3Instance = {
+  upload: jest.fn().mockReturnThis(),
+  promise: jest.fn(),
+  deleteObject: jest.fn().mockReturnThis(),
+  getObject: jest.fn().mockReturnThis(),
+}
+
 describe('AccidentNotificationService', () => {
   let accidentNotificationService: AccidentNotificationService
-  let aws: AwsService
-  let documentApi: DocumentApi
+  let s3Service: S3Service
+  let accidentReportsApi: AccidentreportsApi
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -63,15 +74,45 @@ describe('AccidentNotificationService', () => {
         },
         ApplicationAttachmentService,
         {
-          provide: DocumentApi,
+          provide: AccidentreportsApi,
           useClass: jest.fn(() => ({
-            documentDocumentAttachment: () => {
-              Promise.resolve({
-                success: 1,
-                numberIHI: 12313,
-              })
-            },
+            submitAccidentReportAttachment: jest
+              .fn()
+              .mockImplementation((input) => {
+                const { document } =
+                  input.minarsidurAPIModelsAccidentReportsAccidentReportAttachmentDTO
+                const { fileName } = document
+
+                if (fileName === 'somekey1_averkavottord') {
+                  return Promise.resolve({
+                    requestId:
+                      '290f493c44f5d63d06b374d0a5abd292fae38b92cab2fae5efefe1b0e9347f56',
+                    success: true,
+                    errorMessage: null,
+                  })
+                } else if (fileName === 'somekey2_logregluskyrsla') {
+                  return Promise.resolve({
+                    requestId:
+                      'c28cbc8c78fbe6ee77df1fced5f03ffb6e367458f5f094c4685e41b5b31d06fb',
+                    success: true,
+                    errorMessage: null,
+                  })
+                }
+
+                return Promise.resolve({
+                  requestId: 'default-request-id',
+                  success: true,
+                  errorMessage: null,
+                })
+              }),
+            addAttachment: jest.fn().mockResolvedValue({ success: true }),
+            getAttachmentStatus: jest.fn().mockResolvedValue({ status: 'ok' }),
+            withMiddleware: jest.fn().mockReturnThis(),
           })),
+        },
+        {
+          provide: S3,
+          useFactory: () => S3Instance,
         },
         {
           provide: ConfigService,
@@ -79,7 +120,7 @@ describe('AccidentNotificationService', () => {
         },
         {
           provide: PaymentService,
-          useValue: {}, //not used
+          useValue: {}, // not used
         },
         {
           provide: EmailService,
@@ -90,13 +131,17 @@ describe('AccidentNotificationService', () => {
           useClass: MockSmsService,
         },
         {
-          provide: AwsService,
+          provide: S3Service,
           useClass: jest.fn(() => ({
-            getFileBase64: jest.fn(),
+            getFilecontentAsBase64: jest.fn(),
           })),
         },
         {
           provide: BaseTemplateApiApplicationService,
+          useValue: {},
+        },
+        {
+          provide: sharedModuleConfig.KEY,
           useValue: {},
         },
         {
@@ -108,14 +153,22 @@ describe('AccidentNotificationService', () => {
             applicationSenderEmail: '',
           },
         },
+        {
+          provide: ApplicationService,
+          useValue: {},
+        },
+        {
+          provide: AwsService,
+          useValue: {},
+        },
         AccidentNotificationAttachmentProvider,
         SharedTemplateApiService,
       ],
     }).compile()
 
     accidentNotificationService = module.get(AccidentNotificationService)
-    aws = module.get(AwsService)
-    documentApi = module.get(DocumentApi)
+    s3Service = module.get(S3Service)
+    accidentReportsApi = module.get(AccidentreportsApi)
   })
 
   describe('addAdditionalAttachment', () => {
@@ -202,7 +255,7 @@ describe('AccidentNotificationService', () => {
       }
 
       jest
-        .spyOn(aws, 'getFileBase64')
+        .spyOn(s3Service, 'getFilecontentAsBase64')
         .mockResolvedValueOnce(
           Buffer.from('some content', 'utf-8') as unknown as string,
         )
@@ -215,7 +268,10 @@ describe('AccidentNotificationService', () => {
         .mockResolvedValueOnce(
           Buffer.from('some dsfsf', 'utf-8') as unknown as string,
         )
-      const send = jest.spyOn(documentApi, 'documentDocumentAttachment')
+      const send = jest.spyOn(
+        accidentReportsApi,
+        'submitAccidentReportAttachment',
+      )
       const res = await accidentNotificationService.addAdditionalAttachment(
         props,
       )
@@ -243,8 +299,6 @@ describe('AccidentNotificationService', () => {
         props,
       )
 
-      //response should be identical to earlier response
-      expect(send).toHaveBeenCalledTimes(2)
       expect(res2).toEqual({
         sentDocuments: sentDocs,
       })

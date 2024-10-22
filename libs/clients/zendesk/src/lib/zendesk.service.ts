@@ -5,7 +5,16 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 export const ZENDESK_OPTIONS = 'ZENDESK_OPTIONS'
 
-export type Ticket = {
+export enum TicketStatus {
+  Open = 'open',
+  Pending = 'pending',
+  Solved = 'solved',
+  Closed = 'closed',
+  New = 'new',
+  OnHold = 'on-hold',
+}
+
+export type SubmitTicketInput = {
   subject?: string
   message: string
   requesterId?: number
@@ -16,6 +25,13 @@ export type User = {
   name: string
   email: string
   id: number
+}
+
+export type Ticket = {
+  id: string
+  status: TicketStatus | string
+  custom_fields: Array<{ id: number; value: string }>
+  tags: Array<string>
 }
 
 export interface ZendeskServiceOptions {
@@ -121,7 +137,7 @@ export class ZendeskService {
     subject,
     requesterId,
     tags = [],
-  }: Ticket): Promise<boolean> {
+  }: SubmitTicketInput): Promise<boolean> {
     const newTicket = JSON.stringify({
       ticket: {
         requester_id: requesterId,
@@ -145,5 +161,24 @@ export class ZendeskService {
     }
 
     return true
+  }
+
+  async getTicket(ticketId: string): Promise<Ticket> {
+    try {
+      const response = await axios.get(`${this.api}/tickets/${ticketId}.json`, {
+        ...this.params,
+      })
+
+      return response.data.ticket
+    } catch (e) {
+      const errMsg = 'Failed to get Zendesk ticket'
+      const description = e.response.data.description
+
+      this.logger.error(errMsg, {
+        message: description,
+      })
+
+      throw new Error(`${errMsg}: ${description}`)
+    }
   }
 }

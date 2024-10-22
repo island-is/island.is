@@ -46,6 +46,7 @@ export const Prerequisites: Form = buildForm({
           subTitle: externalData.dataProvider.subTitle,
           description: externalData.dataProvider.description,
           checkboxLabel: externalData.dataProvider.checkboxLabel,
+          enableMockPayment: true,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',

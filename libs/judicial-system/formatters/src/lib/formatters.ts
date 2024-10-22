@@ -54,7 +54,7 @@ export const capitalize = (text?: string | null): string => {
   return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
-export const lowercase = (text?: string): string => {
+export const lowercase = (text?: string | null): string => {
   if (!text) {
     return ''
   }
@@ -74,6 +74,24 @@ export const formatNationalId = (nationalId?: string | null): string => {
   } else {
     return nationalId
   }
+}
+
+export const normalizeAndFormatNationalId = (
+  nationalId?: string | null,
+): [string, string] => {
+  return [nationalId?.replace(/-/g, '') ?? '', formatNationalId(nationalId)]
+}
+
+export const getInitials = (name?: string | null): string | undefined => {
+  if (!name?.trim()) return undefined
+
+  const names = name.trim().split(' ')
+  const initials =
+    names.length > 1
+      ? `${names[0][0]}${names[names.length - 1][0]}`
+      : names[0][0]
+
+  return initials.toUpperCase()
 }
 
 export const formatPhoneNumber = (phoneNumber?: string | null) => {
@@ -112,6 +130,8 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
       return 'Frávísun'
     case CaseIndictmentRulingDecision.CANCELLATION:
       return 'Niðurfelling máls'
+    case CaseIndictmentRulingDecision.MERGE:
+      return 'Sameinað'
     default:
       return 'Ekki skráð'
   }
@@ -119,7 +139,7 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
 
 type CaseTypes = { [c in CaseType]: string }
 const caseTypes: CaseTypes = {
-  // Indicitment cases
+  // Indictment cases
   INDICTMENT: 'ákæra',
   // Restriction cases
   CUSTODY: 'gæsluvarðhald',
@@ -402,4 +422,20 @@ export const readableIndictmentSubtypes = (
 
 export const sanitize = (str: string) => {
   return str.replace(/"/g, '')
+}
+
+export enum Word {
+  AKAERDI = 'AKAERDI',
+}
+export const getWordByGender = (word: Word, gender?: Gender): string | null => {
+  switch (word) {
+    case Word.AKAERDI:
+      return gender === Gender.MALE
+        ? 'ákærði'
+        : gender === Gender.FEMALE
+        ? 'ákærða'
+        : 'ákært'
+    default:
+      return null
+  }
 }

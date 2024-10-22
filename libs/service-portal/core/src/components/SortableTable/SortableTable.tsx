@@ -7,6 +7,7 @@ import {
   Tag,
 } from '@island.is/island-ui/core'
 import * as styles from './SortableTable.css'
+import { ExpandHeader, ExpandRow } from '../ExpandableTable'
 
 type ConfigType = { direction: 'ascending' | 'descending'; key: string }
 
@@ -14,7 +15,8 @@ type SortableData = {
   name: string
   id: string
   tag?: TagVariant
-} & { [key: string]: string }
+  children?: React.ReactElement
+} & { [key: string]: string | React.ReactElement }
 
 type SortableTableProps = {
   items: Array<SortableData>
@@ -25,6 +27,9 @@ type SortableTableProps = {
     [key: string]: string | number
   }
   title?: string
+  tagOutlined?: boolean
+  expandable?: boolean // Uses "children" key for expandable rows
+  defaultSortByKey?: string // Starting sort key, use one of keys in SortableData
 }
 
 const useSortableData = <T,>(
@@ -67,7 +72,7 @@ const useSortableData = <T,>(
 export const SortableTable = (props: SortableTableProps) => {
   const { items, requestSort, sortConfig } = useSortableData<SortableData>(
     props.items,
-    { direction: 'ascending', key: 'name' },
+    { direction: 'ascending', key: props.defaultSortByKey ?? 'name' },
   )
   const [headerSorted, setHeaderSorted] = useState<string[]>([])
 
@@ -80,8 +85,44 @@ export const SortableTable = (props: SortableTableProps) => {
       .flat()
       .filter((value, index, self) => self.indexOf(value) === index)
 
+    // Remove children from header if expandable
+    const childrenIndex = headerItems.indexOf('children')
+    props.expandable && headerItems.splice(childrenIndex, 1)
+
     setHeaderSorted(headerItems)
   }, [props.items])
+
+  // Common header button for sorting
+  const headerButton = (headItem: string, i: number) => {
+    return (
+      <button
+        type="button"
+        onClick={() => requestSort(headItem)}
+        className={styles.btn}
+        key={`head-${headItem}-${i}`}
+      >
+        {props.labels[headItem] || ''}
+        {sortConfig.key === headItem &&
+          sortConfig.direction === 'ascending' && (
+            <Icon
+              className={styles.chevron}
+              color="dark400"
+              icon="chevronDown"
+              size="small"
+            />
+          )}
+        {sortConfig.key === headItem &&
+          sortConfig.direction === 'descending' && (
+            <Icon
+              className={styles.chevron}
+              color="dark400"
+              icon="chevronUp"
+              size="small"
+            />
+          )}
+      </button>
+    )
+  }
 
   return (
     <>
@@ -91,44 +132,54 @@ export const SortableTable = (props: SortableTableProps) => {
         </Text>
       )}
       <T.Table>
-        <T.Head>
-          <T.Row>
-            {headerSorted?.map((headItem) => (
-              <T.HeadData key={`head-${headItem}`}>
-                <button
-                  type="button"
-                  onClick={() => requestSort(headItem)}
-                  className={styles.btn}
-                >
-                  {props.labels[headItem] || ''}
-                  {sortConfig.key === headItem &&
-                    sortConfig.direction === 'ascending' && (
-                      <Icon
-                        className={styles.chevron}
-                        color="dark400"
-                        icon="chevronDown"
-                        size="small"
-                      />
-                    )}
-                  {sortConfig.key === headItem &&
-                    sortConfig.direction === 'descending' && (
-                      <Icon
-                        className={styles.chevron}
-                        color="dark400"
-                        icon="chevronUp"
-                        size="small"
-                      />
-                    )}
-                </button>
-              </T.HeadData>
-            ))}
-          </T.Row>
-        </T.Head>
+        {props.expandable ? (
+          <ExpandHeader
+            data={headerSorted.map((headItem, i) => {
+              return {
+                value: headerButton(headItem, i),
+                align: headerSorted.slice(-2).includes(headItem)
+                  ? 'right'
+                  : 'left',
+                element: true,
+              }
+            })}
+          />
+        ) : (
+          <T.Head>
+            <T.Row>
+              {headerSorted?.map((headItem, i) => (
+                <T.HeadData key={`head-${headItem}`}>
+                  {headerButton(headItem, i)}
+                </T.HeadData>
+              ))}
+            </T.Row>
+          </T.Head>
+        )}
         <T.Body>
-          {items.map((item, i) => {
-            const { id, name, tag, ...itemObject } = item
+          {items.map((item) => {
+            const { id, name, tag, children, ...itemObject } = item
             const valueItems = Object.values(itemObject)
-            return (
+
+            return props.expandable ? (
+              <ExpandRow
+                key={id}
+                data={valueItems.map((valueItem, i) => ({
+                  value:
+                    valueItems.length - 1 === i && tag ? (
+                      <Tag variant={tag} outlined={props.tagOutlined}>
+                        {valueItem}
+                      </Tag>
+                    ) : (
+                      valueItem
+                    ),
+                  align: valueItems.slice(-2).includes(valueItem)
+                    ? 'right'
+                    : 'left',
+                }))}
+              >
+                {children}
+              </ExpandRow>
+            ) : (
               <T.Row key={id}>
                 <T.Data>{name}</T.Data>
                 {valueItems.map((valueItem, i) => {
@@ -136,7 +187,9 @@ export const SortableTable = (props: SortableTableProps) => {
                   return (
                     <T.Data key={`body-${id}-${i}`}>
                       {lastItem && tag ? (
-                        <Tag variant={tag}>{valueItem}</Tag>
+                        <Tag variant={tag} outlined={props.tagOutlined}>
+                          {valueItem}
+                        </Tag>
                       ) : (
                         valueItem
                       )}

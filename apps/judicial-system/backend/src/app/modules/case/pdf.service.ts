@@ -26,6 +26,7 @@ import {
   Confirmation,
   createCaseFilesRecord,
   createIndictment,
+  createServiceCertificate,
   createSubpoena,
   getCourtRecordPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
@@ -50,7 +51,7 @@ export class PdfService {
     private readonly subpoenaService: SubpoenaService,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
+  ) { }
 
   private formatMessage: FormatMessage = () => {
     throw new InternalServerErrorException('Format message not initialized')
@@ -92,7 +93,7 @@ export class PdfService {
         (caseFile1, caseFile2) =>
           (caseFile1.chapter ?? 0) - (caseFile2.chapter ?? 0) ||
           (caseFile1.orderWithinChapter ?? 0) -
-            (caseFile2.orderWithinChapter ?? 0),
+          (caseFile2.orderWithinChapter ?? 0),
       )
       ?.map((caseFile) => async () => {
         const buffer = await this.awsS3Service
@@ -352,6 +353,23 @@ export class PdfService {
           ),
         )
     }
+
+    return generatedPdf
+  }
+
+  async getServiceCertificatePdf(
+    theCase: Case,
+    defendant: Defendant,
+    subpoena: Subpoena,
+  ): Promise<Buffer> {
+    await this.refreshFormatMessage()
+
+    const generatedPdf = await createServiceCertificate(
+      theCase,
+      defendant,
+      subpoena,
+      this.formatMessage,
+    )
 
     return generatedPdf
   }

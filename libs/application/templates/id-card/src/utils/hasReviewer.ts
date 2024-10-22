@@ -15,13 +15,23 @@ export const hasReviewer = (answers: FormValue, externalData: ExternalData) => {
     '',
   ) as string
 
+  const chosenTypeOfId = getValueViaPath(answers, Routes.TYPEOFID, '') as string
+
   const applicantNationalId = getValueViaPath(
     externalData,
     'nationalRegistry.data.nationalId',
     '',
   ) as string
+
+  //logged in user is not the applicant
   if (chosenApplicantNationalId !== applicantNationalId) {
-    //logged in user is not the applicant
+    //if a parent is applying for nafnskírteini án ferðaskilríkja for a child, then there is no other reviewer needed
+    if (chosenTypeOfId === 'II') {
+      return false
+    }
+
+    //if a parent is applying for nafnskíteini með ferðaskilríkjum for a child
+    //then check if there is another parent registered that needs to approve
     const chosenChild = applicantChildren.find(
       (x) => x.childNationalId === chosenApplicantNationalId,
     )

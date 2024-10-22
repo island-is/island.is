@@ -190,6 +190,7 @@ export const ServicePortalDocumentsV2 = () => {
                     submitBatchAction(
                       activeArchive ? 'unarchive' : 'archive',
                       selectedLines,
+                      filteredDocuments.length === selectedLines.length,
                     )
                   }
                   archived={activeArchive}

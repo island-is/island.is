@@ -21,6 +21,7 @@ export const prerequisitesSection = buildSection({
       id: 'approveExternalData',
       subTitle: externalData.dataProvider.subTitle,
       checkboxLabel: externalData.dataProvider.checkboxLabel,
+      enableMockPayment: true,
       dataProviders: [
         buildDataProviderItem({
           provider: IdentityApi,

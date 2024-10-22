@@ -1,8 +1,11 @@
 import { DynamicModule } from '@nestjs/common'
 import { TerminusModule } from '@nestjs/terminus'
 
+import { LoggingModule } from '@island.is/logging'
+
 import { HealthController } from './health.controller'
 import { HealthCheckOptions, HealthCheckOptionsProviderKey } from './types'
+import { HealthLogger } from './health.logger'
 
 const defaultOptions: HealthCheckOptions = {
   timeout: 1000,
@@ -22,8 +25,14 @@ export class HealthModule {
             ...options,
           } as HealthCheckOptions,
         },
+        HealthLogger,
       ],
-      imports: [TerminusModule.forRoot()],
+      imports: [
+        TerminusModule.forRoot({
+          logger: HealthLogger,
+        }),
+        LoggingModule,
+      ],
     }
   }
 }

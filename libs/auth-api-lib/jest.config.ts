@@ -4,7 +4,6 @@ export default {
   rootDir: '../..',
   roots: [__dirname],
   globalSetup: `${__dirname}/test/globalSetup.ts`,
-  globalTeardown: `${__dirname}/test/globalTeardown.ts`,
   transform: {
     '^.+\\.[tj]sx?$': [
       'ts-jest',
@@ -16,4 +15,5 @@ export default {
   coverageDirectory: '<rootDir>/coverage/libs/auth-api-lib',
   globals: {},
   displayName: 'auth-api-lib',
+  collectCoverageFrom: ['src/**/*.ts'],
 }

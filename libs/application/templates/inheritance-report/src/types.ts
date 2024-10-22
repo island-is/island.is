@@ -11,6 +11,7 @@ export enum RelationEnum {
   CHILD = 'child',
   SIBLING = 'sibling',
   SPOUSE = 'spouse',
+  ADVOCATE = 'advocate',
 }
 export enum OtherPropertiesEnum {
   ACCOUNTS = 'accounts',

@@ -15,7 +15,6 @@ import {
   PrePaidInheritanceOptions,
   RelationSpouse,
 } from './constants'
-import { DebtTypes } from '../types'
 
 const deceasedShare = {
   deceasedShare: z.string().nonempty().optional(),
@@ -608,9 +607,7 @@ export const inheritanceReportSchema = z.object({
           enabled and whether member has advocate */
       .refine(
         ({ enabled, advocate, phone }) => {
-          return enabled && !advocate?.nationalId
-            ? isValidPhoneNumber(phone ?? '')
-            : true
+          return enabled && !advocate ? isValidPhoneNumber(phone ?? '') : true
         },
         {
           path: ['phone'],
@@ -618,7 +615,7 @@ export const inheritanceReportSchema = z.object({
       )
       .refine(
         ({ enabled, advocate, email }) => {
-          return enabled && !advocate?.nationalId ? isValidEmail(email) : true
+          return enabled && !advocate ? isValidEmail(email) : true
         },
         {
           path: ['email'],
@@ -644,6 +641,16 @@ export const inheritanceReportSchema = z.object({
         },
         {
           path: ['advocate', 'email'],
+        },
+      )
+      .refine(
+        ({ enabled, advocate }) => {
+          return (enabled && advocate?.email) || advocate?.phone
+            ? advocate?.nationalId && kennitala.isValid(advocate.nationalId)
+            : true
+        },
+        {
+          path: ['advocate', 'nationalId'],
         },
       )
       .array()
@@ -774,6 +781,9 @@ export const inheritanceReportSchema = z.object({
       },
     ),
   confirmAction: z.array(z.enum([YES])).length(1),
+  assetsConfirmation: z.array(z.enum([YES])).length(1),
+  debtsConfirmation: z.array(z.enum([YES])).length(1),
+  heirsConfirmation: z.array(z.enum([YES])).length(1),
 })
 
 export type InheritanceReport = z.TypeOf<typeof inheritanceReportSchema>

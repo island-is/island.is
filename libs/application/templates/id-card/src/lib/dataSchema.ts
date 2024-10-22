@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { error } from './messages'
-import { Services } from './constants'
+import { Services } from '../shared/types'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 const emailRegex =
@@ -31,7 +31,7 @@ const personInfo = z
 export const IdCardSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   typeOfId: z.enum(['II', 'ID']), //II = Nafnskírteini sem ferðaskilríki, ID = Nafnskírteini ekki sem ferðaskilríki
-  chosenApplicants: z.string(),
+  chosenApplicants: z.string().min(1),
   applicantInformation: personInfo,
   firstGuardianInformation: personInfo,
   secondGuardianInformation: z.object({
@@ -43,10 +43,10 @@ export const IdCardSchema = z.object({
     phoneNumber: z.string().refine((v) => isValidPhoneNumber(v) || v === '', {
       params: error.invalidValue,
     }),
+    approved: z.boolean().optional(),
   }),
   priceList: z.object({
     priceChoice: z.enum([Services.EXPRESS, Services.REGULAR]),
-    location: z.string(),
   }),
 })
 

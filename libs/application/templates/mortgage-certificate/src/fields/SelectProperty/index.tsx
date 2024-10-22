@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, ErrorMessage } from '@island.is/island-ui/core'
+import { Box, ErrorMessage, Text } from '@island.is/island-ui/core'
 import { PropertyTypeSelectField } from './PropertyTypeSelectField'
 import { useLocale } from '@island.is/localization'
 import { PropertyTypes } from '../../lib/constants'
@@ -9,7 +9,7 @@ import { useFieldArray, useFormContext } from 'react-hook-form'
 import { MortgageCertificate } from '../../lib/dataSchema'
 import { CheckedProperties } from './CheckedProperties'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { error } from '../../lib/messages'
+import { error, application as applicationMessage } from '../../lib/messages'
 import { SelectedProperty } from '../../shared'
 
 export const SelectProperty: FC<
@@ -17,9 +17,14 @@ export const SelectProperty: FC<
     field: { props: { allowVehicle: boolean; allowShip: boolean } }
   }
 > = (props) => {
-  const { application, field, errors } = props
+  const { application, field, errors, setBeforeSubmitCallback } = props
   const { control } = useFormContext<MortgageCertificate>()
   const { formatMessage } = useLocale()
+  const messageValue = formatMessage(
+    applicationMessage.values.maxPropertiesValue,
+  )
+  const maxProperties =
+    messageValue.match(/^[0-9]+$/) != null ? parseInt(messageValue, 10) : 10
   const initialPropertyType = getValueViaPath(
     application.answers,
     `${field.id}.propertyType`,
@@ -45,6 +50,13 @@ export const SelectProperty: FC<
   }
 
   const handleRemoveProperty = (index: number) => remove(index)
+
+  setBeforeSubmitCallback?.(async () => {
+    if (fields.length > maxProperties) {
+      return [false, '']
+    }
+    return [true, null]
+  })
 
   return (
     <>
@@ -74,6 +86,13 @@ export const SelectProperty: FC<
           properties={fields}
           handleRemoveProperty={handleRemoveProperty}
         />
+      )}
+      {fields.length > maxProperties && (
+        <ErrorMessage>
+          {formatMessage(error.errorToManyProperties, {
+            value: maxProperties,
+          })}
+        </ErrorMessage>
       )}
     </>
   )

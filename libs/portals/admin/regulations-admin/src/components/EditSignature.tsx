@@ -20,18 +20,18 @@ import { downloadUrl } from '../utils/files'
 import { DownloadDraftButton } from './DownloadDraftButton'
 import { useLocale } from '@island.is/localization'
 import { useS3Upload } from '../utils/dataHooks'
+import { formatDate } from '../utils/formatAmendingUtils'
 
 // ---------------------------------------------------------------------------
 
 const defaultSignatureText = `
   <p class="Dags" align="center"><em>{ministry}nu, {dags}.</em></p>
-  <p class="FHUndirskr" align="center">F.h.r.</p>
+  <p class="FHUndirskr" align="center">F. h. r.</p>
   <p class="Undirritun" align="center"><strong>NAFN</strong></p>
   <p class="Undirritun" align="right"><em>NAFN.</em></p>
 ` as HTMLText
 
 const getDefaultSignatureText = (
-  dateFormatter: (date: Date, str?: string) => string,
   /** The ministry of the author-type user that created the RegulationDraft */
   authorMinistry?: PlainText,
 ) => {
@@ -41,7 +41,7 @@ const getDefaultSignatureText = (
   const defaultMinister = '⸻ráðherra'
 
   return defaultSignatureText
-    .replace('{dags}', dateFormatter(new Date(), 'dd. MMMM yyyy'))
+    .replace('{dags}', formatDate(new Date()))
     .replace('{ministry}', authorMinistry || defaultMinistry)
     .replace('{minister}', authorMinister || defaultMinister) as HTMLText
 }
@@ -159,7 +159,7 @@ export const EditSignature = () => {
               draftId={draft.id}
               value={
                 draft.signatureText.value ||
-                getDefaultSignatureText(formatDateFns)
+                getDefaultSignatureText(draft.ministry.value)
               }
               onChange={(text) => updateState('signatureText', text)}
               required={!!draft.signatureText.required}

@@ -12,6 +12,7 @@ import { useUserInfo } from '@island.is/auth/react'
 import { LicenseDetail } from '../../../components/LicenseDetail'
 import { olMessage as om } from '../../../lib/messages'
 import { m } from '@island.is/service-portal/core'
+import { OccupationalLicenseV2LicenseType } from '@island.is/service-portal/graphql'
 
 type UseParams = {
   id: string
@@ -55,6 +56,11 @@ export const EducationDetail = () => {
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(om.healthDirectorateTooltip)}
       name={user.profile.name}
+      licenseNumber={
+        license.__typename === 'OccupationalLicensesHealthDirectorateLicense'
+          ? license.number
+          : undefined
+      }
       dateOfBirth={birthday ? formatDateFns(birthday, 'dd.MM.yyyy') : undefined}
       profession={license.profession}
       licenseType={license.type}

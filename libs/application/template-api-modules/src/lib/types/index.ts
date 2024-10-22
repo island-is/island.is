@@ -9,7 +9,8 @@ import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
 import { Message } from '@island.is/email-service'
 
 import type { Locale } from '@island.is/shared/types'
-import { Attachment } from 'nodemailer/lib/mailer'
+import { sharedModuleConfig } from '../modules/shared'
+import { ConfigType } from '@nestjs/config'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -38,6 +39,9 @@ export interface BaseTemplateAPIModuleConfig {
   islykill: IslykillApiModuleConfig
 }
 
+export interface SharedModuleConfig
+  extends ConfigType<typeof sharedModuleConfig> {}
+
 export interface TemplateApiModuleActionProps<Params = unknown> {
   application: ApplicationWithAttachments
   auth: User
@@ -65,7 +69,7 @@ export type EmailTemplateGenerator = (
 
 export type AttachmentEmailTemplateGenerator = (
   props: EmailTemplateGeneratorProps,
-  fileContent: Attachment['content'],
+  fileContent: string,
   email: string,
 ) => Message
 
@@ -107,8 +111,3 @@ export interface SmsMessage {
   phoneNumber: string
   message: string
 }
-
-export type ApplicationSubmittedEmail<T> = (
-  props: EmailTemplateGeneratorProps,
-  recipient: T,
-) => Message

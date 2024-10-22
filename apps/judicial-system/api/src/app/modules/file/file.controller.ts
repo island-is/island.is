@@ -31,7 +31,7 @@ export class FileController {
     private readonly fileService: FileService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-  ) {}
+  ) { }
 
   @Get('request')
   @Header('Content-Type', 'application/pdf')
@@ -177,6 +177,31 @@ export class FileController {
     )
   }
 
+  @Get('serviceCertificate/:defendantId/:subpoenaId')
+  @Header('Content-Type', 'application/pdf')
+  getServiceCertificatePdf(
+    @Param('id') id: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('subpoenaId') subpoenaId?: string,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting service certificate for defendant ${defendantId} of case ${id} as a pdf document`,
+    )
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_SERVICE_CERTIFICATE_PDF,
+      id,
+      `defendant/${defendantId}/subpoena/${subpoenaId}/serviceCertificate`,
+      req,
+      res,
+      'pdf',
+    )
+  }
+
   @Get(['subpoena/:defendantId', 'subpoena/:defendantId/:subpoenaId'])
   @Header('Content-Type', 'application/pdf')
   getSubpoenaPdf(
@@ -191,8 +216,7 @@ export class FileController {
     @Query('subpoenaType') subpoenaType?: SubpoenaType,
   ): Promise<Response> {
     this.logger.debug(
-      `Getting subpoena ${
-        subpoenaId ?? 'draft'
+      `Getting subpoena ${subpoenaId ?? 'draft'
       } for defendant ${defendantId} of case ${id} as a pdf document`,
     )
 

@@ -82,8 +82,7 @@ export const m = defineMessages({
   },
   listInformationDescription: {
     id: 'plc.application:listInformationDescription#markdown',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce aliquet imperdiet odio.',
+    defaultMessage: 'Vinsamlegast yfirfarið að upplýsingarnar séu réttar.',
     description: '',
   },
   information: {
@@ -170,52 +169,6 @@ export const m = defineMessages({
     description: '',
   },
 
-  /* Ábyrgðaraðilar */
-  managersAndSupervisors: {
-    id: 'plc.application:managersAndSupervisors',
-    defaultMessage: 'Ábyrgðar-/umsjónaraðilar',
-    description: '',
-  },
-  managersAndSupervisorsTitle: {
-    id: 'plc.application:managersAndSupervisorsTitle',
-    defaultMessage: 'Veljið ábyrgðar- og umsjónaraðila',
-    description: '',
-  },
-  managers: {
-    id: 'plc.application:managers',
-    defaultMessage: 'Ábyrgðaraðilar',
-    description: '',
-  },
-  managersDescription: {
-    id: 'plc.application:managersDescription',
-    defaultMessage:
-      'Ábyrgðaraðili hefur aðgang að söfnunum í öllum kjördæmum og getur bætt við og eytt umsjónaraðilum. Ábyrgðaraðili getur slegið inn kennitölur meðmælenda af blaði í viðeigandi kjördæmum.',
-    description: '',
-  },
-  addManager: {
-    id: 'plc.application:addManager',
-    defaultMessage: 'Bæta við ábyrgðaraðila',
-    description: '',
-  },
-
-  /* Umsjónaraðilar */
-  supervisors: {
-    id: 'plc.application:supervisors',
-    defaultMessage: 'Umsjónaraðilar',
-    description: '',
-  },
-  supervisorsDescription: {
-    id: 'plc.application:supervisorsDescription',
-    defaultMessage:
-      'Umsjónaraðili sér aðeins þau kjördæmi sem honum hefur verið úthlutað og getur slegið inn kennitölur meðmælenda af blaði í þeim kjördæmum.',
-    description: '',
-  },
-  addSupervisor: {
-    id: 'plc.application:addSupervisor',
-    defaultMessage: 'Bæta við umsjónaraðila',
-    description: '',
-  },
-
   /* Yfirlit */
   overview: {
     id: 'plc.application:overview',
@@ -225,7 +178,7 @@ export const m = defineMessages({
   overviewDescription: {
     id: 'plc.application:overviewDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce aliquet imperdiet odio, id ornare ante tincidunt ac. Phasellus massa velit, condimentum quis est id, tristique vestibulum lectus.',
+      'Vinsamlegast yfirfarið upplýsingar áður en meðmælasöfnun er stofnuð.',
     description: '',
   },
   applicantOverviewHeader: {
@@ -239,7 +192,7 @@ export const m = defineMessages({
     description: '',
   },
   listsOverviewHeader: {
-    id: 'plc.application:listOverviewHeader',
+    id: 'plc.application:listsOverviewHeader',
     defaultMessage: 'Upplýsingar um meðmælalista',
     description: '',
   },
@@ -300,13 +253,23 @@ export const m = defineMessages({
   linkFieldMessage: {
     id: 'plc.application:linkFieldMessage',
     defaultMessage:
-      'Á mínum síðum sést hve mörgum meðmælum hefur verið safnað í hverjum landsfjórðungi.',
+      'Á mínum síðum sést hve mörgum meðmælum hefur verið safnað í hverju kjördæmi.',
     description: '',
   },
-
+  linkFieldButtonCompanyTitle: {
+    id: 'plc.application:linkFieldButtonCompanyTitle',
+    defaultMessage: 'Mínar síður (fyrirtæki)',
+    description: '',
+  },
+  linkFieldCompanyMessage: {
+    id: 'plc.application:linkFieldCompanyMessage',
+    defaultMessage:
+      'Á mínum síðum fyrirtækja sést hve mörgum meðmælum hefur verið safnað í hverju kjördæmi.',
+    description: '',
+  },
   /* Action Card logs */
   logListCreated: {
-    id: 'plc.application:listCreated',
+    id: 'plc.application:logListCreated',
     defaultMessage: 'Meðmælalisti stofnaður',
     description: '',
   },

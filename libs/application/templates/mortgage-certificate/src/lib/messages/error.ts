@@ -17,4 +17,10 @@ export const error = defineMessages({
     defaultMessage: 'Vinsamlega veldu eign til að halda áfram',
     description: 'Error if there is no selected property',
   },
+  errorToManyProperties: {
+    id: 'mc.application:error.errorToManyProperties',
+    defaultMessage:
+      'Þú hefur valið of margar eignir, það er aðeins hægt að sækja veðbókavottorð fyrir {value} eignir í einu.',
+    description: 'Error if there are to many properties',
+  },
 })

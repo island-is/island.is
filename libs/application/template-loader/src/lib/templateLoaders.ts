@@ -71,6 +71,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/financial-statement-individual-election'
     ),
+  [ApplicationTypes.FINANCIAL_STATEMENT_POLITICAL_PARTY]: () =>
+    import(
+      '@island.is/application/templates/financial-statement-political-party'
+    ),
   [ApplicationTypes.OPERATING_LICENSE]: () =>
     import('@island.is/application/templates/operating-license'),
   [ApplicationTypes.MARRIAGE_CONDITIONS]: () =>
@@ -193,8 +197,14 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/id-card'),
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: () =>
     import('@island.is/application/templates/health-insurance-declaration'),
+  [ApplicationTypes.INCOME_PLAN]: () =>
+    import(
+      '@island.is/application/templates/social-insurance-administration/income-plan'
+    ),
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: () =>
     import('@island.is/application/templates/new-primary-school'),
+  [ApplicationTypes.MACHINE_REGISTRATION]: () =>
+    import('@island.is/application/templates/aosh/register-new-machine'),
 }
 
 export default templates
