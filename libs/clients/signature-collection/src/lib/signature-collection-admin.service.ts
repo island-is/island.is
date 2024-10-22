@@ -133,27 +133,51 @@ export class SignatureCollectionAdminClientService {
       throw new Error('Collection id input wrong')
     }
 
+    const candidates = await this.getApiWithAuth(
+      this.candidateApi,
+      auth,
+    ).frambodGet({
+      sofnunID: parseInt(collectionId),
+    })
+
+    const adminApi = await this.getApiWithAuth(this.adminApi, auth)
+
     const filteredAreas = areas
       ? collectionAreas.filter((area) =>
           areas.flatMap((a) => a.areaId).includes(area.id),
         )
       : collectionAreas
 
-    const candidacy = await this.getApiWithAuth(
-      this.adminApi,
-      auth,
-    ).adminFrambodPost({
-      frambodRequestDTO: {
-        sofnunID: parseInt(id),
-        kennitala: owner.nationalId,
-        simi: owner.phone,
-        netfang: owner.email,
-        medmaelalistar: filteredAreas.map((area) => ({
-          svaediID: parseInt(area.id),
-          listiNafn: `${owner.name} - ${area.name}`,
-        })),
-      },
-    })
+    let candidacy = candidates.find((c) => c.kennitala === owner.nationalId)
+
+    // If no candidacy exists, create one
+    if (!candidacy) {
+      candidacy = await adminApi.adminFrambodPost({
+        frambodRequestDTO: {
+          sofnunID: parseInt(id),
+          kennitala: owner.nationalId,
+          simi: owner.phone,
+          netfang: owner.email,
+          medmaelalistar: filteredAreas.map((area) => ({
+            svaediID: parseInt(area.id),
+            listiNafn: `${owner.name} - ${area.name}`,
+          })),
+        },
+      })
+    }
+    // Candidacy exists, add area
+    else {
+      await adminApi.adminMedmaelalistiPost({
+        medmaelalistarRequestDTO: {
+          frambodID: candidacy.id,
+          medmaelalistar: filteredAreas.map((area) => ({
+            svaediID: parseInt(area.id),
+            listiNafn: `${owner.name} - ${area.name}`,
+          })),
+        },
+      })
+    }
+
     return {
       slug: getSlug(
         candidacy.id ?? '',
