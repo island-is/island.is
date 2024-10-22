@@ -24,16 +24,18 @@ export enum ApplicationStates {
   DRAFT_RETRY = 'draft_retry',
   SUBMITTED = 'submitted',
   COMPLETE = 'complete',
+  REJECTED = 'rejected',
 }
 
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
 }
-type OJOIEvents =
+export type OJOIEvents =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.EDIT }
 
 const OJOITemplate: ApplicationTemplate<
   ApplicationContext,
@@ -125,11 +127,14 @@ const OJOITemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [
+          [DefaultEvents.SUBMIT]: [
             {
               target: ApplicationStates.SUBMITTED,
             },
           ],
+          [DefaultEvents.REJECT]: {
+            target: ApplicationStates.REJECTED,
+          },
         },
       },
       [ApplicationStates.DRAFT_RETRY]: {
@@ -176,11 +181,14 @@ const OJOITemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [
+          [DefaultEvents.SUBMIT]: [
             {
               target: ApplicationStates.SUBMITTED,
             },
           ],
+          [DefaultEvents.REJECT]: {
+            target: ApplicationStates.REJECTED,
+          },
         },
       },
       [ApplicationStates.SUBMITTED]: {
@@ -216,8 +224,11 @@ const OJOITemplate: ApplicationTemplate<
           [DefaultEvents.APPROVE]: {
             target: ApplicationStates.COMPLETE,
           },
-          [DefaultEvents.REJECT]: {
+          [DefaultEvents.EDIT]: {
             target: ApplicationStates.DRAFT_RETRY,
+          },
+          [DefaultEvents.REJECT]: {
+            target: ApplicationStates.REJECTED,
           },
         },
       },
@@ -236,6 +247,35 @@ const OJOITemplate: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/Complete').then((val) =>
                   Promise.resolve(val.Complete),
+                ),
+            },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+      },
+      [ApplicationStates.REJECTED]: {
+        meta: {
+          name: 'Umsókn hafnað',
+          status: 'rejected',
+          lifecycle: pruneAfterDays(30),
+          actionCard: {
+            tag: {
+              label: 'Hafnað',
+              variant: 'red',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              read: 'all',
+              delete: true,
+              formLoader: () =>
+                import('../forms/Rejected').then((val) =>
+                  Promise.resolve(val.Rejected),
                 ),
             },
             {

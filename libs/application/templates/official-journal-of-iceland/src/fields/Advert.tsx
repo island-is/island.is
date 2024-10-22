@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { InputFields, OJOIFieldBaseProps } from '../lib/types'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { FormGroup } from '../components/form/FormGroup'
 import { advert } from '../lib/messages'
 import * as styles from './Advert.css'
@@ -18,9 +18,11 @@ type Props = OJOIFieldBaseProps & {
 
 export const Advert = ({ application, timeStamp }: Props) => {
   const { setValue } = useFormContext()
-  const { application: currentApplication } = useApplication({
-    applicationId: application.id,
-  })
+  const { application: currentApplication, submitApplication } = useApplication(
+    {
+      applicationId: application.id,
+    },
+  )
   const { departments, loading: loadingDepartments } = useDepartments()
   const {
     useLazyTypes,
@@ -50,6 +52,12 @@ export const Advert = ({ application, timeStamp }: Props) => {
   return (
     <>
       <FormGroup>
+        <Button
+          colorScheme="destructive"
+          onClick={() => submitApplication('REJECT')}
+        >
+          Reject application
+        </Button>
         <Box className={styles.inputWrapper}>
           <OJOISelectController
             applicationId={application.id}

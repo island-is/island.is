@@ -36,6 +36,7 @@ export enum Routes {
   PUBLISHING = 'publishing',
   SUMMARY = 'summary',
   COMPLETE = 'complete',
+  REJECTED = 'rejected',
   MISC = 'misc',
 }
 

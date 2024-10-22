@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@apollo/client'
 import {
   UPDATE_APPLICATION,
   APPLICATION_APPLICATION,
+  SUBMIT_APPLICATION,
 } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 import { partialSchema } from '../lib/dataSchema'
@@ -31,12 +32,17 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
   })
 
   const [
-    mutation,
+    updateApplicationMutation,
     { data: updateData, loading: updateLoading, error: updateError },
   ] = useMutation(UPDATE_APPLICATION)
 
+  const [
+    submitApplicationMutation,
+    { data: submitData, loading: submitLoading, error: submitError },
+  ] = useMutation(SUBMIT_APPLICATION)
+
   const updateApplication = async (input: partialSchema, cb?: () => void) => {
-    await mutation({
+    await updateApplicationMutation({
       variables: {
         locale,
         input: {
@@ -49,6 +55,18 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     })
 
     cb && cb()
+  }
+
+  const submitApplication = async (event: string) => {
+    await submitApplicationMutation({
+      variables: {
+        locale,
+        input: {
+          id: applicationId,
+          event: event,
+        },
+      },
+    })
   }
 
   const debouncedUpdateApplication = debounce(
@@ -68,12 +86,16 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     application: application?.applicationApplication as OJOIApplication,
     applicationLoading,
     applicationError,
+    submitData,
+    submitLoading,
+    submitError,
     updateData,
     updateLoading,
     updateError,
     isLoading: applicationLoading || updateLoading,
     debouncedOnUpdateApplicationHandler,
     updateApplication,
+    submitApplication,
     refetchApplication,
   }
 }
