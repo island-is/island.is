@@ -1,8 +1,15 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 
-import { Box, Button, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Icon,
+  IconMapIcon,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { Defendant } from '../../graphql/schema'
@@ -10,6 +17,9 @@ import DateTime from '../DateTime/DateTime'
 import SectionHeading from '../SectionHeading/SectionHeading'
 import { strings } from './BlueBoxWithDate.strings'
 import * as styles from './BlueBoxWithIcon.css'
+import { errors } from '@island.is/judicial-system-web/messages'
+import { formatDateForServer, useDefendants } from '../../utils/hooks'
+import { FormContext } from '../FormProvider/FormProvider'
 
 interface Props {
   defendant: Defendant
@@ -23,8 +33,19 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const [dHasBeenSet, setDHasBeenSet] = useState<boolean>()
   const [d2HasBeenSet, setD2HasBeenSet] = useState<boolean>()
   const [textItems, setTextItems] = useState<string[]>([])
+  const { setAndSendDefendantToServer } = useDefendants()
+  const { workingCase, setWorkingCase } = useContext(FormContext)
 
   const handleDateChange = (date: Date | undefined, valid: boolean) => {
+    if (!date) {
+      // Do nothing
+      return
+    }
+
+    if (!valid) {
+      toast.error(formatMessage(errors.createIndictmentCount))
+    }
+
     setD(date)
   }
 
@@ -32,7 +53,20 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     setD2HasBeenSet(true)
   }
   const handleSetDate = () => {
+    if (!d) {
+      // TODO: handle error
+      return
+    }
+
     setDHasBeenSet(true)
+    setAndSendDefendantToServer(
+      {
+        caseId: workingCase.id,
+        defendantId: defendant.id,
+        verdictViewDate: formatDateForServer(d),
+      },
+      setWorkingCase,
+    )
   }
 
   const handleSetDate2 = () => {
