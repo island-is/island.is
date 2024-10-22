@@ -868,7 +868,7 @@ export const notifications = {
     body: {
       id: 'judicial.system.backend:notifications.case_files_updated.body',
       defaultMessage:
-        'Ný gögn hafa borist vegna máls {courtCaseNumber}. {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}',
+        'Ný gögn hafa borist vegna máls {courtCaseNumber}. {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
       description: 'Texti í pósti til aðila máls þegar ný gögn eru send',
     },
   }),

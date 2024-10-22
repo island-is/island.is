@@ -1766,6 +1766,7 @@ export class InternalNotificationService extends BaseNotificationService {
   //#region CASE_FILES_UPDATED notifications
   private sendCaseFilesUpdatedNotification(
     courtCaseNumber?: string,
+    court?: string,
     link?: string,
     name?: string,
     email?: string,
@@ -1775,6 +1776,7 @@ export class InternalNotificationService extends BaseNotificationService {
     })
     const html = this.formatMessage(notifications.caseFilesUpdated.body, {
       courtCaseNumber,
+      court: court?.replace('dómur', 'dómi'),
       userHasAccessToRVG: Boolean(link),
       linkStart: `<a href="${link}">`,
       linkEnd: '</a>',
@@ -1790,6 +1792,7 @@ export class InternalNotificationService extends BaseNotificationService {
     const promises = [
       this.sendCaseFilesUpdatedNotification(
         theCase.courtCaseNumber,
+        theCase.court?.name,
         `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
         theCase.judge?.name,
         theCase.judge?.email,
@@ -1805,6 +1808,7 @@ export class InternalNotificationService extends BaseNotificationService {
         promises.push(
           this.sendCaseFilesUpdatedNotification(
             theCase.courtCaseNumber,
+            theCase.court?.name,
             civilClaimant.spokespersonNationalId &&
               formatDefenderRoute(
                 this.config.clientUrl,
@@ -1828,6 +1832,7 @@ export class InternalNotificationService extends BaseNotificationService {
           promises.push(
             this.sendCaseFilesUpdatedNotification(
               theCase.courtCaseNumber,
+              theCase.court?.name,
               defendant.defenderNationalId &&
                 formatDefenderRoute(
                   this.config.clientUrl,
@@ -1846,6 +1851,7 @@ export class InternalNotificationService extends BaseNotificationService {
       promises.push(
         this.sendCaseFilesUpdatedNotification(
           theCase.courtCaseNumber,
+          theCase.court?.name,
           `${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}`,
           theCase.prosecutor?.name,
           theCase.prosecutor?.email,
