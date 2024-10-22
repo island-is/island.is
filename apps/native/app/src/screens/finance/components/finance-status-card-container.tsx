@@ -8,7 +8,7 @@ import {
 import { useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Image, Linking, Pressable, View } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import chevronDown from '../../../assets/icons/chevron-down.png'
 import {
   ChargeType,
@@ -19,13 +19,11 @@ import { useGetFinanceStatusDetailsQuery } from '../../../graphql/types/schema'
 import { navigateTo } from '../../../lib/deep-linking'
 import { showPicker } from '../../../lib/show-picker'
 import { LightButton } from './light-button'
+import { useBrowser } from '../../../lib/use-browser'
 
 const Row = styled.View<{ border?: boolean }>`
   flex-direction: row;
   flex-wrap: wrap;
-  margin-left: -8px;
-  margin-right: -8px;
-
   border-bottom-color: ${dynamicColor(({ theme }) => ({
     light: theme.color.blue100,
     dark: theme.shades.dark.shade300,
@@ -34,45 +32,71 @@ const Row = styled.View<{ border?: boolean }>`
 `
 
 const Cell = styled.View`
-  margin-right: 8px;
-  margin-left: 8px;
-  margin-top: 4px;
-  margin-bottom: 4px;
+  margin-right: ${({ theme }) => theme.spacing[1]}px;
+  margin-left: ${({ theme }) => theme.spacing[1]}px;
+  margin-top: ${({ theme }) => theme.spacing.smallGutter}px;
+  margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
+`
+
+const AboutItem = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+  min-width: 50%;
+  flex: 1;
 `
 
 const TouchableRow = styled.TouchableHighlight`
   flex-direction: row;
   flex-wrap: wrap;
-  margin-left: -8px;
-  margin-right: -8px;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-top: ${({ theme }) => theme.spacing[2]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
   border-bottom-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blue100,
+    light: theme.color.blue200,
     dark: theme.shades.dark.shade300,
   }))};
   border-bottom-width: 1px;
 `
 
 const AboutBox = styled.View`
-  padding: 16px;
-  border-top-color: ${dynamicColor(({ theme }) => ({
-    light: theme.color.blueberry200,
+  padding: ${({ theme }) => theme.spacing[2]}px;
+  margin-top: 0px;
+`
+
+const RowItem = styled.View`
+  margin-right: ${({ theme }) => theme.spacing[1]}px;
+  margin-left: ${({ theme }) => theme.spacing[1]}px;
+  flex: 1;
+`
+
+const TableHeading = styled.View`
+  flex-direction: row;
+  flex: 1;
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
+  border-bottom-color: ${dynamicColor(({ theme }) => ({
+    light: theme.color.blue200,
     dark: theme.shades.dark.shade300,
   }))};
-  border-top-width: 1px;
-  margin-top: 0px;
+  border-bottom-width: 1px;
+`
+
+const Total = styled(Typography)`
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
+  margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
 export function FinanceStatusCardContainer({
   chargeType,
   org,
+  componentId,
 }: {
   chargeType: ChargeType
   org: Organization
+  componentId: string
 }) {
   const intl = useIntl()
+  const theme = useTheme()
   const [open, setOpen] = useState(false)
+  const { openBrowser } = useBrowser()
   const res = useGetFinanceStatusDetailsQuery({
     variables: {
       input: {
@@ -94,9 +118,13 @@ export function FinanceStatusCardContainer({
   ]
   const [selectedChargeItemSubject, setSelectedChargeItemSubject] = useState(0)
 
+  const shouldShowAboutOrgBox =
+    org.homepage || org.email || org.phone || org.name
+
   return (
     <FinanceStatusCard
       title={chargeType.name}
+      icon={chevronDown}
       message={
         <FormattedMessage
           id="finance.statusCard.status"
@@ -109,11 +137,10 @@ export function FinanceStatusCardContainer({
       }}
       open={open}
     >
-      <View style={{ width: '100%', padding: 16 }}>
+      <View style={{ width: '100%', padding: theme.spacing[2] }}>
         <Typography
-          weight="500"
-          size={13}
-          style={{ color: blue400, marginBottom: 8 }}
+          variant="eyebrow"
+          style={{ color: blue400, marginBottom: theme.spacing[1] }}
         >
           <FormattedMessage
             id="finance.statusCard.paymentBase"
@@ -153,22 +180,24 @@ export function FinanceStatusCardContainer({
           }}
         />
         <Row style={{ marginTop: 12 }}>
-          <Cell style={{ flex: 1 }}>
-            <Typography size={13} weight="600">
-              <FormattedMessage
-                id="finance.statusCard.deadline"
-                defaultMessage="Eindagi"
-              />
-            </Typography>
-          </Cell>
-          <Cell style={{ flex: 1 }}>
-            <Typography style={{ fontWeight: '600', textAlign: 'right' }}>
-              <FormattedMessage
-                id="finance.statusCard.amount"
-                defaultMessage="Upphæð"
-              />
-            </Typography>
-          </Cell>
+          <TableHeading>
+            <Cell style={{ flex: 1 }}>
+              <Typography variant="eyebrow">
+                <FormattedMessage
+                  id="finance.statusCard.deadline"
+                  defaultMessage="Eindagi"
+                />
+              </Typography>
+            </Cell>
+            <Cell style={{ flex: 1 }}>
+              <Typography variant="eyebrow" style={{ textAlign: 'right' }}>
+                <FormattedMessage
+                  id="finance.statusCard.amount"
+                  defaultMessage="Upphæð"
+                />
+              </Typography>
+            </Cell>
+          </TableHeading>
         </Row>
         {res.loading
           ? Array.from({ length: 3 }).map((_, index) => (
@@ -196,27 +225,24 @@ export function FinanceStatusCardContainer({
                   }}
                 >
                   <>
-                    <Cell style={{ flex: 1 }}>
-                      <Typography>{charge.finalDueDate}</Typography>
-                    </Cell>
-                    <Cell style={{ flex: 1 }}>
-                      <Typography style={{ textAlign: 'right' }}>
+                    <RowItem>
+                      <Typography variant="body3">
+                        {charge.finalDueDate}
+                      </Typography>
+                    </RowItem>
+                    <RowItem>
+                      <Typography
+                        variant="body3"
+                        style={{ textAlign: 'right' }}
+                      >
                         {intl.formatNumber(charge.totals)} kr.
                       </Typography>
-                    </Cell>
+                    </RowItem>
                     <Image
                       source={chevronDown}
                       style={{
-                        tintColor: 'rgba(128,128,128,0.6)',
-                        transform: [
-                          { rotate: '-90deg' },
-                          {
-                            translateY: -1,
-                          },
-                          {
-                            translateX: -6,
-                          },
-                        ],
+                        tintColor: theme.color.dark300,
+                        transform: [{ rotate: '-90deg' }],
                       }}
                     />
                   </>
@@ -225,94 +251,126 @@ export function FinanceStatusCardContainer({
             })}
         <Row>
           <Cell style={{ flex: 1, alignItems: 'flex-end' }}>
-            <Typography size={13} weight="600" style={{ marginBottom: 4 }}>
+            <Total variant="eyebrow">
               <FormattedMessage
                 id="finance.statusCard.total"
                 defaultMessage="Samtals"
               />
-            </Typography>
+            </Total>
             {res.loading ? (
               <Skeleton height={18} />
             ) : (
-              <Typography>
+              <Typography variant="body3">
                 {intl.formatNumber(chargeType.totals)} kr.
               </Typography>
             )}
           </Cell>
         </Row>
       </View>
-      <AboutBox>
-        <Typography size={13} weight="600">
-          <FormattedMessage
-            id="finance.statusCard.organization"
-            defaultMessage="Þjónustuaðili"
-          />
-        </Typography>
-        {res.loading ? (
-          <>
-            <Skeleton height={18} style={{ marginTop: 8 }} />
-            <Skeleton height={18} style={{ marginTop: 8 }} />
-          </>
-        ) : (
-          <Typography style={{ paddingTop: 4 }}>{org.name}</Typography>
-        )}
-        <Row>
-          {org.homepage ? (
-            <Cell>
-              <Typography size={13} weight="600">
-                <FormattedMessage
-                  id="finance.statusCard.organizationWebsite"
-                  defaultMessage="Vefur"
-                />
-                :
-              </Typography>
-              <Pressable
-                onPress={() =>
-                  Linking.openURL(
-                    `https://${org.email.replace(/https?:\/\//, '')}`,
-                  )
-                }
-              >
-                <Typography style={{ paddingTop: 4, color: blue400 }}>
-                  {org.homepage}
+      {shouldShowAboutOrgBox && !res.loading && (
+        <AboutBox>
+          <Typography variant="eyebrow">
+            <FormattedMessage
+              id="finance.statusCard.organization"
+              defaultMessage="Þjónustuaðili"
+            />
+          </Typography>
+          {res.loading ? (
+            <>
+              <Skeleton height={18} style={{ marginTop: theme.spacing[1] }} />
+              <Skeleton height={18} style={{ marginTop: theme.spacing[1] }} />
+            </>
+          ) : (
+            <Typography
+              variant="body3"
+              style={{ paddingTop: theme.spacing.smallGutter }}
+            >
+              {org.name}
+            </Typography>
+          )}
+          <Row>
+            {org.homepage ? (
+              <AboutItem style={{ flexWrap: 'nowrap' }}>
+                <Typography variant="eyebrow">
+                  <FormattedMessage
+                    id="finance.statusCard.organizationWebsite"
+                    defaultMessage="Vefur"
+                  />
+                  :
                 </Typography>
-              </Pressable>
-            </Cell>
-          ) : null}
-          {org.email ? (
-            <Cell>
-              <Typography size={13} weight="600">
-                <FormattedMessage
-                  id="finance.statusCard.organizationEmail"
-                  defaultMessage="Netfang"
-                />
-                :
-              </Typography>
-              <Pressable onPress={() => Linking.openURL(`mailto:${org.email}`)}>
-                <Typography style={{ paddingTop: 4, color: blue400 }}>
-                  {org.email}
+                <Pressable
+                  onPress={() =>
+                    openBrowser(
+                      `https://${org.email.replace(/https?:\/\//, '')}`,
+                      componentId,
+                    )
+                  }
+                >
+                  <Typography
+                    variant="eyebrow"
+                    style={{
+                      paddingTop: theme.spacing.smallGutter,
+                      color: blue400,
+                    }}
+                  >
+                    {org.homepage}
+                  </Typography>
+                </Pressable>
+              </AboutItem>
+            ) : null}
+            {org.email ? (
+              <AboutItem>
+                <Typography variant="eyebrow">
+                  <FormattedMessage
+                    id="finance.statusCard.organizationEmail"
+                    defaultMessage="Netfang"
+                  />
+                  :
                 </Typography>
-              </Pressable>
-            </Cell>
-          ) : null}
-          {org.phone ? (
-            <Cell>
-              <Typography weight="600">
-                <FormattedMessage
-                  id="finance.statusCard.organizationPhone"
-                  defaultMessage="Sími"
-                />
-                :
-              </Typography>
-              <Pressable onPress={() => Linking.openURL(`tel:${org.phone}`)}>
-                <Typography style={{ paddingTop: 4, color: blue400 }}>
-                  {org.phone}
+                <Pressable
+                  onPress={() => Linking.openURL(`mailto:${org.email}`)}
+                  style={{ flexWrap: 'nowrap' }}
+                >
+                  <Typography
+                    variant="eyebrow"
+                    style={{
+                      paddingTop: theme.spacing.smallGutter,
+                      color: blue400,
+                    }}
+                  >
+                    {org.email}
+                  </Typography>
+                </Pressable>
+              </AboutItem>
+            ) : null}
+            {org.phone ? (
+              <AboutItem>
+                <Typography variant="eyebrow">
+                  <FormattedMessage
+                    id="finance.statusCard.organizationPhone"
+                    defaultMessage="Sími"
+                  />
+                  :
                 </Typography>
-              </Pressable>
-            </Cell>
-          ) : null}
-        </Row>
-      </AboutBox>
+                <Pressable
+                  onPress={() => Linking.openURL(`tel:${org.phone}`)}
+                  style={{ flexWrap: 'nowrap' }}
+                >
+                  <Typography
+                    variant="eyebrow"
+                    style={{
+                      paddingTop: theme.spacing.smallGutter,
+                      color: blue400,
+                    }}
+                  >
+                    {org.phone}
+                  </Typography>
+                </Pressable>
+              </AboutItem>
+            ) : null}
+          </Row>
+        </AboutBox>
+      )}
     </FinanceStatusCard>
   )
 }

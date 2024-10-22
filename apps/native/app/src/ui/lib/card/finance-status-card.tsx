@@ -2,7 +2,7 @@ import React from 'react'
 import { Image, ImageSourcePropType, LayoutAnimation } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils/dynamic-color'
-import { font } from '../../utils/font'
+import { Typography } from '../typography/typography'
 
 const Host = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
@@ -17,7 +17,7 @@ const Card = styled.TouchableHighlight<{ open?: boolean }>`
     open ? 0 : theme.border.radius.large};
   background-color: ${dynamicColor((props) => ({
     dark: 'shade100',
-    light: props.theme.color.blueberry100,
+    light: props.theme.color.blue100,
   }))};
 `
 
@@ -32,29 +32,28 @@ const Title = styled.View`
   padding-right: ${({ theme }) => theme.spacing[1]}px;
 `
 
-const TitleText = styled.Text`
+const TitleText = styled(Typography)`
   flex: 1;
+`
 
-  ${font({
-    fontWeight: '600',
-    fontSize: 13,
-    lineHeight: 17,
-    color: 'foreground',
-  })}
+const IconWrapper = styled.View`
+  width: 24px;
+  height: 24px;
+  background-color: white;
+  justify-content: center;
+  align-items: center;
+  border-radius: ${({ theme }) => theme.border.radius.circle};
+  margin-right: ${({ theme }) => theme.spacing[1]}px;
+`
+
+const IconMessage = styled.View`
+  flex-direction: row;
+  justify-content: flex-start;
 `
 
 const Row = styled.View`
   flex-direction: row;
   justify-content: space-between;
-`
-
-const Message = styled.Text`
-  ${font({
-    fontSize: 16,
-    fontWeight: '300',
-    lineHeight: 24,
-    color: 'foreground',
-  })}
 `
 
 const Expanded = styled.View`
@@ -124,22 +123,23 @@ export function FinanceStatusCard({
         open={open}
       >
         <Container>
-          <Row style={{ marginBottom: 8 }}>
+          <Row style={{ marginBottom: theme.spacing[1] }}>
             <Title>
-              {icon && (
-                <Image
-                  source={icon}
-                  style={{ width: 16, height: 16, marginRight: 8 }}
-                />
-              )}
-              <TitleText numberOfLines={1} ellipsizeMode="tail">
+              <TitleText numberOfLines={1} ellipsizeMode="tail" variant="body3">
                 {title}
               </TitleText>
             </Title>
           </Row>
           <Row>
-            <Message>{message}</Message>
-            <Message>{value}</Message>
+            <IconMessage>
+              {icon && (
+                <IconWrapper>
+                  <Image source={icon} style={{ width: 16, height: 16 }} />
+                </IconWrapper>
+              )}
+              <Typography variant="heading5">{message}</Typography>
+            </IconMessage>
+            <Typography variant="heading5">{value}</Typography>
           </Row>
         </Container>
       </Card>

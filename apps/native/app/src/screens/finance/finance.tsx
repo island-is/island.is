@@ -184,6 +184,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
                   key={`${org.id}-${chargeType.id}-${i}-${ii}`}
                   chargeType={chargeType}
                   org={org}
+                  componentId={componentId}
                 />
               )),
             )
