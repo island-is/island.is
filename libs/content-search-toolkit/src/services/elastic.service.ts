@@ -243,6 +243,11 @@ export class ElasticService {
       SearchResponse<MappedData>,
       typeof requestBody
     >(index, requestBody)
+
+    if (query.types?.includes('webGrant')) {
+      logger.warn('query with web grant')
+      logger.warn('data boyd', data.body)
+    }
     return data.body
   }
 

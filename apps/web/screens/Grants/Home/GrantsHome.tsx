@@ -128,8 +128,9 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
             </Box>
 
             <GridRow>
-              {categories?.map((c) => (
+              {categories?.map((c, idx) => (
                 <GridColumn
+                  key={idx}
                   span={['1/1', '1/2', '1/2', '1/3']}
                   paddingTop={3}
                   paddingBottom={3}

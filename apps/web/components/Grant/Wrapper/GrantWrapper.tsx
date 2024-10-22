@@ -47,7 +47,7 @@ export const GrantWrapper = ({
   return (
     <>
       <HeadWithSocialSharing
-        title={`pageTitle`}
+        title={pageTitle}
         description={pageDescription}
         imageUrl={pageFeaturedImage}
       />

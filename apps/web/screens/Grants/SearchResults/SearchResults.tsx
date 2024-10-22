@@ -7,13 +7,10 @@ import {
   Box,
   BreadCrumbItem,
   Breadcrumbs,
-  Checkbox,
-  Divider,
   Filter,
   FilterMultiChoice,
   Inline,
   Input,
-  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
@@ -21,9 +18,9 @@ import { GrantHeaderWithImage, GrantWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
-  GenericTag,
+  Grant,
   Query,
-  QueryGetGenericTagsInTagGroupArgs,
+  QueryGetGrantsArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -33,7 +30,7 @@ import {
   withCustomPageWrapper,
 } from '../../CustomPage/CustomPageWrapper'
 import SidebarLayout from '../../Layouts/SidebarLayout'
-import { GET_GENERIC_TAG_IN_TAG_GROUP_QUERY } from '../../queries/GenericTag'
+import { GET_GRANTS_QUERY } from '../../queries/Grants'
 import { m } from '../messages'
 
 const filterState = {
@@ -43,7 +40,10 @@ const filterState = {
   organization: [],
 }
 
-const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({ locale }) => {
+const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
+  locale,
+  grants,
+}) => {
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
@@ -259,10 +259,13 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({ locale }) => {
           }
         >
           <Inline space={2}>
-            <ActionCard heading="bingbong" text="hanblo"></ActionCard>
-            <ActionCard heading="bingbong" text="hanblo"></ActionCard>
-            <ActionCard heading="bingbong" text="hanblo"></ActionCard>
-            <ActionCard heading="bingbong" text="hanblo"></ActionCard>
+            <ActionCard heading="bingbong" text="hanblo" />
+            <ActionCard heading="bingbong" text="hanblo" />
+            <ActionCard heading="bingbong" text="hanblo" />
+            <ActionCard heading="bingbong" text="hanblo" />
+            {grants?.map((grant) => (
+              <ActionCard heading={grant.name} text={grant.description ?? ''} />
+            ))}
           </Inline>
         </SidebarLayout>
       </Box>
@@ -271,21 +274,19 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({ locale }) => {
 }
 
 interface GrantsHomeProps {
-  organization?: Query['getOrganization']
-  categories?: Array<GenericTag>
   locale: Locale
+
+  grants?: Array<Grant>
 }
 
 const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
-  categories,
-  organization,
+  grants,
   customPageData,
   locale,
 }) => {
   return (
     <GrantsSearchResultsPage
-      categories={categories}
-      organization={organization}
+      grants={grants}
       locale={locale}
       customPageData={customPageData}
     />
@@ -293,27 +294,20 @@ const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
 }
 
 GrantsSearchResults.getProps = async ({ apolloClient, locale }) => {
-  const tagGroupCategory = 'grant-category'
-  //Todo: add more organizations ??
-
-  const query = (await apolloClient.query) < Query
-
   const {
-    data: { getGenericTagsInTagGroup: tags },
-  } = await apolloClient.query<Query, QueryGetGenericTagsInTagGroupArgs>({
-    query: GET_GENERIC_TAG_IN_TAG_GROUP_QUERY,
+    data: { getGrants: grants },
+  } = await apolloClient.query<Query, QueryGetGrantsArgs>({
+    query: GET_GRANTS_QUERY,
     variables: {
       input: {
         lang: locale as ContentLanguage,
-        tagGroupSlug: tagGroupCategory,
       },
     },
   })
 
   return {
-    categories: tags ?? [],
+    grants,
     locale: locale as Locale,
-    showSearchInHeader: false,
     themeConfig: {
       footerVersion: 'organization',
     },
