@@ -106,7 +106,6 @@ export class SubpoenaService {
     subpoena: Subpoena,
     update: UpdateSubpoenaDto,
     transaction?: Transaction,
-    user?: User,
   ): Promise<Subpoena> {
     const {
       defenderChoice,
@@ -136,12 +135,14 @@ export class SubpoenaService {
     })
     let defenderAffectedRows = 0
 
-    // This is added because the defender choice can only be confirmed by
-    // a district court user. If someone else updates it then we want to
-    // reset the existing confirmation (unless a court user is updating it)
-    const confirmDefenderChoice = Boolean(
-      user && isDistrictCourtUser(user) && isDefenderChoiceConfirmed === true,
-    )
+    // If there is a change in the defender choice after the judge has confirmed the choice,
+    // we need to set the isDefenderChoiceConfirmed to false
+    const isChangingDefenderChoice =
+      (update.defenderChoice &&
+        subpoena.defendant?.defenderChoice !== update.defenderChoice) ||
+      (update.defenderNationalId &&
+        subpoena.defendant?.defenderNationalId !== update.defenderNationalId &&
+        subpoena.defendant?.isDefenderChoiceConfirmed)
 
     if (
       defenderChoice ||
@@ -158,7 +159,7 @@ export class SubpoenaService {
         requestedDefenderChoice,
         requestedDefenderNationalId,
         requestedDefenderName,
-        isDefenderChoiceConfirmed: confirmDefenderChoice,
+        isDefenderChoiceConfirmed: isChangingDefenderChoice ? false : undefined,
       }
 
       const [defenderUpdateAffectedRows] = await this.defendantModel.update(
