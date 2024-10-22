@@ -5,7 +5,6 @@ import {
   buildDescriptionField,
   buildHiddenInput,
   buildMultiField,
-  buildRadioField,
   buildSelectField,
   buildSubSection,
   buildTextField,
@@ -49,11 +48,11 @@ export const aboutSection = buildSubSection({
           required: true,
           options: [
             {
-              value: YES, // TODO What format does aosh use for yes/no options
+              value: YES,
               label: shared.options.yes,
             },
             {
-              value: NO, // TODO What format does aosh use for yes/no options
+              value: NO,
               label: shared.options.no,
             },
           ],
@@ -65,11 +64,11 @@ export const aboutSection = buildSubSection({
           required: true,
           options: [
             {
-              value: YES, // TODO What format does aosh use for yes/no options
+              value: YES,
               label: shared.options.yes,
             },
             {
-              value: NO, // TODO What format does aosh use for yes/no options
+              value: NO,
               label: shared.options.no,
             },
           ],

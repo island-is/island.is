@@ -2,11 +2,13 @@ import {
   buildAlertMessageField,
   buildDescriptionField,
   buildMultiField,
+  buildRadioField,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { information } from '../../../lib/messages'
-import { Application } from '@island.is/api/schema'
+import { information, shared } from '../../../lib/messages'
+import { FormValue, NO, YES } from '@island.is/application/types'
 
 export const projectPurchaseSection = buildSubSection({
   id: 'projectPurchaseSection',
@@ -28,18 +30,38 @@ export const projectPurchaseSection = buildSubSection({
           message: information.labels.projectPurchase.alertMessage,
           alertType: 'info',
         }),
+        buildRadioField({
+          id: 'projectPurchase.radio',
+          width: 'half',
+          defaultValue: NO,
+          title: information.labels.projectPurchase.radioTitle,
+          options: [
+            {
+              value: YES,
+              label: shared.options.yes,
+            },
+            {
+              value: NO,
+              label: shared.options.no,
+            },
+          ],
+        }),
         buildTextField({
           id: 'projectPurchase.nationalId',
           title: information.labels.company.nationalId,
           backgroundColor: 'white',
           width: 'half',
           format: '######-####',
+          condition: (answer: FormValue) =>
+            getValueViaPath(answer, 'projectPurchase.checkbox') === YES,
         }),
         buildTextField({
           id: 'projectPurchase.name',
           title: information.labels.projectPurchase.name,
           backgroundColor: 'white',
           width: 'half',
+          condition: (answer: FormValue) =>
+            getValueViaPath(answer, 'projectPurchase.checkbox') === YES,
         }),
       ],
     }),

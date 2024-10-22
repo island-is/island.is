@@ -33,14 +33,22 @@ type MultiSelectControllerProps = {
   answerId: string
   onAnswerChange: (answers: OptionWithKey) => void
   pickedValue?: OptionAndKey
+  majorGroupLength: number
 }
 
 export const MultiSelectDropdownController: FC<
   React.PropsWithChildren<MultiSelectControllerProps & FieldBaseProps>
 > = (props) => {
   const { setValue } = useFormContext()
-  const { groups, items, answerId, pickedValue, onAnswerChange, application } =
-    props
+  const {
+    groups,
+    items,
+    answerId,
+    pickedValue,
+    onAnswerChange,
+    application,
+    majorGroupLength,
+  } = props
   const [answers, setAnswers] = useState<OptionWithKey>(
     (getValueViaPath(application.answers, answerId) as OptionWithKey) || {},
   )
@@ -119,11 +127,11 @@ export const MultiSelectDropdownController: FC<
         <MultiSelectDropdown
           group={group}
           options={stateItems.filter(
-            // TODO(balli) Need to change this logic, since not all data for VER is consistant in the code structure
-            // Get as props the lenght of major group vs subgroup for example...
-            (item) => item.code.substring(0, 1) === group.code.substring(0, 1),
+            (item) =>
+              item.code.substring(0, majorGroupLength) ===
+              group.code.substring(0, majorGroupLength),
           )}
-          values={answers[group.code.substring(0, 1)]}
+          values={answers[group.code.substring(0, majorGroupLength)]}
           key={index}
           onChange={onChange}
           {...props}

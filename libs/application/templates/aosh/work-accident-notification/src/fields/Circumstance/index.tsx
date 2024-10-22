@@ -21,6 +21,7 @@ export const Circumstance: FC<
 
   return (
     <CausesAndEffects
+      majorGroupLength={1}
       externalDataKey={'aoshData.data.specificPhysicalActivity'}
       heading={causeAndConsequences.circumstances.heading}
       subHeading={causeAndConsequences.circumstances.subHeading}

@@ -21,6 +21,7 @@ export const Deviation: FC<
 
   return (
     <CausesAndEffects
+      majorGroupLength={1}
       externalDataKey={'aoshData.data.workDeviation'}
       heading={causeAndConsequences.deviations.heading}
       subHeading={causeAndConsequences.deviations.subHeading}

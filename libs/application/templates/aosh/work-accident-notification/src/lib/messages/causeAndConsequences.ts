@@ -7,6 +7,16 @@ export const causeAndConsequences = {
       defaultMessage: 'Sláðu inn leitarorð',
       description: 'Placeholder of the search input',
     },
+    mostSeriousWarning: {
+      id: 'aosh.wan.application:causeAndConsequences.circumstances.mostSeriousWarning',
+      defaultMessage: 'Hakaðu við það sem þú telur að sé alvarlegast.',
+      description: 'Warning before most serious choice',
+    },
+    mostSeriousAlert: {
+      id: 'aosh.wan.application:causeAndConsequences.circumstances.mostSeriousAlert',
+      defaultMessage: 'Vinsamlegast veldur eitt af eftirfarandi.',
+      description: 'Alert before most serious choice',
+    },
   }),
   absence: defineMessages({
     title: {
