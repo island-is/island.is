@@ -75,7 +75,10 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   }
 
   const addNewText = () => {
-    setTextItems([...textItems, `Dómi áfrýjað ${formatDate(d)}`])
+    setTextItems([
+      ...textItems,
+      formatMessage(strings.defendantAppealDate, { date: formatDate(d) }),
+    ])
   }
 
   const componentVariants = {
@@ -96,13 +99,19 @@ const BlueBoxWithDate: FC<Props> = (props) => {
 
     setTextItems([
       formatMessage(strings.defendantVerdictViewedDate, {
-        date: formatDate(d),
+        date: d ? formatDate(d) : formatDate(defendant.verdictViewDate),
       }),
       formatMessage(appealExpiration.message, {
         appealExpirationDate: appealExpiration.date,
       }),
     ])
-  }, [d, dHasBeenSet, defendant.verdictAppealDeadline, formatMessage])
+  }, [
+    d,
+    dHasBeenSet,
+    defendant.verdictAppealDeadline,
+    defendant.verdictViewDate,
+    formatMessage,
+  ])
 
   return (
     <Box className={styles.container} padding={[2, 2, 3, 3]}>
@@ -121,7 +130,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           <Text variant="eyebrow">{defendant.name}</Text>
         </Box>
         <AnimatePresence mode="wait" initial={false}>
-          {dHasBeenSet ? (
+          {dHasBeenSet || defendant.verdictViewDate ? (
             <>
               <motion.div
                 layout="position"
