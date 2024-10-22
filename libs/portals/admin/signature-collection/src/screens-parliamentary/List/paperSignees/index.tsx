@@ -19,7 +19,7 @@ import {
   useSignatureCollectionAdminCanSignInfoQuery,
   useIdentityQuery,
 } from './identityAndCanSignLookup.generated'
-import { useSignatureCollectionUploadPaperSignatureMutation } from './uploadPaperSignee.generated'
+import { useSignatureCollectionAdminUploadPaperSignatureMutation } from './uploadPaperSignee.generated'
 
 export const PaperSignees = ({ listId }: { listId: string }) => {
   useNamespaces('sp.signatureCollection')
@@ -61,7 +61,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
   }, [nationalIdInput, loading, data])
 
   const [uploadPaperSignee, { loading: uploadingPaperSignature }] =
-    useSignatureCollectionUploadPaperSignatureMutation({
+    useSignatureCollectionAdminUploadPaperSignatureMutation({
       variables: {
         input: {
           listId: listId,

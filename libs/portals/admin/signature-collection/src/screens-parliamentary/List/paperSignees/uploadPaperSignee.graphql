@@ -1,4 +1,4 @@
-mutation SignatureCollectionUploadPaperSignature(
+mutation SignatureCollectionAdminUploadPaperSignature(
   $input: SignatureCollectionUploadPaperSignatureInput!
 ) {
   signatureCollectionAdminUploadPaperSignature(input: $input) {
