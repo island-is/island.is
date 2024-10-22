@@ -7,7 +7,7 @@ type Props = {
   inao?: MessageDescriptor
 }
 
-const Logo = ({ serviceProvider, inao }: Props) => {
+export const Logo = ({ serviceProvider, inao }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -21,5 +21,3 @@ const Logo = ({ serviceProvider, inao }: Props) => {
     </Box>
   )
 }
-
-export default Logo

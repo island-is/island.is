@@ -5,7 +5,7 @@ import { clientInfoSection } from './clientInfoSection'
 import { keyNumbersSection } from './keyNumbersSection'
 import { financialStatementSection } from './keyNumbersSection/financialStatementSection'
 import { overviewSection } from './keyNumbersSection/overviewSection'
-import Logo from '@island.is/libs/application/templates/inao/shared/components/Logo'
+import { Logo } from '@island.is/application/templates/inao/shared'
 
 export const FinancialStatementPoliticalPartyForm: Form = buildForm({
   id: 'FinancialStatementPoliticalPartyForm',

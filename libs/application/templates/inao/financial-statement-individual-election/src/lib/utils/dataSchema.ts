@@ -3,7 +3,7 @@ import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { m } from './messages'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { checkIfNegative } from '@island.is/libs/application/templates/inao/shared/utils/helpers'
+import { checkIfNegative } from '@island.is/application/templates/inao/shared'
 import {
   Override,
   NestedType,

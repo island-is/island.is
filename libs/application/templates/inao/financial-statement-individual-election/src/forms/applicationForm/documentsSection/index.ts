@@ -4,7 +4,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../../lib/utils/messages'
-import { LESS } from '@island.is/libs/application/templates/inao/shared/utils/constants'
+import { LESS } from '@island.is/application/templates/inao/shared'
 
 export const documentsSection = buildSection({
   id: 'documents',

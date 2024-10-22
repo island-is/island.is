@@ -15,8 +15,8 @@ import { getErrorViaPath } from '@island.is/application/core'
 import {
   CAPITALNUMBERS,
   INPUTCHANGEINTERVAL,
-} from '@island.is/libs/application/templates/inao/shared/utils/constants'
-import { Total } from '@island.is/libs/application/templates/inao/shared/components/Total'
+  Total,
+} from '@island.is/application/templates/inao/shared'
 
 export const KeyNumbersCapital = () => {
   const { formatMessage } = useLocale()

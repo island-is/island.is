@@ -1,6 +1,6 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '@island.is/libs/application/templates/inao/shared/components/Logo'
+import { Logo } from '@island.is/application/templates/inao/shared'
 import { prerequisitesSection } from './prerequsitesSection'
 import { m } from '../../lib/messages'
 

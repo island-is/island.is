@@ -1,5 +1,5 @@
 import { buildSection, getValueViaPath } from '@island.is/application/core'
-import { GREATER } from '@island.is/libs/application/templates/inao/shared/utils/constants'
+import { GREATER } from '@island.is/application/templates/inao/shared'
 import { m } from '../../../lib/utils/messages'
 import { operatingCostSubSection } from './operatingcostSubSection'
 import { equityAndLiabilitiesSubSection } from './equitiesAndLiabilitiesSubSection'

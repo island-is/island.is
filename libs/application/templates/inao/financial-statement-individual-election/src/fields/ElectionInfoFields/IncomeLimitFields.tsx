@@ -8,12 +8,12 @@ import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { useLazyQuery } from '@apollo/client'
 import { getFinancialLimit } from '../../graphql'
-import { FSIUSERTYPE } from '@island.is/libs/application/templates/inao/shared/utils/enums'
 import {
   ABOUTIDS,
   GREATER,
   LESS,
-} from '@island.is/libs/application/templates/inao/shared/utils/constants'
+  FSIUSERTYPE,
+} from '@island.is/application/templates/inao/shared'
 import { m } from '../../lib/utils/messages'
 
 type IncomeLimitProps = {

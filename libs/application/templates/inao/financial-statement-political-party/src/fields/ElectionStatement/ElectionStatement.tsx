@@ -8,9 +8,11 @@ import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { useFormContext } from 'react-hook-form'
 import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
 import { ELECTIONLIMIT } from '../../utils/constants'
-import { formatNumber } from '@island.is/libs/application/templates/inao/shared/utils/helpers'
-import { BottomBar } from '@island.is/libs/application/templates/inao/shared/components/BottomBar'
-import { GREATER } from '@island.is/libs/application/templates/inao/shared/utils/constants'
+import {
+  formatNumber,
+  BottomBar,
+  GREATER,
+} from '@island.is/application/templates/inao/shared'
 
 export const ElectionStatement = ({
   application,

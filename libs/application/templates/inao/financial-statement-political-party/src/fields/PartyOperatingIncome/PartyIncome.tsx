@@ -9,7 +9,7 @@ import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { FinancialStatementsInaoTaxInfo } from '@island.is/api/schema'
 import { PARTYOPERATIONIDS } from '../../utils/constants'
-import { INPUTCHANGEINTERVAL } from '@island.is/libs/application/templates/inao/shared/utils/constants'
+import { INPUTCHANGEINTERVAL } from '@island.is/application/templates/inao/shared'
 
 type Props = {
   data?: {

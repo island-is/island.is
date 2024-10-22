@@ -22,7 +22,7 @@ import {
   CemeteriesBackwardLimit,
   CemeteriesYearAllowed,
 } from '../../utils/constants'
-import { ABOUTIDS } from '@island.is/libs/application/templates/inao/shared/utils/constants'
+import { ABOUTIDS } from '@island.is/application/templates/inao/shared'
 
 export const OperatingYear = () => {
   const { data, loading, error } = useQuery(getAuditConfig)

@@ -6,7 +6,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { INDIVIDUALOPERATIONIDS } from '../../lib/utils/constants'
 import { m } from '../../lib/utils/messages'
-import { INPUTCHANGEINTERVAL } from '@island.is/libs/application/templates/inao/shared/utils/constants'
+import { INPUTCHANGEINTERVAL } from '@island.is/application/templates/inao/shared'
 
 type Props = {
   getSum: () => void

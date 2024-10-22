@@ -13,18 +13,20 @@ import {
 import { Controller, useFormContext } from 'react-hook-form'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
-import { formatCurrency } from '@island.is/libs/application/templates/inao/shared/utils/helpers'
 import { starterColumnStyle, sectionColumn } from './overviewStyles.css'
 import { FinancialStatementIndividualElection } from '../../lib/utils/dataSchema'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
-import { GREATER } from '@island.is/libs/application/templates/inao/shared/utils/constants'
 import { m } from '../../lib/utils/messages'
-import { CapitalNumberOverview } from '@island.is/libs/application/templates/inao/shared/components/CapitalNumberOverview'
-import { AssetDebtEquityOverview } from '@island.is/libs/application/templates/inao/shared/components/AssetDebtEquityOverview'
-import { FileValueLine } from '@island.is/libs/application/templates/inao/shared/components/FileValueLine'
-import { AboutOverview } from '@island.is/libs/application/templates/inao/shared/components/AboutOverview'
-import { ValueLine } from '@island.is/libs/application/templates/inao/shared/components/ValueLine'
-import { BottomBar } from '@island.is/libs/application/templates/inao/shared/components/BottomBar'
+import {
+  GREATER,
+  formatCurrency,
+  CapitalNumberOverview,
+  AssetDebtEquityOverview,
+  FileValueLine,
+  AboutOverview,
+  ValueLine,
+  BottomBar,
+} from '@island.is/application/templates/inao/shared'
 
 export const Overview = ({
   application,

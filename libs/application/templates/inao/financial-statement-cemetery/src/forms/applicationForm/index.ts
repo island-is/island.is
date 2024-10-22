@@ -6,7 +6,7 @@ import { cemeteryCaretekerSection } from './cemeteryCaretakerSection'
 import { cemeteryFinancialStatementSection } from './cemeteryFinancialStatementSection'
 import { clientInfoSection } from './clientInfoSection'
 import { overviewSection } from './overviewSection'
-import Logo from '@island.is/libs/application/templates/inao/shared/components/Logo'
+import { Logo } from '@island.is/application/templates/inao/shared'
 
 export const FinancialStatementCemeteryForm: Form = buildForm({
   id: 'FinancialStatementCemeteryForm',

@@ -12,11 +12,11 @@ import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { m } from '../../lib/messages'
 import { getErrorViaPath } from '@island.is/application/core'
-import { Total } from '@island.is/libs/application/templates/inao/shared/components/Total'
 import {
   CAPITALNUMBERS,
   INPUTCHANGEINTERVAL,
-} from '@island.is/libs/application/templates/inao/shared/utils/constants'
+  Total,
+} from '@island.is/application/templates/inao/shared'
 
 export const KeyNumbersCapital = () => {
   const { formatMessage } = useLocale()

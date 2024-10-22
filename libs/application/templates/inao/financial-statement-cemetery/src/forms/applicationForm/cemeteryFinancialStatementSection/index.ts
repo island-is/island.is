@@ -1,6 +1,6 @@
 import { buildFileUploadField, buildSection } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
-import { currencyStringToNumber } from '@island.is/libs/application/templates/inao/shared/utils/helpers'
+import { currencyStringToNumber } from '@island.is/application/templates/inao/shared'
 import { FinancialStatementCemetery } from '../../../lib/dataSchema'
 
 export const cemeteryFinancialStatementSection = buildSection({

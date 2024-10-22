@@ -11,7 +11,7 @@ import { ApolloError } from '@apollo/client/errors'
 import { getErrorViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import { m } from '../../lib/utils/messages'
-import { ABOUTIDS } from '@island.is/libs/application/templates/inao/shared/utils/constants'
+import { ABOUTIDS } from '@island.is/application/templates/inao/shared'
 import { Options } from '../../types/types'
 import { FinancialStatementsInaoElection } from '@island.is/api/schema'
 

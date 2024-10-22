@@ -4,10 +4,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../../../lib/messages'
-import {
-  GREATER,
-  LESS,
-} from '@island.is/libs/application/templates/inao/shared/constants'
+import { GREATER, LESS } from '@island.is/application/templates/inao/shared'
 
 export const overviewMultiField = buildMultiField({
   id: 'overview',

@@ -8,7 +8,7 @@ import {
   ABOUTIDS,
   GREATER,
   LESS,
-} from '@island.is/libs/application/templates/inao/shared/utils/constants'
+} from '@island.is/application/templates/inao/shared'
 import { m } from '../../../lib/utils/messages'
 
 export const overviewSection = buildSection({

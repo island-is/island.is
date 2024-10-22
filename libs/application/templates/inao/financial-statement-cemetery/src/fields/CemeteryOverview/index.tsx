@@ -18,19 +18,21 @@ import { format as formatNationalId } from 'kennitala'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { m } from '../../lib/messages'
 import { FinancialStatementCemetery } from '../../lib/dataSchema'
-import { currencyStringToNumber } from '@island.is/libs/application/templates/inao/shared/utils/helpers'
 import { BOARDMEMEBER } from '../../utils/constants'
 import {
   columnStyle,
   sectionColumn,
   starterColumnStyle,
 } from './overviewStyles.css'
-import { AboutOverview } from '@island.is/libs/application/templates/inao/shared/components/AboutOverview'
-import { ValueLine } from '@island.is/libs/application/templates/inao/shared/components/ValueLine'
-import { BottomBar } from '@island.is/libs/application/templates/inao/shared/components/BottomBar'
-import { FileValueLine } from '@island.is/libs/application/templates/inao/shared/components/FileValueLine'
-import { formatCurrency } from '@island.is/libs/application/templates/inao/shared/utils/helpers'
-import { CapitalNumberOverview } from '@island.is/libs/application/templates/inao/shared/components/CapitalNumberOverview'
+import {
+  AboutOverview,
+  CapitalNumberOverview,
+  ValueLine,
+  BottomBar,
+  FileValueLine,
+  formatCurrency,
+  currencyStringToNumber,
+} from '@island.is/application/templates/inao/shared'
 
 export const CemeteryOverview = ({
   application,
