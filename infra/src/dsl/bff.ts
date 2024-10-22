@@ -1,6 +1,5 @@
 import { json, ref } from './dsl'
 import { BffInfo, PortalKeys, Context } from './types/input-types'
-import { Envs } from '../environments'
 
 import {
   adminPortalScopes,
@@ -19,7 +18,7 @@ export const getScopes = (key: PortalKeys) => {
 }
 
 export const bffConfig = (info: BffInfo) => {
-  const { key, services, clientName, env = {} } = info
+  const { key, services, clientName } = info
 
   const getBaseUrl = (ctx: Context) =>
     ctx.featureDeploymentName
