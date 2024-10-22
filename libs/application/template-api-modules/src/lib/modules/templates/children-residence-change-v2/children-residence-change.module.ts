@@ -4,6 +4,7 @@ import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { SharedTemplateAPIModule } from '../../shared'
 import { SmsModule } from '@island.is/nova-sms'
+import { ApplicationsNotificationsModule } from '../../../notification/notifications.module'
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { SmsModule } from '@island.is/nova-sms'
     SharedTemplateAPIModule,
     SmsModule,
     NationalRegistryClientModule,
+    ApplicationsNotificationsModule,
   ],
   providers: [ChildrenResidenceChangeServiceV2],
   exports: [ChildrenResidenceChangeServiceV2],

@@ -1,7 +1,9 @@
 query UserInfoOverview($useFakeData: Boolean) {
   nationalRegistryPerson(useFakeData: $useFakeData) {
     nationalId
-    fullName
+    name {
+      fullName
+    }
     spouse {
       nationalId
       fullName
