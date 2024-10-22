@@ -57,6 +57,10 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
   }
 
   const getValue = (value: Value | Value[]) => {
+    if (!value) {
+      return null
+    }
+
     if (Array.isArray(value)) {
       return value
         .map((v) => options.find((option) => option.value === v))
