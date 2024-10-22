@@ -1,6 +1,6 @@
 import { FC, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import {
   Box,
@@ -11,15 +11,16 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { errors } from '@island.is/judicial-system-web/messages'
 
 import { Defendant } from '../../graphql/schema'
+import { formatDateForServer, useDefendants } from '../../utils/hooks'
 import DateTime from '../DateTime/DateTime'
+import { FormContext } from '../FormProvider/FormProvider'
+import { getAppealExpirationInfo } from '../InfoCard/DefendantInfo/DefendantInfo'
 import SectionHeading from '../SectionHeading/SectionHeading'
 import { strings } from './BlueBoxWithDate.strings'
 import * as styles from './BlueBoxWithIcon.css'
-import { errors } from '@island.is/judicial-system-web/messages'
-import { formatDateForServer, useDefendants } from '../../utils/hooks'
-import { FormContext } from '../FormProvider/FormProvider'
 
 interface Props {
   defendant: Defendant
@@ -89,11 +90,19 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   }
 
   useEffect(() => {
+    const appealExpiration = getAppealExpirationInfo(
+      defendant.verdictAppealDeadline,
+    )
+
     setTextItems([
-      `Dómur birtur ${formatDate(d)}`,
-      `Áfrýjunarfrestur ákærða er til ${formatDate(d)}`,
+      formatMessage(strings.defendantVerdictViewedDate, {
+        date: formatDate(d),
+      }),
+      formatMessage(appealExpiration.message, {
+        appealExpirationDate: appealExpiration.date,
+      }),
     ])
-  }, [d, dHasBeenSet])
+  }, [d, dHasBeenSet, defendant.verdictAppealDeadline, formatMessage])
 
   return (
     <Box className={styles.container} padding={[2, 2, 3, 3]}>

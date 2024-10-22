@@ -13,6 +13,11 @@ export const strings = defineMessages({
     description:
       'Notaður sem placeholder texti í dagsetningarinnsláttarsvæði fyrir það hvenær dómur var birtur dómfellda.',
   },
+  defendantVerdictViewedDate: {
+    id: 'judicial.system.core:blue_box_with_date.defendant_verdict_viewed_date',
+    defaultMessage: 'Dómur birtur {date}',
+    description: 'Notaður sem text fyrir dagsetningu birtingar.',
+  },
   defendantVerdictViewDateButtonText: {
     id: 'judicial.system.core:blue_box_with_date.defendant_verdict_view_date_button_text',
     defaultMessage: 'Skrá birtingu dóms',
