@@ -192,8 +192,6 @@ export class ServiceBuilder<ServiceType extends string> {
       ...bffConf.getEnv(),
     }
 
-    console.debug(JSON.stringify(this.serviceDef.env, null, 2))
-
     this.serviceDef.secrets = {
       ...this.serviceDef.secrets,
       ...bffConf.getSecrets(),

@@ -11,18 +11,6 @@ const clientName = 'portals-admin'
 const serviceName = `${bffName}-${clientName}`
 const key = 'stjornbord'
 
-type PortalKeys = 'stjornbord' | 'minarsidur'
-
-const getScopes = (key: PortalKeys) => {
-  switch (key) {
-    case 'minarsidur':
-      return servicePortalScopes
-    case 'stjornbord':
-      return adminPortalScopes
-    default:
-      throw new Error('Invalid BFF client')
-  }
-}
 export const serviceSetup = (
   services: BffInfraServices,
 ): ServiceBuilder<typeof serviceName> =>
@@ -35,9 +23,6 @@ export const serviceSetup = (
       key: 'stjornbord',
       clientName,
       services,
-      env: {
-        IDENTITY_SERVER_CLIENT_SCOPES: json(getScopes(key)),
-      },
     })
     .readiness(`/${key}/bff/health/check`)
     .liveness(`/${key}/bff/liveness`)

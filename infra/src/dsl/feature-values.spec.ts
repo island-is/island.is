@@ -1,4 +1,4 @@
-import { ServiceBuilder, ref, service } from './dsl'
+import { ServiceBuilder, ref, service, json } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
 import { EnvironmentConfig } from './types/charts'
 import { getFeatureAffectedServices } from './feature-deployments'
@@ -6,7 +6,7 @@ import { HelmValueFile } from './types/output-types'
 import { getHelmValueFile } from './value-files-generators/helm-value-file'
 import { renderers } from './upstream-dependencies'
 import { generateOutput } from './processing/rendering-pipeline'
-import { createPortalEnv } from '../../../apps/services/bff/infra/utils/createPortalEnv'
+import { getScopes } from './bff'
 
 const getEnvironment = (
   options: EnvironmentConfig = {
@@ -50,7 +50,7 @@ describe('Feature-deployment support', () => {
     const dependencyA = service('service-a').namespace('A')
     const dependencyB = service('service-b')
     const dependencyC = service('service-c')
-    const apiService = service('graphql')
+    const apiService = service('api')
       .env({
         A: ref((h) => `${h.svc(dependencyA)}`),
         B: ref(
@@ -76,9 +76,11 @@ describe('Feature-deployment support', () => {
       })
       .db()
 
-    const bff = service('services-bff-portals-admin').env(
-      createPortalEnv('stjornbord', { api: apiService }),
-    )
+    const bff = service('services-bff-portals-admin').bff({
+      key: 'stjornbord',
+      clientName: 'portals-admin',
+      services: { api: apiService },
+    })
     dev = getEnvironment()
     const services1 = await getFeatureAffectedServices(
       [apiService, dependencyA, dependencyB, bff],
@@ -87,15 +89,14 @@ describe('Feature-deployment support', () => {
       dev,
     )
     values = await getValues(services1.included, dev)
-    console.debug(JSON.stringify(values, null, 2))
   })
 
   it('dynamic service name generation', () => {
-    expect(values.services.graphql.env).toEqual({
+    expect(values.services.api.env).toEqual({
       A: 'web-service-a',
       B: 'feature-web-service-b.islandis.svc.cluster.local',
-      DB_USER: 'feature_feature_A_graphql',
-      DB_NAME: 'feature_feature_A_graphql',
+      DB_USER: 'feature_feature_A_api',
+      DB_NAME: 'feature_feature_A_api',
       DB_HOST: 'a',
       DB_REPLICAS_HOST: 'a',
       NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init',
@@ -108,8 +109,8 @@ describe('Feature-deployment support', () => {
     expect(values.services.bff.env).toEqual({
       A: 'web-service-a',
       B: 'feature-web-service-b.islandis.svc.cluster.local',
-      DB_USER: 'feature_feature_A_graphql',
-      DB_NAME: 'feature_feature_A_graphql',
+      DB_USER: 'feature_feature_A_api',
+      DB_NAME: 'feature_feature_A_api',
       DB_HOST: 'a',
       DB_REPLICAS_HOST: 'a',
       NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init',
@@ -119,7 +120,7 @@ describe('Feature-deployment support', () => {
     })
   })
   it('db extensions are set', () => {
-    expect(values.services.graphql.initContainer?.env).toEqual(
+    expect(values.services.api.initContainer?.env).toEqual(
       expect.objectContaining({
         DB_EXTENSIONS: 'foo',
       }),
@@ -127,27 +128,27 @@ describe('Feature-deployment support', () => {
   })
 
   it('dynamic secrets path', () => {
-    expect(values.services.graphql.secrets).toHaveProperty('DB_PASS')
-    expect(values.services.graphql.secrets!.DB_PASS).toEqual(
-      '/k8s/feature-feature-A-graphql/DB_PASSWORD',
+    expect(values.services.api.secrets).toHaveProperty('DB_PASS')
+    expect(values.services.api.secrets!.DB_PASS).toEqual(
+      '/k8s/feature-feature-A-api/DB_PASSWORD',
     )
   })
 
   it('dynamic secrets path', () => {
-    expect(values.services.graphql.initContainer?.secrets).toHaveProperty(
-      'DB_PASS',
-    )
-    expect(values.services.graphql.initContainer?.secrets!.DB_PASS).toEqual(
-      '/k8s/feature-feature-A-graphql/DB_PASSWORD',
+    expect(values.services.api.initContainer?.secrets).toHaveProperty('DB_PASS')
+    expect(values.services.api.initContainer?.secrets!.DB_PASS).toEqual(
+      '/k8s/feature-feature-A-api/DB_PASSWORD',
     )
   })
 
   it('feature deployment namespaces', () => {
     expect(Object.keys(values.services).sort()).toEqual([
-      'graphql',
+      'api',
       'service-a',
+      'services-bff-portals-admin',
     ])
-    expect(values.services['graphql'].namespace).toEqual(
+    expect(values.services['api'].namespace).toEqual(`feature-${dev.feature}`)
+    expect(values.services['services-bff-portals-admin'].namespace).toEqual(
       `feature-${dev.feature}`,
     )
     expect(values.services['service-a'].namespace).toEqual(
@@ -156,7 +157,7 @@ describe('Feature-deployment support', () => {
   })
 
   it('feature deployment ingress', () => {
-    expect(values.services.graphql.ingress).toEqual({
+    expect(values.services.api.ingress).toEqual({
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',

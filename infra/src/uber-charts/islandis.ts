@@ -82,8 +82,6 @@ const appSystemApi = appSystemApiSetup({
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
-const bffAdminPortalService = bffAdminPortalServiceSetup()
-
 const adminPortal = adminPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
@@ -118,6 +116,8 @@ const api = apiSetup({
   universityGatewayApi: universityGatewayService,
   userNotificationService,
 })
+
+const bffAdminPortalService = bffAdminPortalServiceSetup({ api: api })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
@@ -138,8 +138,7 @@ const downloadService = downloadServiceSetup({
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
-const userNotificationCleanupWorkerService =
-  userNotificationCleanUpWorkerSetup()
+const userNotificationCleanupWorkerService = userNotificationCleanUpWorkerSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
 

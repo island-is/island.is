@@ -5,23 +5,38 @@ import {
   Secrets,
 } from './types/input-types'
 
-export type PortalKeys = 'stjornbord' | 'minarsidur'
+import {
+  adminPortalScopes,
+  servicePortalScopes,
+} from '../../../libs/auth/scopes/src/index'
+
+type PortalKeys = 'stjornbord' | 'minarsidur'
+export const getScopes = (key: PortalKeys) => {
+  switch (key) {
+    case 'minarsidur':
+      return servicePortalScopes
+    case 'stjornbord':
+      return adminPortalScopes
+    default:
+      throw new Error('Invalid BFF client')
+  }
+}
 
 export interface BffConfig {
   key: PortalKeys
   clientName: string
   services: BffInfraServices
-  env: EnvironmentVariables
+  env?: EnvironmentVariables
 }
 
 export class BffConf {
   constructor(private config: BffConfig) {}
 
   getEnv(): EnvironmentVariables {
-    const { key, services, env } = this.config
-    console.debug(JSON.stringify(services, null, 2))
+    const { key, services, env = {} } = this.config
     return {
       ...env,
+      IDENTITY_SERVER_CLIENT_SCOPES: json(getScopes(key)),
       IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-${key}`,
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -42,7 +57,6 @@ export class BffConf {
           : `beta.${ctx.env.domain}`
         return json([`https://${baseUrl}`])
       }),
-      // BFF_CLIENT_BASE_URL: ref((ctx) => ctx.svc(services.api)),
       BFF_CLIENT_BASE_URL: ref((ctx) => {
         const baseUrl = ctx.featureDeploymentName
           ? `${ctx.featureDeploymentName}-${ctx.env.domain}`
@@ -62,10 +76,6 @@ export class BffConf {
           : `beta.${ctx.env.domain}`
         return `https://${baseUrl}/${key}/bff/callbacks`
       }),
-      // BFF_CALLBACKS_BASE_PATH: ref((ctx) => {
-      //   const baseUrl = ctx.svc(services.api)
-      //   return `${baseUrl}/${key}/bff/callbacks`
-      // }),
       BFF_PROXY_API_ENDPOINT: ref((ctx) => `http://${ctx.svc(services.api)}`),
       BFF_ALLOWED_EXTERNAL_API_URLS: {
         local: json(['http://localhost:3377/download/v1']),

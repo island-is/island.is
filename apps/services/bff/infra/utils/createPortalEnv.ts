@@ -1,94 +1,41 @@
 /* eslint-disable @nx/enforce-module-boundaries */
+// FIXME: this file can be removed since the DSL is handling this now
 import { json, ref } from '../../../../../infra/src/dsl/dsl'
-import { Context } from '../../../../../infra/src/dsl/types/input-types'
 import {
   adminPortalScopes,
   servicePortalScopes,
 } from '../../../../../libs/auth/scopes/src/index'
 import { FIVE_SECONDS_IN_MS } from '../../src/app/constants/time'
-import { BffInfraServices } from '../admin-portal.infra'
+import { BffInfraServices } from '../../../../../infra/src/dsl/types/input-types'
 
 const ONE_HOUR_IN_MS = 60 * 60 * 1000
 const ONE_WEEK_IN_MS = ONE_HOUR_IN_MS * 24 * 7
 
 type PortalKeys = 'stjornbord' | 'minarsidur'
 
-interface GetEnvUrlOpts {
-  urls: string | string[]
-  serialize?: boolean
-}
-
 const getScopes = (key: PortalKeys) => {
   switch (key) {
     case 'minarsidur':
       return servicePortalScopes
+
     case 'stjornbord':
       return adminPortalScopes
+
     default:
       throw new Error('Invalid BFF client')
   }
 }
-
-// FIXME: move to DSL
-// const envUrl = {
-//   islandis: {
-//     local: 'http://localhost:4200',
-//     dev: 'https://beta.dev01.devland.is',
-//     staging: 'https://beta.staging01.devland.is',
-//     prod: 'https://island.is',
-//   },
-//   ids: {
-//     local: 'http://localhost:4200',
-//     dev: 'https://identity-server.dev01.devland.is',
-//     staging: 'https://identity-server.staging01.devland.is',
-//     prod: 'https://innskra.island.is',
-//   },
-// } as const
-
-const getEnvUrl = (opts: GetEnvUrlOpts) => {
-  const { urls, serialize = false } = opts
-
-  return ref((ctx: Context): string => {
-    const processUrls = (url: string) =>
-      `${
-        ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
-      }${url}`
-
-    const processedUrls = Array.isArray(urls)
-      ? urls.map(processUrls)
-      : processUrls(urls)
-
-    return serialize
-      ? json(processedUrls)
-      : Array.isArray(processedUrls)
-      ? processedUrls[0]
-      : processedUrls
-  })
-}
-
-// const islandisUrls = {
-//   local: getEnvUrl({ urls: envUrl.islandis.local }),
-//   dev: getEnvUrl({ urls: envUrl.islandis.dev }),
-//   staging: getEnvUrl({ urls: envUrl.islandis.staging }),
-//   prod: getEnvUrl({ urls: envUrl.islandis.prod }),
-// }
-//
-// const idsUrls = {
-//   local: getEnvUrl({ urls: envUrl.ids.local }),
-//   dev: getEnvUrl({ urls: envUrl.ids.dev }),
-//   staging: getEnvUrl({ urls: envUrl.ids.staging }),
-//   prod: getEnvUrl({ urls: envUrl.ids.prod }),
-// }
 
 export const createPortalEnv = (
   key: PortalKeys,
   services: BffInfraServices,
 ) => {
   return {
-    // Identity server
+    // Idenity server
     IDENTITY_SERVER_CLIENT_SCOPES: json(getScopes(key)),
     IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-${key}`,
     IDENTITY_SERVER_ISSUER_URL: {
+      local: 'https://identity-server.dev01.devland.is',
       dev: 'https://identity-server.dev01.devland.is',
       staging: 'https://identity-server.staging01.devland.is',
       prod: 'https://innskra.island.is',
@@ -102,10 +49,30 @@ export const createPortalEnv = (
     },
     BFF_CLIENT_KEY_PATH: `/${key}`,
     BFF_PAR_SUPPORT_ENABLED: 'false',
-    BFF_ALLOWED_REDIRECT_URIS: ref((h) => json([`https://${h.env.domain}`])),
-    BFF_CLIENT_BASE_URL: ref((h) => h.svc(`http://${services.api}`)),
-    BFF_LOGOUT_REDIRECT_URI: ref((h) => json([h.svc(services.api)])),
-    BFF_CALLBACKS_BASE_PATH: ref((h) => json([h.svc(services.api)])),
+    BFF_ALLOWED_REDIRECT_URIS: {
+      local: json(['http://localhost:4200/stjornbord']),
+      dev: json(['https://featbff-beta.dev01.devland.is']),
+      staging: json(['https://beta.staging01.devland.is']),
+      prod: json(['https://island.is']),
+    },
+    BFF_CLIENT_BASE_URL: {
+      local: 'http://localhost:4200',
+      dev: 'https://featbff-beta.dev01.devland.is',
+      staging: 'https://beta.staging01.devland.is',
+      prod: 'https://island.is',
+    },
+    BFF_LOGOUT_REDIRECT_URI: {
+      local: 'http://localhost:4200/stjornbord',
+      dev: 'https://featbff-beta.dev01.devland.is',
+      staging: 'https://beta.staging01.devland.is',
+      prod: 'https://island.is',
+    },
+    BFF_CALLBACKS_BASE_PATH: {
+      local: `http://localhost:3010/${key}/bff/callbacks`,
+      dev: `https://featbff-beta.dev01.devland.is/${key}/bff/callbacks`,
+      staging: `https://beta.staging01.devland.is/${key}/bff/callbacks`,
+      prod: `https://island.is/${key}/bff/callbacks`,
+    },
     BFF_PROXY_API_ENDPOINT: ref((h) => `http://${h.svc(services.api)}`),
     BFF_ALLOWED_EXTERNAL_API_URLS: {
       local: json(['http://localhost:3377/download/v1']),
@@ -113,6 +80,10 @@ export const createPortalEnv = (
       staging: json(['https://api.staging01.devland.is']),
       prod: json(['https://api.island.is']),
     },
+    /**
+     * The TTL should be aligned with the lifespan of the Ids client refresh token.
+     * We also subtract 5 seconds from the TTL to handle latency and clock drift.
+     */
     BFF_CACHE_USER_PROFILE_TTL_MS: (
       ONE_HOUR_IN_MS - FIVE_SECONDS_IN_MS
     ).toString(),
