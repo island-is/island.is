@@ -22951,6 +22951,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/serve-static@npm:^1.15.5":
+  version: 1.15.7
+  resolution: "@types/serve-static@npm:1.15.7"
+  dependencies:
+    "@types/http-errors": "*"
+    "@types/node": "*"
+    "@types/send": "*"
+  checksum: bbbf00dbd84719da2250a462270dc68964006e8d62f41fe3741abd94504ba3688f420a49afb2b7478921a1544d3793183ffa097c5724167da777f4e0c7f1a7d6
+  languageName: node
+  linkType: hard
+
 "@types/sinon@npm:^17.0.3":
   version: 17.0.3
   resolution: "@types/sinon@npm:17.0.3"
