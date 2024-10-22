@@ -78,7 +78,7 @@ const appSystemApi = appSystemApiSetup({
   servicesEndorsementApi: endorsement,
   skilavottordWs,
   servicePortalApi,
-  userNotificationService
+  userNotificationService,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
@@ -98,7 +98,6 @@ const authAdminApi = authAdminApiSetup()
 
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
-
 
 const api = apiSetup({
   appSystemApi,
