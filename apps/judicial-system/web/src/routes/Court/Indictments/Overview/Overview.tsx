@@ -111,11 +111,15 @@ const IndictmentOverview = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardActiveIndictment />
         </Box>
+        {/* 
+        NOTE: Temporarily hidden while list of laws broken is not complete in
+        indictment cases
+        
         {lawsBroken.size > 0 && (
           <Box marginBottom={5}>
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
-        )}
+        )} */}
         {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
           <Accordion>
             {workingCase.mergedCases.map((mergedCase) => (

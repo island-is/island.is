@@ -46,8 +46,12 @@ export class InstitutionNotificationService extends BaseNotificationService {
   }
 
   private async sendIndictmentsWaitingForConfirmationNotification(
-    prosecutorsOfficeId: string,
+    prosecutorsOfficeId?: string,
   ): Promise<unknown> {
+    if (!prosecutorsOfficeId) {
+      return
+    }
+
     const count =
       await this.internalCaseService.countIndictmentsWaitingForConfirmation(
         prosecutorsOfficeId,
@@ -87,7 +91,7 @@ export class InstitutionNotificationService extends BaseNotificationService {
 
   async sendNotification(
     type: NotificationType,
-    prosecutorsOfficeId: string,
+    prosecutorsOfficeId?: string,
   ): Promise<DeliverResponse> {
     try {
       switch (type) {

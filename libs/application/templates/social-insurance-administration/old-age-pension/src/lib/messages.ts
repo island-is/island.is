@@ -516,4 +516,11 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Umsókn vegna ellilífeyris hefur verið samþykkt',
     description: 'The application for old-age pension has been approved',
   },
+  oldAgePensionSubmittedContent: {
+    id: 'oap.application:oldAgePensionSubmittedContent#markdown',
+    defaultMessage:
+      'Umsókn þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til hún er tekin til yfirferðar. Athugið að ef ekki er búið að skila inn tekjuáætlun þarf að gera það hér.',
+    description:
+      'Your application is awaiting review. It is possible to edit the application until it is under review. Please note that if you have not submitted an income plan, you must do so here.',
+  },
 })
