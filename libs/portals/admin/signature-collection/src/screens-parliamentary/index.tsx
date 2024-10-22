@@ -24,6 +24,8 @@ import nationalRegistryLogo from '../../assets/nationalRegistry.svg'
 import { useState } from 'react'
 import { useSignatureCollectionSignatureLookupQuery } from './findSignature.generated'
 import { SkeletonSingleRow } from '../shared-components/compareLists/skeleton'
+import { CollectionStatus } from '@island.is/api/schema'
+import ActionCompleteCollectionProcessing from '../shared-components/completeCollectionProcessing'
 
 const ParliamentaryRoot = ({
   allowedToProcess,
@@ -33,7 +35,8 @@ const ParliamentaryRoot = ({
   const { formatMessage } = useLocale()
 
   const navigate = useNavigate()
-  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
+  const { collection, collectionStatus, allLists } =
+    useLoaderData() as ListsLoaderReturn
 
   const [searchTerm, setSearchTerm] = useState('')
 
@@ -179,41 +182,48 @@ const ParliamentaryRoot = ({
               </Box>
             ))}
           <Stack space={3}>
-            {collection?.areas.map((area) => (
-              <ActionCard
-                key={area.id}
-                eyebrow={
-                  formatMessage(m.totalListsPerConstituency) +
-                  allLists.filter((l) => l.area.name === area.name).length
-                }
-                heading={area.name}
-                cta={{
-                  label: formatMessage(m.viewConstituency),
-                  variant: 'text',
-                  onClick: () => {
-                    navigate(
-                      SignatureCollectionPaths.ParliamentaryConstituency.replace(
-                        ':constituencyName',
-                        area.name,
-                      ),
-                    )
-                  },
-                }}
-                tag={
-                  allLists
-                    .filter((l) => l.area.name === area.name)
-                    .every((l) => l.reviewed === true)
-                    ? {
-                        label: formatMessage(m.confirmListReviewed),
-                        variant: 'mint',
-                        outlined: true,
-                      }
-                    : undefined
-                }
-              />
-            ))}
+            {collection?.areas.map((area) => {
+              const areaLists = allLists.filter(
+                (l) => l.area.name === area.name,
+              )
+              return (
+                <ActionCard
+                  key={area.id}
+                  eyebrow={
+                    formatMessage(m.totalListsPerConstituency) +
+                    areaLists.length
+                  }
+                  heading={area.name}
+                  cta={{
+                    label: formatMessage(m.viewConstituency),
+                    variant: 'text',
+                    onClick: () => {
+                      navigate(
+                        SignatureCollectionPaths.ParliamentaryConstituency.replace(
+                          ':constituencyName',
+                          area.name,
+                        ),
+                      )
+                    },
+                  }}
+                  tag={
+                    areaLists.length > 0 &&
+                    areaLists.every((l) => l.reviewed === true)
+                      ? {
+                          label: formatMessage(m.confirmListReviewed),
+                          variant: 'mint',
+                          outlined: true,
+                        }
+                      : undefined
+                  }
+                />
+              )
+            })}
           </Stack>
           {allowedToProcess && <CompareLists collectionId={collection?.id} />}
+          {collectionStatus === CollectionStatus.InInitialReview && (
+            <ActionCompleteCollectionProcessing collectionId={collection?.id} />
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

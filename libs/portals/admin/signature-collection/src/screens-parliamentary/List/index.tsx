@@ -87,7 +87,12 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 ? formatMessage(m.listStatusReviewedStatusAlert)
                 : formatMessage(m.listStatusActiveAlert)
             }
-            type={listStatus === ListStatus.Reviewed ? 'success' : undefined}
+            type={
+              listStatus === ListStatus.Reviewed ||
+              listStatus === ListStatus.Inactive
+                ? 'success'
+                : undefined
+            }
           />
           <ActionExtendDeadline
             listId={list.id}
