@@ -194,17 +194,11 @@ export const CASES_IN_PROGRESS_QUERY = gql`
     officialJournalOfIcelandCasesInProgress(params: $params) {
       cases {
         id
-        advertType {
-          title
-        }
-        advertTitle
-        status {
-          title
-        }
-        involvedParty {
-          title
-        }
+        title
+        status
+        involvedParty
         createdAt
+        fastTrack
         requestedPublicationDate
       }
       paging {

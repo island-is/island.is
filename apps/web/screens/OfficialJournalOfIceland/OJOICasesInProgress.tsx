@@ -5,7 +5,7 @@ import { Locale } from '@island.is/shared/types'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
-  OfficialJournalOfIcelandCase,
+  OfficialJournalOfIcelandCaseInProgress,
   Query,
   QueryGetOrganizationArgs,
   QueryOfficialJournalOfIcelandCasesInProgressArgs,
@@ -85,9 +85,9 @@ const OJOICasesInProgressPage: CustomScreen<OJOICasesInProgressProps> = ({
               <T.Row key={c.id}>
                 <T.Data>{formatDate(c.createdAt)}</T.Data>
                 <T.Data>{formatDate(c.requestedPublicationDate)}</T.Data>
-                <T.Data>{c.status.title}</T.Data>
-                <T.Data>{c.advertType.title + ' ' + c.advertTitle}</T.Data>
-                <T.Data>{c.involvedParty.title}</T.Data>
+                <T.Data>{c.status}</T.Data>
+                <T.Data>{c.title}</T.Data>
+                <T.Data>{c.involvedParty}</T.Data>
               </T.Row>
             ))}
           </T.Body>
@@ -98,7 +98,7 @@ const OJOICasesInProgressPage: CustomScreen<OJOICasesInProgressProps> = ({
 }
 
 interface OJOICasesInProgressProps {
-  cases?: Array<OfficialJournalOfIcelandCase>
+  cases?: Array<OfficialJournalOfIcelandCaseInProgress>
   organization?: Query['getOrganization']
   locale: Locale
 }

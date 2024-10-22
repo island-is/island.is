@@ -1,26 +1,25 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { AdvertEntity } from './advert.model'
 
-@ObjectType('OfficialJournalOfIcelandCase')
-export class Case {
+@ObjectType('OfficialJournalOfIcelandCaseInProgress')
+export class CaseInProgress {
   @Field(() => ID)
   id!: string
 
-  @Field(() => AdvertEntity)
-  advertType!: AdvertEntity | null
+  @Field(() => String)
+  title!: string | null
 
   @Field(() => String)
-  advertTitle!: string | null
+  involvedParty!: string | null
 
-  @Field(() => AdvertEntity)
-  involvedParty!: AdvertEntity | null
-
-  @Field(() => AdvertEntity)
-  status!: AdvertEntity | null
+  @Field(() => String)
+  status!: string | null
 
   @Field(() => String)
   createdAt!: string | null
 
   @Field(() => String)
   requestedPublicationDate!: string | null
+
+  @Field(() => Boolean)
+  fastTrack!: boolean | null
 }
