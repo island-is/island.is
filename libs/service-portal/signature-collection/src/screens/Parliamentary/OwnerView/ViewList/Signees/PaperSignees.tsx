@@ -123,7 +123,7 @@ export const PaperSignees = ({
       >
         <GridContainer>
           <GridRow marginBottom={3}>
-            <GridColumn span={['7/12', '8/12']}>
+            <GridColumn span={['12/12', '8/12']}>
               <InputController
                 control={control}
                 id="nationalId"
@@ -140,16 +140,18 @@ export const PaperSignees = ({
                 icon={name && canSign ? 'checkmark' : undefined}
               />
             </GridColumn>
-            <GridColumn span={['5/12', '4/12']}>
-              <Input
-                id="page"
-                name="page"
-                type="number"
-                required
-                label={formatMessage(m.paperNumber)}
-                value={page}
-                onChange={(e) => setPage(e.target.value)}
-              />
+            <GridColumn span={['12/12', '4/12']}>
+              <Box marginTop={[3, 0]}>
+                <Input
+                  id="page"
+                  name="page"
+                  type="number"
+                  required
+                  label={formatMessage(m.paperNumber)}
+                  value={page}
+                  onChange={(e) => setPage(e.target.value)}
+                />
+              </Box>
             </GridColumn>
           </GridRow>
           <GridRow marginBottom={3}>
