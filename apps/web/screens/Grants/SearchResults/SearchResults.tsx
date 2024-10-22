@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import NextLink from 'next/link'
 
 import {
-  ActionCard,
   Box,
   BreadCrumbItem,
   Breadcrumbs,
@@ -14,13 +13,18 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
-import { GrantHeaderWithImage, GrantWrapper } from '@island.is/web/components'
+import {
+  GrantHeaderWithImage,
+  GrantWrapper,
+  PlazaCard,
+} from '@island.is/web/components'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
   Grant,
   Query,
   QueryGetGrantsArgs,
+  QueryGetOrganizationArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -32,6 +36,8 @@ import {
 import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_GRANTS_QUERY } from '../../queries/Grants'
 import { m } from '../messages'
+import { format } from 'date-fns'
+import { isDefined } from '@island.is/shared/utils'
 
 const filterState = {
   status: [],
@@ -98,6 +104,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
       />
       <Box background="blue100">
         <SidebarLayout
+          fullWidthContent={true}
           sidebarContent={
             <Box component="form" borderRadius="large" action={currentUrl}>
               <Box marginBottom={[1, 1, 2]}>
@@ -258,15 +265,58 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
             </Box>
           }
         >
-          <Inline space={2}>
-            <ActionCard heading="bingbong" text="hanblo" />
-            <ActionCard heading="bingbong" text="hanblo" />
-            <ActionCard heading="bingbong" text="hanblo" />
-            <ActionCard heading="bingbong" text="hanblo" />
-            {grants?.map((grant) => (
-              <ActionCard heading={grant.name} text={grant.description ?? ''} />
-            ))}
-          </Inline>
+          <Box display="flex" flexDirection="row" flexWrap="wrap">
+            {[...Array(8)].map((_) => {
+              const grant = grants?.[0]
+
+              if (!grant) {
+                return null
+              }
+              return (
+                <Box marginLeft={3} marginTop={3}>
+                  <PlazaCard
+                    eyebrow={grant.name}
+                    subEyebrow={grant.organization?.title}
+                    title={grant.name ?? ''}
+                    text={grant.description ?? ''}
+                    logo={grant.organization?.logo?.url ?? ''}
+                    logoAlt={grant.organization?.logo?.title ?? ''}
+                    tag={{
+                      label: grant.status ?? '',
+                      variant: 'mint',
+                    }}
+                    cta={{
+                      label: 'Skoða nánar',
+                      variant: 'text',
+                      onClick: () => console.log('click'),
+                      icon: 'arrowForward',
+                    }}
+                    detailLines={[
+                      grant.dateFrom && grant.dateTo
+                        ? {
+                            icon: 'calendar' as const,
+                            text: `${format(
+                              new Date(grant.dateFrom),
+                              'dd.MM.',
+                            )}-${format(new Date(grant.dateTo), 'dd.MM.yyyy')}`,
+                          }
+                        : null,
+                      {
+                        icon: 'time' as const,
+                        text: 'Frestur til 16.08.2024, kl. 15.00',
+                      },
+                      grant.categoryTag?.title
+                        ? {
+                            icon: 'informationCircle' as const,
+                            text: grant.categoryTag.title,
+                          }
+                        : undefined,
+                    ].filter(isDefined)}
+                  />
+                </Box>
+              )
+            })}
+          </Box>
         </SidebarLayout>
       </Box>
     </GrantWrapper>
@@ -275,7 +325,6 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
 
 interface GrantsHomeProps {
   locale: Locale
-
   grants?: Array<Grant>
 }
 

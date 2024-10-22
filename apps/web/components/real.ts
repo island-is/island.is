@@ -11,6 +11,7 @@
  * `libs/shared/babel/README.md` for more details.
  */
 
+export * from './Plaza'
 export * from './Card/Card'
 export * from './Header/Header'
 export * from './SearchInput/SearchInput'

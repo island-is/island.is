@@ -11,7 +11,6 @@ import { mapGrant } from '../../models/grant.model'
 @Injectable()
 export class GrantsSyncService implements CmsSyncProvider<IGrant> {
   processSyncData(entries: processSyncDataInput<IGrant>) {
-    logger.debug('entires', entries)
     // only process grants that we consider not to be empty and dont have circular structures
     return entries.filter(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,9 +22,6 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
   }
 
   doMapping(entries: IGrant[]) {
-    if (entries.length > 0) {
-      logger.info('Mapping grants', { count: entries.length })
-    }
     return entries
       .map<MappedData | boolean>((entry) => {
         try {
