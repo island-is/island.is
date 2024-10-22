@@ -121,30 +121,6 @@ export class InternalNotificationService extends BaseNotificationService {
     )
   }
 
-  private hasSentNotification(
-    type: NotificationType,
-    notifications?: Notification[],
-  ) {
-    return notifications?.some((notification) => notification.type === type)
-  }
-
-  private hasReceivedNotification(
-    type?: NotificationType | NotificationType[],
-    address?: string,
-    notifications?: Notification[],
-  ) {
-    const types = type ? [type].flat() : Object.values(NotificationType)
-
-    return notifications?.some((notification) => {
-      return (
-        types.includes(notification.type) &&
-        notification.recipients.some(
-          (recipient) => recipient.address === address && recipient.success,
-        )
-      )
-    })
-  }
-
   private async shouldSendNotificationToPrison(
     theCase: Case,
   ): Promise<boolean> {
