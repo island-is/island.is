@@ -132,7 +132,6 @@ export const Constituency = ({
                     constituencyLists.length}
                 </Text>
                 {allowedToProcess &&
-                  constituencyLists?.length > 0 &&
                   collectionStatus === CollectionStatus.Processed && (
                     <CreateCollection
                       collectionId={collection?.id}
