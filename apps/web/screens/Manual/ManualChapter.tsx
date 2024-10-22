@@ -75,7 +75,7 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
   const { activeLocale } = useI18n()
 
   const [selectedItemId, setSelectedItemId] = useQueryState('selectedItemId')
-  const [expandedItemIds, setExpandedItemsIds] = useState(
+  const [expandedItemIds, setExpandedItemIds] = useState(
     selectedItemId ? [selectedItemId] : [],
   )
   const initialScrollHasHappened = useRef(false)
@@ -184,10 +184,10 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
                 onToggle={(expanded) => {
                   initialScrollHasHappened.current = true
                   if (expanded) {
-                    setExpandedItemsIds((prev) => prev.concat(item.id))
+                    setExpandedItemIds((prev) => prev.concat(item.id))
                     setSelectedItemId(item.id)
                   } else {
-                    setExpandedItemsIds((prev) => {
+                    setExpandedItemIds((prev) => {
                       const updatedExpandedItemIds = prev.filter(
                         (id) => id !== item.id,
                       )
