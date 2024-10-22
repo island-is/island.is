@@ -9,7 +9,7 @@ import { DeductionFactorsModel } from '../deductionFactors'
 import { DirectTaxPaymentModel } from '../directTaxPayment/models'
 import { ApplicationModel } from '../application'
 import { ApplicationFileModel } from '../file/models'
-import { createApplicantPdf } from '../../formatters/createPdf'
+import { createPdf } from '../../formatters/createPdf'
 import { PdfApplicatiponResponse } from './pdfApplication.response'
 
 @Injectable()
@@ -160,6 +160,6 @@ export class OpenApiApplicationService {
       ],
     })
 
-    return { file: await createApplicantPdf(application) }
+    return { file: await createPdf(application) }
   }
 }

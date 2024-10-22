@@ -1,10 +1,11 @@
-import { PDFDocument, StandardFonts } from 'pdf-lib'
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import format from 'date-fns/format'
 import {
   Application,
   ApplicationEvent,
   ApplicationState,
   calcAge,
+  calcDifferenceInDate,
   Employment,
   formatNationalId,
   formatPhoneNumber,
@@ -12,12 +13,14 @@ import {
   getEventData,
   getHomeCircumstances,
   getMonth,
+  getState,
   HomeCircumstances,
   showSpouseData,
 } from '@island.is/financial-aid/shared/lib'
 import { ApplicationModel } from '../modules/application'
 import { getApplicant, getApplicantMoreInfo } from './applicationHelper'
 import { get } from 'lodash'
+import { baseFontSize, largeFontSize, smallFontSize } from './pdfhelpers'
 
 export const createApplicantPdff = async (application: ApplicationModel) => {
   const pdfDoc = await PDFDocument.create()
@@ -155,5 +158,59 @@ export const createApplicantPdff = async (application: ApplicationModel) => {
 
 export const createPdf = async (application: ApplicationModel) => {
   const pdfDoc = await PDFDocument.create()
-  pdfDoc.setTitle(`Umsókn ${application.id} um fjárhagsaðstoð`)
+  pdfDoc.setTitle(`Umsokn-${application.id}`)
+
+  const page = pdfDoc.addPage()
+
+  const { width, height } = page.getSize()
+
+  const margin = 50
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
+
+  // HEADER of Application
+  const { name, state, created } = application
+
+  const applicationState = getState[application.state]
+  const applicationCreated = created.toISOString()
+
+  const ageOfApplication = `Aldur umsóknar: ${calcDifferenceInDate(
+    applicationCreated,
+  )}`
+
+  const stateWidth = font.widthOfTextAtSize(applicationState, baseFontSize)
+
+  // Define padding between title and the new text
+  const lineSpacing = 10
+
+  // Draw the title on the left side within the margin
+  page.drawText(name, {
+    x: margin,
+    y: height - margin - largeFontSize,
+    size: largeFontSize,
+    font: font,
+    color: rgb(0, 0, 0),
+  })
+
+  // Draw the state on the right side within the margin
+  page.drawText(applicationState, {
+    x: width - stateWidth - margin,
+    y: height - margin - baseFontSize,
+    size: baseFontSize,
+    font: font,
+    color:
+      state === ApplicationState.REJECTED ? rgb(1, 0, 0.3) : rgb(0, 179, 158),
+  })
+
+  // Draw the subTitle ("Aldur umsóknar") under the title
+  page.drawText(ageOfApplication, {
+    x: margin,
+    y: height - margin - largeFontSize - smallFontSize - lineSpacing, // Adjust y-position below title
+    size: smallFontSize,
+    font: font,
+    color: rgb(0, 0, 0),
+  })
+
+  const pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true })
+
+  return pdfDataUri
 }
