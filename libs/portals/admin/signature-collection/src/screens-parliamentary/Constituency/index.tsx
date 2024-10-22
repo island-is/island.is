@@ -1,7 +1,7 @@
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
-import { m, parliamentaryMessages } from '../../lib/messages'
+import { m } from '../../lib/messages'
 import {
   ActionCard,
   Box,
@@ -30,7 +30,10 @@ import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { useSignatureCollectionAdminRemoveListMutation } from './removeList.generated'
 import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCandidate.generated'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import {
+  CollectionStatus,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 
 export const Constituency = ({
   allowedToProcess,
@@ -41,12 +44,15 @@ export const Constituency = ({
   const navigate = useNavigate()
   const { revalidate } = useRevalidator()
 
-  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
+  const { collection, collectionStatus, allLists } =
+    useLoaderData() as ListsLoaderReturn
   const { constituencyName } = useParams() as { constituencyName: string }
 
   const constituencyLists = allLists.filter(
     (list) => list.area.name === constituencyName,
   )
+
+  const areaId = collection.areas.find((a) => a.name === constituencyName)?.id
 
   const countCandidatesLists = (allLists: SignatureCollectionList[]) => {
     return allLists?.reduce((acc: any, list: SignatureCollectionList) => {
@@ -90,9 +96,7 @@ export const Constituency = ({
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage(
-                    parliamentaryMessages.signatureListsTitle,
-                  ),
+                  title: formatMessage(m.parliamentaryCollectionTitle),
                   href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
                 },
                 {
@@ -104,7 +108,7 @@ export const Constituency = ({
           <IntroHeader
             title={constituencyName}
             intro={
-              formatMessage(parliamentaryMessages.singleConstituencyIntro) +
+              formatMessage(m.parliamentaryConstituencyIntro) +
               ' ' +
               constituencyName
             }
@@ -127,8 +131,11 @@ export const Constituency = ({
                     ': ' +
                     constituencyLists.length}
                 </Text>
-                {constituencyLists?.length > 0 && (
-                  <CreateCollection collectionId={collection?.id} />
+                {allowedToProcess && (
+                  <CreateCollection
+                    collectionId={collection?.id}
+                    areaId={areaId}
+                  />
                 )}
               </Box>
               <Stack space={3}>
@@ -155,7 +162,9 @@ export const Constituency = ({
                       },
                     }}
                     tag={
-                      !list.reviewed
+                      allowedToProcess &&
+                      list.active &&
+                      collectionStatus === CollectionStatus.InitialActive
                         ? {
                             label: 'Cancel collection',
                             renderTag: () => (
@@ -227,11 +236,19 @@ export const Constituency = ({
                               />
                             ),
                           }
-                        : {
-                            label: m.confirmListReviewed.defaultMessage,
+                        : !list.active && !list.reviewed
+                        ? {
+                            label: formatMessage(m.listLocked),
+                            variant: 'blueberry',
+                            outlined: false,
+                          }
+                        : !list.active && list.reviewed
+                        ? {
+                            label: formatMessage(m.confirmListReviewed),
                             variant: 'mint',
                             outlined: false,
                           }
+                        : undefined
                     }
                   />
                 ))}

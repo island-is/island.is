@@ -389,8 +389,7 @@ describe('getCasesQueryFilter', () => {
             [Op.notIn]: Sequelize.literal(`
             (SELECT case_id
               FROM defendant
-              WHERE service_requirement <> 'NOT_REQUIRED'
-              AND (verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '28 days'))
+              WHERE (verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '28 days'))
           `),
           },
         },
@@ -454,13 +453,26 @@ describe('getCasesQueryFilter', () => {
                   ],
                 },
                 {
-                  id: {
-                    [Op.in]: Sequelize.literal(`
-                (SELECT case_id
-                  FROM defendant
-                  WHERE defender_national_id in ('${user.nationalId}', '${user.nationalId}'))
-              `),
-                  },
+                  [Op.or]: [
+                    {
+                      id: {
+                        [Op.in]: Sequelize.literal(`
+                      (SELECT case_id
+                        FROM defendant
+                        WHERE defender_national_id in ('${user.nationalId}', '${user.nationalId}'))
+                    `),
+                      },
+                    },
+                    {
+                      id: {
+                        [Op.in]: Sequelize.literal(`
+                      (SELECT case_id
+                        FROM civil_claimant
+                        WHERE has_spokesperson = true AND spokesperson_national_id in ('${user.nationalId}', '${user.nationalId}'))
+                    `),
+                      },
+                    },
+                  ],
                 },
               ],
             },

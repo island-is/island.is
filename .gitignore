@@ -29,8 +29,7 @@ TODO
 *.todo
 .env
 .env.*
-!.env.podman
-.envrc.*
+.envrc.private
 .nvmrc
 .node-version
 # IDE - VSCode
