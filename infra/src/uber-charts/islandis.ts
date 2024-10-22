@@ -117,7 +117,6 @@ const api = apiSetup({
   userNotificationService,
 })
 
-const bffAdminPortalService = bffAdminPortalServiceSetup({ api: api })
 const servicePortal = servicePortalSetup({ graphql: api })
 const bffAdminPortalService = bffAdminPortalServiceSetup({ api })
 const appSystemForm = appSystemFormSetup({ api })

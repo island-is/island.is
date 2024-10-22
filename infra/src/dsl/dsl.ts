@@ -186,10 +186,10 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   bff(config: BffInfo) {
-    this.serviceDef.env = { ...this.serviceDef.env, ...bffConfig(config).env }
+    this.serviceDef.env = { ...bffConfig(config).env, ...this.serviceDef.env }
     this.serviceDef.secrets = {
-      ...this.serviceDef.secrets,
       ...bffConfig(config).secrets,
+      ...this.serviceDef.secrets,
     }
     return this
   }
