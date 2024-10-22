@@ -230,7 +230,10 @@ const ParliamentaryRoot = ({
                 collectionStatus === CollectionStatus.InInitialReview) && (
                 <ActionCompleteCollectionProcessing
                   collectionId={collection?.id}
-                  canProcess={!!allLists.length && allLists.every((l) => l.reviewed === true)}
+                  canProcess={
+                    !!allLists.length &&
+                    allLists.every((l) => l.reviewed === true)
+                  }
                 />
               )}
             </Box>
