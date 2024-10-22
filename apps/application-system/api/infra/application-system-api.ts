@@ -83,9 +83,6 @@ export const workerSetup =
           prod: 'https://island.is/umsoknir',
           local: 'http://localhost:4200/umsoknir',
         },
-        USER_NOTIFICATION_API_URL: ref(
-          (h) => `http://${h.svc(services.userNotificationService)}`,
-        ),
       })
       .xroad(Base, Client, Payment, Inna, EHIC, WorkMachines)
       .secrets({
@@ -125,6 +122,7 @@ export const serviceSetup = (services: {
   skilavottordWs: ServiceBuilder<'skilavottord-ws'>
   // The user profile service is named service-portal-api in infra setup
   servicePortalApi: ServiceBuilder<'service-portal-api'>
+  userNotificationService: ServiceBuilder<'services-user-notification'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace(namespace)
@@ -258,6 +256,9 @@ export const serviceSetup = (services: {
       },
       SERVICE_USER_PROFILE_URL: ref(
         (h) => `http://${h.svc(services.servicePortalApi)}`,
+      ),
+      USER_NOTIFICATION_API_URL: ref(
+        (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
     })
     .xroad(
