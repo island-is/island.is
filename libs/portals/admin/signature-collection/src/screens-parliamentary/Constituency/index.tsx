@@ -131,12 +131,13 @@ export const Constituency = ({
                     ': ' +
                     constituencyLists.length}
                 </Text>
-                {allowedToProcess && (
-                  <CreateCollection
-                    collectionId={collection?.id}
-                    areaId={areaId}
-                  />
-                )}
+                {allowedToProcess &&
+                  collectionStatus === CollectionStatus.Processed && (
+                    <CreateCollection
+                      collectionId={collection?.id}
+                      areaId={areaId}
+                    />
+                  )}
               </Box>
               <Stack space={3}>
                 {constituencyLists.map((list) => (
