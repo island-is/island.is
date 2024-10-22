@@ -9,6 +9,7 @@ import {
   Breadcrumbs,
   Table as T,
   Text,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
@@ -220,9 +221,37 @@ const ParliamentaryRoot = ({
               )
             })}
           </Stack>
-          {allowedToProcess && <CompareLists collectionId={collection?.id} />}
-          {collectionStatus === CollectionStatus.InInitialReview && (
-            <ActionCompleteCollectionProcessing collectionId={collection?.id} />
+          {allowedToProcess && (
+            <Box>
+              {collectionStatus !== CollectionStatus.InReview && (
+                <CompareLists collectionId={collection?.id} />
+              )}
+              {(collectionStatus === CollectionStatus.InitialActive ||
+                collectionStatus === CollectionStatus.InInitialReview) && (
+                <ActionCompleteCollectionProcessing
+                  collectionId={collection?.id}
+                  canProcess={allLists.every((l) => l.reviewed === true)}
+                />
+              )}
+            </Box>
+          )}
+          {collectionStatus === CollectionStatus.Processed && (
+            <Box marginTop={8}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionProcessedTitle)}
+                message={formatMessage(m.collectionProcessedMessage)}
+              />
+            </Box>
+          )}
+          {collectionStatus === CollectionStatus.InReview && (
+            <Box marginTop={8}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionReviewedTitle)}
+                message={formatMessage(m.collectionReviewedMessage)}
+              />
+            </Box>
           )}
         </GridColumn>
       </GridRow>

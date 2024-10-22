@@ -106,7 +106,9 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           )}
           {allowedToProcess && (
             <Box>
-              {!list.active && <PaperSignees listId={list.id} />}
+              {!list.active && !list.reviewed && (
+                <PaperSignees listId={list.id} />
+              )}
               <ActionReviewComplete listId={list.id} listStatus={listStatus} />
             </Box>
           )}

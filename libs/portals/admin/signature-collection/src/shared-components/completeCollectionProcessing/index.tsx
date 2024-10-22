@@ -8,8 +8,10 @@ import { useProcessCollectionMutation } from './finishCollectionProcess.generate
 
 const ActionCompleteCollectionProcessing = ({
   collectionId,
+  canProcess,
 }: {
   collectionId: string
+  canProcess?: boolean
 }) => {
   const { formatMessage } = useLocale()
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
@@ -45,6 +47,7 @@ const ActionCompleteCollectionProcessing = ({
             colorScheme="destructive"
             variant="text"
             onClick={() => setModalSubmitReviewIsOpen(true)}
+            disabled={!canProcess}
           >
             {formatMessage(m.completeCollectionProcessing)}
           </Button>

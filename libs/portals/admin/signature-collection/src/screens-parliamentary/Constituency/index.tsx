@@ -131,14 +131,12 @@ export const Constituency = ({
                     ': ' +
                     constituencyLists.length}
                 </Text>
-                {constituencyLists?.length > 0 &&
-                  allowedToProcess &&
-                  collectionStatus === CollectionStatus.InInitialReview && (
-                    <CreateCollection
-                      collectionId={collection?.id}
-                      areaId={areaId}
-                    />
-                  )}
+                {allowedToProcess && (
+                  <CreateCollection
+                    collectionId={collection?.id}
+                    areaId={areaId}
+                  />
+                )}
               </Box>
               <Stack space={3}>
                 {constituencyLists.map((list) => (
@@ -164,7 +162,9 @@ export const Constituency = ({
                       },
                     }}
                     tag={
-                      allowedToProcess && list.active
+                      allowedToProcess &&
+                      list.active &&
+                      collectionStatus === CollectionStatus.InitialActive
                         ? {
                             label: 'Cancel collection',
                             renderTag: () => (
