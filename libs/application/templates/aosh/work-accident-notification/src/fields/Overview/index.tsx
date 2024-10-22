@@ -4,7 +4,7 @@ import {
   FieldTypes,
 } from '@island.is/application/types'
 import { FC } from 'react'
-import { Accordion, AccordionItem, Text, Box } from '@island.is/island-ui/core'
+import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ReviewGroup } from '../Components/ReviewGroup'
 import { KeyValueFormField } from '@island.is/application/ui-fields'
@@ -13,23 +13,8 @@ import {
   getAccidentInformationForOverview,
   getCompanyInformationForOverview,
 } from '../../utils'
-import { InjuredAccordionItem } from './InjuredAccordionItem'
-// import {
-//   information,
-//   licensePlate,
-//   machine,
-//   overview,
-// } from '../../lib/messages'
-// import {
-//   canMaybeRegisterToTraffic,
-//   canRegisterToTraffic,
-//   getBasicMachineInformation,
-//   getPersonInformationForOverview,
-//   getStreetRegistrationInformation,
-//   getTechnicalInformation,
-//   hasOperator,
-//   isOwnerOtherThanImporter,
-// } from '../../utils'
+import { EmployeeAccordionItem } from './EmployeeAccordionItem'
+import { AddEmployee } from '../AddEmployee'
 
 export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
@@ -97,23 +82,27 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           }}
         />
       </ReviewGroup>
-
-      <Accordion>
-        {mockEmployees.map((injured, index) => (
-          <AccordionItem
-            id={`${field.id}-accordion-item-${'someid'}`}
-            label={`${formatMessage(overview.labels.employee)} ${
-              mockEmployees.length > 1 ? index + 1 : ''
-            }`}
-          >
-            <InjuredAccordionItem
-              injured={injured}
-              onClick={() => onClick(`someplace[${index}]`)}
-              {...props}
-            />
-          </AccordionItem>
-        ))}
-      </Accordion>
+      <Box paddingY={[0, 2, 4, 6]}>
+        <Accordion>
+          {mockEmployees.map((employee, index) => (
+            <AccordionItem
+              id={`${field.id}-accordion-item-${'someid'}`}
+              label={`${formatMessage(overview.labels.employee)} ${
+                mockEmployees.length > 1 ? index + 1 : ''
+              }`}
+            >
+              <EmployeeAccordionItem
+                employee={employee}
+                onClick={() => onClick(`someplace[${index}]`)}
+                {...props}
+              />
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </Box>
+      <Box paddingTop={[2, 2, 4]}>
+        <AddEmployee handleClick={() => console.log('hello')} />
+      </Box>
     </Box>
   )
 }

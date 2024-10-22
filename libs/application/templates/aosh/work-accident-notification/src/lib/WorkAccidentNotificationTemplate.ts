@@ -25,8 +25,8 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.WORK_ACCIDENT_NOTIFICATION,
-  name: '',
-  institution: '',
+  name: 'hello',
+  institution: 'nlaf',
   translationNamespaces: [
     ApplicationConfigurations.WorkAccidentNotification.translation,
   ],

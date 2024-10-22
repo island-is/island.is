@@ -10,6 +10,18 @@ export const overviewSection = buildSection({
   title: overview.general.sectionTitle,
   children: [
     buildMultiField({
+      id: 'addEmployeeMultiField',
+      title: overview.general.moreInjuredTitle,
+      description: overview.general.moreInjuredDescription,
+      children: [
+        buildCustomField({
+          id: 'addEmployee',
+          title: '',
+          component: 'AddEmployee',
+        }),
+      ],
+    }),
+    buildMultiField({
       id: 'overview',
       title: overview.general.pageTitle,
       description: overview.general.description,

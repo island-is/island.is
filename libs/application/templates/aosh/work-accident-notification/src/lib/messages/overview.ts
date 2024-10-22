@@ -18,6 +18,17 @@ export const overview = {
       defaultMessage: 'Yfirlit skráningar',
       description: 'Title of overview section',
     },
+    moreInjuredTitle: {
+      id: 'aosh.wan.application:information.labels.moreInjuredTitle',
+      defaultMessage: 'Slösuðust fleiri?',
+      description: 'More injured title',
+    },
+    moreInjuredDescription: {
+      id: 'aosh.wan.application:information.labels.moreInjuredDescription',
+      defaultMessage:
+        'Urna urna at habitasse viverra aliquam eget. Bibendum nunc eu vitae mattis lorem pharetra suscipit lectus sapien. Porta nec proin pretium magnis ac. Ac amet sed quisque in sed.',
+      description: 'More injured description',
+    },
   }),
   labels: defineMessages({
     editMessage: {
@@ -75,6 +86,22 @@ export const overview = {
       defaultMessage:
         'Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum frumritið.',
       description: 'Employee description label',
+    },
+    causeAndConsequences: {
+      id: 'aosh.wan.application:information.labels.causeAndConsequences',
+      defaultMessage: 'Orsakir/afleiðingar slyss',
+      description: 'Cause and consequences label',
+    },
+    addEmployeeDescription: {
+      id: 'aosh.wan.application:information.labels.addEmployeeDescription',
+      defaultMessage:
+        'Ef það voru fleiri sem slösuðust er hægt að bæta við starfsmanni hér',
+      description: 'Add employee description label',
+    },
+    addEmployeeButton: {
+      id: 'aosh.wan.application:information.labels.addEmployeeButton',
+      defaultMessage: 'Bæta við slösuðum starfsmanni',
+      description: 'Add employee button label',
     },
   }),
 }
