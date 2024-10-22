@@ -17,10 +17,11 @@ import {
   XroadConfig,
   PodDisruptionBudget,
   IngressMapping,
+  BffInfo,
 } from './types/input-types'
+import { bffConfig } from './bff'
 import { logger } from '../logging'
 import { COMMON_SECRETS } from './consts'
-import { type BffConfig, BffConf } from './bff'
 
 /**
  * Allows you to make some properties of a type optional.
@@ -184,19 +185,12 @@ export class ServiceBuilder<ServiceType extends string> {
     return this
   }
 
-  bff(config: BffConfig): this {
-    const bffConf = new BffConf(config)
-
-    this.serviceDef.env = {
-      ...this.serviceDef.env,
-      ...bffConf.getEnv(),
-    }
-
+  bff(config: BffInfo) {
+    this.serviceDef.env = { ...this.serviceDef.env, ...bffConfig(config).env }
     this.serviceDef.secrets = {
       ...this.serviceDef.secrets,
-      ...bffConf.getSecrets(),
+      ...bffConfig(config).secrets,
     }
-
     return this
   }
 
@@ -353,7 +347,7 @@ export class ServiceBuilder<ServiceType extends string> {
   /**
    * Initializes a container with optional parameters and checks for unique container names.
    * If the 'withDB' flag is set or if the 'postgres' property is present in the input object,
-   * it grants database access to the container.
+   * it grants database access toethe container.
    * Maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
    *
    * @param ic - The initial container configuration.

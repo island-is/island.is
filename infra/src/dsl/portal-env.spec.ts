@@ -18,9 +18,6 @@ const clientName = 'portals-admin'
 const serviceName = `${bffName}-${clientName}`
 const key = 'stjornbord'
 
-export type BffInfraServices = {
-  api: ServiceBuilder<'api'>
-}
 const Dev: EnvironmentConfig = {
   auroraHost: 'a',
   redisHost: 'b',
@@ -42,14 +39,18 @@ describe('BFF PortalEnv serialization', () => {
     .image(bffName)
     .redis()
     .serviceAccount(bffName)
+    .env({
+      BFF_ALLOWED_EXTERNAL_API_URLS: {
+        local: json(['http://localhost:3377/download/v1']),
+        dev: json(['https://api.dev01.devland.is']),
+        staging: json(['https://api.staging01.devland.is']),
+        prod: json(['https://api.island.is']),
+      },
+    })
     .bff({
       key: 'stjornbord',
       clientName,
       services,
-      // FIXME: move to DSL without importing the auth-scopes lib
-      env: {
-        IDENTITY_SERVER_CLIENT_SCOPES: json(adminPortalScopes),
-      },
     })
     .command('node')
     .args('main.js')

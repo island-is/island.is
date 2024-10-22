@@ -1,10 +1,6 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { ServiceBuilder, service, json } from '../../../../infra/src/dsl/dsl'
 import { BffInfraServices } from '../../../../infra/src/dsl/types/input-types'
-import {
-  adminPortalScopes,
-  servicePortalScopes,
-} from '../../../../libs/auth/scopes/src/index'
 
 const bffName = 'services-bff'
 const clientName = 'portals-admin'
@@ -19,6 +15,14 @@ export const serviceSetup = (
     .image(bffName)
     .redis()
     .serviceAccount(bffName)
+    .env({
+      BFF_ALLOWED_EXTERNAL_API_URLS: {
+        local: json(['http://localhost:3377/download/v1']),
+        dev: json(['https://api.dev01.devland.is']),
+        staging: json(['https://api.staging01.devland.is']),
+        prod: json(['https://api.island.is']),
+      },
+    })
     .bff({
       key: 'stjornbord',
       clientName,
