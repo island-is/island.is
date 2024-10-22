@@ -30,6 +30,7 @@ import {
   lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
+  AdvocateType,
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
@@ -50,13 +51,13 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
+  formatAdvocateAssignedEmailNotification,
   formatCourtHeadsUpSmsNotification,
   formatCourtIndictmentReadyForCourtEmailNotification,
   formatCourtOfAppealJudgeAssignedEmailNotification,
   formatCourtReadyForCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
   formatCourtRevokedSmsNotification,
-  formatDefenderAssignedEmailNotification,
   formatDefenderCourtDateEmailNotification,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderReadyForCourtEmailNotification,
@@ -115,30 +116,6 @@ export class InternalNotificationService extends BaseNotificationService {
       eventService,
       logger,
     )
-  }
-
-  private hasSentNotification(
-    type: NotificationType,
-    notifications?: Notification[],
-  ) {
-    return notifications?.some((notification) => notification.type === type)
-  }
-
-  private hasReceivedNotification(
-    type?: NotificationType | NotificationType[],
-    address?: string,
-    notifications?: Notification[],
-  ) {
-    const types = type ? [type].flat() : Object.values(NotificationType)
-
-    return notifications?.some((notification) => {
-      return (
-        types.includes(notification.type) &&
-        notification.recipients.some(
-          (recipient) => recipient.address === address && recipient.success,
-        )
-      )
-    })
   }
 
   private async shouldSendNotificationToPrison(
@@ -1518,18 +1495,18 @@ export class InternalNotificationService extends BaseNotificationService {
   }
   //#endregion
 
-  //#region DEFENDER_ASSIGNED notifications */
-  private shouldSendDefenderAssignedNotification(
+  //#region ADVOCATE_ASSIGNED notifications */
+  private shouldSendAdvocateAssignedNotification(
     theCase: Case,
-    defenderEmail?: string,
+    advocateEmail?: string,
   ): boolean {
-    if (!defenderEmail) {
+    if (!advocateEmail) {
       return false
     }
     if (isIndictmentCase(theCase.type)) {
       const hasSentNotificationBefore = this.hasReceivedNotification(
-        NotificationType.DEFENDER_ASSIGNED,
-        defenderEmail,
+        NotificationType.ADVOCATE_ASSIGNED,
+        advocateEmail,
         theCase.notifications,
       )
 
@@ -1550,7 +1527,7 @@ export class InternalNotificationService extends BaseNotificationService {
         [
           NotificationType.READY_FOR_COURT,
           NotificationType.COURT_DATE,
-          NotificationType.DEFENDER_ASSIGNED,
+          NotificationType.ADVOCATE_ASSIGNED,
         ],
         theCase.defenderEmail,
         theCase.notifications,
@@ -1564,30 +1541,32 @@ export class InternalNotificationService extends BaseNotificationService {
     return true
   }
 
-  private sendDefenderAssignedNotification(
+  private sendAdvocateAssignedNotification(
     theCase: Case,
-    defenderNationalId?: string,
-    defenderName?: string,
-    defenderEmail?: string,
+    advocateType: AdvocateType,
+    advocateNationalId?: string,
+    advocateName?: string,
+    advocateEmail?: string,
   ): Promise<Recipient> {
-    const { subject, body } = formatDefenderAssignedEmailNotification(
+    const { subject, body } = formatAdvocateAssignedEmailNotification(
       this.formatMessage,
       theCase,
-      defenderNationalId &&
+      advocateType,
+      advocateNationalId &&
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
     )
 
     return this.sendEmail(
       subject,
       body,
-      defenderName,
-      defenderEmail,
+      advocateName,
+      advocateEmail,
       undefined,
-      Boolean(defenderNationalId) === false,
+      Boolean(advocateNationalId) === false,
     )
   }
 
-  private async sendDefenderAssignedNotifications(
+  private async sendAdvocateAssignedNotifications(
     theCase: Case,
   ): Promise<DeliverResponse> {
     const promises: Promise<Recipient>[] = []
@@ -1597,18 +1576,20 @@ export class InternalNotificationService extends BaseNotificationService {
         theCase.defendants ?? [],
         (d: Defendant) => d.defenderEmail,
       )
+
       for (const defendant of uniqDefendants) {
         const { defenderEmail, defenderNationalId, defenderName } = defendant
 
-        const shouldSend = this.shouldSendDefenderAssignedNotification(
+        const shouldSend = this.shouldSendAdvocateAssignedNotification(
           theCase,
           defenderEmail,
         )
 
         if (shouldSend === true) {
           promises.push(
-            this.sendDefenderAssignedNotification(
+            this.sendAdvocateAssignedNotification(
               theCase,
+              AdvocateType.DEFENDER,
               defenderNationalId,
               defenderName,
               defenderEmail,
@@ -1616,8 +1597,40 @@ export class InternalNotificationService extends BaseNotificationService {
           )
         }
       }
+
+      if (theCase.civilClaimants) {
+        for (const civilClaimant of theCase.civilClaimants) {
+          const {
+            spokespersonEmail,
+            spokespersonIsLawyer,
+            spokespersonName,
+            spokespersonNationalId,
+            hasSpokesperson,
+          } = civilClaimant
+
+          const shouldSend =
+            this.shouldSendAdvocateAssignedNotification(
+              theCase,
+              spokespersonEmail,
+            ) && hasSpokesperson
+
+          if (shouldSend === true) {
+            promises.push(
+              this.sendAdvocateAssignedNotification(
+                theCase,
+                spokespersonIsLawyer
+                  ? AdvocateType.LAWYER
+                  : AdvocateType.LEGAL_RIGHTS_PROTECTOR,
+                spokespersonNationalId,
+                spokespersonName,
+                spokespersonEmail,
+              ),
+            )
+          }
+        }
+      }
     } else if (DateLog.arraignmentDate(theCase.dateLogs)?.date) {
-      const shouldSend = this.shouldSendDefenderAssignedNotification(
+      const shouldSend = this.shouldSendAdvocateAssignedNotification(
         theCase,
         theCase.defenderEmail,
       )
@@ -1636,7 +1649,7 @@ export class InternalNotificationService extends BaseNotificationService {
 
     return this.recordNotification(
       theCase.id,
-      NotificationType.DEFENDER_ASSIGNED,
+      NotificationType.ADVOCATE_ASSIGNED,
       recipients,
     )
   }
@@ -2528,8 +2541,8 @@ export class InternalNotificationService extends BaseNotificationService {
           return this.sendModifiedNotifications(theCase, user)
         case NotificationType.REVOKED:
           return this.sendRevokedNotifications(theCase)
-        case NotificationType.DEFENDER_ASSIGNED:
-          return this.sendDefenderAssignedNotifications(theCase)
+        case NotificationType.ADVOCATE_ASSIGNED:
+          return this.sendAdvocateAssignedNotifications(theCase)
         case NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT:
           return this.sendDefendantsNotUpdatedAtCourtNotifications(theCase)
         case NotificationType.APPEAL_TO_COURT_OF_APPEALS:

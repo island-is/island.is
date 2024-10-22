@@ -286,25 +286,34 @@ export class CitizenshipService extends BaseTemplateApiService {
       auth,
       {
         selectedChildren:
-          answers.selectedChildrenExtraData?.map((c) => {
+          answers.selectedChildren?.map((y) => {
+            const childExtraInformation =
+              answers.selectedChildrenExtraData?.find((z) => z.nationalId === y)
+
+            if (!childExtraInformation) {
+              throw new Error('Vantar upplýsingar um börn')
+            }
+
             const childrenCustodyInformation = application.externalData
               .childrenCustodyInformation
               .data as ApplicantChildCustodyInformation[]
 
             const thisChild = childrenCustodyInformation.find(
-              (x) => x.nationalId === c.nationalId,
+              (x) => x.nationalId === childExtraInformation.nationalId,
             )
 
             return {
-              nationalId: c.nationalId,
-              otherParentNationalId: c.otherParentNationalId,
-              otherParentBirtDate: c.otherParentBirtDate
-                ? new Date(c.otherParentBirtDate)
+              nationalId: childExtraInformation.nationalId,
+              otherParentNationalId:
+                childExtraInformation.otherParentNationalId,
+              otherParentBirtDate: childExtraInformation.otherParentBirtDate
+                ? new Date(childExtraInformation.otherParentBirtDate)
                 : undefined,
-              otherParentName: c.otherParentName,
+              otherParentName: childExtraInformation.otherParentName,
               citizenship: thisChild?.citizenship?.code || '',
             }
           }) || [],
+
         isFormerIcelandicCitizen: answers.formerIcelander === YES,
         givenName:
           individual?.givenName ||
@@ -341,33 +350,33 @@ export class CitizenshipService extends BaseTemplateApiService {
           passportNumber: applicantPassport.passportNumber,
           passportTypeId: parseInt(applicantPassport.passportTypeId),
           countryOfIssuerId: applicantPassport.countryOfIssuerId,
-          file: await this.getFilesFromAttachment(
+          file: await this.getUrlForAttachment(
             application,
             answers?.passport?.attachment,
           ),
         },
         supportingDocuments: {
-          birthCertificate: await this.getFilesFromAttachment(
+          birthCertificate: await this.getUrlForAttachment(
             application,
             answers?.supportingDocuments?.birthCertificate,
           ),
-          subsistenceCertificate: await this.getFilesFromAttachment(
+          subsistenceCertificate: await this.getUrlForAttachment(
             application,
             answers?.supportingDocuments?.subsistenceCertificate,
           ),
-          subsistenceCertificateForTown: await this.getFilesFromAttachment(
+          subsistenceCertificateForTown: await this.getUrlForAttachment(
             application,
             answers?.supportingDocuments?.subsistenceCertificateForTown,
           ),
-          certificateOfLegalResidenceHistory: await this.getFilesFromAttachment(
+          certificateOfLegalResidenceHistory: await this.getUrlForAttachment(
             application,
             answers?.supportingDocuments?.certificateOfLegalResidenceHistory,
           ),
-          icelandicTestCertificate: await this.getFilesFromAttachment(
+          icelandicTestCertificate: await this.getUrlForAttachment(
             application,
             answers?.supportingDocuments?.icelandicTestCertificate,
           ),
-          criminalRecord: await this.getFilesFromAttachment(
+          criminalRecord: await this.getUrlForAttachment(
             application,
             applicantCriminalRecordAttachments,
           ),
@@ -387,25 +396,25 @@ export class CitizenshipService extends BaseTemplateApiService {
             passportNumber: p.passportNumber,
             passportTypeId: parseInt(p.passportTypeId),
             countryIdOfIssuer: p.countryOfIssuerId,
-            file: await this.getFilesFromAttachment(application, p.attachment),
+            file: await this.getUrlForAttachment(application, p.attachment),
           })) || [],
         ),
         childrenSupportingDocuments: await Promise.all(
           answers.childrenSupportingDocuments?.map(async (d) => ({
             nationalId: d.nationalId,
-            birthCertificate: await this.getFilesFromAttachment(
+            birthCertificate: await this.getUrlForAttachment(
               application,
               d.birthCertificate,
             ),
-            writtenConsentFromChild: await this.getFilesFromAttachment(
+            writtenConsentFromChild: await this.getUrlForAttachment(
               application,
               d.writtenConsentFromChild,
             ),
-            writtenConsentFromOtherParent: await this.getFilesFromAttachment(
+            writtenConsentFromOtherParent: await this.getUrlForAttachment(
               application,
               d.writtenConsentFromOtherParent,
             ),
-            custodyDocuments: await this.getFilesFromAttachment(
+            custodyDocuments: await this.getUrlForAttachment(
               application,
               d.custodyDocuments,
             ),
@@ -415,20 +424,20 @@ export class CitizenshipService extends BaseTemplateApiService {
     )
   }
 
-  private async getFilesFromAttachment(
+  private async getUrlForAttachment(
     application: ApplicationWithAttachments,
     attachments?: { name: string; key: string; countryId?: string }[],
-  ): Promise<{ filename: string; base64: string; countryId: string }[]> {
+  ): Promise<{ filename: string; fileUrl: string; countryId: string }[]> {
     return await Promise.all(
       attachments?.map(async (file) => {
-        const base64 =
-          await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
-            application,
-            file.key,
-          )
+        const fileUrl = await this.sharedTemplateAPIService.getAttachmentUrl(
+          application,
+          file.key,
+          300000,
+        )
         return {
           filename: file.name,
-          base64,
+          fileUrl,
           countryId: file.countryId || '',
         }
       }) || [],

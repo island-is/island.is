@@ -6,6 +6,7 @@ export enum BasePensionType {
   Disability = 'Disability',
   Rehabilitation = 'Rehabilitation',
   HalfRetirement = 'HalfRetirement',
+  NewSystem = 'NewSystem',
 }
 
 registerEnumType(BasePensionType, {

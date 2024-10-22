@@ -13,7 +13,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../lib/navigation'
-import { m, parliamentaryMessages } from '../lib/messages'
+import { m } from '../lib/messages'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../lib/paths'
 import CompareLists from '../shared-components/compareLists'
@@ -68,16 +68,14 @@ const ParliamentaryRoot = ({
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage(
-                    parliamentaryMessages.signatureListsTitle,
-                  ),
+                  title: formatMessage(m.parliamentaryCollectionTitle),
                 },
               ]}
             />
           </Box>
           <IntroHeader
-            title={formatMessage(parliamentaryMessages.signatureListsTitle)}
-            intro={formatMessage(parliamentaryMessages.signatureListsIntro)}
+            title={formatMessage(m.parliamentaryCollectionTitle)}
+            intro={formatMessage(m.parliamentaryCollectionIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
             img={
@@ -101,10 +99,12 @@ const ParliamentaryRoot = ({
                 backgroundColor="blue"
               />
             </Box>
-            <DownloadReports
-              areas={collection.areas}
-              collectionId={collection?.id}
-            />
+            {allowedToProcess && (
+              <DownloadReports
+                areas={collection.areas}
+                collectionId={collection?.id}
+              />
+            )}
           </Box>
           {loading && (
             <Box marginBottom={6}>
@@ -199,10 +199,21 @@ const ParliamentaryRoot = ({
                     )
                   },
                 }}
+                tag={
+                  allLists
+                    .filter((l) => l.area.name === area.name)
+                    .every((l) => l.reviewed === true)
+                    ? {
+                        label: formatMessage(m.confirmListReviewed),
+                        variant: 'mint',
+                        outlined: true,
+                      }
+                    : undefined
+                }
               />
             ))}
           </Stack>
-          <CompareLists collectionId={collection?.id} />
+          {allowedToProcess && <CompareLists collectionId={collection?.id} />}
         </GridColumn>
       </GridRow>
     </GridContainer>
