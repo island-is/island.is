@@ -223,7 +223,8 @@ const ParliamentaryRoot = ({
           </Stack>
           {allowedToProcess && (
             <Box>
-              {collectionStatus !== CollectionStatus.InReview && (
+              {(collectionStatus === CollectionStatus.InInitialReview ||
+                collectionStatus === CollectionStatus.InReview) && (
                 <CompareLists collectionId={collection?.id} />
               )}
               {(collectionStatus === CollectionStatus.InitialActive ||
