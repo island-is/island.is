@@ -669,10 +669,6 @@
       "@island.is/clients/form-system": [
         "libs/clients/form-system/src/index.ts"
       ],
-      "@island.is/clients/grants": ["libs/clients/grants/src/index.ts"],
-      "@island.is/clients/grants/clients/rannis": [
-        "libs/clients/grants/clients/rannis/src/index.ts"
-      ],
       "@island.is/clients/grants/rannis": [
         "libs/clients/grants/src/lib/clients/rannis/src/index.ts"
       ],
