@@ -7,7 +7,7 @@ import { BffPoller } from './BffPoller'
 import { BffSessionExpiredModal } from './BffSessionExpiredModal'
 import { ErrorScreen } from './ErrorScreen'
 import { BffBroadcastEvents, useBffBroadcaster } from './bff.hooks'
-import { ActionType, initialState, reducer } from './bff.state'
+import { ActionType, LoggedInState, initialState, reducer } from './bff.state'
 import { createBffUrlGenerator, isNewSession } from './bff.utils'
 
 const BFF_SERVER_UNAVAILABLE = 'BFF_SERVER_UNAVAILABLE'
@@ -18,15 +18,20 @@ type BffProviderProps = {
    * The base path of the application.
    */
   applicationBasePath: string
+  mockedInitialState?: LoggedInState
 }
 
 export const BffProvider = ({
   children,
   applicationBasePath,
+  mockedInitialState,
 }: BffProviderProps) => {
   const [showSessionExpiredScreen, setSessionExpiredScreen] = useState(false)
   const bffUrlGenerator = createBffUrlGenerator(applicationBasePath)
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [state, dispatch] = useReducer(
+    reducer,
+    mockedInitialState ?? initialState,
+  )
 
   const { authState } = state
   const showErrorScreen = authState === 'error'
@@ -172,7 +177,7 @@ export const BffProvider = ({
   useEffectOnce(() => {
     const hasError = checkQueryStringError()
 
-    if (!hasError) {
+    if (!hasError && !isLoggedIn) {
       checkLogin()
     }
   })
@@ -186,6 +191,10 @@ export const BffProvider = ({
   }
 
   const renderContent = () => {
+    if (mockedInitialState) {
+      return children
+    }
+
     if (showErrorScreen) {
       return (
         <ErrorScreen

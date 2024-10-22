@@ -32,6 +32,10 @@ const Dev: EnvironmentConfig = {
   global: {},
 }
 
+const services = {
+  api: service('api'),
+}
+
 describe('BFF PortalEnv serialization', () => {
   const services = { api: service('api') }
   const sut = service(serviceName)

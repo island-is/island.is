@@ -1,4 +1,5 @@
 import '@island.is/api/mocks'
+
 import { userMonitoring } from '@island.is/user-monitoring'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
