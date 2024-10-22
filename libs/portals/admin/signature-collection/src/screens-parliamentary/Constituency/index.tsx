@@ -30,7 +30,10 @@ import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { useSignatureCollectionAdminRemoveListMutation } from './removeList.generated'
 import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCandidate.generated'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import {
+  CollectionStatus,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 
 export const Constituency = ({
   allowedToProcess,
@@ -41,7 +44,8 @@ export const Constituency = ({
   const navigate = useNavigate()
   const { revalidate } = useRevalidator()
 
-  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
+  const { collection, collectionStatus, allLists } =
+    useLoaderData() as ListsLoaderReturn
   const { constituencyName } = useParams() as { constituencyName: string }
 
   const constituencyLists = allLists.filter(
@@ -127,7 +131,7 @@ export const Constituency = ({
                     ': ' +
                     constituencyLists.length}
                 </Text>
-                {allowedToProcess && constituencyLists?.length > 0 && (
+                {allowedToProcess && (
                   <CreateCollection
                     collectionId={collection?.id}
                     areaId={areaId}
@@ -158,7 +162,9 @@ export const Constituency = ({
                       },
                     }}
                     tag={
-                      allowedToProcess && list.active
+                      allowedToProcess &&
+                      list.active &&
+                      collectionStatus === CollectionStatus.InitialActive
                         ? {
                             label: 'Cancel collection',
                             renderTag: () => (
