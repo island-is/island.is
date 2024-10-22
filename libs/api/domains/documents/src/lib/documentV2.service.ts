@@ -540,7 +540,7 @@ export class DocumentServiceV2 {
     const hideHealthData = isLegalGuardian && childAgeIs16OrOlder
     // Hide law and order data if user is delegated
     // commented out until we have correct category for law and order files
-    const hideLawAndOrderData = false //isDelegated
+    const hideLawAndOrderData = isDelegated
 
     return [
       ...(hideHealthData ? [HEALTH_CATEGORY_ID] : []),
