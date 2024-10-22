@@ -260,7 +260,7 @@ export class FileService {
           await this.s3Service.deleteObject({ bucket, key: s3key })
           result = {
             ...result,
-            deleted: result.deleted += 1,
+            deleted: (result.deleted += 1),
           }
         } catch (error) {
           this.logger.error(

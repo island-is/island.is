@@ -52,16 +52,23 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const { nationalRegistry } = externalData
     const applicant = nationalRegistry.data
     const s3FileName = `children-residence-change/${application.id}.pdf`
-    const fileContentBinary = await this.s3Service.getFileContent({
-      bucket: this.config.templateApi.presignBucket,
-      key: s3FileName,
-    }, 'binary')
+    const fileContentBinary = await this.s3Service.getFileContent(
+      {
+        bucket: this.config.templateApi.presignBucket,
+        key: s3FileName,
+      },
+      'binary',
+    )
 
     if (!fileContentBinary) {
-      throw new Error(`File content was undefined for key ${s3FileName} in bucket ${this.config.templateApi.presignBucket}`)
+      throw new Error(
+        `File content was undefined for key ${s3FileName} in bucket ${this.config.templateApi.presignBucket}`,
+      )
     }
 
-    const fileContentBase64 = Buffer.from(fileContentBinary, 'binary').toString('base64')
+    const fileContentBase64 = Buffer.from(fileContentBinary, 'binary').toString(
+      'base64',
+    )
 
     const selectedChildren = getSelectedChildrenFromExternalData(
       externalData.childrenCustodyInformation.data,
