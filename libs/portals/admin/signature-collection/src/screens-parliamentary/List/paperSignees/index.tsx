@@ -69,8 +69,12 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
           pageNumber: Number(page),
         },
       },
-      onCompleted: () => {
-        toast.success(formatMessage(m.paperSigneeSuccess))
+      onCompleted: (res) => {
+        if (res.signatureCollectionAdminUploadPaperSignature?.success) {
+          toast.success(formatMessage(m.paperSigneeSuccess))
+        } else {
+          toast.error(formatMessage(m.paperSigneeError))
+        }
         reset()
         setNationalIdTypo(false)
         setName('')

@@ -1,7 +1,7 @@
 mutation SignatureCollectionUploadPaperSignature(
   $input: SignatureCollectionUploadPaperSignatureInput!
 ) {
-  signatureCollectionUploadPaperSignature(input: $input) {
+  signatureCollectionAdminUploadPaperSignature(input: $input) {
     success
     reasons
   }
