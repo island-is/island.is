@@ -114,10 +114,7 @@
     "mockmode": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn nx run portals-admin:start-bff",
-          "API_MOCKS=true yarn start portals-admin"
-        ]
+        "commands": ["API_MOCKS=true yarn start portals-admin"]
       }
     },
     "docker-static": {

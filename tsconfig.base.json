@@ -247,8 +247,6 @@
       ],
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
-      "@island.is/api/mocks/resolvers": ["libs/api/mocks/src/resolvers.ts"],
-      "@island.is/api/mocks/schema": ["libs/api/mocks/src/schema.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/api/core": [
         "libs/application/api/core/src/index.ts"

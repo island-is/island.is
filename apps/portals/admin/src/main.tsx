@@ -1,4 +1,4 @@
-import { setupMocking } from '@island.is/portals/core'
+import '@island.is/api/mocks'
 
 import { userMonitoring } from '@island.is/user-monitoring'
 import { StrictMode } from 'react'
@@ -8,8 +8,6 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import environment from './environments/environment'
 import { App } from './app/App'
-
-setupMocking()
 
 if (!isRunningOnEnvironment('local')) {
   userMonitoring.initDdRum({

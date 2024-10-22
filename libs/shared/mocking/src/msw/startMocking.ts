@@ -8,10 +8,13 @@ const allowedKeyPaths = ['stjornbord', 'minarsidur']
 const extractUniqueKeyPath = (url: string) => {
   try {
     const parsedUrl = new URL(url)
-    const pathSegments = parsedUrl.pathname.split('/').filter(Boolean)
+    const pathSegments = parsedUrl.pathname
+      .replace(/\/$/, '')
+      .split('/')
+      .filter(Boolean)
     return pathSegments.length > 0 ? pathSegments[0] : null
   } catch (error) {
-    // coop
+    // noop
     return null
   }
 }
@@ -31,9 +34,11 @@ export const startMocking = (requestHandlers: RequestHandlersList) => {
     const keyPath = extractUniqueKeyPath(location.href)
 
     if (keyPath && allowedKeyPaths.includes(keyPath)) {
+      const normalizedPath = keyPath.endsWith('/') ? keyPath : `${keyPath}/`
+
       worker.start({
         serviceWorker: {
-          url: `/${keyPath}/mockServiceWorker.js`,
+          url: `/${normalizedPath}mockServiceWorker.js`,
         },
       })
     } else {
