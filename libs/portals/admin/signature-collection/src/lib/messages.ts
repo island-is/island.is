@@ -442,6 +442,27 @@ export const m = defineMessages({
     defaultMessage: 'Opna fyrir úrvinnslu',
     description: '',
   },
+  collectionReviewedTitle: {
+    id: 'admin-portal.signature-collection:collectionReviewedTitle',
+    defaultMessage: 'Meðmælasöfnun vegna framboðs til Alþingis lokið',
+    description: '',
+  },
+  collectionReviewedMessage: {
+    id: 'admin-portal.signature-collection:collectionReviewedMessage',
+    defaultMessage:
+      'Nú hefur úrvinnslu verið lokið á öllum listum í öllum kjördæmum.',
+    description: '',
+  },
+  collectionProcessedTitle: {
+    id: 'admin-portal.signature-collection:collectionProcessedTitle',
+    defaultMessage: 'Úrvinnsla meðmælasöfnunar lokið',
+    description: '',
+  },
+  collectionProcessedMessage: {
+    id: 'admin-portal.signature-collection:collectionReviewedTitle',
+    defaultMessage: 'Nú er hægt að framlengja stökum listum.',
+    description: '',
+  },
   listReviewedModalDescription: {
     id: 'admin-portal.signature-collection:listReviewedModalDescription#markdown',
     defaultMessage:
