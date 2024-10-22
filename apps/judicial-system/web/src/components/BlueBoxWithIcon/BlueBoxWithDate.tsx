@@ -112,7 +112,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const componentVariants = {
     hidden: { opacity: 0, y: 15 },
     visible: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: 15 },
+    exit: { opacity: 0, y: 10 },
   }
 
   const textVariants = {
@@ -151,7 +151,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
 
   return (
     <Box className={styles.container} padding={[2, 2, 3, 3]}>
-      <motion.div layout>
+      <motion.div>
         <Box className={styles.titleContainer}>
           <SectionHeading
             title="Lykildagsetningar"
@@ -165,18 +165,12 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         <Box marginBottom={1}>
           <Text variant="eyebrow">{defendant.name}</Text>
         </Box>
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence mode="wait">
           {dHasBeenSet || defendant.verdictViewDate ? (
             <>
               <motion.div
-                layout="position"
                 initial="hidden"
                 animate="visible"
-                transition={{
-                  layout: {
-                    duration: 1.5,
-                  },
-                }}
                 variants={{
                   visible: {
                     transition: { staggerChildren: 0.2, delayChildren: 0.6 },
@@ -201,10 +195,13 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                   <motion.div
                     key="firstComponent"
                     variants={componentVariants}
-                    initial="hidden"
+                    initial={false}
                     animate="visible"
                     exit="exit"
-                    transition={{ duration: 0.4, ease: 'easeInOut' }}
+                    transition={{
+                      duration: 0.4,
+                      ease: 'easeInOut',
+                    }}
                   >
                     <Box className={styles.dataContainer}>
                       <DateTime
