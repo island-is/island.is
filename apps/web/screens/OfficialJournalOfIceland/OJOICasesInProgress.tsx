@@ -83,11 +83,11 @@ const OJOICasesInProgressPage: CustomScreen<OJOICasesInProgressProps> = ({
           <T.Body>
             {cases.map((c) => (
               <T.Row key={c.id}>
-                <T.Data>{formatDate(c.createdAt)}</T.Data>
-                <T.Data>{formatDate(c.requestedPublicationDate)}</T.Data>
-                <T.Data>{c.status}</T.Data>
-                <T.Data>{c.title}</T.Data>
-                <T.Data>{c.involvedParty}</T.Data>
+                <T.Data>{formatDate(c.createdAt ?? '')}</T.Data>
+                <T.Data>{formatDate(c.requestedPublicationDate ?? '')}</T.Data>
+                <T.Data>{c.status ?? '-'}</T.Data>
+                <T.Data>{c.title ?? '-'}</T.Data>
+                <T.Data>{c.involvedParty ?? '-'}</T.Data>
               </T.Row>
             ))}
           </T.Body>
