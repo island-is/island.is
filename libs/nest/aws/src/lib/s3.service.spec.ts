@@ -146,7 +146,9 @@ describe('S3Service', () => {
     expect(logger.error).toBeCalledTimes(1)
     expect(logger.error).toBeCalledWith(
       'Error occurred while checking if file exists in S3',
-      TypeError('Cannot read properties of undefined (reading \'httpStatusCode\')'),
+      TypeError(
+        "Cannot read properties of undefined (reading 'httpStatusCode')",
+      ),
     )
 
     expect(result).toEqual(false)

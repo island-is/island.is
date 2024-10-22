@@ -108,7 +108,10 @@ export class S3Service {
       return results.$metadata.httpStatusCode === 200
     } catch (error) {
       // To avoid granting the service ListBucket permissions, we also allow 403 Forbidden.
-      if(error?.$metadata?.httpStatusCode === 404 || error?.$metadata?.httpStatusCode === 403)
+      if (
+        error?.$metadata?.httpStatusCode === 404 ||
+        error?.$metadata?.httpStatusCode === 403
+      )
         return false
 
       this.logger.error(
