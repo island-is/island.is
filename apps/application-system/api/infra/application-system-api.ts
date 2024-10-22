@@ -83,6 +83,9 @@ export const workerSetup =
           prod: 'https://island.is/umsoknir',
           local: 'http://localhost:4200/umsoknir',
         },
+        USER_NOTIFICATION_API_URL: ref(
+          (h) => `http://${h.svc(services.userNotificationService)}`,
+        ),
       })
       .xroad(Base, Client, Payment, Inna, EHIC, WorkMachines)
       .secrets({
