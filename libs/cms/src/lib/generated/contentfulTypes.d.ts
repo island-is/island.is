@@ -1770,7 +1770,7 @@ export interface IGrantFields {
   grantName: string
 
   /** Description */
-  grantDescription?: Document | undefined
+  grantDescription?: string | undefined
 
   /** Grant Application ID */
   grantApplicationId?: string | undefined

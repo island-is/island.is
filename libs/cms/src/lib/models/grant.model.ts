@@ -4,6 +4,7 @@ import { IGrant } from '../generated/contentfulTypes'
 import { Organization, mapOrganization } from './organization.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { CacheField } from '@island.is/nest/graphql'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { Asset, mapAsset } from './asset.model'
 import { ReferenceLink, mapReferenceLink } from './referenceLink.model'
 
@@ -27,20 +28,20 @@ export class Grant {
   @CacheField(() => ReferenceLink, { nullable: true })
   applicationUrl?: ReferenceLink
 
-  @Field({ nullable: true })
-  whatIsGranted?: string
+  @CacheField(() => [SliceUnion])
+  whatIsGranted?: Array<typeof SliceUnion>
 
-  @Field({ nullable: true })
-  specialEmphasis?: string
+  @CacheField(() => [SliceUnion])
+  specialEmphasis?: Array<typeof SliceUnion>
 
-  @Field({ nullable: true })
-  whoCanApply?: string
+  @CacheField(() => [SliceUnion])
+  whoCanApply?: Array<typeof SliceUnion>
 
-  @Field({ nullable: true })
-  howToApply?: string
+  @CacheField(() => [SliceUnion])
+  howToApply?: Array<typeof SliceUnion>
 
-  @Field({ nullable: true })
-  applicationDeadline?: string
+  @CacheField(() => [SliceUnion])
+  applicationDeadline?: Array<typeof SliceUnion>
 
   @Field({ nullable: true })
   dateFrom?: string
@@ -70,31 +71,30 @@ export class Grant {
 export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
   id: sys.id,
   name: fields.grantName,
-  description:
-    (fields.grantDescription && JSON.stringify(fields.grantDescription)) ??
-    undefined,
+  description: fields.grantDescription,
   applicationId: fields.grantApplicationId ?? '',
   applicationDeadlineText: fields.grantApplicationDeadlineText,
   applicationUrl: fields.granApplicationUrl?.fields
     ? mapReferenceLink(fields.granApplicationUrl)
     : undefined,
-  whatIsGranted:
-    (fields.grantWhatIsGranted && JSON.stringify(fields.grantWhatIsGranted)) ??
-    undefined,
-  specialEmphasis:
-    (fields.grantSpecialEmphasis &&
-      JSON.stringify(fields.grantSpecialEmphasis)) ??
-    undefined,
-  whoCanApply:
-    (fields.grantWhoCanApply && JSON.stringify(fields.grantWhoCanApply)) ??
-    undefined,
-  howToApply:
-    (fields.grantHowToApply && JSON.stringify(fields.grantHowToApply)) ??
-    undefined,
-  applicationDeadline:
-    (fields.grantApplicationDeadline &&
-      JSON.stringify(fields.grantApplicationDeadline)) ??
-    undefined,
+  whatIsGranted: fields.grantWhatIsGranted
+    ? mapDocument(fields.grantWhatIsGranted, sys.id + ':what-is-granted')
+    : [],
+  specialEmphasis: fields.grantSpecialEmphasis
+    ? mapDocument(fields.grantSpecialEmphasis, sys.id + ':special-emphasis')
+    : [],
+  whoCanApply: fields.grantWhoCanApply
+    ? mapDocument(fields.grantWhoCanApply, sys.id + ':who-can-apply')
+    : [],
+  howToApply: fields.grantHowToApply
+    ? mapDocument(fields.grantHowToApply, sys.id + ':how-to-apply')
+    : [],
+  applicationDeadline: fields.grantApplicationDeadline
+    ? mapDocument(
+        fields.grantApplicationDeadline,
+        sys.id + ':application-deadline',
+      )
+    : [],
   dateFrom: fields.grantDateFrom ?? '',
   dateTo: fields.grantDateTo ?? '',
   isOpen: fields.grantIsOpen ?? undefined,
