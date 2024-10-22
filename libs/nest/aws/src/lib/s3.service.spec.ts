@@ -107,13 +107,32 @@ describe('S3Service', () => {
     expect(result).toEqual(true)
   })
 
-  it.each([404, 403, 500])(
+  it.each([404, 403])(
     'should return false if the object doesnt exist in s3',
     async (code) => {
       const metadata = { httpStatusCode: code }
-      s3Mock.on(HeadObjectCommand).resolvesOnce({ $metadata: metadata })
+      s3Mock.on(HeadObjectCommand).rejectsOnce({ $metadata: metadata })
 
       const result = await s3Service.fileExists({ bucket: 'x', key: 'y' })
+
+      expect(logger.error).toBeCalledTimes(0)
+      expect(result).toEqual(false)
+    },
+  )
+
+  it.each([500, 400])(
+    'should return false and log error if an unexpected error occurs in s3',
+    async (code) => {
+      const metadata = { httpStatusCode: code }
+      s3Mock.on(HeadObjectCommand).rejectsOnce({ $metadata: metadata })
+
+      const result = await s3Service.fileExists({ bucket: 'x', key: 'y' })
+
+      expect(logger.error).toBeCalledTimes(1)
+      expect(logger.error).toBeCalledWith(
+        'Error occurred while checking if file exists in S3',
+        Error(),
+      )
 
       expect(result).toEqual(false)
     },
@@ -123,6 +142,12 @@ describe('S3Service', () => {
     s3Mock.on(HeadObjectCommand).resolvesOnce({})
 
     const result = await s3Service.fileExists({ bucket: 'x', key: 'y' })
+
+    expect(logger.error).toBeCalledTimes(1)
+    expect(logger.error).toBeCalledWith(
+      'Error occurred while checking if file exists in S3',
+      TypeError('Cannot read properties of undefined (reading \'httpStatusCode\')'),
+    )
 
     expect(result).toEqual(false)
   })
