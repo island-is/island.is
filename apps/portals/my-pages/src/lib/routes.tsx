@@ -7,7 +7,12 @@ import { Root } from '../components/Root'
  */
 export const createRoutes = (moduleRoutes: RouteObject[]): RouteObject[] => [
   {
-    element: <Root />,
+    element: (
+      <>
+        <Root />
+        <ScrollRestoration />
+      </>
+    ),
     children: moduleRoutes,
   },
 ]
