@@ -27,6 +27,7 @@ export const CauseOfInjury: FC<
 
   return (
     <CausesAndEffects
+      majorGroupLength={1}
       externalDataKey={'aoshData.data.contactModeOfInjury'}
       heading={causeAndConsequences.causeOfInjury.heading}
       subHeading={causeAndConsequences.causeOfInjury.subHeading}

@@ -31,13 +31,14 @@ export const Occupation: FC<
 > = (props) => {
   const idx = props.field?.props?.index
   const { formatMessage } = useLocale()
-  const { application } = props
+  const { application, setBeforeSubmitCallback } = props
   const answers = application.answers as WorkAccidentNotification
   const { setValue } = useFormContext()
 
   const [selectedMajorGroup, setSelectedMajorGroup] = useState<Options | null>(
     answers?.employee?.[idx]?.victimsOccupationMajor || null,
   )
+
   const [selectedSubMajorGroup, setSelectedSubMajorGroup] =
     useState<Options | null>(
       answers?.employee?.[idx]?.victimsOccupationSubMajor || null,
@@ -323,7 +324,17 @@ export const Occupation: FC<
     }
   }, [selectedMinorGroup])
 
-  console.log('WHY AM I HERE')
+  setBeforeSubmitCallback?.(async () => {
+    setValue(`employee[${idx}].victimsOccupationMajor`, selectedMajorGroup)
+    setValue(
+      `employee[${idx}].victimsOccupationSubMajor`,
+      selectedSubMajorGroup,
+    )
+    setValue(`employee[${idx}].victimsOccupationMinor`, selectedMinorGroup)
+    setValue(`employee[${idx}].victimsOccupationUnit`, selectedUnitGroup)
+
+    return [true, null]
+  })
 
   return (
     <Box>
@@ -363,7 +374,7 @@ export const Occupation: FC<
             return (
               <Select
                 label={formatMessage(employee.employee.majorGroupLabel)}
-                name="majorGroupSelect"
+                name={`employee[${idx}].victimsOccupationMajor`}
                 options={majorGroupOptions.map((item) => ({
                   label: item.name || '',
                   value: item.code,
@@ -384,7 +395,7 @@ export const Occupation: FC<
               />
             )
           }}
-          name={'majorGroup'}
+          name={`employee[${idx}].victimsOccupationMajor`}
         />
       </Box>
       {/* Sub Major group */}
@@ -394,7 +405,7 @@ export const Occupation: FC<
             return (
               <Select
                 label={formatMessage(employee.employee.subMajorGroupLabel)}
-                name="subMajorGroupSelect"
+                name={`employee[${idx}].victimsOccupationSubMajor`}
                 isDisabled={
                   !selectedMajorGroup || subMajorGroupOptions.length === 0
                 }
@@ -418,7 +429,7 @@ export const Occupation: FC<
               />
             )
           }}
-          name={'subMajorGroup'}
+          name={`employee[${idx}].victimsOccupationSubMajor`}
         />
       </Box>
       {/* Minor group */}
@@ -428,7 +439,7 @@ export const Occupation: FC<
             return (
               <Select
                 label={formatMessage(employee.employee.minorGroupLabel)}
-                name="minorGroupSelect"
+                name={`employee[${idx}].victimsOccupationMinor`}
                 isDisabled={
                   !selectedSubMajorGroup || minorGroupOptions.length === 0
                 }
@@ -452,7 +463,7 @@ export const Occupation: FC<
               />
             )
           }}
-          name={'minorGroup'}
+          name={`employee[${idx}].victimsOccupationMinor`}
         />
       </Box>
       {/* Unit group */}
@@ -462,7 +473,7 @@ export const Occupation: FC<
             return (
               <Select
                 label={formatMessage(employee.employee.unitGroupLabel)}
-                name="unitGroupSelect"
+                name={`employee[${idx}].victimsOccupationUnit`}
                 isDisabled={
                   !selectedMinorGroup || unitGroupOptions.length === 0
                 }
@@ -494,7 +505,7 @@ export const Occupation: FC<
               />
             )
           }}
-          name={'unitGroup'}
+          name={`employee[${idx}].victimsOccupationUnit`}
         />
       </Box>
     </Box>

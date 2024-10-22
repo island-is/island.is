@@ -13,6 +13,7 @@ import {
 } from '@island.is/application/core'
 import { employee, sections } from '../../../lib/messages'
 import {
+  EmploymentStatusOfVictimDto,
   LengthOfEmploymentDto,
   PostCodeDto,
   WorkhourArrangementDto,
@@ -48,8 +49,8 @@ export const employeeSubSection = (index: number) =>
             title: '',
           }),
           buildTextField({
-            // TODO(balli) Set some max length to this
             id: `employee[${index}].address`,
+            maxLength: 255,
             title: employee.employee.address,
             width: 'half',
             variant: 'text',
@@ -179,26 +180,29 @@ export const employeeSubSection = (index: number) =>
             title: employee.employee.employmentStatus,
             width: 'half',
             // required: true,
-            options: [
-              {
-                label: 'Starfsmannaleiga',
-                value: 'Starfsmannaleiga',
-              },
-            ],
+            options: (application) => {
+              const options = getValueViaPath(
+                application.externalData,
+                'aoshData.data.employmentStatusOfVictim',
+              ) as EmploymentStatusOfVictimDto[]
+              return options.map((option) => ({
+                value: option.code || '',
+                label: option.name || '',
+              }))
+            },
           }),
           buildTextField({
-            // TODO(balli) Set some max length to this
             id: `employee[${index}].tempEmploymentSSN`,
             title: employee.employee.tempEmploymentSSN,
             width: 'half',
             variant: 'text',
-            // TODO(balli) fix validation etc here when we get data from a web service
+            format: '######-####',
             condition: (formValue) =>
               getValueViaPath(
                 formValue,
                 `employee[${index}].employmentStatus`,
-              ) === 'Starfsmannaleiga',
-            // required: true,
+              ) === '4', // Code for 'starfsmannaleiga'
+            required: true,
           }),
           buildDescriptionField({
             id: `employee[${index}].occupationTitle`,

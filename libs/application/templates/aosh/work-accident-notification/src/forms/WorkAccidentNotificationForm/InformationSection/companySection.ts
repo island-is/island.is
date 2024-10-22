@@ -111,6 +111,15 @@ export const companySection = buildSubSection({
           title: information.labels.company.numberOfEmployees,
           width: 'half',
           required: true,
+          defaultValue: (application: Application) => {
+            const type = getValueViaPath(
+              application.externalData,
+              'identity.data.type',
+              undefined,
+            ) as string | undefined
+            if (type === 'person') return '0'
+            return undefined
+          },
           options: (application) => {
             const sizeOfEnterprises = getValueViaPath(
               application.externalData,

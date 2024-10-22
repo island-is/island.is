@@ -1,7 +1,6 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { causeAndConsequences } from '../../lib/messages'
-import { Option } from '../Components/types'
 import { WorkAccidentNotification } from '../../lib/dataSchema'
 import { CausesAndEffects } from '../Components/CausesAndEffects'
 
@@ -22,6 +21,7 @@ export const InjuredBodyParts: FC<
 
   return (
     <CausesAndEffects
+      majorGroupLength={1}
       externalDataKey={'aoshData.data.partOfBodyInjured'}
       heading={causeAndConsequences.injuredBodyParts.heading}
       subHeading={causeAndConsequences.injuredBodyParts.subHeading}
@@ -29,7 +29,8 @@ export const InjuredBodyParts: FC<
       mostSeriousAnswerId={`injuredBodyParts[${idx}].partOfBodyInjuredMostSerious`}
       screenId={'injuredBodyParts'}
       mostSeriousAnswer={
-        (answers?.injuredBodyParts?.[idx]?.partOfBodyInjured as string) || ''
+        (answers?.injuredBodyParts?.[idx]
+          ?.partOfBodyInjuredMostSerious as string) || ''
       }
       {...props}
     />

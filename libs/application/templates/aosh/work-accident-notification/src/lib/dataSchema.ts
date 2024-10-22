@@ -50,25 +50,41 @@ const companySchema = z.object({
   industryClassification: z.string().optional(),
 })
 
-const employeeSchema = z.object({
-  // TODO A lot of this optional stuff is to ease developement, go over what is and isn't required
-  victimsOccupation: option,
-  victimsOccupationMajor: option.optional().nullish(),
-  victimsOccupationSubMajor: option.optional().nullish(),
-  victimsOccupationMinor: option.optional().nullish(),
-  victimsOccupationUnit: option.optional().nullish(),
-  address: z.string(),
-  employmentStatus: z.string().optional(),
-  employmentTime: z.string(),
-  employmentRate: z.string().min(1).max(100),
-  //nationalField: TODO .... name and nationalId
-  nationality: z.string(),
-  postnumberAndMunicipality: z.string(),
-  startTime: TimeWithRefine,
-  startDate: z.string(),
-  tempEmploymentSSN: z.string().optional(), // Starfsmannaleiga, TODO(balli) Setja condition að ef starfsmannaleiga er valið þá er þetta must
-  workstation: z.string(), // starfsstöð
-})
+const employeeSchema = z
+  .object({
+    victimsOccupation: option,
+    victimsOccupationMajor: option.optional(),
+    victimsOccupationSubMajor: option.optional(),
+    victimsOccupationMinor: option.optional(),
+    victimsOccupationUnit: option.optional(),
+    address: z.string(),
+    employmentStatus: z.string().optional(),
+    employmentTime: z.string(),
+    employmentRate: z.string().min(1).max(100),
+    nationality: z.string(),
+    postnumberAndMunicipality: z.string(),
+    startTime: TimeWithRefine,
+    startDate: z.string(),
+    tempEmploymentSSN: z.string().optional(),
+    workstation: z.string(), // starfsstöð
+  })
+  .refine(
+    (data) => {
+      // If employmentStatus is '4', tempEmploymentSSN must be valid
+      if (data.employmentStatus === '4') {
+        return (
+          data.tempEmploymentSSN &&
+          data.tempEmploymentSSN.length !== 0 &&
+          kennitala.isValid(data.tempEmploymentSSN)
+        )
+      }
+      // Otherwise, tempEmploymentSSN can be anything (undefined, null, etc.)
+      return true
+    },
+    {
+      path: ['tempEmploymentSSN'],
+    },
+  )
 
 // Reusable schema generator
 const createCauseAndEffectSchema = (

@@ -28,6 +28,7 @@ type CausesAndEffectsProps = {
   mostSeriousAnswerId: string // Example circumstances.physicialActivitesMostSerious
   screenId: string // Example circumstances ... used to find answers to autofill
   mostSeriousAnswer?: string // Example physicialActivitiesMostSerious ... used to find answers to autofill
+  majorGroupLength: number
 }
 
 export type OptionAndKey = {
@@ -132,7 +133,6 @@ export const CausesAndEffects: FC<
           groups={activityGroups}
           items={activites}
           pickedValue={pickedValue}
-          // answerId sent with ...props
           {...props}
         />
       </Box>
@@ -141,14 +141,18 @@ export const CausesAndEffects: FC<
           <Box marginBottom={2}>
             <AlertMessage
               type="warning"
-              message={'Hakaðu við það sem þú telur að sé alvarlegast.'} // TODO translate etc..
+              message={formatMessage(
+                causeAndConsequences.shared.mostSeriousWarning,
+              )}
             />
             {errors && getErrorViaPath(errors, mostSeriousAnswerId) && (
               // TODO Have something design for displaying error ?
               <Box paddingTop={2}>
                 <AlertMessage
                   type="error"
-                  message={'Vinsamlegast veldur eitt af eftirfarandi'} // TODO translate etc..
+                  message={formatMessage(
+                    causeAndConsequences.shared.mostSeriousAlert,
+                  )}
                 />
               </Box>
             )}

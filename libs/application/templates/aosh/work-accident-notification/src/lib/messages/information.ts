@@ -131,6 +131,12 @@ export const information = {
         defaultMessage: 'Verkkaupi',
         description: 'Title of project purchase information section',
       },
+      radioTitle: {
+        id: 'aosh.wan.application:information.projectPurchase.radioTitle',
+        defaultMessage: 'Vilt þú skrá verkkaupa ?',
+        description:
+          'Title of checkbox on the project purchase page. information section',
+      },
       descriptionField: {
         id: 'aosh.wan.application:information.projectPurchase.descriptionField',
         defaultMessage: 'Verkkaupi',

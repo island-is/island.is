@@ -15,12 +15,13 @@ type MultiSelectDropdownProps = {
     fullItemCode: string,
   ) => void
   values: Option[]
+  majorGroupLength: number
 }
 
 export const MultiSelectDropdown: FC<
   React.PropsWithChildren<MultiSelectDropdownProps & FieldBaseProps>
 > = (props) => {
-  const { group, options, onChange, values } = props
+  const { group, options, onChange, values, majorGroupLength } = props
 
   return (
     <Box marginTop={1}>
@@ -49,21 +50,21 @@ export const MultiSelectDropdown: FC<
                       value,
                       label,
                     })) as Option[],
-                    group.code.substring(0, 1),
+                    group.code.substring(0, majorGroupLength),
                     true,
                     meta.option?.value || '',
                   )
                 } else if (meta.action === 'remove-value') {
                   onChange(
                     [meta.removedValue] as Option[],
-                    group.code.substring(0, 1),
+                    group.code.substring(0, majorGroupLength),
                     false,
                     meta.removedValue?.value,
                   )
                 } else if (meta.action === 'deselect-option') {
                   onChange(
                     [meta.option] as Option[],
-                    group.code.substring(0, 1),
+                    group.code.substring(0, majorGroupLength),
                     false,
                     meta.option?.value || '',
                   )

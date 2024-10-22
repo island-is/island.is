@@ -21,6 +21,7 @@ export const TypeOfInjury: FC<
 
   return (
     <CausesAndEffects
+      majorGroupLength={2}
       externalDataKey={'aoshData.data.typeOfInjury'}
       heading={causeAndConsequences.typeOfInjury.heading}
       subHeading={causeAndConsequences.typeOfInjury.subHeading}
@@ -28,7 +29,7 @@ export const TypeOfInjury: FC<
       mostSeriousAnswerId={`typeOfInjury[${idx}].typeOfInjuryMostSerious`}
       screenId={'typeOfInjury'}
       mostSeriousAnswer={
-        (answers?.typeOfInjury?.[idx]?.typeOfInjury as string) || ''
+        (answers?.typeOfInjury?.[idx]?.typeOfInjuryMostSerious as string) || ''
       }
       {...props}
     />
