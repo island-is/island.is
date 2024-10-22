@@ -305,7 +305,10 @@ const Stepper = ({
     <Box marginTop={3}>
       <Button
         onClick={() => {
-          if (selectedOption === null) {
+          if (
+            selectedOption === null &&
+            currentStepType !== STEP_TYPES.INFORMATION
+          ) {
             setHasClickedContinueWithoutSelecting(true)
             return
           }
