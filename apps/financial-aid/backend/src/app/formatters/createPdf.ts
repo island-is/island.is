@@ -18,9 +18,21 @@ import {
   showSpouseData,
 } from '@island.is/financial-aid/shared/lib'
 import { ApplicationModel } from '../modules/application'
-import { getApplicant, getApplicantMoreInfo } from './applicationHelper'
+import {
+  getApplicant,
+  getApplicantMoreInfo,
+  getApplicationInfo,
+  getApplicationRejection,
+  getHeader,
+} from './applicationPdfHelper'
 import { get } from 'lodash'
-import { baseFontSize, largeFontSize, smallFontSize } from './pdfhelpers'
+import {
+  baseFontSize,
+  largeFontSize,
+  lightGray,
+  mediumFontSize,
+  smallFontSize,
+} from './pdfhelpers'
 
 export const createApplicantPdff = async (application: ApplicationModel) => {
   const pdfDoc = await PDFDocument.create()
@@ -166,32 +178,26 @@ export const createPdf = async (application: ApplicationModel) => {
 
   const margin = 50
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
+  const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
 
-  // HEADER of Application
   const { name, state, created } = application
 
-  const applicationState = getState[application.state]
-  const applicationCreated = created.toISOString()
-
-  const ageOfApplication = `Aldur umsóknar: ${calcDifferenceInDate(
-    applicationCreated,
-  )}`
+  const { applicationState, ageOfApplication } = getHeader(created, state)
 
   const stateWidth = font.widthOfTextAtSize(applicationState, baseFontSize)
 
   // Define padding between title and the new text
   const lineSpacing = 10
 
-  // Draw the title on the left side within the margin
+  //   ---- ----- HEADER ---- ----
   page.drawText(name, {
     x: margin,
     y: height - margin - largeFontSize,
     size: largeFontSize,
-    font: font,
+    font: boldFont,
     color: rgb(0, 0, 0),
   })
 
-  // Draw the state on the right side within the margin
   page.drawText(applicationState, {
     x: width - stateWidth - margin,
     y: height - margin - baseFontSize,
@@ -201,14 +207,103 @@ export const createPdf = async (application: ApplicationModel) => {
       state === ApplicationState.REJECTED ? rgb(1, 0, 0.3) : rgb(0, 179, 158),
   })
 
-  // Draw the subTitle ("Aldur umsóknar") under the title
+  const ageOfApplicationYPosition =
+    height - margin - largeFontSize - smallFontSize - lineSpacing
+
   page.drawText(ageOfApplication, {
     x: margin,
-    y: height - margin - largeFontSize - smallFontSize - lineSpacing, // Adjust y-position below title
+    y: ageOfApplicationYPosition,
     size: smallFontSize,
     font: font,
     color: rgb(0, 0, 0),
   })
+  //   ---- ----- HEADER ---- ----
+
+  //   ---- ----- APPLICANT INFO ---- ----
+  const mainTitle = 'Umsókn'
+
+  const mainTitleYPosition = ageOfApplicationYPosition - mediumFontSize - 20
+  page.drawText(mainTitle, {
+    x: margin,
+    y: mainTitleYPosition,
+    size: mediumFontSize,
+    font: boldFont,
+    color: rgb(0, 0, 0),
+  })
+
+  // Draw a line under the main title
+  const lineYPosition = mainTitleYPosition - 10
+  page.drawLine({
+    start: { x: margin, y: lineYPosition },
+    end: { x: width - margin, y: lineYPosition },
+    thickness: 1,
+    color: lightGray, // Light gray
+  })
+
+  const sections = getApplicationInfo(application)
+
+  // Calculate the width of each section (3 equal sections)
+  const sectionWidth = (width - 2 * margin) / sections.length
+
+  // Draw each section
+  sections.forEach((section, index) => {
+    // Calculate the x position for each section
+    const sectionX = margin + index * sectionWidth
+
+    // Draw the section title
+    page.drawText(section.title, {
+      x: sectionX,
+      y: lineYPosition - 20,
+      size: baseFontSize,
+      font: boldFont,
+      color: rgb(0, 0, 0),
+    })
+
+    // Draw the section text
+    page.drawText(section.text, {
+      x: sectionX,
+      y: lineYPosition - 40,
+      size: baseFontSize,
+      font: font,
+      color: rgb(0, 0, 0), // Blue text to match the style
+    })
+  })
+
+  if (application.state === ApplicationState.REJECTED) {
+    let rejectionTextY = lineYPosition - 80
+
+    page.drawText('Ástæða synjunar', {
+      x: margin,
+      y: rejectionTextY,
+      size: mediumFontSize,
+      font: boldFont,
+      color: rgb(0, 0, 0),
+    })
+    // here should be a rejection
+    const applicationRejction = getApplicationRejection(application.rejection)
+    const cleanText = application.rejection.replace(/<\/[^>]+(>|$)/g, '')
+    console.log(JSON.stringify(applicationRejction))
+    console.log(JSON.stringify(cleanText))
+    // Adjust Y position for the rejection text
+    rejectionTextY -= mediumFontSize + 10
+
+    // Draw each part of the rejection text
+    applicationRejction.forEach((line) => {
+      let fontToUse = line.bold ? boldFont : font // Use bold font for bold text
+      let textColor = line.color === 'blue' ? rgb(0, 0, 1) : rgb(0, 0, 0) // Blue for email, otherwise black
+
+      page.drawText(line.text, {
+        x: margin,
+        y: rejectionTextY,
+        size: baseFontSize,
+        font: fontToUse,
+        color: textColor,
+      })
+
+      // Adjust the Y position for the next line
+      rejectionTextY -= baseFontSize + 2
+    })
+  }
 
   const pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true })
 
