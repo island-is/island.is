@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
+import { PDFDocument, PDFFont, rgb, StandardFonts } from 'pdf-lib'
 import format from 'date-fns/format'
 import {
   Application,
@@ -21,17 +21,22 @@ import { ApplicationModel } from '../modules/application'
 import {
   getApplicant,
   getApplicantMoreInfo,
+  getApplicantSpouse,
   getApplicationInfo,
-  getApplicationRejection,
   getHeader,
+  getNationalRegistryInfo,
 } from './applicationPdfHelper'
-import { get } from 'lodash'
 import {
   baseFontSize,
+  drawTextArea,
   largeFontSize,
   lightGray,
   mediumFontSize,
   smallFontSize,
+  stripHTMLTags,
+  drawTitleAndUnderLine,
+  wrapText,
+  drawSectionInfo,
 } from './pdfhelpers'
 
 export const createApplicantPdff = async (application: ApplicationModel) => {
@@ -172,7 +177,7 @@ export const createPdf = async (application: ApplicationModel) => {
   const pdfDoc = await PDFDocument.create()
   pdfDoc.setTitle(`Umsokn-${application.id}`)
 
-  const page = pdfDoc.addPage()
+  let page = pdfDoc.addPage()
 
   const { width, height } = page.getSize()
 
@@ -207,102 +212,136 @@ export const createPdf = async (application: ApplicationModel) => {
       state === ApplicationState.REJECTED ? rgb(1, 0, 0.3) : rgb(0, 179, 158),
   })
 
-  const ageOfApplicationYPosition =
+  let currentYPosition =
     height - margin - largeFontSize - smallFontSize - lineSpacing
-
+  console.log(JSON.stringify(currentYPosition), 'currentYPosition - header')
   page.drawText(ageOfApplication, {
     x: margin,
-    y: ageOfApplicationYPosition,
+    y: currentYPosition,
     size: smallFontSize,
     font: font,
     color: rgb(0, 0, 0),
   })
   //   ---- ----- HEADER ---- ----
 
-  //   ---- ----- APPLICANT INFO ---- ----
-  const mainTitle = 'Umsókn'
-
-  const mainTitleYPosition = ageOfApplicationYPosition - mediumFontSize - 20
-  page.drawText(mainTitle, {
-    x: margin,
-    y: mainTitleYPosition,
-    size: mediumFontSize,
-    font: boldFont,
-    color: rgb(0, 0, 0),
-  })
-
-  // Draw a line under the main title
-  const lineYPosition = mainTitleYPosition - 10
-  page.drawLine({
-    start: { x: margin, y: lineYPosition },
-    end: { x: width - margin, y: lineYPosition },
-    thickness: 1,
-    color: lightGray, // Light gray
-  })
+  //   ---- ----- APPLICATION INFO ---- ----
+  currentYPosition = drawTitleAndUnderLine(
+    'Umsókn',
+    currentYPosition,
+    page,
+    margin,
+    width,
+    boldFont,
+  )
 
   const sections = getApplicationInfo(application)
-
-  // Calculate the width of each section (3 equal sections)
-  const sectionWidth = (width - 2 * margin) / sections.length
-
-  // Draw each section
-  sections.forEach((section, index) => {
-    // Calculate the x position for each section
-    const sectionX = margin + index * sectionWidth
-
-    // Draw the section title
-    page.drawText(section.title, {
-      x: sectionX,
-      y: lineYPosition - 20,
-      size: baseFontSize,
-      font: boldFont,
-      color: rgb(0, 0, 0),
-    })
-
-    // Draw the section text
-    page.drawText(section.text, {
-      x: sectionX,
-      y: lineYPosition - 40,
-      size: baseFontSize,
-      font: font,
-      color: rgb(0, 0, 0), // Blue text to match the style
-    })
-  })
+  drawSectionInfo(sections, page, margin, currentYPosition, boldFont, font)
 
   if (application.state === ApplicationState.REJECTED) {
-    let rejectionTextY = lineYPosition - 80
+    // Optionally draw rejection text and get the updated Y position
+    currentYPosition = drawTextArea(
+      page,
+      'Ástæða synjunar',
+      application.rejection,
+      font,
+      boldFont,
+      baseFontSize,
+      currentYPosition,
+      margin,
+    )
+  }
 
-    page.drawText('Ástæða synjunar', {
-      x: margin,
-      y: rejectionTextY,
-      size: mediumFontSize,
-      font: boldFont,
-      color: rgb(0, 0, 0),
-    })
-    // here should be a rejection
-    const applicationRejction = getApplicationRejection(application.rejection)
-    const cleanText = application.rejection.replace(/<\/[^>]+(>|$)/g, '')
-    console.log(JSON.stringify(applicationRejction))
-    console.log(JSON.stringify(cleanText))
-    // Adjust Y position for the rejection text
-    rejectionTextY -= mediumFontSize + 10
+  //   ---- ----- APPLICATION INFO ---- ----
 
-    // Draw each part of the rejection text
-    applicationRejction.forEach((line) => {
-      let fontToUse = line.bold ? boldFont : font // Use bold font for bold text
-      let textColor = line.color === 'blue' ? rgb(0, 0, 1) : rgb(0, 0, 0) // Blue for email, otherwise black
+  //  ---- ----- APPLICANT INFO ---- ----
 
-      page.drawText(line.text, {
-        x: margin,
-        y: rejectionTextY,
-        size: baseFontSize,
-        font: fontToUse,
-        color: textColor,
-      })
+  currentYPosition = drawTitleAndUnderLine(
+    'Umsækjandi',
+    currentYPosition,
+    page,
+    margin,
+    width,
+    boldFont,
+  )
 
-      // Adjust the Y position for the next line
-      rejectionTextY -= baseFontSize + 2
-    })
+  const applicant = getApplicant(application)
+  drawSectionInfo(applicant, page, margin, currentYPosition, boldFont, font)
+
+  if (application.formComment) {
+    // Optionally draw rejection text and get the updated Y position
+    currentYPosition = drawTextArea(
+      page,
+      'Athugasemd',
+      application.formComment,
+      font,
+      boldFont,
+      baseFontSize,
+      currentYPosition - 50,
+      margin,
+    )
+  }
+
+  //   ---- ----- APPLICANT INFO ---- ----
+
+  // ----- ----- NationlRegistry INFO ---- ----
+  currentYPosition = drawTitleAndUnderLine(
+    'Þjóðskrá',
+    currentYPosition,
+    page,
+    margin,
+    width,
+    boldFont,
+  )
+
+  const nationalRegistryInfo = getNationalRegistryInfo(application)
+  drawSectionInfo(
+    nationalRegistryInfo,
+    page,
+    margin,
+    currentYPosition,
+    boldFont,
+    font,
+  )
+
+  // ----- ----- NationlRegistry INFO ---- ----
+  //   page = pdfDoc.addPage()
+  //   currentYPosition = height - margin - baseFontSize
+
+  if (showSpouseData[application.familyStatus]) {
+    // ----- ----- Spouse info ---- ----
+    currentYPosition = drawTitleAndUnderLine(
+      'Maki',
+      currentYPosition,
+      page,
+      margin,
+      width,
+      boldFont,
+    )
+
+    const applicantSpouse = getApplicantSpouse(application)
+    drawSectionInfo(
+      applicantSpouse,
+      page,
+      margin,
+      currentYPosition,
+      boldFont,
+      font,
+    )
+
+    if (application.spouseFormComment) {
+      // Optionally draw rejection text and get the updated Y position
+      currentYPosition = drawTextArea(
+        page,
+        'Athugasemd',
+        application.spouseFormComment,
+        font,
+        boldFont,
+        baseFontSize,
+        currentYPosition - 50,
+        margin,
+      )
+    }
+    // ----- ----- Spouse info ---- ----
   }
 
   const pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true })
