@@ -19,11 +19,13 @@ import {
   useSignatureCollectionAdminCanSignInfoQuery,
   useIdentityQuery,
 } from './identityAndCanSignLookup.generated'
-import { useSignatureCollectionUploadPaperSignatureMutation } from './uploadPaperSignee.generated'
+import { useSignatureCollectionAdminUploadPaperSignatureMutation } from './uploadPaperSignee.generated'
+import { useRevalidator } from 'react-router-dom'
 
 export const PaperSignees = ({ listId }: { listId: string }) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
+  const { revalidate } = useRevalidator()
   const { control, reset } = useForm()
 
   const [nationalIdInput, setNationalIdInput] = useState('')
@@ -61,7 +63,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
   }, [nationalIdInput, loading, data])
 
   const [uploadPaperSignee, { loading: uploadingPaperSignature }] =
-    useSignatureCollectionUploadPaperSignatureMutation({
+    useSignatureCollectionAdminUploadPaperSignatureMutation({
       variables: {
         input: {
           listId: listId,
@@ -72,6 +74,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
       onCompleted: () => {
         toast.success(formatMessage(m.paperSigneeSuccess))
         reset()
+        revalidate()
         setNationalIdTypo(false)
         setName('')
       },
