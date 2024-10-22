@@ -164,7 +164,9 @@ export const Constituency = ({
                       },
                     }}
                     tag={
-                      allowedToProcess && list.active
+                      allowedToProcess &&
+                      list.active &&
+                      collectionStatus === CollectionStatus.InitialActive
                         ? {
                             label: 'Cancel collection',
                             renderTag: () => (
