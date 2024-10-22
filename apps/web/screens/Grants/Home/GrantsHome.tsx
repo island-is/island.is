@@ -20,7 +20,7 @@ import {
   CustomPageUniqueIdentifier,
   GenericTag,
   Query,
-  QueryGetGenericTagsInTagGroupArgs,
+  QueryGetGenericTagsInTagGroupsArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -29,7 +29,7 @@ import {
   CustomScreen,
   withCustomPageWrapper,
 } from '../../CustomPage/CustomPageWrapper'
-import { GET_GENERIC_TAG_IN_TAG_GROUP_QUERY } from '../../queries/GenericTag'
+import { GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY } from '../../queries/GenericTag'
 import { m } from '../messages'
 
 const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
@@ -177,13 +177,13 @@ GrantsHome.getProps = async ({ apolloClient, locale }) => {
   //Todo: add more organizations ??
 
   const {
-    data: { getGenericTagsInTagGroup: tags },
-  } = await apolloClient.query<Query, QueryGetGenericTagsInTagGroupArgs>({
-    query: GET_GENERIC_TAG_IN_TAG_GROUP_QUERY,
+    data: { getGenericTagsInTagGroups: tags },
+  } = await apolloClient.query<Query, QueryGetGenericTagsInTagGroupsArgs>({
+    query: GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY,
     variables: {
       input: {
         lang: locale as ContentLanguage,
-        tagGroupSlug: tagGroupCategory,
+        tagGroupSlugs: [tagGroupCategory],
       },
     },
   })

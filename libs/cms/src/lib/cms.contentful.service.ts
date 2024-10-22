@@ -35,7 +35,6 @@ import { ContentfulRepository, localeMap } from './contentful.repository'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
 import { mapUrl, Url } from './models/url.model'
-import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
 import {
@@ -82,7 +81,7 @@ import { GenericTag, mapGenericTag } from './models/genericTag.model'
 import { GetEmailSignupInput } from './dto/getEmailSignup.input'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
 import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
-import { GetGenericTagInTagGroupInput } from './dto/getGenericTags.input'
+import { GetGenericTagsInTagGroupsInput } from './dto/getGenericTagsInTagGroups.input'
 import { Grant, mapGrant } from './models/grant.model'
 
 const errorHandler = (name: string) => {
@@ -1062,14 +1061,22 @@ export class CmsContentfulService {
     return (result.items as types.IGenericTag[]).map(mapGenericTag)[0] ?? null
   }
 
-  async getGenericTagsInTagGroup({
+  async getGenericTagsInTagGroups({
     lang = 'is',
-    tagGroupSlug,
-  }: GetGenericTagInTagGroupInput): Promise<Array<GenericTag> | null> {
-    const params = {
-      ['content_type']: 'genericTag',
-      'fields.genericTagGroup.fields.slug': tagGroupSlug,
-      'fields.genericTagGroup.sys.contentType.sys.id': 'genericTagGroup',
+    tagGroupSlugs,
+  }: GetGenericTagsInTagGroupsInput): Promise<Array<GenericTag> | null> {
+    let params
+    if (tagGroupSlugs) {
+      params = {
+        ['content_type']: 'genericTag',
+        'fields.genericTagGroup.fields.slug[in]': tagGroupSlugs.join(','),
+        'fields.genericTagGroup.sys.contentType.sys.id': 'genericTagGroup',
+      }
+    } else {
+      params = {
+        ['content_type']: 'genericTag',
+        'fields.genericTagGroup.sys.contentType.sys.id': 'genericTagGroup',
+      }
     }
 
     const result = await this.contentfulRepository

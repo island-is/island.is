@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
+import format from 'date-fns/format'
 import NextLink from 'next/link'
 
 import {
@@ -8,11 +9,11 @@ import {
   Breadcrumbs,
   Filter,
   FilterMultiChoice,
-  Inline,
   Input,
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
 import {
   GrantHeaderWithImage,
   GrantWrapper,
@@ -21,10 +22,11 @@ import {
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
+  GenericTag,
   Grant,
   Query,
+  QueryGetGenericTagsInTagGroupsArgs,
   QueryGetGrantsArgs,
-  QueryGetOrganizationArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -34,10 +36,9 @@ import {
   withCustomPageWrapper,
 } from '../../CustomPage/CustomPageWrapper'
 import SidebarLayout from '../../Layouts/SidebarLayout'
+import { GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY } from '../../queries/GenericTag'
 import { GET_GRANTS_QUERY } from '../../queries/Grants'
 import { m } from '../messages'
-import { format } from 'date-fns'
-import { isDefined } from '@island.is/shared/utils'
 
 const filterState = {
   status: [],
@@ -49,6 +50,7 @@ const filterState = {
 const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   locale,
   grants,
+  tags,
 }) => {
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
@@ -73,6 +75,14 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   ]
 
   const [searchState, setSearchState] = useState({ q: '', filter: filterState })
+
+  const categoryFilters = tags?.filter(
+    (t) => t.genericTagGroup?.slug === 'grant-category',
+  )
+
+  const typeFilters = tags?.filter(
+    (t) => t.genericTagGroup?.slug === 'grant-type',
+  )
 
   return (
     <GrantWrapper
@@ -153,84 +163,28 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                           },
                         ],
                       },
-                      {
-                        id: 'bleble2',
-                        label: 'Flokkur',
-                        selected: [],
-                        filters: [
-                          {
-                            value: 'Rannsóknir',
-                            label: 'Rannsóknir',
-                          },
-                          {
-                            value: 'Nýsköpun',
-                            label: 'Nýsköpun',
-                          },
-                          {
-                            value: 'Nám og kennsla',
-                            label: 'Nám og kennsla',
-                          },
-                          {
-                            value: 'Starfs- og símenntun',
-                            label: 'Starfs- og símenntun',
-                          },
-                          {
-                            value: 'Menning og listir',
-                            label: 'Menning og listir',
-                          },
-                          {
-                            value: 'Æskulýðsstarf og íþróttir',
-                            label: 'Æskulýðsstarf og íþróttir',
-                          },
-                          {
-                            value: 'Atvinnulíf',
-                            label: 'Atvinnulíf',
-                          },
-                          {
-                            value: 'Innlent',
-                            label: 'Innlent',
-                          },
-                          {
-                            value: 'Alþjóðlegt',
-                            label: 'Alþjóðlegt',
-                          },
-                        ],
-                      },
-                      {
-                        id: 'bleble4',
-                        label: 'Tegund',
-                        selected: [],
-                        filters: [
-                          {
-                            value: 'Fjármögnun',
-                            label: 'Fjármögnun',
-                          },
-                          {
-                            value: 'Starfslaun',
-                            label: 'Starfslaun',
-                          },
-                          {
-                            value: 'Endurgreiðsla kostnaðar',
-                            label: 'Endurgreiðsla kostnaðar',
-                          },
-                          {
-                            value: 'Skattafrádráttur',
-                            label: 'Skattafrádráttur',
-                          },
-                          {
-                            value: 'Skiptinám',
-                            label: 'Skiptinám',
-                          },
-                          {
-                            value: 'Sjálfboðastörf',
-                            label: 'Sjálfboðastörf',
-                          },
-                          {
-                            value: 'Tengslamyndun',
-                            label: 'Tengslamyndun',
-                          },
-                        ],
-                      },
+                      categoryFilters
+                        ? {
+                            id: 'grant-categories',
+                            label: 'Flokkur',
+                            selected: [],
+                            filters: categoryFilters.map((t) => ({
+                              value: t.slug,
+                              label: t.title,
+                            })),
+                          }
+                        : undefined,
+                      typeFilters
+                        ? {
+                            id: 'grant-categories',
+                            label: 'Tegund',
+                            selected: [],
+                            filters: typeFilters.map((t) => ({
+                              value: t.slug,
+                              label: t.title,
+                            })),
+                          }
+                        : undefined,
                       {
                         id: 'bleble3',
                         label: 'Stofnun',
@@ -258,7 +212,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                           },
                         ],
                       },
-                    ]}
+                    ].filter(isDefined)}
                   />
                 </Filter>
               </Box>
@@ -326,16 +280,19 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
 interface GrantsHomeProps {
   locale: Locale
   grants?: Array<Grant>
+  tags?: Array<GenericTag>
 }
 
 const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
   grants,
+  tags,
   customPageData,
   locale,
 }) => {
   return (
     <GrantsSearchResultsPage
       grants={grants}
+      tags={tags}
       locale={locale}
       customPageData={customPageData}
     />
@@ -343,19 +300,35 @@ const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
 }
 
 GrantsSearchResults.getProps = async ({ apolloClient, locale }) => {
-  const {
-    data: { getGrants: grants },
-  } = await apolloClient.query<Query, QueryGetGrantsArgs>({
-    query: GET_GRANTS_QUERY,
-    variables: {
-      input: {
-        lang: locale as ContentLanguage,
-      },
+  const [
+    {
+      data: { getGrants },
     },
-  })
-
+    {
+      data: { getGenericTagsInTagGroups },
+    },
+  ] = await Promise.all([
+    apolloClient.query<Query, QueryGetGrantsArgs>({
+      query: GET_GRANTS_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetGenericTagsInTagGroupsArgs>({
+      query: GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+          tagGroupSlugs: ['grant-category', 'grant-type'],
+        },
+      },
+    }),
+  ])
   return {
-    grants,
+    grants: getGrants,
+    tags: getGenericTagsInTagGroups ?? undefined,
     locale: locale as Locale,
     themeConfig: {
       footerVersion: 'organization',

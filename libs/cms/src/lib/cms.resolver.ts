@@ -121,7 +121,7 @@ import { TeamMemberResponse } from './models/teamMemberResponse.model'
 import { TeamList } from './models/teamList.model'
 import { TeamMember } from './models/teamMember.model'
 import { LatestGenericListItems } from './models/latestGenericListItems.model'
-import { GetGenericTagInTagGroupInput } from './dto/getGenericTags.input'
+import { GetGenericTagsInTagGroupsInput } from './dto/getGenericTagsInTagGroups.input'
 import { Grant } from './models/grant.model'
 import { GetGrantsInput } from './dto/getGrants.input'
 import { GetSingleGrantInput } from './dto/getSingleGrant.input'
@@ -645,10 +645,10 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => [GenericTag], { nullable: true })
-  getGenericTagsInTagGroup(
-    @Args('input') input: GetGenericTagInTagGroupInput,
+  getGenericTagsInTagGroups(
+    @Args('input') input: GetGenericTagsInTagGroupsInput,
   ): Promise<Array<GenericTag> | null> {
-    return this.cmsContentfulService.getGenericTagsInTagGroup(input)
+    return this.cmsContentfulService.getGenericTagsInTagGroups(input)
   }
 
   @CacheControl(defaultCache)
