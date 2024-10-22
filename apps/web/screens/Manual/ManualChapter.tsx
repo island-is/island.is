@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQueryState } from 'next-usequerystate'
 import { BLOCKS } from '@contentful/rich-text-types'
 
@@ -75,6 +75,9 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
   const { activeLocale } = useI18n()
 
   const [selectedItemId, setSelectedItemId] = useQueryState('selectedItemId')
+  const [expandedItemIds, setExpandedItemsIds] = useState(
+    selectedItemId ? [selectedItemId] : [],
+  )
   const initialScrollHasHappened = useRef(false)
 
   useLocalLinkTypeResolver()
@@ -174,13 +177,29 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
                 key={item.id}
                 id={item.id}
                 label={item.title}
-                expanded={item.id === selectedItemId}
+                expanded={
+                  expandedItemIds.includes(item.id) ||
+                  item.id === selectedItemId
+                }
                 onToggle={(expanded) => {
                   initialScrollHasHappened.current = true
                   if (expanded) {
+                    setExpandedItemsIds((prev) => prev.concat(item.id))
                     setSelectedItemId(item.id)
-                  } else if (selectedItemId === item.id) {
-                    setSelectedItemId(null)
+                  } else {
+                    setExpandedItemsIds((prev) => {
+                      const updatedExpandedItemIds = prev.filter(
+                        (id) => id !== item.id,
+                      )
+                      if (selectedItemId === item.id) {
+                        setSelectedItemId(
+                          updatedExpandedItemIds[
+                            updatedExpandedItemIds.length - 1
+                          ] ?? null,
+                        )
+                      }
+                      return updatedExpandedItemIds
+                    })
                   }
                 }}
               >
