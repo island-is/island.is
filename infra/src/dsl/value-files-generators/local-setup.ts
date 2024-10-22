@@ -33,21 +33,21 @@ export const mapServiceToNXname = async (
 
     if (!validatedProjectMeta.name || !validatedProjectMeta.sourceRoot) {
       throw new Error(
-        `Project metadata is missing required fields: name or sourceRoot.`
-      );
+        `Project metadata is missing required fields: name or sourceRoot.`,
+      )
     }
 
     return {
       serviceName: validatedProjectMeta.name,
       projectPath: validatedProjectMeta.sourceRoot,
-    };
+    }
   } catch (error) {
-    logger.error('Error in mapServiceToNXname:', error);
+    logger.error('Error in mapServiceToNXname:', error)
 
     if (error instanceof Error) {
-      throw new Error(`Unexpected error: ${error.message}`);
+      throw new Error(`Unexpected error: ${error.message}`)
     }
-    throw new Error('An unknown error occurred.');
+    throw new Error('An unknown error occurred.')
   }
 }
 

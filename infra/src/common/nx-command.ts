@@ -28,7 +28,7 @@ export const nxCommand = async <T>(options: {
     }
 
     // If not parsing JSON, return raw stdout
-    return (stdout as unknown) as T
+    return stdout as unknown as T
   } catch (error) {
     handleNxCommandError(error)
     throw error
