@@ -53,6 +53,7 @@ describe('BFF PortalEnv serialization', () => {
     })
     .bff({
       key: 'stjornbord',
+      clientId: `@admin.island.is/bff-stjornbord`,
       clientName,
       services,
     })
