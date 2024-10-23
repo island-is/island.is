@@ -9,9 +9,10 @@ import { overviewSection } from './OverviewSection'
 import { announcementSection } from './AnnouncementSection'
 
 const buildRepeatableSections = (): Section[] => {
-  const sections = [...Array(2)].map((_key, index) => {
+  const sections = [...Array(20)].map((_key, index) => {
     return EmployeeAndAccidentInformationSection(index)
   })
+  console.log(sections)
   return sections.flat()
 }
 
@@ -26,10 +27,7 @@ export const WorkAccidentNotificationForm: Form = buildForm({
     announcementSection,
     informationSection,
     accidentSection,
-    overviewSection,
     ...buildRepeatableSections(),
-    //employeeSection,
-    //causeAndConsequencesSection,
     overviewSection,
   ],
 })

@@ -1,5 +1,6 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildDescriptionField,
   buildHiddenInput,
   buildMultiField,
@@ -26,7 +27,15 @@ export const companySection = buildSubSection({
       children: [
         buildHiddenInput({
           id: 'employeeAmount',
-          defaultValue: 2,
+          defaultValue: (application: Application) => {
+            const employeeAmount = getValueViaPath(
+              application.answers,
+              'employeeAmount',
+              1,
+            ) as number
+            console.log(employeeAmount)
+            return employeeAmount
+          },
         }),
         buildDescriptionField({
           id: 'companyInformation.description',

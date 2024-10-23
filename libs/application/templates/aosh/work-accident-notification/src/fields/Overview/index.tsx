@@ -101,7 +101,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         </Accordion>
       </Box>
       <Box paddingTop={[2, 2, 4]}>
-        <AddEmployee handleClick={() => console.log('hello')} />
+        <AddEmployee {...props} />
       </Box>
     </Box>
   )
