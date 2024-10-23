@@ -312,9 +312,17 @@ const useS3Upload = (caseId: string) => {
         }
       })
 
-      return Promise.all(promises).then((results) =>
-        results.every((result) => result),
-      )
+      return Promise.all(promises).then((results) => {
+        if (results.every((result) => result)) {
+          return 'ALL_SUCCEEDED'
+        }
+
+        if (results.some((result) => result)) {
+          return 'SOME_SUCCEEDED'
+        }
+
+        return 'NONE_SUCCEEDED'
+      })
     },
     [getPresignedPost, addFileToCaseState, formatMessage],
   )

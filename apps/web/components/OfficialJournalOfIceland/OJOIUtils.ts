@@ -81,7 +81,10 @@ export const sortCategories = (cats: EntityOption[]) => {
   })
 }
 
-export const formatDate = (date: string, df = 'dd.MM.yyyy') => {
+export const formatDate = (date?: string, df = 'dd.MM.yyyy') => {
+  if (!date) {
+    return '-'
+  }
   try {
     return format(new Date(date), df, { locale: is })
   } catch (e) {

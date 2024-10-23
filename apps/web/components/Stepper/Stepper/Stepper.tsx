@@ -106,7 +106,7 @@ const getInitialStateAndAnswersByQueryParams = (
     )
 
     const stepQuestion = getStepQuestion(step)
-    if (stepQuestion) {
+    if (stepQuestion && stepType !== STEP_TYPES.INFORMATION) {
       questionsAndAnswers.push({
         question: stepQuestion,
         answer: selectedOption.label,
@@ -305,7 +305,10 @@ const Stepper = ({
     <Box marginTop={3}>
       <Button
         onClick={() => {
-          if (selectedOption === null) {
+          if (
+            selectedOption === null &&
+            currentStepType !== STEP_TYPES.INFORMATION
+          ) {
             setHasClickedContinueWithoutSelecting(true)
             return
           }

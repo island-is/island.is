@@ -25,7 +25,10 @@ import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.i
 import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
 import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
 import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
-import { SignatureCollectionListIdInput } from './dto'
+import {
+  SignatureCollectionListIdInput,
+  SignatureCollectionUploadPaperSignatureInput,
+} from './dto'
 
 @Injectable()
 export class SignatureCollectionAdminService {
@@ -64,9 +67,14 @@ export class SignatureCollectionAdminService {
         (signatureSignee.canSignInfo[0] === ReasonKey.AlreadySigned ||
           signatureSignee.canSignInfo[0] === ReasonKey.noInvalidSignature))
 
+    const inArea = list.area.id === signatureSignee.area?.id
     return {
-      success: canSign && list.area.id === signatureSignee.area?.id,
-      reasons: canSign ? [] : signatureSignee.canSignInfo,
+      success: canSign && inArea,
+      reasons: canSign
+        ? inArea
+          ? []
+          : [ReasonKey.NotInArea]
+        : signatureSignee.canSignInfo,
     }
   }
 
@@ -241,6 +249,16 @@ export class SignatureCollectionAdminService {
     return await this.signatureCollectionClientService.lockList(
       user,
       input.listId,
+    )
+  }
+
+  async uploadPaperSignature(
+    input: SignatureCollectionUploadPaperSignatureInput,
+    user: User,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.uploadPaperSignature(
+      user,
+      input,
     )
   }
 }
