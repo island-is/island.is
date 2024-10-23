@@ -51,17 +51,19 @@ export const projectPurchaseSection = buildSubSection({
           title: information.labels.company.nationalId,
           backgroundColor: 'white',
           width: 'half',
+          required: true,
           format: '######-####',
           condition: (answer: FormValue) =>
-            getValueViaPath(answer, 'projectPurchase.checkbox') === YES,
+            getValueViaPath(answer, 'projectPurchase.radio') === YES,
         }),
         buildTextField({
           id: 'projectPurchase.name',
           title: information.labels.projectPurchase.name,
           backgroundColor: 'white',
           width: 'half',
+          required: true,
           condition: (answer: FormValue) =>
-            getValueViaPath(answer, 'projectPurchase.checkbox') === YES,
+            getValueViaPath(answer, 'projectPurchase.radio') === YES,
         }),
       ],
     }),

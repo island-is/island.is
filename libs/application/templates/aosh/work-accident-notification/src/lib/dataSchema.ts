@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { YES } from '@island.is/application/types'
 
 const isValid24HFormatTime = (value: string) => {
   if (value.length !== 4) return false
@@ -22,15 +23,24 @@ const option = z.object({
 const accidentSchema = z.object({
   accidentLocation: option,
   accidentLocationParentGroup: option.optional(),
-  didAoshCome: z.string(), // Boolean ?
+  didAoshCome: z.string(),
   didPoliceCome: z.string(),
   exactLocation: z.string(),
-  how: z.string(),
+  how: z.string().min(1),
   municipality: z.string(),
-  date: z.string(), // Validate a date string
+  date: z.string().refine(
+    (dateStr) => {
+      const date = new Date(dateStr)
+      const minDate = new Date('2020-01-01')
+      return date >= minDate
+    },
+    {
+      message: 'Date must not be before 1.1.2020', // TODO(balli) translate!
+    },
+  ),
   time: TimeWithRefine,
-  wasDoing: z.string(),
-  wentWrong: z.string(),
+  wasDoing: z.string().min(1),
+  wentWrong: z.string().min(1),
 })
 
 const companySchema = z.object({
@@ -155,22 +165,34 @@ const partOfBodyInjuredSchema = createCauseAndEffectSchema(
 const absenceSchema = z.string()
 
 const companyLaborProtectionSchema = z.object({
-  workhealthAndSafetyOccupation: z.array(z.string()).optional(),
+  workhealthAndSafetyOccupation: z.array(z.string()).refine(
+    (data) => {
+      return data.length > 0
+    },
+    {
+      message: 'At least one option must be chosen',
+      path: [''], // Error path
+    },
+  ),
 })
 
-const projectPurchaseSchema = z.object({
-  nationalId: z
-    .string()
-    .optional()
-    .refine(
-      (nationalId) =>
-        !nationalId || (nationalId.length > 0 && kennitala.isValid(nationalId)),
-      {
-        message: 'Invalid nationalId',
-      },
-    ),
-  name: z.string().optional(),
-})
+const projectPurchaseSchema = z
+  .object({
+    radio: z.string(),
+    nationalId: z.string().optional(),
+    name: z.string().optional(),
+  })
+  .refine((data) => data.radio !== YES || (data.name && data.name.length > 0), {
+    path: ['name'], // Focuses on the 'name' field
+  })
+  .refine(
+    (data) =>
+      data.radio !== YES ||
+      (data.nationalId && kennitala.isValid(data.nationalId)),
+    {
+      path: ['nationalId'], // Focuses on the 'nationalId' field
+    },
+  )
 
 export const WorkAccidentNotificationAnswersSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v), // TODO ?

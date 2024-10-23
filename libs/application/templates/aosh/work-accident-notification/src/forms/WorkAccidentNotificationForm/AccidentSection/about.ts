@@ -32,6 +32,7 @@ export const aboutSection = buildSubSection({
           id: 'accident.date',
           title: accident.about.date,
           width: 'half',
+          required: true,
         }),
         buildTextField({
           id: 'accident.time',
@@ -77,6 +78,7 @@ export const aboutSection = buildSubSection({
           id: 'accident.municipality',
           title: accident.about.municipality,
           width: 'half',
+          required: true,
           options: (application) => {
             const municipalities = getValueViaPath(
               application.externalData,
@@ -98,6 +100,7 @@ export const aboutSection = buildSubSection({
           id: 'accident.exactLocation',
           title: accident.about.exactLocation,
           width: 'half',
+          // TODO(balli) is this required ??
         }),
         buildDescriptionField({
           id: 'accident.describe.descriptionHeading',
@@ -124,6 +127,7 @@ export const aboutSection = buildSubSection({
           variant: 'textarea',
           placeholder: accident.about.wasDoingPlaceholder,
           rows: 7,
+          required: true,
         }),
         buildTextField({
           id: 'accident.wentWrong',
@@ -131,6 +135,7 @@ export const aboutSection = buildSubSection({
           variant: 'textarea',
           placeholder: accident.about.wenWrongPlaceholder,
           rows: 7,
+          required: true,
         }),
         buildTextField({
           id: 'accident.how',
@@ -138,6 +143,7 @@ export const aboutSection = buildSubSection({
           variant: 'textarea',
           placeholder: accident.about.howPlaceholder,
           rows: 7,
+          required: true,
         }),
         buildDescriptionField({
           id: 'accident.describe.locationOfAccidentHeading',

@@ -124,6 +124,13 @@ export const information = {
         defaultMessage: 'Vinnuverndarstarf',
         description: 'H5 of workhealth information page',
       },
+      errorAlert: {
+        id: 'aosh.wan.application:information.workhealth.errorAlert',
+        defaultMessage:
+          "Vinsamlegast veldur a.m.k einn valmöguleika, ef ekkert á við veldu 'engin'",
+        description:
+          'error alert on workhealth information page when user attempt to navigate forwards without choosing an option',
+      },
     },
     projectPurchase: {
       sectionTitle: {

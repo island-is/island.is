@@ -3,6 +3,7 @@ import { FC, useEffect, useState } from 'react'
 import {
   AlertMessage,
   Box,
+  ErrorMessage,
   RadioButton,
   Select,
   Text,
@@ -146,11 +147,9 @@ export const CausesAndEffects: FC<
               )}
             />
             {errors && getErrorViaPath(errors, mostSeriousAnswerId) && (
-              // TODO Have something design for displaying error ?
               <Box paddingTop={2}>
-                <AlertMessage
-                  type="error"
-                  message={formatMessage(
+                <ErrorMessage
+                  children={formatMessage(
                     causeAndConsequences.shared.mostSeriousAlert,
                   )}
                 />
