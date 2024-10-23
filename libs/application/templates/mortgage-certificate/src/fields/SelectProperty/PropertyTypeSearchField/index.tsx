@@ -56,11 +56,14 @@ export const PropertyTypeSearchField: FC<
       setFoundProperties(resProperty)
       if (resProperty?.propertyNumber) {
         setShowSearchError(false)
+        setShowApiError(false)
       } else {
         setShowSearchError(true)
+        setShowApiError(false)
       }
     },
     onError() {
+      setShowSearchError(false)
       setShowApiError(true)
       setFoundProperties(undefined)
     },
