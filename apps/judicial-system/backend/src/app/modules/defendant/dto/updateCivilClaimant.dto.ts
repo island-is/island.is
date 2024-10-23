@@ -52,4 +52,9 @@ export class UpdateCivilClaimantDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly caseFilesSharedWithSpokesperson?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isSpokespersonConfirmed?: boolean
 }
