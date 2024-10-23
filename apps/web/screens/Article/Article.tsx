@@ -1,68 +1,70 @@
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { useRouter } from 'next/router'
+import { createPortal } from 'react-dom'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
+
 import {
-  Slice as SliceType,
   ProcessEntry,
+  Slice as SliceType,
 } from '@island.is/island-ui/contentful'
 import {
   Box,
-  Text,
-  Stack,
+  type BreadCrumbItem,
   Breadcrumbs,
+  Button,
   GridColumn,
   GridRow,
   Link,
   Navigation,
+  Stack,
   TableOfContents,
-  Button,
   Tag,
+  Text,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import {
+  AppendedArticleComponents,
   HeadWithSocialSharing,
   InstitutionPanel,
   InstitutionsPanel,
   OrganizationFooter,
-  Sticky,
-  Webreader,
-  AppendedArticleComponents,
+  SignLanguageButton,
   Stepper,
   stepperUtils,
-  Form,
-  SignLanguageButton,
+  Sticky,
+  Webreader,
 } from '@island.is/web/components'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
-import { Screen } from '@island.is/web/types'
-import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
-import { useI18n } from '@island.is/web/i18n'
-import { CustomNextError } from '@island.is/web/units/errors'
-import {
-  QueryGetNamespaceArgs,
-  GetNamespaceQuery,
+import type {
   AllSlicesFragment as Slice,
+  GetNamespaceQuery,
   GetSingleArticleQuery,
-  QueryGetSingleArticleArgs,
   Organization,
+  QueryGetNamespaceArgs,
+  QueryGetSingleArticleArgs,
   Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
-import { createNavigation } from '@island.is/web/utils/navigation'
+import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { SidebarLayout } from '../Layouts/SidebarLayout'
-import { createPortal } from 'react-dom'
+import { useI18n } from '@island.is/web/i18n'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import type { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { createNavigation } from '@island.is/web/utils/navigation'
+import { getOrganizationLink } from '@island.is/web/utils/organization'
+import { webRichText } from '@island.is/web/utils/richText'
+
 import {
   LinkResolverResponse,
   LinkType,
   useLinkResolver,
 } from '../../hooks/useLinkResolver'
-import { ArticleChatPanel } from './components/ArticleChatPanel'
-import { webRichText } from '@island.is/web/utils/richText'
-import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
-import { getOrganizationLink } from '@island.is/web/utils/organization'
+import { SidebarLayout } from '../Layouts/SidebarLayout'
+import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
+import { ArticleChatPanel } from './components/ArticleChatPanel'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -318,7 +320,7 @@ const ArticleSidebar: FC<React.PropsWithChildren<ArticleSidebarProps>> = ({
 
 export interface ArticleProps {
   article: Article
-  namespace: GetNamespaceQuery['getNamespace']
+  namespace: Record<string, string>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
   stepperNamespace: GetNamespaceQuery['getNamespace']
@@ -344,8 +346,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
     processEntryRef.current = document.querySelector('#processRef')
     setMounted(true)
   }, [])
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error make web strict
   const n = useNamespace(namespace)
   const { query, asPath } = useRouter()
   const { linkResolver } = useLinkResolver()
@@ -419,38 +419,62 @@ const ArticleScreen: Screen<ArticleProps> = ({
   const organizationShortTitle = article?.organization?.[0]?.shortTitle
 
   const inStepperView = useMemo(
-    () => query.stepper === 'true' && !!article?.stepper,
-    [query.stepper, article?.stepper],
+    () =>
+      query.stepper === 'true' && (!!article?.stepper || !!subArticle?.stepper),
+    [query.stepper, article?.stepper, subArticle?.stepper],
   )
 
-  const breadcrumbItems = useMemo(
-    () =>
-      inStepperView
-        ? []
-        : [
-            {
-              title: 'Ísland.is',
-              typename: 'homepage',
-              href: '/',
-            },
-            !!article?.category?.slug && {
-              title: article.category.title,
-              typename: 'articlecategory',
-              slug: [article.category.slug],
-            },
-            !!article?.category?.slug &&
-              !!article.group && {
-                isTag: true,
-                title: article.group.title,
-                typename: 'articlecategory',
-                slug: [
-                  article.category.slug +
-                    (article.group?.slug ? `#${article.group.slug}` : ''),
-                ],
-              },
+  const breadcrumbItems = useMemo<BreadCrumbItem[]>(() => {
+    const items: BreadCrumbItem[] = []
+
+    if (inStepperView) {
+      if (!article) {
+        return items
+      }
+
+      items.push({
+        title: article.title,
+        typename: 'article',
+        slug: [article.slug],
+      })
+      if (subArticle) {
+        items.push({
+          title: subArticle.title,
+          typename: 'article',
+          slug: subArticle.slug.split('/'),
+        })
+      }
+
+      return items
+    }
+
+    items.push({
+      title: 'Ísland.is',
+      typename: 'homepage',
+      href: '/',
+    })
+
+    if (article?.category?.slug) {
+      items.push({
+        title: article.category.title,
+        typename: 'articlecategory',
+        slug: [article.category.slug],
+      })
+      if (!!article?.category?.slug && !!article.group) {
+        items.push({
+          isTag: true,
+          title: article.group.title,
+          typename: 'articlecategory',
+          slug: [
+            article.category.slug +
+              (article.group?.slug ? `#${article.group.slug}` : ''),
           ],
-    [article?.category, article?.group, inStepperView],
-  )
+        })
+      }
+    }
+
+    return items
+  }, [article, inStepperView, subArticle])
 
   const content = (
     <Box paddingTop={subArticle ? 2 : 4}>
@@ -592,21 +616,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
       >
         <Box
           paddingBottom={inStepperView ? undefined : [2, 2, 4]}
-          display={['none', 'none', 'block']}
+          display={inStepperView ? 'block' : ['none', 'none', 'block']}
           printHidden={!inStepperView}
         >
-          {inStepperView && (
-            <Text color="blueberry600" variant="eyebrow" as="h2">
-              <span id={slugify(article?.title ?? '')} className="rs_read">
-                {article?.title}
-              </span>
-            </Text>
-          )}
-
-          {!inStepperView && (
+          <Box className="rs_read">
             <Breadcrumbs
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-expect-error make web strict
               items={breadcrumbItems}
               renderLink={(link, { typename, slug }) => {
                 return (
@@ -620,6 +634,16 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 )
               }}
             />
+          </Box>
+          {inStepperView && (
+            <Box printHidden paddingY={2} display={['block', 'block', 'none']}>
+              <ArticleNavigation
+                article={article}
+                n={n}
+                activeSlug={query.subSlug}
+                isMenuDialog
+              />
+            </Box>
           )}
         </Box>
         <Box
@@ -733,14 +757,16 @@ const ArticleScreen: Screen<ArticleProps> = ({
             </Box>
           )}
 
-          <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
-            <ArticleNavigation
-              article={article}
-              n={n}
-              activeSlug={query.subSlug}
-              isMenuDialog
-            />
-          </Box>
+          {!inStepperView && (
+            <Box marginTop={3} display={['block', 'block', 'none']} printHidden>
+              <ArticleNavigation
+                article={article}
+                n={n}
+                activeSlug={query.subSlug}
+                isMenuDialog
+              />
+            </Box>
+          )}
           {processEntry?.processLink && (
             <Box
               marginTop={3}
@@ -770,7 +796,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               </GridColumn>
             </GridRow>
           )}
-          {subArticle && (
+          {!inStepperView && subArticle && (
             <Text variant="h2" as="h2" paddingTop={7}>
               <span id={slugify(subArticle.title)} className="rs_read">
                 {subArticle.title}
