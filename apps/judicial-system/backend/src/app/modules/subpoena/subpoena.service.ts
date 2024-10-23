@@ -269,16 +269,9 @@ export class SubpoenaService {
 
       return { delivered: true }
     } catch (error) {
-      if (error instanceof NotImplementedException) {
-        this.logger.info(
-          'Failed to deliver subpoena to police due to lack of implementation',
-          error,
-        )
-        return { delivered: true }
-      } else {
-        this.logger.error('Error delivering subpoena to police', error)
-        return { delivered: false }
-      }
+      this.logger.error('Error delivering subpoena to police', error)
+
+      return { delivered: false }
     }
   }
 }

@@ -14,10 +14,5 @@ export const policeModuleConfig = defineConfig({
       .split(',')
       .includes('POLICE_CASE'),
     policeApiKey: env.required('XROAD_POLICE_API_KEY', ''),
-    policeCreateSubpoenaApiAvailable: !(
-      env.optional('BLOCKED_API_INTEGRATION') ?? ''
-    )
-      .split(',')
-      .includes('CREATE_SUBPOENA'),
-  }),
+
 })
