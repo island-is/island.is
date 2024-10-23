@@ -40,6 +40,7 @@ export const PropertyTypeSearchField: FC<
 }) => {
   const { formatMessage } = useLocale()
   const [showSearchError, setShowSearchError] = useState<boolean>(false)
+  const [showApiError, setShowApiError] = useState<boolean>(false)
   const [searchStr, setSearchStr] = useState(
     getValueViaPath(application.answers, `${field.id}.searchStr`, '') as string,
   )
@@ -49,17 +50,23 @@ export const PropertyTypeSearchField: FC<
 
   const [runQuery, { loading }] = useLazyQuery(searchPropertiesQuery, {
     onCompleted(result) {
-      setShowSearchError(false)
       setFoundProperties(result.searchForAllProperties)
+      if (foundProperties?.propertyNumber) {
+        setShowSearchError(false)
+      } else {
+        setShowSearchError(true)
+      }
     },
     onError() {
-      setShowSearchError(true)
+      setShowApiError(true)
       setFoundProperties(undefined)
     },
   })
 
   useEffect(() => {
     if (searchStr.length) {
+      setShowSearchError(false)
+      setShowApiError(false)
       runQuery({
         variables: {
           input: {
@@ -105,6 +112,13 @@ export const PropertyTypeSearchField: FC<
         <AlertMessage
           type="warning"
           message={formatMessage(propertySearch.labels.propertyNotFound)}
+        />
+      </Box>
+
+      <Box paddingTop={3} hidden={loading || !showApiError}>
+        <AlertMessage
+          type="warning"
+          message={formatMessage(propertySearch.labels.propertyApiError)}
         />
       </Box>
     </Box>
