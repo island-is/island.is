@@ -34,20 +34,12 @@ export class PaymentService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<PaymentCatalogParameters>): Promise<
     PaymentCatalogItem[]
   > {
-    console.log(
-      '============================Payment catalog============================',
-    )
-    console.log(
-      '============================Mock payment disabled============================',
-    )
     if (!params?.organizationId) {
       throw Error('Missing performing organization ID')
     }
     const data = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
       params.organizationId,
     )
-    console.log('Payment catalog data')
-    console.dir(data, { depth: null })
     return data.item
   }
 
@@ -77,9 +69,6 @@ export class PaymentService extends BaseTemplateApiService {
     const { shouldUseMockPayment } = application.answers
 
     if (shouldUseMockPayment) {
-      console.log(
-        '============================Mock payment enabled============================',
-      )
       const list = [
         {
           performingOrgID: organizationId ?? 'string',
