@@ -113,13 +113,10 @@ describe('EndorsementListService', () => {
 
   describe('create', () => {
     // it('should throw BadRequestException for invalid date range', async () => {
-      
-
     //   await expect(service.create(createInput)).rejects.toThrow(
     //     BadRequestException,
     //   )
     // })
-
     // it('should create a new endorsement list', async () => {
     //   const createInput = {
     //     title: 'Test List',
@@ -129,9 +126,7 @@ describe('EndorsementListService', () => {
     //   }
     //   const mockList = { id: 'some-list-id' }
     //   mockEndorsementListModel.create.mockResolvedValue(mockList)
-
     //   const result = await service.create(createInput)
-
     //   expect(result).toBe(mockList)
     //   expect(endorsementListModel.create).toHaveBeenCalledWith(createInput)
     // })
