@@ -14,5 +14,5 @@ export const policeModuleConfig = defineConfig({
       .split(',')
       .includes('POLICE_CASE'),
     policeApiKey: env.required('XROAD_POLICE_API_KEY', ''),
-
+  }),
 })
