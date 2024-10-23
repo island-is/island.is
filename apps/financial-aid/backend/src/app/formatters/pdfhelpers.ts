@@ -77,13 +77,10 @@ export const drawTextArea = (
   lineYPosition: number,
   margin: number,
 ) => {
-  // Starting Y position for rejection text
-  let rejectionTextY = lineYPosition - 80
-
   // Draw the "Ástæða synjunar" header
   page.drawText(title, {
     x: margin,
-    y: rejectionTextY,
+    y: lineYPosition,
     size: baseFontSize,
     font: boldFont,
     color: rgb(0, 0, 0),
@@ -96,7 +93,7 @@ export const drawTextArea = (
   const wrappedLines = wrapText(cleanText, font, baseFontSize, 400)
 
   // Draw wrapped rejection text below the header
-  let y = rejectionTextY - baseFontSize - 10
+  let y = lineYPosition - baseFontSize - 10
 
   for (const line of wrappedLines) {
     page.drawText(line, {
@@ -161,6 +158,8 @@ export const drawSectionInfo = (
       itemCount = 0 // Reset itemCount for the new row
     }
   }
+
+  return y
 }
 
 // export const needsToAddPage = (currentYPosition: number) => {
