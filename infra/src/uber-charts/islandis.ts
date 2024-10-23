@@ -117,6 +117,7 @@ const api = apiSetup({
   universityGatewayApi: universityGatewayService,
   userNotificationService,
 })
+
 const servicePortal = servicePortalSetup({ graphql: api })
 const bffAdminPortalService = bffAdminPortalServiceSetup({ api })
 const bffServicePortalService = bffServicePortalServiceSetup({ api })

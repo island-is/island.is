@@ -323,7 +323,6 @@ function addFeaturesConfig(
       secrets: v.secrets,
     }
   })
-
   return {
     envs: featureEnvs.reduce(
       (acc, feature) => ({ ...acc, ...feature.envs }),

@@ -1,4 +1,4 @@
-import { service } from './dsl'
+import { ServiceBuilder, service } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
 import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
@@ -14,11 +14,11 @@ const ONE_HOUR_IN_MS = 60 * 60 * 1000
 const ONE_WEEK_IN_MS = ONE_HOUR_IN_MS * 24 * 7
 
 const bffName = 'services-bff'
-const bffType = 'stjornbord'
 const clientName = 'portals-admin'
 const serviceName = `${bffName}-${clientName}`
+const key = 'stjornbord'
 
-const Staging: EnvironmentConfig = {
+const Dev: EnvironmentConfig = {
   auroraHost: 'a',
   redisHost: 'b',
   domain: 'dev01.devland.is',
@@ -37,20 +37,30 @@ const services = {
 }
 
 describe('BFF PortalEnv serialization', () => {
+  const services = { api: service('api') }
   const sut = service(serviceName)
     .namespace(clientName)
     .image(bffName)
     .redis()
     .serviceAccount(bffName)
-    .env(createPortalEnv(bffType, services))
-    .secrets({
-      BFF_TOKEN_SECRET_BASE64: `/k8s/${bffName}/${clientName}/BFF_TOKEN_SECRET_BASE64`,
-      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${bffName}/${clientName}/IDENTITY_SERVER_CLIENT_SECRET`,
+    .env({
+      BFF_ALLOWED_EXTERNAL_API_URLS: {
+        local: json(['http://localhost:3377/download/v1']),
+        dev: json(['https://api.dev01.devland.is']),
+        staging: json(['https://api.staging01.devland.is']),
+        prod: json(['https://api.island.is']),
+      },
+    })
+    .bff({
+      key: 'stjornbord',
+      clientId: `@admin.island.is/bff-stjornbord`,
+      clientName,
+      services,
     })
     .command('node')
     .args('main.js')
-    .readiness('/health/check')
-    .liveness('/liveness')
+    .readiness(`/${key}/bff/health/check`)
+    .liveness(`/${key}/bff/liveness`)
     .replicaCount({
       default: 2,
       min: 2,
@@ -88,7 +98,7 @@ describe('BFF PortalEnv serialization', () => {
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
         },
-        paths: [`/${bffType}/bff`],
+        paths: [`/${key}/bff`],
       },
     })
   let result: SerializeSuccess<HelmService>
@@ -96,8 +106,8 @@ describe('BFF PortalEnv serialization', () => {
     result = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
-      runtime: new Kubernetes(Staging),
-      env: Staging,
+      runtime: new Kubernetes(Dev),
+      env: Dev,
     })) as SerializeSuccess<HelmService>
   })
 
@@ -144,18 +154,16 @@ describe('BFF PortalEnv serialization', () => {
   it('environment variables', () => {
     expect(result.serviceDef[0].env).toEqual({
       IDENTITY_SERVER_CLIENT_SCOPES: json(adminPortalScopes),
-      IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-${bffType}`,
+      IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-${key}`,
       IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is',
       // BFF
       BFF_NAME: 'stjornbord',
-      BFF_CLIENT_KEY_PATH: `/${bffType}`,
+      BFF_CLIENT_KEY_PATH: `/${key}`,
       BFF_PAR_SUPPORT_ENABLED: 'false',
-      BFF_ALLOWED_REDIRECT_URIS: json([
-        'https://featbff-beta.dev01.devland.is',
-      ]),
-      BFF_CLIENT_BASE_URL: 'https://featbff-beta.dev01.devland.is',
-      BFF_LOGOUT_REDIRECT_URI: 'https://featbff-beta.dev01.devland.is',
-      BFF_CALLBACKS_BASE_PATH: `https://featbff-beta.dev01.devland.is/${bffType}/bff/callbacks`,
+      BFF_ALLOWED_REDIRECT_URIS: json(['https://beta.dev01.devland.is']),
+      BFF_CLIENT_BASE_URL: 'https://beta.dev01.devland.is',
+      BFF_LOGOUT_REDIRECT_URI: 'https://beta.dev01.devland.is',
+      BFF_CALLBACKS_BASE_PATH: `https://beta.dev01.devland.is/${key}/bff/callbacks`,
       BFF_PROXY_API_ENDPOINT: 'http://web-api.islandis.svc.cluster.local',
       BFF_ALLOWED_EXTERNAL_API_URLS: json(['https://api.dev01.devland.is']),
       BFF_CACHE_USER_PROFILE_TTL_MS: (
@@ -217,8 +225,8 @@ describe('Env definition defaults', () => {
     result = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sut,
-      runtime: new Kubernetes(Staging),
-      env: Staging,
+      runtime: new Kubernetes(Dev),
+      env: Dev,
     })) as SerializeSuccess<HelmService>
   })
   it('replica max count', () => {
