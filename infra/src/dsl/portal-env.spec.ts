@@ -4,7 +4,6 @@ import { SerializeSuccess, HelmService } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 import { renderers } from './upstream-dependencies'
 import { generateOutputOne } from './processing/rendering-pipeline'
-import { createPortalEnv } from '../../../apps/services/bff/infra/utils/createPortalEnv'
 import { json } from './dsl'
 
 import { adminPortalScopes } from '../../../libs/auth/scopes/src/index'
