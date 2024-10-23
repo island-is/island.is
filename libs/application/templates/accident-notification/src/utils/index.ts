@@ -1,6 +1,6 @@
 import { AttachmentsEnum, FileType, WhoIsTheNotificationForEnum } from '..'
 import { getValueViaPath } from '@island.is/application/core'
-import { YES } from '../constants'
+import { YES } from './constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import { attachments, overview } from '../lib/messages'
 import { FormatMessage } from '@island.is/localization'

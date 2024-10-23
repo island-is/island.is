@@ -20,7 +20,7 @@ import {
 import set from 'lodash/set'
 import { assign } from 'xstate'
 import { AccidentTypeEnum, ReviewApprovalEnum } from '..'
-import { States } from '../constants'
+import { States } from '../utils/constants'
 import { ApiActions } from '../shared'
 import { WhoIsTheNotificationForEnum } from '../types'
 import { AccidentNotificationSchema } from './dataSchema'

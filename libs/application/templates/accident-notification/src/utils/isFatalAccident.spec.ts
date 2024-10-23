@@ -1,6 +1,6 @@
 import { FormValue } from '@island.is/application/types'
 import { isFatalAccident } from './isFatalAccident'
-import { NO, YES } from '../constants'
+import { NO, YES } from './constants'
 
 describe('isFatalAccident', () => {
   const fatal: FormValue = {

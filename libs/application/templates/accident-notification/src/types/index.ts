@@ -1,4 +1,4 @@
-import { NO, YES } from './../constants'
+import { NO, YES } from '../utils/constants'
 
 export type CompanyInfo = {
   nationalRegistrationId: string
