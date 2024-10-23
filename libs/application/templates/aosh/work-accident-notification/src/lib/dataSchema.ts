@@ -141,7 +141,7 @@ const createCauseAndEffectSchema = (
       },
       {
         message:
-          'If more than one option is chosen, you must specify the most serious one',
+          'If more than one option is chosen, you must specify the most serious one', // TODO(balli) Translate
         path: [mostSeriousKey], // Error path
       },
     )
