@@ -128,6 +128,12 @@ export class DocumentServiceV2 {
     const actions = document.actions?.filter(
       (action) => action.type !== 'alert' && action.type !== 'confirmation',
     )
+    if (document.urgent)
+      this.logger.info('Urgent document fetched', {
+        documentId: documentId,
+        includeDocument,
+      })
+
     return {
       ...document,
       publicationDate: document.date,
@@ -484,7 +490,7 @@ export class DocumentServiceV2 {
 
     // we return the document even if the actions are faulty, logged for tracability
     if (hasEmpty) {
-      this.logger.warn('No title or data in actions array', {
+      this.logger.info('No title or data in actions array, return undefined', {
         category: LOG_CATEGORY,
         id,
       })
@@ -511,6 +517,8 @@ export class DocumentServiceV2 {
       }
     })
 
+    // Log the actions to ensure that they are mapped correctly
+    this.logger.info('Actions mapped successfully', { actions: mapped })
     return mapped
   }
 }
