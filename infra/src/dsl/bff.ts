@@ -49,7 +49,7 @@ export const bffConfig = ({ key, services, clientName, clientId }: BffInfo) => {
         prod: 'https://island.is',
       },
       BFF_ALLOWED_REDIRECT_URIS: {
-        local: json(['http://localhost:4200/stjornbord']),
+        local: json([`http://localhost:4200/${key}`]),
         dev: ref((ctx) => json([`https://${getBaseUrl(ctx)}`])),
         staging: ref((ctx) => json([`https://${getBaseUrl(ctx)}`])),
         prod: 'https://island.is',
