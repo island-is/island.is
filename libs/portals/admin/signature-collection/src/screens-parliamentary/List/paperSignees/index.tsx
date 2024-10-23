@@ -20,10 +20,12 @@ import {
   useIdentityQuery,
 } from './identityAndCanSignLookup.generated'
 import { useSignatureCollectionAdminUploadPaperSignatureMutation } from './uploadPaperSignee.generated'
+import { useRevalidator } from 'react-router-dom'
 
 export const PaperSignees = ({ listId }: { listId: string }) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
+  const { revalidate } = useRevalidator()
   const { control, reset } = useForm()
 
   const [nationalIdInput, setNationalIdInput] = useState('')
@@ -76,6 +78,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
           toast.error(formatMessage(m.paperSigneeError))
         }
         reset()
+        revalidate()
         setNationalIdTypo(false)
         setName('')
       },
