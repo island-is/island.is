@@ -352,6 +352,18 @@ export const getAdditionalSingleParentRightsInDays = (
 }
 
 export const getAvailableRightsInDays = (application: Application) => {
+  const { VMSTApplicationRights } = getApplicationExternalData(
+    application.externalData,
+  )
+  const VMSTDays = VMSTApplicationRights?.reduce(
+    (acc, right) => acc + Number(right.days),
+    0,
+  )
+
+  if (VMSTDays) {
+    return VMSTDays
+  }
+
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
@@ -374,17 +386,6 @@ export const getAvailableRightsInDays = (application: Application) => {
   )
   const additionalSingleParentDays =
     getAdditionalSingleParentRightsInDays(application)
-
-  const { VMSTApplicationRights } = getApplicationExternalData(
-    application.externalData,
-  )
-  const VMSTDays = VMSTApplicationRights?.reduce(
-    (acc, right) => acc + Number(right.days),
-    0,
-  )
-  if (VMSTDays) {
-    return VMSTDays
-  }
 
   return (
     selectedChild.remainingDays +

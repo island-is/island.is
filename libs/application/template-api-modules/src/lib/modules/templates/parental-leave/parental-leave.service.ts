@@ -1085,63 +1085,16 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return null
   }
 
-  async setApplicationRights({
-    auth,
-    application,
-  }: TemplateApiModuleActionProps) {
-    // Testing
-    // return [
-    //   {
-    //     rightsUnit: 'F-ANDV22',
-    //     rightsDescription: 'dfads',
-    //     months: '1',
-    //     days: '30',
-    //     daysLeft: '30',
-    //   },
-    //   {
-    //     rightsUnit: 'gfddf',
-    //     rightsDescription: 'fsdfs',
-    //     months: '2',
-    //     days: '60',
-    //     daysLeft: '60',
-    //   },
-    // ]
+  async setApplicationRights({ application }: TemplateApiModuleActionProps) {
     try {
-      const { parentalLeaves } =
-        await this.parentalLeaveApi.parentalLeaveGetParentalLeaves({
-          nationalRegistryId: auth.nationalId,
-        })
-      const { applicationFundId } = getApplicationExternalData(
-        application.externalData,
-      )
-
-      const parentalLeaveApplication = parentalLeaves?.find(
-        (parentalLeave) => parentalLeave.applicationId === applicationFundId,
-      )
-      parentalLeaves?.forEach((p) => console.log({ p }))
-      parentalLeaves?.forEach(({ applicationId }) =>
-        console.log({ applicationId }),
-      )
-      console.log({ applicationFundId })
-
-      console.log({ parentalLeaveApplication })
-
-      // return parentalLeaveApplication?.applicationRights ?? ''
-      const c = {
-        ...parentalLeaveApplication,
-        applicationRights: [
+      const { applicationRights } =
+        await this.applicationInformationAPI.applicationGetApplicationInformation(
           {
-            rightsUnit: 'F-ANDV22',
-            rightsDescription: 'dfads',
-            months: '1',
-            days: '30',
-            daysLeft: '30',
+            applicationId: application.id,
           },
-        ],
-      }
-      console.log({ application, parentalLeaveApplication })
+        )
 
-      return c?.applicationRights ?? ''
+      return applicationRights
     } catch (e) {
       this.logger.warn(
         `Could not fetch applicationRights on nationalId with error: ${e}`,
