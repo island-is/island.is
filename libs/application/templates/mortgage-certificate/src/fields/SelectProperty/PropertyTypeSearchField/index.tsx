@@ -50,8 +50,11 @@ export const PropertyTypeSearchField: FC<
 
   const [runQuery, { loading }] = useLazyQuery(searchPropertiesQuery, {
     onCompleted(result) {
-      setFoundProperties(result.searchForAllProperties)
-      if (foundProperties?.propertyNumber) {
+      const resProperty = result.searchForAllProperties as
+        | ManyPropertyDetail
+        | undefined
+      setFoundProperties(resProperty)
+      if (resProperty?.propertyNumber) {
         setShowSearchError(false)
       } else {
         setShowSearchError(true)
