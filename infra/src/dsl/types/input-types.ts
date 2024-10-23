@@ -58,9 +58,7 @@ export type HealthProbe = {
   timeoutSeconds: number
 }
 
-export type Secrets = {
-  [name: string]: string | ValueType
-}
+export type Secrets = { [name: string]: string }
 
 export type EnvironmentVariableValue =
   | Optional<
@@ -156,9 +154,11 @@ export interface Ingress {
   }
   paths: string[]
   public?: boolean
-  extraAnnotations?: Partial<{
-    [env in OpsEnv]: { [annotation: string]: string | null }
-  }>
+  extraAnnotations?: Partial<
+    {
+      [env in OpsEnv]: { [annotation: string]: string | null }
+    }
+  >
 }
 
 export interface IngressForEnv {
