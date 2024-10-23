@@ -1,11 +1,12 @@
 /* eslint-disable @nx/enforce-module-boundaries */
+// FIXME: this file can be removed since the DSL is handling this now
 import { json, ref } from '../../../../../infra/src/dsl/dsl'
 import {
   adminPortalScopes,
   servicePortalScopes,
 } from '../../../../../libs/auth/scopes/src/index'
 import { FIVE_SECONDS_IN_MS } from '../../src/app/constants/time'
-import { BffInfraServices } from '../admin-portal.infra'
+import { BffInfraServices } from '../../../../../infra/src/dsl/types/input-types'
 
 const ONE_HOUR_IN_MS = 60 * 60 * 1000
 const ONE_WEEK_IN_MS = ONE_HOUR_IN_MS * 24 * 7

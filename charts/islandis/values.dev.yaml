@@ -2281,13 +2281,13 @@ services-bff-portals-admin:
   enabled: true
   env:
     BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.dev01.devland.is"]'
-    BFF_ALLOWED_REDIRECT_URIS: '["https://featbff-beta.dev01.devland.is"]'
+    BFF_ALLOWED_REDIRECT_URIS: '["https://beta.dev01.devland.is"]'
     BFF_CACHE_USER_PROFILE_TTL_MS: '3595000'
-    BFF_CALLBACKS_BASE_PATH: 'https://featbff-beta.dev01.devland.is/stjornbord/bff/callbacks'
-    BFF_CLIENT_BASE_URL: 'https://featbff-beta.dev01.devland.is'
+    BFF_CALLBACKS_BASE_PATH: 'https://beta.dev01.devland.is/stjornbord/bff/callbacks'
+    BFF_CLIENT_BASE_URL: 'https://beta.dev01.devland.is'
     BFF_CLIENT_KEY_PATH: '/stjornbord'
     BFF_LOGIN_ATTEMPT_TTL_MS: '604800000'
-    BFF_LOGOUT_REDIRECT_URI: 'https://featbff-beta.dev01.devland.is'
+    BFF_LOGOUT_REDIRECT_URI: 'https://beta.dev01.devland.is'
     BFF_NAME: 'stjornbord'
     BFF_PAR_SUPPORT_ENABLED: 'false'
     BFF_PROXY_API_ENDPOINT: 'http://web-api.islandis.svc.cluster.local'
