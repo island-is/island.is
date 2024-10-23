@@ -1,6 +1,7 @@
 import { FC, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
+import { height } from 'pdfkit/js/page'
 
 import {
   Box,
@@ -35,6 +36,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const [verdictViewDate, setVerdictViewDate] = useState<Date>()
   const [appealDate, setAppealDate] = useState<Date>()
   const [textItems, setTextItems] = useState<string[]>([])
+  const [triggerAnimation, setTriggerAnimation] = useState<boolean>(false)
   const { setAndSendDefendantToServer } = useDefendants()
   const { workingCase, setWorkingCase } = useContext(FormContext)
 
@@ -64,6 +66,10 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     ) {
       // TODO: handle error
       return
+    }
+
+    if (dateType === 'verdictViewDate') {
+      setTriggerAnimation(true)
     }
 
     if (dateType === 'verdictViewDate' && verdictViewDate) {
@@ -144,8 +150,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   ])
 
   return (
-    <Box className={styles.container} padding={[2, 2, 3, 3]}>
-      <motion.div>
+    <motion.div layout={triggerAnimation ? true : false}>
+      <Box className={styles.container} padding={[2, 2, 3, 3]}>
         <Box className={styles.titleContainer}>
           <SectionHeading
             title="Lykildagsetningar"
@@ -163,7 +169,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           {defendant.verdictViewDate ? (
             <>
               <motion.div
-                initial="hidden"
+                initial={triggerAnimation ? 'hidden' : false}
                 animate="visible"
                 variants={{
                   visible: {
@@ -184,51 +190,47 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                   ))}
                 </AnimatePresence>
               </motion.div>
-              <AnimatePresence>
-                {!defendant.verdictAppealDate && (
-                  <motion.div
-                    key="firstComponent"
-                    variants={componentVariants}
-                    initial={false}
-                    animate="visible"
-                    exit="exit"
-                    transition={{
-                      duration: 0.4,
-                      ease: 'easeInOut',
-                    }}
+              <motion.div
+                key="firstComponent"
+                variants={componentVariants}
+                initial={triggerAnimation ? 'hidden' : false}
+                animate="visible"
+                exit="exit"
+                transition={{
+                  duration: 0.4,
+                  ease: 'easeInOut',
+                }}
+              >
+                <Box className={styles.dataContainer}>
+                  <DateTime
+                    name="defendantAppealDate"
+                    datepickerLabel={formatMessage(
+                      strings.defendantAppealDateLabel,
+                    )}
+                    datepickerPlaceholder={formatMessage(
+                      strings.defendantAppealDatePlaceholder,
+                    )}
+                    size="sm"
+                    onChange={(date, valid) =>
+                      handleDateChange(date, valid, 'appealDate')
+                    }
+                    blueBox={false}
+                    dateOnly
+                  />
+                  <Button
+                    onClick={() => handleSetDate('appealDate')}
+                    disabled={!appealDate}
                   >
-                    <Box className={styles.dataContainer}>
-                      <DateTime
-                        name="defendantAppealDate"
-                        datepickerLabel={formatMessage(
-                          strings.defendantAppealDateLabel,
-                        )}
-                        datepickerPlaceholder={formatMessage(
-                          strings.defendantAppealDatePlaceholder,
-                        )}
-                        size="sm"
-                        onChange={(date, valid) =>
-                          handleDateChange(date, valid, 'appealDate')
-                        }
-                        blueBox={false}
-                        dateOnly
-                      />
-                      <Button
-                        onClick={() => handleSetDate('appealDate')}
-                        disabled={!appealDate}
-                      >
-                        {formatMessage(strings.defendantAppealDateButtonText)}
-                      </Button>
-                    </Box>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    {formatMessage(strings.defendantAppealDateButtonText)}
+                  </Button>
+                </Box>
+              </motion.div>
             </>
           ) : (
             <motion.div
               key="secondComponent"
               variants={componentVariants}
-              initial="hidden"
+              initial={false}
               animate="visible"
               exit="exit"
               transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.2 }}
@@ -260,8 +262,126 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
-    </Box>
+      </Box>
+    </motion.div>
+    // <motion.div layout>
+    //   <Box className={styles.container} padding={[2, 2, 3, 3]}>
+    //     <Box className={styles.titleContainer}>
+    //       <SectionHeading
+    //         title="Lykildagsetningar"
+    //         heading="h4"
+    //         marginBottom={2}
+    //       />
+    //       {icon && (
+    //         <Icon icon={icon} type="outline" color="blue400" size="large" />
+    //       )}
+    //     </Box>
+    //     <Box marginBottom={1}>
+    //       <Text variant="eyebrow">{defendant.name}</Text>
+    //     </Box>
+    //     <AnimatePresence mode="wait">
+    //       {defendant.verdictViewDate ? (
+    //         <>
+    //           <motion.div
+    //             initial="hidden"
+    //             animate="visible"
+    //             variants={{
+    //               visible: {
+    //                 transition: { staggerChildren: 0.2, delayChildren: 0.6 },
+    //               },
+    //             }} // Stagger and delay after second component is visible
+    //           >
+    //             <AnimatePresence>
+    //               {textItems.map((text, index) => (
+    //                 <motion.p
+    //                   key={index}
+    //                   variants={textVariants}
+    //                   transition={{ duration: 0.4 }}
+    //                   style={{ marginBottom: '16px' }}
+    //                 >
+    //                   <Text>{text}</Text>
+    //                 </motion.p>
+    //               ))}
+    //             </AnimatePresence>
+    //           </motion.div>
+    //           <AnimatePresence>
+    //             {!defendant.verdictAppealDate && (
+    //               <motion.div
+    //                 key="firstComponent"
+    //                 variants={componentVariants}
+    //                 initial={false}
+    //                 animate={triggerAnimation ? 'visible' : ''}
+    //                 exit="exit"
+    //                 transition={{
+    //                   duration: 0.4,
+    //                   ease: 'easeInOut',
+    //                 }}
+    //               >
+    //                 <Box className={styles.dataContainer}>
+    //                   <DateTime
+    //                     name="defendantAppealDate"
+    //                     datepickerLabel={formatMessage(
+    //                       strings.defendantAppealDateLabel,
+    //                     )}
+    //                     datepickerPlaceholder={formatMessage(
+    //                       strings.defendantAppealDatePlaceholder,
+    //                     )}
+    //                     size="sm"
+    //                     onChange={(date, valid) =>
+    //                       handleDateChange(date, valid, 'appealDate')
+    //                     }
+    //                     blueBox={false}
+    //                     dateOnly
+    //                   />
+    //                   <Button
+    //                     onClick={() => handleSetDate('appealDate')}
+    //                     disabled={!appealDate}
+    //                   >
+    //                     {formatMessage(strings.defendantAppealDateButtonText)}
+    //                   </Button>
+    //                 </Box>
+    //               </motion.div>
+    //             )}
+    //           </AnimatePresence>
+    //         </>
+    //       ) : (
+    //         <motion.div
+    //           key="secondComponent"
+    //           variants={componentVariants}
+    //           initial={false}
+    //           animate="visible"
+    //           exit="exit"
+    //           transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.2 }}
+    //         >
+    //           <Box className={styles.dataContainer}>
+    //             <DateTime
+    //               name="defendantVerdictViewDate"
+    //               datepickerLabel={formatMessage(
+    //                 strings.defendantVerdictViewDateLabel,
+    //               )}
+    //               datepickerPlaceholder={formatMessage(
+    //                 strings.defendantVerdictViewDatePlaceholder,
+    //               )}
+    //               size="sm"
+    //               selectedDate={verdictViewDate}
+    //               onChange={(date, valid) =>
+    //                 handleDateChange(date, valid, 'verdictViewDate')
+    //               }
+    //               blueBox={false}
+    //               dateOnly
+    //             />
+    //             <Button
+    //               onClick={() => handleSetDate('verdictViewDate')}
+    //               disabled={!verdictViewDate}
+    //             >
+    //               {formatMessage(strings.defendantVerdictViewDateButtonText)}
+    //             </Button>
+    //           </Box>
+    //         </motion.div>
+    //       )}
+    //     </AnimatePresence>
+    //   </Box>
+    // </motion.div>
   )
 }
 
