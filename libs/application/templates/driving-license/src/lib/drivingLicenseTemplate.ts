@@ -33,7 +33,6 @@ import {
   B_FULL,
   B_FULL_RENEWAL_65,
   ApiActions,
-  Pickup,
   CHARGE_ITEM_CODES,
   DELIVERY_FEE,
 } from './constants'
@@ -50,6 +49,7 @@ import {
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
+import { Pickup } from './types'
 
 const getCodes = (application: Application) => {
   const applicationFor = getValueViaPath<
