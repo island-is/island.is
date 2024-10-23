@@ -8,6 +8,7 @@ export const locatorByRole = (
   typeof name === 'string'
     ? `role=${role}[name="${name}"]`
     : `role=${role}[name="${name.name}"]`
+
 export const helpers = (page: Page) => {
   return {
     findByRole: (

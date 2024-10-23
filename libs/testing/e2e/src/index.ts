@@ -1,5 +1,5 @@
 export * from './lib/support/api-tools'
-export * from './lib/support/application'
+export { createApplication } from './lib/support/application'
 export * from './lib/support/disablers'
 export * from './lib/support/email-account'
 export * from './lib/support/i18n'

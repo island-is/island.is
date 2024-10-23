@@ -2,24 +2,17 @@ import { defineConfig, devices } from '@playwright/test'
 
 interface GlobalConfigParams {
   webServerUrl: string
-  port: number
-  service: string
-  dependencies: string[]
-  mockFile: string
+  port?: number
+  command: string
+  cwd?: string
 }
 
 export const createGlobalConfig = ({
   webServerUrl,
   port,
-  service,
-  dependencies,
-  mockFile,
+  command,
+  cwd = '../../../',
 }: GlobalConfigParams) => {
-  const mockoonCommand = `mockoon-cli start --data libs/testing/e2e/src/lib/mocks/${mockFile} --port 9388`
-  const serviceCommand = `cd infra && yarn cli run-local-env --services ${service} --dependencies ${dependencies.join(
-    ' ',
-  )}`
-
   return defineConfig({
     testDir: 'e2e',
     fullyParallel: true,
@@ -29,24 +22,23 @@ export const createGlobalConfig = ({
     reporter: 'html',
 
     use: {
-      baseURL: webServerUrl,
+      baseURL: 'http://localhost:4200',
       trace: 'on-first-retry',
     },
-
     projects: [
       {
         name: 'chromium',
         use: { ...devices['Desktop Chrome'] },
       },
     ],
-
     webServer: {
       stdout: 'pipe',
-      command: `${mockoonCommand} & ${serviceCommand}`,
-      port,
+      port: port ? port : undefined,
+      url: port ? undefined : webServerUrl,
+      command,
       reuseExistingServer: !process.env.CI,
       timeout: 5 * 60 * 1000,
-      cwd: '../../../',
+      cwd,
     },
   })
 }
