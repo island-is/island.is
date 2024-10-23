@@ -108,4 +108,14 @@ export class UpdateDefendantDto {
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly requestedDefenderName?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isDefenderChoiceConfirmed?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly caseFilesSharedWithDefender?: boolean
 }
