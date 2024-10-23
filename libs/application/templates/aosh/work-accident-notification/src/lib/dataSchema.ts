@@ -26,7 +26,6 @@ const accidentSchema = z.object({
   didAoshCome: z.string(),
   didPoliceCome: z.string(),
   exactLocation: z.string(),
-  how: z.string().min(1),
   municipality: z.string(),
   date: z.string().refine(
     (dateStr) => {
@@ -39,6 +38,7 @@ const accidentSchema = z.object({
     },
   ),
   time: TimeWithRefine,
+  how: z.string().min(1), // TODO(balli) add some max to these ?? here or in the component
   wasDoing: z.string().min(1),
   wentWrong: z.string().min(1),
 })
@@ -67,16 +67,17 @@ const employeeSchema = z
     victimsOccupationSubMajor: option.optional(),
     victimsOccupationMinor: option.optional(),
     victimsOccupationUnit: option.optional(),
-    address: z.string(),
+    address: z.string().min(1).max(256),
     employmentStatus: z.string().optional(),
     employmentTime: z.string(),
-    employmentRate: z.string().min(1).max(100),
+    employmentRate: z.string(),
+    workhourArrangement: z.string(),
     nationality: z.string(),
     postnumberAndMunicipality: z.string(),
     startTime: TimeWithRefine,
     startDate: z.string(),
     tempEmploymentSSN: z.string().optional(),
-    workstation: z.string(), // starfsstöð
+    workstation: z.string(),
   })
   .refine(
     (data) => {
@@ -88,11 +89,20 @@ const employeeSchema = z
           kennitala.isValid(data.tempEmploymentSSN)
         )
       }
-      // Otherwise, tempEmploymentSSN can be anything (undefined, null, etc.)
       return true
     },
     {
       path: ['tempEmploymentSSN'],
+    },
+  )
+  .refine(
+    (data) => {
+      const rateNum = parseInt(data.employmentRate, 10)
+      return rateNum > 0 && rateNum <= 100
+    },
+    {
+      message: '1%-100%',
+      path: ['employmentRate'],
     },
   )
 

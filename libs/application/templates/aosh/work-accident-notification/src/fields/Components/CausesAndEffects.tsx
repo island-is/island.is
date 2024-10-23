@@ -49,6 +49,7 @@ export const CausesAndEffects: FC<
     mostSeriousAnswer,
     mostSeriousAnswerId,
     errors,
+    answerId,
   } = props
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
@@ -137,6 +138,15 @@ export const CausesAndEffects: FC<
           {...props}
         />
       </Box>
+      {errors && getErrorViaPath(errors, answerId) && (
+        <Box paddingTop={1}>
+          <ErrorMessage
+            children={formatMessage(
+              causeAndConsequences.shared.causeAndConsequencesNothingChosen,
+            )}
+          />
+        </Box>
+      )}
       {mostSerious.length > 1 ? (
         <Box marginTop={2} border="standard" padding={4}>
           <Box marginBottom={2}>
@@ -146,7 +156,7 @@ export const CausesAndEffects: FC<
                 causeAndConsequences.shared.mostSeriousWarning,
               )}
             />
-            {errors && getErrorViaPath(errors, mostSeriousAnswerId) && (
+            {errors && getErrorViaPath(errors, answerId.split('.')?.[1] || '') && (
               <Box paddingTop={2}>
                 <ErrorMessage
                   children={formatMessage(
