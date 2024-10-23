@@ -125,6 +125,7 @@ import { GetGenericTagsInTagGroupsInput } from './dto/getGenericTagsInTagGroups.
 import { Grant } from './models/grant.model'
 import { GetGrantsInput } from './dto/getGrants.input'
 import { GetSingleGrantInput } from './dto/getSingleGrant.input'
+import { GrantList } from './models/grantList.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -452,8 +453,8 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => [Grant])
-  async getGrants(@Args('input') input: GetGrantsInput): Promise<Grant[]> {
+  @Query(() => GrantList)
+  async getGrants(@Args('input') input: GetGrantsInput): Promise<GrantList> {
     return this.cmsContentfulService.getGrants(input.lang)
   }
 

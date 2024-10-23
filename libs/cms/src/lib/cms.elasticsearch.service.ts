@@ -48,6 +48,7 @@ import { GetTeamMembersInput } from './dto/getTeamMembers.input'
 import { TeamMemberResponse } from './models/teamMemberResponse.model'
 import { GetGrantsInput } from './dto/getGrants.input'
 import { Grant } from './models/grant.model'
+import { GrantList } from './models/grantList.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -607,38 +608,131 @@ export class CmsElasticsearchService {
       .filter(Boolean)
   }
 
-  async getGrants(index: string, input: GetGrantsInput): Promise<Grant[]> {
-    const query = {
-      types: ['webGrant'],
-      tags: [] as elasticTagField[],
-      sort: [{ 'title.sort': { order: SortDirection.ASC } }] as sortRule[],
-      size: 100,
+  async getGrants(
+    index: string,
+    {
+      lang,
+      search,
+      page = 1,
+      size = 8,
+      statuses,
+      categories,
+      types,
+      organizations,
+    }: GetGrantsInput,
+  ): Promise<GrantList> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const must: Record<string, any>[] = [
+      {
+        term: {
+          type: {
+            value: 'webGrant',
+          },
+        },
+      },
+    ]
+
+    if (organizations)
+      must.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  term: {
+                    'tags.key': organizations,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'organization',
+                  },
+                },
+              ],
+            },
+          },
+        },
+      })
+
+    const wildcardSearch = {
+      wildcard: {
+        title: '*',
+      },
     }
 
-    if (input.category) {
-      query.tags.push({ type: 'category', key: input.category })
+    const multimatchSearch = {
+      multi_match: {
+        query: search ? search.toLowerCase() : '',
+        fields: ['title'],
+        type: 'phrase_prefix',
+      },
     }
 
-    if (input.type) {
-      query.tags.push({ type: 'type', key: input.type })
+    must.push(!search ? wildcardSearch : multimatchSearch)
+
+    if (statuses) {
+      must.push(
+        {
+          term: {
+            'tags.key': statuses,
+          },
+        },
+        {
+          term: {
+            'tags.type': 'grantStatus',
+          },
+        },
+      )
     }
 
-    if (input.organization) {
-      query.tags.push({ type: 'organization', key: input.organization })
+    if (categories) {
+      must.push(
+        {
+          term: {
+            'tags.key': categories,
+          },
+        },
+        {
+          term: {
+            'tags.type': 'grantCategory',
+          },
+        },
+      )
     }
 
-    if (input.status) {
-      query.tags.push({ type: 'status', key: input.status })
+    if (types) {
+      must.push(
+        {
+          term: {
+            'tags.key': types,
+          },
+        },
+        {
+          term: {
+            'tags.type': 'grantType',
+          },
+        },
+      )
     }
 
-    const grantsResponse = await this.elasticService.getDocumentsByMetaData(
-      index,
-      query,
-    )
+    const grantListResponse: ApiResponse<SearchResponse<MappedData>> =
+      await this.elasticService.findByQuery(index, {
+        query: {
+          bool: {
+            must,
+          },
+        },
+        size,
+        from: (page - 1) * size,
+      })
 
-    return grantsResponse.hits.hits.map<Grant>((response) =>
-      JSON.parse(response._source.response ?? '[]'),
-    )
+    return {
+      total: grantListResponse.body.hits.total.value,
+      items: grantListResponse.body.hits.hits.map<Grant>((response) =>
+        JSON.parse(response._source.response ?? '[]'),
+      ),
+    }
   }
 
   async getPublishedMaterial(

@@ -1,30 +1,45 @@
-import { IsOptional, IsString } from 'class-validator'
-import { Field, InputType } from '@nestjs/graphql'
+import { IsArray, IsInt, IsOptional, IsString } from 'class-validator'
+import { Field, InputType, Int } from '@nestjs/graphql'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 
 @InputType()
 export class GetGrantsInput {
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  search?: string
+
   @Field(() => String)
   @IsString()
   lang: ElasticsearchIndexLocale = 'is'
 
-  @Field({ nullable: true })
-  @IsString()
+  @Field(() => Int, { nullable: true })
+  @IsInt()
   @IsOptional()
-  status?: string
+  page?: number = 1
+
+  @Field(() => Int, { nullable: true })
+  @IsInt()
+  @IsOptional()
+  size?: number = 8
 
   @Field({ nullable: true })
-  @IsString()
+  @IsArray()
   @IsOptional()
-  category?: string
+  statuses?: string[]
 
   @Field({ nullable: true })
-  @IsString()
+  @IsArray()
   @IsOptional()
-  type?: string
+  categories?: string[]
 
   @Field({ nullable: true })
-  @IsString()
+  @IsArray()
   @IsOptional()
-  organization?: string
+  types?: string[]
+
+  @Field({ nullable: true })
+  @IsArray()
+  @IsOptional()
+  organizations?: string[]
 }

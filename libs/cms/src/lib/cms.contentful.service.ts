@@ -83,6 +83,7 @@ import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
 import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { GetGenericTagsInTagGroupsInput } from './dto/getGenericTagsInTagGroups.input'
 import { Grant, mapGrant } from './models/grant.model'
+import { GrantList } from './models/grantList.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -554,7 +555,7 @@ export class CmsContentfulService {
     return (result.items as types.INews[]).map(mapNews)[0] ?? null
   }
 
-  async getGrants(lang: string): Promise<Array<Grant>> {
+  async getGrants(lang: string): Promise<GrantList> {
     const params = {
       ['content_type']: 'grant',
       include: 10,
@@ -564,7 +565,10 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IGrantFields>(lang, params)
       .catch(errorHandler('getGrants'))
 
-    return (result.items as types.IGrant[]).map(mapGrant)
+    return {
+      total: 10,
+      items: (result.items as types.IGrant[]).map(mapGrant),
+    }
   }
 
   async getGrant(lang: string, slug: string): Promise<Grant | null> {

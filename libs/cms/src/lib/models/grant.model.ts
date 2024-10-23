@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
 import { IGrant } from '../generated/contentfulTypes'
 import { Organization, mapOrganization } from './organization.model'
@@ -7,6 +7,15 @@ import { CacheField } from '@island.is/nest/graphql'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { Asset, mapAsset } from './asset.model'
 import { ReferenceLink, mapReferenceLink } from './referenceLink.model'
+
+enum GrantStatus {
+  CLOSED,
+  OPEN,
+  OPENS_SOON,
+  INACTIVE,
+}
+
+registerEnumType(GrantStatus, { name: 'GrantStatus' })
 
 @ObjectType()
 export class Grant {
@@ -53,7 +62,10 @@ export class Grant {
   isOpen?: boolean
 
   @Field({ nullable: true })
-  status?: string
+  statusText?: string
+
+  @CacheField(() => GrantStatus, { nullable: true })
+  status?: GrantStatus
 
   @CacheField(() => Organization)
   organization?: Organization
@@ -98,7 +110,15 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
   dateFrom: fields.grantDateFrom ?? '',
   dateTo: fields.grantDateTo ?? '',
   isOpen: fields.grantIsOpen ?? undefined,
-  status: fields.grantStatus ?? '',
+  statusText: fields.grantStatus ?? 'Óvirkur sjóður',
+  status:
+    fields.grantStatus === 'Opið fyrir umsóknir'
+      ? GrantStatus.OPEN
+      : fields.grantStatus === 'Lokað fyrir umsóknir'
+      ? GrantStatus.CLOSED
+      : fields.grantStatus === 'Opnar fljótlega'
+      ? GrantStatus.OPENS_SOON
+      : GrantStatus.INACTIVE,
   organization: fields.grantOrganization
     ? mapOrganization(fields.grantOrganization)
     : undefined,

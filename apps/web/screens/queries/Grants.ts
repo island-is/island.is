@@ -3,38 +3,41 @@ import gql from 'graphql-tag'
 export const GET_GRANTS_QUERY = gql`
   query GetGrants($input: GetGrantsInput!) {
     getGrants(input: $input) {
-      id
-      name
-      description
-      applicationId
-      applicationDeadlineText
-      applicationUrl {
-        slug
-        type
-      }
-      dateFrom
-      dateTo
-      isOpen
-      status
-      organization {
+      items {
         id
-        title
-        logo {
-          url
+        name
+        description
+        applicationId
+        applicationDeadlineText
+        applicationUrl {
+          slug
+          type
         }
-      }
-      categoryTag {
-        id
-        title
-        genericTagGroup {
+        dateFrom
+        dateTo
+        isOpen
+        status
+        statusText
+        organization {
+          id
           title
+          logo {
+            url
+          }
         }
-      }
-      typeTag {
-        id
-        title
-        genericTagGroup {
+        categoryTag {
+          id
           title
+          genericTagGroup {
+            title
+          }
+        }
+        typeTag {
+          id
+          title
+          genericTagGroup {
+            title
+          }
         }
       }
     }
