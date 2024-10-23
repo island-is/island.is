@@ -7,6 +7,7 @@ import { externalData } from '../../lib/messages'
 import {
   IdentityApi,
   UserProfileApi,
+  SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
   InsuranceCompaniesApi,
   MockableSamgongustofaPaymentCatalogApi,
@@ -36,6 +37,11 @@ export const prerequisitesSection = buildSection({
           provider: CurrentVehiclesApi,
           title: externalData.currentVehicles.title,
           subTitle: externalData.currentVehicles.subTitle,
+        }),
+        buildDataProviderItem({
+          provider: SamgongustofaPaymentCatalogApi,
+          title: externalData.payment.title,
+          subTitle: externalData.payment.subTitle,
         }),
         buildDataProviderItem({
           provider: MockableSamgongustofaPaymentCatalogApi,

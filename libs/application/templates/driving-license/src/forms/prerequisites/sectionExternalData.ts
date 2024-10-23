@@ -63,6 +63,10 @@ export const sectionExternalData = buildSubSection({
           title: '',
         }),
         buildDataProviderItem({
+          provider: SyslumadurPaymentCatalogApi,
+          title: '',
+        }),
+        buildDataProviderItem({
           provider: MockableSyslumadurPaymentCatalogApi,
           title: '',
         }),

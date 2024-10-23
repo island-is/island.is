@@ -12,6 +12,7 @@ import {
   Form,
   FormModes,
   MockablePaymentCatalogApi,
+  PaymentCatalogApi,
 } from '@island.is/application/types'
 import * as m from '../lib/messages'
 import { chargeItemCodeRadioOptions } from '../lib/utils/chargeItemCodeRadioOptions'
@@ -33,6 +34,10 @@ export const draft: Form = buildForm({
           subTitle: m.draft.externalDataTitle,
           checkboxLabel: m.draft.externalDataTitle,
           dataProviders: [
+            buildDataProviderItem({
+              provider: PaymentCatalogApi,
+              title: '',
+            }),
             buildDataProviderItem({
               provider: MockablePaymentCatalogApi,
               title: m.draft.feeInfo,

@@ -30,6 +30,7 @@ import {
   MockableSyslumadurPaymentCatalogApi,
   IdentityDocumentApi,
   NationalRegistryUserParentB,
+  SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { application as applicationMessage } from './messages'
 import { Events, Roles, States, ApiActions, Routes } from './constants'
@@ -135,6 +136,7 @@ const IdCardTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUser,
                 UserInfoApi,
+                SyslumadurPaymentCatalogApi,
                 MockableSyslumadurPaymentCatalogApi,
                 PassportsApi,
                 DistrictsApi,

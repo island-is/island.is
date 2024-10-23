@@ -85,6 +85,10 @@ export const getPrice = (
   externalData: ExternalData,
   chargeCode: string,
 ): string => {
+  console.log(
+    '============================getPrice============================',
+  )
+  console.dir(externalData, { depth: null })
   const chargeItems = getValueViaPath(
     externalData,
     'payment.data',

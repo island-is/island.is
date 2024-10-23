@@ -25,6 +25,7 @@ import {
   MarriageCondtionsFeatureFlags,
 } from './getApplicationFeatureFlags'
 import {
+  DistrictCommissionersPaymentCatalogApi,
   MockableDistrictCommissionersPaymentCatalogApi,
   MaritalStatusApi,
   ReligionCodesApi,
@@ -91,6 +92,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 DistrictsApi,
                 MaritalStatusApi,
                 ReligionCodesApi,
+                DistrictCommissionersPaymentCatalogApi,
                 MockableDistrictCommissionersPaymentCatalogApi,
               ],
               delete: true,
@@ -158,6 +160,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 DistrictsApi,
                 MaritalStatusApi,
                 ReligionCodesApi,
+                DistrictCommissionersPaymentCatalogApi,
                 MockableDistrictCommissionersPaymentCatalogApi,
               ],
             },

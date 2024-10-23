@@ -34,29 +34,21 @@ export class PaymentService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<PaymentCatalogParameters>): Promise<
     PaymentCatalogItem[]
   > {
-    const { enableMockPayment } = application.externalData
-
-    if (enableMockPayment.data) {
-      return [
-        {
-          performingOrgID: params?.organizationId ?? 'string',
-          chargeType: 'string',
-          chargeItemCode: 'Payment',
-          chargeItemName: 'Mock',
-          priceAmount: 123123,
-        },
-      ]
-    } else {
-      if (!params?.organizationId) {
-        throw Error('Missing performing organization ID')
-      }
-      const data =
-        await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
-          params.organizationId,
-        )
-
-      return data.item
+    console.log(
+      '============================Payment catalog============================',
+    )
+    console.log(
+      '============================Mock payment disabled============================',
+    )
+    if (!params?.organizationId) {
+      throw Error('Missing performing organization ID')
     }
+    const data = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
+      params.organizationId,
+    )
+    console.log('Payment catalog data')
+    console.dir(data, { depth: null })
+    return data.item
   }
 
   async mockPaymentCatalog({
@@ -85,6 +77,9 @@ export class PaymentService extends BaseTemplateApiService {
     const { shouldUseMockPayment } = application.answers
 
     if (shouldUseMockPayment) {
+      console.log(
+        '============================Mock payment enabled============================',
+      )
       const list = [
         {
           performingOrgID: organizationId ?? 'string',

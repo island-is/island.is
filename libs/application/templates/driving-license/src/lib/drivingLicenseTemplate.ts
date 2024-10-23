@@ -47,6 +47,7 @@ import { hasCompletedPrerequisitesStep } from './utils'
 import {
   GlassesCheckApi,
   MockableSyslumadurPaymentCatalogApi,
+  SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 
@@ -149,6 +150,7 @@ const template: ApplicationTemplate<
                 NationalRegistryUserApi,
                 TeachersApi,
                 UserProfileApi,
+                SyslumadurPaymentCatalogApi,
                 MockableSyslumadurPaymentCatalogApi,
                 GlassesCheckApi,
                 JurisdictionApi,

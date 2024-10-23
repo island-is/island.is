@@ -26,6 +26,7 @@ import {
   IdentityDocumentApi,
   MockableSyslumadurPaymentCatalogApi,
   NationalRegistryUser,
+  SyslumadurPaymentCatalogApi,
   UserInfoApi,
 } from '../../dataProviders'
 import { priceList } from '../../lib/messages/priceList'
@@ -107,6 +108,10 @@ export const Prerequisites: Form = buildForm({
               provider: IdentityDocumentApi,
               title: externalData.identityDocument.title,
               subTitle: externalData.identityDocument.subTitle,
+            }),
+            buildDataProviderItem({
+              provider: SyslumadurPaymentCatalogApi,
+              title: '',
             }),
             buildDataProviderItem({
               provider: MockableSyslumadurPaymentCatalogApi,

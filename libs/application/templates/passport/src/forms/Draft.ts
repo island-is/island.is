@@ -17,7 +17,11 @@ import {
   MockablePaymentCatalogApi,
   PassportsApi,
 } from '@island.is/application/types'
-import { UserInfoApi, NationalRegistryUser } from '../dataProviders'
+import {
+  UserInfoApi,
+  NationalRegistryUser,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 import { Services } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
@@ -57,6 +61,10 @@ export const Draft: Form = buildForm({
               provider: PassportsApi,
               title: m.dataCollectionIdentityDocumentTitle,
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
+            }),
+            buildDataProviderItem({
+              provider: SyslumadurPaymentCatalogApi,
+              title: '',
             }),
             buildDataProviderItem({
               provider: MockablePaymentCatalogApi.configure({
