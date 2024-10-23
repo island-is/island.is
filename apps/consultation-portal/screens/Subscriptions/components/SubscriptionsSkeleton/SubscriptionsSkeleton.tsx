@@ -15,6 +15,7 @@ import Link from 'next/link'
 import { useUser } from '../../../../hooks/useUser'
 import localization from '../../Subscriptions.json'
 import { useFetchEmail, useIsMobile } from '../../../../hooks'
+import { RSSIcon } from '../../../../components/svg'
 
 interface Props {
   children: ReactNode
@@ -28,6 +29,7 @@ interface Props {
 const loc = localization['subscriptionSkeleton']
 const locSubs = loc['subscriptions']
 const locMySubs = loc['mySubscriptions']
+const locRss = loc['rssFeedSubscription']
 
 const BREADCRUMBS_LIST = [
   { title: loc.breadcrumbs[0].title, href: loc.breadcrumbs[0].href },
@@ -135,6 +137,15 @@ const SubscriptionsSkeleton = ({
             <></>
           )}
         </Box>
+        <Stack space={1}>
+          <Box display="flex" alignItems="center" columnGap={1}>
+            <Text variant="default">{locRss.text}</Text>
+            <Link href="/api/rss" target="_blank">
+              <RSSIcon />
+            </Link>
+          </Box>
+          <Text variant="small">{locRss.description}</Text>
+        </Stack>
       </GridContainer>
     </Layout>
   )

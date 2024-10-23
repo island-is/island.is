@@ -1,4 +1,11 @@
-import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { apiBasePath } from '@island.is/financial-aid/shared/lib'
@@ -43,5 +50,21 @@ export class OpenApiApplicationController {
       endDate,
       state,
     )
+  }
+
+  @Get('id/:id')
+  @ApiOkResponse({
+    type: ApplicationModel,
+    description: 'Get application',
+  })
+  async getById(
+    @Param('id') id: string,
+    @CurrentMunicipalityCode() municipalityCode: string,
+  ) {
+    this.logger.info(
+      `Open api Application controller: Getting application by id ${id}`,
+    )
+
+    return this.applicationService.getbyID(municipalityCode, id)
   }
 }

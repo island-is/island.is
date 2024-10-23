@@ -24,6 +24,7 @@ import { Locale } from '@island.is/shared/types'
 import type { ApiResponse } from '@elastic/elasticsearch'
 import type { SearchResponse } from '@island.is/shared/types'
 import type { MappedData } from '@island.is/content-search-indexer/types'
+import { MappingService } from './mapping.service'
 
 type SyncCollection = ContentfulSyncCollection & {
   nextPageToken?: string
@@ -79,6 +80,7 @@ export class ContentfulService {
   constructor(
     private readonly elasticService: ElasticService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly mappingService: MappingService,
   ) {
     const params: CreateClientParams = {
       space: environment.contentful.space,
@@ -477,6 +479,9 @@ export class ContentfulService {
     const idsCopy = [...ids]
     let idsChunk = idsCopy.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
 
+    let nestedProgress = idsChunk.length
+    const totalNested = ids.length
+
     while (idsChunk.length > 0) {
       const size = 100
       let page = 1
@@ -566,7 +571,11 @@ export class ContentfulService {
           (id) => !indexableEntries.some((entry) => entry.sys.id === id),
         )
 
+        let progress = 0
+        const total = rootEntryIds.length
+
         let chunkIds = rootEntryIds.splice(-chunkSize, chunkSize)
+        progress += chunkIds.length
 
         while (chunkIds.length > 0) {
           const items = await this.getContentfulData(chunkSize, {
@@ -574,12 +583,30 @@ export class ContentfulService {
             'sys.id[in]': chunkIds.join(','),
             locale: this.contentfulLocaleMap[locale],
           })
-          indexableEntries.push(...items)
+
+          // import data from all providers
+          const importableData = this.mappingService.mapData(items)
+
+          await this.elasticService.bulk(elasticIndex, {
+            add: flatten(importableData),
+            remove: [],
+          })
+
+          logger.info(
+            `${progress}/${total} resolved root entries have been synced`,
+          )
+
           chunkIds = rootEntryIds.splice(-chunkSize, chunkSize)
+          progress += chunkIds.length
         }
       }
 
+      logger.info(
+        `${nestedProgress}/${totalNested} nested entries have been resolved`,
+      )
+
       idsChunk = idsCopy.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
+      nestedProgress += idsChunk.length
     }
   }
 
@@ -643,7 +670,7 @@ export class ContentfulService {
         elasticIndex,
         locale,
         chunkSize,
-        indexableEntries, // This array is modified
+        indexableEntries,
       )
 
       logger.info(

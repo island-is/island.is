@@ -6,7 +6,7 @@ import { useToggleListReviewMutation } from './toggleListReview.generated'
 import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { ListStatus } from '../../lib/utils'
-import LockList from './lockList'
+import ActionLockList from './lockList'
 
 const ActionReviewComplete = ({
   listId,
@@ -19,7 +19,9 @@ const ActionReviewComplete = ({
   const { revalidate } = useRevalidator()
 
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
-  const listReviewed = listStatus && listStatus === ListStatus.Reviewed
+  const listReviewed =
+    listStatus &&
+    (listStatus === ListStatus.Reviewed || listStatus === ListStatus.Inactive)
   const modalText = listReviewed
     ? formatMessage(m.confirmListReviewedToggleBack)
     : formatMessage(m.confirmListReviewed)
@@ -41,14 +43,18 @@ const ActionReviewComplete = ({
   })
 
   return (
-    <Box marginTop={20}>
+    <Box marginTop={12}>
       <Box display="flex" justifyContent="spaceBetween">
-        <LockList listId={listId} listStatus={listStatus} />
+        <ActionLockList listId={listId} listStatus={listStatus} />
         <Button
           iconType="outline"
           variant="ghost"
           icon={listReviewed ? 'reload' : 'checkmark'}
           onClick={() => setModalSubmitReviewIsOpen(true)}
+          disabled={
+            listStatus === ListStatus.Active ||
+            listStatus === ListStatus.Extendable
+          }
         >
           {modalText}
         </Button>
