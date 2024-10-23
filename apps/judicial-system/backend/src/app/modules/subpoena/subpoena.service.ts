@@ -14,18 +14,43 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import type { User } from '@island.is/judicial-system/types'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  CaseFileCategory,
+  DefenderChoice,
+  isDistrictCourtUser,
+  isFailedServiceStatus,
+  isSuccessfulServiceStatus,
+  isTrafficViolationCase,
+  NotificationType,
+  type User as TUser,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
 import { Defendant } from '../defendant/models/defendant.model'
+import { FileService } from '../file'
 import { PoliceService } from '../police'
+import { User } from '../user'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { Subpoena } from './models/subpoena.model'
 
 export const include: Includeable[] = [
-  { model: Case, as: 'case' },
+  {
+    model: Case,
+    as: 'case',
+    include: [
+      {
+        model: User,
+        as: 'judge',
+      },
+      {
+        model: User,
+        as: 'registrar',
+      },
+    ],
+  },
   { model: Defendant, as: 'defendant' },
 ]
 @Injectable()
@@ -35,8 +60,11 @@ export class SubpoenaService {
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
     private readonly pdfService: PdfService,
+    private readonly messageService: MessageService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
+    @Inject(forwardRef(() => FileService))
+    private readonly fileService: FileService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -85,7 +113,19 @@ export class SubpoenaService {
       defenderEmail,
       defenderPhoneNumber,
       defenderName,
+      serviceStatus,
+      requestedDefenderChoice,
+      requestedDefenderNationalId,
+      requestedDefenderName,
     } = update
+
+    const notificationType = isSuccessfulServiceStatus(serviceStatus)
+      ? NotificationType.SERVICE_SUCCESSFUL
+      : isFailedServiceStatus(serviceStatus)
+      ? NotificationType.SERVICE_FAILED
+      : defenderChoice === DefenderChoice.CHOOSE && defenderNationalId
+      ? NotificationType.DEFENDANT_SELECTED_DEFENDER
+      : undefined
 
     const [numberOfAffectedRows] = await this.subpoenaModel.update(update, {
       where: { subpoenaId: subpoena.subpoenaId },
@@ -94,13 +134,31 @@ export class SubpoenaService {
     })
     let defenderAffectedRows = 0
 
-    if (defenderChoice || defenderNationalId) {
+    // If there is a change in the defender choice after the judge has confirmed the choice,
+    // we need to set the isDefenderChoiceConfirmed to false
+    const isChangingDefenderChoice =
+      (update.defenderChoice &&
+        subpoena.defendant?.defenderChoice !== update.defenderChoice) ||
+      (update.defenderNationalId &&
+        subpoena.defendant?.defenderNationalId !== update.defenderNationalId &&
+        subpoena.defendant?.isDefenderChoiceConfirmed)
+
+    if (
+      defenderChoice ||
+      defenderNationalId ||
+      requestedDefenderChoice ||
+      requestedDefenderNationalId
+    ) {
       const defendantUpdate: Partial<Defendant> = {
         defenderChoice,
         defenderNationalId,
         defenderName,
         defenderEmail,
         defenderPhoneNumber,
+        requestedDefenderChoice,
+        requestedDefenderNationalId,
+        requestedDefenderName,
+        isDefenderChoiceConfirmed: isChangingDefenderChoice ? false : undefined,
       }
 
       const [defenderUpdateAffectedRows] = await this.defendantModel.update(
@@ -118,6 +176,23 @@ export class SubpoenaService {
       this.logger.error(
         `Unexpected number of rows ${numberOfAffectedRows} affected when updating subpoena`,
       )
+    }
+
+    if (notificationType) {
+      this.messageService
+        .sendMessagesToQueue([
+          {
+            type: MessageType.SUBPOENA_NOTIFICATION,
+            body: {
+              type: notificationType,
+              subpoena,
+            },
+          },
+        ])
+        .catch((reason) =>
+          // Tolerate failure, but log
+          this.logger.error('Failed to dispatch notifications', { reason }),
+        )
     }
 
     const updatedSubpoena = await this.findBySubpoenaId(subpoena.subpoenaId)
@@ -142,11 +217,32 @@ export class SubpoenaService {
     return subpoena
   }
 
+  async getIndictmentPdf(theCase: Case): Promise<Buffer> {
+    if (isTrafficViolationCase(theCase)) {
+      return await this.pdfService.getIndictmentPdf(theCase)
+    }
+
+    const indictmentCaseFile = theCase.caseFiles?.find(
+      (caseFile) =>
+        caseFile.category === CaseFileCategory.INDICTMENT && caseFile.key,
+    )
+
+    if (!indictmentCaseFile) {
+      // This shouldn't ever happen
+      this.logger.error(
+        `No indictment found for case ${theCase.id} so cannot deliver subpoena to police`,
+      )
+      throw new Error(`No indictment found for case ${theCase.id}`)
+    }
+
+    return await this.fileService.getCaseFileFromS3(theCase, indictmentCaseFile)
+  }
+
   async deliverSubpoenaToPolice(
     theCase: Case,
     defendant: Defendant,
     subpoena: Subpoena,
-    user: User,
+    user: TUser,
   ): Promise<DeliverResponse> {
     try {
       const subpoenaPdf = await this.pdfService.getSubpoenaPdf(
@@ -155,7 +251,7 @@ export class SubpoenaService {
         subpoena,
       )
 
-      const indictmentPdf = await this.pdfService.getIndictmentPdf(theCase)
+      const indictmentPdf = await this.getIndictmentPdf(theCase)
 
       const createdSubpoena = await this.policeService.createSubpoena(
         theCase,
@@ -171,11 +267,16 @@ export class SubpoenaService {
         return { delivered: false }
       }
 
-      // TODO: Improve error handling by checking how many rows were affected and posting error event
-      await this.subpoenaModel.update(
+      const [numberOfAffectedRows] = await this.subpoenaModel.update(
         { subpoenaId: createdSubpoena.subpoenaId },
         { where: { id: subpoena.id } },
       )
+
+      if (numberOfAffectedRows < 1) {
+        this.logger.error(
+          `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena for subpoena ${subpoena.id}`,
+        )
+      }
 
       return { delivered: true }
     } catch (error) {

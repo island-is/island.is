@@ -29,7 +29,7 @@ export const prePaidApplicant = buildSection({
           title: m.phone,
           width: 'half',
           required: true,
-          disableDropdown: false,
+          enableCountrySelector: true,
         }),
         buildTextField({
           id: 'prePaidApplicant.email',

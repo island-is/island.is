@@ -1,13 +1,20 @@
 import { createApplication } from '@island.is/application/testing'
 import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
 import { Test, TestingModule } from '@nestjs/testing'
-import {
-  APPLICATION_ATTACHMENT_BUCKET,
-  SocialInsuranceAdministrationService,
-} from './social-insurance-administration.service'
+import { SocialInsuranceAdministrationService } from './social-insurance-administration.service'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { ApplicationTypes } from '@island.is/application/types'
+import { sharedModuleConfig } from '../../shared'
+import { S3Service } from '@island.is/nest/aws'
+
+const mockConfig = {
+  SharedModuleConfig: {
+    templateApi: {
+      attachmentBucket: 'island-is-dev-storage-application-system',
+    },
+  },
+}
 
 describe('SocialInsuranceAdministrationService', () => {
   let socialInsuranceAdministrationService: SocialInsuranceAdministrationService
@@ -21,6 +28,14 @@ describe('SocialInsuranceAdministrationService', () => {
           useValue: logger,
         },
         {
+          provide: sharedModuleConfig.KEY,
+          useValue: mockConfig,
+        },
+        {
+          provide: S3Service,
+          useValue: {},
+        },
+        {
           provide: SocialInsuranceAdministrationClientService,
           useClass: jest.fn(() => ({
             sendApplication: () =>
@@ -28,10 +43,6 @@ describe('SocialInsuranceAdministrationService', () => {
                 applicationLineId: '123',
               }),
           })),
-        },
-        {
-          provide: APPLICATION_ATTACHMENT_BUCKET,
-          useValue: 'attachmentBucket',
         },
       ],
     }).compile()

@@ -195,13 +195,16 @@ const Overview: FC = () => {
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map((defendant) =>
-          defendant.subpoenas?.map((subpoena) => (
-            <ServiceAnnouncement
-              key={`${subpoena.id}-${subpoena.created}`}
-              subpoena={subpoena}
-              defendantName={defendant.name}
-            />
-          )),
+          defendant.subpoenas?.map(
+            (subpoena) =>
+              subpoena.subpoenaId && (
+                <ServiceAnnouncement
+                  key={`${subpoena.id}-${subpoena.created}`}
+                  subpoena={subpoena}
+                  defendantName={defendant.name}
+                />
+              ),
+          ),
         )}
         {workingCase.court &&
           latestDate?.date &&
@@ -226,9 +229,13 @@ const Overview: FC = () => {
         </Box>
         {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
+            {/* 
+            NOTE: Temporarily hidden while list of laws broken is not complete in
+            indictment cases
+            
             {hasLawsBroken && (
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-            )}
+            )} */}
             {hasMergeCases && (
               <Accordion>
                 {workingCase.mergedCases?.map((mergedCase) => (
