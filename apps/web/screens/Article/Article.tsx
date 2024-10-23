@@ -494,7 +494,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
                         '',
                       )}
                       processLink={asPath.split('?')[0].concat('?stepper=true')}
-                      processTitle={article?.stepper?.title ?? ''}
+                      processTitle={
+                        subArticle
+                          ? subArticle.stepper?.title ?? ''
+                          : article?.stepper?.title ?? ''
+                      }
                       newTab={false}
                     />
                   </Box>
