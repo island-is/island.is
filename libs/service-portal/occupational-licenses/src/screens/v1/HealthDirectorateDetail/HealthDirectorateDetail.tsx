@@ -1,18 +1,17 @@
-import { useParams } from 'react-router-dom'
-import { useGetHealthDirectorateLicenseByIdQuery } from './HealthDirectorateDetail.generated'
 import { Box } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { useUserBirthday, useUserInfo } from '@island.is/react-spa/bff'
 import {
   CardLoader,
   EmptyState,
   ErrorScreen,
   HEALTH_DIRECTORATE_SLUG,
+  m,
 } from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { useUserInfo } from '@island.is/auth/react'
+import { useParams } from 'react-router-dom'
 import { LicenseDetail } from '../../../components/LicenseDetail'
 import { olMessage as om } from '../../../lib/messages'
-import { m } from '@island.is/service-portal/core'
-import { OccupationalLicenseV2LicenseType } from '@island.is/service-portal/graphql'
+import { useGetHealthDirectorateLicenseByIdQuery } from './HealthDirectorateDetail.generated'
 
 type UseParams = {
   id: string
@@ -22,7 +21,7 @@ export const EducationDetail = () => {
   const { id } = useParams() as UseParams
   useNamespaces('sp.occupational-licenses')
   const user = useUserInfo()
-  const birthday = user.profile.dateOfBirth
+  const dateOfBirth = useUserBirthday()
   const { formatDateFns, formatMessage } = useLocale()
 
   const { data, loading, error } = useGetHealthDirectorateLicenseByIdQuery({
@@ -61,7 +60,9 @@ export const EducationDetail = () => {
           ? license.number
           : undefined
       }
-      dateOfBirth={birthday ? formatDateFns(birthday, 'dd.MM.yyyy') : undefined}
+      dateOfBirth={
+        dateOfBirth ? formatDateFns(dateOfBirth, 'dd.MM.yyyy') : undefined
+      }
       profession={license.profession}
       licenseType={license.type}
       dateOfIssue={

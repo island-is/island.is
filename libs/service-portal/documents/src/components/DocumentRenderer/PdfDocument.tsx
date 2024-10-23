@@ -1,12 +1,12 @@
-import { useRef, useState, useEffect } from 'react'
-import { useLocale } from '@island.is/localization'
 import { Box, Button, PdfViewer, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { useBffUrlGenerator } from '@island.is/react-spa/bff'
+import { Problem } from '@island.is/react-spa/shared'
 import { Modal, m } from '@island.is/service-portal/core'
-import { useUserInfo } from '@island.is/auth/react'
+import { useEffect, useRef, useState } from 'react'
 import { ActiveDocumentType2 } from '../../lib/types'
 import { downloadFile } from '../../utils/downloadDocumentV2'
 import { messages } from '../../utils/messages'
-import { Problem } from '@island.is/react-spa/shared'
 import * as styles from './DocumentRenderer.css'
 
 type PdfDocumentProps = {
@@ -23,7 +23,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
   onClose,
 }) => {
   const [scalePDF, setScalePDF] = useState(initScale)
-  const userInfo = useUserInfo()
+  const bffUrlGenerator = useBffUrlGenerator()
   const ref = useRef<HTMLDivElement>(null)
   const { formatMessage } = useLocale()
 
@@ -120,7 +120,9 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
               >
                 <Button
                   size="small"
-                  onClick={() => downloadFile(document, userInfo)}
+                  onClick={() =>
+                    downloadFile({ bffUrlGenerator, doc: document })
+                  }
                 >
                   {formatMessage(m.getDocument)}
                 </Button>

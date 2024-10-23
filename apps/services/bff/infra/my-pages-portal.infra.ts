@@ -2,9 +2,9 @@ import { ServiceBuilder, service } from '../../../../infra/src/dsl/dsl'
 import { createPortalEnv } from './utils/createPortalEnv'
 
 const bffName = 'services-bff'
-const clientName = 'portals-admin'
+const clientName = 'portals-my-pages'
 const serviceName = `${bffName}-${clientName}`
-const key = 'stjornbord'
+const key = 'minarsidur'
 
 export type BffInfraServices = {
   api: ServiceBuilder<'api'>
@@ -22,7 +22,7 @@ export const serviceSetup = (
       createPortalEnv({
         key,
         services,
-        clientId: `@admin.island.is/bff-${key}`,
+        clientId: '@island.is/bff',
       }),
     )
     .secrets({

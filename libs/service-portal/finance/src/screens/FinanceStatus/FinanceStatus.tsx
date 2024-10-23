@@ -35,7 +35,7 @@ import {
   FinanceStatusOrganizationType,
 } from './FinanceStatusData.types'
 import * as styles from './Table.css'
-import { useUserInfo } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import FinanceIntro from '../../components/FinanceIntro'
 import {
   useGetDebtStatusQuery,

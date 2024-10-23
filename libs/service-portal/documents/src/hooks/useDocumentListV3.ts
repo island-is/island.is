@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { AuthDelegationType } from '@island.is/api/schema'
-import { useUserInfo } from '@island.is/auth/react'
+import { useUserBirthday, useUserInfo } from '@island.is/react-spa/bff'
 import { useDocumentContext } from '../screens/Overview/DocumentContext'
 import { useDocumentsV3Query } from '../screens/Overview/Overview.generated'
 import differenceInYears from 'date-fns/differenceInYears'
@@ -23,10 +23,11 @@ export const useDocumentListV3 = (props?: UseDocumentListProps) => {
   } = useDocumentContext()
 
   const userInfo = useUserInfo()
+  const dateOfBirth = useUserBirthday()
   const isLegal = userInfo.profile.delegationType?.includes(
     AuthDelegationType.LegalGuardian,
   )
-  const dateOfBirth = userInfo?.profile.dateOfBirth
+
   let isOver15 = false
   if (dateOfBirth) {
     isOver15 = differenceInYears(new Date(), dateOfBirth) > 15

@@ -8,15 +8,11 @@ import {
 
 import { RetryLink } from '@apollo/client/link/retry'
 import { onError } from '@apollo/client/link/error'
-import { authLink } from '@island.is/auth/react'
-import { getStaticEnv } from '@island.is/shared/utils'
-
-const uri =
-  getStaticEnv('SI_PUBLIC_GRAPHQL_API') ?? 'http://localhost:4444/api/graphql'
 
 const httpLink = new HttpLink({
-  uri: ({ operationName }) => `${uri}?op=${operationName}`,
+  uri: ({ operationName }) => `/minarsidur/bff/api/graphql?op=${operationName}`,
   fetch,
+  credentials: 'include',
 })
 
 const retryLink = new RetryLink()
@@ -33,7 +29,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 })
 
 export const client = new ApolloClient({
-  link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
+  link: ApolloLink.from([retryLink, errorLink, httpLink]),
   cache: new InMemoryCache({
     typePolicies: {
       UserProfile: {

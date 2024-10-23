@@ -1,6 +1,6 @@
 import { Box, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useAuth, useUserInfo } from '@island.is/react-spa/bff'
+import { useBff, useUserInfo } from '@island.is/react-spa/bff'
 import { userMessages } from '@island.is/shared/translations'
 import { UserDropdownItem } from './UserDropdownItem'
 import { UserTopicCard } from './UserTopicCard'
@@ -16,7 +16,7 @@ export const UserDelegations = ({
 }: UserDelegationsProps) => {
   const user = useUserInfo()
   const { formatMessage } = useLocale()
-  const { switchUser } = useAuth()
+  const { switchUser } = useBff()
   const actor = user.profile.actor
 
   return (

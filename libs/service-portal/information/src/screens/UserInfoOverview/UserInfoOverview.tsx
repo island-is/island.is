@@ -7,7 +7,7 @@ import {
   m,
   THJODSKRA_SLUG,
 } from '@island.is/service-portal/core'
-import { useUserInfo } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { spmm } from '../../lib/messages'

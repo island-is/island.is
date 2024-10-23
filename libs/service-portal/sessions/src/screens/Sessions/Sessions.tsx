@@ -1,4 +1,4 @@
-import { useUserInfo } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
 import * as kennitala from 'kennitala'
 import React, { useState } from 'react'

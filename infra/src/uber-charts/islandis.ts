@@ -18,6 +18,7 @@ import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/in
 
 // Bff's
 import { serviceSetup as bffAdminPortalServiceSetup } from '../../../apps/services/bff/infra/admin-portal.infra'
+import { serviceSetup as bffServicePortalServiceSetup } from '../../../apps/services/bff/infra/my-pages-portal.infra'
 
 import { serviceSetup as consultationPortalSetup } from '../../../apps/consultation-portal/infra/samradsgatt'
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
@@ -118,6 +119,7 @@ const api = apiSetup({
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const bffAdminPortalService = bffAdminPortalServiceSetup({ api })
+const bffServicePortalService = bffServicePortalServiceSetup({ api })
 const appSystemForm = appSystemFormSetup({ api })
 const web = webSetup({ api })
 const searchIndexer = searchIndexerSetup()
@@ -180,6 +182,7 @@ export const Services: EnvironmentServices = {
     contentfulApps,
     contentfulEntryTagger,
     bffAdminPortalService,
+    bffServicePortalService,
   ],
   staging: [
     appSystemApi,
@@ -214,6 +217,7 @@ export const Services: EnvironmentServices = {
     universityGatewayService,
     universityGatewayWorker,
     bffAdminPortalService,
+    bffServicePortalService,
   ],
   dev: [
     appSystemApi,
@@ -252,6 +256,7 @@ export const Services: EnvironmentServices = {
     universityGatewayService,
     universityGatewayWorker,
     bffAdminPortalService,
+    bffServicePortalService,
   ],
 }
 

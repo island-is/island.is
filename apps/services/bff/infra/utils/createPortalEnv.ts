@@ -25,14 +25,21 @@ const getScopes = (key: PortalKeys) => {
   }
 }
 
-export const createPortalEnv = (
-  key: PortalKeys,
-  services: BffInfraServices,
-) => {
+type CreatePortalEnvArgs = {
+  key: PortalKeys
+  services: BffInfraServices
+  clientId: string
+}
+
+export const createPortalEnv = ({
+  key,
+  services,
+  clientId,
+}: CreatePortalEnvArgs) => {
   return {
     // Idenity server
     IDENTITY_SERVER_CLIENT_SCOPES: json(getScopes(key)),
-    IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-${key}`,
+    IDENTITY_SERVER_CLIENT_ID: clientId,
     IDENTITY_SERVER_ISSUER_URL: {
       local: 'https://identity-server.dev01.devland.is',
       dev: 'https://identity-server.dev01.devland.is',
@@ -49,7 +56,7 @@ export const createPortalEnv = (
     BFF_CLIENT_KEY_PATH: `/${key}`,
     BFF_PAR_SUPPORT_ENABLED: 'false',
     BFF_ALLOWED_REDIRECT_URIS: {
-      local: json(['http://localhost:4200/stjornbord']),
+      local: json([`http://localhost:4200/${key}`]),
       dev: json(['https://featbff-beta.dev01.devland.is']),
       staging: json(['https://beta.staging01.devland.is']),
       prod: json(['https://island.is']),
@@ -61,7 +68,7 @@ export const createPortalEnv = (
       prod: 'https://island.is',
     },
     BFF_LOGOUT_REDIRECT_URI: {
-      local: 'http://localhost:4200/stjornbord',
+      local: `http://localhost:4200/${key}`,
       dev: 'https://featbff-beta.dev01.devland.is',
       staging: 'https://beta.staging01.devland.is',
       prod: 'https://island.is',

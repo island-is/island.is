@@ -1,111 +1,54 @@
-import { AuthContext } from '@island.is/auth/react'
-import { BffUser, User } from '@island.is/shared/types'
-import { useContext } from 'react'
-import { BffContext, BffContextType } from './BffContext'
 import { createBroadcasterHook } from '@island.is/react-spa/shared'
+import { BffUser } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
+import * as kennitala from 'kennitala'
+import { useContext, useMemo } from 'react'
+import { BffContext, BffContextType } from './BffContext'
 
 /**
- * Maps an object to a BffUser type.
+ * This hook is used to get the BFF authentication context.
  */
-export const mapToBffUser = (input: User): BffUser => {
-  const {
-    profile: {
-      sid,
-      birthdate,
-      nationalId,
-      name,
-      idp,
-      actor,
-      subjectType,
-      delegationType,
-      locale,
-    },
-    scopes,
-  } = input
-
-  // Return a mapped BffUser object
-  return {
-    scopes: scopes || [],
-    profile: {
-      sid: sid || '',
-      birthdate,
-      nationalId,
-      name,
-      idp,
-      actor,
-      subjectType,
-      delegationType,
-      locale,
-    },
-  }
-}
-
-/**
- * Dynamic hook to get the bff context.
- */
-export const useDynamicBffHook = (hookName: string): BffContextType => {
+export const useBff = () => {
   const bffContext = useContext(BffContext)
 
   if (!bffContext) {
-    throw new Error(`${hookName} must be used within a BffProvider`)
+    throw new Error('useAuth must be used within a BffProvider')
   }
 
   return bffContext
 }
 
 /**
- * This hook is used to get the BFF authentication context.
- * It has backward compatibility with AuthContext.
+ * Dynamic hook to get specific key in the bff context.
  */
-export const useAuth = () => {
-  const bffContext = useContext(BffContext)
-  const authContext = useContext(AuthContext)
+export const useDynamicBffHook = <Key extends keyof BffContextType>(
+  returnField: Key,
+): NonNullable<BffContextType[Key]> => {
+  const bffContext = useBff()
 
-  if (bffContext) {
-    return bffContext
+  if (!isDefined(bffContext[returnField])) {
+    throw new Error(`The field ${returnField} does not exist in the BffContext`)
   }
 
-  if (authContext) {
-    return authContext
-  }
-
-  const errorMsg = (providerStr: string) =>
-    `useAuth must be used within a ${providerStr}`
-
-  if (!authContext) {
-    throw new Error(errorMsg('AuthProvider'))
-  }
-
-  throw new Error(errorMsg('BffProvider'))
-}
-
-/**
- * This hook is used to get user information.
- * It will determine what context to use based on the context that is available.
- * We will remove support for AuthContext when other clients transition over to BFF.
- * If AuthContext is being used then we will map the user info to the BffUser type.
- */
-export const useUserInfo = (): BffUser => {
-  const bffContext = useContext(BffContext)
-  const authContext = useContext(AuthContext)
-
-  if (bffContext?.userInfo) {
-    return bffContext.userInfo
-  } else if (authContext?.userInfo) {
-    return mapToBffUser(authContext.userInfo)
-  }
-
-  throw new Error('User info is not available. Is the user authenticated?')
+  return bffContext[returnField] as NonNullable<BffContextType[Key]>
 }
 
 /**
  * This hook is used to get the bff url generator.
  * The bff url generator is used to generate urls for the Bff in a conveinent way.
  */
-export const useBffUrlGenerator = () =>
-  useDynamicBffHook(useBffUrlGenerator.name).bffUrlGenerator
+export const useBffUrlGenerator = () => useDynamicBffHook('bffUrlGenerator')
+export const useUserInfo = () => useDynamicBffHook('userInfo')
 
-export const useBff = () => useDynamicBffHook(useBff.name)
+export const useUserBirthday = () => {
+  const userInfo = useUserInfo()
+
+  return useMemo(() => {
+    const nationalId = userInfo?.profile.nationalId
+
+    return nationalId ? kennitala.info(nationalId)?.birthday : undefined
+  }, [userInfo?.profile.nationalId])
+}
 
 export enum BffBroadcastEvents {
   NEW_SESSION = 'NEW_SESSION',

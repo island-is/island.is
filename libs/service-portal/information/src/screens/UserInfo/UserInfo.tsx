@@ -14,7 +14,7 @@ import {
   InfoLine,
   InfoLineStack,
 } from '@island.is/service-portal/core'
-import { useUserInfo } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 import {
   natRegGenderMessageDescriptorRecord,
