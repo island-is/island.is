@@ -75,9 +75,9 @@ export const Authorize = (
 ): MethodDecorator & ClassDecorator => {
   // IdsUserGuard is causing constant reload on local and DEV in the skilavottord-web
   // To 'fix' it for now we just skip using it for non production
-  if (!environment.production) {
+  if (process.env.NODE_ENV !== 'production') {
     logger.info(`AuthGuard environment`, {
-      isProduction: environment.production,
+      environment: process.env.NODE_ENV,
     })
     return applyDecorators(
       SetMetadata('roles', roles),
