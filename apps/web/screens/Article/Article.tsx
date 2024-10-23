@@ -702,7 +702,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
             <Stepper
               namespace={stepperNamespace ?? {}}
               optionsFromNamespace={stepOptionsFromNamespace}
-              stepper={article?.stepper as StepperSchema}
+              stepper={
+                (subArticle
+                  ? subArticle.stepper
+                  : article?.stepper) as StepperSchema
+              }
               showWebReader={true}
               webReaderClassName="rs_read"
             />
