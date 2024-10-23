@@ -98,6 +98,12 @@ export class DocumentsClientV2Service {
         documentProvider: document?.senderName ?? 'No provider available',
       })
       return null
+    } else {
+      this.logger.info('Document content available for findDocumentById', {
+        category: LOG_CATEGORY,
+        documentId,
+        documentProvider: document?.senderName ?? 'No provider available',
+      })
     }
 
     if (!mappedDocument?.senderNationalId || !mappedDocument?.date) {
