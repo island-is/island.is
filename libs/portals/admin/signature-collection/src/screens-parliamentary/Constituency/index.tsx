@@ -30,7 +30,10 @@ import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { useSignatureCollectionAdminRemoveListMutation } from './removeList.generated'
 import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCandidate.generated'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import {
+  CollectionStatus,
+  SignatureCollectionList,
+} from '@island.is/api/schema'
 
 export const Constituency = ({
   allowedToProcess,
@@ -41,12 +44,15 @@ export const Constituency = ({
   const navigate = useNavigate()
   const { revalidate } = useRevalidator()
 
-  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
+  const { collection, collectionStatus, allLists } =
+    useLoaderData() as ListsLoaderReturn
   const { constituencyName } = useParams() as { constituencyName: string }
 
   const constituencyLists = allLists.filter(
     (list) => list.area.name === constituencyName,
   )
+
+  const areaId = collection.areas.find((a) => a.name === constituencyName)?.id
 
   const countCandidatesLists = (allLists: SignatureCollectionList[]) => {
     return allLists?.reduce((acc: any, list: SignatureCollectionList) => {
@@ -125,9 +131,13 @@ export const Constituency = ({
                     ': ' +
                     constituencyLists.length}
                 </Text>
-                {allowedToProcess && constituencyLists?.length > 0 && (
-                  <CreateCollection collectionId={collection?.id} />
-                )}
+                {allowedToProcess &&
+                  collectionStatus === CollectionStatus.Processed && (
+                    <CreateCollection
+                      collectionId={collection?.id}
+                      areaId={areaId}
+                    />
+                  )}
               </Box>
               <Stack space={3}>
                 {constituencyLists.map((list) => (
@@ -153,86 +163,93 @@ export const Constituency = ({
                       },
                     }}
                     tag={
-                      !list.reviewed
-                        ? allowedToProcess
-                          ? {
-                              label: 'Cancel collection',
-                              renderTag: () => (
-                                <DialogPrompt
-                                  baseId="cancel_collection_dialog"
-                                  title={
-                                    formatMessage(m.cancelCollectionButton) +
-                                    ' - ' +
-                                    list.area?.name
-                                  }
-                                  description={
+                      allowedToProcess &&
+                      list.active &&
+                      collectionStatus === CollectionStatus.InitialActive
+                        ? {
+                            label: 'Cancel collection',
+                            renderTag: () => (
+                              <DialogPrompt
+                                baseId="cancel_collection_dialog"
+                                title={
+                                  formatMessage(m.cancelCollectionButton) +
+                                  ' - ' +
+                                  list.area?.name
+                                }
+                                description={
+                                  candidatesListCount[list.candidate.id] === 1
+                                    ? formatMessage(
+                                        m.cancelCollectionModalMessageLastList,
+                                      )
+                                    : formatMessage(
+                                        m.cancelCollectionModalMessage,
+                                      )
+                                }
+                                ariaLabel="delete"
+                                disclosureElement={
+                                  <Tag outlined variant="red">
+                                    <Box display="flex" alignItems="center">
+                                      <Icon
+                                        icon="trash"
+                                        size="small"
+                                        type="outline"
+                                      />
+                                    </Box>
+                                  </Tag>
+                                }
+                                onConfirm={() => {
+                                  removeList({
+                                    variables: {
+                                      input: {
+                                        listId: list.id,
+                                      },
+                                    },
+                                  })
+
+                                  if (
                                     candidatesListCount[list.candidate.id] === 1
-                                      ? formatMessage(
-                                          m.cancelCollectionModalMessageLastList,
-                                        )
-                                      : formatMessage(
-                                          m.cancelCollectionModalMessage,
-                                        )
-                                  }
-                                  ariaLabel="delete"
-                                  disclosureElement={
-                                    <Tag outlined variant="red">
-                                      <Box display="flex" alignItems="center">
-                                        <Icon
-                                          icon="trash"
-                                          size="small"
-                                          type="outline"
-                                        />
-                                      </Box>
-                                    </Tag>
-                                  }
-                                  onConfirm={() => {
-                                    removeList({
+                                  ) {
+                                    removeCandidate({
                                       variables: {
                                         input: {
-                                          listId: list.id,
+                                          candidateId: list.candidate.id,
                                         },
                                       },
                                     })
-
-                                    if (
-                                      candidatesListCount[list.candidate.id] ===
-                                      1
-                                    ) {
-                                      removeCandidate({
-                                        variables: {
-                                          input: {
-                                            candidateId: list.candidate.id,
-                                          },
-                                        },
-                                      })
-                                    }
-                                  }}
-                                  buttonTextConfirm={
-                                    candidatesListCount[list.candidate.id] === 1
-                                      ? formatMessage(
-                                          m.cancelCollectionAndCandidateModalConfirmButton,
-                                        )
-                                      : formatMessage(
-                                          m.cancelCollectionModalConfirmButton,
-                                        )
                                   }
-                                  buttonPropsConfirm={{
-                                    variant: 'primary',
-                                    colorScheme: 'destructive',
-                                  }}
-                                  buttonTextCancel={formatMessage(
-                                    m.cancelCollectionModalCancelButton,
-                                  )}
-                                />
-                              ),
-                            }
-                          : undefined
-                        : {
+                                }}
+                                buttonTextConfirm={
+                                  candidatesListCount[list.candidate.id] === 1
+                                    ? formatMessage(
+                                        m.cancelCollectionAndCandidateModalConfirmButton,
+                                      )
+                                    : formatMessage(
+                                        m.cancelCollectionModalConfirmButton,
+                                      )
+                                }
+                                buttonPropsConfirm={{
+                                  variant: 'primary',
+                                  colorScheme: 'destructive',
+                                }}
+                                buttonTextCancel={formatMessage(
+                                  m.cancelCollectionModalCancelButton,
+                                )}
+                              />
+                            ),
+                          }
+                        : !list.active && !list.reviewed
+                        ? {
+                            label: formatMessage(m.listLocked),
+                            variant: 'blueberry',
+                            outlined: false,
+                          }
+                        : !list.active && list.reviewed
+                        ? {
                             label: formatMessage(m.confirmListReviewed),
                             variant: 'mint',
                             outlined: false,
                           }
+                        : undefined
                     }
                   />
                 ))}

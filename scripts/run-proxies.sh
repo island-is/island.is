@@ -16,11 +16,12 @@ if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
   CONTEXT="$(kubectl config get-contexts -o name | grep -o ".*:cluster/${AWS_PROFILE##islandis-}-cluster.*")"
   kubectl config use-context "${CONTEXT}" >&2
   kubectl config current-context | sed 's/.*\///' >/dev/null
-  echo "${CONTEXT}"
+  # Strip loading ARN role, region, etc.
+  echo "${CONTEXT##*/}"
 )"}"
 
 echo "AWS_PROFILE=${AWS_PROFILE}" >&2
-echo "CLUSTER=$CLUSTER" >&2
+echo "CLUSTER=${CLUSTER}" >&2
 
 ARGS=()
 PROXIES=()

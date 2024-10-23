@@ -1,5 +1,6 @@
 import {
   GetAdvertsRequest,
+  GetCasesInProgressRequest,
   OfficialJournalOfIcelandClientService,
 } from '@island.is/clients/official-journal-of-iceland'
 import { Injectable } from '@nestjs/common'
@@ -17,6 +18,7 @@ import {
   AdvertsResponse,
   AdvertTypesResponse,
 } from './models/advert.response'
+import { CasesInProgressResponse } from './models/cases.response'
 
 @Injectable()
 export class OfficialJournalOfIcelandService {
@@ -64,5 +66,11 @@ export class OfficialJournalOfIcelandService {
 
   async getAdverts(input: GetAdvertsRequest): Promise<AdvertsResponse> {
     return await this.ojoiService.getAdverts(input)
+  }
+
+  async getCasesInProgress(
+    input: GetCasesInProgressRequest,
+  ): Promise<CasesInProgressResponse> {
+    return await this.ojoiService.getCasesInProgress(input)
   }
 }

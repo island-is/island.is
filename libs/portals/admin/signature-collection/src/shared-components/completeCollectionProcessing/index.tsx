@@ -1,6 +1,6 @@
 import { useLocale } from '@island.is/localization'
 import { Box, Button, Text, toast } from '@island.is/island-ui/core'
-import { m } from '../../../../lib/messages'
+import { m } from '../../lib/messages'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useRevalidator } from 'react-router-dom'
@@ -8,8 +8,10 @@ import { useProcessCollectionMutation } from './finishCollectionProcess.generate
 
 const ActionCompleteCollectionProcessing = ({
   collectionId,
+  canProcess,
 }: {
   collectionId: string
+  canProcess?: boolean
 }) => {
   const { formatMessage } = useLocale()
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
@@ -45,6 +47,7 @@ const ActionCompleteCollectionProcessing = ({
             colorScheme="destructive"
             variant="text"
             onClick={() => setModalSubmitReviewIsOpen(true)}
+            disabled={!canProcess}
           >
             {formatMessage(m.completeCollectionProcessing)}
           </Button>

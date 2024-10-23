@@ -118,12 +118,10 @@ export const IncomePlanForm: Form = buildForm({
                         application.externalData,
                         activeField?.incomeCategory,
                       )
-
-                      return (
-                        options.find(
-                          (option) => option.value === activeField?.incomeType,
-                        )?.value ?? ''
-                      )
+                      const selectedOption = options.find(
+                        (option) => option.value === activeField?.incomeType,
+                      )?.value
+                      return selectedOption ?? null
                     },
                     watchValues: 'incomeCategory',
                   },
@@ -148,7 +146,7 @@ export const IncomePlanForm: Form = buildForm({
                         activeField?.incomeType ===
                           INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS ||
                         activeField?.incomeType === DIVIDENDS_IN_FOREIGN_BANKS
-                          ? ''
+                          ? null
                           : ISK
 
                       return defaultCurrency
