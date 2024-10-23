@@ -972,6 +972,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:upload-failed',
     defaultMessage: 'Upphleðsla mistókst',
   },
+  wrongFileType: {
+    id: 'sp.vehicles:wrong-file-type',
+    defaultMessage: 'Vitlaus skráartýpa. Skrá verður að vera .csv eða .xslx',
+  },
   errorWhileProcessing: {
     id: 'sp.vehicles:error-while-processing',
     defaultMessage: 'Villa við að meðhöndla skjal. Villur: ',
