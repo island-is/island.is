@@ -9,21 +9,21 @@ import { mockClient } from 'aws-sdk-client-mock'
 import { Readable } from 'stream'
 import { sdkStreamMixin } from '@smithy/util-stream'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { AwsService, EncodingString } from './aws.service'
+import { S3Service, EncodingString } from './s3.service'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { Logger } from '@nestjs/common'
 
 jest.mock('@aws-sdk/s3-request-presigner')
 const s3Mock = mockClient(S3Client)
 
-describe('AwsService', () => {
-  let awsService: AwsService
+describe('S3Service', () => {
+  let s3Service: S3Service
   let logger: Logger
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AwsService,
+        S3Service,
         {
           provide: LOGGER_PROVIDER,
           useValue: {
@@ -37,7 +37,7 @@ describe('AwsService', () => {
       ],
     }).compile()
 
-    awsService = module.get<AwsService>(AwsService)
+    s3Service = module.get<S3Service>(S3Service)
     logger = module.get<Logger>(LOGGER_PROVIDER)
 
     s3Mock.reset()
@@ -48,7 +48,7 @@ describe('AwsService', () => {
 
     mockGetObjectCommandWithBodyOnce(expectedResult)
 
-    const getObjectResult = await awsService.getFile({ bucket: 'x', key: 'y' })
+    const getObjectResult = await s3Service.getFile({ bucket: 'x', key: 'y' })
     expect(getObjectResult).toBeDefined()
 
     const contentResults = await getObjectResult?.Body?.transformToString()
@@ -60,7 +60,7 @@ describe('AwsService', () => {
   it('should return undefined from a bucket when an error is thrown', async () => {
     s3Mock.on(GetObjectCommand).rejectsOnce()
 
-    const getObjectResult = await awsService.getFile({ bucket: 'x', key: 'y' })
+    const getObjectResult = await s3Service.getFile({ bucket: 'x', key: 'y' })
 
     expect(getObjectResult).toBeUndefined()
   })
@@ -74,7 +74,7 @@ describe('AwsService', () => {
       )
 
       mockGetObjectCommandWithBodyOnce(startingString)
-      const result = await awsService.getFileContent(
+      const result = await s3Service.getFileContent(
         { bucket: 'abc', key: 'def' },
         encoding as EncodingString,
       )
@@ -90,7 +90,7 @@ describe('AwsService', () => {
     >
     getSignedUrlMock.mockResolvedValue(expectedResult)
 
-    const result = await awsService.getPresignedUrl(
+    const result = await s3Service.getPresignedUrl(
       { bucket: 'x', key: 'y' },
       100,
     )
@@ -102,18 +102,37 @@ describe('AwsService', () => {
     const metadata = { httpStatusCode: 200 }
     s3Mock.on(HeadObjectCommand).resolvesOnce({ $metadata: metadata })
 
-    const result = await awsService.fileExists({ bucket: 'x', key: 'y' })
+    const result = await s3Service.fileExists({ bucket: 'x', key: 'y' })
 
     expect(result).toEqual(true)
   })
 
-  it.each([404, 403, 500])(
+  it.each([404, 403])(
     'should return false if the object doesnt exist in s3',
     async (code) => {
       const metadata = { httpStatusCode: code }
-      s3Mock.on(HeadObjectCommand).resolvesOnce({ $metadata: metadata })
+      s3Mock.on(HeadObjectCommand).rejectsOnce({ $metadata: metadata })
 
-      const result = await awsService.fileExists({ bucket: 'x', key: 'y' })
+      const result = await s3Service.fileExists({ bucket: 'x', key: 'y' })
+
+      expect(logger.error).toBeCalledTimes(0)
+      expect(result).toEqual(false)
+    },
+  )
+
+  it.each([500, 400])(
+    'should return false and log error if an unexpected error occurs in s3',
+    async (code) => {
+      const metadata = { httpStatusCode: code }
+      s3Mock.on(HeadObjectCommand).rejectsOnce({ $metadata: metadata })
+
+      const result = await s3Service.fileExists({ bucket: 'x', key: 'y' })
+
+      expect(logger.error).toBeCalledTimes(1)
+      expect(logger.error).toBeCalledWith(
+        'Error occurred while checking if file exists in S3',
+        Error(),
+      )
 
       expect(result).toEqual(false)
     },
@@ -122,7 +141,15 @@ describe('AwsService', () => {
   it('should return false if the object doesnt exist in s3 and the error as no metadata', async () => {
     s3Mock.on(HeadObjectCommand).resolvesOnce({})
 
-    const result = await awsService.fileExists({ bucket: 'x', key: 'y' })
+    const result = await s3Service.fileExists({ bucket: 'x', key: 'y' })
+
+    expect(logger.error).toBeCalledTimes(1)
+    expect(logger.error).toBeCalledWith(
+      'Error occurred while checking if file exists in S3',
+      TypeError(
+        "Cannot read properties of undefined (reading 'httpStatusCode')",
+      ),
+    )
 
     expect(result).toEqual(false)
   })
@@ -133,7 +160,7 @@ describe('AwsService', () => {
       const metadata = { httpStatusCode: code }
       s3Mock.on(DeleteObjectCommand).resolvesOnce({ $metadata: metadata })
 
-      await awsService.deleteObject({ bucket: 'x', key: 'y' })
+      await s3Service.deleteObject({ bucket: 'x', key: 'y' })
 
       expect(logger.error).toBeCalledTimes(0)
     },
@@ -145,7 +172,7 @@ describe('AwsService', () => {
       const metadata = { httpStatusCode: code }
       s3Mock.on(DeleteObjectCommand).resolvesOnce({ $metadata: metadata })
 
-      const act = () => awsService.deleteObject({ bucket: 'x', key: 'y' })
+      const act = () => s3Service.deleteObject({ bucket: 'x', key: 'y' })
 
       await expect(act()).rejects.toThrow()
 
@@ -161,8 +188,8 @@ describe('AwsService', () => {
     const bucketKeyPair = { bucket: 'abc', key: 'def' }
     const fileUri = 'https://abc.s3.amazonaws.com/def'
 
-    const resultFromPair = awsService.getBucketKey(bucketKeyPair)
-    const resultFromFilename = awsService.getBucketKey(fileUri)
+    const resultFromPair = s3Service.getBucketKey(bucketKeyPair)
+    const resultFromFilename = s3Service.getBucketKey(fileUri)
 
     expect(resultFromPair.bucket).toEqual(bucketKeyPair.bucket)
     expect(resultFromPair.key).toEqual(bucketKeyPair.key)
