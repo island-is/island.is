@@ -74,7 +74,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
     }
 
     const updated = await updateCase(caseToCancelId, {
-      indictmentRulingDecision: CaseIndictmentRulingDecision.CANCELLATION,
+      indictmentRulingDecision: CaseIndictmentRulingDecision.WITHDRAWAL,
     })
 
     if (!updated) {
