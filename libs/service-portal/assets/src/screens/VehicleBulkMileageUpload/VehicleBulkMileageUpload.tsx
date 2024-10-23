@@ -15,15 +15,12 @@ import {
   SAMGONGUSTOFA_SLUG,
   m,
 } from '@island.is/service-portal/core'
-import {
-  MileageRecord,
-  parseCsvToMileageRecord,
-} from '../../utils/parseCsvToMileage'
 import { Problem } from '@island.is/react-spa/shared'
 import { AssetsPaths } from '../../lib/paths'
 import { useVehicleBulkMileagePostMutation } from './VehicleBulkMileageUpload.generated'
 import VehicleBulkMileageFileDownloader from '../VehicleBulkMileage/VehicleBulkMileageFileDownloader'
 import { vehicleMessage } from '../../lib/messages'
+import { parseFileToMileageRecord } from '../../utils/parseFileToMileage'
 
 const VehicleBulkMileageUpload = () => {
   useNamespaces('sp.vehicles')
@@ -52,7 +49,7 @@ const VehicleBulkMileageUpload = () => {
 
   const postMileage = async (file: File) => {
     try {
-      const records = await parseCsvToMileageRecord(file)
+      const records = await parseFileToMileageRecord(file)
       if (!records.length) {
         setUploadErrorMessage(formatMessage(vehicleMessage.uploadFailed))
         return
@@ -169,7 +166,7 @@ const VehicleBulkMileageUpload = () => {
           description={formatMessage(vehicleMessage.fileUploadAcceptedTypes)}
           disabled={!!data?.vehicleBulkMileagePost?.errorMessage}
           buttonLabel={formatMessage(vehicleMessage.selectFileToUpload)}
-          accept={['.csv', '.xls']}
+          accept={['.csv', '.xlsx']}
           multiple={false}
           onRemove={handleOnInputFileUploadRemove}
           onChange={handleOnInputFileUploadChange}

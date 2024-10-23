@@ -10,10 +10,16 @@ const letters =
 const newlines = '\\Q\\r\\n\\E|\\r|\\n'
 const wordbreaks = '[;,]'
 
-const vehicleIndexTitle = ['permno', 'vehicleid', 'ökutæki', 'fastanúmer']
-const mileageIndexTitle = ['kílómetrastaða', 'mileage', 'odometer']
+const vehicleIndexTitle = [
+  'permno',
+  'vehicleid',
+  'bilnumer',
+  'okutaeki',
+  'fastanumer',
+]
+const mileageIndexTitle = ['kilometrastada', 'mileage', 'odometer']
 
-export const parseCsvToMileageRecord = async (
+export const parseFileToMileageRecord = async (
   file: File,
 ): Promise<Array<MileageRecord> | string> => {
   const reader = file.stream().getReader()

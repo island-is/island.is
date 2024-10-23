@@ -1026,7 +1026,7 @@ export const vehicleMessage = defineMessages({
   },
   fileUploadAcceptedTypes: {
     id: 'sp.vehicles:file-upload-accepted-types',
-    defaultMessage: 'Tekið er við skjölum með endingu; .csv',
+    defaultMessage: 'Tekið er við skjölum með endingu; .csv, .xlsx',
   },
   dataAboutJob: {
     id: 'sp.vehicles:data-about-job',
