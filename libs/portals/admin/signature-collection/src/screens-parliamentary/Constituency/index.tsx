@@ -132,7 +132,7 @@ export const Constituency = ({
                     constituencyLists.length}
                 </Text>
                 {allowedToProcess &&
-                  collectionStatus === CollectionStatus.Processed && (
+                  collectionStatus === CollectionStatus.InInitialReview && (
                     <CreateCollection
                       collectionId={collection?.id}
                       areaId={areaId}
