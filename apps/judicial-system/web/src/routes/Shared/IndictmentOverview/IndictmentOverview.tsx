@@ -18,7 +18,6 @@ import {
   FormFooter,
   IndictmentCaseFilesList,
   IndictmentCaseScheduledCard,
-  IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
   PageHeader,
