@@ -12,6 +12,7 @@ import { ApplicationFileModel } from '../file/models'
 import { createPdf } from '../../formatters/createPdf'
 import { PdfApplicatiponResponse } from './pdfApplication.response'
 import { ChildrenModel } from '../children'
+import { ApplicationEventModel } from '../applicationEvent'
 
 @Injectable()
 export class OpenApiApplicationService {
@@ -122,6 +123,22 @@ export class OpenApiApplicationService {
           separate: true,
           order: [['created', 'DESC']],
           attributes: ['key', 'name', 'type'],
+        },
+        {
+          model: ApplicationEventModel,
+          as: 'applicationEvents',
+          separate: true,
+          // where: {
+          //   eventType: {
+          //     [Op.in]: isEmployee
+          //       ? Object.values(ApplicationEventType)
+          //       : [
+          //           ApplicationEventType.DATANEEDED,
+          //           ApplicationEventType.APPROVED,
+          //         ],
+          //   },
+          // },
+          order: [['created', 'DESC']],
         },
         {
           model: StaffModel,
