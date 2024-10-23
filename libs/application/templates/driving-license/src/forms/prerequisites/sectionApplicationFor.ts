@@ -57,7 +57,7 @@ export const sectionApplicationFor = (
               )
 
               if (fakeData?.useFakeData === 'yes') {
-                console.log('using fake data', fakeData)
+                // console.log('using fake data', fakeData)
                 currentLicense = fakeData.currentLicense ?? null
                 categories =
                   fakeData.currentLicense === 'temp'

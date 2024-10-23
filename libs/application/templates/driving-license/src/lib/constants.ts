@@ -25,25 +25,36 @@ export enum Pickup {
   'DISTRICT' = 'district',
 }
 
-export enum AdvancedLicense {
+export enum MainAdvancedLicense {
   'C1' = 'C1',
-  'C1A' = 'C1A',
   'D1' = 'D1',
-  'D1A' = 'D1A',
   'C' = 'C',
-  'CA' = 'CA',
   'D' = 'D',
-  'DA' = 'DA',
   'C1E' = 'C1E',
   'D1E' = 'D1E',
   'CE' = 'CE',
   'DE' = 'DE',
 }
 
+export enum ProfessionalAdvancedLicense {
+  'C1A' = 'C1A',
+  'D1A' = 'D1A',
+  'CA' = 'CA',
+  'DA' = 'DA',
+}
+
+export const AdvancedLicense = {
+  ...MainAdvancedLicense,
+  ...ProfessionalAdvancedLicense,
+} as const
+
 type AdvancedLicenseMapItem = {
   minAge: number
-  code: keyof typeof AdvancedLicense
-  professional?: AdvancedLicenseMapItem
+  code: keyof typeof MainAdvancedLicense
+  professional?: {
+    minAge: number
+    code: keyof typeof ProfessionalAdvancedLicense
+  }
 }
 
 export const advancedLicenseMap: AdvancedLicenseMapItem[] = [

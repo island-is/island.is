@@ -888,93 +888,105 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn um aukin ökuréttindi.',
     description: 'Option description for selecting advanced driving license',
   },
-  applicationForAdvancedLicenseApplyForC1: {
-    id: 'dl.application:applicationForAdvancedLicenseApplyForC1',
-    defaultMessage: 'Sækja um C1',
-    description: 'Apply for C1',
+  applicationForAdvancedLicenseTitleC1: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleC1',
+    defaultMessage: 'C1 titill',
+    description: 'C1 title',
   },
-  applicationForAdvancedLicenseApplyForC1A: {
-    id: 'dl.application:applicationForAdvancedLicenseApplyForC1A',
-    defaultMessage: 'Sækja um C1A',
-    description: 'Apply for C1A',
+  applicationForAdvancedLicenseLabelC1: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelC1',
+    defaultMessage: 'C1 lýsing',
+    description: 'C1 description',
   },
-  applicationForAdvancedLicenseApplyForD1: {
-    id: 'dl.application:applicationForAdvancedLicenseApplyForD1',
-    defaultMessage: 'Sækja um D1',
-    description: 'Apply for D1',
+  applicationForAdvancedLicenseLabelC1A: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelC1A',
+    defaultMessage: 'C1A lýsing',
+    description: 'C1A description',
   },
-  applicationForAdvancedLicenseApplyForC: {
-    id: 'dl.application:applicationForAdvancedLicenseApplyForC',
-    defaultMessage: 'Sækja um C',
-    description: 'Apply for C',
+  applicationForAdvancedLicenseTitleD1: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleD1',
+    defaultMessage: 'D1 titill',
+    description: 'D1 title',
   },
-  applicationForAdvancedLicenseApplyForCA: {
-    id: 'dl.application:applicationForAdvancedLicenseApplyForCA',
-    defaultMessage: 'Sækja um CA',
-    description: 'Apply for CA',
+  applicationForAdvancedLicenseLabelD1: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelD1',
+    defaultMessage: 'D1 lýsing',
+    description: 'D1 description',
   },
-  applicationForAdvancedLicenseApplyForD: {
-    id: 'dl.application:applicationForAdvancedLicenseApplyForD',
-    defaultMessage: 'Sækja um D',
-    description: 'Apply for D',
+  applicationForAdvancedLicenseLabelD1A: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelD1A',
+    defaultMessage: 'D1A lýsing',
+    description: 'D1A description',
   },
-  applicationForAdvancedLicenseApplyForDA: {
-    id: 'dl.application:applicationForAdvancedLicenseApplyForDA',
-    defaultMessage: 'Sækja um DA',
-    description: 'Apply for DA',
+  applicationForAdvancedLicenseTitleC: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleC',
+    defaultMessage: 'C titill',
+    description: 'C title',
   },
-  applicationForAdvancedLicenseApplyForD1A: {
-    id: 'dl.application:applicationForAdvancedLicenseApplyForD1A',
-    defaultMessage: 'Sækja um D1A',
-    description: 'Apply for D1A',
+  applicationForAdvancedLicenseLabelC: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelC',
+    defaultMessage: 'C lýsing',
+    description: 'C description',
   },
-  applicationForAdvancedLicenseApplyForC1E: {
-    id: 'dl.application:applicationForAdvancedLicenseApplyForC1E',
-    defaultMessage: 'Sækja um C1E',
-    description: 'Apply for C1E',
+  applicationForAdvancedLicenseLabelCA: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelCA',
+    defaultMessage: 'CA lýsing',
+    description: 'CA description',
   },
-  applicationForAdvancedLicenseApplyForD1E: {
-    id: 'dl.application:applicationForAdvancedLicenseApplyForD1E',
-    defaultMessage: 'Sækja um D1E',
-    description: 'Apply for D1E',
+  applicationForAdvancedLicenseTitleD: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleD',
+    defaultMessage: 'D titill',
+    description: 'D title',
   },
-  applicationForAdvancedLicenseApplyForCE: {
-    id: 'dl.application:applicationForAdvancedLicenseApplyForCE',
-    defaultMessage: 'Sækja um CE',
-    description: 'Apply for CE',
+  applicationForAdvancedLicenseLabelD: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelD',
+    defaultMessage: 'D lýsing',
+    description: 'D description',
   },
-  applicationForAdvancedLicenseApplyForDE: {
-    id: 'dl.application:applicationForAdvancedLicenseApplyForDE',
-    defaultMessage: 'Sækja um DE',
-    description: 'Apply for DE',
+  applicationForAdvancedLicenseLabelDA: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelDA',
+    defaultMessage: 'DA lýsing',
+    description: 'DA description',
   },
-  applicationForAdvancedLicenseQuestionC1: {
-    id: 'dl.application:applicationForAdvancedLicenseQuestionC1',
-    defaultMessage:
-      'Ætlar þú að taka réttindin í atvinnuskyni og þiggja greiðslu fyrir akstur?',
-    description:
-      'Question (C1) if planning to take the license for professional purposes and receive payment for driving',
+  applicationForAdvancedLicenseTitleC1E: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleC1E',
+    defaultMessage: 'C1E titill',
+    description: 'C1E title',
   },
-  applicationForAdvancedLicenseQuestionD1: {
-    id: 'dl.application:applicationForAdvancedLicenseQuestionD1',
-    defaultMessage:
-      'Ætlar þú að taka réttindin í atvinnuskyni og þiggja greiðslu fyrir akstur?',
-    description:
-      'Question (D1) if planning to take the license for professional purposes and receive payment for driving',
+  applicationForAdvancedLicenseLabelC1E: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelC1E',
+    defaultMessage: 'C1E lýsing',
+    description: 'C1E description',
   },
-  applicationForAdvancedLicenseQuestionC: {
-    id: 'dl.application:applicationForAdvancedLicenseQuestionC',
-    defaultMessage:
-      'Ætlar þú að taka réttindin í atvinnuskyni og þiggja greiðslu fyrir akstur?',
-    description:
-      'Question (C) if planning to take the license for professional purposes and receive payment for driving',
+  applicationForAdvancedLicenseTitleD1E: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleD1E',
+    defaultMessage: 'D1E titill',
+    description: 'D1E title',
   },
-  applicationForAdvancedLicenseQuestionD: {
-    id: 'dl.application:applicationForAdvancedLicenseQuestionD',
-    defaultMessage:
-      'Ætlar þú að taka réttindin í atvinnuskyni og þiggja greiðslu fyrir akstur?',
-    description:
-      'Question (D) if planning to take the license for professional purposes and receive payment for driving',
+  applicationForAdvancedLicenseLabelD1E: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelD1E',
+    defaultMessage: 'D1E lýsing',
+    description: 'D1E description',
+  },
+  applicationForAdvancedLicenseTitleCE: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleCE',
+    defaultMessage: 'CE titill',
+    description: 'CE title',
+  },
+  applicationForAdvancedLicenseLabelCE: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelCE',
+    defaultMessage: 'CE lýsing',
+    description: 'CE description',
+  },
+  applicationForAdvancedLicenseTitleDE: {
+    id: 'dl.application:applicationForAdvancedLicenseTitleDE',
+    defaultMessage: 'DE titill',
+    description: 'DE title',
+  },
+  applicationForAdvancedLicenseLabelDE: {
+    id: 'dl.application:applicationForAdvancedLicenseLabelDE',
+    defaultMessage: 'DE lýsing',
+    description: 'DE description',
   },
 })
 
