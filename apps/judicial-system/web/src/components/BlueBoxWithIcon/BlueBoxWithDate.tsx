@@ -27,18 +27,22 @@ interface Props {
   icon?: IconMapIcon
 }
 
+type DateType = 'verdictViewDate' | 'appealDate'
+
 const BlueBoxWithDate: FC<Props> = (props) => {
   const { defendant, icon } = props
   const { formatMessage } = useIntl()
-  const [d, setD] = useState<Date>()
-  const [d2, setD2] = useState<Date>()
-  const [dHasBeenSet, setDHasBeenSet] = useState<boolean>()
-  const [d2HasBeenSet, setD2HasBeenSet] = useState<boolean>()
+  const [verdictViewDate, setVerdictViewDate] = useState<Date>()
+  const [appealDate, setAppealDate] = useState<Date>()
   const [textItems, setTextItems] = useState<string[]>([])
   const { setAndSendDefendantToServer } = useDefendants()
   const { workingCase, setWorkingCase } = useContext(FormContext)
 
-  const handleDateChange = (date: Date | undefined, valid: boolean) => {
+  const handleDateChange = (
+    date: Date | undefined,
+    valid: boolean,
+    dateType: DateType,
+  ) => {
     if (!date) {
       // Do nothing
       return
@@ -48,64 +52,53 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       toast.error(formatMessage(errors.createIndictmentCount))
     }
 
-    setD(date)
+    dateType === 'verdictViewDate'
+      ? setVerdictViewDate(date)
+      : setAppealDate(date)
   }
 
-  const handleDate2Change = (date: Date | undefined, valid: boolean) => {
-    if (!date) {
-      // Do nothing
-      return
-    }
-
-    if (!valid) {
-      toast.error(formatMessage(errors.createIndictmentCount))
-    }
-
-    setD2(date)
-  }
-
-  const handleSetDate = () => {
-    if (!d) {
+  const handleSetDate = (dateType: DateType) => {
+    if (
+      (dateType === 'verdictViewDate' && !verdictViewDate) ||
+      (dateType === 'appealDate' && !appealDate)
+    ) {
       // TODO: handle error
       return
     }
 
-    setDHasBeenSet(true)
-    setAndSendDefendantToServer(
-      {
-        caseId: workingCase.id,
-        defendantId: defendant.id,
-        verdictViewDate: formatDateForServer(d),
-      },
-      setWorkingCase,
-    )
-  }
+    if (dateType === 'verdictViewDate' && verdictViewDate) {
+      setAndSendDefendantToServer(
+        {
+          caseId: workingCase.id,
+          defendantId: defendant.id,
+          verdictViewDate: formatDateForServer(verdictViewDate),
+        },
+        setWorkingCase,
+      )
+    } else if (dateType === 'appealDate' && appealDate) {
+      setAndSendDefendantToServer(
+        {
+          caseId: workingCase.id,
+          defendantId: defendant.id,
+          verdictAppealDate: formatDateForServer(appealDate),
+        },
+        setWorkingCase,
+      )
 
-  const handleSetDate2 = () => {
-    if (!d2) {
-      // TODO: handle error
-      return
+      setTimeout(() => {
+        addNewText()
+      }, 350)
+    } else {
+      toast.error(formatMessage(errors.general))
     }
-
-    setD2HasBeenSet(true)
-    setAndSendDefendantToServer(
-      {
-        caseId: workingCase.id,
-        defendantId: defendant.id,
-        verdictAppealDate: formatDateForServer(d2),
-      },
-      setWorkingCase,
-    )
-
-    setTimeout(() => {
-      addNewText()
-    }, 350)
   }
 
   const addNewText = () => {
     setTextItems([
       ...textItems,
-      formatMessage(strings.defendantAppealDate, { date: formatDate(d2) }),
+      formatMessage(strings.defendantAppealDate, {
+        date: formatDate(appealDate),
+      }),
     ])
   }
 
@@ -127,7 +120,9 @@ const BlueBoxWithDate: FC<Props> = (props) => {
 
     setTextItems([
       formatMessage(strings.defendantVerdictViewedDate, {
-        date: d ? formatDate(d) : formatDate(defendant.verdictViewDate),
+        date: verdictViewDate
+          ? formatDate(verdictViewDate)
+          : formatDate(defendant.verdictViewDate),
       }),
       formatMessage(appealExpiration.message, {
         appealExpirationDate: appealExpiration.date,
@@ -141,12 +136,11 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         : []),
     ])
   }, [
-    d,
-    dHasBeenSet,
     defendant.verdictAppealDate,
     defendant.verdictAppealDeadline,
     defendant.verdictViewDate,
     formatMessage,
+    verdictViewDate,
   ])
 
   return (
@@ -166,7 +160,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           <Text variant="eyebrow">{defendant.name}</Text>
         </Box>
         <AnimatePresence mode="wait">
-          {dHasBeenSet || defendant.verdictViewDate ? (
+          {defendant.verdictViewDate ? (
             <>
               <motion.div
                 initial="hidden"
@@ -213,11 +207,16 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                           strings.defendantAppealDatePlaceholder,
                         )}
                         size="sm"
-                        onChange={handleDate2Change}
+                        onChange={(date, valid) =>
+                          handleDateChange(date, valid, 'appealDate')
+                        }
                         blueBox={false}
                         dateOnly
                       />
-                      <Button onClick={handleSetDate2} disabled={!d2}>
+                      <Button
+                        onClick={() => handleSetDate('appealDate')}
+                        disabled={!appealDate}
+                      >
                         {formatMessage(strings.defendantAppealDateButtonText)}
                       </Button>
                     </Box>
@@ -244,12 +243,17 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                     strings.defendantVerdictViewDatePlaceholder,
                   )}
                   size="sm"
-                  selectedDate={d}
-                  onChange={handleDateChange}
+                  selectedDate={verdictViewDate}
+                  onChange={(date, valid) =>
+                    handleDateChange(date, valid, 'verdictViewDate')
+                  }
                   blueBox={false}
                   dateOnly
                 />
-                <Button onClick={handleSetDate} disabled={!d}>
+                <Button
+                  onClick={() => handleSetDate('verdictViewDate')}
+                  disabled={!verdictViewDate}
+                >
                   {formatMessage(strings.defendantVerdictViewDateButtonText)}
                 </Button>
               </Box>
