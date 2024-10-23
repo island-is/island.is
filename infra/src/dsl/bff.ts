@@ -17,9 +17,7 @@ export const getScopes = (key: PortalKeys) => {
   }
 }
 
-export const bffConfig = (info: BffInfo) => {
-  const { key, services, clientName } = info
-
+export const bffConfig = ({ key, services, clientName, clientId }: BffInfo) => {
   const getBaseUrl = (ctx: Context) =>
     ctx.featureDeploymentName
       ? `${ctx.featureDeploymentName}.${ctx.env.domain}`
@@ -30,7 +28,7 @@ export const bffConfig = (info: BffInfo) => {
   return {
     env: {
       IDENTITY_SERVER_CLIENT_SCOPES: json(getScopes(key)),
-      IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-${key}`,
+      IDENTITY_SERVER_CLIENT_ID: clientId,
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -45,20 +43,35 @@ export const bffConfig = (info: BffInfo) => {
       BFF_CLIENT_KEY_PATH: `/${key}`,
       BFF_PAR_SUPPORT_ENABLED: 'false',
       BFF_CLIENT_BASE_URL: {
-        dev: ref((h) => h.svc(`https://${getBaseUrl(h)}`)),
-        staging: ref((h) => h.svc(`https://${getBaseUrl(h)}`)),
+        local: 'http://localhost:4200',
+        dev: ref((ctx) => ctx.svc(`https://${getBaseUrl(ctx)}`)),
+        staging: ref((ctx) => ctx.svc(`https://${getBaseUrl(ctx)}`)),
         prod: 'https://island.is',
-        local: ref((h) => h.svc('http://localhost:4200')),
       },
-      BFF_ALLOWED_REDIRECT_URIS: ref((ctx) =>
-        json([`https://${getBaseUrl(ctx)}`]),
-      ),
-      // BFF_CLIENT_BASE_URL: ref((ctx) => `https://${getBaseUrl(ctx)}`),
-      BFF_LOGOUT_REDIRECT_URI: ref((ctx) => `https://${getBaseUrl(ctx)}`),
-      BFF_CALLBACKS_BASE_PATH: ref(
-        (ctx) => `https://${getBaseUrl(ctx)}/${key}/bff/callbacks`,
-      ),
-      BFF_PROXY_API_ENDPOINT: ref((ctx) => `http://${ctx.svc(services.api)}`),
+      BFF_ALLOWED_REDIRECT_URIS: {
+        local: json(['http://localhost:4200/stjornbord']),
+        dev: ref((ctx) => json([`https://${getBaseUrl(ctx)}`])),
+        staging: ref((ctx) => json([`https://${getBaseUrl(ctx)}`])),
+        prod: 'https://island.is',
+      },
+      BFF_LOGOUT_REDIRECT_URI: {
+        local: `http://localhost:4200/${key}`,
+        dev: ref((ctx) => `https://${getBaseUrl(ctx)}`),
+        staging: ref((ctx) => `https://${getBaseUrl(ctx)}`),
+        prod: 'https://island.is',
+      },
+      BFF_CALLBACKS_BASE_PATH: {
+        local: `http://localhost:3010/${key}/bff/callbacks`,
+        dev: ref((c) => `https://${getBaseUrl(c)}/${key}/bff/callbacks`),
+        staging: ref((c) => `https://${getBaseUrl(c)}/${key}/bff/callbacks`),
+        prod: ref((c) => `https://${getBaseUrl(c)}/${key}/bff/callbacks`),
+      },
+      BFF_PROXY_API_ENDPOINT: {
+        local: 'http://localhost:4444/api/graphql',
+        dev: ref((ctx) => `http://${ctx.svc(services.api)}`),
+        staging: ref((ctx) => `http://${ctx.svc(services.api)}`),
+        prod: ref((ctx) => `http://${ctx.svc(services.api)}`),
+      },
       BFF_CACHE_USER_PROFILE_TTL_MS: (60 * 60 * 1000 - 5000).toString(),
       BFF_LOGIN_ATTEMPT_TTL_MS: (60 * 60 * 1000 * 24 * 7).toString(),
     },

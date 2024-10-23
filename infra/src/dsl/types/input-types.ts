@@ -19,6 +19,7 @@ export type AccessModes = 'ReadWrite' | 'ReadOnly'
 
 export type BffInfo = {
   key: PortalKeys
+  clientId: string
   clientName: string
   services: BffInfraServices
   env?: EnvironmentVariables

@@ -79,6 +79,7 @@ describe('Feature-deployment support', () => {
     const bff = service('services-bff-portals-admin')
       .bff({
         key: 'stjornbord',
+        clientId: '@admin.island.is/bff-stjornbord',
         clientName: 'portals-admin',
         services: { api: apiService },
       })

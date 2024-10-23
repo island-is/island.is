@@ -24,7 +24,8 @@ export const serviceSetup = (
       },
     })
     .bff({
-      key: 'stjornbord',
+      key,
+      clientId: `@admin.island.is/bff-${key}`,
       clientName,
       services,
     })
