@@ -100,7 +100,7 @@ const Subpoena = () => {
         )}
       </Box>
 
-      {error && !loading && <Problem error={error} noBorder={false} message />}
+      {error && !loading && <Problem error={error} noBorder={false} />}
 
       {subpoena?.data?.groups?.length && (
         <>
