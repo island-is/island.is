@@ -10,33 +10,6 @@ import { renderLocalServices, runLocalServices } from './render-local-mocks'
 const cli = yargs(process.argv.slice(2))
   .scriptName('yarn cli')
   .command(
-    'nx <nxCommand...>',
-    'Run an NX command from the monorepo',
-    (yargs) => {
-      return yargs.positional('nxCommand', {
-        describe: 'The NX command to run (e.g., run my-app:build)',
-        type: 'string',
-        array: true,
-      })
-    },
-    async (argv) => {
-      const commandArr = argv.nxCommand as string[]
-      const command = commandArr.join(' ')
-
-      try {
-        const result = await nxCommand({ command })
-        if (result.stdout) {
-          console.log(result.stdout) // Raw output, e.g., JSON
-        }
-        if (result.stderr) {
-          logger.error(`NX Warning/Error:\n${result.stderr}`)
-        }
-      } catch (error) {
-        logger.error(`Error running NX command: ${error}`)
-      }
-    },
-  )
-  .command(
     'render-env',
     'Render a chart for environment',
     (yargs) => {
