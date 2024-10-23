@@ -1,6 +1,4 @@
-import { ApplicationState } from '@island.is/financial-aid/shared/lib'
-import { PDFFont, PDFPage, rgb } from 'pdf-lib'
-import { ApplicationModel } from '../modules/application'
+import { PDFDocument, PDFFont, PDFPage, rgb } from 'pdf-lib'
 
 export const calculatePt = (px: number) => Math.ceil(px * 0.74999943307122)
 export const smallFontSize = 9
@@ -116,6 +114,7 @@ interface Section {
 
 export const drawSectionInfo = (
   data: Section[],
+  doc: PDFDocument, // Pass the PDFDocument instance
   page: PDFPage,
   margin: number,
   currentYPosition: number,
@@ -127,8 +126,18 @@ export const drawSectionInfo = (
   const rowHeight = 20 // Adjust based on font size and spacing
   const columnWidth = 150 // Adjust based on your available space
   let y = currentYPosition - baseFontSize - rowHeight
+
   // Loop through the data and draw each item
   for (const item of data) {
+    // Check if there's enough space for another row, if not, add a new page
+    if (y < margin + rowHeight * 2) {
+      // Add a new page
+      page = doc.addPage() // Adjust page size if necessary
+      const { height } = page.getSize()
+      x = margin // Reset x to the margin for the new page
+      y = height - margin // Reset y to the top of the new page
+    }
+
     // Draw label (bold font)
     page.drawText(item.title, {
       x: x,
@@ -144,14 +153,14 @@ export const drawSectionInfo = (
       y: y - rowHeight, // Slightly lower than label
       size: baseFontSize,
       font: font,
-      color: rgb(0, 0, 0), // Blue for value
+      color: rgb(0, 0, 0),
     })
 
     // Move x position for the next column
     x += columnWidth
     itemCount++
 
-    // If we've drawn 4 columns, move to the next row
+    // If we've drawn 3 columns, move to the next row
     if (itemCount === 3) {
       x = margin // Reset x to start position
       y -= rowHeight * 2 + 10 // Move y down for the next row, +10 for padding
@@ -161,12 +170,3 @@ export const drawSectionInfo = (
 
   return y - baseFontSize - rowHeight
 }
-
-// export const needsToAddPage = (currentYPosition: number) => {
-//   if (y < minYPosition) {
-//     // Create a new page and reset the x, y positions
-//     const newPage = pdfDoc.addPage() // Correct way to add a new page
-//     page = newPage // Reassign the new page to `page`
-
-//   }
-// }

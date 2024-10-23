@@ -114,7 +114,15 @@ export const getApplicantMoreInfo = (application: ApplicationModel) => {
       title: 'Hefur haft tekjur',
       content: application.hasIncome ? 'Já' : 'Nei',
     },
-  ]
+    application.homeCircumstancesCustom && {
+      title: 'Búsetuform athugasemd',
+      content: application.homeCircumstancesCustom,
+    },
+    application.employmentCustom && {
+      title: 'Atvinnu athugasemd',
+      content: application.employmentCustom,
+    },
+  ].filter(Boolean)
 }
 
 export const getNationalRegistryInfo = (application: ApplicationModel) => {

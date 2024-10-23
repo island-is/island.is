@@ -247,6 +247,7 @@ export const createPdf = async (application: ApplicationModel) => {
 
   currentYPosition = drawSectionInfo(
     sections,
+    pdfDoc,
     page,
     margin,
     currentYPosition,
@@ -287,6 +288,7 @@ export const createPdf = async (application: ApplicationModel) => {
   const applicant = getApplicant(application)
   currentYPosition = drawSectionInfo(
     applicant,
+    pdfDoc,
     page,
     margin,
     currentYPosition,
@@ -326,6 +328,7 @@ export const createPdf = async (application: ApplicationModel) => {
   const nationalRegistryInfo = getNationalRegistryInfo(application)
   currentYPosition = drawSectionInfo(
     nationalRegistryInfo,
+    pdfDoc,
     page,
     margin,
     currentYPosition,
@@ -351,6 +354,7 @@ export const createPdf = async (application: ApplicationModel) => {
     const applicantSpouse = getApplicantSpouse(application)
     currentYPosition = drawSectionInfo(
       applicantSpouse,
+      pdfDoc,
       page,
       margin,
       currentYPosition,
@@ -390,6 +394,7 @@ export const createPdf = async (application: ApplicationModel) => {
     const childrenInfo = getChildrenInfo(application)
     currentYPosition = drawSectionInfo(
       childrenInfo,
+      pdfDoc,
       page,
       margin,
       currentYPosition,
@@ -413,6 +418,27 @@ export const createPdf = async (application: ApplicationModel) => {
       checkYPositionAndAddPage()
     }
   }
+
+  currentYPosition = drawTitleAndUnderLine(
+    'Umsóknarferli',
+    currentYPosition,
+    page,
+    margin,
+    width,
+    boldFont,
+  )
+  checkYPositionAndAddPage()
+
+  const applicantMoreInfo = getApplicantMoreInfo(application)
+  currentYPosition = drawSectionInfo(
+    applicantMoreInfo,
+    pdfDoc,
+    page,
+    margin,
+    currentYPosition,
+    boldFont,
+    font,
+  )
 
   const pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true })
 
