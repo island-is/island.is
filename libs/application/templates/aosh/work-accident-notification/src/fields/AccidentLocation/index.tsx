@@ -57,6 +57,7 @@ export const AccidentLocation: FC<React.PropsWithChildren<FieldBaseProps>> = (
             render={() => {
               return (
                 <Select
+                  required
                   label={formatMessage(
                     accident.about.locationOfAccidentMajorGroup,
                   )}
@@ -92,6 +93,7 @@ export const AccidentLocation: FC<React.PropsWithChildren<FieldBaseProps>> = (
             render={() => {
               return (
                 <Select
+                  required
                   label={formatMessage(
                     accident.about.locationOfAccidentMinorGroup,
                   )}
