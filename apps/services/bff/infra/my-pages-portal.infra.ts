@@ -1,5 +1,4 @@
-import { ServiceBuilder, service } from '../../../../infra/src/dsl/dsl'
-import { createPortalEnv } from './utils/createPortalEnv'
+import { ServiceBuilder, json, service } from '../../../../infra/src/dsl/dsl'
 
 const bffName = 'services-bff'
 const clientName = 'portals-my-pages'
@@ -18,21 +17,23 @@ export const serviceSetup = (
     .image(bffName)
     .redis()
     .serviceAccount(bffName)
-    .env(
-      createPortalEnv({
-        key,
-        services,
-        clientId: '@island.is/bff',
-      }),
-    )
-    .secrets({
-      // The secret should be a valid 32-byte base64 key.
-      // Generate key example: `openssl rand -base64 32`
-      BFF_TOKEN_SECRET_BASE64: `/k8s/${bffName}/${clientName}/BFF_TOKEN_SECRET_BASE64`,
-      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${bffName}/${clientName}/IDENTITY_SERVER_CLIENT_SECRET`,
+    .env({
+      BFF_ALLOWED_EXTERNAL_API_URLS: {
+        local: json(['http://localhost:3377/download/v1']),
+        dev: json(['https://api.dev01.devland.is']),
+        staging: json(['https://api.staging01.devland.is']),
+        prod: json(['https://api.island.is']),
+      },
+    })
+    .bff({
+      key,
+      clientId: '@island.is/bff',
+      clientName,
+      services,
     })
     .readiness(`/${key}/bff/health/check`)
     .liveness(`/${key}/bff/liveness`)
+
     .replicaCount({
       default: 2,
       min: 2,
