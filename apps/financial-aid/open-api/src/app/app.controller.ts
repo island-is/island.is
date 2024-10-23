@@ -1,4 +1,4 @@
-import { Controller, Get, Headers, Inject, Query } from '@nestjs/common'
+import { Controller, Get, Headers, Inject, Param, Query } from '@nestjs/common'
 import { ApiCreatedResponse } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -32,6 +32,25 @@ export class AppController {
       .then((applications) => {
         this.logger.info(`Application fetched`)
         return applications
+      })
+  }
+
+  @Get('pdf')
+  @ApiCreatedResponse({
+    type: [ApplicationBackendModel],
+    description: 'Gets application',
+  })
+  async getPdf(
+    @Headers('API-Key') apiKey: string,
+    @Headers('Municipality-Code') municipalityCode: string,
+    @Query('id') id: string,
+  ): Promise<ApplicationModel> {
+    this.logger.info('Gets one application and returns pdf')
+    return this.appService
+      .getApplication(apiKey, municipalityCode, id)
+      .then((application) => {
+        this.logger.info(`Application fetched`)
+        return application
       })
   }
 }

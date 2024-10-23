@@ -29,13 +29,13 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
-import ActionCompleteCollectionProcessing from './components/completeCollectionProcessing'
 import ListInfo from '../../shared-components/listInfoAlert'
 import EmptyState from '../../shared-components/emptyState'
 import ReviewCandidates from './components/reviewCandidates'
 import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import CreateCollection from '../../shared-components/createCollection'
+import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 
 const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
@@ -221,7 +221,10 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 {lists?.length > 0 &&
                   allowedToProcess &&
                   collectionStatus === CollectionStatus.InInitialReview && (
-                    <CreateCollection collectionId={collection?.id} />
+                    <CreateCollection
+                      collectionId={collection?.id}
+                      areaId={undefined}
+                    />
                   )}
               </Box>
             </GridColumn>

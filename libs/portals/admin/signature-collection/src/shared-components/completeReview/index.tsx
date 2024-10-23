@@ -19,7 +19,9 @@ const ActionReviewComplete = ({
   const { revalidate } = useRevalidator()
 
   const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
-  const listReviewed = listStatus && listStatus === ListStatus.Reviewed
+  const listReviewed =
+    listStatus &&
+    (listStatus === ListStatus.Reviewed || listStatus === ListStatus.Inactive)
   const modalText = listReviewed
     ? formatMessage(m.confirmListReviewedToggleBack)
     : formatMessage(m.confirmListReviewed)
@@ -49,7 +51,10 @@ const ActionReviewComplete = ({
           variant="ghost"
           icon={listReviewed ? 'reload' : 'checkmark'}
           onClick={() => setModalSubmitReviewIsOpen(true)}
-          disabled={listStatus === ListStatus.Active}
+          disabled={
+            listStatus === ListStatus.Active ||
+            listStatus === ListStatus.Extendable
+          }
         >
           {modalText}
         </Button>
