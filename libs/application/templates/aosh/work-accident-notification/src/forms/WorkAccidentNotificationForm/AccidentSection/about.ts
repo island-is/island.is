@@ -117,6 +117,7 @@ export const aboutSection = buildSubSection({
           title: accident.about.alertFieldTitle,
           message: accident.about.alertFieldDescription,
           alertType: 'warning',
+          doesNotRequireAnswer: true,
         }),
         buildTextField({
           id: 'accident.wasDoing',

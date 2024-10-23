@@ -18,6 +18,7 @@ export const deviationSection = (index: number) =>
         children: [
           buildHiddenInput({
             id: `deviations[${index}].workDeviationsMostSerious`,
+            doesNotRequireAnswer: true,
           }),
           buildCustomField(
             {

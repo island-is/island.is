@@ -1,6 +1,5 @@
 import {
   buildAlertMessageField,
-  buildCustomField,
   buildDescriptionField,
   buildHiddenInput,
   buildMultiField,
@@ -27,6 +26,7 @@ export const companySection = buildSubSection({
       children: [
         buildHiddenInput({
           id: 'employeeAmount',
+          doesNotRequireAnswer: true,
           defaultValue: (application: Application) => {
             const employeeAmount = getValueViaPath(
               application.answers,
@@ -149,6 +149,7 @@ export const companySection = buildSubSection({
           title: '',
           message: information.labels.company.alertMessage,
           alertType: 'info',
+          doesNotRequireAnswer: true,
         }),
         buildTextField({
           id: 'companyInformation.nameOfBranch',
@@ -163,12 +164,14 @@ export const companySection = buildSubSection({
           title: information.labels.company.addressOfBranch,
           backgroundColor: 'blue',
           width: 'half',
+          doesNotRequireAnswer: true,
           defaultValue: (application: Application) => '',
         }),
         buildSelectField({
           id: 'companyInformation.postnumberOfBranch',
           title: information.labels.company.postNumberAndTown,
           width: 'half',
+          doesNotRequireAnswer: true,
           options: (application) => {
             const postCodes = getValueViaPath(
               application.externalData,

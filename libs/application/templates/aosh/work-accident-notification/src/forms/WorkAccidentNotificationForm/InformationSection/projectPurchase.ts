@@ -29,6 +29,7 @@ export const projectPurchaseSection = buildSubSection({
           title: '',
           message: information.labels.projectPurchase.alertMessage,
           alertType: 'info',
+          doesNotRequireAnswer: true,
         }),
         buildRadioField({
           id: 'projectPurchase.radio',
@@ -52,6 +53,7 @@ export const projectPurchaseSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           format: '######-####',
+          doesNotRequireAnswer: true,
           condition: (answer: FormValue) =>
             getValueViaPath(answer, 'projectPurchase.checkbox') === YES,
         }),
@@ -60,6 +62,7 @@ export const projectPurchaseSection = buildSubSection({
           title: information.labels.projectPurchase.name,
           backgroundColor: 'white',
           width: 'half',
+          doesNotRequireAnswer: true,
           condition: (answer: FormValue) =>
             getValueViaPath(answer, 'projectPurchase.checkbox') === YES,
         }),

@@ -26,6 +26,7 @@ export const workhealthSection = buildSubSection({
           alertType: 'info',
           title: '',
           message: information.labels.laborProtection.alertMessageText,
+          doesNotRequireAnswer: true,
         }),
         buildCustomField({
           id: 'companyLaborProtection.workhealthAndSafetyOccupation',

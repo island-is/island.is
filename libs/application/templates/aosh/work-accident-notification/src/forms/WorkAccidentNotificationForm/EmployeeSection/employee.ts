@@ -43,6 +43,7 @@ export const employeeSubSection = (index: number) =>
             title: employee.employee.alertTitle,
             message: employee.employee.alertMessage,
             alertType: 'info',
+            doesNotRequireAnswer: true,
           }),
           buildNationalIdWithNameField({
             id: `employee[${index}].nationalField`,

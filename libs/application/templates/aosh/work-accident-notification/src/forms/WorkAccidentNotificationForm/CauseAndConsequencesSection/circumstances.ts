@@ -18,6 +18,7 @@ export const circumstancesSection = (index: number) =>
         children: [
           buildHiddenInput({
             id: `circumstances[${index}].physicalActivitiesMostSerious`,
+            doesNotRequireAnswer: true,
           }),
           buildCustomField(
             {

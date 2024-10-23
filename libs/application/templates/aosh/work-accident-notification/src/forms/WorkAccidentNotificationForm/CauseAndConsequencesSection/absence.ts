@@ -24,6 +24,7 @@ export const absenceSection = (index: number) =>
             title: causeAndConsequences.absence.alertMessageTitle,
             message: causeAndConsequences.absence.alertMessage,
             alertType: 'info',
+            doesNotRequireAnswer: true,
           }),
           buildSelectField({
             id: `absence[${index}]`,

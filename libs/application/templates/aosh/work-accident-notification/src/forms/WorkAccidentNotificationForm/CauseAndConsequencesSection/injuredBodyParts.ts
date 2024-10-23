@@ -18,6 +18,7 @@ export const injuredBodyPartsSection = (index: number) =>
         children: [
           buildHiddenInput({
             id: `injuredBodyParts[${index}].partOfBodyInjuredMostSerious`,
+            doesNotRequireAnswer: true,
           }),
           buildCustomField(
             {

@@ -18,6 +18,7 @@ export const typeOfInjurySection = (index: number) =>
         children: [
           buildHiddenInput({
             id: `typeOfInjury[${index}].typeOfInjuryMostSerious`,
+            doesNotRequireAnswer: true,
           }),
           buildCustomField(
             {

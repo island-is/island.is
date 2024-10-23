@@ -18,6 +18,7 @@ export const causeOfInjurySection = (index: number) =>
         children: [
           buildHiddenInput({
             id: `causeOfInjury[${index}].contactModeOfInjuryMostSerious`,
+            doesNotRequireAnswer: true,
           }),
           buildCustomField(
             {
