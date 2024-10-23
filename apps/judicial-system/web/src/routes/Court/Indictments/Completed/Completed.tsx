@@ -60,11 +60,11 @@ const Completed: FC = () => {
   )
 
   const handleNextButtonClick = useCallback(async () => {
-    const allSucceeded = await handleUpload(
+    const uploadResult = await handleUpload(
       uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
-    if (!allSucceeded) {
+    if (uploadResult !== 'ALL_SUCCEEDED') {
       return
     }
 
@@ -153,9 +153,13 @@ const Completed: FC = () => {
         </Box>
         {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
+            {/*
+            NOTE: Temporarily hidden while list of laws broken is not complete in
+            indictment cases
+            
             {hasLawsBroken && (
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-            )}
+            )} */}
             {hasMergeCases && (
               <Accordion>
                 {workingCase.mergedCases?.map((mergedCase) => (

@@ -18,11 +18,6 @@ export const serviceSetup =
       })
       .ingress({
         primary: {
-          extraAnnotations: {
-            dev: {},
-            staging: {},
-            prod: {},
-          },
           host: {
             dev: 'ui',
             staging: 'ui',

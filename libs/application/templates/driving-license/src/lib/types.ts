@@ -6,6 +6,11 @@ export type HasQualityPhotoData = {
   }
 }
 
+export enum Pickup {
+  'POST' = 'post',
+  'DISTRICT' = 'district',
+}
+
 export type ConditionFn = (answer: FormValue) => boolean
 
 export type DrivingLicenseCategory = {
