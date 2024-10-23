@@ -23,6 +23,7 @@ import {
   getApplicantMoreInfo,
   getApplicantSpouse,
   getApplicationInfo,
+  getChildrenInfo,
   getHeader,
   getNationalRegistryInfo,
 } from './applicationPdfHelper'
@@ -218,7 +219,7 @@ export const createPdf = async (application: ApplicationModel) => {
   const checkYPositionAndAddPage = () => {
     if (currentYPosition < 100) {
       page = pdfDoc.addPage()
-      currentYPosition = height - margin - baseFontSize
+      currentYPosition = height - margin
     }
   }
 
@@ -312,9 +313,6 @@ export const createPdf = async (application: ApplicationModel) => {
   //   ---- ----- APPLICANT INFO ---- ----
 
   // ----- ----- NationlRegistry INFO ---- ----
-  //   page = pdfDoc.addPage()
-  //   currentYPosition = height - margin - baseFontSize
-  // ----- ----- NationlRegistry INFO ---- ----
   currentYPosition = drawTitleAndUnderLine(
     'Þjóðskrá',
     currentYPosition,
@@ -336,8 +334,10 @@ export const createPdf = async (application: ApplicationModel) => {
   )
   checkYPositionAndAddPage()
 
+  // ----- ----- NationlRegistry INFO ---- ----
+
+  // ----- ----- Spouse info ---- ----
   if (showSpouseData[application.familyStatus]) {
-    // ----- ----- Spouse info ---- ----
     currentYPosition = drawTitleAndUnderLine(
       'Maki',
       currentYPosition,
@@ -368,12 +368,50 @@ export const createPdf = async (application: ApplicationModel) => {
         font,
         boldFont,
         baseFontSize,
-        currentYPosition - 50,
+        currentYPosition,
         margin,
       )
       checkYPositionAndAddPage()
     }
     // ----- ----- Spouse info ---- ----
+  }
+
+  if (application.children?.length > 0) {
+    currentYPosition = drawTitleAndUnderLine(
+      'Börn',
+      currentYPosition,
+      page,
+      margin,
+      width,
+      boldFont,
+    )
+    checkYPositionAndAddPage()
+
+    const childrenInfo = getChildrenInfo(application)
+    currentYPosition = drawSectionInfo(
+      childrenInfo,
+      page,
+      margin,
+      currentYPosition,
+      boldFont,
+      font,
+    )
+    checkYPositionAndAddPage()
+
+    if (application.childrenComment) {
+      // Optionally draw rejection text and get the updated Y position
+      currentYPosition = drawTextArea(
+        page,
+        'Athugasemd',
+        application.childrenComment,
+        font,
+        boldFont,
+        baseFontSize,
+        currentYPosition,
+        margin,
+      )
+      checkYPositionAndAddPage()
+    }
   }
 
   const pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true })

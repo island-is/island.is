@@ -168,3 +168,40 @@ export const getApplicantSpouse = (application: ApplicationModel) => {
     },
   ]
 }
+
+export const getChildrenInfo = (application: ApplicationModel) => {
+  if (!application.children) {
+    return []
+  }
+
+  const allChildren = application.children.flatMap((child) => {
+    return [
+      {
+        title: 'Nafn',
+        content: child.name ?? '',
+      },
+      {
+        title: 'Kennitala',
+        content: formatNationalId(child.nationalId),
+      },
+      {
+        title: 'Aldur',
+        content: calcAge(child.nationalId) + ' ára',
+      },
+      {
+        title: 'Skólastofnun',
+        content: child.school ?? '',
+      },
+      {
+        title: 'Býr hjá umsækjanda?',
+        content: `${child.livesWithApplicant ? 'Já' : 'Nei'}`,
+      },
+      {
+        title: 'Býr hjá báðum foreldrum?',
+        content: `${child.livesWithBothParents ? 'Já' : 'Nei'}`,
+      },
+    ]
+  })
+
+  return allChildren
+}

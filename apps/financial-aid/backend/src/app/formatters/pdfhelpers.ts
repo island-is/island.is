@@ -159,7 +159,7 @@ export const drawSectionInfo = (
     }
   }
 
-  return y
+  return y - baseFontSize - rowHeight
 }
 
 // export const needsToAddPage = (currentYPosition: number) => {

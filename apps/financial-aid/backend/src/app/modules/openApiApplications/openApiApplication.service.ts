@@ -11,6 +11,7 @@ import { ApplicationModel } from '../application'
 import { ApplicationFileModel } from '../file/models'
 import { createPdf } from '../../formatters/createPdf'
 import { PdfApplicatiponResponse } from './pdfApplication.response'
+import { ChildrenModel } from '../children'
 
 @Injectable()
 export class OpenApiApplicationService {
@@ -156,6 +157,12 @@ export class OpenApiApplicationService {
           attributes: {
             exclude: ['id', 'applicationId', 'created', 'modified'],
           },
+        },
+        {
+          model: ChildrenModel,
+          as: 'children',
+          separate: true,
+          order: [['created', 'DESC']],
         },
       ],
     })
