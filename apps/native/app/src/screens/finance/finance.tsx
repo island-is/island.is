@@ -1,4 +1,4 @@
-import { Heading, Skeleton, TableViewCell, Typography } from '@ui'
+import { Button, Heading, Skeleton, TableViewCell, Typography } from '@ui'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { SafeAreaView, ScrollView } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -11,7 +11,6 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useBrowser } from '../../lib/use-browser'
 import { FinanceStatusCardContainer } from './components/finance-status-card-container'
-import { LightButton } from './components/light-button'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -154,16 +153,17 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
           alignItems: 'flex-start',
         }}
       >
-        <LightButton
-          title={
-            <FormattedMessage
-              id="finance.statusCard.schedulePaymentPlan"
-              defaultMessage="Gera greiðsluáætlun"
-            />
-          }
-          disabled={!scheduleButtonVisible}
+        <Button
+          title={intl.formatMessage({
+            id: 'finance.statusCard.schedulePaymentPlan',
+          })}
+          isOutlined
+          isUtilityButton
           icon={externalLink}
-          onPress={() => {
+          disabled={!scheduleButtonVisible}
+          iconStyle={{ tintColor: theme.color.dark300 }}
+          style={{ flex: 1 }}
+          onPress={() =>
             openBrowser(
               `${getConfig().apiUrl.replace(
                 /\/api/,
@@ -171,7 +171,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
               )}/umsoknir/greidsluaaetlun`,
               componentId,
             )
-          }}
+          }
         />
       </SafeAreaView>
       <SafeAreaView style={{ marginHorizontal: 16 }}>

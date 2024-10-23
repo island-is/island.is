@@ -18,7 +18,7 @@ import {
 import { useGetFinanceStatusDetailsQuery } from '../../../graphql/types/schema'
 import { navigateTo } from '../../../lib/deep-linking'
 import { showPicker } from '../../../lib/show-picker'
-import { LightButton } from './light-button'
+import { SelectButton } from './select-button'
 import { useBrowser } from '../../../lib/use-browser'
 
 const Row = styled.View<{ border?: boolean }>`
@@ -147,7 +147,7 @@ export function FinanceStatusCardContainer({
             defaultMessage="Gjaldgrunnur"
           />
         </Typography>
-        <LightButton
+        <SelectButton
           title={
             res.loading
               ? intl.formatMessage({
@@ -218,6 +218,10 @@ export function FinanceStatusCardContainer({
                 <TouchableRow
                   key={index}
                   underlayColor="rgba(128,128,128,0.1)"
+                  style={{
+                    backgroundColor:
+                      index % 2 === 0 ? theme.color.blue100 : theme.color.white,
+                  }}
                   onPress={() => {
                     navigateTo(
                       `/finance/status/${org.id}/${chargeType.id}/${index}`,
