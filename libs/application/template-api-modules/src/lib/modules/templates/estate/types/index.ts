@@ -1,3 +1,5 @@
+import { NO, YES } from '@island.is/application/core'
+
 export interface Address {
   streetAddress: string
   postalCode: string
@@ -35,7 +37,7 @@ type EstateMember = {
   relationWithApplicant?: string
   dateOfBirth?: string
   foreignCitizenship?: string | string[]
-  noContactInfo?: ('Yes' | 'No')[]
+  noContactInfo?: (typeof YES | typeof NO)[]
   phone?: string
   email?: string
   advocate?: Advocate
