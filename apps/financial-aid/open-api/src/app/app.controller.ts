@@ -37,14 +37,13 @@ export class AppController {
 
   @Get('pdf')
   @ApiCreatedResponse({
-    type: [ApplicationBackendModel],
     description: 'Gets application',
   })
   async getPdf(
     @Headers('API-Key') apiKey: string,
     @Headers('Municipality-Code') municipalityCode: string,
     @Query('id') id: string,
-  ): Promise<ApplicationModel> {
+  ): Promise<string> {
     this.logger.info('Gets one application and returns pdf')
     return this.appService
       .getApplication(apiKey, municipalityCode, id)

@@ -23,10 +23,10 @@ import {
   Routes,
   SortableTableHeaderProps,
   truncateString,
+  calcDifferenceInDate,
 } from '@island.is/financial-aid/shared/lib'
 
 import { useAllApplications } from '@island.is/financial-aid-web/veita/src/utils/useAllApplications'
-import { calcDifferenceInDate } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 import useSortedApplications from '@island.is/financial-aid-web/veita/src/utils/useSortedApplications'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 

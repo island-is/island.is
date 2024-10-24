@@ -9,6 +9,10 @@ import { DeductionFactorsModel } from '../deductionFactors'
 import { DirectTaxPaymentModel } from '../directTaxPayment/models'
 import { ApplicationModel } from '../application'
 import { ApplicationFileModel } from '../file/models'
+import { createPdf } from '../../formatters/createPdf'
+import { PdfApplicatiponResponse } from './pdfApplication.response'
+import { ChildrenModel } from '../children'
+import { ApplicationEventModel } from '../applicationEvent'
 
 @Injectable()
 export class OpenApiApplicationService {
@@ -99,8 +103,8 @@ export class OpenApiApplicationService {
   async getbyID(
     municipalityCodes: string,
     id: string,
-  ): Promise<ApplicationModel> {
-    return this.applicationModel.findOne({
+  ): Promise<PdfApplicatiponResponse> {
+    const application = await this.applicationModel.findOne({
       where: {
         id: id,
         municipalityCode: municipalityCodes,
@@ -109,17 +113,7 @@ export class OpenApiApplicationService {
         },
       },
       attributes: {
-        exclude: [
-          'staffId',
-          'applicationSystemId',
-          'interview',
-          'homeCircumstances',
-          'homeCircumstancesCustom',
-          'employment',
-          'employmentCustom',
-          'student',
-          'studentCustom',
-        ],
+        exclude: ['staffId', 'applicationSystemId'],
       },
       order: [['modified', 'DESC']],
       include: [
@@ -129,6 +123,22 @@ export class OpenApiApplicationService {
           separate: true,
           order: [['created', 'DESC']],
           attributes: ['key', 'name', 'type'],
+        },
+        {
+          model: ApplicationEventModel,
+          as: 'applicationEvents',
+          separate: true,
+          // where: {
+          //   eventType: {
+          //     [Op.in]: isEmployee
+          //       ? Object.values(ApplicationEventType)
+          //       : [
+          //           ApplicationEventType.DATANEEDED,
+          //           ApplicationEventType.APPROVED,
+          //         ],
+          //   },
+          // },
+          order: [['created', 'DESC']],
         },
         {
           model: StaffModel,
@@ -165,7 +175,15 @@ export class OpenApiApplicationService {
             exclude: ['id', 'applicationId', 'created', 'modified'],
           },
         },
+        {
+          model: ChildrenModel,
+          as: 'children',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
       ],
     })
+
+    return { file: await createPdf(application) }
   }
 }
