@@ -16,6 +16,7 @@ import { getSlugFromType } from '@island.is/application/core'
 import { getConfigValue } from '../../shared.utils'
 import { ConfigService } from '@nestjs/config'
 import { uuid } from 'uuidv4'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 @Injectable()
 export class PaymentService extends BaseTemplateApiService {
@@ -52,7 +53,7 @@ export class PaymentService extends BaseTemplateApiService {
     const { organizationId, chargeItemCodes, extraData } = params ?? {}
     const { shouldUseMockPayment } = application.answers
 
-    if (shouldUseMockPayment) {
+    if (shouldUseMockPayment && !isRunningOnEnvironment('production')) {
       const list = [
         {
           performingOrgID: organizationId ?? 'string',
