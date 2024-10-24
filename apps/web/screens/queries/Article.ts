@@ -61,6 +61,19 @@ export const GET_ARTICLE_QUERY = gql`
         hasALandingPage
         trackingDomain
         footerConfig
+        alertBanner {
+          showAlertBanner
+          bannerVariant
+          title
+          description
+          linkTitle
+          link {
+            slug
+            type
+          }
+          isDismissable
+          dismissedForDays
+        }
         logo {
           url
           width
