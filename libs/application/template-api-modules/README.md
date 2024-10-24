@@ -468,3 +468,36 @@ and `libs/application/templates/example-payment/src/lib/examplePaymentTemplate.t
 ```
 
 This will cause a checkbox saying "Enable mock payment" to be shown that if checked will cause the payment step to be skipped.
+
+### Mocking payment catalog items
+
+To have the paymentcatalog return a mocked list of items you can set the `mockPaymentCatalog` parameter in the `MockablePaymentCatalogApi` configuration in your dataProviders.
+
+Here is an example from example-payment:
+
+```typescript
+export const MockPaymentCatalogWithTwoItems =
+  MockablePaymentCatalogApi.configure({
+    params: {
+      organizationId: InstitutionNationalIds.SYSLUMENN,
+      enableMockPayment: true,
+      mockPaymentCatalog: [
+        {
+          performingOrgID: InstitutionNationalIds.SYSLUMENN,
+          chargeType: 'string',
+          chargeItemCode: 'fakeItemCode1',
+          chargeItemName: 'fakepayment 1',
+          priceAmount: 123123,
+        },
+        {
+          performingOrgID: InstitutionNationalIds.SYSLUMENN,
+          chargeType: 'string',
+          chargeItemCode: 'fakeItemCode2',
+          chargeItemName: 'fakepayment 2',
+          priceAmount: 321321,
+        },
+      ],
+    },
+    externalDataId: 'paymentCatalog',
+  })
+```
