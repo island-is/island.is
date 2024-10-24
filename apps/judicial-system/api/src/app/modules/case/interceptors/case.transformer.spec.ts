@@ -14,7 +14,7 @@ import { Defendant } from '../../defendant'
 import { Case } from '../models/case.model'
 import {
   getAppealInfo,
-  getDefendantsInfo,
+  getIndictmentDefendantsInfo,
   getIndictmentInfo,
   transformCase,
 } from './case.transformer'
@@ -685,23 +685,25 @@ describe('getIndictmentInfo', () => {
   })
 })
 
-describe('getDefentandInfo', () => {
-  it('should add verdict appeal deadline for defendants with verdict view date', () => {
+describe('getIndictmentDefendantsInfo', () => {
+  it('should add verdict appeal deadline and expiry for defendants with verdict view date', () => {
     const defendants = [
       { verdictViewDate: '2022-06-15T19:50:08.033Z' } as Defendant,
       { verdictViewDate: undefined } as Defendant,
     ]
 
-    const defendantsInfo = getDefendantsInfo(defendants)
+    const defendantsInfo = getIndictmentDefendantsInfo(defendants)
 
     expect(defendantsInfo).toEqual([
       {
         verdictViewDate: '2022-06-15T19:50:08.033Z',
         verdictAppealDeadline: '2022-07-13T19:50:08.033Z',
+        isVerdictAppealDeadlineExpired: true,
       },
       {
         verdictViewDate: undefined,
         verdictAppealDeadline: undefined,
+        isVerdictAppealDeadlineExpired: false,
       },
     ])
   })
