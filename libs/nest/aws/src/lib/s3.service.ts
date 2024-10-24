@@ -19,7 +19,7 @@ export interface BucketKeyPair {
 export type EncodingString = 'base64' | 'binary'
 
 @Injectable()
-export class AwsService {
+export class S3Service {
   constructor(
     @Inject(S3Client) private s3Client: S3Client,
     @Inject(LOGGER_PROVIDER) protected readonly logger: Logger,
@@ -105,9 +105,15 @@ export class AwsService {
       })
       const results = await this.s3Client.send(command)
 
-      const exists = results.$metadata.httpStatusCode === 200
-      return exists
+      return results.$metadata.httpStatusCode === 200
     } catch (error) {
+      // To avoid granting the service ListBucket permissions, we also allow 403 Forbidden.
+      if (
+        error?.$metadata?.httpStatusCode === 404 ||
+        error?.$metadata?.httpStatusCode === 403
+      )
+        return false
+
       this.logger.error(
         'Error occurred while checking if file exists in S3',
         error,

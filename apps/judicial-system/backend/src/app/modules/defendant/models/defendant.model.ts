@@ -29,7 +29,7 @@ import { Subpoena } from '../../subpoena/models/subpoena.model'
   timestamps: true,
 })
 export class Defendant extends Model {
-  static isDefenderOfDefendant(
+  static isConfirmedDefenderOfDefendant(
     defenderNationalId: string,
     defendants?: Defendant[],
   ) {
@@ -38,7 +38,23 @@ export class Defendant extends Model {
         defendant.defenderNationalId &&
         normalizeAndFormatNationalId(defenderNationalId).includes(
           defendant.defenderNationalId,
-        ),
+        ) &&
+        defendant.isDefenderChoiceConfirmed,
+    )
+  }
+
+  static isConfirmedDefenderOfDefendantWithCaseFileAccess(
+    defenderNationalId: string,
+    defendants?: Defendant[],
+  ) {
+    return defendants?.some(
+      (defendant) =>
+        defendant.defenderNationalId &&
+        normalizeAndFormatNationalId(defenderNationalId).includes(
+          defendant.defenderNationalId,
+        ) &&
+        defendant.isDefenderChoiceConfirmed &&
+        defendant.caseFilesSharedWithDefender,
     )
   }
 
@@ -171,4 +187,12 @@ export class Defendant extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   requestedDefenderName?: string
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isDefenderChoiceConfirmed?: boolean
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  caseFilesSharedWithDefender?: boolean
 }
