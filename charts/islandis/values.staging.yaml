@@ -2580,7 +2580,7 @@ skilavottord-web:
     min: 2
   resources:
     limits:
-      cpu: '200m'
+      cpu: '512m'
       memory: '256Mi'
     requests:
       cpu: '20m'
