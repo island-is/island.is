@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { InputFields, OJOIFieldBaseProps } from '../lib/types'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { FormGroup } from '../components/form/FormGroup'
 import { advert } from '../lib/messages'
 import * as styles from './Advert.css'
@@ -11,6 +11,7 @@ import { OJOIInputController } from '../components/input/OJOIInputController'
 import { OJOIHtmlController } from '../components/input/OJOIHtmlController'
 import { useFormContext } from 'react-hook-form'
 import { useApplication } from '../hooks/useUpdateApplication'
+import set from 'lodash/set'
 
 type Props = OJOIFieldBaseProps & {
   timeStamp: string
@@ -18,7 +19,7 @@ type Props = OJOIFieldBaseProps & {
 
 export const Advert = ({ application, timeStamp }: Props) => {
   const { setValue } = useFormContext()
-  const { application: currentApplication, submitApplication } = useApplication(
+  const { application: currentApplication, updateApplication } = useApplication(
     {
       applicationId: application.id,
     },
@@ -49,15 +50,18 @@ export const Advert = ({ application, timeStamp }: Props) => {
     [useLazyTypes],
   )
 
+  const updateTypeHandler = (name: string, id: string) => {
+    let currentAnswers = structuredClone(currentApplication.answers)
+    currentAnswers = set(currentAnswers, InputFields.advert.typeName, name)
+
+    currentAnswers = set(currentAnswers, InputFields.advert.typeId, id)
+
+    updateApplication(currentAnswers)
+  }
+
   return (
     <>
       <FormGroup>
-        <Button
-          colorScheme="destructive"
-          onClick={() => submitApplication('REJECT')}
-        >
-          Reject application
-        </Button>
         <Box className={styles.inputWrapper}>
           <OJOISelectController
             applicationId={application.id}
@@ -69,7 +73,7 @@ export const Advert = ({ application, timeStamp }: Props) => {
               label: d.title,
               value: d.id,
             }))}
-            onChange={(value) => handleDepartmentChange(value)}
+            onChange={(label, value) => handleDepartmentChange(value)}
           />
         </Box>
         <Box className={styles.inputWrapper}>
@@ -85,7 +89,10 @@ export const Advert = ({ application, timeStamp }: Props) => {
               label: d.title,
               value: d.id,
             }))}
-            onChange={(value) => setLocalTypeId(value)}
+            onChange={(label, value) => {
+              setLocalTypeId(value)
+              updateTypeHandler(label, value)
+            }}
           />
         </Box>
         <Box>

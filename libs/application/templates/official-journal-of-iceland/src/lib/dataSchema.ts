@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { error } from './messages'
 import { AnswerOption, SignatureTypes } from './constants'
-import { institution } from '../components/signatures/Signatures.css'
 import { MessageDescriptor } from 'react-intl'
 
 export const memberItemSchema = z

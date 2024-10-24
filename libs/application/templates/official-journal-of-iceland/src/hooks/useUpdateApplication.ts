@@ -3,12 +3,15 @@ import {
   UPDATE_APPLICATION,
   APPLICATION_APPLICATION,
   SUBMIT_APPLICATION,
+  CREATE_APPLICATION,
 } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 import { partialSchema } from '../lib/dataSchema'
-import { OJOIApplication } from '../lib/types'
+import { InputFields, OJOIApplication } from '../lib/types'
 import debounce from 'lodash/debounce'
-import { DEBOUNCE_INPUT_TIMER } from '../lib/constants'
+import { AnswerOption, DEBOUNCE_INPUT_TIMER } from '../lib/constants'
+import { ApplicationTypes } from '@island.is/application/types'
+import { Application } from '@island.is/api/schema'
 
 type OJOIUseApplicationParams = {
   applicationId?: string
@@ -41,6 +44,9 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     { data: submitData, loading: submitLoading, error: submitError },
   ] = useMutation(SUBMIT_APPLICATION)
 
+  const [createApplicationMutation, { error: createError }] =
+    useMutation(CREATE_APPLICATION)
+
   const updateApplication = async (input: partialSchema, cb?: () => void) => {
     await updateApplicationMutation({
       variables: {
@@ -65,6 +71,22 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
           id: applicationId,
           event: event,
         },
+      },
+    })
+  }
+
+  const createApplication = async (
+    onComplete?: (data: { createApplication: Application }) => void,
+  ) => {
+    await createApplicationMutation({
+      variables: {
+        input: {
+          typeId: ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND,
+          initialQuery: null,
+        },
+      },
+      onCompleted: (data) => {
+        onComplete && onComplete(data)
       },
     })
   }
@@ -96,6 +118,7 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     debouncedOnUpdateApplicationHandler,
     updateApplication,
     submitApplication,
+    createApplication,
     refetchApplication,
   }
 }
