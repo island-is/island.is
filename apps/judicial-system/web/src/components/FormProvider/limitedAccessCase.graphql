@@ -34,8 +34,10 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       defenderEmail
       defenderPhoneNumber
       defenderChoice
+      serviceRequirement
       verdictViewDate
       verdictAppealDeadline
+      isVerdictAppealDeadlineExpired
       subpoenas {
         id
         created
@@ -159,6 +161,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     indictmentRulingDecision
     indictmentCompletedDate
     indictmentReviewDecision
+    indictmentVerdictViewedByAll
+    indictmentVerdictAppealDeadlineExpired
     indictmentReviewer {
       id
       name
