@@ -4,6 +4,7 @@ ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 ARG NODE_IMAGE_TAG
 FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS deps
 
+# hadolint ignore=DL3018
 RUN apk add -U git
 
 WORKDIR /build
@@ -12,6 +13,7 @@ WORKDIR /build
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
+# hadolint ignore=DL3018
 RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
 RUN CI=true yarn install --immutable
 
@@ -54,6 +56,7 @@ RUN addgroup runners && adduser -D runner -G runners
 
 FROM output-base AS output-base-with-pg
 
+# hadolint ignore=DL3016
 RUN npm install -g \
   sequelize \
   sequelize-cli \
@@ -98,6 +101,7 @@ ENV DD_GIT_COMMIT_SHA="${GIT_SHA}"
 ENV DD_GIT_REPOSITORY_URL="github.com/island-is/island.is"
 
 RUN mkdir -p /etc/nginx/templates
+# hadolint ignore=DL3018
 RUN apk update && \
   apk upgrade && \
   apk add bash nodejs
@@ -111,6 +115,7 @@ FROM output-base AS output-jest
 
 RUN echo 'module.exports = {};' > jest.config.js
 
+# hadolint ignore=DL3016
 RUN npm install -g jest
 
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
