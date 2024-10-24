@@ -1,4 +1,4 @@
-import { Button } from '@island.is/island-ui/core'
+import { Button, Inline } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { vehicleMessage } from '../../lib/messages'
 import { downloadFile } from '@island.is/service-portal/core'
@@ -12,17 +12,17 @@ const VehicleBulkMileageFileDownloader = ({ onError }: Props) => {
   const { formatMessage } = useLocale()
   const [isLoading, setIsLoading] = useState(false)
 
-  const downloadExampleFile = async () => {
+  const downloadExampleFile = async (type: 'csv' | 'xlsx') => {
     setIsLoading(true)
     try {
       downloadFile(
         `magnskraning_kilometrastodu_example`,
-        ['permno', 'mileage'],
+        ['bilnumer', 'kilometrastada'],
         [
           ['ABC001', 10000],
           ['DEF002', 99999],
         ],
-        'csv',
+        type,
       )
     } catch (error) {
       onError(error)
@@ -32,17 +32,30 @@ const VehicleBulkMileageFileDownloader = ({ onError }: Props) => {
   }
 
   return (
-    <Button
-      colorScheme="default"
-      icon="download"
-      iconType="outline"
-      size="default"
-      variant="utility"
-      onClick={downloadExampleFile}
-      loading={isLoading}
-    >
-      {formatMessage(vehicleMessage.downloadTemplate)}
-    </Button>
+    <Inline space={1}>
+      <Button
+        colorScheme="default"
+        icon="download"
+        iconType="outline"
+        size="default"
+        variant="utility"
+        onClick={() => downloadExampleFile('csv')}
+        loading={isLoading}
+      >
+        {formatMessage(vehicleMessage.downloadTemplate)}
+      </Button>
+      <Button
+        colorScheme="default"
+        icon="download"
+        iconType="outline"
+        size="default"
+        variant="utility"
+        onClick={() => downloadExampleFile('xlsx')}
+        loading={isLoading}
+      >
+        {formatMessage(vehicleMessage.downloadTemplate)}
+      </Button>
+    </Inline>
   )
 }
 

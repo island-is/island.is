@@ -29,7 +29,6 @@ const ORIGIN_CODE = 'ISLAND.IS'
 interface Props {
   vehicle: VehicleType
 }
-
 export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
   const { formatMessage } = useLocale()
   const [postError, setPostError] = useState<string | null>(null)
@@ -49,24 +48,32 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
   })
 
   const [putAction] = usePutSingleVehicleMileageMutation({
-    onError: () => {
+    onError: (e) => {
       setPostError(formatMessage(m.errorTitle))
       setPostStatus('error')
     },
-    onCompleted: () => {
-      setPostError(null)
-      setPostStatus('put-success')
+    onCompleted: ({ vehicleMileagePutV2: data }) => {
+      if (data?.__typename === 'VehiclesMileageUpdateError') {
+        setPostError(data.message)
+        setPostStatus('error')
+      } else {
+        setPostStatus('put-success')
+      }
     },
   })
 
   const [postAction] = usePostSingleVehicleMileageMutation({
-    onError: () => {
+    onError: (e) => {
       setPostError(formatMessage(m.errorTitle))
       setPostStatus('error')
     },
-    onCompleted: () => {
-      setPostError(null)
-      setPostStatus('post-success')
+    onCompleted: ({ vehicleMileagePostV2: data }) => {
+      if (data?.__typename === 'VehiclesMileageUpdateError') {
+        setPostError(data.message)
+        setPostStatus('error')
+      } else {
+        setPostStatus('post-success')
+      }
     },
   })
 
@@ -155,10 +162,10 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
       }
     }
 
-    if (mileageData) {
+    if (mileageData?.vehicleMileageDetails) {
       post()
     }
-  }, [mileageData])
+  }, [mileageData?.vehicleMileageDetails])
 
   return (
     <ExpandRow
@@ -192,75 +199,6 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
                 error={
                   postError ?? (errors?.[vehicle.vehicleId]?.message as string)
                 }
-                rules={{
-                  validate: {
-                    userHasPostAccess: () => {
-                      if (
-                        mileageData?.vehicleMileageDetails
-                          ?.canUserRegisterVehicleMileage
-                      ) {
-                        return true
-                      }
-                      return formatMessage(
-                        vehicleMessage.mileageYouAreNotAllowed,
-                      )
-                    },
-                    readDate: () => {
-                      if (
-                        !mileageData?.vehicleMileageDetails?.editing &&
-                        !mileageData?.vehicleMileageDetails?.canRegisterMileage
-                      ) {
-                        return formatMessage(
-                          vehicleMessage.mileageAlreadyRegistered,
-                        )
-                      }
-                      return true
-                    },
-                    value: (value: number) => {
-                      // Input number must be higher than the highest known mileage registration value
-                      if (mileageData?.vehicleMileageDetails?.data) {
-                        // If we're in editing mode, we want to find the highest confirmed registered number, ignoring all Island.is registrations from today.
-                        const confirmedRegistrations =
-                          mileageData.vehicleMileageDetails.data.filter(
-                            (item) => {
-                              if (item.readDate) {
-                                const isIslandIsReadingToday =
-                                  item.originCode === ORIGIN_CODE &&
-                                  isReadDateToday(new Date(item.readDate))
-                                return !isIslandIsReadingToday
-                              }
-                              return true
-                            },
-                          )
-
-                        const detailArray = mileageData.vehicleMileageDetails
-                          .editing
-                          ? confirmedRegistrations
-                          : mileageData.vehicleMileageDetails.data
-
-                        const latestRegistration =
-                          detailArray[0].mileageNumber ?? 0
-                        if (latestRegistration > value) {
-                          return formatMessage(
-                            vehicleMessage.mileageInputTooLow,
-                          )
-                        }
-                      }
-                    },
-                  },
-                  required: {
-                    value: true,
-                    message: formatMessage(
-                      vehicleMessage.mileageInputMinLength,
-                    ),
-                  },
-                  minLength: {
-                    value: 1,
-                    message: formatMessage(
-                      vehicleMessage.mileageInputMinLength,
-                    ),
-                  },
-                }}
               />
             </Box>
           ),

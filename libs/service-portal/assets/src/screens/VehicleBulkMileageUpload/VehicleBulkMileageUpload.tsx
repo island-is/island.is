@@ -6,6 +6,7 @@ import {
   AlertMessage,
   Stack,
 } from '@island.is/island-ui/core'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useEffect, useState } from 'react'
 import { FileRejection } from 'react-dropzone'
@@ -15,15 +16,12 @@ import {
   SAMGONGUSTOFA_SLUG,
   m,
 } from '@island.is/service-portal/core'
-import {
-  MileageRecord,
-  parseCsvToMileageRecord,
-} from '../../utils/parseCsvToMileage'
 import { Problem } from '@island.is/react-spa/shared'
 import { AssetsPaths } from '../../lib/paths'
 import { useVehicleBulkMileagePostMutation } from './VehicleBulkMileageUpload.generated'
 import VehicleBulkMileageFileDownloader from '../VehicleBulkMileage/VehicleBulkMileageFileDownloader'
 import { vehicleMessage } from '../../lib/messages'
+import { parseFileToMileageRecord } from '../../utils/parseFileToMileage'
 
 const VehicleBulkMileageUpload = () => {
   useNamespaces('sp.vehicles')
@@ -50,9 +48,9 @@ const VehicleBulkMileageUpload = () => {
     }
   }, [data?.vehicleBulkMileagePost?.requestId])
 
-  const postMileage = async (file: File) => {
+  const postMileage = async (file: File, type: 'xlsx' | 'csv') => {
     try {
-      const records = await parseCsvToMileageRecord(file)
+      const records = await parseFileToMileageRecord(file, type)
       if (!records.length) {
         setUploadErrorMessage(formatMessage(vehicleMessage.uploadFailed))
         return
@@ -91,7 +89,19 @@ const VehicleBulkMileageUpload = () => {
     }
     const file = fileToObject(files[0])
     if (file.status === 'done' && file.originalFileObj instanceof File) {
-      postMileage(file.originalFileObj)
+      const type =
+        file.type === fileExtensionWhitelist['.csv']
+          ? 'csv'
+          : file.type === fileExtensionWhitelist['.xlsx']
+          ? 'xlsx'
+          : undefined
+
+      if (!type) {
+        setUploadErrorMessage(formatMessage(vehicleMessage.wrongFileType))
+        return
+      }
+
+      postMileage(file.originalFileObj, type)
     }
   }
 
@@ -169,7 +179,7 @@ const VehicleBulkMileageUpload = () => {
           description={formatMessage(vehicleMessage.fileUploadAcceptedTypes)}
           disabled={!!data?.vehicleBulkMileagePost?.errorMessage}
           buttonLabel={formatMessage(vehicleMessage.selectFileToUpload)}
-          accept={['.csv', '.xls']}
+          accept={['.csv', '.xlsx']}
           multiple={false}
           onRemove={handleOnInputFileUploadRemove}
           onChange={handleOnInputFileUploadChange}
