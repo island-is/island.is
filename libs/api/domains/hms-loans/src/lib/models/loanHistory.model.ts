@@ -3,164 +3,164 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType('HmsLoansProperty')
 export class Property {
   @Field(() => String, { nullable: true })
-  propertyId?: string
+  propertyId?: string | null
 
   @Field(() => String, { nullable: true })
-  propertyAddress?: string
+  propertyAddress?: string | null
 
   @Field(() => String, { nullable: true })
-  propertyMunicipality?: string
+  propertyMunicipality?: string | null
 
   @Field(() => String, { nullable: true })
-  epilog?: string
+  epilog?: string | null
 
   @Field(() => String, { nullable: true })
-  municipalityNumber?: string
+  municipalityNumber?: string | null
 }
 
 @ObjectType('HmsLoansCoPayer')
 export class CoPayer {
   @Field(() => String, { nullable: true })
-  coPayerName?: string
+  coPayerName?: string | null
 
   @Field(() => String, { nullable: true })
-  coPayerNationalId?: string
+  coPayerNationalId?: string | null
 }
 
 @ObjectType('HmsLoansHistory')
 export class LoanHistory {
   @Field(() => Number, { nullable: true })
-  loanId?: number
+  loanId?: number | null
 
   @Field(() => String, { nullable: true })
-  name?: string
+  name?: string | null
 
   @Field(() => String, { nullable: true })
-  homeAddress?: string
+  homeAddress?: string | null
 
   @Field(() => Number, { nullable: true })
-  postNumber?: number
+  postNumber?: number | null
 
   @Field(() => String, { nullable: true })
-  municipality?: string
+  municipality?: string | null
 
   @Field(() => Date, { nullable: true })
-  firstInterestDate?: Date
+  firstInterestDate?: string | null
 
   @Field(() => Date, { nullable: true })
-  firstPaymentDate?: Date
+  firstPaymentDate?: string | null
 
   @Field(() => Number, { nullable: true })
-  totalNumberOfPayments?: number
+  totalNumberOfPayments?: number | null
 
   @Field(() => Number, { nullable: true })
-  numberOfPaymentPerYear?: number
+  numberOfPaymentPerYear?: number | null
 
   @Field(() => String, { nullable: true })
-  balancePayment?: string
+  balancePayment?: string | null
 
   @Field(() => String, { nullable: true })
-  paymentFee?: string
+  paymentFee?: string | null
 
   @Field(() => String, { nullable: true })
-  paymentDelayment?: string
+  paymentDelayment?: string | null
 
   @Field(() => String, { nullable: true })
-  temporaryPaymentDelayment?: string
+  temporaryPaymentDelayment?: string | null
 
   @Field(() => String, { nullable: true })
-  variableInterest?: string
+  variableInterest?: string | null
 
   @Field(() => String, { nullable: true })
-  affiliateLoan?: string
+  affiliateLoan?: string | null
 
   @Field(() => String, { nullable: true })
-  priceIndexType?: string
+  priceIndexType?: string | null
 
   @Field(() => Number, { nullable: true })
-  baseIndex?: number
+  baseIndex?: number | null
 
   @Field(() => Number, { nullable: true })
-  interest?: number
+  interest?: number | null
 
   @Field(() => Number, { nullable: true })
-  originalLoanAmount?: number
+  originalLoanAmount?: number | null
 
   @Field(() => Date, { nullable: true })
-  nextPaymentDate?: Date
+  nextPaymentDate?: string | null
 
   @Field(() => Date, { nullable: true })
-  lastPaymentDate?: Date
+  lastPaymentDate?: string | null
 
   @Field(() => Date, { nullable: true })
-  lastUnpaidInvoiceDate?: Date
+  lastUnpaidInvoiceDate?: string | null
 
   @Field(() => Number, { nullable: true })
-  numberOfPaymentDatesRemaining?: number
+  numberOfPaymentDatesRemaining?: number | null
 
   @Field(() => Number, { nullable: true })
-  statusSettlementPayment?: number
+  statusSettlementPayment?: number | null
 
   @Field(() => Number, { nullable: true })
-  lastPaymentAmount?: number
+  lastPaymentAmount?: number | null
 
   @Field(() => Number, { nullable: true })
-  totalDueAmount?: number
+  totalDueAmount?: number | null
 
   @Field(() => Number, { nullable: true })
-  balanceWithoutInterestPriceImprovements?: number
+  balanceWithoutInterestPriceImprovements?: number | null
 
   @Field(() => Number, { nullable: true })
-  accruedInterestPriceImprovements?: number
+  accruedInterestPriceImprovements?: number | null
 
   @Field(() => Number, { nullable: true })
-  remainingBalanceWithoutDebt?: number
+  remainingBalanceWithoutDebt?: number | null
 
   @Field(() => Number, { nullable: true })
-  repaymentFee?: number
+  repaymentFee?: number | null
 
   @Field(() => Number, { nullable: true })
-  loanAmountWithRepayment?: number
+  loanAmountWithRepayment?: number | null
 
   @Field(() => String, { nullable: true })
-  loanStatus?: string
+  loanStatus?: string | null
 
   @Field(() => String, { nullable: true })
-  nationalId?: string
+  nationalId?: string | null
 
   @Field(() => String, { nullable: true })
-  propertyId?: string
+  propertyId?: string | null
 
   @Field(() => String, { nullable: true })
-  propertyAddress?: string
+  propertyAddress?: string | null
 
   @Field(() => String, { nullable: true })
-  propertyMunicipality?: string
+  propertyMunicipality?: string | null
 
   @Field(() => String, { nullable: true })
-  epilog?: string
+  epilog?: string | null
 
   @Field(() => String, { nullable: true })
-  municipalityNumber?: string
+  municipalityNumber?: string | null
 
   @Field(() => String, { nullable: true })
-  loanType?: string
+  loanType?: string | null
 
   @Field(() => Number, { nullable: true })
-  installments?: number
+  installments?: number | null
 
   @Field(() => String, { nullable: true })
-  creditor?: string
+  creditor?: string | null
 
   @Field(() => String, { nullable: true })
-  coPayerName?: string
+  coPayerName?: string | null
 
   @Field(() => String, { nullable: true })
-  coPayerNationalId?: string
+  coPayerNationalId?: string | null
 
   @Field(() => [Property], { nullable: true })
-  properties?: Property[]
+  properties?: Property[] | null
 
   @Field(() => [CoPayer], { nullable: true })
-  coPayers?: CoPayer[]
+  coPayers?: CoPayer[] | null
 }
