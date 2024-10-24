@@ -122,11 +122,6 @@ export const bootstrap = async (options: BootstrapOptions) => {
     }
   })
 
-  expressApp.use((err: any, req: any, res: any, _next: any) => {
-    console.error(err.stack)
-    res.status(500).send('Internal Server Error')
-  })
-
   logger.debug('Starting server...', { port: options.port })
   startServer(expressApp, options.port)
 
