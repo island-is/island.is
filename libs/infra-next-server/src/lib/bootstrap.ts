@@ -1,4 +1,4 @@
-// import '@island.is/infra-tracing'
+import '@island.is/infra-tracing'
 
 import createExpressApp, { Express } from 'express'
 
@@ -41,11 +41,9 @@ type BootstrapOptions = {
 }
 
 const startServer = (app: Express, port = 4200) => {
-  logger.debug('Setting up server...', { port })
   const nextPort = parseInt(process.env.PORT || '') || port
   const metricsPort = nextPort + 1
   app.listen(nextPort, () => {
-    logger.debug('Server is listening...', { nextPort })
     logger.info(
       `Next custom server listening at http://localhost:${nextPort}`,
       {
@@ -53,62 +51,44 @@ const startServer = (app: Express, port = 4200) => {
       },
     )
   })
-  logger.debug('Starting metric server...', { metricsPort })
   startMetricServer(metricsPort)
 }
 
-logger.debug('Setting up exit hook...')
 const setupExitHook = () => {
-  logger.debug('Checking exit hook...', {
-    NX_INVOKED_BY_RUNNER: process.env.NX_INVOKED_BY_RUNNER,
-  })
+  // Make sure the server doesn't hang after parent process disconnects, eg when
+  // e2e tests are finished.
   if (process.env.NX_INVOKED_BY_RUNNER === 'true') {
     process.on('disconnect', () => {
-      logger.debug('Exiting process...')
       process.exit(0)
     })
   }
 }
 
-logger.debug('Starting bootstrap...')
 export const bootstrap = async (options: BootstrapOptions) => {
-  logger.debug('Checking environment...', { NODE_ENV: process.env.NODE_ENV })
   const dev = process.env.NODE_ENV !== 'production'
   monkeyPatchServerLogging()
 
   setupExitHook()
 
-  logger.debug('Creating Express app...')
   const expressApp = createExpressApp()
 
-  logger.debug('Setting up proxy...', { proxyConfig: options.proxyConfig, dev })
-  // await setupProxy(expressApp, options.proxyConfig, dev)
+  await setupProxy(expressApp, options.proxyConfig, dev)
 
-  logger.debug('Getting Next.js config...', { appDir: options.appDir, dev })
   const nextConfig = await getNextConfig(options.appDir, dev)
   const nextApp = next(nextConfig)
   const handle = nextApp.getRequestHandler()
   const readyPromise = nextApp.prepare()
-  logger.debug(`Next.js config:`, {
-    nextConfig,
-    handle,
-    handleType: typeof handle,
-    readyPromise,
-  })
 
-  logger.debug('Setting up healthchecks...', {
-    externalEndpointDependencies: options.externalEndpointDependencies,
-  })
-  // setupHealthchecks(
-  //   expressApp,
-  //   readyPromise,
-  //   options.externalEndpointDependencies,
-  // )
+  setupHealthchecks(
+    expressApp,
+    readyPromise,
+    options.externalEndpointDependencies,
+  )
 
   expressApp.use(async (req, res) => {
-    // if (req.url.match('.woff2?$')) {
-    //   res.setHeader('Cache-Control', 'public, max-age=31536000')
-    // }
+    if (req.url.match('.woff2?$')) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000')
+    }
 
     try {
       await handle(req, res)
@@ -122,9 +102,7 @@ export const bootstrap = async (options: BootstrapOptions) => {
     }
   })
 
-  logger.debug('Starting server...', { port: options.port })
   startServer(expressApp, options.port)
 
-  logger.debug('Starting next...')
   await readyPromise
 }
