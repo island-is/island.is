@@ -14,12 +14,13 @@ import {
   DefaultEvents,
   Form,
   FormModes,
+  MockablePaymentCatalogApi,
   PassportsApi,
 } from '@island.is/application/types'
 import {
-  SyslumadurPaymentCatalogApi,
   UserInfoApi,
   NationalRegistryUser,
+  SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { Services } from '../lib/constants'
 import { m } from '../lib/messages'
@@ -45,7 +46,6 @@ export const Draft: Form = buildForm({
           title: m.dataCollectionTitle,
           subTitle: m.dataCollectionSubtitle,
           checkboxLabel: m.dataCollectionCheckboxLabel,
-          enableMockPayment: true,
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUser,
@@ -64,6 +64,12 @@ export const Draft: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SyslumadurPaymentCatalogApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: MockablePaymentCatalogApi.configure({
+                externalDataId: 'payment',
+              }),
               title: '',
             }),
           ],

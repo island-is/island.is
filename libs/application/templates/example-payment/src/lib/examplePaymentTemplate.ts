@@ -13,7 +13,9 @@ import {
   Application,
   VerifyPaymentApi,
   InstitutionNationalIds,
+  MockablePaymentCatalogApi,
 } from '@island.is/application/types'
+import { MockPaymentCatalogWithTwoItems } from '../dataProviders'
 import { ApiActions } from '../shared'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -68,7 +70,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [PaymentCatalogApi],
+              api: [MockPaymentCatalogWithTwoItems, PaymentCatalogApi],
               delete: true,
             },
           ],

@@ -16,6 +16,7 @@ import {
 } from '@island.is/application/types'
 import {
   GlassesCheckApi,
+  MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
 } from '../../dataProviders'
 export const sectionExternalData = buildSubSection({
@@ -27,7 +28,6 @@ export const sectionExternalData = buildSubSection({
       id: 'approveExternalData',
       subTitle: m.externalDataSubTitle,
       checkboxLabel: m.externalDataAgreement,
-      enableMockPayment: true,
       dataProviders: [
         buildDataProviderItem({
           provider: NationalRegistryUserApi,
@@ -64,6 +64,10 @@ export const sectionExternalData = buildSubSection({
         }),
         buildDataProviderItem({
           provider: SyslumadurPaymentCatalogApi,
+          title: '',
+        }),
+        buildDataProviderItem({
+          provider: MockableSyslumadurPaymentCatalogApi,
           title: '',
         }),
         buildDataProviderItem({

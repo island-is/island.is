@@ -1,5 +1,6 @@
 import {
   InstitutionNationalIds,
+  MockablePaymentCatalogApi,
   PaymentCatalogApi,
   defineTemplateApi,
 } from '@island.is/application/types'
@@ -17,6 +18,14 @@ export const UtlendingastofnunPaymentCatalogApi = PaymentCatalogApi.configure({
   },
   externalDataId: 'payment',
 })
+
+export const MockableUtlendingastofnunPaymentCatalogApi =
+  MockablePaymentCatalogApi.configure({
+    params: {
+      organizationId: InstitutionNationalIds.UTLENDINGASTOFNUN,
+    },
+    externalDataId: 'payment',
+  })
 
 export const ApplicantInformationApi = defineTemplateApi({
   action: ApiActions.applicantInformation,
