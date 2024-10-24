@@ -187,16 +187,18 @@ export const PartyOverview = ({
           asset={answers.asset}
           equity={answers.equity}
           equityAndLiabilities={answers.equityAndLiabilities}
-          fixedAssetsTotal={m.fixedAssetsTotal}
-          currentAssets={m.currentAssets}
-          totalAssets={m.totalAssets}
-          longTerm={m.longTerm}
-          shortTerm={m.shortTerm}
-          totalLiabilities={m.totalLiabilities}
-          equityTitle={m.equity}
-          debtsAndCash={m.debtsAndCash}
-          properties={m.properties}
-          debtsAndEquity={m.debtsAndEquity}
+          messages={{
+            fixedAssetsTotal: m.fixedAssetsTotal,
+            currentAssets: m.currentAssets,
+            totalAssets: m.totalAssets,
+            longTerm: m.longTerm,
+            shortTerm: m.shortTerm,
+            totalLiabilities: m.totalLiabilities,
+            equityTitle: m.equity,
+            debtsAndCash: m.debtsAndCash,
+            properties: m.properties,
+            debtsAndEquity: m.debtsAndEquity,
+          }}
         />
       </Box>
       <Divider />

@@ -22,16 +22,18 @@ type Props = {
   equityAndLiabilities: {
     total: string
   }
-  fixedAssetsTotal: MessageDescriptor
-  currentAssets: MessageDescriptor
-  totalAssets: MessageDescriptor
-  longTerm: MessageDescriptor
-  shortTerm: MessageDescriptor
-  totalLiabilities: MessageDescriptor
-  equityTitle: MessageDescriptor
-  debtsAndCash: MessageDescriptor
-  properties: MessageDescriptor
-  debtsAndEquity: MessageDescriptor
+  messages: {
+    fixedAssetsTotal: MessageDescriptor
+    currentAssets: MessageDescriptor
+    totalAssets: MessageDescriptor
+    longTerm: MessageDescriptor
+    shortTerm: MessageDescriptor
+    totalLiabilities: MessageDescriptor
+    equityTitle: MessageDescriptor
+    debtsAndCash: MessageDescriptor
+    properties: MessageDescriptor
+    debtsAndEquity: MessageDescriptor
+  }
 }
 
 export const AssetDebtEquityOverview = ({
@@ -39,18 +41,21 @@ export const AssetDebtEquityOverview = ({
   asset,
   equity,
   equityAndLiabilities,
-  fixedAssetsTotal,
-  currentAssets,
-  totalAssets,
-  longTerm,
-  shortTerm,
-  totalLiabilities,
-  equityTitle,
-  debtsAndCash,
-  properties,
-  debtsAndEquity,
+  messages,
 }: Props) => {
   const { formatMessage } = useLocale()
+  const {
+    fixedAssetsTotal,
+    currentAssets,
+    totalAssets,
+    longTerm,
+    shortTerm,
+    totalLiabilities,
+    equityTitle,
+    debtsAndCash,
+    properties,
+    debtsAndEquity,
+  } = messages
 
   return (
     <GridRow>
