@@ -84,7 +84,7 @@ export class Delegation extends Model<
     allowNull: true,
   })
   @ForeignKey(() => Domain)
-  domainName?: string
+  domainName?: string | null
 
   /**
    * ReferenceId is a field for storing a reference to the zendesk ticket id

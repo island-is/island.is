@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common'
 
 import {
+  FinancialAidAnswers,
   ApproveOptions,
+  ChildrenSchoolInfo,
   CurrentApplication,
-  FAApplication,
+  FinancialAidExternalData,
   findFamilyStatus,
   TaxData,
 } from '@island.is/application/templates/financial-aid'
@@ -12,6 +14,7 @@ import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   ApplicationState,
   FileType,
+  PersonalTaxReturn,
   UserType,
 } from '@island.is/financial-aid/shared/lib'
 import {
@@ -24,15 +27,17 @@ import {
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
+  Application,
   ApplicationAnswerFile,
   ApplicationTypes,
 } from '@island.is/application/types'
 import { FetchError } from '@island.is/clients/middlewares'
 import { messages } from '@island.is/application/templates/financial-aid'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { getValueViaPath } from '@island.is/application/core'
 
 type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
-  application: FAApplication
+  application: Application
 }
 
 @Injectable()
@@ -75,15 +80,26 @@ export class FinancialAidService extends BaseTemplateApiService {
     auth,
   }: Props): Promise<CurrentApplication> {
     const { id, answers, externalData } = application
+    const answersSchema = answers as FinancialAidAnswers
+    const externalDataSchema =
+      externalData as unknown as FinancialAidExternalData
+    const currentApplicationId = getValueViaPath(
+      externalData,
+      'currentApplication.data.currentApplicationId',
+    ) as string | undefined
 
-    if (externalData.currentApplication.data?.currentApplicationId) {
+    const childrenSchoolInfo = getValueViaPath(
+      answers,
+      'childrenSchoolInfo',
+    ) as Array<ChildrenSchoolInfo>
+
+    if (currentApplicationId) {
       return {
-        currentApplicationId:
-          externalData.currentApplication.data.currentApplicationId,
+        currentApplicationId,
       }
     }
     const children = answers.childrenSchoolInfo
-      ? answers.childrenSchoolInfo.map((child) => {
+      ? childrenSchoolInfo.map((child) => {
           return {
             name: child.fullName,
             nationalId: child.nationalId,
@@ -108,40 +124,38 @@ export class FinancialAidService extends BaseTemplateApiService {
       })
     }
 
+    const personalTaxReturn = getValueViaPath(
+      externalData,
+      'taxData.data.municipalitiesPersonalTaxReturn.personalTaxReturn',
+    ) as PersonalTaxReturn | undefined
+
+    const spouseTaxReturn = getValueViaPath(
+      externalData,
+      'taxDataSpouse.data.municipalitiesPersonalTaxReturn.personalTaxReturn',
+    ) as PersonalTaxReturn | undefined
+
     const spouseTaxFiles = () => {
-      if (
-        externalData?.taxDataSpouse?.data?.municipalitiesPersonalTaxReturn
-          ?.personalTaxReturn == null
-      ) {
+      if (spouseTaxReturn == null) {
         return []
       }
-      return [
-        externalData?.taxDataSpouse?.data?.municipalitiesPersonalTaxReturn
-          ?.personalTaxReturn,
-      ]
+      return [spouseTaxReturn]
     }
 
     const applicantTaxFiles = () => {
-      if (
-        externalData?.taxData?.data?.municipalitiesPersonalTaxReturn
-          ?.personalTaxReturn == null
-      ) {
+      if (personalTaxReturn == null) {
         return []
       }
-      return [
-        externalData?.taxData?.data?.municipalitiesPersonalTaxReturn
-          ?.personalTaxReturn,
-      ]
+      return [personalTaxReturn]
     }
 
     const directTaxPayments = () => {
-      if (externalData?.taxDataSpouse?.data) {
-        externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.concat(
-          externalData?.taxDataSpouse?.data.municipalitiesDirectTaxPayments
-            ?.directTaxPayments,
+      if (externalDataSchema?.taxDataSpouse?.data) {
+        externalDataSchema?.taxData?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.concat(
+          externalDataSchema?.taxDataSpouse?.data
+            .municipalitiesDirectTaxPayments?.directTaxPayments,
         )
       }
-      return externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.map(
+      return externalDataSchema?.taxData?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.map(
         (d) => {
           d.userType = application.assignees.includes(auth.nationalId)
             ? UserType.SPOUSE
@@ -151,59 +165,77 @@ export class FinancialAidService extends BaseTemplateApiService {
       )
     }
 
-    const files = formatFiles(answers.taxReturnFiles, FileType.TAXRETURN)
-      .concat(formatFiles(answers.incomeFiles, FileType.INCOME))
-      .concat(formatFiles(answers.spouseIncomeFiles, FileType.SPOUSEFILES))
-      .concat(formatFiles(answers.spouseTaxReturnFiles, FileType.SPOUSEFILES))
+    const files = formatFiles(
+      answersSchema?.taxReturnFiles ?? [],
+      FileType.TAXRETURN,
+    )
+      .concat(formatFiles(answersSchema.incomeFiles ?? [], FileType.INCOME))
+      .concat(
+        formatFiles(
+          answersSchema.spouseIncomeFiles ?? [],
+          FileType.SPOUSEFILES,
+        ),
+      )
+      .concat(
+        formatFiles(
+          answersSchema.spouseTaxReturnFiles ?? [],
+          FileType.SPOUSEFILES,
+        ),
+      )
       .concat(formatFiles(spouseTaxFiles(), FileType.SPOUSEFILES))
       .concat(formatFiles(applicantTaxFiles(), FileType.TAXRETURN))
-      .concat(formatFiles(answers.childrenFiles, FileType.CHILDRENFILES))
+      .concat(
+        formatFiles(answersSchema.childrenFiles ?? [], FileType.CHILDRENFILES),
+      )
 
     const newApplication = {
-      name: externalData.nationalRegistry.data.fullName,
-      nationalId: externalData.nationalRegistry.data.nationalId,
-      phoneNumber: answers.contactInfo.phone,
-      email: answers.contactInfo.email,
-      homeCircumstances: answers.homeCircumstances.type,
-      homeCircumstancesCustom: answers.homeCircumstances.custom,
-      student: Boolean(answers.student.isStudent === ApproveOptions.Yes),
-      studentCustom: answers.student.custom,
-      hasIncome: Boolean(answers.income === ApproveOptions.Yes),
+      name: externalDataSchema.nationalRegistry.data.fullName,
+      nationalId: externalDataSchema.nationalRegistry.data.nationalId,
+      phoneNumber: answersSchema.contactInfo.phone,
+      email: answersSchema.contactInfo.email,
+      homeCircumstances: answersSchema.homeCircumstances.type,
+      homeCircumstancesCustom: answersSchema.homeCircumstances.custom,
+      student: Boolean(answersSchema.student.isStudent === ApproveOptions.Yes),
+      studentCustom: answersSchema.student.custom,
+      hasIncome: Boolean(answersSchema.income.type === ApproveOptions.Yes),
       usePersonalTaxCredit: Boolean(
-        answers.personalTaxCredit === ApproveOptions.Yes,
+        answersSchema.personalTaxCredit.type === ApproveOptions.Yes,
       ),
-      bankNumber: answers.bankInfo.bankNumber,
-      ledger: answers.bankInfo.ledger,
-      accountNumber: answers.bankInfo.accountNumber,
-      employment: answers.employment.type,
-      employmentCustom: answers.employment.custom,
-      formComment: answers.formComment,
+      bankNumber: answersSchema.bankInfo.accountNumber,
+      ledger: answersSchema.bankInfo.accountNumber,
+      accountNumber: answersSchema.bankInfo.accountNumber,
+      employment: answersSchema.employment.type,
+      employmentCustom: answersSchema.employment.custom,
+      formComment: answersSchema.formComment,
       state: ApplicationState.NEW,
       files: files,
-      children: children,
-      childrenComment: answers.childrenComment,
+      children,
+      childrenComment: answersSchema.childrenComment,
       spouseNationalId:
-        externalData.nationalRegistrySpouse.data?.nationalId ||
-        answers.relationshipStatus?.spouseNationalId,
+        externalDataSchema.nationalRegistrySpouse.data?.nationalId ||
+        answersSchema.relationshipStatus?.spouseNationalId,
       spouseEmail:
-        answers.spouseContactInfo?.email ||
-        answers.spouse?.email ||
-        answers.relationshipStatus?.spouseEmail,
-      spousePhoneNumber: answers.spouseContactInfo?.phone,
+        answersSchema.spouseContactInfo?.email ||
+        answersSchema.spouse?.email ||
+        answersSchema.relationshipStatus?.spouseEmail,
+      spousePhoneNumber: answersSchema.spouseContactInfo?.phone,
       spouseName:
-        externalData.nationalRegistrySpouse.data?.name || answers.spouseName,
-      spouseFormComment: answers.spouseFormComment,
-      familyStatus: findFamilyStatus(answers, externalData),
-      streetName: externalData.nationalRegistry.data.address?.streetAddress,
-      postalCode: externalData.nationalRegistry.data.address?.postalCode,
-      city: externalData.nationalRegistry.data.address?.locality,
+        externalDataSchema.nationalRegistrySpouse.data?.name ||
+        answersSchema.spouseName,
+      spouseFormComment: answersSchema.spouseFormComment,
+      familyStatus: findFamilyStatus(answersSchema, externalData),
+      streetName:
+        externalDataSchema.nationalRegistry.data.address?.streetAddress,
+      postalCode: externalDataSchema.nationalRegistry.data.address?.postalCode,
+      city: externalDataSchema.nationalRegistry.data.address?.locality,
       municipalityCode:
-        externalData.nationalRegistry.data.address?.municipalityCode,
+        externalDataSchema.nationalRegistry.data.address?.municipalityCode,
       directTaxPayments: directTaxPayments(),
       hasFetchedDirectTaxPayment:
-        externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.success,
+        externalDataSchema?.taxData?.data?.municipalitiesDirectTaxPayments
+          ?.success,
       spouseHasFetchedDirectTaxPayment:
-        externalData?.taxDataSpouse?.data?.municipalitiesDirectTaxPayments
+        externalDataSchema?.taxDataSpouse?.data?.municipalitiesDirectTaxPayments
           ?.success,
       applicationSystemId: id,
     }
@@ -243,8 +275,10 @@ export class FinancialAidService extends BaseTemplateApiService {
     auth,
     application,
   }: Props): Promise<MunicipalityModel | null> {
-    const municiplaityCode =
-      application.externalData.nationalRegistry.data.address?.municipalityCode
+    const municiplaityCode = getValueViaPath(
+      application.externalData,
+      'nationalRegistry.data.address.municipalityCode',
+    ) as string
     if (municiplaityCode == null) {
       return null
     }
@@ -287,23 +321,26 @@ export class FinancialAidService extends BaseTemplateApiService {
     application,
   }: Props): Promise<{ success: boolean }> {
     const { answers, externalData } = application
+    const answersSchema = answers as unknown as FinancialAidAnswers
+    const externalDataSchema =
+      externalData as unknown as FinancialAidExternalData
     try {
       return await this.applicationApiWithAuth(
         auth,
       ).applicationControllerSendSpouseEmail({
         spouseEmailDto: {
-          name: externalData.nationalRegistry.data.fullName,
-          email: answers.contactInfo.email,
+          name: externalDataSchema.nationalRegistry.data.fullName,
+          email: answersSchema.contactInfo.email,
           spouseName:
-            externalData.nationalRegistrySpouse.data?.name ||
-            answers.spouseName ||
+            externalDataSchema.nationalRegistrySpouse.data?.name ||
+            answersSchema.spouseName ||
             '',
           spouseEmail:
-            answers.spouse?.email ||
-            answers.relationshipStatus.spouseEmail ||
+            answersSchema.spouse?.email ||
+            answersSchema.relationshipStatus.spouseEmail ||
             '',
           municipalityCode:
-            externalData.municipality.data?.municipalityId || '',
+            externalDataSchema.municipality.data?.municipalityId || '',
           created: application.created,
           applicationSystemId: application.id,
         },

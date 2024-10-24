@@ -176,7 +176,7 @@ const getMembersMarkup = (member: z.infer<typeof memberItemSchema>) => {
   }
 
   const aboveMarkup = member.above
-    ? `<p style="margin-bottom: ${styleObject.marginBottom}" margins align="center">${member.above}</p>`
+    ? `<p style="margin-bottom: 0;" align="center">${member.above}</p>`
     : ''
   const afterMarkup = member.after ? ` ${member.after}` : ''
   const belowMarkup = member.below
@@ -184,7 +184,7 @@ const getMembersMarkup = (member: z.infer<typeof memberItemSchema>) => {
     : ''
 
   return `
-    <div class="signature__member">
+    <div class="signature__member" style="margin-bottom: 1.5em;">
       ${aboveMarkup}
       <p style="margin-bottom: ${styleObject.marginBottom}" align="center"><strong>${member.name}</strong>${afterMarkup}</p>
       ${belowMarkup}
@@ -199,15 +199,16 @@ const signatureTemplate = (
 ) => {
   const markup = signatures
     ?.map((signature) => {
-      const membersCount = Math.min(signature.members?.length ?? 1, 3)
+      const membersCount = signature?.members?.length || 0
+
       const styleObject = {
         display: membersCount > 1 ? 'grid' : 'block',
         gridTemplateColumns:
           membersCount === 1
             ? '1fr'
-            : membersCount === 2 || membersCount === 4
-            ? '1fr 1fr'
-            : '1fr 1fr 1fr',
+            : membersCount === 3
+            ? '1fr 1fr 1fr'
+            : '1fr 1fr',
       }
 
       const date = signature.date

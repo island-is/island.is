@@ -453,13 +453,26 @@ describe('getCasesQueryFilter', () => {
                   ],
                 },
                 {
-                  id: {
-                    [Op.in]: Sequelize.literal(`
-                (SELECT case_id
-                  FROM defendant
-                  WHERE defender_national_id in ('${user.nationalId}', '${user.nationalId}'))
-              `),
-                  },
+                  [Op.or]: [
+                    {
+                      id: {
+                        [Op.in]: Sequelize.literal(`
+                      (SELECT case_id
+                        FROM defendant
+                        WHERE defender_national_id in ('${user.nationalId}', '${user.nationalId}') and is_defender_choice_confirmed = true)
+                    `),
+                      },
+                    },
+                    {
+                      id: {
+                        [Op.in]: Sequelize.literal(`
+                      (SELECT case_id
+                        FROM civil_claimant
+                        WHERE has_spokesperson = true AND spokesperson_national_id in ('${user.nationalId}', '${user.nationalId}') and is_spokesperson_confirmed = true)
+                    `),
+                      },
+                    },
+                  ],
                 },
               ],
             },

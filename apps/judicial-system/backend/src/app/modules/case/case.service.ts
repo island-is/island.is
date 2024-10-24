@@ -1663,6 +1663,7 @@ export class CaseService {
         CaseIndictmentRulingDecision.FINE,
         CaseIndictmentRulingDecision.CANCELLATION,
         CaseIndictmentRulingDecision.MERGE,
+        CaseIndictmentRulingDecision.WITHDRAWAL,
       ].includes(theCase.indictmentRulingDecision)
     const updatedArraignmentDate = update.arraignmentDate
     const schedulingNewArraignmentDateForIndictmentCase =

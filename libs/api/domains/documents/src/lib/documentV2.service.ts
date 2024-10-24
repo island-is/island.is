@@ -22,6 +22,7 @@ import { HEALTH_CATEGORY_ID } from './document.types'
 import { Type } from './models/v2/type.model'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
+import type { Locale } from '@island.is/shared/types'
 
 const LOG_CATEGORY = 'documents-api-v2'
 @Injectable()
@@ -81,7 +82,7 @@ export class DocumentServiceV2 {
   async findDocumentByIdV3(
     nationalId: string,
     documentId: string,
-    locale?: string,
+    locale?: Locale,
     includeDocument?: boolean,
   ): Promise<Document | null> {
     const document = await this.documentService.getCustomersDocument(
@@ -110,14 +111,29 @@ export class DocumentServiceV2 {
         type = FileType.UNKNOWN
     }
     // Data for the confirmation modal
-    const confirmation = document.actions?.find(
+    let confirmation = document.actions?.find(
       (action) => action.type === 'confirmation',
     )
+    if (
+      !isDefined(confirmation?.title) ||
+      confirmation?.title === '' ||
+      confirmation?.data === '' ||
+      !isDefined(confirmation?.data)
+    ) {
+      confirmation = undefined
+    }
+
     // Data for the alert box
     const alert = document.actions?.find((action) => action.type === 'alert')
     const actions = document.actions?.filter(
       (action) => action.type !== 'alert' && action.type !== 'confirmation',
     )
+    if (document.urgent)
+      this.logger.info('Urgent document fetched', {
+        documentId: documentId,
+        includeDocument,
+      })
+
     return {
       ...document,
       publicationDate: document.date,
@@ -474,7 +490,7 @@ export class DocumentServiceV2 {
 
     // we return the document even if the actions are faulty, logged for tracability
     if (hasEmpty) {
-      this.logger.warn('No title or data in actions array', {
+      this.logger.info('No title or data in actions array, return undefined', {
         category: LOG_CATEGORY,
         id,
       })
@@ -501,6 +517,8 @@ export class DocumentServiceV2 {
       }
     })
 
+    // Log the actions to ensure that they are mapped correctly
+    this.logger.info('Actions mapped successfully', { actions: mapped })
     return mapped
   }
 }

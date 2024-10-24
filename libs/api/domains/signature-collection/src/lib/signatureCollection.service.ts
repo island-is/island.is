@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { SignatureCollectionSuccess } from './models/success.model'
 import { SignatureCollection } from './models/collection.model'
 import {
@@ -19,12 +15,10 @@ import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionAddListsInput } from './dto/addLists.input'
-import { SignatureCollectionOwnerInput } from './dto/owner.input'
-import { SignatureCollectionListBulkUploadInput } from './dto/bulkUpload.input'
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
 import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
-import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
 import { SignatureCollectionCollector } from './models/collector.model'
+import { SignatureCollectionListSummary } from './models/areaSummaryReport.model'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -192,6 +186,16 @@ export class SignatureCollectionService {
     return await this.signatureCollectionClientService.getCollectors(
       user,
       candidateId,
+    )
+  }
+
+  async listOverview(
+    user: User,
+    listId: string,
+  ): Promise<SignatureCollectionListSummary> {
+    return await this.signatureCollectionClientService.getListOverview(
+      user,
+      listId,
     )
   }
 }
