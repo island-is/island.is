@@ -11,7 +11,7 @@ import {
 
 export const mapUglaApplication = async (
   application: IApplication,
-  logError: (courseExternalId: string, error: Error) => void,
+  logError: (error: Error) => void,
 ): Promise<ApplicationsPostRequest> => {
   const uglaApplication: ApplicationsPostRequest = {
     inlineObject: {
