@@ -6,6 +6,9 @@ export {
   SubpoenaType,
   DefendantPlea,
   ServiceRequirement,
+  ServiceStatus,
+  isSuccessfulServiceStatus,
+  isFailedServiceStatus,
 } from './lib/defendant'
 export { InstitutionType } from './lib/institution'
 export { NotificationType } from './lib/notification'
@@ -96,7 +99,7 @@ export {
   offenseSubstances,
 } from './lib/indictmentCount'
 
-export { type Lawyer, mapToLawyer } from './lib/defender'
+export { type Lawyer, mapToLawyer, AdvocateType } from './lib/advocate'
 
 export type { SubstanceMap } from './lib/indictmentCount'
 

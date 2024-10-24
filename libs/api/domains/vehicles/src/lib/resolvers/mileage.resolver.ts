@@ -7,7 +7,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import {
   IdsUserGuard,
   ScopesGuard,
@@ -34,6 +34,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { mileageDetailConstructor } from '../utils/helpers'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalVehicleMileagePageEnabled)
@@ -41,7 +42,10 @@ import { mileageDetailConstructor } from '../utils/helpers'
 @Audit({ namespace: '@island.is/api/vehicles' })
 @Scopes(ApiScope.vehicles)
 export class VehiclesMileageResolver {
-  constructor(private readonly vehiclesService: VehiclesService) {}
+  constructor(
+    private readonly vehiclesService: VehiclesService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   @Query(() => VehicleMileageOverview, {
     name: 'vehicleMileageDetails',
@@ -88,9 +92,11 @@ export class VehiclesMileageResolver {
       mileage: Number(input.mileage ?? input.mileageNumber),
     })
 
-    if (!res?.length) return undefined
+    if (!res) {
+      return
+    }
 
-    return mileageDetailConstructor(res[0])
+    return mileageDetailConstructor(res)
   }
 
   @ResolveField('canRegisterMileage', () => Boolean, {

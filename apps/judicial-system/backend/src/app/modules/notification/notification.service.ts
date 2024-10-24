@@ -62,7 +62,7 @@ export class NotificationService {
           // the judge chooses not to send a calendar invitation
           messages = [
             this.getNotificationMessage(
-              NotificationType.DEFENDER_ASSIGNED,
+              NotificationType.ADVOCATE_ASSIGNED,
               user,
               theCase,
             ),
@@ -72,9 +72,10 @@ export class NotificationService {
         }
         break
       case NotificationType.HEADS_UP:
-      case NotificationType.DEFENDER_ASSIGNED:
+      case NotificationType.ADVOCATE_ASSIGNED:
       case NotificationType.APPEAL_JUDGES_ASSIGNED:
       case NotificationType.APPEAL_CASE_FILES_UPDATED:
+      case NotificationType.CASE_FILES_UPDATED:
         messages = [this.getNotificationMessage(type, user, theCase)]
         break
       default:

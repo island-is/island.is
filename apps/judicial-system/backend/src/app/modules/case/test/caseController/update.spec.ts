@@ -875,10 +875,16 @@ describe('CaseController - Update', () => {
   describe('indictment arraignment date updated', () => {
     const arraignmentDate = { date: new Date(), location: uuid() }
     const caseToUpdate = { arraignmentDate }
+    const subpoenaId1 = uuid()
+    const subpoenaId2 = uuid()
     const updatedCase = {
       ...theCase,
       type: CaseType.INDICTMENT,
       dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
+      defendants: [
+        { id: defendantId1, subpoenas: [{ id: subpoenaId1 }] },
+        { id: defendantId2, subpoenas: [{ id: subpoenaId2 }] },
+      ],
     }
 
     beforeEach(async () => {
@@ -900,17 +906,19 @@ describe('CaseController - Update', () => {
           caseId,
           body: { type: NotificationType.COURT_DATE },
         },
+      ])
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
           user,
           caseId: theCase.id,
-          elementId: defendantId1,
+          elementId: [defendantId1, subpoenaId1],
         },
         {
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
           user,
           caseId: theCase.id,
-          elementId: defendantId2,
+          elementId: [defendantId2, subpoenaId2],
         },
       ])
     })

@@ -15,6 +15,7 @@ import {
   AddApplicationAttachmentRequest,
   GetApplicationAttachmentsRequest,
   DeleteApplicationAttachmentRequest,
+  GetInvolvedPartiesRequest,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -177,5 +178,22 @@ export class OfficialJournalOfIcelandApplicationClientService {
     await this.ojoiApplicationApiWithAuth(auth).deleteApplicationAttachment(
       params,
     )
+  }
+
+  async getUserInvolvedParties(params: GetInvolvedPartiesRequest, auth: Auth) {
+    try {
+      const data = await this.ojoiApplicationApiWithAuth(
+        auth,
+      ).getInvolvedParties(params)
+      return data
+    } catch (error) {
+      this.logger.warn('Failed to get involved parties', {
+        error,
+        applicationId: params.id,
+        category: LOG_CATEGORY,
+      })
+
+      throw error
+    }
   }
 }

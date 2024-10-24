@@ -243,14 +243,11 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/MileageReadingDto" }
-                }
+                "schema": { "$ref": "#/components/schemas/MileageReadingDto" }
               }
             }
           },

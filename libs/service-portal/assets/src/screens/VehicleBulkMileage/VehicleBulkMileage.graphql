@@ -18,6 +18,40 @@ query vehiclesList($input: VehiclesListInputV3!) {
   }
 }
 
+mutation postSingleVehicleMileage($input: PostVehicleMileageInput!) {
+  vehicleMileagePost(input: $input) {
+    permno
+    readDate
+    originCode
+    mileageNumber
+    internalId
+  }
+}
+
+mutation putSingleVehicleMileage($input: PutVehicleMileageInput!) {
+  vehicleMileagePut(input: $input) {
+    permno
+    internalId
+    mileageNumber
+  }
+}
+
+query GetUsersMileage($input: GetVehicleMileageInput!) {
+  vehicleMileageDetails(input: $input) {
+    data {
+      permno
+      readDate
+      originCode
+      mileageNumber
+      internalId
+    }
+    editing
+    canRegisterMileage
+    requiresMileageRegistration
+    canUserRegisterVehicleMileage
+  }
+}
+
 fragment mileageRegistration on VehiclesMileageRegistration {
   originCode
   mileage

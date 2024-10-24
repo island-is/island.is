@@ -854,7 +854,7 @@ export interface IEmailSignupFields {
   formFields?: IFormField[] | undefined
 
   /** Signup Type */
-  signupType?: 'mailchimp' | 'zenter' | undefined
+  signupType?: 'mailchimp' | 'zenter' | 'campaign monitor' | undefined
 
   /** Configuration */
   configuration?: Record<string, any> | undefined
@@ -1606,6 +1606,9 @@ export interface IGenericListItemFields {
 
   /** Asset */
   asset?: Asset | undefined
+
+  /** External Link */
+  externalLink?: ILinkUrl | undefined
 }
 
 /** An item that belongs to a generic list */

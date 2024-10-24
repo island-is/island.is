@@ -6,7 +6,6 @@ import {
   Header,
   Inject,
   Param,
-  Query,
   Req,
   Res,
   UseGuards,
@@ -20,7 +19,7 @@ import {
   CurrentHttpUser,
   JwtInjectBearerAuthGuard,
 } from '@island.is/judicial-system/auth'
-import type { SubpoenaType, User } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { FileService } from './file.service'
 
@@ -176,27 +175,50 @@ export class LimitedAccessFileController {
     )
   }
 
-  @Get('subpoena/:defendantId')
+  @Get('subpoena/:defendantId/:subpoenaId')
   @Header('Content-Type', 'application/pdf')
   getSubpoenaPdf(
     @Param('id') id: string,
     @Param('defendantId') defendantId: string,
-    @Query('arraignmentDate') arraignmentDate: string,
-    @Query('location') location: string,
-    @Query('subpoenaType') subpoenaType: SubpoenaType,
+    @Param('subpoenaId') subpoenaId: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<Response> {
     this.logger.debug(
-      `Getting the subpoena for defendant ${defendantId} of case ${id} as a pdf document`,
+      `Getting subpoena ${subpoenaId} for defendant ${defendantId} of case ${id} as a pdf document`,
     )
 
     return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_SUBPOENA_PDF,
       id,
-      `limitedAccess/defendant/${defendantId}/subpoena?arraignmentDate=${arraignmentDate}&location=${location}&subpoenaType=${subpoenaType}`,
+      `limitedAccess/defendant/${defendantId}/subpoena/${subpoenaId}`,
+      req,
+      res,
+      'pdf',
+    )
+  }
+
+  @Get('serviceCertificate/:defendantId/:subpoenaId')
+  @Header('Content-Type', 'application/pdf')
+  getServiceCertificatePdf(
+    @Param('id') id: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('subpoenaId') subpoenaId?: string,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting service certificate for defendant ${defendantId} of case ${id} as a pdf document`,
+    )
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_SERVICE_CERTIFICATE_PDF,
+      id,
+      `limitedAccess/defendant/${defendantId}/subpoena/${subpoenaId}/serviceCertificate`,
       req,
       res,
       'pdf',

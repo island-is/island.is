@@ -17,8 +17,11 @@ const VehicleBulkMileageFileDownloader = ({ onError }: Props) => {
     try {
       downloadFile(
         `magnskraning_kilometrastodu_example`,
-        ['Ökutæki', 'Kílómetrastaða'],
-        [['ABC001', 10000]],
+        ['permno', 'mileage'],
+        [
+          ['ABC001', 10000],
+          ['DEF002', 99999],
+        ],
         'csv',
       )
     } catch (error) {

@@ -10,7 +10,12 @@ const letters =
 const newlines = '\\Q\\r\\n\\E|\\r|\\n'
 const wordbreaks = '[;,]'
 
-export const parseCsvToMileageRecord = async (file: File) => {
+const vehicleIndexTitle = ['permno', 'vehicleid', 'ökutæki', 'fastanúmer']
+const mileageIndexTitle = ['kílómetrastaða', 'mileage', 'odometer']
+
+export const parseCsvToMileageRecord = async (
+  file: File,
+): Promise<Array<MileageRecord> | string> => {
   const reader = file.stream().getReader()
 
   const parsedLines: Array<Array<string>> = [[]]
@@ -37,10 +42,24 @@ export const parseCsvToMileageRecord = async (file: File) => {
 
   await reader.read().then(parseChunk)
   const [header, ...values] = parsedLines
-  const vehicleIndex = header.findIndex((l) => l.toLowerCase() === 'ökutæki')
-  const mileageIndex = header.findIndex(
-    (l) => l.toLowerCase() === 'kílómetraskráning',
+  const vehicleIndex = header.findIndex((l) =>
+    vehicleIndexTitle.includes(l.toLowerCase()),
   )
+  if (vehicleIndex < 0) {
+    return `Invalid vehicle column header. Must be one of the following: ${vehicleIndexTitle.join(
+      ', ',
+    )}`
+  }
+  const mileageIndex = header.findIndex((l) =>
+    mileageIndexTitle.includes(l.toLowerCase()),
+  )
+
+  if (mileageIndex < 0) {
+    return `Invalid mileage column header. Must be one of the following: ${mileageIndexTitle.join(
+      ', ',
+    )}`
+  }
+
   const uploadedOdometerStatuses: Array<MileageRecord> = values
     .map((row) => {
       const mileage = parseInt(row[mileageIndex])
@@ -53,6 +72,5 @@ export const parseCsvToMileageRecord = async (file: File) => {
       }
     })
     .filter(isDefined)
-
   return uploadedOdometerStatuses
 }

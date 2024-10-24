@@ -4,8 +4,6 @@ export const dummy: Array<VehicleType> = [
   {
     vehicleId: 'AA001',
     vehicleType: 'MAZDA 3',
-    submissionStatus: 'idle',
-    lastRegistrationDate: new Date('2021-06-11'),
     isCurrentlyEditing: false,
     registrationHistory: [
       {
@@ -18,8 +16,6 @@ export const dummy: Array<VehicleType> = [
   {
     vehicleId: 'BCD89',
     vehicleType: 'SUBARU IMPREZA',
-    submissionStatus: 'idle',
-    lastRegistrationDate: new Date(),
     isCurrentlyEditing: false,
     registrationHistory: [
       {
@@ -37,8 +33,6 @@ export const dummy: Array<VehicleType> = [
   {
     vehicleId: 'BZX09',
     vehicleType: 'MAZDA 3',
-    submissionStatus: 'idle',
-    lastRegistrationDate: new Date(),
     isCurrentlyEditing: false,
     registrationHistory: [
       {
@@ -56,8 +50,6 @@ export const dummy: Array<VehicleType> = [
   {
     vehicleId: 'ED676',
     vehicleType: 'SUBARU FORESTER',
-    submissionStatus: 'idle',
-    lastRegistrationDate: new Date(),
     isCurrentlyEditing: false,
     registrationHistory: [
       {
@@ -75,8 +67,6 @@ export const dummy: Array<VehicleType> = [
   {
     vehicleId: 'HMV76',
     vehicleType: 'VOLKSWAGEN, VW CADDY',
-    submissionStatus: 'idle',
-    lastRegistrationDate: new Date(),
     isCurrentlyEditing: false,
     registrationHistory: [
       {
@@ -94,8 +84,6 @@ export const dummy: Array<VehicleType> = [
   {
     vehicleId: 'JZB99',
     vehicleType: 'VOLVO V90',
-    submissionStatus: 'idle',
-    lastRegistrationDate: new Date(),
     isCurrentlyEditing: false,
     registrationHistory: [
       {
@@ -113,8 +101,6 @@ export const dummy: Array<VehicleType> = [
   {
     vehicleId: 'KDE08',
     vehicleType: 'FORD FOCUS',
-    submissionStatus: 'idle',
-    lastRegistrationDate: new Date(),
     isCurrentlyEditing: false,
     registrationHistory: [
       {
@@ -132,8 +118,6 @@ export const dummy: Array<VehicleType> = [
   {
     vehicleId: 'PIU46',
     vehicleType: 'FORD MUSTANG',
-    submissionStatus: 'idle',
-    lastRegistrationDate: new Date(),
     isCurrentlyEditing: false,
     registrationHistory: [
       {
@@ -151,8 +135,6 @@ export const dummy: Array<VehicleType> = [
   {
     vehicleId: 'ZX716',
     vehicleType: 'MAN H29',
-    submissionStatus: 'idle',
-    lastRegistrationDate: new Date(),
     isCurrentlyEditing: false,
     registrationHistory: [
       {
@@ -170,8 +152,6 @@ export const dummy: Array<VehicleType> = [
   {
     vehicleId: 'ZAPPA',
     vehicleType: 'HONDA COOL',
-    submissionStatus: 'idle',
-    lastRegistrationDate: new Date(),
     isCurrentlyEditing: false,
     registrationHistory: [
       {
@@ -189,8 +169,6 @@ export const dummy: Array<VehicleType> = [
   {
     vehicleId: 'STAPPA',
     vehicleType: 'HONDA COOL',
-    submissionStatus: 'idle',
-    lastRegistrationDate: new Date(),
     isCurrentlyEditing: false,
     registrationHistory: [
       {
@@ -208,8 +186,6 @@ export const dummy: Array<VehicleType> = [
   {
     vehicleId: 'Parappa',
     vehicleType: 'HONDA COOL',
-    submissionStatus: 'idle',
-    lastRegistrationDate: new Date(),
     isCurrentlyEditing: false,
     registrationHistory: [
       {
@@ -227,8 +203,6 @@ export const dummy: Array<VehicleType> = [
   {
     vehicleId: 'zzzzzz',
     vehicleType: 'HONDA COOL',
-    submissionStatus: 'idle',
-    lastRegistrationDate: new Date(),
     isCurrentlyEditing: false,
     registrationHistory: [
       {
@@ -246,8 +220,6 @@ export const dummy: Array<VehicleType> = [
   {
     vehicleId: 'obboboj',
     vehicleType: 'HONDA COOL',
-    submissionStatus: 'idle',
-    lastRegistrationDate: new Date(),
     isCurrentlyEditing: false,
     registrationHistory: [
       {
@@ -265,8 +237,6 @@ export const dummy: Array<VehicleType> = [
   {
     vehicleId: 'Habbebbi',
     vehicleType: 'HONDA COOL',
-    submissionStatus: 'idle',
-    lastRegistrationDate: new Date(),
     isCurrentlyEditing: false,
     registrationHistory: [
       {

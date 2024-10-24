@@ -13,7 +13,7 @@ export const m = defineMessages({
     description: '',
   },
   signatureListsTitlePresidential: {
-    id: 'admin-portal.signature-collection-parliamentary:signatureLists',
+    id: 'admin-portal.signature-collection:signatureListsTitlePresidential',
     defaultMessage: 'Forsetakosningar',
     description: '',
   },
@@ -77,7 +77,7 @@ export const m = defineMessages({
   },
   filter: {
     id: 'admin-portal.signature-collection:filter',
-    defaultMessage: 'Opna síu',
+    defaultMessage: 'Sía',
     description: '',
   },
   filterBy: {
@@ -110,9 +110,14 @@ export const m = defineMessages({
     defaultMessage: 'Hreinsa allar síur',
     description: '',
   },
+  typeOfSignee: {
+    id: 'admin-portal.signature-collection:typeOfSignee',
+    defaultMessage: 'Tegund meðmæla',
+    description: '',
+  },
   createCollection: {
     id: 'admin-portal.signature-collection:createCollection',
-    defaultMessage: 'Stofna söfnun',
+    defaultMessage: 'Stofna nýja meðmælasöfnun',
     description: '',
   },
   createCollectionSuccess: {
@@ -128,7 +133,7 @@ export const m = defineMessages({
   createCollectionModalDescription: {
     id: 'admin-portal.signature-collection:createCollectionModalDescription',
     defaultMessage:
-      'Til þess að stofna meðmælasöfnun þarf að slá inn kennitölu frambjóðs.',
+      'Til þess að stofna meðmælasöfnun þarf að slá inn kennitölu framboðs.',
     description: '',
   },
   candidateNationalId: {
@@ -151,9 +156,31 @@ export const m = defineMessages({
     defaultMessage: 'Lokadagur',
     description: '',
   },
+  editListEndTime: {
+    id: 'admin-portal.signature-collection:editListEndTime',
+    defaultMessage: 'Breyta',
+    description: '',
+  },
   collectionTitle: {
     id: 'admin-portal.signature-collection:collectionTitle',
     defaultMessage: 'Forsetakosningar 2024',
+    description: '',
+  },
+  parliamentaryCollectionTitle: {
+    id: 'admin-portal.signature-collection:parliamentaryCollectionTitle',
+    defaultMessage: 'Alþingiskosningar',
+    description: '',
+  },
+  parliamentaryCollectionIntro: {
+    id: 'admin-portal.signature-collection:parliamentaryCollectionIntro',
+    defaultMessage:
+      'Hér er yfirlit yfir kjördæmin sex. Ýttu á viðeigandi kjördæmi til að sjá meðmælendalista í því kjördæmi.',
+    description: '',
+  },
+  parliamentaryConstituencyIntro: {
+    id: 'admin-portal.signature-collection:parliamentaryConstituencyIntro',
+    defaultMessage:
+      'Hér er yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið í',
     description: '',
   },
   viewList: {
@@ -195,32 +222,43 @@ export const m = defineMessages({
 
   /* Hætta við söfnun modal */
   cancelCollectionButton: {
-    id: 'dmin-portal.signature-collection:cancelCollectionButton',
+    id: 'admin-portal.signature-collection:cancelCollectionButton',
     defaultMessage: 'Eyða lista',
     description: '',
   },
   cancelCollectionModalMessage: {
-    id: 'dmin-portal.signature-collection:cancelCollectionModalMessage',
+    id: 'admin-portal.signature-collection:cancelCollectionModalMessage',
     defaultMessage: 'Þú ert að fara að eyða þessum lista. Ertu viss?',
     description: '',
   },
+  cancelCollectionModalMessageLastList: {
+    id: 'admin-portal.signature-collection:cancelCollectionModalMessageLastList#markdown',
+    defaultMessage:
+      'Þú ert að fara að eyða síðasta lista framboðsins. Athugaðu að með því að eyða síðasta lista framboðsins verður framboðinu einnig eytt. Ertu viss um að þú viljir eyða lista og framboði?',
+    description: '',
+  },
   cancelCollectionModalConfirmButton: {
-    id: 'dmin-portal.signature-collection:modalConfirmButton',
+    id: 'admin-portal.signature-collection:modalConfirmButton',
     defaultMessage: 'Já, eyða lista',
     description: '',
   },
+  cancelCollectionAndCandidateModalConfirmButton: {
+    id: 'admin-portal.signature-collection:modalConfirmButton',
+    defaultMessage: 'Já, eyða bæði lista og framboði',
+    description: '',
+  },
   cancelCollectionModalCancelButton: {
-    id: 'dmin-portal.signature-collection:cancelCollectionModalCancelButton',
+    id: 'admin-portal.signature-collection:cancelCollectionModalCancelButton',
     defaultMessage: 'Nei, hætta við',
     description: '',
   },
   cancelCollectionModalToastError: {
-    id: 'dmin-portal.signature-collection:modalToastError',
+    id: 'admin-portal.signature-collection:modalToastError',
     defaultMessage: 'Ekki tókst að eyða lista',
     description: '',
   },
   cancelCollectionModalToastSuccess: {
-    id: 'dmin-portal.signature-collection:cancelCollectionModalToastSuccess',
+    id: 'admin-portal.signature-collection:cancelCollectionModalToastSuccess',
     defaultMessage: 'Tókst að eyða lista',
     description: '',
   },
@@ -234,13 +272,13 @@ export const m = defineMessages({
   singleListIntro: {
     id: 'admin-portal.signature-collection:singleListIntro',
     defaultMessage:
-      'Hér birtast nöfn meðmælenda frambjóðandans. Hægt er að framlengja tímafrest söfnunarinnar og bæta við meðmælum af blaði.',
+      'Hér birtast nöfn meðmælenda framboðs. Hægt er að framlengja tímafrest söfnunarinnar og bæta við meðmælum af blaði.',
     description: '',
   },
   singleListIntroManage: {
     id: 'admin-portal.signature-collection:singleListIntroManage',
     defaultMessage:
-      'Hér birtast nöfn meðmælenda frambjóðandans. Hægt er að leita að meðmælendum eftir nafni eða kennitölu.',
+      'Hér birtast nöfn meðmælenda framboðs. Hægt er að leita að meðmælendum eftir nafni eða kennitölu.',
     description: '',
   },
   collectors: {
@@ -281,7 +319,7 @@ export const m = defineMessages({
   },
   downloadButton: {
     id: 'admin-portal.signature-collection:downloadButton',
-    defaultMessage: 'Hlaða niður',
+    defaultMessage: 'Sækja skýrslu',
     description: '',
   },
   searchInListPlaceholder: {
@@ -289,9 +327,19 @@ export const m = defineMessages({
     defaultMessage: 'Leita eftir nafni eða kennitölu',
     description: '',
   },
+  searchNationalIdPlaceholder: {
+    id: 'admin-portal.signature-collection:searchNationalIdPlaceholder',
+    defaultMessage: 'Leita eftir kennitölu meðmælanda',
+    description: '',
+  },
+  noSigneeFoundOverviewText: {
+    id: 'admin-portal.signature-collection:noSigneeFoundOverviewText',
+    defaultMessage: 'Enginn meðmælandi fannst',
+    description: '',
+  },
   sortBy: {
     id: 'admin-portal.signature-collection:sortBy',
-    defaultMessage: 'Raða eftir',
+    defaultMessage: 'Raða',
     description: '',
   },
   sortAlphabeticallyAsc: {
@@ -329,6 +377,41 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
     description: '',
   },
+  signeeListSigned: {
+    id: 'admin-portal.signature-collection:signeeListSigned',
+    defaultMessage: 'Listi',
+    description: '',
+  },
+  signeeListSignedType: {
+    id: 'admin-portal.signature-collection:signeeListSignedType',
+    defaultMessage: 'Tegund',
+    description: '',
+  },
+  signeeListSignedStatus: {
+    id: 'admin-portal.signature-collection:signeeListSignedStatus',
+    defaultMessage: 'Staða',
+    description: '',
+  },
+  signeeListSignedDigital: {
+    id: 'admin-portal.signature-collection:signeeListSignedDigital',
+    defaultMessage: 'Rafrænt',
+    description: '',
+  },
+  signeeListSignedPaper: {
+    id: 'admin-portal.signature-collection:signeeListSignedPaper',
+    defaultMessage: 'Af blaði',
+    description: '',
+  },
+  signeeSignatureValid: {
+    id: 'admin-portal.signature-collection:signeeSigntaureValid',
+    defaultMessage: 'Gild',
+    description: '',
+  },
+  signeeSignatureInvalid: {
+    id: 'admin-portal.signature-collection:signeeSigntaureInvalid',
+    defaultMessage: 'Ógild',
+    description: '',
+  },
   signeeAddress: {
     id: 'admin-portal.signature-collection:signeeAddress',
     defaultMessage: 'Heimilisfang',
@@ -356,7 +439,28 @@ export const m = defineMessages({
   },
   confirmListReviewedToggleBack: {
     id: 'admin-portal.signature-collection:confirmListReviewedToggleBack',
-    defaultMessage: 'Aflæsa úrvinnslu',
+    defaultMessage: 'Opna fyrir úrvinnslu',
+    description: '',
+  },
+  collectionReviewedTitle: {
+    id: 'admin-portal.signature-collection:collectionReviewedTitle',
+    defaultMessage: 'Meðmælasöfnun vegna framboðs til Alþingis lokið',
+    description: '',
+  },
+  collectionReviewedMessage: {
+    id: 'admin-portal.signature-collection:collectionReviewedMessage',
+    defaultMessage:
+      'Nú hefur úrvinnslu verið lokið á öllum listum í öllum kjördæmum.',
+    description: '',
+  },
+  collectionProcessedTitle: {
+    id: 'admin-portal.signature-collection:collectionProcessedTitle',
+    defaultMessage: 'Úrvinnsla meðmælasöfnunar lokið',
+    description: '',
+  },
+  collectionProcessedMessage: {
+    id: 'admin-portal.signature-collection:collectionReviewedTitle',
+    defaultMessage: 'Nú er hægt að framlengja stökum listum.',
     description: '',
   },
   listReviewedModalDescription: {
@@ -397,9 +501,40 @@ export const m = defineMessages({
     defaultMessage: 'Úrvinnslu lokið',
     description: '',
   },
+  toggleReviewSuccessToggleBack: {
+    id: 'admin-portal.signature-collection:toggleReviewSuccessToggleBack',
+    defaultMessage: 'Tókst að opna fyrir úrvinnslu',
+    description: '',
+  },
+  lockList: {
+    id: 'admin-portal.signature-collection:lockList',
+    defaultMessage: 'Læsa söfnun',
+    description: '',
+  },
+  listLocked: {
+    id: 'admin-portal.signature-collection:listLocked',
+    defaultMessage: 'Lista læst',
+    description: '',
+  },
+  lockListDescription: {
+    id: 'admin-portal.signature-collection:lockListDescription',
+    defaultMessage:
+      'Ýtið hér ef framboð hefur skilað inn framboðsgögnum fyrir lok framboðsfrest',
+    description: '',
+  },
+  lockListSuccess: {
+    id: 'admin-portal.signature-collection:lockListSuccess',
+    defaultMessage: 'Tókst að læsa söfnun',
+    description: '',
+  },
+  lockListError: {
+    id: 'admin-portal.signature-collection:lockListError',
+    defaultMessage: 'Ekki tókst að læsa söfnun',
+    description: '',
+  },
   toggleReviewError: {
     id: 'admin-portal.signature-collection:toggleReviewError',
-    defaultMessage: 'Ekki tókst loka úrvinnslu',
+    defaultMessage: 'Ekki tókst að loka úrvinnslu',
     description: '',
   },
   toggleCollectionProcessSuccess: {
@@ -624,39 +759,9 @@ export const m = defineMessages({
     defaultMessage: 'Ekki tókst að skrá meðmæli',
     description: '',
   },
-})
-
-export const parliamentaryMessages = defineMessages({
-  signatureListsTitle: {
-    id: 'admin-portal.signature-collection-parliamentary:signatureLists',
-    defaultMessage: 'Alþingiskosningar',
-    description: '',
-  },
-  signatureListsDescription: {
-    id: 'admin-portal.signature-collection-parliamentary:signatureListsDescription',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    description: '',
-  },
-  signatureListsIntro: {
-    id: 'admin-portal.signature-collection-parliamentary:signatureListsIntro',
-    defaultMessage:
-      'Hér er yfirlit yfir kjördæmin sex. Ýttu á viðeigandi kjördæmi til að sjá meðmælendalista í því kjördæmi.',
-    description: '',
-  },
-  compareListsButton: {
-    id: 'admin-portal.signature-collection-parliamentary:compareListsButton',
-    defaultMessage: 'Bera saman',
-    description: '',
-  },
-  compareListsDescription: {
-    id: 'admin-portal.signature-collection-parliamentary:compareListsDescription',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-    description: '',
-  },
-  singleConstituencyIntro: {
-    id: 'admin-portal.signature-collection-parliamentary:singleConstituencyIntro',
-    defaultMessage:
-      'Hér er yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið í',
+  paperSigneeErrorAlreadySigned: {
+    id: 'admin-portal.signature-collection:paperSigneeErrorAlreadySigned',
+    defaultMessage: 'Kennitala er þegar á lista',
     description: '',
   },
 })

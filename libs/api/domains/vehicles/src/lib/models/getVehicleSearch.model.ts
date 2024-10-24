@@ -1,4 +1,12 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
+
+export enum OperatorAnonymityStatus {
+  ALL = 'all',
+  SOME = 'some',
+  UNKNOWN = 'unknown',
+}
+
+registerEnumType(OperatorAnonymityStatus, { name: 'OperatorAnonymityStatus' })
 
 @ObjectType()
 export class VehiclesVehicleSearchNextInspection {
@@ -76,4 +84,16 @@ export class VehiclesVehicleSearch {
 
   @Field(() => Boolean, { nullable: true })
   canRegisterMileage?: boolean | null
+
+  @Field({ nullable: true })
+  engine?: string
+
+  @Field(() => [String], {
+    nullable: true,
+    description: 'Basic operator array, names only.',
+  })
+  operatorNames?: string[]
+
+  @Field(() => OperatorAnonymityStatus)
+  operatorAnonymityStatus!: OperatorAnonymityStatus
 }

@@ -5,6 +5,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  LoadingDots,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -33,7 +34,9 @@ interface BoxProps {
   vinNumber?: string
   outInStatus: number
   useStatus: string
-  reloadFlag: boolean // To force reload of the component to make sure the data in the parent is correct
+  plateCount: number
+  onPlateCountChange: (value: number) => void
+  isLoading: boolean
 }
 
 export const CarDetailsBox2: FC<React.PropsWithChildren<BoxProps>> = ({
@@ -45,6 +48,9 @@ export const CarDetailsBox2: FC<React.PropsWithChildren<BoxProps>> = ({
   mileage,
   outInStatus,
   useStatus,
+  onPlateCountChange,
+  plateCount,
+  isLoading,
 }) => {
   const {
     t: {
@@ -114,67 +120,80 @@ export const CarDetailsBox2: FC<React.PropsWithChildren<BoxProps>> = ({
           </GridRow>
         )}
 
-        {(outInStatus === OutInUsage.IN ||
-          (outInStatus === OutInUsage.OUT &&
-            useStatus === UseStatus.OUT_TICKET)) && (
-          <GridRow>
-            <GridColumn span="12/12">
-              <SelectController
-                label={t.numberplate.count}
-                id="plateCount"
-                name="plateCount"
-                options={[
-                  { label: '0', value: 0 },
-                  { label: '1', value: 1 },
-                  { label: '2', value: 2 },
-                ]}
-                onSelect={(option) => {
-                  if (option?.value === 2) {
-                    setMissingPlates(false)
-                    setLostPlate(false)
-                  } else {
-                    setMissingPlates(true)
-                  }
-                }}
-                defaultValue={2}
-              />
-            </GridColumn>
-          </GridRow>
-        )}
-        {missingPlates && (
-          <GridRow>
-            <GridColumn span="12/12">
-              <Controller
-                name="plateLost"
-                render={({ field: { onChange, value, name } }) => {
-                  return (
-                    <Checkbox
-                      large
-                      name={name}
-                      label={t.numberplate.lost}
-                      onChange={() => {
-                        if (!lostPlate) {
-                          onChange(PlateInfo.PLATE_LOST)
-                        } else {
-                          onChange()
-                        }
+        {isLoading ? (
+          <Box textAlign="center">
+            <LoadingDots />
+          </Box>
+        ) : (
+          <Box>
+            {(outInStatus === OutInUsage.IN ||
+              (outInStatus === OutInUsage.OUT &&
+                useStatus === UseStatus.OUT_TICKET)) && (
+              <GridRow>
+                <GridColumn span="12/12">
+                  <SelectController
+                    label={t.numberplate.count}
+                    id="plateCount"
+                    name="plateCount"
+                    options={[
+                      { label: '0', value: 0 },
+                      { label: '1', value: 1 },
+                      { label: '2', value: 2 },
+                    ]}
+                    onSelect={(option) => {
+                      onPlateCountChange(option?.value)
 
-                        setLostPlate(!lostPlate)
-                      }}
-                    />
-                  )
-                }}
-              />
-            </GridColumn>
-          </GridRow>
-        )}
+                      if (option?.value === 2) {
+                        setMissingPlates(false)
+                        setLostPlate(false)
+                      } else {
+                        setMissingPlates(true)
+                      }
+                    }}
+                    defaultValue={plateCount}
+                  />
+                </GridColumn>
+              </GridRow>
+            )}
+            {missingPlates && (
+              <GridRow>
+                <GridColumn span="12/12">
+                  <Controller
+                    name="plateLost"
+                    render={({ field: { onChange, value, name } }) => {
+                      return (
+                        <Checkbox
+                          large
+                          name={name}
+                          label={t.numberplate.lost}
+                          onChange={() => {
+                            if (!lostPlate) {
+                              onChange(PlateInfo.PLATE_LOST)
+                            } else {
+                              onChange()
+                            }
 
-        {lostPlate && (
-          <GridRow>
-            <GridColumn span="12/12">
-              <AlertMessage type="info" message={t.numberplate.missingInfo} />
-            </GridColumn>
-          </GridRow>
+                            setLostPlate(!lostPlate)
+                          }}
+                        />
+                      )
+                    }}
+                  />
+                </GridColumn>
+              </GridRow>
+            )}
+
+            {lostPlate && (
+              <GridRow>
+                <GridColumn span="12/12">
+                  <AlertMessage
+                    type="info"
+                    message={t.numberplate.missingInfo}
+                  />
+                </GridColumn>
+              </GridRow>
+            )}
+          </Box>
         )}
       </Stack>
     </GridContainer>

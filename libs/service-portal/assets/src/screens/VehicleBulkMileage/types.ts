@@ -2,18 +2,9 @@ export interface VehicleProps {
   vehicleId: string
   vehicleType: string
   lastMileageRegistration?: Date
-  submissionStatus: SubmissionState
 }
 
-export type SubmissionState =
-  | 'idle'
-  | 'success'
-  | 'failure'
-  | 'submit'
-  | 'submit-all'
-  | 'waiting-success'
-  | 'waiting-failure'
-  | 'waiting-idle'
+export type SubmissionStatus = 'success' | 'error' | 'loading' | 'idle'
 
 export interface Props {
   vehicles: Array<VehicleProps>

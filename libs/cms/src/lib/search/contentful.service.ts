@@ -24,12 +24,16 @@ import { Locale } from '@island.is/shared/types'
 import type { ApiResponse } from '@elastic/elasticsearch'
 import type { SearchResponse } from '@island.is/shared/types'
 import type { MappedData } from '@island.is/content-search-indexer/types'
+import { MappingService } from './mapping.service'
 
 type SyncCollection = ContentfulSyncCollection & {
   nextPageToken?: string
 }
 
 const MAX_REQUEST_COUNT = 10
+
+const MAX_RETRY_COUNT = 3
+const INITIAL_DELAY = 500
 
 // Taken from here: https://github.com/contentful/contentful-sdk-core/blob/054328ba2d0df364a5f1ce6d164c5018efb63572/lib/create-http-client.js#L34-L42
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -76,6 +80,7 @@ export class ContentfulService {
   constructor(
     private readonly elasticService: ElasticService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly mappingService: MappingService,
   ) {
     const params: CreateClientParams = {
       space: environment.contentful.space,
@@ -474,6 +479,9 @@ export class ContentfulService {
     const idsCopy = [...ids]
     let idsChunk = idsCopy.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
 
+    let nestedProgress = idsChunk.length
+    const totalNested = ids.length
+
     while (idsChunk.length > 0) {
       const size = 100
       let page = 1
@@ -483,37 +491,61 @@ export class ContentfulService {
       let response: ApiResponse<SearchResponse<MappedData>> | null = null
       let total = -1
 
+      let delay = INITIAL_DELAY
+      let retries = MAX_RETRY_COUNT
+
       while (response === null || items.length < total) {
-        response = await this.elasticService.findByQuery(elasticIndex, {
-          query: {
-            bool: {
-              should: idsChunk.map((id) => ({
-                nested: {
-                  path: 'tags',
-                  query: {
-                    bool: {
-                      must: [
-                        {
-                          term: {
-                            'tags.key': id,
+        try {
+          response = await this.elasticService.findByQuery(elasticIndex, {
+            query: {
+              bool: {
+                should: idsChunk.map((id) => ({
+                  nested: {
+                    path: 'tags',
+                    query: {
+                      bool: {
+                        must: [
+                          {
+                            term: {
+                              'tags.key': id,
+                            },
                           },
-                        },
-                        {
-                          term: {
-                            'tags.type': 'hasChildEntryWithId',
+                          {
+                            term: {
+                              'tags.type': 'hasChildEntryWithId',
+                            },
                           },
-                        },
-                      ],
+                        ],
+                      },
                     },
                   },
-                },
-              })),
-              minimum_should_match: 1,
+                })),
+                minimum_should_match: 1,
+              },
             },
-          },
-          size,
-          from: (page - 1) * size,
-        })
+            size,
+            from: (page - 1) * size,
+          })
+          // Reset variables in case we successfully receive a response
+          delay = INITIAL_DELAY
+          retries = MAX_RETRY_COUNT
+        } catch (error) {
+          if (error?.statusCode === 429 && retries > 0) {
+            logger.info('Retrying nested resolution request...', {
+              retriesLeft: retries - 1,
+              delay,
+            })
+            await new Promise((resolve) => {
+              setTimeout(resolve, delay)
+            })
+            // Keep track of how often and for how long we should wait in case of failure
+            retries -= 1
+            delay *= 2
+            continue
+          } else {
+            throw error
+          }
+        }
 
         if (response.body.hits.hits.length === 0) {
           total = response.body.hits.total.value
@@ -539,7 +571,11 @@ export class ContentfulService {
           (id) => !indexableEntries.some((entry) => entry.sys.id === id),
         )
 
+        let progress = 0
+        const total = rootEntryIds.length
+
         let chunkIds = rootEntryIds.splice(-chunkSize, chunkSize)
+        progress += chunkIds.length
 
         while (chunkIds.length > 0) {
           const items = await this.getContentfulData(chunkSize, {
@@ -547,12 +583,30 @@ export class ContentfulService {
             'sys.id[in]': chunkIds.join(','),
             locale: this.contentfulLocaleMap[locale],
           })
-          indexableEntries.push(...items)
+
+          // import data from all providers
+          const importableData = this.mappingService.mapData(items)
+
+          await this.elasticService.bulk(elasticIndex, {
+            add: flatten(importableData),
+            remove: [],
+          })
+
+          logger.info(
+            `${progress}/${total} resolved root entries have been synced`,
+          )
+
           chunkIds = rootEntryIds.splice(-chunkSize, chunkSize)
+          progress += chunkIds.length
         }
       }
 
+      logger.info(
+        `${nestedProgress}/${totalNested} nested entries have been resolved`,
+      )
+
       idsChunk = idsCopy.splice(-MAX_REQUEST_COUNT, MAX_REQUEST_COUNT)
+      nestedProgress += idsChunk.length
     }
   }
 
@@ -616,7 +670,7 @@ export class ContentfulService {
         elasticIndex,
         locale,
         chunkSize,
-        indexableEntries, // This array is modified
+        indexableEntries,
       )
 
       logger.info(

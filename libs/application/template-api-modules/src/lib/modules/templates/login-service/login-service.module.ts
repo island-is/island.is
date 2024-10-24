@@ -1,6 +1,5 @@
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../shared'
-import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { LoginServiceService } from './login-service.service'
 import { LOGIN_SERVICE_CONFIG } from './config/loginServiceConfig'
 
@@ -15,24 +14,20 @@ const applicationSenderName = process.env.EMAIL_FROM_NAME ?? ''
 
 const applicationSenderEmail = process.env.EMAIL_FROM ?? 'development@island.is'
 
-export class LoginServiceModule {
-  static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
-    return {
-      module: LoginServiceModule,
-      imports: [SharedTemplateAPIModule.register(config)],
-      providers: [
-        {
-          provide: LOGIN_SERVICE_CONFIG,
-          useValue: {
-            applicationRecipientName,
-            applicationRecipientEmail,
-            applicationSenderName,
-            applicationSenderEmail,
-          },
-        },
-        LoginServiceService,
-      ],
-      exports: [LoginServiceService],
-    }
-  }
-}
+@Module({
+  imports: [SharedTemplateAPIModule],
+  providers: [
+    {
+      provide: LOGIN_SERVICE_CONFIG,
+      useValue: {
+        applicationRecipientName,
+        applicationRecipientEmail,
+        applicationSenderName,
+        applicationSenderEmail,
+      },
+    },
+    LoginServiceService,
+  ],
+  exports: [LoginServiceService],
+})
+export class LoginServiceModule {}

@@ -159,10 +159,6 @@ describe('NotificationsWorkerService', () => {
     )
   })
 
-  afterAll(async () => {
-    await app.close()
-  })
-
   afterEach(async () => {
     await truncate(sequelize)
   })
