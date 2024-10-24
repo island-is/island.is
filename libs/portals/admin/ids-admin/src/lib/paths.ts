@@ -9,3 +9,9 @@ export enum IDSAdminPaths {
   IDSAdminClient = '/innskraningarkerfi/:tenant/forrit/:client',
   IDSAdminClientCreate = '/innskraningarkerfi/:tenant/forrit/stofna',
 }
+
+export enum IDSAdminExternalPaths {
+  Docs = 'https://docs.devland.is/products/auth',
+  DocsClients = 'https://docs.devland.is/products/auth/configuration#defining-clients',
+  DocsPermissions = 'https://docs.devland.is/products/auth/configuration#scope-configuration',
+}
