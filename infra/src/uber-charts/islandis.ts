@@ -31,6 +31,8 @@ import { serviceSetup as downloadServiceSetup } from '../../../apps/download-ser
 import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
 import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-actions-cache/infra/github-actions-cache'
 
+import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
+
 import {
   userNotificationServiceSetup,
   userNotificationCleanUpWorkerSetup,
@@ -135,6 +137,8 @@ const userNotificationWorkerService = userNotificationWorkerSetup({
 const userNotificationCleanupWorkerService =
   userNotificationCleanUpWorkerSetup()
 
+const formSystemApi = formSystemApiSetup()
+
 const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
@@ -238,6 +242,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     contentfulEntryTagger,
     licenseApi,
+    formSystemApi,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
