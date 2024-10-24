@@ -1,7 +1,6 @@
 import { FC, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
-import { height } from 'pdfkit/js/page'
 
 import {
   Box,
@@ -64,13 +63,11 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       (dateType === 'verdictViewDate' && !verdictViewDate) ||
       (dateType === 'appealDate' && !appealDate)
     ) {
-      // TODO: handle error
+      toast.error(formatMessage(errors.invalidDate))
       return
     }
 
-    if (dateType === 'verdictViewDate') {
-      setTriggerAnimation(true)
-    }
+    setTriggerAnimation(true)
 
     if (dateType === 'verdictViewDate' && verdictViewDate) {
       setAndSendDefendantToServer(
@@ -197,7 +194,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                       delayChildren: 0.6,
                     },
                   },
-                }} // Stagger and delay after second component is visible
+                }}
               >
                 <AnimatePresence>
                   {textItems.map((text, index) => (
