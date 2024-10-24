@@ -315,4 +315,4 @@ main() {
   wait
 }
 
-main &>/dev/null
+main
