@@ -157,4 +157,9 @@ export const errors = defineMessages({
     description:
       'Notaður sem villuskilaboð þegar tekst að sækja stöðu birtingar',
   },
+  invalidDate: {
+    id: 'judicial.system.core:errors.invalid_date',
+    defaultMessage: 'Dagsetning ekki á rétt slegin inn',
+    description: 'Notaður sem villuskilaboð þegar dagsetning er ekki löggild',
+  },
 })

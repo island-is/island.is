@@ -90,6 +90,12 @@ export class UpdateDefendantDto {
   readonly verdictViewDate?: Date
 
   @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
+  readonly verdictAppealDate?: Date
+
+  @IsOptional()
   @IsEnum(SubpoenaType)
   @ApiPropertyOptional({ enum: SubpoenaType })
   readonly subpoenaType?: SubpoenaType
