@@ -440,7 +440,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
       if (subArticle) {
         items.push({
           title: subArticle.title,
-          typename: 'article',
+          typename: 'subarticle',
           slug: subArticle.slug.split('/'),
         })
       }
