@@ -217,13 +217,13 @@ export class FileController {
   getServiceCertificatePdf(
     @Param('id') id: string,
     @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
-    @Param('subpoenaId') subpoenaId?: string,
   ): Promise<Response> {
     this.logger.debug(
-      `Getting service certificate for defendant ${defendantId} of case ${id} as a pdf document`,
+      `Getting service certificate for subpoena ${subpoenaId} of defendant ${defendantId} and case ${id} as a pdf document`,
     )
 
     return this.fileService.tryGetFile(
