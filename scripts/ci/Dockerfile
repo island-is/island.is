@@ -140,12 +140,11 @@ FROM playwright-base AS output-playwright
 ARG APP_HOME
 ARG APP_DIST_HOME
 
-WORKDIR ${APP_DIST_HOME}
+WORKDIR /${APP_DIST_HOME}
 
 COPY ${APP_HOME}/package.json .
 RUN chown -R pwuser:pwuser .
 
-USER pwuser
 COPY .yarnrc.yml ./
 RUN mkdir ./.yarn
 COPY .yarn/releases ./.yarn/releases
@@ -154,9 +153,11 @@ RUN yarn install
 ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
-COPY --from=builder --chown=pwuser:pwuser /build/${APP_DIST_HOME} .
+COPY --from=builder /build/${APP_DIST_HOME} .
+COPY --chmod=0755 ${APP_HOME}/entrypoint.sh .
 
-COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
+RUN chown -R pwuser:pwuser . .*
+USER pwuser
 
 ENTRYPOINT ["./entrypoint.sh"]
 
