@@ -81,6 +81,7 @@ export interface StackProps {
   space: BoxProps['paddingTop']
   align?: ResponsiveProp<Align>
   dividers?: boolean | DividerProps['weight']
+  skipLastDivider?: boolean
 }
 
 export const Stack = ({
@@ -89,6 +90,7 @@ export const Stack = ({
   space = 'none',
   align = 'left',
   dividers = false,
+  skipLastDivider = false,
 }: StackProps) => {
   if (
     process.env.NODE_ENV === 'development' &&
@@ -109,6 +111,8 @@ export const Stack = ({
   let firstItemOnMd: number | null = null
   let firstItemOnLg: number | null = null
   let firstItemOnXl: number | null = null
+
+  const lastItemIndex = stackItems.length - 1
 
   return (
     <Box component={component} className={negativeMarginTop}>
@@ -151,6 +155,13 @@ export const Stack = ({
           firstItemOnXl = index
         }
 
+        const addDivider =
+          dividers && skipLastDivider
+            ? index < lastItemIndex
+            : dividers && !skipLastDivider && index > 0
+            ? true
+            : false
+
         return (
           <Box
             component={stackItemComponent}
@@ -167,7 +178,7 @@ export const Stack = ({
               ? calculateHiddenStackItemProps(stackItemProps, hidden)
               : stackItemProps)}
           >
-            {dividers && index > 0 ? (
+            {addDivider ? (
               <Box
                 width="full"
                 paddingBottom={space}

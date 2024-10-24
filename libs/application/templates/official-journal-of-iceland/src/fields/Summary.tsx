@@ -4,6 +4,7 @@ import {
   Box,
   Bullet,
   BulletList,
+  Button,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -11,7 +12,7 @@ import { Property } from '../components/property/Property'
 import { advert, error, publishing, summary } from '../lib/messages'
 import { OJOIFieldBaseProps } from '../lib/types'
 import { useLocale } from '@island.is/localization'
-import { MINIMUM_WEEKDAYS } from '../lib/constants'
+import { MINIMUM_WEEKDAYS, Routes } from '../lib/constants'
 import { addWeekdays, parseZodIssue } from '../lib/utils'
 import { useCategories } from '../hooks/useCategories'
 import {
@@ -30,6 +31,7 @@ import { signatures } from '../lib/messages/signatures'
 export const Summary = ({
   application,
   setSubmitButtonDisabled,
+  goToScreen,
 }: OJOIFieldBaseProps) => {
   const { formatMessage: f, formatDate, formatNumber } = useLocale()
   const { application: currentApplication } = useApplication({
@@ -106,16 +108,29 @@ export const Summary = ({
                 x: f(advert.general.section),
               })}
               message={
-                <BulletList color="black">
-                  {advertValidationCheck.error.issues.map((issue) => {
-                    const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
-                    return (
-                      <Bullet key={issue.path.join('.')}>
-                        {f(parsedIssue.message)}
-                      </Bullet>
-                    )
-                  })}
-                </BulletList>
+                <Stack space={2}>
+                  <BulletList color="black">
+                    {advertValidationCheck.error.issues.map((issue) => {
+                      const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
+                      return (
+                        <Bullet key={issue.path.join('.')}>
+                          {f(parsedIssue.message)}
+                        </Bullet>
+                      )
+                    })}
+                  </BulletList>
+                  <Button
+                    onClick={() => {
+                      setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+                      goToScreen && goToScreen(Routes.ADVERT)
+                    }}
+                    size="small"
+                    variant="text"
+                    preTextIcon="arrowBack"
+                  >
+                    Opna kafla {f(advert.general.section)}
+                  </Button>
+                </Stack>
               }
             />
           )}
@@ -128,7 +143,7 @@ export const Summary = ({
                 }),
               })}
               message={
-                <Stack space={1}>
+                <Stack space={2}>
                   <Text>
                     {f(error.missingSignatureFieldsMessage, {
                       x: <strong>{f(advert.general.section)}</strong>,
@@ -144,6 +159,17 @@ export const Summary = ({
                       )
                     })}
                   </BulletList>
+                  <Button
+                    onClick={() => {
+                      setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+                      goToScreen && goToScreen(Routes.ADVERT)
+                    }}
+                    size="small"
+                    variant="text"
+                    preTextIcon="arrowBack"
+                  >
+                    Opna kafla {f(advert.general.section)}
+                  </Button>
                 </Stack>
               }
             />
@@ -153,16 +179,29 @@ export const Summary = ({
               type="warning"
               title={f(error.missingFieldsTitle)}
               message={
-                <BulletList color="black">
-                  {publishingCheck.error.issues.map((issue) => {
-                    const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
-                    return (
-                      <Bullet key={issue.path.join('.')}>
-                        {f(parsedIssue.message)}
-                      </Bullet>
-                    )
-                  })}
-                </BulletList>
+                <Stack space={2}>
+                  <BulletList color="black">
+                    {publishingCheck.error.issues.map((issue) => {
+                      const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
+                      return (
+                        <Bullet key={issue.path.join('.')}>
+                          {f(parsedIssue.message)}
+                        </Bullet>
+                      )
+                    })}
+                  </BulletList>
+                  <Button
+                    onClick={() => {
+                      setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+                      goToScreen && goToScreen(Routes.PUBLISHING)
+                    }}
+                    size="small"
+                    variant="text"
+                    preTextIcon="arrowBack"
+                  >
+                    Opna kafla {f(publishing.general.section)}
+                  </Button>
+                </Stack>
               }
             />
           )}

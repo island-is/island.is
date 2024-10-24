@@ -7,9 +7,9 @@ import {
 } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 import { partialSchema } from '../lib/dataSchema'
-import { InputFields, OJOIApplication } from '../lib/types'
+import { OJOIApplication } from '../lib/types'
 import debounce from 'lodash/debounce'
-import { AnswerOption, DEBOUNCE_INPUT_TIMER } from '../lib/constants'
+import { DEBOUNCE_INPUT_TIMER } from '../lib/constants'
 import { ApplicationTypes } from '@island.is/application/types'
 import { Application } from '@island.is/api/schema'
 
@@ -44,8 +44,7 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     { data: submitData, loading: submitLoading, error: submitError },
   ] = useMutation(SUBMIT_APPLICATION)
 
-  const [createApplicationMutation, { error: createError }] =
-    useMutation(CREATE_APPLICATION)
+  const [createApplicationMutation] = useMutation(CREATE_APPLICATION)
 
   const updateApplication = async (input: partialSchema, cb?: () => void) => {
     await updateApplicationMutation({
@@ -63,7 +62,10 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     cb && cb()
   }
 
-  const submitApplication = async (event: string) => {
+  const submitApplication = async (
+    event: string,
+    onCompleted?: (data: { submitApplication: Application }) => void,
+  ) => {
     await submitApplicationMutation({
       variables: {
         locale,
@@ -72,6 +74,7 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
           event: event,
         },
       },
+      onCompleted: onCompleted,
     })
   }
 

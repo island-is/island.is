@@ -41,6 +41,17 @@ export const publishing = {
       defaultMessage: 'Hvenær viltu að auglýsing birtist?',
       description: 'Title of the date section',
     },
+    fastTrack: {
+      id: 'ojoi.application:publishing.headings.fastTrack',
+      defaultMessage: 'Hraðbirting hefur verið valin',
+      description: 'Title of the fast track section',
+    },
+    fastTrackMessage: {
+      id: 'ojoi.application:publishing.headings.fastTrackMessage',
+      defaultMessage:
+        'Mál sem eru send til birtingar með birtingar dag innan við næstu 10 daga eru merkt í hraðbirtingu.',
+      description: 'Message of the fast track section',
+    },
   }),
   inputs: {
     datepicker: defineMessages({

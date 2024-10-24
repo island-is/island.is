@@ -1,4 +1,4 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Signatures.css'
 import { InstitutionSignature } from './Institution'
@@ -53,7 +53,7 @@ export const CommitteeSignature = ({ applicationId }: Props) => {
           <Text variant="h5" marginBottom={2}>
             {f(signatures.headings.committeeMembers)}
           </Text>
-          <Box className={styles.committeeInputGroupWrapper}>
+          <Stack space={2} dividers skipLastDivider>
             {signature?.members?.map((member, index) => (
               <CommitteeMember
                 key={index}
@@ -63,7 +63,7 @@ export const CommitteeSignature = ({ applicationId }: Props) => {
               />
             ))}
             <AddCommitteeMember applicationId={applicationId} />
-          </Box>
+          </Stack>
         </Box>
       </Box>
       <AdditionalSignature

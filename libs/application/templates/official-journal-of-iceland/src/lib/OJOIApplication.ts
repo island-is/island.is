@@ -266,6 +266,12 @@ const OJOITemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(90),
+          actionCard: {
+            tag: {
+              label: 'Útgefið',
+              variant: 'mint',
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,

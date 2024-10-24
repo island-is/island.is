@@ -13,7 +13,7 @@ import { InputFields, OJOIApplication, RequiredInputFieldsNames } from './types'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { SignatureTypes, OJOI_DF } from './constants'
+import { SignatureTypes, OJOI_DF, FAST_TRACK_DAYS } from './constants'
 import { MessageDescriptor } from 'react-intl'
 
 export const countDaysAgo = (date: Date) => {
@@ -320,4 +320,19 @@ export const getSingleSignatureMarkup = (
   chairman?: z.infer<typeof memberItemSchema>,
 ) => {
   return signatureTemplate([signature], additionalSignature, chairman)
+}
+
+export const getFastTrack = (date: Date) => {
+  const now = new Date()
+  const diff = date.getTime() - now.getTime()
+  const diffDays = diff / (1000 * 3600 * 24)
+  let fastTrack = false
+
+  if (diffDays <= FAST_TRACK_DAYS) {
+    fastTrack = true
+  }
+  return {
+    fastTrack,
+    now,
+  }
 }

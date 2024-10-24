@@ -15,9 +15,10 @@ import { useCategories } from '../hooks/useCategories'
 import { MINIMUM_WEEKDAYS, OJOI_INPUT_HEIGHT } from '../lib/constants'
 import set from 'lodash/set'
 import addYears from 'date-fns/addYears'
-import { addWeekdays, getWeekendDates } from '../lib/utils'
+import { addWeekdays, getFastTrack, getWeekendDates } from '../lib/utils'
+import { useState } from 'react'
 
-export const Publishing = ({ application }: OJOIFieldBaseProps) => {
+export const Publishing = ({ application, goToScreen }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
 
   const { application: currentApplication, updateApplication } = useApplication(
@@ -32,19 +33,22 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
     loading: categoryLoading,
   } = useCategories()
 
-  if (categoryLoading) {
-    return <SkeletonLoader height={OJOI_INPUT_HEIGHT} repeat={2} />
+  const today = new Date()
+  const maxEndDate = addYears(today, 5)
+  const minDate = new Date()
+  if (minDate.getHours() >= 12) {
+    minDate.setDate(minDate.getDate() + 1)
   }
 
-  if (categoryError) {
-    return (
-      <AlertMessage
-        type="error"
-        message={f(error.fetchFailedTitle)}
-        title={f(error.fetchFailedTitle)}
-      />
-    )
-  }
+  const defaultDate = currentApplication.answers.advert?.requestedDate
+    ? new Date(currentApplication.answers.advert.requestedDate)
+        .toISOString()
+        .split('T')[0]
+    : addWeekdays(today, MINIMUM_WEEKDAYS).toISOString().split('T')[0]
+
+  const [fastTrack, setFastTrack] = useState(
+    getFastTrack(new Date(defaultDate)).fastTrack,
+  )
 
   const onCategoryChange = (value?: string) => {
     if (!value) {
@@ -81,19 +85,6 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
     currentApplication.answers.advert?.categories?.includes(c.id),
   )
 
-  const today = new Date()
-  const maxEndDate = addYears(today, 5)
-  const minDate = new Date()
-  if (minDate.getHours() >= 12) {
-    minDate.setDate(minDate.getDate() + 1)
-  }
-
-  const defaultDate = currentApplication.answers.advert?.requestedDate
-    ? new Date(currentApplication.answers.advert.requestedDate)
-        .toISOString()
-        .split('T')[0]
-    : addWeekdays(today, MINIMUM_WEEKDAYS).toISOString().split('T')[0]
-
   return (
     <FormGroup title={f(publishing.headings.date)}>
       <Box width="half">
@@ -106,31 +97,54 @@ export const Publishing = ({ application }: OJOIFieldBaseProps) => {
           minDate={minDate}
           maxDate={maxEndDate}
           defaultValue={defaultDate}
+          onChange={(date) => {
+            const fastTrack = getFastTrack(new Date(date)).fastTrack
+            setFastTrack(fastTrack)
+          }}
         />
       </Box>
       <Box width="half">
-        <Select
-          size="sm"
-          label={f(publishing.inputs.contentCategories.label)}
-          backgroundColor="blue"
-          defaultValue={defaultCategory}
-          options={mappedCategories}
-          onChange={(opt) => onCategoryChange(opt?.value)}
-        />
-        <Box
-          marginTop={1}
-          display="flex"
-          rowGap={1}
-          columnGap={1}
-          flexWrap="wrap"
-        >
-          {selectedCategories?.map((c) => (
-            <Tag onClick={() => onCategoryChange(c.id)} outlined key={c.id}>
-              {c.title}
-            </Tag>
-          ))}
-        </Box>
+        {categoryLoading ? (
+          <SkeletonLoader repeat={2} height={OJOI_INPUT_HEIGHT} space={2} />
+        ) : categoryError ? (
+          <AlertMessage
+            type="error"
+            message={f(error.fetchFailedTitle)}
+            title={f(error.fetchFailedTitle)}
+          />
+        ) : (
+          <>
+            <Select
+              size="sm"
+              label={f(publishing.inputs.contentCategories.label)}
+              backgroundColor="blue"
+              defaultValue={defaultCategory}
+              options={mappedCategories}
+              onChange={(opt) => onCategoryChange(opt?.value)}
+            />
+            <Box
+              marginTop={1}
+              display="flex"
+              rowGap={1}
+              columnGap={1}
+              flexWrap="wrap"
+            >
+              {selectedCategories?.map((c) => (
+                <Tag onClick={() => onCategoryChange(c.id)} outlined key={c.id}>
+                  {c.title}
+                </Tag>
+              ))}
+            </Box>
+          </>
+        )}
       </Box>
+      {fastTrack && (
+        <AlertMessage
+          type="info"
+          title={f(publishing.headings.fastTrack)}
+          message={f(publishing.headings.fastTrackMessage)}
+        />
+      )}
     </FormGroup>
   )
 }

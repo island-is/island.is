@@ -1,5 +1,5 @@
 import { FormGroup } from '../components/form/FormGroup'
-import { OJOIFieldBaseProps } from '../lib/types'
+import { InputFields, OJOIFieldBaseProps } from '../lib/types'
 import { Box, Button, LinkV2 } from '@island.is/island-ui/core'
 import { CompleteImage } from '../assets/CompleteImage'
 import { submitted } from '../lib/messages/submitted'
@@ -12,7 +12,14 @@ import {
 } from '@island.is/application/types'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { AnswerOption } from '../lib/constants'
+import {
+  AnswerOption,
+  DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT,
+  DEFAULT_REGULAR_SIGNATURE_COUNT,
+  DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
+} from '../lib/constants'
+import set from 'lodash/set'
+import { getCommitteeSignature, getRegularSignature } from '../lib/utils'
 export const Submitted = (props: OJOIFieldBaseProps) => {
   const { formatMessage, locale } = useLocale()
 
@@ -29,16 +36,31 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
     useMutation(UPDATE_APPLICATION)
 
   const updateNewApplication = (id: string) => {
+    let currentAnswers = {}
+
+    currentAnswers = set(
+      currentAnswers,
+      InputFields.requirements.approveExternalData,
+      AnswerOption.YES,
+    )
+
+    currentAnswers = set(currentAnswers, InputFields.signature.regular, [
+      ...getRegularSignature(
+        DEFAULT_REGULAR_SIGNATURE_COUNT,
+        DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
+      ),
+    ])
+
+    currentAnswers = set(currentAnswers, InputFields.signature.committee, {
+      ...getCommitteeSignature(DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT),
+    })
+
     updateApplicationMutation({
       variables: {
         locale,
         input: {
           id: id,
-          answers: {
-            requirements: {
-              approveExternalData: AnswerOption.YES,
-            },
-          },
+          answers: currentAnswers,
         },
       },
       onCompleted: () => {
