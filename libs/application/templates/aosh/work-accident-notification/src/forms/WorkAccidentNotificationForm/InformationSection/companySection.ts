@@ -33,7 +33,6 @@ export const companySection = buildSubSection({
               'employeeAmount',
               1,
             ) as number
-            console.log(employeeAmount)
             return employeeAmount
           },
         }),

@@ -17,6 +17,12 @@ export const causeAndConsequences = {
       defaultMessage: 'Vinsamlegast veldur eitt af eftirfarandi.',
       description: 'Alert before most serious choice',
     },
+    causeAndConsequencesNothingChosen: {
+      id: 'aosh.wan.application:causeAndConsequences.circumstances.causeAndConsequencesNothingChosen',
+      defaultMessage: 'Vinsamlegast veldu a.m.k einn valmöguleika',
+      description:
+        'error alerting users to choose at least on option (cause and consequences pages)',
+    },
   }),
   absence: defineMessages({
     title: {

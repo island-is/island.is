@@ -12,7 +12,6 @@ const buildRepeatableSections = (): Section[] => {
   const sections = [...Array(20)].map((_key, index) => {
     return EmployeeAndAccidentInformationSection(index)
   })
-  console.log(sections)
   return sections.flat()
 }
 

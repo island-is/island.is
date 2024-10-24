@@ -33,7 +33,7 @@ export const Occupation: FC<
   const { formatMessage } = useLocale()
   const { application, setBeforeSubmitCallback } = props
   const answers = application.answers as WorkAccidentNotification
-  const { setValue } = useFormContext()
+  const { setValue, getValues } = useFormContext()
 
   const [selectedMajorGroup, setSelectedMajorGroup] = useState<Options | null>(
     answers?.employee?.[idx]?.victimsOccupationMajor || null,
@@ -146,11 +146,12 @@ export const Occupation: FC<
       (group) => group.code === value[0],
     )
     const chosenGroup = allGroups.find((group) => group.code === value)
-    if (chosenGroup)
+    if (chosenGroup) {
       setValue(`employee[${idx}].victimsOccupation`, {
         value: chosenGroup.code,
         label: chosenGroup.name,
       })
+    }
     if (!majorGroup || !majorGroup.code || !majorGroup.name) return
     setSelectedMajorGroup({ value: majorGroup.code, label: majorGroup.name })
   }
@@ -168,7 +169,6 @@ export const Occupation: FC<
       ),
     )
 
-    setValue(`employee[${idx}].victimsOccupationMajor`, selectedGroup)
     const chosenMajorGroup = findGroupByCode(majorGroupOptions, value.value)
     if (chosenMajorGroup?.validToSelect) {
       setValue(`employee[${idx}].victimsOccupation`, selectedGroup)
@@ -195,16 +195,6 @@ export const Occupation: FC<
       ),
     )
 
-    const chosenSubMajorGroup = findGroupByCode(
-      subMajorGroupOptions,
-      value.value,
-    )
-
-    setValue(`employee[${idx}].victimsOccupationSubMajor`, selectedGroup)
-    if (chosenSubMajorGroup?.validToSelect) {
-      setValue(`employee[${idx}].victimsOccupation`, selectedGroup)
-    }
-
     setSelectedMinorGroup(null)
     setSelectedUnitGroup(null)
     setUnitGroupOptions([])
@@ -223,12 +213,6 @@ export const Occupation: FC<
       ),
     )
 
-    setValue(`employee[${idx}].victimsOccupationMinor`, selectedGroup)
-    const chosenMinorGroup = findGroupByCode(minorGroupOptions, value.value)
-    if (chosenMinorGroup?.validToSelect) {
-      setValue(`employee[${idx}].victimsOccupation`, selectedGroup)
-    }
-
     setSelectedUnitGroup(null)
   }
 
@@ -236,8 +220,6 @@ export const Occupation: FC<
     if (!selectedMajorGroup) return
 
     if (selectedSearchGroup) {
-      setValue(`employee[${idx}].victimsOccupationMajor`, selectedMajorGroup)
-
       const codeString: string = selectedSearchGroup.value
       const subMajorGroup = victimsOccupationSubMajorGroups.find(
         (group) => group.code?.substring(0, 2) === codeString?.substring(0, 2),
@@ -264,11 +246,6 @@ export const Occupation: FC<
     if (!selectedSubMajorGroup) return
 
     if (selectedSearchGroup) {
-      setValue(
-        `employee[${idx}].victimsOccupationSubMajor`,
-        selectedSubMajorGroup,
-      )
-
       const codeString = selectedSearchGroup.value
       const minorGroup = victimOccupationMinorGroups.find(
         (group) => group.code?.substring(0, 3) === codeString?.substring(0, 3),
@@ -295,25 +272,18 @@ export const Occupation: FC<
     if (!selectedMinorGroup) return
 
     if (selectedSearchGroup) {
-      setValue(`employee[${idx}].victimsOccupationMinor`, selectedMinorGroup)
-
       const codeString = selectedSearchGroup.value
       const unitGroup = victimsOccupationUnitGroups.find(
         (group) => group.code?.substring(0, 4) === codeString?.substring(0, 4),
       )
       if (!unitGroup || !unitGroup.code || !unitGroup.name) {
         setSelectedUnitGroup({ value: '', label: '' })
-        setValue(`employee[${idx}].victimsOccupationUnit`, {
-          value: '',
-          label: '',
-        })
       } else {
         const selectedUnitGroup: Options = {
           value: unitGroup.code,
           label: unitGroup.name,
         }
         setSelectedUnitGroup(selectedUnitGroup)
-        setValue(`employee[${idx}].victimsOccupationUnit`, selectedUnitGroup)
       }
       setUnitGroupOptions(
         victimsOccupationUnitGroups.filter(
@@ -336,6 +306,8 @@ export const Occupation: FC<
     return [true, null]
   })
 
+  console.log('formContext', getValues())
+
   return (
     <Box>
       {/* Search bar */}
@@ -344,7 +316,7 @@ export const Occupation: FC<
           render={() => {
             return (
               <Select
-                name=""
+                name={`searchBar[${idx}]`}
                 options={getAllValidSelects()}
                 backgroundColor="blue"
                 value={selectedSearchGroup}
@@ -364,7 +336,7 @@ export const Occupation: FC<
               />
             )
           }}
-          name={'searchBar'}
+          name={`searchBar[${idx}]`}
         />
       </Box>
       {/* Major group */}

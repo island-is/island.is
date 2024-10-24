@@ -47,6 +47,7 @@ export const employeeSubSection = (index: number) =>
           }),
           buildNationalIdWithNameField({
             id: `employee[${index}].nationalField`,
+            required: true,
             title: '',
           }),
           buildTextField({
@@ -55,7 +56,7 @@ export const employeeSubSection = (index: number) =>
             title: employee.employee.address,
             width: 'half',
             variant: 'text',
-            // required: true,
+            required: true,
           }),
           buildSelectField({
             id: `employee[${index}].postnumberAndMunicipality`,
@@ -75,7 +76,7 @@ export const employeeSubSection = (index: number) =>
                   value: code || '',
                 }))
             },
-            // required: true,
+            required: true,
           }),
           buildSelectField({
             id: `employee[${index}].nationality`,
@@ -90,7 +91,7 @@ export const employeeSubSection = (index: number) =>
                 }
               })
             },
-            // required: true,
+            required: true,
           }),
           buildDescriptionField({
             id: `employee[${index}].workArrangement`,
@@ -101,14 +102,14 @@ export const employeeSubSection = (index: number) =>
           buildDateField({
             id: `employee[${index}].startDate`,
             width: 'half',
-            // required: true,
+            required: true,
             title: employee.employee.startDate,
           }),
           buildSelectField({
             id: `employee[${index}].employmentTime`,
             title: employee.employee.employmentTime,
             width: 'half',
-            // required: true,
+            required: true,
             options: (application) => {
               const empLength = getValueViaPath(
                 application.externalData,
@@ -128,12 +129,12 @@ export const employeeSubSection = (index: number) =>
             title: employee.employee.employmentRate,
             width: 'half',
             required: true,
-            format: '###',
+            format: '###%',
           }),
           buildSelectField({
             id: `employee[${index}].workhourArrangement`,
             width: 'half',
-            // required: true,
+            required: true,
             title: employee.employee.workhourArrangement,
             options: (application) => {
               const workhourArrangements = getValueViaPath(
@@ -161,7 +162,7 @@ export const employeeSubSection = (index: number) =>
             id: `employee[${index}].workstation`,
             title: employee.employee.workstation,
             width: 'half',
-            // required: true,
+            required: true,
             options: (application) => {
               const workstations = getValueViaPath(
                 application.externalData,
@@ -180,7 +181,7 @@ export const employeeSubSection = (index: number) =>
             id: `employee[${index}].employmentStatus`,
             title: employee.employee.employmentStatus,
             width: 'half',
-            // required: true,
+            required: true,
             options: (application) => {
               const options = getValueViaPath(
                 application.externalData,
