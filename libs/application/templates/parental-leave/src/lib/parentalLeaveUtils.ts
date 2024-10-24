@@ -81,6 +81,7 @@ import {
   YesOrNo,
 } from '../types'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
+import { ApplicationRights } from '@island.is/api/schema'
 
 export const getExpectedDateOfBirthOrAdoptionDateOrBirthDate = (
   application: Application,
@@ -351,6 +352,18 @@ export const getAdditionalSingleParentRightsInDays = (
 }
 
 export const getAvailableRightsInDays = (application: Application) => {
+  const { VMSTApplicationRights } = getApplicationExternalData(
+    application.externalData,
+  )
+  const VMSTDays = VMSTApplicationRights?.reduce(
+    (acc, right) => acc + Number(right.days),
+    0,
+  )
+
+  if (VMSTDays) {
+    return VMSTDays
+  }
+
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
@@ -618,6 +631,11 @@ export const getApplicationExternalData = (
     'VMSTPeriods.data',
   ) as VMSTPeriod[]
 
+  const VMSTApplicationRights = getValueViaPath(
+    externalData,
+    'VMSTApplicationRights.data',
+  ) as ApplicationRights[]
+
   return {
     applicantName,
     applicantGenderCode,
@@ -629,6 +647,7 @@ export const getApplicationExternalData = (
     userPhoneNumber,
     dateOfBirth,
     VMSTPeriods,
+    VMSTApplicationRights,
   }
 }
 

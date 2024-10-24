@@ -682,9 +682,21 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const { applicationType, otherParent, isRequestingRights, periods } =
       getApplicationAnswers(application.answers)
 
-    const { applicationFundId } = getApplicationExternalData(
-      application.externalData,
-    )
+    const { applicationFundId, VMSTApplicationRights } =
+      getApplicationExternalData(application.externalData)
+    console.log({ VMSTApplicationRights })
+    if (VMSTApplicationRights) {
+      let usedDays = calculateDaysUsedByPeriods(periods)
+      const rights = VMSTApplicationRights.map((VMSTRight) => {
+        const daysLeft = Math.max(0, Number(VMSTRight.days) - usedDays)
+        usedDays -= Number(VMSTRight.days) - daysLeft
+        return {
+          ...VMSTRight,
+          daysLeft: String(daysLeft),
+        }
+      })
+      return rights
+    }
 
     let vmstRightCodePeriod = null
     if (applicationFundId) {
@@ -928,6 +940,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       periods,
       firstPeriodStart,
     )
+    // console.log({ periodsDTO, rightsDTO })
+    // throw 'e'
 
     try {
       const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
@@ -1025,6 +1039,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       periods,
       firstPeriodStart,
     )
+    // console.log({ periodsDTO, rightsDTO })
+    // throw 'e'
 
     try {
       const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
@@ -1063,6 +1079,25 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     } catch (e) {
       this.logger.warn(
         `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
+      )
+    }
+
+    return null
+  }
+
+  async setApplicationRights({ application }: TemplateApiModuleActionProps) {
+    try {
+      const { applicationRights } =
+        await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
+
+      return applicationRights
+    } catch (e) {
+      this.logger.warn(
+        `Could not fetch applicationRights on nationalId with error: ${e}`,
       )
     }
 
