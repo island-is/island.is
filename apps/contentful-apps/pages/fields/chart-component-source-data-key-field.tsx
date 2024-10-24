@@ -53,6 +53,7 @@ const sortByDateOfChange = (a: ManualDataDateItem, b: ManualDataDateItem) => {
 interface ManualData {
   typeOfSource: SourceDataKeyValues
   typeOfManualDataKey: ManualDataKeyValues
+  externalSourceDataKey?: string
   dateItems: {
     id: number
     key: string
@@ -81,14 +82,14 @@ const ChartComponentSourceDataKeyField = () => {
     },
   )
   const typeOfSource = manualData ? manualData['typeOfSource'] : null
-  const externarSourceDataKey = manualData
+  const externalSourceDataKey = manualData
     ? manualData['externalSourceDataKey']
     : ''
   const [sourceDataKeyValue, setSourceDataKeyValue] = useState(
     typeOfSource ?? SourceDataKeyValues.ExternalSourceKey,
   )
 
-  const [textInput, setTextInput] = useState(externarSourceDataKey)
+  const [textInput, setTextInput] = useState(externalSourceDataKey)
 
   const [manualDataKeyValue, setManualDataKeyValue] = useState(
     ManualDataKeyValues.Date,
