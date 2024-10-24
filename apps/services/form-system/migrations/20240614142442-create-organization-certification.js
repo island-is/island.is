@@ -1,10 +1,8 @@
-'use strict'
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'organization_certification_type',
+        'organization_certification',
         {
           id: {
             type: Sequelize.UUID,
@@ -30,13 +28,10 @@ module.exports = {
               key: 'id',
             },
           },
-          certification_type_id: {
+          certification_id: {
             type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV4,
             allowNull: false,
-            references: {
-              model: 'certification_type',
-              key: 'id',
-            },
           },
         },
         { transaction: t },
@@ -46,7 +41,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('organization_certification_type', {
+      queryInterface.dropTable('organization_certification', {
         transaction: t,
       }),
     )

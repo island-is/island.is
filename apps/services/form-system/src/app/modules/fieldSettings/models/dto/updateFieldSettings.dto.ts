@@ -1,11 +1,14 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import {
   IsBoolean,
-  IsDate,
+  IsDateString,
   IsNumber,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator'
+import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { Type } from 'class-transformer'
 
 export class UpdateFieldSettingsDto {
   @IsOptional()
@@ -29,12 +32,12 @@ export class UpdateFieldSettingsDto {
   maxLength?: number
 
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   @ApiPropertyOptional({ type: Date })
   minDate?: Date
 
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   @ApiPropertyOptional({ type: Date })
   maxDate?: Date
 
@@ -64,9 +67,20 @@ export class UpdateFieldSettingsDto {
   url?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  buttonText?: string
+  @ValidateNested()
+  @Type(() => LanguageType)
+  @ApiPropertyOptional({ type: LanguageType })
+  buttonText?: LanguageType
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isRequired?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  isLarge?: boolean
 
   @IsOptional()
   @IsBoolean()

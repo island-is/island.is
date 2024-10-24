@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import { FieldTypeDto } from '../../../fields/models/dto/fieldType.dto'
 import { ListTypeDto } from '../../../lists/models/dto/listType.dto'
-import { CertificationTypeDto } from '../../../certifications/models/dto/certificationType.dto'
+import { FormCertificationDto } from '../../../formCertifications/models/dto/formCertification.dto'
 import { FormDto } from './form.dto'
 
 export class FormResponseDto {
@@ -11,8 +11,8 @@ export class FormResponseDto {
   @ApiPropertyOptional({ type: [FieldTypeDto] })
   fieldTypes?: FieldTypeDto[]
 
-  @ApiPropertyOptional({ type: [CertificationTypeDto] })
-  certificationTypes?: CertificationTypeDto[]
+  @ApiPropertyOptional({ type: [FormCertificationDto] })
+  certificationTypes?: FormCertificationDto[]
 
   @ApiPropertyOptional({ type: [ListTypeDto] })
   listTypes?: ListTypeDto[]

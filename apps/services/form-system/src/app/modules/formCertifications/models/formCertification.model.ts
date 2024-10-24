@@ -9,10 +9,10 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Form } from '../../forms/models/form.model'
-import { CertificationType } from './certificationType.model'
+// import { Certifications } from './certification.model'
 
-@Table({ tableName: 'form_certification_type' })
-export class FormCertificationType extends Model<FormCertificationType> {
+@Table({ tableName: 'form_certification' })
+export class FormCertification extends Model<FormCertification> {
   @Column({
     type: DataType.UUID,
     allowNull: false,
@@ -35,11 +35,10 @@ export class FormCertificationType extends Model<FormCertificationType> {
   })
   formId!: string
 
-  @ForeignKey(() => CertificationType)
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     allowNull: false,
-    field: 'certification_type_id',
+    defaultValue: DataType.UUIDV4,
   })
-  certificationTypeId!: string
+  certificationId!: string
 }

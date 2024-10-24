@@ -13,9 +13,10 @@ import {
 import { Section } from '../../sections/models/section.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { FormApplicant } from '../../applicants/models/formApplicant.model'
-import { CertificationType } from '../../certifications/models/certificationType.model'
-import { randomUUID } from 'crypto'
+import { FormApplicant } from '../../formApplicants/models/formApplicant.model'
+// import { Certification } from '../../certifications/models/certification.model'
+import { Dependency } from '../../../dataTypes/dependency.model'
+import { FormCertification } from '../../formCertifications/models/formCertification.model'
 
 @Table({ tableName: 'form' })
 export class Form extends Model<Form> {
@@ -38,7 +39,7 @@ export class Form extends Model<Form> {
     type: DataType.STRING,
     allowNull: false,
     unique: true,
-    defaultValue: randomUUID(),
+    defaultValue: DataType.UUIDV4,
   })
   slug!: string
 
@@ -74,6 +75,13 @@ export class Form extends Model<Form> {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
+  })
+  isPublishedInChanging!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
     defaultValue: true,
   })
   stopProgressOnValidatingScreen!: boolean
@@ -85,11 +93,20 @@ export class Form extends Model<Form> {
   })
   completedMessage?: LanguageType
 
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  dependencies?: Dependency[]
+
   @HasMany(() => Section)
   sections!: Section[]
 
   @HasMany(() => FormApplicant)
   applicants?: FormApplicant[]
+
+  @HasMany(() => FormCertification)
+  certifications?: FormCertification[]
 
   @ForeignKey(() => Organization)
   @Column({
@@ -98,11 +115,4 @@ export class Form extends Model<Form> {
     field: 'organization_id',
   })
   organizationId!: string
-
-  @BelongsToMany(() => CertificationType, {
-    through: 'form_certification_type',
-    foreignKey: 'form_id',
-    otherKey: 'certification_type_id',
-  })
-  certificationTypes?: NonAttribute<CertificationType[]>
 }

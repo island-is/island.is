@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
@@ -67,7 +65,15 @@ module.exports = {
             allowNull: true,
           },
           button_text: {
-            type: Sequelize.STRING,
+            type: Sequelize.JSON,
+            allowNull: true,
+          },
+          is_required: {
+            type: Sequelize.BOOLEAN,
+            allowNull: true,
+          },
+          is_large: {
+            type: Sequelize.BOOLEAN,
             allowNull: true,
           },
           has_property_input: {
