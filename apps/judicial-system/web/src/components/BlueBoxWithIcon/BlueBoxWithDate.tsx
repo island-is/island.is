@@ -82,7 +82,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       return
     }
 
-    setTriggerAnimation(true)
     if (dateType === 'verdictViewDate' && verdictViewDate) {
       setAndSendDefendantToServer(
         {
@@ -120,11 +119,16 @@ const BlueBoxWithDate: FC<Props> = (props) => {
 
   const datePicker2Variants = {
     dpHidden: { opacity: 0, y: 15 },
-    dpVisible: { opacity: 1, y: 0, height: 'auto' },
+    dpVisible: {
+      opacity: 1,
+      y: 0,
+      height: 'auto',
+      transition: { delay: triggerAnimation ? 0 : 0.4 },
+    },
     dpExit: {
       opacity: 0,
       height: 0,
-      transition: { height: { delay: 0.5 } },
+      transition: { height: { delay: 0.4 } },
     },
   }
 
@@ -182,30 +186,32 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           <Text variant="eyebrow">{defendant.name}</Text>
         </Box>
       </Box>
-      {showAppealFields &&
-        textItems.map((text, index) => (
-          <div
-            key={index}
-            style={{
-              marginTop: index === 0 ? 0 : '16px',
-            }}
-          >
-            <Text>{text}</Text>
-          </div>
-        ))}
+      <AnimatePresence>
+        {showAppealFields &&
+          textItems.map((text, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ delay: index * 0.2, duration: 0.3 }}
+              style={{
+                marginTop: index === 0 ? 0 : '16px',
+              }}
+              onAnimationComplete={() => setTriggerAnimation(true)}
+            >
+              <Text>{text}</Text>
+            </motion.div>
+          ))}
+      </AnimatePresence>
       <AnimatePresence mode="wait">
-        {triggerAppealAnimation ||
-        defendant.verdictAppealDate ? null : defendantCanAppeal ? (
+        {defendant.verdictAppealDate ? null : defendantCanAppeal ? (
           <motion.div
             key="defendantAppealDate"
             variants={datePicker2Variants}
-            initial={triggerAnimation ? 'dpHidden' : false}
+            initial="dpHidden"
             animate="dpVisible"
             exit="dpExit"
-            transition={{
-              duration: 0.4,
-              ease: 'easeInOut',
-            }}
             style={{ marginTop: '16px' }}
           >
             <Box className={styles.dataContainer}>
@@ -239,7 +245,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             initial={false}
             animate="dpVisible"
             exit="dpExit"
-            transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.2 }}
+            transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
             style={{ marginTop: '16px' }}
           >
             <Box className={styles.dataContainer}>
