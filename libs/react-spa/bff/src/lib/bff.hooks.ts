@@ -12,7 +12,7 @@ export const useBff = () => {
   const bffContext = useContext(BffContext)
 
   if (!bffContext) {
-    throw new Error('useAuth must be used within a BffProvider')
+    throw new Error('useBff must be used within a BffProvider')
   }
 
   return bffContext

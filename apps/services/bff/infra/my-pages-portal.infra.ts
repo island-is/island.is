@@ -33,7 +33,6 @@ export const serviceSetup = (
     })
     .readiness(`/${key}/bff/health/check`)
     .liveness(`/${key}/bff/liveness`)
-
     .replicaCount({
       default: 2,
       min: 2,

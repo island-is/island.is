@@ -117,7 +117,8 @@
         "commands": [
           "yarn nx run service-portal:start-bff",
           "yarn start service-portal"
-        ]
+        ],
+        "parallel": true
       }
     },
     "mockmode": {
