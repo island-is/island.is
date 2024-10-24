@@ -127,6 +127,8 @@ CMD [ "jest", "main.spec.js" ]
 
 
 FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-base
+# TODO: remove awscli dependency (157 MB extra)
+RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
 
 
 
@@ -134,15 +136,12 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-bas
 
 
 FROM playwright-base AS output-playwright
-# TODO: remove awscli dependency (157 MB extra)
-RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
 
 ARG APP_HOME
 ARG APP_DIST_HOME
 
 WORKDIR ${APP_DIST_HOME}
 
-COPY --from=builder /build/${APP_DIST_HOME} .
 COPY ${APP_HOME}/package.json .
 RUN chown -R pwuser:pwuser .
 
@@ -154,6 +153,8 @@ RUN yarn install
 
 ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
+
+COPY --from=builder --chown=pwuser:pwuser /build/${APP_DIST_HOME} .
 
 COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
 
