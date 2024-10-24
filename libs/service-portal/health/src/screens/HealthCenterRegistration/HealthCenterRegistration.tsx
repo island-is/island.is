@@ -9,6 +9,7 @@ import {
   Table as T,
   Button,
   FilterInput,
+  Select,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
@@ -16,6 +17,7 @@ import {
   EmptyState,
   ErrorScreen,
   ExcludesFalse,
+  Modal,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import * as styles from './HealthRegistration.css'
@@ -26,7 +28,6 @@ import { RightsPortalHealthCenter } from '@island.is/api/schema'
 import { useNavigate } from 'react-router-dom'
 import { HealthPaths } from '../../lib/paths'
 import { formatHealthCenterName } from '../../utils/format'
-import { RegisterModal } from '../../components/RegisterModal'
 import {
   useGetHealthCenterDoctorsLazyQuery,
   useGetHealthCenterQuery,
@@ -58,11 +59,17 @@ const HealthCenterRegistration = () => {
   const [filter, setFilter] = useState('')
   const [loadingTransfer, setLoadingTransfer] = useState(false)
   const [errorTransfer, setErrorTransfer] = useState(false)
+
   const [selectedHealthCenter, setSelectedHealthCenter] =
     useState<SelectedHealthCenter | null>(null)
+
   const [healthCenterDoctors, setHealthCenterDoctors] = useState<
     HealthCenterDoctorOption[]
   >([])
+
+  const [selectedHealthCenterDoctor, setSelectedHealthCenterDoctor] = useState<
+    number | undefined
+  >()
 
   const handleOnError = () => {
     setSelectedHealthCenter(null)
@@ -124,14 +131,14 @@ const HealthCenterRegistration = () => {
     }
   }, [errorTransfer])
 
-  const handleHealthCenterTransfer = async (doctorId?: number) => {
+  const handleHealthCenterTransfer = async () => {
     setLoadingTransfer(true)
-    if (selectedHealthCenter && selectedHealthCenter?.id) {
+    if (selectedHealthCenter?.id) {
       await transferHealthCenter({
         variables: {
           input: {
             id: selectedHealthCenter.id,
-            doctorId: doctorId,
+            doctorId: selectedHealthCenterDoctor,
           },
         },
       })
@@ -235,22 +242,6 @@ const HealthCenterRegistration = () => {
         </Box>
       )}
 
-      <RegisterModal
-        id="healthCenterDialog"
-        title={formatMessage(messages.healthCenterRegistrationModalTitle, {
-          healthCenter: selectedHealthCenter?.name,
-        })}
-        description={formatMessage(messages.healthCenterRegistrationModalInfo)}
-        onClose={() => {
-          setSelectedHealthCenter(null)
-          setHealthCenterDoctors([])
-        }}
-        onAccept={handleHealthCenterTransfer}
-        isVisible={!!selectedHealthCenter}
-        buttonLoading={loadingTransfer}
-        healthCenterDoctors={healthCenterDoctors}
-      />
-
       <Box className={styles.filterWrapperStyle} marginBottom={3}>
         <FilterInput
           onChange={(val) => setFilter(val)}
@@ -304,21 +295,82 @@ const HealthCenterRegistration = () => {
                                   visible: healthCenter.id === hoverId,
                                 })}
                               >
-                                <Button
-                                  size="small"
-                                  variant="text"
-                                  icon="pencil"
-                                  onClick={() => {
-                                    setSelectedHealthCenter({
-                                      id: healthCenter.id,
-                                      name: healthCenter.name,
-                                    })
+                                <Modal
+                                  id={'healthCenterRegisterModal'}
+                                  initialVisibility={false}
+                                  iconSrc="./assets/images/coffee.svg"
+                                  iconAlt="coffee"
+                                  toggleClose={!selectedHealthCenter}
+                                  onCloseModal={() => {
+                                    setSelectedHealthCenter(null)
+                                    setHealthCenterDoctors([])
                                   }}
-                                >
-                                  {formatMessage(
-                                    messages.healthRegistrationSave,
+                                  title={formatMessage(
+                                    messages.healthCenterRegistrationModalTitle,
+                                    {
+                                      healthCenter: selectedHealthCenter?.name,
+                                    },
                                   )}
-                                </Button>
+                                  buttons={[
+                                    {
+                                      id: 'RegisterHealthCenterModalAccept',
+                                      type: 'primary' as const,
+                                      text: formatMessage(
+                                        messages.healthRegisterModalAccept,
+                                      ),
+                                      onClick: handleHealthCenterTransfer,
+                                    },
+                                    {
+                                      id: 'RegisterHealthCenterModalDecline',
+                                      type: 'ghost' as const,
+                                      text: formatMessage(
+                                        messages.healthRegisterModalDecline,
+                                      ),
+                                      onClick: () => {
+                                        setSelectedHealthCenter(null)
+                                        setHealthCenterDoctors([])
+                                      },
+                                    },
+                                  ]}
+                                  disclosure={
+                                    <Button
+                                      size="small"
+                                      variant="text"
+                                      icon="pencil"
+                                      onClick={() => {
+                                        setSelectedHealthCenter({
+                                          id: healthCenter.id,
+                                          name: healthCenter.name,
+                                        })
+                                      }}
+                                    >
+                                      {formatMessage(
+                                        messages.healthRegistrationSave,
+                                      )}
+                                    </Button>
+                                  }
+                                >
+                                  {healthCenterDoctors?.length ? (
+                                    <Box marginBottom={4}>
+                                      <Select
+                                        size="xs"
+                                        isClearable
+                                        options={healthCenterDoctors}
+                                        label={formatMessage(
+                                          messages.chooseDoctorLabel,
+                                        )}
+                                        placeholder={formatMessage(
+                                          messages.chooseDoctorPlaceholder,
+                                        )}
+                                        onChange={(val) => {
+                                          setSelectedHealthCenterDoctor(
+                                            val?.value,
+                                          )
+                                        }}
+                                      />
+                                    </Box>
+                                  ) : null}
+                                </Modal>
                               </Box>
                             </T.Data>
                           </tr>
