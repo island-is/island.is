@@ -18,7 +18,7 @@ import { format as formatNationalId } from 'kennitala'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { m } from '../../lib/messages'
 import { FinancialStatementCemetery } from '../../lib/dataSchema'
-import { BOARDMEMEBER } from '../../utils/constants'
+import { BOARDMEMBER } from '../../utils/constants'
 import {
   columnStyle,
   sectionColumn,
@@ -313,7 +313,7 @@ export const CemeteryOverview = ({
                     <ValueLine
                       label={m.role}
                       value={
-                        careTaker.role === BOARDMEMEBER
+                        careTaker.role === BOARDMEMBER
                           ? formatMessage(m.cemeteryBoardMember)
                           : formatMessage(m.cemeteryInspector)
                       }

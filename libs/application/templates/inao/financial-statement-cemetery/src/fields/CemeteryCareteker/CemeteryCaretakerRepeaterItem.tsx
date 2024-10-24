@@ -19,7 +19,7 @@ import { getValueViaPath, getErrorViaPath } from '@island.is/application/core'
 import { FinancialStatementCemetery } from '../../lib/dataSchema'
 import * as styles from './CemeteryCaretaker.css'
 import { IdentityQuery } from '../../graphql'
-import { BOARDMEMEBER, CARETAKER } from '../../utils/constants'
+import { BOARDMEMBER, CARETAKER } from '../../utils/constants'
 import {
   InputController,
   SelectController,
@@ -142,7 +142,7 @@ export const CaretakerRepeaterItem = ({
                 },
                 {
                   label: formatMessage(m.cemeteryBoardMember),
-                  value: BOARDMEMEBER,
+                  value: BOARDMEMBER,
                 },
               ]}
             />

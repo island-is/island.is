@@ -5,7 +5,7 @@ export const CEMETERYCARETAKER = {
 }
 
 export const CARETAKER = 'Skoðunarmaður'
-export const BOARDMEMEBER = 'Stjórnarmaður'
+export const BOARDMEMBER = 'Stjórnarmaður'
 export const PartiesBackwardLimit = 'PartiesBackwardLimit'
 export const CemeteriesBackwardLimit = 'CemeteriesBackwardLimit'
 export const PartiesYearAllowed = 'PartiesYearAllowed'

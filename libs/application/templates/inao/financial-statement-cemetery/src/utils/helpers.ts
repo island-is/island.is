@@ -1,5 +1,5 @@
 import { ExternalData, FormValue } from '@island.is/application/types'
-import { BOARDMEMEBER, CARETAKER } from './constants'
+import { BOARDMEMBER, CARETAKER } from './constants'
 import { FinancialStatementCemetery } from '../lib/dataSchema'
 import getYear from 'date-fns/getYear'
 import subYears from 'date-fns/subYears'
@@ -14,7 +14,7 @@ export const getBoardmembersAndCaretakers = (members: Array<BoardMember>) => {
     ?.filter((member) => member.role === CARETAKER)
     .map((member) => member.nationalId)
   const boardMembers = members
-    ?.filter((member) => member.role === BOARDMEMEBER)
+    ?.filter((member) => member.role === BOARDMEMBER)
     ?.map((member) => member.nationalId)
 
   return { careTakers, boardMembers }
