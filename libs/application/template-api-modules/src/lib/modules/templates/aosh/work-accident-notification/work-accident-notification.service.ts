@@ -121,15 +121,23 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
         victims: answers.employee.map((employee, index) => {
           return {
             victimsSSN: employee.nationalField.nationalId,
-            employmentStatusOfVictim: 0,
-            employmentAgencySSN: '',
+            employmentStatusOfVictim: employee.employmentStatus
+              ? parseInt(employee.employmentStatus, 10)
+              : 0,
+            employmentAgencySSN: employee.tempEmploymentSSN ?? '',
             startedEmploymentForCompany: new Date(employee.startDate),
-            lengthOfEmployment: 0,
-            percentageOfFullWorkTime: 0,
-            workhourArrangement: 0,
+            lengthOfEmployment: employee.employmentTime
+              ? parseInt(employee.employmentTime, 10)
+              : 0,
+            percentageOfFullWorkTime: employee.employmentRate
+              ? parseInt(employee.employmentRate, 10)
+              : 0,
+            workhourArrangement: employee.workhourArrangement
+              ? parseInt(employee.workhourArrangement, 10)
+              : 0,
             startOfWorkingDay: new Date(),
             workStation: 0,
-            victimsOccupation: '',
+            victimsOccupation: employee.victimsOccupation.value,
             absenceDueToAccident: 0,
             specificPhysicalActivities: [],
             specificPhysicalActivityMostSevere: '',
