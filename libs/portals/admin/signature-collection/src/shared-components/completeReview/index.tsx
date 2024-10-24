@@ -35,7 +35,11 @@ const ActionReviewComplete = ({
     onCompleted: () => {
       setModalSubmitReviewIsOpen(false)
       revalidate()
-      toast.success(formatMessage(m.toggleReviewSuccess))
+      toast.success(
+        listReviewed
+          ? formatMessage(m.toggleReviewSuccessToggleBack)
+          : formatMessage(m.toggleReviewSuccess),
+      )
     },
     onError: () => {
       toast.error(formatMessage(m.toggleReviewError))
@@ -51,7 +55,10 @@ const ActionReviewComplete = ({
           variant="ghost"
           icon={listReviewed ? 'reload' : 'checkmark'}
           onClick={() => setModalSubmitReviewIsOpen(true)}
-          disabled={listStatus === ListStatus.Active}
+          disabled={
+            listStatus === ListStatus.Active ||
+            listStatus === ListStatus.Extendable
+          }
         >
           {modalText}
         </Button>

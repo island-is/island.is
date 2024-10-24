@@ -18,6 +18,7 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   DefenderChoice,
+  isDistrictCourtUser,
   isFailedServiceStatus,
   isSuccessfulServiceStatus,
   isTrafficViolationCase,
@@ -133,6 +134,15 @@ export class SubpoenaService {
     })
     let defenderAffectedRows = 0
 
+    // If there is a change in the defender choice after the judge has confirmed the choice,
+    // we need to set the isDefenderChoiceConfirmed to false
+    const isChangingDefenderChoice =
+      (update.defenderChoice &&
+        subpoena.defendant?.defenderChoice !== update.defenderChoice) ||
+      (update.defenderNationalId &&
+        subpoena.defendant?.defenderNationalId !== update.defenderNationalId &&
+        subpoena.defendant?.isDefenderChoiceConfirmed)
+
     if (
       defenderChoice ||
       defenderNationalId ||
@@ -148,6 +158,7 @@ export class SubpoenaService {
         requestedDefenderChoice,
         requestedDefenderNationalId,
         requestedDefenderName,
+        isDefenderChoiceConfirmed: isChangingDefenderChoice ? false : undefined,
       }
 
       const [defenderUpdateAffectedRows] = await this.defendantModel.update(
