@@ -58,17 +58,11 @@ export const determineMessageFromApplicationAnswers = (
 
 const reviewStatePendingAction = (
   application: Application,
-  nationalId: string,
+  role: string,
 ): PendingAction => {
-  const firstGuardianNationalId = getValueViaPath(
-    application.answers,
-    'firstGuardianInformation.nationalId',
-    undefined,
-  ) as string | undefined
-
   if (
-    nationalId &&
-    firstGuardianNationalId !== nationalId &&
+    role &&
+    role === 'assignee' &&
     !hasReviewerApproved(application.answers)
   ) {
     return {
