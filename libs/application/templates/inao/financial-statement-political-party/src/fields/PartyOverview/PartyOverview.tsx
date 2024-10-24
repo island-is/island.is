@@ -199,8 +199,8 @@ export const PartyOverview = ({
       {fileName ? (
         <>
           <FileValueLine
-            label={answers.attachments?.file?.[0]?.name}
-            files={m.files}
+            heading={m.files}
+            description={answers.attachments?.file?.[0]?.name}
           />
           <Divider />
         </>
