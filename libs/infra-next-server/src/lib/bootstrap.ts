@@ -87,7 +87,8 @@ export const bootstrap = async (options: BootstrapOptions) => {
 
   expressApp.use(async (req, res) => {
     if (req.url.match('.woff2?$')) {
-      res.setHeader('Cache-Control', 'public, max-age=31536000')
+      // Configure long caching for web fonts (often in public folder).
+      res.setHeader('Cache-Control', 'public, max-age=31536000') // 365 days
     }
 
     try {
