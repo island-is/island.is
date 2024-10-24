@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { m } from './messages'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { BOARDMEMEBER, CARETAKER } from '../utils/constants'
+import { BOARDMEMBER, CARETAKER } from '../utils/constants'
 import { getBoardmembersAndCaretakers } from '../utils/helpers'
 
 const FileSchema = z.object({
@@ -149,7 +149,7 @@ const cemeteryCaretaker = z
         return false
       }
       const careTakers = x.filter((member) => member.role === CARETAKER)
-      const boardMembers = x.filter((member) => member.role === BOARDMEMEBER)
+      const boardMembers = x.filter((member) => member.role === BOARDMEMBER)
       if (careTakers.length < 1 || boardMembers.length < 1) {
         return false
       } else {

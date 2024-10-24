@@ -16,17 +16,17 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { FinancialStatementPoliticalParty } from '../../lib/dataSchema'
-import { formatCurrency } from '../../utils/helpers'
-import { ValueLine } from '../../components/ValueLine'
-import { FileValueLine } from '../../components/FileValueLine'
-import { AssetDebtEquityOverview } from '../../components/AssetDebtEquityOverview'
-import { AboutOverview } from '../../components/AboutOverview'
-import BottomBar from '../../components/BottomBar'
 import {
+  formatCurrency,
+  FileValueLine,
+  AssetDebtEquityOverview,
   sectionColumn,
   starterColumnStyle,
-} from '../../components/css/overviewStyles.css'
-import { CapitalNumberOverview } from '../../components/CapitalNumberOverview'
+  ValueLine,
+  BottomBar,
+  AboutOverview,
+  CapitalNumberOverview,
+} from '@island.is/application/templates/inao/shared'
 
 export const PartyOverview = ({
   application,
@@ -67,7 +67,15 @@ export const PartyOverview = ({
     <Box marginBottom={2}>
       <Divider />
       <Box paddingY={3}>
-        <AboutOverview answers={answers} />
+        <AboutOverview
+          about={answers.about}
+          fullName={m.fullName}
+          nationalId={m.nationalId}
+          powerOfAttorneyName={m.powerOfAttorneyName}
+          powerOfAttorneyNationalId={m.powerOfAttorneyNationalId}
+          email={m.email}
+          phoneNumber={m.phoneNumber}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>
@@ -152,7 +160,19 @@ export const PartyOverview = ({
       </Box>
       <Divider />
       <Box paddingY={3}>
-        <CapitalNumberOverview answers={answers} />
+        <CapitalNumberOverview
+          data={{
+            capitalIncome: answers.capitalNumbers.capitalIncome,
+            capitalCost: answers.capitalNumbers.capitalCost,
+            total: answers.capitalNumbers.total,
+          }}
+          messages={{
+            capitalNumbersMessage: m.capitalNumbers,
+            capitalIncomeMessage: m.capitalIncome,
+            capitalCostMessage: m.capitalCost,
+            totalCapitalMessage: m.totalCapital,
+          }}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>
@@ -162,12 +182,32 @@ export const PartyOverview = ({
           </Text>
         </Box>
 
-        <AssetDebtEquityOverview answers={answers} />
+        <AssetDebtEquityOverview
+          liability={answers.liability}
+          asset={answers.asset}
+          equity={answers.equity}
+          equityAndLiabilities={answers.equityAndLiabilities}
+          messages={{
+            fixedAssetsTotal: m.fixedAssetsTotal,
+            currentAssets: m.currentAssets,
+            totalAssets: m.totalAssets,
+            longTerm: m.longTerm,
+            shortTerm: m.shortTerm,
+            totalLiabilities: m.totalLiabilities,
+            equityTitle: m.equity,
+            debtsAndCash: m.debtsAndCash,
+            properties: m.properties,
+            debtsAndEquity: m.debtsAndEquity,
+          }}
+        />
       </Box>
       <Divider />
       {fileName ? (
         <>
-          <FileValueLine label={answers.attachments?.file?.[0]?.name} />
+          <FileValueLine
+            heading={m.files}
+            description={answers.attachments?.file?.[0]?.name}
+          />
           <Divider />
         </>
       ) : null}
@@ -216,6 +256,8 @@ export const PartyOverview = ({
         loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
+        goBack={m.goBack}
+        send={m.send}
       />
     </Box>
   )

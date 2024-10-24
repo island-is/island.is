@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
-
 import {
   AlertBanner,
   Box,
@@ -14,18 +13,20 @@ import {
 import { Controller, useFormContext } from 'react-hook-form'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
-import { formatCurrency } from '../../lib/utils/helpers'
 import { starterColumnStyle, sectionColumn } from './overviewStyles.css'
 import { FinancialStatementIndividualElection } from '../../lib/utils/dataSchema'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
-import { GREATER } from '../../lib/utils/constants'
 import { m } from '../../lib/utils/messages'
-import { AboutOverview } from './AboutOverview'
-import { ValueLine } from './ValueLine'
-import { CapitalNumberOverview } from './CapitalNumbersOverview'
-import { AssetDebtEquityOverview } from './AssetDebtEquityOverview'
-import { FileValueLine } from './FileValueLine'
-import BottomBar from './BottomBar'
+import {
+  GREATER,
+  formatCurrency,
+  CapitalNumberOverview,
+  AssetDebtEquityOverview,
+  FileValueLine,
+  AboutOverview,
+  ValueLine,
+  BottomBar,
+} from '@island.is/application/templates/inao/shared'
 
 export const Overview = ({
   application,
@@ -74,7 +75,15 @@ export const Overview = ({
     <Box marginBottom={2}>
       <Divider />
       <Box paddingY={3}>
-        <AboutOverview answers={answers} />
+        <AboutOverview
+          about={answers.about}
+          fullName={m.fullName}
+          nationalId={m.nationalId}
+          powerOfAttorneyName={m.powerOfAttorneyName}
+          powerOfAttorneyNationalId={m.powerOfAttorneyNationalId}
+          email={m.email}
+          phoneNumber={m.phoneNumber}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>
@@ -151,7 +160,19 @@ export const Overview = ({
       </Box>
       <Divider />
       <Box paddingY={3}>
-        <CapitalNumberOverview answers={answers} />
+        <CapitalNumberOverview
+          data={{
+            capitalIncome: answers.capitalNumbers.capitalIncome,
+            capitalCost: answers.capitalNumbers.capitalCost,
+            total: answers.capitalNumbers.total,
+          }}
+          messages={{
+            capitalNumbersMessage: m.capitalNumbers,
+            capitalIncomeMessage: m.capitalIncome,
+            capitalCostMessage: m.capitalCost,
+            totalCapitalMessage: m.totalCapital,
+          }}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>
@@ -160,14 +181,34 @@ export const Overview = ({
             {formatMessage(m.propertiesAndDebts)}
           </Text>
         </Box>
-        <AssetDebtEquityOverview answers={answers} />
+        <AssetDebtEquityOverview
+          liability={answers.liability}
+          asset={answers.asset}
+          equity={answers.equity}
+          equityAndLiabilities={answers.equityAndLiabilities}
+          messages={{
+            fixedAssetsTotal: m.fixedAssetsTotal,
+            currentAssets: m.currentAssets,
+            totalAssets: m.totalAssets,
+            longTerm: m.longTerm,
+            shortTerm: m.shortTerm,
+            totalLiabilities: m.totalLiabilities,
+            equityTitle: m.equity,
+            debtsAndCash: m.debtsAndCash,
+            properties: m.properties,
+            debtsAndEquity: m.debtsAndEquity,
+          }}
+        />
       </Box>
       <Divider />
 
       <Box paddingY={3}>
         {fileName ? (
           <>
-            <FileValueLine label={answers.attachments?.file?.[0]?.name} />
+            <FileValueLine
+              heading={m.files}
+              description={answers.attachments?.file?.[0]?.name}
+            />
             <Divider />
           </>
         ) : null}
@@ -218,6 +259,8 @@ export const Overview = ({
         loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
+        goBack={m.goBack}
+        send={m.send}
       />
     </Box>
   )

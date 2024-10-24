@@ -11,9 +11,8 @@ import {
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { IdentityInput, Query } from '@island.is/api/schema'
-
 import { m } from '../../lib/messages'
-import { ABOUTIDS } from '../../utils/constants'
+import { ABOUTIDS } from '@island.is/application/templates/inao/shared'
 import { FieldBaseProps } from '@island.is/application/types'
 import { getErrorViaPath } from '@island.is/application/core'
 import { IdentityQuery } from '../../graphql'

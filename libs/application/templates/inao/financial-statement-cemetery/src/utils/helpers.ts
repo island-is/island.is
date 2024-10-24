@@ -1,55 +1,20 @@
 import { ExternalData, FormValue } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
-import { BOARDMEMEBER, CARETAKER, TOTAL } from './constants'
+import { BOARDMEMBER, CARETAKER } from './constants'
 import { FinancialStatementCemetery } from '../lib/dataSchema'
 import getYear from 'date-fns/getYear'
 import subYears from 'date-fns/subYears'
 import { BoardMember, Config, FSIUSERTYPE } from '../types/types'
-
-export const getTotal = (values: Record<string, string>, key: string) => {
-  if (!values[key]) {
-    return 0
-  }
-  const total = Object.entries(values[key])
-    .filter(([k, v]) => k !== TOTAL && !isNaN(Number(v)))
-    .map(([_k, v]) => Number(v))
-    .reduce((prev, current) => {
-      return (prev += current)
-    }, 0)
-  return total
-}
-
-export const currencyStringToNumber = (str: string) => {
-  if (!str) {
-    return str
-  }
-  const cleanString = str.replace(/[,\s]+|[.\s]+/g, '')
-  return parseInt(cleanString, 10)
-}
-
-export const getCurrentUserType = (
-  answers: FormValue,
-  externalData: ExternalData,
-) => {
-  const fakeUserType: FSIUSERTYPE | undefined = getValueViaPath(
-    answers,
-    'fakeData.options',
-  )
-
-  const currentUserType: FSIUSERTYPE | undefined = getValueViaPath(
-    externalData,
-    'getUserType.data.value',
-  )
-
-  return fakeUserType ? fakeUserType : currentUserType
-}
+import {
+  getCurrentUserType,
+  currencyStringToNumber,
+} from '@island.is/application/templates/inao/shared'
 
 export const getBoardmembersAndCaretakers = (members: Array<BoardMember>) => {
   const careTakers = members
     ?.filter((member) => member.role === CARETAKER)
     .map((member) => member.nationalId)
   const boardMembers = members
-    ?.filter((member) => member.role === BOARDMEMEBER)
+    ?.filter((member) => member.role === BOARDMEMBER)
     ?.map((member) => member.nationalId)
 
   return { careTakers, boardMembers }
@@ -97,9 +62,4 @@ export const possibleOperatingYears = (
 
 export const getConfigInfoForKey = (config: Config[], configKey: string) => {
   return config?.filter((config: Config) => config.key === configKey)[0].value
-}
-
-export const formatCurrency = (answer?: string) => {
-  if (!answer) return '0. kr'
-  return answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 }
