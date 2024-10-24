@@ -187,6 +187,7 @@ export * from './lib/personal-representative/dto/paginated-personal-representati
 export * from './lib/personal-representative/dto/personal-representative-scope-permission.dto'
 export * from './lib/clients/admin/dto/admin-create-client.dto'
 export * from './lib/clients/admin/dto/admin-client.dto'
+export { isUnderXAge } from './lib/delegations/utils/isUnderXAge'
 
 // Passkeys core module
 export * from './lib/passkeys-core/passkeys-core.module'
