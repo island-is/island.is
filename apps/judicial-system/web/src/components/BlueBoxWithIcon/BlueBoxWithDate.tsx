@@ -123,9 +123,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     dpVisible: { opacity: 1, y: 0, height: 'auto' },
     dpExit: {
       opacity: 0,
-      //y: 15,
       height: 0,
-      transition: { height: { delay: 0.4 } },
+      transition: { height: { delay: 0.5 } },
     },
   }
 
@@ -241,6 +240,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             animate="dpVisible"
             exit="dpExit"
             transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.2 }}
+            style={{ marginTop: '16px' }}
           >
             <Box className={styles.dataContainer}>
               <DateTime
