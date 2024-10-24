@@ -1,3 +1,4 @@
+import { coreErrorMessages } from '@island.is/application/core'
 import { FieldComponents, FieldTypes } from '@island.is/application/types'
 import {
   Label,
@@ -6,7 +7,13 @@ import {
   removeCountryCode,
 } from '@island.is/application/ui-components'
 import { StaticTableFormField } from '@island.is/application/ui-fields'
-import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  SkeletonLoader,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { format as formatKennitala } from 'kennitala'
 import { useFriggOptions } from '../../../hooks/useFriggOptions'
@@ -26,7 +33,11 @@ export const Relatives = ({
   const { formatMessage } = useLocale()
   const { relatives } = getApplicationAnswers(application.answers)
 
-  const relationFriggOptions = useFriggOptions(OptionsType.RELATION)
+  const {
+    options: relationFriggOptions,
+    loading,
+    error,
+  } = useFriggOptions(OptionsType.RELATION)
 
   const rows = relatives.map((r) => {
     return [
@@ -42,37 +53,46 @@ export const Relatives = ({
       isEditable={editable}
       editAction={() => goToScreen?.('relatives')}
     >
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-          <Label>
-            {formatMessage(
-              newPrimarySchoolMessages.childrenNParents
-                .relativesSubSectionTitle,
+      {loading ? (
+        <SkeletonLoader height={40} width="80%" borderRadius="large" />
+      ) : (
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+            <Label>
+              {formatMessage(
+                newPrimarySchoolMessages.childrenNParents
+                  .relativesSubSectionTitle,
+              )}
+            </Label>
+            {relatives?.length > 0 && (
+              <Box paddingTop={3}>
+                <StaticTableFormField
+                  application={application}
+                  field={{
+                    type: FieldTypes.STATIC_TABLE,
+                    component: FieldComponents.STATIC_TABLE,
+                    children: undefined,
+                    id: 'relativesTable',
+                    title: '',
+                    header: [
+                      newPrimarySchoolMessages.shared.fullName,
+                      newPrimarySchoolMessages.shared.phoneNumber,
+                      newPrimarySchoolMessages.shared.nationalId,
+                      newPrimarySchoolMessages.shared.relation,
+                    ],
+                    rows,
+                  }}
+                />
+              </Box>
             )}
-          </Label>
-          {relatives?.length > 0 && (
-            <Box paddingTop={3}>
-              <StaticTableFormField
-                application={application}
-                field={{
-                  type: FieldTypes.STATIC_TABLE,
-                  component: FieldComponents.STATIC_TABLE,
-                  children: undefined,
-                  id: 'relativesTable',
-                  title: '',
-                  header: [
-                    newPrimarySchoolMessages.shared.fullName,
-                    newPrimarySchoolMessages.shared.phoneNumber,
-                    newPrimarySchoolMessages.shared.nationalId,
-                    newPrimarySchoolMessages.shared.relation,
-                  ],
-                  rows,
-                }}
-              />
-            </Box>
-          )}
-        </GridColumn>
-      </GridRow>
+            {error && (
+              <Text marginTop={1} variant="eyebrow" color="red600">
+                {formatMessage(coreErrorMessages.failedDataProvider)}
+              </Text>
+            )}
+          </GridColumn>
+        </GridRow>
+      )}
     </ReviewGroup>
   )
 }
