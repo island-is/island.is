@@ -159,7 +159,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   }
 
   const textVariant = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 15 },
     visible: { opacity: 1, y: 0 },
   }
 
@@ -180,7 +180,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       </Box>
       <motion.div
         variants={staggerContainer}
-        initial={'hidden'}
+        initial={triggerAnimation ? 'hidden' : false}
         animate={showAppealFields ? 'visible' : false}
       >
         {showAppealFields &&
