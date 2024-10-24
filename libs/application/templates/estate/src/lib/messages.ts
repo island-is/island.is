@@ -963,7 +963,7 @@ export const m = defineMessages({
     description: '',
   },
   notFilledOutItalic: {
-    id: 'es.application:notFilledOut#markdown',
+    id: 'es.application:notFilledOutItalic#markdown',
     defaultMessage: '*Ekki fyllt út*',
     description: '',
   },
@@ -1003,6 +1003,16 @@ export const m = defineMessages({
     id: 'es.application:divisionOfEstateByHeirsSubtitle#markdown',
     defaultMessage:
       'Sýslumaður hefur móttekið beiðni þína um einkaskipti. Hún verður nú tekin til afgreiðslu og upplýsingar um afgreiðslu beiðninnar send í pósthólf þitt á Ísland.is.',
+    description: '',
+  },
+  openServicePortalTitle: {
+    id: 'es.application:openServicePortalTitle',
+    defaultMessage: 'Mínar síður', 
+    description: '',
+  },
+  openServicePortalMessage: {
+    id: 'es.application:openServicePortalMessage',
+    defaultMessage: 'Inni á Mínum síðum og í Ísland.is appinu hefur þú aðgang að þínum upplýsingum, Stafrænu pósthólfi og stöðu umsóknar.', 
     description: '',
   },
 
