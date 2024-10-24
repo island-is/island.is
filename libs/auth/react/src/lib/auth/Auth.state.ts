@@ -1,5 +1,4 @@
 import { User } from '@island.is/shared/types'
-import { getBirthday } from '../utils/getBirthday'
 
 export type AuthState =
   | 'logged-out'
@@ -37,20 +36,6 @@ export const initialState: AuthReducerState = {
   isAuthenticated: false,
 }
 
-// Add dateOfBirth Date object to user profile
-const formatUser = (payload: User): User | null => {
-  const dateOfBirth = getBirthday(payload?.profile?.nationalId)
-
-  return {
-    ...payload,
-    scopes: payload.scopes || [],
-    profile: {
-      ...payload.profile,
-      dateOfBirth,
-    },
-  }
-}
-
 export const reducer = (
   state: AuthReducerState,
   action: Action,
@@ -64,7 +49,8 @@ export const reducer = (
     case ActionType.SIGNIN_SUCCESS:
       return {
         ...state,
-        userInfo: formatUser(action.payload),
+        userInfo: action.payload,
+
         authState: 'logged-in',
         isAuthenticated: true,
       }
@@ -72,7 +58,7 @@ export const reducer = (
       return state.isAuthenticated
         ? {
             ...state,
-            userInfo: formatUser(action.payload),
+            userInfo: action.payload,
           }
         : state
     case ActionType.SIGNIN_FAILURE:

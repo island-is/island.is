@@ -4,6 +4,7 @@ export type ListDocumentsInputDto = {
   dateFrom?: Date
   dateTo?: Date
   categoryId?: string
+  hiddenCategoryIds?: string
   typeId?: string
   subjectContains?: string
   archived?: boolean
