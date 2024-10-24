@@ -1,7 +1,7 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
-ARG NODE_IMAGE_TAG
+ARG NODE_IMAGE_TAG=latest
 FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS deps
 
 RUN apk add -U git
