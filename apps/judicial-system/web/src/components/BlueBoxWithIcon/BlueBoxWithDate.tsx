@@ -128,7 +128,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     dpExit: {
       opacity: 0,
       height: 0,
-      transition: { height: { delay: 0.4 } },
+      transition: { height: { delay: 0.6 }, opacity: { delay: 0.4 } },
     },
   }
 
