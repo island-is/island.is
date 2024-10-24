@@ -82,7 +82,7 @@ export class InternalNotificationController {
     @Body() notificationDto: SubpoenaNotificationDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Sending ${notificationDto.type} subpona notification for subpoena ${subpoenaId} of defendant ${defendantId} and case ${caseId}`,
+      `Sending ${notificationDto.type} subpoena notification for subpoena ${subpoenaId} of defendant ${defendantId} and case ${caseId}`,
     )
 
     return this.subpoenaNotificationService.sendSubpoenaNotification(
