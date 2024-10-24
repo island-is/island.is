@@ -8,10 +8,12 @@ ENV CLUSTER=dev-cluster01
 
 FROM base as proxy
 USER runner
+# hadolint ignore=DL3025
 CMD aws eks --region eu-west-1 update-kubeconfig --name $CLUSTER ; \
-    kubectl port-forward -n $TARGET_NAMESPACE svc/$TARGET_SVC --address 0.0.0.0 $PROXY_PORT:$TARGET_PORT
+  kubectl port-forward -n $TARGET_NAMESPACE svc/$TARGET_SVC --address 0.0.0.0 $PROXY_PORT:$TARGET_PORT
 
 FROM base as restart-deployment
+# hadolint ignore=DL3025
 CMD aws eks --region eu-west-1 update-kubeconfig --name $CLUSTER ; \
-    kubectl rollout restart deployment/$TARGET_SVC -n $TARGET_NAMESPACE ; \
-    kubectl rollout status deployment/$TARGET_SVC -n $TARGET_NAMESPACE --timeout=60s
+  kubectl rollout restart deployment/$TARGET_SVC -n $TARGET_NAMESPACE ; \
+  kubectl rollout status deployment/$TARGET_SVC -n $TARGET_NAMESPACE --timeout=60s

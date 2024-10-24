@@ -7,7 +7,9 @@ RUN bin/elasticsearch-plugin install analysis-icu
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
 RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
 
-RUN yum -y install unzip wget
+# hadolint ignore=DL3033
+RUN yum -y install unzip wget && \
+  yum clean all
 
 # get dictionaries
 RUN wget -O master.zip https://github.com/island-is/elasticsearch-dictionaries/archive/master.zip
