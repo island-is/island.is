@@ -377,58 +377,6 @@ export const DeathBenefitsForm: Form = buildForm({
                 }),
               ],
             }),
-            buildMultiField({
-              id: 'deceasedSpouseNoInfo',
-              title: deathBenefitsFormMessage.info.deceasedSpouseTitle,
-              description:
-                deathBenefitsFormMessage.info.deceasedSpouseNotFoundDescription,
-              // Use correct value for condition
-              condition: (_, externalData) =>
-                !getApplicationExternalData(externalData)
-                  .deceasedSpouseNationalId,
-              children: [
-                buildNationalIdWithNameField({
-                  id: 'deceasedSpouseInfo',
-                  title: '',
-                  required: true,
-                }),
-              ],
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'deceasedSpouseAttachmentSection',
-          title:
-            deathBenefitsFormMessage.info.deceasedSpouseAttachmentSubSection,
-          condition: (_, externalData) =>
-            !getApplicationExternalData(externalData).deceasedSpouse,
-          children: [
-            buildMultiField({
-              id: 'deceasedSpouseAttachment',
-              title:
-                deathBenefitsFormMessage.info
-                  .deceasedSpouseAttachmentSubSection,
-              description:
-                deathBenefitsFormMessage.info
-                  .deceasedSpouseAttachmentSectionDescription,
-              children: [
-                buildFileUploadField({
-                  id: 'fileUpload.deathCertificate',
-                  title: '',
-                  uploadHeader:
-                    deathBenefitsFormMessage.info
-                      .deceasedSpouseAttachmentHeader,
-                  uploadDescription:
-                    deathBenefitsFormMessage.info
-                      .deceasedSpouseAttachmentDescription,
-                  uploadButtonLabel:
-                    deathBenefitsFormMessage.info
-                      .deceasedSpouseAttachmentButton,
-                  uploadAccept: '.pdf',
-                  uploadMultiple: false,
-                }),
-              ],
-            }),
           ],
         }),
         buildSubSection({
