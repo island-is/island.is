@@ -95,7 +95,12 @@ export class LawAndOrderResolver {
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
   ) {
-    return this.lawAndOrderService.getLawyers(user, locale)
+    return this.auditAndHandle(
+      'getLawyers',
+      'lawyers',
+      this.lawAndOrderService.getLawyers(user, locale),
+      user,
+    )
   }
 
   @Mutation(() => DefenseChoice, {

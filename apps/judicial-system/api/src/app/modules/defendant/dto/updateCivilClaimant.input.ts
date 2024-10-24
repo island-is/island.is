@@ -61,4 +61,9 @@ export class UpdateCivilClaimantInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly caseFilesSharedWithSpokesperson?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isSpokespersonConfirmed?: boolean
 }
