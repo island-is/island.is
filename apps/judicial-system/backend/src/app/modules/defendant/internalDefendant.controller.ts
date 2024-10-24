@@ -20,7 +20,7 @@ import {
 
 import { Case, CaseExistsGuard, CurrentCase } from '../case'
 import { DeliverDefendantToCourtDto } from './dto/deliverDefendantToCourt.dto'
-import { UpdateDefendantDto } from './dto/updateDefendant.dto'
+import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { Defendant } from './models/defendant.model'
@@ -71,7 +71,7 @@ export class InternalDefendantController {
     @Param('caseId') caseId: string,
     @Param('defendantNationalId') defendantNationalId: string,
     @CurrentCase() theCase: Case,
-    @Body() updatedDefendantChoice: UpdateDefendantDto,
+    @Body() updatedDefendantChoice: InternalUpdateDefendantDto,
   ): Promise<Defendant> {
     this.logger.debug(`Updating defendant info for ${caseId}`)
 

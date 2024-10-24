@@ -49,7 +49,12 @@ export const BulletList: FC<React.PropsWithChildren<BulletListProps>> = ({
             <Text>{bullet.body}</Text>
             {bullet.url && bullet.linkText && (
               <Link href={bullet.url}>
-                <Button as="span" variant="text" icon="arrowForward">
+                <Button
+                  as="span"
+                  variant="text"
+                  icon="arrowForward"
+                  unfocusable
+                >
                   {bullet.linkText}
                 </Button>
               </Link>

@@ -22,6 +22,11 @@ query Case($input: CaseQueryInput!) {
       defenderPhoneNumber
       defenderChoice
       defendantPlea
+      requestedDefenderChoice
+      requestedDefenderNationalId
+      requestedDefenderName
+      isDefenderChoiceConfirmed
+      caseFilesSharedWithDefender
       serviceRequirement
       verdictViewDate
       verdictAppealDeadline
@@ -337,6 +342,7 @@ query Case($input: CaseQueryInput!) {
       spokespersonEmail
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
+      isSpokespersonConfirmed
     }
     civilDemands
     hasCivilClaims

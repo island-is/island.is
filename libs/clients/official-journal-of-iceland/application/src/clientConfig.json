@@ -433,6 +433,11 @@
       "ApplicationAdvert": {
         "type": "object",
         "properties": {
+          "involvedPartyId": {
+            "type": "string",
+            "example": "a12c3d4e-5f67-8h90-1i23-j45k6l7m8n9o0",
+            "description": "Id of the involved party"
+          },
           "departmentId": {
             "type": "string",
             "example": "a12c3d4e-5f67-8h90-1i23-j45k6l7m8n9o0",
@@ -473,6 +478,7 @@
           }
         },
         "required": [
+          "involvedPartyId",
           "departmentId",
           "typeId",
           "title",
@@ -734,39 +740,35 @@
         "required": ["application"]
       },
       "CaseCommentType": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "The title of the case comment type"
-          },
-          "title": {
-            "type": "string",
-            "enum": [
-              "submit",
-              "assign",
-              "assign-self",
-              "update",
-              "comment",
-              "message"
-            ],
-            "description": "The title of the case comment type"
-          },
-          "slug": {
-            "type": "string",
-            "description": "The slug of the case comment type"
-          }
-        },
-        "required": ["id", "title", "slug"]
+        "type": "string",
+        "description": "Title of the comment",
+        "enum": [
+          "Innsent af:",
+          "færir mál á",
+          "merkir sér málið.",
+          "færir mál í stöðuna:",
+          "gerir athugasemd.",
+          "skráir skilaboð"
+        ]
       },
-      "CaseStatus": {
+      "CaseCommentDirection": {
+        "type": "string",
+        "description": "Was the comment sent or received.",
+        "enum": ["sent", "received"]
+      },
+      "CaseComment": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
-            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851",
+            "description": "Id of the case comment."
           },
           "title": {
+            "example": "f. 2 dögum",
+            "$ref": "#/components/schemas/CaseCommentType"
+          },
+          "caseStatus": {
             "type": "string",
             "enum": [
               "Innsent",
@@ -777,120 +779,38 @@
               "Tekið úr birtingu",
               "Birtingu hafnað"
             ],
-            "example": "Innsent",
-            "description": "Status of the case"
+            "description": "Case status of when the comment was created."
           },
-          "slug": {
+          "age": {
             "type": "string",
-            "example": "innsent",
-            "description": "Slug of the case staus"
-          }
-        },
-        "required": ["id", "title", "slug"]
-      },
-      "CaseCommentTitle": {
-        "type": "object",
-        "properties": {
-          "id": {
+            "example": "f. 2 dögum",
+            "description": "String representation of the age of the case comment."
+          },
+          "ageIso": {
             "type": "string",
-            "description": "The title of the case comment type"
+            "description": "ISO date format representation of the age of the case comment."
           },
-          "title": {
+          "direction": { "$ref": "#/components/schemas/CaseCommentDirection" },
+          "creator": {
             "type": "string",
-            "enum": [
-              "Innsent af:",
-              "færir mál á",
-              "merkir sér málið.",
-              "færir mál í stöðuna:",
-              "gerir athugasemd.",
-              "skráir skilaboð"
-            ],
-            "description": "The title of the case comment type"
+            "description": "Who created the comment "
           },
-          "slug": {
+          "receiver": {
             "type": "string",
-            "description": "The slug of the case comment type"
-          }
-        },
-        "required": ["id", "title", "slug"]
-      },
-      "CaseCommentTask": {
-        "type": "object",
-        "properties": {
-          "from": {
-            "type": "string",
-            "description": "From who or what initied the task, used by client to show who inited the task.",
-            "example": "Ármann",
-            "nullable": true
+            "description": "Who received the comment"
           },
-          "to": {
-            "type": "string",
-            "description": "To whom or what the task is assigned to.",
-            "example": "Pálina J",
-            "nullable": true
-          },
-          "title": {
-            "description": "Title for the task action",
-            "allOf": [{ "$ref": "#/components/schemas/CaseCommentTitle" }]
-          },
-          "comment": {
-            "type": "string",
-            "description": "The comment itself",
-            "example": "Pálína, getur þú tekið við og staðfest að upplýsingarnar séu réttar?",
-            "nullable": true
-          }
-        },
-        "required": ["from", "to", "title", "comment"]
-      },
-      "CaseComment": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851",
-            "description": "Id of the case comment."
-          },
-          "createdAt": {
-            "type": "string",
-            "description": "Date and time of the comment, ISO 8601 format, UTC time format.",
-            "example": "2024-01-01T09:00:00Z"
-          },
-          "internal": {
-            "type": "boolean",
-            "description": "Is the comment internal or external.",
-            "example": false
-          },
-          "type": {
-            "description": "Type of the case task.",
-            "allOf": [{ "$ref": "#/components/schemas/CaseCommentType" }]
-          },
-          "status": {
-            "description": "Status of case when comment was added.",
-            "allOf": [{ "$ref": "#/components/schemas/CaseStatus" }]
-          },
-          "state": {
-            "type": "string",
-            "description": "JSON state of the application"
-          },
-          "task": {
-            "example": {
-              "from": "Ármann",
-              "to": null,
-              "title": "gerir athugasemd",
-              "comment": "Pálína, getur\n      þú tekið við og staðfest að upplýsingarnar séu réttar?"
-            },
-            "description": "The task itself",
-            "allOf": [{ "$ref": "#/components/schemas/CaseCommentTask" }]
-          }
+          "comment": { "type": "string", "description": "The comment itself" }
         },
         "required": [
           "id",
-          "createdAt",
-          "internal",
-          "type",
-          "status",
-          "state",
-          "task"
+          "title",
+          "caseStatus",
+          "age",
+          "ageIso",
+          "direction",
+          "creator",
+          "receiver",
+          "comment"
         ]
       },
       "GetCaseCommentsResponse": {
