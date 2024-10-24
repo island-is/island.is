@@ -118,7 +118,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
 
     const appealExpiration = getAppealExpirationInfo(verdictAppealDeadline)
 
-    console.log(defendant.verdictAppealDate)
     setTextItems([
       ...(indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
         ? [
