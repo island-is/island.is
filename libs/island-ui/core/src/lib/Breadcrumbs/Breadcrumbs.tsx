@@ -60,7 +60,7 @@ export const Breadcrumbs: FC<React.PropsWithChildren<BreadcrumbsProps>> = ({
 
         return (
           <Box
-            key={`${item.title}-${index}}`}
+            key={`${item.title}-${index}`}
             display={'inlineFlex'}
             alignItems={'center'}
           >
