@@ -2,6 +2,7 @@ import { FC, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import addDays from 'date-fns/addDays'
 import { AnimatePresence, motion } from 'framer-motion'
+import { height } from 'pdfkit/js/page'
 
 import {
   Box,
@@ -37,6 +38,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const [verdictViewDate, setVerdictViewDate] = useState<Date>()
   const [appealDate, setAppealDate] = useState<Date>()
   const [textItems, setTextItems] = useState<string[]>([])
+  const [triggerAppealAnimation, setTriggerAppealAnimation] =
+    useState<boolean>(false)
   const [triggerAnimation, setTriggerAnimation] = useState<boolean>(false)
   const { setAndSendDefendantToServer } = useDefendants()
   const { workingCase, setWorkingCase } = useContext(FormContext)
@@ -90,14 +93,17 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         setWorkingCase,
       )
     } else if (dateType === 'appealDate' && appealDate) {
-      setAndSendDefendantToServer(
-        {
-          caseId: workingCase.id,
-          defendantId: defendant.id,
-          verdictAppealDate: formatDateForServer(appealDate),
-        },
-        setWorkingCase,
-      )
+      setTriggerAppealAnimation(true)
+      setTimeout(() => {
+        setAndSendDefendantToServer(
+          {
+            caseId: workingCase.id,
+            defendantId: defendant.id,
+            verdictAppealDate: formatDateForServer(appealDate),
+          },
+          setWorkingCase,
+        )
+      }, 400)
     } else {
       toast.error(formatMessage(errors.general))
     }
@@ -106,7 +112,21 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const datePickerVariants = {
     dpHidden: { opacity: 0, y: 15 },
     dpVisible: { opacity: 1, y: 0 },
-    dpExit: { opacity: 0, y: 15 },
+    dpExit: {
+      opacity: 0,
+      y: 15,
+    },
+  }
+
+  const datePicker2Variants = {
+    dpHidden: { opacity: 0, y: 15 },
+    dpVisible: { opacity: 1, y: 0, height: 'auto' },
+    dpExit: {
+      opacity: 0,
+      //y: 15,
+      height: 0,
+      transition: { height: { delay: 0.4 } },
+    },
   }
 
   useEffect(() => {
@@ -175,10 +195,11 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           </div>
         ))}
       <AnimatePresence mode="wait">
-        {defendant.verdictAppealDate ? null : defendantCanAppeal ? (
+        {triggerAppealAnimation ||
+        defendant.verdictAppealDate ? null : defendantCanAppeal ? (
           <motion.div
             key="defendantAppealDate"
-            variants={datePickerVariants}
+            variants={datePicker2Variants}
             initial={triggerAnimation ? 'dpHidden' : false}
             animate="dpVisible"
             exit="dpExit"
