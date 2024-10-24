@@ -10,4 +10,9 @@ export const chevron = style({
 
 export const btn = style({
   position: 'relative',
+  fontSize: 16,
+})
+
+export const btnContainer = style({
+  width: '100%',
 })

@@ -6,7 +6,7 @@ import {
 } from '@island.is/service-portal/core'
 import { messages } from '../../../lib/messages'
 import { tagSelector } from '../../../utils/tagSelector'
-import { VaccinationsDetailTable } from './VaccinationsDetailTable'
+import { HealthTable as VaccinationsDetailTable } from '../../../components/Table/HealthTable'
 import { DetailHeader, DetailRow } from '../../../utils/types'
 import { HealthDirectorateVaccination } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
