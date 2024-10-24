@@ -28,11 +28,11 @@ enum ManualDataKeyValues {
 const generateId = (items: ManualData, dataKeyValue: ManualDataKeyValues) => {
   let highestId = 0
 
-  const manualDataitems =
+  const manualDataItems =
     dataKeyValue === ManualDataKeyValues.Date
       ? items?.dateItems ?? []
       : items?.categoryItems ?? []
-  for (const item of manualDataitems) {
+  for (const item of manualDataItems) {
     if (item.id > highestId) {
       highestId = item.id
     }
