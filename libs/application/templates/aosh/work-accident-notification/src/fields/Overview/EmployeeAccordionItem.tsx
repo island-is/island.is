@@ -6,23 +6,23 @@ import {
 import { FC } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { information, overview } from '../../lib/messages'
+import { overview } from '../../lib/messages'
 import { ReviewGroup } from '../Components/ReviewGroup'
 import { KeyValueFormField } from '@island.is/application/ui-fields'
+import { EmployeeType } from '../../lib/dataSchema'
+import { getEmployeeInformationForOverview } from '../../utils/getEmployeeInformationForOverview'
+import { getCauseAndConsequencesForOverview } from '../../utils/getCauseAndConsequencesForOverview'
 
 type EmployeeAccordionItemType = {
-  employee: {
-    name: string
-    nationalId: string
-  }
+  employee: EmployeeType
   onClick: () => void
-  // index: number
+  index: number
 }
 
 export const EmployeeAccordionItem: FC<
   React.PropsWithChildren<FieldBaseProps & EmployeeAccordionItemType>
 > = ({ ...props }) => {
-  const { application, field, employee, onClick } = props
+  const { application, field, employee, onClick, index } = props
   const { formatMessage } = useLocale()
 
   return (
@@ -43,7 +43,11 @@ export const EmployeeAccordionItem: FC<
               component: FieldComponents.KEY_VALUE,
               title: '',
               label: formatMessage(overview.labels.employee),
-              value: 'tjtj',
+              value: getEmployeeInformationForOverview(
+                application.externalData,
+                employee,
+                formatMessage,
+              ),
             }}
           />
         </ReviewGroup>
@@ -61,7 +65,12 @@ export const EmployeeAccordionItem: FC<
               component: FieldComponents.KEY_VALUE,
               title: '',
               label: formatMessage(overview.labels.causeAndConsequences),
-              value: 'ftjk',
+              value: getCauseAndConsequencesForOverview(
+                application.externalData,
+                application.answers,
+                index,
+                formatMessage,
+              ),
             }}
           />
         </ReviewGroup>

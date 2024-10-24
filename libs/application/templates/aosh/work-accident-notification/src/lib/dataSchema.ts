@@ -77,6 +77,11 @@ const employeeSchema = z
     startDate: z.string(),
     tempEmploymentSSN: z.string().optional(),
     workstation: z.string(), // starfsstöð
+    workhourArrangement: z.string(),
+    nationalField: z.object({
+      name: z.string().min(1),
+      nationalId: z.string().min(1),
+    }),
   })
   .refine(
     (data) => {
@@ -218,3 +223,4 @@ export type CompanyLaborProtectionType = z.TypeOf<
   typeof companyLaborProtectionSchema
 >
 export type AccidentType = z.TypeOf<typeof accidentSchema>
+export type EmployeeType = z.TypeOf<typeof employeeSchema>

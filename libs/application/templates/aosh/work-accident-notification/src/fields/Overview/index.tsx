@@ -15,6 +15,8 @@ import {
 } from '../../utils'
 import { EmployeeAccordionItem } from './EmployeeAccordionItem'
 import { AddEmployee } from '../AddEmployee'
+import { getValueViaPath } from '@island.is/application/core'
+import { EmployeeType } from '../../lib/dataSchema'
 
 export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
@@ -26,16 +28,11 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     if (goToScreen) goToScreen(page)
   }
 
-  const mockEmployees = [
-    {
-      name: 'Gervimaður Færeyjar',
-      nationalId: '0101302399',
-    },
-    {
-      name: 'Gervimaður Ameríka',
-      nationalId: '0101302989',
-    },
-  ]
+  const employees = getValueViaPath(
+    application.answers,
+    'employee',
+    [],
+  ) as EmployeeType[]
 
   return (
     <Box>
@@ -84,16 +81,17 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       </ReviewGroup>
       <Box paddingY={[0, 2, 4, 6]}>
         <Accordion>
-          {mockEmployees.map((employee, index) => (
+          {employees.map((employee, index) => (
             <AccordionItem
-              id={`${field.id}-accordion-item-${'someid'}`}
+              id={`${field.id}-accordion-item-${index}`}
               label={`${formatMessage(overview.labels.employee)} ${
-                mockEmployees.length > 1 ? index + 1 : ''
+                employees.length > 1 ? index + 1 : ''
               }`}
             >
               <EmployeeAccordionItem
                 employee={employee}
-                onClick={() => onClick(`someplace[${index}]`)}
+                onClick={() => onClick(`employeeInformation[${index}]`)}
+                index={index}
                 {...props}
               />
             </AccordionItem>

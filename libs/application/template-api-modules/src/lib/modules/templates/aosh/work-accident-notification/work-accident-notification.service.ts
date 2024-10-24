@@ -108,7 +108,7 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
         ),
         aoshCame: answers.accident.didAoshCome === 'yes',
         policeCame: answers.accident.didPoliceCome === 'yes',
-        numberOfVictims: 0, // TODO: Add victims.length
+        numberOfVictims: answers.employee.length,
         municipalityWhereAccidentOccured: answers.accident.municipality, // Vilja þau code eða name til baka?
         specificLocationOfAccident: answers.accident.exactLocation,
         detailedDescriptionOfAccident: answers.accident.wasDoing.concat(
@@ -118,12 +118,12 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
           answers.accident.how,
         ),
         workingEnvironment: answers.accident.accidentLocation.value,
-        victims: [
-          {
-            victimsSSN: '',
+        victims: answers.employee.map((employee, index) => {
+          return {
+            victimsSSN: employee.nationalField.nationalId,
             employmentStatusOfVictim: 0,
             employmentAgencySSN: '',
-            startedEmploymentForCompany: new Date(),
+            startedEmploymentForCompany: new Date(employee.startDate),
             lengthOfEmployment: 0,
             percentageOfFullWorkTime: 0,
             workhourArrangement: 0,
@@ -141,8 +141,8 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
             partOfBodyInjuredMostSevere: '',
             typesOfInjury: [],
             typeOfInjuryMostSevere: '',
-          },
-        ], // TODO
+          }
+        }), // TODO
         userPhoneNumber: '', // TODO: Þetta kemur ekki fram í umsókn og því ekki víst að þetta sé til staðar?
         userEmail: '', // TODO
       },
