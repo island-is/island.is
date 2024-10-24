@@ -3,6 +3,8 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
@@ -30,9 +32,9 @@ import { S3Service } from '@island.is/nest/aws'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 import * as path from 'path'
 
-interface CreateInput extends EndorsementListDto {
-  owner: string
-}
+// interface CreateInput extends EndorsementListDto {
+//   ownerNationalId: string
+// }
 
 @Injectable()
 export class EndorsementListService {
@@ -48,6 +50,47 @@ export class EndorsementListService {
     private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
     private readonly s3Service: S3Service,
   ) {}
+
+  async populateOwnerNamesForExistingLists() {
+    const lists = await this.endorsementListModel.findAll({
+      where: {
+        ownerName: '',
+      },
+    })
+
+    this.logger.info(
+      `Populating owner names for ${lists.length} existing lists`,
+    )
+    for (const list of lists) {
+      const ownerName = await this.getOwnerName(list.ownerNationalId)
+      if (ownerName) {
+        list.ownerName = ownerName
+        await list.save()
+      }
+    }
+  }
+
+  async getOwnerName(ownerNationalId: string): Promise<string> {
+    try {
+      const person = await this.nationalRegistryApiV3.getName(ownerNationalId)
+      return person?.fulltNafn || ''
+    } catch (error) {
+      // const message = `Error fetching owner name from NationalRegistryApi: ${error.message}`
+      // this.logger.error(message)
+      // throw new BadRequestException(message)
+      throw new HttpException(
+        error?.response || 'Error fetching owner name',
+        error?.status || HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async onModuleInit() {
+    // spit out some counts of tables - basic data overview
+
+    // Populate owner names for existing lists if they are missing
+    await this.populateOwnerNamesForExistingLists()
+  }
 
   hasAdminScope(user: User): boolean {
     if (user?.scope) {
@@ -68,7 +111,7 @@ export class EndorsementListService {
       },
     })
     if (endorsementList) {
-      return endorsementList.owner
+      return endorsementList.ownerNationalId
     } else {
       return null
     }
@@ -170,7 +213,7 @@ export class EndorsementListService {
       primaryKeyField: 'counter',
       orderOption: [['counter', 'ASC']],
       where: {
-        owner: nationalId,
+        ownerNationalId: nationalId,
         adminLock: false,
       },
     })
@@ -212,7 +255,7 @@ export class EndorsementListService {
     return await endorsementList.update({ ...endorsementList, ...newData })
   }
 
-  async create(list: CreateInput) {
+  async create(list: EndorsementListDto, user: User) {
     if (!list.openedDate || !list.closedDate) {
       this.logger.warn('Body missing openedDate or closedDate value.')
       throw new BadRequestException([
@@ -234,7 +277,13 @@ export class EndorsementListService {
       ])
     }
     this.logger.info(`Creating endorsement list: ${list.title}`)
-    const endorsementList = await this.endorsementListModel.create({ ...list })
+    // store user name with nationalId
+    const ownerName = await this.getOwnerName(user.nationalId)
+    const endorsementList = await this.endorsementListModel.create({
+      ...list,
+      ownerNationalId: user.nationalId,
+      ownerName,
+    })
 
     if (process.env.NODE_ENV === 'production') {
       await this.emailCreated(endorsementList)
@@ -279,9 +328,9 @@ export class EndorsementListService {
     return result
   }
 
-  async getOwnerInfo(listId: string, owner?: string) {
+  async getOwnerInfo(listId: string, ownerNationalId?: string) {
     this.logger.info(`Finding single endorsement lists by id "${listId}"`)
-    if (!owner) {
+    if (!ownerNationalId) {
       const endorsementList = await this.endorsementListModel.findOne({
         where: {
           id: listId,
@@ -291,11 +340,11 @@ export class EndorsementListService {
         this.logger.warn('This endorsement list does not exist.')
         throw new NotFoundException(['This endorsement list does not exist.'])
       }
-      owner = endorsementList.owner
+      ownerNationalId = endorsementList.ownerNationalId
     }
 
     try {
-      const person = await this.nationalRegistryApiV3.getName(owner)
+      const person = await this.nationalRegistryApiV3.getName(ownerNationalId)
       return person?.fulltNafn ? person.fulltNafn : ''
     } catch (e) {
       if (e instanceof Error) {
@@ -528,7 +577,7 @@ export class EndorsementListService {
     }
     const ownerName = await this.getOwnerInfo(
       endorsementList?.id,
-      endorsementList.owner,
+      endorsementList.ownerNationalId,
     )
     this.logger.info(
       `sending list ${listId} to ${recipientEmail} from ${environment.email.sender}`,
@@ -619,7 +668,7 @@ export class EndorsementListService {
     const recipientEmail = this.getOwnerContact(endorsementList.meta, 'email')
     const ownerName = await this.getOwnerInfo(
       endorsementList?.id,
-      endorsementList.owner,
+      endorsementList.ownerNationalId,
     )
     this.logger.info(
       `sending list ${endorsementList.id} to ${recipientEmail} from ${environment.email.sender}`,
@@ -685,7 +734,7 @@ export class EndorsementListService {
     const ownerPhone = this.getOwnerContact(endorsementList.meta, 'phone')
     const ownerName = await this.getOwnerInfo(
       endorsementList?.id,
-      endorsementList.owner,
+      endorsementList.ownerNationalId,
     )
     this.logger.info(
       `sending new list ${endorsementList.id} to skra@skra.is from ${environment.email.sender}`,
@@ -742,7 +791,7 @@ export class EndorsementListService {
             {
               component: 'Copy',
               context: {
-                copy: `Kennitala stofnenda: ${endorsementList.owner}`,
+                copy: `Kennitala stofnenda: ${endorsementList.ownerNationalId}`,
                 small: true,
               },
             },
@@ -830,7 +879,7 @@ export class EndorsementListService {
     return this.endorsementListModel.findOne({
       where: {
         id: listId,
-        ...(isAdmin ? {} : { owner: user.nationalId }),
+        ...(isAdmin ? {} : { ownerNationalId: user.nationalId }),
       },
       include: [{ model: Endorsement }],
     })
@@ -852,7 +901,7 @@ export class EndorsementListService {
     try {
       const ownerName = await this.getOwnerInfo(
         endorsementList.id,
-        endorsementList.owner,
+        endorsementList.ownerNationalId,
       )
       const pdfBuffer = await this.createDocumentBuffer(
         endorsementList,

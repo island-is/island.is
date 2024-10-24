@@ -7,7 +7,7 @@ export function maskEndorsementList(
 ): EndorsementList {
   // mask list owner data for everyone except list owner and admins
   if (!isListOwner && !isAdmin) {
-    endorsementList.owner = 'xxxxxx-xxxx'
+    endorsementList.ownerNationalId = 'xxxxxx-xxxx'
     endorsementList.meta = { ...endorsementList.meta, phone: '', email: '' }
   }
 
