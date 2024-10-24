@@ -1,4 +1,4 @@
-import { RouteObject, ScrollRestoration } from 'react-router-dom'
+import { Outlet, RouteObject, ScrollRestoration } from 'react-router-dom'
 import { Root } from '../components/Root'
 
 /**
