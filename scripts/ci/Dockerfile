@@ -25,7 +25,7 @@ RUN wget --progress=dot -O /tmp/jq-linux64 https://github.com/stedolan/jq/releas
 # image with the source code
 COPY *.* .
 COPY infra infra
-# COPY scripts scripts
+# COPY scripts scripts # Don't need scripts for builds
 COPY tools tools
 COPY libs libs
 COPY apps apps
