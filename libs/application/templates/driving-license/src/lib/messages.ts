@@ -641,15 +641,15 @@ export const m = defineMessages({
     defaultMessage: 'Veldu sýslumannsembætti',
     description: 'Choose district commissioner',
   },
-  chooseDistrictCommisionerForFullLicense: {
-    id: 'dl.application:chooseDistrictCommisionerForFullLicense',
+  chooseDistrictCommissionerForFullLicense: {
+    id: 'dl.application:chooseDistrictCommissionerForFullLicense',
     defaultMessage:
-      'Veldu það embætti sýslumanns þar sem þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini',
+      'Veldu það embætti sýslumanns þar sem þú vilt skila inn eldra ökuskírteini og fá afhent nýtt með nýjum réttindunum',
     description:
       'Choose district commissioner for returning a temporary license and recieve a new full license',
   },
-  chooseDistrictCommisionerForTempLicense: {
-    id: 'dl.application:chooseDistrictCommisionerForTempLicense',
+  chooseDistrictCommissionerForTempLicense: {
+    id: 'dl.application:chooseDistrictCommissionerForTempLicense',
     defaultMessage:
       'Veldu það embætti sýslumanns sem þú hyggst skila inn gæðamerktri ljósmynd',
     description: 'Choose district commissioner for submitting a quality photo',
