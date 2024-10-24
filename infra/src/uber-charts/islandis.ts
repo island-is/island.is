@@ -18,6 +18,7 @@ import { serviceSetup as consultationPortalSetup } from '../../../apps/consultat
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
 
 import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
+import { workerSetup as cmsImporterSetup } from '../../../apps/services/cms-importer/infra/cms-importer-worker'
 
 import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/skilavottord-ws'
 import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/skilavottord-web'
@@ -123,6 +124,7 @@ const consultationPortal = consultationPortalSetup({ api: api })
 const xroadCollector = xroadCollectorSetup()
 
 const licenseApi = licenseApiSetup()
+const cmsImporter = cmsImporterSetup()
 
 const storybook = storybookSetup({})
 
@@ -167,6 +169,7 @@ export const Services: EnvironmentServices = {
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
     licenseApi,
+    cmsImporter,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -202,6 +205,7 @@ export const Services: EnvironmentServices = {
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
     licenseApi,
+    cmsImporter,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -230,6 +234,7 @@ export const Services: EnvironmentServices = {
     adsBackend,
     adsApi,
     rabBackend,
+    cmsImporter,
     githubActionsCache,
     userNotificationService,
     userNotificationWorkerService,
@@ -238,6 +243,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     contentfulEntryTagger,
     licenseApi,
+    cmsImporter,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
