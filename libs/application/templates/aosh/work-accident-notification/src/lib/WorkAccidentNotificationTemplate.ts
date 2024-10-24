@@ -18,6 +18,7 @@ import { Roles, States, Events } from './constants'
 import { WorkAccidentNotificationAnswersSchema } from './dataSchema'
 import { getAoshInputOptionsApi, IdentityApi } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { shared } from './messages'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -25,8 +26,8 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.WORK_ACCIDENT_NOTIFICATION,
-  name: 'hello',
-  institution: 'nlaf',
+  name: shared.application.name,
+  institution: shared.application.institutionName,
   translationNamespaces: [
     ApplicationConfigurations.WorkAccidentNotification.translation,
   ],
