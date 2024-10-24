@@ -10,6 +10,7 @@ import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { User } from '@island.is/auth-nest-tools';
 import { EndorsementList } from './endorsementList.model';
 
+<<<<<<< HEAD
 const mockEndorsementList = {
     id: '1',
     counter: 1,
@@ -30,6 +31,26 @@ const mockEndorsementList = {
   };
   
   
+=======
+// const mockEndorsementList = {
+//     id: '1',
+//     counter: 1,
+//     title: 'Test List',
+//     description: 'A test endorsement list',
+//     openedDate: new Date(),
+//     closedDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+//     endorsementMetadata: [],
+//     tags: [],
+//     owner: '1234567890',
+//     adminLock: false,
+//     endorsements: [],
+//     endorsementCounter: 0,
+//     meta: {},
+//     created: new Date(),
+//     modified: new Date(),
+//     endorsementCount: 0,
+//   };
+>>>>>>> 1efcf585525e6ffc881eff529c1031ae1f962722
 
 const paginatedEndorsementListDto: PaginatedEndorsementListDto = {
   totalCount: 1,

@@ -25,14 +25,14 @@ describe('EndorsementListService', () => {
     nationalId: '1234567890',
     scope: [EndorsementsScope.main],
     authorization: '',
-    client:''
+    client: '',
   }
 
   const mockAdminUser: User = {
     nationalId: '1234567890',
     scope: [AdminPortalScope.petitionsAdmin],
     authorization: '',
-    client:''
+    client: '',
   }
 
   const mockLogger = {
@@ -63,7 +63,7 @@ describe('EndorsementListService', () => {
       create: jest.fn(),
       update: jest.fn(),
       findAll: jest.fn(),
-      count: jest.fn()  // Add this line
+      count: jest.fn(), // Add this line
     }
 
     mockEndorsementModel = {
@@ -111,283 +111,312 @@ describe('EndorsementListService', () => {
   })
 
   // ... previous tests remain the same ...
-// Previous imports remain the same...
+  // Previous imports remain the same...
 
-describe('EndorsementListService', () => {
-  // Previous setup remains the same...
+  describe('EndorsementListService', () => {
+    // Previous setup remains the same...
 
-  
-
-  describe('constructor and initialization', () => {
-    it('should be properly initialized with all dependencies', () => {
-      expect(service).toBeDefined()
-      expect(service['endorsementListModel']).toBeDefined()
-      expect(service['endorsementModel']).toBeDefined()
-      expect(service['logger']).toBeDefined()
-      expect(service['emailService']).toBeDefined()
-      expect(service['nationalRegistryApiV3']).toBeDefined()
-      expect(service['awsService']).toBeDefined()
+    describe('constructor and initialization', () => {
+      it('should be properly initialized with all dependencies', () => {
+        expect(service).toBeDefined()
+        expect(service['endorsementListModel']).toBeDefined()
+        expect(service['endorsementModel']).toBeDefined()
+        expect(service['logger']).toBeDefined()
+        expect(service['emailService']).toBeDefined()
+        expect(service['nationalRegistryApiV3']).toBeDefined()
+        expect(service['awsService']).toBeDefined()
+      })
     })
-  })
 
-  describe('findAllEndorsementsByNationalId', () => {
-    const mockQuery = { limit: 10 }
-    const nationalId = '1234567890'
+    describe('findAllEndorsementsByNationalId', () => {
+      const mockQuery = { limit: 10 }
+      const nationalId = '1234567890'
 
-    it('should return paginated endorsements for user', async () => {
-      const mockEndorsements = [{
-        id: 'end-1',
-        endorser: nationalId,
-        endorsementList: mockEndorsementList
-      }]
-      mockEndorsementModel.findAll.mockResolvedValue(mockEndorsements)
-      mockEndorsementModel.count.mockResolvedValue(1)
-    
-      const result = await service.findAllEndorsementsByNationalId(nationalId, mockQuery)
-      
-      expect(result.data).toEqual(mockEndorsements)
-      expect(mockEndorsementModel.findAll).toHaveBeenCalledWith({
-        where: { endorser: nationalId },
-        include: [{
-          model: EndorsementList,
-          required: true,
-          as: 'endorsementList',
-          where: {
-            adminLock: false,
-            tags: { [Op.contains]: [['generalPetition']] }
+      it('should return paginated endorsements for user', async () => {
+        const mockEndorsements = [
+          {
+            id: 'end-1',
+            endorser: nationalId,
+            endorsementList: mockEndorsementList,
           },
-          attributes: ['id', 'title', 'description', 'tags', 'closedDate', 'openedDate']
-        }],
-        limit: 10,
-        order: [['counter', 'DESC']]
-      })
-    })
-
-    it('should handle empty results', async () => {
-      mockEndorsementModel.findAll.mockResolvedValue([])
-      mockEndorsementModel.count.mockResolvedValue(0)
-
-      const result = await service.findAllEndorsementsByNationalId(nationalId, mockQuery)
-      expect(result.data).toEqual([])
-      expect(result.totalCount).toBe(0)
-    })
-  })
-
-  describe('findAllEndorsementListsByNationalId', () => {
-    const mockQuery = { limit: 10 }
-    const nationalId = '1234567890'
-
-    it('should return paginated lists owned by user', async () => {
-      mockEndorsementListModel.findAll.mockResolvedValue([mockEndorsementList])
-      mockEndorsementListModel.count.mockResolvedValue(1)
-
-      const result = await service.findAllEndorsementListsByNationalId(nationalId, mockQuery)
-      
-      expect(result.data).toHaveLength(1)
-      expect(mockEndorsementListModel.findAll).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: {
-            owner: nationalId,
-            adminLock: false,
-          }
-        })
-      )
-    })
-  })
-
-  describe('createDocumentBuffer', () => {
-    const mockOwnerName = 'Test Owner'
-
-    it('should create PDF buffer with correct content', async () => {
-      const endorsementListWithEndorsements = {
-        ...mockEndorsementList,
-        endorsements: [
-          {
-            created: new Date('2024-01-01'),
-            meta: {
-              fullName: 'Test Endorser',
-              locality: 'Test City',
-              showName: true
-            }
-          }
         ]
-      }
+        mockEndorsementModel.findAll.mockResolvedValue(mockEndorsements)
+        mockEndorsementModel.count.mockResolvedValue(1)
 
-      const buffer = await service.createDocumentBuffer(
-        endorsementListWithEndorsements,
-        mockOwnerName
-      )
-
-      expect(buffer).toBeInstanceOf(Buffer)
-    })
-
-    it('should handle endorsements without optional fields', async () => {
-      const endorsementListWithPartialData = {
-        ...mockEndorsementList,
-        endorsements: [
-          {
-            created: new Date('2024-01-01'),
-            meta: {
-              fullName: undefined,
-              locality: undefined,
-              showName: true
-            }
-          }
-        ]
-      }
-
-      const buffer = await service.createDocumentBuffer(
-        endorsementListWithPartialData,
-        mockOwnerName
-      )
-
-      expect(buffer).toBeInstanceOf(Buffer)
-    })
-  })
-
-  describe('findSingleOpenListTaggedGeneralPetition', () => {
-    const listId = 'test-id'
-
-    it('should return open general petition list', async () => {
-      mockEndorsementListModel.findOne.mockResolvedValue(mockEndorsementList)
-      
-      const result = await service.findSingleOpenListTaggedGeneralPetition(listId)
-      expect(result).toEqual(mockEndorsementList)
-      expect(mockEndorsementListModel.findOne).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: expect.objectContaining({
-            id: listId,
-            adminLock: false
-          })
-        })
-      )
-    })
-
-    it('should throw NotFoundException for non-existent list', async () => {
-      mockEndorsementListModel.findOne.mockResolvedValue(null)
-      
-      await expect(
-        service.findSingleOpenListTaggedGeneralPetition(listId)
-      ).rejects.toThrow(NotFoundException)
-    })
-
-    it('should throw NotFoundException for closed list', async () => {
-      // Set up a list that's definitely closed
-      const closedList = {
-        ...mockEndorsementList,
-        openedDate: new Date('2023-01-01'),
-        closedDate: new Date('2023-12-31'),
-        tags: ['generalPetition'],  // Make sure tags match exactly
-        adminLock: false
-      }
-      
-      // First, mock findOne to return null to trigger NotFoundException
-      mockEndorsementListModel.findOne.mockResolvedValue(null)
-      
-      await expect(
-        service.findSingleOpenListTaggedGeneralPetition(listId)
-      ).rejects.toThrow(NotFoundException)
-    })
-  })
-
-  describe('fetchEndorsementList', () => {
-    const listId = 'test-id'
-
-    it('should return list for admin user with all lists visible', async () => {
-      mockEndorsementListModel.findOne.mockResolvedValue(mockEndorsementList)
-      
-      const result = await service['fetchEndorsementList'](listId, mockAdminUser)
-      expect(result).toEqual(mockEndorsementList)
-      expect(mockEndorsementListModel.findOne).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { id: listId }
-        })
-      )
-    })
-
-    it('should return list for owner only', async () => {
-      mockEndorsementListModel.findOne.mockResolvedValue(mockEndorsementList)
-      
-      const result = await service['fetchEndorsementList'](listId, mockUser)
-      expect(result).toEqual(mockEndorsementList)
-      expect(mockEndorsementListModel.findOne).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: {
-            id: listId,
-            owner: mockUser.nationalId
-          }
-        })
-      )
-    })
-  })
-
-  describe('AWS integration edge cases', () => {
-    const exportParams = {
-      listId: 'test-id',
-      user: mockUser,
-      fileType: 'pdf' as const
-    }
-
-    beforeEach(() => {
-      mockEndorsementListModel.findOne.mockResolvedValue(mockEndorsementList)
-      mockNationalRegistryService.getName.mockResolvedValue({
-        fulltNafn: 'Test Owner'
-      })
-    })
-
-    it('should handle AWS presigned URL generation failure', async () => {
-      // First the uploadFile succeeds
-      mockAwsService.uploadFile.mockResolvedValue(undefined)
-      // Then getPresignedUrl fails
-      mockAwsService.getPresignedUrl.mockRejectedValue(new Error('Presigned URL failed'))
-      
-      await expect(
-        service.exportList(
-          exportParams.listId,
-          exportParams.user,
-          exportParams.fileType
+        const result = await service.findAllEndorsementsByNationalId(
+          nationalId,
+          mockQuery,
         )
-      ).rejects.toThrow('Presigned URL failed')
-    })
 
-    it('should handle file upload with custom content types', async () => {
-      await service.exportList(exportParams.listId, exportParams.user, 'csv')
-      
-      expect(mockAwsService.uploadFile).toHaveBeenCalledWith(
-        expect.any(Buffer),
-        expect.anything(),
-        expect.objectContaining({
-          ContentType: 'text/csv'
+        expect(result.data).toEqual(mockEndorsements)
+        expect(mockEndorsementModel.findAll).toHaveBeenCalledWith({
+          where: { endorser: nationalId },
+          include: [
+            {
+              model: EndorsementList,
+              required: true,
+              as: 'endorsementList',
+              where: {
+                adminLock: false,
+                tags: { [Op.contains]: [['generalPetition']] },
+              },
+              attributes: [
+                'id',
+                'title',
+                'description',
+                'tags',
+                'closedDate',
+                'openedDate',
+              ],
+            },
+          ],
+          limit: 10,
+          order: [['counter', 'DESC']],
         })
-      )
+      })
+
+      it('should handle empty results', async () => {
+        mockEndorsementModel.findAll.mockResolvedValue([])
+        mockEndorsementModel.count.mockResolvedValue(0)
+
+        const result = await service.findAllEndorsementsByNationalId(
+          nationalId,
+          mockQuery,
+        )
+        expect(result.data).toEqual([])
+        expect(result.totalCount).toBe(0)
+      })
+    })
+
+    describe('findAllEndorsementListsByNationalId', () => {
+      const mockQuery = { limit: 10 }
+      const nationalId = '1234567890'
+
+      it('should return paginated lists owned by user', async () => {
+        mockEndorsementListModel.findAll.mockResolvedValue([
+          mockEndorsementList,
+        ])
+        mockEndorsementListModel.count.mockResolvedValue(1)
+
+        const result = await service.findAllEndorsementListsByNationalId(
+          nationalId,
+          mockQuery,
+        )
+
+        expect(result.data).toHaveLength(1)
+        expect(mockEndorsementListModel.findAll).toHaveBeenCalledWith(
+          expect.objectContaining({
+            where: {
+              owner: nationalId,
+              adminLock: false,
+            },
+          }),
+        )
+      })
+    })
+
+    describe('createDocumentBuffer', () => {
+      const mockOwnerName = 'Test Owner'
+
+      it('should create PDF buffer with correct content', async () => {
+        const endorsementListWithEndorsements = {
+          ...mockEndorsementList,
+          endorsements: [
+            {
+              created: new Date('2024-01-01'),
+              meta: {
+                fullName: 'Test Endorser',
+                locality: 'Test City',
+                showName: true,
+              },
+            },
+          ],
+        }
+
+        const buffer = await service.createDocumentBuffer(
+          endorsementListWithEndorsements,
+          mockOwnerName,
+        )
+
+        expect(buffer).toBeInstanceOf(Buffer)
+      })
+
+      it('should handle endorsements without optional fields', async () => {
+        const endorsementListWithPartialData = {
+          ...mockEndorsementList,
+          endorsements: [
+            {
+              created: new Date('2024-01-01'),
+              meta: {
+                fullName: undefined,
+                locality: undefined,
+                showName: true,
+              },
+            },
+          ],
+        }
+
+        const buffer = await service.createDocumentBuffer(
+          endorsementListWithPartialData,
+          mockOwnerName,
+        )
+
+        expect(buffer).toBeInstanceOf(Buffer)
+      })
+    })
+
+    describe('findSingleOpenListTaggedGeneralPetition', () => {
+      const listId = 'test-id'
+
+      it('should return open general petition list', async () => {
+        mockEndorsementListModel.findOne.mockResolvedValue(mockEndorsementList)
+
+        const result = await service.findSingleOpenListTaggedGeneralPetition(
+          listId,
+        )
+        expect(result).toEqual(mockEndorsementList)
+        expect(mockEndorsementListModel.findOne).toHaveBeenCalledWith(
+          expect.objectContaining({
+            where: expect.objectContaining({
+              id: listId,
+              adminLock: false,
+            }),
+          }),
+        )
+      })
+
+      it('should throw NotFoundException for non-existent list', async () => {
+        mockEndorsementListModel.findOne.mockResolvedValue(null)
+
+        await expect(
+          service.findSingleOpenListTaggedGeneralPetition(listId),
+        ).rejects.toThrow(NotFoundException)
+      })
+
+      it('should throw NotFoundException for closed list', async () => {
+        // Set up a list that's definitely closed
+        const closedList = {
+          ...mockEndorsementList,
+          openedDate: new Date('2023-01-01'),
+          closedDate: new Date('2023-12-31'),
+          tags: ['generalPetition'], // Make sure tags match exactly
+          adminLock: false,
+        }
+
+        // First, mock findOne to return null to trigger NotFoundException
+        mockEndorsementListModel.findOne.mockResolvedValue(null)
+
+        await expect(
+          service.findSingleOpenListTaggedGeneralPetition(listId),
+        ).rejects.toThrow(NotFoundException)
+      })
+    })
+
+    describe('fetchEndorsementList', () => {
+      const listId = 'test-id'
+
+      it('should return list for admin user with all lists visible', async () => {
+        mockEndorsementListModel.findOne.mockResolvedValue(mockEndorsementList)
+
+        const result = await service['fetchEndorsementList'](
+          listId,
+          mockAdminUser,
+        )
+        expect(result).toEqual(mockEndorsementList)
+        expect(mockEndorsementListModel.findOne).toHaveBeenCalledWith(
+          expect.objectContaining({
+            where: { id: listId },
+          }),
+        )
+      })
+
+      it('should return list for owner only', async () => {
+        mockEndorsementListModel.findOne.mockResolvedValue(mockEndorsementList)
+
+        const result = await service['fetchEndorsementList'](listId, mockUser)
+        expect(result).toEqual(mockEndorsementList)
+        expect(mockEndorsementListModel.findOne).toHaveBeenCalledWith(
+          expect.objectContaining({
+            where: {
+              id: listId,
+              owner: mockUser.nationalId,
+            },
+          }),
+        )
+      })
+    })
+
+    describe('AWS integration edge cases', () => {
+      const exportParams = {
+        listId: 'test-id',
+        user: mockUser,
+        fileType: 'pdf' as const,
+      }
+
+      beforeEach(() => {
+        mockEndorsementListModel.findOne.mockResolvedValue(mockEndorsementList)
+        mockNationalRegistryService.getName.mockResolvedValue({
+          fulltNafn: 'Test Owner',
+        })
+      })
+
+      it('should handle AWS presigned URL generation failure', async () => {
+        // First the uploadFile succeeds
+        mockAwsService.uploadFile.mockResolvedValue(undefined)
+        // Then getPresignedUrl fails
+        mockAwsService.getPresignedUrl.mockRejectedValue(
+          new Error('Presigned URL failed'),
+        )
+
+        await expect(
+          service.exportList(
+            exportParams.listId,
+            exportParams.user,
+            exportParams.fileType,
+          ),
+        ).rejects.toThrow('Presigned URL failed')
+      })
+
+      it('should handle file upload with custom content types', async () => {
+        await service.exportList(exportParams.listId, exportParams.user, 'csv')
+
+        expect(mockAwsService.uploadFile).toHaveBeenCalledWith(
+          expect.any(Buffer),
+          expect.anything(),
+          expect.objectContaining({
+            ContentType: 'text/csv',
+          }),
+        )
+      })
+    })
+
+    describe('Email error handling', () => {
+      it('should handle national registry API errors in emailLock', async () => {
+        // Mock the National Registry API to fail
+        mockNationalRegistryService.getName.mockRejectedValue(
+          new Error('API Error'),
+        )
+        // Mock the email service to fail as well since we couldn't get the name
+        mockEmailService.sendEmail.mockRejectedValue(new Error('Email failed'))
+
+        const result = await service.emailLock(mockEndorsementList)
+        expect(result.success).toBe(false)
+        expect(mockLogger.error).toHaveBeenCalled()
+      })
+
+      it('should handle missing owner data gracefully', async () => {
+        mockNationalRegistryService.getName.mockResolvedValue({})
+
+        const result = await service.emailCreated(mockEndorsementList)
+        expect(result.success).toBe(true)
+        expect(mockEmailService.sendEmail).toHaveBeenCalled()
+      })
     })
   })
-
-  describe('Email error handling', () => {
-    it('should handle national registry API errors in emailLock', async () => {
-      // Mock the National Registry API to fail
-      mockNationalRegistryService.getName.mockRejectedValue(new Error('API Error'))
-      // Mock the email service to fail as well since we couldn't get the name
-      mockEmailService.sendEmail.mockRejectedValue(new Error('Email failed'))
-      
-      const result = await service.emailLock(mockEndorsementList)
-      expect(result.success).toBe(false)
-      expect(mockLogger.error).toHaveBeenCalled()
-    })
-
-    it('should handle missing owner data gracefully', async () => {
-      mockNationalRegistryService.getName.mockResolvedValue({})
-      
-      const result = await service.emailCreated(mockEndorsementList)
-      expect(result.success).toBe(true)
-      expect(mockEmailService.sendEmail).toHaveBeenCalled()
-    })
-  })
-})
 
   describe('findListsGenericQuery', () => {
     const mockQuery = { limit: 10 }
-    
+
     it('should return paginated results', async () => {
       const mockPaginatedResult = {
         data: [mockEndorsementList],
@@ -531,7 +560,9 @@ describe('EndorsementListService', () => {
     }
 
     beforeEach(() => {
-      mockEndorsementListModel.findOne.mockResolvedValue(mockEndorsementWithEndorsements)
+      mockEndorsementListModel.findOne.mockResolvedValue(
+        mockEndorsementWithEndorsements,
+      )
       mockNationalRegistryService.getName.mockResolvedValue({
         fulltNafn: 'Test Owner',
       })
@@ -539,7 +570,7 @@ describe('EndorsementListService', () => {
 
     it('should successfully send PDF email', async () => {
       const result = await service.emailPDF(mockListId, mockEmail)
-      
+
       expect(result.success).toBe(true)
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -554,14 +585,14 @@ describe('EndorsementListService', () => {
 
     it('should handle email sending failure', async () => {
       mockEmailService.sendEmail.mockRejectedValue(new Error('Email failed'))
-      
+
       const result = await service.emailPDF(mockListId, mockEmail)
       expect(result.success).toBe(false)
     })
 
     it('should throw NotFoundException when list not found', async () => {
       mockEndorsementListModel.findOne.mockResolvedValue(null)
-      
+
       await expect(service.emailPDF(mockListId, mockEmail)).rejects.toThrow(
         NotFoundException,
       )
@@ -617,7 +648,11 @@ describe('EndorsementListService', () => {
       mockAwsService.uploadFile.mockRejectedValue(new Error('Upload failed'))
 
       await expect(
-        service.exportList(exportParams.listId, exportParams.user, exportParams.fileType),
+        service.exportList(
+          exportParams.listId,
+          exportParams.user,
+          exportParams.fileType,
+        ),
       ).rejects.toThrow('Error uploading file to S3')
     })
   })
@@ -654,7 +689,7 @@ describe('EndorsementListService', () => {
 
     it('should handle email service failures', async () => {
       mockEmailService.sendEmail.mockRejectedValue(new Error('Email failed'))
-      
+
       const result = await service.emailCreated(mockEndorsementList)
       expect(result.success).toBe(false)
     })
@@ -686,6 +721,24 @@ describe('List query functionality', () => {
     )
   })
   
+  describe('List query functionality', () => {
+    it('should handle pagination parameters', async () => {
+      const query = {
+        limit: 10,
+        after: 'some-cursor',
+        before: 'other-cursor',
+      }
+      mockEndorsementListModel.findAll.mockResolvedValue([mockEndorsementList])
+      mockEndorsementListModel.count.mockResolvedValue(1)
+
+      await service.findListsGenericQuery(query)
+      expect(mockEndorsementListModel.findAll).toHaveBeenCalledWith(
+        expect.objectContaining({
+          limit: 10,
+          offset: expect.any(Number),
+        }),
+      )
+    })
 
   it('should handle invalid cursor values', async () => {
     const query = {
@@ -736,36 +789,44 @@ describe('Core list operations', () => {
       expect(result).toBe('test@example.com')
     })
 
-    it('should throw NotFoundException for missing contact', () => {
-      const meta = { phone: '1234567' }
-      expect(() => service.getOwnerContact(meta, 'email')).toThrow(NotFoundException)
+    describe('updateEndorsementList', () => {
+      it('should update multiple fields', async () => {
+        const updates = {
+          title: 'Updated Title',
+          description: 'Updated Description',
+          openedDate: new Date('2024-01-01'),
+          closedDate: new Date('2024-12-31'),
+        }
+        const list = { ...mockEndorsementList, update: jest.fn() }
+        list.update.mockResolvedValue({ ...list, ...updates })
+
+        const result = await service.updateEndorsementList(list, updates)
+        expect(result.title).toBe(updates.title)
+        expect(result.description).toBe(updates.description)
+      })
+    })
+
+    describe('getOwnerContact', () => {
+      it('should find nested contact information', () => {
+        const meta = {
+          email: 'test@example.com',
+          nested: { email: 'nested@example.com' },
+        }
+        const result = service.getOwnerContact(meta, 'email')
+        expect(result).toBe('test@example.com')
+      })
+
+      it('should throw NotFoundException for missing contact', () => {
+        const meta = { phone: '1234567' }
+        expect(() => service.getOwnerContact(meta, 'email')).toThrow(
+          NotFoundException,
+        )
+      })
     })
   })
-})
 
-describe('PDF generation', () => {
-  const mockEndorsementWithData = {
-    ...mockEndorsementList,
-    endorsements: [
-      {
-        created: new Date(),
-        meta: {
-          fullName: 'Test User',
-          locality: 'Test City',
-          showName: true
-        }
-      }
-    ]
-  }
-
-  it('should handle PDF document creation with complex data', async () => {
-    const buffer = await service.createDocumentBuffer(mockEndorsementWithData, 'Test Owner')
-    expect(buffer).toBeInstanceOf(Buffer)
-    expect(buffer.length).toBeGreaterThan(0)
-  })
-
-  it('should handle missing metadata in endorsements', async () => {
-    const listWithIncompleteData = {
+  describe('PDF generation', () => {
+    const mockEndorsementWithData = {
       ...mockEndorsementList,
       endorsements: [
         {
@@ -787,30 +848,7 @@ describe('PDF generation', () => {
 })
 
 describe('AWS and file handling', () => {
-  // it('should handle file upload retries', async () => {
-  //   const listId = 'test-id'
-  //   const fileType = 'pdf'
-  
-  //   // Mock the first upload attempt to fail, and the second one to succeed
-  //   mockAwsService.uploadFile
-  //     .mockRejectedValueOnce(new Error('First attempt failed')) // First attempt fails
-  //     .mockResolvedValueOnce(undefined) // Second attempt succeeds
-  
-  //   // Mock the findOne to return a valid endorsement list
-  //   mockEndorsementListModel.findOne.mockResolvedValue(mockEndorsementList)
-  
-  //   // Mock the national registry service
-  //   mockNationalRegistryService.getName.mockResolvedValue({ fulltNafn: 'Test Owner' })
-  
-  //   // Call the exportList method
-  //   const result = await service.exportList(listId, mockUser, fileType)
-  
-  //   // Ensure that the presigned URL is generated after retry
-  //   expect(result.url).toBeDefined()
-  
-  //   // Ensure that the file upload was retried
-  //   expect(mockAwsService.uploadFile).toHaveBeenCalledTimes(2)
-  // })
+
   
 
   it('should handle presigned URL errors gracefully', async () => {
@@ -873,5 +911,6 @@ describe('AWS and file handling', () => {
     expect(mockAwsService.getPresignedUrl).toHaveBeenCalled()
   })
   
+})
 })
 })
