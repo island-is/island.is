@@ -135,6 +135,8 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-bas
 
 FROM playwright-base AS output-playwright
 # TODO: remove awscli dependency (157 MB extra)
+
+# hadolint ignore=DL3008
 RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
 
 ARG APP_HOME
@@ -162,6 +164,9 @@ ENTRYPOINT ["./entrypoint.sh"]
 
 FROM playwright-base AS output-local
 ARG APP_HOME
+ARG APP_DIST_HOME
+
+WORKDIR ${APP_DIST_HOME}
 
 
 # node user exists in the base image
