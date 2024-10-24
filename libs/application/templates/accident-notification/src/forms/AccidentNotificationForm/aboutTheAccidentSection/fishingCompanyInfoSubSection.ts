@@ -5,12 +5,10 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import {
-  isFishermanAccident,
-  isInjuredAndRepresentativeOfCompanyOrInstitute,
-  isReportingOnBehalfOfEmployee,
-} from '../../../utils'
+import { isInjuredAndRepresentativeOfCompanyOrInstitute } from '../../../utils/miscUtils'
 import { fishingCompanyInfo, representativeInfo } from '../../../lib/messages'
+import { isReportingOnBehalfOfEmployee } from '../../../utils/reportingUtils'
+import { isFishermanAccident } from '../../../utils/occupationUtils'
 
 // fishery information if fisherman
 export const fishingCompanyInfoSubSection = buildSubSection({

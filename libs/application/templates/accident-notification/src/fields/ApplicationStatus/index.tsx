@@ -15,13 +15,11 @@ import { useFormContext } from 'react-hook-form'
 import { getAccidentStatusQuery } from '../../hooks/useLazyStatusOfNotification'
 import { inReview } from '../../lib/messages'
 import { ReviewApprovalEnum, SubmittedApplicationData } from '../../types'
-import {
-  getErrorMessageForMissingDocuments,
-  isUniqueAssignee,
-} from '../../utils'
+import { isUniqueAssignee } from '../../utils/miscUtils'
 import { StatusStep } from './StatusStep'
 import { ApplicationStatusProps } from './StatusStep/types'
 import { getStatusAndApproval, getSteps } from './applicationStatusUtils'
+import { getErrorMessageForMissingDocuments } from '../../utils/documentUtils'
 
 export const ApplicationStatus = ({
   goToScreen,

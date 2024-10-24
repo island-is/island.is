@@ -1,5 +1,6 @@
 import { FormValue } from '@island.is/application/types'
-import { isDateOlderThanAYear } from './isDateOlderThanAYear'
+import { isDateOlderThanAYear, isValid24HFormatTime } from './dateUtils'
+
 describe('isDateOlderThanAYear', () => {
   const yesterday = new Date()
   yesterday.setDate(yesterday.getDate() - 1)
@@ -25,5 +26,31 @@ describe('isDateOlderThanAYear', () => {
   })
   it('should return false for empty object', () => {
     expect(isDateOlderThanAYear(emptyObject)).toEqual(false)
+  })
+})
+
+describe('isValid24HFormatTime', () => {
+  it.each(['0000', '2359', '1234'])(
+    'should return true for valid time',
+    (time) => {
+      const result = isValid24HFormatTime(time)
+      expect(result).toBeTruthy()
+    },
+  )
+
+  it.each([
+    '2534',
+    '1265',
+    '2360',
+    '2400',
+    '12:34',
+    '',
+    '1',
+    '12',
+    '123',
+    '12345',
+  ])('should return false for invalid time', (time) => {
+    const result = isValid24HFormatTime(time)
+    expect(result).toBeFalsy()
   })
 })

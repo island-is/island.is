@@ -1,10 +1,9 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { AccidentNotification } from '../../lib/dataSchema'
-import { isInjuredAndRepresentativeOfCompanyOrInstitute } from '../../utils'
+import { isInjuredAndRepresentativeOfCompanyOrInstitute } from '../../utils/miscUtils'
 
-interface HiddenInformationProps {
+type Props = {
   field: {
     props: {
       id: string
@@ -12,9 +11,10 @@ interface HiddenInformationProps {
   }
 }
 
-export const HiddenInformation: FC<
-  React.PropsWithChildren<FieldBaseProps & HiddenInformationProps>
-> = ({ application, field }) => {
+export const HiddenInformation = ({
+  application,
+  field,
+}: Props & FieldBaseProps) => {
   const { register, setValue } = useFormContext()
   const { id } = field.props
 
