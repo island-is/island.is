@@ -19,6 +19,7 @@ import {
 } from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
+import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 
 import { environment } from '../environments'
 import { ClientsModule } from './clients/clients.module'
@@ -52,6 +53,7 @@ import { ScopesModule } from './scopes/scopes.module'
         XRoadConfig,
         DelegationApiUserSystemNotificationConfig,
         SyslumennClientConfig,
+        ZendeskServiceConfig,
       ],
     }),
   ],

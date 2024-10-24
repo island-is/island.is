@@ -6,9 +6,10 @@ import { Logger } from '@island.is/logging'
 import { ZendeskService } from './zendesk.service'
 
 const testOptions = {
-  token: 'token',
-  email: 'email',
+  formToken: 'token',
+  formEmail: 'email',
   subdomain: 'subdomain',
+  isConfigured: true,
 }
 
 const testUser = {
