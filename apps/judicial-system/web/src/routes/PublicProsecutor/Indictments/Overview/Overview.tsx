@@ -122,12 +122,7 @@ export const Overview = () => {
           </Box>
         ))}
         <Box component="section" marginBottom={5}>
-          <InfoCardClosedIndictment
-            displayAppealExpirationInfo={
-              workingCase.indictmentRulingDecision ===
-              CaseIndictmentRulingDecision.RULING
-            }
-          />
+          <InfoCardClosedIndictment />
         </Box>
         {/* 
         NOTE: Temporarily hidden while list of laws broken is not complete in

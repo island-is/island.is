@@ -25,7 +25,7 @@ import * as styles from './BlueBoxWithIcon.css'
 
 interface Props {
   defendant: Defendant
-  indictmentRulingDecision?: CaseIndictmentRulingDecision
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null
   icon?: IconMapIcon
 }
 
