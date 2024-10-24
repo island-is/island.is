@@ -1,17 +1,17 @@
 import {
-  Icon,
   Box,
   BoxProps,
-  LoadingDots,
   Button,
+  Icon,
+  LoadingDots,
 } from '@island.is/island-ui/core'
-import { useUserInfo } from '@island.is/auth/react'
-import { Tooltip, m } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
-import { ActiveDocumentType2 } from '../../lib/types'
-import { useDocumentContext } from '../../screens/Overview/DocumentContext'
+import { useBffUrlGenerator } from '@island.is/react-spa/bff'
+import { Tooltip, m } from '@island.is/service-portal/core'
 import { useDocumentList } from '../../hooks/useDocumentList'
 import { useMailAction } from '../../hooks/useMailActionV2'
+import { ActiveDocumentType2 } from '../../lib/types'
+import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { downloadFile } from '../../utils/downloadDocumentV2'
 import * as styles from './DocumentActionBar.css'
 
@@ -37,8 +37,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
 
   const { activeDocument } = useDocumentContext()
   const { fetchObject, refetch } = useDocumentList()
-  const userInfo = useUserInfo()
-
+  const bffUrlGenerator = useBffUrlGenerator()
   const { formatMessage } = useLocale()
 
   const isBookmarked =
@@ -144,7 +143,11 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
                 icon="download"
                 iconType={'outline'}
                 onClick={() =>
-                  downloadFile(activeDocument, userInfo, 'download')
+                  downloadFile({
+                    bffUrlGenerator,
+                    doc: activeDocument,
+                    query: 'download',
+                  })
                 }
                 size="medium"
                 colorScheme="light"
@@ -158,7 +161,12 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
               circle
               icon="print"
               iconType={'outline'}
-              onClick={() => downloadFile(activeDocument, userInfo)}
+              onClick={() =>
+                downloadFile({
+                  bffUrlGenerator,
+                  doc: activeDocument,
+                })
+              }
               size="medium"
               colorScheme="light"
             />

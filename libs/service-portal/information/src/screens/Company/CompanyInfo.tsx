@@ -13,7 +13,7 @@ import {
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { dateFormat } from '@island.is/shared/constants'
-import { useUserInfo } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 import { mCompany } from '../../lib/messages'
 import { useCompanyRegistryCompanyQuery } from './Company.generated'

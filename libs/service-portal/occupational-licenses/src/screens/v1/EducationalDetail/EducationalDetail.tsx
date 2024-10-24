@@ -9,7 +9,7 @@ import {
   formSubmit,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useUserInfo } from '@island.is/auth/react'
+import { useUserBirthday, useUserInfo } from '@island.is/react-spa/bff'
 import { LicenseDetail } from '../../../components/LicenseDetail'
 import { useEffect, useState } from 'react'
 import { m } from '@island.is/service-portal/core'
@@ -26,7 +26,7 @@ export const EducationDetail = () => {
   useNamespaces('sp.occupational-licenses')
 
   const user = useUserInfo()
-  const birthday = user.profile.dateOfBirth
+  const dateOfBirth = useUserBirthday()
 
   const { formatDateFns, formatMessage } = useLocale()
 
@@ -100,7 +100,9 @@ export const EducationDetail = () => {
       }
       isOldEducationLicense={isOldEducationLicense}
       name={user.profile.name}
-      dateOfBirth={birthday ? formatDateFns(birthday, 'dd.MM.yyyy') : undefined}
+      dateOfBirth={
+        dateOfBirth ? formatDateFns(dateOfBirth, 'dd.MM.yyyy') : undefined
+      }
       profession={programme}
       licenseType={programme}
       publisher={license.type}

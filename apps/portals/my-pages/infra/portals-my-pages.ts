@@ -1,5 +1,7 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
+const graphqlApiPath = '/minarsidur/bff/api/graphql'
+
 export const serviceSetup = (services: {
   graphql: ServiceBuilder<'api'>
 }): ServiceBuilder<'service-portal'> =>
@@ -25,10 +27,10 @@ export const serviceSetup = (services: {
       },
       SI_PUBLIC_ENVIRONMENT: ref((h) => h.env.type),
       SI_PUBLIC_GRAPHQL_API: {
-        prod: '/api/graphql',
-        staging: '/api/graphql',
-        dev: '/api/graphql',
-        local: ref((h) => `http://${h.svc(services.graphql)}/api/graphql`),
+        prod: graphqlApiPath,
+        staging: graphqlApiPath,
+        dev: graphqlApiPath,
+        local: ref((h) => `http://${h.svc(services.graphql)}${graphqlApiPath}`),
       },
     })
     .secrets({

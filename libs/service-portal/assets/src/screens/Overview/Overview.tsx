@@ -12,8 +12,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  EmptyState,
-  ErrorScreen,
   FootNote,
   formSubmit,
   IntroHeader,

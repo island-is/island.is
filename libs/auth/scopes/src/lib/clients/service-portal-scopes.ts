@@ -30,6 +30,7 @@ export const servicePortalScopes = [
   ApiScope.internal,
   ApiScope.internalProcuring,
   ApiScope.meDetails,
+  ApiScope.lawAndOrder,
   ApiScope.licenses,
   ApiScope.licensesVerify,
   ApiScope.company,

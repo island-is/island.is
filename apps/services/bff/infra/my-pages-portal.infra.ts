@@ -1,11 +1,13 @@
-/* eslint-disable @nx/enforce-module-boundaries */
-import { ServiceBuilder, service, json } from '../../../../infra/src/dsl/dsl'
-import { BffInfraServices } from '../../../../infra/src/dsl/types/input-types'
+import { ServiceBuilder, json, service } from '../../../../infra/src/dsl/dsl'
 
 const bffName = 'services-bff'
-const clientName = 'portals-admin'
+const clientName = 'portals-my-pages'
 const serviceName = `${bffName}-${clientName}`
-const key = 'stjornbord'
+const key = 'minarsidur'
+
+export type BffInfraServices = {
+  api: ServiceBuilder<'api'>
+}
 
 export const serviceSetup = (
   services: BffInfraServices,
@@ -25,7 +27,7 @@ export const serviceSetup = (
     })
     .bff({
       key,
-      clientId: `@admin.island.is/bff-${key}`,
+      clientId: '@island.is/bff',
       clientName,
       services,
     })
