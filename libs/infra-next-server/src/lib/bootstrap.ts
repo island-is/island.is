@@ -41,9 +41,11 @@ type BootstrapOptions = {
 }
 
 const startServer = (app: Express, port = 4200) => {
+  logger.debug('Setting up server...', { port })
   const nextPort = parseInt(process.env.PORT || '') || port
   const metricsPort = nextPort + 1
   app.listen(nextPort, () => {
+    logger.debug('Server is listening...', { nextPort })
     logger.info(
       `Next custom server listening at http://localhost:${nextPort}`,
       {
@@ -51,50 +53,83 @@ const startServer = (app: Express, port = 4200) => {
       },
     )
   })
+  logger.debug('Starting metric server...', { metricsPort })
   startMetricServer(metricsPort)
 }
 
+logger.debug('Setting up exit hook...')
 const setupExitHook = () => {
-  // Make sure the server doesn't hang after parent process disconnects, eg when
-  // e2e tests are finished.
+  logger.debug('Checking exit hook...', {
+    NX_INVOKED_BY_RUNNER: process.env.NX_INVOKED_BY_RUNNER,
+  })
   if (process.env.NX_INVOKED_BY_RUNNER === 'true') {
     process.on('disconnect', () => {
+      logger.debug('Exiting process...')
       process.exit(0)
     })
   }
 }
 
+logger.debug('Starting bootstrap...')
 export const bootstrap = async (options: BootstrapOptions) => {
+  logger.debug('Checking environment...', { NODE_ENV: process.env.NODE_ENV })
   const dev = process.env.NODE_ENV !== 'production'
   monkeyPatchServerLogging()
 
   setupExitHook()
 
+  logger.debug('Creating Express app...')
   const expressApp = createExpressApp()
 
-  await setupProxy(expressApp, options.proxyConfig, dev)
+  logger.debug('Setting up proxy...', { proxyConfig: options.proxyConfig, dev })
+  // await setupProxy(expressApp, options.proxyConfig, dev)
 
+  logger.debug('Getting Next.js config...', { appDir: options.appDir, dev })
   const nextConfig = await getNextConfig(options.appDir, dev)
   const nextApp = next(nextConfig)
   const handle = nextApp.getRequestHandler()
   const readyPromise = nextApp.prepare()
-
-  setupHealthchecks(
-    expressApp,
+  logger.debug(`Next.js config:`, {
+    nextConfig,
+    handle,
+    handleType: typeof handle,
     readyPromise,
-    options.externalEndpointDependencies,
-  )
-
-  expressApp.use((req, res) => {
-    // Configure long caching for web fonts (often in public folder).
-    if (req.url.match('.woff2?$')) {
-      res.setHeader('Cache-Control', 'public, max-age=31536000') // 365 days
-    }
-
-    handle(req, res as never)
   })
 
+  logger.debug('Setting up healthchecks...', {
+    externalEndpointDependencies: options.externalEndpointDependencies,
+  })
+  // setupHealthchecks(
+  //   expressApp,
+  //   readyPromise,
+  //   options.externalEndpointDependencies,
+  // )
+
+  expressApp.use(async (req, res) => {
+    // if (req.url.match('.woff2?$')) {
+    //   res.setHeader('Cache-Control', 'public, max-age=31536000')
+    // }
+
+    try {
+      await handle(req, res)
+    } catch (err: any) {
+      logger.error('Error in Next.js request handler!', {
+        message: err.message,
+        stack: err.stack,
+        err,
+      })
+      res.status(500).send('Internal Server Error')
+    }
+  })
+
+  expressApp.use((err: any, req: any, res: any, _next: any) => {
+    console.error(err.stack)
+    res.status(500).send('Internal Server Error')
+  })
+
+  logger.debug('Starting server...', { port: options.port })
   startServer(expressApp, options.port)
 
+  logger.debug('Starting next...')
   await readyPromise
 }
