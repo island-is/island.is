@@ -1,11 +1,11 @@
 import '@island.is/api/mocks'
+
 import { userMonitoring } from '@island.is/user-monitoring'
-import React, { StrictMode } from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
-import './auth'
 import environment from './environments/environment'
 import { App } from './app/App'
 
