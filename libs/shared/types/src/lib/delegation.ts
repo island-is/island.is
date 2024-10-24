@@ -3,6 +3,7 @@ export enum AuthDelegationType {
   LegalGuardian = 'LegalGuardian',
   Custom = 'Custom',
   PersonalRepresentative = 'PersonalRepresentative',
+  PersonalRepresentativePostbox = 'PersonalRepresentative:postholf',
   LegalRepresentative = 'LegalRepresentative',
   GeneralMandate = 'GeneralMandate',
 }

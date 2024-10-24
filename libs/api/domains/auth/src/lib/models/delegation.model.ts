@@ -30,6 +30,8 @@ const exhaustiveCheck = (param: never) => {
         return ProcuringHolderDelegation
       case AuthDelegationType.PersonalRepresentative:
         return PersonalRepresentativeDelegation
+      case AuthDelegationType.PersonalRepresentativepostholf:
+        return PersonalRepresentativePostboxDelegation
       case AuthDelegationType.Custom:
         return CustomDelegation
       case AuthDelegationType.GeneralMandate:
@@ -78,6 +80,11 @@ export class ProcuringHolderDelegation extends Delegation {}
   implements: Delegation,
 })
 export class PersonalRepresentativeDelegation extends Delegation {}
+
+@ObjectType('AuthPersonalRepresentativePostboxDelegation', {
+  implements: Delegation,
+})
+export class PersonalRepresentativePostboxDelegation extends Delegation {}
 
 @ObjectType('AuthGeneralMandate', {
   implements: Delegation,
