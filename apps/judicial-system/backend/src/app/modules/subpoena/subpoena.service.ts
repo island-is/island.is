@@ -182,10 +182,8 @@ export class SubpoenaService {
       transaction,
     })
 
-    if (numberOfAffectedRows !== 1) {
-      // Normally we would not tolerate it if the number of affected rows is 0
-      // but in this case the update comes from an external system and
-      // for now we want to prentend that it's ok.
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
       this.logger.error(
         `Unexpected number of rows ${numberOfAffectedRows} affected when updating subpoena`,
       )
@@ -226,10 +224,8 @@ export class SubpoenaService {
         },
       )
 
-      if (numberOfAffectedRows !== 1) {
-        // Normally we would not tolerate it if the number of affected rows is 0
-        // but in this case the update comes from an external system and
-        // for now we want to prentend that it's ok.
+      if (numberOfAffectedRows > 1) {
+        // Tolerate failure, but log error
         this.logger.error(
           `Unexpected number of rows ${numberOfAffectedRows} affected when updating defendant`,
         )
