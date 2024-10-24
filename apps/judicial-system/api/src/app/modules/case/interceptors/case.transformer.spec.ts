@@ -540,6 +540,31 @@ describe('getAppealInfo', () => {
     expect(appealInfo).toEqual({})
   })
 
+  it('should return not return appealedDate if case has not been appealed', () => {
+    const rulingDate = new Date().toISOString()
+    const theCase = {
+      type: CaseType.CUSTODY,
+      rulingDate,
+      appealState: undefined,
+      accusedAppealDecision: CaseAppealDecision.POSTPONE,
+      prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+      accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+      prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+    } as Case
+
+    const appealInfo = getAppealInfo(theCase)
+
+    expect(appealInfo).toEqual({
+      canBeAppealed: true,
+      hasBeenAppealed: false,
+      appealDeadline: new Date(
+        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 3),
+      ).toISOString(),
+      canDefenderAppeal: true,
+      canProsecutorAppeal: true,
+    })
+  })
+
   it('should return correct appeal info when ruling date is provided', () => {
     const rulingDate = new Date().toISOString()
     const theCase = {
@@ -565,82 +590,6 @@ describe('getAppealInfo', () => {
       statementDeadline: '2021-06-16T19:50:08.033Z',
       canDefenderAppeal: false,
       canProsecutorAppeal: false,
-    })
-  })
-
-  const rulingDate = new Date().toISOString()
-
-  Object.values(CaseAppealDecision).forEach((decision) => {
-    const expected =
-      decision === CaseAppealDecision.POSTPONE ||
-      decision === CaseAppealDecision.NOT_APPLICABLE
-
-    test(`canProsecutorAppeal for appeal decision ${decision} should return ${expected}`, () => {
-      const theCase = {
-        type: CaseType.CUSTODY,
-        rulingDate,
-        prosecutorAppealDecision: decision,
-      } as Case
-
-      const appealInfo = getAppealInfo(theCase)
-
-      expect(appealInfo).toHaveProperty('canProsecutorAppeal', expected)
-    })
-  })
-
-  Object.values(CaseAppealDecision).forEach((decision) => {
-    const expected =
-      decision === CaseAppealDecision.POSTPONE ||
-      decision === CaseAppealDecision.NOT_APPLICABLE
-
-    test(`canDefenderAppeal for appeal decision ${decision} should return ${expected}`, () => {
-      const theCase = {
-        type: CaseType.CUSTODY,
-        rulingDate,
-        accusedAppealDecision: decision,
-      } as Case
-
-      const appealInfo = getAppealInfo(theCase)
-
-      expect(appealInfo).toHaveProperty('canDefenderAppeal', expected)
-    })
-  })
-})
-
-describe('getAppealInfo', () => {
-  it('should return empty appeal info when ruling date is not provided', () => {
-    // Arrange
-    const theCase = { type: CaseType.CUSTODY } as Case
-
-    // Act
-    const appealInfo = getAppealInfo(theCase)
-
-    // Assert
-    expect(appealInfo).toEqual({})
-  })
-
-  it('should return not return appealedDate if case has not been appealed', () => {
-    const rulingDate = new Date().toISOString()
-    const theCase = {
-      type: CaseType.CUSTODY,
-      rulingDate,
-      appealState: undefined,
-      accusedAppealDecision: CaseAppealDecision.POSTPONE,
-      prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-      accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
-      prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
-    } as Case
-
-    const appealInfo = getAppealInfo(theCase)
-
-    expect(appealInfo).toEqual({
-      canBeAppealed: true,
-      hasBeenAppealed: false,
-      appealDeadline: new Date(
-        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 3),
-      ).toISOString(),
-      canDefenderAppeal: true,
-      canProsecutorAppeal: true,
     })
   })
 
