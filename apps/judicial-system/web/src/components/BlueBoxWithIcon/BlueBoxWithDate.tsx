@@ -148,21 +148,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     verdictViewDate,
   ])
 
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2, // Adjust the delay between each child animation
-      },
-    },
-  }
-
-  const textVariant = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0 },
-  }
-
   return (
     <Box className={styles.container} padding={[2, 2, 3, 3]}>
       <Box className={styles.titleContainer}>
@@ -178,24 +163,17 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           <Text variant="eyebrow">{defendant.name}</Text>
         </Box>
       </Box>
-      <motion.div
-        variants={staggerContainer}
-        initial="hidden"
-        animate={showAppealFields ? 'visible' : false}
-      >
-        {showAppealFields &&
-          textItems.map((text, index) => (
-            <motion.div
-              key={index}
-              variants={textVariant}
-              style={{
-                marginTop: index === 0 ? 0 : '16px',
-              }}
-            >
-              <Text>{text}</Text>
-            </motion.div>
-          ))}
-      </motion.div>
+      {showAppealFields &&
+        textItems.map((text, index) => (
+          <div
+            key={index}
+            style={{
+              marginTop: index === 0 ? 0 : '16px',
+            }}
+          >
+            <Text>{text}</Text>
+          </div>
+        ))}
       <AnimatePresence mode="wait">
         {defendant.verdictAppealDate ? null : defendantCanAppeal ? (
           <motion.div
