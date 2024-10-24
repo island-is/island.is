@@ -4,7 +4,7 @@ import {
   hasReceivedAllDocuments,
 } from './hasMissingDocuments'
 import { WhoIsTheNotificationForEnum, AttachmentsEnum } from '../types'
-import { NO, YES } from '../constants'
+import { NO, YES } from './constants'
 import { FormatMessage } from '@island.is/localization'
 import { FormValue } from '@island.is/application/types'
 import { AccidentNotification } from '../lib/dataSchema'

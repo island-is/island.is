@@ -22,7 +22,7 @@ import {
   isRescueWorkAccident,
   isStudiesAccident,
 } from '../../../utils'
-import { NO, YES } from '../../../constants'
+import { NO, YES } from '../../../utils/constants'
 import { isSportAccidentAndEmployee } from '../../../utils/isSportAccidentAndEmployee'
 import {
   AgricultureAccidentLocationEnum,

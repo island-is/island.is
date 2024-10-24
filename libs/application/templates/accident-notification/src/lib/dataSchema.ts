@@ -1,7 +1,7 @@
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
 import { z } from 'zod'
-import { YES } from '../constants'
+import { YES } from '../utils/constants'
 import {
   AccidentTypeEnum,
   AgricultureAccidentLocationEnum,
