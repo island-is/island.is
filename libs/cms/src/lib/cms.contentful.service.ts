@@ -35,7 +35,6 @@ import { ContentfulRepository, localeMap } from './contentful.repository'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
 import { mapUrl, Url } from './models/url.model'
-import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
 import {
@@ -90,20 +89,41 @@ const errorHandler = (name: string) => {
   }
 }
 
-const ArticleFields = [
-  // we want to exclude relatedArticles because it's a self-referencing
-  // relation and selecting related articles to a depth of 10 would make the
-  // response huge
-  'sys',
-  'fields.slug',
-  'fields.title',
-  'fields.shortTitle',
-  'fields.content',
-  'fields.subgroup',
-  'fields.group',
-  'fields.category',
-  'fields.subArticles',
-].join(',')
+const ArticleFields = (
+  [
+    // we want to exclude relatedArticles because it's a self-referencing
+    // relation and selecting related articles to a depth of 10 would make the
+    // response huge
+    'sys',
+    'fields.activeTranslations',
+    'fields.alertBanner',
+    'fields.category',
+    'fields.content',
+    'fields.contentStatus',
+    'fields.featuredImage',
+    'fields.group',
+    'fields.importance',
+    'fields.intro',
+    'fields.organization',
+    'fields.otherCategories',
+    'fields.otherGroups',
+    'fields.otherSubgroups',
+    'fields.processEntry',
+    'fields.processEntryButtonText',
+    'fields.relatedContent',
+    'fields.relatedOrganization',
+    'fields.responsibleParty',
+    'fields.shortTitle',
+    'fields.showTableOfContents',
+    'fields.signLanguageVideo',
+    'fields.slug',
+    'fields.stepper',
+    'fields.subArticles',
+    'fields.subgroup',
+    'fields.title',
+    'fields.userStories',
+  ] as ('sys' | `fields.${keyof types.IArticle['fields']}`)[]
+).join(',')
 
 @Injectable()
 export class CmsContentfulService {
@@ -378,8 +398,9 @@ export class CmsContentfulService {
   ): Promise<OrganizationPage> {
     const params = {
       ['content_type']: 'organizationPage',
-      include: 10,
+      include: 5,
       'fields.slug': slug,
+      limit: 1,
     }
 
     const result = await this.contentfulRepository
@@ -399,10 +420,11 @@ export class CmsContentfulService {
   ): Promise<OrganizationSubpage> {
     const params = {
       ['content_type']: 'organizationSubpage',
-      include: 10,
+      include: 5,
       'fields.slug': slug,
       'fields.organizationPage.sys.contentType.sys.id': 'organizationPage',
       'fields.organizationPage.fields.slug': organizationSlug,
+      limit: 1,
     }
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.IOrganizationSubpageFields>(lang, params)
@@ -467,6 +489,7 @@ export class CmsContentfulService {
     const params = {
       ['content_type']: 'projectPage',
       'fields.slug': slug,
+      limit: 1,
     }
 
     const result = await this.contentfulRepository
@@ -483,7 +506,8 @@ export class CmsContentfulService {
       ['content_type']: 'article',
       'fields.slug': slug,
       select: ArticleFields,
-      include: 10,
+      include: 5,
+      limit: 1,
     }
 
     const result = await this.contentfulRepository
@@ -542,8 +566,9 @@ export class CmsContentfulService {
   async getNews(lang: string, slug: string): Promise<News | null> {
     const params = {
       ['content_type']: 'news',
-      include: 10,
+      include: 5,
       'fields.slug': slug,
+      limit: 1,
     }
 
     const result = await this.contentfulRepository
@@ -828,8 +853,9 @@ export class CmsContentfulService {
     const params = {
       ['content_type']: 'frontpage',
       'fields.pageIdentifier': pageIdentifier,
-      include: 10,
+      include: 5,
       order: '-sys.createdAt',
+      limit: 1,
     }
 
     const result = await this.contentfulRepository
