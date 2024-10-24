@@ -194,7 +194,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
-              transition={{ delay: index * 0.2, duration: 0.3 }}
+              transition={{ delay: index < 3 ? index * 0.2 : 0, duration: 0.3 }}
               style={{
                 marginTop: index === 0 ? 0 : '16px',
               }}
