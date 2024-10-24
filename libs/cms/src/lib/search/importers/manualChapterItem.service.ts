@@ -62,15 +62,11 @@ export class ManualChapterItemSyncService implements CmsSyncProvider<IManual> {
     return chapterItems
       .map<MappedData | boolean>(({ item, manual, chapter }) => {
         try {
-          console.log('HERE 1')
-
           const mapped = mapManualChapterItem({
             item,
             manual,
             chapter,
           })
-
-          console.log('HERE 2')
 
           const content = extractStringsFromObject(
             (mapped.content ?? []).map(pruneNonSearchableSliceUnionFields),
