@@ -35,6 +35,9 @@ import {
 } from '@island.is/nest/feature-flags'
 import { mileageDetailConstructor } from '../utils/helpers'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { VehicleMileagePostResponse } from '../models/v3/postVehicleMileageResponse.model'
+import { VehiclesMileageUpdateError } from '../models/v3/vehicleMileageResponseError.model'
+import { VehicleMileagePutResponse } from '../models/v3/putVehicleMileageResponse.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalVehicleMileagePageEnabled)
@@ -94,6 +97,54 @@ export class VehiclesMileageResolver {
 
     if (!res) {
       return
+    }
+
+    return mileageDetailConstructor(res)
+  }
+
+  @Mutation(() => VehicleMileagePostResponse, {
+    name: 'vehicleMileagePostV2',
+    nullable: true,
+  })
+  @Audit()
+  async postVehicleMileageReadingV2(
+    @Args('input') input: PostVehicleMileageInput,
+    @CurrentUser() user: User,
+  ) {
+    const res = await this.vehiclesService.postMileageReadingV2(user, {
+      ...input,
+      mileage: Number(input.mileage ?? input.mileageNumber),
+    })
+
+    if (!res) return undefined
+
+    if (res instanceof VehiclesMileageUpdateError) {
+      return res
+    }
+
+    return mileageDetailConstructor(res)
+  }
+
+  @Mutation(() => VehicleMileagePutResponse, {
+    name: 'vehicleMileagePutV2',
+    nullable: true,
+  })
+  @Audit()
+  async putVehicleMileageReadingV2(
+    @Args('input') input: PutVehicleMileageInput,
+    @CurrentUser() user: User,
+  ) {
+    const res = await this.vehiclesService.putMileageReadingV2(user, {
+      ...input,
+      mileage: Number(input.mileage ?? input.mileageNumber),
+    })
+
+    if (!res) {
+      return
+    }
+
+    if (res instanceof VehiclesMileageUpdateError) {
+      return res
     }
 
     return mileageDetailConstructor(res)
