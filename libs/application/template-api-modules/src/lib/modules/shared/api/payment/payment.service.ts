@@ -50,6 +50,20 @@ export class PaymentService extends BaseTemplateApiService {
     PaymentCatalogItem[]
   > {
     if (params?.mockPaymentCatalog?.length) {
+      const isValid = params.mockPaymentCatalog.every(
+        (item): item is PaymentCatalogItem => {
+          return (
+            typeof item.performingOrgID === 'string' &&
+            typeof item.chargeType === 'string' &&
+            typeof item.chargeItemCode === 'string' &&
+            typeof item.chargeItemName === 'string' &&
+            typeof item.priceAmount === 'number'
+          )
+        },
+      )
+      if (!isValid) {
+        throw new Error('Invalid mock payment catalog structure')
+      }
       return params.mockPaymentCatalog
     } else {
       return [
