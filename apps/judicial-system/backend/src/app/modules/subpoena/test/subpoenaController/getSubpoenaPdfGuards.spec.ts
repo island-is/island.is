@@ -1,7 +1,7 @@
 import { SubpoenaExistsOptionalGuard } from '../../guards/subpoenaExists.guard'
 import { SubpoenaController } from '../../subpoena.controller'
 
-describe('SubpoenaController - Get custody notice pdf rules', () => {
+describe('SubpoenaController - Get subpoena pdf guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
