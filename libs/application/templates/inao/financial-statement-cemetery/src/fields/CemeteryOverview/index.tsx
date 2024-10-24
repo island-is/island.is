@@ -187,13 +187,17 @@ export const CemeteryOverview = ({
 
       <Box paddingY={3}>
         <CapitalNumberOverview
-          capitalNumbersMessage={m.capitalNumbers}
-          capitalIncomeMessage={m.capitalIncome}
-          capitalIncome={answers.capitalNumbers.capitalIncome}
-          capitalCostMessage={m.capitalCost}
-          capitalCost={answers.capitalNumbers.capitalCost}
-          totalCapitalMessage={m.totalCapital}
-          total={answers.capitalNumbers.total}
+          data={{
+            capitalIncome: answers.capitalNumbers.capitalIncome,
+            capitalCost: answers.capitalNumbers.capitalCost,
+            total: answers.capitalNumbers.total,
+          }}
+          messages={{
+            capitalNumbersMessage: m.capitalNumbers,
+            capitalIncomeMessage: m.capitalIncome,
+            capitalCostMessage: m.capitalCost,
+            totalCapitalMessage: m.totalCapital,
+          }}
         />
       </Box>
       <Divider />

@@ -6,24 +6,27 @@ import { ValueLine } from './ValueLine'
 import { MessageDescriptor } from 'react-intl'
 
 type Props = {
-  capitalNumbersMessage: MessageDescriptor
-  capitalIncomeMessage: MessageDescriptor
-  capitalIncome: string
-  capitalCostMessage: MessageDescriptor
-  capitalCost: string
-  totalCapitalMessage: MessageDescriptor
-  total: string
+  data: {
+    capitalIncome: string
+    capitalCost: string
+    total: string
+  }
+  messages: {
+    capitalNumbersMessage: MessageDescriptor
+    capitalIncomeMessage: MessageDescriptor
+    capitalCostMessage: MessageDescriptor
+    totalCapitalMessage: MessageDescriptor
+  }
 }
 
-export const CapitalNumberOverview = ({
-  capitalNumbersMessage,
-  capitalIncomeMessage,
-  capitalIncome,
-  capitalCostMessage,
-  capitalCost,
-  totalCapitalMessage,
-  total,
-}: Props) => {
+export const CapitalNumberOverview = ({ data, messages }: Props) => {
+  const { capitalIncome, capitalCost, total } = data
+  const {
+    capitalNumbersMessage,
+    capitalIncomeMessage,
+    capitalCostMessage,
+    totalCapitalMessage,
+  } = messages
   const { formatMessage } = useLocale()
   return (
     <>
