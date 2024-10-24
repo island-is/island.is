@@ -118,6 +118,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
 
     const appealExpiration = getAppealExpirationInfo(verdictAppealDeadline)
 
+    console.log(defendant.verdictAppealDate)
     setTextItems([
       ...(indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
         ? [
@@ -180,7 +181,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       </Box>
       <motion.div
         variants={staggerContainer}
-        initial={triggerAnimation ? 'hidden' : false}
+        initial="hidden"
         animate={showAppealFields ? 'visible' : false}
       >
         {showAppealFields &&
