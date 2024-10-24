@@ -1,3 +1,4 @@
+import flatten from 'lodash/flatten'
 import { Area, Bar, Cell, Label, Line, Pie } from 'recharts'
 
 import type { Locale } from '@island.is/shared/types'
@@ -132,7 +133,7 @@ export const renderPieChartComponents = (
   activeLocale: Locale,
   customStyleConfig: CustomStyleConfig,
 ) => {
-  const pieData = data?.[0]?.statisticsForHeader ?? []
+  const pieData = flatten(data?.map((s) => s.statisticsForHeader) ?? [])
   const total = pieData.reduce(
     (total, { value }) => total + (value ? value : 0),
     0,
