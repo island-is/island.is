@@ -13287,7 +13287,7 @@ __metadata:
     react-native-quick-actions: 0.3.13
     react-native-quick-base64: 2.1.2
     react-native-reanimated: 3.12.1
-    react-native-share: 7.1.1
+    react-native-share: 10.2.1
     react-native-spotlight-search: 2.0.0
     react-native-svg: 15.2.0
     react-native-vision-camera: 4.5.1
@@ -49210,10 +49210,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-share@npm:7.1.1":
-  version: 7.1.1
-  resolution: "react-native-share@npm:7.1.1"
-  checksum: f391e3797f1570d55922216546b096d2af386d025e6f98a1aca24142b0f51dc6c6d494c048a7a81f82947570e2d483c80467e2960b1a061961f98dfcea0f078e
+"react-native-share@npm:10.2.1":
+  version: 10.2.1
+  resolution: "react-native-share@npm:10.2.1"
+  checksum: 9dd4e0329b344668e04ff5421ab982e319dc3ba988d0b7990a619bd1c551beb6012623abe238a80e427f86f2bb03dd21b7afc0e957ee7348e0bd9fb39956912e
   languageName: node
   linkType: hard
 
