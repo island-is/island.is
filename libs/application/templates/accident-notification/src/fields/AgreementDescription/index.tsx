@@ -1,12 +1,8 @@
-import { FieldBaseProps } from '@island.is/application/types'
 import { Bullet, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC } from 'react'
 import { externalData } from '../../lib/messages'
 
-export const AgreementDescription: FC<
-  React.PropsWithChildren<FieldBaseProps>
-> = () => {
+export const AgreementDescription = () => {
   const { formatMessage } = useLocale()
 
   return (
