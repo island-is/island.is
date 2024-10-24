@@ -22,7 +22,12 @@ RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-
   mv /tmp/jq-linux64 /usr/bin/jq
 
 # image with the source code
-COPY . .
+COPY *.* .
+COPY infra infra
+# COPY scripts scripts
+COPY tools tools
+COPY libs libs
+COPY apps apps
 
 FROM src AS builder
 ARG APP
