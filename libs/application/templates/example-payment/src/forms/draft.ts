@@ -16,6 +16,7 @@ import {
 } from '@island.is/application/types'
 import * as m from '../lib/messages'
 import { chargeItemCodeRadioOptions } from '../lib/utils/chargeItemCodeRadioOptions'
+import { MockPaymentCatalogWithTwoItems } from '../dataProviders'
 
 export const draft: Form = buildForm({
   id: 'ExamplePaymentDraftForm',
@@ -39,7 +40,7 @@ export const draft: Form = buildForm({
               title: '',
             }),
             buildDataProviderItem({
-              provider: MockablePaymentCatalogApi,
+              provider: MockPaymentCatalogWithTwoItems,
               title: m.draft.feeInfo,
             }),
           ],

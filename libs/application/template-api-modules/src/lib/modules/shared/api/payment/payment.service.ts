@@ -49,15 +49,19 @@ export class PaymentService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<PaymentCatalogParameters>): Promise<
     PaymentCatalogItem[]
   > {
-    return [
-      {
-        performingOrgID: params?.organizationId ?? 'string',
-        chargeType: 'string',
-        chargeItemCode: 'Payment',
-        chargeItemName: 'Mock',
-        priceAmount: 123123,
-      },
-    ]
+    if (params?.mockPaymentCatalog?.length) {
+      return params.mockPaymentCatalog
+    } else {
+      return [
+        {
+          performingOrgID: params?.organizationId ?? 'string',
+          chargeType: 'string',
+          chargeItemCode: 'Payment',
+          chargeItemName: 'Mock',
+          priceAmount: 123123,
+        },
+      ]
+    }
   }
 
   async createCharge({
