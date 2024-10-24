@@ -2,3 +2,7 @@ node_modules/
 dist/
 scripts/ci/
 /cache*
+cache/
+.git/
+log/
+*.log
