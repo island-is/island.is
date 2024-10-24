@@ -3,6 +3,8 @@ import {
   PaymentCatalogItem,
   PaymentCatalogParameters,
 } from '@island.is/application/types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   SharedModuleConfig,
   TemplateApiModuleActionProps,
@@ -16,11 +18,13 @@ import { getSlugFromType } from '@island.is/application/core'
 import { getConfigValue } from '../../shared.utils'
 import { ConfigService } from '@nestjs/config'
 import { uuid } from 'uuidv4'
+import { environment } from 'libs/cms/src/lib/environments'
 
 @Injectable()
 export class PaymentService extends BaseTemplateApiService {
   constructor(
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly paymentModelService: PaymentModelService,
     @Inject(ConfigService)
     private readonly configService: ConfigService<SharedModuleConfig>,
@@ -49,6 +53,18 @@ export class PaymentService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<PaymentCatalogParameters>): Promise<
     PaymentCatalogItem[]
   > {
+    if (environment.production) {
+      this.logger.warn('Attempt to use mock payments in production', {
+        applicationId: application.id,
+        organizationId: params?.organizationId,
+      })
+      throw new Error('Mock payments are not allowed in production')
+    }
+
+    this.logger.info('Using mock payment catalog', {
+      applicationId: application.id,
+      hasMockCatalog: !!params?.mockPaymentCatalog?.length,
+    })
     if (params?.mockPaymentCatalog?.length) {
       const isValid = params.mockPaymentCatalog.every(
         (item): item is PaymentCatalogItem => {
@@ -86,7 +102,15 @@ export class PaymentService extends BaseTemplateApiService {
     const { organizationId, chargeItemCodes, extraData } = params ?? {}
     const { shouldUseMockPayment } = application.answers
 
-    if (shouldUseMockPayment) {
+    if (shouldUseMockPayment && environment.production) {
+      this.logger.warn('Attempt to use mock payments in production', {
+        applicationId: application.id,
+        organizationId: organizationId,
+      })
+      throw new Error('Mock payments are not allowed in production')
+    }
+
+    if (shouldUseMockPayment && !environment.production) {
       const list = [
         {
           performingOrgID: organizationId ?? 'string',
