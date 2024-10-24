@@ -12,7 +12,7 @@ import {
   monkeyPatchServerLogging,
 } from '@island.is/logging'
 import { getServerPort, startMetricServer } from '@island.is/infra-metrics'
-// import '@island.is/infra-tracing'
+import '@island.is/infra-tracing'
 
 import { httpRequestDurationMiddleware } from './httpRequestDurationMiddleware'
 import { InfraModule } from './infra/infra.module'

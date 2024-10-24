@@ -16,7 +16,6 @@ export const runServer = ({
   routes,
   port = 3000,
 }: RunServerParams) => {
-  logger.info(`Starting custom express server ${name}`)
   const app = express()
 
   app.use(express.json())
@@ -42,13 +41,11 @@ export const runServer = ({
     return next()
   })
 
-  app.get('/liveness', function liveness(_req, res) {
-    logger.info(`Returning liveness check for ${name}`)
+  app.get('/liveness', function liveness(req, res) {
     res.json({ ok: true })
   })
 
-  app.get('/version', function versionOfCode(_req, res) {
-    logger.info(`Returning version for ${name}`)
+  app.get('/version', function versionOfCode(req, res) {
     res.json({ version: process.env.REVISION })
   })
 
@@ -59,7 +56,7 @@ export const runServer = ({
 
   // security middleware
   // we should implemente something along the lines of this https://auth0.com/docs/quickstart/backend/nodejs/01-authorization
-  app.use(async (_req, _res, next) => {
+  app.use((req, res, next) => {
     // we need to secure all routes by default. OAuth?
     next()
   })
@@ -69,9 +66,9 @@ export const runServer = ({
 
   app.use(function errorHandler(
     err: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
-    _req: Request,
+    req: Request,
     res: Response,
-    _next: NextFunction, // eslint-disable-line
+    next: NextFunction, // eslint-disable-line
   ) {
     logger.error(`Status code: ${err.status}, msg: ${err.message}`)
     res.status(err.status || 500)

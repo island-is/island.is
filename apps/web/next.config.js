@@ -23,7 +23,6 @@ const {
  **/
 const nextConfig = {
   async rewrites() {
-    console.log({ action: 'rewrites', graphqlPath })
     return [
       {
         source: '/umsoknir/:slug',
@@ -40,7 +39,6 @@ const nextConfig = {
     ]
   },
   async redirects() {
-    console.log({ action: 'redirects', graphqlPath })
     return [
       {
         source: '/en/organizations',
@@ -125,7 +123,6 @@ const nextConfig = {
     ]
   },
   webpack: (config, { isServer }) => {
-    console.log({ action: 'webpack', isServer })
     if (process.env.ANALYZE === 'true' && !isServer) {
       config.plugins.push(
         new DuplicatesPlugin({
