@@ -1,4 +1,4 @@
-import '@island.is/infra-tracing'
+// import '@island.is/infra-tracing'
 
 import createExpressApp, { Express } from 'express'
 
