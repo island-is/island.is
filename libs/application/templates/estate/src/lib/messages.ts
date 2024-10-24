@@ -1007,12 +1007,13 @@ export const m = defineMessages({
   },
   openServicePortalTitle: {
     id: 'es.application:openServicePortalTitle',
-    defaultMessage: 'Mínar síður', 
+    defaultMessage: 'Mínar síður',
     description: '',
   },
   openServicePortalMessage: {
     id: 'es.application:openServicePortalMessage',
-    defaultMessage: 'Inni á Mínum síðum og í Ísland.is appinu hefur þú aðgang að þínum upplýsingum, Stafrænu pósthólfi og stöðu umsóknar.', 
+    defaultMessage:
+      'Inni á Mínum síðum og í Ísland.is appinu hefur þú aðgang að þínum upplýsingum, Stafrænu pósthólfi og stöðu umsóknar.',
     description: '',
   },
 
