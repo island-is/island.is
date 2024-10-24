@@ -5,7 +5,7 @@ ARG NODE_IMAGE_TAG
 FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS deps
 
 # hadolint ignore=DL3018
-RUN apk add -U git
+RUN apk add --no-cache git
 
 WORKDIR /build
 
@@ -15,11 +15,11 @@ COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
 # hadolint ignore=DL3018
 RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
-RUN CI=true yarn install --immutable
+RUN CI=true yarn install --immutable && yarn cache clean
 
 FROM deps AS src
 
-RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
+RUN wget --progress=dot -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
   chmod a+x /tmp/jq-linux64 && \
   mv /tmp/jq-linux64 /usr/bin/jq
 
@@ -102,9 +102,8 @@ ENV DD_GIT_REPOSITORY_URL="github.com/island-is/island.is"
 
 RUN mkdir -p /etc/nginx/templates
 # hadolint ignore=DL3018
-RUN apk update && \
-  apk upgrade && \
-  apk add bash nodejs
+RUN apk upgrade --no-cache && \
+  apk add --no-cache bash nodejs
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
 COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
@@ -113,10 +112,9 @@ COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
 FROM output-base AS output-jest
 
-RUN echo 'module.exports = {};' > jest.config.js
-
 # hadolint ignore=DL3016
-RUN npm install -g jest
+RUN npm install -g jest && \
+  echo 'module.exports = {};' > jest.config.js
 
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
@@ -137,7 +135,9 @@ FROM playwright-base AS output-playwright
 # TODO: remove awscli dependency (157 MB extra)
 
 # hadolint ignore=DL3008
-RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
+RUN apt-get update -y && \
+  apt-get install --no-install-recommends -y zip awscli && \
+  apt-get purge
 
 ARG APP_HOME
 ARG APP_DIST_HOME
