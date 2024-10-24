@@ -22,7 +22,7 @@ import { DefendantExistsGuard } from '../defendant'
 import { SubpoenaExistsGuard } from '../subpoena'
 import { CaseNotificationDto } from './dto/caseNotification.dto'
 import { InstitutionNotificationDto } from './dto/institutionNotification.dto'
-import { NotificationDispatchnDto } from './dto/notificationDispatch.dto'
+import { NotificationDispatchDto } from './dto/notificationDispatch.dto'
 import { SubpoenaNotificationDto } from './dto/subpoenaNotification.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { CaseNotificationService } from './caseNotification.service'
@@ -97,7 +97,7 @@ export class InternalNotificationController {
     description: 'Dispatches notifications',
   })
   dispatchNotification(
-    @Body() notificationDto: NotificationDispatchnDto,
+    @Body() notificationDto: NotificationDispatchDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Dispatching ${notificationDto.type} notification`)
 
