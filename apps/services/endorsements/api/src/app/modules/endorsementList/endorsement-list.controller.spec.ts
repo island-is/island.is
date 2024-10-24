@@ -28,8 +28,6 @@
 //     modified: new Date(),
 //     endorsementCount: 0,
 //   };
-  
-  
 
 // const paginatedEndorsementListDto: PaginatedEndorsementListDto = {
 //   totalCount: 1,
