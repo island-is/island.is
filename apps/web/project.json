@@ -82,7 +82,7 @@
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/web/{screens,components}/**/!(*.d).{js,ts,tsx}'"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/web/screens/**/!(*.d).{js,ts,tsx}'"
       }
     },
     "export": {
