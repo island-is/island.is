@@ -13,7 +13,7 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { errors } from '@island.is/judicial-system-web/messages'
 
-import { Defendant } from '../../graphql/schema'
+import { CaseIndictmentRulingDecision, Defendant } from '../../graphql/schema'
 import { formatDateForServer, useDefendants } from '../../utils/hooks'
 import DateTime from '../DateTime/DateTime'
 import { FormContext } from '../FormProvider/FormProvider'
@@ -24,13 +24,14 @@ import * as styles from './BlueBoxWithIcon.css'
 
 interface Props {
   defendant: Defendant
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
   icon?: IconMapIcon
 }
 
 type DateType = 'verdictViewDate' | 'appealDate'
 
 const BlueBoxWithDate: FC<Props> = (props) => {
-  const { defendant, icon } = props
+  const { defendant, indictmentRulingDecision, icon } = props
   const { formatMessage } = useIntl()
   const [verdictViewDate, setVerdictViewDate] = useState<Date>()
   const [appealDate, setAppealDate] = useState<Date>()
@@ -38,6 +39,13 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const [triggerAnimation, setTriggerAnimation] = useState<boolean>(false)
   const { setAndSendDefendantToServer } = useDefendants()
   const { workingCase, setWorkingCase } = useContext(FormContext)
+
+  // The defendant can appeal if the verdict has been served to them or if the cases
+  // ruling is a FINE because in those cases a verdict is not served to the defendant
+  const defendantCanAppeal =
+    !defendant.verdictAppealDate &&
+    (defendant.verdictViewDate ||
+      indictmentRulingDecision === CaseIndictmentRulingDecision.FINE)
 
   const handleDateChange = (
     date: Date | undefined,
@@ -141,11 +149,15 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     )
 
     setTextItems([
-      formatMessage(strings.defendantVerdictViewedDate, {
-        date: verdictViewDate
-          ? formatDate(verdictViewDate)
-          : formatDate(defendant.verdictViewDate),
-      }),
+      ...(indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+        ? [
+            formatMessage(strings.defendantVerdictViewedDate, {
+              date: verdictViewDate
+                ? formatDate(verdictViewDate)
+                : formatDate(defendant.verdictViewDate),
+            }),
+          ]
+        : []),
       formatMessage(appealExpiration.message, {
         appealExpirationDate: appealExpiration.date,
       }),
@@ -162,6 +174,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     defendant.verdictAppealDeadline,
     defendant.verdictViewDate,
     formatMessage,
+    indictmentRulingDecision,
     verdictViewDate,
   ])
 
@@ -182,7 +195,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           <Text variant="eyebrow">{defendant.name}</Text>
         </Box>
         <AnimatePresence mode="wait">
-          {defendant.verdictViewDate ? (
+          {defendant.verdictViewDate ||
+          indictmentRulingDecision === CaseIndictmentRulingDecision.FINE ? (
             <>
               <motion.div
                 initial={triggerAnimation ? 'hidden' : false}
@@ -213,7 +227,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                 </AnimatePresence>
               </motion.div>
               <AnimatePresence>
-                {!defendant.verdictAppealDate && (
+                {defendantCanAppeal && (
                   <motion.div
                     key="firstComponent"
                     variants={appealVariants}

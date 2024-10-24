@@ -112,14 +112,15 @@ export const Overview = () => {
       <FormContentContainer>
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        {workingCase.defendants && (
-          <Box component="section" marginBottom={5}>
+        {workingCase.defendants?.map((defendant) => (
+          <Box component="section" marginBottom={5} key={defendant.id}>
             <BlueBoxWithDate
-              defendant={workingCase.defendants[0]}
+              defendant={defendant}
+              indictmentRulingDecision={workingCase.indictmentRulingDecision}
               icon="calendar"
             />
           </Box>
-        )}
+        ))}
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment
             displayAppealExpirationInfo={
