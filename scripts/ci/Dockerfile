@@ -1,20 +1,16 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 ARG PLAYWRIGHT_VERSION
-ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws/docker
+ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 ARG NODE_IMAGE_TAG=latest
-FROM ${DOCKER_IMAGE_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS deps
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS deps
 
-RUN apk add -U git
+# hadolint ignore=DL3018
+RUN apk add --no-cache git python3 build-base gcc && \
+  ln -sf /usr/bin/python3 /usr/bin/python
 
 WORKDIR /build
 
 # Adding and installing packages
-RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
-RUN wget --progress=dot:giga -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
-  chmod a+x /tmp/jq-linux64 && \
-  mv /tmp/jq-linux64 /usr/bin/jq
-
-# Node/yarn specifics
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
@@ -22,8 +18,17 @@ RUN CI=true yarn install --immutable && yarn cache clean
 
 FROM deps AS src
 
-# Image with the source code
-COPY . .
+RUN wget --progress=dot -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
+  chmod a+x /tmp/jq-linux64 && \
+  mv /tmp/jq-linux64 /usr/bin/jq
+
+# image with the source code
+COPY *.* .
+COPY infra infra
+# COPY scripts scripts
+COPY tools tools
+COPY libs libs
+COPY apps apps
 
 FROM src AS builder
 ARG APP
@@ -34,8 +39,8 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 
 RUN yarn run build ${APP} --prod
 
-FROM ${DOCKER_IMAGE_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS output-base
-# This is base image for containers that are to be deployed
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS output-base
+# this is base image for containers that are to be deployed
 ARG GIT_BRANCH
 ARG GIT_SHA
 LABEL branch=${GIT_BRANCH}
@@ -55,6 +60,7 @@ RUN addgroup runners && adduser -D runner -G runners
 
 FROM output-base AS output-base-with-pg
 
+# hadolint ignore=DL3016
 RUN npm install -g \
   sequelize \
   sequelize-cli \
@@ -112,8 +118,8 @@ FROM output-base AS output-jest
 
 
 # hadolint ignore=DL3016
-RUN echo 'module.exports = {};' > jest.config.js && \
-  npm install -g jest
+RUN npm install -g jest && \
+  echo 'module.exports = {};' > jest.config.js
 
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
@@ -124,17 +130,13 @@ CMD [ "jest", "main.spec.js" ]
 
 
 FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-base
-# TODO: remove awscli dependency (157 MB extra)
-
 # hadolint ignore=DL3008
 RUN apt-get update -y && \
+  # TODO: remove awscli dependency (157 MB extra)
   apt-get install --no-install-recommends -y zip awscli && \
   apt-get purge && \
   rm -rf /var/lib/apt/lists/*
 
-
-ENV PLAYWRIGHT_BROWSER=chromium
-RUN playwright install ${PLAYWRIGHT_BROWSER}
 
 
 
@@ -145,27 +147,35 @@ FROM playwright-base AS output-playwright
 ARG APP_HOME
 ARG APP_DIST_HOME
 
-WORKDIR ${APP_DIST_HOME}
+WORKDIR /${APP_DIST_HOME}
 
 COPY ${APP_HOME}/package.json .
+RUN chown -R pwuser:pwuser .
+
 COPY .yarnrc.yml ./
+RUN mkdir ./.yarn
 COPY .yarn/releases ./.yarn/releases
 RUN yarn install
 
-COPY --from=builder /build/${APP_DIST_HOME} .
+ENV PLAYWRIGHT_BROWSER=chromium
+RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
+COPY --from=builder /build/${APP_DIST_HOME} .
 COPY --chmod=0755 ${APP_HOME}/entrypoint.sh .
 
-RUN chown -R pwuser:pwuser .
+RUN chown -R pwuser:pwuser . .*
 USER pwuser
+
 ENTRYPOINT ["./entrypoint.sh"]
 
 
 FROM playwright-base AS output-local
 ARG APP_HOME
+ARG APP_DIST_HOME
+WORKDIR /${APP_DIST_HOME}
 
 
-# Node user exists in the base image
+# node user exists in the base image
 RUN mkdir -p /out \
   && chown node:node /out
 
