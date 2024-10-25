@@ -139,9 +139,11 @@ export interface Ingress {
   }
   paths: string[]
   public?: boolean
-  extraAnnotations?: Partial<{
-    [env in OpsEnv]: { [annotation: string]: string | null }
-  }>
+  extraAnnotations?: Partial<
+    {
+      [env in OpsEnv]: { [annotation: string]: string | null }
+    }
+  >
 }
 
 export interface IngressForEnv {

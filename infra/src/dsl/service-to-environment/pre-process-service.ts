@@ -238,14 +238,25 @@ export function getEnvVariables(
   )
 }
 
+/**
+ * Retrieves the environment variable value based on the specified environment type.
+ *
+ * @param {EnvironmentVariableValue} value - The environment variable value which can be a direct value or an object containing values for different environments.
+ * @param {OpsEnvWithLocal} envType - The type of environment for which the value is needed. It can be 'local', 'dev', 'prod', etc.
+ * @returns {{ type: 'error' } | { type: 'success'; value: ValueType }} - Returns an object indicating success or error. On success, it includes the retrieved value.
+ */
 function getEnvValue(
   value: EnvironmentVariableValue,
   envType: OpsEnvWithLocal,
 ): { type: 'error' } | { type: 'success'; value: ValueType } {
+  // Check if the value is missing entirely
   if (value === MissingSetting) return { type: 'error' }
+
+  // Check if the value is an object and the specific environment setting is missing
   if (typeof value === 'object' && value[envType] === MissingSetting) {
     return { type: 'error' }
   } else {
+    // Handle the case where the environment type is 'local' and the local setting is undefined
     if (
       typeof value === 'object' &&
       envType === 'local' &&
@@ -253,9 +264,10 @@ function getEnvValue(
     ) {
       return {
         type: 'success',
-        value: value.dev,
+        value: value.dev, // Fallback to 'dev' value if 'local' is undefined
       }
     } else {
+      // Return the value for the specified environment type
       return {
         type: 'success',
         value: typeof value === 'object' ? value[envType]! : value,
@@ -306,9 +318,12 @@ function addFeaturesConfig(
   env: EnvironmentConfig,
   serviceName: string,
 ) {
-  const activeFeatures = Object.entries(serviceDefFeatures).filter(
-    ([feature]) => env.featuresOn.includes(feature as FeatureNames),
-  ) as [FeatureNames, Feature][]
+  const activeFeatures = Object.entries(
+    serviceDefFeatures,
+  ).filter(([feature]) => env.featuresOn.includes(feature as FeatureNames)) as [
+    FeatureNames,
+    Feature,
+  ][]
   const featureEnvs = activeFeatures.map(([name, v]) => {
     const { envs, errors } = getEnvVariables(v.env, serviceName, env.type)
     return {

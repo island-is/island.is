@@ -341,8 +341,9 @@ function serializeIngress(
   ingressConf: IngressForEnv,
   env: EnvironmentConfig,
 ) {
-  const hosts = (
-    typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
+  const hosts = (typeof ingressConf.host === 'string'
+    ? [ingressConf.host]
+    : ingressConf.host
   ).map((host) =>
     ingressConf.public ?? true
       ? hostFullName(host, env)
@@ -506,6 +507,7 @@ function getFeatureDeploymentNamespace(env: EnvironmentConfig) {
 
 export const HelmOutput: OutputFormat<HelmService> = {
   featureDeployment(s: ServiceDefinition, env): void {
+    // Set feature-deployment prefix for URLs
     Object.entries(s.ingress).forEach(([name, ingress]) => {
       if (!Array.isArray(ingress.host.dev)) {
         ingress.host.dev = [ingress.host.dev]
