@@ -412,359 +412,368 @@ describe('EndorsementListService', () => {
         expect(mockEmailService.sendEmail).toHaveBeenCalled()
       })
     })
-  
 
-  describe('findListsGenericQuery', () => {
-    const mockQuery = { limit: 10 }
+    describe('findListsGenericQuery', () => {
+      const mockQuery = { limit: 10 }
 
-    it('should return paginated results', async () => {
-      const mockPaginatedResult = {
-        data: [mockEndorsementList],
-        totalCount: 1,
-        pageInfo: { hasNextPage: false },
-      }
-      mockEndorsementListModel.findAll.mockResolvedValue([mockEndorsementList])
-      mockEndorsementListModel.count.mockResolvedValue(1)
+      it('should return paginated results', async () => {
+        const mockPaginatedResult = {
+          data: [mockEndorsementList],
+          totalCount: 1,
+          pageInfo: { hasNextPage: false },
+        }
+        mockEndorsementListModel.findAll.mockResolvedValue([
+          mockEndorsementList,
+        ])
+        mockEndorsementListModel.count.mockResolvedValue(1)
 
-      const result = await service.findListsGenericQuery(mockQuery)
-      expect(result).toHaveProperty('data')
-      expect(result).toHaveProperty('totalCount')
-      expect(result).toHaveProperty('pageInfo')
-    })
+        const result = await service.findListsGenericQuery(mockQuery)
+        expect(result).toHaveProperty('data')
+        expect(result).toHaveProperty('totalCount')
+        expect(result).toHaveProperty('pageInfo')
+      })
 
-    it('should apply provided where conditions', async () => {
-      const whereCondition = { adminLock: false }  // Example condition
-      const query = { limit: 10 }  // Mock query
-      
-      // Mock the findAll response
-      mockEndorsementListModel.findAll.mockResolvedValue([mockEndorsementList])
-      mockEndorsementListModel.count.mockResolvedValue(1)
-    
-      // Call the service method with a query and where condition
-      await service.findListsGenericQuery(query, whereCondition)
-    
-      // Expect the findAll method to be called with the correct 'where' condition
-      expect(mockEndorsementListModel.findAll).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: whereCondition,  // Ensure that the 'where' condition is passed correctly
-        }),
-      )
-    })
-  })
+      it('should apply provided where conditions', async () => {
+        const whereCondition = { adminLock: false } // Example condition
+        const query = { limit: 10 } // Mock query
 
-  describe('findListsByTags', () => {
-    const mockQuery = { limit: 10 }
-    const mockTags = [EndorsementTag.GENERAL_PETITION]
+        // Mock the findAll response
+        mockEndorsementListModel.findAll.mockResolvedValue([
+          mockEndorsementList,
+        ])
+        mockEndorsementListModel.count.mockResolvedValue(1)
 
-    it('should return lists filtered by tags for admin user', async () => {
-      const mockPaginatedResult = {
-        data: [mockEndorsementList],
-        totalCount: 1,
-        pageInfo: { hasNextPage: false },
-      }
-      mockEndorsementListModel.findAll.mockResolvedValue([mockEndorsementList])
-      mockEndorsementListModel.count.mockResolvedValue(1)
+        // Call the service method with a query and where condition
+        await service.findListsGenericQuery(query, whereCondition)
 
-      await service.findListsByTags(mockTags, mockQuery, mockAdminUser)
-      expect(mockEndorsementListModel.findAll).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: {
-            tags: { [Op.overlap]: mockTags },
-            adminLock: { [Op.or]: [true, false] },
-          },
-        }),
-      )
-    })
-
-    it('should return lists filtered by tags for regular user', async () => {
-      const tags = ['generalTag']
-      const query = { limit: 10 }
-    
-      // Mock the findAll response to return some lists
-      mockEndorsementListModel.findAll.mockResolvedValue([mockEndorsementList])
-    
-      // Mock the count response to avoid the error with pagination
-      mockEndorsementListModel.count.mockResolvedValue(1) // Ensuring count resolves with a promise
-    
-      // Call the service method with tags, query, and the regular user (mockUser)
-      await service.findListsByTags(tags, query, mockUser)
-    
-      // Ensure that the query for regular users has 'adminLock: false'
-      expect(mockEndorsementListModel.findAll).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: {
-            tags: { [Op.overlap]: tags },
-            adminLock: false,  // Ensure that adminLock is false for regular users
-          },
-        }),
-      )
-    
-      // Verify that count was called
-      expect(mockEndorsementListModel.count).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: {
-            tags: { [Op.overlap]: tags },
-            adminLock: false,  // The same condition should apply to count
-          },
-        }),
-      )
-    })
-  })
-
-  describe('findOpenListsTaggedGeneralPetition', () => {
-    const mockQuery = { limit: 10 }
-
-    it('should return open general petition lists', async () => {
-      const mockPaginatedResult = {
-        data: [mockEndorsementList],
-        totalCount: 1,
-        pageInfo: { hasNextPage: false },
-      }
-      mockEndorsementListModel.findAll.mockResolvedValue([mockEndorsementList])
-      mockEndorsementListModel.count.mockResolvedValue(1)
-
-      const result = await service.findOpenListsTaggedGeneralPetition(mockQuery)
-      expect(result).toHaveProperty('data')
-      expect(mockEndorsementListModel.findAll).toHaveBeenCalled()
-    })
-
-    it('should throw NotFoundException when no lists found', async () => {
-      const query = { limit: 10 }
-    
-      // Mock findAll to return an empty array (no results)
-      mockEndorsementListModel.findAll.mockResolvedValue([])
-    
-      // Mock count to return 0, indicating no lists found
-      mockEndorsementListModel.count.mockResolvedValue(0)
-    
-      // Ensure the service throws NotFoundException when no lists are found
-      await expect(service.findOpenListsTaggedGeneralPetition(query)).rejects.toThrow(NotFoundException)
-    })
-    
-  })
-
-  describe('emailPDF', () => {
-    const mockListId = 'test-id'
-    const mockEmail = 'test@example.com'
-    const mockEndorsementWithEndorsements = {
-      ...mockEndorsementList,
-      endorsements: [
-        {
-          created: new Date(),
-          meta: {
-            fullName: 'Test User',
-            locality: 'Test City',
-          },
-        },
-      ],
-    }
-
-    beforeEach(() => {
-      mockEndorsementListModel.findOne.mockResolvedValue(
-        mockEndorsementWithEndorsements,
-      )
-      mockNationalRegistryService.getName.mockResolvedValue({
-        fulltNafn: 'Test Owner',
+        // Expect the findAll method to be called with the correct 'where' condition
+        expect(mockEndorsementListModel.findAll).toHaveBeenCalledWith(
+          expect.objectContaining({
+            where: whereCondition, // Ensure that the 'where' condition is passed correctly
+          }),
+        )
       })
     })
 
-    it('should successfully send PDF email', async () => {
-      const result = await service.emailPDF(mockListId, mockEmail)
+    describe('findListsByTags', () => {
+      const mockQuery = { limit: 10 }
+      const mockTags = [EndorsementTag.GENERAL_PETITION]
 
-      expect(result.success).toBe(true)
-      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
-        expect.objectContaining({
-          to: expect.arrayContaining([
-            expect.objectContaining({
-              address: mockEmail,
-            }),
-          ]),
-        }),
-      )
-    })
+      it('should return lists filtered by tags for admin user', async () => {
+        const mockPaginatedResult = {
+          data: [mockEndorsementList],
+          totalCount: 1,
+          pageInfo: { hasNextPage: false },
+        }
+        mockEndorsementListModel.findAll.mockResolvedValue([
+          mockEndorsementList,
+        ])
+        mockEndorsementListModel.count.mockResolvedValue(1)
 
-    it('should handle email sending failure', async () => {
-      mockEmailService.sendEmail.mockRejectedValue(new Error('Email failed'))
+        await service.findListsByTags(mockTags, mockQuery, mockAdminUser)
+        expect(mockEndorsementListModel.findAll).toHaveBeenCalledWith(
+          expect.objectContaining({
+            where: {
+              tags: { [Op.overlap]: mockTags },
+              adminLock: { [Op.or]: [true, false] },
+            },
+          }),
+        )
+      })
 
-      const result = await service.emailPDF(mockListId, mockEmail)
-      expect(result.success).toBe(false)
-    })
+      it('should return lists filtered by tags for regular user', async () => {
+        const tags = ['generalTag']
+        const query = { limit: 10 }
 
-    it('should throw NotFoundException when list not found', async () => {
-      mockEndorsementListModel.findOne.mockResolvedValue(null)
+        // Mock the findAll response to return some lists
+        mockEndorsementListModel.findAll.mockResolvedValue([
+          mockEndorsementList,
+        ])
 
-      await expect(service.emailPDF(mockListId, mockEmail)).rejects.toThrow(
-        NotFoundException,
-      )
-    })
-  })
+        // Mock the count response to avoid the error with pagination
+        mockEndorsementListModel.count.mockResolvedValue(1) // Ensuring count resolves with a promise
 
-  describe('exportList', () => {
-    const exportParams = {
-      listId: 'test-id',
-      user: mockUser,
-      fileType: 'pdf' as const,
-    }
+        // Call the service method with tags, query, and the regular user (mockUser)
+        await service.findListsByTags(tags, query, mockUser)
 
-    beforeEach(() => {
-      mockEndorsementListModel.findOne.mockResolvedValue(mockEndorsementList)
-      mockNationalRegistryService.getName.mockResolvedValue({
-        fulltNafn: 'Test Owner',
+        // Ensure that the query for regular users has 'adminLock: false'
+        expect(mockEndorsementListModel.findAll).toHaveBeenCalledWith(
+          expect.objectContaining({
+            where: {
+              tags: { [Op.overlap]: tags },
+              adminLock: false, // Ensure that adminLock is false for regular users
+            },
+          }),
+        )
+
+        // Verify that count was called
+        expect(mockEndorsementListModel.count).toHaveBeenCalledWith(
+          expect.objectContaining({
+            where: {
+              tags: { [Op.overlap]: tags },
+              adminLock: false, // The same condition should apply to count
+            },
+          }),
+        )
       })
     })
 
-    it('should handle PDF export', async () => {
-      const result = await service.exportList(
-        exportParams.listId,
-        exportParams.user,
-        exportParams.fileType,
-      )
+    describe('findOpenListsTaggedGeneralPetition', () => {
+      const mockQuery = { limit: 10 }
 
-      expect(result.url).toBe('https://test-url.com')
-      expect(mockAwsService.uploadFile).toHaveBeenCalled()
-      expect(mockAwsService.getPresignedUrl).toHaveBeenCalled()
+      it('should return open general petition lists', async () => {
+        const mockPaginatedResult = {
+          data: [mockEndorsementList],
+          totalCount: 1,
+          pageInfo: { hasNextPage: false },
+        }
+        mockEndorsementListModel.findAll.mockResolvedValue([
+          mockEndorsementList,
+        ])
+        mockEndorsementListModel.count.mockResolvedValue(1)
+
+        const result = await service.findOpenListsTaggedGeneralPetition(
+          mockQuery,
+        )
+        expect(result).toHaveProperty('data')
+        expect(mockEndorsementListModel.findAll).toHaveBeenCalled()
+      })
+
+      it('should throw NotFoundException when no lists found', async () => {
+        const query = { limit: 10 }
+
+        // Mock findAll to return an empty array (no results)
+        mockEndorsementListModel.findAll.mockResolvedValue([])
+
+        // Mock count to return 0, indicating no lists found
+        mockEndorsementListModel.count.mockResolvedValue(0)
+
+        // Ensure the service throws NotFoundException when no lists are found
+        await expect(
+          service.findOpenListsTaggedGeneralPetition(query),
+        ).rejects.toThrow(NotFoundException)
+      })
     })
 
-    it('should handle CSV export', async () => {
-      const result = await service.exportList(
-        exportParams.listId,
-        exportParams.user,
-        'csv',
-      )
+    describe('emailPDF', () => {
+      const mockListId = 'test-id'
+      const mockEmail = 'test@example.com'
+      const mockEndorsementWithEndorsements = {
+        ...mockEndorsementList,
+        endorsements: [
+          {
+            created: new Date(),
+            meta: {
+              fullName: 'Test User',
+              locality: 'Test City',
+            },
+          },
+        ],
+      }
 
-      expect(result.url).toBe('https://test-url.com')
-      expect(mockAwsService.uploadFile).toHaveBeenCalledWith(
-        expect.any(Buffer),
-        expect.objectContaining({
-          key: expect.stringContaining('.csv'),
-        }),
-        expect.objectContaining({
-          ContentType: 'text/csv',
-        }),
-      )
+      beforeEach(() => {
+        mockEndorsementListModel.findOne.mockResolvedValue(
+          mockEndorsementWithEndorsements,
+        )
+        mockNationalRegistryService.getName.mockResolvedValue({
+          fulltNafn: 'Test Owner',
+        })
+      })
+
+      it('should successfully send PDF email', async () => {
+        const result = await service.emailPDF(mockListId, mockEmail)
+
+        expect(result.success).toBe(true)
+        expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+          expect.objectContaining({
+            to: expect.arrayContaining([
+              expect.objectContaining({
+                address: mockEmail,
+              }),
+            ]),
+          }),
+        )
+      })
+
+      it('should handle email sending failure', async () => {
+        mockEmailService.sendEmail.mockRejectedValue(new Error('Email failed'))
+
+        const result = await service.emailPDF(mockListId, mockEmail)
+        expect(result.success).toBe(false)
+      })
+
+      it('should throw NotFoundException when list not found', async () => {
+        mockEndorsementListModel.findOne.mockResolvedValue(null)
+
+        await expect(service.emailPDF(mockListId, mockEmail)).rejects.toThrow(
+          NotFoundException,
+        )
+      })
     })
 
-    it('should handle AWS upload failure', async () => {
-      mockAwsService.uploadFile.mockRejectedValue(new Error('Upload failed'))
+    describe('exportList', () => {
+      const exportParams = {
+        listId: 'test-id',
+        user: mockUser,
+        fileType: 'pdf' as const,
+      }
 
-      await expect(
-        service.exportList(
+      beforeEach(() => {
+        mockEndorsementListModel.findOne.mockResolvedValue(mockEndorsementList)
+        mockNationalRegistryService.getName.mockResolvedValue({
+          fulltNafn: 'Test Owner',
+        })
+      })
+
+      it('should handle PDF export', async () => {
+        const result = await service.exportList(
           exportParams.listId,
           exportParams.user,
           exportParams.fileType,
-        ),
-      ).rejects.toThrow('Error uploading file to S3')
-    })
-  })
+        )
 
-  describe('emailCreated and emailLock', () => {
-    beforeEach(() => {
-      mockNationalRegistryService.getName.mockResolvedValue({
-        fulltNafn: 'Test Owner',
+        expect(result.url).toBe('https://test-url.com')
+        expect(mockAwsService.uploadFile).toHaveBeenCalled()
+        expect(mockAwsService.getPresignedUrl).toHaveBeenCalled()
+      })
+
+      it('should handle CSV export', async () => {
+        const result = await service.exportList(
+          exportParams.listId,
+          exportParams.user,
+          'csv',
+        )
+
+        expect(result.url).toBe('https://test-url.com')
+        expect(mockAwsService.uploadFile).toHaveBeenCalledWith(
+          expect.any(Buffer),
+          expect.objectContaining({
+            key: expect.stringContaining('.csv'),
+          }),
+          expect.objectContaining({
+            ContentType: 'text/csv',
+          }),
+        )
+      })
+
+      it('should handle AWS upload failure', async () => {
+        mockAwsService.uploadFile.mockRejectedValue(new Error('Upload failed'))
+
+        await expect(
+          service.exportList(
+            exportParams.listId,
+            exportParams.user,
+            exportParams.fileType,
+          ),
+        ).rejects.toThrow('Error uploading file to S3')
       })
     })
 
-    it('should send creation email successfully', async () => {
-      const result = await service.emailCreated(mockEndorsementList)
-      expect(result.success).toBe(true)
-      expect(mockEmailService.sendEmail).toHaveBeenCalled()
+    describe('emailCreated and emailLock', () => {
+      beforeEach(() => {
+        mockNationalRegistryService.getName.mockResolvedValue({
+          fulltNafn: 'Test Owner',
+        })
+      })
+
+      it('should send creation email successfully', async () => {
+        const result = await service.emailCreated(mockEndorsementList)
+        expect(result.success).toBe(true)
+        expect(mockEmailService.sendEmail).toHaveBeenCalled()
+      })
+
+      it('should send lock email successfully', async () => {
+        const result = await service.emailLock(mockEndorsementList)
+        expect(result.success).toBe(true)
+        expect(mockEmailService.sendEmail).toHaveBeenCalled()
+      })
+
+      it('should handle missing owner email', async () => {
+        const listWithoutEmail = {
+          ...mockEndorsementList,
+          meta: {},
+        }
+
+        await expect(service.emailLock(listWithoutEmail)).rejects.toThrow(
+          NotFoundException,
+        )
+      })
+
+      it('should handle email service failures', async () => {
+        mockEmailService.sendEmail.mockRejectedValue(new Error('Email failed'))
+
+        const result = await service.emailCreated(mockEndorsementList)
+        expect(result.success).toBe(false)
+      })
     })
 
-    it('should send lock email successfully', async () => {
-      const result = await service.emailLock(mockEndorsementList)
-      expect(result.success).toBe(true)
-      expect(mockEmailService.sendEmail).toHaveBeenCalled()
+    describe('List query functionality', () => {
+      it('should handle pagination parameters', async () => {
+        const query = {
+          limit: 10,
+          after: 'cursor-after-value', // Simulate an 'after' cursor
+        }
+
+        // Mock findAll and count methods
+        mockEndorsementListModel.findAll.mockResolvedValue([
+          mockEndorsementList,
+        ])
+        mockEndorsementListModel.count.mockResolvedValue(1)
+
+        // Call the service method
+        await service.findListsGenericQuery(query)
+
+        // Ensure that pagination params like 'limit' and 'after' cursor are passed
+        expect(mockEndorsementListModel.findAll).toHaveBeenCalledWith(
+          expect.objectContaining({
+            limit: 10,
+            where: expect.anything(), // The `where` condition should still be there
+            // No 'offset', but check 'after' or 'before' is being handled correctly by pagination logic
+          }),
+        )
+      })
+
+      it('should handle invalid cursor values', async () => {
+        const query = {
+          limit: 10,
+          after: 'invalid-cursor',
+        }
+        mockEndorsementListModel.findAll.mockResolvedValue([])
+        mockEndorsementListModel.count.mockResolvedValue(0)
+
+        const result = await service.findListsGenericQuery(query)
+        expect(result.pageInfo.hasNextPage).toBe(false)
+      })
     })
 
-    it('should handle missing owner email', async () => {
-      const listWithoutEmail = {
-        ...mockEndorsementList,
-        meta: {},
-      }
+    // describe('Core list operations', () => {
+    describe('open', () => {
+      it('should handle opening a list with new date', async () => {
+        const newDate = { closedDate: new Date('2025-01-01') }
+        const list = { ...mockEndorsementList, update: jest.fn() }
+        list.update.mockResolvedValue({ ...list, ...newDate })
 
-      await expect(service.emailLock(listWithoutEmail)).rejects.toThrow(
-        NotFoundException,
-      )
+        const result = await service.open(list, newDate)
+        expect(result.closedDate).toEqual(newDate.closedDate)
+      })
     })
 
-    it('should handle email service failures', async () => {
-      mockEmailService.sendEmail.mockRejectedValue(new Error('Email failed'))
+    describe('updateEndorsementList', () => {
+      it('should update multiple fields', async () => {
+        const updates = {
+          title: 'Updated Title',
+          description: 'Updated Description',
+          openedDate: new Date('2024-01-01'),
+          closedDate: new Date('2024-12-31'),
+        }
+        const list = { ...mockEndorsementList, update: jest.fn() }
+        list.update.mockResolvedValue({ ...list, ...updates })
 
-      const result = await service.emailCreated(mockEndorsementList)
-      expect(result.success).toBe(false)
+        const result = await service.updateEndorsementList(list, updates)
+        expect(result.title).toBe(updates.title)
+        expect(result.description).toBe(updates.description)
+      })
     })
-  })
-
-
-describe('List query functionality', () => {
-  it('should handle pagination parameters', async () => {
-    const query = {
-      limit: 10,
-      after: 'cursor-after-value', // Simulate an 'after' cursor
-    }
-  
-    // Mock findAll and count methods
-    mockEndorsementListModel.findAll.mockResolvedValue([mockEndorsementList])
-    mockEndorsementListModel.count.mockResolvedValue(1)
-  
-    // Call the service method
-    await service.findListsGenericQuery(query)
-  
-    // Ensure that pagination params like 'limit' and 'after' cursor are passed
-    expect(mockEndorsementListModel.findAll).toHaveBeenCalledWith(
-      expect.objectContaining({
-        limit: 10,
-        where: expect.anything(), // The `where` condition should still be there
-        // No 'offset', but check 'after' or 'before' is being handled correctly by pagination logic
-      }),
-    )
-  })
-  
-
-
-  it('should handle invalid cursor values', async () => {
-    const query = {
-      limit: 10,
-      after: 'invalid-cursor'
-    }
-    mockEndorsementListModel.findAll.mockResolvedValue([])
-    mockEndorsementListModel.count.mockResolvedValue(0)
-
-    const result = await service.findListsGenericQuery(query)
-    expect(result.pageInfo.hasNextPage).toBe(false)
-  })
-})
-
-// describe('Core list operations', () => {
-  describe('open', () => {
-    it('should handle opening a list with new date', async () => {
-      const newDate = { closedDate: new Date('2025-01-01') }
-      const list = { ...mockEndorsementList, update: jest.fn() }
-      list.update.mockResolvedValue({ ...list, ...newDate })
-
-      const result = await service.open(list, newDate)
-      expect(result.closedDate).toEqual(newDate.closedDate)
-    })
-  })
-
-  describe('updateEndorsementList', () => {
-    it('should update multiple fields', async () => {
-      const updates = {
-        title: 'Updated Title',
-        description: 'Updated Description',
-        openedDate: new Date('2024-01-01'),
-        closedDate: new Date('2024-12-31')
-      }
-      const list = { ...mockEndorsementList, update: jest.fn() }
-      list.update.mockResolvedValue({ ...list, ...updates })
-
-      const result = await service.updateEndorsementList(list, updates)
-      expect(result.title).toBe(updates.title)
-      expect(result.description).toBe(updates.description)
-    })
-  })
-
-
 
     describe('updateEndorsementList', () => {
       it('should update multiple fields', async () => {
@@ -802,66 +811,68 @@ describe('List query functionality', () => {
     })
   })
 
-
   it('should handle presigned URL errors gracefully', async () => {
     const listId = 'test-id'
     const fileType = 'pdf'
-    
+
     // Mock the file upload to succeed
     mockAwsService.uploadFile.mockResolvedValue(undefined)
-    
+
     // Simulate an error when generating the presigned URL
-    mockAwsService.getPresignedUrl.mockRejectedValue(new Error('Presigned URL generation failed'))
-  
+    mockAwsService.getPresignedUrl.mockRejectedValue(
+      new Error('Presigned URL generation failed'),
+    )
+
     // Mock fetchEndorsementList to return a valid endorsement list (bypassing the NotFoundException)
     mockEndorsementListModel.findOne.mockResolvedValue(mockEndorsementList)
-    mockNationalRegistryService.getName.mockResolvedValue({ fulltNafn: 'Test Owner' })
-    
+    mockNationalRegistryService.getName.mockResolvedValue({
+      fulltNafn: 'Test Owner',
+    })
+
     // Expect the service to throw an error when presigned URL generation fails
-    await expect(service.exportList(listId, mockUser, fileType)).rejects.toThrow('Presigned URL generation failed')
-    
+    await expect(
+      service.exportList(listId, mockUser, fileType),
+    ).rejects.toThrow('Presigned URL generation failed')
+
     // Ensure the file upload was attempted
     expect(mockAwsService.uploadFile).toHaveBeenCalled()
-    
+
     // Ensure the presigned URL generation was attempted and failed
     expect(mockAwsService.getPresignedUrl).toHaveBeenCalled()
   })
-  
 
   it('should handle file size limits', async () => {
     const listId = 'test-id'
     const fileType = 'csv'
-  
+
     // Simulate a list with a large number of endorsements
     const largeEndorsementList = {
       ...mockEndorsementList,
       endorsements: Array(1000).fill({
         created: new Date(),
-        meta: { fullName: 'Test User', locality: 'Test City' }
-      })
+        meta: { fullName: 'Test User', locality: 'Test City' },
+      }),
     }
-  
+
     // Mock findOne to return a large endorsement list
     mockEndorsementListModel.findOne.mockResolvedValue(largeEndorsementList)
-  
+
     // Mock file upload to succeed
     mockAwsService.uploadFile.mockResolvedValue(undefined)
-  
+
     // Mock presigned URL generation to succeed
     mockAwsService.getPresignedUrl.mockResolvedValue('https://test-url.com')
-  
+
     // Call the exportList method and expect success
     const result = await service.exportList(listId, mockUser, fileType)
-  
+
     // Check that a presigned URL was generated and returned
     expect(result.url).toBeDefined()
-  
+
     // Ensure the file upload was attempted
     expect(mockAwsService.uploadFile).toHaveBeenCalled()
-  
+
     // Ensure the presigned URL generation was successful
     expect(mockAwsService.getPresignedUrl).toHaveBeenCalled()
   })
-  
 })
-

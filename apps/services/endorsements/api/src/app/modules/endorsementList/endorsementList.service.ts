@@ -252,21 +252,20 @@ export class EndorsementListService {
         closedDate: { [Op.gt]: dateOb },
         adminLock: false,
       }
-      
+
       const paginatedResult = await this.findListsGenericQuery(query, where)
-  
+
       // Check if no results were found and throw NotFoundException
       if (paginatedResult.totalCount === 0) {
         throw new NotFoundException()
       }
-  
+
       return paginatedResult
     } catch (error) {
       this.logger.warn('findOpenListsTaggedGeneralPetition not found')
       throw new NotFoundException()
     }
   }
-  
 
   async findSingleOpenListTaggedGeneralPetition(
     listId: string,

@@ -96,8 +96,9 @@ export class EndorsementList extends Model {
   @HasMany(() => Endorsement)
   endorsements?: Endorsement[]
 
-  @ApiProperty()
-  endorsementCounter?: number
+  // OK TO DELETE THIS NOW .........................................
+  // @ApiProperty()
+  // endorsementCounter?: number
 
   @ApiProperty()
   @Column({
