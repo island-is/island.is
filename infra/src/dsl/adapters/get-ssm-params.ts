@@ -1,10 +1,10 @@
-import { GetParametersCommand, SSM } from '@aws-sdk/client-ssm'
+import {
+  GetParametersCommand,
+  SSM,
+  DescribeParametersCommand,
+} from '@aws-sdk/client-ssm'
 import { logger } from '../../common'
 
-// const API_INITIALIZATION_OPTIONS = {
-//   region: 'eu-west-1',
-//   maxAttempts: 10,
-// }
 const client = new SSM({})
 export async function getSsmParams(
   ssmNames: string[],
@@ -17,26 +17,32 @@ export async function getSsmParams(
   }, [])
 
   try {
-    const allParams = await Promise.all(
-      chunks.map((Names) =>
-        client.send(new GetParametersCommand({ Names, WithDecryption: true })),
-      ),
-    )
-    const params = allParams
-      .map(({ Parameters }) =>
-        Object.fromEntries(Parameters!.map((p) => [p.Name, p.Value])),
-      )
-      .reduce((p, c) => ({ ...p, ...c }), {})
-    logger.debug('get-ssm-params return debug', {
-      chunks,
-      numChunks: chunks.length,
-      allParams,
-      sampleAllParams: allParams[0]?.Parameters ?? null,
-      params,
-    })
-    return params
-  } catch (e: any) {
-    logger.error(`Error getting SSM parameters`, { error: e })
-    return {}
+    client.send(new DescribeParametersCommand({}))
+  } catch (error: any) {
+    if (error.name === 'CredentialsProviderError') {
+      logger.warn(`You're not authenticated to AWS. This command will fail.`, {
+        error,
+      })
+      return {}
+    }
   }
+
+  const allParams = await Promise.all(
+    chunks.map((Names) =>
+      client.send(new GetParametersCommand({ Names, WithDecryption: true })),
+    ),
+  )
+  const params = allParams
+    .map(({ Parameters }) =>
+      Object.fromEntries(Parameters!.map((p) => [p.Name, p.Value])),
+    )
+    .reduce((p, c) => ({ ...p, ...c }), {})
+  logger.debug('get-ssm-params return debug', {
+    chunks,
+    numChunks: chunks.length,
+    allParams,
+    sampleAllParams: allParams[0]?.Parameters ?? null,
+    params,
+  })
+  return params
 }
