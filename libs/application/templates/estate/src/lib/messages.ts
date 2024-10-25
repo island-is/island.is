@@ -1130,7 +1130,7 @@ export const m = defineMessages({
     description: '',
   },
   missingHeirUndividedEstateValidation: {
-    id: 'es.application:missingSpouseValidation',
+    id: 'es.application:missingHeirUndividedEstateValidation',
     defaultMessage:
       'Ekki er hægt að halda áfram með umsókn þar sem engin erfingi er skráður',
     description: '',

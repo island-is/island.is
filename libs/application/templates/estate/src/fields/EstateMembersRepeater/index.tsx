@@ -77,9 +77,9 @@ export const EstateMembersRepeater: FC<
 
   const missingHeirsForUndividedEstate =
     selectedEstate === EstateTypes.permitForUndividedEstate &&
-    !values.estate?.estateMembers?.some((member: EstateMember) => {
-      return member.enabled
-    })
+    !values.estate?.estateMembers?.some(
+      (member: EstateMember) => member.enabled,
+    )
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
