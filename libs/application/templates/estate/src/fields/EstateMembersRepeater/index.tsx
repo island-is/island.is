@@ -436,7 +436,7 @@ export const EstateMembersRepeater: FC<
           {formatMessage(m.inheritanceAddMember)}
         </Button>
       </Box>
-      {errors && !!errors[heirAgeValidation] && (
+      {!!errors?.[heirAgeValidation] && (
         <Box marginTop={4}>
           <InputError
             errorMessage={
@@ -447,7 +447,7 @@ export const EstateMembersRepeater: FC<
           />
         </Box>
       )}
-      {errors && !!errors[missingHeirUndividedEstateValidation] && (
+      {!!errors?.[missingHeirUndividedEstateValidation] && (
         <Box marginTop={4}>
           <InputError
             errorMessage={formatMessage(m.missingHeirUndividedEstateValidation)}
