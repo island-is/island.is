@@ -1,11 +1,15 @@
 'use strict'
+const DEFAULT_SCOPES = ['email', 'address', 'phone']
 
 module.exports = {
   async up(queryInterface, Sequelize) {
     const clients = await queryInterface.sequelize.query(
-      `SELECT "client_id" FROM "client" WHERE "client_type" IN ('web', 'native', 'spa');`,
-      { type: queryInterface.sequelize.QueryTypes.SELECT },
-    )
+      `SELECT "client_id" FROM "client" WHERE "client_type" IN (:clientTypes);`,
+      {
+        type: queryInterface.sequelize.QueryTypes.SELECT,
+        replacements: { clientTypes: ['web', 'native', 'spa'] }
+      }
+    );
     const clientIds = clients.map((client) => client.client_id)
 
     if (!clientIds.length) {
@@ -25,11 +29,10 @@ module.exports = {
     )
 
     const rows = []
-    const defaultScopes = ['email', 'address', 'phone']
 
     for (const clientId of clientIds) {
       rows.push(
-        ...defaultScopes
+        ...DEFAULT_SCOPES
           .filter((scope) => {
             return !existingScopesLookup.has(`${clientId}-${scope}`)
           })
