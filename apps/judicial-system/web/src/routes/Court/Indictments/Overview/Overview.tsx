@@ -19,7 +19,7 @@ import {
   PageLayout,
   PageTitle,
   ServiceAnnouncement,
-  useIndictmentsLawsBroken,
+  // useIndictmentsLawsBroken, NOTE: Temporarily hidden while list of laws broken is not complete
 } from '@island.is/judicial-system-web/src/components'
 import { IndictmentDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -35,7 +35,7 @@ const IndictmentOverview = () => {
   const { updateDefendantState, updateDefendant } = useDefendants()
 
   const { formatMessage } = useIntl()
-  const lawsBroken = useIndictmentsLawsBroken(workingCase)
+  // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
   const [modalVisible, setModalVisible] = useState<'RETURN_INDICTMENT'>()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate

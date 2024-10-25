@@ -34,11 +34,20 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       defenderEmail
       defenderPhoneNumber
       defenderChoice
+      serviceRequirement
       verdictViewDate
       verdictAppealDeadline
+      isVerdictAppealDeadlineExpired
       subpoenas {
         id
         created
+        serviceStatus
+        serviceDate
+        servedBy
+        comment
+        defenderNationalId
+        caseId
+        subpoenaId
       }
     }
     defenderName
@@ -159,6 +168,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     indictmentRulingDecision
     indictmentCompletedDate
     indictmentReviewDecision
+    indictmentVerdictViewedByAll
+    indictmentVerdictAppealDeadlineExpired
     indictmentReviewer {
       id
       name

@@ -20,10 +20,10 @@ import {
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
+  CaseNotificationType,
   CaseState,
   DateType,
   EventType,
-  NotificationType,
   StringType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -375,7 +375,7 @@ export class LimitedAccessCaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_TO_COURT_OF_APPEALS },
+        body: { type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
       })
     }
 
@@ -384,7 +384,7 @@ export class LimitedAccessCaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_WITHDRAWN },
+        body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
       })
     }
 
@@ -399,7 +399,7 @@ export class LimitedAccessCaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_STATEMENT },
+        body: { type: CaseNotificationType.APPEAL_STATEMENT },
       })
     }
 
