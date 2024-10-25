@@ -8,7 +8,7 @@ export interface MileageRecord {
 
 const letters =
   'aábcdðeéfghiíjklmnoópqrstuúvwxyýzþæöAÁBCDÐEÉFGHIÍJKLMNOÓPQRSTUÚVWXYÝZÞÆÖ'
-const newlines = '\\Q\\r\\n\\E|\\r|\\n'
+const newlines = '\\r\\n\\r|\\n'
 const wordbreaks = '[;,]'
 
 const vehicleIndexTitle = [
@@ -53,7 +53,7 @@ export const parseFileToMileageRecord = async (
 
   const uploadedOdometerStatuses: Array<MileageRecord> = values
     .map((row) => {
-      const mileage = parseInt(row[mileageIndex])
+      const mileage = Number(row[mileageIndex])
       if (Number.isNaN(mileage)) {
         return undefined
       }
@@ -89,15 +89,19 @@ const parseCsv = async (file: File) => {
 }
 
 const parseXlsx = async (file: File) => {
-  //FIRST SHEET ONLY
-  const buffer = await file.arrayBuffer()
-  const parsedFile = XLSX.read(buffer, { type: 'buffer' })
+  try {
+    //FIRST SHEET ONLY
+    const buffer = await file.arrayBuffer()
+    const parsedFile = XLSX.read(buffer, { type: 'buffer' })
 
-  const jsonData = XLSX.utils.sheet_to_csv(
-    parsedFile.Sheets[parsedFile.SheetNames[0]],
-  )
+    const jsonData = XLSX.utils.sheet_to_csv(
+      parsedFile.Sheets[parsedFile.SheetNames[0]],
+    )
 
-  return parseCsvString(jsonData)
+    return parseCsvString(jsonData)
+  } catch (e) {
+    throw new Error('Failed to parse XLSX file: ' + e.message)
+  }
 }
 
 const parseCsvString = (chunk: string) => {

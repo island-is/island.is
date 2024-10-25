@@ -23,6 +23,11 @@ import VehicleBulkMileageFileDownloader from '../VehicleBulkMileage/VehicleBulkM
 import { vehicleMessage } from '../../lib/messages'
 import { parseFileToMileageRecord } from '../../utils/parseFileToMileage'
 
+const extensionToType = {
+  [fileExtensionWhitelist['.csv']]: 'csv',
+  [fileExtensionWhitelist['.xlsx']]: 'xlsx',
+} as const
+
 const VehicleBulkMileageUpload = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
@@ -91,10 +96,6 @@ const VehicleBulkMileageUpload = () => {
 
     if (file.status === 'done' && file.originalFileObj instanceof File) {
       //use value of file extension as key
-      const extensionToType = {
-        [fileExtensionWhitelist['.csv']]: 'csv',
-        [fileExtensionWhitelist['.xlsx']]: 'xlsx',
-      } as const
 
       const type = file.type ? extensionToType[file.type] : undefined
 
