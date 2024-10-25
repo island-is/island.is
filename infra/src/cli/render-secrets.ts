@@ -23,7 +23,7 @@ export const renderSecretsCommand = async (service: string) => {
     } else {
       logger.error(error)
     }
-    process.exit(1)
+    throw new Error('Could not render secrets')
   })
 }
 
@@ -31,9 +31,8 @@ export const renderSecrets = async (service: string) => {
   const services = await Promise.all(
     Object.values(Charts).map(
       async (chart) =>
-        (
-          await renderHelmServices(Envs.dev01, chart.dev, chart.dev, 'no-mocks')
-        ).services,
+        (await renderHelmServices(Envs.dev01, chart.dev, chart.dev, 'no-mocks'))
+          .services,
     ),
   )
 

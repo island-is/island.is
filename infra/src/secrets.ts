@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk'
+import { SSM } from '@aws-sdk/client-ssm'
 import yargs from 'yargs'
 import { OpsEnv } from './dsl/types/input-types'
 import { Envs } from './environments'
@@ -30,7 +30,7 @@ const config = {
   region: 'eu-west-1',
 }
 
-const ssm = new AWS.SSM(config)
+const ssm = new SSM(config)
 yargs(hideBin(process.argv))
   .command(
     'get-all-required-secrets',
@@ -75,7 +75,7 @@ yargs(hideBin(process.argv))
         WithDecryption: true,
       }
 
-      const { Parameter } = await ssm.getParameter(parameterInput).promise()
+      const { Parameter } = await ssm.getParameter(parameterInput)
       if (Parameter) {
         if (Parameter.Value && Parameter.Value.length > 0) {
           console.log(Parameter.Value)
@@ -92,13 +92,12 @@ yargs(hideBin(process.argv))
     'store secret',
     () => {},
     async ({ key, secret }: StoreArguments) => {
-      await ssm
-        .putParameter({
-          Name: key,
-          Value: secret,
-          Type: 'SecureString',
-        })
-        .promise()
+      await ssm.putParameter({
+        Name: key,
+        Value: secret,
+        Type: 'SecureString',
+      })
+
       logger.debug('Done!')
     },
   )
@@ -108,13 +107,12 @@ yargs(hideBin(process.argv))
     'delete secrets by prefix',
     () => {},
     async ({ prefix }: DeleteArguments) => {
-      const { Parameters } = await ssm
-        .describeParameters({
-          ParameterFilters: [
-            { Key: 'Name', Option: 'BeginsWith', Values: [prefix] },
-          ],
-        })
-        .promise()
+      const { Parameters } = await ssm.describeParameters({
+        ParameterFilters: [
+          { Key: 'Name', Option: 'BeginsWith', Values: [prefix] },
+        ],
+      })
+
       if (Parameters && Parameters.length > 0) {
         logger.debug(
           `Parameters to destroy: ${Parameters.map(({ Name }) => Name)}`,
@@ -122,7 +120,7 @@ yargs(hideBin(process.argv))
         await Promise.all(
           Parameters.map(({ Name }) =>
             Name
-              ? ssm.deleteParameter({ Name }).promise()
+              ? ssm.deleteParameter({ Name })
               : new Promise((resolve) => resolve(true)),
           ),
         )

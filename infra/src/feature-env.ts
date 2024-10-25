@@ -1,6 +1,5 @@
 import yargs from 'yargs'
-import AWS from 'aws-sdk'
-import { Kubernetes } from './dsl/kubernetes-runtime'
+import { PutObjectCommand, PutObjectCommandInput, S3 } from '@aws-sdk/client-s3'
 import { Envs } from './environments'
 import {
   ExcludedFeatureDeploymentServices,
@@ -40,9 +39,9 @@ interface Arguments {
 const writeToOutput = async (data: string, output?: string) => {
   if (output) {
     if (output.startsWith('s3://')) {
-      const Bucket = output.substr(5).split('/')[0]
-      const Key = output.substr(5).split(/\/(.+)/)[1]
-      const objectParams = {
+      const Bucket = output.substring(5).split('/')[0]
+      const Key = output.substring(5).split(/\/(.+)/)[1]
+      const objectParams: PutObjectCommandInput = {
         Bucket,
         Key,
         Body: data,
@@ -51,12 +50,12 @@ const writeToOutput = async (data: string, output?: string) => {
       const config = {
         region: 'eu-west-1',
       }
-      const s3 = new AWS.S3(config)
+      const s3 = new S3(config)
       try {
-        await s3.putObject(objectParams).promise()
-        console.log(`Successfully uploaded data to ${output}`)
+        await s3.send(new PutObjectCommand(objectParams))
+        logger.info(`Successfully uploaded data to ${output}`)
       } catch (err) {
-        console.log('Error', err)
+        logger.error('Error', err)
       }
     }
   } else {
@@ -145,13 +144,15 @@ yargs(process.argv.slice(2))
     () => {},
     async (argv: Arguments) => {
       const { habitat, affectedServices, env } = parseArguments(argv)
-      const { included: featureYaml, excluded } =
-        await getFeatureAffectedServices(
-          habitat,
-          affectedServices.slice(),
-          ExcludedFeatureDeploymentServices,
-          env,
-        )
+      const {
+        included: featureYaml,
+        excluded,
+      } = await getFeatureAffectedServices(
+        habitat,
+        affectedServices.slice(),
+        ExcludedFeatureDeploymentServices,
+        env,
+      )
       const ingressComment = buildComment(
         (await renderHelmServices(env, habitat, featureYaml, 'no-mocks'))
           .services,
