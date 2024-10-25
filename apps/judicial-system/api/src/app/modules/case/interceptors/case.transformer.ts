@@ -169,16 +169,22 @@ export const getIndictmentInfo = (
   return indictmentInfo
 }
 
-export const getIndictmentDefendantsInfo = (
-  defendants: Defendant[] | undefined,
-) => {
-  return defendants?.map((defendant) => {
+export const getIndictmentDefendantsInfo = (theCase: Case) => {
+  const isFine =
+    theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+
+  return theCase.defendants?.map((defendant) => {
     const { verdictViewDate } = defendant
-    const verdictAppealDeadline = verdictViewDate
-      ? new Date(
-          new Date(verdictViewDate).getTime() + getDays(28),
-        ).toISOString()
-      : undefined
+    const verdictAppealDeadline =
+      isFine && theCase.rulingDate
+        ? new Date(
+            new Date(theCase.rulingDate).getTime() + getDays(28),
+          ).toISOString()
+        : verdictViewDate
+        ? new Date(
+            new Date(verdictViewDate).getTime() + getDays(28),
+          ).toISOString()
+        : undefined
     const isVerdictAppealDeadlineExpired = verdictAppealDeadline
       ? Date.now() >= new Date(verdictAppealDeadline).getTime()
       : false
@@ -200,7 +206,7 @@ const transformIndictmentCase = (theCase: Case): Case => {
       theCase.defendants,
       theCase.eventLogs,
     ),
-    defendants: getIndictmentDefendantsInfo(theCase.defendants),
+    defendants: getIndictmentDefendantsInfo(theCase),
   }
 }
 

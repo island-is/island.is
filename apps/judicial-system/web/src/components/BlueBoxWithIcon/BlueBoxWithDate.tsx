@@ -209,7 +209,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           ))}
       </AnimatePresence>
       <AnimatePresence mode="wait">
-        {defendant.verdictAppealDate ? null : defendantCanAppeal ? (
+        {defendant.verdictAppealDate ||
+        defendant.isVerdictAppealDeadlineExpired ? null : defendantCanAppeal ? (
           <motion.div
             key="defendantAppealDate"
             variants={datePicker2Variants}

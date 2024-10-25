@@ -19,11 +19,13 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseIndictmentRulingDecision,
   CaseNotificationType,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import { Case } from '../case/models/case.model'
 import { CourtService } from '../court'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
