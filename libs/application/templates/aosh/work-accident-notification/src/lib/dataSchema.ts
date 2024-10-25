@@ -59,9 +59,9 @@ const companySchema = z.object({
   address: z.string(),
   addressOfBranch: z.string().optional(),
   name: z.string(),
-  nameOfBranch: z.string(),
   numberOfEmployees: z.string(),
   postnumber: z.string(),
+  nameOfBranch: z.string().optional(), // TODO(balli) Can we make this conditional based on company/person ?
   postnumberOfBranch: z.string().optional(),
   industryClassification: z.string().optional(),
   email: z.string().email(),
