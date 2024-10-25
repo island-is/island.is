@@ -7,9 +7,9 @@ module.exports = {
       `SELECT "client_id" FROM "client" WHERE "client_type" IN (:clientTypes);`,
       {
         type: queryInterface.sequelize.QueryTypes.SELECT,
-        replacements: { clientTypes: ['web', 'native', 'spa'] }
-      }
-    );
+        replacements: { clientTypes: ['web', 'native', 'spa'] },
+      },
+    )
     const clientIds = clients.map((client) => client.client_id)
 
     if (!clientIds.length) {
@@ -32,11 +32,9 @@ module.exports = {
 
     for (const clientId of clientIds) {
       rows.push(
-        ...DEFAULT_SCOPES
-          .filter((scope) => {
-            return !existingScopesLookup.has(`${clientId}-${scope}`)
-          })
-          .map((scope) => ({ client_id: clientId, scope_name: scope })),
+        ...DEFAULT_SCOPES.filter((scope) => {
+          return !existingScopesLookup.has(`${clientId}-${scope}`)
+        }).map((scope) => ({ client_id: clientId, scope_name: scope })),
       )
     }
 
