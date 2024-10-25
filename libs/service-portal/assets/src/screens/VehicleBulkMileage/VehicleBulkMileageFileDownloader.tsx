@@ -1,8 +1,7 @@
-import { Button, DropdownMenu, Inline } from '@island.is/island-ui/core'
+import { DropdownMenu } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { vehicleMessage } from '../../lib/messages'
 import { downloadFile } from '@island.is/service-portal/core'
-import { useState } from 'react'
 
 interface Props {
   onError: (error: string) => void
@@ -10,10 +9,8 @@ interface Props {
 
 const VehicleBulkMileageFileDownloader = ({ onError }: Props) => {
   const { formatMessage } = useLocale()
-  const [isLoading, setIsLoading] = useState(false)
 
   const downloadExampleFile = async (type: 'csv' | 'xlsx') => {
-    setIsLoading(true)
     try {
       downloadFile(
         `magnskraning_kilometrastodu_example`,
@@ -26,8 +23,6 @@ const VehicleBulkMileageFileDownloader = ({ onError }: Props) => {
       )
     } catch (error) {
       onError(error)
-    } finally {
-      setIsLoading(false)
     }
   }
 
