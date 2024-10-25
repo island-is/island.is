@@ -3,9 +3,10 @@ import {
   GridColumn,
   GridRow,
   Text,
-  LoadingDots,
   GridColumnProps,
   Box,
+  SkeletonLoader,
+  Stack,
 } from '@island.is/island-ui/core'
 import { IntroHeaderProps } from '@island.is/portals/core'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
@@ -39,28 +40,30 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
 
   const columnSpan = isMobile ? '8/8' : props.narrow ? '4/8' : '5/8'
 
-  if (props.loading) {
-    return (
-      <Box marginBottom={marginBottom ?? 4}>
-        <LoadingDots />
-      </Box>
-    )
-  }
   return (
     <GridRow marginBottom={marginBottom ?? 4}>
       <GridColumn span={props.span ? props.span : columnSpan}>
-        <Text variant="h3" as={props.isSubheading ? 'h2' : 'h1'}>
-          {formatMessage(props.title)}
-        </Text>
-        {props.intro && (
-          <Text variant="default" paddingTop={1}>
-            {formatMessage(props.intro)}
-          </Text>
+        {props.loading ? (
+          <Stack space={2}>
+            <SkeletonLoader height={24} width={120} />
+            <SkeletonLoader height={24} width={300} />
+          </Stack>
+        ) : (
+          <>
+            <Text variant="h3" as={props.isSubheading ? 'h2' : 'h1'}>
+              {formatMessage(props.title)}
+            </Text>
+            {props.intro && (
+              <Text variant="default" paddingTop={1}>
+                {formatMessage(props.intro)}
+              </Text>
+            )}
+            {props.introComponent && (
+              <Box paddingTop={1}>{props.introComponent}</Box>
+            )}
+            {props.children}
+          </>
         )}
-        {props.introComponent && (
-          <Box paddingTop={1}>{props.introComponent}</Box>
-        )}
-        {props.children}
       </GridColumn>
       {!isMobile && props.serviceProviderSlug && organization && (
         <GridColumn span={'2/8'} offset={'1/8'}>

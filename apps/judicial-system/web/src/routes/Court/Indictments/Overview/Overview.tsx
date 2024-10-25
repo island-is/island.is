@@ -13,12 +13,13 @@ import {
   FormFooter,
   IndictmentCaseFilesList,
   IndictmentCaseScheduledCard,
-  IndictmentsLawsBrokenAccordionItem,
+  // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
   PageHeader,
   PageLayout,
   PageTitle,
-  useIndictmentsLawsBroken,
+  ServiceAnnouncement,
+  // useIndictmentsLawsBroken, NOTE: Temporarily hidden while list of laws broken is not complete
 } from '@island.is/judicial-system-web/src/components'
 import { IndictmentDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -34,11 +35,12 @@ const IndictmentOverview = () => {
   const { updateDefendantState, updateDefendant } = useDefendants()
 
   const { formatMessage } = useIntl()
-  const lawsBroken = useIndictmentsLawsBroken(workingCase)
+  // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
   const [modalVisible, setModalVisible] = useState<'RETURN_INDICTMENT'>()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
+
   // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNavigationTo = useCallback(
@@ -76,6 +78,18 @@ const IndictmentOverview = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.defendants?.map((defendant) =>
+          defendant.subpoenas?.map(
+            (subpoena) =>
+              subpoena.subpoenaId && (
+                <ServiceAnnouncement
+                  key={`${subpoena.id}-${subpoena.created}`}
+                  subpoena={subpoena}
+                  defendantName={defendant.name}
+                />
+              ),
+          ),
+        )}
         {workingCase.court &&
           latestDate?.date &&
           workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
@@ -97,11 +111,15 @@ const IndictmentOverview = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardActiveIndictment />
         </Box>
+        {/* 
+        NOTE: Temporarily hidden while list of laws broken is not complete in
+        indictment cases
+        
         {lawsBroken.size > 0 && (
           <Box marginBottom={5}>
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
-        )}
+        )} */}
         {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
           <Accordion>
             {workingCase.mergedCases.map((mergedCase) => (

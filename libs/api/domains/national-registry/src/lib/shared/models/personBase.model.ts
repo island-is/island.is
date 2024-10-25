@@ -5,7 +5,11 @@ export class PersonBase {
   @Field(() => ID)
   nationalId!: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String, {
+    nullable: true,
+    deprecationReason:
+      'This might return the display name instead of true full name. Use name object instead.',
+  })
   fullName!: string | null
 
   @Field(() => String, {

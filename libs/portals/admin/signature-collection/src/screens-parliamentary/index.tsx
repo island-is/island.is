@@ -7,11 +7,14 @@ import {
   Stack,
   Box,
   Breadcrumbs,
+  Table as T,
+  Text,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../lib/navigation'
-import { m, parliamentaryMessages } from '../lib/messages'
+import { m } from '../lib/messages'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../lib/paths'
 import CompareLists from '../shared-components/compareLists'
@@ -19,6 +22,11 @@ import { ListsLoaderReturn } from '../loaders/AllLists.loader'
 import DownloadReports from './DownloadReports'
 import electionsCommitteeLogo from '../../assets/electionsCommittee.svg'
 import nationalRegistryLogo from '../../assets/nationalRegistry.svg'
+import { useState } from 'react'
+import { useSignatureCollectionSignatureLookupQuery } from './findSignature.generated'
+import { SkeletonSingleRow } from '../shared-components/compareLists/skeleton'
+import { CollectionStatus } from '@island.is/api/schema'
+import ActionCompleteCollectionProcessing from '../shared-components/completeCollectionProcessing'
 
 const ParliamentaryRoot = ({
   allowedToProcess,
@@ -28,7 +36,20 @@ const ParliamentaryRoot = ({
   const { formatMessage } = useLocale()
 
   const navigate = useNavigate()
-  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
+  const { collection, collectionStatus, allLists } =
+    useLoaderData() as ListsLoaderReturn
+
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const { data, loading } = useSignatureCollectionSignatureLookupQuery({
+    variables: {
+      input: {
+        collectionId: collection?.id,
+        nationalId: searchTerm.replace(/[^0-9]/g, ''),
+      },
+    },
+    skip: searchTerm.replace(/[^0-9]/g, '').length !== 10,
+  })
 
   return (
     <GridContainer>
@@ -51,16 +72,14 @@ const ParliamentaryRoot = ({
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage(
-                    parliamentaryMessages.signatureListsTitle,
-                  ),
+                  title: formatMessage(m.parliamentaryCollectionTitle),
                 },
               ]}
             />
           </Box>
           <IntroHeader
-            title={formatMessage(parliamentaryMessages.signatureListsTitle)}
-            intro={formatMessage(parliamentaryMessages.signatureListsIntro)}
+            title={formatMessage(m.parliamentaryCollectionTitle)}
+            intro={formatMessage(m.parliamentaryCollectionIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
             img={
@@ -69,49 +88,172 @@ const ParliamentaryRoot = ({
           />
           <Box
             width="full"
-            marginBottom={8}
+            marginBottom={6}
             display="flex"
             justifyContent="spaceBetween"
           >
             <Box width="half">
               <FilterInput
                 name="searchSignee"
-                value={''}
-                onChange={() => console.log('search')}
+                value={searchTerm}
+                onChange={(v) => {
+                  setSearchTerm(v)
+                }}
                 placeholder={formatMessage(m.searchNationalIdPlaceholder)}
                 backgroundColor="blue"
               />
             </Box>
-            <DownloadReports
-              areas={collection.areas}
-              collectionId={collection?.id}
-            />
-          </Box>
-          <Stack space={3}>
-            {collection?.areas.map((area) => (
-              <ActionCard
-                key={area.id}
-                eyebrow={
-                  formatMessage(m.totalListsPerConstituency) +
-                  allLists.filter((l) => l.area.name === area.name).length
-                }
-                heading={area.name}
-                cta={{
-                  label: formatMessage(m.viewConstituency),
-                  variant: 'text',
-                  onClick: () => {
-                    navigate(
-                      SignatureCollectionPaths.ParliamentaryConstituency.replace(
-                        ':constituencyName',
-                        area.name,
-                      ),
-                    )
-                  },
-                }}
+            {allowedToProcess && (
+              <DownloadReports
+                areas={collection.areas}
+                collectionId={collection?.id}
               />
+            )}
+          </Box>
+          {loading && (
+            <Box marginBottom={6}>
+              <SkeletonSingleRow />
+            </Box>
+          )}
+          {data?.signatureCollectionSignatureLookup &&
+            (data?.signatureCollectionSignatureLookup.length > 0 ? (
+              <Box marginBottom={6}>
+                <T.Table>
+                  <T.Head>
+                    <T.Row>
+                      <T.HeadData>{formatMessage(m.signeeName)}</T.HeadData>
+                      <T.HeadData>
+                        {formatMessage(m.signeeListSigned)}
+                      </T.HeadData>
+                      <T.HeadData>
+                        {formatMessage(m.signeeListSignedType)}
+                      </T.HeadData>
+                      <T.HeadData>
+                        {formatMessage(m.signeeListSignedStatus)}
+                      </T.HeadData>
+                    </T.Row>
+                  </T.Head>
+                  <T.Body>
+                    {data?.signatureCollectionSignatureLookup?.map((s) => (
+                      <T.Row key={s.id}>
+                        <T.Data
+                          span={3}
+                          text={{ variant: 'medium' }}
+                          box={{ background: s.valid ? 'white' : 'red100' }}
+                        >
+                          {s.signee.name}
+                        </T.Data>
+                        <T.Data
+                          span={3}
+                          text={{ variant: 'medium' }}
+                          box={{ background: s.valid ? 'white' : 'red100' }}
+                        >
+                          {s.listTitle}
+                        </T.Data>
+                        <T.Data
+                          span={3}
+                          text={{ variant: 'medium' }}
+                          box={{ background: s.valid ? 'white' : 'red100' }}
+                        >
+                          {formatMessage(
+                            s.isDigital
+                              ? m.signeeListSignedDigital
+                              : m.signeeListSignedPaper,
+                          )}
+                        </T.Data>
+                        <T.Data
+                          span={3}
+                          text={{ variant: 'medium' }}
+                          box={{ background: s.valid ? 'white' : 'red100' }}
+                        >
+                          {formatMessage(
+                            s.valid
+                              ? m.signeeSignatureValid
+                              : m.signeeSignatureInvalid,
+                          )}
+                        </T.Data>
+                      </T.Row>
+                    ))}
+                  </T.Body>
+                </T.Table>
+              </Box>
+            ) : (
+              <Box marginBottom={6}>
+                <Text>{formatMessage(m.noSigneeFoundOverviewText)}</Text>
+              </Box>
             ))}
+          <Stack space={3}>
+            {collection?.areas.map((area) => {
+              const areaLists = allLists.filter(
+                (l) => l.area.name === area.name,
+              )
+              return (
+                <ActionCard
+                  key={area.id}
+                  eyebrow={
+                    formatMessage(m.totalListsPerConstituency) +
+                    areaLists.length
+                  }
+                  heading={area.name}
+                  cta={{
+                    label: formatMessage(m.viewConstituency),
+                    variant: 'text',
+                    onClick: () => {
+                      navigate(
+                        SignatureCollectionPaths.ParliamentaryConstituency.replace(
+                          ':constituencyName',
+                          area.name,
+                        ),
+                      )
+                    },
+                  }}
+                  tag={
+                    areaLists.length > 0 &&
+                    areaLists.every((l) => l.reviewed === true)
+                      ? {
+                          label: formatMessage(m.confirmListReviewed),
+                          variant: 'mint',
+                          outlined: true,
+                        }
+                      : undefined
+                  }
+                />
+              )
+            })}
           </Stack>
-          <CompareLists collectionId={collection?.id} />
+          {allowedToProcess && (
+            <Box>
+              <CompareLists collectionId={collection?.id} />
+              {(collectionStatus === CollectionStatus.InitialActive ||
+                collectionStatus === CollectionStatus.InInitialReview) && (
+                <ActionCompleteCollectionProcessing
+                  collectionId={collection?.id}
+                  canProcess={
+                    !!allLists.length &&
+                    allLists.every((l) => l.reviewed === true)
+                  }
+                />
+              )}
+            </Box>
+          )}
+          {collectionStatus === CollectionStatus.Processed && (
+            <Box marginTop={8}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionProcessedTitle)}
+                message={formatMessage(m.collectionProcessedMessage)}
+              />
+            </Box>
+          )}
+          {collectionStatus === CollectionStatus.InReview && (
+            <Box marginTop={8}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(m.collectionReviewedTitle)}
+                message={formatMessage(m.collectionReviewedMessage)}
+              />
+            </Box>
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

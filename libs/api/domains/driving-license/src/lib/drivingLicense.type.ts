@@ -9,6 +9,17 @@ export interface DrivingLicenseType {
 
 export type DrivingLicenseApplicationType = 'B-full' | 'B-temp' | 'BE'
 
+export interface PostRenewal65AndOverInput {
+  districtId?: number
+  pickupPlasticAtDistrict?: boolean | null
+  sendPlasticToPerson?: boolean | null
+}
+
+export enum Pickup {
+  'POST' = 'post',
+  'DISTRICT' = 'district',
+}
+
 export interface NewDrivingLicenseInput {
   jurisdictionId: number
   needsToPresentHealthCertificate: boolean
@@ -74,6 +85,7 @@ export enum RequirementKey {
   hasHadValidCategoryForFiveYearsOrMore = 'HasHadValidCategoryForFiveYearsOrMore',
   //TODO: Remove when RLS/SGS supports health certificate in BE license
   beRequiresHealthCertificate = 'beRequiresHealthCertificate',
+  noExtendedDrivingLicense = 'NoExtendedDrivingLicense',
 }
 
 export interface ApplicationEligibilityRequirement {

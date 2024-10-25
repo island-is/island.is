@@ -13,7 +13,7 @@ export const m = defineMessages({
     description: '',
   },
   signatureListsTitlePresidential: {
-    id: 'admin-portal.signature-collection-parliamentary:signatureLists',
+    id: 'admin-portal.signature-collection:signatureListsTitlePresidential',
     defaultMessage: 'Forsetakosningar',
     description: '',
   },
@@ -166,6 +166,23 @@ export const m = defineMessages({
     defaultMessage: 'Forsetakosningar 2024',
     description: '',
   },
+  parliamentaryCollectionTitle: {
+    id: 'admin-portal.signature-collection:parliamentaryCollectionTitle',
+    defaultMessage: 'Alþingiskosningar',
+    description: '',
+  },
+  parliamentaryCollectionIntro: {
+    id: 'admin-portal.signature-collection:parliamentaryCollectionIntro',
+    defaultMessage:
+      'Hér er yfirlit yfir kjördæmin sex. Ýttu á viðeigandi kjördæmi til að sjá meðmælendalista í því kjördæmi.',
+    description: '',
+  },
+  parliamentaryConstituencyIntro: {
+    id: 'admin-portal.signature-collection:parliamentaryConstituencyIntro',
+    defaultMessage:
+      'Hér er yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið í',
+    description: '',
+  },
   viewList: {
     id: 'admin-portal.signature-collection:viewList',
     defaultMessage: 'Skoða söfnun',
@@ -312,7 +329,12 @@ export const m = defineMessages({
   },
   searchNationalIdPlaceholder: {
     id: 'admin-portal.signature-collection:searchNationalIdPlaceholder',
-    defaultMessage: 'Leita eftir kennitölu',
+    defaultMessage: 'Leita eftir kennitölu meðmælanda',
+    description: '',
+  },
+  noSigneeFoundOverviewText: {
+    id: 'admin-portal.signature-collection:noSigneeFoundOverviewText',
+    defaultMessage: 'Enginn meðmælandi fannst',
     description: '',
   },
   sortBy: {
@@ -355,6 +377,41 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
     description: '',
   },
+  signeeListSigned: {
+    id: 'admin-portal.signature-collection:signeeListSigned',
+    defaultMessage: 'Listi',
+    description: '',
+  },
+  signeeListSignedType: {
+    id: 'admin-portal.signature-collection:signeeListSignedType',
+    defaultMessage: 'Tegund',
+    description: '',
+  },
+  signeeListSignedStatus: {
+    id: 'admin-portal.signature-collection:signeeListSignedStatus',
+    defaultMessage: 'Staða',
+    description: '',
+  },
+  signeeListSignedDigital: {
+    id: 'admin-portal.signature-collection:signeeListSignedDigital',
+    defaultMessage: 'Rafrænt',
+    description: '',
+  },
+  signeeListSignedPaper: {
+    id: 'admin-portal.signature-collection:signeeListSignedPaper',
+    defaultMessage: 'Af blaði',
+    description: '',
+  },
+  signeeSignatureValid: {
+    id: 'admin-portal.signature-collection:signeeSigntaureValid',
+    defaultMessage: 'Gild',
+    description: '',
+  },
+  signeeSignatureInvalid: {
+    id: 'admin-portal.signature-collection:signeeSigntaureInvalid',
+    defaultMessage: 'Ógild',
+    description: '',
+  },
   signeeAddress: {
     id: 'admin-portal.signature-collection:signeeAddress',
     defaultMessage: 'Heimilisfang',
@@ -382,7 +439,28 @@ export const m = defineMessages({
   },
   confirmListReviewedToggleBack: {
     id: 'admin-portal.signature-collection:confirmListReviewedToggleBack',
-    defaultMessage: 'Aflæsa úrvinnslu',
+    defaultMessage: 'Opna fyrir úrvinnslu',
+    description: '',
+  },
+  collectionReviewedTitle: {
+    id: 'admin-portal.signature-collection:collectionReviewedTitle',
+    defaultMessage: 'Meðmælasöfnun vegna framboðs til Alþingis lokið',
+    description: '',
+  },
+  collectionReviewedMessage: {
+    id: 'admin-portal.signature-collection:collectionReviewedMessage',
+    defaultMessage:
+      'Nú hefur úrvinnslu verið lokið á öllum listum í öllum kjördæmum.',
+    description: '',
+  },
+  collectionProcessedTitle: {
+    id: 'admin-portal.signature-collection:collectionProcessedTitle',
+    defaultMessage: 'Úrvinnsla meðmælasöfnunar lokið',
+    description: '',
+  },
+  collectionProcessedMessage: {
+    id: 'admin-portal.signature-collection:collectionReviewedTitle',
+    defaultMessage: 'Nú er hægt að framlengja stökum listum.',
     description: '',
   },
   listReviewedModalDescription: {
@@ -423,9 +501,40 @@ export const m = defineMessages({
     defaultMessage: 'Úrvinnslu lokið',
     description: '',
   },
+  toggleReviewSuccessToggleBack: {
+    id: 'admin-portal.signature-collection:toggleReviewSuccessToggleBack',
+    defaultMessage: 'Tókst að opna fyrir úrvinnslu',
+    description: '',
+  },
+  lockList: {
+    id: 'admin-portal.signature-collection:lockList',
+    defaultMessage: 'Læsa söfnun',
+    description: '',
+  },
+  listLocked: {
+    id: 'admin-portal.signature-collection:listLocked',
+    defaultMessage: 'Lista læst',
+    description: '',
+  },
+  lockListDescription: {
+    id: 'admin-portal.signature-collection:lockListDescription',
+    defaultMessage:
+      'Ýtið hér ef framboð hefur skilað inn framboðsgögnum fyrir lok framboðsfrest',
+    description: '',
+  },
+  lockListSuccess: {
+    id: 'admin-portal.signature-collection:lockListSuccess',
+    defaultMessage: 'Tókst að læsa söfnun',
+    description: '',
+  },
+  lockListError: {
+    id: 'admin-portal.signature-collection:lockListError',
+    defaultMessage: 'Ekki tókst að læsa söfnun',
+    description: '',
+  },
   toggleReviewError: {
     id: 'admin-portal.signature-collection:toggleReviewError',
-    defaultMessage: 'Ekki tókst loka úrvinnslu',
+    defaultMessage: 'Ekki tókst að loka úrvinnslu',
     description: '',
   },
   toggleCollectionProcessSuccess: {
@@ -650,39 +759,9 @@ export const m = defineMessages({
     defaultMessage: 'Ekki tókst að skrá meðmæli',
     description: '',
   },
-})
-
-export const parliamentaryMessages = defineMessages({
-  signatureListsTitle: {
-    id: 'admin-portal.signature-collection-parliamentary:signatureLists',
-    defaultMessage: 'Alþingiskosningar',
-    description: '',
-  },
-  signatureListsDescription: {
-    id: 'admin-portal.signature-collection-parliamentary:signatureListsDescription',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    description: '',
-  },
-  signatureListsIntro: {
-    id: 'admin-portal.signature-collection-parliamentary:signatureListsIntro',
-    defaultMessage:
-      'Hér er yfirlit yfir kjördæmin sex. Ýttu á viðeigandi kjördæmi til að sjá meðmælendalista í því kjördæmi.',
-    description: '',
-  },
-  compareListsButton: {
-    id: 'admin-portal.signature-collection-parliamentary:compareListsButton',
-    defaultMessage: 'Bera saman',
-    description: '',
-  },
-  compareListsDescription: {
-    id: 'admin-portal.signature-collection-parliamentary:compareListsDescription',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-    description: '',
-  },
-  singleConstituencyIntro: {
-    id: 'admin-portal.signature-collection-parliamentary:singleConstituencyIntro',
-    defaultMessage:
-      'Hér er yfirlit yfir allar meðmælasafnanir sem stofnaðar hafa verið í',
+  paperSigneeErrorAlreadySigned: {
+    id: 'admin-portal.signature-collection:paperSigneeErrorAlreadySigned',
+    defaultMessage: 'Kennitala er þegar á lista',
     description: '',
   },
 })

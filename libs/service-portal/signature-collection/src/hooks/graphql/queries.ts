@@ -172,3 +172,16 @@ export const GetCollectors = gql`
     }
   }
 `
+
+export const getPdfReport = gql`
+  query SignatureCollectionOverview($input: SignatureCollectionListIdInput!) {
+    signatureCollectionListOverview(input: $input) {
+      candidateName
+      listName
+      partyBallotLetter
+      nrOfSignatures
+      nrOfDigitalSignatures
+      nrOfPaperSignatures
+    }
+  }
+`

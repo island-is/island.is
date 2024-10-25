@@ -113,6 +113,8 @@ export const getIndictmentRulingDecisionTag = (
       return { color: 'blue', text: strings.indictmentDismissal }
     case CaseIndictmentRulingDecision.RULING:
       return { color: 'darkerBlue', text: strings.indictmentRuling }
+    case CaseIndictmentRulingDecision.WITHDRAWAL:
+      return { color: 'rose', text: strings.indictmentWithdrawal }
     default:
       return { color: 'darkerBlue', text: strings.complete }
   }

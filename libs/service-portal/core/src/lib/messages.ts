@@ -5,6 +5,10 @@ export const m = defineMessages({
     id: 'service.portal:reference',
     defaultMessage: 'Tilvísun',
   },
+  goToPage: {
+    id: 'service.portal:go-to-page',
+    defaultMessage: 'Fara á síðu',
+  },
   print: {
     id: 'service.portal:print',
     defaultMessage: 'Prenta',
@@ -560,6 +564,11 @@ export const m = defineMessages({
   signatureCollectionParliamentaryLists: {
     id: 'service.portal:signatureCollectionParliamentaryLists',
     defaultMessage: 'Alþingiskosningar - Meðmælasöfnun',
+  },
+  signatureCollectionParliamentaryListsCompany: {
+    id: 'service.portal:signatureCollectionParliamentaryListsCompany',
+    defaultMessage:
+      'Alþingiskosningar - Meðmælasöfnun (Aðeins fyrir stjórnmálasamtök)',
   },
   signatureCollectionPresidentialLists: {
     id: 'service.portal:signatureCollectionPresidentialLists',

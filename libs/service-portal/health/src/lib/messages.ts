@@ -682,8 +682,8 @@ export const messages = defineMessages({
     id: 'sp.health:health-center-list-search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
   },
-  healthCenterRegistrationTransferErrorTitle: {
-    id: 'sp.health:health-center-registration-transfer-error-title',
+  healthErrorTitle: {
+    id: 'sp.health:health-error-title',
     defaultMessage: 'Villa hefur komið upp',
   },
   healthCenterRegistrationTransferErrorInfo: {
@@ -939,6 +939,10 @@ export const messages = defineMessages({
   medicineNameOfDoctor: {
     id: 'sp.health:medicine-name-of-doctor',
     defaultMessage: 'Heiti læknis',
+  },
+  medicineNameOfDocExtra: {
+    id: 'sp.health:medicine-name-of-doc-extra',
+    defaultMessage: 'Aukalæknar skráðir á skírteini',
   },
   medicineCalculatorAddToPurchaseLabel: {
     id: 'sp.health:medicine-calculator-add-to-purchase-label',
