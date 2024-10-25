@@ -1,202 +1,198 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { EndorsementListController } from './endorsementList.controller';
-import { EndorsementListService } from './endorsementList.service';
-import { EndorsementListDto } from './dto/endorsementList.dto';
-import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto';
-import { createCurrentUser } from '@island.is/testing/fixtures';
-import { EndorsementsScope } from '@island.is/auth/scopes';
-import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto';
-import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto';
-import { User } from '@island.is/auth-nest-tools';
-import { EndorsementList } from './endorsementList.model';
+import { getModelToken } from '@nestjs/sequelize'
+import request from 'supertest'
+import { EndorsementListController } from './endorsementList.controller'
+import { EndorsementListService } from './endorsementList.service'
+import type { TestApp } from '@island.is/testing/nest'
+import { setupApp, setupAppWithoutAuth } from '@island.is/testing/nest'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+import { EndorsementsScope, AdminPortalScope } from '@island.is/auth/scopes'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { EndorsementList } from './endorsementList.model'
+import { EmailService } from '@island.is/email-service'
+import { AwsService } from '@island.is/nest/aws'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
+import { SequelizeConfigService } from '../../sequelizeConfig.service'
+import { AppModule } from '../../app.module'
 
-<<<<<<< HEAD
-const mockEndorsementList = {
-    id: '1',
-    counter: 1,
-    title: 'Test List',
-    description: 'A test endorsement list',
+describe('EndorsementListController', () => {
+  let app: TestApp
+  let server: request.SuperTest<request.Test>
+
+  const mockEndorsementList = {
+    id: '12345',
+    title: 'Test Endorsement List',
+    description: 'Test description',
+    owner: '1234567890',
     openedDate: new Date(),
     closedDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
     endorsementMetadata: [],
     tags: [],
-    owner: '1234567890',
-    adminLock: false,
-    endorsements: [],
-    endorsementCounter: 0,
     meta: {},
-    created: new Date(),
-    modified: new Date(),
+    adminLock: false,
     endorsementCount: 0,
-  };
-  
-  
-=======
-// const mockEndorsementList = {
-//     id: '1',
-//     counter: 1,
-//     title: 'Test List',
-//     description: 'A test endorsement list',
-//     openedDate: new Date(),
-//     closedDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
-//     endorsementMetadata: [],
-//     tags: [],
-//     owner: '1234567890',
-//     adminLock: false,
-//     endorsements: [],
-//     endorsementCounter: 0,
-//     meta: {},
-//     created: new Date(),
-//     modified: new Date(),
-//     endorsementCount: 0,
-//   };
->>>>>>> 1efcf585525e6ffc881eff529c1031ae1f962722
+  }
 
-const paginatedEndorsementListDto: PaginatedEndorsementListDto = {
-  totalCount: 1,
-  data: [mockEndorsementList as any as EndorsementList],
-  pageInfo: {
-    hasNextPage: false,
-    hasPreviousPage: false,
-  },
-};
+  describe('Without auth', () => {
+    beforeAll(async () => {
+      app = await setupAppWithoutAuth({
+        AppModule,
+        SequelizeConfigService,
+      })
+      server = request(app.getHttpServer())
+    })
 
-const createEndorsementListDto = {
-  title: 'New Endorsement List',
-  description: 'A new endorsement list for testing',
-  openedDate: new Date(),
-  closedDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
-  adminLock: false,
+    afterAll(async () => {
+      await app.cleanUp()
+    })
 
-};
+    it.each([
+      ['GET', '/endorsement-list'],
+      ['POST', '/endorsement-list'], 
+      ['GET', '/endorsement-list/12345'],
+      ['PUT', '/endorsement-list/12345/close'],
+      ['PUT', '/endorsement-list/12345/lock'],
+    ])('%s %s should return 401 when user is not authenticated', async (method, path) => {
+      const res = await (server as any)[method.toLowerCase()](path)
 
-const updateEndorsementListDto = {
-  title: 'Updated Title',
-  description: 'Updated description',
-  openedDate: new Date(),
-  closedDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
-};
+      expect(res.status).toBe(401)
+      expect(res.body).toMatchObject({
+        status: 401,
+        title: 'Unauthorized',
+        type: 'https://httpstatuses.org/401',
+      })
+    })
+  })
 
-describe('EndorsementListController', () => {
-  let endorsementListController: EndorsementListController;
-  let endorsementListService: EndorsementListService;
-  const user = createCurrentUser({
-    scope: [EndorsementsScope.main],
-  });
+  describe('With auth', () => {
+    describe('with endorsement scope', () => {
+      beforeAll(async () => {
+        app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: createCurrentUser({
+            scope: [EndorsementsScope.main],
+          }),
+        })
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [EndorsementListController],
-      providers: [
-        {
-          provide: EndorsementListService,
-          useValue: {
-            create: jest.fn().mockResolvedValue(mockEndorsementList),
-            findAllEndorsementListsByNationalId: jest.fn().mockResolvedValue(paginatedEndorsementListDto),
-            findListsByTags: jest.fn().mockResolvedValue(paginatedEndorsementListDto),
-            findSingleList: jest.fn().mockResolvedValue(mockEndorsementList),
-            close: jest.fn().mockResolvedValue(mockEndorsementList),
-            open: jest.fn().mockResolvedValue(mockEndorsementList),
-            updateEndorsementList: jest.fn().mockResolvedValue(mockEndorsementList),
-            lock: jest.fn().mockResolvedValue(mockEndorsementList),
-            unlock: jest.fn().mockResolvedValue(mockEndorsementList),
-          },
-        },
-      ],
-    }).compile();
+        server = request(app.getHttpServer())
+        const endorsementListService = app.get(EndorsementListService)
+        
+        jest.spyOn(endorsementListService, 'findListsByTags').mockResolvedValue({
+          data: [mockEndorsementList],
+          totalCount: 1,
+          pageInfo: { hasNextPage: false },
+        })
+        jest.spyOn(endorsementListService, 'create').mockResolvedValue(mockEndorsementList)
+      })
 
-    endorsementListController = module.get<EndorsementListController>(EndorsementListController);
-    endorsementListService = module.get<EndorsementListService>(EndorsementListService);
-  });
+      afterAll(async () => {
+        await app.cleanUp()
+      })
 
-  it('should be defined', () => {
-    expect(endorsementListController).toBeDefined();
-  });
+      describe('GET /endorsement-list', () => {
+        it('should return list of endorsements', async () => {
+          const res = await server
+            .get('/endorsement-list')
+            .query({ tags: ['test-tag'] })
 
-  describe('create()', () => {
-    it('should create a new endorsement list', async () => {
-      const result = await endorsementListController.create(mockEndorsementList, user);
-      expect(result).toEqual(mockEndorsementList);
-      expect(endorsementListService.create).toHaveBeenCalledWith({
-        ...createEndorsementListDto,
-        owner: user.nationalId,
-      });
-    });
-  });
+          expect(res.status).toBe(200)
+          expect(res.body).toMatchObject({
+            data: [mockEndorsementList],
+            totalCount: 1,
+            pageInfo: { hasNextPage: false },
+          })
+        })
+      })
 
-  describe('findEndorsementLists()', () => {
-    it('should return endorsement lists for the current user', async () => {
-      const result = await endorsementListController.findEndorsementLists(user, { limit: 10 });
-      expect(result).toEqual(paginatedEndorsementListDto);
-      expect(endorsementListService.findAllEndorsementListsByNationalId).toHaveBeenCalledWith(
-        user.nationalId,
-        { limit: 10 },
-      );
-    });
-  });
+      describe('POST /endorsement-list', () => {
+        it('should create new endorsement list', async () => {
+          const newList = {
+            title: 'New List',
+            description: 'New description',
+            openedDate: new Date(),
+            closedDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+          }
 
-  describe('findByTags()', () => {
-    it('should return endorsement lists by tags', async () => {
-      const result = await endorsementListController.findByTags(user, { tags: ['tag1'], limit: 10 });
-      expect(result).toEqual(paginatedEndorsementListDto);
-      expect(endorsementListService.findListsByTags).toHaveBeenCalledWith(['tag1'], { limit: 10 }, user);
-    });
-  });
+          const res = await server.post('/endorsement-list').send(newList)
 
-  describe('findOne()', () => {
-    it('should return a single endorsement list', async () => {
-      const result = await endorsementListController.findOne('1');
-      expect(result).toEqual(mockEndorsementList);
-    });
-  });
+          expect(res.status).toBe(201)
+          expect(res.body).toMatchObject(mockEndorsementList)
+        })
+      })
+    })
 
-  describe('close()', () => {
-    it('should close an endorsement list', async () => {
-      const result = await endorsementListController.close('1', mockEndorsementList);
-      expect(result).toEqual(mockEndorsementList);
-      expect(endorsementListService.close).toHaveBeenCalledWith(mockEndorsementList);
-    });
-  });
+    describe('with admin scope', () => {
+      beforeAll(async () => {
+        app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: createCurrentUser({
+            scope: [AdminPortalScope.petitionsAdmin],
+          }),
+        })
 
-  describe('open()', () => {
-    it('should open an endorsement list', async () => {
-      const changeDateDto: ChangeEndorsmentListClosedDateDto = {
-        closedDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
-      };
-      const result = await endorsementListController.open(changeDateDto, '1', mockEndorsementList);
-      expect(result).toEqual(mockEndorsementList);
-      expect(endorsementListService.open).toHaveBeenCalledWith(mockEndorsementList, changeDateDto);
-    });
-  });
+        server = request(app.getHttpServer())
+        const endorsementListService = app.get(EndorsementListService)
+        
+        jest.spyOn(endorsementListService, 'findSingleList').mockResolvedValue(mockEndorsementList)
+        jest.spyOn(endorsementListService, 'lock').mockResolvedValue(mockEndorsementList)
+        jest.spyOn(endorsementListService, 'unlock').mockResolvedValue(mockEndorsementList)
+      })
 
-  describe('update()', () => {
-    it('should update an endorsement list', async () => {
-      const result = await endorsementListController.update(
-        updateEndorsementListDto,
-        '1',
-        mockEndorsementList,
-      );
-      expect(result).toEqual(mockEndorsementList);
-      expect(endorsementListService.updateEndorsementList).toHaveBeenCalledWith(
-        mockEndorsementList,
-        updateEndorsementListDto,
-      );
-    });
-  });
+      afterAll(async () => {
+        await app.cleanUp()
+      })
 
-  describe('lock()', () => {
-    it('should lock an endorsement list', async () => {
-      const result = await endorsementListController.lock('1', mockEndorsementList);
-      expect(result).toEqual(mockEndorsementList);
-      expect(endorsementListService.lock).toHaveBeenCalledWith(mockEndorsementList);
-    });
-  });
+      describe('PUT /endorsement-list/:id/lock', () => {
+        it('should lock endorsement list', async () => {
+          const res = await server.put('/endorsement-list/12345/lock')
 
-  describe('unlock()', () => {
-    it('should unlock an endorsement list', async () => {
-      const result = await endorsementListController.unlock('1', mockEndorsementList);
-      expect(result).toEqual(mockEndorsementList);
-      expect(endorsementListService.unlock).toHaveBeenCalledWith(mockEndorsementList);
-    });
-  });
-});
+          expect(res.status).toBe(200)
+          expect(res.body).toMatchObject(mockEndorsementList)
+        })
+      })
+
+      describe('PUT /endorsement-list/:id/unlock', () => {
+        it('should unlock endorsement list', async () => {
+          const res = await server.put('/endorsement-list/12345/unlock')
+
+          expect(res.status).toBe(200)
+          expect(res.body).toMatchObject(mockEndorsementList)
+        })
+      })
+    })
+
+    describe('without required scope', () => {
+      beforeAll(async () => {
+        app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: createCurrentUser({
+            scope: ['some-other-scope'],
+          }),
+        })
+        server = request(app.getHttpServer())
+      })
+
+      afterAll(async () => {
+        await app.cleanUp()
+      })
+
+      it.each([
+        ['GET', '/endorsement-list'],
+        ['POST', '/endorsement-list'],
+        ['PUT', '/endorsement-list/12345/lock'],
+      ])('%s %s should return 403 when user lacks required scope', async (method, path) => {
+        const res = await server[method.toLowerCase()](path)
+
+        expect(res.status).toBe(403)
+        expect(res.body).toMatchObject({
+          status: 403,
+          title: 'Forbidden',
+          detail: 'Forbidden resource',
+          type: 'https://httpstatuses.org/403',
+        })
+      })
+    })
+  })
+})
