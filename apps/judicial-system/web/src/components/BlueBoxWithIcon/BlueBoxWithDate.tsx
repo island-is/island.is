@@ -63,6 +63,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
 
     if (!valid) {
       toast.error(formatMessage(errors.invalidDate))
+      return
     }
 
     dateType === 'verdictViewDate'
