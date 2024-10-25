@@ -12,6 +12,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { VERDICT_APPEAL_WINDOW_DAYS } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
 import {
@@ -133,7 +134,10 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     const verdictAppealDeadline = defendant.verdictAppealDeadline
       ? defendant.verdictAppealDeadline
       : verdictViewDate
-      ? addDays(new Date(verdictViewDate), 28).toISOString()
+      ? addDays(
+          new Date(verdictViewDate),
+          VERDICT_APPEAL_WINDOW_DAYS,
+        ).toISOString()
       : null
 
     const appealExpiration = getAppealExpirationInfo(

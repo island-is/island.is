@@ -1,3 +1,5 @@
+export const VERDICT_APPEAL_WINDOW_DAYS = 28
+
 export enum Gender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',

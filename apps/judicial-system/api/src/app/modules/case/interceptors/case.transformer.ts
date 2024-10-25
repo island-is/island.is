@@ -7,6 +7,7 @@ import {
   isRequestCase,
   ServiceRequirement,
   UserRole,
+  VERDICT_APPEAL_WINDOW_DAYS,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -179,11 +180,13 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
     const verdictAppealDeadline =
       serviceRequirementNotRequired && theCase.rulingDate
         ? new Date(
-            new Date(theCase.rulingDate).getTime() + getDays(28),
+            new Date(theCase.rulingDate).getTime() +
+              getDays(VERDICT_APPEAL_WINDOW_DAYS),
           ).toISOString()
         : verdictViewDate
         ? new Date(
-            new Date(verdictViewDate).getTime() + getDays(28),
+            new Date(verdictViewDate).getTime() +
+              getDays(VERDICT_APPEAL_WINDOW_DAYS),
           ).toISOString()
         : undefined
     const isVerdictAppealDeadlineExpired = verdictAppealDeadline
