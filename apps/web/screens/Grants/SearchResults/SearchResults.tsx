@@ -137,7 +137,6 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     })
       .then((res) => {
         if (res.data?.getGrants.items.length) {
-          console.log(res.data.getGrants.items)
           setGrants(res.data.getGrants.items)
         } else if (res.error) {
           setGrants([])
