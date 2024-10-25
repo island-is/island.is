@@ -507,7 +507,7 @@ export class VehiclesService {
         const errorBody = e.body as UpdateResponseError
         return {
           code: e.status,
-          message: errorBody.Errors[0].errorMess,
+          message: errorBody.Errors?.[0]?.errorMess || 'Unknown error',
         }
       } else throw e
     }
@@ -540,7 +540,7 @@ export class VehiclesService {
         const errorBody = e.body as UpdateResponseError
         return {
           code: e.status,
-          message: errorBody.Errors[0].errorMess,
+          message: errorBody.Errors?.[0]?.errorMess || 'Unknown error',
         }
       } else throw e
     }

@@ -88,13 +88,15 @@ const VehicleBulkMileageUpload = () => {
       setRequestGuid(null)
     }
     const file = fileToObject(files[0])
+
     if (file.status === 'done' && file.originalFileObj instanceof File) {
-      const type =
-        file.type === fileExtensionWhitelist['.csv']
-          ? 'csv'
-          : file.type === fileExtensionWhitelist['.xlsx']
-          ? 'xlsx'
-          : undefined
+      //use value of file extension as key
+      const extensionToType = {
+        [fileExtensionWhitelist['.csv']]: 'csv',
+        [fileExtensionWhitelist['.xlsx']]: 'xlsx',
+      } as const
+
+      const type = file.type ? extensionToType[file.type] : undefined
 
       if (!type) {
         setUploadErrorMessage(formatMessage(vehicleMessage.wrongFileType))

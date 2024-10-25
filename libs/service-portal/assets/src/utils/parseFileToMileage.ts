@@ -23,7 +23,7 @@ const mileageIndexTitle = ['kilometrastada', 'mileage', 'odometer']
 export const parseFileToMileageRecord = async (
   file: File,
   type: 'csv' | 'xlsx',
-): Promise<Array<MileageRecord> | string> => {
+): Promise<Array<MileageRecord>> => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsv(file)
     : parseXlsx(file))
@@ -33,18 +33,22 @@ export const parseFileToMileageRecord = async (
     vehicleIndexTitle.includes(l.toLowerCase()),
   )
   if (vehicleIndex < 0) {
-    return `Invalid vehicle column header. Must be one of the following: ${vehicleIndexTitle.join(
-      ', ',
-    )}`
+    throw new Error(
+      `Invalid vehicle column header. Must be one of the following: ${vehicleIndexTitle.join(
+        ', ',
+      )}`,
+    )
   }
   const mileageIndex = header.findIndex((l) =>
     mileageIndexTitle.includes(l.toLowerCase()),
   )
 
   if (mileageIndex < 0) {
-    return `Invalid mileage column header. Must be one of the following: ${mileageIndexTitle.join(
-      ', ',
-    )}`
+    throw new Error(
+      `Invalid mileage column header. Must be one of the following: ${mileageIndexTitle.join(
+        ', ',
+      )}`,
+    )
   }
 
   const uploadedOdometerStatuses: Array<MileageRecord> = values
@@ -64,17 +68,23 @@ export const parseFileToMileageRecord = async (
 
 const parseCsv = async (file: File) => {
   const reader = file.stream().getReader()
+  const decoder = new TextDecoder('utf-8')
 
   let parsedLines: Array<Array<string>> = [[]]
-  const parseChunk = async (res: ReadableStreamReadResult<Uint8Array>) => {
-    if (res.done) {
-      return
+
+  let accumulatedChunk = ''
+  let done = false
+
+  while (!done) {
+    const res = await reader.read()
+    done = res.done
+    if (!done) {
+      accumulatedChunk += decoder.decode(res.value)
     }
-    const chunk = Buffer.from(res.value).toString('utf8')
-    parsedLines = parseCsvString(chunk)
   }
 
-  await reader.read().then(parseChunk)
+  parsedLines = parseCsvString(accumulatedChunk)
+
   return parsedLines
 }
 

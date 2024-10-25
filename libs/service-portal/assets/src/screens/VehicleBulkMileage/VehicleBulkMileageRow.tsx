@@ -21,10 +21,16 @@ import { VehicleBulkMileageSaveButton } from './VehicleBulkMileageSaveButton'
 import { InputController } from '@island.is/shared/form-fields'
 import * as styles from './VehicleBulkMileage.css'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { isReadDateToday } from '../../utils/readDate'
 import { useDebounce } from 'react-use'
 
 const ORIGIN_CODE = 'ISLAND.IS'
+
+type MutationStatus =
+  | 'initial'
+  | 'posting'
+  | 'post-success'
+  | 'put-success'
+  | 'error'
 
 interface Props {
   vehicle: VehicleType
@@ -32,9 +38,7 @@ interface Props {
 export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
   const { formatMessage } = useLocale()
   const [postError, setPostError] = useState<string | null>(null)
-  const [postStatus, setPostStatus] = useState<
-    'initial' | 'posting' | 'post-success' | 'put-success' | 'error'
-  >('initial')
+  const [postStatus, setPostStatus] = useState<MutationStatus>('initial')
 
   const [
     executeRegistrationsQuery,
@@ -47,11 +51,13 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     },
   })
 
+  const handleMutationError = () => {
+    setPostError(formatMessage(m.errorTitle))
+    setPostStatus('error')
+  }
+
   const [putAction] = usePutSingleVehicleMileageMutation({
-    onError: (e) => {
-      setPostError(formatMessage(m.errorTitle))
-      setPostStatus('error')
-    },
+    onError: handleMutationError,
     onCompleted: ({ vehicleMileagePutV2: data }) => {
       if (data?.__typename === 'VehiclesMileageUpdateError') {
         setPostError(data.message)
@@ -63,10 +69,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
   })
 
   const [postAction] = usePostSingleVehicleMileageMutation({
-    onError: (e) => {
-      setPostError(formatMessage(m.errorTitle))
-      setPostStatus('error')
-    },
+    onError: handleMutationError,
     onCompleted: ({ vehicleMileagePostV2: data }) => {
       if (data?.__typename === 'VehiclesMileageUpdateError') {
         setPostError(data.message)

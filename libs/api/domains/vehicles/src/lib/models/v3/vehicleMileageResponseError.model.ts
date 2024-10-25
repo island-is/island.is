@@ -1,5 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
-import JSON from 'graphql-type-json'
+import GraphQLJSON from 'graphql-type-json'
 
 @ObjectType()
 export class VehiclesMileageUpdateError {
@@ -9,6 +9,6 @@ export class VehiclesMileageUpdateError {
   @Field(() => Int, { nullable: true })
   code?: number
 
-  @Field(() => JSON, { nullable: true })
+  @Field(() => GraphQLJSON, { nullable: true })
   error?: string
 }

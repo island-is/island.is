@@ -33,28 +33,21 @@ const VehicleBulkMileageFileDownloader = ({ onError }: Props) => {
 
   return (
     <Inline space={1}>
-      <Button
-        colorScheme="default"
-        icon="download"
-        iconType="outline"
-        size="default"
-        variant="utility"
-        onClick={() => downloadExampleFile('csv')}
-        loading={isLoading}
-      >
-        {formatMessage(vehicleMessage.downloadTemplate)}
-      </Button>
-      <Button
-        colorScheme="default"
-        icon="download"
-        iconType="outline"
-        size="default"
-        variant="utility"
-        onClick={() => downloadExampleFile('xlsx')}
-        loading={isLoading}
-      >
-        {formatMessage(vehicleMessage.downloadTemplate)}
-      </Button>
+      {(['csv', 'xlsx'] as const).map((type) => (
+        <Button
+          colorScheme="default"
+          icon="download"
+          iconType="outline"
+          size="default"
+          variant="utility"
+          onClick={() => downloadExampleFile(type)}
+          loading={isLoading}
+        >
+          {formatMessage(vehicleMessage.downloadTemplate, {
+            arg: `.${type}`,
+          })}
+        </Button>
+      ))}
     </Inline>
   )
 }

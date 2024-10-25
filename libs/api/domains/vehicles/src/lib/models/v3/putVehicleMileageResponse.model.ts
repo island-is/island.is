@@ -6,7 +6,7 @@ export const VehicleMileagePutResponse = createUnionType({
   name: 'VehicleMileagePutResponse',
   types: () => [VehicleMileagePutModel, VehiclesMileageUpdateError] as const,
   resolveType(value) {
-    if (value.permno) {
+    if ('permno' in value && value.permno !== undefined) {
       return VehicleMileagePutModel
     }
 

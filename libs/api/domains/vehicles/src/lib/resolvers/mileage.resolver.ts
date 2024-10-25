@@ -116,9 +116,7 @@ export class VehiclesMileageResolver {
       mileage: Number(input.mileage ?? input.mileageNumber),
     })
 
-    if (!res) return undefined
-
-    if (res instanceof VehiclesMileageUpdateError) {
+    if (!res || res instanceof VehiclesMileageUpdateError) {
       return res
     }
 
@@ -139,11 +137,7 @@ export class VehiclesMileageResolver {
       mileage: Number(input.mileage ?? input.mileageNumber),
     })
 
-    if (!res) {
-      return
-    }
-
-    if (res instanceof VehiclesMileageUpdateError) {
+    if (!res || res instanceof VehiclesMileageUpdateError) {
       return res
     }
 
