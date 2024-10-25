@@ -179,7 +179,6 @@ export const getIndictmentInfo = (
 }
 
 export const getIndictmentDefendantsInfo = (theCase: Case) => {
-  console.log(theCase)
   return theCase.defendants?.map((defendant) => {
     const serviceRequirementNotRequired =
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE ||
