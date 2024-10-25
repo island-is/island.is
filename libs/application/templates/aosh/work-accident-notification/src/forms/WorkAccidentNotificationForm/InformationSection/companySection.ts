@@ -14,6 +14,7 @@ import {
   PostCodeDto,
   SizeOfTheEnterpriseDto,
 } from '@island.is/clients/work-accident-ver'
+import { FormValue } from '@island.is/application/types'
 
 export const companySection = buildSubSection({
   id: 'company',
@@ -108,12 +109,6 @@ export const companySection = buildSubSection({
             return `${postalCode} - ${city}`
           },
         }),
-        // buildSelectField({
-        //   id: 'companyInformation.industryClassification',
-        //   title: information.labels.company.industryClassification,
-        //   width: 'half',
-        //   options: [],
-        // }),
         buildSelectField({
           id: 'companyInformation.numberOfEmployees',
           title: information.labels.company.numberOfEmployees,
@@ -149,14 +144,27 @@ export const companySection = buildSubSection({
           message: information.labels.company.alertMessage,
           alertType: 'info',
           doesNotRequireAnswer: true,
+          condition: (formValue: FormValue, externalData, user) => {
+            const type = getValueViaPath(
+              externalData,
+              'identity.data.type',
+            ) as string
+            return type === 'company'
+          },
         }),
         buildTextField({
           id: 'companyInformation.nameOfBranch',
           title: information.labels.company.nameOfBranch,
           backgroundColor: 'blue',
           width: 'half',
-          required: true,
           defaultValue: (application: Application) => '',
+          condition: (formValue: FormValue, externalData, user) => {
+            const type = getValueViaPath(
+              externalData,
+              'identity.data.type',
+            ) as string
+            return type === 'company'
+          },
         }),
         buildTextField({
           id: 'companyInformation.addressOfBranch',
@@ -165,12 +173,26 @@ export const companySection = buildSubSection({
           width: 'half',
           doesNotRequireAnswer: true,
           defaultValue: (application: Application) => '',
+          condition: (formValue: FormValue, externalData, user) => {
+            const type = getValueViaPath(
+              externalData,
+              'identity.data.type',
+            ) as string
+            return type === 'company'
+          },
         }),
         buildSelectField({
           id: 'companyInformation.postnumberOfBranch',
           title: information.labels.company.postNumberAndTown,
           width: 'half',
           doesNotRequireAnswer: true,
+          condition: (formValue: FormValue, externalData, user) => {
+            const type = getValueViaPath(
+              externalData,
+              'identity.data.type',
+            ) as string
+            return type === 'company'
+          },
           options: (application) => {
             const postCodes = getValueViaPath(
               application.externalData,
