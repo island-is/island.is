@@ -1669,6 +1669,23 @@ export class CaseService {
     const schedulingNewArraignmentDateForIndictmentCase =
       isIndictmentCase(theCase.type) && Boolean(updatedArraignmentDate)
 
+    if (update.accusedPostponedAppealDate) {
+      const relevantInfo = {
+        appealState: theCase.appealState,
+        accusedAppealDecision: theCase.accusedAppealDecision,
+        accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
+        prosecutorAppealDecision: theCase.prosecutorAppealDecision,
+        prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
+        update: update,
+      }
+
+      this.logger.info(
+        `Updating accusedPostponedAppealDate in case service for case ${
+          theCase.id
+        }. Relevant info: ${JSON.stringify(relevantInfo)}`,
+      )
+    }
+
     return this.sequelize
       .transaction(async (transaction) => {
         if (receivingCase) {
