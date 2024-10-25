@@ -2,7 +2,6 @@ import { FC, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import addDays from 'date-fns/addDays'
 import { AnimatePresence, motion } from 'framer-motion'
-import { height } from 'pdfkit/js/page'
 
 import {
   Box,
@@ -38,8 +37,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const [verdictViewDate, setVerdictViewDate] = useState<Date>()
   const [appealDate, setAppealDate] = useState<Date>()
   const [textItems, setTextItems] = useState<string[]>([])
-  const [triggerAppealAnimation, setTriggerAppealAnimation] =
-    useState<boolean>(false)
   const [triggerAnimation, setTriggerAnimation] = useState<boolean>(false)
   const { setAndSendDefendantToServer } = useDefendants()
   const { workingCase, setWorkingCase } = useContext(FormContext)
@@ -92,7 +89,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         setWorkingCase,
       )
     } else if (dateType === 'appealDate' && appealDate) {
-      setTriggerAppealAnimation(true)
       setTimeout(() => {
         setAndSendDefendantToServer(
           {
