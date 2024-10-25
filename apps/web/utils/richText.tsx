@@ -298,7 +298,7 @@ export const webRichText = (
   activeLocale?: Locale,
 ) => {
   return richText(
-    (slices as SliceType[]) ?? [],
+    (slices ?? []) as SliceType[],
     {
       renderComponent: {
         ...defaultRenderComponentObject,
