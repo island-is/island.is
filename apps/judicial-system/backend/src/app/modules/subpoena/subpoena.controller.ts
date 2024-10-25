@@ -42,7 +42,10 @@ import { Defendant } from '../defendant'
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
-import { SubpoenaExistsOptionalGuard } from './guards/subpoenaExists.guard'
+import {
+  SubpoenaExistsGuard,
+  SubpoenaExistsOptionalGuard,
+} from './guards/subpoenaExists.guard'
 import { Subpoena } from './models/subpoena.model'
 
 @UseGuards(
@@ -52,12 +55,8 @@ import { Subpoena } from './models/subpoena.model'
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
   DefendantExistsGuard,
-  SubpoenaExistsOptionalGuard,
 )
-@Controller([
-  'api/case/:caseId/defendant/:defendantId/subpoena',
-  'api/case/:caseId/defendant/:defendantId/subpoena/:subpoenaId',
-])
+@Controller('api/case/:caseId/defendant/:defendantId/subpoena')
 @ApiTags('subpoenas')
 export class SubpoenaController {
   constructor(
@@ -73,7 +72,8 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get()
+  @Get(['', ':subpoenaId'])
+  @UseGuards(SubpoenaExistsOptionalGuard)
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -116,7 +116,8 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get('serviceCertificate')
+  @Get(':subpoenaId/serviceCertificate')
+  @UseGuards(SubpoenaExistsGuard)
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -129,16 +130,12 @@ export class SubpoenaController {
     @Param('subpoenaId') subpoenaId: string,
     @CurrentCase() theCase: Case,
     @CurrentDefendant() defendant: Defendant,
+    @CurrentSubpoena() subpoena: Subpoena,
     @Res() res: Response,
-    @CurrentSubpoena() subpoena?: Subpoena,
   ): Promise<void> {
     this.logger.debug(
       `Getting service certificate for defendant ${defendantId} in subpoena ${subpoenaId} of case ${caseId} as a pdf document`,
     )
-
-    if (!subpoena) {
-      throw new InternalServerErrorException('Missing subpoena')
-    }
 
     const pdf = await this.pdfService.getServiceCertificatePdf(
       theCase,

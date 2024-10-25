@@ -6,10 +6,12 @@ import {
   FinancialStatementsInaoClientModule,
 } from '@island.is/clients/financial-statements-inao'
 import { FinancialStatementPoliticalPartyTemplateService } from './financial-statement-political-party.service'
+import { AwsModule } from '@island.is/nest/aws'
 
 @Module({
   imports: [
     SharedTemplateAPIModule,
+    AwsModule,
     ConfigModule.forRoot({
       load: [FinancialStatementsInaoClientConfig],
     }),

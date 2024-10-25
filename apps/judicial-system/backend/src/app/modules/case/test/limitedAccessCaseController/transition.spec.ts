@@ -8,10 +8,10 @@ import {
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
+  CaseNotificationType,
   CaseState,
   CaseTransition,
   CaseType,
-  NotificationType,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -169,7 +169,7 @@ describe('LimitedAccessCaseController - Transition', () => {
             type: MessageType.NOTIFICATION,
             user,
             caseId,
-            body: { type: NotificationType.APPEAL_TO_COURT_OF_APPEALS },
+            body: { type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
           },
         ])
       })
@@ -218,7 +218,7 @@ describe('LimitedAccessCaseController - Transition', () => {
             type: MessageType.NOTIFICATION,
             user,
             caseId,
-            body: { type: NotificationType.APPEAL_WITHDRAWN },
+            body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
           },
         ])
       })
