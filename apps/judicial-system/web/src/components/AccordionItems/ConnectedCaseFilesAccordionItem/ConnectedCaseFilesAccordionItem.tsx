@@ -10,11 +10,13 @@ import { strings } from './ConnectedCaseFilesAccordionItem.strings'
 interface Props {
   connectedCaseParentId: string
   connectedCase: Case
+  displayGeneratedPDFs?: boolean
 }
 
 const ConnectedCaseFilesAccordionItem: FC<Props> = ({
   connectedCaseParentId,
   connectedCase,
+  displayGeneratedPDFs = true,
 }) => {
   const { formatMessage } = useIntl()
   const { caseFiles, courtCaseNumber } = connectedCase
@@ -34,6 +36,7 @@ const ConnectedCaseFilesAccordionItem: FC<Props> = ({
       <IndictmentCaseFilesList
         workingCase={connectedCase}
         displayHeading={false}
+        displayGeneratedPDFs={displayGeneratedPDFs}
         connectedCaseParentId={connectedCaseParentId}
       />
     </AccordionItem>
