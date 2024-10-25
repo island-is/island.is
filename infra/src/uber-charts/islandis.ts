@@ -60,6 +60,7 @@ import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/a
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
+import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
 
 const endorsement = endorsementServiceSetup({})
 
