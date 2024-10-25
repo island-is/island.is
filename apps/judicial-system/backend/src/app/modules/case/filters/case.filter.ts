@@ -289,19 +289,19 @@ const canPrisonAdminUserAccessCase = (
     ) {
       return false
     }
-  }
 
-  // Check defendant verdict appeal deadline access
-  const canAppealVerdict = true
-  const verdictInfo = (theCase.defendants || []).map<
-    [boolean, Date | undefined]
-  >((defendant) => [canAppealVerdict, defendant.verdictViewDate])
+    // Check defendant verdict appeal deadline access
+    const canAppealVerdict = true
+    const verdictInfo = (theCase.defendants || []).map<
+      [boolean, Date | undefined]
+    >((defendant) => [canAppealVerdict, defendant.verdictViewDate])
 
-  const [_, indictmentVerdictAppealDeadlineExpired] =
-    getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
+    const [_, indictmentVerdictAppealDeadlineExpired] =
+      getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
 
-  if (!indictmentVerdictAppealDeadlineExpired) {
-    return false
+    if (!indictmentVerdictAppealDeadlineExpired) {
+      return false
+    }
   }
 
   return true
@@ -386,13 +386,18 @@ const canDefenceUserAccessIndictmentCase = (
   }
 
   // Check case defender assignment
-  if (Defendant.isDefenderOfDefendant(user.nationalId, theCase.defendants)) {
+  if (
+    Defendant.isConfirmedDefenderOfDefendant(
+      user.nationalId,
+      theCase.defendants,
+    )
+  ) {
     return true
   }
 
   // Check case spokesperson assignment
   if (
-    CivilClaimant.isSpokespersonOfCivilClaimant(
+    CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
       user.nationalId,
       theCase.civilClaimants,
     ) &&

@@ -18,7 +18,7 @@ import {
   FormFooter,
   IndictmentCaseFilesList,
   IndictmentCaseScheduledCard,
-  IndictmentsLawsBrokenAccordionItem,
+  // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
   PageHeader,

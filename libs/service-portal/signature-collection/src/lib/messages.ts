@@ -250,6 +250,11 @@ export const m = defineMessages({
     defaultMessage: 'Umsjónaraðilar:',
     description: '',
   },
+  downloadPdf: {
+    id: 'sp.signatureCollection:downloadPdf',
+    defaultMessage: 'Sækja skýrslu',
+    description: '',
+  },
   copyLink: {
     id: 'sp.signatureCollection:copyLink',
     defaultMessage: 'Afrita tengil',

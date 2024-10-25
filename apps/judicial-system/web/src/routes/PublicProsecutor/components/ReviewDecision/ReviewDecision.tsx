@@ -5,16 +5,14 @@ import { useRouter } from 'next/router'
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  IndictmentCaseReviewDecision,
-  isPublicProsecutor,
-} from '@island.is/judicial-system/types'
+import { isPublicProsecutor } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   Modal,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { IndictmentCaseReviewDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './ReviewDecision.strings'
