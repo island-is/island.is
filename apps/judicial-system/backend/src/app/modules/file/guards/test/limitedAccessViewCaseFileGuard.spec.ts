@@ -178,7 +178,13 @@ describe('Limited Access View Case File Guard', () => {
                   case: {
                     type,
                     state,
-                    defendants: [{ defenderNationalId: nationalId }],
+                    defendants: [
+                      {
+                        defenderNationalId: nationalId,
+                        isDefenderChoiceConfirmed: true,
+                        caseFilesSharedWithDefender: true,
+                      },
+                    ],
                   },
                   caseFile: { category },
                 }))
@@ -206,6 +212,7 @@ describe('Limited Access View Case File Guard', () => {
                         hasSpokesperson: true,
                         spokespersonNationalId: nationalId,
                         caseFilesSharedWithSpokesperson: true,
+                        isSpokespersonConfirmed: true,
                       },
                     ],
                   },
@@ -268,7 +275,6 @@ describe('Limited Access View Case File Guard', () => {
                     {
                       hasSpokesperson: true,
                       spokespersonNationalId: nationalId,
-                      caseFilesSharedWithSpokesperson: true,
                     },
                   ],
                 },
