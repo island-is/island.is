@@ -24,20 +24,12 @@ import {
   DEFAULT_REGULAR_SIGNATURE_COUNT,
   DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
   OJOI_INPUT_HEIGHT,
-  SignatureTypes,
 } from '../lib/constants'
 import set from 'lodash/set'
-import {
-  getAdvertMarkup,
-  getCommitteeSignature,
-  getRegularSignature,
-  getSignaturesMarkup,
-} from '../lib/utils'
+import { getCommitteeSignature, getRegularSignature } from '../lib/utils'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { HTMLText } from '@island.is/regulations-tools/types'
-import { useType } from '../hooks/useType'
-import { useCategories } from '../hooks/useCategories'
-import { useDepartment } from '../hooks/useDepartment'
+import { useApplicationCase } from '../hooks/useApplicationCase'
 export const Submitted = (props: OJOIFieldBaseProps) => {
   const { formatMessage, locale } = useLocale()
 
@@ -46,20 +38,12 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
   const slug =
     ApplicationConfigurations[ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND].slug
 
-  const { createApplication, application: currentApplication } = useApplication(
-    {
-      applicationId: props.application.id,
-    },
-  )
-
-  const { categories, loading: categoriesLoading } = useCategories()
-
-  const { department, loading: departmentLoading } = useDepartment({
-    departmentId: currentApplication.answers.advert?.departmentId,
+  const { createApplication } = useApplication({
+    applicationId: props.application.id,
   })
 
-  const { type, loading: typeLoading } = useType({
-    typeId: currentApplication.answers.advert?.typeId,
+  const { caseData, loading } = useApplicationCase({
+    applicationId: props.application.id,
   })
 
   const [updateApplicationMutation, { loading: updateLoading }] =
@@ -105,32 +89,6 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
     ? `http://localhost:4200/minarsidur/umsoknir#${props.application.id}`
     : `${path}/minarsidur/umsoknir#${props.application.id}`
 
-  const signatureMarkup = getSignaturesMarkup({
-    signatures: currentApplication.answers.signatures,
-    type: currentApplication.answers.misc?.signatureType as SignatureTypes,
-  })
-
-  const advertMarkup = getAdvertMarkup({
-    type: type?.title,
-    title: currentApplication.answers.advert?.title,
-    html: currentApplication.answers.advert?.html,
-  })
-
-  const hasMarkup =
-    !!currentApplication.answers.advert?.html ||
-    type?.title ||
-    currentApplication.answers.advert?.title
-
-  const combinedHtml = hasMarkup
-    ? (`${advertMarkup}<br />${signatureMarkup}` as HTMLText)
-    : (`${signatureMarkup}` as HTMLText)
-
-  const activeCategories = categories?.filter((c) => {
-    return currentApplication.answers.advert?.categories?.includes(c.id)
-  })
-
-  const loading = categoriesLoading || typeLoading || departmentLoading
-
   return (
     <FormGroup>
       <Box>
@@ -142,15 +100,18 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
           />
         ) : (
           <Inline space={1} flexWrap="wrap">
-            <Tag outlined variant="blue">
-              {type?.title}
+            <Tag disabled outlined variant="blue">
+              {caseData?.status}
             </Tag>
-            <Tag outlined variant="blue">
-              {department?.title}
+            <Tag disabled outlined variant="blueberry">
+              {caseData?.department}
             </Tag>
-            {activeCategories?.map((c) => (
-              <Tag outlined variant="blue" key={c.id}>
-                {c.title}
+            <Tag disabled outlined variant="darkerBlue">
+              {caseData?.type}
+            </Tag>
+            {caseData?.categories?.map((category, i) => (
+              <Tag disabled outlined variant="purple" key={i}>
+                {category}
               </Tag>
             ))}
           </Inline>
@@ -169,12 +130,12 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
             name="submitted.document"
             readOnly={true}
             hideWarnings={true}
-            value={combinedHtml}
+            value={caseData?.html as HTMLText}
             config={{ toolbar: false }}
           />
         </Box>
       )}
-      <Box display="flex" justifyContent="spaceBetween">
+      <Box display="flex" marginY={4} justifyContent="spaceBetween">
         <Button
           loading={updateLoading}
           onClick={() =>
