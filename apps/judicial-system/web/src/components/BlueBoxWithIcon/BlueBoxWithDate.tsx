@@ -139,7 +139,10 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       ? addDays(new Date(verdictViewDate), 28).toISOString()
       : null
 
-    const appealExpiration = getAppealExpirationInfo(verdictAppealDeadline)
+    const appealExpiration = getAppealExpirationInfo(
+      verdictAppealDeadline,
+      defendant.isVerdictAppealDeadlineExpired,
+    )
 
     setTextItems([
       ...(indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
@@ -163,6 +166,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         : []),
     ])
   }, [
+    defendant.isVerdictAppealDeadlineExpired,
     defendant.verdictAppealDate,
     defendant.verdictAppealDeadline,
     defendant.verdictViewDate,
