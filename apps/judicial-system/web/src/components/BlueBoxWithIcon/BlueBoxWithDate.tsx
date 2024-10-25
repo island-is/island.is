@@ -14,7 +14,11 @@ import {
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { errors } from '@island.is/judicial-system-web/messages'
 
-import { CaseIndictmentRulingDecision, Defendant } from '../../graphql/schema'
+import {
+  CaseIndictmentRulingDecision,
+  Defendant,
+  ServiceRequirement,
+} from '../../graphql/schema'
 import { formatDateForServer, useDefendants } from '../../utils/hooks'
 import DateTime from '../DateTime/DateTime'
 import { FormContext } from '../FormProvider/FormProvider'
@@ -46,10 +50,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const defendantCanAppeal =
     indictmentRulingDecision === CaseIndictmentRulingDecision.FINE ||
     defendant.verdictViewDate
-
-  const showAppealFields =
-    Boolean(defendant.verdictViewDate) ||
-    indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
   const handleDateChange = (
     date: Date | undefined,
@@ -187,7 +187,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         </Box>
       </Box>
       <AnimatePresence>
-        {showAppealFields &&
+        {defendantCanAppeal &&
           textItems.map((text, index) => (
             <motion.div
               key={index}
@@ -200,7 +200,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
               }}
               onAnimationComplete={() => setTriggerAnimation(true)}
             >
-              <Text>{text}</Text>
+              <Text>{`• ${text}`}</Text>
             </motion.div>
           ))}
       </AnimatePresence>
