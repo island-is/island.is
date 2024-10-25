@@ -53,6 +53,9 @@ export class PaymentService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<PaymentCatalogParameters>): Promise<
     PaymentCatalogItem[]
   > {
+    if (!params?.organizationId) {
+      throw Error('Missing performing organization ID')
+    }
     if (isRunningOnEnvironment('production')) {
       this.logger.warn('Attempt to use mock payments in production', {
         applicationId: application.id,
