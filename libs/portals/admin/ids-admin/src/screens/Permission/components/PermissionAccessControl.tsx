@@ -9,6 +9,7 @@ import { m } from '../../../lib/messages'
 import { PermissionFormTypes } from '../EditPermission.schema'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
+import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 
 const commonProps: Pick<CheckboxProps, 'backgroundColor' | 'large' | 'value'> =
   {
@@ -20,6 +21,7 @@ const commonProps: Pick<CheckboxProps, 'backgroundColor' | 'large' | 'value'> =
 export const PermissionAccessControl = () => {
   const { formatMessage } = useLocale()
   const { selectedPermission, permission } = usePermission()
+  const { isSuperAdmin } = useSuperAdmin()
   const { isAccessControlled, grantToAuthenticatedUser } = selectedPermission
 
   const [inputValues, setInputValues] = useEnvironmentState<{
@@ -40,19 +42,21 @@ export const PermissionAccessControl = () => {
       ])}
     >
       <Stack space={3}>
-        <Checkbox
-          label={formatMessage(m.isAccessControlled)}
-          subLabel={formatMessage(m.isAccessControlledDescription)}
-          name="isAccessControlled"
-          checked={inputValues.isAccessControlled}
-          onChange={(e) => {
-            setInputValues({
-              ...inputValues,
-              isAccessControlled: e.target.checked,
-            })
-          }}
-          {...commonProps}
-        />
+        {isSuperAdmin && (
+          <Checkbox
+            label={formatMessage(m.isAccessControlled)}
+            subLabel={formatMessage(m.isAccessControlledDescription)}
+            name="isAccessControlled"
+            checked={inputValues.isAccessControlled}
+            onChange={(e) => {
+              setInputValues({
+                ...inputValues,
+                isAccessControlled: e.target.checked,
+              })
+            }}
+            {...commonProps}
+          />
+        )}
         <Checkbox
           label={formatMessage(m.grantToAuthenticatedUser)}
           subLabel={formatMessage(m.grantToAuthenticatedUserDescription)}

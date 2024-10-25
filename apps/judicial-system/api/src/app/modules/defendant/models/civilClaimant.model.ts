@@ -43,4 +43,7 @@ export class CivilClaimant {
 
   @Field(() => Boolean, { nullable: true })
   readonly caseFilesSharedWithSpokesperson?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isSpokespersonConfirmed?: boolean
 }

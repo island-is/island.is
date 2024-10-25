@@ -5,6 +5,7 @@ import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 import { FinanceClientModule } from '@island.is/clients/finance'
 import { JudicialAdministrationClientModule } from '@island.is/clients/judicial-administration'
+import { AwsModule } from '@island.is/nest/aws'
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { JudicialAdministrationClientModule } from '@island.is/clients/judicial-
     CriminalRecordModule,
     FinanceClientModule,
     JudicialAdministrationClientModule,
+    AwsModule,
   ],
   providers: [OperatingLicenseService],
   exports: [OperatingLicenseService],

@@ -90,6 +90,13 @@ export const formatPerson = async (
       individual.kennitala && {
         baseId: maskedNationalId,
       }),
+    name: {
+      firstName: individual.fulltNafn?.eiginNafn ?? null,
+      middleName: individual.fulltNafn?.milliNafn ?? null,
+      lastName: individual.fulltNafn?.kenniNafn ?? null,
+      fullName: individual.fulltNafn?.fulltNafn ?? individual.nafn,
+      displayName: individual.nafn,
+    },
 
     //DEPRECATION LINE -- below shall be removed
     legalResidence: formatLegalResidence(individual.heimilisfang),

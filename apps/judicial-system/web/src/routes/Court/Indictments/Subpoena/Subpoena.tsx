@@ -103,9 +103,11 @@ const Subpoena: FC = () => {
     },
     [
       isSchedulingArraignmentDate,
-      sendCourtDateToServer,
       workingCase.defendants,
+      workingCase.indictmentDecision,
       workingCase.id,
+      isArraignmentScheduled,
+      sendCourtDateToServer,
       updateDefendant,
     ],
   )

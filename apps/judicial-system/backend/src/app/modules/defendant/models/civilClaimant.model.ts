@@ -6,9 +6,12 @@ import {
   ForeignKey,
   Model,
   Table,
+  UpdatedAt,
 } from 'sequelize-typescript'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 
 import { Case } from '../../case/models/case.model'
 
@@ -17,6 +20,37 @@ import { Case } from '../../case/models/case.model'
   timestamps: false,
 })
 export class CivilClaimant extends Model {
+  static isConfirmedSpokespersonOfCivilClaimant(
+    spokespersonNationalId: string,
+    civilClaimants?: CivilClaimant[],
+  ) {
+    return civilClaimants?.some(
+      (civilClaimant) =>
+        civilClaimant.hasSpokesperson &&
+        civilClaimant.spokespersonNationalId &&
+        civilClaimant.isSpokespersonConfirmed &&
+        normalizeAndFormatNationalId(spokespersonNationalId).includes(
+          civilClaimant.spokespersonNationalId,
+        ),
+    )
+  }
+
+  static isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+    spokespersonNationalId: string,
+    civilClaimants?: CivilClaimant[],
+  ) {
+    return civilClaimants?.some(
+      (civilClaimant) =>
+        civilClaimant.hasSpokesperson &&
+        civilClaimant.spokespersonNationalId &&
+        civilClaimant.isSpokespersonConfirmed &&
+        normalizeAndFormatNationalId(spokespersonNationalId).includes(
+          civilClaimant.spokespersonNationalId,
+        ) &&
+        civilClaimant.caseFilesSharedWithSpokesperson,
+    )
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -27,13 +61,12 @@ export class CivilClaimant extends Model {
   id!: string
 
   @CreatedAt
-  @Column({
-    type: DataType.DATE,
-    defaultValue: DataType.NOW,
-    allowNull: false,
-  })
   @ApiProperty({ type: Date })
   created!: Date
+
+  @UpdatedAt
+  @ApiProperty({ type: Date })
+  modified!: Date
 
   @ForeignKey(() => Case)
   @Column({
@@ -110,4 +143,11 @@ export class CivilClaimant extends Model {
   })
   @ApiPropertyOptional({ type: Boolean })
   caseFilesSharedWithSpokesperson?: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: Boolean })
+  isSpokespersonConfirmed?: boolean
 }
