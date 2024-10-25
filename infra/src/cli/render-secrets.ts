@@ -23,7 +23,7 @@ export const renderSecretsCommand = async (service: string) => {
     } else {
       logger.error(error)
     }
-    throw new Error('Could not render secrets')
+    process.exit(1)
   })
 }
 

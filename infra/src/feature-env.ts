@@ -1,5 +1,5 @@
 import yargs from 'yargs'
-import { PutObjectCommand, PutObjectCommandInput, S3 } from '@aws-sdk/client-s3'
+import AWS from 'aws-sdk'
 import { Envs } from './environments'
 import {
   ExcludedFeatureDeploymentServices,
@@ -41,7 +41,7 @@ const writeToOutput = async (data: string, output?: string) => {
     if (output.startsWith('s3://')) {
       const Bucket = output.substring(5).split('/')[0]
       const Key = output.substring(5).split(/\/(.+)/)[1]
-      const objectParams: PutObjectCommandInput = {
+      const objectParams = {
         Bucket,
         Key,
         Body: data,
@@ -50,9 +50,9 @@ const writeToOutput = async (data: string, output?: string) => {
       const config = {
         region: 'eu-west-1',
       }
-      const s3 = new S3(config)
+      const s3 = new AWS.S3(config)
       try {
-        await s3.send(new PutObjectCommand(objectParams))
+        await s3.putObject(objectParams).promise()
         logger.info(`Successfully uploaded data to ${output}`)
       } catch (err) {
         logger.error('Error', err)
