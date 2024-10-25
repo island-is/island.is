@@ -179,7 +179,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     <Box className={styles.container} padding={[2, 2, 3, 3]}>
       <Box className={styles.titleContainer}>
         <SectionHeading
-          title="Lykildagsetningar"
+          title={formatMessage(strings.keyDates)}
           heading="h4"
           marginBottom={2}
         />
