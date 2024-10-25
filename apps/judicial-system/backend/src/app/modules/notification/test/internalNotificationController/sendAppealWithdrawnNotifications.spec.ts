@@ -3,8 +3,8 @@ import { uuid } from 'uuidv4'
 import { EmailService } from '@island.is/email-service'
 
 import {
+  CaseNotificationType,
   InstitutionType,
-  NotificationType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -98,7 +98,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
               role: userRole,
               institution: { type: InstitutionType.PROSECUTORS_OFFICE },
             } as User,
-            type: NotificationType.APPEAL_WITHDRAWN,
+            type: CaseNotificationType.APPEAL_WITHDRAWN,
           },
         )
         .then((result) => (then.result = result))
@@ -158,7 +158,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
       then = await givenWhenThen(UserRole.PROSECUTOR, receivedDate, [
         {
           caseId,
-          type: NotificationType.APPEAL_JUDGES_ASSIGNED,
+          type: CaseNotificationType.APPEAL_JUDGES_ASSIGNED,
         } as Notification,
       ])
     })

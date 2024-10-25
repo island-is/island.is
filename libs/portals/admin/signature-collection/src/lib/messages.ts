@@ -501,6 +501,11 @@ export const m = defineMessages({
     defaultMessage: 'Úrvinnslu lokið',
     description: '',
   },
+  toggleReviewSuccessToggleBack: {
+    id: 'admin-portal.signature-collection:toggleReviewSuccessToggleBack',
+    defaultMessage: 'Tókst að opna fyrir úrvinnslu',
+    description: '',
+  },
   lockList: {
     id: 'admin-portal.signature-collection:lockList',
     defaultMessage: 'Læsa söfnun',
@@ -752,6 +757,11 @@ export const m = defineMessages({
   paperSigneeError: {
     id: 'admin-portal.signature-collection:paperSigneeError',
     defaultMessage: 'Ekki tókst að skrá meðmæli',
+    description: '',
+  },
+  paperSigneeErrorAlreadySigned: {
+    id: 'admin-portal.signature-collection:paperSigneeErrorAlreadySigned',
+    defaultMessage: 'Kennitala er þegar á lista',
     description: '',
   },
 })
