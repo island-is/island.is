@@ -36,6 +36,7 @@ import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model
 import type { Locale } from '@island.is/shared/types'
 import { DocumentConfirmActionsInput } from './models/v2/confirmActions.input'
 import { DocumentConfirmActions } from './models/v2/confirmActions.model'
+import { isDefined } from '@island.is/shared/utils'
 
 const LOG_CATEGORY = 'documents-resolver'
 
@@ -95,9 +96,8 @@ export class DocumentResolverV2 {
     @CurrentUser() user: User,
   ): Promise<PaginatedDocuments> {
     const ffEnabled = await this.getFeatureFlag()
-    if (ffEnabled)
-      return this.documentServiceV2.listDocumentsV3(user.nationalId, input)
-    return this.documentServiceV2.listDocuments(user.nationalId, input)
+    if (ffEnabled) return this.documentServiceV2.listDocumentsV3(user, input)
+    return this.documentServiceV2.listDocuments(user, input)
   }
 
   @Scopes(DocumentsScope.main)
@@ -121,8 +121,13 @@ export class DocumentResolverV2 {
   }
 
   @ResolveField('categories', () => [Category])
-  documentCategories(@CurrentUser() user: User): Promise<Array<Category>> {
-    return this.documentServiceV2.getCategories(user.nationalId)
+  async documentCategories(
+    @CurrentUser() user: User,
+  ): Promise<Array<Category>> {
+    const categories = await this.documentServiceV2.getCategories(user)
+    if (!isDefined(categories)) {
+      return []
+    } else return categories
   }
 
   @ResolveField('senders', () => [Sender])

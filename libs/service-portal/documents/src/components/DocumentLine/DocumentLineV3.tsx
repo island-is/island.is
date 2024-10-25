@@ -103,6 +103,17 @@ export const DocumentLineV3: FC<Props> = ({
     setHasAvatarFocus(isAvatarFocused)
   }, [isAvatarFocused])
 
+  const displayErrorMessage = () => {
+    const errorMessage = formatMessage(messages.documentFetchError, {
+      senderName: documentLine.sender?.name ?? '',
+    })
+    if (asFrame) {
+      toast.error(errorMessage, { toastId: 'overview-doc-error' })
+    } else {
+      setDocumentDisplayError(errorMessage)
+    }
+  }
+
   const displayPdf = (
     content?: DocumentV2Content,
     actions?: Array<DocumentV2Action>,
@@ -167,14 +178,7 @@ export const DocumentLineV3: FC<Props> = ({
         }
       },
       onError: () => {
-        const errorMessage = formatMessage(messages.documentFetchError, {
-          senderName: documentLine.sender?.name ?? '',
-        })
-        if (asFrame) {
-          toast.error(errorMessage, { toastId: 'overview-doc-error' })
-        } else {
-          setDocumentDisplayError(errorMessage)
-        }
+        displayErrorMessage()
       },
     })
 
@@ -205,11 +209,7 @@ export const DocumentLineV3: FC<Props> = ({
         }
       },
       onError: () => {
-        setDocumentDisplayError(
-          formatMessage(messages.documentFetchError, {
-            senderName: documentLine.sender?.name ?? '',
-          }),
-        )
+        displayErrorMessage()
       },
     })
 
