@@ -232,6 +232,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                 onChange={(date, valid) =>
                   handleDateChange(date, valid, 'appealDate')
                 }
+                maxDate={new Date()}
                 blueBox={false}
                 dateOnly
               />
@@ -268,6 +269,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                   handleDateChange(date, valid, 'verdictViewDate')
                 }
                 blueBox={false}
+                maxDate={new Date()}
                 dateOnly
               />
               <Button
