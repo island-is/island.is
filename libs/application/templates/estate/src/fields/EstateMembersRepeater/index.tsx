@@ -27,6 +27,7 @@ import {
   NO,
   YES,
   heirAgeValidation,
+  missingHeirUndividedEstateValidation,
   relationWithApplicant,
 } from '../../lib/constants'
 import intervalToDuration from 'date-fns/intervalToDuration'
@@ -74,6 +75,12 @@ export const EstateMembersRepeater: FC<
     },
   )
 
+  const missingHeirsForUndividedEstate =
+    selectedEstate === EstateTypes.permitForUndividedEstate &&
+    !values.estate?.estateMembers?.some((member: EstateMember) => {
+      return member.enabled
+    })
+
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
       if (
@@ -94,6 +101,13 @@ export const EstateMembersRepeater: FC<
           type: 'custom',
         })
         return [false, 'invalid member age']
+      }
+
+      if (missingHeirsForUndividedEstate) {
+        setError(missingHeirUndividedEstateValidation, {
+          type: 'custom',
+        })
+        return [false, 'missing spouse heir for undivided estate']
       }
 
       return [true, null]
@@ -136,11 +150,15 @@ export const EstateMembersRepeater: FC<
     if (!hasEstateMemberUnder18withoutRep) {
       clearErrors(heirAgeValidation)
     }
+    if (!missingHeirsForUndividedEstate) {
+      clearErrors(missingHeirUndividedEstateValidation)
+    }
   }, [
     fields,
     hasEstateMemberUnder18withoutRep,
     hasEstateMemberUnder18,
     clearErrors,
+    missingHeirsForUndividedEstate,
   ])
 
   useEffect(() => {
@@ -426,6 +444,13 @@ export const EstateMembersRepeater: FC<
                 ? formatMessage(m.inheritanceAgeValidation)
                 : formatMessage(m.heirAdvocateAgeValidation)
             }
+          />
+        </Box>
+      ) : null}
+      {errors && errors[missingHeirUndividedEstateValidation] ? (
+        <Box marginTop={4}>
+          <InputError
+            errorMessage={formatMessage(m.missingHeirUndividedEstateValidation)}
           />
         </Box>
       ) : null}
