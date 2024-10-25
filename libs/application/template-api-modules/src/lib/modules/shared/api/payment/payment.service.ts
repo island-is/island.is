@@ -18,7 +18,7 @@ import { getSlugFromType } from '@island.is/application/core'
 import { getConfigValue } from '../../shared.utils'
 import { ConfigService } from '@nestjs/config'
 import { uuid } from 'uuidv4'
-import { environment } from 'libs/cms/src/lib/environments'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 @Injectable()
 export class PaymentService extends BaseTemplateApiService {
@@ -53,7 +53,7 @@ export class PaymentService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<PaymentCatalogParameters>): Promise<
     PaymentCatalogItem[]
   > {
-    if (environment.production) {
+    if (isRunningOnEnvironment('production')) {
       this.logger.warn('Attempt to use mock payments in production', {
         applicationId: application.id,
         organizationId: params?.organizationId,
@@ -102,7 +102,7 @@ export class PaymentService extends BaseTemplateApiService {
     const { organizationId, chargeItemCodes, extraData } = params ?? {}
     const { shouldUseMockPayment } = application.answers
 
-    if (shouldUseMockPayment && environment.production) {
+    if (shouldUseMockPayment && isRunningOnEnvironment('production')) {
       this.logger.warn('Attempt to use mock payments in production', {
         applicationId: application.id,
         organizationId: organizationId,
@@ -110,7 +110,7 @@ export class PaymentService extends BaseTemplateApiService {
       throw new Error('Mock payments are not allowed in production')
     }
 
-    if (shouldUseMockPayment && !environment.production) {
+    if (shouldUseMockPayment && !isRunningOnEnvironment('production')) {
       const list = [
         {
           performingOrgID: organizationId ?? 'string',
