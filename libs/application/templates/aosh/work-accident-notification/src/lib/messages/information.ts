@@ -98,6 +98,27 @@ export const information = {
         defaultMessage: 'Heimilisfang útibús/deildar',
         description: 'Address of company branch',
       },
+      postNumberAndTownOfBranch: {
+        id: 'aosh.wan.application:information.company.postNumberAndTownOfBranch',
+        defaultMessage: 'Póstnúmer og bær útibús/deildar',
+        description: 'Company information post number and town of branch label',
+      },
+      email: {
+        id: 'aosh.wan.application:information.company.email',
+        defaultMessage: 'Netfang tengiliðs',
+        description: 'Email of company ',
+      },
+      phonenumber: {
+        id: 'aosh.wan.application:information.company.phonenumber',
+        defaultMessage: 'Símanúmer tengiliðs',
+        description: 'Phonenumber of company',
+      },
+      emailAndPhoneAlertMessage: {
+        id: 'aosh.wan.application:information.company.emailAndPhoneAlertMessage',
+        defaultMessage:
+          'Vinsamlega vertu viss um að símanúmer og netfang fyrir tengilið sé rétt skráð.',
+        description: 'Email and phone information alert message',
+      },
     }),
     laborProtection: {
       pageTitle: {

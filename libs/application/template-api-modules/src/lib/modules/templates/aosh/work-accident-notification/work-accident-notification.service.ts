@@ -6,30 +6,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { WorkAccidentNotification } from '@island.is/application/templates/aosh/work-accident-notification'
-// import {
-//   employmentStatusOfTheVictim,
-//   lengthOfEmployments,
-//   victimsOccupationSubMajorGroup,
-//   sizeOfEnterprises,
-//   victimsOccupationMajorGroup,
-//   workhourArrangements,
-//   workingEnvironmentGroup,
-//   workingEnvironmentSubGroup,
-//   workplaceHealthAndSafety,
-//   workStations,
-//   absenceDueToAccident,
-//   specificPhysicalActivityGroups,
-//   victimOccupationMinorGroups,
-//   activities,
-//   deviationGroups,
-//   deviations,
-//   contactModesOfInjury,
-//   typeOfInjuryGroups,
-//   typeOfInjuries,
-//   partOfBodyInjuredGroups,
-//   partOfBodyInjured,
-//   victimsOccupationUnitGroups,
-// } from './work-accident-notification.mockData'
 import {
   DataDto,
   WorkAccidentClientService,
@@ -49,31 +25,6 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
     auth,
   }: TemplateApiModuleActionProps): Promise<DataDto> {
     const data = await this.workAccidentClientService.getOptionsData(auth)
-
-    // const result = {
-    //   sizeOfEnterprises,
-    //   workplaceHealthAndSafety,
-    //   workingEnvironmentGroup,
-    //   workingEnvironmentSubGroup,
-    //   workStations,
-    //   employmentStatusOfTheVictim,
-    //   lengthOfEmployments,
-    //   workhourArrangements,
-    //   victimsOccupationMajorGroup,
-    //   victimsOccupationSubMajorGroup,
-    //   absenceDueToAccident,
-    //   specificPhysicalActivityGroups,
-    //   victimOccupationMinorGroups,
-    //   activities,
-    //   deviationGroups,
-    //   deviations,
-    //   contactModesOfInjury,
-    //   typeOfInjuryGroups,
-    //   typeOfInjuries,
-    //   partOfBodyInjuredGroups,
-    //   partOfBodyInjured,
-    //   victimsOccupationUnitGroups,
-    // }
 
     return data
   }
@@ -100,7 +51,7 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
               return parseInt(code, 10)
             },
           ),
-        buyersSSN: '', // TODO ????
+        buyersSSN: answers.projectPurchase.nationalId,
         dateAndTimeOfAccident: getDateAndTime(
           answers.accident.date,
           answers.accident.time.split(':')[0],
@@ -135,13 +86,22 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
             workhourArrangement: employee.workhourArrangement
               ? parseInt(employee.workhourArrangement, 10)
               : 0,
-            startOfWorkingDay: new Date(),
-            workStation: 0,
+            startOfWorkingDay: new Date(), // TODO: Missing date in dataschema!
+            workStation: employee.workstation
+              ? parseInt(employee.workstation, 10)
+              : 0,
             victimsOccupation: employee.victimsOccupation.value,
-            absenceDueToAccident: 0,
+            absenceDueToAccident: answers.absence[index]
+              ? parseInt(answers.absence[index], 10)
+              : 0,
             specificPhysicalActivities: [],
             specificPhysicalActivityMostSevere: '',
             workDeviations: [],
+            // Object.values(answers.deviations[index]).map((values) => {
+            //   return values?.map(({ value }) => {
+            //     return value
+            //   })
+            // }),
             workDeviationMostSevere: '',
             contactModeOfInjuries: [],
             contactModeOfInjuryMostSevere: '',
@@ -151,8 +111,8 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
             typeOfInjuryMostSevere: '',
           }
         }), // TODO
-        userPhoneNumber: '', // TODO: Þetta kemur ekki fram í umsókn og því ekki víst að þetta sé til staðar?
-        userEmail: '', // TODO
+        userPhoneNumber: answers.companyInformation.phonenumber,
+        userEmail: answers.companyInformation.email,
       },
     })
   }

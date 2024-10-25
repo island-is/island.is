@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { YES } from '@island.is/application/types'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 const isValid24HFormatTime = (value: string) => {
   if (value.length !== 4) return false
@@ -9,6 +10,11 @@ const isValid24HFormatTime = (value: string) => {
   if (hours > 23) return false
   if (minutes > 59) return false
   return true
+}
+
+export const isValidPhoneNumber = (phoneNumber: string) => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone && phone.isValid()
 }
 
 const TimeWithRefine = z
@@ -58,6 +64,8 @@ const companySchema = z.object({
   postnumber: z.string(),
   postnumberOfBranch: z.string().optional(),
   industryClassification: z.string().optional(),
+  email: z.string().email(),
+  phonenumber: z.string().refine((v) => isValidPhoneNumber(v)),
 })
 
 const employeeSchema = z

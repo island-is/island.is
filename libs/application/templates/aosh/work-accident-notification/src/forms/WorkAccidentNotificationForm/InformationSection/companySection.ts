@@ -3,6 +3,7 @@ import {
   buildDescriptionField,
   buildHiddenInput,
   buildMultiField,
+  buildPhoneField,
   buildSelectField,
   buildSubSection,
   buildTextField,
@@ -168,7 +169,7 @@ export const companySection = buildSubSection({
         }),
         buildSelectField({
           id: 'companyInformation.postnumberOfBranch',
-          title: information.labels.company.postNumberAndTown,
+          title: information.labels.company.postNumberAndTownOfBranch,
           width: 'half',
           doesNotRequireAnswer: true,
           options: (application) => {
@@ -185,6 +186,38 @@ export const companySection = buildSubSection({
                 value: code || '',
               }))
           },
+        }),
+        buildAlertMessageField({
+          id: 'company.alertMessageField.emailAndPhone',
+          title: '',
+          message: information.labels.company.emailAndPhoneAlertMessage,
+          alertType: 'info',
+          doesNotRequireAnswer: true,
+        }),
+        buildTextField({
+          id: 'companyInformation.email',
+          title: information.labels.company.email,
+          backgroundColor: 'blue',
+          width: 'half',
+          required: true,
+          defaultValue: (application: Application) =>
+            getValueViaPath(
+              application.externalData,
+              'userProfile.data.email',
+              '',
+            ) as string,
+        }),
+        buildPhoneField({
+          id: 'companyInformation.phonenumber',
+          title: information.labels.company.phonenumber,
+          width: 'half',
+          required: true,
+          defaultValue: (application: Application) =>
+            getValueViaPath(
+              application.externalData,
+              'userProfile.data.mobilePhoneNumber',
+              '',
+            ) as string,
         }),
       ],
     }),

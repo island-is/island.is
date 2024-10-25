@@ -50,7 +50,7 @@ export const projectPurchaseSection = buildSubSection({
         buildTextField({
           id: 'projectPurchase.nationalId',
           title: information.labels.company.nationalId,
-          backgroundColor: 'white',
+          backgroundColor: 'blue',
           width: 'half',
           required: true,
           format: '######-####',
@@ -61,7 +61,7 @@ export const projectPurchaseSection = buildSubSection({
         buildTextField({
           id: 'projectPurchase.name',
           title: information.labels.projectPurchase.name,
-          backgroundColor: 'white',
+          backgroundColor: 'blue',
           width: 'half',
           required: true,
           doesNotRequireAnswer: true,
