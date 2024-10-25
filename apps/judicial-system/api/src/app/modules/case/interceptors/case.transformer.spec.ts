@@ -717,7 +717,11 @@ describe('getIndictmentDefendantsInfo', () => {
       { verdictViewDate: undefined } as Defendant,
     ]
 
-    const defendantsInfo = getIndictmentDefendantsInfo(defendants)
+    const theCase = {
+      defendants,
+    } as Case
+
+    const defendantsInfo = getIndictmentDefendantsInfo(theCase)
 
     expect(defendantsInfo).toEqual([
       {
