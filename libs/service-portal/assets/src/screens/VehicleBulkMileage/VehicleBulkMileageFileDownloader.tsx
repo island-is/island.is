@@ -1,4 +1,4 @@
-import { Button, Inline } from '@island.is/island-ui/core'
+import { Button, DropdownMenu, Inline } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { vehicleMessage } from '../../lib/messages'
 import { downloadFile } from '@island.is/service-portal/core'
@@ -32,23 +32,15 @@ const VehicleBulkMileageFileDownloader = ({ onError }: Props) => {
   }
 
   return (
-    <Inline space={1}>
-      {(['csv', 'xlsx'] as const).map((type) => (
-        <Button
-          colorScheme="default"
-          icon="download"
-          iconType="outline"
-          size="default"
-          variant="utility"
-          onClick={() => downloadExampleFile(type)}
-          loading={isLoading}
-        >
-          {formatMessage(vehicleMessage.downloadTemplate, {
-            arg: `.${type}`,
-          })}
-        </Button>
-      ))}
-    </Inline>
+    <DropdownMenu
+      icon="ellipsisHorizontal"
+      menuLabel={formatMessage(vehicleMessage.downloadTemplate)}
+      items={(['csv', 'xlsx'] as const).map((type) => ({
+        title: `.${type}`,
+        onClick: () => downloadExampleFile(type),
+      }))}
+      title={formatMessage(vehicleMessage.downloadTemplate)}
+    />
   )
 }
 

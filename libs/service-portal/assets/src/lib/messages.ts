@@ -1068,7 +1068,7 @@ export const vehicleMessage = defineMessages({
   },
   downloadTemplate: {
     id: 'sp.vehicles:download-template',
-    defaultMessage: 'Hlaða niður sniðmáti {arg}',
+    defaultMessage: 'Hlaða niður sniðmáti',
   },
   saveAllVisible: {
     id: 'sp.vehicles:save-all-visible',
