@@ -1,10 +1,15 @@
 import {
   CaseState,
   completedRequestCaseStates,
+  isRequestCase,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
+import {
+  getIndictmentDefendantsInfo,
+  getIndictmentInfo,
+} from './case.transformer'
 
 const RequestSharedWithDefenderAllowedStates: {
   [key in RequestSharedWithDefender]: CaseState[]
@@ -39,11 +44,34 @@ export const canDefenderViewRequest = (theCase: Case) => {
   )
 }
 
-export const transformLimitedAccessCase = (theCase: Case): Case => {
+const transformRequestCase = (theCase: Case): Case => {
   return {
     ...theCase,
     caseResentExplanation: canDefenderViewRequest(theCase)
       ? theCase.caseResentExplanation
       : undefined,
   }
+}
+
+const transformIndictmentCase = (theCase: Case): Case => {
+  const { indictmentRulingDecision, rulingDate, defendants, eventLogs } =
+    theCase
+  return {
+    ...theCase,
+    ...getIndictmentInfo(
+      indictmentRulingDecision,
+      rulingDate,
+      defendants,
+      eventLogs,
+    ),
+    defendants: getIndictmentDefendantsInfo(theCase.defendants),
+  }
+}
+
+export const transformLimitedAccessCase = (theCase: Case): Case => {
+  if (isRequestCase(theCase.type)) {
+    return transformRequestCase(theCase)
+  }
+
+  return transformIndictmentCase(theCase)
 }
