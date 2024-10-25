@@ -27,8 +27,8 @@ export class CivilClaimant extends Model {
     return civilClaimants?.some(
       (civilClaimant) =>
         civilClaimant.hasSpokesperson &&
-        civilClaimant.spokespersonNationalId &&
         civilClaimant.isSpokespersonConfirmed &&
+        civilClaimant.spokespersonNationalId &&
         normalizeAndFormatNationalId(spokespersonNationalId).includes(
           civilClaimant.spokespersonNationalId,
         ),
@@ -42,12 +42,12 @@ export class CivilClaimant extends Model {
     return civilClaimants?.some(
       (civilClaimant) =>
         civilClaimant.hasSpokesperson &&
-        civilClaimant.spokespersonNationalId &&
         civilClaimant.isSpokespersonConfirmed &&
+        civilClaimant.caseFilesSharedWithSpokesperson &&
+        civilClaimant.spokespersonNationalId &&
         normalizeAndFormatNationalId(spokespersonNationalId).includes(
           civilClaimant.spokespersonNationalId,
-        ) &&
-        civilClaimant.caseFilesSharedWithSpokesperson,
+        ),
     )
   }
 
