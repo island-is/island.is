@@ -107,7 +107,7 @@ export const EstateMembersRepeater: FC<
         setError(missingHeirUndividedEstateValidation, {
           type: 'custom',
         })
-        return [false, 'missing spouse heir for undivided estate']
+        return [false, 'missing heir for undivided estate']
       }
 
       return [true, null]
