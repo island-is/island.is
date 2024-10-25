@@ -63,35 +63,37 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
 
   const hasBeenAppealed = Boolean(appealState)
 
+  appealInfo.hasBeenAppealed = hasBeenAppealed
+
+  if (hasBeenAppealed) {
+    appealInfo.appealedByRole = prosecutorPostponedAppealDate
+      ? UserRole.PROSECUTOR
+      : accusedPostponedAppealDate
+      ? UserRole.DEFENDER
+      : undefined
+
+    appealInfo.appealedDate =
+      appealInfo.appealedByRole === UserRole.PROSECUTOR
+        ? prosecutorPostponedAppealDate ?? undefined
+        : accusedPostponedAppealDate ?? undefined
+  }
+
   appealInfo.canBeAppealed = Boolean(
     !hasBeenAppealed &&
       (isAppealableDecision(accusedAppealDecision) ||
         isAppealableDecision(prosecutorAppealDecision)),
   )
 
+  const theRulingDate = new Date(rulingDate)
+  appealInfo.appealDeadline = new Date(
+    theRulingDate.getTime() + getDays(3),
+  ).toISOString()
+
   appealInfo.canProsecutorAppeal =
     !hasBeenAppealed && isAppealableDecision(prosecutorAppealDecision)
 
   appealInfo.canDefenderAppeal =
     !hasBeenAppealed && isAppealableDecision(accusedAppealDecision)
-
-  appealInfo.hasBeenAppealed = hasBeenAppealed
-
-  appealInfo.appealedByRole = prosecutorPostponedAppealDate
-    ? UserRole.PROSECUTOR
-    : accusedPostponedAppealDate
-    ? UserRole.DEFENDER
-    : undefined
-
-  appealInfo.appealedDate =
-    appealInfo.appealedByRole === UserRole.PROSECUTOR
-      ? prosecutorPostponedAppealDate ?? undefined
-      : accusedPostponedAppealDate ?? undefined
-
-  const theRulingDate = new Date(rulingDate)
-  appealInfo.appealDeadline = new Date(
-    theRulingDate.getTime() + getDays(3),
-  ).toISOString()
 
   if (appealReceivedByCourtDate) {
     appealInfo.statementDeadline = getStatementDeadline(
@@ -125,6 +127,12 @@ const transformRequestCase = (theCase: Case): Case => {
       ? Date.now() >=
         new Date(theCase.appealReceivedByCourtDate).getTime() + getDays(1)
       : false,
+    accusedPostponedAppealDate: appealInfo.hasBeenAppealed
+      ? theCase.accusedPostponedAppealDate
+      : undefined,
+    prosecutorPostponedAppealDate: appealInfo.hasBeenAppealed
+      ? theCase.prosecutorPostponedAppealDate
+      : undefined,
     ...appealInfo,
   }
 }
