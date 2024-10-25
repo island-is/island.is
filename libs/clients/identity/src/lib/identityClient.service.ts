@@ -85,7 +85,6 @@ export class IdentityClientService {
       return null
     }
 
-
     return {
       nationalId: person.kennitala,
       givenName: person.fulltNafn?.eiginNafn,
