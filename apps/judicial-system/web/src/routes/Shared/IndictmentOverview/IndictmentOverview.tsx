@@ -18,7 +18,7 @@ import {
   FormFooter,
   IndictmentCaseFilesList,
   IndictmentCaseScheduledCard,
-  IndictmentsLawsBrokenAccordionItem,
+  // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
   PageHeader,
@@ -154,9 +154,13 @@ const IndictmentOverview: FC = () => {
         </Box>
         {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
+            {/* 
+            NOTE: Temporarily hidden while list of laws broken is not complete in
+            indictment cases
+            
             {hasLawsBroken && (
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
-            )}
+            )} */}
             {hasMergeCases && (
               <Accordion>
                 {workingCase.mergedCases?.map((mergedCase) => (

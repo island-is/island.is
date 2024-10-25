@@ -920,6 +920,27 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Aldursviðbót',
     description: 'Niðurstöðuskjár, Aldursviðbót 2025',
   },
+  'REIKNH.ORORKA_ALDURSV_HUPPBOT_2025': {
+    id: 'web.pensionCalculator:REIKNH.ORORKA_ALDURSV_HUPPBOT_2025',
+    defaultMessage: 'Örorkulífeyrir, aldursviðbót og heimilisuppbót',
+    description:
+      'Niðurstöðuskjár, Örorkulífeyrir, aldursviðbót og heimilisuppbót 2025',
+  },
+  'REIKNH.ORORKA_HUPPBOT_2025': {
+    id: 'web.pensionCalculator:REIKNH.ORORKA_HUPPBOT_2025',
+    defaultMessage: 'Örorkulífeyrir og heimilisuppbót',
+    description: 'Niðurstöðuskjár, Örorkulífeyrir og heimilisuppbót 2025',
+  },
+  'REIKNH.ORORKA_ALDURSV_2025': {
+    id: 'web.pensionCalculator:REIKNH.ORORKA_ALDURSV_2025',
+    defaultMessage: 'Örorkulífeyrir og aldursviðbót',
+    description: 'Niðurstöðuskjár, Örorkulífeyrir og aldursviðbót 2025',
+  },
+  'REIKNH.ORORKA_2025': {
+    id: 'web.pensionCalculator:REIKNH.ORORKA_2025',
+    defaultMessage: 'Örorkulífeyrir',
+    description: 'Niðurstöðuskjár, Örorkulífeyrir 2025',
+  },
   highlighedResultItemHeadingForTotalAfterTaxFromTR: {
     id: 'web.pensionCalculator:REIKNH.highlighedResultItemHeadingForTotalAfterTaxFromTR',
     defaultMessage: 'Þar af greiðslur frá TR',
