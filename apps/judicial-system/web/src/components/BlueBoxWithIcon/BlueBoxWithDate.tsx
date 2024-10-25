@@ -47,9 +47,9 @@ const BlueBoxWithDate: FC<Props> = (props) => {
 
   // The defendant can appeal if the verdict has been served to them or if the cases
   // ruling is a FINE because in those cases a verdict is not served to the defendant
-  const defendantCanAppeal =
+  const serviceRequirementNotRequired =
     indictmentRulingDecision === CaseIndictmentRulingDecision.FINE ||
-    defendant.verdictViewDate
+    defendant.serviceRequirement !== ServiceRequirement.REQUIRED
 
   const handleDateChange = (
     date: Date | undefined,
@@ -141,7 +141,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     )
 
     setTextItems([
-      ...(indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+      ...(!serviceRequirementNotRequired
         ? [
             formatMessage(strings.defendantVerdictViewedDate, {
               date: verdictViewDate
@@ -168,6 +168,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     defendant.verdictViewDate,
     formatMessage,
     indictmentRulingDecision,
+    serviceRequirementNotRequired,
     verdictViewDate,
   ])
 
@@ -187,7 +188,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         </Box>
       </Box>
       <AnimatePresence>
-        {defendantCanAppeal &&
+        {(serviceRequirementNotRequired || defendant.verdictViewDate) &&
           textItems.map((text, index) => (
             <motion.div
               key={index}
@@ -206,7 +207,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       </AnimatePresence>
       <AnimatePresence mode="wait">
         {defendant.verdictAppealDate ||
-        defendant.isVerdictAppealDeadlineExpired ? null : defendantCanAppeal ? (
+        defendant.isVerdictAppealDeadlineExpired ? null : serviceRequirementNotRequired ||
+          defendant.verdictViewDate ? (
           <motion.div
             key="defendantAppealDate"
             variants={datePicker2Variants}
