@@ -14,7 +14,6 @@ import { EndorsementsScope, AdminPortalScope } from '@island.is/auth/scopes'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 
-
 import { Injectable } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 import { EndorsementList } from './endorsementList.model'
@@ -50,7 +49,10 @@ export class FixtureFactory {
     })
   }
 
-  async createEndorsementLists(count: number, input: Partial<EndorsementList> = {}) {
+  async createEndorsementLists(
+    count: number,
+    input: Partial<EndorsementList> = {},
+  ) {
     const lists = []
     for (let i = 0; i < count; i++) {
       lists.push(await this.createEndorsementList(input))
@@ -70,8 +72,7 @@ describe('EndorsementListController', () => {
     app = await setupApp({
       AppModule,
       SequelizeConfigService,
-      dbType: 'postgres',  // Specify postgres as the db type for tests
-
+      dbType: 'postgres', // Specify postgres as the db type for tests
     })
 
     fixtureFactory = new FixtureFactory(app)
@@ -92,8 +93,7 @@ describe('EndorsementListController', () => {
       const app = await setupAppWithoutAuth({
         AppModule,
         SequelizeConfigService,
-        dbType: 'postgres',  // Specify postgres as the db type for tests
-
+        dbType: 'postgres', // Specify postgres as the db type for tests
       })
       const server = request(app.getHttpServer())
 
@@ -110,7 +110,7 @@ describe('EndorsementListController', () => {
       const app = await setupApp({
         AppModule,
         SequelizeConfigService,
-        dbType: 'postgres',  // Specify postgres as the db type for tests
+        dbType: 'postgres', // Specify postgres as the db type for tests
 
         user: createCurrentUser({}), // No scopes
       })
@@ -123,5 +123,4 @@ describe('EndorsementListController', () => {
       await app.cleanUp()
     })
   })
-
 })
