@@ -9,6 +9,7 @@ import {
   GetCurrentCollection,
   GetCanSign,
   GetCollectors,
+  getPdfReport,
 } from './graphql/queries'
 import {
   SignatureCollectionListBase,
@@ -185,4 +186,20 @@ export const useGetCollectors = () => {
     (getCollectorsData?.signatureCollectionCollectors as SignatureCollectionCollector[]) ??
     []
   return { collectors, loadingCollectors }
+}
+
+export const useGetPdfReport = (listId: string) => {
+  const { data: pdfReportData, loading: loadingReport } = useQuery(
+    getPdfReport,
+    {
+      variables: {
+        input: {
+          listId,
+        },
+      },
+      skip: !listId,
+    },
+  )
+  const report = pdfReportData?.signatureCollectionListOverview ?? {}
+  return { report, loadingReport }
 }
