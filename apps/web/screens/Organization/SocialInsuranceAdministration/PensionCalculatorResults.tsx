@@ -449,33 +449,30 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                                     )}
                                   </Text>
                                   <Inline space={3} alignY="center">
-                                    <Box
-                                      borderRadius="circle"
-                                      background="blue100"
-                                      padding="p2"
-                                    >
-                                      <img
-                                        width="70px"
-                                        height="70px"
-                                        src={formatMessage(
-                                          translationStrings.results2025ImageUrl,
-                                        )}
-                                        alt=""
-                                      />
-                                    </Box>
-                                    <Text>
-                                      {formatMessage(
-                                        translationStrings.after1stSeptember2025Description,
+                                    <img
+                                      width="80px"
+                                      height="80px"
+                                      src={formatMessage(
+                                        translationStrings.results2025ImageUrl,
                                       )}
-                                    </Text>
+                                      alt=""
+                                    />
+                                    {
+                                      <Box className={styles.text2025Container}>
+                                        <Text>
+                                          {formatMessage(
+                                            translationStrings.after1stSeptember2025Description,
+                                          )}
+                                        </Text>
+                                      </Box>
+                                    }
                                   </Inline>
                                   <Button
                                     onClick={() => {
                                       setShowDisabilityChangesIn2025(true)
                                     }}
-                                    variant="text"
-                                    size="large"
-                                    icon="arrowForward"
+                                    variant="ghost"
+                                    size="small"
                                   >
                                     {formatMessage(
                                       translationStrings.after1stSeptember2025Calculate,
