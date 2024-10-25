@@ -85,7 +85,9 @@ export class AccessControlResolver {
     const access = await this.accessControlService.findOne(input.nationalId)
 
     if (access) {
-      throw new ConflictException('Access with that national id already exists')
+      throw new ConflictException(
+        `Access with the national id ${input.nationalId} already exists`,
+      )
     }
 
     return this.accessControlService.createAccess(input)
