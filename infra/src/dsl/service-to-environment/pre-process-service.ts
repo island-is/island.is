@@ -264,7 +264,7 @@ function getEnvValue(
     ) {
       return {
         type: 'success',
-        value: value.dev, // Fallback to 'dev' value if 'local' is undefined
+        value: value.local ?? value.dev, // Fallback to 'dev' value if 'local' is undefined
       }
     } else {
       // Return the value for the specified environment type
