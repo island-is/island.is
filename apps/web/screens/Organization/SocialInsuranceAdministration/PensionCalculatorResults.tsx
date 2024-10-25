@@ -448,16 +448,34 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                                       translationStrings.after1stSeptember2025,
                                     )}
                                   </Text>
-                                  <Text>
-                                    {formatMessage(
-                                      translationStrings.after1stSeptember2025Description,
-                                    )}
-                                  </Text>
+                                  <Inline space={3} alignY="center">
+                                    <Box
+                                      borderRadius="circle"
+                                      background="blue100"
+                                      padding="p2"
+                                    >
+                                      <img
+                                        width="70px"
+                                        height="70px"
+                                        src={formatMessage(
+                                          translationStrings.results2025ImageUrl,
+                                        )}
+                                        alt=""
+                                      />
+                                    </Box>
+                                    <Text>
+                                      {formatMessage(
+                                        translationStrings.after1stSeptember2025Description,
+                                      )}
+                                    </Text>
+                                  </Inline>
                                   <Button
                                     onClick={() => {
                                       setShowDisabilityChangesIn2025(true)
                                     }}
-                                    size="small"
+                                    variant="text"
+                                    size="large"
+                                    icon="arrowForward"
                                   >
                                     {formatMessage(
                                       translationStrings.after1stSeptember2025Calculate,
