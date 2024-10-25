@@ -43,14 +43,14 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const [appealDate, setAppealDate] = useState<Date>()
   const [textItems, setTextItems] = useState<string[]>([])
   const [triggerAnimation, setTriggerAnimation] = useState<boolean>(false)
+  const [triggerAnimation2, setTriggerAnimation2] = useState<boolean>(false)
   const { setAndSendDefendantToServer } = useDefendants()
   const { workingCase, setWorkingCase } = useContext(FormContext)
 
-  // The defendant can appeal if the verdict has been served to them or if the cases
-  // ruling is a FINE because in those cases a verdict is not served to the defendant
   const serviceRequirementNotRequired =
     indictmentRulingDecision === CaseIndictmentRulingDecision.FINE ||
-    defendant.serviceRequirement !== ServiceRequirement.REQUIRED
+    (defendant.serviceRequirement &&
+      defendant.serviceRequirement !== ServiceRequirement.REQUIRED)
 
   const handleDateChange = (
     date: Date | undefined,
@@ -91,23 +91,22 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         setWorkingCase,
       )
     } else if (dateType === 'appealDate' && appealDate) {
-      setTimeout(() => {
-        setAndSendDefendantToServer(
-          {
-            caseId: workingCase.id,
-            defendantId: defendant.id,
-            verdictAppealDate: formatDateForServer(appealDate),
-          },
-          setWorkingCase,
-        )
-      }, 400)
+      setTriggerAnimation2(true)
+      setAndSendDefendantToServer(
+        {
+          caseId: workingCase.id,
+          defendantId: defendant.id,
+          verdictAppealDate: formatDateForServer(appealDate),
+        },
+        setWorkingCase,
+      )
     } else {
       toast.error(formatMessage(errors.general))
     }
   }
 
   const datePickerVariants = {
-    dpHidden: { opacity: 0, y: 15 },
+    dpHidden: { opacity: 0, y: 15, marginTop: '16px' },
     dpVisible: { opacity: 1, y: 0 },
     dpExit: {
       opacity: 0,
@@ -116,7 +115,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   }
 
   const datePicker2Variants = {
-    dpHidden: { opacity: 0, y: 15 },
+    dpHidden: { opacity: 0, y: 15, marginTop: '16px' },
     dpVisible: {
       opacity: 1,
       y: 0,
@@ -126,7 +125,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     dpExit: {
       opacity: 0,
       height: 0,
-      transition: { height: { delay: 0.6 }, opacity: { delay: 0.4 } },
+      transition: { opacity: { duration: 0.2 } },
     },
   }
 
@@ -197,13 +196,15 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           textItems.map((text, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{
+                marginTop: index === 0 ? 0 : '16px',
+                opacity: 0,
+                y: 20,
+                height: triggerAnimation2 ? 0 : 'auto',
+              }}
+              animate={{ opacity: 1, y: 0, height: 'auto' }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ delay: index < 3 ? index * 0.2 : 0, duration: 0.3 }}
-              style={{
-                marginTop: index === 0 ? 0 : '16px',
-              }}
               onAnimationComplete={() => setTriggerAnimation(true)}
             >
               <Text>{`• ${text}`}</Text>
@@ -220,7 +221,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             initial="dpHidden"
             animate="dpVisible"
             exit="dpExit"
-            style={{ marginTop: '16px' }}
           >
             <Box className={styles.dataContainer}>
               <DateTime
@@ -255,7 +255,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             animate="dpVisible"
             exit="dpExit"
             transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
-            style={{ marginTop: '16px' }}
           >
             <Box className={styles.dataContainer}>
               <DateTime
