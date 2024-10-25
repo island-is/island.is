@@ -13,3 +13,19 @@ query GetUserProfileByNationalId($nationalId: String!) {
     locale
   }
 }
+
+mutation UpdateUserProfile($nationalId: String!, $input: UpdateUserProfileInput!) {
+  UserProfileAdminUpdateProfile(nationalId: $nationalId, input: $input) {
+    nationalId
+    email
+    emailVerified
+    mobilePhoneNumber
+    mobilePhoneNumberVerified
+    lastNudge
+    nextNudge
+    fullName
+    documentNotifications
+    emailNotifications
+    locale
+  }
+}

@@ -9,6 +9,7 @@ import { m } from '../../lib/messages'
 import { ServiceDeskPaths } from '../../lib/paths'
 import { CompanyRelationshipResult } from './Procurers.loader'
 import { Card } from '../../components/Card'
+import React from 'react'
 
 const Procurers = () => {
   const { formatMessage } = useLocale()
@@ -18,8 +19,11 @@ const Procurers = () => {
 
   return (
     <Stack space="containerGutter">
-      <BackButton onClick={() => navigate(ServiceDeskPaths.Companies)} />
-      <div>
+      <BackButton
+        onClick={() => {
+          navigate(-1)
+        }}
+      />      <div>
         <IntroHeader title={company.name} intro={formattedNationalId} />
         <Box marginTop={[3, 3, 6]}>
           {company.companyInfo?.relationships?.length === 0 ? (

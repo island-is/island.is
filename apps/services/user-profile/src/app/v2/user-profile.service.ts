@@ -119,14 +119,17 @@ export class UserProfileService {
   }
 
   async patch(
-    user: User,
+    user: {
+      nationalId: string
+      audkenniSimNumber?: string
+    },
     userProfile: PatchUserProfileDto,
   ): Promise<UserProfileDto> {
     const { nationalId, audkenniSimNumber } = user
     const isEmailDefined = isDefined(userProfile.email)
     const isMobilePhoneNumberDefined = isDefined(userProfile.mobilePhoneNumber)
 
-    const audkenniSimSameAsMobilePhoneNumber =
+    const audkenniSimSameAsMobilePhoneNumber = audkenniSimNumber && isMobilePhoneNumberDefined &&
       this.checkAudkenniSameAsMobilePhoneNumber(
         audkenniSimNumber,
         userProfile.mobilePhoneNumber,
@@ -270,6 +273,7 @@ export class UserProfileService {
         },
         { transaction },
       )
+      console.log('isEmailDefined', isEmailDefined)
 
       if (
         isEmailDefined ||

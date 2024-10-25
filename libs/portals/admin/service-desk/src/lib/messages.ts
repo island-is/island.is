@@ -69,6 +69,10 @@ export const m = defineMessages({
     id: 'admin-portal.service-desk:email',
     defaultMessage: 'Netfang',
   },
+  delete: {
+    id: 'admin-portal.service-desk:delete-email',
+    defaultMessage: 'Eyða',
+  },
   phone: {
     id: 'admin-portal.service-desk:phone',
     defaultMessage: 'Símanúmer',
@@ -139,4 +143,12 @@ export const m = defineMessages({
     id: 'admin-portal.service-desk:no-users-found',
     defaultMessage: 'Engir notendur fundust',
   },
+  noEmail: {
+    id: 'admin-portal.service-desk:no-email',
+    defaultMessage: 'Ekkert netfang skráð',
+  },
+  noMobilePhone: {
+    id: 'admin-portal.service-desk:no-mobile-phone',
+    defaultMessage: 'Ekkert símanúmer skráð',
+  }
 })

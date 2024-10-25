@@ -1,9 +1,9 @@
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 import {
-  BadRequestException,
+  BadRequestException, Body,
   Controller,
   Get,
-  Headers,
+  Headers, Patch,
   Query,
   UseGuards,
 } from '@nestjs/common'
@@ -19,6 +19,7 @@ import { UserProfileService } from './user-profile.service'
 import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
 import { ClientType } from '../types/ClientType'
 import { ActorProfileDto } from './dto/actor-profile.dto'
+import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 
 const namespace = '@island.is/user-profile/v2/users'
 
@@ -131,5 +132,33 @@ export class UserProfileController {
       toNationalId,
       fromNationalId,
     })
+  }
+
+  @Patch('/.national-id')
+  @Documentation({
+    description: 'Update user profile for given nationalId.',
+    request: {
+      header: {
+        'X-Param-National-Id': {
+          required: true,
+          description: 'National id of the user to update',
+        },
+      },
+    },
+    response: { status: 200, type: UserProfileDto },
+  })
+  @Audit<UserProfileDto>({
+    resources: (profile) => profile.nationalId,
+  })
+  @Scopes(
+    AdminPortalScope.serviceDesk,
+  )
+  patchUserProfile(
+    @Headers('X-Param-National-Id') nationalId: string,
+    @Body() userProfile: PatchUserProfileDto,
+  ): Promise<UserProfileDto> {
+    return this.userProfileService.patch({
+      nationalId,
+    }, userProfile)
   }
 }
