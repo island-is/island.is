@@ -47,20 +47,23 @@ describe('EndorsementListController', () => {
 
     it.each([
       ['GET', '/endorsement-list'],
-      ['POST', '/endorsement-list'], 
+      ['POST', '/endorsement-list'],
       ['GET', '/endorsement-list/12345'],
       ['PUT', '/endorsement-list/12345/close'],
       ['PUT', '/endorsement-list/12345/lock'],
-    ])('%s %s should return 401 when user is not authenticated', async (method, path) => {
-      const res = await (server as any)[method.toLowerCase()](path)
+    ])(
+      '%s %s should return 401 when user is not authenticated',
+      async (method, path) => {
+        const res = await (server as any)[method.toLowerCase()](path)
 
-      expect(res.status).toBe(401)
-      expect(res.body).toMatchObject({
-        status: 401,
-        title: 'Unauthorized',
-        type: 'https://httpstatuses.org/401',
-      })
-    })
+        expect(res.status).toBe(401)
+        expect(res.body).toMatchObject({
+          status: 401,
+          title: 'Unauthorized',
+          type: 'https://httpstatuses.org/401',
+        })
+      },
+    )
   })
 
   describe('With auth', () => {
@@ -76,13 +79,17 @@ describe('EndorsementListController', () => {
 
         server = request(app.getHttpServer())
         const endorsementListService = app.get(EndorsementListService)
-        
-        jest.spyOn(endorsementListService, 'findListsByTags').mockResolvedValue({
-          data: [mockEndorsementList],
-          totalCount: 1,
-          pageInfo: { hasNextPage: false },
-        })
-        jest.spyOn(endorsementListService, 'create').mockResolvedValue(mockEndorsementList)
+
+        jest
+          .spyOn(endorsementListService, 'findListsByTags')
+          .mockResolvedValue({
+            data: [mockEndorsementList],
+            totalCount: 1,
+            pageInfo: { hasNextPage: false },
+          })
+        jest
+          .spyOn(endorsementListService, 'create')
+          .mockResolvedValue(mockEndorsementList)
       })
 
       afterAll(async () => {
@@ -110,7 +117,9 @@ describe('EndorsementListController', () => {
             title: 'New List',
             description: 'New description',
             openedDate: new Date(),
-            closedDate: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+            closedDate: new Date(
+              new Date().setMonth(new Date().getMonth() + 1),
+            ),
           }
 
           const res = await server.post('/endorsement-list').send(newList)
@@ -133,10 +142,16 @@ describe('EndorsementListController', () => {
 
         server = request(app.getHttpServer())
         const endorsementListService = app.get(EndorsementListService)
-        
-        jest.spyOn(endorsementListService, 'findSingleList').mockResolvedValue(mockEndorsementList)
-        jest.spyOn(endorsementListService, 'lock').mockResolvedValue(mockEndorsementList)
-        jest.spyOn(endorsementListService, 'unlock').mockResolvedValue(mockEndorsementList)
+
+        jest
+          .spyOn(endorsementListService, 'findSingleList')
+          .mockResolvedValue(mockEndorsementList)
+        jest
+          .spyOn(endorsementListService, 'lock')
+          .mockResolvedValue(mockEndorsementList)
+        jest
+          .spyOn(endorsementListService, 'unlock')
+          .mockResolvedValue(mockEndorsementList)
       })
 
       afterAll(async () => {
@@ -182,17 +197,20 @@ describe('EndorsementListController', () => {
         ['GET', '/endorsement-list'],
         ['POST', '/endorsement-list'],
         ['PUT', '/endorsement-list/12345/lock'],
-      ])('%s %s should return 403 when user lacks required scope', async (method, path) => {
-        const res = await server[method.toLowerCase()](path)
+      ])(
+        '%s %s should return 403 when user lacks required scope',
+        async (method, path) => {
+          const res = await server[method.toLowerCase()](path)
 
-        expect(res.status).toBe(403)
-        expect(res.body).toMatchObject({
-          status: 403,
-          title: 'Forbidden',
-          detail: 'Forbidden resource',
-          type: 'https://httpstatuses.org/403',
-        })
-      })
+          expect(res.status).toBe(403)
+          expect(res.body).toMatchObject({
+            status: 403,
+            title: 'Forbidden',
+            detail: 'Forbidden resource',
+            type: 'https://httpstatuses.org/403',
+          })
+        },
+      )
     })
   })
 })
