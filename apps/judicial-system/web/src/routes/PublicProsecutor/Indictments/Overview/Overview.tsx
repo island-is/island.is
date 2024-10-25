@@ -20,7 +20,7 @@ import {
   PageLayout,
   PageTitle,
   SectionHeading,
-  useIndictmentsLawsBroken,
+  // useIndictmentsLawsBroken, NOTE: Temporarily hidden while list of laws broken is not complete
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
@@ -55,7 +55,7 @@ export const Overview = () => {
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
   const [modalVisible, setModalVisible] = useState<VisibleModal>()
-  const lawsBroken = useIndictmentsLawsBroken(workingCase)
+  // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
 
   const [selectedDefendant, setSelectedDefendant] = useState<Defendant | null>()
   const { setAndSendDefendantToServer } = useDefendants()
