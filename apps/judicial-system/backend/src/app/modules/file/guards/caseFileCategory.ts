@@ -64,14 +64,19 @@ const canDefenceUserViewCaseFileOfIndictmentCase = (
   defendants?: Defendant[],
   civilClaimants?: CivilClaimant[],
 ) => {
-  if (Defendant.isDefenderOfDefendant(nationalId, defendants)) {
+  if (
+    Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
+      nationalId,
+      defendants,
+    )
+  ) {
     return defenderCaseFileCategoriesForIndictmentCases.includes(
       caseFileCategory,
     )
   }
 
   if (
-    CivilClaimant.isSpokespersonOfCivilClaimantWithCaseFileAccess(
+    CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
       nationalId,
       civilClaimants,
     )
