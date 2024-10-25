@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import format from 'date-fns/format'
 import debounce from 'lodash/debounce'
@@ -10,11 +10,7 @@ import {
   Box,
   BreadCrumbItem,
   Breadcrumbs,
-  Filter,
-  FilterMultiChoice,
-  Input,
   TagVariant,
-  Text,
 } from '@island.is/island-ui/core'
 import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
@@ -46,14 +42,15 @@ import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY } from '../../queries/GenericTag'
 import { GET_GRANTS_QUERY } from '../../queries/Grants'
 import { m } from '../messages'
+import { GrantsSearchResultsFilter } from './SearchResultsFilter'
 
-const initialFilterState = {
-  page: '',
-  query: '',
-  applicationStatuses: new Array<string>,
-  categories: new Array<string>,
-  types: new Array<string>,
-  organizations: new Array<string>,
+export interface SearchState {
+  page?: number
+  query?: string
+  statuses?: Array<string>
+  categories?: Array<string>
+  types?: Array<string>
+  organizations?: Array<string>
 }
 
 const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
@@ -65,96 +62,117 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   const router = useRouter()
   const { linkResolver } = useLinkResolver()
 
-  const [searchState, setSearchState] = useState(initialFilterState)
-  const [grants, setGrants] = useState(initialGrants)
-
-  const [getGrants] = useLazyQuery<GrantList, QueryGetGrantsArgs>(
-    GET_GRANTS_QUERY,
-    {
-      fetchPolicy: 'no-cache',
-    },
-  )
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(document.location.search)
-    setSearchState({
-      page: searchParams.get('page') ?? '',
-      query: searchParams.get('query') ?? '',
-      applicationStatus: searchParams.getAll('applicationStatus') ?? [],
-      category: searchParams.getAll('category') ?? [],
-      type: searchParams.getAll('type') ?? [],
-      organization: searchParams.getAll('organization') ?? [],
-    })
-  }, [])
-
-  const fetchGrants = useMemo(() => {
-    return debounce((state: typeof initialFilterState) => {
-      getGrants({
-        variables: {
-          input: {
-            categories: state.categories,
-            lang: locale,
-            organizations: state.organizations,
-            page: state.page ? Number.parseInt(state.page) : undefined,
-            search: state.query,
-            size: 8,
-            status: state.applicationStatus,
-            type: state.type,
-          },
-        },
-      })
-        .then((res) => {
-          if (res.data?.items.length) {
-            setGrants(res.data.items)
-          } else if (res.error) {
-            setGrants([])
-            console.error('Error fetching grants', res.error)
-          }
-        })
-        .catch((err) => {
-          setGrants([])
-          console.error('Error fetching grants', err)
-        })
-    }, debounceTime.search)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    const isEmpty = !Object.entries(searchState).filter(([_, v]) => !!v).length
-    if (isEmpty) {
-      setGrants(initialGrants)
-    } else {
-      fetchGrants(searchState)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchState])
-
   const parentUrl = linkResolver('styrkjatorg', [], locale).href
   const currentUrl = linkResolver('styrkjatorgsearch', [], locale).href
 
-  const removeEmptyFromObject = (obj: Record<string, string>) => {
-    return Object.entries(obj)
-      .filter(([_, v]) => !!v)
-      .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {})
-  }
+  const [grants, setGrants] = useState<Array<Grant>>()
+  const [searchState, setSearchState] = useState<SearchState>()
 
-  const updateSearchParams = useMemo(() => {
-    return debounce((state: Record<string, string>) => {
-      router.replace(
-        currentUrl,
-        {
-          query: removeEmptyFromObject(state),
-        },
-        { shallow: true },
-      )
-    }, debounceTime.search)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const [getGrants] = useLazyQuery<
+    { getGrants: GrantList },
+    QueryGetGrantsArgs
+  >(GET_GRANTS_QUERY, {
+    fetchPolicy: 'no-cache',
+  })
+
+  //load params into search state on first render
+  useEffect(() => {
+    const searchParams = new URLSearchParams(document.location.search)
+    const page = searchParams.get('page')
+    const statuses = searchParams.getAll('status')
+    const categories = searchParams.getAll('category')
+    const types = searchParams.getAll('type')
+    const organizations = searchParams.getAll('organization')
+
+    setSearchState({
+      page: page ? Number.parseInt(page) : undefined,
+      query: searchParams.get('query') ?? undefined,
+      statuses: statuses.length ? statuses : undefined,
+      categories: categories.length ? categories : undefined,
+      types: types.length ? types : undefined,
+      organizations: organizations.length ? organizations : undefined,
+    })
   }, [])
 
-  const resetFilter = () => {
-    setSearchState(initialFilterState)
-    updateSearchParams(initialFilterState)
-    setGrants(initialGrants)
+  const updateUrl = useCallback(() => {
+    if (!searchState) {
+      return
+    }
+    router.replace(
+      {
+        pathname: currentUrl,
+        query: Object.entries(searchState)
+          .filter(([_, value]) => !!value)
+          .reduce(
+            (accumulator, [searchStateKey, searchStateValue]) => ({
+              ...accumulator,
+              [searchStateKey]: searchStateValue,
+            }),
+            {},
+          ),
+      },
+      undefined,
+      { shallow: true },
+    )
+  }, [searchState, router, currentUrl])
+
+  const fetchGrants = useCallback(() => {
+    if (!grants) {
+      setGrants(initialGrants)
+      return
+    }
+    getGrants({
+      variables: {
+        input: {
+          categories: searchState?.categories,
+          lang: locale,
+          organizations: searchState?.organizations,
+          page: searchState?.page,
+          search: searchState?.query,
+          size: 8,
+          statuses: searchState?.statuses,
+          types: searchState?.types,
+        },
+      },
+    })
+      .then((res) => {
+        if (res.data?.getGrants.items.length) {
+          console.log(res.data.getGrants.items)
+          setGrants(res.data.getGrants.items)
+        } else if (res.error) {
+          setGrants([])
+          console.error('Error fetching grants', res.error)
+        }
+      })
+      .catch((err) => {
+        setGrants([])
+        console.error('Error fetching grants', err)
+      })
+  }, [searchState, initialGrants])
+
+  //SEARCH STATE UPDATES
+  const debouncedSearchUpdate = useMemo(() => {
+    return debounce(() => {
+      updateUrl()
+      fetchGrants()
+    }, debounceTime.search)
+  }, [searchState])
+
+  useEffect(() => {
+    debouncedSearchUpdate()
+    return () => {
+      debouncedSearchUpdate.cancel()
+    }
+  }, [debouncedSearchUpdate])
+
+  const updateSearchStateValue = (
+    categoryId: keyof SearchState,
+    values: unknown,
+  ) => {
+    setSearchState({
+      ...searchState,
+      [categoryId]: values,
+    })
   }
 
   const breadcrumbItems: Array<BreadCrumbItem> = [
@@ -173,13 +191,17 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     },
   ]
 
-  const categoryFilters = tags?.filter(
-    (t) => t.genericTagGroup?.slug === 'grant-category',
-  )
-
-  const typeFilters = tags?.filter(
-    (t) => t.genericTagGroup?.slug === 'grant-type',
-  )
+  const onResetFilter = () => {
+    setSearchState({
+      page: undefined,
+      query: undefined,
+      statuses: undefined,
+      categories: undefined,
+      types: undefined,
+      organizations: undefined,
+    })
+    router.replace(currentUrl, {}, { shallow: true })
+  }
 
   return (
     <GrantWrapper
@@ -213,107 +235,13 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
         <SidebarLayout
           fullWidthContent={true}
           sidebarContent={
-            <Box component="form" borderRadius="large" action={currentUrl}>
-              <Box marginBottom={[1, 1, 2]}>
-                <Text variant="h4">Leit</Text>
-
-                <Input
-                  name="q"
-                  placeholder={formatMessage(m.search.inputPlaceholder)}
-                  size="xs"
-                  value={searchState.query}
-                  onChange={() => console.log('update search')}
-                />
-              </Box>
-              <Box background="white" padding={[1, 1, 2]}>
-                <Filter
-                  labelClearAll={'Hreina síu'}
-                  labelClear={''}
-                  labelOpen={''}
-                  onFilterClear={resetFilter}
-                >
-                  <FilterMultiChoice
-                    labelClear={''}
-                    onChange={() => console.log('change')}
-                    onClear={() => console.log('clear')}
-                    categories={[
-                      {
-                        id: 'bleble',
-                        label: 'Staða umsóknar',
-                        selected: [],
-                        filters: [
-                          {
-                            value: 'Opið fyrir umsóknir',
-                            label: 'Opið fyrir umsóknir',
-                          },
-                          {
-                            value: 'Opnar fljótlega',
-                            label: 'Opnar fljótlega',
-                          },
-                          {
-                            value: 'Lokað fyrir umsóknir',
-                            label: 'Lokað fyrir umsóknir',
-                          },
-                          {
-                            value: 'Óvirkur sjóður',
-                            label: 'Óvirkur sjóður',
-                          },
-                        ],
-                      },
-                      categoryFilters
-                        ? {
-                            id: 'grant-categories',
-                            label: 'Flokkur',
-                            selected: [],
-                            filters: categoryFilters.map((t) => ({
-                              value: t.slug,
-                              label: t.title,
-                            })),
-                          }
-                        : undefined,
-                      typeFilters
-                        ? {
-                            id: 'grant-types',
-                            label: 'Tegund',
-                            selected: [],
-                            filters: typeFilters.map((t) => ({
-                              value: t.slug,
-                              label: t.title,
-                            })),
-                          }
-                        : undefined,
-                      {
-                        id: 'bleble3',
-                        label: 'Stofnun',
-                        selected: [],
-                        filters: [
-                          {
-                            value: 'Rannís',
-                            label: 'Rannís',
-                          },
-                          {
-                            value: 'Tónlistarmiðstöð',
-                            label: 'Tónlistarmiðstöð',
-                          },
-                          {
-                            value: 'Kvikmyndastöð',
-                            label: 'Kvikmyndastöð',
-                          },
-                          {
-                            value: 'Félags- og vinnumarkaðsráðuneytið',
-                            label: 'Félags- og vinnumarkaðsráðuneytið',
-                          },
-                          {
-                            value: 'Menningar- og viðskiptaráðuneytið',
-                            label: 'Menningar- og viðskiptaráðuneytið',
-                          },
-                        ],
-                      },
-                    ].filter(isDefined)}
-                  />
-                </Filter>
-              </Box>
-            </Box>
+            <GrantsSearchResultsFilter
+              searchState={searchState}
+              onSearchUpdate={updateSearchStateValue}
+              onReset={onResetFilter}
+              tags={tags ?? []}
+              url={currentUrl}
+            />
           }
         >
           <Box display="flex" flexDirection="row" flexWrap="wrap">

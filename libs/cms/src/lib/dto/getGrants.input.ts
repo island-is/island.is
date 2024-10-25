@@ -23,22 +23,22 @@ export class GetGrantsInput {
   @IsOptional()
   size?: number = 8
 
-  @Field({ nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsArray()
   @IsOptional()
   statuses?: string[]
 
-  @Field({ nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsArray()
   @IsOptional()
   categories?: string[]
 
-  @Field({ nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsArray()
   @IsOptional()
   types?: string[]
 
-  @Field({ nullable: true })
+  @Field(() => [String], { nullable: true })
   @IsArray()
   @IsOptional()
   organizations?: string[]

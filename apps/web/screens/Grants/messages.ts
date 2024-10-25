@@ -8,6 +8,10 @@ export const m = {
     },
   }),
   search: defineMessages({
+    search: {
+      id: 'web.grants:search.search',
+      defaultMessage: 'Leit',
+    },
     inputPlaceholder: {
       id: 'web.grants:search.inputPlaceholder',
       defaultMessage: 'Sía eftir leitarorði',
