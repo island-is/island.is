@@ -143,7 +143,7 @@ export const getIndictmentInfo = (
 
   const theRulingDate = new Date(rulingDate)
   indictmentInfo.indictmentAppealDeadline = new Date(
-    theRulingDate.getTime() + getDays(28),
+    theRulingDate.getTime() + getDays(VERDICT_APPEAL_WINDOW_DAYS),
   ).toISOString()
 
   const verdictInfo = defendants?.map<[boolean, Date | undefined]>(
@@ -177,18 +177,17 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
       defendant.serviceRequirement !== ServiceRequirement.REQUIRED
 
     const { verdictViewDate } = defendant
-    const verdictAppealDeadline =
-      serviceRequirementNotRequired && theCase.rulingDate
-        ? new Date(
-            new Date(theCase.rulingDate).getTime() +
-              getDays(VERDICT_APPEAL_WINDOW_DAYS),
-          ).toISOString()
-        : verdictViewDate
-        ? new Date(
-            new Date(verdictViewDate).getTime() +
-              getDays(VERDICT_APPEAL_WINDOW_DAYS),
-          ).toISOString()
-        : undefined
+
+    const baseDate = serviceRequirementNotRequired
+      ? theCase.rulingDate
+      : verdictViewDate
+
+    const verdictAppealDeadline = baseDate
+      ? new Date(
+          new Date(baseDate).getTime() + getDays(VERDICT_APPEAL_WINDOW_DAYS),
+        ).toISOString()
+      : undefined
+
     const isVerdictAppealDeadlineExpired = verdictAppealDeadline
       ? Date.now() >= new Date(verdictAppealDeadline).getTime()
       : false
