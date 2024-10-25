@@ -23,6 +23,7 @@ import { m } from './utils/messages'
 import { ApiActions, Events, Roles, States } from '../types/types'
 import { dataSchema } from './utils/dataSchema'
 import { Features } from '@island.is/feature-flags'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const configuration =
   ApplicationConfigurations[
@@ -40,7 +41,14 @@ const FinancialStatementIndividualElectionTemplate: ApplicationTemplate<
   dataSchema,
   translationNamespaces: [configuration.translation],
   featureFlag: Features.FinancialStatementIndividualElectionEnabled,
-  // allowedDelegations: ...,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
