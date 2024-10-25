@@ -93,8 +93,7 @@ export const publishing = {
       },
       placeholder: {
         id: 'ojoi.application:publishing.inputs.messages.placeholder',
-        defaultMessage:
-          'Hér er hægt að skrifa skilaboð til Stjórnartíðinda varðandi auglýsinguna.',
+        defaultMessage: 'Skilaboð til ritstjóra Stjórnartíðinda.',
         description: 'Placeholder of the messages textarea input',
       },
     }),

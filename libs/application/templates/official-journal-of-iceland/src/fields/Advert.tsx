@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { InputFields, OJOIFieldBaseProps } from '../lib/types'
 import { Box } from '@island.is/island-ui/core'
 import { FormGroup } from '../components/form/FormGroup'
@@ -12,6 +12,8 @@ import { OJOIHtmlController } from '../components/input/OJOIHtmlController'
 import { useFormContext } from 'react-hook-form'
 import { useApplication } from '../hooks/useUpdateApplication'
 import set from 'lodash/set'
+import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
+import { getAdvertMarkup } from '../lib/utils'
 
 type Props = OJOIFieldBaseProps & {
   timeStamp: string
@@ -33,9 +35,6 @@ export const Advert = ({ application, timeStamp }: Props) => {
     initalDepartmentId: application.answers?.advert?.departmentId,
   })
 
-  const [localTypeId, setLocalTypeId] = useState<string | undefined>(
-    application.answers?.advert?.typeId,
-  )
   const handleDepartmentChange = useCallback(
     (value: string) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -45,7 +44,6 @@ export const Advert = ({ application, timeStamp }: Props) => {
           pageSize: 100,
         },
       })
-      setLocalTypeId(undefined)
     },
     [useLazyTypes],
   )
@@ -58,6 +56,11 @@ export const Advert = ({ application, timeStamp }: Props) => {
 
     updateApplication(currentAnswers)
   }
+
+  const titlePreview = getAdvertMarkup({
+    type: currentApplication.answers.advert?.typeName,
+    title: currentApplication.answers.advert?.title,
+  })
 
   return (
     <>
@@ -73,7 +76,7 @@ export const Advert = ({ application, timeStamp }: Props) => {
               label: d.title,
               value: d.id,
             }))}
-            onChange={(label, value) => handleDepartmentChange(value)}
+            onChange={(_, value) => handleDepartmentChange(value)}
           />
         </Box>
         <Box className={styles.inputWrapper}>
@@ -84,13 +87,12 @@ export const Advert = ({ application, timeStamp }: Props) => {
             placeholder={advert.inputs.type.placeholder}
             loading={loadingTypes}
             disabled={!types}
-            defaultValue={localTypeId}
+            defaultValue={application.answers?.advert?.typeId}
             options={types?.map((d) => ({
               label: d.title,
               value: d.id,
             }))}
             onChange={(label, value) => {
-              setLocalTypeId(value)
               updateTypeHandler(label, value)
             }}
           />
@@ -103,6 +105,14 @@ export const Advert = ({ application, timeStamp }: Props) => {
             defaultValue={application.answers?.advert?.title}
             placeholder={advert.inputs.title.placeholder}
             textarea={true}
+          />
+        </Box>
+        <Box>
+          <HTMLEditor
+            name="preview.title"
+            config={{ toolbar: false }}
+            readOnly={true}
+            value={titlePreview}
           />
         </Box>
       </FormGroup>

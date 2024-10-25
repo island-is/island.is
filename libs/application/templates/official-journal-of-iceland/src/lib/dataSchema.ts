@@ -38,6 +38,7 @@ export const committeeSignatureSchema = regularSignatureItemSchema
 
 export const channelSchema = z
   .object({
+    name: z.string(),
     email: z.string(),
     phone: z.string(),
   })
@@ -46,6 +47,7 @@ export const channelSchema = z
 const advertSchema = z
   .object({
     departmentId: z.string().optional(),
+    typeName: z.string().optional(),
     typeId: z.string().optional(),
     title: z.string().optional(),
     html: z.string().optional(),
@@ -113,6 +115,35 @@ export const advertValidationSchema = z.object({
       .optional()
       .refine((value) => value && value.length > 0, {
         params: error.missingHtml,
+      }),
+  }),
+})
+
+export const previewValidationSchema = z.object({
+  advert: z.object({
+    departmentId: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingPreviewDepartment,
+      }),
+    typeId: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingPreviewType,
+      }),
+    title: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingPreviewTitle,
+      }),
+    html: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingPreviewHtml,
       }),
   }),
 })
@@ -204,13 +235,14 @@ const validateInstitutionAndDate = (
   date: string | undefined,
   context: z.RefinementCtx,
 ) => {
+  let success = true
   if (!institution) {
     context.addIssue({
       code: z.ZodIssueCode.custom,
       params: error.missingSignatureInstitution,
     })
 
-    return false
+    success = false
   }
 
   if (!date) {
@@ -219,10 +251,10 @@ const validateInstitutionAndDate = (
       params: error.missingSignatureDate,
     })
 
-    return false
+    success = false
   }
 
-  return true
+  return success
 }
 
 const validateRegularSignature = (

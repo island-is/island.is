@@ -73,37 +73,38 @@ export const InvolvedPartyScreen = ({
       intro={f(involvedParty.general.intro)}
       loading={loading}
     >
-      <Stack space={2}>
-        {involvedParties?.length === 0 && (
-          <AlertMessage
-            type="warning"
-            title={f(involvedParty.errors.noDataTitle)}
-            message={f(involvedParty.errors.noDataMessage)}
+      <Box>
+        <Stack space={2}>
+          {involvedParties?.length === 0 && (
+            <AlertMessage
+              type="warning"
+              title={f(involvedParty.errors.noDataTitle)}
+              message={f(involvedParty.errors.noDataMessage)}
+            />
+          )}
+          {!!error && (
+            <AlertMessage
+              type="error"
+              title={f(involvedParty.errors.title)}
+              message={f(involvedParty.errors.message)}
+            />
+          )}
+        </Stack>
+        <Box width="half">
+          <OJOISelectController
+            disabled={disableSelect}
+            loading={loading}
+            name={InputFields.advert.involvedPartyId}
+            label={f(involvedParty.general.section)}
+            options={options}
+            applicationId={application.id}
+            defaultValue={defaultValue}
+            placeholder={involvedParty.inputs.select.placeholder}
+            onChange={() => {
+              setSubmitButtonDisabled && setSubmitButtonDisabled(false)
+            }}
           />
-        )}
-        {!!error && (
-          <AlertMessage
-            type="error"
-            title={f(involvedParty.errors.title)}
-            message={f(involvedParty.errors.message)}
-          />
-        )}
-      </Stack>
-      <Box width="half">
-        <OJOISelectController
-          disabled={disableSelect}
-          loading={loading}
-          name={InputFields.advert.involvedPartyId}
-          label={f(involvedParty.general.section)}
-          options={options}
-          applicationId={application.id}
-          defaultValue={defaultValue}
-          placeholder={involvedParty.inputs.select.placeholder}
-          onChange={() => {
-            console.log('onChange')
-            setSubmitButtonDisabled && setSubmitButtonDisabled(false)
-          }}
-        />
+        </Box>
       </Box>
     </FormScreen>
   )

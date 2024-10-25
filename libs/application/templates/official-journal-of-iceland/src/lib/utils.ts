@@ -322,8 +322,14 @@ export const getSingleSignatureMarkup = (
   return signatureTemplate([signature], additionalSignature, chairman)
 }
 
-export const getFastTrack = (date: Date) => {
+export const getFastTrack = (date?: Date) => {
   const now = new Date()
+  if (!date)
+    return {
+      fastTrack: false,
+      now,
+    }
+
   const diff = date.getTime() - now.getTime()
   const diffDays = diff / (1000 * 3600 * 24)
   let fastTrack = false

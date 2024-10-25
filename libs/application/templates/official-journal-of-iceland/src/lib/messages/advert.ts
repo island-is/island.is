@@ -29,7 +29,7 @@ export const advert = {
   buttons: defineMessages({
     copyOldAdvert: {
       id: 'ojoi.application:advert.buttons.copyOldAdvert.label',
-      defaultMessage: 'Afrita eldri mál',
+      defaultMessage: 'Afrita eldra mál',
       description: 'Label for the copy old advert button',
     },
   }),
@@ -78,7 +78,7 @@ export const advert = {
       },
       placeholder: {
         id: 'ojoi.application:advert.inputs.title.placeholder',
-        defaultMessage: 'Skráðu heiti innsendingar',
+        defaultMessage: 'Heiti auglýsingar (án tegundar)',
         description: 'Placeholder for the title input',
       },
     }),

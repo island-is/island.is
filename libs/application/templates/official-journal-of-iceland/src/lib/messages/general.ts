@@ -21,6 +21,11 @@ export const general = defineMessages({
     id: 'ojoi.application:general.ministryOfJustice',
     defaultMessage: 'Dómsmálaráðuneytið',
   },
+  name: {
+    id: 'ojoi.application:general.name',
+    defaultMessage: 'Nafn',
+  },
+
   phoneNumber: {
     id: 'ojoi.application:general.phoneNumber',
     defaultMessage: 'Símanúmer',

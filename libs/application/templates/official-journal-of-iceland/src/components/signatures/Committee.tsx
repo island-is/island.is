@@ -53,7 +53,7 @@ export const CommitteeSignature = ({ applicationId }: Props) => {
           <Text variant="h5" marginBottom={2}>
             {f(signatures.headings.committeeMembers)}
           </Text>
-          <Stack space={2} dividers skipLastDivider>
+          <Stack space={2} dividers>
             {signature?.members?.map((member, index) => (
               <CommitteeMember
                 key={index}
@@ -62,8 +62,8 @@ export const CommitteeSignature = ({ applicationId }: Props) => {
                 member={member}
               />
             ))}
-            <AddCommitteeMember applicationId={applicationId} />
           </Stack>
+          <AddCommitteeMember applicationId={applicationId} />
         </Box>
       </Box>
       <AdditionalSignature

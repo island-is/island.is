@@ -7,6 +7,7 @@ import { useApplication } from '../hooks/useUpdateApplication'
 import {
   AlertMessage,
   Box,
+  Icon,
   Select,
   SkeletonLoader,
   Tag,
@@ -18,8 +19,9 @@ import addYears from 'date-fns/addYears'
 import { addWeekdays, getFastTrack, getWeekendDates } from '../lib/utils'
 import { useState } from 'react'
 
-export const Publishing = ({ application, goToScreen }: OJOIFieldBaseProps) => {
+export const Publishing = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
+  const [isUpdatingCategory, setIsUpdatingCategory] = useState(false)
 
   const { application: currentApplication, updateApplication } = useApplication(
     {
@@ -51,7 +53,9 @@ export const Publishing = ({ application, goToScreen }: OJOIFieldBaseProps) => {
   )
 
   const onCategoryChange = (value?: string) => {
+    setIsUpdatingCategory(true)
     if (!value) {
+      setIsUpdatingCategory(false)
       return
     }
 
@@ -68,7 +72,9 @@ export const Publishing = ({ application, goToScreen }: OJOIFieldBaseProps) => {
       newCategories,
     )
 
-    updateApplication(updatedAnswers)
+    updateApplication(updatedAnswers, () => {
+      setIsUpdatingCategory(false)
+    })
   }
 
   const defaultCategory = {
@@ -130,8 +136,16 @@ export const Publishing = ({ application, goToScreen }: OJOIFieldBaseProps) => {
               flexWrap="wrap"
             >
               {selectedCategories?.map((c) => (
-                <Tag onClick={() => onCategoryChange(c.id)} outlined key={c.id}>
-                  {c.title}
+                <Tag
+                  disabled={isUpdatingCategory}
+                  onClick={() => onCategoryChange(c.id)}
+                  outlined
+                  key={c.id}
+                >
+                  <Box display="flex" alignItems="center">
+                    {c.title}
+                    <Icon icon="close" size="small" />
+                  </Box>
                 </Tag>
               ))}
             </Box>
