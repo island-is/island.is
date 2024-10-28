@@ -306,8 +306,6 @@ export const Occupation: FC<
     return [true, null]
   })
 
-  console.log('formContext', getValues())
-
   return (
     <Box>
       {/* Search bar */}

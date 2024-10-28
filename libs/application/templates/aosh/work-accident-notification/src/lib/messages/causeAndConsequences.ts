@@ -10,12 +10,12 @@ export const causeAndConsequences = {
     mostSeriousWarning: {
       id: 'aosh.wan.application:causeAndConsequences.circumstances.mostSeriousWarning',
       defaultMessage: 'Hakaðu við það sem þú telur að sé alvarlegast.',
-      description: 'Warning before most serious choice',
+      description: 'Warning before "most serious" choice',
     },
     mostSeriousAlert: {
       id: 'aosh.wan.application:causeAndConsequences.circumstances.mostSeriousAlert',
       defaultMessage: 'Vinsamlegast veldur eitt af eftirfarandi.',
-      description: 'Alert before most serious choice',
+      description: 'Alert before "most serious" choice',
     },
     causeAndConsequencesNothingChosen: {
       id: 'aosh.wan.application:causeAndConsequences.circumstances.causeAndConsequencesNothingChosen',
@@ -166,12 +166,12 @@ export const causeAndConsequences = {
     },
     heading: {
       id: 'aosh.wan.application:causeAndConsequences.injuredBodyParts.heading',
-      defaultMessage: '?ennan texta vantar...',
+      defaultMessage: 'Þennan texta vantar...',
       description: 'Heading before choosing injured body parts of accident',
     },
     subHeading: {
       id: 'aosh.wan.application:causeAndConsequences.injuredBodyParts.subHeading',
-      defaultMessage: 'Lýstu því við hvað .... vantar þennan texta',
+      defaultMessage: 'Lýstu því hvað .... vantar þennan texta',
       description:
         'Text below heading before choosing injured body parts of accident',
     },
