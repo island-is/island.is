@@ -14,6 +14,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { error } from '@island.is/application/templates/general-fishing-license'
+import { S3Service } from '@island.is/nest/aws'
 
 @Injectable()
 export class GeneralFishingLicenseService extends BaseTemplateApiService {
@@ -22,6 +23,7 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly fishingLicenceApi: FishingLicenseService,
     private readonly umsoknirApi: UmsoknirApi,
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.GENERAL_FISHING_LICENSE)
   }
@@ -87,12 +89,19 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
         'fishingLicenseFurtherInformation.attachments',
         [],
       ) as Array<{ key: string; name: string }>
+      
+      const attachmentDict = (
+        application.attachments as {
+          [key: string]: string
+        }
+      )
       const attachments = await Promise.all(
         attachmentsRaw?.map(async (a) => {
+          const filename = attachmentDict[a.key]
           const vidhengiBase64 =
-            await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
-              application,
-              a.key,
+            await this.s3Service.getFileContent(
+              filename,
+              'base64'
             )
           return {
             vidhengiBase64,

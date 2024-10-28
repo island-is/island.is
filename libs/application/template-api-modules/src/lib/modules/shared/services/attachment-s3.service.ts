@@ -1,10 +1,13 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationWithAttachments as Application } from '@island.is/application/types'
-import { S3 } from 'aws-sdk'
+import { ApplicationWithAttachments as Application, ApplicationWithAttachments } from '@island.is/application/types'
 import AmazonS3URI from 'amazon-s3-uri'
 import { logger } from '@island.is/logging'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { S3Service } from '@island.is/nest/aws'
+import { ApplicationService } from '@island.is/application/api/core'
+import { sharedModuleConfig } from '../shared.config'
+import { ConfigType } from '@nestjs/config'
+import { uuid } from 'uuidv4'
 
 export interface AttachmentData {
   key: string
@@ -17,6 +20,9 @@ export interface AttachmentData {
 export class AttachmentS3Service {
   constructor(
     private readonly s3Service: S3Service,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
+    private readonly applicationService: ApplicationService,
   ) 
   {}
 
@@ -64,5 +70,72 @@ export class AttachmentS3Service {
         return { key, fileContent, answerKey, fileName: name }
       }),
     )
+  }
+
+  async addAttachment(
+    application: ApplicationWithAttachments,
+    fileName: string,
+    buffer: Buffer,
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string> {
+    return this.saveAttachmentToApplicaton(
+      application,
+      fileName,
+      buffer,
+      uploadParameters,
+    )
+  }
+
+  async saveAttachmentToApplicaton(
+    application: ApplicationWithAttachments,
+    fileName: string,
+    buffer: Buffer,
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string> {
+    const uploadBucket = this.config.templateApi.attachmentBucket
+    if (!uploadBucket) throw new Error('No attachment bucket configured')
+
+    const fileId = uuid()
+    const attachmentKey = `${fileId}-${fileName}`
+    const s3key = `${application.id}/${attachmentKey}`
+    const url = await this.s3Service.uploadFile(
+      buffer,
+      { bucket: uploadBucket, key: s3key },
+      uploadParameters,
+    )
+
+    await this.applicationService.update(application.id, {
+      attachments: {
+        ...application.attachments,
+        [attachmentKey]: url,
+      },
+    })
+
+    return attachmentKey
+  }
+
+  async getAttachmentUrl(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+    expiration: number,
+  ): Promise<string> {
+    if (expiration <= 0) {
+      return Promise.reject('expiration must be positive')
+    }
+    const fileName = (
+      application.attachments as {
+        [key: string]: string
+      }
+    )[attachmentKey]
+
+    return this.s3Service.getPresignedUrl(fileName, expiration)
   }
 }

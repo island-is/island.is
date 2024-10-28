@@ -16,7 +16,6 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Upload } from '@aws-sdk/lib-storage'
 import { createPresignedPost, PresignedPost, PresignedPostOptions } from "@aws-sdk/s3-presigned-post";
-import { PassThrough } from 'stream'
 
 export interface BucketKeyPair {
   bucket: string
@@ -124,47 +123,6 @@ export class S3Service {
       this.logger.error(`Error occurred while uploading file: ${key} to S3 bucket: ${bucket}`, error)
       throw error
     }
-  }
-
-  public async uploadFileFromStream(
-    stream: Response,
-    BucketKeyPairOrFilename: BucketKeyPair | string,
-    expirationOverride?: number,
-  ): Promise<string | null> {
-    const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
-    const { passThrough, uploadPromise } = this.uploadFromStream(bucket, key, stream);
-  
-    // Piping the response body to the PassThrough stream
-    stream.body.pipe(passThrough)
-  
-    // Wait for the upload to complete and then get the signed URL
-    return uploadPromise
-      .then(async (result) => {
-        const oneMinutePlus = 65; // Extra 5 seconds for potential delays
-  
-        // Use the getSignedUrl from the s3-request-presigner package
-        return this.getPresignedUrl({bucket, result.}, expirationOverride ?? oneMinutePlus)
-  })
-}
-
-  private uploadFromStream(
-    bucket: string,
-    key: string,
-    fileResponse: Response,
-  ) {
-    const passThrough = new PassThrough();
-    
-    // Using the PutObjectCommand to upload the stream in SDK v3
-    const uploadPromise = this.s3Client.send(
-      new PutObjectCommand({
-        Bucket: bucket,
-        Key: key,
-        ContentType: 'application/pdf',
-        Body: passThrough,  // Stream is passed through here
-      })
-    );
-    
-    return { passThrough, uploadPromise }; // rename promise to uploadPromise for clarity
   }
 
   public async getPresignedUrl(

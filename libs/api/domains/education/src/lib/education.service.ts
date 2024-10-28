@@ -17,10 +17,10 @@ import {
   ExamResult,
   Student,
 } from './education.type'
-import { S3Service } from './s3.service'
 import { getYearInterval } from './education.utils'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { isDefined } from '@island.is/shared/utils'
+import { S3Service } from '@island.is/nest/aws'
 
 @Injectable()
 export class EducationService {
@@ -54,10 +54,11 @@ export class EducationService {
       licenseId,
     )
 
-    return this.s3Service.uploadFileFromStream(responseStream, {
-      fileName: uuid(),
-      bucket: this.config.fileDownloadBucket,
-    })
+    const fileLocation = await this.s3Service.uploadFile(
+      await responseStream.buffer(), 
+      { bucket: this.config.fileDownloadBucket, key: uuid() }
+    )
+    return await this.s3Service.getPresignedUrl(fileLocation, 65)
   }
 
   async getFamily(nationalId: string): Promise<Array<Student>> {

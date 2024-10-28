@@ -95,6 +95,7 @@ export const insuranceToXML = async (
       const filename = arrAttachments[i]
       const fileContent =  await s3Service.getFileContent(
         filename,
+        'base64'
       )
 
       if(!fileContent)
