@@ -173,7 +173,7 @@ WORKDIR ${APP_DIST_HOME}
 RUN mkdir -p /out \
   && chown node:node /out
 
-COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
+COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
 
 USER pwuser
 
