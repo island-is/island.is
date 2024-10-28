@@ -163,7 +163,7 @@ describe('BFF PortalEnv serialization', () => {
       BFF_CLIENT_BASE_URL: 'https://beta.dev01.devland.is',
       BFF_LOGOUT_REDIRECT_URI: 'https://beta.dev01.devland.is',
       BFF_CALLBACKS_BASE_PATH: `https://beta.dev01.devland.is/${key}/bff/callbacks`,
-      BFF_PROXY_API_ENDPOINT: 'http://web-api.islandis.svc.cluster.local',
+      BFF_PROXY_API_ENDPOINT: 'http://web-api.islandis.svc.cluster.local/api/graphql',
       BFF_ALLOWED_EXTERNAL_API_URLS: json(['https://api.dev01.devland.is']),
       BFF_CACHE_USER_PROFILE_TTL_MS: (
         ONE_HOUR_IN_MS - FIVE_SECONDS_IN_MS
