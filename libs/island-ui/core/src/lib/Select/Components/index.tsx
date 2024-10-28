@@ -96,12 +96,30 @@ export const Option = <
     >
       <>
         {showCheckmark && (
-          <input
-            type="checkbox"
-            checked={props.isSelected && props.data?.isSelected}
-            onChange={() => null}
-            style={{ marginRight: 10 }}
-          />
+          <>
+            <input
+              type="checkbox"
+              checked={props.isSelected && props.data?.isSelected}
+              onChange={() => null}
+              className={cn(styles.inputCheckbox)}
+            />
+            <div
+              className={cn(styles.checkbox, {
+                [styles.checkboxChecked]:
+                  props.isSelected && props.data?.isSelected,
+              })}
+            >
+              <Icon
+                icon="checkmark"
+                color={
+                  props.isSelected && props.data?.isSelected
+                    ? 'white'
+                    : 'transparent'
+                }
+                ariaHidden
+              />
+            </div>
+          </>
         )}
         {props.children}
         {!!description && (
