@@ -8,31 +8,33 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../../lib/messages'
 import { Modal } from '@island.is/react/components'
 import { useState } from 'react'
-import { useSignatureCollectionAdminUpdatePaperSignaturePageNumberMutation } from './editPage.generated'
 import { toast } from 'react-toastify'
-import { useRevalidator } from 'react-router-dom'
+import { m } from '../../../../../../lib/messages'
+import { useMutation } from '@apollo/client'
+import { updatePaperSignaturePageNumber } from '../../../../../../hooks/graphql/mutations'
 
 const EditPage = ({
   page,
   name,
   nationalId,
   signatureId,
+  refetchSignees,
 }: {
   page: number
   name: string
   nationalId: string
   signatureId: string
+  refetchSignees: () => void
 }) => {
   const { formatMessage } = useLocale()
   const [newPage, setNewPage] = useState(page)
   const [modalIsOpen, setModalIsOpen] = useState(false)
-  const { revalidate } = useRevalidator()
 
-  const [updatePage, { loading }] =
-    useSignatureCollectionAdminUpdatePaperSignaturePageNumberMutation({
+  const [updatePage, { loading }] = useMutation(
+    updatePaperSignaturePageNumber,
+    {
       variables: {
         input: {
           pageNumber: newPage,
@@ -41,13 +43,14 @@ const EditPage = ({
       },
       onCompleted: () => {
         toast.success(formatMessage(m.editPaperNumberSuccess))
-        revalidate()
+        refetchSignees()
         setModalIsOpen(false)
       },
       onError: () => {
         toast.error(formatMessage(m.editPaperNumberError))
       },
-    })
+    },
+  )
 
   return (
     <Box>
