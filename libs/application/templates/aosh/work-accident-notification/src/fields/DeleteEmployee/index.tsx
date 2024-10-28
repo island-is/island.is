@@ -31,7 +31,6 @@ export const DeleteEmployee: FC<
   const onDelete = async () => {
     // Delete employee
     const updatedEmployees = removeAtIndex(answers.employee)
-    console.log(answers.employee, updatedEmployees)
 
     const updatedAbsences = removeAtIndex(answers.absence)
     const updatedDeviations = removeAtIndex(answers.deviations)
