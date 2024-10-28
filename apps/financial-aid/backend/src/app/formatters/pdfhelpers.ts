@@ -1,3 +1,4 @@
+import { ApplicationEventType } from '@island.is/financial-aid/shared/lib'
 import { PDFDocument, PDFFont, PDFPage, rgb } from 'pdf-lib'
 
 export const calculatePt = (px: number) => Math.ceil(px * 0.74999943307122)
@@ -8,6 +9,10 @@ export const mediumFontSize = 14
 export const mediumPlusFontSize = 16
 export const largeFontSize = 18
 export const lightGray = rgb(0.8, 0.8, 0.8)
+export const color_black = rgb(0, 0, 0)
+export const color_red = rgb(1, 0, 0.3)
+export const color_green = rgb(0, 0.702, 0.62)
+export const color_lightPurple = rgb(0.88, 0.835, 0.925)
 
 export const stripHTMLTags = (str) => str.replace(/<[^>]*>/g, '')
 
@@ -186,4 +191,14 @@ export const drawSectionInfo = (
     }
   }
   return { updatedPage: page, updatedYPosition: y - rowHeight * 2 }
+}
+
+export const colorOfHeaderInTimeline = (eventType: ApplicationEventType) => {
+  if (eventType === ApplicationEventType.REJECTED) {
+    return color_red
+  }
+  if (eventType === ApplicationEventType.APPROVED) {
+    return color_green
+  }
+  return color_black
 }

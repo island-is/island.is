@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
+import { PDFDocument, StandardFonts } from 'pdf-lib'
 import format from 'date-fns/format'
 import {
   ApplicationEvent,
@@ -24,6 +24,11 @@ import {
   smallFontSize,
   drawTitleAndUnderLine,
   drawSectionInfo,
+  color_black,
+  color_red,
+  color_green,
+  colorOfHeaderInTimeline,
+  color_lightPurple,
 } from './pdfhelpers'
 
 export const createPdf = async (application: ApplicationModel) => {
@@ -53,7 +58,7 @@ export const createPdf = async (application: ApplicationModel) => {
     y: height - margin - largeFontSize,
     size: largeFontSize,
     font: boldFont,
-    color: rgb(0, 0, 0),
+    color: color_black,
   })
 
   page.drawText(applicationState, {
@@ -61,10 +66,7 @@ export const createPdf = async (application: ApplicationModel) => {
     y: height - margin - baseFontSize,
     size: baseFontSize,
     font: font,
-    color:
-      state === ApplicationState.REJECTED
-        ? rgb(1, 0, 0.3)
-        : rgb(0, 0.702, 0.62),
+    color: state === ApplicationState.REJECTED ? color_red : color_green,
   })
 
   let currentYPosition =
@@ -82,35 +84,39 @@ export const createPdf = async (application: ApplicationModel) => {
     y: currentYPosition,
     size: smallFontSize,
     font: font,
-    color: rgb(0, 0, 0),
+    color: color_black,
   })
   //   ---- ----- HEADER ---- ----
 
+  // Draw Sections
+  const drawSection = (title, data) => {
+    currentYPosition = drawTitleAndUnderLine(
+      title,
+      currentYPosition,
+      page,
+      margin,
+      width,
+      boldFont,
+    )
+    checkYPositionAndAddPage()
+
+    const { updatedYPosition, updatedPage } = drawSectionInfo(
+      data,
+      pdfDoc,
+      page,
+      margin,
+      currentYPosition,
+      boldFont,
+      font,
+    )
+    page = updatedPage
+    currentYPosition = updatedYPosition
+    checkYPositionAndAddPage()
+  }
+
   //   ---- ----- APPLICATION INFO ---- ----
-  currentYPosition = drawTitleAndUnderLine(
-    'Umsókn',
-    currentYPosition,
-    page,
-    margin,
-    width,
-    boldFont,
-  )
-  checkYPositionAndAddPage()
 
-  const sections = getApplicationInfo(application)
-
-  const { updatedYPosition, updatedPage } = drawSectionInfo(
-    sections,
-    pdfDoc,
-    page,
-    margin,
-    currentYPosition,
-    boldFont,
-    font,
-  )
-  page = updatedPage // Update to the new page if created
-  currentYPosition = updatedYPosition
-  checkYPositionAndAddPage()
+  drawSection('Umsókn', getApplicationInfo(application))
 
   if (application.state === ApplicationState.REJECTED) {
     // Optionally draw rejection text and get the updated Y position
@@ -134,31 +140,7 @@ export const createPdf = async (application: ApplicationModel) => {
   //   ---- ----- APPLICATION INFO ---- ----
 
   //  ---- ----- APPLICANT INFO ---- ----
-
-  currentYPosition = drawTitleAndUnderLine(
-    'Umsækjandi',
-    currentYPosition,
-    page,
-    margin,
-    width,
-    boldFont,
-  )
-  checkYPositionAndAddPage()
-
-  const applicant = getApplicant(application)
-  const { updatedYPosition: updatedYPosition1, updatedPage: updatedPage1 } =
-    drawSectionInfo(
-      applicant,
-      pdfDoc,
-      page,
-      margin,
-      currentYPosition,
-      boldFont,
-      font,
-    )
-  page = updatedPage1
-  currentYPosition = updatedYPosition1
-  checkYPositionAndAddPage()
+  drawSection('Umsækjandi', getApplicant(application))
 
   if (application.formComment) {
     const { updatedYPosition, updatedPage } = drawTextArea(
@@ -179,61 +161,10 @@ export const createPdf = async (application: ApplicationModel) => {
 
   //   ---- ----- APPLICANT INFO ---- ----
 
-  // ----- ----- NationlRegistry INFO ---- ----
-  currentYPosition = drawTitleAndUnderLine(
-    'Þjóðskrá',
-    currentYPosition,
-    page,
-    margin,
-    width,
-    boldFont,
-  )
-  checkYPositionAndAddPage()
+  drawSection('Þjóðskrá', getNationalRegistryInfo(application))
 
-  const nationalRegistryInfo = getNationalRegistryInfo(application)
-  const { updatedYPosition: updatedYPosition2, updatedPage: updatedPage2 } =
-    drawSectionInfo(
-      nationalRegistryInfo,
-      pdfDoc,
-      page,
-      margin,
-      currentYPosition,
-      boldFont,
-      font,
-    )
-  page = updatedPage2
-  currentYPosition = updatedYPosition2
-  checkYPositionAndAddPage()
-
-  // ----- ----- NationlRegistry INFO ---- ----
-
-  // ----- ----- Spouse info ---- ----
   if (showSpouseData[application.familyStatus]) {
-    currentYPosition = drawTitleAndUnderLine(
-      'Maki',
-      currentYPosition,
-      page,
-      margin,
-      width,
-      boldFont,
-    )
-    checkYPositionAndAddPage()
-
-    const applicantSpouse = getApplicantSpouse(application)
-
-    const { updatedYPosition: updatedYPosition, updatedPage: updatedPage } =
-      drawSectionInfo(
-        applicantSpouse,
-        pdfDoc,
-        page,
-        margin,
-        currentYPosition,
-        boldFont,
-        font,
-      )
-    page = updatedPage
-    currentYPosition = updatedYPosition
-    checkYPositionAndAddPage()
+    drawSection('Maki', getApplicantSpouse(application))
 
     if (application.spouseFormComment) {
       // Optionally draw rejection text and get the updated Y position
@@ -253,34 +184,10 @@ export const createPdf = async (application: ApplicationModel) => {
       currentYPosition = updatedYPosition
       checkYPositionAndAddPage()
     }
-    // ----- ----- Spouse info ---- ----
   }
 
   if (application.children?.length > 0) {
-    currentYPosition = drawTitleAndUnderLine(
-      'Börn',
-      currentYPosition,
-      page,
-      margin,
-      width,
-      boldFont,
-    )
-    checkYPositionAndAddPage()
-
-    const childrenInfo = getChildrenInfo(application)
-    const { updatedYPosition: updatedYPosition, updatedPage: updatedPage } =
-      drawSectionInfo(
-        childrenInfo,
-        pdfDoc,
-        page,
-        margin,
-        currentYPosition,
-        boldFont,
-        font,
-      )
-    page = updatedPage
-    currentYPosition = updatedYPosition
-    checkYPositionAndAddPage()
+    drawSection('Börn', getChildrenInfo(application))
 
     if (application.childrenComment) {
       // Optionally draw rejection text and get the updated Y position
@@ -301,31 +208,7 @@ export const createPdf = async (application: ApplicationModel) => {
     }
   }
 
-  currentYPosition = drawTitleAndUnderLine(
-    'Umsóknarferli',
-    currentYPosition,
-    page,
-    margin,
-    width,
-    boldFont,
-  )
-  checkYPositionAndAddPage()
-
-  const applicantMoreInfo = getApplicantMoreInfo(application)
-  const { updatedYPosition: updatedYPosition3, updatedPage: updatedPage3 } =
-    drawSectionInfo(
-      applicantMoreInfo,
-      pdfDoc,
-      page,
-      margin,
-      currentYPosition,
-      boldFont,
-      font,
-    )
-  page = updatedPage3
-  currentYPosition = updatedYPosition3
-
-  checkYPositionAndAddPage()
+  drawSection('Umsóknarferli', getApplicantMoreInfo(application))
 
   //   ---- ----- APPLICATION EVENTS ---- ----
   currentYPosition = drawTitleAndUnderLine(
@@ -353,14 +236,14 @@ export const createPdf = async (application: ApplicationModel) => {
     )
     const eventCreated = format(new Date(event.created), 'dd/MM/yyyy HH:mm')
 
-    const colorOfHeader = () => {
+    const colorOfHeader = (eventType: ApplicationEventType) => {
       if (applicationEvent.eventType === ApplicationEventType.REJECTED) {
-        return rgb(1, 0, 0.3)
+        return color_red
       }
       if (applicationEvent.eventType === ApplicationEventType.APPROVED) {
-        return rgb(0, 0.702, 0.62)
+        return color_green
       }
-      return rgb(0, 0, 0)
+      return color_black
     }
 
     page.drawText(eventData.header, {
@@ -368,7 +251,7 @@ export const createPdf = async (application: ApplicationModel) => {
       y: currentYPosition,
       size: baseFontSize,
       font: boldFont,
-      color: colorOfHeader(),
+      color: colorOfHeaderInTimeline(applicationEvent.eventType),
     })
     currentYPosition -= baseFontSize + lineSpacing
     checkYPositionAndAddPage()
@@ -377,7 +260,7 @@ export const createPdf = async (application: ApplicationModel) => {
       y: currentYPosition,
       size: baseFontSize,
       font: font,
-      color: rgb(0, 0, 0),
+      color: color_black,
     })
     checkYPositionAndAddPage()
     currentYPosition -= baseFontSize + lineSpacing
@@ -405,7 +288,7 @@ export const createPdf = async (application: ApplicationModel) => {
       y: currentYPosition,
       size: smallFontSize,
       font: boldFont,
-      color: rgb(0, 0, 0),
+      color: color_black,
     })
 
     // Draw a line under the main title
@@ -414,7 +297,7 @@ export const createPdf = async (application: ApplicationModel) => {
       start: { x: margin, y: lineYPosition },
       end: { x: width - margin, y: lineYPosition },
       thickness: 1,
-      color: rgb(0.88, 0.835, 0.925),
+      color: color_lightPurple,
     })
 
     currentYPosition -= baseFontSize + lineSpacing + 10
