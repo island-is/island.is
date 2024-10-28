@@ -84,7 +84,10 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
     }
 
     try {
-      const fileContent = await this.s3Service.getFileContent(fileName, 'base64')
+      const fileContent = await this.s3Service.getFileContent(
+        fileName,
+        'base64',
+      )
       return fileContent || ''
     } catch (error) {
       throw new Error('Villa kom kom upp við að senda umsókn')

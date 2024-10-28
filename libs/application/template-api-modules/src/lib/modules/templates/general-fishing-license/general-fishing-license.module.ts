@@ -5,7 +5,7 @@ import { FishingLicenseClientModule } from '@island.is/clients/fishing-license'
 import { AwsModule } from '@island.is/nest/aws'
 
 @Module({
-  imports: [SharedTemplateAPIModule, FishingLicenseClientModule, AwsModule,],
+  imports: [SharedTemplateAPIModule, FishingLicenseClientModule, AwsModule],
   providers: [GeneralFishingLicenseService],
   exports: [GeneralFishingLicenseService],
 })

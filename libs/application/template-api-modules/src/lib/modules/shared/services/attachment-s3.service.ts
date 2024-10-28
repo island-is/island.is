@@ -22,8 +22,7 @@ export class AttachmentS3Service {
     @Inject(sharedModuleConfig.KEY)
     private config: ConfigType<typeof sharedModuleConfig>,
     private readonly applicationService: ApplicationService,
-  ) 
-  {}
+  ) {}
 
   public async getFiles(
     application: ApplicationWithAttachments,

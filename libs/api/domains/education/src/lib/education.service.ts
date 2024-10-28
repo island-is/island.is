@@ -55,8 +55,8 @@ export class EducationService {
     )
 
     const fileLocation = await this.s3Service.uploadFile(
-      await responseStream.buffer(), 
-      { bucket: this.config.fileDownloadBucket, key: uuid() }
+      await responseStream.buffer(),
+      { bucket: this.config.fileDownloadBucket, key: uuid() },
     )
     return await this.s3Service.getPresignedUrl(fileLocation, 65)
   }

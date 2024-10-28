@@ -15,7 +15,11 @@ import { Inject, Injectable } from '@nestjs/common'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Upload } from '@aws-sdk/lib-storage'
-import { createPresignedPost, PresignedPost, PresignedPostOptions } from "@aws-sdk/s3-presigned-post";
+import {
+  createPresignedPost,
+  PresignedPost,
+  PresignedPostOptions,
+} from '@aws-sdk/s3-presigned-post'
 
 export interface BucketKeyPair {
   bucket: string
@@ -59,12 +63,15 @@ export class S3Service {
     const input: CopyObjectRequest = {
       Bucket: bucket,
       Key: key,
-      CopySource: copySource
+      CopySource: copySource,
     }
     try {
       return await this.s3Client.send(new CopyObjectCommand(input))
     } catch (error) {
-      this.logger.error(`Error occurred while copying file: ${key} to S3 bucket: ${bucket} from ${copySource}`, error)
+      this.logger.error(
+        `Error occurred while copying file: ${key} to S3 bucket: ${bucket} from ${copySource}`,
+        error,
+      )
       throw error
     }
   }
@@ -79,13 +86,16 @@ export class S3Service {
       Bucket: bucket,
       Key: key,
       Body: content,
-      ContentType: contentType
+      ContentType: contentType,
     }
     try {
       await this.s3Client.send(new PutObjectCommand(input))
       return key
     } catch (error) {
-      this.logger.error(`Error occurred while putting file: ${key} to S3 bucket: ${bucket}`, error)
+      this.logger.error(
+        `Error occurred while putting file: ${key} to S3 bucket: ${bucket}`,
+        error,
+      )
       throw error
     }
   }
@@ -120,7 +130,10 @@ export class S3Service {
 
       return url
     } catch (error) {
-      this.logger.error(`Error occurred while uploading file: ${key} to S3 bucket: ${bucket}`, error)
+      this.logger.error(
+        `Error occurred while uploading file: ${key} to S3 bucket: ${bucket}`,
+        error,
+      )
       throw error
     }
   }
@@ -141,12 +154,19 @@ export class S3Service {
     })
   }
 
-  public async createPresignedPost(params: PresignedPostOptions): Promise<PresignedPost> {
+  public async createPresignedPost(
+    params: PresignedPostOptions,
+  ): Promise<PresignedPost> {
     try {
       return await createPresignedPost(this.s3Client, params)
     } catch (error) {
-      this.logger.error(`An error occurred while trying to create a presigned post for file: ${params.Key} in bucket: ${params.Bucket}`, error)
-      throw new Error('An error occurred while trying to create a presigned post')
+      this.logger.error(
+        `An error occurred while trying to create a presigned post for file: ${params.Key} in bucket: ${params.Bucket}`,
+        error,
+      )
+      throw new Error(
+        'An error occurred while trying to create a presigned post',
+      )
     }
   }
 
@@ -198,7 +218,10 @@ export class S3Service {
       }
       return true
     } catch (error) {
-      this.logger.error(`Error occurred while deleting file: ${key} from S3 bucket: ${bucket}`, error)
+      this.logger.error(
+        `Error occurred while deleting file: ${key} from S3 bucket: ${bucket}`,
+        error,
+      )
       return false
     }
   }
@@ -213,7 +236,10 @@ export class S3Service {
       try {
         return AmazonS3URI(BucketKeyPairOrFilename)
       } catch (error) {
-        this.logger.error(`Invalid S3 URI provided: ${BucketKeyPairOrFilename}`, error)
+        this.logger.error(
+          `Invalid S3 URI provided: ${BucketKeyPairOrFilename}`,
+          error,
+        )
         throw new Error('Invalid S3 URI provided')
       }
     }
@@ -231,7 +257,10 @@ export class S3Service {
         }),
       )
     } catch (error) {
-      this.logger.error(`Error occurred while fetching file: ${key} from S3 bucket: ${bucket}`, error)
+      this.logger.error(
+        `Error occurred while fetching file: ${key} from S3 bucket: ${bucket}`,
+        error,
+      )
       return undefined
     }
   }

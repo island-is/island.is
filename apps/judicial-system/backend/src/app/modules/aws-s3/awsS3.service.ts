@@ -51,8 +51,7 @@ export class AwsS3Service {
     type: string,
   ): Promise<PresignedPost> {
     const formattedKey = formatS3Key(caseType, key)
-    return this.s3Service.createPresignedPost(
-    {
+    return this.s3Service.createPresignedPost({
       Bucket: this.config.bucket,
       Key: formattedKey,
       Expires: this.config.timeToLivePost,
@@ -65,21 +64,21 @@ export class AwsS3Service {
   }
 
   objectExists(caseType: CaseType, key: string): Promise<boolean> {
-    return this.s3Service
-      .fileExists({
-        bucket: this.config.bucket,
-        key: formatS3Key(caseType, key),
-      })
+    return this.s3Service.fileExists({
+      bucket: this.config.bucket,
+      key: formatS3Key(caseType, key),
+    })
   }
 
   private async putObjectToS3(key: string, content: string): Promise<string> {
     return this.s3Service.putObject(
       {
-        bucket: this.config.bucket, 
-        key
-      }, 
-      Buffer.from(content, 'binary'), 
-      'application/pdf')
+        bucket: this.config.bucket,
+        key,
+      },
+      Buffer.from(content, 'binary'),
+      'application/pdf',
+    )
   }
 
   putObject(caseType: CaseType, key: string, content: string): Promise<string> {
@@ -108,11 +107,11 @@ export class AwsS3Service {
     }
 
     return this.s3Service.getPresignedUrl(
-      { 
-        bucket: this.config.bucket, 
-        key: formatS3Key(caseType, key)
-      }, 
-      timeToLive ?? this.config.timeToLiveGet
+      {
+        bucket: this.config.bucket,
+        key: formatS3Key(caseType, key),
+      },
+      timeToLive ?? this.config.timeToLiveGet,
     )
   }
 
@@ -121,7 +120,7 @@ export class AwsS3Service {
     key: string | undefined,
     force: boolean,
     confirmContent: (content: Buffer) => Promise<string | undefined>,
-    timeToLive?: number
+    timeToLive?: number,
   ): Promise<string> {
     if (!key) {
       throw new Error('Key is required')
@@ -134,11 +133,7 @@ export class AwsS3Service {
     const confirmedKey = formatConfirmedIndictmentCaseKey(key)
 
     if (!force && (await this.objectExists(caseType, confirmedKey))) {
-      return this.getSignedUrl(
-        caseType,
-        confirmedKey,
-        timeToLive
-      )
+      return this.getSignedUrl(caseType, confirmedKey, timeToLive)
     }
 
     const confirmedContent = await this.getObject(caseType, key).then(
@@ -155,14 +150,19 @@ export class AwsS3Service {
   }
 
   private async getObjectFromS3(key: string): Promise<Buffer> {
-    const content = await this.s3Service.getFileContent({
-      bucket: this.config.bucket,
-      key: key,
-    }, 'binary')
+    const content = await this.s3Service.getFileContent(
+      {
+        bucket: this.config.bucket,
+        key: key,
+      },
+      'binary',
+    )
 
-    if(!content)
-      throw new Error(`No content from file: ${key} in S3 bucket: ${this.config.bucket}`)
-    
+    if (!content)
+      throw new Error(
+        `No content from file: ${key} in S3 bucket: ${this.config.bucket}`,
+      )
+
     return Buffer.from(content, 'binary')
   }
 
