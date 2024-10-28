@@ -847,7 +847,7 @@ export const JudicialSystemServicePortal = new XroadConf({
       dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
       staging:
         'IS-TEST/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
-      prod: 'IS-GOV/GOV/5804170510/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      prod: 'IS/GOV/5804170510/Rettarvorslugatt-Private/judicial-system-mailbox-api',
     },
   },
 })

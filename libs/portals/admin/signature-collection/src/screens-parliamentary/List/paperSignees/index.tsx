@@ -75,7 +75,13 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
         if (res.signatureCollectionAdminUploadPaperSignature?.success) {
           toast.success(formatMessage(m.paperSigneeSuccess))
         } else {
-          toast.error(formatMessage(m.paperSigneeError))
+          if (
+            res.signatureCollectionAdminUploadPaperSignature?.reasons?.includes(
+              'alreadySigned',
+            )
+          ) {
+            toast.error(formatMessage(m.paperSigneeErrorAlreadySigned))
+          }
         }
         reset()
         revalidate()

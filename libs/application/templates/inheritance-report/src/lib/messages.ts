@@ -425,7 +425,7 @@ export const m = defineMessages({
     description: '',
   },
   realEstateDescriptionPrePaid: {
-    id: 'ir.application:realEstateDescriptionPrePaid',
+    id: 'ir.application:realEstateDescriptionPrePaid#markdown',
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
     description: '',
   },
