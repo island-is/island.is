@@ -106,7 +106,7 @@ const getInitialStateAndAnswersByQueryParams = (
     )
 
     const stepQuestion = getStepQuestion(step)
-    if (stepQuestion) {
+    if (stepQuestion && stepType !== STEP_TYPES.INFORMATION) {
       questionsAndAnswers.push({
         question: stepQuestion,
         answer: selectedOption.label,

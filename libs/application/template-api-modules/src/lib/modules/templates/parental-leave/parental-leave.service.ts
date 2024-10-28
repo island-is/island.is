@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { AwsService } from '@island.is/nest/aws'
+import { S3Service } from '@island.is/nest/aws'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   ADOPTION,
@@ -111,7 +111,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private readonly configService: ConfigService<SharedModuleConfig>,
     private readonly childrenService: ChildrenService,
     private readonly nationalRegistryApi: NationalRegistryClientService,
-    private readonly awsService: AwsService,
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.PARENTAL_LEAVE)
   }
@@ -382,7 +382,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       )
 
       const Key = `${application.id}/${filename}`
-      const fileContent = await this.awsService.getFileContent(
+      const fileContent = await this.s3Service.getFileContent(
         {
           bucket: this.config.templateApi.attachmentBucket,
           key: Key,
