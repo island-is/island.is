@@ -1883,6 +1883,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/s3-presigned-post@npm:3.662.0":
+  version: 3.662.0
+  resolution: "@aws-sdk/s3-presigned-post@npm:3.662.0"
+  dependencies:
+    "@aws-sdk/client-s3": 3.662.0
+    "@aws-sdk/types": 3.662.0
+    "@aws-sdk/util-format-url": 3.662.0
+    "@smithy/middleware-endpoint": ^3.1.4
+    "@smithy/signature-v4": ^4.2.0
+    "@smithy/types": ^3.5.0
+    "@smithy/util-hex-encoding": ^3.0.0
+    "@smithy/util-utf8": ^3.0.0
+    tslib: ^2.6.2
+  checksum: 5514900727f092ae46e7136acacc4baaa6949fc311bdef93b4fc29eb258c44397f2e49719c5b58796d45816242caa15ee3118011c02b8458b0749af910b89f91
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/s3-request-presigner@npm:3.662.0":
   version: 3.662.0
   resolution: "@aws-sdk/s3-request-presigner@npm:3.662.0"
@@ -38628,6 +38645,7 @@ __metadata:
     "@aws-sdk/client-ssm": 3.145.0
     "@aws-sdk/credential-provider-node": 3.662.0
     "@aws-sdk/lib-storage": 3.662.0
+    "@aws-sdk/s3-presigned-post": 3.662.0
     "@aws-sdk/s3-request-presigner": 3.662.0
     "@azure/msal-node": 1.14.4
     "@babel/core": 7.22.5

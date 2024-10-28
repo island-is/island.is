@@ -33,6 +33,7 @@ import {
 } from './mappers/mapValuesToUsertype'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { S3Service } from '@island.is/nest/aws'
 
 export interface AttachmentData {
   key: string
@@ -56,13 +57,12 @@ export interface DataResponse {
 
 @Injectable()
 export class FinancialStatementsInaoTemplateService extends BaseTemplateApiService {
-  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementsClientService: FinancialStatementsInaoClientService,
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENTS_INAO)
-    this.s3 = new S3()
   }
 
   private async getAttachment(application: Application): Promise<string> {
@@ -83,18 +83,9 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
       return Promise.reject({})
     }
 
-    const { bucket, key } = AmazonS3URI(fileName)
-
-    const uploadBucket = bucket
     try {
-      const file = await this.s3
-        .getObject({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent?.toString('base64') || ''
+      const fileContent = await this.s3Service.getFileContent(fileName, 'base64')
+      return fileContent || ''
     } catch (error) {
       throw new Error('Villa kom kom upp við að senda umsókn')
     }

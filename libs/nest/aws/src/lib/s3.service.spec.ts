@@ -160,8 +160,9 @@ describe('S3Service', () => {
       const metadata = { httpStatusCode: code }
       s3Mock.on(DeleteObjectCommand).resolvesOnce({ $metadata: metadata })
 
-      await s3Service.deleteObject({ bucket: 'x', key: 'y' })
+      const result = await s3Service.deleteObject({ bucket: 'x', key: 'y' })
 
+      expect(result).toBeTruthy()
       expect(logger.error).toBeCalledTimes(0)
     },
   )
@@ -172,9 +173,9 @@ describe('S3Service', () => {
       const metadata = { httpStatusCode: code }
       s3Mock.on(DeleteObjectCommand).resolvesOnce({ $metadata: metadata })
 
-      const act = () => s3Service.deleteObject({ bucket: 'x', key: 'y' })
+      const result = await s3Service.deleteObject({ bucket: 'x', key: 'y' })
 
-      await expect(act()).rejects.toThrow()
+      expect(result).toBeFalsy()
 
       expect(logger.error).toBeCalledTimes(1)
       expect(logger.error).toBeCalledWith(

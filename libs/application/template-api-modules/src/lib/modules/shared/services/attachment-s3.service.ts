@@ -4,6 +4,7 @@ import { S3 } from 'aws-sdk'
 import AmazonS3URI from 'amazon-s3-uri'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
+import { S3Service } from '@island.is/nest/aws'
 
 export interface AttachmentData {
   key: string
@@ -14,10 +15,10 @@ export interface AttachmentData {
 
 @Injectable()
 export class AttachmentS3Service {
-  private readonly s3: AWS.S3
-  constructor() {
-    this.s3 = new S3()
-  }
+  constructor(
+    private readonly s3Service: S3Service,
+  ) 
+  {}
 
   public async getFiles(
     application: Application,
@@ -58,30 +59,10 @@ export class AttachmentS3Service {
           return { key: '', fileContent: '', answerKey, fileName: '' }
         }
         const fileContent =
-          (await this.getApplicationFilecontentAsBase64(url)) ?? ''
+          (await this.s3Service.getFileContent(url, 'base64')) ?? ''
 
         return { key, fileContent, answerKey, fileName: name }
       }),
     )
-  }
-
-  private async getApplicationFilecontentAsBase64(
-    fileName: string,
-  ): Promise<string | undefined> {
-    const { bucket, key } = AmazonS3URI(fileName)
-    const uploadBucket = bucket
-    try {
-      const file = await this.s3
-        .getObject({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent?.toString('base64')
-    } catch (error) {
-      logger.error(error)
-      return undefined
-    }
   }
 }
