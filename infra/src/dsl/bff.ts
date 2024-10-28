@@ -20,7 +20,7 @@ export const getScopes = (key: PortalKeys) => {
 export const bffConfig = ({ key, services, clientName, clientId }: BffInfo) => {
   const getBaseUrl = (ctx: Context) =>
     ctx.featureDeploymentName
-      ? `${ctx.featureDeploymentName}.${ctx.env.domain}`
+      ? `${ctx.featureDeploymentName}-beta.${ctx.env.domain}`
       : ctx.env.type === 'prod'
       ? ctx.env.domain
       : `beta.${ctx.env.domain}`
