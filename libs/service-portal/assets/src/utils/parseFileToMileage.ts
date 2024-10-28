@@ -88,6 +88,10 @@ const parseXlsx = async (file: File) => {
 
     const jsonData = XLSX.utils.sheet_to_csv(
       parsedFile.Sheets[parsedFile.SheetNames[0]],
+      {
+        strip: true,
+        blankrows: false,
+      },
     )
 
     return parseCsvString(jsonData)
@@ -101,7 +105,9 @@ const parseCsvString = (chunk: string): Promise<string[][]> => {
     const records: string[][] = []
 
     const parser = parse({
-      skip_empty_lines: true,
+      cast: true,
+      skipEmptyLines: true,
+      delimiter: [';', ','],
     })
 
     parser.on('readable', () => {
