@@ -20,6 +20,7 @@ type Translations = {
     institution: string
     indictment: string
     judge: string
+    districtCourtAssistant: string
     location: string
     name: string
     nationalId: string
@@ -57,6 +58,7 @@ const translations: Translations = {
     institution: 'Institution',
     indictment: 'Indictment',
     judge: 'Judge',
+    districtCourtAssistant: 'Court assistant',
     location: 'Location',
     name: 'Name',
     nationalId: 'National ID',
@@ -92,6 +94,7 @@ const translations: Translations = {
     institution: 'Embætti',
     indictment: 'Ákæra',
     judge: 'Dómari',
+    districtCourtAssistant: 'Aðstoðarmaður dómara',
     location: 'Staður',
     name: 'Nafn',
     nationalId: 'Kennitala',
