@@ -34,7 +34,10 @@ export const formatAddress = (
 ): string | undefined => {
   if (!address) return undefined
 
-  if (address.streetAddress === address.city) {
+  if (
+    address.streetAddress === address.city ||
+    (address.streetAddress && !address.postalCode && !address.city)
+  ) {
     return address.streetAddress
   }
 
