@@ -1,5 +1,5 @@
 import PDFDocument from 'pdfkit'
-import { MessageDescriptor } from 'react-intl'
+import { MessageDescriptor } from '@formatjs/intl'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
