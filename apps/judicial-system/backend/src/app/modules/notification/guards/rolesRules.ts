@@ -1,5 +1,8 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
-import { NotificationType, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseNotificationType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 // Allows prosecutors to send notifications
 export const prosecutorNotificationRule: RolesRule = {
@@ -7,10 +10,10 @@ export const prosecutorNotificationRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [
-    NotificationType.HEADS_UP,
-    NotificationType.READY_FOR_COURT,
-    NotificationType.APPEAL_CASE_FILES_UPDATED,
-    NotificationType.CASE_FILES_UPDATED,
+    CaseNotificationType.HEADS_UP,
+    CaseNotificationType.READY_FOR_COURT,
+    CaseNotificationType.APPEAL_CASE_FILES_UPDATED,
+    CaseNotificationType.CASE_FILES_UPDATED,
   ],
 } as RolesRule
 
@@ -20,8 +23,8 @@ export const defenderNotificationRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [
-    NotificationType.APPEAL_CASE_FILES_UPDATED,
-    NotificationType.CASE_FILES_UPDATED,
+    CaseNotificationType.APPEAL_CASE_FILES_UPDATED,
+    CaseNotificationType.CASE_FILES_UPDATED,
   ],
 } as RolesRule
 
@@ -31,8 +34,8 @@ export const districtCourtJudgeNotificationRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [
-    NotificationType.COURT_DATE,
-    NotificationType.ADVOCATE_ASSIGNED,
+    CaseNotificationType.COURT_DATE,
+    CaseNotificationType.ADVOCATE_ASSIGNED,
   ],
 }
 
@@ -42,8 +45,8 @@ export const districtCourtRegistrarNotificationRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [
-    NotificationType.COURT_DATE,
-    NotificationType.ADVOCATE_ASSIGNED,
+    CaseNotificationType.COURT_DATE,
+    CaseNotificationType.ADVOCATE_ASSIGNED,
   ],
 }
 
@@ -53,8 +56,8 @@ export const districtCourtAssistantNotificationRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
   dtoFieldValues: [
-    NotificationType.COURT_DATE,
-    NotificationType.ADVOCATE_ASSIGNED,
+    CaseNotificationType.COURT_DATE,
+    CaseNotificationType.ADVOCATE_ASSIGNED,
   ],
 }
 
@@ -63,7 +66,7 @@ export const courtOfAppealsJudgeNotificationRule: RolesRule = {
   role: UserRole.COURT_OF_APPEALS_JUDGE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
-  dtoFieldValues: [NotificationType.APPEAL_JUDGES_ASSIGNED],
+  dtoFieldValues: [CaseNotificationType.APPEAL_JUDGES_ASSIGNED],
 }
 
 // Allows court of appeals registrars to send notifications
@@ -71,7 +74,7 @@ export const courtOfAppealsRegistrarNotificationRule: RolesRule = {
   role: UserRole.COURT_OF_APPEALS_REGISTRAR,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
-  dtoFieldValues: [NotificationType.APPEAL_JUDGES_ASSIGNED],
+  dtoFieldValues: [CaseNotificationType.APPEAL_JUDGES_ASSIGNED],
 }
 
 // Allows court of appeals assistants to send notifications
@@ -79,5 +82,5 @@ export const courtOfAppealsAssistantNotificationRule: RolesRule = {
   role: UserRole.COURT_OF_APPEALS_ASSISTANT,
   type: RulesType.FIELD_VALUES,
   dtoField: 'type',
-  dtoFieldValues: [NotificationType.APPEAL_JUDGES_ASSIGNED],
+  dtoFieldValues: [CaseNotificationType.APPEAL_JUDGES_ASSIGNED],
 }

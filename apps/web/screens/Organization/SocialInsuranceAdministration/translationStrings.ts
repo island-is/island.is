@@ -17,6 +17,13 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Þú vilt hefja töku eftir 67 ára aldur',
     description: 'Upplýsingar sem birtast ef þú vilt seinka töku ellilífeyris',
   },
+  results2025ImageUrl: {
+    id: 'web.pensionCalculator:results2025ImageUrl',
+    defaultMessage:
+      'https://images.ctfassets.net/8k0h54kbe6bj/fkWhyD4Bcn1Osh4qJQasW/d15e433d2f6747a3ec4d79da49bb25f1/Fi_rildi_-_gr_nt.png',
+    description:
+      'Hlekkur á mynd sem sést þegar borið er saman 2025 örorkulífeyrisútreikninga við núverandi ár',
+  },
   pensionStartIsHurried: {
     id: 'web.pensionCalculator:pensionStartIsHurried',
     defaultMessage: 'Þú vilt hefja töku fyrir 67 ára aldur',
@@ -919,6 +926,27 @@ export const translationStrings = defineMessages({
     id: 'web.pensionCalculator:REIKNH.ORALDURSVIDBOT2025',
     defaultMessage: 'Aldursviðbót',
     description: 'Niðurstöðuskjár, Aldursviðbót 2025',
+  },
+  'REIKNH.ORORKA_ALDURSV_HUPPBOT_2025': {
+    id: 'web.pensionCalculator:REIKNH.ORORKA_ALDURSV_HUPPBOT_2025',
+    defaultMessage: 'Örorkulífeyrir, aldursviðbót og heimilisuppbót',
+    description:
+      'Niðurstöðuskjár, Örorkulífeyrir, aldursviðbót og heimilisuppbót 2025',
+  },
+  'REIKNH.ORORKA_HUPPBOT_2025': {
+    id: 'web.pensionCalculator:REIKNH.ORORKA_HUPPBOT_2025',
+    defaultMessage: 'Örorkulífeyrir og heimilisuppbót',
+    description: 'Niðurstöðuskjár, Örorkulífeyrir og heimilisuppbót 2025',
+  },
+  'REIKNH.ORORKA_ALDURSV_2025': {
+    id: 'web.pensionCalculator:REIKNH.ORORKA_ALDURSV_2025',
+    defaultMessage: 'Örorkulífeyrir og aldursviðbót',
+    description: 'Niðurstöðuskjár, Örorkulífeyrir og aldursviðbót 2025',
+  },
+  'REIKNH.ORORKA_2025': {
+    id: 'web.pensionCalculator:REIKNH.ORORKA_2025',
+    defaultMessage: 'Örorkulífeyrir',
+    description: 'Niðurstöðuskjár, Örorkulífeyrir 2025',
   },
   highlighedResultItemHeadingForTotalAfterTaxFromTR: {
     id: 'web.pensionCalculator:REIKNH.highlighedResultItemHeadingForTotalAfterTaxFromTR',
