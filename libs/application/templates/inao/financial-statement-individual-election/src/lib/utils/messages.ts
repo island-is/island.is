@@ -105,6 +105,11 @@ export const m = defineMessages({
     defaultMessage: 'Vinsamlega yfirfarið upplýsingarnar hér að neðan',
     description: 'Review info',
   },
+  candidateInfoProcure: {
+    id: 'fsie.application:candidateInfoProcure',
+    defaultMessage: 'Vinsamlega fyllið inn upplýsingar um frambjóðanda',
+    description: 'Candidate info procure',
+  },
   candidateNationalId: {
     id: 'fsie.application:candidateId',
     defaultMessage: 'Kennitala frambjóðanda',
