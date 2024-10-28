@@ -157,9 +157,9 @@ RUN yarn install
 ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
-COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
+COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
 
-ENTRYPOINT ["bash", "./entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
 
 
 FROM playwright-base AS output-local
