@@ -242,6 +242,7 @@ export enum CaseIndictmentRulingDecision {
   DISMISSAL = 'DISMISSAL',
   CANCELLATION = 'CANCELLATION',
   MERGE = 'MERGE',
+  WITHDRAWAL = 'WITHDRAWAL',
 }
 
 export enum IndictmentCaseReviewDecision {

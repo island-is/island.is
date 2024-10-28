@@ -20,10 +20,10 @@ import {
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
+  CaseNotificationType,
   CaseState,
   DateType,
   EventType,
-  NotificationType,
   StringType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -314,6 +314,23 @@ export class LimitedAccessCaseService {
     update: LimitedAccessUpdateCase,
     user: TUser,
   ): Promise<Case> {
+    if (update.accusedPostponedAppealDate) {
+      const relevantInfo = {
+        appealState: theCase.appealState,
+        accusedAppealDecision: theCase.accusedAppealDecision,
+        accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
+        prosecutorAppealDecision: theCase.prosecutorAppealDecision,
+        prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
+        update: update,
+      }
+
+      this.logger.info(
+        `Updating accusedPostponedAppealDate in limited access case service for case ${
+          theCase.id
+        }. Relevant info: ${JSON.stringify(relevantInfo)}`,
+      )
+    }
+
     const [numberOfAffectedRows] = await this.caseModel.update(
       { ...update },
       { where: { id: theCase.id } },
@@ -358,7 +375,7 @@ export class LimitedAccessCaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_TO_COURT_OF_APPEALS },
+        body: { type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
       })
     }
 
@@ -367,7 +384,7 @@ export class LimitedAccessCaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_WITHDRAWN },
+        body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
       })
     }
 
@@ -382,7 +399,7 @@ export class LimitedAccessCaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_STATEMENT },
+        body: { type: CaseNotificationType.APPEAL_STATEMENT },
       })
     }
 
