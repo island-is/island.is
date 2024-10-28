@@ -30,6 +30,7 @@ import {
   IdentityApi,
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
+  MockableSamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
   InsuranceCompaniesApi,
 } from '../dataProviders'
@@ -142,6 +143,7 @@ const template: ApplicationTemplate<
                 IdentityApi,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
+                MockableSamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
                 InsuranceCompaniesApi,
               ],
