@@ -710,7 +710,7 @@ export const m = defineMessages({
     description: '',
   },
   editPaperNumberError: {
-    id: 'admin-portal.signature-collection:editPaperNumberSuccess',
+    id: 'admin-portal.signature-collection:editPaperNumberError',
     defaultMessage: 'Ekki tókst að breyta blaðsíðunúmeri',
     description: '',
   },
