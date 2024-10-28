@@ -471,7 +471,7 @@ This will cause a checkbox saying "Enable mock payment" to be shown that if chec
 
 ### Create your own MockablePaymentCatalogApi
 
-If for some reaason you need to create your own MockablePaymentCatalogApi you can do so by defining it in your dataprovider definitions.
+If for some reason you need to create your own MockablePaymentCatalogApi you can do so by defining it in your dataprovider definitions.
 
 Here is an example of how you can do this:
 
