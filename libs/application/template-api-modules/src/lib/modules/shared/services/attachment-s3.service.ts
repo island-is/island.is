@@ -1,6 +1,5 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationWithAttachments as Application, ApplicationWithAttachments } from '@island.is/application/types'
-import AmazonS3URI from 'amazon-s3-uri'
+import { ApplicationWithAttachments } from '@island.is/application/types'
 import { logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { S3Service } from '@island.is/nest/aws'
@@ -27,7 +26,7 @@ export class AttachmentS3Service {
   {}
 
   public async getFiles(
-    application: Application,
+    application: ApplicationWithAttachments,
     attachmentAnswerKeys: string[],
   ): Promise<AttachmentData[]> {
     const attachments: AttachmentData[] = []
@@ -50,7 +49,7 @@ export class AttachmentS3Service {
       name: string
     }>,
     answerKey: string,
-    application: Application,
+    application: ApplicationWithAttachments,
   ): Promise<AttachmentData[]> {
     return await Promise.all(
       answers.map(async ({ key, name }) => {
