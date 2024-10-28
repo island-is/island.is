@@ -372,7 +372,7 @@ export const m = defineMessages({
     description: '',
   },
   editPaperNumberError: {
-    id: 'sp.signatureCollection:editPaperNumberSuccess',
+    id: 'sp.signatureCollection:editPaperNumberError',
     defaultMessage: 'Ekki tókst að breyta blaðsíðunúmeri',
     description: '',
   },
