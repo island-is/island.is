@@ -35,11 +35,11 @@ export class Defendant extends Model {
   ) {
     return defendants?.some(
       (defendant) =>
+        defendant.isDefenderChoiceConfirmed &&
         defendant.defenderNationalId &&
         normalizeAndFormatNationalId(defenderNationalId).includes(
           defendant.defenderNationalId,
-        ) &&
-        defendant.isDefenderChoiceConfirmed,
+        ),
     )
   }
 
@@ -49,12 +49,12 @@ export class Defendant extends Model {
   ) {
     return defendants?.some(
       (defendant) =>
+        defendant.isDefenderChoiceConfirmed &&
+        defendant.caseFilesSharedWithDefender &&
         defendant.defenderNationalId &&
         normalizeAndFormatNationalId(defenderNationalId).includes(
           defendant.defenderNationalId,
-        ) &&
-        defendant.isDefenderChoiceConfirmed &&
-        defendant.caseFilesSharedWithDefender,
+        ),
     )
   }
 

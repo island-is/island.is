@@ -501,6 +501,11 @@ export const m = defineMessages({
     defaultMessage: 'Úrvinnslu lokið',
     description: '',
   },
+  toggleReviewSuccessToggleBack: {
+    id: 'admin-portal.signature-collection:toggleReviewSuccessToggleBack',
+    defaultMessage: 'Tókst að opna fyrir úrvinnslu',
+    description: '',
+  },
   lockList: {
     id: 'admin-portal.signature-collection:lockList',
     defaultMessage: 'Læsa söfnun',
@@ -705,7 +710,7 @@ export const m = defineMessages({
     description: '',
   },
   editPaperNumberError: {
-    id: 'admin-portal.signature-collection:editPaperNumberSuccess',
+    id: 'admin-portal.signature-collection:editPaperNumberError',
     defaultMessage: 'Ekki tókst að breyta blaðsíðunúmeri',
     description: '',
   },
@@ -752,6 +757,11 @@ export const m = defineMessages({
   paperSigneeError: {
     id: 'admin-portal.signature-collection:paperSigneeError',
     defaultMessage: 'Ekki tókst að skrá meðmæli',
+    description: '',
+  },
+  paperSigneeErrorAlreadySigned: {
+    id: 'admin-portal.signature-collection:paperSigneeErrorAlreadySigned',
+    defaultMessage: 'Kennitala er þegar á lista',
     description: '',
   },
 })
