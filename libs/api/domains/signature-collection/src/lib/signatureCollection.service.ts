@@ -19,6 +19,7 @@ import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperS
 import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
 import { SignatureCollectionCollector } from './models/collector.model'
 import { SignatureCollectionListSummary } from './models/areaSummaryReport.model'
+import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -196,6 +197,17 @@ export class SignatureCollectionService {
     return await this.signatureCollectionClientService.getListOverview(
       user,
       listId,
+    )
+  }
+
+  async updateSignaturePageNumber(
+    user: User,
+    input: SignatureCollectionSignatureUpdateInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.updateSignaturePageNumber(
+      user,
+      input.signatureId,
+      input.pageNumber,
     )
   }
 }
