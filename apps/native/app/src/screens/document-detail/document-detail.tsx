@@ -252,7 +252,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     } finally {
       markDocumentAsRead()
       setRefetching(false)
-      setLoaded(true)
     }
   }
 
@@ -487,17 +486,13 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               />
             ) : hasPdf ? (
               <PdfWrapper>
-                {visible && accessToken && loaded && (
+                {visible && accessToken && (
                   <PdfViewer
                     url={`data:application/pdf;base64,${Document.content?.value}`}
                     body={`documentId=${Document.id}&__accessToken=${accessToken}`}
                     onLoaded={(filePath: any) => {
                       setPdfUrl(filePath)
-                      // Make sure to not set document as loaded until actions have been fetched
-                      // To prevent top of first page not being shown
-                      if (shouldIncludeDocument) {
-                        setLoaded(true)
-                      }
+                      setLoaded(true)
                     }}
                     onError={() => {
                       setLoaded(true)
