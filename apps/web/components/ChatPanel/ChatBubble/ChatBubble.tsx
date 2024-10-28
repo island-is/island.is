@@ -56,9 +56,15 @@ export const ChatBubble = ({
               return
             }
 
-            const itemValue = localStorage.getItem(
-              embedDisclaimerProps.localStorageKey,
-            )
+            let itemValue: string | null = null
+            try {
+              itemValue = localStorage.getItem(
+                embedDisclaimerProps.localStorageKey,
+              )
+            } catch (error) {
+              console.warn('Failed to get preference:', error)
+            }
+
             if (itemValue === 'true') {
               onClick?.()
               return

@@ -89,10 +89,14 @@ export const EmbedDisclaimer = ({
                       checked={value}
                       onChange={(e) => {
                         onChange(e.target.checked)
-                        localStorage.setItem(
-                          localStorageKey,
-                          e.target.checked ? 'true' : 'false',
-                        )
+                        try {
+                          localStorage.setItem(
+                            localStorageKey,
+                            e.target.checked ? 'true' : 'false',
+                          )
+                        } catch (error) {
+                          console.warn('Failed to save preference:', error)
+                        }
                       }}
                     />
                   )}
