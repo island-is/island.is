@@ -98,8 +98,6 @@ export const Summary = ({
     requestedDate ? new Date(requestedDate) : new Date(),
   )
 
-  console.log(fastTrack)
-
   return (
     <>
       <Box
