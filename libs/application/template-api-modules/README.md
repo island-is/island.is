@@ -412,7 +412,7 @@ import { SharedApi } from '@island.is/application/types'
 
 ## Enabling payment mocking
 
-To enable payment mocking on dev and local you need to replace the `PaymentCatalogApi` with `MockablePaymentCatalogApi` in your application. You also need to make sure to update your template in the same manner
+To enable payment mocking on dev and local you need to add a `MockablePaymentCatalogApi` in your application. Make sure though to not remove the existing `PaymentCatalogApi` as this is the api that is used on prod. You also need to make sure to update your template in the same manner
 
 A simple example of this can be found in `libs/application/templates/example-payment/src/forms/draft.ts`
 
@@ -468,6 +468,22 @@ and `libs/application/templates/example-payment/src/lib/examplePaymentTemplate.t
 ```
 
 This will cause a checkbox saying "Enable mock payment" to be shown that if checked will cause the payment step to be skipped.
+
+### Create your own MockablePaymentCatalogApi
+
+If for some reaason you need to create your own MockablePaymentCatalogApi you can do so by defining it in your dataprovider definitions.
+
+Here is an example of how you can do this:
+
+```typescript
+export const MockableSyslumadurPaymentCatalogApi =
+  MockablePaymentCatalogApi.configure({
+    params: {
+      organizationId: InstitutionNationalIds.SYSLUMENN,
+    },
+    externalDataId: 'payment',
+  })
+```
 
 ### Mocking payment catalog items
 
