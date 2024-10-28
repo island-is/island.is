@@ -41,18 +41,13 @@ export const getApplicationInfo = (application: ApplicationModel) => {
         getMonth(application.appliedDate.getMonth()) +
         format(application.appliedDate, ' y'),
     },
-    application.state === ApplicationState.APPROVED
-      ? {
-          title: 'Samþykkt aðstoð: ',
-          content: `${application.amount.finalAmount.toLocaleString(
-            'de-DE',
-          )} kr.`,
-        }
-      : {
-          title: '',
-          content: '',
-        },
-  ]
+    application.state === ApplicationState.APPROVED && {
+      title: 'Samþykkt aðstoð: ',
+      content: `${application.amount[0].finalAmount.toLocaleString(
+        'de-DE',
+      )} kr.`,
+    },
+  ].filter(Boolean)
 }
 
 export const getApplicant = (application: ApplicationModel) => {

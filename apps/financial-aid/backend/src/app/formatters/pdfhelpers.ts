@@ -67,31 +67,35 @@ export const drawTitleAndUnderLine = (
 
 export const drawTextArea = (
   page: PDFPage,
-  title: string,
   applicationText: string,
   font: PDFFont,
   boldFont: PDFFont,
   baseFontSize: number,
   lineYPosition: number,
   margin: number,
+  title?: string,
 ) => {
-  // Draw the "Ástæða synjunar" header
-  page.drawText(title, {
-    x: margin,
-    y: lineYPosition,
-    size: baseFontSize,
-    font: boldFont,
-    color: rgb(0, 0, 0),
-  })
+  if (title) {
+    // Draw the "Ástæða synjunar" header
+    page.drawText(title, {
+      x: margin,
+      y: lineYPosition,
+      size: baseFontSize,
+      font: boldFont,
+      color: rgb(0, 0, 0),
+    })
+  }
 
   // Clean the rejection text
   const cleanText = stripHTMLTags(applicationText)
 
+  const sanitizedText = cleanText.replace(/\n/g, ' ')
+
   // Wrap the rejection text
-  const wrappedLines = wrapText(cleanText, font, baseFontSize, 400)
+  const wrappedLines = wrapText(sanitizedText, font, baseFontSize, 400)
 
   // Draw wrapped rejection text below the header
-  let y = lineYPosition - baseFontSize - 10
+  let y = title ? lineYPosition - baseFontSize - 10 : lineYPosition
 
   for (const line of wrappedLines) {
     page.drawText(line, {
@@ -127,6 +131,8 @@ export const drawSectionInfo = (
   const columnWidth = 150 // Adjust based on your available space
   let y = currentYPosition - baseFontSize - rowHeight
 
+  let currentIndex = 0
+
   // Loop through the data and draw each item
   for (const item of data) {
     // Check if there's enough space for another row, if not, add a new page
@@ -159,14 +165,18 @@ export const drawSectionInfo = (
     // Move x position for the next column
     x += columnWidth
     itemCount++
+    currentIndex++
 
     // If we've drawn 3 columns, move to the next row
     if (itemCount === 3) {
       x = margin // Reset x to start position
-      y -= rowHeight * 2 + 10 // Move y down for the next row, +10 for padding
+      if (currentIndex < data.length) {
+        y -= rowHeight * 2 + 10
+      }
+
       itemCount = 0 // Reset itemCount for the new row
     }
   }
 
-  return y - baseFontSize - rowHeight
+  return y - rowHeight * 2
 }

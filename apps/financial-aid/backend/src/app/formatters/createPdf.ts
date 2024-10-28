@@ -2,6 +2,7 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import format from 'date-fns/format'
 import {
   ApplicationEvent,
+  ApplicationEventType,
   ApplicationState,
   calcAge,
   formatNationalId,
@@ -66,7 +67,9 @@ export const createPdf = async (application: ApplicationModel) => {
     size: baseFontSize,
     font: font,
     color:
-      state === ApplicationState.REJECTED ? rgb(1, 0, 0.3) : rgb(0, 179, 158),
+      state === ApplicationState.REJECTED
+        ? rgb(1, 0, 0.3)
+        : rgb(0, 0.702, 0.62),
   })
 
   let currentYPosition =
@@ -116,13 +119,13 @@ export const createPdf = async (application: ApplicationModel) => {
     // Optionally draw rejection text and get the updated Y position
     currentYPosition = drawTextArea(
       page,
-      'Ástæða synjunar',
       application.rejection,
       font,
       boldFont,
       baseFontSize,
       currentYPosition,
       margin,
+      'Ástæða synjunar',
     )
     checkYPositionAndAddPage()
   }
@@ -157,13 +160,13 @@ export const createPdf = async (application: ApplicationModel) => {
     // Optionally draw rejection text and get the updated Y position
     currentYPosition = drawTextArea(
       page,
-      'Athugasemd',
       application.formComment,
       font,
       boldFont,
       baseFontSize,
       currentYPosition,
       margin,
+      'Athugasemd',
     )
     checkYPositionAndAddPage()
   }
@@ -223,13 +226,13 @@ export const createPdf = async (application: ApplicationModel) => {
       // Optionally draw rejection text and get the updated Y position
       currentYPosition = drawTextArea(
         page,
-        'Athugasemd',
         application.spouseFormComment,
         font,
         boldFont,
         baseFontSize,
         currentYPosition,
         margin,
+        'Athugasemd',
       )
       checkYPositionAndAddPage()
     }
@@ -237,6 +240,8 @@ export const createPdf = async (application: ApplicationModel) => {
   }
 
   if (application.children?.length > 0) {
+    checkYPositionAndAddPage()
+
     currentYPosition = drawTitleAndUnderLine(
       'Börn',
       currentYPosition,
@@ -263,13 +268,13 @@ export const createPdf = async (application: ApplicationModel) => {
       // Optionally draw rejection text and get the updated Y position
       currentYPosition = drawTextArea(
         page,
-        'Athugasemd',
         application.childrenComment,
         font,
         boldFont,
         baseFontSize,
         currentYPosition,
         margin,
+        'Athugasemd',
       )
       checkYPositionAndAddPage()
     }
@@ -324,29 +329,38 @@ export const createPdf = async (application: ApplicationModel) => {
     )
     const eventCreated = format(new Date(event.created), 'dd/MM/yyyy HH:mm')
 
+    const colorOfHeader = () => {
+      if (applicationEvent.eventType === ApplicationEventType.REJECTED) {
+        return rgb(1, 0, 0.3)
+      }
+      if (applicationEvent.eventType === ApplicationEventType.APPROVED) {
+        return rgb(0, 0.702, 0.62)
+      }
+      return rgb(0, 0, 0)
+    }
+
     page.drawText(eventData.header, {
       x: margin,
       y: currentYPosition,
       size: baseFontSize,
       font: boldFont,
-      color: rgb(0, 0, 0),
+      color: colorOfHeader(),
     })
     currentYPosition -= baseFontSize + lineSpacing
     checkYPositionAndAddPage()
-    page.drawText(eventData.prefix + ' : ' + eventData.text, {
+    page.drawText(eventData.prefix + ': ' + eventData.text, {
       x: margin,
       y: currentYPosition,
       size: baseFontSize,
       font: font,
       color: rgb(0, 0, 0),
     })
+    checkYPositionAndAddPage()
+    currentYPosition -= baseFontSize + lineSpacing
 
     if (item.comment) {
-      currentYPosition -= baseFontSize + lineSpacing
-      checkYPositionAndAddPage()
       currentYPosition = drawTextArea(
         page,
-        '',
         item.comment,
         font,
         boldFont,
@@ -355,9 +369,9 @@ export const createPdf = async (application: ApplicationModel) => {
         margin,
       )
       checkYPositionAndAddPage()
+      currentYPosition -= baseFontSize + lineSpacing
     }
 
-    currentYPosition -= baseFontSize + lineSpacing
     checkYPositionAndAddPage()
     page.drawText(eventCreated, {
       x: margin,
@@ -373,7 +387,7 @@ export const createPdf = async (application: ApplicationModel) => {
       start: { x: margin, y: lineYPosition },
       end: { x: width - margin, y: lineYPosition },
       thickness: 1,
-      color: lightGray, // Light gray
+      color: rgb(0.88, 0.835, 0.925),
     })
 
     currentYPosition -= baseFontSize + lineSpacing + 10
