@@ -124,7 +124,9 @@ describe('Feature-deployment support', () => {
       BFF_NAME: 'stjornbord',
       BFF_CLIENT_KEY_PATH: `/stjornbord`,
       BFF_PAR_SUPPORT_ENABLED: 'false',
-      BFF_ALLOWED_REDIRECT_URIS: json(['https://feature-A-beta.dev01.devland.is']),
+      BFF_ALLOWED_REDIRECT_URIS: json([
+        'https://feature-A-beta.dev01.devland.is',
+      ]),
       BFF_CLIENT_BASE_URL: 'https://feature-A-beta.dev01.devland.is',
       BFF_LOGOUT_REDIRECT_URI: 'https://feature-A-beta.dev01.devland.is',
       BFF_CALLBACKS_BASE_PATH: `https://feature-A-beta.dev01.devland.is/stjornbord/bff/callbacks`,
