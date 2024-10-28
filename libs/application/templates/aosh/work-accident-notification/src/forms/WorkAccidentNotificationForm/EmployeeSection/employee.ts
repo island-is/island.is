@@ -150,6 +150,12 @@ export const employeeSubSection = (index: number) =>
                 }))
             },
           }),
+          buildDateField({
+            id: `employee[${index}].startOfWorkdayDate`,
+            width: 'half',
+            required: true,
+            title: employee.employee.startOfWorkdayDate,
+          }),
           buildTextField({
             id: `employee[${index}].startTime`,
             title: employee.employee.time,

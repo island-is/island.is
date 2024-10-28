@@ -96,10 +96,9 @@ export const getEmployeeInformationForOverview = (
     `${formatMessage(overview.employee.workhourArrangement)}: ${
       chosenWorkhourArrangement?.name
     }`,
-    `${formatMessage(overview.employee.startTime)}: ${employee.startTime.slice(
-      0,
-      2,
-    )}:${employee.startTime.slice(2, 4)}`,
+    `${formatMessage(overview.employee.startTime)}: ${formatDate(
+      employee.startOfWorkdayDate,
+    )}, ${employee.startTime.slice(0, 2)}:${employee.startTime.slice(2, 4)}`,
     `${formatMessage(overview.employee.workstation)}: ${
       chosenWorkstation?.name
     }`,

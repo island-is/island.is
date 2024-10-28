@@ -1,4 +1,6 @@
 import {
+  coreHistoryMessages,
+  corePendingActionMessages,
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -12,6 +14,7 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   Application,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { Roles, States, Events } from './constants'
@@ -19,6 +22,7 @@ import { WorkAccidentNotificationAnswersSchema } from './dataSchema'
 import { getAoshInputOptionsApi, IdentityApi } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { shared } from './messages'
+import { ApiActions } from '../shared/constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -50,6 +54,18 @@ const template: ApplicationTemplate<
           name: 'Skilyrði',
           progress: 0,
           status: 'draft',
+          actionCard: {
+            tag: {
+              label: shared.application.actionCardPrerequisites,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -79,6 +95,18 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Tilkynning vinnuslyss',
           status: 'draft',
+          actionCard: {
+            tag: {
+              label: shared.application.actionCardDraft,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -109,19 +137,19 @@ const template: ApplicationTemplate<
           name: 'Completed',
           status: 'completed',
           lifecycle: pruneAfterDays(30),
-          // onEntry: defineTemplateApi({
-          //   action: ApiActions.submitApplication,
-          // }),
-          // actionCard: {
-          //   tag: {
-          //     label: applicationMessage.actionCardDone,
-          //     variant: 'blueberry',
-          //   },
-          //   pendingAction: {
-          //     title: corePendingActionMessages.applicationReceivedTitle,
-          //     displayStatus: 'success',
-          //   },
-          // },
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
+          actionCard: {
+            tag: {
+              label: shared.application.actionCardDone,
+              variant: 'blueberry',
+            },
+            pendingAction: {
+              title: corePendingActionMessages.applicationReceivedTitle,
+              displayStatus: 'success',
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,

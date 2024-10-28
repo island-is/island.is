@@ -4,13 +4,14 @@ import {
   FormatMessage,
   FormValue,
 } from '@island.is/application/types'
-import { information } from '../lib/messages'
+import { information, overview } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { CompanyLaborProtectionType, CompanyType } from '../lib/dataSchema'
 import {
   SizeOfTheEnterpriseDto,
   WorkplaceHealthAndSafetyDto,
 } from '@island.is/clients/work-accident-ver'
+import { formatPhoneNumber } from './formatPhonenumber'
 
 export const getCompanyInformationForOverview = (
   answers: FormValue,
@@ -51,5 +52,10 @@ export const getCompanyInformationForOverview = (
             ?.join(', ')
         : ''
     }`,
+
+    `${formatMessage(overview.labels.email)}: ${company.email}`,
+    `${formatMessage(overview.labels.phonenumber)}: ${formatPhoneNumber(
+      company.phonenumber,
+    )}`,
   ].filter((n) => n)
 }

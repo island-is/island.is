@@ -116,7 +116,7 @@ export const information = {
       emailAndPhoneAlertMessage: {
         id: 'aosh.wan.application:information.company.emailAndPhoneAlertMessage',
         defaultMessage:
-          'Vinsamlega vertu viss um að símanúmer og netfang fyrir tengilið sé rétt skráð.',
+          'ATH. Ef tengiliður er annar en er sjálfkrafa skráður þá geturðu breytt þeim upplýsingum hér.',
         description: 'Email and phone information alert message',
       },
     }),

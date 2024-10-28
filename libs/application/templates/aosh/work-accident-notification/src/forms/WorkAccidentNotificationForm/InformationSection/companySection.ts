@@ -140,11 +140,45 @@ export const companySection = buildSubSection({
           },
         }),
         buildAlertMessageField({
+          id: 'company.alertMessageField.emailAndPhone',
+          title: '',
+          message: information.labels.company.emailAndPhoneAlertMessage,
+          alertType: 'info',
+          marginBottom: 0,
+          doesNotRequireAnswer: true,
+        }),
+        buildTextField({
+          id: 'companyInformation.email',
+          title: information.labels.company.email,
+          backgroundColor: 'blue',
+          width: 'half',
+          required: true,
+          defaultValue: (application: Application) =>
+            getValueViaPath(
+              application.externalData,
+              'userProfile.data.email',
+              '',
+            ) as string,
+        }),
+        buildPhoneField({
+          id: 'companyInformation.phonenumber',
+          title: information.labels.company.phonenumber,
+          width: 'half',
+          required: true,
+          defaultValue: (application: Application) =>
+            getValueViaPath(
+              application.externalData,
+              'userProfile.data.mobilePhoneNumber',
+              '',
+            ) as string,
+        }),
+        buildAlertMessageField({
           id: 'company.alertMessageField',
           title: '',
           message: information.labels.company.alertMessage,
           alertType: 'info',
           doesNotRequireAnswer: true,
+          marginBottom: 0,
           condition: (formValue: FormValue, externalData, user) => {
             const type = getValueViaPath(
               externalData,
@@ -208,38 +242,6 @@ export const companySection = buildSubSection({
                 value: code || '',
               }))
           },
-        }),
-        buildAlertMessageField({
-          id: 'company.alertMessageField.emailAndPhone',
-          title: '',
-          message: information.labels.company.emailAndPhoneAlertMessage,
-          alertType: 'info',
-          doesNotRequireAnswer: true,
-        }),
-        buildTextField({
-          id: 'companyInformation.email',
-          title: information.labels.company.email,
-          backgroundColor: 'blue',
-          width: 'half',
-          required: true,
-          defaultValue: (application: Application) =>
-            getValueViaPath(
-              application.externalData,
-              'userProfile.data.email',
-              '',
-            ) as string,
-        }),
-        buildPhoneField({
-          id: 'companyInformation.phonenumber',
-          title: information.labels.company.phonenumber,
-          width: 'half',
-          required: true,
-          defaultValue: (application: Application) =>
-            getValueViaPath(
-              application.externalData,
-              'userProfile.data.mobilePhoneNumber',
-              '',
-            ) as string,
         }),
       ],
     }),

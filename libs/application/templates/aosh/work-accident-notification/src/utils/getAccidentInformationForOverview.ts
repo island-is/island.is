@@ -5,7 +5,7 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { overview, shared } from '../lib/messages'
-import { AccidentType } from '../lib/dataSchema'
+import { AccidentType, EmployeeType } from '../lib/dataSchema'
 import { formatDate } from './formatDate'
 import { MunicipalityDto } from '@island.is/clients/work-accident-ver'
 
@@ -20,6 +20,7 @@ export const getAccidentInformationForOverview = (
     'aoshData.data.municipality',
     [],
   ) as MunicipalityDto[]
+  const employees = getValueViaPath(answers, 'employee', []) as EmployeeType[]
   const chosenMunicipality = municipalities.find(
     ({ code }) => accident.municipality === code,
   )
@@ -34,9 +35,7 @@ export const getAccidentInformationForOverview = (
     `${formatMessage(overview.labels.didPoliceCome)}: ${formatMessage(
       accident.didPoliceCome === 'yes' ? shared.options.yes : shared.options.no,
     )}`,
-    `${formatMessage(
-      overview.labels.injuredAmount,
-    )}: TODO: get from employees length`,
+    `${formatMessage(overview.labels.injuredAmount)}: ${employees.length}`,
     `${formatMessage(overview.labels.municipality)}: ${
       chosenMunicipality?.name
     }`,

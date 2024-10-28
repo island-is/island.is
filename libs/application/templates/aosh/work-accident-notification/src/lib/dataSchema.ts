@@ -83,6 +83,7 @@ const employeeSchema = z
     nationality: z.string(),
     postnumberAndMunicipality: z.string(),
     startTime: TimeWithRefine,
+    startOfWorkdayDate: z.string(),
     startDate: z.string(),
     tempEmploymentSSN: z.string().optional(),
     workstation: z.string(),
