@@ -795,7 +795,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               <GridColumn
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-expect-error make web strict
-                span={[null, '4/7', '5/7', '4/7', '3/7']}
+                span={[null, '4/7', '5/7', '4/7']}
               >
                 <TOC
                   title={n('tableOfContentTitle')}

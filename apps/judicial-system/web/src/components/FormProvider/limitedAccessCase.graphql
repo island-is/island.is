@@ -34,10 +34,17 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       defenderEmail
       defenderPhoneNumber
       defenderChoice
+      defendantPlea
+      requestedDefenderChoice
+      requestedDefenderNationalId
+      requestedDefenderName
+      isDefenderChoiceConfirmed
+      caseFilesSharedWithDefender
       serviceRequirement
       verdictViewDate
       verdictAppealDeadline
       isVerdictAppealDeadlineExpired
+      subpoenaType
       subpoenas {
         id
         created
