@@ -71,6 +71,8 @@ const IndictmentOverview: FC = () => {
   const shouldDisplayGeneratedPDFs =
     workingCase.defendants?.some(
       (defendant) =>
+        defendant.isDefenderChoiceConfirmed &&
+        defendant.caseFilesSharedWithDefender &&
         defendant.defenderNationalId &&
         normalizeAndFormatNationalId(user?.nationalId).includes(
           defendant.defenderNationalId,
@@ -79,11 +81,12 @@ const IndictmentOverview: FC = () => {
     workingCase.civilClaimants?.some(
       (civilClaimant) =>
         civilClaimant.hasSpokesperson &&
+        civilClaimant.isSpokespersonConfirmed &&
+        civilClaimant.caseFilesSharedWithSpokesperson &&
         civilClaimant.spokespersonNationalId &&
         normalizeAndFormatNationalId(user?.nationalId).includes(
           civilClaimant.spokespersonNationalId,
-        ) &&
-        civilClaimant.caseFilesSharedWithSpokesperson,
+        ),
     )
 
   const handleNavigationTo = useCallback(
@@ -168,6 +171,7 @@ const IndictmentOverview: FC = () => {
                     <ConnectedCaseFilesAccordionItem
                       connectedCaseParentId={workingCase.id}
                       connectedCase={mergedCase}
+                      displayGeneratedPDFs={shouldDisplayGeneratedPDFs}
                     />
                   </Box>
                 ))}

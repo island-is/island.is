@@ -17,6 +17,13 @@ export const translationStrings = defineMessages({
     defaultMessage: 'Þú vilt hefja töku eftir 67 ára aldur',
     description: 'Upplýsingar sem birtast ef þú vilt seinka töku ellilífeyris',
   },
+  results2025ImageUrl: {
+    id: 'web.pensionCalculator:results2025ImageUrl',
+    defaultMessage:
+      'https://images.ctfassets.net/8k0h54kbe6bj/fkWhyD4Bcn1Osh4qJQasW/d15e433d2f6747a3ec4d79da49bb25f1/Fi_rildi_-_gr_nt.png',
+    description:
+      'Hlekkur á mynd sem sést þegar borið er saman 2025 örorkulífeyrisútreikninga við núverandi ár',
+  },
   pensionStartIsHurried: {
     id: 'web.pensionCalculator:pensionStartIsHurried',
     defaultMessage: 'Þú vilt hefja töku fyrir 67 ára aldur',
