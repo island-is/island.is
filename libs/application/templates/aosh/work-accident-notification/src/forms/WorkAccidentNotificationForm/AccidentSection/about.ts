@@ -100,7 +100,6 @@ export const aboutSection = buildSubSection({
           id: 'accident.exactLocation',
           title: accident.about.exactLocation,
           width: 'half',
-          // TODO(balli) is this required ??
         }),
         buildDescriptionField({
           id: 'accident.describe.descriptionHeading',
@@ -128,6 +127,7 @@ export const aboutSection = buildSubSection({
           variant: 'textarea',
           placeholder: accident.about.wasDoingPlaceholder,
           rows: 7,
+          maxLength: 500,
           required: true,
         }),
         buildTextField({
@@ -136,6 +136,7 @@ export const aboutSection = buildSubSection({
           variant: 'textarea',
           placeholder: accident.about.wenWrongPlaceholder,
           rows: 7,
+          maxLength: 500,
           required: true,
         }),
         buildTextField({
@@ -144,6 +145,7 @@ export const aboutSection = buildSubSection({
           variant: 'textarea',
           placeholder: accident.about.howPlaceholder,
           rows: 7,
+          maxLength: 500,
           required: true,
         }),
         buildDescriptionField({

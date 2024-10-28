@@ -40,13 +40,13 @@ const accidentSchema = z.object({
       return date >= minDate
     },
     {
-      message: 'Date must not be before 1.1.2020', // TODO(balli) translate!
+      message: 'Dagsetning má ekki vera fyrir 1.1.2020',
     },
   ),
   time: TimeWithRefine,
-  how: z.string().min(1), // TODO(balli) add some max to these ?? here or in the component
-  wasDoing: z.string().min(1),
-  wentWrong: z.string().min(1),
+  how: z.string().min(1).max(500),
+  wasDoing: z.string().min(1).max(500),
+  wentWrong: z.string().min(1).max(500),
 })
 
 const companySchema = z.object({
@@ -153,8 +153,6 @@ const createCauseAndEffectSchema = (
         return totalOptions < 2 || (totalOptions >= 2 && data[mostSeriousKey])
       },
       {
-        message:
-          'If more than one option is chosen, you must specify the most serious one', // TODO(balli) Translate
         path: [mostSeriousKey], // Error path
       },
     )
@@ -218,7 +216,7 @@ const projectPurchaseSchema = z
   )
 
 export const WorkAccidentNotificationAnswersSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v), // TODO ?
+  approveExternalData: z.boolean().refine((v) => v),
   companyInformation: companySchema,
   companyLaborProtection: companyLaborProtectionSchema,
   accident: accidentSchema,

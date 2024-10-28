@@ -13,6 +13,11 @@ export const employee = {
         'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
       description: 'Description of employee page',
     },
+    employeeInformation: {
+      id: 'aosh.wan.application:employee.employeeInformation',
+      defaultMessage: 'Upplýsingar um starfsmann',
+      description: 'Heading above employee information section',
+    },
     ssn: {
       id: 'aosh.wan.application:employee.ssn',
       defaultMessage: 'Kennitala',
@@ -40,7 +45,7 @@ export const employee = {
     },
     workArrangement: {
       id: 'aosh.wan.application:employee.workArrangement',
-      defaultMessage: 'Starfstillhögun starfsmann',
+      defaultMessage: 'Starfstillhögun starfsmanns',
       description: 'Work arrangement of employee',
     },
     employmentStatus: {

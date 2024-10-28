@@ -45,6 +45,16 @@ export const employeeSubSection = (index: number) =>
             alertType: 'info',
             doesNotRequireAnswer: true,
           }),
+          buildCustomField(
+            {
+              id: `employeeInformation[${index}].delete`,
+              title: '',
+              component: 'TitleWithRemove',
+            },
+            {
+              index: index,
+            },
+          ),
           buildNationalIdWithNameField({
             id: `employee[${index}].nationalField`,
             required: true,
@@ -97,7 +107,8 @@ export const employeeSubSection = (index: number) =>
             id: `employee[${index}].workArrangement`,
             title: employee.employee.workArrangement,
             titleVariant: 'h5',
-            marginTop: 3,
+            marginTop: 4,
+            marginBottom: 1,
           }),
           buildDateField({
             id: `employee[${index}].startDate`,

@@ -43,4 +43,11 @@ export const shared = {
       description: 'Yes',
     },
   }),
+  buttons: defineMessages({
+    deleteEmployee: {
+      id: 'aosh.wan.application:shared.buttons.deleteEmployee',
+      defaultMessage: 'Eyða starfsmanni',
+      description: 'Delete employee',
+    },
+  }),
 }
