@@ -68,7 +68,7 @@ export const GrantsSearchResultsFilter = ({
             }}
             categories={[
               {
-                id: 'applicationStatuses',
+                id: 'statuses',
                 label: 'Staða umsóknar',
                 selected: searchState?.['statuses'] ?? [],
                 filters: [
