@@ -73,6 +73,7 @@ export const drawTextArea = (
   baseFontSize: number,
   lineYPosition: number,
   margin: number,
+  pdfDoc: PDFDocument,
   title?: string,
 ) => {
   if (title) {
@@ -98,6 +99,13 @@ export const drawTextArea = (
   let y = title ? lineYPosition - baseFontSize - 10 : lineYPosition
 
   for (const line of wrappedLines) {
+    if (y < margin + baseFontSize) {
+      // Add a new page
+      page = pdfDoc.addPage() // Adjust page size if necessary
+      const { height } = page.getSize()
+      y = height - margin // Reset y to the top of the new page
+    }
+
     page.drawText(line, {
       x: 50,
       y,
@@ -108,7 +116,7 @@ export const drawTextArea = (
     y -= baseFontSize + 4 // Adjust for the next line
   }
 
-  return y // Return the updated Y position
+  return { updatedPage: page, updatedYPosition: y }
 }
 
 interface Section {
@@ -177,6 +185,5 @@ export const drawSectionInfo = (
       itemCount = 0 // Reset itemCount for the new row
     }
   }
-
-  return y - rowHeight * 2
+  return { updatedPage: page, updatedYPosition: y - rowHeight * 2 }
 }
