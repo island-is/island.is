@@ -68,9 +68,9 @@ export const bffConfig = ({ key, services, clientName, clientId }: BffInfo) => {
       },
       BFF_PROXY_API_ENDPOINT: {
         local: 'http://localhost:4444/api/graphql',
-        dev: ref((ctx) => `http://${ctx.svc(services.api)}`),
-        staging: ref((ctx) => `http://${ctx.svc(services.api)}`),
-        prod: ref((ctx) => `http://${ctx.svc(services.api)}`),
+        dev: ref((ctx) => `http://${ctx.svc(services.api)}/api/graphql`),
+        staging: ref((ctx) => `http://${ctx.svc(services.api)}/api/graphql`),
+        prod: ref((ctx) => `http://${ctx.svc(services.api)}/api/graphql`),
       },
       BFF_CACHE_USER_PROFILE_TTL_MS: (60 * 60 * 1000 - 5000).toString(),
       BFF_LOGIN_ATTEMPT_TTL_MS: (60 * 60 * 1000 * 24 * 7).toString(),
