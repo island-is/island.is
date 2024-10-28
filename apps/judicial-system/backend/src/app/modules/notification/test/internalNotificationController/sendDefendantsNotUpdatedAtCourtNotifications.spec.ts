@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
 
-import { NotificationType, User } from '@island.is/judicial-system/types'
+import { CaseNotificationType, User } from '@island.is/judicial-system/types'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
@@ -25,7 +25,7 @@ describe('InternalNotificationController - Send defendants not updated at court 
   const userId = uuid()
   const notificationDto: CaseNotificationDto = {
     user: { id: userId } as User,
-    type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+    type: CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
   }
   const caseId = uuid()
   const courtCaseNumber = uuid()
@@ -91,7 +91,7 @@ describe('InternalNotificationController - Send defendants not updated at court 
           ...theCase,
           notifications: [
             {
-              type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+              type: CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
               recipients: [{ address: registrarEmail, success: true }],
             },
           ],
