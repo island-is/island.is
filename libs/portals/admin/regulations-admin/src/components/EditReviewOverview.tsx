@@ -1,5 +1,12 @@
 import { ReactNode, useState } from 'react'
-import { Box, Button, Inline, Text, Divider } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Inline,
+  Text,
+  Divider,
+  AlertMessage,
+} from '@island.is/island-ui/core'
 import { editorMsgs, impactMsgs, reviewMessages } from '../lib/messages'
 import { useDraftingState } from '../state/useDraftingState'
 import { useLocale } from '@island.is/localization'
@@ -11,7 +18,9 @@ import {
   toISODate,
 } from '@island.is/regulations'
 import copyToClipboard from 'copy-to-clipboard'
+import isBefore from 'date-fns/isBefore'
 import { DownloadDraftButton } from './DownloadDraftButton'
+import { getDateOverviewWarning, hasPublishEffectiveWarning } from '../utils'
 
 // ---------------------------------------------------------------------------
 
@@ -160,6 +169,21 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
           {draft.fastTrack.value ? ` (${t(editorMsgs.applyForFastTrack)})` : ''}
         </Text>
       </OverviewItem>
+      {getDateOverviewWarning(
+        draft.effectiveDate.value,
+        draft.idealPublishDate.value,
+        draft.fastTrack.value,
+      ).map((item) => (
+        <Box marginBottom={3} width="half">
+          <AlertMessage
+            message={t(item)}
+            type="default"
+            action={
+              <JumpToStep step="meta" label={t(editorMsgs.stepMetaHeadline)} />
+            }
+          />
+        </Box>
+      ))}
 
       {Object.keys(draft.impacts).length > 0 && (
         <Box marginTop={4} marginBottom={4}>

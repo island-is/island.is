@@ -3,8 +3,10 @@ import { ISODate, toISODate } from '@island.is/regulations'
 import startOfDay from 'date-fns/startOfDay'
 import addDays from 'date-fns/addDays'
 import isBefore from 'date-fns/isBefore'
+import { editorMsgs } from '../lib/messages'
 
 import { StringOption as Option } from '@island.is/island-ui/core'
+import { MessageDescriptor } from 'react-intl'
 
 // ---------------------------------------------------------------------------
 
@@ -35,12 +37,12 @@ export const isWorkday = (date: Date): boolean => {
 export const getMinPublishDate = (fastTrack: boolean, signatureDate?: Date) => {
   let d = new Date()
   // Shift forward one day if the time is 14:00 or later.
-  if (d.getHours() > 14) {
+  if (d.getHours() > 14 && fastTrack) {
     d = addDays(d, 1)
   }
   // only fastTracked regulations may request today and/or a holiday
   if (!fastTrack) {
-    d = getNextWorkday(addDays(d, 1))
+    d = getWorkdayMinimumDate(10)
   }
   const minDate = startOfDay(d)
 
@@ -146,4 +148,42 @@ export const hasPublishEffectiveWarning = (
   }
 
   return false
+}
+
+export const getDateOverviewWarning = (
+  effective?: Date,
+  publish?: Date,
+  fastTrack?: boolean,
+): MessageDescriptor[] => {
+  const arr = []
+
+  const startPublishDate = publish ? startOfDay(publish) : undefined
+  const startEffectiveDate = effective ? startOfDay(effective) : undefined
+  const startToday = startOfDay(new Date())
+
+  // Minimum publish date for fast track regulations +1
+  const minimumPublishDateNoFastTrack = startOfDay(getWorkdayMinimumDate(10))
+  if (hasPublishEffectiveWarning(effective, publish, fastTrack)) {
+    arr.push(editorMsgs.publishEffectiveWarning)
+  }
+
+  if (!fastTrack) {
+    if (
+      startPublishDate &&
+      isBefore(startPublishDate, minimumPublishDateNoFastTrack) &&
+      !isBefore(startPublishDate, startToday)
+    ) {
+      arr.push(editorMsgs.publishDateEarlyFast)
+    }
+  }
+
+  if (startPublishDate && isBefore(startPublishDate, startToday)) {
+    arr.push(editorMsgs.publishDateEarly)
+  }
+
+  if (startEffectiveDate && isBefore(startEffectiveDate, startToday)) {
+    arr.push(editorMsgs.effectiveDateEarly)
+  }
+
+  return arr
 }
