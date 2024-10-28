@@ -26,7 +26,8 @@ ACTION=${3:-docker_build}
 PLAYWRIGHT_VERSION="$(yarn info --json @playwright/test | jq -r '.children.Version')"
 CONTAINER_BUILDER=${CONTAINER_BUILDER:-docker}
 DOCKER_LOCAL_CACHE="${DOCKER_LOCAL_CACHE:-true}"
-NODE_IMAGE_TAG="$(cd "$DIR" && ../../scripts/ci/get-node-version.mjs)"
+NODE_IMAGE_TAG="${NODE_IMAGE_TAG:-$(cd "$DIR" && ../../scripts/ci/get-node-version.mjs)}"
+DOCKER_REGISTRY=${DOCKER_REGISTRY:-localhost}
 
 BUILD_ARGS=()
 
@@ -40,7 +41,7 @@ mkargs() {
     --build-arg="APP=${APP}"
     --build-arg="APP_HOME=${APP_HOME}"
     --build-arg="APP_DIST_HOME=${APP_DIST_HOME}"
-    -t "${DOCKER_REGISTRY}${DOCKER_REGISTRY:+/}${APP}:${DOCKER_TAG}"
+    -t "${DOCKER_REGISTRY}/${APP}:${DOCKER_TAG}"
     --build-arg="PLAYWRIGHT_VERSION=${PLAYWRIGHT_VERSION}"
     --build-arg="NODE_IMAGE_TAG=${NODE_IMAGE_TAG}"
   )
@@ -55,6 +56,7 @@ mkargs() {
 
 container_build() {
   $CONTAINER_BUILDER buildx build "${BUILD_ARGS[@]}" "$PROJECT_ROOT"
+  echo "Successfully built ${DOCKER_REGISTRY}/${APP}:${DOCKER_TAG}" >&2
 }
 
 docker_build() {
