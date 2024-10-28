@@ -18,9 +18,8 @@ import {
   toISODate,
 } from '@island.is/regulations'
 import copyToClipboard from 'copy-to-clipboard'
-import isBefore from 'date-fns/isBefore'
 import { DownloadDraftButton } from './DownloadDraftButton'
-import { getDateOverviewWarning, hasPublishEffectiveWarning } from '../utils'
+import { getDateOverviewWarning } from '../utils'
 
 // ---------------------------------------------------------------------------
 
