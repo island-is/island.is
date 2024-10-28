@@ -19,14 +19,15 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseNotificationType,
   CaseState,
   CaseType,
-  NotificationType,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
 import { CourtService } from '../court'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
+import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { Defendant } from './models/defendant.model'
 import { DeliverResponse } from './models/deliver.response'
@@ -48,7 +49,7 @@ export class DefendantService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
+      body: { type: CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
     }
   }
 
@@ -199,8 +200,18 @@ export class DefendantService {
   async updateByNationalId(
     caseId: string,
     defendantNationalId: string,
-    update: UpdateDefendantDto,
+    update: InternalUpdateDefendantDto,
   ): Promise<Defendant> {
+    // The reason we have a separate dto for this is because requests that end here
+    // are initiated by outside API's which should not be able to edit other fields
+    // Defendant updated originating from the judicial system should use the UpdateDefendantDto
+    // and go through the update method above using the defendantId.
+    // This is also why we set the isDefenderChoiceConfirmed to false here - the judge needs to confirm all changes.
+    update = {
+      ...update,
+      isDefenderChoiceConfirmed: false,
+    } as UpdateDefendantDto
+
     const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
       update,
       {
@@ -298,7 +309,7 @@ export class DefendantService {
           },
         },
       ],
-      where: { defenderNationalId: nationalId },
+      where: { defenderNationalId: normalizeAndFormatNationalId(nationalId) },
       order: [['created', 'DESC']],
     })
   }

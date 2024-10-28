@@ -75,11 +75,16 @@ const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 const documentsService = serviceDocumentsSetup()
 const servicePortalApi = servicePortalApiSetup()
 
+const userNotificationService = userNotificationServiceSetup({
+  userProfileApi: servicePortalApi,
+})
+
 const appSystemApi = appSystemApiSetup({
   documentsService,
   servicesEndorsementApi: endorsement,
   skilavottordWs,
   servicePortalApi,
+  userNotificationService,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
@@ -99,10 +104,6 @@ const authAdminApi = authAdminApiSetup()
 
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
-
-const userNotificationService = userNotificationServiceSetup({
-  userProfileApi: servicePortalApi,
-})
 
 const api = apiSetup({
   appSystemApi,

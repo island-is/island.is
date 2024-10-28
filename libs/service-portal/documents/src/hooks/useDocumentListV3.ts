@@ -1,9 +1,6 @@
 import { useEffect } from 'react'
-import { AuthDelegationType } from '@island.is/api/schema'
-import { useUserBirthday, useUserInfo } from '@island.is/react-spa/bff'
 import { useDocumentContext } from '../screens/Overview/DocumentContext'
 import { useDocumentsV3Query } from '../screens/Overview/Overview.generated'
-import differenceInYears from 'date-fns/differenceInYears'
 
 export const pageSize = 10
 
@@ -22,18 +19,6 @@ export const useDocumentListV3 = (props?: UseDocumentListProps) => {
     setSendersAvailable,
   } = useDocumentContext()
 
-  const userInfo = useUserInfo()
-  const dateOfBirth = useUserBirthday()
-  const isLegal = userInfo.profile.delegationType?.includes(
-    AuthDelegationType.LegalGuardian,
-  )
-
-  let isOver15 = false
-  if (dateOfBirth) {
-    isOver15 = differenceInYears(new Date(), dateOfBirth) > 15
-  }
-  const hideHealthData = isOver15 && isLegal
-
   const fetchObject = {
     input: {
       senderNationalId: filterValue.activeSenders,
@@ -45,7 +30,6 @@ export const useDocumentListV3 = (props?: UseDocumentListProps) => {
       opened: filterValue.showUnread ? false : null,
       page: page,
       pageSize: props?.defaultPageSize ?? pageSize,
-      isLegalGuardian: hideHealthData,
       archived: filterValue.archived,
       bookmarked: filterValue.bookmarked,
     },
@@ -82,6 +66,7 @@ export const useDocumentListV3 = (props?: UseDocumentListProps) => {
   }, [loading, data, sendersAvailable, categoriesAvailable])
 
   const totalCount = data?.documentsV2?.totalCount || 0
+
   useEffect(() => {
     const pageCount = Math.ceil(totalCount / pageSize)
     if (pageCount !== totalPages && !loading) {

@@ -186,7 +186,7 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
                     </>
                   ))}
 
-                  {!popUp && (
+                  {!popUp && !error && (
                     <Button
                       type="submit"
                       size="small"
@@ -201,7 +201,7 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
                       )}
                     </Button>
                   )}
-                  {popUp && (
+                  {popUp && !error && (
                     <Box
                       display="flex"
                       flexDirection="row"

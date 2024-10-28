@@ -1,6 +1,6 @@
 import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useUserBirthday, useUserInfo } from '@island.is/react-spa/bff'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import {
   CardLoader,
   EmptyState,
@@ -21,7 +21,6 @@ export const EducationDetail = () => {
   const { id } = useParams() as UseParams
   useNamespaces('sp.occupational-licenses')
   const user = useUserInfo()
-  const dateOfBirth = useUserBirthday()
   const { formatDateFns, formatMessage } = useLocale()
 
   const { data, loading, error } = useGetHealthDirectorateLicenseByIdQuery({
@@ -59,9 +58,6 @@ export const EducationDetail = () => {
         license.__typename === 'OccupationalLicensesHealthDirectorateLicense'
           ? license.number
           : undefined
-      }
-      dateOfBirth={
-        dateOfBirth ? formatDateFns(dateOfBirth, 'dd.MM.yyyy') : undefined
       }
       profession={license.profession}
       licenseType={license.type}

@@ -95,4 +95,77 @@ export class OpenApiApplicationService {
       ],
     })
   }
+
+  async getbyID(
+    municipalityCodes: string,
+    id: string,
+  ): Promise<ApplicationModel> {
+    return this.applicationModel.findOne({
+      where: {
+        id: id,
+        municipalityCode: municipalityCodes,
+        state: {
+          [Op.or]: [ApplicationState.REJECTED, ApplicationState.APPROVED],
+        },
+      },
+      attributes: {
+        exclude: [
+          'staffId',
+          'applicationSystemId',
+          'interview',
+          'homeCircumstances',
+          'homeCircumstancesCustom',
+          'employment',
+          'employmentCustom',
+          'student',
+          'studentCustom',
+        ],
+      },
+      order: [['modified', 'DESC']],
+      include: [
+        {
+          model: ApplicationFileModel,
+          as: 'files',
+          separate: true,
+          order: [['created', 'DESC']],
+          attributes: ['key', 'name', 'type'],
+        },
+        {
+          model: StaffModel,
+          as: 'staff',
+          attributes: ['name', 'nationalId'],
+        },
+        {
+          model: AmountModel,
+          as: 'amount',
+          attributes: [
+            'aidAmount',
+            'childrenAidAmount',
+            'decemberAidAmount',
+            'income',
+            'personalTaxCredit',
+            'tax',
+            'finalAmount',
+            'spousePersonalTaxCredit',
+          ],
+          include: [
+            {
+              model: DeductionFactorsModel,
+              as: 'deductionFactors',
+              attributes: ['amount', 'description'],
+            },
+          ],
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+        {
+          model: DirectTaxPaymentModel,
+          as: 'directTaxPayments',
+          attributes: {
+            exclude: ['id', 'applicationId', 'created', 'modified'],
+          },
+        },
+      ],
+    })
+  }
 }

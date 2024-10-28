@@ -7,7 +7,7 @@ import { setup } from '../../../../../../test/setup'
 import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import * as utils from '../../utils/application'
-import { AwsService } from '@island.is/nest/aws'
+import { S3Service } from '@island.is/nest/aws'
 import { EmailService } from '@island.is/email-service'
 import { ContentfulRepository } from '@island.is/cms'
 import { ApplicationLifecycleModule } from '../application-lifecycle.module'
@@ -18,7 +18,7 @@ import { MockFeatureFlagService } from '../../e2e/mockFeatureFlagService'
 let app: INestApplication
 let server: request.SuperTest<request.Test>
 let lifeCycleService: ApplicationLifeCycleService
-let awsService: AwsService
+let s3Service: S3Service
 const sendMail = () => ({
   messageId: 'some id',
 })
@@ -80,9 +80,9 @@ beforeAll(async () => {
   lifeCycleService = lifeCycleApp.get<ApplicationLifeCycleService>(
     ApplicationLifeCycleService,
   )
-  awsService = app.get<AwsService>(AwsService)
+  s3Service = app.get<S3Service>(S3Service)
 
-  jest.spyOn(awsService, 'deleteObject').mockResolvedValue()
+  jest.spyOn(s3Service, 'deleteObject').mockResolvedValue()
   server = request(app.getHttpServer())
 })
 describe('ApplicationLifecycleService', () => {

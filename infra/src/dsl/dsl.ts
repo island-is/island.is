@@ -169,13 +169,13 @@ export class ServiceBuilder<ServiceType extends string> {
    * @example
    * ```
    * .env({
-   *        MY_VAR: 'foo',
-   *        YOUR_VAR: {
-   *            dev: 'foo',
-   *            staging: 'bar',
-   *            prod: 'baz',
-   *        },
-   *    })
+   *    MY_VAR: 'foo',
+   *    YOUR_VAR: {
+   *      dev: 'foo',
+   *      staging: 'bar',
+   *      prod: 'baz',
+   *    },
+   *  })
    * ```
    *
    */
@@ -490,6 +490,9 @@ export class ServiceBuilder<ServiceType extends string> {
     return this
   }
 
+  /**
+   * Validates that no environment variables are set twice. Throws if any are duplicated.
+   */
   private assertUnset<T extends {}>(current: T, envs: T) {
     const intersection = Object.keys({
       ...current,

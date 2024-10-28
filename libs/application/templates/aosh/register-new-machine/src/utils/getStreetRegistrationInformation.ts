@@ -8,12 +8,12 @@ export const getStreetRegistrationInformation = (
 ) => {
   const registerToTraffic = getValueViaPath(
     answers,
-    'streetRegistration.registerToTraffic',
+    'machine.streetRegistration.registerToTraffic',
   ) as typeof NO | typeof YES
 
   const licensePlateSize = getValueViaPath(
     answers,
-    'streetRegistration.size',
+    'machine.streetRegistration.size',
   ) as 'A' | 'B' | 'D'
 
   return registerToTraffic === YES

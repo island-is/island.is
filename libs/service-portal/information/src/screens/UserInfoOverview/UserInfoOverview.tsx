@@ -113,7 +113,7 @@ const UserInfoOverview = () => {
       {!error && !loading && data?.nationalRegistryPerson && (
         <Stack space={2}>
           <FamilyMemberCard
-            title={data.nationalRegistryPerson?.fullName || ''}
+            title={data.nationalRegistryPerson?.name?.fullName || ''}
             nationalId={data.nationalRegistryPerson?.nationalId}
             currentUser
           />

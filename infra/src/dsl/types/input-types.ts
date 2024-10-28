@@ -58,9 +58,7 @@ export type HealthProbe = {
   timeoutSeconds: number
 }
 
-export type Secrets = {
-  [name: string]: string | ValueType
-}
+export type Secrets = { [name: string]: string }
 
 export type EnvironmentVariableValue =
   | Optional<

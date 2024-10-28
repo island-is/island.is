@@ -7,8 +7,7 @@
     "charts": "node -r esbuild-register src/cli/generate-chart-values.ts",
     "update": "yarn update:packagejson",
     "update:packagejson": "node -r esbuild-register scripts/update-package-json.ts",
-    "cli": "node -r esbuild-register src/cli/cli.ts",
-    "generate-nx-schema": "node -r esbuild-register ./scripts/generate-nx-schema.ts"
+    "cli": "node -r esbuild-register src/cli/cli.ts"
   },
   "license": "MIT",
   "devDependencies": {
