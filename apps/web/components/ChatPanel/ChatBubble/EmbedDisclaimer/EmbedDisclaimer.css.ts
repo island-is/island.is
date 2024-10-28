@@ -19,4 +19,5 @@ export const modal = style({
     },
   }),
   transition: 'opacity 0.3s ease',
+  boxShadow: '0 4px 30px rgba(0, 0, 0, 0.16)',
 })

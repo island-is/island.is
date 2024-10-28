@@ -2,11 +2,11 @@ import React, { useRef, useState } from 'react'
 import cn from 'classnames'
 
 import { Box, FocusableBox, LoadingDots, Text } from '@island.is/island-ui/core'
+
 import {
   EmbedDisclaimer,
   type EmbedDisclaimerProps,
-} from '@island.is/web/components'
-
+} from './EmbedDisclaimer/EmbedDisclaimer'
 import * as styles from './ChatBubble.css'
 
 interface ChatBubbleProps {
