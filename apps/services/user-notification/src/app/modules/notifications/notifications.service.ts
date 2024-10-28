@@ -167,8 +167,8 @@ export class NotificationsService {
     }
   }
 
-  validateArgCounts(args: ArgumentDto[], template: HnippTemplate): boolean {
-    return args.length == template.args.length
+  validateArgCounts(args: ArgumentDto[] | null, template: HnippTemplate): boolean {
+    return (args ? args.length : 0) === (template.args ? template.args.length : 0);
   }
 
   /**
