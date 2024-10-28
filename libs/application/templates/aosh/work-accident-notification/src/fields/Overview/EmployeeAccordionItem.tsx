@@ -9,9 +9,10 @@ import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { ReviewGroup } from '../Components/ReviewGroup'
 import { KeyValueFormField } from '@island.is/application/ui-fields'
-import { EmployeeType } from '../../lib/dataSchema'
+import { EmployeeType, WorkAccidentNotification } from '../../lib/dataSchema'
 import { getEmployeeInformationForOverview } from '../../utils/getEmployeeInformationForOverview'
 import { getCauseAndConsequencesForOverview } from '../../utils/getCauseAndConsequencesForOverview'
+import { DeleteEmployee } from '../DeleteEmployee'
 
 type EmployeeAccordionItemType = {
   employee: EmployeeType
@@ -24,11 +25,22 @@ export const EmployeeAccordionItem: FC<
 > = ({ ...props }) => {
   const { application, field, employee, onClick, index } = props
   const { formatMessage } = useLocale()
+  const answers = application.answers as WorkAccidentNotification
 
   return (
     <>
       <Text>{formatMessage(overview.labels.employeeDescription)}</Text>
-
+      <Box
+        marginTop={1}
+        width="full"
+        display={'flex'}
+        justifyContent={'flexEnd'}
+      >
+        <DeleteEmployee
+          {...props}
+          allowDeleteFirst={answers.employeeAmount > 1}
+        />
+      </Box>
       <Box padding={[0, 0, 2, 4]}>
         <ReviewGroup
           handleClick={onClick}
