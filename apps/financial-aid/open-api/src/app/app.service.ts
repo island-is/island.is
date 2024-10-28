@@ -10,7 +10,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import appModuleConfig from './app.config'
 import { FilterApplicationsDto } from './app.dto'
 import { isDateValid } from './helpers'
-import { ApplicationModel } from './models'
+import { ApplicationModel, PdfModel } from './models'
 
 @Injectable()
 export class AppService {
@@ -66,7 +66,7 @@ export class AppService {
     apiKey: string,
     municipalityCode: string,
     id: string,
-  ): Promise<string> {
+  ): Promise<PdfModel> {
     this.logger.info(
       `trying to fetching all applications with municipalityCode ${municipalityCode}`,
       id,

@@ -7,7 +7,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { FilterApplicationsDto } from './app.dto'
 import { AppService } from './app.service'
 import { ApplicationBackendModel } from './backendModels'
-import { ApplicationModel } from './models'
+import { ApplicationModel, PdfModel } from './models'
 
 @Controller('api/open/v1')
 export class AppController {
@@ -43,12 +43,12 @@ export class AppController {
     @Headers('API-Key') apiKey: string,
     @Headers('Municipality-Code') municipalityCode: string,
     @Query('id') id: string,
-  ): Promise<string> {
+  ): Promise<PdfModel> {
     this.logger.info('Gets one application and returns pdf')
     return this.appService
       .getApplication(apiKey, municipalityCode, id)
       .then((application) => {
-        this.logger.info(`Application fetched`)
+        this.logger.info(`Application fetched and returned as pdf`)
         return application
       })
   }

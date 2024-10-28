@@ -128,16 +128,6 @@ export class OpenApiApplicationService {
           model: ApplicationEventModel,
           as: 'applicationEvents',
           separate: true,
-          // where: {
-          //   eventType: {
-          //     [Op.in]: isEmployee
-          //       ? Object.values(ApplicationEventType)
-          //       : [
-          //           ApplicationEventType.DATANEEDED,
-          //           ApplicationEventType.APPROVED,
-          //         ],
-          //   },
-          // },
           order: [['created', 'DESC']],
         },
         {
