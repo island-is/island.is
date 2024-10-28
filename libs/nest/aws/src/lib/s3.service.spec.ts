@@ -130,7 +130,7 @@ describe('S3Service', () => {
 
       expect(logger.error).toBeCalledTimes(1)
       expect(logger.error).toBeCalledWith(
-        'Error occurred while checking if file exists in S3',
+        'Error occurred while checking if file: y exists in S3 bucket: x',
         Error(),
       )
 
@@ -145,7 +145,7 @@ describe('S3Service', () => {
 
     expect(logger.error).toBeCalledTimes(1)
     expect(logger.error).toBeCalledWith(
-      'Error occurred while checking if file exists in S3',
+      'Error occurred while checking if file: y exists in S3 bucket: x',
       TypeError(
         "Cannot read properties of undefined (reading 'httpStatusCode')",
       ),
@@ -179,7 +179,7 @@ describe('S3Service', () => {
 
       expect(logger.error).toBeCalledTimes(1)
       expect(logger.error).toBeCalledWith(
-        'Error occurred while deleting file from S3',
+        'Error occurred while deleting file: y from S3 bucket: x',
         Error('Unexpected http response when deleting object from S3'),
       )
     },

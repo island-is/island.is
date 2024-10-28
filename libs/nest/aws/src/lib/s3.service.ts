@@ -36,7 +36,7 @@ export class S3Service {
   ) {}
 
   public async getClientRegion(): Promise<string> {
-    return await this.s3Client.config.region()
+    return this.s3Client.config.region()
   }
 
   public async getFile(
@@ -250,7 +250,7 @@ export class S3Service {
     key: string,
   ): Promise<GetObjectCommandOutput | undefined> {
     try {
-      return this.s3Client.send(
+      return await this.s3Client.send(
         new GetObjectCommand({
           Bucket: bucket,
           Key: key,
