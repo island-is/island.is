@@ -161,7 +161,6 @@ export const getDateOverviewWarning = (
   const startEffectiveDate = effective ? startOfDay(effective) : undefined
   const startToday = startOfDay(new Date())
 
-  // Minimum publish date for fast track regulations +1
   const minimumPublishDateNoFastTrack = startOfDay(getWorkdayMinimumDate(10))
   if (hasPublishEffectiveWarning(effective, publish, fastTrack)) {
     arr.push(editorMsgs.publishEffectiveWarning)
