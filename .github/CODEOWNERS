@@ -392,6 +392,7 @@ codemagic.yaml                                                                  
 /apps/system-e2e/src/tests/islandis/admin-portal/                                                        @island-is/aranja
 /apps/system-e2e/src/tests/islandis/application-system/                                                  @island-is/norda-applications
 /apps/system-e2e/src/tests/islandis/application-system/acceptance/parental-leave.spec.ts                 @island-is/deloitte
+/apps/system-e2e/src/tests/islandis/application-system/acceptance/social-insurance-administration/       @island-is/deloitte
 /apps/system-e2e/src/tests/islandis/consultation-portal/                                                 @island-is/advania
 /apps/system-e2e/src/tests/islandis/service-portal/                                                      @island-is/hugsmidjan @island-is/juni @island-is/norda-applications
 /apps/system-e2e/src/tests/islandis/web/                                                                 @island-is/hugsmidjan @island-is/juni @island-is/stefna
