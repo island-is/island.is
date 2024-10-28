@@ -513,7 +513,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           }
         />
       )}
-
       <ToastContainer />
     </Hidden>
   )
