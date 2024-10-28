@@ -130,7 +130,7 @@ describe('Feature-deployment support', () => {
       BFF_CLIENT_BASE_URL: 'https://feature-A-beta.dev01.devland.is',
       BFF_LOGOUT_REDIRECT_URI: 'https://feature-A-beta.dev01.devland.is',
       BFF_CALLBACKS_BASE_PATH: `https://feature-A-beta.dev01.devland.is/stjornbord/bff/callbacks`,
-      BFF_PROXY_API_ENDPOINT: 'http://web-api',
+      BFF_PROXY_API_ENDPOINT: 'http://web-api/api/graphql',
       BFF_ALLOWED_EXTERNAL_API_URLS: json(['https://api.dev01.devland.is']),
       BFF_CACHE_USER_PROFILE_TTL_MS: '3595000',
       BFF_LOGIN_ATTEMPT_TTL_MS: '604800000',
