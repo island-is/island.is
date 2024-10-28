@@ -1,32 +1,20 @@
-import { DynamicModule } from '@nestjs/common'
-import { BaseTemplateAPIModuleConfig } from '../../../types'
-import {
-  ChildrenResidenceChangeService,
-  PRESIGNED_BUCKET,
-} from './children-residence-change.service'
+import { Module } from '@nestjs/common'
+import { ChildrenResidenceChangeService } from './children-residence-change.service'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { SharedTemplateAPIModule } from '../../shared'
 import { SmsModule } from '@island.is/nova-sms'
+import { AwsModule } from '@island.is/nest/aws'
 
-export class ChildrenResidenceChangeModule {
-  static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
-    return {
-      module: ChildrenResidenceChangeModule,
-      imports: [
-        SyslumennClientModule,
-        SharedTemplateAPIModule.register(config),
-        SmsModule,
-        NationalRegistryClientModule,
-      ],
-      providers: [
-        {
-          provide: PRESIGNED_BUCKET,
-          useFactory: () => config.presignBucket,
-        },
-        ChildrenResidenceChangeService,
-      ],
-      exports: [ChildrenResidenceChangeService],
-    }
-  }
-}
+@Module({
+  imports: [
+    SyslumennClientModule,
+    SharedTemplateAPIModule,
+    SmsModule,
+    NationalRegistryClientModule,
+    AwsModule,
+  ],
+  providers: [ChildrenResidenceChangeService],
+  exports: [ChildrenResidenceChangeService],
+})
+export class ChildrenResidenceChangeModule {}

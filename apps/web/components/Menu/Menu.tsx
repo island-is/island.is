@@ -11,6 +11,7 @@ import {
 import { SearchInput } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 import { useI18n } from '@island.is/web/i18n'
+import type { LayoutProps } from '@island.is/web/layouts/main'
 
 import { LanguageToggler } from '../LanguageToggler'
 
@@ -29,6 +30,7 @@ interface Props {
   buttonColorScheme?: ButtonTypes['colorScheme']
   onMenuOpen?: () => void
   organizationSearchFilter?: string
+  languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
 }
 
 const minarsidurLink = '/minarsidur/'
@@ -41,6 +43,7 @@ export const Menu = ({
   buttonColorScheme = 'default',
   onMenuOpen,
   organizationSearchFilter,
+  languageToggleQueryParams,
 }: Props) => {
   const searchInput = useRef<HTMLInputElement>()
   const { activeLocale, t } = useI18n()
@@ -133,6 +136,7 @@ export const Menu = ({
           dialogId={
             isMobile ? 'menu-language-toggle-mobile' : 'menu-language-toggle'
           }
+          queryParams={languageToggleQueryParams}
         />
       )}
       renderSearch={(input, closeModal) => (

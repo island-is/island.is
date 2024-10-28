@@ -20,8 +20,6 @@ import { Events, States, Roles, ApiActions } from './constants'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { NewMachineAnswersSchema } from './dataSchema'
 import { application as applicationMessage } from './messages'
-import { assign } from 'xstate'
-import set from 'lodash/set'
 import {
   IdentityApi,
   MachineParentCategoriesApi,
@@ -131,7 +129,6 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: EphemeralStateLifeCycle,
-
           roles: [
             {
               id: Roles.APPLICANT,

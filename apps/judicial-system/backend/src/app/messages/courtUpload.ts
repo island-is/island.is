@@ -1,4 +1,4 @@
-import { defineMessages } from 'react-intl'
+import { defineMessages } from '@formatjs/intl'
 
 export const courtUpload = defineMessages({
   request: {

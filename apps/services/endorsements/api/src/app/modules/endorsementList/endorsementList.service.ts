@@ -26,7 +26,7 @@ import { NationalRegistryV3ClientService } from '@island.is/clients/national-reg
 
 import csvStringify from 'csv-stringify/lib/sync'
 
-import { AwsService } from '@island.is/nest/aws'
+import { S3Service } from '@island.is/nest/aws'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 import * as path from 'path'
 
@@ -46,7 +46,7 @@ export class EndorsementListService {
     @Inject(EmailService)
     private emailService: EmailService,
     private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
-    private readonly awsService: AwsService,
+    private readonly s3Service: S3Service,
   ) {}
 
   hasAdminScope(user: User): boolean {
@@ -810,10 +810,10 @@ export class EndorsementListService {
       await this.uploadFileToS3(fileBuffer, filename, fileType)
 
       // Generate presigned URL with 60 minutes expiration
-      const url = await this.awsService.getPresignedUrl(
-        environment.exportsBucketName,
-        filename,
-      )
+      const url = await this.s3Service.getPresignedUrl({
+        bucket: environment.exportsBucketName,
+        key: filename,
+      })
       return { url }
     } catch (error) {
       this.logger.error(`Failed to export list ${listId}`, { error })
@@ -876,10 +876,9 @@ export class EndorsementListService {
     fileType: 'pdf' | 'csv',
   ): Promise<void> {
     try {
-      await this.awsService.uploadFile(
+      await this.s3Service.uploadFile(
         fileBuffer,
-        environment.exportsBucketName,
-        filename,
+        { bucket: environment.exportsBucketName, key: filename },
         {
           ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
         },

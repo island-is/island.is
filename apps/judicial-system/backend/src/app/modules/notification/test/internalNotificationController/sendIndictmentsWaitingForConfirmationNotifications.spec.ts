@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
 
-import { NotificationType } from '@island.is/judicial-system/types'
+import { InstitutionNotificationType } from '@island.is/judicial-system/types'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
@@ -57,7 +57,7 @@ describe('InternalNotificationController - Send indictments waiting for confirma
 
       await internalNotificationController
         .sendNotification({
-          type: NotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
+          type: InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
           prosecutorsOfficeId,
         })
         .then((result) => (then.result = result))

@@ -10,7 +10,6 @@ import {
   Inject,
   Injectable,
   NotFoundException,
-  NotImplementedException,
   ServiceUnavailableException,
 } from '@nestjs/common'
 
@@ -352,6 +351,21 @@ export class PoliceService {
             subpoenaId,
           )
 
+          const serviceStatus = response.deliveredToLawyer
+            ? ServiceStatus.DEFENDER
+            : response.prosecutedConfirmedSubpoenaThroughIslandis
+            ? ServiceStatus.ELECTRONICALLY
+            : response.deliveredOnPaper || response.delivered === true
+            ? ServiceStatus.IN_PERSON
+            : response.acknowledged === false && response.delivered === false
+            ? ServiceStatus.FAILED
+            : // TODO: handle expired
+              undefined
+
+          if (serviceStatus === undefined) {
+            return subpoenaToUpdate
+          }
+
           const updatedSubpoena = await this.subpoenaService.update(
             subpoenaToUpdate,
             {
@@ -359,16 +373,7 @@ export class PoliceService {
               servedBy: response.servedBy ?? undefined,
               defenderNationalId: response.defenderNationalId ?? undefined,
               serviceDate: response.servedAt ?? undefined,
-              serviceStatus: response.deliveredToLawyer
-                ? ServiceStatus.DEFENDER
-                : response.prosecutedConfirmedSubpoenaThroughIslandis
-                ? ServiceStatus.ELECTRONICALLY
-                : response.deliveredOnPaper || response.delivered === true
-                ? ServiceStatus.IN_PERSON
-                : response.acknowledged === false
-                ? ServiceStatus.FAILED
-                : // TODO: handle expired
-                  undefined,
+              serviceStatus,
             } as UpdateSubpoenaDto,
           )
 
@@ -617,12 +622,6 @@ export class PoliceService {
     indictment: string,
     user: User,
   ): Promise<CreateSubpoenaResponse> {
-    if (!this.config.policeCreateSubpoenaApiAvailable) {
-      throw new NotImplementedException(
-        'Police create subpoena API not available in current environment',
-      )
-    }
-
     const { courtCaseNumber, dateLogs, prosecutor, policeCaseNumbers, court } =
       workingCase
     const { nationalId: defendantNationalId } = defendant
@@ -679,7 +678,7 @@ export class PoliceService {
         'Failed to create subpoena',
         {
           caseId: workingCase.id,
-          defendantId: defendant?.nationalId,
+          defendantId: defendant?.id,
           actor,
         },
         error,

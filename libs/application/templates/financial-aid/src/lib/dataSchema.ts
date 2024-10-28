@@ -7,144 +7,167 @@ import {
 import { isValidEmail, isValidNationalId, isValidPhone } from './utils'
 import { ApproveOptions } from './types'
 
-export const dataSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v, {
-    params: error.validation.dataGathering,
+const fileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
+const approveExternalDataSchema = z.boolean().refine((v) => v, {
+  params: error.validation.dataGathering,
+})
+
+const spouseSchema = z.object({
+  email: z.string().refine((v) => isValidEmail(v), {
+    params: error.validation.email,
   }),
-  approveExternalDataSpouse: z.boolean().refine((v) => v, {
-    params: error.validation.dataGathering,
+  approveTerms: z.array(z.string()).refine((v) => v && v.length === 1, {
+    params: error.validation.approveSpouse,
   }),
-  spouse: z.object({
-    email: z.string().refine((v) => isValidEmail(v), {
+})
+
+const childSchoolInfoSchema = z.object({
+  fullName: z.string(),
+  nationalId: z.string(),
+  school: z.string(),
+  livesWithApplicant: z.boolean(),
+  livesWithBothParents: z.boolean(),
+})
+
+const relationshipStatusScema = z
+  .object({
+    unregisteredCohabitation: z.nativeEnum(ApproveOptions).refine((v) => v, {
+      params: error.validation.radioErrorMessage,
+    }),
+    spouseEmail: z.string().optional(),
+    spouseNationalId: z.string().optional(),
+    spouseApproveTerms: z.array(z.string()).optional(),
+  })
+  .refine(
+    (v) =>
+      v.unregisteredCohabitation === ApproveOptions.Yes
+        ? v.spouseEmail &&
+          isValidEmail(v.spouseEmail) &&
+          v.spouseNationalId &&
+          isValidNationalId(v.spouseNationalId) &&
+          v.spouseApproveTerms &&
+          v.spouseApproveTerms.length === 1
+        : true,
+    {
+      //More detailed error messages are in the UnknownRelationshipForm component
       params: error.validation.email,
+    },
+  )
+
+const studentSchema = z
+  .object({
+    isStudent: z
+      .enum([ApproveOptions.Yes, ApproveOptions.No])
+      .refine((v) => v, {
+        params: error.validation.radioErrorMessage,
+      }),
+    custom: z.string().optional(),
+  })
+  .refine((v) => (v.isStudent === ApproveOptions.Yes ? v.custom : true), {
+    params: error.validation.inputErrorMessage,
+  })
+
+const homeCircumstancesSchema = z
+  .object({
+    type: z.nativeEnum(HomeCircumstances).refine((v) => v, {
+      params: error.validation.radioErrorMessage,
     }),
-    approveTerms: z.array(z.string()).refine((v) => v && v.length === 1, {
-      params: error.validation.approveSpouse,
-    }),
-  }),
-  childrenSchoolInfo: z.array(
-    z.object({
-      fullName: z.string(),
-      nationalId: z.string(),
-      school: z.string(),
-      livesWithApplicant: z.boolean(),
-      livesWithBothParents: z.boolean(),
-    }),
-  ),
-  childrenComment: z.string().optional(),
-  relationshipStatus: z
-    .object({
-      unregisteredCohabitation: z
-        .enum([ApproveOptions.Yes, ApproveOptions.No])
-        .refine((v) => v, {
-          params: error.validation.radioErrorMessage,
-        }),
-      spouseEmail: z.string().optional(),
-      spouseNationalId: z.string().optional(),
-      spouseApproveTerms: z.array(z.string()).optional(),
-    })
-    .refine(
-      (v) =>
-        v.unregisteredCohabitation === ApproveOptions.Yes
-          ? v.spouseEmail &&
-            isValidEmail(v.spouseEmail) &&
-            v.spouseNationalId &&
-            isValidNationalId(v.spouseNationalId) &&
-            v.spouseApproveTerms &&
-            v.spouseApproveTerms.length === 1
-          : true,
-      {
-        //More detailed error messages are in the UnknownRelationshipForm component
-        params: error.validation.email,
-      },
-    ),
-  student: z
-    .object({
-      isStudent: z
-        .enum([ApproveOptions.Yes, ApproveOptions.No])
-        .refine((v) => v, {
-          params: error.validation.radioErrorMessage,
-        }),
-      custom: z.string().optional(),
-    })
-    .refine((v) => (v.isStudent === ApproveOptions.Yes ? v.custom : true), {
-      params: error.validation.inputErrorMessage,
-    }),
-  homeCircumstances: z
-    .object({
-      type: z
-        .enum([
-          HomeCircumstances.WITHPARENTS,
-          HomeCircumstances.WITHOTHERS,
-          HomeCircumstances.OWNPLACE,
-          HomeCircumstances.REGISTEREDLEASE,
-          HomeCircumstances.UNREGISTEREDLEASE,
-          HomeCircumstances.OTHER,
-        ])
-        .refine((v) => v, {
-          params: error.validation.radioErrorMessage,
-        }),
-      custom: z.string().optional(),
-    })
-    .refine((v) => (v.type === HomeCircumstances.OTHER ? v.custom : true), {
-      params: error.validation.inputErrorMessage,
-      path: ['custom'],
-    }),
-  income: z.enum([ApproveOptions.Yes, ApproveOptions.No]).refine((v) => v, {
+    custom: z.string().optional(),
+  })
+  .refine((v) => (v.type === HomeCircumstances.OTHER ? v.custom : true), {
+    params: error.validation.inputErrorMessage,
+    path: ['custom'],
+  })
+
+const incomeSchema = z.object({
+  type: z.nativeEnum(ApproveOptions).refine((v) => v, {
     params: error.validation.radioErrorMessage,
   }),
-  employment: z
-    .object({
-      type: z
-        .enum([
-          Employment.WORKING,
-          Employment.UNEMPLOYED,
-          Employment.CANNOTWORK,
-          Employment.OTHER,
-        ])
-        .refine((v) => v, {
-          params: error.validation.radioErrorMessage,
-        }),
-      custom: z.string().optional(),
-    })
-    .refine((v) => (v.type === Employment.OTHER ? v.custom : true), {
-      params: error.validation.inputErrorMessage,
-      path: ['custom'],
-    }),
-  bankInfo: z.object({
-    bankNumber: z.string().optional(),
-    ledger: z.string().optional(),
-    accountNumber: z.string().optional(),
-  }),
-  personalTaxCredit: z
-    .enum([ApproveOptions.Yes, ApproveOptions.No])
-    .refine((v) => v, {
+})
+
+const incomeFilesSchema = z
+  .array(fileSchema)
+  .refine((v) => v.length > 0, { params: error.validation.missingFiles })
+
+const employmentSchema = z
+  .object({
+    type: z.nativeEnum(Employment).refine((v) => v, {
       params: error.validation.radioErrorMessage,
     }),
+    custom: z.string().optional(),
+  })
+  .refine((v) => (v.type === Employment.OTHER ? v.custom : true), {
+    params: error.validation.inputErrorMessage,
+    path: ['custom'],
+  })
+
+const bankInfoSchema = z.object({
+  bankNumber: z.string().optional(),
+  ledger: z.string().optional(),
+  accountNumber: z.string().optional(),
+})
+
+const personalTexCreditSchema = z.object({
+  type: z.nativeEnum(ApproveOptions).refine((v) => v, {
+    params: error.validation.radioErrorMessage,
+  }),
+})
+
+const contactInfoSchema = z.object({
+  email: z.string().refine((v) => isValidEmail(v), {
+    params: error.validation.email,
+  }),
+  phone: z.string().refine((v) => isValidPhone(v), {
+    params: error.validation.phone,
+  }),
+})
+
+const spouseIncomeSchema = z.object({
+  type: z.nativeEnum(ApproveOptions).refine((v) => v, {
+    params: error.validation.radioErrorMessage,
+  }),
+})
+
+const spouseContactInfoSchema = z.object({
+  email: z.string().refine((v) => isValidEmail(v), {
+    params: error.validation.email,
+  }),
+  phone: z.string().refine((v) => isValidPhone(v), {
+    params: error.validation.phone,
+  }),
+})
+
+export const dataSchema = z.object({
+  // Validation for ApplicationForm
+  approveExternalData: approveExternalDataSchema,
+  spouse: spouseSchema,
+  childrenSchoolInfo: z.array(childSchoolInfoSchema),
+  childrenComment: z.string().optional(),
+  relationshipStatus: relationshipStatusScema,
+  student: studentSchema,
+  homeCircumstances: homeCircumstancesSchema,
+  income: incomeSchema,
+  incomeFiles: incomeFilesSchema,
+  taxReturnFiles: z.array(fileSchema).optional(),
+  spouseIncomeFiles: z.array(fileSchema).optional(),
+  spouseTaxReturnFiles: z.array(fileSchema).optional(),
+  childrenFiles: z.array(fileSchema).optional(),
+  employment: employmentSchema,
+  bankInfo: bankInfoSchema,
+  personalTaxCredit: personalTexCreditSchema,
+  contactInfo: contactInfoSchema,
   formComment: z.string().optional(),
-  contactInfo: z.object({
-    email: z.string().refine((v) => isValidEmail(v), {
-      params: error.validation.email,
-    }),
-    phone: z.string().refine((v) => isValidPhone(v), {
-      params: error.validation.phone,
-    }),
-  }),
-  spouseIncome: z
-    .enum([ApproveOptions.Yes, ApproveOptions.No])
-    .refine((v) => v, {
-      params: error.validation.radioErrorMessage,
-    }),
-  spouseContactInfo: z.object({
-    email: z.string().refine((v) => isValidEmail(v), {
-      params: error.validation.email,
-    }),
-    phone: z.string().refine((v) => isValidPhone(v), {
-      params: error.validation.phone,
-    }),
-  }),
+  // Validation for SpouseForm
+  approveExternalDataSpouse: approveExternalDataSchema,
+  spouseIncome: spouseIncomeSchema,
+  spouseContactInfo: spouseContactInfoSchema,
   spouseFormComment: z.string().optional(),
   spouseName: z.string().optional(),
 })
 
-export type answersSchema = z.infer<typeof dataSchema>
+export type AnswersSchema = z.infer<typeof dataSchema>

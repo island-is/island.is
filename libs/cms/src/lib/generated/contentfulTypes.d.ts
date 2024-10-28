@@ -1606,6 +1606,9 @@ export interface IGenericListItemFields {
 
   /** Asset */
   asset?: Asset | undefined
+
+  /** External Link */
+  externalLink?: ILinkUrl | undefined
 }
 
 /** An item that belongs to a generic list */
@@ -3948,7 +3951,12 @@ export interface IStepFields {
   slug: string
 
   /** Step Type */
-  stepType?: 'Question - Radio' | 'Question - Dropdown' | 'Answer' | undefined
+  stepType?:
+    | 'Question - Radio'
+    | 'Question - Dropdown'
+    | 'Information'
+    | 'Answer'
+    | undefined
 
   /** Subtitle */
   subtitle?: Document | undefined
@@ -4104,6 +4112,9 @@ export interface ISubArticleFields {
 
   /** Sign Language Video */
   signLanguageVideo?: IEmbeddedVideo | undefined
+
+  /** Stepper */
+  stepper?: IStepper | undefined
 }
 
 /** A sub article that's a part of another main article */

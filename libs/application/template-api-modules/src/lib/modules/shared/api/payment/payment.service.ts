@@ -4,7 +4,7 @@ import {
   PaymentCatalogParameters,
 } from '@island.is/application/types'
 import {
-  BaseTemplateAPIModuleConfig,
+  SharedModuleConfig,
   TemplateApiModuleActionProps,
 } from '../../../../types'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
@@ -23,7 +23,7 @@ export class PaymentService extends BaseTemplateApiService {
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly paymentModelService: PaymentModelService,
     @Inject(ConfigService)
-    private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
+    private readonly configService: ConfigService<SharedModuleConfig>,
   ) {
     super('Payment')
   }
@@ -82,6 +82,7 @@ export class PaymentService extends BaseTemplateApiService {
       )
 
       const slug = getSlugFromType(application.typeId)
+
       const clientLocationOrigin = getConfigValue(
         this.configService,
         'clientLocationOrigin',
