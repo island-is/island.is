@@ -45,27 +45,24 @@ const transformData = (items: any) => {
       .flatMap((item: { categoryItems: any }) => item.categoryItems)
       .map((item: { id: string; value: string }) => ({
         key: item.id,
-        value: parseInt(item.value),
+        value: item.value,
       })),
   }
 }
 
-const getData = (slice: IChart, queryResult: DataItem[]): any => {
+const getData = (slice: IChart, queryResult: DataItem[]) => {
   const base = slice.sourceData ? JSON.parse(slice.sourceData) : queryResult
 
   const values = slice.components.map((component) =>
-    JSON.parse(component.values ?? '{}'),
+    JSON.parse(component.values || '{}'),
   )
 
   if (values[0]?.typeOfSource === 'manual') {
     const sourceDataType = values[0]?.typeOfManualDataKey
     const componentType = slice.components[0]?.type
 
-    let transformedData
-
     if (componentType === 'pie-cell') {
-      transformedData = transformData(values)
-      return [transformedData]
+      return [transformData(values)]
     }
 
     const allItems = values.flatMap((item) =>
@@ -89,9 +86,7 @@ const getData = (slice: IChart, queryResult: DataItem[]): any => {
       {},
     )
 
-    transformedData = Object.values(groupedData).reverse()
-
-    return transformedData
+    return Object.values(groupedData).reverse()
   }
 
   return base
