@@ -362,22 +362,22 @@ export const m = defineMessages({
     description: '',
   },
   editPaperNumber: {
-    id: 'sp.signature-collection:editPaperNumber',
+    id: 'sp.signatureCollection:editPaperNumber',
     defaultMessage: 'Breyta blaðsíðunúmeri',
     description: '',
   },
   editPaperNumberSuccess: {
-    id: 'sp.signature-collection:editPaperNumberSuccess',
+    id: 'sp.signatureCollection:editPaperNumberSuccess',
     defaultMessage: 'Tókst að breyta blaðsíðunúmeri',
     description: '',
   },
   editPaperNumberError: {
-    id: 'sp.signature-collection:editPaperNumberSuccess',
+    id: 'sp.signatureCollection:editPaperNumberSuccess',
     defaultMessage: 'Ekki tókst að breyta blaðsíðunúmeri',
     description: '',
   },
   saveEditPaperNumber: {
-    id: 'sp.signature-collection:saveEditPaperNumber',
+    id: 'sp.signatureCollection:saveEditPaperNumber',
     defaultMessage: 'Uppfæra blaðsíðunúmer',
     description: '',
   },
