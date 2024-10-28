@@ -153,7 +153,6 @@ export class NotificationsService {
    */
   async validate(templateId: string, args: ArgumentDto[]) {
     const template = await this.getTemplate(templateId)
-
     if (!this.validateArgCounts(args, template)) {
       throw new BadRequestException(
         `Number of arguments doesn't match, template requires ${template.args.length} arguments but ${args.length} were provided`,
@@ -167,8 +166,8 @@ export class NotificationsService {
     }
   }
 
-  validateArgCounts(args: ArgumentDto[], template: HnippTemplate): boolean {
-    return args.length == template.args.length
+  validateArgCounts(args: ArgumentDto[] | null, template: HnippTemplate): boolean {
+    return (args ? args.length : 0) === (template.args ? template.args.length : 0);
   }
 
   /**
