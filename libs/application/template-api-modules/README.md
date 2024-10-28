@@ -435,7 +435,7 @@ buildExternalDataProvider({
 and `libs/application/templates/example-payment/src/lib/examplePaymentTemplate.ts`
 
 ```typescript
-[States.DRAFT]: {
+[States.PREREQUISITES]: {
         meta: {
           status: 'draft',
           name: 'Draft',
