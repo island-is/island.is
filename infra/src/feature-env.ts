@@ -18,6 +18,7 @@ import {
   renderHelmValueFileContent,
 } from './dsl/exports/helm'
 import { ServiceBuilder } from './dsl/dsl'
+import { logger } from './logging'
 
 type ChartName = 'islandis' | 'identity-server'
 
