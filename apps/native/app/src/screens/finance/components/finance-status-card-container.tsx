@@ -1,9 +1,9 @@
 import {
-  FinanceStatusCard,
   Skeleton,
   Typography,
   blue400,
   dynamicColor,
+  ExpandableCard,
 } from '@ui'
 import { useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -122,7 +122,7 @@ export function FinanceStatusCardContainer({
     org.homepage || org.email || org.phone || org.name
 
   return (
-    <FinanceStatusCard
+    <ExpandableCard
       title={chargeType.name}
       icon={chevronDown}
       message={
@@ -375,6 +375,6 @@ export function FinanceStatusCardContainer({
           </Row>
         </AboutBox>
       )}
-    </FinanceStatusCard>
+    </ExpandableCard>
   )
 }

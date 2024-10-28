@@ -22,7 +22,7 @@ const Card = styled.TouchableHighlight<{ open?: boolean }>`
 `
 
 const Container = styled.View`
-  padding: 16px 20px;
+  padding: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Title = styled.View`
@@ -54,6 +54,7 @@ const IconMessage = styled.View`
 const Row = styled.View`
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 `
 
 const Expanded = styled.View`
@@ -63,9 +64,10 @@ const Expanded = styled.View`
 `
 
 interface CardProps {
-  icon?: ImageSourcePropType
+  titleIcon?: ImageSourcePropType
   title: React.ReactNode
   message: React.ReactNode
+  icon?: ImageSourcePropType
   value?: React.ReactNode
   children?: React.ReactNode
   open?: boolean
@@ -91,15 +93,16 @@ const toggleAnimation = {
   },
 }
 
-export function FinanceStatusCard({
+export const ExpandableCard = ({
   icon,
   title,
+  titleIcon,
   message,
   value,
   children,
   open,
   onPress,
-}: CardProps) {
+}: CardProps) => {
   const theme = useTheme()
   return (
     <Host
@@ -123,13 +126,29 @@ export function FinanceStatusCard({
         open={open}
       >
         <Container>
-          <Row style={{ marginBottom: theme.spacing[1] }}>
-            <Title>
-              <TitleText numberOfLines={1} ellipsizeMode="tail" variant="body3">
-                {title}
-              </TitleText>
-            </Title>
-          </Row>
+          {title && (
+            <Row style={{ marginBottom: theme.spacing[1] }}>
+              <Title>
+                {titleIcon && (
+                  <Image
+                    source={titleIcon}
+                    style={{
+                      width: 16,
+                      height: 16,
+                      marginRight: theme.spacing.smallGutter,
+                    }}
+                  />
+                )}
+                <TitleText
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  variant="body3"
+                >
+                  {title}
+                </TitleText>
+              </Title>
+            </Row>
+          )}
           <Row>
             <IconMessage>
               {icon && (

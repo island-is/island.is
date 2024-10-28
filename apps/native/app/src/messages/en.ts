@@ -609,7 +609,7 @@ export const en: TranslatedMessages = {
   'updateApp.button': 'Update',
   'updateApp.buttonSkip': 'Skip',
 
-  // health
+  // health - overview
   'health.overview.screenTitle': 'Health',
   'health.overview.title': 'My health',
   'health.overview.description':
@@ -635,4 +635,16 @@ export const en: TranslatedMessages = {
   'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'A new payment period begins with the next medicine purchase',
+
+  // health - vaccinations
+  'health.vaccinations.screenTitle': 'Bólusetningar',
+  'health.vaccinations.title': 'Bólusetningar',
+  'health.vaccinations.description':
+    'Hér getur þú séð lista yfir bóluefni sem þú hefur fengið, stöðu bólusetningar og aðrar upplýsingar.',
+  'health.vaccinations.generalVaccinations': 'Almennar bólusetningar',
+  'health.vaccinations.otherVaccinations': 'Aðrar bólusetningar',
+  'health.vaccinations.number': 'Nr.',
+  'health.vaccinations.date': 'Dags.',
+  'health.vaccinations.age': 'Aldur',
+  'health.vaccinations.vaccine': 'Bóluefni',
 }

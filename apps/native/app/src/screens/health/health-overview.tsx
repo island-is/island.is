@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -24,6 +25,7 @@ import externalLinkIcon from '../../assets/icons/external-link.png'
 import { getConfig } from '../../config'
 import { useBrowser } from '../../lib/use-browser'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { navigateTo } from '../../lib/deep-linking'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -91,6 +93,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const { openBrowser } = useBrowser()
   const origin = getConfig().apiUrl.replace(/\/api$/, '')
   const [refetching, setRefetching] = useState(false)
+  const { width } = useWindowDimensions()
 
   const now = useMemo(() => new Date().toISOString(), [])
 
@@ -177,6 +180,15 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           </Typography>
           <ButtonWrapper>
             <Button
+              title={intl.formatMessage({ id: 'health.overview.vaccinations' })}
+              isOutlined
+              isUtilityButton
+              iconStyle={{ tintColor: theme.color.dark300 }}
+              style={{ flex: 1 }}
+              ellipsis
+              onPress={() => navigateTo('/vaccinations', componentId)}
+            />
+            <Button
               title={intl.formatMessage({ id: 'health.overview.therapy' })}
               isOutlined
               isUtilityButton
@@ -191,6 +203,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 )
               }
             />
+          </ButtonWrapper>
+          <ButtonWrapper>
             <Button
               title={intl.formatMessage({
                 id: 'health.overview.aidsAndNutrition',
@@ -199,7 +213,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               isUtilityButton
               icon={externalLinkIcon}
               iconStyle={{ tintColor: theme.color.dark300 }}
-              style={{ flex: 1 }}
+              style={{ flex: 1, maxWidth: width * 0.5 - theme.spacing[3] }}
               ellipsis
               onPress={() =>
                 openBrowser(
