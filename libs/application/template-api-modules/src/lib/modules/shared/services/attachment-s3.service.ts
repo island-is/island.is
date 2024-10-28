@@ -1,5 +1,8 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationWithAttachments as Application, ApplicationWithAttachments } from '@island.is/application/types'
+import {
+  ApplicationWithAttachments as Application,
+  ApplicationWithAttachments,
+} from '@island.is/application/types'
 import AmazonS3URI from 'amazon-s3-uri'
 import { logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
@@ -23,8 +26,7 @@ export class AttachmentS3Service {
     @Inject(sharedModuleConfig.KEY)
     private config: ConfigType<typeof sharedModuleConfig>,
     private readonly applicationService: ApplicationService,
-  ) 
-  {}
+  ) {}
 
   public async getFiles(
     application: Application,

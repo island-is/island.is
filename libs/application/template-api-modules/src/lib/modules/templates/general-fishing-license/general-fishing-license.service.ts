@@ -89,20 +89,17 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
         'fishingLicenseFurtherInformation.attachments',
         [],
       ) as Array<{ key: string; name: string }>
-      
-      const attachmentDict = (
-        application.attachments as {
-          [key: string]: string
-        }
-      )
+
+      const attachmentDict = application.attachments as {
+        [key: string]: string
+      }
       const attachments = await Promise.all(
         attachmentsRaw?.map(async (a) => {
           const filename = attachmentDict[a.key]
-          const vidhengiBase64 =
-            await this.s3Service.getFileContent(
-              filename,
-              'base64'
-            )
+          const vidhengiBase64 = await this.s3Service.getFileContent(
+            filename,
+            'base64',
+          )
           return {
             vidhengiBase64,
             vidhengiNafn: a.name,

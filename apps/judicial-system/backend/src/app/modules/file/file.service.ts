@@ -404,7 +404,7 @@ export class FileService {
   private async getCaseFileSignedUrlFromS3(
     theCase: Case,
     file: CaseFile,
-    timeToLive?: number
+    timeToLive?: number,
   ): Promise<string> {
     if (this.shouldGetConfirmedDocument(file, theCase)) {
       return this.awsS3Service.getConfirmedIndictmentCaseSignedUrl(
@@ -413,15 +413,11 @@ export class FileService {
         !file.hash,
         (content: Buffer) =>
           this.confirmIndictmentCaseFile(theCase, file, content),
-        timeToLive
+        timeToLive,
       )
     }
 
-    return this.awsS3Service.getSignedUrl(
-      theCase.type,
-      file.key,
-      timeToLive
-    )
+    return this.awsS3Service.getSignedUrl(theCase.type, file.key, timeToLive)
   }
 
   async getCaseFileSignedUrl(
@@ -562,7 +558,7 @@ export class FileService {
     const url = await this.getCaseFileSignedUrlFromS3(
       theCase,
       file,
-      this.config.robotS3TimeToLiveGet
+      this.config.robotS3TimeToLiveGet,
     )
 
     return this.courtService

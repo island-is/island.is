@@ -69,10 +69,10 @@ export class FileStorageService {
 
     await this.s3Service.copyObject(
       {
-        bucket: destinationBucket, 
-        key: destinationKey
-      }, 
-      `${this.config.uploadBucket}/${sourceKey}`
+        bucket: destinationBucket,
+        key: destinationKey,
+      },
+      `${this.config.uploadBucket}/${sourceKey}`,
     )
     return `https://${destinationBucket}.s3-${region}.amazonaws.com/${destinationKey}`
   }

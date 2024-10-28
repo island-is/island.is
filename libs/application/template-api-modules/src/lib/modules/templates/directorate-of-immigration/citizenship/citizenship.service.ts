@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
-import { AttachmentS3Service } from '../../../shared/services';
+import { AttachmentS3Service } from '../../../shared/services'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
