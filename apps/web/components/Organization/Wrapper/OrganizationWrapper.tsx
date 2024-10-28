@@ -613,6 +613,13 @@ export const OrganizationHeader: React.FC<
           customTitleColor={n('tryggingastofnunHeaderTitleColor', '#007339')}
         />
       )
+    case 'faggilding':
+      return (
+        <DefaultHeader
+          {...defaultProps}
+          logoImageClassName={n('faggildingLogoImageLarge', false)}
+        />
+      )
     default:
       return <DefaultHeader {...defaultProps} />
   }

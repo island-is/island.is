@@ -32,6 +32,7 @@ export interface DefaultHeaderProps {
   imageObjectPosition?: 'left' | 'center' | 'right'
   className?: string
   titleClassName?: string
+  logoImageClassName?: boolean
   logoAltText?: string
   isSubpage?: boolean
 }
@@ -55,6 +56,7 @@ export const DefaultHeader: React.FC<
   imageObjectPosition = 'center',
   className,
   titleClassName,
+  logoImageClassName,
   logoAltText,
   titleSectionPaddingLeft,
   isSubpage,
@@ -88,7 +90,13 @@ export const DefaultHeader: React.FC<
                   borderRadius="circle"
                   background="white"
                 >
-                  <img className={styles.logo} src={logo} alt={logoAltText} />
+                  <img
+                    className={cn(styles.logo, {
+                      [styles.logoLarge]: logoImageClassName,
+                    })}
+                    src={logo}
+                    alt={logoAltText}
+                  />
                 </Box>
               </LinkWrapper>
             </div>
@@ -140,7 +148,12 @@ export const DefaultHeader: React.FC<
                       background="white"
                     >
                       <img
-                        className={isSubpage ? styles.logoSubpage : styles.logo}
+                        className={cn(
+                          isSubpage ? styles.logoSubpage : styles.logo,
+                          {
+                            [styles.logoLarge]: logoImageClassName,
+                          },
+                        )}
                         src={logo}
                         alt={logoAltText}
                       />

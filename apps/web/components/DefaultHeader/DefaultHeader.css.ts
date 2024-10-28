@@ -131,6 +131,11 @@ export const logo = style({
   height: '70px',
 })
 
+export const logoLarge = style({
+  width: '80px',
+  height: '80px',
+})
+
 export const logoSubpage = style({
   width: '30px',
   height: '30px',
