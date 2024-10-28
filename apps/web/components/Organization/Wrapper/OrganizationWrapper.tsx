@@ -617,7 +617,7 @@ export const OrganizationHeader: React.FC<
       return (
         <DefaultHeader
           {...defaultProps}
-          logoImageClassName={n('faggildingLogoImageLarge', false)}
+          logoImageClassName={styles.logoLarge}
         />
       )
     default:
