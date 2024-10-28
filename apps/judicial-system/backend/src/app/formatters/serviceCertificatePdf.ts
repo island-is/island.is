@@ -42,7 +42,6 @@ const getSubpoenaType = (subpoenaType?: SubpoenaType): string => {
 }
 
 const getRole = (userRole?: UserRole) => {
-  console.log(userRole)
   switch (userRole) {
     case UserRole.DISTRICT_COURT_ASSISTANT: {
       return 'Aðstoðarmaður dómara'
