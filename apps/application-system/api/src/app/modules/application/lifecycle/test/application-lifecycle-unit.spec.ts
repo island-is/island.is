@@ -1,7 +1,7 @@
 import { ApplicationService } from '@island.is/application/api/core'
 import { createApplication } from '@island.is/application/testing'
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
-import { AwsService } from '@island.is/nest/aws'
+import { S3Service } from '@island.is/nest/aws'
 import { TestApp } from '@island.is/testing/nest'
 
 import { setup } from '../../../../../../test/setup'
@@ -10,7 +10,7 @@ import { ApplicationLifecycleModule } from '../application-lifecycle.module'
 import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 
 let lifeCycleService: ApplicationLifeCycleService
-let awsService: AwsService
+let s3Service: S3Service
 
 export const createApplications = () => {
   return [
@@ -88,7 +88,7 @@ describe('ApplicationLifecycleService Unit tests', () => {
           .useClass(ApplicationChargeServiceMock),
     })
 
-    awsService = app.get<AwsService>(AwsService)
+    s3Service = app.get<S3Service>(S3Service)
     lifeCycleService = app.get<ApplicationLifeCycleService>(
       ApplicationLifeCycleService,
     )
@@ -97,7 +97,7 @@ describe('ApplicationLifecycleService Unit tests', () => {
   it('should prune answers and prune true.', async () => {
     //PREPARE
     const deleteObjectSpy = jest
-      .spyOn(awsService, 'deleteObject')
+      .spyOn(s3Service, 'deleteObject')
       .mockResolvedValue()
 
     //ACT
@@ -116,7 +116,7 @@ describe('ApplicationLifecycleService Unit tests', () => {
   it('should prune answers leave one attachment on exist true.', async () => {
     //PREPARE
     const deleteObjectSpy = jest
-      .spyOn(awsService, 'deleteObject')
+      .spyOn(s3Service, 'deleteObject')
       .mockReset()
       .mockImplementationOnce(() => {
         throw new Error('Error')
@@ -142,7 +142,7 @@ describe('ApplicationLifecycleService Unit tests', () => {
   it('should not remove attachments if deleteObject throws Error.', async () => {
     //PREPARE
     const deleteObjectSpy = jest
-      .spyOn(awsService, 'deleteObject')
+      .spyOn(s3Service, 'deleteObject')
       .mockReset()
       .mockImplementation(() => {
         throw new Error('Error')

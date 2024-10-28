@@ -87,7 +87,12 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 ? formatMessage(m.listStatusReviewedStatusAlert)
                 : formatMessage(m.listStatusActiveAlert)
             }
-            type={listStatus === ListStatus.Reviewed ? 'success' : undefined}
+            type={
+              listStatus === ListStatus.Reviewed ||
+              listStatus === ListStatus.Inactive
+                ? 'success'
+                : undefined
+            }
           />
           <ActionExtendDeadline
             listId={list.id}
@@ -96,13 +101,14 @@ const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               allowedToProcess && listStatus === ListStatus.Extendable
             }
           />
-          {(allowedToProcess && !list.active) ||
-            (!allowedToProcess && (
-              <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
-            ))}
+          {((allowedToProcess && !list.active) || !allowedToProcess) && (
+            <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
+          )}
           {allowedToProcess && (
             <Box>
-              {!list.active && <PaperSignees listId={list.id} />}
+              {!list.active && !list.reviewed && (
+                <PaperSignees listId={list.id} />
+              )}
               <ActionReviewComplete listId={list.id} listStatus={listStatus} />
             </Box>
           )}

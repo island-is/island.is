@@ -140,6 +140,20 @@ describe('mapCaseStateToTagVariant', () => {
       text: 'Niðurfelling',
     })
 
+    expect(
+      fn(
+        CaseState.COMPLETED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        undefined,
+        CaseIndictmentRulingDecision.WITHDRAWAL,
+      ),
+    ).toEqual({
+      color: 'darkerBlue',
+      text: 'Afturkallað',
+    })
+
     expect(fn(CaseState.COMPLETED, false, CaseType.INDICTMENT)).toEqual({
       color: 'darkerBlue',
       text: 'Lokið',
