@@ -191,7 +191,6 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
       ? theCase.rulingDate
       : verdictViewDate
 
-    console.log(baseDate)
     const verdictAppealDeadline = baseDate
       ? new Date(
           new Date(baseDate).getTime() + getDays(VERDICT_APPEAL_WINDOW_DAYS),
