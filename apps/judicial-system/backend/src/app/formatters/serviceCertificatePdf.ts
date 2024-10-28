@@ -9,7 +9,11 @@ import {
   getWordByGender,
   Word,
 } from '@island.is/judicial-system/formatters'
-import { ServiceStatus, SubpoenaType } from '@island.is/judicial-system/types'
+import {
+  ServiceStatus,
+  SubpoenaType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { serviceCertificate as strings } from '../messages'
 import { Case } from '../modules/case'
@@ -34,6 +38,18 @@ const getSubpoenaType = (subpoenaType?: SubpoenaType): string => {
     default:
       // Should never happen
       return 'Ekki skráð'
+  }
+}
+
+const getRole = (userRole?: UserRole) => {
+  console.log(userRole)
+  switch (userRole) {
+    case UserRole.DISTRICT_COURT_ASSISTANT: {
+      return 'Aðstoðarmaður dómara'
+    }
+    default: {
+      return 'Dómari'
+    }
   }
 }
 
@@ -132,7 +148,7 @@ export const createServiceCertificate = (
     'Times-Roman',
   )
 
-  addNormalText(doc, 'Dómari: ', 'Times-Bold', true)
+  addNormalText(doc, `${getRole(theCase.judge?.role)}: `, 'Times-Bold', true)
   addNormalText(
     doc,
     theCase.judge ? theCase.judge.name : 'Ekki skráður',
