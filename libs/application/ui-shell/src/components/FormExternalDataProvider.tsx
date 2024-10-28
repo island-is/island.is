@@ -195,7 +195,6 @@ const FormExternalDataProvider: FC<
     addExternalData(data: ExternalData): void
     setBeforeSubmitCallback: SetBeforeSubmitCallback
     externalData: ExternalData
-    enableMockPayment?: boolean
     externalDataProvider: ExternalDataProviderScreen
     formValue: FormValue
     errors: RecordObject
@@ -205,12 +204,13 @@ const FormExternalDataProvider: FC<
   setBeforeSubmitCallback,
   application,
   applicationId,
-  enableMockPayment = false,
   externalData,
   externalDataProvider,
   formValue,
   errors,
 }) => {
+  const [shouldUseMockPayment, setShouldUseMockPayment] = useState(false)
+  const [hasApproved, setHasApproved] = useState(false)
   const { formatMessage, lang: locale } = useLocale()
   const { setValue, clearErrors } = useFormContext()
   const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
@@ -231,22 +231,38 @@ const FormExternalDataProvider: FC<
     checkboxLabel,
   } = externalDataProvider
   const relevantDataProviders = dataProviders.filter((p) => p.action)
-
   const [suppressProviderErrors, setSuppressProviderErrors] = useState(true)
+  const enableMockPayment = dataProviders.some(
+    (x) => x.action === 'Payment.mockPaymentCatalog',
+  )
 
   // If id is undefined then the error won't be attached to the field with id
   const error = getValueViaPath(errors, id ?? '', undefined) as
     | string
     | undefined
 
-  const activateBeforeSubmitCallback = (checked: boolean) => {
+  const activateBeforeSubmitCallback = (
+    checked: boolean,
+    enableMockPayment: boolean,
+  ) => {
     if (checked) {
       setBeforeSubmitCallback(async () => {
+        let providers = relevantDataProviders
+        if (enableMockPayment) {
+          providers = relevantDataProviders.filter(
+            (x) => x.action !== 'Payment.paymentCatalog',
+          )
+        } else {
+          providers = relevantDataProviders.filter(
+            (x) => x.action !== 'Payment.mockPaymentCatalog',
+          )
+        }
+
         const response = await updateExternalData({
           variables: {
             input: {
               id: applicationId,
-              dataProviders: relevantDataProviders.map(({ action, order }) => ({
+              dataProviders: providers.map(({ action, order }) => ({
                 actionId: action,
                 order,
               })),
@@ -261,7 +277,7 @@ const FormExternalDataProvider: FC<
           response.data &&
           verifyExternalData(
             getExternalDataFromResponse(response.data),
-            relevantDataProviders,
+            providers,
           )
         ) {
           return [true, null]
@@ -278,6 +294,11 @@ const FormExternalDataProvider: FC<
     if (!id) return
     setValue(id, false)
   }, [id, setValue])
+
+  useEffect(() => {
+    activateBeforeSubmitCallback(hasApproved, shouldUseMockPayment)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasApproved, shouldUseMockPayment])
 
   return (
     <Box>
@@ -335,8 +356,8 @@ const FormExternalDataProvider: FC<
                   const isChecked = e.target.checked
                   clearErrors(id)
                   setValue(id as string, isChecked)
+                  setHasApproved(isChecked)
                   onChange(isChecked)
-                  activateBeforeSubmitCallback(isChecked)
                 }}
                 checked={value}
                 hasError={error !== undefined}
@@ -375,6 +396,7 @@ const FormExternalDataProvider: FC<
                       const isChecked = e.target.checked
                       clearErrors(MOCKPAYMENT)
                       setValue(MOCKPAYMENT as string, isChecked)
+                      setShouldUseMockPayment(isChecked)
                       onChange(isChecked)
                     }}
                     checked={value}
