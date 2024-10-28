@@ -21,6 +21,7 @@ import { getConfigValue } from '../../shared.utils'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { FetchError } from '@island.is/clients/middlewares'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 @Injectable()
 export class UserProfileService extends BaseTemplateApiService {
@@ -72,30 +73,44 @@ export class UserProfileService extends BaseTemplateApiService {
     }
 
     if (params?.validateEmail && !email) {
+      const link = this.getRegistrationLink(application, 'email', auth)
+
       throw new TemplateApiError(
         {
           title: coreErrorMessages.noEmailFound,
           summary: {
-            ...coreErrorMessages.noEmailFoundDescription,
-            values: { link: this.getIDSLink(application) },
+            ...(link
+              ? {
+                  ...coreErrorMessages.noEmailFoundDescription,
+                  values: { link },
+                }
+              : coreErrorMessages.noEmailNoRegistration),
           },
         },
         500,
       )
     }
 
-    if (params?.validatePhoneNumber) {
-      if (!mobilePhoneNumber || !this.isValidPhoneNumber(mobilePhoneNumber))
-        throw new TemplateApiError(
-          {
-            title: coreErrorMessages.invalidPhoneNumber,
-            summary: {
-              ...coreErrorMessages.invalidPhoneNumberDescription,
-              values: { link: '/minarsidur' },
-            },
+    if (
+      params?.validatePhoneNumber &&
+      (!mobilePhoneNumber || !this.isValidPhoneNumber(mobilePhoneNumber))
+    ) {
+      const link = this.getRegistrationLink(application, 'phone', auth)
+
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.invalidPhoneNumber,
+          summary: {
+            ...(link
+              ? {
+                  ...coreErrorMessages.invalidPhoneNumberDescription,
+                  values: { link },
+                }
+              : coreErrorMessages.invalidPhoneNumberNoRegistration),
           },
-          500,
-        )
+        },
+        500,
+      )
     }
 
     return {
@@ -128,13 +143,33 @@ export class UserProfileService extends BaseTemplateApiService {
       })
   }
 
-  private getIDSLink(application: ApplicationWithAttachments) {
-    const slug = getSlugFromType(application.typeId)
-    const clientLocationOrigin = getConfigValue(
-      this.configService,
-      'clientLocationOrigin',
-    ) as string
+  private getRegistrationLink(
+    application: ApplicationWithAttachments,
+    emailOrPhone: 'email' | 'phone',
+    user: User,
+  ) {
+    if (!user.delegationType) {
+      // If delegationType is not set, we have a regular user so we
+      // use the new IDS user profile screens to update email/phone
+      const slug = getSlugFromType(application.typeId)
+      const clientLocationOrigin = getConfigValue(
+        this.configService,
+        'clientLocationOrigin',
+      ) as string
 
-    return `${this.idsClientConfig.issuer}/app/user-profile/email?state=update&returnUrl=${clientLocationOrigin}/${slug}/${application.id}`
+      return `${this.idsClientConfig.issuer}/app/user-profile/${emailOrPhone}?state=update&returnUrl=${clientLocationOrigin}/${slug}/${application.id}`
+    } else if (
+      user.delegationType.includes(AuthDelegationType.ProcurationHolder)
+    ) {
+      // ProcurationHolders can use the settings page in the ServicePortal
+      // to update their delegated entity email/phone
+
+      return '/minarsidur/min-gogn/stillingar'
+    }
+
+    // For other types of delegations we cannot redirect user to update their email/phone
+    // For custom delegations on companies we need to display message about the procuration holder
+    // being able to update the email/phone details.
+    return null
   }
 }
