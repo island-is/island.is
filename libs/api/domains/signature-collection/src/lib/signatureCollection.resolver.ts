@@ -21,12 +21,7 @@ import {
   SignatureCollectionListIdInput,
   SignatureCollectionUploadPaperSignatureInput,
 } from './dto'
-import {
-  AllowDelegation,
-  AllowManager,
-  CurrentSignee,
-  IsOwner,
-} from './decorators'
+import { AllowManager, CurrentSignee, IsOwner } from './decorators'
 import {
   SignatureCollection,
   SignatureCollectionCollector,
@@ -36,6 +31,8 @@ import {
   SignatureCollectionSignedList,
   SignatureCollectionSignee,
 } from './models'
+import { SignatureCollectionListSummary } from './models/areaSummaryReport.model'
+import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
@@ -185,6 +182,7 @@ export class SignatureCollectionResolver {
 
   @Scopes(ApiScope.signatureCollection)
   @IsOwner()
+  @AllowManager()
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
   async signatureCollectionUploadPaperSignature(
@@ -209,6 +207,33 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.collectors(
       user,
       signee.candidate?.id,
+    )
+  }
+
+  @Scopes(ApiScope.signatureCollection)
+  @IsOwner()
+  @AllowManager()
+  @Query(() => SignatureCollectionListSummary)
+  @Audit()
+  async signatureCollectionListOverview(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionListIdInput,
+  ): Promise<SignatureCollectionListSummary> {
+    return this.signatureCollectionService.listOverview(user, input.listId)
+  }
+
+  @Scopes(ApiScope.signatureCollection)
+  @IsOwner()
+  @AllowManager()
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionUpdatePaperSignaturePageNumber(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionSignatureUpdateInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.updateSignaturePageNumber(
+      user,
+      input,
     )
   }
 }

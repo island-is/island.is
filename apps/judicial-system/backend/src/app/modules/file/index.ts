@@ -1,6 +1,6 @@
 export { CaseFile } from './models/file.model'
 export { FileService } from './file.service'
 export {
-  canLimitedAcccessUserViewCaseFile,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+  canLimitedAccessUserViewCaseFile,
+  defenderCaseFileCategoriesForRequestCases,
 } from './guards/caseFileCategory'

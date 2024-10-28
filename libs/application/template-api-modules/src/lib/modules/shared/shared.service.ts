@@ -25,7 +25,7 @@ import { sharedModuleConfig } from './shared.config'
 import { ApplicationService } from '@island.is/application/api/core'
 import jwt from 'jsonwebtoken'
 import { uuid } from 'uuidv4'
-import { AwsService } from '@island.is/nest/aws'
+import { S3Service } from '@island.is/nest/aws'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -41,7 +41,7 @@ export class SharedTemplateApiService {
     private config: ConfigType<typeof sharedModuleConfig>,
     private readonly applicationService: ApplicationService,
     private readonly paymentService: PaymentService,
-    private readonly awsService: AwsService,
+    private readonly s3Service: S3Service,
   ) {
     this.s3 = new S3()
   }
@@ -251,24 +251,6 @@ export class SharedTemplateApiService {
     return new Blob([file.Body as ArrayBuffer], { type: file.ContentType })
   }
 
-  async getAttachmentUrl(key: string, expiration: number): Promise<string> {
-    if (expiration <= 0) {
-      return Promise.reject('expiration must be positive')
-    }
-
-    const bucket = this.config.templateApi.attachmentBucket
-
-    if (bucket == undefined) {
-      return Promise.reject('could not find s3 bucket')
-    }
-
-    return this.s3.getSignedUrlPromise('getObject', {
-      Bucket: bucket,
-      Key: key,
-      Expires: expiration,
-    })
-  }
-
   async saveAttachmentToApplicaton(
     application: ApplicationWithAttachments,
     fileName: string,
@@ -285,10 +267,9 @@ export class SharedTemplateApiService {
     const fileId = uuid()
     const attachmentKey = `${fileId}-${fileName}`
     const s3key = `${application.id}/${attachmentKey}`
-    const url = await this.awsService.uploadFile(
+    const url = await this.s3Service.uploadFile(
       buffer,
-      uploadBucket,
-      s3key,
+      { bucket: uploadBucket, key: s3key },
       uploadParameters,
     )
 
@@ -332,5 +313,27 @@ export class SharedTemplateApiService {
       { expiresIn },
     )
     return token
+  }
+
+  async getAttachmentUrl(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+    expiration: number,
+  ): Promise<string> {
+    if (expiration <= 0) {
+      return Promise.reject('expiration must be positive')
+    }
+    const fileName = (
+      application.attachments as {
+        [key: string]: string
+      }
+    )[attachmentKey]
+    const { bucket, key } = AmazonS3URI(fileName)
+
+    return this.s3.getSignedUrlPromise('getObject', {
+      Bucket: bucket,
+      Key: key,
+      Expires: expiration,
+    })
   }
 }
