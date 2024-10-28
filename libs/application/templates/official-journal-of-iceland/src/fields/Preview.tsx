@@ -126,7 +126,13 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
                 <Stack space={2}>
                   <Text>
                     {f(error.missingSignatureFieldsMessage, {
-                      x: <strong>Grunnupplýsinga</strong>,
+                      x: (
+                        <strong>
+                          {f(advert.general.sectionWithAbbreviation, {
+                            x: 'a',
+                          })}
+                        </strong>
+                      ),
                     })}
                   </Text>
                   <BulletList color="black">

@@ -18,6 +18,11 @@ export const advert = {
       defaultMessage: 'Grunnupplýsingar',
       description: 'Title of the advert section',
     },
+    sectionWithAbbreviation: {
+      id: 'ojoi.application:advert.general.sectionWithAbbreviation',
+      defaultMessage: 'Grunnupplýsing{x}',
+      description: 'Title of the advert section with abbreviations',
+    },
   }),
   headings: defineMessages({
     materialForPublication: {
