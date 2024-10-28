@@ -1,15 +1,11 @@
 import { isDefined } from '@island.is/shared/utils'
 import XLSX from 'xlsx'
+import parse from 'csv-parse'
 
 export interface MileageRecord {
   vehicleId: string
   mileage: number
 }
-
-const letters =
-  'aábcdðeéfghiíjklmnoópqrstuúvwxyýzþæöAÁBCDÐEÉFGHIÍJKLMNOÓPQRSTUÚVWXYÝZÞÆÖ'
-const newlines = '\\r\\n\\r|\\n'
-const wordbreaks = '[;,]'
 
 const vehicleIndexTitle = [
   'permno',
@@ -70,8 +66,6 @@ const parseCsv = async (file: File) => {
   const reader = file.stream().getReader()
   const decoder = new TextDecoder('utf-8')
 
-  let parsedLines: Array<Array<string>> = [[]]
-
   let accumulatedChunk = ''
   let done = false
 
@@ -83,9 +77,7 @@ const parseCsv = async (file: File) => {
     }
   }
 
-  parsedLines = parseCsvString(accumulatedChunk)
-
-  return parsedLines
+  return parseCsvString(accumulatedChunk)
 }
 
 const parseXlsx = async (file: File) => {
@@ -104,21 +96,30 @@ const parseXlsx = async (file: File) => {
   }
 }
 
-const parseCsvString = (chunk: string) => {
-  const parsedLines: Array<Array<string>> = [[]]
-  let rowIndex = 0
-  for (const cell of chunk.matchAll(
-    new RegExp(`([${letters}\\d]+)(${newlines}|${wordbreaks})?`, 'gi'),
-  )) {
-    const [_, trimmedValue, delimiter] = cell
-    const lineBreak = ['\r\n', '\n', '\r'].includes(delimiter)
+const parseCsvString = (chunk: string): Promise<string[][]> => {
+  return new Promise((resolve, reject) => {
+    const records: string[][] = []
 
-    parsedLines[rowIndex].push(trimmedValue.trim())
-    if (lineBreak) {
-      parsedLines.push([])
-      rowIndex++
-    }
-  }
+    const parser = parse({
+      skip_empty_lines: true,
+    })
 
-  return parsedLines
+    parser.on('readable', () => {
+      let record
+      while ((record = parser.read()) !== null) {
+        records.push(record)
+      }
+    })
+
+    parser.on('error', (err) => {
+      reject(err)
+    })
+
+    parser.on('end', () => {
+      resolve(records)
+    })
+
+    parser.write(chunk)
+    parser.end()
+  })
 }
