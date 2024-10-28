@@ -7,7 +7,14 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserProfile } from '@island.is/service-portal/graphql'
 import { Locale } from '@island.is/shared/types'
 import { useGenericLicenseCollectionQuery } from './LicensesOverview.generated'
-import { Box, Stack, Tabs, TagVariant } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Inline,
+  Stack,
+  Tabs,
+  TagVariant,
+} from '@island.is/island-ui/core'
 import {
   ActionCard,
   CardLoader,
@@ -17,12 +24,16 @@ import {
 import { m } from '../../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import { getPathFromType } from '../../../utils/mapPaths'
+import { useMemo, useState } from 'react'
+import { IS_ISO31661_ALPHA_3 } from 'class-validator'
 
 export const LicensesOverviewV2 = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
+
+  const [tabsNumber, setTabsNumber] = useState(3)
 
   const includedTypes = [
     GenericLicenseType.AdrLicense,
@@ -94,6 +105,24 @@ export const LicensesOverviewV2 = () => {
   const licenses: Array<GenericUserLicense> =
     data?.genericLicenseCollection?.licenses ?? []
 
+  const tabs = useMemo(
+    () => [
+      {
+        label: formatMessage(m.licenseTabPrimary),
+        content: generateLicenseStack(
+          licenses.filter((license) => !license.isOwnerChildOfUser),
+        ),
+      },
+      {
+        label: formatMessage(m.licenseTabSecondary),
+        content: generateLicenseStack(
+          licenses.filter((license) => license.isOwnerChildOfUser),
+        ),
+      },
+    ],
+    [licenses],
+  )
+
   return (
     <>
       <IntroHeader
@@ -123,21 +152,9 @@ export const LicensesOverviewV2 = () => {
         <Box>
           <Tabs
             label={formatMessage(m.seeLicenses)}
+            size="xs"
             contentBackground="white"
-            tabs={[
-              {
-                label: formatMessage(m.licenseTabPrimary),
-                content: generateLicenseStack(
-                  licenses.filter((license) => !license.isOwnerChildOfUser),
-                ),
-              },
-              {
-                label: formatMessage(m.licenseTabSecondary),
-                content: generateLicenseStack(
-                  licenses.filter((license) => license.isOwnerChildOfUser),
-                ),
-              },
-            ]}
+            tabs={tabs.slice(0, tabsNumber)}
           />
         </Box>
       ) : (

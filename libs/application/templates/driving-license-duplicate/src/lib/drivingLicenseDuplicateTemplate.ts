@@ -119,7 +119,11 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
               api: [
                 CurrentLicenseApi,
                 JurisdictionApi,
-                NationalRegistryUserApi,
+                NationalRegistryUserApi.configure({
+                  params: {
+                    legalDomicileIceland: true,
+                  },
+                }),
                 SyslumadurPaymentCatalogApi,
                 QualitySignatureApi,
                 QualityPhotoApi,

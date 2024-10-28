@@ -8,8 +8,9 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
+  InstitutionNotificationType,
   InstitutionType,
-  NotificationType,
+  NotificationDispatchType,
 } from '@island.is/judicial-system/types'
 
 import { Institution, InstitutionService } from '../institution'
@@ -30,9 +31,9 @@ export class NotificationDispatchService {
 
     const messages = prosecutorsOffices.map(
       (prosecutorsOffice: Institution) => ({
-        type: MessageType.NOTIFICATION,
+        type: MessageType.INSTITUTION_NOTIFICATION,
         body: {
-          type: NotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
+          type: InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
           prosecutorsOfficeId: prosecutorsOffice.id,
         },
       }),
@@ -41,10 +42,12 @@ export class NotificationDispatchService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
-  async dispatchNotification(type: NotificationType): Promise<DeliverResponse> {
+  async dispatchNotification(
+    type: NotificationDispatchType,
+  ): Promise<DeliverResponse> {
     try {
       switch (type) {
-        case NotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION:
+        case NotificationDispatchType.INDICTMENTS_WAITING_FOR_CONFIRMATION:
           await this.dispatchIndictmentsWaitingForConfirmationNotification()
           break
         default:

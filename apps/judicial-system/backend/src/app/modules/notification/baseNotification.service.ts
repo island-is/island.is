@@ -129,7 +129,7 @@ export abstract class BaseNotificationService {
 
   protected async recordNotification(
     caseId: string,
-    type: NotificationType,
+    type: string,
     recipients: Recipient[],
   ): Promise<DeliverResponse> {
     await this.notificationModel.create({
@@ -146,15 +146,12 @@ export abstract class BaseNotificationService {
     }
   }
 
-  protected hasSentNotification(
-    type: NotificationType,
-    notifications?: Notification[],
-  ) {
+  protected hasSentNotification(type: string, notifications?: Notification[]) {
     return notifications?.some((notification) => notification.type === type)
   }
 
   protected hasReceivedNotification(
-    type?: NotificationType | NotificationType[],
+    type?: string | string[],
     address?: string,
     notifications?: Notification[],
   ) {
