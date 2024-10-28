@@ -43,3 +43,45 @@ export const GET_GRANTS_QUERY = gql`
     }
   }
 `
+
+export const GET_GRANT_QUERY = gql`
+  query GetGrants($input: GetGrantsInput!) {
+    getGrant(input: $input) {
+      id
+      name
+      description
+      applicationId
+      applicationDeadlineText
+      applicationUrl {
+        slug
+        type
+      }
+      dateFrom
+      dateTo
+      isOpen
+      status
+      statusText
+      organization {
+        id
+        title
+        logo {
+          url
+        }
+      }
+      categoryTag {
+        id
+        title
+        genericTagGroup {
+          title
+        }
+      }
+      typeTag {
+        id
+        title
+        genericTagGroup {
+          title
+        }
+      }
+    }
+  }
+`
