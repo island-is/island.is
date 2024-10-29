@@ -456,6 +456,7 @@
     "license-checker": "25.0.1",
     "mailparser": "3.5.0",
     "next-secure-headers": "2.1.0",
+    "nodemailer-mock": "2.0.6",
     "nx": "19.4.0",
     "prettier": "2.6.2",
     "sequelize-cli": "6.4.1",
