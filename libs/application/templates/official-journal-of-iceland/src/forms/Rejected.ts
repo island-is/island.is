@@ -1,4 +1,8 @@
-import { buildForm, buildSection } from '@island.is/application/core'
+import {
+  buildCustomField,
+  buildForm,
+  buildSection,
+} from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { Routes } from '../lib/constants'
 import {
@@ -9,12 +13,11 @@ import {
   preview,
   publishing,
 } from '../lib/messages'
-import { complete } from '../lib/messages/complete'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-export const Complete: Form = buildForm({
+import { rejected } from '../lib/messages'
+export const Rejected: Form = buildForm({
   id: 'OfficialJournalOfIcelandAdvertOfIcelandApplication',
   title: 'Skilyrði',
-  mode: FormModes.COMPLETED,
+  mode: FormModes.REJECTED,
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
   children: [
@@ -48,9 +51,16 @@ export const Complete: Form = buildForm({
       title: publishing.general.section,
       children: [],
     }),
-    buildFormConclusionSection({
-      multiFieldTitle: complete.general.title,
-      expandableDescription: complete.general.bullets,
+    buildSection({
+      id: Routes.REJECTED,
+      title: rejected.general.section,
+      children: [
+        buildCustomField({
+          id: 'rejected',
+          title: '',
+          component: 'RejectScreen',
+        }),
+      ],
     }),
   ],
 })

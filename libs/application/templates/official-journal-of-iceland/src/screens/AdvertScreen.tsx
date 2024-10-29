@@ -7,7 +7,6 @@ import { Button } from '@island.is/island-ui/core'
 import { Advert } from '../fields/Advert'
 import { Signatures } from '../fields/Signatures'
 import { AdvertModal } from '../fields/AdvertModal'
-import { Comments } from '../fields/Comments'
 export const AdvertScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
   const [modalVisible, setModalVisability] = useState(false)
@@ -21,6 +20,7 @@ export const AdvertScreen = (props: OJOIFieldBaseProps) => {
 
   return (
     <FormScreen
+      goToScreen={props.goToScreen}
       title={f(advert.general.title)}
       intro={f(advert.general.intro)}
       button={
