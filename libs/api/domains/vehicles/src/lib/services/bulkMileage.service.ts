@@ -66,7 +66,7 @@ export class BulkMileageService {
       if (error instanceof FetchError && error.status === 429) {
         return {
           requestId: undefined,
-          errorMessage: 'Too many requests. Please try again later',
+          errorMessage: error.statusText,
         }
       }
       throw e
