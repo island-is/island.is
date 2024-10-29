@@ -61,6 +61,7 @@ export type TableRepeaterFields =
   | 'checkbox'
   | 'date'
   | 'nationalIdWithName'
+  | 'phone'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -127,6 +128,10 @@ export type TableRepeaterItem = {
       maxLength?: number
       currency?: boolean
       suffix?: string
+    }
+  | {
+      component: 'phone'
+      format?: string
     }
   | {
       component: 'date'
