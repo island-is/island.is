@@ -8,7 +8,7 @@ import { gql, useQuery } from '@apollo/client'
 import { LoadingDots } from '@island.is/island-ui/core'
 import { Markdown } from '@island.is/shared/components'
 
-export const hasDisabilityLicense = `
+const hasDisabilityLicense = `
   query hasDisabilityLicense {
     hasDisabilityLicense
   }
