@@ -23,6 +23,7 @@ import {
   CreateApplicationDtoEducationOptionEnum,
   CreateApplicationExtraFieldsDto,
   ProgramExtraApplicationFieldFieldTypeEnum,
+  CreateApplicationExtraFieldsDtoFieldTypeEnum,
 } from '@island.is/clients/university-gateway-api'
 
 import {
@@ -232,12 +233,10 @@ export class UniversityService extends BaseTemplateApiService {
     const extraFieldList: Array<CreateApplicationExtraFieldsDto> = []
     for (let i = 0; i < otherDocuments.length; i++) {
       const fieldInfo = chosenProgram?.extraApplicationFields[i]
-      const fieldExternalKey = fieldInfo?.externalKey || ''
+      if (!fieldInfo) continue
 
-      //TODOx handle other types
       if (
-        fieldInfo?.fieldType ===
-        ProgramExtraApplicationFieldFieldTypeEnum.UPLOAD
+        fieldInfo.fieldType === ProgramExtraApplicationFieldFieldTypeEnum.UPLOAD
       ) {
         const attachments = await this.getAttachmentUrls(
           application,
@@ -251,11 +250,13 @@ export class UniversityService extends BaseTemplateApiService {
 
         for (let j = 0; j < attachments.length; j++) {
           extraFieldList.push({
-            externalKey: fieldExternalKey,
+            fieldType: CreateApplicationExtraFieldsDtoFieldTypeEnum.UPLOAD,
+            externalKey: fieldInfo.externalKey,
             value: attachments[j],
           })
         }
       }
+      // TODO handle other field types when ready
     }
 
     const createApplicationDto: UniversityApplicationControllerCreateApplicationRequest =

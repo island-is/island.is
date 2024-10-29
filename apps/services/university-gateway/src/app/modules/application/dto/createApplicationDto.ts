@@ -1,4 +1,8 @@
-import { ModeOfDelivery, ApplicationTypes } from '@island.is/university-gateway'
+import {
+  ModeOfDelivery,
+  ApplicationTypes,
+  FieldType,
+} from '@island.is/university-gateway'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   IsArray,
@@ -203,6 +207,15 @@ class CreateApplicationWorkExperienceDto {
 }
 
 class CreateApplicationExtraFieldsDto {
+  @IsEnum(FieldType)
+  @ApiProperty({
+    description:
+      'What type of field should be displayed in the application form',
+    example: FieldType.UPLOAD,
+    enum: FieldType,
+  })
+  fieldType!: FieldType
+
   @IsString()
   @ApiProperty({
     description: 'External key for field',
