@@ -63,7 +63,7 @@ export const drawTitleAndUnderLine = (
     y: mainTitleYPosition,
     size: mediumFontSize,
     font: boldFont,
-    color: rgb(0, 0, 0),
+    color: color_black,
   })
 
   // Draw a line under the main title
@@ -96,7 +96,7 @@ export const drawTextArea = (
       y: lineYPosition,
       size: baseFontSize,
       font: boldFont,
-      color: rgb(0, 0, 0),
+      color: color_black,
     })
   }
 
@@ -120,11 +120,11 @@ export const drawTextArea = (
     }
 
     page.drawText(line, {
-      x: 50,
+      x: margin,
       y,
       size: baseFontSize,
       font,
-      color: rgb(0, 0, 0),
+      color: color_black,
     })
     y -= baseFontSize + 4 // Adjust for the next line
   }
@@ -171,7 +171,7 @@ export const drawSectionInfo = (
       y: y,
       size: baseFontSize,
       font: boldFont,
-      color: rgb(0, 0, 0),
+      color: color_black,
     })
 
     // Draw value (regular font)
@@ -180,7 +180,7 @@ export const drawSectionInfo = (
       y: y - rowHeight, // Slightly lower than label
       size: baseFontSize,
       font: font,
-      color: rgb(0, 0, 0),
+      color: color_black,
     })
 
     // Move x position for the next column
