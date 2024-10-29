@@ -1,7 +1,6 @@
 import {
   Badge,
   ExpandableCard,
-  Link,
   LinkText,
   Skeleton,
   Typography,
@@ -9,7 +8,7 @@ import {
 } from '@ui'
 import { useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { Markdown } from '../../../ui/lib/markdown/markdown'
 
@@ -75,6 +74,10 @@ const TableHeading = styled.View`
   }))};
   border-bottom-width: 1px;
 `
+const CommentWrapper = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const mapStatusToBadge = (status?: string) => {
   switch (status) {
     case 'expired':
@@ -244,20 +247,30 @@ export function VaccinationsCardContainer({
                   </RowItem>
                   {vaccination.url && vaccination.name && (
                     <RowItem>
-                      <Link url={vaccination.url}>
+                      <TouchableOpacity
+                        style={{ flexWrap: 'wrap' }}
+                        onPress={() =>
+                          openBrowser(vaccination.url!, componentId)
+                        }
+                      >
                         <LinkText variant="small" icon={externalLinkIcon}>
                           {vaccination.name}
                         </LinkText>
-                      </Link>
+                      </TouchableOpacity>
                     </RowItem>
                   )}
                 </TableRow>
               )
             })}
-        {vaccination?.comments &&
-          vaccination.comments.map((comment) => (
-            <Markdown bullets>{comment}</Markdown>
-          ))}
+        {vaccination?.comments && (
+          <CommentWrapper>
+            {vaccination.comments.map((comment) => (
+              <Markdown bullets componentId={componentId}>
+                {comment}
+              </Markdown>
+            ))}
+          </CommentWrapper>
+        )}
       </View>
     </ExpandableCard>
   )

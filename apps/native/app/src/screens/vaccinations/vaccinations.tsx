@@ -1,4 +1,4 @@
-import { Heading, Typography } from '@ui'
+import { GeneralCardSkeleton, Heading, Typography } from '@ui'
 import React, { useCallback, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
@@ -32,7 +32,6 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-  const theme = useTheme()
   const [refetching, setRefetching] = useState(false)
 
   const vaccinationsRes = useGetVaccinationsQuery()
@@ -43,7 +42,7 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
   useConnectivityIndicator({
     componentId,
     refetching,
-    queryResult: [vaccinationsRes],
+    queryResult: vaccinationsRes,
   })
 
   const onRefresh = useCallback(async () => {
@@ -80,14 +79,18 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
             />
           </Typography>
           <Vaccinations>
-            {vaccinations.map((vaccination, index) => (
-              <VaccinationsCardContainer
-                key={index}
-                vaccination={vaccination}
-                loading={vaccinationsRes.loading && !vaccinationsRes.data}
-                componentId={componentId}
-              />
-            ))}
+            {vaccinationsRes.loading && !vaccinationsRes.data
+              ? Array.from({ length: 5 }).map((_, index) => (
+                  <GeneralCardSkeleton height={90} key={index} />
+                ))
+              : vaccinations.map((vaccination, index) => (
+                  <VaccinationsCardContainer
+                    key={index}
+                    vaccination={vaccination}
+                    loading={vaccinationsRes.loading && !vaccinationsRes.data}
+                    componentId={componentId}
+                  />
+                ))}
           </Vaccinations>
         </Host>
       </ScrollView>
