@@ -73,3 +73,4 @@ export const serviceSetup = (
         paths: [`/${key}/bff`],
       },
     })
+    .grantNamespaces('identity-server')
