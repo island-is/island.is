@@ -18,6 +18,7 @@ import { SignatureCollectionSignature as Signature } from '@island.is/api/schema
 import { PaperSignees } from './PaperSignees'
 import sortBy from 'lodash/sortBy'
 import PdfReport from '../PdfReport'
+import EditPage from './EditPage'
 
 const Signees = () => {
   useNamespaces('sp.signatureCollection')
@@ -113,6 +114,15 @@ const Signees = () => {
                                   color="blue400"
                                 />
                               </Box>
+                              <EditPage
+                                page={s.pageNumber ?? 0}
+                                name={s.signee.name}
+                                nationalId={formatNationalId(
+                                  s.signee.nationalId,
+                                )}
+                                signatureId={s.id}
+                                refetchSignees={refetchListSignees}
+                              />
                             </Box>
                           )}
                         </T.Data>

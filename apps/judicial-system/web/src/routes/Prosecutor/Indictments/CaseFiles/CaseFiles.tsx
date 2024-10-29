@@ -49,11 +49,6 @@ const CaseFiles = () => {
           file.category === CaseFileCategory.INDICTMENT &&
           file.status === 'done',
       )) &&
-    uploadFiles.some(
-      (file) =>
-        file.category === CaseFileCategory.CRIMINAL_RECORD &&
-        file.status === 'done',
-    ) &&
     allFilesDoneOrError
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -107,7 +102,6 @@ const CaseFiles = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.caseFiles.criminalRecordSection)}
-            required
           />
           <InputFileUpload
             fileList={uploadFiles.filter(
