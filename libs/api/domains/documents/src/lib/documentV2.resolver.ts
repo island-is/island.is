@@ -82,6 +82,7 @@ export class DocumentResolverV2 {
       this.logger.info('failed to get single document', {
         category: LOG_CATEGORY,
         provider: input.provider,
+        documentCategory: input.category,
         error: e,
       })
       throw e
@@ -116,7 +117,11 @@ export class DocumentResolverV2 {
       resources: input.id,
       meta: { confirmed: input.confirmed },
     })
-
+    this.logger.info('confirming document modal', {
+      category: LOG_CATEGORY,
+      id: input.id,
+      confirmed: input.confirmed,
+    })
     return { id: input.id, confirmed: input.confirmed }
   }
 
