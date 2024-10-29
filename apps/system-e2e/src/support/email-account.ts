@@ -12,9 +12,7 @@ import { sessionsPath } from './session'
 import { debug } from './utils'
 
 export type EmailAccount = {
-  getLastEmail(
-    retries: number,
-  ): Promise<{
+  getLastEmail(retries: number): Promise<{
     subject: string | undefined
     text: string | undefined
     html: string | false
@@ -40,9 +38,7 @@ const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
   const userEmail: EmailAccount = {
     email: 'mockUser@mockserver.local',
 
-    async getLastEmail(
-      retries: number,
-    ): Promise<null | {
+    async getLastEmail(retries: number): Promise<null | {
       subject: string | undefined
       text: string | undefined
       html: string | false
