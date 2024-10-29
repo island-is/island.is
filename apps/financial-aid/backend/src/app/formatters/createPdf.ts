@@ -29,9 +29,12 @@ import {
   color_green,
   colorOfHeaderInTimeline,
   color_lightPurple,
+  Section,
 } from './pdfhelpers'
 
-export const createPdf = async (application: ApplicationModel) => {
+export const createPdf = async (
+  application: ApplicationModel,
+): Promise<string> => {
   const pdfDoc = await PDFDocument.create()
   pdfDoc.setTitle(`Umsokn-${application.id}`)
 
@@ -72,7 +75,7 @@ export const createPdf = async (application: ApplicationModel) => {
   let currentYPosition =
     height - margin - largeFontSize - smallFontSize - lineSpacing
 
-  const checkYPositionAndAddPage = () => {
+  const checkYPositionAndAddPage = (): void => {
     if (currentYPosition < 100) {
       page = pdfDoc.addPage()
       currentYPosition = height - margin
@@ -89,7 +92,7 @@ export const createPdf = async (application: ApplicationModel) => {
   //   ---- ----- HEADER ---- ----
 
   // Draw Sections
-  const drawSection = (title, data) => {
+  const drawSection = (title: string, data: Section[]) => {
     currentYPosition = drawTitleAndUnderLine(
       title,
       currentYPosition,
@@ -235,16 +238,6 @@ export const createPdf = async (application: ApplicationModel) => {
       application.spouseName,
     )
     const eventCreated = format(new Date(event.created), 'dd/MM/yyyy HH:mm')
-
-    const colorOfHeader = (eventType: ApplicationEventType) => {
-      if (applicationEvent.eventType === ApplicationEventType.REJECTED) {
-        return color_red
-      }
-      if (applicationEvent.eventType === ApplicationEventType.APPROVED) {
-        return color_green
-      }
-      return color_black
-    }
 
     page.drawText(eventData.header, {
       x: margin,

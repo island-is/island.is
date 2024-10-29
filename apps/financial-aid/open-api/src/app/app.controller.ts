@@ -37,7 +37,8 @@ export class AppController {
 
   @Get('pdf')
   @ApiCreatedResponse({
-    description: 'Gets application',
+    type: PdfModel,
+    description: 'Gets application from id and returns pdf',
   })
   async getPdf(
     @Headers('API-Key') apiKey: string,
@@ -46,10 +47,14 @@ export class AppController {
   ): Promise<PdfModel> {
     this.logger.info('Gets one application and returns pdf')
     return this.appService
-      .getApplication(apiKey, municipalityCode, id)
+      .getApplicationPdfById(apiKey, municipalityCode, id)
       .then((application) => {
         this.logger.info(`Application fetched and returned as pdf`)
         return application
+      })
+      .catch((error) => {
+        this.logger.error('Failed to generate PDF', error)
+        throw error
       })
   }
 }

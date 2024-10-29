@@ -50,6 +50,14 @@ export const getApplicationInfo = (application: ApplicationModel) => {
   ].filter(Boolean)
 }
 
+const formatBankNumber = (
+  bankNumber?: string,
+  ledger?: string,
+  accountNumber?: string,
+) => {
+  return `${bankNumber}-${ledger}-${accountNumber}`
+}
+
 export const getApplicant = (application: ApplicationModel) => {
   return [
     {
@@ -71,12 +79,11 @@ export const getApplicant = (application: ApplicationModel) => {
 
     {
       title: 'Bankareikningur',
-      content:
-        application.bankNumber +
-        '-' +
-        application.ledger +
-        '-' +
+      content: formatBankNumber(
+        application.bankNumber,
+        application.ledger,
         application.accountNumber,
+      ),
     },
     {
       title: 'Nota persónuafslátt',

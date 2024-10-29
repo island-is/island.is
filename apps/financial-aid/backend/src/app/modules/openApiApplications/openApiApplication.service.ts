@@ -10,7 +10,10 @@ import { DirectTaxPaymentModel } from '../directTaxPayment/models'
 import { ApplicationModel } from '../application'
 import { ApplicationFileModel } from '../file/models'
 import { createPdf } from '../../formatters/createPdf'
-import { PdfApplicatiponResponse } from './pdfApplication.response'
+import {
+  Base64EncodedPdf,
+  PdfApplicationResponse,
+} from './pdfApplication.response'
 import { ChildrenModel } from '../children'
 import { ApplicationEventModel } from '../applicationEvent'
 
@@ -103,7 +106,7 @@ export class OpenApiApplicationService {
   async getApplicationPdfById(
     municipalityCodes: string,
     id: string,
-  ): Promise<PdfApplicatiponResponse> {
+  ): Promise<PdfApplicationResponse> {
     const application = await this.applicationModel.findOne({
       where: {
         id: id,
@@ -174,6 +177,11 @@ export class OpenApiApplicationService {
       ],
     })
 
-    return { file: await createPdf(application) }
+    try {
+      const pdfFile = await createPdf(application)
+      return { file: pdfFile as Base64EncodedPdf }
+    } catch (error) {
+      throw new Error('Failed to generate PDF: ' + error.message)
+    }
   }
 }

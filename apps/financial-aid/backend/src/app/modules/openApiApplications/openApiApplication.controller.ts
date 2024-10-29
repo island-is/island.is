@@ -16,7 +16,7 @@ import { ApiKeyGuard } from '../../guards/apiKey.guard'
 import { CurrentMunicipalityCode } from '../../decorators/apiKey.decorator'
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 import { ApplicationModel } from '../application'
-import { PdfApplicatiponResponse } from './pdfApplication.response'
+import { PdfApplicationResponse } from './pdfApplication.response'
 
 @Controller(`${apiBasePath}/open-api-applications`)
 @UseGuards(ApiKeyGuard)
@@ -55,7 +55,7 @@ export class OpenApiApplicationController {
 
   @Get('id/:id')
   @ApiOkResponse({
-    type: PdfApplicatiponResponse,
+    type: PdfApplicationResponse,
     description: 'Get application',
   })
   async getApplicationPdfById(

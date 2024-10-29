@@ -62,7 +62,7 @@ export class AppService {
     })
   }
 
-  async getApplication(
+  async getApplicationPdfById(
     apiKey: string,
     municipalityCode: string,
     id: string,
