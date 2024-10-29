@@ -16,6 +16,8 @@ import {
   GetApplicationAttachmentsRequest,
   DeleteApplicationAttachmentRequest,
   GetInvolvedPartiesRequest,
+  GetApplicationCaseRequest,
+  GetApplicationCaseResponse,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -188,6 +190,25 @@ export class OfficialJournalOfIcelandApplicationClientService {
       return data
     } catch (error) {
       this.logger.warn('Failed to get involved parties', {
+        error,
+        applicationId: params.id,
+        category: LOG_CATEGORY,
+      })
+
+      throw error
+    }
+  }
+
+  async getApplicationCase(
+    params: GetApplicationCaseRequest,
+    auth: Auth,
+  ): Promise<GetApplicationCaseResponse> {
+    try {
+      return await this.ojoiApplicationApiWithAuth(auth).getApplicationCase(
+        params,
+      )
+    } catch (error) {
+      this.logger.warn('Failed to get application case', {
         error,
         applicationId: params.id,
         category: LOG_CATEGORY,

@@ -252,3 +252,8 @@ export const hveHeaderGridContainerSubpage = style({
     },
   }),
 })
+
+export const logoLarge = style({
+  width: '80px',
+  height: '80px',
+})
