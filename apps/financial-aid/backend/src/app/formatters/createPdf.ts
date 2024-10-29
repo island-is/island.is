@@ -32,6 +32,7 @@ import {
   colorOfHeaderInTimeline,
   color_lightPurple,
   Section,
+  drawHeaders,
 } from './pdfhelpers'
 
 export const createPdf = async (
@@ -221,6 +222,7 @@ export const createPdf = async (
       'Upplýsingar um staðgreiðslu',
       getDirectTaxPayments(applicantDirectPayments),
     )
+    drawHeaders(page, currentYPosition, margin, boldFont)
   }
 
   drawSection('Umsóknarferli', getApplicantMoreInfo(application))

@@ -210,3 +210,42 @@ export const colorOfHeaderInTimeline = (eventType: ApplicationEventType) => {
   }
   return color_black
 }
+
+export const drawHeaders = (
+  page: PDFPage,
+  currentYPosition: number,
+  margin: number,
+  boldFont: PDFFont,
+) => {
+  const cellColor = rgb(0.9, 0.9, 1)
+  const pageWidth = page.getWidth() - margin * 2
+  const headers = [
+    'Fyrirtæki',
+    'Heildarlaun',
+    'Persónuafsláttur',
+    'Staðgreiðsla',
+  ]
+  const columnWidth = pageWidth / 4
+  let x = margin
+
+  page.drawRectangle({
+    x,
+    y: currentYPosition - 15,
+    width: pageWidth,
+    height: 30,
+    color: cellColor,
+  })
+
+  headers.forEach((header, i) => {
+    page.drawText(header, {
+      x: x,
+      y: currentYPosition - 5,
+      size: baseFontSize,
+      font: boldFont,
+      color: rgb(0, 0, 0),
+    })
+    x += columnWidth
+  })
+}
+
+export const drawTable = () => {}
