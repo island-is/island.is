@@ -257,13 +257,6 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
     [debouncedSearch],
   )
 
-  const defaultDepartment = departmentsOptions.find(
-    (d) => d.value === defaultSearchParams.deild,
-  )
-
-  console.log(defaultSearchParams)
-  console.log('defaultdepartment', defaultDepartment)
-
   return (
     <OJOIWrapper
       pageTitle={formatMessage(m.search.title)}
