@@ -31,9 +31,12 @@ import {
   color_green,
   colorOfHeaderInTimeline,
   color_lightPurple,
+  Section,
 } from './pdfhelpers'
 
-export const createPdf = async (application: ApplicationModel) => {
+export const createPdf = async (
+  application: ApplicationModel,
+): Promise<string> => {
   const pdfDoc = await PDFDocument.create()
   pdfDoc.setTitle(`Umsokn-${application.id}`)
 
@@ -74,7 +77,7 @@ export const createPdf = async (application: ApplicationModel) => {
   let currentYPosition =
     height - margin - largeFontSize - smallFontSize - lineSpacing
 
-  const checkYPositionAndAddPage = () => {
+  const checkYPositionAndAddPage = (): void => {
     if (currentYPosition < 100) {
       page = pdfDoc.addPage()
       currentYPosition = height - margin
@@ -91,7 +94,7 @@ export const createPdf = async (application: ApplicationModel) => {
   //   ---- ----- HEADER ---- ----
 
   // Draw Sections
-  const drawSection = (title, data) => {
+  const drawSection = (title: string, data: Section[]) => {
     currentYPosition = drawTitleAndUnderLine(
       title,
       currentYPosition,

@@ -72,12 +72,7 @@ export const getApplicant = (application: ApplicationModel) => {
 
     {
       title: 'Bankareikningur',
-      content:
-        application.bankNumber +
-        '-' +
-        application.ledger +
-        '-' +
-        application.accountNumber,
+      content: `${application.bankNumber}-${application.ledger}-${application.accountNumber}`,
     },
     {
       title: 'Nota persónuafslátt',

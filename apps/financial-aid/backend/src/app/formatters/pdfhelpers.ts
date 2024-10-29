@@ -16,7 +16,15 @@ export const color_lightPurple = rgb(0.88, 0.835, 0.925)
 
 export const stripHTMLTags = (str) => str.replace(/<[^>]*>/g, '')
 
-export const wrapText = (text, font, fontSize, maxWidth) => {
+export const wrapText = (
+  text: string,
+  font: PDFFont,
+  fontSize: number,
+  maxWidth: number,
+) => {
+  if (!text || fontSize <= 0 || maxWidth <= 0) {
+    throw new Error('Invalid parameters for text wrapping')
+  }
   const lines = []
   const words = text.split(' ')
   let currentLine = ''
@@ -55,7 +63,7 @@ export const drawTitleAndUnderLine = (
     y: mainTitleYPosition,
     size: mediumFontSize,
     font: boldFont,
-    color: rgb(0, 0, 0),
+    color: color_black,
   })
 
   // Draw a line under the main title
@@ -88,7 +96,7 @@ export const drawTextArea = (
       y: lineYPosition,
       size: baseFontSize,
       font: boldFont,
-      color: rgb(0, 0, 0),
+      color: color_black,
     })
   }
 
@@ -112,11 +120,11 @@ export const drawTextArea = (
     }
 
     page.drawText(line, {
-      x: 50,
+      x: margin,
       y,
       size: baseFontSize,
       font,
-      color: rgb(0, 0, 0),
+      color: color_black,
     })
     y -= baseFontSize + 4 // Adjust for the next line
   }
@@ -124,7 +132,7 @@ export const drawTextArea = (
   return { updatedPage: page, updatedYPosition: y }
 }
 
-interface Section {
+export interface Section {
   title: string
   content: string
 }
@@ -163,7 +171,7 @@ export const drawSectionInfo = (
       y: y,
       size: baseFontSize,
       font: boldFont,
-      color: rgb(0, 0, 0),
+      color: color_black,
     })
 
     // Draw value (regular font)
@@ -172,7 +180,7 @@ export const drawSectionInfo = (
       y: y - rowHeight, // Slightly lower than label
       size: baseFontSize,
       font: font,
-      color: rgb(0, 0, 0),
+      color: color_black,
     })
 
     // Move x position for the next column
