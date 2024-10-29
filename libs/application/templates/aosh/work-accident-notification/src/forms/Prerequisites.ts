@@ -35,7 +35,7 @@ export const Prerequisites: Form = buildForm({
     }),
     buildSection({
       id: 'conclusion',
-      title: sections.prerequisites.information,
+      title: sections.prerequisites.conclusion,
       children: [],
     }),
   ],

@@ -9,7 +9,7 @@ export const sections = {
     },
     information: {
       id: 'aosh.wan.application:sections.prerequisites.pageTitle',
-      defaultMessage: 'Fyrirtækið',
+      defaultMessage: 'Tilkynningaraðili',
       description: `Title of company section (right side panel)`,
     },
     accident: {
