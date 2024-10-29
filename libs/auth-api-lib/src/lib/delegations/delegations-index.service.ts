@@ -1,6 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import startOfDay from 'date-fns/startOfDay'
 import union from 'lodash/union'
 import { Op } from 'sequelize'
 import * as kennitala from 'kennitala'
@@ -392,10 +391,13 @@ export class DelegationsIndexService {
     // so we take the auth separately from the subject nationalId
     auth: Auth,
   ) {
+    const types = Array.from(new Set(delegations.map((d) => d.type)))
+
     const currRecords = await this.delegationIndexModel.findAll({
       where: {
         toNationalId: nationalId,
         provider: INDEXED_DELEGATION_PROVIDERS,
+        type: types
       },
     })
 

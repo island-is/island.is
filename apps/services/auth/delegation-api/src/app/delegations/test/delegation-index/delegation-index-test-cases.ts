@@ -49,6 +49,28 @@ export const indexingTestCases: Record<string, TestCase> = {
       ],
     },
   ),
+  customAndPersonalRepresentative: new TestCase(
+    createClient({
+      clientId: clientId,
+      supportsCustomDelegation: true,
+      supportsPersonalRepresentatives: true,
+      supportedDelegationTypes: [AuthDelegationType.Custom, AuthDelegationType.PersonalRepresentative],
+    }),
+    {
+      fromCustom: [adult1, adult2],
+      fromRepresentative: [
+        { fromNationalId: adult1, rightTypes: [{ code: prRight1 }] },
+      ],
+      expectedFrom: [
+        { nationalId: adult1, type: AuthDelegationType.Custom },
+        { nationalId: adult2, type: AuthDelegationType.Custom },
+        {
+          nationalId: adult1,
+          type: `${AuthDelegationType.PersonalRepresentative}:${prRight1}` as AuthDelegationType,
+        },
+      ],
+    },
+  ),
   // Should index legal guardian delegations
   ward: new TestCase(
     createClient({
