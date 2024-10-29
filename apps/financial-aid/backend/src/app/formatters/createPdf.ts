@@ -191,6 +191,36 @@ export const createPdf = async (
       currentYPosition = updatedYPosition
       checkYPositionAndAddPage()
     }
+
+    const spouseDirectPayments =
+      directTaxPayments.filter((d) => d.userType === UserType.SPOUSE) ?? []
+
+    if (spouseDirectPayments.length > 0) {
+      drawSection(
+        'Upplýsingar um staðgreiðslu maka',
+        getDirectTaxPayments(spouseDirectPayments),
+      )
+
+      currentYPosition = drawHeadersForTable(
+        page,
+        currentYPosition,
+        margin,
+        boldFont,
+      )
+      checkYPositionAndAddPage()
+      const { updatedPage, updatedYPosition } = drawTable(
+        page,
+        pdfDoc,
+        groupDirectPayments(spouseDirectPayments),
+        margin,
+        currentYPosition,
+        boldFont,
+        font,
+      )
+      page = updatedPage
+      currentYPosition = updatedYPosition
+      checkYPositionAndAddPage()
+    }
   }
 
   if (application.children?.length > 0) {
