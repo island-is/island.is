@@ -1,24 +1,24 @@
-import { BrowserRouter } from 'react-router-dom'
-import { ReactNode, FC } from 'react'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
-import { renderHook } from '@testing-library/react'
-import { IntlProvider } from 'react-intl'
-import { MockedAuthProvider } from '@island.is/auth/react'
+import { BffProvider, createMockedInitialState } from '@island.is/react-spa/bff'
+import { FeatureFlagClient } from '@island.is/react/feature-flags'
 import { defaultLanguage } from '@island.is/shared/constants'
+import { BffUser } from '@island.is/shared/types'
+import { renderHook } from '@testing-library/react'
+import { FC, ReactNode } from 'react'
+import { IntlProvider } from 'react-intl'
+import { BrowserRouter } from 'react-router-dom'
 import { testCases } from '../../test/useSingleNavigationItem-test-cases'
+import { PortalContext, PortalMeta } from '../components/PortalProvider'
 import {
   PortalModule,
   PortalNavigationItem,
   PortalRoute,
 } from '../types/portalCore'
-import { FeatureFlagClient } from '@island.is/react/feature-flags'
-import { createMockUser } from '@island.is/auth/react'
-import { useSingleNavigationItem } from './useSingleNavigationItem'
 import { prepareRouterData } from '../utils/router/prepareRouterData'
-import { PortalContext, PortalMeta } from '../components/PortalProvider'
+import { useSingleNavigationItem } from './useSingleNavigationItem'
 
-const user = { profile: { name: 'Peter' } }
-const userInfo = createMockUser(user)
+const user = { profile: { name: 'Peter' } } as BffUser
+const mockedInitialState = createMockedInitialState()
 
 const MockedPortalProvider: FC<
   React.PropsWithChildren<{
@@ -53,7 +53,7 @@ describe('useSingleNavigationItem hook', () => {
 
     beforeAll(async () => {
       const routerData = await prepareRouterData({
-        userInfo,
+        userInfo: mockedInitialState.userInfo,
         featureFlagClient: {} as FeatureFlagClient,
         modules: testModules,
       })
@@ -70,7 +70,10 @@ describe('useSingleNavigationItem hook', () => {
             // Ignoring error because we don't need translations for tests
           }}
         >
-          <MockedAuthProvider user={user}>
+          <BffProvider
+            applicationBasePath="/minarsidur"
+            mockedInitialState={mockedInitialState}
+          >
             <BrowserRouter>
               <MockedPortalProvider
                 meta={{
@@ -84,7 +87,7 @@ describe('useSingleNavigationItem hook', () => {
                 {children}
               </MockedPortalProvider>
             </BrowserRouter>
-          </MockedAuthProvider>
+          </BffProvider>
         </IntlProvider>
       </ApolloProvider>
     )
