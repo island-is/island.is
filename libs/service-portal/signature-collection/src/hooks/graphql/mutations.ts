@@ -39,3 +39,12 @@ export const uploadPaperSignature = gql`
     }
   }
 `
+export const updatePaperSignaturePageNumber = gql`
+  mutation SignatureCollectionUpdatePaperSignaturePageNumber(
+    $input: SignatureCollectionSignatureUpdateInput!
+  ) {
+    signatureCollectionUpdatePaperSignaturePageNumber(input: $input) {
+      success
+    }
+  }
+`

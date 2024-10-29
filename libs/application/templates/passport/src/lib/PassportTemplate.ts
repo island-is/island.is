@@ -13,6 +13,7 @@ import {
   defineTemplateApi,
   DistrictsApi,
   InstitutionNationalIds,
+  MockablePaymentCatalogApi,
   PassportsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
@@ -107,6 +108,9 @@ const PassportTemplate: ApplicationTemplate<
                 NationalRegistryUser,
                 UserInfoApi,
                 SyslumadurPaymentCatalogApi,
+                MockablePaymentCatalogApi.configure({
+                  externalDataId: 'payment',
+                }),
                 PassportsApi,
                 DistrictsApi,
                 IdentityDocumentApi,

@@ -448,15 +448,30 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                                       translationStrings.after1stSeptember2025,
                                     )}
                                   </Text>
-                                  <Text>
-                                    {formatMessage(
-                                      translationStrings.after1stSeptember2025Description,
-                                    )}
-                                  </Text>
+                                  <Inline space={3} alignY="center">
+                                    <img
+                                      width="80px"
+                                      height="80px"
+                                      src={formatMessage(
+                                        translationStrings.results2025ImageUrl,
+                                      )}
+                                      alt=""
+                                    />
+                                    {
+                                      <Box className={styles.text2025Container}>
+                                        <Text>
+                                          {formatMessage(
+                                            translationStrings.after1stSeptember2025Description,
+                                          )}
+                                        </Text>
+                                      </Box>
+                                    }
+                                  </Inline>
                                   <Button
                                     onClick={() => {
                                       setShowDisabilityChangesIn2025(true)
                                     }}
+                                    variant="ghost"
                                     size="small"
                                   >
                                     {formatMessage(

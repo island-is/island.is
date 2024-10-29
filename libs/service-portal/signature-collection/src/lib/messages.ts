@@ -361,6 +361,26 @@ export const m = defineMessages({
     defaultMessage: 'Ekki tókst að skrá meðmæli',
     description: '',
   },
+  editPaperNumber: {
+    id: 'sp.signatureCollection:editPaperNumber',
+    defaultMessage: 'Breyta blaðsíðunúmeri',
+    description: '',
+  },
+  editPaperNumberSuccess: {
+    id: 'sp.signatureCollection:editPaperNumberSuccess',
+    defaultMessage: 'Tókst að breyta blaðsíðunúmeri',
+    description: '',
+  },
+  editPaperNumberError: {
+    id: 'sp.signatureCollection:editPaperNumberError',
+    defaultMessage: 'Ekki tókst að breyta blaðsíðunúmeri',
+    description: '',
+  },
+  saveEditPaperNumber: {
+    id: 'sp.signatureCollection:saveEditPaperNumber',
+    defaultMessage: 'Uppfæra blaðsíðunúmer',
+    description: '',
+  },
 
   /* Parliamentary */
   parliamentaryElectionsTitle: {
