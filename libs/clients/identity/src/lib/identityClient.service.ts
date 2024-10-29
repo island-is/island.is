@@ -14,7 +14,7 @@ type FallbackIdentity = Partial<Omit<Identity, 'nationalId' | 'type'>>
 @Injectable()
 export class IdentityClientService {
   constructor(
-    private nationalRegistryXRoadService: NationalRegistryV3ClientService,
+    private nationalRegistryService: NationalRegistryV3ClientService,
     private rskCompanyInfoService: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
@@ -77,7 +77,7 @@ export class IdentityClientService {
   private async getPersonIdentity(
     nationalId: string,
   ): Promise<Identity | null> {
-    const person = await this.nationalRegistryXRoadService.getAllDataIndividual(
+    const person = await this.nationalRegistryService.getAllDataIndividual(
       nationalId,
     )
 
@@ -87,8 +87,8 @@ export class IdentityClientService {
 
     return {
       nationalId: person.kennitala,
-      givenName: person.fulltNafn?.eiginNafn,
-      familyName: person.fulltNafn?.kenniNafn,
+      givenName: person.fulltNafn?.eiginNafn ?? null,
+      familyName: person.fulltNafn?.kenniNafn ?? null,
       name: person.nafn,
       address: person.heimilisfang && {
         streetAddress: person.heimilisfang.husHeiti,
