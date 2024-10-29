@@ -417,6 +417,7 @@ api:
     - 'api-catalogue'
     - 'application-system'
     - 'consultation-portal'
+    - 'services-bff-portals-admin'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1800,8 +1801,9 @@ portals-admin:
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'dev'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'identity-server'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -2299,8 +2301,9 @@ services-bff-portals-admin:
     NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'identity-server'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
