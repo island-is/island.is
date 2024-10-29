@@ -45,6 +45,8 @@ export const EmployeeAccordionItem: FC<
         <ReviewGroup
           handleClick={onClick}
           editMessage={formatMessage(overview.labels.editMessage)}
+          title={formatMessage(overview.labels.employee)}
+          isLast
           isFirst
         >
           <KeyValueFormField
@@ -54,7 +56,7 @@ export const EmployeeAccordionItem: FC<
               type: FieldTypes.KEY_VALUE,
               component: FieldComponents.KEY_VALUE,
               title: '',
-              label: formatMessage(overview.labels.employee),
+              label: '',
               value: getEmployeeInformationForOverview(
                 application.externalData,
                 employee,
@@ -67,7 +69,9 @@ export const EmployeeAccordionItem: FC<
         <ReviewGroup
           handleClick={onClick}
           editMessage={formatMessage(overview.labels.editMessage)}
+          title={formatMessage(overview.labels.events)}
           isLast
+          isFirst
         >
           <KeyValueFormField
             application={application}
@@ -76,7 +80,7 @@ export const EmployeeAccordionItem: FC<
               type: FieldTypes.KEY_VALUE,
               component: FieldComponents.KEY_VALUE,
               title: '',
-              label: formatMessage(overview.labels.causeAndConsequences),
+              label: '',
               value: getCauseAndConsequencesForOverview(
                 application.externalData,
                 application.answers,

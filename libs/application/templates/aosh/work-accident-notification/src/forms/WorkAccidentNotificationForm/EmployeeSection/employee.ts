@@ -50,6 +50,7 @@ export const employeeSubSection = (index: number) =>
               id: `employeeInformation[${index}].delete`,
               title: '',
               component: 'TitleWithRemove',
+              doesNotRequireAnswer: true,
             },
             {
               index: index,

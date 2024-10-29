@@ -92,10 +92,10 @@ export const overview = {
         'Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum frumritið.',
       description: 'Employee description label',
     },
-    causeAndConsequences: {
-      id: 'aosh.wan.application:overview.labels.causeAndConsequences',
-      defaultMessage: 'Orsakir/afleiðingar slyss',
-      description: 'Cause and consequences label',
+    events: {
+      id: 'aosh.wan.application:overview.labels.events',
+      defaultMessage: 'Atburðir',
+      description: 'Events label on overview page',
     },
     addEmployeeDescription: {
       id: 'aosh.wan.application:overview.labels.addEmployeeDescription',

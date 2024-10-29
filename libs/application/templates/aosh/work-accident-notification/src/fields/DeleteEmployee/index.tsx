@@ -43,9 +43,6 @@ export const DeleteEmployee: FC<
     const updateAmountOfEmployees =
       answers.employeeAmount === 1 ? 1 : answers.employeeAmount - 1
 
-    // Calculate the next index, staying within the bounds of the updated array
-    //const nextIndex = Math.min(idx, updateAmountOfEmployees - 1)
-
     const res = await updateApplication({
       variables: {
         input: {
