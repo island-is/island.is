@@ -233,12 +233,11 @@ export const drawHeadersForTable = (
   let x = margin
   const lineSpacing = 15
 
-  // Draw a line under the main title
   page.drawLine({
     start: { x: margin, y: currentYPosition },
     end: { x: pageWidth, y: currentYPosition },
     thickness: 1,
-    color: color_lightPurple, // Light gray
+    color: color_lightPurple,
   })
   const headerYPosition = currentYPosition - lineSpacing
   headers.forEach((header) => {
@@ -252,13 +251,12 @@ export const drawHeadersForTable = (
     x += columnWidth
   })
 
-  // Draw a line under the main title
   const lineYPosition = headerYPosition - lineSpacing
   page.drawLine({
     start: { x: margin, y: lineYPosition },
     end: { x: pageWidth, y: lineYPosition },
     thickness: 1,
-    color: color_lightPurple, // Light gray
+    color: color_lightPurple,
   })
 
   return lineYPosition - lineSpacing
@@ -277,18 +275,15 @@ export const drawTable = (
   const columnWidth = pageWidth / 4
   const rowHeight = 20
 
-  // Utility for formatting numbers
   const formatNumber = (number: number) =>
     `${number.toLocaleString('de-DE')} kr.`
 
-  // Helper to add a new page and reset Y position
   const addNewPage = () => {
     const newPage = pdfDoc.addPage()
     const { height } = newPage.getSize()
     return { page: newPage, currentYPosition: height - margin }
   }
 
-  // Draw a header for each entry in data
   const drawHeader = (key: string, yPosition: number) => {
     page.drawRectangle({
       x: margin,
@@ -306,7 +301,6 @@ export const drawTable = (
     })
   }
 
-  // Draw a row for each payment
   const drawRow = (payment: DirectTaxPayment, yPosition: number) => {
     let x = margin
     const columns = [
@@ -348,7 +342,6 @@ export const drawTable = (
     currentYPosition -= rowHeight / 2
   })
 
-  // Draw line under main title
   page.drawLine({
     start: { x: margin, y: currentYPosition + rowHeight },
     end: { x: pageWidth, y: currentYPosition + rowHeight },

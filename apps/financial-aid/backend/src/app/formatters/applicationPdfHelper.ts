@@ -245,7 +245,11 @@ export const getDirectTaxPayments = (directTaxPayments: DirectTaxPayment[]) => {
 
 export const groupDirectPayments = (directTaxPayments: DirectTaxPayment[]) => {
   const grouped = directTaxPayments.reduce((acc, payment) => {
-    const key = `${payment.month}-${payment.year}`
+    const monthNumber = parseInt(payment.month.toString()) - 1
+
+    const key = `${getMonth(
+      monthNumber < 0 ? 12 + monthNumber : monthNumber,
+    )} ${payment.year}`
     if (!acc[key]) {
       acc[key] = []
     }

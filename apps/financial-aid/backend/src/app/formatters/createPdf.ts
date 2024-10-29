@@ -2,7 +2,6 @@ import { PDFDocument, StandardFonts } from 'pdf-lib'
 import format from 'date-fns/format'
 import {
   ApplicationEvent,
-  ApplicationEventType,
   ApplicationState,
   getEventData,
   showSpouseData,
