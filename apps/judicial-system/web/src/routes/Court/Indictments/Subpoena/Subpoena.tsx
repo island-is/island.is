@@ -2,10 +2,10 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Button, toast } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { errors, titles } from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
   CourtCaseInfo,
@@ -77,9 +77,7 @@ const Subpoena: FC = () => {
       const allDefendantsUpdated = await Promise.all(promises)
 
       if (!allDefendantsUpdated.every((result) => result)) {
-        toast.error(formatMessage(errors.updateDefendant))
         setIsCreatingSubpoena(false)
-
         return
       }
 
@@ -102,9 +100,7 @@ const Subpoena: FC = () => {
       const courtDateUpdated = await sendCourtDateToServer(clearedConclusion)
 
       if (!courtDateUpdated) {
-        toast.error(formatMessage(errors.updateCase))
         setIsCreatingSubpoena(false)
-
         return
       }
 
@@ -118,7 +114,6 @@ const Subpoena: FC = () => {
       isArraignmentScheduled,
       sendCourtDateToServer,
       updateDefendant,
-      formatMessage,
     ],
   )
 
