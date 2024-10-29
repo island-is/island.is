@@ -20,7 +20,9 @@ import { debug } from './utils'
  * @param emailAccount
  */
 async function registerEmailAddressWithSES(emailAccount: {
-  getLastEmail(retries: number): Promise<{
+  getLastEmail(
+    retries: number,
+  ): Promise<{
     subject: string | undefined
     text: string | undefined
     html: string | false
@@ -63,7 +65,9 @@ async function registerEmailAddressWithSES(emailAccount: {
 }
 
 export type EmailAccount = {
-  getLastEmail(retries: number): Promise<{
+  getLastEmail(
+    retries: number,
+  ): Promise<{
     subject: string | undefined
     text: string | undefined
     html: string | false
@@ -99,14 +103,16 @@ const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
      * Utility method for getting the last email
      * for the Ethereal email account created above.
      */
-    async getLastEmail(retries: number): Promise<null | {
+    async getLastEmail(
+      retries: number,
+    ): Promise<null | {
       subject: string | undefined
       text: string | undefined
       html: string | false
     }> {
       // makes debugging very simple
       debug('getting the last email')
-      debug(emailConfig)
+      debug(`email config: ${emailConfig}`)
 
       debug('connecting to mail server...')
       const connection = await connect(emailConfig)
@@ -139,8 +145,8 @@ const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
           const mail = await simpleParser(
             messages[messages.length - 1].parts[0].body,
           )
-          debug(mail.subject)
-          debug(mail.text)
+          debug(`mail.subject: ${mail.subject}`)
+          debug(`mail.text: ${mail.text}`)
 
           // and returns the main fields
           return {
