@@ -3,8 +3,8 @@ import { ApiProperty } from '@nestjs/swagger'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   DateType,
-  UserRole,
   isSuccessfulServiceStatus,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
