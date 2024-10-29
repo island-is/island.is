@@ -10,6 +10,7 @@ import {
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
+  CaseNotificationType,
   CaseOrigin,
   CaseState,
   CaseTransition,
@@ -18,7 +19,6 @@ import {
   indictmentCases,
   investigationCases,
   isIndictmentCase,
-  NotificationType,
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
@@ -243,7 +243,7 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  body: { type: NotificationType.REVOKED },
+                  body: { type: CaseNotificationType.REVOKED },
                 },
               ])
             } else if (
@@ -260,7 +260,7 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  body: { type: NotificationType.RECEIVED_BY_COURT },
+                  body: { type: CaseNotificationType.RECEIVED_BY_COURT },
                 },
               ])
             } else {
@@ -384,7 +384,7 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  body: { type: NotificationType.RULING },
+                  body: { type: CaseNotificationType.RULING },
                 },
                 {
                   type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
@@ -409,7 +409,7 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  body: { type: NotificationType.REVOKED },
+                  body: { type: CaseNotificationType.REVOKED },
                 },
               ],
             )
@@ -423,7 +423,7 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  body: { type: NotificationType.READY_FOR_COURT },
+                  body: { type: CaseNotificationType.READY_FOR_COURT },
                 },
               ],
             )
@@ -440,7 +440,7 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  body: { type: NotificationType.RECEIVED_BY_COURT },
+                  body: { type: CaseNotificationType.RECEIVED_BY_COURT },
                 },
                 {
                   type: MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO,
@@ -482,7 +482,7 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  body: { type: NotificationType.INDICTMENT_RETURNED },
+                  body: { type: CaseNotificationType.INDICTMENT_RETURNED },
                 },
               ],
             )
@@ -499,7 +499,7 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  body: { type: NotificationType.INDICTMENT_DENIED },
+                  body: { type: CaseNotificationType.INDICTMENT_DENIED },
                 },
               ],
             )
@@ -516,7 +516,7 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  body: { type: NotificationType.REVOKED },
+                  body: { type: CaseNotificationType.REVOKED },
                 },
               ],
             )
@@ -677,7 +677,9 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  body: { type: NotificationType.APPEAL_TO_COURT_OF_APPEALS },
+                  body: {
+                    type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
+                  },
                 },
               ])
             }
@@ -695,7 +697,7 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  body: { type: NotificationType.APPEAL_RECEIVED_BY_COURT },
+                  body: { type: CaseNotificationType.APPEAL_RECEIVED_BY_COURT },
                 },
               ])
             }
@@ -722,7 +724,7 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  body: { type: NotificationType.APPEAL_COMPLETED },
+                  body: { type: CaseNotificationType.APPEAL_COMPLETED },
                 },
                 {
                   type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
@@ -758,7 +760,7 @@ describe('CaseController - Transition', () => {
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  body: { type: NotificationType.APPEAL_WITHDRAWN },
+                  body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
                 },
               ])
             }

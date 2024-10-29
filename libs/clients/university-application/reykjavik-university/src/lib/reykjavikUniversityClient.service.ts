@@ -9,14 +9,11 @@ import {
 } from '../../gen/fetch'
 import {
   ApplicationStatus,
-  CourseSeason,
   DegreeType,
   FieldType,
   IApplication,
-  ICourse,
   IProgram,
   ModeOfDelivery,
-  Requirement,
   Season,
   mapStringToEnum,
   EnumError,
@@ -108,63 +105,6 @@ export class ReykjavikUniversityApplicationClient {
             e,
           )
         }
-      }
-    }
-
-    return mappedRes
-  }
-
-  async getCourses(externalId: string): Promise<ICourse[]> {
-    const res = await this.hvinApi.hvinActivePrograms({ version: '1' })
-
-    const program = res.find((p) => p.externalId === externalId)
-
-    if (!program) {
-      throw new Error('Did not find program for courses by program external id')
-    }
-
-    const mappedRes = []
-    const courseList = program.courses || []
-    for (let i = 0; i < courseList.length; i++) {
-      const course = courseList[i]
-      try {
-        let semesterSeason: CourseSeason | undefined = undefined
-        // TODO what value is this
-        if (course.semesterSeason === 'NOTSET') {
-          semesterSeason = CourseSeason.ANY
-        } else {
-          semesterSeason = mapStringToEnum(
-            course.semesterSeason,
-            CourseSeason,
-            'CourseSeason',
-          )
-        }
-        if (!semesterSeason) {
-          throw new Error(
-            `Not able to map semester season: ${course.semesterSeason?.toString()}`,
-          )
-        }
-
-        mappedRes.push({
-          externalId: course.externalId || '',
-          nameIs: course.nameIs || '',
-          nameEn: course.nameEn || '',
-          credits: course.credits || 0,
-          descriptionIs: course.descriptionIs,
-          descriptionEn: course.descriptionEn,
-          externalUrlIs: course.externalUrlIs,
-          externalUrlEn: course.externalUrlEn,
-          requirement: course.required
-            ? Requirement.MANDATORY
-            : Requirement.FREE_ELECTIVE, //TODO missing in api
-          semesterYear: course.semesterYear,
-          semesterSeason: semesterSeason,
-        })
-      } catch (e) {
-        logger.error(
-          `Failed to map course with externalId ${course.externalId} for program with externalId ${externalId} (reykjavik-university), reason:`,
-          e,
-        )
       }
     }
 
