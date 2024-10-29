@@ -54,7 +54,10 @@ export const indexingTestCases: Record<string, TestCase> = {
       clientId: clientId,
       supportsCustomDelegation: true,
       supportsPersonalRepresentatives: true,
-      supportedDelegationTypes: [AuthDelegationType.Custom, AuthDelegationType.PersonalRepresentative],
+      supportedDelegationTypes: [
+        AuthDelegationType.Custom,
+        AuthDelegationType.PersonalRepresentative,
+      ],
     }),
     {
       fromCustom: [adult1, adult2],

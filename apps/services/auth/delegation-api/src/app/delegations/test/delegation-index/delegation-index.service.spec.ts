@@ -514,14 +514,15 @@ describe('DelegationsIndexService', () => {
     })
 
     it('should index custom delegations without overiding existing delegations', async () => {
-
       // Arrange
       const nationalId = user.nationalId
 
       // Act
-      await delegationIndexService.indexRepresentativeDelegations(nationalId, user)
+      await delegationIndexService.indexRepresentativeDelegations(
+        nationalId,
+        user,
+      )
       await delegationIndexService.indexCustomDelegations(nationalId, user)
-
 
       // Assert
       const delegationsAfter = await delegationIndexModel.findAll({
@@ -574,7 +575,6 @@ describe('DelegationsIndexService', () => {
       })
     })
   })
-
 
   describe('SubjectId', () => {
     const testCase = indexingTestCases.singleCustomDelegation

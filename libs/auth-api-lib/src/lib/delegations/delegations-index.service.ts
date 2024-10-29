@@ -397,7 +397,7 @@ export class DelegationsIndexService {
       where: {
         toNationalId: nationalId,
         provider: INDEXED_DELEGATION_PROVIDERS,
-        type: types
+        type: types,
       },
     })
 
