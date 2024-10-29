@@ -23,6 +23,7 @@ import {
   CommentDirection,
   GetCommentsResponse,
 } from '../models/getComments.response'
+import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -206,5 +207,35 @@ export class OfficialJournalOfIcelandApplicationService {
       },
       user,
     )
+  }
+
+  async getApplicationCase(
+    id: string,
+    user: User,
+  ): Promise<OJOIAApplicationCaseResponse> {
+    const { applicationCase } =
+      await this.ojoiApplicationService.getApplicationCase(
+        {
+          id,
+        },
+        user,
+      )
+
+    let title = 'Óþekkt'
+
+    if ('title' in applicationCase.status) {
+      title = applicationCase.status.title as string
+    }
+
+    const mapped: OJOIAApplicationCaseResponse = {
+      department: applicationCase.department.title,
+      type: applicationCase.type.title,
+      categories: applicationCase.categories.map((c) => c.title),
+      html: applicationCase.html,
+      status: title,
+      communicationStatus: applicationCase.communicationStatus.title,
+    }
+
+    return mapped
   }
 }
