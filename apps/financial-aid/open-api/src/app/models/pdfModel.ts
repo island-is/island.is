@@ -1,5 +1,6 @@
-import { Field, ObjectType } from '@nestjs/graphql'
 import { IsBase64 } from 'class-validator'
+
+import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class PdfModel {
