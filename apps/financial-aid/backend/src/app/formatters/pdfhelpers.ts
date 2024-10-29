@@ -1,4 +1,8 @@
-import { ApplicationEventType } from '@island.is/financial-aid/shared/lib'
+import {
+  ApplicationEventType,
+  DirectTaxPayment,
+  formatNationalId,
+} from '@island.is/financial-aid/shared/lib'
 import { PDFDocument, PDFFont, PDFPage, rgb } from 'pdf-lib'
 
 export const calculatePt = (px: number) => Math.ceil(px * 0.74999943307122)
@@ -13,6 +17,7 @@ export const color_black = rgb(0, 0, 0)
 export const color_red = rgb(1, 0, 0.3)
 export const color_green = rgb(0, 0.702, 0.62)
 export const color_lightPurple = rgb(0.88, 0.835, 0.925)
+export const color_blue = rgb(0.8, 0.875, 1)
 
 export const stripHTMLTags = (str) => str.replace(/<[^>]*>/g, '')
 
@@ -211,13 +216,12 @@ export const colorOfHeaderInTimeline = (eventType: ApplicationEventType) => {
   return color_black
 }
 
-export const drawHeaders = (
+export const drawHeadersForTable = (
   page: PDFPage,
   currentYPosition: number,
   margin: number,
   boldFont: PDFFont,
 ) => {
-  const cellColor = rgb(0.9, 0.9, 1)
   const pageWidth = page.getWidth() - margin * 2
   const headers = [
     'Fyrirtæki',
@@ -227,25 +231,133 @@ export const drawHeaders = (
   ]
   const columnWidth = pageWidth / 4
   let x = margin
+  const lineSpacing = 15
 
-  page.drawRectangle({
-    x,
-    y: currentYPosition - 15,
-    width: pageWidth,
-    height: 30,
-    color: cellColor,
+  // Draw a line under the main title
+  page.drawLine({
+    start: { x: margin, y: currentYPosition },
+    end: { x: pageWidth, y: currentYPosition },
+    thickness: 1,
+    color: color_lightPurple, // Light gray
   })
-
-  headers.forEach((header, i) => {
+  const headerYPosition = currentYPosition - lineSpacing
+  headers.forEach((header) => {
     page.drawText(header, {
       x: x,
-      y: currentYPosition - 5,
+      y: headerYPosition,
       size: baseFontSize,
       font: boldFont,
-      color: rgb(0, 0, 0),
+      color: color_black,
     })
     x += columnWidth
   })
+
+  // Draw a line under the main title
+  const lineYPosition = headerYPosition - lineSpacing
+  page.drawLine({
+    start: { x: margin, y: lineYPosition },
+    end: { x: pageWidth, y: lineYPosition },
+    thickness: 1,
+    color: color_lightPurple, // Light gray
+  })
+
+  return lineYPosition - lineSpacing
 }
 
-export const drawTable = () => {}
+export const drawTable = (
+  page: PDFPage,
+  pdfDoc: PDFDocument,
+  data: Record<string, DirectTaxPayment[]>,
+  margin: number,
+  currentYPosition: number,
+  boldFont: PDFFont,
+  font: PDFFont,
+) => {
+  const pageWidth = page.getWidth() - margin * 2
+  const columnWidth = pageWidth / 4
+  const rowHeight = 20
+
+  // Utility for formatting numbers
+  const formatNumber = (number: number) =>
+    `${number.toLocaleString('de-DE')} kr.`
+
+  // Helper to add a new page and reset Y position
+  const addNewPage = () => {
+    const newPage = pdfDoc.addPage()
+    const { height } = newPage.getSize()
+    return { page: newPage, currentYPosition: height - margin }
+  }
+
+  // Draw a header for each entry in data
+  const drawHeader = (key: string, yPosition: number) => {
+    page.drawRectangle({
+      x: margin,
+      y: yPosition,
+      width: pageWidth,
+      height: 15,
+      color: color_blue,
+    })
+    page.drawText(key, {
+      x: margin,
+      y: yPosition + 5,
+      size: smallFontSize,
+      font: boldFont,
+      color: color_black,
+    })
+  }
+
+  // Draw a row for each payment
+  const drawRow = (payment: DirectTaxPayment, yPosition: number) => {
+    let x = margin
+    const columns = [
+      formatNationalId(payment.payerNationalId),
+      formatNumber(payment.totalSalary),
+      formatNumber(payment.personalAllowance),
+      formatNumber(payment.withheldAtSource),
+    ]
+
+    columns.forEach((text) => {
+      page.drawText(text, {
+        x: x,
+        y: yPosition,
+        size: baseFontSize,
+        font,
+        color: color_black,
+      })
+      x += columnWidth
+    })
+  }
+
+  Object.entries(data).forEach(([key, payments]) => {
+    drawHeader(key, currentYPosition)
+    currentYPosition -= rowHeight
+
+    if (currentYPosition < margin + rowHeight) {
+      ;({ page, currentYPosition } = addNewPage())
+    }
+
+    payments.forEach((payment) => {
+      drawRow(payment, currentYPosition)
+      currentYPosition -= rowHeight
+
+      if (currentYPosition < margin + rowHeight) {
+        ;({ page, currentYPosition } = addNewPage())
+      }
+    })
+
+    currentYPosition -= rowHeight / 2
+  })
+
+  // Draw line under main title
+  page.drawLine({
+    start: { x: margin, y: currentYPosition + rowHeight },
+    end: { x: pageWidth, y: currentYPosition + rowHeight },
+    thickness: 1,
+    color: color_lightPurple,
+  })
+
+  return {
+    updatedPage: page,
+    updatedYPosition: currentYPosition - rowHeight / 2,
+  }
+}

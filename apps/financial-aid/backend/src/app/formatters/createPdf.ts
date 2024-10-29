@@ -18,6 +18,7 @@ import {
   getDirectTaxPayments,
   getHeader,
   getNationalRegistryInfo,
+  groupDirectPayments,
 } from './applicationPdfHelper'
 import {
   baseFontSize,
@@ -32,7 +33,8 @@ import {
   colorOfHeaderInTimeline,
   color_lightPurple,
   Section,
-  drawHeaders,
+  drawHeadersForTable,
+  drawTable,
 } from './pdfhelpers'
 
 export const createPdf = async (
@@ -222,7 +224,26 @@ export const createPdf = async (
       'Upplýsingar um staðgreiðslu',
       getDirectTaxPayments(applicantDirectPayments),
     )
-    drawHeaders(page, currentYPosition, margin, boldFont)
+
+    currentYPosition = drawHeadersForTable(
+      page,
+      currentYPosition,
+      margin,
+      boldFont,
+    )
+    checkYPositionAndAddPage()
+    const { updatedPage, updatedYPosition } = drawTable(
+      page,
+      pdfDoc,
+      groupDirectPayments(applicantDirectPayments),
+      margin,
+      currentYPosition,
+      boldFont,
+      font,
+    )
+    page = updatedPage
+    currentYPosition = updatedYPosition
+    checkYPositionAndAddPage()
   }
 
   drawSection('Umsóknarferli', getApplicantMoreInfo(application))

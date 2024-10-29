@@ -242,3 +242,16 @@ export const getDirectTaxPayments = (directTaxPayments: DirectTaxPayment[]) => {
     },
   ]
 }
+
+export const groupDirectPayments = (directTaxPayments: DirectTaxPayment[]) => {
+  const grouped = directTaxPayments.reduce((acc, payment) => {
+    const key = `${payment.month}-${payment.year}`
+    if (!acc[key]) {
+      acc[key] = []
+    }
+    acc[key].push(payment)
+    return acc
+  }, {} as Record<string, DirectTaxPayment[]>)
+
+  return grouped
+}
