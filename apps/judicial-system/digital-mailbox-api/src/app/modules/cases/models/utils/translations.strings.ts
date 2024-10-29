@@ -70,7 +70,7 @@ const translations: Translations = {
     subpoena: 'Subpoena',
     subpoenaSent: 'Subpoena sent',
     subpoenaServed:
-      'Confirmation of subpoena service has been sent to the court',
+      'Confirmation of subpoena service has been sent to the police and court',
     type: 'Type',
     waiveRightToCounsel: 'Right to counsel waived',
   },
@@ -105,7 +105,8 @@ const translations: Translations = {
     prosecutorsOffice: 'Embætti',
     subpoena: 'Fyrirkall',
     subpoenaSent: 'Fyrirkall sent',
-    subpoenaServed: 'Staðfesting á móttöku hefur verið send á dómstóla',
+    subpoenaServed:
+      'Staðfesting á móttöku hefur verið send á lögreglu og dómstóla',
     type: 'Tegund',
     waiveRightToCounsel: 'Ekki er óskað eftir verjanda',
   },
