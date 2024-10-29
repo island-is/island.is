@@ -6,6 +6,7 @@ import {
   ApplicationState,
   getEventData,
   showSpouseData,
+  UserType,
 } from '@island.is/financial-aid/shared/lib'
 import { ApplicationModel } from '../modules/application'
 import {
@@ -14,6 +15,7 @@ import {
   getApplicantSpouse,
   getApplicationInfo,
   getChildrenInfo,
+  getDirectTaxPayments,
   getHeader,
   getNationalRegistryInfo,
 } from './applicationPdfHelper'
@@ -43,7 +45,7 @@ export const createPdf = async (application: ApplicationModel) => {
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
 
-  const { name, state, created } = application
+  const { name, state, created, directTaxPayments } = application
 
   const { applicationState, ageOfApplication } = getHeader(created, state)
 
@@ -208,6 +210,16 @@ export const createPdf = async (application: ApplicationModel) => {
     }
   }
 
+  const applicantDirectPayments =
+    directTaxPayments.filter((d) => d.userType === UserType.APPLICANT) ?? []
+
+  if (applicantDirectPayments.length > 0) {
+    drawSection(
+      'Upplýsingar um staðgreiðslu',
+      getDirectTaxPayments(applicantDirectPayments),
+    )
+  }
+
   drawSection('Umsóknarferli', getApplicantMoreInfo(application))
 
   //   ---- ----- APPLICATION EVENTS ---- ----
@@ -235,16 +247,6 @@ export const createPdf = async (application: ApplicationModel) => {
       application.spouseName,
     )
     const eventCreated = format(new Date(event.created), 'dd/MM/yyyy HH:mm')
-
-    const colorOfHeader = (eventType: ApplicationEventType) => {
-      if (applicationEvent.eventType === ApplicationEventType.REJECTED) {
-        return color_red
-      }
-      if (applicationEvent.eventType === ApplicationEventType.APPROVED) {
-        return color_green
-      }
-      return color_black
-    }
 
     page.drawText(eventData.header, {
       x: margin,

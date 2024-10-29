@@ -2,6 +2,7 @@ import {
   ApplicationState,
   calcAge,
   calcDifferenceInDate,
+  DirectTaxPayment,
   Employment,
   formatNationalId,
   formatPhoneNumber,
@@ -207,4 +208,42 @@ export const getChildrenInfo = (application: ApplicationModel) => {
   })
 
   return allChildren
+}
+
+export const getDirectTaxPayments = (directTaxPayments: DirectTaxPayment[]) => {
+  if (directTaxPayments && directTaxPayments.length === 0) {
+    return []
+  }
+  const totalSalary = directTaxPayments.reduce(
+    (n, { totalSalary }) => n + totalSalary,
+    0,
+  )
+
+  return [
+    {
+      title: 'Samtals heildarlaun',
+      content: totalSalary.toLocaleString('de-DE'),
+    },
+    {
+      title: 'Meðaltal',
+      content: Math.floor(
+        totalSalary / directTaxPayments.length,
+      ).toLocaleString('de-DE'),
+    },
+    {
+      title: 'Persónuafsláttur meðaltal',
+      content: (
+        directTaxPayments.reduce(
+          (n, { personalAllowance }) => n + personalAllowance,
+          0,
+        ) / directTaxPayments.length
+      ).toLocaleString('de-DE'),
+    },
+    {
+      title: 'Samtals staðgreiðsla',
+      content: directTaxPayments
+        .reduce((n, { withheldAtSource }) => n + withheldAtSource, 0)
+        .toLocaleString('de-DE'),
+    },
+  ]
 }
