@@ -30,6 +30,7 @@ export class CaseService {
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
     private readonly lawyersService: LawyersService,
+    private readonly policeService: PoliceService,
   ) {}
 
   async getCases(nationalId: string, lang?: string): Promise<CasesResponse[]> {
@@ -86,6 +87,7 @@ export class CaseService {
     lang?: string,
   ): Promise<CasesResponse[]> {
     const response = await this.fetchCases(nationalId)
+
     return CasesResponse.fromInternalCasesResponse(response, lang)
   }
 
@@ -95,6 +97,12 @@ export class CaseService {
     lang?: string,
   ): Promise<CaseResponse> {
     const response = await this.fetchCase(id, nationalId)
+    const defendant = response.defendants[0]
+    const subpoenas = defendant.subpoenas
+
+    if (subpoenas && subpoenas[0].serviceStatus === null) {
+    }
+
     return CaseResponse.fromInternalCaseResponse(response, lang)
   }
 
