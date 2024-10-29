@@ -92,4 +92,9 @@ export const strings = defineMessages({
     defaultMessage: 'Sameinað',
     description: 'Notað fyrir "Sameinað" tagg',
   },
+  indictmentWithdrawal: {
+    id: 'judicial.system.core:case_tag.withdrawal',
+    defaultMessage: 'Afturkallað',
+    description: 'Notað fyrir "Afturkallað" tagg',
+  },
 })

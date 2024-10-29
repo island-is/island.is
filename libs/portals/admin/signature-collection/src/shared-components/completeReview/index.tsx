@@ -35,7 +35,11 @@ const ActionReviewComplete = ({
     onCompleted: () => {
       setModalSubmitReviewIsOpen(false)
       revalidate()
-      toast.success(formatMessage(m.toggleReviewSuccess))
+      toast.success(
+        listReviewed
+          ? formatMessage(m.toggleReviewSuccessToggleBack)
+          : formatMessage(m.toggleReviewSuccess),
+      )
     },
     onError: () => {
       toast.error(formatMessage(m.toggleReviewError))

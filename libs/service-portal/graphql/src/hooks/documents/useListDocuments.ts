@@ -28,7 +28,6 @@ export const useListDocuments = (
     opened,
     page,
     pageSize,
-    isLegalGuardian,
     archived,
     bookmarked,
   } = input ?? {}
@@ -47,7 +46,6 @@ export const useListDocuments = (
         opened,
         page,
         pageSize,
-        isLegalGuardian,
         archived,
         bookmarked,
       },
