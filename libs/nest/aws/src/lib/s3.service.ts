@@ -113,10 +113,9 @@ export class S3Service {
     const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
     const isStreaming = !(content instanceof Buffer)
     let uploadStream: stream.PassThrough | undefined
-    
-    if(isStreaming)
-      uploadStream = new stream.PassThrough()
-       
+
+    if (isStreaming) uploadStream = new stream.PassThrough()
+
     const uploadParams: PutObjectCommandInput = {
       Bucket: bucket,
       Key: key,
@@ -130,8 +129,7 @@ export class S3Service {
         params: uploadParams,
       })
 
-      if(isStreaming && uploadStream)
-        content.pipe(uploadStream)
+      if (isStreaming && uploadStream) content.pipe(uploadStream)
 
       const { Location: url } = await parallelUpload.done()
 

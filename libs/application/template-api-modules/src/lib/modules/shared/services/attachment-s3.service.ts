@@ -112,7 +112,7 @@ export class AttachmentS3Service {
 
     await this.applicationService.update(application.id, {
       attachments: {
-        ...application.attachments || {},
+        ...(application.attachments || {}),
         [attachmentKey]: url,
       },
     })

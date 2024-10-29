@@ -93,7 +93,7 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
       const attachmentDict = application.attachments as {
         [key: string]: string
       }
-      const attachments = (await Promise.all(
+      const attachments = await Promise.all(
         attachmentsRaw?.map(async (a) => {
           const filename = attachmentDict[a.key]
           const vidhengiBase64 = await this.s3Service.getFileContent(
@@ -106,7 +106,7 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
             vidhengiTypa: a.name.split('.').pop(),
           }
         }) || [],
-      ))
+      )
 
       await this.umsoknirApi
         .withMiddleware(new AuthMiddleware(auth as Auth))

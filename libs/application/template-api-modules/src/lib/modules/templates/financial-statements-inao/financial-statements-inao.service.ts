@@ -62,7 +62,9 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
     super(ApplicationTypes.FINANCIAL_STATEMENTS_INAO)
   }
 
-  private async getAttachmentAsBase64(application: Application): Promise<string> {
+  private async getAttachmentAsBase64(
+    application: Application,
+  ): Promise<string> {
     const attachments: AttachmentData[] | undefined = getValueViaPath(
       application.answers,
       'attachments.file',
@@ -77,7 +79,9 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
     )[attachmentKey]
 
     if (!fileName) {
-      throw new Error(`Attachment filename not found in application on attachment key: ${attachmentKey}`)
+      throw new Error(
+        `Attachment filename not found in application on attachment key: ${attachmentKey}`,
+      )
     }
 
     try {
@@ -300,7 +304,9 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
 
       const file = getValueViaPath(answers, 'attachments.file')
 
-      const fileName = file ? await this.getAttachmentAsBase64(application) : undefined
+      const fileName = file
+        ? await this.getAttachmentAsBase64(application)
+        : undefined
 
       const client = {
         nationalId: nationalId,

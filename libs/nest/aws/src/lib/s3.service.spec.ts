@@ -187,9 +187,9 @@ describe('S3Service', () => {
 
   it('should handle DeleteObjectCommand throwing an error', async () => {
     s3Mock.on(DeleteObjectCommand).rejects(new Error('Network error'))
-  
+
     const result = await s3Service.deleteObject({ bucket: 'x', key: 'y' })
-  
+
     expect(result).toBe(false)
     expect(logger.error).toBeCalledWith(
       'Error occurred while deleting file: y from S3 bucket: x',

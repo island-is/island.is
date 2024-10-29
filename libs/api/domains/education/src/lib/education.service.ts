@@ -60,10 +60,13 @@ export class EducationService {
         responseStream.body,
         { bucket: this.config.fileDownloadBucket, key: uuid() },
       )
-  
+
       // Presigned URL expires in 65 seconds to allow for download initiation
       const PRESIGNED_URL_EXPIRY = 65
-      return await this.s3Service.getPresignedUrl(fileLocation, PRESIGNED_URL_EXPIRY)
+      return await this.s3Service.getPresignedUrl(
+        fileLocation,
+        PRESIGNED_URL_EXPIRY,
+      )
     } catch (error) {
       this.logger.error(`Failed to process PDF license: ${licenseId}`, error)
       return null
