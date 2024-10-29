@@ -1,6 +1,5 @@
 'use strict'
 
-//TODOx update DB schema (dbdiagram)
 module.exports = {
   async up(queryInterface) {
     return queryInterface.sequelize.transaction(async (transaction) => {
