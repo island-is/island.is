@@ -58,7 +58,7 @@ const translations: Translations = {
     institution: 'Institution',
     indictment: 'Indictment',
     judge: 'Judge',
-    districtCourtAssistant: 'Court assistant',
+    districtCourtAssistant: 'Assistant judge',
     location: 'Location',
     name: 'Name',
     nationalId: 'National ID',
