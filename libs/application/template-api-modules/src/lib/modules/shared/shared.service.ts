@@ -22,7 +22,6 @@ import { sharedModuleConfig } from './shared.config'
 import { ApplicationService } from '@island.is/application/api/core'
 import jwt from 'jsonwebtoken'
 import { uuid } from 'uuidv4'
-import { S3Service } from '@island.is/nest/aws'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -37,7 +36,6 @@ export class SharedTemplateApiService {
     private config: ConfigType<typeof sharedModuleConfig>,
     private readonly applicationService: ApplicationService,
     private readonly paymentService: PaymentService,
-    private readonly s3Service: S3Service,
   ) {}
 
   async createAssignToken(application: Application, expiresIn: number) {

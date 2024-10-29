@@ -151,7 +151,7 @@ describe('S3Service', () => {
       ),
     )
 
-    expect(result).toEqual(false)
+    expect(result).toBe(false)
   })
 
   it.each([200, 204])(
@@ -162,7 +162,7 @@ describe('S3Service', () => {
 
       const result = await s3Service.deleteObject({ bucket: 'x', key: 'y' })
 
-      expect(result).toBeTruthy()
+      expect(result).toBe(true)
       expect(logger.error).toBeCalledTimes(0)
     },
   )
@@ -175,7 +175,7 @@ describe('S3Service', () => {
 
       const result = await s3Service.deleteObject({ bucket: 'x', key: 'y' })
 
-      expect(result).toBeFalsy()
+      expect(result).toBe(false)
 
       expect(logger.error).toBeCalledTimes(1)
       expect(logger.error).toBeCalledWith(
@@ -184,6 +184,18 @@ describe('S3Service', () => {
       )
     },
   )
+
+  it('should handle DeleteObjectCommand throwing an error', async () => {
+    s3Mock.on(DeleteObjectCommand).rejects(new Error('Network error'))
+  
+    const result = await s3Service.deleteObject({ bucket: 'x', key: 'y' })
+  
+    expect(result).toBe(false)
+    expect(logger.error).toBeCalledWith(
+      'Error occurred while deleting file: y from S3 bucket: x',
+      expect.any(Error),
+    )
+  })
 
   it('should return correct bucket and key strings', async () => {
     const bucketKeyPair = { bucket: 'abc', key: 'def' }

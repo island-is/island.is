@@ -95,18 +95,30 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
       }
       const attachments = await Promise.all(
         attachmentsRaw?.map(async (a) => {
-          const filename = attachmentDict[a.key]
-          const vidhengiBase64 = await this.s3Service.getFileContent(
-            filename,
-            'base64',
-          )
-          return {
-            vidhengiBase64,
-            vidhengiNafn: a.name,
-            vidhengiTypa: a.name.split('.').pop(),
+          try {
+            const filename = attachmentDict[a.key]
+            const vidhengiBase64 = await this.s3Service.getFileContent(
+              filename,
+              'base64',
+            )
+            if(!filename) {
+              this.logger.warn(`Missing filename for attachment key: ${a.key}`)
+              return null
+            }
+            return {
+              vidhengiBase64,
+              vidhengiNafn: a.name,
+              vidhengiTypa: a.name.split('.').pop(),
+            }
+          } catch (error) {
+            this.logger.error(
+              `Failed to process attachment ${a.name}:`,
+              error
+            )
+            return null
           }
         }) || [],
-      )
+      ).then(results => results.filter(result => result !== null))
 
       await this.umsoknirApi
         .withMiddleware(new AuthMiddleware(auth as Auth))

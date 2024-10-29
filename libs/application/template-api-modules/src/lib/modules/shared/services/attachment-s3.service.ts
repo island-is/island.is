@@ -80,7 +80,7 @@ export class AttachmentS3Service {
       ContentEncoding?: string
     },
   ): Promise<string> {
-    return this.saveAttachmentToApplicaton(
+    return this.saveAttachmentToApplication(
       application,
       fileName,
       buffer,
@@ -88,7 +88,7 @@ export class AttachmentS3Service {
     )
   }
 
-  async saveAttachmentToApplicaton(
+  async saveAttachmentToApplication(
     application: ApplicationWithAttachments,
     fileName: string,
     buffer: Buffer,
@@ -112,7 +112,7 @@ export class AttachmentS3Service {
 
     await this.applicationService.update(application.id, {
       attachments: {
-        ...application.attachments,
+        ...application.attachments || {},
         [attachmentKey]: url,
       },
     })
@@ -126,13 +126,17 @@ export class AttachmentS3Service {
     expiration: number,
   ): Promise<string> {
     if (expiration <= 0) {
-      return Promise.reject('expiration must be positive')
+      throw new Error('Expiration must be positive')
     }
     const fileName = (
       application.attachments as {
         [key: string]: string
       }
     )[attachmentKey]
+
+    if (!fileName) {
+      throw new Error('Attachment not found')
+    }
 
     return this.s3Service.getPresignedUrl(fileName, expiration)
   }

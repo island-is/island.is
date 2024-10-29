@@ -21,6 +21,7 @@ import { getYearInterval } from './education.utils'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { isDefined } from '@island.is/shared/utils'
 import { S3Service } from '@island.is/nest/aws'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @Injectable()
 export class EducationService {
@@ -30,6 +31,7 @@ export class EducationService {
     @Inject('CONFIG')
     private readonly config: Config,
     private readonly nationalRegistryApi: NationalRegistryV3ClientService,
+    @Inject(LOGGER_PROVIDER) protected readonly logger: Logger,
   ) {}
 
   async getLicenses(
@@ -53,12 +55,19 @@ export class EducationService {
       nationalId,
       licenseId,
     )
-
-    const fileLocation = await this.s3Service.uploadFile(
-      await responseStream.buffer(),
-      { bucket: this.config.fileDownloadBucket, key: uuid() },
-    )
-    return await this.s3Service.getPresignedUrl(fileLocation, 65)
+    try {
+      const fileLocation = await this.s3Service.uploadFile(
+        responseStream.body,
+        { bucket: this.config.fileDownloadBucket, key: uuid() },
+      )
+  
+      // Presigned URL expires in 65 seconds to allow for download initiation
+      const PRESIGNED_URL_EXPIRY = 65
+      return await this.s3Service.getPresignedUrl(fileLocation, PRESIGNED_URL_EXPIRY)
+    } catch (error) {
+      this.logger.error(`Failed to process PDF license: ${licenseId}`, error)
+      return null
+    }
   }
 
   async getFamily(nationalId: string): Promise<Array<Student>> {

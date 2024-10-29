@@ -20,6 +20,7 @@ import {
   PresignedPost,
   PresignedPostOptions,
 } from '@aws-sdk/s3-presigned-post'
+import stream from 'stream'
 
 export interface BucketKeyPair {
   bucket: string
@@ -36,7 +37,7 @@ export class S3Service {
   ) {}
 
   public async getClientRegion(): Promise<string> {
-    return this.s3Client.config.region()
+    return await this.s3Client.config.region()
   }
 
   public async getFile(
@@ -101,7 +102,7 @@ export class S3Service {
   }
 
   public async uploadFile(
-    content: Buffer,
+    content: Buffer | NodeJS.ReadableStream,
     BucketKeyPairOrFilename: BucketKeyPair | string,
     uploadParameters?: {
       ContentType?: string
@@ -110,10 +111,16 @@ export class S3Service {
     },
   ): Promise<string> {
     const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
-    const uploadParams = {
+    const isStreaming = !(content instanceof Buffer)
+    let uploadStream: stream.PassThrough | undefined
+    
+    if(isStreaming)
+      uploadStream = new stream.PassThrough()
+       
+    const uploadParams: PutObjectCommandInput = {
       Bucket: bucket,
       Key: key,
-      Body: content,
+      Body: isStreaming ? uploadStream : content,
       ...uploadParameters,
     }
 
@@ -122,6 +129,9 @@ export class S3Service {
         client: this.s3Client,
         params: uploadParams,
       })
+
+      if(isStreaming && uploadStream)
+        content.pipe(uploadStream)
 
       const { Location: url } = await parallelUpload.done()
 
@@ -165,7 +175,7 @@ export class S3Service {
         error,
       )
       throw new Error(
-        'An error occurred while trying to create a presigned post',
+        `An error occurred while trying to create a presigned post ${error.message}`,
       )
     }
   }
