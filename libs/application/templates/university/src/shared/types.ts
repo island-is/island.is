@@ -61,12 +61,5 @@ type ModeOfDelivery = {
 
 type ProgramExtraApplicationField = {
   externalKey: string
-  // nameIs: string
-  // nameEn: string
-  // descriptionIs?: string
-  // descriptionEn?: string
-  // required: boolean
   fieldType: ProgramExtraApplicationFieldFieldTypeEnum
-  // uploadAcceptedFileType?: string
-  // options?: string
 }

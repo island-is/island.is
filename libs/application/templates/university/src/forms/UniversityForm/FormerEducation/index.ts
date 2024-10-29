@@ -16,6 +16,6 @@ export const FormerEducationSection = buildSection({
     NotFinishedEducationSubSection,
     ThirdLevelEducationSubSection,
     ExemptionSubSection,
-    OtherDocumentsSection, //TODO conditionally display section
+    OtherDocumentsSection,
   ],
 })
