@@ -11,6 +11,7 @@ import * as styles from './ConfirmationModal.css'
 import Modal from '../Modal/Modal'
 import LinkResolver from '../LinkResolver/LinkResolver'
 import { m } from '../..'
+
 interface Props {
   onSubmit: () => void
   onCancel: () => void

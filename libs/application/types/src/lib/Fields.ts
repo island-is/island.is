@@ -232,6 +232,8 @@ export enum FieldTypes {
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
   STATIC_TABLE = 'STATIC_TABLE',
+  ACCORDION = 'ACCORDION',
+  BANK_ACCOUNT = 'BANK_ACCOUNT',
   SLIDER = 'SLIDER',
 }
 
@@ -264,6 +266,8 @@ export enum FieldComponents {
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
   STATIC_TABLE = 'StaticTableFormField',
+  ACCORDION = 'AccordionFormField',
+  BANK_ACCOUNT = 'BankAccountFormField',
   SLIDER = 'SliderFormField',
 }
 
@@ -381,7 +385,7 @@ export interface PhoneField extends BaseField {
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
   allowedCountryCodes?: string[]
-  disableDropdown?: boolean
+  enableCountrySelector?: boolean
   required?: boolean
   onChange?: (...event: any[]) => void
 }
@@ -514,6 +518,30 @@ export interface ImageField extends BaseField {
   imagePosition?: ImagePositionProps | Array<ImagePositionProps>
 }
 
+export type AccordionItem = {
+  itemTitle: FormText
+  itemContent: FormText
+}
+
+export interface AccordionField extends BaseField {
+  readonly type: FieldTypes.ACCORDION
+  component: FieldComponents.ACCORDION
+  accordionItems:
+    | Array<AccordionItem>
+    | ((application: Application) => Array<AccordionItem>)
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+}
+
+export interface BankAccountField extends BaseField {
+  readonly type: FieldTypes.BANK_ACCOUNT
+  component: FieldComponents.BANK_ACCOUNT
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+}
+
 export interface PdfLinkButtonField extends BaseField {
   readonly type: FieldTypes.PDF_LINK_BUTTON
   component: FieldComponents.PDF_LINK_BUTTON
@@ -551,7 +579,10 @@ type Modify<T, R> = Omit<T, keyof R> & R
 export type ActionCardListField = BaseField & {
   readonly type: FieldTypes.ACTION_CARD_LIST
   component: FieldComponents.ACTION_CARD_LIST
-  items: (application: Application) => ApplicationActionCardProps[]
+  items: (
+    application: Application,
+    lang: Locale,
+  ) => ApplicationActionCardProps[]
   space?: BoxProps['paddingTop']
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
@@ -560,6 +591,7 @@ export type ActionCardListField = BaseField & {
 export type ApplicationActionCardProps = Modify<
   ActionCardProps,
   {
+    eyebrow?: string
     heading?: FormText
     text?: FormText
     tag?: Modify<ActionCardProps['tag'], { label: FormText }>
@@ -720,4 +752,6 @@ export type Field =
   | HiddenInputField
   | FindVehicleField
   | StaticTableField
+  | AccordionField
+  | BankAccountField
   | SliderField

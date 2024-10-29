@@ -29,6 +29,7 @@ import { ElectronicRegistrationsModule } from '@island.is/api/domains/electronic
 import {
   EmailSignupModule,
   ZenterSignupConfig,
+  CampaignMonitorSignupConfig,
 } from '@island.is/api/domains/email-signup'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { EnergyFundsServiceModule } from '@island.is/api/domains/energy-funds'
@@ -391,6 +392,7 @@ const environment = getConfig
         DocumentClientConfig,
         DocumentsClientV2Config,
         ZenterSignupConfig,
+        CampaignMonitorSignupConfig,
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,
         CommunicationsConfig,

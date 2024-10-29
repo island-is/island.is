@@ -30,6 +30,8 @@ import { FinancialStatementsInaoTemplateModule } from './financial-statements-in
 import { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
 import { FinancialStatementIndividualElectionModule } from './financial-statement-individual-election/financial-statement-individual-election.module'
 import { FinancialStatementIndividualElectionService } from './financial-statement-individual-election/financial-statement-individual-election.service'
+import { FinancialStatementPoliticalPartyTemplateModule } from './financial-statement-political-party/financial-statement-political-party.modules'
+import { FinancialStatementPoliticalPartyTemplateService } from './financial-statement-political-party/financial-statement-political-party.service'
 import { FundingGovernmentProjectsModule } from './funding-government-projects/funding-government-projects.module'
 import { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
 import { GeneralFishingLicenseModule } from './general-fishing-license/general-fishing-license.module'
@@ -64,7 +66,6 @@ import { PublicDebtPaymentPlanTemplateModule } from './public-debt-payment-plan/
 import { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
 import { ReferenceTemplateModule } from './reference-template/reference-template.module'
 import { ReferenceTemplateService } from './reference-template/reference-template.service'
-
 import { CitizenshipModule } from './directorate-of-immigration/citizenship/citizenship.module'
 import { CitizenshipService } from './directorate-of-immigration/citizenship/citizenship.service'
 import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-learners-permit.module'
@@ -99,12 +100,10 @@ import { OrderVehicleRegistrationCertificateModule } from './transport-authority
 import { OrderVehicleRegistrationCertificateService } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.service'
 import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
 import { TransferOfVehicleOwnershipService } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.service'
-
 import { EnergyFundsModule } from './energy-funds/energy-funds.module'
 import { EnergyFundsService } from './energy-funds/energy-funds.service'
 import { UniversityModule } from './university/university.module'
 import { UniversityService } from './university/university.service'
-
 import { TransferOfMachineOwnershipTemplateModule } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.module'
 import { TransferOfMachineOwnershipTemplateService } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.service'
 import { CarRecyclingModule } from './car-recycling/car-recycling.module'
@@ -137,9 +136,12 @@ import { HealthInsuranceDeclarationModule } from './health-insurance-declaration
 import { HealthInsuranceDeclarationService } from './health-insurance-declaration/health-insurance-declaration.service'
 import { NewPrimarySchoolModule } from './new-primary-school/new-primary-school.module'
 import { NewPrimarySchoolService } from './new-primary-school/new-primary-school.service'
+<<<<<<< HEAD
 import { WorkAccidentNotificationTemplateModule } from './aosh/work-accident-notification/work-accident-notification.module'
 import { WorkAccidentNotificationTemplateService } from './aosh/work-accident-notification/work-accident-notification.service'
 
+=======
+>>>>>>> origin/main
 import { IdCardModule } from './id-card/id-card.module'
 import { IdCardService } from './id-card/id-card.service'
 import { ParliamentaryListCreationModule } from './signature-collection/parliamentary-list-creation/parliamentary-list-creation.module'
@@ -147,22 +149,21 @@ import { ParliamentaryListCreationService } from './signature-collection/parliam
 import { ParliamentaryListSigningModule } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.module'
 import { ParliamentaryListSigningService } from './signature-collection/parliamentary-list-signing/parliamentary-list-signing.service'
 
+export const dynamicModules = [GeneralPetitionModule]
+
 export const modules = [
   ReferenceTemplateModule,
   GeneralFishingLicenseModule,
   DataProtectionComplaintModule,
   PublicDebtPaymentPlanTemplateModule,
-  ParentalLeaveModule,
   DocumentProviderOnboardingModule,
   InstitutionCollaborationModule,
   HealthInsuranceModule,
-  ChildrenResidenceChangeModule,
   ChildrenResidenceChangeModuleV2,
   LoginServiceModule,
   FundingGovernmentProjectsModule,
   DrivingLicenseSubmissionModule,
   AccidentNotificationModule,
-  GeneralPetitionModule,
   CriminalRecordSubmissionModule,
   PSignSubmissionModule,
   AnnouncementOfDeathModule,
@@ -177,6 +178,7 @@ export const modules = [
   FinancialStatementCemeteryTemplateModule,
   FinancialStatementsInaoTemplateModule,
   FinancialStatementIndividualElectionModule,
+  FinancialStatementPoliticalPartyTemplateModule,
   NoDebtCertificateModule,
   InheritanceReportModule,
   EstateTemplateModule,
@@ -195,7 +197,6 @@ export const modules = [
   DrivingLicenseBookUpdateInstructorModule,
   DrivingLearnersPermitModule,
   DrivingLicenseDuplicateModule,
-  SocialInsuranceAdministrationModule,
   CarRecyclingModule,
   CitizenshipModule,
   EnergyFundsModule,
@@ -219,6 +220,9 @@ export const modules = [
   WorkAccidentNotificationTemplateModule,
   ParliamentaryListCreationModule,
   ParliamentaryListSigningModule,
+  ParentalLeaveModule,
+  ChildrenResidenceChangeModule,
+  SocialInsuranceAdministrationModule,
 ]
 
 export const services = [
@@ -250,6 +254,7 @@ export const services = [
   FinancialStatementCemeteryTemplateService,
   FinancialStatementsInaoTemplateService,
   FinancialStatementIndividualElectionService,
+  FinancialStatementPoliticalPartyTemplateService,
   MarriageConditionsSubmissionService,
   NoDebtCertificateService,
   InheritanceReportService,

@@ -6,7 +6,7 @@ import { useLazyQuery } from './useLazyQuery'
 export const useLazyMachineCategory = () => {
   return useLazyQuery<
     {
-      getMachineParentCategoryByTypeAndModel: MachineParentCategoryDetailsDto
+      getMachineParentCategoryByTypeAndModel: MachineParentCategoryDetailsDto[]
     },
     {
       input: {

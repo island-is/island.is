@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Divider,
+  SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -43,6 +44,7 @@ const Subpoena = () => {
   })
 
   const subpoena = data?.lawAndOrderSubpoena
+
   const [defenderPopUp, setDefenderPopUp] = useState<boolean>(false)
 
   if (
@@ -61,19 +63,18 @@ const Subpoena = () => {
         intro={subpoena?.texts?.description ?? ''}
         serviceProviderSlug={DOMSMALARADUNEYTID_SLUG}
         serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
-        children={
-          !loading &&
-          subpoena?.texts?.confirmation && (
-            <Box marginTop={4}>
-              <AlertMessage
-                type="success"
-                message={subpoena.texts.confirmation}
-              />
-            </Box>
-          )
-        }
-      />
+      >
+        {!loading && subpoena?.texts?.confirmation && (
+          <Box marginTop={4}>
+            <AlertMessage
+              type="success"
+              message={subpoena.texts.confirmation}
+            />
+          </Box>
+        )}
+      </IntroHeader>
 
+      {loading && <SkeletonLoader space={2} repeat={4} height={24} />}
       <Box marginTop={3} display="flex" flexWrap="wrap">
         {!loading && subpoena?.data && (
           <Box paddingRight={2} marginBottom={[1]}>
@@ -101,10 +102,10 @@ const Subpoena = () => {
 
       {error && !loading && <Problem error={error} noBorder={false} />}
 
-      {subpoena?.data?.groups && subpoena.data.groups.length > 0 && (
+      {subpoena?.data?.groups?.length && (
         <>
           <InfoLines groups={subpoena.data.groups} loading={loading} />
-          {isDefined(subpoena?.data.defenderChoice) && (
+          {subpoena.data.hasChosen && isDefined(subpoena?.data.defenderChoice) && (
             <>
               <Box paddingTop={1} />
               <InfoLine
@@ -121,7 +122,7 @@ const Subpoena = () => {
                   action: () => {
                     setDefenderPopUp(true)
                   },
-                  disabled: !subpoena.data.canEditDefenderChoice,
+                  disabled: subpoena.data.canEditDefenderChoice === false,
                   tooltip: subpoena.data.canEditDefenderChoice
                     ? undefined
                     : subpoena.data.courtContactInfo ?? '',
@@ -138,8 +139,12 @@ const Subpoena = () => {
             <Text>{formatMessage(messages.subpoenaInfoText2)}</Text>
           </Box>
 
-          {!loading && !subpoena?.data.defenderChoice && (
-            <DefenderChoices id={id} refetch={refetch} />
+          {!loading && subpoena.data.hasChosen === false && (
+            <DefenderChoices
+              id={id}
+              refetch={refetch}
+              choice={subpoena.data.defaultChoice}
+            />
           )}
 
           {defenderPopUp && (
@@ -157,7 +162,7 @@ const Subpoena = () => {
           )}
         </>
       )}
-      {!loading && !error && subpoena?.data?.groups?.length === 0 && (
+      {!loading && !error && subpoena === null && (
         <Problem
           type="no_data"
           noBorder={false}

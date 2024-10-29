@@ -42,20 +42,20 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
           {t(msg.saveAndClose)}
         </Button>
       </Box>
-      {propose && (
+      {/* {propose && (
         <Box className={classes.saveDraft}>
           <Button
             onClick={() => propose()}
             icon="open"
             iconType="outline"
-            variant="text"
+            variant="utility"
             size="small"
             disabled={saving}
           >
             {t(msg.propose)}
           </Button>
         </Box>
-      )}
+      )} */}
       <Box className={classes.deleteDraft}>
         <Button
           onClick={() => setIsConfirmationVisible(true)}

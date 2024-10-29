@@ -94,4 +94,14 @@ export class UpdateDefendantInput {
   @IsOptional()
   @Field(() => SubpoenaType, { nullable: true })
   readonly subpoenaType?: SubpoenaType
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isDefenderChoiceConfirmed?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly caseFilesSharedWithDefender?: boolean
 }

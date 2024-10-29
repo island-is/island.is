@@ -59,7 +59,11 @@ export const Breadcrumbs: FC<React.PropsWithChildren<BreadcrumbsProps>> = ({
         )
 
         return (
-          <Box key={index} display={'inlineFlex'} alignItems={'center'}>
+          <Box
+            key={`${item.title}-${index}`}
+            display={'inlineFlex'}
+            alignItems={'center'}
+          >
             {isLink
               ? renderLink(
                   <a

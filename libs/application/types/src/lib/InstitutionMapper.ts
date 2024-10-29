@@ -169,6 +169,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.RIKISENDURSKODUN,
     contentfulId: InstitutionContentfulIds.RIKISENDURSKODUN,
   },
+  [ApplicationTypes.FINANCIAL_STATEMENT_POLITICAL_PARTY]: {
+    nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
+    slug: InstitutionTypes.RIKISENDURSKODUN,
+    contentfulId: InstitutionContentfulIds.RIKISENDURSKODUN,
+  },
   [ApplicationTypes.ANNOUNCEMENT_OF_DEATH]: {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
