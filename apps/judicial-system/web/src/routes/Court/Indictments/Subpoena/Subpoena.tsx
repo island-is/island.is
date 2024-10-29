@@ -2,10 +2,10 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
   CourtCaseInfo,
@@ -32,6 +32,7 @@ const Subpoena: FC = () => {
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [newSubpoenas, setNewSubpoenas] = useState<string[]>([])
+  const [isCreatingSubpoena, setIsCreatingSubpoena] = useState<boolean>(false)
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
   const {
@@ -51,6 +52,8 @@ const Subpoena: FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
+      setIsCreatingSubpoena(true)
+
       if (!isSchedulingArraignmentDate) {
         router.push(`${destination}/${workingCase.id}`)
         return
@@ -74,6 +77,9 @@ const Subpoena: FC = () => {
       const allDefendantsUpdated = await Promise.all(promises)
 
       if (!allDefendantsUpdated.every((result) => result)) {
+        toast.error(formatMessage(errors.updateDefendant))
+        setIsCreatingSubpoena(false)
+
         return
       }
 
@@ -96,6 +102,9 @@ const Subpoena: FC = () => {
       const courtDateUpdated = await sendCourtDateToServer(clearedConclusion)
 
       if (!courtDateUpdated) {
+        toast.error(formatMessage(errors.updateCase))
+        setIsCreatingSubpoena(false)
+
         return
       }
 
@@ -109,6 +118,7 @@ const Subpoena: FC = () => {
       isArraignmentScheduled,
       sendCourtDateToServer,
       updateDefendant,
+      formatMessage,
     ],
   )
 
@@ -254,7 +264,7 @@ const Subpoena: FC = () => {
           }}
           primaryButtonText={formatMessage(strings.modalPrimaryButtonText)}
           secondaryButtonText={formatMessage(strings.modalSecondaryButtonText)}
-          isPrimaryButtonLoading={false}
+          isPrimaryButtonLoading={isCreatingSubpoena}
         />
       )}
     </PageLayout>
