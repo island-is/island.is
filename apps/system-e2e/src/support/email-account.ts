@@ -1,9 +1,5 @@
-// use Nodemailer to get an Ethereal email inbox
-// https://nodemailer.com/about/
-import { createTestAccount } from 'nodemailer'
-// used to check the email inbox
-import { connect } from 'imap-simple'
-import { simpleParser } from 'mailparser'
+import nodemailer from 'nodemailer'
+import nodemailerMock from 'nodemailer-mock'
 import axios from 'axios'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import {
@@ -15,11 +11,7 @@ import { join } from 'path'
 import { sessionsPath } from './session'
 import { debug } from './utils'
 
-/**
- * Register the email address with AWS SES, so we can send emails to it
- * @param emailAccount
- */
-async function registerEmailAddressWithSES(emailAccount: {
+export type EmailAccount = {
   getLastEmail(
     retries: number,
   ): Promise<{
@@ -28,7 +20,71 @@ async function registerEmailAddressWithSES(emailAccount: {
     html: string | false
   } | null>
   email: string
-}) {
+}
+
+const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
+  const storagePath = join(sessionsPath, `${name}-email.json`)
+  const emailAccountExists = existsSync(storagePath)
+
+  // Configure `nodemailer-mock` as the transport
+  const transporter = nodemailerMock.createTransport({
+    host: 'smtp.mockserver.local',
+    port: 587,
+    secure: false,
+    auth: {
+      user: 'mockUser',
+      pass: 'mockPass',
+    },
+  })
+
+  const userEmail: EmailAccount = {
+    email: 'mockUser@mockserver.local',
+
+    async getLastEmail(
+      retries: number,
+    ): Promise<null | {
+      subject: string | undefined
+      text: string | undefined
+      html: string | false
+    }> {
+      debug('Fetching the last mocked email')
+      const sentEmails = nodemailerMock.mock.getSentMail()
+
+      if (!sentEmails.length) {
+        debug('No emails found')
+        if (retries <= 0) {
+          return null
+        } else {
+          await new Promise((r) => setTimeout(r, 5000))
+          return userEmail.getLastEmail(retries - 1)
+        }
+      } else {
+        const lastEmail = sentEmails[sentEmails.length - 1]
+        debug(`Last email subject: ${lastEmail.subject}`)
+        debug(`Last email text: ${lastEmail.text}`)
+
+        return {
+          subject: lastEmail.subject,
+          text: lastEmail.text?.toString(),
+          html: lastEmail.html?.toString() || false,
+        }
+      }
+    },
+  }
+
+  if (!emailAccountExists) {
+    await registerEmailAddressWithSES(userEmail)
+  }
+  writeFileSync(
+    storagePath,
+    JSON.stringify({ user: 'mockUser', pass: 'mockPass' }),
+    { encoding: 'utf-8' },
+  )
+
+  return userEmail
+}
+
+async function registerEmailAddressWithSES(emailAccount: EmailAccount) {
   const client = new SESClient({ region: 'eu-west-1' })
   await client.send(
     new VerifyEmailAddressCommand({ EmailAddress: emailAccount.email }),
@@ -62,116 +118,6 @@ async function registerEmailAddressWithSES(emailAccount: {
   } else {
     throw new Error('Verification message not found.')
   }
-}
-
-export type EmailAccount = {
-  getLastEmail(
-    retries: number,
-  ): Promise<{
-    subject: string | undefined
-    text: string | undefined
-    html: string | false
-  } | null>
-  email: string
-}
-const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
-  const storagePath = join(sessionsPath, `${name}-email.json`)
-  const emailAccountExists = existsSync(storagePath)
-  const testAccount = emailAccountExists
-    ? (JSON.parse(readFileSync(storagePath, { encoding: 'utf-8' })) as {
-        user: string
-        pass: string
-      })
-    : await createTestAccount()
-
-  const emailConfig = {
-    imap: {
-      user: testAccount.user,
-      password: testAccount.pass,
-      host: 'imap.ethereal.email',
-      port: 993,
-      tls: true,
-      authTimeout: 10000,
-    },
-  }
-  debug('created new email account %s', testAccount.user)
-  debug('for debugging, the password is %s', testAccount.pass)
-  const userEmail: EmailAccount = {
-    email: testAccount.user,
-
-    /**
-     * Utility method for getting the last email
-     * for the Ethereal email account created above.
-     */
-    async getLastEmail(
-      retries: number,
-    ): Promise<null | {
-      subject: string | undefined
-      text: string | undefined
-      html: string | false
-    }> {
-      // makes debugging very simple
-      debug('getting the last email')
-      debug(`email config: ${emailConfig}`)
-
-      debug('connecting to mail server...')
-      const connection = await connect(emailConfig)
-      debug('connected')
-      try {
-        // grab up to 50 emails from the inbox
-        debug('Opening inbox...')
-        await connection.openBox('INBOX')
-        debug('Opened inbox.')
-        const searchCriteria = ['UNSEEN']
-        const fetchOptions = {
-          bodies: [''],
-          markSeen: true,
-        }
-        debug('Starting search for new messages...')
-        const messages = await connection.search(searchCriteria, fetchOptions)
-        debug('Search finished')
-
-        if (!messages.length) {
-          debug('cannot find any emails')
-          if (retries <= 0) {
-            return null
-          } else {
-            await new Promise((r) => setTimeout(r, 5000))
-            return userEmail.getLastEmail(retries - 1)
-          }
-        } else {
-          debug('there are %d messages', messages.length)
-          // grab the last email
-          const mail = await simpleParser(
-            messages[messages.length - 1].parts[0].body,
-          )
-          debug(`mail.subject: ${mail.subject}`)
-          debug(`mail.text: ${mail.text}`)
-
-          // and returns the main fields
-          return {
-            subject: mail.subject,
-            text: mail.text,
-            html: mail.html,
-          }
-        }
-      } finally {
-        // and close the connection to avoid it hanging
-        connection.end()
-      }
-    },
-  }
-
-  if (!emailAccountExists) {
-    await registerEmailAddressWithSES(userEmail)
-  }
-  writeFileSync(
-    storagePath,
-    JSON.stringify({ user: testAccount.user, pass: testAccount.pass }),
-    { encoding: 'utf-8' },
-  )
-
-  return userEmail
 }
 
 export { makeEmailAccount, registerEmailAddressWithSES }
