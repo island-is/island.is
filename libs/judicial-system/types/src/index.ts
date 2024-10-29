@@ -9,6 +9,7 @@ export {
   ServiceStatus,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
+  VERDICT_APPEAL_WINDOW_DAYS,
 } from './lib/defendant'
 export { InstitutionType } from './lib/institution'
 export {

@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const strings = defineMessages({
+  keyDates: {
+    id: 'judicial.system.core:blue_box_with_date.key_dates',
+    defaultMessage: 'Lykildagsetningar',
+    description: 'Notaður sem titill í lykildagsetningarsvæði dómfellda.',
+  },
   defendantVerdictViewDateLabel: {
     id: 'judicial.system.core:blue_box_with_date.defendant_verdict_view_date_label',
     defaultMessage: 'Dagsetning birtingar',
@@ -16,12 +21,12 @@ export const strings = defineMessages({
   defendantVerdictViewedDate: {
     id: 'judicial.system.core:blue_box_with_date.defendant_verdict_viewed_date',
     defaultMessage: 'Dómur birtur {date}',
-    description: 'Notaður sem text fyrir dagsetningu birtingar.',
+    description: 'Notaður sem texti fyrir dagsetningu birtingar.',
   },
   defendantAppealDate: {
     id: 'judicial.system.core:blue_box_with_date.defendant_appeal_date',
     defaultMessage: 'Dómi áfrýjað {date}',
-    description: 'Notaður sem text fyrir dagsetningu birtingar.',
+    description: 'Notaður sem texti fyrir dagsetningu áfrýjunar.',
   },
   defendantVerdictViewDateButtonText: {
     id: 'judicial.system.core:blue_box_with_date.defendant_verdict_view_date_button_text',

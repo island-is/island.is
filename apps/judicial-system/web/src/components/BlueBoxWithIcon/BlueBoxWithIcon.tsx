@@ -19,7 +19,7 @@ const BlueBoxWithIcon: FC<Props> = (props) => {
           <Box
             data-testid={`infoCardDataContainer${index}`}
             key={dataItem.title}
-            marginTop={index > 1 ? 1 : 0}
+            marginBottom={1}
           >
             <Text variant="h4">{dataItem.title}</Text>
             {typeof dataItem.value === 'string' ? (

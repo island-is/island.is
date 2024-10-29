@@ -159,7 +159,7 @@ export const errors = defineMessages({
   },
   invalidDate: {
     id: 'judicial.system.core:errors.invalid_date',
-    defaultMessage: 'Dagsetning ekki á rétt slegin inn',
+    defaultMessage: 'Dagsetning ekki rétt slegin inn',
     description: 'Notaður sem villuskilaboð þegar dagsetning er ekki löggild',
   },
 })

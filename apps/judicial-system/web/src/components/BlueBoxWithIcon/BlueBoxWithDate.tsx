@@ -2,7 +2,6 @@ import { FC, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import addDays from 'date-fns/addDays'
 import { AnimatePresence, motion } from 'framer-motion'
-import { height } from 'pdfkit/js/page'
 
 import {
   Box,
@@ -13,9 +12,14 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { VERDICT_APPEAL_WINDOW_DAYS } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
-import { CaseIndictmentRulingDecision, Defendant } from '../../graphql/schema'
+import {
+  CaseIndictmentRulingDecision,
+  Defendant,
+  ServiceRequirement,
+} from '../../graphql/schema'
 import { formatDateForServer, useDefendants } from '../../utils/hooks'
 import DateTime from '../DateTime/DateTime'
 import { FormContext } from '../FormProvider/FormProvider'
@@ -38,21 +42,15 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const [verdictViewDate, setVerdictViewDate] = useState<Date>()
   const [appealDate, setAppealDate] = useState<Date>()
   const [textItems, setTextItems] = useState<string[]>([])
-  const [triggerAppealAnimation, setTriggerAppealAnimation] =
-    useState<boolean>(false)
   const [triggerAnimation, setTriggerAnimation] = useState<boolean>(false)
+  const [triggerAnimation2, setTriggerAnimation2] = useState<boolean>(false)
   const { setAndSendDefendantToServer } = useDefendants()
   const { workingCase, setWorkingCase } = useContext(FormContext)
 
-  // The defendant can appeal if the verdict has been served to them or if the cases
-  // ruling is a FINE because in those cases a verdict is not served to the defendant
-  const defendantCanAppeal =
+  const serviceRequirementNotRequired =
     indictmentRulingDecision === CaseIndictmentRulingDecision.FINE ||
-    defendant.verdictViewDate
-
-  const showAppealFields =
-    Boolean(defendant.verdictViewDate) ||
-    indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+    (defendant.serviceRequirement &&
+      defendant.serviceRequirement !== ServiceRequirement.REQUIRED)
 
   const handleDateChange = (
     date: Date | undefined,
@@ -65,7 +63,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     }
 
     if (!valid) {
-      toast.error(formatMessage(errors.createIndictmentCount))
+      toast.error(formatMessage(errors.invalidDate))
+      return
     }
 
     dateType === 'verdictViewDate'
@@ -92,24 +91,22 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         setWorkingCase,
       )
     } else if (dateType === 'appealDate' && appealDate) {
-      setTriggerAppealAnimation(true)
-      setTimeout(() => {
-        setAndSendDefendantToServer(
-          {
-            caseId: workingCase.id,
-            defendantId: defendant.id,
-            verdictAppealDate: formatDateForServer(appealDate),
-          },
-          setWorkingCase,
-        )
-      }, 400)
+      setTriggerAnimation2(true)
+      setAndSendDefendantToServer(
+        {
+          caseId: workingCase.id,
+          defendantId: defendant.id,
+          verdictAppealDate: formatDateForServer(appealDate),
+        },
+        setWorkingCase,
+      )
     } else {
       toast.error(formatMessage(errors.general))
     }
   }
 
   const datePickerVariants = {
-    dpHidden: { opacity: 0, y: 15 },
+    dpHidden: { opacity: 0, y: 15, marginTop: '16px' },
     dpVisible: { opacity: 1, y: 0 },
     dpExit: {
       opacity: 0,
@@ -118,7 +115,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   }
 
   const datePicker2Variants = {
-    dpHidden: { opacity: 0, y: 15 },
+    dpHidden: { opacity: 0, y: 15, marginTop: '16px' },
     dpVisible: {
       opacity: 1,
       y: 0,
@@ -128,7 +125,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     dpExit: {
       opacity: 0,
       height: 0,
-      transition: { height: { delay: 0.6 }, opacity: { delay: 0.4 } },
+      transition: { opacity: { duration: 0.2 } },
     },
   }
 
@@ -136,13 +133,19 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     const verdictAppealDeadline = defendant.verdictAppealDeadline
       ? defendant.verdictAppealDeadline
       : verdictViewDate
-      ? addDays(new Date(verdictViewDate), 28).toISOString()
+      ? addDays(
+          new Date(verdictViewDate),
+          VERDICT_APPEAL_WINDOW_DAYS,
+        ).toISOString()
       : null
 
-    const appealExpiration = getAppealExpirationInfo(verdictAppealDeadline)
+    const appealExpiration = getAppealExpirationInfo(
+      verdictAppealDeadline,
+      defendant.isVerdictAppealDeadlineExpired,
+    )
 
     setTextItems([
-      ...(indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+      ...(!serviceRequirementNotRequired
         ? [
             formatMessage(strings.defendantVerdictViewedDate, {
               date: verdictViewDate
@@ -163,11 +166,13 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         : []),
     ])
   }, [
+    defendant.isVerdictAppealDeadlineExpired,
     defendant.verdictAppealDate,
     defendant.verdictAppealDeadline,
     defendant.verdictViewDate,
     formatMessage,
     indictmentRulingDecision,
+    serviceRequirementNotRequired,
     verdictViewDate,
   ])
 
@@ -175,7 +180,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     <Box className={styles.container} padding={[2, 2, 3, 3]}>
       <Box className={styles.titleContainer}>
         <SectionHeading
-          title="Lykildagsetningar"
+          title={formatMessage(strings.keyDates)}
           heading="h4"
           marginBottom={2}
         />
@@ -187,32 +192,35 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         </Box>
       </Box>
       <AnimatePresence>
-        {showAppealFields &&
+        {(serviceRequirementNotRequired || defendant.verdictViewDate) &&
           textItems.map((text, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{
+                marginTop: index === 0 ? 0 : '16px',
+                opacity: 0,
+                y: 20,
+                height: triggerAnimation2 ? 0 : 'auto',
+              }}
+              animate={{ opacity: 1, y: 0, height: 'auto' }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ delay: index < 3 ? index * 0.2 : 0, duration: 0.3 }}
-              style={{
-                marginTop: index === 0 ? 0 : '16px',
-              }}
               onAnimationComplete={() => setTriggerAnimation(true)}
             >
-              <Text>{text}</Text>
+              <Text>{`• ${text}`}</Text>
             </motion.div>
           ))}
       </AnimatePresence>
       <AnimatePresence mode="wait">
-        {defendant.verdictAppealDate ? null : defendantCanAppeal ? (
+        {defendant.verdictAppealDate ||
+        defendant.isVerdictAppealDeadlineExpired ? null : serviceRequirementNotRequired ||
+          defendant.verdictViewDate ? (
           <motion.div
             key="defendantAppealDate"
             variants={datePicker2Variants}
             initial="dpHidden"
             animate="dpVisible"
             exit="dpExit"
-            style={{ marginTop: '16px' }}
           >
             <Box className={styles.dataContainer}>
               <DateTime
@@ -227,6 +235,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                 onChange={(date, valid) =>
                   handleDateChange(date, valid, 'appealDate')
                 }
+                maxDate={new Date()}
                 blueBox={false}
                 dateOnly
               />
@@ -246,7 +255,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             animate="dpVisible"
             exit="dpExit"
             transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
-            style={{ marginTop: '16px' }}
           >
             <Box className={styles.dataContainer}>
               <DateTime
@@ -263,6 +271,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                   handleDateChange(date, valid, 'verdictViewDate')
                 }
                 blueBox={false}
+                maxDate={new Date()}
                 dateOnly
               />
               <Button
