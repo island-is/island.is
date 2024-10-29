@@ -120,7 +120,7 @@ const EducationDetailsSchema = z.object({
 })
 
 const otherDocumentsSchema = z.object({
-  attachments: z.array(FileDocumentSchema).optional(),
+  attachments: z.array(FileDocumentSchema).optional(), //TODOx ekki endilega attachment
 })
 
 const modeOfDeliverInformationSchema = z.object({

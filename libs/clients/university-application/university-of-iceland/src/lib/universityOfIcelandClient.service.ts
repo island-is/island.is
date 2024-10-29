@@ -41,7 +41,7 @@ export class UniversityOfIcelandApplicationClient {
   }
 
   async getApplicationStatus(externalId: string): Promise<ApplicationStatus> {
-    // TODOx connect to HÍ API
+    // TODO connect to HÍ API
     return ApplicationStatus.IN_REVIEW
   }
 
@@ -62,7 +62,7 @@ export class UniversityOfIcelandApplicationClient {
   }
 
   async updateApplicationStatus(externalId: string, status: ApplicationStatus) {
-    // TODOx connect to HÍ API
+    // TODO connect to HÍ API
     return
   }
 }

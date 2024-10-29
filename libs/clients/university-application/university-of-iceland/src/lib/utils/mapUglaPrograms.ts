@@ -6,6 +6,7 @@ import {
   Season,
   mapStringToEnum,
   EnumError,
+  IProgramExtraApplicationField,
 } from '@island.is/university-gateway'
 import {
   InlineResponse2002,
@@ -115,21 +116,23 @@ const mapExtraApplicationFields = (
   program: InlineResponse2002Data,
 ): IProgram['extraApplicationFields'] => {
   const fields =
-    program.extraApplicationFields?.map((field) => ({
-      externalId: '', //TODO missing in api
-      nameIs: field.nameIs || '',
-      nameEn: field.nameEn || '',
-      descriptionIs: field.descriptionIs,
-      descriptionEn: field.descriptionEn,
-      required: field.required || false,
-      fieldType: mapStringToEnum(field.fieldType, FieldType, 'FieldType'),
-      uploadAcceptedFileType: field.uploadAcceptedFileType,
-      options: mapOptions(program, field),
-    })) || []
+    program.extraApplicationFields?.map((field) => {
+      return {
+        externalKey: field.fieldKey || '',
+        nameIs: field.nameIs || '',
+        nameEn: field.nameEn || '',
+        descriptionIs: field.descriptionIs,
+        descriptionEn: field.descriptionEn,
+        required: field.required || false,
+        fieldType: mapStringToEnum(field.fieldType, FieldType, 'FieldType'),
+        uploadAcceptedFileType: field.uploadAcceptedFileType,
+        options: mapOptions(program, field),
+      } as IProgramExtraApplicationField
+    }) || []
 
   if (program.mustPickExamVenue) {
     fields.push({
-      externalId: '', //TODO missing in the api
+      externalKey: '', // TODO set value here and use it
       nameIs: 'Prófstaður',
       nameEn: 'Exam venue',
       required: true,

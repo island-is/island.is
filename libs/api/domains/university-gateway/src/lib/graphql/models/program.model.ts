@@ -188,7 +188,7 @@ class UniversityGatewayProgramCourse {
 @ObjectType('UniversityGatewayProgramExtraApplicationField')
 class UniversityGatewayProgramExtraApplicationField {
   @Field()
-  externalId!: string
+  externalKey!: string
 
   @Field()
   nameIs!: string

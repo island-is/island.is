@@ -62,6 +62,7 @@ export const mapUglaApplication = async (
         ? await mapApplicationAttachments(application.attachments)
         : undefined,
       namskeid: undefined, // TODO what is this?
+      //TODOx senda með það sem kemur úr extraFieldList
     },
   }
 
@@ -74,9 +75,7 @@ const mapApplicationAttachments = async (
   return await Promise.all(
     attachments.filter(Boolean).map(async (attachment) => {
       return {
-        url: attachment?.url,
-        attachmentKey:
-          AttachmentKey[attachment?.fileType as keyof typeof AttachmentKey],
+        url: attachment?.fileUrl,
         fileName: attachment?.fileName,
       } as ApplicationsAttachments
     }),

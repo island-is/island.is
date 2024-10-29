@@ -50,11 +50,10 @@ export interface IApplicationWorkExperience {
 
 export interface IApplicationAttachment {
   fileName: string
-  fileType: string
-  url: string
+  fileUrl: string
 }
 
 export interface IApplicationExtraFields {
-  key: string
+  externalKey: string
   value: object
 }

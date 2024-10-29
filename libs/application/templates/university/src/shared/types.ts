@@ -4,6 +4,7 @@ import {
   ExemptionEducationSchema,
   RepeateableEducationDetailsSchema,
 } from '../lib/dataSchema'
+import { ProgramExtraApplicationFieldFieldTypeEnum } from '@island.is/clients/university-gateway-api'
 
 export type EducationDetailsItem = z.TypeOf<
   typeof RepeateableEducationDetailsSchema
@@ -51,8 +52,21 @@ export type UniversityGatewayProgram = {
   studentAnswerDate?: string
   universityContentfulKey: string
   universityId: string
+  extraApplicationFields: Array<ProgramExtraApplicationField>
 }
 
 type ModeOfDelivery = {
   modeOfDelivery: string
+}
+
+type ProgramExtraApplicationField = {
+  externalKey: string
+  // nameIs: string
+  // nameEn: string
+  // descriptionIs?: string
+  // descriptionEn?: string
+  // required: boolean
+  fieldType: ProgramExtraApplicationFieldFieldTypeEnum
+  // uploadAcceptedFileType?: string
+  // options?: string
 }

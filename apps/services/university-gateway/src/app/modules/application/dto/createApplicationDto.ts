@@ -106,17 +106,10 @@ class CreateApplicationFileDto {
 
   @IsString()
   @ApiProperty({
-    description: 'File type',
-    example: 'profskirteini',
-  })
-  fileType!: string
-
-  @IsString()
-  @ApiProperty({
     description: 'A public download link to a s3 file',
     example: '',
   })
-  url!: string
+  fileUrl!: string
 }
 
 class CreateApplicationEducationDto {
@@ -212,10 +205,10 @@ class CreateApplicationWorkExperienceDto {
 class CreateApplicationExtraFieldsDto {
   @IsString()
   @ApiProperty({
-    description: 'Field key',
+    description: 'External key for field',
     example: 'cv_field',
   })
-  key!: string
+  externalKey!: string
 
   @IsObject()
   @ApiProperty({
