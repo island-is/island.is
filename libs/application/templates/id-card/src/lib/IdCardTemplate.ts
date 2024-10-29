@@ -58,13 +58,9 @@ export const determineMessageFromApplicationAnswers = (
 
 const reviewStatePendingAction = (
   application: Application,
-  role: string,
+  role: ApplicationRole,
 ): PendingAction => {
-  if (
-    role &&
-    role === 'assignee' &&
-    !hasReviewerApproved(application.answers)
-  ) {
+  if (role === Roles.ASSIGNEE && !hasReviewerApproved(application.answers)) {
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
       content: corePendingActionMessages.youNeedToReviewDescription,
