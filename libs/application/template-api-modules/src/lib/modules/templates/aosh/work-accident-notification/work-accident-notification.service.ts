@@ -58,8 +58,8 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
         buyersSSN: answers.projectPurchase.nationalId,
         dateAndTimeOfAccident: getDateAndTime(
           answers.accident.date,
-          answers.accident.time.split(':')[0],
-          answers.accident.time.split(':')[1],
+          answers.accident.time.slice(0, 2),
+          answers.accident.time.slice(2, 4),
         ),
         aoshCame: answers.accident.didAoshCome === 'yes',
         policeCame: answers.accident.didPoliceCome === 'yes',
@@ -92,8 +92,8 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
               : 0,
             startOfWorkingDay: getDateAndTime(
               employee.startOfWorkdayDate,
-              employee.startTime.split(':')[0],
-              employee.startTime.split(':')[1],
+              employee.startTime.slice(0, 2),
+              employee.startTime.slice(2, 4),
             ),
             workStation: employee.workstation
               ? parseInt(employee.workstation, 10)
@@ -169,11 +169,11 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
               return parseInt(code, 10)
             },
           ),
-        buyersSSN: answers.projectPurchase.nationalId,
+        buyersSSN: answers.projectPurchase.nationalId ?? '',
         dateAndTimeOfAccident: getDateAndTime(
           answers.accident.date,
-          answers.accident.time.split(':')[0],
-          answers.accident.time.split(':')[1],
+          answers.accident.time.slice(0, 2),
+          answers.accident.time.slice(2, 4),
         ),
         aoshCame: answers.accident.didAoshCome === 'yes',
         policeCame: answers.accident.didPoliceCome === 'yes',
@@ -220,47 +220,72 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
               application.answers,
               `circumstances[${index}].physicalActivities`,
             ),
-            specificPhysicalActivityMostSevere: getValueViaPath(
-              application.answers,
-              `circumstances[${index}].physicalActivitiesMostSerious`,
-              null,
-            ) as string | null,
+            specificPhysicalActivityMostSevere:
+              (getValueViaPath(
+                application.answers,
+                `circumstances[${index}].physicalActivitiesMostSerious`,
+                undefined,
+              ) as string | undefined) ??
+              getValueList(
+                application.answers,
+                `circumstances[${index}].physicalActivities`,
+              )[0],
             workDeviations: getValueList(
               application.answers,
               `deviations[${index}].workDeviations`,
             ),
-            workDeviationMostSevere: getValueViaPath(
-              application.answers,
-              `deviations[${index}].workDeviationsMostSerious`,
-              null,
-            ) as string | null,
+            workDeviationMostSevere:
+              (getValueViaPath(
+                application.answers,
+                `deviations[${index}].workDeviationsMostSerious`,
+                undefined,
+              ) as string | undefined) ??
+              getValueList(
+                application.answers,
+                `deviations[${index}].workDeviations`,
+              )[0],
             contactModeOfInjuries: getValueList(
               application.answers,
               `causeOfInjury[${index}].contactModeOfInjury`,
             ),
-            contactModeOfInjuryMostSevere: getValueViaPath(
-              application.answers,
-              `causeOfInjury[${index}].contactModeOfInjuryMostSerious`,
-              null,
-            ) as string | null,
+            contactModeOfInjuryMostSevere:
+              (getValueViaPath(
+                application.answers,
+                `causeOfInjury[${index}].contactModeOfInjuryMostSerious`,
+                undefined,
+              ) as string | undefined) ??
+              getValueList(
+                application.answers,
+                `causeOfInjury[${index}].contactModeOfInjury`,
+              )[0],
             partsOfBodyInjured: getValueList(
               application.answers,
               `injuredBodyParts[${index}].partOfBodyInjured`,
             ),
-            partOfBodyInjuredMostSevere: getValueViaPath(
-              application.answers,
-              `injuredBodyParts[${index}].partOfBodyInjuredMostSerious`,
-              null,
-            ) as string | null,
+            partOfBodyInjuredMostSevere:
+              (getValueViaPath(
+                application.answers,
+                `injuredBodyParts[${index}].partOfBodyInjuredMostSerious`,
+                undefined,
+              ) as string | undefined) ??
+              getValueList(
+                application.answers,
+                `injuredBodyParts[${index}].partOfBodyInjured`,
+              )[0],
             typesOfInjury: getValueList(
               application.answers,
               `typeOfInjury[${index}].typeOfInjury`,
             ),
-            typeOfInjuryMostSevere: getValueViaPath(
-              application.answers,
-              `typeOfInjury[${index}].typeOfInjuryMostSerious`,
-              null,
-            ) as string | null,
+            typeOfInjuryMostSevere:
+              (getValueViaPath(
+                application.answers,
+                `typeOfInjury[${index}].typeOfInjuryMostSerious`,
+                undefined,
+              ) as string | undefined) ??
+              getValueList(
+                application.answers,
+                `typeOfInjury[${index}].typeOfInjury`,
+              )[0],
           }
         }),
         userPhoneNumber: answers.companyInformation.phonenumber,

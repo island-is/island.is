@@ -1,0 +1,75 @@
+import { getValueViaPath } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
+
+export const getMaxDate = (application: Application) => {
+  const date = getValueViaPath(
+    application.answers,
+    'accident.date',
+    new Date().toString(),
+  ) as string
+  return new Date(date)
+}
+
+export const getMinDate = (application: Application) => {
+  const date = getValueViaPath(
+    application.answers,
+    'accident.date',
+    new Date().toString(),
+  ) as string
+  const time = getValueViaPath(
+    application.answers,
+    'accident.time',
+    '00:00',
+  ) as string
+  const minDate = new Date(date)
+  minDate.setDate(
+    minDate.getDate() - (parseInt(time.slice(0, 2), 10) < 12 ? 2 : 1),
+  )
+  return minDate
+}
+
+export const getDateAndTime = (
+  date: string,
+  hours: string,
+  minutes: string,
+): Date => {
+  const finalDate = new Date(date)
+  finalDate.setHours(
+    parseInt(hours, 10), // hours
+    parseInt(minutes, 10), // minutes
+  )
+  return finalDate
+}
+
+export const dateIsWithing36Hours = (
+  application: Application,
+  date: string,
+  time: string,
+) => {
+  const accidentDate = getValueViaPath(
+    application.answers,
+    'accident.date',
+    new Date().toString(),
+  ) as string
+  const accidentTime = getValueViaPath(
+    application.answers,
+    'accident.time',
+    '00:00',
+  ) as string
+  const timeAllowed = 1000 * 60 * 60 * 36
+  const accidentDateAndTime = getDateAndTime(
+    accidentDate,
+    accidentTime.slice(0, 2),
+    accidentTime.slice(2, 4),
+  )
+  const employeeDateAndTime = getDateAndTime(
+    date,
+    time.slice(0, 2),
+    time.slice(2, 4),
+  )
+
+  return (
+    accidentDateAndTime.getTime() >= employeeDateAndTime.getTime() &&
+    accidentDateAndTime.getTime() - timeAllowed < employeeDateAndTime.getTime()
+  )
+}

@@ -149,5 +149,11 @@ export const employee = {
       defaultMessage: 'Veldur úr lista',
       description: 'Placeholder for occupation group select fields',
     },
+    errorMessage: {
+      id: 'aosh.wan.application:employee.errorMessage',
+      defaultMessage:
+        'Starfsdagur má byrja allt að 36 tímum fyrir slys og að tímasetningu slyss',
+      description: 'Error message for employee start time',
+    },
   }),
 }

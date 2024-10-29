@@ -26,6 +26,17 @@
         "summary": "Endpoint for reporting a occupational accident.",
         "description": "This endpoint consumes a data model `AccidentForCreationDto` for occupational accident reporting.\r\nÞessi endapunktúr tekur á móti gagnamódeli fyrir tilkynningar um vinnuslys.\r\n\r\nThis endpoint returns `AccidentForCreationResponseDto` Data model for confirmation of the submission of a notification of an occupational accident. Gagnalíkan fyrir staðfestingu á innsendingu tilkynningar um vinnuslys.\r\n\r\nIf a user is logged in with a mandate, the company social security number must be the same as the company social security number for which the user has a mandate for.\r\n\r\nIf the user is logged in as an individual, the user can register the notification on their own social security number or register a company's social security number.\r\nThe exception is if a company has blocked notifications from individuals.\r\nAn individual cannot send in a notification with another person's social security number as company social security number.\r\n\r\nEf notandi er innskráður með umboð þá verður kennitala fyrirtækis að vera sú sama og fyrirtækis sem notandinn er með umboð fyrir.\r\n\r\nEf notandi er skráður inn sem einstaklingur þá getur notaninn skráð tilkynninguna á eigin kennitölu eða skráð kennitölu fyrirtækis.\r\nUndantekningin er ef fyrirtæki hefur lokað á tilkynningar frá einstaklingum.\r\nEinstaklingur getur ekki sent inn tilkynnigu með kennitölu annars einstaklings í kennitölu fyrirtækis.\r\n\r\nThis endpoint returns `AccidentForCreationResponseDto` Data model for confirmation of the submission of a notification of an occupational accident. Gagnalíkan fyrir staðfestingu á innsendingu tilkynningar um vinnuslys.",
         "operationId": "CreateAccident",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "description": "`AccidentForCreationResponseDto`",
           "content": {
@@ -130,6 +141,15 @@
               "type": "string",
               "default": "is"
             }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
@@ -141,6 +161,17 @@
       "options": {
         "tags": ["Accidents"],
         "operationId": "GetAccidentOptions",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -172,6 +203,15 @@
               "type": "string",
               "default": "is"
             }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "responses": {
@@ -198,6 +238,15 @@
             "in": "query",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -230,6 +279,17 @@
       "post": {
         "tags": ["CompanySettings"],
         "operationId": "UpdateCompanySettings",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -288,6 +348,17 @@
       "options": {
         "tags": ["CompanySettings"],
         "operationId": "GetCompanySettingsOptions",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -298,7 +369,29 @@
     "/api/Data": {
       "get": {
         "tags": ["Data"],
+        "summary": "Endpoint to get lookup talbes for the a occupational accident report.",
+        "description": "This endpoint returns `DataDto` Data model with lookup tables for the notification of an occupational accident. Gagnalíkan með uppflettitöflum fyrir tilkynninguna um vinnuslys.",
         "operationId": "GetData",
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "`string` Optinal \"is\" or \"en\" the default value is \"is\".",
+            "schema": {
+              "type": "string",
+              "default": "is"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -318,6 +411,17 @@
       "options": {
         "tags": ["Data"],
         "operationId": "GetDataOptions",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"

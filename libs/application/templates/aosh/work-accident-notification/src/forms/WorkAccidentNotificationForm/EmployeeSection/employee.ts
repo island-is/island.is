@@ -20,6 +20,7 @@ import {
   WorkstationDto,
 } from '@island.is/clients/work-accident-ver'
 import { getAllCountryCodes } from '@island.is/shared/utils'
+import { getMaxDate, getMinDate } from '../../../utils'
 
 export const employeeSubSection = (index: number) =>
   buildSubSection({
@@ -166,6 +167,8 @@ export const employeeSubSection = (index: number) =>
             width: 'half',
             required: true,
             title: employee.employee.startOfWorkdayDate,
+            maxDate: (application) => getMaxDate(application),
+            minDate: (application) => getMinDate(application),
           }),
           buildTextField({
             id: `employee[${index}].startTime`,
@@ -246,6 +249,16 @@ export const employeeSubSection = (index: number) =>
               id: `employee[${index}].victimsOccupation`,
               title: '',
               component: 'Occupation',
+            },
+            {
+              index: index,
+            },
+          ),
+          buildCustomField(
+            {
+              id: `employee[${index}].error`,
+              title: '',
+              component: 'EmployeeStartTimeError',
             },
             {
               index: index,
