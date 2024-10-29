@@ -28,6 +28,7 @@ CONTAINER_BUILDER=${CONTAINER_BUILDER:-docker}
 DOCKER_LOCAL_CACHE="${DOCKER_LOCAL_CACHE:-true}"
 NODE_IMAGE_TAG="${NODE_IMAGE_TAG:-$(cd "$DIR" && ../../scripts/ci/get-node-version.mjs)}"
 DOCKER_REGISTRY=${DOCKER_REGISTRY:-localhost}
+DOCKER_TAG=${DOCKER_TAG%/} # Remove trailing slash
 
 BUILD_ARGS=()
 
