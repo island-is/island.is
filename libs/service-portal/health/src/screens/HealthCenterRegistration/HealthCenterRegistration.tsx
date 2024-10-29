@@ -9,6 +9,7 @@ import {
   Table as T,
   Button,
   FilterInput,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
@@ -299,27 +300,43 @@ const HealthCenterRegistration = () => {
                               {healthCenter.address?.streetAddress}
                             </T.Data>
                             <T.Data>
-                              <Box
-                                className={styles.saveButtonWrapperStyle({
-                                  visible: healthCenter.id === hoverId,
-                                })}
-                              >
-                                <Button
-                                  size="small"
-                                  variant="text"
-                                  icon="pencil"
-                                  onClick={() => {
-                                    setSelectedHealthCenter({
-                                      id: healthCenter.id,
-                                      name: healthCenter.name,
-                                    })
-                                  }}
+                              {healthCenter.canRegister ? (
+                                <Box
+                                  className={styles.saveButtonWrapperStyle({
+                                    visible: healthCenter.id === hoverId,
+                                  })}
                                 >
-                                  {formatMessage(
-                                    messages.healthRegistrationSave,
-                                  )}
-                                </Button>
-                              </Box>
+                                  <Button
+                                    size="small"
+                                    variant="text"
+                                    icon="pencil"
+                                    onClick={() => {
+                                      setSelectedHealthCenter({
+                                        id: healthCenter.id,
+                                        name: healthCenter.name,
+                                      })
+                                    }}
+                                  >
+                                    {formatMessage(
+                                      messages.healthRegistrationSave,
+                                    )}
+                                  </Button>
+                                </Box>
+                              ) : (
+                                <>
+                                  <Text>
+                                    {formatMessage(
+                                      messages.healthCenterNotAvailableForRegistration,
+                                    )}
+                                  </Text>
+                                  <Tooltip
+                                    text={formatMessage(
+                                      messages.healthCenterNotAvailableForRegistrationDesc,
+                                    )}
+                                    placement="right"
+                                  />
+                                </>
+                              )}
                             </T.Data>
                           </tr>
                         )

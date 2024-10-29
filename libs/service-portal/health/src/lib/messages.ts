@@ -210,6 +210,15 @@ export const messages = defineMessages({
     id: 'sp.health:no-health-insurance-message',
     defaultMessage: 'Síðasta trygging: {arg}',
   },
+  healthCenterNotAvailableForRegistration: {
+    id: 'sp.health:health-center-not-available-for-registration',
+    defaultMessage: 'Ekki hægt',
+  },
+  healthCenterNotAvailableForRegistrationDesc: {
+    id: 'sp.health:health-center-not-available-for-registration-desc',
+    defaultMessage:
+      'Þessi heilsugæslustöð er með lokað fyrir skráningar utan hverfis.',
+  },
   paymentTarget: {
     id: 'sp.health:payment-target',
     defaultMessage: 'Greiðslumark',
@@ -300,7 +309,7 @@ export const messages = defineMessages({
   },
   healthCenterTitle: {
     id: 'sp.health:health-center-title',
-    defaultMessage: 'Heilsugæsla',
+    defaultMessage: 'Skráð heilsugæsla',
   },
   healthCenterDescription: {
     id: 'sp.health:health-center-intro',
@@ -611,6 +620,10 @@ export const messages = defineMessages({
   personalDoctor: {
     id: 'sp.health:personal-doctor',
     defaultMessage: 'Heimilslæknir',
+  },
+  neighborhoodHealthCenter: {
+    id: 'sp.health:neighborhood-health-center',
+    defaultMessage: 'Hverfisheilsugæsla',
   },
   doctor: {
     id: 'sp.health:doctor',

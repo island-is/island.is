@@ -14,6 +14,7 @@ import {
   Divider,
   SkeletonLoader,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import HistoryTable from './HistoryTable'
@@ -46,6 +47,7 @@ const HealthCenter = () => {
   const healthCenterData = data?.rightsPortalHealthCenterRegistrationHistory
 
   const canRegister = healthCenterData?.canRegister ?? false
+  const neighborhoodCenter = healthCenterData?.neighborhoodCenter ?? null
 
   if (loading)
     return (
@@ -120,6 +122,15 @@ const HealthCenter = () => {
               }
             />
             <Divider />
+            {neighborhoodCenter && (
+              <>
+                <UserInfoLine
+                  label={formatMessage(messages.neighborhoodHealthCenter)}
+                  content={neighborhoodCenter}
+                />
+                <Divider />
+              </>
+            )}
           </Stack>
         </Box>
       )}

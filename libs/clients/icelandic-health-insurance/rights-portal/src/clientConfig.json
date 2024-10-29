@@ -2416,13 +2416,7 @@
   "components": {
     "schemas": {
       "Minarsidur.API.Models.AccidentReports.AccidentDTO": {
-        "required": [
-          "datetime",
-          "dateTimeOfDoctorVisit",
-          "description",
-          "symptoms",
-          "type"
-        ],
+        "required": ["datetime", "description", "type"],
         "type": "object",
         "properties": {
           "type": {
@@ -2448,7 +2442,8 @@
           },
           "dateTimeOfDoctorVisit": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "fatal": {
             "type": "boolean",
