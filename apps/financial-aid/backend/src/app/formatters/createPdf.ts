@@ -306,7 +306,5 @@ export const createPdf = async (application: ApplicationModel) => {
 
   //   ---- ----- APPLICATION EVENTS ---- ----
 
-  const pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true })
-
-  return pdfDataUri
+  return await pdfDoc.saveAsBase64({ dataUri: true })
 }

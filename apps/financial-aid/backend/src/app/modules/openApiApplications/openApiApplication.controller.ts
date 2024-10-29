@@ -58,7 +58,7 @@ export class OpenApiApplicationController {
     type: PdfApplicatiponResponse,
     description: 'Get application',
   })
-  async getById(
+  async getApplicationPdfById(
     @Param('id') id: string,
     @CurrentMunicipalityCode() municipalityCode: string,
   ) {
@@ -66,6 +66,6 @@ export class OpenApiApplicationController {
       `Open api Application controller: Getting application by id ${id}`,
     )
 
-    return this.applicationService.getbyID(municipalityCode, id)
+    return this.applicationService.getApplicationPdfById(municipalityCode, id)
   }
 }

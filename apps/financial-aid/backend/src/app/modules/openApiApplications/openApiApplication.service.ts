@@ -100,7 +100,7 @@ export class OpenApiApplicationService {
     })
   }
 
-  async getbyID(
+  async getApplicationPdfById(
     municipalityCodes: string,
     id: string,
   ): Promise<PdfApplicatiponResponse> {
