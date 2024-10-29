@@ -21,7 +21,7 @@ type Props = {
   loading?: boolean
   applicationId: string
   disabled?: boolean
-  onChange?: (value: string) => void
+  onChange?: (label: string, value: string) => void
 }
 
 export const OJOISelectController = ({
@@ -43,7 +43,7 @@ export const OJOISelectController = ({
 
   const labelText = typeof label === 'string' ? label : f(label)
 
-  const handleChange = (value: string) => {
+  const handleChange = (label: string, value: string) => {
     const currentAnswers = structuredClone(application.answers)
     const newAnswers = set(currentAnswers, name, value)
 
@@ -54,7 +54,7 @@ export const OJOISelectController = ({
 
     updateApplication(newAnswers)
 
-    onChange && onChange(value)
+    onChange && onChange(label, value)
   }
 
   if (loading) {
@@ -78,7 +78,7 @@ export const OJOISelectController = ({
       options={options}
       defaultValue={defaultValue}
       disabled={disabled}
-      onSelect={(opt) => handleChange(opt.value)}
+      onSelect={(opt) => handleChange(opt.label, opt.value)}
     />
   )
 }

@@ -5,6 +5,9 @@ import { TYPES_QUERY } from '../graphql/queries'
 
 type UseTypesParams = {
   initalDepartmentId?: string
+  onCompleted?: (data: TypesResponse) => void
+  pageSize?: number
+  page?: number
 }
 
 type TypesResponse = {
@@ -13,7 +16,7 @@ type TypesResponse = {
 
 type TypesVariables = {
   params: {
-    department: string
+    department?: string
     page?: number
     pageSize?: number
   }
@@ -21,19 +24,31 @@ type TypesVariables = {
 
 export const useTypes = ({
   initalDepartmentId: departmentId,
+  onCompleted,
 }: UseTypesParams) => {
+  const params: TypesVariables['params'] = {}
+
+  if (departmentId) {
+    params.department = departmentId
+  }
+
+  if (!params.page) {
+    params.page = 1
+  }
+
+  if (!params.pageSize) {
+    params.pageSize = 1000
+  }
+
   const { data, loading, error, refetch, networkStatus } = useQuery<
     TypesResponse,
     TypesVariables
   >(TYPES_QUERY, {
     variables: {
-      params: {
-        department: departmentId ?? '',
-        page: 1,
-        pageSize: 1000,
-      },
+      params: params,
     },
     notifyOnNetworkStatusChange: true,
+    onCompleted: onCompleted,
   })
 
   return {

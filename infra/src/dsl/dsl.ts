@@ -17,6 +17,7 @@ import {
   ServiceDefinition,
   XroadConfig,
   PodDisruptionBudget,
+  IngressMapping,
 } from './types/input-types'
 import { logger } from '../logging'
 import { COMMON_SECRETS } from './consts'
@@ -167,13 +168,13 @@ export class ServiceBuilder<ServiceType extends string> {
    * @example
    * ```
    * .env({
-   *        MY_VAR: 'foo',
-   *        YOUR_VAR: {
-   *            dev: 'foo',
-   *            staging: 'bar',
-   *            prod: 'baz',
-   *        },
-   *    })
+   *    MY_VAR: 'foo',
+   *    YOUR_VAR: {
+   *      dev: 'foo',
+   *      staging: 'bar',
+   *      prod: 'baz',
+   *    },
+   *  })
    * ```
    *
    */
@@ -461,7 +462,7 @@ export class ServiceBuilder<ServiceType extends string> {
    * You can allow ingress traffic (traffic from the internet) to your service by creating an ingress controller. Mapped to an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#what-is-ingress).
    * @param ingress - Ingress parameters
    */
-  ingress(ingress: { [name: string]: Ingress }) {
+  ingress(ingress: IngressMapping) {
     this.serviceDef.ingress = ingress
     return this
   }
@@ -479,6 +480,9 @@ export class ServiceBuilder<ServiceType extends string> {
     return this
   }
 
+  /**
+   * Validates that no environment variables are set twice. Throws if any are duplicated.
+   */
   private assertUnset<T extends {}>(current: T, envs: T) {
     const intersection = Object.keys({
       ...current,

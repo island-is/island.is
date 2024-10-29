@@ -6,7 +6,6 @@ import {
   Header,
   Inject,
   Param,
-  Query,
   Req,
   Res,
   UseGuards,
@@ -20,7 +19,7 @@ import {
   CurrentHttpUser,
   JwtInjectBearerAuthGuard,
 } from '@island.is/judicial-system/auth'
-import type { SubpoenaType, User } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { FileService } from './file.service'
 

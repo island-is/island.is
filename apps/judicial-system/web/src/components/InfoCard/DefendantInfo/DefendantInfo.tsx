@@ -38,6 +38,7 @@ interface DefendantInfoProps {
 
 export const getAppealExpirationInfo = (
   verdictAppealDeadline?: string | null,
+  isVerdictAppealDeadlineExpired?: boolean | null,
   serviceRequirement?: ServiceRequirement | null,
 ) => {
   if (serviceRequirement === ServiceRequirement.NOT_REQUIRED) {
@@ -48,14 +49,11 @@ export const getAppealExpirationInfo = (
     return { message: strings.appealDateNotBegun, date: null }
   }
 
-  // TODO: Move to the server as today may not be accurate in the client
-  const today = new Date()
   const expiryDate = new Date(verdictAppealDeadline)
 
-  const message =
-    today < expiryDate
-      ? strings.appealExpirationDate
-      : strings.appealDateExpired
+  const message = isVerdictAppealDeadlineExpired
+    ? strings.appealDateExpired
+    : strings.appealExpirationDate
 
   return { message, date: formatDate(expiryDate) }
 }
@@ -72,6 +70,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
 
   const appealExpirationInfo = getAppealExpirationInfo(
     defendant.verdictAppealDeadline,
+    defendant.isVerdictAppealDeadlineExpired,
     defendant.serviceRequirement,
   )
 
