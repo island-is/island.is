@@ -571,10 +571,10 @@ export class CmsContentfulService {
     }
   }
 
-  async getGrant(lang: string, slug: string): Promise<Grant | null> {
+  async getGrant(lang: string, id: string): Promise<Grant | null> {
     const params = {
       ['content_type']: 'grant',
-      'fields.slug': slug,
+      'fields.grantApplicationId': id,
     }
 
     const result = await this.contentfulRepository

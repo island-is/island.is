@@ -461,11 +461,11 @@ export class CmsResolver {
   @CacheControl(defaultCache)
   @Query(() => Grant, { nullable: true })
   async getSingleGrant(
-    @Args('input') { lang, slug }: GetSingleGrantInput,
+    @Args('input') { lang, id }: GetSingleGrantInput,
   ): Promise<(Partial<Grant> & { lang: Locale }) | null> {
     const grant: Grant | null = await this.cmsContentfulService.getGrant(
       lang,
-      slug,
+      id,
     )
 
     if (!grant) return null

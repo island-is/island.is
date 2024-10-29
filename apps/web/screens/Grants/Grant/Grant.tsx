@@ -1,27 +1,15 @@
 import { useIntl } from 'react-intl'
-import NextLink from 'next/link'
 
-import {
-  ArrowLink,
-  Box,
-  Breadcrumbs,
-  CategoryCard,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Stack } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
-import { GrantSearchSection, GrantWrapper } from '@island.is/web/components'
+import { GrantWrapper } from '@island.is/web/components'
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
-  GenericTag,
   Grant,
   Query,
-  QueryGetGenericTagsInTagGroupsArgs,
+  QueryGetSingleGrantArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -30,20 +18,15 @@ import {
   CustomScreen,
   withCustomPageWrapper,
 } from '../../CustomPage/CustomPageWrapper'
-import { GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY } from '../../queries/GenericTag'
+import { GET_GRANT_QUERY } from '../../queries'
 import { m } from '../messages'
 
-const GrantSinglePage: CustomScreen<GrantSingleProps> = ({
-  organization,
-  grant,
-  locale,
-}) => {
+const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
   const baseUrl = linkResolver('styrkjatorg', [], locale).href
-  const searchUrl = linkResolver('styrkjatorgsearch', [], locale).href
-  const categoriesUrl = linkResolver('ojoicategories', [], locale).href
+  const currentUrl = linkResolver('styrkjatorggrant', [], locale).href
 
   const breadcrumbItems = [
     {
@@ -51,147 +34,66 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({
       href: linkResolver('homepage', [], locale).href,
     },
     {
-      title: 'Styrkjatorg',
+      title: 'Styrkir og sjóðir',
       href: baseUrl,
+    },
+    {
+      title: grant?.name ?? 'Styrkur',
+      href: currentUrl,
     },
   ]
 
+  if (!grant) {
+    return null
+  }
+
   return (
     <GrantWrapper
-      pageTitle={'Styrkjatorg'}
-      pageDescription={formatMessage(m.home.description)}
+      pageTitle={'Styrkur'}
+      pageDescription={grant?.description ?? ''}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
     >
       <Stack space={SLICE_SPACING}>
-        <GrantSearchSection
-          title={'Styrkjatorg'}
-          description={
-            'Non scelerisque risus amet tincidunt. Sit sed quis cursus hendrerit nulla egestas interdum. In varius quisque.'
-          }
-          searchPlaceholder={formatMessage(m.home.inputPlaceholder)}
-          searchUrl={searchUrl}
-          shortcutsTitle={formatMessage(m.home.mostVisited)}
-          featuredImage={formatMessage(m.home.featuredImage)}
-          quickLinks={[
-            {
-              title: 'Listamannalaun',
-              href: searchUrl + '?deild=a-deild',
-            },
-            {
-              title: 'Barnamenningarsjóður',
-              href: searchUrl + '?deild=b-deild',
-            },
-            {
-              title: 'Tónlistarsjóður',
-              href: searchUrl + '?deild=c-deild',
-            },
-            {
-              title: 'Rannís',
-              href: searchUrl + '?malaflokkur=grindavik',
-              variant: 'purple',
-            },
-            {
-              title: 'Erasmus',
-              href: searchUrl + '?malaflokkur=gjaldskra',
-              variant: 'purple',
-            },
-          ]}
-          breadcrumbs={
-            breadcrumbItems && (
-              <Breadcrumbs
-                items={breadcrumbItems ?? []}
-                renderLink={(link, item) => {
-                  return item?.href ? (
-                    <NextLink href={item?.href} legacyBehavior>
-                      {link}
-                    </NextLink>
-                  ) : (
-                    link
-                  )
-                }}
-              />
-            )
-          }
-        />
-
-        <Box background="blue100" paddingTop={8} paddingBottom={8}>
-          <GridContainer>
-            <Box
-              display={'flex'}
-              justifyContent={'spaceBetween'}
-              alignItems="flexEnd"
-            >
-              <Text variant="h3">
-                {formatMessage(m.home.popularCategories)}
-              </Text>
-              <ArrowLink href={categoriesUrl}>
-                {formatMessage(m.home.allGrants)}
-              </ArrowLink>
-            </Box>
-
-            <GridRow>
-              {categories?.map((c, idx) => (
-                <GridColumn
-                  key={idx}
-                  span={['1/1', '1/2', '1/2', '1/3']}
-                  paddingTop={3}
-                  paddingBottom={3}
-                >
-                  <CategoryCard
-                    href={`${categoriesUrl}?yfirflokkur=${c.slug}`}
-                    heading={c.title}
-                    text={'Flokka lýsing'}
-                  />
-                </GridColumn>
-              ))}
-            </GridRow>
-          </GridContainer>
-        </Box>
+        <p>hgeoiag</p>
       </Stack>
     </GrantWrapper>
   )
 }
 
 interface GrantSingleProps {
-  organization?: Query['getOrganization']
-  grant?: Grant,
+  grant?: Grant
   locale: Locale
 }
 
 const GrantSingle: CustomScreen<GrantSingleProps> = ({
   grant,
-  organization,
   customPageData,
   locale,
 }) => {
   return (
     <GrantSinglePage
       grant={grant}
-      organization={organization}
       locale={locale}
       customPageData={customPageData}
     />
   )
 }
 
-GrantSingle.getProps = async ({ apolloClient, locale }) => {
-  const tagGroupCategory = 'grant-category'
-  //Todo: add more organizations ??
-
+GrantSingle.getProps = async ({ apolloClient, locale, query }) => {
   const {
-    data: { getGenericTagsInTagGroups: tags },
-  } = await apolloClient.query<Query, QueryGetGenericTagsInTagGroupsArgs>({
-    query: GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY,
+    data: { getSingleGrant: grant },
+  } = await apolloClient.query<Query, QueryGetSingleGrantArgs>({
+    query: GET_GRANT_QUERY,
     variables: {
       input: {
         lang: locale as ContentLanguage,
-        tagGroupSlugs: [tagGroupCategory],
+        id: String(query.id),
       },
     },
   })
 
   return {
-    categories: tags ?? [],
+    grant: grant ?? undefined,
     locale: locale as Locale,
     showSearchInHeader: false,
     themeConfig: {
@@ -201,4 +103,5 @@ GrantSingle.getProps = async ({ apolloClient, locale }) => {
 }
 
 export default withMainLayout(
-  withCustomPageWrapper(CustomPageUniqueIdentifier.Grants, GrantSingle)
+  withCustomPageWrapper(CustomPageUniqueIdentifier.Grants, GrantSingle),
+)

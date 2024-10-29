@@ -6,7 +6,7 @@ import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manage
 export class GetSingleGrantInput {
   @Field()
   @IsString()
-  slug!: string
+  id!: string
 
   @Field(() => String)
   @IsString()

@@ -268,45 +268,58 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
 
               return (
                 <Box marginLeft={3} marginTop={3}>
-                  <PlazaCard
-                    eyebrow={grant.name}
-                    subEyebrow={grant.organization?.title}
-                    title={grant.name ?? ''}
-                    text={grant.description ?? ''}
-                    logo={grant.organization?.logo?.url ?? ''}
-                    logoAlt={grant.organization?.logo?.title ?? ''}
-                    tag={{
-                      label: grant.statusText ?? '',
-                      variant: tagVariant,
-                    }}
-                    cta={{
-                      label: 'Skoða nánar',
-                      variant: 'text',
-                      onClick: () => console.log('click'),
-                      icon: 'arrowForward',
-                    }}
-                    detailLines={[
-                      grant.dateFrom && grant.dateTo
-                        ? {
-                            icon: 'calendar' as const,
-                            text: `${format(
-                              new Date(grant.dateFrom),
-                              'dd.MM.',
-                            )}-${format(new Date(grant.dateTo), 'dd.MM.yyyy')}`,
-                          }
-                        : null,
-                      {
-                        icon: 'time' as const,
-                        text: 'Frestur til 16.08.2024, kl. 15.00',
-                      },
-                      grant.categoryTag?.title
-                        ? {
-                            icon: 'informationCircle' as const,
-                            text: grant.categoryTag.title,
-                          }
-                        : undefined,
-                    ].filter(isDefined)}
-                  />
+                  {grant.applicationId && (
+                    <PlazaCard
+                      eyebrow={grant.name}
+                      subEyebrow={grant.organization?.title}
+                      title={grant.name ?? ''}
+                      text={grant.description ?? ''}
+                      logo={grant.organization?.logo?.url ?? ''}
+                      logoAlt={grant.organization?.logo?.title ?? ''}
+                      tag={{
+                        label: grant.statusText ?? '',
+                        variant: tagVariant,
+                      }}
+                      cta={{
+                        label: 'Skoða nánar',
+                        variant: 'text',
+                        onClick: () => {
+                          router.push(
+                            linkResolver(
+                              'styrkjatorggrant',
+                              [grant?.applicationId ?? ''],
+                              locale,
+                            ).href,
+                          )
+                        },
+                        icon: 'arrowForward',
+                      }}
+                      detailLines={[
+                        grant.dateFrom && grant.dateTo
+                          ? {
+                              icon: 'calendar' as const,
+                              text: `${format(
+                                new Date(grant.dateFrom),
+                                'dd.MM.',
+                              )}-${format(
+                                new Date(grant.dateTo),
+                                'dd.MM.yyyy',
+                              )}`,
+                            }
+                          : null,
+                        {
+                          icon: 'time' as const,
+                          text: 'Frestur til 16.08.2024, kl. 15.00',
+                        },
+                        grant.categoryTag?.title
+                          ? {
+                              icon: 'informationCircle' as const,
+                              text: grant.categoryTag.title,
+                            }
+                          : undefined,
+                      ].filter(isDefined)}
+                    />
+                  )}
                 </Box>
               )
             })}
