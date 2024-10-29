@@ -136,12 +136,9 @@ import { HealthInsuranceDeclarationModule } from './health-insurance-declaration
 import { HealthInsuranceDeclarationService } from './health-insurance-declaration/health-insurance-declaration.service'
 import { NewPrimarySchoolModule } from './new-primary-school/new-primary-school.module'
 import { NewPrimarySchoolService } from './new-primary-school/new-primary-school.service'
-<<<<<<< HEAD
 import { WorkAccidentNotificationTemplateModule } from './aosh/work-accident-notification/work-accident-notification.module'
 import { WorkAccidentNotificationTemplateService } from './aosh/work-accident-notification/work-accident-notification.service'
 
-=======
->>>>>>> origin/main
 import { IdCardModule } from './id-card/id-card.module'
 import { IdCardService } from './id-card/id-card.service'
 import { ParliamentaryListCreationModule } from './signature-collection/parliamentary-list-creation/parliamentary-list-creation.module'
