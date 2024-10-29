@@ -55,6 +55,11 @@ export enum rentalAmountPaymentDateOptions {
   OTHER = 'other',
 }
 
+export enum rentOtherFeesPayeeOptions {
+  LANDLORD = 'landlordPays',
+  TENANT = 'tenantPays',
+}
+
 export const pruneAfterDays = (Days: number): StateLifeCycle => {
   return {
     shouldBeListed: false,

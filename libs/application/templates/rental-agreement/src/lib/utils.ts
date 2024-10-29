@@ -8,6 +8,7 @@ import {
   rentalHousingCategoryTypes,
   rentalHousingConditionInspector,
   rentalAmountPaymentDateOptions,
+  rentOtherFeesPayeeOptions,
 } from './constants'
 import * as m from './messages'
 
@@ -51,6 +52,22 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
       'rentalAmountPaymentDate',
     )
 
+  const rentOtherFeesHousingFund = getValueViaPath<rentOtherFeesPayeeOptions>(
+    answers,
+    'rentOtherFees.housingFund',
+  )
+
+  const rentOtherFeesElectricityCost =
+    getValueViaPath<rentOtherFeesPayeeOptions>(
+      answers,
+      'rentOtherFees.electricityCost',
+    )
+
+  const rentOtherFeesHeatingCost = getValueViaPath<rentOtherFeesPayeeOptions>(
+    answers,
+    'rentOtherFees.heatingCost',
+  )
+
   return {
     propertyCategoryTypeOptions,
     propertyCategoryClassOptions,
@@ -58,6 +75,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     isRentalAmountIndexConnected,
     rentalAmountIndexTypesOptions,
     rentalAmountPaymentDateOptions,
+    rentOtherFeesElectricityCost,
+    rentOtherFeesHeatingCost,
+    rentOtherFeesHousingFund,
   }
 }
 
@@ -157,5 +177,16 @@ export const getRentalAmountPaymentDateOptions = () => [
   {
     value: rentalAmountPaymentDateOptions.OTHER,
     label: m.rentalAmount.paymentDateOptionOther,
+  },
+]
+
+export const getRentalOtherFeesPayeeOptions = () => [
+  {
+    value: rentOtherFeesPayeeOptions.LANDLORD,
+    label: m.otherFees.paidByLandlordLabel,
+  },
+  {
+    value: rentOtherFeesPayeeOptions.TENANT,
+    label: m.otherFees.paidByTenantLabel,
   },
 ]

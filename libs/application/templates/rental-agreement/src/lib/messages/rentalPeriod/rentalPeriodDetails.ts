@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const rentalPeriodDetails = defineMessages({
   subSectionName: {
     id: 'ra.application:rentalPeriodDetails.subSectionName',
-    defaultMessage: 'Leigutímabil',
+    defaultMessage: 'Tímabil',
     description: 'Rental period sub section name',
   },
   pageTitle: {
