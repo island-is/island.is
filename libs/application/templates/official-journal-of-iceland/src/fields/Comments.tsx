@@ -16,7 +16,11 @@ import {
 import { OJOI_INPUT_HEIGHT } from '../lib/constants'
 import { AddComment } from '../components/comments/AddComment'
 
-export const Comments = ({ application }: OJOIFieldBaseProps) => {
+type Props = OJOIFieldBaseProps & {
+  canAddComment?: boolean
+}
+
+export const Comments = ({ application, canAddComment = true }: Props) => {
   const { formatMessage: f } = useLocale()
   const {
     comments,
@@ -73,12 +77,14 @@ export const Comments = ({ application }: OJOIFieldBaseProps) => {
             <CommentsList comments={comments} />
           </Box>
         )}
-        <AddComment
-          addComment={addComment}
-          addCommentError={addCommentError}
-          addCommentLoading={addCommentLoading}
-          addCommentSuccess={addCommentSuccess}
-        />
+        {canAddComment && (
+          <AddComment
+            addComment={addComment}
+            addCommentError={addCommentError}
+            addCommentLoading={addCommentLoading}
+            addCommentSuccess={addCommentSuccess}
+          />
+        )}
       </Stack>
     </FormGroup>
   )
