@@ -8,7 +8,7 @@ import {
   useGetUsersMileageLazyQuery,
 } from './VehicleBulkMileage.generated'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import {
   ExpandRow,
   NestedFullTable,
@@ -22,15 +22,17 @@ import { InputController } from '@island.is/shared/form-fields'
 import * as styles from './VehicleBulkMileage.css'
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import { useDebounce } from 'react-use'
+import { isReadDateToday } from '../../utils/readDate'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 
 type MutationStatus =
   | 'initial'
   | 'posting'
-  | 'post-success'
-  | 'put-success'
+  | 'waiting'
+  | 'success'
   | 'error'
+  | 'validation-error'
 
 interface Props {
   vehicle: VehicleType
@@ -51,31 +53,25 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     },
   })
 
-  const handleMutationError = () => {
-    setPostError(formatMessage(m.errorTitle))
-    setPostStatus('error')
-  }
-
   const [putAction] = usePutSingleVehicleMileageMutation({
-    onError: handleMutationError,
-    onCompleted: ({ vehicleMileagePutV2: data }) => {
-      if (data?.__typename === 'VehiclesMileageUpdateError') {
-        setPostError(data.message)
-        setPostStatus('error')
-      } else {
-        setPostStatus('put-success')
-      }
-    },
+    onError: () => handleMutationResponse(true),
+    onCompleted: ({ vehicleMileagePutV2: data }) =>
+      handleMutationResponse(
+        data?.__typename === 'VehiclesMileageUpdateError',
+        data?.__typename === 'VehiclesMileageUpdateError'
+          ? data?.message ?? formatMessage(m.errorTitle)
+          : undefined,
+      ),
   })
 
   const [postAction] = usePostSingleVehicleMileageMutation({
-    onError: handleMutationError,
+    onError: () => handleMutationResponse(true),
     onCompleted: ({ vehicleMileagePostV2: data }) => {
       if (data?.__typename === 'VehiclesMileageUpdateError') {
         setPostError(data.message)
         setPostStatus('error')
       } else {
-        setPostStatus('post-success')
+        setPostStatus('success')
       }
     },
   })
@@ -92,26 +88,63 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     trigger,
   } = useFormContext()
 
-  const postMileage = () => {
-    const formerPostStatus = postStatus
-    setPostError(null)
-    setPostStatus('posting')
-    if (formerPostStatus !== 'initial') {
-      mileageRefetch()
-    } else {
-      executeMileageQuery()
+  const handleMutationResponse = (isError: boolean, message?: string) =>
+    updateStatusAndMessage(isError ? 'error' : 'success', message)
+
+  const updateStatusAndMessage = (
+    status: MutationStatus,
+    errorMessage?: string,
+  ) => {
+    if (
+      postError &&
+      !errorMessage &&
+      status !== 'error' &&
+      status !== 'validation-error'
+    ) {
+      setPostError(null)
+    }
+    setPostStatus(status)
+
+    if (errorMessage) {
+      setPostError(errorMessage)
     }
   }
 
-  useDebounce(
-    () => {
-      if (postStatus === 'put-success' || postStatus === 'post-success') {
+  const handleValidationErrors = useCallback(() => {
+    const vehicleErrors = errors?.[vehicle.vehicleId]
+    if (vehicleErrors) {
+      updateStatusAndMessage('error', vehicleErrors.message as string)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [errors, vehicle.vehicleId])
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (postStatus === 'success') {
         registrationsRefetch()
       }
-    },
-    500,
-    [postStatus, registrationsRefetch],
-  )
+    }, 500)
+  }, [postStatus, registrationsRefetch])
+
+  useEffect(() => {
+    switch (postStatus) {
+      case 'posting': {
+        postToServer()
+        return
+      }
+      case 'waiting':
+        if (mileageData?.vehicleMileageDetails) {
+          setPostStatus('posting')
+        }
+        return
+      case 'validation-error':
+        handleValidationErrors()
+        return
+      default:
+        return
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postStatus, mileageData?.vehicleMileageDetails])
 
   const getValueFromForm = async (
     formFieldId: string,
@@ -121,54 +154,63 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     if (!value && skipEmpty) {
       return
     }
-    if (await trigger(formFieldId)) {
+    const isValid = await trigger(formFieldId)
+    if (isValid) {
       return Number(value)
     }
-    return
+
+    //invalid validation, set errors
+    setPostStatus('validation-error')
+  }
+
+  const onInputChange = () => {
+    if (postStatus === 'error' || postStatus === 'validation-error') {
+      updateStatusAndMessage('initial')
+    }
   }
 
   const onSaveButtonClick = async () => {
-    postMileage()
+    if (postStatus !== 'initial') {
+      mileageRefetch()
+    } else {
+      executeMileageQuery()
+    }
+
+    updateStatusAndMessage('waiting')
   }
 
-  useEffect(() => {
-    const post = async () => {
-      const formValue = await getValueFromForm(vehicle.vehicleId)
-      if (formValue) {
-        if (
-          mileageData?.vehicleMileageDetails?.editing &&
-          mileageData.vehicleMileageDetails?.data?.[0]?.internalId
-        ) {
-          putAction({
-            variables: {
-              input: {
-                internalId: parseInt(
-                  mileageData.vehicleMileageDetails?.data?.[0]?.internalId,
-                  10,
-                ),
-                permno: vehicle.vehicleId,
-                mileageNumber: formValue,
-              },
+  const postToServer = useCallback(async () => {
+    const formValue = await getValueFromForm(vehicle.vehicleId)
+    if (formValue) {
+      if (
+        mileageData?.vehicleMileageDetails?.editing &&
+        mileageData.vehicleMileageDetails?.data?.[0]?.internalId
+      ) {
+        putAction({
+          variables: {
+            input: {
+              internalId: parseInt(
+                mileageData.vehicleMileageDetails?.data?.[0]?.internalId,
+                10,
+              ),
+              permno: vehicle.vehicleId,
+              mileageNumber: formValue,
             },
-          })
-        } else {
-          postAction({
-            variables: {
-              input: {
-                permno: vehicle.vehicleId,
-                originCode: 'ISLAND.IS',
-                mileageNumber: formValue,
-              },
+          },
+        })
+      } else {
+        postAction({
+          variables: {
+            input: {
+              permno: vehicle.vehicleId,
+              originCode: 'ISLAND.IS',
+              mileageNumber: formValue,
             },
-          })
-        }
+          },
+        })
       }
     }
-
-    if (mileageData?.vehicleMileageDetails) {
-      post()
-    }
-  }, [mileageData?.vehicleMileageDetails])
+  }, [mileageData?.vehicleMileageDetails, vehicle.vehicleId])
 
   return (
     <ExpandRow
@@ -194,14 +236,79 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
                 name={vehicle.vehicleId}
                 type="number"
                 suffix=" km"
-                min={0}
                 thousandSeparator
                 size="xs"
                 maxLength={12}
                 defaultValue={''}
-                error={
-                  postError ?? (errors?.[vehicle.vehicleId]?.message as string)
-                }
+                onChange={onInputChange}
+                error={postError ?? undefined}
+                rules={{
+                  validate: {
+                    userHasPostAccess: () => {
+                      if (
+                        mileageData?.vehicleMileageDetails
+                          ?.canUserRegisterVehicleMileage
+                      ) {
+                        return true
+                      }
+                      return formatMessage(
+                        vehicleMessage.mileageYouAreNotAllowed,
+                      )
+                    },
+                    readDate: () => {
+                      if (
+                        !mileageData?.vehicleMileageDetails?.editing &&
+                        !mileageData?.vehicleMileageDetails?.canRegisterMileage
+                      ) {
+                        return formatMessage(
+                          vehicleMessage.mileageAlreadyRegistered,
+                        )
+                      }
+                      return true
+                    },
+                    value: (value: number) => {
+                      // Input number must be higher than the highest known mileage registration value
+                      if (mileageData?.vehicleMileageDetails?.data) {
+                        // If we're in editing mode, we want to find the highest confirmed registered number, ignoring all Island.is registrations from today.
+                        const confirmedRegistrations =
+                          mileageData.vehicleMileageDetails.data.filter(
+                            (item) => {
+                              if (item.readDate) {
+                                const isIslandIsReadingToday =
+                                  item.originCode === ORIGIN_CODE &&
+                                  isReadDateToday(new Date(item.readDate))
+                                return !isIslandIsReadingToday
+                              }
+                              return true
+                            },
+                          )
+
+                        const detailArray = mileageData.vehicleMileageDetails
+                          .editing
+                          ? confirmedRegistrations
+                          : mileageData.vehicleMileageDetails.data
+
+                        const latestRegistration =
+                          detailArray[0].mileageNumber ?? 0
+                        if (latestRegistration > value) {
+                          return formatMessage(
+                            vehicleMessage.mileageInputTooLow,
+                          )
+                        }
+                      }
+                    },
+                  },
+                  required: {
+                    value: true,
+                    message: formatMessage(
+                      vehicleMessage.mileageInputMinLength,
+                    ),
+                  },
+                  min: {
+                    value: 1,
+                    message: formatMessage(vehicleMessage.mileageInputPositive),
+                  },
+                }}
               />
             </Box>
           ),
@@ -212,24 +319,24 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
               submissionStatus={
                 postStatus === 'error'
                   ? 'error'
-                  : postStatus === 'posting'
+                  : postStatus === 'posting' || postStatus === 'waiting'
                   ? 'loading'
-                  : postStatus === 'post-success' ||
-                    postStatus === 'put-success'
+                  : postStatus === 'success'
                   ? 'success'
                   : 'idle'
               }
               onClick={onSaveButtonClick}
+              disabled={postStatus === 'error'}
             />
           ),
         },
       ]}
     >
-      {(postStatus === 'post-success' || postStatus === 'put-success') && (
+      {postStatus === 'success' && (
         <AlertMessage
           type="success"
           message={formatMessage(
-            postStatus === 'post-success'
+            postStatus === 'success'
               ? vehicleMessage.mileagePostSuccess
               : vehicleMessage.mileagePutSuccess,
           )}

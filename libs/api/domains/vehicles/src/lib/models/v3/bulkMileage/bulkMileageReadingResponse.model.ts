@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
 
 @ObjectType()
 export class VehiclesBulkMileageReadingResponse {
@@ -8,6 +8,9 @@ export class VehiclesBulkMileageReadingResponse {
       'The GUID of the mileage registration post request. Used to fetch job status',
   })
   requestId?: string
+
+  @Field(() => Int, { nullable: true })
+  errorCode?: number
 
   @Field({ nullable: true })
   errorMessage?: string

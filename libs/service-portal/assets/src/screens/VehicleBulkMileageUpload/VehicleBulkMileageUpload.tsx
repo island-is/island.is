@@ -131,7 +131,11 @@ const VehicleBulkMileageUpload = () => {
           <AlertMessage
             type="warning"
             title={formatMessage(vehicleMessage.uploadFailed)}
-            message={data.vehicleBulkMileagePost.errorMessage}
+            message={
+              data?.vehicleBulkMileagePost?.errorCode === 429
+                ? formatMessage(vehicleMessage.mileageUploadTooManyRequests)
+                : data.vehicleBulkMileagePost.errorMessage
+            }
           />
         )}
         {downloadError && (

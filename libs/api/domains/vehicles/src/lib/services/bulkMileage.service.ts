@@ -66,6 +66,7 @@ export class BulkMileageService {
       if (error instanceof FetchError && error.status === 429) {
         return {
           requestId: undefined,
+          errorCode: 429,
           errorMessage: error.statusText,
         }
       }
