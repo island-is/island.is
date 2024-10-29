@@ -36,10 +36,10 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   } = useFormContext()
   const userPassportRadio = `${id}.userPassport`
   const childPassportRadio = `${id}.childPassport`
-  
+
   const fieldErrorsUser = getErrorViaPath(errors, userPassportRadio)
   const fieldErrorsChild = getErrorViaPath(errors, childPassportRadio)
-  
+
   const identityDocumentData = application.externalData.identityDocument
     .data as IdentityDocumentData
 
@@ -48,9 +48,7 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     isDisabled: boolean
   }
 
-  const tag = (
-    identityDocument: IdentityDocument,
-  ): TagCheck => {
+  const tag = (identityDocument: IdentityDocument): TagCheck => {
     const today = new Date()
     const expirationDate = new Date(identityDocument?.expirationDate)
     const todayPlus6Months = new Date(
