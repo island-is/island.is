@@ -24,9 +24,10 @@ import {
   NationalRegistrySpouseDetailsApi,
   ResidenceInIcelandLastChangeDateApi,
   UserProfileApi,
-  UtlendingastofnunPaymentCatalogApi,
   TravelDocumentTypesApi,
   ApplicantInformationApi,
+  MockableUtlendingastofnunPaymentCatalogApi,
+  UtlendingastofnunPaymentCatalogApi,
 } from '../../dataProviders'
 
 export const Prerequisites: Form = buildForm({
@@ -46,7 +47,6 @@ export const Prerequisites: Form = buildForm({
           subTitle: externalData.dataProvider.subTitle,
           description: externalData.dataProvider.description,
           checkboxLabel: externalData.dataProvider.checkboxLabel,
-          enableMockPayment: true,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
@@ -109,6 +109,10 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: UtlendingastofnunPaymentCatalogApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: MockableUtlendingastofnunPaymentCatalogApi,
               title: '',
             }),
             buildDataProviderItem({

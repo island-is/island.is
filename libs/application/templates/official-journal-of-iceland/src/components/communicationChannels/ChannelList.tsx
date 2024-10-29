@@ -4,10 +4,11 @@ import { general } from '../../lib/messages'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import { InputFields } from '../../lib/types'
 import set from 'lodash/set'
+import { useAuth } from '@island.is/auth/react'
 
 type Props = {
   applicationId: string
-  onEditChannel: (email?: string, phone?: string) => void
+  onEditChannel?: (email?: string, phone?: string, name?: string) => void
 }
 
 export const ChannelList = ({ applicationId, onEditChannel }: Props) => {
@@ -17,16 +18,28 @@ export const ChannelList = ({ applicationId, onEditChannel }: Props) => {
     applicationId,
   })
 
-  const channels = application.answers.advert?.channels || []
+  const { userInfo } = useAuth()
 
-  const onRemoveChannel = (email?: string) => {
+  const defaultName = userInfo?.profile?.name
+  const defaultEmail = userInfo?.profile?.email
+  const defaultPhone = userInfo?.profile?.phone_number
+
+  const initalChannel = {
+    name: defaultName,
+    email: defaultEmail,
+    phone: defaultPhone,
+  }
+
+  const channels = application.answers.advert?.channels || [initalChannel]
+
+  const onRemoveChannel = (index?: number) => {
     const currentAnswers = structuredClone(application.answers)
     const currentChannels = currentAnswers.advert?.channels ?? []
 
     const updatedAnswers = set(
       currentAnswers,
       InputFields.advert.channels,
-      currentChannels.filter((channel) => channel.email !== email),
+      currentChannels.filter((_, i) => i !== index),
     )
 
     updateApplication(updatedAnswers)
@@ -40,6 +53,7 @@ export const ChannelList = ({ applicationId, onEditChannel }: Props) => {
     <T.Table>
       <T.Head>
         <T.Row>
+          <T.HeadData>{formatMessage(general.name)}</T.HeadData>
           <T.HeadData>{formatMessage(general.email)}</T.HeadData>
           <T.HeadData>{formatMessage(general.phoneNumber)}</T.HeadData>
           <T.HeadData></T.HeadData>
@@ -47,28 +61,35 @@ export const ChannelList = ({ applicationId, onEditChannel }: Props) => {
         </T.Row>
       </T.Head>
       <T.Body>
-        {channels.map((channel, i) => (
-          <T.Row key={i}>
-            <T.Data>{channel.email}</T.Data>
-            <T.Data>{channel.phone}</T.Data>
-            <T.Data style={{ paddingInline: 0 }} align="center" width={1}>
-              <button
-                type="button"
-                onClick={() => onEditChannel(channel.email, channel.phone)}
-              >
-                <Icon color="blue400" icon="pencil" />
-              </button>
-            </T.Data>
-            <T.Data style={{ paddingInline: 0 }} align="center" width={1}>
-              <button
-                type="button"
-                onClick={() => onRemoveChannel(channel.email)}
-              >
-                <Icon color="blue400" icon="trash" />
-              </button>
-            </T.Data>
-          </T.Row>
-        ))}
+        {channels.map((channel, i) => {
+          return (
+            <T.Row key={i}>
+              <T.Data>{channel.name}</T.Data>
+              <T.Data>{channel.email}</T.Data>
+              <T.Data>{channel.phone}</T.Data>
+              <T.Data style={{ paddingInline: 0 }} align="center" width={1}>
+                {onEditChannel && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onEditChannel(channel.name, channel.email, channel.phone)
+                    }
+                  >
+                    <Icon color="blue400" icon="pencil" />
+                  </button>
+                )}
+              </T.Data>
+
+              <T.Data style={{ paddingInline: 0 }} align="center" width={1}>
+                {onEditChannel && (
+                  <button type="button" onClick={() => onRemoveChannel(i)}>
+                    <Icon color="blue400" icon="trash" />
+                  </button>
+                )}
+              </T.Data>
+            </T.Row>
+          )
+        })}
       </T.Body>
     </T.Table>
   )

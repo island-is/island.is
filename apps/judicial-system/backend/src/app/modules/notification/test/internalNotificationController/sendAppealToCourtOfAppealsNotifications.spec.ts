@@ -4,7 +4,8 @@ import { EmailService } from '@island.is/email-service'
 import { SmsService } from '@island.is/nova-sms'
 
 import {
-  NotificationType,
+  CaseNotificationType,
+  InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -19,13 +20,9 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (
-  role: UserRole,
-  defenderNationalId?: string,
-) => Promise<Then>
+type GivenWhenThen = (user: User, defenderNationalId?: string) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal to court of appeals notifications', () => {
-  const userId = uuid()
   const caseId = uuid()
   const prosecutorName = uuid()
   const prosecutorEmail = uuid()
@@ -56,7 +53,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
     mockEmailService = emailService
     mockSmsService = smsService
 
-    givenWhenThen = async (role: UserRole, defenderNationalId?: string) => {
+    givenWhenThen = async (user: User, defenderNationalId?: string) => {
       const then = {} as Then
 
       await internalNotificationController
@@ -79,8 +76,8 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
             courtId: courtId,
           } as Case,
           {
-            user: { id: userId, role } as User,
-            type: NotificationType.APPEAL_TO_COURT_OF_APPEALS,
+            user,
+            type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
           },
         )
         .then((result) => (then.result = result))
@@ -93,7 +90,13 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(UserRole.PROSECUTOR, uuid())
+      then = await givenWhenThen(
+        {
+          role: UserRole.PROSECUTOR,
+          institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+        } as User,
+        uuid(),
+      )
     })
 
     it('should send notification to judge, registrar, court and defender', () => {
@@ -138,7 +141,10 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(UserRole.PROSECUTOR)
+      then = await givenWhenThen({
+        role: UserRole.PROSECUTOR,
+        institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+      } as User)
     })
 
     it('should send notification to judge and defender', () => {
@@ -168,7 +174,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(UserRole.DEFENDER, uuid())
+      then = await givenWhenThen({ role: UserRole.DEFENDER } as User, uuid())
     })
 
     it('should send notifications to judge and prosecutor', () => {
