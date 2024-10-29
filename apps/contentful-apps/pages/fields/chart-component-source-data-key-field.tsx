@@ -133,11 +133,6 @@ const ChartComponentSourceDataKeyField = () => {
     textInput,
   ])
 
-  const handleTextInputChange = (event) => {
-    const newValue = event.target.value
-    setTextInput(newValue)
-  }
-
   const updateManualDataDateItem = (
     id: number,
     key: keyof ManualData['dateItems'][number],
@@ -200,7 +195,7 @@ const ChartComponentSourceDataKeyField = () => {
         </Radio>
       </Stack>
       <Stack flexDirection="column">
-        {sourceDataKeyValue === 'manual' && (
+        {sourceDataKeyValue === SourceDataKeyValues.Manual && (
           <>
             <Stack flexDirection="row">
               <Radio
@@ -230,7 +225,7 @@ const ChartComponentSourceDataKeyField = () => {
                 justifyContent: 'flex-end',
               }}
             >
-              {manualDataKeyValue === 'date' && (
+              {manualDataKeyValue === ManualDataKeyValues.Date && (
                 <Button
                   onClick={() => {
                     setManualData((prevManualData) => ({
@@ -249,7 +244,7 @@ const ChartComponentSourceDataKeyField = () => {
                   Add item
                 </Button>
               )}
-              {manualDataKeyValue === 'category' && (
+              {manualDataKeyValue === ManualDataKeyValues.Category && (
                 <Button
                   onClick={() => {
                     setManualData((prevManualData) => ({
@@ -271,7 +266,7 @@ const ChartComponentSourceDataKeyField = () => {
                 </Button>
               )}
             </Box>
-            {manualDataKeyValue === 'date' &&
+            {manualDataKeyValue === ManualDataKeyValues.Date &&
               manualData?.dateItems?.length > 0 && (
                 <Table>
                   <Table.Head>
@@ -343,7 +338,7 @@ const ChartComponentSourceDataKeyField = () => {
                   </Table.Body>
                 </Table>
               )}
-            {manualDataKeyValue === 'category' &&
+            {manualDataKeyValue === ManualDataKeyValues.Category &&
               manualData?.categoryItems?.length > 0 && (
                 <Table>
                   <Table.Head>
@@ -411,11 +406,13 @@ const ChartComponentSourceDataKeyField = () => {
               )}
           </>
         )}
-        {sourceDataKeyValue === 'externalSourceKey' && (
+        {sourceDataKeyValue === SourceDataKeyValues.ExternalSourceKey && (
           <TextInput
             type="text"
             value={textInput}
-            onChange={handleTextInputChange}
+            onChange={(event) => {
+              setTextInput(event.target.value)
+            }}
           ></TextInput>
         )}
       </Stack>
