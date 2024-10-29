@@ -1,6 +1,7 @@
 import {
   defineTemplateApi,
   InstitutionNationalIds,
+  MockablePaymentCatalogApi,
   PaymentCatalogApi,
 } from '@island.is/application/types'
 export {
@@ -9,6 +10,7 @@ export {
   UserProfileApi,
   CurrentLicenseApi,
   DrivingAssessmentApi,
+  JurisdictionApi,
   QualityPhotoApi,
   ExistingApplicationApi,
 } from '@island.is/application/types'
@@ -19,6 +21,14 @@ export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   },
   externalDataId: 'payment',
 })
+
+export const MockableSyslumadurPaymentCatalogApi =
+  MockablePaymentCatalogApi.configure({
+    params: {
+      organizationId: InstitutionNationalIds.SYSLUMENN,
+    },
+    externalDataId: 'payment',
+  })
 
 export const GlassesCheckApi = defineTemplateApi({
   action: 'glassesCheck',

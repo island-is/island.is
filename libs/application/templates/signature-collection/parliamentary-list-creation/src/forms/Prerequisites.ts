@@ -11,13 +11,17 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
 import Logo from '../../assets/Logo'
-import { ParliamentaryCollectionApi, CandidateApi } from '../dataProviders'
+import {
+  ParliamentaryCollectionApi,
+  CandidateApi,
+  ParliamentaryIdentityApi,
+  IsDelegatedToCompanyApi,
+} from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
@@ -73,22 +77,22 @@ export const Prerequisites: Form = buildForm({
               subTitle: m.userProfileProviderSubtitle,
             }),
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: m.nationalRegistryProviderTitle,
-              subTitle: m.nationalRegistryProviderSubtitle,
-            }),
-            buildDataProviderItem({
-              //provider: TODO: Add providers needed for creating collection,
-              title: '',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
               provider: ParliamentaryCollectionApi,
               title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
+              provider: ParliamentaryIdentityApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
               provider: CandidateApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: IsDelegatedToCompanyApi,
               title: '',
               subTitle: '',
             }),
@@ -104,11 +108,6 @@ export const Prerequisites: Form = buildForm({
     buildSection({
       id: 'screen4',
       title: m.constituency,
-      children: [],
-    }),
-    buildSection({
-      id: 'screen5',
-      title: m.managersAndSupervisors,
       children: [],
     }),
     buildSection({

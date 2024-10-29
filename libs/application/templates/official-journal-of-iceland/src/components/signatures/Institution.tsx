@@ -20,12 +20,14 @@ import {
   getCommitteeAnswers,
   getRegularAnswers,
   getSignatureDefaultValues,
+  getSingleSignatureMarkup,
   isCommitteeSignature,
   isRegularSignature,
 } from '../../lib/utils'
 import { z } from 'zod'
 import { signatureInstitutionSchema } from '../../lib/dataSchema'
 import { RemoveRegularSignature } from './RemoveRegularSignature'
+import { useFormContext } from 'react-hook-form'
 type Props = {
   applicationId: string
   type: SignatureType
@@ -48,6 +50,8 @@ export const InstitutionSignature = ({
     applicationId,
   })
 
+  const { setValue } = useFormContext()
+
   const handleInstitutionChange = (
     value: string,
     key: SignatureInstitutionKeys,
@@ -61,9 +65,20 @@ export const InstitutionSignature = ({
     if (isRegularSignature(signature)) {
       const updatedRegularSignature = signature?.map((signature, index) => {
         if (index === signatureIndex) {
+          const additionalSignature =
+            application.answers.signatures?.additionalSignature?.regular
+          const html = getSingleSignatureMarkup(
+            {
+              ...signature,
+              [key]: value,
+            },
+            additionalSignature,
+          )
+
           return {
             ...signature,
             [key]: value,
+            html: html,
           }
         }
 
@@ -76,18 +91,35 @@ export const InstitutionSignature = ({
         updatedRegularSignature,
       )
 
+      setValue(InputFields.signature[type], updatedRegularSignature)
+
       return updatedSignatures
     }
 
     if (isCommitteeSignature(signature)) {
+      const chairman = signature.chairman
+      const additionalSignature =
+        application.answers.signatures?.additionalSignature?.committee
+      const html = getSingleSignatureMarkup(
+        {
+          ...signature,
+          [key]: value,
+        },
+        additionalSignature,
+        chairman,
+      )
+
       const updatedCommitteeSignature = set(
         currentAnswers,
         InputFields.signature[type],
         {
           ...signature,
+          html: html,
           [key]: value,
         },
       )
+
+      setValue(InputFields.signature[type], updatedCommitteeSignature)
 
       return updatedCommitteeSignature
     }

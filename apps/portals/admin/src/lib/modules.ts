@@ -10,6 +10,7 @@ import { petitionModule } from '@island.is/portals/admin/petition'
 import { serviceDeskModule } from '@island.is/portals/admin/service-desk'
 import { signatureCollectionModule } from '@island.is/portals/admin/signature-collection'
 import { formSystemModule } from '@island.is/form-system'
+import { delegationAdminModule } from 'delegation-admin'
 
 /**
  * NOTE:
@@ -30,4 +31,5 @@ export const modules: PortalModule[] = [
   serviceDeskModule,
   signatureCollectionModule,
   formSystemModule,
+  delegationAdminModule,
 ]

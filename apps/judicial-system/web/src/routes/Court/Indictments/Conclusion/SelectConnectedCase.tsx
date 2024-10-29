@@ -41,10 +41,18 @@ const SelectConnectedCase: FC<Props> = ({ workingCase, setWorkingCase }) => {
     }))
   }
 
-  const connectedCases = connectedCasesData?.connectedCases?.map((aCase) => ({
-    label: `${aCase.courtCaseNumber}`,
-    value: aCase.id,
-  })) as ConnectedCaseOption[]
+  const connectedCases = connectedCasesData?.connectedCases
+    ?.filter(
+      // The filtering is done here rather than on the server side
+      // as we may allow more relaxed merging later on
+      (connectedCase) =>
+        connectedCase.defendants?.length === 1 &&
+        connectedCase.court?.id === workingCase.court?.id,
+    )
+    ?.map((connectedCase) => ({
+      label: `${connectedCase.courtCaseNumber}`,
+      value: connectedCase.id,
+    })) as ConnectedCaseOption[]
 
   // For now we only want to allow cases with a single defendant to be able to merge
   // in to another case

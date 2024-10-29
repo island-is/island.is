@@ -1,4 +1,5 @@
 import {
+  coreMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   pruneAfterDays,
@@ -61,6 +62,7 @@ const IncomePlanTemplate: ApplicationTemplate<
   featureFlag: Features.IncomePlanEnabled,
   translationNamespaces: ApplicationConfigurations.IncomePlan.translation,
   dataSchema,
+  allowMultipleApplicationsInDraft: false,
   newApplicationButtonLabel: historyMessages.newIncomePlanButtonLabel,
   applicationText: historyMessages.incomePlanPageTitle,
   stateMachineConfig: {
@@ -233,6 +235,9 @@ const IncomePlanTemplate: ApplicationTemplate<
           status: 'inprogress',
           lifecycle: pruneAfterDays(365),
           actionCard: {
+            tag: {
+              label: coreMessages.tagsInProgress,
+            },
             pendingAction: {
               title: statesMessages.tryggingastofnunInReviewTitle,
               content: statesMessages.tryggingastofnunInReviewContent,
@@ -268,6 +273,9 @@ const IncomePlanTemplate: ApplicationTemplate<
           status: 'completed',
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
+            tag: {
+              label: coreMessages.tagsDone,
+            },
             pendingAction: {
               title: statesMessages.incomePlanProcessed,
               content: statesMessages.incomePlanProcessedDescription,

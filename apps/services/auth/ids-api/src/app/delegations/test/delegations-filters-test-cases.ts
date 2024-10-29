@@ -11,8 +11,8 @@ import {
   TestCase,
 } from './delegations-filters-types'
 
-const person1 = createNationalId('person')
-const person2 = createNationalId('person')
+const person1 = createNationalId('residentAdult')
+const person2 = createNationalId('residentAdult')
 const company1 = createNationalId('company')
 const company2 = createNationalId('company')
 
@@ -285,6 +285,19 @@ export const testCases: Record<string, TestCase> = {
         AuthDelegationType.Custom,
         AuthDelegationType.LegalGuardian,
       ],
+    },
+  ),
+  // Returns available delegations for legal representatives
+  legalRepresentative1: new TestCase(
+    createClient({
+      clientId: clientId,
+      supportedDelegationTypes: [AuthDelegationType.LegalRepresentative],
+    }),
+    {
+      fromLegalRepresentative: [person1, person2],
+      protectedScopes: [],
+      expectedFrom: [person1, person2],
+      expectedTypes: [AuthDelegationType.LegalRepresentative],
     },
   ),
 }

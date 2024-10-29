@@ -181,7 +181,7 @@ export const moveToScreen = (
   return screenIndex
 }
 
-function convertFieldToScreen(
+const convertFieldToScreen = (
   field: Field,
   answers: FormValue,
   externalData: ExternalData,
@@ -189,7 +189,7 @@ function convertFieldToScreen(
   sectionIndex: number,
   subSectionIndex: number,
   user: User | null,
-): FieldDef {
+): FieldDef => {
   return {
     ...field,
     isNavigable:
@@ -200,7 +200,7 @@ function convertFieldToScreen(
   } as FieldDef
 }
 
-function convertDataProviderToScreen(
+const convertDataProviderToScreen = (
   externalDataProvider: ExternalDataProvider,
   answers: FormValue,
   externalData: ExternalData,
@@ -208,7 +208,7 @@ function convertDataProviderToScreen(
   sectionIndex: number,
   subSectionIndex: number,
   user: User | null,
-): ExternalDataProviderScreen {
+): ExternalDataProviderScreen => {
   return {
     ...externalDataProvider,
     isNavigable:
@@ -219,7 +219,7 @@ function convertDataProviderToScreen(
   }
 }
 
-export function convertMultiFieldToScreen(
+export const convertMultiFieldToScreen = (
   multiField: MultiField,
   answers: FormValue,
   externalData: ExternalData,
@@ -227,7 +227,7 @@ export function convertMultiFieldToScreen(
   sectionIndex: number,
   subSectionIndex: number,
   user: User | null,
-): MultiFieldScreen {
+): MultiFieldScreen => {
   let isMultiFieldVisible = false
   const children: FieldDef[] = []
 
@@ -260,7 +260,7 @@ export function convertMultiFieldToScreen(
   } as MultiFieldScreen
 }
 
-function convertRepeaterToScreens(
+const convertRepeaterToScreens = (
   repeater: Repeater,
   answers: FormValue,
   externalData: ExternalData,
@@ -268,12 +268,15 @@ function convertRepeaterToScreens(
   sectionIndex: number,
   subSectionIndex: number,
   user: User | null,
-): FormScreen[] {
+): FormScreen[] => {
   const { id, children } = repeater
   const newScreens: FormScreen[] = []
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function recursiveMap(field: FormLeaf, fn: (l: FormLeaf) => FormLeaf): any {
+  const recursiveMap = (
+    field: FormLeaf,
+    fn: (l: FormLeaf) => FormLeaf,
+  ): any => {
     if (Array.isArray(field.children)) {
       return (field.children as FormLeaf[]).map((c) => recursiveMap(c, fn))
     }
@@ -329,7 +332,7 @@ function convertRepeaterToScreens(
   ]
 }
 
-function convertLeafToScreens(
+const convertLeafToScreens = (
   leaf: FormLeaf,
   answers: FormValue,
   externalData: ExternalData,
@@ -337,7 +340,7 @@ function convertLeafToScreens(
   sectionIndex: number,
   subSectionIndex: number,
   user: User | null,
-): FormScreen[] {
+): FormScreen[] => {
   if (leaf.type === FormItemTypes.MULTI_FIELD) {
     return [
       convertMultiFieldToScreen(
@@ -387,7 +390,7 @@ function convertLeafToScreens(
   ]
 }
 
-function convertFormNodeToScreens(
+const convertFormNodeToScreens = (
   formNode: FormNode,
   answers: FormValue,
   externalData: ExternalData,
@@ -396,7 +399,7 @@ function convertFormNodeToScreens(
   sectionIndex: number,
   subSectionIndex: number,
   user: User | null,
-): FormScreen[] {
+): FormScreen[] => {
   const { children } = formNode
 
   if (isValidScreen(formNode)) {
@@ -465,12 +468,12 @@ function convertFormNodeToScreens(
   return screens
 }
 
-export function convertFormToScreens(
+export const convertFormToScreens = (
   form: Form,
   answers: FormValue,
   externalData: ExternalData,
   user: User | null,
-): FormScreen[] {
+): FormScreen[] => {
   return convertFormNodeToScreens(
     form,
     answers,
@@ -483,12 +486,12 @@ export function convertFormToScreens(
   )
 }
 
-export function getNavigableSectionsInForm(
+export const getNavigableSectionsInForm = (
   form: Form,
   answers: FormValue,
   externalData: ExternalData,
   user: User | null,
-): Section[] {
+): Section[] => {
   const sections: Section[] = []
 
   form.children.forEach((child) => {

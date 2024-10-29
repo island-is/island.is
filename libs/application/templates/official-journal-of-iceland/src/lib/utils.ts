@@ -5,6 +5,7 @@ import {
   committeeSignatureSchema,
   memberItemSchema,
   partialSchema,
+  regularSignatureItemSchema,
   regularSignatureSchema,
 } from './dataSchema'
 import { getValueViaPath } from '@island.is/application/core'
@@ -12,7 +13,7 @@ import { InputFields, OJOIApplication, RequiredInputFieldsNames } from './types'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { SignatureTypes } from './constants'
+import { SignatureTypes, OJOI_DF, FAST_TRACK_DAYS } from './constants'
 import { MessageDescriptor } from 'react-intl'
 
 export const countDaysAgo = (date: Date) => {
@@ -175,7 +176,7 @@ const getMembersMarkup = (member: z.infer<typeof memberItemSchema>) => {
   }
 
   const aboveMarkup = member.above
-    ? `<p style="margin-bottom: ${styleObject.marginBottom}" margins align="center">${member.above}</p>`
+    ? `<p style="margin-bottom: 0;" align="center">${member.above}</p>`
     : ''
   const afterMarkup = member.after ? ` ${member.after}` : ''
   const belowMarkup = member.below
@@ -183,7 +184,7 @@ const getMembersMarkup = (member: z.infer<typeof memberItemSchema>) => {
     : ''
 
   return `
-    <div class="signature__member">
+    <div class="signature__member" style="margin-bottom: 1.5em;">
       ${aboveMarkup}
       <p style="margin-bottom: ${styleObject.marginBottom}" align="center"><strong>${member.name}</strong>${afterMarkup}</p>
       ${belowMarkup}
@@ -198,19 +199,20 @@ const signatureTemplate = (
 ) => {
   const markup = signatures
     ?.map((signature) => {
-      const membersCount = Math.min(signature.members?.length ?? 1, 3)
+      const membersCount = signature?.members?.length || 0
+
       const styleObject = {
         display: membersCount > 1 ? 'grid' : 'block',
         gridTemplateColumns:
           membersCount === 1
             ? '1fr'
-            : membersCount === 2 || membersCount === 4
-            ? '1fr 1fr'
-            : '1fr 1fr 1fr',
+            : membersCount === 3
+            ? '1fr 1fr 1fr'
+            : '1fr 1fr',
       }
 
       const date = signature.date
-        ? format(new Date(signature.date), 'dd. MMM yyyy.', { locale: is })
+        ? format(new Date(signature.date), OJOI_DF, { locale: is })
         : ''
 
       const chairmanMarkup = chairman
@@ -242,7 +244,7 @@ const signatureTemplate = (
   return `${markup}${additionalMarkup}` as HTMLText
 }
 
-export const getSignatureMarkup = ({
+export const getSignaturesMarkup = ({
   signatures,
   type,
 }: {
@@ -309,5 +311,34 @@ export const parseZodIssue = (issue: z.ZodCustomIssue) => {
   return {
     name: getValueViaPath(RequiredInputFieldsNames, path) as string,
     message: issue?.params as MessageDescriptor,
+  }
+}
+
+export const getSingleSignatureMarkup = (
+  signature: z.infer<typeof regularSignatureItemSchema>,
+  additionalSignature?: string,
+  chairman?: z.infer<typeof memberItemSchema>,
+) => {
+  return signatureTemplate([signature], additionalSignature, chairman)
+}
+
+export const getFastTrack = (date?: Date) => {
+  const now = new Date()
+  if (!date)
+    return {
+      fastTrack: false,
+      now,
+    }
+
+  const diff = date.getTime() - now.getTime()
+  const diffDays = diff / (1000 * 3600 * 24)
+  let fastTrack = false
+
+  if (diffDays <= FAST_TRACK_DAYS) {
+    fastTrack = true
+  }
+  return {
+    fastTrack,
+    now,
   }
 }

@@ -25,8 +25,12 @@ import {
   Roles,
   States,
 } from './constants'
-import { Features } from '@island.is/feature-flags'
 import { EstateOnEntryApi, MaritalStatusApi } from '../dataProviders'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import {
+  getApplicationFeatureFlags,
+  InheritanceReportFeatureFlags,
+} from './getApplicationFeatureFlags'
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.INHERITANCE_REPORT]
@@ -50,7 +54,6 @@ const InheritanceReportTemplate: ApplicationTemplate<
   institution: m.institution,
   dataSchema: inheritanceReportSchema,
   translationNamespaces: [configuration.translation],
-  featureFlag: Features.inheritanceReport,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.prerequisites,
@@ -64,12 +67,25 @@ const InheritanceReportTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
-              formLoader: async () => {
+              formLoader: async ({ featureFlagClient }) => {
+                const featureFlags = await getApplicationFeatureFlags(
+                  featureFlagClient as FeatureFlagClient,
+                )
+
                 const getForm = await import('../forms/prerequisites').then(
                   (val) => val.getForm,
                 )
 
-                return getForm()
+                return getForm({
+                  allowEstateApplication:
+                    featureFlags[
+                      InheritanceReportFeatureFlags.AllowEstateApplication
+                    ],
+                  allowPrepaidApplication:
+                    featureFlags[
+                      InheritanceReportFeatureFlags.AllowPrepaidApplication
+                    ],
+                })
               },
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',

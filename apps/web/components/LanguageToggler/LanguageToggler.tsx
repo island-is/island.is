@@ -61,7 +61,14 @@ export const LanguageToggler = ({
       if (pagePath === '/404') {
         return setShowDialog(true)
       } else {
-        return Router.push(pagePath)
+        const queryParamsString = new URLSearchParams(
+          queryParams?.[otherLanguage],
+        ).toString()
+        return Router.push(
+          `${pagePath}${
+            queryParamsString.length > 0 ? '?' + queryParamsString : ''
+          }`,
+        )
       }
     }
 

@@ -267,15 +267,36 @@ export const isProcessingStepValidIndictments = (
       return validate([[defendant.defendantPlea, ['empty']]]).isValid
     })
 
+  const hasCivilClaimSelected =
+    workingCase.hasCivilClaims !== null &&
+    workingCase.hasCivilClaims !== undefined
+
+  const allCivilClaimantsAreValid = workingCase.hasCivilClaims
+    ? workingCase.civilClaimants?.every(
+        (civilClaimant) =>
+          civilClaimant.name &&
+          (civilClaimant.noNationalId ||
+            (civilClaimant.nationalId &&
+              civilClaimant.nationalId.replace('-', '').length === 10)),
+      )
+    : true
+
   return Boolean(
-    workingCase.prosecutor && workingCase.court && defendantsAreValid(),
+    workingCase.prosecutor &&
+      workingCase.court &&
+      hasCivilClaimSelected &&
+      allCivilClaimantsAreValid &&
+      defendantsAreValid(),
   )
 }
 
 export const isTrafficViolationStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  return Boolean(workingCase.demands)
+  return Boolean(
+    workingCase.demands &&
+      (!workingCase.hasCivilClaims || workingCase.civilDemands),
+  )
 }
 
 export const isPoliceDemandsStepValidRC = (workingCase: Case): boolean => {
@@ -448,6 +469,8 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
     workingCase.defendants?.every((defendant) => {
       return (
         defendant.defenderChoice === DefenderChoice.WAIVE ||
+        defendant.defenderChoice === DefenderChoice.DELAY ||
+        !defendant.defenderChoice ||
         validate([
           [defendant.defenderName, ['empty']],
           [defendant.defenderEmail, ['email-format']],
@@ -560,12 +583,9 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
 
 export const isCaseFilesStepValidIndictments = (workingCase: Case): boolean => {
   return Boolean(
-    (isTrafficViolationCase(workingCase) ||
+    isTrafficViolationCase(workingCase) ||
       workingCase.caseFiles?.some(
         (file) => file.category === CaseFileCategory.INDICTMENT,
-      )) &&
-      workingCase.caseFiles?.some(
-        (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
       ),
   )
 }

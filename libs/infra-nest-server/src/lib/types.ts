@@ -49,6 +49,13 @@ export type RunServerOptions = {
   enableVersioning?: boolean
 
   /**
+   * Hook to run before server is started.
+   * @param app The nest application instance.
+   * @returns a promise that resolves when the hook is done.
+   */
+  beforeServerStart?: (app: INestApplication) => void
+
+  /**
    * Configures metrics collection and starts metric server. Default: true.
    */
   collectMetrics?: boolean

@@ -61,6 +61,11 @@ export const m = defineMessages({
     defaultMessage: 'Dánarbú',
     description: '',
   },
+  preDataCollectionApplicationForDefaultTooltip: {
+    id: 'ir.application:preDataCollectionApplicationForDefaultTooltip',
+    defaultMessage: 'Ekki er búið að opna fyrir umsóknir af þessari gerð.',
+    description: '',
+  },
   // Application begin
   applicationName: {
     id: 'ir.application:applicationName',
@@ -420,7 +425,7 @@ export const m = defineMessages({
     description: '',
   },
   realEstateDescriptionPrePaid: {
-    id: 'ir.application:realEstateDescriptionPrePaid',
+    id: 'ir.application:realEstateDescriptionPrePaid#markdown',
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
     description: '',
   },

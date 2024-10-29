@@ -93,8 +93,7 @@ export const HearingArrangements = () => {
     [formatMessage, router, setWorkingCase, transitionCase, workingCase],
   )
 
-  const stepIsValid =
-    isHearingArrangementsStepValidRC(workingCase) || isTransitioningCase
+  const stepIsValid = isHearingArrangementsStepValidRC(workingCase)
 
   return (
     <PageLayout

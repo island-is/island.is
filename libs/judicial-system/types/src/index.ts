@@ -6,13 +6,22 @@ export {
   SubpoenaType,
   DefendantPlea,
   ServiceRequirement,
+  ServiceStatus,
+  isSuccessfulServiceStatus,
+  isFailedServiceStatus,
 } from './lib/defendant'
 export { InstitutionType } from './lib/institution'
-export { NotificationType } from './lib/notification'
+export {
+  CaseNotificationType,
+  SubpoenaNotificationType,
+  NotificationType,
+  InstitutionNotificationType,
+  NotificationDispatchType,
+} from './lib/notification'
 export type { Institution } from './lib/institution'
 export { EventType } from './lib/eventLog'
 export { DateType } from './lib/dateLog'
-export { CommentType } from './lib/comment'
+export { StringType } from './lib/caseString'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
 
@@ -96,7 +105,7 @@ export {
   offenseSubstances,
 } from './lib/indictmentCount'
 
-export { type Lawyer, mapToLawyer } from './lib/defender'
+export { type Lawyer, mapToLawyer, AdvocateType } from './lib/advocate'
 
 export type { SubstanceMap } from './lib/indictmentCount'
 

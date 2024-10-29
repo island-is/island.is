@@ -2,21 +2,24 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Button } from '@island.is/island-ui/core'
+import { Accordion, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isDefenceUser,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
   IndictmentCaseScheduledCard,
-  IndictmentsLawsBrokenAccordionItem,
+  // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardActiveIndictment,
   InfoCardClosedIndictment,
   PageHeader,
@@ -26,6 +29,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseIndictmentRulingDecision,
   CaseState,
   IndictmentDecision,
   UserRole,
@@ -54,14 +58,47 @@ const IndictmentOverview: FC = () => {
     workingCase.indictmentReviewer?.id === user?.id &&
     Boolean(!workingCase.indictmentReviewDecision)
   const canAddFiles =
+    !isCompletedCase(workingCase.state) &&
     isDefenceUser(user) &&
+    workingCase.defendants?.some(
+      (defendant) =>
+        defendant?.defenderNationalId &&
+        normalizeAndFormatNationalId(user?.nationalId).includes(
+          defendant.defenderNationalId,
+        ),
+    ) &&
     workingCase.indictmentDecision !==
       IndictmentDecision.POSTPONING_UNTIL_VERDICT
+  const shouldDisplayGeneratedPdfFiles =
+    isProsecutionUser(user) ||
+    workingCase.defendants?.some(
+      (defendant) =>
+        defendant.isDefenderChoiceConfirmed &&
+        defendant.caseFilesSharedWithDefender &&
+        defendant.defenderNationalId &&
+        normalizeAndFormatNationalId(user?.nationalId).includes(
+          defendant.defenderNationalId,
+        ),
+    ) ||
+    workingCase.civilClaimants?.some(
+      (civilClaimant) =>
+        civilClaimant.hasSpokesperson &&
+        civilClaimant.isSpokespersonConfirmed &&
+        civilClaimant.caseFilesSharedWithSpokesperson &&
+        civilClaimant.spokespersonNationalId &&
+        normalizeAndFormatNationalId(user?.nationalId).includes(
+          civilClaimant.spokespersonNationalId,
+        ),
+    )
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
+
+  const hasLawsBroken = lawsBroken.size > 0
+  const hasMergeCases =
+    workingCase.mergedCases && workingCase.mergedCases.length > 0
 
   return (
     <PageLayout
@@ -110,27 +147,49 @@ const IndictmentOverview: FC = () => {
           {caseIsClosed ? (
             <InfoCardClosedIndictment
               displayAppealExpirationInfo={
-                user?.role === UserRole.DEFENDER ||
-                workingCase.indictmentReviewer?.id === user?.id
+                workingCase.indictmentRulingDecision ===
+                  CaseIndictmentRulingDecision.RULING &&
+                (user?.role === UserRole.DEFENDER ||
+                  workingCase.indictmentReviewer?.id === user?.id)
               }
             />
           ) : (
             <InfoCardActiveIndictment />
           )}
         </Box>
-        {lawsBroken.size > 0 && (
+        {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
-            <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            {/* 
+            NOTE: Temporarily hidden while list of laws broken is not complete in
+            indictment cases
+            
+            {hasLawsBroken && (
+              <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
+            )} */}
+            {hasMergeCases && (
+              <Accordion>
+                {workingCase.mergedCases?.map((mergedCase) => (
+                  <Box key={mergedCase.id}>
+                    <ConnectedCaseFilesAccordionItem
+                      connectedCaseParentId={workingCase.id}
+                      connectedCase={mergedCase}
+                      displayGeneratedPDFs={shouldDisplayGeneratedPdfFiles}
+                    />
+                  </Box>
+                ))}
+              </Accordion>
+            )}
           </Box>
         )}
-        {workingCase.caseFiles && (
-          <Box
-            component="section"
-            marginBottom={shouldDisplayReviewDecision || canAddFiles ? 5 : 10}
-          >
-            <IndictmentCaseFilesList workingCase={workingCase} />
-          </Box>
-        )}
+        <Box
+          component="section"
+          marginBottom={shouldDisplayReviewDecision || canAddFiles ? 5 : 10}
+        >
+          <IndictmentCaseFilesList
+            workingCase={workingCase}
+            displayGeneratedPDFs={shouldDisplayGeneratedPdfFiles}
+          />
+        </Box>
         {canAddFiles && (
           <Box display="flex" justifyContent="flexEnd" marginBottom={10}>
             <Button

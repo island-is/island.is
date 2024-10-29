@@ -12,6 +12,11 @@ export const accidentLocation = {
       defaultMessage: 'Hvar gerðist slysið?',
       description: 'Accident location section title',
     },
+    listTitle: {
+      id: 'an.application:accidentLocation.listTitle',
+      defaultMessage: 'Staðsetning',
+      description: 'Accident location list title',
+    },
     description: {
       id: 'an.application:accidentLocation.description',
       defaultMessage: 'Vinsamlegast veldu hvar slysið átti sér stað',

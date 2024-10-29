@@ -13,6 +13,8 @@ export {
   TenantDto,
   PaginatedDelegationProviderDto,
   DelegationProviderDto,
+  DelegationAdminApi,
+  DelegationAdminCustomDto,
 } from '../gen/fetch'
 export * from './lib/apis'
 export * from './lib/auth-admin-api-client.config'

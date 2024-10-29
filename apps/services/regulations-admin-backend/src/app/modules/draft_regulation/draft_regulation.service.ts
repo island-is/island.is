@@ -28,9 +28,9 @@ import {
   ShippedSummary,
   TaskListType,
 } from '@island.is/regulations/admin'
-import { Kennitala, RegQueryName } from '@island.is/regulations'
+import { Kennitala, MinistrySlug, RegQueryName } from '@island.is/regulations'
 import * as kennitala from 'kennitala'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import type { User } from '@island.is/auth-nest-tools'
 
 const sortImpacts = (
@@ -54,7 +54,7 @@ export class DraftRegulationService {
     private readonly regulationsService: RegulationsService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-    private readonly nationalRegistryApi: NationalRegistryClientService,
+    private readonly nationalRegistryApi: NationalRegistryV3ClientService,
   ) {}
 
   async getAll(user?: User, page = 1): Promise<TaskListType> {
@@ -255,13 +255,20 @@ export class DraftRegulationService {
   ): Promise<DraftRegulationModel> {
     this.logger.debug('Creating a new DraftRegulation')
 
+    // If user is in delegation, use actor. Else use user.
+    let creatorNationalId = user?.nationalId
+    if (user?.actor) {
+      creatorNationalId = user.actor.nationalId
+      // If the user is in delegation from a valid ministry, add ministry to create?
+    }
+
     const createData: Partial<DraftRegulationModel> = {
       drafting_status: 'draft',
       title: '',
       text: '',
       drafting_notes: '',
       type: create.type,
-      authors: [user?.nationalId as Kennitala],
+      authors: [creatorNationalId as Kennitala],
     }
 
     return this.draftRegulationModel.create(createData)
@@ -337,12 +344,14 @@ export class DraftRegulationService {
 
       if (!author) {
         try {
-          const person = await this.nationalRegistryApi.getIndividual(
+          const person = await this.nationalRegistryApi.getAllDataIndividual(
             nationalId,
+            false,
           )
-          if (person?.name) {
+
+          if (person?.nafn) {
             author = {
-              name: person.name,
+              name: person.nafn,
               authorId: nationalId,
             }
             await this.draftAuthorService.create(author)

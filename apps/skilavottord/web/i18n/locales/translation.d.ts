@@ -273,6 +273,24 @@ export interface Deregister {
   success: string
   error: CompletedError
   currentMileage: string
+  numberplate: NumberPlate
+}
+
+export interface NumberPlate {
+  sectionTitle: string
+  alert: DeregisteredMessages
+  count: string
+  lost: string
+  missingInfo: string
+}
+
+export interface DeregisteredMessages {
+  info: Message
+  warning: Message
+}
+export interface Message {
+  title: string
+  message: string
 }
 
 export interface DeregisterButtons {

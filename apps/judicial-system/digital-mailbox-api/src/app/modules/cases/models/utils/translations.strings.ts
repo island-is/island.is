@@ -11,6 +11,7 @@ type Translations = {
     court: string
     courtCaseNumber: string
     courtCeremony: string
+    courtContactInfo: string
     date: string
     defendant: string
     defender: string
@@ -19,6 +20,7 @@ type Translations = {
     institution: string
     indictment: string
     judge: string
+    districtCourtAssistant: string
     location: string
     name: string
     nationalId: string
@@ -29,6 +31,7 @@ type Translations = {
     prosecutorsOffice: string
     subpoena: string
     subpoenaSent: string
+    subpoenaServed: string
     type: string
     waiveRightToCounsel: string
   }
@@ -45,6 +48,8 @@ const translations: Translations = {
     court: 'Court',
     courtCaseNumber: 'Case number',
     courtCeremony: 'Court ceremony',
+    courtContactInfo:
+      'Please contact the court if you wish to change your choice of defender',
     date: 'Date',
     defendant: 'Defendant',
     defender: 'Defender',
@@ -53,6 +58,7 @@ const translations: Translations = {
     institution: 'Institution',
     indictment: 'Indictment',
     judge: 'Judge',
+    districtCourtAssistant: 'Assistant judge',
     location: 'Location',
     name: 'Name',
     nationalId: 'National ID',
@@ -63,6 +69,8 @@ const translations: Translations = {
     prosecutorsOffice: 'Institution',
     subpoena: 'Subpoena',
     subpoenaSent: 'Subpoena sent',
+    subpoenaServed:
+      'Confirmation of subpoena service has been sent to the police and court',
     type: 'Type',
     waiveRightToCounsel: 'Right to counsel waived',
   },
@@ -76,6 +84,8 @@ const translations: Translations = {
     court: 'Dómstóll',
     courtCaseNumber: 'Málsnúmer héraðsdóms',
     courtCeremony: 'Dómsathöfn',
+    courtContactInfo:
+      'Vinsamlegast hafið samband við dómstól til að breyta verjanda vali',
     date: 'Dagsetning',
     defendant: 'Varnaraðili',
     defender: 'Verjandi',
@@ -84,6 +94,7 @@ const translations: Translations = {
     institution: 'Embætti',
     indictment: 'Ákæra',
     judge: 'Dómari',
+    districtCourtAssistant: 'Aðstoðarmaður dómara',
     location: 'Staður',
     name: 'Nafn',
     nationalId: 'Kennitala',
@@ -94,6 +105,8 @@ const translations: Translations = {
     prosecutorsOffice: 'Embætti',
     subpoena: 'Fyrirkall',
     subpoenaSent: 'Fyrirkall sent',
+    subpoenaServed:
+      'Staðfesting á móttöku hefur verið send á lögreglu og dómstóla',
     type: 'Tegund',
     waiveRightToCounsel: 'Ekki er óskað eftir verjanda',
   },

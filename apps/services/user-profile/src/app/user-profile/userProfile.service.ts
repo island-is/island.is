@@ -63,6 +63,14 @@ export class UserProfileService {
 
   async addDeviceToken(body: DeviceTokenDto, user: User) {
     try {
+      const token = await this.userDeviceTokensModel.findOne({
+        where: { nationalId: user.nationalId, deviceToken: body.deviceToken },
+      })
+
+      if (token) {
+        return token
+      }
+
       return await this.userDeviceTokensModel.create({
         ...body,
         nationalId: user.nationalId,

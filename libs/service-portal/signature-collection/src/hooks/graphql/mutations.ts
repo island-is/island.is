@@ -18,3 +18,33 @@ export const unSignList = gql`
     }
   }
 `
+export const addConstituency = gql`
+  mutation SignatureCollectionAddAreas(
+    $inputAdd: SignatureCollectionAddListsInput!
+  ) {
+    signatureCollectionAddAreas(input: $inputAdd) {
+      success
+      reasons
+    }
+  }
+`
+
+export const uploadPaperSignature = gql`
+  mutation SignatureCollectionUploadPaperSignature(
+    $input: SignatureCollectionUploadPaperSignatureInput!
+  ) {
+    signatureCollectionUploadPaperSignature(input: $input) {
+      success
+      reasons
+    }
+  }
+`
+export const updatePaperSignaturePageNumber = gql`
+  mutation SignatureCollectionUpdatePaperSignaturePageNumber(
+    $input: SignatureCollectionSignatureUpdateInput!
+  ) {
+    signatureCollectionUpdatePaperSignaturePageNumber(input: $input) {
+      success
+    }
+  }
+`

@@ -1,10 +1,18 @@
 import React, { FC } from 'react'
-import { Text, Table as T, Column, Columns } from '@island.is/island-ui/core'
+import {
+  Text,
+  Table as T,
+  Column,
+  Columns,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { tableStyles } from '../../utils/utils'
+import { EmptyTable } from '../EmptyTable/EmptyTable'
+import { MessageDescriptor } from 'react-intl'
 
 interface TableItem {
   title: string
-  value: string
+  value: string | React.ReactNode
   detail?: string
 }
 
@@ -13,6 +21,8 @@ interface Props {
   title?: string
   subtitle?: string
   mt?: boolean
+  loading?: boolean
+  emptyMessage?: MessageDescriptor
 }
 
 export const TableGrid: FC<React.PropsWithChildren<Props>> = ({
@@ -20,6 +30,8 @@ export const TableGrid: FC<React.PropsWithChildren<Props>> = ({
   title,
   subtitle,
   mt,
+  loading,
+  emptyMessage,
 }) => {
   return (
     <T.Table box={mt ? { marginTop: 'containerGutter' } : undefined}>
@@ -36,38 +48,48 @@ export const TableGrid: FC<React.PropsWithChildren<Props>> = ({
         </T.Row>
       </T.Head>
       <T.Body>
-        {dataArray.map((row, ii) => (
-          <T.Row key={`row-${ii}`}>
-            {row.map(
-              (rowitem, iii) =>
-                rowitem && (
-                  <T.Data
-                    key={`rowitem-${iii}`}
-                    colSpan={2}
-                    style={tableStyles}
-                  >
-                    <Columns collapseBelow="lg" space={2}>
-                      <Column>
-                        <Text
-                          title={rowitem.detail}
-                          variant="medium"
-                          fontWeight="semiBold"
-                          as="span"
-                        >
-                          {rowitem.title}
-                        </Text>
-                      </Column>
-                      <Column>
-                        <Text variant="medium" title={rowitem.detail}>
-                          {rowitem.value}
-                        </Text>
-                      </Column>
-                    </Columns>
-                  </T.Data>
-                ),
-            )}
-          </T.Row>
-        ))}
+        {loading && <EmptyTable message={emptyMessage} loading={loading} />}
+        {!loading &&
+          dataArray.map((row, ii) => (
+            <T.Row key={`row-${ii}`}>
+              {row.map(
+                (rowitem, iii) =>
+                  rowitem && (
+                    <T.Data
+                      key={`rowitem-${iii}`}
+                      colSpan={2}
+                      style={tableStyles}
+                    >
+                      <Columns alignY="center" collapseBelow="lg" space={2}>
+                        <Column>
+                          <Text
+                            title={rowitem.detail}
+                            variant="medium"
+                            fontWeight="semiBold"
+                            as="span"
+                          >
+                            {rowitem.title}
+                          </Text>
+                        </Column>
+                        <Column>
+                          <Text
+                            as={
+                              typeof rowitem.value === 'string'
+                                ? undefined
+                                : 'span'
+                            }
+                            variant="medium"
+                            title={rowitem.detail}
+                          >
+                            {rowitem.value}
+                          </Text>
+                        </Column>
+                      </Columns>
+                    </T.Data>
+                  ),
+              )}
+            </T.Row>
+          ))}
       </T.Body>
     </T.Table>
   )

@@ -55,13 +55,12 @@ export const Button = forwardRef<
           {
             [styles.truncate]: truncate,
             [styles.size[size]]:
-              variant !== 'utility' &&
-              !circle &&
-              !(variant === 'text' && size === 'small'),
+              variant !== 'utility' && !circle && variant !== 'text',
             [styles.fluid]: fluid,
             [styles.nowrap]: nowrap,
             [styles.size.utility]: variant === 'utility',
             [styles.size.textSmall]: variant === 'text' && size === 'small',
+            [styles.size.text]: variant === 'text',
             [styles.circleSizes[size]]: circle,
             [styles.circle]: circle,
             [styles.padding[size]]:
@@ -102,7 +101,11 @@ export const Button = forwardRef<
             {preTextIcon && (
               <ButtonIcon icon={preTextIcon} type={preTextIconType} preText />
             )}
-            {children}
+            {typeof children === 'string' && variant !== 'text' ? (
+              <span>{children}</span>
+            ) : (
+              children
+            )}
             {icon && <ButtonIcon icon={icon} type={iconType} />}
           </>
         )}

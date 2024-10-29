@@ -7,7 +7,6 @@ import {
   Collection,
   CreateParliamentaryCandidacyInput,
   MandateType,
-  ReasonKey,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { errorMessages } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
@@ -16,14 +15,18 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CollectionType } from '@island.is/clients/signature-collection'
 import { CreateListSchema } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
-import { FetchError } from '@island.is/clients/middlewares'
-
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { isCompany } from 'kennitala'
+import { coreErrorMessages } from '@island.is/application/core'
+import { generateApplicationSubmittedEmail } from './emailGenerators'
+import { AuthDelegationType } from '@island.is/shared/types'
 @Injectable()
 export class ParliamentaryListCreationService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly _sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private signatureCollectionClientService: SignatureCollectionClientService,
+    private nationalRegisryClientService: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.PARLIAMENTARY_LIST_CREATION)
   }
@@ -49,8 +52,45 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
         405,
       )
     }
+    // Candidates are stored on user national id never the actors so should be able to check just the auth national id
+
+    if (
+      currentCollection.candidates.some(
+        (c) => c.nationalId.replace('-', '') === auth.nationalId,
+      )
+    ) {
+      throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
+    }
 
     return currentCollection
+  }
+
+  async parliamentaryIdentity({ auth }: TemplateApiModuleActionProps) {
+    const contactNationalId = isCompany(auth.nationalId)
+      ? auth.actor?.nationalId ?? auth.nationalId
+      : auth.nationalId
+
+    const identity = await this.nationalRegisryClientService.getIndividual(
+      contactNationalId,
+    )
+
+    if (!identity) {
+      throw new TemplateApiError(
+        coreErrorMessages.nationalIdNotFoundInNationalRegistrySummary,
+        500,
+      )
+    }
+
+    return identity
+  }
+
+  async delegatedToCompany({ auth }: TemplateApiModuleActionProps) {
+    const data = {
+      delegatedToCompany:
+        auth.delegationType?.includes(AuthDelegationType.ProcurationHolder) ??
+        false,
+    }
+    return data
   }
 
   async submit({ application, auth }: TemplateApiModuleActionProps) {
@@ -59,7 +99,12 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
       .parliamentaryCollection.data as Collection
 
     const input: CreateParliamentaryCandidacyInput = {
-      owner: answers.applicant,
+      owner: {
+        ...answers.applicant,
+        nationalId: application?.applicantActors?.[0]
+          ? application.applicant
+          : answers.applicant.nationalId,
+      },
       agents: (answers.managers ?? [])
         .map((manager) => ({
           nationalId: manager.manager.nationalId,
@@ -107,6 +152,19 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
           500,
         )
       })
+
+    try {
+      // Use the shared service to send an email using a custom email generator
+      await this.sharedTemplateAPIService.sendEmail(
+        generateApplicationSubmittedEmail,
+        application,
+      )
+    } catch (e) {
+      this.logger.warn(
+        'Could not send submit email to admins for parlimentary list creation application: ',
+        application.id,
+      )
+    }
 
     return {
       success: true,

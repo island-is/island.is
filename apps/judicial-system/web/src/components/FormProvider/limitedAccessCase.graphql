@@ -10,10 +10,13 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     caseFiles {
       id
       created
+      modified
       name
+      type
       category
+      state
       key
-      policeCaseNumber
+      size
       userGeneratedFilename
       displayDate
       submittedBy
@@ -31,7 +34,28 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       defenderEmail
       defenderPhoneNumber
       defenderChoice
+      defendantPlea
+      requestedDefenderChoice
+      requestedDefenderNationalId
+      requestedDefenderName
+      isDefenderChoiceConfirmed
+      caseFilesSharedWithDefender
+      serviceRequirement
       verdictViewDate
+      verdictAppealDeadline
+      isVerdictAppealDeadlineExpired
+      subpoenaType
+      subpoenas {
+        id
+        created
+        serviceStatus
+        serviceDate
+        servedBy
+        comment
+        defenderNationalId
+        caseId
+        subpoenaId
+      }
     }
     defenderName
     defenderNationalId
@@ -151,6 +175,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     indictmentRulingDecision
     indictmentCompletedDate
     indictmentReviewDecision
+    indictmentVerdictViewedByAll
+    indictmentVerdictAppealDeadlineExpired
     indictmentReviewer {
       id
       name
@@ -160,6 +186,59 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       created
       eventType
+    }
+    mergeCase {
+      id
+      courtCaseNumber
+    }
+    indictmentCounts {
+      id
+      caseId
+      policeCaseNumber
+      created
+      modified
+      vehicleRegistrationNumber
+      offenses
+      substances
+      lawsBroken
+      incidentDescription
+      legalArguments
+    }
+    mergedCases {
+      id
+      courtCaseNumber
+      type
+      caseFiles {
+        id
+        created
+        modified
+        name
+        type
+        category
+        state
+        key
+        size
+        userGeneratedFilename
+        displayDate
+        submittedBy
+      }
+      policeCaseNumbers
+      indictmentSubtypes
+    }
+    hasCivilClaims
+    civilClaimants {
+      id
+      caseId
+      name
+      nationalId
+      noNationalId
+      hasSpokesperson
+      spokespersonIsLawyer
+      spokespersonNationalId
+      spokespersonName
+      spokespersonEmail
+      spokespersonPhoneNumber
+      caseFilesSharedWithSpokesperson
     }
   }
 }

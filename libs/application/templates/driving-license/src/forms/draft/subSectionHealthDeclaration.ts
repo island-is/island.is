@@ -3,19 +3,16 @@ import {
   buildCustomField,
   buildSubSection,
   buildAlertMessageField,
-  hasYes,
   buildDescriptionField,
   YES,
 } from '@island.is/application/core'
-import { NationalRegistryUser } from '@island.is/api/schema'
-import { info } from 'kennitala'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
 import {
   hasHealthRemarks,
   needsHealthCertificateCondition,
 } from '../../lib/utils/formUtils'
-import { BE } from '../../lib/constants'
+import { BE, B_FULL_RENEWAL_65 } from '../../lib/constants'
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
@@ -25,22 +22,15 @@ export const subSectionHealthDeclaration = buildSubSection({
     buildMultiField({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
-      description: m.healthDeclarationSubTitle,
+      condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
       space: 2,
-      condition: (answers, externalData) => {
-        if ((answers.fakeData as any).age) {
-          return (answers.fakeData as any).age < 65
-        }
-
-        return (
-          !hasYes(answers?.drivingLicenseInOtherCountry) &&
-          info(
-            (externalData.nationalRegistry.data as NationalRegistryUser)
-              .nationalId,
-          ).age < 65
-        )
-      },
       children: [
+        buildDescriptionField({
+          id: 'healthDeclarationDescription',
+          title: '',
+          description: m.healthDeclarationSubTitle,
+          marginBottom: 2,
+        }),
         buildCustomField({
           id: 'remarks',
           title: '',
@@ -173,30 +163,15 @@ export const subSectionHealthDeclaration = buildSubSection({
         }),
       ],
     }),
-    /* Different set of the Health Declaration screen for people over the age of 65 */
     buildMultiField({
       id: 'healthDeclarationAge65',
       title: m.healthDeclarationMultiFieldTitle,
-      description: m.healthDeclarationAge65MultiFieldSubTitle,
-      space: 1,
-      condition: (answers, externalData) => {
-        if ((answers.fakeData as any).age) {
-          return (answers.fakeData as any).age >= 65
-        }
-
-        return (
-          !hasYes(answers?.drivingLicenseInOtherCountry) &&
-          info(
-            (externalData.nationalRegistry.data as NationalRegistryUser)
-              .nationalId,
-          ).age >= 65
-        )
-      },
+      condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
       children: [
         buildDescriptionField({
-          id: 'healthDeclarationAge65Description',
+          id: 'healthDeclarationDescription65',
           title: '',
-          description: 'Þetta view er í vinnslu',
+          description: m.healthDeclarationMultiField65Description,
         }),
       ],
     }),

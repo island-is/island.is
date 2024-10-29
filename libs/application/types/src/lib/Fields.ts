@@ -15,7 +15,7 @@ import { CallToAction } from './StateMachine'
 import { Colors, theme } from '@island.is/island-ui/theme'
 import { Condition } from './Condition'
 import { FormatInputValueFunction } from 'react-number-format'
-import React from 'react'
+import React, { CSSProperties } from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
 import { Locale } from '@island.is/shared/types'
@@ -94,8 +94,17 @@ export type TableRepeaterItem = {
         application: Application,
         activeField?: Record<string, string>,
       ) => boolean)
+  disabled?:
+    | boolean
+    | ((
+        application: Application,
+        activeField?: Record<string, string>,
+      ) => boolean)
   updateValueObj?: {
-    valueModifier: (activeField?: Record<string, string>) => unknown
+    valueModifier: (
+      application: Application,
+      activeField?: Record<string, string>,
+    ) => unknown
     watchValues:
       | string
       | string[]
@@ -223,6 +232,9 @@ export enum FieldTypes {
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
   STATIC_TABLE = 'STATIC_TABLE',
+  ACCORDION = 'ACCORDION',
+  BANK_ACCOUNT = 'BANK_ACCOUNT',
+  SLIDER = 'SLIDER',
 }
 
 export enum FieldComponents {
@@ -254,6 +266,9 @@ export enum FieldComponents {
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
   STATIC_TABLE = 'StaticTableFormField',
+  ACCORDION = 'AccordionFormField',
+  BANK_ACCOUNT = 'BankAccountFormField',
+  SLIDER = 'SliderFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -350,6 +365,7 @@ export interface TextField extends BaseField {
   maxLength?: number
   max?: number
   min?: number
+  step?: string
   placeholder?: FormText
   variant?: TextFieldVariant
   backgroundColor?: InputBackgroundColor
@@ -369,7 +385,7 @@ export interface PhoneField extends BaseField {
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
   allowedCountryCodes?: string[]
-  disableDropdown?: boolean
+  enableCountrySelector?: boolean
   required?: boolean
   onChange?: (...event: any[]) => void
 }
@@ -502,6 +518,30 @@ export interface ImageField extends BaseField {
   imagePosition?: ImagePositionProps | Array<ImagePositionProps>
 }
 
+export type AccordionItem = {
+  itemTitle: FormText
+  itemContent: FormText
+}
+
+export interface AccordionField extends BaseField {
+  readonly type: FieldTypes.ACCORDION
+  component: FieldComponents.ACCORDION
+  accordionItems:
+    | Array<AccordionItem>
+    | ((application: Application) => Array<AccordionItem>)
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+}
+
+export interface BankAccountField extends BaseField {
+  readonly type: FieldTypes.BANK_ACCOUNT
+  component: FieldComponents.BANK_ACCOUNT
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+}
+
 export interface PdfLinkButtonField extends BaseField {
   readonly type: FieldTypes.PDF_LINK_BUTTON
   component: FieldComponents.PDF_LINK_BUTTON
@@ -539,7 +579,10 @@ type Modify<T, R> = Omit<T, keyof R> & R
 export type ActionCardListField = BaseField & {
   readonly type: FieldTypes.ACTION_CARD_LIST
   component: FieldComponents.ACTION_CARD_LIST
-  items: (application: Application) => ApplicationActionCardProps[]
+  items: (
+    application: Application,
+    lang: Locale,
+  ) => ApplicationActionCardProps[]
   space?: BoxProps['paddingTop']
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
@@ -548,6 +591,7 @@ export type ActionCardListField = BaseField & {
 export type ApplicationActionCardProps = Modify<
   ActionCardProps,
   {
+    eyebrow?: string
     heading?: FormText
     text?: FormText
     tag?: Modify<ActionCardProps['tag'], { label: FormText }>
@@ -640,6 +684,43 @@ export interface StaticTableField extends BaseField {
     | ((application: Application) => { label: StaticText; value: StaticText }[])
 }
 
+export interface SliderField extends BaseField {
+  readonly type: FieldTypes.SLIDER
+  readonly color?: Colors
+  component: FieldComponents.SLIDER
+  min: number
+  max: MaybeWithApplicationAndField<number>
+  step?: number
+  snap?: boolean
+  trackStyle?: CSSProperties
+  calculateCellStyle: (index: number) => CSSProperties
+  showLabel?: boolean
+  showMinMaxLabels?: boolean
+  showRemainderOverlay?: boolean
+  showProgressOverlay?: boolean
+  showToolTip?: boolean
+  label: {
+    singular: FormText
+    plural: FormText
+  }
+  rangeDates?: {
+    start: {
+      date: string
+      message: string
+    }
+    end: {
+      date: string
+      message: string
+    }
+  }
+  currentIndex?: number
+  onChange?: (index: number) => void
+  onChangeEnd?(index: number): void
+  labelMultiplier?: number
+  id: string
+  saveAsString?: boolean
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -671,3 +752,6 @@ export type Field =
   | HiddenInputField
   | FindVehicleField
   | StaticTableField
+  | AccordionField
+  | BankAccountField
+  | SliderField

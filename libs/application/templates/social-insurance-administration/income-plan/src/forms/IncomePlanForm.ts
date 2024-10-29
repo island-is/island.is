@@ -21,8 +21,12 @@ import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-component
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
 import {
+  DIVIDENDS_IN_FOREIGN_BANKS,
   FOREIGN_BASIC_PENSION,
+  FOREIGN_INCOME,
+  FOREIGN_PENSION,
   INCOME,
+  INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS,
   ISK,
   RatioType,
   YES,
@@ -109,7 +113,16 @@ export const IncomePlanForm: Form = buildForm({
                   width: 'half',
                   isSearchable: true,
                   updateValueObj: {
-                    valueModifier: (_) => '',
+                    valueModifier: (application, activeField) => {
+                      const options = getTypesOptions(
+                        application.externalData,
+                        activeField?.incomeCategory,
+                      )
+                      const selectedOption = options.find(
+                        (option) => option.value === activeField?.incomeType,
+                      )?.value
+                      return selectedOption ?? null
+                    },
                     watchValues: 'incomeCategory',
                   },
                   options: (application, activeField) => {
@@ -125,10 +138,15 @@ export const IncomePlanForm: Form = buildForm({
                   placeholder: incomePlanFormMessage.incomePlan.selectCurrency,
                   isSearchable: true,
                   updateValueObj: {
-                    valueModifier: (activeField) => {
+                    valueModifier: (_, activeField) => {
                       const defaultCurrency =
-                        activeField?.incomeType === FOREIGN_BASIC_PENSION
-                          ? ''
+                        activeField?.incomeType === FOREIGN_BASIC_PENSION ||
+                        activeField?.incomeType === FOREIGN_PENSION ||
+                        activeField?.incomeType === FOREIGN_INCOME ||
+                        activeField?.incomeType ===
+                          INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS ||
+                        activeField?.incomeType === DIVIDENDS_IN_FOREIGN_BANKS
+                          ? null
                           : ISK
 
                       return defaultCurrency
@@ -141,7 +159,12 @@ export const IncomePlanForm: Form = buildForm({
                     )
 
                     const hideISKCurrency =
-                      activeField?.incomeType === FOREIGN_BASIC_PENSION
+                      activeField?.incomeType === FOREIGN_BASIC_PENSION ||
+                      activeField?.incomeType === FOREIGN_PENSION ||
+                      activeField?.incomeType === FOREIGN_INCOME ||
+                      activeField?.incomeType ===
+                        INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS ||
+                      activeField?.incomeType === DIVIDENDS_IN_FOREIGN_BANKS
                         ? ISK
                         : ''
 
@@ -171,13 +194,25 @@ export const IncomePlanForm: Form = buildForm({
                   type: 'number',
                   displayInTable: false,
                   currency: true,
-                  defaultValue: (_, activeField) => {
-                    if (activeField?.incomePerYear) {
-                      return Math.round(
-                        Number(activeField?.incomePerYear) / 12,
-                      ).toString()
-                    }
-                    return ''
+                  updateValueObj: {
+                    valueModifier: (_, activeField) => {
+                      const unevenAndEmploymentIncome =
+                        activeField?.unevenIncomePerYear?.[0] !== YES ||
+                        (activeField?.incomeCategory !== INCOME &&
+                          activeField?.unevenIncomePerYear?.[0] === YES)
+
+                      if (
+                        activeField?.income === RatioType.MONTHLY &&
+                        activeField?.currency !== ISK &&
+                        unevenAndEmploymentIncome
+                      ) {
+                        return Math.round(
+                          Number(activeField?.incomePerYear) / 12,
+                        ).toString()
+                      }
+                      return undefined
+                    },
+                    watchValues: 'income',
                   },
                   suffix: '',
                   condition: (_, activeField) => {
@@ -200,13 +235,25 @@ export const IncomePlanForm: Form = buildForm({
                   type: 'number',
                   displayInTable: false,
                   currency: true,
-                  defaultValue: (_, activeField) => {
-                    if (activeField?.incomePerYear) {
-                      return Math.round(
-                        Number(activeField?.incomePerYear) / 12,
-                      ).toString()
-                    }
-                    return ''
+                  updateValueObj: {
+                    valueModifier: (_, activeField) => {
+                      const unevenAndEmploymentIncome =
+                        activeField?.unevenIncomePerYear?.[0] !== YES ||
+                        (activeField?.incomeCategory !== INCOME &&
+                          activeField?.unevenIncomePerYear?.[0] === YES)
+
+                      if (
+                        activeField?.income === RatioType.MONTHLY &&
+                        activeField?.currency === ISK &&
+                        unevenAndEmploymentIncome
+                      ) {
+                        return Math.round(
+                          Number(activeField?.incomePerYear) / 12,
+                        ).toString()
+                      }
+                      return undefined
+                    },
+                    watchValues: 'income',
                   },
                   suffix: '',
                   condition: (_, activeField) => {
@@ -228,11 +275,11 @@ export const IncomePlanForm: Form = buildForm({
                   width: 'half',
                   type: 'number',
                   currency: true,
-                  readonly: (_, activeField) => {
+                  disabled: (_, activeField) => {
                     return activeField?.income === RatioType.MONTHLY
                   },
                   updateValueObj: {
-                    valueModifier: (activeField) => {
+                    valueModifier: (_, activeField) => {
                       if (
                         activeField?.income === RatioType.MONTHLY &&
                         activeField?.incomeCategory === INCOME &&

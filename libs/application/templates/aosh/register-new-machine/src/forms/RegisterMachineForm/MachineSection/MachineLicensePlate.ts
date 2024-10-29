@@ -1,17 +1,18 @@
 import {
   NO,
   YES,
+  buildAlertMessageField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { information, licensePlate } from '../../../lib/messages'
+import { information, licensePlate, overview } from '../../../lib/messages'
 import { plate110 } from '../../../assets/plates/plate-110-510'
 import { plate200 } from '../../../assets/plates/plate-200-280'
 import { plate155 } from '../../../assets/plates/plate-155-305'
 import { Plate } from '../../../shared/types'
-import { canRegisterToTraffic } from '../../../utils'
+import { canMaybeRegisterToTraffic, canRegisterToTraffic } from '../../../utils'
 
 export const MachineLicensePlate = buildSubSection({
   id: 'streetRegistrationSection',
@@ -24,7 +25,7 @@ export const MachineLicensePlate = buildSubSection({
       description: licensePlate.general.description,
       children: [
         buildRadioField({
-          id: 'streetRegistration.registerToTraffic',
+          id: 'machine.streetRegistration.registerToTraffic',
           title: licensePlate.general.subTitle,
           width: 'half',
           defaultValue: NO,
@@ -40,7 +41,7 @@ export const MachineLicensePlate = buildSubSection({
           ],
         }),
         buildRadioField({
-          id: 'streetRegistration.size',
+          id: 'machine.streetRegistration.size',
           title: '',
           backgroundColor: 'white',
           options: [
@@ -66,12 +67,19 @@ export const MachineLicensePlate = buildSubSection({
           condition: (answers) => {
             const registerToTraffic = getValueViaPath(
               answers,
-              'streetRegistration.registerToTraffic',
+              'machine.streetRegistration.registerToTraffic',
               NO,
             ) as typeof NO | typeof YES
 
             return registerToTraffic === YES
           },
+        }),
+        buildAlertMessageField({
+          id: 'streetRegistration.alertMessage',
+          title: overview.labels.alertMessageTitle,
+          message: overview.labels.alertMessageMessage,
+          alertType: 'warning',
+          condition: (answers) => canMaybeRegisterToTraffic(answers),
         }),
       ],
     }),

@@ -279,6 +279,7 @@ api:
     AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.staging01.devland.is'
     APOLLO_CACHE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
+    AUTH_ADMIN_API_PATH: 'https://identity-server.staging01.devland.is/backend'
     AUTH_ADMIN_API_PATHS: '{"development":"https://identity-server.dev01.devland.is/backend","staging":"https://identity-server.staging01.devland.is/backend"}'
     AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
     AUTH_IDS_API_URL: 'https://identity-server.staging01.devland.is'
@@ -367,7 +368,8 @@ api:
     XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-TEST/EDU/10049/LHI-Protected/brautskraning-v1'
     XROAD_INNA_PATH: 'IS-TEST/GOV/6601241280/MMS-Protected/inna-v1'
     XROAD_INTELLECTUAL_PROPERTIES_PATH: 'IS-TEST/GOV/6501912189/WebAPI-Public/HUG-webAPI/'
-    XROAD_MMS_FRIGG_PATH: 'IS-TEST/GOV/10066/MMS-Protected/frigg-api'
+    XROAD_JUDICIAL_SYSTEM_SP_PATH: 'IS-TEST/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api'
+    XROAD_MMS_FRIGG_PATH: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-service'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-TEST/GOV/6601241280/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-TEST/GOV/6601241280/MMS-Protected/license-api-v1'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
@@ -439,7 +441,6 @@ api:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.staging01.devland.is'
@@ -543,6 +544,7 @@ api:
     UST_PKPASS_API_KEY: '/k8s/api/UST_PKPASS_API_KEY'
     VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS'
     VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY'
+    VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY: '/k8s/api/VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY'
     WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY: '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY'
     WATSON_ASSISTANT_CHAT_FEEDBACK_URL: '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_URL'
     XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
@@ -612,6 +614,7 @@ application-system-api:
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
+    USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
     WORKPOINT_ARBORG_SERVICE_PATH: 'IS-TEST/MUN/10036/Arborg-Protected/tengill-application-v1'
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-TEST/EDU/10056/LBHI-Protected/brautskraning-v1'
     XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: 'IS-TEST/GOV/10047/UA-Protected/kvortun-v1/'
@@ -644,7 +647,7 @@ application-system-api:
     XROAD_HOLAR_UNIVERSITY_PATH: 'IS-TEST/EDU/10055/Holar-Protected/brautskraning-v1'
     XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-TEST/EDU/10049/LHI-Protected/brautskraning-v1'
     XROAD_INNA_PATH: 'IS-TEST/GOV/6601241280/MMS-Protected/inna-v1'
-    XROAD_MMS_FRIGG_PATH: 'IS-TEST/GOV/10066/MMS-Protected/frigg-api'
+    XROAD_MMS_FRIGG_PATH: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-service'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
     XROAD_OFFICIAL_JOURNAL_APPLICATION_PATH: 'IS-TEST/GOV/10014/DMR-Protected/official-journal-application'
@@ -880,7 +883,7 @@ application-system-api-worker:
       cpu: '400m'
       memory: '768Mi'
     requests:
-      cpu: '100m'
+      cpu: '150m'
       memory: '384Mi'
   schedule: '*/30 * * * *'
   secrets:
@@ -946,7 +949,6 @@ application-system-form:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -1014,7 +1016,6 @@ consultation-portal:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -1105,7 +1106,6 @@ download-service:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'api.staging01.devland.is'
@@ -1388,7 +1388,6 @@ island-ui-storybook:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'ui.staging01.devland.is'
@@ -1461,7 +1460,6 @@ license-api:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'license-api-xrd.internal.staging01.devland.is'
@@ -1480,7 +1478,7 @@ license-api:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '15m'
+      cpu: '50m'
       memory: '256Mi'
   secrets:
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
@@ -1555,7 +1553,7 @@ portals-admin:
     scaling:
       metric:
         cpuAverageUtilization: 90
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 8
       replicas:
         max: 30
         min: 2
@@ -1565,7 +1563,6 @@ portals-admin:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -1586,7 +1583,7 @@ portals-admin:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '25m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1606,15 +1603,15 @@ regulations-admin-backend:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
-    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
-    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
-    XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
@@ -1682,6 +1679,7 @@ regulations-admin-backend:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-regulations-admin/IDENTITY_SERVER_CLIENT_SECRET'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
     REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
     REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
@@ -1862,7 +1860,6 @@ service-portal:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
-        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
@@ -1994,7 +1991,7 @@ service-portal-api:
       cpu: '800m'
       memory: '1024Mi'
     requests:
-      cpu: '400m'
+      cpu: '100m'
       memory: '512Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2556,10 +2553,10 @@ skilavottord-web:
     scaling:
       metric:
         cpuAverageUtilization: 90
-        nginxRequestsIrate: 5
+        nginxRequestsIrate: 8
       replicas:
-        max: 3
-        min: 1
+        max: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
   ingress:
@@ -2578,9 +2575,9 @@ skilavottord-web:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 1
-    max: 3
-    min: 1
+    default: 2
+    max: 10
+    min: 2
   resources:
     limits:
       cpu: '200m'
@@ -3070,10 +3067,10 @@ web:
     min: 2
   resources:
     limits:
-      cpu: '400m'
+      cpu: '1000m'
       memory: '768Mi'
     requests:
-      cpu: '200m'
+      cpu: '300m'
       memory: '384Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'

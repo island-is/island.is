@@ -76,6 +76,12 @@ export const formatNationalId = (nationalId?: string | null): string => {
   }
 }
 
+export const normalizeAndFormatNationalId = (
+  nationalId?: string | null,
+): [string, string] => {
+  return [nationalId?.replace(/-/g, '') ?? '', formatNationalId(nationalId)]
+}
+
 export const getInitials = (name?: string | null): string | undefined => {
   if (!name?.trim()) return undefined
 
@@ -124,6 +130,10 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
       return 'Frávísun'
     case CaseIndictmentRulingDecision.CANCELLATION:
       return 'Niðurfelling máls'
+    case CaseIndictmentRulingDecision.MERGE:
+      return 'Sameinað'
+    case CaseIndictmentRulingDecision.WITHDRAWAL:
+      return 'Afturkallað'
     default:
       return 'Ekki skráð'
   }
@@ -131,7 +141,7 @@ export const getHumanReadableCaseIndictmentRulingDecision = (
 
 type CaseTypes = { [c in CaseType]: string }
 const caseTypes: CaseTypes = {
-  // Indicitment cases
+  // Indictment cases
   INDICTMENT: 'ákæra',
   // Restriction cases
   CUSTODY: 'gæsluvarðhald',
@@ -414,4 +424,20 @@ export const readableIndictmentSubtypes = (
 
 export const sanitize = (str: string) => {
   return str.replace(/"/g, '')
+}
+
+export enum Word {
+  AKAERDI = 'AKAERDI',
+}
+export const getWordByGender = (word: Word, gender?: Gender): string | null => {
+  switch (word) {
+    case Word.AKAERDI:
+      return gender === Gender.MALE
+        ? 'ákærði'
+        : gender === Gender.FEMALE
+        ? 'ákærða'
+        : 'ákært'
+    default:
+      return null
+  }
 }

@@ -17,7 +17,12 @@ import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
-import { ParliamentaryCollectionApi, CandidateApi } from '../dataProviders'
+import {
+  ParliamentaryCollectionApi,
+  CandidateApi,
+  ParliamentaryIdentityApi,
+  IsDelegatedToCompanyApi,
+} from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 
 const WeekLifeCycle: StateLifeCycle = {
@@ -76,6 +81,8 @@ const createListTemplate: ApplicationTemplate<
                 UserProfileApi,
                 CandidateApi,
                 ParliamentaryCollectionApi,
+                ParliamentaryIdentityApi,
+                IsDelegatedToCompanyApi,
               ],
             },
           ],

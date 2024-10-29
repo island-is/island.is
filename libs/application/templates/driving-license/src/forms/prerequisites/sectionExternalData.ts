@@ -10,11 +10,13 @@ import {
   UserProfileApi,
   CurrentLicenseApi,
   DrivingAssessmentApi,
+  JurisdictionApi,
   QualityPhotoApi,
   ExistingApplicationApi,
 } from '@island.is/application/types'
 import {
   GlassesCheckApi,
+  MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
 } from '../../dataProviders'
 export const sectionExternalData = buildSubSection({
@@ -57,7 +59,15 @@ export const sectionExternalData = buildSubSection({
           title: '',
         }),
         buildDataProviderItem({
+          provider: JurisdictionApi,
+          title: '',
+        }),
+        buildDataProviderItem({
           provider: SyslumadurPaymentCatalogApi,
+          title: '',
+        }),
+        buildDataProviderItem({
+          provider: MockableSyslumadurPaymentCatalogApi,
           title: '',
         }),
         buildDataProviderItem({

@@ -11,29 +11,29 @@ import {
   DataProviderBuilderItem,
 } from '@island.is/application/types'
 
-export function buildForm(data: Omit<Form, 'type'>): Form {
+export const buildForm = (data: Omit<Form, 'type'>): Form => {
   return { ...data, type: FormItemTypes.FORM }
 }
 
-export function buildMultiField(data: Omit<MultiField, 'type'>): MultiField {
+export const buildMultiField = (data: Omit<MultiField, 'type'>): MultiField => {
   return { ...data, type: FormItemTypes.MULTI_FIELD }
 }
 
-export function buildRepeater(data: Omit<Repeater, 'type'>): Repeater {
+export const buildRepeater = (data: Omit<Repeater, 'type'>): Repeater => {
   return { ...data, type: FormItemTypes.REPEATER }
 }
 
-export function buildSection(data: Omit<Section, 'type'>): Section {
+export const buildSection = (data: Omit<Section, 'type'>): Section => {
   return { ...data, type: FormItemTypes.SECTION }
 }
 
-export function buildSubSection(data: Omit<SubSection, 'type'>): SubSection {
+export const buildSubSection = (data: Omit<SubSection, 'type'>): SubSection => {
   return { ...data, type: FormItemTypes.SUB_SECTION }
 }
 
-export function buildExternalDataProvider(
+export const buildExternalDataProvider = (
   data: Omit<ExternalDataProvider, 'type' | 'isPartOfRepeater' | 'children'>,
-): ExternalDataProvider {
+): ExternalDataProvider => {
   return {
     ...data,
     isPartOfRepeater: false,
@@ -42,9 +42,9 @@ export function buildExternalDataProvider(
   }
 }
 
-export function buildDataProviderItem(
+export const buildDataProviderItem = (
   data: DataProviderBuilderItem,
-): DataProviderItem {
+): DataProviderItem => {
   return {
     id: data.provider?.externalDataId ?? data.provider?.action ?? '',
     action: data.provider?.actionId,
@@ -56,8 +56,8 @@ export function buildDataProviderItem(
   }
 }
 
-export function buildDataProviderPermissionItem(
+export const buildDataProviderPermissionItem = (
   data: DataProviderPermissionItem,
-): DataProviderPermissionItem {
+): DataProviderPermissionItem => {
   return data
 }

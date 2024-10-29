@@ -4,9 +4,15 @@ import {
   buildSection,
   buildMessageWithLinkButtonField,
   buildDescriptionField,
+  buildImageField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
+import { infer as zinfer } from 'zod'
+import { dataSchema } from '../lib/dataSchema'
+import { ManOnBenchIllustration } from '../../assets/ManOnBenchIllustration'
+type Answers = zinfer<typeof dataSchema>
 
 export const Done: Form = buildForm({
   id: 'done',
@@ -32,19 +38,36 @@ export const Done: Form = buildForm({
         buildMultiField({
           id: 'doneScreen',
           title: m.listSigned,
-          description: m.listSignedDescription,
           children: [
-            buildMessageWithLinkButtonField({
-              id: 'done.goToServicePortal',
+            buildAlertMessageField({
+              id: 'doneAlertMessage',
               title: '',
-              url: '/minarsidur/min-gogn/listar/medmaelasofnun',
-              buttonTitle: m.linkFieldButtonTitle,
-              message: m.linkFieldMessage,
+              message: (application: Application) => ({
+                ...m.listSignedDescription,
+                values: {
+                  name: (application.answers as Answers).list.name,
+                },
+              }),
+              alertType: 'success',
+            }),
+            buildImageField({
+              id: 'doneImage',
+              title: '',
+              image: ManOnBenchIllustration,
+              imageWidth: '50%',
+              imagePosition: 'center',
             }),
             buildDescriptionField({
               id: 'space',
               title: '',
               space: 'containerGutter',
+            }),
+            buildMessageWithLinkButtonField({
+              id: 'done.goToServicePortal',
+              title: '',
+              url: '/minarsidur/min-gogn/listar/althingis-medmaelasofnun',
+              buttonTitle: m.linkFieldButtonTitle,
+              message: m.linkFieldMessage,
             }),
             buildDescriptionField({
               id: 'space1',

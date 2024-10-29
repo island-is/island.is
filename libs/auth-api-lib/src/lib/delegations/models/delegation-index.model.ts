@@ -11,6 +11,9 @@ import {
   InferAttributes,
   InferCreationAttributes,
 } from 'sequelize'
+
+import { AuthDelegationType } from '@island.is/shared/types'
+
 import { DelegationRecordDTO } from '../dto/delegation-index.dto'
 
 @Table({
@@ -78,6 +81,7 @@ export class DelegationIndex extends Model<
       fromNationalId: this.fromNationalId,
       toNationalId: this.toNationalId,
       subjectId: this.subjectId,
+      type: this.type as AuthDelegationType,
     }
   }
 }

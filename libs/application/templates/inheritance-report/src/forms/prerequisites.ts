@@ -9,7 +9,10 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { ESTATE_INHERITANCE, PREPAID_INHERITANCE } from '../lib/constants'
 import { m } from '../lib/messages'
 
-export const getForm = (): Form =>
+export const getForm = ({
+  allowEstateApplication = false,
+  allowPrepaidApplication = false,
+}): Form =>
   buildForm({
     id: 'PrerequisitesDraft',
     title: '',
@@ -34,10 +37,14 @@ export const getForm = (): Form =>
                   {
                     value: ESTATE_INHERITANCE,
                     label: m.preDataCollectionApplicationForDefault,
+                    disabled: !allowEstateApplication,
+                    //TODO: remove tooltip when this application is ready to go live
+                    tooltip: m.preDataCollectionApplicationForDefaultTooltip,
                   },
                   {
                     value: PREPAID_INHERITANCE,
                     label: m.preDataCollectionApplicationForPrepaid,
+                    disabled: !allowPrepaidApplication,
                   },
                 ],
               }),

@@ -1,19 +1,8 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
-  HouseholdSupplementHousing,
-  AttachmentLabel,
-  AttachmentTypes,
-} from './constants'
-import {
-  Application,
-  YesOrNo,
-  YES,
-  ExternalData,
-} from '@island.is/application/types'
-import addMonths from 'date-fns/addMonths'
-import subYears from 'date-fns/subYears'
-import * as kennitala from 'kennitala'
-import { FileUpload } from '../types'
+  BankAccountType,
+  MONTHS,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   Attachments,
   BankInfo,
@@ -21,9 +10,20 @@ import {
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
-  BankAccountType,
-  MONTHS,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+  Application,
+  ExternalData,
+  YES,
+  YesOrNo,
+} from '@island.is/application/types'
+import addMonths from 'date-fns/addMonths'
+import subYears from 'date-fns/subYears'
+import * as kennitala from 'kennitala'
+import { FileUpload } from '../types'
+import {
+  AttachmentLabel,
+  AttachmentTypes,
+  HouseholdSupplementHousing,
+} from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber = getValueViaPath(
@@ -54,6 +54,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const selectedYear = getValueViaPath(answers, 'period.year') as string
 
   const selectedMonth = getValueViaPath(answers, 'period.month') as string
+
+  const selectedYearHiddenInput = getValueViaPath(
+    answers,
+    'period.hiddenInput',
+  ) as string
 
   const additionalAttachments = getValueViaPath(
     answers,
@@ -102,6 +107,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     leaseAgreementAttachments,
     selectedYear,
     selectedMonth,
+    selectedYearHiddenInput,
     additionalAttachments,
     additionalAttachmentsRequired,
     comment,

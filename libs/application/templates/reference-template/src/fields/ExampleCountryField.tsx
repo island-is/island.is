@@ -36,7 +36,7 @@ const ExampleCountryField: FC<React.PropsWithChildren<Props>> = ({
   // @ts-ignore
   const [age, setAge] = useState(formValue.person?.age || 0)
 
-  function fetchCountries(query = '') {
+  const fetchCountries = (query = '') => {
     if (query.length === 0) {
       return
     }

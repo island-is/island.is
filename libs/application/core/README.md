@@ -405,9 +405,9 @@ export interface NewField extends BaseField {
 4. Create a new function in `libs/application/core/src/lib/fieldBuilders.ts`. This function accepts a parameter of the new type we created, `NewField`, but we have to omit `type`, `component` and `children`. Then add the props as follows.
 
 ```typescript
-export function buildNewField(
+export const buildNewField = (
   data: Omit<NewField, 'type' | 'component' | 'children'>,
-): NewField {
+): NewField => {
   const { myProp, myOtherProp } = data
   return {
     ...extractCommonFields(data),

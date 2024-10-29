@@ -1,12 +1,13 @@
 import { getModelToken } from '@nestjs/sequelize'
 import times from 'lodash/times'
 import request from 'supertest'
+import kennitala from 'kennitala'
+import addYears from 'date-fns/addYears'
 
 import {
-  ApiScope,
-  Client,
   ClientDelegationType,
   Delegation,
+  DelegationDelegationType,
   DelegationDTO,
   DelegationDTOMapper,
   DelegationProviderModel,
@@ -21,7 +22,10 @@ import {
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import {
+  IndividualDto,
+  NationalRegistryClientService,
+} from '@island.is/clients/national-registry-v2'
 import {
   createClient,
   createDelegation,
@@ -153,6 +157,7 @@ describe('ActorDelegationsController', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
     let delegationModel: typeof Delegation
+    let delegationDelegationTypeModel: typeof DelegationDelegationType
     let clientDelegationTypeModel: typeof ClientDelegationType
     let nationalRegistryApi: NationalRegistryClientService
 
@@ -174,11 +179,14 @@ describe('ActorDelegationsController', () => {
       clientDelegationTypeModel = app.get<typeof ClientDelegationType>(
         getModelToken(ClientDelegationType),
       )
+      delegationDelegationTypeModel = app.get<typeof DelegationDelegationType>(
+        getModelToken(DelegationDelegationType),
+      )
       nationalRegistryApi = app.get(NationalRegistryClientService)
     })
 
-    beforeEach(() => {
-      return clientDelegationTypeModel.bulkCreate(
+    beforeEach(async () => {
+      return await clientDelegationTypeModel.bulkCreate(
         delegationTypes.map((type) => ({
           clientId: client.clientId,
           delegationType: type,
@@ -293,31 +301,79 @@ describe('ActorDelegationsController', () => {
         )
       })
 
-      it('should return custom delegations when the delegationTypes filter has custom type', async () => {
+      it('should return custom delegations and general mandate when the delegationTypes filter has both types and delegation exists for both', async () => {
         // Arrange
+        const delegation = createDelegation({
+          fromNationalId: nationalRegistryUser.nationalId,
+          toNationalId: user.nationalId,
+          scopes: [],
+        })
+
+        await delegationModel.create(delegation)
+
+        await delegationDelegationTypeModel.create({
+          delegationId: delegation.id,
+          delegationTypeId: AuthDelegationType.GeneralMandate,
+        })
+
         await createDelegationModels(delegationModel, [
           mockDelegations.incomingWithOtherDomain,
         ])
-        const expectedModel = await findExpectedMergedDelegationModels(
-          delegationModel,
-          mockDelegations.incomingWithOtherDomain.id,
-          [Scopes[0].name],
-        )
 
         // Act
         const res = await server.get(
-          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}`,
+          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&delegationTypes=${AuthDelegationType.GeneralMandate}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(2)
+        expect(
+          res.body
+            .map((d: MergedDelegationDTO) => d.types)
+            .flat()
+            .sort(),
+        ).toEqual(
+          [AuthDelegationType.Custom, AuthDelegationType.GeneralMandate].sort(),
+        )
+      })
+
+      it('should return a merged object with both Custom and GeneralMandate types', async () => {
+        // Arrange
+        const delegation = createDelegation({
+          fromNationalId:
+            mockDelegations.incomingWithOtherDomain.fromNationalId,
+          toNationalId: user.nationalId,
+          domainName: null,
+          scopes: [],
+        })
+
+        await delegationModel.create(delegation)
+
+        await delegationDelegationTypeModel.create({
+          delegationId: delegation.id,
+          delegationTypeId: AuthDelegationType.GeneralMandate,
+        })
+
+        await createDelegationModels(delegationModel, [
+          mockDelegations.incomingWithOtherDomain,
+        ])
+
+        // Act
+        const res = await server.get(
+          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&delegationTypes=${AuthDelegationType.GeneralMandate}`,
         )
 
         // Assert
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
-        expectMatchingMergedDelegations(
-          res.body[0],
-          updateDelegationFromNameToPersonName(
-            expectedModel,
-            nationalRegistryUsers,
-          ),
+        expect(
+          res.body
+            .map((d: MergedDelegationDTO) => d.types)
+            .flat()
+            .sort(),
+        ).toEqual(
+          [AuthDelegationType.Custom, AuthDelegationType.GeneralMandate].sort(),
         )
       })
 
@@ -335,6 +391,34 @@ describe('ActorDelegationsController', () => {
         // Act
         const res = await server.get(
           `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&otherUser=${mockDelegations.incoming.fromNationalId}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(1)
+        expectMatchingMergedDelegations(
+          res.body[0],
+          updateDelegationFromNameToPersonName(
+            expectedModel,
+            nationalRegistryUsers,
+          ),
+        )
+      })
+
+      it('should return only delegations related to the provided otherUser national id without the general mandate since there is none', async () => {
+        // Arrange
+        await createDelegationModels(delegationModel, [
+          mockDelegations.incoming,
+        ])
+        const expectedModel = await findExpectedMergedDelegationModels(
+          delegationModel,
+          mockDelegations.incoming.id,
+          [Scopes[0].name],
+        )
+
+        // Act
+        const res = await server.get(
+          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&delegationTypes${AuthDelegationType.GeneralMandate}&otherUser=${mockDelegations.incoming.fromNationalId}`,
         )
 
         // Assert
@@ -597,10 +681,32 @@ describe('ActorDelegationsController', () => {
 
       describe('with legal guardian delegations', () => {
         let getForsja: jest.SpyInstance
-        beforeAll(() => {
-          const client = app.get(NationalRegistryClientService)
+        let clientInstance: any
+
+        const mockForKt = (kt: string): void => {
+          jest.spyOn(kennitala, 'info').mockReturnValue({
+            kt,
+            age: 16,
+            birthday: addYears(Date.now(), -15),
+            birthdayReadable: '',
+            type: 'person',
+            valid: true,
+          })
+
+          jest.spyOn(clientInstance, 'getIndividual').mockResolvedValueOnce({
+            nationalId: kt,
+            name: nationalRegistryUser.name,
+          } as IndividualDto)
+
+          jest
+            .spyOn(clientInstance, 'getCustodyChildren')
+            .mockResolvedValueOnce([kt])
+        }
+
+        beforeEach(() => {
+          clientInstance = app.get(NationalRegistryClientService)
           getForsja = jest
-            .spyOn(client, 'getCustodyChildren')
+            .spyOn(clientInstance, 'getCustodyChildren')
             .mockResolvedValue([nationalRegistryUser.nationalId])
         })
 
@@ -609,23 +715,29 @@ describe('ActorDelegationsController', () => {
         })
 
         it('should return delegations', async () => {
+          const kt = '1111089030'
+
           // Arrange
-          const expectedDelegation = {
+          mockForKt(kt)
+
+          const expectedDelegation = DelegationDTOMapper.toMergedDelegationDTO({
             fromName: nationalRegistryUser.name,
-            fromNationalId: nationalRegistryUser.nationalId,
-            provider: 'thjodskra',
+            fromNationalId: kt,
+            provider: AuthDelegationProvider.NationalRegistry,
             toNationalId: user.nationalId,
-            type: 'LegalGuardian',
-          } as DelegationDTO
+            type: [
+              AuthDelegationType.LegalGuardian,
+              AuthDelegationType.LegalGuardianMinor,
+            ],
+          } as Omit<DelegationDTO, 'type'> & { type: AuthDelegationType | AuthDelegationType[] })
+
           // Act
           const res = await server.get(`${path}${query}`)
 
           // Assert
           expect(res.status).toEqual(200)
           expect(res.body).toHaveLength(1)
-          expect(res.body[0]).toEqual(
-            DelegationDTOMapper.toMergedDelegationDTO(expectedDelegation),
-          )
+          expect(res.body[0]).toEqual(expectedDelegation)
         })
 
         it('should not return delegations when client does not support legal guardian delegations', async () => {

@@ -46,7 +46,7 @@ const syslumennOffices = {
   },
 }
 
-export function syslumennDataFromPostalCode(postalCode: string) {
+export const syslumennDataFromPostalCode = (postalCode: string) => {
   for (const [, value] of Object.entries(syslumennOffices)) {
     if (
       value.postalCodePrefixes.some((prefix) => postalCode.startsWith(prefix))

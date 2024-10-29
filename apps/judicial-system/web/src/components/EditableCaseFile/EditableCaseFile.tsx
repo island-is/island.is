@@ -178,7 +178,10 @@ const EditableCaseFile: FC<Props> = (props) => {
                   </button>
                   <Box marginLeft={1}>
                     <button
-                      onClick={() => onDelete(caseFile as TUploadFile)}
+                      onClick={() => {
+                        onDelete(caseFile as TUploadFile)
+                        onStopEditing()
+                      }}
                       className={cn(styles.editCaseFileButton, {
                         [styles.background.primary]:
                           caseFile.status !== 'error',
