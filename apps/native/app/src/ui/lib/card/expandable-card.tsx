@@ -1,5 +1,10 @@
-import React from 'react'
-import { Image, ImageSourcePropType, LayoutAnimation } from 'react-native'
+import React, { useRef } from 'react'
+import {
+  Animated,
+  Image,
+  ImageSourcePropType,
+  LayoutAnimation,
+} from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { Typography } from '../typography/typography'
@@ -104,6 +109,13 @@ export const ExpandableCard = ({
   onPress,
 }: CardProps) => {
   const theme = useTheme()
+  const animationController = useRef(new Animated.Value(0)).current
+
+  const arrowTransform = animationController.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '-180deg'],
+  })
+
   return (
     <Host
       style={{
@@ -119,6 +131,12 @@ export const ExpandableCard = ({
     >
       <Card
         onPress={() => {
+          const config = {
+            duration: 300,
+            toValue: open ? 0 : 1,
+            useNativeDriver: true,
+          }
+          Animated.timing(animationController, config).start()
           LayoutAnimation.configureNext(toggleAnimation)
           onPress?.()
         }}
@@ -153,7 +171,14 @@ export const ExpandableCard = ({
             <IconMessage>
               {icon && (
                 <IconWrapper>
-                  <Image source={icon} style={{ width: 16, height: 16 }} />
+                  <Animated.Image
+                    source={icon}
+                    style={{
+                      width: 16,
+                      height: 16,
+                      transform: [{ rotate: arrowTransform }],
+                    }}
+                  />
                 </IconWrapper>
               )}
               <Typography variant="heading5">{message}</Typography>

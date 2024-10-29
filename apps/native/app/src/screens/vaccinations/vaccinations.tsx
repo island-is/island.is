@@ -37,10 +37,6 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
 
   const vaccinationsRes = useGetVaccinationsQuery()
 
-  console.log(
-    vaccinationsRes.data?.healthDirectorateVaccinations.vaccinations[0],
-  )
-
   const vaccinations =
     vaccinationsRes.data?.healthDirectorateVaccinations.vaccinations ?? []
 

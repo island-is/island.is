@@ -9,7 +9,7 @@ import {
 } from '@ui'
 import { useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { View, Image } from 'react-native'
+import { View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { Markdown } from '../../../ui/lib/markdown/markdown'
 
@@ -75,7 +75,6 @@ const TableHeading = styled.View`
   }))};
   border-bottom-width: 1px;
 `
-
 const mapStatusToBadge = (status?: string) => {
   switch (status) {
     case 'expired':
@@ -123,9 +122,6 @@ export function VaccinationsCardContainer({
   const theme = useTheme()
   const [open, setOpen] = useState(false)
   const { openBrowser } = useBrowser()
-
-  console.log(vaccination.comments)
-
   return (
     <ExpandableCard
       title={
