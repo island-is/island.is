@@ -17,6 +17,8 @@ export const mapUglaApplication = async (
   let attachments: ApplicationsAttachments[] = []
   if (application.attachments) {
     attachments = application.attachments.map((item) => ({
+      // Note: will give all attachments in "Námsferill" the attachment key: "profskirteini",
+      // since we have no way of knowing if it is CV or kynningabréf
       attachmentKey: AttachmentKey.profskirteini,
       url: item.fileUrl,
       fileName: item.fileName,

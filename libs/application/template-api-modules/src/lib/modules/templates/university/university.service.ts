@@ -145,7 +145,8 @@ export class UniversityService extends BaseTemplateApiService {
 
     const combinedEducationList: Array<CreateApplicationEducationDto> = []
 
-    // A: ekki námsgögn í Innu, eldra próf eða annað + Námsgögn í Innu + Bæta við námsferli gögn
+    // A: ekki námsgögn í Innu, eldra próf eða annað
+    // Note: Includes also data from "Bæta við námsferli"
     const finishedData =
       answers.educationDetails.finishedDetails?.filter(
         (x) => x && x.wasRemoved !== 'true',

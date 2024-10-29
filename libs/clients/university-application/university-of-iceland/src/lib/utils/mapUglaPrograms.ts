@@ -132,7 +132,7 @@ const mapExtraApplicationFields = (
 
   if (program.mustPickExamVenue) {
     fields.push({
-      externalKey: '', // TODO set value here and use it
+      externalKey: '', // TODO missing in the api
       nameIs: 'Prófstaður',
       nameEn: 'Exam venue',
       required: true,
