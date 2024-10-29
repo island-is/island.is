@@ -3,7 +3,7 @@ const DEFAULT_SCOPES = ['email', 'address', 'phone']
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    const transaction = await queryInterface.sequelize.transaction();
+    const transaction = await queryInterface.sequelize.transaction()
     try {
       const clients = await queryInterface.sequelize.query(
         `SELECT "client_id" FROM "client" WHERE "client_type" IN (:clientTypes);`,
@@ -46,7 +46,9 @@ module.exports = {
         return
       }
 
-      await queryInterface.bulkInsert('client_allowed_scope', rows, { transaction })
+      await queryInterface.bulkInsert('client_allowed_scope', rows, {
+        transaction,
+      })
     } catch (err) {
       await transaction.rollback()
       throw err
