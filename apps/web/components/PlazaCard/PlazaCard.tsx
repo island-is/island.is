@@ -11,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { ActionCardProps } from '@island.is/island-ui/core/types'
 
-import * as styles from './Card.css'
+import * as styles from './PlazaCard.css'
 
 const eyebrowColor = 'blueberry600'
 
@@ -30,7 +30,7 @@ interface Props {
   cta?: ActionCardProps['cta']
 }
 
-export const Card = ({
+export const PlazaCard = ({
   title,
   text,
   eyebrow,
