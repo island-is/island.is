@@ -305,14 +305,12 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
-    const states = transitionCase(
+    let update: UpdateCase = transitionCase(
       transition.transition,
       theCase.type,
       theCase.state,
       theCase.appealState,
     )
-
-    let update: UpdateCase = states
 
     switch (transition.transition) {
       case CaseTransition.DELETE:
@@ -348,8 +346,8 @@ export class CaseController {
             ...transitionCase(
               CaseTransition.APPEAL,
               theCase.type,
-              states.state ?? theCase.state,
-              states.appealState ?? theCase.appealState,
+              update.state ?? theCase.state,
+              update.appealState ?? theCase.appealState,
             ),
           }
         }
@@ -423,7 +421,7 @@ export class CaseController {
       theCase,
       update,
       user,
-      states.state !== CaseState.DELETED,
+      update.state !== CaseState.DELETED,
     )
 
     // No need to wait

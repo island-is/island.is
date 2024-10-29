@@ -25,15 +25,17 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti fyrir takka þegar ákærðu óska ekki eftir verjanda í dómaraflæði í ákærum. ',
   },
+
   confirmDefenderChoice: {
-    id: 'judicial.system.core:court_indictments.advocates.confirm_defender_choice',
-    defaultMessage: 'Staðfesta val á verjanda',
+    id: 'judicial.system.core:court_indictments.advocates.confirm_defender_choice_v1',
+    defaultMessage: 'Staðfesta val',
+
     description:
       'Notaður sem texti fyrir takka til að staðfesta val á verjanda í dómaraflæði í ákærum.',
   },
   changeDefenderChoice: {
-    id: 'judicial.system.core:court_indictments.advocates.change_defender_choice',
-    defaultMessage: 'Breyta vali á verjanda',
+    id: 'judicial.system.core:court_indictments.advocates.change_defender_choice_v1',
+    defaultMessage: 'Breyta vali',
     description:
       'Notaður sem texti fyrir takka til að breyta vali á verjanda í dómaraflæði í ákærum.',
   },
@@ -113,7 +115,6 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti þegar ákærði hefur valið verjanda í dómaraflæði í ákærum.',
   },
-
   confirmDefenderChoiceModalTitle: {
     id: 'judicial.system.core:court_indictments.advocates.confirm_defender_choice_modal_title',
     defaultMessage:
@@ -122,9 +123,9 @@ export const strings = defineMessages({
       'Notaður sem titill á staðfesta eða breyta val á verjanda modal í dómaraflæði í ákærum.',
   },
   confirmDefenderChoiceModalText: {
-    id: 'judicial.system.core:court_indictments.advocates.confirm_defender_choice_modal_text',
+    id: 'judicial.system.core:court_indictments.advocates.confirm_defender_choice_modal_text_v1',
     defaultMessage:
-      'Valinn verjandi, {defenderName}, mun fá aðgang að máli í Réttarvörslugátt. ',
+      'Valinn verjandi, {defenderName}, mun fá aðgang að málinu í Réttarvörslugátt. ',
     description:
       'Notaður sem texti í staðfesta val á verjanda modal í dómaraflæði í ákærum.',
   },
@@ -135,9 +136,9 @@ export const strings = defineMessages({
       'Notaður sem texti í staðfesta val á verjanda modal í dómaraflæði í ákærum.',
   },
   confirmDefenderDelayModalText: {
-    id: 'judicial.system.core:court_indictments.advocates.confirm_defender_delay_modal_text',
+    id: 'judicial.system.core:court_indictments.advocates.confirm_defender_delay_modal_text_v1',
     defaultMessage:
-      'Ákærð fær frest fram að þingfestingu til þess að tilnefna verjanda.',
+      'Ákærði fær frest fram að þingfestingu til að tilnefna verjanda.',
     description:
       'Notaður sem texti í staðfesta val á verjanda modal í dómaraflæði í ákærum.',
   },
@@ -147,7 +148,6 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti í breyta vali á verjanda modal í dómaraflæði í ákærum.',
   },
-
   confirmSpokespersonModalTitle: {
     id: 'judicial.system.core:court_indictments.advocates.confirm_spokesperson_modal_title',
     defaultMessage:
@@ -163,8 +163,8 @@ export const strings = defineMessages({
       'Notaður sem texti í staðfesta val á lögmanni eða réttargæslumanni modal í dómaraflæði í ákærum.',
   },
   confirmModalPrimaryButtonText: {
-    id: 'judicial.system.core:court_indictments.advocates.modal_primary_button_text',
-    defaultMessage: 'Staðfesta',
+    id: 'judicial.system.core:court_indictments.advocates.modal_primary_button_text_v1',
+    defaultMessage: 'Staðfesta val',
     description:
       'Notaður sem texti á takka til að staðfesta val á lögmanni eða réttargæslumanni í dómaraflæði í ákærum.',
   },
