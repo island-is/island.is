@@ -1,7 +1,5 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
-import { S3 } from 'aws-sdk'
-import AmazonS3URI from 'amazon-s3-uri'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { S3Service } from '@island.is/nest/aws'

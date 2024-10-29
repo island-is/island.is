@@ -23,9 +23,6 @@ import {
   ApplicationWithAttachments as Application,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import AmazonS3URI from 'amazon-s3-uri'
-
-import { S3 } from 'aws-sdk'
 import {
   mapValuesToIndividualtype,
   mapValuesToPartytype,
