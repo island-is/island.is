@@ -34,12 +34,11 @@ export const formatAddress = (
 ): string | undefined => {
   if (!address) return undefined
 
-  if (
-    address.streetAddress === address.city ||
-    (address.streetAddress && !address.postalCode && !address.city)
-  ) {
-    return address.streetAddress
+  const { streetAddress, city, postalCode } = address
+
+  if (streetAddress && (streetAddress === city || (!postalCode && !city))) {
+    return streetAddress
   }
 
-  return `${address.streetAddress}, ${address.postalCode} ${address.city}`
+  return `${streetAddress}, ${postalCode} ${city}`
 }
