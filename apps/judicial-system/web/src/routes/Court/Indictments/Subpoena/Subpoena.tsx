@@ -32,6 +32,7 @@ const Subpoena: FC = () => {
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [newSubpoenas, setNewSubpoenas] = useState<string[]>([])
+  const [isCreatingSubpoena, setIsCreatingSubpoena] = useState<boolean>(false)
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
   const {
@@ -51,6 +52,8 @@ const Subpoena: FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
+      setIsCreatingSubpoena(true)
+
       if (!isSchedulingArraignmentDate) {
         router.push(`${destination}/${workingCase.id}`)
         return
@@ -74,6 +77,7 @@ const Subpoena: FC = () => {
       const allDefendantsUpdated = await Promise.all(promises)
 
       if (!allDefendantsUpdated.every((result) => result)) {
+        setIsCreatingSubpoena(false)
         return
       }
 
@@ -96,6 +100,7 @@ const Subpoena: FC = () => {
       const courtDateUpdated = await sendCourtDateToServer(clearedConclusion)
 
       if (!courtDateUpdated) {
+        setIsCreatingSubpoena(false)
         return
       }
 
@@ -254,7 +259,7 @@ const Subpoena: FC = () => {
           }}
           primaryButtonText={formatMessage(strings.modalPrimaryButtonText)}
           secondaryButtonText={formatMessage(strings.modalSecondaryButtonText)}
-          isPrimaryButtonLoading={false}
+          isPrimaryButtonLoading={isCreatingSubpoena}
         />
       )}
     </PageLayout>
