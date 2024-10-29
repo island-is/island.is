@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  BulkMileageReadingRequestResultDto,
   GetbulkmileagereadingrequeststatusGuidGetRequest,
   MileageReadingApi,
 } from '@island.is/clients/vehicles-mileage'
@@ -14,6 +13,7 @@ import { VehiclesBulkMileageReadingResponse } from '../models/v3/bulkMileage/bul
 import { VehiclesBulkMileageRegistrationJobHistory } from '../models/v3/bulkMileage/bulkMileageRegistrationJobHistory.model'
 import { VehiclesBulkMileageRegistrationRequestStatus } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestStatus.model'
 import { VehiclesBulkMileageRegistrationRequestOverview } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestOverview.model'
+import { FetchError } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class BulkMileageService {
@@ -34,8 +34,10 @@ export class BulkMileageService {
       return null
     }
 
-    const res: BulkMileageReadingRequestResultDto =
-      await this.getMileageWithAuth(auth).requestbulkmileagereadingPost({
+    try {
+      const res = await this.getMileageWithAuth(
+        auth,
+      ).requestbulkmileagereadingPost({
         postBulkMileageReadingModel: {
           originCode: input.originCode,
           mileageData: input.mileageData.map((m) => ({
@@ -45,19 +47,29 @@ export class BulkMileageService {
         },
       })
 
-    if (!res.guid) {
-      this.logger.warn(
-        'Missing guid from bulk mileage reading registration response',
-        {
-          category: LOG_CATEGORY,
-        },
-      )
-      return null
-    }
+      if (!res.guid) {
+        this.logger.warn(
+          'Missing guid from bulk mileage reading registration response',
+          {
+            category: LOG_CATEGORY,
+          },
+        )
+        return null
+      }
 
-    return {
-      requestId: res.guid,
-      errorMessage: res.errorMessage ?? undefined,
+      return {
+        requestId: res.guid,
+        errorMessage: res.errorMessage ?? undefined,
+      }
+    } catch (e) {
+      const error: Error = e
+      if (error instanceof FetchError && error.status === 429) {
+        return {
+          requestId: '',
+          errorMessage: e.statusText,
+        }
+      }
+      throw e
     }
   }
 

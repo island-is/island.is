@@ -141,13 +141,6 @@ const VehicleBulkMileageUpload = () => {
             message={downloadError}
           />
         )}
-        {data?.vehicleBulkMileagePost?.errorMessage && !loading && !error && (
-          <AlertMessage
-            type="warning"
-            title={formatMessage(vehicleMessage.uploadFailed)}
-            message={data.vehicleBulkMileagePost.errorMessage}
-          />
-        )}
         {requestGuid &&
           !data?.vehicleBulkMileagePost?.errorMessage &&
           !loading &&
