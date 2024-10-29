@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { nestedFields, slices } from './fragments'
 
 export const GET_GRANTS_QUERY = gql`
   query GetGrants($input: GetGrantsInput!) {
@@ -51,6 +52,50 @@ export const GET_GRANT_QUERY = gql`
       name
       description
       applicationId
+      applicationUrl {
+          slug
+          type
+    }
+      applicationDeadlineText
+      statusText
+      categoryTag {
+        id
+        title
+      }
+      typeTag {
+        id
+        title
+      }
+      organization {
+          title
+          logo {
+            url
+          }
+      }
+      files {
+          ...AssetFields
+      }
+      whatIsGranted {
+        ...AllSlices
+        ${nestedFields}
+      }
+      specialEmphasis {
+        ...AllSlices
+        ${nestedFields}
+      }
+      whoCanApply {
+        ...AllSlices
+        ${nestedFields}
+      }
+      howToApply {
+        ...AllSlices
+        ${nestedFields}
+      }
+      applicationDeadline {
+        ...AllSlices
+        ${nestedFields}
+      }
     }
   }
+  ${slices}
 `

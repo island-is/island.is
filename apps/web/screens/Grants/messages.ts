@@ -33,6 +33,44 @@ export const m = {
       defaultMessage: 'Stofnun',
     },
   }),
+  single: defineMessages({
+    fund: {
+      id: 'web.grants:single.fund',
+      defaultMessage: 'Sjóður',
+    },
+    category: {
+      id: 'web.grants:single.category',
+      defaultMessage: 'Styrkjaflokkur',
+    },
+    type: {
+      id: 'web.grants:single.type',
+      defaultMessage: 'Tegund',
+    },
+    deadline: {
+      id: 'web.grants:single.deadline',
+      defaultMessage: 'Umsóknarfrestur',
+    },
+    status: {
+      id: 'web.grants:single.status',
+      defaultMessage: 'Staða',
+    },
+    whatIsGranted: {
+      id: 'web.grants:single.whatIsGranted',
+      defaultMessage: 'Hvað er styrkt?',
+    },
+    specialEmphasis: {
+      id: 'web.grants:single.specialEmphasis',
+      defaultMessage: 'Sérstakar áherslur',
+    },
+    whoCanApply: {
+      id: 'web.grants:single.whoCanApply',
+      defaultMessage: 'Hverjir geta sótt um?',
+    },
+    howToApply: {
+      id: 'web.grants:single.howToApply',
+      defaultMessage: 'Hvernig er sótt um?',
+    },
+  }),
   home: defineMessages({
     title: {
       id: 'web.grants:home.title',

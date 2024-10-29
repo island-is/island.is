@@ -1,9 +1,18 @@
 import { useIntl } from 'react-intl'
+import NextLink from 'next/link'
+import { useRouter } from 'next/router'
 
-import { Stack } from '@island.is/island-ui/core'
+import { SliceType } from '@island.is/island-ui/contentful'
+import {
+  ActionCard,
+  Box,
+  Breadcrumbs,
+  Divider,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import { GrantWrapper } from '@island.is/web/components'
-import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
@@ -13,17 +22,21 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import {
   CustomScreen,
   withCustomPageWrapper,
 } from '../../CustomPage/CustomPageWrapper'
+import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_GRANT_QUERY } from '../../queries'
 import { m } from '../messages'
+import { GrantSidebar } from './GrantSidebar'
 
 const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
+  const router = useRouter()
 
   const baseUrl = linkResolver('styrkjatorg', [], locale).href
   const currentUrl = linkResolver('styrkjatorggrant', [], locale).href
@@ -53,9 +66,85 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
       pageDescription={grant?.description ?? ''}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
     >
-      <Stack space={SLICE_SPACING}>
-        <p>hgeoiag</p>
-      </Stack>
+      <SidebarLayout
+        sidebarContent={<GrantSidebar locale={locale} grant={grant} />}
+      >
+        <Stack space={4}>
+          <Box>
+            <Breadcrumbs
+              items={breadcrumbItems ?? []}
+              renderLink={(link, item) => {
+                return item?.href ? (
+                  <NextLink href={item?.href} legacyBehavior>
+                    {link}
+                  </NextLink>
+                ) : (
+                  link
+                )
+              }}
+            />
+
+            <Text as="h1" variant="h1" marginTop={2} marginBottom={2}>
+              {grant.name}
+            </Text>
+            <Text variant="default">{grant.description}</Text>
+          </Box>
+          <ActionCard
+            heading={grant.name}
+            backgroundColor="blue"
+            cta={{
+              disabled: !grant.applicationUrl?.slug,
+              label: 'Sækja um',
+              onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
+              icon: 'fileTrayFull',
+            }}
+          />
+          <Box>
+            <Text variant="h3">{'Hvað er styrkt?'}</Text>
+            <Box className="rs_read">
+              {webRichText(
+                grant.whatIsGranted as SliceType[],
+                undefined,
+                locale,
+              )}
+            </Box>
+          </Box>
+          <Box>
+            <Text variant="h3">{'Sérstakar áherslur'}</Text>
+            <Box className="rs_read">
+              {webRichText(
+                grant.specialEmphasis as SliceType[],
+                undefined,
+                locale,
+              )}
+            </Box>
+          </Box>
+          <Divider />
+          <Box>
+            <Text variant="h3">{'Hverjir geta sótt um?'}</Text>
+            <Box className="rs_read">
+              {webRichText(grant.whoCanApply as SliceType[], undefined, locale)}
+            </Box>
+          </Box>
+          <Divider />
+          <Box>
+            <Text variant="h3">{'Hvernig er sótt um?'}</Text>
+            <Box className="rs_read">
+              {webRichText(grant.howToApply as SliceType[], undefined, locale)}
+            </Box>
+          </Box>
+          <Box>
+            <Text variant="h4">{'Umsóknarfrestur'}</Text>
+            <Box className="rs_read">
+              {webRichText(
+                grant.applicationDeadline as SliceType[],
+                undefined,
+                locale,
+              )}
+            </Box>
+          </Box>
+        </Stack>
+      </SidebarLayout>
     </GrantWrapper>
   )
 }
