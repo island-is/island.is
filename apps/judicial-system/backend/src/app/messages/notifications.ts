@@ -607,17 +607,29 @@ export const notifications = {
         'Notaður sem texti í tölvupósti til verjanda vegna breytingar á lengd gæslu/einangrunar/vistunar þar sem úrskurðað var í einangrun.',
     },
   }),
-  defenderAssignedEmail: defineMessages({
-    subject: {
-      id: 'judicial.system.backend:notifications.defender_assigned_email.subject',
+  advocateAssignedEmail: defineMessages({
+    subjectAccessToCaseFiles: {
+      id: 'judicial.system.backend:notifications.defender_assigned_email.subject_access_to_case_files',
       defaultMessage: '{court} - aðgangur að málsgögnum',
       description:
         'Fyrirsögn í pósti til verjanda þegar hann er skráður á mál.',
     },
-    body: {
-      id: 'judicial.system.backend:notifications.defender_assigned_email.body_v3',
+    subjectAccess: {
+      id: 'judicial.system.backend:notifications.defender_assigned_email.subject_access',
+      defaultMessage: 'Skráning í máli {courtCaseNumber}',
+      description:
+        'Fyrirsögn í pósti til verjanda þegar hann er skráður á mál.',
+    },
+    bodyAccessToCaseFiles: {
+      id: 'judicial.system.backend:notifications.defender_assigned_email.body_access_to_case_files',
       defaultMessage:
         '{court} hefur skráð þig verjanda í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Gögn málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast gögn málsins hjá {courtName} ef þau hafa ekki þegar verið afhent}}.',
+      description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
+    },
+    bodyAccess: {
+      id: 'judicial.system.backend:notifications.defender_assigned_email.body_access',
+      defaultMessage:
+        '{court} hefur skráð þig {advocateType, select, LAWYER {lögmann einkaréttarkröfuhafa} LEGAL_RIGHTS_PROTECTOR {réttargæslumann einkaréttarkröfuhafa} other {verjanda}} í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast málið hjá {courtName}.}}.',
       description: 'Texti í pósti til verjanda þegar hann er skráður á mál.',
     },
   }),
@@ -845,6 +857,19 @@ export const notifications = {
       defaultMessage:
         '{prosecutorsOffice} hefur afturkallað ákæru {courtCaseNumber, select, NONE {í máli sem ekki hefur enn fengið málsnúmer} other {í máli {courtCaseNumber}}}.',
       description: 'Texti í pósti til dómstóls þegar ákæra er afturkölluð',
+    },
+  }),
+  caseFilesUpdated: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.case_files_updated.subject',
+      defaultMessage: 'Ný gögn í máli {courtCaseNumber}',
+      description: 'Fyrirsögn í pósti til aðila máls þegar ný gögn eru send',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.case_files_updated.body',
+      defaultMessage:
+        'Ný gögn hafa borist vegna máls {courtCaseNumber}. {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
+      description: 'Texti í pósti til aðila máls þegar ný gögn eru send',
     },
   }),
 }

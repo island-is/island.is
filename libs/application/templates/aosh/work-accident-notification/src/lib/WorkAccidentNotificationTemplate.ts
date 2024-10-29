@@ -44,7 +44,7 @@ const template: ApplicationTemplate<
       type: AuthDelegationType.Custom,
     },
   ],
-  featureFlag: Features.exampleApplication,
+  featureFlag: Features.WorkAccidentNotificationEnabled,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,

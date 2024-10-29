@@ -252,7 +252,6 @@ const SupportingDocumentsSchema = z
     },
     {
       path: ['birthCertificate'],
-      params: error.fileUploadRequired,
     },
   )
 
@@ -267,12 +266,17 @@ const ChildrenSupportingDocumentsSchema = z
     custodyDocumentsRequired: z.string().min(1),
     custodyDocuments: z.array(FileDocumentSchema).optional(),
   })
-  .refine(({ writtenConsentFromChildRequired, writtenConsentFromChild }) => {
-    return (
-      writtenConsentFromChildRequired === 'false' ||
-      (writtenConsentFromChild && writtenConsentFromChild.length > 0)
-    )
-  })
+  .refine(
+    ({ writtenConsentFromChildRequired, writtenConsentFromChild }) => {
+      return (
+        writtenConsentFromChildRequired === 'false' ||
+        (writtenConsentFromChild && writtenConsentFromChild.length > 0)
+      )
+    },
+    {
+      path: ['writtenConsentFromChild'],
+    },
+  )
   .refine(
     ({
       writtenConsentFromOtherParentRequired,
@@ -286,7 +290,6 @@ const ChildrenSupportingDocumentsSchema = z
     },
     {
       path: ['writtenConsentFromOtherParent'],
-      params: error.fileUploadRequired,
     },
   )
   .refine(
@@ -298,7 +301,6 @@ const ChildrenSupportingDocumentsSchema = z
     },
     {
       path: ['custodyDocuments'],
-      params: error.fileUploadRequired,
     },
   )
 

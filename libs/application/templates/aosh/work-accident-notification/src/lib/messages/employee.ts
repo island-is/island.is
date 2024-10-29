@@ -4,7 +4,7 @@ export const employee = {
   employee: defineMessages({
     pageTitle: {
       id: 'aosh.wan.application:employee.pageTitle',
-      defaultMessage: 'Replace me....',
+      defaultMessage: 'Starfsmaður',
       description: 'Title of employee page',
     },
     description: {
@@ -116,7 +116,7 @@ export const employee = {
     alertMessage: {
       id: 'aosh.wan.application:employee.alertMessage',
       defaultMessage:
-        'Ef fjöldi starfsmanna er fleiri en einn er hægt að bæta við fleirum bla bla bla ...',
+        'Ef fjöldi starfsmanna er fleiri en einn er hægt að bæta við fleirum ...',
       description: 'Message for the alert field in the employee section.',
     },
     searchPlaceholder: {

@@ -7,28 +7,22 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
-  buildSelectField,
   buildSubmitField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import {
   Application,
   DefaultEvents,
   Form,
   FormModes,
+  MockablePaymentCatalogApi,
   PassportsApi,
 } from '@island.is/application/types'
 import {
-  DeliveryAddressApi,
-  SyslumadurPaymentCatalogApi,
   UserInfoApi,
   NationalRegistryUser,
+  SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
-import {
-  DistrictCommissionerAgencies,
-  Passport,
-  Services,
-} from '../lib/constants'
+import { Services } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
 import { personalInfo } from './infoSection/personalInfo'
@@ -52,7 +46,6 @@ export const Draft: Form = buildForm({
           title: m.dataCollectionTitle,
           subTitle: m.dataCollectionSubtitle,
           checkboxLabel: m.dataCollectionCheckboxLabel,
-          enableMockPayment: true,
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUser,
@@ -74,7 +67,9 @@ export const Draft: Form = buildForm({
               title: '',
             }),
             buildDataProviderItem({
-              provider: DeliveryAddressApi,
+              provider: MockablePaymentCatalogApi.configure({
+                externalDataId: 'payment',
+              }),
               title: '',
             }),
           ],
@@ -162,25 +157,8 @@ export const Draft: Form = buildForm({
               title: m.dropLocation,
               titleVariant: 'h3',
               space: 2,
-              description: m.dropLocationDescription,
+              description: m.dropLocationTitleFixedValue,
               marginBottom: 'gutter',
-            }),
-            buildSelectField({
-              id: 'service.dropLocation',
-              title: m.dropLocation,
-              placeholder: m.dropLocationPlaceholder.defaultMessage,
-              options: ({
-                externalData: {
-                  deliveryAddress: { data },
-                },
-              }) => {
-                return (data as DistrictCommissionerAgencies[])?.map(
-                  ({ key, name }) => ({
-                    value: key,
-                    label: name,
-                  }),
-                )
-              },
             }),
           ],
         }),

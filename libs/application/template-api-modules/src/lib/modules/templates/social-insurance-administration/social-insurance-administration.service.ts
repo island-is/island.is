@@ -26,7 +26,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
-import { S3 } from 'aws-sdk'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
@@ -37,18 +36,20 @@ import {
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
+import { sharedModuleConfig } from '../../shared'
+import { ConfigType } from '@nestjs/config'
+import { S3Service } from '@island.is/nest/aws'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
 @Injectable()
 export class SocialInsuranceAdministrationService extends BaseTemplateApiService {
-  s3 = new S3()
-
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private siaClientService: SocialInsuranceAdministrationClientService,
-    @Inject(APPLICATION_ATTACHMENT_BUCKET)
-    private readonly attachmentBucket: string,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
+    private readonly s3Service: S3Service,
   ) {
     super('SocialInsuranceAdministration')
   }
@@ -376,17 +377,17 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return attachments
   }
 
-  async getPdf(key: string) {
-    const file = await this.s3
-      .getObject({ Bucket: this.attachmentBucket, Key: key })
-      .promise()
-    const fileContent = file.Body as Buffer
+  async getPdf(key: string): Promise<string> {
+    const fileContent = await this.s3Service.getFileContent(
+      { bucket: this.config.templateApi.attachmentBucket, key },
+      'base64',
+    )
 
     if (!fileContent) {
       throw new Error('File content was undefined')
     }
 
-    return fileContent.toString('base64')
+    return fileContent
   }
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {

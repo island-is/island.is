@@ -44,9 +44,9 @@ const accidentSchema = z.object({
     },
   ),
   time: TimeWithRefine,
-  how: z.string().min(1).max(500),
-  wasDoing: z.string().min(1).max(500),
-  wentWrong: z.string().min(1).max(500),
+  how: z.string().min(1).max(499),
+  wasDoing: z.string().min(1).max(499),
+  wentWrong: z.string().min(1).max(499),
 })
 
 const companySchema = z.object({

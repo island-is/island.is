@@ -16,7 +16,6 @@ export const vehicleSubSection = buildSubSection({
     buildMultiField({
       id: 'vehicleMultiField',
       title: information.labels.vehicle.title,
-      description: information.labels.vehicle.description,
       children: [
         buildTextField({
           id: 'vehicleInfo.plate',

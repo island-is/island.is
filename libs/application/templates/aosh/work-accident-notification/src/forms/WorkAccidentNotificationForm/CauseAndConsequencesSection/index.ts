@@ -12,14 +12,7 @@ import { WorkAccidentNotification } from '../../../lib/dataSchema'
 export const causeAndConsequencesSection = (index: number) =>
   buildSection({
     id: `causeAndConsequencesSection ${index}`,
-    title: () => {
-      return {
-        ...sections.draft.causes,
-        values: {
-          number: index + 1,
-        },
-      }
-    },
+    title: sections.draft.causes,
     condition: (formValue: FormValue, externalData, user) => {
       const answers = formValue as WorkAccidentNotification
       return index < answers.employeeAmount || index === 0

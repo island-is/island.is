@@ -9,12 +9,13 @@ import { shared } from '../../lib/messages'
 
 interface DeleteEmployeeProps {
   index: number
+  allowDeleteFirst?: boolean
 }
 
 export const DeleteEmployee: FC<
   React.PropsWithChildren<DeleteEmployeeProps & FieldBaseProps>
 > = (props) => {
-  const { application, refetch, goToScreen } = props
+  const { application, refetch, goToScreen, allowDeleteFirst } = props
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const answers = application.answers as WorkAccidentNotification
   const idx = props.index
@@ -42,9 +43,6 @@ export const DeleteEmployee: FC<
     const updateAmountOfEmployees =
       answers.employeeAmount === 1 ? 1 : answers.employeeAmount - 1
 
-    // Calculate the next index, staying within the bounds of the updated array
-    const nextIndex = Math.min(idx, updateAmountOfEmployees - 1)
-
     const res = await updateApplication({
       variables: {
         input: {
@@ -71,7 +69,7 @@ export const DeleteEmployee: FC<
 
   return (
     <Button
-      disabled={answers.employeeAmount === 1}
+      disabled={answers.employeeAmount === 1 && !allowDeleteFirst}
       onClick={onDelete}
       colorScheme="default"
       iconType="outline"

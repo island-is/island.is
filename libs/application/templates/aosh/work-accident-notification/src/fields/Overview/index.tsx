@@ -39,6 +39,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <ReviewGroup
         handleClick={() => onClick('companyInformation')}
         editMessage={formatMessage(overview.labels.editMessage)}
+        title={formatMessage(information.labels.company.pageTitle)}
         isFirst
       >
         <KeyValueFormField
@@ -48,7 +49,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             type: FieldTypes.KEY_VALUE,
             component: FieldComponents.KEY_VALUE,
             title: '',
-            label: formatMessage(information.labels.company.pageTitle),
+            label: '',
             value: getCompanyInformationForOverview(
               application.answers,
               application.externalData,
@@ -61,6 +62,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <ReviewGroup
         handleClick={() => onClick('accidentMultiField')}
         editMessage={formatMessage(overview.labels.editMessage)}
+        title={formatMessage(sections.draft.accident)}
         isLast
       >
         <KeyValueFormField
@@ -70,7 +72,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             type: FieldTypes.KEY_VALUE,
             component: FieldComponents.KEY_VALUE,
             title: '',
-            label: formatMessage(sections.draft.accident),
+            label: '',
             value: getAccidentInformationForOverview(
               application.answers,
               application.externalData,

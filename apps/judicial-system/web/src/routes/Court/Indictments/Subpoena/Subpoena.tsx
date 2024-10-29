@@ -77,7 +77,23 @@ const Subpoena: FC = () => {
         return
       }
 
-      const courtDateUpdated = await sendCourtDateToServer()
+      // If rescheduling after the court has met, then clear the current conclusion
+      const clearedConclusion =
+        isArraignmentScheduled && workingCase.indictmentDecision
+          ? [
+              {
+                indictmentDecision: null,
+                courtSessionType: null,
+                courtDate: null,
+                postponedIndefinitelyExplanation: null,
+                indictmentRulingDecision: null,
+                mergeCaseId: null,
+                force: true,
+              },
+            ]
+          : undefined
+
+      const courtDateUpdated = await sendCourtDateToServer(clearedConclusion)
 
       if (!courtDateUpdated) {
         return
@@ -87,9 +103,11 @@ const Subpoena: FC = () => {
     },
     [
       isSchedulingArraignmentDate,
-      sendCourtDateToServer,
       workingCase.defendants,
+      workingCase.indictmentDecision,
       workingCase.id,
+      isArraignmentScheduled,
+      sendCourtDateToServer,
       updateDefendant,
     ],
   )

@@ -9,7 +9,7 @@ export const sections = {
     },
     information: {
       id: 'aosh.wan.application:sections.prerequisites.pageTitle',
-      defaultMessage: 'Fyrirtækið',
+      defaultMessage: 'Tilkynningaraðili',
       description: `Title of company section (right side panel)`,
     },
     accident: {
@@ -41,8 +41,9 @@ export const sections = {
     },
     company: {
       id: 'aosh.wan.application:sections.draft.company',
-      defaultMessage: 'Fyrirtækið',
-      description: 'Title of company section (right side panel)',
+      defaultMessage: 'Tilkynningaraðili',
+      description:
+        'Title of company/sole proprietary section (right side panel)',
     },
     accident: {
       id: 'aosh.wan.application:sections.draft.accident',
@@ -56,7 +57,7 @@ export const sections = {
     },
     causes: {
       id: 'aosh.wan.application:sections.draft.causes',
-      defaultMessage: 'Orsakir/Afleiðingar - {number}',
+      defaultMessage: 'Orsakir/Afleiðingar',
       description:
         'Title of causes/consequences in accident sub section (right side panel)',
     },

@@ -15,7 +15,7 @@ export const information = {
     },
     pageTitle: {
       id: 'aosh.wan.application:information.company.pageTitle',
-      defaultMessage: 'Fyrirtækið',
+      defaultMessage: 'Tilkynningaraðili',
       description: 'Title of company information section',
     },
   }),
@@ -28,8 +28,8 @@ export const information = {
       },
       pageTitle: {
         id: 'aosh.wan.application:information.company.pageTitle',
-        defaultMessage: 'Fyrirtækið',
-        description: 'Title of company information section',
+        defaultMessage: 'Tilkynningaraðili',
+        description: 'Title of company/sole proprietary information section',
       },
       description: {
         id: 'aosh.wan.application:information.company.description',
