@@ -1143,30 +1143,28 @@ export class ApplicationController {
           throw new TemplateApiError(reason, 500)
         }
       }
-
-      // delete charge in FJS
-      await this.applicationChargeService.deleteCharge(existingApplication)
-
-      // delete the entry in Payment table to prevent FK error
-      await this.paymentService.delete(existingApplication.id, user)
-
-      await this.fileService.deleteAttachmentsForApplication(
-        existingApplication,
-      )
-
-      // delete history for application
-      await this.historyService.deleteHistoryByApplicationId(
-        existingApplication.id,
-      )
-
-      await this.applicationService.delete(existingApplication.id)
-
-      this.auditService.audit({
-        auth: user,
-        action: 'delete',
-        resources: existingApplication.id,
-        meta: { type: existingApplication.typeId },
-      })
     }
+
+    // delete charge in FJS
+    await this.applicationChargeService.deleteCharge(existingApplication)
+
+    // delete the entry in Payment table to prevent FK error
+    await this.paymentService.delete(existingApplication.id, user)
+
+    await this.fileService.deleteAttachmentsForApplication(existingApplication)
+
+    // delete history for application
+    await this.historyService.deleteHistoryByApplicationId(
+      existingApplication.id,
+    )
+
+    await this.applicationService.delete(existingApplication.id)
+
+    this.auditService.audit({
+      auth: user,
+      action: 'delete',
+      resources: existingApplication.id,
+      meta: { type: existingApplication.typeId },
+    })
   }
 }
