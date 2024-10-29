@@ -615,7 +615,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           )
           .catch((e) => {
             this.logger.error(
-              `Error sending sms about rejectApplication to 
+              `Error sending sms about submitApplication to 
               a phonenumber in application: ID: ${application.id}, 
               role: ${recipientList[i].role}`,
               e,
