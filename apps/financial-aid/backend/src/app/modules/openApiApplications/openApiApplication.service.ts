@@ -9,6 +9,13 @@ import { DeductionFactorsModel } from '../deductionFactors'
 import { DirectTaxPaymentModel } from '../directTaxPayment/models'
 import { ApplicationModel } from '../application'
 import { ApplicationFileModel } from '../file/models'
+import { createPdf } from '../../formatters/createPdf'
+import {
+  Base64EncodedPdf,
+  PdfApplicationResponse,
+} from './pdfApplication.response'
+import { ChildrenModel } from '../children'
+import { ApplicationEventModel } from '../applicationEvent'
 
 @Injectable()
 export class OpenApiApplicationService {
@@ -96,11 +103,11 @@ export class OpenApiApplicationService {
     })
   }
 
-  async getbyID(
+  async getApplicationPdfById(
     municipalityCodes: string,
     id: string,
-  ): Promise<ApplicationModel> {
-    return this.applicationModel.findOne({
+  ): Promise<PdfApplicationResponse> {
+    const application = await this.applicationModel.findOne({
       where: {
         id: id,
         municipalityCode: municipalityCodes,
@@ -109,17 +116,7 @@ export class OpenApiApplicationService {
         },
       },
       attributes: {
-        exclude: [
-          'staffId',
-          'applicationSystemId',
-          'interview',
-          'homeCircumstances',
-          'homeCircumstancesCustom',
-          'employment',
-          'employmentCustom',
-          'student',
-          'studentCustom',
-        ],
+        exclude: ['staffId', 'applicationSystemId'],
       },
       order: [['modified', 'DESC']],
       include: [
@@ -129,6 +126,12 @@ export class OpenApiApplicationService {
           separate: true,
           order: [['created', 'DESC']],
           attributes: ['key', 'name', 'type'],
+        },
+        {
+          model: ApplicationEventModel,
+          as: 'applicationEvents',
+          separate: true,
+          order: [['created', 'DESC']],
         },
         {
           model: StaffModel,
@@ -165,7 +168,20 @@ export class OpenApiApplicationService {
             exclude: ['id', 'applicationId', 'created', 'modified'],
           },
         },
+        {
+          model: ChildrenModel,
+          as: 'children',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
       ],
     })
+
+    try {
+      const pdfFile = await createPdf(application)
+      return { file: pdfFile as Base64EncodedPdf }
+    } catch (error) {
+      throw new Error('Failed to generate PDF: ' + error.message)
+    }
   }
 }
