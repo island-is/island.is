@@ -27,12 +27,11 @@ test.describe('Admin portal (Endorsements)', () => {
     await contextGranter.close()
   })
 
-
   test('Open old endorsement list and go back', async ({ page }) => {
     test.slow()
     await page.goto(icelandicAndNoPopupUrl(homeUrl))
-    await page.click(delegationTarget);
-    await page.click('[title="Undirskriftalistar"]');
+    await page.click(delegationTarget)
+    await page.click('[title="Undirskriftalistar"]')
 
     await page.getByRole('tab', { name: 'Liðnir listar' }).click()
     await page.getByRole('button', { name: 'Skoða lista' }).first().click()
@@ -45,8 +44,8 @@ test.describe('Admin portal (Endorsements)', () => {
   test('Update old endorsement list', async ({ page }) => {
     test.slow()
     await page.goto(icelandicAndNoPopupUrl(homeUrl))
-    await page.click(delegationTarget);
-    await page.click('[title="Undirskriftalistar"]');
+    await page.click(delegationTarget)
+    await page.click('[title="Undirskriftalistar"]')
 
     await page.getByRole('tab', { name: 'Liðnir listar' }).click()
     await page.getByRole('button', { name: 'Skoða lista' }).first().click()
@@ -56,12 +55,11 @@ test.describe('Admin portal (Endorsements)', () => {
     ).toBeVisible()
   })
 
-
   test('Access and edit a list', async ({ page }) => {
     test.slow()
     await page.goto(icelandicAndNoPopupUrl(homeUrl))
-    await page.click(delegationTarget);
-    await page.click('[title="Undirskriftalistar"]');
+    await page.click(delegationTarget)
+    await page.click('[title="Undirskriftalistar"]')
 
     // Setup
     await page.getByRole('tab', { name: 'Liðnir listar' }).click()
