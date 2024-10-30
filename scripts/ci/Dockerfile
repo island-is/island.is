@@ -134,6 +134,12 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-bas
 
 
 FROM playwright-base AS output-playwright
+ARG GIT_BRANCH
+ARG GIT_SHA
+LABEL branch=${GIT_BRANCH}
+LABEL commit=${GIT_SHA}
+ENV GIT_BRANCH=${GIT_BRANCH}
+ENV GIT_SHA=${GIT_SHA}
 # TODO: remove awscli dependency (157 MB extra)
 
 # hadolint ignore=DL3008
