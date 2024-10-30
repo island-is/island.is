@@ -1,0 +1,19 @@
+schema:
+  - libs/clients/smart-solutions-v2/smartsolutions-api.graphql
+generates:
+  libs/clients/smart-solutions-v2/gen/schema.ts:
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-document-nodes'
+    documents: libs/clients/smart-solutions-v2/src/lib/*.graphql
+    config:
+      scalars:
+        Instant: number
+        LocalDate: Date
+        Long: number
+        UUID: string
+        JSON: '{ [key: string]: any }'
+hooks:
+  afterAllFileWrite:
+    - prettier --write

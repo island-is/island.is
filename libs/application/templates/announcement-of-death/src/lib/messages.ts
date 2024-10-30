@@ -228,13 +228,18 @@ export const m = defineMessages({
     description: 'Firearms step answer no',
   },
   firearmsApplicantHeader: {
-    id: 'aod.application:firearmsApplicantHeader',
+    id: 'aod.application:firearmsApplicantHeader#markdown',
     defaultMessage: 'Skráning vörsluaðila:',
+    description: '',
+  },
+  firearmsApplicant: {
+    id: 'aod.application:firearmsApplicant',
+    defaultMessage: 'Skráður vörsluaðili',
     description: '',
   },
   firearmsApplicantOverviewHeader: {
     id: 'aod.application:firearmsApplicantOverviewHeader',
-    defaultMessage: 'Skotvopn - vörsluaðili',
+    defaultMessage: 'Skotvopn',
     description: '',
   },
   firearmsApplicantName: {
@@ -323,6 +328,18 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage: 'Fæðingardagur',
     description: 'Day of birth label',
   },
+  inheritanceConfirmationDescription: {
+    id: 'aod.application:inheritanceConfirmationDescription#markdown',
+    defaultMessage:
+      'Ath. Það þarf alltaf að fylla út upplýsingar um alla erfingja, til dæmis þótt maki ætli að sitja í óskiptu búi. Ef barn hins látna var fallið frá á undan þarf að gefa upplýsingar um barnabörn. Ef látni sat í óskiptu búi þarf að veita upplýsingar um stjúpbörn.',
+    description: 'Inheritance confirmation',
+  },
+  inheritanceConfirmation: {
+    id: 'aod.application:inheritanceConfirmation',
+    defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um alla erfingja',
+    description: 'Inheritance confirmation',
+  },
 
   /* Properties step */
   propertiesTitle: {
@@ -332,8 +349,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
   },
   propertiesDescription: {
     id: 'aod.application:propertiesDescription',
-    defaultMessage:
-      'Upplýsingar um eignir og ökutæki hafa verið sóttar rafrænt. Vinsamlega bætið við upplýsingum ef eitthvað vantar. Taktu þér góðan tíma í að fylla þetta út eftir bestu getu. ',
+    defaultMessage: 'Merktu við það sem á við eftir bestu vitund.',
     description: 'Properties description',
   },
   realEstatesTitle: {
@@ -341,35 +357,25 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage: 'Fasteignir',
     description: 'Real estates and lands title',
   },
-  realEstatesDescription: {
-    id: 'aod.application:realEstatesDescription',
-    defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
-    description: 'Real estates and lands description',
-  },
   vehiclesTitle: {
     id: 'aod.application:vehiclesTitle',
     defaultMessage: 'Faratæki',
     description: 'Vehicles title',
-  },
-  vehiclesDescription: {
-    id: 'aod.application:vehiclesDescription',
-    defaultMessage: 'Til dæmis bifreiðar, flugvélar og bátar.',
-    description: 'Vehicles description',
   },
   vehiclesPlaceholder: {
     id: 'aod.application:vehiclesPlaceholder',
     defaultMessage: 't.d. Toyota Yaris',
     description: 'Placeholder for vehicles type',
   },
-  otherPropertiesTitle: {
-    id: 'aod.application:otherPropertiesTitle',
-    defaultMessage: 'Aðrar eignir',
-    description: 'Other properties title',
+  propertiesRealEstate: {
+    id: 'aod.application:propertiesRealEstate',
+    defaultMessage: 'Fasteignir',
+    description: 'Properties option: Real estate',
   },
-  otherPropertiesDescription: {
-    id: 'aod.application:otherPropertiesDescription',
-    defaultMessage: 'Merktu við það sem á við eftir bestu vitund.',
-    description: 'Other properties description',
+  propertiesVehicles: {
+    id: 'aod.application:propertiesVehicles',
+    defaultMessage: 'Faratæki',
+    description: 'Properties option: Vehicles',
   },
   otherPropertiesAccounts: {
     id: 'aod.application:otherPropertiesAccounts',
@@ -551,6 +557,11 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     id: 'aod.application:error.errorNumberEmpty',
     defaultMessage: 'Númer má ekki vera tómt',
     description: 'Invalid general asset number error message',
+  },
+  errorNoDateOfBirthProvided: {
+    id: 'aod.application:error.errorNoDateOfBirthProvided',
+    defaultMessage: 'Fæðingardagur þarf að vera fylltur út',
+    description: 'Date of birth is required',
   },
 
   /* Announcement */

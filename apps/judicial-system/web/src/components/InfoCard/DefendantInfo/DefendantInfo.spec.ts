@@ -13,11 +13,33 @@ describe('DefendantInfo', () => {
       jest.useRealTimers()
     })
 
-    test('should return the correct string if viewDate is not provided', () => {
-      const viewDate = undefined
-      const serviceRequirement = ServiceRequirement.NOT_REQUIRED
+    test('should return the correct string if serviceRequirement is REQUIRED and verdictAppealDeadline is not provided', () => {
+      const verdictAppealDeadline = undefined
+      const isVerdictAppealDeadlineExpired = false
+      const serviceRequirement = ServiceRequirement.REQUIRED
 
-      const dataSections = getAppealExpirationInfo(viewDate, serviceRequirement)
+      const dataSections = getAppealExpirationInfo(
+        verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired,
+        serviceRequirement,
+      )
+
+      expect(dataSections.message.id).toStrictEqual(
+        'judicial.system.core:info_card.defendant_info.appeal_date_not_begun',
+      )
+    })
+
+    test('should return the correct string if serviceRequirement is NOT_APPLICABLE and verdictAppealDeadline is not provided', () => {
+      const verdictAppealDeadline = undefined
+      const isVerdictAppealDeadlineExpired = false
+
+      const serviceRequirement = ServiceRequirement.NOT_APPLICABLE
+
+      const dataSections = getAppealExpirationInfo(
+        verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired,
+        serviceRequirement,
+      )
 
       expect(dataSections.message.id).toStrictEqual(
         'judicial.system.core:info_card.defendant_info.appeal_date_not_begun',
@@ -25,49 +47,87 @@ describe('DefendantInfo', () => {
     })
 
     test('should return the correct string if serviceRequirement is NOT_REQUIRED', () => {
-      const viewDate = '2024-07-08'
+      const verdictAppealDeadline = undefined
+      const isVerdictAppealDeadlineExpired = false
       const serviceRequirement = ServiceRequirement.NOT_REQUIRED
 
-      const dataSections = getAppealExpirationInfo(viewDate, serviceRequirement)
+      const dataSections = getAppealExpirationInfo(
+        verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired,
+        serviceRequirement,
+      )
 
       expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.service_requirement_not_required',
+        'judicial.system.core:info_card.defendant_info.service_requirement_not_required_v1',
       )
     })
 
-    test('should return the correct string if serviceRequirement is NOT_APPLICABLE', () => {
-      const viewDate = '2024-07-08'
-      const serviceRequirement = ServiceRequirement.NOT_APPLICABLE
-
-      const dataSections = getAppealExpirationInfo(viewDate, serviceRequirement)
-
-      expect(dataSections.message.id).toStrictEqual(
-        'judicial.system.core:info_card.defendant_info.service_requirement_not_applicable',
-      )
-    })
-
-    test('should return the correct string if appeal expiration date is in the future', () => {
-      const viewDate = '2024-07-08'
+    test('should return the correct string if serviceRequirement is REQUIRED and appeal expiration date is in the future', () => {
+      const verdictAppealDeadline = '2024-08-05'
+      const isVerdictAppealDeadlineExpired = false
       const serviceRequirement = ServiceRequirement.REQUIRED
 
-      const dataSections = getAppealExpirationInfo(viewDate, serviceRequirement)
+      const dataSections = getAppealExpirationInfo(
+        verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired,
+        serviceRequirement,
+      )
 
       expect(dataSections.message.id).toStrictEqual(
         'judicial.system.core:info_card.defendant_info.appeal_expiration_date',
       )
-      expect(dataSections.data).toStrictEqual('05.08.2024')
+      expect(dataSections.date).toStrictEqual('05.08.2024')
     })
 
-    test('should return the correct string if appeal expiration date is in the past', () => {
-      const viewDate = '2024-06-09'
+    test('should return the correct string if serviceRequirement is NOT_APPLICABLE and appeal expiration date is in the future', () => {
+      const verdictAppealDeadline = '2024-08-05'
+      const isVerdictAppealDeadlineExpired = false
+      const serviceRequirement = ServiceRequirement.NOT_APPLICABLE
+
+      const dataSections = getAppealExpirationInfo(
+        verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired,
+        serviceRequirement,
+      )
+
+      expect(dataSections.message.id).toStrictEqual(
+        'judicial.system.core:info_card.defendant_info.appeal_expiration_date',
+      )
+      expect(dataSections.date).toStrictEqual('05.08.2024')
+    })
+
+    test('should return the correct string if serviceRequirement is REQUIRED and appeal expiration date is in the past', () => {
+      const verdictAppealDeadline = '2024-07-07'
+      const isVerdictAppealDeadlineExpired = true
       const serviceRequirement = ServiceRequirement.REQUIRED
 
-      const dataSections = getAppealExpirationInfo(viewDate, serviceRequirement)
+      const dataSections = getAppealExpirationInfo(
+        verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired,
+        serviceRequirement,
+      )
 
       expect(dataSections.message.id).toStrictEqual(
         'judicial.system.core:info_card.defendant_info.appeal_date_expired',
       )
-      expect(dataSections.data).toStrictEqual('07.07.2024')
+      expect(dataSections.date).toStrictEqual('07.07.2024')
+    })
+
+    test('should return the correct string if serviceRequirement is NOT_APPLICABLE and appeal expiration date is in the past', () => {
+      const verdictAppealDeadline = '2024-07-07'
+      const isVerdictAppealDeadlineExpired = true
+      const serviceRequirement = ServiceRequirement.NOT_APPLICABLE
+
+      const dataSections = getAppealExpirationInfo(
+        verdictAppealDeadline,
+        isVerdictAppealDeadlineExpired,
+        serviceRequirement,
+      )
+
+      expect(dataSections.message.id).toStrictEqual(
+        'judicial.system.core:info_card.defendant_info.appeal_date_expired',
+      )
+      expect(dataSections.date).toStrictEqual('07.07.2024')
     })
   })
 })

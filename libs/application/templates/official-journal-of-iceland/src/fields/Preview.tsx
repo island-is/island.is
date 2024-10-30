@@ -1,45 +1,43 @@
-import { Box, Button, SkeletonLoader } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Bullet,
+  BulletList,
+  Button,
+  SkeletonLoader,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { signatureConfig } from '../components/htmlEditor/config/signatureConfig'
-import { advertisementTemplate } from '../components/htmlEditor/templates/content'
-import {
-  regularSignatureTemplate,
-  committeeSignatureTemplate,
-} from '../components/htmlEditor/templates/signatures'
-import { preview } from '../lib/messages'
-import {
-  OJOIFieldBaseProps,
-  OfficialJournalOfIcelandGraphqlResponse,
-} from '../lib/types'
+import { OJOIFieldBaseProps } from '../lib/types'
 import { useLocale } from '@island.is/localization'
-import { useQuery } from '@apollo/client'
-import { PDF_QUERY, PDF_URL_QUERY, TYPE_QUERY } from '../graphql/queries'
+import { HTMLText } from '@island.is/regulations-tools/types'
+import {
+  getAdvertMarkup,
+  getSignaturesMarkup,
+  parseZodIssue,
+} from '../lib/utils'
+import { Routes, SignatureTypes } from '../lib/constants'
+import { useApplication } from '../hooks/useUpdateApplication'
+import { advert, error, preview, signatures } from '../lib/messages'
+import { useType } from '../hooks/useType'
+import {
+  advertValidationSchema,
+  previewValidationSchema,
+  signatureValidationSchema,
+} from '../lib/dataSchema'
+import { ZodCustomIssue } from 'zod'
 
-export const Preview = (props: OJOIFieldBaseProps) => {
+export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
+  const { application: currentApplication } = useApplication({
+    applicationId: application.id,
+  })
+
   const { formatMessage: f } = useLocale()
-  const { answers, id } = props.application
-  const { advert, signature } = answers
 
-  const { data, loading } = useQuery(TYPE_QUERY, {
-    variables: {
-      params: {
-        id: advert?.type,
-      },
-    },
-  })
-
-  const type = data?.officialJournalOfIcelandType?.type?.title
-
-  const { data: pdfUrlData } = useQuery(PDF_URL_QUERY, {
-    variables: {
-      id: id,
-    },
-  })
-
-  const { data: pdfData } = useQuery(PDF_QUERY, {
-    variables: {
-      id: id,
-    },
+  const { type, loading } = useType({
+    typeId: currentApplication.answers.advert?.typeId,
   })
 
   if (loading) {
@@ -48,50 +46,120 @@ export const Preview = (props: OJOIFieldBaseProps) => {
     )
   }
 
-  const onCopyPreviewLink = () => {
-    if (!pdfData) {
-      return
-    }
+  const advertValidationCheck = previewValidationSchema.safeParse(
+    currentApplication.answers,
+  )
 
-    const url = pdfData.officialJournalOfIcelandApplicationGetPdfUrl.url
+  const signatureValidationCheck = signatureValidationSchema.safeParse({
+    signatures: currentApplication.answers.signatures,
+    misc: currentApplication.answers.misc,
+  })
 
-    navigator.clipboard.writeText(url)
-  }
+  const signatureMarkup = getSignaturesMarkup({
+    signatures: currentApplication.answers.signatures,
+    type: currentApplication.answers.misc?.signatureType as SignatureTypes,
+  })
 
-  const onOpenPdfPreview = () => {
-    if (!pdfData) {
-      return
-    }
+  const advertMarkup = getAdvertMarkup({
+    type: type?.title,
+    title: currentApplication.answers.advert?.title,
+    html: currentApplication.answers.advert?.html,
+  })
 
-    window.open(
-      `data:application/pdf,${pdfData.officialJournalOfIcelandApplicationGetPdf.pdf}`,
-      '_blank',
-    )
-  }
+  const hasMarkup =
+    !!currentApplication.answers.advert?.html ||
+    type?.title ||
+    currentApplication.answers.advert?.title
+
+  const combinedHtml = hasMarkup
+    ? (`${advertMarkup}<br />${signatureMarkup}` as HTMLText)
+    : (`${signatureMarkup}` as HTMLText)
 
   return (
-    <>
-      <Box display="flex" columnGap={2}>
-        {!!pdfUrlData && (
-          <Button
-            onClick={onOpenPdfPreview}
-            variant="utility"
-            icon="download"
-            iconType="outline"
-          >
-            {f(preview.buttons.fetchPdf)}
-          </Button>
-        )}
-        {!!pdfData && (
-          <Button
-            onClick={onCopyPreviewLink}
-            variant="utility"
-            icon="link"
-            iconType="outline"
-          >
-            {f(preview.buttons.copyPreviewLink)}
-          </Button>
-        )}
+    <Stack space={4}>
+      <Box
+        hidden={
+          advertValidationCheck.success && signatureValidationCheck.success
+        }
+      >
+        <Stack space={2}>
+          {!advertValidationCheck.success && (
+            <AlertMessage
+              type="warning"
+              title={f(preview.errors.noContent)}
+              message={
+                <Stack space={2}>
+                  <Text>{f(preview.errors.noContentMessage)}</Text>
+                  <BulletList color="black">
+                    {advertValidationCheck.error.issues.map((issue) => {
+                      const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
+                      return (
+                        <Bullet key={issue.path.join('.')}>
+                          {f(parsedIssue.message)}
+                        </Bullet>
+                      )
+                    })}
+                  </BulletList>
+                  <Button
+                    onClick={() => {
+                      goToScreen && goToScreen(Routes.ADVERT)
+                    }}
+                    size="small"
+                    variant="text"
+                    preTextIcon="arrowBack"
+                  >
+                    Opna kafla {f(advert.general.section)}
+                  </Button>
+                </Stack>
+              }
+            />
+          )}
+          {!signatureValidationCheck.success && (
+            <AlertMessage
+              type="warning"
+              title={f(error.missingFieldsTitle, {
+                x: f(signatures.general.section, {
+                  abbreviation: 'a',
+                }),
+              })}
+              message={
+                <Stack space={2}>
+                  <Text>
+                    {f(error.missingSignatureFieldsMessage, {
+                      x: (
+                        <strong>
+                          {f(advert.general.sectionWithAbbreviation, {
+                            x: 'a',
+                          })}
+                        </strong>
+                      ),
+                    })}
+                  </Text>
+                  <BulletList color="black">
+                    {signatureValidationCheck.error.issues.map((issue) => {
+                      const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
+                      return (
+                        <Bullet key={issue.path.join('.')}>
+                          {f(parsedIssue.message)}
+                        </Bullet>
+                      )
+                    })}
+                  </BulletList>
+                  <Button
+                    onClick={() => {
+                      goToScreen && goToScreen(Routes.ADVERT)
+                    }}
+                    size="small"
+                    variant="text"
+                    preTextIcon="arrowBack"
+                  >
+                    Opna kafla {f(advert.general.section)}
+                  </Button>
+                </Stack>
+              }
+            />
+          )}
+        </Stack>
       </Box>
       <Box border="standard" borderRadius="large">
         <HTMLEditor
@@ -99,24 +167,9 @@ export const Preview = (props: OJOIFieldBaseProps) => {
           config={signatureConfig}
           readOnly={true}
           hideWarnings={true}
-          value={advertisementTemplate({
-            category: type,
-            content: advert?.document,
-            title: advert?.title,
-            signature:
-              signature?.type === 'regular'
-                ? regularSignatureTemplate({
-                    signatureGroups: signature?.regular,
-                    additionalSignature: signature?.additional,
-                  })
-                : committeeSignatureTemplate({
-                    signature: signature?.committee,
-                    additionalSignature: signature?.additional,
-                  }),
-            readonly: true,
-          })}
+          value={combinedHtml}
         />
       </Box>
-    </>
+    </Stack>
   )
 }

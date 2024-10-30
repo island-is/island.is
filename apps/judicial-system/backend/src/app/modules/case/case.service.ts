@@ -20,7 +20,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   Message,
   MessageService,
@@ -33,18 +33,18 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
+  CaseNotificationType,
   CaseOrigin,
   CaseState,
   CaseTransition,
   CaseType,
-  CommentType,
   DateType,
   EventType,
   isCompletedCase,
   isIndictmentCase,
   isRequestCase,
   isTrafficViolationCase,
-  NotificationType,
+  StringType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -55,19 +55,20 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { Defendant, DefendantService } from '../defendant'
-import { CaseEvent, EventService } from '../event'
+import { CivilClaimant, Defendant, DefendantService } from '../defendant'
+import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
+import { Subpoena, SubpoenaService } from '../subpoena'
 import { User } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
 import { Case } from './models/case.model'
+import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
-import { ExplanatoryComment } from './models/explanatoryComment.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { caseModuleConfig } from './case.config'
@@ -178,6 +179,7 @@ export interface UpdateCase
   indictmentReturnedExplanation?: string | null
   indictmentDeniedExplanation?: string | null
   indictmentHash?: string | null
+  civilDemands?: string | null
 }
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
@@ -187,19 +189,20 @@ const dateLogTypes: Record<DateLogKeys, DateType> = {
   courtDate: DateType.COURT_DATE,
 }
 
-type ExplanatoryCommentKeys = keyof Pick<
+type CaseStringKeys = keyof Pick<
   UpdateCase,
-  'postponedIndefinitelyExplanation'
+  'postponedIndefinitelyExplanation' | 'civilDemands'
 >
 
-const explanatoryCommentTypes: Record<ExplanatoryCommentKeys, CommentType> = {
+const caseStringTypes: Record<CaseStringKeys, StringType> = {
   postponedIndefinitelyExplanation:
-    CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
+    StringType.POSTPONED_INDEFINITELY_EXPLANATION,
+  civilDemands: StringType.CIVIL_DEMANDS,
 }
 
 const eventTypes = Object.values(EventType)
 const dateTypes = Object.values(DateType)
-const commentTypes = Object.values(CommentType)
+const stringTypes = Object.values(StringType)
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -269,7 +272,23 @@ export const include: Includeable[] = [
     ],
   },
   { model: Case, as: 'childCase' },
-  { model: Defendant, as: 'defendants' },
+  {
+    model: Defendant,
+    as: 'defendants',
+    required: false,
+    order: [['created', 'ASC']],
+    include: [
+      {
+        model: Subpoena,
+        as: 'subpoenas',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
+  { model: CivilClaimant, as: 'civilClaimants' },
   { model: IndictmentCount, as: 'indictmentCounts' },
   {
     model: CaseFile,
@@ -293,10 +312,10 @@ export const include: Includeable[] = [
     where: { dateType: { [Op.in]: dateTypes } },
   },
   {
-    model: ExplanatoryComment,
-    as: 'explanatoryComments',
+    model: CaseString,
+    as: 'caseStrings',
     required: false,
-    where: { commentType: { [Op.in]: commentTypes } },
+    where: { stringType: { [Op.in]: stringTypes } },
   },
   { model: Notification, as: 'notifications' },
   { model: Case, as: 'mergeCase' },
@@ -318,6 +337,10 @@ export const include: Includeable[] = [
               CaseFileCategory.CRIMINAL_RECORD,
               CaseFileCategory.COST_BREAKDOWN,
               CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+              CaseFileCategory.CASE_FILE,
+              CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIM,
             ],
           },
         },
@@ -333,7 +356,7 @@ export const include: Includeable[] = [
 ]
 
 export const order: OrderItem[] = [
-  [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: CivilClaimant, as: 'civilClaimants' }, 'created', 'ASC'],
   [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
   [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
   [{ model: Notification, as: 'notifications' }, 'created', 'DESC'],
@@ -374,24 +397,23 @@ export const caseListInclude: Includeable[] = [
     where: { dateType: { [Op.in]: dateTypes } },
   },
   {
-    model: ExplanatoryComment,
-    as: 'explanatoryComments',
+    model: CaseString,
+    as: 'caseStrings',
     required: false,
-    where: { commentType: { [Op.in]: commentTypes } },
+    where: { stringType: { [Op.in]: stringTypes } },
   },
   {
     model: EventLog,
     as: 'eventLogs',
     required: false,
     where: { eventType: { [Op.in]: eventTypes } },
-    order: [['created', 'DESC']],
-    separate: true,
   },
 ]
 
 export const listOrder: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
   [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
+  [{ model: EventLog, as: 'eventLogs' }, 'created', 'DESC'],
 ]
 
 @Injectable()
@@ -400,11 +422,12 @@ export class CaseService {
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
-    @InjectModel(ExplanatoryComment)
-    private readonly explanatoryCommentModel: typeof ExplanatoryComment,
+    @InjectModel(CaseString)
+    private readonly caseStringModel: typeof CaseString,
     @Inject(caseModuleConfig.KEY)
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
+    private readonly subpoenaService: SubpoenaService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
@@ -597,7 +620,7 @@ export class CaseService {
     ]
   }
 
-  private addMessagesForSubmittedIndicitmentCaseToQueue(
+  private addMessagesForSubmittedIndictmentCaseToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
@@ -606,7 +629,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.READY_FOR_COURT },
+        body: { type: CaseNotificationType.READY_FOR_COURT },
       },
     ])
   }
@@ -620,7 +643,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.RECEIVED_BY_COURT },
+        body: { type: CaseNotificationType.RECEIVED_BY_COURT },
       },
     ]
 
@@ -782,7 +805,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.RULING },
+        body: { type: CaseNotificationType.RULING },
       },
     ]
 
@@ -853,7 +876,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.RULING },
+        body: { type: CaseNotificationType.RULING },
       },
     ]
 
@@ -877,7 +900,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.MODIFIED },
+        body: { type: CaseNotificationType.MODIFIED },
       },
     ]
 
@@ -898,7 +921,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.REVOKED },
+        body: { type: CaseNotificationType.REVOKED },
       },
     ]
   }
@@ -964,7 +987,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: NotificationType.APPEAL_TO_COURT_OF_APPEALS },
+      body: { type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
     })
 
     return this.messageService.sendMessagesToQueue(messages)
@@ -979,7 +1002,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_RECEIVED_BY_COURT },
+        body: { type: CaseNotificationType.APPEAL_RECEIVED_BY_COURT },
       },
     ])
   }
@@ -1008,7 +1031,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_COMPLETED },
+        body: { type: CaseNotificationType.APPEAL_COMPLETED },
       },
       {
         type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
@@ -1040,7 +1063,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_STATEMENT },
+        body: { type: CaseNotificationType.APPEAL_STATEMENT },
       },
     ])
   }
@@ -1054,7 +1077,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_WITHDRAWN },
+        body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
       },
     ])
   }
@@ -1068,7 +1091,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.INDICTMENT_DENIED },
+        body: { type: CaseNotificationType.INDICTMENT_DENIED },
       },
     ])
   }
@@ -1082,7 +1105,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.INDICTMENT_RETURNED },
+        body: { type: CaseNotificationType.INDICTMENT_RETURNED },
       },
     ])
   }
@@ -1145,9 +1168,36 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.COURT_DATE },
+        body: { type: CaseNotificationType.COURT_DATE },
       },
     ])
+  }
+
+  private addMessagesForNewSubpoenasToQueue(
+    theCase: Case,
+    updatedCase: Case,
+    user: TUser,
+  ) {
+    const messages = updatedCase.defendants
+      ?.filter(
+        (updatedDefendant) =>
+          theCase.defendants?.find(
+            (defendant) => defendant.id === updatedDefendant.id,
+          )?.subpoenas?.[0]?.id !== updatedDefendant.subpoenas?.[0]?.id,
+      )
+      .map((updatedDefendant) => ({
+        type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+        user,
+        caseId: theCase.id,
+        elementId: [
+          updatedDefendant.id,
+          updatedDefendant.subpoenas?.[0].id ?? '',
+        ],
+      }))
+
+    if (messages && messages.length > 0) {
+      return this.messageService.sendMessagesToQueue(messages)
+    }
   }
 
   private async addMessagesForUpdatedCaseToQueue(
@@ -1181,7 +1231,7 @@ export class CaseService {
           await this.addMessagesForCompletedCaseToQueue(updatedCase, user)
         }
       } else if (updatedCase.state === CaseState.SUBMITTED && isIndictment) {
-        await this.addMessagesForSubmittedIndicitmentCaseToQueue(
+        await this.addMessagesForSubmittedIndictmentCaseToQueue(
           updatedCase,
           user,
         )
@@ -1306,11 +1356,27 @@ export class CaseService {
     }
 
     // This only applies to indictments
-    const courtDate = DateLog.courtDate(theCase.dateLogs)
-    const updatedCourtDate = DateLog.courtDate(updatedCase.dateLogs)
-    if (updatedCourtDate && updatedCourtDate.date !== courtDate?.date) {
-      // New court date
-      await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
+    if (isIndictment) {
+      const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
+      const updatedArraignmentDate = DateLog.arraignmentDate(
+        updatedCase.dateLogs,
+      )
+      const arraignmentDateChanged =
+        updatedArraignmentDate &&
+        updatedArraignmentDate.date.getTime() !==
+          arraignmentDate?.date.getTime()
+      const courtDate = DateLog.courtDate(theCase.dateLogs)
+      const updatedCourtDate = DateLog.courtDate(updatedCase.dateLogs)
+      const courtDateChanged =
+        updatedCourtDate &&
+        updatedCourtDate.date.getTime() !== courtDate?.date.getTime()
+
+      if (arraignmentDateChanged || courtDateChanged) {
+        // New arraignment date or new court date
+        await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
+      }
+
+      await this.addMessagesForNewSubpoenasToQueue(theCase, updatedCase, user)
     }
   }
 
@@ -1353,42 +1419,46 @@ export class CaseService {
     caseId: string,
     defendant: Defendant,
   ): Promise<Case[]> {
-    let whereClause: WhereOptions = {
-      type: CaseType.INDICTMENT,
-      id: { [Op.ne]: caseId },
-      state: [CaseState.RECEIVED],
-    }
+    const whereClause: WhereOptions = [
+      { isArchived: false },
+      { type: CaseType.INDICTMENT },
+      { id: { [Op.ne]: caseId } },
+      { state: CaseState.RECEIVED },
+    ]
 
     if (defendant.noNationalId) {
-      whereClause = {
-        ...whereClause,
-        [Op.and]: [
-          { '$defendants.national_id$': defendant.nationalId },
-          { '$defendants.name$': defendant.name },
-        ],
-      }
+      whereClause.push({
+        id: {
+          [Op.in]: Sequelize.literal(`
+            (SELECT case_id
+              FROM defendant
+              WHERE national_id = '${defendant.nationalId}'
+              AND name = '${defendant.name}'
+          )`),
+        },
+      })
     } else {
-      const formattedNationalId = formatNationalId(defendant.nationalId)
-      whereClause = {
-        ...whereClause,
-        [Op.or]: [
-          { '$defendants.national_id$': defendant.nationalId },
-          { '$defendants.national_id$': formattedNationalId },
-        ],
-      }
+      const [normalizedNationalId, formattedNationalId] =
+        normalizeAndFormatNationalId(defendant.nationalId)
+
+      whereClause.push({
+        id: {
+          [Op.in]: Sequelize.literal(`
+            (SELECT case_id
+              FROM defendant
+              WHERE national_id in ('${normalizedNationalId}', '${formattedNationalId}')
+          )`),
+        },
+      })
     }
 
     return this.caseModel.findAll({
       include: [
+        { model: Institution, as: 'court' },
         { model: Defendant, as: 'defendants' },
-        {
-          model: DateLog,
-          as: 'dateLogs',
-        },
       ],
-      order: [[{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC']],
       attributes: ['id', 'courtCaseNumber', 'type', 'state'],
-      where: whereClause,
+      where: { [Op.and]: whereClause },
     })
   }
 
@@ -1468,39 +1538,39 @@ export class CaseService {
     update: UpdateCase,
     transaction: Transaction,
   ) {
-    // Iterate over all known explanatory comment types
-    for (const key in explanatoryCommentTypes) {
-      const commentKey = key as ExplanatoryCommentKeys
-      const updateComment = update[commentKey]
+    // Iterate over all known case string types
+    for (const key in caseStringTypes) {
+      const caseStringKey = key as CaseStringKeys
+      const updateCaseString = update[caseStringKey]
 
-      if (updateComment !== undefined) {
-        const commentType = explanatoryCommentTypes[commentKey]
+      if (updateCaseString !== undefined) {
+        const stringType = caseStringTypes[caseStringKey]
 
-        const comment = await this.explanatoryCommentModel.findOne({
-          where: { caseId: theCase.id, commentType },
+        const caseString = await this.caseStringModel.findOne({
+          where: { caseId: theCase.id, stringType },
           transaction,
         })
 
-        if (comment) {
-          if (updateComment === null) {
-            await this.explanatoryCommentModel.destroy({
-              where: { caseId: theCase.id, commentType },
+        if (caseString) {
+          if (updateCaseString === null) {
+            await this.caseStringModel.destroy({
+              where: { caseId: theCase.id, stringType },
               transaction,
             })
           } else {
-            await this.explanatoryCommentModel.update(
-              { comment: updateComment },
-              { where: { caseId: theCase.id, commentType }, transaction },
+            await this.caseStringModel.update(
+              { value: updateCaseString },
+              { where: { caseId: theCase.id, stringType }, transaction },
             )
           }
-        } else if (updateComment !== null) {
-          await this.explanatoryCommentModel.create(
-            { caseId: theCase.id, commentType, comment: updateComment },
+        } else if (updateCaseString !== null) {
+          await this.caseStringModel.create(
+            { caseId: theCase.id, stringType, value: updateCaseString },
             { transaction },
           )
         }
 
-        delete update[commentKey]
+        delete update[caseStringKey]
       }
     }
   }
@@ -1585,8 +1655,36 @@ export class CaseService {
       isIndictmentCase(theCase.type) &&
       update.state === CaseState.DRAFT &&
       theCase.state === CaseState.RECEIVED
-    const completingIndictmentCase =
-      isIndictmentCase(theCase.type) && update.state === CaseState.COMPLETED
+    const completingIndictmentCaseWithoutRuling =
+      isIndictmentCase(theCase.type) &&
+      update.state === CaseState.COMPLETED &&
+      theCase.indictmentRulingDecision &&
+      [
+        CaseIndictmentRulingDecision.FINE,
+        CaseIndictmentRulingDecision.CANCELLATION,
+        CaseIndictmentRulingDecision.MERGE,
+        CaseIndictmentRulingDecision.WITHDRAWAL,
+      ].includes(theCase.indictmentRulingDecision)
+    const updatedArraignmentDate = update.arraignmentDate
+    const schedulingNewArraignmentDateForIndictmentCase =
+      isIndictmentCase(theCase.type) && Boolean(updatedArraignmentDate)
+
+    if (update.accusedPostponedAppealDate) {
+      const relevantInfo = {
+        appealState: theCase.appealState,
+        accusedAppealDecision: theCase.accusedAppealDecision,
+        accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
+        prosecutorAppealDecision: theCase.prosecutorAppealDecision,
+        prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
+        update: update,
+      }
+
+      this.logger.info(
+        `Updating accusedPostponedAppealDate in case service for case ${
+          theCase.id
+        }. Relevant info: ${JSON.stringify(relevantInfo)}`,
+      )
+    }
 
     return this.sequelize
       .transaction(async (transaction) => {
@@ -1603,24 +1701,22 @@ export class CaseService {
         await this.handleCommentUpdates(theCase, update, transaction)
         await this.handleEventLogs(theCase, update, user, transaction)
 
-        if (Object.keys(update).length === 0) {
-          return
-        }
+        if (Object.keys(update).length > 0) {
+          const [numberOfAffectedRows] = await this.caseModel.update(update, {
+            where: { id: theCase.id },
+            transaction,
+          })
 
-        const [numberOfAffectedRows] = await this.caseModel.update(update, {
-          where: { id: theCase.id },
-          transaction,
-        })
-
-        if (numberOfAffectedRows > 1) {
-          // Tolerate failure, but log error
-          this.logger.error(
-            `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${theCase.id}`,
-          )
-        } else if (numberOfAffectedRows < 1) {
-          throw new InternalServerErrorException(
-            `Could not update case ${theCase.id}`,
-          )
+          if (numberOfAffectedRows > 1) {
+            // Tolerate failure, but log error
+            this.logger.error(
+              `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${theCase.id}`,
+            )
+          } else if (numberOfAffectedRows < 1) {
+            throw new InternalServerErrorException(
+              `Could not update case ${theCase.id}`,
+            )
+          }
         }
 
         // Update police case numbers of case files if necessary
@@ -1646,22 +1742,34 @@ export class CaseService {
           )
         }
 
-        if (
-          completingIndictmentCase &&
-          theCase.indictmentRulingDecision &&
-          [
-            CaseIndictmentRulingDecision.FINE,
-            CaseIndictmentRulingDecision.CANCELLATION,
-          ].includes(theCase.indictmentRulingDecision)
-        ) {
+        // Remove uploaded ruling files if an indictment case is completed without a ruling
+        if (completingIndictmentCaseWithoutRuling && theCase.caseFiles) {
           await Promise.all(
             theCase.caseFiles
-              ?.filter(
+              .filter(
                 (caseFile) => caseFile.category === CaseFileCategory.RULING,
               )
-              ?.map((caseFile) =>
+              .map((caseFile) =>
                 this.fileService.deleteCaseFile(theCase, caseFile, transaction),
-              ) ?? [],
+              ),
+          )
+        }
+
+        // Create new subpoeans if scheduling a new arraignment date for an indictment case
+        if (
+          schedulingNewArraignmentDateForIndictmentCase &&
+          theCase.defendants
+        ) {
+          await Promise.all(
+            theCase.defendants.map((defendant) =>
+              this.subpoenaService.createSubpoena(
+                defendant.id,
+                theCase.id,
+                transaction,
+                updatedArraignmentDate?.date,
+                updatedArraignmentDate?.location,
+              ),
+            ),
           )
         }
       })
@@ -1671,7 +1779,7 @@ export class CaseService {
         await this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
         if (receivingCase) {
-          this.eventService.postEvent(CaseEvent.RECEIVE, updatedCase)
+          this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase)
         }
 
         if (returnUpdatedCase) {

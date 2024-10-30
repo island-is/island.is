@@ -4,6 +4,7 @@ import {
   UserProfileApi,
   NationalRegistryUserApi,
   InstitutionNationalIds,
+  MockablePaymentCatalogApi,
 } from '@island.is/application/types'
 import { error } from '../lib/messages'
 
@@ -33,7 +34,7 @@ const defaultParams = {
     summary: error.invalidAgeDescription,
   },
   icelandicCitizenship: true,
-  allowPassOnChild: true,
+  allowIfChildHasCitizenship: true,
 }
 
 export const NationalRegistryUser = NationalRegistryUserApi.configure({
@@ -45,6 +46,7 @@ export const NationalRegistryUserParentB = NationalRegistryUserApi.configure({
     ...defaultParams,
     icelandicCitizenship: false,
   },
+  externalDataId: 'nationalRegistryParentB',
 })
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
@@ -53,6 +55,14 @@ export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   },
   externalDataId: 'payment',
 })
+
+export const MockableSyslumadurPaymentCatalogApi =
+  MockablePaymentCatalogApi.configure({
+    params: {
+      organizationId: InstitutionNationalIds.SYSLUMENN,
+    },
+    externalDataId: 'payment',
+  })
 
 export const DeliveryAddressApi = defineTemplateApi({
   action: 'deliveryAddress',

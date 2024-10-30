@@ -24,6 +24,7 @@ import {
 import {
   DeliveryAddressApi,
   IdentityDocumentApi,
+  MockableSyslumadurPaymentCatalogApi,
   NationalRegistryUser,
   SyslumadurPaymentCatalogApi,
   UserInfoApi,
@@ -40,6 +41,7 @@ export const Prerequisites: Form = buildForm({
     buildSection({
       id: 'preInformation',
       title: externalData.preInformation.sectionTitle,
+
       children: [
         buildMultiField({
           id: 'preInformation.multifield',
@@ -104,10 +106,15 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: IdentityDocumentApi,
-              title: '',
+              title: externalData.identityDocument.title,
+              subTitle: externalData.identityDocument.subTitle,
             }),
             buildDataProviderItem({
               provider: SyslumadurPaymentCatalogApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: MockableSyslumadurPaymentCatalogApi,
               title: '',
             }),
           ],

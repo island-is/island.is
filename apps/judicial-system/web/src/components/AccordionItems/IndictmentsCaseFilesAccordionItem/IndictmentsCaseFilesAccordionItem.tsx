@@ -1,7 +1,12 @@
-import { FC, PointerEvent, useEffect, useState } from 'react'
+import {
+  Dispatch,
+  FC,
+  PointerEvent,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
-import isValid from 'date-fns/isValid'
-import parseISO from 'date-fns/parseISO'
 import {
   animate,
   AnimatePresence,
@@ -25,7 +30,6 @@ import {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import { errors as errorMessages } from '@island.is/judicial-system-web/messages/Core/errors'
 import {
   FileNotFoundModal,
   IndictmentInfo,
@@ -41,7 +45,7 @@ import EditableCaseFile, {
   TEditableCaseFile,
 } from '../../EditableCaseFile/EditableCaseFile'
 import { useUpdateFilesMutation } from './updateFiles.generated'
-import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
+import { strings } from './IndictmentsCaseFilesAccordionItem.strings'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
 interface Props {
@@ -51,14 +55,16 @@ interface Props {
   shouldStartExpanded: boolean
   subtypes?: IndictmentSubtypeMap
   crimeScenes?: CrimeSceneMap
+  setEditCount: Dispatch<SetStateAction<number>>
 }
 
 interface CaseFileProps {
   caseFile: ReorderableItem
   onReorder: (id?: string) => void
   onOpen: (id: string) => void
-  onRename: (id: string, name?: string, displayDate?: string) => void
+  onRename: (id: string, name: string, displayDate: string) => void
   onDelete: (file: TUploadFile) => void
+  setEditCount: Dispatch<SetStateAction<number>>
 }
 
 export interface ReorderableItem extends TEditableCaseFile {
@@ -109,11 +115,24 @@ export const getFilesToUpdate = (
       files[index - 1].chapter === null)
   ) {
     // The file is not in a chapter
-    return [null, null, [files[index]]]
+    return [
+      null,
+      null,
+      files[index].chapter === undefined || files[index].chapter === null
+        ? []
+        : [files[index]],
+    ]
   }
 
   const chapter = files[index - 1]?.chapter ?? 0
   const orderWithinChapter = (files[index - 1]?.orderWithinChapter ?? -1) + 1
+
+  if (
+    files[index].chapter === chapter &&
+    files[index].orderWithinChapter === orderWithinChapter
+  ) {
+    return [chapter, orderWithinChapter, []]
+  }
 
   const filesToUpdate: ReorderableItem[] = [files[index]]
   while (files[++index].chapter === chapter) {
@@ -170,7 +189,8 @@ const renderChapter = (chapter: number, name?: string | null) => (
 )
 
 const CaseFile: FC<CaseFileProps> = (props) => {
-  const { caseFile, onReorder, onOpen, onRename, onDelete } = props
+  const { caseFile, onReorder, onOpen, onRename, onDelete, setEditCount } =
+    props
   const y = useMotionValue(0)
   const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
@@ -237,6 +257,8 @@ const CaseFile: FC<CaseFileProps> = (props) => {
           onDelete={onDelete}
           onOpen={onOpen}
           onRename={onRename}
+          onStartEditing={() => setEditCount((count) => count + 1)}
+          onStopEditing={() => setEditCount((count) => count - 1)}
         />
       )}
     </Reorder.Item>
@@ -251,15 +273,14 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     shouldStartExpanded,
     subtypes,
     crimeScenes,
+    setEditCount,
   } = props
   const { formatMessage } = useIntl()
   const [updateFilesMutation] = useUpdateFilesMutation()
-
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId,
   })
   const { handleRemove } = useS3Upload(caseId)
-
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>(
     [],
   )
@@ -269,7 +290,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(0, caseFiles),
       {
         id: uuid(),
-        displayText: formatMessage(m.chapterInvesitgationProcess),
+        displayText: formatMessage(strings.chapterInvesitgationProcess),
         chapter: 1,
         isHeading: true,
         isDivider: false,
@@ -277,7 +298,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(1, caseFiles),
       {
         id: uuid(),
-        displayText: formatMessage(m.chapterWitnesses),
+        displayText: formatMessage(strings.chapterWitnesses),
         chapter: 2,
         isHeading: true,
         isDivider: false,
@@ -285,7 +306,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(2, caseFiles),
       {
         id: uuid(),
-        displayText: formatMessage(m.chapterDefendant),
+        displayText: formatMessage(strings.chapterDefendant),
         chapter: 3,
         isHeading: true,
         isDivider: false,
@@ -293,7 +314,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(3, caseFiles),
       {
         id: uuid(),
-        displayText: formatMessage(m.chapterCaseFiles),
+        displayText: formatMessage(strings.chapterCaseFiles),
         chapter: 4,
         isHeading: true,
         isDivider: false,
@@ -301,7 +322,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(4, caseFiles),
       {
         id: uuid(),
-        displayText: formatMessage(m.chapterElectronicDocuments),
+        displayText: formatMessage(strings.chapterElectronicDocuments),
         chapter: 5,
         isHeading: true,
         isDivider: false,
@@ -309,9 +330,9 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       ...sortedFilesInChapter(5, caseFiles),
       {
         id: uuid(),
-        displayText: `${formatMessage(m.unorderedFilesTitle)}|${formatMessage(
-          m.unorderedFilesExplanation,
-        )}`,
+        displayText: `${formatMessage(
+          strings.unorderedFilesTitle,
+        )}|${formatMessage(strings.unorderedFilesExplanation)}`,
         isHeading: false,
         isDivider: true,
       },
@@ -348,6 +369,10 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       reorderableItems,
     )
 
+    if (filesToUpdate.length === 0) {
+      return
+    }
+
     const { errors } = await updateFilesMutation({
       variables: {
         input: {
@@ -371,44 +396,26 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     })
 
     if (errors) {
-      toast.error(formatMessage(m.reorderFailedErrorMessage))
+      toast.error(formatMessage(strings.reorderFailedErrorMessage))
     }
   }
 
   const handleRename = async (
     fileId: string,
-    newName?: string,
-    newDisplayDate?: string,
+    newName: string,
+    newDisplayDate: string,
   ) => {
-    let newDate: Date | null = null
-    const fileInReorderableItems = reorderableItems.findIndex(
-      (item) => item.id === fileId,
+    setReorderableItems((prev) =>
+      prev.map((item) =>
+        item.id === fileId
+          ? {
+              ...item,
+              userGeneratedFilename: newName,
+              displayDate: newDisplayDate,
+            }
+          : item,
+      ),
     )
-
-    if (fileInReorderableItems === -1) {
-      return
-    }
-
-    if (newDisplayDate) {
-      const [day, month, year] = newDisplayDate.split('.')
-      newDate = parseISO(`${year}-${month}-${day}`)
-
-      if (!isValid(newDate)) {
-        toast.error(formatMessage(errorMessages.invalidDateErrorMessage))
-        return
-      }
-    }
-
-    setReorderableItems((prev) => {
-      const newReorderableItems = [...prev]
-      newReorderableItems[fileInReorderableItems].userGeneratedFilename =
-        newName
-      newReorderableItems[fileInReorderableItems].displayDate = newDate
-        ? newDate.toISOString()
-        : newReorderableItems[fileInReorderableItems].displayDate
-
-      return newReorderableItems
-    })
 
     const { errors } = await updateFilesMutation({
       variables: {
@@ -418,7 +425,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
             {
               id: fileId,
               userGeneratedFilename: newName,
-              ...(newDate && { displayDate: newDate.toISOString() }),
+              displayDate: newDisplayDate,
             },
           ],
         },
@@ -426,7 +433,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     })
 
     if (errors) {
-      toast.error(formatMessage(errorMessages.renameFailedErrorMessage))
+      toast.error(formatMessage(strings.renameFailedErrorMessage))
     }
   }
 
@@ -440,7 +447,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     <>
       <AccordionItem
         id="IndictmentsCaseFilesAccordionItem"
-        label={formatMessage(m.title, {
+        label={formatMessage(strings.title, {
           policeCaseNumber,
         })}
         labelVariant="h3"
@@ -454,7 +461,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
           />
         </Box>
         <Box marginBottom={3}>
-          <Text>{formatMessage(m.explanation)}</Text>
+          <Text>{formatMessage(strings.explanation)}</Text>
         </Box>
         {/* 
       Render the first chapter here, outside the reorder group because 
@@ -463,7 +470,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
         <Box marginBottom={2}>
           {renderChapter(
             0,
-            formatMessage(m.chapterIndictmentAndAccompanyingDocuments),
+            formatMessage(strings.chapterIndictmentAndAccompanyingDocuments),
           )}
         </Box>
         <Reorder.Group
@@ -481,6 +488,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
                   onOpen={onOpen}
                   onRename={handleRename}
                   onDelete={handleDelete}
+                  setEditCount={setEditCount}
                 />
               </Box>
             )
@@ -496,7 +504,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
               >
                 <AlertMessage
                   type="success"
-                  message={formatMessage(m.noCaseFiles)}
+                  message={formatMessage(strings.noCaseFiles)}
                 />
               </motion.div>
             )}

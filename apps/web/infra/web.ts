@@ -45,7 +45,6 @@ export const serviceSetup = (services: {
           prod: {
             'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
         },
         paths: ['/'],
@@ -54,8 +53,8 @@ export const serviceSetup = (services: {
     .liveness('/liveness')
     .readiness({ path: '/readiness', initialDelaySeconds: 20 })
     .resources({
-      limits: { cpu: '400m', memory: '768Mi' },
-      requests: { cpu: '200m', memory: '384Mi' },
+      limits: { cpu: '1000m', memory: '768Mi' },
+      requests: { cpu: '300m', memory: '384Mi' },
     })
     .replicaCount({
       default: 2,

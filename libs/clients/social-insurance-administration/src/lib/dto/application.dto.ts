@@ -5,8 +5,8 @@ import {
   ForeignBankInfo,
   TaxInfo,
   ApplicantInfo,
-  Employer,
   SpouseTaxCardUsage,
+  IncomePlanInfo,
 } from '../socialInsuranceAdministrationClient.type'
 
 export interface ApplicationDTO {
@@ -29,4 +29,5 @@ export interface ApplicationDTO {
   deceasedNationalId?: string
   childrenNationalIds?: string[]
   spouseTaxCardUsage?: SpouseTaxCardUsage
+  incomePlan?: IncomePlanInfo
 }

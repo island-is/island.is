@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -83,12 +83,12 @@ const AppealFiles = () => {
   }/${id}`
 
   const handleNextButtonClick = useCallback(async () => {
-    const allSucceeded = await handleUpload(
-      uploadFiles.filter((file) => !file.key),
+    const uploadResult = await handleUpload(
+      uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
 
-    if (!allSucceeded) {
+    if (uploadResult !== 'ALL_SUCCEEDED') {
       return
     }
 
@@ -111,8 +111,8 @@ const AppealFiles = () => {
     }
   }
 
-  const handleChange = (files: File[], category: CaseFileCategory) => {
-    addUploadFiles(files, { category, status: 'done' })
+  const handleChange = (files: File[]) => {
+    addUploadFiles(files, { category: appealCaseFilesType, status: 'done' })
   }
 
   return (
@@ -181,10 +181,8 @@ const AppealFiles = () => {
               fileEndings: '.pdf',
             })}
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-            onChange={(files) => {
-              handleChange(files, appealCaseFilesType)
-            }}
-            onRemove={(file) => handleRemoveFile(file)}
+            onChange={handleChange}
+            onRemove={handleRemoveFile}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
           />

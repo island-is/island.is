@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertBanner, AlertMessage, Box } from '@island.is/island-ui/core'
@@ -31,7 +31,7 @@ type modalTypes = 'reopenCase' | 'none'
 const CourtOfAppealResult = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const [modalVisible, setModalVisible] = React.useState<modalTypes>('none')
+  const [modalVisible, setModalVisible] = useState<modalTypes>('none')
 
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)

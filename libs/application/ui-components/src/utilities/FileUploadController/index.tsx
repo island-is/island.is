@@ -36,7 +36,7 @@ const answerToUploadFile = ({ name, key }: UploadFile): UploadFile => {
   return { name, key, status: 'done' }
 }
 
-function reducer(state: UploadFile[], action: Action) {
+const reducer = (state: UploadFile[], action: Action) => {
   switch (action.type) {
     case ActionTypes.ADD:
       return state.concat(action.payload.newFiles)

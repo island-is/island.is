@@ -12,7 +12,7 @@ import {
   hasHealthRemarks,
   needsHealthCertificateCondition,
 } from '../../lib/utils/formUtils'
-import { BE } from '../../lib/constants'
+import { BE, B_FULL_RENEWAL_65 } from '../../lib/constants'
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
@@ -22,8 +22,15 @@ export const subSectionHealthDeclaration = buildSubSection({
     buildMultiField({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
+      condition: (answers) => answers.applicationFor !== B_FULL_RENEWAL_65,
       space: 2,
       children: [
+        buildDescriptionField({
+          id: 'healthDeclarationDescription',
+          title: '',
+          description: m.healthDeclarationSubTitle,
+          marginBottom: 2,
+        }),
         buildCustomField({
           id: 'remarks',
           title: '',
@@ -153,6 +160,18 @@ export const subSectionHealthDeclaration = buildSubSection({
           alertType: 'warning',
           condition: (answers, externalData) =>
             needsHealthCertificateCondition(YES)(answers, externalData),
+        }),
+      ],
+    }),
+    buildMultiField({
+      id: 'healthDeclarationAge65',
+      title: m.healthDeclarationMultiFieldTitle,
+      condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
+      children: [
+        buildDescriptionField({
+          id: 'healthDeclarationDescription65',
+          title: '',
+          description: m.healthDeclarationMultiField65Description,
         }),
       ],
     }),

@@ -2,7 +2,6 @@ import AWS from 'aws-sdk'
 import yargs from 'yargs'
 import { OpsEnv } from './dsl/types/input-types'
 import { Envs } from './environments'
-// import { serializeService } from './dsl/output-generators/map-to-helm-values'
 import {
   ChartName,
   Charts,
@@ -11,8 +10,7 @@ import {
 } from './uber-charts/all-charts'
 import { renderHelmServices } from './dsl/exports/helm'
 import { logger } from './common'
-
-const { hideBin } = require('yargs/helpers')
+import { hideBin } from 'yargs/helpers'
 
 interface GetArguments {
   key: string

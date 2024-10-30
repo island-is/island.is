@@ -30,6 +30,7 @@ import { useAuth } from '@island.is/auth/react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import FormStepper from '../components/FormStepper'
+import { getFormComponent } from '../utils'
 
 export const FormShell: FC<
   React.PropsWithChildren<{
@@ -71,7 +72,7 @@ export const FormShell: FC<
   } = state.form
   const showProgressTag = mode !== FormModes.DRAFT
   const currentScreen = screens[activeScreen]
-  const FormLogo = form.logo
+  const FormLogo = getFormComponent(form.logo, storedApplication)
 
   const getDraftSectionCurrentScreen = (): number | undefined => {
     const currentDraftScreenSection = sections.find(
@@ -99,37 +100,6 @@ export const FormShell: FC<
 
   if (updateForbidden) {
     return <ErrorShell errorType="lost" applicationType={application.typeId} />
-  }
-
-  const parseSubsections = (
-    children: Array<SectionChildren>,
-    isParentActive: boolean,
-  ) => {
-    const childrenToParse: Array<SectionChildren> = []
-
-    children.forEach((child) => {
-      const childScreen = screens.find((s) => s.id === child.id)
-
-      if (childScreen?.subSectionIndex === -1) {
-        return null
-      }
-
-      childrenToParse.push(child)
-    })
-
-    return childrenToParse.map((child, i) => {
-      const isChildActive =
-        isParentActive && currentScreen.subSectionIndex === i
-      return (
-        <Text
-          variant="medium"
-          fontWeight={isChildActive ? 'semiBold' : 'regular'}
-          key={`formStepperChild-${i}`}
-        >
-          {formatMessage(child.title as MessageDescriptor)}
-        </Text>
-      )
-    })
   }
 
   return (

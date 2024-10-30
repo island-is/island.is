@@ -5,6 +5,7 @@ import { Entry } from 'contentful'
 import { IFrontpage } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapFrontpage } from '../../models/frontpage.model'
+import { extractChildEntryIds } from './utils'
 
 @Injectable()
 export class FrontpageSyncService implements CmsSyncProvider<IFrontpage> {
@@ -43,6 +44,10 @@ export class FrontpageSyncService implements CmsSyncProvider<IFrontpage> {
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapFrontpage(entry)
+
+          // Tag the document with the ids of its children so we can later look up what document a child belongs to
+          const childEntryIds = extractChildEntryIds(entry)
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -53,6 +58,10 @@ export class FrontpageSyncService implements CmsSyncProvider<IFrontpage> {
                 key: entry.fields?.pageIdentifier,
                 type: 'slug',
               },
+              ...childEntryIds.map((id) => ({
+                key: id,
+                type: 'hasChildEntryWithId',
+              })),
             ],
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),

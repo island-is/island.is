@@ -23,7 +23,10 @@ import {
   CreateApplicationDtoEducationOptionEnum,
 } from '@island.is/clients/university-gateway-api'
 
-import { UniversityAnswers } from '@island.is/application/templates/university'
+import {
+  UniversityAnswers,
+  UniversityGatewayProgram,
+} from '@island.is/application/templates/university'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { InnaClientService } from '@island.is/clients/inna'
 
@@ -120,6 +123,14 @@ export class UniversityService extends BaseTemplateApiService {
       email: userFromAnswers.email,
       phone: userFromAnswers.phone,
     }
+    const programs = externalData.programs
+      ?.data as Array<UniversityGatewayProgram>
+    const modesOfDeliveryFromChosenProgram = programs.find(
+      (x) => x.id === answers.programInformation.program,
+    )
+    const defaultModeOfDelivery = modesOfDeliveryFromChosenProgram
+      ?.modeOfDelivery[0]
+      .modeOfDelivery as CreateApplicationDtoModeOfDeliveryEnum
 
     //all possible types of education data from the application answers
     const educationOptionChosen =
@@ -137,6 +148,7 @@ export class UniversityService extends BaseTemplateApiService {
       educationOptionChosen === UniversityApplicationTypes.EXEMPTION
         ? {
             degreeAttachments: await this.getAttachmentUrls(
+              application,
               answers.educationDetails.exemptionDetails?.degreeAttachments?.map(
                 (x, i) => {
                   const type = this.mapFileTypes(i)
@@ -167,6 +179,7 @@ export class UniversityService extends BaseTemplateApiService {
             moreDetails:
               answers.educationDetails.thirdLevelDetails?.moreDetails,
             degreeAttachments: await this.getAttachmentUrls(
+              application,
               answers.educationDetails.thirdLevelDetails?.degreeAttachments?.map(
                 (x, i) => {
                   const type = this.mapFileTypes(i)
@@ -186,6 +199,7 @@ export class UniversityService extends BaseTemplateApiService {
           return {
             ...item,
             degreeAttachments: await this.getAttachmentUrls(
+              application,
               item.degreeAttachments?.map((x, i) => {
                 const type = this.mapFileTypes(i)
                 return {
@@ -235,7 +249,8 @@ export class UniversityService extends BaseTemplateApiService {
           universityId: answers.programInformation.university,
           programId: answers.programInformation.program,
           modeOfDelivery: mapStringToEnum(
-            answers.modeOfDeliveryInformation.chosenMode,
+            answers.modeOfDeliveryInformation?.chosenMode ||
+              defaultModeOfDelivery,
             CreateApplicationDtoModeOfDeliveryEnum,
             'CreateApplicationDtoModeOfDeliveryEnum',
           ),
@@ -256,6 +271,7 @@ export class UniversityService extends BaseTemplateApiService {
   }
 
   private async getAttachmentUrls(
+    application: ApplicationWithAttachments,
     attachments?: { name: string; key: string; type: string }[],
   ): Promise<{ fileName: string; fileType: string; url: string }[]> {
     const expiry = 36000
@@ -266,6 +282,7 @@ export class UniversityService extends BaseTemplateApiService {
           fileName: file.name,
           fileType: file.type,
           url: await this.sharedTemplateAPIService.getAttachmentUrl(
+            application,
             file.key,
             expiry,
           ),

@@ -14,11 +14,10 @@ import { isDefined } from '@island.is/shared/utils'
 
 import { PersonalRepresentativeDTO } from '../personal-representative/dto/personal-representative.dto'
 import { PersonalRepresentativeService } from '../personal-representative/services/personalRepresentative.service'
+import { UNKNOWN_NAME } from './constants/names'
 import { ApiScopeInfo } from './delegations-incoming.service'
 import { DelegationDTO } from './dto/delegation.dto'
 import { partitionWithIndex } from './utils/partitionWithIndex'
-
-export const UNKNOWN_NAME = 'Óþekkt nafn'
 
 type FindAllIncomingOptions = {
   nationalId: string

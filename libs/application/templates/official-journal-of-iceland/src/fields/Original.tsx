@@ -1,29 +1,34 @@
-import { FileUploadController } from '@island.is/application/ui-components'
-import { FormGroup } from '../components/form/FormGroup'
-import { InputFields, OJOIFieldBaseProps } from '../lib/types'
-import { Application } from '@island.is/application/types'
-import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../lib/constants'
+import { OJOIFieldBaseProps } from '../lib/types'
+import { ALLOWED_FILE_TYPES, ApplicationAttachmentType } from '../lib/constants'
 import { original } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { getErrorViaPath } from '@island.is/application/core'
+import { InputFileUpload, Box } from '@island.is/island-ui/core'
 
-export const Original = (props: OJOIFieldBaseProps) => {
+import { useFileUpload } from '../hooks/useFileUpload'
+
+export const Original = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
+  const { files, onChange, onRemove } = useFileUpload({
+    applicationId: application.id,
+    attachmentType: ApplicationAttachmentType.ORIGINAL,
+  })
   return (
-    <FormGroup>
-      <FileUploadController
-        application={props.application as unknown as Application}
-        id={InputFields.original.files}
-        accept={UPLOAD_ACCEPT}
-        maxSize={FILE_SIZE_LIMIT}
+    <Box>
+      <InputFileUpload
         header={f(original.fileUpload.header)}
         description={f(original.fileUpload.description)}
         buttonLabel={f(original.fileUpload.buttonLabel)}
-        error={
-          props.errors &&
-          getErrorViaPath(props.errors, InputFields.original.files)
-        }
+        fileList={files}
+        accept={ALLOWED_FILE_TYPES}
+        onChange={onChange}
+        onRemove={onRemove}
+        multiple={false}
+        defaultFileBackgroundColor={{
+          background: 'blue100',
+          border: 'blue200',
+          icon: 'blue200',
+        }}
       />
-    </FormGroup>
+    </Box>
   )
 }

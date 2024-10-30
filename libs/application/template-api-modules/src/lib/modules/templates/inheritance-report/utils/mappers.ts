@@ -234,6 +234,9 @@ export const expandAnswers = (
     },
     caseNumber: answers.estateInfoSelection,
     confirmAction: answers.confirmAction,
+    assetsConfirmation: answers.assetsConfirmation,
+    debtsConfirmation: answers.debtsConfirmation,
+    heirsConfirmation: answers.heirsConfirmation,
     debts: {
       debtsTotal: answers?.debts?.debtsTotal ?? 0,
       domesticAndForeignDebts: {

@@ -10,13 +10,18 @@ export const advert = {
     intro: {
       id: 'ojoi.application:advert.general.intro',
       defaultMessage:
-        'Veldu deild og tegund birtingar í fellilistanum hér að neðan og skráðu heiti auglýsingar í viðeigandi reit. Tegundarheitið birtist sjálfkrafa í hástöfum í fyrirsögn og titillinn í næstu línu. Efni auglýsinga er sett í ritilinn hér að neðan og skal vanda alla uppsetningu, setja inn töluliði, töflur o.þ.h. Til einföldunar við vinnslu meginmáls getur þú valið sniðmát og aðlagað það að þinni auglýsingu eða sótt eldri auglýsingu og breytt henni.',
+        'Veldu deild og tegund birtingar í fellilistanum hér að neðan og skráðu heiti innsendingar í viðeigandi reit. Tegundarheitið birtist sjálfkrafa í hástöfum í fyrirsögn og titillinn í næstu línu. Efni innsendingar er sett í ritilinn hér að neðan og skal vanda alla uppsetningu, setja inn töluliði, töflur o.þ.h. Til einföldunar við vinnslu meginmáls getur þú valið sniðmát og aðlagað það að þinni innsendingu eða sótt eldri innsendingar og breytt henni.',
       description: 'Intro of the advert form',
     },
     section: {
       id: 'ojoi.application:advert.general.section',
       defaultMessage: 'Grunnupplýsingar',
       description: 'Title of the advert section',
+    },
+    sectionWithAbbreviation: {
+      id: 'ojoi.application:advert.general.sectionWithAbbreviation',
+      defaultMessage: 'Grunnupplýsing{x}',
+      description: 'Title of the advert section with abbreviations',
     },
   }),
   headings: defineMessages({
@@ -29,7 +34,7 @@ export const advert = {
   buttons: defineMessages({
     copyOldAdvert: {
       id: 'ojoi.application:advert.buttons.copyOldAdvert.label',
-      defaultMessage: 'Afrita eldri mál',
+      defaultMessage: 'Afrita eldra mál',
       description: 'Label for the copy old advert button',
     },
   }),
@@ -73,12 +78,12 @@ export const advert = {
     title: defineMessages({
       label: {
         id: 'ojoi.application:advert.inputs.title.label',
-        defaultMessage: 'Heiti auglýsingar',
+        defaultMessage: 'Titill innsendingar',
         description: 'Label for the title input',
       },
       placeholder: {
         id: 'ojoi.application:advert.inputs.title.placeholder',
-        defaultMessage: 'Skráðu heiti auglýsinga',
+        defaultMessage: 'Heiti auglýsingar (án tegundar)',
         description: 'Placeholder for the title input',
       },
     }),
@@ -90,7 +95,7 @@ export const advert = {
       },
       placeholder: {
         id: 'ojoi.application:advert.inputs.template.placeholder',
-        defaultMessage: 'Fyrirmynd auglýsinga',
+        defaultMessage: 'Fyrirmynd innsendingar',
         description: 'Placeholder for the template input',
       },
     }),

@@ -705,7 +705,7 @@
       "responses": [
         {
           "uuid": "a9384814-ffa3-4bdd-ae69-35d53bb264c7",
-          "body": "{\n  \"canApply\": true,\n  \"isInsured\": true,\n  \"hasInsuranceStatement\": true,\n  \"insuranceStatementValidUntil\": \"2024-12-05\",\n  \"comment\": \"Umsækjandi á tryggingayfirlýsingu í gildi til 05.12.2024\"\n}",
+          "body": "{\n  \"canApply\": true,\n  \"isInsured\": false,\n  \"hasInsuranceStatement\": false,\n  \"insuranceStatementValidUntil\": \"2024-12-05\",\n  \"comment\": \"Umsækjandi á tryggingayfirlýsingu í gildi til 05.12.2024\"\n}",
           "latency": 0,
           "statusCode": 200,
           "label": "",

@@ -1,15 +1,32 @@
-query getDonorStatus {
-  HealthDirectorateOrganDonationGetDonorStatus {
-    isDonor
-    exceptions
-    exceptionComment
-    registrationDate
+query getDonorStatus($locale: String) {
+  healthDirectorateOrganDonation(locale: $locale) {
+    donor {
+      isDonor
+      limitations {
+        hasLimitations
+        limitedOrgansList {
+          id
+          name
+        }
+        comment
+      }
+    }
   }
 }
 
-query getOrganDonationExceptions($locale: String) {
-  HealthDirectorateOrganDonationGetDonationExceptions(locale: $locale) {
-    values {
+query getOrgansList($locale: String) {
+  healthDirectorateOrganDonation(locale: $locale) {
+    donor {
+      isDonor
+      limitations {
+        hasLimitations
+        limitedOrgansList {
+          id
+          name
+        }
+      }
+    }
+    organList {
       id
       name
     }
@@ -17,7 +34,11 @@ query getOrganDonationExceptions($locale: String) {
 }
 
 mutation updateOrganDonationInfo(
-  $input: HealthDirectorateOrganDonorStatusInput!
+  $input: HealthDirectorateOrganDonorInput!
+  $locale: String
 ) {
-  HealthDirectorateOrganDonationUpdateDonorStatus(input: $input)
+  healthDirectorateOrganDonationUpdateDonorStatus(
+    input: $input
+    locale: $locale
+  )
 }

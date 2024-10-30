@@ -5,6 +5,7 @@ import { m } from './messages'
 import { RoleConfirmationEnum } from '../types'
 
 import { customZodError } from './utils/customZodError'
+import { NO, YES } from '@island.is/application/core'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -76,9 +77,10 @@ export const dataSchema = z.object({
   }),
   applicantEmail: customZodError(z.string().email(), m.errorEmail),
   applicantRelation: customZodError(z.string().min(1), m.errorRelation),
+  hadFirearms: z.enum([YES, NO]),
   firearmApplicant: z
     .object({
-      nationalId: z.string(),
+      nationalId: z.string().refine((v) => nationalId.isPerson(v)),
       name: z.string(),
       phone: z.string().refine((v) => isValidPhoneNumber(v), {
         params: m.errorPhoneNumber,
@@ -116,9 +118,25 @@ export const dataSchema = z.object({
         dateOfBirth: z.string().min(1).optional(),
         dummy: z.boolean().optional(),
       })
+      .refine(
+        ({ name, relation, nationalId, foreignCitizenship, dateOfBirth }) => {
+          const hasNameAndRelation = name && relation
+
+          if (foreignCitizenship && foreignCitizenship.length !== 0) {
+            return Boolean(dateOfBirth) && hasNameAndRelation
+          } else {
+            return Boolean(nationalId) && hasNameAndRelation
+          }
+        },
+        {
+          message: m.errorNoDateOfBirthProvided.defaultMessage,
+          path: ['dateOfBirth'],
+        },
+      )
       .array()
       .optional(),
     encountered: z.boolean().optional(),
+    confirmation: z.array(z.enum([YES])).length(1),
   }),
   flyers: asset,
   ships: asset,

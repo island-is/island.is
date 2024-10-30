@@ -6,6 +6,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { CivilClaimant, Defendant } from '../../defendant'
 import { TransitionCaseDto } from '../dto/transitionCase.dto'
 import { UpdateCaseDto } from '../dto/updateCase.dto'
 import { Case } from '../models/case.model'
@@ -52,6 +53,8 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'requestAppealRulingNotToBePublished',
   'indictmentDeniedExplanation',
   'indictmentReviewDecision',
+  'civilDemands',
+  'hasCivilClaims',
 ]
 
 const publicProsecutorFields: (keyof UpdateCaseDto)[] = ['indictmentReviewerId']
@@ -269,6 +272,42 @@ export const defenderTransitionRule: RolesRule = {
     }
 
     return true
+  },
+}
+
+// Allows defenders to access generated PDFs
+export const defenderGeneratedPdfRule: RolesRule = {
+  role: UserRole.DEFENDER,
+  type: RulesType.BASIC,
+  canActivate: (request) => {
+    const user: User = request.user
+    const theCase: Case = request.case
+
+    // Deny if something is missing - should never happen
+    if (!user || !theCase) {
+      return false
+    }
+
+    // Allow if the user is a defender of a defendant of the case
+    if (
+      Defendant.isConfirmedDefenderOfDefendantWithCaseFileAccess(
+        user.nationalId,
+        theCase.defendants,
+      )
+    ) {
+      return true
+    }
+
+    if (
+      CivilClaimant.isConfirmedSpokespersonOfCivilClaimantWithCaseFileAccess(
+        user.nationalId,
+        theCase.civilClaimants,
+      )
+    ) {
+      return true
+    }
+
+    return false
   },
 }
 

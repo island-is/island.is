@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -86,10 +86,10 @@ const CaseFileTable: FC<Props> = ({
             </td>
             <td>
               <Box className={styles.noWrapColumn}>
-                <Text textAlign="right">
+                <Text>
                   {formatDate(file.created, "dd.MM.yyyy 'kl.' HH:mm")}
                 </Text>
-                <Text variant="small" textAlign="right">
+                <Text variant="small">
                   {formatMessage(strings.submittedBy, {
                     category: file.category,
                     initials: getInitials(file.submittedBy),

@@ -1,4 +1,5 @@
 import { CaseReadGuard } from '../../../case'
+import { MergedCaseExistsGuard } from '../../../case/guards/mergedCaseExists.guard'
 import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 import { LimitedAccessViewCaseFileGuard } from '../../guards/limitedAccessViewCaseFile.guard'
 import { LimitedAccessFileController } from '../../limitedAccessFile.controller'
@@ -15,9 +16,10 @@ describe('LimitedAccessFileController - Get case file signed url guards', () => 
   })
 
   it('should have the right guard configuration', () => {
-    expect(guards).toHaveLength(3)
+    expect(guards).toHaveLength(4)
     expect(new guards[0]()).toBeInstanceOf(CaseReadGuard)
-    expect(new guards[1]()).toBeInstanceOf(CaseFileExistsGuard)
-    expect(new guards[2]()).toBeInstanceOf(LimitedAccessViewCaseFileGuard)
+    expect(new guards[1]()).toBeInstanceOf(MergedCaseExistsGuard)
+    expect(new guards[2]()).toBeInstanceOf(CaseFileExistsGuard)
+    expect(new guards[3]()).toBeInstanceOf(LimitedAccessViewCaseFileGuard)
   })
 })

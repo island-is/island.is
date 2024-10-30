@@ -18,16 +18,4 @@ export const strings = defineMessages({
     defaultMessage: 'Velja skjöl til að hlaða upp',
     description: 'Notaður sem texti á takka til að velja skjölum.',
   },
-  invalidDateErrorMessage: {
-    id: 'judicial.system.core:upload_files.invalid_date_error_message',
-    defaultMessage:
-      'Ekki tókst að uppfæra skjal, dagsetning er ekki á réttu formi',
-    description:
-      'Notaður sem villuboð þegar tekst ekki að uppfæra dagsetningu á skjali.',
-  },
-  renameFailedErrorMessage: {
-    id: 'judicial.system.core:upload_files.rename_failed_error_message',
-    defaultMessage: 'Ekki tókst að endurnefna skjal',
-    description: 'Notaður sem villuboð þegar endurnefning á skjali mistókst.',
-  },
 })

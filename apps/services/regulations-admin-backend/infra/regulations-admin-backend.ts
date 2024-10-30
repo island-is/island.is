@@ -1,5 +1,9 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import { Base, Client, NationalRegistry } from '../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  NationalRegistryB2C,
+} from '../../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
   service('regulations-admin-backend')
@@ -25,12 +29,14 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
       REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '100m', memory: '256Mi' },
     })
-    .xroad(Base, Client, NationalRegistry)
+    .xroad(Base, Client, NationalRegistryB2C)
     .readiness('/liveness')
     .liveness('/liveness')
     .grantNamespaces('islandis', 'download-service')

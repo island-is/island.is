@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { ChangeEvent, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -252,7 +252,7 @@ const CourtOfAppealRuling = () => {
                 <RestrictionLength
                   workingCase={workingCase}
                   handleIsolationChange={(
-                    event: React.ChangeEvent<HTMLInputElement>,
+                    event: ChangeEvent<HTMLInputElement>,
                   ): void => {
                     setAndSendCaseToServer(
                       [

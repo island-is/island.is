@@ -132,50 +132,50 @@ export enum CaseAppealState {
 }
 
 export enum CaseTransition {
-  OPEN = 'OPEN',
-  ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
-  DENY_INDICTMENT = 'DENY_INDICTMENT',
-  SUBMIT = 'SUBMIT',
-  ASK_FOR_CANCELLATION = 'ASK_FOR_CANCELLATION',
-  RECEIVE = 'RECEIVE',
-  RETURN_INDICTMENT = 'RETURN_INDICTMENT',
-  COMPLETE = 'COMPLETE',
   ACCEPT = 'ACCEPT',
-  REJECT = 'REJECT',
-  DISMISS = 'DISMISS',
-  DELETE = 'DELETE',
-  REOPEN = 'REOPEN',
   APPEAL = 'APPEAL',
-  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  ASK_FOR_CANCELLATION = 'ASK_FOR_CANCELLATION',
+  ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
+  COMPLETE = 'COMPLETE',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
+  DELETE = 'DELETE',
+  DENY_INDICTMENT = 'DENY_INDICTMENT',
+  DISMISS = 'DISMISS',
+  OPEN = 'OPEN',
+  RECEIVE = 'RECEIVE',
+  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  REJECT = 'REJECT',
+  REOPEN = 'REOPEN',
   REOPEN_APPEAL = 'REOPEN_APPEAL',
+  RETURN_INDICTMENT = 'RETURN_INDICTMENT',
+  SUBMIT = 'SUBMIT',
   WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
 }
 
 export enum IndictmentCaseTransition {
-  ASK_FOR_CONFIRMATION = CaseTransition.ASK_FOR_CONFIRMATION,
-  DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
-  SUBMIT = CaseTransition.SUBMIT,
   ASK_FOR_CANCELLATION = CaseTransition.ASK_FOR_CANCELLATION,
-  RECEIVE = CaseTransition.RECEIVE,
-  RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
+  ASK_FOR_CONFIRMATION = CaseTransition.ASK_FOR_CONFIRMATION,
   COMPLETE = CaseTransition.COMPLETE,
   DELETE = CaseTransition.DELETE,
+  DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
+  RECEIVE = CaseTransition.RECEIVE,
+  RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
+  SUBMIT = CaseTransition.SUBMIT,
 }
 
 export enum RequestCaseTransition {
-  OPEN = CaseTransition.OPEN,
-  SUBMIT = CaseTransition.SUBMIT,
-  RECEIVE = CaseTransition.RECEIVE,
   ACCEPT = CaseTransition.ACCEPT,
-  REJECT = CaseTransition.REJECT,
-  DISMISS = CaseTransition.DISMISS,
-  DELETE = CaseTransition.DELETE,
-  REOPEN = CaseTransition.REOPEN,
   APPEAL = CaseTransition.APPEAL,
-  RECEIVE_APPEAL = CaseTransition.RECEIVE_APPEAL,
   COMPLETE_APPEAL = CaseTransition.COMPLETE_APPEAL,
+  DELETE = CaseTransition.DELETE,
+  DISMISS = CaseTransition.DISMISS,
+  OPEN = CaseTransition.OPEN,
+  RECEIVE = CaseTransition.RECEIVE,
+  RECEIVE_APPEAL = CaseTransition.RECEIVE_APPEAL,
+  REJECT = CaseTransition.REJECT,
+  REOPEN = CaseTransition.REOPEN,
   REOPEN_APPEAL = CaseTransition.REOPEN_APPEAL,
+  SUBMIT = CaseTransition.SUBMIT,
   WITHDRAW_APPEAL = CaseTransition.WITHDRAW_APPEAL,
 }
 
@@ -242,6 +242,7 @@ export enum CaseIndictmentRulingDecision {
   DISMISSAL = 'DISMISSAL',
   CANCELLATION = 'CANCELLATION',
   MERGE = 'MERGE',
+  WITHDRAWAL = 'WITHDRAWAL',
 }
 
 export enum IndictmentCaseReviewDecision {
@@ -260,18 +261,6 @@ export enum RequestSharedWithDefender {
   READY_FOR_COURT = 'READY_FOR_COURT',
   COURT_DATE = 'COURT_DATE', // TODO: Rename to ARRAIGNMENT_DATE at some point
   NOT_SHARED = 'NOT_SHARED',
-}
-
-export enum DefendantPlea {
-  GUILTY = 'GUILTY',
-  NOT_GUILTY = 'NOT_GUILTY',
-  NO_PLEA = 'NO_PLEA',
-}
-
-export enum ServiceRequirement {
-  REQUIRED = 'REQUIRED',
-  NOT_REQUIRED = 'NOT_REQUIRED',
-  NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
 
 export enum CourtSessionType {
@@ -443,25 +432,4 @@ export const isRequestCaseTransition = (
   return Object.values(RequestCaseTransition).includes(
     transition as RequestCaseTransition,
   )
-}
-
-export type DistrictCourts =
-  | 'Héraðsdómur Reykjavíkur'
-  | 'Héraðsdómur Reykjaness'
-  | 'Héraðsdómur Vesturlands'
-  | 'Héraðsdómur Vestfjarða'
-  | 'Héraðsdómur Norðurlands vestra'
-  | 'Héraðsdómur Norðurlands eystra'
-  | 'Héraðsdómur Austurlands'
-  | 'Héraðsdómur Suðurlands'
-
-export const DistrictCourtLocation: Record<DistrictCourts, string> = {
-  'Héraðsdómur Reykjavíkur': 'Dómhúsið við Lækjartorg, Reykjavík',
-  'Héraðsdómur Reykjaness': 'Fjarðargata 9, Hafnarfirði',
-  'Héraðsdómur Vesturlands': 'Bjarnarbraut 8, Borgarnesi',
-  'Héraðsdómur Vestfjarða': 'Hafnarstræti 9, Ísafirði',
-  'Héraðsdómur Norðurlands vestra': 'Skagfirðingabraut 21, Sauðárkróki',
-  'Héraðsdómur Norðurlands eystra': 'Hafnarstræti 107, 4. hæð, Akureyri',
-  'Héraðsdómur Austurlands': 'Lyngás 15, Egilsstöðum',
-  'Héraðsdómur Suðurlands': 'Austurvegur 4, Selfossi',
 }

@@ -3,13 +3,18 @@ import each from 'jest-each'
 import {
   CaseAppealDecision,
   CaseAppealState,
+  CaseIndictmentRulingDecision,
   CaseState,
+  CaseType,
+  ServiceRequirement,
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { Defendant } from '../../defendant'
 import { Case } from '../models/case.model'
 import {
   getAppealInfo,
+  getIndictmentDefendantsInfo,
   getIndictmentInfo,
   transformCase,
 } from './case.transformer'
@@ -25,7 +30,10 @@ describe('transformCase', () => {
     ({ originalValue, transformedValue }) => {
       it(`should transform ${originalValue} requestProsecutorOnlySession to ${transformedValue}`, () => {
         // Arrange
-        const theCase = { requestProsecutorOnlySession: originalValue } as Case
+        const theCase = {
+          type: CaseType.CUSTODY,
+          requestProsecutorOnlySession: originalValue,
+        } as Case
 
         // Act
         const res = transformCase(theCase)
@@ -36,7 +44,10 @@ describe('transformCase', () => {
 
       it(`should transform ${originalValue} isClosedCourtHidden to ${transformedValue}`, () => {
         // Arrange
-        const theCase = { isClosedCourtHidden: originalValue } as Case
+        const theCase = {
+          type: CaseType.CUSTODY,
+          isClosedCourtHidden: originalValue,
+        } as Case
 
         // Act
         const res = transformCase(theCase)
@@ -47,7 +58,10 @@ describe('transformCase', () => {
 
       it(`should transform ${originalValue} isHightenedSecurityLevel to ${transformedValue}`, () => {
         // Arrange
-        const theCase = { isHeightenedSecurityLevel: originalValue } as Case
+        const theCase = {
+          type: CaseType.CUSTODY,
+          isHeightenedSecurityLevel: originalValue,
+        } as Case
 
         // Act
         const res = transformCase(theCase)
@@ -74,7 +88,10 @@ describe('transformCase', () => {
       // Arrange
       const validToDate = new Date()
       validToDate.setSeconds(validToDate.getSeconds() + 1)
-      const theCase = { validToDate: validToDate.toISOString() } as Case
+      const theCase = {
+        type: CaseType.CUSTODY,
+        validToDate: validToDate.toISOString(),
+      } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -87,7 +104,10 @@ describe('transformCase', () => {
       // Arrange
       const validToDate = new Date()
       validToDate.setSeconds(validToDate.getSeconds() - 1)
-      const theCase = { validToDate: validToDate.toISOString() } as Case
+      const theCase = {
+        type: CaseType.CUSTODY,
+        validToDate: validToDate.toISOString(),
+      } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -100,7 +120,7 @@ describe('transformCase', () => {
   describe('isAppealDeadlineExpired', () => {
     it('should be false when no court date is set', () => {
       // Arrange
-      const theCase = {} as Case
+      const theCase = { type: CaseType.CUSTODY } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -114,7 +134,10 @@ describe('transformCase', () => {
       const rulingDate = new Date()
       rulingDate.setDate(rulingDate.getDate() - 3)
       rulingDate.setSeconds(rulingDate.getSeconds() + 1)
-      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+      const theCase = {
+        type: CaseType.CUSTODY,
+        rulingDate: rulingDate.toISOString(),
+      } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -127,7 +150,10 @@ describe('transformCase', () => {
       // Arrange
       const rulingDate = new Date()
       rulingDate.setDate(rulingDate.getDate() - 3)
-      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+      const theCase = {
+        type: CaseType.CUSTODY,
+        rulingDate: rulingDate.toISOString(),
+      } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -140,7 +166,7 @@ describe('transformCase', () => {
   describe('isAppealGracePeriodExpired', () => {
     it('should be false when no court end time is set', () => {
       // Arrange
-      const theCase = {} as Case
+      const theCase = { type: CaseType.CUSTODY } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -154,7 +180,10 @@ describe('transformCase', () => {
       const rulingDate = new Date()
       rulingDate.setDate(rulingDate.getDate() - 31)
       rulingDate.setSeconds(rulingDate.getSeconds() + 1)
-      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+      const theCase = {
+        type: CaseType.CUSTODY,
+        rulingDate: rulingDate.toISOString(),
+      } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -167,7 +196,10 @@ describe('transformCase', () => {
       // Arrange
       const rulingDate = new Date()
       rulingDate.setDate(rulingDate.getDate() - 31)
-      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+      const theCase = {
+        type: CaseType.CUSTODY,
+        rulingDate: rulingDate.toISOString(),
+      } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -180,7 +212,7 @@ describe('transformCase', () => {
   describe('isStatementDeadlineExpired', () => {
     it('should be false if the case has not been appealed', () => {
       // Arrange
-      const theCase = { appealState: undefined } as Case
+      const theCase = { type: CaseType.CUSTODY, appealState: undefined } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -194,6 +226,7 @@ describe('transformCase', () => {
       const appealReceivedByCourtDate = new Date()
       appealReceivedByCourtDate.setDate(appealReceivedByCourtDate.getDate() - 2)
       const theCase = {
+        type: CaseType.CUSTODY,
         appealReceivedByCourtDate: appealReceivedByCourtDate.toISOString(),
       } as Case
 
@@ -212,6 +245,7 @@ describe('transformCase', () => {
         appealReceivedByCourtDate.getSeconds() - 100,
       )
       const theCase = {
+        type: CaseType.CUSTODY,
         appealReceivedByCourtDate: appealReceivedByCourtDate.toISOString(),
       } as Case
 
@@ -226,7 +260,7 @@ describe('transformCase', () => {
   describe('appealInfo', () => {
     it('should be undefined when no court end time is set', () => {
       // Arrange
-      const theCase = {} as Case
+      const theCase = { type: CaseType.CUSTODY } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -245,7 +279,10 @@ describe('transformCase', () => {
       const rulingDate = new Date()
       rulingDate.setDate(rulingDate.getDate())
       rulingDate.setSeconds(rulingDate.getSeconds())
-      const theCase = { rulingDate: rulingDate.toISOString() } as Case
+      const theCase = {
+        type: CaseType.CUSTODY,
+        rulingDate: rulingDate.toISOString(),
+      } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -260,6 +297,7 @@ describe('transformCase', () => {
       const rulingDate = new Date()
       rulingDate.setDate(rulingDate.getDate() - 1)
       const theCase = {
+        type: CaseType.CUSTODY,
         rulingDate: rulingDate.toISOString(),
         accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
         appealState: CaseAppealState.APPEALED,
@@ -278,6 +316,7 @@ describe('transformCase', () => {
       const rulingDate = new Date()
       rulingDate.setDate(rulingDate.getDate() - 1)
       const theCase = {
+        type: CaseType.CUSTODY,
         rulingDate: rulingDate.toISOString(),
         appealState: CaseAppealState.RECEIVED,
         appealReceivedByCourtDate: '2021-06-15T19:50:08.033Z',
@@ -294,6 +333,7 @@ describe('transformCase', () => {
       'should return that case can be appealed when prosecutorAppealDecision is %s',
       (prosecutorAppealDecision) => {
         const theCase = {
+          type: CaseType.CUSTODY,
           rulingDate: '2022-06-15T19:50:08.033Z',
           prosecutorAppealDecision,
         } as Case
@@ -314,6 +354,7 @@ describe('transformCase', () => {
       'should return that case cannot be appealed when prosecutorAppealDecision is %s',
       (prosecutorAppealDecision) => {
         const theCase = {
+          type: CaseType.CUSTODY,
           rulingDate: '2022-06-15T19:50:08.033Z',
           prosecutorAppealDecision,
         } as Case
@@ -332,6 +373,7 @@ describe('transformCase', () => {
       'should return that case can be appealed when accusedAppealDecision is %s',
       (accusedAppealDecision) => {
         const theCase = {
+          type: CaseType.CUSTODY,
           rulingDate: '2022-06-15T19:50:08.033Z',
           accusedAppealDecision,
         } as Case
@@ -352,6 +394,7 @@ describe('transformCase', () => {
       'should return that case cannot be appealed when accusedAppealDecision is %s',
       (accusedAppealDecision) => {
         const theCase = {
+          type: CaseType.CUSTODY,
           rulingDate: '2022-06-15T19:50:08.033Z',
           accusedAppealDecision,
         } as Case
@@ -368,6 +411,7 @@ describe('transformCase', () => {
 
     it('should return that case has been appealed by the prosecutor, and return the correct appealed date', () => {
       const theCase = {
+        type: CaseType.CUSTODY,
         rulingDate: '2022-06-15T19:50:08.033Z',
         appealState: CaseAppealState.APPEALED,
         prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
@@ -387,6 +431,7 @@ describe('transformCase', () => {
 
     it('should return that case has been appealed by the defender, and return the correct appealed date', () => {
       const theCase = {
+        type: CaseType.CUSTODY,
         rulingDate: '2022-06-15T19:50:08.033Z',
         appealState: CaseAppealState.APPEALED,
         accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
@@ -406,6 +451,7 @@ describe('transformCase', () => {
 
     it('should return that case has not yet been appealed if case appeal decision was postponed and the case has not been appealed yet', () => {
       const theCase = {
+        type: CaseType.CUSTODY,
         rulingDate: '2022-06-15T19:50:08.033Z',
         prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
       } as Case
@@ -423,6 +469,7 @@ describe('transformCase', () => {
 
     it('should return that the case cannot be appealed if case appeal decision does not allow appeal', () => {
       const theCase = {
+        type: CaseType.CUSTODY,
         rulingDate: '2022-06-15T19:50:08.033Z',
         prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
         accusedAppealDecision: CaseAppealDecision.APPEAL,
@@ -441,6 +488,7 @@ describe('transformCase', () => {
 
     it('should return a statement deadline if the case has been marked as received by the court', () => {
       const theCase = {
+        type: CaseType.CUSTODY,
         rulingDate: '2022-06-15T19:50:08.033Z',
         appealReceivedByCourtDate: '2022-06-15T19:50:08.033Z',
         state: CaseState.RECEIVED,
@@ -462,6 +510,7 @@ describe('transformCase', () => {
         '$appealState should return that case has been appealed',
         ({ appealState }) => {
           const theCase = {
+            type: CaseType.CUSTODY,
             rulingDate: '2022-06-15T19:50:08.033Z',
             appealState,
           } as Case
@@ -478,10 +527,11 @@ describe('transformCase', () => {
     })
   })
 })
+
 describe('getAppealInfo', () => {
   it('should return empty appeal info when ruling date is not provided', () => {
     // Arrange
-    const theCase = {} as Case
+    const theCase = { type: CaseType.CUSTODY } as Case
 
     // Act
     const appealInfo = getAppealInfo(theCase)
@@ -490,9 +540,35 @@ describe('getAppealInfo', () => {
     expect(appealInfo).toEqual({})
   })
 
+  it('should return not return appealedDate if case has not been appealed', () => {
+    const rulingDate = new Date().toISOString()
+    const theCase = {
+      type: CaseType.CUSTODY,
+      rulingDate,
+      appealState: undefined,
+      accusedAppealDecision: CaseAppealDecision.POSTPONE,
+      prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+      accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+      prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+    } as Case
+
+    const appealInfo = getAppealInfo(theCase)
+
+    expect(appealInfo).toEqual({
+      canBeAppealed: true,
+      hasBeenAppealed: false,
+      appealDeadline: new Date(
+        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 3),
+      ).toISOString(),
+      canDefenderAppeal: true,
+      canProsecutorAppeal: true,
+    })
+  })
+
   it('should return correct appeal info when ruling date is provided', () => {
     const rulingDate = new Date().toISOString()
     const theCase = {
+      type: CaseType.CUSTODY,
       rulingDate,
       appealState: CaseAppealState.APPEALED,
       accusedAppealDecision: CaseAppealDecision.APPEAL,
@@ -526,6 +602,7 @@ describe('getAppealInfo', () => {
 
     test(`canProsecutorAppeal for appeal decision ${decision} should return ${expected}`, () => {
       const theCase = {
+        type: CaseType.CUSTODY,
         rulingDate,
         prosecutorAppealDecision: decision,
       } as Case
@@ -543,6 +620,7 @@ describe('getAppealInfo', () => {
 
     test(`canDefenderAppeal for appeal decision ${decision} should return ${expected}`, () => {
       const theCase = {
+        type: CaseType.CUSTODY,
         rulingDate,
         accusedAppealDecision: decision,
       } as Case
@@ -557,10 +635,11 @@ describe('getAppealInfo', () => {
 describe('getIndictmentInfo', () => {
   it('should return empty indictment info when ruling date is not provided', () => {
     // Arrange
-    const theCase = {} as Case
 
     // Act
-    const indictmentInfo = getIndictmentInfo(theCase.rulingDate)
+    const indictmentInfo = getIndictmentInfo(
+      CaseIndictmentRulingDecision.RULING,
+    )
 
     // Assert
     expect(indictmentInfo).toEqual({})
@@ -568,16 +647,89 @@ describe('getIndictmentInfo', () => {
 
   it('should return correct indictment info when ruling date is provided', () => {
     const rulingDate = new Date().toISOString()
-    const theCase = {
-      rulingDate,
-    } as Case
 
-    const indictmentInfo = getIndictmentInfo(theCase.rulingDate)
+    const indictmentInfo = getIndictmentInfo(
+      CaseIndictmentRulingDecision.RULING,
+      rulingDate,
+    )
 
     expect(indictmentInfo).toEqual({
       indictmentAppealDeadline: new Date(
         new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 28),
       ).toISOString(),
+      indictmentVerdictViewedByAll: true,
+      indictmentVerdictAppealDeadlineExpired: true,
     })
+  })
+
+  it('should return correct indictment info when some defendants have yet to view the verdict', () => {
+    const rulingDate = new Date().toISOString()
+    const defendants = [
+      { verdictViewDate: new Date().toISOString() } as Defendant,
+      { verdictViewDate: undefined } as Defendant,
+    ]
+
+    const indictmentInfo = getIndictmentInfo(
+      CaseIndictmentRulingDecision.RULING,
+      rulingDate,
+      defendants,
+    )
+
+    expect(indictmentInfo).toEqual({
+      indictmentAppealDeadline: new Date(
+        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 28),
+      ).toISOString(),
+      indictmentVerdictViewedByAll: false,
+      indictmentVerdictAppealDeadlineExpired: false,
+    })
+  })
+
+  it('should return correct indictment info when no defendants have yet to view the verdict', () => {
+    const rulingDate = new Date().toISOString()
+    const defendants = [
+      { verdictViewDate: new Date().toISOString() } as Defendant,
+      {
+        serviceRequirement: ServiceRequirement.NOT_REQUIRED,
+        verdictViewDate: undefined,
+      } as Defendant,
+    ]
+
+    const indictmentInfo = getIndictmentInfo(
+      CaseIndictmentRulingDecision.RULING,
+      rulingDate,
+      defendants,
+    )
+
+    expect(indictmentInfo).toEqual({
+      indictmentAppealDeadline: new Date(
+        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 28),
+      ).toISOString(),
+      indictmentVerdictViewedByAll: true,
+      indictmentVerdictAppealDeadlineExpired: false,
+    })
+  })
+})
+
+describe('getIndictmentDefendantsInfo', () => {
+  it('should add verdict appeal deadline and expiry for defendants with verdict view date', () => {
+    const defendants = [
+      { verdictViewDate: '2022-06-15T19:50:08.033Z' } as Defendant,
+      { verdictViewDate: undefined } as Defendant,
+    ]
+
+    const defendantsInfo = getIndictmentDefendantsInfo(defendants)
+
+    expect(defendantsInfo).toEqual([
+      {
+        verdictViewDate: '2022-06-15T19:50:08.033Z',
+        verdictAppealDeadline: '2022-07-13T19:50:08.033Z',
+        isVerdictAppealDeadlineExpired: true,
+      },
+      {
+        verdictViewDate: undefined,
+        verdictAppealDeadline: undefined,
+        isVerdictAppealDeadlineExpired: false,
+      },
+    ])
   })
 })

@@ -1,23 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
-  Application,
-  ApplicationTypes,
-  YES,
-} from '@island.is/application/types'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { TemplateApiModuleActionProps } from '../../../types'
-import { BaseTemplateApiService } from '../../base-template-api.service'
+  HouseholdSupplementHousing,
+  getApplicationAnswers as getHSApplicationAnswers,
+} from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
   ApplicationType,
   Employment,
   getApplicationAnswers as getOAPApplicationAnswers,
   isEarlyRetirement,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
-import {
-  HouseholdSupplementHousing,
-  getApplicationAnswers as getHSApplicationAnswers,
-} from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 import {
   getApplicationAnswers as getDBApplicationAnswers,
@@ -26,14 +18,27 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/death-benefits'
 import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
+  Application,
+  ApplicationTypes,
+  YES,
+} from '@island.is/application/types'
+import {
+  ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
 } from '@island.is/clients/social-insurance-administration'
-import { S3 } from 'aws-sdk'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { Inject, Injectable } from '@nestjs/common'
+import { TemplateApiModuleActionProps } from '../../../types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   getApplicationType,
+  transformApplicationToAdditionalSupportForTheElderlyDTO,
   transformApplicationToHouseholdSupplementDTO,
+  transformApplicationToIncomePlanDTO,
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
   transformApplicationToAdditionalSupportForTheElderlyDTO,
@@ -43,19 +48,20 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import * as kennitala from 'kennitala'
+import { sharedModuleConfig } from '../../shared'
+import { ConfigType } from '@nestjs/config'
+import { S3Service } from '@island.is/nest/aws'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
 @Injectable()
 export class SocialInsuranceAdministrationService extends BaseTemplateApiService {
-  s3 = new S3()
-
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private siaClientService: SocialInsuranceAdministrationClientService,
-    @Inject(APPLICATION_ATTACHMENT_BUCKET)
-    private readonly attachmentBucket: string,
-    private readonly nationalRegistryApi: NationalRegistryClientService,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
+    private readonly s3Service: S3Service,
   ) {
     super('SocialInsuranceAdministration')
   }
@@ -437,17 +443,17 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return attachments
   }
 
-  async getPdf(key: string) {
-    const file = await this.s3
-      .getObject({ Bucket: this.attachmentBucket, Key: key })
-      .promise()
-    const fileContent = file.Body as Buffer
+  async getPdf(key: string): Promise<string> {
+    const fileContent = await this.s3Service.getFileContent(
+      { bucket: this.config.templateApi.attachmentBucket, key },
+      'base64',
+    )
 
     if (!fileContent) {
       throw new Error('File content was undefined')
     }
 
-    return fileContent.toString('base64')
+    return fileContent
   }
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
@@ -529,6 +535,17 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       const response = await this.siaClientService.sendApplication(
         auth,
         deathBenefitsDTO,
+        application.typeId.toLowerCase(),
+      )
+      return response
+    }
+      
+    if (application.typeId === ApplicationTypes.INCOME_PLAN) {
+      const incomePlanDTO = transformApplicationToIncomePlanDTO(application)
+
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        incomePlanDTO,
         application.typeId.toLowerCase(),
       )
       return response
@@ -630,5 +647,24 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getSpousalInfo({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getSpousalInfo(auth)
+  }  
+
+  async getCategorizedIncomeTypes({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getCategorizedIncomeTypes(auth)
+  }
+
+  async getWithholdingTax(
+    { auth }: TemplateApiModuleActionProps,
+    year: ApiProtectedV1IncomePlanWithholdingTaxGetRequest = {},
+  ) {
+    return await this.siaClientService.getWithholdingTax(auth, year)
+  }
+
+  async getLatestIncomePlan({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getLatestIncomePlan(auth)
+  }
+
+  async getIncomePlanConditions({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getIncomePlanConditions(auth)
   }
 }

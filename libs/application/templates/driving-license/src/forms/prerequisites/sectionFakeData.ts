@@ -124,6 +124,13 @@ export const sectionFakeData = buildSubSection({
           width: 'half',
           defaultValue: '185',
         }),
+        buildTextField({
+          id: 'fakeData.age',
+          title: 'Aldur umsækjanda',
+          width: 'half',
+          condition: allowFakeCondition(YES),
+          defaultValue: '35',
+        }),
       ],
     }),
   ],

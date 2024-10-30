@@ -682,8 +682,8 @@ export const messages = defineMessages({
     id: 'sp.health:health-center-list-search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
   },
-  healthCenterRegistrationTransferErrorTitle: {
-    id: 'sp.health:health-center-registration-transfer-error-title',
+  healthErrorTitle: {
+    id: 'sp.health:health-error-title',
     defaultMessage: 'Villa hefur komið upp',
   },
   healthCenterRegistrationTransferErrorInfo: {
@@ -940,6 +940,10 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-name-of-doctor',
     defaultMessage: 'Heiti læknis',
   },
+  medicineNameOfDocExtra: {
+    id: 'sp.health:medicine-name-of-doc-extra',
+    defaultMessage: 'Aukalæknar skráðir á skírteini',
+  },
   medicineCalculatorAddToPurchaseLabel: {
     id: 'sp.health:medicine-calculator-add-to-purchase-label',
     defaultMessage: 'Bæta {arg} við lyfjakaupalista',
@@ -998,9 +1002,25 @@ export const messages = defineMessages({
     id: 'sp.health:i-am-organ-donor',
     defaultMessage: 'Ég er líffæragjafi.',
   },
+  iAmOrganDonorText: {
+    id: 'sp.health:i-am-organ-donor-text',
+    defaultMessage: 'Öll líffærin mín má nota til ígræðslu.',
+  },
+  iAmOrganDonorWithExceptions: {
+    id: 'sp.health:i-am-organ-donor-w-exceptions',
+    defaultMessage: 'Ég heimila líffæragjöf, með takmörkunum.',
+  },
+  iAmOrganDonorWithExceptionsText: {
+    id: 'sp.health:i-am-organ-donor-w-exceptions-text',
+    defaultMessage: 'Öll líffæri má nota til ígræðslu fyrir utan:',
+  },
   iAmNotOrganDonor: {
     id: 'sp.health:i-am-not-organ-donor',
     defaultMessage: 'Ég banna líffæragjöf.',
+  },
+  iAmNotOrganDonorText: {
+    id: 'sp.health:i-am-not-organ-donor-text',
+    defaultMessage: 'Engin líffæri má nota til ígræðslu',
   },
   organDonationRegistrationOptIn: {
     id: 'sp.health:organ-donation-registration-opt-in',
@@ -1106,5 +1126,17 @@ export const messages = defineMessages({
     id: 'sp.health:health-directorate-error-title',
     defaultMessage:
       'Ekki tókst að sækja gögn frá Embætti Landlæknis. Vinsamlegast reynið aftur síðar',
+  },
+  medicinePrescriptions: {
+    id: 'sp.health:medicine-prescriptions',
+    defaultMessage: 'Lyfjaávísanir',
+  },
+  medicineDelegation: {
+    id: 'sp.health:medicine-delegation',
+    defaultMessage: 'Lyfjaumboð',
+  },
+  medicinePaymentParticipation: {
+    id: 'sp.health:medicine-payment-participation',
+    defaultMessage: 'Greiðsluþátttaka',
   },
 })

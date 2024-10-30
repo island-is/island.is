@@ -12,7 +12,7 @@ import {
 } from '@island.is/clients/syslumenn'
 import {
   Answers as aodAnswers,
-  OtherPropertiesEnum,
+  PropertiesEnum,
 } from '@island.is/application/templates/announcement-of-death/types'
 import { NationalRegistry, RoleConfirmationEnum, PickRole } from './types'
 import {
@@ -23,12 +23,10 @@ import {
 
 import { isPerson } from 'kennitala'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { Application, ApplicationTypes } from '@island.is/application/types'
-import { coreErrorMessages } from '@island.is/application/core'
+import { ApplicationTypes } from '@island.is/application/types'
+import { coreErrorMessages, YES } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { generateFirearmApplicantEmail } from './emailGenerators/firearmApplicantNotification'
 import { SharedTemplateApiService } from '../../shared'
-import { generateRequestReviewSms } from './smsGenerators/requestReviewSms'
 
 @Injectable()
 export class AnnouncementOfDeathService extends BaseTemplateApiService {
@@ -75,18 +73,10 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
     }
 
     for (const estate in estates) {
-      estates[estate].assets = estates[estate].assets.map(baseMapper)
-      estates[estate].vehicles = [
-        ...estates[estate].vehicles,
-        ...estates[estate].ships,
-        ...estates[estate].flyers,
-      ].map(baseMapper)
       estates[estate].estateMembers =
         estates[estate].estateMembers.map(baseMapper)
       // TODO: remove once empty array diff problem is resolved
       //       in the application system (property dropped before deepmerge)
-      estates[estate].assets.unshift(dummyAsset as EstateAsset)
-      estates[estate].vehicles.unshift(dummyAsset as EstateAsset)
       estates[estate].estateMembers.unshift(dummyMember as EstateMember)
       estates[estate].guns.unshift(dummyAsset as EstateAsset)
     }
@@ -126,41 +116,6 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
       )
     } catch (e) {
       return { success: false }
-    }
-  }
-
-  private async notifyApplicant(answers: aodAnswers, application: Application) {
-    const applicant = answers.firearmApplicant
-
-    if (!applicant) return
-
-    if (applicant.phone) {
-      await this.sendSmsNotification(applicant.phone, application)
-    }
-    if (applicant.email) {
-      await this.sendEmailNotification(applicant.email, application)
-    }
-  }
-
-  private async sendSmsNotification(phone: string, application: Application) {
-    try {
-      await this.sharedTemplateAPIService.sendSms(
-        (_) => generateRequestReviewSms(application),
-        application,
-      )
-    } catch (error) {
-      this.logger.error(`Error sending SMS to ${phone}`, error)
-    }
-  }
-
-  private async sendEmailNotification(email: string, application: Application) {
-    try {
-      await this.sharedTemplateAPIService.sendEmail(
-        (props) => generateFirearmApplicantEmail(props),
-        application,
-      )
-    } catch (error) {
-      this.logger.error(`Error sending email to ${email}`, error)
     }
   }
 
@@ -230,32 +185,38 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
         estateMembers: JSON.stringify(
           answers.estateMembers.members.filter((member) => !member?.dummy),
         ),
-        assets: JSON.stringify(
-          answers.assets.assets.filter((asset) => !asset?.dummy),
-        ),
-        vehicles: JSON.stringify(
-          answers.vehicles.vehicles.filter((vehicle) => !vehicle?.dummy),
-        ),
         hadFirearms: answers.hadFirearms,
-        firearm: JSON.stringify(answers.firearmApplicant),
+        firearm:
+          answers.hadFirearms === YES
+            ? JSON.stringify(answers.firearmApplicant)
+            : JSON.stringify({
+                email: '',
+                phone: '',
+                name: '',
+                nationalId: '',
+              }),
         bankcodeSecuritiesOrShares: otherProperties.includes(
-          OtherPropertiesEnum.ACCOUNTS,
+          PropertiesEnum.ACCOUNTS,
         )
           ? 'true'
           : 'false',
         selfOperatedCompany: otherProperties.includes(
-          OtherPropertiesEnum.OWN_BUSINESS,
+          PropertiesEnum.OWN_BUSINESS,
         )
           ? 'true'
           : 'false',
         occupationRightViaCondominium: otherProperties.includes(
-          OtherPropertiesEnum.RESIDENCE,
+          PropertiesEnum.RESIDENCE,
         )
           ? 'true'
           : 'false',
-        assetsAbroad: otherProperties.includes(
-          OtherPropertiesEnum.ASSETS_ABROAD,
-        )
+        assetsAbroad: otherProperties.includes(PropertiesEnum.ASSETS_ABROAD)
+          ? 'true'
+          : 'false',
+        realEstate: otherProperties.includes(PropertiesEnum.REAL_ESTATE)
+          ? 'true'
+          : 'false',
+        vehicles: otherProperties.includes(PropertiesEnum.VEHICLES)
           ? 'true'
           : 'false',
         districtCommissionerHasWill:
@@ -295,9 +256,6 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
         throw new Error(
           'Application submission failed on syslumadur upload data',
         )
-      }
-      if (answers.firearmApplicant) {
-        this.notifyApplicant(answers, application)
       }
       return { success: result.success, id: result.caseNumber }
     }

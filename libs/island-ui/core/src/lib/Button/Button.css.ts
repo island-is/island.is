@@ -110,6 +110,16 @@ export const size = styleVariants({
       },
     }),
   },
+  text: {
+    fontSize: 16,
+    lineHeight: 1.25,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: 18,
+        lineHeight: 1.6,
+      },
+    }),
+  },
   textSmall: {
     fontSize: 12,
     lineHeight: 1.25,

@@ -11,18 +11,10 @@ interface SharedProps {
   skipOutboundTrack?: boolean
 }
 
-type Props =
-  | {
-      variant?: 'primary' | 'ghost' | 'utility'
-      icon?: ButtonProps['icon']
-    }
-  | {
-      /**
-       * default variant is "text"
-       */
-      variant?: 'text'
-      icon?: never
-    }
+type Props = {
+  variant?: 'primary' | 'ghost' | 'utility' | 'text'
+  icon?: ButtonProps['icon']
+}
 
 type LinkButtonProps = SharedProps & Props
 
@@ -58,8 +50,8 @@ export const LinkButton = ({
           size={size ?? 'small'}
           variant="text"
           unfocusable
-          icon={isExternal ? 'open' : undefined}
-          iconType={isExternal ? 'outline' : undefined}
+          icon={isExternal ? 'open' : icon}
+          iconType="outline"
         >
           {text}
         </Button>

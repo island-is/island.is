@@ -1,12 +1,27 @@
 export { Feature } from './lib/feature'
 
-export { Gender, DefenderChoice, SubpoenaType } from './lib/defendant'
+export {
+  Gender,
+  DefenderChoice,
+  SubpoenaType,
+  DefendantPlea,
+  ServiceRequirement,
+  ServiceStatus,
+  isSuccessfulServiceStatus,
+  isFailedServiceStatus,
+} from './lib/defendant'
 export { InstitutionType } from './lib/institution'
-export { NotificationType } from './lib/notification'
+export {
+  CaseNotificationType,
+  SubpoenaNotificationType,
+  NotificationType,
+  InstitutionNotificationType,
+  NotificationDispatchType,
+} from './lib/notification'
 export type { Institution } from './lib/institution'
 export { EventType } from './lib/eventLog'
 export { DateType } from './lib/dateLog'
-export { CommentType } from './lib/comment'
+export { StringType } from './lib/caseString'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
 
@@ -22,10 +37,12 @@ export {
   isCourtOfAppealsUser,
   prisonSystemRoles,
   isPrisonSystemUser,
+  isPrisonStaffUser,
   defenceRoles,
   isDefenceUser,
   isAdminUser,
   isCoreUser,
+  isPrisonAdminUser,
   isPublicProsecutor,
 } from './lib/user'
 export type { User } from './lib/user'
@@ -48,8 +65,6 @@ export {
   CaseAppealRulingDecision,
   CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
-  DefendantPlea,
-  ServiceRequirement,
   SessionArrangements,
   indictmentCases,
   restrictionCases,
@@ -72,17 +87,15 @@ export {
   isRequestCaseState,
   isIndictmentCaseTransition,
   isRequestCaseTransition,
-  DistrictCourtLocation,
   CourtSessionType,
   courtSessionTypeNames,
 } from './lib/case'
 
-export { getIndictmentVerdictAppealDeadline } from './lib/indictmentCase'
+export { getIndictmentVerdictAppealDeadlineStatus } from './lib/indictmentCase'
 
 export type {
   CrimeScene,
   CrimeSceneMap,
-  DistrictCourts,
   IndictmentSubtypeMap,
 } from './lib/case'
 
@@ -92,7 +105,7 @@ export {
   offenseSubstances,
 } from './lib/indictmentCount'
 
-export { type Lawyer, mapToLawyer } from './lib/defender'
+export { type Lawyer, mapToLawyer, AdvocateType } from './lib/advocate'
 
 export type { SubstanceMap } from './lib/indictmentCount'
 

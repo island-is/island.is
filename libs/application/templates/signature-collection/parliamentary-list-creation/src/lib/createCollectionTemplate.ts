@@ -17,7 +17,13 @@ import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
-import { ParliamentaryCollectionApi, CandidateApi } from '../dataProviders'
+import {
+  ParliamentaryCollectionApi,
+  CandidateApi,
+  ParliamentaryIdentityApi,
+  IsDelegatedToCompanyApi,
+} from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const WeekLifeCycle: StateLifeCycle = {
   shouldBeListed: false,
@@ -38,6 +44,11 @@ const createListTemplate: ApplicationTemplate<
   translationNamespaces: [
     ApplicationConfigurations[ApplicationTypes.PARLIAMENTARY_LIST_CREATION]
       .translation,
+  ],
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
   ],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -70,6 +81,8 @@ const createListTemplate: ApplicationTemplate<
                 UserProfileApi,
                 CandidateApi,
                 ParliamentaryCollectionApi,
+                ParliamentaryIdentityApi,
+                IsDelegatedToCompanyApi,
               ],
             },
           ],

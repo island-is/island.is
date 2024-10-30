@@ -8,7 +8,6 @@ import { registerAllComponents } from './utils/lifecycle/setup-components'
 import { setupDevMenu } from './utils/lifecycle/setup-dev-menu'
 import { setupEventHandlers } from './utils/lifecycle/setup-event-handlers'
 import { setupGlobals } from './utils/lifecycle/setup-globals'
-import { setupNotifications } from './utils/lifecycle/setup-notifications'
 import { setupRoutes } from './utils/lifecycle/setup-routes'
 import { performanceMetricsAppLaunched } from './utils/performance-metrics'
 
@@ -24,9 +23,6 @@ async function startApp() {
 
   // Setup app routing layer
   setupRoutes()
-
-  // Setup notifications
-  setupNotifications()
 
   // Initialize Apollo client. This must be done before registering components
   await initializeApolloClient()

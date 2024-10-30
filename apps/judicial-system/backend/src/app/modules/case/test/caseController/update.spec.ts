@@ -6,16 +6,16 @@ import {
   CaseDecision,
   CaseFileCategory,
   CaseFileState,
+  CaseNotificationType,
   CaseOrigin,
   CaseState,
   CaseType,
-  CommentType,
   DateType,
   indictmentCases,
   InstitutionType,
   investigationCases,
-  NotificationType,
   restrictionCases,
+  StringType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -28,8 +28,8 @@ import { FileService } from '../../../file'
 import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 import { Case } from '../../models/case.model'
+import { CaseString } from '../../models/caseString.model'
 import { DateLog } from '../../models/dateLog.model'
-import { ExplanatoryComment } from '../../models/explanatoryComment.model'
 
 jest.mock('../../../../factories')
 
@@ -73,7 +73,7 @@ describe('CaseController - Update', () => {
   let transaction: Transaction
   let mockCaseModel: typeof Case
   let mockDateLogModel: typeof DateLog
-  let mockExplanatoryCommentModel: typeof ExplanatoryComment
+  let mockCaseStringModel: typeof CaseString
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -84,7 +84,7 @@ describe('CaseController - Update', () => {
       sequelize,
       caseModel,
       dateLogModel,
-      explanatoryCommentModel,
+      caseStringModel,
       caseController,
     } = await createTestingCaseModule()
 
@@ -93,7 +93,7 @@ describe('CaseController - Update', () => {
     mockFileService = fileService
     mockCaseModel = caseModel
     mockDateLogModel = dateLogModel
-    mockExplanatoryCommentModel = explanatoryCommentModel
+    mockCaseStringModel = caseStringModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -541,7 +541,7 @@ describe('CaseController - Update', () => {
             type: MessageType.NOTIFICATION,
             user,
             caseId,
-            body: { type: NotificationType.MODIFIED },
+            body: { type: CaseNotificationType.MODIFIED },
           },
           { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
         ])
@@ -598,7 +598,7 @@ describe('CaseController - Update', () => {
             type: MessageType.NOTIFICATION,
             user,
             caseId,
-            body: { type: NotificationType.APPEAL_STATEMENT },
+            body: { type: CaseNotificationType.APPEAL_STATEMENT },
           },
         ])
       })
@@ -872,11 +872,64 @@ describe('CaseController - Update', () => {
     })
   })
 
-  describe('court date updated', () => {
+  describe('indictment arraignment date updated', () => {
+    const arraignmentDate = { date: new Date(), location: uuid() }
+    const caseToUpdate = { arraignmentDate }
+    const subpoenaId1 = uuid()
+    const subpoenaId2 = uuid()
+    const updatedCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
+      defendants: [
+        { id: defendantId1, subpoenas: [{ id: subpoenaId1 }] },
+        { id: defendantId2, subpoenas: [{ id: subpoenaId2 }] },
+      ],
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should update case', () => {
+      expect(mockDateLogModel.create).toHaveBeenCalledWith(
+        { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
+        { transaction },
+      )
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: CaseNotificationType.COURT_DATE },
+        },
+      ])
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId1, subpoenaId1],
+        },
+        {
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId2, subpoenaId2],
+        },
+      ])
+    })
+  })
+
+  describe('indictment court date updated', () => {
     const courtDate = { date: new Date(), location: uuid() }
     const caseToUpdate = { courtDate }
     const updatedCase = {
       ...theCase,
+      type: CaseType.INDICTMENT,
       dateLogs: [{ dateType: DateType.COURT_DATE, ...courtDate }],
     }
 
@@ -892,13 +945,12 @@ describe('CaseController - Update', () => {
         { dateType: DateType.COURT_DATE, caseId, ...courtDate },
         { transaction },
       )
-
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: NotificationType.COURT_DATE },
+          body: { type: CaseNotificationType.COURT_DATE },
         },
       ])
     })
@@ -913,11 +965,31 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockExplanatoryCommentModel.create).toHaveBeenCalledWith(
+      expect(mockCaseStringModel.create).toHaveBeenCalledWith(
         {
-          commentType: CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
+          stringType: StringType.POSTPONED_INDEFINITELY_EXPLANATION,
           caseId,
-          comment: postponedIndefinitelyExplanation,
+          value: postponedIndefinitelyExplanation,
+        },
+        { transaction },
+      )
+    })
+  })
+
+  describe('civil demands updated', () => {
+    const civilDemands = uuid()
+    const caseToUpdate = { civilDemands }
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should update case', () => {
+      expect(mockCaseStringModel.create).toHaveBeenCalledWith(
+        {
+          stringType: StringType.CIVIL_DEMANDS,
+          caseId,
+          value: civilDemands,
         },
         { transaction },
       )

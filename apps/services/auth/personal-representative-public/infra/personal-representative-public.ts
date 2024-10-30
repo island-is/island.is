@@ -26,15 +26,6 @@ export const serviceSetup =
           paths: ['/'],
           public: false,
         },
-        demo: {
-          host: {
-            dev: 'personal-representative-public-xrd.dev01.devland.is',
-            staging: '',
-            prod: '',
-          },
-          paths: ['/'],
-          public: true,
-        },
       })
       .readiness('/health/check')
       .liveness('/liveness')

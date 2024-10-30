@@ -13,10 +13,13 @@ import { ClientSecretLoader } from './client/client-secret.loader'
 import { ScopeResolver } from './scope/scope.resolver'
 import { ScopeService } from './scope/scope.service'
 import { DelegationProviderService } from './delegationProvider/delegation-provider.service'
-import { DelegationProviderResolverResolver } from './delegationProvider/delegation-provider.resolver'
+import { DelegationProviderResolver } from './delegationProvider/delegation-provider.resolver'
+import { DelegationAdminResolver } from './delegationAdmin/delegation-admin.resolver'
+import { DelegationAdminService } from './delegationAdmin/delegation-admin.service'
+import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
 
 @Module({
-  imports: [AuthAdminApiClientModule],
+  imports: [AuthAdminApiClientModule, AuthDelegationApiClientModule],
   providers: [
     TenantResolver,
     TenantEnvironmentResolver,
@@ -29,7 +32,9 @@ import { DelegationProviderResolverResolver } from './delegationProvider/delegat
     ScopeResolver,
     ScopeService,
     DelegationProviderService,
-    DelegationProviderResolverResolver,
+    DelegationProviderResolver,
+    DelegationAdminResolver,
+    DelegationAdminService,
   ],
 })
 export class AuthAdminModule {}

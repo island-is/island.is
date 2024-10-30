@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, RadioButton, Text, Tooltip } from '@island.is/island-ui/core'
@@ -17,14 +17,13 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '../../utils/hooks'
 import RequiredStar from '../RequiredStar/RequiredStar'
 import { UserContext } from '../UserProvider/UserProvider'
-import { BlueBox, SectionHeading } from '..'
-import DefenderInput from './DefenderInput'
+import { BlueBox, InputAdvocate, SectionHeading } from '..'
 import DefenderNotFound from './DefenderNotFound'
 import { defenderInfo } from './DefenderInfo.strings'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
 }
 
 const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
@@ -94,7 +93,7 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
       />
       {defenderNotFound && <DefenderNotFound />}
       <BlueBox>
-        <DefenderInput onDefenderNotFound={setDefenderNotFound} />
+        <InputAdvocate onAdvocateNotFound={setDefenderNotFound} />
         {isProsecutionUser(user) && (
           <>
             <Text variant="h4" marginTop={2} marginBottom={2}>

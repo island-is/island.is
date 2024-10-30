@@ -12,6 +12,7 @@ import {
 } from '@island.is/application/types'
 import { information } from '../../lib/messages'
 import { coreErrorMessages } from '@island.is/application/core'
+import { ListItemField } from './ListItemField'
 
 export const formFieldMapper = ({
   item,
@@ -19,8 +20,10 @@ export const formFieldMapper = ({
   displayError,
   watchTechInfoFields,
   formatMessage,
+  lang,
 }: FormFieldMapperType) => {
-  const { variableName, label, type, required, maxLength, values } = item
+  const { variableName, label, labelEn, type, required, maxLength, values } =
+    item
   const { application, field } = props
   const error =
     displayError && required && variableName
@@ -35,21 +38,16 @@ export const formFieldMapper = ({
       : undefined
   if (values && values.length > 0) {
     return (
-      <SelectFormField
-        application={application}
-        error={error}
-        field={{
-          id: `${field.id}.${variableName}`,
-          title: label ?? '',
-          options: values.map((value) => {
-            return { value: value, label: value }
-          }),
-          component: FieldComponents.SELECT,
-          children: undefined,
-          type: FieldTypes.SELECT,
-          required: required,
-          backgroundColor: 'blue',
-        }}
+      <ListItemField
+        fieldId={`${field.id}.${variableName}`}
+        label={(lang === 'is' ? label : labelEn) ?? ''}
+        options={values?.map((value) => {
+          return {
+            value: { nameIs: value.name, nameEn: value.nameEn },
+            label: lang === 'is' ? value.name : value.nameEn,
+          }
+        })}
+        required={required}
       />
     )
   }
@@ -61,7 +59,7 @@ export const formFieldMapper = ({
         error={error}
         field={{
           id: `${field.id}.${variableName}`,
-          title: label ?? '',
+          title: (lang === 'is' ? label : labelEn) ?? '',
           component: FieldComponents.TEXT,
           type: FieldTypes.TEXT,
           children: undefined,
@@ -70,6 +68,7 @@ export const formFieldMapper = ({
           variant: 'number',
           max: maxLength ? parseInt(maxLength, 10) : undefined,
           min: 0,
+          step: type === 'float' ? '0.0000000001' : '1',
         }}
       />
     )
@@ -82,7 +81,7 @@ export const formFieldMapper = ({
         showFieldName
         field={{
           id: `${field.id}.${variableName}`,
-          title: label ?? '',
+          title: (lang === 'is' ? label : labelEn) ?? '',
           component: FieldComponents.TEXT,
           type: FieldTypes.TEXT,
           children: undefined,
@@ -101,7 +100,7 @@ export const formFieldMapper = ({
         error={error}
         field={{
           id: `${field.id}.${variableName}`,
-          title: label ?? '',
+          title: (lang === 'is' ? label : labelEn) ?? '',
           component: FieldComponents.DATE,
           type: FieldTypes.DATE,
           children: undefined,
@@ -119,7 +118,7 @@ export const formFieldMapper = ({
         error={error}
         field={{
           id: `${field.id}.${variableName}`,
-          title: label ?? '',
+          title: (lang === 'is' ? label : labelEn) ?? '',
           options: [
             {
               value: YES,

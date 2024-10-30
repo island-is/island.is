@@ -1,20 +1,25 @@
-import { User } from '@island.is/auth-nest-tools'
+import kennitala from 'kennitala'
 import { Op, WhereOptions } from 'sequelize'
+
+import { User } from '@island.is/auth-nest-tools'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
+
 import {
   DelegationRecordType,
   PersonalRepresentativeDelegationType,
 } from '../types/delegationRecord'
-import kennitala from 'kennitala'
 
 export const delegationProviderTypeMap: Record<
   AuthDelegationProvider,
   DelegationRecordType[]
 > = {
-  [AuthDelegationProvider.NationalRegistry]: [AuthDelegationType.LegalGuardian],
+  [AuthDelegationProvider.NationalRegistry]: [
+    AuthDelegationType.LegalGuardian,
+    AuthDelegationType.LegalGuardianMinor,
+  ],
   [AuthDelegationProvider.CompanyRegistry]: [
     AuthDelegationType.ProcurationHolder,
   ],
@@ -23,6 +28,9 @@ export const delegationProviderTypeMap: Record<
     PersonalRepresentativeDelegationType.PersonalRepresentativePostholf,
   ],
   [AuthDelegationProvider.Custom]: [AuthDelegationType.Custom],
+  [AuthDelegationProvider.DistrictCommissionersRegistry]: [
+    AuthDelegationType.LegalRepresentative,
+  ],
 }
 
 export const getDelegationNoActorWhereClause = (user: User): WhereOptions => {

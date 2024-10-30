@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback, useContext } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useIntl } from 'react-intl'
 
@@ -15,11 +15,12 @@ interface Props {
   onChange: (files: File[]) => void
   onRetry?: (file: TUploadFile) => void
   onDelete: (file: TUploadFile) => void
-  onRename: (fileId: string, newName?: string, newDisplayDate?: string) => void
+  onRename: (fileId: string, newName: string, newDisplayDate: string) => void
+  setEditCount: Dispatch<SetStateAction<number>>
 }
 
 const UploadFiles: FC<Props> = (props) => {
-  const { files, onChange, onRetry, onDelete, onRename } = props
+  const { files, onChange, onRetry, onDelete, onRename, setEditCount } = props
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
 
@@ -70,6 +71,8 @@ const UploadFiles: FC<Props> = (props) => {
             onRename={onRename}
             onDelete={onDelete}
             onRetry={onRetry}
+            onStartEditing={() => setEditCount((count) => count + 1)}
+            onStopEditing={() => setEditCount((count) => count - 1)}
           />
         </Box>
       ))}

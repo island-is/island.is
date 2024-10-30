@@ -67,6 +67,7 @@ const generateRandomHeir = (
         }
       : {}),
     email: name.split(' ').at(-1) + '@gervimadur.com',
+    phone: '9999999',
     enabled: true,
     relationWithApplicant: ['Bróðir', 'Systir', 'Móðir', 'Faðir'].sort(
       () => 0.5 - Math.random(),

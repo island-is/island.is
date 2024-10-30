@@ -14,7 +14,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 import { TECHNICAL_INFO_INPUTS } from '../../graphql/queries'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { TechInfoItem } from '../../shared/types'
+import { CategoryType, TechInfoItem } from '../../shared/types'
 import { formFieldMapper } from './formFieldMapper'
 import { application as applicationMessage } from '../../lib/messages'
 import { formatDate } from '../../utils'
@@ -27,18 +27,18 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
   const { application, field, setBeforeSubmitCallback } = props
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage, locale, lang } = useLocale()
 
   const machineCategory = getValueViaPath(
     application.answers,
     'machine.aboutMachine.category',
-    '',
-  ) as string
+    { nameIs: '', nameEn: '' },
+  ) as CategoryType
   const machineSubCategory = getValueViaPath(
     application.answers,
     'machine.aboutMachine.subcategory',
-    '',
-  ) as string
+    { nameIs: '', nameEn: '' },
+  ) as CategoryType
 
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
@@ -65,15 +65,16 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
   useEffect(() => {
     runQuery({
       variables: {
-        parentCategory: machineCategory,
+        parentCategory: machineCategory.nameIs,
+        subCategory: machineSubCategory.nameIs,
       },
     })
-  }, [machineCategory])
+  }, [machineCategory, machineSubCategory])
 
   setBeforeSubmitCallback?.(async () => {
     setDisplayError(false)
     const techInfoAnswer = techInfoItems?.map(
-      ({ variableName, required, label, maxLength, type }, index) => {
+      ({ variableName, required, label, labelEn, maxLength, type }, index) => {
         const answer = variableName ? watchTechInfoFields[variableName] : ''
         if (
           (required && answer.length === 0) ||
@@ -87,13 +88,37 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
           setDisplayError(true)
           return 'error'
         }
+        const isAnswer =
+          type === 'dateTime'
+            ? formatDate(answer)
+            : typeof answer === 'object'
+            ? answer.nameIs
+            : type === 'float'
+            ? parseFloat(answer).toLocaleString()
+            : answer
+        const enAnswer =
+          type === 'dateTime'
+            ? formatDate(answer)
+            : typeof answer === 'object'
+            ? answer.nameEn
+            : type === 'float'
+            ? parseFloat(answer).toLocaleString()
+            : answer
         setValue(`techInfo[${index}].variableName`, variableName)
-        setValue(
-          `techInfo[${index}].value`,
-          type === 'dateTime' ? formatDate(answer) : answer,
-        )
+        setValue(`techInfo[${index}].value.nameIs`, isAnswer)
+        setValue(`techInfo[${index}].value.nameEn`, enAnswer)
         setValue(`techInfo[${index}].label`, label)
-        return { variableName, value: answer, label }
+        setValue(`techInfo[${index}].labelEn`, labelEn)
+        return {
+          variableName,
+          value: {
+            nameIs: isAnswer,
+            nameEn: enAnswer,
+          },
+
+          label,
+          labelEn,
+        }
       },
     )
 
@@ -104,7 +129,6 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
     ) {
       return [false, '']
     }
-
     await updateApplication({
       variables: {
         input: {
@@ -124,7 +148,10 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
     <Box paddingTop={2}>
       <Box>
         <Text variant="h5">
-          {machineCategory}: {machineSubCategory}
+          {lang === 'is' ? machineCategory.nameIs : machineCategory.nameEn}:{' '}
+          {lang === 'is'
+            ? machineSubCategory.nameIs
+            : machineSubCategory.nameEn}
         </Text>
       </Box>
       <GridRow>
@@ -142,6 +169,7 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
                 displayError,
                 watchTechInfoFields,
                 formatMessage,
+                lang,
               })}
             </GridColumn>
           )

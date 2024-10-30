@@ -1,4 +1,4 @@
-import { Fragment, ReactNode } from 'react'
+import { Fragment, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -30,6 +30,7 @@ import {
   QueryGetOrganizationArgs,
   QueryGetOrganizationPageArgs,
   QueryGetPensionCalculationArgs,
+  SocialInsurancePensionCalculationBasePensionType,
   SocialInsurancePensionCalculationInput,
   SocialInsurancePensionCalculationResponse,
   SocialInsurancePensionCalculationResponseItem,
@@ -56,23 +57,37 @@ import {
   convertToQueryParams,
   extractSlug,
   getDateOfCalculationsOptions,
+  is2025PreviewActive,
 } from './utils'
 import * as styles from './PensionCalculatorResults.css'
+
+const ChangeAssumptionsButton = ({ href }: { href: string }) => {
+  const { formatMessage } = useIntl()
+  return (
+    <LinkV2 href={href}>
+      <Button unfocusable={true} variant="text" preTextIcon="arrowBack">
+        {formatMessage(translationStrings.changeAssumptions)}
+      </Button>
+    </LinkV2>
+  )
+}
 
 interface HighlightedItemsProps {
   highlightedItems: SocialInsurancePensionCalculationResponseItem[]
   customPageData: CustomPage | null | undefined
-  firstItemRightAlignedContent?: ReactNode
+  topHeadingText?: string
+  topHeadingLevel?: 2 | 3
 }
 
 const HighlightedItems = ({
   highlightedItems,
   customPageData,
-  firstItemRightAlignedContent,
+  topHeadingText,
+  topHeadingLevel = 3,
 }: HighlightedItemsProps) => {
   const { formatMessage } = useIntl()
 
-  const higlightedItemIsPresent = highlightedItems.length > 0
+  const highlightedItemPresent = highlightedItems.length > 0
   const perMonthText = formatMessage(translationStrings.perMonth)
   const perYearText = formatMessage(translationStrings.perYear)
 
@@ -99,21 +114,30 @@ const HighlightedItems = ({
           )
         }
 
-        const titleVariant: TextProps['variant'] = index === 0 ? 'h3' : 'h4'
+        const titleAs: TextProps['as'] = (index === 0
+          ? `h${topHeadingLevel}`
+          : `h${topHeadingLevel + 1}`) as unknown as TextProps['as']
+
+        const titleVariant: TextProps['variant'] = (index === 0
+          ? `h${topHeadingLevel + 1}`
+          : `h${topHeadingLevel + 2}`) as unknown as TextProps['variant']
 
         const numericVariant: TextProps['variant'] =
           index === 0 ? 'h5' : 'medium'
 
+        if (index === 0 && topHeadingText) {
+          highlightedItemName = topHeadingText
+        }
+
         return (
           <Stack key={index} space={2}>
             <Inline alignY="center" justifyContent="spaceBetween" space={5}>
-              {higlightedItemIsPresent && (
-                <Text variant={titleVariant} as="h2">
+              {highlightedItemPresent && (
+                <Text variant={titleVariant} as={titleAs}>
                   {highlightedItemName}
                 </Text>
               )}
-              {!higlightedItemIsPresent && <Box />}
-              {index === 0 && firstItemRightAlignedContent}
+              {!highlightedItemPresent && <Box />}
             </Inline>
 
             <Box className={styles.grid}>
@@ -237,6 +261,7 @@ interface PensionCalculatorResultsProps {
   organizationPage: OrganizationPage
   organization: Organization
   calculation: SocialInsurancePensionCalculationResponse
+  calculation2025: SocialInsurancePensionCalculationResponse
   calculationInput: SocialInsurancePensionCalculationInput
   queryParamString: string
   dateOfCalculationsOptions: Option<string>[]
@@ -246,6 +271,7 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   organizationPage,
   organization,
   calculation,
+  calculation2025,
   calculationInput,
   queryParamString,
   dateOfCalculationsOptions,
@@ -255,6 +281,8 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   const { linkResolver } = useLinkResolver()
 
   const highlightedItems = calculation.highlightedItems ?? []
+
+  const highlightedItems2025 = calculation2025.highlightedItems ?? []
 
   const title = `${formatMessage(translationStrings.mainTitle)} ${
     dateOfCalculationsOptions.find(
@@ -266,7 +294,25 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
     typeof calculation.groups?.length === 'number' &&
     calculation.groups.length > 0
 
-  const higlightedItemIsPresent = highlightedItems.length > 0
+  const calculation2025IsPresent =
+    typeof calculation2025.groups?.length === 'number' &&
+    calculation2025.groups.length > 0
+
+  const highlightedItemPresent = highlightedItems.length > 0
+  const highlighted2025ItemIsPresent =
+    highlightedItems2025.length > 0 &&
+    is2025PreviewActive(customPageData) &&
+    calculationInput.dateOfCalculations &&
+    new Date(calculationInput.dateOfCalculations).getFullYear() >= 2024
+
+  const isTurnedOff = customPageData?.configJson?.isTurnedOff ?? false
+
+  const changeAssumtionsHref = `${
+    linkResolver('pensioncalculator').href
+  }?${queryParamString}`
+
+  const [showDisabilityChangesIn2025, setShowDisabilityChangesIn2025] =
+    useState(false)
 
   return (
     <>
@@ -278,117 +324,237 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
           ogImageUrl={organizationPage.featuredImage?.url}
           indexableBySearchEngine={false}
         >
-          <GridContainer>
-            <GridRow>
-              <GridColumn
-                offset={['0', '0', '0', '1/9']}
-                className={styles.fullWidth}
-              >
-                <Box paddingY={6}>
-                  <Stack space={5}>
-                    <Stack space={2}>
+          {isTurnedOff && (
+            <GridContainer>
+              <GridRow>
+                <GridColumn
+                  offset={['0', '0', '0', '1/9']}
+                  className={styles.fullWidth}
+                >
+                  <Box paddingY={5}>
+                    <Stack space={3}>
                       <Text variant="h1" as="h1">
                         {title}
                       </Text>
-                      <Box className={styles.textMaxWidth}>
-                        <Text>
-                          {formatMessage(translationStrings.resultDisclaimer)}
-                        </Text>
-                      </Box>
+                      <Text>
+                        {formatMessage(translationStrings.isTurnedOff)}
+                      </Text>
                     </Stack>
-                    {higlightedItemIsPresent && (
-                      <HighlightedItems
-                        customPageData={customPageData}
-                        highlightedItems={highlightedItems}
-                        firstItemRightAlignedContent={
-                          <Hidden print below="md">
-                            <LinkV2
-                              href={`${
-                                linkResolver('pensioncalculator').href
-                              }?${queryParamString}`}
-                            >
-                              <Button unfocusable={true} size="small">
-                                {formatMessage(
-                                  translationStrings.changeAssumptions,
-                                )}
-                              </Button>
-                            </LinkV2>
-                          </Hidden>
-                        }
-                      />
-                    )}
-                    <Hidden print above="sm">
-                      <LinkV2
-                        href={`${
-                          linkResolver('pensioncalculator').href
-                        }?${queryParamString}`}
-                      >
-                        <Button unfocusable={true} size="small">
-                          {formatMessage(translationStrings.changeAssumptions)}
-                        </Button>
-                      </LinkV2>
-                    </Hidden>
+                  </Box>
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          )}
 
-                    {!calculationIsPresent && (
-                      <AlertMessage
-                        type="warning"
-                        message={formatMessage(
-                          translationStrings.noResultsCanBeShown,
-                        )}
-                      />
-                    )}
-
-                    {calculationIsPresent && (
-                      <Accordion dividerOnTop={false}>
-                        <AccordionItem
-                          startExpanded={!higlightedItemIsPresent}
-                          id="resultDetails"
-                          labelVariant="h3"
-                          labelUse="h3"
-                          label={formatMessage(
-                            translationStrings.resultDetailsLabel,
-                          )}
+          {!isTurnedOff && (
+            <GridContainer>
+              <GridRow>
+                <GridColumn
+                  offset={['0', '0', '0', '1/9']}
+                  className={styles.fullWidth}
+                >
+                  <Box paddingY={6}>
+                    <Stack space={5}>
+                      <Stack space={2}>
+                        <Text variant="h1" as="h1">
+                          {title}
+                        </Text>
+                        <Box className={styles.textMaxWidth}>
+                          <Text>
+                            {formatMessage(
+                              highlighted2025ItemIsPresent
+                                ? translationStrings.result2025Disclaimer
+                                : translationStrings.resultDisclaimer,
+                            )}
+                          </Text>
+                        </Box>
+                      </Stack>
+                      <Hidden print>
+                        <Box
+                          display="flex"
+                          justifyContent={['flexStart', 'flexStart', 'flexEnd']}
                         >
-                          <Box paddingBottom={3}>
-                            <Stack space={3}>
-                              <Box display="flex" justifyContent="flexEnd">
-                                <Hidden print>
-                                  <Button
-                                    icon="print"
-                                    variant="utility"
-                                    onClick={() => {
-                                      window.print()
-                                    }}
-                                  >
-                                    {formatMessage(translationStrings.print)}
-                                  </Button>
-                                </Hidden>
-                              </Box>
-                              <ResultTable groups={calculation.groups} />
-                            </Stack>
+                          <ChangeAssumptionsButton
+                            href={changeAssumtionsHref}
+                          />
+                        </Box>
+                      </Hidden>
+                      {highlightedItemPresent && (
+                        <Stack space={2}>
+                          {highlighted2025ItemIsPresent &&
+                            calculationInput.typeOfBasePension ===
+                              SocialInsurancePensionCalculationBasePensionType.Disability && (
+                              <Text as="h2" variant="h3">
+                                {formatMessage(
+                                  translationStrings.highlightedResult2025ItemHeading,
+                                )}
+                              </Text>
+                            )}
+                          <Box className={styles.highlightedItemsContainer}>
+                            <HighlightedItems
+                              customPageData={customPageData}
+                              highlightedItems={highlightedItems}
+                              topHeadingLevel={
+                                highlighted2025ItemIsPresent &&
+                                calculationInput.typeOfBasePension ===
+                                  SocialInsurancePensionCalculationBasePensionType.Disability
+                                  ? 3
+                                  : 2
+                              }
+                              topHeadingText={
+                                highlighted2025ItemIsPresent &&
+                                calculationInput.typeOfBasePension ===
+                                  SocialInsurancePensionCalculationBasePensionType.Disability
+                                  ? String(
+                                      new Date(
+                                        calculationInput.dateOfCalculations ||
+                                          new Date().toISOString(),
+                                      ).getFullYear(),
+                                    )
+                                  : ''
+                              }
+                            />
 
-                            <Hidden print>
-                              <LinkV2
-                                href={`${
-                                  linkResolver('pensioncalculator').href
-                                }?${queryParamString}`}
-                              >
-                                <Button unfocusable={true} size="small">
-                                  {formatMessage(
-                                    translationStrings.changeAssumptions,
+                            {calculationInput.typeOfBasePension ===
+                              SocialInsurancePensionCalculationBasePensionType.Disability &&
+                              highlighted2025ItemIsPresent && (
+                                <Box className={styles.longLine} />
+                              )}
+
+                            {showDisabilityChangesIn2025 &&
+                              highlighted2025ItemIsPresent && (
+                                <HighlightedItems
+                                  customPageData={customPageData}
+                                  highlightedItems={highlightedItems2025}
+                                  topHeadingText={formatMessage(
+                                    translationStrings.after1stSeptember2025,
                                   )}
-                                </Button>
-                              </LinkV2>
-                            </Hidden>
+                                  topHeadingLevel={
+                                    calculationInput.typeOfBasePension ===
+                                    SocialInsurancePensionCalculationBasePensionType.Disability
+                                      ? 3
+                                      : 2
+                                  }
+                                />
+                              )}
+
+                            {calculationInput.typeOfBasePension ===
+                              SocialInsurancePensionCalculationBasePensionType.Disability &&
+                              !showDisabilityChangesIn2025 &&
+                              highlighted2025ItemIsPresent && (
+                                <Stack space={3}>
+                                  <Text variant="h4" as="h3">
+                                    {formatMessage(
+                                      translationStrings.after1stSeptember2025,
+                                    )}
+                                  </Text>
+                                  <Inline space={3} alignY="center">
+                                    <img
+                                      width="80px"
+                                      height="80px"
+                                      src={formatMessage(
+                                        translationStrings.results2025ImageUrl,
+                                      )}
+                                      alt=""
+                                    />
+                                    {
+                                      <Box className={styles.text2025Container}>
+                                        <Text>
+                                          {formatMessage(
+                                            translationStrings.after1stSeptember2025Description,
+                                          )}
+                                        </Text>
+                                      </Box>
+                                    }
+                                  </Inline>
+                                  <Button
+                                    onClick={() => {
+                                      setShowDisabilityChangesIn2025(true)
+                                    }}
+                                    variant="ghost"
+                                    size="small"
+                                  >
+                                    {formatMessage(
+                                      translationStrings.after1stSeptember2025Calculate,
+                                    )}
+                                  </Button>
+                                </Stack>
+                              )}
                           </Box>
-                        </AccordionItem>
-                      </Accordion>
-                    )}
-                  </Stack>
-                </Box>
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
+                        </Stack>
+                      )}
+
+                      {!calculationIsPresent && (
+                        <AlertMessage
+                          type="warning"
+                          message={formatMessage(
+                            translationStrings.noResultsCanBeShown,
+                          )}
+                        />
+                      )}
+
+                      {calculationIsPresent && (
+                        <Accordion dividerOnTop={false}>
+                          <AccordionItem
+                            startExpanded={!highlightedItemPresent}
+                            id="resultDetails"
+                            labelVariant="h3"
+                            labelUse="h3"
+                            label={formatMessage(
+                              highlighted2025ItemIsPresent &&
+                                calculationInput.typeOfBasePension ===
+                                  SocialInsurancePensionCalculationBasePensionType.Disability
+                                ? translationStrings.resultDetails2024Label
+                                : translationStrings.resultDetailsLabel,
+                            )}
+                          >
+                            <Box>
+                              <Stack space={3}>
+                                <Box display="flex" justifyContent="flexEnd">
+                                  <Hidden print>
+                                    <Button
+                                      icon="print"
+                                      variant="utility"
+                                      onClick={() => {
+                                        window.print()
+                                      }}
+                                    >
+                                      {formatMessage(translationStrings.print)}
+                                    </Button>
+                                  </Hidden>
+                                </Box>
+                                <ResultTable groups={calculation.groups} />
+                              </Stack>
+
+                              <Hidden print>
+                                <ChangeAssumptionsButton
+                                  href={changeAssumtionsHref}
+                                />
+                              </Hidden>
+                            </Box>
+                          </AccordionItem>
+                          {calculation2025IsPresent &&
+                            showDisabilityChangesIn2025 && (
+                              <AccordionItem
+                                startExpanded={false}
+                                id="resultDetails"
+                                labelVariant="h3"
+                                labelUse="h3"
+                                label={formatMessage(
+                                  translationStrings.result2025DetailsLabel,
+                                )}
+                              >
+                                <ResultTable groups={calculation2025.groups} />
+                              </AccordionItem>
+                            )}
+                        </Accordion>
+                      )}
+                    </Stack>
+                  </Box>
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          )}
         </PensionCalculatorWrapper>
       </Box>
 
@@ -399,13 +565,36 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
               {title}
             </Text>
             <Box className={styles.textMaxWidth}>
-              <Text>{formatMessage(translationStrings.resultDisclaimer)}</Text>
+              <Text>
+                {highlighted2025ItemIsPresent
+                  ? formatMessage(translationStrings.result2025Disclaimer)
+                  : formatMessage(translationStrings.resultDisclaimer)}
+              </Text>
             </Box>
           </Stack>
-          {higlightedItemIsPresent && (
+          {highlightedItemPresent && (
             <HighlightedItems
               customPageData={customPageData}
               highlightedItems={highlightedItems}
+              topHeadingText={
+                highlighted2025ItemIsPresent &&
+                calculationInput.typeOfBasePension ===
+                  SocialInsurancePensionCalculationBasePensionType.Disability
+                  ? String(
+                      new Date(
+                        calculationInput.dateOfCalculations ||
+                          new Date().toISOString(),
+                      ).getFullYear(),
+                    )
+                  : ''
+              }
+              topHeadingLevel={
+                highlighted2025ItemIsPresent &&
+                calculationInput.typeOfBasePension ===
+                  SocialInsurancePensionCalculationBasePensionType.Disability
+                  ? 3
+                  : 2
+              }
             />
           )}
           <Box paddingTop={2}>
@@ -435,6 +624,9 @@ PensionCalculatorResults.getProps = async ({
     {
       data: { getPensionCalculation },
     },
+    {
+      data: { getPensionCalculation: getPensionCalculation2025 },
+    },
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -460,6 +652,29 @@ PensionCalculatorResults.getProps = async ({
         input: calculationInput,
       },
     }),
+    calculationInput.typeOfBasePension ===
+      SocialInsurancePensionCalculationBasePensionType.Disability &&
+    is2025PreviewActive(customPageData)
+      ? apolloClient.query<Query, QueryGetPensionCalculationArgs>({
+          query: GET_PENSION_CALCULATION,
+          variables: {
+            input: {
+              ...calculationInput,
+              startYear: 2025,
+              startMonth: 9,
+              typeOfBasePension:
+                SocialInsurancePensionCalculationBasePensionType.NewSystem,
+            },
+          },
+        })
+      : {
+          data: {
+            getPensionCalculation: {
+              groups: [],
+              highlightedItems: [],
+            },
+          },
+        },
   ])
 
   if (!getOrganizationPage) {
@@ -477,11 +692,13 @@ PensionCalculatorResults.getProps = async ({
   }
 
   const queryParams = convertToQueryParams(calculationInput)
+  const queryParamsObject = Object.fromEntries(queryParams)
 
   return {
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     calculation: getPensionCalculation,
+    calculation2025: getPensionCalculation2025,
     calculationInput,
     dateOfCalculationsOptions: getDateOfCalculationsOptions(customPageData),
     queryParamString: queryParams.toString(),
@@ -489,6 +706,10 @@ PensionCalculatorResults.getProps = async ({
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,
     ),
+    languageToggleQueryParams: {
+      is: queryParamsObject,
+      en: queryParamsObject,
+    },
   }
 }
 

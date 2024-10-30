@@ -119,7 +119,7 @@ export const EditBankInfoScreen: NavigationFunctionComponent<any> = ({
                   })
 
                   if (!res.data) {
-                    throw new Error('Faild to update')
+                    throw new Error('Failed to update')
                   }
 
                   Navigation.dismissModal(componentId)
@@ -128,7 +128,10 @@ export const EditBankInfoScreen: NavigationFunctionComponent<any> = ({
                   throw new Error('Failed to update')
                 }
               } catch (e) {
-                Alert.alert('Villa', 'Gat ekki vistað reikningsupplýsingar')
+                Alert.alert(
+                  intl.formatMessage({ id: 'edit.bankinfo.error' }),
+                  intl.formatMessage({ id: 'edit.bankinfo.errorMessage' }),
+                )
               }
             }}
           />

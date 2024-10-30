@@ -55,7 +55,7 @@ const apiCollection: Array<{
   },
   {
     api: IncomePlanApi,
-    scopes: ['@tr.is/tekjuaetlun:read'],
+    scopes: ['@tr.is/tekjuaetlun:read', '@tr.is/stadgreidsla:read'],
     autoAuth: true,
   },
   {

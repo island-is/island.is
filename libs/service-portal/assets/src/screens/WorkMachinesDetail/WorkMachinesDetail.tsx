@@ -177,7 +177,11 @@ const WorkMachinesDetail = () => {
               />
               <InfoLine
                 label={labels.dateLastInspection ?? ''}
-                content={formatDate(workMachine?.dateLastInspection ?? '')}
+                content={
+                  workMachine?.dateLastInspection
+                    ? formatDate(workMachine.dateLastInspection)
+                    : formatMessage(messages.noInspection)
+                }
                 loading={loading}
               />
               <InfoLine

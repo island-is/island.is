@@ -28,13 +28,6 @@ let backgroundAppLockTimeout: ReturnType<typeof setTimeout>
 export function setupEventHandlers() {
   // Listen for url events through iOS and Android's Linking library
   Linking.addEventListener('url', ({ url }) => {
-    console.log('URL', url)
-    Linking.canOpenURL(url).then((supported) => {
-      if (supported) {
-        evaluateUrl(url)
-      }
-    })
-
     // Handle Cognito
     if (/cognito/.test(url)) {
       const [, hash] = url.split('#')
@@ -65,15 +58,6 @@ export function setupEventHandlers() {
       navigateTo(url)
     })
   }
-
-  // Get initial url and pass to the opener
-  Linking.getInitialURL()
-    .then((url) => {
-      if (url) {
-        Linking.openURL(url)
-      }
-    })
-    .catch((err) => console.error('An error occurred in getInitialURL: ', err))
 
   Navigation.events().registerBottomTabSelectedListener((e) => {
     uiStore.setState({
@@ -164,6 +148,8 @@ export function setupEventHandlers() {
           return navigateTo('/license-scanner')
         case ButtonRegistry.OfflineButton:
           return handleOfflineButtonClick()
+        case ButtonRegistry.HomeScreenOptionsButton:
+          return navigateTo('/home-options')
       }
     },
   )

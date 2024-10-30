@@ -29,10 +29,10 @@ export class AdvertsInput {
   involvedParty?: string[]
 
   @Field(() => Date, { nullable: true })
-  dateFrom?: Date
+  dateFrom?: string
 
   @Field(() => Date, { nullable: true })
-  dateTo?: Date
+  dateTo?: string
 }
 
 @InputType('OfficialJournalOfIcelandTypesInput')
@@ -45,6 +45,9 @@ export class TypeQueryParams {
 
   @Field(() => Number, { nullable: true })
   page?: number
+
+  @Field(() => Number, { nullable: true })
+  pageSize?: number
 }
 
 @InputType('OfficialJournalOfIcelandAdvertSingleParams')

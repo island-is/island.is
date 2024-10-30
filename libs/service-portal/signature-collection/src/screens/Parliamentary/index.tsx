@@ -1,22 +1,59 @@
 import { Box } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { IntroHeader } from '@island.is/service-portal/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  EmptyState,
+  IntroHeader,
+  THJODSKRA_SLUG,
+} from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import OwnerView from './OwnerView'
-import SigneeView from './SigneeView'
+import SigneeView from '../shared/SigneeView'
+import { useGetCurrentCollection, useIsOwner } from '../../hooks'
+import { useUserInfo } from '@island.is/auth/react'
+import { AuthDelegationType } from '../../types/schema'
 
 const SignatureListsParliamentary = () => {
+  useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
+
+  const { isOwner, loadingIsOwner, refetchIsOwner } = useIsOwner()
+  const userInfo = useUserInfo()
+  const { currentCollection, loadingCurrentCollection } =
+    useGetCurrentCollection()
 
   return (
     <Box>
       <IntroHeader
         title={formatMessage(m.pageTitleParliamentary)}
-        intro={formatMessage(m.pageDescriptionParliamentary)}
+        intro={formatMessage(m.pageDescriptionSignee)}
+        serviceProviderTooltip={formatMessage(m.infoProviderTooltip)}
+        serviceProviderSlug={THJODSKRA_SLUG}
       />
-      <Box marginTop={5}>
-        <OwnerView />
-      </Box>
+      {!loadingIsOwner && !loadingCurrentCollection && (
+        <Box>
+          {!currentCollection?.isPresidential ? (
+            isOwner.success ? (
+              <OwnerView
+                refetchIsOwner={refetchIsOwner}
+                currentCollection={currentCollection}
+                isListHolder={
+                  !userInfo?.profile?.delegationType ||
+                  userInfo?.profile?.delegationType?.includes(
+                    AuthDelegationType.ProcurationHolder,
+                  )
+                }
+              />
+            ) : (
+              <SigneeView currentCollection={currentCollection} />
+            )
+          ) : (
+            <EmptyState
+              title={m.noCollectionIsActive}
+              description={m.noCollectionIsActiveDescription}
+            />
+          )}
+        </Box>
+      )}
     </Box>
   )
 }

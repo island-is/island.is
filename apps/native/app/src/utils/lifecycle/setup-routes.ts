@@ -51,9 +51,45 @@ export function setupRoutes() {
     selectTab(4)
   })
 
-  addRoute('/applications', () => {
+  addRoute('/applications', async () => {
     Navigation.dismissAllModals()
     selectTab(3)
+  })
+
+  addRoute('/applications-completed', async (passProps) => {
+    Navigation.dismissAllModals()
+    selectTab(3)
+    await Navigation.popToRoot(StackRegistry.ApplicationsStack)
+    await Navigation.push(ComponentRegistry.ApplicationsScreen, {
+      component: {
+        name: ComponentRegistry.ApplicationsCompletedScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/applications-in-progress', async (passProps) => {
+    Navigation.dismissAllModals()
+    selectTab(3)
+    await Navigation.popToRoot(StackRegistry.ApplicationsStack)
+    await Navigation.push(ComponentRegistry.ApplicationsScreen, {
+      component: {
+        name: ComponentRegistry.ApplicationsInProgressScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/applications-incomplete', async (passProps) => {
+    Navigation.dismissAllModals()
+    selectTab(3)
+    await Navigation.popToRoot(StackRegistry.ApplicationsStack)
+    await Navigation.push(ComponentRegistry.ApplicationsScreen, {
+      component: {
+        name: ComponentRegistry.ApplicationsIncompleteScreen,
+        passProps,
+      },
+    })
   })
 
   addRoute('/vehicles', async (passProps) => {
@@ -63,6 +99,18 @@ export function setupRoutes() {
     await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.VehiclesScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/home-options', async (passProps) => {
+    Navigation.dismissAllModals()
+    selectTab(2)
+    await Navigation.popToRoot(StackRegistry.HomeStack)
+    await Navigation.push(StackRegistry.HomeStack, {
+      component: {
+        name: ComponentRegistry.HomeOptionsScreen,
         passProps,
       },
     })
@@ -92,10 +140,23 @@ export function setupRoutes() {
 
   addRoute('/air-discount', async (passProps) => {
     await Navigation.dismissAllModals()
+    selectTab(4)
     await Navigation.popToRoot(StackRegistry.MoreStack)
     await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.AirDiscountScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/health-overview', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.popToRoot(StackRegistry.MoreStack)
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.HealthOverviewScreen,
         passProps,
       },
     })
@@ -123,6 +184,26 @@ export function setupRoutes() {
           {
             component: {
               name: ComponentRegistry.PasskeyScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/update-app', async (passProps) => {
+    Navigation.showModal({
+      stack: {
+        options: {
+          modal: {
+            swipeToDismiss: false,
+          },
+        },
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.UpdateAppScreen,
               passProps,
             },
           },
@@ -206,7 +287,9 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/vehicle/:id', (passProps: any) => {
+  addRoute('/vehicle/:id', async (passProps: any) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
     Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.VehicleDetailScreen,

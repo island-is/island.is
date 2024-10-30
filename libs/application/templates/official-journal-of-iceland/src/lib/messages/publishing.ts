@@ -21,7 +21,7 @@ export const publishing = {
     communicationIntro: {
       id: 'ojoi.application:publishing.general.communicationIntro',
       defaultMessage:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc sit amet mattis erat, eget dignissim lacus. Cras id enim ac urna bibendum gravida.',
+        'Hér getur þú skráð inn tölvupóstfang og/eða símanúmer þess sem best er að hafa samskipti við vegna málsins, hægt að skrá fleiri en einn.',
       description: 'Intro of the communication section',
     },
   }),
@@ -40,6 +40,17 @@ export const publishing = {
       id: 'ojoi.application:publishing.headings.date',
       defaultMessage: 'Hvenær viltu að auglýsing birtist?',
       description: 'Title of the date section',
+    },
+    fastTrack: {
+      id: 'ojoi.application:publishing.headings.fastTrack',
+      defaultMessage: 'Hraðbirting hefur verið valin',
+      description: 'Title of the fast track section',
+    },
+    fastTrackMessage: {
+      id: 'ojoi.application:publishing.headings.fastTrackMessage',
+      defaultMessage:
+        'Mál sem eru send til birtingar með birtingar dag innan við næstu 10 daga eru merkt í hraðbirtingu.',
+      description: 'Message of the fast track section',
     },
   }),
   inputs: {
@@ -68,6 +79,11 @@ export const publishing = {
         defaultMessage: 'Efnisflokkar',
         description: 'Label of the content categories input',
       },
+      placeholder: {
+        id: 'ojoi.application:publishing.inputs.contentCategories.placeholder',
+        defaultMessage: 'Veldu efnisflokka',
+        description: 'Placeholder of the content categories input',
+      },
     }),
     messages: defineMessages({
       label: {
@@ -77,8 +93,7 @@ export const publishing = {
       },
       placeholder: {
         id: 'ojoi.application:publishing.inputs.messages.placeholder',
-        defaultMessage:
-          'Hér er hægt að skrifa skilaboð til Stjórnartíðinda varðandi auglýsinguna.',
+        defaultMessage: 'Skilaboð til ritstjóra Stjórnartíðinda.',
         description: 'Placeholder of the messages textarea input',
       },
     }),

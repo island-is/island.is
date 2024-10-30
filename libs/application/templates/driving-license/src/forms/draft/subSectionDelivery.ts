@@ -1,6 +1,7 @@
 import {
   buildDescriptionField,
   buildMultiField,
+  buildRadioField,
   buildSelectField,
   buildSubSection,
 } from '@island.is/application/core'
@@ -11,6 +12,8 @@ import {
 } from '../../lib/utils'
 
 import { Jurisdiction } from '@island.is/clients/driving-license'
+import { B_FULL_RENEWAL_65 } from '../../lib/constants'
+import { Pickup } from '../../lib/types'
 
 export const subSectionDelivery = buildSubSection({
   id: 'user',
@@ -20,19 +23,17 @@ export const subSectionDelivery = buildSubSection({
     buildMultiField({
       id: 'info',
       title: m.pickupLocationTitle,
-      space: 1,
       children: [
         buildDescriptionField({
-          id: 'afhending',
-          title: m.districtCommisionerTitle,
-          titleVariant: 'h4',
+          id: 'jurisdictionHeader',
+          title: '',
           description: chooseDistrictCommissionerDescription,
         }),
         buildSelectField({
           id: 'jurisdiction',
-          title: m.districtCommisionerPickup,
-          disabled: false,
+          title: m.districtCommissionerPickup,
           required: true,
+          placeholder: m.districtCommissionerPickupPlaceholder,
           options: ({
             externalData: {
               jurisdictions: { data },
@@ -44,6 +45,24 @@ export const subSectionDelivery = buildSubSection({
               tooltip: `Póstnúmer ${zip}`,
             }))
           },
+        }),
+        buildDescriptionField({
+          id: 'pickupHeader',
+          title: '',
+          description: m.pickupLocationHeader,
+          titleVariant: 'h4',
+          space: 'containerGutter',
+          condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
+        }),
+        buildRadioField({
+          id: 'pickup',
+          title: '',
+          defaultValue: Pickup.POST,
+          condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
+          options: [
+            { value: Pickup.POST, label: m.overviewPickupPost },
+            { value: Pickup.DISTRICT, label: m.overviewPickupDistrict },
+          ],
         }),
       ],
     }),

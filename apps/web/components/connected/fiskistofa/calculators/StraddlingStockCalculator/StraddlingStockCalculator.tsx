@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useIntl } from 'react-intl'
 import cn from 'classnames'
+import { useRouter } from 'next/router'
 import { useMachine } from '@xstate/react'
+
+import { FiskistofaCatchQuotaCategory as CatchQuotaCategory } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -11,16 +14,15 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { FiskistofaCatchQuotaCategory as CatchQuotaCategory } from '@island.is/api/schema'
-import { useNamespace } from '@island.is/web/hooks'
+
 import {
   getYearOptions,
-  YearOption,
-  numberFormatter,
   isNumberBelowZero,
+  numberFormatter,
+  YearOption,
 } from '../utils'
-import { machine, Context, Event as EventType } from './machine'
-
+import { Context, Event as EventType, machine } from './machine'
+import { translation as translationStrings } from './translation.strings'
 import * as styles from './StraddlingStockCalculator.css'
 
 const emptyValue = { value: -1, label: '' }
@@ -43,18 +45,12 @@ type ChangeErrors = Record<
   }
 >
 
-interface StraddlingStockCalculatorProps {
-  namespace: Record<string, string>
-}
-
-const StraddlingStockCalculator = ({
-  namespace,
-}: StraddlingStockCalculatorProps) => {
+const StraddlingStockCalculator = () => {
   const yearOptions = useMemo(() => getYearOptions(), [])
   const [selectedYear, setSelectedYear] = useState<YearOption>(yearOptions[0])
   const [changes, setChanges] = useState<Changes>({})
   const [changeErrors, setChangeErrors] = useState<ChangeErrors>({})
-  const n = useNamespace(namespace)
+  const { formatMessage } = useIntl()
   const prevChangesRef = useRef<Changes | null>(null)
 
   const [shipNumber, setShipNumber] = useState<number | null>(null)
@@ -214,7 +210,7 @@ const StraddlingStockCalculator = ({
             <Select
               isDisabled={loading}
               size="sm"
-              label={n('year', 'Ár')}
+              label={formatMessage(translationStrings.year)}
               name="year-select"
               options={yearOptions}
               value={selectedYear}
@@ -230,7 +226,7 @@ const StraddlingStockCalculator = ({
               isDisabled={loading}
               value={emptyValue}
               size="sm"
-              label={n('addType', 'Bæta við tegund')}
+              label={formatMessage(translationStrings.addType)}
               name="tegund-fiskur-select"
               options={quotaTypes}
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -258,7 +254,7 @@ const StraddlingStockCalculator = ({
               size="small"
               disabled={loading}
             >
-              {n('reset', 'Frumstilla')}
+              {formatMessage(translationStrings.reset)}
             </Button>
             <Button
               onClick={calculate}
@@ -270,14 +266,19 @@ const StraddlingStockCalculator = ({
                   JSON.stringify(prevChangesRef.current)
               }
             >
-              {loading ? <LoadingDots /> : n('calculate', 'Reikna')}
+              {loading ? (
+                <LoadingDots />
+              ) : (
+                formatMessage(translationStrings.calculate)
+              )}
             </Button>
           </Inline>
         </Box>
       </Box>
 
       <Text variant="small">
-        {n('calendarYear', 'Almanaksárið')} 01.01.{selectedYear.label} - 31.12.
+        {formatMessage(translationStrings.calendarYear)} 01.01.
+        {selectedYear.label} - 31.12.
         {selectedYear.label}
       </Text>
 
@@ -306,7 +307,7 @@ const StraddlingStockCalculator = ({
               size="small"
               colorScheme="default"
             >
-              {n('clearAll', 'Hreinsa allt')}
+              {formatMessage(translationStrings.clearAll)}
             </Button>
           )}
         </Inline>
@@ -314,9 +315,7 @@ const StraddlingStockCalculator = ({
 
       <Box width="full" textAlign="center">
         {state.matches('error') && (
-          <Text>
-            {n('deilistofnaError', 'Villa kom upp við að sækja gögn')}
-          </Text>
+          <Text>{formatMessage(translationStrings.deilistofnaError)}</Text>
         )}
       </Box>
 
@@ -325,7 +324,7 @@ const StraddlingStockCalculator = ({
           <table className={styles.tableContainer}>
             <thead className={styles.tableHead}>
               <tr>
-                <th>{n('kvotategund', 'Kvótategund')}</th>
+                <th>{formatMessage(translationStrings.kvotategund)}</th>
                 {state.context.data.catchQuotaCategories.map((category) => {
                   return <th key={category.name}>{category.name}</th>
                 })}
@@ -333,7 +332,7 @@ const StraddlingStockCalculator = ({
             </thead>
             <tbody>
               <tr>
-                <td>{n('codEquivalentRatio', 'Þorskígildisstuðull')}</td>
+                <td>{formatMessage(translationStrings.codEquivalentRatio)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -349,7 +348,7 @@ const StraddlingStockCalculator = ({
                 ))}
               </tr>
               <tr>
-                <td>{n('uthlutun', 'Úthlutun')}</td>
+                <td>{formatMessage(translationStrings.uthlutun)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -362,7 +361,7 @@ const StraddlingStockCalculator = ({
                 ))}
               </tr>
               <tr>
-                <td>{n('serstokUthlutun', 'Sérst. úthl.')}</td>
+                <td>{formatMessage(translationStrings.serstokUthlutun)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -379,7 +378,7 @@ const StraddlingStockCalculator = ({
                 ))}
               </tr>
               <tr>
-                <td>{n('milliAra', 'Milli ára')}</td>
+                <td>{formatMessage(translationStrings.milliAra)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -394,7 +393,7 @@ const StraddlingStockCalculator = ({
                 ))}
               </tr>
               <tr>
-                <td>{n('milliSkipa', 'Milli skipa')}</td>
+                <td>{formatMessage(translationStrings.milliSkipa)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -409,7 +408,7 @@ const StraddlingStockCalculator = ({
                 ))}
               </tr>
               <tr>
-                <td>{n('aflamarksbreyting', 'Aflamarksbr.')}</td>
+                <td>{formatMessage(translationStrings.aflamarksbreyting)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td key={category.name}>
                     {category.id === 0 ? (
@@ -449,7 +448,7 @@ const StraddlingStockCalculator = ({
                 ))}
               </tr>
               <tr>
-                <td>{n('aflamark', 'Aflamark')}</td>
+                <td>{formatMessage(translationStrings.aflamark)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -462,7 +461,7 @@ const StraddlingStockCalculator = ({
                 ))}
               </tr>
               <tr>
-                <td>{n('afli', 'Afli')}</td>
+                <td>{formatMessage(translationStrings.afli)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -475,7 +474,7 @@ const StraddlingStockCalculator = ({
                 ))}
               </tr>
               <tr>
-                <td>{n('aflabreyting', 'Aflabreyting')}</td>
+                <td>{formatMessage(translationStrings.aflabreyting)}</td>
 
                 {state.context.data.catchQuotaCategories.map((category) => {
                   return (
@@ -517,7 +516,7 @@ const StraddlingStockCalculator = ({
                 })}
               </tr>
               <tr>
-                <td>{n('stada', 'Staða')}</td>
+                <td>{formatMessage(translationStrings.stada)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -530,7 +529,7 @@ const StraddlingStockCalculator = ({
                 ))}
               </tr>
               <tr>
-                <td>{n('tilfaersla', 'Tilfærsla')}</td>
+                <td>{formatMessage(translationStrings.tilfaersla)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -545,7 +544,7 @@ const StraddlingStockCalculator = ({
                 ))}
               </tr>
               <tr>
-                <td>{n('nyStada', 'Ný staða')}</td>
+                <td>{formatMessage(translationStrings.nyStada)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -558,7 +557,7 @@ const StraddlingStockCalculator = ({
                 ))}
               </tr>
               <tr>
-                <td>{n('aNaestaAr', 'Á næsta ár')}</td>
+                <td>{formatMessage(translationStrings.aNaestaAr)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -571,7 +570,7 @@ const StraddlingStockCalculator = ({
                 ))}
               </tr>
               <tr>
-                <td>{n('umframafli', 'Umframafli')}</td>
+                <td>{formatMessage(translationStrings.umframafli)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}
@@ -582,7 +581,7 @@ const StraddlingStockCalculator = ({
                 ))}
               </tr>
               <tr>
-                <td>{n('onotad', 'Ónotað')}</td>
+                <td>{formatMessage(translationStrings.onotad)}</td>
                 {state.context.data.catchQuotaCategories.map((category) => (
                   <td
                     key={category.name}

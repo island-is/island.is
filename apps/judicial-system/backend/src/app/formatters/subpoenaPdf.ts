@@ -1,39 +1,74 @@
 import PDFDocument from 'pdfkit'
+import { MessageDescriptor } from '@formatjs/intl'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
 import {
+  capitalize,
   formatDate,
   formatDOB,
+  getWordByGender,
   lowercase,
+  Word,
 } from '@island.is/judicial-system/formatters'
-import {
-  DateType,
-  DistrictCourtLocation,
-  DistrictCourts,
-  SubpoenaType,
-} from '@island.is/judicial-system/types'
+import { Gender, SubpoenaType } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../factories/date.factory'
 import { subpoena as strings } from '../messages'
 import { Case } from '../modules/case'
 import { Defendant } from '../modules/defendant'
+import { Subpoena } from '../modules/subpoena'
 import {
+  addConfirmation,
   addEmptyLines,
   addFooter,
   addHugeHeading,
   addMediumText,
   addNormalRightAlignedText,
   addNormalText,
+  Confirmation,
   setTitle,
 } from './pdfHelpers'
+
+const getIntro = (
+  gender?: Gender,
+): {
+  intro: MessageDescriptor
+  absenceIntro: MessageDescriptor
+  arrestIntro: MessageDescriptor
+} => {
+  switch (gender) {
+    case Gender.MALE:
+      return {
+        intro: strings.intro,
+        absenceIntro: strings.absenceIntro,
+        arrestIntro: strings.arrestIntro,
+      }
+
+    case Gender.FEMALE:
+      return {
+        intro: strings.intro_female,
+        absenceIntro: strings.absenceIntroFemale,
+        arrestIntro: strings.arrestIntroFemale,
+      }
+    default:
+      return {
+        intro: strings.intro_non_binary,
+        absenceIntro: strings.absenceIntroNonBinary,
+        arrestIntro: strings.arrestIntroNonBinary,
+      }
+  }
+}
 
 export const createSubpoena = (
   theCase: Case,
   defendant: Defendant,
   formatMessage: FormatMessage,
+  subpoena?: Subpoena,
   arraignmentDate?: Date,
   location?: string,
   subpoenaType?: SubpoenaType,
+  confirmation?: Confirmation,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -47,29 +82,32 @@ export const createSubpoena = (
   })
 
   const sinc: Buffer[] = []
-  const dateLog = theCase.dateLogs?.find(
-    (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-  )
+  const intro = getIntro(defendant.gender)
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
   setTitle(doc, formatMessage(strings.title))
+
+  if (confirmation) {
+    addEmptyLines(doc, 5)
+  }
+
   addNormalText(doc, `${theCase.court?.name}`, 'Times-Bold', true)
 
   addNormalRightAlignedText(
     doc,
-    `${formatDate(new Date(dateLog?.modified ?? new Date()), 'PPP')}`,
+    `${formatDate(new Date(subpoena?.created ?? nowFactory()), 'PPP')}`,
     'Times-Roman',
   )
 
-  arraignmentDate = arraignmentDate ?? dateLog?.date
-  location = location ?? dateLog?.location
+  arraignmentDate = arraignmentDate ?? subpoena?.arraignmentDate
+  location = location ?? subpoena?.location
   subpoenaType = subpoenaType ?? defendant.subpoenaType
 
   if (theCase.court?.name) {
     addNormalText(
       doc,
-      DistrictCourtLocation[theCase.court.name as DistrictCourts],
+      theCase.court.address || 'Ekki skráð', // the latter shouldn't happen, if it does we have an problem with the court data
       'Times-Roman',
     )
   }
@@ -108,7 +146,12 @@ export const createSubpoena = (
     'Times-Roman',
   )
   addEmptyLines(doc)
-  addNormalText(doc, 'Ákærði: ', 'Times-Bold', true)
+  addNormalText(
+    doc,
+    `${capitalize(getWordByGender(Word.AKAERDI, defendant.gender))}: `,
+    'Times-Bold',
+    true,
+  )
   addNormalText(doc, defendant.name || 'Nafn ekki skráð', 'Times-Roman')
   addEmptyLines(doc, 2)
 
@@ -134,15 +177,15 @@ export const createSubpoena = (
 
   addNormalText(doc, formatMessage(strings.type), 'Times-Roman')
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(strings.intro), 'Times-Bold')
+  addNormalText(doc, formatMessage(intro.intro), 'Times-Bold')
 
   if (subpoenaType) {
     addNormalText(
       doc,
       formatMessage(
         subpoenaType === SubpoenaType.ABSENCE
-          ? strings.absenceIntro
-          : strings.arrestIntro,
+          ? intro.absenceIntro
+          : intro.arrestIntro,
       ),
       'Times-Bold',
     )
@@ -152,6 +195,10 @@ export const createSubpoena = (
   addNormalText(doc, formatMessage(strings.deadline), 'Times-Roman')
 
   addFooter(doc)
+
+  if (confirmation) {
+    addConfirmation(doc, confirmation)
+  }
 
   doc.end()
 

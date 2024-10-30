@@ -15,6 +15,7 @@ import {
   QualitySignatureResult,
   NewBEDrivingLicenseInput,
   DrivinglicenseDuplicateValidityStatus,
+  PostRenewal65AndOverInput,
 } from './drivingLicense.type'
 import {
   CanApplyErrorCodeBFull,
@@ -355,8 +356,15 @@ export class DrivingLicenseService {
     }
   }
 
-  async canApplyFor(type: 'B-full' | 'B-temp' | 'BE', token: string) {
-    if (type === 'B-full') {
+  async canApplyFor(
+    type: 'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65',
+    token: string,
+  ) {
+    if (type === 'B-full-renewal-65') {
+      return this.drivingLicenseApi.getCanApplyForRenewal65({
+        token,
+      })
+    } else if (type === 'B-full') {
       return this.drivingLicenseApi.getCanApplyForCategoryFull({
         category: 'B',
         token,
@@ -501,6 +509,20 @@ export class DrivingLicenseService {
     return {
       success: response,
       errorMessage: null,
+    }
+  }
+
+  async renewDrivingLicense65AndOver(
+    auth: User['authorization'],
+    input: PostRenewal65AndOverInput,
+  ): Promise<NewDrivingLicenseResult> {
+    const response = await this.drivingLicenseApi.postRenewLicenseOver65({
+      input,
+      auth: auth,
+    })
+    return {
+      success: response.isOk ?? false,
+      errorMessage: response.errorCode ?? null,
     }
   }
 

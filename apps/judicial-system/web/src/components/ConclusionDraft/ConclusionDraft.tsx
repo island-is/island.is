@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -14,7 +14,7 @@ import { useCase } from '../../utils/hooks'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
 }
 
 const ConclusionDraft: FC<Props> = ({ workingCase, setWorkingCase }) => {

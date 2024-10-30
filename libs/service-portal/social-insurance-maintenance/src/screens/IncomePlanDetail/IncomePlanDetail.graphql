@@ -5,7 +5,7 @@ query getIncomePlanDetail {
       reason
     }
     incomeCategories {
-      name
+      typeName
       annualSum
       currency
     }

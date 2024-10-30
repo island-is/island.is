@@ -1,6 +1,8 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
+  ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   ApiProtectedV1PensionCalculatorPostRequest,
   ApplicantApi,
   ApplicationApi,
@@ -13,6 +15,9 @@ import {
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
+  TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto,
+  TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanConditionsDto,
+  TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
   TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
@@ -83,6 +88,14 @@ export class SocialInsuranceAdministrationClientService {
     return mapIncomePlanDto(incomePlan) ?? null
   }
 
+  async getIncomePlanConditions(
+    user: User,
+  ): Promise<TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanConditionsDto> {
+    return this.incomePlanApiWithAuth(
+      user,
+    ).apiProtectedV1IncomePlanIncomePlanConditionsGet()
+  }
+
   sendApplication(
     user: User,
     applicationDTO: object,
@@ -144,5 +157,35 @@ export class SocialInsuranceAdministrationClientService {
     return this.deathBenefitsApiWithAuth(
       user,
     ).apiProtectedV1DeathBenefitsSpousalinfoGet()
+  }
+
+  async getCategorizedIncomeTypes(
+    user: User,
+  ): Promise<
+    Array<TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto>
+  > {
+    return this.incomePlanApiWithAuth(
+      user,
+    ).apiProtectedV1IncomePlanCategorizedIncomeTypesGet()
+  }
+
+  async getWithholdingTax(
+    user: User,
+    year: ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
+  ): Promise<TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto> {
+    return this.incomePlanApiWithAuth(
+      user,
+    ).apiProtectedV1IncomePlanWithholdingTaxGet(year)
+  }
+
+  async getTemporaryCalculations(
+    user: User,
+    parameters: ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest['trWebApiServicesDomainFinanceModelsIslandIsIncomePlanDto'],
+  ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
+    return this.incomePlanApiWithAuth(
+      user,
+    ).apiProtectedV1IncomePlanTemporaryCalculationsPost({
+      trWebApiServicesDomainFinanceModelsIslandIsIncomePlanDto: parameters,
+    })
   }
 }

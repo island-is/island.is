@@ -64,6 +64,7 @@ export class FinanceResolver {
       user.nationalId,
       user,
     )
+
     return {
       ...financeStatus,
       downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/finance/`,

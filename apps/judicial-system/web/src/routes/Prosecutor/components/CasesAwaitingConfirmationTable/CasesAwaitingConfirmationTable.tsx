@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -9,7 +9,10 @@ import {
   SectionHeading,
   TagCaseState,
 } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import {
+  ContextMenuItem,
+  useContextMenu,
+} from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import { contextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
 import {
   ColumnCaseType,
@@ -33,12 +36,19 @@ interface CasesAwaitingConfirmationTableProps {
   isFiltering: boolean
   cases: CaseListEntry[]
   onContextMenuDeleteClick: (id: string) => void
+  canDeleteCase: (caseToDelete: CaseListEntry) => boolean
 }
 
 const CasesAwaitingConfirmationTable: FC<
   CasesAwaitingConfirmationTableProps
 > = (props) => {
-  const { loading, isFiltering, cases, onContextMenuDeleteClick } = props
+  const {
+    loading,
+    isFiltering,
+    cases,
+    onContextMenuDeleteClick,
+    canDeleteCase,
+  } = props
   const { formatMessage } = useIntl()
 
   const { openCaseInNewTabMenuItem } = useContextMenu()
@@ -76,13 +86,17 @@ const CasesAwaitingConfirmationTable: FC<
               generateContextMenuItems={(row) => {
                 return [
                   openCaseInNewTabMenuItem(row.id),
-                  {
-                    title: formatMessage(contextMenu.deleteCase),
-                    onClick: () => {
-                      onContextMenuDeleteClick(row.id)
-                    },
-                    icon: 'trash',
-                  },
+                  ...(canDeleteCase(row)
+                    ? [
+                        {
+                          title: formatMessage(contextMenu.deleteCase),
+                          onClick: () => {
+                            onContextMenuDeleteClick(row.id)
+                          },
+                          icon: 'trash',
+                        } as ContextMenuItem,
+                      ]
+                    : []),
                 ]
               }}
               columns={[

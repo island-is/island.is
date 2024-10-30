@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Icon, Text, Tooltip } from '@island.is/island-ui/core'

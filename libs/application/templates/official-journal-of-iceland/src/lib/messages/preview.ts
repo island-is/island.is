@@ -19,6 +19,18 @@ export const preview = {
       description: 'Title of the preview section',
     },
   }),
+  errors: defineMessages({
+    noContent: {
+      id: 'ojoi.application:preview.errors.noContent',
+      defaultMessage: 'Upplýsingar vantar í skráningu auglýsingar',
+      description: 'Error message when content is missing',
+    },
+    noContentMessage: {
+      id: 'ojoi.application:preview.errors.noContentMessage',
+      defaultMessage: 'Að lágmarki þarf að fylla út',
+      description: 'Error message when content is missing',
+    },
+  }),
   buttons: defineMessages({
     fetchPdf: {
       id: 'ojoi.application:preview.buttons.fetchPdf',

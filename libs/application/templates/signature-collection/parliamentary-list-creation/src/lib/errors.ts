@@ -13,6 +13,32 @@ export const errorMessages = {
       description: '',
     },
   }),
+  partyBallotLetter: defineMessages({
+    title: {
+      id: 'plc.application:error.partyBallotLetter.title',
+      defaultMessage: 'Ekki er hægt að stofna meðmælasöfnun',
+      description: '',
+    },
+    summary: {
+      id: 'plc.application:error.partyBallotLetter.summary',
+      defaultMessage:
+        'Innskráður notandi/fyrirtæki vantar framboð eða listabókstaf',
+      description: '',
+    },
+  }),
+  alreadyCandidate: defineMessages({
+    title: {
+      id: 'plc.application:error.alreadyCandidate.title',
+      defaultMessage: 'Ekki hægt að tvískrá meðmælasöfnun',
+      description: '',
+    },
+    summary: {
+      id: 'plc.application:error.alreadyCandidate.summary',
+      defaultMessage:
+        'Þú ert nú þegar með framboð. Þú getur nálgast nánari upplýsingar um þína meðmælasöfnun á Mínum Síðum.',
+      description: '',
+    },
+  }),
   citizenship: defineMessages({
     title: {
       id: 'plc.application:error.citizenship.title',

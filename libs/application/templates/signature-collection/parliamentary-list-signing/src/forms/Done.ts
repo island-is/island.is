@@ -4,9 +4,15 @@ import {
   buildSection,
   buildMessageWithLinkButtonField,
   buildDescriptionField,
+  buildImageField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
+import { infer as zinfer } from 'zod'
+import { dataSchema } from '../lib/dataSchema'
+import { ManOnBenchIllustration } from '../../assets/ManOnBenchIllustration'
+type Answers = zinfer<typeof dataSchema>
 
 export const Done: Form = buildForm({
   id: 'done',
@@ -32,33 +38,36 @@ export const Done: Form = buildForm({
         buildMultiField({
           id: 'doneScreen',
           title: m.listSigned,
-          description: m.listSignedDescription,
           children: [
-            buildDescriptionField({
-              id: 'nextStepsTitle',
-              title: m.nextSteps,
-              titleVariant: 'h3',
-              marginBottom: 1,
-            }),
-            //Set up separately for even spacing
-            buildDescriptionField({
-              id: 'nextStepsDescription',
+            buildAlertMessageField({
+              id: 'doneAlertMessage',
               title: '',
-              description: m.nextStepsDescription,
-              titleVariant: 'h3',
-              marginBottom: 5,
+              message: (application: Application) => ({
+                ...m.listSignedDescription,
+                values: {
+                  name: (application.answers as Answers).list.name,
+                },
+              }),
+              alertType: 'success',
             }),
-            buildMessageWithLinkButtonField({
-              id: 'done.goToServicePortal',
+            buildImageField({
+              id: 'doneImage',
               title: '',
-              url: '/minarsidur/min-gogn/listar/medmaelasofnun',
-              buttonTitle: m.linkFieldButtonTitle,
-              message: m.linkFieldMessage,
+              image: ManOnBenchIllustration,
+              imageWidth: '50%',
+              imagePosition: 'center',
             }),
             buildDescriptionField({
               id: 'space',
               title: '',
               space: 'containerGutter',
+            }),
+            buildMessageWithLinkButtonField({
+              id: 'done.goToServicePortal',
+              title: '',
+              url: '/minarsidur/min-gogn/listar/althingis-medmaelasofnun',
+              buttonTitle: m.linkFieldButtonTitle,
+              message: m.linkFieldMessage,
             }),
             buildDescriptionField({
               id: 'space1',

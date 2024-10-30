@@ -4,7 +4,7 @@
 
 This application template allows applicants to apply for household supplement.
 
-![](./assets/household-supplement-flow-chart.png)
+![](../core/assets/tr-applications-flow-chart.png)
 
 ### States
 

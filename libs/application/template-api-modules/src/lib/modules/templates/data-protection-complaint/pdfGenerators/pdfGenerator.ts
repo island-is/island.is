@@ -3,10 +3,10 @@ import { PdfConstants } from './constants'
 
 type generatePdfBody<T> = (template: T, doc: PDFKit.PDFDocument) => void
 
-export async function generatePdf<T>(
+export const generatePdf = async <T>(
   template: T,
   generatePdfBody: generatePdfBody<T>,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   const doc = new PDFDocument({
     margins: {
       top: PdfConstants.VERTICAL_MARGIN,

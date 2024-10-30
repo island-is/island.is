@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import { ChangeEvent, FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'
@@ -20,7 +20,7 @@ import { restrictionLength as strings } from './RestrictionLength.strings'
 
 interface Props {
   workingCase: Case
-  handleIsolationChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleIsolationChange: (event: ChangeEvent<HTMLInputElement>) => void
   handleIsolationDateChange: (date: Date | undefined, valid: boolean) => void
   handleValidToDateChange: (date: Date | undefined, valid: boolean) => void
 }

@@ -1,4 +1,4 @@
-import React, { FC, useContext, useMemo } from 'react'
+import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Option, Select } from '@island.is/island-ui/core'

@@ -186,7 +186,7 @@ const AppealCase: FC = () => {
             <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
             <BlueBox>
               {defaultJudges.map((judge, index) => (
-                <Box marginBottom={2} key={`${judge?.id}`}>
+                <Box marginBottom={2} key={`${index}`}>
                   <Select
                     name="judge"
                     label={formatMessage(

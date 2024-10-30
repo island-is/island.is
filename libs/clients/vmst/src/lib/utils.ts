@@ -2,6 +2,7 @@ import fetch from 'isomorphic-fetch'
 import { logger } from '@island.is/logging'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
+import { ApplicationRights } from '../../gen/fetch'
 
 // A parental leave request body:
 type Init = {
@@ -47,6 +48,7 @@ type Init = {
   }[]
   testData: string
   otherParentBlocked: boolean
+  applicationRights: ApplicationRights[]
 }
 
 export const createWrappedFetchWithLogging = (
@@ -79,6 +81,7 @@ export const createWrappedFetchWithLogging = (
             // 'rightsCode',
             // 'status',
             'testData',
+            'applicationRights',
           ],
         )
         // Then omit the sensitive sub-attributes

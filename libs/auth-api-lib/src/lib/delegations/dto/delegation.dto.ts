@@ -64,6 +64,16 @@ export class DelegationDTO {
   provider!: AuthDelegationProvider
 
   @IsOptional()
+  @ApiPropertyOptional({ nullable: true, type: String })
+  @IsString()
+  referenceId?: string | null
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ nullable: true, type: String })
+  createdByNationalId?: string | null
+
+  @IsOptional()
   @ApiPropertyOptional({ type: [DelegationScopeDTO] })
   @IsArray()
   scopes?: DelegationScopeDTO[]

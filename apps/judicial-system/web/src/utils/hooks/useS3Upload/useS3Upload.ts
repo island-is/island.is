@@ -312,9 +312,17 @@ const useS3Upload = (caseId: string) => {
         }
       })
 
-      return Promise.all(promises).then((results) =>
-        results.every((result) => result),
-      )
+      return Promise.all(promises).then((results) => {
+        if (results.every((result) => result)) {
+          return 'ALL_SUCCEEDED'
+        }
+
+        if (results.some((result) => result)) {
+          return 'SOME_SUCCEEDED'
+        }
+
+        return 'NONE_SUCCEEDED'
+      })
     },
     [getPresignedPost, addFileToCaseState, formatMessage],
   )
@@ -407,7 +415,7 @@ const useS3Upload = (caseId: string) => {
   )
 
   const handleRemove = useCallback(
-    async (file: TUploadFile, callback: (file: TUploadFile) => void) => {
+    async (file: TUploadFile, callback?: (file: TUploadFile) => void) => {
       try {
         if (file.id) {
           const { data } = await remove(file.id)
@@ -421,7 +429,7 @@ const useS3Upload = (caseId: string) => {
             throw new Error('Failed to delete file')
           }
 
-          callback(file)
+          callback && callback(file)
         }
       } catch {
         toast.error(formatMessage(strings.removeFailed))

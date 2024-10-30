@@ -12,7 +12,6 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import * as kennitala from 'kennitala'
-import { EstateRegistrant } from '@island.is/clients/syslumenn'
 import { Answers, EstateMember } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
@@ -28,6 +27,7 @@ import {
   NO,
   YES,
   heirAgeValidation,
+  missingHeirUndividedEstateValidation,
   relationWithApplicant,
 } from '../../lib/constants'
 import intervalToDuration from 'date-fns/intervalToDuration'
@@ -75,6 +75,12 @@ export const EstateMembersRepeater: FC<
     },
   )
 
+  const missingHeirsForUndividedEstate =
+    selectedEstate === EstateTypes.permitForUndividedEstate &&
+    !values.estate?.estateMembers?.some(
+      (member: EstateMember) => member.enabled,
+    )
+
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
       if (
@@ -95,6 +101,13 @@ export const EstateMembersRepeater: FC<
           type: 'custom',
         })
         return [false, 'invalid member age']
+      }
+
+      if (missingHeirsForUndividedEstate) {
+        setError(missingHeirUndividedEstateValidation, {
+          type: 'custom',
+        })
+        return [false, 'missing heir for undivided estate']
       }
 
       return [true, null]
@@ -137,11 +150,15 @@ export const EstateMembersRepeater: FC<
     if (!hasEstateMemberUnder18withoutRep) {
       clearErrors(heirAgeValidation)
     }
+    if (!missingHeirsForUndividedEstate) {
+      clearErrors(missingHeirUndividedEstateValidation)
+    }
   }, [
     fields,
     hasEstateMemberUnder18withoutRep,
     hasEstateMemberUnder18,
     clearErrors,
+    missingHeirsForUndividedEstate,
   ])
 
   useEffect(() => {
@@ -175,7 +192,12 @@ export const EstateMembersRepeater: FC<
           ...acc,
           <Box marginTop={index > 0 ? 7 : 0} key={index}>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
-              <Text variant="h4">{formatMessage(m.estateMember)}</Text>
+              <Text
+                color={member.enabled ? 'currentColor' : 'dark300'}
+                variant="h4"
+              >
+                {formatMessage(m.estateMember)}
+              </Text>
               <Box>
                 <Button
                   variant="text"
@@ -349,13 +371,12 @@ export const EstateMembersRepeater: FC<
                     />
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                    <InputController
+                    <PhoneInputController
                       id={`${id}[${index}].advocate.phone`}
                       name={`${id}[${index}].advocate.phone`}
                       label={formatMessage(m.phone)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
-                      format="###-####"
                       defaultValue={member.advocate?.phone || ''}
                       error={
                         error && error[index] && error[index].advocate?.phone
@@ -415,7 +436,7 @@ export const EstateMembersRepeater: FC<
           {formatMessage(m.inheritanceAddMember)}
         </Button>
       </Box>
-      {errors && errors[heirAgeValidation] ? (
+      {!!errors?.[heirAgeValidation] && (
         <Box marginTop={4}>
           <InputError
             errorMessage={
@@ -425,7 +446,14 @@ export const EstateMembersRepeater: FC<
             }
           />
         </Box>
-      ) : null}
+      )}
+      {!!errors?.[missingHeirUndividedEstateValidation] && (
+        <Box marginTop={4}>
+          <InputError
+            errorMessage={formatMessage(m.missingHeirUndividedEstateValidation)}
+          />
+        </Box>
+      )}
     </Box>
   )
 }

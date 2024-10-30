@@ -58,14 +58,7 @@
       "get": {
         "operationId": "MeVaccinationController_getVaccinationsForDiseases",
         "description": "Get overview of vaccinations for a user",
-        "parameters": [
-          {
-            "name": "locale",
-            "required": true,
-            "in": "query",
-            "schema": { "type": "string" }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "",
@@ -126,12 +119,6 @@
             "required": true,
             "in": "path",
             "description": "id of the disease",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "locale",
-            "required": true,
-            "in": "query",
             "schema": { "type": "string" }
           }
         ],
@@ -649,8 +636,14 @@
               }
             }
           }
-        },
-        "tags": ["visualizer"]
+        }
+      }
+    },
+    "/*": {
+      "get": {
+        "operationId": "VisualizerController_getVisualizer",
+        "parameters": [],
+        "responses": { "200": { "description": "" } }
       }
     }
   },
@@ -673,7 +666,9 @@
             "scopes": {
               "openid": "openid",
               "vaccination": "vaccination",
-              "@landlaeknir.is/vaccinations:admin": "Get vaccination data for a user"
+              "@landlaeknir.is/vaccinations:admin": "Manage disease- and vaccine data",
+              "@landlaeknir.is/vaccinations": "Get vaccination data for a user",
+              "@landlaeknir.is/vaccinations:read": "Get disease- and vaccine data"
             }
           }
         }
@@ -685,32 +680,34 @@
         "properties": {
           "id": { "type": "number" },
           "nationalId": { "type": "string", "example": "1234567890" },
-          "code": { "type": "string", "example": "J07BJ51" },
-          "codingSystem": { "type": "string", "example": "ATC" },
-          "codeDescription": { "type": "string", "example": "ATC" },
-          "vaccineName": { "type": "string", "example": "ATC" },
+          "vaccineCode": { "type": "string", "example": "J07BJ51" },
+          "vaccineCodingSystem": { "type": "string", "example": "ATC" },
+          "vaccineCodeDescription": { "type": "string" },
+          "vaccineCodeDescriptionShort": { "type": "string" },
+          "vaccineUrl": { "type": "string" },
           "vaccinationDate": {
             "format": "date-time",
             "type": "string",
             "example": "2021-01-01"
           },
+          "vaccinationLocation": { "type": "string" },
           "vaccinationAge": {
             "type": "object",
             "example": { "years": 1, "months": 2 }
           },
-          "generalComment": { "type": "object", "example": "ATC" },
+          "generalComment": { "type": "string" },
           "rejected": { "type": "boolean", "example": false }
         },
         "required": [
           "id",
           "nationalId",
-          "code",
-          "codingSystem",
-          "codeDescription",
-          "vaccineName",
+          "vaccineCode",
+          "vaccineCodingSystem",
+          "vaccineCodeDescription",
+          "vaccineCodeDescriptionShort",
           "vaccinationDate",
+          "vaccinationLocation",
           "vaccinationAge",
-          "generalComment",
           "rejected"
         ]
       },
@@ -718,7 +715,7 @@
         "type": "object",
         "properties": {
           "type": {
-            "type": "string",
+            "type": "object",
             "description": "A URI reference that identifies the problem type"
           },
           "title": {
@@ -737,12 +734,20 @@
         },
         "required": ["type", "title"]
       },
+      "VaccinationStatusColor": {
+        "type": "string",
+        "enum": ["green", "yellow", "red"]
+      },
       "DiseaseVaccinationDto": {
         "type": "object",
         "properties": {
           "diseaseId": { "type": "string", "example": "tetanus" },
           "diseaseName": { "type": "string", "example": "Stífkrampi" },
           "diseaseDescription": { "type": "string" },
+          "isFeatured": {
+            "type": "boolean",
+            "description": "Is the vaccination scheduled as in \"almenn bólusetning\""
+          },
           "vaccinationStatus": {
             "type": "string",
             "example": "vaccinated",
@@ -758,6 +763,9 @@
             ]
           },
           "vaccinationStatusName": { "type": "string", "example": "Í gildi" },
+          "vaccinationStatusColor": {
+            "$ref": "#/components/schemas/VaccinationStatusColor"
+          },
           "lastVaccinationDate": { "format": "date-time", "type": "string" },
           "vaccinations": {
             "type": "array",
@@ -768,23 +776,20 @@
         "required": [
           "diseaseId",
           "diseaseName",
-          "diseaseDescription",
-          "vaccinationStatus",
-          "vaccinationStatusName",
-          "lastVaccinationDate",
+          "isFeatured",
           "vaccinations",
           "comments"
         ]
       },
-      "VaccineDto": {
+      "VaccineDiseaseDto": {
         "type": "object",
         "properties": {
           "code": { "type": "string" },
           "codingSystem": { "type": "string", "example": "ATC" },
-          "name": { "type": "string" },
-          "description": { "type": "string" }
+          "diseaseId": { "type": "string" },
+          "useInCalculations": { "type": "boolean" }
         },
-        "required": ["code", "codingSystem", "name", "description"]
+        "required": ["code", "codingSystem", "diseaseId", "useInCalculations"]
       },
       "Locale": { "type": "string", "enum": ["en", "is"] },
       "DiseaseRuleTranslationDto": {
@@ -801,7 +806,7 @@
           "id": { "type": "number" },
           "diseaseId": { "type": "string" },
           "order": { "type": "number" },
-          "type": { "type": "string" },
+          "type": { "type": "object" },
           "cond1Type": { "type": "string" },
           "cond1Min": { "type": "number" },
           "cond1Max": { "type": "number" },
@@ -822,33 +827,14 @@
             }
           }
         },
-        "required": [
-          "id",
-          "diseaseId",
-          "order",
-          "type",
-          "cond1Type",
-          "cond1Min",
-          "cond1Max",
-          "cond2Type",
-          "cond2Min",
-          "cond2Max",
-          "cond3Type",
-          "cond3Min",
-          "cond3Max",
-          "status",
-          "statusName",
-          "internalComment",
-          "publicComment",
-          "translations"
-        ]
+        "required": ["id", "diseaseId", "order", "type", "translations"]
       },
       "DiseaseTranslationDto": {
         "type": "object",
         "properties": {
           "locale": { "$ref": "#/components/schemas/Locale" },
           "name": { "type": "string" },
-          "description": { "type": "string" }
+          "description": { "type": "object" }
         },
         "required": ["locale", "name", "description"]
       },
@@ -858,17 +844,11 @@
           "id": { "type": "string" },
           "name": { "type": "string" },
           "description": { "type": "string" },
-          "doseSchedule": {
-            "description": "Array of numbers representing at which dates (in months) the doses should be administered",
-            "example": [2, 4, 6],
-            "type": "array",
-            "items": { "type": "number" }
-          },
           "isFeatured": { "type": "boolean" },
-          "isScheduled": { "type": "boolean" },
+          "isVisible": { "type": "boolean" },
           "vaccines": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/VaccineDto" }
+            "items": { "$ref": "#/components/schemas/VaccineDiseaseDto" }
           },
           "rules": {
             "type": "array",
@@ -882,10 +862,8 @@
         "required": [
           "id",
           "name",
-          "description",
-          "doseSchedule",
           "isFeatured",
-          "isScheduled",
+          "isVisible",
           "vaccines",
           "rules",
           "translations"
@@ -897,14 +875,8 @@
           "id": { "type": "string" },
           "name": { "type": "string" },
           "description": { "type": "string" },
-          "doseSchedule": {
-            "description": "Array of numbers representing at which dates (in months) the doses should be administered",
-            "example": [2, 4, 6],
-            "type": "array",
-            "items": { "type": "number" }
-          },
           "isFeatured": { "type": "boolean" },
-          "isScheduled": { "type": "boolean" },
+          "isVisible": { "type": "boolean" },
           "rules": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/DiseaseRuleDto" }
@@ -919,7 +891,7 @@
         "type": "object",
         "properties": {
           "order": { "type": "number" },
-          "type": { "type": "string" },
+          "type": { "type": "object" },
           "cond1Type": { "type": "string" },
           "cond1Min": { "type": "number" },
           "cond1Max": { "type": "number" },
@@ -940,24 +912,7 @@
             }
           }
         },
-        "required": [
-          "order",
-          "type",
-          "cond1Type",
-          "cond1Min",
-          "cond1Max",
-          "cond2Type",
-          "cond2Min",
-          "cond2Max",
-          "cond3Type",
-          "cond3Min",
-          "cond3Max",
-          "status",
-          "statusName",
-          "internalComment",
-          "publicComment",
-          "translations"
-        ]
+        "required": ["order", "type", "translations"]
       },
       "UpdateDiseaseRuleDto": {
         "type": "object",
@@ -965,7 +920,7 @@
           "id": { "type": "number" },
           "diseaseId": { "type": "string" },
           "order": { "type": "number" },
-          "type": { "type": "string" },
+          "type": { "type": "object" },
           "cond1Type": { "type": "string" },
           "cond1Min": { "type": "number" },
           "cond1Max": { "type": "number" },

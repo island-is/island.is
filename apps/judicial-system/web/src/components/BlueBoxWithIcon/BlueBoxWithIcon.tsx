@@ -1,15 +1,15 @@
-import { FC } from 'react'
+import { FC, ReactNode } from 'react'
 
 import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 
 import * as styles from './BlueBoxWithIcon.css'
 
 export interface DataSection {
-  data: { title: string; value?: React.ReactNode }[]
+  data: { title: string; value?: ReactNode }[]
 }
 
 interface Props {
-  data: { title: string; value?: React.ReactNode }[]
+  data: { title: string; value?: ReactNode }[]
   icon?: IconMapIcon
 }
 

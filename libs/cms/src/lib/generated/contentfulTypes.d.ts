@@ -854,7 +854,7 @@ export interface IEmailSignupFields {
   formFields?: IFormField[] | undefined
 
   /** Signup Type */
-  signupType?: 'mailchimp' | 'zenter' | undefined
+  signupType?: 'mailchimp' | 'zenter' | 'campaign monitor' | undefined
 
   /** Configuration */
   configuration?: Record<string, any> | undefined
@@ -1606,6 +1606,9 @@ export interface IGenericListItemFields {
 
   /** Asset */
   asset?: Asset | undefined
+
+  /** External Link */
+  externalLink?: ILinkUrl | undefined
 }
 
 /** An item that belongs to a generic list */
@@ -3806,6 +3809,9 @@ export interface ISliceConnectedComponentFields {
 
   /** Config */
   config?: Record<string, any> | undefined
+
+  /** Translation namespace */
+  translationNamespace?: INamespace | undefined
 }
 
 export interface ISliceConnectedComponent
@@ -3945,7 +3951,12 @@ export interface IStepFields {
   slug: string
 
   /** Step Type */
-  stepType?: 'Question - Radio' | 'Question - Dropdown' | 'Answer' | undefined
+  stepType?:
+    | 'Question - Radio'
+    | 'Question - Dropdown'
+    | 'Information'
+    | 'Answer'
+    | undefined
 
   /** Subtitle */
   subtitle?: Document | undefined
@@ -4101,6 +4112,9 @@ export interface ISubArticleFields {
 
   /** Sign Language Video */
   signLanguageVideo?: IEmbeddedVideo | undefined
+
+  /** Stepper */
+  stepper?: IStepper | undefined
 }
 
 /** A sub article that's a part of another main article */
@@ -4366,6 +4380,9 @@ export interface ITeamListFields {
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
 
+  /** Filter groups */
+  filterGroups?: IGenericTagGroup[] | undefined
+
   /** Variant */
   variant?: 'card' | 'accordion' | undefined
 }
@@ -4405,7 +4422,13 @@ export interface ITeamMemberFields {
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
 
-  /** Intro */
+  /** Accordion email */
+  email?: string | undefined
+
+  /** Accordion phone */
+  phone?: string | undefined
+
+  /** Accordion free text */
   intro?: Document | undefined
 }
 

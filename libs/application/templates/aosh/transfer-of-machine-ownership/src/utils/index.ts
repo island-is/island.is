@@ -15,6 +15,7 @@ export { getReviewSteps } from './getReviewSteps'
 export { hasReviewerApproved } from './hasReviewerApproved'
 export { getApproveAnswers } from './getApproveAnswers'
 export { getRejecter } from './getRejecter'
+export { doSellerAndBuyerHaveSameNationalId } from './doSellerAndBuyerHaveSameNationalId'
 
 export const getChargeItemCodes = (
   application: Application<FormValue>,

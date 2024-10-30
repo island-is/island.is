@@ -17,7 +17,14 @@ export const done: Form = buildForm({
         answers.applicationFor === PREPAID_INHERITANCE
           ? m.doneTitlePrepaidEFS
           : m.doneTitleEFS,
-      expandableHeader: m.nextSteps,
+      expandableHeader: ({ answers }) =>
+        answers.applicationFor === PREPAID_INHERITANCE
+          ? m.expandableHeaderPrepaid
+          : m.expandableHeaderEFS,
+      expandableIntro: ({ answers }) =>
+        answers.applicationFor === PREPAID_INHERITANCE
+          ? m.expandableIntroPrepaid
+          : m.expandableIntroEFS,
       expandableDescription: ({ answers }) =>
         answers.applicationFor === PREPAID_INHERITANCE
           ? m.doneDescriptionPrepaidEFS

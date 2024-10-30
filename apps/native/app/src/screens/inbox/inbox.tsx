@@ -8,7 +8,6 @@ import {
   TopLine,
   InboxCard,
 } from '@ui'
-import { setBadgeCountAsync } from 'expo-notifications'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -123,12 +122,13 @@ const PressableListItem = React.memo(
         publicationDate={item.publicationDate}
         id={item.id}
         unread={!item.opened}
-        bookmarked={item.bookmarked}
         senderName={item.sender.name}
         icon={item.sender.name && getOrganizationLogoUrl(item.sender.name, 75)}
+        isUrgent={item.isUrgent}
         onPress={() =>
           navigateTo(`/inbox/${item.id}`, {
             title: item.sender.name,
+            isUrgent: item.isUrgent,
             listParams,
           })
         }
@@ -371,7 +371,6 @@ export const InboxScreen: NavigationFunctionComponent<{
         badgeColor: theme.color.red400,
       },
     })
-    setBadgeCountAsync(unreadCount)
   }, [intl, theme, unreadCount])
 
   const keyExtractor = useCallback((item: ListItem) => {

@@ -8,6 +8,7 @@ import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 import { nowFactory } from '../factories'
 import { indictment } from '../messages'
 import { Case } from '../modules/case'
+import { CaseString } from '../modules/case/models/caseString.model'
 import {
   addEmptyLines,
   addGiganticHeading,
@@ -16,7 +17,7 @@ import {
   addNormalPlusJustifiedText,
   addNormalPlusText,
   addNormalText,
-  IndictmentConfirmation,
+  Confirmation,
   setTitle,
 } from './pdfHelpers'
 
@@ -52,7 +53,7 @@ const roman = (num: number) => {
 export const createIndictment = async (
   theCase: Case,
   formatMessage: FormatMessage,
-  confirmation?: IndictmentConfirmation,
+  confirmation?: Confirmation,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -69,10 +70,7 @@ export const createIndictment = async (
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
-  const title = formatMessage(indictment.title)
-  const heading = formatMessage(indictment.heading)
-
-  setTitle(doc, title)
+  setTitle(doc, formatMessage(indictment.title))
 
   if (confirmation) {
     addIndictmentConfirmation(doc, confirmation)
@@ -80,7 +78,7 @@ export const createIndictment = async (
 
   addEmptyLines(doc, 6, doc.page.margins.left)
 
-  addGiganticHeading(doc, heading, 'Times-Roman')
+  addGiganticHeading(doc, formatMessage(indictment.heading), 'Times-Roman')
   addNormalPlusText(doc, ' ')
   setLineCap(2)
   addNormalPlusText(doc, theCase.indictmentIntroduction ?? '')
@@ -103,6 +101,15 @@ export const createIndictment = async (
 
   addEmptyLines(doc, 2)
   addNormalPlusJustifiedText(doc, theCase.demands ?? '')
+
+  const civilDemands = CaseString.civilDemands(theCase.caseStrings)
+
+  if (civilDemands) {
+    addEmptyLines(doc, 2)
+    addNormalPlusText(doc, formatMessage(indictment.civilDemandsHeading))
+    addNormalPlusJustifiedText(doc, civilDemands)
+  }
+
   addEmptyLines(doc, 2)
   addNormalPlusCenteredText(
     doc,

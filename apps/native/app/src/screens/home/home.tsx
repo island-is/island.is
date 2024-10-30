@@ -16,24 +16,49 @@ import {
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import {
-  Application,
-  useListApplicationsQuery,
-  useListDocumentsQuery,
-} from '../../graphql/types/schema'
+
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useAndroidNotificationPermission } from '../../hooks/use-android-notification-permission'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useDeepLinkHandling } from '../../hooks/use-deep-link-handling'
 import { useNotificationsStore } from '../../stores/notifications-store'
+import {
+  preferencesStore,
+  usePreferencesStore,
+} from '../../stores/preferences-store'
 import { useUiStore } from '../../stores/ui-store'
 import { isAndroid } from '../../utils/devices'
+import { needsToUpdateAppVersion } from '../../utils/minimum-app-version'
 import { getRightButtons } from '../../utils/get-main-root'
-import { handleInitialNotification } from '../../utils/lifecycle/setup-notifications'
 import { testIDs } from '../../utils/test-ids'
-import { ApplicationsModule } from './applications-module'
+import { navigateTo } from '../../lib/deep-linking'
+import {
+  AirDiscountModule,
+  useGetAirDiscountQuery,
+  validateAirDiscountInitialData,
+} from './air-discount-module'
+import {
+  ApplicationsModule,
+  useListApplicationsQuery,
+  validateApplicationsInitialData,
+} from './applications-module'
 import { HelloModule } from './hello-module'
-import { InboxModule } from './inbox-module'
+import {
+  InboxModule,
+  useListDocumentsQuery,
+  validateInboxInitialData,
+} from './inbox-module'
+import {
+  LicensesModule,
+  useGetLicensesData,
+  validateLicensesInitialData,
+} from './licenses-module'
 import { OnboardingModule } from './onboarding-module'
+import {
+  useListVehiclesQuery,
+  validateVehiclesInitialData,
+  VehiclesModule,
+} from './vehicles-module'
 
 interface ListItem {
   id: string
@@ -50,7 +75,10 @@ const { useNavigationOptions, getNavigationOptions } =
     (theme, intl, initialized) => ({
       topBar: {
         rightButtons: initialized
-          ? getRightButtons({ icons: ['notifications'], theme: theme as any })
+          ? getRightButtons({
+              icons: ['notifications', 'options'],
+              theme: theme as any,
+            })
           : [],
       },
       bottomTab: {
@@ -99,19 +127,125 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   useAndroidNotificationPermission()
   const syncToken = useNotificationsStore(({ syncToken }) => syncToken)
   const checkUnseen = useNotificationsStore(({ checkUnseen }) => checkUnseen)
+  const getAndSetLocale = usePreferencesStore(
+    ({ getAndSetLocale }) => getAndSetLocale,
+  )
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
+  const vehiclesWidgetEnabled = usePreferencesStore(
+    ({ vehiclesWidgetEnabled }) => vehiclesWidgetEnabled,
+  )
+  const inboxWidgetEnabled = usePreferencesStore(
+    ({ inboxWidgetEnabled }) => inboxWidgetEnabled,
+  )
+  const licensesWidgetEnabled = usePreferencesStore(
+    ({ licensesWidgetEnabled }) => licensesWidgetEnabled,
+  )
+  const applicationsWidgetEnabled = usePreferencesStore(
+    ({ applicationsWidgetEnabled }) => applicationsWidgetEnabled,
+  )
+  const airDiscountWidgetEnabled = usePreferencesStore(
+    ({ airDiscountWidgetEnabled }) => airDiscountWidgetEnabled,
+  )
+  const widgetsInitialised = usePreferencesStore(
+    ({ widgetsInitialised }) => widgetsInitialised,
+  )
 
-  const applicationsRes = useListApplicationsQuery()
-  const inboxRes = useListDocumentsQuery({
-    variables: { input: { page: 1, pageSize: 3 } },
+  useDeepLinkHandling()
+
+  const applicationsRes = useListApplicationsQuery({
+    skip: !applicationsWidgetEnabled,
   })
+
+  const inboxRes = useListDocumentsQuery({
+    variables: {
+      input: { page: 1, pageSize: 3 },
+    },
+    skip: !inboxWidgetEnabled,
+  })
+
+  const licensesRes = useGetLicensesData({
+    skipFetching: !licensesWidgetEnabled,
+  })
+
+  const airDiscountRes = useGetAirDiscountQuery({
+    fetchPolicy: 'network-only',
+    skip: !airDiscountWidgetEnabled,
+  })
+
+  const vehiclesRes = useListVehiclesQuery({
+    variables: {
+      input: {
+        page: 1,
+        pageSize: 15,
+        showDeregeristered: false,
+        showHistory: false,
+      },
+    },
+    skip: !vehiclesWidgetEnabled,
+  })
+
+  useEffect(() => {
+    // If widgets have not been initialized, validate data and set state accordingly
+    if (!widgetsInitialised) {
+      const shouldShowInboxWidget = validateInboxInitialData({ ...inboxRes })
+
+      const shouldShowLicensesWidget = validateLicensesInitialData({
+        ...licensesRes,
+      })
+
+      const shouldShowApplicationsWidget = validateApplicationsInitialData({
+        ...applicationsRes,
+      })
+
+      const shouldShowVehiclesWidget = validateVehiclesInitialData({
+        ...vehiclesRes,
+      })
+
+      const shouldShowAirDiscountWidget = validateAirDiscountInitialData({
+        ...airDiscountRes,
+      })
+
+      preferencesStore.setState({
+        inboxWidgetEnabled: shouldShowInboxWidget,
+        licensesWidgetEnabled: shouldShowLicensesWidget,
+        applicationsWidgetEnabled: shouldShowApplicationsWidget,
+        vehiclesWidgetEnabled: shouldShowVehiclesWidget,
+        airDiscountWidgetEnabled: shouldShowAirDiscountWidget,
+      })
+
+      // Don't set initialized state if any of the queries are still loading
+      if (
+        licensesRes.loading ||
+        applicationsRes.loading ||
+        inboxRes.loading ||
+        airDiscountRes.loading ||
+        vehiclesRes.loading
+      ) {
+        return
+      }
+
+      preferencesStore.setState({ widgetsInitialised: true })
+    }
+  }, [
+    licensesRes.loading,
+    applicationsRes.loading,
+    inboxRes.loading,
+    airDiscountRes.loading,
+    vehiclesRes.loading,
+  ])
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons({ icons: ['notifications'] }),
-    queryResult: applicationsRes,
+    rightButtons: getRightButtons({ icons: ['notifications', 'options'] }),
+    queryResult: [
+      applicationsRes,
+      inboxRes,
+      licensesRes,
+      airDiscountRes,
+      vehiclesRes,
+    ],
     refetching,
   })
 
@@ -122,26 +256,54 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const keyExtractor = useCallback((item: ListItem) => item.id, [])
   const scrollY = useRef(new Animated.Value(0)).current
 
+  const isAppUpdateRequired = useCallback(async () => {
+    const needsUpdate = await needsToUpdateAppVersion()
+    if (needsUpdate) {
+      navigateTo('/update-app', { closable: false })
+    }
+  }, [])
+
   useEffect(() => {
     // Sync push tokens and unseen notifications
     syncToken()
     checkUnseen()
-
-    // Handle initial notification
-    handleInitialNotification()
+    // Get user locale from server
+    getAndSetLocale()
+    // Check if upgrade wall should be shown
+    isAppUpdateRequired()
   }, [])
 
   const refetch = useCallback(async () => {
     setRefetching(true)
 
     try {
-      await applicationsRes.refetch()
+      const promises = [
+        applicationsWidgetEnabled && applicationsRes.refetch(),
+        inboxWidgetEnabled && inboxRes.refetch(),
+        licensesWidgetEnabled && licensesRes.refetch(),
+        licensesWidgetEnabled && licensesRes.refetchPassport(),
+        airDiscountWidgetEnabled && airDiscountRes.refetch(),
+        vehiclesWidgetEnabled && vehiclesRes.refetch(),
+      ].filter(Boolean)
+
+      await Promise.all(promises)
     } catch (err) {
       // noop
     }
 
     setRefetching(false)
-  }, [applicationsRes])
+  }, [
+    applicationsRes,
+    inboxRes,
+    licensesRes,
+    airDiscountRes,
+    vehiclesRes,
+    vehiclesWidgetEnabled,
+    airDiscountWidgetEnabled,
+    applicationsWidgetEnabled,
+    licensesWidgetEnabled,
+    inboxWidgetEnabled,
+  ])
 
   if (!ui.initializedApp) {
     return null
@@ -156,27 +318,34 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
       id: 'onboarding',
       component: <OnboardingModule />,
     },
+
     {
       id: 'inbox',
-      component: (
-        <InboxModule
-          documents={inboxRes.data?.documentsV2?.data ?? []}
-          loading={inboxRes.loading}
-        />
-      ),
+      component: inboxWidgetEnabled ? <InboxModule {...inboxRes} /> : null,
+    },
+    {
+      id: 'licenses',
+      component: licensesWidgetEnabled ? (
+        <LicensesModule {...licensesRes} />
+      ) : null,
     },
     {
       id: 'applications',
-      component: (
-        <ApplicationsModule
-          applications={
-            (applicationsRes.data?.applicationApplications ??
-              []) as Application[]
-          }
-          loading={applicationsRes.loading}
-          componentId={componentId}
-        />
-      ),
+      component: applicationsWidgetEnabled ? (
+        <ApplicationsModule {...applicationsRes} componentId={componentId} />
+      ) : null,
+    },
+    {
+      id: 'vehicles',
+      component: vehiclesWidgetEnabled ? (
+        <VehiclesModule {...vehiclesRes} />
+      ) : null,
+    },
+    {
+      id: 'air-discount',
+      component: airDiscountWidgetEnabled ? (
+        <AirDiscountModule {...airDiscountRes} />
+      ) : null,
     },
   ].filter(Boolean) as Array<{
     id: string

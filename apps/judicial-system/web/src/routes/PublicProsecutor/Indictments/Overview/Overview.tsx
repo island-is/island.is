@@ -1,11 +1,10 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Option, Select, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { isCompletedCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -14,18 +13,19 @@ import {
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
-  IndictmentsLawsBrokenAccordionItem,
+  // IndictmentsLawsBrokenAccordionItem, NOTE: Temporarily hidden while list of laws broken is not complete
   InfoCardClosedIndictment,
   Modal,
   PageHeader,
   PageLayout,
   PageTitle,
   SectionHeading,
-  useIndictmentsLawsBroken,
+  // useIndictmentsLawsBroken, NOTE: Temporarily hidden while list of laws broken is not complete
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
 import {
+  CaseIndictmentRulingDecision,
   Defendant,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -39,15 +39,10 @@ import { strings } from './Overview.strings'
 type VisibleModal = 'REVIEWER_ASSIGNED' | 'DEFENDANT_VIEWS_VERDICT'
 
 export const isDefendantInfoActionButtonDisabled = (defendant: Defendant) => {
-  switch (defendant.serviceRequirement) {
-    case ServiceRequirement.NOT_APPLICABLE:
-    case ServiceRequirement.NOT_REQUIRED:
-      return true
-    case ServiceRequirement.REQUIRED:
-      return defendant.verdictViewDate !== null
-    default:
-      return false
-  }
+  return (
+    defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED ||
+    Boolean(defendant.verdictViewDate)
+  )
 }
 
 export const Overview = () => {
@@ -60,9 +55,7 @@ export const Overview = () => {
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
   const [modalVisible, setModalVisible] = useState<VisibleModal>()
-  const lawsBroken = useIndictmentsLawsBroken(workingCase)
-
-  const displayReviewerChoices = workingCase.indictmentReviewer === null
+  // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
 
   const [selectedDefendant, setSelectedDefendant] = useState<Defendant | null>()
   const { setAndSendDefendantToServer } = useDefendants()
@@ -89,7 +82,7 @@ export const Overview = () => {
     const updatedDefendant = {
       caseId: workingCase.id,
       defendantId: selectedDefendant.id,
-      verdictViewDate: formatDateForServer(new Date()),
+      verdictViewDate: formatDateForServer(new Date()), // TODO: Let the server override this date as we cannot trust the client date
     }
 
     setAndSendDefendantToServer(updatedDefendant, setWorkingCase)
@@ -144,8 +137,8 @@ export const Overview = () => {
         <Box component="section" marginBottom={5}>
           <InfoCardClosedIndictment
             defendantInfoActionButton={
-              isCompletedCase(workingCase.state) &&
-              workingCase.indictmentReviewer !== null
+              workingCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.RULING
                 ? {
                     text: fm(strings.displayVerdict),
                     onClick: (defendant) => {
@@ -157,64 +150,79 @@ export const Overview = () => {
                   }
                 : undefined
             }
-            displayAppealExpirationInfo={true}
+            displayAppealExpirationInfo={
+              workingCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.RULING
+            }
           />
         </Box>
+        {/* 
+        NOTE: Temporarily hidden while list of laws broken is not complete in
+        indictment cases
+        
         {lawsBroken.size > 0 && (
           <Box marginBottom={5}>
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
-        )}
+        )} */}
         {workingCase.caseFiles && (
           <Box component="section" marginBottom={5}>
             <IndictmentCaseFilesList workingCase={workingCase} />
           </Box>
         )}
-        {displayReviewerChoices && (
-          <Box marginBottom={5}>
-            <SectionHeading
-              title={fm(strings.reviewerTitle)}
-              description={
-                <Text variant="eyebrow">
-                  {fm(strings.reviewerSubtitle, {
-                    indictmentAppealDeadline: formatDate(
-                      workingCase.indictmentAppealDeadline,
-                    ),
-                  })}
-                </Text>
-              }
-            />
-            <BlueBox>
-              <Select
-                name="reviewer"
-                label={fm(strings.reviewerLabel)}
-                placeholder={fm(strings.reviewerPlaceholder)}
-                value={selectedIndictmentReviewer}
-                options={publicProsecutors}
-                onChange={(value) => {
-                  setSelectedIndictmentReviewer(value as Option<string>)
-                }}
-                isDisabled={loading}
-                required
-              />
-            </BlueBox>
-          </Box>
-        )}
-      </FormContentContainer>
-
-      {displayReviewerChoices && (
-        <FormContentContainer isFooter>
-          <FormFooter
-            nextButtonIcon="arrowForward"
-            previousUrl={`${constants.CASES_ROUTE}`}
-            nextIsLoading={isLoadingWorkingCase}
-            nextIsDisabled={!selectedIndictmentReviewer || isLoadingWorkingCase}
-            onNextButtonClick={assignReviewer}
-            nextButtonText={fm(core.continue)}
+        <Box marginBottom={5}>
+          <SectionHeading
+            title={fm(strings.reviewerTitle)}
+            description={
+              <Text variant="eyebrow">
+                {fm(strings.reviewerSubtitle, {
+                  indictmentAppealDeadline: formatDate(
+                    workingCase.indictmentAppealDeadline,
+                  ),
+                })}
+              </Text>
+            }
           />
-        </FormContentContainer>
-      )}
-
+          <BlueBox>
+            <Select
+              name="reviewer"
+              label={fm(strings.reviewerLabel)}
+              placeholder={fm(strings.reviewerPlaceholder)}
+              value={
+                selectedIndictmentReviewer
+                  ? selectedIndictmentReviewer
+                  : workingCase.indictmentReviewer
+                  ? {
+                      label: workingCase.indictmentReviewer.name || '',
+                      value: workingCase.indictmentReviewer.id,
+                    }
+                  : undefined
+              }
+              options={publicProsecutors}
+              onChange={(value) => {
+                setSelectedIndictmentReviewer(value as Option<string>)
+              }}
+              isDisabled={loading}
+              required
+            />
+          </BlueBox>
+        </Box>
+      </FormContentContainer>
+      <FormContentContainer isFooter>
+        <FormFooter
+          nextButtonIcon="arrowForward"
+          previousUrl={constants.CASES_ROUTE}
+          nextIsLoading={isLoadingWorkingCase}
+          nextIsDisabled={
+            !selectedIndictmentReviewer ||
+            selectedIndictmentReviewer.value ===
+              workingCase.indictmentReviewer?.id ||
+            isLoadingWorkingCase
+          }
+          onNextButtonClick={assignReviewer}
+          nextButtonText={fm(core.continue)}
+        />
+      </FormContentContainer>
       {modalVisible === 'REVIEWER_ASSIGNED' && (
         <Modal
           title={fm(strings.reviewerAssignedModalTitle)}
@@ -226,7 +234,6 @@ export const Overview = () => {
           onSecondaryButtonClick={() => router.push(constants.CASES_ROUTE)}
         />
       )}
-
       {modalVisible === 'DEFENDANT_VIEWS_VERDICT' && (
         <Modal
           title={fm(strings.defendantViewsVerdictModalTitle)}

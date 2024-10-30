@@ -101,6 +101,26 @@ export const m = defineMessages({
     defaultMessage: 'Nafn',
     description: '',
   },
+  selectCandidate: {
+    id: 'pls.application:selectCandidate',
+    defaultMessage: 'Veldu frambjóðanda',
+    description: '',
+  },
+  selectCandidateDescription: {
+    id: 'pls.application:selectCandidateDescription',
+    defaultMessage: 'Frambjóðendur á þínu svæði sem hægt er að mæla með:',
+    description: '',
+  },
+  selectCandidateMaxReached: {
+    id: 'pls.application:selectCandidateMaxReached',
+    defaultMessage: 'Hámarki meðmæla náð',
+    description: '',
+  },
+  selectCandidateListExpired: {
+    id: 'pls.application:selectCandidateListExpired',
+    defaultMessage: 'Söfnuninni lokið',
+    description: '',
+  },
   listName: {
     id: 'pls.application:listName',
     defaultMessage: 'Heiti framboðs',
@@ -149,8 +169,8 @@ export const m = defineMessages({
     description: '',
   },
   listSignedDescription: {
-    id: 'pls.application:listSignedDescription',
-    defaultMessage: 'Stjórnmálasamtök sem þú mæltir með: TBD',
+    id: 'pls.application:listSignedDescription#markdown',
+    defaultMessage: 'Stjórnmálasamtök sem þú mæltir með: **{name}**',
     description: '',
   },
   nextSteps: {
@@ -186,8 +206,7 @@ export const m = defineMessages({
   },
   linkFieldMessage: {
     id: 'pls.application:linkFieldMessage',
-    defaultMessage:
-      'Á mínum síðum sést hve mörgum meðmælum hefur verið safnað í hverjum landsfjórðungi.',
+    defaultMessage: 'Á Mínum síðum geturðu séð hvaða framboði þú mæltir með',
     description: '',
   },
 

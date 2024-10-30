@@ -5,6 +5,7 @@ import {
   CheckboxController,
   DatePickerController,
   InputController,
+  PhoneInputController,
   SelectController,
 } from '@island.is/shared/form-fields'
 import * as kennitala from 'kennitala'
@@ -229,13 +230,12 @@ export const AdditionalHeir = ({
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <InputController
+              <PhoneInputController
                 id={phoneField}
                 name={phoneField}
                 label={formatMessage(m.phone)}
                 defaultValue={field.phone || ''}
                 backgroundColor="blue"
-                format={'###-####'}
                 error={error?.phone}
                 required
               />
@@ -354,12 +354,11 @@ export const AdditionalHeir = ({
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <InputController
+              <PhoneInputController
                 id={advocatePhoneField}
                 name={advocatePhoneField}
                 label={formatMessage(m.phone)}
                 backgroundColor="blue"
-                format="###-####"
                 error={(error?.advocate as unknown as ErrorValue)?.phone}
                 size="sm"
                 required
@@ -409,12 +408,11 @@ export const AdditionalHeir = ({
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <InputController
+              <PhoneInputController
                 id={advocatePhoneField2}
                 name={advocatePhoneField2}
                 label={formatMessage(m.phone)}
                 backgroundColor="blue"
-                format="###-####"
                 size="sm"
               />
             </GridColumn>

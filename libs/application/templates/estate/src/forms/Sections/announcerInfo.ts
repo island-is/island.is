@@ -68,8 +68,7 @@ export const announcerInfo = buildSection({
           title: m.phone,
           width: 'half',
           required: true,
-          disableDropdown: true,
-          allowedCountryCodes: ['IS'],
+          enableCountrySelector: true,
           defaultValue: (application: Application) => {
             const phone =
               (

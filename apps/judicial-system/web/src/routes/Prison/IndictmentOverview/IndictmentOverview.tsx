@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -73,7 +73,6 @@ const IndictmentOverview = () => {
             {formatMessage(strings.verdictTitle)}
           </Text>
           <RenderFiles
-            workingCase={workingCase}
             onOpenFile={onOpen}
             caseFiles={
               workingCase.caseFiles?.filter(

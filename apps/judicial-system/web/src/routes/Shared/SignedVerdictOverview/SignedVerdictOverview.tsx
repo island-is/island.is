@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useCallback, useContext, useState } from 'react'
+import { FC, ReactNode, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 import { AnimatePresence } from 'framer-motion'
@@ -388,6 +388,7 @@ export const SignedVerdictOverview: FC = () => {
           ),
         })
 
+        // TODO: Pass the real insitution into shareCaseWithAnotherInstitution, no nned for faking values here.
         setWorkingCase((prevWorkingCase) => ({
           ...prevWorkingCase,
           sharedWithProsecutorsOffice: {

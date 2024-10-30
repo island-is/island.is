@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
+import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
@@ -10,6 +10,7 @@ import {
   isIndictmentCase,
   isProsecutionUser,
   isPublicProsecutor,
+  isRequestCase,
 } from '@island.is/judicial-system/types'
 import {
   core,
@@ -147,7 +148,7 @@ export const Cases: FC = () => {
     const casesAwaitingAssignment = filterCases(
       (c) =>
         isIndictmentCase(c.type) &&
-        c.state !== CaseState.WAITING_FOR_CANCELLATION &&
+        (c.state === CaseState.SUBMITTED || c.state === CaseState.RECEIVED) &&
         !c.judge,
     )
 
@@ -192,7 +193,8 @@ export const Cases: FC = () => {
       (c) =>
         !activeCases.includes(c) &&
         !casesAwaitingAssignment.includes(c) &&
-        !casesAwaitingReview.includes(c),
+        !casesAwaitingReview.includes(c) &&
+        !casesAwaitingConfirmation.includes(c),
     )
 
     return [
@@ -212,15 +214,20 @@ export const Cases: FC = () => {
     pastCases,
   } = useFilter(allActiveCases, allPastCases, user)
 
+  const canDeleteCase = (caseToDelete: CaseListEntry) =>
+    (isRequestCase(caseToDelete.type) &&
+      (caseToDelete.state === CaseState.NEW ||
+        caseToDelete.state === CaseState.DRAFT ||
+        caseToDelete.state === CaseState.SUBMITTED ||
+        caseToDelete.state === CaseState.RECEIVED)) ||
+    (isIndictmentCase(caseToDelete.type) &&
+      (caseToDelete.state === CaseState.DRAFT ||
+        caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION))
+
   const deleteCase = async (caseToDelete: CaseListEntry) => {
-    if (
-      caseToDelete.state === CaseState.NEW ||
-      caseToDelete.state === CaseState.DRAFT ||
-      caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION ||
-      caseToDelete.state === CaseState.SUBMITTED ||
-      caseToDelete.state === CaseState.RECEIVED
-    ) {
+    if (canDeleteCase(caseToDelete)) {
       await transitionCase(caseToDelete.id, CaseTransition.DELETE)
+
       refetch()
     }
   }
@@ -235,6 +242,7 @@ export const Cases: FC = () => {
     }
 
     await deleteCase(caseToDelete)
+
     setVisibleModal(undefined)
   }
 
@@ -286,6 +294,7 @@ export const Cases: FC = () => {
                       isFiltering={isFiltering}
                       cases={casesAwaitingConfirmation}
                       onContextMenuDeleteClick={setVisibleModal}
+                      canDeleteCase={canDeleteCase}
                     />
                     {isPublicProsecutor(user) && (
                       <CasesAwaitingReview
@@ -301,6 +310,7 @@ export const Cases: FC = () => {
                     <ActiveCases
                       cases={activeCases}
                       onContextMenuDeleteClick={setVisibleModal}
+                      canDeleteCase={canDeleteCase}
                     />
                   ) : (
                     <div className={styles.infoContainer}>

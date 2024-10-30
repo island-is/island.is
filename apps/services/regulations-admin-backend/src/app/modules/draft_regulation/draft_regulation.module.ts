@@ -7,7 +7,7 @@ import { DraftRegulationModel } from './draft_regulation.model'
 import { DraftRegulationChangeModule } from '../draft_regulation_change'
 import { DraftRegulationCancelModule } from '../draft_regulation_cancel'
 import { RegulationsService } from '@island.is/clients/regulations'
-import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import { DraftAuthorModule } from '../draft_author'
 
 @Module({
@@ -16,7 +16,7 @@ import { DraftAuthorModule } from '../draft_author'
     DraftAuthorModule,
     DraftRegulationChangeModule,
     DraftRegulationCancelModule,
-    NationalRegistryClientModule,
+    NationalRegistryV3ClientModule,
   ],
   providers: [DraftRegulationService, RegulationsService],
   controllers: [DraftRegulationController],

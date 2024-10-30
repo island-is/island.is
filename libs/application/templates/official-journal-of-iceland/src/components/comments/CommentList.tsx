@@ -1,24 +1,30 @@
-import type { Props as CommentProps } from './Comment'
-import { Text } from '@island.is/island-ui/core'
+import { SkeletonLoader } from '@island.is/island-ui/core'
 import { Comment } from './Comment'
 import * as styles from './Comments.css'
-import { useLocale } from '@island.is/localization'
-import { comments as messages } from '../../lib/messages/comments'
+import { OJOI_INPUT_HEIGHT } from '../../lib/constants'
+import { OjoiaComment } from '@island.is/api/schema'
 
 type Props = {
-  comments: CommentProps[]
+  comments?: Array<OjoiaComment>
+  loading?: boolean
 }
 
-export const CommentsList = ({ comments }: Props) => {
-  const { formatMessage: f } = useLocale()
-  if (!comments.length) {
-    return <Text>{f(messages.errors.emptyComments)}</Text>
+export const CommentsList = ({ comments, loading }: Props) => {
+  if (loading) {
+    return (
+      <SkeletonLoader
+        repeat={3}
+        space={1}
+        height={OJOI_INPUT_HEIGHT}
+        borderRadius="standard"
+      />
+    )
   }
 
   return (
     <ul className={styles.commentsList}>
-      {comments.map((comment, index) => (
-        <Comment key={index} {...comment} as="li" />
+      {comments?.map((comment, index) => (
+        <Comment key={index} {...comment} />
       ))}
     </ul>
   )

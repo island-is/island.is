@@ -9,9 +9,10 @@ import {
 } from '@island.is/judicial-system/consts'
 import {
   CaseDecision,
+  CaseIndictmentRulingDecision,
+  CaseNotificationType,
   CaseState,
   CaseType,
-  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -40,7 +41,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
   const userId = uuid()
   const notificationDto: CaseNotificationDto = {
     user: { id: userId } as User,
-    type: NotificationType.RULING,
+    type: CaseNotificationType.RULING,
   }
 
   let mockEmailService: EmailService
@@ -87,6 +88,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       type: CaseType.INDICTMENT,
       courtCaseNumber: '007-2022-07',
       court: { name: 'Héraðsdómur Reykjavíkur' },
+      indictmentRulingDecision: CaseIndictmentRulingDecision.MERGE,
       prosecutor,
     } as Case
 
@@ -101,7 +103,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: 'Máli lokið 007-2022-07',
-          html: `Máli 007-2022-07 hjá Héraðsdómi Reykjavíkur hefur verið lokið.<br /><br />Niðurstaða: Ekki skráð<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `Máli 007-2022-07 hjá Héraðsdómi Reykjavíkur hefur verið lokið.<br /><br />Niðurstaða: Sameinað<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
     })

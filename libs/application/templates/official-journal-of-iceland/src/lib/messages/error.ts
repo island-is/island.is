@@ -1,10 +1,171 @@
 import { defineMessages } from 'react-intl'
 
 export const error = defineMessages({
+  fetchCommentsFailedTitle: {
+    id: 'ojoi.application:error.fetchCommentsFailedTitle',
+    defaultMessage: 'Ekki tókst að sækja athugasemdir',
+    description: 'Error message when fetching comments fails',
+  },
+  fetchCommentsFailedMessage: {
+    id: 'ojoi.application:error.fetchCommentsFailedMessage',
+    defaultMessage:
+      'Villa kom upp við að sækja athugasemdir, reyndu aftur síðar',
+    description: 'Error message when fetching comments fails',
+  },
+  fetchAdvertFailed: {
+    id: 'ojoi.application:error.fetchAdvertFailed',
+    defaultMessage: 'Ekki tókst að sækja auglýsingu',
+    description: 'Error message when fetching advert fails',
+  },
+  fetchAdvertFailedMessage: {
+    id: 'ojoi.application:error.fetchAdvertFailedMessage',
+    defaultMessage: 'Villa kom upp við að sækja auglýsingu, reyndu aftur síðar',
+    description: 'Error message when fetching advert fails',
+  },
+  fetchApplicationFailedTitle: {
+    id: 'ojoi.application:error.fetchApplicationFailedTitle',
+    defaultMessage: 'Ekki tókst að sækja umsókn',
+    description: 'Error message when fetching application fails',
+  },
+  fetchApplicationFailedMessage: {
+    id: 'ojoi.application:error.fetchApplicationFailedMessage',
+    defaultMessage: 'Villa kom upp við að sækja umsókn, reyndu aftur síðar',
+    description: 'Error message when fetching application fails',
+  },
+  missingChairmanName: {
+    id: 'ojoi.application:error.missingChairmanName',
+    defaultMessage: 'Nafn formanns vantar',
+    description: 'Error message when chairman name is missing',
+  },
+  missingCommitteeMemberName: {
+    id: 'ojoi.application:error.missingCommitteeMemberName',
+    defaultMessage: 'Nafn nefndarmanns vantar',
+    description: 'Error message when committee member name is missing',
+  },
+  missingSignatureInstitution: {
+    id: 'ojoi.application:error.missingSignatureInstitution',
+    defaultMessage: 'Nafn stofnunar vantar',
+    description: 'Error message when signature institution is missing',
+  },
+  missingSignatureDate: {
+    id: 'ojoi.application:error.missingSignatureDate',
+    defaultMessage: 'Dagsetning undirskriftar vantar',
+    description: 'Error message when signature date is missing',
+  },
+  missingSignatureType: {
+    id: 'ojoi.application:error.missingSignatureType',
+    defaultMessage: 'Tegund undirskriftar vantar',
+    description: 'Error message when signature type is missing',
+  },
+  missingFieldsTitle: {
+    id: 'ojoi.application:error.missingFieldsTitle',
+    defaultMessage: 'Fylla þarf út eftirfarandi reiti í {x}',
+    description: 'Error message when fields are missing',
+  },
+  missingSignatureFieldsMessage: {
+    id: 'ojoi.application:error.missingSignatureFieldsMessage',
+    defaultMessage: '(Undirritunarkafli er hluti {x})',
+    description: 'Error message when signature fields are missing',
+  },
+  noSignatureMembers: {
+    id: 'ojoi.application:error.noSignatureMembers',
+    defaultMessage: 'Engin undirskriftarmenn valdir',
+    description: 'Error message when no signature members are selected',
+  },
+  missingSignatureMember: {
+    id: 'ojoi.application:error.missingSignatureMember',
+    defaultMessage: 'Nafn undirritara vantar',
+    description: 'Error message when signature member is missing',
+  },
+  noCategorySelected: {
+    id: 'ojoi.application:error.noCategorySelected',
+    defaultMessage: 'Enginn efnisflokkur valinn, vinsamlegast veldu efnisflokk',
+    description: 'Error message when no category is selected',
+  },
+  missingPreviewType: {
+    id: 'ojoi.application:error.missingPreviewType',
+    defaultMessage: 'Tegund auglýsingar',
+    description: 'Error message when type is missing',
+  },
+  missingPreviewDepartment: {
+    id: 'ojoi.application:error.missingPreviewDepartment',
+    defaultMessage: 'Deild',
+    description: 'Error message when department is missing',
+  },
+  missingPreviewTitle: {
+    id: 'ojoi.application:error.missingPreviewTitle',
+    defaultMessage: 'Heiti auglýsingar',
+    description: 'Error message when title is missing',
+  },
+  missingPreviewHtml: {
+    id: 'ojoi.application:error.missingPreviewHtml',
+    defaultMessage: 'Meginmál auglýsingar',
+    description: 'Error message when html is missing',
+  },
+  missingType: {
+    id: 'ojoi.application:error.missingType',
+    defaultMessage: 'Velja þarf tegund auglýsingar',
+    description: 'Error message when type is missing',
+  },
+  missingDepartment: {
+    id: 'ojoi.application:error.missingDepartment',
+    defaultMessage: 'Velja þarf deild auglýsingar',
+    description: 'Error message when department is missing',
+  },
+  missingTitle: {
+    id: 'ojoi.application:error.missingTitle',
+    defaultMessage: 'Fylla þarf út titill auglýsingar',
+    description: 'Error message when title is missing',
+  },
+  missingHtml: {
+    id: 'ojoi.application:error.missingHtml',
+    defaultMessage: 'Meginmál auglýsingar má ekki vera autt',
+    description: 'Error message when html is missing',
+  },
+  missingHtmlMessage: {
+    id: 'ojoi.application:error.missingHtmlMessage',
+    defaultMessage: 'Innsending samanstendur af eftirfarandi reitum',
+    description: 'Error message when html is missing',
+  },
+  missingRequestedDate: {
+    id: 'ojoi.application:error.missingRequestedDate',
+    defaultMessage: 'Útgáfudagsetning má ekki vera tóm',
+    description: 'Error message when requested date is missing',
+  },
+  applicationValidationError: {
+    id: 'ojoi.application:error.applicationValidationError',
+    defaultMessage: 'Umsókn er ekki rétt útfyllt',
+    description: 'Error message when application is not valid',
+  },
+  signaturesValidationError: {
+    id: 'ojoi.application:error.signaturesValidationError',
+    defaultMessage: 'Undirskriftir eru ekki réttar',
+    description: 'Error message when signatures are not valid',
+  },
   dataSubmissionErrorTitle: {
     id: 'ojoi.application:error.dataSubmissionErrorTitle',
     defaultMessage: 'Villa kom upp við vistun gagna',
     description: 'Error message when data is not submitted',
+  },
+  fetchXFailedTitle: {
+    id: 'ojoi.application:error.fetchXFailedTitle',
+    defaultMessage: 'Ekki tókst að sækja {x}',
+    description: 'Error message when fetching x fails',
+  },
+  fetchXFailedMessage: {
+    id: 'ojoi.application:error.fetchXFailedMessage',
+    defaultMessage: 'Villa kom upp við að sækja {x}',
+    description: 'Error message when fetching x fails',
+  },
+  fetchFailedTitle: {
+    id: 'ojoi.application:error.fetchFailedTitle',
+    defaultMessage: 'Ekki tókst að sækja gögn',
+    description: 'Error message when fetching fails',
+  },
+  fetchFailedMessage: {
+    id: 'ojoi.application:error.fetchFailedMessage',
+    defaultMessage: 'Villa kom upp við að sækja gögn',
+    description: 'Error message when fetching fails',
   },
   xIsNotValid: {
     id: 'ojoi.application:error.xIsNotValid',

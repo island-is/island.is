@@ -99,6 +99,7 @@ export class PersonalRepresentativesController {
 
     return personalRepresentative
   }
+
   /** Removes a personal representative by its id */
   @Delete(':id')
   @Documentation({
@@ -135,6 +136,7 @@ export class PersonalRepresentativesController {
       // Index personal representative delegations for the personal representative
       void this.delegationIndexService.indexRepresentativeDelegations(
         deletedPersonalRepresentative.nationalIdPersonalRepresentative,
+        user,
       )
     }
   }
@@ -203,6 +205,7 @@ export class PersonalRepresentativesController {
       // Index personal representative delegations for the personal representative
       void this.delegationIndexService.indexRepresentativeDelegations(
         createdPersonalRepresentative.nationalIdPersonalRepresentative,
+        user,
       )
     }
 

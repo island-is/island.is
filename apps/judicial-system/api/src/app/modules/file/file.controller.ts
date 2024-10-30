@@ -54,10 +54,14 @@ export class FileController {
     )
   }
 
-  @Get('caseFilesRecord/:policeCaseNumber')
+  @Get([
+    'caseFilesRecord/:policeCaseNumber',
+    'mergedCase/:mergedCaseId/caseFilesRecord/:policeCaseNumber',
+  ])
   @Header('Content-Type', 'application/pdf')
   getCaseFilesRecordPdf(
     @Param('id') id: string,
+    @Param('mergedCaseId') mergedCaseId: string,
     @Param('policeCaseNumber') policeCaseNumber: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
@@ -65,11 +69,15 @@ export class FileController {
   ): Promise<Response> {
     this.logger.debug(`Getting the case files for case ${id} as a pdf document`)
 
+    const mergedCaseInjection = mergedCaseId
+      ? `mergedCase/${mergedCaseId}/`
+      : ''
+
     return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_CASE_FILES_PDF,
       id,
-      `caseFilesRecord/${policeCaseNumber}`,
+      `${mergedCaseInjection}caseFilesRecord/${policeCaseNumber}`,
       req,
       res,
       'pdf',
@@ -143,48 +151,86 @@ export class FileController {
     )
   }
 
-  @Get('indictment')
+  @Get(['indictment', 'mergedCase/:mergedCaseId/indictment'])
   @Header('Content-Type', 'application/pdf')
   getIndictmentPdf(
     @Param('id') id: string,
+    @Param('mergedCaseId') mergedCaseId: string,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<Response> {
     this.logger.debug(`Getting the indictment for case ${id} as a pdf document`)
 
+    const mergedCaseInjection = mergedCaseId
+      ? `mergedCase/${mergedCaseId}/`
+      : ''
+
     return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_INDICTMENT_PDF,
       id,
-      'indictment',
+      `${mergedCaseInjection}indictment`,
       req,
       res,
       'pdf',
     )
   }
 
-  @Get('subpoena/:defendantId')
+  @Get(['subpoena/:defendantId', 'subpoena/:defendantId/:subpoenaId'])
   @Header('Content-Type', 'application/pdf')
   getSubpoenaPdf(
     @Param('id') id: string,
     @Param('defendantId') defendantId: string,
-    @Query('arraignmentDate') arraignmentDate: string,
-    @Query('location') location: string,
-    @Query('subpoenaType') subpoenaType: SubpoenaType,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
+    @Param('subpoenaId') subpoenaId?: string,
+    @Query('arraignmentDate') arraignmentDate?: string,
+    @Query('location') location?: string,
+    @Query('subpoenaType') subpoenaType?: SubpoenaType,
   ): Promise<Response> {
     this.logger.debug(
-      `Getting the subpoena for defendant ${defendantId} of case ${id} as a pdf document`,
+      `Getting subpoena ${
+        subpoenaId ?? 'draft'
+      } for defendant ${defendantId} of case ${id} as a pdf document`,
     )
+
+    const subpoenaIdInjection = subpoenaId ? `/${subpoenaId}` : ''
+    const queryInjection = arraignmentDate
+      ? `?arraignmentDate=${arraignmentDate}&location=${location}&subpoenaType=${subpoenaType}`
+      : ''
 
     return this.fileService.tryGetFile(
       user.id,
       AuditedAction.GET_SUBPOENA_PDF,
       id,
-      `defendant/${defendantId}/subpoena?arraignmentDate=${arraignmentDate}&location=${location}&subpoenaType=${subpoenaType}`,
+      `defendant/${defendantId}/subpoena${subpoenaIdInjection}${queryInjection}`,
+      req,
+      res,
+      'pdf',
+    )
+  }
+
+  @Get('serviceCertificate/:defendantId/:subpoenaId')
+  @Header('Content-Type', 'application/pdf')
+  getServiceCertificatePdf(
+    @Param('id') id: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentHttpUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<Response> {
+    this.logger.debug(
+      `Getting service certificate for subpoena ${subpoenaId} of defendant ${defendantId} and case ${id} as a pdf document`,
+    )
+
+    return this.fileService.tryGetFile(
+      user.id,
+      AuditedAction.GET_SERVICE_CERTIFICATE_PDF,
+      id,
+      `defendant/${defendantId}/subpoena/${subpoenaId}/serviceCertificate`,
       req,
       res,
       'pdf',

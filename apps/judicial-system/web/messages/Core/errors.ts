@@ -12,17 +12,35 @@ export const errors = defineMessages({
     description:
       'Notaður sem villuskilaboð þegar ekki gengur að uppfæra varnaraðila',
   },
+  updateCivilClaimant: {
+    id: 'judicial.system.core:errors.update_civil_claimant',
+    defaultMessage: 'Upp kom villa við að uppfæra kröfuhafa',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að uppfæra kröfuhafa',
+  },
   createDefendant: {
     id: 'judicial.system.core:errors.create_defendant',
     defaultMessage: 'Upp kom villa við að stofna nýjan varnaraðila',
     description:
       'Notaður sem villuskilaboð þegar ekki gengur að stofna varnaraðila',
   },
+  createCivilClaimant: {
+    id: 'judicial.system.core:errors.create_civil_claimant',
+    defaultMessage: 'Upp kom villa við að stofna nýjan kröfuhafa',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að stofna kröfuhafa',
+  },
   deleteDefendant: {
     id: 'judicial.system.core:errors.delete_defendant',
     defaultMessage: 'Upp kom villa við að eyða varnaraðila',
     description:
       'Notaður sem villuskilaboð þegar ekki gengur að eyða varnaraðila',
+  },
+  deleteCivilClaimant: {
+    id: 'judicial.system.core:errors.delete_civil_claimant',
+    defaultMessage: 'Upp kom villa við að eyða kröfuhafa',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að eyða kröfuhafa',
   },
   createCase: {
     id: 'judicial.system.core:errors.create_case',
@@ -127,16 +145,16 @@ export const errors = defineMessages({
     defaultMessage: 'Upp kom villa við að opna skjal',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að opna skjal',
   },
-  invalidDateErrorMessage: {
-    id: 'judicial.system.core:errors.invalid_date_error_message',
-    defaultMessage:
-      'Ekki tókst að uppfæra skjal, dagsetning er ekki á réttu formi',
+  getSubpoenaStatusTitle: {
+    id: 'judicial.system.core:errors.get_subpoena_status_title',
+    defaultMessage: 'Ekki tókst að sækja stöðu birtingar',
     description:
-      'Notaður sem villuboð þegar tekst ekki að uppfæra dagsetningu á skjali.',
+      'Notaður sem villuskilaboð þegar tekst að sækja stöðu birtingar',
   },
-  renameFailedErrorMessage: {
-    id: 'judicial.system.core:errors.rename_failed_error_message',
-    defaultMessage: 'Ekki tókst að endurnefna skjal',
-    description: 'Notaður sem villuboð þegar endurnefning á skjali mistókst.',
+  getSubpoenaStatus: {
+    id: 'judicial.system.core:errors.get_subpoena_status',
+    defaultMessage: 'Vinsamlegast reyndu aftur síðar',
+    description:
+      'Notaður sem villuskilaboð þegar tekst að sækja stöðu birtingar',
   },
 })

@@ -98,7 +98,7 @@ export function AccordionItem({
         >
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {icon && <Icon>{icon}</Icon>}
-            <Typography variant="heading5">{title}</Typography>
+            <Typography variant="heading4">{title}</Typography>
           </View>
           <PlusMinus
             style={{
