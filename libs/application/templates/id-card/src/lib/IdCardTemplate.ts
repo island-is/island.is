@@ -274,6 +274,7 @@ const IdCardTemplate: ApplicationTemplate<
                 import('../forms/Approved').then((val) =>
                   Promise.resolve(val.Approved),
                 ),
+              read: 'all',
             },
             {
               id: Roles.ASSIGNEE,
@@ -281,6 +282,7 @@ const IdCardTemplate: ApplicationTemplate<
                 import('../forms/Approved').then((val) =>
                   Promise.resolve(val.Approved),
                 ),
+              read: 'all',
             },
           ],
           actionCard: {
