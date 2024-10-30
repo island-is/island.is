@@ -17,6 +17,29 @@
           "outputPath": "apps/payments"
         },
         "production": {}
+      },
+      "dependsOn": ["build-custom-server"]
+    },
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/payments",
+        "main": "apps/payments/server.ts",
+        "tsConfig": "apps/payments/tsconfig.server.json",
+        "maxWorkers": 2,
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node",
+        "webpackConfig": "apps/payments/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
       }
     },
     "serve": {
@@ -24,16 +47,34 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "payments:build",
-        "dev": true
+        "dev": true,
+        "customServerTarget": "payments:serve-custom-server"
       },
       "configurations": {
         "development": {
           "buildTarget": "payments:build:development",
-          "dev": true
+          "dev": true,
+          "customServerTarget": "payments:serve-custom-server:development"
         },
         "production": {
           "buildTarget": "payments:build:production",
-          "dev": false
+          "dev": false,
+          "customServerTarget": "payments:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "payments:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "payments:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "payments:build-custom-server:production"
         }
       }
     },
