@@ -19,20 +19,32 @@ query vehiclesList($input: VehiclesListInputV3!) {
 }
 
 mutation postSingleVehicleMileage($input: PostVehicleMileageInput!) {
-  vehicleMileagePost(input: $input) {
-    permno
-    readDate
-    originCode
-    mileageNumber
-    internalId
+  vehicleMileagePostV2(input: $input) {
+    ... on VehicleMileageDetail {
+      permno
+      readDate
+      originCode
+      mileageNumber
+      internalId
+    }
+    ... on VehiclesMileageUpdateError {
+      code
+      message
+    }
   }
 }
 
 mutation putSingleVehicleMileage($input: PutVehicleMileageInput!) {
-  vehicleMileagePut(input: $input) {
-    permno
-    internalId
-    mileageNumber
+  vehicleMileagePutV2(input: $input) {
+    ... on VehicleMileagePutModel {
+      permno
+      internalId
+      mileageNumber
+    }
+    ... on VehiclesMileageUpdateError {
+      code
+      message
+    }
   }
 }
 
