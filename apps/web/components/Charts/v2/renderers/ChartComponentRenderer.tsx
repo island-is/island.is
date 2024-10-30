@@ -1,4 +1,3 @@
-import flatten from 'lodash/flatten'
 import { Area, Bar, Cell, Label, Line, Pie } from 'recharts'
 
 import type { Locale } from '@island.is/shared/types'
