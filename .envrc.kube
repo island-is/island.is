@@ -14,6 +14,10 @@ set-kubectx() {
   if kubectx | grep -q "${AWS_PROFILE##islandis-}"; then
     return
   fi
+  if [[ -z "${AWS_PROFILE}" ]]; then
+    echo "No AWS_PROFILE set" >&2
+    return
+  fi
   echo "Setting kube context..." >&2
   AWS_ACCOUNT_ID="$(aws sts get-caller-identity | jq -r '.Account')"
   kubectx "$(kubectx | grep "${AWS_ACCOUNT_ID}")"
