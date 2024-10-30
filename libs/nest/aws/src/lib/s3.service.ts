@@ -6,7 +6,6 @@ import {
   GetObjectCommand,
   GetObjectCommandOutput,
   HeadObjectCommand,
-  PutObjectCommand,
   PutObjectCommandInput,
   S3Client,
 } from '@aws-sdk/client-s3'
@@ -20,7 +19,7 @@ import {
   PresignedPost,
   PresignedPostOptions,
 } from '@aws-sdk/s3-presigned-post'
-import stream from 'stream'
+import stream, { Readable } from 'stream'
 
 export interface BucketKeyPair {
   bucket: string
@@ -87,7 +86,7 @@ export class S3Service {
     },
   ): Promise<string> {
     const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
-    const isStreaming = !(content instanceof Buffer)
+    const isStreaming = this.isReadableStream(content)
     let uploadStream: stream.PassThrough | undefined
 
     if (isStreaming) uploadStream = new stream.PassThrough()
@@ -247,5 +246,11 @@ export class S3Service {
       )
       return undefined
     }
+  }
+
+  private isReadableStream(
+    content: Buffer | NodeJS.ReadableStream,
+  ): content is NodeJS.ReadableStream {
+    return content instanceof Readable && typeof content.pipe === 'function'
   }
 }
