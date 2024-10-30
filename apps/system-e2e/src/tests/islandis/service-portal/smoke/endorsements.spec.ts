@@ -22,7 +22,6 @@ test.describe('Endorsements', () => {
   })
 
   test('should be able to access and see UI elements in minar-sidur for endorsements', async () => {
-    // test.slow()
     const page = await context.newPage()
     await disableI18n(page)
 
