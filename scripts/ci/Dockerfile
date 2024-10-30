@@ -2,6 +2,8 @@
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 ARG NODE_IMAGE_TAG
+ARG GIT_BRANCH
+ARG GIT_SHA
 FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS deps
 
 # hadolint ignore=DL3018
@@ -37,8 +39,6 @@ RUN yarn run build ${APP} --prod
 
 FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS output-base
 # this is base image for containers that are to be deployed
-ARG GIT_BRANCH
-ARG GIT_SHA
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_SHA}
 ENV GIT_BRANCH=${GIT_BRANCH}
@@ -65,7 +65,6 @@ RUN npm install -g \
 USER runner
 
 FROM output-base-with-pg AS output-express
-ARG GIT_SHA
 ENV DD_GIT_COMMIT_SHA="${GIT_SHA}"
 ENV DD_GIT_REPOSITORY_URL="github.com/island-is/island.is"
 
@@ -75,7 +74,6 @@ ENTRYPOINT []
 CMD [ "node", "--no-experimental-fetch", "main.js" ]
 
 FROM output-base-with-pg AS output-next
-ARG GIT_SHA
 ENV DD_GIT_COMMIT_SHA="${GIT_SHA}"
 ENV DD_GIT_REPOSITORY_URL="github.com/island-is/island.is"
 ENV PORT=4200
@@ -89,8 +87,6 @@ ENTRYPOINT [ "node", "main.js" ]
 FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine AS output-static
 ARG APP
 ARG APP_DIST_HOME
-ARG GIT_BRANCH
-ARG GIT_SHA
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_SHA}
 ENV GIT_BRANCH=${GIT_BRANCH}
@@ -134,8 +130,6 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-bas
 
 
 FROM playwright-base AS output-playwright
-ARG GIT_BRANCH
-ARG GIT_SHA
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_SHA}
 ENV GIT_BRANCH=${GIT_BRANCH}
