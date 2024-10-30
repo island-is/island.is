@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import { useGetVaccinationsQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
@@ -29,6 +29,10 @@ const { getNavigationOptions, useNavigationOptions } =
       title: {
         text: intl.formatMessage({ id: 'health.vaccinations.screenTitle' }),
       },
+    },
+    bottomTabs: {
+      visible: false,
+      drawBehind: true,
     },
   }))
 
