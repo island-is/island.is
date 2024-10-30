@@ -40,11 +40,11 @@ export const CheckboxFormField = ({
     onSelect,
     spacing,
   } = field
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
 
   const finalOptions = useMemo(
-    () => buildFieldOptions(options, application, field),
-    [options, application],
+    () => buildFieldOptions(options, application, field, locale),
+    [options, application, locale],
   )
 
   return (

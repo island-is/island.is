@@ -37,11 +37,11 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
     required = false,
     isMulti,
   } = field
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
 
   const finalOptions = useMemo(
-    () => buildFieldOptions(options, application, field),
-    [options, application, field],
+    () => buildFieldOptions(options, application, field, locale),
+    [options, application, field, locale],
   )
 
   return (

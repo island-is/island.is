@@ -27,6 +27,9 @@ export type MaybeWithApplication<T> = T | ((application: Application) => T)
 export type MaybeWithApplicationAndField<T> =
   | T
   | ((application: Application, field: Field) => T)
+export type MaybeWithApplicationAndFieldAndLocale<T> =
+  | T
+  | ((application: Application, field: Field, locale: Locale) => T)
 export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
 export type TitleVariants = 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
@@ -280,7 +283,7 @@ export enum FieldComponents {
 export interface CheckboxField extends InputField {
   readonly type: FieldTypes.CHECKBOX
   component: FieldComponents.CHECKBOX
-  options: MaybeWithApplicationAndField<Option[]>
+  options: MaybeWithApplicationAndFieldAndLocale<Option[]>
   large?: boolean
   strong?: boolean
   backgroundColor?: InputBackgroundColor
@@ -315,7 +318,7 @@ export interface DescriptionField extends BaseField {
 export interface RadioField extends InputField {
   readonly type: FieldTypes.RADIO
   component: FieldComponents.RADIO
-  options: MaybeWithApplicationAndField<Option[]>
+  options: MaybeWithApplicationAndFieldAndLocale<Option[]>
   backgroundColor?: InputBackgroundColor
   largeButtons?: boolean
   space?: BoxProps['paddingTop']
@@ -327,7 +330,7 @@ export interface RadioField extends InputField {
 export interface SelectField extends InputField {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
-  options: MaybeWithApplicationAndField<Option[]>
+  options: MaybeWithApplicationAndFieldAndLocale<Option[]>
   onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor

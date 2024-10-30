@@ -116,12 +116,24 @@ export const ExampleForm: Form = buildForm({
               title: m.careerIndustry,
               description: m.careerIndustryDescription,
               required: true,
-              options: [
-                { label: 'Hugbúnaður', value: 'software' },
-                { label: 'Fjármál', value: 'finance' },
-                { label: 'Efnahagsráðgjöf', value: 'consulting' },
-                { label: 'Önnur', value: 'other' },
-              ],
+              options: (options, application, locale) => {
+                if (locale === 'is') {
+                  return [
+                    { label: locale, value: locale },
+                    { label: 'Hugbúnaður', value: 'software' },
+                    { label: 'Fjármál', value: 'finance' },
+                    { label: 'Efnahagsráðgjöf', value: 'consulting' },
+                    { label: 'Önnur', value: 'other' },
+                  ]
+                }
+                return [
+                  { label: locale, value: locale },
+                  { label: 'Software', value: 'software' },
+                  { label: 'Finance', value: 'finance' },
+                  { label: 'Consulting', value: 'consulting' },
+                  { label: 'Other', value: 'other' },
+                ]
+              },
             }),
             buildRadioField({
               id: 'careerHistory',

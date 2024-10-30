@@ -39,11 +39,11 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
     hasIllustration,
     widthWithIllustration,
   } = field
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
 
   const finalOptions = useMemo(
-    () => buildFieldOptions(options, application, field),
-    [options, application],
+    () => buildFieldOptions(options, application, field, locale),
+    [options, application, locale],
   )
 
   console.debug(
