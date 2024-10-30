@@ -10,5 +10,3 @@ export const AttachmentLabel: {
   expectingChild: deathBenefitsFormMessage.confirm.expectingChildAttachment,
   deathCertificate: deathBenefitsFormMessage.confirm.deathCertificateAttachment,
 }
-
-export const DeathBenefits = 'deathbenefits'

@@ -5,7 +5,6 @@ import {
   buildFileUploadField,
   buildForm,
   buildMultiField,
-  buildNationalIdWithNameField,
   buildRadioField,
   buildSection,
   buildSelectField,

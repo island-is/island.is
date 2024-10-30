@@ -14,7 +14,6 @@ import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/app
 import {
   getApplicationAnswers as getDBApplicationAnswers,
   ChildInformation,
-  DeathBenefits,
 } from '@island.is/application/templates/social-insurance-administration/death-benefits'
 import {
   Application,
@@ -591,8 +590,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         auth,
         applicationType.toLowerCase(),
       )
-    } else if (application.typeId === ApplicationTypes.DEATH_BENEFITS) {
-      return await this.siaClientService.getIsEligible(auth, DeathBenefits)
     } else {
       return await this.siaClientService.getIsEligible(
         auth,
