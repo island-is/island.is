@@ -175,14 +175,6 @@ export class LimitedAccessCaseController {
       user,
     )
 
-    if (
-      transition.transition === CaseTransition.WITHDRAW_APPEAL &&
-      !theCase.appealRulingDecision &&
-      theCase.appealState === CaseAppealState.RECEIVED
-    ) {
-      update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
-    }
-
     const updatedCase = await this.limitedAccessCaseService.update(
       theCase,
       update,

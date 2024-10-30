@@ -1,6 +1,7 @@
 import { ForbiddenException } from '@nestjs/common'
 
 import {
+  CaseAppealRulingDecision,
   CaseAppealState,
   CaseState,
   CaseTransition,
@@ -311,6 +312,22 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
         ],
         fromAppealStates: [CaseAppealState.APPEALED, CaseAppealState.RECEIVED],
         to: () => ({ appealState: CaseAppealState.WITHDRAWN }),
+        sideEffect: (theCase: Case) => {
+          // We only want to set the appeal ruling decision if the
+          // case has already been received.
+          // Otherwise the court of appeals never knew of the appeal in
+          // the first place so it remains withdrawn without a decision.
+          if (
+            !theCase.appealRulingDecision &&
+            theCase.appealState === CaseAppealState.RECEIVED
+          ) {
+            return {
+              appealRulingDecision: CaseAppealRulingDecision.DISCONTINUED,
+            }
+          }
+
+          return {}
+        },
       },
     ],
   ])
