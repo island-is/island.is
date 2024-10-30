@@ -1,14 +1,15 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript'
+import { Column, DataType } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
+import { IsNotEmpty, IsString } from 'class-validator'
 
-import { Staff } from '@island.is/financial-aid/shared/lib'
-
-export class PdfResponseBackendModel extends Model<Staff> {
+export class PdfResponseBackendModel {
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   file!: string
 }
