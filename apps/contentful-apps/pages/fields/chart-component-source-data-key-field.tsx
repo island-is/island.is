@@ -440,7 +440,7 @@ const ChartComponentSourceDataKeyField = () => {
             onChange={(event) => {
               setTextInput(event.target.value)
             }}
-          ></TextInput>
+          />
         )}
       </Stack>
     </>
