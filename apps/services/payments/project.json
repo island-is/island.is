@@ -1,0 +1,52 @@
+{
+  "name": "services-payments",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/services/payments/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/services/payments",
+        "main": "apps/services/payments/src/main.ts",
+        "tsConfig": "apps/services/payments/tsconfig.app.json",
+        "assets": ["apps/services/payments/src/assets"],
+        "webpackConfig": "apps/services/payments/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "services-payments:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "services-payments:build:development"
+        },
+        "production": {
+          "buildTarget": "services-payments:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/services/payments/jest.config.ts"
+      }
+    }
+  }
+}
