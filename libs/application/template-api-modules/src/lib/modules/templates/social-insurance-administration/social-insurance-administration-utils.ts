@@ -380,7 +380,7 @@ export const transformApplicationToDeathBenefitsDTO = (
     },
   }
   return deathBenefitsDTO
-}  
+}
 
 export const transformApplicationToIncomePlanDTO = (
   application: Application,
