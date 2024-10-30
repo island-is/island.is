@@ -1,5 +1,8 @@
 import { StateLifeCycle } from '@island.is/application/types'
 
+export const TRUE = 'true'
+export const FALSE = 'false'
+
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',

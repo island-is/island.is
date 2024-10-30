@@ -4,19 +4,15 @@ import {
   buildTextField,
   buildRadioField,
   buildDateField,
-  buildDescriptionField,
-  buildCheckboxField,
-  buildTableRepeaterField,
-  buildRepeater,
+  getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
 import {
   getApplicationAnswers,
   getRentalOtherFeesPayeeOptions,
 } from '../../lib/utils'
-import { rentOtherFeesPayeeOptions } from '../../lib/constants'
+import { rentOtherFeesPayeeOptions, TRUE } from '../../lib/constants'
 import { FormValue } from '@island.is/application/types'
-import { formatCurrency } from '@island.is/application/ui-components'
 
 function housingFundAmountPayedByTenant(answers: FormValue) {
   const { rentOtherFeesHousingFund } = getApplicationAnswers(answers)
@@ -33,6 +29,15 @@ function heatingCostPayedByTenant(answers: FormValue) {
   return rentOtherFeesHeatingCost === rentOtherFeesPayeeOptions.TENANT
 }
 
+function otherCostsPayedByTenant(answers: FormValue) {
+  const rentOtherFeesOtherCosts = getValueViaPath(
+    answers,
+    'rentOtherFees.otherCosts',
+    [],
+  ) as string[]
+  return rentOtherFeesOtherCosts[0] === TRUE
+}
+
 export const RentalPeriodOtherFees = buildSubSection({
   id: 'rentOtherFees',
   title: m.otherFees.subSectionName,
@@ -46,7 +51,6 @@ export const RentalPeriodOtherFees = buildSubSection({
           id: 'rentOtherFees.housingFund',
           title: m.otherFees.housingFundTitle,
           options: getRentalOtherFeesPayeeOptions,
-          defaultValue: rentOtherFeesPayeeOptions.LANDLORD,
           width: 'half',
           space: 1,
         }),
@@ -64,7 +68,6 @@ export const RentalPeriodOtherFees = buildSubSection({
           id: 'rentOtherFees.electricityCost',
           title: m.otherFees.electricityCostTitle,
           options: getRentalOtherFeesPayeeOptions,
-          defaultValue: rentOtherFeesPayeeOptions.LANDLORD,
           width: 'half',
           space: 6,
         }),
@@ -97,7 +100,6 @@ export const RentalPeriodOtherFees = buildSubSection({
           id: 'rentOtherFees.heatingCost',
           title: m.otherFees.heatingCostTitle,
           options: getRentalOtherFeesPayeeOptions,
-          defaultValue: rentOtherFeesPayeeOptions.LANDLORD,
           width: 'half',
           space: 6,
         }),
@@ -124,52 +126,40 @@ export const RentalPeriodOtherFees = buildSubSection({
           width: 'half',
           condition: heatingCostPayedByTenant,
         }),
-      ],
-    }),
-    buildTableRepeaterField({
-      id: 'rentOtherFees.otherFees',
-      title: 'm.otherFees.otherFeesTitle',
-      description: 'm.otherFees.otherFeesDescription',
-      fields: {
-        name: {
-          component: 'input',
-          label: m.landlordDetails.nameInputLabel,
-          width: 'half',
-        },
-        nationalId: {
-          component: 'input',
-          label: m.landlordDetails.nationalIdInputLabel,
-          format: '######-####',
-          width: 'half',
-        },
-      },
-      table: {
-        header: [
-          m.landlordDetails.nameInputLabel,
-          m.landlordDetails.nationalIdHeaderLabel,
-        ],
-      },
-    }),
-    buildRepeater({
-      id: 'rentOtherFees.otherFees',
-      title: 'm.otherFees.otherFeesTitle',
-      component: 'OtherFeesRepeater',
-      children: [
-        buildTextField({
-          id: 'otherFeesDescription',
-          title: 'm.otherFees.otherFeesDescriptionLabel',
-          placeholder: 'm.otherFees.otherFeesDescriptionPlaceholder',
-          width: 'half',
-          required: true,
-        }),
-        buildTextField({
-          id: 'otherFeesAmount',
-          title: 'm.otherFees.otherFeesAmountLabel',
-          placeholder: 'm.otherFees.otherFeesAmountPlaceholder',
-          variant: 'currency',
-          width: 'half',
-          required: true,
-        }),
+
+        // TODO: Add otherCosts fileds when ready
+        // Other fees
+        // buildDescriptionField({
+        //   id: 'rentOtherFees.otherCostsTitle',
+        //   title: m.otherFees.otherCostsTitle,
+        //   titleVariant: 'h4',
+        //   space: 6,
+        // }),
+        // buildCheckboxField({
+        //   id: 'rentOtherFees.otherCosts',
+        //   title: '',
+        //   options: [
+        //     {
+        //       value: TRUE,
+        //       label: m.otherFees.otherCostsLabel,
+        //     },
+        //   ],
+        //   spacing: 0,
+        // }),
+        // buildTextField({
+        //   id: 'rentOtherFees.otherCostsDescription',
+        //   title: m.otherFees.otherCostsDescriptionLabel,
+        //   placeholder: m.otherFees.otherCostsDescriptionPlaceholder,
+        //   width: 'half',
+        //   condition: otherCostsPayedByTenant,
+        // }),
+        // buildTextField({
+        //   id: 'rentOtherFees.otherCostsAmount',
+        //   title: m.otherFees.otherCostsAmountLabel,
+        //   placeholder: m.otherFees.otherCostsAmountPlaceholder,
+        //   width: 'half',
+        //   condition: otherCostsPayedByTenant,
+        // }),
       ],
     }),
   ],

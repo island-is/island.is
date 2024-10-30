@@ -41,12 +41,30 @@ export const RentalPeriodAmount = buildSubSection({
           titleVariant: 'h3',
           space: 1,
         }),
+
+        // Monthly rental amount and indexation
         buildTextField({
           id: 'rentalAmountInput',
           title: m.rentalAmount.inputLabel,
           placeholder: m.rentalAmount.inputPlaceholder,
           variant: 'currency',
-          maxLength: 14,
+          maxLength: 15,
+        }),
+        buildSelectField({
+          id: 'rentalAmountIndexTypes',
+          title: m.rentalAmount.indexOptionsLabel,
+          options: getRentalAmountIndexTypes(),
+          defaultValue: rentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
+          condition: rentalAmountIndexIsConnected,
+          width: 'half',
+        }),
+        buildTextField({
+          id: 'rentalAmountIndexValue',
+          title: m.rentalAmount.indexValueLabel,
+          placeholder: m.rentalAmount.indexValuePlaceholder,
+          variant: 'number',
+          width: 'half',
+          condition: rentalAmountIndexIsConnected,
         }),
         buildCheckboxField({
           id: 'isRentalAmountIndexConnected',
@@ -57,33 +75,10 @@ export const RentalPeriodAmount = buildSubSection({
               label: m.rentalAmount.priceIndexLabel,
             },
           ],
-          width: 'half',
           spacing: 0,
         }),
-        buildSelectField({
-          id: 'rentalAmountIndexTypes',
-          title: m.rentalAmount.indexOptionsLabel,
-          options: getRentalAmountIndexTypes(),
-          defaultValue: rentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
-          condition: rentalAmountIndexIsConnected,
-          width: 'half',
-        }),
-        buildDateField({
-          id: 'rentalAmountIndexDate',
-          title: m.rentalAmount.indexDateLabel,
-          maxDate: new Date(),
-          defaultValue: new Date().toISOString().substring(0, 10),
-          width: 'half',
-          condition: rentalAmountIndexIsConnected,
-        }),
-        buildTextField({
-          id: 'rentalAmountIndexValue',
-          title: m.rentalAmount.indexValueLabel,
-          placeholder: m.rentalAmount.indexValuePlaceholder,
-          variant: 'number',
-          width: 'half',
-          condition: rentalAmountIndexIsConnected,
-        }),
+
+        // Payment details
         buildDescriptionField({
           id: 'rentalAmountPaymentDateDetails',
           title: m.rentalAmount.paymentDateTitle,
