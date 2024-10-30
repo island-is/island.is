@@ -25,16 +25,23 @@ test.describe('Endorsements', () => {
     const page = await context.newPage()
     await disableI18n(page)
 
-    const timeout = 10000;
+    const timeout = 10000
 
-    await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/listar'));
+    await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/listar'))
 
     await Promise.all([
-      expect(page.getByRole('button', { name: 'Stofna nýjan lista' })).toBeVisible({ timeout }),
-      expect(page.getByRole('link', { name: 'Almennir undirskriftalistar' })).toBeVisible({ timeout }),
-      expect(page.getByRole('tab', { name: 'Virkir listar' })).toBeVisible({ timeout }),
-      expect(page.getByRole('tab', { name: 'Liðnir listar' })).toBeVisible({ timeout }),
-    ]);
-
+      expect(
+        page.getByRole('button', { name: 'Stofna nýjan lista' }),
+      ).toBeVisible({ timeout }),
+      expect(
+        page.getByRole('link', { name: 'Almennir undirskriftalistar' }),
+      ).toBeVisible({ timeout }),
+      expect(page.getByRole('tab', { name: 'Virkir listar' })).toBeVisible({
+        timeout,
+      }),
+      expect(page.getByRole('tab', { name: 'Liðnir listar' })).toBeVisible({
+        timeout,
+      }),
+    ])
   })
 })
