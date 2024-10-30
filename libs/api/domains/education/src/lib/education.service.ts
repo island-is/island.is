@@ -59,6 +59,7 @@ export class EducationService {
       const fileLocation = await this.s3Service.uploadFile(
         responseStream.body,
         { bucket: this.config.fileDownloadBucket, key: uuid() },
+        { ContentType: 'application/pdf'}
       )
 
       // Presigned URL expires in 65 seconds to allow for download initiation
