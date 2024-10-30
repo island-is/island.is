@@ -8,7 +8,7 @@ import styled from 'styled-components/native'
 import { useGetVaccinationsQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { VaccinationsCardContainer } from './components/vaccination-card-container'
+import { VaccinationsCard } from './components/vaccination-card'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -120,7 +120,7 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
                   <GeneralCardSkeleton height={90} key={index} />
                 ))
               : vaccinations.map((vaccination, index) => (
-                  <VaccinationsCardContainer
+                  <VaccinationsCard
                     key={`${vaccination?.id}-${index}`}
                     vaccination={vaccination}
                     loading={vaccinationsRes.loading && !vaccinationsRes.data}

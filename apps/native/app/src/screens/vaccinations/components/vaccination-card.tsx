@@ -118,7 +118,7 @@ const convertAgeToString = (
   return ageString
 }
 
-export function VaccinationsCardContainer({
+export function VaccinationsCard({
   vaccination,
   loading,
   componentId,
