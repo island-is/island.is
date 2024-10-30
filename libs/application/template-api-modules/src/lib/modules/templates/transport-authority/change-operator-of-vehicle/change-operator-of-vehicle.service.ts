@@ -127,7 +127,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           return this.mapVehicle(auth, vehicle, false)
         }
 
-        // C. vehicleCount >= 5
+        // C. vehicleCount <= 5
         // Display radio buttons, validate all vehicles now
         return this.mapVehicle(auth, vehicle, true)
       }),
