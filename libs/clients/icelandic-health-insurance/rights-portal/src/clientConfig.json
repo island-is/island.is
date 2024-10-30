@@ -4129,6 +4129,10 @@
             "type": "string",
             "nullable": true
           },
+          "canRegister": {
+            "type": "boolean",
+            "nullable": true
+          },
           "waitlistRegistration": {
             "type": "boolean",
             "nullable": true
