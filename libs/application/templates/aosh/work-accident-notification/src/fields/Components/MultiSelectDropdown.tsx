@@ -24,7 +24,7 @@ export const MultiSelectDropdown: FC<
   const { group, options, onChange, values, majorGroupLength } = props
 
   return (
-    <Box marginTop={1}>
+    <Box marginTop={3}>
       <Controller
         render={() => {
           return (
@@ -36,6 +36,7 @@ export const MultiSelectDropdown: FC<
               label={group.name}
               closeMenuOnSelect={false}
               hideSelectedOptions={false}
+              placeholder={'Veldu það sem á við ef eitthvað'}
               options={options.map((option) => ({
                 value: option.code,
                 label: option.name,

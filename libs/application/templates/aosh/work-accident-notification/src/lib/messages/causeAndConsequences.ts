@@ -3,22 +3,28 @@ import { defineMessages } from 'react-intl'
 export const causeAndConsequences = {
   shared: defineMessages({
     searchPlaceholder: {
-      id: 'aosh.wan.application:causeAndConsequences.circumstances.searchPlaceholder',
+      id: 'aosh.wan.application:causeAndConsequences.shared.searchPlaceholder',
       defaultMessage: 'Sláðu inn leitarorð',
       description: 'Placeholder of the search input',
     },
     mostSeriousWarning: {
-      id: 'aosh.wan.application:causeAndConsequences.circumstances.mostSeriousWarning',
+      id: 'aosh.wan.application:causeAndConsequences.shared.mostSeriousWarning',
       defaultMessage: 'Hakaðu við það sem þú telur að sé alvarlegast.',
       description: 'Warning before "most serious" choice',
     },
     mostSeriousAlert: {
-      id: 'aosh.wan.application:causeAndConsequences.circumstances.mostSeriousAlert',
+      id: 'aosh.wan.application:causeAndConsequences.shared.mostSeriousAlert',
       defaultMessage: 'Vinsamlegast veldur eitt af eftirfarandi.',
       description: 'Alert before "most serious" choice',
     },
     causeAndConsequencesNothingChosen: {
-      id: 'aosh.wan.application:causeAndConsequences.circumstances.causeAndConsequencesNothingChosen',
+      id: 'aosh.wan.application:causeAndConsequences.shared.causeAndConsequencesNothingChosen',
+      defaultMessage: 'Vinsamlegast veldu a.m.k einn valmöguleika',
+      description:
+        'error alerting users to choose at least on option (cause and consequences pages)',
+    },
+    selectPlaceholder: {
+      id: 'aosh.wan.application:causeAndConsequences.shared.selectPlaceholder',
       defaultMessage: 'Vinsamlegast veldu a.m.k einn valmöguleika',
       description:
         'error alerting users to choose at least on option (cause and consequences pages)',

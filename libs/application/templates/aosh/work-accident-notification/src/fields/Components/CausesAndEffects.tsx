@@ -148,7 +148,7 @@ export const CausesAndEffects: FC<
         </Box>
       )}
       {mostSerious.length > 1 ? (
-        <Box marginTop={2} border="standard" padding={4}>
+        <Box marginTop={3} border="standard" padding={4}>
           <Box marginBottom={2}>
             <AlertMessage
               type="warning"
