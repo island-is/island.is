@@ -8,7 +8,10 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import { isRequestCase } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  isRequestCase,
+} from '@island.is/judicial-system/types'
 
 import { getIndictmentInfo } from '../../case/interceptors/case.transformer'
 import { CaseListEntry } from '../models/caseList.model'
@@ -21,11 +24,12 @@ const getAppealedDate = (
 }
 
 const wasAcceptedInCourt = (
-  prosecutorAppealDecision?: string,
-  accusedAppealDecision?: string,
+  prosecutorAppealDecision?: CaseAppealDecision,
+  accusedAppealDecision?: CaseAppealDecision,
 ): boolean => {
   return (
-    prosecutorAppealDecision === 'ACCEPT' && accusedAppealDecision === 'ACCEPT'
+    prosecutorAppealDecision === CaseAppealDecision.ACCEPT &&
+    accusedAppealDecision === CaseAppealDecision.ACCEPT
   )
 }
 
