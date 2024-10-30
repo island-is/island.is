@@ -23,6 +23,7 @@ import {
 } from '../hooks'
 import { messages } from '../messages'
 import { ChartType, CustomStyleConfig, DataItem } from '../types'
+import { ChartComponentType } from '../types'
 import {
   calculateChartSkeletonLoaderHeight,
   createTickFormatter,
@@ -53,7 +54,7 @@ const getData = (slice: IChart, queryResult: DataItem[]) => {
   const sourceDataType = values[0]?.typeOfManualDataKey
   const componentType = slice.components[0]?.type
 
-  if (componentType === 'pie-cell') {
+  if (componentType === ChartComponentType.pie) {
     const pieData = {
       statisticsForHeader: values
         .flatMap((item: { categoryItems: [] }) => item.categoryItems)
