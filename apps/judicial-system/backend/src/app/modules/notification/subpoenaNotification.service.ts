@@ -12,8 +12,14 @@ import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
-import { SubpoenaNotificationType } from '@island.is/judicial-system/types'
+import {
+  INDICTMENTS_COURT_OVERVIEW_ROUTE,
+  INDICTMENTS_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
+  SubpoenaNotificationType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../case'
 import { EventService } from '../event'
@@ -50,22 +56,22 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     notificationType: SubpoenaNotificationType,
     subject: MessageDescriptor,
     body: MessageDescriptor,
-    to: { name?: string; email?: string }[],
+    to: { name?: string; email?: string; overviewUrl: string }[],
   ) {
     const formattedSubject = this.formatMessage(subject, {
       courtCaseNumber: theCase.courtCaseNumber,
-    })
-
-    const formattedBody = this.formatMessage(body, {
-      courtCaseNumber: theCase.courtCaseNumber,
-      linkStart: `<a href="${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}">`,
-      linkEnd: '</a>',
     })
 
     const promises: Promise<Recipient>[] = []
 
     for (const recipient of to) {
       if (recipient.email && recipient.name) {
+        const formattedBody = this.formatMessage(body, {
+          courtCaseNumber: theCase.courtCaseNumber,
+          linkStart: `<a href="${recipient.overviewUrl}">`,
+          linkEnd: '</a>',
+        })
+
         promises.push(
           this.sendEmail(
             formattedSubject,
@@ -93,9 +99,21 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       strings.serviceSuccessfulSubject,
       strings.serviceSuccessfulBody,
       [
-        { name: theCase.judge?.name, email: theCase.judge?.email },
-        { name: theCase.registrar?.name, email: theCase.registrar?.email },
-        { name: theCase.prosecutor?.name, email: theCase.prosecutor?.email },
+        {
+          name: theCase.judge?.name,
+          email: theCase.judge?.email,
+          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+        },
+        {
+          name: theCase.registrar?.name,
+          email: theCase.registrar?.email,
+          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+        },
+        {
+          name: theCase.prosecutor?.name,
+          email: theCase.prosecutor?.email,
+          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}`,
+        },
       ],
     )
   }
@@ -109,9 +127,21 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       strings.serviceFailedSubject,
       strings.serviceFailedBody,
       [
-        { name: theCase.judge?.name, email: theCase.judge?.email },
-        { name: theCase.registrar?.name, email: theCase.registrar?.email },
-        { name: theCase.prosecutor?.name, email: theCase.prosecutor?.email },
+        {
+          name: theCase.judge?.name,
+          email: theCase.judge?.email,
+          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+        },
+        {
+          name: theCase.registrar?.name,
+          email: theCase.registrar?.email,
+          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+        },
+        {
+          name: theCase.prosecutor?.name,
+          email: theCase.prosecutor?.email,
+          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}`,
+        },
       ],
     )
   }
@@ -125,8 +155,16 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       strings.defendantSelectedDefenderSubject,
       strings.defendantSelectedDefenderBody,
       [
-        { name: theCase.judge?.name, email: theCase.judge?.email },
-        { name: theCase.registrar?.name, email: theCase.registrar?.email },
+        {
+          name: theCase.judge?.name,
+          email: theCase.judge?.email,
+          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+        },
+        {
+          name: theCase.registrar?.name,
+          email: theCase.registrar?.email,
+          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
+        },
       ],
     )
   }
