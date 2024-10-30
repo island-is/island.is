@@ -38,7 +38,7 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
                 { value: '', printHidden: true },
               ]}
             />
-            <T.Body>{rows[0]}</T.Body>
+            <T.Body>{rows}</T.Body>
           </T.Table>
         )}
         {(!rows.length || loading) && (

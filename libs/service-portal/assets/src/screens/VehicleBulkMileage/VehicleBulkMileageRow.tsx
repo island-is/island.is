@@ -21,7 +21,6 @@ import { VehicleBulkMileageSaveButton } from './VehicleBulkMileageSaveButton'
 import { InputController } from '@island.is/shared/form-fields'
 import * as styles from './VehicleBulkMileage.css'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { useDebounce } from 'react-use'
 import { isReadDateToday } from '../../utils/readDate'
 
 const ORIGIN_CODE = 'ISLAND.IS'
@@ -241,6 +240,10 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
                 defaultValue={''}
                 onChange={onInputChange}
                 error={postError ?? undefined}
+                aria-invalid={!!postError}
+                aria-describedby={
+                  postError ? `${vehicle.vehicleId}-error` : undefined
+                }
                 rules={{
                   validate: {
                     userHasPostAccess: () => {
@@ -334,6 +337,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
       {postStatus === 'success' && (
         <AlertMessage
           type="success"
+          aria-live="polite"
           message={formatMessage(
             postStatus === 'success'
               ? vehicleMessage.mileagePostSuccess
