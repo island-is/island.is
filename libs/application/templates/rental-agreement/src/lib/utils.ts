@@ -1,7 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
-  AnswerOptions,
   rentalAmountIndexTypes,
   rentalHousingCategoryClass,
   rentalHousingCategoryClassGroup,
@@ -36,11 +35,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'rentalHousingConditionInspector',
   )
 
-  const isRentalAmountIndexConnected = getValueViaPath<AnswerOptions>(
-    answers,
-    'isRentalAmountIndexConnected',
-  )
-
   const rentalAmountIndexTypesOptions = getValueViaPath<rentalAmountIndexTypes>(
     answers,
     'rentalAmountIndexTypes',
@@ -72,7 +66,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     propertyCategoryTypeOptions,
     propertyCategoryClassOptions,
     inspectorOptions,
-    isRentalAmountIndexConnected,
     rentalAmountIndexTypesOptions,
     rentalAmountPaymentDateOptions,
     rentOtherFeesElectricityCost,

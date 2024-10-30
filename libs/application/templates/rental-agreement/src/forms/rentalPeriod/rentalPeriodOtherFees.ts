@@ -6,13 +6,13 @@ import {
   buildDateField,
   getValueViaPath,
 } from '@island.is/application/core'
-import * as m from '../../lib/messages'
+import { FormValue } from '@island.is/application/types'
 import {
   getApplicationAnswers,
   getRentalOtherFeesPayeeOptions,
 } from '../../lib/utils'
 import { rentOtherFeesPayeeOptions, TRUE } from '../../lib/constants'
-import { FormValue } from '@island.is/application/types'
+import * as m from '../../lib/messages'
 
 function housingFundAmountPayedByTenant(answers: FormValue) {
   const { rentOtherFeesHousingFund } = getApplicationAnswers(answers)
@@ -35,7 +35,7 @@ function otherCostsPayedByTenant(answers: FormValue) {
     'rentOtherFees.otherCosts',
     [],
   ) as string[]
-  return rentOtherFeesOtherCosts[0] === TRUE
+  return rentOtherFeesOtherCosts && rentOtherFeesOtherCosts.includes(TRUE)
 }
 
 export const RentalPeriodOtherFees = buildSubSection({
@@ -127,7 +127,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           condition: heatingCostPayedByTenant,
         }),
 
-        // TODO: Add otherCosts fileds when ready
+        // TODO: Add otherCosts fields when ready
         // Other fees
         // buildDescriptionField({
         //   id: 'rentOtherFees.otherCostsTitle',
