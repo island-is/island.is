@@ -12,6 +12,7 @@ export const PublishingScreen = (props: OJOIFieldBaseProps) => {
     <FormScreen
       title={f(publishing.general.title)}
       intro={f(publishing.general.intro)}
+      goToScreen={props.goToScreen}
     >
       <Publishing {...props} />
       <CommunicationChannels {...props} />
