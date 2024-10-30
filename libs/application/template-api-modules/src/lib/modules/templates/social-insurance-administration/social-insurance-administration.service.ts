@@ -535,7 +535,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       )
       return response
     }
-      
+
     if (application.typeId === ApplicationTypes.INCOME_PLAN) {
       const incomePlanDTO = transformApplicationToIncomePlanDTO(application)
 
@@ -641,7 +641,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getSpousalInfo({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getSpousalInfo(auth)
-  }  
+  }
 
   async getCategorizedIncomeTypes({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getCategorizedIncomeTypes(auth)

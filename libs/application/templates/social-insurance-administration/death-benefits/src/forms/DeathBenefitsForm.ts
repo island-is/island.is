@@ -384,7 +384,7 @@ export const DeathBenefitsForm: Form = buildForm({
           condition: (_, externalData) => {
             const { children } = getApplicationExternalData(externalData)
             // if no children returned, dont show the table
-            if (children.length === 0) return false
+            if (!children || children.length === 0) return false
             return true
           },
           children: [
@@ -411,8 +411,9 @@ export const DeathBenefitsForm: Form = buildForm({
               getApplicationExternalData(
                 externalData,
               ).deceasedSpouseCohabitationLongerThan1Year
-            //if cohabitation has lasted less than a year, then show question
-            if (spouseAtLeast1Year === false) return true
+            // If cohabitation has lasted less than a year or is undefined, show question
+            if (spouseAtLeast1Year !== true) return true
+            return false
             return false
           },
           children: [
