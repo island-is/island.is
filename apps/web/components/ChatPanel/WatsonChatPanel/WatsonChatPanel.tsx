@@ -283,6 +283,10 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   const watsonInstance = useRef<WatsonInstance | null>(null)
   const [hasButtonBeenClicked, setHasButtonBeenClicked] = useState(false)
 
+  const replaceDirectorateOfImmigrationWebChatWithAI = Boolean(
+    namespace?.replaceDirectorateOfImmigrationWebChatWithAI,
+  )
+
   useEffect(() => {
     if (Object.keys(namespace).length === 0) {
       return () => {
@@ -293,10 +297,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     // @ts-ignore make web strict
     const namespaceValue = namespace?.[namespaceKey] ?? {}
     const { cssVariables, ...languagePack } = namespaceValue
-
-    const replaceDirectorateOfImmigrationWebChatWithAI = Boolean(
-      namespace?.replaceDirectorateOfImmigrationWebChatWithAI,
-    )
 
     const propsCopy = { ...props }
 
@@ -415,6 +415,8 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
   if (showLauncher) return null
 
+  const chatTermsUrl = n('chatTermsUrl', '')
+
   return (
     <Hidden print>
       {shouldDisplayFeedbackPanel && (
@@ -457,6 +459,58 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           }}
           pushUp={pushUp}
           loading={loading}
+          embedDisclaimerProps={
+            replaceDirectorateOfImmigrationWebChatWithAI &&
+            props.integrationID === '9e320784-ad44-4da9-9eb3-f305057a196a'
+              ? {
+                  localStorageKey: 'watsonAssistantChatAllowed',
+                  texts: {
+                    message:
+                      activeLocale === 'is' ? (
+                        <Text variant="small">
+                          Þetta netspjall er hýst af þriðja aðila. Með því að
+                          halda áfram samþykkir þú{' '}
+                          {!chatTermsUrl ? (
+                            'skilmála'
+                          ) : (
+                            <a href={chatTermsUrl ?? ''}>skilmála</a>
+                          )}{' '}
+                          þeirra.
+                        </Text>
+                      ) : (
+                        <Text variant="small">
+                          This AI chatbot is hosted by a third party and by
+                          continuing, you are agreeing to their{' '}
+                          {!chatTermsUrl ? (
+                            'terms and conditions'
+                          ) : (
+                            <a href={chatTermsUrl ?? ''}>
+                              terms and conditions
+                            </a>
+                          )}
+                          . The chatbots purpose is to assist you in your search
+                          for information, it's still learning so suggestions
+                          must be taken with caution.
+                        </Text>
+                      ),
+                    remember: n(
+                      'rememberThisSetting',
+                      activeLocale === 'is'
+                        ? 'Muna þessa stillingu'
+                        : 'Remember this setting',
+                    ),
+                    accept: n(
+                      'accept',
+                      activeLocale === 'is' ? 'Halda áfram' : 'I agree',
+                    ),
+                    cancel: n(
+                      'cancel',
+                      activeLocale === 'is' ? 'Hætta við' : 'I disagree',
+                    ),
+                  },
+                }
+              : undefined
+          }
         />
       )}
       <ToastContainer />

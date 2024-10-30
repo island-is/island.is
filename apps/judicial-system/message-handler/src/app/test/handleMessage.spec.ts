@@ -9,7 +9,7 @@ import {
   MessageService,
   MessageType,
 } from '@island.is/judicial-system/message'
-import { NotificationType, User } from '@island.is/judicial-system/types'
+import { User } from '@island.is/judicial-system/types'
 
 import { appModuleConfig } from '../app.config'
 import { InternalDeliveryService } from '../internalDelivery.service'

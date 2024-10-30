@@ -96,7 +96,15 @@ export class AppService {
     subpoenaId: string,
     updateSubpoena: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
-    let defenderName = undefined
+    let defenderInfo: {
+      defenderName: string | undefined
+      defenderEmail: string | undefined
+      defenderPhoneNumber: string | undefined
+    } = {
+      defenderName: undefined,
+      defenderEmail: undefined,
+      defenderPhoneNumber: undefined,
+    }
 
     if (
       updateSubpoena.defenderChoice === DefenderChoice.CHOOSE &&
@@ -113,7 +121,11 @@ export class AppService {
           updateSubpoena.defenderNationalId,
         )
 
-        defenderName = chosenLawyer.Name
+        defenderInfo = {
+          defenderName: chosenLawyer.Name,
+          defenderEmail: chosenLawyer.Email,
+          defenderPhoneNumber: chosenLawyer.Phone,
+        }
       } catch (reason) {
         // TODO: Reconsider throwing - what happens if registry is down?
         this.logger.error(
@@ -141,9 +153,14 @@ export class AppService {
       comment: updateSubpoena.comment,
       servedBy: updateSubpoena.servedBy,
       serviceDate: updateSubpoena.servedAt,
+      defenderChoice: updateSubpoena.defenderChoice,
+      defenderNationalId: updateSubpoena.defenderNationalId,
+      defenderName: defenderInfo.defenderName,
+      defenderEmail: defenderInfo.defenderEmail,
+      defenderPhoneNumber: defenderInfo.defenderPhoneNumber,
       requestedDefenderChoice: updateSubpoena.defenderChoice,
       requestedDefenderNationalId: updateSubpoena.defenderNationalId,
-      requestedDefenderName: defenderName,
+      requestedDefenderName: defenderInfo.defenderName,
     }
 
     try {

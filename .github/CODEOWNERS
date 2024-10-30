@@ -371,9 +371,6 @@ codemagic.yaml                                                                  
 /libs/application/templates/university/                                                                  @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/university/                             @island-is/origo
 
-# Temporary assignment while the QA bootstrap project is in progress
-/apps/system-e2e/                                                                                        @island-is/qa
-
 # DevOps
 /.github/                                                                                                @island-is/devops
 /.githooks/                                                                                              @island-is/devops
@@ -386,3 +383,18 @@ codemagic.yaml                                                                  
 /scripts/postinstall.js                                                                                  @island-is/devops @island-is/core
 /scripts/codegen.js                                                                                      @island-is/devops @island-is/core
 /charts/                                                                                                 @island-is/devops
+.dockerignore                                                                                            @island-is/devops
+
+
+# System tests
+# Catch-all
+/apps/system-e2e/                                                                                        @island-is/qa
+# Islandis
+/apps/system-e2e/src/tests/islandis/admin-portal/                                                        @island-is/aranja
+/apps/system-e2e/src/tests/islandis/application-system/                                                  @island-is/norda-applications
+/apps/system-e2e/src/tests/islandis/application-system/acceptance/parental-leave.spec.ts                 @island-is/deloitte
+/apps/system-e2e/src/tests/islandis/consultation-portal/                                                 @island-is/advania
+/apps/system-e2e/src/tests/islandis/service-portal/                                                      @island-is/hugsmidjan @island-is/juni @island-is/norda-applications
+/apps/system-e2e/src/tests/islandis/web/                                                                 @island-is/hugsmidjan @island-is/juni @island-is/stefna
+# Judicial system
+/apps/system-e2e/src/tests/judicial-system/                                                              @island-is/kolibri-justice-league

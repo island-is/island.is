@@ -99,6 +99,7 @@ export class HealthDirectorateService {
                 url: vaccination.vaccineUrl,
                 comment: vaccination.generalComment,
                 rejected: vaccination.rejected,
+                location: vaccination.vaccinationLocation,
               }
             },
           ),
