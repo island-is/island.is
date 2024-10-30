@@ -10,7 +10,7 @@ import { useGetFinanceStatusQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useBrowser } from '../../lib/use-browser'
-import { FinanceStatusCardContainer } from './components/finance-status-card-container'
+import { FinanceStatusCard } from './components/finance-status-card'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -180,7 +180,7 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
           : organizations.length > 0 || financeStatusZero
           ? organizations.map((org, i) =>
               (org.chargeTypes ?? []).map((chargeType, ii: number) => (
-                <FinanceStatusCardContainer
+                <FinanceStatusCard
                   key={`${org.id}-${chargeType.id}-${i}-${ii}`}
                   chargeType={chargeType}
                   org={org}

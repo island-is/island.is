@@ -84,7 +84,7 @@ const Total = styled(Typography)`
   margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
-export function FinanceStatusCardContainer({
+export function FinanceStatusCard({
   chargeType,
   org,
   componentId,
