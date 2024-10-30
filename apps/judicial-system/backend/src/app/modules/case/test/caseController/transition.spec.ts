@@ -19,6 +19,7 @@ import {
   indictmentCases,
   investigationCases,
   isIndictmentCase,
+  isRequestCase,
   restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
@@ -353,7 +354,9 @@ describe('CaseController - Transition', () => {
             {
               state: newState,
               parentCaseId:
-                transition === CaseTransition.DELETE ? null : undefined,
+                isRequestCase(type) && transition === CaseTransition.DELETE
+                  ? null
+                  : undefined,
               courtCaseNumber:
                 transition === CaseTransition.RETURN_INDICTMENT
                   ? null

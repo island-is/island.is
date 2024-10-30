@@ -4,7 +4,6 @@ import {
   CaseAppealState,
   CaseState,
   CaseTransition,
-  CaseType,
   IndictmentCaseState,
   IndictmentCaseTransition,
   isIndictmentCase,
@@ -15,7 +14,12 @@ import {
   isRequestCaseTransition,
   RequestCaseState,
   RequestCaseTransition,
+  User,
 } from '@island.is/judicial-system/types'
+
+import { nowFactory } from '../../../factories'
+import { UpdateCase } from '../case.service'
+import { Case } from '../models/case.model'
 
 interface IndictmentCaseStates {
   state?: IndictmentCaseState
@@ -26,15 +30,19 @@ interface RequestCaseStates {
   appealState?: CaseAppealState
 }
 
+type SideEffect = (theCase: Case, user: User) => UpdateCase
+
 interface IndictmentCaseRule {
   fromStates: IndictmentCaseState[]
-  to: IndictmentCaseStates
+  to: () => IndictmentCaseStates
+  sideEffect?: SideEffect
 }
 
 interface RequestCaseRule {
   fromStates: RequestCaseState[]
   fromAppealStates: (undefined | CaseAppealState)[]
-  to: RequestCaseStates
+  to: () => RequestCaseStates
+  sideEffect?: SideEffect
 }
 
 interface CaseStates {
@@ -50,42 +58,54 @@ const indictmentCaseStateMachine: Map<
     IndictmentCaseTransition.ASK_FOR_CONFIRMATION,
     {
       fromStates: [IndictmentCaseState.DRAFT, IndictmentCaseState.SUBMITTED],
-      to: { state: IndictmentCaseState.WAITING_FOR_CONFIRMATION },
+      to: () => ({ state: IndictmentCaseState.WAITING_FOR_CONFIRMATION }),
+      sideEffect: () => ({ indictmentReturnedExplanation: null }),
     },
   ],
   [
     IndictmentCaseTransition.DENY_INDICTMENT,
     {
       fromStates: [IndictmentCaseState.WAITING_FOR_CONFIRMATION],
-      to: { state: IndictmentCaseState.DRAFT },
+      to: () => ({ state: IndictmentCaseState.DRAFT }),
     },
   ],
   [
     IndictmentCaseTransition.SUBMIT,
     {
       fromStates: [IndictmentCaseState.WAITING_FOR_CONFIRMATION],
-      to: { state: IndictmentCaseState.SUBMITTED },
+      to: () => ({ state: IndictmentCaseState.SUBMITTED }),
+      sideEffect: () => ({ indictmentDeniedExplanation: null }),
     },
   ],
   [
     IndictmentCaseTransition.ASK_FOR_CANCELLATION,
     {
       fromStates: [IndictmentCaseState.SUBMITTED, IndictmentCaseState.RECEIVED],
-      to: { state: IndictmentCaseState.WAITING_FOR_CANCELLATION },
+      to: () => ({ state: IndictmentCaseState.WAITING_FOR_CANCELLATION }),
+      sideEffect: (theCase: Case) => {
+        if (theCase.indictmentDecision) {
+          throw new ForbiddenException(
+            `Cannot ask for cancellation of an indictment that is already in progress at the district court`,
+          )
+        }
+
+        return {}
+      },
     },
   ],
   [
     IndictmentCaseTransition.RECEIVE,
     {
       fromStates: [IndictmentCaseState.SUBMITTED],
-      to: { state: IndictmentCaseState.RECEIVED },
+      to: () => ({ state: IndictmentCaseState.RECEIVED }),
     },
   ],
   [
     IndictmentCaseTransition.RETURN_INDICTMENT,
     {
       fromStates: [IndictmentCaseState.RECEIVED],
-      to: { state: IndictmentCaseState.DRAFT },
+      to: () => ({ state: IndictmentCaseState.DRAFT }),
+      sideEffect: () => ({ courtCaseNumber: null, indictmentHash: null }),
     },
   ],
   [
@@ -95,7 +115,8 @@ const indictmentCaseStateMachine: Map<
         IndictmentCaseState.WAITING_FOR_CANCELLATION,
         IndictmentCaseState.RECEIVED,
       ],
-      to: { state: IndictmentCaseState.COMPLETED },
+      to: () => ({ state: IndictmentCaseState.COMPLETED }),
+      sideEffect: () => ({ rulingDate: nowFactory() }),
     },
   ],
   [
@@ -105,7 +126,7 @@ const indictmentCaseStateMachine: Map<
         IndictmentCaseState.DRAFT,
         IndictmentCaseState.WAITING_FOR_CONFIRMATION,
       ],
-      to: { state: IndictmentCaseState.DELETED },
+      to: () => ({ state: IndictmentCaseState.DELETED }),
     },
   ],
 ])
@@ -117,7 +138,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
       {
         fromStates: [RequestCaseState.NEW],
         fromAppealStates: [undefined],
-        to: { state: RequestCaseState.DRAFT },
+        to: () => ({ state: RequestCaseState.DRAFT }),
       },
     ],
     [
@@ -125,7 +146,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
       {
         fromStates: [RequestCaseState.DRAFT],
         fromAppealStates: [undefined],
-        to: { state: RequestCaseState.SUBMITTED },
+        to: () => ({ state: RequestCaseState.SUBMITTED }),
       },
     ],
     [
@@ -133,7 +154,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
       {
         fromStates: [RequestCaseState.SUBMITTED],
         fromAppealStates: [undefined],
-        to: { state: RequestCaseState.RECEIVED },
+        to: () => ({ state: RequestCaseState.RECEIVED }),
       },
     ],
     [
@@ -147,7 +168,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           CaseAppealState.COMPLETED,
           CaseAppealState.WITHDRAWN,
         ],
-        to: { state: RequestCaseState.ACCEPTED },
+        to: () => ({ state: RequestCaseState.ACCEPTED }),
       },
     ],
     [
@@ -161,7 +182,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           CaseAppealState.COMPLETED,
           CaseAppealState.WITHDRAWN,
         ],
-        to: { state: RequestCaseState.REJECTED },
+        to: () => ({ state: RequestCaseState.REJECTED }),
       },
     ],
     [
@@ -175,7 +196,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           CaseAppealState.COMPLETED,
           CaseAppealState.WITHDRAWN,
         ],
-        to: { state: RequestCaseState.DISMISSED },
+        to: () => ({ state: RequestCaseState.DISMISSED }),
       },
     ],
     [
@@ -188,7 +209,8 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.RECEIVED,
         ],
         fromAppealStates: [undefined],
-        to: { state: RequestCaseState.DELETED },
+        to: () => ({ state: RequestCaseState.DELETED }),
+        sideEffect: () => ({ parentCaseId: null }),
       },
     ],
     [
@@ -206,7 +228,12 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           CaseAppealState.COMPLETED,
           CaseAppealState.WITHDRAWN,
         ],
-        to: { state: RequestCaseState.RECEIVED },
+        to: () => ({ state: RequestCaseState.RECEIVED }),
+        sideEffect: () => ({
+          rulingDate: null,
+          courtRecordSignatoryId: null,
+          courtRecordSignatureDate: null,
+        }),
       },
     ],
     // APPEAL, RECEIVE_APPEAL and COMPLETE_APPEAL transitions do not affect the case state,
@@ -220,7 +247,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.DISMISSED,
         ],
         fromAppealStates: [undefined],
-        to: { appealState: CaseAppealState.APPEALED },
+        to: () => ({ appealState: CaseAppealState.APPEALED }),
       },
     ],
     [
@@ -232,7 +259,8 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.DISMISSED,
         ],
         fromAppealStates: [CaseAppealState.APPEALED],
-        to: { appealState: CaseAppealState.RECEIVED },
+        to: () => ({ appealState: CaseAppealState.RECEIVED }),
+        sideEffect: () => ({ appealReceivedByCourtDate: nowFactory() }),
       },
     ],
     [
@@ -244,7 +272,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.DISMISSED,
         ],
         fromAppealStates: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN],
-        to: { appealState: CaseAppealState.COMPLETED },
+        to: () => ({ appealState: CaseAppealState.COMPLETED }),
       },
     ],
     [
@@ -256,7 +284,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.DISMISSED,
         ],
         fromAppealStates: [CaseAppealState.COMPLETED],
-        to: { appealState: CaseAppealState.RECEIVED },
+        to: () => ({ appealState: CaseAppealState.RECEIVED }),
       },
     ],
     [
@@ -268,15 +296,17 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.DISMISSED,
         ],
         fromAppealStates: [CaseAppealState.APPEALED, CaseAppealState.RECEIVED],
-        to: { appealState: CaseAppealState.WITHDRAWN },
+        to: () => ({ appealState: CaseAppealState.WITHDRAWN }),
       },
     ],
   ])
 
 const transitionIndictmentCase = (
   transition: CaseTransition,
+  theCase: Case,
+  user: User,
   currentState: CaseState,
-): CaseStates => {
+): UpdateCase => {
   if (
     !isIndictmentCaseTransition(transition) ||
     !isIndictmentCaseState(currentState)
@@ -294,15 +324,20 @@ const transitionIndictmentCase = (
     )
   }
 
-  // Since the state machine is a global constant, we spread the result before returning it to avoid accidental mutations
-  return { ...rule.to } as CaseStates
+  const states = rule.to() as UpdateCase
+
+  const sideEffect = rule.sideEffect?.(theCase, user) ?? {}
+
+  return { ...states, ...sideEffect }
 }
 
 const transitionRequestCase = (
   transition: CaseTransition,
+  theCase: Case,
+  user: User,
   currentState: CaseState,
   currentAppealState?: CaseAppealState | undefined,
-): CaseStates => {
+): UpdateCase => {
   if (
     !isRequestCaseTransition(transition) ||
     !isRequestCaseState(currentState)
@@ -325,25 +360,40 @@ const transitionRequestCase = (
     )
   }
 
-  // Since the state machine is a global constant, we spread the result before returning it to avoid accidental mutations
-  return { ...rule.to } as CaseStates
+  const states = rule.to() as UpdateCase
+
+  const sideEffect = rule.sideEffect?.(theCase, user) ?? {}
+
+  return { ...states, ...sideEffect }
 }
 
 export const transitionCase = function (
   transition: CaseTransition,
-  caseType: CaseType,
-  currentState: CaseState,
+  theCase: Case,
+  user: User,
+  currentState?: CaseState,
   currentAppealState?: CaseAppealState,
 ): CaseStates {
-  if (isIndictmentCase(caseType)) {
-    return transitionIndictmentCase(transition, currentState)
+  if (isIndictmentCase(theCase.type)) {
+    return transitionIndictmentCase(
+      transition,
+      theCase,
+      user,
+      currentState ?? theCase.state,
+    )
   }
 
-  if (isRequestCase(caseType)) {
-    return transitionRequestCase(transition, currentState, currentAppealState)
+  if (isRequestCase(theCase.type)) {
+    return transitionRequestCase(
+      transition,
+      theCase,
+      user,
+      currentState ?? theCase.state,
+      currentAppealState ?? theCase.appealState,
+    )
   }
 
   throw new ForbiddenException(
-    `The transition ${transition} cannot be applied to a ${caseType} case`,
+    `The transition ${transition} cannot be applied to a ${theCase.type} case`,
   )
 }

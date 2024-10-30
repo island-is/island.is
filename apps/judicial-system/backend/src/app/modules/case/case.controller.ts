@@ -307,27 +307,15 @@ export class CaseController {
 
     let update: UpdateCase = transitionCase(
       transition.transition,
-      theCase.type,
-      theCase.state,
-      theCase.appealState,
+      theCase,
+      user,
     )
 
     switch (transition.transition) {
-      case CaseTransition.DELETE:
-        update.parentCaseId = null
-        break
-      case CaseTransition.SUBMIT:
-        if (isIndictmentCase(theCase.type)) {
-          update.indictmentDeniedExplanation = null
-        }
-        break
       case CaseTransition.ACCEPT:
       case CaseTransition.REJECT:
       case CaseTransition.DISMISS:
-      case CaseTransition.COMPLETE:
-        update.rulingDate = isIndictmentCase(theCase.type)
-          ? nowFactory()
-          : theCase.courtEndTime
+        update.rulingDate = theCase.courtEndTime
 
         // Handle appealed in court
         if (
@@ -345,26 +333,19 @@ export class CaseController {
             ...update,
             ...transitionCase(
               CaseTransition.APPEAL,
-              theCase.type,
-              update.state ?? theCase.state,
-              update.appealState ?? theCase.appealState,
+              theCase,
+              user,
+              update.state,
+              update.appealState,
             ),
           }
         }
-        break
-      case CaseTransition.REOPEN:
-        update.rulingDate = null
-        update.courtRecordSignatoryId = null
-        update.courtRecordSignatureDate = null
         break
       // TODO: Consider changing the names of the postponed appeal date variables
       // as they are now also used when the case is appealed in court
       case CaseTransition.APPEAL:
         // The only roles that can appeal a case here are prosecutor roles
         update.prosecutorPostponedAppealDate = nowFactory()
-        break
-      case CaseTransition.RECEIVE_APPEAL:
-        update.appealReceivedByCourtDate = nowFactory()
         break
       case CaseTransition.COMPLETE_APPEAL:
         if (
@@ -400,20 +381,6 @@ export class CaseController {
           theCase.appealState === CaseAppealState.RECEIVED
         ) {
           update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
-        }
-        break
-      case CaseTransition.ASK_FOR_CONFIRMATION:
-        update.indictmentReturnedExplanation = null
-        break
-      case CaseTransition.RETURN_INDICTMENT:
-        update.courtCaseNumber = null
-        update.indictmentHash = null
-        break
-      case CaseTransition.ASK_FOR_CANCELLATION:
-        if (theCase.indictmentDecision) {
-          throw new ForbiddenException(
-            `Cannot ask for cancellation of an indictment that is already in progress at the district court`,
-          )
         }
     }
 

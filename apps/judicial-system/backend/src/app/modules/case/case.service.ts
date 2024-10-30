@@ -1691,9 +1691,10 @@ export class CaseService {
         if (receivingCase) {
           update.state = transitionCase(
             CaseTransition.RECEIVE,
-            theCase.type,
-            theCase.state,
-            theCase.appealState,
+            theCase,
+            user,
+            update.state,
+            update.appealState,
           ).state
         }
 
