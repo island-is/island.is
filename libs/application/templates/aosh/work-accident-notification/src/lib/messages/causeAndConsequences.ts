@@ -148,7 +148,7 @@ export const causeAndConsequences = {
     },
     heading: {
       id: 'aosh.wan.application:causeAndConsequences.typeOfInjury.heading',
-      defaultMessage: '?ennan texta vantar...',
+      defaultMessage: 'Þennan texta vantar...',
       description: 'Heading before choosing type of injury of accident',
     },
     subHeading: {
@@ -161,7 +161,7 @@ export const causeAndConsequences = {
   injuredBodyParts: defineMessages({
     title: {
       id: 'aosh.wan.application:causeAndConsequences.injuredBodyParts.title',
-      defaultMessage: 'Tegund áverka',
+      defaultMessage: 'Skaddaðir líkamshlutar',
       description: 'Title of the injured body parts page',
     },
     description: {
