@@ -341,12 +341,6 @@ export class CaseController {
           }
         }
         break
-      // TODO: Consider changing the names of the postponed appeal date variables
-      // as they are now also used when the case is appealed in court
-      case CaseTransition.APPEAL:
-        // The only roles that can appeal a case here are prosecutor roles
-        update.prosecutorPostponedAppealDate = nowFactory()
-        break
       case CaseTransition.COMPLETE_APPEAL:
         if (
           isRestrictionCase(theCase.type) &&

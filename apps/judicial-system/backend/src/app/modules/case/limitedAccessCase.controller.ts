@@ -175,10 +175,6 @@ export class LimitedAccessCaseController {
       user,
     )
 
-    if (update.appealState === CaseAppealState.APPEALED) {
-      update.accusedPostponedAppealDate = nowFactory()
-    }
-
     if (
       transition.transition === CaseTransition.WITHDRAW_APPEAL &&
       !theCase.appealRulingDecision &&

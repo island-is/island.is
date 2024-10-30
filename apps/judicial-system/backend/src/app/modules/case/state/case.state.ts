@@ -6,9 +6,11 @@ import {
   CaseTransition,
   IndictmentCaseState,
   IndictmentCaseTransition,
+  isDefenceUser,
   isIndictmentCase,
   isIndictmentCaseState,
   isIndictmentCaseTransition,
+  isProsecutionUser,
   isRequestCase,
   isRequestCaseState,
   isRequestCaseTransition,
@@ -85,7 +87,7 @@ const indictmentCaseStateMachine: Map<
       sideEffect: (theCase: Case) => {
         if (theCase.indictmentDecision) {
           throw new ForbiddenException(
-            `Cannot ask for cancellation of an indictment that is already in progress at the district court`,
+            'Cannot ask for cancellation of an indictment that is already in progress at the district court',
           )
         }
 
@@ -248,6 +250,18 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
         ],
         fromAppealStates: [undefined],
         to: () => ({ appealState: CaseAppealState.APPEALED }),
+        sideEffect: (theCase: Case, user: User) => {
+          if (isProsecutionUser(user)) {
+            return { prosecutorPostponedAppealDate: nowFactory() }
+          }
+          if (isDefenceUser(user)) {
+            return { accusedPostponedAppealDate: nowFactory() }
+          }
+
+          throw new ForbiddenException(
+            `A ${user.role} user cannot appeal a ${theCase.type} case`,
+          )
+        },
       },
     ],
     [
