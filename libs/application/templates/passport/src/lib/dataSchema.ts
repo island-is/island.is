@@ -59,7 +59,6 @@ export const dataSchema = z.object({
   }),
   service: z.object({
     type: z.enum([Services.REGULAR, Services.EXPRESS]),
-    dropLocation: z.string().nullable().optional(),
   }),
   approveExternalDataParentB: z.boolean().refine((v) => v),
   chargeItemCode: z.string(),

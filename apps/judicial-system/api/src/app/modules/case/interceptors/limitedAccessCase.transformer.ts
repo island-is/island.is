@@ -64,7 +64,7 @@ const transformIndictmentCase = (theCase: Case): Case => {
       defendants,
       eventLogs,
     ),
-    defendants: getIndictmentDefendantsInfo(theCase.defendants),
+    defendants: getIndictmentDefendantsInfo(theCase),
   }
 }
 
