@@ -3,8 +3,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { CurrentHttpUser, TokenGuard } from '@island.is/judicial-system/auth'
-import type { User } from '@island.is/judicial-system/types'
+import { TokenGuard } from '@island.is/judicial-system/auth'
 
 import { Case, CaseExistsGuard, CurrentCase } from '../case'
 import { Subpoena } from '../subpoena'
@@ -27,10 +26,9 @@ export class InternalPoliceController {
   getSubpoenaStatus(
     @Param('subpoenaId') subpoenaId: string,
     @CurrentCase() theCase: Case,
-    @CurrentHttpUser() user: User,
   ): Promise<Subpoena> {
     this.logger.debug(`Gets subpoena status in case ${theCase.id}`)
 
-    return this.policeService.getSubpoenaStatus(subpoenaId, user)
+    return this.policeService.getSubpoenaStatus(subpoenaId)
   }
 }
