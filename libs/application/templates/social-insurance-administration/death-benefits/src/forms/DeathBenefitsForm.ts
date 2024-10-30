@@ -412,8 +412,9 @@ export const DeathBenefitsForm: Form = buildForm({
               getApplicationExternalData(
                 externalData,
               ).deceasedSpouseCohabitationLongerThan1Year
-            //if cohabitation has lasted less than a year, then show question
-            if (spouseAtLeast1Year === false) return true
+            // If cohabitation has lasted less than a year or is undefined, show question
+            if (spouseAtLeast1Year !== true) return true
+            return false
             return false
           },
           children: [
