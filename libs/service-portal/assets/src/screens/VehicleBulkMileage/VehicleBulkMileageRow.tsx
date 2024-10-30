@@ -66,14 +66,13 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
 
   const [postAction] = usePostSingleVehicleMileageMutation({
     onError: () => handleMutationResponse(true),
-    onCompleted: ({ vehicleMileagePostV2: data }) => {
-      if (data?.__typename === 'VehiclesMileageUpdateError') {
-        setPostError(data.message)
-        setPostStatus('error')
-      } else {
-        setPostStatus('success')
-      }
-    },
+    onCompleted: ({ vehicleMileagePostV2: data }) =>
+      handleMutationResponse(
+        data?.__typename === 'VehiclesMileageUpdateError',
+        data?.__typename === 'VehiclesMileageUpdateError'
+          ? data?.message ?? formatMessage(m.errorTitle)
+          : undefined,
+      ),
   })
 
   const [executeMileageQuery, { data: mileageData, refetch: mileageRefetch }] =
