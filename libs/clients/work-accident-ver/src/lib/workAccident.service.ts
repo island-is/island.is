@@ -26,8 +26,11 @@ export class WorkAccidentClientService {
   private dataApiWithAuth = (user: User) =>
     this.dataApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async getOptionsData(auth: User): Promise<DataDto> {
-    return await this.dataApiWithAuth(auth).getData({ locale: 'is' })
+  async getOptionsData(
+    auth: User,
+    locale: 'is' | 'en' = 'is',
+  ): Promise<DataDto> {
+    return await this.dataApiWithAuth(auth).getData({ locale })
   }
 
   async createAccident(
