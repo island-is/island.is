@@ -384,6 +384,7 @@ codemagic.yaml                                                                  
 /scripts/postinstall.js                                                                                  @island-is/devops @island-is/core
 /scripts/codegen.js                                                                                      @island-is/devops @island-is/core
 /charts/                                                                                                 @island-is/devops
+.dockerignore                                                                                            @island-is/devops
 
 
 # System tests
