@@ -104,6 +104,6 @@ export const dataSchema = z.object({
         params: m.dataSchema.nationalId,
       }),
   }),
-  asdf: z.array(fileSchema),
-  rentOtherFees: rentOtherFees,
+  rentalHousingConditionFiles: z.array(fileSchema),
+  rentOtherFees,
 })
