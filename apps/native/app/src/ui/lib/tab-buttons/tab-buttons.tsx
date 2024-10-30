@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import styled, { useTheme } from 'styled-components/native'
 import { Animated, useWindowDimensions } from 'react-native'
 import { Typography } from '../typography/typography'
@@ -7,6 +7,7 @@ const Host = styled.View`
   border-radius: ${({ theme }) => theme.border.radius.large};
   justify-content: center;
   background-color: ${({ theme }) => theme.color.blue100};
+  position: relative;
 `
 
 const Tabs = styled.View`
@@ -23,20 +24,20 @@ const Tab = styled.Pressable<{ isSelected: boolean }>`
   height: 40px;
   justify-content: center;
   align-items: center;
-  background-color: ${({ isSelected }) =>
-    isSelected ? 'white' : 'transparent'};
-  border-width: ${({ isSelected }) => (isSelected ? 1 : 0)}px;
-  border-color: ${({ theme }) => theme.color.blue200};
   border-radius: 6px;
   flex: 1;
 `
 
-const ActiveBackground = styled(Animated.View)`
+const ActiveBackground = styled(Animated.View)<{ buttonWidth: number }>`
   position: absolute;
+
   background-color: ${({ theme }) => theme.color.white};
   border-radius: 6px;
   margin-horizontal: 2px;
   height: 38px;
+  width: ${({ buttonWidth }) => buttonWidth}px;
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.color.blue200};
 `
 
 interface TabButton {
@@ -59,17 +60,23 @@ export const TabButtons = ({
 
   const buttonWidth = (width - theme.spacing[4]) / buttons.length
 
-  const handlePress = (index: number) => {
-    setSelectedTab(index)
-  }
+  const translateX = useRef(new Animated.Value(0)).current
 
   const onTabPress = (index: number) => {
-    handlePress(index)
+    Animated.timing(translateX, {
+      toValue: index * buttonWidth,
+      duration: 200,
+      useNativeDriver: true,
+    }).start()
+    setSelectedTab(index)
   }
 
   return (
     <Host accessibilityRole="tabbar">
-      <ActiveBackground />
+      <ActiveBackground
+        buttonWidth={buttonWidth}
+        style={{ transform: [{ translateX: translateX }] }}
+      />
       <Tabs>
         {buttons.map((button, index) => {
           const isSelected = selectedTab === index
