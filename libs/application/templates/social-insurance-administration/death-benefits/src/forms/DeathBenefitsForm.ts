@@ -414,7 +414,6 @@ export const DeathBenefitsForm: Form = buildForm({
             // If cohabitation has lasted less than a year or is undefined, show question
             if (spouseAtLeast1Year !== true) return true
             return false
-            return false
           },
           children: [
             buildMultiField({
