@@ -4,7 +4,6 @@ import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
-  NationalRegistryIndividual,
   TagVariant,
 } from '@island.is/application/types'
 import { RadioFormField } from '@island.is/application/ui-fields'
@@ -37,24 +36,19 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   } = useFormContext()
   const userPassportRadio = `${id}.userPassport`
   const childPassportRadio = `${id}.childPassport`
-  const fieldErrors = getErrorViaPath(errors, userPassportRadio)
+
+  const fieldErrorsUser = getErrorViaPath(errors, userPassportRadio)
+  const fieldErrorsChild = getErrorViaPath(errors, childPassportRadio)
+
   const identityDocumentData = application.externalData.identityDocument
     .data as IdentityDocumentData
-
-  const individual = application.externalData.nationalRegistry
-    .data as NationalRegistryIndividual
-
-  const domicileCode = individual?.address?.municipalityCode
 
   type TagCheck = {
     tag: Tag
     isDisabled: boolean
   }
 
-  const tag = (
-    identityDocument: IdentityDocument,
-    isChild: boolean,
-  ): TagCheck => {
+  const tag = (identityDocument: IdentityDocument): TagCheck => {
     const today = new Date()
     const expirationDate = new Date(identityDocument?.expirationDate)
     const todayPlus6Months = new Date(
@@ -110,7 +104,7 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   return (
     <Box>
       <RadioFormField
-        error={fieldErrors}
+        error={fieldErrorsUser}
         application={application}
         field={{
           id: userPassportRadio,
@@ -131,11 +125,11 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   identityDocumentData.userPassport?.subType +
                   identityDocumentData?.userPassport?.number
                 : '',
-              tag: tag(identityDocumentData.userPassport, false).tag,
+              tag: tag(identityDocumentData.userPassport).tag,
               disabled:
-                tag(identityDocumentData.userPassport, false).tag.label ===
+                tag(identityDocumentData.userPassport).tag.label ===
                   m.orderedTag.defaultMessage ||
-                tag(identityDocumentData.userPassport, false).isDisabled,
+                tag(identityDocumentData.userPassport).isDisabled,
             },
           ],
           onSelect: () => {
@@ -149,7 +143,7 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         </Text>
       )}
       <RadioFormField
-        error={fieldErrors}
+        error={fieldErrorsChild}
         application={application}
         field={{
           space: 'smallGutter',
@@ -172,10 +166,10 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     child.passports[0].number
                   : '',
                 tag: child.passports
-                  ? tag(child.passports?.[0], true).tag
+                  ? tag(child.passports?.[0]).tag
                   : undefined,
                 disabled: child.passports
-                  ? tag(child.passports?.[0], true).isDisabled
+                  ? tag(child.passports?.[0]).isDisabled
                   : false,
               }
             },
