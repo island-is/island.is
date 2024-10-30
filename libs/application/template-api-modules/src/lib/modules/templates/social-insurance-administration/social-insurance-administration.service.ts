@@ -16,7 +16,6 @@ import {
   ChildInformation,
   DeathBenefits,
 } from '@island.is/application/templates/social-insurance-administration/death-benefits'
-import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
   Application,
   ApplicationTypes,
@@ -41,11 +40,8 @@ import {
   transformApplicationToIncomePlanDTO,
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
-  transformApplicationToAdditionalSupportForTheElderlyDTO,
   transformApplicationToDeathBenefitsDTO,
 } from './social-insurance-administration-utils'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import * as kennitala from 'kennitala'
 import { sharedModuleConfig } from '../../shared'
@@ -62,6 +58,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     @Inject(sharedModuleConfig.KEY)
     private config: ConfigType<typeof sharedModuleConfig>,
     private readonly s3Service: S3Service,
+    private readonly nationalRegistryApi: NationalRegistryClientService,
   ) {
     super('SocialInsuranceAdministration')
   }

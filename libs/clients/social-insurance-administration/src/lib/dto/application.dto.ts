@@ -5,6 +5,7 @@ import {
   ForeignBankInfo,
   TaxInfo,
   ApplicantInfo,
+  Employer,
   SpouseTaxCardUsage,
   IncomePlanInfo,
 } from '../socialInsuranceAdministrationClient.type'
