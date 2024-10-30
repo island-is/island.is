@@ -22,8 +22,12 @@ import {
   useGetChartData,
 } from '../hooks'
 import { messages } from '../messages'
-import { ChartType, CustomStyleConfig, DataItem } from '../types'
-import { ChartComponentType } from '../types'
+import {
+  ChartComponentType,
+  ChartType,
+  CustomStyleConfig,
+  DataItem,
+} from '../types'
 import {
   calculateChartSkeletonLoaderHeight,
   createTickFormatter,
