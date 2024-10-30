@@ -112,7 +112,7 @@ export class TransportAuthorityApi {
         make: vehicle.make,
         color: vehicle.colorName,
         requireMileage: vehicle.requiresMileageRegistration,
-        mileageReading: (mileageReadings?.[0]?.mileage ?? '').toString(),
+        mileageReading: mileageReadings?.[0]?.mileage?.toString() ?? '',
       },
       isDebtLess: debtStatus.isDebtLess,
       validationErrorMessages: ownerChangeValidation?.hasError
@@ -282,7 +282,7 @@ export class TransportAuthorityApi {
         make: vehicle.make,
         permno: vehicle.permno,
         requireMileage: vehicle.requiresMileageRegistration,
-        mileageReading: (mileageReadings?.[0]?.mileage ?? '').toString(),
+        mileageReading: mileageReadings?.[0]?.mileage?.toString() ?? '',
       },
     }
   }

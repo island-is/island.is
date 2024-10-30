@@ -174,7 +174,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       color: vehicle.colorName || undefined,
       role: vehicle.role || undefined,
       requireMileage: vehicle.requiresMileageRegistration,
-      mileageReading: (mileageReadings?.[0]?.mileage ?? '').toString(),
+      mileageReading: mileageReadings?.[0]?.mileage?.toString() ?? '',
       isDebtLess: debtStatus?.isDebtLess,
       validationErrorMessages: validation?.hasError
         ? validation.errorMessages
