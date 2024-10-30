@@ -628,6 +628,7 @@ export const en: TranslatedMessages = {
   'health.overview.paymentCredit': 'Credit',
   'health.overview.paymentDebt': 'Debt',
   'health.overview.therapy': 'Therapy',
+  'health.overview.vaccinations': 'Vaccinations',
   'health.overview.aidsAndNutrition': 'Aids and nutrition',
   'health.overview.medicinePurchase': 'Medicine purchase',
   'health.overview.period': 'Period',
@@ -637,14 +638,18 @@ export const en: TranslatedMessages = {
     'A new payment period begins with the next medicine purchase',
 
   // health - vaccinations
-  'health.vaccinations.screenTitle': 'Bólusetningar',
-  'health.vaccinations.title': 'Bólusetningar',
+  'health.vaccinations.screenTitle': 'Vaccinations',
+  'health.vaccinations.title': 'Vaccinations',
   'health.vaccinations.description':
-    'Hér getur þú séð lista yfir bóluefni sem þú hefur fengið, stöðu bólusetningar og aðrar upplýsingar.',
-  'health.vaccinations.generalVaccinations': 'Almennar bólusetningar',
-  'health.vaccinations.otherVaccinations': 'Aðrar bólusetningar',
-  'health.vaccinations.number': 'Nr.',
-  'health.vaccinations.date': 'Dags.',
-  'health.vaccinations.age': 'Aldur',
-  'health.vaccinations.vaccine': 'Bóluefni',
+    'Here you can see a list of vaccines you have received, vaccination status and other information.',
+  'health.vaccinations.generalVaccinations': 'General vaccinations',
+  'health.vaccinations.otherVaccinations': 'Other vaccinations',
+  'health.vaccinations.number': 'No.',
+  'health.vaccinations.date': 'Date',
+  'health.vaccinations.age': 'Age',
+  'health.vaccinations.vaccine': 'Vaccine',
+  'health.vaccinations.noVaccinations': 'No vaccinations recorded',
+  'health.vaccinations.noVaccinationsDescription':
+    'If you believe you have data that should appear here, please contact service provider.',
+  'health.vaccinations.directorateOfHealth': 'The directorate of Health',
 }

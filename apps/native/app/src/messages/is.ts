@@ -652,5 +652,5 @@ export const is = {
   'health.vaccinations.noVaccinations': 'Engar bólusetningar skráðar',
   'health.vaccinations.noVaccinationsDescription':
     'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
-  'health.vaccinations.directorativeOfHealth': 'Embætti landlæknis',
+  'health.vaccinations.directorateOfHealth': 'Embætti landlæknis',
 }

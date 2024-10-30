@@ -17,6 +17,7 @@ import clockIcon from '../../../assets/icons/clock.png'
 import externalLinkIcon from '../../../assets/icons/external-link.png'
 import { HealthDirectorateVaccination } from '../../../graphql/types/schema'
 import { useBrowser } from '../../../lib/use-browser'
+import { usePreferencesStore } from '../../../stores/preferences-store'
 
 const Row = styled.View<{ border?: boolean }>`
   flex-direction: row;
@@ -97,16 +98,21 @@ const mapStatusToBadge = (status?: string) => {
   }
 }
 
-const convertAgeToString = (months?: number | null, years?: number | null) => {
+const convertAgeToString = (
+  locale: string,
+  months?: number | null,
+  years?: number | null,
+) => {
+  const localeIs = locale === 'is-IS'
   let ageString = ''
   if (years === 1) {
-    ageString += '1 árs '
+    ageString += localeIs ? '1 árs ' : '1 year '
   } else if (years && years > 1) {
-    ageString += `${years} ára `
+    ageString += localeIs ? `${years} ára ` : `${years} years `
   }
 
   if (months && months > 0) {
-    ageString += `${months} mán.`
+    ageString += localeIs ? `${months} mán.` : `${months} months`
   }
 
   return ageString
@@ -125,6 +131,8 @@ export function VaccinationsCardContainer({
   const theme = useTheme()
   const [open, setOpen] = useState(false)
   const { openBrowser } = useBrowser()
+  const locale = usePreferencesStore(({ locale }) => locale)
+
   return (
     <ExpandableCard
       title={
@@ -151,7 +159,7 @@ export function VaccinationsCardContainer({
         {vaccination?.vaccinationsInfo?.length ? (
           <Row style={{ marginTop: 12 }}>
             <TableHeading>
-              <Cell style={{ flex: 1, maxWidth: '5%' }}>
+              <Cell style={{ flex: 1, maxWidth: '6%' }}>
                 <Typography variant="eyebrow">
                   <FormattedMessage
                     id="health.vaccinations.number"
@@ -190,7 +198,7 @@ export function VaccinationsCardContainer({
             <Badge
               variant="blue"
               title={intl.formatMessage({
-                id: 'health.vaccinations.directorativeOfHealth',
+                id: 'health.vaccinations.directorateOfHealth',
               })}
             />
             <Typography
@@ -228,7 +236,7 @@ export function VaccinationsCardContainer({
                       index % 2 === 0 ? theme.color.blue100 : theme.color.white,
                   }}
                 >
-                  <RowItem style={{ maxWidth: '5%' }}>
+                  <RowItem style={{ maxWidth: '6%' }}>
                     <Typography variant="body3">{index + 1}</Typography>
                   </RowItem>
                   <RowItem style={{ maxWidth: '20%' }}>
@@ -241,6 +249,7 @@ export function VaccinationsCardContainer({
                   <RowItem style={{ maxWidth: '25%' }}>
                     <Typography variant="body3">
                       {convertAgeToString(
+                        locale,
                         vaccination?.age?.months,
                         vaccination.age?.years,
                       )}
