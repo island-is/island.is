@@ -1,9 +1,9 @@
-import { GeneralCardSkeleton, Heading, Typography } from '@ui'
+import { GeneralCardSkeleton, Heading, TabButtons, Typography } from '@ui'
 import React, { useCallback, useState } from 'react'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import styled, { useTheme } from 'styled-components'
+import styled, { useTheme } from 'styled-components/native'
 
 import { useGetVaccinationsQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
@@ -15,7 +15,11 @@ const Host = styled(SafeAreaView)`
   margin-bottom: ${({ theme }) => theme.spacing[4]}px;
 `
 
-const Vaccinations = styled(View)`
+const Vaccinations = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[3]}px;
+`
+
+const Tabs = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
 `
 
@@ -32,12 +36,22 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+  const intl = useIntl()
   const [refetching, setRefetching] = useState(false)
+  const [selectedTab, setSelectedTab] = useState(0)
 
   const vaccinationsRes = useGetVaccinationsQuery()
 
-  const vaccinations =
-    vaccinationsRes.data?.healthDirectorateVaccinations.vaccinations ?? []
+  const vaccinations = vaccinationsRes.data?.healthDirectorateVaccinations
+    .vaccinations
+    ? selectedTab === 0
+      ? vaccinationsRes.data?.healthDirectorateVaccinations.vaccinations.filter(
+          (v) => v.isFeatured,
+        )
+      : vaccinationsRes.data?.healthDirectorateVaccinations.vaccinations.filter(
+          (v) => !v.isFeatured,
+        )
+    : []
 
   useConnectivityIndicator({
     componentId,
@@ -78,6 +92,24 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
               defaultMessage="Hér getur þú séð lista yfir bóluefni sem þú hefur fengið, stöðu bólusetningar og aðrar upplýsingar."
             />
           </Typography>
+          <Tabs>
+            <TabButtons
+              buttons={[
+                {
+                  title: intl.formatMessage({
+                    id: 'health.vaccinations.generalVaccinations',
+                  }),
+                },
+                {
+                  title: intl.formatMessage({
+                    id: 'health.vaccinations.otherVaccinations',
+                  }),
+                },
+              ]}
+              selectedTab={selectedTab}
+              setSelectedTab={setSelectedTab}
+            />
+          </Tabs>
           <Vaccinations>
             {vaccinationsRes.loading && !vaccinationsRes.data
               ? Array.from({ length: 5 }).map((_, index) => (
