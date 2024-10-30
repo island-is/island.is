@@ -9,10 +9,23 @@ export const general = defineMessages({
     id: 'ojoi.application:general.applicationName',
     defaultMessage: 'Stjórnartíðindi',
   },
+  draftStatusLabel: {
+    id: 'ojoi.application:general.draftStatusLabel',
+    defaultMessage: 'Í vinnslu hjá innsendanda',
+  },
+  submittedStatusLabel: {
+    id: 'ojoi.application:general.submittedStatusLabel',
+    defaultMessage: 'Í vinnslu hjá ritstjórn',
+  },
   ministryOfJustice: {
     id: 'ojoi.application:general.ministryOfJustice',
     defaultMessage: 'Dómsmálaráðuneytið',
   },
+  name: {
+    id: 'ojoi.application:general.name',
+    defaultMessage: 'Nafn',
+  },
+
   phoneNumber: {
     id: 'ojoi.application:general.phoneNumber',
     defaultMessage: 'Símanúmer',

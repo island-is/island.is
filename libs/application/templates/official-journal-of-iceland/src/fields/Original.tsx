@@ -1,6 +1,6 @@
 import { OJOIFieldBaseProps } from '../lib/types'
 import { ALLOWED_FILE_TYPES, ApplicationAttachmentType } from '../lib/constants'
-import { attachments } from '../lib/messages'
+import { original } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { InputFileUpload, Box } from '@island.is/island-ui/core'
 
@@ -15,13 +15,14 @@ export const Original = ({ application }: OJOIFieldBaseProps) => {
   return (
     <Box>
       <InputFileUpload
-        header={f(attachments.inputs.fileUpload.header)}
-        description={f(attachments.inputs.fileUpload.description)}
-        buttonLabel={f(attachments.inputs.fileUpload.buttonLabel)}
+        header={f(original.fileUpload.header)}
+        description={f(original.fileUpload.description)}
+        buttonLabel={f(original.fileUpload.buttonLabel)}
         fileList={files}
         accept={ALLOWED_FILE_TYPES}
         onChange={onChange}
         onRemove={onRemove}
+        multiple={false}
         defaultFileBackgroundColor={{
           background: 'blue100',
           border: 'blue200',
