@@ -72,7 +72,7 @@ export const TabButtons = ({
   }
 
   return (
-    <Host accessibilityRole="tabbar">
+    <Host accessibilityRole="tablist">
       <ActiveBackground
         buttonWidth={buttonWidth}
         style={{ transform: [{ translateX: translateX }] }}
