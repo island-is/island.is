@@ -83,6 +83,8 @@ const ChartComponentSourceDataKeyField = () => {
     },
   )
   const typeOfSource = manualData ? manualData['typeOfSource'] : null
+  const typeIsPieChart = sdk.entry.fields.type.getValue() === 'pie-cell'
+
   const externalSourceDataKey = manualData
     ? manualData['externalSourceDataKey']
     : ''
@@ -93,7 +95,7 @@ const ChartComponentSourceDataKeyField = () => {
   const [textInput, setTextInput] = useState(externalSourceDataKey)
 
   const [manualDataKeyValue, setManualDataKeyValue] = useState(
-    ManualDataKeyValues.Date,
+    typeIsPieChart ? ManualDataKeyValues.Category : ManualDataKeyValues.Date,
   )
 
   const componentKeyValue = sdk.ids.entry
@@ -101,6 +103,16 @@ const ChartComponentSourceDataKeyField = () => {
   useEffect(() => {
     sdk.window.startAutoResizer()
   }, [sdk.window])
+
+  useEffect(() => {
+    sdk.entry.fields.type.onValueChanged((type) => {
+      if (type === 'pie-cell') {
+        setManualDataKeyValue(ManualDataKeyValues.Category)
+      } else {
+        setManualDataKeyValue(ManualDataKeyValues.Date)
+      }
+    })
+  }, [sdk.entry.fields.type])
 
   useDebounce(
     () => {
@@ -167,9 +179,7 @@ const ChartComponentSourceDataKeyField = () => {
     }))
   }
 
-  const disableMoreThanOneItemOnPieChart =
-    sdk.entry.fields.type.getValue() === 'pie-cell' &&
-    (manualData?.categoryItems?.length > 0 || manualData?.dateItems?.length > 0)
+  const disableMoreThanOneItemOnPieChart = manualData?.categoryItems?.length > 0
 
   return (
     <>
@@ -178,7 +188,7 @@ const ChartComponentSourceDataKeyField = () => {
           id={SourceDataKeyValues.Manual}
           name="manual"
           value={SourceDataKeyValues.Manual}
-          isChecked={sourceDataKeyValue === 'manual'}
+          isChecked={sourceDataKeyValue === SourceDataKeyValues.Manual}
           onChange={() => setSourceDataKeyValue(SourceDataKeyValues.Manual)}
         >
           Manual
@@ -187,7 +197,9 @@ const ChartComponentSourceDataKeyField = () => {
           id={SourceDataKeyValues.ExternalSourceKey}
           name="externalSourceKey"
           value={SourceDataKeyValues.ExternalSourceKey}
-          isChecked={sourceDataKeyValue === 'externalSourceKey'}
+          isChecked={
+            sourceDataKeyValue === SourceDataKeyValues.ExternalSourceKey
+          }
           onChange={() =>
             setSourceDataKeyValue(SourceDataKeyValues.ExternalSourceKey)
           }
@@ -199,20 +211,25 @@ const ChartComponentSourceDataKeyField = () => {
         {sourceDataKeyValue === SourceDataKeyValues.Manual && (
           <>
             <Stack flexDirection="row">
-              <Radio
-                id={ManualDataKeyValues.Date}
-                name="date"
-                value={ManualDataKeyValues.Date}
-                isChecked={manualDataKeyValue === 'date'}
-                onChange={() => setManualDataKeyValue(ManualDataKeyValues.Date)}
-              >
-                Date
-              </Radio>
+              {!typeIsPieChart && (
+                <Radio
+                  id={ManualDataKeyValues.Date}
+                  name={ManualDataKeyValues.Date}
+                  value={ManualDataKeyValues.Date}
+                  isChecked={manualDataKeyValue === ManualDataKeyValues.Date}
+                  onChange={() =>
+                    setManualDataKeyValue(ManualDataKeyValues.Date)
+                  }
+                >
+                  Date
+                </Radio>
+              )}
+
               <Radio
                 id={ManualDataKeyValues.Category}
-                name="category"
+                name={ManualDataKeyValues.Category}
                 value={ManualDataKeyValues.Category}
-                isChecked={manualDataKeyValue === 'category'}
+                isChecked={manualDataKeyValue === ManualDataKeyValues.Category}
                 onChange={() =>
                   setManualDataKeyValue(ManualDataKeyValues.Category)
                 }
@@ -240,7 +257,6 @@ const ChartComponentSourceDataKeyField = () => {
                     }))
                   }}
                   startIcon={<PlusIcon />}
-                  isDisabled={disableMoreThanOneItemOnPieChart}
                 >
                   Add item
                 </Button>
