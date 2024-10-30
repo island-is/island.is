@@ -29,14 +29,14 @@ const opts: Record<string, ServiceConfig> = {
     clientName: 'portals-admin',
     serviceName: 'services-bff-portals-admin',
     key: 'stjornbord',
-    scopes: servicePortalScopes,
+    scopes: adminPortalScopes,
   },
   portalsAdmin: {
     bffName: 'services-bff',
     clientName: 'portals-my-pages',
     serviceName: 'services-bff-portals-my-pages',
     key: 'minarsidur',
-    scopes: adminPortalScopes,
+    scopes: servicePortalScopes,
   },
 }
 
@@ -137,126 +137,123 @@ const createService = (config: ServiceConfig) => {
     })
 }
 
-describe.each(servicesOpts)(
-  '$name BFF PortalEnv serialization',
-  ({ name, config }) => {
-    const sut = createService(config)
-    const { serviceName, clientName, bffName, key, scopes } = config
-    let result: SerializeSuccess<HelmService>
+describe.each(servicesOpts)('$name BFF serialization', ({ name, config }) => {
+  const sut = createService(config)
+  const { serviceName, clientName, bffName, key, scopes } = config
+  let result: SerializeSuccess<HelmService>
 
-    beforeEach(async () => {
-      result = (await generateOutputOne({
-        outputFormat: renderers.helm,
-        service: sut,
-        runtime: new Kubernetes(Dev),
-        env: Dev,
-      })) as SerializeSuccess<HelmService>
-    })
-    it('basic props', () => {
-      expect(result.serviceDef[0].enabled).toBe(true)
-      expect(result.serviceDef[0].namespace).toBe(clientName)
-    })
+  beforeEach(async () => {
+    result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Dev),
+      env: Dev,
+    })) as SerializeSuccess<HelmService>
+  })
+  it('basic props', () => {
+    expect(result.serviceDef[0].enabled).toBe(true)
+    expect(result.serviceDef[0].namespace).toBe(clientName)
+  })
 
-    it('image and repo', () => {
-      expect(result.serviceDef[0].image.repository).toBe(
-        `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${bffName}`,
-      )
-    })
+  it('image and repo', () => {
+    expect(result.serviceDef[0].image.repository).toBe(
+      `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${bffName}`,
+    )
+  })
 
-    it('command and args', () => {
-      expect(result.serviceDef[0].command).toStrictEqual(['node'])
-      expect(result.serviceDef[0].args).toStrictEqual(['main.js'])
-    })
-    it('network policies', () => {
-      expect(result.serviceDef[0].grantNamespaces).toStrictEqual([])
-      expect(result.serviceDef[0].grantNamespacesEnabled).toBe(false)
-    })
+  it('command and args', () => {
+    expect(result.serviceDef[0].command).toStrictEqual(['node'])
+    expect(result.serviceDef[0].args).toStrictEqual(['main.js'])
+  })
+  it('network policies', () => {
+    expect(result.serviceDef[0].grantNamespaces).toStrictEqual([])
+    expect(result.serviceDef[0].grantNamespacesEnabled).toBe(false)
+  })
 
-    it('resources', () => {
-      expect(result.serviceDef[0].resources).toStrictEqual({
-        limits: {
-          cpu: '400m',
-          memory: '512Mi',
-        },
-        requests: {
-          cpu: '100m',
-          memory: '256Mi',
-        },
-      })
+  it('resources', () => {
+    expect(result.serviceDef[0].resources).toStrictEqual({
+      limits: {
+        cpu: '400m',
+        memory: '512Mi',
+      },
+      requests: {
+        cpu: '100m',
+        memory: '256Mi',
+      },
     })
-    it('replica count', () => {
-      expect(result.serviceDef[0].replicaCount).toStrictEqual({
-        min: 2,
-        max: 3,
-        default: 2,
-      })
+  })
+  it('replica count', () => {
+    expect(result.serviceDef[0].replicaCount).toStrictEqual({
+      min: 2,
+      max: 3,
+      default: 2,
     })
+  })
 
-    it('environment variables', () => {
-      expect(result.serviceDef[0].env).toEqual({
-        IDENTITY_SERVER_CLIENT_SCOPES: json(scopes),
-        IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-${key}`,
-        IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is',
-        // BFF
-        BFF_NAME: key,
-        BFF_CLIENT_KEY_PATH: `/${key}`,
-        BFF_PAR_SUPPORT_ENABLED: 'false',
-        BFF_ALLOWED_REDIRECT_URIS: json(['https://beta.dev01.devland.is']),
-        BFF_CLIENT_BASE_URL: 'https://beta.dev01.devland.is',
-        BFF_LOGOUT_REDIRECT_URI: 'https://beta.dev01.devland.is',
-        BFF_CALLBACKS_BASE_PATH: `https://beta.dev01.devland.is/${key}/bff/callbacks`,
-        BFF_PROXY_API_ENDPOINT:
-          'http://web-api.islandis.svc.cluster.local/api/graphql',
-        BFF_ALLOWED_EXTERNAL_API_URLS: json(['https://api.dev01.devland.is']),
-        BFF_CACHE_USER_PROFILE_TTL_MS: (
-          ONE_HOUR_IN_MS - FIVE_SECONDS_IN_MS
-        ).toString(),
-        BFF_LOGIN_ATTEMPT_TTL_MS: ONE_WEEK_IN_MS.toString(),
-        NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init',
-        SERVERSIDE_FEATURES_ON: '',
-        LOG_LEVEL: 'info',
-        REDIS_URL_NODE_01: 'b',
-      })
+  it('environment variables', () => {
+    expect(result.serviceDef[0].env).toEqual({
+      IDENTITY_SERVER_CLIENT_SCOPES: json(scopes),
+      IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-${key}`,
+      IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is',
+      // BFF
+      BFF_NAME: key,
+      BFF_CLIENT_KEY_PATH: `/${key}`,
+      BFF_PAR_SUPPORT_ENABLED: 'false',
+      BFF_ALLOWED_REDIRECT_URIS: json(['https://beta.dev01.devland.is']),
+      BFF_CLIENT_BASE_URL: 'https://beta.dev01.devland.is',
+      BFF_LOGOUT_REDIRECT_URI: 'https://beta.dev01.devland.is',
+      BFF_CALLBACKS_BASE_PATH: `https://beta.dev01.devland.is/${key}/bff/callbacks`,
+      BFF_PROXY_API_ENDPOINT:
+        'http://web-api.islandis.svc.cluster.local/api/graphql',
+      BFF_ALLOWED_EXTERNAL_API_URLS: json(['https://api.dev01.devland.is']),
+      BFF_CACHE_USER_PROFILE_TTL_MS: (
+        ONE_HOUR_IN_MS - FIVE_SECONDS_IN_MS
+      ).toString(),
+      BFF_LOGIN_ATTEMPT_TTL_MS: ONE_WEEK_IN_MS.toString(),
+      NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init',
+      SERVERSIDE_FEATURES_ON: '',
+      LOG_LEVEL: 'info',
+      REDIS_URL_NODE_01: 'b',
     })
+  })
 
-    it('secrets', () => {
-      expect(result.serviceDef[0].secrets).toEqual({
-        BFF_TOKEN_SECRET_BASE64: `/k8s/${bffName}/${clientName}/BFF_TOKEN_SECRET_BASE64`,
-        IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${bffName}/${clientName}/IDENTITY_SERVER_CLIENT_SECRET`,
-        CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
-      })
+  it('secrets', () => {
+    expect(result.serviceDef[0].secrets).toEqual({
+      BFF_TOKEN_SECRET_BASE64: `/k8s/${bffName}/${clientName}/BFF_TOKEN_SECRET_BASE64`,
+      IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${bffName}/${clientName}/IDENTITY_SERVER_CLIENT_SECRET`,
+      CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
     })
+  })
 
-    it('service account', () => {
-      expect(result.serviceDef[0].podSecurityContext).toEqual({
-        fsGroup: 65534,
-      })
-      expect(result.serviceDef[0].serviceAccount).toEqual({
+  it('service account', () => {
+    expect(result.serviceDef[0].podSecurityContext).toEqual({
+      fsGroup: 65534,
+    })
+    expect(result.serviceDef[0].serviceAccount).toEqual({
+      annotations: {
+        'eks.amazonaws.com/role-arn': `arn:aws:iam::111111:role/${bffName}`,
+      },
+      create: true,
+      name: bffName,
+    })
+  })
+
+  it('ingress', () => {
+    expect(result.serviceDef[0].ingress).toEqual({
+      'primary-alb': {
         annotations: {
-          'eks.amazonaws.com/role-arn': `arn:aws:iam::111111:role/${bffName}`,
+          'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+          'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          'kubernetes.io/ingress.class': 'nginx-external-alb',
+          'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
-        create: true,
-        name: bffName,
-      })
-    })
-
-    it('ingress', () => {
-      expect(result.serviceDef[0].ingress).toEqual({
-        'primary-alb': {
-          annotations: {
-            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-            'kubernetes.io/ingress.class': 'nginx-external-alb',
-            'nginx.ingress.kubernetes.io/service-upstream': 'true',
+        hosts: [
+          {
+            host: 'beta.dev01.devland.is',
+            paths: [`/${key}/bff`],
           },
-          hosts: [
-            {
-              host: 'beta.dev01.devland.is',
-              paths: [`/${key}/bff`],
-            },
-          ],
-        },
-      })
+        ],
+      },
     })
-  },
-)
+  })
+})
