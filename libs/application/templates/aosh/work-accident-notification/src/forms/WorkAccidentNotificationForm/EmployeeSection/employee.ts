@@ -21,6 +21,7 @@ import {
 } from '@island.is/clients/work-accident-ver'
 import { getAllCountryCodes } from '@island.is/shared/utils'
 import { getMaxDate, getMinDate } from '../../../utils'
+import { EMPLOYMENT_STATUS } from '../../../shared/constants'
 
 export const employeeSubSection = (index: number) =>
   buildSubSection({
@@ -224,7 +225,7 @@ export const employeeSubSection = (index: number) =>
               getValueViaPath(
                 formValue,
                 `employee[${index}].employmentStatus`,
-              ) === '4', // Code for 'starfsmannaleiga'
+              ) === EMPLOYMENT_STATUS.TEMP_AGENCY,
             required: true,
           }),
           buildDescriptionField({

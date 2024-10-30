@@ -41,7 +41,7 @@ export const getDateAndTime = (
   return finalDate
 }
 
-export const dateIsWithing36Hours = (
+export const dateIsWithin36Hours = (
   application: Application,
   date: string,
   time: string,
