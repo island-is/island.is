@@ -144,11 +144,14 @@ export function VaccinationsCard({
       message={vaccination.name}
       icon={chevronDown}
       value={
-        <Badge
-          variant={mapStatusToBadge(vaccination.status ?? undefined)}
-          title={vaccination.statusName!}
-          outlined
-        />
+        vaccination.statusName &&
+        vaccination.status && (
+          <Badge
+            variant={mapStatusToBadge(vaccination.status)}
+            title={vaccination.statusName}
+            outlined
+          />
+        )
       }
       onPress={() => {
         setOpen((p) => !p)
