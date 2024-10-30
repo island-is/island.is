@@ -33,7 +33,10 @@ import {
   VehicleDebtStatus,
   VehicleServiceFjsV1Client,
 } from '@island.is/clients/vehicle-service-fjs-v1'
-import { VehicleSearchApi } from '@island.is/clients/vehicles'
+import {
+  CurrentVehiclesWithMilageAndNextInspDto,
+  VehicleSearchApi,
+} from '@island.is/clients/vehicles'
 import {
   MileageReadingApi,
   MileageReadingDto,
@@ -42,7 +45,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { applicationCheck } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
@@ -75,7 +78,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   async getCurrentVehiclesWithOwnerchangeChecks({
     auth,
   }: TemplateApiModuleActionProps) {
-    // Check total vehicles
+    // Get total count of vehicles
     const countResult =
       (
         await this.vehiclesApiWithAuth(
@@ -88,21 +91,9 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           pageSize: 1,
         })
       ).totalRecords || 0
-    if (countResult && countResult > 20) {
-      return {
-        totalRecords: countResult,
-        vehicles: [],
-      }
-    }
-    const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
-      persidNo: auth.nationalId,
-      showOwned: true,
-      showCoowned: false,
-      showOperated: false,
-    })
 
     // Validate that user has at least 1 vehicle
-    if (!result || !result.length) {
+    if (!countResult) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.vehiclesEmptyListOwner,
@@ -112,51 +103,86 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       )
     }
 
+    // A. vehicleCount > 20
+    // Display search box, validate vehicle when permno is entered
+    if (countResult > 20) {
+      return {
+        totalRecords: countResult,
+        vehicles: [],
+      }
+    }
+
+    // Get all vehicles
+    const result = await this.vehiclesApiWithAuth(
+      auth,
+    ).currentvehicleswithmileageandinspGet({
+      showOwned: true,
+      showCoowned: false,
+      showOperated: false,
+    })
+
+    const resultData = result.data || []
+
+    const vehicles = await Promise.all(
+      resultData.map(async (vehicle) => {
+        // B. 20 >= vehicleCount > 5
+        // Display dropdown, validate vehicle when selected in dropdown
+        if (countResult > 5) {
+          return this.mapVehicle(auth, vehicle, false)
+        }
+
+        // C. vehicleCount >= 5
+        // Display radio buttons, validate all vehicle now
+        return this.mapVehicle(auth, vehicle, true)
+      }),
+    )
+
     return {
       totalRecords: countResult,
-      vehicles: await Promise.all(
-        result?.map(async (vehicle) => {
-          let validation: OwnerChangeValidation | undefined
-          let debtStatus: VehicleDebtStatus | undefined
-          let mileageReadings: MileageReadingDto[] | undefined
+      vehicles: vehicles,
+    }
+  }
 
-          // Only validate if fewer than 5 items
-          if (result.length <= 5) {
-            // Get debt status
-            debtStatus =
-              await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
-                auth,
-                vehicle.permno || '',
-              )
+  private async mapVehicle(
+    auth: User,
+    vehicle: CurrentVehiclesWithMilageAndNextInspDto,
+    fetchExtraData: boolean,
+  ) {
+    let validation: OwnerChangeValidation | undefined
+    let debtStatus: VehicleDebtStatus | undefined
+    let mileageReadings: MileageReadingDto[] | undefined
 
-            // Get validation
-            validation =
-              await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
-                auth,
-                vehicle.permno || '',
-              )
-            mileageReadings = await this.mileageReadingApiWithAuth(
-              auth,
-            ).getMileageReading({ permno: vehicle.permno || '' })
-          }
+    if (fetchExtraData) {
+      // Get debt status
+      debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+        auth,
+        vehicle.permno || '',
+      )
 
-          const electricFuelCodes =
-            this.vehicleCodetablesClient.getElectricFueldCodes()
+      // Get owner change validation
+      validation =
+        await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
+          auth,
+          vehicle.permno || '',
+        )
 
-          return {
-            permno: vehicle.permno || undefined,
-            make: vehicle.make || undefined,
-            color: vehicle.color || undefined,
-            role: vehicle.role || undefined,
-            requireMileage: electricFuelCodes.includes(vehicle.fuelCode || ''),
-            mileageReading: (mileageReadings?.[0]?.mileage ?? '').toString(),
-            isDebtLess: debtStatus?.isDebtLess,
-            validationErrorMessages: validation?.hasError
-              ? validation.errorMessages
-              : null,
-          }
-        }),
-      ),
+      // Get mileage reading
+      mileageReadings = await this.mileageReadingApiWithAuth(
+        auth,
+      ).getMileageReading({ permno: vehicle.permno || '' })
+    }
+
+    return {
+      permno: vehicle.permno || undefined,
+      make: vehicle.make || undefined,
+      color: vehicle.colorName || undefined,
+      role: vehicle.role || undefined,
+      requireMileage: vehicle.requiresMileageRegistration,
+      mileageReading: (mileageReadings?.[0]?.mileage ?? '').toString(),
+      isDebtLess: debtStatus?.isDebtLess,
+      validationErrorMessages: validation?.hasError
+        ? validation.errorMessages
+        : null,
     }
   }
 
