@@ -294,7 +294,8 @@ const transitionIndictmentCase = (
     )
   }
 
-  return rule.to as CaseStates
+  // Since the state machine is a global constant, we spread the result before returning it to avoid accidental mutations
+  return { ...rule.to } as CaseStates
 }
 
 const transitionRequestCase = (
@@ -324,7 +325,8 @@ const transitionRequestCase = (
     )
   }
 
-  return rule.to as CaseStates
+  // Since the state machine is a global constant, we spread the result before returning it to avoid accidental mutations
+  return { ...rule.to } as CaseStates
 }
 
 export const transitionCase = function (

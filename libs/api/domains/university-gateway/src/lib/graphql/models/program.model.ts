@@ -143,48 +143,6 @@ export class UniversityGatewayProgramDetails extends UniversityGatewayProgram {
   extraApplicationFields!: UniversityGatewayProgramExtraApplicationField[]
 }
 
-@ObjectType('UniversityGatewayProgramCourse')
-class UniversityGatewayProgramCourse {
-  @Field()
-  id!: string
-
-  @Field()
-  externalId!: string
-
-  @Field()
-  nameIs!: string
-
-  @Field()
-  nameEn!: string
-
-  @Field()
-  credits!: number
-
-  @Field({ nullable: true })
-  semesterYear?: number
-
-  @Field({ nullable: true })
-  semesterYearNumber?: number
-
-  @Field()
-  semesterSeason!: string
-
-  @Field({ nullable: true })
-  descriptionIs?: string
-
-  @Field({ nullable: true })
-  descriptionEn?: string
-
-  @Field({ nullable: true })
-  externalUrlIs?: string
-
-  @Field({ nullable: true })
-  externalUrlEn?: string
-
-  @Field()
-  requirement!: string
-}
-
 @ObjectType('UniversityGatewayProgramExtraApplicationField')
 class UniversityGatewayProgramExtraApplicationField {
   @Field()

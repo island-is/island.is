@@ -1,6 +1,5 @@
 import yargs from 'yargs'
 import AWS from 'aws-sdk'
-import { Kubernetes } from './dsl/kubernetes-runtime'
 import { Envs } from './environments'
 import {
   ExcludedFeatureDeploymentServices,
@@ -40,8 +39,8 @@ interface Arguments {
 const writeToOutput = async (data: string, output?: string) => {
   if (output) {
     if (output.startsWith('s3://')) {
-      const Bucket = output.substr(5).split('/')[0]
-      const Key = output.substr(5).split(/\/(.+)/)[1]
+      const Bucket = output.substring(5).split('/')[0]
+      const Key = output.substring(5).split(/\/(.+)/)[1]
       const objectParams = {
         Bucket,
         Key,
@@ -54,9 +53,9 @@ const writeToOutput = async (data: string, output?: string) => {
       const s3 = new AWS.S3(config)
       try {
         await s3.putObject(objectParams).promise()
-        console.log(`Successfully uploaded data to ${output}`)
+        logger.info(`Successfully uploaded data to ${output}`)
       } catch (err) {
-        console.log('Error', err)
+        logger.error('Error', err)
       }
     }
   } else {

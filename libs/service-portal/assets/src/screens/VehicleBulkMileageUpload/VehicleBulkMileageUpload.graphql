@@ -2,5 +2,6 @@ mutation vehicleBulkMileagePost($input: PostVehicleBulkMileageInput!) {
   vehicleBulkMileagePost(input: $input) {
     requestId
     errorMessage
+    errorCode
   }
 }
