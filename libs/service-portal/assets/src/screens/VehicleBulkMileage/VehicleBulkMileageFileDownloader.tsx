@@ -1,8 +1,7 @@
-import { Button } from '@island.is/island-ui/core'
+import { DropdownMenu } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { vehicleMessage } from '../../lib/messages'
 import { downloadFile } from '@island.is/service-portal/core'
-import { useState } from 'react'
 
 interface Props {
   onError: (error: string) => void
@@ -10,39 +9,33 @@ interface Props {
 
 const VehicleBulkMileageFileDownloader = ({ onError }: Props) => {
   const { formatMessage } = useLocale()
-  const [isLoading, setIsLoading] = useState(false)
 
-  const downloadExampleFile = async () => {
-    setIsLoading(true)
+  const downloadExampleFile = async (type: 'csv' | 'xlsx') => {
     try {
       downloadFile(
         `magnskraning_kilometrastodu_example`,
-        ['permno', 'mileage'],
+        ['bilnumer', 'kilometrastada'],
         [
           ['ABC001', 10000],
           ['DEF002', 99999],
         ],
-        'csv',
+        type,
       )
     } catch (error) {
       onError(error)
-    } finally {
-      setIsLoading(false)
     }
   }
 
   return (
-    <Button
-      colorScheme="default"
-      icon="download"
-      iconType="outline"
-      size="default"
-      variant="utility"
-      onClick={downloadExampleFile}
-      loading={isLoading}
-    >
-      {formatMessage(vehicleMessage.downloadTemplate)}
-    </Button>
+    <DropdownMenu
+      icon="ellipsisHorizontal"
+      menuLabel={formatMessage(vehicleMessage.downloadTemplate)}
+      items={(['csv', 'xlsx'] as const).map((type) => ({
+        title: `.${type}`,
+        onClick: () => downloadExampleFile(type),
+      }))}
+      title={formatMessage(vehicleMessage.downloadTemplate)}
+    />
   )
 }
 
