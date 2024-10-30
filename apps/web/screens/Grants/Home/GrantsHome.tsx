@@ -41,7 +41,6 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
 
   const baseUrl = linkResolver('styrkjatorg', [], locale).href
   const searchUrl = linkResolver('styrkjatorgsearch', [], locale).href
-  const categoriesUrl = linkResolver('ojoicategories', [], locale).href
 
   const breadcrumbItems = [
     {
@@ -70,27 +69,28 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
           searchUrl={searchUrl}
           shortcutsTitle={formatMessage(m.home.mostVisited)}
           featuredImage={formatMessage(m.home.featuredImage)}
+          //TODO!!!
           quickLinks={[
             {
               title: 'Listamannalaun',
-              href: searchUrl + '?deild=a-deild',
+              href: searchUrl + '?category=menning-og-listir',
             },
             {
               title: 'Barnamenningarsjóður',
-              href: searchUrl + '?deild=b-deild',
+              href: searchUrl + '?category=nam-og-kennsla ',
             },
             {
               title: 'Tónlistarsjóður',
-              href: searchUrl + '?deild=c-deild',
+              href: searchUrl + '?category=nyskopun',
             },
             {
               title: 'Rannís',
-              href: searchUrl + '?malaflokkur=grindavik',
+              href: searchUrl + '?organization=rannis',
               variant: 'purple',
             },
             {
               title: 'Erasmus',
-              href: searchUrl + '?malaflokkur=gjaldskra',
+              href: searchUrl + '?organization=erasmus',
               variant: 'purple',
             },
           ]}
@@ -122,7 +122,7 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
               <Text variant="h3">
                 {formatMessage(m.home.popularCategories)}
               </Text>
-              <ArrowLink href={categoriesUrl}>
+              <ArrowLink href={searchUrl}>
                 {formatMessage(m.home.allGrants)}
               </ArrowLink>
             </Box>
@@ -136,9 +136,9 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
                   paddingBottom={3}
                 >
                   <CategoryCard
-                    href={`${categoriesUrl}?yfirflokkur=${c.slug}`}
+                    href={`${searchUrl}?category=${c.slug}`}
                     heading={c.title}
-                    text={'Flokka lýsing'}
+                    text={'Lýsing á flokk'}
                   />
                 </GridColumn>
               ))}

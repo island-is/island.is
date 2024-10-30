@@ -68,9 +68,9 @@ export const GrantsSearchResultsFilter = ({
             }}
             categories={[
               {
-                id: 'statuses',
+                id: 'status',
                 label: 'Staða umsóknar',
-                selected: searchState?.['statuses'] ?? [],
+                selected: searchState?.['status'] ?? [],
                 filters: [
                   {
                     value: 'open',
@@ -92,9 +92,9 @@ export const GrantsSearchResultsFilter = ({
               },
               categoryFilters
                 ? {
-                    id: 'categories',
+                    id: 'category',
                     label: 'Flokkur',
-                    selected: searchState?.['categories'] ?? [],
+                    selected: searchState?.['category'] ?? [],
                     filters: categoryFilters.map((t) => ({
                       value: t.slug,
                       label: t.title,
@@ -103,9 +103,9 @@ export const GrantsSearchResultsFilter = ({
                 : undefined,
               typeFilters
                 ? {
-                    id: 'types',
+                    id: 'type',
                     label: 'Tegund',
-                    selected: searchState?.['types'] ?? [],
+                    selected: searchState?.['type'] ?? [],
                     filters: typeFilters.map((t) => ({
                       value: t.slug,
                       label: t.title,
@@ -113,10 +113,10 @@ export const GrantsSearchResultsFilter = ({
                   }
                 : undefined,
               {
-                id: 'organizations',
+                id: 'organization',
                 label: 'Stofnun',
 
-                selected: searchState?.['organizations'] ?? [],
+                selected: searchState?.['organization'] ?? [],
                 filters: [
                   {
                     value: 'rannis',

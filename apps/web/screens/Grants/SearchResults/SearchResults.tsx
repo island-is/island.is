@@ -47,10 +47,10 @@ import { GrantsSearchResultsFilter } from './SearchResultsFilter'
 export interface SearchState {
   page?: number
   query?: string
-  statuses?: Array<string>
-  categories?: Array<string>
-  types?: Array<string>
-  organizations?: Array<string>
+  status?: Array<string>
+  category?: Array<string>
+  type?: Array<string>
+  organization?: Array<string>
 }
 
 const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
@@ -87,10 +87,10 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     setSearchState({
       page: page ? Number.parseInt(page) : undefined,
       query: searchParams.get('query') ?? undefined,
-      statuses: statuses.length ? statuses : undefined,
-      categories: categories.length ? categories : undefined,
-      types: types.length ? types : undefined,
-      organizations: organizations.length ? organizations : undefined,
+      status: statuses.length ? statuses : undefined,
+      category: categories.length ? categories : undefined,
+      type: types.length ? types : undefined,
+      organization: organizations.length ? organizations : undefined,
     })
   }, [])
 
@@ -124,14 +124,14 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     getGrants({
       variables: {
         input: {
-          categories: searchState?.categories,
+          categories: searchState?.category,
           lang: locale,
-          organizations: searchState?.organizations,
+          organizations: searchState?.organization,
           page: searchState?.page,
           search: searchState?.query,
           size: 8,
-          statuses: searchState?.statuses,
-          types: searchState?.types,
+          statuses: searchState?.status,
+          types: searchState?.type,
         },
       },
     })
@@ -194,10 +194,10 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     setSearchState({
       page: undefined,
       query: undefined,
-      statuses: undefined,
-      categories: undefined,
-      types: undefined,
-      organizations: undefined,
+      status: undefined,
+      category: undefined,
+      type: undefined,
+      organization: undefined,
     })
     router.replace(currentUrl, {}, { shallow: true })
   }
