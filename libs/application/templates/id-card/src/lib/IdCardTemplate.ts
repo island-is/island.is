@@ -58,19 +58,9 @@ export const determineMessageFromApplicationAnswers = (
 
 const reviewStatePendingAction = (
   application: Application,
-  nationalId: string,
+  role: ApplicationRole,
 ): PendingAction => {
-  const firstGuardianNationalId = getValueViaPath(
-    application.answers,
-    'firstGuardianInformation.nationalId',
-    undefined,
-  ) as string | undefined
-
-  if (
-    nationalId &&
-    firstGuardianNationalId !== nationalId &&
-    !hasReviewerApproved(application.answers)
-  ) {
+  if (role === Roles.ASSIGNEE && !hasReviewerApproved(application.answers)) {
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
       content: corePendingActionMessages.youNeedToReviewDescription,
@@ -282,6 +272,7 @@ const IdCardTemplate: ApplicationTemplate<
                 import('../forms/Approved').then((val) =>
                   Promise.resolve(val.Approved),
                 ),
+              read: 'all',
             },
             {
               id: Roles.ASSIGNEE,
@@ -289,6 +280,7 @@ const IdCardTemplate: ApplicationTemplate<
                 import('../forms/Approved').then((val) =>
                   Promise.resolve(val.Approved),
                 ),
+              read: 'all',
             },
           ],
           actionCard: {
