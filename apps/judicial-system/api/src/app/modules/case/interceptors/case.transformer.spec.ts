@@ -593,6 +593,29 @@ describe('getAppealInfo', () => {
     })
   })
 
+  it('should transform appeal state and dates if appeal data does not match up', () => {
+    const theCase = {
+      type: CaseType.CUSTODY,
+      rulingDate: '2022-06-15T19:50:08.033Z',
+      appealState: CaseAppealState.APPEALED,
+      accusedAppealDecision: CaseAppealDecision.ACCEPT,
+      prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+      accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+      prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+    } as Case
+
+    const appealInfo = getAppealInfo(theCase)
+
+    expect(appealInfo).toEqual({
+      canBeAppealed: false,
+      hasBeenAppealed: false,
+      appealedDate: undefined,
+      appealDeadline: '2022-06-18T19:50:08.033Z',
+      canDefenderAppeal: false,
+      canProsecutorAppeal: false,
+    })
+  })
+
   const rulingDate = new Date().toISOString()
 
   Object.values(CaseAppealDecision).forEach((decision) => {
@@ -628,29 +651,6 @@ describe('getAppealInfo', () => {
       const appealInfo = getAppealInfo(theCase)
 
       expect(appealInfo).toHaveProperty('canDefenderAppeal', expected)
-    })
-  })
-
-  it('should transform appeal state and dates if appeal data does not match up', () => {
-    const theCase = {
-      type: CaseType.CUSTODY,
-      rulingDate: '2022-06-15T19:50:08.033Z',
-      appealState: CaseAppealState.APPEALED,
-      accusedAppealDecision: CaseAppealDecision.ACCEPT,
-      prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
-      accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
-      prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
-    } as Case
-
-    const appealInfo = getAppealInfo(theCase)
-
-    expect(appealInfo).toEqual({
-      canBeAppealed: false,
-      hasBeenAppealed: false,
-      appealedDate: undefined,
-      appealDeadline: '2022-06-18T19:50:08.033Z',
-      canDefenderAppeal: false,
-      canProsecutorAppeal: false,
     })
   })
 })
