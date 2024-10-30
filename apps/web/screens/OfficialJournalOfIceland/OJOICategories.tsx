@@ -162,7 +162,7 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
 
   const breadcrumbItems = [
     {
-      title: 'Ísland.is',
+      title: formatMessage(m.breadcrumb.frontpage),
       href: linkResolver('homepage', [], locale).href,
     },
     {
@@ -170,7 +170,7 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
       href: baseUrl,
     },
     {
-      title: 'Málaflokkar',
+      title: formatMessage(m.categories.breadcrumbTitle),
     },
   ]
 

@@ -250,6 +250,11 @@ export const m = defineMessages({
     defaultMessage: 'Umsjónaraðilar:',
     description: '',
   },
+  downloadPdf: {
+    id: 'sp.signatureCollection:downloadPdf',
+    defaultMessage: 'Sækja skýrslu',
+    description: '',
+  },
   copyLink: {
     id: 'sp.signatureCollection:copyLink',
     defaultMessage: 'Afrita tengil',
@@ -354,6 +359,26 @@ export const m = defineMessages({
   paperSigneeError: {
     id: 'sp.signatureCollection:paperSigneeError',
     defaultMessage: 'Ekki tókst að skrá meðmæli',
+    description: '',
+  },
+  editPaperNumber: {
+    id: 'sp.signatureCollection:editPaperNumber',
+    defaultMessage: 'Breyta blaðsíðunúmeri',
+    description: '',
+  },
+  editPaperNumberSuccess: {
+    id: 'sp.signatureCollection:editPaperNumberSuccess',
+    defaultMessage: 'Tókst að breyta blaðsíðunúmeri',
+    description: '',
+  },
+  editPaperNumberError: {
+    id: 'sp.signatureCollection:editPaperNumberError',
+    defaultMessage: 'Ekki tókst að breyta blaðsíðunúmeri',
+    description: '',
+  },
+  saveEditPaperNumber: {
+    id: 'sp.signatureCollection:saveEditPaperNumber',
+    defaultMessage: 'Uppfæra blaðsíðunúmer',
     description: '',
   },
 

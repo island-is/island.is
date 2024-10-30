@@ -21,6 +21,7 @@ import {
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
+  VERDICT_APPEAL_WINDOW_DAYS,
 } from '@island.is/judicial-system/types'
 
 import { getCasesQueryFilter } from '../cases.filter'
@@ -389,7 +390,7 @@ describe('getCasesQueryFilter', () => {
             [Op.notIn]: Sequelize.literal(`
             (SELECT case_id
               FROM defendant
-              WHERE (verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '28 days'))
+              WHERE (verdict_appeal_date IS NOT NULL OR verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '${VERDICT_APPEAL_WINDOW_DAYS} days'))
           `),
           },
         },
@@ -459,7 +460,7 @@ describe('getCasesQueryFilter', () => {
                         [Op.in]: Sequelize.literal(`
                       (SELECT case_id
                         FROM defendant
-                        WHERE defender_national_id in ('${user.nationalId}', '${user.nationalId}'))
+                        WHERE defender_national_id in ('${user.nationalId}', '${user.nationalId}') and is_defender_choice_confirmed = true)
                     `),
                       },
                     },
@@ -468,7 +469,7 @@ describe('getCasesQueryFilter', () => {
                         [Op.in]: Sequelize.literal(`
                       (SELECT case_id
                         FROM civil_claimant
-                        WHERE has_spokesperson = true AND spokesperson_national_id in ('${user.nationalId}', '${user.nationalId}'))
+                        WHERE has_spokesperson = true AND spokesperson_national_id in ('${user.nationalId}', '${user.nationalId}') and is_spokesperson_confirmed = true)
                     `),
                       },
                     },

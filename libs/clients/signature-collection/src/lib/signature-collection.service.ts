@@ -23,6 +23,7 @@ import { mapCandidate } from './types/candidate.dto'
 import { Slug } from './types/slug.dto'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
+import { ListSummary, mapListSummary } from './types/areaSummaryReport.dto'
 type Api = MedmaelalistarApi | MedmaelasofnunApi | MedmaeliApi | FrambodApi
 
 @Injectable()
@@ -560,5 +561,35 @@ export class SignatureCollectionClientService {
         nationalId: u.kennitala ?? '',
       })) ?? []
     )
+  }
+
+  async getListOverview(auth: User, listId: string): Promise<ListSummary> {
+    const summary = await this.getApiWithAuth(
+      this.listsApi,
+      auth,
+    ).medmaelalistarIDInfoGet({
+      iD: parseInt(listId),
+    })
+
+    return mapListSummary(summary)
+  }
+
+  async updateSignaturePageNumber(
+    auth: Auth,
+    signatureId: string,
+    pageNumber: number,
+  ): Promise<Success> {
+    try {
+      const res = await this.getApiWithAuth(
+        this.signatureApi,
+        auth,
+      ).medmaeliIDUpdateBlsPatch({
+        iD: parseInt(signatureId),
+        blsNr: pageNumber,
+      })
+      return { success: res.bladsidaNr === pageNumber }
+    } catch {
+      return { success: false }
+    }
   }
 }

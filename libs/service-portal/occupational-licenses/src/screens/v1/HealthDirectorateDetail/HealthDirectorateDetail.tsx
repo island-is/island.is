@@ -22,7 +22,6 @@ export const EducationDetail = () => {
   const { id } = useParams() as UseParams
   useNamespaces('sp.occupational-licenses')
   const user = useUserInfo()
-  const birthday = user.profile.dateOfBirth
   const { formatDateFns, formatMessage } = useLocale()
 
   const { data, loading, error } = useGetHealthDirectorateLicenseByIdQuery({
@@ -61,7 +60,6 @@ export const EducationDetail = () => {
           ? license.number
           : undefined
       }
-      dateOfBirth={birthday ? formatDateFns(birthday, 'dd.MM.yyyy') : undefined}
       profession={license.profession}
       licenseType={license.type}
       dateOfIssue={
