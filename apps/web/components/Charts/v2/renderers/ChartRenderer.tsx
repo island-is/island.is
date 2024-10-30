@@ -39,17 +39,6 @@ type ChartProps = {
   slice: IChart
 }
 
-const transformPieChartData = (items: any) => {
-  return {
-    statisticsForHeader: items
-      .flatMap((item: { categoryItems: any }) => item.categoryItems)
-      .map((item: { key: string; value: string }) => ({
-        key: item.key,
-        value: parseFloat(item.value) || 0,
-      })),
-  }
-}
-
 const getData = (slice: IChart, queryResult: DataItem[]) => {
   const base = slice.sourceData ? JSON.parse(slice.sourceData) : queryResult
 
@@ -66,7 +55,15 @@ const getData = (slice: IChart, queryResult: DataItem[]) => {
     const componentType = slice.components[0]?.type
 
     if (componentType === 'pie-cell') {
-      return [transformPieChartData(values)]
+      const pieData = {
+        statisticsForHeader: values
+          .flatMap((item: { categoryItems: [] }) => item.categoryItems)
+          .map((item: { key: string; value: string }) => ({
+            key: item.key,
+            value: parseFloat(item.value) || 0,
+          })),
+      }
+      return [pieData]
     }
 
     const allItems = values.flatMap((item) =>
