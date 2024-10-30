@@ -1,13 +1,10 @@
 import { ServiceBuilder, json, service } from '../../../../infra/src/dsl/dsl'
+import { BffInfraServices } from '../../../../infra/src/dsl/types/input-types'
 
 const bffName = 'services-bff'
 const clientName = 'portals-my-pages'
 const serviceName = `${bffName}-${clientName}`
 const key = 'minarsidur'
-
-export type BffInfraServices = {
-  api: ServiceBuilder<'api'>
-}
 
 export const serviceSetup = (
   services: BffInfraServices,

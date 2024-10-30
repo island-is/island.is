@@ -92,7 +92,7 @@ export type MountedFile = { filename: string; env: string }
 export type PortalKeys = 'stjornbord' | 'minarsidur'
 
 export interface BffInfraServices {
-  api: ServiceBuilder<string> | string
+  api: ServiceBuilder<string>
 }
 
 export type ServiceDefinitionCore = {
@@ -154,9 +154,11 @@ export interface Ingress {
   }
   paths: string[]
   public?: boolean
-  extraAnnotations?: Partial<{
-    [env in OpsEnv]: { [annotation: string]: string | null }
-  }>
+  extraAnnotations?: Partial<
+    {
+      [env in OpsEnv]: { [annotation: string]: string | null }
+    }
+  >
 }
 
 export interface IngressForEnv {
