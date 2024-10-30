@@ -118,6 +118,11 @@ export class VehiclesService {
       showOwned: true,
       page: input.page,
       pageSize: input.pageSize,
+      permno: input.query
+        ? input.query.length < 5
+          ? `${input.query}*`
+          : `${input.query}`
+        : undefined,
     })
 
     if (
