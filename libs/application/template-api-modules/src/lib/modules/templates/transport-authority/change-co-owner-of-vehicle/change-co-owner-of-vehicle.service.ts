@@ -130,7 +130,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         }
 
         // C. vehicleCount >= 5
-        // Display radio buttons, validate all vehicle now
+        // Display radio buttons, validate all vehicles now
         return this.mapVehicle(auth, vehicle, true)
       }),
     )
