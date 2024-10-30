@@ -50,6 +50,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     notificationType: SubpoenaNotificationType,
     subject: MessageDescriptor,
     body: MessageDescriptor,
+    to: { name?: string; email?: string }[],
   ) {
     const formattedSubject = this.formatMessage(subject, {
       courtCaseNumber: theCase.courtCaseNumber,
@@ -60,32 +61,22 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       linkStart: `<a href="${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}">`,
       linkEnd: '</a>',
     })
+
     const promises: Promise<Recipient>[] = []
 
-    if (theCase.judge?.email) {
-      promises.push(
-        this.sendEmail(
-          formattedSubject,
-          formattedBody,
-          theCase.judge.name,
-          theCase.judge.email,
-          undefined,
-          true,
-        ),
-      )
-    }
-
-    if (theCase.registrar?.email) {
-      promises.push(
-        this.sendEmail(
-          formattedSubject,
-          formattedBody,
-          theCase.registrar.name,
-          theCase.registrar.email,
-          undefined,
-          true,
-        ),
-      )
+    for (const recipient of to) {
+      if (recipient.email && recipient.name) {
+        promises.push(
+          this.sendEmail(
+            formattedSubject,
+            formattedBody,
+            recipient.name,
+            recipient.email,
+            undefined,
+            true,
+          ),
+        )
+      }
     }
 
     const recipients = await Promise.all(promises)
@@ -101,6 +92,11 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       SubpoenaNotificationType.SERVICE_SUCCESSFUL,
       strings.serviceSuccessfulSubject,
       strings.serviceSuccessfulBody,
+      [
+        { name: theCase.judge?.name, email: theCase.judge?.email },
+        { name: theCase.registrar?.name, email: theCase.registrar?.email },
+        { name: theCase.prosecutor?.name, email: theCase.prosecutor?.email },
+      ],
     )
   }
 
@@ -112,6 +108,11 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       SubpoenaNotificationType.SERVICE_FAILED,
       strings.serviceFailedSubject,
       strings.serviceFailedBody,
+      [
+        { name: theCase.judge?.name, email: theCase.judge?.email },
+        { name: theCase.registrar?.name, email: theCase.registrar?.email },
+        { name: theCase.prosecutor?.name, email: theCase.prosecutor?.email },
+      ],
     )
   }
 
@@ -123,6 +124,10 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       SubpoenaNotificationType.DEFENDANT_SELECTED_DEFENDER,
       strings.defendantSelectedDefenderSubject,
       strings.defendantSelectedDefenderBody,
+      [
+        { name: theCase.judge?.name, email: theCase.judge?.email },
+        { name: theCase.registrar?.name, email: theCase.registrar?.email },
+      ],
     )
   }
 
