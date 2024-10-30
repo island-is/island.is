@@ -6,8 +6,13 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { useFormContext } from 'react-hook-form'
 import { gql, useQuery } from '@apollo/client'
 import { LoadingDots } from '@island.is/island-ui/core'
-import { hasDisabilityLicense } from '../../lib/queries'
 import { Markdown } from '@island.is/shared/components'
+
+const hasDisabilityLicense = `
+  query hasDisabilityLicense {
+    hasDisabilityLicense
+  }
+`
 
 export const HasDisabilityLicenseMessage: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -40,10 +45,10 @@ export const HasDisabilityLicenseMessage: FC<
           message={
             <Markdown>
               {error
-                ? formatMessage(m.disabiltiyRecordError)
+                ? formatMessage(m.disabilityRecordError)
                 : data?.hasDisabilityLicense
-                ? formatMessage(m.disabiltiyRecordInfoMessage)
-                : formatMessage(m.noDisabiltiyRecordInfoMessage)}
+                ? formatMessage(m.disabilityRecordInfoMessage)
+                : formatMessage(m.noDisabilityRecordInfoMessage)}
             </Markdown>
           }
           type={

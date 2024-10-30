@@ -4,7 +4,7 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { Configuration, CoursesApi, ProgramsApi } from '../../gen/fetch'
+import { Configuration, ProgramsApi } from '../../gen/fetch'
 import { IcelandUniversityOfTheArtsApplicationClientConfig } from './icelandUniversityOfTheArtsClient.config'
 
 const configFactory = (
@@ -33,7 +33,7 @@ const configFactory = (
   basePath,
 })
 
-export const exportedApis = [ProgramsApi, CoursesApi].map((Api) => ({
+export const exportedApis = [ProgramsApi].map((Api) => ({
   provide: Api,
   useFactory: (
     xRoadConfig: ConfigType<typeof XRoadConfig>,
