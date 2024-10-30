@@ -42,11 +42,12 @@ export const RentalPeriodAmount = buildSubSection({
           space: 1,
         }),
         buildTextField({
-          id: 'rentalAmountInput',
+          id: 'rentalAmount.amount',
           title: m.rentalAmount.inputLabel,
           placeholder: m.rentalAmount.inputPlaceholder,
           variant: 'currency',
           maxLength: 14,
+          required: true,
         }),
         buildCheckboxField({
           id: 'isRentalAmountIndexConnected',
