@@ -77,30 +77,6 @@ export class S3Service {
     }
   }
 
-  public async putObject(
-    BucketKeyPairOrFilename: BucketKeyPair | string,
-    content: Buffer,
-    contentType: string,
-  ): Promise<string> {
-    const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
-    const input: PutObjectCommandInput = {
-      Bucket: bucket,
-      Key: key,
-      Body: content,
-      ContentType: contentType,
-    }
-    try {
-      await this.s3Client.send(new PutObjectCommand(input))
-      return key
-    } catch (error) {
-      this.logger.error(
-        `Error occurred while putting file: ${key} to S3 bucket: ${bucket}`,
-        error,
-      )
-      throw error
-    }
-  }
-
   public async uploadFile(
     content: Buffer | NodeJS.ReadableStream,
     BucketKeyPairOrFilename: BucketKeyPair | string,
