@@ -88,9 +88,15 @@ export const hasHealthRemarks = (externalData: ExternalData) => {
 }
 
 export const joinWithAnd = (arr: string[], andString = 'og'): string => {
-  if (arr.length === 0) return ''
-  if (arr.length === 1) return arr[0]
-  if (arr.length === 2) return arr.join(` ${andString} `)
+  const validStrings = arr.filter(
+    (str) => typeof str === 'string' && str.trim().length > 0,
+  )
 
-  return `${arr.slice(0, -1).join(', ')}, ${andString} ${arr[arr.length - 1]}`
+  if (validStrings.length === 0) return ''
+  if (validStrings.length === 1) return validStrings[0]
+  if (validStrings.length === 2) return validStrings.join(` ${andString} `)
+
+  return `${validStrings.slice(0, -1).join(', ')}, ${andString} ${
+    validStrings[validStrings.length - 1]
+  }`
 }

@@ -890,8 +890,8 @@ export const m = defineMessages({
   },
   applicationForAdvancedAgeRequired: {
     id: 'dl.application:applicationForAdvancedAgeFor',
-    defaultMessage: 'Réttindaaldur fyrir %1 er %2 ára',
-    description: 'Required age for %1 is %2 years',
+    defaultMessage: 'Réttindaaldur fyrir {licenses} er {age} ára',
+    description: 'Required age for {licenses} is {age} years',
   },
   applicationForAdvancedLicenseTitleC1: {
     id: 'dl.application:applicationForAdvancedLicenseTitleC1',

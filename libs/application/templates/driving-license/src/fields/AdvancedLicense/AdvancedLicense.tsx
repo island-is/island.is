@@ -42,12 +42,17 @@ const AdvancedLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         const requiredAgeText =
           s1 &&
           s2 &&
-          formatMessage(m[`applicationForAdvancedAgeRequired`])
-            ?.replace('%1', s1)
-            ?.replace('%2', String(s2))
+          formatMessage(m[`applicationForAdvancedAgeRequired`], {
+            licenses: s1,
+            age: String(s2),
+          })
 
         return (
-          <Box marginTop={index === 0 ? 2 : 5} marginBottom={5}>
+          <Box
+            key={`license-group-${index}`}
+            marginTop={index === 0 ? 2 : 5}
+            marginBottom={5}
+          >
             {requiredAgeText && (
               <Box marginBottom={2}>
                 <Text variant="medium" as="div">

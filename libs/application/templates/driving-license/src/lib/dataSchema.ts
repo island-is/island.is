@@ -47,7 +47,7 @@ export const dataSchema = z.object({
   certificate: z.array(z.enum([YES, NO])).nonempty(),
   applicationFor: z.enum([B_FULL, B_TEMP, BE, B_FULL_RENEWAL_65, B_ADVANCED]),
   advancedLicense: z
-    .array(z.enum(Object.keys(AdvancedLicense) as [string, ...string[]]))
+    .array(z.enum(Object.values(AdvancedLicense) as [string, ...string[]]))
     .nonempty(),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),

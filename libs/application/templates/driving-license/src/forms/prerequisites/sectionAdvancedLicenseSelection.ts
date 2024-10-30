@@ -16,7 +16,7 @@ export const sectionAdvancedLicenseSelection = buildSubSection({
       'applicationFor',
     )
 
-    return applicationFor === LicenseTypes.B_ADVANCED
+    return applicationFor != null && applicationFor === LicenseTypes.B_ADVANCED
   },
   children: [
     buildMultiField({

@@ -41,7 +41,7 @@ export const getForm = ({
                 ),
               ]
             : []),
-          sectionAdvancedLicenseSelection,
+          ...(allowAdvanced ? [sectionAdvancedLicenseSelection] : []),
           sectionDigitalLicenseInfo,
           sectionRequirements,
         ],
