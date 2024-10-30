@@ -8,6 +8,7 @@ import {
   DataApi,
   DataDto,
 } from '../../gen/fetch'
+import { Locale } from '@island.is/shared/types'
 
 @Injectable()
 export class WorkAccidentClientService {
@@ -26,10 +27,7 @@ export class WorkAccidentClientService {
   private dataApiWithAuth = (user: User) =>
     this.dataApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async getOptionsData(
-    auth: User,
-    locale: 'is' | 'en' = 'is',
-  ): Promise<DataDto> {
+  async getOptionsData(auth: User, locale: Locale = 'is'): Promise<DataDto> {
     return await this.dataApiWithAuth(auth).getData({ locale })
   }
 
