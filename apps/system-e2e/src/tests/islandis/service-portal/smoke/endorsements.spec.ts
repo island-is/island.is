@@ -22,19 +22,20 @@ test.describe('Endorsements', () => {
   })
 
   test('should be able to access and see UI elements in minar-sidur for endorsements', async () => {
+    // test.slow()
     const page = await context.newPage()
     await disableI18n(page)
 
-    // Navigate to the specified page
-    await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/listar'))
+    const timeout = 10000;
 
-    // Check for ui things
-    await expect(
-      page.locator('button:text("Stofna nýjan lista")'),
-    ).toBeVisible()
+    await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/listar'));
 
-    // check for tabs
-    await expect(page.locator('button:text("Virkir listar")')).toBeVisible()
-    await expect(page.locator('button:text("Liðnir listar")')).toBeVisible()
+    await Promise.all([
+      expect(page.getByRole('button', { name: 'Stofna nýjan lista' })).toBeVisible({ timeout }),
+      expect(page.getByRole('link', { name: 'Almennir undirskriftalistar' })).toBeVisible({ timeout }),
+      expect(page.getByRole('tab', { name: 'Virkir listar' })).toBeVisible({ timeout }),
+      expect(page.getByRole('tab', { name: 'Liðnir listar' })).toBeVisible({ timeout }),
+    ]);
+
   })
 })
