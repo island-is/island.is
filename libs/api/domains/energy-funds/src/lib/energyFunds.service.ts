@@ -69,9 +69,9 @@ export class EnergyFundsService {
       auth,
     ).basicVehicleInformationGet({ permno: permno })
 
-    if (!result || !result.data || !result.totalRecords || !basicVehicle) {
+    if (!result || !result.data || result.data.length === 0 || !basicVehicle) {
       throw Error(
-        'Did not find the vehicle with for that permno, or you are not owner of the vehicle',
+        'Did not find the vehicle with that permno, or you are not owner of the vehicle',
       )
     }
 

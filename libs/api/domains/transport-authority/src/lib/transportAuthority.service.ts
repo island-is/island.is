@@ -61,33 +61,7 @@ export class TransportAuthorityApi {
     return { exists: hasActiveCard }
   }
 
-  private isOwnerOrCoOwner(
-    vehicle: BasicVehicleInformationDto,
-    auth: Auth,
-  ): boolean {
-    if (vehicle.owners) {
-      for (const owner of vehicle.owners) {
-        if (owner.persidno === auth.nationalId) {
-          return true
-        }
-        if (owner.coOwners) {
-          for (const coOwner of owner.coOwners) {
-            if (coOwner.persidno === auth.nationalId) {
-              return true
-            }
-          }
-        }
-      }
-    }
-    return false
-  }
-
-  async getVehicleOwnerchangeChecksByPermno(
-    auth: User,
-    permno: string,
-  ): Promise<VehicleOwnerchangeChecksByPermno | null | ApolloError> {
-    // Make sure user is only fetching information for vehicles where he is either owner or co-owner
-    // (mainly debt status info that is sensitive)
+  private async fetchVehicleDataForOwnerCoOwner(auth: User, permno: string) {
     const result = await this.vehiclesApiWithAuth(
       auth,
     ).currentvehicleswithmileageandinspGet({
@@ -96,13 +70,30 @@ export class TransportAuthorityApi {
       showCoowned: true,
       showOperated: false,
     })
-    if (!result || !result.data || !result.totalRecords) {
+    if (!result || !result.data || result.data.length === 0) {
       throw Error(
-        'Did not find the vehicle with for that permno, or you are neither owner nor co-owner of the vehicle',
+        'Did not find the vehicle with that permno, or you are neither owner nor co-owner of the vehicle',
       )
     }
 
     const vehicle = result.data[0]
+
+    // Get mileage reading
+    const mileageReadings = await this.mileageReadingApiWithAuth(
+      auth,
+    ).getMileageReading({ permno: permno })
+
+    return { vehicle, mileageReadings }
+  }
+
+  async getVehicleOwnerchangeChecksByPermno(
+    auth: User,
+    permno: string,
+  ): Promise<VehicleOwnerchangeChecksByPermno | null | ApolloError> {
+    // Make sure user is only fetching information for vehicles where he is either owner or co-owner
+    // (mainly debt status info that is sensitive)
+    const { vehicle, mileageReadings } =
+      await this.fetchVehicleDataForOwnerCoOwner(auth, permno)
 
     // Get debt status
     const debtStatus =
@@ -114,11 +105,6 @@ export class TransportAuthorityApi {
         auth,
         permno,
       )
-
-    // Get mileage reading
-    const mileageReadings = await this.mileageReadingApiWithAuth(
-      auth,
-    ).getMileageReading({ permno: permno })
 
     return {
       basicVehicleInformation: {
@@ -272,21 +258,8 @@ export class TransportAuthorityApi {
   ): Promise<VehicleOperatorChangeChecksByPermno | null | ApolloError> {
     // Make sure user is only fetching information for vehicles where he is either owner or co-owner
     // (mainly debt status info that is sensitive)
-    const result = await this.vehiclesApiWithAuth(
-      auth,
-    ).currentvehicleswithmileageandinspGet({
-      permno: permno,
-      showOwned: true,
-      showCoowned: true,
-      showOperated: false,
-    })
-    if (!result || !result.data || !result.totalRecords) {
-      throw Error(
-        'Did not find the vehicle with for that permno, or you are neither owner nor co-owner of the vehicle',
-      )
-    }
-
-    const vehicle = result.data[0]
+    const { vehicle, mileageReadings } =
+      await this.fetchVehicleDataForOwnerCoOwner(auth, permno)
 
     // Get debt status
     const debtStatus =
@@ -298,11 +271,6 @@ export class TransportAuthorityApi {
         auth,
         permno,
       )
-
-    // Get mileage reading
-    const mileageReadings = await this.mileageReadingApiWithAuth(
-      auth,
-    ).getMileageReading({ permno: permno })
 
     return {
       isDebtLess: debtStatus.isDebtLess,

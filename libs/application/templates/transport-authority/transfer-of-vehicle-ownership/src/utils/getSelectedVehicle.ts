@@ -32,8 +32,7 @@ export const getSelectedVehicle = (
 
   const index = parseInt(vehicleIndex, 10)
 
-  const vehicle =
-    currentVehicleList?.vehicles && currentVehicleList.vehicles[index]
+  const vehicle = currentVehicleList?.vehicles?.[index]
 
   if (vehicle && !Object.isFrozen(vehicle)) {
     currentVehicleList.vehicles[index] = {
@@ -42,5 +41,5 @@ export const getSelectedVehicle = (
     }
   }
 
-  return currentVehicleList?.vehicles[index]
+  return currentVehicleList?.vehicles?.[index]
 }
