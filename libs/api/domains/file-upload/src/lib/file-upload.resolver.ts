@@ -8,7 +8,9 @@ export class FileUploadResolver {
   constructor(private fileStorageService: FileStorageService) {}
 
   @Mutation(() => PresignedPost)
-  createUploadUrl(@Args('filename') filename: string): Promise<S3PresignedPost> {
+  createUploadUrl(
+    @Args('filename') filename: string,
+  ): Promise<S3PresignedPost> {
     return this.fileStorageService.generatePresignedPost(filename)
   }
 }
