@@ -30,7 +30,6 @@ export class CaseService {
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
     private readonly lawyersService: LawyersService,
-    private readonly policeService: PoliceService,
   ) {}
 
   async getCases(nationalId: string, lang?: string): Promise<CasesResponse[]> {
@@ -100,7 +99,8 @@ export class CaseService {
     const defendant = response.defendants[0]
     const subpoenas = defendant.subpoenas
 
-    if (subpoenas && subpoenas[0].serviceStatus === null) {
+    if (subpoenas && subpoenas[0].subpoenaId) {
+      await this.fetchServiceStatus(id, subpoenas[0].subpoenaId)
     }
 
     return CaseResponse.fromInternalCaseResponse(response, lang)
@@ -234,6 +234,53 @@ export class CaseService {
 
       throw new BadGatewayException(
         `Failed to fetch case by id: ${reason.message}`,
+      )
+    }
+  }
+
+  private async fetchServiceStatus(
+    caseId: string,
+    subpoenaId: string,
+  ): Promise<InternalCaseResponse> {
+    try {
+      console.log()
+      const res = await fetch(
+        `${this.config.backendUrl}/api/internal/case/${caseId}/subpoenaStatus/${subpoenaId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.secretToken}`,
+          },
+        },
+      )
+
+      if (!res.ok) {
+        if (res.status === 404) {
+          throw new NotFoundException(`Case ${caseId} not found`)
+        }
+
+        const reason = await res.text()
+
+        throw new BadGatewayException(
+          reason ||
+            'Unexpected error occurred while fetching serviceStatus by subpoenaID',
+        )
+      }
+
+      const caseData = await res.json()
+
+      return caseData
+    } catch (reason) {
+      if (
+        reason instanceof BadGatewayException ||
+        reason instanceof NotFoundException
+      ) {
+        throw reason
+      }
+
+      throw new BadGatewayException(
+        `Failed to fetch serviceStatus by subpoenaId: ${reason.message}`,
       )
     }
   }
