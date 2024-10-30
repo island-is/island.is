@@ -46,49 +46,47 @@ const getData = (slice: IChart, queryResult: DataItem[]) => {
     JSON.parse(component.values || '{}'),
   )
 
-  if (base.length > 0) {
+  if (values[0]?.typeOfSource !== 'manual') {
     return base
   }
 
-  if (values[0]?.typeOfSource === 'manual') {
-    const sourceDataType = values[0]?.typeOfManualDataKey
-    const componentType = slice.components[0]?.type
+  const sourceDataType = values[0]?.typeOfManualDataKey
+  const componentType = slice.components[0]?.type
 
-    if (componentType === 'pie-cell') {
-      const pieData = {
-        statisticsForHeader: values
-          .flatMap((item: { categoryItems: [] }) => item.categoryItems)
-          .map((item: { key: string; value: string }) => ({
-            key: item.key,
-            value: parseFloat(item.value) || 0,
-          })),
-      }
-      return [pieData]
+  if (componentType === 'pie-cell') {
+    const pieData = {
+      statisticsForHeader: values
+        .flatMap((item: { categoryItems: [] }) => item.categoryItems)
+        .map((item: { key: string; value: string }) => ({
+          key: item.key,
+          value: parseFloat(item.value) || 0,
+        })),
     }
-
-    const allItems = values.flatMap((item) =>
-      sourceDataType === 'date' ? item.dateItems : item.categoryItems,
-    )
-
-    const groupedData = allItems.reduce(
-      (acc: Record<string, Record<string, any>>, item) => {
-        const key =
-          sourceDataType === 'date'
-            ? new Date(item.dateOfChange).getTime()
-            : item.category
-
-        if (!acc[key]) {
-          acc[key] = { header: key }
-        }
-
-        acc[key][item.key] = item.value
-        return acc
-      },
-      {},
-    )
-
-    return Object.values(groupedData).reverse()
+    return [pieData]
   }
+
+  const allItems = values.flatMap((item) =>
+    sourceDataType === 'date' ? item.dateItems : item.categoryItems,
+  )
+
+  const groupedData = allItems.reduce(
+    (acc: Record<string, Record<string, any>>, item) => {
+      const key =
+        sourceDataType === 'date'
+          ? new Date(item.dateOfChange).getTime()
+          : item.category
+
+      if (!acc[key]) {
+        acc[key] = { header: key }
+      }
+
+      acc[key][item.key] = item.value
+      return acc
+    },
+    {},
+  )
+
+  return Object.values(groupedData).reverse()
 }
 
 export const Chart = ({ slice }: ChartProps) => {
