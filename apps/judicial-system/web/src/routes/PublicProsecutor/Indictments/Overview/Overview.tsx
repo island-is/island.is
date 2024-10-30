@@ -133,11 +133,9 @@ export const Overview = () => {
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
         )} */}
-        {workingCase.caseFiles && (
-          <Box component="section" marginBottom={5}>
-            <IndictmentCaseFilesList workingCase={workingCase} />
-          </Box>
-        )}
+        <Box component="section" marginBottom={5}>
+          <IndictmentCaseFilesList workingCase={workingCase} />
+        </Box>
         <Box marginBottom={5}>
           <SectionHeading
             title={fm(strings.reviewerTitle)}
