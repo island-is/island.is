@@ -1,4 +1,4 @@
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, Icon } from '@island.is/island-ui/core'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import { InputFields } from '../../lib/types'
 import { MINIMUM_REGULAR_SIGNATURE_MEMBER_COUNT } from '../../lib/constants'
@@ -56,13 +56,13 @@ export const RemoveRegularMember = ({
   }
 
   return (
-    <Box className={styles.removeInputGroup}>
+    <Box display="flex" flexDirection="column" justifyContent="flexEnd">
       <Button
-        disabled={memberIndex < MINIMUM_REGULAR_SIGNATURE_MEMBER_COUNT}
         loading={isLoading}
         variant="utility"
         icon="trash"
         iconType="outline"
+        disabled={memberIndex < MINIMUM_REGULAR_SIGNATURE_MEMBER_COUNT}
         onClick={() => onRemoveMember()}
       />
     </Box>

@@ -30,17 +30,18 @@ export const attachments = {
     fileUpload: defineMessages({
       header: {
         id: 'ojoi.application:attachments.fileUpload.header',
-        defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
+        defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
         description: 'Heading of the file upload input',
       },
       description: {
         id: 'ojoi.application:attachments.fileUpload.description',
-        defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
+        defaultMessage:
+          'Tekið er við skjölum með endingu: .pdf. Veldu eitt skjal í einu til að stýra röðun.',
         description: 'Description of the file upload input',
       },
       buttonLabel: {
         id: 'ojoi.application:attachments.fileUpload.buttonLabel',
-        defaultMessage: 'Velja skjöl til að hlaða upp',
+        defaultMessage: 'Veldu skjal',
         description: 'Label of the upload button of the file upload input',
       },
     }),
