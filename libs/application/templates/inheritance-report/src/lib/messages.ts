@@ -1350,7 +1350,8 @@ export const m = defineMessages({
   },
   heirsDescriptionPrePaid: {
     id: 'ir.application:heirsDescriptionPrePaid#markdown',
-    defaultMessage: 'Vinsamlegast skráðu upplýsingar um þá erfingja sem eiga að taka við fyrirframgreiddum arfi.',
+    defaultMessage:
+      'Vinsamlegast skráðu upplýsingar um þá erfingja sem eiga að taka við fyrirframgreiddum arfi.',
     description: '',
   },
   heirsAndPartition: {
