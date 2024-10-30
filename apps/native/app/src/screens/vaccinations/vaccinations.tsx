@@ -121,7 +121,7 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
                 ))
               : vaccinations.map((vaccination, index) => (
                   <VaccinationsCardContainer
-                    key={index}
+                    key={`${vaccination?.id}-${index}`}
                     vaccination={vaccination}
                     loading={vaccinationsRes.loading && !vaccinationsRes.data}
                     componentId={componentId}

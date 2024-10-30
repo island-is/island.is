@@ -222,6 +222,7 @@ export function VaccinationsCardContainer({
           : vaccination?.vaccinationsInfo?.map((vaccination, index) => {
               return (
                 <TableRow
+                  key={index}
                   style={{
                     backgroundColor:
                       index % 2 === 0 ? theme.color.blue100 : theme.color.white,
@@ -264,8 +265,8 @@ export function VaccinationsCardContainer({
             })}
         {vaccination?.comments && (
           <CommentWrapper>
-            {vaccination.comments.map((comment) => (
-              <Markdown bullets componentId={componentId}>
+            {vaccination.comments.map((comment, index) => (
+              <Markdown bullets componentId={componentId} key={index}>
                 {comment}
               </Markdown>
             ))}
