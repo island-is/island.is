@@ -3,6 +3,7 @@ import format from 'date-fns/format'
 import {
   ApplicationEvent,
   ApplicationState,
+  DirectTaxPayment,
   getEventData,
   showSpouseData,
   UserType,
@@ -50,7 +51,7 @@ export const createPdf = async (
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
 
-  const { name, state, created, directTaxPayments } = application
+  const { name, state, created, directTaxPayments = [] } = application
 
   const { applicationState, ageOfApplication } = getHeader(created, state)
 
@@ -119,6 +120,37 @@ export const createPdf = async (
     page = updatedPage
     currentYPosition = updatedYPosition
     checkYPositionAndAddPage()
+  }
+
+  // process direct payments
+  const processDirectPayments = (
+    directPayments: DirectTaxPayment[],
+    sectionTitle: string,
+  ) => {
+    if (directPayments.length > 0) {
+      drawSection(sectionTitle, getDirectTaxPayments(directPayments))
+
+      currentYPosition = drawHeadersForTable(
+        page,
+        currentYPosition,
+        margin,
+        boldFont,
+      )
+      checkYPositionAndAddPage()
+
+      const { updatedPage, updatedYPosition } = drawTable(
+        page,
+        pdfDoc,
+        groupDirectPayments(directPayments),
+        margin,
+        currentYPosition,
+        boldFont,
+        font,
+      )
+      page = updatedPage
+      currentYPosition = updatedYPosition
+      checkYPositionAndAddPage()
+    }
   }
 
   //   ---- ----- APPLICATION INFO ---- ----
@@ -195,32 +227,10 @@ export const createPdf = async (
     const spouseDirectPayments =
       directTaxPayments.filter((d) => d.userType === UserType.SPOUSE) ?? []
 
-    if (spouseDirectPayments.length > 0) {
-      drawSection(
-        'Upplýsingar um staðgreiðslu maka',
-        getDirectTaxPayments(spouseDirectPayments),
-      )
-
-      currentYPosition = drawHeadersForTable(
-        page,
-        currentYPosition,
-        margin,
-        boldFont,
-      )
-      checkYPositionAndAddPage()
-      const { updatedPage, updatedYPosition } = drawTable(
-        page,
-        pdfDoc,
-        groupDirectPayments(spouseDirectPayments),
-        margin,
-        currentYPosition,
-        boldFont,
-        font,
-      )
-      page = updatedPage
-      currentYPosition = updatedYPosition
-      checkYPositionAndAddPage()
-    }
+    processDirectPayments(
+      spouseDirectPayments,
+      'Upplýsingar um staðgreiðslu maka',
+    )
   }
 
   if (application.children?.length > 0) {
@@ -248,32 +258,7 @@ export const createPdf = async (
   const applicantDirectPayments =
     directTaxPayments.filter((d) => d.userType === UserType.APPLICANT) ?? []
 
-  if (applicantDirectPayments.length > 0) {
-    drawSection(
-      'Upplýsingar um staðgreiðslu',
-      getDirectTaxPayments(applicantDirectPayments),
-    )
-
-    currentYPosition = drawHeadersForTable(
-      page,
-      currentYPosition,
-      margin,
-      boldFont,
-    )
-    checkYPositionAndAddPage()
-    const { updatedPage, updatedYPosition } = drawTable(
-      page,
-      pdfDoc,
-      groupDirectPayments(applicantDirectPayments),
-      margin,
-      currentYPosition,
-      boldFont,
-      font,
-    )
-    page = updatedPage
-    currentYPosition = updatedYPosition
-    checkYPositionAndAddPage()
-  }
+  processDirectPayments(applicantDirectPayments, 'Upplýsingar um staðgreiðslu')
 
   drawSection('Umsóknarferli', getApplicantMoreInfo(application))
 

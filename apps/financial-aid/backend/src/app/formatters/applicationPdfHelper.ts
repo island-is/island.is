@@ -15,6 +15,9 @@ import {
 import { ApplicationModel } from '../modules/application'
 import format from 'date-fns/format'
 
+const localeForNumbers = 'de-DE'
+const formatNumber = (num: number) => num.toLocaleString(localeForNumbers)
+
 export const getHeader = (created: Date, state: ApplicationState) => {
   const applicationState = getState[state]
   const applicationCreated = created.toISOString()
@@ -44,9 +47,7 @@ export const getApplicationInfo = (application: ApplicationModel) => {
     },
     application.state === ApplicationState.APPROVED && {
       title: 'Samþykkt aðstoð: ',
-      content: `${application.amount[0].finalAmount.toLocaleString(
-        'de-DE',
-      )} kr.`,
+      content: `${formatNumber(application.amount[0].finalAmount)} kr.`,
     },
   ].filter(Boolean)
 }
@@ -217,13 +218,11 @@ export const getDirectTaxPayments = (directTaxPayments: DirectTaxPayment[]) => {
   return [
     {
       title: 'Samtals heildarlaun',
-      content: totalSalary.toLocaleString('de-DE'),
+      content: formatNumber(totalSalary),
     },
     {
       title: 'Meðaltal',
-      content: Math.floor(
-        totalSalary / directTaxPayments.length,
-      ).toLocaleString('de-DE'),
+      content: formatNumber(Math.floor(totalSalary / directTaxPayments.length)),
     },
     {
       title: 'Persónuafsláttur meðaltal',
@@ -232,13 +231,13 @@ export const getDirectTaxPayments = (directTaxPayments: DirectTaxPayment[]) => {
           (n, { personalAllowance }) => n + personalAllowance,
           0,
         ) / directTaxPayments.length
-      ).toLocaleString('de-DE'),
+      ).toLocaleString(localeForNumbers),
     },
     {
       title: 'Samtals staðgreiðsla',
       content: directTaxPayments
         .reduce((n, { withheldAtSource }) => n + withheldAtSource, 0)
-        .toLocaleString('de-DE'),
+        .toLocaleString(localeForNumbers),
     },
   ]
 }
