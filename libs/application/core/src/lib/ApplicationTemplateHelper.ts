@@ -293,6 +293,7 @@ export class ApplicationTemplateHelper<
         content: action.content ? formatMessage(action.content) : undefined,
         title: action.title ? formatMessage(action.title) : undefined,
         button: action.button ? formatMessage(action.button) : undefined,
+        hideButton: action.hideButton,
       }
     }
     return {
@@ -306,6 +307,7 @@ export class ApplicationTemplateHelper<
       button: pendingAction.button
         ? formatMessage(pendingAction.button)
         : undefined,
+      hideButton: pendingAction.hideButton,
     }
   }
 

@@ -153,7 +153,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [{ target: States.TRYGGINGASTOFNUN_SUBMITTED }],
+          SUBMIT: [{ target: States.REJECTED }],
           [DefaultEvents.ABORT]: { target: States.TRYGGINGASTOFNUN_SUBMITTED },
         },
       },

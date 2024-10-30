@@ -512,6 +512,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               title: statesMessages.vinnumalastofnunApprovalDescription,
               content: parentalLeaveFormMessages.reviewScreen.deptDesc,
               displayStatus: 'info',
+              hideButton: true,
             },
             historyLogs: [
               {
@@ -924,6 +925,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               title: statesMessages.editOrAddPeriodsTitle,
               content: statesMessages.editOrAddPeriodsDescription,
               displayStatus: 'warning',
+              hideButton: true,
             },
             historyLogs: [
               {

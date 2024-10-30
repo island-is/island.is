@@ -19,6 +19,7 @@ export const ApplicationFragment = gql`
         displayStatus
         content
         title
+        hideButton
       }
       history {
         log

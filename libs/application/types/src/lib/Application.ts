@@ -41,6 +41,7 @@ export interface ActionCardMetaData {
     title?: string
     content?: string
     button?: string
+    hideButton?: boolean
   }
   history?: ApplicationHistoryItem[]
   tag?: {

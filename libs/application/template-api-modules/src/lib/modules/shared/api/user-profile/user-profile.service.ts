@@ -70,39 +70,44 @@ export class UserProfileService extends BaseTemplateApiService {
         400,
       )
     }
-
-    if (params?.validateEmail && !email) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.noEmailFound,
-          summary: {
-            ...coreErrorMessages.noEmailFoundDescription,
-            values: { link: this.getIDSLink(application) },
-          },
-        },
-        500,
-      )
-    }
-
-    if (params?.validatePhoneNumber) {
-      if (!mobilePhoneNumber || !this.isValidPhoneNumber(mobilePhoneNumber))
-        throw new TemplateApiError(
-          {
-            title: coreErrorMessages.invalidPhoneNumber,
-            summary: {
-              ...coreErrorMessages.invalidPhoneNumberDescription,
-              values: { link: '/minarsidur' },
-            },
-          },
-          500,
-        )
-    }
-
     return {
-      mobilePhoneNumber: mobilePhoneNumber ?? undefined,
-      email: email ?? undefined,
+      mobilePhoneNumber: '8888888',
+      email: 'h@j.is',
       bankInfo,
     }
+
+    // if (params?.validateEmail && !email) {
+    //   throw new TemplateApiError(
+    //     {
+    //       title: coreErrorMessages.noEmailFound,
+    //       summary: {
+    //         ...coreErrorMessages.noEmailFoundDescription,
+    //         values: { link: this.getIDSLink(application) },
+    //       },
+    //     },
+    //     500,
+    //   )
+    // }
+
+    // if (params?.validatePhoneNumber) {
+    //   if (!mobilePhoneNumber || !this.isValidPhoneNumber(mobilePhoneNumber))
+    //     throw new TemplateApiError(
+    //       {
+    //         title: coreErrorMessages.invalidPhoneNumber,
+    //         summary: {
+    //           ...coreErrorMessages.invalidPhoneNumberDescription,
+    //           values: { link: '/minarsidur' },
+    //         },
+    //       },
+    //       500,
+    //     )
+    // }
+
+    // return {
+    //   mobilePhoneNumber: mobilePhoneNumber ?? undefined,
+    //   email: email ?? undefined,
+    //   bankInfo,
+    // }
   }
 
   private isValidPhoneNumber = (phoneNumber: string) => {

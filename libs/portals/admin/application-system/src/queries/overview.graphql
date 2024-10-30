@@ -27,6 +27,7 @@ query getApplications($input: ApplicationApplicationsAdminInput!) {
         displayStatus
         content
         title
+        hideButton
       }
       history {
         log
@@ -69,6 +70,7 @@ query getInstitutionApplications(
           displayStatus
           content
           title
+          hideButton
         }
         history {
           log

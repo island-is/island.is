@@ -33,6 +33,7 @@ export const buildHistoryItems = (
             application.actionCard.pendingAction.content ?? '',
           )}
           action={
+            !application.actionCard?.pendingAction?.hideButton &&
             openApplication !== undefined ? (
               <Box>
                 <Button

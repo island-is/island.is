@@ -49,6 +49,9 @@ class PendingAction {
 
   @Field(() => String, { nullable: true })
   button?: string
+
+  @Field(() => Boolean, { nullable: true })
+  hideButton?: boolean
 }
 
 @ObjectType()

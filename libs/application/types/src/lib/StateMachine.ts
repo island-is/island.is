@@ -78,6 +78,7 @@ export type PendingAction = {
   title?: StaticText
   content?: StaticText
   button?: StaticText
+  hideButton?: boolean
 }
 
 export type HistoryEventMessage<T extends EventObject = AnyEventObject> = {

@@ -46,6 +46,11 @@ class PendingAction {
   @Expose()
   @IsString()
   button?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsBoolean()
+  hideButton?: boolean
 }
 
 class History {
