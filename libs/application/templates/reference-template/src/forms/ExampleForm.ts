@@ -48,7 +48,7 @@ export const ExampleForm: Form = buildForm({
         }),
         buildMultiField({
           id: 'about',
-          title: m.about,
+          title: m.about.defaultMessage,
           children: [
             buildTextField({
               id: 'person.name',
@@ -97,7 +97,12 @@ export const ExampleForm: Form = buildForm({
         }),
         buildFileUploadField({
           id: 'attachments',
-          title: 'Viðhengi',
+          title: (application, locale) => {
+            if (locale === 'is') {
+              return 'Viðhengi - IS'
+            }
+            return 'Attachments - EN'
+          },
           introduction: 'Hér getur þú bætt við viðhengjum við umsóknina þína.',
           uploadMultiple: true,
         }),

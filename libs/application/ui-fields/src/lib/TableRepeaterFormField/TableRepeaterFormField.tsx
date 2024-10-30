@@ -1,4 +1,8 @@
-import { coreMessages, formatText } from '@island.is/application/core'
+import {
+  coreMessages,
+  formatText,
+  formatTextWithLocale,
+} from '@island.is/application/core'
 import {
   FieldBaseProps,
   TableRepeaterField,
@@ -20,6 +24,7 @@ import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { handleCustomMappedValues } from './utils'
 import { Item } from './TableRepeaterItem'
+import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -54,7 +59,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     ...rawItems[key],
   }))
 
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const methods = useFormContext()
   const [activeIndex, setActiveIndex] = useState(-1)
   const { fields, append, remove } = useFieldArray({
@@ -112,7 +117,12 @@ export const TableRepeaterFormField: FC<Props> = ({
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {showFieldName && (
         <Text variant={titleVariant} marginBottom={2}>
-          {formatText(title, application, formatMessage)}
+          {formatTextWithLocale(
+            title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         </Text>
       )}
       {description && (

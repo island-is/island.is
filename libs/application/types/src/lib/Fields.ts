@@ -8,7 +8,13 @@ import type {
   ResponsiveProp,
   SpanType,
 } from '@island.is/island-ui/core/types'
-import { FormItem, FormText, FormTextArray, StaticText } from './Form'
+import {
+  FormItem,
+  FormText,
+  FormTextArray,
+  FormTextWithLocale,
+  StaticText,
+} from './Form'
 import { ApolloClient } from '@apollo/client'
 import { Application } from './Application'
 import { CallToAction } from './StateMachine'
@@ -190,7 +196,7 @@ export interface SelectOption<T = string | number> {
 export interface BaseField extends FormItem {
   readonly id: string
   readonly component: FieldComponents | string
-  readonly title: FormText
+  readonly title: FormTextWithLocale
   readonly description?: FormText
   readonly children: undefined
   disabled?: boolean

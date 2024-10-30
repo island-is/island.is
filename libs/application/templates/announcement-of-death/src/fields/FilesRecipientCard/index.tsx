@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { SelectController } from '@island.is/shared/form-fields'
-import { formatText } from '@island.is/application/core'
+import { formatText, formatTextWithLocale } from '@island.is/application/core'
 import {
   Application,
   FieldBaseProps,
@@ -11,7 +11,7 @@ import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { Answers as AODAnswers } from '../../types'
 import { isPerson } from 'kennitala'
-
+import { Locale } from '@island.is/shared/types'
 type FilesRecipientCardProps = {
   field: {
     props: {
@@ -25,7 +25,7 @@ type FilesRecipientCardProps = {
 export const FilesRecipientCard: FC<
   React.PropsWithChildren<FieldBaseProps<AODAnswers> & FilesRecipientCardProps>
 > = ({ application, field }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   let options =
     application.answers?.estateMembers?.members?.length &&
     application.answers.estateMembers.members.length !== 0
@@ -67,7 +67,12 @@ export const FilesRecipientCard: FC<
     >
       {field.title && (
         <Text variant="h4" as="h3" marginBottom={1}>
-          {formatText(field.title, application, formatMessage)}
+          {formatTextWithLocale(
+            field.title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         </Text>
       )}
       {field.description && (

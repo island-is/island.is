@@ -1,6 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
 
-import { buildFieldRequired, formatText } from '@island.is/application/core'
+import {
+  buildFieldRequired,
+  formatText,
+  formatTextWithLocale,
+} from '@island.is/application/core'
 import { AsyncSelectField, FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -12,6 +16,7 @@ import { useApolloClient } from '@apollo/client/react'
 import { Option } from '@island.is/application/types'
 
 import { getDefaultValue } from '../../getDefaultValue'
+import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
   field: AsyncSelectField
@@ -36,7 +41,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     isMulti,
     required = false,
   } = field
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const apolloClient = useApolloClient()
   const [options, setOptions] = useState<Option[]>([])
   const [hasLoadingError, setHasLoadingError] = useState<boolean>(false)
@@ -68,7 +73,12 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
           required={buildFieldRequired(application, required)}
           dataTestId={field.dataTestId}
           defaultValue={getDefaultValue(field, application)}
-          label={formatText(title, application, formatMessage)}
+          label={formatTextWithLocale(
+            title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
           name={id}
           disabled={disabled}
           error={

@@ -5,6 +5,7 @@ import {
   formatText,
   getValueViaPath,
   buildFieldOptions,
+  formatTextWithLocale,
 } from '@island.is/application/core'
 import { CheckboxField, FieldBaseProps } from '@island.is/application/types'
 import { Text, Box } from '@island.is/island-ui/core'
@@ -15,6 +16,7 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import { getDefaultValue } from '../../getDefaultValue'
+import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
   field: CheckboxField
@@ -51,7 +53,12 @@ export const CheckboxFormField = ({
     <div>
       {showFieldName && (
         <Text variant="h4">
-          {formatText(title, application, formatMessage)}
+          {formatTextWithLocale(
+            title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         </Text>
       )}
 

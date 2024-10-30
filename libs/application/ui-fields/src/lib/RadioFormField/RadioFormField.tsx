@@ -5,6 +5,7 @@ import {
   formatText,
   getValueViaPath,
   buildFieldOptions,
+  formatTextWithLocale,
 } from '@island.is/application/core'
 import { FieldBaseProps, RadioField } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
@@ -15,6 +16,7 @@ import {
 } from '@island.is/shared/form-fields'
 
 import { getDefaultValue } from '../../getDefaultValue'
+import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
   field: RadioField
@@ -47,9 +49,12 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
   )
 
   console.debug(
-    `Radio title ${JSON.stringify(title)}, and formatted: ${formatText(
+    `Radio title ${JSON.stringify(
+      title,
+    )}, and formatted: ${formatTextWithLocale(
       title,
       application,
+      locale as Locale,
       formatMessage,
     )}`,
   )
@@ -58,7 +63,12 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
     <Box paddingTop={field.space} role="region" aria-labelledby={id + 'title'}>
       {showFieldName && (
         <Text variant="h4" as="h4" id={id + 'title'}>
-          {formatText(title, application, formatMessage)}
+          {formatTextWithLocale(
+            title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         </Text>
       )}
 

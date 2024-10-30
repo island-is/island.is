@@ -1,8 +1,9 @@
 import React from 'react'
-import { formatText } from '@island.is/application/core'
+import { formatText, formatTextWithLocale } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { ResponsiveSpace, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { Locale } from '@island.is/shared/types'
 
 type Props = FieldBaseProps & {
   field: {
@@ -14,7 +15,7 @@ type Props = FieldBaseProps & {
 }
 
 export const FieldTitle = ({ field, application }: Props) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   return (
     <>
       <Text
@@ -22,7 +23,12 @@ export const FieldTitle = ({ field, application }: Props) => {
         marginTop={field.props.marginTop || 0}
         marginBottom={field.description ? 1 : 0}
       >
-        {formatText(field.title, application, formatMessage)}
+        {formatTextWithLocale(
+          field.title,
+          application,
+          locale as Locale,
+          formatMessage,
+        )}
         {field.props.required && (
           <Text variant="h4" color="red400" as="span">
             {' *'}
