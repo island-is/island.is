@@ -1,4 +1,5 @@
 const MILLISECONDS_TO_EXPIRY = 28 * 24 * 60 * 60 * 1000
+export const VERDICT_APPEAL_WINDOW_DAYS = 28
 
 /*
   This function takes an array of verdict info tuples:

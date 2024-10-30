@@ -47,10 +47,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const { setAndSendDefendantToServer } = useDefendants()
   const { workingCase, setWorkingCase } = useContext(FormContext)
 
-  const serviceRequirementNotRequired =
-    indictmentRulingDecision === CaseIndictmentRulingDecision.FINE ||
-    (defendant.serviceRequirement &&
-      defendant.serviceRequirement !== ServiceRequirement.REQUIRED)
+  const serviceRequired =
+    defendant.serviceRequirement === ServiceRequirement.REQUIRED
 
   const handleDateChange = (
     date: Date | undefined,
@@ -145,7 +143,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     )
 
     setTextItems([
-      ...(!serviceRequirementNotRequired
+      ...(serviceRequired
         ? [
             formatMessage(strings.defendantVerdictViewedDate, {
               date: verdictViewDate
@@ -172,7 +170,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     defendant.verdictViewDate,
     formatMessage,
     indictmentRulingDecision,
-    serviceRequirementNotRequired,
+    serviceRequired,
     verdictViewDate,
   ])
 
@@ -192,7 +190,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         </Box>
       </Box>
       <AnimatePresence>
-        {(serviceRequirementNotRequired || defendant.verdictViewDate) &&
+        {(!serviceRequired || defendant.verdictViewDate) &&
           textItems.map((text, index) => (
             <motion.div
               key={index}
@@ -213,7 +211,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       </AnimatePresence>
       <AnimatePresence mode="wait">
         {defendant.verdictAppealDate ||
-        defendant.isVerdictAppealDeadlineExpired ? null : serviceRequirementNotRequired ||
+        defendant.isVerdictAppealDeadlineExpired ? null : !serviceRequired ||
           defendant.verdictViewDate ? (
           <motion.div
             key="defendantAppealDate"
