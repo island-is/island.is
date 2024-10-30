@@ -154,7 +154,7 @@ export function VaccinationsCard({
         )
       }
       onPress={() => {
-        setOpen((p) => !p)
+        setOpen((isOpen) => !isOpen)
       }}
       open={open}
     >
