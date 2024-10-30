@@ -127,6 +127,7 @@ export const ExpandableCard = ({
         shadowRadius: 16,
         elevation: 1,
         shadowColor: 'rgb(0, 32, 128)',
+        backgroundColor: theme.color.white,
       }}
     >
       <Card
