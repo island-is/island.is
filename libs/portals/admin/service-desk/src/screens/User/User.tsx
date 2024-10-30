@@ -24,10 +24,10 @@ const User = () => {
 
   const handleUpdateProfile = async (input: UpdateUserProfileInput) => {
     try {
-     const updatedProfile = await updateProfile({
+      const updatedProfile = await updateProfile({
         variables: {
           nationalId: user.nationalId,
-          input
+          input,
         },
       })
 

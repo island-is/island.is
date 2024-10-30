@@ -1,4 +1,11 @@
-import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { BadRequestException, UseGuards } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
@@ -50,9 +57,12 @@ export class AdminUserProfileResolver {
     @Args('input') input: UpdateUserProfileInput,
     @CurrentUser() user: User,
   ): Promise<AdminUserProfile> {
-    return this.userUserProfileService.updateUserProfile(nationalId, input, user)
+    return this.userUserProfileService.updateUserProfile(
+      nationalId,
+      input,
+      user,
+    )
   }
-
 
   @ResolveField('fullName', () => String, { nullable: true })
   async getFullName(@Parent() adminUserProfile: AdminUserProfile) {

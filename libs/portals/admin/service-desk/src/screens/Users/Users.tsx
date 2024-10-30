@@ -1,4 +1,10 @@
-import { Form, useActionData, useNavigate, useSearchParams, useSubmit } from 'react-router-dom'
+import {
+  Form,
+  useActionData,
+  useNavigate,
+  useSearchParams,
+  useSubmit,
+} from 'react-router-dom'
 
 import {
   AsyncSearchInput,
@@ -21,7 +27,7 @@ import { ServiceDeskPaths } from '../../lib/paths'
 import { GetUserProfilesResult } from './Users.action'
 
 const Users = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams()
   const searchQuery = searchParams?.get('q')
   const [focused, setFocused] = useState(false)
   const [searchInput, setSearchInput] = useState(() => searchQuery || '')
@@ -86,7 +92,7 @@ const Users = () => {
                   params.set('q', searchInput)
                   return params
                 })
-              }
+              },
             }}
             hasError={error.hasError}
             errorMessage={error.hasError ? error.message : undefined}

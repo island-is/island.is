@@ -23,7 +23,8 @@ const Procurers = () => {
         onClick={() => {
           navigate(-1)
         }}
-      />      <div>
+      />{' '}
+      <div>
         <IntroHeader title={company.name} intro={formattedNationalId} />
         <Box marginTop={[3, 3, 6]}>
           {company.companyInfo?.relationships?.length === 0 ? (

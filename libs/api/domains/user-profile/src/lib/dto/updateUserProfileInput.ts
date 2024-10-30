@@ -4,7 +4,8 @@ import {
   IsOptional,
   IsEmail,
   IsEnum,
-  IsBoolean, ValidateIf,
+  IsBoolean,
+  ValidateIf,
 } from 'class-validator'
 import { Locale } from '../types/locales.enum'
 import { DataStatus } from '../types/dataStatus.enum'

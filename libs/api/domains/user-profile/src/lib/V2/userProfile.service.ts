@@ -181,7 +181,7 @@ export class UserProfileServiceV2 {
       user,
     ).userProfileControllerPatchUserProfile({
       xParamNationalId: nationalId,
-      patchUserProfileDto: input
+      patchUserProfileDto: input,
     })
   }
 }

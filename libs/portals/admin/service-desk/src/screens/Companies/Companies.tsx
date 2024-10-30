@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import { Form, useActionData, useNavigate, useSearchParams, useSubmit } from 'react-router-dom'
+import {
+  Form,
+  useActionData,
+  useNavigate,
+  useSearchParams,
+  useSubmit,
+} from 'react-router-dom'
 import * as kennitala from 'kennitala'
 
 import { useLocale } from '@island.is/localization'
@@ -20,7 +26,7 @@ import { ServiceDeskPaths } from '../../lib/paths'
 import * as styles from './Companies.css'
 
 const Companies = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams()
   const searchQuery = searchParams?.get('q')
 
   const [focused, setFocused] = useState(false)
@@ -69,7 +75,6 @@ const Companies = () => {
               onFocus,
               placeholder: formatMessage(m.searchByNationalId),
               colored: true,
-
             }}
             buttonProps={{
               type: 'submit',
@@ -79,7 +84,7 @@ const Companies = () => {
                   params.set('q', searchInput)
                   return params
                 })
-              }
+              },
             }}
           />
         </Box>

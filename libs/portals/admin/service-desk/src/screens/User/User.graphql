@@ -14,7 +14,10 @@ query GetUserProfileByNationalId($nationalId: String!) {
   }
 }
 
-mutation UpdateUserProfile($nationalId: String!, $input: UpdateUserProfileInput!) {
+mutation UpdateUserProfile(
+  $nationalId: String!
+  $input: UpdateUserProfileInput!
+) {
   UserProfileAdminUpdateProfile(nationalId: $nationalId, input: $input) {
     nationalId
     email

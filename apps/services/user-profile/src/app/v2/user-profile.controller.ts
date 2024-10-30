@@ -1,9 +1,11 @@
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 import {
-  BadRequestException, Body,
+  BadRequestException,
+  Body,
   Controller,
   Get,
-  Headers, Patch,
+  Headers,
+  Patch,
   Query,
   UseGuards,
 } from '@nestjs/common'
@@ -150,15 +152,16 @@ export class UserProfileController {
   @Audit<UserProfileDto>({
     resources: (profile) => profile.nationalId,
   })
-  @Scopes(
-    AdminPortalScope.serviceDesk,
-  )
+  @Scopes(AdminPortalScope.serviceDesk)
   patchUserProfile(
     @Headers('X-Param-National-Id') nationalId: string,
     @Body() userProfile: PatchUserProfileDto,
   ): Promise<UserProfileDto> {
-    return this.userProfileService.patch({
-      nationalId,
-    }, userProfile)
+    return this.userProfileService.patch(
+      {
+        nationalId,
+      },
+      userProfile,
+    )
   }
 }

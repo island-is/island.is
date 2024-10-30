@@ -90,11 +90,7 @@ export class UserProfileService {
     input: UpdateUserProfileInput,
     user: User,
   ): Promise<UserProfile> {
-    return this.userProfileServiceV2.updateUserProfile(
-      input,
-      user,
-      nationalId
-    )
+    return this.userProfileServiceV2.updateUserProfile(input, user, nationalId)
   }
 
   async deleteIslykillValue(

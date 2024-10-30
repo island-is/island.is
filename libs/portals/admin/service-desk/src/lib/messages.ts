@@ -150,5 +150,5 @@ export const m = defineMessages({
   noMobilePhone: {
     id: 'admin-portal.service-desk:no-mobile-phone',
     defaultMessage: 'Ekkert símanúmer skráð',
-  }
+  },
 })

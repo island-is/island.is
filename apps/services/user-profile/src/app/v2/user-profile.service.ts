@@ -129,7 +129,9 @@ export class UserProfileService {
     const isEmailDefined = isDefined(userProfile.email)
     const isMobilePhoneNumberDefined = isDefined(userProfile.mobilePhoneNumber)
 
-    const audkenniSimSameAsMobilePhoneNumber = audkenniSimNumber && isMobilePhoneNumberDefined &&
+    const audkenniSimSameAsMobilePhoneNumber =
+      audkenniSimNumber &&
+      isMobilePhoneNumberDefined &&
       this.checkAudkenniSameAsMobilePhoneNumber(
         audkenniSimNumber,
         userProfile.mobilePhoneNumber,
