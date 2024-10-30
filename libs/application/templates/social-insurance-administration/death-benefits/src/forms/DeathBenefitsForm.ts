@@ -385,7 +385,7 @@ export const DeathBenefitsForm: Form = buildForm({
           condition: (_, externalData) => {
             const { children } = getApplicationExternalData(externalData)
             // if no children returned, dont show the table
-            if (children.length === 0) return false
+            if (!children || children.length === 0) return false
             return true
           },
           children: [
