@@ -97,10 +97,13 @@ export class CaseService {
   ): Promise<CaseResponse> {
     const response = await this.fetchCase(id, nationalId)
     const defendant = response.defendants[0]
-    const subpoenas = defendant.subpoenas
 
-    if (subpoenas && subpoenas[0].subpoenaId) {
-      await this.fetchServiceStatus(id, subpoenas[0].subpoenaId)
+    if (!defendant) {
+      throw new NotFoundException('No defendant found for this case')
+    }
+
+    if (defendant.subpoenas && defendant.subpoenas[0].subpoenaId) {
+      await this.fetchServiceStatus(id, defendant.subpoenas[0].subpoenaId)
     }
 
     return CaseResponse.fromInternalCaseResponse(response, lang)
