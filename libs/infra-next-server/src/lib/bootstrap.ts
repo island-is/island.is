@@ -85,13 +85,22 @@ export const bootstrap = async (options: BootstrapOptions) => {
     options.externalEndpointDependencies,
   )
 
-  expressApp.use((req, res) => {
+  expressApp.use(async (req, res) => {
     // Configure long caching for web fonts (often in public folder).
     if (req.url.match('.woff2?$')) {
       res.setHeader('Cache-Control', 'public, max-age=31536000') // 365 days
     }
 
-    handle(req, res as never)
+    try {
+      await handle(req, res)
+    } catch (err: any) {
+      logger.error('Error in Next.js request handler!', {
+        message: err.message,
+        stack: err.stack,
+        err,
+      })
+      res.status(500).send('Internal Server Error')
+    }
   })
 
   startServer(expressApp, options.port)

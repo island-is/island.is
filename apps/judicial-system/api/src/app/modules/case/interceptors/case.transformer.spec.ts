@@ -14,7 +14,7 @@ import { Defendant } from '../../defendant'
 import { Case } from '../models/case.model'
 import {
   getAppealInfo,
-  getDefendantsInfo,
+  getIndictmentDefendantsInfo,
   getIndictmentInfo,
   transformCase,
 } from './case.transformer'
@@ -540,6 +540,31 @@ describe('getAppealInfo', () => {
     expect(appealInfo).toEqual({})
   })
 
+  it('should return not return appealedDate if case has not been appealed', () => {
+    const rulingDate = new Date().toISOString()
+    const theCase = {
+      type: CaseType.CUSTODY,
+      rulingDate,
+      appealState: undefined,
+      accusedAppealDecision: CaseAppealDecision.POSTPONE,
+      prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+      accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+      prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+    } as Case
+
+    const appealInfo = getAppealInfo(theCase)
+
+    expect(appealInfo).toEqual({
+      canBeAppealed: true,
+      hasBeenAppealed: false,
+      appealDeadline: new Date(
+        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 3),
+      ).toISOString(),
+      canDefenderAppeal: true,
+      canProsecutorAppeal: true,
+    })
+  })
+
   it('should return correct appeal info when ruling date is provided', () => {
     const rulingDate = new Date().toISOString()
     const theCase = {
@@ -685,23 +710,33 @@ describe('getIndictmentInfo', () => {
   })
 })
 
-describe('getDefentandInfo', () => {
-  it('should add verdict appeal deadline for defendants with verdict view date', () => {
+describe('getIndictmentDefendantsInfo', () => {
+  it('should add verdict appeal deadline and expiry for defendants with verdict view date', () => {
     const defendants = [
-      { verdictViewDate: '2022-06-15T19:50:08.033Z' } as Defendant,
+      {
+        verdictViewDate: '2022-06-15T19:50:08.033Z',
+        serviceRequirement: ServiceRequirement.REQUIRED,
+      } as Defendant,
       { verdictViewDate: undefined } as Defendant,
     ]
 
-    const defendantsInfo = getDefendantsInfo(defendants)
+    const theCase = {
+      defendants,
+    } as Case
+
+    const defendantsInfo = getIndictmentDefendantsInfo(theCase)
 
     expect(defendantsInfo).toEqual([
       {
         verdictViewDate: '2022-06-15T19:50:08.033Z',
+        serviceRequirement: ServiceRequirement.REQUIRED,
         verdictAppealDeadline: '2022-07-13T19:50:08.033Z',
+        isVerdictAppealDeadlineExpired: true,
       },
       {
         verdictViewDate: undefined,
         verdictAppealDeadline: undefined,
+        isVerdictAppealDeadlineExpired: false,
       },
     ])
   })

@@ -1,7 +1,6 @@
 import {
   buildCustomField,
   buildDataProviderItem,
-  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
@@ -14,12 +13,13 @@ import {
   DefaultEvents,
   Form,
   FormModes,
+  MockablePaymentCatalogApi,
   PassportsApi,
 } from '@island.is/application/types'
 import {
-  SyslumadurPaymentCatalogApi,
   UserInfoApi,
   NationalRegistryUser,
+  SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { Services } from '../lib/constants'
 import { m } from '../lib/messages'
@@ -45,7 +45,6 @@ export const Draft: Form = buildForm({
           title: m.dataCollectionTitle,
           subTitle: m.dataCollectionSubtitle,
           checkboxLabel: m.dataCollectionCheckboxLabel,
-          enableMockPayment: true,
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUser,
@@ -64,6 +63,12 @@ export const Draft: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SyslumadurPaymentCatalogApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: MockablePaymentCatalogApi.configure({
+                externalDataId: 'payment',
+              }),
               title: '',
             }),
           ],
@@ -95,23 +100,17 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'serviceSection',
-      title: m.serviceTitle,
+      title: m.serviceTypeTitle,
       children: [
         buildMultiField({
           id: 'service',
-          title: m.serviceTitle,
+          title: m.serviceTypeTitle,
+          description: m.serviceTypeDescription,
           children: [
-            buildDescriptionField({
-              id: 'service.dropTypeDescription',
-              title: m.serviceTypeTitle,
-              titleVariant: 'h3',
-              description: m.serviceTypeDescription,
-            }),
             buildRadioField({
               id: 'service.type',
               title: '',
               width: 'half',
-              space: 'none',
               options: ({ answers, externalData }: Application) => {
                 const regularCode = getChargeCode(
                   answers,
@@ -145,14 +144,6 @@ export const Draft: Form = buildForm({
                   },
                 ]
               },
-            }),
-            buildDescriptionField({
-              id: 'service.dropLocationDescription',
-              title: m.dropLocation,
-              titleVariant: 'h3',
-              space: 2,
-              description: m.dropLocationTitleFixedValue,
-              marginBottom: 'gutter',
             }),
           ],
         }),

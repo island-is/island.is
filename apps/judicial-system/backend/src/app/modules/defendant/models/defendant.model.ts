@@ -35,11 +35,11 @@ export class Defendant extends Model {
   ) {
     return defendants?.some(
       (defendant) =>
+        defendant.isDefenderChoiceConfirmed &&
         defendant.defenderNationalId &&
         normalizeAndFormatNationalId(defenderNationalId).includes(
           defendant.defenderNationalId,
-        ) &&
-        defendant.isDefenderChoiceConfirmed,
+        ),
     )
   }
 
@@ -49,12 +49,12 @@ export class Defendant extends Model {
   ) {
     return defendants?.some(
       (defendant) =>
+        defendant.isDefenderChoiceConfirmed &&
+        defendant.caseFilesSharedWithDefender &&
         defendant.defenderNationalId &&
         normalizeAndFormatNationalId(defenderNationalId).includes(
           defendant.defenderNationalId,
-        ) &&
-        defendant.isDefenderChoiceConfirmed &&
-        defendant.caseFilesSharedWithDefender,
+        ),
     )
   }
 
@@ -155,6 +155,10 @@ export class Defendant extends Model {
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
   verdictViewDate?: Date
+
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  verdictAppealDate?: Date
 
   @Column({
     type: DataType.ENUM,
