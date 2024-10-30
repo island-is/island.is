@@ -874,13 +874,22 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:mileage-errors-input-too-low',
     defaultMessage: 'Verður að vera hærri en síðasta staðfesta skráning',
   },
+  mileageInputPositive: {
+    id: 'sp.vehicles:mileage-errors-min-value',
+    defaultMessage: 'Skráning þarf að vera að minnsta kosti 1 km',
+  },
   mileageInputMinLength: {
     id: 'sp.vehicles:mileage-errors-min-length',
-    defaultMessage: 'Skrá verður inn kílómetrastöðu til að vista',
+    defaultMessage: 'Skrá þarf einhverja kílómetrastöðu',
   },
   mileageSuccessFormTitle: {
     id: 'sp.vehicles:mileage-success-form-title',
     defaultMessage: 'Kílómetrastaða skráð',
+  },
+  mileageUploadTooManyRequests: {
+    id: 'sp.vehicles:mileage-error-too-many-request',
+    defaultMessage:
+      'Of margar upphleðslur á stuttum tíma. Vinsamlegast hinkraðu um stund.',
   },
   mileageSuccessFormText: {
     id: 'sp.vehicles:mileage-success-form-text',
@@ -972,6 +981,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:upload-failed',
     defaultMessage: 'Upphleðsla mistókst',
   },
+  wrongFileType: {
+    id: 'sp.vehicles:wrong-file-type',
+    defaultMessage: 'Vitlaus skráartýpa. Skrá verður að vera .csv eða .xslx',
+  },
   errorWhileProcessing: {
     id: 'sp.vehicles:error-while-processing',
     defaultMessage: 'Villa við að meðhöndla skjal. Villur: ',
@@ -1026,7 +1039,7 @@ export const vehicleMessage = defineMessages({
   },
   fileUploadAcceptedTypes: {
     id: 'sp.vehicles:file-upload-accepted-types',
-    defaultMessage: 'Tekið er við skjölum með endingu; .csv',
+    defaultMessage: 'Tekið er við skjölum með endingu; .csv, .xlsx',
   },
   dataAboutJob: {
     id: 'sp.vehicles:data-about-job',
