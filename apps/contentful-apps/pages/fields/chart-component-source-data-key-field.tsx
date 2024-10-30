@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import NumberFormat from 'react-number-format'
 import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import {
@@ -58,13 +59,13 @@ interface ManualData {
     id: number
     key: string
     dateOfChange: string
-    value: string
+    value: number
   }[]
   categoryItems: {
     id: number
     key: string
     category: string
-    value: string
+    value: number
   }[]
 }
 
@@ -136,7 +137,7 @@ const ChartComponentSourceDataKeyField = () => {
   const updateManualDataDateItem = (
     id: number,
     key: keyof ManualData['dateItems'][number],
-    value: string,
+    value: number | string,
   ) => {
     setManualData((prevManualData) => ({
       ...prevManualData,
@@ -152,7 +153,7 @@ const ChartComponentSourceDataKeyField = () => {
   const updateManualDataCategoryItem = (
     id: number,
     key: keyof ManualData['categoryItems'][number],
-    value: string,
+    value: number | string,
   ) => {
     setManualData((prevManualData) => ({
       ...prevManualData,
@@ -234,7 +235,7 @@ const ChartComponentSourceDataKeyField = () => {
                         id: generateId(prevManualData, manualDataKeyValue),
                         key: componentKeyValue,
                         dateOfChange: new Date().toISOString(),
-                        value: '',
+                        value: 0,
                       }),
                     }))
                   }}
@@ -255,7 +256,7 @@ const ChartComponentSourceDataKeyField = () => {
                         id: generateId(prevManualData, manualDataKeyValue),
                         key: componentKeyValue,
                         category: '',
-                        value: '',
+                        value: 0,
                       }),
                     }))
                   }}
@@ -298,15 +299,20 @@ const ChartComponentSourceDataKeyField = () => {
                             />
                           </Table.Cell>
                           <Table.Cell>
-                            <TextInput
-                              value={change.value}
-                              onChange={(ev) => {
+                            <NumberFormat
+                              customInput={TextInput}
+                              value={String(change.value || '')}
+                              onValueChange={(ev) => {
                                 updateManualDataDateItem(
                                   change.id,
                                   'value',
-                                  ev.target.value,
+                                  Number(ev.value),
                                 )
                               }}
+                              isNumericString={true}
+                              inputMode="decimal"
+                              thousandSeparator="."
+                              decimalSeparator=","
                             />
                           </Table.Cell>
                           <Table.Cell>
@@ -364,15 +370,20 @@ const ChartComponentSourceDataKeyField = () => {
                           />
                         </Table.Cell>
                         <Table.Cell>
-                          <TextInput
-                            value={change.value}
-                            onChange={(ev) => {
+                          <NumberFormat
+                            customInput={TextInput}
+                            value={String(change.value || '')}
+                            onValueChange={(ev) => {
                               updateManualDataCategoryItem(
                                 change.id,
                                 'value',
-                                ev.target.value,
+                                Number(ev.value),
                               )
                             }}
+                            isNumericString={true}
+                            inputMode="decimal"
+                            thousandSeparator="."
+                            decimalSeparator=","
                           />
                         </Table.Cell>
                         <Table.Cell>
