@@ -243,7 +243,6 @@ export class CaseService {
     subpoenaId: string,
   ): Promise<InternalCaseResponse> {
     try {
-      console.log()
       const res = await fetch(
         `${this.config.backendUrl}/api/internal/case/${caseId}/subpoenaStatus/${subpoenaId}`,
         {
