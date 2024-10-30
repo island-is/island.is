@@ -201,6 +201,8 @@ export const SitemapNode = ({
       ? node.url
       : entries.find((entry) => entry.id === node.entryId)?.slug || '...'
 
+  const isClickable = node.type !== TreeNodeType.URL
+
   return (
     <div
       style={{
@@ -214,36 +216,45 @@ export const SitemapNode = ({
         style={{
           border: '1px solid black',
           padding: '4px',
-          cursor: node.type !== TreeNodeType.URL ? 'cursor' : undefined,
           display: 'flex',
           flexFlow: 'row nowrap',
           justifyContent: 'space-between',
         }}
       >
         <div
+          style={{
+            cursor: isClickable ? 'pointer' : undefined,
+            width: '100%',
+          }}
           onClick={() => {
-            if (node.type !== TreeNodeType.URL) {
+            if (isClickable) {
               setShowChildNodes((prev) => !prev)
             }
-          }}
-          style={{
-            display: 'flex',
-            flexFlow: 'row nowrap',
-            gap: '8px',
-            alignItems: 'center',
           }}
         >
           <div
             style={{
-              visibility: node.type === TreeNodeType.URL ? 'hidden' : 'visible',
+              display: 'flex',
+              flexFlow: 'row nowrap',
+              gap: '8px',
+              alignItems: 'center',
             }}
           >
-            {showChildNodes ? <ChevronDownIcon /> : <ChevronRightIcon />}
-          </div>
+            <div
+              style={{
+                visibility:
+                  node.type === TreeNodeType.URL ? 'hidden' : 'visible',
+              }}
+            >
+              {showChildNodes ? <ChevronDownIcon /> : <ChevronRightIcon />}
+            </div>
 
-          <div>
-            <div style={{ fontSize: '16px', fontWeight: 'bold' }}>{label}</div>
-            <div>{slug}</div>
+            <div>
+              <div style={{ fontSize: '16px', fontWeight: 'bold' }}>
+                {label}
+              </div>
+              <div>{slug}</div>
+            </div>
           </div>
         </div>
         <div>
