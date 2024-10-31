@@ -6,7 +6,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional, PickType } from '@nestjs/swagger'
 import {
   ApplicationTypes,
   ApplicationStatus,
@@ -194,3 +194,9 @@ export class ApplicationsStatistics {
   @Expose()
   name?: string
 }
+
+export class ApplicationDetails extends PickType(Application, [
+  'answers',
+  'externalData',
+  'attachments',
+] as const) {}

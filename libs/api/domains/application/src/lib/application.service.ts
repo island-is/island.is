@@ -97,6 +97,14 @@ export class ApplicationService {
     })
   }
 
+  async getApplicationDetails(applicationId: string, user: User) {
+    return this.applicationApiWithAuth(
+      user,
+    ).adminControllerGetApplicationDetails({
+      applicationId,
+    })
+  }
+
   async findAllInstitutionAdmin(
     user: User,
     locale: Locale,
