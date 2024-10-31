@@ -51,6 +51,13 @@ export class Screen extends Model<Screen> {
   isHidden!: boolean
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  isCompleted!: boolean
+
+  @Column({
     type: DataType.INTEGER,
     allowNull: false,
     defaultValue: 0,
