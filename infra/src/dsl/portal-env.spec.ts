@@ -1,10 +1,9 @@
-import { ServiceBuilder, service } from './dsl'
+import { json, service } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
-import { SerializeSuccess, HelmService } from './types/output-types'
-import { EnvironmentConfig } from './types/charts'
-import { renderers } from './upstream-dependencies'
 import { generateOutputOne } from './processing/rendering-pipeline'
-import { json } from './dsl'
+import { EnvironmentConfig } from './types/charts'
+import { HelmService, SerializeSuccess } from './types/output-types'
+import { renderers } from './upstream-dependencies'
 
 import { adminPortalScopes } from '../../../libs/auth/scopes/src/index'
 
@@ -158,7 +157,7 @@ describe('BFF PortalEnv serialization', () => {
       // BFF
       BFF_NAME: 'stjornbord',
       BFF_CLIENT_KEY_PATH: `/${key}`,
-      BFF_PAR_SUPPORT_ENABLED: 'false',
+      BFF_PAR_SUPPORT_ENABLED: 'true',
       BFF_ALLOWED_REDIRECT_URIS: json(['https://beta.dev01.devland.is']),
       BFF_CLIENT_BASE_URL: 'https://beta.dev01.devland.is',
       BFF_LOGOUT_REDIRECT_URI: 'https://beta.dev01.devland.is',
