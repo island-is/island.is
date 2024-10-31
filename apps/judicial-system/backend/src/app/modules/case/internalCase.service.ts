@@ -1,7 +1,6 @@
 import CryptoJS from 'crypto-js'
 import format from 'date-fns/format'
 import { Base64 } from 'js-base64'
-import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -58,7 +57,7 @@ import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Institution } from '../institution'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
-import { Subpoena } from '../subpoena/models/subpoena.model'
+import { Subpoena } from '../subpoena'
 import { User, UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
@@ -261,7 +260,7 @@ export class InternalCaseService {
     }
   }
 
-  private async upploadRequestPdfToCourt(
+  private async uploadRequestPdfToCourt(
     theCase: Case,
     user: TUser,
   ): Promise<boolean> {
@@ -759,7 +758,7 @@ export class InternalCaseService {
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    return this.upploadRequestPdfToCourt(theCase, user).then((delivered) => ({
+    return this.uploadRequestPdfToCourt(theCase, user).then((delivered) => ({
       delivered,
     }))
   }

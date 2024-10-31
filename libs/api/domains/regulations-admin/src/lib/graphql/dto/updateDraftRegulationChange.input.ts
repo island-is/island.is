@@ -8,6 +8,9 @@ class UpdateChangeAppendixInput {
 
   @Field(() => String, { nullable: true })
   text!: HTMLText
+
+  @Field(() => String, { nullable: true })
+  diff?: HTMLText
 }
 
 @InputType()

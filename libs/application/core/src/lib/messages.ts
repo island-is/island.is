@@ -298,6 +298,21 @@ export const coreDefaultFieldMessages = defineMessages({
     defaultMessage: 'Veljið skjöl til að hlaða upp',
     description: 'Default file upload button label',
   },
+  defaultBankAccountBankNumber: {
+    id: 'application.system:core.default.bankAccount.bankNumber',
+    defaultMessage: 'Bankanúmer',
+    description: 'Bank account bank number',
+  },
+  defaultBankAccountLedger: {
+    id: 'application.system:core.default.bankAccount.ledger',
+    defaultMessage: 'Höfuðbók',
+    description: 'Bank account ledger',
+  },
+  defaultBankAccountAccountNumber: {
+    id: 'application.system:core.default.bankAccount.accountNumber',
+    defaultMessage: 'Reikningsnúmer',
+    description: 'Bank account account number',
+  },
   defaultDownloadButtonTitle: {
     id: 'application.system:core.default.pdfLinkButtonField.downloadButtonTitle',
     defaultMessage: 'Hlaða niður skjali',

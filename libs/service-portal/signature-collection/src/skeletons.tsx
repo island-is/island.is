@@ -23,7 +23,9 @@ export const SkeletonTable = () => {
 }
 
 export const CollectorSkeleton = () => {
-  return (
-    <SkeletonLoader height={50} borderRadius="large" repeat={2} space={1} />
-  )
+  return <SkeletonLoader height={50} borderRadius="large" />
+}
+
+export const SingleListSkeleton = () => {
+  return <SkeletonLoader height={150} borderRadius="large" />
 }

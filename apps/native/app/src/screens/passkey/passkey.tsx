@@ -1,4 +1,4 @@
-import { Button, Typography, NavigationBarSheet } from '@ui'
+import { Button, Typography, NavigationBarSheet, LinkText } from '@ui'
 import React, { useEffect, useState } from 'react'
 import { useIntl, FormattedMessage } from 'react-intl'
 import {
@@ -7,6 +7,8 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Alert,
+  TouchableOpacity,
+  useWindowDimensions,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import {
@@ -15,7 +17,8 @@ import {
 } from 'react-native-navigation'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import logo from '../../assets/logo/logo-64w.png'
-import illustrationSrc from '../../assets/illustrations/digital-services-m1.png'
+import externalLink from '../../assets/icons/external-link.png'
+import illustrationSrc from '../../assets/illustrations/digital-services-m1-dots.png'
 import { openNativeBrowser } from '../../lib/rn-island'
 import { preferencesStore } from '../../stores/preferences-store'
 import { useRegisterPasskey } from '../../lib/passkeys/useRegisterPasskey'
@@ -24,11 +27,41 @@ import { authStore } from '../../stores/auth-store'
 import { useBrowser } from '../../lib/use-browser'
 import { addPasskeyAsLoginHint } from '../../lib/passkeys/helpers'
 
-const Text = styled.View`
+const Text = styled.View<{ isSmallDevice: boolean }>`
   margin-horizontal: ${({ theme }) => theme.spacing[7]}px;
   text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing[5]}px;
-  margin-top: ${({ theme }) => theme.spacing[5]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+  margin-top: ${({ theme, isSmallDevice }) =>
+    isSmallDevice ? theme.spacing[2] : theme.spacing[3]}px;
+`
+
+const Host = styled.View<{ isSmallDevice: boolean }>`
+  justify-content: center;
+  align-items: center;
+  margin-top: ${({ theme, isSmallDevice }) =>
+    isSmallDevice ? -theme.spacing[3] : 0}px;
+  flex: 1;
+`
+
+const ButtonWrapper = styled.View`
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-vertical: ${({ theme }) => theme.spacing[4]}px;
+`
+
+const Title = styled(Typography)`
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+`
+const SettingsMessage = styled(Typography)<{ isSmallDevice: boolean }>`
+  margin-top: ${({ theme, isSmallDevice }) =>
+    isSmallDevice ? theme.spacing[1] : theme.spacing[2]}px;
+  max-width: 265px;
+  text-align: center;
+`
+
+const LinkWrapper = styled.View<{ isSmallDevice: boolean }>`
+  margin-bottom: ${({ theme, isSmallDevice }) =>
+    isSmallDevice ? theme.spacing[2] : theme.spacing[3]}px;
 `
 
 const LoadingOverlay = styled.View`
@@ -63,8 +96,9 @@ export const PasskeyScreen: NavigationFunctionComponent<{
   const intl = useIntl()
   const theme = useTheme()
   const { openBrowser } = useBrowser()
+  const { height } = useWindowDimensions()
+  const isSmallDevice = height < 800
   const [isLoading, setIsLoading] = useState(false)
-
   const { registerPasskey } = useRegisterPasskey()
   const { authenticatePasskey } = useAuthenticatePasskey()
 
@@ -83,32 +117,19 @@ export const PasskeyScreen: NavigationFunctionComponent<{
         style={{ marginHorizontal: 16 }}
       />
       <SafeAreaView style={{ flex: 1 }}>
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            flex: 1,
-          }}
-        >
+        <Host isSmallDevice={isSmallDevice}>
           <Image
             source={logo}
             resizeMode="contain"
             style={{ width: 45, height: 45 }}
           />
-          <Text>
-            <Typography
-              variant={'heading2'}
-              style={{
-                paddingHorizontal: theme.spacing[2],
-                marginBottom: theme.spacing[2],
-              }}
-              textAlign="center"
-            >
+          <Text isSmallDevice={isSmallDevice}>
+            <Title variant={'heading2'} textAlign="center">
               <FormattedMessage
                 id="passkeys.headingTitle"
                 defaultMessage="Innskrá með Ísland.is appinu"
               />
-            </Typography>
+            </Title>
             <Typography textAlign="center">
               <FormattedMessage
                 id={
@@ -124,18 +145,34 @@ export const PasskeyScreen: NavigationFunctionComponent<{
               />
             </Typography>
           </Text>
-          <Image
-            source={illustrationSrc}
-            style={{ width: 195, height: 223 }}
-            resizeMode="contain"
-          />
-        </View>
-        <View
-          style={{
-            paddingHorizontal: theme.spacing[2],
-            paddingVertical: theme.spacing[4],
-          }}
-        >
+          <LinkWrapper isSmallDevice={isSmallDevice}>
+            <TouchableOpacity
+              style={{ flexWrap: 'wrap' }}
+              onPress={() =>
+                openBrowser('https://island.is/adgangslyklar', componentId)
+              }
+            >
+              <LinkText>
+                <FormattedMessage id="passkeys.furtherInformation" />{' '}
+                <Image source={externalLink} />
+              </LinkText>
+            </TouchableOpacity>
+          </LinkWrapper>
+          {height > 650 && (
+            <Image
+              source={illustrationSrc}
+              style={{
+                width: isSmallDevice ? 120 : 174,
+                height: isSmallDevice ? 140 : 204,
+              }}
+              resizeMode="contain"
+            />
+          )}
+          <SettingsMessage variant="body3" isSmallDevice={isSmallDevice}>
+            <FormattedMessage id="passkeys.settings" />
+          </SettingsMessage>
+        </Host>
+        <ButtonWrapper>
           <Button
             title={intl.formatMessage({
               id: 'passkeys.createButton',
@@ -218,7 +255,7 @@ export const PasskeyScreen: NavigationFunctionComponent<{
               url && openBrowser(url, parentComponentId)
             }}
           />
-        </View>
+        </ButtonWrapper>
       </SafeAreaView>
       {isLoading && (
         <LoadingOverlay>

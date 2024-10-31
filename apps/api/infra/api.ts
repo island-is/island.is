@@ -46,6 +46,7 @@ import {
   UniversityCareers,
   OfficialJournalOfIceland,
   OfficialJournalOfIcelandApplication,
+  JudicialSystemServicePortal,
   Frigg,
   HealthDirectorateOrganDonation,
   HealthDirectorateVaccination,
@@ -385,6 +386,8 @@ export const serviceSetup = (services: {
       ULTRAVIOLET_RADIATION_API_KEY: '/k8s/api/ULTRAVIOLET_RADIATION_API_KEY',
       UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL:
         '/k8s/api/UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL',
+      VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY:
+        '/k8s/api/VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY',
     })
     .xroad(
       AdrAndMachine,
@@ -432,6 +435,7 @@ export const serviceSetup = (services: {
       SignatureCollection,
       SocialInsuranceAdministration,
       OfficialJournalOfIceland,
+      JudicialSystemServicePortal,
       OfficialJournalOfIcelandApplication,
       Frigg,
       HealthDirectorateOrganDonation,
@@ -446,13 +450,6 @@ export const serviceSetup = (services: {
           prod: ['', 'www.island.is'],
         },
         paths: ['/api'],
-        extraAnnotations: {
-          dev: {},
-          staging: {
-            'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
-          },
-          prod: {},
-        },
         public: true,
       },
     })

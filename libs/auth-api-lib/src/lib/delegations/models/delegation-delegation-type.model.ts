@@ -51,7 +51,7 @@ export class DelegationDelegationType extends Model<
     type: DataType.DATE,
     allowNull: true,
   })
-  validTo?: Date
+  validTo?: Date | null
 
   @CreatedAt
   readonly created!: CreationOptional<Date>

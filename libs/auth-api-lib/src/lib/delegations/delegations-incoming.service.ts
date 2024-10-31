@@ -189,13 +189,21 @@ export class DelegationsIncomingService {
     }
 
     if (types?.includes(AuthDelegationType.GeneralMandate)) {
-      delegationPromises.push(
-        this.delegationsIncomingCustomService.findAllAvailableGeneralMandate(
+      const isGeneralMandateDelegationEnabled =
+        await this.featureFlagService.getValue(
+          Features.isGeneralMandateDelegationEnabled,
+          false,
           user,
-          clientAllowedApiScopes,
-          client.requireApiScopes,
-        ),
-      )
+        )
+      if (isGeneralMandateDelegationEnabled) {
+        delegationPromises.push(
+          this.delegationsIncomingCustomService.findAllAvailableGeneralMandate(
+            user,
+            clientAllowedApiScopes,
+            client.requireApiScopes,
+          ),
+        )
+      }
     }
 
     if (
@@ -220,7 +228,7 @@ export class DelegationsIncomingService {
       const isLegalRepresentativeDelegationEnabled =
         await this.featureFlagService.getValue(
           Features.isLegalRepresentativeDelegationEnabled,
-          true,
+          false,
           user,
         )
       if (isLegalRepresentativeDelegationEnabled) {
@@ -294,12 +302,15 @@ export class DelegationsIncomingService {
         if (delegationFound) {
           return true
         } else {
-          this.delegationsIndexService.removeDelegationRecord({
-            fromNationalId,
-            toNationalId: user.nationalId,
-            type: AuthDelegationType.LegalRepresentative,
-            provider: AuthDelegationProvider.DistrictCommissionersRegistry,
-          })
+          void this.delegationsIndexService.removeDelegationRecord(
+            {
+              fromNationalId,
+              toNationalId: user.nationalId,
+              type: AuthDelegationType.LegalRepresentative,
+              provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+            },
+            user,
+          )
         }
       } catch (error) {
         logger.error(

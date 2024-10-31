@@ -1,34 +1,27 @@
 import {
   buildCustomField,
   buildDataProviderItem,
-  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildRadioField,
   buildSection,
-  buildSelectField,
   buildSubmitField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import {
   Application,
   DefaultEvents,
   Form,
   FormModes,
+  MockablePaymentCatalogApi,
   PassportsApi,
 } from '@island.is/application/types'
 import {
-  DeliveryAddressApi,
-  SyslumadurPaymentCatalogApi,
   UserInfoApi,
   NationalRegistryUser,
+  SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
-import {
-  DistrictCommissionerAgencies,
-  Passport,
-  Services,
-} from '../lib/constants'
+import { Services } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
 import { personalInfo } from './infoSection/personalInfo'
@@ -52,7 +45,6 @@ export const Draft: Form = buildForm({
           title: m.dataCollectionTitle,
           subTitle: m.dataCollectionSubtitle,
           checkboxLabel: m.dataCollectionCheckboxLabel,
-          enableMockPayment: true,
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUser,
@@ -74,7 +66,9 @@ export const Draft: Form = buildForm({
               title: '',
             }),
             buildDataProviderItem({
-              provider: DeliveryAddressApi,
+              provider: MockablePaymentCatalogApi.configure({
+                externalDataId: 'payment',
+              }),
               title: '',
             }),
           ],
@@ -106,23 +100,17 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'serviceSection',
-      title: m.serviceTitle,
+      title: m.serviceTypeTitle,
       children: [
         buildMultiField({
           id: 'service',
-          title: m.serviceTitle,
+          title: m.serviceTypeTitle,
+          description: m.serviceTypeDescription,
           children: [
-            buildDescriptionField({
-              id: 'service.dropTypeDescription',
-              title: m.serviceTypeTitle,
-              titleVariant: 'h3',
-              description: m.serviceTypeDescription,
-            }),
             buildRadioField({
               id: 'service.type',
               title: '',
               width: 'half',
-              space: 'none',
               options: ({ answers, externalData }: Application) => {
                 const regularCode = getChargeCode(
                   answers,
@@ -155,31 +143,6 @@ export const Draft: Form = buildForm({
                     subLabel: m.serviceTypeExpressSublabel.defaultMessage,
                   },
                 ]
-              },
-            }),
-            buildDescriptionField({
-              id: 'service.dropLocationDescription',
-              title: m.dropLocation,
-              titleVariant: 'h3',
-              space: 2,
-              description: m.dropLocationDescription,
-              marginBottom: 'gutter',
-            }),
-            buildSelectField({
-              id: 'service.dropLocation',
-              title: m.dropLocation,
-              placeholder: m.dropLocationPlaceholder.defaultMessage,
-              options: ({
-                externalData: {
-                  deliveryAddress: { data },
-                },
-              }) => {
-                return (data as DistrictCommissionerAgencies[])?.map(
-                  ({ key, name }) => ({
-                    value: key,
-                    label: name,
-                  }),
-                )
               },
             }),
           ],

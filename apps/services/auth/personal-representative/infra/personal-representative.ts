@@ -1,5 +1,4 @@
 import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { MissingSetting } from '../../../../../infra/src/dsl/types/input-types'
 import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
 const REDIS_NODE_CONFIG = {
@@ -45,7 +44,7 @@ export const serviceSetup =
         SYSLUMENN_HOST: {
           dev: 'https://api.syslumenn.is/staging',
           staging: 'https://api.syslumenn.is/staging',
-          prod: 'https://api.syslumenn.is',
+          prod: 'https://api.syslumenn.is/api',
         },
         SYSLUMENN_TIMEOUT: '3000',
       })
@@ -66,15 +65,6 @@ export const serviceSetup =
           },
           paths: ['/'],
           public: false,
-        },
-        demo: {
-          host: {
-            dev: 'personal-representative-xrd.dev01.devland.is',
-            staging: MissingSetting,
-            prod: MissingSetting,
-          },
-          paths: ['/'],
-          public: true,
         },
       })
       .readiness('/health/check')

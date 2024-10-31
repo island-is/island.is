@@ -127,7 +127,6 @@ const AppealCaseFilesOverview = () => {
               <PdfButton
                 key={file.id}
                 renderAs="row"
-                caseId={workingCase.id}
                 title={file.name}
                 disabled={isDisabled}
                 handleClick={() => onOpen(file.id)}

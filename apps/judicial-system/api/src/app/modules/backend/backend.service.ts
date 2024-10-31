@@ -41,6 +41,7 @@ import { Institution } from '../institution'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
+  SubpoenaStatus,
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { backendModuleConfig } from './backend.config'
@@ -269,8 +270,16 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post(`case/${id}/file`, createFile)
   }
 
-  getCaseFileSignedUrl(caseId: string, id: string): Promise<SignedUrl> {
-    return this.get(`case/${caseId}/file/${id}/url`)
+  getCaseFileSignedUrl(
+    caseId: string,
+    id: string,
+    mergedCaseId?: string,
+  ): Promise<SignedUrl> {
+    const mergedCaseInjection = mergedCaseId
+      ? `/mergedCase/${mergedCaseId}`
+      : ''
+
+    return this.get(`case/${caseId}${mergedCaseInjection}/file/${id}/url`)
   }
 
   deleteCaseFile(caseId: string, id: string): Promise<DeleteFileResponse> {
@@ -296,6 +305,13 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
     return this.get(`case/${caseId}/policeFiles`)
+  }
+
+  getSubpoenaStatus(
+    caseId: string,
+    subpoenaId: string,
+  ): Promise<SubpoenaStatus> {
+    return this.get(`case/${caseId}/subpoenaStatus/${subpoenaId}`)
   }
 
   getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {
@@ -426,8 +442,15 @@ export class BackendService extends DataSource<{ req: Request }> {
   limitedAccessGetCaseFileSignedUrl(
     caseId: string,
     id: string,
+    mergedCaseId?: string,
   ): Promise<SignedUrl> {
-    return this.get(`case/${caseId}/limitedAccess/file/${id}/url`)
+    const mergedCaseInjection = mergedCaseId
+      ? `/mergedCase/${mergedCaseId}`
+      : ''
+
+    return this.get(
+      `case/${caseId}/limitedAccess${mergedCaseInjection}/file/${id}/url`,
+    )
   }
 
   limitedAccessDeleteCaseFile(

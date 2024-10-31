@@ -145,4 +145,21 @@ export const errors = defineMessages({
     defaultMessage: 'Upp kom villa við að opna skjal',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að opna skjal',
   },
+  getSubpoenaStatusTitle: {
+    id: 'judicial.system.core:errors.get_subpoena_status_title',
+    defaultMessage: 'Ekki tókst að sækja stöðu birtingar',
+    description:
+      'Notaður sem villuskilaboð þegar tekst að sækja stöðu birtingar',
+  },
+  getSubpoenaStatus: {
+    id: 'judicial.system.core:errors.get_subpoena_status',
+    defaultMessage: 'Vinsamlegast reyndu aftur síðar',
+    description:
+      'Notaður sem villuskilaboð þegar tekst að sækja stöðu birtingar',
+  },
+  invalidDate: {
+    id: 'judicial.system.core:errors.invalid_date',
+    defaultMessage: 'Dagsetning ekki rétt slegin inn',
+    description: 'Notaður sem villuskilaboð þegar dagsetning er ekki löggild',
+  },
 })

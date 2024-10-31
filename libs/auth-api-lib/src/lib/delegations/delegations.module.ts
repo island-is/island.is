@@ -6,6 +6,10 @@ import { NationalRegistryClientModule } from '@island.is/clients/national-regist
 import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import {
+  ZendeskModule,
+  ZendeskServiceOptions,
+} from '@island.is/clients/zendesk'
 
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
 import { Client } from '../clients/models/client.model'
@@ -28,6 +32,7 @@ import { DelegationsIncomingService } from './delegations-incoming.service'
 import { DelegationsIndexService } from './delegations-index.service'
 import { DelegationsOutgoingService } from './delegations-outgoing.service'
 import { DelegationsService } from './delegations.service'
+import { environment } from '../environments'
 import { DelegationDelegationType } from './models/delegation-delegation-type.model'
 import { DelegationIndexMeta } from './models/delegation-index-meta.model'
 import { DelegationIndex } from './models/delegation-index.model'
@@ -46,6 +51,7 @@ import { NamesService } from './names.service'
     CompanyRegistryClientModule,
     UserIdentitiesModule,
     FeatureFlagModule,
+    ZendeskModule.register(environment.zendeskOptions as ZendeskServiceOptions),
     SequelizeModule.forFeature([
       ApiScope,
       ApiScopeDelegationType,

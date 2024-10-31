@@ -1,17 +1,16 @@
-import { useNavigate } from 'react-router-dom'
 import format from 'date-fns/format'
 import { VisuallyHidden } from 'reakit/VisuallyHidden'
 import * as kennitala from 'kennitala'
 
 import {
   Box,
-  Text,
-  Stack,
-  Tag,
-  Inline,
+  Button,
   Icon,
   IconMapIcon as IconType,
-  Button,
+  Inline,
+  Stack,
+  Tag,
+  Text,
   Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -20,13 +19,12 @@ import { m as coreMessages } from '@island.is/portals/core'
 import uniqBy from 'lodash/uniqBy'
 import sortBy from 'lodash/sortBy'
 import { m } from '../../lib/messages'
-import { DelegationPaths } from '../../lib/paths'
 import { AuthApiScope, AuthDelegationType } from '@island.is/api/schema'
 import {
-  AuthCustomDelegation,
   AuthCustomDelegationIncoming,
   AuthCustomDelegationOutgoing,
 } from '../../types/customDelegation'
+import { AuthCustomDelegation } from '@island.is/api/schema'
 
 const isDateExpired = (date?: string | null) =>
   date ? new Date(date) < new Date() : false
@@ -38,7 +36,9 @@ const getTags = (delegation: AuthCustomDelegation) =>
   sortBy(
     uniqBy(
       delegation.scopes?.map((scope) => ({
-        name: scope?.apiScope ? getTagName(scope?.apiScope) : scope.displayName,
+        name: scope?.apiScope
+          ? getTagName(scope?.apiScope as AuthApiScope)
+          : scope.displayName,
         isExpired: isDateExpired(scope.validTo),
       })),
       'name',
@@ -49,35 +49,36 @@ const getTags = (delegation: AuthCustomDelegation) =>
 interface AccessCardProps {
   delegation: AuthCustomDelegation
 
-  onDelete(delegation: AuthCustomDelegation): void
-
-  onView?(delegation: AuthCustomDelegation): void
+  onDelete?: (delegation: AuthCustomDelegation) => void
+  onEdit?: (delegation: AuthCustomDelegation) => void
+  onView?: (delegation: AuthCustomDelegation) => void
+  onRenew?: (delegation: AuthCustomDelegation) => void
 
   variant?: 'outgoing' | 'incoming'
-  direction?: 'incoming' | 'outgoing'
 
-  canModify?: boolean
+  isAdminView?: boolean
 }
 
 export const AccessCard = ({
   delegation,
   onDelete,
   onView,
+  onEdit,
+  onRenew,
   variant = 'outgoing',
-  direction = 'outgoing',
-  canModify = true,
+  isAdminView = false,
 }: AccessCardProps) => {
   const { formatMessage } = useLocale()
-  const navigate = useNavigate()
-
   const tags = useMemo(() => getTags(delegation), [delegation])
 
   const hasTags = tags.length > 0
   const isOutgoing = variant === 'outgoing'
-  const href = `${DelegationPaths.Delegations}/${delegation.id}`
 
   const isExpired = useMemo(() => {
-    if (delegation.validTo) {
+    if (
+      delegation.validTo ||
+      delegation.type === AuthDelegationType.GeneralMandate
+    ) {
       return isDateExpired(delegation.validTo)
     }
 
@@ -159,12 +160,7 @@ export const AccessCard = ({
     return <Tooltip placement="bottom" as="button" text={text} />
   }
 
-  const showActions =
-    canModify && (isOutgoing || delegation.type === AuthDelegationType.Custom)
-
-  const canDelete =
-    isOutgoing || (!isOutgoing && delegation.type === AuthDelegationType.Custom)
-
+  const hasActions = onView || onEdit || onDelete
   return (
     <Box
       paddingY={[2, 3, 4]}
@@ -176,10 +172,12 @@ export const AccessCard = ({
       <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">
         <Stack space="smallGutter">
           <Box display="flex" columnGap={2} alignItems="center">
-            {!isOutgoing && (
+            {(isAdminView ||
+              !isOutgoing ||
+              delegation.type === AuthDelegationType.GeneralMandate) && (
               <>
                 {renderDelegationTypeLabel(delegation.type)}
-                {delegation.domain && (
+                {delegation.domain?.name && (
                   <Text variant="eyebrow" color="blue300">
                     {'|'}
                   </Text>
@@ -207,7 +205,7 @@ export const AccessCard = ({
           </Box>
           <VisuallyHidden>{formatMessage(m.accessHolder)}</VisuallyHidden>
           <Text variant="h3" as="h2" color={isExpired ? 'dark300' : 'dark400'}>
-            {direction === 'outgoing'
+            {isOutgoing
               ? (delegation as AuthCustomDelegationOutgoing)?.to?.name
               : (delegation as AuthCustomDelegationIncoming)?.from?.name}
           </Text>
@@ -231,10 +229,10 @@ export const AccessCard = ({
           )}
         </Inline>
       </Box>
-      <Box marginTop={hasTags && showActions ? 2 : 0}>
+      <Box marginTop={hasTags && hasActions ? 2 : 0}>
         <Box
           display="flex"
-          justifyContent={'spaceBetween'}
+          justifyContent={hasTags ? 'spaceBetween' : 'flexEnd'}
           alignItems={['stretch', 'flexEnd']}
           flexDirection={['column', 'row']}
           width="full"
@@ -255,7 +253,7 @@ export const AccessCard = ({
               </Inline>
             </Box>
           )}
-          {showActions && (
+          {hasActions && (
             <Box
               display="flex"
               alignItems="center"
@@ -263,7 +261,7 @@ export const AccessCard = ({
               marginTop={[2, 0]}
               marginLeft={[0, 3]}
             >
-              {canDelete && (
+              {onDelete && (
                 <Button
                   variant="text"
                   icon="trash"
@@ -277,7 +275,7 @@ export const AccessCard = ({
                 </Button>
               )}
               <Box marginLeft={3}>
-                {!isOutgoing && onView ? (
+                {onView && (
                   <Button
                     size="small"
                     variant="utility"
@@ -285,26 +283,30 @@ export const AccessCard = ({
                   >
                     {formatMessage(coreMessages.view)}
                   </Button>
-                ) : !isExpired ? (
+                )}
+                {!isExpired && onEdit ? (
                   <Button
                     icon="pencil"
                     iconType="outline"
                     size="small"
                     variant="utility"
-                    onClick={() => navigate(href)}
+                    onClick={() => onEdit(delegation)}
                   >
                     {formatMessage(coreMessages.buttonEdit)}
                   </Button>
                 ) : (
-                  <Button
-                    icon="reload"
-                    iconType="outline"
-                    size="small"
-                    variant="utility"
-                    onClick={() => navigate(href)}
-                  >
-                    {formatMessage(coreMessages.buttonRenew)}
-                  </Button>
+                  isExpired &&
+                  onRenew && (
+                    <Button
+                      icon="reload"
+                      iconType="outline"
+                      size="small"
+                      variant="utility"
+                      onClick={() => onRenew(delegation)}
+                    >
+                      {formatMessage(coreMessages.buttonRenew)}
+                    </Button>
+                  )
                 )}
               </Box>
             </Box>

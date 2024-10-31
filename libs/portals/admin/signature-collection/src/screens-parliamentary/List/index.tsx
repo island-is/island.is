@@ -1,18 +1,30 @@
-import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
+import {
+  Box,
+  Breadcrumbs,
+  GridColumn,
+  GridContainer,
+  GridRow,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
-import { m, parliamentaryMessages } from '../../lib/messages'
+import { m } from '../../lib/messages'
 import { useLoaderData } from 'react-router-dom'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import { ListStatus, SignatureCollectionList } from '@island.is/api/schema'
+import { PaperSignees } from './paperSignees'
+import { SignatureCollectionPaths } from '../../lib/paths'
 import ActionExtendDeadline from '../../shared-components/extendDeadline'
 import Signees from '../../shared-components/signees'
 import ActionReviewComplete from '../../shared-components/completeReview'
+import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import ListInfo from '../../shared-components/listInfoAlert'
 
-const List = () => {
+const List = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
   const { formatMessage } = useLocale()
-  const { list } = useLoaderData() as {
+  const { list, listStatus } = useLoaderData() as {
     list: SignatureCollectionList
+    listStatus: string
   }
 
   return (
@@ -32,15 +44,74 @@ const List = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
+          <Box marginBottom={3}>
+            <Breadcrumbs
+              items={[
+                {
+                  title: formatMessage(m.parliamentaryCollectionTitle),
+                  href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
+                },
+                {
+                  title: list.area.name,
+                  href: `/stjornbord${SignatureCollectionPaths.ParliamentaryConstituency.replace(
+                    ':constituencyName',
+                    list.area.name,
+                  )}`,
+                },
+                { title: list.candidate.name },
+              ]}
+            />
+          </Box>
           <IntroHeader
             title={list?.title}
-            intro={formatMessage(parliamentaryMessages.signatureListsIntro)}
+            intro={
+              allowedToProcess
+                ? formatMessage(m.singleListIntro)
+                : formatMessage(m.singleListIntroManage)
+            }
             imgPosition="right"
             imgHiddenBelow="sm"
+            img={
+              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
+            }
           />
-          <ActionExtendDeadline listId={list.id} endTime={list.endTime} />
-          <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
-          <ActionReviewComplete listId={list.id} />
+          <ListInfo
+            message={
+              listStatus === ListStatus.Extendable
+                ? formatMessage(m.listStatusExtendableAlert)
+                : listStatus === ListStatus.InReview
+                ? formatMessage(m.listStatusInReviewAlert)
+                : listStatus === ListStatus.Reviewed
+                ? formatMessage(m.listStatusReviewedStatusAlert)
+                : listStatus === ListStatus.Inactive
+                ? formatMessage(m.listStatusReviewedStatusAlert)
+                : formatMessage(m.listStatusActiveAlert)
+            }
+            type={
+              listStatus === ListStatus.Reviewed ||
+              listStatus === ListStatus.Inactive
+                ? 'success'
+                : undefined
+            }
+          />
+          <ActionExtendDeadline
+            listId={list.id}
+            endTime={list.endTime}
+            allowedToProcess={
+              allowedToProcess && listStatus === ListStatus.Extendable
+            }
+          />
+          {((allowedToProcess && !list.active) || !allowedToProcess) && (
+            <Signees numberOfSignatures={list.numberOfSignatures ?? 0} />
+          )}
+          {allowedToProcess && (
+            <Box>
+              {!list.active && !list.reviewed && (
+                <PaperSignees listId={list.id} />
+              )}
+              <ActionReviewComplete listId={list.id} listStatus={listStatus} />
+            </Box>
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

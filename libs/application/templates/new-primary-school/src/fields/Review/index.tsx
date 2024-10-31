@@ -16,11 +16,9 @@ import { ReasonForApplicationOptions, States } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 
-import { AllergiesAndIntolerances } from './review-groups/AllergiesAndIntolerances'
 import { Child } from './review-groups/Child'
 import { Languages } from './review-groups/Languages'
 import { Parents } from './review-groups/Parents'
-import { Photography } from './review-groups/Photography'
 import { ReasonForApplication } from './review-groups/ReasonForApplication'
 import { Relatives } from './review-groups/Relatives'
 import { Siblings } from './review-groups/Siblings'
@@ -167,9 +165,7 @@ export const Review: FC<ReviewScreenProps> = ({
           )}
           <School {...childProps} />
           <Languages {...childProps} />
-          <AllergiesAndIntolerances {...childProps} />
           <Support {...childProps} />
-          <Photography {...childProps} />
         </>
       )}
     </>

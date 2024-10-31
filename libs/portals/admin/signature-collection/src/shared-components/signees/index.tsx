@@ -14,9 +14,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLoaderData } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
-import SortSignees from '../sortSignees'
-import { pageSize } from '../../lib/utils'
+import SortSignees from './sortSignees'
+import { FiltersSigneeType, pageSize } from '../../lib/utils'
 import { m } from '../../lib/messages'
+import EditPage from './editPage'
+import FilterSignees from './filterSignees'
 
 const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
   const { formatMessage } = useLocale()
@@ -27,16 +29,26 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(1)
 
+  const [filters, setFilters] = useState<FiltersSigneeType>({
+    signeeType: [],
+    pageNumber: [],
+  })
+
   const filteredSignees = useMemo(() => {
     return allSignees.filter((s) => {
       const lowercaseSearchTerm = searchTerm.toLowerCase()
       return (
-        s.signee.name.toLowerCase().includes(lowercaseSearchTerm) ||
-        formatNationalId(s.signee.nationalId).includes(searchTerm) ||
-        s.signee.nationalId.includes(searchTerm)
+        (filters.signeeType.length === 0 ||
+          (filters.signeeType.includes('digital') && s.isDigital) ||
+          (filters.signeeType.includes('paper') && !s.isDigital)) &&
+        (filters.pageNumber.length === 0 ||
+          filters.pageNumber.includes(String(s.pageNumber))) &&
+        (s.signee.name.toLowerCase().includes(lowercaseSearchTerm) ||
+          formatNationalId(s.signee.nationalId).includes(searchTerm) ||
+          s.signee.nationalId.includes(searchTerm))
       )
     })
-  }, [allSignees, searchTerm])
+  }, [allSignees, searchTerm, filters])
 
   useEffect(() => {
     setPage(1)
@@ -44,32 +56,46 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
   }, [filteredSignees])
 
   return (
-    <Box marginTop={7}>
-      <Text variant="h3">{formatMessage(m.listSigneesHeader)}</Text>
+    <Box marginTop={8}>
+      <Text variant="h4">{formatMessage(m.listSigneesHeader)}</Text>
 
       <GridRow marginTop={2} marginBottom={4}>
-        <GridColumn span={['12/12', '12/12', '6/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <FilterInput
             name="searchSignee"
             value={searchTerm}
             onChange={(v) => setSearchTerm(v)}
             placeholder={formatMessage(m.searchInListPlaceholder)}
-            backgroundColor="white"
+            backgroundColor="blue"
           />
         </GridColumn>
-        <GridColumn span={['12/12', '12/12', '6/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Box
             display="flex"
             justifyContent="spaceBetween"
             alignItems="flexEnd"
             height="full"
             marginTop={[1, 1, 0]}
+            flexDirection={['rowReverse', 'rowReverse', 'rowReverse', 'row']}
           >
-            <SortSignees
-              signees={signees}
-              setSignees={setSignees}
-              setPage={setPage}
-            />
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              marginTop={[2, 2, 2, 0]}
+            >
+              <SortSignees
+                signees={signees}
+                setSignees={setSignees}
+                setPage={setPage}
+              />
+              <Box marginLeft={1}>
+                <FilterSignees
+                  signees={signees}
+                  filters={filters}
+                  onSetFilters={setFilters}
+                />
+              </Box>
+            </Box>
             {searchTerm.length > 0 && signees.length > 0
               ? signees.length > 0 && (
                   <Text variant="eyebrow" textAlign="right">
@@ -94,6 +120,7 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
                 <T.HeadData>{formatMessage(m.signeeDate)}</T.HeadData>
                 <T.HeadData>{formatMessage(m.signeeName)}</T.HeadData>
                 <T.HeadData>{formatMessage(m.signeeNationalId)}</T.HeadData>
+                <T.HeadData>{formatMessage(m.signeeAddress)}</T.HeadData>
                 <T.HeadData></T.HeadData>
               </T.Row>
             </T.Head>
@@ -103,26 +130,60 @@ const Signees = ({ numberOfSignatures }: { numberOfSignatures: number }) => {
                 .map((s) => {
                   return (
                     <T.Row key={s.id}>
-                      <T.Data text={{ variant: 'medium' }}>
+                      <T.Data
+                        text={{ variant: 'medium' }}
+                        box={{
+                          background: s.isDigital ? 'white' : 'blueberry100',
+                        }}
+                        style={{ width: '22%' }}
+                      >
                         {format(new Date(s.created), 'dd.MM.yyyy HH:mm')}
                       </T.Data>
-                      <T.Data text={{ variant: 'medium' }}>
+                      <T.Data
+                        text={{ variant: 'medium' }}
+                        box={{
+                          background: s.isDigital ? 'white' : 'blueberry100',
+                        }}
+                      >
                         {s.signee.name}
                       </T.Data>
-                      <T.Data text={{ variant: 'medium' }}>
+                      <T.Data
+                        text={{ variant: 'medium' }}
+                        box={{
+                          background: s.isDigital ? 'white' : 'blueberry100',
+                        }}
+                      >
                         {formatNationalId(s.signee.nationalId)}
                       </T.Data>
-                      <T.Data>
+                      <T.Data
+                        text={{ variant: 'medium' }}
+                        box={{
+                          background: s.isDigital ? 'white' : 'blueberry100',
+                        }}
+                      >
+                        {s.signee.address}
+                      </T.Data>
+                      <T.Data
+                        box={{
+                          background: s.isDigital ? 'white' : 'blueberry100',
+                        }}
+                      >
                         {!s.isDigital && (
                           <Box display="flex">
-                            <Text>{s.pageNumber}</Text>
-                            <Box marginLeft={1}>
-                              <Icon
-                                icon="document"
-                                type="outline"
-                                color="blue400"
-                              />
+                            <Box marginRight={1}>
+                              <Text>{s.pageNumber}</Text>
                             </Box>
+                            <Icon
+                              icon="document"
+                              type="outline"
+                              color="blue400"
+                            />
+                            <EditPage
+                              page={s.pageNumber ?? 0}
+                              name={s.signee.name}
+                              nationalId={formatNationalId(s.signee.nationalId)}
+                              signatureId={s.id}
+                            />
                           </Box>
                         )}
                       </T.Data>

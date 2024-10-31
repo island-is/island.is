@@ -51,8 +51,13 @@ import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
+import { MergedCaseExistsGuard } from './guards/mergedCaseExists.guard'
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
-import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
+import {
+  defenderGeneratedPdfRule,
+  defenderTransitionRule,
+  defenderUpdateRule,
+} from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { LimitedAccessCaseFileInterceptor } from './interceptors/limitedAccessCaseFile.interceptor'
@@ -239,13 +244,17 @@ export class LimitedAccessCaseController {
 
   @UseGuards(
     JwtAuthGuard,
-    RolesGuard,
     CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
-  @RolesRules(defenderRule)
-  @Get('case/:caseId/limitedAccess/caseFilesRecord/:policeCaseNumber')
+  @RolesRules(defenderGeneratedPdfRule)
+  @Get([
+    'case/:caseId/limitedAccess/caseFilesRecord/:policeCaseNumber',
+    'case/:caseId/limitedAccess/mergedCase/:mergedCaseId/caseFilesRecord/:policeCaseNumber',
+  ])
   @ApiOkResponse({
     content: { 'application/pdf': {} },
     description:
@@ -370,13 +379,17 @@ export class LimitedAccessCaseController {
 
   @UseGuards(
     JwtAuthGuard,
-    RolesGuard,
     CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
-  @RolesRules(defenderRule)
-  @Get('case/:caseId/limitedAccess/indictment')
+  @RolesRules(defenderGeneratedPdfRule)
+  @Get([
+    'case/:caseId/limitedAccess/indictment',
+    'case/:caseId/limitedAccess/mergedCase/:mergedCaseId/indictment',
+  ])
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },

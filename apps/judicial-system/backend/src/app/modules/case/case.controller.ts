@@ -79,6 +79,7 @@ import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
+import { MergedCaseExistsGuard } from './guards/mergedCaseExists.guard'
 import {
   courtOfAppealsAssistantTransitionRule,
   courtOfAppealsAssistantUpdateRule,
@@ -304,14 +305,12 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
-    const states = transitionCase(
+    let update: UpdateCase = transitionCase(
       transition.transition,
       theCase.type,
       theCase.state,
       theCase.appealState,
     )
-
-    let update: UpdateCase = states
 
     switch (transition.transition) {
       case CaseTransition.DELETE:
@@ -347,8 +346,8 @@ export class CaseController {
             ...transitionCase(
               CaseTransition.APPEAL,
               theCase.type,
-              states.state ?? theCase.state,
-              states.appealState ?? theCase.appealState,
+              update.state ?? theCase.state,
+              update.appealState ?? theCase.appealState,
             ),
           }
         }
@@ -422,7 +421,7 @@ export class CaseController {
       theCase,
       update,
       user,
-      states.state !== CaseState.DELETED,
+      update.state !== CaseState.DELETED,
     )
 
     // No need to wait
@@ -549,6 +548,7 @@ export class CaseController {
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(
     prosecutorRule,
@@ -558,7 +558,10 @@ export class CaseController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get('case/:caseId/caseFilesRecord/:policeCaseNumber')
+  @Get([
+    'case/:caseId/caseFilesRecord/:policeCaseNumber',
+    'case/:caseId/mergedCase/:mergedCaseId/caseFilesRecord/:policeCaseNumber',
+  ])
   @ApiOkResponse({
     content: { 'application/pdf': {} },
     description:
@@ -705,6 +708,7 @@ export class CaseController {
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
+    MergedCaseExistsGuard,
   )
   @RolesRules(
     prosecutorRule,
@@ -714,7 +718,10 @@ export class CaseController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get('case/:caseId/indictment')
+  @Get([
+    'case/:caseId/indictment',
+    'case/:caseId/mergedCase/:mergedCaseId/indictment',
+  ])
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },

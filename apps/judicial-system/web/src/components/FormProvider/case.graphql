@@ -22,10 +22,28 @@ query Case($input: CaseQueryInput!) {
       defenderPhoneNumber
       defenderChoice
       defendantPlea
+      requestedDefenderChoice
+      requestedDefenderNationalId
+      requestedDefenderName
+      isDefenderChoiceConfirmed
+      caseFilesSharedWithDefender
       serviceRequirement
       verdictViewDate
       verdictAppealDeadline
+      verdictAppealDate
+      isVerdictAppealDeadlineExpired
       subpoenaType
+      subpoenas {
+        id
+        created
+        serviceStatus
+        serviceDate
+        servedBy
+        comment
+        defenderNationalId
+        caseId
+        subpoenaId
+      }
     }
     defenderName
     defenderNationalId
@@ -299,11 +317,16 @@ query Case($input: CaseQueryInput!) {
       caseFiles {
         id
         created
+        modified
         name
+        type
+        category
         state
         key
         size
-        category
+        userGeneratedFilename
+        displayDate
+        submittedBy
       }
       policeCaseNumbers
       indictmentSubtypes
@@ -321,6 +344,7 @@ query Case($input: CaseQueryInput!) {
       spokespersonEmail
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
+      isSpokespersonConfirmed
     }
     civilDemands
     hasCivilClaims

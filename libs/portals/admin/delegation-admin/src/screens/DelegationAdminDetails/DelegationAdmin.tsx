@@ -72,11 +72,11 @@ const DelegationAdminScreen = () => {
           {
             label: formatMessage(m.delegationFrom),
             content:
-              delegationAdmin.incoming.length > 0 ? (
+              delegationAdmin.outgoing.length > 0 ? (
                 <DelegationList
-                  direction="incoming"
+                  direction="outgoing"
                   delegationsList={
-                    delegationAdmin.incoming as AuthCustomDelegation[]
+                    delegationAdmin.outgoing as AuthCustomDelegation[]
                   }
                 />
               ) : (
@@ -89,11 +89,11 @@ const DelegationAdminScreen = () => {
           {
             label: formatMessage(m.delegationTo),
             content:
-              delegationAdmin.outgoing.length > 0 ? (
+              delegationAdmin.incoming.length > 0 ? (
                 <DelegationList
-                  direction="outgoing"
+                  direction="incoming"
                   delegationsList={
-                    delegationAdmin.outgoing as AuthCustomDelegation[]
+                    delegationAdmin.incoming as AuthCustomDelegation[]
                   }
                 />
               ) : (

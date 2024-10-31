@@ -129,7 +129,7 @@ export abstract class BaseNotificationService {
 
   protected async recordNotification(
     caseId: string,
-    type: NotificationType,
+    type: string,
     recipients: Recipient[],
   ): Promise<DeliverResponse> {
     await this.notificationModel.create({
@@ -144,5 +144,26 @@ export abstract class BaseNotificationService {
         false as boolean,
       ),
     }
+  }
+
+  protected hasSentNotification(type: string, notifications?: Notification[]) {
+    return notifications?.some((notification) => notification.type === type)
+  }
+
+  protected hasReceivedNotification(
+    type?: string | string[],
+    address?: string,
+    notifications?: Notification[],
+  ) {
+    const types = type ? [type].flat() : Object.values(NotificationType)
+
+    return notifications?.some((notification) => {
+      return (
+        types.includes(notification.type) &&
+        notification.recipients.some(
+          (recipient) => recipient.address === address && recipient.success,
+        )
+      )
+    })
   }
 }

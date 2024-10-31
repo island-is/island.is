@@ -11,7 +11,7 @@ import {
   toast,
   Button,
 } from '@island.is/island-ui/core'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
@@ -29,13 +29,22 @@ import { SignatureCollection } from '@island.is/api/schema'
 import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
 import copyToClipboard from 'copy-to-clipboard'
+import { formatNationalId } from '@island.is/portals/core'
+import SignedList from '../../shared/SignedList'
 
 const OwnerView = ({
+  refetchIsOwner,
   currentCollection,
+  // list holder is an individual who owns a list or has a delegation of type Procuration Holder
+  isListHolder,
 }: {
+  refetchIsOwner: () => void
   currentCollection: SignatureCollection
+  isListHolder: boolean
 }) => {
   const navigate = useNavigate()
+  const location = useLocation()
+
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
     useGetListsForOwner(currentCollection?.id || '')
@@ -47,6 +56,7 @@ const OwnerView = ({
       onCompleted: () => {
         toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
         refetchListsForOwner()
+        refetchIsOwner()
       },
       onError: () => {
         toast.error(formatMessage(m.cancelCollectionModalToastError))
@@ -68,16 +78,16 @@ const OwnerView = ({
   return (
     <Stack space={8}>
       <Box marginTop={5}>
-        <Box display="flex" justifyContent="spaceBetween" alignItems="baseline">
-          <Text variant="h4">
-            {formatMessage(m.myListsDescription) + ' '}
-            <Tooltip
-              placement="right"
-              text={formatMessage(m.myListsInfo)}
-              color="blue400"
-            />
-          </Text>
-          {!loadingOwnerLists &&
+        <SignedList currentCollection={currentCollection} />
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="baseline"
+          marginTop={[5, 10]}
+        >
+          <Text variant="h4">{formatMessage(m.myListsDescription) + ' '}</Text>
+          {isListHolder &&
+            !loadingOwnerLists &&
             listsForOwner?.length < currentCollection?.areas.length && (
               <AddConstituency
                 lists={listsForOwner}
@@ -88,7 +98,7 @@ const OwnerView = ({
             )}
         </Box>
         {loadingOwnerLists ? (
-          <Box marginTop={2}>
+          <Box marginTop={3}>
             <OwnerParliamentarySkeleton />
           </Box>
         ) : (
@@ -103,61 +113,81 @@ const OwnerView = ({
                   withLabel: true,
                 }}
                 eyebrow={list.title.split(' - ')[0]}
-                cta={{
-                  label: formatMessage(m.viewList),
-                  variant: 'text',
-                  icon: 'arrowForward',
-                  onClick: () => {
-                    navigate(
-                      SignatureCollectionPaths.ViewParliamentaryList.replace(
-                        ':id',
-                        list.id,
-                      ),
-                      {
-                        state: {
-                          collectionId: currentCollection?.id || '',
+                cta={
+                  list.active
+                    ? {
+                        label: formatMessage(m.viewList),
+                        variant: 'text',
+                        icon: 'arrowForward',
+                        onClick: () => {
+                          const path = location.pathname.includes('fyrirtaeki')
+                            ? SignatureCollectionPaths.CompanyViewParliamentaryList
+                            : SignatureCollectionPaths.ViewParliamentaryList
+                          navigate(path.replace(':id', list.id), {
+                            state: {
+                              collectionId: currentCollection?.id || '',
+                            },
+                          })
                         },
-                      },
-                    )
-                  },
-                }}
-                tag={{
-                  label: 'Cancel collection',
-                  renderTag: () => (
-                    <DialogPrompt
-                      baseId="cancel_collection_dialog"
-                      title={
-                        formatMessage(m.cancelCollectionButton) +
-                        ' - ' +
-                        list.area?.name
                       }
-                      description={formatMessage(
-                        m.cancelCollectionModalMessage,
-                      )}
-                      ariaLabel="delete"
-                      disclosureElement={
-                        <Tag outlined variant="red">
-                          <Box display="flex" alignItems="center">
-                            <Icon icon="trash" size="small" type="outline" />
-                          </Box>
-                        </Tag>
+                    : undefined
+                }
+                tag={
+                  list.active && isListHolder
+                    ? {
+                        label: 'Cancel collection',
+                        renderTag: () => (
+                          <DialogPrompt
+                            baseId="cancel_collection_dialog"
+                            title={
+                              formatMessage(m.cancelCollectionButton) +
+                              ' - ' +
+                              list.area?.name
+                            }
+                            description={
+                              listsForOwner.length === 1
+                                ? formatMessage(
+                                    m.cancelCollectionModalMessageLastList,
+                                  )
+                                : formatMessage(m.cancelCollectionModalMessage)
+                            }
+                            ariaLabel="delete"
+                            disclosureElement={
+                              <Tag outlined variant="red">
+                                <Box display="flex" alignItems="center">
+                                  <Icon
+                                    icon="trash"
+                                    size="small"
+                                    type="outline"
+                                  />
+                                </Box>
+                              </Tag>
+                            }
+                            onConfirm={() => {
+                              onCancelCollection(list.id)
+                            }}
+                            buttonTextConfirm={formatMessage(
+                              listsForOwner.length === 1
+                                ? m.cancelCollectionModalConfirmButtonLastList
+                                : m.cancelCollectionModalConfirmButton,
+                            )}
+                            buttonPropsConfirm={{
+                              variant: 'primary',
+                              colorScheme: 'destructive',
+                            }}
+                            buttonTextCancel={formatMessage(
+                              m.cancelCollectionModalCancelButton,
+                            )}
+                          />
+                        ),
                       }
-                      onConfirm={() => {
-                        onCancelCollection(list.id)
-                      }}
-                      buttonTextConfirm={formatMessage(
-                        m.cancelCollectionModalConfirmButton,
-                      )}
-                      buttonPropsConfirm={{
-                        variant: 'primary',
-                        colorScheme: 'destructive',
-                      }}
-                      buttonTextCancel={formatMessage(
-                        m.cancelCollectionModalCancelButton,
-                      )}
-                    />
-                  ),
-                }}
+                    : !list.active
+                    ? {
+                        label: formatMessage(m.listSubmitted),
+                        variant: 'blueberry',
+                      }
+                    : undefined
+                }
               />
             </Box>
           ))
@@ -172,7 +202,10 @@ const OwnerView = ({
         >
           <Text variant="h4">
             {formatMessage(m.supervisors) + ' '}
-            <Tooltip placement="right" text="info" color="blue400" />
+            <Tooltip
+              placement="bottom"
+              text={formatMessage(m.supervisorsTooltip)}
+            />
           </Text>
         </Box>
         <T.Table>
@@ -185,17 +218,22 @@ const OwnerView = ({
           <T.Body>
             {loadingCollectors ? (
               <T.Row>
-                <T.Data colSpan={2}>
-                  <CollectorSkeleton></CollectorSkeleton>
+                <T.Data>
+                  <CollectorSkeleton />
+                </T.Data>
+                <T.Data>
+                  <CollectorSkeleton />
                 </T.Data>
               </T.Row>
-            ) : (
+            ) : collectors.length ? (
               collectors.map((collector) => (
                 <T.Row key={collector.nationalId}>
-                  <T.Data width={'40%'}>{collector.name}</T.Data>
-                  <T.Data>{collector.nationalId}</T.Data>
+                  <T.Data width={'35%'}>{collector.name}</T.Data>
+                  <T.Data>{formatNationalId(collector.nationalId)}</T.Data>
                 </T.Row>
               ))
+            ) : (
+              <Text marginTop={2}>{formatMessage(m.noSupervisors)}</Text>
             )}
           </T.Body>
         </T.Table>

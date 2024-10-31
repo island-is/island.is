@@ -1,6 +1,6 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from './paths'
-import { m, parliamentaryMessages } from './messages'
+import { m } from './messages'
 
 export const signatureCollectionNavigation: PortalNavigationItem = {
   name: m.signatureListsTitle,
@@ -11,7 +11,7 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
   path: SignatureCollectionPaths.ParliamentaryRoot,
   children: [
     {
-      name: parliamentaryMessages.listTitle,
+      name: m.parliamentaryCollectionTitle,
       path: SignatureCollectionPaths.ParliamentaryRoot,
       activeIfExact: true,
     },

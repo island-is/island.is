@@ -68,11 +68,15 @@ export const ApplicationsPreview = ({
             />
           }
           progress={
-            type !== 'incomplete'
-              ? undefined
-              : application.actionCard?.draftFinishedSteps ?? 0
+            type === 'incomplete'
+              ? application.actionCard?.draftFinishedSteps ?? 0
+              : undefined
           }
-          progressTotalSteps={application.actionCard?.draftTotalSteps ?? 0}
+          progressTotalSteps={
+            type === 'incomplete'
+              ? application.actionCard?.draftTotalSteps ?? 0
+              : undefined
+          }
           progressMessage={intl.formatMessage(
             {
               id: 'applicationStatusCard.draftProgress',
