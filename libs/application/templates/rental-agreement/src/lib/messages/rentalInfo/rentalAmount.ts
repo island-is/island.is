@@ -64,7 +64,7 @@ export const rentalAmount = defineMessages({
   },
   indexValueLabel: {
     id: 'ra.application:rentalAmount.indexValueLabel',
-    defaultMessage: 'Vísitölugildi',
+    defaultMessage: 'Vísitala við upphaf samnings',
     description: 'Rental amount index type value label',
   },
   indexValuePlaceholder: {

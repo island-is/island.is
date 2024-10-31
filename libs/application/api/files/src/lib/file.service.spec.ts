@@ -5,7 +5,7 @@ import {
   signingModuleConfig,
   SigningService,
 } from '@island.is/dokobit-signing'
-import { AwsModule, AwsService } from '@island.is/nest/aws'
+import { AwsModule, S3Service } from '@island.is/nest/aws'
 import * as pdf from './pdfGenerators'
 import { Application } from '@island.is/application/api/core'
 import { ApplicationTypes, PdfTypes } from '@island.is/application/types'
@@ -17,7 +17,7 @@ import { FileStorageConfig } from '@island.is/file-storage'
 describe('FileService', () => {
   let service: FileService
   let signingService: SigningService
-  let awsService: AwsService
+  let s3Service: S3Service
   const signingServiceRequestSignatureResponse = {
     controlCode: 'code',
     documentToken: 'token',
@@ -128,20 +128,20 @@ describe('FileService', () => {
       providers: [FileService],
     }).compile()
 
-    awsService = module.get(AwsService)
+    s3Service = module.get(S3Service)
 
     jest
-      .spyOn(awsService, 'getFileContent')
+      .spyOn(s3Service, 'getFileContent')
       .mockImplementation(() => Promise.resolve('body'))
 
-    jest.spyOn(awsService, 'fileExists').mockResolvedValue(false)
+    jest.spyOn(s3Service, 'fileExists').mockResolvedValue(false)
 
     jest
-      .spyOn(awsService, 'uploadFile')
+      .spyOn(s3Service, 'uploadFile')
       .mockImplementation(() => Promise.resolve('url'))
 
     jest
-      .spyOn(awsService, 'getPresignedUrl')
+      .spyOn(s3Service, 'getPresignedUrl')
       .mockImplementation(() => Promise.resolve('url'))
 
     jest
@@ -173,7 +173,7 @@ describe('FileService', () => {
 
     const fileName = `children-residence-change/${application.id}.pdf`
 
-    expect(awsService.uploadFile).toHaveBeenCalledWith(
+    expect(s3Service.uploadFile).toHaveBeenCalledWith(
       Buffer.from('buffer'),
       { bucket, key: fileName },
       {
@@ -183,7 +183,7 @@ describe('FileService', () => {
       },
     )
 
-    expect(awsService.getPresignedUrl).toHaveBeenCalledWith({
+    expect(s3Service.getPresignedUrl).toHaveBeenCalledWith({
       bucket: bucket,
       key: fileName,
     })
@@ -198,7 +198,7 @@ describe('FileService', () => {
       PdfTypes.CHILDREN_RESIDENCE_CHANGE,
     )
 
-    expect(awsService.getFileContent).toHaveBeenCalledWith(
+    expect(s3Service.getFileContent).toHaveBeenCalledWith(
       { bucket, key: `children-residence-change/${application.id}.pdf` },
       'binary',
     )
@@ -224,7 +224,7 @@ describe('FileService', () => {
     const application = createApplication()
 
     jest
-      .spyOn(awsService, 'getFileContent')
+      .spyOn(s3Service, 'getFileContent')
       .mockImplementation(() => Promise.resolve(''))
 
     const act = async () =>
@@ -235,7 +235,7 @@ describe('FileService', () => {
 
     await expect(act).rejects.toThrowError(NotFoundException)
 
-    expect(awsService.getFileContent).toHaveBeenCalledWith(
+    expect(s3Service.getFileContent).toHaveBeenCalledWith(
       { bucket: bucket, key: `children-residence-change/${applicationId}.pdf` },
       'binary',
     )
@@ -271,7 +271,7 @@ describe('FileService', () => {
       PdfTypes.CHILDREN_RESIDENCE_CHANGE,
     )
 
-    expect(awsService.getPresignedUrl).toHaveBeenCalledWith({
+    expect(s3Service.getPresignedUrl).toHaveBeenCalledWith({
       bucket,
       key: fileName,
     })

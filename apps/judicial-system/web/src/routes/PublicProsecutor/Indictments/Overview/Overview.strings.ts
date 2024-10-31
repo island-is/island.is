@@ -38,25 +38,4 @@ export const strings = defineMessages({
       'Máli {caseNumber} hefur verið úthlutað til yfirlestrar á {reviewer}.',
     description: 'Notaður sem texti í tilkynningaglugga um yfirlesara.',
   },
-  displayVerdict: {
-    id: 'judicial.system.core:public_prosecutor.indictments.overview.display_verdict',
-    defaultMessage: 'Dómur birtur',
-    description: 'Notaður sem texti á takka til að birta dóm.',
-  },
-  defendantViewsVerdictModalTitle: {
-    id: 'judicial.system.core:public_prosecutor.indictments.overview.defendant_views_verdict_modal_title',
-    defaultMessage: 'Hefur dómur verið birtur dómfellda?',
-    description: 'Notaður sem titill á tilkynningaglugga um birtan dóm.',
-  },
-  defendantViewsVerdictModalText: {
-    id: 'judicial.system.core:public_prosecutor.indictments.overview.defendant_views_verdict_modal_text',
-    defaultMessage:
-      'Dómfelldi fær fjögurra vikna frest til að áfrýja dómi eftir að birting hans hefur verið staðfest.',
-    description: 'Notaður sem texti í tilkynningaglugga um birtan dóm.',
-  },
-  defendantViewsVerdictModalPrimaryButtonText: {
-    id: 'judicial.system.core:public_prosecutor.indictments.overview.defendant_views_verdict_modal_primary_button_text',
-    defaultMessage: 'Staðfesta',
-    description: 'Notaður sem texti á takka til að birta dóm.',
-  },
 })

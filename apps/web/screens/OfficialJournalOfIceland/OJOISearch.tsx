@@ -232,7 +232,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
 
   const breadcrumbItems = [
     {
-      title: 'Ísland.is',
+      title: formatMessage(m.breadcrumb.frontpage),
       href: linkResolver('homepage', [], locale).href,
     },
     {
@@ -240,7 +240,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       href: baseUrl,
     },
     {
-      title: 'Leitarniðurstöður',
+      title: formatMessage(m.search.breadcrumbTitle),
     },
   ]
 
@@ -256,13 +256,6 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
     },
     [debouncedSearch],
   )
-
-  const defaultDepartment = departmentsOptions.find(
-    (d) => d.value === defaultSearchParams.deild,
-  )
-
-  console.log(defaultSearchParams)
-  console.log('defaultdepartment', defaultDepartment)
 
   return (
     <OJOIWrapper

@@ -17,6 +17,7 @@ export const PreviewScreen = (props: OJOIFieldBaseProps) => {
           </>
         ),
       })}
+      goToScreen={props.goToScreen}
     >
       <Preview {...props} />
     </FormScreen>

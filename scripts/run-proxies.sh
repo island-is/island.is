@@ -11,16 +11,10 @@ if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
 : "${LOCAL_PORT:=}"
 : "${DRY:=}"
 : "${AWS_PROFILE:=islandis-dev}"
-: "${CLUSTER:="$(
-  echo "CLUSTER environment variable is not set. Setting using \`kubectl\` and \`aws sts get-caller-identity\`" >&2
-  CONTEXT="$(kubectl config get-contexts -o name | grep -o ".*:cluster/${AWS_PROFILE##islandis-}-cluster.*")"
-  kubectl config use-context "${CONTEXT}" >&2
-  kubectl config current-context | sed 's/.*\///' >/dev/null
-  echo "${CONTEXT}"
-)"}"
+: "${CLUSTER:=${AWS_PROFILE##*-}-cluster01}"
 
 echo "AWS_PROFILE=${AWS_PROFILE}" >&2
-echo "CLUSTER=$CLUSTER" >&2
+echo "CLUSTER=${CLUSTER}" >&2
 
 ARGS=()
 PROXIES=()

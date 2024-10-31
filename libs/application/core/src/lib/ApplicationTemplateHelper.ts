@@ -118,6 +118,15 @@ export class ApplicationTemplateHelper<
     return this.getTemplateAPIAction(action)
   }
 
+  getOnDeleteStateAPIAction(
+    stateKey: string = this.application.state,
+  ): TemplateApi | TemplateApi[] | null {
+    const action =
+      this.template.stateMachineConfig.states[stateKey]?.meta?.onDelete ?? null
+
+    return this.getTemplateAPIAction(action)
+  }
+
   getApplicationStateInformation(
     stateKey: string = this.application.state,
   ): ApplicationStateMeta<TEvents> | undefined {
