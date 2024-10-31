@@ -11,6 +11,7 @@ import {
   VehicleDtoListPagedResponse,
   PersidnoLookupResultDto,
   CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
+  ApiResponse,
 } from '@island.is/clients/vehicles'
 import {
   CanregistermileagePermnoGetRequest,
@@ -18,6 +19,7 @@ import {
   MileageReadingApi,
   MileageReadingDto,
   PostMileageReadingModel,
+  PutMileageReadingModel,
   RequiresmileageregistrationPermnoGetRequest,
   RootPostRequest,
   RootPutRequest,
@@ -33,10 +35,13 @@ import {
   GetVehiclesForUserInput,
   GetVehiclesListV2Input,
 } from '../dto/getVehiclesForUserInput'
-import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
+import {
+  VehicleMileageDetail,
+  VehicleMileageOverview,
+} from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
 import { mileageDetailConstructor } from '../utils/helpers'
-import { handle404 } from '@island.is/clients/middlewares'
+import { FetchError, handle404 } from '@island.is/clients/middlewares'
 import { VehicleSearchCustomDto } from '../vehicles.type'
 import { operatorStatusMapper } from '../utils/operatorStatusMapper'
 import { VehiclesListInputV3 } from '../dto/vehiclesListInputV3'
@@ -44,6 +49,8 @@ import { VehiclesCurrentListResponse } from '../models/v3/currentVehicleListResp
 import { isDefined } from '@island.is/shared/utils'
 import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
 import { MileageRegistrationHistory } from '../models/v3/mileageRegistrationHistory.model'
+import { VehiclesMileageUpdateError } from '../models/v3/vehicleMileageResponseError.model'
+import { UpdateResponseError } from '../dto/updateResponseError.dto'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -111,6 +118,11 @@ export class VehiclesService {
       showOwned: true,
       page: input.page,
       pageSize: input.pageSize,
+      permno: input.query
+        ? input.query.length < 5
+          ? `${input.query}*`
+          : `${input.query}`
+        : undefined,
     })
 
     if (
@@ -461,6 +473,82 @@ export class VehiclesService {
     return this.getMileageWithAuth(auth).rootPut({
       putMileageReadingModel: input,
     })
+  }
+
+  async postMileageReadingV2(
+    auth: User,
+    input: RootPostRequest['postMileageReadingModel'],
+  ): Promise<PostMileageReadingModel | VehiclesMileageUpdateError | null> {
+    if (!input) return null
+
+    const isAllowed = await this.isAllowedMileageRegistration(
+      auth,
+      input.permno,
+    )
+    if (!isAllowed) {
+      this.logger.error(UNAUTHORIZED_OWNERSHIP_LOG, {
+        category: LOG_CATEGORY,
+        error: 'postMileageReading failed',
+      })
+      throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
+    }
+
+    try {
+      const res = await this.getMileageWithAuth(auth).rootPostRaw({
+        postMileageReadingModel: input,
+      })
+
+      if (res.raw.status === 200) {
+        this.logger.info(
+          'Tried to post already existing mileage reading. Should use PUT',
+        )
+        return null
+      }
+
+      const value = await res.value()
+      return value
+    } catch (e) {
+      if (e instanceof FetchError && (e.status === 400 || e.status === 429)) {
+        const errorBody = e.body as UpdateResponseError
+        return {
+          code: e.status,
+          message: errorBody.Errors?.[0]?.errorMess || 'Unknown error',
+        }
+      } else throw e
+    }
+  }
+
+  async putMileageReadingV2(
+    auth: User,
+    input: RootPutRequest['putMileageReadingModel'],
+  ): Promise<MileageReadingDto | VehiclesMileageUpdateError | null> {
+    if (!input) return null
+
+    const isAllowed = await this.isAllowedMileageRegistration(
+      auth,
+      input.permno,
+    )
+    if (!isAllowed) {
+      this.logger.error(UNAUTHORIZED_OWNERSHIP_LOG, {
+        category: LOG_CATEGORY,
+        error: 'putMileageReading failed',
+      })
+      throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
+    }
+
+    try {
+      return this.getMileageWithAuth(auth).rootPut({
+        putMileageReadingModel: input,
+      })
+    } catch (e) {
+      if (e instanceof FetchError && (e.status === 400 || e.status === 429)) {
+        const errorBody = e.body as UpdateResponseError
+        return {
+          code: e.status,
+          message: errorBody.Errors?.[0]?.errorMess || 'Unknown error',
+        }
+      } else throw e
+    }
   }
 
   async canRegisterMileage(
