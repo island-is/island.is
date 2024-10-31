@@ -102,7 +102,7 @@ class InternalApplicationService {
         )
 
         if (affectedCount > 0) {
-          //TODOx update in application system DB
+          //TODO update in application system DB
         }
       } catch (e) {
         logger.error(
