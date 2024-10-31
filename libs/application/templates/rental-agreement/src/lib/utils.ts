@@ -1,13 +1,13 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
-  AnswerOptions,
   rentalAmountIndexTypes,
   rentalHousingCategoryClass,
   rentalHousingCategoryClassGroup,
   rentalHousingCategoryTypes,
   rentalHousingConditionInspector,
   rentalAmountPaymentDateOptions,
+  rentOtherFeesPayeeOptions,
 } from './constants'
 import * as m from './messages'
 
@@ -35,11 +35,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'rentalHousingConditionInspector',
   )
 
-  const isRentalAmountIndexConnected = getValueViaPath<AnswerOptions>(
-    answers,
-    'isRentalAmountIndexConnected',
-  )
-
   const rentalAmountIndexTypesOptions = getValueViaPath<rentalAmountIndexTypes>(
     answers,
     'rentalAmountIndexTypes',
@@ -51,13 +46,31 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
       'rentalAmountPaymentDate',
     )
 
+  const rentOtherFeesHousingFund = getValueViaPath<rentOtherFeesPayeeOptions>(
+    answers,
+    'rentOtherFees.housingFund',
+  )
+
+  const rentOtherFeesElectricityCost =
+    getValueViaPath<rentOtherFeesPayeeOptions>(
+      answers,
+      'rentOtherFees.electricityCost',
+    )
+
+  const rentOtherFeesHeatingCost = getValueViaPath<rentOtherFeesPayeeOptions>(
+    answers,
+    'rentOtherFees.heatingCost',
+  )
+
   return {
     propertyCategoryTypeOptions,
     propertyCategoryClassOptions,
     inspectorOptions,
-    isRentalAmountIndexConnected,
     rentalAmountIndexTypesOptions,
     rentalAmountPaymentDateOptions,
+    rentOtherFeesElectricityCost,
+    rentOtherFeesHeatingCost,
+    rentOtherFeesHousingFund,
   }
 }
 
@@ -157,5 +170,16 @@ export const getRentalAmountPaymentDateOptions = () => [
   {
     value: rentalAmountPaymentDateOptions.OTHER,
     label: m.rentalAmount.paymentDateOptionOther,
+  },
+]
+
+export const getRentalOtherFeesPayeeOptions = () => [
+  {
+    value: rentOtherFeesPayeeOptions.LANDLORD,
+    label: m.otherFees.paidByLandlordLabel,
+  },
+  {
+    value: rentOtherFeesPayeeOptions.TENANT,
+    label: m.otherFees.paidByTenantLabel,
   },
 ]

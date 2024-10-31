@@ -35,8 +35,8 @@ export const RentalHousingCondition = buildSubSection({
         }),
         buildTextField({
           id: 'rentalHousingConditionInspectorName',
-          title: m.housingCondition.independantInspectorNameLabel,
-          placeholder: m.housingCondition.independantInspectorNamePlaceholder,
+          title: m.housingCondition.independentInspectorNameLabel,
+          placeholder: m.housingCondition.independentInspectorNamePlaceholder,
           condition: (answers) => {
             const { inspectorOptions } = getApplicationAnswers(answers)
             return (
@@ -61,7 +61,7 @@ export const RentalHousingCondition = buildSubSection({
           rows: 8,
         }),
         buildFileUploadField({
-          id: 'asdf',
+          id: 'rentalHousingConditionFiles',
           title: m.housingCondition.fileUploadTitle,
           uploadHeader: m.housingCondition.fileUploadTitle,
           uploadDescription: m.housingCondition.fileUploadDescription,

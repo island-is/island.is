@@ -1,5 +1,8 @@
 import { StateLifeCycle } from '@island.is/application/types'
 
+export const TRUE = 'true'
+export const FALSE = 'false'
+
 export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
@@ -53,6 +56,11 @@ export enum rentalAmountPaymentDateOptions {
   FIRST_DAY = 'firstDay',
   LAST_DAY = 'lastDay',
   OTHER = 'other',
+}
+
+export enum rentOtherFeesPayeeOptions {
+  LANDLORD = 'landlordPays',
+  TENANT = 'tenantPays',
 }
 
 export const pruneAfterDays = (Days: number): StateLifeCycle => {
