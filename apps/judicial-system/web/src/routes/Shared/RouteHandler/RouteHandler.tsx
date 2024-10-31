@@ -4,10 +4,13 @@ import { useRouter } from 'next/router'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
 import {
   CLOSED_INDICTMENT_OVERVIEW_ROUTE,
+  INDICTMENTS_COMPLETED_ROUTE,
+  INDICTMENTS_COURT_OVERVIEW_ROUTE,
   INDICTMENTS_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   isCompletedCase,
+  isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
@@ -16,9 +19,55 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/case.generated'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import * as styles from './RouteHandler.css'
+
+type UserType = 'prosecution' | 'districtCourt'
+type CaseStatus = 'completed' | 'ongoing'
+
+const routes: Partial<
+  Record<CaseType, Record<UserType, Record<CaseStatus, string>>>
+> = {
+  [CaseType.INDICTMENT]: {
+    prosecution: {
+      completed: CLOSED_INDICTMENT_OVERVIEW_ROUTE,
+      ongoing: INDICTMENTS_OVERVIEW_ROUTE,
+    },
+    districtCourt: {
+      completed: INDICTMENTS_COMPLETED_ROUTE,
+      ongoing: INDICTMENTS_COURT_OVERVIEW_ROUTE,
+    },
+  },
+}
+
+const getCaseStatus = (state?: CaseState | null): CaseStatus =>
+  isCompletedCase(state) ? 'completed' : 'ongoing'
+
+const getRoute = (caseToOpen?: Case, user?: User): string => {
+  if (!caseToOpen || !user) {
+    return '/'
+  }
+
+  const userType: UserType | null = isProsecutionUser(user)
+    ? 'prosecution'
+    : isDistrictCourtUser(user)
+    ? 'districtCourt'
+    : null
+  const caseStatus = getCaseStatus(caseToOpen.state)
+
+  const route =
+    caseToOpen.type &&
+    userType &&
+    routes[caseToOpen.type]?.[userType]?.[caseStatus]
+
+  return route ? `${route}/${caseToOpen.id}` : '/'
+}
 
 const RouteHandler: React.FC = () => {
   const router = useRouter()
@@ -50,25 +99,7 @@ const RouteHandler: React.FC = () => {
 
   useEffect(() => {
     handleGetCase(router.query.id?.toString())
-
-    if (caseToOpen) {
-      if (isIndictmentCase(caseToOpen.type)) {
-        if (isProsecutionUser(user)) {
-          if (isCompletedCase(caseToOpen.state)) {
-            router.push(
-              `${CLOSED_INDICTMENT_OVERVIEW_ROUTE}/${router.query.id}`,
-            )
-            return
-          } else {
-            router.push(`${INDICTMENTS_OVERVIEW_ROUTE}/${router.query.id}`)
-            return
-          }
-        } else {
-          router.push('/e')
-          return
-        }
-      }
-    }
+    router.push(getRoute(caseToOpen, user))
   }, [caseToOpen, handleGetCase, queryCase, router, user])
 
   return (
