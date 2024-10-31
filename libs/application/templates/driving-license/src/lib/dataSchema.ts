@@ -48,7 +48,10 @@ export const dataSchema = z.object({
   applicationFor: z.enum([B_FULL, B_TEMP, BE, B_FULL_RENEWAL_65, B_ADVANCED]),
   advancedLicense: z
     .array(z.enum(Object.values(AdvancedLicense) as [string, ...string[]]))
-    .nonempty(),
+    .nonempty()
+    .refine((value) => {
+      return value.length > 0
+    }),
   email: z.string().email(),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   drivingInstructor: z.string().min(1),

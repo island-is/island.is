@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 
-import { Box, Checkbox, Text } from '@island.is/island-ui/core'
+import { Box, Checkbox, ErrorMessage, Text } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useFormContext } from 'react-hook-form'
 import {
@@ -12,10 +12,15 @@ import { m } from '../../lib/messages'
 import { joinWithAnd } from '../../lib/utils'
 
 const AdvancedLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  application,
+  errors,
 }) => {
   const { formatMessage } = useLocale()
   const { setValue, watch } = useFormContext()
+
+  const requiredMessage = (errors as { advancedLicense?: string })
+    ?.advancedLicense
+    ? formatMessage(m.applicationForAdvancedRequiredError)
+    : ''
 
   const advancedLicenseValue = watch('advancedLicense') ?? []
 
@@ -23,9 +28,7 @@ const AdvancedLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     useState<Array<keyof typeof AdvancedLicenseEnum>>(advancedLicenseValue)
 
   useEffect(() => {
-    if (selectedLicenses.length > 0) {
-      setValue('advancedLicense', selectedLicenses)
-    }
+    setValue('advancedLicense', selectedLicenses)
   }, [selectedLicenses, setValue])
 
   return (
@@ -88,9 +91,7 @@ const AdvancedLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     backgroundColor="blue"
                     labelVariant="medium"
                     checked={advancedLicenseValue.includes(option.code)}
-                    onChange={(e) => {
-                      const checked = e.target.checked
-
+                    onChange={() => {
                       setSelectedLicenses((prev) => {
                         return prev.includes(option.code)
                           ? prev
@@ -102,9 +103,9 @@ const AdvancedLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                       })
                     }}
                   />
-                  {option?.professional && (
+                  {option?.professional?.code && (
                     <Box
-                      key={index}
+                      key={`professional-${option.professional.code}`}
                       marginTop={2}
                       paddingX={3}
                       paddingY={2}
@@ -144,6 +145,11 @@ const AdvancedLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           </Box>
         )
       })}
+      {!selectedLicenses?.length && requiredMessage && (
+        <ErrorMessage>
+          <div>{requiredMessage}</div>
+        </ErrorMessage>
+      )}
     </Box>
   )
 }

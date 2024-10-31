@@ -993,6 +993,11 @@ export const m = defineMessages({
     defaultMessage: 'DE lýsing',
     description: 'DE description',
   },
+  applicationForAdvancedRequiredError: {
+    id: 'dl.application:applicationForAdvancedRequiredError',
+    defaultMessage: 'Þú verður að velja að minnsta kosti einn valmöguleika',
+    description: 'You must select at least one option',
+  },
 })
 
 export const requirementsMessages = defineMessages({

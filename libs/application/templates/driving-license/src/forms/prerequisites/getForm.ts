@@ -10,13 +10,21 @@ import { sectionExistingApplication } from './sectionExistingApplication'
 import { sectionDigitalLicenseInfo } from './sectionDigitalLicenseInfo'
 import { sectionAdvancedLicenseSelection } from './sectionAdvancedLicenseSelection'
 
+interface DrivingLicenseFormConfig {
+  allowFakeData?: boolean
+  allowPickLicense?: boolean
+  allowBELicense?: boolean
+  allow65Renewal?: boolean
+  allowAdvanced?: boolean
+}
+
 export const getForm = ({
   allowFakeData = false,
   allowPickLicense = false,
   allowBELicense = false,
   allow65Renewal = false,
   allowAdvanced = false,
-}): Form =>
+}: DrivingLicenseFormConfig): Form =>
   buildForm({
     id: 'DrivingLicenseApplicationPrerequisitesForm',
     title: '',
