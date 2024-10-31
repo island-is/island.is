@@ -63,12 +63,12 @@ const AdvancedLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 </Text>
               </Box>
             )}
-            {options.map((option, index) => {
+            {options.map((option) => {
               const name = `field-${option.code}`
 
               return (
                 <Box
-                  key={index}
+                  key={`license-option-${option.code}`}
                   marginBottom={2}
                   paddingX={3}
                   paddingTop={2}
