@@ -18,9 +18,9 @@ import {
 import { useCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/case.generated'
 import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import * as styles from './Notification.css'
+import * as styles from './RouteHandler.css'
 
-const Notification: React.FC = () => {
+const RouteHandler: React.FC = () => {
   const router = useRouter()
   const { user } = useContext(UserContext)
   const { getCase } = useContext(FormContext)
@@ -78,4 +78,4 @@ const Notification: React.FC = () => {
   )
 }
 
-export default Notification
+export default RouteHandler

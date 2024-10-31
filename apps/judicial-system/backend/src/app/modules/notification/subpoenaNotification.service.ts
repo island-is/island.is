@@ -12,11 +12,7 @@ import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import {
-  EMAIL_NOTIFICATION_ROUTE,
-  INDICTMENTS_COURT_OVERVIEW_ROUTE,
-  INDICTMENTS_OVERVIEW_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
 import { SubpoenaNotificationType } from '@island.is/judicial-system/types'
 
 import { Case } from '../case'
@@ -66,7 +62,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       if (recipient.email && recipient.name) {
         const formattedBody = this.formatMessage(body, {
           courtCaseNumber: theCase.courtCaseNumber,
-          linkStart: `<a href="${this.config.clientUrl}${EMAIL_NOTIFICATION_ROUTE}/${theCase.id}">`,
+          linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
         })
 
