@@ -25,6 +25,7 @@ import {
   Result,
   VerifyPkPassResult,
 } from '../../licenseClient.type'
+import compareAsc from 'date-fns/compareAsc'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'machinelicense-service'
@@ -53,11 +54,12 @@ export class MachineLicenseClient
       return LicensePkPassAvailability.Unknown
     }
 
-    const comparison = compareAsc(expirationDate, new Date())
+    const comparison = compareAsc(new Date(expirationDate), new Date())
 
     if (Number.isNaN(comparison) || comparison < 0) {
       return LicensePkPassAvailability.NotAvailable
     }
+
     return LicensePkPassAvailability.Available
   }
 
