@@ -146,7 +146,7 @@ export class UniversityGatewayProgramDetails extends UniversityGatewayProgram {
 @ObjectType('UniversityGatewayProgramExtraApplicationField')
 class UniversityGatewayProgramExtraApplicationField {
   @Field()
-  externalId!: string
+  externalKey!: string
 
   @Field()
   nameIs!: string

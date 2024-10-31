@@ -2,6 +2,7 @@ import {
   ApplicationState,
   calcAge,
   calcDifferenceInDate,
+  DirectTaxPayment,
   Employment,
   formatNationalId,
   formatPhoneNumber,
@@ -13,6 +14,9 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { ApplicationModel } from '../modules/application'
 import format from 'date-fns/format'
+
+const localeForNumbers = 'de-DE'
+const formatNumber = (num: number) => num.toLocaleString(localeForNumbers)
 
 export const getHeader = (created: Date, state: ApplicationState) => {
   const applicationState = getState[state]
@@ -43,9 +47,7 @@ export const getApplicationInfo = (application: ApplicationModel) => {
     },
     application.state === ApplicationState.APPROVED && {
       title: 'Samþykkt aðstoð: ',
-      content: `${application.amount[0].finalAmount.toLocaleString(
-        'de-DE',
-      )} kr.`,
+      content: `${formatNumber(application.amount[0].finalAmount)} kr.`,
     },
   ].filter(Boolean)
 }
@@ -202,4 +204,57 @@ export const getChildrenInfo = (application: ApplicationModel) => {
   })
 
   return allChildren
+}
+
+export const getDirectTaxPayments = (directTaxPayments: DirectTaxPayment[]) => {
+  if (directTaxPayments && directTaxPayments.length === 0) {
+    return []
+  }
+  const totalSalary = directTaxPayments.reduce(
+    (n, { totalSalary }) => n + totalSalary,
+    0,
+  )
+
+  return [
+    {
+      title: 'Samtals heildarlaun',
+      content: formatNumber(totalSalary),
+    },
+    {
+      title: 'Meðaltal',
+      content: formatNumber(Math.floor(totalSalary / directTaxPayments.length)),
+    },
+    {
+      title: 'Persónuafsláttur meðaltal',
+      content: (
+        directTaxPayments.reduce(
+          (n, { personalAllowance }) => n + personalAllowance,
+          0,
+        ) / directTaxPayments.length
+      ).toLocaleString(localeForNumbers),
+    },
+    {
+      title: 'Samtals staðgreiðsla',
+      content: directTaxPayments
+        .reduce((n, { withheldAtSource }) => n + withheldAtSource, 0)
+        .toLocaleString(localeForNumbers),
+    },
+  ]
+}
+
+export const groupDirectPayments = (directTaxPayments: DirectTaxPayment[]) => {
+  const grouped = directTaxPayments.reduce((acc, payment) => {
+    const monthNumber = parseInt(payment.month.toString()) - 1
+
+    const key = `${getMonth(
+      monthNumber < 0 ? 12 + monthNumber : monthNumber,
+    )} ${payment.year}`
+    if (!acc[key]) {
+      acc[key] = []
+    }
+    acc[key].push(payment)
+    return acc
+  }, {} as Record<string, DirectTaxPayment[]>)
+
+  return grouped
 }
