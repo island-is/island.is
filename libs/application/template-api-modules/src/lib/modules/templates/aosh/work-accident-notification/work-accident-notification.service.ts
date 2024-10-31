@@ -47,9 +47,14 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
           10,
         ),
         nameOfBranchOrDepartment:
-          answers.companyInformation.nameOfBranch ?? '1', // TODO: Vinnueftirlit will decide what number is default
-        address: answers.companyInformation.address,
-        postcode: answers.companyInformation.postnumber.slice(0, 3),
+          answers.companyInformation.nameOfBranch ??
+          answers.companyInformation.name,
+        address:
+          answers.companyInformation.addressOfBranch ??
+          answers.companyInformation.address,
+        postcode:
+          answers.companyInformation.postnumberOfBranch?.slice(0, 3) ??
+          answers.companyInformation.postnumber.slice(0, 3),
         workplaceHealthAndSafety:
           answers.companyLaborProtection.workhealthAndSafetyOccupation?.map(
             (code: string) => {
