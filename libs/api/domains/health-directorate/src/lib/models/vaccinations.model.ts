@@ -36,6 +36,9 @@ export class Info {
 
   @Field(() => Boolean, { nullable: true })
   rejected?: boolean
+
+  @Field({ nullable: true })
+  location?: string
 }
 
 @ObjectType('HealthDirectorateVaccination')

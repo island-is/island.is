@@ -72,6 +72,12 @@ export class Defendant {
   @Field(() => String, { nullable: true })
   readonly verdictAppealDeadline?: string
 
+  @Field(() => String, { nullable: true })
+  readonly verdictAppealDate?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isVerdictAppealDeadlineExpired?: boolean
+
   @Field(() => DefenderChoice, { nullable: true })
   readonly defenderChoice?: DefenderChoice
 
@@ -89,4 +95,10 @@ export class Defendant {
 
   @Field(() => [Subpoena], { nullable: true })
   readonly subpoenas?: Subpoena[]
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isDefenderChoiceConfirmed?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly caseFilesSharedWithDefender?: boolean
 }

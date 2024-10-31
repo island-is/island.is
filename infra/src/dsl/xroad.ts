@@ -515,9 +515,9 @@ export const PaymentSchedule = new XroadConf({
 export const IntellectualProperties = new XroadConf({
   env: {
     XROAD_INTELLECTUAL_PROPERTIES_PATH: {
-      dev: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI/',
-      staging: 'IS-TEST/GOV/6501912189/WebAPI-Public/HUG-webAPI/',
-      prod: 'IS/GOV/6501912189/WebAPI-Public/HUG-webAPI/',
+      dev: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI',
+      staging: 'IS-TEST/GOV/6501912189/WebAPI-Public/HUG-webAPI',
+      prod: 'IS/GOV/6501912189/WebAPI-Public/HUG-webAPI',
     },
   },
 })
@@ -847,7 +847,7 @@ export const JudicialSystemServicePortal = new XroadConf({
       dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
       staging:
         'IS-TEST/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
-      prod: 'IS-GOV/GOV/5804170510/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      prod: 'IS/GOV/5804170510/Rettarvorslugatt-Private/judicial-system-mailbox-api',
     },
   },
 })

@@ -8,7 +8,7 @@ import {
   TemplateAPIConfig,
 } from '@island.is/application/template-api-modules'
 import { ApplicationService } from '@island.is/application/api/core'
-import { AwsService } from '@island.is/nest/aws'
+import { S3Service } from '@island.is/nest/aws'
 import { ConfigService } from '@nestjs/config'
 import jwt from 'jsonwebtoken'
 import { uuid } from 'uuidv4'
@@ -17,7 +17,7 @@ import { uuid } from 'uuidv4'
 export class TemplateApiApplicationService extends BaseTemplateApiApplicationService {
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly awsService: AwsService,
+    private readonly s3Service: S3Service,
     @Inject(ConfigService)
     private readonly configService: ConfigService<TemplateAPIConfig>,
   ) {
@@ -40,7 +40,7 @@ export class TemplateApiApplicationService extends BaseTemplateApiApplicationSer
     const fileId = uuid()
     const attachmentKey = `${fileId}-${fileName}`
     const s3key = `${application.id}/${attachmentKey}`
-    const url = await this.awsService.uploadFile(
+    const url = await this.s3Service.uploadFile(
       buffer,
       { bucket: uploadBucket, key: s3key },
       uploadParameters,

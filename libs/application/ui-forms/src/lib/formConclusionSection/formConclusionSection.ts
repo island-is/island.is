@@ -7,7 +7,7 @@ import {
   buildSection,
   coreMessages,
 } from '@island.is/application/core'
-import { Application, FormText, StaticText } from '@island.is/application/types'
+import { FormText, StaticText } from '@island.is/application/types'
 import { conclusion } from './messages'
 
 type Props = Partial<{
@@ -27,7 +27,7 @@ type Props = Partial<{
   sectionTitle: StaticText
   bottomButtonLink: string
   bottomButtonLabel: StaticText
-  bottomButtonMessage: StaticText
+  bottomButtonMessage: FormText
 }>
 
 /**

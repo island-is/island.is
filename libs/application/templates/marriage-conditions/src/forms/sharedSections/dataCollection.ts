@@ -5,6 +5,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   ReligionCodesApi,
+  MockableDistrictCommissionersPaymentCatalogApi,
   DistrictCommissionersPaymentCatalogApi,
   BirthCertificateApi,
 } from '../../dataProviders'
@@ -42,6 +43,11 @@ export const dataCollection = [
   }),
   buildDataProviderItem({
     provider: DistrictCommissionersPaymentCatalogApi,
+    title: '',
+    subTitle: '',
+  }),
+  buildDataProviderItem({
+    provider: MockableDistrictCommissionersPaymentCatalogApi,
     title: '',
     subTitle: '',
   }),

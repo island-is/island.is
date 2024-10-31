@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import startOfDay from 'date-fns/startOfDay'
 
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { createEnhancedFetch, handle404 } from '@island.is/clients/middlewares'
 
 import {
   Configuration,
@@ -516,18 +516,14 @@ export class SyslumennService {
               : VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
         },
       })
-      .catch(() => {
-        throw new Error(
-          `Failed to get all properties for property number: ${propertyNumber}`,
-        )
-      })
+      .catch(handle404)
 
     return {
-      propertyNumber: res.fastanum ?? undefined, // Removes nulls with ?? undefined
-      propertyType: res.tegundEignar ?? undefined,
-      realEstate: res.fasteign ? res.fasteign.map(mapRealEstateResponse) : [],
-      vehicle: res.okutaeki ? mapVehicleResponse(res.okutaeki) : undefined,
-      ship: res.skip ? mapShipResponse(res.skip) : undefined,
+      propertyNumber: res?.fastanum ?? undefined,
+      propertyType: res?.tegundEignar ?? undefined,
+      realEstate: res?.fasteign ? res.fasteign.map(mapRealEstateResponse) : [],
+      vehicle: res?.okutaeki ? mapVehicleResponse(res.okutaeki) : undefined,
+      ship: res?.skip ? mapShipResponse(res.skip) : undefined,
     }
   }
 

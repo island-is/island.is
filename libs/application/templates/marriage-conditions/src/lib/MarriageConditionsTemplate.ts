@@ -27,6 +27,7 @@ import {
 import {
   BirthCertificateApi,
   DistrictCommissionersPaymentCatalogApi,
+  MockableDistrictCommissionersPaymentCatalogApi,
   MaritalStatusApi,
   ReligionCodesApi,
 } from '../dataProviders'
@@ -94,6 +95,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 ReligionCodesApi,
                 DistrictCommissionersPaymentCatalogApi,
                 BirthCertificateApi,
+                MockableDistrictCommissionersPaymentCatalogApi,
               ],
               delete: true,
             },
@@ -157,6 +159,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 ReligionCodesApi,
                 DistrictCommissionersPaymentCatalogApi,
                 BirthCertificateApi,
+                MockableDistrictCommissionersPaymentCatalogApi,
               ],
             },
           ],

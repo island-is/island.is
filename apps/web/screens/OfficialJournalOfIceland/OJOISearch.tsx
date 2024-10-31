@@ -1,16 +1,17 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
-import { useLazyQuery } from '@apollo/client'
 
 import {
+  AlertMessage,
   Box,
   Button,
   DatePicker,
   Divider,
   Input,
   Select,
+  SkeletonLoader,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -22,7 +23,6 @@ import {
   OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertCategory,
   OfficialJournalOfIcelandAdvertEntity,
-  OfficialJournalOfIcelandAdvertsResponse,
   OfficialJournalOfIcelandAdvertType,
   Query,
   QueryGetOrganizationArgs,
@@ -57,108 +57,182 @@ import {
   INSTITUTIONS_QUERY,
   TYPES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
+import { useAdverts } from './hooks'
 import { m } from './messages'
 
-const initialState = {
-  sida: '',
-  q: '',
-  deild: '', // department
-  tegund: '', // type
-  timabil: '', // dateFrom - dateTo
-  malaflokkur: '', // category
-  stofnun: '', // involvedParty
-  dagsFra: '',
-  dagsTil: '',
+type OJOISearchParams = {
+  q: string
+  deild: string
+  tegund: string
+  timabil: string
+  malaflokkur: string
+  stofnun: string
+  dagsFra?: string // DATE STRING
+  dagsTil?: string // DATE STRING
+  sida?: number
+  staerd?: number
 }
 
 const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
   initialAdverts,
   categories,
   departments,
+  defaultSearchParams,
   types,
   institutions,
   organization,
   locale,
 }) => {
   const { formatMessage } = useIntl()
-  const router = useRouter()
   const { linkResolver } = useLinkResolver()
+  const router = useRouter()
 
-  const [adverts, setAdverts] = useState(initialAdverts)
-
-  const [searchState, setSearchState] = useState(initialState)
   const [listView, setListView] = useState(false)
 
   const baseUrl = linkResolver('ojoihome', [], locale).href
   const searchUrl = linkResolver('ojoisearch', [], locale).href
 
-  const [getAdverts] = useLazyQuery<
-    {
-      officialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsResponse
+  const getTimestamp = () => new Date().getTime()
+  const [resetTimestamp, setResetTimestamp] = useState<number>(0)
+
+  const [localSearchValue, setLocalSearchValue] = useState(
+    defaultSearchParams.q,
+  )
+
+  const { adverts, loading, error, refetch } = useAdverts({
+    vars: {
+      department: [defaultSearchParams.deild],
+      category: [defaultSearchParams.malaflokkur],
+      involvedParty: [defaultSearchParams.stofnun],
+      type: [defaultSearchParams.tegund],
+      dateFrom: defaultSearchParams.dagsFra
+        ? new Date(defaultSearchParams.dagsFra)
+        : undefined,
+      dateTo: defaultSearchParams.dagsTil
+        ? new Date(defaultSearchParams.dagsTil)
+        : undefined,
+      search: defaultSearchParams.q,
+      page: defaultSearchParams.sida,
+      pageSize: defaultSearchParams.staerd,
     },
-    QueryOfficialJournalOfIcelandAdvertsArgs
-  >(ADVERTS_QUERY, { fetchPolicy: 'no-cache' })
+    fallbackData: initialAdverts,
+  })
 
-  useEffect(() => {
-    const searchParams = new URLSearchParams(document.location.search)
-    setSearchState({
-      sida: searchParams.get('sida') ?? '',
-      q: searchParams.get('q') ?? '',
-      deild: searchParams.get('deild') ?? '',
-      tegund: searchParams.get('tegund') ?? '',
-      timabil: searchParams.get('timabil') ?? '',
-      malaflokkur: searchParams.get('malaflokkur') ?? '',
-      stofnun: searchParams.get('stofnun') ?? '',
-      dagsFra: searchParams.get('dagsFra') ?? '',
-      dagsTil: searchParams.get('dagsTil') ?? '',
-    })
-  }, [])
+  const [searchState, setSearchState] = useState({
+    q: defaultSearchParams.q,
+    deild: defaultSearchParams.deild,
+    tegund: defaultSearchParams.tegund,
+    timabil: defaultSearchParams.timabil,
+    malaflokkur: defaultSearchParams.malaflokkur,
+    stofnun: defaultSearchParams.stofnun,
+    dagsFra: defaultSearchParams.dagsFra,
+    dagsTil: defaultSearchParams.dagsTil,
+    sida: defaultSearchParams.sida,
+    staerd: defaultSearchParams.staerd,
+  })
 
-  const fetchAdverts = useMemo(() => {
-    return debounce((state: typeof initialState) => {
-      getAdverts({
-        variables: {
-          input: {
-            search: state.q,
-            page: state.sida ? parseInt(state.sida) : undefined,
-            department: state.deild ? [state.deild] : undefined,
-            type: state.tegund ? [state.tegund] : undefined,
-            category: state.malaflokkur ? [state.malaflokkur] : undefined,
-            involvedParty: state.stofnun ? [state.stofnun] : undefined,
-            dateFrom: state.dagsFra ? new Date(state.dagsFra) : undefined,
-            dateTo: state.dagsTil ? new Date(state.dagsTil) : undefined,
-          },
+  const updateSearchStateHandler = useCallback(
+    (
+      key: keyof typeof searchState,
+      value: string | number | Date | undefined,
+    ) => {
+      const parsed =
+        typeof value === 'string'
+          ? value.trim()
+          : typeof value === 'number'
+          ? value
+          : value instanceof Date
+          ? value
+          : undefined
+
+      setSearchState((prev) => ({
+        ...prev,
+        [key]: parsed,
+      }))
+
+      const searchValues = {
+        ...searchState,
+        [key]: parsed,
+      }
+
+      router.replace(
+        {
+          pathname: searchUrl,
+          query: removeEmptyFromObject({
+            ...searchValues,
+            [key]:
+              parsed instanceof Date
+                ? parsed.toISOString().split('T')[0]
+                : parsed,
+          }),
+        },
+        undefined,
+        { shallow: true },
+      )
+
+      refetch({
+        input: {
+          department: [searchValues.deild],
+          category: [searchValues.malaflokkur],
+          involvedParty: [searchValues.stofnun],
+          type: [searchValues.tegund],
+          dateFrom: searchValues.dagsFra
+            ? new Date(searchValues.dagsFra)
+            : undefined,
+          dateTo: searchValues.dagsTil
+            ? new Date(searchValues.dagsTil)
+            : undefined,
+          search: searchValues.q,
+          page: searchValues.sida,
+          pageSize: searchValues.staerd,
         },
       })
-        .then((res) => {
-          if (res.data) {
-            setAdverts(res.data.officialJournalOfIcelandAdverts.adverts)
-          } else if (res.error) {
-            setAdverts([])
-            console.error('Error fetching Adverts', res.error)
-          }
-        })
-        .catch((err) => {
-          setAdverts([])
-          console.error('Error fetching Adverts', { err })
-        })
-    }, debounceTime.search)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    },
 
-  useEffect(() => {
-    const isEmpty = !Object.entries(searchState).filter(([_, v]) => !!v).length
-    if (isEmpty) {
-      setAdverts(initialAdverts)
-    } else {
-      fetchAdverts(searchState)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchState])
+    [refetch, router, searchState, searchUrl],
+  )
+
+  const resetFilter = () => {
+    router.replace(searchUrl, {}, { shallow: true })
+    setLocalSearchValue('')
+    setSearchState({
+      q: '',
+      deild: '',
+      tegund: '',
+      timabil: '',
+      malaflokkur: '',
+      stofnun: '',
+      dagsFra: undefined,
+      dagsTil: undefined,
+      sida: 1,
+      staerd: 20,
+    })
+
+    refetch({
+      input: {
+        department: [],
+        category: [],
+        involvedParty: [],
+        type: [],
+        dateFrom: undefined,
+        dateTo: undefined,
+        search: '',
+        page: undefined,
+        pageSize: undefined,
+      },
+    })
+
+    setResetTimestamp(getTimestamp())
+  }
+
+  const categoriesOptions = mapEntityToOptions(categories)
+  const departmentsOptions = mapEntityToOptions(departments)
+  const typesOptions = mapEntityToOptions(types)
+  const institutionsOptions = mapEntityToOptions(institutions)
 
   const breadcrumbItems = [
     {
-      title: 'Ísland.is',
+      title: formatMessage(m.breadcrumb.frontpage),
       href: linkResolver('homepage', [], locale).href,
     },
     {
@@ -166,42 +240,22 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       href: baseUrl,
     },
     {
-      title: 'Leitarniðurstöður',
+      title: formatMessage(m.search.breadcrumbTitle),
     },
   ]
 
-  const updateSearchParams = useMemo(() => {
-    return debounce((state: Record<string, string>) => {
-      router.replace(
-        searchUrl,
-        {
-          query: removeEmptyFromObject(state),
-        },
-        { shallow: true },
-      )
-    }, debounceTime.search)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const debouncedSearch = useMemo(
+    () => debounce(updateSearchStateHandler, debounceTime.search),
+    [updateSearchStateHandler],
+  )
 
-  const updateSearchState = (key: keyof typeof initialState, value: string) => {
-    const newState = {
-      ...searchState,
-      [key]: value,
-    }
-    setSearchState(newState)
-    updateSearchParams(newState)
-  }
-
-  const resetFilter = () => {
-    setSearchState(initialState)
-    updateSearchParams(initialState)
-    setAdverts(initialAdverts)
-  }
-
-  const categoriesOptions = mapEntityToOptions(categories)
-  const departmentsOptions = mapEntityToOptions(departments)
-  const typesOptions = mapEntityToOptions(types)
-  const institutionsOptions = mapEntityToOptions(institutions)
+  const debouncedSearchHandler = useCallback(
+    (search: string) => {
+      debouncedSearch.cancel()
+      debouncedSearch('q', search)
+    },
+    [debouncedSearch],
+  )
 
   return (
     <OJOIWrapper
@@ -222,11 +276,15 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
             <Text variant="h4">Leit</Text>
 
             <Input
+              key={`search-${resetTimestamp}`}
               name="q"
               placeholder={formatMessage(m.search.inputPlaceholder)}
               size="xs"
-              value={searchState.q}
-              onChange={(e) => updateSearchState('q', e.target.value)}
+              value={localSearchValue}
+              onChange={(e) => {
+                setLocalSearchValue(e.target.value)
+                debouncedSearchHandler(e.target.value)
+              }}
             />
 
             <Divider weight={'blueberry200'} />
@@ -245,6 +303,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
             </Box>
 
             <Select
+              key={`deild-${resetTimestamp}`}
               name="deild"
               label={formatMessage(m.search.departmentLabel)}
               size="xs"
@@ -254,12 +313,17 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
                 ...departmentsOptions,
               ]}
               isClearable
-              isSearchable
-              value={findValueOption(departmentsOptions, searchState.deild)}
-              onChange={(v) => updateSearchState('deild', v?.value ?? '')}
+              defaultValue={findValueOption(
+                departmentsOptions,
+                searchState.deild,
+              )}
+              onChange={(v) =>
+                updateSearchStateHandler('deild', v?.value ?? '')
+              }
             />
 
             <Select
+              key={`tegund-${resetTimestamp}`}
               name="tegund"
               label={formatMessage(m.search.typeLabel)}
               size="xs"
@@ -269,11 +333,14 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
                 ...typesOptions,
               ]}
               isClearable
-              value={findValueOption(typesOptions, searchState.tegund)}
-              onChange={(v) => updateSearchState('tegund', v?.value ?? '')}
+              defaultValue={findValueOption(typesOptions, searchState.tegund)}
+              onChange={(v) =>
+                updateSearchStateHandler('tegund', v?.value ?? '')
+              }
             />
 
             <Select
+              key={`malaflokkur-${resetTimestamp}`}
               name="malaflokkur"
               label={formatMessage(m.search.categoriesLabel)}
               size="xs"
@@ -284,56 +351,55 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
               ]}
               isClearable
               isSearchable
-              value={findValueOption(
+              defaultValue={findValueOption(
                 categoriesOptions,
                 searchState.malaflokkur,
               )}
-              onChange={(v) => updateSearchState('malaflokkur', v?.value ?? '')}
+              onChange={(v) =>
+                updateSearchStateHandler('malaflokkur', v?.value ?? '')
+              }
             />
 
             <DatePicker
+              key={`dagsFra-${resetTimestamp}`}
               size="xs"
               locale="is"
               name="dagsFra"
               label={formatMessage(m.search.dateFromLabel)}
               placeholderText={formatMessage(m.search.dateFromPlaceholder)}
-              selected={
-                searchState.dagsFra ? new Date(searchState.dagsFra) : undefined
-              }
               minDate={new Date('1950-01-01')}
               maxDate={
                 searchState.dagsTil ? new Date(searchState.dagsTil) : undefined
               }
-              handleChange={(date) =>
-                updateSearchState(
-                  'dagsFra',
-                  date ? date.toISOString().slice(0, 10) : '',
-                )
+              selected={
+                searchState.dagsFra ? new Date(searchState.dagsFra) : undefined
               }
+              handleChange={(date) => {
+                updateSearchStateHandler('dagsFra', date)
+              }}
             />
 
             <DatePicker
+              key={`dagsTil-${resetTimestamp}`}
               size="xs"
               locale="is"
               name="dagsTil"
               label={formatMessage(m.search.dateToLabel)}
               placeholderText={formatMessage(m.search.dateToPlaceholder)}
-              selected={
-                searchState.dagsTil ? new Date(searchState.dagsTil) : undefined
-              }
               minDate={
                 searchState.dagsFra ? new Date(searchState.dagsFra) : undefined
               }
               maxDate={new Date()}
-              handleChange={(date) =>
-                updateSearchState(
-                  'dagsTil',
-                  date ? date.toISOString().slice(0, 10) : '',
-                )
+              selected={
+                searchState.dagsTil ? new Date(searchState.dagsTil) : undefined
               }
+              handleChange={(date) => {
+                updateSearchStateHandler('dagsTil', date)
+              }}
             />
 
             <Select
+              key={`stofnun-${resetTimestamp}`}
               name="stofnun"
               label={formatMessage(m.search.institutionLabel)}
               size="xs"
@@ -344,15 +410,36 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
               ]}
               isClearable
               isSearchable
-              value={findValueOption(institutionsOptions, searchState.stofnun)}
-              onChange={(v) => updateSearchState('stofnun', v?.value ?? '')}
+              defaultValue={findValueOption(
+                institutionsOptions,
+                searchState.stofnun,
+              )}
+              onChange={(v) =>
+                updateSearchStateHandler('stofnun', v?.value ?? '')
+              }
             />
           </Stack>
         </Box>
       }
       breadcrumbItems={breadcrumbItems}
     >
-      {adverts?.length ? (
+      {!!error && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            title={formatMessage(m.search.errorFetchingAdvertsTitle)}
+            message={formatMessage(m.search.errorFetchingAdvertsMessage)}
+            type="error"
+          />
+        </Box>
+      )}
+      {loading ? (
+        <SkeletonLoader
+          repeat={5}
+          height={200}
+          borderRadius="large"
+          space={3}
+        />
+      ) : adverts?.length ? (
         <Stack space={3}>
           <Button
             onClick={() => setListView(!listView)}
@@ -391,6 +478,7 @@ interface OJOISearchProps {
   types?: Array<OfficialJournalOfIcelandAdvertType>
   institutions?: Array<OfficialJournalOfIcelandAdvertEntity>
   organization?: Query['getOrganization']
+  defaultSearchParams: OJOISearchParams
   locale: Locale
 }
 
@@ -403,6 +491,7 @@ const OJOISearch: CustomScreen<OJOISearchProps> = ({
   organization,
   locale,
   customPageData,
+  defaultSearchParams,
 }) => {
   return (
     <OJOISearchPage
@@ -414,12 +503,73 @@ const OJOISearch: CustomScreen<OJOISearchProps> = ({
       organization={organization}
       locale={locale}
       customPageData={customPageData}
+      defaultSearchParams={defaultSearchParams}
     />
   )
 }
 
-OJOISearch.getProps = async ({ apolloClient, locale }) => {
+OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
   const organizationSlug = 'stjornartidindi'
+
+  const getStringFromQuery = (key?: string | string[]) => {
+    if (typeof key === 'string') {
+      return key
+    }
+
+    if (Array.isArray(key)) {
+      return key[0]
+    }
+
+    return ''
+  }
+
+  let dateFrom: string | undefined
+  let dateTo: string | undefined
+  let page: number | undefined
+  let pageSize: number | undefined
+
+  if (query.dagsFra && typeof query.dagsFra === 'string') {
+    const isValid = !Number.isNaN(Date.parse(query.dagsFra))
+    if (isValid) {
+      dateFrom = new Date(query.dagsFra).toISOString().split('T')[0]
+    }
+  }
+
+  if (query.dagsTil && typeof query.dagsTil === 'string') {
+    const isValid = !Number.isNaN(Date.parse(query.dagsTil))
+    if (isValid) {
+      dateTo = new Date(query.dagsTil).toISOString().split('T')[0]
+    }
+  }
+
+  if (query.sida && typeof query.sida === 'string') {
+    const check = !Number.isNaN(parseInt(query.sida))
+
+    if (check) {
+      page = parseInt(query.sida)
+    }
+  }
+
+  if (query.pageSize && typeof query.pageSize === 'string') {
+    const check = !Number.isNaN(parseInt(query.pageSize))
+
+    if (check) {
+      pageSize = parseInt(query.pageSize)
+    }
+  }
+
+  const defaultParams = {
+    deild: getStringFromQuery(query.deild),
+    dagsFra: dateFrom,
+    dagsTil: dateTo,
+    malaflokkur: getStringFromQuery(query.malaflokkur),
+    q: getStringFromQuery(query.q),
+    stofnun: getStringFromQuery(query.stofnun),
+    tegund: getStringFromQuery(query.tegund),
+    timabil: getStringFromQuery(query.timabil),
+    sida: page,
+    pageSize,
+  }
 
   const [
     {
@@ -444,13 +594,29 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
     apolloClient.query<Query, QueryOfficialJournalOfIcelandAdvertsArgs>({
       query: ADVERTS_QUERY,
       variables: {
-        input: {},
+        input: {
+          category: [defaultParams.malaflokkur],
+          dateFrom: defaultParams.dagsFra
+            ? new Date(defaultParams.dagsFra)
+            : undefined,
+          dateTo: defaultParams.dagsTil
+            ? new Date(defaultParams.dagsTil)
+            : undefined,
+          department: [defaultParams.deild],
+          involvedParty: [defaultParams.stofnun],
+          page: defaultParams.sida,
+          pageSize: defaultParams.pageSize,
+          search: defaultParams.q,
+          type: [defaultParams.tegund],
+        },
       },
     }),
     apolloClient.query<Query, QueryOfficialJournalOfIcelandCategoriesArgs>({
       query: CATEGORIES_QUERY,
       variables: {
-        params: {},
+        params: {
+          pageSize: 1000,
+        },
       },
     }),
     apolloClient.query<Query, QueryOfficialJournalOfIcelandDepartmentsArgs>({
@@ -462,13 +628,17 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
     apolloClient.query<Query, QueryOfficialJournalOfIcelandTypesArgs>({
       query: TYPES_QUERY,
       variables: {
-        params: {},
+        params: {
+          pageSize: 1000,
+        },
       },
     }),
     apolloClient.query<Query, QueryOfficialJournalOfIcelandInstitutionsArgs>({
       query: INSTITUTIONS_QUERY,
       variables: {
-        params: {},
+        params: {
+          pageSize: 1000,
+        },
       },
     }),
     apolloClient.query<Query, QueryGetOrganizationArgs>({
@@ -497,6 +667,18 @@ OJOISearch.getProps = async ({ apolloClient, locale }) => {
     showSearchInHeader: false,
     themeConfig: {
       footerVersion: 'organization',
+    },
+    defaultSearchParams: {
+      deild: defaultParams.deild,
+      dagsFra: defaultParams.dagsFra,
+      dagsTil: defaultParams.dagsTil,
+      malaflokkur: defaultParams.malaflokkur,
+      q: defaultParams.q,
+      stofnun: defaultParams.stofnun,
+      tegund: defaultParams.tegund,
+      timabil: defaultParams.timabil,
+      sida: defaultParams.sida,
+      staerd: defaultParams.pageSize,
     },
   }
 }
