@@ -4,10 +4,11 @@ import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Button } from '@contentful/f36-components'
 import { JsonEditor } from '@contentful/field-editor-json'
 import { useSDK } from '@contentful/react-apps-toolkit'
-import { generateId, type Tree, type TreeNode, TreeNodeType } from './utils'
-import { AddNodeButton } from './AddNodeButton'
-import { SitemapNode } from './SitemapNode'
 
+import { AddNodeButton } from './AddNodeButton'
+import { EntryContext, useEntryContext } from './entryContext'
+import { SitemapNode } from './SitemapNode'
+import { generateId, type Tree, type TreeNode, TreeNodeType } from './utils'
 import * as styles from './SitemapTreeField.css'
 
 export const SitemapTreeField = () => {
@@ -143,44 +144,46 @@ export const SitemapTreeField = () => {
   )
 
   return (
-    <div>
-      <div style={{ paddingBottom: '16px' }}>
-        <Button
-          onClick={() => {
-            setTree({
-              id: 0,
-              childNodes: [],
-            })
-          }}
-        >
-          Reset
-        </Button>
-      </div>
-
+    <EntryContext.Provider value={useEntryContext()}>
       <div>
-        <div className={styles.childNodeContainer}>
-          {tree.childNodes.map((node) => (
-            <SitemapNode
-              parentNode={tree}
-              removeNode={removeNode}
-              addNode={addNode}
-              key={node.id}
-              node={node}
-            />
-          ))}
-          <div className={styles.addNodeButtonContainer}>
-            <AddNodeButton
-              addNode={(type) => {
-                addNode(tree, type)
-              }}
-            />
+        <div style={{ paddingBottom: '16px' }}>
+          <Button
+            onClick={() => {
+              setTree({
+                id: 0,
+                childNodes: [],
+              })
+            }}
+          >
+            Reset
+          </Button>
+        </div>
+
+        <div>
+          <div className={styles.childNodeContainer}>
+            {tree.childNodes.map((node) => (
+              <SitemapNode
+                parentNode={tree}
+                removeNode={removeNode}
+                addNode={addNode}
+                key={node.id}
+                node={node}
+              />
+            ))}
+            <div className={styles.addNodeButtonContainer}>
+              <AddNodeButton
+                addNode={(type) => {
+                  addNode(tree, type)
+                }}
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div style={{ paddingTop: '16px' }}>
-        <JsonEditor field={sdk.field} isInitiallyDisabled={false} />
+        <div style={{ paddingTop: '16px' }}>
+          <JsonEditor field={sdk.field} isInitiallyDisabled={false} />
+        </div>
       </div>
-    </div>
+    </EntryContext.Provider>
   )
 }

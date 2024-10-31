@@ -1,5 +1,6 @@
 import { Button, Menu } from '@contentful/f36-components'
 import { ChevronDownIcon, PlusIcon } from '@contentful/f36-icons'
+
 import { TreeNodeType } from './utils'
 
 interface AddNodeButtonProps {

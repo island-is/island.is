@@ -11,4 +11,5 @@ export const addNodeButtonContainer = style({
   justifyContent: 'center',
   border: '1px dashed #d3dce0',
   padding: '10px 4px',
+  borderRadius: '6px',
 })
