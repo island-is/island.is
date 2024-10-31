@@ -35,6 +35,65 @@ export const ExampleForm: Form = buildForm({
       children: [],
     }),
     buildSection({
+      id: 'testinCheckboxes',
+      title: 'Testing checkboxes',
+      children: [
+        buildMultiField({
+          id: 'asdf',
+          title: 'Test checkboxes',
+          children: [
+            buildCheckboxField({
+              id: 'testCheckbox',
+              title: 'Test checkbox',
+              options: [{ value: 'yes', label: 'Yes' }],
+              width: 'half',
+              large: false,
+            }),
+
+            buildRadioField({
+              id: 'testRadio',
+              title: '',
+              width: 'half',
+              options: [
+                {
+                  value: 'yes',
+                  label: 'Yes',
+                },
+              ],
+            }),
+            buildTextField({
+              id: 'testTextField',
+              width: 'half',
+              title: 'Test text field',
+            }),
+            buildCheckboxField({
+              id: 'testCheckbox',
+              title: '',
+              options: [{ value: 'yes', label: 'Yes' }],
+              width: 'half',
+              large: false,
+            }),
+            buildTextField({
+              id: 'testTextField',
+              width: 'half',
+              title: 'Test text field',
+            }),
+            buildRadioField({
+              id: 'testRadio',
+              title: '',
+              width: 'half',
+              options: [
+                {
+                  value: 'yes',
+                  label: 'Yes',
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
       id: 'intro',
       title: m.introSection,
       children: [
