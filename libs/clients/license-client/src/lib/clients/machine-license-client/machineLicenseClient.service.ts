@@ -45,13 +45,22 @@ export class MachineLicenseClient
   private checkLicenseValidityForPkPass(
     licenseInfo: VinnuvelaDto,
   ): LicensePkPassAvailability {
-    if (!licenseInfo) {
+    const expirationDate = licenseInfo
+      ? findLatestExpirationDate(licenseInfo)
+      : undefined
+
+    if (!licenseInfo || !expirationDate) {
       return LicensePkPassAvailability.Unknown
     }
 
-    //Nothing to check as of yet
+    const comparison = compareAsc(expirationDate, new Date())
+
+    if (Number.isNaN(comparison) || comparison < 0) {
+      return LicensePkPassAvailability.NotAvailable
+    }
     return LicensePkPassAvailability.Available
   }
+
   private async fetchLicense(user: User): Promise<Result<VinnuvelaDto | null>> {
     try {
       const licenseInfo = await this.machineApi
