@@ -88,7 +88,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               id={`${field.id}-accordion-item-${index}`}
               label={`${formatMessage(overview.labels.employee)} ${
                 employees.length > 1 ? index + 1 : ''
-              }`}
+              } - ${employee.nationalField.name}`}
             >
               <EmployeeAccordionItem
                 employee={employee}

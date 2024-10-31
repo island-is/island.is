@@ -25,7 +25,7 @@ export const causeAndConsequences = {
     },
     selectPlaceholder: {
       id: 'aosh.wan.application:causeAndConsequences.shared.selectPlaceholder',
-      defaultMessage: 'Vinsamlegast veldu a.m.k einn valmöguleika',
+      defaultMessage: 'Veldu allt sem á við ef eitthvað',
       description:
         'error alerting users to choose at least on option (cause and consequences pages)',
     },
