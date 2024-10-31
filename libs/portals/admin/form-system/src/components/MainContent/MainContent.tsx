@@ -94,7 +94,7 @@ export const MainContent = () => {
                 <Checkbox
                   name="multi"
                   label={formatMessage(m.allowMultiple)}
-                  checked={(activeItem.data as FormSystemScreen).multiset !== 0 ?? false}
+                  checked={(activeItem.data as FormSystemScreen).multiset !== 0}
                   onChange={(e) =>
                     controlDispatch({
                       type: 'TOGGLE_MULTI_SET',
