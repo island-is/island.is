@@ -185,6 +185,7 @@ air-discount-scheme-backend:
     ERNIR_API_KEY: '/k8s/air-discount-scheme/backend/ERNIR_API_KEY'
     ICELANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/ICELANDAIR_API_KEY'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
+    MYFLUG_API_KEY: '/k8s/air-discount-scheme/backend/MYFLUG_API_KEY'
     NATIONAL_REGISTRY_PASSWORD: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD'
     NATIONAL_REGISTRY_URL: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL'
     NATIONAL_REGISTRY_USERNAME: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
@@ -367,7 +368,7 @@ api:
     XROAD_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PATH: 'IS-DEV/GOV/10021/FJS-Protected/recruitment-v1'
     XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1'
     XROAD_INNA_PATH: 'IS-DEV/GOV/10066/MMS-Protected/inna-v1'
-    XROAD_INTELLECTUAL_PROPERTIES_PATH: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI/'
+    XROAD_INTELLECTUAL_PROPERTIES_PATH: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI'
     XROAD_JUDICIAL_SYSTEM_SP_PATH: 'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api'
     XROAD_MMS_FRIGG_PATH: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-service'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1'
@@ -2883,7 +2884,7 @@ skilavottord-web:
     API_URL: 'http://web-skilavottord-ws'
     ENVIRONMENT: 'dev'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -2928,11 +2929,11 @@ skilavottord-web:
     min: 2
   resources:
     limits:
-      cpu: '200m'
-      memory: '256Mi'
+      cpu: '400m'
+      memory: '512Mi'
     requests:
-      cpu: '20m'
-      memory: '128Mi'
+      cpu: '40m'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
@@ -2953,7 +2954,7 @@ skilavottord-ws:
     DB_USER: 'skilavottord'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'application-system'
@@ -3019,11 +3020,11 @@ skilavottord-ws:
     min: 1
   resources:
     limits:
-      cpu: '200m'
-      memory: '256Mi'
+      cpu: '400m'
+      memory: '512Mi'
     requests:
-      cpu: '100m'
-      memory: '128Mi'
+      cpu: '40m'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
