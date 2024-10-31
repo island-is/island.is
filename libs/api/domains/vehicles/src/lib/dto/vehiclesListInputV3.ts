@@ -7,4 +7,7 @@ export class VehiclesListInputV3 {
 
   @Field()
   page!: number
+
+  @Field({ nullable: true })
+  query?: string
 }
