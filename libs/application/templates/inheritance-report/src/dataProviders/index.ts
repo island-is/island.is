@@ -7,4 +7,5 @@ export const EstateOnEntryApi = defineTemplateApi({
 
 export const MaritalStatusApi = defineTemplateApi({
   action: 'maritalStatus',
+  shouldPersistToExternalData: true,
 })
