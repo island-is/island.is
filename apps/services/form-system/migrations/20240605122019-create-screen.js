@@ -33,6 +33,11 @@ module.exports = {
             allowNull: false,
             defaultValue: false,
           },
+          is_completed: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+          },
           multiset: {
             type: Sequelize.INTEGER,
             allowNull: false,
