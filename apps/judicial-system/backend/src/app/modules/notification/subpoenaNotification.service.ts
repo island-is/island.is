@@ -54,7 +54,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     notificationType: SubpoenaNotificationType,
     subject: MessageDescriptor,
     body: MessageDescriptor,
-    to: { name?: string; email?: string; overviewUrl: string }[],
+    to: { name?: string; email?: string }[],
   ) {
     const formattedSubject = this.formatMessage(subject, {
       courtCaseNumber: theCase.courtCaseNumber,
@@ -66,7 +66,7 @@ export class SubpoenaNotificationService extends BaseNotificationService {
       if (recipient.email && recipient.name) {
         const formattedBody = this.formatMessage(body, {
           courtCaseNumber: theCase.courtCaseNumber,
-          linkStart: `<a href="${this.config.clientUrl}${EMAIL_NOTIFICATION_ROUTE}">`,
+          linkStart: `<a href="${this.config.clientUrl}${EMAIL_NOTIFICATION_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
         })
 
@@ -100,17 +100,14 @@ export class SubpoenaNotificationService extends BaseNotificationService {
         {
           name: theCase.judge?.name,
           email: theCase.judge?.email,
-          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
         },
         {
           name: theCase.registrar?.name,
           email: theCase.registrar?.email,
-          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
         },
         {
           name: theCase.prosecutor?.name,
           email: theCase.prosecutor?.email,
-          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}`,
         },
       ],
     )
@@ -128,17 +125,14 @@ export class SubpoenaNotificationService extends BaseNotificationService {
         {
           name: theCase.judge?.name,
           email: theCase.judge?.email,
-          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
         },
         {
           name: theCase.registrar?.name,
           email: theCase.registrar?.email,
-          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
         },
         {
           name: theCase.prosecutor?.name,
           email: theCase.prosecutor?.email,
-          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_OVERVIEW_ROUTE}/${theCase.id}`,
         },
       ],
     )
@@ -156,12 +150,10 @@ export class SubpoenaNotificationService extends BaseNotificationService {
         {
           name: theCase.judge?.name,
           email: theCase.judge?.email,
-          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
         },
         {
           name: theCase.registrar?.name,
           email: theCase.registrar?.email,
-          overviewUrl: `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
         },
       ],
     )
