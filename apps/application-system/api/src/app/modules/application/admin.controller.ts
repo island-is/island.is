@@ -218,7 +218,7 @@ export class AdminController {
       'Get external data, attachments, and answers for a specific application',
     response: {
       status: 200,
-      type: ApplicationDetails, 
+      type: ApplicationDetails,
     },
     request: {
       params: {
