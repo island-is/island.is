@@ -200,6 +200,7 @@ const SelectCivilClaimantAdvocate: FC<Props> = ({ civilClaimant }) => {
           })}
           primaryButtonText={formatMessage(
             strings.confirmModalPrimaryButtonText,
+            { isConfirming: !civilClaimant.isSpokespersonConfirmed },
           )}
           onPrimaryButtonClick={() => {
             updateCivilClaimant({
