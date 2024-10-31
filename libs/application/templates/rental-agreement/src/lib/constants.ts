@@ -55,6 +55,23 @@ export enum rentalAmountPaymentDateOptions {
   OTHER = 'other',
 }
 
+export enum securityDepositTypeOptions {
+  BANK_GUARANTEE = 'bankGuarantee',
+  CAPITAL = 'capital',
+  THIRD_PARTY_GUARANTEE = 'thirdPartyGuarantee',
+  INSURANCE_COMPANY = 'insuranceCompany',
+  MUTUAL_FUND = 'mutualFund',
+  OTHER = 'other',
+}
+
+export enum securityDepositAmountOptions {
+  ONE_MONTH = '1 month',
+  TWO_MONTHS = '2 months',
+  THREE_MONTHS = '3 months',
+
+  OTHER = 'other',
+}
+
 export const pruneAfterDays = (Days: number): StateLifeCycle => {
   return {
     shouldBeListed: false,

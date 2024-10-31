@@ -10,52 +10,54 @@ import {
 
 import * as m from '../../lib/messages'
 import { FormValue } from '@island.is/application/types'
+import {
+  securityDepositTypeOptions,
+  securityDepositAmountOptions,
+} from '../../lib/constants'
 
-const messages = m.prerequisites.intro
-
-const securityDepositTypes = [
+const typeOptions = [
   {
     label: m.securityDeposit.typeSelectionBankGuaranteeTitle,
-    value: 'bankGuarantee',
+    value: securityDepositTypeOptions.BANK_GUARANTEE,
   },
   {
     label: m.securityDeposit.typeSelectionCapitalTitle,
-    value: 'capital',
+    value: securityDepositTypeOptions.CAPITAL,
   },
   {
     label: m.securityDeposit.typeSelectionThirdPartyGuaranteeTitle,
-    value: 'thirdPartyGuarantee',
+    value: securityDepositTypeOptions.THIRD_PARTY_GUARANTEE,
   },
   {
     label: m.securityDeposit.typeSelectionInsuranceCompanyTitle,
-    value: 'insuranceCompany',
+    value: securityDepositTypeOptions.INSURANCE_COMPANY,
   },
   {
     label: m.securityDeposit.typeSelectionMutualFundTitle,
-    value: 'mutualFund',
+    value: securityDepositTypeOptions.MUTUAL_FUND,
   },
   {
     label: m.securityDeposit.typeSelectionOtherTitle,
-    value: 'other',
+    value: securityDepositTypeOptions.OTHER,
   },
 ]
 
-const rentalAmountDetails = [
+const amountOptions = [
   {
     label: m.securityDeposit.amountSelection1Month,
-    value: '1 month',
+    value: securityDepositAmountOptions.ONE_MONTH,
   },
   {
     label: m.securityDeposit.amountSelection2Month,
-    value: '2 months',
+    value: securityDepositAmountOptions.TWO_MONTHS,
   },
   {
     label: m.securityDeposit.amountSelection3Month,
-    value: '3 months',
+    value: securityDepositAmountOptions.THREE_MONTHS,
   },
   {
     label: m.securityDeposit.amountSelectionOther,
-    value: 'other',
+    value: securityDepositAmountOptions.OTHER,
   },
 ]
 
@@ -77,7 +79,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
         buildSelectField({
           id: 'securityDeposit.securityType',
           title: m.securityDeposit.typeSelectionTitle,
-          options: securityDepositTypes,
+          options: typeOptions,
         }),
         // Tegund tryggingar: Bankaábyrgð
         buildTextField({
@@ -89,7 +91,8 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
-              securityDeposit.securityType === 'bankGuarantee'
+              securityDeposit.securityType ===
+                securityDepositTypeOptions.BANK_GUARANTEE
             )
           },
         }),
@@ -103,7 +106,8 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
-              securityDeposit.securityType === 'capital'
+              securityDeposit.securityType ===
+                securityDepositTypeOptions.CAPITAL
             )
           },
           space: 2,
@@ -118,7 +122,8 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
-              securityDeposit.securityType === 'thirdPartyGuarantee'
+              securityDeposit.securityType ===
+                securityDepositTypeOptions.THIRD_PARTY_GUARANTEE
             )
           },
         }),
@@ -132,7 +137,8 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
-              securityDeposit.securityType === 'insuranceCompany'
+              securityDeposit.securityType ===
+                securityDepositTypeOptions.INSURANCE_COMPANY
             )
           },
         }),
@@ -146,7 +152,8 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
-              securityDeposit.securityType === 'mutualFund'
+              securityDeposit.securityType ===
+                securityDepositTypeOptions.MUTUAL_FUND
             )
           },
         }),
@@ -160,27 +167,27 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
-              securityDeposit.securityType === 'other'
+              securityDeposit.securityType === securityDepositTypeOptions.OTHER
             )
           },
         }),
         buildDescriptionField({
           id: 'securityDeposit.amountTitle',
           title: m.securityDeposit.amountHeaderTitle,
-          titleTooltip: m.securityDeposit.amountHeaderToolTip,
           titleVariant: 'h3',
           space: 5,
         }),
         buildSelectField({
           id: 'securityDeposit.securityAmount',
           title: m.securityDeposit.amountSelectionTitle,
-          options: rentalAmountDetails,
+          options: amountOptions,
           condition: (answers) => {
             const securityDeposit = answers.securityDeposit as FormValue
             return (
               !securityDeposit ||
               securityDeposit.securityType === undefined ||
-              securityDeposit.securityType !== 'mutualFund'
+              securityDeposit.securityType !==
+                securityDepositTypeOptions.MUTUAL_FUND
             )
           },
         }),
@@ -195,7 +202,8 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
-              securityDeposit.securityType === 'mutualFund'
+              securityDeposit.securityType ===
+                securityDepositTypeOptions.MUTUAL_FUND
             )
           },
         }),
@@ -210,8 +218,10 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
-              (securityDeposit.securityType === 'mutualFund' ||
-                securityDeposit.securityAmount === 'other')
+              (securityDeposit.securityType ===
+                securityDepositTypeOptions.MUTUAL_FUND ||
+                securityDeposit.securityAmount ===
+                  securityDepositAmountOptions.OTHER)
             )
           },
         }),

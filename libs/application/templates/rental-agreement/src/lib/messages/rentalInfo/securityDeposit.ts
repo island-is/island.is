@@ -24,7 +24,8 @@ export const securityDeposit = defineMessages({
   },
   typeHeaderToolTip: {
     id: 'ra.application:securityDeposit.typeHeaderToolTip',
-    defaultMessage: 'Tool tip',
+    defaultMessage:
+      'Áður en afhending hins leigða húsnæðis fer fram er leigusala rétt að krefjast þess að leigjandi setji honum tryggingu fyrir réttum efndum á leigusamningnum, þ.e. fyrir leigugreiðslum og skaðabótum vegna tjóns á hinu leigða sem leigjandi ber ábyrgð á samkvæmt ákvæðum laga þessara eða almennum reglum.',
     description: 'security deposit type header tool tip',
   },
   typeSelectionTitle: {
@@ -124,11 +125,6 @@ export const securityDeposit = defineMessages({
     defaultMessage: 'Upphæð tryggingar',
     description: 'security deposit amount header title',
   },
-  amountHeaderToolTip: {
-    id: 'ra.application:securityDeposit.amountHeaderToolTip',
-    defaultMessage: 'Tool tip',
-    description: 'security deposit amount header tool tip',
-  },
   amountSelectionTitle: {
     id: 'ra.application:securityDeposit.amountSelectionTitle',
     defaultMessage: 'Upphæð tryggingar',
@@ -217,13 +213,13 @@ export const securityDeposit = defineMessages({
   },
   amountOtherMutualFundError: {
     id: 'ra.application:securityDeposit.amountOtherMutualFundError',
-    defaultMessage:
-      'Upphæð tryggingar verður að vera minni en 10% af leiguverði',
+    defaultMessage: 'Upphæð tryggingar ef of há',
     description: 'security deposit amount other mutual fund error',
   },
   amountOtherCapitolError: {
     id: 'ra.application:securityDeposit.amountOtherCapitolError',
-    defaultMessage: 'Upphæð tryggingar má ekki vera meira en 3x leiguverð',
+    defaultMessage:
+      'Upphæð tryggingar má ekki vera meira en þreföld mánaðarleg leiguupphæð',
     description: 'security deposit amount other capitol error',
   },
 })

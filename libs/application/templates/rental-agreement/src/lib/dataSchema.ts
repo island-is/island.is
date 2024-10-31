@@ -1,6 +1,10 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import * as m from './messages'
+import {
+  securityDepositAmountOptions,
+  securityDepositTypeOptions,
+} from './constants'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -38,7 +42,7 @@ const rentalAmount = z.object({
     .refine((x) => checkIfNegative(x), { params: negativeNumberError }),
 })
 
-const rentalInsurance = z
+const securityDeposit = z
   .object({
     securityType: z
       .string()
@@ -56,7 +60,10 @@ const rentalInsurance = z
     rentalAmount: z.string().optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.securityType === 'bankGuarantee' && !data.bankGuaranteeInfo) {
+    if (
+      data.securityType === securityDepositTypeOptions.BANK_GUARANTEE &&
+      !data.bankGuaranteeInfo
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
@@ -66,7 +73,7 @@ const rentalInsurance = z
     }
 
     if (
-      data.securityType === 'thirdPartyGuarantee' &&
+      data.securityType === securityDepositTypeOptions.THIRD_PARTY_GUARANTEE &&
       !data.thirdPartyGuaranteeInfo
     ) {
       ctx.addIssue({
@@ -78,7 +85,7 @@ const rentalInsurance = z
     }
 
     if (
-      data.securityType === 'insuranceCompany' &&
+      data.securityType === securityDepositTypeOptions.INSURANCE_COMPANY &&
       !data.insuranceCompanyInfo
     ) {
       ctx.addIssue({
@@ -89,7 +96,10 @@ const rentalInsurance = z
       })
     }
 
-    if (data.securityType === 'mutualFund' && !data.mutualFundInfo) {
+    if (
+      data.securityType === securityDepositTypeOptions.MUTUAL_FUND &&
+      !data.mutualFundInfo
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
@@ -98,7 +108,10 @@ const rentalInsurance = z
       })
     }
 
-    if (data.securityType === 'other' && !data.otherInfo) {
+    if (
+      data.securityType === securityDepositTypeOptions.OTHER &&
+      !data.otherInfo
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
@@ -107,7 +120,10 @@ const rentalInsurance = z
       })
     }
 
-    if (data.securityType !== 'mutualFund' && !data.securityAmount) {
+    if (
+      data.securityType !== securityDepositTypeOptions.MUTUAL_FUND &&
+      !data.securityAmount
+    ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
@@ -117,7 +133,8 @@ const rentalInsurance = z
     }
 
     if (
-      (data.securityType === 'mutualFund' || data.securityAmount === 'other') &&
+      (data.securityType === securityDepositTypeOptions.MUTUAL_FUND ||
+        data.securityAmount === securityDepositAmountOptions.OTHER) &&
       !data.securityAmountOther
     ) {
       ctx.addIssue({
@@ -129,7 +146,7 @@ const rentalInsurance = z
     }
 
     if (
-      data.securityType === 'mutualFund' &&
+      data.securityType === securityDepositTypeOptions.MUTUAL_FUND &&
       Number(data.rentalAmount) * 0.1 < Number(data.securityAmountOther)
     ) {
       ctx.addIssue({
@@ -141,8 +158,9 @@ const rentalInsurance = z
     }
 
     if (
-      (data.securityType === 'capital' ||
-        data.securityType === 'thirdPartyGuarantee') &&
+      (data.securityType === securityDepositTypeOptions.CAPITAL ||
+        data.securityType ===
+          securityDepositTypeOptions.THIRD_PARTY_GUARANTEE) &&
       Number(data.rentalAmount) * 3 < Number(data.securityAmount)
     ) {
       ctx.addIssue({
@@ -165,5 +183,5 @@ export const dataSchema = z.object({
   }),
   asdf: z.array(FileSchema),
   rentalAmount,
-  rentalInsurance,
+  securityDeposit,
 })
