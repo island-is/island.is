@@ -1,13 +1,16 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import { ReturnTypeMessage } from '../../gen/fetch'
 import { OwnerChangeApi } from '../../gen/fetch/apis'
 import {
   NewestOwnerChange,
   OwnerChange,
   OwnerChangeValidation,
 } from './vehicleOwnerChangeClient.types'
-import { getDateAtTimestamp } from './vehicleOwnerChangeClient.utils'
+import {
+  ErrorMessage,
+  getCleanErrorMessagesFromTryCatch,
+  getDateAtTimestamp,
+} from './vehicleOwnerChangeClient.utils'
 
 @Injectable()
 export class VehicleOwnerChangeClient {
@@ -49,7 +52,7 @@ export class VehicleOwnerChangeClient {
   ): Promise<OwnerChangeValidation> {
     const useGroup = '000'
 
-    let errorList: ReturnTypeMessage[] | undefined
+    let errorMessages: ErrorMessage[] | undefined
 
     try {
       // Note: If insurance company has not been supplied (we have not required the user to fill in at this point),
@@ -67,7 +70,7 @@ export class VehicleOwnerChangeClient {
         ownerChange.dateOfPurchaseTimestamp,
       )
 
-      // Note: we have manually changed this endpoint to void, since the messages we want only
+      // Note: we have manually changed this endpoint to void (in clientConfig), since the messages we want only
       // come with error code 400. If this function returns an array of ReturnTypeMessage, then
       // we will get an error with code 204, since the openapi generator tries to convert empty result
       // into an array of ReturnTypeMessage
@@ -92,44 +95,14 @@ export class VehicleOwnerChangeClient {
         },
       })
     } catch (e) {
-      // Note: We need to wrap in try-catch to get the error messages, because if this action results in error,
-      // we get 4xx error (instead of 200 with error messages) with the errorList in this field
-      // ("body.Errors" for input validation, and "body" for data validation (in database)),
-      // that is of the same class as 200 result schema
-      if (e?.body?.Errors && Array.isArray(e.body.Errors)) {
-        errorList = e.body.Errors as ReturnTypeMessage[]
-      } else if (e?.body && Array.isArray(e.body)) {
-        errorList = e.body as ReturnTypeMessage[]
-      } else {
-        throw e
-      }
+      // Note: We had to wrap in try-catch to get the error messages, because if this action results in error,
+      // we get 4xx error (instead of 200 with error messages) with the error messages in the body
+      errorMessages = getCleanErrorMessagesFromTryCatch(e)
     }
 
-    const warnSeverityError = 'E'
-    const warnSeverityLock = 'L'
-    errorList = errorList?.filter(
-      (x) =>
-        x.errorMess &&
-        (x.warnSever === warnSeverityError || x.warnSever === warnSeverityLock),
-    )
-
     return {
-      hasError: !!errorList?.length,
-      errorMessages: errorList?.map((item) => {
-        let errorNo = item.warningSerialNumber?.toString()
-
-        // Note: For vehicle locks, we need to do some special parsing since
-        // the error number (warningSerialNumber) is always -1 for locks,
-        // but the number is included in the errorMess field (value before the first space)
-        if (item.warnSever === warnSeverityLock) {
-          errorNo = item.errorMess?.split(' ')[0]
-        }
-
-        return {
-          errorNo: (item.warnSever || '_') + errorNo,
-          defaultMessage: item.errorMess,
-        }
-      }),
+      hasError: !!errorMessages?.length,
+      errorMessages: errorMessages,
     }
   }
 

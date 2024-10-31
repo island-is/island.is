@@ -1,11 +1,14 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import { ReturnTypeMessage } from '../../gen/fetch'
 import { OperatorApi } from '../../gen/fetch/apis'
 import {
   Operator,
   OperatorChangeValidation,
 } from './vehicleOperatorsClient.types'
+import {
+  ErrorMessage,
+  getCleanErrorMessagesFromTryCatch,
+} from '@island.is/clients/transport-authority/vehicle-owner-change'
 
 @Injectable()
 export class VehicleOperatorsClient {
@@ -45,7 +48,7 @@ export class VehicleOperatorsClient {
     operators: Operator[] | null,
     mileage?: number | null,
   ): Promise<OperatorChangeValidation> {
-    let errorList: ReturnTypeMessage[] | undefined
+    let errorMessages: ErrorMessage[] | undefined
 
     // In case we dont have the operators selected yet,
     // then we will send in the owner as operator
@@ -72,35 +75,14 @@ export class VehicleOperatorsClient {
         },
       })
     } catch (e) {
-      // Note: We need to wrap in try-catch to get the error messages, because if this action results in error,
-      // we get 4xx error (instead of 200 with error messages) with the errorList in this field
-      // ("body.Errors" for input validation, and "body" for data validation (in database)),
-      // that is of the same class as 200 result schema
-      if (e?.body?.Errors && Array.isArray(e.body.Errors)) {
-        errorList = e.body.Errors as ReturnTypeMessage[]
-      } else if (e?.body && Array.isArray(e.body)) {
-        errorList = e.body as ReturnTypeMessage[]
-      } else {
-        throw e
-      }
+      // Note: We had to wrap in try-catch to get the error messages, because if this action results in error,
+      // we get 4xx error (instead of 200 with error messages) with the error messages in the body
+      errorMessages = getCleanErrorMessagesFromTryCatch(e)
     }
 
-    const warnSeverityError = 'E'
-    const warnSeverityLock = 'L'
-    errorList = errorList?.filter(
-      (x) =>
-        x.errorMess &&
-        (x.warnSever === warnSeverityError || x.warnSever === warnSeverityLock),
-    )
-
     return {
-      hasError: !!errorList?.length,
-      errorMessages: errorList?.map((item) => {
-        return {
-          errorNo: (item.warnSever || '_') + item.warningSerialNumber,
-          defaultMessage: item.errorMess,
-        }
-      }),
+      hasError: !!errorMessages?.length,
+      errorMessages: errorMessages,
     }
   }
 
