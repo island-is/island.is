@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { ApplicantTypes } from '../../../../enums/applicantTypes'
+// import { ApplicantTypes } from '../../../../enums/applicantTypes'
 
 export class ApplicationApplicantDto {
   @ApiProperty()
@@ -32,6 +32,6 @@ export class ApplicationApplicantDto {
   @ApiProperty()
   municipality!: string
 
-  @ApiProperty({ enum: ApplicantTypes })
-  applicantType!: string
+  @ApiProperty()
+  applicantTypeId!: string
 }

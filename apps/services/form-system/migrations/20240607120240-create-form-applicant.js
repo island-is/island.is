@@ -24,17 +24,9 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
-          applicant_type: {
-            type: Sequelize.ENUM(
-              'individual',
-              'individualWithDelegationFromIndividual',
-              'individualWithDelegationFromLegalEntity',
-              'individualWithProcuration',
-              'individualGivingDelegation',
-              'legalEntity',
-            ),
+          applicant_type_id: {
+            type: Sequelize.UUID,
             allowNull: false,
-            defaultValue: 'individual',
           },
           form_id: {
             type: Sequelize.UUID,

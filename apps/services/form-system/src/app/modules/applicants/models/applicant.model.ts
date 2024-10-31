@@ -8,7 +8,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApplicantTypes } from '../../../enums/applicantTypes'
+// import { ApplicantTypes } from '../../../enums/applicantTypes'
 import { Application } from '../../applications/models/application.model'
 
 @Table({ tableName: 'applicant' })
@@ -72,12 +72,10 @@ export class Applicant extends Model<Applicant> {
   municipality!: string
 
   @Column({
-    type: DataType.ENUM,
+    type: DataType.STRING,
     allowNull: false,
-    values: Object.values(ApplicantTypes),
-    defaultValue: ApplicantTypes.INDIVIDUAL,
   })
-  applicantType!: string
+  applicantTypeId!: string
 
   @ForeignKey(() => Application)
   @Column({

@@ -10,7 +10,7 @@ import {
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { Form } from '../../forms/models/form.model'
 import { CreationOptional } from 'sequelize'
-import { ApplicantTypes } from '../../../enums/applicantTypes'
+// import { ApplicantTypes } from '../../../enums/applicantTypes'
 
 @Table({ tableName: 'form_applicant' })
 export class FormApplicant extends Model<FormApplicant> {
@@ -29,19 +29,17 @@ export class FormApplicant extends Model<FormApplicant> {
   modified!: CreationOptional<Date>
 
   @Column({
-    type: DataType.ENUM,
-    allowNull: false,
-    values: Object.values(ApplicantTypes),
-    defaultValue: 'individual',
-  })
-  applicantType!: string
-
-  @Column({
     type: DataType.JSON,
     allowNull: false,
     defaultValue: () => new LanguageType().toString(),
   })
   name!: LanguageType
+
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  applicantTypeId!: string
 
   @ForeignKey(() => Form)
   @Column({
