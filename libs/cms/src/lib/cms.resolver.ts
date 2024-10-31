@@ -455,7 +455,10 @@ export class CmsResolver {
   @CacheControl(defaultCache)
   @Query(() => GrantList)
   async getGrants(@Args('input') input: GetGrantsInput): Promise<GrantList> {
-    return this.cmsContentfulService.getGrants(input.lang)
+    return this.cmsElasticsearchService.getGrants(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
   }
 
   @CacheControl(defaultCache)
