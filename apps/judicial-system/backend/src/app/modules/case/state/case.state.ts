@@ -146,7 +146,7 @@ const indictmentCaseStateMachine: Map<
         IndictmentCaseState.WAITING_FOR_CONFIRMATION,
       ],
       transition: (update: UpdateCase) => ({
-        update,
+        ...update,
         state: CaseState.DELETED,
       }),
     },
