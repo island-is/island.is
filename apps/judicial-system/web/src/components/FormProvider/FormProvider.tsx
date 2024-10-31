@@ -156,6 +156,7 @@ const FormProvider = ({ children }: Props) => {
 
       promisedCase
         .then((caseData) => {
+          console.log('*&^%$&^%$#^%$#', caseData)
           if (caseData && caseData.data) {
             const data = caseData.data as CaseQuery & LimitedAccessCaseQuery
             const theCase = data[limitedAccess ? 'limitedAccessCase' : 'case']
