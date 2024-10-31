@@ -29,6 +29,10 @@ export const airlineOptions = [
     value: Airlines.icelandair,
   },
   {
+    label: 'Mýflug',
+    value: Airlines.myflug,
+  },
+  {
     label: 'Norlandair',
     value: Airlines.norlandair,
   },
