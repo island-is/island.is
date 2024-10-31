@@ -43,6 +43,7 @@ import { GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY } from '../../queries/GenericTag'
 import { GET_GRANTS_QUERY } from '../../queries/Grants'
 import { m } from '../messages'
 import { GrantsSearchResultsFilter } from './SearchResultsFilter'
+import { convertToArray } from '../utils'
 
 export interface SearchState {
   page?: number
@@ -350,7 +351,13 @@ const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
   )
 }
 
-GrantsSearchResults.getProps = async ({ apolloClient, locale }) => {
+GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
+  const queryPage = query?.page
+    ? Array.isArray(query.page)
+      ? query.page[0]
+      : query.page
+    : undefined
+
   const [
     {
       data: { getGrants },
@@ -364,6 +371,16 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale }) => {
       variables: {
         input: {
           lang: locale as ContentLanguage,
+          page: queryPage ? Number.parseInt(queryPage) : undefined,
+          search: query?.search
+            ? Array.isArray(query.search)
+              ? query.search[0]
+              : query.search
+            : undefined,
+          categories: convertToArray(query?.category),
+          statuses: convertToArray(query?.status),
+          types: convertToArray(query?.type),
+          organizations: convertToArray(query?.organization),
         },
       },
     }),
