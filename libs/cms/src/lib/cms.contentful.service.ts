@@ -555,22 +555,6 @@ export class CmsContentfulService {
     return (result.items as types.INews[]).map(mapNews)[0] ?? null
   }
 
-  async getGrants(lang: string): Promise<GrantList> {
-    const params = {
-      ['content_type']: 'grant',
-      include: 10,
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IGrantFields>(lang, params)
-      .catch(errorHandler('getGrants'))
-
-    return {
-      total: 10,
-      items: (result.items as types.IGrant[]).map(mapGrant),
-    }
-  }
-
   async getGrant(lang: string, id: string): Promise<Grant | null> {
     const params = {
       ['content_type']: 'grant',

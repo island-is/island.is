@@ -244,9 +244,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           }
         >
           <Box display="flex" flexDirection="row" flexWrap="wrap">
-            {[...Array(8)].map((_) => {
-              const grant = grants?.[0]
-
+            {grants?.map((grant) => {
               if (!grant) {
                 return null
               }
