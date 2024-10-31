@@ -684,7 +684,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     const { applicationFundId, VMSTApplicationRights } =
       getApplicationExternalData(application.externalData)
-    console.log({ VMSTApplicationRights })
+
     if (VMSTApplicationRights) {
       let usedDays = calculateDaysUsedByPeriods(periods)
       const rights = VMSTApplicationRights.map((VMSTRight) => {
@@ -940,8 +940,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       periods,
       firstPeriodStart,
     )
-    // console.log({ periodsDTO, rightsDTO })
-    // throw 'e'
 
     try {
       const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(
@@ -1039,8 +1037,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       periods,
       firstPeriodStart,
     )
-    // console.log({ periodsDTO, rightsDTO })
-    // throw 'e'
 
     try {
       const parentalLeaveDTO = transformApplicationToParentalLeaveDTO(

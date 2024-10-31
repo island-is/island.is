@@ -917,7 +917,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'setNavId',
           'createTempEmployers',
           'setVMSTPeriods',
-          'setApplicationRights',
         ],
         exit: [
           'removeAddedEmployers',
@@ -2089,30 +2088,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         if (newPeriods.length > 0) {
           set(application.answers, 'periods', newPeriods)
-        }
-
-        return context
-      }),
-      /**
-       * Copy VMST applicationRights to applicationRights.
-       * Applicant could have different rights after creating application, so VMST most likely has the newest changes to applicationRights.
-       */
-      setApplicationRights: assign((context, event) => {
-        if (event.type !== DefaultEvents.EDIT) {
-          return context
-        }
-        const { application } = context
-
-        /**
-         * Do not update applicationRights if in these states.
-         * We may be overwriting older edits that have not reached VMST (e.g. still pending employer approval)
-         */
-        if (
-          application.state === States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS ||
-          application.state === States.EMPLOYER_APPROVE_EDITS ||
-          application.state === States.EMPLOYER_EDITS_ACTION
-        ) {
-          return context
         }
 
         return context
