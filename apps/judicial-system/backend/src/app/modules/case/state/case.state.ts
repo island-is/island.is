@@ -4,6 +4,7 @@ import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
   CaseAppealState,
+  CaseDecision,
   CaseState,
   CaseTransition,
   IndictmentCaseState,
@@ -16,6 +17,7 @@ import {
   isRequestCase,
   isRequestCaseState,
   isRequestCaseTransition,
+  isRestrictionCase,
   RequestCaseState,
   RequestCaseTransition,
   User,
@@ -373,10 +375,49 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           RequestCaseState.DISMISSED,
         ],
         fromAppealStates: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN],
-        transition: (update: UpdateCase) => ({
-          ...update,
-          appealState: CaseAppealState.COMPLETED,
-        }),
+        transition: (update: UpdateCase, theCase: Case) => {
+          const newUpdate = {
+            ...update,
+            appealState: CaseAppealState.COMPLETED,
+          }
+
+          const currentState = update.state ?? theCase.state
+          const currentDecision = update.decision ?? theCase.decision
+
+          if (
+            isRestrictionCase(theCase.type) &&
+            currentState === CaseState.ACCEPTED &&
+            (currentDecision === CaseDecision.ACCEPTING ||
+              currentDecision === CaseDecision.ACCEPTING_PARTIALLY)
+          ) {
+            // TODO: Decide what to do if correcting appeal
+            const currentAppealRulingDecision =
+              newUpdate.appealRulingDecision ?? theCase.appealRulingDecision
+
+            if (
+              currentAppealRulingDecision ===
+                CaseAppealRulingDecision.CHANGED ||
+              currentAppealRulingDecision ===
+                CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY
+            ) {
+              // The court of appeals has modified the ruling of a restriction case
+              newUpdate.validToDate =
+                update.appealValidToDate ?? theCase.appealValidToDate
+              newUpdate.isCustodyIsolation =
+                update.isAppealCustodyIsolation ??
+                theCase.isAppealCustodyIsolation
+              newUpdate.isolationToDate =
+                update.appealIsolationToDate ?? theCase.appealIsolationToDate
+            } else if (
+              currentAppealRulingDecision === CaseAppealRulingDecision.REPEAL
+            ) {
+              // The court of appeals has repealed the ruling of a restriction case
+              newUpdate.validToDate = nowFactory()
+            }
+          }
+
+          return newUpdate
+        },
       },
     ],
     [
