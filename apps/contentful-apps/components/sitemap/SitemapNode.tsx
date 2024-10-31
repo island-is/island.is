@@ -46,7 +46,9 @@ export const SitemapNode = ({
     fetchEntries(entryNodes.map((entryNode) => entryNode.entryId))
   }, [fetchEntries, node])
 
-  const isClickable = node.type !== TreeNodeType.URL
+  const isClickable =
+    node.type !== TreeNodeType.URL &&
+    !('type' in parentNode && parentNode.type === TreeNodeType.ENTRY)
 
   const handleClick = () => {
     if (isClickable) {
@@ -73,8 +75,7 @@ export const SitemapNode = ({
           <div className={styles.contentContainer}>
             <div
               style={{
-                visibility:
-                  node.type === TreeNodeType.URL ? 'hidden' : 'visible',
+                visibility: isClickable ? 'visible' : 'hidden',
               }}
             >
               {showChildNodes ? <ChevronDownIcon /> : <ChevronRightIcon />}

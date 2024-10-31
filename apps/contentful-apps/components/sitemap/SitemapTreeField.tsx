@@ -56,6 +56,20 @@ export const SitemapTreeField = () => {
         if (!entry?.sys?.id) {
           return
         }
+
+        if (
+          'type' in parentNode &&
+          parentNode.type === TreeNodeType.ENTRY &&
+          entry.sys.id ===
+            (parentNode as unknown as { entryId: string }).entryId
+        ) {
+          sdk.dialogs.openAlert({
+            title: 'Invalid entry selected',
+            message: 'You can not place the same page below itself!',
+          })
+          return
+        }
+
         entryId = entry.sys.id
       } else if (type === TreeNodeType.CATEGORY) {
         const labelPrompt = await sdk.dialogs.openPrompt({
