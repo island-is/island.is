@@ -1,5 +1,5 @@
-import { FC } from 'react'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { FC, useState } from 'react'
+import { Box, Button, ErrorMessage, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { useMutation } from '@apollo/client'
@@ -15,6 +15,9 @@ export const AddEmployee: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { formatMessage, locale } = useLocale()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const { setValue } = useFormContext()
+  const [couldNotAddEmployee, setCouldNotAddEmployee] = useState<boolean>(false)
+  const [undefinedEmployeeAmount, setUndefinedEmployeeAmount] =
+    useState<boolean>(false)
   const employeeAmount = getValueViaPath(
     application.answers,
     'employeeAmount',
@@ -37,13 +40,15 @@ export const AddEmployee: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       })
 
       if (res.data) {
+        setUndefinedEmployeeAmount(false)
+        setCouldNotAddEmployee(false)
         // Go to screen
         goToScreen && goToScreen(`employeeInformation[${employeeAmount}]`)
       } else {
-        // Error message
+        setCouldNotAddEmployee(true)
       }
     } else {
-      // Error because employee amount is undefined
+      setUndefinedEmployeeAmount(true)
     }
   }
 
@@ -60,6 +65,15 @@ export const AddEmployee: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       >
         {formatMessage(overview.labels.addEmployeeButton)}
       </Button>
+      {couldNotAddEmployee ? (
+        <ErrorMessage id="could-not-add-employee">
+          {formatMessage(overview.labels.couldNotAddEmployee)}
+        </ErrorMessage>
+      ) : undefinedEmployeeAmount ? (
+        <ErrorMessage id="undefined-employee-amount">
+          {formatMessage(overview.labels.undefinedEmployeeAmount)}
+        </ErrorMessage>
+      ) : null}
     </Box>
   )
 }

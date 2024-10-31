@@ -109,14 +109,25 @@ export const overview = {
       description: 'Add employee button label',
     },
     email: {
-      id: 'aosh.wan.application:overview.employee.email',
+      id: 'aosh.wan.application:overview.labels.email',
       defaultMessage: 'Netfang tengiliðs',
       description: 'Email of company ',
     },
     phonenumber: {
-      id: 'aosh.wan.application:overview.employee.phonenumber',
+      id: 'aosh.wan.application:overview.labels.phonenumber',
       defaultMessage: 'Símanúmer tengiliðs',
       description: 'Phonenumber of company',
+    },
+    couldNotAddEmployee: {
+      id: 'aosh.wan.application:overview.labels.couldNotAddEmployee',
+      defaultMessage: 'Ekki tókst að bæta við nýjum starfsmanni.',
+      description: 'Could not add employee error',
+    },
+    undefinedEmployeeAmount: {
+      id: 'aosh.wan.application:overview.labels.undefinedEmployeeAmount',
+      defaultMessage:
+        'Fjöldi starfsmanna finnst ekki, og því ekki hægt að bæta við nýjum starfsmanni.',
+      description: 'Undefined employee amount error',
     },
   }),
   employee: defineMessages({

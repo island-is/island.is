@@ -13,6 +13,7 @@ import {
 import {
   getDateAndTime,
   getValueList,
+  mapVictimData,
 } from './work-accident-notification.utils'
 import { getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -98,105 +99,7 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
           ),
           workingEnvironment: answers.accident.accidentLocation.value,
           victims: answers.employee.map((employee, index) => {
-            return {
-              victimsSSN: employee.nationalField.nationalId,
-              employmentStatusOfVictim: employee.employmentStatus
-                ? parseInt(employee.employmentStatus, 10)
-                : 0,
-              employmentAgencySSN: employee.tempEmploymentSSN ?? '',
-              startedEmploymentForCompany: new Date(employee.startDate),
-              lengthOfEmployment: employee.employmentTime
-                ? parseInt(employee.employmentTime, 10)
-                : 0,
-              percentageOfFullWorkTime: employee.employmentRate
-                ? parseInt(employee.employmentRate, 10)
-                : 0,
-              workhourArrangement: employee.workhourArrangement
-                ? parseInt(employee.workhourArrangement, 10)
-                : 0,
-              startOfWorkingDay: getDateAndTime(
-                employee.startOfWorkdayDate,
-                employee.startTime.slice(0, 2),
-                employee.startTime.slice(2, 4),
-              ),
-              workStation: employee.workstation
-                ? parseInt(employee.workstation, 10)
-                : 0,
-              victimsOccupation: employee.victimsOccupation.value,
-              absenceDueToAccident: answers.absence[index]
-                ? parseInt(answers.absence[index], 10)
-                : 0,
-              specificPhysicalActivities: getValueList(
-                application.answers,
-                `circumstances[${index}].physicalActivities`,
-              ),
-              specificPhysicalActivityMostSevere:
-                (getValueViaPath(
-                  application.answers,
-                  `circumstances[${index}].physicalActivitiesMostSerious`,
-                  undefined,
-                ) as string | undefined) ??
-                getValueList(
-                  application.answers,
-                  `circumstances[${index}].physicalActivities`,
-                )[0],
-              workDeviations: getValueList(
-                application.answers,
-                `deviations[${index}].workDeviations`,
-              ),
-              workDeviationMostSevere:
-                (getValueViaPath(
-                  application.answers,
-                  `deviations[${index}].workDeviationsMostSerious`,
-                  undefined,
-                ) as string | undefined) ??
-                getValueList(
-                  application.answers,
-                  `deviations[${index}].workDeviations`,
-                )[0],
-              contactModeOfInjuries: getValueList(
-                application.answers,
-                `causeOfInjury[${index}].contactModeOfInjury`,
-              ),
-              contactModeOfInjuryMostSevere:
-                (getValueViaPath(
-                  application.answers,
-                  `causeOfInjury[${index}].contactModeOfInjuryMostSerious`,
-                  undefined,
-                ) as string | undefined) ??
-                getValueList(
-                  application.answers,
-                  `causeOfInjury[${index}].contactModeOfInjury`,
-                )[0],
-              partsOfBodyInjured: getValueList(
-                application.answers,
-                `injuredBodyParts[${index}].partOfBodyInjured`,
-              ),
-              partOfBodyInjuredMostSevere:
-                (getValueViaPath(
-                  application.answers,
-                  `injuredBodyParts[${index}].partOfBodyInjuredMostSerious`,
-                  undefined,
-                ) as string | undefined) ??
-                getValueList(
-                  application.answers,
-                  `injuredBodyParts[${index}].partOfBodyInjured`,
-                )[0],
-              typesOfInjury: getValueList(
-                application.answers,
-                `typeOfInjury[${index}].typeOfInjury`,
-              ),
-              typeOfInjuryMostSevere:
-                (getValueViaPath(
-                  application.answers,
-                  `typeOfInjury[${index}].typeOfInjuryMostSerious`,
-                  undefined,
-                ) as string | undefined) ??
-                getValueList(
-                  application.answers,
-                  `typeOfInjury[${index}].typeOfInjury`,
-                )[0],
-            }
+            return mapVictimData(employee, index, answers, application)
           }),
           userPhoneNumber: answers.companyInformation.phonenumber,
           userEmail: answers.companyInformation.email,

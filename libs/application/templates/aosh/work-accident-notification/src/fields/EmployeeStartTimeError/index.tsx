@@ -27,6 +27,7 @@ export const EmployeeStartTimeError: FC<
   setBeforeSubmitCallback?.(async () => {
     const values = getValues('employee')
     if (
+      values?.[index] &&
       values[index].startOfWorkdayDate &&
       values[index].startTime &&
       dateIsWithin36Hours(
