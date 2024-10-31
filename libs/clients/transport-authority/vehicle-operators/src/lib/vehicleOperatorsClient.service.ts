@@ -9,13 +9,21 @@ import {
   ErrorMessage,
   getCleanErrorMessagesFromTryCatch,
 } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
 
 @Injectable()
 export class VehicleOperatorsClient {
-  constructor(private readonly operatorsApi: OperatorApi) {}
+  constructor(
+    private readonly operatorsApi: OperatorApi,
+    private readonly mileageReadingApi: MileageReadingApi,
+  ) {}
 
   private operatorsApiWithAuth(auth: Auth) {
     return this.operatorsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private mileageReadingApiWithAuth(auth: Auth) {
+    return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   public async getOperators(auth: User, permno: string): Promise<Operator[]> {
@@ -39,14 +47,25 @@ export class VehicleOperatorsClient {
     auth: User,
     permno: string,
   ): Promise<OperatorChangeValidation> {
-    return await this.validateAllForOperatorChange(auth, permno, null)
+    // Get current mileage reading
+    const mileageReadings = await this.mileageReadingApiWithAuth(
+      auth,
+    ).getMileageReading({ permno })
+    const currentMileage = mileageReadings?.[0]?.mileage || 0
+
+    return await this.validateAllForOperatorChange(
+      auth,
+      permno,
+      null,
+      currentMileage + 1,
+    )
   }
 
   public async validateAllForOperatorChange(
     auth: User,
     permno: string,
     operators: Operator[] | null,
-    mileage?: number | null,
+    mileage: number | null,
   ): Promise<OperatorChangeValidation> {
     let errorMessages: ErrorMessage[] | undefined
 

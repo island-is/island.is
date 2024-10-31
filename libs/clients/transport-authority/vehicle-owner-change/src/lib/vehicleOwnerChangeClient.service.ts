@@ -11,13 +11,21 @@ import {
   getCleanErrorMessagesFromTryCatch,
   getDateAtTimestamp,
 } from './vehicleOwnerChangeClient.utils'
+import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
 
 @Injectable()
 export class VehicleOwnerChangeClient {
-  constructor(private readonly ownerchangeApi: OwnerChangeApi) {}
+  constructor(
+    private readonly ownerchangeApi: OwnerChangeApi,
+    private readonly mileageReadingApi: MileageReadingApi,
+  ) {}
 
   private ownerchangeApiWithAuth(auth: Auth) {
     return this.ownerchangeApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private mileageReadingApiWithAuth(auth: Auth) {
+    return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   public async validateVehicleForOwnerChange(
@@ -26,7 +34,15 @@ export class VehicleOwnerChangeClient {
   ): Promise<OwnerChangeValidation> {
     // Note: since the vehiclecheck endpoint is funky, we will instead just use the personcheck endpoint
     // and send in dummy data where needed
+
     const todayStr = new Date().toISOString()
+
+    // Get current mileage reading
+    const mileageReadings = await this.mileageReadingApiWithAuth(
+      auth,
+    ).getMileageReading({ permno })
+    const currentMileage = mileageReadings?.[0]?.mileage || 0
+
     return await this.validateAllForOwnerChange(auth, {
       permno: permno,
       seller: {
@@ -43,6 +59,7 @@ export class VehicleOwnerChangeClient {
       insuranceCompanyCode: null,
       operators: null,
       coOwners: null,
+      mileage: currentMileage + 1,
     })
   }
 
