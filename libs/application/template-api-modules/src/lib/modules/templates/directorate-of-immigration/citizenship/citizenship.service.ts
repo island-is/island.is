@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
+import { AttachmentS3Service } from '../../../shared/services'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
@@ -32,6 +33,7 @@ import { ApplicantInformation } from './types'
 export class CitizenshipService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly attachmentService: AttachmentS3Service,
     private readonly directorateOfImmigrationClient: DirectorateOfImmigrationClient,
     private readonly nationalRegistryApi: NationalRegistryClientService,
   ) {
@@ -430,7 +432,7 @@ export class CitizenshipService extends BaseTemplateApiService {
   ): Promise<{ filename: string; fileUrl: string; countryId: string }[]> {
     return await Promise.all(
       attachments?.map(async (file) => {
-        const fileUrl = await this.sharedTemplateAPIService.getAttachmentUrl(
+        const fileUrl = await this.attachmentService.getAttachmentUrl(
           application,
           file.key,
           300000,
