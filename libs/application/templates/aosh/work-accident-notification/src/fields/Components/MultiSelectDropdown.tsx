@@ -4,6 +4,8 @@ import { Group, Item } from './MultiSelectDropdownController'
 import { Box, Select } from '@island.is/island-ui/core'
 import { Controller } from 'react-hook-form'
 import { Option } from '../Components/types'
+import { useLocale } from '@island.is/localization'
+import { causeAndConsequences } from '../../lib/messages'
 
 type MultiSelectDropdownProps = {
   group: Group
@@ -22,9 +24,9 @@ export const MultiSelectDropdown: FC<
   React.PropsWithChildren<MultiSelectDropdownProps & FieldBaseProps>
 > = (props) => {
   const { group, options, onChange, values, majorGroupLength } = props
-
+  const { formatMessage } = useLocale()
   return (
-    <Box marginTop={1}>
+    <Box marginTop={3}>
       <Controller
         render={() => {
           return (
@@ -36,6 +38,9 @@ export const MultiSelectDropdown: FC<
               label={group.name}
               closeMenuOnSelect={false}
               hideSelectedOptions={false}
+              placeholder={formatMessage(
+                causeAndConsequences.shared.selectPlaceholder,
+              )}
               options={options.map((option) => ({
                 value: option.code,
                 label: option.name,

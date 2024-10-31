@@ -4,5 +4,5 @@ export {
   getMaxDate,
   getMinDate,
   getDateAndTime,
-  dateIsWithing36Hours,
+  dateIsWithin36Hours,
 } from './dateManipulation'

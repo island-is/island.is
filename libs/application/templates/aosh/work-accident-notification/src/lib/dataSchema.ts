@@ -2,6 +2,7 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { YES } from '@island.is/application/types'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { EMPLOYMENT_STATUS } from '../shared/constants'
 
 const isValid24HFormatTime = (value: string) => {
   if (value.length !== 4) return false
@@ -61,7 +62,7 @@ const companySchema = z.object({
   name: z.string(),
   numberOfEmployees: z.string(),
   postnumber: z.string(),
-  nameOfBranch: z.string().optional(), // TODO(balli) Can we make this conditional based on company/person ?
+  nameOfBranch: z.string().optional(), // VER needs to confirm requirement here for individuals vs company
   postnumberOfBranch: z.string().optional(),
   industryClassification: z.string().optional(),
   email: z.string().email(),
@@ -94,8 +95,7 @@ const employeeSchema = z
   })
   .refine(
     (data) => {
-      // If employmentStatus is '4', tempEmploymentSSN must be valid
-      if (data.employmentStatus === '4') {
+      if (data.employmentStatus === EMPLOYMENT_STATUS.TEMP_AGENCY) {
         return (
           data.tempEmploymentSSN &&
           data.tempEmploymentSSN.length !== 0 &&
@@ -192,7 +192,7 @@ const companyLaborProtectionSchema = z.object({
     },
     {
       message: 'At least one option must be chosen',
-      path: [''], // Error path
+      path: [''],
     },
   ),
 })
@@ -204,14 +204,14 @@ const projectPurchaseSchema = z
     name: z.string().optional(),
   })
   .refine((data) => data.radio !== YES || (data.name && data.name.length > 0), {
-    path: ['name'], // Focuses on the 'name' field
+    path: ['name'],
   })
   .refine(
     (data) =>
       data.radio !== YES ||
       (data.nationalId && kennitala.isValid(data.nationalId)),
     {
-      path: ['nationalId'], // Focuses on the 'nationalId' field
+      path: ['nationalId'],
     },
   )
 

@@ -5,7 +5,7 @@ import { useFormContext } from 'react-hook-form'
 import { employee } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { WorkAccidentNotification } from '../../lib/dataSchema'
-import { dateIsWithing36Hours } from '../../utils'
+import { dateIsWithin36Hours } from '../../utils'
 
 interface EmployeeStartTimeErrorProps {
   field: {
@@ -29,7 +29,7 @@ export const EmployeeStartTimeError: FC<
     if (
       values[index].startOfWorkdayDate &&
       values[index].startTime &&
-      dateIsWithing36Hours(
+      dateIsWithin36Hours(
         application,
         values[index].startOfWorkdayDate,
         values[index].startTime,

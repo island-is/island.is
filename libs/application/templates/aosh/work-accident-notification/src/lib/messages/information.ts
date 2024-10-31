@@ -67,11 +67,6 @@ export const information = {
         defaultMessage: 'Póstnúmer og bær',
         description: 'Company information post number and town label',
       },
-      // industryClassification: {
-      //   id: 'aosh.wan.application:information.company.industryClassification',
-      //   defaultMessage: 'Atvinnugreinaflokkun',
-      //   description: 'Company information industry classification label',
-      // },
       numberOfEmployees: {
         id: 'aosh.wan.application:information.company.numberOfEmployees',
         defaultMessage: 'Starfsmannafjöldi',
