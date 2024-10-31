@@ -42,7 +42,12 @@ export const StaticTableFormField: FC<Props> = ({
       )}
       {description && (
         <FieldDescription
-          description={formatText(description, application, formatMessage)}
+          description={formatTextWithLocale(
+            description,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         />
       )}
       <Box marginTop={description ? 3 : 0}>

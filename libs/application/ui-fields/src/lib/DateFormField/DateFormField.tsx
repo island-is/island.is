@@ -116,7 +116,12 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     <div>
       {description && (
         <FieldDescription
-          description={formatText(description, application, formatMessage)}
+          description={formatTextWithLocale(
+            description,
+            application,
+            lang as Locale,
+            formatMessage,
+          )}
         />
       )}
 

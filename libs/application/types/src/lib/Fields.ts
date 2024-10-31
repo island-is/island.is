@@ -197,7 +197,7 @@ export interface BaseField extends FormItem {
   readonly id: string
   readonly component: FieldComponents | string
   readonly title: FormTextWithLocale
-  readonly description?: FormText
+  readonly description?: FormTextWithLocale
   readonly children: undefined
   disabled?: boolean
   width?: FieldWidth

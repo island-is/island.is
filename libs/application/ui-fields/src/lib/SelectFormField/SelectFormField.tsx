@@ -50,7 +50,12 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
     <div>
       {description && (
         <FieldDescription
-          description={formatText(description, application, formatMessage)}
+          description={formatTextWithLocale(
+            description,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         />
       )}
 

@@ -74,7 +74,12 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
 
       {description && (
         <FieldDescription
-          description={formatText(description, application, formatMessage)}
+          description={formatTextWithLocale(
+            description,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         />
       )}
 

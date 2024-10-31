@@ -76,7 +76,14 @@ export const FilesRecipientCard: FC<
         </Text>
       )}
       {field.description && (
-        <Text>{formatText(field.description, application, formatMessage)}</Text>
+        <Text>
+          {formatTextWithLocale(
+            field.description,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
+        </Text>
       )}
       {!field?.props?.noOptions && (
         <Box marginTop={3}>

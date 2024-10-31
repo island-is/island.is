@@ -99,9 +99,9 @@ export const ExampleForm: Form = buildForm({
           id: 'attachments',
           title: (application, locale) => {
             if (locale === 'is') {
-              return 'Viðhengi - IS'
+              return 'Viðhengi'
             }
-            return 'Attachments - EN'
+            return 'Attachments'
           },
           introduction: 'Hér getur þú bætt við viðhengjum við umsóknina þína.',
           uploadMultiple: true,

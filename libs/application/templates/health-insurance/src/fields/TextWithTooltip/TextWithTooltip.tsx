@@ -29,9 +29,10 @@ export const TextWithTooltip = ({
         )}{' '}
         <Tooltip
           placement="top"
-          text={formatText(
+          text={formatTextWithLocale(
             field.description ? field.description : description,
             application,
+            locale as Locale,
             formatMessage,
           )}
         />

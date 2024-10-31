@@ -36,7 +36,14 @@ export const FieldTitle = ({ field, application }: Props) => {
         )}
       </Text>
       {field.description && (
-        <Text>{formatText(field.description, application, formatMessage)}</Text>
+        <Text>
+          {formatTextWithLocale(
+            field.description,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
+        </Text>
       )}
     </>
   )
