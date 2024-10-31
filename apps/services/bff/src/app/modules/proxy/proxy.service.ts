@@ -7,11 +7,16 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
+import Agent from 'agentkeepalive'
 import { Request, Response } from 'express'
 import fetch from 'node-fetch'
 import { BffConfig } from '../../bff.config'
 import { CryptoService } from '../../services/crypto.service'
 
+import {
+  AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
+  AGENT_DEFAULT_MAX_SOCKETS,
+} from '@island.is/shared/constants'
 import { hasTimestampExpiredInMS } from '../../utils/has-timestamp-expired-in-ms'
 import { validateUri } from '../../utils/validate-uri'
 import { AuthService } from '../auth/auth.service'
@@ -21,6 +26,18 @@ import { IdsService } from '../ids/ids.service'
 import { ApiProxyDto } from './dto/api-proxy.dto'
 
 const droppedResponseHeaders = ['access-control-allow-origin']
+
+/**
+ * A custom HTTP agent for managing connections efficiently.
+ * - Keeps connections alive for reuse, reducing connection setup time.
+ * - Configured with custom timeout and socket limits to optimize resource usage.
+ */
+const CUSTOM_AGENT = new Agent({
+  keepAlive: true,
+  timeout: 0,
+  freeSocketTimeout: AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
+  maxSockets: AGENT_DEFAULT_MAX_SOCKETS,
+})
 
 @Injectable()
 export class ProxyService {
@@ -104,6 +121,7 @@ export class ProxyService {
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(body ?? req.body),
+        agent: CUSTOM_AGENT,
       })
 
       // Set the status code of the response
