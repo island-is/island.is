@@ -88,12 +88,38 @@ export class DefendantNotificationService extends BaseNotificationService {
     return this.recordNotification(theCase.id, notificationType, recipients)
   }
 
+  private shouldSendAdvocateAssignedNotification(
+    theCase: Case,
+    advocateEmail?: string,
+  ): boolean {
+    if (!advocateEmail) {
+      return false
+    }
+
+    if (isIndictmentCase(theCase.type)) {
+      const hasSentNotificationBefore = this.hasReceivedNotification(
+        DefendantNotificationType.ADVOCATE_ASSIGNED,
+        advocateEmail,
+        theCase.notifications,
+      )
+
+      if (!hasSentNotificationBefore) {
+        return true
+      }
+    }
+    return false
+  }
+
   private async sendAdvocateAssignedNotification(
     defendant: Defendant,
     theCase: Case,
   ): Promise<DeliverResponse> {
-    // We aren't using this yet for request cases
-    if (isIndictmentCase(theCase.type)) {
+    const shouldSend = this.shouldSendAdvocateAssignedNotification(
+      theCase,
+      defendant.defenderEmail,
+    )
+
+    if (shouldSend) {
       return this.sendEmails(
         defendant,
         theCase,
@@ -102,7 +128,9 @@ export class DefendantNotificationService extends BaseNotificationService {
         strings.indictmentAdvocateAssignedBody,
       )
     }
-    return { delivered: false }
+
+    // Nothing should be sent so we return a successful response
+    return { delivered: true }
   }
 
   private sendNotification(
