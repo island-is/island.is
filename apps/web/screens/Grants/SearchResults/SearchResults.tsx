@@ -68,7 +68,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   const [grants, setGrants] = useState<Array<Grant>>()
   const [searchState, setSearchState] = useState<SearchState>()
 
-  const [getGrants] = useLazyQuery<
+  const [getGrants, { refetch, called }] = useLazyQuery<
     { getGrants: GrantList },
     QueryGetGrantsArgs
   >(GET_GRANTS_QUERY, {
@@ -136,7 +136,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
       },
     })
       .then((res) => {
-        if (res.data?.getGrants.items.length) {
+        if (res.data) {
           setGrants(res.data.getGrants.items)
         } else if (res.error) {
           setGrants([])

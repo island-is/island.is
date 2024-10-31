@@ -61,7 +61,10 @@ export const GrantsSearchResultsFilter = ({
           <FilterMultiChoice
             labelClear={'Hreinsa flokk'}
             onChange={({ categoryId, selected }) => {
-              onSearchUpdate(categoryId as keyof SearchState, selected)
+              onSearchUpdate(
+                categoryId as keyof SearchState,
+                selected.length ? selected : undefined,
+              )
             }}
             onClear={(categoryId) => {
               onSearchUpdate(categoryId as keyof SearchState, undefined)

@@ -632,29 +632,6 @@ export class CmsElasticsearchService {
       },
     ]
 
-    if (organizations)
-      must.push({
-        nested: {
-          path: 'tags',
-          query: {
-            bool: {
-              must: [
-                {
-                  term: {
-                    'tags.key': organizations,
-                  },
-                },
-                {
-                  term: {
-                    'tags.type': 'organization',
-                  },
-                },
-              ],
-            },
-          },
-        },
-      })
-
     const wildcardSearch = {
       wildcard: {
         title: '*',
@@ -671,50 +648,44 @@ export class CmsElasticsearchService {
 
     must.push(!search ? wildcardSearch : multimatchSearch)
 
-    if (statuses) {
-      must.push(
-        {
-          term: {
-            'tags.key': statuses,
-          },
-        },
-        {
-          term: {
-            'tags.type': 'grantStatus',
-          },
-        },
-      )
-    }
+    const tagFilters: Array<Array<string>> = []
 
     if (categories) {
-      must.push(
-        {
-          term: {
-            'tags.key': categories,
-          },
-        },
-        {
-          term: {
-            'tags.type': 'grantCategory',
-          },
-        },
-      )
+      tagFilters.push(categories)
+    }
+    if (types) {
+      tagFilters.push(types)
+    }
+    if (statuses) {
+      tagFilters.push(statuses)
+    }
+    if (organizations) {
+      tagFilters.push(organizations)
     }
 
-    if (types) {
-      must.push(
-        {
-          term: {
-            'tags.key': types,
+    tagFilters.forEach((filter) => {
+      must.push({
+        nested: {
+          path: 'tags',
+          query: {
+            bool: {
+              must: [
+                {
+                  terms: {
+                    'tags.key': filter,
+                  },
+                },
+                {
+                  term: {
+                    'tags.type': 'genericTag',
+                  },
+                },
+              ],
+            },
           },
         },
-        {
-          term: {
-            'tags.type': 'grantType',
-          },
-        },
-      )
-    }
+      })
+    })
 
     const grantListResponse: ApiResponse<SearchResponse<MappedData>> =
       await this.elasticService.findByQuery(index, {
