@@ -28,10 +28,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
-  CaseAppealRulingDecision,
-  CaseAppealState,
   CaseState,
-  CaseTransition,
   CaseType,
   indictmentCases,
   investigationCases,

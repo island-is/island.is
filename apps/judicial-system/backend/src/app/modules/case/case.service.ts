@@ -1689,13 +1689,7 @@ export class CaseService {
     return this.sequelize
       .transaction(async (transaction) => {
         if (receivingCase) {
-          update.state = transitionCase(
-            CaseTransition.RECEIVE,
-            theCase,
-            user,
-            update.state,
-            update.appealState,
-          ).state
+          update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
         }
 
         await this.handleDateUpdates(theCase, update, transaction)

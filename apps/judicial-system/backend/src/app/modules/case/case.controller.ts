@@ -39,16 +39,13 @@ import {
 } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
-  CaseAppealDecision,
   CaseAppealRulingDecision,
-  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseTransition,
   CaseType,
   indictmentCases,
   investigationCases,
-  isIndictmentCase,
   isRestrictionCase,
   restrictionCases,
   UserRole,
@@ -305,42 +302,13 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
-    let update: UpdateCase = transitionCase(
+    const update: UpdateCase = transitionCase(
       transition.transition,
       theCase,
       user,
     )
 
     switch (transition.transition) {
-      case CaseTransition.ACCEPT:
-      case CaseTransition.REJECT:
-      case CaseTransition.DISMISS:
-        update.rulingDate = theCase.courtEndTime
-
-        // Handle appealed in court
-        if (
-          !theCase.appealState && // don't appeal twice
-          (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-            theCase.accusedAppealDecision === CaseAppealDecision.APPEAL)
-        ) {
-          if (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
-            update.prosecutorPostponedAppealDate = nowFactory()
-          } else {
-            update.accusedPostponedAppealDate = nowFactory()
-          }
-
-          update = {
-            ...update,
-            ...transitionCase(
-              CaseTransition.APPEAL,
-              theCase,
-              user,
-              update.state,
-              update.appealState,
-            ),
-          }
-        }
-        break
       case CaseTransition.COMPLETE_APPEAL:
         if (
           isRestrictionCase(theCase.type) &&
