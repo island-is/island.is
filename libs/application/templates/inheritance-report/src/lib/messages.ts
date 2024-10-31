@@ -1349,8 +1349,9 @@ export const m = defineMessages({
     description: '',
   },
   heirsDescriptionPrePaid: {
-    id: 'ir.application:heirsDescriptionPrePaid',
-    defaultMessage: 'Lorem ipsum lorem ipsum',
+    id: 'ir.application:heirsDescriptionPrePaid#markdown',
+    defaultMessage:
+      'Vinsamlegast skráðu upplýsingar um þá erfingja sem eiga að taka við fyrirframgreiddum arfi.',
     description: '',
   },
   heirsAndPartition: {
@@ -1471,6 +1472,11 @@ export const m = defineMessages({
   },
   inheritanceAdvocateLabel: {
     id: 'ir.application:inheritanceAdvocateLabel',
+    defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
+    description: 'Custody label',
+  },
+  inheritanceAdvocateLabelPrePaid: {
+    id: 'ir.application:inheritanceAdvocateLabelPrePaid',
     defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
     description: 'Custody label',
   },
