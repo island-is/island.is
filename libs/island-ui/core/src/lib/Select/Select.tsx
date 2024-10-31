@@ -40,7 +40,7 @@ export const Select = <
   errorMessage = '',
   placeholder = '',
   defaultValue,
-  hideSelectedOptions = true,
+  hideSelectedOptions,
   icon = 'chevronDown',
   isSearchable = true,
   isCreatable = false,

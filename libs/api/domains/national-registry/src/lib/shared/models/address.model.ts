@@ -16,8 +16,8 @@ export class Address {
   @Field(() => String, { nullable: true })
   apartment?: string | null
 
-  @Field(() => String)
-  city!: string
+  @Field(() => String, { nullable: true })
+  city?: string | null
 
   @Field(() => String, { nullable: true })
   postalCode?: string | null
