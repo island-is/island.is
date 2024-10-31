@@ -1736,6 +1736,18 @@ export const m = defineMessages({
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet urna nec nunc ultricies ultricies.',
     description: '',
   },
+  bottomButtonMessagePrepaidEFS: {
+    id: 'ir.application:bottomButtonMessagePrepaidEFS',
+    defaultMessage:
+      'Inni á Mínum síðum og í Ísland.is appinu hefur þú aðgang að þínum upplýsingum og Stafrænu pósthólfi.',
+    description: '',
+  },
+  bottomButtonMessageEFS: {
+    id: 'ir.application:bottomButtonMessageEFS',
+    defaultMessage:
+      'Inni á Mínum síðum og í Ísland.is appinu hefur þú aðgang að þínum upplýsingum og Stafrænu pósthólfi.',
+    description: '',
+  },
   errorRelation: {
     id: 'ir.application:error.errorRelation',
     defaultMessage: 'Tengsl virðast ekki vera rétt',
