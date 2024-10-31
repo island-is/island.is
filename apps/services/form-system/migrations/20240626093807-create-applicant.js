@@ -51,17 +51,9 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: true,
           },
-          applicant_type: {
-            type: Sequelize.ENUM(
-              'individual',
-              'individualWithDelegationFromIndividual',
-              'individualWithDelegationFromLegalEntity',
-              'individualWithProcuration',
-              'individualGivingDelegation',
-              'legalEntity',
-            ),
+          applicant_type_id: {
+            type: Sequelize.UUID,
             allowNull: false,
-            defaultValue: 'individual',
           },
           application_id: {
             type: Sequelize.UUID,
