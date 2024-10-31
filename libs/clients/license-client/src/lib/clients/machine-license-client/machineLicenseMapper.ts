@@ -9,22 +9,25 @@ import is from 'date-fns/locale/is'
 import enGB from 'date-fns/locale/en-GB'
 import { format as formatSsn } from 'kennitala'
 
+const compareDates = (newDate: Date, latestDate?: Date) =>
+  !latestDate || newDate > latestDate ? newDate : latestDate
+
 export const findLatestExpirationDate = (license: VinnuvelaDto) => {
   if (!license.vinnuvelaRettindi) {
     return null
   }
 
-  let maxDate = new Date()
+  let latestDate: Date | undefined
   for (const right of license.vinnuvelaRettindi) {
-    if (right.stjorna && new Date(right.stjorna) > maxDate) {
-      maxDate = new Date(right.stjorna)
+    if (right.stjorna) {
+      latestDate = compareDates(new Date(right.stjorna), latestDate)
     }
-    if (right.kenna && new Date(right.kenna) > maxDate) {
-      maxDate = new Date(right.kenna)
+    if (right.kenna) {
+      latestDate = compareDates(new Date(right.kenna), latestDate)
     }
   }
 
-  return maxDate.toISOString()
+  return latestDate ? latestDate.toISOString() : null
 }
 
 const formatDateString = (

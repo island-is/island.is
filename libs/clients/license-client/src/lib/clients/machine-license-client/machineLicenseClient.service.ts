@@ -48,7 +48,7 @@ export class MachineLicenseClient
   ): LicensePkPassAvailability {
     const expirationDate = licenseInfo
       ? findLatestExpirationDate(licenseInfo)
-      : undefined
+      : null
 
     if (!licenseInfo || !expirationDate) {
       return LicensePkPassAvailability.Unknown
