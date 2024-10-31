@@ -41,7 +41,6 @@ const rentOtherFees = z
           path: ['housingFundAmount'],
           params: m.dataSchema.errorHousingFundLength,
         })
-        return false
       }
     }
     if (data.electricityCost === rentOtherFeesPayeeOptions.TENANT) {
@@ -54,7 +53,6 @@ const rentOtherFees = z
           path: ['electricityCostMeterNumber'],
           params: m.dataSchema.errorMeterNumberRegex,
         })
-        return false
       }
       if (
         data.electricityCostMeterStatus &&
@@ -65,7 +63,6 @@ const rentOtherFees = z
           path: ['electricityCostMeterStatus'],
           params: m.dataSchema.errorMeterStatusRegex,
         })
-        return false
       }
     }
     if (data.heatingCost === rentOtherFeesPayeeOptions.TENANT) {
@@ -78,7 +75,6 @@ const rentOtherFees = z
           path: ['heatingCostMeterNumber'],
           params: m.dataSchema.errorMeterNumberRegex,
         })
-        return false
       }
       if (
         data.heatingCostMeterStatus &&
@@ -89,7 +85,6 @@ const rentOtherFees = z
           path: ['heatingCostMeterStatus'],
           params: m.dataSchema.errorMeterStatusRegex,
         })
-        return false
       }
     }
     return true

@@ -21,7 +21,7 @@ import {
 import * as m from '../../lib/messages'
 
 function rentalAmountConnectedToIndex(answers: FormValue) {
-  const isRentalAmountConnectedToIndex: string[] =
+  const isRentalAmountConnectedToIndex =
     answers.isRentalAmountIndexConnected as string[]
   return (
     isRentalAmountConnectedToIndex &&
