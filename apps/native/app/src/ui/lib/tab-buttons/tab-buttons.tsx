@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useCallback, useMemo, useRef } from 'react'
 import styled, { useTheme } from 'styled-components/native'
 import { Animated, useWindowDimensions } from 'react-native'
 import { Typography } from '../typography/typography'
@@ -58,18 +58,24 @@ export const TabButtons = ({
   const theme = useTheme()
   const { width } = useWindowDimensions()
 
-  const buttonWidth = (width - theme.spacing[4]) / buttons.length
+  const buttonWidth = useMemo(
+    () => (width - theme.spacing[4]) / buttons.length,
+    [width, theme.spacing, buttons.length],
+  )
 
   const translateX = useRef(new Animated.Value(0)).current
 
-  const onTabPress = (index: number) => {
-    Animated.timing(translateX, {
-      toValue: index * buttonWidth,
-      duration: 200,
-      useNativeDriver: true,
-    }).start()
-    setSelectedTab(index)
-  }
+  const onTabPress = useCallback(
+    (index: number) => {
+      Animated.timing(translateX, {
+        toValue: index * buttonWidth,
+        duration: 200,
+        useNativeDriver: true,
+      }).start()
+      setSelectedTab(index)
+    },
+    [buttonWidth, translateX, setSelectedTab],
+  )
 
   return (
     <Host accessibilityRole="tablist">
@@ -85,6 +91,8 @@ export const TabButtons = ({
               key={index}
               onPress={() => onTabPress(index)}
               isSelected={isSelected}
+              accessibilityRole="tab"
+              accessibilityLabel={`${button.title} tab`}
             >
               <TabText variant="body3" isSelected={isSelected}>
                 {button.title}

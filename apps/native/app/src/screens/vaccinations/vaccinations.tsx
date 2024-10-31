@@ -67,7 +67,7 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
     setRefetching(true)
 
     try {
-      vaccinationsRes.refetch()
+      await vaccinationsRes.refetch()
     } catch (e) {
       // noop
     } finally {
