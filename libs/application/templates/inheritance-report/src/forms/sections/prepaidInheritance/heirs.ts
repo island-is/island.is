@@ -9,7 +9,6 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
 import { prepaidOverview } from './overview'
-import build from 'next/dist/build'
 
 export const prePaidHeirs = buildSection({
   id: 'heirs',
