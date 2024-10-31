@@ -31,6 +31,10 @@ export enum DefendantNotificationType {
   ADVOCATE_ASSIGNED = 'ADVOCATE_ASSIGNED',
 }
 
+export enum CivilClaimantNotificationType {
+  ADVOCATE_ASSIGNED = 'ADVOCATE_ASSIGNED',
+}
+
 export enum NotificationType {
   HEADS_UP = CaseNotificationType.HEADS_UP,
   READY_FOR_COURT = CaseNotificationType.READY_FOR_COURT,

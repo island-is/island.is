@@ -7,7 +7,11 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import { CaseState } from '@island.is/judicial-system/types'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  CaseState,
+  CivilClaimantNotificationType,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
@@ -18,6 +22,7 @@ export class CivilClaimantService {
   constructor(
     @InjectModel(CivilClaimant)
     private readonly civilClaimantModel: typeof CivilClaimant,
+    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -25,6 +30,22 @@ export class CivilClaimantService {
     return this.civilClaimantModel.create({
       caseId: theCase.id,
     })
+  }
+
+  private async sendUpdateCivilClaimantMessages(
+    update: UpdateCivilClaimantDto,
+    updatedCivilClaimant: CivilClaimant,
+  ): Promise<void> {
+    if (update.isSpokespersonConfirmed === true) {
+      await this.messageService.sendMessagesToQueue([
+        {
+          type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+          caseId: updatedCivilClaimant.caseId,
+          body: { type: CivilClaimantNotificationType.ADVOCATE_ASSIGNED },
+          elementId: updatedCivilClaimant.id,
+        },
+      ])
+    }
   }
 
   async update(
@@ -48,6 +69,8 @@ export class CivilClaimantService {
     } else if (numberOfAffectedRows < 1) {
       throw new Error(`Could not update civil claimant ${civilClaimantId}`)
     }
+
+    this.sendUpdateCivilClaimantMessages(update, civilClaimants[0])
 
     return civilClaimants[0]
   }
