@@ -1,5 +1,6 @@
 import { Season } from '../types/season'
 import { ModeOfDelivery } from '../types/modeOfDelivery'
+import { FieldType } from '../types/fieldType'
 
 export interface IApplication {
   id: string
@@ -13,7 +14,7 @@ export interface IApplication {
   workExperienceList: IApplicationWorkExperience[]
   extraFieldList: IApplicationExtraFields[]
   educationOption?: string
-  attachments?: Array<IApplicationAttachment | undefined>
+  attachments?: Array<IApplicationAttachment>
 }
 
 export interface IApplicationApplicant {
@@ -50,11 +51,11 @@ export interface IApplicationWorkExperience {
 
 export interface IApplicationAttachment {
   fileName: string
-  fileType: string
-  url: string
+  fileUrl: string
 }
 
 export interface IApplicationExtraFields {
-  key: string
+  fieldType: FieldType
+  externalKey: string
   value: object
 }

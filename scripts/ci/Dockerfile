@@ -134,6 +134,12 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-bas
 
 
 FROM playwright-base AS output-playwright
+ARG GIT_BRANCH
+ARG GIT_SHA
+LABEL branch=${GIT_BRANCH}
+LABEL commit=${GIT_SHA}
+ENV GIT_BRANCH=${GIT_BRANCH}
+ENV GIT_SHA=${GIT_SHA}
 # TODO: remove awscli dependency (157 MB extra)
 
 # hadolint ignore=DL3008
@@ -157,7 +163,7 @@ RUN yarn install
 ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
-COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
+COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
 
 ENTRYPOINT ["./entrypoint.sh"]
 
@@ -173,7 +179,7 @@ WORKDIR ${APP_DIST_HOME}
 RUN mkdir -p /out \
   && chown node:node /out
 
-COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
+COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
 
 USER pwuser
 
