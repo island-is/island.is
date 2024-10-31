@@ -22,7 +22,7 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (entry: Entry<any>): entry is IGrant =>
         entry.sys.contentType.sys.id === 'grant' &&
-        !!entry.fields.title &&
+        entry.fields.title &&
         !isCircular(entry),
     )
   }
