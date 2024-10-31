@@ -3,9 +3,9 @@ import { uuid } from 'uuidv4'
 import { EmailService } from '@island.is/email-service'
 
 import {
+  CaseNotificationType,
   CaseType,
   DateType,
-  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -69,7 +69,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
 
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: NotificationType.COURT_DATE,
+      type: CaseNotificationType.COURT_DATE,
     }
 
     const theCase = {
@@ -119,7 +119,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
 
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: NotificationType.COURT_DATE,
+      type: CaseNotificationType.COURT_DATE,
     }
 
     const theCase = {
@@ -142,7 +142,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
           notifications: [
             {
               caseId,
-              type: NotificationType.READY_FOR_COURT,
+              type: CaseNotificationType.READY_FOR_COURT,
               recipients: [{ address: defenderEmail, success: true }],
             },
           ],
@@ -168,7 +168,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
 
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: NotificationType.COURT_DATE,
+      type: CaseNotificationType.COURT_DATE,
     }
 
     const courtDate = new Date(2024, 4, 2, 14, 32)

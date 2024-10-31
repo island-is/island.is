@@ -8,9 +8,9 @@ import {
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  CaseNotificationType,
   CaseType,
   DateType,
-  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -55,7 +55,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
 
     notificationDTO = {
       user: { id: userId } as User,
-      type: NotificationType.ADVOCATE_ASSIGNED,
+      type: CaseNotificationType.ADVOCATE_ASSIGNED,
     }
 
     mockEmailService = emailService

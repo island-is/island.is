@@ -72,6 +72,12 @@ export class Defendant {
   @Field(() => String, { nullable: true })
   readonly verdictAppealDeadline?: string
 
+  @Field(() => String, { nullable: true })
+  readonly verdictAppealDate?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isVerdictAppealDeadlineExpired?: boolean
+
   @Field(() => DefenderChoice, { nullable: true })
   readonly defenderChoice?: DefenderChoice
 
