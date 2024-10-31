@@ -46,20 +46,8 @@ export const RentalPeriodAmount = buildSubSection({
           title: m.rentalAmount.inputLabel,
           placeholder: m.rentalAmount.inputPlaceholder,
           variant: 'currency',
-          maxLength: 14,
+          maxLength: 15,
           required: true,
-        }),
-        buildCheckboxField({
-          id: 'isRentalAmountIndexConnected',
-          title: '',
-          options: [
-            {
-              value: AnswerOptions.YES,
-              label: m.rentalAmount.priceIndexLabel,
-            },
-          ],
-          width: 'half',
-          spacing: 0,
         }),
         buildSelectField({
           id: 'rentalAmountIndexTypes',
