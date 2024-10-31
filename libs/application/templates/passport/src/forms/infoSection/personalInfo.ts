@@ -1,15 +1,16 @@
 import {
-  buildAlertMessageField,
+  YES,
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { removeCountryCode } from '@island.is/application/ui-components'
-import { format as formatKennitala } from 'kennitala'
-import { Passport, PersonalInfo, YES } from '../../lib/constants'
+import { format as formatNationalId } from 'kennitala'
+import { Passport } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
 export const personalInfo = buildMultiField({
@@ -45,7 +46,7 @@ export const personalInfo = buildMultiField({
             }
           )?.nationalId ?? ''
 
-        return formatKennitala(nationalId)
+        return formatNationalId(nationalId)
       },
     }),
     buildTextField({
@@ -101,11 +102,8 @@ export const personalInfo = buildMultiField({
       title: '',
       component: 'HasDisabilityLicenseMessage',
       doesNotRequireAnswer: true,
-      condition: (answers) => {
-        return (
-          (answers.personalInfo as PersonalInfo)?.disabilityCheckbox[0] === YES
-        )
-      },
+      condition: (answers) =>
+        getValueViaPath(answers, 'personalInfo.disabilityCheckbox[0]') === YES,
     }),
   ],
 })
