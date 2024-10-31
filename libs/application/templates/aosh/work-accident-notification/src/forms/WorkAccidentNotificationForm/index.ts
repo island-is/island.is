@@ -23,7 +23,7 @@ export const WorkAccidentNotificationForm: Form = buildForm({
   logo: Logo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
+  renderLastScreenBackButton: false,
   children: [
     announcementSection,
     informationSection,
@@ -35,6 +35,7 @@ export const WorkAccidentNotificationForm: Form = buildForm({
       multiFieldTitle: conclusion.general.title,
       alertTitle: conclusion.default.alertTitle,
       expandableHeader: conclusion.default.accordionTitle,
+      expandableIntro: '',
       expandableDescription: conclusion.default.accordionText,
     }),
   ],
