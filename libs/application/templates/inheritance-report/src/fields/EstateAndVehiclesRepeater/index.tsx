@@ -1,7 +1,7 @@
 import { FC, useState, useEffect, useCallback } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, GridRow, Button, Input, Text } from '@island.is/island-ui/core'
+import { Box, GridRow, Button, Input } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
