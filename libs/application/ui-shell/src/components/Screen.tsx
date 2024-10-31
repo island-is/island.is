@@ -375,7 +375,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                 application={application}
                 addExternalData={addExternalData}
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
-                enableMockPayment={screen.enableMockPayment}
                 applicationId={applicationId}
                 externalData={externalData}
                 externalDataProvider={screen}

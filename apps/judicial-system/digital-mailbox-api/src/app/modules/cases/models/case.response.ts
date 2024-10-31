@@ -4,6 +4,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   DateType,
   isSuccessfulServiceStatus,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
@@ -89,7 +90,10 @@ export class CaseResponse {
                 value: internalCase.court.name,
               },
               {
-                label: t.judge,
+                label:
+                  internalCase.judge.role === UserRole.DISTRICT_COURT_ASSISTANT
+                    ? t.districtCourtAssistant
+                    : t.judge,
                 value: internalCase.judge.name,
               },
               {

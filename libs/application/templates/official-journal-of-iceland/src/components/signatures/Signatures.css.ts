@@ -1,5 +1,6 @@
 import { theme } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
+import { OJOI_INPUT_HEIGHT } from '../../lib/constants'
 
 const spacing = theme.spacing[2]
 export const tabWrapper = style({
@@ -59,13 +60,8 @@ export const institution = style({
 
 export const inputGroup = style({
   display: 'flex',
+  flexDirection: 'column',
   gap: spacing,
-
-  '@media': {
-    [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
-      flexDirection: 'column',
-    },
-  },
 })
 
 export const committeeInputGroupWrapper = style({
@@ -108,19 +104,18 @@ export const committeInputWrapperLast = style(
 
 export const inputWrapper = style({
   display: 'flex',
-  flexDirection: 'column',
   justifyContent: 'space-between',
-  flex: 1,
   gap: spacing,
 })
 
 export const removeInputGroup = style({
+  border: `1px solid ${theme.color.blue200}`,
+  borderRadius: theme.border.radius.large,
   display: 'flex',
-  flexDirection: 'column',
-  width: 48,
-  height: 48,
-  marginInline: theme.spacing[1],
-  alignSelf: 'flex-end',
+  width: OJOI_INPUT_HEIGHT,
+  height: OJOI_INPUT_HEIGHT,
+  justifyContent: 'center',
+  alignItems: 'center',
 })
 
 export const addSignatureWrapper = style({

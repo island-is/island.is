@@ -21,6 +21,7 @@ import {
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
+  VERDICT_APPEAL_WINDOW_DAYS,
 } from '@island.is/judicial-system/types'
 
 import { getCasesQueryFilter } from '../cases.filter'
@@ -389,7 +390,7 @@ describe('getCasesQueryFilter', () => {
             [Op.notIn]: Sequelize.literal(`
             (SELECT case_id
               FROM defendant
-              WHERE (verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '28 days'))
+              WHERE (verdict_appeal_date IS NOT NULL OR verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '${VERDICT_APPEAL_WINDOW_DAYS} days'))
           `),
           },
         },
