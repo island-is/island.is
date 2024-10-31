@@ -16,6 +16,7 @@ import {
   InjuredPersonInformationV2,
   RepresentativeInfoV2,
   StudiesAccidentTypeEnum,
+  utils,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
   WorkMachineV2,
@@ -334,7 +335,27 @@ const getEmployer = (
     'representative',
   ) as RepresentativeInfoV2
 
-  if (accidentType !== AccidentTypeEnum.WORK) return
+  if (
+    answers.juridicalPerson &&
+    answers.applicant &&
+    utils.isRepresentativeOfCompanyOrInstitute(answers)
+  ) {
+    return {
+      companyName: answers.juridicalPerson.companyNationalId,
+      companyNationalId: answers.juridicalPerson.companyName,
+      representativeName: answers.applicant.name ?? '',
+      representativeEmail: answers.applicant.email ?? '',
+      representativePhone: answers.applicant.phoneNumber ?? '',
+    }
+  }
+
+  if (
+    accidentType === AccidentTypeEnum.HOMEACTIVITIES ||
+    !companyInfo ||
+    !representative
+  ) {
+    return undefined
+  }
 
   return {
     companyName: companyInfo.name ?? '',
