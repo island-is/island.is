@@ -6,7 +6,8 @@ import { isCompany } from 'kennitala'
 import { User } from '@island.is/auth-nest-tools'
 import { DocumentsScope } from '@island.is/auth/scopes'
 import {
-  EinstaklingurDTONafnAllt, EinstaklingurDTONafnItar,
+  EinstaklingurDTONafnAllt,
+  EinstaklingurDTONafnItar,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
 import {
