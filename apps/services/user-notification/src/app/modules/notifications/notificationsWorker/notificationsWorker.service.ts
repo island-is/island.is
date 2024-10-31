@@ -6,7 +6,7 @@ import { isCompany } from 'kennitala'
 import { User } from '@island.is/auth-nest-tools'
 import { DocumentsScope } from '@island.is/auth/scopes'
 import {
-  EinstaklingurDTONafnAllt,
+  EinstaklingurDTONafnAllt, EinstaklingurDTONafnItar,
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
 import {
@@ -469,7 +469,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
   }
 
   private async getFullName(nationalId: string): Promise<string> {
-    let identity: CompanyExtendedInfo | EinstaklingurDTONafnAllt | null
+    let identity: CompanyExtendedInfo | EinstaklingurDTONafnItar | null
 
     if (isCompany(nationalId)) {
       identity = await this.companyRegistryService.getCompany(nationalId)
@@ -477,7 +477,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     }
 
     identity = await this.nationalRegistryService.getName(nationalId)
-    return identity?.fulltNafn ?? ''
+    return identity?.birtNafn ?? ''
   }
 
   /* Private methods */
