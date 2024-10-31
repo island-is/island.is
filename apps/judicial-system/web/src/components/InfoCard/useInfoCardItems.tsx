@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
+import cn from 'classnames'
 
 import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -28,6 +29,7 @@ import {
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
 import { Item } from './InfoCard'
 import { strings } from './useInfoCardItems.strings'
+import * as styles from './InfoCard.css'
 
 const useInfoCardItems = () => {
   const { formatMessage } = useIntl()
@@ -300,17 +302,34 @@ const useInfoCardItems = () => {
 
   const civilClaimants: Item = {
     id: 'civil-claimant-item',
-    title: capitalize(
-      workingCase.civilClaimants && workingCase.civilClaimants.length > 1
-        ? formatMessage(strings.civilClaimants)
-        : formatMessage(strings.civilClaimant),
+    title: (
+      <Text variant="h4" as="h4" marginBottom={3}>
+        {capitalize(
+          workingCase.civilClaimants && workingCase.civilClaimants.length > 1
+            ? formatMessage(strings.civilClaimants)
+            : formatMessage(strings.civilClaimant),
+        )}
+      </Text>
     ),
     values: workingCase.civilClaimants
-      ? workingCase.civilClaimants.map((civilClaimant) => (
-          <CivilClaimantInfo
-            key={civilClaimant.id}
-            civilClaimant={civilClaimant}
-          />
+      ? workingCase.civilClaimants.map((civilClaimant, index) => (
+          <div
+            className={cn(
+              workingCase.civilClaimants &&
+                workingCase.civilClaimants.length > 1
+                ? styles.renderDivider
+                : undefined,
+              workingCase.civilClaimants &&
+                index === workingCase.civilClaimants.length - 1
+                ? styles.last
+                : undefined,
+            )}
+          >
+            <CivilClaimantInfo
+              key={civilClaimant.id}
+              civilClaimant={civilClaimant}
+            />
+          </div>
         ))
       : [],
   }

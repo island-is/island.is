@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   Defendant,
   ServiceRequirement,
@@ -10,6 +11,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
+import { strings as infoCardStrings } from '../useInfoCardItems.strings'
 import { strings } from './DefendantInfo.strings'
 import * as styles from './DefendantInfo.css'
 
@@ -83,20 +85,28 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
       }
     >
       <div className={styles.infoCardDefendant}>
-        <span>
-          <Text as="span" fontWeight="semiBold">
+        <Box marginBottom={1}>
+          <Text as="span" fontWeight="semiBold">{`${formatMessage(
+            infoCardStrings.name,
+          )}: `}</Text>
+          <Text as="span">
             {defendant.name}
             {defendant.nationalId &&
               `, ${formatDOB(defendant.nationalId, defendant.noNationalId)}`}
-          </Text>
-          <Text as="span" fontWeight="light">
             {defendant.citizenship && `, (${defendant.citizenship})`}
-            {defendant.address && `, ${defendant.address}`}
           </Text>
-        </span>
+        </Box>
+        <Box marginBottom={1}>
+          <Text as="span" fontWeight="semiBold">{`${formatMessage(
+            core.addressOrResidence,
+          )}: `}</Text>
+          <Text as="span">
+            {defendant.address ? defendant.address : 'Ekki skráð'}
+          </Text>
+        </Box>
         {defendant.defenderName || defender?.name ? (
           <Box display={['block', 'block', 'block', 'flex']}>
-            <Text as="span" whiteSpace="pre">
+            <Text as="span" whiteSpace="pre" fontWeight="semiBold">
               {defender?.sessionArrangement ===
               SessionArrangements.ALL_PRESENT_SPOKESPERSON
                 ? `${formatMessage(strings.spokesperson)}: `

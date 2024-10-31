@@ -6,6 +6,7 @@ import { formatDOB } from '@island.is/judicial-system/formatters'
 import { CivilClaimant } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
+import { strings as infoCardStrings } from '../useInfoCardItems.strings'
 import { strings } from './CivilClaimantInfo.strings'
 
 interface CivilClaimantInfoProps {
@@ -18,17 +19,22 @@ export const CivilClaimantInfo: FC<CivilClaimantInfoProps> = (props) => {
 
   return (
     <Box>
-      <Text as="span" fontWeight="semiBold">
-        {civilClaimant.name}
-        {civilClaimant.nationalId &&
-          `, ${formatDOB(
-            civilClaimant.nationalId,
-            civilClaimant.noNationalId,
-          )}`}
-      </Text>
+      <Box marginBottom={1}>
+        <Text as="span" fontWeight="semiBold">
+          {`${formatMessage(infoCardStrings.name)}: `}
+        </Text>
+        <Text as="span">
+          {civilClaimant.name}
+          {civilClaimant.nationalId &&
+            `, ${formatDOB(
+              civilClaimant.nationalId,
+              civilClaimant.noNationalId,
+            )}`}
+        </Text>
+      </Box>
       {civilClaimant.hasSpokesperson ? (
         <Box display={['block', 'block', 'block', 'flex']}>
-          <Text as="span" whiteSpace="pre">
+          <Text as="span" whiteSpace="pre" fontWeight="semiBold">
             {civilClaimant.spokespersonIsLawyer
               ? `${formatMessage(strings.lawyer)}: `
               : `${formatMessage(strings.spokesperson)}: `}
