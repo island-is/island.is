@@ -32,6 +32,11 @@ import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { OrganizationCertification } from '../organizationCertifications/models/organizationCertification.model'
 import { Certifications } from '../../dataTypes/certificationType.model'
 import { FormCertification } from '../formCertifications/models/formCertification.model'
+import {
+  ApplicantType,
+  ApplicantTypes,
+} from '../../dataTypes/applicantType.model'
+import { FormApplicant } from '../formApplicants/models/formApplicant.model'
 
 @Injectable()
 export class FormsService {
@@ -194,6 +199,10 @@ export class FormsService {
           model: FormCertification,
           as: 'certifications',
         },
+        {
+          model: FormApplicant,
+          as: 'applicants',
+        },
       ],
     })
 
@@ -209,10 +218,17 @@ export class FormsService {
       form: this.setArrays(form),
       fieldTypes: await this.getFieldTypes(form.organizationId),
       certificationTypes: await this.getCertificationTypes(form.organizationId),
+      applicantTypes: await this.getApplicantTypes(),
       listTypes: await this.getListTypes(form.organizationId),
     }
 
     return response
+  }
+
+  private async getApplicantTypes(): Promise<ApplicantType[]> {
+    const applicantTypes = ApplicantTypes
+
+    return applicantTypes
   }
 
   private async getCertificationTypes(
@@ -351,7 +367,7 @@ export class FormsService {
 
     formDto.certifications = certificationsDto
 
-    const applicantKeys = ['id', 'applicantType', 'name']
+    const applicantKeys = ['id', 'applicantTypeId', 'name']
     form.applicants?.map((applicant) => {
       formDto.applicants?.push(
         defaults(

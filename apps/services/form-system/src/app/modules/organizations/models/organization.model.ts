@@ -10,7 +10,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { ApplicantTypeNameSuggestion } from '../../applicants/models/applicantTypeNameSuggestion.model'
+// import { ApplicantTypeNameSuggestion } from '../../applicants/models/applicantTypeNameSuggestion.model'
 import { Form } from '../../forms/models/form.model'
 import { FieldType } from '../../fields/models/fieldType.model'
 import { ListType } from '../../lists/models/listType.model'
@@ -50,8 +50,8 @@ export class Organization extends Model<Organization> {
   @HasMany(() => Form)
   forms?: Form[]
 
-  @HasMany(() => ApplicantTypeNameSuggestion)
-  applicantTypeNameSuggestions?: ApplicantTypeNameSuggestion[]
+  // @HasMany(() => ApplicantTypeNameSuggestion)
+  // applicantTypeNameSuggestions?: ApplicantTypeNameSuggestion[]
 
   @BelongsToMany(() => FieldType, {
     through: 'organization_field_type',
