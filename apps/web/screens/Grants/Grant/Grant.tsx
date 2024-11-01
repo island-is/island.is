@@ -39,7 +39,11 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
   const router = useRouter()
 
   const baseUrl = linkResolver('styrkjatorg', [], locale).href
-  const currentUrl = linkResolver('styrkjatorggrant', [], locale).href
+  const currentUrl = linkResolver(
+    'styrkjatorggrant',
+    [grant?.applicationId ?? ''],
+    locale,
+  ).href
 
   const breadcrumbItems = [
     {
@@ -53,6 +57,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
     {
       title: grant?.name ?? 'Styrkur',
       href: currentUrl,
+      isTag: true,
     },
   ]
 
@@ -99,50 +104,72 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
               icon: 'fileTrayFull',
             }}
           />
-          <Box>
-            <Text variant="h3">{'Hvað er styrkt?'}</Text>
-            <Box className="rs_read">
-              {webRichText(
-                grant.whatIsGranted as SliceType[],
-                undefined,
-                locale,
-              )}
+          {grant.whatIsGranted.length ? (
+            <Box>
+              <Text variant="h3">{'Hvað er styrkt?'}</Text>
+              <Box className="rs_read">
+                {webRichText(
+                  grant.whatIsGranted as SliceType[],
+                  undefined,
+                  locale,
+                )}
+              </Box>
             </Box>
-          </Box>
-          <Box>
-            <Text variant="h3">{'Sérstakar áherslur'}</Text>
-            <Box className="rs_read">
-              {webRichText(
-                grant.specialEmphasis as SliceType[],
-                undefined,
-                locale,
-              )}
+          ) : undefined}
+          {grant.specialEmphasis.length ? (
+            <>
+              <Box>
+                <Text variant="h3">{'Sérstakar áherslur'}</Text>
+                <Box className="rs_read">
+                  {webRichText(
+                    grant.specialEmphasis as SliceType[],
+                    undefined,
+                    locale,
+                  )}
+                </Box>
+              </Box>
+              <Divider />
+            </>
+          ) : undefined}
+          {grant.whoCanApply.length ? (
+            <>
+              <Box>
+                <Text variant="h3">{'Hverjir geta sótt um?'}</Text>
+                <Box className="rs_read">
+                  {webRichText(
+                    grant.whoCanApply as SliceType[],
+                    undefined,
+                    locale,
+                  )}
+                </Box>
+              </Box>
+              <Divider />
+            </>
+          ) : undefined}
+          {grant.howToApply.length ? (
+            <Box>
+              <Text variant="h3">{'Hvernig er sótt um?'}</Text>
+              <Box className="rs_read">
+                {webRichText(
+                  grant.howToApply as SliceType[],
+                  undefined,
+                  locale,
+                )}
+              </Box>
             </Box>
-          </Box>
-          <Divider />
-          <Box>
-            <Text variant="h3">{'Hverjir geta sótt um?'}</Text>
-            <Box className="rs_read">
-              {webRichText(grant.whoCanApply as SliceType[], undefined, locale)}
+          ) : undefined}
+          {grant.applicationDeadline.length ? (
+            <Box>
+              <Text variant="h4">{'Umsóknarfrestur'}</Text>
+              <Box className="rs_read">
+                {webRichText(
+                  grant.applicationDeadline as SliceType[],
+                  undefined,
+                  locale,
+                )}
+              </Box>
             </Box>
-          </Box>
-          <Divider />
-          <Box>
-            <Text variant="h3">{'Hvernig er sótt um?'}</Text>
-            <Box className="rs_read">
-              {webRichText(grant.howToApply as SliceType[], undefined, locale)}
-            </Box>
-          </Box>
-          <Box>
-            <Text variant="h4">{'Umsóknarfrestur'}</Text>
-            <Box className="rs_read">
-              {webRichText(
-                grant.applicationDeadline as SliceType[],
-                undefined,
-                locale,
-              )}
-            </Box>
-          </Box>
+          ) : undefined}
         </Stack>
       </SidebarLayout>
     </GrantWrapper>

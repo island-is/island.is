@@ -42,6 +42,10 @@ export const m = {
       id: 'web.grants:single.category',
       defaultMessage: 'Styrkjaflokkur',
     },
+    provider: {
+      id: 'web.grants:single.provider',
+      defaultMessage: 'Þjónustuaðili',
+    },
     type: {
       id: 'web.grants:single.type',
       defaultMessage: 'Tegund',

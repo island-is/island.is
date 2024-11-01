@@ -1,23 +1,27 @@
+import { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Button, LinkV2, Stack, Text } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
 import { InstitutionPanel } from '@island.is/web/components'
 import { Grant } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
-import { isDefined } from '@island.is/shared/utils'
 
 interface Props {
   grant: Grant
   locale: Locale
 }
 
-const generateLine = (heading: string, content: React.ReactNode) => {
+const generateLine = (heading: string, content?: React.ReactNode) => {
+  if (!content) {
+    return null
+  }
   return (
     <Box>
-      <Text variant="medium" fontWeight="medium">
+      <Text variant="medium" fontWeight="semiBold">
         {heading}
       </Text>
       {content}
@@ -29,61 +33,92 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
+  const detailPanelData = useMemo(
+    () =>
+      [
+        generateLine(
+          formatMessage(m.single.fund),
+          grant?.applicationUrl?.type && grant.applicationUrl?.slug ? (
+            <Text fontWeight="semiBold" color="blue400">
+              <LinkV2
+                {...linkResolver(
+                  grant.applicationUrl.type.toLowerCase() as LinkType,
+                  [grant.applicationUrl.slug],
+                )}
+                color="blue400"
+                underline="normal"
+                underlineVisibility="hover"
+              >
+                Barnamenningarsjóður Íslands
+              </LinkV2>
+            </Text>
+          ) : undefined,
+        ),
+        generateLine(
+          formatMessage(m.single.category),
+          grant?.categoryTag?.title ? (
+            <Text variant="medium">{grant.categoryTag?.title}</Text>
+          ) : undefined,
+        ),
+        generateLine(
+          formatMessage(m.single.type),
+          grant?.typeTag?.title ? (
+            <Text variant="medium">{grant.typeTag?.title}</Text>
+          ) : undefined,
+        ),
+        generateLine(
+          formatMessage(m.single.deadline),
+          grant?.applicationDeadlineText ? (
+            <Text variant="medium">{grant.applicationDeadlineText}</Text>
+          ) : undefined,
+        ),
+        generateLine(
+          formatMessage(m.single.status),
+          grant?.statusText ? (
+            <Text variant="medium">{grant.statusText}</Text>
+          ) : undefined,
+        ),
+      ].filter(isDefined) ?? [],
+    [grant, formatMessage, linkResolver],
+  )
+
+  const filesPanelData = useMemo(
+    () =>
+      grant.files
+        ?.map((f) => {
+          if (!f.url) {
+            return null
+          }
+          return (
+            <LinkV2 href={f.url} underlineVisibility="hover">
+              <Button icon="download" iconType="outline" variant="text">
+                {f.title}
+              </Button>
+            </LinkV2>
+          )
+        })
+        .filter(isDefined) ?? [],
+    [grant.files],
+  )
+
   return (
     <Stack space={3}>
       <InstitutionPanel
-        institutionTitle={'Þjónustuaðili'}
+        institutionTitle={formatMessage(m.single.provider)}
         institution={grant.organization.title}
         img={grant.organization.logo?.url}
         locale={locale}
       />
-      <Box background="blue100" padding={3}>
-        <Stack space={2}>
-          {grant?.applicationUrl &&
-            generateLine(
-              formatMessage(m.single.fund),
-              <LinkV2
-                {...linkResolver(grant.applicationUrl.type as LinkType, [
-                  grant.applicationUrl.slug,
-                ])}
-              />,
-            )}
-          {generateLine(
-            formatMessage(m.single.category),
-            <Text variant="medium">{grant.categoryTag?.title}</Text>,
-          )}
-          {generateLine(
-            formatMessage(m.single.type),
-            <Text variant="medium">{grant.typeTag?.title}</Text>,
-          )}
-          {generateLine(
-            formatMessage(m.single.deadline),
-            <Text variant="medium">{grant.applicationDeadlineText}</Text>,
-          )}
-          {generateLine(
-            formatMessage(m.single.status),
-            <Text variant="medium">{grant.statusText}</Text>,
-          )}
-        </Stack>
-      </Box>
-      <Box background="red100" padding={3}>
-        <Stack space={2}>
-          {grant.files
-            ?.map((f) => {
-              if (!f.url) {
-                return null
-              }
-              return (
-                <LinkV2 href={f.url} underlineVisibility="hover">
-                  <Button icon="download" iconType="outline" variant="text">
-                    {f.title}
-                  </Button>
-                </LinkV2>
-              )
-            })
-            .filter(isDefined)}
-        </Stack>
-      </Box>
+      {detailPanelData.length ? (
+        <Box background="blue100" padding={3}>
+          <Stack space={2}>{detailPanelData}</Stack>
+        </Box>
+      ) : undefined}
+      {filesPanelData.length ? (
+        <Box background="red100" padding={3}>
+          <Stack space={2}>{filesPanelData}</Stack>
+        </Box>
+      ) : undefined}
     </Stack>
   )
 }
