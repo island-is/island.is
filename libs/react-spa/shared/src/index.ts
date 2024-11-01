@@ -10,6 +10,8 @@ export * from './lib/messages'
 // hooks
 export * from './hooks/useSubmitting'
 export * from './hooks/useEffectOnce'
+export * from './hooks/usePolling'
+export * from './hooks/useBroadcaster'
 
 // utils
 export * from './utils/getOrganizationSlugFromError'
