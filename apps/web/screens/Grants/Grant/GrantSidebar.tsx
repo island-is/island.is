@@ -38,18 +38,18 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
       [
         generateLine(
           formatMessage(m.single.fund),
-          grant?.applicationUrl?.type && grant.applicationUrl?.slug ? (
+          grant?.fund?.url ? (
             <Text fontWeight="semiBold" color="blue400">
               <LinkV2
                 {...linkResolver(
-                  grant.applicationUrl.type.toLowerCase() as LinkType,
-                  [grant.applicationUrl.slug],
+                  grant.fund.url.type.toLowerCase() as LinkType,
+                  [grant.fund.url.slug],
                 )}
                 color="blue400"
                 underline="normal"
                 underlineVisibility="hover"
               >
-                Barnamenningarsjóður Íslands
+                {grant.fund.title}
               </LinkV2>
             </Text>
           ) : undefined,

@@ -95,6 +95,26 @@ export const GET_GRANT_QUERY = gql`
       files {
           ...AssetFields
       }
+      fund {
+        id
+        title
+        url {
+          slug
+          type
+        }
+        link {
+          slug
+          type
+        }
+        featuredImage {
+          id
+          url
+        }
+        parentOrganization {
+          id
+          title
+        }
+      }
       whatIsGranted {
         ...AllSlices
         ${nestedFields}

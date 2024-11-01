@@ -101,12 +101,13 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
               disabled: !grant.applicationUrl?.slug,
               label: 'Sækja um',
               onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
-              icon: 'fileTrayFull',
+              icon: 'open',
+              iconType: 'outline',
             }}
           />
           {grant.whatIsGranted.length ? (
             <Box>
-              <Text variant="h3">{'Hvað er styrkt?'}</Text>
+              <Text variant="h3">{formatMessage(m.single.whatIsGranted)}</Text>
               <Box className="rs_read">
                 {webRichText(
                   grant.whatIsGranted as SliceType[],
@@ -119,7 +120,9 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
           {grant.specialEmphasis.length ? (
             <>
               <Box>
-                <Text variant="h3">{'Sérstakar áherslur'}</Text>
+                <Text variant="h3">
+                  {formatMessage(m.single.specialEmphasis)}
+                </Text>
                 <Box className="rs_read">
                   {webRichText(
                     grant.specialEmphasis as SliceType[],
@@ -134,7 +137,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
           {grant.whoCanApply.length ? (
             <>
               <Box>
-                <Text variant="h3">{'Hverjir geta sótt um?'}</Text>
+                <Text variant="h3">{formatMessage(m.single.whoCanApply)}</Text>
                 <Box className="rs_read">
                   {webRichText(
                     grant.whoCanApply as SliceType[],
@@ -148,7 +151,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
           ) : undefined}
           {grant.howToApply.length ? (
             <Box>
-              <Text variant="h3">{'Hvernig er sótt um?'}</Text>
+              <Text variant="h3">{formatMessage(m.single.howToApply)}</Text>
               <Box className="rs_read">
                 {webRichText(
                   grant.howToApply as SliceType[],
@@ -160,7 +163,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
           ) : undefined}
           {grant.applicationDeadline.length ? (
             <Box>
-              <Text variant="h4">{'Umsóknarfrestur'}</Text>
+              <Text variant="h4">{formatMessage(m.single.deadline)}</Text>
               <Box className="rs_read">
                 {webRichText(
                   grant.applicationDeadline as SliceType[],
