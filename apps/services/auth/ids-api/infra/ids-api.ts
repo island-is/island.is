@@ -158,4 +158,3 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
       staging: schedule,
       prod: schedule,
     })
-    .grantNamespaces('nginx-ingress-external', 'user-notification')
