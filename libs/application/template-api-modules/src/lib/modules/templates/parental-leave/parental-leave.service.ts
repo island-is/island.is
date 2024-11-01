@@ -688,8 +688,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     if (VMSTApplicationRights) {
       let usedDays = calculateDaysUsedByPeriods(periods)
       const rights = VMSTApplicationRights.map((VMSTRight) => {
-        const daysLeft = Math.max(0, Number(VMSTRight.days) - usedDays)
-        usedDays -= Number(VMSTRight.days) - daysLeft
+        const availableDays = Number(VMSTRight.days)
+        const daysLeft = Math.max(0, availableDays - usedDays)
+        usedDays -= availableDays - daysLeft
         return {
           ...VMSTRight,
           daysLeft: String(daysLeft),

@@ -355,12 +355,12 @@ export const getAvailableRightsInDays = (application: Application) => {
   const { VMSTApplicationRights } = getApplicationExternalData(
     application.externalData,
   )
-  const VMSTDays = VMSTApplicationRights?.reduce(
-    (acc, right) => acc + Number(right.days),
-    0,
-  )
+  if (VMSTApplicationRights) {
+    const VMSTDays = VMSTApplicationRights.reduce(
+      (acc, right) => acc + Number(right.days),
+      0,
+    )
 
-  if (VMSTDays) {
     return VMSTDays
   }
 
