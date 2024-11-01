@@ -353,6 +353,7 @@
     "@nx/nest": "19.4.0",
     "@nx/next": "19.4.0",
     "@nx/node": "19.4.0",
+    "@nx/playwright": "20.0.0",
     "@nx/react": "19.4.0",
     "@nx/storybook": "19.4.0",
     "@nx/web": "19.4.0",
