@@ -48,7 +48,7 @@ export const DeceasedSpouse = ({
               label={formatMessage(
                 deathBenefitsFormMessage.info.deceasedSpouseNationalId,
               )}
-              value={deceasedSpouseNationalId}
+              value={formatKennitala(deceasedSpouseNationalId)}
             />
           </GridColumn>
         </GridRow>
