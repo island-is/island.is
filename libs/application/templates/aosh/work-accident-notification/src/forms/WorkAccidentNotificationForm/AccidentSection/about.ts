@@ -33,6 +33,7 @@ export const aboutSection = buildSubSection({
           title: accident.about.date,
           width: 'half',
           required: true,
+          minDate: new Date('1.1.2020'),
         }),
         buildTextField({
           id: 'accident.time',

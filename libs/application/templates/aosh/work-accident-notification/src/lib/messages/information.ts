@@ -143,7 +143,7 @@ export const information = {
       errorAlert: {
         id: 'aosh.wan.application:information.workhealth.errorAlert',
         defaultMessage:
-          "Vinsamlegast veldur a.m.k einn valmöguleika, ef ekkert á við veldu 'engin'",
+          "Vinsamlegast veldu a.m.k einn valmöguleika, ef ekkert á við veldu 'engin'",
         description:
           'error alert on workhealth information page when user attempt to navigate forwards without choosing an option',
       },

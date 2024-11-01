@@ -34,16 +34,7 @@ const accidentSchema = z.object({
   didPoliceCome: z.string(),
   exactLocation: z.string(),
   municipality: z.string(),
-  date: z.string().refine(
-    (dateStr) => {
-      const date = new Date(dateStr)
-      const minDate = new Date('2020-01-01')
-      return date >= minDate
-    },
-    {
-      message: 'Dagsetning má ekki vera fyrir 1.1.2020',
-    },
-  ),
+  date: z.string(),
   time: TimeWithRefine,
   how: z.string().min(1).max(499),
   wasDoing: z.string().min(1).max(499),
@@ -128,9 +119,7 @@ const createCauseAndEffectSchema = (
     .object({
       [fieldKey]: z
         .record(z.array(option))
-        .refine((obj) => Object.values(obj).some((arr) => arr.length > 0), {
-          message: 'At least one option has to be chosen',
-        }),
+        .refine((obj) => Object.values(obj).some((arr) => arr.length > 0)),
       [mostSeriousKey]: z.string().optional(),
     })
     .refine(
@@ -191,7 +180,6 @@ const companyLaborProtectionSchema = z.object({
       return data.length > 0
     },
     {
-      message: 'At least one option must be chosen',
       path: [''],
     },
   ),

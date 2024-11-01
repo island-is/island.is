@@ -156,15 +156,21 @@ export const CausesAndEffects: FC<
                 causeAndConsequences.shared.mostSeriousWarning,
               )}
             />
-            {errors && getErrorViaPath(errors, answerId.split('.')?.[1] || '') && (
-              <Box paddingTop={2}>
-                <ErrorMessage
-                  children={formatMessage(
-                    causeAndConsequences.shared.mostSeriousAlert,
-                  )}
-                />
-              </Box>
-            )}
+            {errors &&
+              getErrorViaPath(
+                errors,
+                `${answerId.split('.')?.[0]}.${
+                  mostSeriousAnswerId.split('.')?.[1]
+                }` || '',
+              ) && (
+                <Box paddingTop={2}>
+                  <ErrorMessage
+                    children={formatMessage(
+                      causeAndConsequences.shared.mostSeriousAlert,
+                    )}
+                  />
+                </Box>
+              )}
           </Box>
           <Box>
             {mostSerious.map((item, index) => {

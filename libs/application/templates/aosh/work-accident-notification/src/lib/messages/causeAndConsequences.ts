@@ -14,7 +14,7 @@ export const causeAndConsequences = {
     },
     mostSeriousAlert: {
       id: 'aosh.wan.application:causeAndConsequences.shared.mostSeriousAlert',
-      defaultMessage: 'Vinsamlegast veldur eitt af eftirfarandi.',
+      defaultMessage: 'Vinsamlegast veldu eitt af eftirfarandi.',
       description: 'Alert before "most serious" choice',
     },
     causeAndConsequencesNothingChosen: {
