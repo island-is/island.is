@@ -11,14 +11,12 @@ import {
 import {
   isCompletedCase,
   isDistrictCourtUser,
-  isIndictmentCase,
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { useCaseLazyQuery } from '@island.is/judicial-system-web/src/components/FormProvider/case.generated'
 import {
   Case,
   CaseState,
@@ -74,10 +72,6 @@ const RouteHandler: React.FC = () => {
   const { user } = useContext(UserContext)
   const { getCase } = useContext(FormContext)
   const [caseToOpen, setCaseToOpen] = useState<Case>()
-  const [queryCase] = useCaseLazyQuery({
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
 
   const handleGetCase = useCallback(
     (caseId?: string) => {
