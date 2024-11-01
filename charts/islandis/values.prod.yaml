@@ -406,7 +406,7 @@ api:
     - 'api-catalogue'
     - 'application-system'
     - 'consultation-portal'
-    - 'services-bff-portals-admin'
+    - 'portals-admin'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
