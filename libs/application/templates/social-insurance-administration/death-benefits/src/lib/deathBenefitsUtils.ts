@@ -110,7 +110,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'deceasedSpouseInfo.nationalId',
   ) as string
-  
+
   const deceasedSpouseDateOfDeath = getValueViaPath(
     answers,
     'deceasedSpouseInfo.date',

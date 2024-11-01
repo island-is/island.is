@@ -97,14 +97,14 @@ export const BaseInformation = ({
         </GridColumn>
 
         {applicantPhonenumber && (
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          <DataValue
-            label={formatMessage(
-              socialInsuranceAdministrationMessage.info.applicantPhonenumber,
-            )}
-            value={formatNumber(applicantPhonenumber, 'International')}
-          />
-        </GridColumn>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <DataValue
+              label={formatMessage(
+                socialInsuranceAdministrationMessage.info.applicantPhonenumber,
+              )}
+              value={formatNumber(applicantPhonenumber, 'International')}
+            />
+          </GridColumn>
         )}
       </GridRow>
     </ReviewGroup>
