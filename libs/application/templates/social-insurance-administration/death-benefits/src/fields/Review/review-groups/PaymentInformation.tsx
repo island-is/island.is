@@ -162,7 +162,7 @@ export const PaymentInformation = ({
           />
         </GridColumn>
 
-        {personalAllowance === YES && (
+        {spouseAllowance === YES && (
           <GridColumn
             span={['12/12', '12/12', '12/12', '5/12']}
             paddingBottom={3}
