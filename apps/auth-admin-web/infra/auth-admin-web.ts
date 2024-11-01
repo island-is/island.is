@@ -74,5 +74,5 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
       staging: { progressDeadlineSeconds: 1200 },
       prod: { progressDeadlineSeconds: 1200 },
     })
-    .grantNamespaces('portals-admin', 'nginx-ingress-external')
+    .grantNamespaces('nginx-ingress-external')
 }
