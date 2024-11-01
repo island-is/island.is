@@ -8,6 +8,7 @@ import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatt
 import {
   isCompletedCase,
   isDefenceUser,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -68,7 +69,8 @@ const IndictmentOverview: FC = () => {
     ) &&
     workingCase.indictmentDecision !==
       IndictmentDecision.POSTPONING_UNTIL_VERDICT
-  const shouldDisplayGeneratedPDFs =
+  const shouldDisplayGeneratedPdfFiles =
+    isProsecutionUser(user) ||
     workingCase.defendants?.some(
       (defendant) =>
         defendant.isDefenderChoiceConfirmed &&
@@ -171,7 +173,7 @@ const IndictmentOverview: FC = () => {
                     <ConnectedCaseFilesAccordionItem
                       connectedCaseParentId={workingCase.id}
                       connectedCase={mergedCase}
-                      displayGeneratedPDFs={shouldDisplayGeneratedPDFs}
+                      displayGeneratedPDFs={shouldDisplayGeneratedPdfFiles}
                     />
                   </Box>
                 ))}
@@ -179,17 +181,15 @@ const IndictmentOverview: FC = () => {
             )}
           </Box>
         )}
-        {workingCase.caseFiles && ( // TODO: Find a more accurate condition, there may be generated PDFs to display even if there are no uploaded files to display
-          <Box
-            component="section"
-            marginBottom={shouldDisplayReviewDecision || canAddFiles ? 5 : 10}
-          >
-            <IndictmentCaseFilesList
-              workingCase={workingCase}
-              displayGeneratedPDFs={shouldDisplayGeneratedPDFs}
-            />
-          </Box>
-        )}
+        <Box
+          component="section"
+          marginBottom={shouldDisplayReviewDecision || canAddFiles ? 5 : 10}
+        >
+          <IndictmentCaseFilesList
+            workingCase={workingCase}
+            displayGeneratedPDFs={shouldDisplayGeneratedPdfFiles}
+          />
+        </Box>
         {canAddFiles && (
           <Box display="flex" justifyContent="flexEnd" marginBottom={10}>
             <Button
