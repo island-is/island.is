@@ -72,7 +72,7 @@ describe('Death Benefits Template', () => {
     it('should transition from tryggingastofnunSubmitted to tryggingastofnunInReview on inreview', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
-          state: 'tryggingastofnunSubmitted',
+          state: States.TRYGGINGASTOFNUN_SUBMITTED,
         }),
         DeathBenefitsTemplate,
       )
@@ -81,7 +81,7 @@ describe('Death Benefits Template', () => {
         type: OAPEvents.INREVIEW,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe('tryggingastofnunInReview')
+      expect(newState).toBe(States.TRYGGINGASTOFNUN_IN_REVIEW)
     })
   })
 
