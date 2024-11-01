@@ -40,6 +40,16 @@ export const preview = {
       defaultMessage: 'Ekki tókst að sækja skjal, reyndu aftur',
       description: 'Error message when pdf download fails',
     },
+    invalidPdf: {
+      id: 'ojoi.application:preview.errors.invalidPdf',
+      defaultMessage: 'Ógilt skjal',
+      description: 'Error message when pdf is invalid',
+    },
+    invalidPdfMessage: {
+      id: 'ojoi.application:preview.errors.invalidPdfMessage',
+      defaultMessage: 'Skjalið er ógilt eða á vitlausu formi, reyndu aftur',
+      description: 'Error message when pdf is invalid',
+    },
   }),
   buttons: defineMessages({
     fetchPdf: {

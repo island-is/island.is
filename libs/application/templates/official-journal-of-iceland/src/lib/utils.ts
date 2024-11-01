@@ -343,12 +343,11 @@ export const getFastTrack = (date?: Date) => {
   }
 }
 
-export const base64ToBlob = (base64: string) => {
-  const byteCharacters = Buffer.from(base64, 'base64')
-  const byteNumbers = new Array(byteCharacters.length)
-  for (let i = 0; i < byteCharacters.length; i++) {
-    byteNumbers[i] = byteCharacters[i]
+export const base64ToBlob = (base64: string, mimeType = 'application/pdf') => {
+  if (!base64) {
+    return null
   }
-  const byteArray = new Uint8Array(byteNumbers)
-  return new Blob([byteArray], { type: 'application/pdf' })
+
+  const byteCharacters = Buffer.from(base64, 'base64')
+  return new Blob([byteCharacters], { type: mimeType })
 }

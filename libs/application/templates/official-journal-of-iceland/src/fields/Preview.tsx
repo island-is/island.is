@@ -28,11 +28,14 @@ import {
 } from '../lib/dataSchema'
 import { ZodCustomIssue } from 'zod'
 import { usePdf } from '../hooks/usePdf'
+import { useState } from 'react'
 
 export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
   const { application: currentApplication } = useApplication({
     applicationId: application.id,
   })
+
+  const [hasInvalidPdf, setHasInvalidPdf] = useState(false)
 
   const { formatMessage: f } = useLocale()
 
@@ -48,6 +51,12 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
     applicationId: application.id,
     onComplete: (data) => {
       const blob = base64ToBlob(data.OJOIAGetPdf.pdf)
+
+      if (!blob) {
+        setHasInvalidPdf(true)
+        return
+      }
+
       const url = URL.createObjectURL(blob)
 
       let downloadName
@@ -67,11 +76,15 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
 
       downloadName += '.pdf'
 
-      const anchor = document.createElement('a')
-      anchor.href = url
-      anchor.download = downloadName
-      anchor.click()
-      anchor.remove()
+      try {
+        const anchor = document.createElement('a')
+        anchor.href = url
+        anchor.download = downloadName
+        anchor.click()
+        anchor.remove()
+      } finally {
+        URL.revokeObjectURL(url)
+      }
     },
   })
 
@@ -104,6 +117,13 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
     ? (`${advertMarkup}<br />${signatureMarkup}` as HTMLText)
     : (`${signatureMarkup}` as HTMLText)
 
+  const hasError = !(
+    advertValidationCheck.success &&
+    signatureValidationCheck.success &&
+    !pdfError &&
+    !hasInvalidPdf
+  )
+
   return (
     <Stack space={4}>
       <Box>
@@ -117,19 +137,20 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
           {f(preview.buttons.fetchPdf)}
         </Button>
       </Box>
-      <Box
-        hidden={
-          advertValidationCheck.success &&
-          signatureValidationCheck.success &&
-          !error
-        }
-      >
+      <Box hidden={!hasError}>
         <Stack space={2}>
           {pdfError && (
             <AlertMessage
               type="error"
               title={f(preview.errors.pdfError)}
               message={f(preview.errors.pdfErrorMessage)}
+            />
+          )}
+          {hasInvalidPdf && (
+            <AlertMessage
+              type="error"
+              title={f(preview.errors.invalidPdf)}
+              message={f(preview.errors.invalidPdfMessage)}
             />
           )}
           {!advertValidationCheck.success && (

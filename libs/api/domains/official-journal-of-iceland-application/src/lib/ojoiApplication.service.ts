@@ -242,15 +242,25 @@ export class OfficialJournalOfIcelandApplicationService {
   }
 
   async getPdf(input: OJOIAIdInput, user: User): Promise<GetPdfResponse> {
-    const data = await this.ojoiApplicationService.getPdf(
-      {
-        id: input.id,
-      },
-      user,
-    )
+    try {
+      const data = await this.ojoiApplicationService.getPdf(
+        {
+          id: input.id,
+        },
+        user,
+      )
 
-    return {
-      pdf: data.content,
+      return {
+        pdf: data.content,
+      }
+    } catch (error) {
+      this.logger.error('Failed to get pdf', {
+        category: LOG_CATEGORY,
+        applicationId: input.id,
+        error: error,
+      })
+
+      throw error
     }
   }
 }
