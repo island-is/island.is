@@ -47,11 +47,12 @@ export const RentalPeriodAmount = buildSubSection({
 
         // Monthly rental amount and indexation
         buildTextField({
-          id: 'rentalAmountInput',
+          id: 'rentalAmount.amount',
           title: m.rentalAmount.inputLabel,
           placeholder: m.rentalAmount.inputPlaceholder,
           variant: 'currency',
           maxLength: 15,
+          required: true,
         }),
         buildSelectField({
           id: 'rentalAmountIndexTypes',
