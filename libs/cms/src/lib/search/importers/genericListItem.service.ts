@@ -2,6 +2,7 @@ import { MappedData } from '@island.is/content-search-indexer/types'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { ILink, IGenericListItem } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapGenericListItem } from '../../models/genericListItem.model'
@@ -33,11 +34,22 @@ export class GenericListItemSyncService
         try {
           const mapped = mapGenericListItem(entry)
 
-          const content = extractStringsFromObject(
-            mapped.cardIntro.map(pruneNonSearchableSliceUnionFields),
-            100,
-            2,
-          )
+          const contentSections: string[] = []
+
+          if (entry.fields.cardIntro) {
+            contentSections.push(
+              documentToPlainTextString(entry.fields.cardIntro),
+            )
+          }
+          if (mapped.content) {
+            extractStringsFromObject(
+              mapped.content.map(pruneNonSearchableSliceUnionFields),
+              100,
+              2,
+            )
+          }
+
+          const content = contentSections.join(' ')
 
           const tags: MappedData['tags'] =
             mapped.filterTags?.map((tag) => ({
