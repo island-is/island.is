@@ -1,5 +1,10 @@
 import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
-import { keyframes, style, styleVariants } from '@vanilla-extract/css'
+import {
+  globalStyle,
+  keyframes,
+  style,
+  styleVariants,
+} from '@vanilla-extract/css'
 import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -161,13 +166,18 @@ export const closeButton = style({
   transition: 'background-color 250ms, border-color 250ms',
 
   ':hover': {
-    backgroundColor: theme.color.dark100,
+    backgroundColor: theme.color.blue100,
+    color: theme.color.blue400,
   },
 
   ':focus': {
     outline: 'none',
     borderColor: theme.color.mint200,
   },
+})
+
+globalStyle(`${closeButton}:hover > svg`, {
+  color: theme.color.blue400,
 })
 
 export const itemLink = style({

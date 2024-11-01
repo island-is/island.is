@@ -51,7 +51,7 @@ const NotificationMenu = ({
       onClick={onClose}
       aria-label={formatMessage(sharedMessages.close)}
     >
-      <Icon icon="close" color="blue400" />
+      <Icon icon="close" color="blue600" />
     </button>
   )
 
@@ -93,7 +93,7 @@ const NotificationMenu = ({
               justifyContent="center"
               alignItems="center"
               className={mStyles.overviewIcon}
-              marginRight={1}
+              marginRight={'p2'}
             >
               <Icon
                 icon="notifications"
