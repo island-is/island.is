@@ -5,7 +5,6 @@ import {
   ExtraValues,
   Features,
   HealthProbe,
-  Ingress,
   InitContainers,
   MountedFile,
   PersistentVolumeClaim,
@@ -18,7 +17,9 @@ import {
   XroadConfig,
   PodDisruptionBudget,
   IngressMapping,
+  BffInfo,
 } from './types/input-types'
+import { bffConfig } from './bff'
 import { logger } from '../logging'
 import { COMMON_SECRETS } from './consts'
 
@@ -184,6 +185,15 @@ export class ServiceBuilder<ServiceType extends string> {
     return this
   }
 
+  bff(config: BffInfo) {
+    this.serviceDef.env = { ...bffConfig(config).env, ...this.serviceDef.env }
+    this.serviceDef.secrets = {
+      ...bffConfig(config).secrets,
+      ...this.serviceDef.secrets,
+    }
+    return this
+  }
+
   /**
    * X-Road configuration blocks to inject to the container. Types of XroadConfig can contain environment variables and/or secrets that define how to contact an external service through X-Road.
    * @param ...configs - X-road configs
@@ -337,7 +347,7 @@ export class ServiceBuilder<ServiceType extends string> {
   /**
    * Initializes a container with optional parameters and checks for unique container names.
    * If the 'withDB' flag is set or if the 'postgres' property is present in the input object,
-   * it grants database access to the container.
+   * it grants database access toethe container.
    * Maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
    *
    * @param ic - The initial container configuration.
