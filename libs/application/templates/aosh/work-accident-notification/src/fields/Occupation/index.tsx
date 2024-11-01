@@ -70,32 +70,16 @@ export const Occupation: FC<
     [],
   ) as VictimsOccupationDto[]
   const victimsOccupationMajorGroups = (
-    getValueViaPath(
-      application.externalData,
-      'aoshData.data.victimsOccupation',
-      [],
-    ) as VictimsOccupationDto[]
+    allGroups as VictimsOccupationDto[]
   ).filter((group) => group.code?.length === 1)
   const victimsOccupationSubMajorGroups = (
-    getValueViaPath(
-      application.externalData,
-      'aoshData.data.victimsOccupation',
-      [],
-    ) as VictimsOccupationDto[]
+    allGroups as VictimsOccupationDto[]
   ).filter((group) => group.code?.length === 2)
   const victimOccupationMinorGroups = (
-    getValueViaPath(
-      application.externalData,
-      'aoshData.data.victimsOccupation',
-      [],
-    ) as VictimsOccupationDto[]
+    allGroups as VictimsOccupationDto[]
   ).filter((group) => group.code?.length === 3)
   const victimsOccupationUnitGroups = (
-    getValueViaPath(
-      application.externalData,
-      'aoshData.data.victimsOccupation',
-      [],
-    ) as VictimsOccupationDto[]
+    allGroups as VictimsOccupationDto[]
   ).filter((group) => group.code?.length === 4)
 
   const getValidOptions = (groups: VictimsOccupationDto[]) => {
