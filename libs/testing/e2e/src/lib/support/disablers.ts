@@ -3,7 +3,7 @@ import mergeWith from 'lodash/merge'
 import camelCase from 'lodash/camelCase'
 import { debug } from './utils'
 
-function mergeOverwrite(_: unknown, source: unknown) {
+const mergeOverwrite = (_: unknown, source: unknown) => {
   source
 }
 
@@ -21,12 +21,12 @@ type Dict<T = unknown> = Record<string, T>
 /**
  * Return a copy of the `eroginal` object with any sub-objects mocked as `mockData`
  */
-function deepMock<T = Dict>(
+const deepMock = <T = Dict>(
   original: T | T[],
   mockKey: Matchable,
   mockData: unknown = {},
   { exactMatch = false, deepPath = 'data' } = {},
-): T | T[] | Dict | Dict[] {
+): T | T[] | Dict | Dict[] => {
   if (Array.isArray(original)) {
     debug('Deep mocking array:', original)
     // Should do the typing properly here :/
@@ -71,7 +71,7 @@ function deepMock<T = Dict>(
  * Optionally, define a different data key in the response or turn off the default camelCasing
  * of the operation.
  */
-export async function mockQGL<T>(
+export const mockQGL = async <T>(
   page: Page,
   op: string,
   mockData: T,
@@ -82,7 +82,7 @@ export async function mockQGL<T>(
     deepMockKey = undefined,
     pattern = `**/graphql?op=${op}`,
   }: MockGQLOptions = {},
-) {
+) => {
   debug(`Setting up mock for ${pattern} `, {
     op,
     responseKey,
@@ -147,18 +147,18 @@ export async function mockQGL<T>(
   })
 }
 
-export async function disableObjectKey<T>(
+export const disableObjectKey = async <T>(
   page: Page,
   key: Matchable,
   mockData?: T,
-) {
+) => {
   return await mockQGL(page, '**', mockData ?? `MOCKED-${key}`, {
     deepMockKey: key,
     patchResponse: true,
   })
 }
 
-export async function disablePreviousApplications(page: Page) {
+export const disablePreviousApplications = async (page: Page) => {
   await mockQGL(page, 'ApplicationApplications', [])
   //syslumennOnEntry.data.estates
   /*
@@ -176,12 +176,12 @@ export async function disablePreviousApplications(page: Page) {
   */
 }
 
-export async function disableI18n(page: Page) {
+export const disableI18n = async (page: Page) => {
   return await mockQGL(page, 'GetTranslations', {
     'mock.translation': 'YES-mocked',
   })
 }
 
-export async function disableDelegations(page: Page) {
+export const disableDelegations = async (page: Page) => {
   return await mockQGL(page, 'ActorDelegations', [])
 }

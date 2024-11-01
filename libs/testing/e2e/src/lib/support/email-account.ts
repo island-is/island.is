@@ -19,14 +19,14 @@ import { debug } from './utils'
  * Register the email address with AWS SES, so we can send emails to it
  * @param emailAccount
  */
-async function registerEmailAddressWithSES(emailAccount: {
+const registerEmailAddressWithSES = async (emailAccount: {
   getLastEmail(retries: number): Promise<{
     subject: string | undefined
     text: string | undefined
     html: string | false
   } | null>
   email: string
-}) {
+}) => {
   const client = new SESClient({ region: 'eu-west-1' })
   await client.send(
     new VerifyEmailAddressCommand({ EmailAddress: emailAccount.email }),

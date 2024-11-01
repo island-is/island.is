@@ -1,0 +1,854 @@
+{
+  "uuid": "62a98de2-b95e-4989-a409-5bcf795b22c6",
+  "lastMigration": 32,
+  "name": "Application portal mocks",
+  "endpointPrefix": "",
+  "latency": 0,
+  "port": 9388,
+  "hostname": "",
+  "folders": [
+    {
+      "uuid": "496d9ffa-efde-468e-b033-18658b4c9730",
+      "name": "National Registry",
+      "children": [
+        {
+          "type": "route",
+          "uuid": "0d9ba168-7513-4445-8843-620a8c70b996"
+        },
+        {
+          "type": "route",
+          "uuid": "644fb8cc-8eb3-40aa-abf0-5e7c510c61fb"
+        },
+        {
+          "type": "route",
+          "uuid": "4bd5e2a2-b4fb-4a1c-9ac9-2310fc6a4e11"
+        },
+        {
+          "type": "route",
+          "uuid": "bca460fe-b19e-4fa2-be57-c18233657984"
+        },
+        {
+          "type": "route",
+          "uuid": "7e883b6f-3bc5-48ee-871d-bfcca11ad7fd"
+        },
+        {
+          "type": "route",
+          "uuid": "505a41e7-1a09-4164-9974-9eea44a76968"
+        },
+        {
+          "type": "route",
+          "uuid": "28c55a79-5138-400a-b502-d108df747a66"
+        },
+        {
+          "type": "route",
+          "uuid": "559744ee-08a0-426c-bc50-5c3581c52a2e"
+        },
+        {
+          "type": "route",
+          "uuid": "23f2dd3f-8c46-47b8-beaf-5152a2cea262"
+        },
+        {
+          "type": "route",
+          "uuid": "977226ba-5fb6-4430-b1a5-cbc0fdee013a"
+        }
+      ]
+    },
+    {
+      "uuid": "9c3e8c07-1060-407e-a6fe-0919083bf709",
+      "name": "Parental Leave",
+      "children": [
+        {
+          "type": "route",
+          "uuid": "795624bf-7a65-43e4-a699-a84531ef3d28"
+        },
+        {
+          "type": "route",
+          "uuid": "4c320fbe-1d1e-46b6-93ac-8b7b1c071a13"
+        },
+        {
+          "type": "route",
+          "uuid": "ee89acbf-449a-4dcd-8173-a2da10f3cef2"
+        },
+        {
+          "type": "route",
+          "uuid": "631e51d8-d386-4f2d-b265-803b2eafe906"
+        },
+        {
+          "type": "route",
+          "uuid": "8e9e4e58-415e-4711-a1cf-bc53ee1534be"
+        },
+        {
+          "type": "route",
+          "uuid": "123e9d14-e7a4-4295-918a-c19b31072f46"
+        },
+        {
+          "type": "route",
+          "uuid": "b0d2e633-6c9c-469f-933e-c55cd45fd2d8"
+        },
+        {
+          "type": "route",
+          "uuid": "86713eae-e230-4380-90c1-6aaca81ec68b"
+        }
+      ]
+    },
+    {
+      "uuid": "39a33f8d-96a0-4502-8ae2-07622259c8c1",
+      "name": "Social Insurance Administration",
+      "children": [
+        {
+          "type": "route",
+          "uuid": "a7b1cda1-6e5c-4cc6-bfc6-d078f7b2feef"
+        },
+        {
+          "type": "route",
+          "uuid": "35ab4fa3-d1cb-43f4-92be-132ae6a8629a"
+        },
+        {
+          "type": "route",
+          "uuid": "21570fae-b858-4092-97ba-95a3b35c2f1c"
+        },
+        {
+          "type": "route",
+          "uuid": "8c7718d6-8ff9-4f50-9bd7-133a27709978"
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "uuid": "977226ba-5fb6-4430-b1a5-cbc0fdee013a",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101303019",
+      "responses": [
+        {
+          "uuid": "94778b46-1238-4614-9c6d-9feb6ba93fde",
+          "body": "{\n  \"kennitala\": \"0101303019\",\n  \"nafn\": \"Gervimaður Afríka\",\n  \"eiginnafn\": \"Gervimaður\",\n  \"millinafn\": null,\n  \"kenninafn\": \"Afríka\",\n  \"fulltNafn\": \"Gervimaður Afríka\",\n  \"kynkodi\": \"1\",\n  \"bannmerking\": false,\n  \"faedingardagur\": \"1930-01-01T00:00:00\",\n  \"logheimili\": {\n    \"heiti\": \"Engihjalli 3\",\n    \"postnumer\": \"200\",\n    \"stadur\": \"Kópavogur\",\n    \"sveitarfelagsnumer\": \"1000\"\n  },\n  \"adsetur\": {\n    \"heiti\": \"Fellsmúli 2\",\n    \"postnumer\": \"108\",\n    \"stadur\": \"Reykjavík\",\n    \"sveitarfelagsnumer\": \"0000\"\n  }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "23f2dd3f-8c46-47b8-beaf-5152a2cea262",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101303019/hjuskapur",
+      "responses": [
+        {
+          "uuid": "f53a27ff-c490-40ee-bcbd-c549f7847564",
+          "body": "{\n  \"kennitalaMaka\": \"0101307789\",\n  \"nafnMaka\": \"Gervimaður útlönd\",\n  \"hjuskaparkodi\": \"1\",\n  \"breytt\": \"2021-05-26T22:23:40.513\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "559744ee-08a0-426c-bc50-5c3581c52a2e",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101303019/rikisfang",
+      "responses": [
+        {
+          "uuid": "a6fdeb9d-32dd-4573-bd26-eedcbedf4921",
+          "body": "{\n  \"kodi\": \"IS\",\n  \"land\": \"Ísland\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "28c55a79-5138-400a-b502-d108df747a66",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101303019/buseta",
+      "responses": [
+        {
+          "uuid": "1cdcbea3-91e8-40fc-ab53-f960c5a5b0b6",
+          "body": "[\n  {\n    \"huskodi\": \"000031440040\",\n    \"fasteignanumer\": \"\",\n    \"heimilisfang\": \"Gullengi 4\",\n    \"postnumer\": \"112\",\n    \"stadur\": \"Reykjavík\",\n    \"sveitarfelagsnumer\": \"0000\",\n    \"landakodi\": \"IS\",\n    \"breytt\": \"2022-07-04T00:00:00\"\n  },\n  {\n    \"huskodi\": \"99XT00000000\",\n    \"fasteignanumer\": \"\",\n    \"heimilisfang\": \"Afríka ótilgreint\",\n    \"postnumer\": null,\n    \"stadur\": \"Afríka ótilgreint\",\n    \"sveitarfelagsnumer\": null,\n    \"landakodi\": \"XT\",\n    \"breytt\": \"1992-11-16T00:00:00\"\n  }\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "7e883b6f-3bc5-48ee-871d-bfcca11ad7fd",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101303019/samibuar",
+      "responses": [
+        {
+          "uuid": "2d688217-3a2e-4e7e-a5a3-f2754e4ad4ed",
+          "body": "[\n  \"0101303019\"\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "505a41e7-1a09-4164-9974-9eea44a76968",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101307789",
+      "responses": [
+        {
+          "uuid": "c88cdf1e-e4eb-4e42-84d7-c865f1dd6abf",
+          "body": "{\n  \"kennitala\": \"0101307789\",\n  \"nafn\": \"Gervimaður útlönd\",\n  \"eiginnafn\": \"Gervimaður\",\n  \"millinafn\": null,\n  \"kenninafn\": \"útlönd\",\n  \"fulltNafn\": \"Gervimaður útlönd\",\n  \"kynkodi\": \"1\",\n  \"bannmerking\": false,\n  \"faedingardagur\": \"1930-01-01T00:00:00\",\n  \"logheimili\": {\n    \"heiti\": \"Engihjalli 3\",\n    \"postnumer\": \"200\",\n    \"stadur\": \"Kópavogur\",\n    \"sveitarfelagsnumer\": \"1000\"\n  },\n  \"adsetur\": {\n    \"heiti\": \"Fellsmúli 2\",\n    \"postnumer\": \"108\",\n    \"stadur\": \"Reykjavík\",\n    \"sveitarfelagsnumer\": \"0000\"\n  }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "bca460fe-b19e-4fa2-be57-c18233657984",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101307789/hjuskapur",
+      "responses": [
+        {
+          "uuid": "036710cd-12dc-476e-8c20-468b681b5410",
+          "body": "{\n  \"kennitalaMaka\": \"0101303019\",\n  \"nafnMaka\": \"Gervimaður Afríka\",\n  \"hjuskaparkodi\": \"1\",\n  \"breytt\": \"2021-05-26T22:23:40.513\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "4bd5e2a2-b4fb-4a1c-9ac9-2310fc6a4e11",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101307789/rikisfang",
+      "responses": [
+        {
+          "uuid": "8b616795-e637-46be-ba43-2a9320453b63",
+          "body": "{\n  \"kodi\": \"IS\",\n  \"land\": \"Ísland\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "644fb8cc-8eb3-40aa-abf0-5e7c510c61fb",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101307789/faedingarstadur",
+      "responses": [
+        {
+          "uuid": "551f1036-c559-43b0-874f-1387c42ec5e2",
+          "body": "{\n  \"sveitarfelagsnumer\": \"0000\",\n  \"stadur\": \"Reykjavík\",\n  \"faedingardagur\": \"1930-01-01T00:00:00\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "0d9ba168-7513-4445-8843-620a8c70b996",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/lyklar/hjuskaparkodar/1/1",
+      "responses": [
+        {
+          "uuid": "3f9473b1-7067-4d1f-821a-31f88a9c460b",
+          "body": "{\n  \"kodi\": \"1\",\n  \"lysing\": \"Ógiftur\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "795624bf-7a65-43e4-a699-a84531ef3d28",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/1111111119",
+      "responses": [
+        {
+          "uuid": "1885dd35-7d00-4273-823d-6d9ced650388",
+          "body": "{\n  \"kennitala\": \"1111111119\",\n  \"nafn\": \"Stubbur Maack\",\n  \"eiginnafn\": \"Stubbur\",\n  \"millinafn\": null,\n  \"kenninafn\": \"Maack\",\n  \"fulltNafn\": \"Stubbur Maack\",\n  \"kynkodi\": \"3\",\n  \"bannmerking\": false,\n  \"faedingardagur\": \"2011-11-11T00:00:00\",\n  \"logheimili\": {\n    \"heiti\": \"Engihjalli 3\",\n    \"postnumer\": \"200\",\n    \"stadur\": \"Kópavogur\",\n    \"sveitarfelagsnumer\": \"1000\"\n  },\n  \"adsetur\": {\n    \"heiti\": \"Fellsmúli 2\",\n    \"postnumer\": \"108\",\n    \"stadur\": \"Reykjavík\",\n    \"sveitarfelagsnumer\": \"0000\"\n  }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "4c320fbe-1d1e-46b6-93ac-8b7b1c071a13",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101303019/forsja",
+      "responses": [
+        {
+          "uuid": "1ec8abc3-9200-40d3-8367-56a45dcb1217",
+          "body": "[\n  \"1111111119\"\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "ee89acbf-449a-4dcd-8173-a2da10f3cef2",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101303019/forsja/1111111119",
+      "responses": [
+        {
+          "uuid": "696a6cfe-bb64-4607-b0a6-60a12d073576",
+          "body": "[\n  \"0101307789\"\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "631e51d8-d386-4f2d-b265-803b2eafe906",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101303019/fjolskyldumedlimir",
+      "responses": [
+        {
+          "uuid": "31583608-c82c-47f0-af87-cafc112cb238",
+          "body": "{\n  \"fjolskyldunumer\": \"0101303019\",\n  \"einstaklingar\": [\n    {\n      \"kennitala\": \"0101303019\",\n      \"nafn\": \"Gervimaður Afríka\",\n      \"eiginnafn\": \"Gervimaður\",\n      \"millinafn\": null,\n      \"kenninafn\": \"Afríka\",\n      \"fulltNafn\": \"Gervimaður Afríka\",\n      \"kynkodi\": \"1\",\n      \"bannmerking\": false,\n      \"faedingardagur\": \"1930-01-01T00:00:00\",\n      \"logheimili\": {\n        \"heiti\": \"Engihjalli 3\",\n        \"postnumer\": \"200\",\n        \"stadur\": \"Kópavogur\",\n        \"sveitarfelagsnumer\": \"1000\"\n      },\n      \"adsetur\": {\n        \"heiti\": \"Fellsmúli 2\",\n        \"postnumer\": \"108\",\n        \"stadur\": \"Reykjavík\",\n        \"sveitarfelagsnumer\": \"0000\"\n      }\n    },\n    {\n      \"kennitala\": \"0101307789\",\n      \"nafn\": \"Gervimaður útlönd\",\n      \"eiginnafn\": \"Gervimaður\",\n      \"millinafn\": null,\n      \"kenninafn\": \"útlönd\",\n      \"fulltNafn\": \"Gervimaður útlönd\",\n      \"kynkodi\": \"1\",\n      \"bannmerking\": false,\n      \"faedingardagur\": \"1930-01-01T00:00:00\",\n      \"logheimili\": {\n        \"heiti\": \"Engihjalli 3\",\n        \"postnumer\": \"200\",\n        \"stadur\": \"Kópavogur\",\n        \"sveitarfelagsnumer\": \"1000\"\n      },\n      \"adsetur\": {\n        \"heiti\": \"Fellsmúli 2\",\n        \"postnumer\": \"108\",\n        \"stadur\": \"Reykjavík\",\n        \"sveitarfelagsnumer\": \"0000\"\n      }\n    },\n    {\n      \"kennitala\": \"1111111119\",\n      \"nafn\": \"Stubbur Maack\",\n      \"eiginnafn\": \"Stubbur\",\n      \"millinafn\": null,\n      \"kenninafn\": \"Maack\",\n      \"fulltNafn\": \"Stubbur Maack\",\n      \"kynkodi\": \"3\",\n      \"bannmerking\": false,\n      \"faedingardagur\": \"2011-11-11T00:00:00\",\n      \"logheimili\": {\n        \"heiti\": \"Engihjalli 3\",\n        \"postnumer\": \"200\",\n        \"stadur\": \"Kópavogur\",\n        \"sveitarfelagsnumer\": \"1000\"\n      },\n      \"adsetur\": {\n        \"heiti\": \"Fellsmúli 2\",\n        \"postnumer\": \"108\",\n        \"stadur\": \"Reykjavík\",\n        \"sveitarfelagsnumer\": \"0000\"\n      }\n    }\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "8e9e4e58-415e-4711-a1cf-bc53ee1534be",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10003/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1/users/0101303019/parental-leaves/periods/length",
+      "responses": [
+        {
+          "uuid": "044c03bc-c30c-4503-85d2-3bb87e7c8d28",
+          "body": "{\n  \"parentalLeaves\": []\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "123e9d14-e7a4-4295-918a-c19b31072f46",
+      "type": "http",
+      "documentation": "",
+      "method": "post",
+      "endpoint": "r1/IS-DEV/GOV/10003/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1/users/0101303019/parental-leaves",
+      "responses": [
+        {
+          "uuid": "b49e7274-8c2d-45a6-975e-f8d76fdacee0",
+          "body": "{\n  \"status\": \"TestOK\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "239d9f5d-c04a-4493-82cd-b430f3938e58",
+          "body": "{\n  \"status\": \"OK\",\n  \"id\": \"23234\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "b0d2e633-6c9c-469f-933e-c55cd45fd2d8",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10003/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1/users/0101303019/parental-leaves",
+      "responses": [
+        {
+          "uuid": "7d7fd7a0-0eee-4413-9f69-d23e8676e3c9",
+          "body": "{\n  \"parentalLeaves\": []\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "944b9ef7-07e9-4c31-814c-e9e3a1c2d176",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": "SEQUENTIAL"
+    },
+    {
+      "uuid": "86713eae-e230-4380-90c1-6aaca81ec68b",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10003/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1/users/0101303019/pregnancy-status",
+      "responses": [
+        {
+          "uuid": "5cc6661d-96e2-447f-b779-8c836f9ce870",
+          "body": "{\n  \"hasActivePregnancy\": true,\n  \"expectedDateOfBirth\": \"{{dateTimeShift date='2024-10-01' format='yyyy-MM-dd\\'T\\'HH:mm:ss.SSSxxx' days=180}}\"\n\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "a7b1cda1-6e5c-4cc6-bfc6-d078f7b2feef",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1/Applicant/*/eligible",
+      "responses": [
+        {
+          "uuid": "72cb0e49-9d44-4dbd-9b7e-f88ee938a753",
+          "body": "{\n    \"isEligible\": true,\n    \"reason\": null,\n    \"reasonCode\": null\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "35ab4fa3-d1cb-43f4-92be-132ae6a8629a",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1/Application/*",
+      "responses": [
+        {
+          "uuid": "aafa1bc2-c85c-4000-b775-94f976e8261c",
+          "body": "{\n    \"applicationLineId\": 1234567\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "21570fae-b858-4092-97ba-95a3b35c2f1c",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1/General/currencies",
+      "responses": [
+        {
+          "uuid": "de81213c-a2eb-4d87-b586-cffb85081e83",
+          "body": "[\n    \"ZAR\",\n    \"AUD\",\n    \"CAD\",\n    \"CHF\",\n    \"DKK\",\n    \"EUR\",\n    \"GBP\",\n    \"NOK\",\n    \"PLN\",\n    \"SEK\",\n    \"USD\",\n    \"LVL\",\n    \"CZK\",\n    \"SKK\",\n    \"IKR\",\n    \"LTL\",\n    \"VND\",\n    \"BGN\",\n    \"RUB\",\n    \"CNY\",\n    \"ALL\",\n    \"LEI\",\n    \"UAH\",\n    \"HUF\"\n]",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
+      "uuid": "8c7718d6-8ff9-4f50-9bd7-133a27709978",
+      "type": "http",
+      "documentation": "",
+      "method": "get",
+      "endpoint": "r1/IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1/Applicant",
+      "responses": [
+        {
+          "uuid": "1f0de0be-803d-4356-b115-809edd5c0179",
+          "body": "{\n    \"emailAddress\": \"mail@mail.is\",\n    \"phoneNumber\": null,\n    \"bankAccount\": {\n        \"bank\": \"2222\",\n        \"ledger\": \"00\",\n        \"accountNumber\": \"123456\"\n    }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    }
+  ],
+  "rootChildren": [
+    {
+      "type": "folder",
+      "uuid": "496d9ffa-efde-468e-b033-18658b4c9730"
+    },
+    {
+      "type": "folder",
+      "uuid": "9c3e8c07-1060-407e-a6fe-0919083bf709"
+    },
+    {
+      "type": "folder",
+      "uuid": "39a33f8d-96a0-4502-8ae2-07622259c8c1"
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "cors": true,
+  "headers": [
+    {
+      "key": "Content-Type",
+      "value": "application/json"
+    },
+    {
+      "key": "Access-Control-Allow-Origin",
+      "value": "*"
+    },
+    {
+      "key": "Access-Control-Allow-Methods",
+      "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+    },
+    {
+      "key": "Access-Control-Allow-Headers",
+      "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+    }
+  ],
+  "proxyReqHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyResHeaders": [
+    {
+      "key": "",
+      "value": ""
+    }
+  ],
+  "data": [],
+  "callbacks": []
+}

@@ -64,6 +64,6 @@ export const setupHealthchecks = (
 
   app.use('/liveness', (_, res) => {
     res.statusCode = 200
-    res.end('')
+    res.json({ ok: true })
   })
 }

@@ -7,7 +7,7 @@ export type CognitoCreds = {
   password: string
 }
 
-function getCognitoCredentials(): CognitoCreds {
+const getCognitoCredentials = (): CognitoCreds => {
   const username = process.env.AWS_COGNITO_USERNAME
   const password = process.env.AWS_COGNITO_PASSWORD
   if (!username || !password) throw new Error('Cognito credentials missing')
@@ -45,12 +45,12 @@ export const cognitoLogin = async (
   await page.waitForURL(new RegExp(`${home}|${authUrl}`))
 }
 
-export async function idsLogin(
+export const idsLogin = async (
   page: Page,
   phoneNumber: string,
   home: string,
   delegation?: string,
-) {
+) => {
   await page.waitForURL(`${urls.authUrl}/**`, { timeout: 15000 })
   const input = page.locator('#phoneUserIdentifier')
   await input.type(phoneNumber, { delay: 100 })

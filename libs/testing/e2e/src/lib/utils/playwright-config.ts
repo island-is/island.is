@@ -22,7 +22,7 @@ export const createGlobalConfig = ({
     reporter: 'html',
 
     use: {
-      baseURL: 'http://localhost:4200',
+      baseURL: webServerUrl,
       trace: 'on-first-retry',
     },
     projects: [

@@ -4,7 +4,7 @@ import fs from 'fs'
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
-export function createMockPdf() {
+export const createMockPdf = () => {
   fs.writeFile('./mockPdf.pdf', 'test', (e) => {
     throw e
   })
@@ -17,7 +17,7 @@ export function createMockPdf() {
   */
 }
 
-export function deleteMockPdf() {
+export const deleteMockPdf = () => {
   fs.unlink('./mockPdf.pdf', (err) => {
     if (err) throw err
     debug('Successfully deleted mockPdf file.')
@@ -25,6 +25,6 @@ export function deleteMockPdf() {
 }
 
 // Set NODE_DEBUG=system-e2e in your environment when testing to show debug messages
-export function debug(msg: string, ...args: unknown[]) {
+export const debug = (msg: string, ...args: unknown[]) => {
   debuglog('system-e2e')(msg, ...args)
 }

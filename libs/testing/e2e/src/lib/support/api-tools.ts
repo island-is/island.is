@@ -1,7 +1,14 @@
 import { Page } from '@playwright/test'
 
-export async function graphqlSpy(page: Page, url: string, operation: string) {
-  const data: { request: any; response: any }[] = []
+export const graphqlSpy = async (
+  page: Page,
+  url: string,
+  operation: string,
+) => {
+  const data: {
+    request: Record<string, unknown>
+    response: Record<string, unknown>
+  }[] = []
   await page.route(url, async (route, req) => {
     const response = await page.request.fetch(req)
     if (
@@ -17,20 +24,34 @@ export async function graphqlSpy(page: Page, url: string, operation: string) {
   })
   return {
     extractor:
-      (fieldExtractor: (op: { request: any; response: any }) => string) =>
+      (
+        fieldExtractor: (op: {
+          request: Record<string, unknown>
+          response: Record<string, unknown>
+        }) => string,
+      ) =>
       () => {
         const op = data[0]
         return op ? fieldExtractor(op) : ''
       },
-    data: (fieldExtractor: (op: { request: any; response: any }) => string) => {
+    data: (
+      fieldExtractor: (op: {
+        request: Record<string, unknown>
+        response: unknown
+      }) => string,
+    ) => {
       const op = data[0]
       return op ? fieldExtractor(op) : ''
     },
   }
 }
 
-export async function mockApi(page: Page, url: string, response: any) {
-  await page.route(url, async (route, req) => {
+export const mockApi = async (
+  page: Page,
+  url: string,
+  response: Record<string, unknown>,
+) => {
+  await page.route(url, async (route, _req) => {
     await route.fulfill({
       status: 200,
       body: JSON.stringify(response),
@@ -39,11 +60,11 @@ export async function mockApi(page: Page, url: string, response: any) {
   })
 }
 
-export async function verifyRequestCompletion(
+export const verifyRequestCompletion = async (
   page: Page,
   url: string,
   op: string,
-) {
+) => {
   const response = await page.waitForResponse(
     (resp) =>
       resp.url().includes(url) &&

@@ -16,11 +16,11 @@ if (!existsSync(sessionsPath)) {
  * @param homeUrl
  * @param authUrlPrefix
  */
-async function ensureCognitoSessionIfNeeded(
+const ensureCognitoSessionIfNeeded = async (
   page: Page,
   homeUrl = '/',
   authUrlPrefix = '',
-) {
+) => {
   const cognitoSessionValidation = await page.request.get(homeUrl)
   if (
     cognitoSessionValidation
@@ -47,7 +47,7 @@ async function ensureCognitoSessionIfNeeded(
  * @param authUrlPrefix
  * @param delegation - National ID of delegation to choose, if any
  */
-async function ensureIDSsession(
+const ensureIDSsession = async (
   idsLoginOn: { nextAuth?: { nextAuthRoot: string } } | boolean,
   page: Page,
   context: BrowserContext,
@@ -56,7 +56,7 @@ async function ensureIDSsession(
   authUrlPrefix: string,
   delegation?: string,
   authTrigger: ((page: Page) => Promise<string>) | string = homeUrl,
-) {
+) => {
   if (typeof idsLoginOn === 'object' && idsLoginOn.nextAuth) {
     const idsSessionValidation = await page.request.get(
       `${idsLoginOn.nextAuth.nextAuthRoot}/api/auth/session`,
@@ -95,7 +95,7 @@ async function ensureIDSsession(
   }
 }
 
-export async function session({
+export const session = async ({
   browser,
   homeUrl = '/',
   phoneNumber = '',
@@ -119,7 +119,7 @@ export async function session({
   delegation?: string
   storageState?: string
   authTrigger?: string | ((page: Page) => Promise<string>)
-}) {
+}) => {
   // Browser context storage
   // default: sessions/phone x delegation/url
   const storageStatePath = join(
@@ -156,13 +156,13 @@ export async function session({
   return context
 }
 
-export async function judicialSystemSession({
+export const judicialSystemSession = async ({
   browser,
   homeUrl,
 }: {
   browser: Browser
   homeUrl?: string
-}) {
+}) => {
   const context = await browser.newContext()
   const page = await context.newPage()
   const authUrlPrefix = urls.authUrl

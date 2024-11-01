@@ -28,6 +28,7 @@ export const serviceSetup = (services: {
         prod: 'innskra.island.is',
       },
       NEXTAUTH_URL: {
+        local: 'http://localhost:4200/samradsgatt/api/auth',
         dev: 'https://beta.dev01.devland.is/samradsgatt/api/auth',
         staging: 'https://beta.staging01.devland.is/samradsgatt/api/auth',
         prod: 'https://island.is/samradsgatt/api/auth',
