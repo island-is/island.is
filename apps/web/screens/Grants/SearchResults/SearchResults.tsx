@@ -10,7 +10,10 @@ import {
   Box,
   BreadCrumbItem,
   Breadcrumbs,
+  Button,
+  Inline,
   TagVariant,
+  Text,
 } from '@island.is/island-ui/core'
 import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
@@ -203,6 +206,23 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     router.replace(currentUrl, {}, { shallow: true })
   }
 
+  const hitsMessage = useMemo(() => {
+    if (!grants) {
+      return
+    }
+    if (grants.length === 0) {
+      return formatMessage(m.search.noResultsFound)
+    }
+    if (grants.length === 1) {
+      return formatMessage(m.search.resultFound, {
+        arg: <strong>{grants.length}</strong>,
+      })
+    }
+    return formatMessage(m.search.resultsFound, {
+      arg: <strong>{grants.length}</strong>,
+    })
+  }, [formatMessage, grants])
+
   return (
     <GrantWrapper
       pageTitle={'Styrkjatorg'}
@@ -244,84 +264,89 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
             />
           }
         >
-          <Box display="flex" flexDirection="row" flexWrap="wrap">
-            {grants?.map((grant) => {
-              if (!grant) {
-                return null
-              }
+          <Box marginLeft={3}>
+            <Box marginBottom={3}>
+              <Text>{hitsMessage}</Text>
+            </Box>
+            <Inline space={3}>
+              {grants?.map((grant) => {
+                if (!grant) {
+                  return null
+                }
 
-              let tagVariant: TagVariant | undefined
-              switch (grant.status) {
-                case GrantStatus.Open:
-                  tagVariant = 'mint'
-                  break
-                case GrantStatus.Closed:
-                  tagVariant = 'rose'
-                  break
-                case GrantStatus.OpensSoon:
-                  tagVariant = 'purple'
-                  break
-                default:
-                  break
-              }
+                let tagVariant: TagVariant | undefined
+                switch (grant.status) {
+                  case GrantStatus.Open:
+                    tagVariant = 'mint'
+                    break
+                  case GrantStatus.Closed:
+                    tagVariant = 'rose'
+                    break
+                  case GrantStatus.OpensSoon:
+                    tagVariant = 'purple'
+                    break
+                  default:
+                    break
+                }
 
-              return (
-                <Box marginLeft={3} marginTop={3}>
-                  {grant.applicationId && (
-                    <PlazaCard
-                      eyebrow={grant.name}
-                      subEyebrow={grant.organization?.title}
-                      title={grant.name ?? ''}
-                      text={grant.description ?? ''}
-                      logo={grant.organization?.logo?.url ?? ''}
-                      logoAlt={grant.organization?.logo?.title ?? ''}
-                      tag={{
-                        label: grant.statusText ?? '',
-                        variant: tagVariant,
-                      }}
-                      cta={{
-                        label: 'Skoða nánar',
-                        variant: 'text',
-                        onClick: () => {
-                          router.push(
-                            linkResolver(
-                              'styrkjatorggrant',
-                              [grant?.applicationId ?? ''],
-                              locale,
-                            ).href,
-                          )
-                        },
-                        icon: 'arrowForward',
-                      }}
-                      detailLines={[
-                        grant.dateFrom && grant.dateTo
-                          ? {
-                              icon: 'calendar' as const,
-                              text: `${format(
-                                new Date(grant.dateFrom),
-                                'dd.MM.',
-                              )}-${format(
-                                new Date(grant.dateTo),
-                                'dd.MM.yyyy',
-                              )}`,
-                            }
-                          : null,
-                        {
-                          icon: 'time' as const,
-                          text: 'Frestur til 16.08.2024, kl. 15.00',
-                        },
-                        grant.categoryTag?.title
-                          ? {
-                              icon: 'informationCircle' as const,
-                              text: grant.categoryTag.title,
-                            }
-                          : undefined,
-                      ].filter(isDefined)}
-                    />
-                  )}
-                </Box>
-              )
-            })}
+                return (
+                  <Box>
+                    {grant.applicationId && (
+                      <PlazaCard
+                        eyebrow={grant.fund?.title ?? grant.name ?? ''}
+                        subEyebrow={grant.organization?.title}
+                        title={grant.name ?? ''}
+                        text={grant.description ?? ''}
+                        logo={grant.organization?.logo?.url ?? ''}
+                        logoAlt={grant.organization?.logo?.title ?? ''}
+                        tag={{
+                          label: grant.statusText ?? '',
+                          variant: tagVariant,
+                        }}
+                        cta={{
+                          label: 'Skoða nánar',
+                          variant: 'text',
+                          onClick: () => {
+                            router.push(
+                              linkResolver(
+                                'styrkjatorggrant',
+                                [grant?.applicationId ?? ''],
+                                locale,
+                              ).href,
+                            )
+                          },
+                          icon: 'arrowForward',
+                        }}
+                        detailLines={[
+                          grant.dateFrom && grant.dateTo
+                            ? {
+                                icon: 'calendar' as const,
+                                text: `${format(
+                                  new Date(grant.dateFrom),
+                                  'dd.MM.',
+                                )}-${format(
+                                  new Date(grant.dateTo),
+                                  'dd.MM.yyyy',
+                                )}`,
+                              }
+                            : null,
+                          {
+                            icon: 'time' as const,
+                            text: 'Frestur til 16.08.2024, kl. 15.00',
+                          },
+                          grant.categoryTag?.title
+                            ? {
+                                icon: 'informationCircle' as const,
+                                text: grant.categoryTag.title,
+                              }
+                            : undefined,
+                        ].filter(isDefined)}
+                      />
+                    )}
+                  </Box>
+                )
+              })}
+            </Inline>
           </Box>
         </SidebarLayout>
       </Box>

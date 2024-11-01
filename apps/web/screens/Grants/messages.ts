@@ -16,6 +16,10 @@ export const m = {
       id: 'web.grants:search.inputPlaceholder',
       defaultMessage: 'Sía eftir leitarorði',
     },
+    clearFilters: {
+      id: 'web.grants:search.clearFilters',
+      defaultMessage: 'Hreinsa allar síur',
+    },
     applicationStatus: {
       id: 'web.grants:search.applicationStatus',
       defaultMessage: 'Staða umsóknar',
@@ -27,6 +31,18 @@ export const m = {
     type: {
       id: 'web.grants:search.type',
       defaultMessage: 'Tegund',
+    },
+    resultFound: {
+      id: 'web.grants:search.resultFound',
+      defaultMessage: '{arg} styrkur fannst',
+    },
+    resultsFound: {
+      id: 'web.grants:search.resultsFound',
+      defaultMessage: '{arg} styrkir fundust',
+    },
+    noResultsFound: {
+      id: 'web.grants:search.noResultsFound',
+      defaultMessage: 'Engir styrkir fundust',
     },
     organization: {
       id: 'web.grants:search.organization',

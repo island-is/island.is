@@ -2,6 +2,7 @@ import { useIntl } from 'react-intl'
 
 import {
   Box,
+  Button,
   Filter,
   FilterMultiChoice,
   Input,
@@ -39,113 +40,116 @@ export const GrantsSearchResultsFilter = ({
   )
 
   return (
-    <Box component="form" borderRadius="large" action={url}>
-      <Box marginBottom={[1, 1, 2]}>
-        <Text variant="h4">{formatMessage(m.search.search)}</Text>
-
-        <Input
-          name="q"
-          placeholder={formatMessage(m.search.inputPlaceholder)}
-          size="xs"
-          value={searchState?.query}
-          onChange={(e) => onSearchUpdate('query', e.target.value)}
-        />
+    <Box>
+      <Box marginBottom={3}>
+        <Text fontWeight="semiBold">{formatMessage(m.search.search)}</Text>
       </Box>
-      <Box background="white" padding={[1, 1, 2]}>
-        <Filter
-          labelClearAll="Hreinsa síur"
-          labelOpen=""
-          labelClear=""
-          onFilterClear={onReset}
-        >
-          <FilterMultiChoice
-            labelClear={'Hreinsa flokk'}
-            onChange={({ categoryId, selected }) => {
-              onSearchUpdate(
-                categoryId as keyof SearchState,
-                selected.length ? selected : undefined,
-              )
-            }}
-            onClear={(categoryId) => {
-              onSearchUpdate(categoryId as keyof SearchState, undefined)
-            }}
-            categories={[
-              {
-                id: 'status',
-                label: 'Staða umsóknar',
-                selected: searchState?.['status'] ?? [],
-                filters: [
-                  {
-                    value: 'open',
-                    label: 'Opið fyrir umsóknir',
-                  },
-                  {
-                    value: 'open-soon',
-                    label: 'Opnar fljótlega',
-                  },
-                  {
-                    value: 'closed',
-                    label: 'Lokað fyrir umsóknir',
-                  },
-                  {
-                    value: 'inactive',
-                    label: 'Óvirkur sjóður',
-                  },
-                ],
-              },
-              categoryFilters
-                ? {
-                    id: 'category',
-                    label: 'Flokkur',
-                    selected: searchState?.['category'] ?? [],
-                    filters: categoryFilters.map((t) => ({
-                      value: t.slug,
-                      label: t.title,
-                    })),
-                  }
-                : undefined,
-              typeFilters
-                ? {
-                    id: 'type',
-                    label: 'Tegund',
-                    selected: searchState?.['type'] ?? [],
-                    filters: typeFilters.map((t) => ({
-                      value: t.slug,
-                      label: t.title,
-                    })),
-                  }
-                : undefined,
-              {
-                id: 'organization',
-                label: 'Stofnun',
-
-                selected: searchState?.['organization'] ?? [],
-                filters: [
-                  {
-                    value: 'rannis',
-                    label: 'Rannís',
-                  },
-                  {
-                    value: 'tonlistarmidstod',
-                    label: 'Tónlistarmiðstöð',
-                  },
-                  {
-                    value: 'kvikmyndastod',
-                    label: 'Kvikmyndastöð',
-                  },
-                  {
-                    value: 'felags-og-vinnumarkadsraduneytid',
-                    label: 'Félags- og vinnumarkaðsráðuneytið',
-                  },
-                  {
-                    value: 'menningar-og-vidskiptaraduneytid',
-                    label: 'Menningar- og viðskiptaráðuneytið',
-                  },
-                ],
-              },
-            ].filter(isDefined)}
+      <Box component="form" borderRadius="large" action={url}>
+        <Box marginBottom={[1, 1, 2]}>
+          <Input
+            name="q"
+            placeholder={formatMessage(m.search.inputPlaceholder)}
+            size="xs"
+            value={searchState?.query}
+            onChange={(e) => onSearchUpdate('query', e.target.value)}
           />
-        </Filter>
+        </Box>
+        <Box background="white" padding={[1, 1, 2]}>
+          <Filter
+            labelClearAll={formatMessage(m.search.clearFilters)}
+            labelOpen=""
+            labelClear=""
+            onFilterClear={onReset}
+          >
+            <FilterMultiChoice
+              labelClear={'Hreinsa flokk'}
+              onChange={({ categoryId, selected }) => {
+                onSearchUpdate(
+                  categoryId as keyof SearchState,
+                  selected.length ? selected : undefined,
+                )
+              }}
+              onClear={(categoryId) => {
+                onSearchUpdate(categoryId as keyof SearchState, undefined)
+              }}
+              categories={[
+                {
+                  id: 'status',
+                  label: 'Staða umsóknar',
+                  selected: searchState?.['status'] ?? [],
+                  filters: [
+                    {
+                      value: 'open',
+                      label: 'Opið fyrir umsóknir',
+                    },
+                    {
+                      value: 'open-soon',
+                      label: 'Opnar fljótlega',
+                    },
+                    {
+                      value: 'closed',
+                      label: 'Lokað fyrir umsóknir',
+                    },
+                    {
+                      value: 'inactive',
+                      label: 'Óvirkur sjóður',
+                    },
+                  ],
+                },
+                categoryFilters
+                  ? {
+                      id: 'category',
+                      label: 'Flokkur',
+                      selected: searchState?.['category'] ?? [],
+                      filters: categoryFilters.map((t) => ({
+                        value: t.slug,
+                        label: t.title,
+                      })),
+                    }
+                  : undefined,
+                typeFilters
+                  ? {
+                      id: 'type',
+                      label: 'Tegund',
+                      selected: searchState?.['type'] ?? [],
+                      filters: typeFilters.map((t) => ({
+                        value: t.slug,
+                        label: t.title,
+                      })),
+                    }
+                  : undefined,
+                {
+                  id: 'organization',
+                  label: 'Stofnun',
+
+                  selected: searchState?.['organization'] ?? [],
+                  filters: [
+                    {
+                      value: 'rannis',
+                      label: 'Rannís',
+                    },
+                    {
+                      value: 'tonlistarmidstod',
+                      label: 'Tónlistarmiðstöð',
+                    },
+                    {
+                      value: 'kvikmyndastod',
+                      label: 'Kvikmyndastöð',
+                    },
+                    {
+                      value: 'felags-og-vinnumarkadsraduneytid',
+                      label: 'Félags- og vinnumarkaðsráðuneytið',
+                    },
+                    {
+                      value: 'menningar-og-vidskiptaraduneytid',
+                      label: 'Menningar- og viðskiptaráðuneytið',
+                    },
+                  ],
+                },
+              ].filter(isDefined)}
+            />
+          </Filter>
+        </Box>
       </Box>
     </Box>
   )
