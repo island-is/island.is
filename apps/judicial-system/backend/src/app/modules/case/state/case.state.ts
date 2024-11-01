@@ -27,7 +27,7 @@ import { nowFactory } from '../../../factories'
 import { UpdateCase } from '../case.service'
 import { Case } from '../models/case.model'
 
-type Actor = 'Prosecution' | 'Defence' | 'Nutral'
+type Actor = 'Prosecution' | 'Defence' | 'Neutral'
 
 type Transition = (
   update: UpdateCase,
@@ -535,11 +535,14 @@ export const transitionCase = function (
   user: User,
   update: UpdateCase = {},
 ): CaseStates {
-  const actor = !isProsecutionUser(user)
-    ? !isDefenceUser(user)
-      ? 'Nutral'
-      : 'Defence'
-    : 'Prosecution'
+  let actor: Actor
+  if (isProsecutionUser(user)) {
+    actor = 'Prosecution'
+  } else if (isDefenceUser(user)) {
+    actor = 'Defence'
+  } else {
+    actor = 'Neutral'
+  }
 
   if (isIndictmentCase(theCase.type)) {
     return transitionIndictmentCase(transition, theCase, update, actor)
