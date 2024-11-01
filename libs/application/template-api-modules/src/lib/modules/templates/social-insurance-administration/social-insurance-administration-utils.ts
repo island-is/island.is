@@ -342,7 +342,7 @@ export const transformApplicationToDeathBenefitsDTO = (
     childrenNationalIds: getChildrenNationalIds(children),
     spouseTaxCardUsage: {
       usecard: spouseAllowance === YES,
-      ratio: Number(spouseAllowanceUsage),
+      ratio: YES === spouseAllowance ? +spouseAllowanceUsage : 0,
     },
     applicantInfo: {
       email: userProfileEmail,
