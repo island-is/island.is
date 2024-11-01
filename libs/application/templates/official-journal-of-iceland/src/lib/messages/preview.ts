@@ -30,6 +30,16 @@ export const preview = {
       defaultMessage: 'Að lágmarki þarf að fylla út',
       description: 'Error message when content is missing',
     },
+    pdfError: {
+      id: 'ojoi.application:preview.errors.pdfError',
+      defaultMessage: 'Villa kom upp við að sækja skjal',
+      description: 'Error message when pdf download fails',
+    },
+    pdfErrorMessage: {
+      id: 'ojoi.application:preview.errors.pdfErrorMessage',
+      defaultMessage: 'Ekki tókst að sækja skjal, reyndu aftur',
+      description: 'Error message when pdf download fails',
+    },
   }),
   buttons: defineMessages({
     fetchPdf: {

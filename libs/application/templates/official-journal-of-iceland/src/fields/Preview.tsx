@@ -4,7 +4,6 @@ import {
   Bullet,
   BulletList,
   Button,
-  SkeletonLoader,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -14,6 +13,7 @@ import { OJOIFieldBaseProps } from '../lib/types'
 import { useLocale } from '@island.is/localization'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import {
+  base64ToBlob,
   getAdvertMarkup,
   getSignaturesMarkup,
   parseZodIssue,
@@ -23,11 +23,11 @@ import { useApplication } from '../hooks/useUpdateApplication'
 import { advert, error, preview, signatures } from '../lib/messages'
 import { useType } from '../hooks/useType'
 import {
-  advertValidationSchema,
   previewValidationSchema,
   signatureValidationSchema,
 } from '../lib/dataSchema'
 import { ZodCustomIssue } from 'zod'
+import { usePdf } from '../hooks/usePdf'
 
 export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
   const { application: currentApplication } = useApplication({
@@ -36,15 +36,44 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
 
   const { formatMessage: f } = useLocale()
 
-  const { type, loading } = useType({
+  const { type } = useType({
     typeId: currentApplication.answers.advert?.typeId,
   })
 
-  if (loading) {
-    return (
-      <SkeletonLoader height={40} space={2} repeat={5} borderRadius="large" />
-    )
-  }
+  const {
+    fetchPdf,
+    error: pdfError,
+    loading: pdfLoading,
+  } = usePdf({
+    applicationId: application.id,
+    onComplete: (data) => {
+      const blob = base64ToBlob(data.OJOIAGetPdf.pdf)
+      const url = URL.createObjectURL(blob)
+
+      let downloadName
+      const type = currentApplication.answers.advert?.typeName
+      if (type) {
+        downloadName = type.replace('.', '')
+      }
+
+      const title = currentApplication.answers.advert?.title
+      if (title) {
+        downloadName += ` ${title}`
+      }
+
+      if (!downloadName) {
+        downloadName = `Innsending ${application.id}`
+      }
+
+      downloadName += '.pdf'
+
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = downloadName
+      anchor.click()
+      anchor.remove()
+    },
+  })
 
   const advertValidationCheck = previewValidationSchema.safeParse(
     currentApplication.answers,
@@ -77,12 +106,32 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
 
   return (
     <Stack space={4}>
+      <Box>
+        <Button
+          loading={pdfLoading}
+          icon="download"
+          iconType="outline"
+          variant="utility"
+          onClick={() => fetchPdf()}
+        >
+          {f(preview.buttons.fetchPdf)}
+        </Button>
+      </Box>
       <Box
         hidden={
-          advertValidationCheck.success && signatureValidationCheck.success
+          advertValidationCheck.success &&
+          signatureValidationCheck.success &&
+          !error
         }
       >
         <Stack space={2}>
+          {pdfError && (
+            <AlertMessage
+              type="error"
+              title={f(preview.errors.pdfError)}
+              message={f(preview.errors.pdfErrorMessage)}
+            />
+          )}
           {!advertValidationCheck.success && (
             <AlertMessage
               type="warning"
@@ -91,13 +140,9 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
                 <Stack space={2}>
                   <Text>{f(preview.errors.noContentMessage)}</Text>
                   <BulletList color="black">
-                    {advertValidationCheck.error.issues.map((issue) => {
+                    {advertValidationCheck.error.issues.map((issue, i) => {
                       const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
-                      return (
-                        <Bullet key={issue.path.join('.')}>
-                          {f(parsedIssue.message)}
-                        </Bullet>
-                      )
+                      return <Bullet key={i}>{f(parsedIssue.message)}</Bullet>
                     })}
                   </BulletList>
                   <Button
@@ -136,13 +181,9 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
                     })}
                   </Text>
                   <BulletList color="black">
-                    {signatureValidationCheck.error.issues.map((issue) => {
+                    {signatureValidationCheck.error.issues.map((issue, i) => {
                       const parsedIssue = parseZodIssue(issue as ZodCustomIssue)
-                      return (
-                        <Bullet key={issue.path.join('.')}>
-                          {f(parsedIssue.message)}
-                        </Bullet>
-                      )
+                      return <Bullet key={i}>{f(parsedIssue.message)}</Bullet>
                     })}
                   </BulletList>
                   <Button

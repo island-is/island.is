@@ -24,6 +24,8 @@ import {
   GetCommentsResponse,
 } from '../models/getComments.response'
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
+import { GetPdfResponse } from '../models/getPdf.response'
+import { OJOIAIdInput } from '../models/id.input'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -237,5 +239,18 @@ export class OfficialJournalOfIcelandApplicationService {
     }
 
     return mapped
+  }
+
+  async getPdf(input: OJOIAIdInput, user: User): Promise<GetPdfResponse> {
+    const data = await this.ojoiApplicationService.getPdf(
+      {
+        id: input.id,
+      },
+      user,
+    )
+
+    return {
+      pdf: data.content,
+    }
   }
 }
