@@ -533,7 +533,6 @@ export const buildFieldOptions = (
   if (typeof maybeOptions === 'function') {
     return maybeOptions(application, field)
   }
-
   return maybeOptions
 }
 
