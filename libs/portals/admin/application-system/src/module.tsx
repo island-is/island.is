@@ -19,7 +19,7 @@ const allowedScopes: string[] = [
   AdminPortalScope.applicationSystemInstitution,
 ]
 const getScreen = ({ userInfo }: PortalModuleRoutesProps): React.ReactNode => {
-  if (userInfo.scope?.includes(AdminPortalScope.applicationSystemInstitution)) {
+  if (userInfo.scopes.includes(AdminPortalScope.applicationSystemInstitution)) {
     return <InstitutionOverview />
   }
   return <Overview />
@@ -51,7 +51,7 @@ export const applicationSystemAdminModule: PortalModule = {
           name: m.statistics,
           path: ApplicationSystemPaths.Statistics,
           element: <Statistics />,
-          enabled: props.userInfo.scope?.includes(
+          enabled: props.userInfo.scopes.includes(
             AdminPortalScope.applicationSystemAdmin,
           ),
         },
