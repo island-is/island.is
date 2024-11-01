@@ -15,7 +15,6 @@ auth-admin-web:
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - 'portals-admin'
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
@@ -123,7 +122,8 @@ identity-server:
   files:
     - 'ids-signing.pfx'
   grantNamespaces:
-    - 'user-notification'
+    - 'nginx-ingress-external'
+    - 'portals-admin'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -535,7 +535,8 @@ services-auth-ids-api-cleanup:
     NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - 'user-notification'
+    - 'nginx-ingress-external'
+    - 'portals-admin'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -757,7 +758,6 @@ services-auth-public-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
-    - 'portals-admin'
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
