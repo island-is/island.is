@@ -1,20 +1,34 @@
 import { ApolloProvider } from '@apollo/client'
-import { AuthProvider } from '@island.is/auth/react'
 import { LocaleProvider } from '@island.is/localization'
-import { defaultLanguage } from '@island.is/shared/constants'
+import {
+  ApplicationErrorBoundary,
+  PortalRouter,
+  isMockMode,
+} from '@island.is/portals/core'
+import { BffProvider, createMockedInitialState } from '@island.is/react-spa/bff'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
-import { ApplicationErrorBoundary, PortalRouter } from '@island.is/portals/core'
-import { modules } from '../lib/modules'
-import { client } from '../graphql'
+import { defaultLanguage } from '@island.is/shared/constants'
 import environment from '../environments/environment'
+import { client } from '../graphql'
+import { modules } from '../lib/modules'
 import { AdminPortalPaths } from '../lib/paths'
 import { createRoutes } from '../lib/routes'
+import { adminPortalScopes } from '@island.is/auth/scopes'
+
+const mockedInitialState = isMockMode
+  ? createMockedInitialState({
+      scopes: adminPortalScopes,
+    })
+  : undefined
 
 export const App = () => (
   <ApolloProvider client={client}>
     <LocaleProvider locale={defaultLanguage} messages={{}}>
       <ApplicationErrorBoundary>
-        <AuthProvider basePath={AdminPortalPaths.Base}>
+        <BffProvider
+          applicationBasePath={AdminPortalPaths.Base}
+          mockedInitialState={mockedInitialState}
+        >
           <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
             <PortalRouter
               modules={modules}
@@ -26,7 +40,7 @@ export const App = () => (
               }}
             />
           </FeatureFlagProvider>
-        </AuthProvider>
+        </BffProvider>
       </ApplicationErrorBoundary>
     </LocaleProvider>
   </ApolloProvider>
