@@ -18,7 +18,7 @@ export const ExpectingChild = ({
       <ReviewGroup
         isLast
         isEditable={editable}
-        editAction={() => goToScreen?.('onePaymentPerYear')}
+        editAction={() => goToScreen?.('expectingChild')}
       >
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
