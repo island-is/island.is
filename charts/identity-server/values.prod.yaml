@@ -123,7 +123,6 @@ identity-server:
     - 'ids-signing.pfx'
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'portals-admin'
     - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
@@ -433,7 +432,6 @@ services-auth-ids-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'portals-admin'
     - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
@@ -538,7 +536,6 @@ services-auth-ids-api-cleanup:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'portals-admin'
     - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
