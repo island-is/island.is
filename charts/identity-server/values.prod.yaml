@@ -15,9 +15,8 @@ auth-admin-web:
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
+    - 'portals-admin'
     - 'nginx-ingress-external'
-    - 'nginx-ingress-internal'
-    - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -755,9 +754,8 @@ services-auth-public-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
+    - 'portals-admin'
     - 'nginx-ingress-external'
-    - 'nginx-ingress-internal'
-    - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
