@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import type { MappedData } from '@island.is/content-search-indexer/types'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import type { ITeamList } from '../../generated/contentfulTypes'
 import { mapTeamList } from '../../models/teamList.model'
 import type { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { extractChildEntryIds } from './utils'
-
-import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 
 @Injectable()
 export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
