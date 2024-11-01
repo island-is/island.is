@@ -4,7 +4,7 @@
 
 This application template allows applicants to apply for death benefits.
 
-![Death Benefits flow chart](./src/assets/death-benefits.png)
+![Death Benefits flow chart](./src/assets/death-benefits-flow-chart.png)
 
 ### States
 
