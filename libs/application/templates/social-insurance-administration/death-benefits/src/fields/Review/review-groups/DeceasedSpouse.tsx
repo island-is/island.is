@@ -14,11 +14,11 @@ export const DeceasedSpouse = ({
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatDate } = useLocale()
   const externalDataDeceasedSpouse = getApplicationExternalData(
     application.externalData,
   ).deceasedSpouseNationalId
-  const { deceasedSpouseName, deceasedSpouseNationalId } =
+  const { deceasedSpouseName, deceasedSpouseNationalId, deceasedSpouseDateOfDeath } =
     getApplicationAnswers(application.answers)
 
   return (
@@ -50,6 +50,16 @@ export const DeceasedSpouse = ({
                 deathBenefitsFormMessage.info.deceasedSpouseNationalId,
               )}
               value={formatKennitala(deceasedSpouseNationalId)}
+            />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <DataValue
+              label={formatMessage(
+                deathBenefitsFormMessage.info.deceasedSpouseDate,
+              )}
+              value={formatDate(deceasedSpouseDateOfDeath)}
             />
           </GridColumn>
         </GridRow>

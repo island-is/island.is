@@ -355,7 +355,7 @@ export const DeathBenefitsForm: Form = buildForm({
                   defaultValue: (application: Application) =>
                     getApplicationExternalData(application.externalData)
                       .deceasedSpouseNationalId,
-                  readOnly: true,
+                  disabled: true,
                 }),
                 buildDateField({
                   id: 'deceasedSpouseInfo.date',
@@ -364,7 +364,7 @@ export const DeathBenefitsForm: Form = buildForm({
                   defaultValue: (application: Application) =>
                     getApplicationExternalData(application.externalData)
                       .deceasedSpouseDateOfDeath,
-                  readOnly: true,
+                  disabled: true,
                 }),
                 buildTextField({
                   id: 'deceasedSpouseInfo.name',
@@ -372,7 +372,7 @@ export const DeathBenefitsForm: Form = buildForm({
                   defaultValue: (application: Application) =>
                     getApplicationExternalData(application.externalData)
                       .deceasedSpouseName,
-                  readOnly: true,
+                  disabled: true,
                 }),
               ],
             }),

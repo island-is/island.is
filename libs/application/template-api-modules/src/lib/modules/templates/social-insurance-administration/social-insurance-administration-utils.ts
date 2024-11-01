@@ -339,7 +339,7 @@ export const transformApplicationToDeathBenefitsDTO = (
 
   const deathBenefitsDTO: ApplicationDTO = {
     deceasedNationalId: deceasedSpouseNationalId,
-    childrenNationalIds: getChildrenNationalIds(children),
+    childrenNationalIds: children.map(({ nationalId }) => nationalId),
     spouseTaxCardUsage: {
       usecard: spouseAllowance === YES,
       ratio: YES === spouseAllowance ? +spouseAllowanceUsage : 0,
@@ -468,10 +468,6 @@ export const getMonthNumber = (monthName: string): number => {
   const monthNumber = parse(monthName, 'MMMM', new Date())
   return monthNumber.getMonth() + 1
 }
-
-export const getChildrenNationalIds = (
-  children: ChildInformation[],
-): string[] => children.map(({ nationalId }) => nationalId)
 
 export const getApplicationType = (application: Application): string => {
   const { applicationType } = getOAPApplicationAnswers(application.answers)

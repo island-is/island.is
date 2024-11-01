@@ -96,6 +96,7 @@ export const BaseInformation = ({
           />
         </GridColumn>
 
+        {applicantPhonenumber && (
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
             label={formatMessage(
@@ -104,6 +105,7 @@ export const BaseInformation = ({
             value={formatNumber(applicantPhonenumber, 'International')}
           />
         </GridColumn>
+        )}
       </GridRow>
     </ReviewGroup>
   )

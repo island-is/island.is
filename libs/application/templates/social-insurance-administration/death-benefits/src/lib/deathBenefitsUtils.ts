@@ -110,6 +110,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'deceasedSpouseInfo.nationalId',
   ) as string
+  
+  const deceasedSpouseDateOfDeath = getValueViaPath(
+    answers,
+    'deceasedSpouseInfo.date',
+  ) as Date
 
   const tempAnswers = getValueViaPath(
     answers,
@@ -143,6 +148,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     additionalAttachmentsRequired,
     deceasedSpouseName,
     deceasedSpouseNationalId,
+    deceasedSpouseDateOfDeath,
     tempAnswers,
     isExpectingChild,
   }
