@@ -1669,6 +1669,7 @@ portals-admin:
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

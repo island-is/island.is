@@ -124,6 +124,7 @@ identity-server:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'portals-admin'
+    - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -431,6 +432,8 @@ services-auth-ids-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
+    - 'nginx-ingress-external'
+    - 'portals-admin'
     - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
@@ -536,6 +539,7 @@ services-auth-ids-api-cleanup:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'portals-admin'
+    - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
