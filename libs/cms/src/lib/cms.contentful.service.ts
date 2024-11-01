@@ -82,6 +82,8 @@ import { GenericTag, mapGenericTag } from './models/genericTag.model'
 import { GetEmailSignupInput } from './dto/getEmailSignup.input'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
 import { mapManual } from './models/manual.model'
+import { mapServiceWebPage } from './models/serviceWebPage.model'
+import { mapEvent } from './models/event.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -438,6 +440,23 @@ export class CmsContentfulService {
     )
   }
 
+  async getServiceWebPage(slug: string, lang: string) {
+    const params = {
+      ['content_type']: 'serviceWebPage',
+      include: 5,
+      'fields.slug': slug,
+      limit: 1,
+    }
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IServiceWebPageFields>(lang, params)
+      .catch(errorHandler('getServiceWebPage'))
+
+    return (
+      (result.items as types.IServiceWebPage[]).map(mapServiceWebPage)[0] ??
+      null
+    )
+  }
+
   async getAuctions(
     lang: string,
     organization?: string,
@@ -577,6 +596,21 @@ export class CmsContentfulService {
       .catch(errorHandler('getNews'))
 
     return (result.items as types.INews[]).map(mapNews)[0] ?? null
+  }
+
+  async getSingleEvent(lang: string, slug: string) {
+    const params = {
+      ['content_type']: 'event',
+      include: 5,
+      'fields.slug': slug,
+      limit: 1,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IEventFields>(lang, params)
+      .catch(errorHandler('getSingleEvent'))
+
+    return (result.items as types.IEvent[]).map(mapEvent)[0] ?? null
   }
 
   async getSingleManual(lang: string, slug: string) {

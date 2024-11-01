@@ -266,10 +266,7 @@ export class CmsResolver {
   async getServiceWebPage(
     @Args('input') input: GetServiceWebPageInput,
   ): Promise<ServiceWebPage | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
-      getElasticsearchIndex(input.lang),
-      { type: 'webServiceWebPage', slug: input.slug },
-    )
+    return this.cmsContentfulService.getServiceWebPage(input.slug, input.lang)
   }
 
   @CacheControl(defaultCache)
@@ -409,6 +406,7 @@ export class CmsResolver {
   getArticleCategories(
     @Args('input') input: GetArticleCategoriesInput,
   ): Promise<ArticleCategory[]> {
+    // TODO
     return this.cmsElasticsearchService.getArticleCategories(
       getElasticsearchIndex(input.lang),
       input,
@@ -457,10 +455,7 @@ export class CmsResolver {
   getSingleEvent(
     @Args('input') { lang, slug }: GetSingleEventInput,
   ): Promise<EventModel | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<EventModel>(
-      getElasticsearchIndex(lang),
-      { type: 'webEvent', slug },
-    )
+    return this.cmsContentfulService.getSingleEvent(lang, slug)
   }
 
   @CacheControl(defaultCache)
@@ -525,6 +520,7 @@ export class CmsResolver {
   getSingleSupportQNA(
     @Args('input') { lang, slug }: GetSingleSupportQNAInput,
   ): Promise<SupportQNA | null> {
+    // TODO
     return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<SupportQNA>(
       getElasticsearchIndex(lang),
       { type: 'webQNA', slug },
@@ -646,6 +642,7 @@ export class CmsResolver {
   async getCustomPage(
     @Args('input') input: GetCustomPageInput,
   ): Promise<CustomPage | null> {
+    // TODO
     return this.cmsElasticsearchService.getCustomPage(input)
   }
 
@@ -670,6 +667,7 @@ export class CmsResolver {
   getGenericListItemBySlug(
     @Args('input') input: GetGenericListItemBySlugInput,
   ): Promise<GenericListItem | null> {
+    // TODO
     return this.cmsElasticsearchService.getGenericListItemBySlug(input)
   }
 
