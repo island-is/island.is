@@ -1541,7 +1541,7 @@ portals-admin:
     SI_PUBLIC_ENVIRONMENT: 'staging'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   grantNamespaces:
-    - 'identity-server'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
