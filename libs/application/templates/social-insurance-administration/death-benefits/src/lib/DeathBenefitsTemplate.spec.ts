@@ -8,7 +8,7 @@ import {
   ApplicationStatus,
 } from '@island.is/application/types'
 import DeathBenefitsTemplate from './DeathBenefitsTemplate'
-import { OAPEvents } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { OAPEvents, States } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 const buildApplication = (data: {
   answers?: FormValue

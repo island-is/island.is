@@ -28,6 +28,7 @@ import {
 } from '@island.is/application/core'
 import {
   Actions,
+  BankAccountType,
   Events,
   Roles,
   States,
@@ -442,6 +443,24 @@ const DeathBenefitsTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
+      clearBankAccountInfo: assign((context) => {
+        const { application } = context
+        const { bankAccountType } = getApplicationAnswers(application.answers)
+
+        if (bankAccountType === BankAccountType.ICELANDIC) {
+          unset(application.answers, 'paymentInfo.iban')
+          unset(application.answers, 'paymentInfo.swift')
+          unset(application.answers, 'paymentInfo.bankName')
+          unset(application.answers, 'paymentInfo.bankAddress')
+          unset(application.answers, 'paymentInfo.currency')
+        }
+
+        if (bankAccountType === BankAccountType.FOREIGN) {
+          unset(application.answers, 'paymentInfo.bank')
+        }
+
+        return context
+      }),
       moveAdditionalDocumentRequired: assign((context) => {
         const { application } = context
         const { answers } = application
