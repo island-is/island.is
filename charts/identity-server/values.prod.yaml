@@ -124,6 +124,7 @@ identity-server:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'user-notification'
+    - 'portals-admin'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -537,6 +538,7 @@ services-auth-ids-api-cleanup:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'user-notification'
+    - 'portals-admin'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
