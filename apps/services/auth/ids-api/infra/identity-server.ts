@@ -192,9 +192,5 @@ export const serviceSetup = (services: {
         },
       },
     })
-    .grantNamespaces(
-      'nginx-ingress-external',
-      'portals-admin',
-      'user-notification',
-    )
+    .grantNamespaces('nginx-ingress-external', 'user-notification')
 }
