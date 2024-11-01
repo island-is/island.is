@@ -302,11 +302,7 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
-    const update: UpdateCase = transitionCase(
-      transition.transition,
-      theCase,
-      user,
-    )
+    const update = transitionCase(transition.transition, theCase, user)
 
     const updatedCase = await this.caseService.update(
       theCase,

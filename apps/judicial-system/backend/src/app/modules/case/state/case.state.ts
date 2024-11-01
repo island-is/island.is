@@ -534,7 +534,7 @@ export const transitionCase = function (
   theCase: Case,
   user: User,
   update: UpdateCase = {},
-): CaseStates {
+): UpdateCase {
   let actor: Actor
   if (isProsecutionUser(user)) {
     actor = 'Prosecution'

@@ -166,11 +166,7 @@ export class LimitedAccessCaseController {
       `Transitioning case ${caseId} to ${transition.transition}`,
     )
 
-    const update: LimitedAccessUpdateCase = transitionCase(
-      transition.transition,
-      theCase,
-      user,
-    )
+    const update = transitionCase(transition.transition, theCase, user)
 
     const updatedCase = await this.limitedAccessCaseService.update(
       theCase,
