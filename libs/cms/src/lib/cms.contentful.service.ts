@@ -81,6 +81,7 @@ import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { GenericTag, mapGenericTag } from './models/genericTag.model'
 import { GetEmailSignupInput } from './dto/getEmailSignup.input'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
+import { mapManual } from './models/manual.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -576,6 +577,21 @@ export class CmsContentfulService {
       .catch(errorHandler('getNews'))
 
     return (result.items as types.INews[]).map(mapNews)[0] ?? null
+  }
+
+  async getSingleManual(lang: string, slug: string) {
+    const params = {
+      ['content_type']: 'manual',
+      include: 5,
+      'fields.slug': slug,
+      limit: 1,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IManualFields>(lang, params)
+      .catch(errorHandler('getSingleManual'))
+
+    return (result.items as types.IManual[]).map(mapManual)[0] ?? null
   }
 
   async getContentSlug({

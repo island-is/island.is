@@ -614,10 +614,7 @@ export class CmsResolver {
   getSingleManual(
     @Args('input') input: GetSingleManualInput,
   ): Promise<Manual | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
-      getElasticsearchIndex(input.lang),
-      { type: 'webManual', slug: input.slug },
-    )
+    return this.cmsContentfulService.getSingleManual(input.lang, input.slug)
   }
 
   @CacheControl(defaultCache)
