@@ -40,6 +40,26 @@ export const GET_GRANTS_QUERY = gql`
             title
           }
         }
+        fund {
+          id
+          title
+          url {
+            slug
+            type
+          }
+          link {
+            slug
+            type
+          }
+          featuredImage {
+            id
+            url
+          }
+          parentOrganization {
+            id
+            title
+          }
+        }
       }
     }
   }

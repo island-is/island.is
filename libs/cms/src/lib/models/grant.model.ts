@@ -7,6 +7,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { Asset, mapAsset } from './asset.model'
 import { ReferenceLink, mapReferenceLink } from './referenceLink.model'
+import { Fund, mapFund } from './fund.model'
 
 enum GrantStatus {
   CLOSED,
@@ -78,6 +79,9 @@ export class Grant {
 
   @CacheField(() => GenericTag, { nullable: true })
   typeTag?: GenericTag
+
+  @CacheField(() => Fund, { nullable: true })
+  fund?: Fund
 }
 
 export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
@@ -119,6 +123,7 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
       : fields.grantStatus === 'Opnar fljótlega'
       ? GrantStatus.OPENS_SOON
       : GrantStatus.INACTIVE,
+  fund: fields.grantFund ? mapFund(fields.grantFund) : undefined,
   organization: fields.grantOrganization
     ? mapOrganization(fields.grantOrganization)
     : undefined,
