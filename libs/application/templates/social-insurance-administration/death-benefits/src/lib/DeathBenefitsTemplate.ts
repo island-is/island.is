@@ -117,8 +117,8 @@ const DeathBenefitsTemplate: ApplicationTemplate<
       },
       [States.DRAFT]: {
         exit: [
-          'clearBankAccountInfo', 
-          'clearTemp', 
+          'clearBankAccountInfo',
+          'clearTemp',
           'restoreAnswersFromTemp',
           'clearPersonalAllowanceIfUsePersonalAllowanceIsNo',
           'clearSpouseAllowanceIfUseSpouseAllowanceIsNo',
@@ -471,9 +471,7 @@ const DeathBenefitsTemplate: ApplicationTemplate<
       }),
       clearPersonalAllowanceIfUsePersonalAllowanceIsNo: assign((context) => {
         const { application } = context
-        const { personalAllowance } = getApplicationAnswers(
-          application.answers,
-        )
+        const { personalAllowance } = getApplicationAnswers(application.answers)
 
         if (personalAllowance === NO) {
           unset(application.answers, 'paymentInfo.personalAllowanceUsage')
@@ -483,9 +481,7 @@ const DeathBenefitsTemplate: ApplicationTemplate<
       }),
       clearSpouseAllowanceIfUseSpouseAllowanceIsNo: assign((context) => {
         const { application } = context
-        const { spouseAllowance } = getApplicationAnswers(
-          application.answers,
-        )
+        const { spouseAllowance } = getApplicationAnswers(application.answers)
 
         if (spouseAllowance === NO) {
           unset(application.answers, 'paymentInfo.spouseAllowanceUsage')
@@ -495,9 +491,7 @@ const DeathBenefitsTemplate: ApplicationTemplate<
       }),
       clearExpectingChildAttachmentIfNoChild: assign((context) => {
         const { application } = context
-        const { isExpectingChild } = getApplicationAnswers(
-          application.answers,
-        )
+        const { isExpectingChild } = getApplicationAnswers(application.answers)
 
         if (isExpectingChild === NO) {
           unset(application.answers, 'fileUpload.expectingChild')
