@@ -7,6 +7,7 @@ import {
 } from '../../../lib/deathBenefitsUtils'
 import { GridColumn, GridRow, Stack, Text } from '@island.is/island-ui/core'
 import { deathBenefitsFormMessage } from '../../../lib/messages'
+import { format as formatKennitala } from 'kennitala'
 
 export const DeceasedSpouse = ({
   application,

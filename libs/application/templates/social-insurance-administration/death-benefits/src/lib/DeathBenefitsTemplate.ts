@@ -25,6 +25,7 @@ import {
   coreHistoryMessages,
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  NO,
 } from '@island.is/application/core'
 import {
   Actions,
@@ -115,7 +116,14 @@ const DeathBenefitsTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearBankAccountInfo', 'clearTemp', 'restoreAnswersFromTemp'],
+        exit: [
+          'clearBankAccountInfo', 
+          'clearTemp', 
+          'restoreAnswersFromTemp',
+          'clearPersonalAllowanceIfUsePersonalAllowanceIsNo',
+          'clearSpouseAllowanceIfUseSpouseAllowanceIsNo',
+          'clearExpectingChildAttachmentIfNoChild',
+        ],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -457,6 +465,42 @@ const DeathBenefitsTemplate: ApplicationTemplate<
 
         if (bankAccountType === BankAccountType.FOREIGN) {
           unset(application.answers, 'paymentInfo.bank')
+        }
+
+        return context
+      }),
+      clearPersonalAllowanceIfUsePersonalAllowanceIsNo: assign((context) => {
+        const { application } = context
+        const { personalAllowance } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (personalAllowance === NO) {
+          unset(application.answers, 'paymentInfo.personalAllowanceUsage')
+        }
+
+        return context
+      }),
+      clearSpouseAllowanceIfUseSpouseAllowanceIsNo: assign((context) => {
+        const { application } = context
+        const { spouseAllowance } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (spouseAllowance === NO) {
+          unset(application.answers, 'paymentInfo.spouseAllowanceUsage')
+        }
+
+        return context
+      }),
+      clearExpectingChildAttachmentIfNoChild: assign((context) => {
+        const { application } = context
+        const { isExpectingChild } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (isExpectingChild === NO) {
+          unset(application.answers, 'fileUpload.expectingChild')
         }
 
         return context
