@@ -16,6 +16,8 @@ auth-admin-web:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
+    - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -756,6 +758,8 @@ services-auth-public-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
+    - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

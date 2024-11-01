@@ -1803,7 +1803,7 @@ portals-admin:
     SI_PUBLIC_ENVIRONMENT: 'dev'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces:
-    - 'nginx-ingress-internal'
+    - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
