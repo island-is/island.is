@@ -99,12 +99,10 @@ export const serviceSetup = (services: {
         prod: 'https://innskra.island.is/api',
       },
       ELASTIC_NODE: {
-        dev:
-          'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com',
+        dev: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com',
         staging:
           'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/',
-        prod:
-          'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/',
+        prod: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/',
       },
 
       CONTENTFUL_HOST: {
@@ -163,8 +161,7 @@ export const serviceSetup = (services: {
       XROAD_FINANCES_TIMEOUT: '20000',
       XROAD_CHARGE_FJS_V2_TIMEOUT: '20000',
       AUTH_DELEGATION_API_URL: {
-        dev:
-          'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
+        dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
         staging:
           'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
         prod: 'https://auth-delegation-api.internal.innskra.island.is',
