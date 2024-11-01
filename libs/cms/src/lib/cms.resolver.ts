@@ -398,10 +398,10 @@ export class CmsResolver {
   getFrontpage(
     @Args('input') input: GetFrontpageInput,
   ): Promise<Frontpage | null> {
-    return this.cmsContentfulService.getFrontpage({
-      lang: input.lang,
-      pageIdentifier: input.pageIdentifier,
-    })
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+      getElasticsearchIndex(input.lang),
+      { type: 'webFrontpage', slug: input.pageIdentifier },
+    )
   }
 
   @CacheControl(defaultCache)
