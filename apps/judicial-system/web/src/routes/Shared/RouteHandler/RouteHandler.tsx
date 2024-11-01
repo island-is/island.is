@@ -99,8 +99,15 @@ const RouteHandler: React.FC = () => {
 
   useEffect(() => {
     handleGetCase(router.query.id?.toString())
+  }, [handleGetCase, router.query.id])
+
+  useEffect(() => {
+    if (!caseToOpen || !user) {
+      return
+    }
+
     router.push(getRoute(caseToOpen, user))
-  }, [caseToOpen, handleGetCase, queryCase, router, user])
+  }, [caseToOpen, router, user])
 
   return (
     <Box className={styles.loadingContainer}>
