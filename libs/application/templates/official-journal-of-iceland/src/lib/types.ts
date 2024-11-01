@@ -12,6 +12,7 @@ export const InputFields = {
   },
   [Routes.ADVERT]: {
     departmentId: 'advert.departmentId',
+    typeName: 'advert.typeName',
     typeId: 'advert.typeId',
     title: 'advert.title',
     html: 'advert.html',

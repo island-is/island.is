@@ -1,5 +1,5 @@
 import { json, ref } from './dsl'
-import { BffInfo, PortalKeys, Context } from './types/input-types'
+import { BffInfo, Context, PortalKeys } from './types/input-types'
 
 import {
   adminPortalScopes,
@@ -41,7 +41,7 @@ export const bffConfig = ({ key, services, clientName, clientId }: BffInfo) => {
         prod: key,
       },
       BFF_CLIENT_KEY_PATH: `/${key}`,
-      BFF_PAR_SUPPORT_ENABLED: 'false',
+      BFF_PAR_SUPPORT_ENABLED: 'true',
       BFF_CLIENT_BASE_URL: {
         local: 'http://localhost:4200',
         dev: ref((ctx) => ctx.svc(`https://${getBaseUrl(ctx)}`)),

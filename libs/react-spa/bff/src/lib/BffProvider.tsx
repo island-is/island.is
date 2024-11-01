@@ -79,7 +79,7 @@ export const BffProvider = ({
 
     try {
       const url = bffUrlGenerator('/user', {
-        no_refresh: noRefresh.toString(),
+        refresh: noRefresh.toString(),
       })
 
       const res = await fetch(url, {

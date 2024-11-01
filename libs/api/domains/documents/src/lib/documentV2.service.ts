@@ -489,7 +489,7 @@ export class DocumentServiceV2 {
   }
 
   private actionMapper = (id: string, actions?: Array<MessageAction>) => {
-    if (actions === undefined) return undefined
+    if (actions === undefined || actions.length === 0) return undefined
     const hasEmpty = actions.every(
       (x) =>
         x?.data === undefined ||
@@ -500,7 +500,7 @@ export class DocumentServiceV2 {
 
     // we return the document even if the actions are faulty, logged for tracability
     if (hasEmpty) {
-      this.logger.info('No title or data in actions array, return undefined', {
+      this.logger.debug('No title or data in actions array, return undefined', {
         category: LOG_CATEGORY,
         id,
       })
@@ -528,7 +528,7 @@ export class DocumentServiceV2 {
     })
 
     // Log the actions to ensure that they are mapped correctly
-    this.logger.info('Actions mapped successfully', { actions: mapped })
+    this.logger.debug('Actions mapped successfully', { actions: mapped })
     return mapped
   }
 

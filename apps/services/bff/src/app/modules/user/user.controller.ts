@@ -20,6 +20,6 @@ export class UserController {
     @Query(qsValidationPipe)
     query: GetUserDto,
   ): Promise<BffUser> {
-    return this.userService.getUser(req, query.no_refresh === 'true')
+    return this.userService.getUser(req, query.refresh === 'true')
   }
 }

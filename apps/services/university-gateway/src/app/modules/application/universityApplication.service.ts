@@ -9,6 +9,7 @@ import { UniversityOfIcelandApplicationClient } from '@island.is/clients/univers
 import {
   ApplicationStatus,
   IApplication,
+  IApplicationAttachment,
   UniversityNationalIds,
 } from '@island.is/university-gateway'
 import { University } from '../university/model/university'
@@ -89,10 +90,10 @@ export class UniversityApplicationService {
       )
     }
 
-    const allAttachments = applicationDto.educationList
-      .map((x) => x.degreeAttachments)
-      .filter((y) => !!y)
-      .flat()
+    const allAttachments: IApplicationAttachment[] =
+      applicationDto.educationList
+        .flatMap((education) => education.degreeAttachments || [])
+        .filter(Boolean)
 
     // Wrap answers in obj that can be sent to libs/clients for universities
     const applicationObj: IApplication = {

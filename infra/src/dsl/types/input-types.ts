@@ -92,7 +92,7 @@ export type MountedFile = { filename: string; env: string }
 export type PortalKeys = 'stjornbord' | 'minarsidur'
 
 export interface BffInfraServices {
-  api: ServiceBuilder<string>
+  api: ServiceBuilder<string> | string
 }
 
 export type ServiceDefinitionCore = {

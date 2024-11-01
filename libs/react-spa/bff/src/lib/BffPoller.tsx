@@ -48,7 +48,7 @@ export const BffPoller = ({
   const { postMessage } = useBffBroadcaster()
 
   const url = useMemo(
-    () => bffUrlGenerator('/user', { no_refresh: 'true' }),
+    () => bffUrlGenerator('/user', { refresh: 'true' }),
     [bffUrlGenerator],
   )
 

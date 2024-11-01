@@ -1,12 +1,12 @@
-import { ServiceBuilder, ref, service, json } from './dsl'
-import { Kubernetes } from './kubernetes-runtime'
-import { EnvironmentConfig } from './types/charts'
-import { getFeatureAffectedServices } from './feature-deployments'
-import { HelmValueFile } from './types/output-types'
-import { getHelmValueFile } from './value-files-generators/helm-value-file'
-import { renderers } from './upstream-dependencies'
-import { generateOutput } from './processing/rendering-pipeline'
 import { getScopes } from './bff'
+import { ServiceBuilder, json, ref, service } from './dsl'
+import { getFeatureAffectedServices } from './feature-deployments'
+import { Kubernetes } from './kubernetes-runtime'
+import { generateOutput } from './processing/rendering-pipeline'
+import { EnvironmentConfig } from './types/charts'
+import { HelmValueFile } from './types/output-types'
+import { renderers } from './upstream-dependencies'
+import { getHelmValueFile } from './value-files-generators/helm-value-file'
 
 const getEnvironment = (
   options: EnvironmentConfig = {
@@ -123,7 +123,7 @@ describe('Feature-deployment support', () => {
       IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is',
       BFF_NAME: 'stjornbord',
       BFF_CLIENT_KEY_PATH: `/stjornbord`,
-      BFF_PAR_SUPPORT_ENABLED: 'false',
+      BFF_PAR_SUPPORT_ENABLED: 'true',
       BFF_ALLOWED_REDIRECT_URIS: json([
         'https://feature-A-beta.dev01.devland.is',
       ]),

@@ -5,6 +5,7 @@ import { Request } from 'express'
 
 import { BffUser } from '@island.is/shared/types'
 import { SESSION_COOKIE_NAME } from '../../constants/cookies'
+import { CryptoService } from '../../services/crypto.service'
 
 import { hasTimestampExpiredInMS } from '../../utils/has-timestamp-expired-in-ms'
 import { AuthService } from '../auth/auth.service'
@@ -18,6 +19,7 @@ export class UserService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
 
+    private readonly cryptoService: CryptoService,
     private readonly cacheService: CacheService,
     private readonly idsService: IdsService,
     private readonly authService: AuthService,
@@ -30,7 +32,7 @@ export class UserService {
     }
   }
 
-  public async getUser(req: Request, noRefresh = false): Promise<BffUser> {
+  public async getUser(req: Request, refresh = true): Promise<BffUser> {
     const sid = req.cookies[SESSION_COOKIE_NAME]
 
     if (!sid) {
@@ -53,7 +55,7 @@ export class UserService {
         cachedTokenResponse.accessTokenExp,
       )
 
-      if (accessTokenHasExpired && !noRefresh) {
+      if (accessTokenHasExpired && !refresh) {
         // Get new token data with refresh token
         const tokenResponse = await this.idsService.refreshToken(
           cachedTokenResponse.encryptedRefreshToken,

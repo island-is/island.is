@@ -1,56 +1,20 @@
-import { ServiceBuilder, service } from './dsl'
+import { json, service } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
-import { SerializeSuccess, HelmService } from './types/output-types'
-import { PortalKeys } from './types/input-types'
-import { EnvironmentConfig } from './types/charts'
-import { renderers } from './upstream-dependencies'
 import { generateOutputOne } from './processing/rendering-pipeline'
-import { json } from './dsl'
+import { EnvironmentConfig } from './types/charts'
+import { HelmService, SerializeSuccess } from './types/output-types'
+import { renderers } from './upstream-dependencies'
 
-import {
-  adminPortalScopes,
-  servicePortalScopes,
-} from '../../../libs/auth/scopes/src/index'
+import { adminPortalScopes } from '../../../libs/auth/scopes/src/index'
 
 import { FIVE_SECONDS_IN_MS } from '../../../apps/services/bff/src/app/constants/time'
-type ScopeType = typeof servicePortalScopes | typeof adminPortalScopes
-
-interface ServiceConfig {
-  bffName: string
-  clientName: string
-  serviceName: string
-  key: PortalKeys
-  scopes: ScopeType
-}
-
-const opts: Record<string, ServiceConfig> = {
-  servicePortal: {
-    bffName: 'services-bff',
-    clientName: 'portals-admin',
-    serviceName: 'services-bff-portals-admin',
-    key: 'stjornbord',
-    scopes: adminPortalScopes,
-  },
-  portalsAdmin: {
-    bffName: 'services-bff',
-    clientName: 'portals-my-pages',
-    serviceName: 'services-bff-portals-my-pages',
-    key: 'minarsidur',
-    scopes: servicePortalScopes,
-  },
-}
-
-const servicesOpts = [
-  { name: 'servicePortal', config: opts.servicePortal },
-  { name: 'portalsAdmin', config: opts.portalsAdmin },
-]
 const ONE_HOUR_IN_MS = 60 * 60 * 1000
 const ONE_WEEK_IN_MS = ONE_HOUR_IN_MS * 24 * 7
 
-// const bffName = 'services-bff'
-// const clientName = 'portals-admin'
-// const serviceName = `${bffName}-${clientName}`
-// const key = 'stjornbord'
+const bffName = 'services-bff'
+const clientName = 'portals-admin'
+const serviceName = `${bffName}-${clientName}`
+const key = 'stjornbord'
 
 const Dev: EnvironmentConfig = {
   auroraHost: 'a',
@@ -70,9 +34,9 @@ const services = {
   api: service('api'),
 }
 
-const createService = (config: ServiceConfig) => {
-  const { serviceName, clientName, bffName, key } = config
-  return service(serviceName)
+describe('BFF PortalEnv serialization', () => {
+  const services = { api: service('api') }
+  const sut = service(serviceName)
     .namespace(clientName)
     .image(bffName)
     .redis()
@@ -86,8 +50,8 @@ const createService = (config: ServiceConfig) => {
       },
     })
     .bff({
-      key,
-      clientId: `@admin.island.is/bff-${key}`,
+      key: 'stjornbord',
+      clientId: `@admin.island.is/bff-stjornbord`,
       clientName,
       services,
     })
@@ -135,13 +99,7 @@ const createService = (config: ServiceConfig) => {
         paths: [`/${key}/bff`],
       },
     })
-}
-
-describe.each(servicesOpts)('$name BFF serialization', ({ name, config }) => {
-  const sut = createService(config)
-  const { serviceName, clientName, bffName, key, scopes } = config
   let result: SerializeSuccess<HelmService>
-
   beforeEach(async () => {
     result = (await generateOutputOne({
       outputFormat: renderers.helm,
@@ -150,6 +108,7 @@ describe.each(servicesOpts)('$name BFF serialization', ({ name, config }) => {
       env: Dev,
     })) as SerializeSuccess<HelmService>
   })
+
   it('basic props', () => {
     expect(result.serviceDef[0].enabled).toBe(true)
     expect(result.serviceDef[0].namespace).toBe(clientName)
@@ -192,13 +151,13 @@ describe.each(servicesOpts)('$name BFF serialization', ({ name, config }) => {
 
   it('environment variables', () => {
     expect(result.serviceDef[0].env).toEqual({
-      IDENTITY_SERVER_CLIENT_SCOPES: json(scopes),
+      IDENTITY_SERVER_CLIENT_SCOPES: json(adminPortalScopes),
       IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-${key}`,
       IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is',
       // BFF
-      BFF_NAME: key,
+      BFF_NAME: 'stjornbord',
       BFF_CLIENT_KEY_PATH: `/${key}`,
-      BFF_PAR_SUPPORT_ENABLED: 'false',
+      BFF_PAR_SUPPORT_ENABLED: 'true',
       BFF_ALLOWED_REDIRECT_URIS: json(['https://beta.dev01.devland.is']),
       BFF_CLIENT_BASE_URL: 'https://beta.dev01.devland.is',
       BFF_LOGOUT_REDIRECT_URI: 'https://beta.dev01.devland.is',
@@ -250,10 +209,30 @@ describe.each(servicesOpts)('$name BFF serialization', ({ name, config }) => {
         hosts: [
           {
             host: 'beta.dev01.devland.is',
-            paths: [`/${key}/bff`],
+            paths: ['/stjornbord/bff'],
           },
         ],
       },
+    })
+  })
+})
+
+describe('Env definition defaults', () => {
+  const sut = service('api').namespace('islandis').image(bffName)
+  let result: SerializeSuccess<HelmService>
+  beforeEach(async () => {
+    result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Dev),
+      env: Dev,
+    })) as SerializeSuccess<HelmService>
+  })
+  it('replica max count', () => {
+    expect(result.serviceDef[0].replicaCount).toStrictEqual({
+      min: 2,
+      max: 3,
+      default: 2,
     })
   })
 })
