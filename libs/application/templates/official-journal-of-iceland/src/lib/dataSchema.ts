@@ -3,6 +3,10 @@ import { error } from './messages'
 import { AnswerOption, SignatureTypes } from './constants'
 import { MessageDescriptor } from 'react-intl'
 
+const emailRegex =
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+const isValidEmail = (value?: string) =>
+  value ? emailRegex.test(value) : false
 export const memberItemSchema = z
   .object({
     name: z.string().optional(),
@@ -116,6 +120,18 @@ export const advertValidationSchema = z.object({
       .refine((value) => value && value.length > 0, {
         params: error.missingHtml,
       }),
+    channels: z
+      .array(channelSchema)
+      .optional()
+      .refine(
+        (value) =>
+          value &&
+          value.length > 0 &&
+          value.every((channel) => validateChannel(channel)),
+        {
+          params: error.invalidChannel,
+        },
+      ),
   }),
 })
 
@@ -336,6 +352,12 @@ const validateCommitteeSignature = (
       .every((isValid) => isValid) ?? false
 
   return hasValidInstitutionAndDate && hasValidChairman && hasValidMembers
+}
+
+const validateChannel = (channel: z.infer<typeof channelSchema>) => {
+  const validEmail = isValidEmail(channel.email)
+
+  return validEmail
 }
 
 type Flatten<T> = T extends any[] ? T[number] : T
