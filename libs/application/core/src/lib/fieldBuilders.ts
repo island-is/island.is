@@ -44,6 +44,7 @@ import {
   AccordionField,
   BankAccountField,
   SliderField,
+  MaybeWithApplication,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
@@ -534,6 +535,16 @@ export const buildFieldOptions = (
   }
 
   return maybeOptions
+}
+
+export const buildFieldRequired = (
+  application: Application,
+  maybeRequired?: MaybeWithApplication<boolean>,
+) => {
+  if (typeof maybeRequired === 'function') {
+    return maybeRequired(application)
+  }
+  return maybeRequired
 }
 
 export const buildRedirectToServicePortalField = (data: {
