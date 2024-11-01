@@ -42,10 +42,12 @@ export class GenericListItemSyncService
             )
           }
           if (mapped.content) {
-            extractStringsFromObject(
-              mapped.content.map(pruneNonSearchableSliceUnionFields),
-              100,
-              2,
+            contentSections.push(
+              extractStringsFromObject(
+                mapped.content.map(pruneNonSearchableSliceUnionFields),
+                100,
+                2,
+              ),
             )
           }
 
