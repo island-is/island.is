@@ -30,6 +30,8 @@ query Case($input: CaseQueryInput!) {
       serviceRequirement
       verdictViewDate
       verdictAppealDeadline
+      verdictAppealDate
+      isVerdictAppealDeadlineExpired
       subpoenaType
       subpoenas {
         id

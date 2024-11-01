@@ -19,10 +19,9 @@ import {
 } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseNotificationType,
   CaseState,
   CaseType,
-  isDistrictCourtUser,
-  NotificationType,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
@@ -50,7 +49,7 @@ export class DefendantService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
+      body: { type: CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
     }
   }
 

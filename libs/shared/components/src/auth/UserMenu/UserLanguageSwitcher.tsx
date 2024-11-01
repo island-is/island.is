@@ -1,18 +1,17 @@
-import React from 'react'
 import { Box, Button, Select } from '@island.is/island-ui/core'
-import { User, Locale } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
-import { useUpdateUserProfileMutation } from '../../../gen/schema'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { sharedMessages } from '@island.is/shared/translations'
+import { Locale } from '@island.is/shared/types'
 import { checkDelegation } from '@island.is/shared/utils'
+import { useUpdateUserProfileMutation } from '../../../gen/schema'
 
 export const UserLanguageSwitcher = ({
-  user,
   dropdown = false,
 }: {
-  user: User
   dropdown?: boolean
 }) => {
+  const user = useUserInfo()
   const { lang, formatMessage, changeLanguage } = useLocale()
   const [updateUserProfileMutation] = useUpdateUserProfileMutation()
 

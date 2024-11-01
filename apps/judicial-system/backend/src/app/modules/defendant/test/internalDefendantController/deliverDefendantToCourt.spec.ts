@@ -1,7 +1,7 @@
 import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
-import { NotificationType, User } from '@island.is/judicial-system/types'
+import { CaseNotificationType, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
@@ -108,7 +108,7 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
+          body: { type: CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
         },
       ])
     })

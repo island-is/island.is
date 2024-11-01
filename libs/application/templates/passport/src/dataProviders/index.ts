@@ -45,7 +45,3 @@ export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   },
   externalDataId: 'payment',
 })
-
-export const DeliveryAddressApi = defineTemplateApi({
-  action: 'deliveryAddress',
-})

@@ -6,6 +6,7 @@ tmp/
 out-tsc/
 **/tsconfig.tsbuildinfo
 infra/mountebank-imposter-config.json
+mountebank-imposter-config.json
 infra/helm/**/*.tgz
 
 # dependencies
@@ -96,6 +97,7 @@ apps/**/index.html
 .next
 
 .nx/
+.zed/
 
 # E2E outputs
 test-results/
