@@ -1,10 +1,9 @@
 import { KeyvAdapter } from '@apollo/utils.keyvadapter'
 import KeyvRedis from '@keyv/redis'
-import { caching } from 'cache-manager'
 import type { Config } from 'cache-manager'
+import { caching } from 'cache-manager'
 import { redisInsStore } from 'cache-manager-ioredis-yet'
-import { Cluster, ClusterNode, RedisOptions, ClusterOptions } from 'ioredis'
-import { DEFAULT_CLUSTER_OPTIONS } from 'ioredis/built/cluster/ClusterOptions'
+import { Cluster, ClusterNode, ClusterOptions, RedisOptions } from 'ioredis'
 
 import { logger } from '@island.is/logging'
 import Keyv from 'keyv'
@@ -89,7 +88,7 @@ const getEnvValueToNumber = <T extends number | undefined = undefined>(
   return defaultValue
 }
 
-const getRedisClusterOptions = (
+export const getRedisClusterOptions = (
   options: Options,
 ): RedisOptions | ClusterOptions => {
   const redisOptions: RedisOptions = {}
