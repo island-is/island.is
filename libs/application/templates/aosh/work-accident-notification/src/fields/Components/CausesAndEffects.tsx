@@ -50,6 +50,7 @@ export const CausesAndEffects: FC<
     mostSeriousAnswerId,
     errors,
     answerId,
+    setBeforeSubmitCallback,
   } = props
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
@@ -57,7 +58,6 @@ export const CausesAndEffects: FC<
   const [mostSeriousChosen, setMostSeriousChosen] = useState<string>(
     mostSeriousAnswer || '',
   )
-
   const [pickedValue, setPickedValue] = useState<OptionAndKey>()
   const activityGroups = (
     getValueViaPath(application.externalData, externalDataKey) as Group[]
@@ -75,7 +75,6 @@ export const CausesAndEffects: FC<
     }
 
     if (!options.some((option) => option.value === mostSeriousChosen)) {
-      setValue(mostSeriousAnswerId, undefined)
       setMostSeriousChosen('')
     }
 
@@ -84,10 +83,19 @@ export const CausesAndEffects: FC<
 
   useEffect(() => {
     if (mostSeriousAnswer) {
-      setValue(mostSeriousAnswerId, mostSeriousAnswer)
+      console.log('Inside use effect mostSerious')
+      setMostSeriousChosen(mostSeriousAnswer)
     }
   }, [mostSeriousAnswer, mostSeriousAnswerId, setValue])
 
+  setBeforeSubmitCallback?.(async () => {
+    if (mostSeriousChosen === '') {
+      setValue(mostSeriousAnswerId, null)
+    } else {
+      setValue(mostSeriousAnswerId, mostSeriousChosen)
+    }
+    return [true, null]
+  })
   return (
     <Box>
       <Box marginBottom={2} marginTop={2}>
@@ -95,7 +103,6 @@ export const CausesAndEffects: FC<
           render={() => {
             return (
               <Select
-                name=""
                 options={activites.map((activity) => ({
                   value: activity.code,
                   label: activity.name,

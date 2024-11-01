@@ -120,7 +120,7 @@ const createCauseAndEffectSchema = (
       [fieldKey]: z
         .record(z.array(option))
         .refine((obj) => Object.values(obj).some((arr) => arr.length > 0)),
-      [mostSeriousKey]: z.string().optional(),
+      [mostSeriousKey]: z.string().optional().nullable(),
     })
     .refine(
       (data) => {

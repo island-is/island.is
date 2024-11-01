@@ -33,7 +33,7 @@ export const Occupation: FC<
   const { formatMessage } = useLocale()
   const { application, setBeforeSubmitCallback } = props
   const answers = application.answers as WorkAccidentNotification
-  const { setValue, getValues } = useFormContext()
+  const { setValue } = useFormContext()
 
   const [selectedMajorGroup, setSelectedMajorGroup] = useState<Options | null>(
     answers?.employee?.[idx]?.victimsOccupationMajor || null,
