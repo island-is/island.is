@@ -151,6 +151,7 @@ export class SocialInsuranceAdministrationClientService {
         parameters,
     })
   }
+
   async getSpousalInfo(
     user: User,
   ): Promise<TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo> {
