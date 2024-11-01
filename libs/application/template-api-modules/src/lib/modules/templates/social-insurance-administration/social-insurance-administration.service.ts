@@ -114,6 +114,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         application.answers,
       ).additionalAttachmentsRequired
     }
+    
     if (application.typeId === ApplicationTypes.DEATH_BENEFITS) {
       additionalAttachmentsRequired = getDBApplicationAnswers(
         application.answers,
