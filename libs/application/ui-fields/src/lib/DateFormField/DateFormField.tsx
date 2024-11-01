@@ -1,6 +1,10 @@
 import React, { FC, useMemo } from 'react'
 
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import {
+  buildFieldRequired,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   FieldBaseProps,
   DateField,
@@ -124,7 +128,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
           id={id}
           name={id}
           locale={lang}
-          required={required}
+          required={buildFieldRequired(application, required)}
           excludeDates={finalExcludeDates}
           minDate={finalMinDate}
           maxDate={finalMaxDate}
