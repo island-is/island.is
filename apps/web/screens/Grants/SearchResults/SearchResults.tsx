@@ -10,7 +10,6 @@ import {
   Box,
   BreadCrumbItem,
   Breadcrumbs,
-  Button,
   Inline,
   TagVariant,
   Text,
@@ -72,7 +71,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   const [grants, setGrants] = useState<Array<Grant>>()
   const [searchState, setSearchState] = useState<SearchState>()
 
-  const [getGrants, { refetch, called }] = useLazyQuery<
+  const [getGrants, { refetch, called, error, loading }] = useLazyQuery<
     { getGrants: GrantList },
     QueryGetGrantsArgs
   >(GET_GRANTS_QUERY, {
@@ -264,90 +263,102 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
             />
           }
         >
-          <Box marginLeft={3}>
-            <Box marginBottom={3}>
-              <Text>{hitsMessage}</Text>
+          {loading && !error && <Box>loading - todo</Box>}
+          {!loading && !error && (
+            <Box marginLeft={3}>
+              <Box marginBottom={3}>
+                <Text>{hitsMessage}</Text>
+              </Box>
+              {grants?.length ? (
+                <Inline space={3}>
+                  {grants?.map((grant) => {
+                    if (!grant) {
+                      return null
+                    }
+
+                    let tagVariant: TagVariant | undefined
+                    switch (grant.status) {
+                      case GrantStatus.Open:
+                        tagVariant = 'mint'
+                        break
+                      case GrantStatus.Closed:
+                        tagVariant = 'rose'
+                        break
+                      case GrantStatus.OpensSoon:
+                        tagVariant = 'purple'
+                        break
+                      default:
+                        break
+                    }
+
+                    return (
+                      <Box>
+                        {grant.applicationId && (
+                          <PlazaCard
+                            eyebrow={grant.fund?.title ?? grant.name ?? ''}
+                            subEyebrow={grant.fund?.parentOrganization?.title}
+                            title={grant.name ?? ''}
+                            text={grant.description ?? ''}
+                            logo={
+                              grant.fund?.parentOrganization?.logo?.url ?? ''
+                            }
+                            logoAlt={
+                              grant.fund?.parentOrganization?.logo?.title ?? ''
+                            }
+                            tag={{
+                              label: grant.statusText ?? '',
+                              variant: tagVariant,
+                            }}
+                            cta={{
+                              label: 'Skoða nánar',
+                              variant: 'text',
+                              onClick: () => {
+                                router.push(
+                                  linkResolver(
+                                    'styrkjatorggrant',
+                                    [grant?.applicationId ?? ''],
+                                    locale,
+                                  ).href,
+                                )
+                              },
+                              icon: 'arrowForward',
+                            }}
+                            detailLines={[
+                              grant.dateFrom && grant.dateTo
+                                ? {
+                                    icon: 'calendar' as const,
+                                    text: `${format(
+                                      new Date(grant.dateFrom),
+                                      'dd.MM.',
+                                    )}-${format(
+                                      new Date(grant.dateTo),
+                                      'dd.MM.yyyy',
+                                    )}`,
+                                  }
+                                : null,
+                              {
+                                icon: 'time' as const,
+                                text: 'Frestur til 16.08.2024, kl. 15.00',
+                              },
+                              grant.categoryTag?.title
+                                ? {
+                                    icon: 'informationCircle' as const,
+                                    text: grant.categoryTag.title,
+                                  }
+                                : undefined,
+                            ].filter(isDefined)}
+                          />
+                        )}
+                      </Box>
+                    )
+                  })}
+                </Inline>
+              ) : undefined}
+              {!grants?.length && !error && !loading && (
+                <Box background="white">ekkert fannst - TODO</Box>
+              )}
             </Box>
-            <Inline space={3}>
-              {grants?.map((grant) => {
-                if (!grant) {
-                  return null
-                }
-
-                let tagVariant: TagVariant | undefined
-                switch (grant.status) {
-                  case GrantStatus.Open:
-                    tagVariant = 'mint'
-                    break
-                  case GrantStatus.Closed:
-                    tagVariant = 'rose'
-                    break
-                  case GrantStatus.OpensSoon:
-                    tagVariant = 'purple'
-                    break
-                  default:
-                    break
-                }
-
-                return (
-                  <Box>
-                    {grant.applicationId && (
-                      <PlazaCard
-                        eyebrow={grant.fund?.title ?? grant.name ?? ''}
-                        subEyebrow={grant.organization?.title}
-                        title={grant.name ?? ''}
-                        text={grant.description ?? ''}
-                        logo={grant.organization?.logo?.url ?? ''}
-                        logoAlt={grant.organization?.logo?.title ?? ''}
-                        tag={{
-                          label: grant.statusText ?? '',
-                          variant: tagVariant,
-                        }}
-                        cta={{
-                          label: 'Skoða nánar',
-                          variant: 'text',
-                          onClick: () => {
-                            router.push(
-                              linkResolver(
-                                'styrkjatorggrant',
-                                [grant?.applicationId ?? ''],
-                                locale,
-                              ).href,
-                            )
-                          },
-                          icon: 'arrowForward',
-                        }}
-                        detailLines={[
-                          grant.dateFrom && grant.dateTo
-                            ? {
-                                icon: 'calendar' as const,
-                                text: `${format(
-                                  new Date(grant.dateFrom),
-                                  'dd.MM.',
-                                )}-${format(
-                                  new Date(grant.dateTo),
-                                  'dd.MM.yyyy',
-                                )}`,
-                              }
-                            : null,
-                          {
-                            icon: 'time' as const,
-                            text: 'Frestur til 16.08.2024, kl. 15.00',
-                          },
-                          grant.categoryTag?.title
-                            ? {
-                                icon: 'informationCircle' as const,
-                                text: grant.categoryTag.title,
-                              }
-                            : undefined,
-                        ].filter(isDefined)}
-                      />
-                    )}
-                  </Box>
-                )
-              })}
-            </Inline>
-          </Box>
+          )}
         </SidebarLayout>
       </Box>
     </GrantWrapper>

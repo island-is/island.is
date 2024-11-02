@@ -1,7 +1,6 @@
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
 import { IGrant } from '../generated/contentfulTypes'
-import { Organization, mapOrganization } from './organization.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { CacheField } from '@island.is/nest/graphql'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
@@ -68,9 +67,6 @@ export class Grant {
   @CacheField(() => GrantStatus, { nullable: true })
   status?: GrantStatus
 
-  @CacheField(() => Organization)
-  organization?: Organization
-
   @CacheField(() => [Asset], { nullable: true })
   files?: Array<Asset>
 
@@ -124,9 +120,6 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
       ? GrantStatus.OPENS_SOON
       : GrantStatus.INACTIVE,
   fund: fields.grantFund ? mapFund(fields.grantFund) : undefined,
-  organization: fields.grantOrganization
-    ? mapOrganization(fields.grantOrganization)
-    : undefined,
   files: (fields.grantFiles ?? []).map((file) => mapAsset(file)) ?? [],
   categoryTag: fields.grantCategoryTag
     ? mapGenericTag(fields.grantCategoryTag)

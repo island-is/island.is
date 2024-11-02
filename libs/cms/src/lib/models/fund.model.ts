@@ -14,8 +14,8 @@ export class Fund {
   @Field()
   title!: string
 
-  @CacheField(() => ReferenceLink, { nullable: true })
-  url?: ReferenceLink
+  @Field({ nullable: true })
+  url?: string
 
   @CacheField(() => ReferenceLink, { nullable: true })
   link?: ReferenceLink
@@ -23,19 +23,17 @@ export class Fund {
   @CacheField(() => Image, { nullable: true })
   featuredImage?: Image | null
 
-  @CacheField(() => Organization, { nullable: true })
-  parentOrganization?: Organization
+  @CacheField(() => Organization)
+  parentOrganization!: Organization
 }
 
 export const mapFund = ({ fields, sys }: IFund): Fund => ({
   id: sys.id,
   title: fields.fundTitle,
-  url: fields.fundUrl ? mapReferenceLink(fields.fundUrl) : undefined,
+  url: fields.fundUrl,
   link: fields.fundLink ? mapReferenceLink(fields.fundLink) : undefined,
   featuredImage: fields.fundFeaturedImage
     ? mapImage(fields.fundFeaturedImage)
     : undefined,
-  parentOrganization: fields.fundParentOrganization
-    ? mapOrganization(fields.fundParentOrganization)
-    : undefined,
+  parentOrganization: mapOrganization(fields.fundParentOrganization),
 })

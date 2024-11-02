@@ -41,10 +41,7 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
           grant?.fund?.url ? (
             <Text fontWeight="semiBold" color="blue400">
               <LinkV2
-                {...linkResolver(
-                  grant.fund.url.type.toLowerCase() as LinkType,
-                  [grant.fund.url.slug],
-                )}
+                href={grant.fund.url}
                 color="blue400"
                 underline="normal"
                 underlineVisibility="hover"
@@ -105,17 +102,17 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
     <Stack space={3}>
       <InstitutionPanel
         institutionTitle={formatMessage(m.single.provider)}
-        institution={grant.organization.title}
-        img={grant.organization.logo?.url}
+        institution={grant.fund?.parentOrganization.title ?? 'Óþekkt stofnun'}
+        img={grant.fund?.parentOrganization.logo?.url}
         locale={locale}
       />
       {detailPanelData.length ? (
-        <Box background="blue100" padding={3}>
+        <Box background="blue100" padding={3} borderRadius="standard">
           <Stack space={2}>{detailPanelData}</Stack>
         </Box>
       ) : undefined}
       {filesPanelData.length ? (
-        <Box background="red100" padding={3}>
+        <Box background="red100" padding={3} borderRadius="standard">
           <Stack space={2}>{filesPanelData}</Stack>
         </Box>
       ) : undefined}

@@ -1555,7 +1555,7 @@ export interface IFundFields {
   fundTitle: string
 
   /** Url */
-  fundUrl?: ILinkUrl | undefined
+  fundUrl?: string | undefined
 
   /** Link */
   fundLink?: IArticle | IOrganizationSubpage | undefined
@@ -1564,7 +1564,7 @@ export interface IFundFields {
   fundFeaturedImage: Asset
 
   /** Parent Organization */
-  fundParentOrganization?: IOrganization | undefined
+  fundParentOrganization: IOrganization
 }
 
 /** Fund is a part of "Styrkjatorg". */
@@ -1857,9 +1857,6 @@ export interface IGrantFields {
     | 'Opnar fljótlega'
     | undefined
 
-  /** Organization */
-  grantOrganization: IOrganization
-
   /** Files */
   grantFiles?: Asset[] | undefined
 
@@ -1870,7 +1867,7 @@ export interface IGrantFields {
   grantTypeTag?: IGenericTag | undefined
 
   /** Fund */
-  grantFund?: IFund | undefined
+  grantFund: IFund
 }
 
 /** Grant is a part of "Styrkjatorg". */

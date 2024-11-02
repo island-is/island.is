@@ -19,13 +19,6 @@ export const GET_GRANTS_QUERY = gql`
         isOpen
         status
         statusText
-        organization {
-          id
-          title
-          logo {
-            url
-          }
-        }
         categoryTag {
           id
           title
@@ -43,10 +36,8 @@ export const GET_GRANTS_QUERY = gql`
         fund {
           id
           title
-          url {
-            slug
-            type
-          }
+          url
+
           link {
             slug
             type
@@ -58,6 +49,9 @@ export const GET_GRANTS_QUERY = gql`
           parentOrganization {
             id
             title
+            logo {
+              url
+            }
           }
         }
       }
@@ -86,22 +80,13 @@ export const GET_GRANT_QUERY = gql`
         id
         title
       }
-      organization {
-          title
-          logo {
-            url
-          }
-      }
       files {
           ...AssetFields
       }
       fund {
         id
         title
-        url {
-          slug
-          type
-        }
+        url
         link {
           slug
           type
@@ -113,6 +98,9 @@ export const GET_GRANT_QUERY = gql`
         parentOrganization {
           id
           title
+          logo {
+            url
+          }
         }
       }
       whatIsGranted {
