@@ -60,7 +60,7 @@ const NotificationMenu = ({
       <Box
         position="relative"
         background="white"
-        padding={2}
+        padding={isMobile ? 0 : 2}
         borderRadius="large"
         display="flex"
         flexDirection="column"
@@ -85,6 +85,8 @@ const NotificationMenu = ({
             alignItems="center"
             marginBottom={1}
             marginTop={2}
+            marginRight={2}
+            marginLeft={2}
           >
             <Box
               borderRadius="circle"
@@ -93,7 +95,7 @@ const NotificationMenu = ({
               justifyContent="center"
               alignItems="center"
               className={mStyles.overviewIcon}
-              marginRight={'p2'}
+              marginRight="p2"
             >
               <Icon
                 icon="notifications"
