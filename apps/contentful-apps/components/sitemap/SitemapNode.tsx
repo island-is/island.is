@@ -13,19 +13,23 @@ import * as styles from './SitemapNode.css'
 interface SitemapNodeProps {
   node: TreeNode
   parentNode: Tree
+  root: Tree
   indent?: number
-  addNode: (parentNode: Tree, type: TreeNodeType) => void
+  addNode: (parentNode: Tree, type: TreeNodeType, createNew?: boolean) => void
   removeNode: (parentNode: Tree, idOfNodeToRemove: number) => void
   updateNode: (parentNode: Tree, updatedNode: TreeNode) => void
+  onMarkEntryAsPrimary: (nodeId: number, entryId: string) => void
 }
 
 export const SitemapNode = ({
   node,
   parentNode,
   indent = 0,
+  root,
   addNode,
   removeNode,
   updateNode,
+  onMarkEntryAsPrimary,
 }: SitemapNodeProps) => {
   const sdk = useSDK<FieldExtensionSDK>()
 
@@ -48,9 +52,7 @@ export const SitemapNode = ({
     fetchEntries(entryNodes.map((entryNode) => entryNode.entryId))
   }, [fetchEntries, node])
 
-  const isClickable =
-    node.type !== TreeNodeType.URL &&
-    !('type' in parentNode && parentNode.type === TreeNodeType.ENTRY)
+  const isClickable = node.type === TreeNodeType.CATEGORY
 
   const handleClick = () => {
     if (isClickable) {
@@ -87,6 +89,15 @@ export const SitemapNode = ({
         </div>
         <div>
           <EditMenu
+            entryId={
+              node.type === TreeNodeType.ENTRY ? node.entryId : undefined
+            }
+            root={root}
+            onMarkEntryAsPrimary={onMarkEntryAsPrimary}
+            isEntryNodePrimaryLocation={
+              node.type === TreeNodeType.ENTRY && node.primaryLocation
+            }
+            entryNodeId={node.id}
             onEdit={async () => {
               if (node.type === TreeNodeType.ENTRY) {
                 const entry = await sdk.navigator.openEntry(node.entryId, {
@@ -138,12 +149,14 @@ export const SitemapNode = ({
               key={child.id}
               node={child}
               indent={indent + 1}
+              root={root}
+              onMarkEntryAsPrimary={onMarkEntryAsPrimary}
             />
           ))}
           <div className={styles.addNodeButtonContainer}>
             <AddNodeButton
-              addNode={(type) => {
-                addNode(node, type)
+              addNode={(type, createNew) => {
+                addNode(node, type, createNew)
               }}
               options={
                 indent > 1 || node.type === TreeNodeType.ENTRY

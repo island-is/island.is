@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
-import { Button } from '@contentful/f36-components'
-import { JsonEditor } from '@contentful/field-editor-json'
 import { useSDK } from '@contentful/react-apps-toolkit'
 
 import { AddNodeButton } from './AddNodeButton'
@@ -10,6 +8,7 @@ import { EntryContext, useEntryContext } from './entryContext'
 import { SitemapNode } from './SitemapNode'
 import {
   addNode as addNodeUtil,
+  findNodes,
   removeNode as removeNodeUtil,
   type Tree,
   TreeNode,
@@ -38,15 +37,20 @@ export const SitemapTreeField = () => {
   )
 
   useEffect(() => {
-    sdk.window.startAutoResizer()
+    if (tree.childNodes.length > 1) {
+      sdk.window.startAutoResizer()
+    } else {
+      sdk.window.stopAutoResizer()
+      sdk.window.updateHeight(tree.childNodes.length === 0 ? 210 : 300)
+    }
     return () => {
       sdk.window.stopAutoResizer()
     }
-  }, [sdk.window])
+  }, [sdk.window, tree.childNodes.length])
 
   const addNode = useCallback(
-    async (parentNode: Tree, type: TreeNodeType) => {
-      await addNodeUtil(parentNode, type, sdk, tree)
+    async (parentNode: Tree, type: TreeNodeType, createNew?: boolean) => {
+      await addNodeUtil(parentNode, type, sdk, tree, createNew)
       setTree((prevTree) => ({
         ...prevTree,
       }))
@@ -67,6 +71,23 @@ export const SitemapTreeField = () => {
     setTree((prevTree) => ({ ...prevTree }))
   }, [])
 
+  const onMarkEntryAsPrimary = useCallback(
+    (nodeId: number, entryId: string) => {
+      const nodes = findNodes(
+        tree,
+        (otherNode) =>
+          otherNode.type === TreeNodeType.ENTRY && otherNode.entryId == entryId,
+      )
+      for (const node of nodes) {
+        if (node.type === TreeNodeType.ENTRY) {
+          node.primaryLocation = node.id === nodeId
+        }
+      }
+      setTree((prevTree) => ({ ...prevTree }))
+    },
+    [tree],
+  )
+
   return (
     <EntryContext.Provider value={useEntryContext()}>
       <div>
@@ -80,12 +101,14 @@ export const SitemapTreeField = () => {
                 updateNode={updateNode}
                 key={node.id}
                 node={node}
+                root={tree}
+                onMarkEntryAsPrimary={onMarkEntryAsPrimary}
               />
             ))}
             <div className={styles.addNodeButtonContainer}>
               <AddNodeButton
-                addNode={(type) => {
-                  addNode(tree, type)
+                addNode={(type, createNew) => {
+                  addNode(tree, type, createNew)
                 }}
               />
             </div>

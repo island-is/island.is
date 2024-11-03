@@ -10,7 +10,7 @@ const optionMap = {
 }
 
 interface AddNodeButtonProps {
-  addNode: (type: TreeNodeType) => void
+  addNode: (type: TreeNodeType, createNew?: boolean) => void
   options?: TreeNodeType[]
 }
 
@@ -26,16 +26,41 @@ export const AddNodeButton = ({
         </Button>
       </Menu.Trigger>
       <Menu.List>
-        {options.map((option) => (
-          <Menu.Item
-            key={option}
-            onClick={() => {
-              addNode(option)
-            }}
-          >
-            {optionMap[option]}
-          </Menu.Item>
-        ))}
+        {options.map((option) => {
+          if (option !== TreeNodeType.ENTRY) {
+            return (
+              <Menu.Item
+                key={option}
+                onClick={() => {
+                  addNode(option)
+                }}
+              >
+                {optionMap[option]}
+              </Menu.Item>
+            )
+          }
+          return (
+            <Menu.Submenu key={option}>
+              <Menu.SubmenuTrigger>Page</Menu.SubmenuTrigger>
+              <Menu.List>
+                <Menu.Item
+                  onClick={() => {
+                    addNode(option, true)
+                  }}
+                >
+                  Create new
+                </Menu.Item>
+                <Menu.Item
+                  onClick={() => {
+                    addNode(option, false)
+                  }}
+                >
+                  Add existing
+                </Menu.Item>
+              </Menu.List>
+            </Menu.Submenu>
+          )
+        })}
       </Menu.List>
     </Menu>
   )
