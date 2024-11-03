@@ -145,6 +145,15 @@ export const SitemapNode = ({
               addNode={(type) => {
                 addNode(node, type)
               }}
+              options={
+                indent > 1 || node.type === TreeNodeType.ENTRY
+                  ? [TreeNodeType.ENTRY, TreeNodeType.URL]
+                  : [
+                      TreeNodeType.CATEGORY,
+                      TreeNodeType.ENTRY,
+                      TreeNodeType.URL,
+                    ]
+              }
             />
           </div>
         </div>

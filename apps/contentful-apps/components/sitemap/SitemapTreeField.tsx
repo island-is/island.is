@@ -70,19 +70,6 @@ export const SitemapTreeField = () => {
   return (
     <EntryContext.Provider value={useEntryContext()}>
       <div>
-        <div style={{ paddingBottom: '16px' }}>
-          <Button
-            onClick={() => {
-              setTree({
-                id: 0,
-                childNodes: [],
-              })
-            }}
-          >
-            Reset
-          </Button>
-        </div>
-
         <div>
           <div className={styles.childNodeContainer}>
             {tree.childNodes.map((node) => (
@@ -103,10 +90,6 @@ export const SitemapTreeField = () => {
               />
             </div>
           </div>
-        </div>
-
-        <div style={{ paddingTop: '16px' }}>
-          <JsonEditor field={sdk.field} isInitiallyDisabled={false} />
         </div>
       </div>
     </EntryContext.Provider>

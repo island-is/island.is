@@ -3,11 +3,21 @@ import { ChevronDownIcon, PlusIcon } from '@contentful/f36-icons'
 
 import { TreeNodeType } from './utils'
 
-interface AddNodeButtonProps {
-  addNode: (type: TreeNodeType) => void
+const optionMap = {
+  [TreeNodeType.CATEGORY]: 'Category',
+  [TreeNodeType.ENTRY]: 'Page',
+  [TreeNodeType.URL]: 'URL',
 }
 
-export const AddNodeButton = ({ addNode }: AddNodeButtonProps) => {
+interface AddNodeButtonProps {
+  addNode: (type: TreeNodeType) => void
+  options?: TreeNodeType[]
+}
+
+export const AddNodeButton = ({
+  addNode,
+  options = [TreeNodeType.CATEGORY, TreeNodeType.ENTRY, TreeNodeType.URL],
+}: AddNodeButtonProps) => {
   return (
     <Menu>
       <Menu.Trigger>
@@ -16,27 +26,16 @@ export const AddNodeButton = ({ addNode }: AddNodeButtonProps) => {
         </Button>
       </Menu.Trigger>
       <Menu.List>
-        <Menu.Item
-          onClick={async () => {
-            addNode(TreeNodeType.CATEGORY)
-          }}
-        >
-          Category
-        </Menu.Item>
-        <Menu.Item
-          onClick={() => {
-            addNode(TreeNodeType.ENTRY)
-          }}
-        >
-          Page
-        </Menu.Item>
-        <Menu.Item
-          onClick={() => {
-            addNode(TreeNodeType.URL)
-          }}
-        >
-          URL
-        </Menu.Item>
+        {options.map((option) => (
+          <Menu.Item
+            key={option}
+            onClick={() => {
+              addNode(option)
+            }}
+          >
+            {optionMap[option]}
+          </Menu.Item>
+        ))}
       </Menu.List>
     </Menu>
   )
