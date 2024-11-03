@@ -6,7 +6,7 @@ export const topRow = style({
 })
 
 export const container = style({
-  padding: '8px',
+  padding: '16px',
 })
 
 export const formContainer = style({

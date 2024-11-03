@@ -97,9 +97,14 @@ export const addNode = async (
   } else if (type === TreeNodeType.CATEGORY) {
     const data = await sdk.dialogs.openCurrentApp({
       parameters: {
-        type: TreeNodeType.CATEGORY,
+        node: {
+          type: TreeNodeType.CATEGORY,
+          label: '',
+          description: '',
+          slug: '',
+        },
       },
-      minHeight: '400px',
+      minHeight: 400,
     })
 
     if (!data) {
@@ -110,25 +115,22 @@ export const addNode = async (
     slug = data.slug
     description = data.description
   } else if (type === TreeNodeType.URL) {
-    const labelPrompt = await sdk.dialogs.openPrompt({
-      title: 'URL',
-      message: 'Label',
+    const data = await sdk.dialogs.openCurrentApp({
+      parameters: {
+        node: {
+          type: TreeNodeType.URL,
+          url: '',
+        },
+      },
+      minHeight: 400,
     })
 
-    if (!labelPrompt || typeof labelPrompt !== 'string') {
+    if (!data) {
       return
     }
-    label = labelPrompt
 
-    const urlPrompt = await sdk.dialogs.openPrompt({
-      title: 'URL',
-      message: 'HREF',
-    })
-
-    if (!urlPrompt || typeof urlPrompt !== 'string') {
-      return
-    }
-    url = urlPrompt
+    label = data.label
+    url = data.url
   }
 
   const node: TreeNode = {
@@ -150,4 +152,13 @@ export const addNode = async (
         }),
   }
   parentNode.childNodes = [...parentNode.childNodes].concat(node)
+}
+
+export const updateNode = (parentNode: Tree, updatedNode: TreeNode) => {
+  const nodeIndex = parentNode.childNodes.findIndex(
+    (node) => node.id === updatedNode.id,
+  )
+  if (nodeIndex >= 0) {
+    parentNode.childNodes[nodeIndex] = updatedNode
+  }
 }

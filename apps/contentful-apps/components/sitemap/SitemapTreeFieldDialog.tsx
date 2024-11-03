@@ -4,12 +4,13 @@ import {
   Button,
   FormControl,
   IconButton,
+  Textarea,
   TextInput,
 } from '@contentful/f36-components'
 import { CloseIcon } from '@contentful/f36-icons'
 import { useSDK } from '@contentful/react-apps-toolkit'
 
-import { TreeNodeType } from './utils'
+import { TreeNode, TreeNodeType } from './utils'
 import * as styles from './SitemapTreeFieldDialog.css'
 
 interface CategoryState {
@@ -18,18 +19,19 @@ interface CategoryState {
   description: string
 }
 
-interface CategoryFormProps {
-  initialState: CategoryState
-  onSubmit: (props: CategoryState) => void
+interface FormProps<State> {
+  initialState: State
+  onSubmit: (props: State) => void
 }
 
-const CategoryForm = ({ initialState, onSubmit }: CategoryFormProps) => {
+const CategoryForm = ({ initialState, onSubmit }: FormProps<CategoryState>) => {
   const [state, setState] = useState<CategoryState>(initialState)
   return (
     <FormControl className={styles.formContainer}>
       <div>
         <FormControl.Label>Label</FormControl.Label>
         <TextInput
+          value={state.label}
           onChange={(ev) => {
             setState((prevState) => ({ ...prevState, label: ev.target.value }))
           }}
@@ -38,6 +40,7 @@ const CategoryForm = ({ initialState, onSubmit }: CategoryFormProps) => {
       <div>
         <FormControl.Label>Slug</FormControl.Label>
         <TextInput
+          value={state.slug}
           onChange={(ev) => {
             setState((prevState) => ({ ...prevState, slug: ev.target.value }))
           }}
@@ -45,7 +48,8 @@ const CategoryForm = ({ initialState, onSubmit }: CategoryFormProps) => {
       </div>
       <div>
         <FormControl.Label>Description</FormControl.Label>
-        <TextInput
+        <Textarea
+          value={state.description}
           onChange={(ev) => {
             setState((prevState) => ({
               ...prevState,
@@ -56,11 +60,52 @@ const CategoryForm = ({ initialState, onSubmit }: CategoryFormProps) => {
       </div>
 
       <Button
+        variant="primary"
         onClick={() => {
           onSubmit(state)
         }}
       >
-        Submit
+        Save changes
+      </Button>
+    </FormControl>
+  )
+}
+
+interface UrlState {
+  label: string
+  url: string
+}
+
+const UrlForm = ({ initialState, onSubmit }: FormProps<UrlState>) => {
+  const [state, setState] = useState<UrlState>(initialState)
+  return (
+    <FormControl className={styles.formContainer}>
+      <div>
+        <FormControl.Label>Label</FormControl.Label>
+        <TextInput
+          value={state.label}
+          onChange={(ev) => {
+            setState((prevState) => ({ ...prevState, label: ev.target.value }))
+          }}
+        />
+      </div>
+      <div>
+        <FormControl.Label>URL</FormControl.Label>
+        <TextInput
+          value={state.url}
+          onChange={(ev) => {
+            setState((prevState) => ({ ...prevState, url: ev.target.value }))
+          }}
+        />
+      </div>
+
+      <Button
+        variant="primary"
+        onClick={() => {
+          onSubmit(state)
+        }}
+      >
+        Save changes
       </Button>
     </FormControl>
   )
@@ -69,7 +114,7 @@ const CategoryForm = ({ initialState, onSubmit }: CategoryFormProps) => {
 export const SitemapTreeFieldDialog = () => {
   const sdk = useSDK<DialogExtensionSDK>()
 
-  const type = (sdk.parameters.invocation as { type: TreeNodeType })?.type
+  const node = (sdk.parameters.invocation as { node: TreeNode }).node
 
   return (
     <div className={styles.container}>
@@ -78,15 +123,15 @@ export const SitemapTreeFieldDialog = () => {
           icon={<CloseIcon />}
           aria-label="Close"
           onClick={() => {
-            sdk.close()
+            sdk.close(node)
           }}
         />
       </div>
-      {type === TreeNodeType.CATEGORY && (
-        <CategoryForm
-          initialState={{ label: '', description: '', slug: '' }}
-          onSubmit={sdk.close}
-        />
+      {node.type === TreeNodeType.CATEGORY && (
+        <CategoryForm initialState={node} onSubmit={sdk.close} />
+      )}
+      {node.type === TreeNodeType.URL && (
+        <UrlForm initialState={node} onSubmit={sdk.close} />
       )}
     </div>
   )

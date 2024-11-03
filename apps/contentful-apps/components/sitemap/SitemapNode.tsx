@@ -16,6 +16,7 @@ interface SitemapNodeProps {
   indent?: number
   addNode: (parentNode: Tree, type: TreeNodeType) => void
   removeNode: (parentNode: Tree, idOfNodeToRemove: number) => void
+  updateNode: (parentNode: Tree, updatedNode: TreeNode) => void
 }
 
 export const SitemapNode = ({
@@ -24,6 +25,7 @@ export const SitemapNode = ({
   indent = 0,
   addNode,
   removeNode,
+  updateNode,
 }: SitemapNodeProps) => {
   const sdk = useSDK<FieldExtensionSDK>()
 
@@ -97,11 +99,20 @@ export const SitemapNode = ({
 
                 return
               }
+
+              const updatedNode = await sdk.dialogs.openCurrentApp({
+                parameters: {
+                  node,
+                },
+                minHeight: 400,
+              })
+              updateNode(parentNode, updatedNode)
+              return
             }}
             onRemove={async () => {
               const confirmed = await sdk.dialogs.openConfirm({
                 title: 'Are you sure?',
-                message: `Entry and everything below it will be removed from the sitemap`,
+                message: `Entry and everything below it will be removed`,
               })
               if (!confirmed) {
                 return
@@ -123,6 +134,7 @@ export const SitemapNode = ({
               addNode={addNode}
               parentNode={node}
               removeNode={removeNode}
+              updateNode={updateNode}
               key={child.id}
               node={child}
               indent={indent + 1}

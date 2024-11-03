@@ -12,7 +12,9 @@ import {
   addNode as addNodeUtil,
   removeNode as removeNodeUtil,
   type Tree,
+  TreeNode,
   TreeNodeType,
+  updateNode as updateNodeUtil,
 } from './utils'
 import * as styles from './SitemapTreeField.css'
 
@@ -60,6 +62,11 @@ export const SitemapTreeField = () => {
     [],
   )
 
+  const updateNode = useCallback((parentNode: Tree, updatedNode: TreeNode) => {
+    updateNodeUtil(parentNode, updatedNode)
+    setTree((prevTree) => ({ ...prevTree }))
+  }, [])
+
   return (
     <EntryContext.Provider value={useEntryContext()}>
       <div>
@@ -83,6 +90,7 @@ export const SitemapTreeField = () => {
                 parentNode={tree}
                 removeNode={removeNode}
                 addNode={addNode}
+                updateNode={updateNode}
                 key={node.id}
                 node={node}
               />
