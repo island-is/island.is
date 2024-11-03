@@ -22,11 +22,11 @@ export const useEntryContext = () => {
 
   const fetchEntries = useCallback(
     async (entryIds: string[]) => {
-      // TODO: fetch more if needed, split up fetches if we are asking for too much data
       const response = await cma.entry.getMany({
         query: {
           'sys.id[in]': entryIds.join(','),
           'sys.archivedVersion[exists]': false,
+          limit: 1000,
         },
       })
 
