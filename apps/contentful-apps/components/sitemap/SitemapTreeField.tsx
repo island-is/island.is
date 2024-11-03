@@ -37,12 +37,7 @@ export const SitemapTreeField = () => {
   )
 
   useEffect(() => {
-    if (tree.childNodes.length > 1) {
-      sdk.window.startAutoResizer()
-    } else {
-      sdk.window.stopAutoResizer()
-      sdk.window.updateHeight(tree.childNodes.length === 0 ? 210 : 300)
-    }
+    sdk.window.startAutoResizer()
     return () => {
       sdk.window.stopAutoResizer()
     }
