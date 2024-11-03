@@ -55,7 +55,7 @@ export const SitemapTreeField = () => {
 
   const removeNode = useCallback(
     (parentNode: Tree, idOfNodeToRemove: number) => {
-      removeNodeUtil(parentNode, idOfNodeToRemove)
+      removeNodeUtil(parentNode, idOfNodeToRemove, tree)
       setTree((prevTree) => ({ ...prevTree }))
     },
     [],

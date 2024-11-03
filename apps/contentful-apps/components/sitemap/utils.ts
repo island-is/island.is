@@ -51,16 +51,42 @@ export const generateId = (tree: Tree) => {
 export const removeNode = async (
   parentNode: Tree,
   idOfNodeToRemove: number,
+  root: Tree,
 ) => {
+  const node = findNode(parentNode, (node) => node.id === idOfNodeToRemove)
+
+  if (!node) {
+    return
+  }
+
   parentNode.childNodes = parentNode.childNodes.filter(
     (node) => node.id !== idOfNodeToRemove,
   )
+
+  if (node.type === TreeNodeType.ENTRY && node.primaryLocation) {
+    const otherNodesWithSameEntryId = findNodes(
+      root,
+      (otherNode) =>
+        otherNode.id !== idOfNodeToRemove &&
+        otherNode.type === TreeNodeType.ENTRY &&
+        otherNode.entryId === node.entryId,
+    )
+
+    if (otherNodesWithSameEntryId.length > 0) {
+      for (const otherNode of otherNodesWithSameEntryId) {
+        if (otherNode.type === TreeNodeType.ENTRY) {
+          otherNode.primaryLocation = true
+          return
+        }
+      }
+    }
+  }
 }
 
 const findNodeRecursive = (
   node: TreeNode,
   condition: (otherNode: TreeNode) => boolean,
-) => {
+): TreeNode => {
   if (condition(node)) {
     return node
   }
