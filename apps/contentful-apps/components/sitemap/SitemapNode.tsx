@@ -49,7 +49,9 @@ export const SitemapNode = ({
     if (entryNodes.length === 0) {
       return
     }
-    fetchEntries(entryNodes.map((entryNode) => entryNode.entryId))
+    fetchEntries(
+      entryNodes.map((entryNode) => (entryNode as { entryId: string }).entryId),
+    )
   }, [fetchEntries, node])
 
   const isClickable = node.type === TreeNodeType.CATEGORY
