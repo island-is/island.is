@@ -397,5 +397,6 @@ export const institutionMapper = {
   [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
+    contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
   },
 }
