@@ -636,19 +636,7 @@ export class AdminClientsService {
             {
               clientId: client.clientId,
               scopeName: 'profile',
-            },
-            {
-              clientId: client.clientId,
-              scopeName: 'email',
-            },
-            {
-              clientId: client.clientId,
-              scopeName: 'phone',
-            },
-            {
-              clientId: client.clientId,
-              scopeName: 'address',
-            },
+            }
           ],
         )
     }

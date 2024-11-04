@@ -275,7 +275,6 @@ export class UserProfileService {
         },
         { transaction },
       )
-      console.log('isEmailDefined', isEmailDefined)
 
       if (
         isEmailDefined ||
