@@ -318,7 +318,7 @@ export const buildPhoneField = (
     readOnly,
     rightAlign,
     allowedCountryCodes,
-    enableCountrySelector,
+    enableCountrySelector = false,
   } = data
   return {
     ...extractCommonFields(data),
