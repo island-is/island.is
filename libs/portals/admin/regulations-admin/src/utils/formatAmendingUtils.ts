@@ -71,7 +71,7 @@ export const removeRegPrefix = (title: string) => {
 }
 
 export const isGildisTaka = (str: string) => {
-  return /(öðlast|tekur).*gildi|sett.*með.*(?:heimild|stoð)/.test(
+  return /\b(öðlast|tekur)\b.*\bgildi\b|\bsett\b.*\bmeð\b.*\b(?:heimild|stoð)\b/.test(
     (str || '').toLowerCase(),
   )
 }
