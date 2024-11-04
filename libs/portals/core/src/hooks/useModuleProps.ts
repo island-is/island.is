@@ -3,10 +3,10 @@ import {
   ApolloClient,
   NormalizedCacheObject,
 } from '@apollo/client'
-import { useAuth } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 export const useModuleProps = () => {
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const client = useApolloClient() as ApolloClient<NormalizedCacheObject>
 
   if (userInfo === null) {
