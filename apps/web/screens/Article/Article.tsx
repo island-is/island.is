@@ -605,6 +605,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
         imageUrl={article?.featuredImage?.url}
         imageWidth={article?.featuredImage?.width.toString()}
         imageHeight={article?.featuredImage?.height.toString()}
+        keywords={article?.keywords}
       />
       <SidebarLayout
         isSticky={false}
