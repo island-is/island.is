@@ -55,15 +55,16 @@ export const createPdf = async (
 
   const { applicationState, ageOfApplication } = getHeader(created, state)
 
-  const stateWidth = font.widthOfTextAtSize(applicationState, baseFontSize)
+  const stateWidth = font.widthOfTextAtSize(applicationState, largeFontSize)
 
   // Define padding between title and the new text
   const lineSpacing = 10
 
   //   ---- ----- HEADER ---- ----
+  const headerYPosition = height - margin - largeFontSize
   page.drawText(name, {
     x: margin,
-    y: height - margin - largeFontSize,
+    y: headerYPosition,
     size: largeFontSize,
     font: boldFont,
     color: color_black,
@@ -71,14 +72,13 @@ export const createPdf = async (
 
   page.drawText(applicationState, {
     x: width - stateWidth - margin,
-    y: height - margin - baseFontSize,
-    size: baseFontSize,
-    font: font,
+    y: headerYPosition,
+    size: largeFontSize,
+    font: boldFont,
     color: state === ApplicationState.REJECTED ? color_red : color_green,
   })
 
-  let currentYPosition =
-    height - margin - largeFontSize - smallFontSize - lineSpacing
+  let currentYPosition = headerYPosition - smallFontSize - lineSpacing
 
   const checkYPositionAndAddPage = (): void => {
     if (currentYPosition < 100) {
@@ -279,6 +279,7 @@ export const createPdf = async (
     const applicationEvent: ApplicationEvent = {
       ...event,
       created: event.created.toISOString(), // Convert Date to string
+      staffName: 'Starfsmaður',
     }
 
     const eventData = getEventData(
