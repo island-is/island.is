@@ -59,7 +59,10 @@ const reportingForMap = {
     MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_4,
 }
 
-const whoIsTheNotificationForToDTO = (who: WhoIsTheNotificationForEnum) => {
+const whoIsTheNotificationForToDTO = (who?: WhoIsTheNotificationForEnum) => {
+  if (!who) {
+    return MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_1
+  }
   return (
     reportingForMap[who] ||
     MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_1
@@ -107,18 +110,18 @@ const studiesAccidentSubtypeMap = {
 }
 
 const getAccidentTypes = (answers: AccidentNotificationAnswers) => {
-  const accidentType = getValueViaPath(
+  const accidentType = getValueViaPath<AccidentTypeEnum>(
     answers,
     'accidentType.answer',
-  ) as AccidentTypeEnum
-  const workAccidentType = getValueViaPath(
+  )
+  const workAccidentType = getValueViaPath<WorkAccidentTypeEnum>(
     answers,
     'workAccident.type',
-  ) as WorkAccidentTypeEnum
-  const studiesAccidentType = getValueViaPath(
+  )
+  const studiesAccidentType = getValueViaPath<StudiesAccidentTypeEnum>(
     answers,
     'studiesAccident.type',
-  ) as StudiesAccidentTypeEnum
+  )
 
   return { accidentType, workAccidentType, studiesAccidentType }
 }
@@ -129,18 +132,22 @@ const accidentTypeToDTO = (
   const { accidentType, workAccidentType, studiesAccidentType } =
     getAccidentTypes(answers)
 
-  const baseType = accidentTypeMap[accidentType] || { type: 6 }
+  const baseType = accidentType ? accidentTypeMap[accidentType] : { type: 6 }
 
   switch (accidentType) {
     case AccidentTypeEnum.WORK:
       return {
         type: baseType.type,
-        subtype: workAccidentSubtypeMap[workAccidentType] || 1,
+        subtype: workAccidentType
+          ? workAccidentSubtypeMap[workAccidentType]
+          : 1,
       }
     case AccidentTypeEnum.STUDIES:
       return {
         type: baseType.type,
-        subtype: studiesAccidentSubtypeMap[studiesAccidentType],
+        subtype: studiesAccidentType
+          ? studiesAccidentSubtypeMap[studiesAccidentType]
+          : undefined,
       }
     default:
       return baseType
@@ -148,10 +155,11 @@ const accidentTypeToDTO = (
 }
 
 const locationToDTO = (answers: AccidentNotificationAnswers) => {
-  const accidentLocation = getValueViaPath(
-    answers,
-    'accidentLocation.answer',
-  ) as GeneralWorkplaceAccidentLocationEnum
+  const accidentLocation =
+    getValueViaPath<GeneralWorkplaceAccidentLocationEnum>(
+      answers,
+      'accidentLocation.answer',
+    )
 
   switch (accidentLocation) {
     case GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE:
@@ -166,10 +174,11 @@ const locationToDTO = (answers: AccidentNotificationAnswers) => {
 }
 
 const shipLocationToDTO = (answers: AccidentNotificationAnswers) => {
-  const accidentLocation = getValueViaPath(
-    answers,
-    'accidentLocation.answer',
-  ) as FishermanWorkplaceAccidentLocationEnum
+  const accidentLocation =
+    getValueViaPath<FishermanWorkplaceAccidentLocationEnum>(
+      answers,
+      'accidentLocation.answer',
+    )
 
   switch (accidentLocation) {
     case FishermanWorkplaceAccidentLocationEnum.ONTHESHIP:
@@ -186,22 +195,22 @@ const shipLocationToDTO = (answers: AccidentNotificationAnswers) => {
 const getReporter = (
   answers: AccidentNotificationAnswers,
 ): MinarsidurAPIModelsAccidentReportsReporterDTO => {
-  const applicant = getValueViaPath(answers, 'applicant') as ApplicantV2
-  const whoIsTheNotificationFor = getValueViaPath(
+  const applicant = getValueViaPath<ApplicantV2>(answers, 'applicant')
+  const whoIsTheNotificationFor = getValueViaPath<WhoIsTheNotificationForEnum>(
     answers,
     'whoIsTheNotificationFor.answer',
-  ) as WhoIsTheNotificationForEnum
+  )
 
   const reportingFor = whoIsTheNotificationForToDTO(whoIsTheNotificationFor)
 
   const reporter = {
-    address: applicant.address ?? '',
-    city: applicant.city ?? '',
-    email: applicant.email ?? '',
-    name: applicant.name ?? '',
-    nationalId: applicant.nationalId ?? '',
-    phoneNumber: applicant.phoneNumber ?? '',
-    postcode: applicant.postalCode ?? '',
+    address: applicant?.address ?? '',
+    city: applicant?.city ?? '',
+    email: applicant?.email ?? '',
+    name: applicant?.name ?? '',
+    nationalId: applicant?.nationalId ?? '',
+    phoneNumber: applicant?.phoneNumber ?? '',
+    postcode: applicant?.postalCode ?? '',
     reportingFor,
   }
 
@@ -211,29 +220,40 @@ const getReporter = (
 const getInjured = (
   answers: AccidentNotificationAnswers,
 ): MinarsidurAPIModelsAccidentReportsInjuredDTO => {
-  const whoIsTheNotificationFor = getValueViaPath(
+  const whoIsTheNotificationFor = getValueViaPath<WhoIsTheNotificationForEnum>(
     answers,
     'whoIsTheNotificationFor.answer',
-  ) as WhoIsTheNotificationForEnum
+  )
 
   const injured =
     whoIsTheNotificationFor === WhoIsTheNotificationForEnum.ME
       ? {
-          ...(getValueViaPath(answers, 'applicant') as ApplicantV2),
-          jobTitle: getValueViaPath(answers, 'workAccident.jobTitle') as string,
+          ...getValueViaPath<ApplicantV2>(answers, 'applicant'),
+          jobTitle: getValueViaPath<string>(answers, 'workAccident.jobTitle'),
         }
-      : (getValueViaPath(
+      : getValueViaPath<InjuredPersonInformationV2>(
           answers,
           'injuredPersonInformation',
-        ) as InjuredPersonInformationV2)
+        )
 
   return {
-    nationalId: injured.nationalId ?? '',
-    name: injured.name ?? '',
-    email: injured.email ?? '',
-    phone: injured.phoneNumber ?? '',
-    occupation: injured.jobTitle ?? '',
+    nationalId: injured?.nationalId ?? '',
+    name: injured?.name ?? '',
+    email: injured?.email ?? '',
+    phone: injured?.phoneNumber ?? '',
+    occupation: injured?.jobTitle ?? '',
   }
+}
+
+const createDateTime = (date?: string | null, time?: string | null): Date => {
+  if (!date) {
+    return new Date()
+  }
+
+  const [year, month, day] = date.split('-').map(Number)
+  const hours = time ? parseInt(time.slice(0, 2), 10) : 0
+  const minutes = time ? parseInt(time.slice(2, 4), 10) : 0
+  return new Date(year, month - 1, day, hours, minutes)
 }
 
 const getAccident = (
@@ -241,29 +261,36 @@ const getAccident = (
 ): MinarsidurAPIModelsAccidentReportsAccidentDTO => {
   const accidentType = accidentTypeToDTO(answers)
 
-  const accidentDetails = getValueViaPath(
+  const accidentDetails = getValueViaPath<AccidentDetailsV2>(
     answers,
     'accidentDetails',
-  ) as AccidentDetailsV2
+  )
 
-  const fatal = getValueViaPath(answers, 'wasTheAccidentFatal') as YesOrNo
+  const fatal = getValueViaPath<YesOrNo>(answers, 'wasTheAccidentFatal')
 
   const accidentLocation = locationToDTO(answers)
+
+  const locationDescription = getValueViaPath<string>(
+    answers,
+    'locationAndPurpose.location',
+  )
 
   return {
     type: accidentType.type ?? null,
     subtype: accidentType.subtype ?? null,
-    datetime: accidentDetails.dateOfAccident
-      ? new Date(accidentDetails.dateOfAccident)
-      : new Date(),
-    description: accidentDetails.descriptionOfAccident ?? '',
+    datetime: createDateTime(
+      accidentDetails?.dateOfAccident,
+      accidentDetails?.timeOfAccident,
+    ),
+    description: accidentDetails?.descriptionOfAccident ?? '',
     fatal: fatal === 'yes',
     location: accidentLocation,
-    locationDescription: accidentDetails.descriptionOfAccident ?? '',
-    symptoms: accidentDetails.accidentSymptoms ?? '',
-    dateTimeOfDoctorVisit: accidentDetails.dateOfDoctorVisit
-      ? new Date(accidentDetails.dateOfDoctorVisit)
-      : new Date(),
+    locationDescription: locationDescription ?? '',
+    symptoms: accidentDetails?.accidentSymptoms ?? '',
+    dateTimeOfDoctorVisit: createDateTime(
+      accidentDetails?.dateOfDoctorVisit,
+      accidentDetails?.timeOfDoctorVisit,
+    ),
     // dockName: null, // Not in the application, but should it?
     // dockGps: null, // Not in the application, but should it?
     atHome: getAtHome(answers),
@@ -273,10 +300,7 @@ const getAccident = (
 }
 
 const getAtHome = (answers: AccidentNotificationAnswers) => {
-  const homeAccident = getValueViaPath(
-    answers,
-    'homeAccident',
-  ) as HomeAccidentV2
+  const homeAccident = getValueViaPath<HomeAccidentV2>(answers, 'homeAccident')
 
   if (!homeAccident) {
     return undefined
@@ -293,7 +317,7 @@ const getAtHome = (answers: AccidentNotificationAnswers) => {
 }
 
 const getAtWork = (answers: AccidentNotificationAnswers) => {
-  const workMachine = getValueViaPath(answers, 'workMachine') as WorkMachineV2
+  const workMachine = getValueViaPath<WorkMachineV2>(answers, 'workMachine')
 
   if (!workMachine || !workMachine?.descriptionOfMachine) {
     return undefined
@@ -304,10 +328,10 @@ const getAtWork = (answers: AccidentNotificationAnswers) => {
 
 const getAtSailorWork = (answers: AccidentNotificationAnswers) => {
   const shipLocation = shipLocationToDTO(answers)
-  const fishingShipInfo = getValueViaPath(
+  const fishingShipInfo = getValueViaPath<FishingShipInfoV2>(
     answers,
     'fishingShipInfo',
-  ) as FishingShipInfoV2
+  )
 
   if (!shipLocation || !fishingShipInfo) {
     return undefined
@@ -325,15 +349,15 @@ const getAtSailorWork = (answers: AccidentNotificationAnswers) => {
 const getEmployer = (
   answers: AccidentNotificationAnswers,
 ): MinarsidurAPIModelsAccidentReportsEmployerDTO | undefined => {
-  const companyInfo = getValueViaPath(answers, 'companyInfo') as CompanyInfoV2
-  const accidentType = getValueViaPath(
+  const companyInfo = getValueViaPath<CompanyInfoV2>(answers, 'companyInfo')
+  const accidentType = getValueViaPath<AccidentTypeEnum>(
     answers,
     'accidentType.radioButton',
-  ) as AccidentTypeEnum
-  const representative = getValueViaPath(
+  )
+  const representative = getValueViaPath<RepresentativeInfoV2>(
     answers,
     'representative',
-  ) as RepresentativeInfoV2
+  )
 
   if (
     answers.juridicalPerson &&
@@ -369,20 +393,20 @@ const getEmployer = (
 const getClub = (
   answers: AccidentNotificationAnswers,
 ): MinarsidurAPIModelsAccidentReportsClubDTO | undefined => {
-  const accidentType = getValueViaPath(
+  const accidentType = getValueViaPath<AccidentTypeEnum>(
     answers,
     'accidentType.radioButton',
-  ) as AccidentTypeEnum
+  )
   if (accidentType !== AccidentTypeEnum.SPORTS) return
 
-  const club = getValueViaPath(answers, 'companyInfo') as CompanyInfoV2
-  const accidentLocation = getValueViaPath(
+  const club = getValueViaPath<CompanyInfoV2>(answers, 'companyInfo')
+  const accidentLocation = getValueViaPath<string>(
     answers,
     'accidentLocation.answer',
   ) as string
   return {
-    nationalId: club.nationalRegistrationId ?? '',
-    name: club.name ?? '',
+    nationalId: club?.nationalRegistrationId ?? '',
+    name: club?.name ?? '',
     accidentType: accidentLocation ?? '',
   }
 }
