@@ -19,7 +19,6 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { application as applicationMessage } from './messages'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import {
   UserProfileApi,
@@ -43,7 +42,6 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.HealthcareWorkPermit.translation,
   ],
   dataSchema: HealthcareWorkPermitSchema,
-  featureFlag: Features.healthcareWorkPermit,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
