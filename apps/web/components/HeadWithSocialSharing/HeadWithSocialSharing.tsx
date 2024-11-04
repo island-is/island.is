@@ -8,7 +8,7 @@ interface HeadWithSocialSharingProps {
   imageWidth?: string
   imageHeight?: string
   imageContentType?: string
-  keywords?: string[]
+  keywords?: string[] | null
 }
 
 const usableContentTypes = ['image/jpeg', 'image/gif', 'image/png', undefined]
