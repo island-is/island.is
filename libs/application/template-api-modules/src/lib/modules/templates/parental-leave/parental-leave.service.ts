@@ -682,8 +682,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     const { applicationType, otherParent, isRequestingRights, periods } =
       getApplicationAnswers(application.answers)
 
-    const { applicationFundId, VMSTApplicationRights } =
-      getApplicationExternalData(application.externalData)
+    const { VMSTApplicationRights } = getApplicationExternalData(
+      application.externalData,
+    )
 
     if (VMSTApplicationRights) {
       let usedDays = calculateDaysUsedByPeriods(periods)
@@ -697,39 +698,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         }
       })
       return rights
-    }
-
-    let vmstRightCodePeriod = null
-    if (applicationFundId) {
-      try {
-        const VMSTperiods =
-          await this.applicationInformationAPI.applicationGetApplicationInformation(
-            {
-              applicationId: application.id,
-            },
-          )
-
-        if (VMSTperiods?.periods) {
-          /*
-           * Sometime applicant uses other right than basic right ( grunnréttindi)
-           * Here we make sure we only use/sync amd use basic right ( grunnréttindi ) from VMST
-           */
-          const getVMSTRightCodePeriod =
-            VMSTperiods.periods[0].rightsCodePeriod.split(',')[0]
-          const periodCodeStartCharacters = ['M', 'F']
-          if (
-            periodCodeStartCharacters.some((c) =>
-              getVMSTRightCodePeriod.startsWith(c),
-            )
-          ) {
-            vmstRightCodePeriod = getVMSTRightCodePeriod
-          }
-        }
-      } catch (e) {
-        this.logger.warn(
-          `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
-        )
-      }
     }
 
     const maximumPersonalDaysToSpend =
@@ -754,7 +722,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         ? apiConstants.rights.multipleBirthsOrlofRightsId
         : apiConstants.rights.multipleBirthsGrantRightsId
 
-    const baseRight = vmstRightCodePeriod ?? getRightsCode(application)
+    const baseRight = getRightsCode(application)
     const rights = [
       {
         rightsUnit: baseRight,
