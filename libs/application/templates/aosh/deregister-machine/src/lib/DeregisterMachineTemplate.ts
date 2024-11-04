@@ -25,7 +25,6 @@ import { assign } from 'xstate'
 import set from 'lodash/set'
 import { IdentityApi, UserProfileApi, MachinesApi } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Features } from '@island.is/feature-flags'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regNumber = getValueViaPath(
@@ -47,7 +46,6 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.DEREGISTER_MACHINE,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
-  featureFlag: Features.DeregisterMachine,
   translationNamespaces: [
     ApplicationConfigurations.DeregisterMachine.translation,
   ],
