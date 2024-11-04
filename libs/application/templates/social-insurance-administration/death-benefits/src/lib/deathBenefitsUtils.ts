@@ -312,6 +312,11 @@ export const getAttachments = (application: Application) => {
   return attachments
 }
 
+export const getChildren = (externalData: ExternalData) => {
+  const { children } = getApplicationExternalData(externalData)
+  return children
+}
+
 export const isEligible = (externalData: ExternalData): boolean => {
   const { isEligible } = getApplicationExternalData(externalData)
   return isEligible

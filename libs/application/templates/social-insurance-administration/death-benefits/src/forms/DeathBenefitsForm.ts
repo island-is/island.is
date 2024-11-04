@@ -8,6 +8,7 @@ import {
   buildRadioField,
   buildSection,
   buildSelectField,
+  buildStaticTableField,
   buildSubSection,
   buildSubmitField,
   buildTextField,
@@ -34,7 +35,9 @@ import isEmpty from 'lodash/isEmpty'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getChildren,
 } from '../lib/deathBenefitsUtils'
+import { format as formatKennitala } from 'kennitala'
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
@@ -393,11 +396,19 @@ export const DeathBenefitsForm: Form = buildForm({
               title: deathBenefitsFormMessage.info.childrenTitle,
               description: deathBenefitsFormMessage.info.childrenDescription,
               children: [
-                buildCustomField({
-                  id: 'children.table',
-                  doesNotRequireAnswer: true,
+                buildStaticTableField({
                   title: '',
-                  component: 'Children',
+                  header: [
+                    socialInsuranceAdministrationMessage.confirm.name,
+                    socialInsuranceAdministrationMessage.confirm.nationalId,
+                  ],
+                  rows: ({ externalData }) => {
+                    const children = getChildren(externalData)
+                    return children.map((child) => [
+                      child.fullName ?? '',
+                      formatKennitala(child.nationalId ?? '')
+                    ])
+                  },
                 }),
               ],
             }),
