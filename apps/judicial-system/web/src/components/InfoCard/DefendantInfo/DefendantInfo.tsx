@@ -1,7 +1,7 @@
 import { FC } from 'react'
-import { useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -49,6 +49,22 @@ export const getAppealExpirationInfo = (
     : strings.appealExpirationDate
 
   return { message, date: formatDate(expiryDate) }
+}
+
+const getVerdictViewDateText = (
+  formatMessage: IntlShape['formatMessage'],
+  verdictViewDate?: string | null,
+  serviceNotRequired?: boolean,
+): string => {
+  if (verdictViewDate) {
+    return formatMessage(strings.verdictDisplayedDate, {
+      date: formatDate(verdictViewDate, 'PPP'),
+    })
+  } else if (serviceNotRequired) {
+    return formatMessage(strings.serviceNotRequired)
+  } else {
+    return ''
+  }
 }
 
 export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
@@ -117,10 +133,12 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         </Box>
       )}
       {displayVerdictViewDate && (
-        <Text>
-          {formatMessage(strings.verdictDisplayedDate, {
-            date: formatDate(defendant.verdictViewDate, 'PPP'),
-          })}
+        <Text marginTop={1} fontWeight="semiBold">
+          {getVerdictViewDateText(
+            formatMessage,
+            defendant.verdictViewDate,
+            defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED,
+          )}
         </Text>
       )}
     </>

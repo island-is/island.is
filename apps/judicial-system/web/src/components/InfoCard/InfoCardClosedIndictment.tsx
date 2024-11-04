@@ -29,7 +29,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     civilClaimants,
   } = useInfoCardItems()
 
-  const { displayAppealExpirationInfo } = props
+  const { displayAppealExpirationInfo, displayVerdictViewDate } = props
 
   const reviewedDate = workingCase.eventLogs?.find(
     (log) => log.eventType === EventType.INDICTMENT_REVIEWED,
@@ -40,7 +40,13 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
       sections={[
         {
           id: 'defendants-section',
-          items: [defendants(workingCase.type, displayAppealExpirationInfo)],
+          items: [
+            defendants(
+              workingCase.type,
+              displayAppealExpirationInfo,
+              displayVerdictViewDate,
+            ),
+          ],
         },
         ...(workingCase.hasCivilClaims
           ? [{ id: 'civil-claimant-section', items: [civilClaimants] }]
