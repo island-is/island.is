@@ -40,7 +40,6 @@ import {
   CompanyRegistryClientService,
 } from '@island.is/clients/rsk/company-registry'
 
-
 type HandleNotification = {
   profile: {
     nationalId: string

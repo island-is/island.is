@@ -49,9 +49,11 @@ export class WorkerService implements OnModuleDestroy {
     this.status = Status.Running
 
     while (this.status === Status.Running) {
-
       const now = new Date()
-      if (this.config.shouldSleepOutsideWorkingHours && isOutsideWorkingHours(now)) {
+      if (
+        this.config.shouldSleepOutsideWorkingHours &&
+        isOutsideWorkingHours(now)
+      ) {
         this.logger.info('Outside of working hours - worker sleeping')
         this.status = Status.Sleeping
         await sleepUntilMorning(now)

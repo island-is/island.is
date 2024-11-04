@@ -21,12 +21,12 @@ export const isOutsideWorkingHours = (now: Date): boolean => {
 }
 
 export const calculateSleepDurationUntilMorning = (now: Date): number => {
-  const currentHour = now.getHours();
-  const currentMinutes = now.getMinutes();
-  const currentSeconds = now.getSeconds();
-  const sleepHours = (24 - currentHour + WORK_STARTING_HOUR) % 24;
-  return (sleepHours * 3600 - currentMinutes * 60 - currentSeconds) * 1000;
-};
+  const currentHour = now.getHours()
+  const currentMinutes = now.getMinutes()
+  const currentSeconds = now.getSeconds()
+  const sleepHours = (24 - currentHour + WORK_STARTING_HOUR) % 24
+  return (sleepHours * 3600 - currentMinutes * 60 - currentSeconds) * 1000
+}
 
 export const sleepUntilMorning = (now: Date): Promise<void> => {
   const ms = calculateSleepDurationUntilMorning(now)
