@@ -1,13 +1,13 @@
-import { useEffect } from 'react'
 import { gql, useLazyQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
+import { useEffect, useState } from 'react'
 
 import { Button, toast } from '@island.is/island-ui/core'
 
 import { useLocale } from '@island.is/localization'
-import { editorMsgs, reviewMessages } from '../lib/messages'
+import { useBffUrlGenerator } from '@island.is/react-spa/bff'
 import type { RegulationDraftId } from '@island.is/regulations/admin'
-import { useAuth } from '@island.is/auth/react'
+import { editorMsgs, reviewMessages } from '../lib/messages'
 
 type Props = {
   draftId: RegulationDraftId
@@ -23,40 +23,21 @@ const DownloadRegulationDraftQuery = gql`
   }
 `
 
-function formSubmit(url: string, token: string) {
-  // Create form elements
-  const form = document.createElement('form')
-  const tokenInput = document.createElement('input')
-
-  form.appendChild(tokenInput)
-
-  // Form values
-  form.method = 'post'
-  form.action = url
-  form.target = '_blank'
-
-  // National Id values
-  tokenInput.type = 'hidden'
-  tokenInput.name = '__accessToken'
-  tokenInput.value = token
-
-  document.body.appendChild(form)
-  form.submit()
-  document.body.removeChild(form)
-}
-
-export function DownloadDraftButton({ draftId, reviewButton }: Props) {
-  const userInfo = useAuth().userInfo
+export const DownloadDraftButton = ({ draftId, reviewButton }: Props) => {
+  const bffUrlGenerator = useBffUrlGenerator()
+  const [isFetchingFile, setIsFetchingFile] = useState(false)
   const t = useLocale().formatMessage
-  const [downloadRegulation, { called, loading, error, data }] =
-    useLazyQuery<Query>(DownloadRegulationDraftQuery, {
+  const [downloadRegulation, { loading, error, data }] = useLazyQuery<Query>(
+    DownloadRegulationDraftQuery,
+    {
       variables: {
         input: {
           draftId,
         },
       },
       fetchPolicy: 'no-cache',
-    })
+    },
+  )
 
   useEffect(() => {
     if (error) {
@@ -65,27 +46,30 @@ export function DownloadDraftButton({ draftId, reviewButton }: Props) {
   }, [t, error])
 
   useEffect(() => {
-    if (called && data) {
-      const response = data.getDraftRegulationPdfDownload
-      const url = response?.url
+    const url = data?.getDraftRegulationPdfDownload?.url
 
-      if (url && userInfo) {
-        formSubmit(url, userInfo.access_token)
-      } else {
-        toast.error(t(editorMsgs.signedDocumentDownloadFreshError))
-      }
+    if (url && !isFetchingFile) {
+      window.open(
+        bffUrlGenerator('/api', {
+          url,
+        }),
+        '_blank',
+      )
+    } else if (data && !url) {
+      toast.error(t(editorMsgs.signedDocumentDownloadFreshError))
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [called, data, userInfo?.access_token])
+  }, [data])
 
   const onClick = async () => {
     downloadRegulation()
   }
 
+  const isLoading = loading || isFetchingFile
+
   if (reviewButton) {
     return (
       <Button
-        loading={loading}
+        loading={isLoading}
         as="button"
         onClick={onClick}
         icon="download"
@@ -99,7 +83,7 @@ export function DownloadDraftButton({ draftId, reviewButton }: Props) {
   }
 
   return (
-    <Button loading={loading} onClick={onClick} icon="download">
+    <Button loading={isLoading} onClick={onClick} icon="download">
       {t(editorMsgs.signedDocumentDownloadFresh)}
     </Button>
   )

@@ -1,5 +1,5 @@
 import { useLocale } from '@island.is/localization'
-import { useAuth } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { checkDelegation } from '@island.is/shared/utils'
 
 import { m } from '../lib/messages'
@@ -7,7 +7,7 @@ import { Problem } from '@island.is/react-spa/shared'
 
 export const AccessDenied = () => {
   const { formatMessage } = useLocale()
-  const { userInfo: user } = useAuth()
+  const user = useUserInfo()
   const isDelegation = user && checkDelegation(user)
 
   return (

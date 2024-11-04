@@ -8,8 +8,8 @@ const extraAnnotations = {
     'client_header_buffer_size 16k; large_client_header_buffers 4 16k;',
 }
 
-export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
-  return service('auth-admin-web')
+export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> =>
+  service('auth-admin-web')
     .namespace('identity-server-admin')
     .image('auth-admin-web')
     .env({
@@ -74,4 +74,3 @@ export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
       staging: { progressDeadlineSeconds: 1200 },
       prod: { progressDeadlineSeconds: 1200 },
     })
-}
