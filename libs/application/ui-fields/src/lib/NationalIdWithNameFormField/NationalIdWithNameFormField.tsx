@@ -1,3 +1,4 @@
+import { buildFieldRequired } from '@island.is/application/core'
 import {
   FieldBaseProps,
   NationalIdWithNameField,
@@ -17,7 +18,7 @@ export const NationalIdWithNameFormField: FC<
       id={field.id}
       application={application}
       disabled={field.disabled}
-      required={field.required}
+      required={buildFieldRequired(application, field.required)}
       customNationalIdLabel={field.customNationalIdLabel}
       customNameLabel={field.customNameLabel}
       onNationalIdChange={field.onNationalIdChange}

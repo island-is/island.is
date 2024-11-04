@@ -1,13 +1,13 @@
-import { useLocale } from '@island.is/localization'
-import { createContext, useContext, useMemo } from 'react'
-import { useLocation, matchPath, Outlet } from 'react-router-dom'
-import { PortalModule, PortalRoute, PortalType } from '../types/portalCore'
-import { useAuth } from '@island.is/auth/react'
 import {
   ApolloClient,
-  useApolloClient,
   NormalizedCacheObject,
+  useApolloClient,
 } from '@apollo/client'
+import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { createContext, useContext, useMemo } from 'react'
+import { Outlet, matchPath, useLocation } from 'react-router-dom'
+import { PortalModule, PortalRoute, PortalType } from '../types/portalCore'
 
 export type PortalMeta = {
   portalType: PortalType
@@ -44,7 +44,7 @@ export const PortalProvider = ({
   routes,
 }: PortalProviderProps) => {
   const { pathname } = useLocation()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const client = useApolloClient() as ApolloClient<NormalizedCacheObject>
 
