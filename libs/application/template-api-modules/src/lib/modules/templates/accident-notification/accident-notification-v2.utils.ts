@@ -403,7 +403,7 @@ const getClub = (
   const accidentLocation = getValueViaPath<string>(
     answers,
     'accidentLocation.answer',
-  ) as string
+  )
   return {
     nationalId: club?.nationalRegistrationId ?? '',
     name: club?.name ?? '',
