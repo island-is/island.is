@@ -33,9 +33,9 @@ export const PhoneWithElectronicId: FC<
   const [getElectronicIdStatus] = useLazyQuery(
     GET_SYSLUMENN_ELECTRONIC_ID_STATUS,
   )
+  const topId = id.split('.')[0]
 
   useEffect(() => {
-    const topId = id.split('.')[0]
     const cleanPhone = phoneNumber.replace(/\D/g, '')
     if (cleanPhone.length === 7 && nationalId?.length === 10) {
       setLoading(true)
@@ -83,7 +83,7 @@ export const PhoneWithElectronicId: FC<
         onChange={(e) => setPhoneNumber(e.target.value)}
       />
       <Box hidden={true}>
-        <InputController id={`${id}.electronicID`} defaultValue={''} />
+        <InputController id={id} defaultValue={''} />
       </Box>
     </Box>
   )
