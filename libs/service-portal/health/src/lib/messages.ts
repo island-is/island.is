@@ -87,6 +87,31 @@ export const messages = defineMessages({
     id: 'sp.health:repaid',
     defaultMessage: 'Endurgreitt',
   },
+  renewal: {
+    id: 'sp.health:renewal',
+    defaultMessage: 'Endurnýjun',
+  },
+  valid: {
+    id: 'sp.health:valid',
+    defaultMessage: 'Í gildi',
+  },
+  validForRenewal: {
+    id: 'sp.health:valid-for-renewal',
+    defaultMessage: 'Endurnýja',
+  },
+  renewalInProgress: {
+    id: 'sp.health:renewal-in-progress',
+    defaultMessage: 'Endurnýjun í gangi',
+  },
+  notValidForRenewal: {
+    id: 'sp.health:not-valid-for-renewal',
+    defaultMessage: 'Ekki hægt',
+  },
+  notValidForRenewalDetail: {
+    id: 'sp.health:not-valid-for-renewal-detail',
+    defaultMessage:
+      'Sjálfvirk endurnýjun er ekki í boði fyrir þetta hjálpartæki.',
+  },
   monthlyBreakdownOfInvoices: {
     id: 'sp.health:monthly-breakdown-of-invoices',
     defaultMessage: 'Sundurliðun reikninga í völdum mánuði',
