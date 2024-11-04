@@ -67,8 +67,8 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   )
 
   return (
-    <Box>
-      <Box marginBottom={1}>
+    <>
+      <Box component="p" marginBottom={1}>
         <Text as="span" fontWeight="semiBold">{`${formatMessage(
           infoCardStrings.name,
         )}: `}</Text>
@@ -79,7 +79,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           {defendant.citizenship && `, (${defendant.citizenship})`}
         </Text>
       </Box>
-      <Box marginBottom={1}>
+      <Box component="p" marginBottom={1}>
         <Text as="span" fontWeight="semiBold">{`${formatMessage(
           core.addressOrResidence,
         )}: `}</Text>
@@ -88,7 +88,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         </Text>
       </Box>
       {defendant.defenderName || defender?.name ? (
-        <>
+        <Box component="p">
           <Text as="span" whiteSpace="pre" fontWeight="semiBold">
             {defender?.sessionArrangement ===
             SessionArrangements.ALL_PRESENT_SPOKESPERSON
@@ -101,7 +101,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
             defendant.defenderPhoneNumber || defender?.phoneNumber,
             false,
           )}
-        </>
+        </Box>
       ) : (
         <Text>{`${formatMessage(strings.defender)}: ${formatMessage(
           strings.noDefender,
@@ -123,6 +123,6 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           })}
         </Text>
       )}
-    </Box>
+    </>
   )
 }

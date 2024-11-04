@@ -36,39 +36,45 @@ const useInfoCardItems = () => {
     caseType?: CaseType | null,
     displayAppealExpirationInfo?: boolean,
     displayVerdictViewDate?: boolean,
-  ): Item => ({
-    id: 'defendant-item',
-    title: capitalize(
-      isRequestCase(caseType)
-        ? formatMessage(core.defendant, {
-            suffix:
-              workingCase.defendants && workingCase.defendants.length > 1
-                ? 'ar'
-                : 'i',
-          })
-        : workingCase.defendants && workingCase.defendants.length > 1
-        ? formatMessage(core.indictmentDefendants)
-        : formatMessage(core.indictmentDefendant, {
-            gender: workingCase.defendants && workingCase.defendants[0].gender,
-          }),
-    ),
-    values: workingCase.defendants
-      ? workingCase.defendants.map((defendant) => (
-          <DefendantInfo
-            key={defendant.id}
-            defendant={defendant}
-            defender={{
-              name: workingCase.defenderName,
-              email: workingCase.defenderEmail,
-              phoneNumber: workingCase.defenderPhoneNumber,
-              sessionArrangement: workingCase.sessionArrangements,
-            }}
-            displayAppealExpirationInfo={displayAppealExpirationInfo}
-            displayVerdictViewDate={displayVerdictViewDate}
-          />
-        ))
-      : [],
-  })
+  ): Item => {
+    const defendants = workingCase.defendants
+    const isMultipleDefendants = defendants && defendants.length > 1
+
+    return {
+      id: 'defendant-item',
+      title: (
+        <Text variant="h4" as="h4" marginBottom={2}>
+          {capitalize(
+            isRequestCase(caseType)
+              ? formatMessage(core.defendant, {
+                  suffix: isMultipleDefendants ? 'ar' : 'i',
+                })
+              : isMultipleDefendants
+              ? formatMessage(core.indictmentDefendants)
+              : formatMessage(core.indictmentDefendant, {
+                  gender: defendants && defendants[0].gender,
+                }),
+          )}
+        </Text>
+      ),
+      values: defendants
+        ? defendants.map((defendant) => (
+            <DefendantInfo
+              key={defendant.id}
+              defendant={defendant}
+              defender={{
+                name: workingCase.defenderName,
+                email: workingCase.defenderEmail,
+                phoneNumber: workingCase.defenderPhoneNumber,
+                sessionArrangement: workingCase.sessionArrangements,
+              }}
+              displayAppealExpirationInfo={displayAppealExpirationInfo}
+              displayVerdictViewDate={displayVerdictViewDate}
+            />
+          ))
+        : [],
+    }
+  }
 
   const indictmentCreated: Item = {
     id: 'indictment-created-item',
@@ -298,7 +304,15 @@ const useInfoCardItems = () => {
   const civilClaimants: Item = {
     id: 'civil-claimant-item',
     title: (
-      <Text variant="h4" as="h4" marginBottom={3}>
+      <Text
+        variant="h4"
+        as="h4"
+        marginBottom={
+          workingCase.civilClaimants && workingCase.civilClaimants.length > 1
+            ? 3
+            : 2
+        }
+      >
         {capitalize(
           workingCase.civilClaimants && workingCase.civilClaimants.length > 1
             ? formatMessage(strings.civilClaimants)

@@ -26,7 +26,7 @@ export const twoCols = style({
 
 export const renderDivider = style({
   position: 'relative',
-  marginBottom: theme.spacing[4],
+  marginBottom: theme.spacing[3],
   '::after': {
     content: "''",
     position: 'absolute',

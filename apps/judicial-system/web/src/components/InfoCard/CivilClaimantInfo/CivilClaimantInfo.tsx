@@ -18,7 +18,7 @@ export const CivilClaimantInfo: FC<CivilClaimantInfoProps> = (props) => {
   const { formatMessage } = useIntl()
 
   return (
-    <Box>
+    <>
       <Box marginBottom={1}>
         <Text as="span" fontWeight="semiBold">
           {`${formatMessage(infoCardStrings.name)}: `}
@@ -51,6 +51,6 @@ export const CivilClaimantInfo: FC<CivilClaimantInfoProps> = (props) => {
           strings.noLawyer,
         )}`}</Text>
       )}
-    </Box>
+    </>
   )
 }
