@@ -131,6 +131,11 @@ export const overview = {
     },
   }),
   employee: defineMessages({
+    employees: {
+      id: 'aosh.wan.application:overview.employee.employees',
+      defaultMessage: 'Starfsmenn',
+      description: 'Employees label',
+    },
     nationality: {
       id: 'aosh.wan.application:overview.employee.nationality',
       defaultMessage: 'Þjóðerni',

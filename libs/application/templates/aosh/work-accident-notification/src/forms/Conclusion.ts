@@ -1,4 +1,13 @@
-import { buildForm, buildSection } from '@island.is/application/core'
+import {
+  buildAlertMessageField,
+  buildExpandableDescriptionField,
+  buildCustomField,
+  buildForm,
+  buildMultiField,
+  buildSection,
+  coreMessages,
+  buildMessageWithLinkButtonField,
+} from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import {
   information,
@@ -8,7 +17,6 @@ import {
   conclusion,
 } from '../lib/messages'
 import { Logo } from '../assets/Logo'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const Conclusion: Form = buildForm({
   id: 'ConclusionApplicationForm',
@@ -51,13 +59,42 @@ export const Conclusion: Form = buildForm({
       title: overview.general.sectionTitle,
       children: [],
     }),
-    buildFormConclusionSection({
-      sectionTitle: conclusion.general.sectionTitle,
-      multiFieldTitle: conclusion.general.title,
-      alertTitle: conclusion.default.alertTitle,
-      expandableHeader: conclusion.default.accordionTitle,
-      expandableIntro: '',
-      expandableDescription: conclusion.default.accordionText,
+    buildSection({
+      id: 'conclusion',
+      title: conclusion.general.sectionTitle,
+      children: [
+        buildMultiField({
+          id: 'uiForms.conclusionMultifield',
+          title: conclusion.general.title,
+          children: [
+            buildAlertMessageField({
+              id: 'uiForms.conclusionAlert',
+              title: conclusion.default.alertTitle,
+              alertType: 'success',
+            }),
+            buildExpandableDescriptionField({
+              id: 'uiForms.conclusionExpandableDescription',
+              title: conclusion.default.accordionTitle,
+              introText: '',
+              description: conclusion.default.accordionText,
+              startExpanded: true,
+            }),
+            buildCustomField({
+              id: 'pdfoverview',
+              title: '',
+              component: 'PdfOverview',
+            }),
+            buildMessageWithLinkButtonField({
+              id: 'uiForms.conclusionBottomLink',
+              title: '',
+              url: '/minarsidur/umsoknir',
+              buttonTitle: coreMessages.openServicePortalButtonTitle,
+              message: coreMessages.openServicePortalMessageText,
+              marginBottom: [4, 4, 12],
+            }),
+          ],
+        }),
+      ],
     }),
   ],
 })
