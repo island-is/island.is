@@ -33,7 +33,7 @@ export const CivilClaimantInfo: FC<CivilClaimantInfoProps> = (props) => {
         </Text>
       </Box>
       {civilClaimant.hasSpokesperson ? (
-        <Box display={['block', 'block', 'block', 'flex']}>
+        <>
           <Text as="span" whiteSpace="pre" fontWeight="semiBold">
             {civilClaimant.spokespersonIsLawyer
               ? `${formatMessage(strings.lawyer)}: `
@@ -45,7 +45,7 @@ export const CivilClaimantInfo: FC<CivilClaimantInfoProps> = (props) => {
             civilClaimant.spokespersonPhoneNumber,
             false,
           )}
-        </Box>
+        </>
       ) : (
         <Text>{`${formatMessage(strings.lawyer)}: ${formatMessage(
           strings.noLawyer,
