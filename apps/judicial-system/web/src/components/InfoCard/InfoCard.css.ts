@@ -32,7 +32,7 @@ export const renderDivider = style({
     position: 'absolute',
     top: -theme.spacing[1],
     display: 'block',
-    width: '50px',
+    width: '64px',
     height: '2px',
     backgroundColor: theme.color.blue200,
   },

@@ -22,10 +22,7 @@ import {
 import { sortByIcelandicAlphabet } from '../../utils/sortHelper'
 import { FormContext } from '../FormProvider/FormProvider'
 import { CivilClaimantInfo } from './CivilClaimantInfo/CivilClaimantInfo'
-import {
-  DefendantInfo,
-  DefendantInfoActionButton,
-} from './DefendantInfo/DefendantInfo'
+import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
 import { Item } from './InfoCard'
 import { strings } from './useInfoCardItems.strings'
@@ -38,7 +35,6 @@ const useInfoCardItems = () => {
   const defendants = (
     caseType?: CaseType | null,
     displayAppealExpirationInfo?: boolean,
-    defendantInfoActionButton?: DefendantInfoActionButton,
     displayVerdictViewDate?: boolean,
   ): Item => ({
     id: 'defendant-item',
@@ -69,7 +65,6 @@ const useInfoCardItems = () => {
             }}
             displayAppealExpirationInfo={displayAppealExpirationInfo}
             displayVerdictViewDate={displayVerdictViewDate}
-            defendantInfoActionButton={defendantInfoActionButton}
           />
         ))
       : [],
