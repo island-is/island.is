@@ -73,8 +73,14 @@ export class HealthDirectorateService {
   }
 
   /* Vaccinations */
-  async getVaccinations(auth: Auth): Promise<Vaccinations | null> {
-    const data = await this.vaccinationApi.getVaccinationDiseaseDetail(auth)
+  async getVaccinations(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<Vaccinations | null> {
+    const data = await this.vaccinationApi.getVaccinationDiseaseDetail(
+      auth,
+      locale === 'is' ? 'is' : 'en',
+    )
     if (data === null) {
       return null
     }

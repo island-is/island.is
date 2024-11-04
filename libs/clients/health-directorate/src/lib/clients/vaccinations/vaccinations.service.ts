@@ -40,6 +40,7 @@ export class HealthDirectorateVaccinationsService {
 
   public async getVaccinationDiseaseDetail(
     auth: Auth,
+    locale: string,
   ): Promise<Array<DiseaseVaccinationDto> | null> {
     const disease = await this.vaccinationsApiWithAuth(auth)
       .meVaccinationControllerGetVaccinationsForDiseases()
