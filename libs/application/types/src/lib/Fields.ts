@@ -131,7 +131,8 @@ export type TableRepeaterItem = {
     }
   | {
       component: 'phone'
-      format?: string
+      allowedCountryCodes?: string[]
+      enableCountrySelector?: boolean
     }
   | {
       component: 'date'
