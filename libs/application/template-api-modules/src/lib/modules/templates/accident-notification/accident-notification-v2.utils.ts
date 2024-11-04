@@ -361,11 +361,11 @@ const getEmployer = (
   if (accidentType !== AccidentTypeEnum.WORK) return
 
   return {
-    companyName: companyInfo.name ?? '',
-    companyNationalId: companyInfo.nationalRegistrationId ?? '',
-    representativeName: representative.name ?? '',
-    representativeEmail: representative.email ?? '',
-    representativePhone: representative.phoneNumber ?? '',
+    companyName: companyInfo?.name ?? '',
+    companyNationalId: companyInfo?.nationalRegistrationId ?? '',
+    representativeName: representative?.name ?? '',
+    representativeEmail: representative?.email ?? '',
+    representativePhone: representative?.phoneNumber ?? '',
   }
 }
 
