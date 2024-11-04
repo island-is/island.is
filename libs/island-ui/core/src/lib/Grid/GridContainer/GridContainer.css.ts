@@ -28,7 +28,7 @@ export const root = style({
         },
       },
     },
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       paddingLeft: theme.grid.gutter.desktop * 2,
       paddingRight: theme.grid.gutter.desktop * 2,
       selectors: {
