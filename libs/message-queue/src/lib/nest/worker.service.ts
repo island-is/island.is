@@ -4,7 +4,7 @@ import { Message } from '@aws-sdk/client-sqs'
 import type { Logger } from '@island.is/logging'
 import { QueueService } from './queue.service'
 import type { Queue, Job } from './types'
-import { clamp } from './utils'
+import { clamp, isOutsideWorkingHours, sleepUntilMorning } from './utils'
 import { ClientService } from './client.service'
 
 type MessageHandler<T> = (handler: T, job: Job) => Promise<void>
@@ -20,6 +20,7 @@ enum Status {
   Running,
   Stopping,
   Stopped,
+  Sleeping,
 }
 
 @Injectable()
@@ -46,7 +47,17 @@ export class WorkerService implements OnModuleDestroy {
     )
 
     this.status = Status.Running
+
     while (this.status === Status.Running) {
+
+      const now = new Date()
+      if (this.config.shouldSleepOutsideWorkingHours && isOutsideWorkingHours(now)) {
+        this.logger.info('Outside of working hours - worker sleeping')
+        this.status = Status.Sleeping
+        await sleepUntilMorning(now)
+        this.status = Status.Running
+      }
+
       const messages = await this.client.receiveMessages(this.queue.url, {
         maxNumMessages: this.config.maxConcurrentJobs,
       })
@@ -107,7 +118,7 @@ export class WorkerService implements OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    if (this.status === Status.Running) {
+    if (this.status === Status.Running || this.status === Status.Sleeping) {
       this.logger.info(`Stopping worker "${this.config.name}"`)
 
       if (this.activeJobs !== null) {

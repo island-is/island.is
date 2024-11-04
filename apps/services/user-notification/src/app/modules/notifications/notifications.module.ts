@@ -36,6 +36,7 @@ import { MessageProcessorService } from './messageProcessor.service'
       queue: {
         name: 'notifications',
         queueName: environment.mainQueueName,
+        shouldSleepOutsideWorkingHours: true,
         deadLetterQueue: {
           queueName: environment.deadLetterQueueName,
         },
