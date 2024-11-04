@@ -18,8 +18,11 @@ export const DeceasedSpouse = ({
   const externalDataDeceasedSpouse = getApplicationExternalData(
     application.externalData,
   ).deceasedSpouseNationalId
-  const { deceasedSpouseName, deceasedSpouseNationalId, deceasedSpouseDateOfDeath } =
-    getApplicationAnswers(application.answers)
+  const {
+    deceasedSpouseName,
+    deceasedSpouseNationalId,
+    deceasedSpouseDateOfDeath,
+  } = getApplicationAnswers(application.answers)
 
   return (
     <ReviewGroup
