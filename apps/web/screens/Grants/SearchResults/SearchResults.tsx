@@ -209,9 +209,6 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     if (!grants) {
       return
     }
-    if (grants.length === 0) {
-      return formatMessage(m.search.noResultsFound)
-    }
     if (grants.length === 1) {
       return formatMessage(m.search.resultFound, {
         arg: <strong>{grants.length}</strong>,
@@ -355,7 +352,30 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                 </Inline>
               ) : undefined}
               {!grants?.length && !error && !loading && (
-                <Box background="white">ekkert fannst - TODO</Box>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  background="white"
+                  borderWidth="standard"
+                  borderRadius="xl"
+                  borderColor="blue200"
+                  flexDirection={['columnReverse', 'columnReverse', 'row']}
+                  columnGap={[2, 4, 8, 8, 20]}
+                  paddingY={[5, 8]}
+                  paddingX={[3, 3, 5, 10]}
+                  rowGap={[7, 7, 0]}
+                >
+                  <Box display="flex" flexDirection="column" rowGap={1}>
+                    <Text variant={'h3'} as={'h3'} color="dark400">
+                      {formatMessage(m.search.noResultsFound)}
+                    </Text>
+                    <Text whiteSpace="preLine">
+                      Borem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </Text>
+                  </Box>
+                  <img width="240" src="/assets/sofa.svg" alt={'bingbong'} />
+                </Box>
               )}
             </Box>
           )}
