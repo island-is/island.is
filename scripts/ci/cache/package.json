@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@actions/cache": "3.2.4",
+    "@actions/cache": "3.3.0",
     "glob": "10.4.2"
   },
   "resolutions": {

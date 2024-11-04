@@ -5,11 +5,11 @@ __metadata:
   version: 6
   cacheKey: 8
 
-"@actions/cache@npm:3.2.4":
-  version: 3.2.4
-  resolution: "@actions/cache@npm:3.2.4"
+"@actions/cache@npm:3.3.0":
+  version: 3.3.0
+  resolution: "@actions/cache@npm:3.3.0"
   dependencies:
-    "@actions/core": ^1.10.0
+    "@actions/core": ^1.11.1
     "@actions/exec": ^1.0.1
     "@actions/glob": ^0.1.0
     "@actions/http-client": ^2.1.1
@@ -18,30 +18,21 @@ __metadata:
     "@azure/ms-rest-js": ^2.6.0
     "@azure/storage-blob": ^12.13.0
     semver: ^6.3.1
-    uuid: ^3.3.3
-  checksum: 5bf5f7541bea4906b553440a9ffee5699e11dfb729365c6cb0bbd37e147a1a0993369fdad16bfa3e2b01ec7fa57dac66276278bfd4a389009246a75ea953e61d
+  checksum: f0761b1491b7706a80b44d68ed52eb48c04653fc939525a7c7b606e9d9251c40c7e4ac20846ab92ac32db6869e1a6f0f574bd6b7fec1ab9378c8e199c5acc9c9
   languageName: node
   linkType: hard
 
-"@actions/cache@patch:@actions/cache@npm%3A3.2.4#./.yarn/patches/@actions-cache-npm-3.2.4-c57b047f14.patch::locator=root-workspace-0b6124%40workspace%3A.":
-  version: 3.2.4
-  resolution: "@actions/cache@patch:@actions/cache@npm%3A3.2.4#./.yarn/patches/@actions-cache-npm-3.2.4-c57b047f14.patch::version=3.2.4&hash=70b7bd&locator=root-workspace-0b6124%40workspace%3A."
+"@actions/core@npm:^1.11.1":
+  version: 1.11.1
+  resolution: "@actions/core@npm:1.11.1"
   dependencies:
-    "@actions/core": ^1.10.0
-    "@actions/exec": ^1.0.1
-    "@actions/glob": ^0.1.0
-    "@actions/http-client": ^2.1.1
-    "@actions/io": ^1.0.1
-    "@azure/abort-controller": ^1.1.0
-    "@azure/ms-rest-js": ^2.6.0
-    "@azure/storage-blob": ^12.13.0
-    semver: ^6.3.1
-    uuid: ^3.3.3
-  checksum: 6375f711c898d1b9cd827172d7cd77140226366af5b2b6a8db5de23d2350a3bd0444fa7bb9f55e2ad9390c1c1c2205299134cf195aca70c72cf18657cc4e4679
+    "@actions/exec": ^1.1.1
+    "@actions/http-client": ^2.0.1
+  checksum: 9ac7a3e0b478bfefd862dcb4ddaa1d8c3f9076bb1931d3d280918d1749e7783480c6a009c1b009c8bf5093e2d77d9f4e023d70416145bf246f0071736d4ef839
   languageName: node
   linkType: hard
 
-"@actions/core@npm:^1.10.0, @actions/core@npm:^1.2.6":
+"@actions/core@npm:^1.2.6":
   version: 1.10.1
   resolution: "@actions/core@npm:1.10.1"
   dependencies:
@@ -51,7 +42,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@actions/exec@npm:^1.0.1":
+"@actions/exec@npm:^1.0.1, @actions/exec@npm:^1.1.1":
   version: 1.1.1
   resolution: "@actions/exec@npm:1.1.1"
   dependencies:
@@ -652,7 +643,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "root-workspace-0b6124@workspace:."
   dependencies:
-    "@actions/cache": 3.2.4
+    "@actions/cache": 3.3.0
     glob: 10.4.2
   languageName: unknown
   linkType: soft
@@ -777,15 +768,6 @@ __metadata:
   dependencies:
     "@fastify/busboy": ^2.0.0
   checksum: a8193132d84540e4dc1895ecc8dbaa176e8a49d26084d6fbe48a292e28397cd19ec5d13bc13e604484e76f94f6e334b2bdc740d5f06a6e50c44072818d0c19f9
-  languageName: node
-  linkType: hard
-
-"uuid@npm:^3.3.3":
-  version: 3.4.0
-  resolution: "uuid@npm:3.4.0"
-  bin:
-    uuid: ./bin/uuid
-  checksum: 58de2feed61c59060b40f8203c0e4ed7fd6f99d42534a499f1741218a1dd0c129f4aa1de797bcf822c8ea5da7e4137aa3673431a96dae729047f7aca7b27866f
   languageName: node
   linkType: hard
 
