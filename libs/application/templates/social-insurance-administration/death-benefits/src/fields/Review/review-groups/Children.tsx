@@ -13,10 +13,7 @@ export const Children = ({ application }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
   const { children } = getApplicationExternalData(application.externalData)
   const rows = children.map((child) => {
-    return [
-      child.fullName ?? '',
-      formatKennitala(child.nationalId ?? '')
-    ]
+    return [child.fullName ?? '', formatKennitala(child.nationalId ?? '')]
   })
 
   return (

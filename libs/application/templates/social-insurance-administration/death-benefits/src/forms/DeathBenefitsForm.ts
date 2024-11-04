@@ -406,7 +406,7 @@ export const DeathBenefitsForm: Form = buildForm({
                     const children = getChildren(externalData)
                     return children.map((child) => [
                       child.fullName ?? '',
-                      formatKennitala(child.nationalId ?? '')
+                      formatKennitala(child.nationalId ?? ''),
                     ])
                   },
                 }),
