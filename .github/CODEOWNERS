@@ -347,6 +347,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/university-gateway/                                                                    @island-is/origo
 /libs/university-gateway/                                                                                @island-is/origo
 /apps/web/screens/UniversitySearch/                                                                      @island-is/origo
+/apps/web/screens/queries/UniversityGateway.ts                                                           @island-is/origo
 /apps/web/components/ListViewCard/                                                                       @island-is/origo
 
 /libs/application/templates/directorate-of-immigration/                                                  @island-is/origo
