@@ -287,6 +287,36 @@ export const m = defineMessages({
     description: '',
   },
 
+  /* Missing information */
+  missingInformation: {
+    id: 'mac.application:missingInformation',
+    defaultMessage: 'Gögn vantar',
+    description: '',
+  },
+  missingInformationTitle: {
+    id: 'mac.application:missingInformationTitle',
+    defaultMessage: 'Athugið',
+    description: '',
+  },
+  missingInformationDescription: {
+    id: 'mac.application:missingInformationDescription',
+    defaultMessage:
+      'Því miður reyndist gagnaöflun ófullnægjandi. Vinsamlegast hafðu samband við næsta sýslumann.',
+    description: '',
+  },
+  missingInformationAlertDescription: {
+    id: 'mac.application:missingInformationAlertDescription',
+    defaultMessage:
+      'Skila þarf inn fæðingarvottorði til að fullnægja kröfum um að fá staðfestingu á hjónavígslu.',
+    description: '',
+  },
+  applicantConfirmMissingInformation: {
+    id: 'mac.application:applicantConfirmMissingInformation',
+    defaultMessage:
+      'Ég skil að ég þarf að skila inn fæðingarvottorði til syslumanns.',
+    description: '',
+  },
+
   /* Spouse confirmation screens */
   entrance: {
     id: 'mac.application:entrance',

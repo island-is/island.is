@@ -491,13 +491,12 @@ export const getApplication = ({ allowFakeData = false }): Form => {
           return !data
         },
         id: 'missingInformation',
-        title: 'Gögn vantar',
+        title: m.missingInformation,
         children: [
           buildMultiField({
             id: 'missingInfo',
-            title: 'Athugið',
-            description:
-              'Því miður reyndist gagnaöflun ófullnægjandi. Vinsamlegast hafðu samband við næsta sýslumann.',
+            title: m.missingInformationTitle,
+            description: m.missingInformationDescription,
             children: [
               buildImageField({
                 id: 'image',
@@ -513,9 +512,8 @@ export const getApplication = ({ allowFakeData = false }): Form => {
               }),
               buildAlertMessageField({
                 id: 'missingInfoAlert',
-                title: 'Gögn vantar',
-                message:
-                  'Skila þarf inn fæðingarvottorði til að fullnægja kröfum um að fá staðfestingu á hjónavígslu.',
+                title: m.missingInformation,
+                message: m.missingInformationAlertDescription,
                 alertType: 'warning',
               }),
               buildCheckboxField({
@@ -526,8 +524,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                 options: [
                   {
                     value: YES,
-                    label:
-                      'Ég skil að ég þarf að skila inn fæðingarvottorði til syslumanns.',
+                    label: m.applicantConfirmMissingInformation,
                   },
                 ],
               }),
