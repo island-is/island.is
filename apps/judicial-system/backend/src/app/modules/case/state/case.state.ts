@@ -46,11 +46,6 @@ interface RequestCaseRule {
   transition: Transition
 }
 
-interface CaseStates {
-  state?: CaseState
-  appealState?: CaseAppealState
-}
-
 const indictmentCaseStateMachine: Map<
   IndictmentCaseTransition,
   IndictmentCaseRule
@@ -527,7 +522,7 @@ const transitionRequestCase = (
     )
   }
 
-  return rule.transition(update, theCase, actor) as UpdateCase
+  return rule.transition(update, theCase, actor)
 }
 
 export const transitionCase = function (
