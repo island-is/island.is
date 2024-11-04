@@ -390,6 +390,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
             (currentDecision === CaseDecision.ACCEPTING ||
               currentDecision === CaseDecision.ACCEPTING_PARTIALLY)
           ) {
+            // TODO: Decide what to do with ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             // TODO: Decide what to do if correcting appeal
             const currentAppealRulingDecision =
               newUpdate.appealRulingDecision ?? theCase.appealRulingDecision
