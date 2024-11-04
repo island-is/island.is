@@ -54,7 +54,7 @@ export const GrantsSearchResultsFilter = ({
             onChange={(e) => onSearchUpdate('query', e.target.value)}
           />
         </Box>
-        <Box background="white" padding={[1, 1, 2]}>
+        <Box background="white" padding={[1, 1, 2]} borderRadius="large">
           <Filter
             labelClearAll={formatMessage(m.search.clearFilters)}
             labelOpen=""
