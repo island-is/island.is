@@ -564,9 +564,16 @@ jobs:
           SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
-          echo "Node image tag is: '$NODE_IMAGE_TAG'"
-          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
-          ./scripts/ci/run-in-parallel.sh "90_$DOCKER_TYPE"
+          echo "Node image tag is: '${NODE_IMAGE_TAG}'"
+          build_args=(
+            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
+            --build-arg="NODE_IMAGE_TAG=${NODE_IMAGE_TAG}"
+            --build-arg="GIT_BRANCH=${GIT_BRANCH}"
+            --build-arg="GIT_SHA=${SHA}"
+            --build-arg="GIT_REPOSITORY_URL=${{ github.repositoryUrl }}"
+          )
+          export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
+          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
 
       - name: Building Docker images Retry
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
@@ -575,9 +582,16 @@ jobs:
           SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
-          echo "Node image tag is: '$NODE_IMAGE_TAG'"
-          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
-          ./scripts/ci/run-in-parallel.sh "90_$DOCKER_TYPE"
+          echo "Node image tag is: '${NODE_IMAGE_TAG}'"
+          build_args=(
+            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
+            --build-arg="NODE_IMAGE_TAG=${NODE_IMAGE_TAG}"
+            --build-arg="GIT_BRANCH=${GIT_BRANCH}"
+            --build-arg="GIT_SHA=${SHA}"
+            --build-arg="GIT_REPOSITORY_URL=${{ github.repositoryUrl }}"
+          )
+          export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
+          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
 
   helm-docker-build:
     needs:
