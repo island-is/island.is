@@ -12,6 +12,7 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   DefendantPlea,
   DefenderChoice,
@@ -28,6 +29,35 @@ import { Subpoena } from '../../subpoena/models/subpoena.model'
   timestamps: true,
 })
 export class Defendant extends Model {
+  static isConfirmedDefenderOfDefendant(
+    defenderNationalId: string,
+    defendants?: Defendant[],
+  ) {
+    return defendants?.some(
+      (defendant) =>
+        defendant.isDefenderChoiceConfirmed &&
+        defendant.defenderNationalId &&
+        normalizeAndFormatNationalId(defenderNationalId).includes(
+          defendant.defenderNationalId,
+        ),
+    )
+  }
+
+  static isConfirmedDefenderOfDefendantWithCaseFileAccess(
+    defenderNationalId: string,
+    defendants?: Defendant[],
+  ) {
+    return defendants?.some(
+      (defendant) =>
+        defendant.isDefenderChoiceConfirmed &&
+        defendant.caseFilesSharedWithDefender &&
+        defendant.defenderNationalId &&
+        normalizeAndFormatNationalId(defenderNationalId).includes(
+          defendant.defenderNationalId,
+        ),
+    )
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -126,6 +156,10 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: Date })
   verdictViewDate?: Date
 
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  verdictAppealDate?: Date
+
   @Column({
     type: DataType.ENUM,
     allowNull: true,
@@ -153,4 +187,12 @@ export class Defendant extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   requestedDefenderName?: string
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isDefenderChoiceConfirmed?: boolean
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  caseFilesSharedWithDefender?: boolean
 }

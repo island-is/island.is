@@ -48,7 +48,7 @@ export const vehicleSubSection = buildSubSection({
           },
         }),
         buildHiddenInput({
-          id: 'vehicleMileage.isRequired',
+          id: 'vehicleMileage.requireMileage',
           defaultValue: (application: Application) => {
             const vehicle = getSelectedVehicle(
               application.externalData,

@@ -25,7 +25,7 @@ import { sharedModuleConfig } from './shared.config'
 import { ApplicationService } from '@island.is/application/api/core'
 import jwt from 'jsonwebtoken'
 import { uuid } from 'uuidv4'
-import { AwsService } from '@island.is/nest/aws'
+import { S3Service } from '@island.is/nest/aws'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -41,7 +41,7 @@ export class SharedTemplateApiService {
     private config: ConfigType<typeof sharedModuleConfig>,
     private readonly applicationService: ApplicationService,
     private readonly paymentService: PaymentService,
-    private readonly awsService: AwsService,
+    private readonly s3Service: S3Service,
   ) {
     this.s3 = new S3()
   }
@@ -267,10 +267,9 @@ export class SharedTemplateApiService {
     const fileId = uuid()
     const attachmentKey = `${fileId}-${fileName}`
     const s3key = `${application.id}/${attachmentKey}`
-    const url = await this.awsService.uploadFile(
+    const url = await this.s3Service.uploadFile(
       buffer,
-      uploadBucket,
-      s3key,
+      { bucket: uploadBucket, key: s3key },
       uploadParameters,
     )
 

@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
 
-import { NotificationType } from '@island.is/judicial-system/types'
+import { CaseNotificationType } from '@island.is/judicial-system/types'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
@@ -58,7 +58,7 @@ describe('InternalNotificationController - Send revoked notifications for indict
         .sendCaseNotification(
           theCase.id,
           { ...theCase, notifications } as Case,
-          { type: NotificationType.REVOKED } as CaseNotificationDto,
+          { type: CaseNotificationType.REVOKED } as CaseNotificationDto,
         )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -73,7 +73,7 @@ describe('InternalNotificationController - Send revoked notifications for indict
     beforeEach(async () => {
       then = await givenWhenThen([
         {
-          type: NotificationType.COURT_DATE,
+          type: CaseNotificationType.COURT_DATE,
           recipients: [{ address: defenderEmail, success: true }],
         } as Notification,
       ])
@@ -103,7 +103,7 @@ describe('InternalNotificationController - Send revoked notifications for indict
       )
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId: caseId,
-        type: NotificationType.REVOKED,
+        type: CaseNotificationType.REVOKED,
         recipients: [
           { address: judgeEmail, success: true },
           { address: registrarEmail, success: true },

@@ -17,7 +17,7 @@ export const AdditionalSignature = ({ applicationId, name }: Props) => {
       <Text variant="h5" marginBottom={2}>
         {f(signatures.headings.additionalSignature)}
       </Text>
-      <Box display="flex" justifyContent="flexStart">
+      <Box>
         <OJOIInputController
           name={name}
           label={f(signatures.inputs.name.label)}
