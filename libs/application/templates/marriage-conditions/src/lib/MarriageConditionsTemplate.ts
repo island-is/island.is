@@ -18,7 +18,6 @@ import {
   ApplicationConfigurations,
 } from '@island.is/application/types'
 import { assign } from 'xstate'
-import { getSpouseNationalId } from './utils'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
   getApplicationFeatureFlags,
@@ -31,7 +30,10 @@ import {
   MaritalStatusApi,
   ReligionCodesApi,
 } from '../dataProviders'
-import { coreHistoryMessages } from '@island.is/application/core'
+import {
+  coreHistoryMessages,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
 
 const pruneAfter = (time: number) => {
@@ -231,7 +233,10 @@ const MarriageConditionsTemplate: ApplicationTemplate<
   stateMachineOptions: {
     actions: {
       assignToSpouse: assign((context) => {
-        const spouse: string = getSpouseNationalId(context.application.answers)
+        const spouse = getValueViaPath(
+          context.application.answers,
+          'spouse.person.nationalId',
+        ) as string
 
         return {
           ...context,

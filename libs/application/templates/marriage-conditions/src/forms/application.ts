@@ -128,6 +128,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     title: m.phone,
                     width: 'half',
                     backgroundColor: 'blue',
+                    required: true,
                     defaultValue: (application: Application) => {
                       const data = application.externalData.userProfile
                         .data as UserProfile
@@ -140,6 +141,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     variant: 'email',
                     width: 'half',
                     backgroundColor: 'blue',
+                    required: true,
                     defaultValue: (application: Application) => {
                       const data = application.externalData.userProfile
                         .data as UserProfile
@@ -179,6 +181,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     variant: 'email',
                     width: 'half',
                     backgroundColor: 'blue',
+                    required: true,
                     defaultValue: (application: Application) => {
                       const info = application.answers.spouse as Individual
                       return info?.email ?? ''
@@ -427,6 +430,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     variant: 'email',
                     width: 'half',
                     backgroundColor: 'blue',
+                    required: true,
                   }),
                   buildDescriptionField({
                     id: 'header4',
@@ -469,6 +473,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
                     variant: 'email',
                     width: 'half',
                     backgroundColor: 'blue',
+                    required: true,
                   }),
                 ],
               }),

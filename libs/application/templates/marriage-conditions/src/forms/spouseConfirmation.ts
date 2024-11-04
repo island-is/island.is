@@ -186,6 +186,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     title: m.phone,
                     width: 'half',
                     backgroundColor: 'blue',
+                    required: true,
                     defaultValue: (application: Application) => {
                       const info = application.answers.spouse as Individual
                       return removeCountryCode(info?.phone ?? '')
@@ -197,6 +198,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     variant: 'email',
                     width: 'half',
                     backgroundColor: 'blue',
+                    required: true,
                     defaultValue: (application: Application) => {
                       const info = application.answers.spouse as Individual
                       return info?.email ?? ''

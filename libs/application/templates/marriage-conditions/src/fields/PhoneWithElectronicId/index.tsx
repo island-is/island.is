@@ -5,13 +5,13 @@ import {
   InputController,
   PhoneInputController,
 } from '@island.is/shared/form-fields'
-import { Box, Hidden } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { GET_SYSLUMENN_ELECTRONIC_ID_STATUS } from '../../queries/getElectronicId.graphql'
+import { getErrorViaPath } from '@island.is/application/core'
 import { useLazyQuery } from '@apollo/client'
 import { useFormContext } from 'react-hook-form'
 import { fakeDataIsEnabled } from '../../lib/utils'
+import { GET_SYSLUMENN_ELECTRONIC_ID_STATUS } from '../../queries'
 
 interface PhoneWithElectronicIdProps {
   field: {
@@ -26,7 +26,7 @@ export const PhoneWithElectronicId: FC<
   const { id } = field
   const { nationalIdPath } = field.props
   const [phoneNumber, setPhoneNumber] = useState<string>('')
-  const { watch, setError, clearErrors, setValue } = useFormContext()
+  const { watch, setValue } = useFormContext()
   const nationalId: string = watch(nationalIdPath)
   const [loading, setLoading] = useState(false)
 

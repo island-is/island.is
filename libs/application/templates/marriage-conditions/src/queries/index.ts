@@ -1,4 +1,7 @@
-import { GET_SYSLUMENN_ELECTRONIC_ID_STATUS } from './getElectronicId.graphql'
-import { IDENTITY_QUERY } from './getIdentity.graphql'
+import { gql } from '@apollo/client'
 
-export { GET_SYSLUMENN_ELECTRONIC_ID_STATUS, IDENTITY_QUERY }
+export const GET_SYSLUMENN_ELECTRONIC_ID_STATUS = gql`
+  query GetSyslumennElectronicIDStatus($input: GetElectronicIDInput!) {
+    getSyslumennElectronicIDStatus(input: $input)
+  }
+`
