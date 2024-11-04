@@ -123,7 +123,7 @@ export class NotificationsService {
     locale = mapToLocale(locale as Locale)
     const queryVariables = { locale: mapToContentfulLocale(locale) }
     const res = await this.cmsService.fetchData(GetTemplates, queryVariables)
-    
+
     return res.hnippTemplateCollection.items.map((template: HnippTemplate) => ({
       ...template,
       args: template.args || [], // Ensure args is an array
