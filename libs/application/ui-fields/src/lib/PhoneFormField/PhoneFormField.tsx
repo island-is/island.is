@@ -9,6 +9,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { getDefaultValue } from '../../getDefaultValue'
+import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
   field: PhoneField
@@ -36,7 +37,7 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
     onChange = () => undefined,
   } = field
   const { control, clearErrors } = useFormContext()
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
 
   return (
     <div>
@@ -63,6 +64,7 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
               ? formatText(title, application, formatMessage)
               : undefined
           }
+          locale={locale as Locale}
           autoFocus={autoFocus}
           error={error}
           control={control}
