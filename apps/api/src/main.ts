@@ -6,5 +6,5 @@ bootstrap({
   name: 'api',
   port: 4444,
   stripNonClassValidatorInputs: false,
-  jsonBodyLimit: '300kb',
+  jsonBodyLimit: '350kb',
 })
