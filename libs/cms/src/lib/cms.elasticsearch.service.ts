@@ -49,6 +49,7 @@ import { TeamMemberResponse } from './models/teamMemberResponse.model'
 import { GetGrantsInput } from './dto/getGrants.input'
 import { Grant } from './models/grant.model'
 import { GrantList } from './models/grantList.model'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -632,21 +633,36 @@ export class CmsElasticsearchService {
       },
     ]
 
-    const wildcardSearch = {
-      wildcard: {
-        title: '*',
-      },
+    let queryString = search ? search.toLowerCase() : ''
+
+    if (lang === 'is') {
+      queryString = queryString.replace('`', '')
     }
 
-    const multimatchSearch = {
-      multi_match: {
-        query: search ? search.toLowerCase() : '',
-        fields: ['title'],
-        type: 'phrase_prefix',
+    const sort: ('_score' | sortRule)[] = [
+      {
+        [SortField.RELEASE_DATE]: {
+          order: SortDirection.DESC,
+        },
       },
+      // Sort items with equal values by ascending title order
+      { 'title.sort': { order: SortDirection.ASC } },
+    ]
+
+    // Order by score first in case there is a query string
+    if (queryString.length > 0 && queryString !== '*') {
+      sort.unshift('_score')
     }
 
-    must.push(!search ? wildcardSearch : multimatchSearch)
+    if (queryString) {
+      must.push({
+        simple_query_string: {
+          query: queryString + '*',
+          fields: ['title^100', 'content'],
+          analyze_wildcard: true,
+        },
+      })
+    }
 
     const tagFilters: Array<Array<string>> = []
 
@@ -694,6 +710,7 @@ export class CmsElasticsearchService {
             must,
           },
         },
+        sort,
         size,
         from: (page - 1) * size,
       })

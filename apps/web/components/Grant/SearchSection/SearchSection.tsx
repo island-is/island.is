@@ -1,10 +1,5 @@
-import { ReactNode } from 'react'
-
 import {
   Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
   Inline,
   Input,
   Tag,
@@ -30,8 +25,8 @@ export const SearchSection = (props: SearchSectionProps) => {
     <HeaderWithImage {...props}>
       <Box paddingTop={6} component="form" action={props.searchUrl}>
         <Input
-          id="q"
-          name="q"
+          id="query"
+          name="query"
           placeholder={props.searchPlaceholder}
           backgroundColor={['blue']}
           size="md"

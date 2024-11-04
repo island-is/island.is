@@ -428,10 +428,10 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
         input: {
           lang: locale as ContentLanguage,
           page: queryPage ? Number.parseInt(queryPage) : undefined,
-          search: query?.search
-            ? Array.isArray(query.search)
-              ? query.search[0]
-              : query.search
+          search: query?.query
+            ? Array.isArray(query.query)
+              ? query.query[0]
+              : query.query
             : undefined,
           categories: convertToArray(query?.category),
           statuses: convertToArray(query?.status),

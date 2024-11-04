@@ -47,7 +47,7 @@ export const GrantsSearchResultsFilter = ({
       <Box component="form" borderRadius="large" action={url}>
         <Box marginBottom={[1, 1, 2]}>
           <Input
-            name="q"
+            name="query"
             placeholder={formatMessage(m.search.inputPlaceholder)}
             size="xs"
             value={searchState?.query}
