@@ -915,6 +915,14 @@ export const m = defineMessages({
     defaultMessage:
       'Allow users to sign into this application as children which they are legal guardians of according to the Registers Iceland.',
   },
+  clientDelegationTypeLegalGuardianMinorName: {
+    id: 'ap.ids-admin:client-delegation-type-legal-guardian-minor-name',
+    defaultMessage: 'Legal guardian minor',
+  },
+  clientDelegationTypeLegalGuardianMinorDescription: {
+    id: 'ap.ids-admin:client-delegation-type-legal-guardian-minor-description',
+    defaultMessage: 'Legal guardian of children 16 years and younger.',
+  },
   clientDelegationTypeLegalGuardianName: {
     id: 'ap.ids-admin:client-delegation-type-legal-guardian-name',
     defaultMessage: 'Legal guardian',
@@ -978,6 +986,15 @@ export const m = defineMessages({
   apiScopeDelegationProviderThjodskraName: {
     id: 'ap.ids-admin:api-scope-delegation-provider-tjodskra-name',
     defaultMessage: 'National registry',
+  },
+  apiScopeDelegationTypeLegalGuardianMinorName: {
+    id: 'ap.ids-admin:api-scope-delegation-type-legal-guardian-minor-name',
+    defaultMessage: 'Legal guardian minor',
+  },
+  apiScopeDelegationTypeLegalGuardianMinorDescription: {
+    id: 'ap.ids-admin:api-scope-delegation-type-legal-guardian-minor-description',
+    defaultMessage:
+      'Should legal guardians automatically get this permission for their wards, 16 and younger.',
   },
   apiScopeDelegationTypeLegalGuardianName: {
     id: 'ap.ids-admin:api-scope-delegation-type-legal-guardian-name',

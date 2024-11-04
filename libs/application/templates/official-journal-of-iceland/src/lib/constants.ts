@@ -36,6 +36,7 @@ export enum Routes {
   PUBLISHING = 'publishing',
   SUMMARY = 'summary',
   COMPLETE = 'complete',
+  REJECTED = 'rejected',
   MISC = 'misc',
 }
 
@@ -48,6 +49,7 @@ export enum TypeIds {
   SKIPULAGSSKRA = '3',
 }
 
+export const FAST_TRACK_DAYS = 10
 export const MEMBER_INDEX = '{memberIndex}'
 export const SIGNATURE_INDEX = '{institutionIndex}'
 

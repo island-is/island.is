@@ -10,6 +10,7 @@ import {
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
   InsuranceCompaniesApi,
+  MockableSamgongustofaPaymentCatalogApi,
 } from '../../dataProviders'
 
 export const prerequisitesSection = buildSection({
@@ -21,7 +22,6 @@ export const prerequisitesSection = buildSection({
       id: 'approveExternalData',
       subTitle: externalData.dataProvider.subTitle,
       checkboxLabel: externalData.dataProvider.checkboxLabel,
-      enableMockPayment: true,
       dataProviders: [
         buildDataProviderItem({
           provider: IdentityApi,
@@ -42,6 +42,10 @@ export const prerequisitesSection = buildSection({
           provider: SamgongustofaPaymentCatalogApi,
           title: externalData.payment.title,
           subTitle: externalData.payment.subTitle,
+        }),
+        buildDataProviderItem({
+          provider: MockableSamgongustofaPaymentCatalogApi,
+          title: '',
         }),
         buildDataProviderItem({
           provider: InsuranceCompaniesApi,

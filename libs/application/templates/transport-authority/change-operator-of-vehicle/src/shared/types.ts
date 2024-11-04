@@ -55,7 +55,7 @@ export type OperatorFormField = Partial<
 >
 
 export type VehicleMileage = {
-  isRequired?: boolean
+  requireMileage?: boolean
   mileageReading?: string
   value?: string
 }

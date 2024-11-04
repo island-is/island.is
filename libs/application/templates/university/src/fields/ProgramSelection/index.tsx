@@ -92,7 +92,8 @@ export const ProgramSelection: FC<FieldBaseProps> = ({
 
   const ChooseProgram = (value: string) => {
     const chosenProgram = programs.find(
-      (program) => program.universityId === chosenUniversity,
+      (program) =>
+        program.universityId === chosenUniversity && program.id === value,
     )
 
     const extra =

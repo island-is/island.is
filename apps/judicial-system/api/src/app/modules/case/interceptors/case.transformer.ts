@@ -7,6 +7,7 @@ import {
   isRequestCase,
   ServiceRequirement,
   UserRole,
+  VERDICT_APPEAL_WINDOW_DAYS,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -60,7 +61,29 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
     return appealInfo
   }
 
-  const hasBeenAppealed = Boolean(appealState)
+  const didProsecutorAcceptInCourt =
+    prosecutorAppealDecision === CaseAppealDecision.ACCEPT
+  const didAccusedAcceptInCourt =
+    accusedAppealDecision === CaseAppealDecision.ACCEPT
+  const didAllAcceptInCourt =
+    didProsecutorAcceptInCourt && didAccusedAcceptInCourt
+
+  const hasBeenAppealed = Boolean(appealState) && !didAllAcceptInCourt
+  appealInfo.hasBeenAppealed = hasBeenAppealed
+
+  if (hasBeenAppealed) {
+    appealInfo.appealedByRole =
+      prosecutorPostponedAppealDate && !didProsecutorAcceptInCourt
+        ? UserRole.PROSECUTOR
+        : accusedPostponedAppealDate && !didAccusedAcceptInCourt
+        ? UserRole.DEFENDER
+        : undefined
+
+    appealInfo.appealedDate =
+      appealInfo.appealedByRole === UserRole.PROSECUTOR
+        ? prosecutorPostponedAppealDate ?? undefined
+        : accusedPostponedAppealDate ?? undefined
+  }
 
   appealInfo.canBeAppealed = Boolean(
     !hasBeenAppealed &&
@@ -68,29 +91,16 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
         isAppealableDecision(prosecutorAppealDecision)),
   )
 
+  const theRulingDate = new Date(rulingDate)
+  appealInfo.appealDeadline = new Date(
+    theRulingDate.getTime() + getDays(3),
+  ).toISOString()
+
   appealInfo.canProsecutorAppeal =
     !hasBeenAppealed && isAppealableDecision(prosecutorAppealDecision)
 
   appealInfo.canDefenderAppeal =
     !hasBeenAppealed && isAppealableDecision(accusedAppealDecision)
-
-  appealInfo.hasBeenAppealed = hasBeenAppealed
-
-  appealInfo.appealedByRole = prosecutorPostponedAppealDate
-    ? UserRole.PROSECUTOR
-    : accusedPostponedAppealDate
-    ? UserRole.DEFENDER
-    : undefined
-
-  appealInfo.appealedDate =
-    appealInfo.appealedByRole === UserRole.PROSECUTOR
-      ? prosecutorPostponedAppealDate ?? undefined
-      : accusedPostponedAppealDate ?? undefined
-
-  const theRulingDate = new Date(rulingDate)
-  appealInfo.appealDeadline = new Date(
-    theRulingDate.getTime() + getDays(3),
-  ).toISOString()
 
   if (appealReceivedByCourtDate) {
     appealInfo.statementDeadline = getStatementDeadline(
@@ -124,6 +134,12 @@ const transformRequestCase = (theCase: Case): Case => {
       ? Date.now() >=
         new Date(theCase.appealReceivedByCourtDate).getTime() + getDays(1)
       : false,
+    accusedPostponedAppealDate: appealInfo.hasBeenAppealed
+      ? theCase.accusedPostponedAppealDate
+      : undefined,
+    prosecutorPostponedAppealDate: appealInfo.hasBeenAppealed
+      ? theCase.prosecutorPostponedAppealDate
+      : undefined,
     ...appealInfo,
   }
 }
@@ -142,7 +158,7 @@ export const getIndictmentInfo = (
 
   const theRulingDate = new Date(rulingDate)
   indictmentInfo.indictmentAppealDeadline = new Date(
-    theRulingDate.getTime() + getDays(28),
+    theRulingDate.getTime() + getDays(VERDICT_APPEAL_WINDOW_DAYS),
   ).toISOString()
 
   const verdictInfo = defendants?.map<[boolean, Date | undefined]>(
@@ -169,18 +185,29 @@ export const getIndictmentInfo = (
   return indictmentInfo
 }
 
-export const getDefendantsInfo = (defendants: Defendant[] | undefined) => {
-  return defendants?.map((defendant) => {
+export const getIndictmentDefendantsInfo = (theCase: Case) => {
+  return theCase.defendants?.map((defendant) => {
+    const serviceRequired =
+      defendant.serviceRequirement === ServiceRequirement.REQUIRED
+
     const { verdictViewDate } = defendant
-    const verdictAppealDeadline = verdictViewDate
+
+    const baseDate = serviceRequired ? verdictViewDate : theCase.rulingDate
+
+    const verdictAppealDeadline = baseDate
       ? new Date(
-          new Date(verdictViewDate).getTime() + getDays(28),
+          new Date(baseDate).getTime() + getDays(VERDICT_APPEAL_WINDOW_DAYS),
         ).toISOString()
       : undefined
+
+    const isVerdictAppealDeadlineExpired = verdictAppealDeadline
+      ? Date.now() >= new Date(verdictAppealDeadline).getTime()
+      : false
 
     return {
       ...defendant,
       verdictAppealDeadline,
+      isVerdictAppealDeadlineExpired,
     }
   })
 }
@@ -194,7 +221,7 @@ const transformIndictmentCase = (theCase: Case): Case => {
       theCase.defendants,
       theCase.eventLogs,
     ),
-    defendants: getDefendantsInfo(theCase.defendants),
+    defendants: getIndictmentDefendantsInfo(theCase),
   }
 }
 
