@@ -44,6 +44,7 @@ const template: ApplicationTemplate<
       type: AuthDelegationType.Custom,
     },
   ],
+  requiredScopes: [ApiScope.vinnueftirlitid],
   featureFlag: Features.WorkAccidentNotificationEnabled,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
