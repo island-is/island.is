@@ -636,7 +636,7 @@ export class AdminClientsService {
             {
               clientId: client.clientId,
               scopeName: 'profile',
-            }
+            },
           ],
         )
     }
