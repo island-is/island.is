@@ -47,6 +47,47 @@
       "options": {
         "jestConfig": "apps/services/payments/jest.config.ts"
       }
+    },
+    "dev-services": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose up -d",
+        "cwd": "apps/services/payments"
+      }
+    },
+    "dev-init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run services-payments:dev-services",
+          "yarn nx run services-payments:migrate"
+        ],
+        "parallel": false
+      }
+    },
+    "codegen/backend-schema": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/payments/tsconfig.app.json apps/services/payments/src/buildOpenApi.ts"
+      },
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
+    },
+    "migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sequelize-cli db:migrate",
+        "cwd": "apps/services/payments"
+      }
+    },
+    "migrate/generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sequelize-cli migration:generate",
+        "cwd": "apps/services/payments"
+      }
+    },
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
     }
   }
 }
