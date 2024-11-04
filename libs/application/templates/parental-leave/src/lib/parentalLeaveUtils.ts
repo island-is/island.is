@@ -81,7 +81,7 @@ import {
   YesOrNo,
 } from '../types'
 import { currentDateStartTime } from './parentalLeaveTemplateUtils'
-import { ApplicationRights } from '@island.is/api/schema'
+import { ApplicationRights } from '@island.is/clients/vmst'
 
 export const getExpectedDateOfBirthOrAdoptionDateOrBirthDate = (
   application: Application,
