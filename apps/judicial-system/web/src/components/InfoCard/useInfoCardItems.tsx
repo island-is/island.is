@@ -43,7 +43,7 @@ const useInfoCardItems = () => {
     return {
       id: 'defendant-item',
       title: (
-        <Text variant="h4" as="h4" marginBottom={2}>
+        <Text variant="h4" as="h4" marginBottom={isMultipleDefendants ? 3 : 2}>
           {capitalize(
             isRequestCase(caseType)
               ? formatMessage(core.defendant, {
@@ -58,19 +58,28 @@ const useInfoCardItems = () => {
         </Text>
       ),
       values: defendants
-        ? defendants.map((defendant) => (
-            <DefendantInfo
-              key={defendant.id}
-              defendant={defendant}
-              defender={{
-                name: workingCase.defenderName,
-                email: workingCase.defenderEmail,
-                phoneNumber: workingCase.defenderPhoneNumber,
-                sessionArrangement: workingCase.sessionArrangements,
-              }}
-              displayAppealExpirationInfo={displayAppealExpirationInfo}
-              displayVerdictViewDate={displayVerdictViewDate}
-            />
+        ? defendants.map((defendant, index) => (
+            <div
+              className={cn(
+                isMultipleDefendants ? styles.renderDivider : undefined,
+                defendants && index === defendants.length - 1
+                  ? styles.last
+                  : undefined,
+              )}
+            >
+              <DefendantInfo
+                key={defendant.id}
+                defendant={defendant}
+                defender={{
+                  name: workingCase.defenderName,
+                  email: workingCase.defenderEmail,
+                  phoneNumber: workingCase.defenderPhoneNumber,
+                  sessionArrangement: workingCase.sessionArrangements,
+                }}
+                displayAppealExpirationInfo={displayAppealExpirationInfo}
+                displayVerdictViewDate={displayVerdictViewDate}
+              />
+            </div>
           ))
         : [],
     }

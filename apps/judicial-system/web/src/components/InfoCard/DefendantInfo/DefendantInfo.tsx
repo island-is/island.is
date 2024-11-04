@@ -63,7 +63,7 @@ const getVerdictViewDateText = (
   } else if (serviceNotRequired) {
     return formatMessage(strings.serviceNotRequired)
   } else {
-    return ''
+    return formatMessage(strings.serviceRequired)
   }
 }
 
