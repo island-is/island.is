@@ -120,18 +120,6 @@ export const advertValidationSchema = z.object({
       .refine((value) => value && value.length > 0, {
         params: error.missingHtml,
       }),
-    channels: z
-      .array(channelSchema)
-      .optional()
-      .refine(
-        (value) =>
-          value &&
-          value.length > 0 &&
-          value.every((channel) => validateChannel(channel)),
-        {
-          params: error.invalidChannel,
-        },
-      ),
   }),
 })
 
@@ -177,6 +165,37 @@ export const publishingValidationSchema = z.object({
     .optional()
     .refine((value) => Array.isArray(value) && value.length > 0, {
       params: error.noCategorySelected,
+    }),
+  channels: z
+    .array(channelSchema)
+    .optional()
+    .superRefine((schema, context) => {
+      let pass = true
+      if (!schema || schema.length === 0) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: error.emptyChannel,
+          path: ['advert', 'channels'],
+        })
+
+        pass = false
+      }
+
+      const validChannels = schema?.every(
+        (channel) => validateChannel(channel) === true,
+      )
+
+      if (!validChannels) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: error.invalidChannel,
+          path: ['advert', 'channels'],
+        })
+
+        pass = false
+      }
+
+      return pass
     }),
 })
 
