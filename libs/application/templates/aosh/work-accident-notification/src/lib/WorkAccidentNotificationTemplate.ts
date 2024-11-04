@@ -23,6 +23,7 @@ import { getAoshInputOptionsApi, IdentityApi } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { shared } from './messages'
 import { ApiActions } from '../shared/constants'
+import { ApiScope } from '@island.is/auth/scopes'
 
 const template: ApplicationTemplate<
   ApplicationContext,
