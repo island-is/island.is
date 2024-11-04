@@ -7,7 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import Agent, { HttpsAgent } from 'agentkeepalive'
+import AgentKeepAlive, { HttpsAgent } from 'agentkeepalive'
 import { Request, Response } from 'express'
 import fetch from 'node-fetch'
 import { BffConfig } from '../../bff.config'
@@ -17,7 +17,6 @@ import {
   AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
   AGENT_DEFAULT_MAX_SOCKETS,
 } from '@island.is/shared/constants'
-import AgentKeepAlive from 'agentkeepalive'
 import { hasTimestampExpiredInMS } from '../../utils/has-timestamp-expired-in-ms'
 import { validateUri } from '../../utils/validate-uri'
 import { AuthService } from '../auth/auth.service'
@@ -39,7 +38,7 @@ const agentOptions: AgentKeepAlive.HttpOptions = {
   freeSocketTimeout: AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
   maxSockets: AGENT_DEFAULT_MAX_SOCKETS,
 }
-const customAgent = new Agent(agentOptions)
+const customAgent = new AgentKeepAlive(agentOptions)
 /**
  * Only applies to none same domain requests.
  *
