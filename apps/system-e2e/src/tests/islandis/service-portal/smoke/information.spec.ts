@@ -3,7 +3,7 @@ import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/portals/my-pages/core/messages'
-import { spmm } from '@island.is/service-portal/information/messages'
+import { spmm } from '@island.is/portals/my-pages/information/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })

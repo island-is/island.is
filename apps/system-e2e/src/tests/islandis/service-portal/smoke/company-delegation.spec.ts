@@ -6,7 +6,7 @@ import { label } from '../../../../support/i18n'
 import { coreDelegationsMessages } from '@island.is/application/core/messages'
 import { m } from '@island.is/portals/shared-modules/delegations/messages'
 import { m as coreMessages } from '@island.is/portals/my-pages/core/messages'
-import { mCompany } from '@island.is/service-portal/information/messages'
+import { mCompany } from '@island.is/portals/my-pages/information/messages'
 import { disableI18n } from '../../../../support/disablers'
 import { switchDelegation } from './auth.spec'
 
