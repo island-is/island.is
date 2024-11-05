@@ -1,4 +1,3 @@
-import { S3 } from 'aws-sdk'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { Inject } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
@@ -7,49 +6,52 @@ import {
   CemeteryFinancialStatementValues,
   FinancialStatementsInaoClientService,
   ClientRoles,
-  Contact,
-  ContactType,
-  DigitalSignee,
 } from '@island.is/clients/financial-statements-inao'
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,
-  PerformActionResult,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import AmazonS3URI from 'amazon-s3-uri'
 import { TemplateApiModuleActionProps } from '../../../types'
 import * as kennitala from 'kennitala'
-import {
-  DataResponse,
-  getCurrentUserType,
-} from '../financial-statements-inao/financial-statements-inao.service'
-import {
-  BoardMember,
-  FSIUSERTYPE,
-} from '@island.is/application/templates/financial-statements-inao/types'
 import {
   mapValuesToCemeterytype,
   getNeededCemeteryValues,
   mapContactsAnswersToContacts,
   mapDigitalSignee,
 } from '../financial-statement-cemetery/mappers/mapValuesToUserType'
-import { TemplateApiError } from '@island.is/nest/problem'
-import { ApplicationApiAction } from '../../template-api.service'
+import { S3Service } from '@island.is/nest/aws'
 
 export type AttachmentData = {
   key: string
   name: string
 }
 
+export interface DataResponse {
+  success: boolean
+  message?: string
+}
+
+export const getCurrentUserType = (
+  answers: Application['answers'],
+  externalData: Application['externalData'],
+) => {
+  const fakeUserType: any = getValueViaPath(answers, 'fakeData.options')
+
+  const currentUserType: any = getValueViaPath(
+    externalData,
+    'getUserType.data.value',
+  )
+  return fakeUserType ?? currentUserType
+}
+
 export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiService {
-  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementClientService: FinancialStatementsInaoClientService,
+    private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY)
-    this.s3 = new S3()
   }
 
   private async getAttachments(application: Application): Promise<string> {
@@ -70,18 +72,12 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
       return Promise.reject({})
     }
 
-    const { bucket, key } = AmazonS3URI(fileName)
-
-    const uploadBucket = bucket
     try {
-      const file = await this.s3
-        .getObject({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent.toString('base64') || ''
+      const fileContent = await this.s3Service.getFileContent(
+        fileName,
+        'base64',
+      )
+      return fileContent || ''
     } catch (error) {
       throw new Error('Error occurred while fetching attachment')
     }

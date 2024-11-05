@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+
 import {
   AccordionItem,
   ArrowLink,
@@ -9,18 +10,18 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Step, Stepper } from '@island.is/web/graphql/schema'
-import { useI18n } from '@island.is/web/i18n'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
-import {
-  StepperState,
-  resolveStepType,
-  getStepOptions,
-  getStepBySlug,
-  getStateMeta,
-  StepperMachine,
-} from '../utils'
-import { STEPPER_HELPER_ENABLED_KEY } from '../Stepper/Stepper'
+import { useI18n } from '@island.is/web/i18n'
 
+import { STEPPER_HELPER_ENABLED_KEY } from '../Stepper/Stepper'
+import {
+  getStateMeta,
+  getStepBySlug,
+  getStepOptions,
+  resolveStepType,
+  StepperMachine,
+  StepperState,
+} from '../utils'
 import * as styles from './StepperHelper.css'
 
 const SUCCESS_SYMBOL = '✔️'
@@ -138,15 +139,17 @@ export const renderErrors = (errors: ErrorField[]) => {
 }
 
 export const renderStepperAndStepConfigErrors = (
-  stepper: Stepper,
+  stepper: Stepper | undefined,
   stepperConfigErrors: Set<string>,
-  stepConfigErrors: { step: Step; errors: Set<string> }[],
+  stepConfigErrors: { step: Step | undefined; errors: Set<string> }[],
 ) => {
   const stepperConfigErrorComponent =
     stepperConfigErrors.size > 0 ? (
       <div className={styles.border}>
         <Text variant="h4">Stepper config errors:</Text>
-        <ArrowLink href={getContentfulLink(stepper)}>Contentful</ArrowLink>
+        {stepper && (
+          <ArrowLink href={getContentfulLink(stepper)}>Contentful</ArrowLink>
+        )}
         {renderErrors(
           Array.from(stepperConfigErrors).map((e) => ({ message: e })),
         )}
@@ -162,7 +165,9 @@ export const renderStepperAndStepConfigErrors = (
           .map(({ step, errors }, index) => (
             <div key={index} className={styles.border}>
               <Text variant="h5">Step config errors:</Text>
-              <ArrowLink href={getContentfulLink(step)}>Contentful</ArrowLink>
+              {step && (
+                <ArrowLink href={getContentfulLink(step)}>Contentful</ArrowLink>
+              )}
               {renderErrors(Array.from(errors).map((e) => ({ message: e })))}
             </div>
           ))}

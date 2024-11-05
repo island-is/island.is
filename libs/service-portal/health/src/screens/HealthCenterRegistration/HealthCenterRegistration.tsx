@@ -213,9 +213,7 @@ const HealthCenterRegistration = () => {
         <Box paddingBottom={4} ref={errorBoxRef}>
           <AlertMessage
             type="error"
-            title={formatMessage(
-              messages.healthCenterRegistrationTransferErrorTitle,
-            )}
+            title={formatMessage(messages.healthErrorTitle)}
             message={formatMessage(
               messages.healthCenterRegistrationTransferErrorInfo,
             )}

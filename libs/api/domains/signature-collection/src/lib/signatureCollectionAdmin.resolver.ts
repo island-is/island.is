@@ -32,11 +32,11 @@ import { SignatureCollectionSignatureIdInput } from './dto/signatureId.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
 import { SignatureCollectionCanSignFromPaperInput } from './dto/canSignFromPaper.input'
-import { CanSignInfo } from './models/canSignInfo.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.input'
 import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
 import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
+import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -48,25 +48,17 @@ export class SignatureCollectionAdminResolver {
     private signatureCollectionManagerService: SignatureCollectionManagerService,
   ) {}
 
-  @Query(() => CanSignInfo, { nullable: true })
-  @Scopes(
-    AdminPortalScope.signatureCollectionManage,
-    AdminPortalScope.signatureCollectionProcess,
-  )
+  @Query(() => SignatureCollectionSuccess)
   async signatureCollectionAdminCanSignInfo(
     @CurrentUser()
     user: User,
     @Args('input') input: SignatureCollectionCanSignFromPaperInput,
-  ): Promise<CanSignInfo> {
-    const canSignInfo = await this.signatureCollectionService.getCanSignInfo(
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.getCanSignInfo(
       user,
       input.signeeNationalId,
+      input.listId,
     )
-
-    return {
-      reasons: canSignInfo,
-      success: true,
-    }
   }
 
   @Query(() => SignatureCollection)
@@ -295,5 +287,14 @@ export class SignatureCollectionAdminResolver {
     @Args('input') input: SignatureCollectionListIdInput,
   ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.lockList(input, user)
+  }
+
+  @Mutation(() => SignatureCollectionSuccess)
+  @Audit()
+  async signatureCollectionAdminUploadPaperSignature(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionUploadPaperSignatureInput,
+  ): Promise<SignatureCollectionSuccess> {
+    return this.signatureCollectionService.uploadPaperSignature(input, user)
   }
 }

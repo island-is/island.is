@@ -687,8 +687,8 @@ export const messages = defineMessages({
     id: 'sp.health:health-center-list-search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
   },
-  healthCenterRegistrationTransferErrorTitle: {
-    id: 'sp.health:health-center-registration-transfer-error-title',
+  healthErrorTitle: {
+    id: 'sp.health:health-error-title',
     defaultMessage: 'Villa hefur komið upp',
   },
   healthCenterRegistrationTransferErrorInfo: {

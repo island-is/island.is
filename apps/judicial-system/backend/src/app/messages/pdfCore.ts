@@ -1,16 +1,10 @@
-import { defineMessage } from 'react-intl'
-import { defineMessages } from '@formatjs/intl'
+import { defineMessage, defineMessages } from '@formatjs/intl'
 
 export const core = {
   and: defineMessage({
     id: 'judicial.system.backend:pdf.core.and',
     defaultMessage: 'og',
     description: 'Notað fyrir orðið og.',
-  }),
-  accused: defineMessage({
-    id: 'judicial.system.backend:pdf.core.accused',
-    defaultMessage: 'kærð{suffix}',
-    description: 'Notað fyrir orðið kærði/a.',
   }),
   defendant: defineMessage({
     id: 'judicial.system.backend:pdf.core.defendant',

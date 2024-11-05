@@ -87,7 +87,7 @@ export async function runLocalServices(
     noUpdateSecrets,
   })
 
-  // Verify tat all dependencies exist in the rendered dependency list
+  // Verify that all dependencies exist in the rendered dependency list
   for (const dependency of dependencies) {
     if (!renderedLocalServices.services[dependency]) {
       throw new Error(`Dependency ${dependency} not found`)
