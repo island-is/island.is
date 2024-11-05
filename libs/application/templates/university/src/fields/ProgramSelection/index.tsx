@@ -95,7 +95,7 @@ export const ProgramSelection: FC<FieldBaseProps> = ({ application }) => {
             getProgramNameAndExtra(programInfo),
           )
 
-          setDefaultModeOfDelivery(programInfo)
+          updateDefaultModeOfDelivery(programInfo)
         }
 
         // set universityId to filter programs
@@ -171,10 +171,10 @@ export const ProgramSelection: FC<FieldBaseProps> = ({ application }) => {
     )
 
     // set default mode of delivery
-    setDefaultModeOfDelivery(programInfo)
+    updateDefaultModeOfDelivery(programInfo)
   }
 
-  const setDefaultModeOfDelivery = (program: Program | undefined) => {
+  const updateDefaultModeOfDelivery = (program: Program | undefined) => {
     if (program?.modeOfDelivery.length === 1) {
       setValue(
         `${Routes.MODEOFDELIVERYINFORMATION}.chosenMode`,
