@@ -561,6 +561,25 @@ jobs:
           driver-opts: |
             image=${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
 
+      - name: Prepare Docker build arguments
+        id: dockerargs
+        if: steps.gather.outcome == 'success'
+        env:
+          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          SHA: ${{ github.sha }}
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+        run: |
+          set -x
+          build_args=(
+            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
+            --build-arg="NODE_IMAGE_TAG=${NODE_IMAGE_TAG}"
+            --build-arg="GIT_BRANCH=${GIT_BRANCH}"
+            --build-arg="GIT_SHA=${SHA}"
+            --build-arg="GIT_REPOSITORY_URL=${{ github.repositoryUrl }}"
+          )
+          export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
+          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
+
       - name: Building Docker images
         continue-on-error: true
         id: dockerbuild
@@ -572,14 +591,8 @@ jobs:
         run: |
           set -x
           echo "Node image tag is: '${NODE_IMAGE_TAG}'"
-          build_args=(
-            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
-            --build-arg="NODE_IMAGE_TAG=${NODE_IMAGE_TAG}"
-            --build-arg="GIT_BRANCH=${GIT_BRANCH}"
-            --build-arg="GIT_SHA=${SHA}"
-            --build-arg="GIT_REPOSITORY_URL=${{ github.repositoryUrl }}"
-          )
-          export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
+          echo "Docker build args are: '${build_args[*]}'"
+          export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
 
       - name: Building Docker images Retry
@@ -591,14 +604,8 @@ jobs:
         run: |
           set -x
           echo "Node image tag is: '${NODE_IMAGE_TAG}'"
-          build_args=(
-            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
-            --build-arg="NODE_IMAGE_TAG=${NODE_IMAGE_TAG}"
-            --build-arg="GIT_BRANCH=${GIT_BRANCH}"
-            --build-arg="GIT_SHA=${SHA}"
-            --build-arg="GIT_REPOSITORY_URL=${{ github.repositoryUrl }}"
-          )
-          export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
+          echo "Docker build args are: '${build_args[*]}'"
+          export EXTRA_DOCKER_BUILD_ARGS
           ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
 
   helm-docker-build:
