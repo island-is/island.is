@@ -7,6 +7,7 @@ import { UpdateFieldDto } from './models/dto/updateField.dto'
 import { FieldMapper } from './models/field.mapper'
 import { Field } from './models/field.model'
 import { UpdateFieldsDisplayOrderDto } from './models/dto/updateFieldsDisplayOrder.dto'
+import { FieldTypes } from '../../enums/fieldTypes'
 
 @Injectable()
 export class FieldsService {
@@ -32,6 +33,7 @@ export class FieldsService {
 
     const newField: Field = await this.fieldModel.create({
       screenId: screenId,
+      fieldType: FieldTypes.TEXTBOX,
     } as Field)
 
     const newFieldSettingsDto = await this.fieldSettingsService.create(

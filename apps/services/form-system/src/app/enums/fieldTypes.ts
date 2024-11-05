@@ -22,4 +22,5 @@ export const FieldTypes = {
   HOMESTAY_OVERVIEW: 'homestayOverview',
   PAYMENT: 'payment',
   TEXTBOX: 'textbox',
+  CANDITATE: 'candidate',
 }

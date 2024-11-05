@@ -10,6 +10,9 @@ import { Field } from '../fields/models/field.model'
 import { Screen } from '../screens/models/screen.model'
 import { ApplicationMapper } from './models/application.mapper'
 import { Value } from '../values/models/value.model'
+import { ValueFactory } from '../../dataTypes/valueTypes/valueType.factory'
+import { BaseValueType } from '../../dataTypes/valueTypes/baseValueType.interface'
+import { TextboxValue } from '../../dataTypes/valueTypes/models/textbox.valuetype'
 
 @Injectable()
 export class ApplicationsService {
@@ -40,6 +43,7 @@ export class ApplicationsService {
           await this.valueModel.create({
             fieldId: field.id,
             applicationId: newApplication.id,
+            json: this.createValue(field.fieldType, 0),
           } as Value)
         })
       })
@@ -48,6 +52,12 @@ export class ApplicationsService {
     const applicationDto = await this.getApplication(newApplication.id)
 
     return applicationDto
+  }
+
+  private createValue(type: string, order: number) {
+    const ValueClass = ValueFactory.getClass(type)
+    const value = new ValueClass(order)
+    return value
   }
 
   async getApplication(applicationId: string): Promise<ApplicationDto> {
@@ -68,6 +78,16 @@ export class ApplicationsService {
       form,
       application,
     )
+
+    // const j = await this.valueModel.findByPk(
+    //   '0c98264f-b460-483d-ab1e-4a8eb0d92072',
+    // )
+
+    // if (j) {
+    //   const k: BaseValueType = j.json as BaseValueType
+    //   const h: TextboxValue = k
+    //   console.log(h)
+    // }
 
     return applicationDto
   }
