@@ -46,7 +46,7 @@ export const OnboardingHeader = ({
       </FocusableBox>
       {!hideClose && (
         <Box display="flex" flexDirection="row" alignItems="center">
-          {user && <UserLanguageSwitcher user={user} />}
+          {user && <UserLanguageSwitcher />}
           <Box
             paddingLeft={5}
             paddingRight={2}
