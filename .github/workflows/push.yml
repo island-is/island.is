@@ -575,7 +575,7 @@ jobs:
             --build-arg="NODE_IMAGE_TAG=${NODE_IMAGE_TAG}"
             --build-arg="GIT_BRANCH=${GIT_BRANCH}"
             --build-arg="GIT_SHA=${SHA}"
-            --build-arg="GIT_REPOSITORY_URL=${{ github.repositoryUrl }}"
+            --build-arg="GIT_REPOSITORY_URL=${{ github.server_url }}/${{ github.repository }}"
           )
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
