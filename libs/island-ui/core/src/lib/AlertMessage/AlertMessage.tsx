@@ -1,10 +1,9 @@
-import * as React from 'react'
+import { FC, PropsWithChildren, ReactNode, isValidElement } from 'react'
 import { Text } from '../Text/Text'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconType } from '../IconRC/iconMap'
 import { Colors } from '@island.is/island-ui/theme'
 import { Box } from '../Box/Box'
-import { Stack } from '../Stack/Stack'
 
 export type AlertMessageType =
   | 'error'
@@ -55,32 +54,29 @@ const variantStyles: VariantStyles = {
   },
 }
 
-export interface AlertMessageProps {
+interface AlertMessageProps {
   type: AlertMessageType
   testid?: string
-  action?: React.ReactNode
 }
 
 type TitleAndOrMessage =
   | {
       title: string
-      message: string | React.ReactNode
+      message: string | ReactNode
     }
   | {
       title?: never
-      message: string | React.ReactNode
+      message: string | ReactNode
     }
   | {
       title: string
       message?: never
     }
 
-export const AlertMessage: React.FC<
-  React.PropsWithChildren<AlertMessageProps & TitleAndOrMessage>
-> = ({ type, title, message, action, testid }) => {
+export const AlertMessage: FC<
+  PropsWithChildren<AlertMessageProps & TitleAndOrMessage>
+> = ({ type, title, message, testid }) => {
   const variant = variantStyles[type]
-
-  const onlyMessage = !title && !!message
 
   return (
     <Box
@@ -91,7 +87,7 @@ export const AlertMessage: React.FC<
       borderWidth="standard"
       data-testid={testid ?? 'alertMessage'}
     >
-      <Box display="flex" alignItems={onlyMessage ? 'center' : 'flexStart'}>
+      <Box display="flex" alignItems="flexStart">
         {variant.icon && (
           <Box display="flex" marginRight={[1, 1, 2]}>
             <Icon
@@ -102,34 +98,28 @@ export const AlertMessage: React.FC<
             />
           </Box>
         )}
-        <Box display="flex" width="full" flexDirection="column">
-          <Stack space={1}>
-            {!!title && (
-              <Text as="h5" variant="h5">
-                {title}
-              </Text>
-            )}
+        <Box
+          display="flex"
+          width="full"
+          flexDirection="column"
+          alignSelf="center"
+        >
+          {title && (
+            <Text as="h5" variant="h5">
+              {title}
+            </Text>
+          )}
+          {message && (
             <Box display="flex" alignItems="center">
-              {message &&
-                (React.isValidElement(message) ? (
-                  message
-                ) : (
-                  <Box flexGrow={1}>
-                    <Text variant="small">{message}</Text>
-                  </Box>
-                ))}
-              {action && (
-                <Box
-                  display="flex"
-                  style={{ alignSelf: 'flex-end' }}
-                  justifyContent="flexEnd"
-                  alignItems="flexEnd"
-                >
-                  {action}
+              {isValidElement(message) ? (
+                message
+              ) : (
+                <Box flexGrow={1}>
+                  <Text variant="small">{message}</Text>
                 </Box>
               )}
             </Box>
-          </Stack>
+          )}
         </Box>
       </Box>
     </Box>
