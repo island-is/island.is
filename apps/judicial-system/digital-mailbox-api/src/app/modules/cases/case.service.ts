@@ -123,7 +123,9 @@ export class CaseService {
     defendantNationalId: string,
     lang?: string,
   ): Promise<SubpoenaResponse> {
+    await this.refreshFormatMessage()
     const caseData = await this.fetchCase(caseId, defendantNationalId)
+
     return SubpoenaResponse.fromInternalCaseResponse(
       caseData,
       defendantNationalId,
@@ -138,7 +140,9 @@ export class CaseService {
     defenderAssignment: UpdateSubpoenaDto,
     lang?: string,
   ): Promise<SubpoenaResponse> {
+    await this.refreshFormatMessage()
     let chosenLawyer = null
+
     if (defenderAssignment.defenderChoice === DefenderChoice.CHOOSE) {
       if (!defenderAssignment.defenderNationalId) {
         throw new NotFoundException(
