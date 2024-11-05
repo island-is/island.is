@@ -12,7 +12,22 @@ import { KeyValue } from './KeyValue'
 
 export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application } = props
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatDateFns } = useLocale()
+
+  console.log('Application: ', application)
+  console.log('Created: ', application.created)
+  console.log(
+    'Start date of rental period: ',
+    application.answers.rentalPeriodStartDate,
+  )
+
+  const startDate = application.answers.rentalPeriodStartDate
+  const endDate = application.answers.rentalPeriodEndDate
+  const isRentalPeriodDefinite = Boolean(
+    application.answers.rentalPeriodDefinite,
+  )
+
+  console.log('isRentalPeriodDefinite: ', isRentalPeriodDefinite)
 
   return (
     <Box className={summaryWrapper}>
@@ -23,7 +38,17 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
       <Box marginTop={5} className={sectionWrapper}>
         <GridRow className={gridRow}>
           <GridColumn span={['12/12', '4/12']}>
-            <KeyValue label={'Upphafsdagur samnings'} value={'Value'} />
+            <KeyValue
+              label={'Upphafsdagur samnings'}
+              value={
+                application.answers.rentalPeriodStartDate
+                  ? formatDateFns(
+                      application.answers.rentalPeriodStartDate.toString(),
+                      'dd MMM yyyy',
+                    )
+                  : '-'
+              }
+            />
           </GridColumn>
           <GridColumn span={['12/12', '4/12']}>
             <KeyValue label={'Leigutímabil'} value={'Value'} />

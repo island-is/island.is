@@ -18,7 +18,7 @@ export const registerProperty = {
     pageDescription: {
       id: 'ra.application:registerProperty.info.pageDescription',
       defaultMessage:
-        'Finndu eignina með fasteignanúmeri eða heimilisfangi. Nánari upplýsingar er að finna í [fasteignaskrá HMS](https://hms.is/fasteignir).',
+        'Finndu eignina með fasteignanúmeri eða heimilisfangi. Nánari upplýsingar er að finna í [fasteignaskrá HMS](https://leit.fasteignaskra.is/).',
       description: 'Register property page description',
     },
     addressLabel: {
