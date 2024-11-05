@@ -4,6 +4,7 @@ import {
   Gender,
   Institution,
   ServiceStatus,
+  SubpoenaType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -47,4 +48,5 @@ interface Subpoena {
   id: string
   subpoenaId: string
   serviceStatus?: ServiceStatus
+  subpoenaType?: SubpoenaType
 }

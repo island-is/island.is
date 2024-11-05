@@ -2,9 +2,12 @@ import {
   BadGatewayException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
 
+import { FormatMessage, IntlService } from '@island.is/cms-translations'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import {
@@ -30,7 +33,24 @@ export class CaseService {
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
     private readonly lawyersService: LawyersService,
+    private readonly intlService: IntlService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  private formatMessage: FormatMessage = () => {
+    throw new InternalServerErrorException('Format message not initialized')
+  }
+
+  private async refreshFormatMessage(): Promise<void> {
+    return this.intlService
+      .useIntl(['judicial.system.backend'], 'is')
+      .then((res) => {
+        this.formatMessage = res.formatMessage
+      })
+      .catch((reason) => {
+        this.logger.error('Unable to refresh format messages', { reason })
+      })
+  }
 
   async getCases(nationalId: string, lang?: string): Promise<CasesResponse[]> {
     return this.auditTrailService.audit(
@@ -107,6 +127,7 @@ export class CaseService {
     return SubpoenaResponse.fromInternalCaseResponse(
       caseData,
       defendantNationalId,
+      this.formatMessage,
       lang,
     )
   }
@@ -152,6 +173,7 @@ export class CaseService {
     return SubpoenaResponse.fromInternalCaseResponse(
       updatedCase,
       defendantNationalId,
+      this.formatMessage,
       lang,
     )
   }

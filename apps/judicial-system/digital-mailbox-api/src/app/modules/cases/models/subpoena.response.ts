@@ -2,6 +2,9 @@ import { IsEnum } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
+import { FormatMessage } from '@island.is/cms-translations'
+
+import { getIntro } from '@island.is/judicial-system/consts'
 import {
   formatDate,
   normalizeAndFormatNationalId,
@@ -10,6 +13,7 @@ import {
   DateType,
   DefenderChoice,
   isSuccessfulServiceStatus,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
@@ -53,6 +57,12 @@ class SubpoenaData {
   title!: string
 
   @ApiProperty({ type: String })
+  subpoenaInfoText!: string
+
+  @ApiProperty({ type: String })
+  subpoenaNotificationDeadline!: string
+
+  @ApiProperty({ type: String })
   subtitle?: string
 
   @ApiProperty({ type: () => [Groups] })
@@ -84,6 +94,7 @@ export class SubpoenaResponse {
   static fromInternalCaseResponse(
     internalCase: InternalCaseResponse,
     defendantNationalId: string,
+    formatMessage: FormatMessage,
     lang?: string,
   ): SubpoenaResponse {
     const t = getTranslations(lang)
@@ -95,6 +106,18 @@ export class SubpoenaResponse {
           defendant.nationalId,
         ),
     )
+    const subpoenaType = defendantInfo?.subpoenas?.[0].subpoenaType
+
+    const intro = getIntro(defendantInfo?.gender, lang)
+    const formatedSubpoenaInfoText = `${formatMessage(intro.intro)}${
+      subpoenaType
+        ? ` ${formatMessage(
+            subpoenaType === SubpoenaType.ABSENCE
+              ? intro.absenceIntro
+              : intro.arrestIntro,
+          )}`
+        : ''
+    }`
 
     const waivedRight =
       defendantInfo?.requestedDefenderChoice === DefenderChoice.WAIVE
@@ -119,6 +142,8 @@ export class SubpoenaResponse {
       caseId: internalCase.id,
       data: {
         title: t.subpoena,
+        subpoenaInfoText: formatedSubpoenaInfoText,
+        subpoenaNotificationDeadline: formatMessage(intro.deadline),
         subtitle: courtNameAndAddress,
         hasBeenServed: hasBeenServed,
         hasChosenDefender: Boolean(
