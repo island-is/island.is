@@ -125,6 +125,7 @@ const ArticleFields = (
     'fields.subgroup',
     'fields.title',
     'fields.userStories',
+    'fields.keywords',
   ] as ('sys' | `fields.${keyof types.IArticle['fields']}`)[]
 ).join(',')
 
