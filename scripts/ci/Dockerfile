@@ -70,6 +70,11 @@ RUN npm install -g \
 USER runner
 
 FROM output-base-with-pg AS output-express
+ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
+ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+LABEL branch=${GIT_BRANCH}
+LABEL commit=${GIT_SHA}
 
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
@@ -77,6 +82,11 @@ ENTRYPOINT []
 CMD [ "node", "--no-experimental-fetch", "main.js" ]
 
 FROM output-base-with-pg AS output-next
+ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
+ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+LABEL branch=${GIT_BRANCH}
+LABEL commit=${GIT_SHA}
 ENV PORT=4200
 
 # TODO: smallify
@@ -109,6 +119,11 @@ COPY scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
 FROM output-base AS output-jest
+ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
+ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+LABEL branch=${GIT_BRANCH}
+LABEL commit=${GIT_SHA}
 
 RUN echo 'module.exports = {};' > jest.config.js
 
