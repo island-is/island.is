@@ -1,4 +1,12 @@
-export const countryCodesEN = [
+interface CountryCode {
+  name: string
+  flag: string
+  code: string
+  dial_code: string
+  format?: string
+}
+
+export const countryCodesEN: CountryCode[] = [
   { name: 'Afghanistan', flag: '🇦🇫', code: 'AF', dial_code: '+93' },
   {
     name: 'Åland Islands',
@@ -635,7 +643,7 @@ export const countryCodesEN = [
   { name: 'Zimbabwe', flag: '🇿🇼', code: 'ZW', dial_code: '+263' },
 ]
 
-export const countryCodesIS = [
+export const countryCodesIS: CountryCode[] = [
   { name: 'Afganistan', flag: '🇦🇫', code: 'AF', dial_code: '+93' },
   { name: 'Albanía', flag: '🇦🇱', code: 'AL', dial_code: '+355' },
   { name: 'Alsír', flag: '🇩🇿', code: 'DZ', dial_code: '+213' },
