@@ -8,6 +8,7 @@ import {
 } from '@island.is/clients/middlewares'
 import { PowerBiConfig } from './powerbi.config'
 import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPropsFromServer.response'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 type Owner = 'Fiskistofa'
 const BASE_URL = 'https://api.powerbi.com/v1.0/myorg'
@@ -19,6 +20,7 @@ export class PowerBiService {
   constructor(
     @Inject(PowerBiConfig.KEY)
     private config: ConfigType<typeof PowerBiConfig>,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.fetch = createEnhancedFetch({ name: 'PowerBiService' })
   }
@@ -36,6 +38,10 @@ export class PowerBiService {
       return null
 
     const accessToken = await this.getAccessToken(powerBiSlice.owner as Owner)
+
+    if (!accessToken) {
+      return null
+    }
 
     const report = await this.getReport(
       powerBiSlice.workspaceId,
@@ -81,11 +87,16 @@ export class PowerBiService {
 
     const clientApplication = new ConfidentialClientApplication(msalConfig)
 
-    const tokenResponse =
-      await clientApplication.acquireTokenByClientCredential({
-        scopes: ['https://analysis.windows.net/powerbi/api/.default'],
-      })
-    return tokenResponse?.accessToken as string
+    try {
+      const tokenResponse =
+        await clientApplication.acquireTokenByClientCredential({
+          scopes: ['https://analysis.windows.net/powerbi/api/.default'],
+        })
+      return tokenResponse?.accessToken as string
+    } catch (error) {
+      this.logger.error(error)
+      return null
+    }
   }
 
   private async getReport(
