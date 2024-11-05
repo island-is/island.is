@@ -29,7 +29,11 @@ const SectionHeading: FC<Props> = ({
       {tooltip && ' '}
       {tooltip && <Box component="span">{tooltip}</Box>}
     </Text>
-    {description && <Text marginTop={1}>{description}</Text>}
+    {description && (
+      <Box component="span" marginTop={1}>
+        {description}
+      </Box>
+    )}
   </Box>
 )
 

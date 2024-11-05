@@ -17,6 +17,8 @@ import { SkeletonTable } from '../../../../../skeletons'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
 import { PaperSignees } from './PaperSignees'
 import sortBy from 'lodash/sortBy'
+import PdfReport from '../PdfReport'
+import EditPage from './EditPage'
 
 const Signees = () => {
   useNamespaces('sp.signatureCollection')
@@ -59,15 +61,20 @@ const Signees = () => {
 
   return (
     <Box>
-      <Text variant="h4">{formatMessage(m.signeesHeader)}</Text>
-      <Box marginTop={1} width="half">
-        <FilterInput
-          name="searchSignee"
-          value={searchTerm}
-          onChange={(v) => setSearchTerm(v)}
-          placeholder={formatMessage(m.searchInListPlaceholder)}
-          backgroundColor="white"
-        />
+      <Text variant="h4" marginBottom={1}>
+        {formatMessage(m.signeesHeader)}
+      </Text>
+      <Box display="flex" justifyContent="spaceBetween">
+        <Box width="half">
+          <FilterInput
+            name="searchSignee"
+            value={searchTerm}
+            onChange={(v) => setSearchTerm(v)}
+            placeholder={formatMessage(m.searchInListPlaceholder)}
+            backgroundColor="white"
+          />
+        </Box>
+        <PdfReport listId={id} />
       </Box>
       {!loadingSignees ? (
         signees.length > 0 ? (
@@ -107,6 +114,15 @@ const Signees = () => {
                                   color="blue400"
                                 />
                               </Box>
+                              <EditPage
+                                page={s.pageNumber ?? 0}
+                                name={s.signee.name}
+                                nationalId={formatNationalId(
+                                  s.signee.nationalId,
+                                )}
+                                signatureId={s.id}
+                                refetchSignees={refetchListSignees}
+                              />
                             </Box>
                           )}
                         </T.Data>

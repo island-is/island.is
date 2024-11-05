@@ -281,39 +281,46 @@ export const DELETE_APPLICATION_ATTACHMENT_MUTATION = gql`
 `
 
 export const GET_COMMENTS_QUERY = gql`
-  query GetComments(
-    $input: OfficialJournalOfIcelandApplicationGetCommentsInput!
-  ) {
-    officialJournalOfIcelandApplicationGetComments(input: $input) {
+  query GetComments($input: OJOIAGetCommentsInput!) {
+    OJOIAGetComments(input: $input) {
       comments {
-        createdAt
-        type {
-          title
-        }
-        task {
-          from
-          to
-          title {
-            title
-          }
-          comment
-        }
-        status {
-          id
-          title
-          slug
-        }
+        id
+        age
+        title
+        direction
+        comment
+        creator
+        receiver
       }
     }
   }
 `
 
 export const POST_COMMENT_MUTATION = gql`
-  mutation AddComment(
-    $input: OfficialJournalOfIcelandApplicationPostCommentInput!
-  ) {
-    officialJournalOfIcelandApplicationPostComment(input: $input) {
+  mutation AddComment($input: OJOIAPostCommentInput!) {
+    OJOIAPostComment(input: $input) {
       success
+    }
+  }
+`
+
+export const GET_APPLICATION_CASE_QUERY = gql`
+  query GetApplicationCase($input: OJOIAIdInput!) {
+    OJOIAGetApplicationCase(input: $input) {
+      department
+      type
+      status
+      communicationStatus
+      categories
+      html
+    }
+  }
+`
+
+export const GET_PDF_QUERY = gql`
+  query GetPdf($input: OJOIAIdInput!) {
+    OJOIAGetPdf(input: $input) {
+      pdf
     }
   }
 `

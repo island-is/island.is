@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { formatText } from '@island.is/application/core'
+import { buildFieldRequired, formatText } from '@island.is/application/core'
 import { FieldBaseProps, PhoneField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -9,7 +9,6 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { getDefaultValue } from '../../getDefaultValue'
-import { useFeatureFlag } from '@island.is/react/feature-flags'
 
 interface Props extends FieldBaseProps {
   field: PhoneField
@@ -33,15 +32,11 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
     readOnly,
     dataTestId,
     allowedCountryCodes,
-    disableDropdown,
+    enableCountrySelector = false,
     onChange = () => undefined,
   } = field
   const { control, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
-  const { value: isPhoneInputV2Enabled } = useFeatureFlag(
-    'isPhoneInputV2Enabled',
-    false,
-  )
 
   return (
     <div>
@@ -71,7 +66,7 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
           autoFocus={autoFocus}
           error={error}
           control={control}
-          disableDropdown={disableDropdown || !isPhoneInputV2Enabled}
+          disableDropdown={!enableCountrySelector}
           onChange={(e) => {
             if (error) {
               clearErrors(id)
@@ -80,7 +75,7 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
           }}
           defaultValue={getDefaultValue(field, application)}
           backgroundColor={backgroundColor}
-          required={required}
+          required={buildFieldRequired(application, required)}
         />
       </Box>
     </div>

@@ -16,7 +16,11 @@ import {
   Document as DocumentV2,
   PaginatedDocuments,
 } from './models/v2/document.model'
-
+import {
+  FeatureFlagGuard,
+  FeatureFlagService,
+  Features,
+} from '@island.is/nest/feature-flags'
 import { PostRequestPaperInput } from './dto/postRequestPaperInput'
 import { DocumentInput } from './models/v2/document.input'
 import { DocumentServiceV2 } from './documentV2.service'
@@ -32,16 +36,18 @@ import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model
 import type { Locale } from '@island.is/shared/types'
 import { DocumentConfirmActionsInput } from './models/v2/confirmActions.input'
 import { DocumentConfirmActions } from './models/v2/confirmActions.model'
+import { isDefined } from '@island.is/shared/utils'
 
 const LOG_CATEGORY = 'documents-resolver'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver(() => PaginatedDocuments)
 @Audit({ namespace: '@island.is/api/document-v2' })
 export class DocumentResolverV2 {
   constructor(
     private documentServiceV2: DocumentServiceV2,
     private readonly auditService: AuditService,
+    private readonly featureFlagService: FeatureFlagService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -53,6 +59,7 @@ export class DocumentResolverV2 {
     locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<DocumentV2 | null> {
+    const ffEnabled = await this.getFeatureFlag()
     try {
       return await this.auditService.auditPromise(
         {
@@ -62,17 +69,20 @@ export class DocumentResolverV2 {
           resources: input.id,
           meta: { includeDocument: input.includeDocument },
         },
-        this.documentServiceV2.findDocumentById(
-          user.nationalId,
-          input.id,
-          locale,
-          input.includeDocument,
-        ),
+        ffEnabled
+          ? this.documentServiceV2.findDocumentByIdV3(
+              user.nationalId,
+              input.id,
+              locale,
+              input.includeDocument,
+            )
+          : this.documentServiceV2.findDocumentById(user.nationalId, input.id),
       )
     } catch (e) {
       this.logger.info('failed to get single document', {
         category: LOG_CATEGORY,
         provider: input.provider,
+        documentCategory: input.category,
         error: e,
       })
       throw e
@@ -82,11 +92,13 @@ export class DocumentResolverV2 {
   @Scopes(DocumentsScope.main)
   @Query(() => PaginatedDocuments, { nullable: true })
   @Audit()
-  documentsV2(
+  async documentsV2(
     @Args('input') input: DocumentsInput,
     @CurrentUser() user: User,
   ): Promise<PaginatedDocuments> {
-    return this.documentServiceV2.listDocuments(user.nationalId, input)
+    const ffEnabled = await this.getFeatureFlag()
+    if (ffEnabled) return this.documentServiceV2.listDocumentsV3(user, input)
+    return this.documentServiceV2.listDocuments(user, input)
   }
 
   @Scopes(DocumentsScope.main)
@@ -105,13 +117,22 @@ export class DocumentResolverV2 {
       resources: input.id,
       meta: { confirmed: input.confirmed },
     })
-
+    this.logger.info('confirming document modal', {
+      category: LOG_CATEGORY,
+      id: input.id,
+      confirmed: input.confirmed,
+    })
     return { id: input.id, confirmed: input.confirmed }
   }
 
   @ResolveField('categories', () => [Category])
-  documentCategories(@CurrentUser() user: User): Promise<Array<Category>> {
-    return this.documentServiceV2.getCategories(user.nationalId)
+  async documentCategories(
+    @CurrentUser() user: User,
+  ): Promise<Array<Category>> {
+    const categories = await this.documentServiceV2.getCategories(user)
+    if (!isDefined(categories)) {
+      return []
+    } else return categories
   }
 
   @ResolveField('senders', () => [Sender])
@@ -205,5 +226,12 @@ export class DocumentResolverV2 {
       })
       throw e
     }
+  }
+
+  private async getFeatureFlag(): Promise<boolean> {
+    return await this.featureFlagService.getValue(
+      Features.isServicePortalDocumentsV3PageEnabled,
+      false,
+    )
   }
 }

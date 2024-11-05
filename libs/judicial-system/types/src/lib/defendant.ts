@@ -35,3 +35,19 @@ export enum ServiceStatus {
   FAILED = 'FAILED',
   EXPIRED = 'EXPIRED', // If a subpoena expires
 }
+
+export const successfulServiceStatus: string[] = [
+  ServiceStatus.ELECTRONICALLY,
+  ServiceStatus.DEFENDER,
+  ServiceStatus.IN_PERSON,
+]
+
+export const isSuccessfulServiceStatus = (
+  status?: ServiceStatus | null,
+): boolean => {
+  return Boolean(status && successfulServiceStatus.includes(status))
+}
+
+export const isFailedServiceStatus = (status?: ServiceStatus): boolean => {
+  return Boolean(status && status === ServiceStatus.FAILED)
+}

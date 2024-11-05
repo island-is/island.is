@@ -2,6 +2,7 @@ import { INestApplication, NestInterceptor, Type } from '@nestjs/common'
 import { OpenAPIObject } from '@nestjs/swagger'
 import { Server } from 'http'
 
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface'
 import { HealthCheckOptions } from './infra/health/types'
 
 export type RunServerOptions = {
@@ -49,6 +50,13 @@ export type RunServerOptions = {
   enableVersioning?: boolean
 
   /**
+   * Hook to run before server is started.
+   * @param app The nest application instance.
+   * @returns a promise that resolves when the hook is done.
+   */
+  beforeServerStart?: (app: INestApplication) => void
+
+  /**
    * Configures metrics collection and starts metric server. Default: true.
    */
   collectMetrics?: boolean
@@ -66,6 +74,11 @@ export type RunServerOptions = {
    * Otherwise an object can be provided to override specific options.
    */
   healthCheck?: boolean | HealthCheckOptions
+
+  /**
+   * Enables CORS (Cross-Origin Resource Sharing)
+   */
+  enableCors?: CorsOptions
 
   /**
    * Hook to run before app is initialized.

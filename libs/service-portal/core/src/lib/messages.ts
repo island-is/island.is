@@ -5,6 +5,10 @@ export const m = defineMessages({
     id: 'service.portal:reference',
     defaultMessage: 'Tilvísun',
   },
+  goToPage: {
+    id: 'service.portal:go-to-page',
+    defaultMessage: 'Fara á síðu',
+  },
   print: {
     id: 'service.portal:print',
     defaultMessage: 'Prenta',
@@ -560,6 +564,11 @@ export const m = defineMessages({
   signatureCollectionParliamentaryLists: {
     id: 'service.portal:signatureCollectionParliamentaryLists',
     defaultMessage: 'Alþingiskosningar - Meðmælasöfnun',
+  },
+  signatureCollectionParliamentaryListsCompany: {
+    id: 'service.portal:signatureCollectionParliamentaryListsCompany',
+    defaultMessage:
+      'Alþingiskosningar - Meðmælasöfnun (Aðeins fyrir stjórnmálasamtök)',
   },
   signatureCollectionPresidentialLists: {
     id: 'service.portal:signatureCollectionPresidentialLists',
@@ -1646,6 +1655,10 @@ export const m = defineMessages({
     id: 'service.portal:law-and-order-description',
     defaultMessage:
       'Hér eru upplýsingar og yfirlit yfir mál sem þú átt hjá dómskerfinu.',
+  },
+  myCourtCases: {
+    id: 'service.portal:my-court-cases',
+    defaultMessage: 'Mín dómsmál',
   },
   courtCases: {
     id: 'service.portal:court-cases',

@@ -4,6 +4,8 @@ import { IntlConfig, IntlProvider } from 'react-intl'
 import {
   FaqList,
   type FaqListProps,
+  Image,
+  type ImageProps,
   renderConnectedComponent,
   richText,
   SectionWithImage,
@@ -279,6 +281,11 @@ const defaultRenderComponent = {
       variant={slice.variant as 'accordion' | 'card'}
     />
   ),
+  Image: (slice: ImageProps) => {
+    const thumbnailUrl = slice?.url ? slice.url + '?w=50' : ''
+    const url = slice?.url ? slice.url + '?w=800' : ''
+    return <Image {...slice} thumbnail={thumbnailUrl} url={url} />
+  },
 }
 
 export const webRichText = (
@@ -291,7 +298,7 @@ export const webRichText = (
   activeLocale?: Locale,
 ) => {
   return richText(
-    slices as SliceType[],
+    (slices ?? []) as SliceType[],
     {
       renderComponent: {
         ...defaultRenderComponentObject,

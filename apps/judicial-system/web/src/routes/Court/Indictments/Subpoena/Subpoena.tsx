@@ -32,6 +32,7 @@ const Subpoena: FC = () => {
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [newSubpoenas, setNewSubpoenas] = useState<string[]>([])
+  const [isCreatingSubpoena, setIsCreatingSubpoena] = useState<boolean>(false)
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
   const {
@@ -51,6 +52,8 @@ const Subpoena: FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
+      setIsCreatingSubpoena(true)
+
       if (!isSchedulingArraignmentDate) {
         router.push(`${destination}/${workingCase.id}`)
         return
@@ -74,12 +77,30 @@ const Subpoena: FC = () => {
       const allDefendantsUpdated = await Promise.all(promises)
 
       if (!allDefendantsUpdated.every((result) => result)) {
+        setIsCreatingSubpoena(false)
         return
       }
 
-      const courtDateUpdated = await sendCourtDateToServer()
+      // If rescheduling after the court has met, then clear the current conclusion
+      const clearedConclusion =
+        isArraignmentScheduled && workingCase.indictmentDecision
+          ? [
+              {
+                indictmentDecision: null,
+                courtSessionType: null,
+                courtDate: null,
+                postponedIndefinitelyExplanation: null,
+                indictmentRulingDecision: null,
+                mergeCaseId: null,
+                force: true,
+              },
+            ]
+          : undefined
+
+      const courtDateUpdated = await sendCourtDateToServer(clearedConclusion)
 
       if (!courtDateUpdated) {
+        setIsCreatingSubpoena(false)
         return
       }
 
@@ -87,9 +108,11 @@ const Subpoena: FC = () => {
     },
     [
       isSchedulingArraignmentDate,
-      sendCourtDateToServer,
       workingCase.defendants,
+      workingCase.indictmentDecision,
       workingCase.id,
+      isArraignmentScheduled,
+      sendCourtDateToServer,
       updateDefendant,
     ],
   )
@@ -236,7 +259,7 @@ const Subpoena: FC = () => {
           }}
           primaryButtonText={formatMessage(strings.modalPrimaryButtonText)}
           secondaryButtonText={formatMessage(strings.modalSecondaryButtonText)}
-          isPrimaryButtonLoading={false}
+          isPrimaryButtonLoading={isCreatingSubpoena}
         />
       )}
     </PageLayout>

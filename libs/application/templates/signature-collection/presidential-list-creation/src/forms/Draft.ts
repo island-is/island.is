@@ -66,7 +66,6 @@ export const Draft: Form = buildForm({
               title: m.phone,
               width: 'half',
               required: true,
-              disableDropdown: true,
               allowedCountryCodes: ['IS'],
               defaultValue: (application: Application) => {
                 const phone =

@@ -351,6 +351,21 @@ export class PoliceService {
             subpoenaId,
           )
 
+          const serviceStatus = response.deliveredToLawyer
+            ? ServiceStatus.DEFENDER
+            : response.prosecutedConfirmedSubpoenaThroughIslandis
+            ? ServiceStatus.ELECTRONICALLY
+            : response.deliveredOnPaper || response.delivered === true
+            ? ServiceStatus.IN_PERSON
+            : response.acknowledged === false && response.delivered === false
+            ? ServiceStatus.FAILED
+            : // TODO: handle expired
+              undefined
+
+          if (serviceStatus === undefined) {
+            return subpoenaToUpdate
+          }
+
           const updatedSubpoena = await this.subpoenaService.update(
             subpoenaToUpdate,
             {
@@ -358,16 +373,7 @@ export class PoliceService {
               servedBy: response.servedBy ?? undefined,
               defenderNationalId: response.defenderNationalId ?? undefined,
               serviceDate: response.servedAt ?? undefined,
-              serviceStatus: response.deliveredToLawyer
-                ? ServiceStatus.DEFENDER
-                : response.prosecutedConfirmedSubpoenaThroughIslandis
-                ? ServiceStatus.ELECTRONICALLY
-                : response.deliveredOnPaper || response.delivered === true
-                ? ServiceStatus.IN_PERSON
-                : response.acknowledged === false
-                ? ServiceStatus.FAILED
-                : // TODO: handle expired
-                  undefined,
+              serviceStatus,
             } as UpdateSubpoenaDto,
           )
 
@@ -672,7 +678,7 @@ export class PoliceService {
         'Failed to create subpoena',
         {
           caseId: workingCase.id,
-          defendantId: defendant?.nationalId,
+          defendantId: defendant?.id,
           actor,
         },
         error,

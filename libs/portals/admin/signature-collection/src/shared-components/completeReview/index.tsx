@@ -6,6 +6,7 @@ import { useToggleListReviewMutation } from './toggleListReview.generated'
 import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { ListStatus } from '../../lib/utils'
+import ActionLockList from './lockList'
 
 const ActionReviewComplete = ({
   listId,
@@ -15,44 +16,49 @@ const ActionReviewComplete = ({
   listStatus: string
 }) => {
   const { formatMessage } = useLocale()
-  const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
-  const [toggleListReviewMutation, { loading }] = useToggleListReviewMutation()
   const { revalidate } = useRevalidator()
-  const listReviewed = listStatus && listStatus === ListStatus.Reviewed
+
+  const [modalSubmitReviewIsOpen, setModalSubmitReviewIsOpen] = useState(false)
+  const listReviewed =
+    listStatus &&
+    (listStatus === ListStatus.Reviewed || listStatus === ListStatus.Inactive)
   const modalText = listReviewed
     ? formatMessage(m.confirmListReviewedToggleBack)
     : formatMessage(m.confirmListReviewed)
 
-  const toggleReview = async () => {
-    try {
-      const res = await toggleListReviewMutation({
-        variables: {
-          input: {
-            listId,
-          },
-        },
-      })
-      if (res.data?.signatureCollectionAdminToggleListReview.success) {
-        toast.success(formatMessage(m.toggleReviewSuccess))
-        setModalSubmitReviewIsOpen(false)
-        revalidate()
-      } else {
-        toast.error(formatMessage(m.toggleReviewError))
-      }
-    } catch (e) {
-      toast.error(e.message)
-    }
-  }
+  const [toggleListReview, { loading }] = useToggleListReviewMutation({
+    variables: {
+      input: {
+        listId,
+      },
+    },
+    onCompleted: () => {
+      setModalSubmitReviewIsOpen(false)
+      revalidate()
+      toast.success(
+        listReviewed
+          ? formatMessage(m.toggleReviewSuccessToggleBack)
+          : formatMessage(m.toggleReviewSuccess),
+      )
+    },
+    onError: () => {
+      toast.error(formatMessage(m.toggleReviewError))
+    },
+  })
 
   return (
-    <Box marginTop={20}>
-      <Box display="flex" justifyContent="flexEnd">
+    <Box marginTop={12}>
+      <Box display="flex" justifyContent="spaceBetween">
+        <ActionLockList listId={listId} listStatus={listStatus} />
         <Button
           iconType="outline"
           variant="ghost"
-          icon={listReviewed ? 'lockOpened' : 'lockClosed'}
-          colorScheme={listReviewed ? 'default' : 'destructive'}
+          icon={listReviewed ? 'reload' : 'checkmark'}
           onClick={() => setModalSubmitReviewIsOpen(true)}
+          disabled={
+            listStatus === ListStatus.Active ||
+            listStatus === ListStatus.Extendable
+          }
         >
           {modalText}
         </Button>
@@ -75,10 +81,9 @@ const ActionReviewComplete = ({
             <Button
               iconType="outline"
               variant="ghost"
-              onClick={() => toggleReview()}
+              onClick={() => toggleListReview()}
               loading={loading}
-              icon={listReviewed ? 'lockOpened' : 'lockClosed'}
-              colorScheme={listReviewed ? 'default' : 'destructive'}
+              icon={listReviewed ? 'reload' : 'checkmark'}
             >
               {modalText}
             </Button>

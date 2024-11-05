@@ -136,6 +136,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
                     icon="filter"
                     fluid
                     nowrap
+                    size="small"
                   >
                     {popover.visible ? labelClose : labelOpen}
                   </Button>

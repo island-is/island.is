@@ -198,6 +198,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:vehicle-mileage-intro',
     defaultMessage: `Sýnir kílómetrastöðu fyrir hvert ár. Athugið að einungis er hægt að skrá einu sinni fyrir hvert tímabil, <href>sjá nánar um það hér.</href>`,
   },
+  vehicleBulkMileageIntro: {
+    id: 'sp.vehicles:vehicle-bulk-mileage-intro',
+    defaultMessage: `Yfirlit yfir skráða kílómetrastöðu. Að minnsta kosti 30 dagar verða að líða á milli skráningar kílómetrastöðu, <href>sjá nánar um það hér.</href>`,
+  },
   historyIntro: {
     id: 'sp.vehicles:vehicles-history-intro',
     defaultMessage: `Hér má nálgast upplýsingar um þinn ökutækjaferil úr ökutækjaskrá Samgöngustofu.`,
@@ -870,13 +874,22 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:mileage-errors-input-too-low',
     defaultMessage: 'Verður að vera hærri en síðasta staðfesta skráning',
   },
+  mileageInputPositive: {
+    id: 'sp.vehicles:mileage-errors-min-value',
+    defaultMessage: 'Skráning þarf að vera að minnsta kosti 1 km',
+  },
   mileageInputMinLength: {
     id: 'sp.vehicles:mileage-errors-min-length',
-    defaultMessage: 'Skrá verður inn kílómetrastöðu til að vista',
+    defaultMessage: 'Skrá þarf einhverja kílómetrastöðu',
   },
   mileageSuccessFormTitle: {
     id: 'sp.vehicles:mileage-success-form-title',
     defaultMessage: 'Kílómetrastaða skráð',
+  },
+  mileageUploadTooManyRequests: {
+    id: 'sp.vehicles:mileage-error-too-many-request',
+    defaultMessage:
+      'Of margar upphleðslur á stuttum tíma. Vinsamlegast hinkraðu um stund.',
   },
   mileageSuccessFormText: {
     id: 'sp.vehicles:mileage-success-form-text',
@@ -911,6 +924,10 @@ export const vehicleMessage = defineMessages({
   bulkPostMileage: {
     id: 'sp.vehicles:bulk-post-mileage',
     defaultMessage: 'Magnskrá kílómetrastöðu',
+  },
+  bulkPostMileageWithFile: {
+    id: 'sp.vehicles:bulk-post-mileage-with-file',
+    defaultMessage: 'Magnskrá með skjali',
   },
   jobOverview: {
     id: 'sp.vehicles:job-overview',
@@ -963,6 +980,10 @@ export const vehicleMessage = defineMessages({
   uploadFailed: {
     id: 'sp.vehicles:upload-failed',
     defaultMessage: 'Upphleðsla mistókst',
+  },
+  wrongFileType: {
+    id: 'sp.vehicles:wrong-file-type',
+    defaultMessage: 'Vitlaus skráartýpa. Skrá verður að vera .csv eða .xslx',
   },
   errorWhileProcessing: {
     id: 'sp.vehicles:error-while-processing',
@@ -1018,20 +1039,29 @@ export const vehicleMessage = defineMessages({
   },
   fileUploadAcceptedTypes: {
     id: 'sp.vehicles:file-upload-accepted-types',
-    defaultMessage: 'Tekið er við skjölum með endingu; .csv, .xls',
+    defaultMessage: 'Tekið er við skjölum með endingu; .csv, .xlsx',
   },
   dataAboutJob: {
     id: 'sp.vehicles:data-about-job',
-    defaultMessage: 'Hér finnur þú upplýsingar um skráningu',
+    defaultMessage:
+      'Hér finnur þú upplýsingar um skráningu. Að vinna úr magnskráningarskjali getur tekið þónokkrar mínútur. ',
   },
   refreshDataAboutJob: {
     id: 'sp.vehicles:refresh-data-about-job',
     defaultMessage:
-      'Til að sækja nýjustu stöðu er hægt að smella á "Uppfæra stöðu"',
+      'Til að sækja nýjustu stöðu á skráningarkeyrslunni er hægt að smella á "Uppfæra stöðu"',
   },
   refreshJob: {
     id: 'sp.vehicles:refresh-job',
     defaultMessage: 'Uppfæra stöðu',
+  },
+  mileagePostSuccess: {
+    id: 'sp.vehicles:mileage-post-success',
+    defaultMessage: 'Kílómetraskráning tókst',
+  },
+  mileagePutSuccess: {
+    id: 'sp.vehicles:mileage-put-success',
+    defaultMessage: 'Uppfærsla á kílómetraskráningu tókst',
   },
   mileageHistoryFetchFailed: {
     id: 'sp.vehicles:mileage-history-fetch-failed',

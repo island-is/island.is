@@ -33,7 +33,6 @@ import {
   B_FULL,
   B_FULL_RENEWAL_65,
   ApiActions,
-  Pickup,
   CHARGE_ITEM_CODES,
   DELIVERY_FEE,
 } from './constants'
@@ -44,8 +43,13 @@ import {
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
 import { hasCompletedPrerequisitesStep } from './utils'
-import { GlassesCheckApi, SyslumadurPaymentCatalogApi } from '../dataProviders'
+import {
+  GlassesCheckApi,
+  MockableSyslumadurPaymentCatalogApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
+import { Pickup } from './types'
 
 const getCodes = (application: Application) => {
   const applicationFor = getValueViaPath<
@@ -147,6 +151,7 @@ const template: ApplicationTemplate<
                 TeachersApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
+                MockableSyslumadurPaymentCatalogApi,
                 GlassesCheckApi,
                 JurisdictionApi,
                 CurrentLicenseApi.configure({

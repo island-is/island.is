@@ -33,6 +33,7 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseIndictmentRulingDecision,
+  CaseNotificationType,
   CaseOrigin,
   CaseState,
   CaseTransition,
@@ -43,7 +44,6 @@ import {
   isIndictmentCase,
   isRequestCase,
   isTrafficViolationCase,
-  NotificationType,
   StringType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -629,7 +629,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.READY_FOR_COURT },
+        body: { type: CaseNotificationType.READY_FOR_COURT },
       },
     ])
   }
@@ -643,7 +643,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.RECEIVED_BY_COURT },
+        body: { type: CaseNotificationType.RECEIVED_BY_COURT },
       },
     ]
 
@@ -805,7 +805,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.RULING },
+        body: { type: CaseNotificationType.RULING },
       },
     ]
 
@@ -876,7 +876,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.RULING },
+        body: { type: CaseNotificationType.RULING },
       },
     ]
 
@@ -900,7 +900,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.MODIFIED },
+        body: { type: CaseNotificationType.MODIFIED },
       },
     ]
 
@@ -921,7 +921,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.REVOKED },
+        body: { type: CaseNotificationType.REVOKED },
       },
     ]
   }
@@ -987,7 +987,7 @@ export class CaseService {
       type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
-      body: { type: NotificationType.APPEAL_TO_COURT_OF_APPEALS },
+      body: { type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
     })
 
     return this.messageService.sendMessagesToQueue(messages)
@@ -1002,7 +1002,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_RECEIVED_BY_COURT },
+        body: { type: CaseNotificationType.APPEAL_RECEIVED_BY_COURT },
       },
     ])
   }
@@ -1031,7 +1031,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_COMPLETED },
+        body: { type: CaseNotificationType.APPEAL_COMPLETED },
       },
       {
         type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CONCLUSION,
@@ -1063,7 +1063,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_STATEMENT },
+        body: { type: CaseNotificationType.APPEAL_STATEMENT },
       },
     ])
   }
@@ -1077,7 +1077,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_WITHDRAWN },
+        body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
       },
     ])
   }
@@ -1091,7 +1091,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.INDICTMENT_DENIED },
+        body: { type: CaseNotificationType.INDICTMENT_DENIED },
       },
     ])
   }
@@ -1105,7 +1105,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.INDICTMENT_RETURNED },
+        body: { type: CaseNotificationType.INDICTMENT_RETURNED },
       },
     ])
   }
@@ -1168,7 +1168,7 @@ export class CaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.COURT_DATE },
+        body: { type: CaseNotificationType.COURT_DATE },
       },
     ])
   }
@@ -1663,20 +1663,33 @@ export class CaseService {
         CaseIndictmentRulingDecision.FINE,
         CaseIndictmentRulingDecision.CANCELLATION,
         CaseIndictmentRulingDecision.MERGE,
+        CaseIndictmentRulingDecision.WITHDRAWAL,
       ].includes(theCase.indictmentRulingDecision)
     const updatedArraignmentDate = update.arraignmentDate
     const schedulingNewArraignmentDateForIndictmentCase =
       isIndictmentCase(theCase.type) && Boolean(updatedArraignmentDate)
 
+    if (update.accusedPostponedAppealDate) {
+      const relevantInfo = {
+        appealState: theCase.appealState,
+        accusedAppealDecision: theCase.accusedAppealDecision,
+        accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
+        prosecutorAppealDecision: theCase.prosecutorAppealDecision,
+        prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
+        update: update,
+      }
+
+      this.logger.info(
+        `Updating accusedPostponedAppealDate in case service for case ${
+          theCase.id
+        }. Relevant info: ${JSON.stringify(relevantInfo)}`,
+      )
+    }
+
     return this.sequelize
       .transaction(async (transaction) => {
         if (receivingCase) {
-          update.state = transitionCase(
-            CaseTransition.RECEIVE,
-            theCase.type,
-            theCase.state,
-            theCase.appealState,
-          ).state
+          update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
         }
 
         await this.handleDateUpdates(theCase, update, transaction)

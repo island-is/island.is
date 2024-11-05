@@ -16,7 +16,6 @@ export const vehicleSubSection = buildSubSection({
     buildMultiField({
       id: 'vehicleMultiField',
       title: information.labels.vehicle.title,
-      description: information.labels.vehicle.description,
       children: [
         buildTextField({
           id: 'vehicleInfo.plate',
@@ -47,7 +46,7 @@ export const vehicleSubSection = buildSubSection({
           },
         }),
         buildHiddenInput({
-          id: 'vehicleMileage.isRequired',
+          id: 'vehicleMileage.requireMileage',
           defaultValue: (application: Application) => {
             const vehicle = getSelectedVehicle(
               application.externalData,

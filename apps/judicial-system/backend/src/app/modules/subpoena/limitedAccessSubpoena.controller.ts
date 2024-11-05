@@ -6,7 +6,6 @@ import {
   Header,
   Inject,
   Param,
-  Query,
   Res,
   UseGuards,
 } from '@nestjs/common'
@@ -22,18 +21,21 @@ import {
 } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
-import { defenderRule } from '../../guards'
 import {
   Case,
   CaseExistsGuard,
   CaseReadGuard,
   CaseTypeGuard,
   CurrentCase,
+  defenderGeneratedPdfRule,
   PdfService,
 } from '../case'
 import { CurrentDefendant, Defendant, DefendantExistsGuard } from '../defendant'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
-import { SubpoenaExistsOptionalGuard } from './guards/subpoenaExists.guard'
+import {
+  SubpoenaExistsGuard,
+  SubpoenaExistsOptionalGuard,
+} from './guards/subpoenaExists.guard'
 import { Subpoena } from './models/subpoena.model'
 
 @Controller([
@@ -41,21 +43,21 @@ import { Subpoena } from './models/subpoena.model'
 ])
 @UseGuards(
   JwtAuthGuard,
-  RolesGuard,
   CaseExistsGuard,
+  RolesGuard,
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
   DefendantExistsGuard,
-  SubpoenaExistsOptionalGuard,
 )
-@ApiTags('limited access defendants')
+@ApiTags('limited access subpoenas')
 export class LimitedAccessSubpoenaController {
   constructor(
     private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @RolesRules(defenderRule)
+  @UseGuards(SubpoenaExistsOptionalGuard)
+  @RolesRules(defenderGeneratedPdfRule)
   @Get()
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
