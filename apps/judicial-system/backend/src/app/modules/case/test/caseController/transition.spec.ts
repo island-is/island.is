@@ -17,10 +17,13 @@ import {
   completedIndictmentCaseStates,
   completedRequestCaseStates,
   indictmentCases,
+  InstitutionType,
   investigationCases,
   isIndictmentCase,
+  isRequestCase,
   restrictionCases,
   User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -48,7 +51,12 @@ type GivenWhenThen = (
 describe('CaseController - Transition', () => {
   const date = randomDate()
   const userId = uuid()
-  const defaultUser = { id: userId, canConfirmIndictment: false } as User
+  const defaultUser = {
+    id: userId,
+    role: UserRole.PROSECUTOR,
+    canConfirmIndictment: false,
+    institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+  } as User
 
   let mockMessageService: MessageService
   let transaction: Transaction
@@ -353,7 +361,9 @@ describe('CaseController - Transition', () => {
             {
               state: newState,
               parentCaseId:
-                transition === CaseTransition.DELETE ? null : undefined,
+                isRequestCase(type) && transition === CaseTransition.DELETE
+                  ? null
+                  : undefined,
               courtCaseNumber:
                 transition === CaseTransition.RETURN_INDICTMENT
                   ? null
