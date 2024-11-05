@@ -87,6 +87,9 @@ export class FieldSettingsMapper {
       case FieldTypes.TIME_INPUT:
         keys = ['timeInterval', 'isRequired']
         return this.pickSettings(fieldSettings, keys)
+      case FieldTypes.HOMESTAY_OVERVIEW:
+        keys = ['year']
+        return this.pickSettings(fieldSettings, keys)
       default:
         return {}
     }
