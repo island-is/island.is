@@ -6,4 +6,9 @@ export class CreateFieldDto {
   @IsString()
   @ApiProperty()
   screenId!: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  fieldType!: string
 }
