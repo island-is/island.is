@@ -62,6 +62,7 @@ const caseEvent: Record<CaseEvent, string> = {
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
   [CaseTransition.RETURN_INDICTMENT]: ':woman-gesturing-no: Ákæru afturkallað',
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
+  SUBPOENA_SERVICE_STATUS: ':page_with_curl: Staða fyrirkalls uppfærð',
   [CaseTransition.SUBMIT]: ':mailbox_with_mail: Sent',
   [CaseTransition.WITHDRAW_APPEAL]:
     ':leftwards_arrow_with_hook: Kæru afturkallað',
@@ -75,6 +76,7 @@ export type CaseEvent =
   | 'EXTEND'
   | 'RESUBMIT'
   | 'SCHEDULE_COURT_DATE'
+  | 'SUBPOENA_SERVICE_STATUS'
 
 @Injectable()
 export class EventService {
@@ -85,7 +87,12 @@ export class EventService {
     private readonly logger: Logger,
   ) {}
 
-  async postEvent(event: CaseEvent, theCase: Case, eventOnly = false) {
+  async postEvent(
+    event: CaseEvent,
+    theCase: Case,
+    eventOnly = false,
+    extraInfo = '',
+  ) {
     try {
       if (!this.config.url) {
         return
@@ -137,7 +144,7 @@ export class EventService {
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `*${title}*\n>${typeText}\n>${prosecutionText}${courtText}${courtOfAppealsText}${extraText}`,
+                text: `*${title}*\n>${typeText}\n>${prosecutionText}${courtText}${courtOfAppealsText}${extraText}\n>${extraInfo}`,
               },
             },
           ],

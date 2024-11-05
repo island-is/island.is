@@ -32,6 +32,7 @@ import {
 import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
 import { Defendant } from '../defendant/models/defendant.model'
+import { EventService } from '../event'
 import { FileService } from '../file'
 import { PoliceService } from '../police'
 import { User } from '../user'
@@ -69,6 +70,7 @@ export class SubpoenaService {
     private readonly policeService: PoliceService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
+    private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -238,6 +240,28 @@ export class SubpoenaService {
       defenderChoice,
       defenderNationalId,
     )
+
+    if (update.serviceStatus && !subpoena.serviceStatus && subpoena.case) {
+      const serviceStatus =
+        update.serviceStatus === ServiceStatus.DEFENDER
+          ? 'Birt fyrir verjanda'
+          : update.serviceStatus === ServiceStatus.ELECTRONICALLY
+          ? 'Birt rafrænt'
+          : update.serviceStatus === ServiceStatus.IN_PERSON
+          ? 'Birt persónulega'
+          : update.serviceStatus === ServiceStatus.FAILED
+          ? 'Árangurslaus birting'
+          : update.serviceStatus === ServiceStatus.EXPIRED
+          ? 'Rann út á tíma'
+          : 'Í birtingarferli' // This should never happen
+
+      this.eventService.postEvent(
+        'SUBPOENA_SERVICE_STATUS',
+        subpoena.case,
+        false,
+        serviceStatus,
+      )
+    }
 
     return this.findBySubpoenaId(subpoena.subpoenaId)
   }
