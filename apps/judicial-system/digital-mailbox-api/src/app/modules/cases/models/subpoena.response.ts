@@ -106,7 +106,7 @@ export class SubpoenaResponse {
           defendant.nationalId,
         ),
     )
-    const subpoenaType = defendantInfo?.subpoenas?.[0].subpoenaType
+    const subpoenaType = defendantInfo?.subpoenaType
 
     const intro = getIntro(defendantInfo?.gender, lang)
     const formatedSubpoenaInfoText = `${formatMessage(intro.intro)}${

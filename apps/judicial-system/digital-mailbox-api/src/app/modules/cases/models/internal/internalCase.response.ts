@@ -34,6 +34,7 @@ interface Defendant {
   requestedDefenderChoice?: DefenderChoice
   requestedDefenderNationalId?: string
   requestedDefenderName?: string
+  subpoenaType?: SubpoenaType
 }
 
 interface DateLog {
@@ -48,5 +49,4 @@ interface Subpoena {
   id: string
   subpoenaId: string
   serviceStatus?: ServiceStatus
-  subpoenaType?: SubpoenaType
 }
