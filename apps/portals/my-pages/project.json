@@ -104,10 +104,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn nx run services-user-profile:dev",
-          "yarn start service-portal"
-        ],
+        "commands": ["yarn start service-portal"],
         "parallel": true
       }
     },

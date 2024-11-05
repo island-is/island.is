@@ -121,11 +121,13 @@ export class NotificationsService {
 
   async getTemplates(locale?: Locale): Promise<HnippTemplate[]> {
     locale = mapToLocale(locale as Locale)
-    const queryVariables = {
-      locale: mapToContentfulLocale(locale),
-    }
+    const queryVariables = { locale: mapToContentfulLocale(locale) }
     const res = await this.cmsService.fetchData(GetTemplates, queryVariables)
-    return res.hnippTemplateCollection.items
+
+    return res.hnippTemplateCollection.items.map((template: HnippTemplate) => ({
+      ...template,
+      args: template.args || [], // Ensure args is an array
+    }))
   }
 
   async getTemplate(
@@ -143,7 +145,8 @@ export class NotificationsService {
     )
     const items = res.hnippTemplateCollection.items
     if (items.length > 0) {
-      return items[0]
+      const template = items[0]
+      return { ...template, args: template.args || [] } // Ensure args is an array
     } else {
       throw new NotFoundException(`Template not found for ID: ${templateId}`)
     }
