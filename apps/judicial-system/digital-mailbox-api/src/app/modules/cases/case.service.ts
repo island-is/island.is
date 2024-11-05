@@ -107,7 +107,10 @@ export class CaseService {
       throw new NotFoundException('Defendant not found')
     }
 
-    if (defendantInfo.subpoenas?.[0]?.subpoenaId) {
+    if (
+      defendantInfo.subpoenas?.[0]?.subpoenaId &&
+      !defendantInfo.subpoenas[0].serviceStatus
+    ) {
       await this.fetchServiceStatus(id, defendantInfo.subpoenas[0].subpoenaId)
     }
 
