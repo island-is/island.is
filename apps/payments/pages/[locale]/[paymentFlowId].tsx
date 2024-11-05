@@ -1,13 +1,6 @@
 import { GetServerSideProps } from 'next'
 
 import {
-  Box,
-  Button,
-  Stack,
-  RadioButton,
-  Text,
-} from '@island.is/island-ui/core'
-import {
   Query,
   QueryGetPaymentFlowArgs,
   QueryGetOrganizationArgs,
@@ -16,12 +9,22 @@ import {
 import { PageCard } from '../../components/PageCard/PageCard'
 import gql from 'graphql-tag'
 import initApollo from '../../graphql/client'
+import { PaymentHeader } from 'apps/payments/components/PaymentHeader/PaymentHeader'
+import { PaymentSelector } from 'apps/payments/components/PaymentSelector/PaymentSelector'
+import { useState } from 'react'
+import { CardPayment } from 'apps/payments/components/CardPayment/CardPayment'
+import { Box, Button } from '@island.is/island-ui/core'
+import { InvoicePayment } from 'apps/payments/components/InvoicePayment/InvoicePayment'
 
 interface PaymentPageProps {
   locale: string
   paymentFlowId: string
   paymentFlow: Query['getPaymentFlow']
   organization: Query['getOrganization']
+  productInformation: {
+    amount: number
+    title: string
+  }
 }
 
 const GetPaymentFlow = gql`
@@ -64,58 +67,108 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
 
   const client = initApollo()
 
-  const {
-    data: { getPaymentFlow },
-  } = await client.query<Query, QueryGetPaymentFlowArgs>({
-    query: GetPaymentFlow,
-    variables: {
-      input: {
-        id: paymentFlowId,
-      },
-    },
-  })
+  let paymentFlow: PaymentPageProps['paymentFlow']
+  let organization: PaymentPageProps['organization']
 
-  const {
-    data: { getOrganization },
-  } = await client.query<Query, QueryGetOrganizationArgs>({
-    query: GetOrganization,
-    variables: {
-      input: {
-        slug: getPaymentFlow.organisationId,
+  try {
+    const {
+      data: { getPaymentFlow },
+    } = await client.query<Query, QueryGetPaymentFlowArgs>({
+      query: GetPaymentFlow,
+      variables: {
+        input: {
+          id: paymentFlowId,
+        },
       },
-    },
-  })
+    })
+
+    paymentFlow = getPaymentFlow
+
+    const {
+      data: { getOrganization },
+    } = await client.query<Query, QueryGetOrganizationArgs>({
+      query: GetOrganization,
+      variables: {
+        input: {
+          slug: getPaymentFlow.organisationId,
+        },
+      },
+    })
+
+    organization = getOrganization
+  } catch (e) {
+    console.error(e)
+  }
+
+  // TODO fetch product information from TBR
+  const productInformation = {
+    amount: 13337,
+    title: 'Titill vöru',
+  }
 
   return {
     props: {
       locale,
       paymentFlowId,
-      paymentFlow: getPaymentFlow,
-      organization: getOrganization,
+      paymentFlow,
+      organization,
+      productInformation,
     },
   }
 }
 
-export default function TestPage(props: PaymentPageProps) {
-  console.log(props)
+export default function PaymentPage({
+  paymentFlow,
+  organization,
+  productInformation,
+}: PaymentPageProps) {
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>(
+    paymentFlow?.availablePaymentMethods?.[0] ?? '',
+  )
+
+  const invalidFlowSetup =
+    !organization ||
+    !productInformation ||
+    !paymentFlow ||
+    !paymentFlow.availablePaymentMethods
+
   return (
     <PageCard
-      organizationTitle={props.organization?.title}
-      organizationImageSrc={props.organization?.logo?.url}
-      organizationImageAlt={props.organization?.logo?.title}
-      amount={129000}
-      availablePaymentMethods={props.paymentFlow.availablePaymentMethods}
-    >
-      <Box display="flex" flexDirection="column" alignItems="center">
-        <p>(todo fetch product info)</p>
-      </Box>
-
-      <Stack space={1}>
-        <RadioButton id="yes" checked label="Kort" />
-        <RadioButton id="yes" label="Krafa" />
-      </Stack>
-      <Button>Halda áfram</Button>
-    </PageCard>
+      headerSlot={
+        !invalidFlowSetup ? (
+          <PaymentHeader
+            organizationTitle={organization?.title}
+            organizationImageSrc={organization?.logo?.url}
+            organizationImageAlt={organization?.logo?.title}
+            amount={productInformation.amount}
+            productTitle={productInformation.title}
+          />
+        ) : (
+          <PaymentHeader organizationTitle="Villa" />
+        )
+      }
+      bodySlot={
+        !invalidFlowSetup ? (
+          <Box display="flex" flexDirection="column" rowGap={2}>
+            <PaymentSelector
+              availablePaymentMethods={['card', 'invoice']}
+              selectedPayment={selectedPaymentMethod as any}
+              onSelectPayment={setSelectedPaymentMethod}
+            />
+            {selectedPaymentMethod === 'card' && <CardPayment />}
+            {selectedPaymentMethod === 'invoice' && <InvoicePayment />}
+            <Button colorScheme="white" fluid>
+              Hætta við
+            </Button>
+          </Box>
+        ) : (
+          <Box display="flex" flexDirection="column">
+            <p>Ekki tókst að sækja upplýsingar um greiðsluflæði</p>
+          </Box>
+        )
+      }
+      headerColorScheme="primary"
+    />
   )
   //   return <p>Test page (page router)</p>
 }

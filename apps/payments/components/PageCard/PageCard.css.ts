@@ -6,7 +6,7 @@ export const container = style({
 
   ...themeUtils.responsiveStyle({
     md: {
-      maxWidth: theme.contentWidth.medium,
+      maxWidth: theme.contentWidth.small,
       height: 'initial',
       justifyContent: 'initial',
     },
@@ -42,8 +42,24 @@ export const cardContainer = style({
   }),
 })
 
-export const headerContainer = style({
+export const blueBackground = style({
+  backgroundColor: theme.color.blue100,
+})
+
+export const yellowBackground = style({
+  backgroundColor: theme.color.yellow100,
+})
+
+export const purpleBackground = style({
   backgroundColor: theme.color.purple100,
+})
+
+export const redBackground = style({
+  backgroundColor: theme.color.red100,
+})
+
+export const greenBackground = style({
+  backgroundColor: theme.color.mint100,
 })
 
 const logoSize = 40
