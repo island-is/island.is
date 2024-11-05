@@ -83,7 +83,6 @@ export const CausesAndEffects: FC<
 
   useEffect(() => {
     if (mostSeriousAnswer) {
-      console.log('Inside use effect mostSerious')
       setMostSeriousChosen(mostSeriousAnswer)
     }
   }, [mostSeriousAnswer, mostSeriousAnswerId, setValue])

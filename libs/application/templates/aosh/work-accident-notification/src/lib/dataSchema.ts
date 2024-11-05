@@ -1,22 +1,8 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { YES } from '@island.is/application/types'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { EMPLOYMENT_STATUS } from '../shared/constants'
-
-const isValid24HFormatTime = (value: string) => {
-  if (value.length !== 4) return false
-  const hours = parseInt(value.slice(0, 2))
-  const minutes = parseInt(value.slice(2, 4))
-  if (hours > 23) return false
-  if (minutes > 59) return false
-  return true
-}
-
-export const isValidPhoneNumber = (phoneNumber: string) => {
-  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
-  return phone && phone.isValid()
-}
+import { isValid24HFormatTime, isValidPhoneNumber } from '../utils'
 
 const TimeWithRefine = z
   .string()
