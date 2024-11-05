@@ -130,8 +130,6 @@ export interface UpdateCase
     | 'accusedAppealAnnouncement'
     | 'prosecutorAppealDecision'
     | 'prosecutorAppealAnnouncement'
-    | 'accusedPostponedAppealDate'
-    | 'prosecutorPostponedAppealDate'
     | 'registrarId'
     | 'caseModifiedExplanation'
     | 'rulingModifiedHistory'
@@ -140,7 +138,6 @@ export interface UpdateCase
     | 'indictmentIntroduction'
     | 'requestDriversLicenseSuspension'
     | 'creatingProsecutorId'
-    | 'appealState'
     | 'prosecutorStatementDate'
     | 'appealReceivedByCourtDate'
     | 'appealCaseNumber'
@@ -180,6 +177,9 @@ export interface UpdateCase
   indictmentDeniedExplanation?: string | null
   indictmentHash?: string | null
   civilDemands?: string | null
+  appealState?: CaseAppealState | null
+  accusedPostponedAppealDate?: Date | null
+  prosecutorPostponedAppealDate?: Date | null
 }
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>

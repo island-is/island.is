@@ -5,6 +5,7 @@ import {
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseDecision,
+  CaseFileCategory,
   CaseState,
   CaseTransition,
   IndictmentCaseState,
@@ -148,45 +149,129 @@ const indictmentCaseStateMachine: Map<
   ],
 ])
 
-const requestCaseCompletionSideEffect =
-  (state: CaseState) => (update: UpdateCase, theCase: Case) => {
-    const currentCourtEndTime = update.courtEndTime ?? theCase.courtEndTime
-    const newUpdate: UpdateCase = {
-      ...update,
-      state,
-      rulingDate: currentCourtEndTime,
+const handleAppealInCourt = (update: UpdateCase, theCase: Case) => {
+  // Note that this method attempts to handle case correction (reopen + complete)
+
+  const currentCourtEndTime = update.courtEndTime ?? theCase.courtEndTime
+  const currentProsecutorAppealDecision =
+    update.prosecutorAppealDecision ?? theCase.prosecutorAppealDecision
+  const currentAccusedAppealDecision =
+    update.accusedAppealDecision ?? theCase.accusedAppealDecision
+  const currentAppealState =
+    update.appealState === undefined ? theCase.appealState : update.appealState
+  // We want to preserve an already set appeal date, even if it is null
+  const currentProsecutorPostponedAppealDate =
+    update.prosecutorPostponedAppealDate === undefined
+      ? theCase.prosecutorPostponedAppealDate
+      : update.prosecutorPostponedAppealDate
+  // We want to preserve an already set appeal date, even if it is null
+  const currentAccusedPostponedAppealDate =
+    update.accusedPostponedAppealDate === undefined
+      ? theCase.accusedPostponedAppealDate
+      : update.accusedPostponedAppealDate
+
+  const newUpdate = { ...update }
+
+  if (currentProsecutorAppealDecision === CaseAppealDecision.ACCEPT) {
+    // The prosecutor accepted in court
+    // The prosecutor appeal date should be null
+    newUpdate.prosecutorPostponedAppealDate = null
+  }
+
+  if (currentAccusedAppealDecision === CaseAppealDecision.ACCEPT) {
+    // The accused accepted in court
+    // The accused appeal date should be null
+    newUpdate.accusedPostponedAppealDate = null
+  }
+
+  if (
+    currentProsecutorAppealDecision === CaseAppealDecision.ACCEPT &&
+    currentAccusedAppealDecision === CaseAppealDecision.ACCEPT
+  ) {
+    // Both parties accepted in court
+    // The appeal state should be null
+    // Note that if the case was appealed out of court, we do not clean up the uploaded appeal documents
+    return { ...newUpdate, appealState: null }
+  }
+
+  const hasBeenAppealedPreviously = Boolean(currentAppealState)
+
+  if (currentProsecutorAppealDecision === CaseAppealDecision.APPEAL) {
+    // The prosecutor appealed in court
+    // The accused appeal date should be null
+    // The prosecutor appeal date should be set
+    newUpdate.prosecutorPostponedAppealDate = currentCourtEndTime
+    newUpdate.accusedPostponedAppealDate = null
+  } else if (currentAccusedAppealDecision === CaseAppealDecision.APPEAL) {
+    // The prosecutor did not appeal in court, but the accused did
+    // The prosecutor appeal date should be null
+    // The accused appeal date should be set
+    newUpdate.prosecutorPostponedAppealDate = null
+    newUpdate.accusedPostponedAppealDate = currentCourtEndTime
+  } else {
+    // Neither party appealed in court
+
+    const hasValidAppeal =
+      hasBeenAppealedPreviously &&
+      ((currentProsecutorAppealDecision !== CaseAppealDecision.ACCEPT &&
+        Boolean(currentProsecutorPostponedAppealDate) &&
+        theCase.caseFiles?.some(
+          (caseFile) =>
+            caseFile.category === CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+        )) ||
+        (currentAccusedAppealDecision !== CaseAppealDecision.ACCEPT &&
+          Boolean(currentAccusedPostponedAppealDate) &&
+          theCase.caseFiles?.some(
+            (caseFile) =>
+              caseFile.category === CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+          )))
+
+    if (hasValidAppeal) {
+      // The case has a valid appeal
+      return newUpdate
     }
 
-    // Handle appealed in court
-    const hasBeenAppealed = update.appealState ?? theCase.appealState
-    const prosecutorAppealedInCourt =
-      (update.prosecutorAppealDecision ?? theCase.prosecutorAppealDecision) ===
-      CaseAppealDecision.APPEAL
-    const accusedAppealedInCourt =
-      (update.accusedAppealDecision ?? theCase.accusedAppealDecision) ===
-      CaseAppealDecision.APPEAL
+    // The case does not have a valid appeal
 
-    if (
-      // TODO: Decide what to do if correcting case
-      !hasBeenAppealed && // don't appeal twice
-      (prosecutorAppealedInCourt || accusedAppealedInCourt)
-    ) {
-      // TODO: Decide if we should set both appeal dates if both appeal
-      if (prosecutorAppealedInCourt) {
-        newUpdate.prosecutorPostponedAppealDate = currentCourtEndTime
-      } else {
-        newUpdate.accusedPostponedAppealDate = currentCourtEndTime
-      }
-
-      return transitionRequestCase(
-        CaseTransition.APPEAL,
-        theCase,
-        newUpdate,
-        prosecutorAppealedInCourt ? 'Prosecution' : 'Defence',
-      )
+    return {
+      ...newUpdate,
+      appealState: null,
+      prosecutorPostponedAppealDate: null,
+      accusedPostponedAppealDate: null,
     }
 
     return newUpdate
+  }
+
+  // Either the prosecutor or the accused appealed in court
+
+  if (hasBeenAppealedPreviously) {
+    // The case has already been appealed and we leave the appeal state as is
+    // Note that if the case was appealed out of court, we do not clean up the uploaded appeal documents
+    return newUpdate
+  }
+
+  // The case has not been appealed yet
+  return transitionRequestCase(
+    CaseTransition.APPEAL,
+    theCase,
+    update,
+    currentProsecutorAppealDecision === CaseAppealDecision.APPEAL
+      ? 'Prosecution'
+      : 'Defence',
+  )
+}
+
+const requestCaseCompletionSideEffect =
+  (state: CaseState) => (update: UpdateCase, theCase: Case) => {
+    return handleAppealInCourt(
+      {
+        ...update,
+        state,
+        rulingDate: update.courtEndTime ?? theCase.courtEndTime,
+      },
+      theCase,
+    )
   }
 
 const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
@@ -323,7 +408,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
             return {
               ...update,
               appealState: CaseAppealState.APPEALED,
-              // We don't want to overwrite an already set appeal date
+              // We don't want to overwrite an already set appeal date, unless it is null
               prosecutorPostponedAppealDate:
                 update.prosecutorPostponedAppealDate ?? nowFactory(),
             }
@@ -333,7 +418,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
             return {
               ...update,
               appealState: CaseAppealState.APPEALED,
-              // We don't want to overwrite an already set appeal date
+              // We don't want to overwrite an already set appeal date, unless it is null
               accusedPostponedAppealDate:
                 update.accusedPostponedAppealDate ?? nowFactory(),
             }
@@ -388,7 +473,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
             // TODO: Decide what to do with ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             // TODO: Decide what to do if correcting appeal
             const currentAppealRulingDecision =
-              newUpdate.appealRulingDecision ?? theCase.appealRulingDecision
+              update.appealRulingDecision ?? theCase.appealRulingDecision
 
             if (
               currentAppealRulingDecision ===
