@@ -49,8 +49,7 @@ export class WorkerService implements OnModuleDestroy {
     this.status = Status.Running
 
     while (this.status === Status.Running) {
-
-     await this.maybeSleepOutsideWorkingHours()
+      await this.maybeSleepOutsideWorkingHours()
 
       const messages = await this.client.receiveMessages(this.queue.url, {
         maxNumMessages: this.config.maxConcurrentJobs,
