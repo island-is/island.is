@@ -11,6 +11,7 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { LawyersService } from '@island.is/judicial-system/lawyers'
 import { DefenderChoice } from '@island.is/judicial-system/types'
 
@@ -96,14 +97,18 @@ export class CaseService {
     lang?: string,
   ): Promise<CaseResponse> {
     const response = await this.fetchCase(id, nationalId)
-    const defendant = response.defendants[0]
+    const defendantInfo = response.defendants.find(
+      (defendant) =>
+        defendant.nationalId &&
+        normalizeAndFormatNationalId(nationalId).includes(defendant.nationalId),
+    )
 
-    if (!defendant) {
+    if (!defendantInfo) {
       throw new NotFoundException('No defendant found for this case')
     }
 
-    if (defendant.subpoenas && defendant.subpoenas[0].subpoenaId) {
-      await this.fetchServiceStatus(id, defendant.subpoenas[0].subpoenaId)
+    if (defendantInfo.subpoenas?.[0]?.subpoenaId) {
+      await this.fetchServiceStatus(id, defendantInfo.subpoenas[0].subpoenaId)
     }
 
     return CaseResponse.fromInternalCaseResponse(response, lang)
