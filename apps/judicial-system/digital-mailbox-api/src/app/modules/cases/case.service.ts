@@ -104,7 +104,7 @@ export class CaseService {
     )
 
     if (!defendantInfo) {
-      throw new NotFoundException('No defendant found for this case')
+      throw new NotFoundException('Defendant not found')
     }
 
     if (defendantInfo.subpoenas?.[0]?.subpoenaId) {
