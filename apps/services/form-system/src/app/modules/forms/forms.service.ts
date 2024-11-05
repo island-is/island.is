@@ -38,7 +38,7 @@ import {
 } from '../../dataTypes/applicantType.model'
 import { FormApplicant } from '../formApplicants/models/formApplicant.model'
 // import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
-import { ValueFactory } from '../../dataTypes/valueTypes/valueType.factory'
+// import { ValueFactory } from '../../dataTypes/valueTypes/valueType.factory'
 
 @Injectable()
 export class FormsService {

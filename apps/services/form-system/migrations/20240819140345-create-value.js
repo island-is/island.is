@@ -24,6 +24,11 @@ module.exports = {
             type: Sequelize.JSON,
             allowNull: true,
           },
+          order: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+          },
           field_id: {
             type: Sequelize.UUID,
             onDelete: 'CASCADE',

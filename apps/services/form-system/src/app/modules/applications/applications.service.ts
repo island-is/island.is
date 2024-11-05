@@ -10,9 +10,10 @@ import { Field } from '../fields/models/field.model'
 import { Screen } from '../screens/models/screen.model'
 import { ApplicationMapper } from './models/application.mapper'
 import { Value } from '../values/models/value.model'
-import { ValueFactory } from '../../dataTypes/valueTypes/valueType.factory'
-import { BaseValueType } from '../../dataTypes/valueTypes/baseValueType.interface'
-import { TextboxValue } from '../../dataTypes/valueTypes/models/textbox.valuetype'
+// import { ValueFactory } from '../../dataTypes/valueTypes/valueType.factory'
+import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
+// import { BaseValueType } from '../../dataTypes/valueTypes/baseValueType.interface'
+// import { TextboxValue } from '../../dataTypes/valueTypes/models/textbox.valuetype'
 
 @Injectable()
 export class ApplicationsService {
@@ -43,7 +44,7 @@ export class ApplicationsService {
           await this.valueModel.create({
             fieldId: field.id,
             applicationId: newApplication.id,
-            json: this.createValue(field.fieldType, 0),
+            json: this.createValue(field.fieldType),
           } as Value)
         })
       })
@@ -54,11 +55,19 @@ export class ApplicationsService {
     return applicationDto
   }
 
-  private createValue(type: string, order: number) {
-    const ValueClass = ValueFactory.getClass(type)
-    const value = new ValueClass(order)
+  private createValue(type: string) {
+    const value = ValueTypeFactory.getClass(type, {
+      text: 'halló halló',
+      number: 23,
+    })
+    // const value = new ValueClass(order)
     return value
   }
+  // private createValue(type: string, order: number) {
+  //   const ValueClass = ValueFactory.getClass(type)
+  //   const value = new ValueClass(order)
+  //   return value
+  // }
 
   async getApplication(applicationId: string): Promise<ApplicationDto> {
     const application = await this.applicationModel.findByPk(applicationId)

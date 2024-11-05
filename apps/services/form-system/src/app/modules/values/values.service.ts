@@ -5,6 +5,7 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { ValueDto } from './models/dto/value.dto'
+import { UpdateValueDto } from './models/dto/updateValue.dto'
 
 @Injectable()
 export class ValuesService {
@@ -13,15 +14,14 @@ export class ValuesService {
     private readonly valueModel: typeof Value,
   ) {}
 
-  async update(id: string, json: object): Promise<ValueDto> {
+  async update(id: string, updateValueDto: UpdateValueDto): Promise<ValueDto> {
     const value = await this.valueModel.findByPk(id)
 
     if (!value) {
       throw new NotFoundException(`Value with id '${id}' not found`)
     }
 
-    value.json = json
-    value.modified = new Date()
+    value.json = updateValueDto.json
 
     await value.save()
 
