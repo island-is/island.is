@@ -49,7 +49,7 @@ const ApiLocaleQuery = applyDecorators(
 @Controller('api')
 @ApiTags('cases')
 @UseGuards(IdsUserGuard, ScopesGuard)
-// @Scopes(JudicialSystemScope.lawAndOrder)
+@Scopes(JudicialSystemScope.lawAndOrder)
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
