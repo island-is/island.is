@@ -138,7 +138,6 @@ import { NewPrimarySchoolModule } from './new-primary-school/new-primary-school.
 import { NewPrimarySchoolService } from './new-primary-school/new-primary-school.service'
 import { WorkAccidentNotificationTemplateModule } from './aosh/work-accident-notification/work-accident-notification.module'
 import { WorkAccidentNotificationTemplateService } from './aosh/work-accident-notification/work-accident-notification.service'
-
 import { IdCardModule } from './id-card/id-card.module'
 import { IdCardService } from './id-card/id-card.service'
 import { ParliamentaryListCreationModule } from './signature-collection/parliamentary-list-creation/parliamentary-list-creation.module'

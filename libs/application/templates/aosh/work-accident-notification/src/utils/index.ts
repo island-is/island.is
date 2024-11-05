@@ -5,4 +5,6 @@ export {
   getMinDate,
   getDateAndTime,
   dateIsWithin36Hours,
+  isValid24HFormatTime,
+  isValidPhoneNumber,
 } from './dateManipulation'
