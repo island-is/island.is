@@ -25,7 +25,6 @@ export class PaymentFlowService {
     try {
       const result = await this.paymentFlowModel.create({
         ...paymentInfo,
-        ...paymentInfo?.callbacks,
       })
 
       return {
@@ -55,11 +54,6 @@ export class PaymentFlowService {
         ...result,
         availablePaymentMethods:
           result.availablePaymentMethods as PaymentMethod[],
-        callbacks: {
-          onSuccessUrl: result.onSuccessUrl,
-          onUpdateUrl: result.onUpdateUrl,
-          onErrorUrl: result.onErrorUrl,
-        },
       }
     } catch (e) {
       this.logger.error('Fail to get payment flow', e)

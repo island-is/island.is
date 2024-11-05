@@ -1,13 +1,12 @@
 export type PaymentMethod = 'card' | 'invoice'
 
 export type PaymentInformation = {
+  id: string
   productId: string
   availablePaymentMethods: PaymentMethod[]
-  callbacks: {
-    onSuccessUrl: string
-    onUpdateUrl?: string
-    onErrorUrl: string
-  }
+  onSuccessUrl: string
+  onUpdateUrl?: string
+  onErrorUrl: string
   // To display which organization the payment is for
   organisationId: string
   // If the payment is connected to a specific invoice it can be included

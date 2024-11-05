@@ -47,15 +47,14 @@ export const headerContainer = style({
 })
 
 const logoSize = 40
-const logoPadding = 15
-const logoOffset = logoSize / 2 + logoPadding
+const logoOffset = logoSize / 2
 
 export const logo = style({
   position: 'absolute',
   top: `-${logoOffset}px`,
   left: `calc(50% - ${logoOffset}px)`,
-  padding: logoPadding,
   background: theme.color.white,
+  width: `${logoSize}px`,
 })
 
 export const footer = style({

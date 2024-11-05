@@ -5,6 +5,7 @@ import {
   InMemoryCache,
   HttpLink,
   ApolloLink,
+  NormalizedCacheObject,
 } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
@@ -13,7 +14,7 @@ import { setContext } from '@apollo/client/link/context'
 const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 const isBrowser: boolean = process.browser
 
-let apolloClient = null
+let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
 // Polyfill fetch() on the server (used by apollo-client)
 if (!isBrowser) {

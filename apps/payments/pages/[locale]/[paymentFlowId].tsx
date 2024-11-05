@@ -7,14 +7,52 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
+import {
+  Query,
+  QueryGetPaymentFlowArgs,
+  QueryGetOrganizationArgs,
+} from '@island.is/api/schema'
 
 import { PageCard } from '../../components/PageCard/PageCard'
+import gql from 'graphql-tag'
+import initApollo from '../../graphql/client'
 
 interface PaymentPageProps {
   locale: string
   paymentFlowId: string
-  paymentFlow: any
+  paymentFlow: Query['getPaymentFlow']
+  organization: Query['getOrganization']
 }
+
+const GetPaymentFlow = gql`
+  query getPaymentFlow($input: GetPaymentFlowInput!) {
+    getPaymentFlow(input: $input) {
+      id
+      productId
+      invoiceId
+      availablePaymentMethods
+      onSuccessUrl
+      onUpdateUrl
+      onErrorUrl
+      organisationId
+      metadata
+    }
+  }
+`
+
+const GetOrganization = gql`
+  query getOrganization($input: GetOrganizationInput!) {
+    getOrganization(input: $input) {
+      id
+      title
+      shortTitle
+      logo {
+        url
+        title
+      }
+    }
+  }
+`
 
 export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
   context,
@@ -24,22 +62,48 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     paymentFlowId: string
   }
 
-  const paymentFlow = await fetch(
-    `http://localhost:3333/payments/${paymentFlowId}`,
-  ).then((res) => res.json())
+  const client = initApollo()
+
+  const {
+    data: { getPaymentFlow },
+  } = await client.query<Query, QueryGetPaymentFlowArgs>({
+    query: GetPaymentFlow,
+    variables: {
+      input: {
+        id: paymentFlowId,
+      },
+    },
+  })
+
+  const {
+    data: { getOrganization },
+  } = await client.query<Query, QueryGetOrganizationArgs>({
+    query: GetOrganization,
+    variables: {
+      input: {
+        slug: getPaymentFlow.organisationId,
+      },
+    },
+  })
 
   return {
     props: {
       locale,
       paymentFlowId,
-      paymentFlow,
+      paymentFlow: getPaymentFlow,
+      organization: getOrganization,
     },
   }
 }
 
 export default function TestPage(props: PaymentPageProps) {
+  console.log(props)
   return (
-    <PageCard label={`Stofnun (${props.paymentFlow.organisationId})`}>
+    <PageCard
+      label={props.organization?.title}
+      imageSrc={props.organization?.logo?.url}
+      imageAlt={props.organization?.logo?.title}
+    >
       <Box display="flex" flexDirection="column" alignItems="center">
         <Text variant="h1">{props.paymentFlow.productId} (id)</Text>
         <p>(todo fetch product info)</p>

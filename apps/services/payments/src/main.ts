@@ -7,4 +7,5 @@ bootstrap({
   appModule: AppModule,
   name: 'payments',
   openApi,
+  enableVersioning: true,
 })

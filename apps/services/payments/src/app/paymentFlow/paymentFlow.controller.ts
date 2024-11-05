@@ -1,5 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common'
-
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  ParseUUIDPipe,
+} from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 
 import { PaymentFlowService } from './paymentFlow.service'
@@ -9,7 +16,11 @@ import { GetPaymentFlowDTO } from './dtos/getPaymentFlow.dto'
 
 type CreatePaymentUrlResponse = { url: string }
 
-@Controller('payments')
+@ApiTags('payments')
+@Controller({
+  path: 'payments',
+  version: ['1'],
+})
 export class PaymentFlowController {
   constructor(private readonly paymentFlowService: PaymentFlowService) {}
 
@@ -20,12 +31,12 @@ export class PaymentFlowController {
     response: { status: 200, type: GetPaymentFlowDTO },
   })
   getPaymentInfo(
-    @Param() params: { id: string },
-  ): Promise<PaymentInformation | null> {
-    return this.paymentFlowService.getPaymentInfo(params.id)
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<GetPaymentFlowDTO | null> {
+    return this.paymentFlowService.getPaymentInfo(id)
   }
 
-  @Post('')
+  @Post()
   @Documentation({
     description:
       'Creates a new PaymentFlow initialised with PaymentInformation.',

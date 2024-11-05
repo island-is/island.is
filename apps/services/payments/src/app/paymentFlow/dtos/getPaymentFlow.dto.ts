@@ -32,20 +32,20 @@ export class GetPaymentFlowDTO {
     description: 'URL callback to be called on a successful payment',
     type: String,
   })
-  onSuccess!: string
+  onSuccessUrl!: string
 
   @ApiPropertyOptional({
     description:
       'URL callback to be called on payment update events like when the user requests to create invoice rather than directly paying',
     type: String,
   })
-  onUpdate?: string
+  onUpdateUrl?: string
 
   @ApiProperty({
     description: 'URL callback to be called on payment error events',
     type: String,
   })
-  onError!: string
+  onErrorUrl!: string
 
   @ApiProperty({
     description: 'Identifier for the organization initiating the payment flow',
@@ -60,16 +60,4 @@ export class GetPaymentFlowDTO {
     example: { customData: 'value' },
   })
   metadata?: object
-
-  @ApiProperty({
-    description: 'Timestamp when the payment flow was created',
-    type: Date,
-  })
-  created!: Date
-
-  @ApiProperty({
-    description: 'Timestamp when the payment flow was last updated',
-    type: Date,
-  })
-  modified!: Date
 }

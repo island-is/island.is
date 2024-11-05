@@ -5,10 +5,17 @@ import { PageCenter } from '../PageCenter/PageCenter'
 
 type PageCardWrapperProps = {
   label?: string
+  imageSrc?: string
+  imageAlt?: string
   children?: React.ReactNode
 }
 
-export const PageCard = ({ label, children }: PageCardWrapperProps) => {
+export const PageCard = ({
+  label,
+  children,
+  imageSrc,
+  imageAlt,
+}: PageCardWrapperProps) => {
   // const { formatMessage, changeLanguage, locale } = useLocale()
 
   return (
@@ -28,9 +35,7 @@ export const PageCard = ({ label, children }: PageCardWrapperProps) => {
           marginTop={[8, 8, 15]}
           className={styles.cardContainer}
         >
-          <div className={styles.logo}>
-            <Logo iconOnly />
-          </div>
+          <img className={styles.logo} src={imageSrc} alt={imageAlt} />
           {label && (
             <Box
               display="flex"

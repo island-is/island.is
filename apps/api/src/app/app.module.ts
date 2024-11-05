@@ -60,6 +60,7 @@ import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-reg
 import { NotificationsModule } from '@island.is/api/domains/notifications'
 import { PassportModule } from '@island.is/api/domains/passport'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
+import { ApiDomainsPaymentsModule } from '@island.is/api/domains/payments'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
@@ -135,6 +136,7 @@ import { RegulationsClientConfig } from '@island.is/clients/regulations'
 import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
+import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { ShipRegistryClientConfig } from '@island.is/clients/ship-registry'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
@@ -316,6 +318,7 @@ const environment = getConfig
     NationalRegistryXRoadModule,
     NotificationsModule,
     ApiDomainsPaymentModule,
+    ApiDomainsPaymentsModule,
     PaymentScheduleModule,
     ProblemModule,
     CriminalRecordModule,
@@ -402,6 +405,7 @@ const environment = getConfig
         OfficialJournalOfIcelandApplicationClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
+        PaymentsApiClientConfig,
         AuthAdminApiClientConfig,
         WatsonAssistantChatConfig,
         PowerBiConfig,
