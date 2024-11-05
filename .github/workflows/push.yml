@@ -570,6 +570,7 @@ jobs:
           SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
+          set -x
           echo "Node image tag is: '${NODE_IMAGE_TAG}'"
           build_args=(
             --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
@@ -588,6 +589,7 @@ jobs:
           SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
+          set -x
           echo "Node image tag is: '${NODE_IMAGE_TAG}'"
           build_args=(
             --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
