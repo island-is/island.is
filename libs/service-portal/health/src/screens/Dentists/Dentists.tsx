@@ -104,7 +104,7 @@ const Dentists = () => {
             label={formatMessage(messages.dentist)}
             content={dentistName}
             editLink={
-              canRegister
+              !canRegister
                 ? {
                     url: HealthPaths.HealthDentistRegistration,
                     title: messages.changeRegistration,

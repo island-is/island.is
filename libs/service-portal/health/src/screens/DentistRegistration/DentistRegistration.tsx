@@ -113,7 +113,7 @@ export const DentistRegistration = () => {
     )
   }
 
-  if (!canRegister && !statusLoading && !statusError)
+  if (canRegister && !statusLoading && !statusError)
     return <Problem error={error} noBorder={false} />
 
   if (statusLoading)
@@ -195,11 +195,11 @@ export const DentistRegistration = () => {
                           >
                             <Modal
                               id={'dentistRegisterModal'}
-                              initialVisibility={false}
                               iconSrc="./assets/images/coffee.svg"
                               iconAlt="coffee"
-                              toggleClose={!modalVisible}
+                              isVisible={modalVisible}
                               onCloseModal={() => {
+                                setModalVisible(false)
                                 setSelectedDentist(null)
                               }}
                               title={`${formatMessage(
