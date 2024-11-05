@@ -5,6 +5,7 @@ import {
   CardLoader,
   FootNote,
   IntroHeader,
+  IntroWrapper,
   m,
 } from '@island.is/service-portal/core'
 import { useOrganizations } from '@island.is/service-portal/graphql'
@@ -66,12 +67,10 @@ const OverviewV2 = () => {
   }, [errors, organizations])
 
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={m.occupationaLicenses}
-        intro={formatMessage(m.occupationalLicensesDescription)}
-      />
-
+    <IntroWrapper
+      title={m.occupationaLicenses}
+      intro={formatMessage(m.occupationalLicensesDescription)}
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && !!errors.length && (
         <AlertMessage
@@ -120,8 +119,7 @@ const OverviewV2 = () => {
           </Stack>
         </Box>
       )}
-      <FootNote serviceProviderSlug={'syslumenn'} />
-    </Box>
+    </IntroWrapper>
   )
 }
 
