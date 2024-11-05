@@ -2,12 +2,7 @@
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 ARG NODE_IMAGE_TAG
-ARG NODE_IMAGE_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG}
-ARG ALPINE_IMAGE_REGISTRY=${DOCKER_IMAGE_REGISTRY}/nginx/nginx:1.21-alpine
-ARG PLAYWRIGHT_IMAGE_REGISTRY=mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal
-
-# hadolint ignore=DL3006
-FROM ${NODE_IMAGE_REGISTRY} AS deps
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS deps
 
 # hadolint ignore=DL3018
 RUN apk add -U git
@@ -40,14 +35,14 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 
 RUN yarn run build ${APP} --prod
 
-# This is base image for containers that are to be deployed
-# hadolint ignore=DL3006
-FROM ${NODE_IMAGE_REGISTRY} AS output-base
-ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
-ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS output-base
+# this is base image for containers that are to be deployed
+ARG GIT_BRANCH
+ARG GIT_SHA
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_SHA}
+ENV GIT_BRANCH=${GIT_BRANCH}
+ENV GIT_SHA=${GIT_SHA}
 ARG APP
 ARG APP_HOME
 ARG APP_DIST_HOME
@@ -70,11 +65,9 @@ RUN npm install -g \
 USER runner
 
 FROM output-base-with-pg AS output-express
-ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
-ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-LABEL branch=${GIT_BRANCH}
-LABEL commit=${GIT_SHA}
+ARG GIT_SHA
+ENV DD_GIT_COMMIT_SHA="${GIT_SHA}"
+ENV DD_GIT_REPOSITORY_URL="github.com/island-is/island.is"
 
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
@@ -82,11 +75,9 @@ ENTRYPOINT []
 CMD [ "node", "--no-experimental-fetch", "main.js" ]
 
 FROM output-base-with-pg AS output-next
-ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
-ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-LABEL branch=${GIT_BRANCH}
-LABEL commit=${GIT_SHA}
+ARG GIT_SHA
+ENV DD_GIT_COMMIT_SHA="${GIT_SHA}"
+ENV DD_GIT_REPOSITORY_URL="github.com/island-is/island.is"
 ENV PORT=4200
 
 # TODO: smallify
@@ -95,17 +86,19 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT [ "node", "main.js" ]
 
-# hadolint ignore=DL3006
-FROM ${ALPINE_IMAGE_REGISTRY} AS output-static
-ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
-ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-LABEL branch=${GIT_BRANCH}
-LABEL commit=${GIT_SHA}
+FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine AS output-static
 ARG APP
 ARG APP_DIST_HOME
+ARG GIT_BRANCH
+ARG GIT_SHA
+LABEL branch=${GIT_BRANCH}
+LABEL commit=${GIT_SHA}
+ENV GIT_BRANCH=${GIT_BRANCH}
+ENV GIT_SHA=${GIT_SHA}
 ENV APP=${APP}
 ENV BASEPATH=/
+ENV DD_GIT_COMMIT_SHA="${GIT_SHA}"
+ENV DD_GIT_REPOSITORY_URL="github.com/island-is/island.is"
 
 RUN mkdir -p /etc/nginx/templates
 # hadolint ignore=DL3018
@@ -119,11 +112,6 @@ COPY scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
 FROM output-base AS output-jest
-ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
-ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-LABEL branch=${GIT_BRANCH}
-LABEL commit=${GIT_SHA}
 
 RUN echo 'module.exports = {};' > jest.config.js
 
@@ -138,16 +126,20 @@ CMD [ "jest", "main.spec.js" ]
 
 
 
-# hadolint ignore=DL3006
-FROM ${PLAYWRIGHT_IMAGE_REGISTRY} AS playwright-base
+FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-base
+
+
+
+
+
 
 FROM playwright-base AS output-playwright
-ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
-ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+ARG GIT_BRANCH
+ARG GIT_SHA
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_SHA}
-
+ENV GIT_BRANCH=${GIT_BRANCH}
+ENV GIT_SHA=${GIT_SHA}
 # TODO: remove awscli dependency (157 MB extra)
 
 # hadolint ignore=DL3008
