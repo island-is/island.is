@@ -2,6 +2,7 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { NO, YES } from '@island.is/application/core'
 import { ApplicationTypes, ModeOfDelivery } from '@island.is/university-gateway'
+import { EMPTY_MODE_OF_DELIVERY } from './constants'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -129,7 +130,7 @@ const ModeOfDeliverInformationSchema = z.object({
     ModeOfDelivery.ON_SITE,
     ModeOfDelivery.MIXED,
     ModeOfDelivery.REMOTE,
-    'EMPTY_MODE_OF_DELIVERY',
+    EMPTY_MODE_OF_DELIVERY,
   ]),
   location: z.string().optional(),
 })

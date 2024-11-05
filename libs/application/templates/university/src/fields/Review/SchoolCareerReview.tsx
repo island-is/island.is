@@ -54,6 +54,7 @@ export const SchoolCareerReview: FC<Props> = ({
                     display="flex"
                     alignItems="center"
                     marginBottom="smallGutter"
+                    key={file.key}
                   >
                     <Box marginRight={1} display="flex" alignItems="center">
                       <Icon

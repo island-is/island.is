@@ -2,7 +2,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { AlertMessage, Box, LoadingDots } from '@island.is/island-ui/core'
 import { UniversityApplication } from '../../lib/dataSchema'
-import { Routes } from '../../lib/constants'
+import { EMPTY_MODE_OF_DELIVERY, Routes } from '../../lib/constants'
 import { SelectController } from '@island.is/shared/form-fields'
 import { UniversityExternalData } from '../../types'
 import { Program } from '@island.is/clients/university-gateway-api'
@@ -183,7 +183,7 @@ export const ProgramSelection: FC<FieldBaseProps> = ({ application }) => {
     } else {
       setValue(
         `${Routes.MODEOFDELIVERYINFORMATION}.chosenMode`,
-        'EMPTY_MODE_OF_DELIVERY',
+        EMPTY_MODE_OF_DELIVERY,
       )
     }
   }

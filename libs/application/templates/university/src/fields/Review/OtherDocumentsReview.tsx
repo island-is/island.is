@@ -41,7 +41,7 @@ export const OtherDocumentsReview: FC<Props> = ({
               const item = otherDocuments[index]
               if (item.attachments && item.attachments.length > 0) {
                 return (
-                  <>
+                  <Box key={field.externalKey}>
                     <Text>{field.externalKey}:</Text>
                     {item.attachments.map((file) => {
                       return (
@@ -66,7 +66,7 @@ export const OtherDocumentsReview: FC<Props> = ({
                         </Box>
                       )
                     })}
-                  </>
+                  </Box>
                 )
               }
             })}

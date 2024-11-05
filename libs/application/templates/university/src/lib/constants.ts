@@ -38,6 +38,8 @@ export enum Routes {
   OTHERDOCUMENTS = 'otherDocuments',
 }
 
+export const EMPTY_MODE_OF_DELIVERY = 'EMPTY_MODE_OF_DELIVERY'
+
 export const degreeLevelOptions = [
   {
     label: formerEducation.labels.educationDetails.framhaldsskoliSelectionLabel,
