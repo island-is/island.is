@@ -38,11 +38,6 @@ RUN yarn run build ${APP} --prod
 
 # This is base image for containers that are to be deployed
 FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS output-base
-ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
-ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-LABEL branch=${GIT_BRANCH}
-LABEL commit=${GIT_SHA}
 ARG APP
 ARG APP_HOME
 ARG APP_DIST_HOME
@@ -65,37 +60,32 @@ RUN npm install -g \
 USER runner
 
 FROM output-base-with-pg AS output-express
+
+COPY --from=builder /build/${APP_DIST_HOME} /webapp/
+
 ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_SHA}
-
-COPY --from=builder /build/${APP_DIST_HOME} /webapp/
-
 ENTRYPOINT []
 CMD [ "node", "--no-experimental-fetch", "main.js" ]
 
 FROM output-base-with-pg AS output-next
-ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
-ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-LABEL branch=${GIT_BRANCH}
-LABEL commit=${GIT_SHA}
 ENV PORT=4200
 
 # TODO: smallify
 COPY --from=deps /build/node_modules /webapp/node_modules
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
-ENTRYPOINT [ "node", "main.js" ]
-
-FROM ${DOCKER_IMAGE_REGISTRY}/nginx/nginx:1.21-alpine AS output-static
 ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_SHA}
+ENTRYPOINT [ "node", "main.js" ]
+
+FROM ${DOCKER_IMAGE_REGISTRY}/nginx/nginx:1.21-alpine AS output-static
 ARG APP
 ARG APP_DIST_HOME
 ENV APP=${APP}
@@ -112,12 +102,13 @@ COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
 COPY scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
-FROM output-base AS output-jest
 ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_SHA}
+
+FROM output-base AS output-jest
 
 RUN echo 'module.exports = {};' > jest.config.js
 
@@ -128,6 +119,11 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 USER runner
 
+ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
+ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+LABEL branch=${GIT_BRANCH}
+LABEL commit=${GIT_SHA}
 CMD [ "jest", "main.spec.js" ]
 
 
@@ -135,11 +131,6 @@ CMD [ "jest", "main.spec.js" ]
 FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-base
 
 FROM playwright-base AS output-playwright
-ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
-ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
-LABEL branch=${GIT_BRANCH}
-LABEL commit=${GIT_SHA}
 
 # TODO: remove awscli dependency (157 MB extra)
 
@@ -166,6 +157,11 @@ RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
 COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
 
+ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
+ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+LABEL branch=${GIT_BRANCH}
+LABEL commit=${GIT_SHA}
 ENTRYPOINT ["./entrypoint.sh"]
 
 
@@ -184,6 +180,11 @@ COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
 
 USER pwuser
 
+ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
+ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+LABEL branch=${GIT_BRANCH}
+LABEL commit=${GIT_SHA}
 ENTRYPOINT ["./entrypoint.sh"]
 
 FROM output-base AS output-native
