@@ -3,6 +3,7 @@ import { FC } from 'react'
 import { causeAndConsequences } from '../../lib/messages'
 import { WorkAccidentNotification } from '../../lib/dataSchema'
 import { CausesAndEffects } from '../Components/CausesAndEffects'
+import { getValueViaPath } from '@island.is/application/core'
 
 interface InjuredBodyPartsProps {
   field: {
@@ -29,8 +30,10 @@ export const InjuredBodyParts: FC<
       mostSeriousAnswerId={`injuredBodyParts[${idx}].partOfBodyInjuredMostSerious`}
       screenId={'injuredBodyParts'}
       mostSeriousAnswer={
-        (answers?.injuredBodyParts?.[idx]
-          ?.partOfBodyInjuredMostSerious as string) || ''
+        getValueViaPath<string>(
+          answers,
+          `injuredBodyParts[${idx}].partOfBodyInjuredMostSerious`,
+        ) || ''
       }
       {...props}
     />

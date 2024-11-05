@@ -28,10 +28,8 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     if (goToScreen) goToScreen(page)
   }
 
-  const employees = getValueViaPath(
-    application.answers,
-    'employee',
-  ) as EmployeeType[]
+  const employees =
+    getValueViaPath<EmployeeType[]>(application.answers, 'employee') || []
 
   return (
     <Box>
