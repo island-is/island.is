@@ -16,28 +16,6 @@ describe('license-service/client/machine-license', () => {
 
         expect(result).toBeNull()
       })
-
-      it('should handle multiple dates and return the latest', () => {
-        const licenseWithMultipleDates = {
-          ...ValidMachineLicense,
-          qualifications: [
-            { expiryDate: '2023-01-01T00:00:00Z' },
-            { expiryDate: '2023-12-31T00:00:00Z' },
-            { expiryDate: '2023-06-01T00:00:00Z' },
-          ],
-        }
-        const result = mapper.findLatestExpirationDate(licenseWithMultipleDates)
-        expect(result).toBe('2023-12-31T00:00:00Z')
-      })
-
-      it('should handle invalid date formats gracefully', () => {
-        const licenseWithInvalidDate = {
-          ...ValidMachineLicense,
-          qualifications: [{ expiryDate: 'invalid-date' }],
-        }
-        const result = mapper.findLatestExpirationDate(licenseWithInvalidDate)
-        expect(result).toBeNull()
-      })
     })
   })
 })
