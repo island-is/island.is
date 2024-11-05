@@ -22,6 +22,7 @@ import { consentNavigation } from '@island.is/portals/my-pages/consent'
 import { ServicePortalPaths } from '@island.is/portals/my-pages/core'
 import { socialInsuranceMaintenanceNavigation } from '@island.is/portals/my-pages/social-insurance-maintenance'
 import { lawAndOrderNavigation } from '@island.is/portals/my-pages/law-and-order'
+import { companySignatureCollectionNavigation } from '@island.is/portals/my-pages/signature-collection'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
@@ -47,6 +48,7 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
       ],
     },
     companyNavigation,
+    companySignatureCollectionNavigation,
     informationNavigation,
     socialInsuranceMaintenanceNavigation,
     assetsNavigation,

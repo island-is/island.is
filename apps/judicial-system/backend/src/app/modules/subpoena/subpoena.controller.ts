@@ -5,6 +5,7 @@ import {
   Get,
   Header,
   Inject,
+  InternalServerErrorException,
   Param,
   Query,
   Res,
@@ -41,7 +42,10 @@ import { Defendant } from '../defendant'
 import { CurrentDefendant } from '../defendant/guards/defendant.decorator'
 import { DefendantExistsGuard } from '../defendant/guards/defendantExists.guard'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
-import { SubpoenaExistsOptionalGuard } from './guards/subpoenaExists.guard'
+import {
+  SubpoenaExistsGuard,
+  SubpoenaExistsOptionalGuard,
+} from './guards/subpoenaExists.guard'
 import { Subpoena } from './models/subpoena.model'
 
 @UseGuards(
@@ -51,12 +55,8 @@ import { Subpoena } from './models/subpoena.model'
   new CaseTypeGuard(indictmentCases),
   CaseReadGuard,
   DefendantExistsGuard,
-  SubpoenaExistsOptionalGuard,
 )
-@Controller([
-  'api/case/:caseId/defendant/:defendantId/subpoena',
-  'api/case/:caseId/defendant/:defendantId/subpoena/:subpoenaId',
-])
+@Controller('api/case/:caseId/defendant/:defendantId/subpoena')
 @ApiTags('subpoenas')
 export class SubpoenaController {
   constructor(
@@ -72,7 +72,8 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get()
+  @Get(['', ':subpoenaId'])
+  @UseGuards(SubpoenaExistsOptionalGuard)
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -103,6 +104,44 @@ export class SubpoenaController {
       arraignmentDate,
       location,
       subpoenaType,
+    )
+
+    res.end(pdf)
+  }
+
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Get(':subpoenaId/serviceCertificate')
+  @UseGuards(SubpoenaExistsGuard)
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      'Gets the service certificate for a given defendant as a pdf document',
+  })
+  async getServiceCertificatePdf(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @Param('subpoenaId') subpoenaId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @CurrentSubpoena() subpoena: Subpoena,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting service certificate for defendant ${defendantId} in subpoena ${subpoenaId} of case ${caseId} as a pdf document`,
+    )
+
+    const pdf = await this.pdfService.getServiceCertificatePdf(
+      theCase,
+      defendant,
+      subpoena,
     )
 
     res.end(pdf)

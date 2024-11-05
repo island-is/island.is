@@ -37,6 +37,7 @@ export const Form2 = () => {
 
   const { data, loading } = useGetOrgansListQuery({
     variables: { locale: lang },
+    fetchPolicy: 'no-cache',
   })
 
   const isDonor = data?.healthDirectorateOrganDonation.donor?.isDonor
@@ -54,15 +55,16 @@ export const Form2 = () => {
     : OPT_OUT
   const [radioValue, setRadioValue] = useState<string | undefined>(donorStatus)
 
-  const [updateDonorStatus] = useUpdateOrganDonationInfoMutation({
-    onCompleted: () => {
-      toast.success(formatMessage(messages.registrationComplete))
-      navigate(HealthPaths.HealthOrganDonation, { replace: true })
-    },
-    onError: () => {
-      toast.error(formatMessage(messages.registrationFailed))
-    },
-  })
+  const [updateDonorStatus, { loading: submitLoading }] =
+    useUpdateOrganDonationInfoMutation({
+      onCompleted: () => {
+        toast.success(formatMessage(messages.registrationComplete))
+        navigate(HealthPaths.HealthOrganDonation, { replace: true })
+      },
+      onError: () => {
+        toast.error(formatMessage(messages.registrationFailed))
+      },
+    })
 
   useEffect(() => {
     if (radioValue !== donorStatus) {
@@ -178,7 +180,7 @@ export const Form2 = () => {
               size="small"
               type="submit"
               loading={loading}
-              disabled={radioValue === undefined}
+              disabled={radioValue === undefined || submitLoading}
             >
               {formatMessage(coreMessages.codeConfirmation)}
             </Button>

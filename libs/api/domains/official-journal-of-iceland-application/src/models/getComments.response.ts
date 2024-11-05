@@ -1,56 +1,39 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-@ObjectType('OfficialJournalOfIcelandApplicationEntity')
-export class CaseCommentEntity {
-  @Field(() => ID)
-  id!: string
-
-  @Field()
-  title!: string
-
-  @Field()
-  slug!: string
-}
-@ObjectType('OfficialJournalOfIcelandApplicationCommentTask')
-export class CaseCommentTask {
-  @Field(() => String, { nullable: true })
-  from!: string | null
-
-  @Field(() => String, { nullable: true })
-  to!: string | null
-
-  @Field(() => CaseCommentEntity)
-  title!: CaseCommentEntity
-
-  @Field(() => String, { nullable: true })
-  comment!: string | null
+export enum CommentDirection {
+  SENT = 'sent',
+  RECEIVED = 'received',
 }
 
-@ObjectType('OfficialJournalOfIcelandApplicationComment')
+registerEnumType(CommentDirection, {
+  name: 'OJOICommentDirection',
+})
+
+@ObjectType('OJOIAComment')
 export class CaseComment {
   @Field(() => ID)
   id!: string
 
   @Field()
-  createdAt!: string
+  age!: string
+
+  @Field(() => CommentDirection)
+  direction!: CommentDirection
 
   @Field()
-  internal!: boolean
-
-  @Field(() => CaseCommentEntity)
-  type!: CaseCommentEntity
-
-  @Field(() => CaseCommentEntity)
-  status!: CaseCommentEntity
+  title!: string
 
   @Field(() => String, { nullable: true })
-  state!: string | null
+  comment!: string | null
 
-  @Field(() => CaseCommentTask)
-  task!: CaseCommentTask
+  @Field(() => String, { nullable: true })
+  creator!: string | null
+
+  @Field(() => String, { nullable: true })
+  receiver!: string | null
 }
 
-@ObjectType('OfficialJournalOfIcelandApplicationGetCommentsResponse')
+@ObjectType('OJOIAGetCommentsResponse')
 export class GetCommentsResponse {
   @Field(() => [CaseComment])
   comments!: CaseComment[]

@@ -82,6 +82,7 @@ export const DocumentLineV3: FC<Props> = ({
     setDocumentDisplayError,
     setDocLoading,
     setLocalRead,
+    categoriesAvailable,
     localRead,
   } = useDocumentContext()
 
@@ -102,6 +103,17 @@ export const DocumentLineV3: FC<Props> = ({
   useEffect(() => {
     setHasAvatarFocus(isAvatarFocused)
   }, [isAvatarFocused])
+
+  const displayErrorMessage = () => {
+    const errorMessage = formatMessage(messages.documentFetchError, {
+      senderName: documentLine.sender?.name ?? '',
+    })
+    if (asFrame) {
+      toast.error(errorMessage, { toastId: 'overview-doc-error' })
+    } else {
+      setDocumentDisplayError(errorMessage)
+    }
+  }
 
   const displayPdf = (
     content?: DocumentV2Content,
@@ -141,6 +153,9 @@ export const DocumentLineV3: FC<Props> = ({
         input: {
           id: documentLine.id,
           provider: documentLine.sender?.name ?? 'unknown',
+          category: categoriesAvailable.find(
+            (i) => i.id === documentLine?.categoryId,
+          )?.name,
         },
         locale: lang,
       },
@@ -167,14 +182,7 @@ export const DocumentLineV3: FC<Props> = ({
         }
       },
       onError: () => {
-        const errorMessage = formatMessage(messages.documentFetchError, {
-          senderName: documentLine.sender?.name ?? '',
-        })
-        if (asFrame) {
-          toast.error(errorMessage, { toastId: 'overview-doc-error' })
-        } else {
-          setDocumentDisplayError(errorMessage)
-        }
+        displayErrorMessage()
       },
     })
 
@@ -185,6 +193,9 @@ export const DocumentLineV3: FC<Props> = ({
           id: documentLine.id,
           provider: documentLine.sender?.name ?? 'unknown',
           includeDocument: false,
+          category: categoriesAvailable.find(
+            (i) => i.id === documentLine?.categoryId,
+          )?.name,
         },
       },
 
@@ -205,11 +216,7 @@ export const DocumentLineV3: FC<Props> = ({
         }
       },
       onError: () => {
-        setDocumentDisplayError(
-          formatMessage(messages.documentFetchError, {
-            senderName: documentLine.sender?.name ?? '',
-          }),
-        )
+        displayErrorMessage()
       },
     })
 

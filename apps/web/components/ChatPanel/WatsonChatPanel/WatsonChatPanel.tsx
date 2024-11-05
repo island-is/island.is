@@ -30,7 +30,6 @@ import { SUBMIT_WATSON_ASSISTANT_CHAT_FEEDBACK } from '@island.is/web/screens/qu
 import { ChatBubble } from '../ChatBubble'
 import { WatsonChatPanelProps } from '../types'
 import type { WatsonInstance, WatsonInstanceEvent } from './types'
-import { onAuthenticatedWatsonAssistantChatLoad } from './utils'
 import * as styles from './WatsonChatPanel.css'
 
 const chatLog: WatsonInstanceEvent[] = []
@@ -284,6 +283,10 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   const watsonInstance = useRef<WatsonInstance | null>(null)
   const [hasButtonBeenClicked, setHasButtonBeenClicked] = useState(false)
 
+  const replaceDirectorateOfImmigrationWebChatWithAI = Boolean(
+    namespace?.replaceDirectorateOfImmigrationWebChatWithAI,
+  )
+
   useEffect(() => {
     if (Object.keys(namespace).length === 0) {
       return () => {
@@ -294,6 +297,16 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     // @ts-ignore make web strict
     const namespaceValue = namespace?.[namespaceKey] ?? {}
     const { cssVariables, ...languagePack } = namespaceValue
+
+    const propsCopy = { ...props }
+
+    if (
+      !replaceDirectorateOfImmigrationWebChatWithAI &&
+      props.integrationID === '9e320784-ad44-4da9-9eb3-f305057a196a'
+    ) {
+      propsCopy.integrationID = '89a03e83-5c73-4642-b5ba-cd3771ceca54'
+      propsCopy.serviceInstanceID = 'bc3d8312-d862-4750-b8bf-529db282050a'
+    }
 
     let scriptElement: HTMLScriptElement | null = null
 
@@ -322,7 +335,7 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           serviceDesk: {
             skipConnectAgentCard: true,
           },
-          ...props,
+          ...propsCopy,
           onLoad: (instance) => {
             watsonInstance.current = instance
             if (Object.keys(cssVariables).length > 0) {
@@ -334,7 +347,8 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
             if (
               // Útlendingastofnun
-              props.integrationID !== '89a03e83-5c73-4642-b5ba-cd3771ceca54'
+              props.integrationID !== '89a03e83-5c73-4642-b5ba-cd3771ceca54' &&
+              props.integrationID !== '9e320784-ad44-4da9-9eb3-f305057a196a'
             ) {
               // Keep the chat log in memory
               instance.on({
@@ -370,18 +384,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
               })
             }
 
-            if (
-              // Askur - Útlendingastofnun
-              props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54'
-            ) {
-              onAuthenticatedWatsonAssistantChatLoad(
-                instance,
-                namespace,
-                activeLocale,
-                'directorateOfImmigration',
-              )
-            }
-
             if (onLoad) {
               onLoad(instance)
             }
@@ -412,6 +414,8 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   }, [namespace, hasButtonBeenClicked, showLauncher])
 
   if (showLauncher) return null
+
+  const chatTermsUrl = n('chatTermsUrl', '')
 
   return (
     <Hidden print>
@@ -455,6 +459,58 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           }}
           pushUp={pushUp}
           loading={loading}
+          embedDisclaimerProps={
+            replaceDirectorateOfImmigrationWebChatWithAI &&
+            props.integrationID === '9e320784-ad44-4da9-9eb3-f305057a196a'
+              ? {
+                  localStorageKey: 'watsonAssistantChatAllowed',
+                  texts: {
+                    message:
+                      activeLocale === 'is' ? (
+                        <Text variant="small">
+                          Þetta netspjall er hýst af þriðja aðila. Með því að
+                          halda áfram samþykkir þú{' '}
+                          {!chatTermsUrl ? (
+                            'skilmála'
+                          ) : (
+                            <a href={chatTermsUrl ?? ''}>skilmála</a>
+                          )}{' '}
+                          þeirra.
+                        </Text>
+                      ) : (
+                        <Text variant="small">
+                          This AI chatbot is hosted by a third party and by
+                          continuing, you are agreeing to their{' '}
+                          {!chatTermsUrl ? (
+                            'terms and conditions'
+                          ) : (
+                            <a href={chatTermsUrl ?? ''}>
+                              terms and conditions
+                            </a>
+                          )}
+                          . The chatbots purpose is to assist you in your search
+                          for information, it's still learning so suggestions
+                          must be taken with caution.
+                        </Text>
+                      ),
+                    remember: n(
+                      'rememberThisSetting',
+                      activeLocale === 'is'
+                        ? 'Muna þessa stillingu'
+                        : 'Remember this setting',
+                    ),
+                    accept: n(
+                      'accept',
+                      activeLocale === 'is' ? 'Halda áfram' : 'I agree',
+                    ),
+                    cancel: n(
+                      'cancel',
+                      activeLocale === 'is' ? 'Hætta við' : 'I disagree',
+                    ),
+                  },
+                }
+              : undefined
+          }
         />
       )}
       <ToastContainer />

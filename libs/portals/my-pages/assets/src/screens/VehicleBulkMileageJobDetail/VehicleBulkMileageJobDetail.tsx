@@ -229,26 +229,31 @@ const VehicleBulkMileageJobDetail = () => {
               </T.Head>
 
               <T.Body>
-                {displayRegistrationData &&
-                  registrations?.requests.map((j) => (
-                    <T.Row key={j.vehicleId}>
-                      <T.Data>
-                        <Box display="flex" justifyContent="spaceBetween">
-                          <Icon
-                            icon={
-                              j.returnCode !== 'E' ? 'checkmark' : 'warning'
-                            }
-                            color={j.returnCode !== 'E' ? 'mint400' : 'red400'}
-                          />
-                          {j.vehicleId}
-                        </Box>
-                      </T.Data>
-                      <T.Data>{displayWithUnit(j.mileage, 'km', true)}</T.Data>
-                      <T.Data>
-                        {(j.errors ?? []).map((j) => j.message).join(', ')}
-                      </T.Data>
-                    </T.Row>
-                  ))}
+                {displayRegistrationData
+                  ? registrations?.requests.map((j) => (
+                      <T.Row key={j.vehicleId}>
+                        <T.Data>
+                          <Box display="flex" justifyContent="spaceBetween">
+                            <Icon
+                              icon={
+                                j.returnCode !== 'E' ? 'checkmark' : 'warning'
+                              }
+                              color={
+                                j.returnCode !== 'E' ? 'mint400' : 'red400'
+                              }
+                            />
+                            {j.vehicleId}
+                          </Box>
+                        </T.Data>
+                        <T.Data>
+                          {displayWithUnit(j.mileage, 'km', true)}
+                        </T.Data>
+                        <T.Data>
+                          {(j.errors ?? []).map((j) => j.message).join(', ')}
+                        </T.Data>
+                      </T.Row>
+                    ))
+                  : null}
               </T.Body>
             </T.Table>
             {!displayRegistrationData && (

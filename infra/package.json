@@ -30,6 +30,8 @@
     "aws-sdk": "^2.1003.0",
     "glob": "10.3.3",
     "js-yaml": "4.0.0",
+    "json-refs": "3.0.15",
+    "json-schema-to-zod": "2.4.1",
     "lodash": "4.17.21",
     "yargs": "17.7.2"
   },

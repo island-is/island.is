@@ -110,6 +110,7 @@ const SignedList = ({
                       ? {
                           label:
                             formatMessage(m.digitalSignature) +
+                            ' ' +
                             format(new Date(list.signedDate), 'dd.MM.yyyy'),
                           variant: 'blueberry',
                           outlined: true,

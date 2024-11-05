@@ -565,6 +565,11 @@ export const m = defineMessages({
     id: 'service.portal:signatureCollectionParliamentaryLists',
     defaultMessage: 'Alþingiskosningar - Meðmælasöfnun',
   },
+  signatureCollectionParliamentaryListsCompany: {
+    id: 'service.portal:signatureCollectionParliamentaryListsCompany',
+    defaultMessage:
+      'Alþingiskosningar - Meðmælasöfnun (Aðeins fyrir stjórnmálasamtök)',
+  },
   signatureCollectionPresidentialLists: {
     id: 'service.portal:signatureCollectionPresidentialLists',
     defaultMessage: 'Forsetakosningar - Meðmælasöfnun',
@@ -1650,6 +1655,10 @@ export const m = defineMessages({
     id: 'service.portal:law-and-order-description',
     defaultMessage:
       'Hér eru upplýsingar og yfirlit yfir mál sem þú átt hjá dómskerfinu.',
+  },
+  myCourtCases: {
+    id: 'service.portal:my-court-cases',
+    defaultMessage: 'Mín dómsmál',
   },
   courtCases: {
     id: 'service.portal:court-cases',

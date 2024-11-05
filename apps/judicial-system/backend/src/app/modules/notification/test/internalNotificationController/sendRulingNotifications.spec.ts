@@ -10,9 +10,9 @@ import {
 import {
   CaseDecision,
   CaseIndictmentRulingDecision,
+  CaseNotificationType,
   CaseState,
   CaseType,
-  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -41,7 +41,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
   const userId = uuid()
   const notificationDto: CaseNotificationDto = {
     user: { id: userId } as User,
-    type: NotificationType.RULING,
+    type: CaseNotificationType.RULING,
   }
 
   let mockEmailService: EmailService

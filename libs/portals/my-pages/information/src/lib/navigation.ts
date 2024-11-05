@@ -55,6 +55,7 @@ export const informationNavigation: PortalNavigationItem = {
       name: m.lists,
       path: InformationPaths.Lists,
       children: [
+        // Parliamentary
         {
           name: m.signatureCollectionParliamentaryLists,
           path: SignatureCollectionPaths.SignatureCollectionParliamentaryLists,
@@ -64,8 +65,21 @@ export const informationNavigation: PortalNavigationItem = {
               navHide: true,
               path: SignatureCollectionPaths.ViewParliamentaryList,
             },
+            {
+              name: m.signatureCollectionLists,
+              navHide: true,
+              path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
+              children: [
+                {
+                  name: m.viewSignatureList,
+                  navHide: true,
+                  path: SignatureCollectionPaths.CompanyViewParliamentaryList,
+                },
+              ],
+            },
           ],
         },
+        // Presidential
         {
           name: m.signatureCollectionPresidentialLists,
           path: SignatureCollectionPaths.SignatureCollectionLists,
@@ -77,6 +91,7 @@ export const informationNavigation: PortalNavigationItem = {
             },
           ],
         },
+        // General Petitions
         {
           name: m.generalPetitions,
           path: PetitionPaths.Petitions,

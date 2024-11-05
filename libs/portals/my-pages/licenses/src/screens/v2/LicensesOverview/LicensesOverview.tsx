@@ -123,6 +123,7 @@ export const LicensesOverviewV2 = () => {
         <Box>
           <Tabs
             label={formatMessage(m.seeLicenses)}
+            size="xs"
             contentBackground="white"
             tabs={[
               {

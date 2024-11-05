@@ -9,6 +9,7 @@ import {
   GetCurrentCollection,
   GetCanSign,
   GetCollectors,
+  getPdfReport,
 } from './graphql/queries'
 import {
   SignatureCollectionListBase,
@@ -79,6 +80,7 @@ export const useGetListsForUser = (collectionId?: string) => {
     data: getListsForUser,
     loading: loadingUserLists,
     refetch: refetchListsForUser,
+    error: getListsForUserError,
   } = useQuery<{
     signatureCollectionListsForUser?: SignatureCollectionListBase[]
   }>(GetListsForUser, {
@@ -93,7 +95,12 @@ export const useGetListsForUser = (collectionId?: string) => {
   const listsForUser =
     (getListsForUser?.signatureCollectionListsForUser as SignatureCollectionListBase[]) ??
     []
-  return { listsForUser, loadingUserLists, refetchListsForUser }
+  return {
+    listsForUser,
+    loadingUserLists,
+    refetchListsForUser,
+    getListsForUserError,
+  }
 }
 
 export const useGetListsForOwner = (collectionId: string) => {
@@ -179,4 +186,20 @@ export const useGetCollectors = () => {
     (getCollectorsData?.signatureCollectionCollectors as SignatureCollectionCollector[]) ??
     []
   return { collectors, loadingCollectors }
+}
+
+export const useGetPdfReport = (listId: string) => {
+  const { data: pdfReportData, loading: loadingReport } = useQuery(
+    getPdfReport,
+    {
+      variables: {
+        input: {
+          listId,
+        },
+      },
+      skip: !listId,
+    },
+  )
+  const report = pdfReportData?.signatureCollectionListOverview ?? {}
+  return { report, loadingReport }
 }

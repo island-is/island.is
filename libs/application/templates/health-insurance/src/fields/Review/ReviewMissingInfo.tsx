@@ -1,29 +1,41 @@
-import React, { FC } from 'react'
-import { formatText } from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import { Box, Bullet, BulletList, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { MissingInfoType, ReviewFieldProps } from '../../types'
-import AgentComment from '../AgentComment/AgentComment'
-import MissingInfoRemarks from '../MissingInfoRemarks/MissingInfoRemarks'
-import { m } from '../../forms/messages'
+import { MissingInfoType, ReviewFieldProps } from '../../utils/types'
+import { MissingInfoRemarks } from '../MissingInfoRemarks/MissingInfoRemarks'
+import { m } from '../../lib/messages/messages'
 
 interface Props extends ReviewFieldProps {
   missingInfo: MissingInfoType
 }
 
-const ReviewMissingInfo: FC<React.PropsWithChildren<Props>> = ({
+export const ReviewMissingInfo = ({
   application,
   field,
   isEditable,
-  missingInfo = {},
+  missingInfo = { date: '', remarks: '' },
   index: missingInfoIndex,
-}) => {
+}: Props) => {
   const { formatMessage } = useLocale()
+
+  const agentComments = getValueViaPath(
+    application.answers,
+    'agentComments',
+  ) as string
 
   return (
     <Box paddingY={2}>
       <Stack space={4}>
-        <AgentComment application={application} field={field} />
+        <Stack space={1}>
+          <Text variant="h4">
+            {formatText(m.agentCommentsTitle, application, formatMessage)}
+          </Text>
+          <Text>
+            {agentComments
+              ? agentComments
+              : formatText(m.agentCommentsEmpty, application, formatMessage)}
+          </Text>
+        </Stack>
         <Stack space={1}>
           <Text variant="h5">
             {formatText(m.missingInfoAnswersTitle, application, formatMessage)}
@@ -53,5 +65,3 @@ const ReviewMissingInfo: FC<React.PropsWithChildren<Props>> = ({
     </Box>
   )
 }
-
-export default ReviewMissingInfo
