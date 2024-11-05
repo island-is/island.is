@@ -2,12 +2,8 @@
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 ARG NODE_IMAGE_TAG
-ARG NODE_IMAGE_REGISTRY=${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG}
-ARG ALPINE_IMAGE_REGISTRY=${DOCKER_IMAGE_REGISTRY}/nginx/nginx:1.21-alpine
-ARG PLAYWRIGHT_IMAGE_REGISTRY=mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal
 
-# hadolint ignore=DL3006
-FROM ${NODE_IMAGE_REGISTRY} AS deps
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS deps
 
 # hadolint ignore=DL3018
 RUN apk add -U git
@@ -41,8 +37,7 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 RUN yarn run build ${APP} --prod
 
 # This is base image for containers that are to be deployed
-# hadolint ignore=DL3006
-FROM ${NODE_IMAGE_REGISTRY} AS output-base
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS output-base
 ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
@@ -95,8 +90,7 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT [ "node", "main.js" ]
 
-# hadolint ignore=DL3006
-FROM ${ALPINE_IMAGE_REGISTRY} AS output-static
+FROM ${DOCKER_IMAGE_REGISTRY}/nginx/nginx:1.21-alpine AS output-static
 ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
@@ -138,8 +132,7 @@ CMD [ "jest", "main.spec.js" ]
 
 
 
-# hadolint ignore=DL3006
-FROM ${PLAYWRIGHT_IMAGE_REGISTRY} AS playwright-base
+FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-base
 
 FROM playwright-base AS output-playwright
 ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
