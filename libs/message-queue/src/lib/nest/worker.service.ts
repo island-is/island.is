@@ -49,16 +49,8 @@ export class WorkerService implements OnModuleDestroy {
     this.status = Status.Running
 
     while (this.status === Status.Running) {
-      const now = new Date()
-      if (
-        this.config.shouldSleepOutsideWorkingHours &&
-        isOutsideWorkingHours(now)
-      ) {
-        this.logger.info('Outside of working hours - worker sleeping')
-        this.status = Status.Sleeping
-        await sleepUntilMorning(now)
-        this.status = Status.Running
-      }
+
+     await this.maybeSleepOutsideWorkingHours()
 
       const messages = await this.client.receiveMessages(this.queue.url, {
         maxNumMessages: this.config.maxConcurrentJobs,
@@ -67,6 +59,16 @@ export class WorkerService implements OnModuleDestroy {
       this.activeJobs = this.handleMessageBatch(messages, messageHandler)
       await this.activeJobs
       this.activeJobs = null
+    }
+  }
+
+  private async maybeSleepOutsideWorkingHours() {
+    if (this.config.shouldSleepOutsideWorkingHours && isOutsideWorkingHours()) {
+      this.logger.info('Outside of working hours - worker sleeping')
+      this.status = Status.Sleeping
+      await sleepUntilMorning()
+      this.logger.info('Worker waking up')
+      this.status = Status.Running
     }
   }
 
