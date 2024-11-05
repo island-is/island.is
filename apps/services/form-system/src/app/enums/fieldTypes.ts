@@ -1,5 +1,5 @@
 export const FieldTypes = {
-  DEFAULT: 'default',
+  TEXTBOX: 'textbox',
   EMAIL: 'email',
   PROPERTY_NUMBER: 'propertyNumber',
   ISK_NUMBERBOX: 'iskNumberbox',
@@ -21,6 +21,5 @@ export const FieldTypes = {
   TIME_INPUT: 'timeInput',
   HOMESTAY_OVERVIEW: 'homestayOverview',
   PAYMENT: 'payment',
-  TEXTBOX: 'textbox',
   CANDITATE: 'candidate',
 }

@@ -29,11 +29,10 @@ export class FieldsService {
   }
 
   async create(createFieldDto: CreateFieldDto): Promise<FieldDto> {
-    const { screenId } = createFieldDto
-
+    const { screenId, fieldType } = createFieldDto
     const newField: Field = await this.fieldModel.create({
       screenId: screenId,
-      fieldType: FieldTypes.TEXTBOX,
+      fieldType: fieldType,
     } as Field)
 
     const newFieldSettingsDto = await this.fieldSettingsService.create(
