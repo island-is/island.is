@@ -129,6 +129,7 @@ const modeOfDeliverInformationSchema = z.object({
     ModeOfDelivery.ON_SITE,
     ModeOfDelivery.MIXED,
     ModeOfDelivery.REMOTE,
+    'EMPTY_MODE_OF_DELIVERY',
   ]),
   location: z.string().optional(),
 })
