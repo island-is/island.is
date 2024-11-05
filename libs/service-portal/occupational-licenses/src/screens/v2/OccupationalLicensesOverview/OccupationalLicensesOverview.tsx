@@ -1,13 +1,7 @@
 import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
-import {
-  CardLoader,
-  FootNote,
-  IntroHeader,
-  IntroWrapper,
-  m,
-} from '@island.is/service-portal/core'
+import { CardLoader, IntroWrapper, m } from '@island.is/service-portal/core'
 import { useOrganizations } from '@island.is/service-portal/graphql'
 import { isDefined } from '@island.is/shared/utils'
 import { useMemo } from 'react'

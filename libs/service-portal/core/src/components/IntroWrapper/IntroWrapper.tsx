@@ -84,7 +84,7 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
             </>
           )}
         </GridColumn>
-        {!isMobile && props.serviceProviderSlug && organization && (
+        {!isMobile && props.serviceProviderSlug && organization?.link && (
           <GridColumn span={'2/8'} offset={'1/8'}>
             <InstitutionPanel
               loading={loading}
