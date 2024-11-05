@@ -239,7 +239,7 @@ jobs:
       # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
       - name: Keep PR run event
         uses: actions/upload-artifact@b18b1d32f3f31abcdc29dee3f2484801fe7822f4
-        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
+        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         with:
           name: pr-event
           path: event.json
@@ -347,7 +347,10 @@ jobs:
         with:
           image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
       - name: Get node hash
         uses: actions/github-script@v7
         id: calculate_node_modules_hash
@@ -553,7 +556,10 @@ jobs:
         with:
           image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
 
       - name: Building Docker images
         continue-on-error: true
@@ -603,7 +609,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
@@ -664,7 +670,7 @@ jobs:
         run: '[[ ${{ needs.docker-build.result }} != "failure" ]] || exit 1'
       - uses: actions/checkout@v3
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

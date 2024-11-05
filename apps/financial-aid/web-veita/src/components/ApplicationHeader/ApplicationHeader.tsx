@@ -2,6 +2,7 @@ import {
   Application,
   ApplicationEventType,
   ApplicationState,
+  calcDifferenceInDate,
   getState,
   Routes,
 } from '@island.is/financial-aid/shared/lib'
@@ -11,10 +12,7 @@ import React from 'react'
 import * as styles from './ApplicationHeader.css'
 
 import { useRouter } from 'next/router'
-import {
-  calcDifferenceInDate,
-  getTagByState,
-} from '@island.is/financial-aid-web/veita/src/utils/formHelper'
+import { getTagByState } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 
 import {
   GeneratedProfile,

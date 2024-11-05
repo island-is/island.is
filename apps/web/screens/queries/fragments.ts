@@ -842,6 +842,7 @@ export const slices = gql`
       sourceDataKey
       interval
       stackId
+      values
     }
     sourceData
     flipAxis

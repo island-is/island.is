@@ -1,10 +1,15 @@
+import { Op } from 'sequelize'
+
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Case } from '../case'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import { CaseState } from '@island.is/judicial-system/types'
+
+import { Case } from '../case/models/case.model'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
 import { CivilClaimant } from './models/civilClaimant.model'
 
@@ -65,5 +70,27 @@ export class CivilClaimantService {
     }
 
     return true
+  }
+
+  findLatestClaimantBySpokespersonNationalId(
+    nationalId: string,
+  ): Promise<CivilClaimant | null> {
+    return this.civilClaimantModel.findOne({
+      include: [
+        {
+          model: Case,
+          as: 'case',
+          where: {
+            state: { [Op.not]: CaseState.DELETED },
+            isArchived: false,
+          },
+        },
+      ],
+      where: {
+        hasSpokesperson: true,
+        spokespersonNationalId: normalizeAndFormatNationalId(nationalId),
+      },
+      order: [['created', 'DESC']],
+    })
   }
 }

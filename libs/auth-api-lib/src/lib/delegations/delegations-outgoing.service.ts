@@ -8,6 +8,7 @@ import {
 import { InjectModel } from '@nestjs/sequelize'
 import { and, Op, WhereOptions } from 'sequelize'
 import { isUuid, uuid } from 'uuidv4'
+import startOfDay from 'date-fns/startOfDay'
 
 import { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
@@ -39,6 +40,8 @@ import {
 import { Features } from '@island.is/feature-flags'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { DelegationDelegationType } from './models/delegation-delegation-type.model'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 /**
  * Service class for outgoing delegations.
@@ -68,42 +71,71 @@ export class DelegationsOutgoingService {
     if (otherUser) {
       return this.findByOtherUser(user, otherUser, domainName)
     }
-    const delegations = await this.delegationModel.findAll({
-      where: and(
-        {
+
+    const [delegations, delegationTypesDelegations] = await Promise.all([
+      this.delegationModel.findAll({
+        where: and(
+          {
+            fromNationalId: user.nationalId,
+          },
+          domainName ? { domainName } : {},
+          getDelegationNoActorWhereClause(user),
+          ...(await this.delegationResourceService.apiScopeFilter({
+            user,
+            prefix: 'delegationScopes->apiScope',
+            direction: DelegationDirection.OUTGOING,
+          })),
+        ),
+        include: [
+          {
+            model: DelegationScope,
+            include: [
+              {
+                attributes: ['displayName'],
+                model: ApiScope,
+                required: true,
+                include: [
+                  ...this.delegationResourceService.apiScopeInclude(
+                    user,
+                    DelegationDirection.OUTGOING,
+                  ),
+                ],
+              },
+            ],
+            required: validity !== DelegationValidity.ALL,
+            where: getScopeValidityWhereClause(validity),
+          },
+        ],
+      }),
+      this.delegationModel.findAll({
+        where: {
           fromNationalId: user.nationalId,
         },
-        domainName ? { domainName } : {},
-        getDelegationNoActorWhereClause(user),
-        ...(await this.delegationResourceService.apiScopeFilter({
-          user,
-          prefix: 'delegationScopes->apiScope',
-          direction: DelegationDirection.OUTGOING,
-        })),
-      ),
-      include: [
-        {
-          model: DelegationScope,
-          include: [
-            {
-              attributes: ['displayName'],
-              model: ApiScope,
-              required: true,
-              include: [
-                ...this.delegationResourceService.apiScopeInclude(
-                  user,
-                  DelegationDirection.OUTGOING,
-                ),
-              ],
+        include: [
+          {
+            model: DelegationDelegationType,
+            where: {
+              delegationTypeId: AuthDelegationType.GeneralMandate,
+              validTo: {
+                [Op.or]: {
+                  [Op.gte]: startOfDay(new Date()),
+                  [Op.is]: null,
+                },
+              },
             },
-          ],
-          required: validity !== DelegationValidity.ALL,
-          where: getScopeValidityWhereClause(validity),
-        },
-      ],
-    })
+            required: true,
+          },
+        ],
+      }),
+    ])
 
-    return delegations.map((d) => d.toDTO())
+    const delegationTypesDTO = delegationTypesDelegations.map((d) =>
+      d.toDTO(AuthDelegationType.GeneralMandate),
+    )
+
+    const delegationsDTO = delegations.map((d) => d.toDTO())
+
+    return [...delegationsDTO, ...delegationTypesDTO]
   }
 
   async findByOtherUser(
@@ -241,6 +273,7 @@ export class DelegationsOutgoingService {
     // Index custom delegations for the toNationalId
     void this.delegationIndexService.indexCustomDelegations(
       createDelegation.toNationalId,
+      user,
     )
 
     return newDelegation
@@ -386,11 +419,13 @@ export class DelegationsOutgoingService {
     // Index custom delegations for the toNationalId
     void this.delegationIndexService.indexCustomDelegations(
       delegation.toNationalId,
+      user,
     )
 
     const hasExistingScopes =
       (currentDelegation.delegationScopes?.length ?? 0) > 0
-    this.notifyDelegationUpdate(user, delegation, hasExistingScopes)
+
+    void this.notifyDelegationUpdate(user, delegation, hasExistingScopes)
 
     return delegation
   }
@@ -425,6 +460,7 @@ export class DelegationsOutgoingService {
     // Index custom delegations for the toNationalId
     void this.delegationIndexService.indexCustomDelegations(
       delegation.toNationalId,
+      user,
     )
   }
 

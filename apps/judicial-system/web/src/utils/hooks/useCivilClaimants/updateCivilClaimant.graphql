@@ -1,0 +1,5 @@
+mutation UpdateCivilClaimant($input: UpdateCivilClaimantInput!) {
+  updateCivilClaimant(input: $input) {
+    id
+  }
+}

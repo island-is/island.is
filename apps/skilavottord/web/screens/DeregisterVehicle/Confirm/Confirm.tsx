@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 import { useRouter } from 'next/router'
-import React, { FC, useContext, useEffect } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 
 import {
   Box,
@@ -33,7 +33,7 @@ import {
   Role,
 } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
-import { OutInUsage } from '@island.is/skilavottord-web/utils/consts'
+import { OutInUsage, UseStatus } from '@island.is/skilavottord-web/utils/consts'
 import { getYear } from '@island.is/skilavottord-web/utils/dateUtils'
 import { FormProvider, useForm } from 'react-hook-form'
 
@@ -100,6 +100,17 @@ const UpdateSkilavottordVehicleInfoMutation = gql`
 `
 
 const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
+  const [plateCount, setPlateCount] = useState<number>(2)
+
+  const handlePlateCountChange = (value: number) => {
+    setPlateCount(value)
+  }
+
+  const [
+    vehicleReadyToDeregisteredQueryCompleted,
+    setVehicleReadyToDeregisteredQueryCompleted,
+  ] = useState(false)
+
   const methods = useForm({
     mode: 'onChange',
   })
@@ -117,7 +128,6 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
 
   const mileageValue = watch('mileage')
   const plateLost = watch('plateLost')
-  const plateCountValue = watch('plateCount')
 
   const { data, loading } = useQuery<Query>(
     SkilavottordVehicleReadyToDeregisteredQuery,
@@ -126,12 +136,19 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
     },
   )
 
+  useEffect(() => {
+    if (data && data.skilavottordVehicleReadyToDeregistered) {
+      setVehicleReadyToDeregisteredQueryCompleted(true)
+    }
+  }, [data])
+
   const vehicle = data?.skilavottordVehicleReadyToDeregistered
 
   const { data: traffic, loading: loadingTraffic } = useQuery<Query>(
     SkilavottordTrafficQuery,
     {
       variables: { permno: id },
+      skip: !vehicleReadyToDeregisteredQueryCompleted,
     },
   )
 
@@ -143,6 +160,17 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
       : OutInUsage.IN
 
   const useStatus = vehicleTrafficData?.useStatus || '01'
+
+  useEffect(() => {
+    if (vehicleTrafficData) {
+      if (
+        outInStatus === OutInUsage.OUT &&
+        useStatus !== UseStatus.OUT_TICKET
+      ) {
+        setPlateCount(0)
+      }
+    }
+  }, [vehicleTrafficData])
 
   const [
     setRecyclingRequest,
@@ -196,7 +224,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
       variables: {
         permno: vehicle?.vehicleId,
         mileage: newMileage,
-        plateCount: plateCountValue === 0 ? 0 : plateCountValue,
+        plateCount,
         plateLost: !!plateLost?.length,
       },
     }).then(() => {
@@ -274,6 +302,9 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
                 mileage={vehicle.mileage || 0}
                 outInStatus={outInStatus}
                 useStatus={useStatus || ''}
+                plateCount={plateCount}
+                onPlateCountChange={handlePlateCountChange}
+                isLoading={loadingTraffic}
               />
             </FormProvider>
           </Stack>
@@ -316,7 +347,9 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
             </Button>
           </Hidden>
           {vehicle && (
-            <Button onClick={handleConfirm}>{t.buttons.confirm}</Button>
+            <Button onClick={handleConfirm} disabled={loadingTraffic}>
+              {t.buttons.confirm}
+            </Button>
           )}
         </Box>
       </Stack>

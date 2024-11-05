@@ -109,10 +109,19 @@ const Slider = ({
 
   const convertDeltaToIndex = (delta: number) => {
     const currentX = x + delta
-
-    dragX.current = Math.max(min * sizePerCell, Math.min(size.width, currentX))
-
-    return roundByNum(dragX.current / sizePerCell, step)
+    const roundedMin = toFixedNumber(min, 1, 10)
+    dragX.current = Math.max(0, Math.min(size.width, currentX))
+    // Get value to display in slider.
+    // Get max if more or equal to max, get min if less or equal to min and then show rest with only one decimal point.
+    const index =
+      dragX.current / sizePerCell + min >= max
+        ? max
+        : dragX.current / sizePerCell + min <= min
+        ? min
+        : roundByNum(dragX.current / sizePerCell, step) === 0
+        ? min
+        : roundByNum(dragX.current / sizePerCell, step) + roundedMin
+    return index
   }
 
   useEffect(() => {
@@ -146,19 +155,7 @@ const Slider = ({
 
   const dragBind = useDrag({
     onDragMove(deltaX: number) {
-      const currentX = x + deltaX
-      const roundedMin = toFixedNumber(min, 1, 10)
-      dragX.current = Math.max(0, Math.min(size.width, currentX))
-      // Get value to display in slider.
-      // Get max if more or equal to max, get min if less or equal to min and then show rest with only one decimal point.
-      const index =
-        dragX.current / sizePerCell + min >= max
-          ? max
-          : dragX.current / sizePerCell + min <= min
-          ? min
-          : roundByNum(dragX.current / sizePerCell, step) === 0
-          ? min
-          : roundByNum(dragX.current / sizePerCell, step) + roundedMin
+      const index = convertDeltaToIndex(deltaX)
 
       if (onChange && index !== indexRef.current) {
         onChange(index)
@@ -183,7 +180,6 @@ const Slider = ({
       dragX.current = undefined
       if (onChangeEnd) {
         const index = convertDeltaToIndex(deltaX)
-
         onChangeEnd?.(index)
       }
       setIsDragging(false)

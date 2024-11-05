@@ -90,6 +90,13 @@ export const formatPerson = async (
       individual.kennitala && {
         baseId: maskedNationalId,
       }),
+    name: {
+      firstName: individual.fulltNafn?.eiginNafn ?? null,
+      middleName: individual.fulltNafn?.milliNafn ?? null,
+      lastName: individual.fulltNafn?.kenniNafn ?? null,
+      fullName: individual.fulltNafn?.fulltNafn ?? individual.nafn,
+      displayName: individual.nafn,
+    },
 
     //DEPRECATION LINE -- below shall be removed
     legalResidence: formatLegalResidence(individual.heimilisfang),
@@ -163,7 +170,7 @@ export const formatSpouse = (
 export const formatAddress = (
   address?: EinstaklingurDTOHeimili | null,
 ): Address | null => {
-  if (!address || !address.husHeiti || !address.poststod) {
+  if (!address || !address.husHeiti) {
     return null
   }
 
@@ -171,7 +178,7 @@ export const formatAddress = (
     streetAddress: address.husHeiti,
     postalCode: address.postnumer ?? null,
     apartment: address.ibud ?? null,
-    city: address.poststod,
+    city: address.poststod ?? null,
     municipalityText: address.sveitarfelag ?? null,
   }
 }

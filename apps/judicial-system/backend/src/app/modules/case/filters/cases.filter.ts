@@ -11,6 +11,7 @@ import {
   CaseState,
   CaseType,
   DateType,
+  EventType,
   IndictmentCaseReviewDecision,
   indictmentCases,
   investigationCases,
@@ -24,6 +25,7 @@ import {
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
+  VERDICT_APPEAL_WINDOW_DAYS,
 } from '@island.is/judicial-system/types'
 
 const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
@@ -75,8 +77,20 @@ const getPublicProsecutionUserCasesQueryFilter = (): WhereOptions => {
   return {
     [Op.and]: [
       { is_archived: false },
-      { state: [CaseState.COMPLETED] },
       { type: indictmentCases },
+      { state: CaseState.COMPLETED },
+      {
+        indictment_ruling_decision: [
+          CaseIndictmentRulingDecision.FINE,
+          CaseIndictmentRulingDecision.RULING,
+        ],
+      },
+      {
+        // The following condition will filter out all event logs that are not of type INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR
+        // but that should be ok the case list for the public prosecutor is not using other event logs
+        '$eventLogs.event_type$':
+          EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+      },
     ],
   }
 }
@@ -190,15 +204,10 @@ const getPrisonAdminUserCasesQueryFilter = (): WhereOptions => {
     [Op.or]: [
       {
         state: CaseState.ACCEPTED,
-        type: [
-          CaseType.CUSTODY,
-          CaseType.ADMISSION_TO_FACILITY,
-          CaseType.PAROLE_REVOCATION,
-          CaseType.TRAVEL_BAN,
-        ],
+        type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
       },
       {
-        type: CaseType.INDICTMENT,
+        type: indictmentCases,
         state: CaseState.COMPLETED,
         indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
         indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
@@ -206,8 +215,7 @@ const getPrisonAdminUserCasesQueryFilter = (): WhereOptions => {
           [Op.notIn]: Sequelize.literal(`
             (SELECT case_id
               FROM defendant
-              WHERE service_requirement <> 'NOT_REQUIRED'
-              AND (verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '28 days'))
+              WHERE (verdict_appeal_date IS NOT NULL OR verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '${VERDICT_APPEAL_WINDOW_DAYS} days'))
           `),
         },
       },
@@ -270,13 +278,26 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
               ],
             },
             {
-              id: {
-                [Op.in]: Sequelize.literal(`
-                (SELECT case_id
-                  FROM defendant
-                  WHERE defender_national_id in ('${normalizedNationalId}', '${formattedNationalId}'))
-              `),
-              },
+              [Op.or]: [
+                {
+                  id: {
+                    [Op.in]: Sequelize.literal(`
+                      (SELECT case_id
+                        FROM defendant
+                        WHERE defender_national_id in ('${normalizedNationalId}', '${formattedNationalId}') and is_defender_choice_confirmed = true)
+                    `),
+                  },
+                },
+                {
+                  id: {
+                    [Op.in]: Sequelize.literal(`
+                      (SELECT case_id
+                        FROM civil_claimant
+                        WHERE has_spokesperson = true AND spokesperson_national_id in ('${normalizedNationalId}', '${formattedNationalId}') and is_spokesperson_confirmed = true)
+                    `),
+                  },
+                },
+              ],
             },
           ],
         },

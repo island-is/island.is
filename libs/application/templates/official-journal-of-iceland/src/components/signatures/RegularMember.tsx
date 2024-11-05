@@ -1,5 +1,4 @@
 import { Box } from '@island.is/island-ui/core'
-import * as styles from './Signatures.css'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import { useLocale } from '@island.is/localization'
 import { signatures } from '../../lib/messages/signatures'
@@ -8,13 +7,13 @@ import set from 'lodash/set'
 import {
   getEmptyMember,
   getRegularAnswers,
-  getSignaturesMarkup,
   getSingleSignatureMarkup,
 } from '../../lib/utils'
 import { memberItemSchema } from '../../lib/dataSchema'
 import { SignatureMember } from './Member'
 import * as z from 'zod'
 import { RemoveRegularMember } from './RemoveRegularMember'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -35,6 +34,8 @@ export const RegularMember = ({
   const { debouncedOnUpdateApplicationHandler, application } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
 
   const handleMemberChange = (
     value: string,
@@ -84,6 +85,8 @@ export const RegularMember = ({
         updatedRegularSignature,
       )
 
+      setValue(InputFields.signature.regular, updatedRegularSignature)
+
       return updatedSignatures
     }
 
@@ -95,8 +98,8 @@ export const RegularMember = ({
   }
 
   return (
-    <Box className={styles.inputGroup}>
-      <Box className={styles.inputWrapper}>
+    <Box display="flex" flexDirection="column" rowGap={2}>
+      <Box>
         <SignatureMember
           name={`signature.regular.member.above.${signatureIndex}.${memberIndex}`}
           label={f(signatures.inputs.above.label)}
@@ -112,60 +115,68 @@ export const RegularMember = ({
             )
           }
         />
-        <SignatureMember
-          name={`signature.regular.member.after.${signatureIndex}.${memberIndex}`}
-          label={f(signatures.inputs.after.label)}
-          defaultValue={member.after}
-          onChange={(e) =>
-            debouncedOnUpdateApplicationHandler(
-              handleMemberChange(
-                e.target.value,
-                'after',
-                signatureIndex,
-                memberIndex,
-              ),
-            )
-          }
+      </Box>
+      <Box display="flex" columnGap={2} rowGap={2} flexWrap="wrap">
+        <Box flexGrow={1}>
+          <SignatureMember
+            name={`signature.regular.member.name.${signatureIndex}.${memberIndex}`}
+            label={f(signatures.inputs.name.label)}
+            defaultValue={member.name}
+            onChange={(e) =>
+              debouncedOnUpdateApplicationHandler(
+                handleMemberChange(
+                  e.target.value,
+                  'name',
+                  signatureIndex,
+                  memberIndex,
+                ),
+              )
+            }
+          />
+        </Box>
+        <Box flexGrow={1}>
+          <SignatureMember
+            name={`signature.regular.member.after.${signatureIndex}.${memberIndex}`}
+            label={f(signatures.inputs.after.label)}
+            defaultValue={member.after}
+            onChange={(e) =>
+              debouncedOnUpdateApplicationHandler(
+                handleMemberChange(
+                  e.target.value,
+                  'after',
+                  signatureIndex,
+                  memberIndex,
+                ),
+              )
+            }
+          />
+        </Box>
+      </Box>
+      <Box display="flex" columnGap={2}>
+        <Box flexGrow={1}>
+          <SignatureMember
+            name={`signature.regular.member.below.${signatureIndex}.${memberIndex}`}
+            label={f(signatures.inputs.below.label)}
+            defaultValue={member.below}
+            onChange={(e) =>
+              debouncedOnUpdateApplicationHandler(
+                handleMemberChange(
+                  e.target.value,
+                  'below',
+                  signatureIndex,
+                  memberIndex,
+                ),
+              )
+            }
+          />
+        </Box>
+        <RemoveRegularMember
+          key={`signature.${signatureIndex}.remove.${memberIndex}`}
+          applicationId={applicationId}
+          signatureIndex={signatureIndex}
+          memberIndex={memberIndex}
         />
       </Box>
-      <Box className={styles.inputWrapper}>
-        <SignatureMember
-          name={`signature.regular.member.name.${signatureIndex}.${memberIndex}`}
-          label={f(signatures.inputs.name.label)}
-          defaultValue={member.name}
-          onChange={(e) =>
-            debouncedOnUpdateApplicationHandler(
-              handleMemberChange(
-                e.target.value,
-                'name',
-                signatureIndex,
-                memberIndex,
-              ),
-            )
-          }
-        />
-        <SignatureMember
-          name={`signature.regular.member.below.${signatureIndex}.${memberIndex}`}
-          label={f(signatures.inputs.below.label)}
-          defaultValue={member.below}
-          onChange={(e) =>
-            debouncedOnUpdateApplicationHandler(
-              handleMemberChange(
-                e.target.value,
-                'below',
-                signatureIndex,
-                memberIndex,
-              ),
-            )
-          }
-        />
-      </Box>
-      <RemoveRegularMember
-        key={`signature.${signatureIndex}.remove.${memberIndex}`}
-        applicationId={applicationId}
-        signatureIndex={signatureIndex}
-        memberIndex={memberIndex}
-      />
     </Box>
   )
 }

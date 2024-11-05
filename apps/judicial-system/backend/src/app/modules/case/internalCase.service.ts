@@ -1,7 +1,6 @@
 import CryptoJS from 'crypto-js'
 import format from 'date-fns/format'
 import { Base64 } from 'js-base64'
-import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -58,6 +57,7 @@ import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Institution } from '../institution'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
+import { Subpoena } from '../subpoena'
 import { User, UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
@@ -260,7 +260,7 @@ export class InternalCaseService {
     }
   }
 
-  private async upploadRequestPdfToCourt(
+  private async uploadRequestPdfToCourt(
     theCase: Case,
     user: TUser,
   ): Promise<boolean> {
@@ -758,7 +758,7 @@ export class InternalCaseService {
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    return this.upploadRequestPdfToCourt(theCase, user).then((delivered) => ({
+    return this.uploadRequestPdfToCourt(theCase, user).then((delivered) => ({
       delivered,
     }))
   }
@@ -1204,7 +1204,10 @@ export class InternalCaseService {
   async getIndictmentCases(nationalId: string): Promise<Case[]> {
     return this.caseModel.findAll({
       include: [
-        { model: Defendant, as: 'defendants' },
+        {
+          model: Defendant,
+          as: 'defendants',
+        },
         {
           model: DateLog,
           as: 'dateLogs',
@@ -1228,11 +1231,25 @@ export class InternalCaseService {
   async getIndictmentCase(caseId: string, nationalId: string): Promise<Case> {
     const caseById = await this.caseModel.findOne({
       include: [
-        { model: Defendant, as: 'defendants' },
+        {
+          model: Defendant,
+          as: 'defendants',
+          include: [
+            {
+              model: Subpoena,
+              as: 'subpoenas',
+              order: [['created', 'DESC']],
+            },
+          ],
+        },
         { model: Institution, as: 'court' },
         { model: Institution, as: 'prosecutorsOffice' },
         { model: User, as: 'judge' },
-        { model: User, as: 'prosecutor' },
+        {
+          model: User,
+          as: 'prosecutor',
+          include: [{ model: Institution, as: 'institution' }],
+        },
         { model: DateLog, as: 'dateLogs' },
       ],
       attributes: ['courtCaseNumber', 'id'],

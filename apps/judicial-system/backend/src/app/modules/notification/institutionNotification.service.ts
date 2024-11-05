@@ -10,7 +10,7 @@ import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { NotificationType } from '@island.is/judicial-system/types'
+import { InstitutionNotificationType } from '@island.is/judicial-system/types'
 
 import { InternalCaseService } from '../case'
 import { EventService } from '../event'
@@ -86,12 +86,12 @@ export class InstitutionNotificationService extends BaseNotificationService {
   }
 
   async sendNotification(
-    type: NotificationType,
+    type: InstitutionNotificationType,
     prosecutorsOfficeId: string,
   ): Promise<DeliverResponse> {
     try {
       switch (type) {
-        case NotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION:
+        case InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION:
           await this.sendIndictmentsWaitingForConfirmationNotification(
             prosecutorsOfficeId,
           )

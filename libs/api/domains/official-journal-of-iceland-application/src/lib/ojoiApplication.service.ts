@@ -10,6 +10,7 @@ import {
   mapAttachmentType,
   mapGetAttachmentType,
   mapPresignedUrlType,
+  safeEnumMapper,
 } from './mappers'
 import { AddApplicationAttachmentResponse } from '../models/addApplicationAttachment.response'
 import { GetApplicationAttachmentInput } from '../models/getApplicationAttachment.input'
@@ -17,6 +18,14 @@ import { DeleteApplicationAttachmentInput } from '../models/deleteApplicationAtt
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
+import { GetUserInvolvedPartiesInput } from '../models/getUserInvolvedParties.input'
+import {
+  CommentDirection,
+  GetCommentsResponse,
+} from '../models/getComments.response'
+import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
+import { GetPdfResponse } from '../models/getPdf.response'
+import { OJOIAIdInput } from '../models/id.input'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
 
@@ -28,12 +37,38 @@ export class OfficialJournalOfIcelandApplicationService {
     private readonly ojoiApplicationService: OfficialJournalOfIcelandApplicationClientService,
   ) {}
 
-  async getComments(input: GetCommentsInput, user: User) {
-    return this.ojoiApplicationService.getComments(input, user)
+  async getComments(
+    input: GetCommentsInput,
+    user: User,
+  ): Promise<GetCommentsResponse> {
+    const incomingComments = await this.ojoiApplicationService.getComments(
+      input,
+      user,
+    )
+
+    const mapped = incomingComments.comments.map((c) => {
+      const directonEnum =
+        safeEnumMapper(c.direction, CommentDirection) ??
+        CommentDirection.RECEIVED
+
+      return {
+        id: c.id,
+        age: c.age,
+        direction: directonEnum,
+        title: c.title,
+        comment: c.comment,
+        creator: c.creator,
+        receiver: c.receiver,
+      }
+    })
+
+    return {
+      comments: mapped,
+    }
   }
 
   async postComment(input: PostCommentInput, user: User) {
-    const success = this.ojoiApplicationService.postComment(
+    const success = await this.ojoiApplicationService.postComment(
       {
         id: input.id,
         postApplicationComment: {
@@ -164,6 +199,68 @@ export class OfficialJournalOfIcelandApplicationService {
         error: error,
       })
       return { success: false }
+    }
+  }
+
+  async getUserInvolvedParties(input: GetUserInvolvedPartiesInput, user: User) {
+    return this.ojoiApplicationService.getUserInvolvedParties(
+      {
+        id: input.applicationId,
+      },
+      user,
+    )
+  }
+
+  async getApplicationCase(
+    id: string,
+    user: User,
+  ): Promise<OJOIAApplicationCaseResponse> {
+    const { applicationCase } =
+      await this.ojoiApplicationService.getApplicationCase(
+        {
+          id,
+        },
+        user,
+      )
+
+    let title = 'Óþekkt'
+
+    if ('title' in applicationCase.status) {
+      title = applicationCase.status.title as string
+    }
+
+    const mapped: OJOIAApplicationCaseResponse = {
+      department: applicationCase.department.title,
+      type: applicationCase.type.title,
+      categories: applicationCase.categories.map((c) => c.title),
+      html: applicationCase.html,
+      status: title,
+      communicationStatus: applicationCase.communicationStatus.title,
+    }
+
+    return mapped
+  }
+
+  async getPdf(input: OJOIAIdInput, user: User): Promise<GetPdfResponse> {
+    try {
+      const data = await this.ojoiApplicationService.getPdf(
+        {
+          id: input.id,
+        },
+        user,
+      )
+
+      return {
+        pdf: data.content,
+      }
+    } catch (error) {
+      this.logger.error('Failed to get pdf', {
+        category: LOG_CATEGORY,
+        applicationId: input.id,
+        error: error,
+      })
+
+      throw error
     }
   }
 }

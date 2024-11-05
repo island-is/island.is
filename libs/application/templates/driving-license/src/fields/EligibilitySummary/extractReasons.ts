@@ -25,6 +25,8 @@ const getDeniedByServiceMessageDescription = (
     case RequirementKey.HasDeprivation:
     case RequirementKey.HasPoints:
       return requirementsMessages.hasPointsOrDeprivation
+    case RequirementKey.NoExtendedDrivingLicense:
+      return requirementsMessages.noExtendedDrivingLicenseTitle
     default:
       return requirementsMessages.rlsDefaultDeniedDescription
   }
@@ -84,6 +86,11 @@ const requirementKeyToStep = (
       return {
         title: requirementsMessages.beLicenseQualityPhotoTitle,
         description: requirementsMessages.beLicenseQualityPhotoDescription,
+      }
+    case RequirementKey.NoExtendedDrivingLicense:
+      return {
+        title: requirementsMessages.noExtendedDrivingLicenseTitle,
+        description: requirementsMessages.noExtendedDrivingLicenseDescription,
       }
     default:
       throw new Error('Unknown requirement reason - should not happen')

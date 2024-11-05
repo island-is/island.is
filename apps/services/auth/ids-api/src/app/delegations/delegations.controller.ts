@@ -1,8 +1,10 @@
 import {
+  Body,
   Controller,
   Get,
   Inject,
   ParseArrayPipe,
+  Post,
   Query,
   UseGuards,
   Version,
@@ -11,11 +13,9 @@ import {
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import {
-  DelegationDTO,
   DelegationScopeService,
   DelegationsIncomingService,
   DelegationsIndexService,
-  DelegationsService,
   MergedDelegationDTO,
 } from '@island.is/auth-api-lib'
 import {
@@ -25,11 +25,14 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Documentation } from '@island.is/nest/swagger'
 import { AuthDelegationType } from '@island.is/shared/types'
+
+import { DelegationVerificationResult } from './delegation-verification-result.dto'
+import { DelegationVerification } from './delegation-verification.dto'
 
 import type { Logger } from '@island.is/logging'
 import type { User } from '@island.is/auth-nest-tools'
-
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
 @Controller({
@@ -40,33 +43,16 @@ export class DelegationsController {
   constructor(
     @Inject(LOGGER_PROVIDER)
     protected readonly logger: Logger,
-    private readonly delegationsService: DelegationsService,
     private readonly delegationScopeService: DelegationScopeService,
     private readonly delegationsIncomingService: DelegationsIncomingService,
     private readonly delegationIndexService: DelegationsIndexService,
   ) {}
 
   @Scopes('@identityserver.api/authentication')
+  @Version([VERSION_NEUTRAL, '1', '2'])
   @Get()
   @ApiOkResponse({ isArray: true })
-  async findAllToV1(@CurrentUser() user: User): Promise<DelegationDTO[]> {
-    const delegations = await this.delegationsService.findAllIncoming(user)
-
-    // don't fail the request if indexing fails
-    try {
-      void this.delegationIndexService.indexDelegations(user)
-    } catch {
-      this.logger.error('Failed to index delegations')
-    }
-
-    return delegations
-  }
-
-  @Scopes('@identityserver.api/authentication')
-  @Version('2')
-  @Get()
-  @ApiOkResponse({ isArray: true })
-  async findAllToV2(@CurrentUser() user: User): Promise<MergedDelegationDTO[]> {
+  async findAllTo(@CurrentUser() user: User): Promise<MergedDelegationDTO[]> {
     const delegations = await this.delegationsIncomingService.findAllAvailable({
       user,
     })
@@ -109,5 +95,27 @@ export class DelegationsController {
       fromNationalId,
       delegationType,
     )
+  }
+
+  @Scopes('@identityserver.api/authentication')
+  @Post('verify')
+  @Documentation({
+    description: 'Verifies a delegation at the source.',
+    response: { status: 200, type: DelegationVerificationResult },
+  })
+  @ApiOkResponse({ type: DelegationVerificationResult })
+  async verify(
+    @CurrentUser() user: User,
+    @Body()
+    request: DelegationVerification,
+  ): Promise<DelegationVerificationResult> {
+    const verified =
+      await this.delegationsIncomingService.verifyDelegationAtProvider(
+        user,
+        request.fromNationalId,
+        request.delegationTypes,
+      )
+
+    return { verified }
   }
 }

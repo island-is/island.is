@@ -13,6 +13,7 @@ import { SignatureMember } from './Member'
 import set from 'lodash/set'
 import * as styles from './Signatures.css'
 import * as z from 'zod'
+import { useFormContext } from 'react-hook-form'
 
 type Props = {
   applicationId: string
@@ -26,6 +27,8 @@ export const Chairman = ({ applicationId, member }: Props) => {
   const { application, debouncedOnUpdateApplicationHandler } = useApplication({
     applicationId,
   })
+
+  const { setValue } = useFormContext()
 
   const handleChairmanChange = (value: string, key: keyof MemberProperties) => {
     const { signature, currentAnswers } = getCommitteeAnswers(
@@ -57,6 +60,8 @@ export const Chairman = ({ applicationId, member }: Props) => {
         updatedCommitteeSignature,
       )
 
+      setValue(InputFields.signature.committee, updatedCommitteeSignature)
+
       return updatedSignatures
     }
 
@@ -72,8 +77,8 @@ export const Chairman = ({ applicationId, member }: Props) => {
       <Text variant="h5" marginBottom={2}>
         {f(signatures.headings.chairman)}
       </Text>
-      <Box className={styles.inputGroup}>
-        <Box className={styles.inputWrapper}>
+      <Box display="flex" flexDirection="column" rowGap={2}>
+        <Box>
           <SignatureMember
             name={`signature.comittee.member.above.chairman`}
             label={f(signatures.inputs.above.label)}
@@ -84,28 +89,34 @@ export const Chairman = ({ applicationId, member }: Props) => {
               )
             }
           />
-          <SignatureMember
-            name={`signature.comittee.member.after`}
-            label={f(signatures.inputs.after.label)}
-            defaultValue={member.after}
-            onChange={(e) =>
-              debouncedOnUpdateApplicationHandler(
-                handleChairmanChange(e.target.value, 'after'),
-              )
-            }
-          />
         </Box>
-        <Box className={styles.inputWrapper}>
-          <SignatureMember
-            name={`signature.comittee.member.name`}
-            label={f(signatures.inputs.name.label)}
-            defaultValue={member.name}
-            onChange={(e) =>
-              debouncedOnUpdateApplicationHandler(
-                handleChairmanChange(e.target.value, 'name'),
-              )
-            }
-          />
+        <Box display="flex" columnGap={2} rowGap={2} flexWrap="wrap">
+          <Box flexGrow={1}>
+            <SignatureMember
+              name={`signature.comittee.member.name`}
+              label={f(signatures.inputs.name.label)}
+              defaultValue={member.name}
+              onChange={(e) =>
+                debouncedOnUpdateApplicationHandler(
+                  handleChairmanChange(e.target.value, 'name'),
+                )
+              }
+            />
+          </Box>
+          <Box flexGrow={1}>
+            <SignatureMember
+              name={`signature.comittee.member.after`}
+              label={f(signatures.inputs.after.label)}
+              defaultValue={member.after}
+              onChange={(e) =>
+                debouncedOnUpdateApplicationHandler(
+                  handleChairmanChange(e.target.value, 'after'),
+                )
+              }
+            />
+          </Box>
+        </Box>
+        <Box>
           <SignatureMember
             name={`signature.comittee.member.below`}
             label={f(signatures.inputs.below.label)}

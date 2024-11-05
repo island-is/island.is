@@ -21,6 +21,9 @@ const SignedList = ({
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [listIdToUnsign, setListIdToUnsign] = useState<string | undefined>(
+    undefined,
+  )
 
   // SignedList is typically singular, although it may consist of multiple entries, which in that case will all be invalid
   const { signedLists, loadingSignedLists, refetchSignedLists } =
@@ -29,10 +32,7 @@ const SignedList = ({
   const [unSign, { loading }] = useMutation(unSignList, {
     variables: {
       input: {
-        listId:
-          signedLists && signedLists?.length === 1
-            ? signedLists[0].id
-            : undefined,
+        listId: listIdToUnsign,
       },
     },
   })
@@ -85,7 +85,10 @@ const SignedList = ({
                             variant: 'text',
                             colorScheme: 'destructive',
                           },
-                          onClick: () => setModalIsOpen(true),
+                          onClick: () => {
+                            setListIdToUnsign(list.id)
+                            setModalIsOpen(true)
+                          },
                           icon: undefined,
                         }
                       : undefined
@@ -107,6 +110,7 @@ const SignedList = ({
                       ? {
                           label:
                             formatMessage(m.digitalSignature) +
+                            ' ' +
                             format(new Date(list.signedDate), 'dd.MM.yyyy'),
                           variant: 'blueberry',
                           outlined: true,
@@ -120,41 +124,44 @@ const SignedList = ({
                       : undefined
                   }
                 />
-                <Modal
-                  id="unSignList"
-                  isVisible={modalIsOpen}
-                  toggleClose={false}
-                  initialVisibility={false}
-                  onCloseModal={() => setModalIsOpen(false)}
-                >
-                  <Box display="block" width="full">
-                    <Text variant="h2" marginTop={[5, 0]}>
-                      {formatMessage(m.unSignList)}
-                    </Text>
-                    <Text variant="default" marginTop={2}>
-                      {formatMessage(m.unSignModalMessage)}
-                    </Text>
-                    <Box
-                      marginTop={[7, 10]}
-                      marginBottom={5}
-                      display="flex"
-                      justifyContent="center"
-                    >
-                      <Button
-                        loading={loading}
-                        colorScheme="destructive"
-                        onClick={() => {
-                          onUnSignList()
-                        }}
-                      >
-                        {formatMessage(m.unSignModalConfirmButton)}
-                      </Button>
-                    </Box>
-                  </Box>
-                </Modal>
               </Box>
             )
           })}
+          <Modal
+            id="unSignList"
+            isVisible={modalIsOpen}
+            toggleClose={false}
+            initialVisibility={false}
+            onCloseModal={() => {
+              setListIdToUnsign(undefined)
+              setModalIsOpen(false)
+            }}
+          >
+            <Box display="block" width="full">
+              <Text variant="h2" marginTop={[5, 0]}>
+                {formatMessage(m.unSignList)}
+              </Text>
+              <Text variant="default" marginTop={2}>
+                {formatMessage(m.unSignModalMessage)}
+              </Text>
+              <Box
+                marginTop={[7, 10]}
+                marginBottom={5}
+                display="flex"
+                justifyContent="center"
+              >
+                <Button
+                  loading={loading}
+                  colorScheme="destructive"
+                  onClick={() => {
+                    onUnSignList()
+                  }}
+                >
+                  {formatMessage(m.unSignModalConfirmButton)}
+                </Button>
+              </Box>
+            </Box>
+          </Modal>
         </Box>
       )}
     </Box>

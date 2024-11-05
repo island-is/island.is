@@ -28,9 +28,27 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill á innsend gögn hluta á dómskjalaskjá í ákærum.',
   },
+  subpoenaTitle: {
+    id: 'judicial.system.core:court.indictment_case_files_list.subpoena_title',
+    defaultMessage: 'Fyrirkall',
+    description:
+      'Notaður sem titill á firyrkall hluta á dómskjalaskjá í ákærum.',
+  },
   civilClaimsTitle: {
     id: 'judicial.system.core:indictment_case_files_list.civil_claims_title',
     defaultMessage: 'Einkaréttarkröfur',
     description: 'Notaður sem titill á dómskjalaskjá í ákærum.',
+  },
+  subpoenaButtonText: {
+    id: 'judicial.system.indictments:indictment_case_files_list.subpoena_button_text_v2',
+    defaultMessage: 'Fyrirkall {name} {date}.pdf',
+    description:
+      'Notaður sem texti á PDF takka til að sækja fyrirkall í ákærum.',
+  },
+  serviceCertificateButtonText: {
+    id: 'judicial.system.indictments:indictment_case_files_list.service_certificate_button_text',
+    defaultMessage: 'Birtingarvottorð {name}.pdf',
+    description:
+      'Notaður sem texti á PDF takka til að sækja birtingarvottorð í ákærum.',
   },
 })

@@ -2,8 +2,9 @@ import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
+  InstitutionNotificationType,
   InstitutionType,
-  NotificationType,
+  NotificationDispatchType,
 } from '@island.is/judicial-system/types'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
@@ -50,7 +51,7 @@ describe('InternalNotificationController - Dispatch indictments waiting for conf
 
       await internalNotificationController
         .dispatchNotification({
-          type: NotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
+          type: NotificationDispatchType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
         })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -72,16 +73,16 @@ describe('InternalNotificationController - Dispatch indictments waiting for conf
       )
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.NOTIFICATION,
+          type: MessageType.INSTITUTION_NOTIFICATION,
           body: {
-            type: NotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
+            type: InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
             prosecutorsOfficeId: prosecutorsOfficeId1,
           },
         },
         {
-          type: MessageType.NOTIFICATION,
+          type: MessageType.INSTITUTION_NOTIFICATION,
           body: {
-            type: NotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
+            type: InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
             prosecutorsOfficeId: prosecutorsOfficeId2,
           },
         },

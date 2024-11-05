@@ -405,6 +405,7 @@ export class FileService {
     theCase: Case,
     file: CaseFile,
     timeToLive?: number,
+    useFreshSession = false,
   ): Promise<string> {
     if (this.shouldGetConfirmedDocument(file, theCase)) {
       return this.awsS3Service.getConfirmedIndictmentCaseSignedUrl(
@@ -414,10 +415,16 @@ export class FileService {
         (content: Buffer) =>
           this.confirmIndictmentCaseFile(theCase, file, content),
         timeToLive,
+        useFreshSession,
       )
     }
 
-    return this.awsS3Service.getSignedUrl(theCase.type, file.key, timeToLive)
+    return this.awsS3Service.getSignedUrl(
+      theCase.type,
+      file.key,
+      timeToLive,
+      useFreshSession,
+    )
   }
 
   async getCaseFileSignedUrl(
@@ -559,6 +566,7 @@ export class FileService {
       theCase,
       file,
       this.config.robotS3TimeToLiveGet,
+      true,
     )
 
     return this.courtService

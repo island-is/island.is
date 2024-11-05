@@ -1,0 +1,2 @@
+# Empty config file so defaults will be respected instead of users' own global config
+# (prevent directory traversal)

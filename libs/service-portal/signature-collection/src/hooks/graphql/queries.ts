@@ -159,7 +159,29 @@ export const GetCurrentCollection = gql`
 `
 
 export const GetCanSign = gql`
-  query Query($input: SignatureCollectionCanSignInput!) {
-    signatureCollectionCanSign(input: $input)
+  query Query($input: SignatureCollectionCanSignFromPaperInput!) {
+    signatureCollectionCanSignFromPaper(input: $input)
+  }
+`
+
+export const GetCollectors = gql`
+  query SignatureCollectionCollectors {
+    signatureCollectionCollectors {
+      nationalId
+      name
+    }
+  }
+`
+
+export const getPdfReport = gql`
+  query SignatureCollectionOverview($input: SignatureCollectionListIdInput!) {
+    signatureCollectionListOverview(input: $input) {
+      candidateName
+      listName
+      partyBallotLetter
+      nrOfSignatures
+      nrOfDigitalSignatures
+      nrOfPaperSignatures
+    }
   }
 `

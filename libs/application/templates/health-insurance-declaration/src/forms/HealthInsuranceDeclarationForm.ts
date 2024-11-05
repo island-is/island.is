@@ -302,8 +302,6 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           ],
         }),
       ],
-      condition: (answers: FormValue) =>
-        !!(answers.hasSpouse || answers.hasChildren),
     }),
     buildSection({
       id: 'residencySectionTourist',

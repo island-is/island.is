@@ -333,7 +333,15 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hsu':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'hsuHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/sSSuQeq3oIx9hOrKRvfzm/447c7e6811c3fa9e9d548ecd4b6d7985/vector-myndir-hsu.svg',
+          )}
+        />
+      ) : (
         <HeilbrigdisstofnunSudurlandsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -347,7 +355,11 @@ export const OrganizationHeader: React.FC<
             'landlaeknirHeaderImage',
             'https://images.ctfassets.net/8k0h54kbe6bj/2p6UWMBdVkVHBAjsnX20bY/c04b402332dbae96c198db7b8640f20b/Header_illustration_1.svg',
           )}
-          className={styles.landlaeknirHeaderGridContainer}
+          className={
+            isSubpage
+              ? styles.landlaeknirHeaderGridContainerSubpage
+              : styles.landlaeknirHeaderGridContainer
+          }
         />
       ) : (
         <LandlaeknirHeader
@@ -369,7 +381,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'rikislogmadur':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={
+            isSubpage
+              ? styles.rikislogmadurHeaderGridContainerWidthSubpage
+              : styles.rikislogmadurHeaderGridContainerWidth
+          }
+        />
+      ) : (
         <RikislogmadurHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -399,7 +420,11 @@ export const OrganizationHeader: React.FC<
       return n('usingDefaultHeader', false) ? (
         <DefaultHeader
           {...defaultProps}
-          className={styles.sakHeaderGridContainer}
+          className={
+            isSubpage
+              ? styles.sakHeaderGridContainerSubpage
+              : styles.sakHeaderGridContainer
+          }
           image={n(
             `sakHeaderBgImage`,
             'https://images.ctfassets.net/8k0h54kbe6bj/4SjqwRBZRMWVWG0y73sXxq/cf8d0d16704cfea124362eca03afdb41/sak-header-trans_2x.png',
@@ -413,14 +438,35 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'gev':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          image={n(
+            'gevHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/13E4vIA69gDNF87pkHwJgc/c2175b5ce58e50c93ddef5ea26854740/figura.png',
+          )}
+        />
+      ) : (
         <GevHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
         />
       )
     case 'hve':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={
+            isSubpage
+              ? styles.hveHeaderGridContainerSubpage
+              : styles.hveHeaderGridContainer
+          }
+          image={n(
+            'hveHeaderImage',
+            'https://images.ctfassets.net/8k0h54kbe6bj/7ie5X2T4g8a7g5PLvu5226/4ec8b2cb69b5cb7193a61c562f9b36e0/minstur1.png',
+          )}
+        />
+      ) : (
         <HveHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -444,7 +490,16 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'hsa':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          className={
+            isSubpage
+              ? styles.hsaHeaderGridContainerWidthSubpage
+              : styles.hsaHeaderGridContainerWidth
+          }
+        />
+      ) : (
         <HeilbrigdisstofnunAusturlandsHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -498,7 +553,9 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'rettindagaesla-fatlads-folks':
-      return (
+      return n('usingDefaultHeader', false) ? (
+        <DefaultHeader {...defaultProps} />
+      ) : (
         <RettindagaeslaFatladsFolksHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -554,6 +611,13 @@ export const OrganizationHeader: React.FC<
         <DefaultHeader
           {...defaultProps}
           customTitleColor={n('tryggingastofnunHeaderTitleColor', '#007339')}
+        />
+      )
+    case 'faggilding':
+      return (
+        <DefaultHeader
+          {...defaultProps}
+          logoImageClassName={styles.logoLarge}
         />
       )
     default:
@@ -1089,6 +1153,7 @@ export const OrganizationWrapper: React.FC<
                         type="button"
                         variant="text"
                         truncate
+                        unfocusable
                       >
                         {backLink.text}
                       </Button>

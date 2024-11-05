@@ -6,6 +6,7 @@ import {
   CaseDecision,
   CaseFileCategory,
   CaseFileState,
+  CaseNotificationType,
   CaseOrigin,
   CaseState,
   CaseType,
@@ -13,7 +14,6 @@ import {
   indictmentCases,
   InstitutionType,
   investigationCases,
-  NotificationType,
   restrictionCases,
   StringType,
   User,
@@ -541,7 +541,7 @@ describe('CaseController - Update', () => {
             type: MessageType.NOTIFICATION,
             user,
             caseId,
-            body: { type: NotificationType.MODIFIED },
+            body: { type: CaseNotificationType.MODIFIED },
           },
           { type: MessageType.DELIVERY_TO_POLICE_CASE, user, caseId },
         ])
@@ -598,7 +598,7 @@ describe('CaseController - Update', () => {
             type: MessageType.NOTIFICATION,
             user,
             caseId,
-            body: { type: NotificationType.APPEAL_STATEMENT },
+            body: { type: CaseNotificationType.APPEAL_STATEMENT },
           },
         ])
       })
@@ -872,11 +872,64 @@ describe('CaseController - Update', () => {
     })
   })
 
-  describe('court date updated', () => {
+  describe('indictment arraignment date updated', () => {
+    const arraignmentDate = { date: new Date(), location: uuid() }
+    const caseToUpdate = { arraignmentDate }
+    const subpoenaId1 = uuid()
+    const subpoenaId2 = uuid()
+    const updatedCase = {
+      ...theCase,
+      type: CaseType.INDICTMENT,
+      dateLogs: [{ dateType: DateType.ARRAIGNMENT_DATE, ...arraignmentDate }],
+      defendants: [
+        { id: defendantId1, subpoenas: [{ id: subpoenaId1 }] },
+        { id: defendantId2, subpoenas: [{ id: subpoenaId2 }] },
+      ],
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should update case', () => {
+      expect(mockDateLogModel.create).toHaveBeenCalledWith(
+        { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
+        { transaction },
+      )
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: CaseNotificationType.COURT_DATE },
+        },
+      ])
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId1, subpoenaId1],
+        },
+        {
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendantId2, subpoenaId2],
+        },
+      ])
+    })
+  })
+
+  describe('indictment court date updated', () => {
     const courtDate = { date: new Date(), location: uuid() }
     const caseToUpdate = { courtDate }
     const updatedCase = {
       ...theCase,
+      type: CaseType.INDICTMENT,
       dateLogs: [{ dateType: DateType.COURT_DATE, ...courtDate }],
     }
 
@@ -892,13 +945,12 @@ describe('CaseController - Update', () => {
         { dateType: DateType.COURT_DATE, caseId, ...courtDate },
         { transaction },
       )
-
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.NOTIFICATION,
           user,
           caseId,
-          body: { type: NotificationType.COURT_DATE },
+          body: { type: CaseNotificationType.COURT_DATE },
         },
       ])
     })

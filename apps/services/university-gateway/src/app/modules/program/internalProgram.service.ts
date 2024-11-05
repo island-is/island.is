@@ -161,7 +161,6 @@ export class InternalProgramService {
           specializationNameIs: specialization?.nameIs,
           specializationNameEn: specialization?.nameEn,
           universityId,
-          courses: [],
           modeOfDelivery: [],
           extraApplicationFields: [],
         }
@@ -214,7 +213,7 @@ export class InternalProgramService {
         for (let k = 0; k < extraApplicationFieldList.length; k++) {
           await this.programExtraApplicationFieldModel.create({
             programId: programId,
-            externalId: extraApplicationFieldList[k].externalId,
+            externalKey: extraApplicationFieldList[k].externalKey,
             nameIs: extraApplicationFieldList[k].nameIs,
             nameEn: extraApplicationFieldList[k].nameEn,
             descriptionIs: extraApplicationFieldList[k].descriptionIs,

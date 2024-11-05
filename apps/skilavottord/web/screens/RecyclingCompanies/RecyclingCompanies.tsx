@@ -72,7 +72,7 @@ const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
 
   const handleUpdate = (id: string) => {
     router.push({
-      pathname: BASE_PATH + routes.recyclingCompanies.edit, // without BASE-PATH it changes the whole route, probably some bug
+      pathname: routes.recyclingCompanies.edit, // with BASE-PATH it duplicates the path
       query: { id },
     })
   }

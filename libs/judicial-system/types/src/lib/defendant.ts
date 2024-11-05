@@ -27,3 +27,27 @@ export enum ServiceRequirement {
   NOT_REQUIRED = 'NOT_REQUIRED',
   NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
+
+export enum ServiceStatus {
+  ELECTRONICALLY = 'ELECTRONICALLY', // Via digital mailbox on island.is
+  DEFENDER = 'DEFENDER', // Via a person's defender
+  IN_PERSON = 'IN_PERSON',
+  FAILED = 'FAILED',
+  EXPIRED = 'EXPIRED', // If a subpoena expires
+}
+
+export const successfulServiceStatus: string[] = [
+  ServiceStatus.ELECTRONICALLY,
+  ServiceStatus.DEFENDER,
+  ServiceStatus.IN_PERSON,
+]
+
+export const isSuccessfulServiceStatus = (
+  status?: ServiceStatus | null,
+): boolean => {
+  return Boolean(status && successfulServiceStatus.includes(status))
+}
+
+export const isFailedServiceStatus = (status?: ServiceStatus): boolean => {
+  return Boolean(status && status === ServiceStatus.FAILED)
+}

@@ -23,6 +23,7 @@ import { Locale } from '@island.is/shared/types'
 type Space = keyof typeof theme.spacing
 
 export type RecordObject<T = unknown> = Record<string, T>
+export type MaybeWithApplication<T> = T | ((application: Application) => T)
 export type MaybeWithApplicationAndField<T> =
   | T
   | ((application: Application, field: Field) => T)
@@ -196,8 +197,13 @@ export interface BaseField extends FormItem {
   isPartOfRepeater?: boolean
   defaultValue?: MaybeWithApplicationAndField<unknown>
   doesNotRequireAnswer?: boolean
+
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
+}
+
+export interface InputField extends BaseField {
+  required?: MaybeWithApplication<boolean>
 }
 
 export enum FieldTypes {
@@ -232,6 +238,8 @@ export enum FieldTypes {
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
   STATIC_TABLE = 'STATIC_TABLE',
+  ACCORDION = 'ACCORDION',
+  BANK_ACCOUNT = 'BANK_ACCOUNT',
   SLIDER = 'SLIDER',
 }
 
@@ -264,22 +272,23 @@ export enum FieldComponents {
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
   STATIC_TABLE = 'StaticTableFormField',
+  ACCORDION = 'AccordionFormField',
+  BANK_ACCOUNT = 'BankAccountFormField',
   SLIDER = 'SliderFormField',
 }
 
-export interface CheckboxField extends BaseField {
+export interface CheckboxField extends InputField {
   readonly type: FieldTypes.CHECKBOX
   component: FieldComponents.CHECKBOX
   options: MaybeWithApplicationAndField<Option[]>
   large?: boolean
   strong?: boolean
-  required?: boolean
   backgroundColor?: InputBackgroundColor
   onSelect?: ((s: string[]) => void) | undefined
   spacing?: 0 | 1 | 2
 }
 
-export interface DateField extends BaseField {
+export interface DateField extends InputField {
   readonly type: FieldTypes.DATE
   placeholder?: FormText
   component: FieldComponents.DATE
@@ -288,7 +297,6 @@ export interface DateField extends BaseField {
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
-  required?: boolean
   readOnly?: boolean
 }
 
@@ -304,41 +312,38 @@ export interface DescriptionField extends BaseField {
   titleVariant?: TitleVariants
 }
 
-export interface RadioField extends BaseField {
+export interface RadioField extends InputField {
   readonly type: FieldTypes.RADIO
   component: FieldComponents.RADIO
   options: MaybeWithApplicationAndField<Option[]>
   backgroundColor?: InputBackgroundColor
   largeButtons?: boolean
-  required?: boolean
   space?: BoxProps['paddingTop']
   hasIllustration?: boolean
   widthWithIllustration?: '1/1' | '1/2' | '1/3'
   onSelect?(s: string): void
 }
 
-export interface SelectField extends BaseField {
+export interface SelectField extends InputField {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
   options: MaybeWithApplicationAndField<Option[]>
   onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
-  required?: boolean
   isMulti?: boolean
 }
 
-export interface CompanySearchField extends BaseField {
+export interface CompanySearchField extends InputField {
   readonly type: FieldTypes.COMPANY_SEARCH
   component: FieldComponents.COMPANY_SEARCH
   placeholder?: FormText
   setLabelToDataSchema?: boolean
   shouldIncludeIsatNumber?: boolean
   checkIfEmployerIsOnForbiddenList?: boolean
-  required?: boolean
 }
 
-export interface AsyncSelectField extends BaseField {
+export interface AsyncSelectField extends InputField {
   readonly type: FieldTypes.ASYNC_SELECT
   component: FieldComponents.ASYNC_SELECT
   placeholder?: FormText
@@ -347,11 +352,10 @@ export interface AsyncSelectField extends BaseField {
   loadingError?: FormText
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
-  required?: boolean
   isMulti?: boolean
 }
 
-export interface TextField extends BaseField {
+export interface TextField extends InputField {
   readonly type: FieldTypes.TEXT
   component: FieldComponents.TEXT
   disabled?: boolean
@@ -368,11 +372,10 @@ export interface TextField extends BaseField {
   format?: string | FormatInputValueFunction
   suffix?: string
   rows?: number
-  required?: boolean
   onChange?: (...event: any[]) => void
 }
 
-export interface PhoneField extends BaseField {
+export interface PhoneField extends InputField {
   readonly type: FieldTypes.PHONE
   component: FieldComponents.PHONE
   disabled?: boolean
@@ -381,8 +384,7 @@ export interface PhoneField extends BaseField {
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
   allowedCountryCodes?: string[]
-  disableDropdown?: boolean
-  required?: boolean
+  enableCountrySelector?: boolean
   onChange?: (...event: any[]) => void
 }
 
@@ -514,6 +516,30 @@ export interface ImageField extends BaseField {
   imagePosition?: ImagePositionProps | Array<ImagePositionProps>
 }
 
+export type AccordionItem = {
+  itemTitle: FormText
+  itemContent: FormText
+}
+
+export interface AccordionField extends BaseField {
+  readonly type: FieldTypes.ACCORDION
+  component: FieldComponents.ACCORDION
+  accordionItems:
+    | Array<AccordionItem>
+    | ((application: Application) => Array<AccordionItem>)
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+}
+
+export interface BankAccountField extends BaseField {
+  readonly type: FieldTypes.BANK_ACCOUNT
+  component: FieldComponents.BANK_ACCOUNT
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+}
+
 export interface PdfLinkButtonField extends BaseField {
   readonly type: FieldTypes.PDF_LINK_BUTTON
   component: FieldComponents.PDF_LINK_BUTTON
@@ -531,11 +557,10 @@ export interface PdfLinkButtonField extends BaseField {
   downloadButtonTitle?: StaticText
 }
 
-export interface NationalIdWithNameField extends BaseField {
+export interface NationalIdWithNameField extends InputField {
   readonly type: FieldTypes.NATIONAL_ID_WITH_NAME
   component: FieldComponents.NATIONAL_ID_WITH_NAME
   disabled?: boolean
-  required?: boolean
   customNationalIdLabel?: StaticText
   customNameLabel?: StaticText
   onNationalIdChange?: (s: string) => void
@@ -551,7 +576,10 @@ type Modify<T, R> = Omit<T, keyof R> & R
 export type ActionCardListField = BaseField & {
   readonly type: FieldTypes.ACTION_CARD_LIST
   component: FieldComponents.ACTION_CARD_LIST
-  items: (application: Application) => ApplicationActionCardProps[]
+  items: (
+    application: Application,
+    lang: Locale,
+  ) => ApplicationActionCardProps[]
   space?: BoxProps['paddingTop']
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
@@ -560,6 +588,7 @@ export type ActionCardListField = BaseField & {
 export type ApplicationActionCardProps = Modify<
   ActionCardProps,
   {
+    eyebrow?: string
     heading?: FormText
     text?: FormText
     tag?: Modify<ActionCardProps['tag'], { label: FormText }>
@@ -604,11 +633,10 @@ export type TableRepeaterField = BaseField & {
     format?: Record<string, (value: string) => string | StaticText>
   }
 }
-export interface FindVehicleField extends BaseField {
+export interface FindVehicleField extends InputField {
   readonly type: FieldTypes.FIND_VEHICLE
   component: FieldComponents.FIND_VEHICLE
   disabled?: boolean
-  required?: boolean
   additionalErrors: boolean
   getDetails?: (plate: string) => Promise<unknown>
   findVehicleButtonText?: FormText
@@ -720,4 +748,6 @@ export type Field =
   | HiddenInputField
   | FindVehicleField
   | StaticTableField
+  | AccordionField
+  | BankAccountField
   | SliderField

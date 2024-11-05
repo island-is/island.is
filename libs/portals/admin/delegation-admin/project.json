@@ -15,6 +15,12 @@
         "jestConfig": "libs/portals/admin/delegation-admin/jest.config.ts"
       }
     },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/portals/admin/delegation-admin/src/**/*.{ts,tsx}'"
+      }
+    },
     "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
