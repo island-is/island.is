@@ -55,7 +55,7 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     const answers = application.answers as unknown as WorkAccidentNotification
-    const payload = this.workAccidentClientService.createAccident(auth, {
+    const payload = {
       accidentForCreationDto: {
         companySSN: answers.companyInformation.nationalId,
         sizeOfEnterprise: parseInt(
@@ -102,16 +102,18 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
         userPhoneNumber: answers.companyInformation.phonenumber,
         userEmail: answers.companyInformation.email,
       },
-    })
+    }
 
-    await payload.catch(() => {
-      this.logger.warn(
-        '[work-accident-notification-service]: Error submitting application to AOSH',
-      )
-      return {
-        success: false,
-        message: 'Villa í umsókn, ekki tókst að skila umsókn til VER.',
-      }
-    })
+    await this.workAccidentClientService
+      .createAccident(auth, payload)
+      .catch(() => {
+        this.logger.warn(
+          '[work-accident-notification-service]: Error submitting application to AOSH',
+        )
+        return {
+          success: false,
+          message: 'Villa í umsókn, ekki tókst að skila umsókn til VER.',
+        }
+      })
   }
 }
