@@ -8,8 +8,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
-  FootNote,
-  IntroHeader,
   UserInfoLine,
   StackWithBottomDivider,
   formSubmit,
