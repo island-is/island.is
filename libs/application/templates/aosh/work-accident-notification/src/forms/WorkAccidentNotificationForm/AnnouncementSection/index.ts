@@ -34,11 +34,11 @@ export const announcementSection = buildSection({
         buildDescriptionField({
           id: 'externalData.secondHeading',
           title: (application: Application) => {
-            const ssn = getValueViaPath(
+            const ssn = getValueViaPath<string>(
               application.externalData,
               'identity.data.nationalId',
             )
-            const name = getValueViaPath(
+            const name = getValueViaPath<string>(
               application.externalData,
               'identity.data.name',
             )
