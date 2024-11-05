@@ -25,6 +25,13 @@ export enum Pickup {
   'DISTRICT' = 'district',
 }
 
+export enum AdvancedLicenseGroupCodes {
+  'C1' = 'C1',
+  'C' = 'C',
+  'D1' = 'D1',
+  'D' = 'D',
+}
+
 export enum MainAdvancedLicense {
   'C1' = 'C1',
   'D1' = 'D1',
@@ -50,7 +57,7 @@ export const AdvancedLicense = {
 
 type AdvancedLicenseMapItem = {
   minAge: number
-  group: keyof typeof MainAdvancedLicense
+  group: keyof typeof AdvancedLicenseGroupCodes
   code: keyof typeof MainAdvancedLicense
   professional?: {
     minAge: number
@@ -59,6 +66,7 @@ type AdvancedLicenseMapItem = {
 }
 
 export const advancedLicenseMap: AdvancedLicenseMapItem[] = [
+  // C1
   {
     code: 'C1',
     group: 'C1',
@@ -73,20 +81,8 @@ export const advancedLicenseMap: AdvancedLicenseMapItem[] = [
     group: 'C1',
     minAge: 18,
   },
-  {
-    code: 'D1',
-    group: 'D1',
-    minAge: 21,
-    professional: {
-      code: 'D1A',
-      minAge: 21,
-    },
-  },
-  {
-    code: 'D1E',
-    group: 'D1',
-    minAge: 18,
-  },
+
+  // C
   {
     code: 'C',
     group: 'C',
@@ -99,12 +95,30 @@ export const advancedLicenseMap: AdvancedLicenseMapItem[] = [
   {
     code: 'CE',
     group: 'C',
-    minAge: 18,
+    minAge: 21,
   },
+
+  // D1
+  {
+    code: 'D1',
+    group: 'D1',
+    minAge: 21,
+    professional: {
+      code: 'D1A',
+      minAge: 21,
+    },
+  },
+  {
+    code: 'D1E',
+    group: 'D1',
+    minAge: 21,
+  },
+
+  // D
   {
     code: 'D',
     group: 'D',
-    minAge: 21,
+    minAge: 23,
     professional: {
       code: 'DA',
       minAge: 23,
@@ -113,7 +127,7 @@ export const advancedLicenseMap: AdvancedLicenseMapItem[] = [
   {
     code: 'DE',
     group: 'D',
-    minAge: 18,
+    minAge: 23,
   },
 ]
 

@@ -9,7 +9,6 @@ import {
 } from '../../lib/constants'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { joinWithAnd } from '../../lib/utils'
 
 const AdvancedLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   errors,
@@ -34,58 +33,38 @@ const AdvancedLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   return (
     <Box>
       {Object.entries(organizedAdvancedLicenseMap).map(([, options], index) => {
-        const s1arr = options.map((option) => {
-          return option.code
-        })
-
-        const s1 = joinWithAnd(s1arr)
-
-        const s2 = options.find((x) => x.minAge)?.minAge
-
-        const requiredAgeText =
-          s1 &&
-          s2 &&
-          formatMessage(m[`applicationForAdvancedAgeRequired`], {
-            licenses: s1,
-            age: String(s2),
-          })
+        const group = options.find((x) => x.group)?.group
+        const groupAge = options.find((x) => x.minAge)?.minAge
 
         return (
           <Box
             key={`license-group-${index}`}
-            marginTop={index === 0 ? 2 : 5}
+            marginTop={index === 0 ? 2 : 7}
             marginBottom={5}
           >
-            {requiredAgeText && (
-              <Box marginBottom={2}>
-                <Text variant="medium" as="div">
-                  {requiredAgeText}
-                </Text>
-              </Box>
-            )}
+            <Box marginBottom={2}>
+              <Text variant="h4">
+                {group ? formatMessage(m[`groupTitle${group}`]) : ''}
+              </Text>
+              <Text variant="medium" as="div">
+                {formatMessage(m[`applicationForAdvancedAgeRequired`], {
+                  age: String(groupAge),
+                })}
+              </Text>
+            </Box>
             {options.map((option) => {
               const name = `field-${option.code}`
 
               return (
-                <Box
-                  key={`license-option-${option.code}`}
-                  marginBottom={2}
-                  paddingX={3}
-                  paddingTop={2}
-                  paddingBottom={3}
-                  background="blue100"
-                  borderRadius="large"
-                  border="standard"
-                >
-                  <Text as="div" marginBottom={2}>
-                    {formatMessage(
-                      m[`applicationForAdvancedLicenseTitle${option.code}`],
-                    )}
-                  </Text>
+                <Box key={`license-option-${option.code}`} marginBottom={4}>
                   <Checkbox
                     label={formatMessage(
+                      m[`applicationForAdvancedLicenseTitle${option.code}`],
+                    )}
+                    subLabel={formatMessage(
                       m[`applicationForAdvancedLicenseLabel${option.code}`],
                     )}
+                    large
                     id={name}
                     name={name}
                     backgroundColor="blue"
@@ -104,16 +83,10 @@ const AdvancedLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                     }}
                   />
                   {option?.professional?.code && (
-                    <Box
-                      key={`professional-${option.professional.code}`}
-                      marginTop={2}
-                      paddingX={3}
-                      paddingY={2}
-                      background="blue100"
-                      borderRadius="large"
-                      border="standard"
-                    >
+                    <Box marginTop={1}>
                       <Checkbox
+                        large
+                        key={`professional-${option.professional.code}`}
                         disabled={!selectedLicenses.includes(option?.code)}
                         label={formatMessage(
                           m[

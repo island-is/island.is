@@ -880,117 +880,145 @@ export const m = defineMessages({
   },
   applicationForAdvancedLicenseTitle: {
     id: 'dl.application:applicationForAdvancedLicenseTitle',
-    defaultMessage: 'Umsókn um aukin ökuréttindi',
+    defaultMessage: 'Veldu réttindi',
     description: 'Option title for selecting advanced driving license',
   },
   applicationForAdvancedLicenseDescription: {
     id: 'dl.application:applicationForAdvancedLicenseDescription',
-    defaultMessage: 'Umsókn um aukin ökuréttindi.',
+    defaultMessage: 'Í þessari umsókn er verið að sækja um:',
     description: 'Option description for selecting advanced driving license',
   },
   applicationForAdvancedAgeRequired: {
     id: 'dl.application:applicationForAdvancedAgeFor',
-    defaultMessage: 'Réttindaaldur fyrir {licenses} er {age} ára',
+    defaultMessage: 'Réttindaaldur er {age} ára.',
     description: 'Required age for {licenses} is {age} years',
+  },
+  groupTitleC1: {
+    id: 'dl.application:groupTitleC1',
+    defaultMessage: 'Minni vörubíll og eftirvagn (C1 og C1E)',
+    description: 'C1 group title',
+  },
+  groupTitleC: {
+    id: 'dl.application:groupTitleC1',
+    defaultMessage: 'Vörubíll og eftirvagn (C og CE)',
+    description: 'C1 group title',
+  },
+  groupTitleD1: {
+    id: 'dl.application:groupTitleC1',
+    defaultMessage: 'Lítil rúta og eftirvagn (D1 og D1E)',
+    description: 'C1 group title',
+  },
+  groupTitleD: {
+    id: 'dl.application:groupTitleC1',
+    defaultMessage: 'Stór rúta og eftirvagn (D og DE)',
+    description: 'C1 group title',
   },
   applicationForAdvancedLicenseTitleC1: {
     id: 'dl.application:applicationForAdvancedLicenseTitleC1',
-    defaultMessage: 'C1 titill',
+    defaultMessage: 'Minni vörubíll (C1)',
     description: 'C1 title',
   },
   applicationForAdvancedLicenseLabelC1: {
     id: 'dl.application:applicationForAdvancedLicenseLabelC1',
-    defaultMessage: 'C1 lýsing',
+    defaultMessage:
+      'Gefur réttindi til að aka bifreið þyngri en 3.500 kg en þó ekki þyngri en 7.500 kg. Sá sem hefur C1 réttindi má tengja eftirvagn/tengitæki sem er 750 kg eða minna af leyfðri heildarþyngd. Til þess að mega draga þyngri eftirvagna/tengitæki þarf að taka C1E réttindi.',
     description: 'C1 description',
   },
   applicationForAdvancedLicenseLabelC1A: {
     id: 'dl.application:applicationForAdvancedLicenseLabelC1A',
-    defaultMessage: 'C1A lýsing',
+    defaultMessage: 'Sækja um leyfi í atvinnurekstri',
     description: 'C1A description',
   },
   applicationForAdvancedLicenseTitleD1: {
     id: 'dl.application:applicationForAdvancedLicenseTitleD1',
-    defaultMessage: 'D1 titill',
+    defaultMessage: 'Lítil rúta (D1)',
     description: 'D1 title',
   },
   applicationForAdvancedLicenseLabelD1: {
     id: 'dl.application:applicationForAdvancedLicenseLabelD1',
-    defaultMessage: 'D1 lýsing',
+    defaultMessage:
+      'Gefur réttindi til að aka hópbifreið sem er gerð fyrir að hámarki 16 farþega. Sá sem hefur D1 réttindi má tengja eftirvagn/tengitæki sem er 750 kg eða minna að leyfðri heildarþyngd.',
     description: 'D1 description',
   },
   applicationForAdvancedLicenseLabelD1A: {
     id: 'dl.application:applicationForAdvancedLicenseLabelD1A',
-    defaultMessage: 'D1A lýsing',
+    defaultMessage: 'Sækja um leyfi í atvinnurekstri',
     description: 'D1A description',
   },
   applicationForAdvancedLicenseTitleC: {
     id: 'dl.application:applicationForAdvancedLicenseTitleC',
-    defaultMessage: 'C titill',
+    defaultMessage: 'Vörubíll (C)',
     description: 'C title',
   },
   applicationForAdvancedLicenseLabelC: {
     id: 'dl.application:applicationForAdvancedLicenseLabelC',
-    defaultMessage: 'C lýsing',
+    defaultMessage:
+      'Gefur réttindi til að aka vörubifreið sem er þyngri en 7.500 kg. C flokkur gefur einnig réttindi til að aka bifreiðinni með eftirvagni sem er 750 kg eða minna af leyfðri heildarþyngd.',
     description: 'C description',
   },
   applicationForAdvancedLicenseLabelCA: {
     id: 'dl.application:applicationForAdvancedLicenseLabelCA',
-    defaultMessage: 'CA lýsing',
+    defaultMessage: 'Sækja um leyfi í atvinnurekstri',
     description: 'CA description',
   },
   applicationForAdvancedLicenseTitleD: {
     id: 'dl.application:applicationForAdvancedLicenseTitleD',
-    defaultMessage: 'D titill',
+    defaultMessage: 'Stór rúta (D)',
     description: 'D title',
   },
   applicationForAdvancedLicenseLabelD: {
     id: 'dl.application:applicationForAdvancedLicenseLabelD',
-    defaultMessage: 'D lýsing',
+    defaultMessage:
+      'Gefur réttindi til að aka bifreið sem gerð er fyrir fleiri en 8 farþega auk ökumanns. Sá sem hefur D réttindi má tengja eftirvagn/tengitæki sem er 750 kg eða minna af leyfðri heildarþyngd.',
     description: 'D description',
   },
   applicationForAdvancedLicenseLabelDA: {
     id: 'dl.application:applicationForAdvancedLicenseLabelDA',
-    defaultMessage: 'DA lýsing',
+    defaultMessage: 'Sækja um leyfi í atvinnurekstri',
     description: 'DA description',
   },
   applicationForAdvancedLicenseTitleC1E: {
     id: 'dl.application:applicationForAdvancedLicenseTitleC1E',
-    defaultMessage: 'C1E titill',
+    defaultMessage: 'Minni vörubíll og eftirvagn (C1E)',
     description: 'C1E title',
   },
   applicationForAdvancedLicenseLabelC1E: {
     id: 'dl.application:applicationForAdvancedLicenseLabelC1E',
-    defaultMessage: 'C1E lýsing',
+    defaultMessage:
+      'Gefur réttindi til að aka vörubifreið/stórum pallbíl í flokki C1 með eftirvagni sem er þyngri en 750 kg að heildarþunga. Þó má sameiginlegur heildarþungi beggja ökutækja ekki fara yfir 12.000 kg. ',
     description: 'C1E description',
   },
   applicationForAdvancedLicenseTitleD1E: {
     id: 'dl.application:applicationForAdvancedLicenseTitleD1E',
-    defaultMessage: 'D1E titill',
+    defaultMessage: 'Lítil rúta og eftirvagn (D1)',
     description: 'D1E title',
   },
   applicationForAdvancedLicenseLabelD1E: {
     id: 'dl.application:applicationForAdvancedLicenseLabelD1E',
-    defaultMessage: 'D1E lýsing',
+    defaultMessage:
+      'Gefur réttindi til að aka bifreið í B-flokki með eftirvagn í BE-flokki og hópbifreið í D1 flokki með eftirvagn sem er þyngri en 750 kg að heildarþunga. Þó má sameiginlegur heildarþungi beggja ökutækja ekki fara yfir 12.000 kg.',
     description: 'D1E description',
   },
   applicationForAdvancedLicenseTitleCE: {
     id: 'dl.application:applicationForAdvancedLicenseTitleCE',
-    defaultMessage: 'CE titill',
+    defaultMessage: 'Vörubíll og eftirvagn (CE)',
     description: 'CE title',
   },
   applicationForAdvancedLicenseLabelCE: {
     id: 'dl.application:applicationForAdvancedLicenseLabelCE',
-    defaultMessage: 'CE lýsing',
+    defaultMessage:
+      'Gefur réttindi til að aka vörubifreið í flokki C með eftirvagni sem er þyngri en 750 kg að heildarþunga.',
     description: 'CE description',
   },
   applicationForAdvancedLicenseTitleDE: {
     id: 'dl.application:applicationForAdvancedLicenseTitleDE',
-    defaultMessage: 'DE titill',
+    defaultMessage: 'Stór rúta og eftirvagn (DE)',
     description: 'DE title',
   },
   applicationForAdvancedLicenseLabelDE: {
     id: 'dl.application:applicationForAdvancedLicenseLabelDE',
-    defaultMessage: 'DE lýsing',
+    defaultMessage:
+      'Að loknum D réttindum, er hægt að taka að auki DE, sem gefur réttindi til að aka hópbifreið í flokki D með eftirvagni sem er þyngri en 750 kg að heildarþunga. Þeir nemendur sem taka eftirvagnaréttindi í flokki DE og gilda þau réttindi einnig fyrir CE.',
     description: 'DE description',
   },
   applicationForAdvancedRequiredError: {
