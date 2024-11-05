@@ -79,7 +79,7 @@ export class ReykjavikUniversityApplicationClient {
             }) || [],
           extraApplicationFields: program.extraApplicationFields?.map(
             (field) => ({
-              externalId: field.fieldKey || '',
+              externalKey: field.fieldKey || '',
               nameIs: field.nameIs || '',
               nameEn: field.nameEn || '',
               descriptionIs: field.descriptionIs,

@@ -191,14 +191,14 @@ export const AirDiscountOverview = () => {
                         ? undefined
                         : item.discountCode
                         ? item.discountCode
-                        : '0'
+                        : formatMessage(m.codeGenFailed)
                     }
                     cta={{
                       label: formatMessage(m.copyCode),
                       onClick: () => copy(item.discountCode),
                       centered: true,
                       icon: isCopied ? 'checkmark' : 'copy',
-                      hide: item.user.fund?.credit === 0,
+                      hide: item.user.fund?.credit === 0 || !item.discountCode,
                     }}
                   />
                 )
