@@ -100,12 +100,13 @@ export default function TestPage(props: PaymentPageProps) {
   console.log(props)
   return (
     <PageCard
-      label={props.organization?.title}
-      imageSrc={props.organization?.logo?.url}
-      imageAlt={props.organization?.logo?.title}
+      organizationTitle={props.organization?.title}
+      organizationImageSrc={props.organization?.logo?.url}
+      organizationImageAlt={props.organization?.logo?.title}
+      amount={129000}
+      availablePaymentMethods={props.paymentFlow.availablePaymentMethods}
     >
       <Box display="flex" flexDirection="column" alignItems="center">
-        <Text variant="h1">{props.paymentFlow.productId} (id)</Text>
         <p>(todo fetch product info)</p>
       </Box>
 
@@ -114,9 +115,6 @@ export default function TestPage(props: PaymentPageProps) {
         <RadioButton id="yes" label="Krafa" />
       </Stack>
       <Button>Halda áfram</Button>
-      <p>
-        {props.locale} | {props.paymentFlowId}
-      </p>
     </PageCard>
   )
   //   return <p>Test page (page router)</p>

@@ -43,7 +43,7 @@ export const cardContainer = style({
 })
 
 export const headerContainer = style({
-  backgroundColor: theme.color.blue100,
+  backgroundColor: theme.color.purple100,
 })
 
 const logoSize = 40

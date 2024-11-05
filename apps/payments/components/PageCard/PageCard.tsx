@@ -1,22 +1,29 @@
-import { Box, Link, Logo, Text } from '@island.is/island-ui/core'
+import { Box, Link, Logo, Text, Button, Input } from '@island.is/island-ui/core'
 
 import * as styles from './PageCard.css'
 import { PageCenter } from '../PageCenter/PageCenter'
 
 type PageCardWrapperProps = {
-  label?: string
-  imageSrc?: string
-  imageAlt?: string
+  organizationTitle?: string
+  organizationImageSrc?: string
+  organizationImageAlt?: string
+  amount?: number
+  availablePaymentMethods: string[]
   children?: React.ReactNode
 }
 
 export const PageCard = ({
-  label,
+  organizationTitle,
+  organizationImageSrc,
+  organizationImageAlt,
+  amount,
+  availablePaymentMethods,
   children,
-  imageSrc,
-  imageAlt,
 }: PageCardWrapperProps) => {
   // const { formatMessage, changeLanguage, locale } = useLocale()
+
+  const hasCard = availablePaymentMethods.includes('card')
+  const hasInvoice = availablePaymentMethods.includes('invoice')
 
   return (
     <PageCenter verticalCenter={false}>
@@ -28,27 +35,101 @@ export const PageCard = ({
         width="full"
         className={styles.container}
       >
-        <Box
-          paddingX={[3, 4]}
-          paddingTop={4}
-          paddingBottom={5}
-          marginTop={[8, 8, 15]}
-          className={styles.cardContainer}
-        >
-          <img className={styles.logo} src={imageSrc} alt={imageAlt} />
-          {label && (
+        <Box marginTop={[8, 8, 15]} className={styles.cardContainer}>
+          <Box
+            paddingX={[3, 4]}
+            paddingTop={2}
+            paddingBottom={4}
+            className={styles.headerContainer}
+            flexDirection="row"
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="center"
+          >
+            <Box>
+              {organizationTitle && (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  marginTop={3}
+                  marginBottom={1}
+                >
+                  <Text color="blue400" variant="eyebrow">
+                    {organizationTitle}
+                  </Text>
+                </Box>
+              )}
+              <Text variant="h1">129.000 kr.</Text>
+              <Text>Rekstrarleyfi (TODO)</Text>
+            </Box>
+
+            {organizationImageSrc && (
+              <img
+                style={{ width: 64, height: 64 }}
+                src={organizationImageSrc}
+                alt={organizationImageAlt}
+              />
+            )}
+          </Box>
+          <Box
+            paddingX={[3, 4]}
+            paddingTop={4}
+            paddingBottom={5}
+            display="flex"
+            width="full"
+            flexDirection="column"
+            justifyContent="spaceBetween"
+            columnGap={1}
+            rowGap={2}
+          >
+            {availablePaymentMethods.length > 0 && (
+              <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="spaceBetween"
+                columnGap={1}
+              >
+                {hasCard && (
+                  <Button colorScheme="white" fluid>
+                    Kort
+                  </Button>
+                )}
+                {hasCard && (
+                  <Button colorScheme="light" variant="primary" fluid>
+                    Krafa
+                  </Button>
+                )}
+              </Box>
+            )}
+            {/* {children} */}
+            <Input
+              backgroundColor="blue"
+              label="Kortanúmer"
+              name="card"
+              placeholder="**** **** **** ****"
+              size="md"
+            />
             <Box
               display="flex"
-              justifyContent="center"
-              marginTop={3}
-              marginBottom={1}
+              flexDirection="row"
+              justifyContent="spaceBetween"
+              columnGap={2}
             >
-              <Text color="blue400" variant="eyebrow">
-                {label}
-              </Text>
+              <Input
+                backgroundColor="blue"
+                label="Gildistími"
+                name="cardExpiry"
+                size="md"
+              />
+              <Input
+                backgroundColor="blue"
+                label="CVC"
+                name="cardCVC"
+                size="md"
+              />
             </Box>
-          )}
-          {children}
+            <Button fluid>Greiða</Button>
+          </Box>
         </Box>
         <footer className={styles.footer}>
           <Box display="flex" justifyContent="spaceBetween" alignItems="center">
