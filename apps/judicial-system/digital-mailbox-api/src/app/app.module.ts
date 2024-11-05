@@ -3,8 +3,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 
 import { AuthModule } from '@island.is/auth-nest-tools'
-import { CmsTranslationsModule } from '@island.is/cms-translations'
-import { IntlService } from '@island.is/cms-translations'
+import { CmsTranslationsModule, IntlService } from '@island.is/cms-translations'
 import { ProblemModule } from '@island.is/nest/problem'
 
 import {
