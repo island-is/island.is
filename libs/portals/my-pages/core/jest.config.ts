@@ -4,10 +4,7 @@ export default {
   rootDir: '../../../..',
   roots: [__dirname],
   transform: {
-    '^.+\\.[tj]sx?$': [
-      'ts-jest',
-      { tsconfig: `${__dirname}/tsconfig.spec.json` },
-    ],
+    '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
   coverageDirectory: '<rootDir>/coverage/libs/portals/my-pages/core',
