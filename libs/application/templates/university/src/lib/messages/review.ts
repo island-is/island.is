@@ -42,12 +42,12 @@ export const review = {
     },
     documents: {
       id: 'uni.application:review.labels.documents#markdown',
-      defaultMessage: '**Önnur fylgigögn**',
+      defaultMessage: 'Fylgigögn',
       description: 'documents review label',
     },
     otherDocuments: {
       id: 'uni.application:review.labels.otherDocuments#markdown',
-      defaultMessage: '**Önnur fylgigögn**',
+      defaultMessage: 'Önnur fylgigögn',
       description: 'Other documents review label',
     },
     phoneLabel: {
