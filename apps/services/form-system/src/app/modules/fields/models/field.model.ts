@@ -85,7 +85,6 @@ export class Field extends Model<Field> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    defaultValue: 'default',
     field: 'field_type',
   })
   fieldType!: string

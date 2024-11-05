@@ -37,6 +37,8 @@ import {
   ApplicantTypes,
 } from '../../dataTypes/applicantType.model'
 import { FormApplicant } from '../formApplicants/models/formApplicant.model'
+// import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
+import { ValueFactory } from '../../dataTypes/valueTypes/valueType.factory'
 
 @Injectable()
 export class FormsService {
@@ -438,6 +440,7 @@ export class FormsService {
                     field.fieldSettings,
                     field.fieldType,
                   ),
+                // values: [this.createValue(field.fieldType, 0)],
               },
             ) as FieldDto,
           )
@@ -447,6 +450,12 @@ export class FormsService {
 
     return formDto
   }
+
+  // private createValue(type: string, order: number) {
+  //   const ValueClass = ValueFactory.getClass(type)
+  //   const value = new ValueClass(order)
+  //   return value
+  // }
 
   private async createFormTemplate(form: Form): Promise<void> {
     await this.sectionModel.bulkCreate([
