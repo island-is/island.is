@@ -18,10 +18,10 @@ export const AddEmployee: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [couldNotAddEmployee, setCouldNotAddEmployee] = useState<boolean>(false)
   const [undefinedEmployeeAmount, setUndefinedEmployeeAmount] =
     useState<boolean>(false)
-  const employeeAmount = getValueViaPath(
+  const employeeAmount = getValueViaPath<number>(
     application.answers,
     'employeeAmount',
-  ) as number | undefined
+  )
 
   const addEmployeeAndGoToScreen = async () => {
     if (employeeAmount !== undefined) {

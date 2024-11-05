@@ -76,11 +76,11 @@ export const employeeSubSection = (index: number) =>
             title: employee.employee.postnumberAndMunicipality,
             width: 'half',
             options: (application) => {
-              const postCodes = getValueViaPath(
-                application.externalData,
-                'aoshData.data.postCode',
-                [],
-              ) as PostCodeDto[]
+              const postCodes =
+                getValueViaPath<PostCodeDto[]>(
+                  application.externalData,
+                  'aoshData.data.postCode',
+                ) ?? []
 
               return postCodes
                 .filter((postCode) => postCode?.code && postCode?.name)
@@ -125,11 +125,11 @@ export const employeeSubSection = (index: number) =>
             width: 'half',
             required: true,
             options: (application) => {
-              const empLength = getValueViaPath(
-                application.externalData,
-                'aoshData.data.lengthOfEmployment',
-                [],
-              ) as LengthOfEmploymentDto[]
+              const empLength =
+                getValueViaPath<LengthOfEmploymentDto[]>(
+                  application.externalData,
+                  'aoshData.data.lengthOfEmployment',
+                ) ?? []
               return empLength
                 .filter((length) => length?.code && length?.name)
                 .map(({ name, code }) => ({
@@ -151,11 +151,11 @@ export const employeeSubSection = (index: number) =>
             required: true,
             title: employee.employee.workhourArrangement,
             options: (application) => {
-              const workhourArrangements = getValueViaPath(
-                application.externalData,
-                'aoshData.data.workhourArrangement',
-                [],
-              ) as WorkhourArrangementDto[]
+              const workhourArrangements =
+                getValueViaPath<WorkhourArrangementDto[]>(
+                  application.externalData,
+                  'aoshData.data.workhourArrangement',
+                ) ?? []
               return workhourArrangements
                 .filter((workHr) => workHr?.code && workHr?.name)
                 .map(({ name, code }) => ({
@@ -186,11 +186,11 @@ export const employeeSubSection = (index: number) =>
             width: 'half',
             required: true,
             options: (application) => {
-              const workstations = getValueViaPath(
-                application.externalData,
-                'aoshData.data.workstation',
-                [],
-              ) as WorkstationDto[]
+              const workstations =
+                getValueViaPath<WorkstationDto[]>(
+                  application.externalData,
+                  'aoshData.data.workstation',
+                ) ?? []
               return workstations
                 .filter((workstation) => workstation?.code && workstation?.name)
                 .map(({ name, code }) => ({
@@ -205,10 +205,11 @@ export const employeeSubSection = (index: number) =>
             width: 'half',
             required: true,
             options: (application) => {
-              const options = getValueViaPath(
-                application.externalData,
-                'aoshData.data.employmentStatusOfVictim',
-              ) as EmploymentStatusOfVictimDto[]
+              const options =
+                getValueViaPath<EmploymentStatusOfVictimDto[]>(
+                  application.externalData,
+                  'aoshData.data.employmentStatusOfVictim',
+                ) ?? []
               return options.map((option) => ({
                 value: option.code || '',
                 label: option.name || '',

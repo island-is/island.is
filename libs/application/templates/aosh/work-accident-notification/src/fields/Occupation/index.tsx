@@ -64,11 +64,11 @@ export const Occupation: FC<
     VictimsOccupationDto[]
   >([])
 
-  const allGroups = getValueViaPath(
-    application.externalData,
-    'aoshData.data.victimsOccupation',
-    [],
-  ) as VictimsOccupationDto[]
+  const allGroups =
+    getValueViaPath<VictimsOccupationDto[]>(
+      application.externalData,
+      'aoshData.data.victimsOccupation',
+    ) ?? []
   const victimsOccupationMajorGroups = (
     allGroups as VictimsOccupationDto[]
   ).filter((group) => group.code?.length === 1)

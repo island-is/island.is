@@ -16,6 +16,7 @@ import {
   SizeOfTheEnterpriseDto,
 } from '@island.is/clients/work-accident-ver'
 import { FormValue } from '@island.is/application/types'
+import { isCompany } from '../../../utils'
 
 export const companySection = buildSubSection({
   id: 'company',
@@ -30,11 +31,9 @@ export const companySection = buildSubSection({
           id: 'employeeAmount',
           doesNotRequireAnswer: true,
           defaultValue: (application: Application) => {
-            const employeeAmount = getValueViaPath(
-              application.answers,
-              'employeeAmount',
-              1,
-            ) as number
+            const employeeAmount =
+              getValueViaPath<number>(application.answers, 'employeeAmount') ??
+              1
             return employeeAmount
           },
         }),
@@ -51,11 +50,10 @@ export const companySection = buildSubSection({
           format: '######-####',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const nationalId = getValueViaPath(
+            const nationalId = getValueViaPath<string>(
               application.externalData,
               'identity.data.nationalId',
-              undefined,
-            ) as string | undefined
+            )
 
             return nationalId
           },
@@ -66,11 +64,10 @@ export const companySection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           defaultValue: (application: Application) => {
-            const name = getValueViaPath(
+            const name = getValueViaPath<string>(
               application.externalData,
               'identity.data.name',
-              undefined,
-            ) as string | undefined
+            )
 
             return name
           },
@@ -81,11 +78,10 @@ export const companySection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           defaultValue: (application: Application) => {
-            const streetAddress = getValueViaPath(
+            const streetAddress = getValueViaPath<string>(
               application.externalData,
               'identity.data.address.streetAddress',
-              undefined,
-            ) as string | undefined
+            )
 
             return streetAddress
           },
@@ -96,16 +92,14 @@ export const companySection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           defaultValue: (application: Application) => {
-            const postalCode = getValueViaPath(
+            const postalCode = getValueViaPath<string>(
               application.externalData,
               'identity.data.address.postalCode',
-              undefined,
-            ) as string | undefined
-            const city = getValueViaPath(
+            )
+            const city = getValueViaPath<string>(
               application.externalData,
               'identity.data.address.city',
-              undefined,
-            ) as string | undefined
+            )
 
             return `${postalCode} - ${city}`
           },
@@ -116,20 +110,19 @@ export const companySection = buildSubSection({
           width: 'half',
           required: true,
           defaultValue: (application: Application) => {
-            const type = getValueViaPath(
+            const type = getValueViaPath<string>(
               application.externalData,
               'identity.data.type',
-              undefined,
-            ) as string | undefined
+            )
             if (type === 'person') return '0'
             return undefined
           },
           options: (application) => {
-            const sizeOfEnterprises = getValueViaPath(
-              application.externalData,
-              'aoshData.data.sizeOfTheEnterprise',
-              [],
-            ) as SizeOfTheEnterpriseDto[]
+            const sizeOfEnterprises =
+              getValueViaPath<SizeOfTheEnterpriseDto[]>(
+                application.externalData,
+                'aoshData.data.sizeOfTheEnterprise',
+              ) ?? []
 
             return sizeOfEnterprises
               .filter((size) => size?.code && size?.name)
@@ -154,11 +147,10 @@ export const companySection = buildSubSection({
           width: 'half',
           required: true,
           defaultValue: (application: Application) =>
-            getValueViaPath(
+            getValueViaPath<string>(
               application.externalData,
               'userProfile.data.email',
-              '',
-            ) as string,
+            ) ?? '',
         }),
         buildPhoneField({
           id: 'companyInformation.phonenumber',
@@ -166,11 +158,10 @@ export const companySection = buildSubSection({
           width: 'half',
           required: true,
           defaultValue: (application: Application) =>
-            getValueViaPath(
+            getValueViaPath<string>(
               application.externalData,
               'userProfile.data.mobilePhoneNumber',
-              '',
-            ) as string,
+            ) ?? '',
         }),
         buildAlertMessageField({
           id: 'company.alertMessageField',
@@ -179,13 +170,8 @@ export const companySection = buildSubSection({
           alertType: 'info',
           doesNotRequireAnswer: true,
           marginBottom: 0,
-          condition: (formValue: FormValue, externalData, user) => {
-            const type = getValueViaPath(
-              externalData,
-              'identity.data.type',
-            ) as string
-            return type === 'company'
-          },
+          condition: (formValue: FormValue, externalData) =>
+            isCompany(externalData),
         }),
         buildTextField({
           id: 'companyInformation.nameOfBranch',
@@ -193,13 +179,8 @@ export const companySection = buildSubSection({
           backgroundColor: 'blue',
           width: 'half',
           defaultValue: (application: Application) => '',
-          condition: (formValue: FormValue, externalData, user) => {
-            const type = getValueViaPath(
-              externalData,
-              'identity.data.type',
-            ) as string
-            return type === 'company'
-          },
+          condition: (formValue: FormValue, externalData) =>
+            isCompany(externalData),
         }),
         buildTextField({
           id: 'companyInformation.addressOfBranch',
@@ -208,32 +189,22 @@ export const companySection = buildSubSection({
           width: 'half',
           doesNotRequireAnswer: true,
           defaultValue: (application: Application) => '',
-          condition: (formValue: FormValue, externalData, user) => {
-            const type = getValueViaPath(
-              externalData,
-              'identity.data.type',
-            ) as string
-            return type === 'company'
-          },
+          condition: (formValue: FormValue, externalData) =>
+            isCompany(externalData),
         }),
         buildSelectField({
           id: 'companyInformation.postnumberOfBranch',
           title: information.labels.company.postNumberAndTownOfBranch,
           width: 'half',
           doesNotRequireAnswer: true,
-          condition: (formValue: FormValue, externalData, user) => {
-            const type = getValueViaPath(
-              externalData,
-              'identity.data.type',
-            ) as string
-            return type === 'company'
-          },
+          condition: (formValue: FormValue, externalData) =>
+            isCompany(externalData),
           options: (application) => {
-            const postCodes = getValueViaPath(
-              application.externalData,
-              'aoshData.data.postCode',
-              [],
-            ) as PostCodeDto[]
+            const postCodes =
+              getValueViaPath<PostCodeDto[]>(
+                application.externalData,
+                'aoshData.data.postCode',
+              ) ?? []
 
             return postCodes
               .filter((postCode) => postCode?.code && postCode?.name)

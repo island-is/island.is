@@ -7,8 +7,7 @@ import { accidentSection } from './AccidentSection'
 import { EmployeeAndAccidentInformationSection } from '../RepeatableSection'
 import { overviewSection } from './OverviewSection'
 import { announcementSection } from './AnnouncementSection'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { conclusion } from '../../lib/messages'
+import { conclusionSection } from './ConclusionSection'
 
 const buildRepeatableSections = (): Section[] => {
   const sections = [...Array(20)].map((_key, index) => {
@@ -30,13 +29,6 @@ export const WorkAccidentNotificationForm: Form = buildForm({
     accidentSection,
     ...buildRepeatableSections(),
     overviewSection,
-    buildFormConclusionSection({
-      sectionTitle: conclusion.general.sectionTitle,
-      multiFieldTitle: conclusion.general.title,
-      alertTitle: conclusion.default.alertTitle,
-      expandableHeader: conclusion.default.accordionTitle,
-      expandableIntro: '',
-      expandableDescription: conclusion.default.accordionText,
-    }),
+    conclusionSection,
   ],
 })

@@ -19,7 +19,7 @@ export const getDateAndTime = (
 }
 
 export const getValueList = (answers: FormValue, answer: string) => {
-  const objectList = getValueViaPath(answers, answer, {}) as object
+  const objectList = getValueViaPath<object>(answers, answer) ?? {}
 
   return Object.values(objectList)
     .map((values: { label: string; value: string }[]) => {
@@ -40,47 +40,42 @@ export const mapVictimData = (
     application.answers,
     `circumstances[${index}].physicalActivities`,
   )
-  const physicalActivitiesMostSerious = getValueViaPath(
+  const physicalActivitiesMostSerious = getValueViaPath<string>(
     application.answers,
     `circumstances[${index}].physicalActivitiesMostSerious`,
-    undefined,
-  ) as string | undefined
+  )
   const workDeviations = getValueList(
     application.answers,
     `deviations[${index}].workDeviations`,
   )
-  const workDeviationsMostSerious = getValueViaPath(
+  const workDeviationsMostSerious = getValueViaPath<string>(
     application.answers,
     `deviations[${index}].workDeviationsMostSerious`,
-    undefined,
-  ) as string | undefined
+  )
   const contactModeOfInjury = getValueList(
     application.answers,
     `causeOfInjury[${index}].contactModeOfInjury`,
   )
-  const contactModeOfInjuryMostSerious = getValueViaPath(
+  const contactModeOfInjuryMostSerious = getValueViaPath<string>(
     application.answers,
     `causeOfInjury[${index}].contactModeOfInjuryMostSerious`,
-    undefined,
-  ) as string | undefined
+  )
   const partOfBodyInjured = getValueList(
     application.answers,
     `injuredBodyParts[${index}].partOfBodyInjured`,
   )
-  const partOfBodyInjuredMostSerious = getValueViaPath(
+  const partOfBodyInjuredMostSerious = getValueViaPath<string>(
     application.answers,
     `injuredBodyParts[${index}].partOfBodyInjuredMostSerious`,
-    undefined,
-  ) as string | undefined
+  )
   const typeOfInjury = getValueList(
     application.answers,
     `typeOfInjury[${index}].typeOfInjury`,
   )
-  const typeOfInjuryMostSerious = getValueViaPath(
+  const typeOfInjuryMostSerious = getValueViaPath<string>(
     application.answers,
     `typeOfInjury[${index}].typeOfInjuryMostSerious`,
-    undefined,
-  ) as string | undefined
+  )
   return {
     victimsSSN: employee.nationalField.nationalId,
     employmentStatusOfVictim: employee.employmentStatus

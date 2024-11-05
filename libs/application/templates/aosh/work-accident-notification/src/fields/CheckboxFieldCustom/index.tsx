@@ -1,7 +1,6 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC, useEffect, useState } from 'react'
 import {
-  AlertMessage,
   Box,
   Checkbox,
   ErrorMessage,
@@ -26,28 +25,20 @@ export const CheckboxFieldCustom: FC<
   )
   const { formatMessage } = useLocale()
 
-  const normalOptions = (
-    getValueViaPath(
+  const workplaceHealthAndSafety =
+    getValueViaPath<WorkplaceHealthAndSafetyDto[]>(
       application.externalData,
       'aoshData.data.workplaceHealthAndSafety',
-    ) as WorkplaceHealthAndSafetyDto[]
-  ).filter((x) => x.code !== '1')
+    ) ?? []
 
-  const exceptionOption = (
-    getValueViaPath(
-      application.externalData,
-      'aoshData.data.workplaceHealthAndSafety',
-    ) as WorkplaceHealthAndSafetyDto[]
-  ).filter((x) => x.code === '1')
+  const normalOptions = workplaceHealthAndSafety.filter((x) => x.code !== '1')
+
+  const exceptionOption = workplaceHealthAndSafety.filter((x) => x.code === '1')
 
   useEffect(() => {
-    const options = getValueViaPath(
-      application.externalData,
-      'aoshData.data.workplaceHealthAndSafety',
-    ) as WorkplaceHealthAndSafetyDto[]
     setValue(
       'companyLaborProtection.workhealthAndSafetyOccupation',
-      options
+      workplaceHealthAndSafety
         .filter((option) => choice.includes(option.code || ''))
         .map((option) => option.code),
     )

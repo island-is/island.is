@@ -50,7 +50,7 @@ export const MultiSelectDropdownController: FC<
     majorGroupLength,
   } = props
   const [answers, setAnswers] = useState<OptionWithKey>(
-    (getValueViaPath(application.answers, answerId) as OptionWithKey) || {},
+    getValueViaPath<OptionWithKey>(application.answers, answerId) ?? {},
   )
 
   const [stateItems, setStateItems] = useState<Array<Item>>(

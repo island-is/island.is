@@ -18,11 +18,8 @@ interface PdfDocumentProps {
 export const PdfDocument: FC<
   React.PropsWithChildren<FieldBaseProps & PdfDocumentProps>
 > = ({ application, formatMessage }) => {
-  const employees = getValueViaPath(
-    application.answers,
-    'employee',
-    [],
-  ) as EmployeeType[]
+  const employees =
+    getValueViaPath<EmployeeType[]>(application.answers, 'employee') ?? []
   const companyInfo = getCompanyInformationForOverview(
     application.answers,
     application.externalData,

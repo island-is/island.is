@@ -19,11 +19,11 @@ export const getEmployeeInformationForOverview = (
   formatMessage: FormatMessage,
 ) => {
   // Post code
-  const postCode = getValueViaPath(
-    externalData,
-    'aoshData.data.postCode',
-    [],
-  ) as MunicipalityDto[]
+  const postCode =
+    getValueViaPath<MunicipalityDto[]>(
+      externalData,
+      'aoshData.data.postCode',
+    ) ?? []
   const chosenPostCode = postCode.find(
     ({ code }) => employee.postnumberAndMunicipality === code,
   )
@@ -35,40 +35,41 @@ export const getEmployeeInformationForOverview = (
   )
 
   // Employment status
-  const employmentStatus = getValueViaPath(
-    externalData,
-    'aoshData.data.employmentStatusOfVictim',
-  ) as EmploymentStatusOfVictimDto[]
+  const employmentStatus =
+    getValueViaPath<EmploymentStatusOfVictimDto[]>(
+      externalData,
+      'aoshData.data.employmentStatusOfVictim',
+    ) ?? []
   const chosenEmploymentStatus = employmentStatus.find(
     ({ code }) => employee.employmentStatus === code,
   )
 
   // Employment time
-  const employmentTime = getValueViaPath(
-    externalData,
-    'aoshData.data.lengthOfEmployment',
-    [],
-  ) as LengthOfEmploymentDto[]
+  const employmentTime =
+    getValueViaPath<LengthOfEmploymentDto[]>(
+      externalData,
+      'aoshData.data.lengthOfEmployment',
+    ) ?? []
   const chosenEmploymentTime = employmentTime.find(
     ({ code }) => employee.employmentTime === code,
   )
 
   // Workhour arrangement
-  const workhourArrangement = getValueViaPath(
-    externalData,
-    'aoshData.data.workhourArrangement',
-    [],
-  ) as WorkhourArrangementDto[]
+  const workhourArrangement =
+    getValueViaPath<WorkhourArrangementDto[]>(
+      externalData,
+      'aoshData.data.workhourArrangement',
+    ) ?? []
   const chosenWorkhourArrangement = workhourArrangement.find(
     ({ code }) => employee.workhourArrangement === code,
   )
 
   // Workstation
-  const workstation = getValueViaPath(
-    externalData,
-    'aoshData.data.workstation',
-    [],
-  ) as WorkstationDto[]
+  const workstation =
+    getValueViaPath<WorkstationDto[]>(
+      externalData,
+      'aoshData.data.workstation',
+    ) ?? []
   const chosenWorkstation = workstation.find(
     ({ code }) => employee.workstation === code,
   )

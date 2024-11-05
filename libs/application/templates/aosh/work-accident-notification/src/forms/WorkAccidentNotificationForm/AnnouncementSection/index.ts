@@ -11,7 +11,7 @@ export const announcementSection = buildSection({
   id: 'externalData',
   title: externalData.dataProvider.announcement,
   condition: (formValue: FormValue, externalData, user) => {
-    const type = getValueViaPath(externalData, 'identity.data.type') as string
+    const type = getValueViaPath<string>(externalData, 'identity.data.type')
     return type === 'person'
   },
   children: [

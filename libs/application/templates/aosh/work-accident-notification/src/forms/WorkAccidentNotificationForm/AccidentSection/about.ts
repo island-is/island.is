@@ -81,11 +81,11 @@ export const aboutSection = buildSubSection({
           width: 'half',
           required: true,
           options: (application) => {
-            const municipalities = getValueViaPath(
-              application.externalData,
-              'aoshData.data.municipality',
-              [],
-            ) as MunicipalityDto[]
+            const municipalities =
+              getValueViaPath<MunicipalityDto[]>(
+                application.externalData,
+                'aoshData.data.municipality',
+              ) ?? []
 
             return municipalities
               .filter(

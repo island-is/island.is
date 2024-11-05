@@ -26,19 +26,14 @@ export const AccidentLocation: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const answers = application.answers as WorkAccidentNotification
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
-  const majorGroups = (
-    getValueViaPath(
+  const workingEnvironment =
+    getValueViaPath<WorkingEnvironmentDto[]>(
       application.externalData,
       'aoshData.data.workingEnvironment',
-    ) as WorkingEnvironmentDto[]
-  ).filter((group) => !group.validToSelect)
+    ) ?? []
+  const majorGroups = workingEnvironment.filter((group) => !group.validToSelect)
 
-  const minorGroups = (
-    getValueViaPath(
-      application.externalData,
-      'aoshData.data.workingEnvironment',
-    ) as WorkingEnvironmentDto[]
-  ).filter((group) => group.validToSelect)
+  const minorGroups = workingEnvironment.filter((group) => group.validToSelect)
   const [selectedMajorGroup, setSelectedMajorGroup] = useState<Option | null>(
     answers?.accident?.accidentLocationParentGroup || null,
   )

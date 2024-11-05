@@ -14,22 +14,22 @@ export const getCauseAndConsequencesForOverview = (
   formatMessage: FormatMessage,
 ) => {
   // Absence
-  const absenceDueToAccident = getValueViaPath(
-    externalData,
-    'aoshData.data.absenceDueToAccident',
-    [],
-  ) as AbsenceDueToAccidentDto[]
-  const absence = getValueViaPath(answers, `absence[${index}]`) as string
+  const absenceDueToAccident =
+    getValueViaPath<AbsenceDueToAccidentDto[]>(
+      externalData,
+      'aoshData.data.absenceDueToAccident',
+    ) ?? []
+  const absence = getValueViaPath<string>(answers, `absence[${index}]`)
   const chosenAbsenceDueToAccident = absenceDueToAccident.find(
     ({ code }) => absence === code,
   )
 
   // Circumstances
-  const circumstances = getValueViaPath(
-    answers,
-    `circumstances[${index}].physicalActivities`,
-    {},
-  ) as object
+  const circumstances =
+    getValueViaPath<object>(
+      answers,
+      `circumstances[${index}].physicalActivities`,
+    ) ?? {}
   const chosenCircumstances = Object.values(circumstances)
     .map((value: { label: string; value: string }[]) => {
       return value.map(({ label }) => {
@@ -39,11 +39,9 @@ export const getCauseAndConsequencesForOverview = (
     .flat()
 
   // Deviations
-  const deviations = getValueViaPath(
-    answers,
-    `deviations[${index}].workDeviations`,
-    {},
-  ) as object
+  const deviations =
+    getValueViaPath<object>(answers, `deviations[${index}].workDeviations`) ??
+    {}
   const chosenDeviations = Object.values(deviations)
     .map((value: { label: string; value: string }[]) => {
       return value.map(({ label }) => {
@@ -53,11 +51,11 @@ export const getCauseAndConsequencesForOverview = (
     .flat()
 
   // Cause Of Injury
-  const causeOfInjury = getValueViaPath(
-    answers,
-    `causeOfInjury[${index}].contactModeOfInjury`,
-    {},
-  ) as object
+  const causeOfInjury =
+    getValueViaPath<object>(
+      answers,
+      `causeOfInjury[${index}].contactModeOfInjury`,
+    ) ?? {}
   const chosenCauseOfInjury = Object.values(causeOfInjury)
     .map((value: { label: string; value: string }[]) => {
       return value.map(({ label }) => {
@@ -67,11 +65,9 @@ export const getCauseAndConsequencesForOverview = (
     .flat()
 
   // Type Of Injury
-  const typeOfInjury = getValueViaPath(
-    answers,
-    `typeOfInjury[${index}].typeOfInjury`,
-    {},
-  ) as object
+  const typeOfInjury =
+    getValueViaPath<object>(answers, `typeOfInjury[${index}].typeOfInjury`) ??
+    {}
   const chosenTypeOfInjury = Object.values(typeOfInjury)
     .map((value: { label: string; value: string }[]) => {
       return value.map(({ label }) => {
@@ -81,11 +77,11 @@ export const getCauseAndConsequencesForOverview = (
     .flat()
 
   // Injured Body Parts
-  const injuredBodyParts = getValueViaPath(
-    answers,
-    `injuredBodyParts[${index}].partOfBodyInjured`,
-    {},
-  ) as object
+  const injuredBodyParts =
+    getValueViaPath<object>(
+      answers,
+      `injuredBodyParts[${index}].partOfBodyInjured`,
+    ) ?? {}
   const chosenInjuredBodyParts = Object.values(injuredBodyParts)
     .map((value: { label: string; value: string }[]) => {
       return value.map(({ label }) => {

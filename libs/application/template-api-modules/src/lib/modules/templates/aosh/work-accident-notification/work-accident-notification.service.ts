@@ -55,64 +55,63 @@ export class WorkAccidentNotificationTemplateService extends BaseTemplateApiServ
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     const answers = application.answers as unknown as WorkAccidentNotification
+    const payload = this.workAccidentClientService.createAccident(auth, {
+      accidentForCreationDto: {
+        companySSN: answers.companyInformation.nationalId,
+        sizeOfEnterprise: parseInt(
+          answers.companyInformation.numberOfEmployees,
+          10,
+        ),
+        nameOfBranchOrDepartment:
+          answers.companyInformation.nameOfBranch ??
+          answers.companyInformation.name,
+        address:
+          answers.companyInformation.addressOfBranch ??
+          answers.companyInformation.address,
+        postcode:
+          answers.companyInformation.postnumberOfBranch?.slice(0, 3) ??
+          answers.companyInformation.postnumber.slice(0, 3),
+        workplaceHealthAndSafety:
+          answers.companyLaborProtection.workhealthAndSafetyOccupation?.map(
+            (code: string) => {
+              return parseInt(code, 10)
+            },
+          ),
 
-    await this.workAccidentClientService
-      .createAccident(auth, {
-        accidentForCreationDto: {
-          companySSN: answers.companyInformation.nationalId,
-          sizeOfEnterprise: parseInt(
-            answers.companyInformation.numberOfEmployees,
-            10,
-          ),
-          nameOfBranchOrDepartment:
-            answers.companyInformation.nameOfBranch ??
-            answers.companyInformation.name,
-          address:
-            answers.companyInformation.addressOfBranch ??
-            answers.companyInformation.address,
-          postcode:
-            answers.companyInformation.postnumberOfBranch?.slice(0, 3) ??
-            answers.companyInformation.postnumber.slice(0, 3),
-          workplaceHealthAndSafety:
-            answers.companyLaborProtection.workhealthAndSafetyOccupation?.map(
-              (code: string) => {
-                return parseInt(code, 10)
-              },
-            ),
+        buyersSSN: answers.projectPurchase.nationalId ?? '',
+        dateAndTimeOfAccident: getDateAndTime(
+          answers.accident.date,
+          answers.accident.time.slice(0, 2),
+          answers.accident.time.slice(2, 4),
+        ),
+        aoshCame: answers.accident.didAoshCome === 'yes',
+        policeCame: answers.accident.didPoliceCome === 'yes',
+        numberOfVictims: answers.employee.length,
+        municipalityWhereAccidentOccured: answers.accident.municipality,
+        specificLocationOfAccident: answers.accident.exactLocation,
+        detailedDescriptionOfAccident: answers.accident.wasDoing.concat(
+          '\n',
+          answers.accident.wentWrong,
+          '\n',
+          answers.accident.how,
+        ),
+        workingEnvironment: answers.accident.accidentLocation.value,
+        victims: answers.employee.map((employee, index) => {
+          return mapVictimData(employee, index, answers, application)
+        }),
+        userPhoneNumber: answers.companyInformation.phonenumber,
+        userEmail: answers.companyInformation.email,
+      },
+    })
 
-          buyersSSN: answers.projectPurchase.nationalId ?? '',
-          dateAndTimeOfAccident: getDateAndTime(
-            answers.accident.date,
-            answers.accident.time.slice(0, 2),
-            answers.accident.time.slice(2, 4),
-          ),
-          aoshCame: answers.accident.didAoshCome === 'yes',
-          policeCame: answers.accident.didPoliceCome === 'yes',
-          numberOfVictims: answers.employee.length,
-          municipalityWhereAccidentOccured: answers.accident.municipality,
-          specificLocationOfAccident: answers.accident.exactLocation,
-          detailedDescriptionOfAccident: answers.accident.wasDoing.concat(
-            '\n',
-            answers.accident.wentWrong,
-            '\n',
-            answers.accident.how,
-          ),
-          workingEnvironment: answers.accident.accidentLocation.value,
-          victims: answers.employee.map((employee, index) => {
-            return mapVictimData(employee, index, answers, application)
-          }),
-          userPhoneNumber: answers.companyInformation.phonenumber,
-          userEmail: answers.companyInformation.email,
-        },
-      })
-      .catch(() => {
-        this.logger.warn(
-          '[work-accident-notification-service]: Error submitting application to AOSH',
-        )
-        return {
-          success: false,
-          message: 'Villa í umsókn, ekki tókst að skila umsókn til VER.',
-        }
-      })
+    await payload.catch(() => {
+      this.logger.warn(
+        '[work-accident-notification-service]: Error submitting application to AOSH',
+      )
+      return {
+        success: false,
+        message: 'Villa í umsókn, ekki tókst að skila umsókn til VER.',
+      }
+    })
   }
 }

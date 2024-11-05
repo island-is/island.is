@@ -18,34 +18,34 @@ export const getCompanyInformationForOverview = (
   externalData: ExternalData,
   formatMessage: FormatMessage,
 ) => {
-  const company = getValueViaPath(answers, 'companyInformation') as CompanyType
-  const companyLaborProtection = getValueViaPath(
+  const company = getValueViaPath<CompanyType>(answers, 'companyInformation')
+  const companyLaborProtection = getValueViaPath<CompanyLaborProtectionType>(
     answers,
     'companyLaborProtection',
-  ) as CompanyLaborProtectionType
-  const sizeOfEnterprises = getValueViaPath(
-    externalData,
-    'aoshData.data.sizeOfTheEnterprise',
-    [],
-  ) as SizeOfTheEnterpriseDto[]
-  const workplaceHealthAndSafety = getValueViaPath(
-    externalData,
-    'aoshData.data.workplaceHealthAndSafety',
-    [],
-  ) as WorkplaceHealthAndSafetyDto[]
+  )
+  const sizeOfEnterprises =
+    getValueViaPath<SizeOfTheEnterpriseDto[]>(
+      externalData,
+      'aoshData.data.sizeOfTheEnterprise',
+    ) ?? []
+  const workplaceHealthAndSafety =
+    getValueViaPath<WorkplaceHealthAndSafetyDto[]>(
+      externalData,
+      'aoshData.data.workplaceHealthAndSafety',
+    ) ?? []
   const chosenSizeOfEnterprise = sizeOfEnterprises.find(
-    (size) => company.numberOfEmployees === size?.code,
+    (size) => company?.numberOfEmployees === size?.code,
   )
 
   return [
-    company.name ?? undefined,
-    company.nationalId ? formatKennitala(company.nationalId) : undefined,
-    `${company.address ?? ''}, ${company.postnumber ?? ''}`,
-    company.industryClassification ?? undefined,
+    company?.name ?? undefined,
+    company?.nationalId ? formatKennitala(company.nationalId) : undefined,
+    `${company?.address ?? ''}, ${company?.postnumber ?? ''}`,
+    company?.industryClassification ?? undefined,
     chosenSizeOfEnterprise?.name ?? undefined,
     `${formatMessage(information.labels.workhealth.sectionTitle)}: ${
       workplaceHealthAndSafety.length > 0
-        ? companyLaborProtection.workhealthAndSafetyOccupation
+        ? companyLaborProtection?.workhealthAndSafetyOccupation
             ?.map((c) => {
               return workplaceHealthAndSafety.find((x) => c === x.code)?.name
             })
@@ -53,9 +53,9 @@ export const getCompanyInformationForOverview = (
         : ''
     }`,
 
-    `${formatMessage(overview.labels.email)}: ${company.email}`,
+    `${formatMessage(overview.labels.email)}: ${company?.email}`,
     `${formatMessage(overview.labels.phonenumber)}: ${formatPhoneNumber(
-      company.phonenumber,
+      company?.phonenumber ?? '',
     )}`,
   ].filter((n) => n)
 }

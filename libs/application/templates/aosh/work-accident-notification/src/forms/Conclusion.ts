@@ -1,22 +1,14 @@
-import {
-  buildAlertMessageField,
-  buildExpandableDescriptionField,
-  buildCustomField,
-  buildForm,
-  buildMultiField,
-  buildSection,
-  coreMessages,
-  buildMessageWithLinkButtonField,
-} from '@island.is/application/core'
+import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import {
   information,
   externalData,
   sections,
   overview,
-  conclusion,
+  employee,
 } from '../lib/messages'
 import { Logo } from '../assets/Logo'
+import { conclusionSection } from './WorkAccidentNotificationForm/ConclusionSection'
 
 export const Conclusion: Form = buildForm({
   id: 'ConclusionApplicationForm',
@@ -46,7 +38,7 @@ export const Conclusion: Form = buildForm({
     }),
     buildSection({
       id: `employeeSection`,
-      title: sections.draft.employee,
+      title: employee.employee.pageTitle,
       children: [],
     }),
     buildSection({
@@ -59,42 +51,6 @@ export const Conclusion: Form = buildForm({
       title: overview.general.sectionTitle,
       children: [],
     }),
-    buildSection({
-      id: 'conclusion',
-      title: conclusion.general.sectionTitle,
-      children: [
-        buildMultiField({
-          id: 'uiForms.conclusionMultifield',
-          title: conclusion.general.title,
-          children: [
-            buildAlertMessageField({
-              id: 'uiForms.conclusionAlert',
-              title: conclusion.default.alertTitle,
-              alertType: 'success',
-            }),
-            buildExpandableDescriptionField({
-              id: 'uiForms.conclusionExpandableDescription',
-              title: conclusion.default.accordionTitle,
-              introText: '',
-              description: conclusion.default.accordionText,
-              startExpanded: true,
-            }),
-            buildCustomField({
-              id: 'pdfoverview',
-              title: '',
-              component: 'PdfOverview',
-            }),
-            buildMessageWithLinkButtonField({
-              id: 'uiForms.conclusionBottomLink',
-              title: '',
-              url: '/minarsidur/umsoknir',
-              buttonTitle: coreMessages.openServicePortalButtonTitle,
-              message: coreMessages.openServicePortalMessageText,
-              marginBottom: [4, 4, 12],
-            }),
-          ],
-        }),
-      ],
-    }),
+    conclusionSection,
   ],
 })

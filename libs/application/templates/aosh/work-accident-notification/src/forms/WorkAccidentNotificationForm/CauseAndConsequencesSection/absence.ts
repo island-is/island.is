@@ -30,11 +30,11 @@ export const absenceSection = (index: number) =>
             id: `absence[${index}]`,
             title: causeAndConsequences.absence.absenceDueToAccident,
             options: (application) => {
-              const absenceDueToAccident = getValueViaPath(
-                application.externalData,
-                'aoshData.data.absenceDueToAccident',
-                [],
-              ) as AbsenceDueToAccidentDto[]
+              const absenceDueToAccident =
+                getValueViaPath<AbsenceDueToAccidentDto[]>(
+                  application.externalData,
+                  'aoshData.data.absenceDueToAccident',
+                ) ?? []
               return absenceDueToAccident
                 .filter((absence) => absence?.code && absence?.name)
                 .map(({ name, code }) => ({

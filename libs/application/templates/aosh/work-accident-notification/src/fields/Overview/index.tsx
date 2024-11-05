@@ -31,7 +31,6 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const employees = getValueViaPath(
     application.answers,
     'employee',
-    [],
   ) as EmployeeType[]
 
   return (
@@ -85,6 +84,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         <Accordion>
           {employees.map((employee, index) => (
             <AccordionItem
+              key={`${field.id}-accordion-item-${index}`}
               id={`${field.id}-accordion-item-${index}`}
               label={`${formatMessage(overview.labels.employee)} ${
                 employees.length > 1 ? index + 1 : ''

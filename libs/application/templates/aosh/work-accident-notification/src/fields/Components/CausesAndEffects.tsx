@@ -60,10 +60,10 @@ export const CausesAndEffects: FC<
   )
   const [pickedValue, setPickedValue] = useState<OptionAndKey>()
   const activityGroups = (
-    getValueViaPath(application.externalData, externalDataKey) as Group[]
+    getValueViaPath<Group[]>(application.externalData, externalDataKey) ?? []
   ).filter((group) => !group.validToSelect)
   const activites = (
-    getValueViaPath(application.externalData, externalDataKey) as Item[]
+    getValueViaPath<Item[]>(application.externalData, externalDataKey) ?? []
   ).filter((group) => group.validToSelect)
 
   const onChange = (answers: OptionWithKey) => {

@@ -11,16 +11,10 @@ export const getMaxDate = (application: Application) => {
 }
 
 export const getMinDate = (application: Application) => {
-  const date = getValueViaPath(
-    application.answers,
-    'accident.date',
-    new Date().toString(),
-  ) as string
-  const time = getValueViaPath(
-    application.answers,
-    'accident.time',
-    '00:00',
-  ) as string
+  const date =
+    getValueViaPath<string>(application.answers, 'accident.date') ?? ''
+  const time =
+    getValueViaPath<string>(application.answers, 'accident.time') ?? '00:00'
   const minDate = new Date(date)
   minDate.setDate(
     minDate.getDate() - (parseInt(time.slice(0, 2), 10) < 12 ? 2 : 1),
@@ -46,16 +40,11 @@ export const dateIsWithin36Hours = (
   date: string,
   time: string,
 ) => {
-  const accidentDate = getValueViaPath(
-    application.answers,
-    'accident.date',
-    new Date().toString(),
-  ) as string
-  const accidentTime = getValueViaPath(
-    application.answers,
-    'accident.time',
-    '00:00',
-  ) as string
+  const accidentDate =
+    getValueViaPath<string>(application.answers, 'accident.date') ??
+    new Date().toString()
+  const accidentTime =
+    getValueViaPath<string>(application.answers, 'accident.time') ?? '00:00'
   const timeAllowed = 1000 * 60 * 60 * 36
   const accidentDateAndTime = getDateAndTime(
     accidentDate,

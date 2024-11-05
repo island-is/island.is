@@ -6,3 +6,4 @@ export {
   getDateAndTime,
   dateIsWithin36Hours,
 } from './dateManipulation'
+export { isCompany } from './isCompany'
