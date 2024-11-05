@@ -418,7 +418,7 @@ api:
     - 'api-catalogue'
     - 'application-system'
     - 'consultation-portal'
-    - 'services-bff-portals-admin'
+    - 'portals-admin'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1804,6 +1804,7 @@ portals-admin:
     SI_PUBLIC_ENVIRONMENT: 'dev'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:

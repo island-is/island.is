@@ -1,7 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
 
-import { useAuth } from '@island.is/auth/react'
-import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   GridColumn,
   GridContainer,
@@ -9,6 +7,7 @@ import {
   Input,
   PhoneInput,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   FeatureFlagClient,
   Features,
@@ -20,19 +19,20 @@ import {
   useUserProfile,
 } from '@island.is/service-portal/graphql'
 
+import { useBff } from '@island.is/react-spa/bff'
 import { msg } from '../../../../lib/messages'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
-import { OnboardingIntro } from './components/Intro'
-import { InputSection } from './components/InputSection'
-import { InputEmail } from './components/Inputs/Email'
-import { InputPhone } from './components/Inputs/Phone'
 import { DropModal } from './components/DropModal'
+import { InputSection } from './components/InputSection'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
+import { InputEmail } from './components/Inputs/Email'
 import { Nudge } from './components/Inputs/Nudge'
 import { PaperMail } from './components/Inputs/PaperMail'
+import { InputPhone } from './components/Inputs/Phone'
 import { ReadOnlyWithLinks } from './components/Inputs/ReadOnlyWithLinks'
-import { DropModalType } from './types/form'
+import { OnboardingIntro } from './components/Intro'
 import { useConfirmNudgeMutation } from './confirmNudge.generated'
+import { DropModalType } from './types/form'
 
 enum IdsUserProfileLinks {
   EMAIL = '/app/user-profile/email',
@@ -69,7 +69,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   const [v2UserProfileEnabled, setV2UserProfileEnabled] = useState(false)
   const { deleteIslykillValue, loading: deleteLoading } =
     useDeleteIslykillValue()
-  const { authority, userInfo } = useAuth()
+  const { authority, userInfo } = useBff()
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const { formatMessage } = useLocale()

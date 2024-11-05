@@ -1,27 +1,28 @@
-import React, { FC, useEffect, useState, ReactNode } from 'react'
+import { DocumentsScope } from '@island.is/auth/scopes'
 import {
   Box,
-  GridContainer,
-  GridRow,
-  GridColumn,
   BreadcrumbsDeprecated as Breadcrumbs,
   Button,
+  GridColumn,
+  GridContainer,
+  GridRow,
 } from '@island.is/island-ui/core'
-import {
-  m,
-  ModuleAlertBannerSection,
-  TabNavigation,
-} from '@island.is/service-portal/core'
-import * as styles from './Layout.css'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { IntroHeader, ServicePortalPaths } from '@island.is/service-portal/core'
-import { Link, matchPath, useNavigate } from 'react-router-dom'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import {
+  IntroHeader,
+  ModuleAlertBannerSection,
+  ServicePortalPaths,
+  TabNavigation,
+  m,
+} from '@island.is/service-portal/core'
 import { DocumentsPaths } from '@island.is/service-portal/documents'
-import { theme } from '@island.is/island-ui/theme'
-import { useAuth } from '@island.is/auth/react'
-import { DocumentsScope } from '@island.is/auth/scopes'
 import { FinancePaths } from '@island.is/service-portal/finance'
+import { FC, ReactNode, useEffect, useState } from 'react'
+import { Link, matchPath, useNavigate } from 'react-router-dom'
+import * as styles from './Layout.css'
 
 interface FullWidthLayoutWrapperProps {
   activeParent?: PortalNavigationItem
@@ -46,7 +47,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
 }) => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const [navItems, setNavItems] = useState<PortalNavigationItem[] | undefined>()
 
   useEffect(() => {

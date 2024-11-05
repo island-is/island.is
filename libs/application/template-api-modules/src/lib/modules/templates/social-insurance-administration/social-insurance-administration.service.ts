@@ -12,6 +12,10 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 import {
+  getApplicationAnswers as getDBApplicationAnswers,
+  ChildInformation,
+} from '@island.is/application/templates/social-insurance-administration/death-benefits'
+import {
   Application,
   ApplicationTypes,
   YES,
@@ -35,7 +39,10 @@ import {
   transformApplicationToIncomePlanDTO,
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
+  transformApplicationToDeathBenefitsDTO,
 } from './social-insurance-administration-utils'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import * as kennitala from 'kennitala'
 import { sharedModuleConfig } from '../../shared'
 import { ConfigType } from '@nestjs/config'
 import { S3Service } from '@island.is/nest/aws'
@@ -50,6 +57,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     @Inject(sharedModuleConfig.KEY)
     private config: ConfigType<typeof sharedModuleConfig>,
     private readonly s3Service: S3Service,
+    private readonly nationalRegistryApi: NationalRegistryClientService,
   ) {
     super('SocialInsuranceAdministration')
   }
@@ -103,6 +111,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
     if (application.typeId === ApplicationTypes.PENSION_SUPPLEMENT) {
       additionalAttachmentsRequired = getPSApplicationAnswers(
+        application.answers,
+      ).additionalAttachmentsRequired
+    }
+
+    if (application.typeId === ApplicationTypes.DEATH_BENEFITS) {
+      additionalAttachmentsRequired = getDBApplicationAnswers(
         application.answers,
       ).additionalAttachmentsRequired
     }
@@ -377,6 +391,55 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return attachments
   }
 
+  private async getDBAttachments(
+    application: Application,
+  ): Promise<Attachment[]> {
+    const {
+      additionalAttachments,
+      expectingChildAttachments,
+      deathCertificateAttachments,
+      isExpectingChild,
+    } = getDBApplicationAnswers(application.answers)
+
+    const attachments: Attachment[] = []
+
+    if (additionalAttachments && additionalAttachments.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          DocumentTypeEnum.OTHER,
+          additionalAttachments,
+        )),
+      )
+    }
+
+    if (deathCertificateAttachments && deathCertificateAttachments.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          DocumentTypeEnum.DEATH_CERTIFICATE,
+          deathCertificateAttachments,
+        )),
+      )
+    }
+
+    if (
+      expectingChildAttachments &&
+      expectingChildAttachments.length > 0 &&
+      isExpectingChild === YES
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          DocumentTypeEnum.EXPECTING_CHILD,
+          expectingChildAttachments,
+        )),
+      )
+    }
+
+    return attachments
+  }
+
   async getPdf(key: string): Promise<string> {
     const fileContent = await this.s3Service.getFileContent(
       { bucket: this.config.templateApi.attachmentBucket, key },
@@ -458,6 +521,22 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       return response
     }
 
+    if (application.typeId === ApplicationTypes.DEATH_BENEFITS) {
+      const attachments = await this.getDBAttachments(application)
+
+      const deathBenefitsDTO = transformApplicationToDeathBenefitsDTO(
+        application,
+        attachments,
+      )
+
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        deathBenefitsDTO,
+        application.typeId.toLowerCase(),
+      )
+      return response
+    }
+
     if (application.typeId === ApplicationTypes.INCOME_PLAN) {
       const incomePlanDTO = transformApplicationToIncomePlanDTO(application)
 
@@ -466,7 +545,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         incomePlanDTO,
         application.typeId.toLowerCase(),
       )
-
       return response
     }
   }
@@ -523,6 +601,47 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getCurrencies({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getCurrencies(auth)
+  }
+
+  async getChildrenWithSameDomicile({ auth }: TemplateApiModuleActionProps) {
+    const cohabitants = await this.nationalRegistryApi.getCohabitants(
+      auth.nationalId,
+    )
+
+    const children: Array<ChildInformation | null> = await Promise.all(
+      cohabitants.map(async (cohabitantsNationalId) => {
+        if (
+          cohabitantsNationalId !== auth.nationalId &&
+          kennitala.info(cohabitantsNationalId).age < 18
+        ) {
+          const child = await this.nationalRegistryApi.getIndividual(
+            cohabitantsNationalId,
+          )
+
+          if (!child) {
+            return null
+          }
+
+          return (
+            child && {
+              nationalId: child.nationalId,
+              fullName: child.name,
+            }
+          )
+        } else {
+          return null
+        }
+      }),
+    )
+
+    const filteredChildren = children.filter(
+      (child): child is ChildInformation => child != null,
+    )
+    return filteredChildren
+  }
+
+  async getSpousalInfo({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getSpousalInfo(auth)
   }
 
   async getCategorizedIncomeTypes({ auth }: TemplateApiModuleActionProps) {

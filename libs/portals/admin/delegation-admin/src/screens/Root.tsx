@@ -1,20 +1,20 @@
-import { useLocale } from '@island.is/localization'
-import { IntroHeader } from '@island.is/portals/core'
-import { m } from '../lib/messages'
-import { Form, Outlet, useActionData, useNavigate } from 'react-router-dom'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
   AsyncSearchInput,
+  Box,
   Button,
   GridColumn,
   GridRow,
-  Box,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useState } from 'react'
+import { useLocale } from '@island.is/localization'
+import { IntroHeader } from '@island.is/portals/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { useSubmitting } from '@island.is/react-spa/shared'
-import { GetDelegationForNationalIdResult } from './Root.action'
+import { useEffect, useState } from 'react'
+import { Form, Outlet, useActionData, useNavigate } from 'react-router-dom'
+import { m } from '../lib/messages'
 import { DelegationAdminPaths } from '../lib/paths'
-import { useAuth } from '@island.is/auth/react'
-import { AdminPortalScope } from '@island.is/auth/scopes'
+import { GetDelegationForNationalIdResult } from './Root.action'
 
 const Root = () => {
   const [focused, setFocused] = useState(false)
@@ -24,7 +24,7 @@ const Root = () => {
   const { isSubmitting, isLoading } = useSubmitting()
   const [error, setError] = useState({ hasError: false, message: '' })
   const navigate = useNavigate()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
 
   const hasAdminAccess = userInfo?.scopes.includes(
     AdminPortalScope.delegationSystemAdmin,
