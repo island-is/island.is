@@ -24,7 +24,7 @@ const strings = {
   introEn: defineMessage({
     id: 'judicial.system.core:subpoena.intro_en',
     defaultMessage:
-      'The accused is summoned to the court to hear the charge, make his defence and be subject to judgement.',
+      'The accused is summoned to the court to hear the charge, make their defence and be subject to judgement.',
     description: 'Notaður sem inngangur þegar enska er valið tungumál.',
   }),
   arrestIntro: defineMessage({
@@ -77,7 +77,7 @@ const strings = {
   absenceIntroEn: defineMessage({
     id: 'judicial.system.core:subpoena.absence_intro_en',
     defaultMessage:
-      'If the accused does not attend the hearing he may expect his absence to be evaluated equal to an admission of the infraction of which he is accused of and the sentencing to be delivered in his absence.',
+      'If the accused does not attend the hearing they may expect their absence to be evaluated equal to an admission of the infraction of which they is accused of and the sentencing to be delivered in their absence.',
     description:
       'Notaður sem inngangur fyrir útivistarfyrirkall þegar enska er valið tungumál.',
   }),
