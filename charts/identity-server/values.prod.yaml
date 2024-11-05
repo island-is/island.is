@@ -4,7 +4,6 @@
 # Run "yarn charts" instead.
 #
 #####################################################################
-
 auth-admin-web:
   enabled: true
   env:

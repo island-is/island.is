@@ -1,7 +1,10 @@
 name: Monorepo pipeline - pull request
 
 on:
-  pull_request: {}
+  pull_request:
+    branches-ignore:
+      - 'uni-pr'
+      - 'feature/unicorn-app'
   workflow_dispatch: {}
 
 defaults:
