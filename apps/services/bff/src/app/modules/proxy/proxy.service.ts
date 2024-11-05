@@ -7,7 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import Agent from 'agentkeepalive'
+import AgentKeepAlive, { HttpsAgent } from 'agentkeepalive'
 import { Request, Response } from 'express'
 import fetch from 'node-fetch'
 import { BffConfig } from '../../bff.config'
@@ -28,16 +28,27 @@ import { ApiProxyDto } from './dto/api-proxy.dto'
 const droppedResponseHeaders = ['access-control-allow-origin']
 
 /**
- * A custom HTTP agent for managing connections efficiently.
+ * A custom HTTP/S agent for managing connections efficiently.
  * - Keeps connections alive for reuse, reducing connection setup time.
  * - Configured with custom timeout and socket limits to optimize resource usage.
  */
-const CUSTOM_AGENT = new Agent({
+const agentOptions: AgentKeepAlive.HttpOptions = {
   keepAlive: true,
   timeout: 0,
   freeSocketTimeout: AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
   maxSockets: AGENT_DEFAULT_MAX_SOCKETS,
-})
+}
+const customAgent = new AgentKeepAlive(agentOptions)
+/**
+ * Only applies to none same domain requests.
+ *
+ * When `node-fetch` follows redirects to HTTPS URLs, it still tries to use the HTTP agent internally,
+ * even though the protocol has changed to HTTPS
+ * This creates a protocol mismatch, when trying to use an HTTP agent for an HTTPS connection
+ * @error ERR_INVALID_PROTOCOL
+ * @see https://github.com/node-fetch/node-fetch/issues/571
+ */
+const customHttpsAgent = new HttpsAgent(agentOptions)
 
 @Injectable()
 export class ProxyService {
@@ -121,7 +132,13 @@ export class ProxyService {
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(body ?? req.body),
-        agent: CUSTOM_AGENT,
+        agent: (parsedUrl) => {
+          if (parsedUrl.protocol == 'http:') {
+            return customAgent
+          }
+
+          return customHttpsAgent
+        },
       })
 
       // Set the status code of the response
