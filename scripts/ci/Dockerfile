@@ -141,17 +141,13 @@ CMD [ "jest", "main.spec.js" ]
 # hadolint ignore=DL3006
 FROM ${PLAYWRIGHT_IMAGE_REGISTRY} AS playwright-base
 
-
-
-
-
-
 FROM playwright-base AS output-playwright
 ARG GIT_BRANCH GIT_SHA GIT_REPOSITORY_URL
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_SHA=${GIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_SHA=${GIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_SHA}
+
 # TODO: remove awscli dependency (157 MB extra)
 
 # hadolint ignore=DL3008
