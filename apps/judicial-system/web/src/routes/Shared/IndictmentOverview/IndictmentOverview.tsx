@@ -9,6 +9,7 @@ import {
   isCompletedCase,
   isDefenceUser,
   isProsecutionUser,
+  isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -124,6 +125,13 @@ const IndictmentOverview: FC = () => {
             : formatMessage(strings.inProgressTitle)}
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
+        {isDefenceUser(user) &&
+          workingCase.defendants?.map((defendant) =>
+            defendant.subpoenas?.map(
+              (subpoena) =>
+                isSuccessfulServiceStatus(subpoena.serviceStatus) && 'sdads',
+            ),
+          )}
         {caseHasBeenReceivedByCourt &&
           workingCase.court &&
           latestDate?.date &&
