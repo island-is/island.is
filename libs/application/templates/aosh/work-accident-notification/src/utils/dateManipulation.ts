@@ -3,11 +3,9 @@ import { Application } from '@island.is/application/types'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 export const getMaxDate = (application: Application) => {
-  const date = getValueViaPath(
-    application.answers,
-    'accident.date',
-    new Date().toString(),
-  ) as string
+  const date =
+    getValueViaPath<string>(application.answers, 'accident.date') ??
+    new Date().toString()
   return new Date(date)
 }
 
