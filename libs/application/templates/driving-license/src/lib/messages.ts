@@ -880,11 +880,21 @@ export const m = defineMessages({
   },
   applicationForAdvancedLicenseTitle: {
     id: 'dl.application:applicationForAdvancedLicenseTitle',
-    defaultMessage: 'Veldu réttindi',
+    defaultMessage: 'Aukin ökuréttindi / meirapróf',
     description: 'Option title for selecting advanced driving license',
   },
   applicationForAdvancedLicenseDescription: {
     id: 'dl.application:applicationForAdvancedLicenseDescription',
+    defaultMessage: 'Texti kemur hér',
+    description: 'Option description for selecting advanced driving license',
+  },
+  applicationForAdvancedLicenseSectionTitle: {
+    id: 'dl.application:applicationForAdvancedLicenseSectionTitle',
+    defaultMessage: 'Veldu réttindi',
+    description: 'Option title for selecting advanced driving license',
+  },
+  applicationForAdvancedLicenseSectionDescription: {
+    id: 'dl.application:applicationForAdvancedLicenseSectionDescription',
     defaultMessage: 'Í þessari umsókn er verið að sækja um:',
     description: 'Option description for selecting advanced driving license',
   },

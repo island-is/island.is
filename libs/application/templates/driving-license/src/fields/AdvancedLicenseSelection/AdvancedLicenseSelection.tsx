@@ -10,7 +10,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
-const AdvancedLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+const AdvancedLicenseSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   errors,
 }) => {
   const { formatMessage } = useLocale()
@@ -127,4 +127,4 @@ const AdvancedLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   )
 }
 
-export { AdvancedLicense }
+export { AdvancedLicenseSelection }

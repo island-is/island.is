@@ -21,13 +21,13 @@ export const sectionAdvancedLicenseSelection = buildSubSection({
   children: [
     buildMultiField({
       id: 'advancedLicenseSelectionFields',
-      title: m.applicationForAdvancedLicenseTitle,
-      description: m.applicationForAdvancedLicenseDescription,
+      title: m.applicationForAdvancedLicenseSectionTitle,
+      description: m.applicationForAdvancedLicenseSectionDescription,
       children: [
         buildCustomField({
           id: 'advancedLicense',
-          title: 'Advanced License',
-          component: 'AdvancedLicense',
+          title: '',
+          component: 'AdvancedLicenseSelection',
         }),
       ],
     }),
