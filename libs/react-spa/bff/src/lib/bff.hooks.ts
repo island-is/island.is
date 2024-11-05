@@ -1,8 +1,8 @@
 import { AuthContext } from '@island.is/auth/react'
-import { BffUser, User } from '@island.is/shared/types'
-import { useContext } from 'react'
-import { BffContext, BffContextType } from './BffContext'
 import { createBroadcasterHook } from '@island.is/react-spa/shared'
+import { BffUser, User } from '@island.is/shared/types'
+import { useContext, useMemo } from 'react'
+import { BffContext, BffContextType } from './BffContext'
 
 /**
  * Maps an object to a BffUser type.
@@ -89,10 +89,18 @@ export const useUserInfo = (): BffUser => {
   const bffContext = useContext(BffContext)
   const authContext = useContext(AuthContext)
 
+  const mappedAuthUserInfo = useMemo(() => {
+    if (authContext.userInfo) {
+      return mapToBffUser(authContext.userInfo)
+    }
+
+    return null
+  }, [authContext.userInfo])
+
   if (bffContext?.userInfo) {
     return bffContext.userInfo
-  } else if (authContext?.userInfo) {
-    return mapToBffUser(authContext.userInfo)
+  } else if (mappedAuthUserInfo) {
+    return mappedAuthUserInfo
   }
 
   throw new Error('User info is not available. Is the user authenticated?')

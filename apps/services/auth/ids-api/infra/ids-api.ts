@@ -122,7 +122,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       min: 2,
       max: 15,
     })
-    .grantNamespaces('user-notification')
+    .grantNamespaces('nginx-ingress-external', 'user-notification')
 }
 
 const cleanupId = 'services-auth-ids-api-cleanup'
