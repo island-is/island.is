@@ -14,23 +14,25 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { pensionSupplementFormMessage } from '../lib/messages'
+import { deathBenefitsFormMessage } from '../lib/messages'
 import {
   SocialInsuranceAdministrationApplicantApi,
+  SocialInsuranceAdministrationChildrenApi,
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationSpousalInfo,
 } from '../dataProviders'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { isEligible } from '../lib/pensionSupplementUtils'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { isEligible } from '../lib/deathBenefitsUtils'
 
 export const PrerequisitesForm: Form = buildForm({
-  id: 'PensionSupplementPrerequisites',
+  id: 'DeathBenefitsPrerequisites',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
-  renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
+  renderLastScreenButton: false,
+  renderLastScreenBackButton: false,
   children: [
     buildSection({
       id: 'externalData',
@@ -61,8 +63,7 @@ export const PrerequisitesForm: Form = buildForm({
               provider: NationalRegistryUserApi,
               title:
                 socialInsuranceAdministrationMessage.pre.skraInformationTitle,
-              subTitle:
-                pensionSupplementFormMessage.pre.skraInformationSubTitle,
+              subTitle: deathBenefitsFormMessage.pre.registryIcelandDescription,
             }),
             buildDataProviderItem({
               provider: UserProfileApi,
@@ -71,22 +72,21 @@ export const PrerequisitesForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.pre.contactInfoDescription,
             }),
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationApplicantApi,
+              id: 'sia.data',
               title:
                 socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationTitle,
               subTitle:
-                socialInsuranceAdministrationMessage.pre
+                deathBenefitsFormMessage.pre
                   .socialInsuranceAdministrationDescription,
             }),
             buildDataProviderItem({
-              id: 'sia.privacy',
-              title:
-                socialInsuranceAdministrationMessage.pre
-                  .socialInsuranceAdministrationPrivacyTitle,
-              subTitle:
-                socialInsuranceAdministrationMessage.pre
-                  .socialInsuranceAdministrationPrivacyWithoutIncomeDescription,
+              provider: SocialInsuranceAdministrationApplicantApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationChildrenApi,
+              title: '',
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCurrenciesApi,
@@ -96,11 +96,15 @@ export const PrerequisitesForm: Form = buildForm({
               provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
               title: '',
             }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationSpousalInfo,
+              title: '',
+            }),
           ],
         }),
         buildMultiField({
           id: 'isNotEligible',
-          title: pensionSupplementFormMessage.pre.isNotEligibleLabel,
+          title: deathBenefitsFormMessage.pre.isNotEligibleTitle,
           condition: (_, externalData) => {
             // Show if applicant is not eligible
             return !isEligible(externalData)
@@ -110,7 +114,7 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'isNotEligible',
               title: '',
               description:
-                pensionSupplementFormMessage.pre.isNotEligibleDescription,
+                deathBenefitsFormMessage.pre.isNotEligibleDescription,
             }),
             // Empty submit field to hide all buttons in the footer
             buildSubmitField({
