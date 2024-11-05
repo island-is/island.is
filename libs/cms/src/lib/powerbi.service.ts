@@ -58,7 +58,7 @@ export class PowerBiService {
         embedUrl: report.embedUrl,
       }
     } catch (error) {
-      this.logger.error(error)
+      this.logger.error('Failed to fetch PowerBi embed props', error)
       return null
     }
   }
