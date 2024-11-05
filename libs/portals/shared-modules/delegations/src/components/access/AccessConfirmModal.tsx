@@ -1,6 +1,6 @@
 import { isDefined } from '@island.is/shared/utils'
 import { AuthDelegationScope } from '@island.is/api/schema'
-import { useAuth } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { Box, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId, m as coreMessages } from '@island.is/portals/core'
@@ -37,7 +37,7 @@ export const AccessConfirmModal = ({
   ...rest
 }: AccessConfirmModalProps) => {
   const { formatMessage } = useLocale()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const { md } = useBreakpoint()
   const [error, setError] = useState(formError ?? false)
 

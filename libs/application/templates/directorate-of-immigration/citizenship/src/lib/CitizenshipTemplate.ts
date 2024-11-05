@@ -18,12 +18,10 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { application as applicationMessage } from './messages'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { CitizenshipSchema } from './dataSchema'
 import {
   UserProfileApi,
-  UtlendingastofnunPaymentCatalogApi,
   ChildrenCustodyInformationApi,
   NationalRegistryParentsApi,
   NationalRegistrySpouseDetailsApi,
@@ -31,8 +29,10 @@ import {
   NationalRegistryBirthplaceApi,
   ResidenceInIcelandLastChangeDateApi,
   CountriesApi,
+  UtlendingastofnunPaymentCatalogApi,
   TravelDocumentTypesApi,
   ApplicantInformationApi,
+  MockableUtlendingastofnunPaymentCatalogApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItemCodes } from '../utils'
@@ -47,7 +47,6 @@ const template: ApplicationTemplate<
   institution: applicationMessage.institutionName,
   translationNamespaces: ApplicationConfigurations.Citizenship.translation,
   dataSchema: CitizenshipSchema,
-  featureFlag: Features.citizenship,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -94,6 +93,7 @@ const template: ApplicationTemplate<
                 ResidenceInIcelandLastChangeDateApi,
                 CountriesApi,
                 UtlendingastofnunPaymentCatalogApi,
+                MockableUtlendingastofnunPaymentCatalogApi,
                 ApplicantInformationApi,
                 TravelDocumentTypesApi,
               ],

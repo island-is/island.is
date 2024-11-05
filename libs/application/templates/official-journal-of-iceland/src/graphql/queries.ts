@@ -303,3 +303,24 @@ export const POST_COMMENT_MUTATION = gql`
     }
   }
 `
+
+export const GET_APPLICATION_CASE_QUERY = gql`
+  query GetApplicationCase($input: OJOIAIdInput!) {
+    OJOIAGetApplicationCase(input: $input) {
+      department
+      type
+      status
+      communicationStatus
+      categories
+      html
+    }
+  }
+`
+
+export const GET_PDF_QUERY = gql`
+  query GetPdf($input: OJOIAIdInput!) {
+    OJOIAGetPdf(input: $input) {
+      pdf
+    }
+  }
+`

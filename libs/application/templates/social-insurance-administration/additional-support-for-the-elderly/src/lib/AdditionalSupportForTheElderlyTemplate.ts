@@ -360,6 +360,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
             },
           ],
         },
