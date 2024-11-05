@@ -37,28 +37,29 @@ export class PowerBiService {
     )
       return null
 
-    const accessToken = await this.getAccessToken(powerBiSlice.owner as Owner)
+    try {
+      const accessToken = await this.getAccessToken(powerBiSlice.owner as Owner)
 
-    if (!accessToken) {
+      const report = await this.getReport(
+        powerBiSlice.workspaceId,
+        powerBiSlice.reportId,
+        accessToken,
+      )
+
+      const embedToken = await this.getEmbedToken(
+        powerBiSlice.reportId,
+        [report.datasetId],
+        powerBiSlice.workspaceId,
+        accessToken,
+      )
+
+      return {
+        accessToken: embedToken,
+        embedUrl: report.embedUrl,
+      }
+    } catch (error) {
+      this.logger.error(error)
       return null
-    }
-
-    const report = await this.getReport(
-      powerBiSlice.workspaceId,
-      powerBiSlice.reportId,
-      accessToken,
-    )
-
-    const embedToken = await this.getEmbedToken(
-      powerBiSlice.reportId,
-      [report.datasetId],
-      powerBiSlice.workspaceId,
-      accessToken,
-    )
-
-    return {
-      accessToken: embedToken,
-      embedUrl: report.embedUrl,
     }
   }
 
@@ -87,16 +88,11 @@ export class PowerBiService {
 
     const clientApplication = new ConfidentialClientApplication(msalConfig)
 
-    try {
-      const tokenResponse =
-        await clientApplication.acquireTokenByClientCredential({
-          scopes: ['https://analysis.windows.net/powerbi/api/.default'],
-        })
-      return tokenResponse?.accessToken as string
-    } catch (error) {
-      this.logger.error(error)
-      return null
-    }
+    const tokenResponse =
+      await clientApplication.acquireTokenByClientCredential({
+        scopes: ['https://analysis.windows.net/powerbi/api/.default'],
+      })
+    return tokenResponse?.accessToken as string
   }
 
   private async getReport(
