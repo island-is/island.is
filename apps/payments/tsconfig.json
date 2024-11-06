@@ -15,12 +15,8 @@
     ],
     "strictNullChecks": true
   },
-  "include": [
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
+  "include": [".next/types/**/*.ts"],
+  "exclude": ["node_modules"],
   "files": [],
   "references": [
     {
