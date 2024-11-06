@@ -22,6 +22,7 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
 import styled, { useTheme } from 'styled-components/native'
+
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,
@@ -35,6 +36,7 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { isAndroid, isIos } from '../../utils/devices'
 import { screenWidth } from '../../utils/dimensions'
 import { FieldRender } from './components/field-render'
+import { useOfflineStore } from '../../stores/offline-store'
 
 const INFORMATION_BASE_TOP_SPACING = 70
 
@@ -145,6 +147,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const [addingToWallet, setAddingToWallet] = useState(false)
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
   const fadeInAnim = useRef(new Animated.Value(0)).current
+  const isConnected = useOfflineStore(({ isConnected }) => isConnected)
 
   const [generatePkPass] = useGeneratePkPassMutation()
   const res = useGetLicenseQuery({
@@ -172,7 +175,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const { loading } = res
 
   const informationTopSpacing =
-    allowLicenseBarcode && ((loading && !data?.barcode) || data?.barcode)
+    (allowLicenseBarcode && ((loading && !data?.barcode) || data?.barcode)) ||
+    (!isConnected && isBarcodeEnabled)
       ? barcodeHeight + LICENSE_CARD_ROW_GAP
       : 0
 
@@ -407,11 +411,15 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               height: barcodeHeight,
             },
           })}
+          showBarcodeOfflineMessage={!isConnected && isBarcodeEnabled}
         />
       </LicenseCardWrapper>
       <Information
         contentInset={{
-          bottom: informationTopSpacing ? 162 : 0,
+          bottom:
+            informationTopSpacing || (!isConnected && isBarcodeEnabled)
+              ? 162
+              : 0,
         }}
         key={key}
         contentContainerStyle={{ marginBottom: theme.spacing[6] }}
@@ -422,7 +430,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             marginHorizontal: theme.spacing[2],
             marginBottom:
               pkPassAllowed && !isBarcodeEnabled && isIos
-                ? theme.spacing[12]
+                ? theme.spacing[15]
                 : theme.spacing[2],
           }}
         >

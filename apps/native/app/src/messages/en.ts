@@ -264,6 +264,8 @@ export const en: TranslatedMessages = {
   'walletPass.errorAddingOrFetching': 'Failed to fetch or add pass.',
   'walletPass.errorNotPossibleOnThisDevice':
     'You cannot add passes on this device.',
+  'walletPass.errorNotConnectedNoBarcode':
+    'Not possible to scan barcode if the device is not connected to the internet.',
 
   // wallet passport
   'walletPassport.screenTitle': 'Passport',

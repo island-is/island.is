@@ -401,6 +401,8 @@ export const is = {
     'Tókst ekki að sækja eða bæta við skírteini.',
   'walletPass.errorNotPossibleOnThisDevice':
     'Þú getur ekki bætt við skírteinum á þetta tæki.',
+  'walletPass.errorNotConnectedNoBarcode':
+    'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
 
   // wallet passport
   'walletPassport.screenTitle': 'Vegabréf',
