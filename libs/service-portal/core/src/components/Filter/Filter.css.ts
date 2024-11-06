@@ -18,6 +18,6 @@ export const popoverContainer = style({
 
 export const lgBtn = style({})
 
-globalStyle(`${lgBtn} span`, {
+globalStyle(`${lgBtn} > span`, {
   height: '100%',
 })

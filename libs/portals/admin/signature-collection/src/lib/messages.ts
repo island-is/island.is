@@ -511,6 +511,11 @@ export const m = defineMessages({
     defaultMessage: 'Læsa söfnun',
     description: '',
   },
+  listOpen: {
+    id: 'admin-portal.signature-collection:listOpened',
+    defaultMessage: 'Söfnun í gangi',
+    description: '',
+  },
   listLocked: {
     id: 'admin-portal.signature-collection:listLocked',
     defaultMessage: 'Lista læst',
