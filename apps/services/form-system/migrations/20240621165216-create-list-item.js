@@ -43,12 +43,12 @@ module.exports = {
             allowNull: false,
             defaultValue: 0,
           },
-          field_settings_id: {
+          field_id: {
             type: Sequelize.UUID,
             onDelete: 'CASCADE',
             allowNull: false,
             references: {
-              model: 'field_settings',
+              model: 'field',
               key: 'id',
             },
           },
