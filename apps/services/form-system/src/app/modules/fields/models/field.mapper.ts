@@ -18,7 +18,7 @@ export class FieldMapper {
       description: field.description,
       isPartOfMultiset: field.isPartOfMultiset,
       fieldType: field.fieldType,
-      fieldSettingsType: field.fieldSettingsType,
+      fieldSettings: field.fieldSettings,
       // fieldSettings: fieldSettingsDto,
     }
 
@@ -30,6 +30,6 @@ export class FieldMapper {
     field.description = updateFieldDto.description
     field.isPartOfMultiset = updateFieldDto.isPartOfMultiset
     field.fieldType = updateFieldDto.fieldType
-    field.fieldSettingsType = updateFieldDto.fieldSettingsType
+    field.fieldSettings = updateFieldDto.fieldSettings
   }
 }

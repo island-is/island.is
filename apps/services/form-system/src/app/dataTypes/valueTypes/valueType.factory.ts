@@ -1,4 +1,4 @@
-import { FieldTypes } from '../../enums/fieldTypes'
+import { FieldTypesEnum } from '../../enums/fieldTypes'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
@@ -8,22 +8,22 @@ export class ValueTypeFactory {
   static getClass(type: string, valueType: ValueType) {
     let keys: string[]
     switch (type) {
-      case FieldTypes.TEXTBOX:
+      case FieldTypesEnum.TEXTBOX:
         keys = ['text']
         return this.pickSettings(valueType, keys)
-      case FieldTypes.NUMBERBOX:
+      case FieldTypesEnum.NUMBERBOX:
         keys = ['number']
         return this.pickSettings(valueType, keys)
-      case FieldTypes.MESSAGE:
+      case FieldTypesEnum.MESSAGE:
         keys = ['text']
         return this.pickSettings(valueType, keys)
-      case FieldTypes.HOMESTAY_OVERVIEW:
+      case FieldTypesEnum.HOMESTAY_OVERVIEW:
         keys = ['year', 'isNullReport', 'months', 'totalAmount', 'totalDays']
         return this.pickSettings(valueType, keys)
-      case FieldTypes.HOMESTAY_NUMBER:
+      case FieldTypesEnum.HOMESTAY_NUMBER:
         keys = ['homestayNumber']
         return this.pickSettings(valueType, keys)
-      case FieldTypes.CANDITATE:
+      case FieldTypesEnum.CANDITATE:
         keys = [
           'kennitala',
           'name',
@@ -34,7 +34,7 @@ export class ValueTypeFactory {
           'altName',
         ]
         return this.pickSettings(valueType, keys)
-      case FieldTypes.DATE_PICKER:
+      case FieldTypesEnum.DATE_PICKER:
         keys = ['date']
         return this.pickSettings(valueType, keys)
       default:

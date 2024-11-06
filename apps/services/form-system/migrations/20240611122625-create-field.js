@@ -47,7 +47,7 @@ module.exports = {
             allowNull: false,
             defaultValue: false,
           },
-          field_settings_type: {
+          field_settings: {
             type: Sequelize.JSON,
             allowNull: true,
           },
