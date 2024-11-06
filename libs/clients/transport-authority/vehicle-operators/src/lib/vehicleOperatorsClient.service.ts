@@ -10,6 +10,7 @@ import {
   getCleanErrorMessagesFromTryCatch,
 } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class VehicleOperatorsClient {
@@ -48,10 +49,19 @@ export class VehicleOperatorsClient {
     permno: string,
   ): Promise<OperatorChangeValidation> {
     // Get current mileage reading
-    const mileageReadings = await this.mileageReadingApiWithAuth(
-      auth,
-    ).getMileageReading({ permno })
-    const currentMileage = mileageReadings?.[0]?.mileage || 0
+    let currentMileage = 0
+    try {
+      const mileageReadings = await this.mileageReadingApiWithAuth(
+        auth,
+      ).getMileageReading({ permno })
+      currentMileage = mileageReadings?.[0]?.mileage || 0
+    } catch (e) {
+      logger.error(e)
+      return {
+        hasError: true,
+        errorMessages: [{ defaultMessage: e.message }],
+      }
+    }
 
     return await this.validateAllForOperatorChange(
       auth,
