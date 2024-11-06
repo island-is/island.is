@@ -665,8 +665,7 @@ PensionCalculatorResults.getProps = async ({
           variables: {
             input: {
               ...calculationInput,
-              startYear: 2025,
-              startMonth: 9,
+              dateOfCalculations: new Date(2025, 8, 1).toISOString(),
               typeOfBasePension:
                 SocialInsurancePensionCalculationBasePensionType.NewSystem,
             },
