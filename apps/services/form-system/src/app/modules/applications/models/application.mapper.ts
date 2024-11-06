@@ -49,7 +49,7 @@ export class ApplicationMapper {
                 description: field.description,
                 isPartOfMultiset: field.isPartOfMultiset,
                 fieldType: field.fieldType,
-                fieldSettingsType: field.fieldSettingsType,
+                fieldSettings: field.fieldSettings,
                 // fieldSettings:
                 //   this.fieldSettingsMapper.mapFieldTypeToFieldSettingsDto(
                 //     field.fieldSettings,

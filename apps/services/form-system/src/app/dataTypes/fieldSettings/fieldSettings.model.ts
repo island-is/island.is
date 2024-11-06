@@ -11,7 +11,7 @@ import {
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
-export class FieldSettingsType {
+export class FieldSettings {
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })

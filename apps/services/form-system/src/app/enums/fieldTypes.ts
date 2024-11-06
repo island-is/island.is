@@ -1,4 +1,4 @@
-export const FieldTypes = {
+export const FieldTypesEnum = {
   TEXTBOX: 'textbox',
   EMAIL: 'email',
   PROPERTY_NUMBER: 'propertyNumber',

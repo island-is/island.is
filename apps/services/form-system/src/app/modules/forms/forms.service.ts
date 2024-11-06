@@ -37,8 +37,9 @@ import {
   ApplicantTypes,
 } from '../../dataTypes/applicantType.model'
 import { FormApplicant } from '../formApplicants/models/formApplicant.model'
-import { FieldSettingsType } from '../../dataTypes/fieldSettingsTypes/fieldSettingsType.model'
-import { FieldSettingsTypeFactory } from '../../dataTypes/fieldSettingsTypes/fieldSettingsType.factory'
+import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
+import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
+import { FieldTypes } from '../../dataTypes/fieldType.model'
 // import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 // import { ValueFactory } from '../../dataTypes/valueTypes/valueType.factory'
 
@@ -56,9 +57,8 @@ export class FormsService {
     @InjectModel(FieldType)
     private readonly fieldTypeModel: typeof FieldType,
     @InjectModel(ListType)
-    private readonly listTypeModel: typeof ListType,
-  ) // private readonly fieldSettingsMapper: FieldSettingsMapper,
-  {}
+    private readonly listTypeModel: typeof ListType, // private readonly fieldSettingsMapper: FieldSettingsMapper,
+  ) {}
 
   async findAll(organizationId: string): Promise<FormResponseDto> {
     const forms = await this.formModel.findAll({
@@ -256,9 +256,14 @@ export class FormsService {
   }
 
   private async getFieldTypes(organizationId: string): Promise<FieldTypeDto[]> {
-    const commonFieldTypes = await this.fieldTypeModel.findAll({
-      where: { isCommon: true },
-    })
+    // const commonFieldTypes = await this.fieldTypeModel.findAll({
+    //   where: { isCommon: true },
+    // })
+
+    const commonFieldTypes = FieldTypes.filter(
+      (fieldType) => fieldType.isCommon,
+    )
+
     const organizationSpecificFieldTypes =
       await this.organizationModel.findByPk(organizationId, {
         include: [FieldType],
@@ -278,9 +283,9 @@ export class FormsService {
             zipObject(keys, Array(keys.length).fill(null)),
           ),
           {
-            fieldSettingsType: FieldSettingsTypeFactory.getClass(
+            fieldSettings: FieldSettingsFactory.getClass(
               fieldType.type,
-              new FieldSettingsType(),
+              new FieldSettings(),
             ),
           },
         ) as FieldTypeDto,
@@ -430,9 +435,9 @@ export class FormsService {
                 zipObject(fieldKeys, Array(fieldKeys.length).fill(null)),
               ),
               {
-                fieldSettings: FieldSettingsTypeFactory.getClass(
+                fieldSettings: FieldSettingsFactory.getClass(
                   field.fieldType,
-                  new FieldSettingsType(),
+                  new FieldSettings(),
                 ),
                 // values: [this.createValue(field.fieldType, 0)],
               },
