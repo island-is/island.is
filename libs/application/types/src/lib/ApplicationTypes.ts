@@ -8,7 +8,6 @@ export enum ApplicationTypes {
   PARENTAL_LEAVE = 'ParentalLeave',
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
   HEALTH_INSURANCE = 'HealthInsurance',
-  CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
   CHILDREN_RESIDENCE_CHANGE_V2 = 'ChildrenResidenceChangeV2',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   LOGIN_SERVICE = 'LoginService',
@@ -116,10 +115,6 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.HEALTH_INSURANCE]: {
     slug: 'sjukratryggingar',
     translation: 'hi.application',
-  },
-  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: {
-    slug: 'breytt-logheimili-barns-old',
-    translation: 'crc.application',
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
     slug: 'breytt-logheimili-barns',
