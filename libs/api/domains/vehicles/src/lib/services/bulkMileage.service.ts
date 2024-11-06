@@ -7,6 +7,7 @@ import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { PostVehicleBulkMileageInput } from '../dto/postBulkVehicleMileage.input'
 import { isDefined } from '@island.is/shared/utils'
+import type { Locale } from '@island.is/shared/types'
 import { LOG_CATEGORY } from '../constants'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { VehiclesBulkMileageReadingResponse } from '../models/v3/bulkMileage/bulkMileageReadingResponse.model'
@@ -14,11 +15,16 @@ import { VehiclesBulkMileageRegistrationJobHistory } from '../models/v3/bulkMile
 import { VehiclesBulkMileageRegistrationRequestStatus } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestStatus.model'
 import { VehiclesBulkMileageRegistrationRequestOverview } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestOverview.model'
 import { FetchError } from '@island.is/clients/middlewares'
+import { IntlService } from '@island.is/cms-translations'
+import { errorCodeMessageMap } from './errorCodes'
+
+const namespaces = ['api.bulk-vehicle-mileage']
 
 @Injectable()
 export class BulkMileageService {
   constructor(
     private mileageReadingApi: MileageReadingApi,
+    private readonly intlService: IntlService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -59,7 +65,6 @@ export class BulkMileageService {
 
       return {
         requestId: res.guid,
-        errorMessage: res.errorMessage ?? undefined,
       }
     } catch (e) {
       const error: Error = e
@@ -127,8 +132,10 @@ export class BulkMileageService {
 
   async getBulkMileageRegistrationRequestOverview(
     auth: User,
+    locale: Locale,
     input: GetbulkmileagereadingrequeststatusGuidGetRequest['guid'],
   ): Promise<VehiclesBulkMileageRegistrationRequestOverview> {
+    const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
     const data = await this.getMileageWithAuth(
       auth,
     ).getbulkmileagereadingrequestdetailsGuidGet({ guid: input })
@@ -147,6 +154,10 @@ export class BulkMileageService {
             errors: d.errors?.map((e) => ({
               code: e.errorCode ?? undefined,
               message: e.errorText ?? undefined,
+              warningSerialCode: e.warningSerial ?? 0,
+              warningText: e.warningSerial
+                ? formatMessage(errorCodeMessageMap[e.warningSerial ?? 0])
+                : undefined,
             })),
           }
         })

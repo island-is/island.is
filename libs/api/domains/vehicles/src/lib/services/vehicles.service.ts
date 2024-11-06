@@ -11,7 +11,6 @@ import {
   VehicleDtoListPagedResponse,
   PersidnoLookupResultDto,
   CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
-  ApiResponse,
 } from '@island.is/clients/vehicles'
 import {
   CanregistermileagePermnoGetRequest,
@@ -19,7 +18,6 @@ import {
   MileageReadingApi,
   MileageReadingDto,
   PostMileageReadingModel,
-  PutMileageReadingModel,
   RequiresmileageregistrationPermnoGetRequest,
   RootPostRequest,
   RootPutRequest,
@@ -35,10 +33,7 @@ import {
   GetVehiclesForUserInput,
   GetVehiclesListV2Input,
 } from '../dto/getVehiclesForUserInput'
-import {
-  VehicleMileageDetail,
-  VehicleMileageOverview,
-} from '../models/getVehicleMileage.model'
+import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
 import { mileageDetailConstructor } from '../utils/helpers'
 import { FetchError, handle404 } from '@island.is/clients/middlewares'
@@ -470,9 +465,11 @@ export class VehiclesService {
       throw new ForbiddenException(UNAUTHORIZED_OWNERSHIP_LOG)
     }
 
-    return this.getMileageWithAuth(auth).rootPut({
+    const dtos = await this.getMileageWithAuth(auth).rootPut({
       putMileageReadingModel: input,
     })
+
+    return dtos[0]
   }
 
   async postMileageReadingV2(
@@ -537,9 +534,10 @@ export class VehiclesService {
     }
 
     try {
-      return this.getMileageWithAuth(auth).rootPut({
+      const dtos = await this.getMileageWithAuth(auth).rootPut({
         putMileageReadingModel: input,
       })
+      return dtos[0]
     } catch (e) {
       if (e instanceof FetchError && (e.status === 400 || e.status === 429)) {
         const errorBody = e.body as UpdateResponseError

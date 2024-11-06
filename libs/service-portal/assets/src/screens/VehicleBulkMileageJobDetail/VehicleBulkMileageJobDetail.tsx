@@ -34,7 +34,7 @@ type UseParams = {
 
 const VehicleBulkMileageJobDetail = () => {
   useNamespaces('sp.vehicles')
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const { id } = useParams() as UseParams
 
   const { data, loading, error, refetch, networkStatus } =
@@ -57,6 +57,7 @@ const VehicleBulkMileageJobDetail = () => {
     notifyOnNetworkStatusChange: true,
     variables: {
       input: {
+        locale: locale,
         guid: id,
       },
     },
