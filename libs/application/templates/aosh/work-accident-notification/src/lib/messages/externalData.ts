@@ -2,11 +2,6 @@ import { defineMessages } from 'react-intl'
 
 export const externalData = {
   dataProvider: defineMessages({
-    sectionTitle: {
-      id: 'aosh.wan.application:externalData.dataProvider.sectionTitle',
-      defaultMessage: 'Gagnaöflun',
-      description: 'Title of external data section',
-    },
     pageTitle: {
       id: 'aosh.wan.application:externalData.dataProvider.pageTitle',
       defaultMessage: 'Tilkynning um vinnuslys',

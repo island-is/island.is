@@ -7,11 +7,6 @@ export const conclusion = {
       defaultMessage: 'Staðfesting',
       description: 'Title of conclusion screen',
     },
-    sectionTitle: {
-      id: 'aosh.wan.application:conclusion.general.sectionTitle',
-      defaultMessage: 'Staðfesting',
-      description: 'Title of conclusion screen',
-    },
   }),
   default: defineMessages({
     alertTitle: {

@@ -16,7 +16,7 @@ import { DefaultEvents } from '@island.is/application/types'
 
 export const prerequisitesSection = buildSection({
   id: 'externalData',
-  title: externalData.dataProvider.sectionTitle,
+  title: '',
   children: [
     buildExternalDataProvider({
       id: 'externalData',
