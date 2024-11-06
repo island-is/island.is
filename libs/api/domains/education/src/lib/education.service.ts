@@ -72,7 +72,7 @@ export class EducationService {
         PRESIGNED_URL_EXPIRY,
       )
     } catch (error) {
-      this.logger.error(`Failed to process PDF license: ${licenseId}`, error)
+      this.logger.error(`Failed to process PDF license:`, {error, licenseId})
       return null
     }
   }
