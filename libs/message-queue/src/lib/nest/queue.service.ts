@@ -7,8 +7,11 @@ import type { Queue } from './types'
 @Injectable()
 export class QueueService implements OnApplicationBootstrap {
   private _url: string | null = null
+  queueName: string
 
-  constructor(private client: ClientService, private config: Queue) {}
+  constructor(private client: ClientService, private config: Queue) {
+    this.queueName = config.queueName
+  }
 
   // NB: We initialize the queues using "onApplicationBootstrap" rather than an
   // async "useFactory" because creating the nest application (like the
