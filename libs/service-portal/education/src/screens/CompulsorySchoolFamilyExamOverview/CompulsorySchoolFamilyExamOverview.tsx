@@ -7,9 +7,43 @@ import {
 import { useFamilySchoolCareerQueryQuery } from './CompulsorySchoolFamilyExamOverview.generated'
 import { EducationCompulsorySchoolStudentCareer } from '@island.is/api/schema'
 import { compulsorySchoolMessages } from '../../lib/messages'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  FormatMessage,
+  useLocale,
+  useNamespaces,
+} from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
-import { Box } from '@island.is/island-ui/core'
+import { Stack } from '@island.is/island-ui/core'
+import { isDefined } from '@island.is/shared/utils'
+import { EducationPaths } from '../../lib/paths'
+
+const generateActionCard = (
+  name: string,
+  dateSpan: string,
+  slug: string,
+  formatMessage: FormatMessage,
+) => (
+  <ActionCard
+    image={{ type: 'avatar' }}
+    translateLabel="no"
+    heading={name}
+    text={`${formatMessage(
+      compulsorySchoolMessages.examDateSpan,
+    )}: ${dateSpan}`}
+    tag={{
+      label: formatMessage(compulsorySchoolMessages.studentAssessment),
+      variant: 'purple',
+    }}
+    cta={{
+      label: formatMessage(m.seeDetails),
+      variant: 'text',
+      url: EducationPaths.EducationCompulsorySchoolAssessmentDetail.replace(
+        ':id',
+        slug,
+      ),
+    }}
+  />
+)
 
 export const CompulsorySchoolFamilyExamOverview = () => {
   useNamespaces('sp.education-student-assessment')
@@ -19,6 +53,28 @@ export const CompulsorySchoolFamilyExamOverview = () => {
 
   const userCareer: EducationCompulsorySchoolStudentCareer | null =
     data?.userFamilyExamResults.userCareer ?? null
+
+  const familyCareer: Array<EducationCompulsorySchoolStudentCareer> | null =
+    data?.userFamilyExamResults.familyMemberCareers ?? null
+
+  const careers: Array<React.ReactNode> = [
+    userCareer?.name && userCareer?.examDateSpan
+      ? generateActionCard(
+          userCareer.name,
+          userCareer.examDateSpan,
+          'default',
+          formatMessage,
+        )
+      : undefined,
+    familyCareer
+      ?.map((f) => {
+        if (!f.name || !f.examDateSpan) {
+          return undefined
+        }
+        return generateActionCard(f.name, f.examDateSpan, 'bha', formatMessage)
+      })
+      .filter(isDefined),
+  ].filter(isDefined)
 
   return (
     <>
@@ -41,27 +97,9 @@ export const CompulsorySchoolFamilyExamOverview = () => {
           imgSrc="./assets/images/sofa.svg"
         />
       )}
-      {userCareer && !loading && !error && (
-        <Box>
-          <ActionCard
-            image={{ type: 'avatar' }}
-            translateLabel="no"
-            heading={userCareer.name}
-            text={`${formatMessage(compulsorySchoolMessages.examDateSpan)}: ${
-              userCareer.examDateSpan
-            }`}
-            tag={{
-              label: formatMessage(compulsorySchoolMessages.studentAssessment),
-              variant: 'purple',
-            }}
-            cta={{
-              label: formatMessage(m.seeDetails),
-              variant: 'text',
-              url: 'eghjeaio',
-            }}
-          />
-        </Box>
-      )}
+      <Stack space={2}>
+        {careers.length > 0 && !loading && !error && careers}
+      </Stack>
     </>
   )
 }

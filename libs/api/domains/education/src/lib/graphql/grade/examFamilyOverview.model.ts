@@ -2,10 +2,10 @@ import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
 
 @ObjectType('EducationExamFamilyOverview')
 export class ExamFamilyOverview {
-  @Field(() => ID)
+  @Field()
   nationalId!: string
 
-  @Field(() => String)
+  @Field()
   name!: string
 
   @Field(() => Boolean)

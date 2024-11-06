@@ -4,47 +4,55 @@ import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 
-const CompulsorySchoolStudentAssessmentOverview = lazy(() =>
-  import(
-    '../../education/src/screens/CompulsorySchoolFamilyExamOverview/CompulsorySchoolFamilyExamOverview'
-  ),
-)
-const EducationCareer = lazy(() =>
-  import('../../education-career/src/screens/EducationCareer/EducationCareer'),
+const CompulsorySchoolFamilyExamOverview = lazy(
+  () =>
+    import(
+      '../../education/src/screens/CompulsorySchoolFamilyExamOverview/CompulsorySchoolFamilyExamOverview'
+    ),
 )
 
-const EducationGraduation = lazy(() =>
-  import('./screens/EducationGraduation/EducationGraduation'),
+const CompulsorySchoolExamDetail = lazy(
+  () =>
+    import(
+      '../../education/src/screens/CompulsorySchoolFamilyExamDetail/CompulsorySchoolFamilyExamDetail'
+    ),
 )
 
-const EducationGraduationDetail = lazy(() =>
-  import('./screens/EducationGraduationDetail/EducationGraduationDetail'),
+const EducationGraduation = lazy(
+  () => import('./screens/EducationGraduation/EducationGraduation'),
 )
 
-const SecondarySchoolCareer = lazy(() =>
-  import('./screens/SecondarySchoolCareer/SecondarySchoolCareer'),
+const EducationGraduationDetail = lazy(
+  () => import('./screens/EducationGraduationDetail/EducationGraduationDetail'),
 )
 
-const SecondarySchoolGraduationOverview = lazy(() =>
-  import(
-    './screens/SecondarySchoolGraduationOverview/SecondarySchoolGraduationOverview'
-  ),
+const SecondarySchoolCareer = lazy(
+  () => import('./screens/SecondarySchoolCareer/SecondarySchoolCareer'),
 )
 
-const SecondarySchoolGraduationSingle = lazy(() =>
-  import(
-    './screens/SecondarySchoolGraduationSingle/SecondarySchoolGraduationSingle'
-  ),
+const SecondarySchoolGraduationOverview = lazy(
+  () =>
+    import(
+      './screens/SecondarySchoolGraduationOverview/SecondarySchoolGraduationOverview'
+    ),
 )
 
-const SecondarySchoolGraduationDetail = lazy(() =>
-  import(
-    './screens/SecondarySchoolGraduationDetail/SecondarySchoolGraduationDetail'
-  ),
+const SecondarySchoolGraduationSingle = lazy(
+  () =>
+    import(
+      './screens/SecondarySchoolGraduationSingle/SecondarySchoolGraduationSingle'
+    ),
 )
 
-const DrivingLessonsBook = lazy(() =>
-  import('./screens/DrivingLessonsBook/DrivingLessonsBook'),
+const SecondarySchoolGraduationDetail = lazy(
+  () =>
+    import(
+      './screens/SecondarySchoolGraduationDetail/SecondarySchoolGraduationDetail'
+    ),
+)
+
+const DrivingLessonsBook = lazy(
+  () => import('./screens/DrivingLessonsBook/DrivingLessonsBook'),
 )
 
 export const educationModule: PortalModule = {
@@ -55,7 +63,12 @@ export const educationModule: PortalModule = {
       name: 'Menntun',
       path: EducationPaths.EducationRoot,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <Navigate to={EducationPaths.EducationAssessment} replace />,
+      element: (
+        <Navigate
+          to={EducationPaths.EducationCompulsorySchoolAssessment}
+          replace
+        />
+      ),
     },
 
     // Grunnskóli - Elementary
@@ -63,13 +76,24 @@ export const educationModule: PortalModule = {
       name: 'Grunnskóli',
       path: EducationPaths.EducationGrunnskoli,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <Navigate to={EducationPaths.EducationAssessment} replace />,
+      element: (
+        <Navigate
+          to={EducationPaths.EducationCompulsorySchoolAssessment}
+          replace
+        />
+      ),
     },
     {
       name: 'Námsmat',
-      path: EducationPaths.EducationAssessment,
+      path: EducationPaths.EducationCompulsorySchoolAssessment,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <CompulsorySchoolStudentAssessmentOverview />,
+      element: <CompulsorySchoolFamilyExamOverview />,
+    },
+    {
+      name: 'Námsmat nánar',
+      path: EducationPaths.EducationCompulsorySchoolAssessmentDetail,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: <CompulsorySchoolExamDetail />,
     },
 
     // Framhaldsskóli - Secondary education
