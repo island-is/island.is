@@ -422,7 +422,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               : 0,
         }}
         key={key}
-        contentContainerStyle={{ marginBottom: theme.spacing[6] }}
         topSpacing={informationTopSpacing}
       >
         <SafeAreaView
