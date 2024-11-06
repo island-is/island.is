@@ -30,11 +30,8 @@ module.exports = {
           },
           field_type_id: {
             type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV4,
             allowNull: false,
-            references: {
-              model: 'field_type',
-              key: 'id',
-            },
           },
         },
         { transaction: t },

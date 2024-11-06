@@ -6,14 +6,14 @@ module.exports = {
         created: new Date(),
         modified: new Date(),
         organization_id: 'a4b0db68-e169-416a-8ad9-e46b73ce2d39', // Sandbox Ísland ehf.
-        field_type_id: '49599a07-4d06-4ad4-9927-b55eab2dd97d', // nationaIdEstate
+        field_type_id: '15a57466-0be3-451d-988d-5b807fea3459', // nationaIdEstate
       },
       {
         id: '298bdf4f-6340-46c0-b403-59ec4ae3c19b',
         created: new Date(),
         modified: new Date(),
         organization_id: 'a4b0db68-e169-416a-8ad9-e46b73ce2d39', // Sandbox Ísland ehf.
-        field_type_id: 'ad67a9c3-f5d9-47eb-bcf9-dd34becf4b76', // nationalIdAll
+        field_type_id: '7cbbe78f-cd5f-4fb9-a77c-86af2bf986b1', // nationalIdAll
       },
     ])
   },

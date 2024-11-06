@@ -11,9 +11,9 @@ import { Screen } from '../screens/models/screen.model'
 // import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
 // import { FieldSettings } from '../fieldSettings/models/fieldSettings.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
-import { FieldTypeDto } from '../fields/models/dto/fieldType.dto'
+// import { FieldTypeDto } from '../fields/models/dto/fieldType.dto'
 import { Field } from '../fields/models/field.model'
-import { FieldType } from '../fields/models/fieldType.model'
+// import { FieldType } from '../fields/models/fieldType.model'
 import { ListTypeDto } from '../lists/models/dto/listType.dto'
 import { ListType } from '../lists/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
@@ -39,7 +39,11 @@ import {
 import { FormApplicant } from '../formApplicants/models/formApplicant.model'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
-import { FieldTypes } from '../../dataTypes/fieldType.model'
+import { FieldType, FieldTypes } from '../../dataTypes/fieldType.model'
+import { OrganizationFieldType } from '../organizationFieldTypes/models/organizationFieldType.model'
+import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
+import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
+import { randomUUID } from 'crypto'
 // import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 // import { ValueFactory } from '../../dataTypes/valueTypes/valueType.factory'
 
@@ -54,8 +58,8 @@ export class FormsService {
     private readonly screenModel: typeof Screen,
     @InjectModel(Organization)
     private readonly organizationModel: typeof Organization,
-    @InjectModel(FieldType)
-    private readonly fieldTypeModel: typeof FieldType,
+    // @InjectModel(FieldType)
+    // private readonly fieldTypeModel: typeof FieldType,
     @InjectModel(ListType)
     private readonly listTypeModel: typeof ListType, // private readonly fieldSettingsMapper: FieldSettingsMapper,
   ) {}
@@ -255,7 +259,7 @@ export class FormsService {
     return certificationsDto
   }
 
-  private async getFieldTypes(organizationId: string): Promise<FieldTypeDto[]> {
+  private async getFieldTypes(organizationId: string): Promise<FieldType[]> {
     // const commonFieldTypes = await this.fieldTypeModel.findAll({
     //   where: { isCommon: true },
     // })
@@ -264,35 +268,52 @@ export class FormsService {
       (fieldType) => fieldType.isCommon,
     )
 
-    const organizationSpecificFieldTypes =
-      await this.organizationModel.findByPk(organizationId, {
-        include: [FieldType],
-      })
-
-    const organizationFieldTypes = commonFieldTypes.concat(
-      organizationSpecificFieldTypes?.organizationFieldTypes as FieldType[],
-    )
-
-    const fieldTypesDto: FieldTypeDto[] = []
-    const keys = ['id', 'type', 'name', 'description', 'isCommon']
-    organizationFieldTypes.map((fieldType) => {
-      fieldTypesDto.push(
-        Object.assign(
-          defaults(
-            pick(fieldType, keys),
-            zipObject(keys, Array(keys.length).fill(null)),
-          ),
-          {
-            fieldSettings: FieldSettingsFactory.getClass(
-              fieldType.type,
-              new FieldSettings(),
-            ),
-          },
-        ) as FieldTypeDto,
-      )
+    const organization = await this.organizationModel.findByPk(organizationId, {
+      include: [OrganizationFieldType],
     })
 
-    return fieldTypesDto
+    const uncommonFieldTypes = FieldTypes.filter((fieldType) =>
+      organization?.organizationFieldTypes?.some(
+        (item) => item.fieldTypeId === fieldType.id,
+      ),
+    )
+
+    const organizationFieldTypes = commonFieldTypes.concat(uncommonFieldTypes)
+
+    organizationFieldTypes.map((fieldType) => {
+      ;(fieldType.fieldSettings = FieldSettingsFactory.getClass(
+        fieldType.type,
+        new FieldSettings(),
+      )),
+        (fieldType.values = [
+          {
+            id: randomUUID(),
+            order: 0,
+            json: ValueTypeFactory.getClass(fieldType.type, new ValueType()),
+          },
+        ])
+    })
+
+    // const fieldTypesDto: FieldType[] = []
+    // const keys = ['id', 'type', 'name', 'description', 'isCommon']
+    // organizationFieldTypes.map((fieldType) => {
+    //   fieldTypesDto.push(
+    //     Object.assign(
+    //       defaults(
+    //         pick(fieldType, keys),
+    //         zipObject(keys, Array(keys.length).fill(null)),
+    //       ),
+    //       {
+    //         fieldSettings: FieldSettingsFactory.getClass(
+    //           fieldType.type,
+    //           new FieldSettings(),
+    //         ),
+    //       },
+    //     ) as FieldType,
+    //   )
+    // })
+
+    return organizationFieldTypes
   }
 
   private async getListTypes(organizationId: string): Promise<ListTypeDto[]> {

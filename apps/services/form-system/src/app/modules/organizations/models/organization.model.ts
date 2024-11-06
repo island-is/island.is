@@ -12,9 +12,10 @@ import {
 import { LanguageType } from '../../../dataTypes/languageType.model'
 // import { ApplicantTypeNameSuggestion } from '../../applicants/models/applicantTypeNameSuggestion.model'
 import { Form } from '../../forms/models/form.model'
-import { FieldType } from '../../fields/models/fieldType.model'
+// import { FieldType } from '../../fields/models/fieldType.model'
 import { ListType } from '../../lists/models/listType.model'
 import { OrganizationCertification } from '../../organizationCertifications/models/organizationCertification.model'
+import { OrganizationFieldType } from '../../organizationFieldTypes/models/organizationFieldType.model'
 // import { Certification } from '../../certifications/models/certification.model'
 
 @Table({ tableName: 'organization' })
@@ -53,12 +54,15 @@ export class Organization extends Model<Organization> {
   // @HasMany(() => ApplicantTypeNameSuggestion)
   // applicantTypeNameSuggestions?: ApplicantTypeNameSuggestion[]
 
-  @BelongsToMany(() => FieldType, {
-    through: 'organization_field_type',
-    foreignKey: 'organization_id',
-    otherKey: 'field_type_id',
-  })
-  organizationFieldTypes?: NonAttribute<FieldType[]>
+  // @BelongsToMany(() => FieldType, {
+  //   through: 'organization_field_type',
+  //   foreignKey: 'organization_id',
+  //   otherKey: 'field_type_id',
+  // })
+  // organizationFieldTypes?: NonAttribute<FieldType[]>
+
+  @HasMany(() => OrganizationFieldType)
+  organizationFieldTypes?: OrganizationFieldType[]
 
   @HasMany(() => OrganizationCertification)
   organizationCertifications?: OrganizationCertification[]
