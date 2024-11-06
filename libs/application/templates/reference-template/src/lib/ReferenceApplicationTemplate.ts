@@ -50,16 +50,16 @@ enum Roles {
 }
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
-  const careerHistory = getValueViaPath(
+  const careerHistory = getValueViaPath<string>(
     application.answers,
     'careerHistory',
     undefined,
-  ) as string | undefined
-  const careerIndustry = getValueViaPath(
+  )
+  const careerIndustry = getValueViaPath<string>(
     application.answers,
     'careerIndustry',
     undefined,
-  ) as string | undefined
+  )
 
   if (careerHistory === 'no') {
     return m.nameApplicationNeverWorkedBefore
@@ -103,8 +103,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Prerequisites').then((module) =>
-                  Promise.resolve(module.Prerequisites),
+                import('../forms/prerequisitesForm/prerequisitesForm').then(
+                  (module) => Promise.resolve(module.Prerequisites),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
@@ -154,7 +154,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ExampleForm').then((module) =>
+                import('../forms/exampleForm').then((module) =>
                   Promise.resolve(module.ExampleForm),
                 ),
               actions: [
@@ -207,8 +207,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/WaitingToAssign').then((val) =>
-                  Promise.resolve(val.PendingReview),
+                import('../forms/waitingToAssignForm/waitingToAssignForm').then(
+                  (val) => Promise.resolve(val.PendingReview),
                 ),
               read: 'all',
               write: 'all',
@@ -217,8 +217,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/WaitingToAssign').then((val) =>
-                  Promise.resolve(val.PendingReview),
+                import('../forms/waitingToAssignForm/waitingToAssignForm').then(
+                  (val) => Promise.resolve(val.PendingReview),
                 ),
               read: 'all',
             },
@@ -263,8 +263,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.ASSIGNEE,
               formLoader: () =>
-                import('../forms/ReviewApplication').then((val) =>
-                  Promise.resolve(val.ReviewApplication),
+                import('../forms/reviewApplicationForm/reviewApplication').then(
+                  (val) => Promise.resolve(val.ReviewApplication),
                 ),
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
@@ -279,7 +279,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/PendingReview').then((val) =>
+                import('../forms/pendingReviewForm/pendingReview').then((val) =>
                   Promise.resolve(val.PendingReview),
                 ),
               read: 'all',
@@ -301,7 +301,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Approved').then((val) =>
+                import('../forms/approvedForm/approvedForm').then((val) =>
                   Promise.resolve(val.Approved),
                 ),
               read: 'all',
@@ -320,7 +320,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Rejected').then((val) =>
+                import('../forms/rejectedForm/rejectedForm').then((val) =>
                   Promise.resolve(val.Rejected),
                 ),
             },

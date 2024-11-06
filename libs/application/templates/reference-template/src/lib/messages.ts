@@ -180,4 +180,40 @@ export const m = defineMessages({
       'Vinsamlegast tilgreindu hvort umsóknin sé samþykkt eða ekki',
     description: 'Some description',
   },
+  regularTextExample: {
+    id: 'example.application:regularTextExample',
+    defaultMessage:
+      'Regular text coming from a message file, this can be overwritten in contentful by webmaster',
+    description: 'Example use of messages',
+  },
+  markdownHeadingExample: {
+    id: 'example.application:markdownHeadingExample#markdown',
+    defaultMessage:
+      '# Markdown heading 1\n ## Markdown heading 2\n ### Markdown heading 3\n #### Markdown heading 4\n Regular markdown text',
+    description: 'Example use of markdown',
+  },
+  markdownBulletListExample: {
+    id: 'example.application:markdownBulletListExample#markdown',
+    defaultMessage:
+      'Markdown bullet list\n * bullet 1\n * bullet 2\n * bullet 3',
+    description: 'Example use of markdown',
+  },
+  markdownNumberedListExample: {
+    id: 'example.application:markdownNumberedListExample#markdown',
+    defaultMessage:
+      'Markdown numbered list\n 1. number 1\n 2. number 2\n 3. number 3',
+    description: 'Example use of markdown',
+  },
+  markdownMiscExample: {
+    id: 'example.application:markdownMiscExample#markdown',
+    defaultMessage:
+      'A markdown link will open in a new tab: [This is a link to Google!](http://google.com)\n\n Markdown value inserted {value1}\n\n **Bold text**\n\n *Italic text*\n\n ***Bold and italic text***',
+    description: 'Example use of markdown link',
+  },
+  markdownCodeExample: {
+    id: 'example.application:markdownCodeExample#markdown',
+    defaultMessage:
+      'Markdown code inline `const x = 123` with text\n\n Code block\n\n ```\n const x = 123\n if (x < 100) {\n   return true\n }\n```',
+    description: 'Example use of markdown code',
+  },
 })
