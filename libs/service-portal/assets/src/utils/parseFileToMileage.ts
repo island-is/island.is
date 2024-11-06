@@ -89,7 +89,6 @@ const parseXlsx = async (file: File) => {
     const jsonData = XLSX.utils.sheet_to_csv(
       parsedFile.Sheets[parsedFile.SheetNames[0]],
       {
-        strip: true,
         blankrows: false,
       },
     )
