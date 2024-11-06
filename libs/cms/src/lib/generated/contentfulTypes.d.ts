@@ -305,6 +305,9 @@ export interface IArticleFields {
 
   /** Sign language video */
   signLanguageVideo?: IEmbeddedVideo | undefined
+
+  /** Keywords */
+  keywords?: string[] | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -625,6 +628,9 @@ export interface IChartComponentFields {
 
   /** Stack Id */
   stackId?: string | undefined
+
+  /** Values */
+  values?: Record<string, any> | undefined
 }
 
 /** A component to be used with [Chart]. This component controls how data is visualised on a chart. What type of visualisation, what data is used and how it is used. */

@@ -1079,6 +1079,7 @@ export class ApplicationController {
   async delete(
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() user: User,
+    @CurrentLocale() locale: Locale,
   ) {
     const { nationalId } = user
     const existingApplication =
@@ -1097,6 +1098,53 @@ export class ApplicationController {
       )
     }
 
+    const template = await getApplicationTemplateByTypeId(
+      existingApplication.typeId,
+    )
+    if (template === null) {
+      throw new BadRequestException(
+        `No application template exists for type: ${existingApplication.typeId}`,
+      )
+    }
+
+    let onDeleteActions = new ApplicationTemplateHelper(
+      existingApplication,
+      template,
+    ).getOnDeleteStateAPIAction()
+    if (onDeleteActions) {
+      const namespaces = await getApplicationTranslationNamespaces(
+        existingApplication,
+      )
+      if (!Array.isArray(onDeleteActions)) {
+        onDeleteActions = [onDeleteActions]
+      }
+
+      const intl = await this.intlService.useIntl(namespaces, locale)
+      const deletingApplication = await this.templateApiActionRunner.run(
+        existingApplication,
+        onDeleteActions,
+        user,
+        locale,
+        intl.formatMessage,
+      )
+
+      for (const api of onDeleteActions) {
+        const result =
+          deletingApplication.externalData[api.externalDataId || api.action]
+
+        this.logger.debug(
+          `Performing action ${api.action} on ${JSON.stringify(
+            template.name,
+          )} ended with ${result.status}`,
+        )
+
+        if (result.status === 'failure' && api.throwOnError) {
+          const reason = result.reason ?? 'Unknown error'
+          throw new TemplateApiError(reason, 500)
+        }
+      }
+    }
+
     // delete charge in FJS
     await this.applicationChargeService.deleteCharge(existingApplication)
 
@@ -1111,5 +1159,12 @@ export class ApplicationController {
     )
 
     await this.applicationService.delete(existingApplication.id)
+
+    this.auditService.audit({
+      auth: user,
+      action: 'delete',
+      resources: existingApplication.id,
+      meta: { type: existingApplication.typeId },
+    })
   }
 }
