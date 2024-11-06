@@ -1,15 +1,15 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
-  rentalAmountIndexTypes,
-  rentalHousingCategoryClass,
-  rentalHousingCategoryClassGroup,
-  rentalHousingCategoryTypes,
-  rentalHousingConditionInspector,
-  rentalAmountPaymentDateOptions,
-  rentOtherFeesPayeeOptions,
-  securityDepositTypeOptions,
-  securityDepositAmountOptions,
+  RentalAmountIndexTypes,
+  RentalHousingCategoryClass,
+  RentalHousingCategoryClassGroup,
+  RentalHousingCategoryTypes,
+  RentalHousingConditionInspector,
+  RentalAmountPaymentDateOptions,
+  RentOtherFeesPayeeOptions,
+  SecurityDepositTypeOptions,
+  SecurityDepositAmountOptions,
 } from './constants'
 import * as m from './messages'
 
@@ -21,45 +21,45 @@ export const formatNationalId = (nationalId: string) =>
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const propertyCategoryTypeOptions =
-    getValueViaPath<rentalHousingCategoryTypes>(
+    getValueViaPath<RentalHousingCategoryTypes>(
       answers,
       'registerProperty.categoryType',
     )
 
   const propertyCategoryClassOptions =
-    getValueViaPath<rentalHousingCategoryClass>(
+    getValueViaPath<RentalHousingCategoryClass>(
       answers,
       'registerProperty.categoryClass',
     )
 
-  const inspectorOptions = getValueViaPath<rentalHousingConditionInspector>(
+  const inspectorOptions = getValueViaPath<RentalHousingConditionInspector>(
     answers,
     'condition.inspector',
   )
 
-  const rentalAmountIndexTypesOptions = getValueViaPath<rentalAmountIndexTypes>(
+  const rentalAmountIndexTypesOptions = getValueViaPath<RentalAmountIndexTypes>(
     answers,
     'rentalAmount.indexTypes',
   )
 
   const rentalAmountPaymentDateOptions =
-    getValueViaPath<rentalAmountPaymentDateOptions>(
+    getValueViaPath<RentalAmountPaymentDateOptions>(
       answers,
       'rentalAmount.paymentDateOptions',
     )
 
-  const rentOtherFeesHousingFund = getValueViaPath<rentOtherFeesPayeeOptions>(
+  const rentOtherFeesHousingFund = getValueViaPath<RentOtherFeesPayeeOptions>(
     answers,
     'rentOtherFees.housingFund',
   )
 
   const rentOtherFeesElectricityCost =
-    getValueViaPath<rentOtherFeesPayeeOptions>(
+    getValueViaPath<RentOtherFeesPayeeOptions>(
       answers,
       'rentOtherFees.electricityCost',
     )
 
-  const rentOtherFeesHeatingCost = getValueViaPath<rentOtherFeesPayeeOptions>(
+  const rentOtherFeesHeatingCost = getValueViaPath<RentOtherFeesPayeeOptions>(
     answers,
     'rentOtherFees.heatingCost',
   )
@@ -78,99 +78,99 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
 export const getPropertyCategoryTypeOptions = () => [
   {
-    value: rentalHousingCategoryTypes.ENTIRE_HOME,
+    value: RentalHousingCategoryTypes.ENTIRE_HOME,
     label: m.registerProperty.category.typeSelectLabelEntireHome,
   },
   {
-    value: rentalHousingCategoryTypes.ROOM,
+    value: RentalHousingCategoryTypes.ROOM,
     label: m.registerProperty.category.typeSelectLabelRoom,
   },
   {
-    value: rentalHousingCategoryTypes.COMMERCIAL,
+    value: RentalHousingCategoryTypes.COMMERCIAL,
     label: m.registerProperty.category.typeSelectLabelCommercial,
   },
 ]
 
 export const getPropertyCategoryClassOptions = () => [
   {
-    value: rentalHousingCategoryClass.GENERAL_MARKET,
+    value: RentalHousingCategoryClass.GENERAL_MARKET,
     label: m.registerProperty.category.classSelectLabelGeneralMarket,
   },
   {
-    value: rentalHousingCategoryClass.SPECIAL_GROUPS,
+    value: RentalHousingCategoryClass.SPECIAL_GROUPS,
     label: m.registerProperty.category.classSelectLabelSpecialGroups,
   },
 ]
 
 export const getPropertyCategoryClassGroupOptions = () => [
   {
-    value: rentalHousingCategoryClassGroup.STUDENT_HOUSING,
+    value: RentalHousingCategoryClassGroup.STUDENT_HOUSING,
     label: m.registerProperty.category.classGroupSelectLabelStudentHousing,
   },
   {
-    value: rentalHousingCategoryClassGroup.SENIOR_CITIZEN_HOUSING,
+    value: RentalHousingCategoryClassGroup.SENIOR_CITIZEN_HOUSING,
     label:
       m.registerProperty.category.classGroupSelectLabelSeniorCitizenHousing,
   },
   {
-    value: rentalHousingCategoryClassGroup.COMMUNE,
+    value: RentalHousingCategoryClassGroup.COMMUNE,
     label: m.registerProperty.category.classGroupSelectLabelCommune,
   },
   {
-    value: rentalHousingCategoryClassGroup.HALFWAY_HOUSE,
+    value: RentalHousingCategoryClassGroup.HALFWAY_HOUSE,
     label: m.registerProperty.category.classGroupSelectLabelHalfwayHouse,
   },
   {
-    value: rentalHousingCategoryClassGroup.SOCIAL_HOUSING,
+    value: RentalHousingCategoryClassGroup.SOCIAL_HOUSING,
     label: m.registerProperty.category.classGroupSelectLabelSocialHousing,
   },
   {
-    value: rentalHousingCategoryClassGroup.INCOME_BASED_HOUSING,
+    value: RentalHousingCategoryClassGroup.INCOME_BASED_HOUSING,
     label: m.registerProperty.category.classGroupSelectLabelIncomeBasedHousing,
   },
   {
-    value: rentalHousingCategoryClassGroup.EMPLOYEE_HOUSING,
+    value: RentalHousingCategoryClassGroup.EMPLOYEE_HOUSING,
     label: m.registerProperty.category.classGroupSelectLabelEmployeeHousing,
   },
 ]
 
 export const getInspectorOptions = () => [
   {
-    value: rentalHousingConditionInspector.CONTRACT_PARTIES,
+    value: RentalHousingConditionInspector.CONTRACT_PARTIES,
     label: m.housingCondition.inspectorOptionContractParties,
   },
   {
-    value: rentalHousingConditionInspector.INDEPENDENT_PARTY,
+    value: RentalHousingConditionInspector.INDEPENDENT_PARTY,
     label: m.housingCondition.inspectorOptionIndependentParty,
   },
 ]
 
 export const getRentalAmountIndexTypes = () => [
   {
-    value: rentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
+    value: RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
     label: m.rentalAmount.indexOptionConsumerPriceIndex,
   },
   {
-    value: rentalAmountIndexTypes.CONSTRUCTION_COST_INDEX,
+    value: RentalAmountIndexTypes.CONSTRUCTION_COST_INDEX,
     label: m.rentalAmount.indexOptionConstructionCostIndex,
   },
   {
-    value: rentalAmountIndexTypes.WAGE_INDEX,
+    value: RentalAmountIndexTypes.WAGE_INDEX,
     label: m.rentalAmount.indexOptionWageIndex,
   },
 ]
 
 export const getRentalAmountPaymentDateOptions = () => [
   {
-    value: rentalAmountPaymentDateOptions.FIRST_DAY,
+    value: RentalAmountPaymentDateOptions.FIRST_DAY,
     label: m.rentalAmount.paymentDateOptionFirstDay,
   },
   {
-    value: rentalAmountPaymentDateOptions.LAST_DAY,
+    value: RentalAmountPaymentDateOptions.LAST_DAY,
     label: m.rentalAmount.paymentDateOptionLastDay,
   },
   {
-    value: rentalAmountPaymentDateOptions.OTHER,
+    value: RentalAmountPaymentDateOptions.OTHER,
     label: m.rentalAmount.paymentDateOptionOther,
   },
 ]
@@ -178,56 +178,56 @@ export const getRentalAmountPaymentDateOptions = () => [
 export const getSecurityDepositTypeOptions = () => [
   {
     label: m.securityDeposit.typeSelectionBankGuaranteeTitle,
-    value: securityDepositTypeOptions.BANK_GUARANTEE,
+    value: SecurityDepositTypeOptions.BANK_GUARANTEE,
   },
   {
     label: m.securityDeposit.typeSelectionCapitalTitle,
-    value: securityDepositTypeOptions.CAPITAL,
+    value: SecurityDepositTypeOptions.CAPITAL,
   },
   {
     label: m.securityDeposit.typeSelectionThirdPartyGuaranteeTitle,
-    value: securityDepositTypeOptions.THIRD_PARTY_GUARANTEE,
+    value: SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE,
   },
   {
     label: m.securityDeposit.typeSelectionInsuranceCompanyTitle,
-    value: securityDepositTypeOptions.INSURANCE_COMPANY,
+    value: SecurityDepositTypeOptions.INSURANCE_COMPANY,
   },
   {
     label: m.securityDeposit.typeSelectionMutualFundTitle,
-    value: securityDepositTypeOptions.MUTUAL_FUND,
+    value: SecurityDepositTypeOptions.MUTUAL_FUND,
   },
   {
     label: m.securityDeposit.typeSelectionOtherTitle,
-    value: securityDepositTypeOptions.OTHER,
+    value: SecurityDepositTypeOptions.OTHER,
   },
 ]
 
 export const getSecurityAmountOptions = () => [
   {
     label: m.securityDeposit.amountSelection1Month,
-    value: securityDepositAmountOptions.ONE_MONTH,
+    value: SecurityDepositAmountOptions.ONE_MONTH,
   },
   {
     label: m.securityDeposit.amountSelection2Month,
-    value: securityDepositAmountOptions.TWO_MONTHS,
+    value: SecurityDepositAmountOptions.TWO_MONTHS,
   },
   {
     label: m.securityDeposit.amountSelection3Month,
-    value: securityDepositAmountOptions.THREE_MONTHS,
+    value: SecurityDepositAmountOptions.THREE_MONTHS,
   },
   {
     label: m.securityDeposit.amountSelectionOther,
-    value: securityDepositAmountOptions.OTHER,
+    value: SecurityDepositAmountOptions.OTHER,
   },
 ]
 
 export const getRentalOtherFeesPayeeOptions = () => [
   {
-    value: rentOtherFeesPayeeOptions.LANDLORD,
+    value: RentOtherFeesPayeeOptions.LANDLORD,
     label: m.otherFees.paidByLandlordLabel,
   },
   {
-    value: rentOtherFeesPayeeOptions.TENANT,
+    value: RentOtherFeesPayeeOptions.TENANT,
     label: m.otherFees.paidByTenantLabel,
   },
 ]

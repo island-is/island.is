@@ -11,8 +11,8 @@ import {
 import { SubSection } from '@island.is/application/types'
 import { postalCodes } from '@island.is/shared/utils'
 import {
-  rentalHousingCategoryClass,
-  rentalHousingCategoryTypes,
+  RentalHousingCategoryClass,
+  RentalHousingCategoryTypes,
 } from '../../lib/constants'
 import {
   getApplicationAnswers,
@@ -21,7 +21,6 @@ import {
   getPropertyCategoryTypeOptions,
 } from '../../lib/utils'
 import * as m from '../../lib/messages'
-import { get } from 'lodash'
 
 const messagesInfo = m.registerProperty.info
 const messagesSummary = m.registerProperty.infoSummary
@@ -156,7 +155,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           title: messagesCategory.typeTitle,
           description: messagesCategory.typeDescription,
           options: getPropertyCategoryTypeOptions(),
-          defaultValue: rentalHousingCategoryTypes.ENTIRE_HOME,
+          defaultValue: RentalHousingCategoryTypes.ENTIRE_HOME,
           required: true,
         }),
         buildRadioField({
@@ -164,7 +163,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           title: messagesCategory.classTitle,
           description: messagesCategory.classDescription,
           options: getPropertyCategoryClassOptions(),
-          defaultValue: rentalHousingCategoryClass.GENERAL_MARKET,
+          defaultValue: RentalHousingCategoryClass.GENERAL_MARKET,
           required: true,
           width: 'half',
           space: 5,
@@ -178,7 +177,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
               getApplicationAnswers(answers)
             return (
               propertyCategoryClassOptions ===
-              rentalHousingCategoryClass.SPECIAL_GROUPS
+              RentalHousingCategoryClass.SPECIAL_GROUPS
             )
           },
           options: getPropertyCategoryClassGroupOptions(),

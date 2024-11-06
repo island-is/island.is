@@ -20,18 +20,18 @@ export enum AnswerOptions {
   NO = 'no',
 }
 
-export enum rentalHousingCategoryTypes {
+export enum RentalHousingCategoryTypes {
   ENTIRE_HOME = 'entireHome',
   ROOM = 'room',
   COMMERCIAL = 'commercial',
 }
 
-export enum rentalHousingCategoryClass {
+export enum RentalHousingCategoryClass {
   GENERAL_MARKET = 'generalMarket',
   SPECIAL_GROUPS = 'specialGroups',
 }
 
-export enum rentalHousingCategoryClassGroup {
+export enum RentalHousingCategoryClassGroup {
   STUDENT_HOUSING = 'studentHousing',
   SENIOR_CITIZEN_HOUSING = 'seniorCitizenHousing',
   COMMUNE = 'commune',
@@ -41,24 +41,24 @@ export enum rentalHousingCategoryClassGroup {
   EMPLOYEE_HOUSING = 'employeeHousing',
 }
 
-export enum rentalHousingConditionInspector {
+export enum RentalHousingConditionInspector {
   CONTRACT_PARTIES = 'contractParties',
   INDEPENDENT_PARTY = 'independentParty',
 }
 
-export enum rentalAmountIndexTypes {
+export enum RentalAmountIndexTypes {
   CONSUMER_PRICE_INDEX = 'consumerPriceIndex',
   CONSTRUCTION_COST_INDEX = 'constructionCostIndex',
   WAGE_INDEX = 'wageIndex',
 }
 
-export enum rentalAmountPaymentDateOptions {
+export enum RentalAmountPaymentDateOptions {
   FIRST_DAY = 'firstDay',
   LAST_DAY = 'lastDay',
   OTHER = 'other',
 }
 
-export enum securityDepositTypeOptions {
+export enum SecurityDepositTypeOptions {
   BANK_GUARANTEE = 'bankGuarantee',
   CAPITAL = 'capital',
   THIRD_PARTY_GUARANTEE = 'thirdPartyGuarantee',
@@ -67,7 +67,7 @@ export enum securityDepositTypeOptions {
   OTHER = 'other',
 }
 
-export enum securityDepositAmountOptions {
+export enum SecurityDepositAmountOptions {
   ONE_MONTH = '1 month',
   TWO_MONTHS = '2 months',
   THREE_MONTHS = '3 months',
@@ -75,7 +75,7 @@ export enum securityDepositAmountOptions {
   OTHER = 'other',
 }
 
-export enum rentOtherFeesPayeeOptions {
+export enum RentOtherFeesPayeeOptions {
   LANDLORD = 'landlordPays',
   TENANT = 'tenantPays',
 }

@@ -6,11 +6,11 @@ import {
   buildCheckboxField,
   getValueViaPath,
 } from '@island.is/application/core'
-import * as m from '../../lib/messages'
 import { FormValue } from '@island.is/application/types'
 import { TRUE } from '../../lib/constants'
+import * as m from '../../lib/messages'
 
-function rentalPeriodIsDefinite(answers: FormValue) {
+const rentalPeriodIsDefinite = (answers: FormValue) => {
   const rentalPeriodDefinite = getValueViaPath(
     answers,
     'rentalPeriod.isDefinite',

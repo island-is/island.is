@@ -9,8 +9,8 @@ import {
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import {
-  securityDepositTypeOptions,
-  securityDepositAmountOptions,
+  SecurityDepositTypeOptions,
+  SecurityDepositAmountOptions,
 } from '../../lib/constants'
 import {
   getSecurityDepositTypeOptions,
@@ -50,7 +50,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.BANK_GUARANTEE
+                SecurityDepositTypeOptions.BANK_GUARANTEE
             )
           },
         }),
@@ -66,7 +66,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.CAPITAL
+                SecurityDepositTypeOptions.CAPITAL
             )
           },
           space: 2,
@@ -83,7 +83,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.THIRD_PARTY_GUARANTEE
+                SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE
             )
           },
         }),
@@ -99,7 +99,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.INSURANCE_COMPANY
+                SecurityDepositTypeOptions.INSURANCE_COMPANY
             )
           },
         }),
@@ -115,7 +115,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.MUTUAL_FUND
+                SecurityDepositTypeOptions.MUTUAL_FUND
             )
           },
         }),
@@ -130,7 +130,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
-              securityDeposit.securityType === securityDepositTypeOptions.OTHER
+              securityDeposit.securityType === SecurityDepositTypeOptions.OTHER
             )
           },
         }),
@@ -150,7 +150,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               !securityDeposit ||
               securityDeposit.securityType === undefined ||
               securityDeposit.securityType !==
-                securityDepositTypeOptions.MUTUAL_FUND
+                SecurityDepositTypeOptions.MUTUAL_FUND
             )
           },
         }),
@@ -167,7 +167,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.MUTUAL_FUND
+                SecurityDepositTypeOptions.MUTUAL_FUND
             )
           },
         }),
@@ -183,9 +183,9 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               (securityDeposit.securityType ===
-                securityDepositTypeOptions.MUTUAL_FUND ||
+                SecurityDepositTypeOptions.MUTUAL_FUND ||
                 securityDeposit.securityAmount ===
-                  securityDepositAmountOptions.OTHER)
+                  SecurityDepositAmountOptions.OTHER)
             )
           },
         }),
