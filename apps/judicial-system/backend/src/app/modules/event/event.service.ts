@@ -91,7 +91,7 @@ export class EventService {
     event: CaseEvent,
     theCase: Case,
     eventOnly = false,
-    extraInfo = '',
+    info?: { [key: string]: string | boolean | Date | undefined },
   ) {
     try {
       if (!this.config.url) {
@@ -120,7 +120,7 @@ export class EventService {
       const courtOfAppealsText = theCase.appealCaseNumber
         ? `\n>Landsréttur *${theCase.appealCaseNumber}*`
         : ''
-      const extraText =
+      const courtDateText =
         event === 'SCHEDULE_COURT_DATE'
           ? `\n>Dómari ${
               theCase.judge?.name ?? 'er ekki skráður'
@@ -135,6 +135,8 @@ export class EventService {
             }`
           : ''
 
+      const infoText = this.getInfoText(info)
+
       await fetch(`${this.config.url}`, {
         method: 'POST',
         headers: { 'Content-type': 'application/json' },
@@ -144,7 +146,7 @@ export class EventService {
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `*${title}*\n>${typeText}\n>${prosecutionText}${courtText}${courtOfAppealsText}${extraText}\n>${extraInfo}`,
+                text: `*${title}*\n>${typeText}\n>${prosecutionText}${courtText}${courtOfAppealsText}${courtDateText}\n>${infoText}`,
               },
             },
           ],
@@ -169,14 +171,7 @@ export class EventService {
         return
       }
 
-      let infoText = ''
-
-      if (info) {
-        let property: keyof typeof info
-        for (property in info) {
-          infoText = `${infoText}${property}: ${info[property]}\n`
-        }
-      }
+      const infoText = this.getInfoText(info)
 
       await fetch(`${this.config.errorUrl}`, {
         method: 'POST',
@@ -199,5 +194,20 @@ export class EventService {
       // Tolerate failure, but log error
       this.logger.error(`Failed to post an error event`, { error })
     }
+  }
+
+  getInfoText = (info?: {
+    [key: string]: string | boolean | Date | undefined
+  }) => {
+    let infoText = ''
+
+    if (info) {
+      let property: keyof typeof info
+      for (property in info) {
+        infoText = `${infoText}${property}: ${info[property]}\n`
+      }
+    }
+
+    return infoText
   }
 }

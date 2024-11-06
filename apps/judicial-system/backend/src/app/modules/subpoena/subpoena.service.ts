@@ -241,25 +241,16 @@ export class SubpoenaService {
       defenderNationalId,
     )
 
-    if (update.serviceStatus && !subpoena.serviceStatus && subpoena.case) {
-      const serviceStatus =
-        update.serviceStatus === ServiceStatus.DEFENDER
-          ? 'Birt fyrir verjanda'
-          : update.serviceStatus === ServiceStatus.ELECTRONICALLY
-          ? 'Birt rafrænt'
-          : update.serviceStatus === ServiceStatus.IN_PERSON
-          ? 'Birt persónulega'
-          : update.serviceStatus === ServiceStatus.FAILED
-          ? 'Árangurslaus birting'
-          : update.serviceStatus === ServiceStatus.EXPIRED
-          ? 'Rann út á tíma'
-          : 'Í birtingarferli' // This should never happen
+    if (
+      update.serviceStatus &&
 
+      subpoena.case
+    ) {
       this.eventService.postEvent(
         'SUBPOENA_SERVICE_STATUS',
         subpoena.case,
         false,
-        serviceStatus,
+        { Staða: Subpoena.serviceStatusText(update.serviceStatus) },
       )
     }
 
