@@ -13,7 +13,7 @@ import {
 } from 'sequelize-typescript'
 import { Screen } from '../../screens/models/screen.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { FieldType } from './fieldType.model'
+// import { FieldType } from './fieldType.model'
 // import { FieldSettings } from '../../fieldSettings/models/fieldSettings.model'
 import { Value } from '../../values/models/value.model'
 import { FieldSettings } from '../../../dataTypes/fieldSettings/fieldSettings.model'
@@ -100,11 +100,9 @@ export class Field extends Model<Field> {
   @HasMany(() => Value)
   values?: Value[]
 
-  @ForeignKey(() => FieldType)
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    field: 'field_type',
   })
   fieldType!: string
 }
