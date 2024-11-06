@@ -1,11 +1,24 @@
 import { compiler } from 'markdown-to-jsx'
-import { markdownOptions } from './markdownOptions'
+import { getMarkdownOptions } from './markdownOptions'
 
 interface Props {
-  children: string
+  children: string,
+  conditionals?: OptionalConditionalOverrides
 }
 
-export const Markdown = ({ children }: Props) =>
-  compiler(children, markdownOptions)
+export interface OptionalConditionalOverrides {
+  openLinksInNewTab?: boolean,
+  hehe?: number
+}
+
+const defaultOptionalOverrides: OptionalConditionalOverrides = {
+  openLinksInNewTab: true,
+  hehe: 5
+}
+
+export const Markdown = ({ children, conditionals }: Props) => {
+  const optionalConditionals = { ...defaultOptionalOverrides, ...conditionals }
+  return compiler(children, getMarkdownOptions(optionalConditionals))
+}
 
 export default Markdown
