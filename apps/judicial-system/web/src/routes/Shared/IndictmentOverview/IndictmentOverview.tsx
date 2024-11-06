@@ -4,7 +4,10 @@ import { useRouter } from 'next/router'
 
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isDefenceUser,
@@ -66,7 +69,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
     servedBy?: string | null,
     serviceDate?: string | null,
   ) => {
-    return [servedBy, serviceDate].filter(Boolean).join(', ')
+    return [servedBy, formatDate(serviceDate, 'Pp')].filter(Boolean).join(', ')
   }
 
   return (
