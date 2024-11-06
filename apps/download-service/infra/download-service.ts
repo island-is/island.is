@@ -65,6 +65,7 @@ export const serviceSetup = (services: {
           staging: {
             'nginx.ingress.kubernetes.io/enable-global-auth': 'false',
           },
+          prod: {},
         },
         host: {
           dev: ['api'],
