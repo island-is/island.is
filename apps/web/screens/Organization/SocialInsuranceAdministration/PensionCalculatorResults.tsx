@@ -606,6 +606,14 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   )
 }
 
+const isSameYear = (
+  date1: string | null | undefined,
+  date2: string | null | undefined,
+) => {
+  if (!date1 || !date2) return false
+  return new Date(date1).getFullYear() === new Date(date2).getFullYear()
+}
+
 PensionCalculatorResults.getProps = async ({
   apolloClient,
   locale,
@@ -656,10 +664,10 @@ PensionCalculatorResults.getProps = async ({
     calculationInput.typeOfBasePension ===
       SocialInsurancePensionCalculationBasePensionType.Disability &&
     is2025PreviewActive(customPageData) &&
-    dateOfCalculationsOptions.length > 0 &&
-    calculationInput.dateOfCalculations &&
-    new Date(calculationInput.dateOfCalculations).getFullYear() ===
-      new Date(dateOfCalculationsOptions[0].value).getFullYear()
+    isSameYear(
+      dateOfCalculationsOptions?.[0]?.value,
+      calculationInput.dateOfCalculations,
+    )
       ? apolloClient.query<Query, QueryGetPensionCalculationArgs>({
           query: GET_PENSION_CALCULATION,
           variables: {
