@@ -241,11 +241,7 @@ export class SubpoenaService {
       defenderNationalId,
     )
 
-    if (
-      update.serviceStatus &&
-
-      subpoena.case
-    ) {
+    if (update.serviceStatus && subpoena.case) {
       this.eventService.postEvent(
         'SUBPOENA_SERVICE_STATUS',
         subpoena.case,
