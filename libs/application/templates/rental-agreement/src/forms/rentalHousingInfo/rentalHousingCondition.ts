@@ -7,7 +7,7 @@ import {
   buildFileUploadField,
 } from '@island.is/application/core'
 import { getApplicationAnswers, getInspectorOptions } from '../../lib/utils'
-import { rentalHousingConditionInspector } from '../../lib/constants'
+import { RentalHousingConditionInspector } from '../../lib/constants'
 import * as m from '../../lib/messages'
 
 export const RentalHousingCondition = buildSubSection({
@@ -30,7 +30,7 @@ export const RentalHousingCondition = buildSubSection({
           title: '',
           description: m.housingCondition.inspectorDescription,
           options: getInspectorOptions(),
-          defaultValue: rentalHousingConditionInspector.CONTRACT_PARTIES,
+          defaultValue: RentalHousingConditionInspector.CONTRACT_PARTIES,
           width: 'half',
         }),
         buildTextField({
@@ -41,7 +41,7 @@ export const RentalHousingCondition = buildSubSection({
             const { inspectorOptions } = getApplicationAnswers(answers)
             return (
               inspectorOptions ===
-              rentalHousingConditionInspector.INDEPENDENT_PARTY
+              RentalHousingConditionInspector.INDEPENDENT_PARTY
             )
           },
           required: true,
