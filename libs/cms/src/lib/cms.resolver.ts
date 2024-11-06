@@ -246,10 +246,7 @@ export class CmsResolver {
   async getOrganizationPage(
     @Args('input') input: GetOrganizationPageInput,
   ): Promise<OrganizationPage | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
-      getElasticsearchIndex(input.lang),
-      { type: 'webOrganizationPage', slug: input.slug },
-    )
+    return this.cmsContentfulService.getOrganizationPage(input.slug, input.lang)
   }
 
   @CacheControl(defaultCache)
@@ -257,9 +254,10 @@ export class CmsResolver {
   async getOrganizationSubpage(
     @Args('input') input: GetOrganizationSubpageInput,
   ): Promise<OrganizationSubpage | null> {
-    return this.cmsElasticsearchService.getSingleOrganizationSubpage(
-      getElasticsearchIndex(input.lang),
-      { ...input },
+    return this.cmsContentfulService.getOrganizationSubpage(
+      input.organizationSlug,
+      input.slug,
+      input.lang,
     )
   }
 
@@ -268,10 +266,7 @@ export class CmsResolver {
   async getServiceWebPage(
     @Args('input') input: GetServiceWebPageInput,
   ): Promise<ServiceWebPage | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
-      getElasticsearchIndex(input.lang),
-      { type: 'webServiceWebPage', slug: input.slug },
-    )
+    return this.cmsContentfulService.getServiceWebPage(input.slug, input.lang)
   }
 
   @CacheControl(defaultCache)
@@ -422,11 +417,10 @@ export class CmsResolver {
   async getSingleArticle(
     @Args('input') { lang, slug }: GetSingleArticleInput,
   ): Promise<(Partial<Article> & { lang: Locale }) | null> {
-    const article: Article | null =
-      await this.cmsElasticsearchService.getSingleDocumentTypeBySlug<Article>(
-        getElasticsearchIndex(lang),
-        { type: 'webArticle', slug },
-      )
+    const article: Article | null = await this.cmsContentfulService.getArticle(
+      slug,
+      lang,
+    )
 
     if (!article) return null
 
@@ -452,10 +446,7 @@ export class CmsResolver {
   getSingleNews(
     @Args('input') { lang, slug }: GetSingleNewsInput,
   ): Promise<News | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<News>(
-      getElasticsearchIndex(lang),
-      { type: 'webNews', slug },
-    )
+    return this.cmsContentfulService.getNews(lang, slug)
   }
 
   @CacheControl(defaultCache)
@@ -463,10 +454,7 @@ export class CmsResolver {
   getSingleEvent(
     @Args('input') { lang, slug }: GetSingleEventInput,
   ): Promise<EventModel | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<EventModel>(
-      getElasticsearchIndex(lang),
-      { type: 'webEvent', slug },
-    )
+    return this.cmsContentfulService.getSingleEvent(lang, slug)
   }
 
   @CacheControl(defaultCache)
@@ -620,10 +608,7 @@ export class CmsResolver {
   getSingleManual(
     @Args('input') input: GetSingleManualInput,
   ): Promise<Manual | null> {
-    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
-      getElasticsearchIndex(input.lang),
-      { type: 'webManual', slug: input.slug },
-    )
+    return this.cmsContentfulService.getSingleManual(input.lang, input.slug)
   }
 
   @CacheControl(defaultCache)
