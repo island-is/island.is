@@ -99,20 +99,6 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
               : null,
             properties
               ? {
-                  type: GenericLicenseDataFieldType.Group,
-                  hideFromServicePortal: true,
-                  label: formatMessage(m.firearmProperties),
-                  fields: (properties.properties ?? []).map((property) => ({
-                    type: GenericLicenseDataFieldType.Category,
-                    fields: this.parseProperties(
-                      property,
-                      formatMessage,
-                    )?.filter(isDefined),
-                  })),
-                }
-              : null,
-            properties
-              ? {
                   type: GenericLicenseDataFieldType.Table,
                   label: formatMessage(m.firearmProperties),
                   fields: (properties.properties ?? []).map((property) => ({
