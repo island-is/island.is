@@ -397,7 +397,7 @@ export default function Index() {
                 </svg>
                 View project details
               </summary>
-              <pre>nx show project cd-test --web</pre>
+              <pre>nx show project unicorn-app --web</pre>
             </details>
             <details>
               <summary>

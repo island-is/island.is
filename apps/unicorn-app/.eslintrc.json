@@ -1,17 +1,47 @@
 {
-  "extends": [
-    "plugin:@nx/react-typescript",
-    "next",
-    "next/core-web-vitals",
-    "../../.eslintrc.json"
-  ],
-  "ignorePatterns": ["!**/*", ".next/**/*"],
+  "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
+  "ignorePatterns": ["!**/*"],
+  "rules": {
+    "@nx/enforce-module-boundaries": [
+      "error",
+      {
+        "enforceBuildableLibDependency": true,
+        "allowCircularSelfDependency": true,
+        "allow": ["../../../infra/src/dsl"],
+        "depConstraints": [
+          {
+            "sourceTag": "*",
+            "onlyDependOnLibsWithTags": ["*"]
+          }
+        ]
+      }
+    ],
+    "simple-import-sort/imports": [
+      "warn",
+      {
+        "groups": [
+          // React related packages come first, followed by all external imports.
+          ["^react", "^\\w", "^@(?!island).+"],
+          // Then island.is packages.
+          ["^(@island.is).*"],
+          // Then all other imports in this order: "../", "./", "./css"
+          [
+            "^\\.\\.(?!/?$)",
+            "^\\.\\./?$",
+            "^\\./(?=.*/)(?!/?$)",
+            "^\\.(?!/?$)",
+            "^\\./?$",
+            "^.+\\.?(css)$"
+          ]
+        ]
+      }
+    ]
+  },
+  "plugins": ["simple-import-sort"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {
-        "@next/next/no-html-link-for-pages": ["error", "apps/cd-test/pages"]
-      }
+      "rules": {}
     },
     {
       "files": ["*.ts", "*.tsx"],
@@ -20,12 +50,6 @@
     {
       "files": ["*.js", "*.jsx"],
       "rules": {}
-    },
-    {
-      "files": ["*.spec.ts", "*.spec.tsx", "*.spec.js", "*.spec.jsx"],
-      "env": {
-        "jest": true
-      }
     }
   ]
 }

@@ -23,10 +23,11 @@
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
-    "../../apps/cd-test/.next/types/**/*.ts",
-    "../../dist/apps/cd-test/.next/types/**/*.ts",
+    "../../apps/unicorn-app/.next/types/**/*.ts",
+    "../../dist/apps/unicorn-app/.next/types/**/*.ts",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "../../dist/apps/unicorn-app/.next/types/**/*.ts"
   ],
   "exclude": ["node_modules", "jest.config.ts", "**/*.spec.ts", "**/*.test.ts"]
 }
