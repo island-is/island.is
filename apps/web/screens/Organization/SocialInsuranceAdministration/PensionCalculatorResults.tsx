@@ -614,6 +614,7 @@ PensionCalculatorResults.getProps = async ({
 }) => {
   const calculationInput = convertQueryParametersToCalculationInput(query)
   const slug = extractSlug(locale, customPageData)
+  const dateOfCalculationsOptions = getDateOfCalculationsOptions(customPageData)
   const [
     {
       data: { getOrganizationPage },
@@ -654,7 +655,11 @@ PensionCalculatorResults.getProps = async ({
     }),
     calculationInput.typeOfBasePension ===
       SocialInsurancePensionCalculationBasePensionType.Disability &&
-    is2025PreviewActive(customPageData)
+    is2025PreviewActive(customPageData) &&
+    dateOfCalculationsOptions.length > 0 &&
+    calculationInput.dateOfCalculations &&
+    new Date(calculationInput.dateOfCalculations).getFullYear() ===
+      new Date(dateOfCalculationsOptions[0].value).getFullYear()
       ? apolloClient.query<Query, QueryGetPensionCalculationArgs>({
           query: GET_PENSION_CALCULATION,
           variables: {
@@ -700,7 +705,7 @@ PensionCalculatorResults.getProps = async ({
     calculation: getPensionCalculation,
     calculation2025: getPensionCalculation2025,
     calculationInput,
-    dateOfCalculationsOptions: getDateOfCalculationsOptions(customPageData),
+    dateOfCalculationsOptions,
     queryParamString: queryParams.toString(),
     ...getThemeConfig(
       getOrganizationPage?.theme,
