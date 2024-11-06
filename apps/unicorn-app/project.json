@@ -1,7 +1,7 @@
 {
-  "name": "cd-test",
+  "name": "unicorn-app",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/cd-test",
+  "sourceRoot": "apps/unicorn-app",
   "projectType": "application",
   "tags": [],
   "targets": {
@@ -10,11 +10,11 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/cd-test"
+        "outputPath": "dist/apps/unicorn-app"
       },
       "configurations": {
         "development": {
-          "outputPath": "apps/cd-test"
+          "outputPath": "apps/unicorn-app"
         },
         "production": {}
       }
@@ -23,16 +23,16 @@
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "cd-test:build",
+        "buildTarget": "unicorn-app:build",
         "dev": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "cd-test:build:development",
+          "buildTarget": "unicorn-app:build:development",
           "dev": true
         },
         "production": {
-          "buildTarget": "cd-test:build:production",
+          "buildTarget": "unicorn-app:build:production",
           "dev": false
         }
       }
@@ -40,14 +40,14 @@
     "export": {
       "executor": "@nx/next:export",
       "options": {
-        "buildTarget": "cd-test:build:production"
+        "buildTarget": "unicorn-app:build:production"
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/cd-test/jest.config.ts"
+        "jestConfig": "apps/unicorn-app/jest.config.ts"
       }
     },
     "lint": {
