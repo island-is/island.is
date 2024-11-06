@@ -21,12 +21,12 @@ import {
 import * as m from '../../lib/messages'
 
 function rentalAmountConnectedToIndex(answers: FormValue) {
-  const isRentalAmountConnectedToIndex =
-    answers.isRentalAmountIndexConnected as string[]
-  return (
-    isRentalAmountConnectedToIndex &&
-    isRentalAmountConnectedToIndex.includes(TRUE)
-  )
+  const isAmountConnectedToIndex = getValueViaPath(
+    answers,
+    'rentalAmount.isIndexConnected',
+    [],
+  ) as string[]
+  return isAmountConnectedToIndex && isAmountConnectedToIndex.includes(TRUE)
 }
 
 export const RentalPeriodAmount = buildSubSection({
@@ -34,12 +34,12 @@ export const RentalPeriodAmount = buildSubSection({
   title: m.rentalAmount.subSectionName,
   children: [
     buildMultiField({
-      id: 'rentalAmountDetails',
+      id: 'rentalAmount.details',
       title: m.rentalAmount.pageTitle,
       description: m.rentalAmount.pageDescription,
       children: [
         buildDescriptionField({
-          id: 'rentalAmountDetailsTitle',
+          id: 'rentalAmount.detailsTitle',
           title: m.rentalAmount.infoTitle,
           titleVariant: 'h3',
           space: 1,
@@ -55,7 +55,7 @@ export const RentalPeriodAmount = buildSubSection({
           required: true,
         }),
         buildSelectField({
-          id: 'rentalAmountIndexTypes',
+          id: 'rentalAmount.indexTypes',
           title: m.rentalAmount.indexOptionsLabel,
           options: getRentalAmountIndexTypes(),
           defaultValue: rentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
@@ -63,7 +63,7 @@ export const RentalPeriodAmount = buildSubSection({
           width: 'half',
         }),
         buildTextField({
-          id: 'rentalAmountIndexValue',
+          id: 'rentalAmount.indexValue',
           title: m.rentalAmount.indexValueLabel,
           placeholder: m.rentalAmount.indexValuePlaceholder,
           variant: 'number',
@@ -71,7 +71,7 @@ export const RentalPeriodAmount = buildSubSection({
           condition: rentalAmountConnectedToIndex,
         }),
         buildCheckboxField({
-          id: 'isRentalAmountIndexConnected',
+          id: 'rentalAmount.isIndexConnected',
           title: '',
           options: [
             {
@@ -84,34 +84,34 @@ export const RentalPeriodAmount = buildSubSection({
 
         // Payment details
         buildDescriptionField({
-          id: 'rentalAmountPaymentDateDetails',
+          id: 'rentalAmount.paymentDateDetails',
           title: m.rentalAmount.paymentDateTitle,
           titleVariant: 'h4',
           description: m.rentalAmount.paymentDateDescription,
           space: 6,
         }),
         buildSelectField({
-          id: 'rentalAmountPaymentDateOptions',
+          id: 'rentalAmount.paymentDateOptions',
           title: m.rentalAmount.paymentDateOptionsLabel,
           options: getRentalAmountPaymentDateOptions(),
           defaultValue: rentalAmountPaymentDateOptions.FIRST_DAY,
         }),
         buildTextField({
-          id: 'rentalAmountPaymentDateOther',
+          id: 'rentalAmount.paymentDateOther',
           title: m.rentalAmount.paymentDateOtherOptionLabel,
           placeholder: m.rentalAmount.paymentDateOtherOptionPlaceholder,
           condition: (answers) =>
-            getValueViaPath(answers, 'rentalAmountPaymentDateOptions') ===
+            getValueViaPath(answers, 'rentalAmount.paymentDateOptions') ===
             rentalAmountPaymentDateOptions.OTHER,
         }),
         buildDescriptionField({
-          id: 'rentalAmountPaymentInsuranceTitle',
+          id: 'rentalAmount.paymentInsuranceTitle',
           title: m.rentalAmount.paymentInsuranceTitle,
           titleVariant: 'h4',
           space: 6,
         }),
         buildCheckboxField({
-          id: 'isRentalAmountPaymentInsuranceRequired',
+          id: 'rentalAmount.isPaymentInsuranceRequired',
           title: '',
           options: [
             {

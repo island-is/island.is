@@ -8,6 +8,8 @@ import {
   rentalHousingConditionInspector,
   rentalAmountPaymentDateOptions,
   rentOtherFeesPayeeOptions,
+  securityDepositTypeOptions,
+  securityDepositAmountOptions,
 } from './constants'
 import * as m from './messages'
 
@@ -21,29 +23,29 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const propertyCategoryTypeOptions =
     getValueViaPath<rentalHousingCategoryTypes>(
       answers,
-      'registerPropertyCategoryType',
+      'registerProperty.categoryType',
     )
 
   const propertyCategoryClassOptions =
     getValueViaPath<rentalHousingCategoryClass>(
       answers,
-      'registerPropertyCategoryClass',
+      'registerProperty.categoryClass',
     )
 
   const inspectorOptions = getValueViaPath<rentalHousingConditionInspector>(
     answers,
-    'rentalHousingConditionInspector',
+    'condition.inspector',
   )
 
   const rentalAmountIndexTypesOptions = getValueViaPath<rentalAmountIndexTypes>(
     answers,
-    'rentalAmountIndexTypes',
+    'rentalAmount.indexTypes',
   )
 
   const rentalAmountPaymentDateOptions =
     getValueViaPath<rentalAmountPaymentDateOptions>(
       answers,
-      'rentalAmountPaymentDate',
+      'rentalAmount.paymentDateOptions',
     )
 
   const rentOtherFeesHousingFund = getValueViaPath<rentOtherFeesPayeeOptions>(
@@ -170,6 +172,52 @@ export const getRentalAmountPaymentDateOptions = () => [
   {
     value: rentalAmountPaymentDateOptions.OTHER,
     label: m.rentalAmount.paymentDateOptionOther,
+  },
+]
+
+export const getSecurityDepositTypeOptions = () => [
+  {
+    label: m.securityDeposit.typeSelectionBankGuaranteeTitle,
+    value: securityDepositTypeOptions.BANK_GUARANTEE,
+  },
+  {
+    label: m.securityDeposit.typeSelectionCapitalTitle,
+    value: securityDepositTypeOptions.CAPITAL,
+  },
+  {
+    label: m.securityDeposit.typeSelectionThirdPartyGuaranteeTitle,
+    value: securityDepositTypeOptions.THIRD_PARTY_GUARANTEE,
+  },
+  {
+    label: m.securityDeposit.typeSelectionInsuranceCompanyTitle,
+    value: securityDepositTypeOptions.INSURANCE_COMPANY,
+  },
+  {
+    label: m.securityDeposit.typeSelectionMutualFundTitle,
+    value: securityDepositTypeOptions.MUTUAL_FUND,
+  },
+  {
+    label: m.securityDeposit.typeSelectionOtherTitle,
+    value: securityDepositTypeOptions.OTHER,
+  },
+]
+
+export const getSecurityAmountOptions = () => [
+  {
+    label: m.securityDeposit.amountSelection1Month,
+    value: securityDepositAmountOptions.ONE_MONTH,
+  },
+  {
+    label: m.securityDeposit.amountSelection2Month,
+    value: securityDepositAmountOptions.TWO_MONTHS,
+  },
+  {
+    label: m.securityDeposit.amountSelection3Month,
+    value: securityDepositAmountOptions.THREE_MONTHS,
+  },
+  {
+    label: m.securityDeposit.amountSelectionOther,
+    value: securityDepositAmountOptions.OTHER,
   },
 ]
 

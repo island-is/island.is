@@ -9,17 +9,18 @@ import { formatNationalId } from '../../lib/utils'
 import * as m from '../../lib/messages'
 
 export const RentalHousingLandlordInfo = buildSubSection({
-  id: 'rentalHousingLandlordInfo',
+  id: 'landlordInfo',
   title: m.landlordDetails.subSectionName,
   children: [
     buildMultiField({
-      id: 'rentalHousingLandlordInfo',
+      id: 'landlordInfo.multiField',
       title: m.landlordDetails.pageTitle,
       description: m.landlordDetails.pageDescription,
       children: [
         buildTableRepeaterField({
-          id: 'rentalHousingLandlordInfoTable',
+          id: 'landlordInfo.table',
           title: '',
+          editField: true,
           marginTop: 1,
           fields: {
             name: {

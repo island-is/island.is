@@ -9,17 +9,18 @@ import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { formatNationalId } from '../../lib/utils'
 
 export const RentalHousingTenantInfo = buildSubSection({
-  id: 'rentalHousingTenantInfo',
+  id: 'tenantInfo',
   title: m.tenantDetails.subSectionName,
   children: [
     buildMultiField({
-      id: 'rentalHousingTenantInfo',
+      id: 'tenantInfo.multiField',
       title: m.tenantDetails.pageTitle,
       description: m.tenantDetails.pageDescription,
       children: [
         buildTableRepeaterField({
-          id: 'rentalHousingTenantInfoTable',
+          id: 'tenantInfo.table',
           title: '',
+          editField: true,
           marginTop: 1,
           fields: {
             name: {

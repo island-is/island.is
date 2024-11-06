@@ -75,9 +75,9 @@ export const housingCondition = defineMessages({
     description: 'Housing condition file upload title',
   },
   fileUploadDescription: {
-    id: 'ra.application:housingCondition.fileUploadDescription',
+    id: 'ra.application:housingCondition.fileUploadDescription#markdown',
     defaultMessage:
-      'Tekið er við skjölum með endingu: .png, .jpg, .jpeg, .pdf, .docx, .rtf.',
+      'Tekið er við skjölum með endingu: \n.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
     description: 'Housing condition file upload description',
   },
 })

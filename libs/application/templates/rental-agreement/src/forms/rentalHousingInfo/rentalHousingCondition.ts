@@ -11,22 +11,22 @@ import { rentalHousingConditionInspector } from '../../lib/constants'
 import * as m from '../../lib/messages'
 
 export const RentalHousingCondition = buildSubSection({
-  id: 'rentalHousingCondition',
+  id: 'condition',
   title: m.housingCondition.subSectionName,
   children: [
     buildMultiField({
-      id: 'rentalHousingCondition',
+      id: 'condition.pageTitle',
       title: m.housingCondition.pageTitle,
       description: m.housingCondition.pageDescription,
       children: [
         buildDescriptionField({
-          id: 'rentalHousingConditionTitle',
+          id: 'condition.inspectorTitle',
           title: m.housingCondition.inspectorTitle,
           titleVariant: 'h3',
           space: 1,
         }),
         buildRadioField({
-          id: 'rentalHousingConditionInspector',
+          id: 'condition.inspector',
           title: '',
           description: m.housingCondition.inspectorDescription,
           options: getInspectorOptions(),
@@ -34,7 +34,7 @@ export const RentalHousingCondition = buildSubSection({
           width: 'half',
         }),
         buildTextField({
-          id: 'rentalHousingConditionInspectorName',
+          id: 'condition.inspectorName',
           title: m.housingCondition.independentInspectorNameLabel,
           placeholder: m.housingCondition.independentInspectorNamePlaceholder,
           condition: (answers) => {
@@ -47,13 +47,13 @@ export const RentalHousingCondition = buildSubSection({
           required: true,
         }),
         buildDescriptionField({
-          id: 'rentalHousingResultsTitle',
+          id: 'condition.resultsTitle',
           title: m.housingCondition.inspectionResultsTitle,
           titleVariant: 'h3',
           space: 6,
         }),
         buildTextField({
-          id: 'rentalHousingConditionTextInput',
+          id: 'condition.resultsDescription',
           title: m.housingCondition.inspectionResultsInputLabel,
           description: m.housingCondition.inspectionResultsDescription,
           placeholder: m.housingCondition.inspectionResultsInputPlaceholder,
@@ -61,7 +61,7 @@ export const RentalHousingCondition = buildSubSection({
           rows: 8,
         }),
         buildFileUploadField({
-          id: 'rentalHousingConditionFiles',
+          id: 'condition.resultsFiles',
           title: m.housingCondition.fileUploadTitle,
           uploadHeader: m.housingCondition.fileUploadTitle,
           uploadDescription: m.housingCondition.fileUploadDescription,

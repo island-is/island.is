@@ -265,6 +265,8 @@ export const dataSchema = z.object({
   }),
   rentalAmount,
   securityDeposit,
-  rentalHousingConditionFiles: z.array(fileSchema),
+  condition: z.object({
+    resultsFiles: z.array(fileSchema),
+  }),
   rentOtherFees,
 })

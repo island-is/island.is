@@ -7,22 +7,22 @@ import {
 import * as m from '../../lib/messages'
 
 export const RentalHousingSpecialProvisions = buildSubSection({
-  id: 'RentalHousingSpecialProvisions',
+  id: 'specialProvisions',
   title: m.specialProvisions.subsection.name,
   children: [
     buildMultiField({
-      id: 'rentalHousingSpecialProvisionsDetails',
+      id: 'specialProvisions.details',
       title: m.specialProvisions.subsection.pageTitle,
       description: m.specialProvisions.subsection.pageDescription,
       children: [
         buildDescriptionField({
-          id: 'rentalHousingSpecialProvisionsDescriptionTitle',
+          id: 'specialProvisions.descriptionTitle',
           title: m.specialProvisions.housingInfo.title,
           titleTooltip: m.specialProvisions.housingInfo.tooltip,
           titleVariant: 'h3',
         }),
         buildTextField({
-          id: 'rentalHousingSpecialProvisionsDescriptionInput',
+          id: 'specialProvisions.descriptionInput',
           title: m.specialProvisions.housingInfo.inputLabel,
           maxLength: 1500,
           placeholder: m.specialProvisions.housingInfo.inputPlaceholder,
@@ -30,14 +30,14 @@ export const RentalHousingSpecialProvisions = buildSubSection({
           rows: 8,
         }),
         buildDescriptionField({
-          id: 'rentalHousingSpecialProvisionsTitle',
+          id: 'specialProvisions.rulesTitle',
           title: m.specialProvisions.housingRules.title,
           titleTooltip: m.specialProvisions.housingRules.tooltip,
           titleVariant: 'h3',
           marginTop: 6,
         }),
         buildTextField({
-          id: 'rentalHousingSpecialProvisionsInput',
+          id: 'specialProvisions.rulesInput',
           title: m.specialProvisions.housingRules.inputLabel,
           placeholder: m.specialProvisions.housingRules.inputPlaceholder,
           variant: 'textarea',
