@@ -24,14 +24,12 @@ export const dataSchema = defineMessages({
   },
   errorMeterNumberRegex: {
     id: 'ra.application:dataSchema.errorMeterNumberRegex',
-    defaultMessage:
-      'Númer mælis þarf að vera tölustafir og ekki meira en 20 tölustafir',
+    defaultMessage: 'Sláðu inn númer í tölustöfum',
     description: 'Error message when meter number is not valid',
   },
   errorMeterStatusRegex: {
     id: 'ra.application:dataSchema.errorMeterStatusRegex',
-    defaultMessage:
-      'Staða mælis þarf að vera tölustafir, ekki fleiri en 10 og ekki fleiri en 1 aukastaf eftir kommu(,)',
+    defaultMessage: 'Sláðu inn stöðu í tölustöfum með mest einum aukastaf',
     description: 'Error message when meter status is not valid',
   },
 })
