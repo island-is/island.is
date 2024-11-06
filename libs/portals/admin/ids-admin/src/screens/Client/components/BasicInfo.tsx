@@ -4,20 +4,23 @@ import { AccordionCard, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../lib/messages'
-import { AuthAdminClientSecret } from '../Client.loader'
+import { AuthAdminClientSecret, AuthAdminClient } from '../Client.loader'
 import { useCopyToClipboard } from '../../../hooks/useCopyToClipboard'
 import { FormCard } from '../../../components/FormCard/FormCard'
+import { AuthAdminClientType } from '@island.is/api/schema'
 
 interface BasicInfoProps {
   clientId: string
   clientSecrets?: AuthAdminClientSecret | null
   issuerUrl: string
+  clientType:  AuthAdminClient['clientType']
 }
 
 export const BasicInfo = ({
   clientId,
   clientSecrets = [],
   issuerUrl,
+  clientType,
 }: BasicInfoProps) => {
   const { formatMessage } = useLocale()
   const { copyToClipboard } = useCopyToClipboard()
@@ -33,7 +36,7 @@ export const BasicInfo = ({
   const jsonWebSetKeyUrlRef = useRef<HTMLInputElement>(null)
 
   const secret = clientSecrets?.find((secret) => secret.decryptedValue)
-  const hasClientSecrets = Boolean(clientSecrets && clientSecrets.length > 0)
+  const hasClientSecrets = Boolean(clientSecrets && clientSecrets.length > 0) && clientType !== AuthAdminClientType.native
   const isLegacySecret = hasClientSecrets && !secret
 
   return (
