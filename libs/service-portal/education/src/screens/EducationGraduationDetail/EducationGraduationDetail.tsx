@@ -19,6 +19,7 @@ import {
   formSubmit,
   formatDate,
   m,
+  IntroWrapper,
 } from '@island.is/service-portal/core'
 import { useParams } from 'react-router-dom'
 import {
@@ -61,12 +62,11 @@ export const EducationGraduationDetail = () => {
   const filesAvailable = (files?.length ?? 0) > 0
 
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={m.educationGraduation}
-        intro={text?.description || ''}
-        serviceProviderSlug={mapSlugToContentfulSlug(uni) ?? 'haskoli-islands'}
-      />
+    <IntroWrapper
+      title={m.educationGraduation}
+      intro={text?.description || ''}
+      serviceProviderSlug={mapSlugToContentfulSlug(uni) ?? 'haskoli-islands'}
+    >
       <GridRow marginBottom={[1, 1, 1, 3]}>
         <GridColumn span="12/12">
           <Box
@@ -198,7 +198,7 @@ export const EducationGraduationDetail = () => {
           </Box>
         </>
       )}
-    </Box>
+    </IntroWrapper>
   )
 }
 
