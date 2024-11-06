@@ -1,11 +1,11 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { rentOtherFeesPayeeOptions } from './constants'
-import * as m from './messages'
+import { RentOtherFeesPayeeOptions } from './constants'
 import {
-  securityDepositAmountOptions,
-  securityDepositTypeOptions,
+  SecurityDepositAmountOptions,
+  SecurityDepositTypeOptions,
 } from './constants'
+import * as m from './messages'
 
 const isValidMeterNumber = (value: string) => {
   const meterNumberRegex = /^[0-9]{1,20}$/
@@ -72,7 +72,7 @@ const securityDeposit = z
   })
   .superRefine((data, ctx) => {
     if (
-      data.securityType === securityDepositTypeOptions.BANK_GUARANTEE &&
+      data.securityType === SecurityDepositTypeOptions.BANK_GUARANTEE &&
       !data.bankGuaranteeInfo
     ) {
       ctx.addIssue({
@@ -84,7 +84,7 @@ const securityDeposit = z
     }
 
     if (
-      data.securityType === securityDepositTypeOptions.THIRD_PARTY_GUARANTEE &&
+      data.securityType === SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE &&
       !data.thirdPartyGuaranteeInfo
     ) {
       ctx.addIssue({
@@ -96,7 +96,7 @@ const securityDeposit = z
     }
 
     if (
-      data.securityType === securityDepositTypeOptions.INSURANCE_COMPANY &&
+      data.securityType === SecurityDepositTypeOptions.INSURANCE_COMPANY &&
       !data.insuranceCompanyInfo
     ) {
       ctx.addIssue({
@@ -108,7 +108,7 @@ const securityDeposit = z
     }
 
     if (
-      data.securityType === securityDepositTypeOptions.MUTUAL_FUND &&
+      data.securityType === SecurityDepositTypeOptions.MUTUAL_FUND &&
       !data.mutualFundInfo
     ) {
       ctx.addIssue({
@@ -120,7 +120,7 @@ const securityDeposit = z
     }
 
     if (
-      data.securityType === securityDepositTypeOptions.OTHER &&
+      data.securityType === SecurityDepositTypeOptions.OTHER &&
       !data.otherInfo
     ) {
       ctx.addIssue({
@@ -132,7 +132,7 @@ const securityDeposit = z
     }
 
     if (
-      data.securityType !== securityDepositTypeOptions.MUTUAL_FUND &&
+      data.securityType !== SecurityDepositTypeOptions.MUTUAL_FUND &&
       !data.securityAmount
     ) {
       ctx.addIssue({
@@ -144,8 +144,8 @@ const securityDeposit = z
     }
 
     if (
-      (data.securityType === securityDepositTypeOptions.MUTUAL_FUND ||
-        data.securityAmount === securityDepositAmountOptions.OTHER) &&
+      (data.securityType === SecurityDepositTypeOptions.MUTUAL_FUND ||
+        data.securityAmount === SecurityDepositAmountOptions.OTHER) &&
       !data.securityAmountOther
     ) {
       ctx.addIssue({
@@ -157,7 +157,7 @@ const securityDeposit = z
     }
 
     if (
-      data.securityType === securityDepositTypeOptions.MUTUAL_FUND &&
+      data.securityType === SecurityDepositTypeOptions.MUTUAL_FUND &&
       Number(data.rentalAmount) * 0.1 < Number(data.securityAmountOther)
     ) {
       ctx.addIssue({
@@ -169,9 +169,9 @@ const securityDeposit = z
     }
 
     if (
-      (data.securityType === securityDepositTypeOptions.CAPITAL ||
+      (data.securityType === SecurityDepositTypeOptions.CAPITAL ||
         data.securityType ===
-          securityDepositTypeOptions.THIRD_PARTY_GUARANTEE) &&
+          SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE) &&
       Number(data.rentalAmount) * 3 < Number(data.securityAmount)
     ) {
       ctx.addIssue({
@@ -195,7 +195,7 @@ const rentOtherFees = z
     heatingCostMeterStatus: z.string().optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.housingFund === rentOtherFeesPayeeOptions.TENANT) {
+    if (data.housingFund === RentOtherFeesPayeeOptions.TENANT) {
       if (
         data.housingFundAmount &&
         data.housingFundAmount.toString().length > 7
@@ -207,7 +207,7 @@ const rentOtherFees = z
         })
       }
     }
-    if (data.electricityCost === rentOtherFeesPayeeOptions.TENANT) {
+    if (data.electricityCost === RentOtherFeesPayeeOptions.TENANT) {
       if (
         data.electricityCostMeterNumber &&
         !isValidMeterNumber(data.electricityCostMeterNumber)
@@ -229,7 +229,7 @@ const rentOtherFees = z
         })
       }
     }
-    if (data.heatingCost === rentOtherFeesPayeeOptions.TENANT) {
+    if (data.heatingCost === RentOtherFeesPayeeOptions.TENANT) {
       if (
         data.heatingCostMeterNumber &&
         !isValidMeterNumber(data.heatingCostMeterNumber)
@@ -265,6 +265,8 @@ export const dataSchema = z.object({
   }),
   rentalAmount,
   securityDeposit,
-  rentalHousingConditionFiles: z.array(fileSchema),
+  condition: z.object({
+    resultsFiles: z.array(fileSchema),
+  }),
   rentOtherFees,
 })

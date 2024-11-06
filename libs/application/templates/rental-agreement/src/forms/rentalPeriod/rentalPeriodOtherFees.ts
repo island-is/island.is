@@ -4,38 +4,28 @@ import {
   buildTextField,
   buildRadioField,
   buildDateField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import {
   getApplicationAnswers,
   getRentalOtherFeesPayeeOptions,
 } from '../../lib/utils'
-import { rentOtherFeesPayeeOptions, TRUE } from '../../lib/constants'
+import { RentOtherFeesPayeeOptions } from '../../lib/constants'
 import * as m from '../../lib/messages'
 
-function housingFundAmountPayedByTenant(answers: FormValue) {
+const housingFundAmountPayedByTenant = (answers: FormValue) => {
   const { rentOtherFeesHousingFund } = getApplicationAnswers(answers)
-  return rentOtherFeesHousingFund === rentOtherFeesPayeeOptions.TENANT
+  return rentOtherFeesHousingFund === RentOtherFeesPayeeOptions.TENANT
 }
 
-function electricityCostPayedByTenant(answers: FormValue) {
+const electricityCostPayedByTenant = (answers: FormValue) => {
   const { rentOtherFeesElectricityCost } = getApplicationAnswers(answers)
-  return rentOtherFeesElectricityCost === rentOtherFeesPayeeOptions.TENANT
+  return rentOtherFeesElectricityCost === RentOtherFeesPayeeOptions.TENANT
 }
 
-function heatingCostPayedByTenant(answers: FormValue) {
+const heatingCostPayedByTenant = (answers: FormValue) => {
   const { rentOtherFeesHeatingCost } = getApplicationAnswers(answers)
-  return rentOtherFeesHeatingCost === rentOtherFeesPayeeOptions.TENANT
-}
-
-function otherCostsPayedByTenant(answers: FormValue) {
-  const rentOtherFeesOtherCosts = getValueViaPath(
-    answers,
-    'rentOtherFees.otherCosts',
-    [],
-  ) as string[]
-  return rentOtherFeesOtherCosts && rentOtherFeesOtherCosts.includes(TRUE)
+  return rentOtherFeesHeatingCost === RentOtherFeesPayeeOptions.TENANT
 }
 
 export const RentalPeriodOtherFees = buildSubSection({
@@ -151,14 +141,32 @@ export const RentalPeriodOtherFees = buildSubSection({
         //   title: m.otherFees.otherCostsDescriptionLabel,
         //   placeholder: m.otherFees.otherCostsDescriptionPlaceholder,
         //   width: 'half',
-        //   condition: otherCostsPayedByTenant,
+        //   condition: (answers) => {
+        //     const rentOtherFeesOtherCosts = getValueViaPath(
+        //       answers,
+        //       'rentOtherFees.otherCosts',
+        //       [],
+        //     ) as string[]
+        //     return (
+        //       rentOtherFeesOtherCosts && rentOtherFeesOtherCosts.includes(TRUE)
+        //     )
+        //   },
         // }),
         // buildTextField({
         //   id: 'rentOtherFees.otherCostsAmount',
         //   title: m.otherFees.otherCostsAmountLabel,
         //   placeholder: m.otherFees.otherCostsAmountPlaceholder,
         //   width: 'half',
-        //   condition: otherCostsPayedByTenant,
+        //   condition: (answers) => {
+        //     const rentOtherFeesOtherCosts = getValueViaPath(
+        //       answers,
+        //       'rentOtherFees.otherCosts',
+        //       [],
+        //     ) as string[]
+        //     return (
+        //       rentOtherFeesOtherCosts && rentOtherFeesOtherCosts.includes(TRUE)
+        //     )
+        //   },
         // }),
       ],
     }),

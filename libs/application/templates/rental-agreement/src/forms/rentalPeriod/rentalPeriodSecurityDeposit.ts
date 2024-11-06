@@ -7,59 +7,16 @@ import {
   buildAlertMessageField,
   buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
-
-import * as m from '../../lib/messages'
 import { FormValue } from '@island.is/application/types'
 import {
-  securityDepositTypeOptions,
-  securityDepositAmountOptions,
+  SecurityDepositTypeOptions,
+  SecurityDepositAmountOptions,
 } from '../../lib/constants'
-
-const typeOptions = [
-  {
-    label: m.securityDeposit.typeSelectionBankGuaranteeTitle,
-    value: securityDepositTypeOptions.BANK_GUARANTEE,
-  },
-  {
-    label: m.securityDeposit.typeSelectionCapitalTitle,
-    value: securityDepositTypeOptions.CAPITAL,
-  },
-  {
-    label: m.securityDeposit.typeSelectionThirdPartyGuaranteeTitle,
-    value: securityDepositTypeOptions.THIRD_PARTY_GUARANTEE,
-  },
-  {
-    label: m.securityDeposit.typeSelectionInsuranceCompanyTitle,
-    value: securityDepositTypeOptions.INSURANCE_COMPANY,
-  },
-  {
-    label: m.securityDeposit.typeSelectionMutualFundTitle,
-    value: securityDepositTypeOptions.MUTUAL_FUND,
-  },
-  {
-    label: m.securityDeposit.typeSelectionOtherTitle,
-    value: securityDepositTypeOptions.OTHER,
-  },
-]
-
-const amountOptions = [
-  {
-    label: m.securityDeposit.amountSelection1Month,
-    value: securityDepositAmountOptions.ONE_MONTH,
-  },
-  {
-    label: m.securityDeposit.amountSelection2Month,
-    value: securityDepositAmountOptions.TWO_MONTHS,
-  },
-  {
-    label: m.securityDeposit.amountSelection3Month,
-    value: securityDepositAmountOptions.THREE_MONTHS,
-  },
-  {
-    label: m.securityDeposit.amountSelectionOther,
-    value: securityDepositAmountOptions.OTHER,
-  },
-]
+import {
+  getSecurityDepositTypeOptions,
+  getSecurityAmountOptions,
+} from '../../lib/utils'
+import * as m from '../../lib/messages'
 
 export const RentalPeriodSecurityDeposit = buildSubSection({
   id: 'securityDeposit.SecurityDeposit',
@@ -79,8 +36,9 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
         buildSelectField({
           id: 'securityDeposit.securityType',
           title: m.securityDeposit.typeSelectionTitle,
-          options: typeOptions,
+          options: getSecurityDepositTypeOptions,
         }),
+
         // Tegund tryggingar: Bankaábyrgð
         buildTextField({
           id: 'securityDeposit.bankGuaranteeInfo',
@@ -92,10 +50,11 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.BANK_GUARANTEE
+                SecurityDepositTypeOptions.BANK_GUARANTEE
             )
           },
         }),
+
         // Tegund tryggingar: Tryggingarfé
         buildDescriptionField({
           id: 'securityDeposit.typeCapitalInfo',
@@ -107,11 +66,12 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.CAPITAL
+                SecurityDepositTypeOptions.CAPITAL
             )
           },
           space: 2,
         }),
+
         // Tegund tryggingar: Sjálfskuldarábyrgð þriðja aðila
         buildTextField({
           id: 'securityDeposit.thirdPartyGuaranteeInfo',
@@ -123,10 +83,11 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.THIRD_PARTY_GUARANTEE
+                SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE
             )
           },
         }),
+
         // Tegund tryggingar: Leigugreiðslu- og viðskilnaðartrygging
         buildTextField({
           id: 'securityDeposit.insuranceCompanyInfo',
@@ -138,10 +99,11 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.INSURANCE_COMPANY
+                SecurityDepositTypeOptions.INSURANCE_COMPANY
             )
           },
         }),
+
         // Tegund tryggingar: Gjald í samtryggingarsjóð leigusala
         buildTextField({
           id: 'securityDeposit.mutualFundInfo',
@@ -153,10 +115,11 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.MUTUAL_FUND
+                SecurityDepositTypeOptions.MUTUAL_FUND
             )
           },
         }),
+
         // Tegund tryggingar: annað
         buildTextField({
           id: 'securityDeposit.otherInfo',
@@ -167,7 +130,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
-              securityDeposit.securityType === securityDepositTypeOptions.OTHER
+              securityDeposit.securityType === SecurityDepositTypeOptions.OTHER
             )
           },
         }),
@@ -180,17 +143,18 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
         buildSelectField({
           id: 'securityDeposit.securityAmount',
           title: m.securityDeposit.amountSelectionTitle,
-          options: amountOptions,
+          options: getSecurityAmountOptions,
           condition: (answers) => {
             const securityDeposit = answers.securityDeposit as FormValue
             return (
               !securityDeposit ||
               securityDeposit.securityType === undefined ||
               securityDeposit.securityType !==
-                securityDepositTypeOptions.MUTUAL_FUND
+                SecurityDepositTypeOptions.MUTUAL_FUND
             )
           },
         }),
+
         // Tegund tryggingar: Gjald í samtryggingarsjóð leigusala
         buildAlertMessageField({
           id: 'securityDeposit.mutualFundAmountInfo',
@@ -203,7 +167,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.MUTUAL_FUND
+                SecurityDepositTypeOptions.MUTUAL_FUND
             )
           },
         }),
@@ -219,9 +183,9 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               (securityDeposit.securityType ===
-                securityDepositTypeOptions.MUTUAL_FUND ||
+                SecurityDepositTypeOptions.MUTUAL_FUND ||
                 securityDeposit.securityAmount ===
-                  securityDepositAmountOptions.OTHER)
+                  SecurityDepositAmountOptions.OTHER)
             )
           },
         }),

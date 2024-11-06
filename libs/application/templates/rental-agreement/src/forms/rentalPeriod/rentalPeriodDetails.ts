@@ -4,39 +4,47 @@ import {
   buildDescriptionField,
   buildDateField,
   buildCheckboxField,
+  getValueViaPath,
 } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
+import { TRUE } from '../../lib/constants'
 import * as m from '../../lib/messages'
 
+const rentalPeriodIsDefinite = (answers: FormValue) => {
+  const rentalPeriodDefinite = getValueViaPath(
+    answers,
+    'rentalPeriod.isDefinite',
+    [],
+  ) as string[]
+  return rentalPeriodDefinite && rentalPeriodDefinite.includes(TRUE)
+}
+
 export const RentalPeriodDetails = buildSubSection({
-  id: 'rentalPeriodDetails',
+  id: 'rentalPeriod',
   title: m.rentalPeriodDetails.subSectionName,
   children: [
     buildMultiField({
+      id: 'rentalPeriod.details',
       title: m.rentalPeriodDetails.pageTitle,
       description: m.rentalPeriodDetails.pageDescription,
       children: [
         buildDateField({
-          id: 'rentalPeriodStartDate',
+          id: 'rentalPeriod.startDate',
           title: m.rentalPeriodDetails.startDateTitle,
           placeholder: m.rentalPeriodDetails.startDatePlaceholder,
         }),
         buildDateField({
-          id: 'rentalPeriodEndDate',
+          id: 'rentalPeriod.endDate',
           title: m.rentalPeriodDetails.endDateTitle,
           placeholder: m.rentalPeriodDetails.endDatePlaceholder,
-          condition: (answers) => {
-            const rentalPeriodDefinite: string[] =
-              answers.rentalPeriodDefinite as string[]
-
-            return rentalPeriodDefinite && rentalPeriodDefinite.includes('true')
-          },
+          condition: rentalPeriodIsDefinite,
         }),
         buildCheckboxField({
-          id: 'rentalPeriodDefinite',
+          id: 'rentalPeriod.isDefinite',
           title: '',
           options: [
             {
-              value: 'true',
+              value: TRUE,
               label: m.rentalPeriodDetails.rentalPeriodDefiniteLabel,
             },
           ],
@@ -44,7 +52,7 @@ export const RentalPeriodDetails = buildSubSection({
         }),
 
         buildDescriptionField({
-          id: 'rentalPeriodTermination',
+          id: 'rentalPeriod.termination',
           title: m.rentalPeriodDetails.terminationLabel,
           titleVariant: 'h3',
           space: 3,
