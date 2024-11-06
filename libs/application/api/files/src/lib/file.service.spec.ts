@@ -6,13 +6,12 @@ import {
   SigningService,
 } from '@island.is/dokobit-signing'
 import { AwsModule, S3Service } from '@island.is/nest/aws'
-import * as pdf from './pdfGenerators'
 import { Application } from '@island.is/application/api/core'
-import { ApplicationTypes, PdfTypes } from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import { LoggingModule } from '@island.is/logging'
-import { NotFoundException } from '@nestjs/common'
 import { defineConfig, ConfigModule } from '@island.is/nest/config'
 import { FileStorageConfig } from '@island.is/file-storage'
+import AmazonS3Uri from 'amazon-s3-uri'
 
 describe('FileService', () => {
   let service: FileService
@@ -79,10 +78,12 @@ describe('FileService', () => {
       state: 'draft',
       applicant: parentA.nationalId,
       assignees: [],
-      typeId: typeId ?? ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+      typeId: typeId ?? ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2,
       modified: new Date(),
       created: new Date(),
-      attachments: {},
+      attachments: {
+        key: 'https://s3.amazonaws.com/bucket-name/key-name',
+      },
       answers: answers ?? {
         useMocks: 'no',
         selectedChildren: [child.nationalId],
@@ -131,30 +132,10 @@ describe('FileService', () => {
     s3Service = module.get(S3Service)
 
     jest
-      .spyOn(s3Service, 'getFileContent')
-      .mockImplementation(() => Promise.resolve('body'))
+      .spyOn(s3Service, 'deleteObject')
+      .mockImplementation(() => Promise.resolve())
 
-    jest.spyOn(s3Service, 'fileExists').mockResolvedValue(false)
-
-    jest
-      .spyOn(s3Service, 'uploadFile')
-      .mockImplementation(() => Promise.resolve('url'))
-
-    jest
-      .spyOn(s3Service, 'getPresignedUrl')
-      .mockImplementation(() => Promise.resolve('url'))
-
-    jest
-      .spyOn(pdf, 'generateResidenceChangePdf')
-      .mockImplementation(() => Promise.resolve(Buffer.from('buffer')))
-
-    signingService = module.get(SigningService)
-
-    jest
-      .spyOn(signingService, 'requestSignature')
-      .mockImplementation(() =>
-        Promise.resolve(signingServiceRequestSignatureResponse),
-      )
+    // jest.mock('amazon-s3-uri')
 
     service = module.get(FileService)
   })
@@ -163,186 +144,14 @@ describe('FileService', () => {
     expect(service).toBeTruthy()
   })
 
-  it('should generate pdf for children residence change and return a presigned url', async () => {
+  it('Should properly delete a file from s3', async () => {
     const application = createApplication()
-
-    const response = await service.generatePdf(
-      application,
-      PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-    )
-
-    const fileName = `children-residence-change/${application.id}.pdf`
-
-    expect(s3Service.uploadFile).toHaveBeenCalledWith(
-      Buffer.from('buffer'),
-      { bucket, key: fileName },
-      {
-        ContentEncoding: 'base64',
-        ContentDisposition: 'inline',
-        ContentType: 'application/pdf',
-      },
-    )
-
-    expect(s3Service.getPresignedUrl).toHaveBeenCalledWith({
-      bucket: bucket,
-      key: fileName,
+    const result = await service.deleteAttachmentsForApplication(application)
+    expect(s3Service.deleteObject).toHaveBeenCalled()
+    expect(result).toEqual({
+      failed: {},
+      success: true,
+      deleted: 1,
     })
-
-    expect(response).toEqual('url')
-  })
-  it('should request file signature for children residence transfer then return controlCode and documentToken', async () => {
-    const application = createApplication()
-
-    const response = await service.requestFileSignature(
-      application,
-      PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-    )
-
-    expect(s3Service.getFileContent).toHaveBeenCalledWith(
-      { bucket, key: `children-residence-change/${application.id}.pdf` },
-      'binary',
-    )
-
-    expect(signingService.requestSignature).toHaveBeenCalledWith(
-      parentAWithContactInfo.phoneNumber,
-      'Lögheimilisbreyting barns',
-      parentA.fullName,
-      'Ísland',
-      'Logheimilisbreyting-barns.pdf',
-      'body',
-    )
-
-    expect(response.controlCode).toEqual(
-      signingServiceRequestSignatureResponse.controlCode,
-    )
-    expect(response.documentToken).toEqual(
-      signingServiceRequestSignatureResponse.documentToken,
-    )
-  })
-
-  it('should throw error for request file signature since file content is missing', async () => {
-    const application = createApplication()
-
-    jest
-      .spyOn(s3Service, 'getFileContent')
-      .mockImplementation(() => Promise.resolve(''))
-
-    const act = async () =>
-      await service.requestFileSignature(
-        application,
-        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-      )
-
-    await expect(act).rejects.toThrowError(NotFoundException)
-
-    expect(s3Service.getFileContent).toHaveBeenCalledWith(
-      { bucket: bucket, key: `children-residence-change/${applicationId}.pdf` },
-      'binary',
-    )
-
-    expect(signingService.requestSignature).not.toHaveBeenCalled()
-  })
-
-  it('should throw error for generatePdf since application type is not supported', async () => {
-    const application = createApplication(undefined, ApplicationTypes.EXAMPLE)
-
-    const act = async () =>
-      await service.generatePdf(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
-
-    await expect(act).rejects.toThrow(
-      'Application type is not supported in file service.',
-    )
-  })
-
-  it('should have an application type that is valid for generatePdf', async () => {
-    const application = createApplication()
-
-    const act = async () =>
-      await service.generatePdf(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
-
-    expect(act).not.toThrow()
-  })
-  it('should return presigned url', async () => {
-    const application = createApplication()
-    const fileName = `children-residence-change/${application.id}.pdf`
-
-    const result = await service.getPresignedUrl(
-      application,
-      PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-    )
-
-    expect(s3Service.getPresignedUrl).toHaveBeenCalledWith({
-      bucket,
-      key: fileName,
-    })
-    expect(result).toEqual('url')
-  })
-
-  it('should throw error for uploadSignedFile since application type is not supported', async () => {
-    const application = createApplication(undefined, ApplicationTypes.EXAMPLE)
-
-    const act = async () =>
-      await service.uploadSignedFile(
-        application,
-        'token',
-        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-      )
-
-    await expect(act).rejects.toThrow(
-      'Application type is not supported in file service.',
-    )
-  })
-
-  it('should have an application type that is valid for uploadSignedFile', async () => {
-    const application = createApplication()
-
-    const act = async () =>
-      await service.uploadSignedFile(
-        application,
-        'token',
-        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-      )
-
-    await expect(act).resolves
-  })
-
-  it('should throw error for requestFileSignature since application type is not supported', async () => {
-    const application = createApplication(undefined, ApplicationTypes.EXAMPLE)
-
-    const act = async () =>
-      await service.requestFileSignature(
-        application,
-        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-      )
-
-    await expect(act).rejects.toThrow(
-      'Application type is not supported in file service.',
-    )
-  })
-
-  it('should have an application type that is valid for requestFileSignature', async () => {
-    const application = createApplication()
-
-    const act = async () =>
-      await service.requestFileSignature(
-        application,
-        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-      )
-
-    await expect(act).resolves
-  })
-
-  it('should throw error for getPresignedUrl since application type is not supported', async () => {
-    const application = createApplication(undefined, ApplicationTypes.EXAMPLE)
-
-    const act = async () =>
-      await service.getPresignedUrl(
-        application,
-        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-      )
-
-    await expect(act).rejects.toThrow(
-      'Application type is not supported in file service.',
-    )
   })
 })
