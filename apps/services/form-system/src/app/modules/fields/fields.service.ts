@@ -7,11 +7,11 @@ import { UpdateFieldDto } from './models/dto/updateField.dto'
 import { FieldMapper } from './models/field.mapper'
 import { Field } from './models/field.model'
 import { UpdateFieldsDisplayOrderDto } from './models/dto/updateFieldsDisplayOrder.dto'
-import { FieldTypes } from '../../enums/fieldTypes'
-import { FieldSettingsTypeFactory } from '../../dataTypes/fieldSettingsTypes/fieldSettingsType.factory'
+import { FieldTypesEnum } from '../../enums/fieldTypes'
+import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
-import { FieldSettingsType } from '../../dataTypes/fieldSettingsTypes/fieldSettingsType.model'
+import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import { ValueDto } from '../values/models/dto/value.dto'
 import { randomUUID } from 'crypto'
 
@@ -39,9 +39,9 @@ export class FieldsService {
     const newField: Field = await this.fieldModel.create({
       screenId: screenId,
       fieldType: fieldType,
-      fieldSettingsType: FieldSettingsTypeFactory.getClass(
+      fieldSettings: FieldSettingsFactory.getClass(
         fieldType,
-        new FieldSettingsType(),
+        new FieldSettings(),
       ),
     } as Field)
 

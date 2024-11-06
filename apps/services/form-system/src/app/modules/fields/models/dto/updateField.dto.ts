@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 // import { UpdateFieldSettingsDto } from '../../../fieldSettings/models/dto/updateFieldSettings.dto'
-import { FieldTypes } from '../../../../enums/fieldTypes'
+import { FieldTypesEnum } from '../../../../enums/fieldTypes'
 import { IsEnum, IsNotEmpty, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
-import { FieldSettingsType } from '../../../../dataTypes/fieldSettingsTypes/fieldSettingsType.model'
+import { FieldSettings } from '../../../../dataTypes/fieldSettings/fieldSettings.model'
 
 export class UpdateFieldDto {
   @IsNotEmpty()
@@ -31,12 +31,12 @@ export class UpdateFieldDto {
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => FieldSettingsType)
-  @ApiProperty({ type: FieldSettingsType })
-  fieldSettingsType?: FieldSettingsType
+  @Type(() => FieldSettings)
+  @ApiProperty({ type: FieldSettings })
+  fieldSettings?: FieldSettings
 
   @IsNotEmpty()
-  @IsEnum(FieldTypes)
-  @ApiProperty({ enum: FieldTypes })
+  @IsEnum(FieldTypesEnum)
+  @ApiProperty({ enum: FieldTypesEnum })
   fieldType!: string
 }

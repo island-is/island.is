@@ -1,9 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 // import { FieldSettingsDto } from '../../../fieldSettings/models/dto/fieldSettings.dto'
-import { FieldTypes } from '../../../../enums/fieldTypes'
+import { FieldTypesEnum } from '../../../../enums/fieldTypes'
 import { ValueDto } from '../../../values/models/dto/value.dto'
-import { FieldSettingsType } from '../../../../dataTypes/fieldSettingsTypes/fieldSettingsType.model'
+import { FieldSettings } from '../../../../dataTypes/fieldSettings/fieldSettings.model'
 import { ListItemDto } from '../../../listItems/models/dto/listItem.dto'
 
 export class FieldDto {
@@ -28,10 +28,10 @@ export class FieldDto {
   // @ApiPropertyOptional({ type: FieldSettingsDto })
   // fieldSettings?: FieldSettingsDto
 
-  @ApiPropertyOptional({ type: FieldSettingsType })
-  fieldSettingsType?: FieldSettingsType
+  @ApiPropertyOptional({ type: FieldSettings })
+  fieldSettings?: FieldSettings
 
-  @ApiProperty({ enum: FieldTypes })
+  @ApiProperty({ enum: FieldTypesEnum })
   fieldType!: string
 
   @ApiPropertyOptional({ type: [ListItemDto] })

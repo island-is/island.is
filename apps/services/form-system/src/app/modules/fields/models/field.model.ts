@@ -16,7 +16,7 @@ import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FieldType } from './fieldType.model'
 // import { FieldSettings } from '../../fieldSettings/models/fieldSettings.model'
 import { Value } from '../../values/models/value.model'
-import { FieldSettingsType } from '../../../dataTypes/fieldSettingsTypes/fieldSettingsType.model'
+import { FieldSettings } from '../../../dataTypes/fieldSettings/fieldSettings.model'
 import { ListItem } from '../../listItems/models/listItem.model'
 
 @Table({ tableName: 'field' })
@@ -92,7 +92,7 @@ export class Field extends Model<Field> {
     type: DataType.JSON,
     allowNull: true,
   })
-  fieldSettingsType?: FieldSettingsType
+  fieldSettings?: FieldSettings
 
   @HasMany(() => ListItem)
   list?: ListItem[]
