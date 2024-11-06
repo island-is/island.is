@@ -55,7 +55,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   const { defendant, subpoena } = props
   const { formatMessage } = useIntl()
 
-  const getTitle = (defendantName?: string | null) => {
+  const getTitle = (defendantName?: string | null): string => {
     const successMessage = formatMessage(
       serviceAnnouncementStrings.serviceStatusSuccess,
     )
@@ -68,7 +68,7 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   const getMessage = (
     servedBy?: string | null,
     serviceDate?: string | null,
-  ) => {
+  ): string => {
     return [servedBy, formatDate(serviceDate, 'Pp')].filter(Boolean).join(', ')
   }
 

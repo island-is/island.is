@@ -105,7 +105,7 @@ export const AlertMessage: FC<
           alignSelf="center"
         >
           {title && (
-            <Text as="h5" variant="h5">
+            <Text as="h5" variant="h5" marginBottom={message ? 1 : 0}>
               {title}
             </Text>
           )}
