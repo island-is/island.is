@@ -170,8 +170,11 @@ export const ProgramSelection: FC<FieldBaseProps> = ({ application }) => {
       programInfo && getProgramNameAndExtra(programInfo),
     )
 
-    // set default mode of delivery
+    // set default mode of delivery (or clear selection)
     updateDefaultModeOfDelivery(programInfo)
+
+    // clear testing site selection
+    clearModeOfDeliveryTestingSite()
   }
 
   const updateDefaultModeOfDelivery = (program: Program | undefined) => {
@@ -186,6 +189,10 @@ export const ProgramSelection: FC<FieldBaseProps> = ({ application }) => {
         EMPTY_MODE_OF_DELIVERY,
       )
     }
+  }
+
+  const clearModeOfDeliveryTestingSite = () => {
+    setValue(`${Routes.MODEOFDELIVERYINFORMATION}.location`, '')
   }
 
   const getProgramNameAndExtra = (program: Program) => {
