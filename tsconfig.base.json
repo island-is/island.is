@@ -507,6 +507,9 @@
       "@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly": [
         "libs/application/templates/social-insurance-administration/additional-support-for-the-elderly/src/index.ts"
       ],
+      "@island.is/application/templates/social-insurance-administration/death-benefits": [
+        "libs/application/templates/social-insurance-administration/death-benefits/src/index.ts"
+      ],
       "@island.is/application/templates/social-insurance-administration/household-supplement": [
         "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
       ],
@@ -984,6 +987,7 @@
       "@island.is/portals/shared-modules/delegations/messages": [
         "libs/portals/shared-modules/delegations/src/lib/messages.ts"
       ],
+      "@island.is/react-spa/bff": ["libs/react-spa/bff/src/index.ts"],
       "@island.is/react-spa/shared": ["libs/react-spa/shared/src/index.ts"],
       "@island.is/react/components": ["libs/react/components/src/index.ts"],
       "@island.is/react/feature-flags": [
