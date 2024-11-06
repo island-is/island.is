@@ -3,21 +3,21 @@ import { getMarkdownOptions } from './markdownOptions'
 
 interface Props {
   children: string,
-  conditionals?: OptionalConditionalOverrides
+  options?: OptionalOverrides
 }
 
-export interface OptionalConditionalOverrides {
+export interface OptionalOverrides {
   openLinksInNewTab?: boolean,
   hehe?: number
 }
 
-const defaultOptionalOverrides: OptionalConditionalOverrides = {
+const defaultOptionalOverrides: OptionalOverrides = {
   openLinksInNewTab: true,
   hehe: 5
 }
 
-export const Markdown = ({ children, conditionals }: Props) => {
-  const optionalConditionals = { ...defaultOptionalOverrides, ...conditionals }
+export const Markdown = ({ children, options }: Props) => {
+  const optionalConditionals = { ...defaultOptionalOverrides, ...options }
   return compiler(children, getMarkdownOptions(optionalConditionals))
 }
 
