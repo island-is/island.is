@@ -1,62 +1,86 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
+import { Type } from 'class-transformer'
+import { IsArray, IsOptional, ValidateNested } from 'class-validator'
 
 class Month {
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: Number })
   month?: number
 
-  @ApiPropertyOptional()
-  amount?: number
+  @IsOptional()
+  @ApiPropertyOptional({ type: Number })
+  amount?: number | null
 
+  @IsOptional()
   @ApiPropertyOptional({ type: [Number] })
   days?: number[]
 }
 
 export class ValueType {
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
   text?: string
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: Number })
   number?: number
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: Date })
   date?: Date
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
   kennitala?: string
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
   name?: string
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
   address?: string
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
   postalCode?: string
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
   municipality?: string
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
   jobTitle?: string
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
   altName?: string
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
   homestayNumber?: string
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: Number })
   totalDays?: number
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: Number })
   totalAmount?: number
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: Number })
   year?: number
 
-  @ApiPropertyOptional()
+  @IsOptional()
+  @ApiPropertyOptional({ type: Boolean })
   isNullReport?: boolean
 
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => Month)
+  @IsArray()
   @ApiPropertyOptional({ type: [Month] })
   months?: Month[]
 }

@@ -38,7 +38,7 @@ export class ValueTypeFactory {
         keys = ['date']
         return this.pickSettings(valueType, keys)
       default:
-        return {}
+        return undefined
     }
   }
 

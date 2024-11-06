@@ -9,16 +9,16 @@ export class FieldSettingsTypeFactory {
     let keys: string[]
     switch (type) {
       case FieldTypes.TEXTBOX:
-        keys = ['minLength', 'maxLength', 'isLarge', 'isRequired']
+        keys = ['minLength', 'maxLength', 'isLarge']
         return this.pickSettings(fieldSettingsType, keys)
       case FieldTypes.NUMBERBOX:
-        keys = ['minLength', 'maxLength', 'minValue', 'maxValue', 'isRequired']
+        keys = ['minLength', 'maxLength', 'minValue', 'maxValue']
         return this.pickSettings(fieldSettingsType, keys)
       case FieldTypes.MESSAGE:
         keys = ['hasLink', 'url', 'buttonText']
         return this.pickSettings(fieldSettingsType, keys)
       case FieldTypes.DATE_PICKER:
-        keys = ['minDate', 'maxDate', 'isRequired']
+        keys = ['minDate', 'maxDate']
         return this.pickSettings(fieldSettingsType, keys)
       // case FieldTypes.DROPDOWN_LIST: {
       //   keys = ['list', 'listType', 'isRequired']
@@ -37,22 +37,22 @@ export class FieldSettingsTypeFactory {
       //   return radioButtonsFieldSettings
       // }
       case FieldTypes.ISK_NUMBERBOX:
-        keys = ['minAmount', 'maxAmount', 'isRequired']
+        keys = ['minAmount', 'maxAmount']
         return this.pickSettings(fieldSettingsType, keys)
       case FieldTypes.PROPERTY_NUMBER:
-        keys = ['hasPropertyInput', 'hasPropertyList', 'isRequired']
+        keys = ['hasPropertyInput', 'hasPropertyList']
         return this.pickSettings(fieldSettingsType, keys)
       case FieldTypes.DOCUMENT:
-        keys = ['fileTypes', 'fileMaxSize', 'maxFiles', 'isRequired']
+        keys = ['fileTypes', 'fileMaxSize', 'maxFiles']
         return this.pickSettings(fieldSettingsType, keys)
       case FieldTypes.TIME_INPUT:
-        keys = ['timeInterval', 'isRequired']
+        keys = ['timeInterval']
         return this.pickSettings(fieldSettingsType, keys)
       case FieldTypes.HOMESTAY_OVERVIEW:
         keys = ['year']
         return this.pickSettings(fieldSettingsType, keys)
       default:
-        return {}
+        return undefined
     }
   }
 

@@ -37,10 +37,19 @@ module.exports = {
             allowNull: false,
             defaultValue: false,
           },
+          is_required: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+          },
           is_part_of_multiset: {
             type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: false,
+          },
+          field_settings_type: {
+            type: Sequelize.JSON,
+            allowNull: true,
           },
           screen_id: {
             type: Sequelize.UUID,

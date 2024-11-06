@@ -8,8 +8,8 @@ import { SectionTypes } from '../../enums/sectionTypes'
 import { FormApplicantDto } from '../formApplicants/models/dto/formApplicant.dto'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Screen } from '../screens/models/screen.model'
-import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
-import { FieldSettings } from '../fieldSettings/models/fieldSettings.model'
+// import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
+// import { FieldSettings } from '../fieldSettings/models/fieldSettings.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
 import { FieldTypeDto } from '../fields/models/dto/fieldType.dto'
 import { Field } from '../fields/models/field.model'
@@ -37,6 +37,8 @@ import {
   ApplicantTypes,
 } from '../../dataTypes/applicantType.model'
 import { FormApplicant } from '../formApplicants/models/formApplicant.model'
+import { FieldSettingsType } from '../../dataTypes/fieldSettingsTypes/fieldSettingsType.model'
+import { FieldSettingsTypeFactory } from '../../dataTypes/fieldSettingsTypes/fieldSettingsType.factory'
 // import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 // import { ValueFactory } from '../../dataTypes/valueTypes/valueType.factory'
 
@@ -55,8 +57,8 @@ export class FormsService {
     private readonly fieldTypeModel: typeof FieldType,
     @InjectModel(ListType)
     private readonly listTypeModel: typeof ListType,
-    private readonly fieldSettingsMapper: FieldSettingsMapper,
-  ) {}
+  ) // private readonly fieldSettingsMapper: FieldSettingsMapper,
+  {}
 
   async findAll(organizationId: string): Promise<FormResponseDto> {
     const forms = await this.formModel.findAll({
@@ -182,14 +184,8 @@ export class FormsService {
                   as: 'fields',
                   include: [
                     {
-                      model: FieldSettings,
-                      as: 'fieldSettings',
-                      include: [
-                        {
-                          model: ListItem,
-                          as: 'list',
-                        },
-                      ],
+                      model: ListItem,
+                      as: 'list',
                     },
                   ],
                 },
@@ -282,11 +278,10 @@ export class FormsService {
             zipObject(keys, Array(keys.length).fill(null)),
           ),
           {
-            fieldSettings:
-              this.fieldSettingsMapper.mapFieldTypeToFieldSettingsDto(
-                null,
-                fieldType.type,
-              ),
+            fieldSettingsType: FieldSettingsTypeFactory.getClass(
+              fieldType.type,
+              new FieldSettingsType(),
+            ),
           },
         ) as FieldTypeDto,
       )
@@ -435,11 +430,10 @@ export class FormsService {
                 zipObject(fieldKeys, Array(fieldKeys.length).fill(null)),
               ),
               {
-                fieldSettings:
-                  this.fieldSettingsMapper.mapFieldTypeToFieldSettingsDto(
-                    field.fieldSettings,
-                    field.fieldType,
-                  ),
+                fieldSettings: FieldSettingsTypeFactory.getClass(
+                  field.fieldType,
+                  new FieldSettingsType(),
+                ),
                 // values: [this.createValue(field.fieldType, 0)],
               },
             ) as FieldDto,

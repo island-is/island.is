@@ -8,7 +8,7 @@ import { ValueType } from '../../../../dataTypes/valueTypes/valueType.model'
 export class UpdateValueDto {
   @IsNotEmpty()
   @ValidateNested()
-  @Type(() => Sequelize.json)
-  @ApiProperty({ type: Sequelize.json })
+  @Type(() => ValueType)
+  @ApiProperty({ type: ValueType })
   json!: ValueType
 }

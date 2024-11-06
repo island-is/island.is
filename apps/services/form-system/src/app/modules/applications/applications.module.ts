@@ -5,7 +5,7 @@ import { ApplicationsService } from './applications.service'
 import { ApplicationsController } from './applications.controller'
 import { Form } from '../forms/models/form.model'
 import { ApplicationMapper } from './models/application.mapper'
-import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
+// import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
 import { ListItemMapper } from '../listItems/models/listItem.mapper'
 import { Value } from '../values/models/value.model'
 
@@ -15,7 +15,7 @@ import { Value } from '../values/models/value.model'
   providers: [
     ApplicationsService,
     ApplicationMapper,
-    FieldSettingsMapper,
+    // FieldSettingsMapper,
     ListItemMapper,
   ],
 })

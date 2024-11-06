@@ -1,5 +1,6 @@
 import { CreationOptional } from 'sequelize'
 import {
+  AllowNull,
   Column,
   CreatedAt,
   DataType,
@@ -13,8 +14,10 @@ import {
 import { Screen } from '../../screens/models/screen.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FieldType } from './fieldType.model'
-import { FieldSettings } from '../../fieldSettings/models/fieldSettings.model'
+// import { FieldSettings } from '../../fieldSettings/models/fieldSettings.model'
 import { Value } from '../../values/models/value.model'
+import { FieldSettingsType } from '../../../dataTypes/fieldSettingsTypes/fieldSettingsType.model'
+import { ListItem } from '../../listItems/models/listItem.model'
 
 @Table({ tableName: 'field' })
 export class Field extends Model<Field> {
@@ -65,6 +68,13 @@ export class Field extends Model<Field> {
     allowNull: false,
     defaultValue: false,
   })
+  isRequired!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
   isPartOfMultiset!: boolean
 
   @ForeignKey(() => Screen)
@@ -75,8 +85,17 @@ export class Field extends Model<Field> {
   })
   screenId!: string
 
-  @HasOne(() => FieldSettings)
-  fieldSettings?: FieldSettings
+  // @HasOne(() => FieldSettings)
+  // fieldSettings?: FieldSettings
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  fieldSettingsType?: FieldSettingsType
+
+  @HasMany(() => ListItem)
+  list?: ListItem[]
 
   @HasMany(() => Value)
   values?: Value[]
