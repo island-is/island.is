@@ -23,7 +23,7 @@ const markdownOverrides: MarkdownToJSX.Overrides = {
       color: 'blue400',
       underline: 'small',
       underlineVisibility: 'always',
-      newTab: true
+      newTab: true,
     },
   },
   h1: {
