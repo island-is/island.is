@@ -142,7 +142,7 @@ export class DefendantService {
           {
             type: MessageType.DEFENDANT_NOTIFICATION,
             caseId: theCase.id,
-            body: { type: DefendantNotificationType.ADVOCATE_ASSIGNED },
+            body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
             elementId: updatedDefendant.id,
           },
         ])

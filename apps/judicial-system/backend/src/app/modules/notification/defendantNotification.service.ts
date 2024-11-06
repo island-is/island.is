@@ -88,18 +88,18 @@ export class DefendantNotificationService extends BaseNotificationService {
     return this.recordNotification(theCase.id, notificationType, recipients)
   }
 
-  private shouldSendAdvocateAssignedNotification(
+  private shouldSendDefenderAssignedNotification(
     theCase: Case,
-    advocateEmail?: string,
+    defenderEmail?: string,
   ): boolean {
-    if (!advocateEmail) {
+    if (!defenderEmail) {
       return false
     }
 
     if (isIndictmentCase(theCase.type)) {
       const hasSentNotificationBefore = this.hasReceivedNotification(
-        DefendantNotificationType.ADVOCATE_ASSIGNED,
-        advocateEmail,
+        DefendantNotificationType.DEFENDER_ASSIGNED,
+        defenderEmail,
         theCase.notifications,
       )
 
@@ -110,11 +110,11 @@ export class DefendantNotificationService extends BaseNotificationService {
     return false
   }
 
-  private async sendAdvocateAssignedNotification(
+  private async sendDefenderAssignedNotification(
     defendant: Defendant,
     theCase: Case,
   ): Promise<DeliverResponse> {
-    const shouldSend = this.shouldSendAdvocateAssignedNotification(
+    const shouldSend = this.shouldSendDefenderAssignedNotification(
       theCase,
       defendant.defenderEmail,
     )
@@ -123,9 +123,9 @@ export class DefendantNotificationService extends BaseNotificationService {
       return this.sendEmails(
         defendant,
         theCase,
-        DefendantNotificationType.ADVOCATE_ASSIGNED,
-        strings.indictmentAdvocateAssignedSubject,
-        strings.indictmentAdvocateAssignedBody,
+        DefendantNotificationType.DEFENDER_ASSIGNED,
+        strings.defenderAssignedSubject,
+        strings.defenderAssignedBody,
       )
     }
 
@@ -140,8 +140,8 @@ export class DefendantNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     {
       switch (notificationType) {
-        case DefendantNotificationType.ADVOCATE_ASSIGNED:
-          return this.sendAdvocateAssignedNotification(defendant, theCase)
+        case DefendantNotificationType.DEFENDER_ASSIGNED:
+          return this.sendDefenderAssignedNotification(defendant, theCase)
         default:
           throw new InternalServerErrorException(
             `Invalid notification type: ${notificationType}`,
