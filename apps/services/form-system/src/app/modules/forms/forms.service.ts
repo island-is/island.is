@@ -56,9 +56,8 @@ export class FormsService {
     @InjectModel(FieldType)
     private readonly fieldTypeModel: typeof FieldType,
     @InjectModel(ListType)
-    private readonly listTypeModel: typeof ListType,
-  ) // private readonly fieldSettingsMapper: FieldSettingsMapper,
-  {}
+    private readonly listTypeModel: typeof ListType, // private readonly fieldSettingsMapper: FieldSettingsMapper,
+  ) {}
 
   async findAll(organizationId: string): Promise<FormResponseDto> {
     const forms = await this.formModel.findAll({
