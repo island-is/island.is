@@ -105,6 +105,7 @@ export class NotificationsController {
       messageId: id,
       ...flattenedArgs,
       ...body,
+      queue: { url: this.queue.url, name: this.queue.queueName },
     })
 
     return {
