@@ -1,19 +1,20 @@
+import { useState } from 'react'
 import { GetServerSideProps } from 'next'
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
+import gql from 'graphql-tag'
 
 import {
   Query,
   QueryGetPaymentFlowArgs,
   QueryGetOrganizationArgs,
 } from '@island.is/api/schema'
+import { Box, Button } from '@island.is/island-ui/core'
 
 import { PageCard } from '../../components/PageCard/PageCard'
-import gql from 'graphql-tag'
 import initApollo from '../../graphql/client'
 import { PaymentHeader } from 'apps/payments/components/PaymentHeader/PaymentHeader'
 import { PaymentSelector } from 'apps/payments/components/PaymentSelector/PaymentSelector'
-import { useState } from 'react'
 import { CardPayment } from 'apps/payments/components/CardPayment/CardPayment'
-import { Box, Button } from '@island.is/island-ui/core'
 import { InvoicePayment } from 'apps/payments/components/InvoicePayment/InvoicePayment'
 
 interface PaymentPageProps {
@@ -67,7 +68,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
 
   const client = initApollo()
 
-  let paymentFlow: PaymentPageProps['paymentFlow']
+  let paymentFlow: any // TODO look into type "used before initialization"
   let organization: PaymentPageProps['organization']
 
   try {
@@ -102,7 +103,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
 
   // TODO fetch product information from TBR
   const productInformation = {
-    amount: 13337,
+    amount: 133337,
     title: 'Titill vöru',
   }
 
@@ -122,6 +123,10 @@ export default function PaymentPage({
   organization,
   productInformation,
 }: PaymentPageProps) {
+  const methods = useForm({
+    mode: 'onBlur',
+    reValidateMode: 'onChange',
+  })
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>(
     paymentFlow?.availablePaymentMethods?.[0] ?? '',
   )
@@ -131,6 +136,10 @@ export default function PaymentPage({
     !productInformation ||
     !paymentFlow ||
     !paymentFlow.availablePaymentMethods
+
+  const onSubmit: SubmitHandler<Record<string, unknown>> = (data) => {
+    console.log('Submit', data)
+  }
 
   return (
     <PageCard
@@ -149,18 +158,29 @@ export default function PaymentPage({
       }
       bodySlot={
         !invalidFlowSetup ? (
-          <Box display="flex" flexDirection="column" rowGap={2}>
-            <PaymentSelector
-              availablePaymentMethods={['card', 'invoice']}
-              selectedPayment={selectedPaymentMethod as any}
-              onSelectPayment={setSelectedPaymentMethod}
-            />
-            {selectedPaymentMethod === 'card' && <CardPayment />}
-            {selectedPaymentMethod === 'invoice' && <InvoicePayment />}
-            <Button colorScheme="white" fluid>
-              Hætta við
-            </Button>
-          </Box>
+          <FormProvider {...methods}>
+            <form onSubmit={methods.handleSubmit(onSubmit)}>
+              <Box display="flex" flexDirection="column" rowGap={2}>
+                <PaymentSelector
+                  availablePaymentMethods={['card', 'invoice']}
+                  selectedPayment={selectedPaymentMethod as any}
+                  onSelectPayment={setSelectedPaymentMethod}
+                />
+                {selectedPaymentMethod === 'card' && <CardPayment />}
+                {selectedPaymentMethod === 'invoice' && <InvoicePayment />}
+                <Button
+                  type="submit"
+                  fluid
+                  disabled={!methods.formState.isValid}
+                >
+                  {selectedPaymentMethod === 'card' ? 'Greiða' : 'Stofna kröfu'}
+                </Button>
+                <Button colorScheme="white" fluid>
+                  Hætta við
+                </Button>
+              </Box>
+            </form>
+          </FormProvider>
         ) : (
           <Box display="flex" flexDirection="column">
             <p>Ekki tókst að sækja upplýsingar um greiðsluflæði</p>
@@ -170,5 +190,4 @@ export default function PaymentPage({
       headerColorScheme="primary"
     />
   )
-  //   return <p>Test page (page router)</p>
 }

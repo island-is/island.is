@@ -1,11 +1,4 @@
-import {
-  Box,
-  LinkV2,
-  Logo,
-  Text,
-  Button,
-  Input,
-} from '@island.is/island-ui/core'
+import { Box, LinkV2, Logo } from '@island.is/island-ui/core'
 
 import * as styles from './PageCard.css'
 import { PageCenter } from '../PageCenter/PageCenter'
@@ -73,11 +66,11 @@ export const PageCard = ({
         </Box>
         <footer className={styles.footer}>
           <Box display="flex" justifyContent="spaceBetween" alignItems="center">
-            <LinkV2 href="https://island.is/skilmalar-island-is">
+            <LinkV2 href="https://island.is/skilmalar-island-is" skipTab>
               <Logo width={120} />
             </LinkV2>
             <Box display="flex" columnGap={2}>
-              <LinkV2 href="todo" color="blue400" onClick={() => alert('todo')}>
+              <LinkV2 href="#" color="blue400">
                 English
               </LinkV2>
               <span className={styles.linkSeparator} />

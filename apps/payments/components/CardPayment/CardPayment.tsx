@@ -1,17 +1,35 @@
+import { useFormContext } from 'react-hook-form'
+
 import { Box, Button, Input } from '@island.is/island-ui/core'
 
 import { PaymentContainer } from '../PaymentContainer/PaymentContainer'
 
+interface CardPaymentInput {
+  card: string
+  cardExpiry: string
+  cardCVC: string
+}
+
 export const CardPayment = () => {
+  const { register, formState } = useFormContext<CardPaymentInput>()
+
   return (
     <>
       <PaymentContainer>
         <Input
           backgroundColor="blue"
           label="Kortanúmer"
-          name="card"
           placeholder="**** **** **** ****"
           size="md"
+          {...register('card', {
+            required: true,
+            pattern: {
+              // number between 13-19 digits
+              value: /^[0-9]{13,19}$/,
+              message: 'Kortanúmer er ekki rétt',
+            },
+          })}
+          errorMessage={formState.errors.card?.message}
         />
         <Box
           display="flex"
@@ -23,7 +41,9 @@ export const CardPayment = () => {
             <Input
               backgroundColor="blue"
               label="Gildistími"
-              name="cardExpiry"
+              {...register('cardExpiry', {
+                required: true,
+              })}
               placeholder="MM / ÁÁ"
               size="md"
               rows={6}
@@ -32,16 +52,17 @@ export const CardPayment = () => {
           <Box width="full">
             <Input
               backgroundColor="blue"
-              label="CVC"
-              name="cardCVC"
-              placeholder="Öryggiskóði"
+              label="Öryggiskóði"
+              {...register('cardCVC', {
+                required: true,
+              })}
+              placeholder="***"
               size="md"
               rows={6}
             />
           </Box>
         </Box>
       </PaymentContainer>
-      <Button fluid>Greiða</Button>
     </>
   )
 }

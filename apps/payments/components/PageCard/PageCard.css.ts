@@ -3,10 +3,12 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const container = style({
   height: '100%',
+  margin: 0,
 
   ...themeUtils.responsiveStyle({
-    md: {
-      maxWidth: theme.contentWidth.small,
+    xs: {
+      margin: theme.spacing[1],
+      maxWidth: '430px',
       height: 'initial',
       justifyContent: 'initial',
     },
@@ -35,7 +37,7 @@ export const cardContainer = style({
   position: 'relative',
   borderTop: createStandardBorder(),
   ...themeUtils.responsiveStyle({
-    md: {
+    xs: {
       border: createStandardBorder(),
       borderRadius: theme.border.radius.large,
     },
@@ -79,7 +81,7 @@ export const footer = style({
   paddingLeft: theme.spacing[3],
   marginTop: theme.spacing[4],
   ...themeUtils.responsiveStyle({
-    md: {
+    xs: {
       paddingRight: 0,
       paddingLeft: 0,
       marginTop: 0,
