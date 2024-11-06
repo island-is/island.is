@@ -21,31 +21,26 @@ import {
   FormModes,
   FormValue,
 } from '@island.is/application/types'
-import { ApiActions } from '../shared'
-import { m } from '../lib/messages'
+import { m } from '../../lib/messages'
+import { ApiActions } from '../../shared'
+import { introSection } from './introSection/introSection'
+import { getDataFromExternalDataSection } from './getDataFromExternalDataSection/getDataFromExternalDataSection'
+import { simpleInputsSection } from './simpleInputsSection'
+import { descriptionSection } from './descriptionSection/descriptionSection'
 
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
-  title: 'Atvinnuleysisbætur',
+  title: 'Main form',
   mode: FormModes.DRAFT,
   children: [
-    buildSection({
-      id: 'conditions',
-      title: m.conditionsSection,
-      children: [],
-    }),
+    introSection,
+    getDataFromExternalDataSection,
+    descriptionSection,
+    simpleInputsSection,
     buildSection({
       id: 'intro',
       title: m.introSection,
       children: [
-        buildDescriptionField({
-          id: 'field',
-          title: m.introField,
-          description: (application) => ({
-            ...m.introIntroduction,
-            values: { name: application.answers.name },
-          }),
-        }),
         buildMultiField({
           id: 'about',
           title: m.about,
