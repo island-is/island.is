@@ -9,7 +9,9 @@ import { MarkdownToJSX } from 'markdown-to-jsx'
 import * as styles from './Markdown.css'
 import { OptionalConditionalOverrides } from './Markdown'
 
-export const getMarkdownOptions = (optionalConditionals: OptionalConditionalOverrides): MarkdownToJSX.Options => {
+export const getMarkdownOptions = (
+  optionalConditionals: OptionalConditionalOverrides,
+): MarkdownToJSX.Options => {
   return {
     overrides: getMarkdownOverrides(optionalConditionals),
     wrapper: ({ children }: { children: React.ReactNode }) => (
@@ -24,7 +26,9 @@ export const getMarkdownOptions = (optionalConditionals: OptionalConditionalOver
   }
 }
 
-const getMarkdownOverrides = (optionalConditionals: OptionalConditionalOverrides): MarkdownToJSX.Overrides => {
+const getMarkdownOverrides = (
+  optionalConditionals: OptionalConditionalOverrides,
+): MarkdownToJSX.Overrides => {
   return {
     ul: BulletList,
     ol: {
@@ -40,7 +44,7 @@ const getMarkdownOverrides = (optionalConditionals: OptionalConditionalOverrides
         color: 'blue400',
         underline: 'small',
         underlineVisibility: 'always',
-        newTab: optionalConditionals.openLinksInNewTab
+        newTab: optionalConditionals.openLinksInNewTab,
       },
     },
     h1: {
