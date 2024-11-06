@@ -27,6 +27,24 @@ query userFamilyMemberExamResults(
         }
         gradeCategories {
           label
+          ... on EducationCompulsorySchoolGradeCategoryText {
+            text
+          }
+          ... on EducationCompulsorySchoolGradeCategoryWeighted {
+            label
+            grade {
+              compulsorySchoolGrade {
+                grade
+                weight
+                label
+              }
+              serialGrade {
+                grade
+                weight
+                label
+              }
+            }
+          }
         }
       }
     }
