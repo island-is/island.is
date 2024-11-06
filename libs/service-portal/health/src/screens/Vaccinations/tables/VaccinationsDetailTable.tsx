@@ -58,7 +58,7 @@ export const VaccinationsDetailTable = ({
         <ul color="black">
           {footerText.map((item, i) => (
             <li key={i} className={styles.footerList}>
-              <Markdown options={{openLinksInNewTab: false}}>{item}</Markdown>
+              <Markdown options={{ openLinksInNewTab: false }}>{item}</Markdown>
             </li>
           ))}
         </ul>

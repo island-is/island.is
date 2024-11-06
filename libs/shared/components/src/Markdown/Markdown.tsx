@@ -2,12 +2,12 @@ import { compiler } from 'markdown-to-jsx'
 import { getMarkdownOptions } from './markdownOptions'
 
 interface Props {
-  children: string,
+  children: string
   options?: OptionalOverrides
 }
 
 export interface OptionalOverrides {
-  openLinksInNewTab?: boolean,
+  openLinksInNewTab?: boolean
 }
 
 const defaultOptionalOverrides: OptionalOverrides = {
