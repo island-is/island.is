@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common'
+import { DynamicModule, Module } from '@nestjs/common'
 import { BullModule as NestBullModule } from '@nestjs/bull'
 import { createRedisCluster } from '@island.is/cache'
+import { SigningModule } from '@island.is/dokobit-signing'
 import { LoggingModule } from '@island.is/logging'
 import { AwsModule } from '@island.is/nest/aws'
 import { FileService } from './file.service'
@@ -15,6 +16,7 @@ import { ApplicationApiCoreModule } from '@island.is/application/api/core'
   imports: [
     ApplicationApiCoreModule,
     AwsModule,
+    SigningModule,
     LoggingModule,
     FileStorageModule,
   ],

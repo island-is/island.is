@@ -73,6 +73,7 @@ import { ApplicationValidationService } from './tools/applicationTemplateValidat
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
+import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { verifyToken } from './utils/tokenUtils'
 import { getApplicationLifecycle } from './utils/application'
@@ -92,6 +93,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
 import { ApplicationActionService } from './application-action.service'
+import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -842,6 +844,47 @@ export class ApplicationController {
     })
 
     return updatedApplication
+  }
+
+  @Get('applications/:id/attachments/:attachmentKey/presigned-url')
+  @Scopes(ApplicationScope.read)
+  @Documentation({
+    description: 'Gets a presigned url for attachments',
+    response: { status: 200, type: PresignedUrlResponseDto },
+    request: {
+      query: {},
+      params: {
+        id: {
+          type: 'string',
+          description: 'application id',
+          required: true,
+        },
+        attachmentKey: {
+          type: 'string',
+          description: 'key for attachment',
+          required: true,
+        },
+      },
+    },
+  })
+  async getAttachmentPresignedURL(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('attachmentKey') attachmentKey: string,
+    @CurrentUser() user: User,
+  ): Promise<PresignedUrlResponseDto> {
+    const existingApplication =
+      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
+
+    if (!existingApplication.attachments) {
+      throw new NotFoundException('Attachments not found')
+    }
+    try {
+      const str = attachmentKey as keyof typeof existingApplication.attachments
+      const fileName = existingApplication.attachments[str]
+      return await this.fileService.getAttachmentPresignedURL(fileName)
+    } catch (error) {
+      throw new NotFoundException('Attachment not found')
+    }
   }
 
   @Scopes(ApplicationScope.write)

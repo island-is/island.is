@@ -7,11 +7,10 @@ import {
 } from '@island.is/dokobit-signing'
 import { AwsModule, S3Service } from '@island.is/nest/aws'
 import { Application } from '@island.is/application/api/core'
-import { ApplicationTypes } from '@island.is/application/types'
+import { ApplicationTypes, PdfTypes } from '@island.is/application/types'
 import { LoggingModule } from '@island.is/logging'
 import { defineConfig, ConfigModule } from '@island.is/nest/config'
 import { FileStorageConfig } from '@island.is/file-storage'
-import AmazonS3Uri from 'amazon-s3-uri'
 
 describe('FileService', () => {
   let service: FileService
@@ -81,9 +80,7 @@ describe('FileService', () => {
       typeId: typeId ?? ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2,
       modified: new Date(),
       created: new Date(),
-      attachments: {
-        key: 'https://s3.amazonaws.com/bucket-name/key-name',
-      },
+      attachments: {},
       answers: answers ?? {
         useMocks: 'no',
         selectedChildren: [child.nationalId],
@@ -132,16 +129,90 @@ describe('FileService', () => {
     s3Service = module.get(S3Service)
 
     jest
-      .spyOn(s3Service, 'deleteObject')
-      .mockImplementation(() => Promise.resolve())
+      .spyOn(s3Service, 'getFileContent')
+      .mockImplementation(() => Promise.resolve('body'))
 
-    // jest.mock('amazon-s3-uri')
+    jest.spyOn(s3Service, 'fileExists').mockResolvedValue(false)
+
+    jest
+      .spyOn(s3Service, 'uploadFile')
+      .mockImplementation(() => Promise.resolve('url'))
+
+    jest
+      .spyOn(s3Service, 'getPresignedUrl')
+      .mockImplementation(() => Promise.resolve('url'))
+
+    signingService = module.get(SigningService)
+
+    jest
+      .spyOn(signingService, 'requestSignature')
+      .mockImplementation(() =>
+        Promise.resolve(signingServiceRequestSignatureResponse),
+      )
 
     service = module.get(FileService)
   })
 
   it('should be defined', () => {
     expect(service).toBeTruthy()
+  })
+
+  it('should return presigned url', async () => {
+    const application = createApplication()
+    const fileName = `children-residence-change/${application.id}.pdf`
+
+    const result = await service.getPresignedUrl(
+      application,
+      PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+    )
+
+    expect(s3Service.getPresignedUrl).toHaveBeenCalledWith({
+      bucket,
+      key: fileName,
+    })
+    expect(result).toEqual('url')
+  })
+
+  it('should throw error for uploadSignedFile since application type is not supported', async () => {
+    const application = createApplication(undefined, ApplicationTypes.EXAMPLE)
+
+    const act = async () =>
+      await service.uploadSignedFile(
+        application,
+        'token',
+        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+      )
+
+    await expect(act).rejects.toThrow(
+      'Application type is not supported in file service.',
+    )
+  })
+
+  it('should have an application type that is valid for uploadSignedFile', async () => {
+    const application = createApplication()
+
+    const act = async () =>
+      await service.uploadSignedFile(
+        application,
+        'token',
+        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+      )
+
+    await expect(act).resolves
+  })
+
+  it('should throw error for getPresignedUrl since application type is not supported', async () => {
+    const application = createApplication(undefined, ApplicationTypes.EXAMPLE)
+
+    const act = async () =>
+      await service.getPresignedUrl(
+        application,
+        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
+      )
+
+    await expect(act).rejects.toThrow(
+      'Application type is not supported in file service.',
+    )
   })
 
   it('Should properly delete a file from s3', async () => {
