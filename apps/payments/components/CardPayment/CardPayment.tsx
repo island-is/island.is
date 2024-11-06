@@ -1,6 +1,6 @@
 import { useFormContext } from 'react-hook-form'
 
-import { Box, Button, Input } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 
 import { PaymentContainer } from '../PaymentContainer/PaymentContainer'
 

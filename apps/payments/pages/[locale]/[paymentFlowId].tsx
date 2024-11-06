@@ -16,6 +16,7 @@ import { PaymentHeader } from 'apps/payments/components/PaymentHeader/PaymentHea
 import { PaymentSelector } from 'apps/payments/components/PaymentSelector/PaymentSelector'
 import { CardPayment } from 'apps/payments/components/CardPayment/CardPayment'
 import { InvoicePayment } from 'apps/payments/components/InvoicePayment/InvoicePayment'
+import { ALLOWED_LOCALES, Locale } from 'apps/payments/utils'
 
 interface PaymentPageProps {
   locale: string
@@ -66,10 +67,19 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
     paymentFlowId: string
   }
 
+  if (!ALLOWED_LOCALES.includes(locale as Locale)) {
+    return {
+      redirect: {
+        destination: `/${ALLOWED_LOCALES[0]}/${paymentFlowId}`,
+        permanent: false,
+      },
+    }
+  }
+
   const client = initApollo()
 
-  let paymentFlow: any // TODO look into type "used before initialization"
-  let organization: PaymentPageProps['organization']
+  let paymentFlow: any = null // TODO look into type "used before initialization"
+  let organization: PaymentPageProps['organization'] = null
 
   try {
     const {
