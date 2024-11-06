@@ -136,6 +136,7 @@ export const ParentInformationSchema = z
     nationalId: z.string().optional(),
     givenName: z.string().optional(),
     familyName: z.string().optional(),
+    currentName: z.string(),
     wasRemoved: z.string().min(1).optional(),
   })
   .refine(
