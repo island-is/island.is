@@ -1,4 +1,5 @@
 import styles from './page.module.css'
+import { GET_ERROR_PAGE } from '../queries'
 
 export default function Index() {
   return (
