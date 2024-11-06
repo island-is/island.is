@@ -77,6 +77,8 @@ const LicenseCardWrapper = styled(SafeAreaView)`
 const ButtonWrapper = styled(SafeAreaView)<{ floating?: boolean }>`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
   margin-right: ${({ theme }) => theme.spacing[2]}px;
+  margin-bottom: ${({ theme, floating }) =>
+    floating ? 0 : theme.spacing[6]}px;
 
   ${({ floating, theme }) =>
     floating &&
@@ -167,6 +169,20 @@ export const WalletPassScreen: NavigationFunctionComponent<{
   const barcodeHeight = barcodeWidth / 3
   const updated = data?.fetch?.updated
 
+  const { loading } = res
+
+  const informationTopSpacing =
+    allowLicenseBarcode && ((loading && !data?.barcode) || data?.barcode)
+      ? barcodeHeight + LICENSE_CARD_ROW_GAP
+      : 0
+
+  const [key, setKey] = useState(0)
+  useEffect(() => {
+    // Used to rerender ScrollView to have correct ContentInset based on barcode/no barcode
+    // Remove once barcodes are live
+    setKey((prev) => prev + 1)
+  }, [isBarcodeEnabled])
+
   const fadeIn = () => {
     Animated.timing(fadeInAnim, {
       toValue: 1,
@@ -226,11 +242,22 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           addPass(pkPassContentUri, 'com.snjallveskid').catch(() => {
             if (!canAddPass) {
               Alert.alert(
-                'Villa',
-                'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
+                intl.formatMessage({
+                  id: 'walletPass.errorTitle',
+                }),
+                intl.formatMessage({
+                  id: 'walletPass.errorCannotAddPasses',
+                }),
               )
             } else {
-              Alert.alert('Villa', 'Failed to fetch or add pass')
+              Alert.alert(
+                intl.formatMessage({
+                  id: 'walletPass.errorTitle',
+                }),
+                intl.formatMessage({
+                  id: 'walletPass.errorAddingOrFetching',
+                }),
+              )
             }
           })
           setAddingToWallet(false)
@@ -258,7 +285,12 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       } catch (err) {
         if (!canAddPass) {
           Alert.alert(
-            'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
+            intl.formatMessage({
+              id: 'walletPass.errorTitle',
+            }),
+            intl.formatMessage({
+              id: 'walletPass.errorCannotAddPasses',
+            }),
           )
         } else {
           Alert.alert(
@@ -269,7 +301,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               ? intl.formatMessage({
                   id: 'walletPass.errorNotPossibleToAddDriverLicense',
                 })
-              : 'Failed to fetch or add pass',
+              : intl.formatMessage({
+                  id: 'walletPass.errorAddingOrFetching',
+                }),
             item?.license?.type === 'DriversLicense'
               ? [
                   {
@@ -294,7 +328,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         console.error(err)
       }
     } else {
-      Alert.alert('You cannot add passes on this device')
+      Alert.alert(
+        intl.formatMessage({ id: 'walletPass.errorNotPossibleOnThisDevice' }),
+      )
     }
   }
 
@@ -314,13 +350,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       return expDt
     }
   }
-
-  const { loading } = res
-
-  const informationTopSpacing =
-    allowLicenseBarcode && ((loading && !data?.barcode) || data?.barcode)
-      ? barcodeHeight + LICENSE_CARD_ROW_GAP
-      : 0
 
   const renderButtons = () => {
     if (isIos) {
@@ -381,10 +410,22 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         />
       </LicenseCardWrapper>
       <Information
-        contentInset={{ bottom: 162 }}
+        contentInset={{
+          bottom: informationTopSpacing ? 162 : 0,
+        }}
+        key={key}
+        contentContainerStyle={{ marginBottom: theme.spacing[6] }}
         topSpacing={informationTopSpacing}
       >
-        <SafeAreaView style={{ marginHorizontal: theme.spacing[2] }}>
+        <SafeAreaView
+          style={{
+            marginHorizontal: theme.spacing[2],
+            marginBottom:
+              pkPassAllowed && !isBarcodeEnabled && isIos
+                ? theme.spacing[12]
+                : theme.spacing[2],
+          }}
+        >
           {/* Show info alert if PCard or Ehic */}
           {(licenseType === GenericLicenseType.PCard ||
             licenseType === GenericLicenseType.Ehic) && (
@@ -439,7 +480,6 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           </Animated.View>
         </ButtonWrapper>
       )}
-
       {addingToWallet && (
         <LoadingOverlay>
           <ActivityIndicator

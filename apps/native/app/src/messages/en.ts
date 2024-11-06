@@ -259,6 +259,11 @@ export const en: TranslatedMessages = {
     'At the moment it is not possible to add driving licenses to the phone.',
   'walletPass.moreInfo': 'More information',
   'walletPass.alertClose': 'Cancel',
+  'walletPass.errorCannotAddPasses':
+    'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
+  'walletPass.errorAddingOrFetching': 'Failed to fetch or add pass.',
+  'walletPass.errorNotPossibleOnThisDevice':
+    'You cannot add passes on this device.',
 
   // wallet passport
   'walletPassport.screenTitle': 'Passport',
