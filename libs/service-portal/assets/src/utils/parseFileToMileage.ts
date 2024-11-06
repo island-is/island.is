@@ -28,6 +28,7 @@ export const parseFileToMileageRecord = async (
   const vehicleIndex = header.findIndex((l) =>
     vehicleIndexTitle.includes(l.toLowerCase()),
   )
+
   if (vehicleIndex < 0) {
     throw new Error(
       `Invalid vehicle column header. Must be one of the following: ${vehicleIndexTitle.join(
@@ -76,7 +77,6 @@ const parseCsv = async (file: File) => {
       accumulatedChunk += decoder.decode(res.value)
     }
   }
-
   return parseCsvString(accumulatedChunk)
 }
 
@@ -105,13 +105,13 @@ const parseCsvString = (chunk: string): Promise<string[][]> => {
     const records: string[][] = []
 
     const parser = parse({
-      cast: true,
-      skipEmptyLines: true,
       delimiter: [';', ','],
+      skipLinesWithEmptyValues: true,
+      trim: true,
     })
 
     parser.on('readable', () => {
-      let record
+      let record: Array<string>
       while ((record = parser.read()) !== null) {
         records.push(record)
       }

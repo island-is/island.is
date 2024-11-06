@@ -981,6 +981,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:upload-failed',
     defaultMessage: 'Upphleðsla mistókst',
   },
+  noDataInUploadedFile: {
+    id: 'sp.vehicles:no-data-in-uploaded-file',
+    defaultMessage: 'Upphleðsla mistókst. Engin gögn í skjali',
+  },
   wrongFileType: {
     id: 'sp.vehicles:wrong-file-type',
     defaultMessage: 'Vitlaus skráartýpa. Skrá verður að vera .csv eða .xslx',

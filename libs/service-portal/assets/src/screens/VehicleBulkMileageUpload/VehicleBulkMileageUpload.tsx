@@ -57,7 +57,9 @@ const VehicleBulkMileageUpload = () => {
     try {
       const records = await parseFileToMileageRecord(file, type)
       if (!records.length) {
-        setUploadErrorMessage(formatMessage(vehicleMessage.uploadFailed))
+        setUploadErrorMessage(
+          formatMessage(vehicleMessage.noDataInUploadedFile),
+        )
         return
       }
       if (typeof records === 'string') {
