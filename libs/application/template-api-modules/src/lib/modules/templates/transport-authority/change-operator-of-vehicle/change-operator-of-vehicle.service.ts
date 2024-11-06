@@ -74,22 +74,22 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
   async getCurrentVehiclesWithOperatorChangeChecks({
     auth,
   }: TemplateApiModuleActionProps) {
-    // Get total count of vehicles
-    const countResult =
-      (
-        await this.vehiclesApiWithAuth(
-          auth,
-        ).currentvehicleswithmileageandinspGet({
-          showOwned: true,
-          showCoowned: false,
-          showOperated: false,
-          page: 1,
-          pageSize: 1,
-        })
-      ).totalRecords || 0
+    // Get max 20 vehicles and total count of vehicles
+    // Note: Should be enough to only get 20, because if totalRecords
+    // is higher than 20, then we won't return any vehicles
+    const result = await this.vehiclesApiWithAuth(
+      auth,
+    ).currentvehicleswithmileageandinspGet({
+      showOwned: true,
+      showCoowned: false,
+      showOperated: false,
+      page: 1,
+      pageSize: 20,
+    })
+    const totalRecords = result.totalRecords || 0
 
     // Validate that user has at least 1 vehicle
-    if (!countResult) {
+    if (!totalRecords) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.vehiclesEmptyListOwner,
@@ -101,21 +101,12 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
     // A. vehicleCount > 20
     // Display search box, validate vehicle when permno is entered
-    if (countResult > 20) {
+    if (totalRecords > 20) {
       return {
-        totalRecords: countResult,
+        totalRecords: totalRecords,
         vehicles: [],
       }
     }
-
-    // Get all vehicles
-    const result = await this.vehiclesApiWithAuth(
-      auth,
-    ).currentvehicleswithmileageandinspGet({
-      showOwned: true,
-      showCoowned: false,
-      showOperated: false,
-    })
 
     const resultData = result.data || []
 
@@ -123,7 +114,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       resultData.map(async (vehicle) => {
         // B. 20 >= vehicleCount > 5
         // Display dropdown, validate vehicle when selected in dropdown
-        if (countResult > 5) {
+        if (totalRecords > 5) {
           return this.mapVehicle(auth, vehicle, false)
         }
 
@@ -134,7 +125,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     )
 
     return {
-      totalRecords: countResult,
+      totalRecords: totalRecords,
       vehicles: vehicles,
     }
   }

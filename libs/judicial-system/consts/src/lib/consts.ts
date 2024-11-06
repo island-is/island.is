@@ -202,6 +202,7 @@ export const CHANGE_USER_ROUTE = '/notendur/breyta'
 //#region Shared routes
 export const CASES_ROUTE = '/krofur'
 export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
+export const ROUTE_HANDLER_ROUTE = '/beinir'
 //#endregion Shared routes
 
 export const prosecutorRestrictionCasesRoutes = [

@@ -50,6 +50,9 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   const [createSkilavottordRecyclingPartner] = useMutation(
     CreateSkilavottordRecyclingPartnerMutation,
     {
+      onError: (_) => {
+        // Hide Runtime error message. The error message is already shown to the user in toast.
+      },
       refetchQueries: [
         {
           query: SkilavottordAllRecyclingPartnersQuery,
