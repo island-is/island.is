@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { FormApplicant } from '../formApplicants/models/formApplicant.model'
 import { Screen } from '../screens/models/screen.model'
-import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
+// import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
 import { FieldType } from '../fields/models/fieldType.model'
 import { ListType } from '../lists/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
@@ -28,6 +28,6 @@ import { ListItem } from '../listItems/models/listItem.model'
     ]),
   ],
   controllers: [FormsController],
-  providers: [FormsService, FieldSettingsMapper, ListItemMapper],
+  providers: [FormsService, ListItemMapper],
 })
 export class FormsModule {}

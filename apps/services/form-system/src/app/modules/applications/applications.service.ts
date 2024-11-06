@@ -4,7 +4,7 @@ import { Application } from './models/application.model'
 import { ApplicationDto } from './models/dto/application.dto'
 import { Form } from '../forms/models/form.model'
 import { Section } from '../sections/models/section.model'
-import { FieldSettings } from '../fieldSettings/models/fieldSettings.model'
+// import { FieldSettings } from '../fieldSettings/models/fieldSettings.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { Field } from '../fields/models/field.model'
 import { Screen } from '../screens/models/screen.model'
@@ -121,14 +121,8 @@ export class ApplicationsService {
                   as: 'fields',
                   include: [
                     {
-                      model: FieldSettings,
-                      as: 'fieldSettings',
-                      include: [
-                        {
-                          model: ListItem,
-                          as: 'list',
-                        },
-                      ],
+                      model: ListItem,
+                      as: 'list',
                     },
                     {
                       model: Value,
@@ -184,14 +178,8 @@ export class ApplicationsService {
                   as: 'fields',
                   include: [
                     {
-                      model: FieldSettings,
-                      as: 'fieldSettings',
-                      include: [
-                        {
-                          model: ListItem,
-                          as: 'list',
-                        },
-                      ],
+                      model: ListItem,
+                      as: 'list',
                     },
                   ],
                 },

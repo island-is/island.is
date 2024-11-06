@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { FieldSettingsService } from '../fieldSettings/fieldSettings.service'
+// import { FieldSettingsService } from '../fieldSettings/fieldSettings.service'
 import { CreateFieldDto } from './models/dto/createField.dto'
 import { FieldDto } from './models/dto/field.dto'
 import { UpdateFieldDto } from './models/dto/updateField.dto'
@@ -8,13 +8,19 @@ import { FieldMapper } from './models/field.mapper'
 import { Field } from './models/field.model'
 import { UpdateFieldsDisplayOrderDto } from './models/dto/updateFieldsDisplayOrder.dto'
 import { FieldTypes } from '../../enums/fieldTypes'
+import { FieldSettingsTypeFactory } from '../../dataTypes/fieldSettingsTypes/fieldSettingsType.factory'
+import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
+import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
+import { FieldSettingsType } from '../../dataTypes/fieldSettingsTypes/fieldSettingsType.model'
+import { ValueDto } from '../values/models/dto/value.dto'
+import { randomUUID } from 'crypto'
 
 @Injectable()
 export class FieldsService {
   constructor(
     @InjectModel(Field)
     private readonly fieldModel: typeof Field,
-    private readonly fieldSettingsService: FieldSettingsService,
+    // private readonly fieldSettingsService: FieldSettingsService,
     private readonly fieldMapper: FieldMapper,
   ) {}
 
@@ -33,16 +39,33 @@ export class FieldsService {
     const newField: Field = await this.fieldModel.create({
       screenId: screenId,
       fieldType: fieldType,
+      fieldSettingsType: FieldSettingsTypeFactory.getClass(
+        fieldType,
+        new FieldSettingsType(),
+      ),
     } as Field)
 
-    const newFieldSettingsDto = await this.fieldSettingsService.create(
-      newField.id,
-    )
+    // const newFieldSettingsDto = await this.fieldSettingsService.create(
+    //   newField.id,
+    // )
 
     const fieldDto: FieldDto = this.fieldMapper.mapFieldToFieldDto(
       newField,
-      newFieldSettingsDto,
+      // newFieldSettingsDto,
     )
+
+    // fieldDto.fieldSettingsType = FieldSettingsTypeFactory.getClass(
+    //   fieldType,
+    //   new FieldSettingsType(),
+    // )
+
+    fieldDto.values = [
+      {
+        id: randomUUID(),
+        order: 0,
+        json: ValueTypeFactory.getClass(fieldType, new ValueType()),
+      },
+    ]
 
     return fieldDto
   }
@@ -52,9 +75,9 @@ export class FieldsService {
 
     this.fieldMapper.mapUpdateFieldDtoToField(field, updateFieldDto)
 
-    if (updateFieldDto.fieldSettings) {
-      await this.fieldSettingsService.update(id, updateFieldDto.fieldSettings)
-    }
+    // if (updateFieldDto.fieldSettings) {
+    //   await this.fieldSettingsService.update(id, updateFieldDto.fieldSettings)
+    // }
 
     await field.save()
   }

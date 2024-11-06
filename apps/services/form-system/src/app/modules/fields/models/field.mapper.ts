@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { FieldSettingsDto } from '../../fieldSettings/models/dto/fieldSettings.dto'
+// import { FieldSettingsDto } from '../../fieldSettings/models/dto/fieldSettings.dto'
 import { FieldDto } from './dto/field.dto'
 import { UpdateFieldDto } from './dto/updateField.dto'
 import { Field } from './field.model'
@@ -8,7 +8,7 @@ import { Field } from './field.model'
 export class FieldMapper {
   mapFieldToFieldDto(
     field: Field,
-    fieldSettingsDto: FieldSettingsDto,
+    // fieldSettingsDto: FieldSettingsDto,
   ): FieldDto {
     const fieldDto: FieldDto = {
       id: field.id,
@@ -18,7 +18,8 @@ export class FieldMapper {
       description: field.description,
       isPartOfMultiset: field.isPartOfMultiset,
       fieldType: field.fieldType,
-      fieldSettings: fieldSettingsDto,
+      fieldSettingsType: field.fieldSettingsType,
+      // fieldSettings: fieldSettingsDto,
     }
 
     return fieldDto
@@ -29,6 +30,6 @@ export class FieldMapper {
     field.description = updateFieldDto.description
     field.isPartOfMultiset = updateFieldDto.isPartOfMultiset
     field.fieldType = updateFieldDto.fieldType
-    field.modified = new Date()
+    field.fieldSettingsType = updateFieldDto.fieldSettingsType
   }
 }

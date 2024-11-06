@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { Form } from '../../forms/models/form.model'
 import { ApplicationDto } from './dto/application.dto'
 import { Application } from './application.model'
-import { FieldSettingsMapper } from '../../fieldSettings/models/fieldSettings.mapper'
+// import { FieldSettingsMapper } from '../../fieldSettings/models/fieldSettings.mapper'
 import { FieldDto } from '../../fields/models/dto/field.dto'
 import { OrganizationDto } from '../../organizations/models/dto/organization.dto'
 import { ScreenDto } from '../../screens/models/dto/screen.dto'
@@ -11,7 +11,7 @@ import { ValueDto } from '../../values/models/dto/value.dto'
 
 @Injectable()
 export class ApplicationMapper {
-  constructor(private readonly fieldSettingsMapper: FieldSettingsMapper) {}
+  // constructor(private readonly fieldSettingsMapper: FieldSettingsMapper) {}
   mapFormToApplicationDto(
     form: Form,
     application: Application,
@@ -49,14 +49,16 @@ export class ApplicationMapper {
                 description: field.description,
                 isPartOfMultiset: field.isPartOfMultiset,
                 fieldType: field.fieldType,
-                fieldSettings:
-                  this.fieldSettingsMapper.mapFieldTypeToFieldSettingsDto(
-                    field.fieldSettings,
-                    field.fieldType,
-                  ),
+                fieldSettingsType: field.fieldSettingsType,
+                // fieldSettings:
+                //   this.fieldSettingsMapper.mapFieldTypeToFieldSettingsDto(
+                //     field.fieldSettings,
+                //     field.fieldType,
+                //   ),
                 values: field.values?.map((value) => {
                   return {
                     id: value.id,
+                    order: value.order,
                     json: value.json,
                   } as ValueDto
                 }),

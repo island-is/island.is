@@ -25,7 +25,7 @@ export class ValuesService {
 
     await value.save()
 
-    const keys = ['id', 'json']
+    const keys = ['id', 'order', 'json']
     const valueDto: ValueDto = defaults(
       pick(value, keys),
       zipObject(keys, Array(keys.length).fill(null)),
