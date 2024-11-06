@@ -8,12 +8,10 @@ interface Props {
 
 export interface OptionalOverrides {
   openLinksInNewTab?: boolean,
-  hehe?: number
 }
 
 const defaultOptionalOverrides: OptionalOverrides = {
   openLinksInNewTab: true,
-  hehe: 5
 }
 
 export const Markdown = ({ children, options }: Props) => {
