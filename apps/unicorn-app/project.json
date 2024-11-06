@@ -52,6 +52,12 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/unicorn-app/codegen.yml"
+      }
     }
   }
 }
