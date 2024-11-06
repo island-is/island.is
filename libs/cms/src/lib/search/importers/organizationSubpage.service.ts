@@ -22,7 +22,9 @@ export class OrganizationSubpageSyncService
         entry.sys.contentType.sys.id === 'organizationSubpage' &&
         !!entry.fields.title &&
         !!entry.fields.slug &&
-        !!entry.fields.organizationPage?.fields?.slug,
+        !!entry.fields.organizationPage?.fields?.slug &&
+        // Standalone organization pages have their own search, we don't want subpages there to be found in the global search
+        entry.fields.organizationPage.fields.theme !== 'standalone',
     )
   }
 
