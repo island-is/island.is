@@ -34904,9 +34904,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:11.11.9":
-  version: 11.11.9
-  resolution: "framer-motion@npm:11.11.9"
+"framer-motion@npm:11.11.11":
+  version: 11.11.11
+  resolution: "framer-motion@npm:11.11.11"
   dependencies:
     tslib: ^2.4.0
   peerDependencies:
@@ -34920,7 +34920,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: d2918aa3de0746cadb60af7f940c72d17b0d2869b66992f47d6a187abc3599cbf6520188ea8131c9fd7fe65cd87783fbfce3d2115f833b1488a8d73509e5789a
+  checksum: 12a358dafdd5239ea6eaad87fa7783dad7c009b639b6e087574f3515dfa4c4bd02ed4fcde61522f6db3a311e353333455d0b0e9d413a2662265330055672eeb6
   languageName: node
   linkType: hard
 
@@ -38802,7 +38802,7 @@ __metadata:
     font-awesome: 4.7.0
     form-data: 3.0.0
     formik: 2.2.9
-    framer-motion: 11.11.9
+    framer-motion: 11.11.11
     fridagar: ^3.2.0
     fuse.js: 7.0.0
     glob: 10.3.3
@@ -38897,7 +38897,7 @@ __metadata:
     react-popper: 2.3.0
     react-remove-scroll: 2.5.6
     react-router-dom: 6.11.2
-    react-select: 5.7.3
+    react-select: 5.8.2
     react-table: 7.7.0
     react-toastify: 6.0.8
     react-top-loading-bar: 2.3.1
@@ -49463,9 +49463,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-select@npm:5.7.3":
-  version: 5.7.3
-  resolution: "react-select@npm:5.7.3"
+"react-select@npm:5.8.2":
+  version: 5.8.2
+  resolution: "react-select@npm:5.8.2"
   dependencies:
     "@babel/runtime": ^7.12.0
     "@emotion/cache": ^11.4.0
@@ -49479,7 +49479,7 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 9ffa75afb395e7077076521c529611494164ace0c6b1ceb249406991ac668947cfd0424812c15c2a45c792bb2794b22f2df93c4c2f2515962b7dfc7c91b029ec
+  checksum: d7b45e377e80731ef11dd0c00749f65c7ce6558c41679dbcfe0af4cfd1d77347275647d847bff1aa584128148863ea59e37cd9c90b754e29b955318fa896884c
   languageName: node
   linkType: hard
 
