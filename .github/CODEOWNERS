@@ -102,7 +102,6 @@
 /libs/clients/middlewares/                                                                               @island-is/aranja
 libs/clients/rsk/relationships/                                                                          @island-is/aranja
 /libs/clients/sessions                                                                                   @island-is/aranja
-/libs/clients/payments                                                                                   @island-is/aranja
 /libs/portals/shared-modules/delegations                                                                 @island-is/aranja
 /libs/portals/admin/ids-admin                                                                            @island-is/aranja
 /libs/service-portal/consent                                                                             @island-is/aranja
@@ -111,6 +110,9 @@ libs/clients/rsk/relationships/                                                 
 /apps/native/app/                                                                                        @island-is/aranja-app
 codemagic.yaml                                                                                           @island-is/aranja-app
 /apps/web/public/.well-known/                                                                            @island-is/aranja-app
+/apps/payments                                                                                           @island-is/aranja
+/apps/services/payments                                                                                  @island-is/aranja
+/libs/clients/payments                                                                                   @island-is/aranja
 
 /apps/judicial-system/                                                                                   @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                                   @island-is/kolibri-justice-league
