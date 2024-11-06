@@ -63,10 +63,6 @@ module.exports = {
           field_type: {
             type: Sequelize.STRING,
             allowNull: false,
-            references: {
-              model: 'field_type',
-              key: 'type',
-            },
           },
         },
         { transaction: t },

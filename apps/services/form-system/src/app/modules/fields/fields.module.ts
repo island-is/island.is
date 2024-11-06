@@ -7,11 +7,11 @@ import { FieldsController } from './fields.controller'
 import { FieldsService } from './fields.service'
 import { FieldMapper } from './models/field.mapper'
 import { Field } from './models/field.model'
-import { FieldType } from './models/fieldType.model'
+// import { FieldType } from './models/fieldType.model'
 import { ListItemMapper } from '../listItems/models/listItem.mapper'
 
 @Module({
-  imports: [SequelizeModule.forFeature([Field, FieldType])],
+  imports: [SequelizeModule.forFeature([Field])],
   controllers: [FieldsController],
   providers: [
     FieldsService,

@@ -8,7 +8,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Organization } from '../../organizations/models/organization.model'
-import { FieldType } from './fieldType.model'
+// import { FieldType } from '../../fields/models/fieldType.model'
 import { CreationOptional } from 'sequelize'
 
 @Table({ tableName: 'organization_field_type' })
@@ -35,11 +35,10 @@ export class OrganizationFieldType extends Model<OrganizationFieldType> {
   })
   organizationId!: string
 
-  @ForeignKey(() => FieldType)
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     allowNull: false,
-    field: 'field_type_id',
+    defaultValue: DataType.UUIDV4,
   })
   fieldTypeId!: string
 }

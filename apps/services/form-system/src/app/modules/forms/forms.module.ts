@@ -3,7 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { FormApplicant } from '../formApplicants/models/formApplicant.model'
 import { Screen } from '../screens/models/screen.model'
 // import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
-import { FieldType } from '../fields/models/fieldType.model'
+// import { FieldType } from '../fields/models/fieldType.model'
 import { ListType } from '../lists/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
 import { Section } from '../sections/models/section.model'
@@ -22,7 +22,7 @@ import { ListItem } from '../listItems/models/listItem.model'
       Section,
       Screen,
       Organization,
-      FieldType,
+      // FieldType,
       ListType,
       ListItem,
     ]),

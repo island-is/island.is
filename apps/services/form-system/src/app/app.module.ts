@@ -18,6 +18,7 @@ import { ValuesModule } from './modules/values/values.module'
 import { FormApplicantsModule } from './modules/formApplicants/formApplicants.module'
 import { FormCertificationsModule } from './modules/formCertifications/formCertifications.module'
 import { OrganizationCertificationsModule } from './modules/organizationCertifications/organizationCertifications.module'
+import { OrganizationFieldTypesModule } from './modules/organizationFieldTypes/organizationFieldTypes.module'
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { OrganizationCertificationsModule } from './modules/organizationCertific
     FormApplicantsModule,
     FormCertificationsModule,
     OrganizationCertificationsModule,
+    OrganizationFieldTypesModule,
   ],
 })
 export class AppModule {}
