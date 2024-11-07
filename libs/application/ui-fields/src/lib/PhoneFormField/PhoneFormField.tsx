@@ -78,6 +78,7 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
                 )
               : undefined
           }
+          locale={locale as Locale}
           autoFocus={autoFocus}
           error={error}
           control={control}
