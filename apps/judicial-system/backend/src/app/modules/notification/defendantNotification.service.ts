@@ -140,15 +140,13 @@ export class DefendantNotificationService extends BaseNotificationService {
     defendant: Defendant,
     theCase: Case,
   ): Promise<DeliverResponse> {
-    {
-      switch (notificationType) {
-        case DefendantNotificationType.DEFENDER_ASSIGNED:
-          return this.sendDefenderAssignedNotification(defendant, theCase)
-        default:
-          throw new InternalServerErrorException(
-            `Invalid notification type: ${notificationType}`,
-          )
-      }
+    switch (notificationType) {
+      case DefendantNotificationType.DEFENDER_ASSIGNED:
+        return this.sendDefenderAssignedNotification(defendant, theCase)
+      default:
+        throw new InternalServerErrorException(
+          `Invalid notification type: ${notificationType}`,
+        )
     }
   }
 
