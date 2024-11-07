@@ -24,8 +24,9 @@ import {
   StaticText,
   StaticTextObject,
   SubSection,
+  FormTextWithLocale,
 } from '@island.is/application/types'
-import { User } from '@island.is/shared/types'
+import { Locale, User } from '@island.is/shared/types'
 
 const containsArray = (obj: RecordObject) => {
   let contains = false
@@ -251,6 +252,45 @@ export const formatText = <T extends FormTextArray | FormText>(
     const message = (text as (_: Application) => StaticText | StaticText[])(
       application,
     )
+    if (Array.isArray(message)) {
+      return message.map((m) =>
+        handleMessageFormatting(m, formatMessage),
+      ) as T extends FormTextArray ? string[] : string
+    }
+    return handleMessageFormatting(
+      message,
+      formatMessage,
+    ) as T extends FormTextArray ? string[] : string
+  } else if (Array.isArray(text)) {
+    const texts = text as StaticText[]
+    return texts.map((m) =>
+      handleMessageFormatting(m, formatMessage),
+    ) as T extends FormTextArray ? string[] : string
+  } else if (typeof text === 'object') {
+    const staticTextObject = text as StaticTextObject
+    if (staticTextObject.values) {
+      return formatMessage(
+        staticTextObject,
+        staticTextObject.values,
+      ) as T extends FormTextArray ? string[] : string
+    }
+  }
+
+  return formatMessage(text) as T extends FormTextArray ? string[] : string
+}
+
+export const formatTextWithLocale = <
+  T extends FormTextArray | FormText | FormTextWithLocale,
+>(
+  text: T,
+  application: Application,
+  locale: Locale,
+  formatMessage: MessageFormatter,
+): T extends FormTextArray ? string[] : string => {
+  if (typeof text === 'function') {
+    const message = (
+      text as (_: Application, locale: Locale) => StaticText | StaticText[]
+    )(application, locale)
     if (Array.isArray(message)) {
       return message.map((m) =>
         handleMessageFormatting(m, formatMessage),

@@ -8,15 +8,14 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { formerEducation } from '../../../../lib/messages/formerEducation'
-import { Routes } from '../../../../lib/constants'
-import { degreeLevelOptions } from './degreeLevelOptions'
+import { degreeLevelOptions, Routes } from '../../../../lib/constants'
 import { FormValue } from '@island.is/application/types'
 import { ApplicationTypes } from '@island.is/university-gateway'
 
 export const NotFinishedEducationSubSection = buildSubSection({
   id: `${Routes.EDUCATIONDETAILS}.notFinishedDetails`,
   title: formerEducation.labels.educationDetails.pageTitle,
-  condition: (answers: FormValue, externalData) => {
+  condition: (answers: FormValue) => {
     const optionAnswers = getValueViaPath(answers, 'educationOptions')
     return optionAnswers === ApplicationTypes.NOTFINISHED
   },
