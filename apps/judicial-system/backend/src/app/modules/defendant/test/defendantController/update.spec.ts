@@ -1,7 +1,13 @@
 import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
-import { CaseNotificationType, User } from '@island.is/judicial-system/types'
+import {
+  CaseNotificationType,
+  CaseType,
+  DefendantNotificationType,
+  DefenderChoice,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
@@ -55,7 +61,7 @@ describe('DefendantController - Update', () => {
           caseId,
           defendantId,
           user,
-          { id: caseId, courtCaseNumber } as Case,
+          { id: caseId, courtCaseNumber, type: CaseType.INDICTMENT } as Case,
           defendant,
           defendantUpdate,
         )
@@ -178,6 +184,45 @@ describe('DefendantController - Update', () => {
       ])
     })
   })
+
+  describe.each([
+    { isDefenderChoiceConfirmed: true, shouldSendEmail: true },
+    { isDefenderChoiceConfirmed: false, shouldSendEmail: false },
+  ])(
+    "defendant's defender choice is confirmed in indictment case",
+    ({ isDefenderChoiceConfirmed, shouldSendEmail }) => {
+      const defendantUpdate = { isDefenderChoiceConfirmed }
+      const updatedDefendant = {
+        defenderChoice: DefenderChoice.CHOOSE,
+        ...defendant,
+        ...defendantUpdate,
+      }
+
+      beforeEach(async () => {
+        const mockUpdate = mockDefendantModel.update as jest.Mock
+        mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
+
+        await givenWhenThen(defendantUpdate, uuid())
+      })
+
+      if (shouldSendEmail) {
+        it('should queue messages', () => {
+          expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+            {
+              type: MessageType.DEFENDANT_NOTIFICATION,
+              caseId,
+              body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
+              elementId: defendantId,
+            },
+          ])
+        })
+      } else {
+        it('should not queue messages', () => {
+          expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+        })
+      }
+    },
+  )
 
   describe('defendant update fails', () => {
     let then: Then
