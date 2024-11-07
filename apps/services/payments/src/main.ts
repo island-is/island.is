@@ -7,5 +7,7 @@ bootstrap({
   appModule: AppModule,
   name: 'payments',
   openApi,
+  // TODO:
+  // port: config.port,
   enableVersioning: true,
 })

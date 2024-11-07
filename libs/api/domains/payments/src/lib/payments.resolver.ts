@@ -7,8 +7,6 @@ import { GetPaymentFlowInput } from './dto/getPaymentFlow.input'
 import { GetPaymentFlowResponse } from './dto/getPaymentFlow.response'
 import { PaymentsService } from './payments.service'
 
-type TODO = any
-
 @UseGuards(ScopesGuard)
 @Resolver()
 export class PaymentsResolver {
@@ -18,7 +16,7 @@ export class PaymentsResolver {
   async getPaymentFlow(
     @Args('input', { type: () => GetPaymentFlowInput })
     input: GetPaymentFlowInput,
-  ): Promise<TODO> {
+  ): Promise<GetPaymentFlowResponse> {
     return this.paymentsService.getPaymentFlow(input)
   }
 }

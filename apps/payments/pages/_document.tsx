@@ -1,5 +1,11 @@
 import React from 'react'
-import Document, { Html, Head, Main, NextScript } from 'next/document'
+import Document, {
+  Html,
+  Head,
+  Main,
+  NextScript,
+  DocumentContext,
+} from 'next/document'
 import { defaultLanguage } from '@island.is/shared/constants'
 
 interface Props {
@@ -7,7 +13,7 @@ interface Props {
 }
 
 class MyDocument extends Document<Props> {
-  static async getInitialProps(ctx: any) {
+  static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx)
 
     return { ...initialProps, lang: ctx?.query?.lang ?? defaultLanguage }

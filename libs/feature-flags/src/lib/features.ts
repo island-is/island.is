@@ -104,6 +104,9 @@ export enum Features {
 
   // General mandate delegation type
   isGeneralMandateDelegationEnabled = 'isGeneralMandateDelegationEnabled',
+
+  // Islandis Payment
+  isIslandisPaymentEnabled = 'islandisPayment',
 }
 
 export enum ServerSideFeature {

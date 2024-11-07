@@ -43,10 +43,21 @@ export const CardPayment = () => {
               label="Gildistími"
               {...register('cardExpiry', {
                 required: true,
+                validate: {
+                  future: (value) => {
+                    const [month, year] = value.split('/')
+                    const expiry = new Date(
+                      2000 + parseInt(year),
+                      parseInt(month) - 1,
+                    )
+                    return expiry > new Date() || 'Kort er útrunnið'
+                  },
+                },
               })}
               placeholder="MM / ÁÁ"
               size="md"
               rows={6}
+              errorMessage={formState.errors.cardExpiry?.message}
             />
           </Box>
           <Box width="full">

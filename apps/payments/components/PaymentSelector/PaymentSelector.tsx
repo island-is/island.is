@@ -1,4 +1,4 @@
-import { Box, Link, Logo, Text, Button, Input } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 
 type PaymentMethod = 'card' | 'invoice'
 

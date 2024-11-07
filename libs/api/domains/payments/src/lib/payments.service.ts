@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common'
 
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-
 import { GetPaymentFlowInput } from './dto/getPaymentFlow.input'
 import { PaymentsApi, GetPaymentFlowDTO } from '@island.is/clients/payments'
 

@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
@@ -13,21 +14,27 @@ import { PaymentFlowService } from './paymentFlow.service'
 import { PaymentInformation } from '../../types'
 import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
 import { GetPaymentFlowDTO } from './dtos/getPaymentFlow.dto'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 
 type CreatePaymentUrlResponse = { url: string }
 
+@UseGuards(FeatureFlagGuard)
 @ApiTags('payments')
 @Controller({
   path: 'payments',
   version: ['1'],
 })
+@FeatureFlag(Features.isIslandisPaymentEnabled)
 export class PaymentFlowController {
   constructor(private readonly paymentFlowService: PaymentFlowService) {}
 
   @Get(':id')
   @Documentation({
-    description:
-      'Creates a new PaymentFlow initialised with PaymentInformation.',
+    description: 'Retrieves payment flow information by ID.',
     response: { status: 200, type: GetPaymentFlowDTO },
   })
   getPaymentInfo(
@@ -45,8 +52,6 @@ export class PaymentFlowController {
   createPaymentUrl(
     @Body() paymentInfo: PaymentInformation,
   ): Promise<CreatePaymentUrlResponse> {
-    console.log('Create payment url')
-    console.log(paymentInfo)
     return this.paymentFlowService.createPaymentUrl(paymentInfo)
   }
 }

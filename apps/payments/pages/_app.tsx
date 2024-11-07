@@ -10,6 +10,8 @@ const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
       <Head>
         <title>Ísland.is | Greiðslur</title>
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Greiðslur á Ísland.is" />
       </Head>
       {children}
     </div>

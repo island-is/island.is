@@ -1,4 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsArray, IsEnum } from 'class-validator'
+import { PaymentMethod } from '../../../types'
 
 export class GetPaymentFlowDTO {
   @ApiProperty({
@@ -25,8 +27,12 @@ export class GetPaymentFlowDTO {
     description: 'List of allowed payment methods for this payment flow',
     type: [String],
     example: ['card', 'invoice'],
+    enum: PaymentMethod,
+    isArray: true,
   })
-  availablePaymentMethods!: string[]
+  @IsArray()
+  @IsEnum(PaymentMethod, { each: true })
+  availablePaymentMethods!: PaymentMethod[]
 
   @ApiProperty({
     description: 'URL callback to be called on a successful payment',

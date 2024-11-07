@@ -36,9 +36,6 @@ const GetPaymentFlow = gql`
       productId
       invoiceId
       availablePaymentMethods
-      onSuccessUrl
-      onUpdateUrl
-      onErrorUrl
       organisationId
       metadata
     }

@@ -13,7 +13,7 @@ module.exports = {
             allowNull: false,
           },
           product_id: {
-            type: Sequelize.STRING,
+            type: Sequelize.STRING(500),
             allowNull: false,
           },
           invoice_id: {

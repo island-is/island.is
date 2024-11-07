@@ -1,4 +1,7 @@
-export type PaymentMethod = 'card' | 'invoice'
+export enum PaymentMethod {
+  CARD = 'card',
+  INVOICE = 'invoice',
+}
 
 export type PaymentInformation = {
   id: string

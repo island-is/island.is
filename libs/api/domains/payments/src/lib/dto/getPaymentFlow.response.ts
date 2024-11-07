@@ -17,15 +17,6 @@ export class GetPaymentFlowResponse {
   availablePaymentMethods!: string[]
 
   @Field(() => String)
-  onSuccessUrl!: string
-
-  @Field(() => String, { nullable: true })
-  onUpdateUrl?: string
-
-  @Field(() => String)
-  onErrorUrl!: string
-
-  @Field(() => String)
   organisationId!: string
 
   @Field(() => GraphQLJSON, {
@@ -33,5 +24,5 @@ export class GetPaymentFlowResponse {
     description:
       'Arbitrary JSON data provided by the consuming service that will be returned on in callbacks (e.g. onSuccess, onUpdate). Example use case: the service that created the payment flow needs to pass some data that will be returned in the callback',
   })
-  metadata?: string
+  metadata?: object
 }

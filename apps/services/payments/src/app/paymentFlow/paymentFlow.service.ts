@@ -20,8 +20,6 @@ export class PaymentFlowService {
   async createPaymentUrl(
     paymentInfo: PaymentInformation,
   ): Promise<{ url: string }> {
-    // return { url: 'https://www.island.is/borga/:todoId' }
-
     try {
       const result = await this.paymentFlowModel.create({
         ...paymentInfo,
@@ -56,21 +54,8 @@ export class PaymentFlowService {
           result.availablePaymentMethods as PaymentMethod[],
       }
     } catch (e) {
-      this.logger.error('Fail to get payment flow', e)
+      this.logger.error('Failed to get payment flow', e)
       return null
     }
-    // return {
-    //   paymentInfo: {
-    //     productId: 'product-id',
-    //     availablePaymentMethods: ['card', 'invoice'],
-    //     callbacks: {
-    //       onSuccessUrl: 'https://www.island.is/borga/success',
-    //       onUpdateUrl: 'https://www.island.is/borga/update',
-    //       onErrorUrl: 'https://www.island.is/borga/error',
-    //     },
-    //     organisationId: 'organization-id',
-    //     invoiceId: 'todo',
-    //   },
-    // }
   }
 }
