@@ -207,7 +207,7 @@ export class FormsService {
         },
         {
           model: FormApplicantType,
-          as: 'applicants',
+          as: 'formApplicantTypes',
         },
       ],
     })
