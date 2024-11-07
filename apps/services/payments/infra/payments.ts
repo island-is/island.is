@@ -11,17 +11,6 @@ export const serviceSetup = (): ServiceBuilder<typeof namespace> =>
     .env({
       // TODO
     })
-    .ingress({
-      internal: {
-        host: {
-          dev: 'payments-api',
-          staging: 'payments-api',
-          prod: 'payments-api',
-        },
-        paths: ['/'],
-        public: false,
-      },
-    })
     .readiness('/liveness')
     .liveness('/liveness')
-    .grantNamespaces('nginx-ingress-internal', 'islandis')
+    .grantNamespaces('islandis')
