@@ -469,6 +469,6 @@ export const serviceSetup = (services: {
       'api-catalogue',
       'application-system',
       'consultation-portal',
-      'services-bff-portals-admin',
+      'portals-admin',
     )
 }

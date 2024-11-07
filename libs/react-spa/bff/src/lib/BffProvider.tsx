@@ -141,22 +141,25 @@ export const BffProvider = ({
     })
   }, [bffUrlGenerator, postMessage, state.userInfo])
 
-  const switchUser = (nationalId?: string) => {
-    dispatch({
-      type: ActionType.SWITCH_USER,
-    })
+  const switchUser = useCallback(
+    (nationalId?: string) => {
+      dispatch({
+        type: ActionType.SWITCH_USER,
+      })
 
-    window.location.href = bffUrlGenerator(
-      '/login',
-      nationalId
-        ? {
-            login_hint: nationalId,
-          }
-        : {
-            prompt: 'select_account',
-          },
-    )
-  }
+      window.location.href = bffUrlGenerator(
+        '/login',
+        nationalId
+          ? {
+              login_hint: nationalId,
+            }
+          : {
+              prompt: 'select_account',
+            },
+      )
+    },
+    [bffUrlGenerator],
+  )
 
   const checkQueryStringError = () => {
     const urlParams = new URLSearchParams(window.location.search)

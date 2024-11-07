@@ -3,7 +3,9 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/portals/my-pages/src",
   "projectType": "application",
-  "tags": ["scope:portals-mypages"],
+  "tags": [
+    "scope:portals-mypages"
+  ],
   "targets": {
     "build": {
       "executor": "@nx/webpack:webpack",
@@ -19,7 +21,9 @@
           "apps/portals/my-pages/src/mockServiceWorker.js",
           "apps/portals/my-pages/src/assets"
         ],
-        "styles": ["apps/portals/my-pages/src/styles.css"],
+        "styles": [
+          "apps/portals/my-pages/src/styles.css"
+        ],
         "scripts": [],
         "webpackConfig": "apps/portals/my-pages/webpack.config.js",
         "maxWorkers": 2
@@ -43,7 +47,9 @@
           ]
         }
       },
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "dependsOn": [
         {
           "target": "generateDevIndexHTML"
@@ -57,7 +63,9 @@
           "node scripts/dockerfile-assets/bash/extract-environment.js apps/portals/my-pages/src"
         ]
       },
-      "outputs": ["{workspaceRoot}/apps/portals/my-pages/src/index.html"]
+      "outputs": [
+        "{workspaceRoot}/apps/portals/my-pages/src/index.html"
+      ]
     },
     "serve": {
       "executor": "@nx/webpack:dev-server",
@@ -84,7 +92,9 @@
       "options": {
         "jestConfig": "apps/portals/my-pages/jest.config.ts"
       },
-      "outputs": ["{workspaceRoot}/coverage/apps/portals/my-pages"]
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/portals/my-pages"
+      ]
     },
     "extract-strings": {
       "executor": "nx:run-commands",
@@ -124,7 +134,9 @@
     "mockmode": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["API_MOCKS=true yarn start service-portal"]
+        "commands": [
+          "API_MOCKS=true yarn start service-portal"
+        ]
       }
     },
     "docker-static": {
