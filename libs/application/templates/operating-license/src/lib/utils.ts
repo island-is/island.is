@@ -108,3 +108,10 @@ export const allowFakeCondition =
   (result = YES) =>
   (answers: FormValue) =>
     getValueViaPath(answers, 'fakeData.useFakeData') === result
+
+export const isValidRealEstate = (value: string) => {
+  const lotRegex = /^[Ll]\d{6}$/
+  const houseRegex = /^[Ff]\d{7}$/
+
+  return lotRegex.test(value) || houseRegex.test(value)
+}

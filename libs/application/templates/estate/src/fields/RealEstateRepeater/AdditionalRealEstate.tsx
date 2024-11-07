@@ -63,7 +63,6 @@ export const AdditionalRealEstate = ({
   useEffect(() => {
     // According to Skra.is:
     // https://www.skra.is/um-okkur/frettir/frett/2018/03/01/Nytt-fasteignanumer-og-itarlegri-skraning-stadfanga/
-    // The property number is a seven digit informationless sequence with prefix F
     // The lot number is a six digit informationless sequence with prefix L
     const propertyNumber = propertyNumberInput.trim().toUpperCase()
     setValue(addressField, '')
