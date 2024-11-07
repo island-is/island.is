@@ -52,7 +52,7 @@ const useInfoCardItems = () => {
               : isMultipleDefendants
               ? formatMessage(core.indictmentDefendants)
               : formatMessage(core.indictmentDefendant, {
-                  gender: defendants && defendants[0].gender,
+                  gender: defendants?.[0].gender,
                 }),
           )}
         </Text>
