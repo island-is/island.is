@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { RentOtherFeesPayeeOptions } from './constants'
+import { RentOtherFeesPayeeOptions, TRUE } from './constants'
 import {
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
@@ -17,12 +17,6 @@ const isValidMeterStatus = (value: string) => {
   return meterStatusRegex.test(value)
 }
 
-const fileSchema = z.object({
-  name: z.string(),
-  key: z.string(),
-  url: z.string().optional(),
-})
-
 const checkIfNegative = (inputNumber: string) => {
   if (Number(inputNumber) < 0) {
     return false
@@ -31,26 +25,53 @@ const checkIfNegative = (inputNumber: string) => {
   }
 }
 
-// debug error messages
-const requiredErrorMsg = {
-  id: 'ra.application:error.required',
-  defaultMessage: 'Reitur má ekki vera tómur',
-  description: 'Error message when a required field has not been filled',
-}
+const fileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
 
-const negativeNumberError = {
-  id: 'ra.application:error.negativeNumber',
-  defaultMessage: 'Ekki er leyfilegt að setja inn neikvæðar tölur',
-  description: 'Error message when a required field has not been filled',
-}
+const rentalPeriod = z
+  .object({
+    startDate: z
+      .string()
+      .optional()
+      .refine((x) => !!x && x.trim().length > 0, {
+        params: m.rentalPeriod.errorAgreementStartDateNotFilled,
+      }),
+    endDate: z.string().optional(),
+    isDefinite: z.string().array().optional(),
+  })
+  .superRefine((data, ctx) => {
+    const start = data.startDate ? new Date(data.startDate) : ''
+    const end = data.endDate ? new Date(data.endDate) : ''
+    const isDefiniteChecked = data.isDefinite && data.isDefinite.includes(TRUE)
+    if (isDefiniteChecked) {
+      if (!data.endDate || !data.endDate.trim().length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['endDate'],
+          params: m.rentalPeriod.errorAgreementEndDateNotFilled,
+        })
+      } else if (start >= end) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['endDate'],
+          params: m.rentalPeriod.errorEndDateBeforeStart,
+        })
+      }
+    }
+  })
 
 const rentalAmount = z.object({
   amount: z
     .string()
     .refine((x) => Boolean(x), {
-      params: requiredErrorMsg,
+      params: m.dataSchema.requiredErrorMsg,
     })
-    .refine((x) => checkIfNegative(x), { params: negativeNumberError }),
+    .refine((x) => checkIfNegative(x), {
+      params: m.dataSchema.negativeNumberError,
+    }),
 })
 
 const securityDeposit = z
@@ -202,8 +223,9 @@ const rentOtherFees = z
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorHousingFundLength,
           path: ['housingFundAmount'],
-          params: m.dataSchema.errorHousingFundLength,
         })
       }
     }
@@ -214,8 +236,9 @@ const rentOtherFees = z
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorMeterNumberRegex,
           path: ['electricityCostMeterNumber'],
-          params: m.dataSchema.errorMeterNumberRegex,
         })
       }
       if (
@@ -224,8 +247,9 @@ const rentOtherFees = z
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorMeterStatusRegex,
           path: ['electricityCostMeterStatus'],
-          params: m.dataSchema.errorMeterStatusRegex,
         })
       }
     }
@@ -236,8 +260,9 @@ const rentOtherFees = z
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorMeterNumberRegex,
           path: ['heatingCostMeterNumber'],
-          params: m.dataSchema.errorMeterNumberRegex,
         })
       }
       if (
@@ -246,8 +271,9 @@ const rentOtherFees = z
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorMeterStatusRegex,
           path: ['heatingCostMeterStatus'],
-          params: m.dataSchema.errorMeterStatusRegex,
         })
       }
     }
@@ -263,6 +289,7 @@ export const dataSchema = z.object({
         params: m.dataSchema.nationalId,
       }),
   }),
+  rentalPeriod,
   rentalAmount,
   securityDeposit,
   condition: z.object({

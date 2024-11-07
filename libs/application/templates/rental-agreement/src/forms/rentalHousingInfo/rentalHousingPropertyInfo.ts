@@ -20,15 +20,15 @@ import {
   getPropertyCategoryClassOptions,
   getPropertyCategoryTypeOptions,
 } from '../../lib/utils'
-import * as m from '../../lib/messages'
+import { registerProperty } from '../../lib/messages'
 
-const messagesInfo = m.registerProperty.info
-const messagesSummary = m.registerProperty.infoSummary
-const messagesCategory = m.registerProperty.category
+const messagesInfo = registerProperty.info
+const messagesSummary = registerProperty.infoSummary
+const messagesCategory = registerProperty.category
 
 export const RentalHousingPropertyInfo: SubSection = buildSubSection({
   id: 'registerProperty',
-  title: m.registerProperty.subsection.name,
+  title: registerProperty.subsection.name,
   children: [
     buildMultiField({
       id: 'registerProperty.info',
