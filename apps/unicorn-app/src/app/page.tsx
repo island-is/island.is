@@ -1,9 +1,8 @@
-import styles from './page.module.css'
 import { GET_ERROR_PAGE } from '../queries'
 
 export default function Index() {
   return (
-    <div className={styles.page}>
+    <div >
       <div className="wrapper">
         <div className="container">
           <div id="welcome">
