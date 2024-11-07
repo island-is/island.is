@@ -12,10 +12,10 @@ export const cemeteryFinancialStatementSection = buildSection({
       title: m.upload,
       condition: (answers) => {
         const applicationAnswers = answers as FinancialStatementCemetery
-        const careTakerLimit =
-          applicationAnswers.cemeteryOperation?.incomeLimit ?? '0'
         const fixedAssetsTotal =
           applicationAnswers.cemeteryAsset?.fixedAssetsTotal
+        const careTakerLimit =
+          applicationAnswers.cemeteryOperation?.incomeLimit ?? '0'
         const totalIncome = applicationAnswers.cemeteryIncome?.total
         const longTermDebt = applicationAnswers.cemeteryLiability?.longTerm
         const isUnderLimit =
