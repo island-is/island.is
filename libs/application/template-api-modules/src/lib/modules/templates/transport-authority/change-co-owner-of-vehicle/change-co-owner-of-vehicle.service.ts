@@ -24,7 +24,7 @@ import {
   MileageReadingApi,
   MileageReadingDto,
 } from '@island.is/clients/vehicles-mileage'
-import { EmailRecipient, EmailRole } from './types'
+import { EmailRecipient, EmailRole, RejectType } from './types'
 import {
   getAllRoles,
   getRecipients,
@@ -325,14 +325,25 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     return recipientList
   }
 
-  async rejectApplication({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps): Promise<void> {
+  async rejectApplication(props: TemplateApiModuleActionProps): Promise<void> {
+    this.doRejectApplication(props, RejectType.REJECT)
+  }
+
+  async deleteApplication(props: TemplateApiModuleActionProps): Promise<void> {
+    this.doRejectApplication(props, RejectType.DELETE)
+  }
+
+  private async doRejectApplication(
+    { application, auth }: TemplateApiModuleActionProps,
+    rejectType: RejectType,
+  ): Promise<void> {
     // 1. Delete charge so that the seller gets reimburshed
-    const chargeId = getPaymentIdFromExternalData(application)
-    if (chargeId) {
-      await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+    // Note: not necessary on delete, since that is done in the shared delete function
+    if (rejectType !== RejectType.DELETE) {
+      const chargeId = getPaymentIdFromExternalData(application)
+      if (chargeId) {
+        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+      }
     }
 
     // 2. Notify everyone in the process that the application has been withdrawn
@@ -352,13 +363,14 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
                 props,
                 recipientList[i],
                 rejectedByRecipient,
+                rejectType,
               ),
             application,
           )
           .catch((e) => {
             this.logger.error(
               `Error sending email about rejectApplication in application: ID: ${application.id}, 
-            role: ${recipientList[i].role}`,
+            role: ${recipientList[i].role} (${rejectType})`,
               e,
             )
           })
@@ -372,6 +384,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
                 application,
                 recipientList[i],
                 rejectedByRecipient,
+                rejectType,
               ),
             application,
           )
@@ -379,7 +392,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
             this.logger.error(
               `Error sending sms about rejectApplication to 
               a phonenumber in application: ID: ${application.id}, 
-              role: ${recipientList[i].role}`,
+              role: ${recipientList[i].role} (${rejectType})`,
               e,
             )
           })

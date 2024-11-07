@@ -1,5 +1,5 @@
 import { SmsMessage } from '../../../../../types'
-import { EmailRecipient } from '../types'
+import { EmailRecipient, RejectType } from '../types'
 import { Application } from '@island.is/application/types'
 import { ChangeCoOwnerOfVehicleAnswers } from '@island.is/application/templates/transport-authority/change-co-owner-of-vehicle'
 import { getRoleNameById } from '../change-co-owner-of-vehicle.utils'
@@ -8,12 +8,14 @@ export type ApplicationRejectedSms = (
   application: Application,
   recipient: EmailRecipient,
   rejectedBy: EmailRecipient | undefined,
+  rejectType: RejectType,
 ) => SmsMessage
 
 export const generateApplicationRejectedSms: ApplicationRejectedSms = (
   application,
   recipient,
   rejectedBy,
+  rejectType,
 ) => {
   const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
   const permno = answers?.pickVehicle?.plate
@@ -26,11 +28,16 @@ export const generateApplicationRejectedSms: ApplicationRejectedSms = (
     rejectedBy.ssn
   } (${getRoleNameById(rejectedBy.role)})`
 
+  let message = `Beiðni um breytingu á meðeigendum á ökutækinu ${permno} hefur verið afturkölluð, `
+  if (rejectType === RejectType.REJECT) {
+    message += `þar sem eftirfarandi aðilar staðfestu ekki: `
+  } else if (rejectType === RejectType.DELETE) {
+    message += `þar sem eftirfarandi aðilar hættu við:`
+  }
+  message += `${rejectedByStr}. Nánari upplýsingar á island.is/umsoknir. `
+
   return {
     phoneNumber: recipient.phone || '',
-    message:
-      `Beiðni um breytingu á meðeigendum á ökutækinu ${permno} hefur verið afturkölluð þar sem eftirfarandi aðilar staðfestu ekki: ` +
-      `${rejectedByStr}. ` +
-      `Nánari upplýsingar á island.is/umsoknir. `,
+    message: message,
   }
 }
