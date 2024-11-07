@@ -69,8 +69,6 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
     },
   ]
 
-  console.log(mainCategories)
-
   return (
     <OJOIWrapper
       pageTitle={organization?.title ?? ''}

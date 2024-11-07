@@ -107,8 +107,6 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
     if (queryMainCateory) {
       const found = mainCategories?.find((c) => c.slug === queryMainCateory)
 
-      console.log(found)
-
       if (found) {
         const subCategorySlugs = found.categories?.map((c) => c.slug)
         filtered = filtered.filter((c) => subCategorySlugs?.includes(c.slug))
