@@ -7,7 +7,6 @@ import {
   Box,
   InputFileUpload,
   RadioButton,
-  Text,
   UploadFile,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -145,7 +144,9 @@ const Completed: FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.completed)} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <PageTitle previousUrl="asd">
+          {formatMessage(strings.heading)}
+        </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />

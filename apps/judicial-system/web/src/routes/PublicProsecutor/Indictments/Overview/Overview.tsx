@@ -26,7 +26,6 @@ import {
 import BlueBoxWithDate from '@island.is/judicial-system-web/src/components/BlueBoxWithIcon/BlueBoxWithDate'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
 import {
-  CaseIndictmentRulingDecision,
   Defendant,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
