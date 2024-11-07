@@ -13,6 +13,17 @@ export const longLine = style({
   borderLeft: `${lineWidth} solid ${theme.color.blue200}`,
 })
 
+export const text2025Container = style({
+  ...themeUtils.responsiveStyle({
+    xs: {
+      maxWidth: '180px',
+    },
+    md: {
+      maxWidth: '200px',
+    },
+  }),
+})
+
 export const highlightedItemsContainer = style({
   display: 'grid',
   ...themeUtils.responsiveStyle({

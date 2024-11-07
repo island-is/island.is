@@ -162,8 +162,8 @@ const OldAgePensionTemplate: ApplicationTemplate<
             },
             pendingAction: {
               title: coreSIAStatesMessages.tryggingastofnunSubmittedTitle,
-              content: coreSIAStatesMessages.tryggingastofnunSubmittedContent,
-              displayStatus: 'info',
+              content: statesMessages.oldAgePensionSubmittedContent,
+              displayStatus: 'warning',
             },
             historyLogs: [
               {

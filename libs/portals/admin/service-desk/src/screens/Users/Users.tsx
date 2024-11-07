@@ -16,7 +16,7 @@ import {
 import { formatNationalId, IntroHeader } from '@island.is/portals/core'
 import { maskString } from '@island.is/shared/utils'
 import { useLocale } from '@island.is/localization'
-import { useAuth } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
 
 import * as styles from '../Companies/Companies.css'
@@ -35,7 +35,7 @@ const Users = () => {
   const actionData = useActionData() as GetUserProfilesResult
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const { isSubmitting, isLoading } = useSubmitting()
   const users = actionData?.data?.data
   const [error, setError] = useState({ hasError: false, message: '' })

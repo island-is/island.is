@@ -3,7 +3,6 @@ import { defineMessage } from 'react-intl'
 import { checkDelegation } from '@island.is/shared/utils'
 import { info } from 'kennitala'
 import { Problem } from '@island.is/react-spa/shared'
-import { Box, Divider, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   FootNote,
@@ -39,7 +38,7 @@ const SubjectInfo = () => {
   return (
     <>
       <IntroHeader
-        title={userInfo.profile.name}
+        title={nationalRegistryPerson?.name?.fullName || ''}
         intro={spmm.userInfoDesc}
         serviceProviderSlug={THJODSKRA_SLUG}
         serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
@@ -60,7 +59,7 @@ const SubjectInfo = () => {
             <InfoLine
               label={m.fullName}
               loading={loading}
-              content={nationalRegistryPerson?.fullName ?? ''}
+              content={nationalRegistryPerson?.name?.fullName ?? ''}
               translate="no"
               tooltip={formatNameBreaks(
                 nationalRegistryPerson?.name ?? undefined,

@@ -10,6 +10,7 @@ export const GET_ARTICLE_QUERY = gql`
       title
       shortTitle
       intro
+      keywords
       importance
       showTableOfContents
       processEntryButtonText
@@ -133,6 +134,21 @@ export const GET_ARTICLE_QUERY = gql`
           ${nestedFields}
         }
         showTableOfContents
+        stepper {
+          id
+          title
+          steps {
+            id
+            title
+            slug
+            stepType
+            subtitle {
+              ...AllSlices
+            }
+            config
+          }
+          config
+        }
       }
       featuredImage {
         url

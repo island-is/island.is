@@ -305,6 +305,9 @@ export interface IArticleFields {
 
   /** Sign language video */
   signLanguageVideo?: IEmbeddedVideo | undefined
+
+  /** Keywords */
+  keywords?: string[] | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -625,6 +628,9 @@ export interface IChartComponentFields {
 
   /** Stack Id */
   stackId?: string | undefined
+
+  /** Values */
+  values?: Record<string, any> | undefined
 }
 
 /** A component to be used with [Chart]. This component controls how data is visualised on a chart. What type of visualisation, what data is used and how it is used. */
@@ -3951,7 +3957,12 @@ export interface IStepFields {
   slug: string
 
   /** Step Type */
-  stepType?: 'Question - Radio' | 'Question - Dropdown' | 'Answer' | undefined
+  stepType?:
+    | 'Question - Radio'
+    | 'Question - Dropdown'
+    | 'Information'
+    | 'Answer'
+    | undefined
 
   /** Subtitle */
   subtitle?: Document | undefined
@@ -4107,6 +4118,9 @@ export interface ISubArticleFields {
 
   /** Sign Language Video */
   signLanguageVideo?: IEmbeddedVideo | undefined
+
+  /** Stepper */
+  stepper?: IStepper | undefined
 }
 
 /** A sub article that's a part of another main article */

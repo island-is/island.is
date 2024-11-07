@@ -18,10 +18,21 @@ import { useCandidateLookupLazyQuery } from './candidateLookup.generated'
 import { setReason } from './utils'
 import { useCreateCollectionMutation } from './createCollection.generated'
 import { m } from '../../lib/messages'
+import { useParams, useRevalidator } from 'react-router-dom'
 
-const CreateCollection = ({ collectionId }: { collectionId: string }) => {
+const CreateCollection = ({
+  collectionId,
+  areaId,
+}: {
+  collectionId: string
+  areaId: string | undefined
+}) => {
   const { formatMessage } = useLocale()
   const { control } = useForm()
+  const { revalidate } = useRevalidator()
+  const { constituencyName } = useParams() as {
+    constituencyName: string | undefined
+  }
 
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [nationalIdInput, setNationalIdInput] = useState('')
@@ -42,7 +53,11 @@ const CreateCollection = ({ collectionId }: { collectionId: string }) => {
           phone: '',
           email: '',
         },
+        areas: areaId ? [{ areaId }] : null,
       },
+    },
+    onCompleted: () => {
+      revalidate()
     },
   })
 
@@ -153,8 +168,15 @@ const CreateCollection = ({ collectionId }: { collectionId: string }) => {
                 label={formatMessage(m.candidateName)}
                 readOnly
                 value={name}
-                placeholder={loadingCandidate ? 'Sæki nafn...' : ''}
               />
+              {areaId && (
+                <Input
+                  name="candidateArea"
+                  label={formatMessage(m.signatureListsConstituencyTitle)}
+                  readOnly
+                  value={constituencyName}
+                />
+              )}
             </Stack>
             {!canCreate && (
               <Box marginTop={3}>
@@ -170,7 +192,7 @@ const CreateCollection = ({ collectionId }: { collectionId: string }) => {
                 onClick={() => {
                   createNewCollection()
                 }}
-                disabled={!canCreate}
+                disabled={!canCreate || !name}
                 loading={loading}
               >
                 {formatMessage(m.createCollection)}
