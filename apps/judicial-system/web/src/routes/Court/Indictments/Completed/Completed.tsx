@@ -144,9 +144,7 @@ const Completed: FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.completed)} />
       <FormContentContainer>
-        <PageTitle previousUrl="asd">
-          {formatMessage(strings.heading)}
-        </PageTitle>
+        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />
