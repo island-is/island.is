@@ -13,10 +13,10 @@ import {
 import { Section } from '../../sections/models/section.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { FormApplicant } from '../../formApplicants/models/formApplicant.model'
+import { FormApplicantType } from '../../formApplicantTypes/models/formApplicantType.model'
 // import { Certification } from '../../certifications/models/certification.model'
 import { Dependency } from '../../../dataTypes/dependency.model'
-import { FormCertification } from '../../formCertifications/models/formCertification.model'
+import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
 
 @Table({ tableName: 'form' })
 export class Form extends Model<Form> {
@@ -102,11 +102,11 @@ export class Form extends Model<Form> {
   @HasMany(() => Section)
   sections!: Section[]
 
-  @HasMany(() => FormApplicant)
-  applicants?: FormApplicant[]
+  @HasMany(() => FormApplicantType)
+  formApplicantTypes?: FormApplicantType[]
 
-  @HasMany(() => FormCertification)
-  certifications?: FormCertification[]
+  @HasMany(() => FormCertificationType)
+  formCertificationTypes?: FormCertificationType[]
 
   @ForeignKey(() => Organization)
   @Column({
