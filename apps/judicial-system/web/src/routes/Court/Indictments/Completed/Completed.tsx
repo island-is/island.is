@@ -15,6 +15,7 @@ import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   ConnectedCaseFilesAccordionItem,
+  CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -24,6 +25,7 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  PageTitle,
   SectionHeading,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
@@ -143,11 +145,8 @@ const Completed: FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.completed)} />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />
         </Box>
