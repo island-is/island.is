@@ -10,6 +10,7 @@ import {
   GridContainer,
   GridRow,
   Stack,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
@@ -67,6 +68,8 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
       href: baseUrl,
     },
   ]
+
+  console.log(mainCategories)
 
   return (
     <OJOIWrapper
@@ -154,6 +157,13 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
 
             <GridRow>
               {mainCategories?.map((category, i) => {
+                const subCategories = category.categories.map(
+                  (subCategory) => ({
+                    label: subCategory.title,
+                    href: `${categoriesUrl}?flokkur=${subCategory.slug}`,
+                  }),
+                )
+
                 return (
                   <GridColumn
                     paddingBottom={4}
@@ -161,10 +171,12 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
                     key={i}
                   >
                     <CategoryCard
+                      nestedHref={true}
                       key={category.slug}
                       href={`${categoriesUrl}?yfirflokkur=${category.slug}`}
                       heading={category.title}
                       text={category.description}
+                      tags={subCategories}
                     />
                   </GridColumn>
                 )

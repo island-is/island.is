@@ -13,6 +13,7 @@ import { Hyphen } from '../Hyphen/Hyphen'
 import { Text, TextProps } from '../Text/Text'
 
 import * as styles from './CategoryCard.css'
+import { Link } from '../Link/Link'
 
 export const STACK_WIDTH = 280
 
@@ -36,6 +37,7 @@ export type CategoryCardProps = {
   tags?: Tag[]
   tagOptions?: Pick<TagProps, 'hyphenate' | 'truncate' | 'textLeft'>
   href?: string
+  nestedHref?: boolean
   colorScheme?: 'blue' | 'purple' | 'red'
   /** The heading above is truncated instead of overflowing */
   truncateHeading?: TextProps['truncate']
@@ -97,6 +99,7 @@ const Component = forwardRef<
       textVariant = 'default',
       textFontWeight = 'regular',
       href = '/',
+      nestedHref = false,
       tags = [],
       colorScheme = 'blue',
       truncateHeading = false,
@@ -120,7 +123,7 @@ const Component = forwardRef<
 
     return (
       <FocusableBox
-        href={href}
+        href={!nestedHref ? href : undefined}
         position="relative"
         display="flex"
         flexDirection="row"
@@ -161,15 +164,29 @@ const Component = forwardRef<
                   {icon}
                 </Box>
               )}
-              <Text
-                as={headingAs}
-                variant={headingVariant}
-                color={textColor}
-                truncate={truncateHeading}
-                title={heading}
-              >
-                {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
-              </Text>
+              {href && !nestedHref ? (
+                <Text
+                  as={headingAs}
+                  variant={headingVariant}
+                  color={textColor}
+                  truncate={truncateHeading}
+                  title={heading}
+                >
+                  {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
+                </Text>
+              ) : (
+                <Link href={href}>
+                  <Text
+                    as={headingAs}
+                    variant={headingVariant}
+                    color={textColor}
+                    truncate={truncateHeading}
+                    title={heading}
+                  >
+                    {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
+                  </Text>
+                </Link>
+              )}
             </Box>
             <Text
               paddingTop={1}
