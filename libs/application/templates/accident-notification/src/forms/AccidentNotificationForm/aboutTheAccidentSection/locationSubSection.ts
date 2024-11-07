@@ -69,7 +69,6 @@ export const locationSubSection = buildSubSection({
         }),
       ],
     }),
-
     // Accident location section
     // location of home related accident
     buildMultiField({
