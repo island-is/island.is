@@ -29,16 +29,15 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  serviceAnnouncementStrings,
   useIndictmentsLawsBroken,
   UserContext,
-  serviceAnnouncementStrings,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseIndictmentRulingDecision,
   CaseState,
   Defendant,
   IndictmentDecision,
-  ServiceStatus,
   Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
