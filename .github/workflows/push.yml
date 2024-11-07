@@ -343,7 +343,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v3
         with:
           image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
       - name: Set up Docker Buildx
@@ -552,7 +552,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v3
         with:
           image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
       - name: Set up Docker Buildx
@@ -560,6 +560,25 @@ jobs:
         with:
           driver-opts: |
             image=${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+
+      - name: Prepare Docker build arguments
+        id: dockerargs
+        if: steps.gather.outcome == 'success'
+        env:
+          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          SHA: ${{ github.sha }}
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+        run: |
+          set -x
+          build_args=(
+            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
+            --build-arg="NODE_IMAGE_TAG=${NODE_IMAGE_TAG}"
+            --build-arg="GIT_BRANCH=${GIT_BRANCH}"
+            --build-arg="GIT_SHA=${SHA}"
+            --build-arg="GIT_REPOSITORY_URL=${{ github.server_url }}/${{ github.repository }}"
+          )
+          export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
+          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
 
       - name: Building Docker images
         continue-on-error: true
@@ -570,9 +589,11 @@ jobs:
           SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
-          echo "Node image tag is: '$NODE_IMAGE_TAG'"
-          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
-          ./scripts/ci/run-in-parallel.sh "90_$DOCKER_TYPE"
+          set -x
+          echo "Node image tag is: '${NODE_IMAGE_TAG}'"
+          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+          export EXTRA_DOCKER_BUILD_ARGS
+          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
 
       - name: Building Docker images Retry
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
@@ -581,9 +602,11 @@ jobs:
           SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
-          echo "Node image tag is: '$NODE_IMAGE_TAG'"
-          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
-          ./scripts/ci/run-in-parallel.sh "90_$DOCKER_TYPE"
+          set -x
+          echo "Node image tag is: '${NODE_IMAGE_TAG}'"
+          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+          export EXTRA_DOCKER_BUILD_ARGS
+          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
 
   helm-docker-build:
     needs:
