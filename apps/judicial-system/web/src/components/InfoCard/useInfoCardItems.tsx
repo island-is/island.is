@@ -60,6 +60,7 @@ const useInfoCardItems = () => {
       values: defendants
         ? defendants.map((defendant, index) => (
             <div
+              key={defendant.id}
               className={cn(
                 isMultipleDefendants ? styles.renderDivider : undefined,
                 defendants && index === defendants.length - 1
@@ -68,7 +69,6 @@ const useInfoCardItems = () => {
               )}
             >
               <DefendantInfo
-                key={defendant.id}
                 defendant={defendant}
                 defender={{
                   name: workingCase.defenderName,
