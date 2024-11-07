@@ -1,12 +1,7 @@
 import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
-import {
-  CardLoader,
-  FootNote,
-  IntroHeader,
-  m,
-} from '@island.is/service-portal/core'
+import { CardLoader, IntroWrapper, m } from '@island.is/service-portal/core'
 import { useOrganizations } from '@island.is/service-portal/graphql'
 import { isDefined } from '@island.is/shared/utils'
 import { useMemo } from 'react'
@@ -66,12 +61,10 @@ const OverviewV2 = () => {
   }, [errors, organizations])
 
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={m.occupationaLicenses}
-        intro={formatMessage(m.occupationalLicensesDescription)}
-      />
-
+    <IntroWrapper
+      title={m.occupationaLicenses}
+      intro={formatMessage(m.occupationalLicensesDescription)}
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && !!errors.length && (
         <AlertMessage
@@ -120,8 +113,7 @@ const OverviewV2 = () => {
           </Stack>
         </Box>
       )}
-      <FootNote serviceProviderSlug={'syslumenn'} />
-    </Box>
+    </IntroWrapper>
   )
 }
 

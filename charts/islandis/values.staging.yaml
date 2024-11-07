@@ -1084,6 +1084,7 @@ download-service:
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-external'
+    - 'services-bff-portals-admin'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
