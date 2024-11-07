@@ -57,6 +57,7 @@ export class DefendantNotificationService extends BaseNotificationService {
     body: MessageDescriptor,
   ) {
     const courtName = theCase.court?.name
+    const defenderHasAccessToRVG = !!defendant.defenderNationalId
 
     const formattedSubject = this.formatMessage(subject, {
       courtName,
@@ -65,12 +66,13 @@ export class DefendantNotificationService extends BaseNotificationService {
     const formattedBody = this.formatMessage(body, {
       courtName,
       courtCaseNumber: theCase.courtCaseNumber,
+      defenderHasAccessToRVG,
       linkStart: `<a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}">`,
       linkEnd: '</a>',
     })
     const promises: Promise<Recipient>[] = []
 
-    if (defendant.defenderEmail && defendant.isDefenderChoiceConfirmed) {
+    if (defendant.defenderEmail) {
       promises.push(
         this.sendEmail(
           formattedSubject,
@@ -90,16 +92,16 @@ export class DefendantNotificationService extends BaseNotificationService {
 
   private shouldSendDefenderAssignedNotification(
     theCase: Case,
-    defenderEmail?: string,
+    defendant: Defendant,
   ): boolean {
-    if (!defenderEmail) {
+    if (!defendant.defenderEmail || !defendant.isDefenderChoiceConfirmed) {
       return false
     }
 
     if (isIndictmentCase(theCase.type)) {
       const hasSentNotificationBefore = this.hasReceivedNotification(
         DefendantNotificationType.DEFENDER_ASSIGNED,
-        defenderEmail,
+        defendant.defenderEmail,
         theCase.notifications,
       )
 
@@ -116,7 +118,7 @@ export class DefendantNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     const shouldSend = this.shouldSendDefenderAssignedNotification(
       theCase,
-      defendant.defenderEmail,
+      defendant,
     )
 
     if (shouldSend) {
