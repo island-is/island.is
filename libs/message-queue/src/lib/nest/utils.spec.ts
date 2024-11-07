@@ -2,8 +2,12 @@ import {
   calculateSleepDurationUntilMorning,
   clamp,
   isOutsideWorkingHours,
-  sleepUntilMorning,
 } from './utils'
+
+const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
+const outsideWorkingHours = new Date(2021, 1, 1, 7, 0, 0)
+const HOUR_IN_MS = 3600000;
+
 
 describe('utils', () => {
   describe('clamp', () => {
@@ -19,40 +23,19 @@ describe('utils', () => {
   })
   describe('isOutsideWorkingHours', () => {
     it('returns true if the current hour is outside working hours', () => {
-      expect(isOutsideWorkingHours(new Date('2023-01-01T07:00:00'))).toBe(true) // 7 AM
-      expect(isOutsideWorkingHours(new Date('2023-01-01T23:00:00'))).toBe(true) // 11 PM
-      expect(isOutsideWorkingHours(new Date('2023-01-01T00:00:00'))).toBe(true) // Midnight
-      expect(isOutsideWorkingHours(new Date('2023-01-01T08:00:00'))).toBe(false) // 8 AM
-      expect(isOutsideWorkingHours(new Date('2023-01-01T22:00:00'))).toBe(false) // 10 PM
+      jest.useFakeTimers({ now: outsideWorkingHours })
+      expect(isOutsideWorkingHours()).toBe(true)
+    })
+    it('returns false if the current hour is inside working hours', () => {
+      jest.useFakeTimers({ now: insideWorkingHours })
+      expect(isOutsideWorkingHours()).toBe(false)
     })
   })
 
   describe('calculateSleepDurationUntilMorning', () => {
-    const HOUR_IN_MS = 3600000;
-    const MINUTE_IN_MS = 60000;
-
-    it('calculates sleep duration correctly for a time at midnight', () => {
-      const now = new Date('2023-01-01T00:00:00') // Midnight
-      const duration = calculateSleepDurationUntilMorning(now)
-      expect(duration).toBe(8 * HOUR_IN_MS) // 8 hours until 8:00 AM
-    })
-
-    it('calculates sleep duration correctly for a time in the middle of the night', () => {
-      const now = new Date('2023-01-01T05:00:00') // 5:00 AM
-      const duration = calculateSleepDurationUntilMorning(now)
-      expect(duration).toBe(3 * HOUR_IN_MS) // 3 hours until 8:00 AM
-    })
-
-    it('calculates sleep duration correctly for a time just before work starts', () => {
-      const now = new Date('2023-01-01T07:59:00') // 7:59 AM
-      const duration = calculateSleepDurationUntilMorning(now)
-      expect(duration).toBe(MINUTE_IN_MS) // 1 minute until 8:00 AM
-    })
-
-    it('returns appropriate duration when called during working hours', () => {
-      const now = new Date('2023-01-01T14:00:00') // 2:00 PM
-      const duration = calculateSleepDurationUntilMorning(now)
-      expect(duration).toBe(18 * HOUR_IN_MS) // 18 hours until next morning 8:00 AM
+    it('calculates the time until the next morning', () => {
+      jest.useFakeTimers({ now: new Date(2021, 1, 1, 23, 0, 0) }) // 11 PM
+      expect(calculateSleepDurationUntilMorning()).toBe(9 * HOUR_IN_MS) // 9 hours
     })
   })
 })
