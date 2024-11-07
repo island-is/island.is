@@ -21,6 +21,7 @@ export enum ActionType {
 type NonLoggedInAuthState = Exclude<BffState, 'logged-in'>
 
 export interface BffReducerStateBase {
+  authority: string
   authState: BffState
   isAuthenticated: boolean
   error?: Error | null
@@ -46,6 +47,7 @@ export const initialState: NonLoggedInState = {
   authState: 'logged-out',
   isAuthenticated: false,
   error: null,
+  authority: 'https://innskra.island.is', // Default to production
 }
 
 export type Action =
@@ -63,10 +65,8 @@ export type Action =
  * Helper function to reset user-related state when switching users or logging out
  */
 const resetState = (authState: NonLoggedInAuthState): NonLoggedInState => ({
-  userInfo: null,
+  ...initialState,
   authState,
-  isAuthenticated: false,
-  error: null,
 })
 
 /**

@@ -16,4 +16,5 @@ export const createMockedInitialState = (
   authState: 'logged-in',
   isAuthenticated: true,
   error: null,
+  authority: 'https://identity-server.dev01.devland.is',
 })

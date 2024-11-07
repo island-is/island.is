@@ -14,24 +14,24 @@ const BFF_SERVER_UNAVAILABLE = 'BFF_SERVER_UNAVAILABLE'
 
 type BffProviderProps = {
   children: ReactNode
-  /**
-   * The base path of the application.
-   */
-  applicationBasePath: string
   mockedInitialState?: LoggedInState
+  options: {
+    authority: string
+    applicationBasePath: string
+  }
 }
 
 export const BffProvider = ({
   children,
-  applicationBasePath,
+  options: { authority, applicationBasePath },
   mockedInitialState,
 }: BffProviderProps) => {
   const [showSessionExpiredScreen, setSessionExpiredScreen] = useState(false)
   const bffUrlGenerator = createBffUrlGenerator(applicationBasePath)
-  const [state, dispatch] = useReducer(
-    reducer,
-    mockedInitialState ?? initialState,
-  )
+  const [state, dispatch] = useReducer(reducer, {
+    ...(mockedInitialState ?? initialState),
+    authority,
+  })
 
   const { authState } = state
   const showErrorScreen = authState === 'error'

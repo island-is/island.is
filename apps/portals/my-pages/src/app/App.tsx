@@ -27,7 +27,10 @@ export const App = () => (
     <ApolloProvider client={client}>
       <LocaleProvider locale={defaultLanguage} messages={{}}>
         <BffProvider
-          applicationBasePath={ServicePortalPaths.Base}
+          options={{
+            applicationBasePath: ServicePortalPaths.Base,
+            authority: environment.identityServer.authority,
+          }}
           mockedInitialState={mockedInitialState}
         >
           <ApplicationErrorBoundary>

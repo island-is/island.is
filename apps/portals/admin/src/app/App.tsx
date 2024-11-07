@@ -1,4 +1,5 @@
 import { ApolloProvider } from '@apollo/client'
+import { adminPortalScopes } from '@island.is/auth/scopes'
 import { LocaleProvider } from '@island.is/localization'
 import {
   ApplicationErrorBoundary,
@@ -13,7 +14,6 @@ import { client } from '../graphql'
 import { modules } from '../lib/modules'
 import { AdminPortalPaths } from '../lib/paths'
 import { createRoutes } from '../lib/routes'
-import { adminPortalScopes } from '@island.is/auth/scopes'
 
 const mockedInitialState = isMockMode
   ? createMockedInitialState({
@@ -26,7 +26,10 @@ export const App = () => (
     <LocaleProvider locale={defaultLanguage} messages={{}}>
       <ApplicationErrorBoundary>
         <BffProvider
-          applicationBasePath={AdminPortalPaths.Base}
+          options={{
+            applicationBasePath: AdminPortalPaths.Base,
+            authority: environment.identityServer.authority,
+          }}
           mockedInitialState={mockedInitialState}
         >
           <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
