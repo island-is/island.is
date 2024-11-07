@@ -189,7 +189,7 @@ describe('DefendantController - Update', () => {
     { isDefenderChoiceConfirmed: true, shouldSendEmail: true },
     { isDefenderChoiceConfirmed: false, shouldSendEmail: false },
   ])(
-    "defendant's defender choice is confirmed in indictment case",
+    "defendant's defender choice is changed",
     ({ isDefenderChoiceConfirmed, shouldSendEmail }) => {
       const defendantUpdate = { isDefenderChoiceConfirmed }
       const updatedDefendant = {
@@ -206,7 +206,7 @@ describe('DefendantController - Update', () => {
       })
 
       if (shouldSendEmail) {
-        it('should queue messages', () => {
+        it('should queue message if defender has been confirmed', () => {
           expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
             {
               type: MessageType.DEFENDANT_NOTIFICATION,
@@ -217,7 +217,7 @@ describe('DefendantController - Update', () => {
           ])
         })
       } else {
-        it('should not queue messages', () => {
+        it('should not queue message if defender has not been confirmed', () => {
           expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
         })
       }
