@@ -58,20 +58,21 @@ export const rentalPeriod = defineMessages({
   },
 
   // Error messages
-  errorEndDateBeforeStart: {
-    id: 'ra.application:dataSchema.errorEndDateBeforeStart',
-    defaultMessage:
-      'Loka dagur samnings má ekki vera sami eða fyrir upphaf samnings',
-    description: 'Error message when end date is before start date',
-  },
+
   errorAgreementStartDateNotFilled: {
     id: 'ra.application:dataSchema.errorStartDateNotFilled',
-    defaultMessage: 'Upphafsdagur þarf að vera fylltur út',
+    defaultMessage: 'Veldu upphafsdag samnings',
     description: 'Error message when start date is not filled',
   },
   errorAgreementEndDateNotFilled: {
     id: 'ra.application:dataSchema.errorEndDateNotFilled',
-    defaultMessage: 'Lokadagur þarf að vera fylltur út',
+    defaultMessage: 'Veldu síðasta dag samnings',
     description: 'Error message when end date is not filled',
+  },
+  errorEndDateBeforeStart: {
+    id: 'ra.application:dataSchema.errorEndDateBeforeStart',
+    defaultMessage:
+      'Loka dagur samnings má ekki vera sami eða fyrir upphafsdag samnings',
+    description: 'Error message when end date is before start date',
   },
 })
