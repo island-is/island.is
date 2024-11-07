@@ -10,17 +10,16 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { formerEducation } from '../../../../lib/messages/formerEducation'
-import { Routes } from '../../../../lib/constants'
+import { degreeLevelOptions, Routes } from '../../../../lib/constants'
 import { FILE_SIZE_LIMIT } from '../../../../shared'
 import { getAllCountryCodes } from '@island.is/shared/utils'
-import { degreeLevelOptions } from './degreeLevelOptions'
 import { FormValue } from '@island.is/application/types'
 import { ApplicationTypes } from '@island.is/university-gateway'
 
 export const ThirdLevelEducationSubSection = buildSubSection({
   id: `${Routes.EDUCATIONDETAILS}.thirdLevelDetails`,
   title: formerEducation.labels.educationDetails.pageTitle,
-  condition: (answers: FormValue, externalData) => {
+  condition: (answers: FormValue) => {
     const optionAnswers = getValueViaPath(answers, 'educationOptions')
     return optionAnswers === ApplicationTypes.THIRDLEVEL
   },
