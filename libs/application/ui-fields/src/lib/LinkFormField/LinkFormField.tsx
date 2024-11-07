@@ -1,9 +1,10 @@
 import { useCallback } from 'react'
-import { formatText } from '@island.is/application/core'
+import { formatText, formatTextWithLocale } from '@island.is/application/core'
 import { LinkField, Application } from '@island.is/application/types'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import useGenerateFileUrl from './hooks/useGenerateFileUrl'
+import { Locale } from '@island.is/shared/types'
 
 type Props = {
   field: LinkField
@@ -11,7 +12,7 @@ type Props = {
 }
 
 export const LinkFormField = ({ field, application }: Props) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const openLink = useCallback(() => {
     window.open(
       formatText(field.link ?? '', application, formatMessage),
@@ -47,7 +48,12 @@ export const LinkFormField = ({ field, application }: Props) => {
         type="button"
         variant="ghost"
       >
-        {formatText(field.title, application, formatMessage)}
+        {formatTextWithLocale(
+          field.title,
+          application,
+          locale as Locale,
+          formatMessage,
+        )}
       </Button>
     </Box>
   )
