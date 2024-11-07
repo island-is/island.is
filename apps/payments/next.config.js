@@ -6,7 +6,7 @@ const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 
 const withVanillaExtract = createVanillaExtractPlugin()
 
-const { API_URL = 'http://localhost:4444' } = process.env
+const { API_URL = 'http://localhost:4444', CONFIGCAT_SDK_KEY } = process.env
 
 const graphqlPath = '/api/graphql'
 
@@ -27,6 +27,7 @@ const nextConfig = {
   publicRuntimeConfig: {
     // Will be available on both server and client
     graphqlEndpoint: graphqlPath,
+    configCatSdkKey: CONFIGCAT_SDK_KEY,
   },
   env: {
     API_MOCKS: process.env.API_MOCKS || '',

@@ -17,6 +17,8 @@ import { PaymentSelector } from 'apps/payments/components/PaymentSelector/Paymen
 import { CardPayment } from 'apps/payments/components/CardPayment/CardPayment'
 import { InvoicePayment } from 'apps/payments/components/InvoicePayment/InvoicePayment'
 import { ALLOWED_LOCALES, Locale } from 'apps/payments/utils'
+import { getConfigcatClient } from 'apps/payments/clients/configcat'
+import { Features } from '@island.is/feature-flags'
 
 interface PaymentPageProps {
   locale: string
@@ -70,6 +72,18 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
         destination: `/${ALLOWED_LOCALES[0]}/${paymentFlowId}`,
         permanent: false,
       },
+    }
+  }
+
+  const configCatClient = getConfigcatClient()
+  const isFeatureEnabled = await configCatClient.getValueAsync(
+    Features.isIslandisPaymentEnabled,
+    false,
+  )
+
+  if (isFeatureEnabled) {
+    return {
+      notFound: true,
     }
   }
 

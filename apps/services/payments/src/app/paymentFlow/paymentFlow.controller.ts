@@ -23,12 +23,12 @@ import {
 type CreatePaymentUrlResponse = { url: string }
 
 @UseGuards(FeatureFlagGuard)
+@FeatureFlag(Features.isIslandisPaymentEnabled)
 @ApiTags('payments')
 @Controller({
   path: 'payments',
   version: ['1'],
 })
-@FeatureFlag(Features.isIslandisPaymentEnabled)
 export class PaymentFlowController {
   constructor(private readonly paymentFlowService: PaymentFlowService) {}
 
