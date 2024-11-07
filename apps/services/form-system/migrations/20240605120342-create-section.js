@@ -25,12 +25,7 @@ module.exports = {
             allowNull: false,
           },
           section_type: {
-            type: Sequelize.DataTypes.ENUM(
-              'premises',
-              'parties',
-              'input',
-              'payment',
-            ),
+            type: Sequelize.STRING,
             allowNull: false,
             defaultValue: 'input',
           },

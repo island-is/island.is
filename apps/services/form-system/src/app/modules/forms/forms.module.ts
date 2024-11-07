@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { FormApplicant } from '../formApplicants/models/formApplicant.model'
+import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
 import { Screen } from '../screens/models/screen.model'
 // import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
 // import { FieldType } from '../fields/models/fieldType.model'
-import { ListType } from '../lists/models/listType.model'
+// import { ListType } from '../organizationListTypes/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
 import { Section } from '../sections/models/section.model'
 // import { Certification } from '../certifications/models/certification.model'
@@ -18,12 +18,12 @@ import { ListItem } from '../listItems/models/listItem.model'
   imports: [
     SequelizeModule.forFeature([
       Form,
-      FormApplicant,
+      FormApplicantType,
       Section,
       Screen,
       Organization,
       // FieldType,
-      ListType,
+      // ListType,
       ListItem,
     ]),
   ],

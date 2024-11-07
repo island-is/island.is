@@ -5,7 +5,7 @@ import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
 import { SectionTypes } from '../../enums/sectionTypes'
-import { FormApplicantDto } from '../formApplicants/models/dto/formApplicant.dto'
+// import { FormApplicantDto } from '../formApplicants/models/dto/formApplicant.dto'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Screen } from '../screens/models/screen.model'
 // import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
@@ -14,12 +14,12 @@ import { FieldDto } from '../fields/models/dto/field.dto'
 // import { FieldTypeDto } from '../fields/models/dto/fieldType.dto'
 import { Field } from '../fields/models/field.model'
 // import { FieldType } from '../fields/models/fieldType.model'
-import { ListTypeDto } from '../lists/models/dto/listType.dto'
-import { ListType } from '../lists/models/listType.model'
+// import { ListTypeDto } from '../organizationListTypes/models/dto/listType.dto'
+// import { ListType } from '../organizationListTypes/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { Section } from '../sections/models/section.model'
-import { FormCertificationDto } from '../formCertifications/models/dto/formCertification.dto'
+// import { FormCertificationDto } from '../formCertifications/models/dto/formCertification.dto'
 // import { Certification } from '../certifications/models/certification.model'
 import { CreateFormDto } from './models/dto/createForm.dto'
 import { FormDto } from './models/dto/form.dto'
@@ -29,21 +29,29 @@ import { ListItem } from '../listItems/models/listItem.model'
 import { createFormTranslations } from '../translations/form'
 import { createSectionTranslations } from '../translations/section'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
-import { OrganizationCertification } from '../organizationCertifications/models/organizationCertification.model'
-import { Certifications } from '../../dataTypes/certificationType.model'
-import { FormCertification } from '../formCertifications/models/formCertification.model'
+import { OrganizationCertificationType } from '../organizationCertificationTypes/models/organizationCertificationType.model'
+import {
+  CertificationType,
+  CertificationTypes,
+} from '../../dataTypes/certificationTypes/certificationType.model'
+import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import {
   ApplicantType,
   ApplicantTypes,
-} from '../../dataTypes/applicantType.model'
-import { FormApplicant } from '../formApplicants/models/formApplicant.model'
+} from '../../dataTypes/applicantTypes/applicantType.model'
+import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
-import { FieldType, FieldTypes } from '../../dataTypes/fieldType.model'
+import {
+  FieldType,
+  FieldTypes,
+} from '../../dataTypes/fieldTypes/fieldType.model'
 import { OrganizationFieldType } from '../organizationFieldTypes/models/organizationFieldType.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { randomUUID } from 'crypto'
+import { ListType, ListTypes } from '../../dataTypes/listTypes/listType.model'
+import { OrganizationListType } from '../organizationListTypes/models/organizationListType.model'
 // import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 // import { ValueFactory } from '../../dataTypes/valueTypes/valueType.factory'
 
@@ -57,11 +65,7 @@ export class FormsService {
     @InjectModel(Screen)
     private readonly screenModel: typeof Screen,
     @InjectModel(Organization)
-    private readonly organizationModel: typeof Organization,
-    // @InjectModel(FieldType)
-    // private readonly fieldTypeModel: typeof FieldType,
-    @InjectModel(ListType)
-    private readonly listTypeModel: typeof ListType, // private readonly fieldSettingsMapper: FieldSettingsMapper,
+    private readonly organizationModel: typeof Organization, // @InjectModel(FieldType) // private readonly fieldTypeModel: typeof FieldType, // @InjectModel(ListType) // private readonly listTypeModel: typeof ListType, // private readonly fieldSettingsMapper: FieldSettingsMapper,
   ) {}
 
   async findAll(organizationId: string): Promise<FormResponseDto> {
@@ -198,11 +202,11 @@ export class FormsService {
           ],
         },
         {
-          model: FormCertification,
-          as: 'certifications',
+          model: FormCertificationType,
+          as: 'formCertificationTypes',
         },
         {
-          model: FormApplicant,
+          model: FormApplicantType,
           as: 'applicants',
         },
       ],
@@ -235,28 +239,47 @@ export class FormsService {
 
   private async getCertificationTypes(
     organizationId: string,
-  ): Promise<FormCertificationDto[]> {
+  ): Promise<CertificationType[]> {
+    const commonCertificationTypes = CertificationTypes.filter(
+      (certificationType) => certificationType.isCommon,
+    )
+
     const organization = await this.organizationModel.findByPk(organizationId, {
-      include: [OrganizationCertification],
+      include: [OrganizationCertificationType],
     })
 
-    const certificationsDto: FormCertificationDto[] = []
+    const uncommonCertificationTypes = CertificationTypes.filter(
+      (certificationType) =>
+        organization?.organizationCertificationTypes?.some(
+          (item) => item.certificationTypeId === certificationType.id,
+        ),
+    )
 
-    const keys = ['id', 'type', 'name', 'description']
-    organization?.organizationCertifications?.map((orgCertification) => {
-      Certifications.map((certification) => {
-        if (orgCertification.certificationId === certification.id) {
-          certificationsDto.push(
-            defaults(
-              pick(certification, keys),
-              zipObject(keys, Array(keys.length).fill(null)),
-            ) as FormCertificationDto,
-          )
-        }
-      })
-    })
+    const organizationCertificationTypes = commonCertificationTypes.concat(
+      uncommonCertificationTypes,
+    )
 
-    return certificationsDto
+    // const organization = await this.organizationModel.findByPk(organizationId, {
+    //   include: [OrganizationCertification],
+    // })
+
+    // const certificationTypes: CertificationType[] = []
+
+    // const keys = ['id', 'type', 'name', 'description']
+    // organization?.organizationCertifications?.map((orgCertification) => {
+    //   CertificationTypes.map((certification) => {
+    //     if (orgCertification.certificationId === certification.id) {
+    //       certificationTypes.push(
+    //         defaults(
+    //           pick(certification, keys),
+    //           zipObject(keys, Array(keys.length).fill(null)),
+    //         ) as FormCertificationDto,
+    //       )
+    //     }
+    //   })
+    // })
+
+    return organizationCertificationTypes
   }
 
   private async getFieldTypes(organizationId: string): Promise<FieldType[]> {
@@ -282,14 +305,14 @@ export class FormsService {
 
     organizationFieldTypes.map((fieldType) => {
       ;(fieldType.fieldSettings = FieldSettingsFactory.getClass(
-        fieldType.type,
+        fieldType.id,
         new FieldSettings(),
       )),
         (fieldType.values = [
           {
             id: randomUUID(),
             order: 0,
-            json: ValueTypeFactory.getClass(fieldType.type, new ValueType()),
+            json: ValueTypeFactory.getClass(fieldType.id, new ValueType()),
           },
         ])
     })
@@ -316,31 +339,45 @@ export class FormsService {
     return organizationFieldTypes
   }
 
-  private async getListTypes(organizationId: string): Promise<ListTypeDto[]> {
-    const commonListTypes = await this.listTypeModel.findAll({
-      where: { isCommon: true },
-    })
-    const organizationSpecificListTypes = await this.organizationModel.findByPk(
-      organizationId,
-      { include: [ListType] },
-    )
+  private async getListTypes(organizationId: string): Promise<ListType[]> {
+    const commonListTypes = ListTypes.filter((listType) => listType.isCommon)
 
-    const organizationListTypes = commonListTypes.concat(
-      organizationSpecificListTypes?.organizationListTypes as ListType[],
-    )
-
-    const listTypesDto: ListTypeDto[] = []
-    const keys = ['id', 'type', 'name', 'description', 'isCommon']
-    organizationListTypes.map((listType) => {
-      listTypesDto.push(
-        defaults(
-          pick(listType, keys),
-          zipObject(keys, Array(keys.length).fill(null)),
-        ) as ListTypeDto,
-      )
+    const organization = await this.organizationModel.findByPk(organizationId, {
+      include: [OrganizationListType],
     })
 
-    return listTypesDto
+    const uncommonListTypes = ListTypes.filter((listType) =>
+      organization?.organizationListTypes?.some(
+        (item) => item.listTypeId === listType.id,
+      ),
+    )
+
+    const organizationListTypes = commonListTypes.concat(uncommonListTypes)
+
+    // const commonListTypes = await this.listTypeModel.findAll({
+    //   where: { isCommon: true },
+    // })
+    // const organizationSpecificListTypes = await this.organizationModel.findByPk(
+    //   organizationId,
+    //   { include: [ListType] },
+    // )
+
+    // const organizationListTypes = commonListTypes.concat(
+    //   organizationSpecificListTypes?.organizationListTypes as ListType[],
+    // )
+
+    // const listTypesDto: ListTypeDto[] = []
+    // const keys = ['id', 'type', 'name', 'description', 'isCommon']
+    // organizationListTypes.map((listType) => {
+    //   listTypesDto.push(
+    //     defaults(
+    //       pick(listType, keys),
+    //       zipObject(keys, Array(keys.length).fill(null)),
+    //     ) as ListTypeDto,
+    //   )
+    // })
+
+    return organizationListTypes
   }
 
   private setArrays(form: Form): FormDto {
@@ -364,41 +401,53 @@ export class FormsService {
         zipObject(formKeys, Array(formKeys.length).fill(null)),
       ),
       {
-        certifications: [],
-        applicants: [],
+        certificationTypes: [],
+        applicantTypes: [],
         sections: [],
         screens: [],
         fields: [],
       },
     ) as FormDto
 
-    const certificationsDto: FormCertificationDto[] = []
+    const certificationTypes: CertificationType[] = []
 
     const keys = ['id', 'type', 'name', 'description']
-    form?.certifications?.map((formCertification) => {
-      Certifications.map((certification) => {
-        if (formCertification.certificationId === certification.id) {
-          certificationsDto.push(
+    form?.formCertificationTypes?.map((formCertification) => {
+      CertificationTypes.map((certification) => {
+        if (formCertification.certificationTypeId === certification.id) {
+          certificationTypes.push(
             defaults(
-              pick({ ...certification, id: formCertification.id }, keys),
+              pick(
+                { ...certification, formCertificationId: formCertification.id },
+                keys,
+              ),
               zipObject(keys, Array(keys.length).fill(null)),
-            ) as FormCertificationDto,
+            ) as CertificationType,
           )
         }
       })
     })
 
-    formDto.certifications = certificationsDto
+    formDto.certificationTypes = certificationTypes
 
     const applicantKeys = ['id', 'applicantTypeId', 'name']
-    form.applicants?.map((applicant) => {
-      formDto.applicants?.push(
-        defaults(
-          pick(applicant, applicantKeys),
-          zipObject(applicantKeys, Array(applicantKeys.length).fill(null)),
-        ) as FormApplicantDto,
-      )
+    form.formApplicantTypes?.map((formApplicant) => {
+      ApplicantTypes.map((applicant) => {
+        if (formApplicant.applicantTypeId === applicant.id) {
+          formDto.applicantTypes?.push(
+            defaults(
+              pick(
+                { ...applicant, formApplicantId: formApplicant.id },
+                applicantKeys,
+              ),
+              zipObject(applicantKeys, Array(applicantKeys.length).fill(null)),
+            ) as ApplicantType,
+          )
+        }
+      })
     })
+
+    console.log(formDto.applicantTypes)
 
     const sectionKeys = [
       'id',
