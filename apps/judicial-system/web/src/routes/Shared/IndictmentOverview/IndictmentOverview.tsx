@@ -2,9 +2,12 @@ import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Accordion, Box, Button } from '@island.is/island-ui/core'
+import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  normalizeAndFormatNationalId,
+} from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isDefenceUser,
@@ -28,24 +31,63 @@ import {
   PageTitle,
   useIndictmentsLawsBroken,
   UserContext,
+  serviceAnnouncementStrings,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseIndictmentRulingDecision,
   CaseState,
+  Defendant,
   IndictmentDecision,
+  ServiceStatus,
+  Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { ReviewDecision } from '../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import { strings } from './IndictmentOverview.strings'
 
+interface ServiceAnnouncementProps {
+  defendant: Defendant
+  subpoena: Subpoena
+}
+
+const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
+  const { defendant, subpoena } = props
+  const { formatMessage } = useIntl()
+
+  const getTitle = (defendantName?: string | null): string => {
+    const successMessage = formatMessage(
+      serviceAnnouncementStrings.serviceStatusSuccess,
+    )
+
+    return defendantName
+      ? `${successMessage} - ${defendantName}`
+      : successMessage
+  }
+
+  const getMessage = (
+    servedBy?: string | null,
+    serviceDate?: string | null,
+  ): string => {
+    return [servedBy, formatDate(serviceDate, 'Pp')].filter(Boolean).join(', ')
+  }
+
+  return (
+    <AlertMessage
+      type="success"
+      title={getTitle(defendant.name)}
+      message={getMessage(subpoena.servedBy, subpoena.serviceDate)}
+    />
+  )
+}
+
 const IndictmentOverview: FC = () => {
-  const router = useRouter()
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { user } = useContext(UserContext)
 
+  const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
+  const router = useRouter()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
@@ -54,10 +96,16 @@ const IndictmentOverview: FC = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [isReviewDecisionSelected, setIsReviewDecisionSelected] =
     useState(false)
+
+  const hasLawsBroken = lawsBroken.size > 0
+  const hasMergeCases =
+    workingCase.mergedCases && workingCase.mergedCases.length > 0
+
   const shouldDisplayReviewDecision =
     isCompletedCase(workingCase.state) &&
     workingCase.indictmentReviewer?.id === user?.id &&
     Boolean(!workingCase.indictmentReviewDecision)
+
   const canAddFiles =
     !isCompletedCase(workingCase.state) &&
     isDefenceUser(user) &&
@@ -70,6 +118,7 @@ const IndictmentOverview: FC = () => {
     ) &&
     workingCase.indictmentDecision !==
       IndictmentDecision.POSTPONING_UNTIL_VERDICT
+
   const shouldDisplayGeneratedPdfFiles =
     isProsecutionUser(user) ||
     workingCase.defendants?.some(
@@ -96,10 +145,6 @@ const IndictmentOverview: FC = () => {
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
   )
-
-  const hasLawsBroken = lawsBroken.size > 0
-  const hasMergeCases =
-    workingCase.mergedCases && workingCase.mergedCases.length > 0
 
   return (
     <PageLayout
@@ -129,7 +174,15 @@ const IndictmentOverview: FC = () => {
           workingCase.defendants?.map((defendant) =>
             defendant.subpoenas?.map(
               (subpoena) =>
-                isSuccessfulServiceStatus(subpoena.serviceStatus) && 'sdads',
+                isSuccessfulServiceStatus(subpoena.serviceStatus) && (
+                  <Box marginBottom={2}>
+                    <ServiceAnnouncement
+                      key={`${defendant.id}${subpoena.id}`}
+                      defendant={defendant}
+                      subpoena={subpoena}
+                    />
+                  </Box>
+                ),
             ),
           )}
         {caseHasBeenReceivedByCourt &&
