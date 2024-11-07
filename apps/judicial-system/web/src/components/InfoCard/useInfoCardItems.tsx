@@ -332,6 +332,7 @@ const useInfoCardItems = () => {
     values: workingCase.civilClaimants
       ? workingCase.civilClaimants.map((civilClaimant, index) => (
           <div
+            key={civilClaimant.id}
             className={cn(
               workingCase.civilClaimants &&
                 workingCase.civilClaimants.length > 1
@@ -343,10 +344,7 @@ const useInfoCardItems = () => {
                 : undefined,
             )}
           >
-            <CivilClaimantInfo
-              key={civilClaimant.id}
-              civilClaimant={civilClaimant}
-            />
+            <CivilClaimantInfo civilClaimant={civilClaimant} />
           </div>
         ))
       : [],
