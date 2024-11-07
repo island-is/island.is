@@ -10,7 +10,8 @@ import { MessageDescriptor } from 'react-intl'
 import { FormScreen } from '../types'
 import useIsMobile from '../hooks/useIsMobile'
 import { ExcludesFalse } from '@island.is/application/utils'
-import { formatText } from '@island.is/application/core'
+import { formatTextWithLocale } from '@island.is/application/core'
+import { Locale } from '@island.is/shared/types'
 
 type Props = {
   form: {
@@ -30,7 +31,7 @@ const FormStepper = ({
   currentScreen,
   application,
 }: Props) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const { isMobile } = useIsMobile()
 
   const parseSubsections = (
@@ -57,7 +58,12 @@ const FormStepper = ({
       .map((child, i) => {
         const isChildActive =
           isParentActive && currentScreen.subSectionIndex === i
-        const childText = formatText(child.title, application, formatMessage)
+        const childText = formatTextWithLocale(
+          child.title,
+          application,
+          locale as Locale,
+          formatMessage,
+        )
 
         if (!childText) return null
 
@@ -91,9 +97,10 @@ const FormStepper = ({
         [
           stepperTitle,
           ...sections.map((section, i) => {
-            const sectionTitle = formatText(
+            const sectionTitle = formatTextWithLocale(
               section.title,
               application,
+              locale as Locale,
               formatMessage,
             )
 
