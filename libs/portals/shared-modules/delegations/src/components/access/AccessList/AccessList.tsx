@@ -43,7 +43,7 @@ export const AccessList = ({
           <Fragment key={scope.name}>
             <AccessListItem
               key={scope.name}
-              name={scope.name}
+              name={scope.displayName || scope.name}
               description={scope.description}
             />
             <div className={commonAccessStyles.divider}>
