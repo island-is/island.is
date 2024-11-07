@@ -45,8 +45,9 @@ import {
   BankAccountField,
   SliderField,
   MaybeWithApplication,
+  MaybeWithApplicationAndFieldAndLocale,
 } from '@island.is/application/types'
-
+import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
 import { SpanType, BoxProps } from '@island.is/island-ui/core/types'
 import { coreDefaultFieldMessages } from './messages'
@@ -526,12 +527,13 @@ export const buildSubmitField = (data: {
 }
 
 export const buildFieldOptions = (
-  maybeOptions: MaybeWithApplicationAndField<Option[]>,
+  maybeOptions: MaybeWithApplicationAndFieldAndLocale<Option[]>,
   application: Application,
   field: Field,
+  locale: Locale,
 ): Option[] => {
   if (typeof maybeOptions === 'function') {
-    return maybeOptions(application, field)
+    return maybeOptions(application, field, locale)
   }
   return maybeOptions
 }
