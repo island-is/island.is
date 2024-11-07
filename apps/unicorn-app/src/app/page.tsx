@@ -2,7 +2,7 @@ import { GET_ERROR_PAGE } from '../queries'
 
 export default function Index() {
   return (
-    <div >
+    <div>
       <div className="wrapper">
         <div className="container">
           <div id="welcome">
