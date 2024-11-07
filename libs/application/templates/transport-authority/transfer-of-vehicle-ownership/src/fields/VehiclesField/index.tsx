@@ -60,9 +60,9 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
     <Box paddingTop={2}>
       {currentVehicleList.totalRecords > 20 ? (
         <FindVehicleFormField
-          application={application}
           setFieldLoadingState={props.setFieldLoadingState}
           setSubmitButtonDisabled={props.setSubmitButtonDisabled}
+          {...props}
           field={{
             id: 'pickVehicle',
             title: information.labels.pickVehicle.title,
