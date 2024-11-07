@@ -2,25 +2,25 @@ import * as kennitala from 'kennitala'
 import { useIntl } from 'react-intl'
 
 import { SessionsSession } from '@island.is/api/schema'
-import { useAuth } from '@island.is/auth/react'
 import { Box, Icon, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ExpandHeader, ExpandRow } from '@island.is/service-portal/core'
 import { Country, getCountryByCode } from '@island.is/shared/utils'
 
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { m } from '../../lib/messages'
 import { SessionType } from '../../lib/types/sessionTypes'
 import { getSessionType } from '../../utils/utils'
-import Person from '../PersonIcon/PersonIcon'
-import * as styles from '../LogTable/LogTable.css'
 import { Client } from '../Client/Client'
-import { m } from '../../lib/messages'
+import * as styles from '../LogTable/LogTable.css'
+import Person from '../PersonIcon/PersonIcon'
 
 interface LogTableProps {
   sessions: SessionsSession[]
 }
 
 const LogTableMobile = ({ sessions }: LogTableProps) => {
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const { formatDate, formatTime } = useIntl()
 

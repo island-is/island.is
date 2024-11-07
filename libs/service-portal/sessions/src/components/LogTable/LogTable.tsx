@@ -3,24 +3,24 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { SessionsSession } from '@island.is/api/schema'
-import { useAuth } from '@island.is/auth/react'
 import { Box, Icon, Table, Text, Tooltip } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { Country, getCountryByCode } from '@island.is/shared/utils'
 import { m } from '../../lib/messages'
 import { SessionType } from '../../lib/types/sessionTypes'
 import { getSessionType } from '../../utils/utils'
+import { Client } from '../Client/Client'
 import * as styles from '../LogTable/LogTable.css'
 import Person from '../PersonIcon/PersonIcon'
-import { Client } from '../Client/Client'
-import { Country, getCountryByCode } from '@island.is/shared/utils'
 
 interface LogTableProps {
   data: SessionsSession[]
 }
 
 const LogTable = ({ data }: LogTableProps) => {
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const { formatDate, formatTime } = useIntl()
 

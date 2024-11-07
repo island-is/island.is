@@ -1,3 +1,4 @@
+import { SignatureCollection } from '@island.is/api/schema'
 import {
   ActionCard,
   Box,
@@ -7,15 +8,14 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import copyToClipboard from 'copy-to-clipboard'
+import format from 'date-fns/format'
+import { useNavigate } from 'react-router-dom'
+import { useGetListsForOwner } from '../../../hooks'
 import { m } from '../../../lib/messages'
 import { SignatureCollectionPaths } from '../../../lib/paths'
-import { useGetListsForOwner } from '../../../hooks'
-import format from 'date-fns/format'
 import { Skeleton } from '../../../skeletons'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '@island.is/auth/react'
-import copyToClipboard from 'copy-to-clipboard'
-import { SignatureCollection } from '@island.is/api/schema'
 import SignedList from '../../shared/SignedList'
 import CancelCollection from './CancelCollection'
 
@@ -26,7 +26,7 @@ const OwnerView = ({
 }) => {
   useNamespaces('sp.signatureCollection')
   const navigate = useNavigate()
-  const { userInfo: user } = useAuth()
+  const user = useUserInfo()
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
     currentCollection?.id || '',

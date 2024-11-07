@@ -6,21 +6,21 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { EmptyState } from '@island.is/service-portal/core'
-import { useGetListsForUser, useGetSignedList } from '../../../hooks'
-import { Skeleton } from '../../../skeletons'
-import { useAuth } from '@island.is/auth/react'
 import { sortAlpha } from '@island.is/shared/utils'
+import { useGetListsForUser, useGetSignedList } from '../../../hooks'
 import { m } from '../../../lib/messages'
-import SignedList from '../SignedList'
+import { Skeleton } from '../../../skeletons'
 import { SignatureCollection } from '../../../types/schema'
+import SignedList from '../SignedList'
 
 const SigneeView = ({
   currentCollection,
 }: {
   currentCollection: SignatureCollection
 }) => {
-  const { userInfo: user } = useAuth()
+  const user = useUserInfo()
   const { formatMessage } = useLocale()
   const { signedLists, loadingSignedLists } = useGetSignedList()
   const { listsForUser, loadingUserLists, getListsForUserError } =
