@@ -1,4 +1,4 @@
-import { FieldTypesEnum } from '../../enums/fieldTypes'
+import { FieldTypesEnum } from '../fieldTypes/fieldTypes.enum'
 import { FieldSettings } from './fieldSettings.model'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'

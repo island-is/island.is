@@ -13,9 +13,10 @@ import { LanguageType } from '../../../dataTypes/languageType.model'
 // import { ApplicantTypeNameSuggestion } from '../../applicants/models/applicantTypeNameSuggestion.model'
 import { Form } from '../../forms/models/form.model'
 // import { FieldType } from '../../fields/models/fieldType.model'
-import { ListType } from '../../lists/models/listType.model'
-import { OrganizationCertification } from '../../organizationCertifications/models/organizationCertification.model'
+// import { ListType } from '../../organizationListTypes/models/listType.model'
+import { OrganizationCertificationType } from '../../organizationCertificationTypes/models/organizationCertificationType.model'
 import { OrganizationFieldType } from '../../organizationFieldTypes/models/organizationFieldType.model'
+import { OrganizationListType } from '../../organizationListTypes/models/organizationListType.model'
 // import { Certification } from '../../certifications/models/certification.model'
 
 @Table({ tableName: 'organization' })
@@ -64,13 +65,16 @@ export class Organization extends Model<Organization> {
   @HasMany(() => OrganizationFieldType)
   organizationFieldTypes?: OrganizationFieldType[]
 
-  @HasMany(() => OrganizationCertification)
-  organizationCertifications?: OrganizationCertification[]
+  @HasMany(() => OrganizationCertificationType)
+  organizationCertificationTypes?: OrganizationCertificationType[]
 
-  @BelongsToMany(() => ListType, {
-    through: 'organization_list_type',
-    foreignKey: 'organization_id',
-    otherKey: 'list_type_id',
-  })
-  organizationListTypes?: NonAttribute<ListType[]>
+  @HasMany(() => OrganizationListType)
+  organizationListTypes?: OrganizationListType[]
+
+  // @BelongsToMany(() => ListType, {
+  //   through: 'organization_list_type',
+  //   foreignKey: 'organization_id',
+  //   otherKey: 'list_type_id',
+  // })
+  // organizationListTypes?: NonAttribute<ListType[]>
 }

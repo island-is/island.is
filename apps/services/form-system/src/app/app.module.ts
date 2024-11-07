@@ -8,16 +8,16 @@ import { FormsModule } from './modules/forms/forms.module'
 import { ScreensModule } from './modules/screens/screens.module'
 // import { FieldSettingsModule } from './modules/fieldSettings/fieldSettings.module'
 import { FieldsModule } from './modules/fields/fields.module'
-import { ListsModule } from './modules/lists/lists.module'
+import { OrganizationListTypesModule } from './modules/organizationListTypes/organizationListTypes.module'
 import { OrganizationsModule } from './modules/organizations/organizations.module'
 import { SectionsModule } from './modules/sections/sections.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ListItemsModule } from './modules/listItems/listItems.module'
 import { ApplicationsModule } from './modules/applications/applications.module'
 import { ValuesModule } from './modules/values/values.module'
-import { FormApplicantsModule } from './modules/formApplicants/formApplicants.module'
-import { FormCertificationsModule } from './modules/formCertifications/formCertifications.module'
-import { OrganizationCertificationsModule } from './modules/organizationCertifications/organizationCertifications.module'
+import { FormApplicantTypesModule } from './modules/formApplicantTypes/formApplicantTypes.module'
+import { FormCertificationTypesModule } from './modules/formCertificationTypes/formCertificationTypes.module'
+import { OrganizationCertificationTypesModule } from './modules/organizationCertificationTypes/organizationCertificationTypes.module'
 import { OrganizationFieldTypesModule } from './modules/organizationFieldTypes/organizationFieldTypes.module'
 
 @Module({
@@ -33,14 +33,14 @@ import { OrganizationFieldTypesModule } from './modules/organizationFieldTypes/o
     SectionsModule,
     ScreensModule,
     FieldsModule,
-    ListsModule,
+    OrganizationListTypesModule,
     // FieldSettingsModule,
     ListItemsModule,
     ApplicationsModule,
     ValuesModule,
-    FormApplicantsModule,
-    FormCertificationsModule,
-    OrganizationCertificationsModule,
+    FormApplicantTypesModule,
+    FormCertificationTypesModule,
+    OrganizationCertificationTypesModule,
     OrganizationFieldTypesModule,
   ],
 })
