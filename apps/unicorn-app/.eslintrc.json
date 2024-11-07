@@ -37,7 +37,7 @@
       }
     ]
   },
-  "plugins": ["simple-import-sort"],
+  "plugins": ["eslint-plugin-jsx-a11y", "simple-import-sort"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
