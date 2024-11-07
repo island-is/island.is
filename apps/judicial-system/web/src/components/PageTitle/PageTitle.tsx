@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useContext } from 'react'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, ResponsiveProp, Space, Text } from '@island.is/island-ui/core'
 import {
   isCompletedCase,
   isIndictmentCase,
@@ -9,11 +9,20 @@ import {
 import { FormContext } from '../FormProvider/FormProvider'
 import TagCaseState from '../TagCaseState/TagCaseState'
 
-const PageTitle: FC<PropsWithChildren> = ({ children }) => {
+interface Props {
+  marginBottom?: ResponsiveProp<Space>
+}
+
+const PageTitle: FC<PropsWithChildren<Props>> = (props) => {
+  const { marginBottom, children } = props
   const { workingCase } = useContext(FormContext)
 
   return (
-    <Box marginBottom={7} display="flex" justifyContent="spaceBetween">
+    <Box
+      marginBottom={marginBottom ?? 7}
+      display="flex"
+      justifyContent="spaceBetween"
+    >
       <Text as="h1" variant="h1">
         {children}
       </Text>
