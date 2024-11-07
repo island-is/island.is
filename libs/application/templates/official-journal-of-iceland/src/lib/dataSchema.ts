@@ -3,6 +3,10 @@ import { error } from './messages'
 import { AnswerOption, SignatureTypes } from './constants'
 import { MessageDescriptor } from 'react-intl'
 
+const emailRegex =
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+const isValidEmail = (value?: string) =>
+  value ? emailRegex.test(value) : false
 export const memberItemSchema = z
   .object({
     name: z.string().optional(),
@@ -161,6 +165,37 @@ export const publishingValidationSchema = z.object({
     .optional()
     .refine((value) => Array.isArray(value) && value.length > 0, {
       params: error.noCategorySelected,
+    }),
+  channels: z
+    .array(channelSchema)
+    .optional()
+    .superRefine((schema, context) => {
+      let pass = true
+      if (!schema || schema.length === 0) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: error.emptyChannel,
+          path: ['advert', 'channels'],
+        })
+
+        pass = false
+      }
+
+      const validChannels = schema?.every(
+        (channel) => validateChannel(channel) === true,
+      )
+
+      if (!validChannels) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: error.invalidChannel,
+          path: ['advert', 'channels'],
+        })
+
+        pass = false
+      }
+
+      return pass
     }),
 })
 
@@ -336,6 +371,12 @@ const validateCommitteeSignature = (
       .every((isValid) => isValid) ?? false
 
   return hasValidInstitutionAndDate && hasValidChairman && hasValidMembers
+}
+
+const validateChannel = (channel: z.infer<typeof channelSchema>) => {
+  const validEmail = isValidEmail(channel.email)
+
+  return validEmail
 }
 
 type Flatten<T> = T extends any[] ? T[number] : T

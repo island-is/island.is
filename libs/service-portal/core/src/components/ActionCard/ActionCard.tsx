@@ -11,11 +11,11 @@ import {
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
+import cn from 'classnames'
 import * as React from 'react'
 import { CardLoader, isExternalLink } from '../..'
-import * as styles from './ActionCard.css'
 import LinkResolver from '../LinkResolver/LinkResolver'
-import cn from 'classnames'
+import * as styles from './ActionCard.css'
 
 type ActionCardProps = {
   capitalizeHeading?: boolean
@@ -349,6 +349,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
             flexDirection="row"
             justifyContent="spaceBetween"
             alignItems={['flexStart', 'flexStart', 'flexEnd']}
+            flexWrap="wrap"
           >
             {heading && (
               <Box

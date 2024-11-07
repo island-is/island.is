@@ -40,6 +40,7 @@ export const AdditionalHeir = ({
   fieldName,
   relationOptions,
   error,
+  isPrepaid,
 }: {
   customFields: HeirsRepeaterProps['field']['props']['customFields']
   field: GenericFormField<EstateMember>
@@ -49,6 +50,7 @@ export const AdditionalHeir = ({
   fieldName: string
   relationOptions: { value: string; label: string }[]
   error: Record<string, string>
+  isPrepaid: boolean
 }) => {
   const { formatMessage } = useLocale()
   const fieldIndex = `${fieldName}[${index}]`
@@ -340,7 +342,11 @@ export const AdditionalHeir = ({
           <GridRow>
             <GridColumn span={['1/1']} paddingBottom={2}>
               <Text variant="h4">
-                {formatMessage(m.inheritanceAdvocateLabel)}
+                {formatMessage(
+                  isPrepaid
+                    ? m.inheritanceAdvocateLabelPrePaid
+                    : m.inheritanceAdvocateLabel,
+                )}
               </Text>
             </GridColumn>
             <GridColumn span={['1/1']} paddingBottom={2}>
@@ -391,7 +397,11 @@ export const AdditionalHeir = ({
           <GridRow>
             <GridColumn span={['1/1']} paddingBottom={2}>
               <Text variant="h4">
-                {formatMessage(m.inheritanceAdvocateLabel)}
+                {formatMessage(
+                  isPrepaid
+                    ? m.inheritanceAdvocateLabelPrePaid
+                    : m.inheritanceAdvocateLabel,
+                )}
               </Text>
             </GridColumn>
             <GridColumn span={['1/1']} paddingBottom={2}>
