@@ -36,7 +36,7 @@ export class S3Service {
   ) {}
 
   public async getClientRegion(): Promise<string> {
-    return await this.s3Client.config.region()
+    return this.s3Client.config.region()
   }
 
   public async getFile(
