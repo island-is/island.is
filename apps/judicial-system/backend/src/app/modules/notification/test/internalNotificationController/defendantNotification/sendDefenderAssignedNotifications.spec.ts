@@ -15,6 +15,7 @@ import { Case } from '../../../../case'
 import { Defendant } from '../../../../defendant'
 import { DefendantNotificationDto } from '../../../dto/defendantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
+import { Notification } from '../../../models/notification.model'
 import { notificationModuleConfig } from '../../../notification.config'
 
 jest.mock('../../../../../factories')
@@ -39,13 +40,18 @@ describe('InternalNotificationController - Send defender assigned notifications'
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
+  let mockNotificationModel: typeof Notification
   let givenWhenThen: GivenWhenThen
 
   let defendantNotificationDTO: DefendantNotificationDto
 
   beforeEach(async () => {
-    const { emailService, notificationConfig, internalNotificationController } =
-      await createTestingNotificationModule()
+    const {
+      emailService,
+      notificationConfig,
+      internalNotificationController,
+      notificationModel,
+    } = await createTestingNotificationModule()
 
     defendantNotificationDTO = {
       type: DefendantNotificationType.DEFENDER_ASSIGNED,
@@ -53,6 +59,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
 
     mockEmailService = emailService
     mockConfig = notificationConfig
+    mockNotificationModel = notificationModel
 
     givenWhenThen = async (
       caseId: string,
@@ -132,6 +139,20 @@ describe('InternalNotificationController - Send defender assigned notifications'
         ),
       })
     })
+
+    it('should record notification', () => {
+      expect(mockNotificationModel.create).toHaveBeenCalledTimes(1)
+      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+        caseId,
+        type: defendantNotificationDTO.type,
+        recipients: [
+          {
+            address: defendant.defenderEmail,
+            success: true,
+          },
+        ],
+      })
+    })
   })
 
   describe('when sending defender assigned notification to unconfirmed defender', () => {
@@ -139,6 +160,36 @@ describe('InternalNotificationController - Send defender assigned notifications'
       id: defendantId,
       defenderEmail: 'ben101@omnitrix.is',
       isDefenderChoiceConfirmed: false,
+    } as Defendant
+
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [defendant],
+    } as Case
+
+    it('should not send a notification', async () => {
+      await givenWhenThen(
+        caseId,
+        defendantId,
+        theCase,
+        defendant,
+        defendantNotificationDTO,
+      )
+
+      expect(mockEmailService.sendEmail).toBeCalledTimes(0)
+    })
+
+    it('should not record notification', () => {
+      expect(mockNotificationModel.create).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('when sending defender assigned notification to defender without email', () => {
+    const defendant = {
+      id: defendantId,
+      defenderName: 'Defender Name',
+      isDefenderChoiceConfirmed: true,
     } as Defendant
 
     const theCase = {
