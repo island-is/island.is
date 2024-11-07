@@ -53,20 +53,8 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
     )
 
     const defaultParents = [
-      {
-        nationalId: '',
-        givenName: '',
-        familyName: '',
-        wasRemoved: 'false',
-        currentName: '',
-      },
-      {
-        nationalId: '',
-        givenName: '',
-        familyName: '',
-        wasRemoved: 'true',
-        currentName: '',
-      },
+      { nationalId: '', givenName: '', familyName: '', wasRemoved: 'false' },
+      { nationalId: '', givenName: '', familyName: '', wasRemoved: 'true' },
     ]
 
     //if the user has answered YES previously and is returning to the step and has one valid parent from previous answers

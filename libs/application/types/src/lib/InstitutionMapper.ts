@@ -329,11 +329,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.TRYGGINGASTOFNUN,
     contentfulId: InstitutionContentfulIds.TRYGGINGASTOFNUN,
   },
-  [ApplicationTypes.DEATH_BENEFITS]: {
-    nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
-    slug: InstitutionTypes.TRYGGINGASTOFNUN,
-    contentfulId: InstitutionContentfulIds.TRYGGINGASTOFNUN,
-  },
   [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,

@@ -4,7 +4,6 @@ import {
   formatText,
   buildFieldOptions,
   getValueViaPath,
-  buildFieldRequired,
 } from '@island.is/application/core'
 import { FieldBaseProps, SelectField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
@@ -54,7 +53,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
 
       <Box paddingTop={2}>
         <SelectController
-          required={buildFieldRequired(application, required)}
+          required={required}
           defaultValue={
             (getValueViaPath(application.answers, id) ??
               getDefaultValue(field, application)) ||

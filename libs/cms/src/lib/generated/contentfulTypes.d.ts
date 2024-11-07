@@ -305,9 +305,6 @@ export interface IArticleFields {
 
   /** Sign language video */
   signLanguageVideo?: IEmbeddedVideo | undefined
-
-  /** Keywords */
-  keywords?: string[] | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {

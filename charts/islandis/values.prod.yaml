@@ -406,7 +406,7 @@ api:
     - 'api-catalogue'
     - 'application-system'
     - 'consultation-portal'
-    - 'portals-admin'
+    - 'services-bff-portals-admin'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1669,7 +1669,6 @@ portals-admin:
     SI_PUBLIC_ENVIRONMENT: 'prod'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces:
-    - 'nginx-ingress-external'
     - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:

@@ -99,19 +99,6 @@ export const searchQuery = (
             type: 'best_fields',
           },
         })
-        should.push({
-          nested: {
-            path: 'tags',
-            query: {
-              bool: {
-                must: [
-                  { term: { 'tags.type': 'keyword' } },
-                  { match: { 'tags.value': queryString } },
-                ],
-              },
-            },
-          },
-        })
         break
     }
   }

@@ -12,7 +12,6 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -36,7 +35,7 @@ type GivenWhenThen = (
 
 describe('LimitedAccessCaseController - Transition', () => {
   const date = randomDate()
-  const user = { id: uuid(), role: UserRole.DEFENDER } as User
+  const user = { id: uuid() } as User
   const caseId = uuid()
   const defenderAppealBriefId = uuid()
   const defenderAppealBriefCaseFileId1 = uuid()

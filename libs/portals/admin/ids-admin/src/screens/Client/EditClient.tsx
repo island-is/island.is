@@ -7,15 +7,7 @@ import {
   AuthAdminEnvironment,
   AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
-import {
-  AlertMessage,
-  Button,
-  Stack,
-  Text,
-  AlertBanner,
-  Box,
-  LinkV2,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { getTranslatedValue } from '@island.is/portals/core'
 
@@ -37,7 +29,6 @@ import { EnvironmentProvider } from '../../context/EnvironmentContext'
 import { useClient } from './ClientContext'
 
 import * as styles from './Client.css'
-import { IDSAdminExternalPaths } from '../../lib/paths'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -106,22 +97,6 @@ export const EditClient = () => {
               />
             </>
           )}
-          <Box paddingBottom={2}>
-            <AlertMessage
-              type="info"
-              title={formatMessage(m.needHelpTitle)}
-              message={formatMessage(m.needHelpDescription)}
-              action={
-                <>
-                  <LinkV2 href={IDSAdminExternalPaths.Docs} newTab>
-                    <Button size="small" variant="text">
-                      {formatMessage(m.learnMore)}
-                    </Button>
-                  </LinkV2>
-                </>
-              }
-            />
-          </Box>
           <BasicInfo
             clientId={selectedEnvironment.clientId}
             issuerUrl={IssuerUrls[selectedEnvironment.environment]}

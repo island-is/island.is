@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { buildFieldRequired, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
 import { FieldBaseProps, TextField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -90,7 +90,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           defaultValue={getDefaultValue(field, application)}
           backgroundColor={backgroundColor}
           rows={rows}
-          required={buildFieldRequired(application, required)}
+          required={required}
           rightAlign={rightAlign}
           max={max}
           min={min}

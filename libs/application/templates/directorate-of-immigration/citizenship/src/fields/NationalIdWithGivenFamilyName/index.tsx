@@ -61,7 +61,7 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
       onCompleted: (data) => {
         setValue(givenNameField, data.identity?.givenName ?? undefined)
         setValue(familyNameField, data.identity?.familyName ?? undefined)
-        const currentName = data.identity?.name ?? ''
+        const currentName = `${data.identity?.givenName} ${data.identity?.familyName}`
         setCurrentName(currentName)
         setValue(currentNameField, currentName)
       },

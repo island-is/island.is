@@ -1,6 +1,6 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from './messages'
-import { IDSAdminExternalPaths, IDSAdminPaths } from './paths'
+import { IDSAdminPaths } from './paths'
 
 export const idsAdminNav: PortalNavigationItem = {
   name: m.tenants,
@@ -37,19 +37,6 @@ export const idsAdminNav: PortalNavigationItem = {
           navHide: true,
         },
       ],
-    },
-    {
-      name: m.documentation,
-      description: m.documentationDescription,
-      path: IDSAdminExternalPaths.Docs,
-      external: true,
-      // Required to render in the sidebar
-      systemRoute: true,
-      // TODO fix icon not rendering in another PR
-      icon: {
-        icon: 'open',
-        type: 'outline',
-      },
     },
   ],
 }

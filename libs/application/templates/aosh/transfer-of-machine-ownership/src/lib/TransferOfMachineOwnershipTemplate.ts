@@ -34,6 +34,7 @@ import {
 import { getChargeItemCodes, hasReviewerApproved } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
 import { ApiScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/feature-flags'
 import { getBuyerNationalId } from '../utils/getBuyerNationalid'
 import { getExtraData } from '../utils/getExtraData'
 import { isPaymentRequired } from '../utils/isPaymentRequired'
@@ -85,6 +86,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
+  featureFlag: Features.transferOfMachineOwnership,
   translationNamespaces: [
     ApplicationConfigurations.TransferOfMachineOwnership.translation,
   ],

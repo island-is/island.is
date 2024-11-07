@@ -1,4 +1,4 @@
-import { DocumentsScope } from '@island.is/auth/scopes'
+import { useAuth } from '@island.is/auth/react'
 import {
   Box,
   Button,
@@ -12,7 +12,6 @@ import {
 import { helperStyles, theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { PortalPageLoader } from '@island.is/portals/core'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import {
   LinkResolver,
@@ -27,6 +26,7 @@ import { useWindowSize } from 'react-use'
 import NotificationButton from '../Notifications/NotificationButton'
 import Sidemenu from '../Sidemenu/Sidemenu'
 import * as styles from './Header.css'
+import { DocumentsScope } from '@island.is/auth/scopes'
 export type MenuTypes = 'side' | 'user' | 'notifications' | undefined
 
 interface Props {
@@ -38,7 +38,7 @@ export const Header = ({ position }: Props) => {
   const { width } = useWindowSize()
   const ref = useRef<HTMLButtonElement>(null)
   const isMobile = width < theme.breakpoints.md
-  const user = useUserInfo()
+  const { userInfo: user } = useAuth()
 
   // Notification feature flag. Remove after feature is live.
   const [enableNotificationFlag, setEnableNotificationFlag] =

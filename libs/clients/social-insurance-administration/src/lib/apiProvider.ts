@@ -13,7 +13,6 @@ import {
   IncomePlanApi,
   PaymentPlanApi,
   PensionCalculatorApi,
-  DeathBenefitsApi,
 } from '../../gen/fetch'
 import {
   Api,
@@ -67,11 +66,6 @@ const apiCollection: Array<{
     api: PensionCalculatorApi,
     scopes: ['@tr.is/stadgreidsla:read'],
     autoAuth: false,
-  },
-  {
-    api: DeathBenefitsApi,
-    scopes: ['@tr.is/danarbaetur:read'],
-    autoAuth: true,
   },
 ]
 

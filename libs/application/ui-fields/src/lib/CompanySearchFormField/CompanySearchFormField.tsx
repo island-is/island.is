@@ -3,11 +3,7 @@ import {
   FieldBaseProps,
 } from '@island.is/application/types'
 import React, { FC } from 'react'
-import {
-  buildFieldRequired,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 
 import { Box } from '@island.is/island-ui/core'
 import { CompanySearchController } from '@island.is/application/ui-components'
@@ -49,7 +45,7 @@ export const CompanySearchFormField: FC<React.PropsWithChildren<Props>> = ({
   return (
     <Box marginTop={[2, 4]}>
       <CompanySearchController
-        required={buildFieldRequired(application, required)}
+        required={required}
         checkIfEmployerIsOnForbiddenList={checkIfEmployerIsOnForbiddenList}
         shouldIncludeIsatNumber={shouldIncludeIsatNumber}
         id={id}

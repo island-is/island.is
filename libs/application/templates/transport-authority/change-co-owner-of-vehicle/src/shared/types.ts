@@ -39,7 +39,7 @@ export type VehiclesCurrentVehicleWithOwnerchangeChecks = {
 }
 
 export type VehicleMileage = {
-  requireMileage?: boolean
+  isRequired?: boolean
   mileageReading?: string
   value?: string
 }

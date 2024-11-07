@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import {
   Box,
   Button,
@@ -12,28 +13,27 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   FootNote,
-  IntroHeader,
-  SAMGONGUSTOFA_SLUG,
   formSubmit,
+  IntroHeader,
   m,
+  SAMGONGUSTOFA_SLUG,
 } from '@island.is/service-portal/core'
-import { useEffect, useState } from 'react'
+import { useUserInfo } from '@island.is/auth/react'
 
-import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { VehicleCard } from '../../components/VehicleCard'
 import {
   vehicleMessage as messages,
   urls,
   vehicleMessage,
 } from '../../lib/messages'
+import DropdownExport from '../../components/DropdownExport/DropdownExport'
 
-import { VehiclesDetail } from '@island.is/api/schema'
-import { useUserInfo } from '@island.is/react-spa/bff'
-import { Problem } from '@island.is/react-spa/shared'
-import useDebounce from 'react-use/lib/useDebounce'
+import { useGetUsersVehiclesV2LazyQuery } from './Overview.generated'
 import { useGetExcelVehiclesLazyQuery } from '../../utils/VehicleExcel.generated'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
-import { useGetUsersVehiclesV2LazyQuery } from './Overview.generated'
+import useDebounce from 'react-use/lib/useDebounce'
+import { VehiclesDetail } from '@island.is/api/schema'
+import { Problem } from '@island.is/react-spa/shared'
 
 const defaultFilterValues = {
   searchQuery: '',

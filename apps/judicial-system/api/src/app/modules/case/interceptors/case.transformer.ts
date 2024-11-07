@@ -61,23 +61,16 @@ export const getAppealInfo = (theCase: Case): AppealInfo => {
     return appealInfo
   }
 
-  const didProsecutorAcceptInCourt =
-    prosecutorAppealDecision === CaseAppealDecision.ACCEPT
-  const didAccusedAcceptInCourt =
-    accusedAppealDecision === CaseAppealDecision.ACCEPT
-  const didAllAcceptInCourt =
-    didProsecutorAcceptInCourt && didAccusedAcceptInCourt
+  const hasBeenAppealed = Boolean(appealState)
 
-  const hasBeenAppealed = Boolean(appealState) && !didAllAcceptInCourt
   appealInfo.hasBeenAppealed = hasBeenAppealed
 
   if (hasBeenAppealed) {
-    appealInfo.appealedByRole =
-      prosecutorPostponedAppealDate && !didProsecutorAcceptInCourt
-        ? UserRole.PROSECUTOR
-        : accusedPostponedAppealDate && !didAccusedAcceptInCourt
-        ? UserRole.DEFENDER
-        : undefined
+    appealInfo.appealedByRole = prosecutorPostponedAppealDate
+      ? UserRole.PROSECUTOR
+      : accusedPostponedAppealDate
+      ? UserRole.DEFENDER
+      : undefined
 
     appealInfo.appealedDate =
       appealInfo.appealedByRole === UserRole.PROSECUTOR

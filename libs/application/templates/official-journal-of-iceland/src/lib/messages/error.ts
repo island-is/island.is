@@ -212,17 +212,6 @@ export const error = defineMessages({
     defaultMessage: 'Vinsamlegast veldu dagsetningu',
     description: 'Error message when date is invalid or not present',
   },
-  emptyChannel: {
-    id: 'ojoi.application:error.emptyChannel',
-    defaultMessage:
-      'Samskiptaleið þarf að innihalda að minnstakosti einn aðila',
-    description: 'Error message when channel is empty',
-  },
-  invalidChannel: {
-    id: 'ojoi.application:error.invalidChannel',
-    defaultMessage: 'Samskiptaleið þarf að vera með gilt netfang',
-    description: 'Error message when channel is invalid',
-  },
   invalidDate: {
     id: 'ojoi.application:error.invalidDate',
     defaultMessage: 'Athugaðu hvort dagsetning sé rétt slegin inn',

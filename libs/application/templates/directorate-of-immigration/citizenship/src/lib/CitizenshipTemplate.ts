@@ -18,6 +18,7 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { application as applicationMessage } from './messages'
+import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { CitizenshipSchema } from './dataSchema'
 import {
@@ -47,6 +48,7 @@ const template: ApplicationTemplate<
   institution: applicationMessage.institutionName,
   translationNamespaces: ApplicationConfigurations.Citizenship.translation,
   dataSchema: CitizenshipSchema,
+  featureFlag: Features.citizenship,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

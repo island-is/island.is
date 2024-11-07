@@ -345,7 +345,7 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/GetPdfRespone" }
+                "schema": { "$ref": "#/components/schemas/StreamableFile" }
               }
             }
           }
@@ -368,7 +368,7 @@
             "description": "",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/GetPdfRespone" }
+                "schema": { "$ref": "#/components/schemas/StreamableFile" }
               }
             }
           }
@@ -473,11 +473,6 @@
             "example": "a12c3d4e-5f67-8h90-1i23-j45k6l7m8n9o0",
             "description": "Id of the selected type"
           },
-          "typeName": {
-            "type": "string",
-            "example": "a12c3d4e-5f67-8h90-1i23-j45k6l7m8n9o0",
-            "description": "Title of the selected type"
-          },
           "title": {
             "type": "string",
             "example": "a12c3d4e-5f67-8h90-1i23-j45k6l7m8n9o0",
@@ -511,7 +506,6 @@
           "involvedPartyId",
           "departmentId",
           "typeId",
-          "typeName",
           "title",
           "html",
           "requestedDate",
@@ -1089,35 +1083,6 @@
         },
         "required": ["id", "title", "slug"]
       },
-      "CaseStatus": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
-          },
-          "title": {
-            "type": "string",
-            "enum": [
-              "Innsent",
-              "Grunnvinnsla",
-              "Yfirlestur",
-              "Tilbúið",
-              "Útgefið",
-              "Tekið úr birtingu",
-              "Birtingu hafnað"
-            ],
-            "example": "Innsent",
-            "description": "Status of the case"
-          },
-          "slug": {
-            "type": "string",
-            "example": "innsent",
-            "description": "Slug of the case staus"
-          }
-        },
-        "required": ["id", "title", "slug"]
-      },
       "CommunicationStatus": {
         "type": "object",
         "properties": {
@@ -1198,10 +1163,7 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/Category" }
           },
-          "status": {
-            "description": "Current status of the case",
-            "allOf": [{ "$ref": "#/components/schemas/CaseStatus" }]
-          },
+          "status": { "type": "object" },
           "communicationStatus": {
             "$ref": "#/components/schemas/CommunicationStatus"
           },
@@ -1225,13 +1187,7 @@
         },
         "required": ["applicationCase"]
       },
-      "GetPdfRespone": {
-        "type": "object",
-        "properties": {
-          "content": { "type": "string", "description": "Base64 encoded PDF" }
-        },
-        "required": ["content"]
-      },
+      "StreamableFile": { "type": "object", "properties": {} },
       "GetPdfUrlResponse": {
         "type": "object",
         "properties": { "url": { "type": "string" } },

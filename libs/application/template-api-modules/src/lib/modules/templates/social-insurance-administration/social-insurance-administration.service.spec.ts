@@ -2,7 +2,6 @@ import { createApplication } from '@island.is/application/testing'
 import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
 import { Test, TestingModule } from '@nestjs/testing'
 import { SocialInsuranceAdministrationService } from './social-insurance-administration.service'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { ApplicationTypes } from '@island.is/application/types'
@@ -31,10 +30,6 @@ describe('SocialInsuranceAdministrationService', () => {
         {
           provide: sharedModuleConfig.KEY,
           useValue: mockConfig,
-        },
-        {
-          provide: NationalRegistryClientService,
-          useValue: {},
         },
         {
           provide: S3Service,

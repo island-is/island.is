@@ -53,4 +53,3 @@ export const serviceSetup = (): ServiceBuilder<'portals-admin'> =>
         paths: ['/stjornbord'],
       },
     })
-    .grantNamespaces('nginx-ingress-external', 'identity-server')

@@ -27,7 +27,6 @@ import { GetUserInvolvedPartiesResponse } from '../models/getUserInvolvedParties
 import { GetUserInvolvedPartiesInput } from '../models/getUserInvolvedParties.input'
 import { OJOIAIdInput } from '../models/id.input'
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
-import { GetPdfResponse } from '../models/getPdf.response'
 
 @Scopes(ApiScope.internal)
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -70,13 +69,6 @@ export class OfficialJournalOfIcelandApplicationResolver {
   })
   getPdfUrl(@Args('id') id: string, @CurrentUser() user: User) {
     return this.ojoiApplicationService.getPdfUrl(id, user)
-  }
-
-  @Query(() => GetPdfResponse, {
-    name: 'OJOIAGetPdf',
-  })
-  getPdf(@Args('input') input: OJOIAIdInput, @CurrentUser() user: User) {
-    return this.ojoiApplicationService.getPdf(input, user)
   }
 
   @Mutation(() => GetPresignedUrlResponse, {

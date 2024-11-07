@@ -1,21 +1,21 @@
+import React, { useEffect, useState } from 'react'
+import { NotificationSettingsCard } from './cards/NotificationSettingsCard'
 import {
   Divider,
   SkeletonLoader,
   Stack,
   toast,
 } from '@island.is/island-ui/core'
+import { useAuth } from '@island.is/auth/react'
 import { useLocale } from '@island.is/localization'
-import { useEffect, useState } from 'react'
-import { NotificationSettingsCard } from './cards/NotificationSettingsCard'
 
-import { useUserInfo } from '@island.is/react-spa/bff'
-import { Problem } from '@island.is/react-spa/shared'
-import { mNotifications } from '../../lib/messages'
 import { SettingsCard } from './cards/SettingsCard/SettingsCard'
+import { mNotifications } from '../../lib/messages'
 import {
   useUpdateUserProfileSettingsMutation,
   useUserProfileSettingsQuery,
 } from './graphql/UserProfile.generated'
+import { Problem } from '@island.is/react-spa/shared'
 
 type UserProfileNotificationSettings = {
   documentNotifications: boolean
@@ -23,7 +23,7 @@ type UserProfileNotificationSettings = {
 }
 
 export const UserProfileNotificationSettings = () => {
-  const userInfo = useUserInfo()
+  const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
   const {
     data: userProfile,

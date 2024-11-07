@@ -6,7 +6,6 @@ import {
   IncomePlanApi,
   PaymentPlanApi,
   PensionCalculatorApi,
-  DeathBenefitsApi,
   TestApi,
 } from '../../gen/fetch'
 
@@ -19,7 +18,6 @@ export type Scope =
   | '@tr.is/greidsluaetlun:read'
   | '@tr.is/almennt:read'
   | '@tr.is/fylgiskjol:write'
-  | '@tr.is/danarbaetur:read'
 
 export type Api =
   | typeof ApplicationApi
@@ -30,7 +28,6 @@ export type Api =
   | typeof IncomePlanApi
   | typeof PaymentPlanApi
   | typeof PensionCalculatorApi
-  | typeof DeathBenefitsApi
   | typeof TestApi
 
 export class ApplicationWriteApi extends ApplicationApi {}
@@ -68,11 +65,6 @@ export interface Employer {
   phoneNumber?: string
   ratio: number
   ratioMonthly?: Months
-}
-
-export interface SpouseTaxCardUsage {
-  usecard: boolean
-  ratio: number
 }
 
 export interface Months {
@@ -131,8 +123,6 @@ export enum DocumentTypeEnum {
   HALFWAY_HOUSE = 'halfwayHouse',
   HOUSE_RENT_AGREEMENT = 'houseRentAgreement',
   HOUSE_RENT_ALLOWANCE = 'houseRentAllowance',
-  EXPECTING_CHILD = 'expectingChild',
-  DEATH_CERTIFICATE = 'deathCertificate',
 }
 
 export type IncomePlanStatus = 'Accepted' | 'Cancelled' | 'InProgress'

@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { buildFieldRequired, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
 import { FieldBaseProps, PhoneField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -75,7 +75,7 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
           }}
           defaultValue={getDefaultValue(field, application)}
           backgroundColor={backgroundColor}
-          required={buildFieldRequired(application, required)}
+          required={required}
         />
       </Box>
     </div>

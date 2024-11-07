@@ -1,4 +1,6 @@
-import { DocumentsScope } from '@island.is/auth/scopes'
+import React, { FC, useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { useAuth } from '@island.is/auth/react'
 import {
   Box,
   Button,
@@ -10,10 +12,13 @@ import {
   SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import { useUserInfo } from '@island.is/react-spa/bff'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import {
+  DocumentsPaths,
+  DocumentLine,
+  DocumentLineV3,
+  useDocumentListV3,
+} from '@island.is/service-portal/documents'
 import {
   LinkResolver,
   PlausiblePageviewDetail,
@@ -21,26 +26,21 @@ import {
   m,
   useDynamicRoutesWithNavigation,
 } from '@island.is/service-portal/core'
-import {
-  DocumentLine,
-  DocumentLineV3,
-  DocumentsPaths,
-  useDocumentListV3,
-} from '@island.is/service-portal/documents'
-import { useOrganizations } from '@island.is/service-portal/graphql'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import cn from 'classnames'
-import React, { FC, useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { useWindowSize } from 'react-use'
-import DocumentsEmpty from '../../components/DocumentsEmpty/DocumentsEmpty'
 import Greeting from '../../components/Greeting/Greeting'
-import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
+import DocumentsEmpty from '../../components/DocumentsEmpty/DocumentsEmpty'
 import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
+import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
+import { useOrganizations } from '@island.is/service-portal/graphql'
 import * as styles from './Dashboard.css'
+import cn from 'classnames'
+import { getOrganizationLogoUrl } from '@island.is/shared/utils'
+import { DocumentsScope } from '@island.is/auth/scopes'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
-  const userInfo = useUserInfo()
+  const { userInfo } = useAuth()
 
   const { data: organizations } = useOrganizations()
   const { formatMessage } = useLocale()

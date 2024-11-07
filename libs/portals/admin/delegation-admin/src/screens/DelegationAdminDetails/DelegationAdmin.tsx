@@ -1,23 +1,24 @@
-import { AuthCustomDelegation } from '@island.is/api/schema'
-import { AdminPortalScope } from '@island.is/auth/scopes'
-import { Box, Button, GridColumn, Stack, Tabs } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { Button, GridColumn, Box, Stack, Tabs } from '@island.is/island-ui/core'
 import { BackButton } from '@island.is/portals/admin/core'
-import { IntroHeader, formatNationalId } from '@island.is/portals/core'
-import { DelegationsEmptyState } from '@island.is/portals/shared-modules/delegations'
-import { useUserInfo } from '@island.is/react-spa/bff'
-import { maskString } from '@island.is/shared/utils'
+import { useLocale } from '@island.is/localization'
 import { useLoaderData, useNavigate } from 'react-router-dom'
-import DelegationList from '../../components/DelegationList'
-import { m } from '../../lib/messages'
-import { DelegationAdminPaths } from '../../lib/paths'
 import { DelegationAdminResult } from './DelegationAdmin.loader'
+import { DelegationAdminPaths } from '../../lib/paths'
+import { formatNationalId, IntroHeader } from '@island.is/portals/core'
+import { m } from '../../lib/messages'
+import React from 'react'
+import DelegationList from '../../components/DelegationList'
+import { AuthCustomDelegation } from '@island.is/api/schema'
+import { DelegationsEmptyState } from '@island.is/portals/shared-modules/delegations'
+import { useAuth } from '@island.is/auth/react'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { maskString } from '@island.is/shared/utils'
 
 const DelegationAdminScreen = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const delegationAdmin = useLoaderData() as DelegationAdminResult
-  const userInfo = useUserInfo()
+  const { userInfo } = useAuth()
 
   const hasAdminAccess = userInfo?.scopes.includes(
     AdminPortalScope.delegationSystemAdmin,

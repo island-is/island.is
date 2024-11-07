@@ -342,12 +342,3 @@ export const getFastTrack = (date?: Date) => {
     now,
   }
 }
-
-export const base64ToBlob = (base64: string, mimeType = 'application/pdf') => {
-  if (!base64) {
-    return null
-  }
-
-  const byteCharacters = Buffer.from(base64, 'base64')
-  return new Blob([byteCharacters], { type: mimeType })
-}

@@ -1,5 +1,3 @@
-import { uuid } from 'uuidv4'
-
 import { ForbiddenException } from '@nestjs/common'
 
 import {
@@ -7,14 +5,10 @@ import {
   CaseState,
   CaseTransition,
   indictmentCases,
-  InstitutionType,
   investigationCases,
   restrictionCases,
-  User,
-  UserRole,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../models/case.model'
 import { transitionCase } from './case.state'
 
 describe('Transition Case', () => {
@@ -23,16 +17,7 @@ describe('Transition Case', () => {
       'state %s - should not open',
       (fromState) => {
         // Arrange
-        const act = () =>
-          transitionCase(
-            CaseTransition.OPEN,
-            { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
-          )
+        const act = () => transitionCase(CaseTransition.OPEN, type, fromState)
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
@@ -53,21 +38,13 @@ describe('Transition Case', () => {
             // Act
             const res = transitionCase(
               CaseTransition.OPEN,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+              fromAppealState,
             )
 
             // Assert
-            expect(res).toMatchObject({ state: CaseState.DRAFT })
+            expect(res).toEqual({ state: CaseState.DRAFT })
           },
         )
 
@@ -78,17 +55,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.OPEN,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -109,17 +78,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.OPEN,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -139,16 +100,12 @@ describe('Transition Case', () => {
         // Act
         const res = transitionCase(
           CaseTransition.ASK_FOR_CONFIRMATION,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          type,
+          fromState,
         )
 
         // Assert
-        expect(res).toMatchObject({ state: CaseState.WAITING_FOR_CONFIRMATION })
+        expect(res).toEqual({ state: CaseState.WAITING_FOR_CONFIRMATION })
       },
     )
 
@@ -159,15 +116,7 @@ describe('Transition Case', () => {
     )('state %s - should not ask for confirmation', (fromState) => {
       // Arrange
       const act = () =>
-        transitionCase(
-          CaseTransition.ASK_FOR_CONFIRMATION,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
-        )
+        transitionCase(CaseTransition.ASK_FOR_CONFIRMATION, type, fromState)
 
       // Act and assert
       expect(act).toThrow(ForbiddenException)
@@ -185,17 +134,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.ASK_FOR_CONFIRMATION,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -215,16 +156,12 @@ describe('Transition Case', () => {
         // Act
         const res = transitionCase(
           CaseTransition.DENY_INDICTMENT,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          type,
+          fromState,
         )
 
         // Assert
-        expect(res).toMatchObject({ state: CaseState.DRAFT })
+        expect(res).toEqual({ state: CaseState.DRAFT })
       },
     )
 
@@ -235,15 +172,7 @@ describe('Transition Case', () => {
     )('state %s - should not deny indictment', (fromState) => {
       // Arrange
       const act = () =>
-        transitionCase(
-          CaseTransition.DENY_INDICTMENT,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
-        )
+        transitionCase(CaseTransition.DENY_INDICTMENT, type, fromState)
 
       // Act and assert
       expect(act).toThrow(ForbiddenException)
@@ -261,17 +190,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.DENY_INDICTMENT,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -289,18 +210,10 @@ describe('Transition Case', () => {
       'state %s - should submit',
       (fromState) => {
         // Act
-        const res = transitionCase(
-          CaseTransition.SUBMIT,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
-        )
+        const res = transitionCase(CaseTransition.SUBMIT, type, fromState)
 
         // Assert
-        expect(res).toMatchObject({ state: CaseState.SUBMITTED })
+        expect(res).toEqual({ state: CaseState.SUBMITTED })
       },
     )
 
@@ -310,16 +223,7 @@ describe('Transition Case', () => {
       ),
     )('state %s - should not submit', (fromState) => {
       // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.SUBMIT,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
-        )
+      const act = () => transitionCase(CaseTransition.SUBMIT, type, fromState)
 
       // Act and assert
       expect(act).toThrow(ForbiddenException)
@@ -339,21 +243,13 @@ describe('Transition Case', () => {
             // Act
             const res = transitionCase(
               CaseTransition.SUBMIT,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+              fromAppealState,
             )
 
             // Assert
-            expect(res).toMatchObject({ state: CaseState.SUBMITTED })
+            expect(res).toEqual({ state: CaseState.SUBMITTED })
           },
         )
 
@@ -364,17 +260,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.SUBMIT,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -395,17 +283,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.SUBMIT,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -425,16 +305,12 @@ describe('Transition Case', () => {
         // Act
         const res = transitionCase(
           CaseTransition.ASK_FOR_CANCELLATION,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          type,
+          fromState,
         )
 
         // Assert
-        expect(res).toMatchObject({ state: CaseState.WAITING_FOR_CANCELLATION })
+        expect(res).toEqual({ state: CaseState.WAITING_FOR_CANCELLATION })
       },
     )
 
@@ -445,15 +321,7 @@ describe('Transition Case', () => {
     )('state %s - should not ask for cancellation', (fromState) => {
       // Arrange
       const act = () =>
-        transitionCase(
-          CaseTransition.ASK_FOR_CANCELLATION,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
-        )
+        transitionCase(CaseTransition.ASK_FOR_CANCELLATION, type, fromState)
 
       // Act and assert
       expect(act).toThrow(ForbiddenException)
@@ -471,17 +339,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.ASK_FOR_CANCELLATION,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -499,18 +359,10 @@ describe('Transition Case', () => {
       'state %s - should receive',
       (fromState) => {
         // Act
-        const res = transitionCase(
-          CaseTransition.RECEIVE,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
-        )
+        const res = transitionCase(CaseTransition.RECEIVE, type, fromState)
 
         // Assert
-        expect(res).toMatchObject({ state: CaseState.RECEIVED })
+        expect(res).toEqual({ state: CaseState.RECEIVED })
       },
     )
 
@@ -520,16 +372,7 @@ describe('Transition Case', () => {
       ),
     )('state %s - should not receive', (fromState) => {
       // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.RECEIVE,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
-        )
+      const act = () => transitionCase(CaseTransition.RECEIVE, type, fromState)
 
       // Act and assert
       expect(act).toThrow(ForbiddenException)
@@ -549,21 +392,13 @@ describe('Transition Case', () => {
             // Act
             const res = transitionCase(
               CaseTransition.RECEIVE,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+              fromAppealState,
             )
 
             // Assert
-            expect(res).toMatchObject({ state: CaseState.RECEIVED })
+            expect(res).toEqual({ state: CaseState.RECEIVED })
           },
         )
 
@@ -574,17 +409,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.RECEIVE,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -605,17 +432,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.RECEIVE,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -635,16 +454,12 @@ describe('Transition Case', () => {
         // Act
         const res = transitionCase(
           CaseTransition.RETURN_INDICTMENT,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
+          type,
+          fromState,
         )
 
         // Assert
-        expect(res).toMatchObject({ state: CaseState.DRAFT })
+        expect(res).toEqual({ state: CaseState.DRAFT })
       },
     )
 
@@ -655,15 +470,7 @@ describe('Transition Case', () => {
     )('state %s - should not return indictment', (fromState) => {
       // Arrange
       const act = () =>
-        transitionCase(
-          CaseTransition.RETURN_INDICTMENT,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
-        )
+        transitionCase(CaseTransition.RETURN_INDICTMENT, type, fromState)
 
       // Act and assert
       expect(act).toThrow(ForbiddenException)
@@ -681,17 +488,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.RETURN_INDICTMENT,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -712,18 +511,10 @@ describe('Transition Case', () => {
       'state %s - should complete',
       (fromState) => {
         // Act
-        const res = transitionCase(
-          CaseTransition.COMPLETE,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
-        )
+        const res = transitionCase(CaseTransition.COMPLETE, type, fromState)
 
         // Assert
-        expect(res).toMatchObject({ state: CaseState.COMPLETED })
+        expect(res).toEqual({ state: CaseState.COMPLETED })
       },
     )
 
@@ -733,16 +524,7 @@ describe('Transition Case', () => {
       ),
     )('state %s - should not complete', (fromState) => {
       // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.COMPLETE,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
-        )
+      const act = () => transitionCase(CaseTransition.COMPLETE, type, fromState)
 
       // Act and assert
       expect(act).toThrow(ForbiddenException)
@@ -760,17 +542,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.COMPLETE,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -786,16 +560,7 @@ describe('Transition Case', () => {
       'state %s - should not accept',
       (fromState) => {
         // Arrange
-        const act = () =>
-          transitionCase(
-            CaseTransition.ACCEPT,
-            { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
-          )
+        const act = () => transitionCase(CaseTransition.ACCEPT, type, fromState)
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
@@ -819,21 +584,13 @@ describe('Transition Case', () => {
             // Act
             const res = transitionCase(
               CaseTransition.ACCEPT,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+              fromAppealState,
             )
 
             // Assert
-            expect(res).toMatchObject({ state: CaseState.ACCEPTED })
+            expect(res).toEqual({ state: CaseState.ACCEPTED })
           },
         )
       })
@@ -850,17 +607,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.ACCEPT,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -876,16 +625,7 @@ describe('Transition Case', () => {
       'state %s - should not reject',
       (fromState) => {
         // Arrange
-        const act = () =>
-          transitionCase(
-            CaseTransition.REJECT,
-            { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
-          )
+        const act = () => transitionCase(CaseTransition.REJECT, type, fromState)
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
@@ -909,21 +649,13 @@ describe('Transition Case', () => {
             // Act
             const res = transitionCase(
               CaseTransition.REJECT,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+              fromAppealState,
             )
 
             // Assert
-            expect(res).toMatchObject({ state: CaseState.REJECTED })
+            expect(res).toEqual({ state: CaseState.REJECTED })
           },
         )
       })
@@ -940,17 +672,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.REJECT,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -967,15 +691,7 @@ describe('Transition Case', () => {
       (fromState) => {
         // Arrange
         const act = () =>
-          transitionCase(
-            CaseTransition.DISMISS,
-            { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
-          )
+          transitionCase(CaseTransition.DISMISS, type, fromState)
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
@@ -999,21 +715,13 @@ describe('Transition Case', () => {
             // Act
             const res = transitionCase(
               CaseTransition.DISMISS,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+              fromAppealState,
             )
 
             // Assert
-            expect(res).toMatchObject({ state: CaseState.DISMISSED })
+            expect(res).toEqual({ state: CaseState.DISMISSED })
           },
         )
       })
@@ -1030,17 +738,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.DISMISS,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -1061,18 +761,10 @@ describe('Transition Case', () => {
       'state %s - should delete',
       (fromState) => {
         // Act
-        const res = transitionCase(
-          CaseTransition.DELETE,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
-        )
+        const res = transitionCase(CaseTransition.DELETE, type, fromState)
 
         // Assert
-        expect(res).toMatchObject({ state: CaseState.DELETED })
+        expect(res).toEqual({ state: CaseState.DELETED })
       },
     )
 
@@ -1082,16 +774,7 @@ describe('Transition Case', () => {
       ),
     )('state %s - should not delete', (fromState) => {
       // Arrange
-      const act = () =>
-        transitionCase(
-          CaseTransition.DELETE,
-          { id: uuid(), state: fromState, type } as Case,
-          {
-            id: uuid(),
-            role: UserRole.PROSECUTOR,
-            institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-          } as User,
-        )
+      const act = () => transitionCase(CaseTransition.DELETE, type, fromState)
 
       // Act and assert
       expect(act).toThrow(ForbiddenException)
@@ -1116,21 +799,13 @@ describe('Transition Case', () => {
             // Act
             const res = transitionCase(
               CaseTransition.DELETE,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+              fromAppealState,
             )
 
             // Assert
-            expect(res).toMatchObject({ state: CaseState.DELETED })
+            expect(res).toEqual({ state: CaseState.DELETED })
           },
         )
 
@@ -1141,17 +816,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.DELETE,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -1172,17 +839,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.DELETE,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -1198,16 +857,7 @@ describe('Transition Case', () => {
       'state %s - should not reopen',
       (fromState) => {
         // Arrange
-        const act = () =>
-          transitionCase(
-            CaseTransition.REOPEN,
-            { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
-          )
+        const act = () => transitionCase(CaseTransition.REOPEN, type, fromState)
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
@@ -1235,21 +885,13 @@ describe('Transition Case', () => {
             // Act
             const res = transitionCase(
               CaseTransition.REOPEN,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+              fromAppealState,
             )
 
             // Assert
-            expect(res).toMatchObject({ state: CaseState.RECEIVED })
+            expect(res).toEqual({ state: CaseState.RECEIVED })
           },
         )
       })
@@ -1266,17 +908,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.REOPEN,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -1292,16 +926,7 @@ describe('Transition Case', () => {
       'state %s - should not appeal',
       (fromState) => {
         // Arrange
-        const act = () =>
-          transitionCase(
-            CaseTransition.APPEAL,
-            { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
-          )
+        const act = () => transitionCase(CaseTransition.APPEAL, type, fromState)
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
@@ -1326,21 +951,13 @@ describe('Transition Case', () => {
             // Act
             const res = transitionCase(
               CaseTransition.APPEAL,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+              fromAppealState,
             )
 
             // Assert
-            expect(res).toMatchObject({ appealState: CaseAppealState.APPEALED })
+            expect(res).toEqual({ appealState: CaseAppealState.APPEALED })
           },
         )
 
@@ -1351,17 +968,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.APPEAL,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -1382,17 +991,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.APPEAL,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -1409,15 +1010,7 @@ describe('Transition Case', () => {
       (fromState) => {
         // Arrange
         const act = () =>
-          transitionCase(
-            CaseTransition.WITHDRAW_APPEAL,
-            { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
-          )
+          transitionCase(CaseTransition.WITHDRAW_APPEAL, type, fromState)
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
@@ -1445,23 +1038,13 @@ describe('Transition Case', () => {
             // Act
             const res = transitionCase(
               CaseTransition.WITHDRAW_APPEAL,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+              fromAppealState,
             )
 
             // Assert
-            expect(res).toMatchObject({
-              appealState: CaseAppealState.WITHDRAWN,
-            })
+            expect(res).toEqual({ appealState: CaseAppealState.WITHDRAWN })
           },
         )
 
@@ -1474,17 +1057,9 @@ describe('Transition Case', () => {
           const act = () =>
             transitionCase(
               CaseTransition.WITHDRAW_APPEAL,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+              fromAppealState,
             )
 
           // Act and assert
@@ -1504,17 +1079,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.WITHDRAW_APPEAL,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -1531,15 +1098,7 @@ describe('Transition Case', () => {
       (fromState) => {
         // Arrange
         const act = () =>
-          transitionCase(
-            CaseTransition.RECEIVE_APPEAL,
-            { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
-          )
+          transitionCase(CaseTransition.RECEIVE_APPEAL, type, fromState)
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
@@ -1564,21 +1123,13 @@ describe('Transition Case', () => {
             // Act
             const res = transitionCase(
               CaseTransition.RECEIVE_APPEAL,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+              fromAppealState,
             )
 
             // Assert
-            expect(res).toMatchObject({ appealState: CaseAppealState.RECEIVED })
+            expect(res).toEqual({ appealState: CaseAppealState.RECEIVED })
           },
         )
 
@@ -1591,17 +1142,9 @@ describe('Transition Case', () => {
           const act = () =>
             transitionCase(
               CaseTransition.RECEIVE_APPEAL,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+              fromAppealState,
             )
 
           // Act and assert
@@ -1621,17 +1164,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.RECEIVE_APPEAL,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -1648,15 +1183,7 @@ describe('Transition Case', () => {
       (fromState) => {
         // Arrange
         const act = () =>
-          transitionCase(
-            CaseTransition.COMPLETE_APPEAL,
-            { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
-          )
+          transitionCase(CaseTransition.COMPLETE_APPEAL, type, fromState)
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
@@ -1684,23 +1211,13 @@ describe('Transition Case', () => {
             // Act
             const res = transitionCase(
               CaseTransition.COMPLETE_APPEAL,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+              fromAppealState,
             )
 
             // Assert
-            expect(res).toMatchObject({
-              appealState: CaseAppealState.COMPLETED,
-            })
+            expect(res).toEqual({ appealState: CaseAppealState.COMPLETED })
           },
         )
 
@@ -1713,17 +1230,9 @@ describe('Transition Case', () => {
           const act = () =>
             transitionCase(
               CaseTransition.COMPLETE_APPEAL,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+              fromAppealState,
             )
 
           // Act and assert
@@ -1743,17 +1252,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.COMPLETE_APPEAL,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert
@@ -1770,15 +1271,7 @@ describe('Transition Case', () => {
       (fromState) => {
         // Arrange
         const act = () =>
-          transitionCase(
-            CaseTransition.REOPEN_APPEAL,
-            { id: uuid(), state: fromState, type } as Case,
-            {
-              id: uuid(),
-              role: UserRole.PROSECUTOR,
-              institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-            } as User,
-          )
+          transitionCase(CaseTransition.REOPEN_APPEAL, type, fromState)
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
@@ -1803,21 +1296,14 @@ describe('Transition Case', () => {
             // Act
             const res = transitionCase(
               CaseTransition.REOPEN_APPEAL,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+
+              fromAppealState,
             )
 
             // Assert
-            expect(res).toMatchObject({ appealState: CaseAppealState.RECEIVED })
+            expect(res).toEqual({ appealState: CaseAppealState.RECEIVED })
           },
         )
 
@@ -1830,17 +1316,10 @@ describe('Transition Case', () => {
           const act = () =>
             transitionCase(
               CaseTransition.REOPEN_APPEAL,
-              {
-                id: uuid(),
-                state: fromState,
-                appealState: fromAppealState,
-                type,
-              } as Case,
-              {
-                id: uuid(),
-                role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-              } as User,
+              type,
+              fromState,
+
+              fromAppealState,
             )
 
           // Act and assert
@@ -1860,17 +1339,9 @@ describe('Transition Case', () => {
             const act = () =>
               transitionCase(
                 CaseTransition.REOPEN_APPEAL,
-                {
-                  id: uuid(),
-                  state: fromState,
-                  appealState: fromAppealState,
-                  type,
-                } as Case,
-                {
-                  id: uuid(),
-                  role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
-                } as User,
+                type,
+                fromState,
+                fromAppealState,
               )
 
             // Act and assert

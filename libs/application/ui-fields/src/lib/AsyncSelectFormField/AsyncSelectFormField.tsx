@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 
-import { buildFieldRequired, formatText } from '@island.is/application/core'
+import { formatText } from '@island.is/application/core'
 import { AsyncSelectField, FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -65,7 +65,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
 
       <Box paddingTop={2}>
         <SelectController
-          required={buildFieldRequired(application, required)}
+          required={required}
           dataTestId={field.dataTestId}
           defaultValue={getDefaultValue(field, application)}
           label={formatText(title, application, formatMessage)}

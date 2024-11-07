@@ -8,10 +8,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import {
-  CaseAppealDecision,
-  isRequestCase,
-} from '@island.is/judicial-system/types'
+import { isRequestCase } from '@island.is/judicial-system/types'
 
 import { getIndictmentInfo } from '../../case/interceptors/case.transformer'
 import { CaseListEntry } from '../models/caseList.model'
@@ -21,16 +18,6 @@ const getAppealedDate = (
   accusedPostponedAppealDate?: string,
 ): string | undefined => {
   return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
-}
-
-const wasAcceptedInCourt = (
-  prosecutorAppealDecision?: CaseAppealDecision,
-  accusedAppealDecision?: CaseAppealDecision,
-): boolean => {
-  return (
-    prosecutorAppealDecision === CaseAppealDecision.ACCEPT &&
-    accusedAppealDecision === CaseAppealDecision.ACCEPT
-  )
 }
 
 @Injectable()
@@ -52,15 +39,6 @@ export class CaseListInterceptor implements NestInterceptor {
                 theCase.prosecutorPostponedAppealDate,
                 theCase.accusedPostponedAppealDate,
               ),
-              // This state overwrite is added in at least temporarily to handle strange
-              // behaviour when a case is reopened after being appealed and then closed
-              // again with everyone having accepted the ruling in court
-              appealState: !wasAcceptedInCourt(
-                theCase.prosecutorAppealDecision,
-                theCase.accusedAppealDecision,
-              )
-                ? theCase.appealState
-                : undefined,
             }
           }
 

@@ -13,7 +13,6 @@ export const getSelectedVehicle = (
     ) as VehiclesCurrentVehicle
     return vehicle
   }
-
   const currentVehicleList =
     (externalData?.currentVehicleList?.data as CurrentVehiclesAndRecords) ??
     undefined
@@ -23,7 +22,11 @@ export const getSelectedVehicle = (
     'pickVehicle.vehicle',
     '',
   ) as string
-
+  const requireMileage = getValueViaPath(
+    answers,
+    'vehicleMileage.requireMileage',
+    false,
+  ) as boolean
   const mileageReading = getValueViaPath(
     answers,
     'vehicleMileage.mileageReading',
@@ -32,14 +35,16 @@ export const getSelectedVehicle = (
 
   const index = parseInt(vehicleIndex, 10)
 
-  const vehicle = currentVehicleList?.vehicles?.[index]
-
-  if (vehicle && !Object.isFrozen(vehicle)) {
+  if (
+    currentVehicleList?.vehicles &&
+    currentVehicleList.vehicles[index] &&
+    !Object.isFrozen(currentVehicleList.vehicles[index])
+  ) {
     currentVehicleList.vehicles[index] = {
-      ...vehicle,
+      ...currentVehicleList.vehicles[index],
+      requireMileage: requireMileage,
       mileageReading: mileageReading,
     }
   }
-
-  return currentVehicleList?.vehicles?.[index]
+  return currentVehicleList?.vehicles[parseInt(vehicleIndex, 10)]
 }

@@ -55,43 +55,38 @@ export class EnergyFundsService {
   }
 
   async getVehicleDetailsWithGrant(auth: User, permno: string) {
-    // Get current vehicle information where you are (main) owner
-    const result = await this.vehiclesApiWithAuth(
-      auth,
-    ).currentvehicleswithmileageandinspGet({
-      permno: permno,
-      showOwned: true,
-      showCoowned: false,
-      showOperated: false,
-    })
-
-    const basicVehicle = await this.vehiclesApiWithAuth(
+    const vehicle = await this.vehiclesApiWithAuth(
       auth,
     ).basicVehicleInformationGet({ permno: permno })
-
-    if (!result || !result.data || result.data.length === 0 || !basicVehicle) {
+    if (!vehicle) {
       throw Error(
-        'Did not find the vehicle with that permno, or you are not owner of the vehicle',
+        'Did not find the vehicle with for that permno, or you are neither owner nor co-owner of the vehicle',
+      )
+    }
+    if (
+      vehicle.owners &&
+      !vehicle.owners.some((owner) => owner.persidno === auth.nationalId)
+    ) {
+      throw Error(
+        'Did not find the vehicle with for that permno, or you are neither owner nor co-owner of the vehicle',
       )
     }
 
-    const vehicle = result.data[0]
-
     const vehicleGrantItem =
       await this.energyFundsClientService.getCatalogValueForVehicle(auth, {
-        vehicleRegistrationCode: basicVehicle.euGroup,
-        firstRegistrationDate: basicVehicle.firstregdate,
-        newRegistrationDate: basicVehicle.newregdate,
+        vehicleRegistrationCode: vehicle.euGroup,
+        firstRegistrationDate: vehicle.firstregdate,
+        newRegistrationDate: vehicle.newregdate,
         permno: vehicle.permno,
       })
 
     if (!vehicleGrantItem)
       throw new Error('Could not get available grants for this vehicle')
 
-    const hasReceivedSubsidy = basicVehicle.vin
+    const hasReceivedSubsidy = vehicle.vin
       ? await this.energyFundsClientService.checkVehicleSubsidyAvilability(
           auth,
-          basicVehicle.vin,
+          vehicle.vin,
         )
       : false
 
@@ -101,11 +96,11 @@ export class EnergyFundsService {
       hasReceivedSubsidy,
       permno: vehicle.permno,
       make: vehicle.make,
-      color: vehicle.colorName,
+      color: vehicle.color,
       requireMileage: vehicle.requiresMileageRegistration,
-      newRegistrationDate: basicVehicle.newregdate,
-      firstRegistrationDate: basicVehicle.firstregdate,
-      vin: basicVehicle.vin,
+      newRegistrationDate: vehicle.newregdate,
+      firstRegistrationDate: vehicle.firstregdate,
+      vin: vehicle.vin,
     }
   }
 }

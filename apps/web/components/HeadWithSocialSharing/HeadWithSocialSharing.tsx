@@ -8,7 +8,6 @@ interface HeadWithSocialSharingProps {
   imageWidth?: string
   imageHeight?: string
   imageContentType?: string
-  keywords?: string[] | null
 }
 
 const usableContentTypes = ['image/jpeg', 'image/gif', 'image/png', undefined]
@@ -22,7 +21,6 @@ export const HeadWithSocialSharing: FC<
   imageWidth,
   imageHeight,
   imageContentType,
-  keywords,
   children,
 }) => {
   const isSvg = imageUrl
@@ -81,10 +79,6 @@ export const HeadWithSocialSharing: FC<
           />
         </>
       ) : null}
-
-      {keywords && keywords.length > 0 && (
-        <meta name="keywords" content={keywords.join(', ')} />
-      )}
 
       {children}
     </Head>

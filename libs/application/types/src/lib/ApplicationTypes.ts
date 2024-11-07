@@ -64,7 +64,6 @@ export enum ApplicationTypes {
   HEALTHCARE_WORK_PERMIT = 'HealthcareWorkPermit',
   PENSION_SUPPLEMENT = 'PensionSupplement',
   TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
-  DEATH_BENEFITS = 'DeathBenefits',
   UNIVERSITY = 'University',
   HOME_SUPPORT = 'HomeSupport',
   CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
@@ -344,10 +343,6 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
     slug: 'eigendaskipti-taekis',
     translation: 'aosh.tmo.application',
-  },
-  [ApplicationTypes.DEATH_BENEFITS]: {
-    slug: 'danarbaetur',
-    translation: ['db.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.HOME_SUPPORT]: {
     slug: 'heimastudningur',

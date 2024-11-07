@@ -45,7 +45,8 @@ export const prerequisitesSection = buildSection({
         }),
         buildDataProviderItem({
           provider: MockableSamgongustofaPaymentCatalogApi,
-          title: '',
+          title: externalData.payment.title,
+          subTitle: externalData.payment.subTitle,
         }),
         buildDataProviderItem({
           provider: InsuranceCompaniesApi,

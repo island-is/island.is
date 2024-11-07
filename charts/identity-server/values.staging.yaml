@@ -124,9 +124,7 @@ identity-server:
   files:
     - 'ids-signing.pfx'
   grantNamespaces:
-    - 'nginx-ingress-external'
     - 'user-notification'
-    - 'portals-admin'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -435,7 +433,6 @@ services-auth-ids-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
-    - 'nginx-ingress-external'
     - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
@@ -539,9 +536,7 @@ services-auth-ids-api-cleanup:
     NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - 'nginx-ingress-external'
     - 'user-notification'
-    - 'portals-admin'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

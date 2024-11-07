@@ -2696,7 +2696,9 @@
             "format": "date-time",
             "nullable": true
           },
-          "cohabitadedLongerThan1Year": { "type": "boolean" }
+          "cohabitationLessThan1Year": {
+            "type": "boolean"
+          }
         },
         "additionalProperties": false
       },
@@ -2833,198 +2835,10 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Application": {
-        "type": "object",
-        "properties": {
-          "language": {
-            "type": "string",
-            "description": "Value for the language, currently we support IS and EN",
-            "nullable": true
-          },
-          "portalApplicationID": {
-            "type": "string",
-            "description": "ID of the application in portal",
-            "nullable": true
-          },
-          "applicationType": {
-            "type": "string",
-            "description": "Identity for application type",
-            "nullable": true
-          },
-          "applicationName": { "type": "string", "nullable": true },
-          "Dagssetning": {
-            "type": "string",
-            "description": "Date when application was last changed",
-            "format": "date-time"
-          },
-          "Adilar": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.AssociatedUser"
-            },
-            "description": "List of persons that have a role in the application",
-            "nullable": true
-          },
-          "Notandagogn": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.InputData"
-            },
-            "description": "Information extracted from the application that the ruleset can use.",
-            "nullable": true
-          },
-          "Greidsla": {
-            "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Payment"
-          },
-          "files": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.File"
-            },
-            "description": "Files that are in the application if any.",
-            "nullable": true
-          },
-          "status": {
-            "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.CurrentApplicationStatus"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.AssociatedUser": {
-        "type": "object",
-        "properties": {
-          "kennitala": { "type": "string", "nullable": true },
-          "heiti": { "type": "string", "nullable": true },
-          "heimili": { "type": "string", "nullable": true },
-          "stadur": { "type": "string", "nullable": true },
-          "postnumer": { "type": "string", "nullable": true },
-          "tegund": { "type": "integer", "format": "int32" },
-          "hlutverk": { "type": "string", "nullable": true },
-          "netfang": { "type": "string", "nullable": true },
-          "simi": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false,
-        "description": "The associated user (Adilar)"
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.ApplicationFileTypes": {
-        "enum": [1, 2, 3, 4, 5],
-        "type": "integer",
-        "format": "int32"
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.CurrentApplicationStatus": {
-        "enum": [70, 71, 73, 80, 90, 100, 1100, 1200],
-        "type": "integer",
-        "format": "int32"
-      },
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.ExternalResultStatus": {
         "enum": [200, 300, 400],
         "type": "integer",
         "format": "int32"
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.File": {
-        "type": "object",
-        "properties": {
-          "flokkur": {
-            "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Enums.ApplicationFileTypes"
-          },
-          "heiti": {
-            "type": "string",
-            "description": "Name of the file",
-            "nullable": true
-          },
-          "dags": {
-            "type": "string",
-            "description": "Date when the file was uploaded into the application",
-            "format": "date-time"
-          },
-          "tegund": {
-            "type": "string",
-            "description": "Mimetype of file if known",
-            "nullable": true
-          },
-          "FileID": {
-            "type": "string",
-            "description": "The file id that can be used to fetch the file in LVG",
-            "nullable": true
-          },
-          "ending": {
-            "type": "string",
-            "description": "extension if the file if available else empty",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.InputData": {
-        "type": "object",
-        "properties": {
-          "guid": { "type": "string", "nullable": true },
-          "flokkur": {
-            "type": "string",
-            "description": "Group name",
-            "nullable": true
-          },
-          "heiti": {
-            "type": "string",
-            "description": "Name of the variable",
-            "nullable": true
-          },
-          "tegund": {
-            "type": "string",
-            "description": "Type of variable",
-            "nullable": true
-          },
-          "gildi": {
-            "type": "string",
-            "description": "Value for inspection",
-            "nullable": true
-          },
-          "countryCode": {
-            "type": "string",
-            "description": "if tegund is \"landalisti\" then the countryCode is included.\r\nThis is a two letter countryCode, i.e. \"DK\" for Denmark",
-            "nullable": true
-          },
-          "nafn": {
-            "type": "string",
-            "description": "If tegund is \"kennitala\" then the name of the payer is included",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Data entered by the applicant (Notandagogn)"
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Payment": {
-        "type": "object",
-        "properties": {
-          "upphaed": {
-            "type": "string",
-            "description": "The amount",
-            "nullable": true
-          },
-          "dags": {
-            "type": "string",
-            "description": "Date when payment was made",
-            "format": "date-time",
-            "nullable": true
-          },
-          "korthafi": {
-            "type": "string",
-            "description": "The card holder",
-            "nullable": true
-          },
-          "kortanumer": {
-            "type": "string",
-            "description": "The card number",
-            "nullable": true
-          },
-          "tegundKorts": {
-            "type": "string",
-            "description": "The type of card",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "Payment coming from the user (Greidsla)"
       },
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.ResultSets.ApplicationResultSet": {
         "type": "object",
@@ -3160,66 +2974,6 @@
             "description": "The code of the income type",
             "nullable": true
           },
-          "amountJan": {
-            "type": "integer",
-            "description": "The income amount for January",
-            "format": "int32"
-          },
-          "amountFeb": {
-            "type": "integer",
-            "description": "The income amount for February",
-            "format": "int32"
-          },
-          "amountMar": {
-            "type": "integer",
-            "description": "The income amount for March",
-            "format": "int32"
-          },
-          "amountApr": {
-            "type": "integer",
-            "description": "The income amount for April",
-            "format": "int32"
-          },
-          "amountMay": {
-            "type": "integer",
-            "description": "The income amount for May",
-            "format": "int32"
-          },
-          "amountJun": {
-            "type": "integer",
-            "description": "The income amount for June",
-            "format": "int32"
-          },
-          "amountJul": {
-            "type": "integer",
-            "description": "The income amount for July",
-            "format": "int32"
-          },
-          "amountAug": {
-            "type": "integer",
-            "description": "The income amount for August",
-            "format": "int32"
-          },
-          "amountSep": {
-            "type": "integer",
-            "description": "The income amount for September",
-            "format": "int32"
-          },
-          "amountOct": {
-            "type": "integer",
-            "description": "The income amount for October",
-            "format": "int32"
-          },
-          "amountNov": {
-            "type": "integer",
-            "description": "The income amount for November",
-            "format": "int32"
-          },
-          "amountDec": {
-            "type": "integer",
-            "description": "The income amount for December",
-            "format": "int32"
-          },
           "totalSum": {
             "type": "integer",
             "description": "The total annual sum of this income type, ie. the amount earned per year",
@@ -3241,7 +2995,7 @@
             "description": "The year of the withholding tax",
             "format": "int32"
           },
-          "incometypes": {
+          "incomeTypes": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.WithholdingTaxIncomeTypeDto"
@@ -3255,32 +3009,32 @@
       "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.WithholdingTaxIncomeTypeDto": {
         "type": "object",
         "properties": {
-          "incometypenumber": {
+          "incomeTypeNumber": {
             "type": "integer",
             "description": "The income type number, e.g. 5808",
             "format": "int64"
           },
-          "incometype": {
+          "incomeTypeName": {
             "type": "string",
             "description": "The income type name, e.g. \"Laun\"",
             "nullable": true
           },
-          "incometypecode": {
+          "incomeTypeCode": {
             "type": "string",
             "description": "The income type code, e.g. \"21F�O\"",
             "nullable": true
           },
-          "categorynumber": {
+          "categoryNumber": {
             "type": "integer",
             "description": "Income type category number",
             "format": "int64"
           },
-          "categoryname": {
+          "categoryName": {
             "type": "string",
             "description": "Income type category name, e.g. \"Atvinnutekjur\", \"Fj�rmagnstekjur\" etc.",
             "nullable": true
           },
-          "categorycode": {
+          "categoryCode": {
             "type": "string",
             "description": "Income type category code",
             "nullable": true

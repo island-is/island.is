@@ -19,6 +19,7 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { application as applicationMessage } from './messages'
+import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { HealthcareLicenseCertificateSchema } from './dataSchema'
 import {
@@ -41,6 +42,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.HealthcareLicenseCertificate.translation,
   ],
   dataSchema: HealthcareLicenseCertificateSchema,
+  featureFlag: Features.healthcareLicenseCertificate,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
