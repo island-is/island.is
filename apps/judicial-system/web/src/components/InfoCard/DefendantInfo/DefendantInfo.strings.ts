@@ -39,7 +39,7 @@ export const strings = defineMessages({
     description: 'Notað sem texti þegar birting dóms er ekki þörf',
   },
   serviceRequired: {
-    id: 'judicial.system.core:info_card.defendant_info.service_not_required',
+    id: 'judicial.system.core:info_card.defendant_info.service_required',
     defaultMessage: 'Birting skal dómfellda dóminn',
     description: 'Notað sem texti þegar birting dóms er þörf',
   },
