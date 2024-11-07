@@ -28,23 +28,31 @@ describe('utils', () => {
   })
 
   describe('calculateSleepDurationUntilMorning', () => {
+    const HOUR_IN_MS = 3600000;
+    const MINUTE_IN_MS = 60000;
+
     it('calculates sleep duration correctly for a time at midnight', () => {
       const now = new Date('2023-01-01T00:00:00') // Midnight
       const duration = calculateSleepDurationUntilMorning(now)
-      expect(duration).toBe(28800000) // 8 hours in milliseconds
+      expect(duration).toBe(8 * HOUR_IN_MS) // 8 hours until 8:00 AM
     })
 
     it('calculates sleep duration correctly for a time in the middle of the night', () => {
-      const now = new Date('2023-01-01T05:00:00') // 11 PM
+      const now = new Date('2023-01-01T05:00:00') // 5:00 AM
       const duration = calculateSleepDurationUntilMorning(now)
-      // 3 hour in milliseconds
-      expect(duration).toBe(10800000)
+      expect(duration).toBe(3 * HOUR_IN_MS) // 3 hours until 8:00 AM
     })
 
     it('calculates sleep duration correctly for a time just before work starts', () => {
       const now = new Date('2023-01-01T07:59:00') // 7:59 AM
       const duration = calculateSleepDurationUntilMorning(now)
-      expect(duration).toBe(60000) // 1 minute in milliseconds
+      expect(duration).toBe(MINUTE_IN_MS) // 1 minute until 8:00 AM
+    })
+
+    it('returns appropriate duration when called during working hours', () => {
+      const now = new Date('2023-01-01T14:00:00') // 2:00 PM
+      const duration = calculateSleepDurationUntilMorning(now)
+      expect(duration).toBe(18 * HOUR_IN_MS) // 18 hours until next morning 8:00 AM
     })
   })
 })
