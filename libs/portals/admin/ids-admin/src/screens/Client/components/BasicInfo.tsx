@@ -13,7 +13,7 @@ interface BasicInfoProps {
   clientId: string
   clientSecrets?: AuthAdminClientSecret | null
   issuerUrl: string
-  clientType:  AuthAdminClient['clientType']
+  clientType: AuthAdminClient['clientType']
 }
 
 export const BasicInfo = ({
@@ -36,7 +36,9 @@ export const BasicInfo = ({
   const jsonWebSetKeyUrlRef = useRef<HTMLInputElement>(null)
 
   const secret = clientSecrets?.find((secret) => secret.decryptedValue)
-  const hasClientSecrets = Boolean(clientSecrets && clientSecrets.length > 0) && clientType !== AuthAdminClientType.native
+  const hasClientSecrets =
+    Boolean(clientSecrets && clientSecrets.length > 0) &&
+    clientType !== AuthAdminClientType.native
   const isLegacySecret = hasClientSecrets && !secret
 
   return (
