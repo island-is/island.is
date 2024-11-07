@@ -10,7 +10,7 @@ export const strings = {
   defenderAssignedBody: defineMessage({
     id: 'judicial.system.backend:defendant_notifications.indictment_defender_assigned_body',
     defaultMessage:
-      '{courtName} hefur skráð þig verjanda í máli {courtCaseNumber}.<br /><br />Hægt er að nálgast málið á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+      '{courtName} hefur skráð þig verjanda í máli {courtCaseNumber}.<br /><br />{defenderHasAccessToRVG, select, true {Hægt er að nálgast málið á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast málið hjá dómstólnum}}.',
     description:
       'Body of the notification when a defender is assigned a confirmed as a defender in indictment cases',
   }),
