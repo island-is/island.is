@@ -7,6 +7,7 @@ import {
   ApplicationFilesConfig,
   ApplicationFilesModule,
 } from '@island.is/application/api/files'
+import { signingModuleConfig } from '@island.is/dokobit-signing'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { LoggingModule } from '@island.is/logging'
 import { AuditModule } from '@island.is/nest/audit'
@@ -28,7 +29,7 @@ import { ApplicationLifeCycleService } from './application-lifecycle.service'
     AuditModule.forRoot(environment.audit),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [ApplicationFilesConfig, FileStorageConfig],
+      load: [signingModuleConfig, ApplicationFilesConfig, FileStorageConfig],
     }),
   ],
   providers: [ApplicationLifeCycleService],

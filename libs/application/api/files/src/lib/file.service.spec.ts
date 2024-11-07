@@ -80,7 +80,9 @@ describe('FileService', () => {
       typeId: typeId ?? ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2,
       modified: new Date(),
       created: new Date(),
-      attachments: {},
+      attachments: {
+        key: 'https://s3.amazonaws.com/bucket-name/key-name',
+      },
       answers: answers ?? {
         useMocks: 'no',
         selectedChildren: [child.nationalId],
@@ -149,6 +151,10 @@ describe('FileService', () => {
       .mockImplementation(() =>
         Promise.resolve(signingServiceRequestSignatureResponse),
       )
+
+    jest
+      .spyOn(s3Service, 'deleteObject')
+      .mockImplementation(() => Promise.resolve())
 
     service = module.get(FileService)
   })

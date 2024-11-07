@@ -4,6 +4,7 @@ import { FileStorageModule } from '@island.is/file-storage'
 import { TemplateAPIModule } from '@island.is/application/template-api-modules'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
+import { SigningModule } from '@island.is/dokobit-signing'
 import { AuditModule } from '@island.is/nest/audit'
 
 import { AdminController } from './admin.controller'
@@ -39,6 +40,7 @@ import { ApplicationActionService } from './application-action.service'
     ApplicationFilesModule,
     AwsModule,
     FileStorageModule,
+    SigningModule,
     CmsTranslationsModule,
     FeatureFlagModule,
     HistoryModule,
