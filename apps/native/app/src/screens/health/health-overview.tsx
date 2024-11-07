@@ -442,7 +442,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               }
               loading={medicinePurchaseRes.loading && !medicinePurchaseRes.data}
               error={medicinePurchaseRes.error && !medicinePurchaseRes.data}
-              darkBorder
+              noBorder
             />
           </InputRow>
         </Host>

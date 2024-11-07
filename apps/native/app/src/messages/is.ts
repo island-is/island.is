@@ -633,5 +633,5 @@ export const is = {
   'health.overview.period': 'Tímabil',
   'health.overview.levelStatus': 'Þrepastaða',
   'health.overview.levelStatusValue':
-    'Greiðsluþrep {level}, þú greiðir {percentage}',
+    'Greiðsluþrep {level}, þú greiðir {percentage}%',
 }
