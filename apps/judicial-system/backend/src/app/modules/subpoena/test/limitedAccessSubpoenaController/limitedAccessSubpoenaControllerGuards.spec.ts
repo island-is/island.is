@@ -3,7 +3,6 @@ import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard, CaseReadGuard, CaseTypeGuard } from '../../../case'
 import { DefendantExistsGuard } from '../../../defendant/guards/defendantExists.guard'
-import { SubpoenaExistsOptionalGuard } from '../../guards/subpoenaExists.guard'
 import { LimitedAccessSubpoenaController } from '../../limitedAccessSubpoena.controller'
 
 describe('LimitedAccessSubpoenaController - guards', () => {
@@ -15,16 +14,15 @@ describe('LimitedAccessSubpoenaController - guards', () => {
   })
 
   it('should have the right guard configuration', () => {
-    expect(guards).toHaveLength(7)
+    expect(guards).toHaveLength(6)
     expect(new guards[0]()).toBeInstanceOf(JwtAuthGuard)
-    expect(new guards[1]()).toBeInstanceOf(RolesGuard)
-    expect(new guards[2]()).toBeInstanceOf(CaseExistsGuard)
+    expect(new guards[1]()).toBeInstanceOf(CaseExistsGuard)
+    expect(new guards[2]()).toBeInstanceOf(RolesGuard)
     expect(guards[3]).toBeInstanceOf(CaseTypeGuard)
     expect(guards[3]).toEqual({
       allowedCaseTypes: indictmentCases,
     })
     expect(new guards[4]()).toBeInstanceOf(CaseReadGuard)
     expect(new guards[5]()).toBeInstanceOf(DefendantExistsGuard)
-    expect(new guards[6]()).toBeInstanceOf(SubpoenaExistsOptionalGuard)
   })
 })

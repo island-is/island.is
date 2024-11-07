@@ -354,6 +354,27 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:select-ministry',
     defaultMessage: 'Veldu ráðuneyti',
   },
+  publishEffectiveWarning: {
+    id: 'ap.regulations-admin:publish-effective-warning',
+    defaultMessage:
+      'Valinn gildistökudagur er á undan útgáfudegi. Almennt er miðað við að reglugerð öðlist gildi eftir birtingu.',
+  },
+  effectiveDateEarly: {
+    id: 'ap.regulations-admin:publish-effective-warning',
+    defaultMessage: 'Valinn gildistökudagur er á undan deginum í dag.',
+  },
+  publishDateEarly: {
+    id: 'ap.regulations-admin:publish-date-early',
+    defaultMessage: 'Valinn útgáfudagur er á undan deginum í dag.',
+  },
+  effectiveDateEarlyFast: {
+    id: 'ap.regulations-admin:effective-date-early',
+    defaultMessage: 'Valinn gildistökudagur er innan glugga hraðbirtingar.',
+  },
+  publishDateEarlyFast: {
+    id: 'ap.regulations-admin:publish-date-early-fast',
+    defaultMessage: 'Valinn útgáfudagur er innan glugga hraðbirtingar.',
+  },
 })
 
 export const impactMsgs = defineMessages({

@@ -384,6 +384,13 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Fylgiskjöl',
       description: 'Attachments',
     },
+    additionalFileDescription: {
+      id: 'sia.application:fileUpload.additionalFile.description',
+      defaultMessage:
+        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar ef þú telur þörf á.',
+      description:
+        'Below you can submit additional data to the Social Insurance Administration, if need be.',
+    },
     attachmentButton: {
       id: 'sia.application:fileUpload.attachment.button',
       defaultMessage: 'Veldu skjal',
@@ -411,13 +418,7 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Fylgiskjöl viðbótargögn',
       description: 'Additional attachments',
     },
-    additionalFileDescription: {
-      id: 'sia.application:fileUpload.additionalFile.description',
-      defaultMessage:
-        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar ef þú telur þörf á.',
-      description:
-        'Below you can submit additional data to the Social Insurance Administration, if need be.',
-    },
+
     additionalDocumentsEditSubmit: {
       id: 'sia.application:fileUpload.additionalDocumentsEditSubmit',
       defaultMessage: 'Senda inn',
@@ -680,7 +681,7 @@ export const statesMessages = defineMessages({
   },
   inProgressTag: {
     id: 'sia.application:in.progress.tag',
-    defaultMessage: 'Í vinnslu',
-    description: 'In progress',
+    defaultMessage: 'Í vinnslu hjá þér',
+    description: 'In progress with you',
   },
 })

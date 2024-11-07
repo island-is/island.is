@@ -169,6 +169,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.RIKISENDURSKODUN,
     contentfulId: InstitutionContentfulIds.RIKISENDURSKODUN,
   },
+  [ApplicationTypes.FINANCIAL_STATEMENT_POLITICAL_PARTY]: {
+    nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
+    slug: InstitutionTypes.RIKISENDURSKODUN,
+    contentfulId: InstitutionContentfulIds.RIKISENDURSKODUN,
+  },
   [ApplicationTypes.ANNOUNCEMENT_OF_DEATH]: {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
@@ -320,6 +325,11 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.TRYGGINGASTOFNUN,
   },
   [ApplicationTypes.PENSION_SUPPLEMENT]: {
+    nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
+    slug: InstitutionTypes.TRYGGINGASTOFNUN,
+    contentfulId: InstitutionContentfulIds.TRYGGINGASTOFNUN,
+  },
+  [ApplicationTypes.DEATH_BENEFITS]: {
     nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
     slug: InstitutionTypes.TRYGGINGASTOFNUN,
     contentfulId: InstitutionContentfulIds.TRYGGINGASTOFNUN,

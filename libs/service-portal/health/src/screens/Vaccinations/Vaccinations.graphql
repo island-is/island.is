@@ -20,6 +20,7 @@ query getVaccinations {
         url
         comment
         rejected
+        location
       }
       comments
     }

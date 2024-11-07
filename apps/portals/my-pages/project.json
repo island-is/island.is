@@ -1,0 +1,115 @@
+{
+  "name": "service-portal",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/portals/my-pages/src",
+  "projectType": "application",
+  "tags": ["scope:portals-mypages"],
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "options": {
+        "baseHref": "/minarsidur/",
+        "outputPath": "dist/apps/portals/my-pages",
+        "index": "apps/portals/my-pages/src/index.html",
+        "main": "apps/portals/my-pages/src/Main.tsx",
+        "polyfills": "apps/portals/my-pages/src/polyfills.ts",
+        "tsConfig": "apps/portals/my-pages/tsconfig.app.json",
+        "assets": [
+          "apps/portals/my-pages/src/favicon.ico",
+          "apps/portals/my-pages/src/mockServiceWorker.js",
+          "apps/portals/my-pages/src/assets"
+        ],
+        "styles": ["apps/portals/my-pages/src/styles.css"],
+        "scripts": [],
+        "webpackConfig": "apps/portals/my-pages/webpack.config.js",
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "outputHashing": "all",
+          "index": "apps/portals/my-pages/src/index.src.html",
+          "sourceMap": false,
+          "extractCss": true,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "2mb",
+              "maximumError": "5mb"
+            }
+          ]
+        }
+      },
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML"
+        }
+      ]
+    },
+    "generateDevIndexHTML": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node scripts/dockerfile-assets/bash/extract-environment.js apps/portals/my-pages/src"
+        ]
+      },
+      "outputs": ["{workspaceRoot}/apps/portals/my-pages/src/index.html"]
+    },
+    "serve": {
+      "executor": "@nx/webpack:dev-server",
+      "options": {
+        "buildTarget": "service-portal:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "service-portal:build:production"
+        }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML"
+        }
+      ]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/portals/my-pages/jest.config.ts"
+      },
+      "outputs": ["{workspaceRoot}/coverage/apps/portals/my-pages"]
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/portals/my-pages/src/{screens,components}/**/*.{js,ts,tsx}'"
+      }
+    },
+    "dev-init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn get-secrets service-portal",
+          "yarn nx run services-user-profile:dev-init"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["yarn start service-portal"],
+        "parallel": true
+      }
+    },
+    "docker-static": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-static`"
+    }
+  }
+}

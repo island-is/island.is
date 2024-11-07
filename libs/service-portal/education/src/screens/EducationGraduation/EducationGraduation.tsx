@@ -5,6 +5,7 @@ import {
   ActionCard,
   CardLoader,
   IntroHeader,
+  IntroWrapper,
   m,
 } from '@island.is/service-portal/core'
 import { isDefined } from '@island.is/shared/utils'
@@ -39,16 +40,15 @@ export const EducationGraduation = () => {
   }, [errors])
 
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={m.educationGraduation}
-        intro={defineMessage({
-          id: 'sp.education-graduation:education-graduation-intro',
-          defaultMessage:
-            'Hér getur þú fundið yfirlit yfir brautskráningar frá háskólanámi frá árinu 2015.',
-          description: 'education graduation intro',
-        })}
-      />
+    <IntroWrapper
+      title={m.educationGraduation}
+      intro={defineMessage({
+        id: 'sp.education-graduation:education-graduation-intro',
+        defaultMessage:
+          'Hér getur þú fundið yfirlit yfir brautskráningar frá háskólanámi frá árinu 2015.',
+        description: 'education graduation intro',
+      })}
+    >
       {!!errors?.length && !error && !loading && (
         <Box marginBottom={2}>
           <AlertMessage
@@ -122,7 +122,7 @@ export const EducationGraduation = () => {
             )
           })}
       </Stack>
-    </Box>
+    </IntroWrapper>
   )
 }
 

@@ -260,7 +260,7 @@ export class InternalCaseService {
     }
   }
 
-  private async upploadRequestPdfToCourt(
+  private async uploadRequestPdfToCourt(
     theCase: Case,
     user: TUser,
   ): Promise<boolean> {
@@ -543,7 +543,9 @@ export class InternalCaseService {
       .then(async (pdf) => {
         await this.refreshFormatMessage()
 
-        const fileName = this.formatMessage(courtUpload.indictment)
+        const fileName = this.formatMessage(courtUpload.indictment, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        })
 
         return this.courtService.createDocument(
           user,
@@ -758,7 +760,7 @@ export class InternalCaseService {
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    return this.upploadRequestPdfToCourt(theCase, user).then((delivered) => ({
+    return this.uploadRequestPdfToCourt(theCase, user).then((delivered) => ({
       delivered,
     }))
   }
