@@ -1,4 +1,4 @@
-import { IntroHeader, m } from '@island.is/service-portal/core'
+import { IntroWrapper, m } from '@island.is/service-portal/core'
 import { compulsorySchoolMessages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
@@ -26,15 +26,12 @@ export const CompulsorySchoolFamilyExamOverview = () => {
   })
 
   return (
-    <>
-      <IntroHeader
-        title={formatMessage(compulsorySchoolMessages.assessment)}
-        intro={formatMessage(
-          compulsorySchoolMessages.studentAssessmentIntroText,
-        )}
-        serviceProviderSlug={'menntamalastofnun'}
-        serviceProviderTooltip={formatMessage(m.mmsTooltip)}
-      />
+    <IntroWrapper
+      title={formatMessage(compulsorySchoolMessages.assessment)}
+      intro={formatMessage(compulsorySchoolMessages.studentAssessmentIntroText)}
+      serviceProviderSlug={'menntamalastofnun'}
+      serviceProviderTooltip={formatMessage(m.mmsTooltip)}
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && !data?.userFamilyMemberExamResults && (
         <Problem
@@ -149,8 +146,7 @@ export const CompulsorySchoolFamilyExamOverview = () => {
             </Box>
           ),
         )}
-      <p>bleble</p>
-    </>
+    </IntroWrapper>
   )
 }
 

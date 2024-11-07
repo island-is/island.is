@@ -1,7 +1,7 @@
 import {
   ActionCard,
   CardLoader,
-  IntroHeader,
+  IntroWrapper,
   m,
 } from '@island.is/service-portal/core'
 import { useFamilySchoolCareerQueryQuery } from './CompulsorySchoolFamilyExamOverview.generated'
@@ -77,15 +77,12 @@ export const CompulsorySchoolFamilyExamOverview = () => {
   ].filter(isDefined)
 
   return (
-    <>
-      <IntroHeader
-        title={formatMessage(compulsorySchoolMessages.assessment)}
-        intro={formatMessage(
-          compulsorySchoolMessages.studentAssessmentIntroText,
-        )}
-        serviceProviderSlug={'menntamalastofnun'}
-        serviceProviderTooltip={formatMessage(m.mmsTooltip)}
-      />
+    <IntroWrapper
+      title={formatMessage(compulsorySchoolMessages.assessment)}
+      intro={formatMessage(compulsorySchoolMessages.studentAssessmentIntroText)}
+      serviceProviderSlug={'menntamalastofnun'}
+      serviceProviderTooltip={formatMessage(m.mmsTooltip)}
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {loading && !error && <CardLoader />}
       {!error && !loading && !userCareer && (
@@ -100,7 +97,7 @@ export const CompulsorySchoolFamilyExamOverview = () => {
       <Stack space={2}>
         {careers.length > 0 && !loading && !error && careers}
       </Stack>
-    </>
+    </IntroWrapper>
   )
 }
 
