@@ -30,7 +30,9 @@ export class IncomingDelegationsCompanyService {
   ): Promise<DelegationDTO[]> {
     const procuringHolderApiScopes = clientAllowedApiScopes?.filter((s) =>
       s.supportedDelegationTypes?.some(
-        (dt) => dt.delegationType == AuthDelegationType.ProcurationHolder,
+        (dt) =>
+          dt.delegationType == AuthDelegationType.ProcurationHolder ||
+          dt.delegationType == AuthDelegationType.ExecutiveDirector,
       ),
     )
     if (

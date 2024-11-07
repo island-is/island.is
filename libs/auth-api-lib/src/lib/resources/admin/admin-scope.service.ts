@@ -462,6 +462,10 @@ export class AdminScopeService {
       delegationTypes.push(AuthDelegationType.GeneralMandate)
     }
 
+    if (grantToProcuringHolders) {
+      delegationTypes.push(AuthDelegationType.ExecutiveDirector)
+    }
+
     // add delegation type rows
     await Promise.all(
       delegationTypes.map((delegationType) =>
@@ -537,6 +541,10 @@ export class AdminScopeService {
 
     if (delegationTypes.includes(AuthDelegationType.Custom)) {
       delegationTypes.push(AuthDelegationType.GeneralMandate)
+    }
+
+    if (delegationTypes.includes(AuthDelegationType.ProcurationHolder)) {
+      delegationTypes.push(AuthDelegationType.ExecutiveDirector)
     }
 
     // remove delegation type rows
