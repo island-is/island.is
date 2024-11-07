@@ -1,6 +1,10 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { buildFieldRequired, formatText } from '@island.is/application/core'
+import {
+  buildFieldRequired,
+  formatText,
+  formatTextWithLocale,
+} from '@island.is/application/core'
 import { FieldBaseProps, PhoneField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -43,7 +47,12 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
     <div>
       {description && (
         <FieldDescription
-          description={formatText(description, application, formatMessage)}
+          description={formatTextWithLocale(
+            description,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         />
       )}
 
@@ -61,7 +70,12 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
           )}
           label={
             showFieldName
-              ? formatText(title, application, formatMessage)
+              ? formatTextWithLocale(
+                  title,
+                  application,
+                  locale as Locale,
+                  formatMessage,
+                )
               : undefined
           }
           locale={locale as Locale}
