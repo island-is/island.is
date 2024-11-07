@@ -31,7 +31,7 @@ export enum DefendantNotificationType {
 }
 
 export enum CivilClaimantNotificationType {
-  ADVOCATE_ASSIGNED = 'ADVOCATE_ASSIGNED',
+  CIVIL_CLAIMANT_SPOKESPERSON_ASSIGNED = 'CIVIL_CLAIMANT_SPOKESPERSON_ASSIGNED',
 }
 
 export enum NotificationType {

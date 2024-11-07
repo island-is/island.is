@@ -50,7 +50,6 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
-  formatAdvocateAssignedEmailNotification,
   formatCourtHeadsUpSmsNotification,
   formatCourtIndictmentReadyForCourtEmailNotification,
   formatCourtOfAppealJudgeAssignedEmailNotification,
@@ -1506,7 +1505,18 @@ export class CaseNotificationService extends BaseNotificationService {
     if (!advocateEmail) {
       return false
     }
-    if (isRequestCase(theCase.type)) {
+    if (isInvestigationCase(theCase.type)) {
+      const isDefenderIncludedInSessionArrangements =
+        theCase.sessionArrangements &&
+        [
+          SessionArrangements.ALL_PRESENT,
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+        ].includes(theCase.sessionArrangements)
+
+      if (!isDefenderIncludedInSessionArrangements) {
+        return false
+      }
+    } else if (isRequestCase(theCase.type)) {
       const hasDefenderBeenNotified = this.hasReceivedNotification(
         [
           CaseNotificationType.READY_FOR_COURT,
@@ -1523,31 +1533,6 @@ export class CaseNotificationService extends BaseNotificationService {
     }
 
     return true
-  }
-
-  private sendAdvocateAssignedNotification(
-    theCase: Case,
-    advocateType: AdvocateType,
-    advocateNationalId?: string,
-    advocateName?: string,
-    advocateEmail?: string,
-  ): Promise<Recipient> {
-    const { subject, body } = formatAdvocateAssignedEmailNotification(
-      this.formatMessage,
-      theCase,
-      advocateType,
-      advocateNationalId &&
-        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
-    )
-
-    return this.sendEmail(
-      subject,
-      body,
-      advocateName,
-      advocateEmail,
-      undefined,
-      Boolean(advocateNationalId) === false,
-    )
   }
 
   private async sendAdvocateAssignedNotifications(

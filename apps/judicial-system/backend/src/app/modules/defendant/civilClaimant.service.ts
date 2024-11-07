@@ -41,7 +41,9 @@ export class CivilClaimantService {
         {
           type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
           caseId: updatedCivilClaimant.caseId,
-          body: { type: CivilClaimantNotificationType.ADVOCATE_ASSIGNED },
+          body: {
+            type: CivilClaimantNotificationType.CIVIL_CLAIMANT_SPOKESPERSON_ASSIGNED,
+          },
           elementId: updatedCivilClaimant.id,
         },
       ])

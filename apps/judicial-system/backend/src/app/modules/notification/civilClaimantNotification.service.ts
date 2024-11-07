@@ -13,10 +13,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import { capitalize } from '@island.is/judicial-system/formatters'
-import {
-  AdvocateType,
-  CivilClaimantNotificationType,
-} from '@island.is/judicial-system/types'
+import { CivilClaimantNotificationType } from '@island.is/judicial-system/types'
 
 import { formatDefenderRoute } from '../../formatters'
 import { Case } from '../case'
@@ -59,19 +56,13 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
   ) {
     const courtName = capitalize(theCase.court?.name)
     const courtCaseNumber = theCase.courtCaseNumber
-    const advocateHasAccessToRVG = !!civilClaimant.spokespersonNationalId
+    const spokespersonHasAccessToRVG = !!civilClaimant.spokespersonNationalId
 
     const overviewUrl = formatDefenderRoute(
       this.config.clientUrl,
       theCase.type,
       theCase.id,
     )
-
-    console.log('!!', advocateHasAccessToRVG)
-    console.log('!!', { civilClaimant })
-    const advocateType = civilClaimant.spokespersonIsLawyer
-      ? AdvocateType.LAWYER
-      : AdvocateType.LEGAL_RIGHTS_PROTECTOR
 
     const formattedSubject = this.formatMessage(subject, {
       courtName,
@@ -81,8 +72,8 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     const formattedBody = this.formatMessage(body, {
       courtName,
       courtCaseNumber,
-      advocateHasAccessToRVG,
-      advocateType,
+      spokespersonHasAccessToRVG,
+      spokesPersonIsLawyer: civilClaimant.spokespersonIsLawyer,
       linkStart: `<a href="${overviewUrl}">`,
       linkEnd: '</a>',
     })
@@ -106,16 +97,16 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     return this.recordNotification(theCase.id, notificationType, recipients)
   }
 
-  private async sendAdvocateAssignedNotification(
+  private async sendSpokespersonAssignedNotification(
     civilClaimant: CivilClaimant,
     theCase: Case,
   ): Promise<DeliverResponse> {
     return this.sendEmails(
       civilClaimant,
       theCase,
-      CivilClaimantNotificationType.ADVOCATE_ASSIGNED,
-      strings.civilClaimantAdvocateAssignedSubject,
-      strings.civilClaimantAdvocateAssignedBody,
+      CivilClaimantNotificationType.CIVIL_CLAIMANT_SPOKESPERSON_ASSIGNED,
+      strings.civilClaimantSpokespersonAssignedSubject,
+      strings.civilClaimantSpokespersonAssignedBody,
     )
   }
 
@@ -126,8 +117,11 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     {
       switch (notificationType) {
-        case CivilClaimantNotificationType.ADVOCATE_ASSIGNED:
-          return this.sendAdvocateAssignedNotification(civilClaimant, theCase)
+        case CivilClaimantNotificationType.CIVIL_CLAIMANT_SPOKESPERSON_ASSIGNED:
+          return this.sendSpokespersonAssignedNotification(
+            civilClaimant,
+            theCase,
+          )
         default:
           throw new InternalServerErrorException(
             `Invalid notification type: ${notificationType}`,
