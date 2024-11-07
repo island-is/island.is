@@ -160,7 +160,7 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
                 const subCategories = category.categories.map(
                   (subCategory) => ({
                     label: subCategory.title,
-                    href: `${categoriesUrl}?flokkur=${subCategory.slug}`,
+                    href: `${searchUrl}?malaflokkur=${subCategory.slug}`,
                   }),
                 )
 
