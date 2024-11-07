@@ -613,7 +613,7 @@ export class CmsContentfulService {
       .catch(errorHandler('getGrant'))
 
     return (result.items as types.IGrant[]).map(mapGrant)[0]
-}
+  }
   async getSingleEvent(lang: string, slug: string) {
     const params = {
       ['content_type']: 'event',
