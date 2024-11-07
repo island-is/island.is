@@ -214,6 +214,9 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Tilkynning um eigendaskipti að ökutæki',
           status: 'inprogress',
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
+          }),
           actionCard: {
             tag: {
               label: applicationMessage.actionCardDraft,

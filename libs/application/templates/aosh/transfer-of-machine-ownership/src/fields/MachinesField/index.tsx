@@ -32,6 +32,7 @@ export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
       return result.data.getWorkerMachineByRegno // Adjust based on your query
     }
   }
+  console.log(machineList.totalCount)
 
   return (
     <Box paddingTop={2}>
