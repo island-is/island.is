@@ -27,6 +27,7 @@ import { introSection } from './introSection/introSection'
 import { getDataFromExternalDataSection } from './getDataFromExternalDataSection/getDataFromExternalDataSection'
 import { simpleInputsSection } from './simpleInputsSection'
 import { descriptionSection } from './descriptionSection/descriptionSection'
+import { accordionSection } from './accordionSection/accordionSection'
 
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
@@ -37,6 +38,8 @@ export const ExampleForm: Form = buildForm({
     getDataFromExternalDataSection,
     descriptionSection,
     simpleInputsSection,
+    accordionSection,
+    // repeterSection,
     buildSection({
       id: 'intro',
       title: m.introSection,
