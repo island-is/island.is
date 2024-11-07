@@ -15,6 +15,7 @@ import styled, { useTheme } from 'styled-components'
 import {
   useGetHealthCenterQuery,
   useGetHealthInsuranceOverviewQuery,
+  useGetMedicineDataQuery,
   useGetPaymentOverviewQuery,
   useGetPaymentStatusQuery,
 } from '../../graphql/types/schema'
@@ -93,6 +94,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
 
   const now = useMemo(() => new Date().toISOString(), [])
 
+  const medicinePurchaseRes = useGetMedicineDataQuery()
   const healthInsuranceRes = useGetHealthInsuranceOverviewQuery()
   const healthCenterRes = useGetHealthCenterQuery()
   const paymentStatusRes = useGetPaymentStatusQuery()
@@ -112,6 +114,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
     componentId,
     refetching,
     queryResult: [
+      medicinePurchaseRes,
       healthInsuranceRes,
       healthCenterRes,
       paymentStatusRes,
@@ -124,6 +127,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
 
     try {
       const promises = [
+        medicinePurchaseRes.refetch(),
         healthInsuranceRes.refetch(),
         healthCenterRes.refetch(),
         paymentStatusRes.refetch(),
@@ -136,6 +140,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
       setRefetching(false)
     }
   }, [
+    medicinePurchaseRes,
     healthInsuranceRes,
     healthCenterRes,
     paymentStatusRes,
@@ -374,6 +379,70 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               loading={paymentOverviewRes.loading && !paymentOverviewRes.data}
               error={paymentOverviewRes.error && !paymentOverviewRes.data}
               noBorder
+            />
+          </InputRow>
+          <HeadingSection
+            title={intl.formatMessage({
+              id: 'health.overview.medicinePurchase',
+            })}
+            onPress={() =>
+              openBrowser(
+                `${origin}/minarsidur/heilsa/lyf/lyfjakaup`,
+                componentId,
+              )
+            }
+          />
+          <InputRow background>
+            <Input
+              label={intl.formatMessage({
+                id: 'health.overview.period',
+              })}
+              value={
+                medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
+                  .dateFrom &&
+                medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0].dateTo
+                  ? `${intl.formatDate(
+                      medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
+                        .dateFrom,
+                    )} - ${intl.formatDate(
+                      medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
+                        .dateTo,
+                    )}`
+                  : ''
+              }
+              loading={medicinePurchaseRes.loading && !medicinePurchaseRes.data}
+              error={medicinePurchaseRes.error && !medicinePurchaseRes.data}
+              darkBorder
+            />
+          </InputRow>
+          <InputRow background>
+            <Input
+              label={intl.formatMessage({
+                id: 'health.overview.levelStatus',
+              })}
+              value={
+                medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
+                  ?.levelNumber &&
+                medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
+                  ?.levelPercentage
+                  ? intl.formatMessage(
+                      {
+                        id: 'health.overview.levelStatusValue',
+                      },
+                      {
+                        level:
+                          medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
+                            ?.levelNumber,
+                        percentage:
+                          medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
+                            ?.levelPercentage,
+                      },
+                    )
+                  : ''
+              }
+              loading={medicinePurchaseRes.loading && !medicinePurchaseRes.data}
+              error={medicinePurchaseRes.error && !medicinePurchaseRes.data}
+              darkBorder
             />
           </InputRow>
         </Host>

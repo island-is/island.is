@@ -629,4 +629,9 @@ export const is = {
   'health.overview.paymentDebt': 'Skuld',
   'health.overview.therapy': 'Þjálfun',
   'health.overview.aidsAndNutrition': 'Hjálpartæki og næring',
+  'health.overview.medicinePurchase': 'Lyfjakaup',
+  'health.overview.period': 'Tímabil',
+  'health.overview.levelStatus': 'Þrepastaða',
+  'health.overview.levelStatusValue':
+    'Greiðsluþrep {level}, þú greiðir {percentage}',
 }

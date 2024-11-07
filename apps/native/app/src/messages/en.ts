@@ -629,4 +629,8 @@ export const en: TranslatedMessages = {
   'health.overview.paymentDebt': 'Debt',
   'health.overview.therapy': 'Therapy',
   'health.overview.aidsAndNutrition': 'Aids and nutrition',
+  'health.overview.medicinePurchase': 'Medicine purchase',
+  'health.overview.period': 'Period',
+  'health.overview.levelStatus': 'Medicine step',
+  'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}',
 }
