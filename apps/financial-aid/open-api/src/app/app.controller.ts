@@ -15,7 +15,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { FilterApplicationsDto } from './app.dto'
 import { AppService } from './app.service'
-import { ApplicationBackendModel } from './backendModels'
+import {
+  ApplicationBackendModel,
+  PdfResponseBackendModel,
+} from './backendModels'
 import { ApplicationModel, PdfModel } from './models'
 
 @Controller('api/open/v1')
@@ -46,7 +49,7 @@ export class AppController {
 
   @Get('pdf')
   @ApiCreatedResponse({
-    type: PdfModel,
+    type: PdfResponseBackendModel,
     description: 'Gets application from id and returns pdf',
   })
   async getPdf(
