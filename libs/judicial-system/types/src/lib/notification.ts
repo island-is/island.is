@@ -31,7 +31,7 @@ export enum DefendantNotificationType {
 }
 
 export enum CivilClaimantNotificationType {
-  CIVIL_CLAIMANT_SPOKESPERSON_ASSIGNED = 'CIVIL_CLAIMANT_SPOKESPERSON_ASSIGNED',
+  SPOKESPERSON_ASSIGNED = 'SPOKESPERSON_ASSIGNED',
 }
 
 export enum NotificationType {
@@ -58,6 +58,7 @@ export enum NotificationType {
   SERVICE_SUCCESSFUL = SubpoenaNotificationType.SERVICE_SUCCESSFUL,
   SERVICE_FAILED = SubpoenaNotificationType.SERVICE_FAILED,
   DEFENDANT_SELECTED_DEFENDER = SubpoenaNotificationType.DEFENDANT_SELECTED_DEFENDER,
+  SPOKESPERSON_ASSIGNED = CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED,
 }
 
 export enum InstitutionNotificationType {

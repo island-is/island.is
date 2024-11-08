@@ -104,7 +104,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     return this.sendEmails(
       civilClaimant,
       theCase,
-      CivilClaimantNotificationType.CIVIL_CLAIMANT_SPOKESPERSON_ASSIGNED,
+      CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED,
       strings.civilClaimantSpokespersonAssignedSubject,
       strings.civilClaimantSpokespersonAssignedBody,
     )
@@ -117,7 +117,7 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
   ): Promise<DeliverResponse> {
     {
       switch (notificationType) {
-        case CivilClaimantNotificationType.CIVIL_CLAIMANT_SPOKESPERSON_ASSIGNED:
+        case CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED:
           return this.sendSpokespersonAssignedNotification(
             civilClaimant,
             theCase,

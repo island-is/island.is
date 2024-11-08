@@ -42,7 +42,7 @@ export class CivilClaimantService {
           type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
           caseId: updatedCivilClaimant.caseId,
           body: {
-            type: CivilClaimantNotificationType.CIVIL_CLAIMANT_SPOKESPERSON_ASSIGNED,
+            type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED,
           },
           elementId: updatedCivilClaimant.id,
         },
