@@ -298,11 +298,11 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
   }
 
   async rejectApplication(props: TemplateApiModuleActionProps): Promise<void> {
-    this.doRejectApplication(props, RejectType.REJECT)
+    return this.doRejectApplication(props, RejectType.REJECT)
   }
 
   async deleteApplication(props: TemplateApiModuleActionProps): Promise<void> {
-    this.doRejectApplication(props, RejectType.DELETE)
+    return this.doRejectApplication(props, RejectType.DELETE)
   }
 
   private async doRejectApplication(
@@ -314,7 +314,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     if (rejectType !== RejectType.DELETE) {
       const chargeId = getPaymentIdFromExternalData(application)
       if (chargeId) {
-        this.chargeFjsV2ClientService.deleteCharge(chargeId)
+        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
       }
     }
 
