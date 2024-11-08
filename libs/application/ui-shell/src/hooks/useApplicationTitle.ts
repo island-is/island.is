@@ -1,6 +1,6 @@
 import { useLocale } from '@island.is/localization'
 import {
-  formatText,
+  formatTextWithLocale,
   getSubSectionsInSection,
 } from '@island.is/application/core'
 import { Section, SubSection } from '@island.is/application/types'
@@ -8,9 +8,11 @@ import { FormatMessage } from '@island.is/localization'
 
 import { ApplicationUIState } from '../reducer/ReducerTypes'
 import { useDocumentTitle } from './useDocumentTitle'
+import { Locale } from '@island.is/shared/types'
 
 export const getApplicationTitle = (
   state: ApplicationUIState,
+  locale: Locale,
   formatMessage: FormatMessage,
 ) => {
   const activeScreen = state.screens[state.activeScreen]
@@ -30,9 +32,10 @@ export const getApplicationTitle = (
   const titleParts = [`${formName} | Ísland.is`]
 
   if (activeSection) {
-    const sectionTitle = formatText(
+    const sectionTitle = formatTextWithLocale(
       activeSection.title,
       state.application,
+      locale as Locale,
       formatMessage,
     )
 
@@ -43,8 +46,12 @@ export const getApplicationTitle = (
 }
 
 export const useApplicationTitle = (state: ApplicationUIState) => {
-  const { formatMessage } = useLocale()
-  const applicationTitle = getApplicationTitle(state, formatMessage)
+  const { formatMessage, lang: locale } = useLocale()
+  const applicationTitle = getApplicationTitle(
+    state,
+    locale as Locale,
+    formatMessage,
+  )
 
   useDocumentTitle(applicationTitle)
 }
