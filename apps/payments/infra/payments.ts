@@ -4,7 +4,7 @@ const namespace = 'payments'
 const serviceName = `${namespace}-web`
 const image = `${namespace}-image`
 
-const basepath = '/gredisla'
+const basepath = '/greidsla'
 
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
