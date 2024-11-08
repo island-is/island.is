@@ -8,12 +8,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  IntroHeader,
   SAMGONGUSTOFA_SLUG,
   m,
   EmptyTable,
   TableGrid,
   downloadFile,
+  IntroWrapper,
 } from '@island.is/service-portal/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { VehiclesBulkMileageRegistrationRequestStatus } from '@island.is/api/schema'
@@ -104,19 +104,18 @@ const VehicleBulkMileageJobDetail = () => {
     !(registrationNetworkStatus === NetworkStatus.refetch)
 
   return (
-    <Box>
-      <IntroHeader
-        title={formatMessage(m.vehiclesBulkMileageJobDetail)}
-        introComponent={
-          <>
-            <Text>{formatMessage(vehicleMessage.dataAboutJob)}</Text>
-            <br />
-            <Text>{formatMessage(vehicleMessage.refreshDataAboutJob)}</Text>
-          </>
-        }
-        serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-        serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-      >
+    <IntroWrapper
+      title={formatMessage(m.vehiclesBulkMileageJobDetail)}
+      introComponent={
+        <>
+          <Text>{formatMessage(vehicleMessage.dataAboutJob)}</Text>
+          <br />
+          <Text>{formatMessage(vehicleMessage.refreshDataAboutJob)}</Text>
+        </>
+      }
+      serviceProviderSlug={SAMGONGUSTOFA_SLUG}
+      serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
+      buttonGroup={
         <Box marginTop={'containerGutter'}>
           <Button
             variant="utility"
@@ -131,7 +130,8 @@ const VehicleBulkMileageJobDetail = () => {
             {formatMessage(vehicleMessage.refreshJob)}
           </Button>
         </Box>
-      </IntroHeader>
+      }
+    >
       {!error && !loading && !jobsStatus && (
         <Problem
           type="no_data"
@@ -271,7 +271,7 @@ const VehicleBulkMileageJobDetail = () => {
           </Box>
         </Stack>
       )}
-    </Box>
+    </IntroWrapper>
   )
 }
 

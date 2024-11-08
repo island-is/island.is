@@ -7,6 +7,11 @@ export interface MileageRecord {
   mileage: number
 }
 
+export interface MileageError {
+  code: 1 | 2
+  message: string
+}
+
 const vehicleIndexTitle = [
   'permno',
   'vehicleid',
@@ -16,10 +21,19 @@ const vehicleIndexTitle = [
 ]
 const mileageIndexTitle = ['kilometrastada', 'mileage', 'odometer']
 
+export const errorMap: Record<number, string> = {
+  1: `Invalid vehicle column header. Must be one of the following: ${vehicleIndexTitle.join(
+    ', ',
+  )}`,
+  2: `Invalid mileage column header. Must be one of the following: ${mileageIndexTitle.join(
+    ', ',
+  )}`,
+}
+
 export const parseFileToMileageRecord = async (
   file: File,
   type: 'csv' | 'xlsx',
-): Promise<Array<MileageRecord>> => {
+): Promise<Array<MileageRecord> | MileageError> => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsv(file)
     : parseXlsx(file))
@@ -30,30 +44,26 @@ export const parseFileToMileageRecord = async (
   )
 
   if (vehicleIndex < 0) {
-    throw new Error(
-      `Invalid vehicle column header. Must be one of the following: ${vehicleIndexTitle.join(
-        ', ',
-      )}`,
-    )
+    return {
+      code: 1,
+      message: errorMap[1],
+    }
   }
+
   const mileageIndex = header.findIndex((l) =>
     mileageIndexTitle.includes(l.toLowerCase()),
   )
 
   if (mileageIndex < 0) {
-    throw new Error(
-      `Invalid mileage column header. Must be one of the following: ${mileageIndexTitle.join(
-        ', ',
-      )}`,
-    )
+    return {
+      code: 2,
+      message: errorMap[2],
+    }
   }
 
   const uploadedOdometerStatuses: Array<MileageRecord> = values
     .map((row) => {
-      const l = sanitizeNumber(row[mileageIndex])
-      console.log('sanitized ', l)
       const mileage = Number(sanitizeNumber(row[mileageIndex]))
-      console.log(mileage)
       if (Number.isNaN(mileage)) {
         return undefined
       }
