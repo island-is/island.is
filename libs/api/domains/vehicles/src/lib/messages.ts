@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  tooManyPermno: {
+    id: 'api.bulk-vehicle-mileage:too-many-permno',
+    defaultMessage: 'Sama fastanúmer birtist oft í skjali',
+  },
   missingPermno: {
     id: 'api.bulk-vehicle-mileage:missing-permno',
     defaultMessage: 'Fastanúmer vantar',

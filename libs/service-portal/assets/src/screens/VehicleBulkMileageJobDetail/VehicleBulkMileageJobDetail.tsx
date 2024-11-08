@@ -90,7 +90,7 @@ const VehicleBulkMileageJobDetail = () => {
         }
         return [
           erroredVehicle.vehicleId,
-          erroredVehicle.errors.map((j) => j.message).join(', '),
+          erroredVehicle.errors.map((j) => j.warningText).join(', '),
         ]
       })
       .filter(isDefined)
@@ -250,7 +250,9 @@ const VehicleBulkMileageJobDetail = () => {
                           {displayWithUnit(j.mileage, 'km', true)}
                         </T.Data>
                         <T.Data>
-                          {(j.errors ?? []).map((j) => j.message).join(', ')}
+                          {(j.errors ?? [])
+                            .map((j) => j.warningText)
+                            .join(', ')}
                         </T.Data>
                       </T.Row>
                     ))

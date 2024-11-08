@@ -2,6 +2,7 @@ import { MessageDescriptor } from 'react-intl'
 import { m } from '../../lib/messages'
 
 export const errorCodeMessageMap: Record<number, MessageDescriptor> = {
+  999: m.tooManyPermno, //returned error code is -1, which cant be used to index. Transform to 999
   3: m.missingPermno,
   4: m.dateMissing,
   5: m.originMissing,

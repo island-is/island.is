@@ -146,19 +146,25 @@ export class BulkMileageService {
           if (!d.guid || !d.permno) {
             return null
           }
+
           return {
             guid: d.guid,
             vehicleId: d.permno,
             mileage: d.mileage ?? undefined,
             returnCode: d.returnCode ?? undefined,
-            errors: d.errors?.map((e) => ({
-              code: e.errorCode ?? undefined,
-              message: e.errorText ?? undefined,
-              warningSerialCode: e.warningSerial ?? 0,
-              warningText: e.warningSerial
-                ? formatMessage(errorCodeMessageMap[e.warningSerial ?? 0])
-                : undefined,
-            })),
+            errors: d.errors?.map((e) => {
+              const warningSerial =
+                e.warningSerial === -1 ? 999 : e.warningSerial
+
+              return {
+                code: e.errorCode ?? undefined,
+                message: e.errorText ?? undefined,
+                warningSerialCode: e.warningSerial ?? 0,
+                warningText: warningSerial
+                  ? formatMessage(errorCodeMessageMap[warningSerial ?? 0])
+                  : undefined,
+              }
+            }),
           }
         })
         .filter(isDefined),
