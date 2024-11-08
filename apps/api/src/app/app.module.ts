@@ -202,6 +202,7 @@ import { GradeClientConfig } from '@island.is/clients/mms/grade'
 import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-skuldara'
 import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
 import { emailModuleConfig } from '@island.is/email-service'
+import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 
 const environment = getConfig
 
@@ -435,6 +436,7 @@ const environment = getConfig
         CriminalRecordClientConfig,
         HealthInsuranceV2ClientConfig,
         UmbodsmadurSkuldaraClientConfig,
+        ZendeskServiceConfig,
         emailModuleConfig,
       ],
     }),
