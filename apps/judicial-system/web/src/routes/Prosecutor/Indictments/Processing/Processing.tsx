@@ -268,9 +268,9 @@ const Processing: FC = () => {
 
     const update = {
       caseId: workingCase.id,
-      civilClaimantId: civilClaimantNationalIdUpdate?.civilClaimantId || '',
-      name: person?.name,
-      nationalId: civilClaimantNationalIdUpdate?.nationalId,
+      civilClaimantId: civilClaimantNationalIdUpdate.civilClaimantId || '',
+      nationalId: civilClaimantNationalIdUpdate.nationalId,
+      ...(person?.name ? { name: person.name } : {}),
     }
 
     handleUpdateCivilClaimant(update)
