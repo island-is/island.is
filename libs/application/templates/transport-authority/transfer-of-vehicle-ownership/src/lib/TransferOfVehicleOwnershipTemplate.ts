@@ -203,8 +203,12 @@ const template: ApplicationTemplate<
             action: ApiActions.addReview,
             shouldPersistToExternalData: true,
           }),
+          // Note: only re-validating because it is possible to add buyerCoOwners and buyerOperators in this step
           onExit: defineTemplateApi({
             action: ApiActions.validateApplication,
+          }),
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
           }),
           roles: [
             {
