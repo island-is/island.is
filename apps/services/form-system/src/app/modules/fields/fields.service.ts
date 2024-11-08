@@ -64,7 +64,7 @@ export class FieldsService {
         id: randomUUID(),
         order: 0,
         json: ValueTypeFactory.getClass(fieldType, new ValueType()),
-        isHidden: false,
+        // isHidden: false,
       },
     ]
 

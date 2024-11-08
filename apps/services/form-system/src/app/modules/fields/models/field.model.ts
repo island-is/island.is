@@ -56,12 +56,12 @@ export class Field extends Model<Field> {
   })
   description!: LanguageType
 
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  })
-  isHidden!: boolean
+  // @Column({
+  //   type: DataType.BOOLEAN,
+  //   allowNull: false,
+  //   defaultValue: false,
+  // })
+  // isHidden!: boolean
 
   @Column({
     type: DataType.BOOLEAN,

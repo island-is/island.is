@@ -46,6 +46,7 @@ export class ApplicationsService {
             fieldId: field.id,
             applicationId: newApplication.id,
             json: this.createValue(field.fieldType),
+            // isHidden: field.isHidden,
           } as Value)
         })
       })

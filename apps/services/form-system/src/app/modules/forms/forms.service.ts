@@ -313,7 +313,7 @@ export class FormsService {
             id: randomUUID(),
             order: 0,
             json: ValueTypeFactory.getClass(fieldType.id, new ValueType()),
-            isHidden: false,
+            // isHidden: false,
           },
         ])
     })
