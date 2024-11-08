@@ -8,6 +8,7 @@ import {
   Checkbox,
   RadioButton,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
@@ -178,6 +179,7 @@ const Processing: FC = () => {
     noNationalId?: boolean | null,
     civilClaimantId?: string | null,
   ) => {
+    console.log(nationalId, civilClaimantId)
     if (!civilClaimantId) {
       return
     }
@@ -257,23 +259,33 @@ const Processing: FC = () => {
   )
 
   useEffect(() => {
-    if (!personData || !personData.items || personData.items.length === 0) {
-      setNationalIdNotFound(true)
+    if (!civilClaimantNationalIdUpdate) {
       return
     }
 
-    setNationalIdNotFound(false)
+    const items = personData?.items || []
+    const person = items[0]
+
+    setNationalIdNotFound(items.length === 0)
+
     const update = {
       caseId: workingCase.id,
       civilClaimantId: civilClaimantNationalIdUpdate?.civilClaimantId || '',
-      name: personData?.items[0].name,
-      nationalId: personData.items[0].kennitala,
+      name: person?.name,
+      nationalId: civilClaimantNationalIdUpdate?.nationalId,
     }
 
     handleUpdateCivilClaimant(update)
     // We want this hook to run exclusively when personData changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personData])
+
+  useEffect(() => {
+    toast.error('Aðgerð heppnaðist')
+    toast.info('Aðgerð heppnaðist')
+    toast.warning('Aðgerð heppnaðist')
+    toast.success('Aðgerð heppnaðist')
+  }, [])
 
   return (
     <PageLayout
