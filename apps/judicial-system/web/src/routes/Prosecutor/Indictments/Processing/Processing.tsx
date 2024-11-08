@@ -8,7 +8,6 @@ import {
   Checkbox,
   RadioButton,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
