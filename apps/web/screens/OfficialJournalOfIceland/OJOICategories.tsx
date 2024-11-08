@@ -97,15 +97,15 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
   const [queryDepartment, setQueryDepartment] = useState(
     getStringFromQueryString(router.query.deild),
   )
-  const [queryMainCateory, setQueryMainCategory] = useState(
+  const [queryMainCateogry, setQueryMainCategory] = useState(
     getStringFromQueryString(router.query.yfirflokkur),
   )
 
   const filteredData = useMemo(() => {
     let filtered = categories
 
-    if (queryMainCateory) {
-      const found = mainCategories?.find((c) => c.slug === queryMainCateory)
+    if (queryMainCateogry) {
+      const found = mainCategories?.find((c) => c.slug === queryMainCateogry)
 
       if (found) {
         const subCategorySlugs = found.categories?.map((c) => c.slug)
@@ -134,7 +134,7 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
       .filter((value, index, self) => self.indexOf(value) === index)
       .sort()
 
-    const grouppedByLetter = letters.reduce((acc, letter) => {
+    const groupedByLetter = letters.reduce((acc, letter) => {
       const letterCategories = filtered.filter(
         (c) => c.title.charAt(0) === letter,
       )
@@ -152,7 +152,7 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
         ...c,
         letter: c.title.charAt(0),
       })),
-      group: grouppedByLetter,
+      group: groupedByLetter,
       letters: letters,
     }
   }, [
@@ -161,7 +161,7 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
     search,
     queryLetters,
     queryDepartment,
-    queryMainCateory,
+    queryMainCateogry,
   ])
 
   const onDepartmentChange = (value?: string) => {
@@ -323,7 +323,7 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
                 ...mainCategoriesOptions,
               ]}
               isClearable
-              value={findValueOption(mainCategoriesOptions, queryMainCateory)}
+              value={findValueOption(mainCategoriesOptions, queryMainCateogry)}
               onChange={(v) => onMainCategoryChange(v?.value)}
             />
           </Stack>
@@ -345,9 +345,8 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
                 onClick={() => {
                   toggleLetter(letter)
                 }}
-                // disabled={isDisabled}
                 variant={isActive ? 'blue' : isDisabled ? 'disabled' : 'white'}
-                outlined={isActive ? false : true}
+                outlined={!isActive}
               >
                 {'\u00A0'}
                 {letter.toUpperCase()}

@@ -166,7 +166,7 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
                   <GridColumn
                     paddingBottom={4}
                     span={['12/12', '6/12', '4/12', '3/12']}
-                    key={i}
+                    key={category.slug}
                   >
                     <CategoryCard
                       nestedHref={true}
