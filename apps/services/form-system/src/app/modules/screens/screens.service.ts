@@ -51,7 +51,7 @@ export class ScreensService {
       'sectionId',
       'name',
       'displayOrder',
-      'isHidden',
+      // 'isHidden',
       'multiset',
       'callRuleset',
     ]

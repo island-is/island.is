@@ -29,11 +29,11 @@ module.exports = {
             allowNull: false,
             defaultValue: 0,
           },
-          is_hidden: {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-          },
+          // is_hidden: {
+          //   type: Sequelize.BOOLEAN,
+          //   allowNull: false,
+          //   defaultValue: false,
+          // },
           field_id: {
             type: Sequelize.UUID,
             onDelete: 'CASCADE',

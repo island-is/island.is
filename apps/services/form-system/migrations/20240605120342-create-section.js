@@ -37,11 +37,11 @@ module.exports = {
             type: Sequelize.JSON,
             allowNull: true,
           },
-          is_hidden: {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-          },
+          // is_hidden: {
+          //   type: Sequelize.BOOLEAN,
+          //   allowNull: false,
+          //   defaultValue: false,
+          // },
           is_completed: {
             type: Sequelize.BOOLEAN,
             allowNull: false,

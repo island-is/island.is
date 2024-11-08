@@ -10,7 +10,7 @@ export class UpdateValueDto {
   @ApiProperty({ type: ValueType })
   json!: ValueType
 
-  @IsNotEmpty()
-  @ApiProperty({ type: Boolean })
-  isHidden!: boolean
+  // @IsNotEmpty()
+  // @ApiProperty({ type: Boolean })
+  // isHidden!: boolean
 }

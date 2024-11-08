@@ -27,9 +27,9 @@ export class UpdateFieldDto {
   @ApiProperty({ type: Boolean })
   isRequired!: boolean
 
-  @IsNotEmpty()
-  @ApiProperty({ type: Boolean })
-  isHidden!: boolean
+  // @IsNotEmpty()
+  // @ApiProperty({ type: Boolean })
+  // isHidden!: boolean
 
   @IsOptional()
   @ValidateNested()

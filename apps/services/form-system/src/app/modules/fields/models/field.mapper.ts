@@ -17,7 +17,7 @@ export class FieldMapper {
       displayOrder: field.displayOrder,
       description: field.description,
       isPartOfMultiset: field.isPartOfMultiset,
-      isHidden: field.isHidden,
+      // isHidden: field.isHidden,
       isRequired: field.isRequired,
       fieldType: field.fieldType,
       fieldSettings: field.fieldSettings,
@@ -28,12 +28,12 @@ export class FieldMapper {
   }
 
   mapUpdateFieldDtoToField(field: Field, updateFieldDto: UpdateFieldDto): void {
-    field.name = updateFieldDto.name
-    field.description = updateFieldDto.description
-    field.isPartOfMultiset = updateFieldDto.isPartOfMultiset
-    ;(field.isHidden = updateFieldDto.isHidden),
+    ;(field.name = updateFieldDto.name),
+      (field.description = updateFieldDto.description),
+      (field.isPartOfMultiset = updateFieldDto.isPartOfMultiset),
+      // ;(field.isHidden = updateFieldDto.isHidden),
       (field.isRequired = updateFieldDto.isRequired),
-      (field.fieldType = updateFieldDto.fieldType)
-    field.fieldSettings = updateFieldDto.fieldSettings
+      (field.fieldType = updateFieldDto.fieldType),
+      (field.fieldSettings = updateFieldDto.fieldSettings)
   }
 }
