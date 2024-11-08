@@ -1407,9 +1407,7 @@ export const calculateDaysUsedByPeriods = (periods: Period[]) =>
         period.months,
       )
 
-      const calculatedLength = period.daysToUse
-        ? Number(period.daysToUse)
-        : Math.round(periodLength * percentage)
+      const calculatedLength = Math.round(periodLength * percentage)
 
       return total + calculatedLength
     }, 0),
