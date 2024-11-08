@@ -339,8 +339,6 @@ export const serviceSetup = (services: {
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME',
       ALTHINGI_OMBUDSMAN_XROAD_PASSWORD:
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
-      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
-        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
     .db()
     .migrations()
