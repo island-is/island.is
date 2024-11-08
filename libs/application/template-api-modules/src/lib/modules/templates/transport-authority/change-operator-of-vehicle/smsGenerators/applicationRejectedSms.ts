@@ -32,7 +32,7 @@ export const generateApplicationRejectedSms: ApplicationRejectedSms = (
   if (rejectType === RejectType.REJECT) {
     message += `þar sem eftirfarandi aðilar staðfestu ekki: `
   } else if (rejectType === RejectType.DELETE) {
-    message += `þar sem eftirfarandi aðilar hættu við:`
+    message += `þar sem seljandinn eyddi umsókn:`
   }
   message += `${rejectedByStr}. Nánari upplýsingar á island.is/umsoknir. `
 
