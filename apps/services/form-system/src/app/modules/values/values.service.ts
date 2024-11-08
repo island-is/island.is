@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  PreconditionFailedException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Value } from './models/value.model'
 import defaults from 'lodash/defaults'
@@ -6,6 +10,7 @@ import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { ValueDto } from './models/dto/value.dto'
 import { UpdateValueDto } from './models/dto/updateValue.dto'
+import { CreateValueDto } from './models/dto/createValue.dto'
 
 @Injectable()
 export class ValuesService {
@@ -14,7 +19,18 @@ export class ValuesService {
     private readonly valueModel: typeof Value,
   ) {}
 
-  async update(id: string, updateValueDto: UpdateValueDto): Promise<ValueDto> {
+  async create(createValueDto: CreateValueDto): Promise<string> {
+    if (createValueDto.order === 0) {
+      throw new PreconditionFailedException(`order of new value cannot be 0`)
+    }
+
+    const newValue: Value = new this.valueModel(createValueDto as Value)
+    await newValue.save()
+
+    return newValue.id
+  }
+
+  async update(id: string, updateValueDto: UpdateValueDto): Promise<void> {
     const value = await this.valueModel.findByPk(id)
 
     if (!value) {
@@ -24,13 +40,21 @@ export class ValuesService {
     value.json = updateValueDto.json
 
     await value.save()
+  }
 
-    const keys = ['id', 'order', 'json']
-    const valueDto: ValueDto = defaults(
-      pick(value, keys),
-      zipObject(keys, Array(keys.length).fill(null)),
-    ) as ValueDto
+  async delete(id: string): Promise<void> {
+    const value = await this.valueModel.findByPk(id)
 
-    return valueDto
+    if (!value) {
+      throw new NotFoundException(`Value with id '${id}' not found`)
+    }
+
+    if (value.order === 0) {
+      throw new PreconditionFailedException(
+        `Value with id '${id}' cannot be deleted`,
+      )
+    }
+
+    value.destroy()
   }
 }
