@@ -145,6 +145,7 @@ const IndictmentOverview: FC = () => {
     [router, workingCase.id],
   )
 
+  console.log('asdasd')
   return (
     <PageLayout
       workingCase={workingCase}
@@ -171,17 +172,18 @@ const IndictmentOverview: FC = () => {
         <CourtCaseInfo workingCase={workingCase} />
         {isDefenceUser(user) &&
           workingCase.defendants?.map((defendant) =>
-            defendant.subpoenas?.map(
-              (subpoena) =>
-                isSuccessfulServiceStatus(subpoena.serviceStatus) && (
-                  <Box marginBottom={2} key={`${defendant.id}${subpoena.id}`}>
-                    <ServiceAnnouncement
-                      defendant={defendant}
-                      subpoena={subpoena}
-                    />
-                  </Box>
-                ),
-            ),
+            (defendant.subpoenas ?? [])
+              .filter((subpoena) =>
+                isSuccessfulServiceStatus(subpoena.serviceStatus),
+              )
+              .map((subpoena) => (
+                <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
+                  <ServiceAnnouncement
+                    defendant={defendant}
+                    subpoena={subpoena}
+                  />
+                </Box>
+              )),
           )}
         {caseHasBeenReceivedByCourt &&
           workingCase.court &&
