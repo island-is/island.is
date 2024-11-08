@@ -50,7 +50,7 @@ export const parseFileToMileageRecord = async (
 
   const uploadedOdometerStatuses: Array<MileageRecord> = values
     .map((row) => {
-      const mileage = Number(row[mileageIndex])
+      const mileage = Number(sanitizeNumber(row[mileageIndex]))
       if (Number.isNaN(mileage)) {
         return undefined
       }
@@ -128,3 +128,5 @@ const parseCsvString = (chunk: string): Promise<string[][]> => {
     parser.end()
   })
 }
+
+const sanitizeNumber = (n: string) => n.replace(/[^\d]/g, '')
