@@ -83,6 +83,7 @@ export class ApplicationsService {
       applicationId,
     )
 
+    // console.log(JSON.stringify(form, null, 2))
     const applicationDto = this.applicationMapper.mapFormToApplicationDto(
       form,
       application,
@@ -151,8 +152,18 @@ export class ApplicationsService {
           'displayOrder',
           'ASC',
         ],
+        [
+          { model: Section, as: 'sections' },
+          { model: Screen, as: 'screens' },
+          { model: Field, as: 'fields' },
+          { model: Value, as: 'values' },
+          'order',
+          'ASC',
+        ],
       ],
     })
+
+    console.log(JSON.stringify(form, null, 2))
 
     if (!form) {
       throw new NotFoundException(`Form with id '${formId}' not found`)

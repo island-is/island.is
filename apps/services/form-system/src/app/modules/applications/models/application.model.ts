@@ -5,6 +5,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
