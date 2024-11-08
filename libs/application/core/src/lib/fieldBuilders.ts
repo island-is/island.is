@@ -608,6 +608,7 @@ export const buildExpandableDescriptionField = (
     component: FieldComponents.EXPANDABLE_DESCRIPTION,
   }
 }
+
 export const buildAlertMessageField = (
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField => {
@@ -909,9 +910,12 @@ export const buildStaticTableField = (
 }
 
 export const buildSliderField = (
-  data: Omit<SliderField, 'type' | 'component' | 'children' | 'title'>,
+  data: Omit<SliderField, 'type' | 'component' | 'children'>,
 ): SliderField => {
   const {
+    id,
+    title,
+    titleVariant = 'h2',
     condition,
     min = 0,
     max = 10,
@@ -919,26 +923,27 @@ export const buildSliderField = (
     snap = true,
     trackStyle,
     calculateCellStyle,
-    showLabel = false,
-    showMinMaxLabels = false,
     showRemainderOverlay = true,
     showProgressOverlay = true,
     showToolTip = false,
     label,
+    showLabel = false,
+    showMinMaxLabels = false,
     rangeDates,
     currentIndex,
     onChange,
     onChangeEnd,
     labelMultiplier = 1,
-    id,
     saveAsString,
   } = data
   return {
-    title: '',
+    component: FieldComponents.SLIDER,
     id,
+    title,
+    titleVariant,
+    condition,
     children: undefined,
     type: FieldTypes.SLIDER,
-    component: FieldComponents.SLIDER,
     min,
     max,
     step,
@@ -956,7 +961,6 @@ export const buildSliderField = (
     onChange,
     onChangeEnd,
     labelMultiplier,
-    condition,
     saveAsString,
   }
 }

@@ -6,6 +6,9 @@ import { selectSubsection } from './selectSubsection'
 import { phoneSubsection } from './phoneSubsection'
 import { dateSubsection } from './dateSubsection'
 import { fileUploadSubsection } from './fileUploadSubsection'
+import { sliderSubsection } from './sliderSubsection'
+import { companySearchSubsection } from './companySearchSubsection'
+import { asyncSelectSubsection } from './asyncSelectSubsection'
 
 export const simpleInputsSection = buildSection({
   id: 'simpleInputsSection',
@@ -15,8 +18,11 @@ export const simpleInputsSection = buildSection({
     checkboxSubsection,
     radioSubsection,
     selectSubsection,
+    asyncSelectSubsection,
+    companySearchSubsection,
     phoneSubsection,
     dateSubsection,
     fileUploadSubsection,
+    sliderSubsection,
   ],
 })

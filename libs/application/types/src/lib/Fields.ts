@@ -684,6 +684,7 @@ export interface SliderField extends BaseField {
   readonly type: FieldTypes.SLIDER
   readonly color?: Colors
   component: FieldComponents.SLIDER
+  titleVariant?: TitleVariants
   min: number
   max: MaybeWithApplicationAndField<number>
   step?: number
