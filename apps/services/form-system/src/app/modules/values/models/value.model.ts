@@ -42,12 +42,12 @@ export class Value extends Model<Value> {
   })
   order!: number
 
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  })
-  isHidden!: boolean
+  // @Column({
+  //   type: DataType.BOOLEAN,
+  //   allowNull: false,
+  //   defaultValue: false,
+  // })
+  // isHidden!: boolean
 
   @ForeignKey(() => Field)
   @Column({

@@ -19,8 +19,8 @@ export class SectionDto {
   @ApiPropertyOptional({ type: LanguageType })
   waitingText?: LanguageType
 
-  @ApiProperty()
-  isHidden!: boolean
+  // @ApiProperty()
+  // isHidden!: boolean
 
   @ApiProperty()
   isCompleted!: boolean
