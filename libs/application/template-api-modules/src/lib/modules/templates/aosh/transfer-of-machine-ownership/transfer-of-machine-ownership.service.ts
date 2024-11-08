@@ -280,8 +280,6 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
       await this.chargeFjsV2ClientService.deleteCharge(chargeId)
     }
 
-    console.log('DELETE HAPPENED')
-
     // 2. Delete owner change in work machines
     const deleteChange = {
       ownerchangeId: application.id,
