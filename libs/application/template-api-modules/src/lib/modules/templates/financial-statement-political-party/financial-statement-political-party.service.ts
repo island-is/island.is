@@ -63,8 +63,7 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
       throw new Error('No attachments found in application')
     }
 
-    const attachmentKey = attachments[0].key
-
+    const attachmentKey = attachments[0]?.key
     const fileName = (
       application.attachments as {
         [key: string]: string
