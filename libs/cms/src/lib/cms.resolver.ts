@@ -266,7 +266,10 @@ export class CmsResolver {
   async getServiceWebPage(
     @Args('input') input: GetServiceWebPageInput,
   ): Promise<ServiceWebPage | null> {
-    return this.cmsContentfulService.getServiceWebPage(input.slug, input.lang)
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+      getElasticsearchIndex(input.lang),
+      { type: 'webServiceWebPage', slug: input.slug },
+    )
   }
 
   @CacheControl(defaultCache)
