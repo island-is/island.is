@@ -275,11 +275,19 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     auth: User,
     applicationId: string,
   ): Promise<void> {
-    const deleteChange = {
-      ownerchangeId: applicationId,
-      xCorrelationID: applicationId,
+    try {
+      const deleteChange = {
+        ownerchangeId: applicationId,
+        xCorrelationID: applicationId,
+      }
+      await this.workMachineClientService.deleteOwnerChange(auth, deleteChange)
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete owner change for application ${applicationId}`,
+        error,
+      )
+      throw error
     }
-    await this.workMachineClientService.deleteOwnerChange(auth, deleteChange)
   }
 
   async deleteApplication({
@@ -288,8 +296,16 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
   }: TemplateApiModuleActionProps): Promise<void> {
     // 1. Delete charge so that the seller gets reimburshed
     const chargeId = getPaymentIdFromExternalData(application)
-    if (chargeId) {
-      await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+    try {
+      if (chargeId) {
+        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+      }
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete charge ${chargeId} for application ${application.id}`,
+        error,
+      )
+      throw error
     }
 
     // 2. Delete owner change in work machines
