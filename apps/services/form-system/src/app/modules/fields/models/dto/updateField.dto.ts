@@ -23,11 +23,13 @@ export class UpdateFieldDto {
   @ApiProperty({ type: Boolean })
   isPartOfMultiset!: boolean
 
-  // @IsOptional()
-  // @ValidateNested()
-  // @Type(() => UpdateFieldSettingsDto)
-  // @ApiProperty({ type: UpdateFieldSettingsDto })
-  // fieldSettings?: UpdateFieldSettingsDto
+  @IsNotEmpty()
+  @ApiProperty({ type: Boolean })
+  isRequired!: boolean
+
+  @IsNotEmpty()
+  @ApiProperty({ type: Boolean })
+  isHidden!: boolean
 
   @IsOptional()
   @ValidateNested()

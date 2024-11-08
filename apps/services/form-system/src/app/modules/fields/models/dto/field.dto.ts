@@ -25,6 +25,12 @@ export class FieldDto {
   @ApiProperty()
   isPartOfMultiset!: boolean
 
+  @ApiProperty()
+  isRequired!: boolean
+
+  @ApiProperty()
+  isHidden!: boolean
+
   // @ApiPropertyOptional({ type: FieldSettingsDto })
   // fieldSettings?: FieldSettingsDto
 

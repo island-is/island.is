@@ -50,11 +50,6 @@ export class ApplicationMapper {
                 isPartOfMultiset: field.isPartOfMultiset,
                 fieldType: field.fieldType,
                 fieldSettings: field.fieldSettings,
-                // fieldSettings:
-                //   this.fieldSettingsMapper.mapFieldTypeToFieldSettingsDto(
-                //     field.fieldSettings,
-                //     field.fieldType,
-                //   ),
                 values: field.values?.map((value) => {
                   return {
                     id: value.id,
