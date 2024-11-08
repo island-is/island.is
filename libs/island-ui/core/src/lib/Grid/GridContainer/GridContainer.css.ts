@@ -19,8 +19,8 @@ export const root = style({
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
-      paddingLeft: theme.grid.gutter.mobile * 2,
-      paddingRight: theme.grid.gutter.mobile * 2,
+      paddingLeft: theme.spacing[3],
+      paddingRight: theme.spacing[3],
       selectors: {
         ['& &']: {
           paddingLeft: 0,
@@ -29,8 +29,8 @@ export const root = style({
       },
     },
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      paddingLeft: theme.grid.gutter.desktop * 2,
-      paddingRight: theme.grid.gutter.desktop * 2,
+      paddingLeft: theme.spacing[6],
+      paddingRight: theme.spacing[6],
       selectors: {
         ['& &']: {
           paddingLeft: 0,
