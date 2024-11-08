@@ -16,6 +16,10 @@ import { serviceSetup as servicePortalSetup } from '../../../apps/portals/my-pag
 
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
 
+// Payments
+import { serviceSetup as paymentsWebAppServiceSetup } from '../../../apps/payments/infra/payments'
+import { serviceSetup as paymentsMicroserviceServiceSetup } from '../../../apps/services/payments/infra/payments'
+
 // Bff's
 import { serviceSetup as bffAdminPortalServiceSetup } from '../../../apps/services/bff/infra/admin-portal.infra'
 
@@ -146,6 +150,9 @@ const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
 
+const paymentsWebApp = paymentsWebAppServiceSetup()
+const paymentsMicroservice = paymentsMicroserviceServiceSetup()
+
 export const Services: EnvironmentServices = {
   prod: [
     appSystemApi,
@@ -254,6 +261,8 @@ export const Services: EnvironmentServices = {
     universityGatewayService,
     universityGatewayWorker,
     bffAdminPortalService,
+    paymentsWebApp,
+    paymentsMicroservice,
   ],
 }
 

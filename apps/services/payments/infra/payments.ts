@@ -1,13 +1,15 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const namespace = 'services-payments'
-const imageName = namespace
+const serviceName = `${namespace}`
+const imageName = `${namespace}-image`
 
-export const serviceSetup = (): ServiceBuilder<typeof namespace> =>
-  service(namespace)
+export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
+  service(serviceName)
     .namespace(namespace)
     .image(imageName)
     .db()
+    .migrations()
     .env({
       // TODO
     })
