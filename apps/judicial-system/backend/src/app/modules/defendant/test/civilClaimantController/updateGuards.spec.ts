@@ -5,6 +5,7 @@ import { CivilClaimantController } from '../../civilClaimant.controller'
 
 describe('CivilClaimantController - Update guards', () => {
   let guards: Array<new () => CanActivate>
+  const expectedGuards = [CaseExistsGuard, CaseWriteGuard]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
@@ -14,8 +15,6 @@ describe('CivilClaimantController - Update guards', () => {
   })
 
   it('should have the correct guards in the correct order', () => {
-    const expectedGuards = [CaseExistsGuard, CaseWriteGuard]
-
     expect(guards).toHaveLength(expectedGuards.length)
 
     expectedGuards.forEach((expectedGuard, index) => {
