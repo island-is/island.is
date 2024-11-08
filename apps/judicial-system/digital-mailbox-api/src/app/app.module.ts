@@ -3,7 +3,6 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 
 import { AuthModule } from '@island.is/auth-nest-tools'
-import { CmsTranslationsModule, IntlService } from '@island.is/cms-translations'
 import { ProblemModule } from '@island.is/nest/problem'
 
 import {
@@ -25,7 +24,6 @@ import { DefenderController } from './modules/defenders/defender.controller'
   imports: [
     AuditTrailModule,
     LawyersModule,
-    CmsTranslationsModule,
     CacheModule.register({
       ttl: 60 * 5 * 1000, // 5 minutes
     }),
@@ -37,6 +35,6 @@ import { DefenderController } from './modules/defenders/defender.controller'
     AuthModule.register(environment.auth),
   ],
   controllers: [CaseController, DefenderController],
-  providers: [CaseService, IntlService],
+  providers: [CaseService],
 })
 export class AppModule {}

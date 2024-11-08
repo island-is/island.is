@@ -2,8 +2,6 @@ import { IsEnum } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { FormatMessage } from '@island.is/cms-translations'
-
 import { getIntro } from '@island.is/judicial-system/consts'
 import {
   formatDate,
@@ -94,7 +92,6 @@ export class SubpoenaResponse {
   static fromInternalCaseResponse(
     internalCase: InternalCaseResponse,
     defendantNationalId: string,
-    formatMessage: FormatMessage,
     lang?: string,
   ): SubpoenaResponse {
     const t = getTranslations(lang)
@@ -109,13 +106,13 @@ export class SubpoenaResponse {
     const subpoenaType = defendantInfo?.subpoenaType
 
     const intro = getIntro(defendantInfo?.gender, lang)
-    const formatedSubpoenaInfoText = `${formatMessage(intro.intro)}${
+    const formatedSubpoenaInfoText = `${intro.intro}${
       subpoenaType
-        ? ` ${formatMessage(
+        ? ` ${
             subpoenaType === SubpoenaType.ABSENCE
               ? intro.absenceIntro
-              : intro.arrestIntro,
-          )}`
+              : intro.arrestIntro
+          }`
         : ''
     }`
 
@@ -143,7 +140,7 @@ export class SubpoenaResponse {
       data: {
         title: t.subpoena,
         subpoenaInfoText: formatedSubpoenaInfoText,
-        subpoenaNotificationDeadline: formatMessage(intro.deadline),
+        subpoenaNotificationDeadline: intro.deadline,
         subtitle: courtNameAndAddress,
         hasBeenServed: hasBeenServed,
         hasChosenDefender: Boolean(
