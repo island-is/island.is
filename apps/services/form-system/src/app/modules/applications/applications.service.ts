@@ -12,6 +12,7 @@ import { ApplicationMapper } from './models/application.mapper'
 import { Value } from '../values/models/value.model'
 // import { ValueFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
+import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 // import { BaseValueType } from '../../dataTypes/valueTypes/baseValueType.interface'
 // import { TextboxValue } from '../../dataTypes/valueTypes/models/textbox.valuetype'
 
@@ -56,10 +57,7 @@ export class ApplicationsService {
   }
 
   private createValue(type: string) {
-    const value = ValueTypeFactory.getClass(type, {
-      text: 'halló halló',
-      number: 23,
-    })
+    const value = ValueTypeFactory.getClass(type, new ValueType())
     // const value = new ValueClass(order)
     return value
   }
