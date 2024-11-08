@@ -170,10 +170,10 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
   }
 
   private prepareDigitalSignee(application: Application): DigitalSignee {
-    const phone =
-      getValueViaPath<string>(application.answers, 'about.phoneNumber') ?? ''
     const email =
       getValueViaPath<string>(application.answers, 'about.email') ?? ''
+    const phone =
+      getValueViaPath<string>(application.answers, 'about.phoneNumber') ?? ''
     return {
       email,
       phone,
