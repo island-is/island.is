@@ -1,5 +1,5 @@
-query ListVehicles($input: GetVehiclesForUserInput!) {
-  vehiclesList(input: $input) {
+query ListVehiclesV2($input: GetVehiclesListV2Input!) {
+  vehiclesListV2(input: $input) {
     vehicleList {
       ...VehicleFragment
     }
