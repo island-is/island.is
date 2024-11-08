@@ -210,6 +210,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
           )}
           primaryButtonText={formatMessage(
             strings.confirmModalPrimaryButtonText,
+            { isConfirming: !defendant.isDefenderChoiceConfirmed },
           )}
           onPrimaryButtonClick={() =>
             toggleDefenderChoiceConfirmed(
