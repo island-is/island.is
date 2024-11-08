@@ -32,10 +32,7 @@ import {
 } from '../case'
 import { CurrentDefendant, Defendant, DefendantExistsGuard } from '../defendant'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
-import {
-  SubpoenaExistsGuard,
-  SubpoenaExistsOptionalGuard,
-} from './guards/subpoenaExists.guard'
+import { SubpoenaExistsOptionalGuard } from './guards/subpoenaExists.guard'
 import { Subpoena } from './models/subpoena.model'
 
 @Controller([
