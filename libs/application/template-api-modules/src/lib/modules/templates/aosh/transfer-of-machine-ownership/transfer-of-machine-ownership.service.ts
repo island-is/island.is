@@ -30,6 +30,7 @@ import {
   MachinesWithTotalCount,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
+import { User } from '@island.is/auth-nest-tools'
 @Injectable()
 export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiService {
   constructor(
@@ -270,6 +271,17 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     return null
   }
 
+  private async deleteOwnerChange(
+    auth: User,
+    applicationId: string,
+  ): Promise<void> {
+    const deleteChange = {
+      ownerchangeId: applicationId,
+      xCorrelationID: applicationId,
+    }
+    await this.workMachineClientService.deleteOwnerChange(auth, deleteChange)
+  }
+
   async deleteApplication({
     application,
     auth,
@@ -281,11 +293,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     }
 
     // 2. Delete owner change in work machines
-    const deleteChange = {
-      ownerchangeId: application.id,
-      xCorrelationID: application.id,
-    }
-    await this.workMachineClientService.deleteOwnerChange(auth, deleteChange)
+    await this.deleteOwnerChange(auth, application.id)
 
     // 3. Notify everyone in the process that the application has been withdrawn
 
@@ -353,11 +361,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     }
 
     // 2. Delete owner change in work machines
-    const deleteChange = {
-      ownerchangeId: application.id,
-      xCorrelationID: application.id,
-    }
-    await this.workMachineClientService.deleteOwnerChange(auth, deleteChange)
+    await this.deleteOwnerChange(auth, application.id)
 
     // 3. Notify everyone in the process that the application has been withdrawn
 
