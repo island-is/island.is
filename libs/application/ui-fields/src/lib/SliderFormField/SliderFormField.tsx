@@ -9,7 +9,7 @@ import { Slider } from '@island.is/application/ui-components'
 import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
-import { Box } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 import { getDefaultValue } from '../../getDefaultValue'
 
 type SliderFormFieldProps = {
@@ -20,6 +20,27 @@ type SliderFormFieldProps = {
 export const SliderFormField: FC<
   React.PropsWithChildren<SliderFormFieldProps>
 > = ({ application, field }) => {
+  const {
+    id,
+    min,
+    max,
+    title,
+    titleVariant,
+    trackStyle,
+    calculateCellStyle,
+    showLabel,
+    showMinMaxLabels,
+    showRemainderOverlay,
+    showProgressOverlay,
+    showToolTip,
+    label,
+    rangeDates,
+    onChangeEnd,
+    labelMultiplier,
+    snap,
+    step,
+    saveAsString,
+  } = field
   const { clearErrors, setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const computeMax = (
@@ -36,60 +57,63 @@ export const SliderFormField: FC<
   const finalMax = useMemo(
     () =>
       computeMax(
-        field.max as MaybeWithApplicationAndField<number>,
+        max as MaybeWithApplicationAndField<number>,
         application,
         field,
       ),
-    [field, application],
+    [field, max, application],
   )
 
   return (
-    <Box>
-      <Controller
-        name={field.id}
-        defaultValue={
-          Number(getValueViaPath(application.answers, field.id)) ||
-          getDefaultValue(field, application) ||
-          field.min
-        }
-        render={({ field: { onChange, value } }) => (
-          <Slider
-            min={field.min}
-            max={finalMax}
-            step={field.step}
-            snap={field.snap}
-            trackStyle={field.trackStyle}
-            calculateCellStyle={field.calculateCellStyle}
-            showLabel={field.showLabel}
-            showMinMaxLabels={field.showMinMaxLabels}
-            showRemainderOverlay={field.showRemainderOverlay}
-            showProgressOverlay={field.showProgressOverlay}
-            showToolTip={field.showToolTip}
-            label={{
-              singular: formatText(
-                field.label.singular,
-                application,
-                formatMessage,
-              ),
-              plural: formatText(
-                field.label.plural,
-                application,
-                formatMessage,
-              ),
-            }}
-            rangeDates={field.rangeDates}
-            currentIndex={Number(value)}
-            onChange={(val) => {
-              clearErrors(field.id)
-              const value = field.saveAsString ? String(val) : val
-              onChange(value)
-              setValue(field.id, value)
-            }}
-            onChangeEnd={field.onChangeEnd}
-            labelMultiplier={field.labelMultiplier}
-          />
-        )}
-      />
-    </Box>
+    <div>
+      {title && (
+        <Text variant={titleVariant ?? 'h2'}>
+          {formatText(title, application, formatMessage)}
+        </Text>
+      )}
+      <Box paddingTop={8}>
+        <Controller
+          name={field.id}
+          defaultValue={
+            Number(getValueViaPath(application.answers, field.id)) ||
+            getDefaultValue(field, application) ||
+            min
+          }
+          render={({ field: { onChange, value } }) => (
+            <Slider
+              min={min}
+              max={finalMax}
+              step={step}
+              snap={snap}
+              trackStyle={trackStyle}
+              calculateCellStyle={calculateCellStyle}
+              showLabel={showLabel}
+              showMinMaxLabels={showMinMaxLabels}
+              showRemainderOverlay={showRemainderOverlay}
+              showProgressOverlay={showProgressOverlay}
+              showToolTip={showToolTip}
+              label={{
+                singular: formatText(
+                  label.singular,
+                  application,
+                  formatMessage,
+                ),
+                plural: formatText(label.plural, application, formatMessage),
+              }}
+              rangeDates={rangeDates}
+              currentIndex={Number(value)}
+              onChange={(val) => {
+                clearErrors(id)
+                const value = saveAsString ? String(val) : val
+                onChange(value)
+                setValue(id, value)
+              }}
+              onChangeEnd={onChangeEnd}
+              labelMultiplier={labelMultiplier}
+            />
+          )}
+        />
+      </Box>
+    </div>
   )
 }
