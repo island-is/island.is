@@ -1804,7 +1804,7 @@ namespaces:
 payments-web:
   enabled: true
   env:
-    BASEPATH: '/gredisla'
+    BASEPATH: '/greidsla'
     LOG_LEVEL: 'info'
     NEXT_PUBLIC_BACKEND_URL: '/backend'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
@@ -1843,7 +1843,7 @@ payments-web:
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
-            - '/gredisla'
+            - '/greidsla'
   namespace: 'payments'
   podDisruptionBudget:
     maxUnavailable: 1
