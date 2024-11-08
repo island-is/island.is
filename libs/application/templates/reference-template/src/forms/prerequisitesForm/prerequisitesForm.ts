@@ -6,18 +6,31 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
 import { UserProfileApi } from '@island.is/application/types'
 import {
   ReferenceDataApi,
   MyMockProvider,
   NationalRegistryApi,
 } from '../../dataProviders'
+import { createElement } from 'react'
+import { Logo } from '../../components/Logo/Logo'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesDraft',
   title: 'Forkröfur',
   mode: FormModes.NOT_STARTED,
+  // The logo prop can either take in a React component or a function that returns a React component.
+  // Dynamic logo can be based on answers or external data
+  logo: (application: Application) => {
+    const logo = createElement(Logo, { application })
+    return () => logo
+  },
   renderLastScreenButton: true,
   children: [
     buildSection({
