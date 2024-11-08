@@ -179,7 +179,6 @@ const Processing: FC = () => {
     noNationalId?: boolean | null,
     civilClaimantId?: string | null,
   ) => {
-    console.log(nationalId, civilClaimantId)
     if (!civilClaimantId) {
       return
     }
@@ -279,13 +278,6 @@ const Processing: FC = () => {
     // We want this hook to run exclusively when personData changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personData])
-
-  useEffect(() => {
-    toast.error('Aðgerð heppnaðist')
-    toast.info('Aðgerð heppnaðist')
-    toast.warning('Aðgerð heppnaðist')
-    toast.success('Aðgerð heppnaðist')
-  }, [])
 
   return (
     <PageLayout
