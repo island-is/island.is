@@ -69,7 +69,7 @@ export const serviceSetup = (
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
         },
-        paths: ['/stjornbord/bff'],
+        paths: [`/${key}/bff`],
       },
     })
     .grantNamespaces('identity-server')
