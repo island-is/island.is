@@ -22,6 +22,9 @@ import {
   CaseNotificationType,
   CaseState,
   CaseType,
+  DefendantNotificationType,
+  DefenderChoice,
+  isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
@@ -85,6 +88,66 @@ export class DefendantService {
     }
 
     return defendants[0]
+  }
+
+  private async sendUpdateDefendantMessages(
+    theCase: Case,
+    updatedDefendant: Defendant,
+    oldDefendant: Defendant,
+    user: User,
+  ) {
+    // Handling of updates sent to the court system
+    if (theCase.courtCaseNumber) {
+      // A defendant is updated after the case has been received by the court.
+      if (updatedDefendant.noNationalId !== oldDefendant.noNationalId) {
+        // This should only happen to non-indictment cases.
+        // A defendant nationalId is added or removed. Attempt to add the defendant to the court case.
+        // In case there is no national id, the court will be notified.
+        await this.messageService.sendMessagesToQueue([
+          this.getMessageForDeliverDefendantToCourt(updatedDefendant, user),
+        ])
+      } else if (updatedDefendant.nationalId !== oldDefendant.nationalId) {
+        // This should only happen to non-indictment cases.
+        // A defendant is replaced. Attempt to add the defendant to the court case,
+        // but also ask the court to verify defendants.
+        await this.messageService.sendMessagesToQueue([
+          this.getMessageForSendDefendantsNotUpdatedAtCourtNotification(
+            theCase,
+            user,
+          ),
+          this.getMessageForDeliverDefendantToCourt(updatedDefendant, user),
+        ])
+      } else if (
+        updatedDefendant.defenderEmail !== oldDefendant.defenderEmail
+      ) {
+        // This should only happen to indictment cases.
+        // A defendant's defender email is updated.
+        // Attempt to update the defendant in the court case.
+        await this.messageService.sendMessagesToQueue([
+          this.getMessageForDeliverDefendantToCourt(updatedDefendant, user),
+        ])
+      }
+    }
+
+    // Handling of messages sent to participants for indictment cases
+    if (isIndictmentCase(theCase.type)) {
+      // Defender was just confirmed by judge
+      if (
+        updatedDefendant.isDefenderChoiceConfirmed &&
+        !oldDefendant.isDefenderChoiceConfirmed &&
+        (updatedDefendant.defenderChoice === DefenderChoice.CHOOSE ||
+          updatedDefendant.defenderChoice === DefenderChoice.DELEGATE)
+      ) {
+        await this.messageService.sendMessagesToQueue([
+          {
+            type: MessageType.DEFENDANT_NOTIFICATION,
+            caseId: theCase.id,
+            body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
+            elementId: updatedDefendant.id,
+          },
+        ])
+      }
+    }
   }
 
   async createForNewCase(
@@ -164,35 +227,12 @@ export class DefendantService {
       theCase.id,
     )
 
-    if (theCase.courtCaseNumber) {
-      // A defendant is updated after the case has been received by the court.
-      if (updatedDefendant.noNationalId !== defendant.noNationalId) {
-        // This should only happen to non-indictment cases.
-        // A defendant nationalId is added or removed. Attempt to add the defendant to the court case.
-        // In case there is no national id, the court will be notified.
-        await this.messageService.sendMessagesToQueue([
-          this.getMessageForDeliverDefendantToCourt(defendant, user),
-        ])
-      } else if (updatedDefendant.nationalId !== defendant.nationalId) {
-        // This should only happen to non-indictment cases.
-        // A defendant is replaced. Attempt to add the defendant to the court case,
-        // but also ask the court to verify defendants.
-        await this.messageService.sendMessagesToQueue([
-          this.getMessageForSendDefendantsNotUpdatedAtCourtNotification(
-            theCase,
-            user,
-          ),
-          this.getMessageForDeliverDefendantToCourt(defendant, user),
-        ])
-      } else if (updatedDefendant.defenderEmail !== defendant.defenderEmail) {
-        // This should only happen to indictment cases.
-        // A defendant's defender email is updated.
-        // Attempt to update the defendant in the court case.
-        await this.messageService.sendMessagesToQueue([
-          this.getMessageForDeliverDefendantToCourt(defendant, user),
-        ])
-      }
-    }
+    await this.sendUpdateDefendantMessages(
+      theCase,
+      updatedDefendant,
+      defendant,
+      user,
+    )
 
     return updatedDefendant
   }
