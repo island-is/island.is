@@ -6,8 +6,7 @@ import {
 
 const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
 const outsideWorkingHours = new Date(2021, 1, 1, 7, 0, 0)
-const HOUR_IN_MS = 3600000;
-
+const HOUR_IN_MS = 3600000
 
 describe('utils', () => {
   describe('clamp', () => {
