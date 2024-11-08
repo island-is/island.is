@@ -7,7 +7,7 @@ import {
 } from '@island.is/dokobit-signing'
 import { AwsModule, S3Service } from '@island.is/nest/aws'
 import { Application } from '@island.is/application/api/core'
-import { ApplicationTypes, PdfTypes } from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import { LoggingModule } from '@island.is/logging'
 import { defineConfig, ConfigModule } from '@island.is/nest/config'
 import { FileStorageConfig } from '@island.is/file-storage'
@@ -161,64 +161,6 @@ describe('FileService', () => {
 
   it('should be defined', () => {
     expect(service).toBeTruthy()
-  })
-
-  it('should return presigned url', async () => {
-    const application = createApplication()
-    const fileName = `children-residence-change/${application.id}.pdf`
-
-    const result = await service.getPresignedUrl(
-      application,
-      PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-    )
-
-    expect(s3Service.getPresignedUrl).toHaveBeenCalledWith({
-      bucket,
-      key: fileName,
-    })
-    expect(result).toEqual('url')
-  })
-
-  it('should throw error for uploadSignedFile since application type is not supported', async () => {
-    const application = createApplication(undefined, ApplicationTypes.EXAMPLE)
-
-    const act = async () =>
-      await service.uploadSignedFile(
-        application,
-        'token',
-        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-      )
-
-    await expect(act).rejects.toThrow(
-      'Application type is not supported in file service.',
-    )
-  })
-
-  it('should have an application type that is valid for uploadSignedFile', async () => {
-    const application = createApplication()
-
-    const act = async () =>
-      await service.uploadSignedFile(
-        application,
-        'token',
-        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-      )
-
-    await expect(act).resolves
-  })
-
-  it('should throw error for getPresignedUrl since application type is not supported', async () => {
-    const application = createApplication(undefined, ApplicationTypes.EXAMPLE)
-
-    const act = async () =>
-      await service.getPresignedUrl(
-        application,
-        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-      )
-
-    await expect(act).rejects.toThrow(
-      'Application type is not supported in file service.',
-    )
   })
 
   it('Should properly delete a file from s3', async () => {

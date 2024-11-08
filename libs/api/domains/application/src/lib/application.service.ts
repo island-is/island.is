@@ -13,6 +13,7 @@ import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
 import { ApplicationPayment } from './application.model'
+import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 import { DeleteApplicationInput } from './dto/deleteApplication.input'
 import {
   ApplicationApplicationsAdminInput,
@@ -196,6 +197,17 @@ export class ApplicationService {
   async deleteApplication(input: DeleteApplicationInput, auth: Auth) {
     return this.applicationApiWithAuth(auth).applicationControllerDelete({
       id: input.id,
+    })
+  }
+
+  async attachmentPresignedURL(input: AttachmentPresignedUrlInput, auth: Auth) {
+    const { id, attachmentKey } = input
+
+    return await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerGetAttachmentPresignedURL({
+      id,
+      attachmentKey,
     })
   }
 }
