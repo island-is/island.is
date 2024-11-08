@@ -7,18 +7,16 @@ import { DEFENDER_INDICTMENT_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseType,
   CivilClaimantNotificationType,
-  DefendantNotificationType,
 } from '@island.is/judicial-system/types'
 
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
 
 import { Case } from '../../../../case'
-import { CivilClaimant, Defendant } from '../../../../defendant'
-import { DefendantNotificationDto } from '../../../dto/defendantNotification.dto'
+import { CivilClaimant } from '../../../../defendant'
+import { CivilClaimantNotificationDto } from '../../../dto/civilClaimantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
 import { Notification } from '../../../models/notification.model'
 import { notificationModuleConfig } from '../../../notification.config'
-import { CivilClaimantNotificationDto } from '../../../dto/civilClaimantNotification.dto'
 
 jest.mock('../../../../../factories')
 
@@ -89,33 +87,81 @@ describe('InternalNotificationController - Send spokesperson assigned notificati
     }
   })
 
-  describe('when sending a spokesperson assigned notification', () => {
-    const civilClaimant = {
-      id: civilClaimantId,
-      caseId,
-      isSpokespersonConfirmed: true,
-      spokespersonIsLawyer: false,
-      spokespersonNationalId: '1234567890',
-    } as CivilClaimant
-
-    beforeEach(async () => {
-      await givenWhenThen(
+  describe.each([
+    { isSpokespersonConfirmed: true, shouldSendEmail: true },
+    { isSpokespersonConfirmed: false, shouldSendEmail: false },
+  ])(
+    'when sending a spokesperson assigned notification',
+    ({ isSpokespersonConfirmed, shouldSendEmail }) => {
+      const civilClaimant = {
+        id: civilClaimantId,
         caseId,
-        civilClaimantId,
-        {
-          id: caseId,
-          court,
-          type: CaseType.INDICTMENT,
-          civilClaimants: [civilClaimant],
-          hasCivilClaims: true,
-        } as Case,
-        civilClaimant,
-        civilClaimantNotificationDTO,
-      )
-    })
+        isSpokespersonConfirmed,
+        spokespersonIsLawyer: true,
+        spokespersonNationalId: '1234567890',
+        spokespersonName: 'Ben 10',
+        spokespersonEmail: 'ben10@omnitrix.is',
+      } as CivilClaimant
 
-    it('should send a spokesperson assigned notification', async () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(1)
-    })
-  })
+      beforeEach(async () => {
+        await givenWhenThen(
+          caseId,
+          civilClaimantId,
+          {
+            id: caseId,
+            court,
+            courtCaseNumber: 'R-123-456',
+            type: CaseType.INDICTMENT,
+            civilClaimants: [civilClaimant],
+            hasCivilClaims: true,
+          } as Case,
+          civilClaimant,
+          civilClaimantNotificationDTO,
+        )
+      })
+
+      test(`should ${
+        shouldSendEmail ? '' : 'not '
+      }send a spokesperson assigned notification`, async () => {
+        if (shouldSendEmail) {
+          expect(mockEmailService.sendEmail).toBeCalledTimes(1)
+          expect(mockEmailService.sendEmail).toBeCalledWith({
+            from: {
+              name: mockConfig.email.fromName,
+              address: mockConfig.email.fromEmail,
+            },
+            to: [
+              {
+                name: civilClaimant.spokespersonName,
+                address: civilClaimant.spokespersonEmail,
+              },
+            ],
+            replyTo: {
+              name: mockConfig.email.replyToName,
+              address: mockConfig.email.replyToEmail,
+            },
+            attachments: undefined,
+            subject: `Héraðsdómur Reykjavíkur - aðgangur að máli`,
+            html: expect.stringContaining(DEFENDER_INDICTMENT_ROUTE),
+            text: expect.stringContaining(
+              `Héraðsdómur Reykjavíkur hefur skráð þig lögmann einkaréttarkröfuhafa í máli R-123-456`,
+            ),
+          })
+          expect(mockNotificationModel.create).toHaveBeenCalledTimes(1)
+          expect(mockNotificationModel.create).toHaveBeenCalledWith({
+            caseId,
+            type: civilClaimantNotificationDTO.type,
+            recipients: [
+              {
+                address: civilClaimant.spokespersonEmail,
+                success: shouldSendEmail,
+              },
+            ],
+          })
+        } else {
+          expect(mockEmailService.sendEmail).not.toBeCalled()
+        }
+      })
+    },
+  )
 })

@@ -12,10 +12,10 @@ import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
+import { DEFENDER_INDICTMENT_ROUTE } from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { CivilClaimantNotificationType } from '@island.is/judicial-system/types'
 
-import { formatDefenderRoute } from '../../formatters'
 import { Case } from '../case'
 import { CivilClaimant } from '../defendant'
 import { EventService } from '../event'
@@ -58,12 +58,6 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     const courtCaseNumber = theCase.courtCaseNumber
     const spokespersonHasAccessToRVG = !!civilClaimant.spokespersonNationalId
 
-    const overviewUrl = formatDefenderRoute(
-      this.config.clientUrl,
-      theCase.type,
-      theCase.id,
-    )
-
     const formattedSubject = this.formatMessage(subject, {
       courtName,
       courtCaseNumber,
@@ -73,8 +67,8 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
       courtName,
       courtCaseNumber,
       spokespersonHasAccessToRVG,
-      spokesPersonIsLawyer: civilClaimant.spokespersonIsLawyer,
-      linkStart: `<a href="${overviewUrl}">`,
+      spokespersonIsLawyer: civilClaimant.spokespersonIsLawyer,
+      linkStart: `<a href="${this.config.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${theCase.id}">`,
       linkEnd: '</a>',
     })
     const promises: Promise<Recipient>[] = []
@@ -97,17 +91,51 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     return this.recordNotification(theCase.id, notificationType, recipients)
   }
 
+  private shouldSendSpokespersonAssignedNotification(
+    theCase: Case,
+    civilClaimant: CivilClaimant,
+  ): boolean {
+    if (
+      !civilClaimant.spokespersonEmail ||
+      !civilClaimant.isSpokespersonConfirmed
+    ) {
+      return false
+    }
+
+    const hasSentNotificationBefore = this.hasReceivedNotification(
+      CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED,
+      civilClaimant.spokespersonEmail,
+      theCase.notifications,
+    )
+
+    if (!hasSentNotificationBefore) {
+      return true
+    }
+
+    return false
+  }
+
   private async sendSpokespersonAssignedNotification(
     civilClaimant: CivilClaimant,
     theCase: Case,
   ): Promise<DeliverResponse> {
-    return this.sendEmails(
-      civilClaimant,
+    const shouldSend = this.shouldSendSpokespersonAssignedNotification(
       theCase,
-      CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED,
-      strings.civilClaimantSpokespersonAssignedSubject,
-      strings.civilClaimantSpokespersonAssignedBody,
+      civilClaimant,
     )
+
+    if (shouldSend) {
+      return this.sendEmails(
+        civilClaimant,
+        theCase,
+        CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED,
+        strings.civilClaimantSpokespersonAssignedSubject,
+        strings.civilClaimantSpokespersonAssignedBody,
+      )
+    }
+
+    // Nothing should be sent so we return a successful response
+    return { delivered: true }
   }
 
   private sendNotification(

@@ -10,7 +10,7 @@ export const strings = {
   civilClaimantSpokespersonAssignedBody: defineMessage({
     id: 'judicial.system.backend:civil_claimant_notifications.indictment_assigned_body',
     defaultMessage:
-      '{courtName} hefur skráð þig {spokespersonIsLawyer, select, true {lögmann einkaréttarkröfuhafa} other {réttargæslumann einkaréttarkröfuhafa} other {verjanda}} í máli {courtCaseNumber}.<br /><br />{spokespersonHasAccessToRVG, select, true {Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast málið hjá dómstólnum.}}.',
+      '{courtName} hefur skráð þig {spokespersonIsLawyer, select, true {lögmann einkaréttarkröfuhafa} other {réttargæslumann einkaréttarkröfuhafa}} í máli {courtCaseNumber}.<br /><br />{spokespersonHasAccessToRVG, select, true {Sjá nánar á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Þú getur nálgast málið hjá dómstólnum.}}.',
     description:
       'Body of the notification when a civil claimant spokesperson is assigned and confirmed',
   }),
