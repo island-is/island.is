@@ -92,8 +92,6 @@ export const createTestingSubpoenaModule = async () => {
 
   const fileService = subpoenaModule.get<FileService>(FileService)
 
-  const eventService = subpoenaModule.get<EventService>(EventService)
-
   const subpoenaModel = await subpoenaModule.resolve<typeof Subpoena>(
     getModelToken(Subpoena),
   )
