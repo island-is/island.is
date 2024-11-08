@@ -2,7 +2,6 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import {
   RentalHousingCategoryClass,
-  RentalHousingCategoryClassGroup,
   RentOtherFeesPayeeOptions,
 } from './constants'
 import {
