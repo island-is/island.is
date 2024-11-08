@@ -145,7 +145,6 @@ const IndictmentOverview: FC = () => {
     [router, workingCase.id],
   )
 
-  console.log('asdasd')
   return (
     <PageLayout
       workingCase={workingCase}
