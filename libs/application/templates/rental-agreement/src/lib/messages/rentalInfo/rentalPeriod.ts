@@ -58,7 +58,6 @@ export const rentalPeriod = defineMessages({
   },
 
   // Error messages
-
   errorAgreementStartDateNotFilled: {
     id: 'ra.application:dataSchema.errorStartDateNotFilled',
     defaultMessage: 'Veldu upphafsdag samnings',
