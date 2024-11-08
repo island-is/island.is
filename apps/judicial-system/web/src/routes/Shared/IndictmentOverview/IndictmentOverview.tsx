@@ -174,9 +174,8 @@ const IndictmentOverview: FC = () => {
             defendant.subpoenas?.map(
               (subpoena) =>
                 isSuccessfulServiceStatus(subpoena.serviceStatus) && (
-                  <Box marginBottom={2}>
+                  <Box marginBottom={2} key={`${defendant.id}${subpoena.id}`}>
                     <ServiceAnnouncement
-                      key={`${defendant.id}${subpoena.id}`}
                       defendant={defendant}
                       subpoena={subpoena}
                     />
