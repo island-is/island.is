@@ -27,5 +27,6 @@ export const simpleInputsSection = buildSection({
     phoneSubsection,
     dateSubsection,
     fileUploadSubsection,
+    sliderSubsection,
   ],
 })
