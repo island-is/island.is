@@ -38717,6 +38717,7 @@ __metadata:
     mailparser: 3.5.0
     markdown-to-jsx: 7.1.7
     memoizee: 0.4.15
+    mobx: 6.3.7
     msw: 0.21.3
     nest-winston: 1.4.0
     next: 14.2.3
@@ -43899,6 +43900,13 @@ __metadata:
     react-native:
       optional: true
   checksum: 07ce6eb297ddab2cc693df7350a3e2f730194cc6eb56bd912f80e28f9427237569e0bda6b30167154faf094e7c5e5ff360abd52acd2860d9a0d0e53320617ee8
+  languageName: node
+  linkType: hard
+
+"mobx@npm:6.3.7":
+  version: 6.3.7
+  resolution: "mobx@npm:6.3.7"
+  checksum: c3ad168d67dcf3c3ddf5f06cf3225fc2b99205cde55a9884ad711a762dc888b81c22d2a97ab987a6bff04f00d3cfb6610af516995ab48221920e9123f3f74836
   languageName: node
   linkType: hard
 
