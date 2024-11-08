@@ -67,7 +67,7 @@ export const ToastContainer: FC<ToastProps> = ({
         position="bottom-right"
         autoClose={timeout}
         hideProgressBar={hideProgressBar}
-        closeButton={true} // {closeButton}
+        closeButton={closeButton}
         closeOnClick
         pauseOnFocusLoss
         draggable
