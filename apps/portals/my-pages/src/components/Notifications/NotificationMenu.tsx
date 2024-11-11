@@ -115,8 +115,8 @@ const NotificationMenu = ({
               />
             ))}
             <Box
-              paddingTop={2}
-              paddingBottom={1}
+              paddingTop={3}
+              paddingBottom={2}
               textAlign="center"
               width="full"
             >
@@ -127,7 +127,7 @@ const NotificationMenu = ({
                 <Button
                   icon="arrowForward"
                   iconType="filled"
-                  size="medium"
+                  size="small"
                   type="text"
                   variant="text"
                   unfocusable
