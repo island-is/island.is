@@ -114,7 +114,8 @@ export const Additions = ({ application }: Props) => {
 
     // this should never happen, but how do we handle it?
     if (!Array.isArray(currentAdditions)) {
-      throw new Error('Additions must be an array')
+      console.error('Additions must be an array')
+      currentAdditions = []
     }
 
     const newAddition = getAddition(additions.length + 1, asRoman)
