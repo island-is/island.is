@@ -43,6 +43,7 @@ export class IdsService {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: this.createPARAuthorizationHeader(),
           },
           body: new URLSearchParams(body).toString(),
         },
@@ -123,6 +124,22 @@ export class IdsService {
   }
 
   /**
+   * Creates a Basic Authorization header for the PAR (Pushed Authorization Requests)
+   * The client ID and secret are url encoded and concatenated with a colon and then base64 encoded
+   *
+   * @see https://datatracker.ietf.org/doc/html/rfc6749#section-2.3.1
+   */
+  createPARAuthorizationHeader() {
+    const { ids } = this.config
+    const basicAuth = `${encodeURIComponent(ids.clientId)}:${encodeURIComponent(
+      ids.secret,
+    )}`
+    const base64Auth = Buffer.from(basicAuth).toString('base64')
+
+    return `Basic ${base64Auth}`
+  }
+
+  /**
    * Fetches the PAR (Pushed Authorization Requests) from the Ids
    */
   public async getPar(args: {
@@ -131,10 +148,10 @@ export class IdsService {
     loginHint?: string
     prompt?: string
   }) {
-    return this.postRequest<ParResponse>('/connect/par', {
-      client_secret: this.config.ids.secret,
-      ...this.getLoginSearchParams(args),
-    })
+    return this.postRequest<ParResponse>(
+      '/connect/par',
+      this.getLoginSearchParams(args),
+    )
   }
 
   /**
@@ -150,13 +167,9 @@ export class IdsService {
     code: string
     codeVerifier: string
   }) {
-    const { ids } = this.config
-
     return this.postRequest<TokenResponse>('/connect/token', {
       grant_type: 'authorization_code',
       code,
-      client_secret: ids.secret,
-      client_id: ids.clientId,
       redirect_uri: this.config.callbacksRedirectUris.login,
       code_verifier: codeVerifier,
     })
@@ -169,13 +182,10 @@ export class IdsService {
    */
   public async refreshToken(refreshToken: string) {
     const decryptedRefreshToken = this.cryptoService.decrypt(refreshToken)
-    const { ids } = this.config
 
     return this.postRequest<TokenResponse>('/connect/token', {
       grant_type: 'refresh_token',
       refresh_token: decryptedRefreshToken,
-      client_secret: ids.secret,
-      client_id: ids.clientId,
     })
   }
 
@@ -190,13 +200,10 @@ export class IdsService {
     tokenTypeHint: 'access_token' | 'refresh_token',
   ) {
     const decryptedToken = this.cryptoService.decrypt(token)
-    const { ids } = this.config
 
     return this.postRequest('/connect/revocation', {
       token: decryptedToken,
       token_type_hint: tokenTypeHint,
-      client_secret: ids.secret,
-      client_id: ids.clientId,
     })
   }
 }
