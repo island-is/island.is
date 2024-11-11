@@ -69,21 +69,19 @@ export class InternalDefendantController {
     type: Defendant,
     description: 'Updates defendant information by case and national id',
   })
-  async updateDefendant(
+  updateDefendant(
     @Param('caseId') caseId: string,
-    @Param('defendantNationalId') defendantNationalId: string,
+    @Param('defendantNationalId') _: string,
     @CurrentCase() theCase: Case,
     @CurrentDefendant() defendant: Defendant,
     @Body() updatedDefendantChoice: InternalUpdateDefendantDto,
   ): Promise<Defendant> {
     this.logger.debug(`Updating defendant info for ${caseId}`)
 
-    const updatedDefendant = await this.defendantService.updateByNationalId(
+    return this.defendantService.updateRestricted(
       theCase,
       defendant,
       updatedDefendantChoice,
     )
-
-    return updatedDefendant
   }
 }
