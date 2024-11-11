@@ -6,7 +6,7 @@ import {
   SitemapTreeNodeType as TreeNodeType,
 } from '@island.is/shared/types'
 
-export type { Tree, TreeNode, TreeNodeType }
+export { type Tree, type TreeNode, TreeNodeType }
 
 export const ENTRY_CONTENT_TYPE_ID = 'organizationParentSubpage'
 
