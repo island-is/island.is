@@ -134,12 +134,6 @@ export class TransportAuthorityApi {
     // the current timestamp
     const todayStr = new Date().toISOString()
 
-    // No need to continue with this validation in user is neither seller nor buyer
-    // (only time application data changes is on state change from these roles)
-    if (user.nationalId !== sellerSsn && user.nationalId !== buyerSsn) {
-      return null
-    }
-
     const filteredBuyerCoOwnerAndOperator =
       answers?.buyerCoOwnerAndOperator?.filter(
         ({ wasRemoved }) => wasRemoved !== 'true',
@@ -291,13 +285,6 @@ export class TransportAuthorityApi {
     user: User,
     answers: OperatorChangeAnswers,
   ): Promise<OperatorChangeValidation | null> {
-    // No need to continue with this validation in user is not owner
-    // (only time application data changes is on state change from that role)
-    const ownerSsn = answers?.owner?.nationalId
-    if (user.nationalId !== ownerSsn) {
-      return null
-    }
-
     const permno = answers?.pickVehicle?.plate
 
     const filteredOldOperators = answers?.oldOperators?.filter(

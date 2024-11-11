@@ -10,14 +10,19 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect } from 'react'
+import { Dispatch, FC, SetStateAction, useEffect } from 'react'
 import { TransferOfVehicleOwnershipAnswers } from '../..'
 import { VALIDATE_VEHICLE_OWNER_CHANGE } from '../../graphql/queries'
 import { applicationCheck, payment } from '../../lib/messages'
 
+interface Props {
+  showErrorOnly?: boolean
+  setValidationErrorFound?: Dispatch<SetStateAction<boolean>>
+}
+
 export const ValidationErrorMessages: FC<
-  React.PropsWithChildren<FieldBaseProps>
-> = (props) => {
+  React.PropsWithChildren<Props & FieldBaseProps>
+> = ({ showErrorOnly, setValidationErrorFound, ...props }) => {
   const { application, setFieldLoadingState } = props
 
   const { formatMessage } = useLocale()
@@ -67,12 +72,18 @@ export const ValidationErrorMessages: FC<
             : null,
         },
       },
+      onCompleted: (data) => {
+        if (data?.vehicleOwnerChangeValidation?.hasError) {
+          setValidationErrorFound?.(true)
+        }
+      },
+      fetchPolicy: 'no-cache',
     },
   )
 
   useEffect(() => {
     setFieldLoadingState?.(loading)
-  }, [loading])
+  }, [loading, setFieldLoadingState])
 
   return data?.vehicleOwnerChangeValidation?.hasError &&
     data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (
@@ -100,7 +111,7 @@ export const ValidationErrorMessages: FC<
                     error?.errorNo
 
                   return (
-                    <Bullet>
+                    <Bullet key={error.errorNo}>
                       {message || defaultMessage || fallbackMessage}
                     </Bullet>
                   )
@@ -111,7 +122,7 @@ export const ValidationErrorMessages: FC<
         }
       />
     </Box>
-  ) : (
+  ) : !showErrorOnly ? (
     <Box>
       <AlertMessage
         type="info"
@@ -125,5 +136,5 @@ export const ValidationErrorMessages: FC<
         }
       />
     </Box>
-  )
+  ) : null
 }

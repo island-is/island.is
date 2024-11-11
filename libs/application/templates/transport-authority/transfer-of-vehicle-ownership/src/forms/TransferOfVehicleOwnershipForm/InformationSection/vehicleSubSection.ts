@@ -7,7 +7,6 @@ import {
   buildHiddenInput,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { VehiclesCurrentVehicle } from '../../../shared'
 import { getSelectedVehicle } from '../../../utils'
 
 export const vehicleSubSection = buildSubSection({
@@ -29,7 +28,7 @@ export const vehicleSubSection = buildSubSection({
             const vehicle = getSelectedVehicle(
               application.externalData,
               application.answers,
-            ) as VehiclesCurrentVehicle
+            )
             return vehicle?.permno
           },
         }),
@@ -43,7 +42,7 @@ export const vehicleSubSection = buildSubSection({
             const vehicle = getSelectedVehicle(
               application.externalData,
               application.answers,
-            ) as VehiclesCurrentVehicle
+            )
             return vehicle?.make
           },
         }),
@@ -72,7 +71,7 @@ export const vehicleSubSection = buildSubSection({
             const vehicle = getSelectedVehicle(
               application.externalData,
               application.answers,
-            ) as VehiclesCurrentVehicle
+            )
             return vehicle?.requireMileage || false
           },
         }),
@@ -82,7 +81,7 @@ export const vehicleSubSection = buildSubSection({
             const vehicle = getSelectedVehicle(
               application.externalData,
               application.answers,
-            ) as VehiclesCurrentVehicle
+            )
             return vehicle?.mileageReading || ''
           },
         }),
@@ -92,17 +91,14 @@ export const vehicleSubSection = buildSubSection({
           width: 'full',
           variant: 'number',
           condition: (answers, externalData) => {
-            const vehicle = getSelectedVehicle(
-              externalData,
-              answers,
-            ) as VehiclesCurrentVehicle
+            const vehicle = getSelectedVehicle(externalData, answers)
             return vehicle?.requireMileage || false
           },
           placeholder(application) {
             const vehicle = getSelectedVehicle(
               application.externalData,
               application.answers,
-            ) as VehiclesCurrentVehicle
+            )
             return vehicle?.mileageReading
               ? `Síðasta skráning ${vehicle.mileageReading} Km`
               : ''

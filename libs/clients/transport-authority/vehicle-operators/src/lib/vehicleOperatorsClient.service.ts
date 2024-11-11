@@ -123,33 +123,48 @@ export class VehicleOperatorsClient {
     permno: string,
     operators: Operator[],
     mileage?: number | null,
-  ): Promise<void> {
+  ): Promise<OperatorChangeValidation> {
+    let errorMessages: ErrorMessage[] | undefined
+
     if (operators.length === 0) {
-      await this.operatorsApiWithAuth(auth).closeWithoutcontractPost({
-        apiVersion: '3.0',
-        apiVersion2: '3.0',
-        postCloseOperatorsWithoutContractModel: {
-          permno: permno,
-          endDate: new Date(),
-          reportingPersonIdNumber: auth.nationalId,
-        },
-      })
+      try {
+        await this.operatorsApiWithAuth(auth).closeWithoutcontractPost({
+          apiVersion: '3.0',
+          apiVersion2: '3.0',
+          postCloseOperatorsWithoutContractModel: {
+            permno: permno,
+            endDate: new Date(),
+            reportingPersonIdNumber: auth.nationalId,
+          },
+        })
+      } catch (e) {
+        errorMessages = getCleanErrorMessagesFromTryCatch(e)
+      }
     } else {
-      await this.operatorsApiWithAuth(auth).withoutcontractPost({
-        apiVersion: '3.0',
-        apiVersion2: '3.0',
-        postOperatorsWithoutContractModel: {
-          permno: permno,
-          startDate: new Date(),
-          reportingPersonIdNumber: auth.nationalId,
-          onlyRunFlexibleWarning: false,
-          mileage: mileage,
-          operators: operators.map((operator) => ({
-            personIdNumber: operator.ssn || '',
-            mainOperator: operator.isMainOperator ? 1 : 0,
-          })),
-        },
-      })
+      try {
+        await this.operatorsApiWithAuth(auth).withoutcontractPost({
+          apiVersion: '3.0',
+          apiVersion2: '3.0',
+          postOperatorsWithoutContractModel: {
+            permno: permno,
+            startDate: new Date(),
+            reportingPersonIdNumber: auth.nationalId,
+            onlyRunFlexibleWarning: false,
+            mileage: mileage,
+            operators: operators.map((operator) => ({
+              personIdNumber: operator.ssn || '',
+              mainOperator: operator.isMainOperator ? 1 : 0,
+            })),
+          },
+        })
+      } catch (e) {
+        errorMessages = getCleanErrorMessagesFromTryCatch(e)
+      }
+    }
+
+    return {
+      hasError: !!errorMessages?.length,
+      errorMessages: errorMessages,
     }
   }
 }

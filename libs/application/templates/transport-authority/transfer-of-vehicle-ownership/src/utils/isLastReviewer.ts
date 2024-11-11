@@ -24,7 +24,6 @@ export const hasPendingApproval = (
       [],
     ) as CoOwnerAndOperator[]
   ).filter(({ wasRemoved }) => wasRemoved !== 'true')
-
   if (
     buyerCoOwnersAndOperators.some(
       ({ nationalId, approved }) =>
@@ -40,7 +39,6 @@ export const hasPendingApproval = (
     'sellerCoOwner',
     [],
   ) as CoOwnerAndOperator[]
-
   if (
     sellerCoOwners.some(
       ({ nationalId, approved }) =>
@@ -64,7 +62,6 @@ export const isLastReviewer = (
 
   // If the current reviewer is the buyer, check for changes in buyer's co-owners/operators list
   const buyer = getValueViaPath(answers, 'buyer', {}) as UserInformation
-
   if (buyer.nationalId === reviewerNationalId) {
     const oldBuyerCoOwnersAndOperators = (
       getValueViaPath(
@@ -96,5 +93,6 @@ export const isLastReviewer = (
     return !newReviewerAdded
   }
 
-  return false
+  // Otherwise, the only review missing is from the current reviewer
+  return true
 }

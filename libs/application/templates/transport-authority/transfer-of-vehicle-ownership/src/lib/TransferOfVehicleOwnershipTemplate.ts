@@ -203,6 +203,8 @@ const template: ApplicationTemplate<
             action: ApiActions.addReview,
             shouldPersistToExternalData: true,
           }),
+          // Note: extra validateApplication here since it is possible to change answers
+          // (add buyer's co-owners/operators) in REVIEW
           onExit: defineTemplateApi({
             action: ApiActions.validateApplication,
           }),

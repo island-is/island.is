@@ -2,39 +2,50 @@ import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { OperatorInformation, UserInformation } from '../shared'
 
-export const isLastReviewer = (
-  reviewerNationalId: string,
+// Function to check if a reviewer has pending approval
+export const hasPendingApproval = (
   answers: FormValue,
-) => {
-  // First check if any reviewer that is not the current user has not approved
-  const ownerCoOwners = getValueViaPath(
+  excludeNationalId?: string,
+): boolean => {
+  // Check if any co-owners have not approved
+  const coOwners = getValueViaPath(
     answers,
     'ownerCoOwner',
     [],
   ) as UserInformation[]
-  const approvedOwnerCoOwner = ownerCoOwners.find((ownerCoOwner) => {
-    return (
-      ownerCoOwner.nationalId !== reviewerNationalId && !ownerCoOwner.approved
+  if (
+    coOwners.some(
+      ({ nationalId, approved }) =>
+        (!excludeNationalId || nationalId !== excludeNationalId) && !approved,
     )
-  })
-  if (approvedOwnerCoOwner) {
-    return false
+  ) {
+    return true
   }
 
-  const operators = getValueViaPath(
-    answers,
-    'operators',
-    [],
-  ) as OperatorInformation[]
-  const approvedOperator = operators
-    .filter(({ wasRemoved }) => wasRemoved !== 'true')
-    .find(
-      (operator) =>
-        operator.nationalId !== reviewerNationalId && !operator.approved,
+  // Check if any new operators have not approved
+  const newOperators = (
+    getValueViaPath(answers, 'operators', []) as OperatorInformation[]
+  ).filter(({ wasRemoved }) => wasRemoved !== 'true')
+  if (
+    newOperators.some(
+      ({ nationalId, approved }) =>
+        (!excludeNationalId || nationalId !== excludeNationalId) && !approved,
     )
-  if (approvedOperator) {
-    return false
+  ) {
+    return true
   }
 
+  return false
+}
+
+// Function to check if the current reviewer is the last one who needs to approve
+export const isLastReviewer = (
+  reviewerNationalId: string,
+  answers: FormValue,
+): boolean => {
+  // If there are pending approvals (excluding current reviewer), then he is not the last reviewer
+  if (hasPendingApproval(answers, reviewerNationalId)) return false
+
+  // Otherwise, the only review missing is from the current reviewer
   return true
 }

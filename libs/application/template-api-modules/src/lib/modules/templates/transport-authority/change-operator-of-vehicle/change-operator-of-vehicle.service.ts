@@ -426,12 +426,26 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
     const mileage = answers?.vehicleMileage?.value
 
-    await this.vehicleOperatorsClient.saveOperators(
+    const submitResult = await this.vehicleOperatorsClient.saveOperators(
       auth,
       permno,
       operators,
       mileage ? Number(mileage) || 0 : null,
     )
+
+    if (
+      submitResult.hasError &&
+      submitResult.errorMessages &&
+      submitResult.errorMessages.length > 0
+    ) {
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.validation.alertTitle,
+          summary: submitResult.errorMessages,
+        },
+        400,
+      )
+    }
 
     // 3. Notify everyone in the process that the application has successfully been submitted
 
