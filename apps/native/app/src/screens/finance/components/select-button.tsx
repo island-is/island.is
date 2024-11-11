@@ -1,8 +1,8 @@
 import { DynamicColorIOS, Platform } from 'react-native'
 import { useTheme } from 'styled-components/native'
-import { Button, blue400 } from '../../../ui'
+import { Button, ButtonProps, blue400 } from '../../../ui'
 
-export const SelectButton = (props: any) => {
+export const SelectButton = (props: ButtonProps) => {
   const theme = useTheme()
   return (
     <Button
