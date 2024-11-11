@@ -253,6 +253,16 @@
             "schema": { "type": "string" }
           },
           {
+            "name": "ids",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": [],
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          {
             "name": "page",
             "description": "Page number to return.",
             "required": false,
@@ -293,6 +303,16 @@
             "schema": { "type": "string" }
           },
           {
+            "name": "ids",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": [],
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          {
             "name": "page",
             "description": "Page number to return.",
             "required": false,
@@ -331,6 +351,16 @@
             "required": false,
             "in": "query",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "ids",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": [],
+              "type": "array",
+              "items": { "type": "string" }
+            }
           },
           {
             "name": "page",
@@ -420,6 +450,16 @@
             "required": false,
             "in": "query",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "ids",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": [],
+              "type": "array",
+              "items": { "type": "string" }
+            }
           },
           {
             "name": "page",
@@ -554,33 +594,6 @@
         },
         "required": ["number", "year", "full"]
       },
-      "MainCategory": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique ID for the main category, GUID format.",
-            "example": "00000000-0000-0000-0000-000000000000",
-            "nullable": false
-          },
-          "title": {
-            "type": "string",
-            "description": "Title of the main category.",
-            "example": "Dómstólar og réttarfar"
-          },
-          "slug": {
-            "type": "string",
-            "description": "Slug of the main category, used in URLs and API requests.",
-            "example": "domstolar-og-rettarfar"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description of the main category, used on front page.",
-            "example": "Hæstiréttur, lögmenn, lögreglumál, dómsmál og landsdómur."
-          }
-        },
-        "required": ["id", "title", "slug", "description"]
-      },
       "Category": {
         "type": "object",
         "properties": {
@@ -599,12 +612,6 @@
             "type": "string",
             "description": "Slug of the advert category, used in URLs and API requests.",
             "example": "evropska-efnahagssvaedid"
-          },
-          "mainCategory": {
-            "description": "The main category this category belongs to.",
-            "nullable": true,
-            "example": "Dómstólar og réttarfar",
-            "allOf": [{ "$ref": "#/components/schemas/MainCategory" }]
           }
         },
         "required": ["id", "title", "slug"]
@@ -994,6 +1001,38 @@
           }
         },
         "required": ["types", "paging"]
+      },
+      "MainCategory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID for the main category, GUID format.",
+            "example": "00000000-0000-0000-0000-000000000000",
+            "nullable": false
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the main category.",
+            "example": "Dómstólar og réttarfar"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug of the main category, used in URLs and API requests.",
+            "example": "domstolar-og-rettarfar"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the main category, used on front page.",
+            "example": "Hæstiréttur, lögmenn, lögreglumál, dómsmál og landsdómur."
+          },
+          "categories": {
+            "description": "List of sub categories under this main category.",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Category" }
+          }
+        },
+        "required": ["id", "title", "slug", "description", "categories"]
       },
       "GetMainCategoriesResponse": {
         "type": "object",

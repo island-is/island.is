@@ -1,8 +1,8 @@
 import { DynamicColorIOS, Platform } from 'react-native'
 import { useTheme } from 'styled-components/native'
-import { Button, blue400 } from '../../../ui'
+import { Button, ButtonProps, blue400 } from '../../../ui'
 
-export const LightButton = (props: any) => {
+export const SelectButton = (props: ButtonProps) => {
   const theme = useTheme()
   return (
     <Button
@@ -26,6 +26,7 @@ export const LightButton = (props: any) => {
         paddingBottom: 8,
         minWidth: 0,
         minHeight: 40,
+        backgroundColor: theme.color.blue100,
       }}
       textProps={{
         lineBreakMode: 'tail',
