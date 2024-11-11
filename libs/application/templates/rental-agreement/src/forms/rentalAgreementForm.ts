@@ -5,11 +5,11 @@ import { RentalHousingInfo } from './RentalHousingInfo'
 import { RentalPeriod } from './rentalPeriod'
 import { Summary } from './summary'
 
-import * as m from '../lib/messages'
+import { application } from '../lib/messages'
 
 export const RentalAgreementForm: Form = buildForm({
   id: 'RentalAgreementApplication',
-  title: m.application.name,
+  title: application.name,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
