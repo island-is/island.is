@@ -91,8 +91,6 @@ const VehicleBulkMileageUpload = () => {
   }
 
   const handleOnInputFileUploadError = (files: FileRejection[]) => {
-    console.log(files[0].errors[0].code)
-    console.log(files[0].errors[0].code === 'file-invalid-type')
     if (files[0].errors[0].code === 'file-invalid-type') {
       setUploadErrorMessage(formatMessage(vehicleMessage.invalidFileType))
     } else {
