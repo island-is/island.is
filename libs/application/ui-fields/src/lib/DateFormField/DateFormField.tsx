@@ -1,6 +1,11 @@
 import React, { FC, useMemo } from 'react'
 
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import {
+  buildFieldRequired,
+  formatText,
+  formatTextWithLocale,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   FieldBaseProps,
   DateField,
@@ -14,6 +19,7 @@ import {
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { getDefaultValue } from '../../getDefaultValue'
+import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
   field: DateField
@@ -110,7 +116,12 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     <div>
       {description && (
         <FieldDescription
-          description={formatText(description, application, formatMessage)}
+          description={formatTextWithLocale(
+            description,
+            application,
+            lang as Locale,
+            formatMessage,
+          )}
         />
       )}
 
@@ -124,13 +135,13 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
           id={id}
           name={id}
           locale={lang}
-          required={required}
+          required={buildFieldRequired(application, required)}
           excludeDates={finalExcludeDates}
           minDate={finalMinDate}
           maxDate={finalMaxDate}
           backgroundColor={backgroundColor}
           readOnly={readOnly}
-          label={formatText(title, application, formatMessage)}
+          label={formatTextWithLocale(title, application, lang, formatMessage)}
           placeholder={
             placeholder
               ? formatText(placeholder, application, formatMessage)

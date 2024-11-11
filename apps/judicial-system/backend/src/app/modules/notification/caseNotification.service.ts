@@ -1577,32 +1577,6 @@ export class CaseNotificationService extends BaseNotificationService {
     const promises: Promise<Recipient>[] = []
 
     if (isIndictmentCase(theCase.type)) {
-      const uniqDefendants = _uniqBy(
-        theCase.defendants ?? [],
-        (d: Defendant) => d.defenderEmail,
-      )
-
-      for (const defendant of uniqDefendants) {
-        const { defenderEmail, defenderNationalId, defenderName } = defendant
-
-        const shouldSend = this.shouldSendAdvocateAssignedNotification(
-          theCase,
-          defenderEmail,
-        )
-
-        if (shouldSend === true) {
-          promises.push(
-            this.sendAdvocateAssignedNotification(
-              theCase,
-              AdvocateType.DEFENDER,
-              defenderNationalId,
-              defenderName,
-              defenderEmail,
-            ),
-          )
-        }
-      }
-
       if (theCase.civilClaimants) {
         for (const civilClaimant of theCase.civilClaimants) {
           const {

@@ -1,4 +1,5 @@
 import { DefaultEvents } from '@island.is/application/types'
+import { formerEducation } from './messages/formerEducation'
 
 export type Events = {
   type:
@@ -36,3 +37,24 @@ export enum Routes {
   EDUCATIONOPTIONS = 'educationOptions',
   OTHERDOCUMENTS = 'otherDocuments',
 }
+
+export const EMPTY_MODE_OF_DELIVERY = 'EMPTY_MODE_OF_DELIVERY'
+
+export const degreeLevelOptions = [
+  {
+    label: formerEducation.labels.educationDetails.framhaldsskoliSelectionLabel,
+    value: 'framhaldsskoli',
+  },
+  {
+    label: formerEducation.labels.educationDetails.bachelorsSelectionLabel,
+    value: 'bachelors',
+  },
+  {
+    label: formerEducation.labels.educationDetails.mastersSelectionLabel,
+    value: 'masters',
+  },
+  {
+    label: formerEducation.labels.educationDetails.doctorsSelectionLabel,
+    value: 'doctors',
+  },
+]

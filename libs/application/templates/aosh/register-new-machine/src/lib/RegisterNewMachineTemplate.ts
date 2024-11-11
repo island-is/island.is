@@ -27,7 +27,6 @@ import {
   UserProfileApi,
 } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Features } from '@island.is/feature-flags'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regNumber = getValueViaPath(
@@ -49,7 +48,6 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.MACHINE_REGISTRATION,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
-  featureFlag: Features.registerNewMachine,
   translationNamespaces:
     ApplicationConfigurations.MachineRegistration.translation,
   dataSchema: NewMachineAnswersSchema,
