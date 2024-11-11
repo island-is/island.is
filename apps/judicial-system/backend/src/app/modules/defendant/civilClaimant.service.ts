@@ -37,7 +37,7 @@ export class CivilClaimantService {
     updatedCivilClaimant: CivilClaimant,
   ): Promise<void> {
     if (update.isSpokespersonConfirmed === true) {
-      await this.messageService.sendMessagesToQueue([
+      return this.messageService.sendMessagesToQueue([
         {
           type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
           caseId: updatedCivilClaimant.caseId,
