@@ -1,11 +1,10 @@
-import React from 'react'
+import { Box, Button, GridColumn, Tabs } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { IntroHeader, usePortalMeta } from '@island.is/portals/core'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { isDefined } from '@island.is/shared/utils'
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-use'
-import { Box, Button, GridColumn, Tabs } from '@island.is/island-ui/core'
-import { IntroHeader, usePortalMeta } from '@island.is/portals/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { useAuth } from '@island.is/auth/react'
-import { isDefined } from '@island.is/shared/utils'
 import { DelegationsIncoming } from '../components/delegations/incoming/DelegationsIncoming'
 import { DelegationsOutgoing } from '../components/delegations/outgoing/DelegationsOutgoing'
 import { m } from '../lib/messages'
@@ -18,7 +17,7 @@ const AccessControl = () => {
   useNamespaces(['sp.access-control-delegations'])
 
   const { formatMessage } = useLocale()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const navigate = useNavigate()
   const location = useLocation()
   const { basePath } = usePortalMeta()
