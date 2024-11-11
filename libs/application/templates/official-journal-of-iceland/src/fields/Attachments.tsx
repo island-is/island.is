@@ -1,13 +1,11 @@
-import { InputFields, OJOIFieldBaseProps } from '../lib/types'
+import { OJOIFieldBaseProps } from '../lib/types'
 import { Box, Button, InputFileUpload, Stack } from '@island.is/island-ui/core'
 import { useFileUpload } from '../hooks/useFileUpload'
 import { ALLOWED_FILE_TYPES, ApplicationAttachmentType } from '../lib/constants'
 import { useLocale } from '@island.is/localization'
 import { attachments } from '../lib/messages/attachments'
-import { getValueViaPath } from '@island.is/application/core'
 import { useState } from 'react'
 import { Additions } from '../components/additions/Additions'
-import { getAddition, isAddition } from '../lib/utils'
 
 export const Attachments = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
