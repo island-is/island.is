@@ -633,4 +633,6 @@ export const en: TranslatedMessages = {
   'health.overview.period': 'Period',
   'health.overview.levelStatus': 'Medicine step',
   'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
+  'health.overview.medicinePurchaseNoActivePeriodWarning':
+    'A new payment period begins with the next medicine purchase',
 }

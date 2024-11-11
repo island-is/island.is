@@ -110,6 +110,13 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
     },
   })
 
+  const medicinePurchaseData =
+    medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
+  const isMedicinePeriodActive =
+    medicinePurchaseData?.active ||
+    (medicinePurchaseData?.dateTo &&
+      new Date(medicinePurchaseData.dateTo) > new Date())
+
   useConnectivityIndicator({
     componentId,
     refetching,
@@ -398,16 +405,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 id: 'health.overview.period',
               })}
               value={
-                medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
-                  .dateFrom &&
-                medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0].dateTo
+                medicinePurchaseData?.dateFrom && medicinePurchaseData?.dateTo
                   ? `${intl.formatDate(
-                      medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
-                        .dateFrom,
-                    )} - ${intl.formatDate(
-                      medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
-                        .dateTo,
-                    )}`
+                      medicinePurchaseData.dateFrom,
+                    )} - ${intl.formatDate(medicinePurchaseData.dateTo)}`
                   : ''
               }
               loading={medicinePurchaseRes.loading && !medicinePurchaseRes.data}
@@ -421,21 +422,15 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 id: 'health.overview.levelStatus',
               })}
               value={
-                medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
-                  ?.levelNumber &&
-                medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
-                  ?.levelPercentage
+                medicinePurchaseData?.levelNumber &&
+                medicinePurchaseData?.levelPercentage
                   ? intl.formatMessage(
                       {
                         id: 'health.overview.levelStatusValue',
                       },
                       {
-                        level:
-                          medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
-                            ?.levelNumber,
-                        percentage:
-                          medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
-                            ?.levelPercentage,
+                        level: medicinePurchaseData?.levelNumber,
+                        percentage: medicinePurchaseData?.levelPercentage,
                       },
                     )
                   : ''
@@ -443,6 +438,13 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               loading={medicinePurchaseRes.loading && !medicinePurchaseRes.data}
               error={medicinePurchaseRes.error && !medicinePurchaseRes.data}
               noBorder
+              warningText={
+                !isMedicinePeriodActive
+                  ? intl.formatMessage({
+                      id: 'health.overview.medicinePurchaseNoActivePeriodWarning',
+                    })
+                  : ''
+              }
             />
           </InputRow>
         </Host>

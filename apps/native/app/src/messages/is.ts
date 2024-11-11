@@ -634,4 +634,6 @@ export const is = {
   'health.overview.levelStatus': 'Þrepastaða',
   'health.overview.levelStatusValue':
     'Greiðsluþrep {level}, þú greiðir {percentage}%',
+  'health.overview.medicinePurchaseNoActivePeriodWarning':
+    'Nýtt greiðslutímabil hefst við næstu lyfjakaup',
 }
