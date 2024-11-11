@@ -2,7 +2,13 @@ import { gql, useQuery } from '@apollo/client'
 import { OwnerChangeValidationMessage } from '@island.is/api/schema'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Bullet,
+  BulletList,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect } from 'react'
 import { TransferOfVehicleOwnershipAnswers } from '../..'
@@ -76,7 +82,7 @@ export const ValidationErrorMessages: FC<
         title={formatMessage(applicationCheck.validation.alertTitle)}
         message={
           <Box component="span" display="block">
-            <ul>
+            <BulletList>
               {data.vehicleOwnerChangeValidation.errorMessages.map(
                 (error: OwnerChangeValidationMessage) => {
                   const message = formatMessage(
@@ -94,15 +100,13 @@ export const ValidationErrorMessages: FC<
                     error?.errorNo
 
                   return (
-                    <li>
-                      <Text variant="small">
-                        {message || defaultMessage || fallbackMessage}
-                      </Text>
-                    </li>
+                    <Bullet>
+                      {message || defaultMessage || fallbackMessage}
+                    </Bullet>
                   )
                 },
               )}
-            </ul>
+            </BulletList>
           </Box>
         }
       />

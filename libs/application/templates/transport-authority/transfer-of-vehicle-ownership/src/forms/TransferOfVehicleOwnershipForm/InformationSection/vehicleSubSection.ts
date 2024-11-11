@@ -30,7 +30,7 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as VehiclesCurrentVehicle
-            return vehicle.permno
+            return vehicle?.permno
           },
         }),
         buildTextField({
@@ -44,7 +44,7 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as VehiclesCurrentVehicle
-            return vehicle.make
+            return vehicle?.make
           },
         }),
         buildTextField({
@@ -73,7 +73,7 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as VehiclesCurrentVehicle
-            return vehicle.requireMileage || false
+            return vehicle?.requireMileage || false
           },
         }),
         buildHiddenInput({
@@ -83,7 +83,7 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as VehiclesCurrentVehicle
-            return vehicle.mileageReading || ''
+            return vehicle?.mileageReading || ''
           },
         }),
         buildTextField({
@@ -103,7 +103,7 @@ export const vehicleSubSection = buildSubSection({
               application.externalData,
               application.answers,
             ) as VehiclesCurrentVehicle
-            return vehicle.mileageReading
+            return vehicle?.mileageReading
               ? `Síðasta skráning ${vehicle.mileageReading} Km`
               : ''
           },

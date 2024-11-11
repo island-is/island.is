@@ -7,6 +7,8 @@ import {
   Button,
   AlertMessage,
   InputError,
+  BulletList,
+  Bullet,
 } from '@island.is/island-ui/core'
 import { ReviewScreenProps } from '../../shared'
 import { useLocale } from '@island.is/localization'
@@ -27,7 +29,8 @@ import {
 } from './sections'
 import {
   getApproveAnswers,
-  hasReviewerApproved,
+  canReviewerApprove,
+  canReviewerReApprove,
   isLastReviewer,
 } from '../../utils'
 import { RejectConfirmationModal } from './RejectConfirmationModal'
@@ -40,6 +43,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import {
   OwnerChangeAnswers,
   OwnerChangeValidationMessage,
+  Query,
 } from '@island.is/api/schema'
 import { VALIDATE_VEHICLE_OWNER_CHANGE } from '../../graphql/queries'
 import { TransferOfVehicleOwnershipAnswers } from '../..'
@@ -75,7 +79,7 @@ export const Overview: FC<
     },
   })
 
-  const [loading, setLoading] = useState(false)
+  const [buttonLoading, setButtonLoading] = useState(false)
 
   const isBuyer =
     (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
@@ -142,11 +146,11 @@ export const Overview: FC<
           })
 
           if (resSubmit?.data) {
-            setLoading(false)
+            setButtonLoading(false)
             setStep && setStep('conclusion')
           }
         } else {
-          setLoading(false)
+          setButtonLoading(false)
           setStep && setStep('conclusion')
         }
       }
@@ -154,7 +158,7 @@ export const Overview: FC<
   }
 
   const [validateVehicleThenApproveAndSubmit, { data }] = useLazyQuery<
-    any,
+    Query,
     { answers: OwnerChangeAnswers }
   >(
     gql`
@@ -164,7 +168,12 @@ export const Overview: FC<
       onCompleted: async (data) => {
         if (!data?.vehicleOwnerChangeValidation?.hasError) {
           await doApproveAndSubmit()
+        } else {
+          setButtonLoading(false)
         }
+      },
+      onError: () => {
+        setButtonLoading(false)
       },
     },
   )
@@ -182,7 +191,7 @@ export const Overview: FC<
       setNoInsuranceError(true)
     } else {
       setNoInsuranceError(false)
-      setLoading(true)
+      setButtonLoading(true)
 
       if (isBuyer) {
         // Need to get updated application, in case buyer has changed co-owner
@@ -236,6 +245,7 @@ export const Overview: FC<
                 insurance: insurance ? { value: insurance } : null,
               },
             },
+            fetchPolicy: 'no-cache',
           })
         }
       } else {
@@ -285,6 +295,7 @@ export const Overview: FC<
         )}
 
         {data?.vehicleOwnerChangeValidation?.hasError &&
+        data?.vehicleOwnerChangeValidation?.errorMessages &&
         data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (
           <Box>
             <AlertMessage
@@ -292,7 +303,7 @@ export const Overview: FC<
               title={formatMessage(applicationCheck.validation.alertTitle)}
               message={
                 <Box component="span" display="block">
-                  <ul>
+                  <BulletList>
                     {data.vehicleOwnerChangeValidation.errorMessages.map(
                       (error: OwnerChangeValidationMessage) => {
                         const message = formatMessage(
@@ -310,15 +321,13 @@ export const Overview: FC<
                           error?.errorNo
 
                         return (
-                          <li key={error.errorNo}>
-                            <Text variant="small">
-                              {message || defaultMessage || fallbackMessage}
-                            </Text>
-                          </li>
+                          <Bullet>
+                            {message || defaultMessage || fallbackMessage}
+                          </Bullet>
                         )
                       },
                     )}
-                  </ul>
+                  </BulletList>
                 </Box>
               }
             />
@@ -331,7 +340,7 @@ export const Overview: FC<
             <Button variant="ghost" onClick={onBackButtonClick}>
               {formatMessage(review.buttons.back)}
             </Button>
-            {!hasReviewerApproved(reviewerNationalId, application.answers) &&
+            {canReviewerApprove(reviewerNationalId, application.answers) &&
               application.state !== States.COMPLETED && (
                 <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
                   <Box marginLeft={3}>
@@ -346,12 +355,24 @@ export const Overview: FC<
                   <Box marginLeft={3}>
                     <Button
                       icon="checkmark"
-                      loading={loading}
+                      loading={buttonLoading}
                       onClick={onApproveButtonClick}
                     >
                       {formatMessage(review.buttons.approve)}
                     </Button>
                   </Box>
+                </Box>
+              )}
+            {canReviewerReApprove(reviewerNationalId, application.answers) &&
+              application.state !== States.COMPLETED && (
+                <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
+                  <Button
+                    icon="reload"
+                    loading={buttonLoading}
+                    onClick={onApproveButtonClick}
+                  >
+                    {formatMessage(review.buttons.tryAgain)}
+                  </Button>
                 </Box>
               )}
           </Box>
