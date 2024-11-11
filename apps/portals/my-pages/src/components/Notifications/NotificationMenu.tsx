@@ -39,7 +39,7 @@ const NotificationMenu = ({
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
 
-  const isMobile = width < theme.breakpoints.md
+  const isMobile = width < theme.breakpoints.lg
 
   const onClose = () => {
     closeNotificationMenu()
