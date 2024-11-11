@@ -1,11 +1,11 @@
 import React, { FC } from 'react'
 
-import { formatText } from '@island.is/application/core'
+import { formatTextWithLocale } from '@island.is/application/core'
 import { Application, DescriptionField } from '@island.is/application/types'
 import { Text, Tooltip, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
-
+import { Locale } from '@island.is/shared/types'
 export const DescriptionFormField: FC<
   React.PropsWithChildren<{
     application: Application
@@ -14,7 +14,7 @@ export const DescriptionFormField: FC<
     showFieldName: boolean
   }>
 > = ({ application, field, showFieldName }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
 
   return (
     <Box
@@ -24,11 +24,21 @@ export const DescriptionFormField: FC<
     >
       {showFieldName && (
         <Text variant={field.titleVariant}>
-          {formatText(field.title, application, formatMessage)}
+          {formatTextWithLocale(
+            field.title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
           {field.titleTooltip && (
             <Tooltip
               placement="top"
-              text={formatText(field.titleTooltip, application, formatMessage)}
+              text={formatTextWithLocale(
+                field.titleTooltip,
+                application,
+                locale as Locale,
+                formatMessage,
+              )}
             />
           )}
         </Text>
@@ -37,13 +47,23 @@ export const DescriptionFormField: FC<
         <Text>
           {field.description && (
             <Markdown>
-              {formatText(field.description, application, formatMessage)}
+              {formatTextWithLocale(
+                field.description,
+                application,
+                locale as Locale,
+                formatMessage,
+              )}
             </Markdown>
           )}
           {field.tooltip && (
             <Tooltip
               placement="top"
-              text={formatText(field.tooltip, application, formatMessage)}
+              text={formatTextWithLocale(
+                field.tooltip,
+                application,
+                locale as Locale,
+                formatMessage,
+              )}
             />
           )}
         </Text>

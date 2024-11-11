@@ -25,7 +25,10 @@ import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
 import { ApiProxyDto } from './dto/api-proxy.dto'
 
-const droppedResponseHeaders = ['access-control-allow-origin']
+const droppedResponseHeaders = [
+  'access-control-allow-origin',
+  'content-encoding',
+]
 
 /**
  * A custom HTTP/S agent for managing connections efficiently.
