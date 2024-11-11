@@ -123,6 +123,7 @@ export class CaseService {
     lang?: string,
   ): Promise<SubpoenaResponse> {
     const caseData = await this.fetchCase(caseId, defendantNationalId)
+
     return SubpoenaResponse.fromInternalCaseResponse(
       caseData,
       defendantNationalId,
@@ -137,6 +138,7 @@ export class CaseService {
     lang?: string,
   ): Promise<SubpoenaResponse> {
     let chosenLawyer = null
+
     if (defenderAssignment.defenderChoice === DefenderChoice.CHOOSE) {
       if (!defenderAssignment.defenderNationalId) {
         throw new NotFoundException(
