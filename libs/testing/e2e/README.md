@@ -17,7 +17,7 @@ This section explains how to use [Mockoon](https://mockoon.com/) to set up mock 
 
 [Mockoon](https://mockoon.com/) is an open-source tool for creating mock APIs quickly and easily. It allows developers to simulate backend servers without relying on live backend services. This is especially useful for e2e testing, where consistency and repeatability of backend responses are important.
 
-Mockoon provides both a graphical user interface (GUI) for managing API mock files and a command-line interface (CLI) for running these mocks in various environments, such as pipelines.
+Mockoon provides both a graphical user interface (GUI) for managing API mock files and a command-line interface (CLI) for running these mock APIs in various environments, such as pipelines.
 
 ### Opening an Existing Mock File in Mockoon
 

@@ -3,8 +3,8 @@ import mergeWith from 'lodash/merge'
 import camelCase from 'lodash/camelCase'
 import { debug } from './utils'
 
-const mergeOverwrite = (_: unknown, source: unknown) => {
-  source
+const mergeOverwrite = (_: unknown, source: unknown): unknown => {
+  return source
 }
 
 type Matchable = string | RegExp
@@ -19,7 +19,7 @@ type MockGQLOptions = {
 
 type Dict<T = unknown> = Record<string, T>
 /**
- * Return a copy of the `eroginal` object with any sub-objects mocked as `mockData`
+ * Return a copy of the `original` object with any sub-objects mocked as `mockData`
  */
 const deepMock = <T = Dict>(
   original: T | T[],
@@ -42,7 +42,7 @@ const deepMock = <T = Dict>(
     mockKey = new RegExp(exactMatch ? `^${mockKey}$` : `${mockKey}`)
   const mocked: Dict = {}
   for (const key in original) {
-    if (key.match('currenLic')) debug('Mocking currentLic', original)
+    if (key.match('currentLic')) debug('Mocking currentLic', original)
     const updatedDeepPath = `${deepPath}.${key}`
     if (key.match(mockKey)) {
       mocked.isMocked = true
@@ -160,28 +160,26 @@ export const disableObjectKey = async <T>(
 
 export const disablePreviousApplications = async (page: Page) => {
   await mockQGL(page, 'ApplicationApplications', [])
-  //syslumennOnEntry.data.estates
-  /*
-  await mockQGL(
-    page,
-    'UpdateApplication',
-    {
-      externalData: {
-        existingApplication: { data: [] },
-        syslumennOnEntry: { data: {} },
-      },
-    },
-    { patchResponse: true },
-  )
-  */
 }
 
+/**
+ * Mocks the i18n translations by returning mock data.
+ *
+ * @param {Page} page - The Playwright page object.
+ * @returns {Promise<void>}
+ */
 export const disableI18n = async (page: Page) => {
-  return await mockQGL(page, 'GetTranslations', {
+  return mockQGL(page, 'GetTranslations', {
     'mock.translation': 'YES-mocked',
   })
 }
 
+/**
+ * Disables delegations by mocking the response to return an empty array.
+ *
+ * @param {Page} page - The Playwright page object.
+ * @returns {Promise<void>}
+ */
 export const disableDelegations = async (page: Page) => {
-  return await mockQGL(page, 'ActorDelegations', [])
+  return mockQGL(page, 'ActorDelegations', [])
 }

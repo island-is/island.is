@@ -5,6 +5,7 @@ interface GlobalConfigParams {
   port?: number
   command: string
   cwd?: string
+  timeoutMs?: number
 }
 
 export const createGlobalConfig = ({
@@ -12,6 +13,7 @@ export const createGlobalConfig = ({
   port,
   command,
   cwd = '../../../',
+  timeoutMs = 5 * 60 * 1000,
 }: GlobalConfigParams) => {
   return defineConfig({
     testDir: 'e2e',
@@ -30,6 +32,14 @@ export const createGlobalConfig = ({
         name: 'chromium',
         use: { ...devices['Desktop Chrome'] },
       },
+      {
+        name: 'firefox',
+        use: { ...devices['Desktop Firefox'] },
+      },
+      {
+        name: 'webkit',
+        use: { ...devices['Desktop Safari'] },
+      },
     ],
     webServer: {
       stdout: 'pipe',
@@ -37,7 +47,7 @@ export const createGlobalConfig = ({
       url: port ? undefined : webServerUrl,
       command,
       reuseExistingServer: !process.env.CI,
-      timeout: 5 * 60 * 1000,
+      timeout: timeoutMs,
       cwd,
     },
   })
