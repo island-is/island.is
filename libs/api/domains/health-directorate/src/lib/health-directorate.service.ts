@@ -10,7 +10,8 @@ import { Auth } from '@island.is/auth-nest-tools'
 import type { Locale } from '@island.is/shared/types'
 import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 
-import { Info, Vaccination, Vaccinations } from './models/vaccinations.model'
+import { Vaccination, Vaccinations } from './models/vaccinations.model'
+import { mapVaccinationStatus } from './utils/mappers'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -72,11 +73,18 @@ export class HealthDirectorateService {
   }
 
   /* Vaccinations */
-  async getVaccinations(auth: Auth): Promise<Vaccinations | null> {
-    const data = await this.vaccinationApi.getVaccinationDiseaseDetail(auth)
+  async getVaccinations(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<Vaccinations | null> {
+    const data = await this.vaccinationApi.getVaccinationDiseaseDetail(
+      auth,
+      locale === 'is' ? 'is' : 'en',
+    )
     if (data === null) {
       return null
     }
+
     const vaccinations: Array<Vaccination> =
       data?.map((item) => {
         return {
@@ -84,7 +92,7 @@ export class HealthDirectorateService {
           name: item.diseaseName,
           description: item.diseaseDescription,
           isFeatured: item.isFeatured,
-          status: item.vaccinationStatus,
+          status: mapVaccinationStatus(item.vaccinationStatus),
           statusName: item.vaccinationStatusName,
           statusColor: item.vaccinationStatusColor,
           lastVaccinationDate: item.lastVaccinationDate ?? null,
