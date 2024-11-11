@@ -9,10 +9,9 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { m } from '@island.is/service-portal/core'
-import React, { FC } from 'react'
 import * as styles from './Greeting.css'
 
-const Greeting: FC<React.PropsWithChildren<{}>> = () => {
+const Greeting = () => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   const currentHour = new Date().getHours()

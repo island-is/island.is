@@ -25,7 +25,11 @@ const DocumentActions = () => {
           flexWrap="wrap"
         >
           {actions.map((a, index) => (
-            <Box marginRight={1} marginTop={1} key={index}>
+            <Box
+              marginRight={1}
+              marginTop={1}
+              key={`${a.type}-${a.title}-${index}`}
+            >
               {a.type === 'url' && a.data && (
                 <a href={a.data}>
                   <Button
@@ -41,7 +45,6 @@ const DocumentActions = () => {
                   </Button>
                 </a>
               )}
-              no
               {a.type === 'file' && activeDocument && (
                 <Button
                   size="small"
