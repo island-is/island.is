@@ -18,7 +18,11 @@ import {
   SignatureTypes,
 } from '../lib/constants'
 import { useApplication } from '../hooks/useUpdateApplication'
-import { getRegularSignature, getCommitteeSignature } from '../lib/utils'
+import {
+  getRegularSignature,
+  getCommitteeSignature,
+  getAddition,
+} from '../lib/utils'
 import set from 'lodash/set'
 import { useEffect } from 'react'
 
@@ -43,6 +47,11 @@ export const RequirementsScreen = ({
    */
   useEffect(() => {
     let currentAnswers = structuredClone(application.answers)
+
+    currentAnswers = set(currentAnswers, InputFields.advert.additions, [
+      getAddition(1, false),
+    ])
+
     currentAnswers = set(currentAnswers, InputFields.signature.regular, [
       ...getRegularSignature(
         DEFAULT_REGULAR_SIGNATURE_COUNT,
