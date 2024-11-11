@@ -92,6 +92,7 @@ export const TabButtons = ({
               onPress={() => onTabPress(index)}
               isSelected={isSelected}
               accessibilityRole="tab"
+              accessibilityState={{ selected: isSelected }}
               accessibilityLabel={`${button.title} tab`}
             >
               <TabText variant="body3" isSelected={isSelected}>
