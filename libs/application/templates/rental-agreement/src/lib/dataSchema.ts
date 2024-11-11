@@ -1,6 +1,10 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { RentOtherFeesPayeeOptions, TRUE } from './constants'
+import {
+  RentalHousingCategoryClass,
+  RentOtherFeesPayeeOptions,
+  TRUE,
+} from './constants'
 import {
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
@@ -24,6 +28,31 @@ const checkIfNegative = (inputNumber: string) => {
     return true
   }
 }
+
+const registerProperty = z
+  .object({
+    categoryClass: z
+      .enum([
+        RentalHousingCategoryClass.GENERAL_MARKET,
+        RentalHousingCategoryClass.SPECIAL_GROUPS,
+      ])
+      .optional(),
+    categoryClassGroup: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      data.categoryClass &&
+      data.categoryClass.includes('specialGroups') &&
+      !data.categoryClassGroup
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.registerProperty.category.classGroupRequiredError,
+        path: ['categoryClassGroup'],
+      })
+    }
+  })
 
 const fileSchema = z.object({
   name: z.string(),
@@ -289,6 +318,7 @@ export const dataSchema = z.object({
         params: m.dataSchema.nationalId,
       }),
   }),
+  registerProperty,
   rentalPeriod,
   rentalAmount,
   securityDeposit,
