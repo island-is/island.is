@@ -22,6 +22,8 @@ import { useFormContext } from 'react-hook-form'
 import { InputFields, OJOIApplication } from '../../lib/types'
 import set from 'lodash/set'
 import debounce from 'lodash/debounce'
+import { useLocale } from '@island.is/localization'
+import { attachments } from '../../lib/messages'
 
 type Props = {
   application: OJOIApplication
@@ -32,6 +34,7 @@ type Addition = z.infer<typeof additionSchema>[number]
 export const Additions = ({ application }: Props) => {
   const [asRoman, setAsRoman] = useState<boolean>(false)
 
+  const { formatMessage: f } = useLocale()
   const { setValue } = useFormContext()
   const { updateApplication, application: currentApplication } = useApplication(
     {
@@ -53,7 +56,9 @@ export const Additions = ({ application }: Props) => {
     const mapped = filtered.map((addition, i) => {
       if (addition.type !== 'html') return addition
 
-      const title = `Viðauki ${asRoman ? convertNumberToRoman(i + 1) : i + 1}`
+      const title = f(attachments.additions.title, {
+        index: asRoman ? convertNumberToRoman(i + 1) : i + 1,
+      })
 
       return {
         ...addition,
@@ -77,7 +82,9 @@ export const Additions = ({ application }: Props) => {
     const handleTitleChange = (addition: Addition, i: number) => {
       if (addition.type !== 'html') return addition
 
-      const title = `Viðauki ${val ? convertNumberToRoman(i + 1) : i + 1}`
+      const title = f(attachments.additions.title, {
+        index: asRoman ? convertNumberToRoman(i + 1) : i + 1,
+      })
       return {
         ...addition,
         title: title,
@@ -153,16 +160,16 @@ export const Additions = ({ application }: Props) => {
 
   return (
     <Stack space={2}>
-      <Text variant="h3">Heiti viðauka</Text>
+      <Text variant="h3">{f(attachments.inputs.radio.title.label)}</Text>
       <Inline space={2}>
         <RadioButton
-          label="Viðauki 1, 2, 3"
+          label={f(attachments.inputs.radio.numeric.label)}
           name="asNumbers"
           checked={!asRoman}
           onChange={() => onRomanChange(false)}
         />
         <RadioButton
-          label="Viðauki I, II, III"
+          label={f(attachments.inputs.radio.roman.label)}
           name="asRoman"
           checked={asRoman}
           onChange={() => onRomanChange(true)}
@@ -198,7 +205,7 @@ export const Additions = ({ application }: Props) => {
                   size="small"
                   onClick={() => onRemoveAddition(additionIndex)}
                 >
-                  Fjarlægja viðauka
+                  {f(attachments.buttons.removeAddition)}
                 </Button>
               </Stack>
             </Box>
@@ -212,7 +219,7 @@ export const Additions = ({ application }: Props) => {
             size="small"
             onClick={onAddAddition}
           >
-            Bæta við viðauka
+            {f(attachments.buttons.addAddition)}
           </Button>
         </Inline>
       </Stack>

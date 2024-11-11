@@ -26,7 +26,11 @@ export const Attachments = ({ application }: OJOIFieldBaseProps) => {
           size="small"
           onClick={() => setAsAddition((toggle) => !toggle)}
         >
-          {asAddition ? `Hlaða upp skjölum` : `Bæta við viðaukum`}
+          {f(
+            asAddition
+              ? attachments.buttons.asAttachment
+              : attachments.buttons.asDocument,
+          )}
         </Button>
       </Box>
       <Box hidden={!asAddition}>
