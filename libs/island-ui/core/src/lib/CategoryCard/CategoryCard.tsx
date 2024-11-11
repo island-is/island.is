@@ -11,7 +11,7 @@ import { Tag } from '../Tag/Tag'
 import { TagProps } from '../Tag/types'
 import { Hyphen } from '../Hyphen/Hyphen'
 import { Text, TextProps } from '../Text/Text'
-import { Link } from '../Link/Link'
+import { LinkV2 } from '../Link/LinkV2'
 
 import * as styles from './CategoryCard.css'
 
@@ -164,18 +164,8 @@ const Component = forwardRef<
                   {icon}
                 </Box>
               )}
-              {href && !hasNestedHref ? (
-                <Text
-                  as={headingAs}
-                  variant={headingVariant}
-                  color={textColor}
-                  truncate={truncateHeading}
-                  title={heading}
-                >
-                  {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
-                </Text>
-              ) : (
-                <Link href={href}>
+              {href && hasNestedHref ? (
+                <LinkV2 href={href}>
                   <Text
                     as={headingAs}
                     variant={headingVariant}
@@ -185,7 +175,17 @@ const Component = forwardRef<
                   >
                     {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
                   </Text>
-                </Link>
+                </LinkV2>
+              ) : (
+                <Text
+                  as={headingAs}
+                  variant={headingVariant}
+                  color={textColor}
+                  truncate={truncateHeading}
+                  title={heading}
+                >
+                  {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
+                </Text>
               )}
             </Box>
             <Text
