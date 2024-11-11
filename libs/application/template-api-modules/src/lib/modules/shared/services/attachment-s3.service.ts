@@ -1,9 +1,12 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { ApplicationWithAttachments as Application } from '@island.is/application/types'
-import { S3 } from 'aws-sdk'
-import AmazonS3URI from 'amazon-s3-uri'
+import { ApplicationWithAttachments } from '@island.is/application/types'
 import { logger } from '@island.is/logging'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { S3Service } from '@island.is/nest/aws'
+import { ApplicationService } from '@island.is/application/api/core'
+import { sharedModuleConfig } from '../shared.config'
+import { ConfigType } from '@nestjs/config'
+import { uuid } from 'uuidv4'
 
 export interface AttachmentData {
   key: string
@@ -14,13 +17,15 @@ export interface AttachmentData {
 
 @Injectable()
 export class AttachmentS3Service {
-  private readonly s3: AWS.S3
-  constructor() {
-    this.s3 = new S3()
-  }
+  constructor(
+    private readonly s3Service: S3Service,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
+    private readonly applicationService: ApplicationService,
+  ) {}
 
   public async getFiles(
-    application: Application,
+    application: ApplicationWithAttachments,
     attachmentAnswerKeys: string[],
   ): Promise<AttachmentData[]> {
     const attachments: AttachmentData[] = []
@@ -43,7 +48,7 @@ export class AttachmentS3Service {
       name: string
     }>,
     answerKey: string,
-    application: Application,
+    application: ApplicationWithAttachments,
   ): Promise<AttachmentData[]> {
     return await Promise.all(
       answers.map(async ({ key, name }) => {
@@ -58,30 +63,81 @@ export class AttachmentS3Service {
           return { key: '', fileContent: '', answerKey, fileName: '' }
         }
         const fileContent =
-          (await this.getApplicationFilecontentAsBase64(url)) ?? ''
+          (await this.s3Service.getFileContent(url, 'base64')) ?? ''
 
         return { key, fileContent, answerKey, fileName: name }
       }),
     )
   }
 
-  private async getApplicationFilecontentAsBase64(
+  async addAttachment(
+    application: ApplicationWithAttachments,
     fileName: string,
-  ): Promise<string | undefined> {
-    const { bucket, key } = AmazonS3URI(fileName)
-    const uploadBucket = bucket
-    try {
-      const file = await this.s3
-        .getObject({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent?.toString('base64')
-    } catch (error) {
-      logger.error(error)
-      return undefined
+    buffer: Buffer,
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string> {
+    return this.saveAttachmentToApplication(
+      application,
+      fileName,
+      buffer,
+      uploadParameters,
+    )
+  }
+
+  async saveAttachmentToApplication(
+    application: ApplicationWithAttachments,
+    fileName: string,
+    buffer: Buffer,
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string> {
+    const uploadBucket = this.config.templateApi.attachmentBucket
+    if (!uploadBucket) throw new Error('No attachment bucket configured')
+
+    const fileId = uuid()
+    const attachmentKey = `${fileId}-${fileName}`
+    const s3key = `${application.id}/${attachmentKey}`
+    const url = await this.s3Service.uploadFile(
+      buffer,
+      { bucket: uploadBucket, key: s3key },
+      uploadParameters,
+    )
+
+    await this.applicationService.update(application.id, {
+      attachments: {
+        ...(application.attachments || {}),
+        [attachmentKey]: url,
+      },
+    })
+
+    return attachmentKey
+  }
+
+  async getAttachmentUrl(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+    expiration: number,
+  ): Promise<string> {
+    if (expiration <= 0) {
+      throw new Error('Expiration must be positive')
     }
+    const fileName = (
+      application.attachments as {
+        [key: string]: string
+      }
+    )[attachmentKey]
+
+    if (!fileName) {
+      throw new Error('Attachment not found')
+    }
+
+    return this.s3Service.getPresignedUrl(fileName, expiration)
   }
 }
