@@ -2,7 +2,6 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { BffProvider, createMockedInitialState } from '@island.is/react-spa/bff'
 import { FeatureFlagClient } from '@island.is/react/feature-flags'
 import { defaultLanguage } from '@island.is/shared/constants'
-import { BffUser } from '@island.is/shared/types'
 import { renderHook } from '@testing-library/react'
 import { FC, ReactNode } from 'react'
 import { IntlProvider } from 'react-intl'
@@ -17,7 +16,6 @@ import {
 import { prepareRouterData } from '../utils/router/prepareRouterData'
 import { useSingleNavigationItem } from './useSingleNavigationItem'
 
-const user = { profile: { name: 'Peter' } } as BffUser
 const mockedInitialState = createMockedInitialState()
 
 const MockedPortalProvider: FC<
@@ -71,7 +69,10 @@ describe('useSingleNavigationItem hook', () => {
           }}
         >
           <BffProvider
-            applicationBasePath="/minarsidur"
+            options={{
+              applicationBasePath: '/minarsidur',
+              authority: 'https://identity-server.dev01.devland.is',
+            }}
             mockedInitialState={mockedInitialState}
           >
             <BrowserRouter>
