@@ -10,6 +10,7 @@ export const GET_ARTICLE_QUERY = gql`
       title
       shortTitle
       intro
+      keywords
       importance
       showTableOfContents
       processEntryButtonText

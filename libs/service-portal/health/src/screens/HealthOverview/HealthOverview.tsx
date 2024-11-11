@@ -51,16 +51,12 @@ export const HealthOverview = () => {
 
   const [
     getInsuranceConfirmationLazyQuery,
-    {
-      data: confirmationData,
-      loading: confirmationLoading,
-      error: confirmationError,
-    },
+    { loading: confirmationLoading, error: confirmationError },
   ] = useGetInsuranceConfirmationLazyQuery()
 
   const getInsuranceConfirmation = async () => {
-    await getInsuranceConfirmationLazyQuery()
-    const downloadData = confirmationData?.rightsPortalInsuranceConfirmation
+    const { data: fetchedData } = await getInsuranceConfirmationLazyQuery()
+    const downloadData = fetchedData?.rightsPortalInsuranceConfirmation
 
     if (downloadData?.data && downloadData.fileName) {
       downloadLink(downloadData.data, 'application/pdf', downloadData.fileName)

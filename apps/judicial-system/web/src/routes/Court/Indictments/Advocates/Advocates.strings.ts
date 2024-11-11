@@ -116,7 +116,7 @@ export const strings = defineMessages({
       'Notaður sem texti þegar ákærði hefur valið verjanda í dómaraflæði í ákærum.',
   },
   confirmDefenderChoiceModalTitle: {
-    id: 'judicial.system.core:court_indictments.advocates.confirm_defender_choice_modal_title',
+    id: 'judicial.system.core:court_indictments.advocates.confirm_defender_choice_modal_title_v2',
     defaultMessage:
       '{isDefenderChoiceConfirmed, select, true {Breyta} other {Staðfesta}}',
     description:
@@ -149,9 +149,9 @@ export const strings = defineMessages({
       'Notaður sem texti í breyta vali á verjanda modal í dómaraflæði í ákærum.',
   },
   confirmSpokespersonModalTitle: {
-    id: 'judicial.system.core:court_indictments.advocates.confirm_spokesperson_modal_title',
+    id: 'judicial.system.core:court_indictments.advocates.confirm_spokesperson_modal_title_v1',
     defaultMessage:
-      '{isSpokespersonConfirmed, select, true {Breyta} other {Staðfesta}} val á {spokespersonIsLawyer, select, true {lögmanni} other {réttargæslumanni}}',
+      '{isSpokespersonConfirmed, select, true {Breyta vali} other {Staðfesta val}} á {spokespersonIsLawyer, select, true {lögmanni} other {réttargæslumanni}}',
     description:
       'Notaður sem titill á staðfesta val á lögmanni eða réttargæslumanni modal í dómaraflæði í ákærum.',
   },
@@ -163,8 +163,9 @@ export const strings = defineMessages({
       'Notaður sem texti í staðfesta val á lögmanni eða réttargæslumanni modal í dómaraflæði í ákærum.',
   },
   confirmModalPrimaryButtonText: {
-    id: 'judicial.system.core:court_indictments.advocates.modal_primary_button_text_v1',
-    defaultMessage: 'Staðfesta val',
+    id: 'judicial.system.core:court_indictments.advocates.modal_primary_button_text_v2',
+    defaultMessage:
+      '{isConfirming, select, true {Staðfesta val} other {Breyta}}',
     description:
       'Notaður sem texti á takka til að staðfesta val á lögmanni eða réttargæslumanni í dómaraflæði í ákærum.',
   },
