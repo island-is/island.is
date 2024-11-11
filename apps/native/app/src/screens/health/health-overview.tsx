@@ -96,6 +96,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const origin = getConfig().apiUrl.replace(/\/api$/, '')
   const [refetching, setRefetching] = useState(false)
   const { width } = useWindowDimensions()
+  const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
   const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
 
   const now = useMemo(() => new Date().toISOString(), [])
@@ -190,7 +191,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 isOutlined
                 isUtilityButton
                 iconStyle={{ tintColor: theme.color.dark300 }}
-                style={{ flex: 1, minWidth: width * 0.5 - theme.spacing[3] }}
+                style={buttonStyle}
                 ellipsis
                 onPress={() => navigateTo('/vaccinations', componentId)}
               />
@@ -201,7 +202,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               isUtilityButton
               icon={externalLinkIcon}
               iconStyle={{ tintColor: theme.color.dark300 }}
-              style={{ flex: 1, minWidth: width * 0.5 - theme.spacing[3] }}
+              style={buttonStyle}
               ellipsis
               onPress={() =>
                 openBrowser(
@@ -219,9 +220,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               icon={externalLinkIcon}
               iconStyle={{ tintColor: theme.color.dark300 }}
               style={{
-                flex: 1,
+                ...buttonStyle,
                 maxWidth: width * 0.5 - theme.spacing[3],
-                minWidth: width * 0.5 - theme.spacing[3],
               }}
               ellipsis
               onPress={() =>
