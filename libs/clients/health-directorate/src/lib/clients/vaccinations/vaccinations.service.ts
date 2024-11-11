@@ -3,6 +3,7 @@ import { handle404 } from '@island.is/clients/middlewares'
 import { Inject, Injectable } from '@nestjs/common'
 import {
   DiseaseVaccinationDto,
+  MeVaccinationControllerGetVaccinationsForDiseasesLocaleEnum,
   MeVaccinationsApi,
   VaccinationDto,
 } from './gen/fetch'
@@ -29,7 +30,7 @@ export class HealthDirectorateVaccinationsService {
       .catch(handle404)
 
     if (!vaccines) {
-      this.logger.warn('No vaccines returned', {
+      this.logger.debug('No vaccines returned', {
         category: LOG_CATEGORY,
       })
       return null
@@ -40,13 +41,19 @@ export class HealthDirectorateVaccinationsService {
 
   public async getVaccinationDiseaseDetail(
     auth: Auth,
+    locale: string,
   ): Promise<Array<DiseaseVaccinationDto> | null> {
     const disease = await this.vaccinationsApiWithAuth(auth)
-      .meVaccinationControllerGetVaccinationsForDiseases()
+      .meVaccinationControllerGetVaccinationsForDiseases({
+        locale:
+          locale === 'is'
+            ? MeVaccinationControllerGetVaccinationsForDiseasesLocaleEnum.Is
+            : MeVaccinationControllerGetVaccinationsForDiseasesLocaleEnum.En,
+      })
       .catch(handle404)
 
     if (!disease) {
-      this.logger.warn('No vaccines diseases returned', {
+      this.logger.debug('No vaccines diseases returned', {
         category: LOG_CATEGORY,
       })
       return null
