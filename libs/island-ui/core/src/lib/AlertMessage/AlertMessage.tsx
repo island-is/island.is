@@ -123,16 +123,16 @@ export const AlertMessage: FC<AlertMessageProps & TitleAndOrMessage> = ({
                   <Text variant="small">{message}</Text>
                 </Box>
               )}
-            </Box>
-          )}
-          {action && (
-            <Box
-              display="flex"
-              style={{ alignSelf: 'flex-end' }}
-              justifyContent="flexEnd"
-              alignItems="flexEnd"
-            >
-              {action}
+              {action && (
+                <Box
+                  display="flex"
+                  style={{ alignSelf: 'flex-end' }}
+                  justifyContent="flexEnd"
+                  alignItems="flexEnd"
+                >
+                  {action}
+                </Box>
+              )}
             </Box>
           )}
         </Box>
