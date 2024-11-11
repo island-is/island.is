@@ -336,7 +336,7 @@ export class PoliceService {
       })
   }
 
-  async getSubpoenaStatus(subpoenaId: string, user: User): Promise<Subpoena> {
+  async getSubpoenaStatus(subpoenaId: string, user?: User): Promise<Subpoena> {
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
     )
@@ -407,8 +407,8 @@ export class PoliceService {
           'Failed to get subpoena',
           {
             subpoenaId,
-            actor: user.name,
-            institution: user.institution?.name,
+            actor: user?.name || 'Digital-mailbox',
+            institution: user?.institution?.name,
           },
           reason,
         )
