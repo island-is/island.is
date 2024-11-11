@@ -72,7 +72,7 @@ export class CivilClaimantService {
       throw new Error(`Could not update civil claimant ${civilClaimantId}`)
     }
 
-    this.sendUpdateCivilClaimantMessages(update, civilClaimants[0])
+    await this.sendUpdateCivilClaimantMessages(update, civilClaimants[0])
 
     return civilClaimants[0]
   }
