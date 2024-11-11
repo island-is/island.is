@@ -208,42 +208,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       courtCaseNumber
       type
-      defendants {
-        id
-        noNationalId
-        nationalId
-        name
-        gender
-        address
-        citizenship
-        defenderName
-        defenderNationalId
-        defenderEmail
-        defenderPhoneNumber
-        defenderChoice
-        defendantPlea
-        requestedDefenderChoice
-        requestedDefenderNationalId
-        requestedDefenderName
-        isDefenderChoiceConfirmed
-        caseFilesSharedWithDefender
-        serviceRequirement
-        verdictViewDate
-        verdictAppealDeadline
-        isVerdictAppealDeadlineExpired
-        subpoenaType
-        subpoenas {
-          id
-          created
-          serviceStatus
-          serviceDate
-          servedBy
-          comment
-          defenderNationalId
-          caseId
-          subpoenaId
-        }
-      }
       caseFiles {
         id
         created
