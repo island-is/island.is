@@ -48,7 +48,9 @@ const StandaloneLayout = ({
     title: organizationPage?.title ?? '',
     fullWidth: organizationPage?.themeProperties.fullWidth ?? false,
     logoAltText: '',
+    links: organizationPage.topLevelNavigation?.links ?? [],
   }
+
   return (
     <>
       <Navigation {...navigationProps} />

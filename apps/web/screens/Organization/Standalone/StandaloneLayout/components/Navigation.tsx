@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, LinkV2, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { LanguageToggler, SearchInput } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
@@ -13,6 +13,7 @@ export interface NavigationProps {
   logoAltText?: string
   isSubpage?: boolean
   customTitleColor?: string
+  links: { label: string; href: string }[]
 }
 
 export const Navigation: React.FC<React.PropsWithChildren<NavigationProps>> = ({
@@ -22,6 +23,7 @@ export const Navigation: React.FC<React.PropsWithChildren<NavigationProps>> = ({
   logoAltText,
   isSubpage = false,
   customTitleColor = 'dark400',
+  links,
 }) => {
   const { activeLocale } = useI18n()
   const { width } = useWindowSize()
@@ -40,6 +42,13 @@ export const Navigation: React.FC<React.PropsWithChildren<NavigationProps>> = ({
             <Text variant={isSubpage && isMobile ? 'h4' : 'h2'} as="h1">
               <span style={{ color: customTitleColor }}>{title}</span>
             </Text>
+          </Box>
+          <Box>
+            {links.map((link) => (
+              <LinkV2 key={link.label} href={link.href}>
+                {link.label}
+              </LinkV2>
+            ))}
           </Box>
           <Box display="flex" alignItems="center" justifyContent="flexEnd">
             <SearchInput size="medium" activeLocale={activeLocale} />
