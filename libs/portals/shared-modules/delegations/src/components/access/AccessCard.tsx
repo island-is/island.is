@@ -117,6 +117,11 @@ export const AccessCard = ({
         icon = 'business'
         break
 
+      case AuthDelegationType.ExecutiveDirector:
+        label = formatMessage(m.delegationTypeExecutiveDirector)
+        icon = 'business'
+        break
+
       default:
         label = formatMessage(m.delegationTypeCustom)
 
