@@ -11,9 +11,9 @@ import { Tag } from '../Tag/Tag'
 import { TagProps } from '../Tag/types'
 import { Hyphen } from '../Hyphen/Hyphen'
 import { Text, TextProps } from '../Text/Text'
+import { Link } from '../Link/Link'
 
 import * as styles from './CategoryCard.css'
-import { Link } from '../Link/Link'
 
 export const STACK_WIDTH = 280
 
