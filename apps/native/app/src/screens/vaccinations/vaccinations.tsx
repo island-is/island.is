@@ -1,4 +1,10 @@
-import { GeneralCardSkeleton, Heading, TabButtons, Typography } from '@ui'
+import {
+  GeneralCardSkeleton,
+  Heading,
+  Problem,
+  TabButtons,
+  Typography,
+} from '@ui'
 import React, { useCallback, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
@@ -20,6 +26,10 @@ const Vaccinations = styled.View`
 `
 
 const Tabs = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[3]}px;
+`
+
+const ErrorWrapper = styled.View`
   margin-top: ${({ theme }) => theme.spacing[3]}px;
 `
 
@@ -96,38 +106,47 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
               defaultMessage="Hér getur þú séð lista yfir bóluefni sem þú hefur fengið, stöðu bólusetningar og aðrar upplýsingar."
             />
           </Typography>
-          <Tabs>
-            <TabButtons
-              buttons={[
-                {
-                  title: intl.formatMessage({
-                    id: 'health.vaccinations.generalVaccinations',
-                  }),
-                },
-                {
-                  title: intl.formatMessage({
-                    id: 'health.vaccinations.otherVaccinations',
-                  }),
-                },
-              ]}
-              selectedTab={selectedTab}
-              setSelectedTab={setSelectedTab}
-            />
-          </Tabs>
-          <Vaccinations>
-            {vaccinationsRes.loading && !vaccinationsRes.data
-              ? Array.from({ length: 5 }).map((_, index) => (
-                  <GeneralCardSkeleton height={90} key={index} />
-                ))
-              : vaccinations.map((vaccination, index) => (
-                  <VaccinationsCard
-                    key={`${vaccination?.id}-${index}`}
-                    vaccination={vaccination}
-                    loading={vaccinationsRes.loading && !vaccinationsRes.data}
-                    componentId={componentId}
-                  />
-                ))}
-          </Vaccinations>
+          {vaccinationsRes.data && (
+            <Tabs>
+              <TabButtons
+                buttons={[
+                  {
+                    title: intl.formatMessage({
+                      id: 'health.vaccinations.generalVaccinations',
+                    }),
+                  },
+                  {
+                    title: intl.formatMessage({
+                      id: 'health.vaccinations.otherVaccinations',
+                    }),
+                  },
+                ]}
+                selectedTab={selectedTab}
+                setSelectedTab={setSelectedTab}
+              />
+            </Tabs>
+          )}
+          {vaccinationsRes.data && (
+            <Vaccinations>
+              {vaccinationsRes.loading && !vaccinationsRes.data
+                ? Array.from({ length: 5 }).map((_, index) => (
+                    <GeneralCardSkeleton height={90} key={index} />
+                  ))
+                : vaccinations.map((vaccination, index) => (
+                    <VaccinationsCard
+                      key={`${vaccination?.id}-${index}`}
+                      vaccination={vaccination}
+                      loading={vaccinationsRes.loading && !vaccinationsRes.data}
+                      componentId={componentId}
+                    />
+                  ))}
+            </Vaccinations>
+          )}
+          {vaccinationsRes.error && !vaccinationsRes.data && (
+            <ErrorWrapper>
+              <Problem />
+            </ErrorWrapper>
+          )}
         </Host>
       </ScrollView>
     </View>
