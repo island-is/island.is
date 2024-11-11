@@ -29,13 +29,13 @@ export const strings = defineMessages({
     description: 'Notað til að birta dagsetningu þegar dómur var birtur.',
   },
   serviceNotRequired: {
-    id: 'judicial.system.core:info_card.defendant_info.service_not_required_v1',
+    id: 'judicial.system.core:info_card.defendant_info.service_not_required',
     defaultMessage: 'Birting dóms ekki þörf',
     description: 'Notað sem texti þegar birting dóms er ekki þörf',
   },
   serviceRequired: {
-    id: 'judicial.system.core:info_card.defendant_info.service_required',
-    defaultMessage: 'Birta skal dómfellda dóminn',
+    id: 'judicial.system.core:info_card.defendant_info.service_required_v1',
+    defaultMessage: 'Birting skal dómfellda dóminn',
     description: 'Notað sem texti þegar birting dóms er þörf',
   },
   spokesperson: {
