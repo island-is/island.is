@@ -368,7 +368,6 @@ describe('NotificationsWorkerService', () => {
   })
 
   it('should not send email or push notification if we are outside working hours (8 AM - 11 PM) ', async () => {
-
     jest.setSystemTime(outsideWorkingHours)
 
     // First message will be handled since the receiveMessages call is waiting (wait time is max 20s and returns when a message is ready)
