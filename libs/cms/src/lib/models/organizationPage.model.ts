@@ -106,7 +106,7 @@ export const mapOrganizationPage = ({
     ) {
       topLevelNavigation.links.push({
         label: node.label,
-        href: `${getOrganizationPageUrlPrefix(sys.locale)}/${slug}/${
+        href: `/${getOrganizationPageUrlPrefix(sys.locale)}/${slug}/${
           node.slug
         }`,
       })
