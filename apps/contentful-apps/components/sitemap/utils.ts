@@ -1,37 +1,14 @@
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 
-export enum TreeNodeType {
-  ENTRY = 'entry',
-  CATEGORY = 'category',
-  URL = 'url',
-}
+import {
+  SitemapTree as Tree,
+  SitemapTreeNode as TreeNode,
+  SitemapTreeNodeType as TreeNodeType,
+} from '@island.is/shared/types'
+
+export type { Tree, TreeNode, TreeNodeType }
 
 export const ENTRY_CONTENT_TYPE_ID = 'organizationParentSubpage'
-
-export type TreeNode = Tree &
-  (
-    | {
-        type: TreeNodeType.ENTRY
-        entryId: string
-        primaryLocation: boolean // Whether the parent nodes above are the main breadcrumb path (always true unless the entry is in multiple places in the sitemap)
-      }
-    | {
-        type: TreeNodeType.CATEGORY
-        label: string
-        slug: string
-        description: string
-      }
-    | {
-        type: TreeNodeType.URL
-        label: string
-        url: string
-      }
-  )
-
-export type Tree = {
-  id: number
-  childNodes: TreeNode[]
-}
 
 const getHighestId = (tree: Tree) => {
   let highestId = tree.id
