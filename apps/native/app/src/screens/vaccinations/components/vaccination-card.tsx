@@ -230,51 +230,45 @@ export function VaccinationsCard({
                 </Cell>
               </Row>
             ))
-          : vaccination?.vaccinationsInfo?.map((vaccination, index) => {
-              return (
-                <TableRow
-                  key={index}
-                  style={{
-                    backgroundColor:
-                      index % 2 === 0 ? theme.color.blue100 : theme.color.white,
-                  }}
-                >
-                  <RowItem style={{ maxWidth: '6%' }}>
-                    <Typography variant="body3">{index + 1}</Typography>
+          : vaccination?.vaccinationsInfo?.map((vaccination, index) => (
+              <TableRow
+                key={index}
+                style={{
+                  backgroundColor:
+                    index % 2 === 0 ? theme.color.blue100 : theme.color.white,
+                }}
+              >
+                <RowItem style={{ maxWidth: '6%' }}>
+                  <Typography variant="body3">{index + 1}</Typography>
+                </RowItem>
+                <RowItem style={{ maxWidth: '20%' }}>
+                  <Typography variant="body3">
+                    {vaccination.date ? intl.formatDate(vaccination.date) : ''}
+                  </Typography>
+                </RowItem>
+                <RowItem style={{ maxWidth: '25%' }}>
+                  <Typography variant="body3">
+                    {convertAgeToString(
+                      locale,
+                      vaccination?.age?.months,
+                      vaccination.age?.years,
+                    )}
+                  </Typography>
+                </RowItem>
+                {vaccination.url && vaccination.name && (
+                  <RowItem>
+                    <TouchableOpacity
+                      style={{ flexWrap: 'wrap' }}
+                      onPress={() => openBrowser(vaccination.url!, componentId)}
+                    >
+                      <LinkText variant="small" icon={externalLinkIcon}>
+                        {vaccination.name}
+                      </LinkText>
+                    </TouchableOpacity>
                   </RowItem>
-                  <RowItem style={{ maxWidth: '20%' }}>
-                    <Typography variant="body3">
-                      {vaccination.date
-                        ? intl.formatDate(vaccination.date)
-                        : ''}
-                    </Typography>
-                  </RowItem>
-                  <RowItem style={{ maxWidth: '25%' }}>
-                    <Typography variant="body3">
-                      {convertAgeToString(
-                        locale,
-                        vaccination?.age?.months,
-                        vaccination.age?.years,
-                      )}
-                    </Typography>
-                  </RowItem>
-                  {vaccination.url && vaccination.name && (
-                    <RowItem>
-                      <TouchableOpacity
-                        style={{ flexWrap: 'wrap' }}
-                        onPress={() =>
-                          openBrowser(vaccination.url!, componentId)
-                        }
-                      >
-                        <LinkText variant="small" icon={externalLinkIcon}>
-                          {vaccination.name}
-                        </LinkText>
-                      </TouchableOpacity>
-                    </RowItem>
-                  )}
-                </TableRow>
-              )
-            })}
+                )}
+              </TableRow>
+            ))}
         {vaccination?.comments && (
           <CommentWrapper>
             {vaccination.comments.map((comment, index) => (

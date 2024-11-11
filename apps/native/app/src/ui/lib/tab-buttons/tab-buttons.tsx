@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef } from 'react'
+import React, { useCallback, useRef } from 'react'
 import styled, { useTheme } from 'styled-components/native'
 import { Animated, useWindowDimensions } from 'react-native'
 import { Typography } from '../typography/typography'
@@ -58,10 +58,7 @@ export const TabButtons = ({
   const theme = useTheme()
   const { width } = useWindowDimensions()
 
-  const buttonWidth = useMemo(
-    () => (width - theme.spacing[4]) / buttons.length,
-    [width, theme.spacing, buttons.length],
-  )
+  const buttonWidth = (width - theme.spacing[4]) / buttons.length
 
   const translateX = useRef(new Animated.Value(0)).current
 
