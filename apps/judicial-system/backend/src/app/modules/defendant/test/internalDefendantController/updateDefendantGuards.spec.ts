@@ -1,3 +1,6 @@
+import { investigationCases } from '@island.is/judicial-system/types'
+
+import { CaseTypeGuard } from '../../../case'
 import { DefendantNationalIdExistsGuard } from '../../guards/defendantNationalIdExists.guard'
 import { InternalDefendantController } from '../../internalDefendant.controller'
 
@@ -13,7 +16,11 @@ describe('InternalDefendantController - Update defendant guards', () => {
   })
 
   it('should have the right guard configuration', () => {
-    expect(guards).toHaveLength(1)
+    expect(guards).toHaveLength(2)
     expect(new guards[0]()).toBeInstanceOf(DefendantNationalIdExistsGuard)
+    expect(guards[1]).toBeInstanceOf(CaseTypeGuard)
+    expect(guards[1]).toEqual({
+      allowedCaseTypes: investigationCases,
+    })
   })
 })
