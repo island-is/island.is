@@ -1,6 +1,6 @@
+//import PDFDocument from 'pdfkit'
 import { debuglog } from 'util'
-import fs from 'fs-extra'
-import path from 'path'
+import fs from 'fs'
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
