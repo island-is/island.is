@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react'
 
-import { ResponsiveSpace } from '@island.is/island-ui/core'
+import { GridContainer, ResponsiveSpace } from '@island.is/island-ui/core'
 import { Footer } from '@island.is/web/components'
 import { OrganizationIslandFooter } from '@island.is/web/components'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
@@ -9,14 +9,14 @@ import { getBackgroundStyle } from '@island.is/web/utils/organization'
 import { Header, HeaderProps } from './components/Header'
 import { Navigation, NavigationProps } from './components/Navigation'
 
-interface StandaloneProps {
+interface StandaloneLayoutProps {
   organizationPage: OrganizationPage
 }
 
-const Standalone = ({
+const StandaloneLayout = ({
   organizationPage,
   children,
-}: PropsWithChildren<StandaloneProps>) => {
+}: PropsWithChildren<StandaloneLayoutProps>) => {
   const headerProps: HeaderProps = {
     fullWidth: organizationPage?.themeProperties.fullWidth ?? false,
     image: organizationPage?.defaultHeaderImage?.url,
@@ -66,4 +66,4 @@ const Standalone = ({
   )
 }
 
-export default Standalone
+export default StandaloneLayout
