@@ -152,10 +152,12 @@ const IndictmentOverview: FC = () => {
                 (user?.role === UserRole.DEFENDER ||
                   workingCase.indictmentReviewer?.id === user?.id)
               }
-              displayVerdictViewDate={isProsecutionUser(user)}
+              displayVerdictViewDate={
+                isProsecutionUser(user) || isDefenceUser(user)
+              }
             />
           ) : (
-            <InfoCardActiveIndictment />
+            <InfoCardActiveIndictment displayVerdictViewDate />
           )}
         </Box>
         {(hasLawsBroken || hasMergeCases) && (
