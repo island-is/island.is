@@ -253,6 +253,12 @@ export const Cases: FC = () => {
   return (
     <>
       <SharedPageLayout>
+        <AlertMessage
+          type={'error'}
+          title="sdasd"
+          message="asdads"
+          action={<p>asdasd</p>}
+        />
         <PageHeader title={formatMessage(titles.shared.cases)} />
         <div className={styles.logoContainer}>
           <Logo />

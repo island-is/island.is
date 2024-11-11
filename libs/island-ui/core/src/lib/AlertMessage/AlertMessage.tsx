@@ -57,6 +57,7 @@ const variantStyles: VariantStyles = {
 interface AlertMessageProps {
   type: AlertMessageType
   testid?: string
+  action?: ReactNode
 }
 
 type TitleAndOrMessage =
@@ -78,6 +79,7 @@ export const AlertMessage: FC<AlertMessageProps & TitleAndOrMessage> = ({
   title,
   message,
   testid,
+  action,
 }) => {
   const variant = variantStyles[type]
 
@@ -121,6 +123,16 @@ export const AlertMessage: FC<AlertMessageProps & TitleAndOrMessage> = ({
                   <Text variant="small">{message}</Text>
                 </Box>
               )}
+            </Box>
+          )}
+          {action && (
+            <Box
+              display="flex"
+              style={{ alignSelf: 'flex-end' }}
+              justifyContent="flexEnd"
+              alignItems="flexEnd"
+            >
+              {action}
             </Box>
           )}
         </Box>
