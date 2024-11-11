@@ -29,7 +29,7 @@ export const strings = defineMessages({
     description: 'Notað til að birta dagsetningu þegar dómur var birtur.',
   },
   serviceNotRequired: {
-    id: 'judicial.system.core:info_card.defendant_info.service_not_required',
+    id: 'judicial.system.core:info_card.defendant_info.service_not_required_v1',
     defaultMessage: 'Birting dóms ekki þörf',
     description: 'Notað sem texti þegar birting dóms er ekki þörf',
   },
