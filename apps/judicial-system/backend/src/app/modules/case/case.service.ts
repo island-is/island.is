@@ -748,10 +748,9 @@ export class CaseService {
           elementId: caseFile.id,
         })) ?? []
 
-    const messages = this.getDeliverProsecutorToCourtMessages(theCase, user)
-      .concat(this.getDeliverDefendantToCourtMessages(theCase, user))
-      .concat(deliverCaseFilesRecordToCourtMessages)
-      .concat(deliverCaseFileToCourtMessages)
+    const messages: Message[] = deliverCaseFilesRecordToCourtMessages.concat(
+      deliverCaseFileToCourtMessages,
+    )
 
     if (isTrafficViolationCase(theCase)) {
       messages.push({
