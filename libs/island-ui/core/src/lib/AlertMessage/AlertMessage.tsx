@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactNode, isValidElement } from 'react'
+import React, { FC, ReactNode, isValidElement } from 'react'
 import { Text } from '../Text/Text'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconType } from '../IconRC/iconMap'
@@ -73,9 +73,12 @@ type TitleAndOrMessage =
       message?: never
     }
 
-export const AlertMessage: FC<
-  PropsWithChildren<AlertMessageProps & TitleAndOrMessage>
-> = ({ type, title, message, testid }) => {
+export const AlertMessage: FC<AlertMessageProps & TitleAndOrMessage> = ({
+  type,
+  title,
+  message,
+  testid,
+}) => {
   const variant = variantStyles[type]
 
   return (
