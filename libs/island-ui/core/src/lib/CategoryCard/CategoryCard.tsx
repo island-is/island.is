@@ -37,7 +37,6 @@ export type CategoryCardProps = {
   tags?: Tag[]
   tagOptions?: Pick<TagProps, 'hyphenate' | 'truncate' | 'textLeft'>
   href?: string
-  nestedHref?: boolean
   colorScheme?: 'blue' | 'purple' | 'red'
   /** The heading above is truncated instead of overflowing */
   truncateHeading?: TextProps['truncate']
@@ -99,7 +98,6 @@ const Component = forwardRef<
       textVariant = 'default',
       textFontWeight = 'regular',
       href = '/',
-      nestedHref = false,
       tags = [],
       colorScheme = 'blue',
       truncateHeading = false,
@@ -121,9 +119,11 @@ const Component = forwardRef<
 
     const shouldStack = width && width < stackWidth
 
+    const hasNestedHref = tags.some((tag) => tag.href)
+
     return (
       <FocusableBox
-        href={!nestedHref ? href : undefined}
+        href={!hasNestedHref ? href : undefined}
         position="relative"
         display="flex"
         flexDirection="row"
@@ -164,7 +164,7 @@ const Component = forwardRef<
                   {icon}
                 </Box>
               )}
-              {href && !nestedHref ? (
+              {href && !hasNestedHref ? (
                 <Text
                   as={headingAs}
                   variant={headingVariant}

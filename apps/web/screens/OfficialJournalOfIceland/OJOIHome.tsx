@@ -169,7 +169,6 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
                     key={category.slug}
                   >
                     <CategoryCard
-                      nestedHref={true}
                       key={category.slug}
                       href={`${categoriesUrl}?yfirflokkur=${category.slug}`}
                       heading={category.title}
