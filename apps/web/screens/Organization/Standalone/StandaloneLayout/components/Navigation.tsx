@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 
-import {
-  Box,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { LanguageToggler, SearchInput } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'

@@ -37,9 +37,7 @@ export interface HeaderProps {
   isSubpage?: boolean
 }
 
-export const Header: React.FC<
-  React.PropsWithChildren<HeaderProps>
-> = ({
+export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   fullWidth,
   image,
   background,
