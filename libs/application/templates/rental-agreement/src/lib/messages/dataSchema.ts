@@ -12,24 +12,15 @@ export const dataSchema = defineMessages({
     description: 'Error message when phone number is invalid.',
   },
 
-  errorFieldCannotBeEmpty: {
-    id: 'ra.application:dataSchema.errorFieldCannotBeEmpty',
+  // Debug error messages
+  requiredErrorMsg: {
+    id: 'ra.application:error.required',
     defaultMessage: 'Reitur má ekki vera tómur',
-    description: 'Error message when field is empty',
+    description: 'Error message when a required field has not been filled',
   },
-  errorHousingFundLength: {
-    id: 'ra.application:dataSchema.errorHousingFundLength',
-    defaultMessage: 'Upphæð hússjóðs má ekki vera meira en 7 tölustafir',
-    description: 'Error message when housing fund amount is too long',
-  },
-  errorMeterNumberRegex: {
-    id: 'ra.application:dataSchema.errorMeterNumberRegex',
-    defaultMessage: 'Sláðu inn númer í tölustöfum',
-    description: 'Error message when meter number is not valid',
-  },
-  errorMeterStatusRegex: {
-    id: 'ra.application:dataSchema.errorMeterStatusRegex',
-    defaultMessage: 'Sláðu inn stöðu í tölustöfum með mest einum aukastaf',
-    description: 'Error message when meter status is not valid',
+  negativeNumberError: {
+    id: 'ra.application:error.negativeNumber',
+    defaultMessage: 'Ekki er leyfilegt að setja inn neikvæðar tölur',
+    description: 'Error message when a required field has not been filled',
   },
 })
