@@ -36,6 +36,7 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
+import { Standalone } from '../Standalone'
 import { LandingPage, LandingPageFooter } from './LandingPage'
 
 const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
@@ -241,6 +242,10 @@ const Home: Screen<HomeProps> = ({
 }) => {
   const isLandingPage =
     !organizationPage && !!organization && organization?.hasALandingPage
+
+  const standalone = organizationPage?.theme === 'standalone'
+  console.log(standalone)
+  if (standalone) return <Standalone organizationPage={organizationPage} />
   if (isLandingPage)
     return (
       <LandingPage
