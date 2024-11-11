@@ -10,7 +10,7 @@ export const FieldDescription: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   return (
     <Box marginTop={1} marginBottom={1}>
-      <Markdown >{description}</Markdown>
+      <Markdown>{description}</Markdown>
     </Box>
   )
 }
