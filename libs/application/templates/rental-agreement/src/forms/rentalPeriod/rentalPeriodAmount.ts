@@ -66,7 +66,6 @@ export const RentalPeriodAmount = buildSubSection({
           id: 'rentalAmount.indexValue',
           title: m.rentalAmount.indexValueLabel,
           placeholder: m.rentalAmount.indexValuePlaceholder,
-          variant: 'number',
           width: 'half',
           condition: rentalAmountConnectedToIndex,
         }),
@@ -100,6 +99,7 @@ export const RentalPeriodAmount = buildSubSection({
           id: 'rentalAmount.paymentDateOther',
           title: m.rentalAmount.paymentDateOtherOptionLabel,
           placeholder: m.rentalAmount.paymentDateOtherOptionPlaceholder,
+          maxLength: 100,
           condition: (answers) =>
             getValueViaPath(answers, 'rentalAmount.paymentDateOptions') ===
             RentalAmountPaymentDateOptions.OTHER,
