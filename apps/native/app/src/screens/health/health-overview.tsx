@@ -562,19 +562,22 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                     ? 'health.organDonation.isDonor'
                     : 'health.organDonation.isNotDonor',
                 })}
-                value={`${intl.formatMessage({
-                  id: isOrganDonorWithLimitations
-                    ? 'health.organDonation.isDonorWithLimitationsDescription'
-                    : isOrganDonor
-                    ? 'health.organDonation.isDonorDescription'
-                    : 'health.organDonation.isNotDonorDescription',
-                })}${
-                  isOrganDonorWithLimitations
-                    ? organLimitations?.join(', ')
-                    : ''
-                }.`}
-                loading={paymentStatusRes.loading && !paymentStatusRes.data}
-                error={paymentStatusRes.error && !paymentStatusRes.data}
+                value={`${intl.formatMessage(
+                  {
+                    id: isOrganDonorWithLimitations
+                      ? 'health.organDonation.isDonorWithLimitationsDescription'
+                      : isOrganDonor
+                      ? 'health.organDonation.isDonorDescription'
+                      : 'health.organDonation.isNotDonorDescription',
+                  },
+                  {
+                    limitations: isOrganDonorWithLimitations
+                      ? organLimitations?.join(', ')
+                      : '',
+                  },
+                )}`}
+                loading={organDonationRes.loading && !organDonationRes.data}
+                error={organDonationRes.error && !organDonationRes.data}
                 noBorder
               />
             </InputRow>
