@@ -151,7 +151,7 @@ export class InternalNotificationController {
     @Body() notificationDto: CivilClaimantNotificationDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Sending ${notificationDto.type} defendant notification for civil claimant ${civilClaimantId} and case ${caseId}`,
+      `Sending ${notificationDto.type} notification for civil claimant ${civilClaimantId} and case ${caseId}`,
     )
 
     return this.civilClaimantNotificationService.sendCivilClaimantNotification(
