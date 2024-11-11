@@ -266,7 +266,7 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationWorkerService,
   userNotificationCleanupWorkerService,
   contentfulEntryTagger,
-  searchIndexer,
+  //searchIndexer,
   contentfulApps,
   githubActionsCache,
 ]
