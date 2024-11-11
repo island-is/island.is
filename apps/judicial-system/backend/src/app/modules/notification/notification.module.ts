@@ -51,7 +51,6 @@ import { SubpoenaNotificationService } from './subpoenaNotification.service'
     NotificationService,
     NotificationDispatchService,
     SubpoenaNotificationService,
-    DefendantNotificationService,
   ],
 })
 export class NotificationModule {}
