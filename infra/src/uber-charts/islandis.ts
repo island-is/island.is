@@ -65,6 +65,7 @@ import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/a
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
+import { serviceSetup as unicornAppSetup } from '../../../apps/unicorn-app/infra/infra'
 
 const endorsement = endorsementServiceSetup({})
 
@@ -128,6 +129,8 @@ const contentfulApps = contentfulAppsSetup()
 const consultationPortal = consultationPortalSetup({ api })
 
 const xroadCollector = xroadCollectorSetup()
+
+const unicornApp  = unicornAppSetup()
 
 const licenseApi = licenseApiSetup()
 
@@ -215,7 +218,7 @@ export const Services: EnvironmentServices = {
     sessionsCleanupWorker,
     universityGatewayService,
     universityGatewayWorker,
-    bffAdminPortalService,
+    bffAdminPortalService
   ],
   dev: [
     appSystemApi,
@@ -254,6 +257,7 @@ export const Services: EnvironmentServices = {
     universityGatewayService,
     universityGatewayWorker,
     bffAdminPortalService,
+    unicornApp
   ],
 }
 
