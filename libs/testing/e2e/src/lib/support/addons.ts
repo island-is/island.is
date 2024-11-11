@@ -1,5 +1,5 @@
 import { expect, Locator, Page } from '@playwright/test'
-import { sleep } from '../support/utils'
+import { sleep } from './utils'
 
 expect.extend({
   async toHaveCountGreaterThan(
