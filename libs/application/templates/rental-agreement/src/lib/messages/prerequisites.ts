@@ -6,6 +6,26 @@ export const application = defineMessages({
     defaultMessage: 'Leigusamningur',
     description: `Name of rental agreement application`,
   },
+  housingSectionName: {
+    id: 'ra.application:application.housingSectionName',
+    defaultMessage: 'Húsnæðið',
+    description: `Name of housing section`,
+  },
+  rentalPeriodSectionName: {
+    id: 'ra.application:application.rentalPeriodSectionName',
+    defaultMessage: 'Tímabil og verð',
+    description: `Name of rental period section`,
+  },
+  summarySectionName: {
+    id: 'ra.application:application.summarySectionName',
+    defaultMessage: 'Samantekt',
+    description: `Name of summary section`,
+  },
+  signingSectionName: {
+    id: 'ra.application:application.signingSectionName',
+    defaultMessage: 'Undirritun',
+    description: `Name of signing section`,
+  },
 })
 
 export const prerequisites = {

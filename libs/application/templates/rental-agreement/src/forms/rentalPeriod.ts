@@ -5,9 +5,11 @@ import { RentalPeriodAmount } from './rentalPeriod/rentalPeriodAmount'
 import { RentalPeriodSecurityDeposit } from './rentalPeriod/rentalPeriodSecurityDeposit'
 import { RentalPeriodOtherFees } from './rentalPeriod/rentalPeriodOtherFees'
 
+import { application } from '../lib/messages'
+
 export const RentalPeriod = buildSection({
   id: 'rentalPeriod',
-  title: 'Tímabil og verð',
+  title: application.rentalPeriodSectionName,
   children: [
     RentalPeriodDetails,
     RentalPeriodAmount,

@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { TRUE } from '../../lib/constants'
-import * as m from '../../lib/messages'
+import { rentalPeriod } from '../../lib/messages'
 
 const rentalPeriodIsDefinite = (answers: FormValue) => {
   const rentalPeriodDefinite = getValueViaPath(
@@ -21,22 +21,24 @@ const rentalPeriodIsDefinite = (answers: FormValue) => {
 
 export const RentalPeriodDetails = buildSubSection({
   id: 'rentalPeriod',
-  title: m.rentalPeriodDetails.subSectionName,
+  title: rentalPeriod.subSectionName,
   children: [
     buildMultiField({
       id: 'rentalPeriod.details',
-      title: m.rentalPeriodDetails.pageTitle,
-      description: m.rentalPeriodDetails.pageDescription,
+      title: rentalPeriod.pageTitle,
+      description: rentalPeriod.pageDescription,
       children: [
         buildDateField({
           id: 'rentalPeriod.startDate',
-          title: m.rentalPeriodDetails.startDateTitle,
-          placeholder: m.rentalPeriodDetails.startDatePlaceholder,
+          title: rentalPeriod.startDateTitle,
+          placeholder: rentalPeriod.startDatePlaceholder,
+          required: true,
         }),
         buildDateField({
           id: 'rentalPeriod.endDate',
-          title: m.rentalPeriodDetails.endDateTitle,
-          placeholder: m.rentalPeriodDetails.endDatePlaceholder,
+          title: rentalPeriod.endDateTitle,
+          placeholder: rentalPeriod.endDatePlaceholder,
+          required: true,
           condition: rentalPeriodIsDefinite,
         }),
         buildCheckboxField({
@@ -45,7 +47,7 @@ export const RentalPeriodDetails = buildSubSection({
           options: [
             {
               value: TRUE,
-              label: m.rentalPeriodDetails.rentalPeriodDefiniteLabel,
+              label: rentalPeriod.rentalPeriodDefiniteLabel,
             },
           ],
           spacing: 0,
@@ -53,10 +55,10 @@ export const RentalPeriodDetails = buildSubSection({
 
         buildDescriptionField({
           id: 'rentalPeriod.termination',
-          title: m.rentalPeriodDetails.terminationLabel,
+          title: rentalPeriod.terminationLabel,
           titleVariant: 'h3',
           space: 3,
-          description: m.rentalPeriodDetails.terminationDescription,
+          description: rentalPeriod.terminationDescription,
         }),
       ],
     }),
