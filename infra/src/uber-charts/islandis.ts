@@ -266,6 +266,7 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationWorkerService,
   userNotificationCleanupWorkerService,
   contentfulEntryTagger,
+  //TODO: DONT FORGET TO REMOVE BEFORE MERGE!!!!!
   //searchIndexer,
   contentfulApps,
   githubActionsCache,
