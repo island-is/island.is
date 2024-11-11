@@ -11,6 +11,20 @@ query GetHealthInsuranceOverview {
   }
 }
 
+query GetMedicineData {
+  rightsPortalDrugPeriods {
+    id
+    dateFrom
+    dateTo
+    active
+    paidAmount
+    paymentStatus
+    numberOfBills
+    levelNumber
+    levelPercentage
+  }
+}
+
 query GetHealthCenter($input: RightsPortalHealthCenterHistoryInput) {
   rightsPortalHealthCenterRegistrationHistory(input: $input) {
     current {
