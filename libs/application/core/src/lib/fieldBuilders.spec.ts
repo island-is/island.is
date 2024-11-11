@@ -24,7 +24,12 @@ describe('buildFieldOptions', () => {
       { label: 'Option 2', value: '2' },
     ]
 
-    const result = buildFieldOptions(staticOptions, mockApplication, mockField)
+    const result = buildFieldOptions(
+      staticOptions,
+      mockApplication,
+      mockField,
+      'is',
+    )
 
     expect(result).toEqual(staticOptions)
   })
@@ -35,9 +40,18 @@ describe('buildFieldOptions', () => {
       { label: 'Dynamic 2', value: 'd2' },
     ])
 
-    const result = buildFieldOptions(dynamicOptions, mockApplication, mockField)
+    const result = buildFieldOptions(
+      dynamicOptions,
+      mockApplication,
+      mockField,
+      'is',
+    )
 
-    expect(dynamicOptions).toHaveBeenCalledWith(mockApplication, mockField)
+    expect(dynamicOptions).toHaveBeenCalledWith(
+      mockApplication,
+      mockField,
+      'is',
+    )
     expect(result).toEqual([
       { label: 'Dynamic 1', value: 'd1' },
       { label: 'Dynamic 2', value: 'd2' },
