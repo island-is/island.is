@@ -1,8 +1,11 @@
-import { getAccessToken } from '@island.is/auth/react'
+import { createBffUrlGenerator } from '@island.is/react-spa/bff'
+import { ServicePortalPaths } from '../lib/navigation/paths'
 
 export const formSubmit = async (url: string, annual?: boolean) => {
-  const token = await getAccessToken()
-  if (!token) return
+  const bffUrlGenerator = createBffUrlGenerator(ServicePortalPaths.Base)
+  const bffUrl = bffUrlGenerator('/api', {
+    url,
+  })
 
   // Create form elements
   const form = document.createElement('form')
@@ -12,7 +15,7 @@ export const formSubmit = async (url: string, annual?: boolean) => {
 
   // Form values
   form.method = 'post'
-  form.action = url
+  form.action = bffUrl
   form.target = '_blank'
 
   if (annual) {
@@ -23,11 +26,6 @@ export const formSubmit = async (url: string, annual?: boolean) => {
     annualInput.name = 'annualDoc'
     annualInput.value = 'true'
   }
-
-  // National Id values
-  tokenInput.type = 'hidden'
-  tokenInput.name = '__accessToken'
-  tokenInput.value = token
 
   document.body.appendChild(form)
   form.submit()

@@ -24,45 +24,44 @@ const DocumentActions = () => {
           flexDirection="row"
           flexWrap="wrap"
         >
-          {actions.map((a) => {
-            return (
-              <Box marginRight={1} marginTop={1}>
-                {a.type === 'url' && a.data && (
-                  <a href={a.data}>
-                    <Button
-                      as="span"
-                      unfocusable
-                      colorScheme="default"
-                      icon={(a.icon as IconMapIcon) ?? DEFAULT_ICON}
-                      iconType="outline"
-                      size="default"
-                      variant="utility"
-                    >
-                      {a.title}
-                    </Button>
-                  </a>
-                )}
-                {a.type === 'file' && activeDocument && (
+          {actions.map((a, index) => (
+            <Box marginRight={1} marginTop={1} key={index}>
+              {a.type === 'url' && a.data && (
+                <a href={a.data}>
                   <Button
-                    size="small"
-                    variant="utility"
+                    as="span"
+                    unfocusable
+                    colorScheme="default"
                     icon={(a.icon as IconMapIcon) ?? DEFAULT_ICON}
                     iconType="outline"
-                    onClick={() => {
-                      window.open(
-                        bffUrlGenerator('/api', {
-                          url: a.data ?? activeDocument.downloadUrl,
-                        }),
-                        '_blank',
-                      )
-                    }}
+                    size="default"
+                    variant="utility"
                   >
                     {a.title}
                   </Button>
-                )}
-              </Box>
-            )
-          })}
+                </a>
+              )}
+              no
+              {a.type === 'file' && activeDocument && (
+                <Button
+                  size="small"
+                  variant="utility"
+                  icon={(a.icon as IconMapIcon) ?? DEFAULT_ICON}
+                  iconType="outline"
+                  onClick={() => {
+                    window.open(
+                      bffUrlGenerator('/api', {
+                        url: a.data ?? activeDocument.downloadUrl,
+                      }),
+                      '_blank',
+                    )
+                  }}
+                >
+                  {a.title}
+                </Button>
+              )}
+            </Box>
+          ))}
         </Box>
       )}
     </Box>

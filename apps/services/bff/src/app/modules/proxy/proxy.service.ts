@@ -207,6 +207,19 @@ export class ProxyService {
   }
 
   /**
+   * Prepares the request for proxying to an external API by validating the URL and getting the access token.
+   */
+  private prepareApiProxyRequest(req: Request, url: string): Promise<string> {
+    if (!validateUri(url, this.config.allowedExternalApiUrls)) {
+      this.logger.error('Invalid external api url provided:', url)
+
+      throw new BadRequestException('Proxing url failed!')
+    }
+
+    return this.getAccessToken(req)
+  }
+
+  /**
    * Forwards an incoming HTTP GET request to the specified URL (provided in the query string),
    * managing authentication, refreshing tokens if needed, and streaming the response back to the client.
    */
@@ -220,20 +233,40 @@ export class ProxyService {
     query: ApiProxyDto
   }) {
     const { url } = query
-
-    if (!validateUri(url, this.config.allowedExternalApiUrls)) {
-      this.logger.error('Invalid external api url provided:', url)
-
-      throw new BadRequestException('Proxing url failed!')
-    }
-
-    const accessToken = await this.getAccessToken(req)
+    const accessToken = await this.prepareApiProxyRequest(req, url)
 
     this.executeStreamRequest({
       accessToken,
       targetUrl: url,
       req,
       res,
+    })
+  }
+
+  /**
+   * Forwards an incoming HTTP POST request to the specified URL (provided in the query string),
+   * managing authentication, refreshing tokens if needed, and streaming the response back to the client.
+   */
+  async forwardPostApiRequest({
+    req,
+    res,
+    query,
+    body,
+  }: {
+    req: Request
+    res: Response
+    query: ApiProxyDto
+    body: Record<string, unknown>
+  }) {
+    const { url } = query
+    const accessToken = await this.prepareApiProxyRequest(req, url)
+
+    this.executeStreamRequest({
+      accessToken,
+      targetUrl: url,
+      req,
+      res,
+      body,
     })
   }
 }

@@ -138,10 +138,10 @@ const VehiclesOverview = () => {
       {((!loading && !error && filteredVehicles.length > 0) ||
         searchLoading) && (
         <Box marginBottom={3} display="flex" flexWrap="wrap">
-          {(ownershipPdf || searchLoading) && (
+          {ownershipPdf && !searchLoading && (
             <Box marginRight={2} marginBottom={[1]}>
               <DropdownExport
-                onGetPDF={() => formSubmit(`${ownershipPdf}`)}
+                onGetPDF={() => formSubmit(ownershipPdf)}
                 onGetExcel={() => setDownloadExcel(true)}
               />
             </Box>
