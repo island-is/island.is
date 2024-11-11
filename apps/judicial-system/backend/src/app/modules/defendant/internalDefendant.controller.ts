@@ -23,6 +23,7 @@ import { DeliverDefendantToCourtDto } from './dto/deliverDefendantToCourt.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
+import { DefendantNationalIdExistsGuard } from './guards/defendantNationalIdExists.guard'
 import { Defendant } from './models/defendant.model'
 import { DeliverResponse } from './models/deliver.response'
 import { DefendantService } from './defendant.service'
@@ -62,6 +63,7 @@ export class InternalDefendantController {
     )
   }
 
+  @UseGuards(DefendantNationalIdExistsGuard)
   @Patch('defense/:defendantNationalId')
   @ApiOkResponse({
     type: Defendant,
@@ -71,13 +73,14 @@ export class InternalDefendantController {
     @Param('caseId') caseId: string,
     @Param('defendantNationalId') defendantNationalId: string,
     @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
     @Body() updatedDefendantChoice: InternalUpdateDefendantDto,
   ): Promise<Defendant> {
     this.logger.debug(`Updating defendant info for ${caseId}`)
 
     const updatedDefendant = await this.defendantService.updateByNationalId(
-      theCase.id,
-      defendantNationalId,
+      theCase,
+      defendant,
       updatedDefendantChoice,
     )
 
