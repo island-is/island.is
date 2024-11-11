@@ -7,7 +7,6 @@ import {
   Box,
   Button,
   getTextStyles,
-  Icon,
   IconMapIcon,
   useBoxStyles,
 } from '@island.is/island-ui/core'
@@ -22,6 +21,7 @@ export interface ContextMenuItem {
   onClick?: () => void
   title: string
   icon?: IconMapIcon
+  disabled?: boolean
 }
 
 export type MenuItems = ContextMenuItem[]
@@ -123,6 +123,7 @@ const ContextMenu = forwardRef<HTMLElement, ContextMenuProps & TestSupport>(
                 {...menu}
                 {...anchorProps}
                 key={`${item.title}_${index}`}
+                disabled={item.disabled}
                 onClick={(evt) => {
                   evt.stopPropagation()
                   menu.hide()
@@ -134,11 +135,19 @@ const ContextMenu = forwardRef<HTMLElement, ContextMenuProps & TestSupport>(
                   menuItemBoxStyle,
                   menuItemTextStyle,
                   styles.menuItem,
+                  {
+                    [styles.disabled]: item.disabled,
+                  },
                 )}
               >
                 {item.icon && (
                   <Box display="flex" marginRight={2}>
-                    <Icon icon={item.icon} type="outline" color="blue400" />
+                    {/* <Icon
+                      icon={item.icon}
+                      type="outline"
+                      color={item.disabled ? 'dark200' : 'blue400'}
+                    /> */}
+                    🚀
                   </Box>
                 )}
                 {item.title}

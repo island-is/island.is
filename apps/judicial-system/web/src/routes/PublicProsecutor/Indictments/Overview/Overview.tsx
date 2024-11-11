@@ -105,6 +105,7 @@ export const Overview = () => {
             <BlueBoxWithDate
               defendant={defendant}
               indictmentRulingDecision={workingCase.indictmentRulingDecision}
+              indictmentReviewDecision={workingCase.indictmentReviewDecision}
               icon="calendar"
             />
           </Box>

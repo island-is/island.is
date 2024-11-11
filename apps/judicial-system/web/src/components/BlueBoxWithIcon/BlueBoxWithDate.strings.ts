@@ -2,8 +2,8 @@ import { defineMessages } from 'react-intl'
 
 export const strings = defineMessages({
   keyDates: {
-    id: 'judicial.system.core:blue_box_with_date.key_dates',
-    defaultMessage: 'Lykildagsetningar',
+    id: 'judicial.system.core:blue_box_with_date.key_dates_v1',
+    defaultMessage: 'Birting dóms',
     description: 'Notaður sem titill í lykildagsetningarsvæði dómfellda.',
   },
   defendantVerdictViewDateLabel: {
@@ -51,5 +51,11 @@ export const strings = defineMessages({
     defaultMessage: 'Skrá áfrýjun ákærða',
     description:
       'Notaður sem text í takka til að skrá hvenær dómur var áfrýjaður af dómfellda.',
+  },
+  sendToFMST: {
+    id: 'judicial.system.core:blue_box_with_date.send_to_fmst',
+    defaultMessage: 'Senda til fullnustu',
+    description:
+      'Notaður sem texti í valmynd fyrir aðgerðina að senda mál til fullnustu',
   },
 })
