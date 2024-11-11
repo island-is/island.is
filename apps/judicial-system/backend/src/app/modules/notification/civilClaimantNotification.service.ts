@@ -143,18 +143,13 @@ export class CivilClaimantNotificationService extends BaseNotificationService {
     civilClaimant: CivilClaimant,
     theCase: Case,
   ): Promise<DeliverResponse> {
-    {
-      switch (notificationType) {
-        case CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED:
-          return this.sendSpokespersonAssignedNotification(
-            civilClaimant,
-            theCase,
-          )
-        default:
-          throw new InternalServerErrorException(
-            `Invalid notification type: ${notificationType}`,
-          )
-      }
+    switch (notificationType) {
+      case CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED:
+        return this.sendSpokespersonAssignedNotification(civilClaimant, theCase)
+      default:
+        throw new InternalServerErrorException(
+          `Invalid notification type: ${notificationType}`,
+        )
     }
   }
 
