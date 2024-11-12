@@ -86,7 +86,7 @@ export class NotificationsService {
       )
 
     this.logger.info(
-      `Notification with id ${response.id} sent for application ${data.applicationId}`,
+      `Notification with templateId ${templateId} and messageId ${response.id} sent for application ${data.applicationId}`,
     )
 
     return response
