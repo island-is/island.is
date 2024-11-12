@@ -163,6 +163,7 @@ export class EventService {
           ],
         }),
       })
+      this.logInfo(event, theCase)
     } catch (error) {
       // Tolerate failure, but log error
       this.logger.error(
@@ -170,8 +171,6 @@ export class EventService {
         { error },
       )
     }
-
-    this.logInfo(event, theCase)
   }
 
   async postErrorEvent(
