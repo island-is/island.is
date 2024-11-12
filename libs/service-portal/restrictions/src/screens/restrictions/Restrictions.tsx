@@ -1,10 +1,9 @@
-import React, { ReactNode, useEffect, useState } from 'react'
-import { FormattedMessage, useIntl } from 'react-intl'
-import { Form, useActionData, useLoaderData } from 'react-router-dom'
 import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
+import { ReactNode, useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Form, useActionData, useLoaderData } from 'react-router-dom'
 
-import { useUserDecodedIdToken } from '@island.is/auth/react'
 import {
   AlertMessage,
   Box,
@@ -13,17 +12,18 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { useSubmitting } from '@island.is/react-spa/shared'
+import { Modal } from '@island.is/react/components'
 import {
   APPLICATION_SERVICE_PROVIDER_SLUG,
   IntroHeader,
 } from '@island.is/service-portal/core'
-import { Modal } from '@island.is/react/components'
-import { useSubmitting } from '@island.is/react-spa/shared'
 
-import { RestrictionsIntent, RestrictionsResponse } from './Restrictions.action'
 import { m } from '../../lib/messages'
+import { RestrictionsIntent, RestrictionsResponse } from './Restrictions.action'
 import { RestrictionsLoaderResponse } from './Restrictions.loader'
 
+import { useUserInfo } from '@island.is/react-spa/bff'
 import * as styles from './Restrictions.css'
 
 const IDP_SIM = 'audkenni_sim'
@@ -49,7 +49,9 @@ export default function Restrictions() {
   const [showModal, setShowModal] = useState(false)
 
   const { formatMessage } = useLocale()
-  const { idp } = useUserDecodedIdToken()
+  const {
+    profile: { idp },
+  } = useUserInfo()
 
   const loaderData = useLoaderData() as RestrictionsLoaderResponse
   const actionData = useActionData() as RestrictionsResponse
