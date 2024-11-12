@@ -278,6 +278,11 @@ export const serviceSetup = (services: {
       UNIVERSITY_GATEWAY_API_URL: ref(
         (h) => `http://${h.svc(services.universityGatewayApi)}`,
       ),
+      WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: {
+        dev: 'island-is-assistant-feedback',
+        staging: 'island-is-assistant-feedback',
+        prod: 'island-is-assistant-feedback',
+      },
     })
 
     .secrets({
