@@ -130,7 +130,7 @@ const consultationPortal = consultationPortalSetup({ api })
 
 const xroadCollector = xroadCollectorSetup()
 
-const unicornApp  = unicornAppSetup()
+const unicornApp = unicornAppSetup()
 
 const licenseApi = licenseApiSetup()
 
@@ -142,8 +142,7 @@ const downloadService = downloadServiceSetup({
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
-const userNotificationCleanupWorkerService =
-  userNotificationCleanUpWorkerSetup()
+const userNotificationCleanupWorkerService = userNotificationCleanUpWorkerSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
 
@@ -218,7 +217,7 @@ export const Services: EnvironmentServices = {
     sessionsCleanupWorker,
     universityGatewayService,
     universityGatewayWorker,
-    bffAdminPortalService
+    bffAdminPortalService,
   ],
   dev: [
     appSystemApi,
@@ -257,7 +256,7 @@ export const Services: EnvironmentServices = {
     universityGatewayService,
     universityGatewayWorker,
     bffAdminPortalService,
-    unicornApp
+    unicornApp,
   ],
 }
 
