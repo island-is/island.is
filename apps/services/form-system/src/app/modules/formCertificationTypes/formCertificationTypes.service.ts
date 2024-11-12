@@ -41,8 +41,7 @@ export class FormCertificationTypesService {
 
     await newFormCertificationType.save()
 
-    certificationType.formCertificationId =
-      newFormCertificationType.certificationTypeId
+    certificationType.formCertificationId = newFormCertificationType.id
 
     // certificationType.id = newFormCertification.id
 

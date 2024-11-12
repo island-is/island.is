@@ -34,7 +34,7 @@ export class FieldDto {
   @ApiPropertyOptional({ type: FieldSettings })
   fieldSettings?: FieldSettings
 
-  @ApiProperty({ enum: FieldTypesEnum })
+  @ApiProperty()
   fieldType!: string
 
   @ApiPropertyOptional({ type: [ListItemDto] })
