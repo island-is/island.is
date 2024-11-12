@@ -3,7 +3,6 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   m,
   SAMGONGUSTOFA_SLUG,
-  IntroHeader,
   LinkButton,
   IntroWrapper,
 } from '@island.is/service-portal/core'

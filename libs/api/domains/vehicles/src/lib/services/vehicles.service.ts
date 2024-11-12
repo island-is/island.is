@@ -469,7 +469,7 @@ export class VehiclesService {
       putMileageReadingModel: input,
     })
 
-    return dtos[0]
+    return dtos.length > 0 ? dtos[0] : null
   }
 
   async postMileageReadingV2(
@@ -537,7 +537,7 @@ export class VehiclesService {
       const dtos = await this.getMileageWithAuth(auth).rootPut({
         putMileageReadingModel: input,
       })
-      return dtos[0]
+      return dtos.length > 0 ? dtos[0] : null
     } catch (e) {
       if (e instanceof FetchError && (e.status === 400 || e.status === 429)) {
         const errorBody = e.body as UpdateResponseError

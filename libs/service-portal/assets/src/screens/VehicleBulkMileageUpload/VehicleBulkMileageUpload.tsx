@@ -73,10 +73,6 @@ const VehicleBulkMileageUpload = () => {
       setUploadErrorMessage(formatMessage(vehicleMessage.noDataInUploadedFile))
       return
     }
-    if (typeof records === 'string') {
-      setUploadErrorMessage(records)
-      return
-    }
     vehicleBulkMileagePostMutation({
       variables: {
         input: {
