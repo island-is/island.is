@@ -58,7 +58,14 @@
       "get": {
         "operationId": "MeVaccinationController_getVaccinationsForDiseases",
         "description": "Get overview of vaccinations for a user",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "schema": { "enum": ["en", "is"], "type": "string" }
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -120,6 +127,12 @@
             "in": "path",
             "description": "id of the disease",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "schema": { "enum": ["en", "is"], "type": "string" }
           }
         ],
         "responses": {
@@ -877,6 +890,10 @@
           "description": { "type": "string" },
           "isFeatured": { "type": "boolean" },
           "isVisible": { "type": "boolean" },
+          "vaccines": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/VaccineDiseaseDto" }
+          },
           "rules": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/DiseaseRuleDto" }
