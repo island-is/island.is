@@ -20,6 +20,7 @@ import { errors } from '@island.is/judicial-system-web/messages'
 import {
   CaseIndictmentRulingDecision,
   Defendant,
+  EventType,
   IndictmentCaseReviewDecision,
   ServiceRequirement,
 } from '../../graphql/schema'
@@ -152,6 +153,12 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       defendant.isVerdictAppealDeadlineExpired,
     )
 
+    const sentToFMST = workingCase.eventLogs?.find(
+      (evt) =>
+        evt.eventType === EventType.INDICTMENT_SENT_TO_FMST &&
+        evt.nationalId === defendant.nationalId,
+    )
+
     setTextItems([
       ...(serviceRequired
         ? [
@@ -172,9 +179,17 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             }),
           ]
         : []),
+      ...(sentToFMST
+        ? [
+            formatMessage(strings.sendToFMSTDate, {
+              date: formatDate(sentToFMST.created),
+            }),
+          ]
+        : []),
     ])
   }, [
     defendant.isVerdictAppealDeadlineExpired,
+    defendant.nationalId,
     defendant.verdictAppealDate,
     defendant.verdictAppealDeadline,
     defendant.verdictViewDate,
@@ -182,6 +197,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     indictmentRulingDecision,
     serviceRequired,
     verdictViewDate,
+    workingCase.eventLogs,
   ])
 
   return (
