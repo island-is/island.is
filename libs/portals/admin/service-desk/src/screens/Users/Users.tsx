@@ -96,7 +96,7 @@ const Users = () => {
                   })
                   submit(formRef.current)
                 }
-              }
+              },
             }}
             hasError={error.hasError}
             errorMessage={error.hasError ? error.message : undefined}
