@@ -36,6 +36,7 @@ import {
   Frigg,
   HealthDirectorateVaccination,
   HealthDirectorateOrganDonation,
+  WorkAccidents,
   NationalRegistryB2C,
 } from '../../../../infra/src/dsl/xroad'
 
@@ -300,6 +301,7 @@ export const serviceSetup = (services: {
       Frigg,
       HealthDirectorateVaccination,
       HealthDirectorateOrganDonation,
+      WorkAccidents,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -339,6 +341,8 @@ export const serviceSetup = (services: {
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME',
       ALTHINGI_OMBUDSMAN_XROAD_PASSWORD:
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
     .db()
     .migrations()

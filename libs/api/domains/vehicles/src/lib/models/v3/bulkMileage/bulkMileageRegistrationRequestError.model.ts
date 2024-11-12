@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class VehiclesBulkMileageRegistrationRequestError {
@@ -7,4 +7,10 @@ export class VehiclesBulkMileageRegistrationRequestError {
 
   @Field({ nullable: true })
   message?: string
+
+  @Field(() => Int, { nullable: true })
+  warningSerialCode?: number
+
+  @Field({ nullable: true })
+  warningText?: string
 }

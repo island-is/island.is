@@ -148,6 +148,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
 import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
+import { WorkAccidentClientConfig } from '@island.is/clients/work-accident-ver'
 
 import {
   ConfigModule,
@@ -436,6 +437,7 @@ const environment = getConfig
         CriminalRecordClientConfig,
         HealthInsuranceV2ClientConfig,
         UmbodsmadurSkuldaraClientConfig,
+        WorkAccidentClientConfig,
         ZendeskServiceConfig,
         emailModuleConfig,
       ],

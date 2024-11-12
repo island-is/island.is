@@ -8,7 +8,7 @@ import {
   useGetUsersMileageLazyQuery,
 } from './VehicleBulkMileage.generated'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import {
   ExpandRow,
   NestedFullTable,
@@ -22,6 +22,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import * as styles from './VehicleBulkMileage.css'
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import { isReadDateToday } from '../../utils/readDate'
+import { isDefined } from '@island.is/shared/utils'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 
@@ -210,6 +211,42 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     }
   }, [mileageData?.vehicleMileageDetails, vehicle.vehicleId])
 
+  const nestedTable = useMemo(() => {
+    if (!data?.vehiclesMileageRegistrationHistory) {
+      return [[]]
+    }
+    const tableData: Array<Array<string>> = [[]]
+    if (data?.vehiclesMileageRegistrationHistory?.lastMileageRegistration) {
+      tableData.push([
+        formatDate(
+          data.vehiclesMileageRegistrationHistory.lastMileageRegistration.date,
+        ),
+        data.vehiclesMileageRegistrationHistory.lastMileageRegistration
+          .originCode,
+        //'-',
+        displayWithUnit(
+          data.vehiclesMileageRegistrationHistory.lastMileageRegistration
+            .mileage,
+          'km',
+          true,
+        ),
+      ])
+    }
+    for (const mileageRegistration of data?.vehiclesMileageRegistrationHistory
+      ?.mileageRegistrationHistory ?? []) {
+      if (mileageRegistration) {
+        tableData.push([
+          formatDate(mileageRegistration.date),
+          mileageRegistration.originCode,
+          //'-',
+          displayWithUnit(mileageRegistration.mileage, 'km', true),
+        ])
+      }
+    }
+
+    return tableData
+  }, [data?.vehiclesMileageRegistrationHistory])
+
   return (
     <ExpandRow
       key={`bulk-mileage-vehicle-row-${vehicle.vehicleId}`}
@@ -360,16 +397,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
           ]}
           loading={loading}
           emptyMessage={formatMessage(vehicleMessage.mileageHistoryNotFound)}
-          data={
-            data?.vehiclesMileageRegistrationHistory?.mileageRegistrationHistory?.map(
-              (r) => [
-                formatDate(r.date),
-                r.originCode,
-                //'-',
-                displayWithUnit(r.mileage, 'km', true),
-              ],
-            ) ?? []
-          }
+          data={nestedTable}
         />
       )}
     </ExpandRow>

@@ -72,7 +72,11 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateVaccinations',
   })
   @Audit()
-  getVaccinations(@CurrentUser() user: User): Promise<Vaccinations | null> {
-    return this.api.getVaccinations(user)
+  getVaccinations(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @CurrentUser() user: User,
+  ): Promise<Vaccinations | null> {
+    return this.api.getVaccinations(user, locale)
   }
 }
