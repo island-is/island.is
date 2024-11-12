@@ -1,4 +1,4 @@
-import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
 const namespace = 'payments'
 const serviceName = `${namespace}-web`
@@ -6,12 +6,14 @@ const image = `${namespace}-image`
 
 const basepath = '/greidsla'
 
-export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
+export const serviceSetup = ({
+  paymentsApi: ServiceBuilder<'payments-api'>,
+}): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .namespace(namespace)
     .image(image)
     .env({
-      NEXT_PUBLIC_BACKEND_URL: '/backend',
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(paymentsApi)}`),
       BASEPATH: basepath,
     })
     .secrets({

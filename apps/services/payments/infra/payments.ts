@@ -1,6 +1,6 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-const namespace = 'services-payments'
+const namespace = 'payments-api'
 const serviceName = `${namespace}`
 const imageName = `${namespace}-image`
 
