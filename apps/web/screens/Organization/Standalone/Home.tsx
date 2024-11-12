@@ -10,11 +10,11 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import StandaloneLayout from './StandaloneLayout/StandaloneLayout'
 
-interface HomeProps {
+export interface StandaloneHomeProps {
   organizationPage: OrganizationPage
 }
 
-const Home: Screen<HomeProps> = ({ organizationPage }) => {
+const StandaloneHome: Screen<StandaloneHomeProps> = ({ organizationPage }) => {
   return (
     <StandaloneLayout organizationPage={organizationPage}>
       Home
@@ -22,7 +22,7 @@ const Home: Screen<HomeProps> = ({ organizationPage }) => {
   )
 }
 
-Home.getProps = async ({ apolloClient, locale, query }) => {
+StandaloneHome.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },
@@ -48,4 +48,4 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default Home
+export default StandaloneHome

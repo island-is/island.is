@@ -36,7 +36,6 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
-import StandaloneHome from '../Standalone/Home'
 import { LandingPage, LandingPageFooter } from './LandingPage'
 
 const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
@@ -229,7 +228,7 @@ const OrganizationHomePage: Screen<HomeProps> = ({
   )
 }
 
-interface HomeProps {
+export interface HomeProps {
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -243,9 +242,6 @@ const Home: Screen<HomeProps> = ({
   const isLandingPage =
     !organizationPage && !!organization && organization?.hasALandingPage
 
-  const standalone = organizationPage?.theme === 'standalone'
-  console.log(standalone)
-  if (standalone) return <StandaloneHome organizationPage={organizationPage} />
   if (isLandingPage)
     return (
       <LandingPage
@@ -325,4 +321,4 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default Home
+export default withMainLayout(Home)
