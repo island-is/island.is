@@ -35,21 +35,7 @@ const config: PlaywrightTestConfig = {
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    ...((process.env.CI
-      ? [
-          ['line'],
-          [
-            'playwright-tesults-reporter',
-            {
-              'tesults-target': process.env.TESULTS_TOKEN,
-              'tesults-build-name': process.env.COMMIT_INFO,
-              'tesults-build-result': 'pass',
-              'tesults-build-reason': 'Always succeed 💯',
-              'tesults-build-description': process.env.COMMIT_INFO_MESSAGE,
-            },
-          ],
-        ]
-      : [['dot']]) as ReporterDescription[]),
+    ...((process.env.CI ? [['line']] : [['dot']]) as ReporterDescription[]),
     ['html', { open: 'never' }],
   ],
 

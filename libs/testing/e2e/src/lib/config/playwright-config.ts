@@ -5,6 +5,7 @@ interface PlaywrightConfigParams {
   port?: number
   command: string
   cwd?: string
+  timeoutMs?: number
 }
 
 export const createPlaywrightConfig = ({
@@ -21,7 +22,9 @@ export const createPlaywrightConfig = ({
     retries: process.env.CI ? 2 : 0,
     workers: process.env.CI ? 1 : undefined,
     reporter: [
-      ...((process.env.CI ? [['json']] : [['dot']]) as ReporterDescription[]),
+      ...((process.env.CI
+        ? [['json', { outputFile: 'test-results.json' }]]
+        : [['dot']]) as ReporterDescription[]),
       ['html', { open: 'never' }],
     ],
 
@@ -30,10 +33,9 @@ export const createPlaywrightConfig = ({
       trace: 'on-first-retry',
     },
     projects: [
-      {
-        name: 'chromium',
-        use: { ...devices['Desktop Chrome'] },
-      },
+      { name: 'everything', testMatch: 'e2e/**/*.spec.[tj]s' },
+      { name: 'smoke', testMatch: 'e2e/smoke/**/*.spec.[tj]s' },
+      { name: 'acceptance', testMatch: 'e2e/acceptance/**/*.spec.[tj]s' },
     ],
     webServer: {
       stdout: 'pipe',
@@ -41,7 +43,7 @@ export const createPlaywrightConfig = ({
       url: port ? undefined : webServerUrl,
       command,
       reuseExistingServer: !process.env.CI,
-      timeout: 5 * 60 * 1000,
+      timeout: timeoutMs,
       cwd,
     },
   })

@@ -1,7 +1,7 @@
-import { createGlobalConfig } from '@island.is/testing/e2e'
+import { createPlaywrightConfig } from '@island.is/testing/e2e'
 import './e2e/utils/addons'
 
-const consultationPortalConfig = createGlobalConfig({
+const consultationPortalConfig = createPlaywrightConfig({
   webServerUrl: 'http://localhost:4200',
   port: 4200,
   command:

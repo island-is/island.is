@@ -32,7 +32,7 @@ const registerEmailAddressWithSES = async (emailAccount: {
     new VerifyEmailAddressCommand({ EmailAddress: emailAccount.email }),
   )
   const verifyMsg = await emailAccount.getLastEmail(4)
-  if (verifyMsg && verifyMsg.text) {
+  if (verifyMsg?.text) {
     debug(`Verify message is ${verifyMsg.subject}: ${verifyMsg.text}`)
     const verifyUrl = verifyMsg.text.match(/https:\/\/email-verification.+/)
     if (!verifyUrl || verifyUrl.length !== 1) {

@@ -3,8 +3,8 @@ import mergeWith from 'lodash/merge'
 import camelCase from 'lodash/camelCase'
 import { debug } from './utils'
 
-const mergeOverwrite = (_: unknown, source: unknown) => {
-  source
+const mergeOverwrite = (_: unknown, source: unknown): unknown => {
+  return source
 }
 
 type Matchable = string | RegExp
@@ -19,7 +19,7 @@ type MockGQLOptions = {
 
 type Dict<T = unknown> = Record<string, T>
 /**
- * Return a copy of the `eroginal` object with any sub-objects mocked as `mockData`
+ * Return a copy of the `original` object with any sub-objects mocked as `mockData`
  */
 const deepMock = <T = Dict>(
   original: T | T[],
@@ -42,7 +42,7 @@ const deepMock = <T = Dict>(
     mockKey = new RegExp(exactMatch ? `^${mockKey}$` : `${mockKey}`)
   const mocked: Dict = {}
   for (const key in original) {
-    if (key.match('currenLic')) debug('Mocking currentLic', original)
+    if (key.match('currentLic')) debug('Mocking currentLic', original)
     const updatedDeepPath = `${deepPath}.${key}`
     if (key.match(mockKey)) {
       mocked.isMocked = true
@@ -71,7 +71,7 @@ const deepMock = <T = Dict>(
  * Optionally, define a different data key in the response or turn off the default camelCasing
  * of the operation.
  */
-export const mockQGL = async <T>(
+export const mockGQL = async <T>(
   page: Page,
   op: string,
   mockData: T,
@@ -152,36 +152,28 @@ export const disableObjectKey = async <T>(
   key: Matchable,
   mockData?: T,
 ) => {
-  return await mockQGL(page, '**', mockData ?? `MOCKED-${key}`, {
+  return await mockGQL(page, '**', mockData ?? `MOCKED-${key}`, {
     deepMockKey: key,
     patchResponse: true,
   })
 }
 
 export const disablePreviousApplications = async (page: Page) => {
-  await mockQGL(page, 'ApplicationApplications', [])
-  //syslumennOnEntry.data.estates
-  /*
-  await mockQGL(
-    page,
-    'UpdateApplication',
-    {
-      externalData: {
-        existingApplication: { data: [] },
-        syslumennOnEntry: { data: {} },
-      },
-    },
-    { patchResponse: true },
-  )
-  */
+  await mockGQL(page, 'ApplicationApplications', [])
 }
 
-export const disableI18n = async (page: Page) => {
-  return await mockQGL(page, 'GetTranslations', {
+/**
+ * Mocks the i18n translations by returning mock data.
+ */
+export const disableI18n = async (page: Page): Promise<void> => {
+  return mockGQL(page, 'GetTranslations', {
     'mock.translation': 'YES-mocked',
   })
 }
 
-export const disableDelegations = async (page: Page) => {
-  return await mockQGL(page, 'ActorDelegations', [])
+/**
+ * Disables delegations by mocking the response to return an empty array.
+ */
+export const disableDelegations = async (page: Page): Promise<void> => {
+  return mockGQL(page, 'ActorDelegations', [])
 }

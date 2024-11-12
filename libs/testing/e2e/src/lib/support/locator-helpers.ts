@@ -1,6 +1,7 @@
 import { Locator, Page } from '@playwright/test'
 
 type Roles = 'heading' | 'button' | 'radio'
+
 export const locatorByRole = (
   role: Roles | string,
   name: string | { name: string },

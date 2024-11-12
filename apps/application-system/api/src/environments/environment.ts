@@ -4,7 +4,7 @@ const devConfig = {
   production: false,
   environment: 'local',
   name: 'local',
-  baseApiUrl: 'http://localhost:4444',
+  baseApiUrl: `http://localhost:9456`,
   audit: {
     defaultNamespace: '@island.is/applications',
   },

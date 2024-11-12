@@ -2,7 +2,7 @@ import { getStaticEnv } from '@island.is/shared/utils'
 
 const devConfig = {
   production: false,
-  baseApiUrl: 'http://localhost:4444',
+  baseApiUrl: 'http://localhost:9456',
   identityServer: {
     authority: 'https://identity-server.dev01.devland.is',
   },
