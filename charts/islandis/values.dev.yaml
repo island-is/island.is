@@ -1809,7 +1809,6 @@ portals-admin:
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'dev'
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'identity-server'
@@ -2103,7 +2102,6 @@ service-portal:
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'dev'
     SI_PUBLIC_GRAPHQL_API: '/minarsidur/bff/api/graphql'
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces:
     - 'nginx-ingress-internal'
     - 'nginx-ingress-external'

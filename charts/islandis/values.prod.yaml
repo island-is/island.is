@@ -1673,7 +1673,6 @@ portals-admin:
     NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'identity-server'
@@ -1969,7 +1968,6 @@ service-portal:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
     SI_PUBLIC_GRAPHQL_API: '/minarsidur/bff/api/graphql'
-    SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces:
     - 'nginx-ingress-internal'
     - 'nginx-ingress-external'
