@@ -3,17 +3,18 @@ version: 2
 updates:
   # Monorepo npm dependencies
   - package-ecosystem: npm
-    directory: '/'
+    directory: /
     schedule:
-      interval: daily
-      time: '04:00'
-      timezone: 'Etc/UTC'
+      interval: weekly
+      time: 02:00
+      day: saturday
+      timezone: Etc/UTC
     labels:
-      - 'automerge'
-      - 'dependencies'
+      - automerge
+      - dependencies
     commit-message:
-      prefix: 'chore(deps)'
-      prefix-development: 'chore(deps-dev)'
+      prefix: chore(deps)
+      prefix-development: chore(deps-dev)
     open-pull-requests-limit: 2
     groups:
       # Group minor and patch updates together
@@ -21,8 +22,8 @@ updates:
         patterns:
           - '*'
         update-types:
-          - 'minor'
-          - 'patch'
+          - minor
+          - patch
     ignore:
       # Ignore major updates as they might break things
       - dependency-name: '*'
@@ -31,17 +32,17 @@ updates:
 
   # Infra npm dependencies
   - package-ecosystem: npm
-    directory: '/infra'
+    directory: /infra
     schedule:
       interval: weekly
-      time: '04:00'
-      timezone: 'Etc/UTC'
+      time: 03:00
+      timezone: Etc/UTC
     labels:
-      - 'automerge'
-      - 'dependencies'
+      - automerge
+      - dependencies
     commit-message:
-      prefix: 'chore(deps)'
-      prefix-development: 'chore(deps-infra)'
+      prefix: chore(deps)
+      prefix-development: chore(deps-infra)
     open-pull-requests-limit: 2
     groups:
       # Group minor and patch updates together
@@ -49,8 +50,8 @@ updates:
         patterns:
           - '*'
         update-types:
-          - 'minor'
-          - 'patch'
+          - minor
+          - patch
     ignore:
       # Ignore major updates as they might break things
       - dependency-name: '*'
@@ -59,34 +60,32 @@ updates:
 
   # GitHub Actions
   - package-ecosystem: github-actions
-    directory: '/'
+    directory: /
     schedule:
       interval: weekly # Less frequent for Actions
-      day: 'monday'
-      time: '04:00'
-      timezone: 'Etc/UTC'
+      day: saturday
+      time: 04:00
+      timezone: Etc/UTC
     labels:
-      - 'automerge'
-      - 'dependencies'
-      - 'github-actions'
+      - automerge
+      - dependencies
     commit-message:
-      prefix: 'chore(ci)'
+      prefix: chore(ci)
     open-pull-requests-limit: 2
 
   # GitHub Actions npm dependencies
   - package-ecosystem: npm
-    directory: '/.github/actions/'
+    directory: /.github/actions/
     schedule:
       interval: weekly
-      day: 'monday'
-      time: '04:00'
-      timezone: 'Etc/UTC'
+      day: saturday
+      time: 05:00
+      timezone: Etc/UTC
     labels:
-      - 'automerge'
-      - 'dependencies'
-      - 'github-actions'
+      - automerge
+      - dependencies
     commit-message:
-      prefix: 'chore(ci-deps)'
+      prefix: chore(ci-deps)
     open-pull-requests-limit: 2
     groups:
       actions-deps:
@@ -95,18 +94,17 @@ updates:
 
   # CI Scripts dependencies
   - package-ecosystem: npm
-    directory: '/scripts/ci/cache'
+    directory: /scripts/ci/cache
     schedule:
       interval: weekly
-      day: 'monday'
-      time: '04:00'
-      timezone: 'Etc/UTC'
+      day: saturday
+      time: 06:00
+      timezone: Etc/UTC
     labels:
-      - 'automerge'
-      - 'dependencies'
-      - 'ci'
+      - automerge
+      - dependencies
     commit-message:
-      prefix: 'chore(ci-deps)'
+      prefix: chore(ci-deps)
     open-pull-requests-limit: 2
     groups:
       ci-deps:
