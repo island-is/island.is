@@ -319,8 +319,9 @@ const Stepper = ({
               <Stack space={2}>
                 {links
                   .filter((link) => Boolean(link.href) && Boolean(link.label))
-                  .map((link) => (
+                  .map((link, index) => (
                     <LinkV2
+                      key={index}
                       newTab={true}
                       color="blue400"
                       underline="normal"
