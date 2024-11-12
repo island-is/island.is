@@ -1,36 +1,45 @@
-import { Test, TestingModule } from '@nestjs/testing'
+import request from 'supertest'
 
 import { PaymentFlowController } from './paymentFlow.controller'
-import { PaymentFlowService } from './paymentFlow.service'
 
-describe('AppController', () => {
-  let app: TestingModule
+import { PaymentMethod } from '../../types'
+import { TestApp } from '@island.is/testing/nest'
+
+import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
+
+import { setupTestApp } from '../../../test/setup'
+
+describe('PaymentFlowController', () => {
+  let app: TestApp
+  let server: request.SuperTest<request.Test>
 
   beforeAll(async () => {
-    app = await Test.createTestingModule({
-      controllers: [PaymentFlowController],
-      providers: [PaymentFlowService],
-    }).compile()
+    app = await setupTestApp()
+    server = request(app.getHttpServer())
+  })
+
+  afterAll(() => {
+    app?.cleanUp()
   })
 
   describe('createPaymentUrl', () => {
     it('should create a string url with correct initialisation', async () => {
-      const appController = app.get<PaymentFlowController>(
-        PaymentFlowController,
-      )
-
-      const response = await appController.createPaymentUrl({
+      const payload = {
         productId: 'product-id',
-        availablePaymentMethods: ['card', 'invoice'],
-        callbacks: {
-          onSuccess: 'https://www.island.is/borga/success',
-          onError: 'https://www.island.is/borga/error',
-        },
-        organizationId: 'organization-id',
+        availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
+        onSuccessUrl: 'https://www.island.is/greida/success',
+        onUpdateUrl: 'https://www.island.is/greida/update',
+        onErrorUrl: 'https://www.island.is/greida/error',
+        organisationId: 'organization-id',
         invoiceId: 'todo',
-      })
+      }
 
-      expect(response.url).toBeInstanceOf(String)
+      // prump
+
+      const response = await server.post('/v1/payments').send(payload)
+
+      expect(response.status).toBe(200)
+      expect(response.body.url).toBeDefined()
     })
   })
 })

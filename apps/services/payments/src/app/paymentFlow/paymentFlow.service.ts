@@ -18,7 +18,7 @@ export class PaymentFlowService {
   ) {}
 
   async createPaymentUrl(
-    paymentInfo: PaymentInformation,
+    paymentInfo: Omit<PaymentInformation, 'id'>,
   ): Promise<{ url: string }> {
     try {
       const result = await this.paymentFlowModel.create({

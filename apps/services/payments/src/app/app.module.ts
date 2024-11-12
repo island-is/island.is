@@ -6,10 +6,10 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { ProblemModule } from '@island.is/nest/problem'
 
 // import { environment } from '../environments'
-import { SequelizeConfigService } from './sequelizeConfig.service'
 import { PaymentFlowModule } from './paymentFlow/paymentFlow.module'
 import { ConfigModule } from '@nestjs/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
+import { SequelizeConfigService } from '../sequelizeConfig.service'
 
 @Module({
   imports: [
@@ -18,11 +18,11 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+    PaymentFlowModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [FeatureFlagConfig],
     }),
-    PaymentFlowModule,
   ],
 })
 export class AppModule {}

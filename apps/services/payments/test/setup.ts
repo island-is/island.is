@@ -1,50 +1,15 @@
-import { testServer, TestServerOptions } from '@island.is/testing/nest'
-import { getConnectionToken } from '@nestjs/sequelize'
-import { INestApplication, Type } from '@nestjs/common'
-import { Sequelize } from 'sequelize-typescript'
+import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
 import { AppModule } from '../src/app/app.module'
+import { SequelizeConfigService } from '../src/sequelizeConfig.service'
 
-export let app: INestApplication
-let sequelize: Sequelize
-
-export const truncate = async () => {
-  if (!sequelize) {
-    return
-  }
-
-  await Promise.all(
-    Object.values(sequelize.models).map((model) => {
-      if (model.tableName.toLowerCase() === 'sequelize') {
-        return null
-      }
-
-      return model.destroy({
-        where: {},
-        cascade: true,
-        truncate: true,
-        force: true,
-      })
-    }),
-  )
-}
-
-export const setup = async (options?: Partial<TestServerOptions>) => {
-  app = await testServer({
+export const setupTestApp = async (): Promise<TestApp> => {
+  const app = await testServer({
     appModule: AppModule,
-    ...options,
+    enableVersioning: true,
+    hooks: [
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
+    ],
   })
-  sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
-
-  await sequelize.sync()
 
   return app
 }
-
-beforeEach(truncate)
-
-afterAll(async () => {
-  if (app && sequelize) {
-    await app.close()
-    await sequelize.close()
-  }
-})

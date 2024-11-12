@@ -6,5 +6,5 @@ export default {
     groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: isProduction ? 'services-payments' : undefined,
   },
-  port: process.env.PORT ?? 3333,
+  port: process.env.PORT ? Number(process.env.PORT) : 3333,
 }

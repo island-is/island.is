@@ -50,7 +50,7 @@ export class PaymentFlowController {
     response: { status: 200, type: CreatePaymentFlowDTO },
   })
   createPaymentUrl(
-    @Body() paymentInfo: PaymentInformation,
+    @Body() paymentInfo: Omit<PaymentInformation, 'id'>,
   ): Promise<CreatePaymentUrlResponse> {
     return this.paymentFlowService.createPaymentUrl(paymentInfo)
   }

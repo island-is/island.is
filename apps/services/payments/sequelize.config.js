@@ -1,12 +1,12 @@
 /* eslint-env node */
 module.exports = {
   development: {
-    username: process.env.DB_USER_PAYMENTS ?? 'dev_db',
-    password: process.env.DB_PASS_PAYMENTS ?? 'dev_db',
-    database: process.env.DB_NAME_PAYMENTS ?? 'dev_db',
+    username: 'dev_db',
+    password: 'dev_db',
+    database: 'dev_db',
+    port: process.env.DB_PORT ?? 5434,
     host: 'localhost',
     dialect: 'postgres',
-    port: process.env.DB_PORT_PAYMENTS ?? 5434,
   },
   production: {
     username: process.env.DB_USER,
