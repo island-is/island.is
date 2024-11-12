@@ -68,7 +68,7 @@ export const Overview: FC<
   })
 
   const [buttonLoading, setButtonLoading] = useState(false)
-  const [loadValidation, setLoadValidation] = useState(false)
+  const [shouldLoadValidation, setShouldLoadValidation] = useState(false)
   const [validationErrorFound, setValidationErrorFound] = useState(false)
 
   const isBuyer =
@@ -162,7 +162,7 @@ export const Overview: FC<
       setNoInsuranceError(false)
 
       setButtonLoading(true)
-      setLoadValidation(true)
+      setShouldLoadValidation(true)
       await doApproveAndSubmit()
     }
   }
@@ -201,7 +201,7 @@ export const Overview: FC<
           noInsuranceError={noInsuranceError}
         />
 
-        {!buttonLoading && loadValidation && (
+        {!buttonLoading && shouldLoadValidation && (
           <ValidationErrorMessages
             {...props}
             showErrorOnly={true}

@@ -54,9 +54,9 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
   // Plate type front should always be defined (rear type can be empty in some cases)
   const plateTypeFrontError = !currentPlateTypeFront
 
-  const currentPlateTypeFrontList =
+  const plateTypeFrontList =
     plateTypeList?.filter((x) => x.code === currentPlateTypeFront) || []
-  const noPlateMatchError = currentPlateTypeFrontList.length === 0
+  const plateTypeFrontListEmptyError = plateTypeFrontList.length === 0
 
   useEffect(() => {
     if (!loading && currentPlateTypeRear === null) {
@@ -77,7 +77,7 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
           repeat={2}
           borderRadius="large"
         />
-      ) : !error && !plateTypeFrontError && !noPlateMatchError ? (
+      ) : !error && !plateTypeFrontError && !plateTypeFrontListEmptyError ? (
         <>
           <Text variant="h5" marginTop={2} marginBottom={1}>
             {formatMessage(information.labels.plateSize.frontPlateSubtitle)}
@@ -137,7 +137,7 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
           <AlertMessage
             type="error"
             title={formatMessage(
-              noPlateMatchError
+              plateTypeFrontListEmptyError
                 ? information.labels.plateSize.noPlateMatchError
                 : error
                 ? information.labels.plateSize.error

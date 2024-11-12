@@ -51,7 +51,7 @@ export const Overview: FC<
   })
 
   const [buttonLoading, setButtonLoading] = useState(false)
-  const [loadValidation, setLoadValidation] = useState(false)
+  const [shouldLoadValidation, setShouldLoadValidation] = useState(false)
   const [validationErrorFound, setValidationErrorFound] = useState(false)
 
   const doApproveAndSubmit = async () => {
@@ -134,7 +134,7 @@ export const Overview: FC<
 
   const onApproveButtonClick = async () => {
     setButtonLoading(true)
-    setLoadValidation(true)
+    setShouldLoadValidation(true)
     await doApproveAndSubmit()
   }
 
@@ -151,7 +151,7 @@ export const Overview: FC<
         <OwnerSection reviewerNationalId={reviewerNationalId} {...props} />
         <CoOwnersSection reviewerNationalId={reviewerNationalId} {...props} />
 
-        {!buttonLoading && loadValidation && (
+        {!buttonLoading && shouldLoadValidation && (
           <ValidationErrorMessages
             {...props}
             setValidationErrorFound={setValidationErrorFound}

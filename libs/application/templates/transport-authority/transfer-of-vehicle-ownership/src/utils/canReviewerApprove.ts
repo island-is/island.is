@@ -22,7 +22,6 @@ export const canReviewerApprove = (
       [],
     ) as CoOwnerAndOperator[]
   ).filter(({ wasRemoved }) => wasRemoved !== 'true')
-
   if (
     buyerCoOwnersAndOperators.some(
       ({ nationalId, approved }) =>
@@ -38,7 +37,6 @@ export const canReviewerApprove = (
     'sellerCoOwner',
     [],
   ) as CoOwnerAndOperator[]
-
   if (
     sellerCoOwners.some(
       ({ nationalId, approved }) =>

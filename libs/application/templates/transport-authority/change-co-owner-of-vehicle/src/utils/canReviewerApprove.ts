@@ -14,7 +14,6 @@ export const canReviewerApprove = (
     'ownerCoOwners',
     [],
   ) as OwnerCoOwnersInformation[]
-
   if (
     oldCoOwners.some(
       ({ nationalId, approved }) =>
@@ -28,7 +27,6 @@ export const canReviewerApprove = (
   const newCoOwners = (
     getValueViaPath(answers, 'coOwners', []) as CoOwnersInformation[]
   ).filter(({ wasRemoved }) => wasRemoved !== 'true')
-
   if (
     newCoOwners.some(
       ({ nationalId, approved }) =>
