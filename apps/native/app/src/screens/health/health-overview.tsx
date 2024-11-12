@@ -7,10 +7,11 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import styled, { useTheme } from 'styled-components'
+import styled, { useTheme } from 'styled-components/native'
 
 import {
   useGetHealthCenterQuery,
@@ -24,17 +25,20 @@ import externalLinkIcon from '../../assets/icons/external-link.png'
 import { getConfig } from '../../config'
 import { useBrowser } from '../../lib/use-browser'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { navigateTo } from '../../lib/deep-linking'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   margin-bottom: ${({ theme }) => theme.spacing[4]}px;
 `
 
-const ButtonWrapper = styled(View)`
+const ButtonWrapper = styled.View`
   flex-direction: row;
   margin-top: ${({ theme }) => theme.spacing[3]}px;
   margin-bottom: ${({ theme }) => -theme.spacing[1]}px;
   gap: ${({ theme }) => theme.spacing[2]}px;
+  flex-wrap: wrap;
 `
 
 interface HeadingSectionProps {
@@ -91,6 +95,9 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const { openBrowser } = useBrowser()
   const origin = getConfig().apiUrl.replace(/\/api$/, '')
   const [refetching, setRefetching] = useState(false)
+  const { width } = useWindowDimensions()
+  const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
+  const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
 
   const now = useMemo(() => new Date().toISOString(), [])
 
@@ -176,13 +183,26 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             />
           </Typography>
           <ButtonWrapper>
+            {isVaccinationsEnabled && (
+              <Button
+                title={intl.formatMessage({
+                  id: 'health.overview.vaccinations',
+                })}
+                isOutlined
+                isUtilityButton
+                iconStyle={{ tintColor: theme.color.dark300 }}
+                style={buttonStyle}
+                ellipsis
+                onPress={() => navigateTo('/vaccinations', componentId)}
+              />
+            )}
             <Button
               title={intl.formatMessage({ id: 'health.overview.therapy' })}
               isOutlined
               isUtilityButton
               icon={externalLinkIcon}
               iconStyle={{ tintColor: theme.color.dark300 }}
-              style={{ flex: 1 }}
+              style={buttonStyle}
               ellipsis
               onPress={() =>
                 openBrowser(
@@ -199,7 +219,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               isUtilityButton
               icon={externalLinkIcon}
               iconStyle={{ tintColor: theme.color.dark300 }}
-              style={{ flex: 1 }}
+              style={{
+                ...buttonStyle,
+                maxWidth: width * 0.5 - theme.spacing[3],
+              }}
               ellipsis
               onPress={() =>
                 openBrowser(
