@@ -1946,6 +1946,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/s3-presigned-post@npm:3.662.0":
+  version: 3.662.0
+  resolution: "@aws-sdk/s3-presigned-post@npm:3.662.0"
+  dependencies:
+    "@aws-sdk/client-s3": 3.662.0
+    "@aws-sdk/types": 3.662.0
+    "@aws-sdk/util-format-url": 3.662.0
+    "@smithy/middleware-endpoint": ^3.1.4
+    "@smithy/signature-v4": ^4.2.0
+    "@smithy/types": ^3.5.0
+    "@smithy/util-hex-encoding": ^3.0.0
+    "@smithy/util-utf8": ^3.0.0
+    tslib: ^2.6.2
+  checksum: 5514900727f092ae46e7136acacc4baaa6949fc311bdef93b4fc29eb258c44397f2e49719c5b58796d45816242caa15ee3118011c02b8458b0749af910b89f91
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/s3-request-presigner@npm:3.662.0":
   version: 3.662.0
   resolution: "@aws-sdk/s3-request-presigner@npm:3.662.0"
@@ -13268,6 +13285,7 @@ __metadata:
     react-native-interactable: 2.0.1
     react-native-keyboard-manager: 6.5.4-3
     react-native-keychain: 8.1.1
+    react-native-markdown-display: 7.0.2
     react-native-mmkv-storage: 0.9.1
     react-native-navigation: 7.40.0
     react-native-navigation-hooks: 6.3.0
@@ -31768,6 +31786,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"entities@npm:~2.0.0":
+  version: 2.0.3
+  resolution: "entities@npm:2.0.3"
+  checksum: 5a7899fcc622e0d76afdeafe4c58a6b40ae3a8ee4772e5825a648c11a2ca324a9a02515386f512e466baac4aeb551f3d3b79eaece5cd98369b9f8601be336b1a
+  languageName: node
+  linkType: hard
+
 "entities@npm:~2.1.0":
   version: 2.1.0
   resolution: "entities@npm:2.1.0"
@@ -38438,6 +38463,7 @@ __metadata:
     "@aws-sdk/client-ssm": 3.145.0
     "@aws-sdk/credential-provider-node": 3.662.0
     "@aws-sdk/lib-storage": 3.662.0
+    "@aws-sdk/s3-presigned-post": 3.662.0
     "@aws-sdk/s3-request-presigner": 3.662.0
     "@azure/msal-node": 1.14.4
     "@babel/core": 7.22.5
@@ -41234,6 +41260,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"linkify-it@npm:^2.0.0":
+  version: 2.2.0
+  resolution: "linkify-it@npm:2.2.0"
+  dependencies:
+    uc.micro: ^1.0.1
+  checksum: d198871d0b3f3cfdb745dae564bfd6743474f20cd0ef1057e6ca29451834749e7f3da52b59b4de44e98f31a1e5c71bdad160490d4ae54de251cbcde57e4d7837
+  languageName: node
+  linkType: hard
+
 "linkify-it@npm:^3.0.1":
   version: 3.0.3
   resolution: "linkify-it@npm:3.0.3"
@@ -42241,6 +42276,21 @@ __metadata:
     "@types/markdown-it": "*"
     markdown-it: "*"
   checksum: d67044f132cd94728227e065b2a82063a05ac5fb82a991c190fe48ac5ab308ed85f49a28e859bcf203e882af814902e67dd69724f6761c61709834b075cc6f95
+  languageName: node
+  linkType: hard
+
+"markdown-it@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "markdown-it@npm:10.0.0"
+  dependencies:
+    argparse: ^1.0.7
+    entities: ~2.0.0
+    linkify-it: ^2.0.0
+    mdurl: ^1.0.1
+    uc.micro: ^1.0.5
+  bin:
+    markdown-it: bin/markdown-it.js
+  checksum: 69f5ee640cbebb451b80d3cce308fff7230767e05c0f8c206a1e413775b7a6e5a08e91e9f3ec59f9b5c5a45493f9ce7ac089379cffb60c9d3e6677ed9d535086
   languageName: node
   linkType: hard
 
@@ -48750,6 +48800,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-fit-image@npm:^1.5.5":
+  version: 1.5.5
+  resolution: "react-native-fit-image@npm:1.5.5"
+  dependencies:
+    prop-types: ^15.5.10
+  checksum: 2f3ce06b43191efe3a4bd0698a4117342d821455c96433e9561d50f156ee446d2c449bf9e0908f9a8b7bbb8f95c02478d4fca8d8d103f38b6ce3b8b75557af15
+  languageName: node
+  linkType: hard
+
 "react-native-gesture-handler@npm:2.17.1":
   version: 2.17.1
   resolution: "react-native-gesture-handler@npm:2.17.1"
@@ -48801,6 +48860,21 @@ __metadata:
   version: 8.1.1
   resolution: "react-native-keychain@npm:8.1.1"
   checksum: fce8319ef8f793516982f96b86080d0a85281d35e91585f1490c41751df4703dcb52b0f22523d2e5f1b87ca7e037daf7d412c7098712cdd3913e6baf239cb673
+  languageName: node
+  linkType: hard
+
+"react-native-markdown-display@npm:7.0.2":
+  version: 7.0.2
+  resolution: "react-native-markdown-display@npm:7.0.2"
+  dependencies:
+    css-to-react-native: ^3.0.0
+    markdown-it: ^10.0.0
+    prop-types: ^15.7.2
+    react-native-fit-image: ^1.5.5
+  peerDependencies:
+    react: ">=16.2.0"
+    react-native: ">=0.50.4"
+  checksum: 69c64f2d21f4ebf001c71d6dff31ef5e13946a0b46b2d2f2830efa89d648afbd8c336be8552264b42d693446e13a3f81fdbfdd5aa9b20878441acabd59f0a54e
   languageName: node
   linkType: hard
 

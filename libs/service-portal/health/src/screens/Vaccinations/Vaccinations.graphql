@@ -1,5 +1,5 @@
-query getVaccinations {
-  healthDirectorateVaccinations {
+query getVaccinations($locale: String) {
+  healthDirectorateVaccinations(locale: $locale) {
     vaccinations {
       id
       name
