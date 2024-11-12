@@ -7,14 +7,16 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import styled, { useTheme } from 'styled-components'
+import styled, { useTheme } from 'styled-components/native'
 
 import {
   useGetHealthCenterQuery,
   useGetHealthInsuranceOverviewQuery,
+  useGetMedicineDataQuery,
   useGetPaymentOverviewQuery,
   useGetPaymentStatusQuery,
 } from '../../graphql/types/schema'
@@ -23,17 +25,20 @@ import externalLinkIcon from '../../assets/icons/external-link.png'
 import { getConfig } from '../../config'
 import { useBrowser } from '../../lib/use-browser'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { navigateTo } from '../../lib/deep-linking'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   margin-bottom: ${({ theme }) => theme.spacing[4]}px;
 `
 
-const ButtonWrapper = styled(View)`
+const ButtonWrapper = styled.View`
   flex-direction: row;
   margin-top: ${({ theme }) => theme.spacing[3]}px;
   margin-bottom: ${({ theme }) => -theme.spacing[1]}px;
   gap: ${({ theme }) => theme.spacing[2]}px;
+  flex-wrap: wrap;
 `
 
 interface HeadingSectionProps {
@@ -90,9 +95,13 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const { openBrowser } = useBrowser()
   const origin = getConfig().apiUrl.replace(/\/api$/, '')
   const [refetching, setRefetching] = useState(false)
+  const { width } = useWindowDimensions()
+  const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
+  const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
 
   const now = useMemo(() => new Date().toISOString(), [])
 
+  const medicinePurchaseRes = useGetMedicineDataQuery()
   const healthInsuranceRes = useGetHealthInsuranceOverviewQuery()
   const healthCenterRes = useGetHealthCenterQuery()
   const paymentStatusRes = useGetPaymentStatusQuery()
@@ -108,10 +117,18 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
     },
   })
 
+  const medicinePurchaseData =
+    medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
+  const isMedicinePeriodActive =
+    medicinePurchaseData?.active ||
+    (medicinePurchaseData?.dateTo &&
+      new Date(medicinePurchaseData.dateTo) > new Date())
+
   useConnectivityIndicator({
     componentId,
     refetching,
     queryResult: [
+      medicinePurchaseRes,
       healthInsuranceRes,
       healthCenterRes,
       paymentStatusRes,
@@ -124,6 +141,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
 
     try {
       const promises = [
+        medicinePurchaseRes.refetch(),
         healthInsuranceRes.refetch(),
         healthCenterRes.refetch(),
         paymentStatusRes.refetch(),
@@ -136,6 +154,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
       setRefetching(false)
     }
   }, [
+    medicinePurchaseRes,
     healthInsuranceRes,
     healthCenterRes,
     paymentStatusRes,
@@ -164,13 +183,26 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             />
           </Typography>
           <ButtonWrapper>
+            {isVaccinationsEnabled && (
+              <Button
+                title={intl.formatMessage({
+                  id: 'health.overview.vaccinations',
+                })}
+                isOutlined
+                isUtilityButton
+                iconStyle={{ tintColor: theme.color.dark300 }}
+                style={buttonStyle}
+                ellipsis
+                onPress={() => navigateTo('/vaccinations', componentId)}
+              />
+            )}
             <Button
               title={intl.formatMessage({ id: 'health.overview.therapy' })}
               isOutlined
               isUtilityButton
               icon={externalLinkIcon}
               iconStyle={{ tintColor: theme.color.dark300 }}
-              style={{ flex: 1 }}
+              style={buttonStyle}
               ellipsis
               onPress={() =>
                 openBrowser(
@@ -187,7 +219,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               isUtilityButton
               icon={externalLinkIcon}
               iconStyle={{ tintColor: theme.color.dark300 }}
-              style={{ flex: 1 }}
+              style={{
+                ...buttonStyle,
+                maxWidth: width * 0.5 - theme.spacing[3],
+              }}
               ellipsis
               onPress={() =>
                 openBrowser(
@@ -374,6 +409,65 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               loading={paymentOverviewRes.loading && !paymentOverviewRes.data}
               error={paymentOverviewRes.error && !paymentOverviewRes.data}
               noBorder
+            />
+          </InputRow>
+          <HeadingSection
+            title={intl.formatMessage({
+              id: 'health.overview.medicinePurchase',
+            })}
+            onPress={() =>
+              openBrowser(
+                `${origin}/minarsidur/heilsa/lyf/lyfjakaup`,
+                componentId,
+              )
+            }
+          />
+          <InputRow background>
+            <Input
+              label={intl.formatMessage({
+                id: 'health.overview.period',
+              })}
+              value={
+                medicinePurchaseData?.dateFrom && medicinePurchaseData?.dateTo
+                  ? `${intl.formatDate(
+                      medicinePurchaseData.dateFrom,
+                    )} - ${intl.formatDate(medicinePurchaseData.dateTo)}`
+                  : ''
+              }
+              loading={medicinePurchaseRes.loading && !medicinePurchaseRes.data}
+              error={medicinePurchaseRes.error && !medicinePurchaseRes.data}
+              darkBorder
+            />
+          </InputRow>
+          <InputRow background>
+            <Input
+              label={intl.formatMessage({
+                id: 'health.overview.levelStatus',
+              })}
+              value={
+                medicinePurchaseData?.levelNumber &&
+                medicinePurchaseData?.levelPercentage
+                  ? intl.formatMessage(
+                      {
+                        id: 'health.overview.levelStatusValue',
+                      },
+                      {
+                        level: medicinePurchaseData?.levelNumber,
+                        percentage: medicinePurchaseData?.levelPercentage,
+                      },
+                    )
+                  : ''
+              }
+              loading={medicinePurchaseRes.loading && !medicinePurchaseRes.data}
+              error={medicinePurchaseRes.error && !medicinePurchaseRes.data}
+              noBorder
+              warningText={
+                !isMedicinePeriodActive
+                  ? intl.formatMessage({
+                      id: 'health.overview.medicinePurchaseNoActivePeriodWarning',
+                    })
+                  : ''
+              }
             />
           </InputRow>
         </Host>
