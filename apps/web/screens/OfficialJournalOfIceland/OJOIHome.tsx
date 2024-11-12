@@ -155,12 +155,12 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
 
             <GridRow>
               {mainCategories?.map((category, i) => {
-                const subCategories = category.categories.map(
-                  (subCategory) => ({
+                const subCategories = category.categories
+                  .slice(0, 3)
+                  .map((subCategory) => ({
                     label: subCategory.title,
                     href: `${searchUrl}?malaflokkur=${subCategory.slug}`,
-                  }),
-                )
+                  }))
 
                 return (
                   <GridColumn
