@@ -14,8 +14,6 @@ export const Logo = ({ application }: Props) => {
 
   useEffect(() => {
     const getLogo = async () => {
-      console.log(application)
-
       const applicant = application.applicant
 
       const town = !applicant

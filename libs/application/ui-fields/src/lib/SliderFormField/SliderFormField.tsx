@@ -25,7 +25,6 @@ export const SliderFormField: FC<
     min,
     max,
     title,
-    titleVariant,
     trackStyle,
     calculateCellStyle,
     showLabel,
@@ -66,12 +65,13 @@ export const SliderFormField: FC<
 
   return (
     <div>
-      {title && (
-        <Text variant={titleVariant ?? 'h2'}>
+      {/* todo fix */}
+      {/* {title && (
+        <Text variant="h4">
           {formatText(title, application, formatMessage)}
         </Text>
-      )}
-      <Box paddingTop={8}>
+      )} */}
+      <Box paddingTop={2}>
         <Controller
           name={field.id}
           defaultValue={
