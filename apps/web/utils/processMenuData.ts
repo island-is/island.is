@@ -8,18 +8,22 @@ import {
 import { linkResolver, LinkType } from '../hooks/useLinkResolver'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
+interface FormattedLink {
+  text: string
+  href: string
+  sub: FormattedLink[] | null
+}
+
 export const formatMegaMenuLinks = (
   locale: Locale,
   menuLinks: (MenuLinkWithChildren | MenuLink)[],
-) => {
+): FormattedLink[] => {
   return menuLinks
-    .map((linkData) => {
-      let sub
-      // if this link has children format them
+    .map((linkData): FormattedLink | null => {
+      let sub: FormattedLink[] | null = null
+
       if ('childLinks' in linkData) {
         sub = formatMegaMenuLinks(locale, linkData.childLinks)
-      } else {
-        sub = null
       }
 
       if (!linkData.link) {
@@ -36,7 +40,7 @@ export const formatMegaMenuLinks = (
         sub,
       }
     })
-    .filter((linkData) => Boolean(linkData))
+    .filter((linkData): linkData is FormattedLink => Boolean(linkData))
 }
 
 export const formatMegaMenuCategoryLinks = (
