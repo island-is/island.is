@@ -10,8 +10,10 @@ import {
   GridContainer,
   GridRow,
   Link,
+  LinkV2,
   RadioButton,
   Select,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -60,6 +62,7 @@ interface QuestionAndAnswer {
   question: string
   answer: string
   slug: string
+  links?: { label?: string; href?: string }[]
 }
 
 const getInitialStateAndAnswersByQueryParams = (
@@ -111,6 +114,7 @@ const getInitialStateAndAnswersByQueryParams = (
         question: stepQuestion,
         answer: selectedOption.label,
         slug: selectedOption.value,
+        links: selectedOption.linksToDisplayInHistory ?? [],
       })
     }
   }
@@ -259,7 +263,7 @@ const Stepper = ({
   ) => {
     const accumulatedAnswers: string[] = []
 
-    return questionsAndAnswers.map(({ question, answer, slug }, i) => {
+    return questionsAndAnswers.map(({ question, answer, slug, links }, i) => {
       const previouslyAccumulatedAnswers = [...accumulatedAnswers]
       accumulatedAnswers.push(slug)
       const query = {
@@ -280,22 +284,55 @@ const Stepper = ({
               {question}
             </Text>
           </Box>
-          <Box marginRight={2}>
-            <Text color="purple600">{answer}</Text>
-          </Box>
-          <Box textAlign="right">
-            <Link
-              shallow={true}
-              href={{
-                pathname: urlWithoutQueryParams,
-                query: query,
-              }}
+
+          <Stack space={1}>
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="flexStart"
+              rowGap={2}
+              columnGap={2}
             >
-              <Button variant="text" icon="pencil" size="small" nowrap={true}>
-                {n('changeSelection', 'Breyta')}
-              </Button>
-            </Link>
-          </Box>
+              <Box>
+                <Text color="purple600">{answer}</Text>
+              </Box>
+              <Box textAlign="right">
+                <Link
+                  shallow={true}
+                  href={{
+                    pathname: urlWithoutQueryParams,
+                    query: query,
+                  }}
+                >
+                  <Button
+                    variant="text"
+                    icon="pencil"
+                    size="small"
+                    nowrap={true}
+                  >
+                    {n('changeSelection', 'Breyta')}
+                  </Button>
+                </Link>
+              </Box>
+            </Box>
+            {links && links.length > 0 && (
+              <Stack space={2}>
+                {links
+                  .filter((link) => Boolean(link.href) && Boolean(link.label))
+                  .map((link) => (
+                    <LinkV2
+                      newTab={true}
+                      color="blue400"
+                      underline="normal"
+                      underlineVisibility="always"
+                      href={link.href as string}
+                    >
+                      {link.label}
+                    </LinkV2>
+                  ))}
+              </Stack>
+            )}
+          </Stack>
         </Box>
       )
     })
