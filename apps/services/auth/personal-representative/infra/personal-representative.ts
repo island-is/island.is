@@ -47,8 +47,17 @@ export const serviceSetup =
           prod: 'https://api.syslumenn.is/api',
         },
         SYSLUMENN_TIMEOUT: '3000',
+        ZENDESK_CONTACT_FORM_SUBDOMAIN: {
+          prod: 'digitaliceland',
+          staging: 'digitaliceland',
+          dev: 'digitaliceland',
+        },
       })
       .secrets({
+        ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
+        ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
+        ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE:
+          '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE',
         IDENTITY_SERVER_CLIENT_SECRET:
           '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
         SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',
