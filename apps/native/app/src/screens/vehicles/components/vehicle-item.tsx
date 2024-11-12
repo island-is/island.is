@@ -42,8 +42,6 @@ export const VehicleItem = React.memo(
 
     const isMileageRequired = item.requiresMileageRegistration
 
-    // type - permno - regno - color
-
     return (
       <View style={{ paddingHorizontal: theme.spacing[2], ...style }}>
         <Cell
