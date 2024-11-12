@@ -17,9 +17,9 @@ export class Dependency {
   @ApiProperty({ type: [String] })
   childProps!: string[]
 
-//   @IsNotEmpty()
-//   @IsBoolean()
-//   @Type(() => Boolean)
-//   @ApiProperty({ type: Boolean })
-//   isSelected!: boolean
-// }
+  // @IsNotEmpty()
+  // @IsBoolean()
+  // @Type(() => Boolean)
+  // @ApiProperty({ type: Boolean })
+  // isSelected!: boolean
+}
