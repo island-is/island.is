@@ -14,6 +14,7 @@ import styled from 'styled-components/native'
 import { useGetVaccinationsQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useLocale } from '../../hooks/use-locale'
 import { VaccinationsCard } from './components/vaccination-card'
 
 const Host = styled(SafeAreaView)`
@@ -53,8 +54,9 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
   const intl = useIntl()
   const [refetching, setRefetching] = useState(false)
   const [selectedTab, setSelectedTab] = useState(0)
+  const locale = useLocale()
 
-  const vaccinationsRes = useGetVaccinationsQuery()
+  const vaccinationsRes = useGetVaccinationsQuery({ variables: { locale } })
 
   const vaccinations = vaccinationsRes.data?.healthDirectorateVaccinations
     .vaccinations
