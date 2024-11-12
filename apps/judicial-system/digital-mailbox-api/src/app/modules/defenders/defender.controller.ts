@@ -1,9 +1,10 @@
 import { CacheInterceptor } from '@nestjs/cache-manager'
 import {
+  BadGatewayException,
   Controller,
   Get,
   Inject,
-  InternalServerErrorException,
+  NotFoundException,
   Param,
   UseInterceptors,
 } from '@nestjs/common'
@@ -29,7 +30,7 @@ export class DefenderController {
     type: [Defender],
     description: 'Returns a list of defenders',
   })
-  @ApiResponse({ status: 500, description: 'Failed to retrieve defenders' })
+  @ApiResponse({ status: 502, description: 'Failed to retrieve defenders' })
   async getLawyers(): Promise<Defender[]> {
     try {
       this.logger.debug('Retrieving litigators from lawyer registry')
@@ -45,7 +46,7 @@ export class DefenderController {
       }))
     } catch (error) {
       this.logger.error('Failed to retrieve lawyers', error)
-      throw new InternalServerErrorException('Failed to retrieve lawyers')
+      throw new BadGatewayException('Failed to retrieve lawyers')
     }
   }
 
@@ -54,6 +55,8 @@ export class DefenderController {
     type: Defender,
     description: 'Retrieves a defender by national id',
   })
+  @ApiResponse({ status: 404, description: 'Defender not found' })
+  @ApiResponse({ status: 502, description: 'Failed to retrieve defender' })
   async getLawyer(@Param('nationalId') nationalId: string): Promise<Defender> {
     try {
       this.logger.debug(`Retrieving lawyer by national id ${nationalId}`)
@@ -66,7 +69,12 @@ export class DefenderController {
       }
     } catch (error) {
       this.logger.error('Failed to retrieve lawyer', error)
-      throw new InternalServerErrorException('Failed to retrieve lawyer')
+
+      if (error instanceof NotFoundException) {
+        throw error
+      }
+
+      throw new BadGatewayException('Failed to retrieve lawyer')
     }
   }
 }

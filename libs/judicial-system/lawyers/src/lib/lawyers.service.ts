@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -56,6 +56,6 @@ export class LawyersService {
 
     const reason = await response.text()
     this.logger.info('Failed to get lawyer from lawyer registry:', reason)
-    throw new Error(reason)
+    throw new NotFoundException(reason)
   }
 }
