@@ -1,0 +1,13 @@
+name: Monorepo pipeline - docker-fix
+
+on:
+  push:
+    branches: [docker-build-x-image]
+
+
+jobs:
+  docker-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echos the env variables
+        run: echo "Hallo"
