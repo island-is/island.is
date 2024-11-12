@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsArray, IsNotEmpty, IsUUID } from 'class-validator'
+import { IsArray, IsBoolean, IsNotEmpty, IsUUID } from 'class-validator'
 import { UUIDV4 } from 'sequelize'
 
 export class Dependency {
@@ -16,4 +16,10 @@ export class Dependency {
   @Type(() => UUIDV4)
   @ApiProperty({ type: [String] })
   childProps!: string[]
+
+  // @IsNotEmpty()
+  // @IsBoolean()
+  // @Type(() => Boolean)
+  // @ApiProperty({ type: Boolean })
+  // isSelected!: boolean
 }
