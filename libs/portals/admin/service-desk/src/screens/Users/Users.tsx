@@ -87,12 +87,16 @@ const Users = () => {
             buttonProps={{
               type: 'submit',
               disabled: searchInput.length === 0,
-              onClick: () => {
-                setSearchParams((params) => {
-                  params.set('q', searchInput)
-                  return params
-                })
-              },
+              onClick: (e) => {
+                e.preventDefault()
+                if (searchInput) {
+                  setSearchParams((params) => {
+                    params.set('q', searchInput)
+                    return params
+                  })
+                  submit(formRef.current)
+                }
+              }
             }}
             hasError={error.hasError}
             errorMessage={error.hasError ? error.message : undefined}
