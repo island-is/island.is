@@ -58,4 +58,10 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti í valmynd fyrir aðgerðina að senda mál til fullnustu',
   },
+  sendToFMSTDate: {
+    id: 'judicial.system.core:blue_box_with_date.send_to_fmst_date',
+    defaultMessage: 'Senda til fullnustu {date}',
+    description:
+      'Notaður sem texti í valmynd fyrir aðgerðina að senda mál til fullnustu',
+  },
 })
