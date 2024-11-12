@@ -10,7 +10,6 @@ import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { ApiActions } from '../../shared'
 import { introSection } from './introSection/introSection'
-import { getDataFromExternalDataSection } from './getDataFromExternalDataSection/getDataFromExternalDataSection'
 import { simpleInputsSection } from './simpleInputsSection'
 import { descriptionSection } from './descriptionSection/descriptionSection'
 import { accordionSection } from './accordionSection/accordionSection'
@@ -22,6 +21,8 @@ import { createElement } from 'react'
 import { Logo } from '../../components/Logo/Logo'
 import { dividerSection } from './dividerSection/dividerSection'
 import { keyValueSection } from './keyValueSection/keyValueSection'
+import { commonActionsSection } from './commonActionsSection'
+import { customSection } from './customSection/customSection'
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
   title: 'Main form',
@@ -34,7 +35,7 @@ export const ExampleForm: Form = buildForm({
   },
   children: [
     introSection,
-    getDataFromExternalDataSection,
+    commonActionsSection,
     descriptionSection,
     dividerSection,
     simpleInputsSection,
@@ -44,6 +45,7 @@ export const ExampleForm: Form = buildForm({
     staticTableSection,
     actionCardSection,
     keyValueSection,
+    customSection,
     buildSection({
       id: 'confirmation',
       title: 'Staðfesta',

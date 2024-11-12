@@ -1,12 +1,12 @@
 import {
   buildDescriptionField,
   buildMultiField,
-  buildSection,
+  buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 
-export const getDataFromExternalDataSection = buildSection({
+export const getDataFromExternalDataSubsection = buildSubSection({
   id: 'getDataFromExternalData',
   title: 'External data',
   children: [
