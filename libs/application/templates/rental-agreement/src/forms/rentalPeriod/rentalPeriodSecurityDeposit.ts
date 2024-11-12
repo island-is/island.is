@@ -38,7 +38,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
           id: 'securityDeposit.securityType',
           title: securityDeposit.typeSelectionTitle,
           options: getSecurityDepositTypeOptions,
-          placeholder: m.securityDeposit.typeSelectionPlaceholder,
+          placeholder: securityDeposit.typeSelectionPlaceholder,
         }),
 
         // Tegund tryggingar: Bankaábyrgð
