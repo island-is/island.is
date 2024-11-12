@@ -1,0 +1,1126 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Tilkynna vinnuslys",
+    "description": "Vefþjónusta til þess að senda inn tilkynningar um vinnuslys.",
+    "contact": {
+      "name": "Ut teymi vinnueftirlits",
+      "email": "ut@vinnueftirlit.is"
+    },
+    "version": "v1",
+    "x-pricing": "free",
+    "x-category": "official",
+    "x-links": {
+      "responsibleParty ": "https://www.vinnueftirlit.is"
+    }
+  },
+  "servers": [
+    {
+      "url": "/slysaskraning"
+    }
+  ],
+  "paths": {
+    "/api/Accidents": {
+      "post": {
+        "tags": ["Accidents"],
+        "summary": "Endpoint for reporting a occupational accident.",
+        "description": "This endpoint consumes a data model `AccidentForCreationDto` for occupational accident reporting.\r\nÞessi endapunktúr tekur á móti gagnamódeli fyrir tilkynningar um vinnuslys.\r\n\r\nThis endpoint returns `AccidentForCreationResponseDto` Data model for confirmation of the submission of a notification of an occupational accident. Gagnalíkan fyrir staðfestingu á innsendingu tilkynningar um vinnuslys.\r\n\r\nIf a user is logged in with a mandate, the company social security number must be the same as the company social security number for which the user has a mandate for.\r\n\r\nIf the user is logged in as an individual, the user can register the notification on their own social security number or register a company's social security number.\r\nThe exception is if a company has blocked notifications from individuals.\r\nAn individual cannot send in a notification with another person's social security number as company social security number.\r\n\r\nEf notandi er innskráður með umboð þá verður kennitala fyrirtækis að vera sú sama og fyrirtækis sem notandinn er með umboð fyrir.\r\n\r\nEf notandi er skráður inn sem einstaklingur þá getur notaninn skráð tilkynninguna á eigin kennitölu eða skráð kennitölu fyrirtækis.\r\nUndantekningin er ef fyrirtæki hefur lokað á tilkynningar frá einstaklingum.\r\nEinstaklingur getur ekki sent inn tilkynnigu með kennitölu annars einstaklings í kennitölu fyrirtækis.\r\n\r\nThis endpoint returns `AccidentForCreationResponseDto` Data model for confirmation of the submission of a notification of an occupational accident. Gagnalíkan fyrir staðfestingu á innsendingu tilkynningar um vinnuslys.",
+        "operationId": "CreateAccident",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "`AccidentForCreationResponseDto`",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccidentForCreationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccidentForCreationResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Accidents"],
+        "summary": "This endpoint returns `AccidentDto` Data model for the submission of a notification of a work accident. Þessi aðgerð skila lista yfir af gagnalíkönum fyrir innsenda tilkynningu um vinnuslys.",
+        "description": "This endpoint is not implemented and returns NotImplementedException.\r\nÞað er ekki búið að útfæra þessa aðgerð og hún skilar NotImplementedException.",
+        "operationId": "GetAccidents",
+        "parameters": [
+          {
+            "name": "searchQuery",
+            "in": "query",
+            "description": "A search string",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "description": "The page number",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "description": "The size of the page",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "description": "A comma separated string of columns to sort by",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "`String?` Default value \"is\"",
+            "schema": {
+              "type": "string",
+              "default": "is"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "options": {
+        "tags": ["Accidents"],
+        "operationId": "GetAccidentOptions",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Accidents/{Id}": {
+      "get": {
+        "tags": ["Accidents"],
+        "summary": "This endpoint returns `AccidentDto` Data model for the submission of a notification of a work accident. Gagnalíkan fyrir innsenda tilkynningu um vinnuslys.",
+        "description": "This endpoint is not implemented and returns `AccidentDto` with only AccidentId set.\r\nÞað er ekki búið að útfæra þessa aðgerð og hún skilar NotImplementedException.",
+        "operationId": "GetAccident",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "description": "AccidentId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "is"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccidentDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/CompanySettings": {
+      "get": {
+        "tags": ["CompanySettings"],
+        "operationId": "GetCompanySettings",
+        "parameters": [
+          {
+            "name": "companyssn",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanySettingsDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": ["CompanySettings"],
+        "operationId": "UpdateCompanySettings",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCompanySettingsRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanySettingsDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "options": {
+        "tags": ["CompanySettings"],
+        "operationId": "GetCompanySettingsOptions",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Data": {
+      "get": {
+        "tags": ["Data"],
+        "summary": "Endpoint to get lookup talbes for the a occupational accident report.",
+        "description": "This endpoint returns `DataDto` Data model with lookup tables for the notification of an occupational accident. Gagnalíkan með uppflettitöflum fyrir tilkynninguna um vinnuslys.",
+        "operationId": "GetData",
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "`string` Optinal \"is\" or \"en\" the default value is \"is\".",
+            "schema": {
+              "type": "string",
+              "default": "is"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "options": {
+        "tags": ["Data"],
+        "operationId": "GetDataOptions",
+        "parameters": [
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AbsenceDueToAccidentDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AccidentDto": {
+        "type": "object",
+        "properties": {
+          "accidentId": {
+            "type": "string",
+            "description": "<value>Property `AccidentId` Afstætt kennimerki.</value>",
+            "format": "uuid"
+          },
+          "registrationNumber": {
+            "type": "string",
+            "description": "<value>Property `RegistrationNumber` Skráningarnúmer.</value>",
+            "nullable": true
+          },
+          "companySSN": {
+            "type": "string",
+            "description": "<value>Property `CompanySSN` Kennitala fyrirtækis.</value>",
+            "nullable": true
+          },
+          "companyName": {
+            "type": "string",
+            "description": "<value>Property `CompanyName` Nafn fyrirtækis.</value>",
+            "nullable": true
+          },
+          "numberOfVictims": {
+            "type": "integer",
+            "description": "<value>Property `NumberOfVictims` Fjöldi slasaðra.</value>",
+            "format": "int32"
+          },
+          "nameOfBranchOrDepartment": {
+            "type": "string",
+            "description": "<value>Property `NameOfBranchOrDepartment` Nafn útibús/deildar.</value>",
+            "nullable": true
+          },
+          "dateAndTimeOfAccident": {
+            "type": "string",
+            "description": "<value>Property `DateAndTimeOfAccident` Dagsetning og tími slyssins.</value>",
+            "format": "date-time"
+          },
+          "dateAndTimeOfRegistration": {
+            "type": "string",
+            "description": "<value>Property `DateAndTimeOfRegistration` Dagsetning og tími skráningar.</value>",
+            "format": "date-time"
+          },
+          "userSSN": {
+            "type": "string",
+            "description": "<value>Property `UserSSN` Kennitala notanda.</value>",
+            "nullable": true
+          },
+          "userName": {
+            "type": "string",
+            "description": "<value>Property `UserName` Nafn notanda.</value>",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Class `AccidentDto` Gagnalíkan fyrir innsenda tilkynningu um vinnuslys."
+      },
+      "AccidentForCreationDto": {
+        "type": "object",
+        "properties": {
+          "companySSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "sizeOfEnterprise": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nameOfBranchOrDepartment": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "postcode": {
+            "type": "string",
+            "nullable": true
+          },
+          "workplaceHealthAndSafety": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "buyersSSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateAndTimeOfAccident": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "aoshCame": {
+            "type": "boolean"
+          },
+          "policeCame": {
+            "type": "boolean"
+          },
+          "numberOfVictims": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "municipalityWhereAccidentOccured": {
+            "type": "string",
+            "nullable": true
+          },
+          "specificLocationOfAccident": {
+            "type": "string",
+            "nullable": true
+          },
+          "detailedDescriptionOfAccident": {
+            "type": "string",
+            "nullable": true
+          },
+          "workingEnvironment": {
+            "type": "string",
+            "nullable": true
+          },
+          "victims": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VictimForCreationDto"
+            },
+            "nullable": true
+          },
+          "userPhoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "userEmail": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AccidentForCreationResponseDto": {
+        "type": "object",
+        "properties": {
+          "accidentId": {
+            "type": "string",
+            "description": "<value>Property `AccidentId` Afstætt kennimerki.</value>",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Class `AccidentForCreationResponseDto` Gagnalíkan fyrir staðfestingu á móttöku innsendrar tilkynningu um vinnuslys."
+      },
+      "CompanySettingsDto": {
+        "type": "object",
+        "properties": {
+          "companySSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "blockRegistration": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContactModeOfInjuryDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validToSelect": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DataDto": {
+        "type": "object",
+        "properties": {
+          "absenceDueToAccident": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AbsenceDueToAccidentDto"
+            },
+            "nullable": true
+          },
+          "contactModeOfInjury": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContactModeOfInjuryDto"
+            },
+            "nullable": true
+          },
+          "employmentStatusOfVictim": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmploymentStatusOfVictimDto"
+            },
+            "nullable": true
+          },
+          "lengthOfEmployment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LengthOfEmploymentDto"
+            },
+            "nullable": true
+          },
+          "municipality": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MunicipalityDto"
+            },
+            "nullable": true
+          },
+          "partOfBodyInjured": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartOfBodyInjuredDto"
+            },
+            "nullable": true
+          },
+          "postCode": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PostCodeDto"
+            },
+            "nullable": true
+          },
+          "sizeOfTheEnterprise": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SizeOfTheEnterpriseDto"
+            },
+            "nullable": true
+          },
+          "specificPhysicalActivity": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SpecificPhysicalActivityDto"
+            },
+            "nullable": true
+          },
+          "typeOfInjury": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TypeOfInjuryDto"
+            },
+            "nullable": true
+          },
+          "victimsOccupation": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VictimsOccupationDto"
+            },
+            "nullable": true
+          },
+          "workDeviation": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkDeviationDto"
+            },
+            "nullable": true
+          },
+          "workhourArrangement": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkhourArrangementDto"
+            },
+            "nullable": true
+          },
+          "workingEnvironment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkingEnvironmentDto"
+            },
+            "nullable": true
+          },
+          "workplaceHealthAndSafety": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkplaceHealthAndSafetyDto"
+            },
+            "nullable": true
+          },
+          "workstation": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkstationDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EmploymentStatusOfVictimDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LengthOfEmploymentDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MunicipalityDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PartOfBodyInjuredDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validToSelect": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PostCodeDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SizeOfTheEnterpriseDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SpecificPhysicalActivityDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validToSelect": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TypeOfInjuryDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validToSelect": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateCompanySettingsRequestDto": {
+        "type": "object",
+        "properties": {
+          "companySSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "blockRegistration": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VictimForCreationDto": {
+        "type": "object",
+        "properties": {
+          "victimsSSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "employmentStatusOfVictim": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "employmentAgencySSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "startedEmploymentForCompany": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lengthOfEmployment": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "percentageOfFullWorkTime": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "workhourArrangement": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "startOfWorkingDay": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "workStation": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "victimsOccupation": {
+            "type": "string",
+            "nullable": true
+          },
+          "absenceDueToAccident": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "specificPhysicalActivities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "specificPhysicalActivityMostSevere": {
+            "type": "string",
+            "nullable": true
+          },
+          "workDeviations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "workDeviationMostSevere": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactModeOfInjuries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "contactModeOfInjuryMostSevere": {
+            "type": "string",
+            "nullable": true
+          },
+          "partsOfBodyInjured": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "partOfBodyInjuredMostSevere": {
+            "type": "string",
+            "nullable": true
+          },
+          "typesOfInjury": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "typeOfInjuryMostSevere": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VictimsOccupationDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validToSelect": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkDeviationDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validToSelect": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkhourArrangementDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkingEnvironmentDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "validToSelect": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkplaceHealthAndSafetyDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkstationDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ValidationProblemDetails": {
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "JWT Token",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
+}
