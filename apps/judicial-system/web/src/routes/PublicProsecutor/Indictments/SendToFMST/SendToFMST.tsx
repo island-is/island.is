@@ -1,26 +1,69 @@
-import { FC, useContext } from 'react'
+import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence } from 'framer-motion'
+import { useParams } from 'next/navigation'
+import { useRouter } from 'next/router'
 
-import { Box, InputFileUpload } from '@island.is/island-ui/core'
+import { Box, InputFileUpload, toast } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, errors } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
+  Modal,
   PageHeader,
   PageLayout,
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import { EventType } from '@island.is/judicial-system-web/src/graphql/schema'
+import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 
 import { strings } from './SendToFMST.strings'
+
+enum AvailableModal {
+  SUCCESS = 'SUCCESS',
+}
 
 const SendToFMST: FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
+  const [modalVisible, setModalVisible] = useState<AvailableModal>()
+  const router = useRouter()
+  const { defendantId } = useParams<{ caseId: string; defendantId: string }>()
+  const { createEventLog } = useEventLog()
+
+  const defendant = workingCase.defendants?.find(
+    (defendant) => defendant.id === defendantId,
+  )
+
+  const handleNextButtonClick = () => {
+    setModalVisible(AvailableModal.SUCCESS)
+  }
+
+  const handleSecondaryButtonClick = () => {
+    setModalVisible(undefined)
+  }
+
+  const handlePrimaryButtonClick = async () => {
+    const eventLogCreated = await createEventLog.action({
+      caseId: workingCase.id,
+      eventType: EventType.INDICTMENT_SENT_TO_FMST,
+      nationalId: defendant?.nationalId,
+    })
+
+    if (!eventLogCreated) {
+      toast.error(formatMessage(errors.updateDefendant))
+      return
+    }
+
+    router.push(
+      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE}/${workingCase.id}`,
+    )
+  }
 
   return (
     <PageLayout
@@ -41,7 +84,7 @@ const SendToFMST: FC = () => {
         <Box marginBottom={10}>
           <InputFileUpload
             fileList={[]}
-            accept={'application/pdf'}
+            accept="application/pdf"
             header={formatMessage(core.uploadBoxTitle)}
             description={formatMessage(core.uploadBoxDescription, {
               fileEndings: '.pdf',
@@ -57,8 +100,25 @@ const SendToFMST: FC = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE}/${workingCase.id}`}
           nextButtonText={formatMessage(strings.nextButtonText)}
+          onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>
+      {modalVisible === AvailableModal.SUCCESS && defendant && (
+        <Modal
+          title={formatMessage(strings.modalTitle)}
+          text={formatMessage(strings.modalText, {
+            courtCaseNumber: workingCase.courtCaseNumber,
+            defendant: defendant.name,
+          })}
+          secondaryButtonText={formatMessage(core.back)}
+          primaryButtonText={formatMessage(strings.modalNextButtonText)}
+          onPrimaryButtonClick={handlePrimaryButtonClick}
+          onSecondaryButtonClick={handleSecondaryButtonClick}
+          onClose={handleSecondaryButtonClick}
+          isPrimaryButtonLoading={createEventLog.loading}
+          loading={createEventLog.loading}
+        />
+      )}
     </PageLayout>
   )
 }

@@ -118,6 +118,7 @@ const FormProvider = ({ children }: Props) => {
   const replacingPath = router.pathname !== pathname
 
   useEffect(() => {
+    console.log('id', id)
     if (!id) {
       // Not working on a case
       setState(undefined)

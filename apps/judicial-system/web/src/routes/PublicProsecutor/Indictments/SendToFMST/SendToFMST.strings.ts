@@ -22,21 +22,23 @@ export const strings = defineMessages({
     defaultMessage: 'Senda til fullnustu',
     description: 'Notaður sem texti í áfram takka.',
   },
-  reviewerSubtitle: {
-    id: 'judicial.system.core:send_to_fmst.title',
-    defaultMessage:
-      'Frestur til að áfrýja dómi rennur út {indictmentAppealDeadline}',
-    description: 'Notaður sem undirtitill á yfirliti ákæru.',
+  modalTitle: {
+    id: 'judicial.system.core:send_to_fmst.modal_title',
+    defaultMessage: 'Senda til fullnustu',
+    description:
+      'Notaður sem titill á tilkynningarglugga um að senda til fullnustu.',
   },
-  reviewerAssignedModalTitle: {
-    id: 'judicial.system.core:send_to_fmst.title',
-    defaultMessage: 'Úthlutun tókst',
-    description: 'Notaður sem titill á tilkynningaglugga um yfirlesara.',
-  },
-  reviewerAssignedModalText: {
-    id: 'judicial.system.core:send_to_fmst.title',
+  modalText: {
+    id: 'judicial.system.core:send_to_fmst.modal_text',
     defaultMessage:
-      'Máli {caseNumber} hefur verið úthlutað til yfirlestrar á {reviewer}.',
-    description: 'Notaður sem texti í tilkynningaglugga um yfirlesara.',
+      'Mál {courtCaseNumber} verður sent til Fangelsismálastofnunar til fullnustu.\nÁkærði: {defendant}.',
+    description:
+      'Notaður sem texti á tilkynningarglugga um að senda til fullnustu',
+  },
+  modalNextButtonText: {
+    id: 'judicial.system.core:send_to_fmst.modal_next_button_text',
+    defaultMessage: 'Senda núna',
+    description:
+      'Notaður sem texti í takka á tilkynningarglugga um að senda til fullnustu',
   },
 })

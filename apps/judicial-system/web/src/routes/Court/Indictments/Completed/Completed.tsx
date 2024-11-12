@@ -68,7 +68,7 @@ const Completed: FC = () => {
       return
     }
 
-    const eventLogCreated = createEventLog({
+    const eventLogCreated = createEventLog.action({
       caseId: workingCase.id,
       eventType: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
     })

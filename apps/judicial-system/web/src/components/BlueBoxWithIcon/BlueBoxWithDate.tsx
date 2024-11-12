@@ -302,7 +302,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           variant="text"
           onClick={() =>
             router.push(
-              `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_FMST_ROUTE}/${workingCase.id}`,
+              `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_FMST_ROUTE}/${workingCase.id}/${defendant.id}`,
             )
           }
           size="small"

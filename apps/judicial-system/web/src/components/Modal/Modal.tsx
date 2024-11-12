@@ -22,6 +22,7 @@ interface ModalProps {
   errorMessage?: string
   children?: ReactNode
   invertButtonColors?: boolean
+  loading?: boolean
 }
 
 const Modal: FC<PropsWithChildren<ModalProps>> = ({
@@ -39,6 +40,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
   errorMessage,
   children,
   invertButtonColors,
+  loading,
 }: ModalProps) => {
   const modalVariants = {
     open: {
@@ -73,7 +75,11 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
         >
           {onClose && (
             <Box position="absolute" top={0} right={0}>
-              <button className={styles.closeButton} onClick={onClose}>
+              <button
+                className={styles.closeButton}
+                onClick={onClose}
+                disabled={loading}
+              >
                 <Icon icon="close" type="outline" color="blue400" />
               </button>
             </Box>
@@ -100,6 +106,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
                   variant={invertButtonColors ? undefined : 'ghost'}
                   onClick={onSecondaryButtonClick}
                   loading={isSecondaryButtonLoading}
+                  disabled={loading}
                 >
                   {secondaryButtonText}
                 </Button>
@@ -146,6 +153,7 @@ const ModalPortal = ({
   errorMessage,
   children,
   invertButtonColors,
+  loading,
 }: ModalProps) => {
   const modalRoot =
     document.getElementById('modal') ?? document.createElement('div')
@@ -166,6 +174,7 @@ const ModalPortal = ({
       errorMessage={errorMessage}
       children={children}
       invertButtonColors={invertButtonColors}
+      loading={loading}
     />,
     modalRoot,
   )
