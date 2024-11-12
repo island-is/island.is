@@ -67,7 +67,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
 
   return (
     <GrantWrapper
-      pageTitle={'Styrkur'}
+      pageTitle={grant.name}
       pageDescription={grant?.description ?? ''}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
     >
