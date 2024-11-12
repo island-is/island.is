@@ -28,11 +28,8 @@ export class FieldDto {
   @ApiProperty()
   isRequired!: boolean
 
-  // @ApiProperty()
-  // isHidden!: boolean
-
-  // @ApiPropertyOptional({ type: FieldSettingsDto })
-  // fieldSettings?: FieldSettingsDto
+  @ApiProperty()
+  isHidden!: boolean
 
   @ApiPropertyOptional({ type: FieldSettings })
   fieldSettings?: FieldSettings

@@ -6,26 +6,26 @@ import { Field } from './field.model'
 
 @Injectable()
 export class FieldMapper {
-  mapFieldToFieldDto(
-    field: Field,
-    // fieldSettingsDto: FieldSettingsDto,
-  ): FieldDto {
-    const fieldDto: FieldDto = {
-      id: field.id,
-      screenId: field.screenId,
-      name: field.name,
-      displayOrder: field.displayOrder,
-      description: field.description,
-      isPartOfMultiset: field.isPartOfMultiset,
-      // isHidden: field.isHidden,
-      isRequired: field.isRequired,
-      fieldType: field.fieldType,
-      fieldSettings: field.fieldSettings,
-      // fieldSettings: fieldSettingsDto,
-    }
+  // mapFieldToFieldDto(
+  //   field: Field,
+  //   // fieldSettingsDto: FieldSettingsDto,
+  // ): FieldDto {
+  //   const fieldDto: FieldDto = {
+  //     id: field.id,
+  //     screenId: field.screenId,
+  //     name: field.name,
+  //     displayOrder: field.displayOrder,
+  //     description: field.description,
+  //     isPartOfMultiset: field.isPartOfMultiset,
+  //     isHidden: false,
+  //     isRequired: field.isRequired,
+  //     fieldType: field.fieldType,
+  //     fieldSettings: field.fieldSettings,
+  //     // fieldSettings: fieldSettingsDto,
+  //   }
 
-    return fieldDto
-  }
+  //   return fieldDto
+  // }
 
   mapUpdateFieldDtoToField(field: Field, updateFieldDto: UpdateFieldDto): void {
     ;(field.name = updateFieldDto.name),

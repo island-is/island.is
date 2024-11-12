@@ -17,6 +17,7 @@ import {
 import { FormCertificationTypesService } from './formCertificationTypes.service'
 // import { FormCertificationDto } from './models/dto/formCertification.dto'
 import { CreateFormCertificationTypeDto } from './models/dto/createFormCertificationType.dto'
+import { CertificationType } from '../../dataTypes/certificationTypes/certificationType.model'
 
 @ApiTags('form certification types')
 @Controller({ path: 'formCertificationTypes', version: ['1', VERSION_NEUTRAL] })
@@ -34,7 +35,7 @@ export class FormCertificationTypesController {
   @Post()
   create(
     @Body() createFormCertificationTypeDto: CreateFormCertificationTypeDto,
-  ): Promise<string> {
+  ): Promise<CertificationType> {
     return this.formCertificationTypesService.create(
       createFormCertificationTypeDto,
     )
