@@ -532,7 +532,7 @@ judicial-system-web:
     readiness:
       initialDelaySeconds: 3
       path: '/readiness'
-      timeoutSeconds: 3
+      timeoutSeconds: 10
   hpa:
     scaling:
       metric:
