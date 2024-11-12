@@ -11,6 +11,7 @@ import { Tag } from '../Tag/Tag'
 import { TagProps } from '../Tag/types'
 import { Hyphen } from '../Hyphen/Hyphen'
 import { Text, TextProps } from '../Text/Text'
+import { LinkV2 } from '../Link/LinkV2'
 
 import * as styles from './CategoryCard.css'
 
@@ -118,9 +119,11 @@ const Component = forwardRef<
 
     const shouldStack = width && width < stackWidth
 
+    const hasNestedHref = tags.some((tag) => tag.href)
+
     return (
       <FocusableBox
-        href={href}
+        href={!hasNestedHref ? href : undefined}
         position="relative"
         display="flex"
         flexDirection="row"
@@ -161,15 +164,29 @@ const Component = forwardRef<
                   {icon}
                 </Box>
               )}
-              <Text
-                as={headingAs}
-                variant={headingVariant}
-                color={textColor}
-                truncate={truncateHeading}
-                title={heading}
-              >
-                {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
-              </Text>
+              {href && hasNestedHref ? (
+                <LinkV2 href={href}>
+                  <Text
+                    as={headingAs}
+                    variant={headingVariant}
+                    color={textColor}
+                    truncate={truncateHeading}
+                    title={heading}
+                  >
+                    {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
+                  </Text>
+                </LinkV2>
+              ) : (
+                <Text
+                  as={headingAs}
+                  variant={headingVariant}
+                  color={textColor}
+                  truncate={truncateHeading}
+                  title={heading}
+                >
+                  {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
+                </Text>
+              )}
             </Box>
             <Text
               paddingTop={1}
