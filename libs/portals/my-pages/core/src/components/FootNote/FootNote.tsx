@@ -14,6 +14,9 @@ interface Props {
   serviceProviderSlug?: OrganizationSlugType
 }
 
+/**
+ * @deprecated Do not use manually. Use <IntroWrapper /> instead
+ */
 export const FootNote = ({ notes, serviceProviderSlug }: Props) => {
   const { data: organization, loading } = useOrganization(serviceProviderSlug)
 

@@ -7,15 +7,16 @@ import { getMaxMultipleBirthsAndDefaultMonths } from '../../lib/parentalLeaveUti
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { defaultMonths, daysInMonth } from '../../config'
-import { formatText } from '@island.is/application/core'
+import { formatText, formatTextWithLocale } from '@island.is/application/core'
 import { NO } from '../../constants'
 import { useEffectOnce } from 'react-use'
+import { Locale } from '@island.is/shared/types'
 
 const RequestMultipleBirthsDaysBoxChart: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ field, application }) => {
   const { description } = field
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const { setValue, watch } = useFormContext()
 
   const maxMonths = getMaxMultipleBirthsAndDefaultMonths(application.answers)
@@ -51,7 +52,14 @@ const RequestMultipleBirthsDaysBoxChart: FC<
 
   return (
     <>
-      <p>{formatText(description!, application, formatMessage)}</p>
+      <p>
+        {formatTextWithLocale(
+          description!,
+          application,
+          locale as Locale,
+          formatMessage,
+        )}
+      </p>
       <Box marginBottom={6} marginTop={5}>
         <BoxChart
           application={application}

@@ -18,11 +18,6 @@ export const strings = defineMessages({
     description:
       'Notaður til að láta vita að áfrýjunarfrestur dómfellda er ekki hafinn.',
   },
-  serviceRequirementNotRequired: {
-    id: 'judicial.system.core:info_card.defendant_info.service_requirement_not_required_v1',
-    defaultMessage: 'Birting dóms ekki þörf',
-    description: 'Notað til að láta vita birting dóms er ekki nauðsynleg.',
-  },
   defender: {
     id: 'judicial.system.core:info_card.defendant_info.defender',
     defaultMessage: 'Verjandi',
@@ -32,6 +27,16 @@ export const strings = defineMessages({
     id: 'judicial.system.core:info_card.defendant_info.verdict_displayed_date',
     defaultMessage: 'Dómur birtur {date}',
     description: 'Notað til að birta dagsetningu þegar dómur var birtur.',
+  },
+  serviceNotRequired: {
+    id: 'judicial.system.core:info_card.defendant_info.service_not_required',
+    defaultMessage: 'Birting dóms ekki þörf',
+    description: 'Notað sem texti þegar birting dóms er ekki þörf',
+  },
+  serviceRequired: {
+    id: 'judicial.system.core:info_card.defendant_info.service_required_v1',
+    defaultMessage: 'Birta skal dómfellda dóminn',
+    description: 'Notað sem texti þegar birting dóms er þörf',
   },
   spokesperson: {
     id: 'judicial.system.core:info_card.spokesperson',

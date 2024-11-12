@@ -3,8 +3,8 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   m,
   SAMGONGUSTOFA_SLUG,
-  IntroHeader,
   LinkButton,
+  IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
 import * as styles from './VehicleBulkMileage.css'
@@ -61,7 +61,7 @@ const VehicleBulkMileage = () => {
   return (
     <Stack space={2}>
       <FormProvider {...methods}>
-        <IntroHeader
+        <IntroWrapper
           title={m.vehiclesBulkMileage}
           introComponent={
             <Text>
@@ -83,44 +83,45 @@ const VehicleBulkMileage = () => {
           }
           serviceProviderSlug={SAMGONGUSTOFA_SLUG}
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-        />
-        <Stack space={4}>
-          <Inline space={2}>
-            <LinkButton
-              to={AssetsPaths.AssetsVehiclesBulkMileageUpload}
-              text={formatMessage(vehicleMessage.bulkPostMileage)}
-              icon="upload"
-              variant="utility"
-            />
-            <LinkButton
-              to={AssetsPaths.AssetsVehiclesBulkMileageJobOverview}
-              text={formatMessage(vehicleMessage.jobOverview)}
-              icon="receipt"
-              variant="utility"
-            />
-          </Inline>
-          {error && !loading && <Problem error={error} noBorder={false} />}
-          {!error && (
-            <VehicleBulkMileageTable loading={loading} vehicles={vehicles} />
-          )}
+        >
+          <Stack space={4}>
+            <Inline space={2}>
+              <LinkButton
+                to={AssetsPaths.AssetsVehiclesBulkMileageUpload}
+                text={formatMessage(vehicleMessage.bulkPostMileage)}
+                icon="upload"
+                variant="utility"
+              />
+              <LinkButton
+                to={AssetsPaths.AssetsVehiclesBulkMileageJobOverview}
+                text={formatMessage(vehicleMessage.jobOverview)}
+                icon="receipt"
+                variant="utility"
+              />
+            </Inline>
+            {error && !loading && <Problem error={error} noBorder={false} />}
+            {!error && (
+              <VehicleBulkMileageTable loading={loading} vehicles={vehicles} />
+            )}
 
-          {totalPages > 1 && (
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              renderLink={(page, className, children) => (
-                <button
-                  aria-label={formatMessage(m.goToPage)}
-                  onClick={() => {
-                    setPage(page)
-                  }}
-                >
-                  <span className={className}>{children}</span>
-                </button>
-              )}
-            />
-          )}
-        </Stack>
+            {totalPages > 1 && (
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                renderLink={(page, className, children) => (
+                  <button
+                    aria-label={formatMessage(m.goToPage)}
+                    onClick={() => {
+                      setPage(page)
+                    }}
+                  >
+                    <span className={className}>{children}</span>
+                  </button>
+                )}
+              />
+            )}
+          </Stack>
+        </IntroWrapper>
       </FormProvider>
     </Stack>
   )

@@ -28,6 +28,11 @@ interface Props {
   introComponent?: ReactNode
   tooltipVariant?: 'light' | 'dark' | 'white'
 }
+
+/**
+ * @deprecated Do not use manually. Use <IntroWrapper /> instead
+ */
+
 export const IntroHeader = (props: IntroHeaderProps & Props) => {
   const { marginBottom } = props
   const { formatMessage } = useLocale()

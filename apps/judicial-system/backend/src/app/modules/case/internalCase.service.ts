@@ -543,7 +543,9 @@ export class InternalCaseService {
       .then(async (pdf) => {
         await this.refreshFormatMessage()
 
-        const fileName = this.formatMessage(courtUpload.indictment)
+        const fileName = this.formatMessage(courtUpload.indictment, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        })
 
         return this.courtService.createDocument(
           user,
@@ -1003,9 +1005,9 @@ export class InternalCaseService {
         )
         .map(async (caseFile) => {
           // TODO: Tolerate failure, but log error
-          const file = await this.awsS3Service.getObject(
-            theCase.type,
-            caseFile.key,
+          const file = await this.fileService.getCaseFileFromS3(
+            theCase,
+            caseFile,
           )
 
           return {
@@ -1152,9 +1154,9 @@ export class InternalCaseService {
         ?.filter((file) => file.category === CaseFileCategory.APPEAL_RULING)
         .map(async (caseFile) => {
           // TODO: Tolerate failure, but log error
-          const file = await this.awsS3Service.getObject(
-            theCase.type,
-            caseFile.key,
+          const file = await this.fileService.getCaseFileFromS3(
+            theCase,
+            caseFile,
           )
 
           return {

@@ -8,12 +8,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  IntroHeader,
   SAMGONGUSTOFA_SLUG,
   m,
   EmptyTable,
   TableGrid,
   downloadFile,
+  IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { VehiclesBulkMileageRegistrationRequestStatus } from '@island.is/api/schema'
@@ -34,7 +34,7 @@ type UseParams = {
 
 const VehicleBulkMileageJobDetail = () => {
   useNamespaces('sp.vehicles')
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const { id } = useParams() as UseParams
 
   const { data, loading, error, refetch, networkStatus } =
@@ -57,6 +57,7 @@ const VehicleBulkMileageJobDetail = () => {
     notifyOnNetworkStatusChange: true,
     variables: {
       input: {
+        locale: locale,
         guid: id,
       },
     },
@@ -89,7 +90,7 @@ const VehicleBulkMileageJobDetail = () => {
         }
         return [
           erroredVehicle.vehicleId,
-          erroredVehicle.errors.map((j) => j.message).join(', '),
+          erroredVehicle.errors.map((j) => j.warningText).join(', '),
         ]
       })
       .filter(isDefined)
@@ -103,19 +104,18 @@ const VehicleBulkMileageJobDetail = () => {
     !(registrationNetworkStatus === NetworkStatus.refetch)
 
   return (
-    <Box>
-      <IntroHeader
-        title={formatMessage(m.vehiclesBulkMileageJobDetail)}
-        introComponent={
-          <>
-            <Text>{formatMessage(vehicleMessage.dataAboutJob)}</Text>
-            <br />
-            <Text>{formatMessage(vehicleMessage.refreshDataAboutJob)}</Text>
-          </>
-        }
-        serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-        serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-      >
+    <IntroWrapper
+      title={formatMessage(m.vehiclesBulkMileageJobDetail)}
+      introComponent={
+        <>
+          <Text>{formatMessage(vehicleMessage.dataAboutJob)}</Text>
+          <br />
+          <Text>{formatMessage(vehicleMessage.refreshDataAboutJob)}</Text>
+        </>
+      }
+      serviceProviderSlug={SAMGONGUSTOFA_SLUG}
+      serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
+      buttonGroup={
         <Box marginTop={'containerGutter'}>
           <Button
             variant="utility"
@@ -130,7 +130,8 @@ const VehicleBulkMileageJobDetail = () => {
             {formatMessage(vehicleMessage.refreshJob)}
           </Button>
         </Box>
-      </IntroHeader>
+      }
+    >
       {!error && !loading && !jobsStatus && (
         <Problem
           type="no_data"
@@ -249,7 +250,9 @@ const VehicleBulkMileageJobDetail = () => {
                           {displayWithUnit(j.mileage, 'km', true)}
                         </T.Data>
                         <T.Data>
-                          {(j.errors ?? []).map((j) => j.message).join(', ')}
+                          {(j.errors ?? [])
+                            .map((j) => j.warningText)
+                            .join(', ')}
                         </T.Data>
                       </T.Row>
                     ))
@@ -268,7 +271,7 @@ const VehicleBulkMileageJobDetail = () => {
           </Box>
         </Stack>
       )}
-    </Box>
+    </IntroWrapper>
   )
 }
 

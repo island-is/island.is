@@ -8,12 +8,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import {
-  FootNote,
-  IntroHeader,
   UserInfoLine,
   StackWithBottomDivider,
   formSubmit,
   LinkButton,
+  IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -57,14 +56,14 @@ const OccupationalLicenseDetail = () => {
     new Date(license.validFrom) < EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF
 
   return (
-    <>
-      <IntroHeader
-        marginBottom={2}
-        title={license?.title ?? formatMessage(om.occupationalLicense)}
-        intro={res?.headerText ?? ''}
-        serviceProviderSlug={license?.issuer as OrganizationSlugType}
-      >
-        {!isOldEducationLicense && res?.actions && (
+    <IntroWrapper
+      marginBottom={2}
+      title={license?.title ?? formatMessage(om.occupationalLicense)}
+      intro={res?.headerText ?? ''}
+      serviceProviderSlug={license?.issuer as OrganizationSlugType}
+      buttonGroup={
+        !isOldEducationLicense &&
+        res?.actions && (
           <Box paddingTop={3}>
             {
               <Inline space={1} collapseBelow="sm">
@@ -114,8 +113,9 @@ const OccupationalLicenseDetail = () => {
               </Inline>
             }
           </Box>
-        )}
-      </IntroHeader>
+        )
+      }
+    >
       {error && !loading && <Problem noBorder={false} error={error} />}
       {!error && !loading && isOldEducationLicense && (
         <AlertMessage
@@ -242,12 +242,7 @@ const OccupationalLicenseDetail = () => {
           </Text>
         </Box>
       )}
-      <FootNote
-        serviceProviderSlug={
-          license?.issuer ? (license.issuer as OrganizationSlugType) : undefined
-        }
-      />
-    </>
+    </IntroWrapper>
   )
 }
 

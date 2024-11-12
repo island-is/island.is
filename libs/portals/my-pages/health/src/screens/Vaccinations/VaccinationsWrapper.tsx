@@ -15,8 +15,12 @@ import { Problem } from '@island.is/react-spa/shared'
 
 export const VaccinationsWrapper = () => {
   useNamespaces('sp.health')
-  const { formatMessage } = useLocale()
-  const { data, loading, error } = useGetVaccinationsQuery()
+  const { formatMessage, locale } = useLocale()
+  const { data, loading, error } = useGetVaccinationsQuery({
+    variables: {
+      locale: locale,
+    },
+  })
 
   const vaccinations = data?.healthDirectorateVaccinations.vaccinations
 

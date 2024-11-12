@@ -34,7 +34,7 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
       value: formatMessage(messages.vaccinesTableHeaderLocation),
     },
   ]
-  if (data?.length === 0)
+  if (!data || data?.length === 0)
     return <EmptyTable message={formatMessage(messages.noVaccinesRegistered)} />
 
   return (
@@ -50,7 +50,7 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
         expandable
         defaultSortByKey="vaccine"
         items={
-          data?.map((item, i) => ({
+          data.map((item, i) => ({
             id: item?.id ?? `${i}`,
             name: item?.name ?? '',
             vaccine: item?.name ?? '',
@@ -97,7 +97,7 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
               />
             ),
             status: item?.statusName ?? '',
-            tag: tagSelector(item?.status),
+            tag: tagSelector(item?.status ?? undefined),
           })) ?? []
         }
       />
