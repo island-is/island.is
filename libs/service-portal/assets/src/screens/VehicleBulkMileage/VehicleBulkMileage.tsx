@@ -3,8 +3,8 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   m,
   SAMGONGUSTOFA_SLUG,
-  IntroHeader,
   LinkButton,
+  IntroHeader,
 } from '@island.is/service-portal/core'
 import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
 import * as styles from './VehicleBulkMileage.css'

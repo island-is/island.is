@@ -63,8 +63,11 @@ const VehicleBulkMileageUploadJobOverview = () => {
   const jobs: Array<VehiclesBulkMileageRegistrationJob> =
     data?.vehicleBulkMileageRegistrationJobHistory?.history ?? []
 
-  const sortedJobs = jobs.length > 1 ? [...jobs] : []
-  sortedJobs.sort((a, b) => sortJobs(a, b))
+  const sortedJobs = [...jobs]
+  if (sortedJobs.length > 1) {
+    sortedJobs.sort((a, b) => sortJobs(a, b))
+  }
+
   return (
     <Box>
       <IntroHeader
