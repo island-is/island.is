@@ -15,7 +15,7 @@ import { useVehicleBulkMileagePostMutation } from './VehicleBulkMileageUpload.ge
 import { vehicleMessage } from '../../lib/messages'
 import { parseFileToMileageRecord } from '../../utils/parseFileToMileage'
 import {
-  IntroWrapper,
+  IntroHeader,
   LinkButton,
   SAMGONGUSTOFA_SLUG,
   m,
@@ -121,17 +121,17 @@ const VehicleBulkMileageUpload = () => {
   }
 
   return (
-    <IntroWrapper
-      title={m.vehiclesBulkMileageUpload}
-      intro={m.vehiclesBulkMileageUploadDescription}
-      serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-      serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-      buttonGroup={
+    <Box>
+      <IntroHeader
+        title={m.vehiclesBulkMileageUpload}
+        intro={m.vehiclesBulkMileageUploadDescription}
+        serviceProviderSlug={SAMGONGUSTOFA_SLUG}
+        serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
+      >
         <Box marginTop={2}>
           <VehicleBulkMileageFileDownloader onError={handleFileDownloadError} />
         </Box>
-      }
-    >
+      </IntroHeader>
       <Stack space={2}>
         {error && <Problem error={error} noBorder={false} />}
         {data?.vehicleBulkMileagePost?.errorMessage && !loading && !error && (
@@ -194,7 +194,7 @@ const VehicleBulkMileageUpload = () => {
           errorMessage={uploadErrorMessage ?? undefined}
         />
       </Stack>
-    </IntroWrapper>
+    </Box>
   )
 }
 

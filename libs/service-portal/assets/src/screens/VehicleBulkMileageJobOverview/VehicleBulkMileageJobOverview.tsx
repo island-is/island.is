@@ -7,7 +7,6 @@ import {
   LinkButton,
   EmptyTable,
   formatDateWithTime,
-  IntroWrapper,
 } from '@island.is/service-portal/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useGetRequestsStatusQuery } from './VehicleBulkMileageJobOverview.generated'
@@ -70,12 +69,13 @@ const VehicleBulkMileageUploadJobOverview = () => {
   }
 
   return (
-    <IntroWrapper
-      title={m.vehiclesBulkMileageJobOverview}
-      intro={m.vehiclesBulkMileageJobOverviewDescription}
-      serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-      serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-    >
+    <Box>
+      <IntroHeader
+        title={m.vehiclesBulkMileageJobOverview}
+        intro={m.vehiclesBulkMileageJobOverviewDescription}
+        serviceProviderSlug={SAMGONGUSTOFA_SLUG}
+        serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
+      />
       {error && <Problem error={error} noBorder={false} />}
       {!error && (
         <T.Table>
@@ -144,7 +144,7 @@ const VehicleBulkMileageUploadJobOverview = () => {
           message={formatMessage(vehicleMessage.noJobsFound)}
         />
       )}
-    </IntroWrapper>
+    </Box>
   )
 }
 
