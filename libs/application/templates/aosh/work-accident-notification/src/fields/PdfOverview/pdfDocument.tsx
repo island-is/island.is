@@ -1,5 +1,18 @@
-import { Page, Text, Document, View, StyleSheet } from '@react-pdf/renderer'
-import { accident, information, overview, sections } from '../../lib/messages'
+import {
+  Page,
+  Text,
+  Document,
+  View,
+  StyleSheet,
+  Svg,
+} from '@react-pdf/renderer'
+import {
+  accident,
+  information,
+  overview,
+  sections,
+  shared,
+} from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
 import { EmployeeType } from '../../lib/dataSchema'
 import { FieldBaseProps, FormatMessage } from '@island.is/application/types'
@@ -10,6 +23,7 @@ import {
 import { FC } from 'react'
 import { getEmployeeInformationForOverview } from '../../utils/getEmployeeInformationForOverview'
 import { getCauseAndConsequencesForOverview } from '../../utils/getCauseAndConsequencesForOverview'
+import { Vinnueftirlitid } from '../../assets/vinnueftirlitid'
 
 interface PdfDocumentProps {
   formatMessage: FormatMessage
@@ -33,6 +47,15 @@ export const PdfDocument: FC<
   return (
     <Document>
       <Page size="A4" style={pdfStyles.body}>
+        {/* Header */}
+        <View style={pdfStyles.row}>
+          <Vinnueftirlitid />
+          <Text style={pdfStyles.headerTitle}>
+            {formatMessage(shared.application.name)}
+          </Text>
+        </View>
+
+        {/* Body */}
         <View style={pdfStyles.listInfo}>
           <Text style={pdfStyles.title}>
             {formatMessage(accident.about.pageTitle)}
@@ -100,13 +123,12 @@ export const pdfStyles = StyleSheet.create({
     fontSize: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     marginBottom: 16,
   },
   employeeHeader: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 600,
-    marginBottom: 5,
   },
   header: {
     fontSize: 14,
@@ -122,5 +144,19 @@ export const pdfStyles = StyleSheet.create({
   },
   view: {
     marginBottom: 20,
+  },
+  image: {
+    width: 120,
+    marginBottom: 20,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: 600,
   },
 })
