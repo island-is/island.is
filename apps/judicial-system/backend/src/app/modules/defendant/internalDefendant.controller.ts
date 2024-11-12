@@ -17,7 +17,7 @@ import {
   messageEndpoint,
   MessageType,
 } from '@island.is/judicial-system/message'
-import { investigationCases } from '@island.is/judicial-system/types'
+import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { Case, CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
 import { DeliverDefendantToCourtDto } from './dto/deliverDefendantToCourt.dto'
@@ -64,10 +64,7 @@ export class InternalDefendantController {
     )
   }
 
-  @UseGuards(
-    new CaseTypeGuard(investigationCases),
-    DefendantNationalIdExistsGuard,
-  )
+  @UseGuards(new CaseTypeGuard(indictmentCases), DefendantNationalIdExistsGuard)
   @Patch('defense/:defendantNationalId')
   @ApiOkResponse({
     type: Defendant,

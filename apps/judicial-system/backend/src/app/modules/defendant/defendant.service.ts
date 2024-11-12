@@ -289,7 +289,7 @@ export class DefendantService {
 
     // Notify the court if the defendant has changed the defender choice
     if (
-      updatedDefendant.isDefenderChoiceConfirmed &&
+      !updatedDefendant.isDefenderChoiceConfirmed &&
       updatedDefendant.defenderChoice === DefenderChoice.CHOOSE &&
       (updatedDefendant.defenderChoice !== defendant.defenderChoice ||
         updatedDefendant.defenderNationalId !== defendant.defenderNationalId)
