@@ -48,9 +48,6 @@ exports.parsers = {
         case 'tsconfig.base.json':
           return sortTsConfig(text)
 
-        case 'nx.json':
-          return sortNx(text)
-
         default:
           return text
       }
