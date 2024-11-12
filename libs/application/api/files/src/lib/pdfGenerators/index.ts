@@ -1,1 +1,0 @@
-export { generateResidenceChangePdf } from './residenceChange'
