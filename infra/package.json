@@ -26,6 +26,8 @@
   },
   "dependencies": {
     "@aws-sdk/client-ssm": "3.145.0",
+    "@aws-sdk/credential-provider-env": "3.686.0",
+    "@aws-sdk/credential-providers": "3.687.0",
     "@types/lodash": "4.14.160",
     "aws-sdk": "^2.1003.0",
     "glob": "10.3.3",
