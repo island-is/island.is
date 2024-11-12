@@ -1470,9 +1470,10 @@ export const calculatePeriodLengthInMonths = (
   const end = parseISO(endDate)
 
   const diffMonths = differenceInMonths(end, start)
-  const diffDays = differenceInDays(addMonths(end, -diffMonths), start)
+  const diffDays = differenceInDays(end, addMonths(start, diffMonths))
 
-  const roundedDays = Math.min((diffDays / 28) * 100, 100) / 100
+  const roundedDays =
+    Math.min((diffDays / getDaysInMonth(end)) * 100, 100) / 100
 
   return round(diffMonths + roundedDays, 1)
 }
