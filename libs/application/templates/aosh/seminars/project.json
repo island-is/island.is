@@ -1,0 +1,12 @@
+{
+  "name": "application-templates-aosh-seminars",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/aosh/seminars/src",
+  "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}
