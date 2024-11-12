@@ -108,7 +108,7 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
               defaultMessage="Hér getur þú séð lista yfir bóluefni sem þú hefur fengið, stöðu bólusetningar og aðrar upplýsingar."
             />
           </Typography>
-          {vaccinationsRes.data && (
+          {!vaccinationsRes.error && (
             <Tabs>
               <TabButtons
                 buttons={[
@@ -128,7 +128,7 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
               />
             </Tabs>
           )}
-          {vaccinationsRes.data && (
+          {!vaccinationsRes.error && (
             <Vaccinations>
               {vaccinationsRes.loading && !vaccinationsRes.data
                 ? Array.from({ length: 5 }).map((_, index) => (
