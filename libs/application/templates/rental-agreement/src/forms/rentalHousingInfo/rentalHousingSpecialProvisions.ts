@@ -4,42 +4,42 @@ import {
   buildDescriptionField,
   buildTextField,
 } from '@island.is/application/core'
-import * as m from '../../lib/messages'
+import { specialProvisions } from '../../lib/messages'
 
 export const RentalHousingSpecialProvisions = buildSubSection({
-  id: 'RentalHousingSpecialProvisions',
-  title: m.specialProvisions.subsection.name,
+  id: 'specialProvisions',
+  title: specialProvisions.subsection.name,
   children: [
     buildMultiField({
-      id: 'rentalHousingSpecialProvisionsDetails',
-      title: m.specialProvisions.subsection.pageTitle,
-      description: m.specialProvisions.subsection.pageDescription,
+      id: 'specialProvisions.details',
+      title: specialProvisions.subsection.pageTitle,
+      description: specialProvisions.subsection.pageDescription,
       children: [
         buildDescriptionField({
-          id: 'rentalHousingSpecialProvisionsDescriptionTitle',
-          title: m.specialProvisions.housingInfo.title,
-          titleTooltip: m.specialProvisions.housingInfo.tooltip,
+          id: 'specialProvisions.descriptionTitle',
+          title: specialProvisions.housingInfo.title,
+          titleTooltip: specialProvisions.housingInfo.tooltip,
           titleVariant: 'h3',
         }),
         buildTextField({
-          id: 'rentalHousingSpecialProvisionsDescriptionInput',
-          title: m.specialProvisions.housingInfo.inputLabel,
+          id: 'specialProvisions.descriptionInput',
+          title: specialProvisions.housingInfo.inputLabel,
           maxLength: 1500,
-          placeholder: m.specialProvisions.housingInfo.inputPlaceholder,
+          placeholder: specialProvisions.housingInfo.inputPlaceholder,
           variant: 'textarea',
           rows: 8,
         }),
         buildDescriptionField({
-          id: 'rentalHousingSpecialProvisionsTitle',
-          title: m.specialProvisions.housingRules.title,
-          titleTooltip: m.specialProvisions.housingRules.tooltip,
+          id: 'specialProvisions.rulesTitle',
+          title: specialProvisions.housingRules.title,
+          titleTooltip: specialProvisions.housingRules.tooltip,
           titleVariant: 'h3',
           marginTop: 6,
         }),
         buildTextField({
-          id: 'rentalHousingSpecialProvisionsInput',
-          title: m.specialProvisions.housingRules.inputLabel,
-          placeholder: m.specialProvisions.housingRules.inputPlaceholder,
+          id: 'specialProvisions.rulesInput',
+          title: specialProvisions.housingRules.inputLabel,
+          placeholder: specialProvisions.housingRules.inputPlaceholder,
           variant: 'textarea',
           rows: 8,
         }),

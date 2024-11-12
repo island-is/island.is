@@ -41,17 +41,24 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
             <KeyValue
               label={'Upphafsdagur samnings'}
               value={
-                application.answers.rentalPeriodStartDate
-                  ? formatDateFns(
-                      application.answers.rentalPeriodStartDate.toString(),
-                      'dd MMM yyyy',
-                    )
+                startDate
+                  ? formatDateFns(startDate.toString(), 'dd MMM yyyy')
                   : '-'
               }
             />
           </GridColumn>
           <GridColumn span={['12/12', '4/12']}>
-            <KeyValue label={'Leigutímabil'} value={'Value'} />
+            <KeyValue
+              label={'Leigutímabil'}
+              value={
+                isRentalPeriodDefinite
+                  ? `${formatDateFns(
+                      startDate.toString(),
+                      'dd MMM yyyy',
+                    )} - ${formatDateFns(endDate.toString(), 'dd MMM yyyy')}`
+                  : 'Ótímabundinn samningur'
+              }
+            />
           </GridColumn>
           <GridColumn span={['12/12', '4/12']}>
             <KeyValue label={'Uppsagnafrestur'} value={'Value'} />

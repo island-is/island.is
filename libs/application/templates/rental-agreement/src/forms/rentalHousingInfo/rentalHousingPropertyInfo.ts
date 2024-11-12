@@ -6,12 +6,13 @@ import {
   buildStaticTableField,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { SubSection } from '@island.is/application/types'
 import { postalCodes } from '@island.is/shared/utils'
 import {
-  rentalHousingCategoryClass,
-  rentalHousingCategoryTypes,
+  RentalHousingCategoryClass,
+  RentalHousingCategoryTypes,
 } from '../../lib/constants'
 import {
   getApplicationAnswers,
@@ -19,30 +20,30 @@ import {
   getPropertyCategoryClassOptions,
   getPropertyCategoryTypeOptions,
 } from '../../lib/utils'
-import * as m from '../../lib/messages'
+import { registerProperty } from '../../lib/messages'
 
-const messagesInfo = m.registerProperty.info
-const messagesInfoSummary = m.registerProperty.infoSummary
-const messagesCategory = m.registerProperty.category
+const messagesInfo = registerProperty.info
+const messagesSummary = registerProperty.infoSummary
+const messagesCategory = registerProperty.category
 
 export const RentalHousingPropertyInfo: SubSection = buildSubSection({
   id: 'registerProperty',
-  title: m.registerProperty.subsection.name,
+  title: registerProperty.subsection.name,
   children: [
     buildMultiField({
-      id: 'registerPropertyInfo',
+      id: 'registerProperty.info',
       title: messagesInfo.pageTitle,
       description: messagesInfo.pageDescription,
       children: [
         buildTextField({
-          id: 'registerPropertyInfoAddress',
+          id: 'registerProperty.address',
           title: messagesInfo.addressLabel,
           placeholder: messagesInfo.addressPlaceholder,
           required: true,
           maxLength: 50,
         }),
         buildTextField({
-          id: 'registerPropertyInfoPropertyId',
+          id: 'registerProperty.propertyId',
           title: messagesInfo.propertyIdLabel,
           placeholder: messagesInfo.propertyIdPlaceholder,
           width: 'half',
@@ -50,7 +51,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           required: true,
         }),
         buildTextField({
-          id: 'registerPropertyInfoUnitId',
+          id: 'registerProperty.unitId',
           title: messagesInfo.propertyUnitIdLabel,
           placeholder: messagesInfo.propertyUnitIdPlaceholder,
           width: 'half',
@@ -58,7 +59,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           required: true,
         }),
         buildSelectField({
-          id: 'registerPropertyInfoPostalCode',
+          id: 'registerProperty.postalCode',
           title: messagesInfo.postalCodeLabel,
           placeholder: messagesInfo.postalCodePlaceholder,
           width: 'half',
@@ -70,21 +71,21 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'registerPropertyInfoMunicipality',
+          id: 'registerProperty.municipality',
           title: messagesInfo.municipalityLabel,
           placeholder: messagesInfo.municipalityPlaceholder,
           width: 'half',
           required: true,
         }),
         buildTextField({
-          id: 'registerPropertyInfoSize',
+          id: 'registerProperty.size',
           title: messagesInfo.sizeLabel,
           placeholder: '',
           width: 'half',
           required: true,
         }),
         buildTextField({
-          id: 'registerPropertyInfoNumOfRooms',
+          id: 'registerProperty.numOfRooms',
           title: messagesInfo.numOfRoomsLabel,
           placeholder: '',
           variant: 'number',
@@ -94,38 +95,45 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
       ],
     }),
     buildMultiField({
-      id: 'registerPropertyInfoSummary',
+      id: 'registerProperty.summary',
       title: '',
       condition: (answers) => Boolean(answers.registerPropertyInfoAddress),
       children: [
         buildStaticTableField({
-          title: messagesInfoSummary.pageTitle,
-          description: messagesInfoSummary.pageDescription,
+          title: messagesSummary.pageTitle,
+          description: messagesSummary.pageDescription,
           header: [
-            messagesInfoSummary.tableHeaderPropertyId,
-            messagesInfoSummary.tableHeaderAddress,
-            messagesInfoSummary.tableHeaderUnitId,
-            messagesInfoSummary.tableHeaderSize,
-            messagesInfoSummary.tableHeaderNumOfRooms,
+            messagesSummary.tableHeaderPropertyId,
+            messagesSummary.tableHeaderAddress,
+            messagesSummary.tableHeaderUnitId,
+            messagesSummary.tableHeaderSize,
+            messagesSummary.tableHeaderNumOfRooms,
           ],
           rows({ answers }) {
+            const propertyId = getValueViaPath(
+              answers,
+              'registerProperty.propertyId',
+            )
+            const address = getValueViaPath(answers, 'registerProperty.address')
+            const municipality = getValueViaPath(
+              answers,
+              'registerProperty.municipality',
+            )
+            const unitId = getValueViaPath(answers, 'registerProperty.unitId')
+            const size = getValueViaPath(answers, 'registerProperty.size')
+            const numOfRooms = getValueViaPath(
+              answers,
+              'registerProperty.numOfRooms',
+            )
             return [
               [
-                answers.registerPropertyInfoPropertyId
-                  ? `F${answers.registerPropertyInfoPropertyId}`
-                  : '',
-                answers.registerPropertyInfoAddress
-                  ? `${answers.registerPropertyInfoAddress.toString()}, ${answers.registerPropertyInfoMunicipality.toString()}`
-                  : '',
-                answers.registerPropertyInfoUnitId
-                  ? `${answers.registerPropertyInfoUnitId.toString()}`
-                  : '',
-                answers.registerPropertyInfoSize
-                  ? `${answers.registerPropertyInfoSize.toString()} m²`
-                  : '',
-                answers.registerPropertyInfoNumOfRooms
-                  ? `${answers.registerPropertyInfoNumOfRooms.toString()}`
-                  : '',
+                propertyId ? `F${propertyId}` : '-',
+                address
+                  ? `${address}${municipality ? `, ${municipality}` : ''}`
+                  : '-',
+                unitId ? unitId : '-',
+                size ? `${size} m²` : '-',
+                numOfRooms ? numOfRooms : '-',
               ],
             ]
           },
@@ -133,35 +141,35 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
       ],
     }),
     buildMultiField({
-      id: 'registerPropertyCategory',
+      id: 'registerProperty.category',
       title: messagesCategory.pageTitle,
       description: messagesCategory.pageDescription,
       children: [
         buildDescriptionField({
-          id: 'registerPropertyCategoryTitle',
+          id: 'registerProperty.categoryTitle',
           title: messagesCategory.typeTitle,
           titleVariant: 'h4',
         }),
         buildSelectField({
-          id: 'registerPropertyCategoryType',
+          id: 'registerProperty.categoryType',
           title: messagesCategory.typeTitle,
           description: messagesCategory.typeDescription,
           options: getPropertyCategoryTypeOptions(),
-          defaultValue: rentalHousingCategoryTypes.ENTIRE_HOME,
+          defaultValue: RentalHousingCategoryTypes.ENTIRE_HOME,
           required: true,
         }),
         buildRadioField({
-          id: 'registerPropertyCategoryClass',
+          id: 'registerProperty.categoryClass',
           title: messagesCategory.classTitle,
           description: messagesCategory.classDescription,
           options: getPropertyCategoryClassOptions(),
-          defaultValue: rentalHousingCategoryClass.GENERAL_MARKET,
+          defaultValue: RentalHousingCategoryClass.GENERAL_MARKET,
           required: true,
           width: 'half',
           space: 5,
         }),
         buildSelectField({
-          id: 'registerPropertyCategoryClassGroup',
+          id: 'registerProperty.categoryClassGroup',
           title: messagesCategory.classGroupLabel,
           placeholder: messagesCategory.classGroupPlaceholder,
           condition: (answers) => {
@@ -169,7 +177,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
               getApplicationAnswers(answers)
             return (
               propertyCategoryClassOptions ===
-              rentalHousingCategoryClass.SPECIAL_GROUPS
+              RentalHousingCategoryClass.SPECIAL_GROUPS
             )
           },
           options: getPropertyCategoryClassGroupOptions(),

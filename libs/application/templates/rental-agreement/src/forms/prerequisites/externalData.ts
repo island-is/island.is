@@ -6,17 +6,17 @@ import {
 } from '@island.is/application/core'
 import { UserProfileApi, NationalRegistryUserApi } from '../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
-import * as m from '../../lib/messages'
+import { prerequisites } from '../../lib/messages'
 
 export const externalData = buildSection({
   id: 'externalData',
-  title: m.prerequisites.externalData.sectionTitle,
+  title: prerequisites.externalData.sectionTitle,
   children: [
     buildExternalDataProvider({
       id: 'approveExternalData',
-      title: m.prerequisites.externalData.pageTitle,
-      subTitle: m.prerequisites.externalData.subTitle,
-      checkboxLabel: m.prerequisites.externalData.checkboxLabel,
+      title: prerequisites.externalData.pageTitle,
+      subTitle: prerequisites.externalData.subTitle,
+      checkboxLabel: prerequisites.externalData.checkboxLabel,
       submitField: buildSubmitField({
         id: 'toDraft',
         title: '',
@@ -32,13 +32,13 @@ export const externalData = buildSection({
       dataProviders: [
         buildDataProviderItem({
           provider: UserProfileApi,
-          title: m.prerequisites.externalData.currentApplicationTitle,
-          subTitle: m.prerequisites.externalData.currentApplicationSubTitle,
+          title: prerequisites.externalData.currentApplicationTitle,
+          subTitle: prerequisites.externalData.currentApplicationSubTitle,
         }),
         buildDataProviderItem({
           provider: NationalRegistryUserApi,
-          title: m.prerequisites.externalData.nationalRegistryTitle,
-          subTitle: m.prerequisites.externalData.nationalRegistrySubTitle,
+          title: prerequisites.externalData.nationalRegistryTitle,
+          subTitle: prerequisites.externalData.nationalRegistrySubTitle,
         }),
       ],
     }),

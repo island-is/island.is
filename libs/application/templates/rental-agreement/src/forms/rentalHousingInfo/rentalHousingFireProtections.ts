@@ -4,54 +4,54 @@ import {
   buildDescriptionField,
   buildTextField,
 } from '@island.is/application/core'
-import * as m from '../../lib/messages'
+import { housingFireProtections } from '../../lib/messages'
 
 export const RentalHousingFireProtections = buildSubSection({
-  id: 'rentalHousingFireProtections',
-  title: m.housingFireProtections.subSectionName,
+  id: 'fireProtections',
+  title: housingFireProtections.subSectionName,
   children: [
     buildMultiField({
-      id: 'rentalHousingFireProtections',
-      title: m.housingFireProtections.pageTitle,
-      description: m.housingFireProtections.pageDescription,
+      id: 'fireProtections.multiField',
+      title: housingFireProtections.pageTitle,
+      description: housingFireProtections.pageDescription,
       children: [
         buildDescriptionField({
-          id: 'rentalHousingFireProtectionsSmokeDetectorsFireExtinguisherRequirements',
+          id: 'fireProtections.smokeDetectorsFireExtinguisherRequirements',
           title: '',
           description:
-            m.housingFireProtections.smokeDetectorsFireExtinguisherRequirements,
+            housingFireProtections.smokeDetectorsFireExtinguisherRequirements,
           space: 0,
         }),
         buildTextField({
-          id: 'rentalHousingFireProtectionsSmokeDetectors',
-          title: m.housingFireProtections.smokeDetectorsLabel,
+          id: 'fireProtections.smokeDetectors',
+          title: housingFireProtections.smokeDetectorsLabel,
           placeholder: '0',
           width: 'half',
           variant: 'number',
         }),
         buildTextField({
-          id: 'rentalHousingFireProtectionsFireExtinguisher',
-          title: m.housingFireProtections.fireExtinguisherLabel,
+          id: 'fireProtections.fireExtinguisher',
+          title: housingFireProtections.fireExtinguisherLabel,
           placeholder: '0',
           width: 'half',
           variant: 'number',
         }),
         buildDescriptionField({
-          id: 'rentalHousingFireProtectionsExitFireBlanketRequirements',
+          id: 'fireProtections.exitFireBlanketRequirements',
           title: '',
-          description: m.housingFireProtections.exitFireBlanketRequirements,
+          description: housingFireProtections.exitFireBlanketRequirements,
           space: 4,
         }),
         buildTextField({
-          id: 'rentalHousingFireProtectionsExits',
-          title: m.housingFireProtections.exitsLabel,
+          id: 'fireProtections.exits',
+          title: housingFireProtections.exitsLabel,
           placeholder: '0',
           width: 'half',
           variant: 'number',
         }),
         buildTextField({
-          id: 'rentalHousingFireProtectionsFireBlanket',
-          title: m.housingFireProtections.fireBlanketLabel,
+          id: 'fireProtections.fireBlanket',
+          title: housingFireProtections.fireBlanketLabel,
           placeholder: '0',
           width: 'half',
           variant: 'number',

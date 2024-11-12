@@ -229,5 +229,13 @@ export const registerProperty = {
       defaultMessage: 'Starfsmannaíbúð eða -herbergi',
       description: 'Label for employee housing select option',
     },
+
+    // Error messages
+    classGroupRequiredError: {
+      id: 'ra.application:registerProperty.category.categoryClassGroupError',
+      defaultMessage: 'Veldu flokk húsnæðis',
+      description:
+        'Error message when property category class group is not selected',
+    },
   }),
 }

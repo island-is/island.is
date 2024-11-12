@@ -10,37 +10,37 @@ import {
 import { FormValue } from '@island.is/application/types'
 import {
   AnswerOptions,
-  rentalAmountIndexTypes,
-  rentalAmountPaymentDateOptions,
+  RentalAmountIndexTypes,
+  RentalAmountPaymentDateOptions,
   TRUE,
 } from '../../lib/constants'
 import {
   getRentalAmountIndexTypes,
   getRentalAmountPaymentDateOptions,
 } from '../../lib/utils'
-import * as m from '../../lib/messages'
+import { rentalAmount } from '../../lib/messages'
 
-function rentalAmountConnectedToIndex(answers: FormValue) {
-  const isRentalAmountConnectedToIndex =
-    answers.isRentalAmountIndexConnected as string[]
-  return (
-    isRentalAmountConnectedToIndex &&
-    isRentalAmountConnectedToIndex.includes(TRUE)
-  )
+const rentalAmountConnectedToIndex = (answers: FormValue) => {
+  const isAmountConnectedToIndex = getValueViaPath(
+    answers,
+    'rentalAmount.isIndexConnected',
+    [],
+  ) as string[]
+  return isAmountConnectedToIndex && isAmountConnectedToIndex.includes(TRUE)
 }
 
 export const RentalPeriodAmount = buildSubSection({
   id: 'rentalAmount',
-  title: m.rentalAmount.subSectionName,
+  title: rentalAmount.subSectionName,
   children: [
     buildMultiField({
-      id: 'rentalAmountDetails',
-      title: m.rentalAmount.pageTitle,
-      description: m.rentalAmount.pageDescription,
+      id: 'rentalAmount.details',
+      title: rentalAmount.pageTitle,
+      description: rentalAmount.pageDescription,
       children: [
         buildDescriptionField({
-          id: 'rentalAmountDetailsTitle',
-          title: m.rentalAmount.infoTitle,
+          id: 'rentalAmount.detailsTitle',
+          title: rentalAmount.infoTitle,
           titleVariant: 'h3',
           space: 1,
         }),
@@ -48,35 +48,35 @@ export const RentalPeriodAmount = buildSubSection({
         // Monthly rental amount and indexation
         buildTextField({
           id: 'rentalAmount.amount',
-          title: m.rentalAmount.inputLabel,
-          placeholder: m.rentalAmount.inputPlaceholder,
+          title: rentalAmount.inputLabel,
+          placeholder: rentalAmount.inputPlaceholder,
           variant: 'currency',
           maxLength: 15,
           required: true,
         }),
         buildSelectField({
-          id: 'rentalAmountIndexTypes',
-          title: m.rentalAmount.indexOptionsLabel,
+          id: 'rentalAmount.indexTypes',
+          title: rentalAmount.indexOptionsLabel,
           options: getRentalAmountIndexTypes(),
-          defaultValue: rentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
+          defaultValue: RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
           condition: rentalAmountConnectedToIndex,
           width: 'half',
         }),
         buildTextField({
-          id: 'rentalAmountIndexValue',
-          title: m.rentalAmount.indexValueLabel,
-          placeholder: m.rentalAmount.indexValuePlaceholder,
+          id: 'rentalAmount.indexValue',
+          title: rentalAmount.indexValueLabel,
+          placeholder: rentalAmount.indexValuePlaceholder,
           variant: 'number',
           width: 'half',
           condition: rentalAmountConnectedToIndex,
         }),
         buildCheckboxField({
-          id: 'isRentalAmountIndexConnected',
+          id: 'rentalAmount.isIndexConnected',
           title: '',
           options: [
             {
               value: TRUE,
-              label: m.rentalAmount.priceIndexLabel,
+              label: rentalAmount.priceIndexLabel,
             },
           ],
           spacing: 0,
@@ -84,39 +84,39 @@ export const RentalPeriodAmount = buildSubSection({
 
         // Payment details
         buildDescriptionField({
-          id: 'rentalAmountPaymentDateDetails',
-          title: m.rentalAmount.paymentDateTitle,
+          id: 'rentalAmount.paymentDateDetails',
+          title: rentalAmount.paymentDateTitle,
           titleVariant: 'h4',
-          description: m.rentalAmount.paymentDateDescription,
+          description: rentalAmount.paymentDateDescription,
           space: 6,
         }),
         buildSelectField({
-          id: 'rentalAmountPaymentDateOptions',
-          title: m.rentalAmount.paymentDateOptionsLabel,
+          id: 'rentalAmount.paymentDateOptions',
+          title: rentalAmount.paymentDateOptionsLabel,
           options: getRentalAmountPaymentDateOptions(),
-          defaultValue: rentalAmountPaymentDateOptions.FIRST_DAY,
+          defaultValue: RentalAmountPaymentDateOptions.FIRST_DAY,
         }),
         buildTextField({
-          id: 'rentalAmountPaymentDateOther',
-          title: m.rentalAmount.paymentDateOtherOptionLabel,
-          placeholder: m.rentalAmount.paymentDateOtherOptionPlaceholder,
+          id: 'rentalAmount.paymentDateOther',
+          title: rentalAmount.paymentDateOtherOptionLabel,
+          placeholder: rentalAmount.paymentDateOtherOptionPlaceholder,
           condition: (answers) =>
-            getValueViaPath(answers, 'rentalAmountPaymentDateOptions') ===
-            rentalAmountPaymentDateOptions.OTHER,
+            getValueViaPath(answers, 'rentalAmount.paymentDateOptions') ===
+            RentalAmountPaymentDateOptions.OTHER,
         }),
         buildDescriptionField({
-          id: 'rentalAmountPaymentInsuranceTitle',
-          title: m.rentalAmount.paymentInsuranceTitle,
+          id: 'rentalAmount.paymentInsuranceTitle',
+          title: rentalAmount.paymentInsuranceTitle,
           titleVariant: 'h4',
           space: 6,
         }),
         buildCheckboxField({
-          id: 'isRentalAmountPaymentInsuranceRequired',
+          id: 'rentalAmount.isPaymentInsuranceRequired',
           title: '',
           options: [
             {
               value: AnswerOptions.YES,
-              label: m.rentalAmount.paymentInsuranceRequiredLabel,
+              label: rentalAmount.paymentInsuranceRequiredLabel,
             },
           ],
         }),

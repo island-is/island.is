@@ -7,210 +7,174 @@ import {
   buildAlertMessageField,
   buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
-
-import * as m from '../../lib/messages'
 import { FormValue } from '@island.is/application/types'
 import {
-  securityDepositTypeOptions,
-  securityDepositAmountOptions,
+  SecurityDepositTypeOptions,
+  SecurityDepositAmountOptions,
 } from '../../lib/constants'
-
-const typeOptions = [
-  {
-    label: m.securityDeposit.typeSelectionBankGuaranteeTitle,
-    value: securityDepositTypeOptions.BANK_GUARANTEE,
-  },
-  {
-    label: m.securityDeposit.typeSelectionCapitalTitle,
-    value: securityDepositTypeOptions.CAPITAL,
-  },
-  {
-    label: m.securityDeposit.typeSelectionThirdPartyGuaranteeTitle,
-    value: securityDepositTypeOptions.THIRD_PARTY_GUARANTEE,
-  },
-  {
-    label: m.securityDeposit.typeSelectionInsuranceCompanyTitle,
-    value: securityDepositTypeOptions.INSURANCE_COMPANY,
-  },
-  {
-    label: m.securityDeposit.typeSelectionMutualFundTitle,
-    value: securityDepositTypeOptions.MUTUAL_FUND,
-  },
-  {
-    label: m.securityDeposit.typeSelectionOtherTitle,
-    value: securityDepositTypeOptions.OTHER,
-  },
-]
-
-const amountOptions = [
-  {
-    label: m.securityDeposit.amountSelection1Month,
-    value: securityDepositAmountOptions.ONE_MONTH,
-  },
-  {
-    label: m.securityDeposit.amountSelection2Month,
-    value: securityDepositAmountOptions.TWO_MONTHS,
-  },
-  {
-    label: m.securityDeposit.amountSelection3Month,
-    value: securityDepositAmountOptions.THREE_MONTHS,
-  },
-  {
-    label: m.securityDeposit.amountSelectionOther,
-    value: securityDepositAmountOptions.OTHER,
-  },
-]
+import {
+  getSecurityDepositTypeOptions,
+  getSecurityAmountOptions,
+} from '../../lib/utils'
+import { securityDeposit } from '../../lib/messages'
 
 export const RentalPeriodSecurityDeposit = buildSubSection({
   id: 'securityDeposit.SecurityDeposit',
-  title: m.securityDeposit.subSectionName,
+  title: securityDeposit.subSectionName,
   children: [
     buildMultiField({
       id: 'securityDeposit.Details',
-      title: m.securityDeposit.pageTitle,
-      description: m.securityDeposit.pageDescription,
+      title: securityDeposit.pageTitle,
+      description: securityDeposit.pageDescription,
       children: [
         buildDescriptionField({
           id: 'securityDeposit.TypeHeader',
-          title: m.securityDeposit.typeHeaderTitle,
-          titleTooltip: m.securityDeposit.typeHeaderToolTip,
+          title: securityDeposit.typeHeaderTitle,
+          titleTooltip: securityDeposit.typeHeaderToolTip,
           titleVariant: 'h3',
         }),
         buildSelectField({
           id: 'securityDeposit.securityType',
-          title: m.securityDeposit.typeSelectionTitle,
-          options: typeOptions,
+          title: securityDeposit.typeSelectionTitle,
+          options: getSecurityDepositTypeOptions,
         }),
+
         // Tegund tryggingar: Bankaábyrgð
         buildTextField({
           id: 'securityDeposit.bankGuaranteeInfo',
-          title: m.securityDeposit.bankGuaranteeInfoTitle,
-          placeholder: m.securityDeposit.bankGuaranteeInfoPlaceholder,
+          title: securityDeposit.bankGuaranteeInfoTitle,
+          placeholder: securityDeposit.bankGuaranteeInfoPlaceholder,
           condition: (answers) => {
             const securityDeposit = answers.securityDeposit as FormValue
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.BANK_GUARANTEE
+                SecurityDepositTypeOptions.BANK_GUARANTEE
             )
           },
         }),
+
         // Tegund tryggingar: Tryggingarfé
         buildDescriptionField({
           id: 'securityDeposit.typeCapitalInfo',
           title: '',
-          description: m.securityDeposit.capitalBulletPoints,
+          description: securityDeposit.capitalBulletPoints,
           condition: (answers) => {
             const securityDeposit = answers.securityDeposit as FormValue
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.CAPITAL
+                SecurityDepositTypeOptions.CAPITAL
             )
           },
           space: 2,
         }),
+
         // Tegund tryggingar: Sjálfskuldarábyrgð þriðja aðila
         buildTextField({
           id: 'securityDeposit.thirdPartyGuaranteeInfo',
-          title: m.securityDeposit.thirdPartyGuaranteeInfoTitle,
-          placeholder: m.securityDeposit.thirdPartyGuaranteeInfoPlaceholder,
+          title: securityDeposit.thirdPartyGuaranteeInfoTitle,
+          placeholder: securityDeposit.thirdPartyGuaranteeInfoPlaceholder,
           condition: (answers) => {
             const securityDeposit = answers.securityDeposit as FormValue
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.THIRD_PARTY_GUARANTEE
+                SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE
             )
           },
         }),
+
         // Tegund tryggingar: Leigugreiðslu- og viðskilnaðartrygging
         buildTextField({
           id: 'securityDeposit.insuranceCompanyInfo',
-          title: m.securityDeposit.insuranceCompanyInfoTitle,
-          placeholder: m.securityDeposit.insuranceCompanyInfoPlaceholder,
+          title: securityDeposit.insuranceCompanyInfoTitle,
+          placeholder: securityDeposit.insuranceCompanyInfoPlaceholder,
           condition: (answers) => {
             const securityDeposit = answers.securityDeposit as FormValue
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.INSURANCE_COMPANY
+                SecurityDepositTypeOptions.INSURANCE_COMPANY
             )
           },
         }),
+
         // Tegund tryggingar: Gjald í samtryggingarsjóð leigusala
         buildTextField({
           id: 'securityDeposit.mutualFundInfo',
-          title: m.securityDeposit.mutualFundInfoTitle,
-          placeholder: m.securityDeposit.mutualFundInfoPlaceholder,
+          title: securityDeposit.mutualFundInfoTitle,
+          placeholder: securityDeposit.mutualFundInfoPlaceholder,
           condition: (answers) => {
             const securityDeposit = answers.securityDeposit as FormValue
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.MUTUAL_FUND
+                SecurityDepositTypeOptions.MUTUAL_FUND
             )
           },
         }),
+
         // Tegund tryggingar: annað
         buildTextField({
           id: 'securityDeposit.otherInfo',
-          title: m.securityDeposit.otherInfoTitle,
-          placeholder: m.securityDeposit.otherInfoPlaceholder,
+          title: securityDeposit.otherInfoTitle,
+          placeholder: securityDeposit.otherInfoPlaceholder,
           condition: (answers) => {
             const securityDeposit = answers.securityDeposit as FormValue
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
-              securityDeposit.securityType === securityDepositTypeOptions.OTHER
+              securityDeposit.securityType === SecurityDepositTypeOptions.OTHER
             )
           },
         }),
         buildDescriptionField({
           id: 'securityDeposit.amountTitle',
-          title: m.securityDeposit.amountHeaderTitle,
+          title: securityDeposit.amountHeaderTitle,
           titleVariant: 'h3',
           space: 5,
         }),
         buildSelectField({
           id: 'securityDeposit.securityAmount',
-          title: m.securityDeposit.amountSelectionTitle,
-          options: amountOptions,
+          title: securityDeposit.amountSelectionTitle,
+          options: getSecurityAmountOptions,
           condition: (answers) => {
             const securityDeposit = answers.securityDeposit as FormValue
             return (
               !securityDeposit ||
               securityDeposit.securityType === undefined ||
               securityDeposit.securityType !==
-                securityDepositTypeOptions.MUTUAL_FUND
+                SecurityDepositTypeOptions.MUTUAL_FUND
             )
           },
         }),
+
         // Tegund tryggingar: Gjald í samtryggingarsjóð leigusala
         buildAlertMessageField({
           id: 'securityDeposit.mutualFundAmountInfo',
-          title: m.securityDeposit.mutualFundAmountInfoTitle,
+          title: securityDeposit.mutualFundAmountInfoTitle,
           alertType: 'info',
-          message: m.securityDeposit.mutualFundAmountInfoMessage,
+          message: securityDeposit.mutualFundAmountInfoMessage,
           condition: (answers) => {
             const securityDeposit = answers.securityDeposit as FormValue
             return (
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               securityDeposit.securityType ===
-                securityDepositTypeOptions.MUTUAL_FUND
+                SecurityDepositTypeOptions.MUTUAL_FUND
             )
           },
         }),
         buildTextField({
           id: 'securityDeposit.securityAmountOther',
-          title: m.securityDeposit.securityAmountOtherTitle,
-          placeholder: m.securityDeposit.securityAmountOtherPlaceholder,
+          title: securityDeposit.securityAmountOtherTitle,
+          placeholder: securityDeposit.securityAmountOtherPlaceholder,
           variant: 'currency',
           condition: (answers) => {
             const securityDeposit = answers.securityDeposit as FormValue
@@ -219,9 +183,9 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
               securityDeposit &&
               Boolean(securityDeposit.securityType) &&
               (securityDeposit.securityType ===
-                securityDepositTypeOptions.MUTUAL_FUND ||
+                SecurityDepositTypeOptions.MUTUAL_FUND ||
                 securityDeposit.securityAmount ===
-                  securityDepositAmountOptions.OTHER)
+                  SecurityDepositAmountOptions.OTHER)
             )
           },
         }),

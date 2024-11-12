@@ -5,6 +5,7 @@ import {
   formatText,
   getValueViaPath,
   buildFieldOptions,
+  formatTextWithLocale,
 } from '@island.is/application/core'
 import { CheckboxField, FieldBaseProps } from '@island.is/application/types'
 import { Text, Box } from '@island.is/island-ui/core'
@@ -15,6 +16,7 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import { getDefaultValue } from '../../getDefaultValue'
+import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
   field: CheckboxField
@@ -40,24 +42,34 @@ export const CheckboxFormField = ({
     onSelect,
     spacing,
   } = field
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
 
   const finalOptions = useMemo(
-    () => buildFieldOptions(options, application, field),
-    [options, application],
+    () => buildFieldOptions(options, application, field, locale),
+    [options, application, locale],
   )
 
   return (
     <div>
       {showFieldName && (
         <Text variant="h4">
-          {formatText(title, application, formatMessage)}
+          {formatTextWithLocale(
+            title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         </Text>
       )}
 
       {description && (
         <FieldDescription
-          description={formatText(description, application, formatMessage)}
+          description={formatTextWithLocale(
+            description,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         />
       )}
 

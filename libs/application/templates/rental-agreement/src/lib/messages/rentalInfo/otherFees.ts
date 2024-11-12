@@ -147,4 +147,21 @@ export const otherFees = defineMessages({
     defaultMessage: 'Upphæð í tölustöfum',
     description: 'Other costs amount placeholder',
   },
+
+  // Error messages
+  errorHousingFundLength: {
+    id: 'ra.application:dataSchema.errorHousingFundLength',
+    defaultMessage: 'Upphæð hússjóðs má ekki vera meira en 7 tölustafir',
+    description: 'Error message when housing fund amount is too long',
+  },
+  errorMeterNumberRegex: {
+    id: 'ra.application:dataSchema.errorMeterNumberRegex',
+    defaultMessage: 'Sláðu inn númer í tölustöfum',
+    description: 'Error message when meter number is not valid',
+  },
+  errorMeterStatusRegex: {
+    id: 'ra.application:dataSchema.errorMeterStatusRegex',
+    defaultMessage: 'Sláðu inn stöðu í tölustöfum með mest einum aukastaf',
+    description: 'Error message when meter status is not valid',
+  },
 })

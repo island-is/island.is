@@ -3,6 +3,7 @@ import {
   EducationNotFinishedSchema,
   ExemptionEducationSchema,
   RepeateableEducationDetailsSchema,
+  OtherDocumentsSchema,
 } from '../lib/dataSchema'
 import { ProgramExtraApplicationFieldFieldTypeEnum } from '@island.is/clients/university-gateway-api'
 
@@ -16,6 +17,8 @@ export type EducationDetailsItemExemption = z.TypeOf<
 export type EducationDetailsItemNotFinished = z.TypeOf<
   typeof EducationNotFinishedSchema
 >
+
+export type OtherDocumentsDetailsItem = z.TypeOf<typeof OtherDocumentsSchema>
 
 export type CurrentApplication = {
   id: string
@@ -59,7 +62,7 @@ type ModeOfDelivery = {
   modeOfDelivery: string
 }
 
-type ProgramExtraApplicationField = {
+export type ProgramExtraApplicationField = {
   externalKey: string
   fieldType: ProgramExtraApplicationFieldFieldTypeEnum
 }

@@ -4,51 +4,61 @@ import {
   buildDescriptionField,
   buildDateField,
   buildCheckboxField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import * as m from '../../lib/messages'
+import { FormValue } from '@island.is/application/types'
+import { TRUE } from '../../lib/constants'
+import { rentalPeriod } from '../../lib/messages'
+
+const rentalPeriodIsDefinite = (answers: FormValue) => {
+  const rentalPeriodDefinite = getValueViaPath(
+    answers,
+    'rentalPeriod.isDefinite',
+    [],
+  ) as string[]
+  return rentalPeriodDefinite && rentalPeriodDefinite.includes(TRUE)
+}
 
 export const RentalPeriodDetails = buildSubSection({
-  id: 'rentalPeriodDetails',
-  title: m.rentalPeriodDetails.subSectionName,
+  id: 'rentalPeriod',
+  title: rentalPeriod.subSectionName,
   children: [
     buildMultiField({
-      title: m.rentalPeriodDetails.pageTitle,
-      description: m.rentalPeriodDetails.pageDescription,
+      id: 'rentalPeriod.details',
+      title: rentalPeriod.pageTitle,
+      description: rentalPeriod.pageDescription,
       children: [
         buildDateField({
-          id: 'rentalPeriodStartDate',
-          title: m.rentalPeriodDetails.startDateTitle,
-          placeholder: m.rentalPeriodDetails.startDatePlaceholder,
+          id: 'rentalPeriod.startDate',
+          title: rentalPeriod.startDateTitle,
+          placeholder: rentalPeriod.startDatePlaceholder,
+          required: true,
         }),
         buildDateField({
-          id: 'rentalPeriodEndDate',
-          title: m.rentalPeriodDetails.endDateTitle,
-          placeholder: m.rentalPeriodDetails.endDatePlaceholder,
-          condition: (answers) => {
-            const rentalPeriodDefinite: string[] =
-              answers.rentalPeriodDefinite as string[]
-
-            return rentalPeriodDefinite && rentalPeriodDefinite.includes('true')
-          },
+          id: 'rentalPeriod.endDate',
+          title: rentalPeriod.endDateTitle,
+          placeholder: rentalPeriod.endDatePlaceholder,
+          required: true,
+          condition: rentalPeriodIsDefinite,
         }),
         buildCheckboxField({
-          id: 'rentalPeriodDefinite',
+          id: 'rentalPeriod.isDefinite',
           title: '',
           options: [
             {
-              value: 'true',
-              label: m.rentalPeriodDetails.rentalPeriodDefiniteLabel,
+              value: TRUE,
+              label: rentalPeriod.rentalPeriodDefiniteLabel,
             },
           ],
           spacing: 0,
         }),
 
         buildDescriptionField({
-          id: 'rentalPeriodTermination',
-          title: m.rentalPeriodDetails.terminationLabel,
+          id: 'rentalPeriod.termination',
+          title: rentalPeriod.terminationLabel,
           titleVariant: 'h3',
           space: 3,
-          description: m.rentalPeriodDetails.terminationDescription,
+          description: rentalPeriod.terminationDescription,
         }),
       ],
     }),

@@ -4,11 +4,11 @@ import { intro } from './prerequisites/intro'
 import { externalData } from './prerequisites/externalData'
 import Logo from '../assets/Logo'
 
-import * as m from '../lib/messages'
+import { prerequisites } from '../lib/messages'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
-  title: m.prerequisites.intro.sectionTitle,
+  title: prerequisites.intro.sectionTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,

@@ -18,6 +18,7 @@ import {
 } from '../index'
 import { Notification } from './models/notification.model'
 import { CaseNotificationService } from './caseNotification.service'
+import { DefendantNotificationService } from './defendantNotification.service'
 import { InstitutionNotificationService } from './institutionNotification.service'
 import { InternalNotificationController } from './internalNotification.controller'
 import { NotificationController } from './notification.controller'
@@ -47,6 +48,7 @@ import { SubpoenaNotificationService } from './subpoenaNotification.service'
     NotificationDispatchService,
     InstitutionNotificationService,
     SubpoenaNotificationService,
+    DefendantNotificationService,
   ],
 })
 export class NotificationModule {}
