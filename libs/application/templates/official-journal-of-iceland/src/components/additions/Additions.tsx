@@ -13,6 +13,7 @@ import { HTMLText } from '@island.is/regulations-tools/types'
 import { z } from 'zod'
 import {
   DEBOUNCE_INPUT_TIMER,
+  DEFAULT_ADDITIONS_COUNT,
   MAXIMUM_ADDITIONS_COUNT,
 } from '../../lib/constants'
 import { HTMLEditor } from '../htmlEditor/HTMLEditor'
@@ -48,7 +49,9 @@ export const Additions = ({ application }: Props) => {
       InputFields.advert.additions,
     )
 
-    return isAddition(additions) ? additions : [getAddition(1, false)]
+    return isAddition(additions)
+      ? additions
+      : [getAddition(DEFAULT_ADDITIONS_COUNT, false)]
   }
 
   const onRemoveAddition = (index: number) => {
@@ -114,7 +117,8 @@ export const Additions = ({ application }: Props) => {
 
     // this should never happen, but how do we handle it?
     if (!Array.isArray(currentAdditions)) {
-      throw new Error('Additions must be an array')
+      console.error('Additions is not an array')
+      return
     }
 
     const newAddition = getAddition(additions.length + 1, asRoman)
@@ -182,7 +186,7 @@ export const Additions = ({ application }: Props) => {
           const defaultValue = currentAddition?.content || ''
           return (
             <Box
-              key={additionIndex}
+              key={addition.id}
               border="standard"
               borderRadius="standard"
               padding={2}

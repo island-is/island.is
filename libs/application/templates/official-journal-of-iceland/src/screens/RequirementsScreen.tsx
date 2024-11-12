@@ -11,6 +11,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { getErrorViaPath } from '@island.is/application/core'
 import {
   AnswerOption,
+  DEFAULT_ADDITIONS_COUNT,
   DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT,
   DEFAULT_REGULAR_SIGNATURE_COUNT,
   DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
@@ -49,7 +50,7 @@ export const RequirementsScreen = ({
     let currentAnswers = structuredClone(application.answers)
 
     currentAnswers = set(currentAnswers, InputFields.advert.additions, [
-      getAddition(1, false),
+      getAddition(DEFAULT_ADDITIONS_COUNT, false),
     ])
 
     currentAnswers = set(currentAnswers, InputFields.signature.regular, [

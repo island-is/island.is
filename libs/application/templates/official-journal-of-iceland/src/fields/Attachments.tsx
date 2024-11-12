@@ -33,10 +33,9 @@ export const Attachments = ({ application }: OJOIFieldBaseProps) => {
           )}
         </Button>
       </Box>
-      <Box hidden={!asAddition}>
+      {!asAddition ? (
         <Additions application={application} />
-      </Box>
-      <Box hidden={asAddition}>
+      ) : (
         <InputFileUpload
           header={f(attachments.inputs.fileUpload.header)}
           description={f(attachments.inputs.fileUpload.description)}
@@ -51,7 +50,7 @@ export const Attachments = ({ application }: OJOIFieldBaseProps) => {
             icon: 'blue200',
           }}
         />
-      </Box>
+      )}
     </Stack>
   )
 }
