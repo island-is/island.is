@@ -4,7 +4,6 @@ import {
   m,
   SAMGONGUSTOFA_SLUG,
   LinkButton,
-  IntroWrapper,
   IntroHeader,
 } from '@island.is/service-portal/core'
 import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'

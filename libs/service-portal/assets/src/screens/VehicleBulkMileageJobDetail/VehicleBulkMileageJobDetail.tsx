@@ -13,7 +13,6 @@ import {
   EmptyTable,
   TableGrid,
   downloadFile,
-  IntroWrapper,
   IntroHeader,
 } from '@island.is/service-portal/core'
 import { Problem } from '@island.is/react-spa/shared'
