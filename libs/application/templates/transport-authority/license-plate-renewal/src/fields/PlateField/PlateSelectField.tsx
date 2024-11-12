@@ -77,7 +77,7 @@ export const PlateSelectField: FC<
               response?.myPlateOwnershipChecksByRegno?.validationErrorMessages,
           })
 
-          const canRenew = checkCanRenew(selectedPlate)
+          const canRenew = checkCanRenew(currentPlate)
           const disabled =
             !!response?.myPlateOwnershipChecksByRegno?.validationErrorMessages
               ?.length || !canRenew
@@ -157,7 +157,7 @@ export const PlateSelectField: FC<
           </Box>
         )}
       </Box>
-      {!isLoading && plate.length === 0 && (errors as any)?.pickVehicle && (
+      {!isLoading && plate.length === 0 && (errors as any)?.pickPlate && (
         <InputError errorMessage={formatMessage(error.requiredValidPlate)} />
       )}
     </Box>

@@ -1,7 +1,7 @@
 import { FormValue } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { CoOwnersInformation, OwnerCoOwnersInformation } from '../shared'
-import { hasPendingApproval } from './isLastReviewer'
+import { applicationHasPendingApproval } from './isLastReviewer'
 
 // Function to check if the reviewer is authorized to approve and hasn't done that yet
 export const canReviewerApprove = (
@@ -61,5 +61,5 @@ export const canReviewerReApprove = (
   ].some(Boolean)
 
   // Check if the reviewer is authorized and if all required approvals have been completed
-  return isReviewerAuthorized && !hasPendingApproval(answers)
+  return isReviewerAuthorized && !applicationHasPendingApproval(answers)
 }

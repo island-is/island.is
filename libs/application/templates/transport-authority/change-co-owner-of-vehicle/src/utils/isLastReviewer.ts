@@ -3,7 +3,7 @@ import { FormValue } from '@island.is/application/types'
 import { OwnerCoOwnersInformation, CoOwnersInformation } from '../shared'
 
 // Function to check if a reviewer has pending approval
-export const hasPendingApproval = (
+export const applicationHasPendingApproval = (
   answers: FormValue,
   excludeNationalId?: string,
 ): boolean => {
@@ -44,7 +44,7 @@ export const isLastReviewer = (
   answers: FormValue,
 ): boolean => {
   // If there are pending approvals (excluding current reviewer), then he is not the last reviewer
-  if (hasPendingApproval(answers, reviewerNationalId)) return false
+  if (applicationHasPendingApproval(answers, reviewerNationalId)) return false
 
   // Otherwise, the only review missing is from the current reviewer
   return true
