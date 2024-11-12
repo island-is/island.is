@@ -21,12 +21,6 @@ export const serviceSetup = (services: {
     .env({
       BASEPATH: '/minarsidur',
       SI_PUBLIC_ENVIRONMENT: ref((h) => h.env.type),
-      SI_PUBLIC_GRAPHQL_API: {
-        prod: graphqlApiPath,
-        staging: graphqlApiPath,
-        dev: graphqlApiPath,
-        local: ref((h) => `http://${h.svc(services.graphql)}${graphqlApiPath}`),
-      },
     })
     .secrets({
       SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
