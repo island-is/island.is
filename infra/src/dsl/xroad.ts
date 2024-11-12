@@ -240,6 +240,17 @@ export const AdrAndMachine = new XroadConf({
   },
 })
 
+export const WorkAccidents = new XroadConf({
+  env: {
+    XROAD_WORK_ACCIDENT_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/slysaskraning-token',
+      staging:
+        'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/slysaskraning-token',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/slysaskraning-token',
+    },
+  },
+})
+
 export const WorkMachines = new XroadConf({
   env: {
     XROAD_WORK_MACHINE_LICENSE_PATH: {
