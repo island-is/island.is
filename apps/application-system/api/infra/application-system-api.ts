@@ -36,6 +36,7 @@ import {
   Frigg,
   HealthDirectorateVaccination,
   HealthDirectorateOrganDonation,
+  NationalRegistryB2C,
 } from '../../../../infra/src/dsl/xroad'
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
@@ -267,6 +268,7 @@ export const serviceSetup = (services: {
       Labor,
       HealthInsurance,
       NationalRegistry,
+      NationalRegistryB2C,
       Payment,
       DrivingLicense,
       PaymentSchedule,
@@ -337,6 +339,8 @@ export const serviceSetup = (services: {
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME',
       ALTHINGI_OMBUDSMAN_XROAD_PASSWORD:
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
     .db()
     .migrations()

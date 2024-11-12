@@ -5,6 +5,7 @@ import { MessageModule } from '@island.is/judicial-system/message'
 
 import { CaseModule } from '../case/case.module'
 import { Defendant } from '../defendant/models/defendant.model'
+import { EventModule } from '../event/event.module'
 import { FileModule } from '../file/file.module'
 import { PoliceModule } from '../police/police.module'
 import { Subpoena } from './models/subpoena.model'
@@ -19,6 +20,8 @@ import { SubpoenaService } from './subpoena.service'
     forwardRef(() => PoliceModule),
     forwardRef(() => FileModule),
     forwardRef(() => MessageModule),
+    forwardRef(() => EventModule),
+
     SequelizeModule.forFeature([Subpoena, Defendant]),
   ],
   controllers: [

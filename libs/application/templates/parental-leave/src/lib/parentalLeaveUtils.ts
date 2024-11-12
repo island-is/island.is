@@ -1471,8 +1471,9 @@ export const calculateEndDateForPeriodWithStartAndLength = (
       endDate = addDays(endDate, -1)
     }
   } else {
-    // startDate is 16 and months with 31 days
-    if (start.getDate() === 16 && daysInMonth === 31) {
+    // startDate is 16 or 17 and months with 31 days
+    const startDay = start.getDate()
+    if ((startDay === 16 || startDay === 17) && daysInMonth === 31) {
       endDate = addDays(endDate, 1)
     }
   }
