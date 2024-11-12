@@ -52,15 +52,21 @@ export const strings = defineMessages({
     description:
       'Notaður sem text í takka til að skrá hvenær dómur var áfrýjaður af dómfellda.',
   },
-  sendToFMST: {
+  sendToPrisonAdmin: {
     id: 'judicial.system.core:blue_box_with_date.send_to_fmst',
     defaultMessage: 'Senda til fullnustu',
     description:
       'Notaður sem texti í valmynd fyrir aðgerðina að senda mál til fullnustu',
   },
-  sendToFMSTDate: {
+  revokeSendToPrisonAdmin: {
+    id: 'judicial.system.core:blue_box_with_date.revoke_send_to_fmst',
+    defaultMessage: 'Afturkalla úr fullnustu',
+    description:
+      'Notaður sem texti í valmynd fyrir aðgerðina að senda mál til fullnustu',
+  },
+  sendToPrisonAdminDate: {
     id: 'judicial.system.core:blue_box_with_date.send_to_fmst_date',
-    defaultMessage: 'Senda til fullnustu {date}',
+    defaultMessage: 'Sent til fullnustu {date}',
     description:
       'Notaður sem texti í valmynd fyrir aðgerðina að senda mál til fullnustu',
   },

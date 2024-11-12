@@ -101,4 +101,7 @@ export class Defendant {
 
   @Field(() => Boolean, { nullable: true })
   readonly caseFilesSharedWithDefender?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isSentToPrisonAdmin?: boolean
 }

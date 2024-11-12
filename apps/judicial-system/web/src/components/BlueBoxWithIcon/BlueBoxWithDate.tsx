@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from 'react'
+import { FC, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import addDays from 'date-fns/addDays'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -18,7 +18,6 @@ import { VERDICT_APPEAL_WINDOW_DAYS } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
 import {
-  CaseIndictmentRulingDecision,
   Defendant,
   EventType,
   IndictmentCaseReviewDecision,
@@ -34,24 +33,20 @@ import * as styles from './BlueBoxWithIcon.css'
 
 interface Props {
   defendant: Defendant
-  indictmentRulingDecision?: CaseIndictmentRulingDecision | null
   indictmentReviewDecision?: IndictmentCaseReviewDecision | null
   icon?: IconMapIcon
 }
 
-type DateType = 'verdictViewDate' | 'appealDate'
-
 const BlueBoxWithDate: FC<Props> = (props) => {
-  const {
-    defendant,
-    indictmentRulingDecision,
-    indictmentReviewDecision,
-    icon,
-  } = props
+  const { defendant, indictmentReviewDecision, icon } = props
   const { formatMessage } = useIntl()
-  const [verdictViewDate, setVerdictViewDate] = useState<Date>()
-  const [appealDate, setAppealDate] = useState<Date>()
-  const [textItems, setTextItems] = useState<string[]>([])
+  const [dates, setDates] = useState<{
+    verdictViewDate?: Date
+    verdictAppealDate?: Date
+  }>({
+    verdictViewDate: undefined,
+    verdictAppealDate: undefined,
+  })
   const [triggerAnimation, setTriggerAnimation] = useState<boolean>(false)
   const [triggerAnimation2, setTriggerAnimation2] = useState<boolean>(false)
   const { setAndSendDefendantToServer } = useDefendants()
@@ -64,7 +59,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const handleDateChange = (
     date: Date | undefined,
     valid: boolean,
-    dateType: DateType,
+    type: keyof typeof dates,
   ) => {
     if (!date) {
       // Do nothing
@@ -76,42 +71,116 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       return
     }
 
-    dateType === 'verdictViewDate'
-      ? setVerdictViewDate(date)
-      : setAppealDate(date)
+    setDates((prev) => ({ ...prev, [type]: date }))
   }
 
-  const handleSetDate = (dateType: DateType) => {
-    if (
-      (dateType === 'verdictViewDate' && !verdictViewDate) ||
-      (dateType === 'appealDate' && !appealDate)
-    ) {
+  const handleSetDate = (type: keyof typeof dates) => {
+    const date = dates[type]
+
+    if (!date) {
       toast.error(formatMessage(errors.invalidDate))
       return
     }
 
-    if (dateType === 'verdictViewDate' && verdictViewDate) {
-      setAndSendDefendantToServer(
-        {
-          caseId: workingCase.id,
-          defendantId: defendant.id,
-          verdictViewDate: formatDateForServer(verdictViewDate),
-        },
-        setWorkingCase,
-      )
-    } else if (dateType === 'appealDate' && appealDate) {
-      setTriggerAnimation2(true)
-      setAndSendDefendantToServer(
-        {
-          caseId: workingCase.id,
-          defendantId: defendant.id,
-          verdictAppealDate: formatDateForServer(appealDate),
-        },
-        setWorkingCase,
-      )
-    } else {
-      toast.error(formatMessage(errors.general))
+    const payload = {
+      caseId: workingCase.id,
+      defendantId: defendant.id,
+      [type]: formatDateForServer(date),
     }
+
+    setAndSendDefendantToServer(payload, setWorkingCase)
+
+    if (type === 'verdictAppealDate') {
+      setTriggerAnimation2(true)
+    }
+  }
+
+  const handleSendToPrisonAdmin = () => {
+    router.push(
+      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_FMST_ROUTE}/${workingCase.id}/${defendant.id}`,
+    )
+  }
+
+  const appealExpirationInfo = useMemo(() => {
+    const deadline =
+      defendant.verdictAppealDeadline ||
+      (dates.verdictViewDate &&
+        addDays(
+          dates.verdictViewDate,
+          VERDICT_APPEAL_WINDOW_DAYS,
+        ).toISOString())
+
+    return getAppealExpirationInfo(
+      deadline,
+      defendant.isVerdictAppealDeadlineExpired,
+    )
+  }, [
+    dates.verdictViewDate,
+    defendant.isVerdictAppealDeadlineExpired,
+    defendant.verdictAppealDeadline,
+  ])
+
+  const textItems = useMemo(() => {
+    const texts = []
+
+    if (serviceRequired) {
+      texts.push(
+        formatMessage(strings.defendantVerdictViewedDate, {
+          date: formatDate(dates.verdictViewDate ?? defendant.verdictViewDate),
+        }),
+      )
+    }
+
+    texts.push(
+      formatMessage(appealExpirationInfo.message, {
+        appealExpirationDate: appealExpirationInfo.date,
+      }),
+    )
+
+    if (defendant.verdictAppealDate) {
+      texts.push(
+        formatMessage(strings.defendantAppealDate, {
+          date: formatDate(defendant.verdictAppealDate),
+        }),
+      )
+    }
+
+    const sentToPrisonAdmin = workingCase.eventLogs?.find(
+      (evt) =>
+        evt.eventType === EventType.INDICTMENT_SENT_TO_FMST &&
+        evt.nationalId === defendant.nationalId,
+    )
+    if (sentToPrisonAdmin && defendant.isSentToPrisonAdmin) {
+      texts.push(
+        formatMessage(strings.sendToPrisonAdminDate, {
+          date: formatDate(sentToPrisonAdmin.created),
+        }),
+      )
+    }
+
+    return texts
+  }, [
+    appealExpirationInfo.date,
+    appealExpirationInfo.message,
+    dates.verdictViewDate,
+    defendant.isSentToPrisonAdmin,
+    defendant.nationalId,
+    defendant.verdictAppealDate,
+    defendant.verdictViewDate,
+    formatMessage,
+    serviceRequired,
+    workingCase.eventLogs,
+  ])
+
+  const handleRevokeSendToPrisonAdmin = () => {
+    setAndSendDefendantToServer(
+      {
+        caseId: workingCase.id,
+        defendantId: defendant.id,
+        isSentToPrisonAdmin: false,
+      },
+      setWorkingCase,
+    )
   }
 
   const datePickerVariants = {
@@ -137,68 +206,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       transition: { opacity: { duration: 0.2 } },
     },
   }
-
-  useEffect(() => {
-    const verdictAppealDeadline = defendant.verdictAppealDeadline
-      ? defendant.verdictAppealDeadline
-      : verdictViewDate
-      ? addDays(
-          new Date(verdictViewDate),
-          VERDICT_APPEAL_WINDOW_DAYS,
-        ).toISOString()
-      : null
-
-    const appealExpiration = getAppealExpirationInfo(
-      verdictAppealDeadline,
-      defendant.isVerdictAppealDeadlineExpired,
-    )
-
-    const sentToFMST = workingCase.eventLogs?.find(
-      (evt) =>
-        evt.eventType === EventType.INDICTMENT_SENT_TO_FMST &&
-        evt.nationalId === defendant.nationalId,
-    )
-
-    setTextItems([
-      ...(serviceRequired
-        ? [
-            formatMessage(strings.defendantVerdictViewedDate, {
-              date: verdictViewDate
-                ? formatDate(verdictViewDate)
-                : formatDate(defendant.verdictViewDate),
-            }),
-          ]
-        : []),
-      formatMessage(appealExpiration.message, {
-        appealExpirationDate: appealExpiration.date,
-      }),
-      ...(defendant.verdictAppealDate
-        ? [
-            formatMessage(strings.defendantAppealDate, {
-              date: formatDate(defendant.verdictAppealDate),
-            }),
-          ]
-        : []),
-      ...(sentToFMST
-        ? [
-            formatMessage(strings.sendToFMSTDate, {
-              date: formatDate(sentToFMST.created),
-            }),
-          ]
-        : []),
-    ])
-  }, [
-    defendant.isVerdictAppealDeadlineExpired,
-    defendant.nationalId,
-    defendant.verdictAppealDate,
-    defendant.verdictAppealDeadline,
-    defendant.verdictViewDate,
-    formatMessage,
-    indictmentRulingDecision,
-    serviceRequired,
-    verdictViewDate,
-    workingCase.eventLogs,
-  ])
 
   return (
     <>
@@ -230,7 +237,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                 animate={{ opacity: 1, y: 0, height: 'auto' }}
                 exit={{ opacity: 0, y: 20 }}
                 transition={{
-                  delay: index < 3 ? index * 0.2 : 0,
+                  delay: index < 4 ? index * 0.2 : 0,
                   duration: 0.3,
                 }}
                 onAnimationComplete={() => setTriggerAnimation(true)}
@@ -261,15 +268,15 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                   )}
                   size="sm"
                   onChange={(date, valid) =>
-                    handleDateChange(date, valid, 'appealDate')
+                    handleDateChange(date, valid, 'verdictAppealDate')
                   }
                   maxDate={new Date()}
                   blueBox={false}
                   dateOnly
                 />
                 <Button
-                  onClick={() => handleSetDate('appealDate')}
-                  disabled={!appealDate}
+                  onClick={() => handleSetDate('verdictAppealDate')}
+                  disabled={!dates.verdictAppealDate}
                 >
                   {formatMessage(strings.defendantAppealDateButtonText)}
                 </Button>
@@ -294,7 +301,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                     strings.defendantVerdictViewDatePlaceholder,
                   )}
                   size="sm"
-                  selectedDate={verdictViewDate}
+                  selectedDate={dates.verdictViewDate}
                   onChange={(date, valid) =>
                     handleDateChange(date, valid, 'verdictViewDate')
                   }
@@ -304,7 +311,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                 />
                 <Button
                   onClick={() => handleSetDate('verdictViewDate')}
-                  disabled={!verdictViewDate}
+                  disabled={!dates.verdictViewDate}
                 >
                   {formatMessage(strings.defendantVerdictViewDateButtonText)}
                 </Button>
@@ -313,19 +320,26 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           )}
         </AnimatePresence>
       </Box>
-      <Box display="flex" justifyContent={'flexEnd'} marginTop={1}>
-        <Button
-          variant="text"
-          onClick={() =>
-            router.push(
-              `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_FMST_ROUTE}/${workingCase.id}/${defendant.id}`,
-            )
-          }
-          size="small"
-          disabled={!indictmentReviewDecision}
-        >
-          {formatMessage(strings.sendToFMST)}
-        </Button>
+      <Box display="flex" justifyContent="flexEnd" marginTop={1}>
+        {defendant.isSentToPrisonAdmin ? (
+          <Button
+            variant="text"
+            onClick={handleRevokeSendToPrisonAdmin}
+            size="small"
+            colorScheme="destructive"
+          >
+            {formatMessage(strings.revokeSendToPrisonAdmin)}
+          </Button>
+        ) : (
+          <Button
+            variant="text"
+            onClick={handleSendToPrisonAdmin}
+            size="small"
+            disabled={!indictmentReviewDecision || !defendant.verdictViewDate}
+          >
+            {formatMessage(strings.sendToPrisonAdmin)}
+          </Button>
+        )}
       </Box>
     </>
   )

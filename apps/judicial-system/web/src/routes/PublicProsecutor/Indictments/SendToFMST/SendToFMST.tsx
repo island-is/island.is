@@ -19,6 +19,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { EventType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 
 import { strings } from './SendToFMST.strings'
@@ -35,6 +36,7 @@ const SendToFMST: FC = () => {
   const router = useRouter()
   const { defendantId } = useParams<{ caseId: string; defendantId: string }>()
   const { createEventLog } = useEventLog()
+  const { updateDefendant } = useDefendants()
 
   const defendant = workingCase.defendants?.find(
     (defendant) => defendant.id === defendantId,
@@ -49,16 +51,21 @@ const SendToFMST: FC = () => {
   }
 
   const handlePrimaryButtonClick = async () => {
-    const eventLogCreated = await createEventLog.action({
+    if (!defendant) {
+      return
+    }
+
+    await updateDefendant({
+      caseId: workingCase.id,
+      defendantId: defendant.id,
+      isSentToPrisonAdmin: true,
+    })
+
+    await createEventLog.action({
       caseId: workingCase.id,
       eventType: EventType.INDICTMENT_SENT_TO_FMST,
       nationalId: defendant?.nationalId,
     })
-
-    if (!eventLogCreated) {
-      toast.error(formatMessage(errors.updateDefendant))
-      return
-    }
 
     router.push(
       `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE}/${workingCase.id}`,

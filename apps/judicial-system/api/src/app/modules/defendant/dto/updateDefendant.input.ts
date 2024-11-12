@@ -109,4 +109,9 @@ export class UpdateDefendantInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly caseFilesSharedWithDefender?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isSentToPrisonAdmin?: boolean
 }

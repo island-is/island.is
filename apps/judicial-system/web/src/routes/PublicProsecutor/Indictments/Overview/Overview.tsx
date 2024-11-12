@@ -104,7 +104,6 @@ export const Overview = () => {
           <Box component="section" marginBottom={5} key={defendant.id}>
             <BlueBoxWithDate
               defendant={defendant}
-              indictmentRulingDecision={workingCase.indictmentRulingDecision}
               indictmentReviewDecision={workingCase.indictmentReviewDecision}
               icon="calendar"
             />

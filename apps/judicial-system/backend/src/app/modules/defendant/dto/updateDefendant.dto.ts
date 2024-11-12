@@ -124,4 +124,9 @@ export class UpdateDefendantDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly caseFilesSharedWithDefender?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isSentToPrisonAdmin?: boolean
 }
