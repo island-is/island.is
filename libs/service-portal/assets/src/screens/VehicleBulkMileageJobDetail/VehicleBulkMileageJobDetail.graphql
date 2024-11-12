@@ -18,6 +18,8 @@ query getJobRegistrations($input: BulkVehicleMileageRequestOverviewInput!) {
       errors {
         code
         message
+        warningSerialCode
+        warningText
       }
     }
   }

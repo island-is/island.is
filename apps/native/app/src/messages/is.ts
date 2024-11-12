@@ -609,7 +609,7 @@ export const is = {
   'updateApp.button': 'Uppfæra',
   'updateApp.buttonSkip': 'Sleppa',
 
-  // health
+  // health - overview
   'health.overview.screenTitle': 'Heilsa',
   'health.overview.title': 'Heilsan mín',
   'health.overview.description':
@@ -628,5 +628,29 @@ export const is = {
   'health.overview.paymentCredit': 'Inneign',
   'health.overview.paymentDebt': 'Skuld',
   'health.overview.therapy': 'Þjálfun',
+  'health.overview.vaccinations': 'Bólusetningar',
   'health.overview.aidsAndNutrition': 'Hjálpartæki og næring',
+  'health.overview.medicinePurchase': 'Lyfjakaup',
+  'health.overview.period': 'Tímabil',
+  'health.overview.levelStatus': 'Þrepastaða',
+  'health.overview.levelStatusValue':
+    'Greiðsluþrep {level}, þú greiðir {percentage}%',
+  'health.overview.medicinePurchaseNoActivePeriodWarning':
+    'Nýtt greiðslutímabil hefst við næstu lyfjakaup',
+
+  // health - vaccinations
+  'health.vaccinations.screenTitle': 'Bólusetningar',
+  'health.vaccinations.title': 'Bólusetningar',
+  'health.vaccinations.description':
+    'Hér getur þú séð lista yfir bóluefni sem þú hefur fengið, stöðu bólusetningar og aðrar upplýsingar.',
+  'health.vaccinations.generalVaccinations': 'Almennar bólusetningar',
+  'health.vaccinations.otherVaccinations': 'Aðrar bólusetningar',
+  'health.vaccinations.number': 'Nr.',
+  'health.vaccinations.date': 'Dags.',
+  'health.vaccinations.age': 'Aldur',
+  'health.vaccinations.vaccine': 'Bóluefni',
+  'health.vaccinations.noVaccinations': 'Engar bólusetningar skráðar',
+  'health.vaccinations.noVaccinationsDescription':
+    'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
+  'health.vaccinations.directorateOfHealth': 'Embætti landlæknis',
 }

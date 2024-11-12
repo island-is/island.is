@@ -49,6 +49,7 @@ import {
   Vehicles,
   VehicleServiceFjsV1,
   VehiclesMileage,
+  WorkAccidents,
   WorkMachines,
 } from '../../../infra/src/dsl/xroad'
 
@@ -440,6 +441,7 @@ export const serviceSetup = (services: {
       Frigg,
       HealthDirectorateOrganDonation,
       HealthDirectorateVaccination,
+      WorkAccidents,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
