@@ -9,16 +9,16 @@ import {
   QueryGetOrganizationArgs,
 } from '@island.is/api/schema'
 import { Box, Button } from '@island.is/island-ui/core'
+import { Features } from '@island.is/feature-flags'
 
 import { PageCard } from '../../components/PageCard/PageCard'
 import initApollo from '../../graphql/client'
-import { PaymentHeader } from 'apps/payments/components/PaymentHeader/PaymentHeader'
-import { PaymentSelector } from 'apps/payments/components/PaymentSelector/PaymentSelector'
-import { CardPayment } from 'apps/payments/components/CardPayment/CardPayment'
-import { InvoicePayment } from 'apps/payments/components/InvoicePayment/InvoicePayment'
-import { ALLOWED_LOCALES, Locale } from 'apps/payments/utils'
-import { getConfigcatClient } from 'apps/payments/clients/configcat'
-import { Features } from '@island.is/feature-flags'
+import { PaymentHeader } from '../../components/PaymentHeader/PaymentHeader'
+import { PaymentSelector } from '../../components/PaymentSelector/PaymentSelector'
+import { CardPayment } from '../../components/CardPayment/CardPayment'
+import { InvoicePayment } from '../../components/InvoicePayment/InvoicePayment'
+import { ALLOWED_LOCALES, Locale } from '../../utils'
+import { getConfigcatClient } from '../../clients/configcat'
 
 interface PaymentPageProps {
   locale: string
