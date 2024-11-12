@@ -72,4 +72,3 @@ export const serviceSetup = (
       },
     })
     .grantNamespaces('identity-server')
-// rebuild 01
