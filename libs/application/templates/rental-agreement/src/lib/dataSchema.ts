@@ -1,13 +1,13 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import {
+  RentalAmountIndexTypes,
+  RentalAmountPaymentDateOptions,
   RentalHousingCategoryClass,
   RentOtherFeesPayeeOptions,
-  TRUE,
-} from './constants'
-import {
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
+  TRUE,
 } from './constants'
 import * as m from './messages'
 
@@ -21,6 +21,11 @@ const isValidMeterStatus = (value: string) => {
   return meterStatusRegex.test(value)
 }
 
+const isValidIndexValue = (value: string) => {
+  const indexValueRegex = /^\d{1,10}(\.\d{3})*(,\d)?$/
+  return indexValueRegex.test(value)
+}
+
 const checkIfNegative = (inputNumber: string) => {
   if (Number(inputNumber) < 0) {
     return false
@@ -28,6 +33,12 @@ const checkIfNegative = (inputNumber: string) => {
     return true
   }
 }
+
+const fileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
 
 const registerProperty = z
   .object({
@@ -53,12 +64,6 @@ const registerProperty = z
       })
     }
   })
-
-const fileSchema = z.object({
-  name: z.string(),
-  key: z.string(),
-  url: z.string().optional(),
-})
 
 const rentalPeriod = z
   .object({
@@ -92,16 +97,65 @@ const rentalPeriod = z
     }
   })
 
-const rentalAmount = z.object({
-  amount: z
-    .string()
-    .refine((x) => Boolean(x), {
-      params: m.dataSchema.requiredErrorMsg,
-    })
-    .refine((x) => checkIfNegative(x), {
-      params: m.dataSchema.negativeNumberError,
-    }),
-})
+const rentalAmount = z
+  .object({
+    amount: z
+      .string()
+      .refine((x) => Boolean(x), {
+        params: m.dataSchema.requiredErrorMsg,
+      })
+      .refine((x) => checkIfNegative(x), {
+        params: m.dataSchema.negativeNumberError,
+      }),
+    indexTypes: z
+      .enum([
+        RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
+        RentalAmountIndexTypes.CONSTRUCTION_COST_INDEX,
+        RentalAmountIndexTypes.WAGE_INDEX,
+      ])
+      .optional(),
+    indexValue: z.string().optional(),
+    isIndexConnected: z.string().array().optional(),
+    paymentDateOptions: z.enum([
+      RentalAmountPaymentDateOptions.FIRST_DAY,
+      RentalAmountPaymentDateOptions.LAST_DAY,
+      RentalAmountPaymentDateOptions.OTHER,
+    ]),
+    paymentDateOther: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.isIndexConnected && data.isIndexConnected.includes(TRUE)) {
+      if (!data.indexValue?.trim().length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.rentalAmount.indexValueRequiredError,
+          path: ['indexValue'],
+        })
+      }
+      if (data.indexValue && !isValidIndexValue(data.indexValue)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.rentalAmount.indexValueValidationError,
+          path: ['indexValue'],
+        })
+      }
+    }
+
+    if (
+      data.paymentDateOptions &&
+      data.paymentDateOptions.includes(RentalAmountPaymentDateOptions.OTHER) &&
+      !data.paymentDateOther?.trim().length
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.rentalAmount.paymentDateOtherOptionRequiredError,
+        path: ['paymentDateOther'],
+      })
+    }
+  })
 
 const securityDeposit = z
   .object({
