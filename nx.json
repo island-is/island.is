@@ -1,30 +1,4 @@
 {
-  "tasksRunnerOptions": {
-    "default": {
-      "runner": "nx/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e",
-          "codegen/backend-client",
-          "codegen/backend-schema",
-          "codegen/frontend-client",
-          "generateDevIndexHTML"
-        ],
-        "cacheDirectory": ".cache/nx",
-        "parallel": 1
-      }
-    },
-    "docker-test": {
-      "runner": "@nx/workspace/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [],
-        "cacheDirectory": ".cache/nx"
-      }
-    }
-  },
   "defaultProject": "web",
   "generators": {
     "@nrwl/nx-plugin": {
@@ -95,20 +69,25 @@
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "inputs": ["production", "^production"],
+      "cache": true
     },
     "e2e": {
-      "inputs": ["default", "^production"]
+      "inputs": ["default", "^production"],
+      "cache": true
     },
     "lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"],
+      "cache": true
     },
     "test": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "cache": true
     },
     "codegen/backend-client": {
       "dependsOn": ["^codegen/backend-client", "^codegen/backend-schema"],
-      "inputs": ["schema-files"]
+      "inputs": ["schema-files"],
+      "cache": true
     },
     "codegen/backend-schema": {
       "dependsOn": [
@@ -116,7 +95,8 @@
         "^codegen/backend-client",
         "^codegen/backend-schema"
       ],
-      "inputs": ["default", "^production"]
+      "inputs": ["default", "^production"],
+      "cache": true
     },
     "codegen/frontend-client": {
       "dependsOn": ["codegen/backend-schema"],
@@ -125,7 +105,8 @@
         "{projectRoot}/**/schema.{ts,tsx}",
         "{projectRoot}/**/fragmentTypes.json",
         "{projectRoot}/**/*.generated.ts"
-      ]
+      ],
+      "cache": true
     },
     "@nx/jest:jest": {
       "cache": true,

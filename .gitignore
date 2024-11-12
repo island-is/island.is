@@ -31,6 +31,7 @@ TODO
 .env
 .env.*
 .envrc.private
+nx-cloud.env
 .nvmrc
 .node-version
 # IDE - VSCode

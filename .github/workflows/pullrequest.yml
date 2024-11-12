@@ -18,6 +18,7 @@ env:
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_BRANCH: ${{ github.event.pull_request.number }}
 
 jobs:
   prepare:
@@ -56,6 +57,10 @@ jobs:
           set -euo pipefail
           node -v
           ls -l `which node`
+
+      - name: NX set shas
+        uses: nrwl/nx-set-shas@v4
+
       - name: Checking out relevant branches
         run: |
           set -euo pipefail
@@ -65,8 +70,8 @@ jobs:
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
-          BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
-          HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
+          BASE_SHA=${{ env.NX_BASE}}
+          HEAD_SHA=${{ env.NX_HEAD}}
           echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
@@ -91,15 +96,15 @@ jobs:
 
       - run: |
           set -euo pipefail
-          echo "HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
-          export HEAD_REF="$GITHUB_HEAD_REF"
-          export BASE_REF="$GITHUB_BASE_REF"
+          echo "HEAD=${{ env.NX_HEAD }}" >> "$GITHUB_ENV"
+          export HEAD_REF="${{ env.NX_HEAD }}"
+          export BASE_REF="${{ env.NX_BASE }}"
           export PR_REF="$GITHUB_SHA"
-          export SHELL=/usr/bin/bash
-          export WORKFLOW_ID=pullrequest
-          source ./scripts/ci/00_prepare-base-tags.sh "$(git merge-base HEAD "$GITHUB_BASE_REF")"
+          # export SHELL=/usr/bin/bash
+          # export WORKFLOW_ID=pullrequest
+          # source ./scripts/ci/00_prepare-base-tags.sh "$(git merge-base HEAD "$GITHUB_BASE_REF")"
           git checkout "$GITHUB_SHA"
-          echo "BASE=$BASE" >> "$GITHUB_ENV"
+          echo "BASE=${{ env.NX_BASE }}" >> "$GITHUB_ENV"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HTML_URL: ${{ github.event.pull_request.html_url }}
