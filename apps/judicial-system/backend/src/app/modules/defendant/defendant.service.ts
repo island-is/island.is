@@ -125,39 +125,46 @@ export class DefendantService {
     theCase: Case,
     updatedDefendant: Defendant,
     oldDefendant: Defendant,
-    user: User,
   ) {
     if (!theCase.courtCaseNumber) {
       return
     }
 
-    const isDefenderConfirmed =
-      updatedDefendant.isDefenderChoiceConfirmed &&
-      (updatedDefendant.defenderChoice === DefenderChoice.CHOOSE ||
-        updatedDefendant.defenderChoice === DefenderChoice.DELEGATE)
+    const messages: Message[] = []
 
-    if (!isDefenderConfirmed) {
-      return
-    }
+    if (updatedDefendant.isDefenderChoiceConfirmed) {
+      if (
+        updatedDefendant.defenderChoice === DefenderChoice.CHOOSE ||
+        updatedDefendant.defenderChoice === DefenderChoice.DELEGATE
+      ) {
+        // TODO: Update defender with robot if needed
 
-    // A defendant's defender email is updated.
-    if (updatedDefendant.defenderEmail !== oldDefendant.defenderEmail) {
-      // TODO: Replace by email to robot
-      await this.messageService.sendMessagesToQueue([
-        this.getMessageForDeliverDefendantToCourt(updatedDefendant, user),
-      ])
-    }
-
-    // Defender was just confirmed by judge
-    if (!oldDefendant.isDefenderChoiceConfirmed) {
-      await this.messageService.sendMessagesToQueue([
-        {
+        // Defender was just confirmed by judge
+        if (!oldDefendant.isDefenderChoiceConfirmed) {
+          messages.push({
+            type: MessageType.DEFENDANT_NOTIFICATION,
+            caseId: theCase.id,
+            body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
+            elementId: updatedDefendant.id,
+          })
+        }
+      }
+    } else {
+      if (
+        updatedDefendant.defenderChoice === DefenderChoice.CHOOSE &&
+        (updatedDefendant.defenderChoice !== oldDefendant.defenderChoice ||
+          updatedDefendant.defenderNationalId !==
+            oldDefendant.defenderNationalId)
+      ) {
+        messages.push({
           type: MessageType.DEFENDANT_NOTIFICATION,
           caseId: theCase.id,
-          body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
           elementId: updatedDefendant.id,
-        },
-      ])
+          body: {
+            type: DefendantNotificationType.DEFENDANT_SELECTED_DEFENDER,
+          },
+        })
+      }
     }
   }
 
@@ -239,19 +246,19 @@ export class DefendantService {
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
-    user: User,
+    transaction?: Transaction,
   ): Promise<Defendant> {
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
       defendant.id,
       update,
+      transaction,
     )
 
     await this.sendIndictmentCaseUpdateDefendantMessages(
       theCase,
       updatedDefendant,
       defendant,
-      user,
     )
 
     return updatedDefendant
@@ -264,7 +271,7 @@ export class DefendantService {
     user: User,
   ): Promise<Defendant> {
     if (isIndictmentCase(theCase.type)) {
-      return this.updateIndictmentCase(theCase, defendant, update, user)
+      return this.updateIndictmentCase(theCase, defendant, update)
     } else {
       return this.updateRequestCase(theCase, defendant, update, user)
     }
@@ -274,6 +281,8 @@ export class DefendantService {
     theCase: Case,
     defendant: Defendant,
     update: InternalUpdateDefendantDto,
+    isDefenderChoiceConfirmed = false,
+    transaction?: Transaction,
   ): Promise<Defendant> {
     // The reason we have a separate dto for this is because requests that end here
     // are initiated by outside API's which should not be able to edit other fields
@@ -281,10 +290,12 @@ export class DefendantService {
     // and go through the update method above using the defendantId.
     // This is also why we may set the isDefenderChoiceConfirmed to false here - the judge needs to confirm all changes.
 
-    return this.updateDatabaseDefendant(theCase.id, defendant.id, {
-      ...update,
-      isDefenderChoiceConfirmed: false,
-    })
+    return this.updateIndictmentCase(
+      theCase,
+      defendant,
+      { ...update, isDefenderChoiceConfirmed },
+      transaction,
+    )
   }
 
   async delete(
