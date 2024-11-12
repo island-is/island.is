@@ -7,6 +7,11 @@ export interface MileageRecord {
   mileage: number
 }
 
+export interface MileageError {
+  code: 1 | 2
+  message: string
+}
+
 const vehicleIndexTitle = [
   'permno',
   'vehicleid',
@@ -16,10 +21,19 @@ const vehicleIndexTitle = [
 ]
 const mileageIndexTitle = ['kilometrastada', 'mileage', 'odometer']
 
+export const errorMap: Record<number, string> = {
+  1: `Invalid vehicle column header. Must be one of the following: ${vehicleIndexTitle.join(
+    ', ',
+  )}`,
+  2: `Invalid mileage column header. Must be one of the following: ${mileageIndexTitle.join(
+    ', ',
+  )}`,
+}
+
 export const parseFileToMileageRecord = async (
   file: File,
   type: 'csv' | 'xlsx',
-): Promise<Array<MileageRecord>> => {
+): Promise<Array<MileageRecord> | MileageError> => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsv(file)
     : parseXlsx(file))
@@ -28,28 +42,28 @@ export const parseFileToMileageRecord = async (
   const vehicleIndex = header.findIndex((l) =>
     vehicleIndexTitle.includes(l.toLowerCase()),
   )
+
   if (vehicleIndex < 0) {
-    throw new Error(
-      `Invalid vehicle column header. Must be one of the following: ${vehicleIndexTitle.join(
-        ', ',
-      )}`,
-    )
+    return {
+      code: 1,
+      message: errorMap[1],
+    }
   }
+
   const mileageIndex = header.findIndex((l) =>
     mileageIndexTitle.includes(l.toLowerCase()),
   )
 
   if (mileageIndex < 0) {
-    throw new Error(
-      `Invalid mileage column header. Must be one of the following: ${mileageIndexTitle.join(
-        ', ',
-      )}`,
-    )
+    return {
+      code: 2,
+      message: errorMap[2],
+    }
   }
 
   const uploadedOdometerStatuses: Array<MileageRecord> = values
     .map((row) => {
-      const mileage = Number(row[mileageIndex])
+      const mileage = Number(sanitizeNumber(row[mileageIndex]))
       if (Number.isNaN(mileage)) {
         return undefined
       }
@@ -76,7 +90,6 @@ const parseCsv = async (file: File) => {
       accumulatedChunk += decoder.decode(res.value)
     }
   }
-
   return parseCsvString(accumulatedChunk)
 }
 
@@ -89,7 +102,6 @@ const parseXlsx = async (file: File) => {
     const jsonData = XLSX.utils.sheet_to_csv(
       parsedFile.Sheets[parsedFile.SheetNames[0]],
       {
-        strip: true,
         blankrows: false,
       },
     )
@@ -105,13 +117,13 @@ const parseCsvString = (chunk: string): Promise<string[][]> => {
     const records: string[][] = []
 
     const parser = parse({
-      cast: true,
-      skipEmptyLines: true,
       delimiter: [';', ','],
+      skipLinesWithEmptyValues: true,
+      trim: true,
     })
 
     parser.on('readable', () => {
-      let record
+      let record: Array<string>
       while ((record = parser.read()) !== null) {
         records.push(record)
       }
@@ -129,3 +141,5 @@ const parseCsvString = (chunk: string): Promise<string[][]> => {
     parser.end()
   })
 }
+
+const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
