@@ -12,6 +12,7 @@ import {
 import { TemplateApiError } from '@island.is/nest/problem'
 import { info } from 'kennitala'
 import { error } from '@island.is/application/templates/transport-authority/license-plate-renewal'
+import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class LicensePlateRenewalService extends BaseTemplateApiService {
@@ -26,8 +27,10 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
     const result = await this.vehiclePlateRenewalClient.getMyPlateOwnerships(
       auth,
     )
+    const totalRecords = (result && result.length) || 0
+
     // Validate that user has at least 1 plate ownership
-    if (!result || !result.length) {
+    if (!totalRecords) {
       throw new TemplateApiError(
         {
           title: error.plateOwnershipEmptyList,
@@ -37,54 +40,45 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
       )
     }
 
-    return await Promise.all(
-      result.map(async (item: PlateOwnership) => {
-        let validation: PlateOwnershipValidation | undefined
-
-        // Only validate if fewer than 5 items
-        if (result.length <= 5) {
-          validation =
-            await this.vehiclePlateRenewalClient.validatePlateOwnership(
-              auth,
-              item.regno,
-            )
+    const plateOwnerships = await Promise.all(
+      result.map(async (plateOwnership) => {
+        // Case: count > 5
+        // Display dropdown, validate plate ownership when selected in dropdown
+        if (totalRecords > 5) {
+          return this.mapPlateOwnership(auth, plateOwnership, false)
         }
 
-        return {
-          regno: item.regno,
-          startDate: item.startDate,
-          endDate: item.endDate,
-          validationErrorMessages: validation?.hasError
-            ? validation.errorMessages
-            : null,
-        }
+        // Case: count <= 5
+        // Display radio buttons, validate all plate ownerships now
+        return this.mapPlateOwnership(auth, plateOwnership, true)
       }),
     )
+
+    return plateOwnerships
   }
 
-  async validateApplication({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps) {
-    const answers = application.answers as LicensePlateRenewalAnswers
-    const regno = answers?.pickPlate?.regno
+  private async mapPlateOwnership(
+    auth: User,
+    plateOwnership: PlateOwnership,
+    fetchExtraData: boolean,
+  ) {
+    let validation: PlateOwnershipValidation | undefined
 
-    const result = await this.vehiclePlateRenewalClient.validatePlateOwnership(
-      auth,
-      regno,
-    )
-
-    // If we get any error messages, we will just throw an error with a default title
-    // We will fetch these error messages again through graphql in the template, to be able
-    // to translate the error message
-    if (result.hasError && result.errorMessages?.length) {
-      throw new TemplateApiError(
-        {
-          title: error.validationAlertTitle,
-          summary: error.validationAlertTitle,
-        },
-        400,
+    if (fetchExtraData) {
+      // Get plate renewal validation
+      validation = await this.vehiclePlateRenewalClient.validatePlateOwnership(
+        auth,
+        plateOwnership.regno,
       )
+    }
+
+    return {
+      regno: plateOwnership.regno,
+      startDate: plateOwnership.startDate,
+      endDate: plateOwnership.endDate,
+      validationErrorMessages: validation?.hasError
+        ? validation.errorMessages
+        : null,
     }
   }
 

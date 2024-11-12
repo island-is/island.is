@@ -11,9 +11,12 @@ import {
   VehiclePlateOrderingClient,
 } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
-import { VehicleSearchApi } from '@island.is/clients/vehicles'
+import {
+  CurrentVehiclesWithMilageAndNextInspDto,
+  VehicleSearchApi,
+} from '@island.is/clients/vehicles'
 import { YES, coreErrorMessages } from '@island.is/application/core'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
@@ -55,33 +58,22 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
   async getCurrentVehiclesWithPlateOrderChecks({
     auth,
   }: TemplateApiModuleActionProps) {
-    const countResult =
-      (
-        await this.vehiclesApiWithAuth(
-          auth,
-        ).currentvehicleswithmileageandinspGet({
-          showOwned: true,
-          showCoowned: false,
-          showOperated: false,
-          page: 1,
-          pageSize: 1,
-        })
-      ).totalRecords || 0
-    if (countResult && countResult > 20) {
-      return {
-        totalRecords: countResult,
-        vehicles: [],
-      }
-    }
-    const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
-      persidNo: auth.nationalId,
+    // Get max 20 vehicles and total count of vehicles
+    // Note: Should be enough to only get 20, because if totalRecords
+    // is higher than 20, then we won't return any vehicles
+    const result = await this.vehiclesApiWithAuth(
+      auth,
+    ).currentvehicleswithmileageandinspGet({
       showOwned: true,
       showCoowned: false,
       showOperated: false,
+      page: 1,
+      pageSize: 20,
     })
+    const totalRecords = result.totalRecords || 0
 
     // Validate that user has at least 1 vehicle
-    if (!result || !result.length) {
+    if (!totalRecords) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.vehiclesEmptyListOwner,
@@ -91,44 +83,72 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
       )
     }
 
+    // Case: count > 20
+    // Display search box, validate vehicle when permno is entered
+    if (totalRecords > 20) {
+      return {
+        totalRecords: totalRecords,
+        vehicles: [],
+      }
+    }
+
+    const resultData = result.data || []
+
+    const vehicles = await Promise.all(
+      resultData.map(async (vehicle) => {
+        // Case: 20 >= count > 5
+        // Display dropdown, validate vehicle when selected in dropdown
+        if (totalRecords > 5) {
+          return this.mapVehicle(auth, vehicle, false)
+        }
+
+        // Case: count <= 5
+        // Display radio buttons, validate all vehicles now
+        return this.mapVehicle(auth, vehicle, true)
+      }),
+    )
+
     return {
-      totalRecords: countResult,
-      vehicles: await Promise.all(
-        result?.map(async (vehicle) => {
-          let validation: PlateOrderValidation | undefined
+      totalRecords: totalRecords,
+      vehicles: vehicles,
+    }
+  }
 
-          // Only validate if fewer than 5 items
-          if (result.length <= 5) {
-            // Get basic information about vehicle
-            const vehicleInfo = await this.vehiclesApiWithAuth(
-              auth,
-            ).basicVehicleInformationGet({
-              clientPersidno: auth.nationalId,
-              permno: vehicle.permno || '',
-              regno: undefined,
-              vin: undefined,
-            })
-            // Get validation
-            validation =
-              await this.vehiclePlateOrderingClient.validatePlateOrder(
-                auth,
-                vehicle.permno || '',
-                vehicleInfo?.platetypefront || '',
-                vehicleInfo?.platetyperear || '',
-              )
-          }
+  private async mapVehicle(
+    auth: User,
+    vehicle: CurrentVehiclesWithMilageAndNextInspDto,
+    fetchExtraData: boolean,
+  ) {
+    let validation: PlateOrderValidation | undefined
 
-          return {
-            permno: vehicle.permno || undefined,
-            make: vehicle.make || undefined,
-            color: vehicle.color || undefined,
-            role: vehicle.role || undefined,
-            validationErrorMessages: validation?.hasError
-              ? validation.errorMessages
-              : null,
-          }
-        }),
-      ),
+    if (fetchExtraData) {
+      // Get basic information about vehicle
+      const vehicleInfo = await this.vehiclesApiWithAuth(
+        auth,
+      ).basicVehicleInformationGet({
+        clientPersidno: auth.nationalId,
+        permno: vehicle.permno || '',
+        regno: undefined,
+        vin: undefined,
+      })
+
+      // Get plate order validation
+      validation = await this.vehiclePlateOrderingClient.validatePlateOrder(
+        auth,
+        vehicle.permno || '',
+        vehicleInfo?.platetypefront || '',
+        vehicleInfo?.platetyperear || '',
+      )
+    }
+
+    return {
+      permno: vehicle.permno || undefined,
+      make: vehicle.make || undefined,
+      color: vehicle.colorName || undefined,
+      role: vehicle.role || undefined,
+      validationErrorMessages: validation?.hasError
+        ? validation.errorMessages
+        : null,
     }
   }
 

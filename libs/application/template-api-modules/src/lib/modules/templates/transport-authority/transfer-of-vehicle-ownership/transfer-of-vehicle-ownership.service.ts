@@ -103,7 +103,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       )
     }
 
-    // A. vehicleCount > 20
+    // Case: count > 20
     // Display search box, validate vehicle when permno is entered
     if (totalRecords > 20) {
       return {
@@ -116,13 +116,13 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
 
     const vehicles = await Promise.all(
       resultData.map(async (vehicle) => {
-        // B. 20 >= vehicleCount > 5
+        // Case: 20 >= count > 5
         // Display dropdown, validate vehicle when selected in dropdown
         if (totalRecords > 5) {
           return this.mapVehicle(auth, vehicle, false)
         }
 
-        // C. vehicleCount <= 5
+        // Case: count <= 5
         // Display radio buttons, validate all vehicles now
         return this.mapVehicle(auth, vehicle, true)
       }),

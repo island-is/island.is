@@ -14,6 +14,7 @@ import { useLocale } from '@island.is/localization'
 import { information } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
+import { checkCanRenew } from '../../utils'
 
 interface Option {
   value: string
@@ -38,9 +39,9 @@ export const PlateRadioField: FC<
     const options = [] as Option[]
 
     for (const [index, plate] of plates.entries()) {
-      const inThreeMonths = new Date().setMonth(new Date().getMonth() + 3)
-      const canRenew = +new Date(plate.endDate) <= +inThreeMonths
+      const canRenew = checkCanRenew(plate)
       const disabled = !!plate?.validationErrorMessages?.length || !canRenew
+
       options.push({
         value: `${index}`,
         label: (
