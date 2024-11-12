@@ -33,19 +33,15 @@ export const getCurrentUserType = (
   answers: Application['answers'],
   externalData: Application['externalData'],
 ) => {
-  const fakeUserType = getValueViaPath(answers, 'fakeData.options') as
-    | number
-    | undefined
+  const fakeUserType = getValueViaPath<number>(answers, 'fakeData.options')
 
-  const currentUserType = getValueViaPath(
+  const currentUserType = getValueViaPath<number>(
     externalData,
     'getUserType.data.value',
-  ) as number | undefined
+  )
 
   return fakeUserType ?? currentUserType
 }
-
-const PARTY_USER_TYPE = 150000001
 
 @Injectable()
 export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplateApiService {
@@ -58,10 +54,10 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
   }
 
   private async getAttachment(application: Application): Promise<string> {
-    const attachments = getValueViaPath(
+    const attachments = getValueViaPath<Array<AttachmentData>>(
       application.answers,
-      'attachments.files',
-    ) as Array<AttachmentData>
+      'attachments.file',
+    )
 
     if (!attachments || attachments.length === 0) {
       throw new Error('No attachments found in application')
@@ -102,12 +98,9 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { nationalId, actor } = auth
-
     if (!actor) {
       throw new Error('Enginn umboðsmaður fannst')
     }
-
-    this.validateUserType(application)
 
     const values = this.prepareValues(application)
     const year = this.getOperatingYear(application)
@@ -160,45 +153,31 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
     return year
   }
 
-  private validateUserType(application: Application) {
-    const currentUserType = getCurrentUserType(
-      application.answers,
-      application.externalData,
-    )
-    if (currentUserType !== PARTY_USER_TYPE) {
-      throw new Error('Invalid user type for application submission')
-    }
-  }
-
   private prepareContacts(
     application: Application,
     actor: { nationalId: string },
   ): Array<Contact> {
-    const actorsName = getValueViaPath(
+    const actorsName = getValueViaPath<string>(
       application.answers,
       'about.powerOfAttorneyName',
-    ) as string
+    )
     return [
       {
         nationalId: actor.nationalId,
-        name: actorsName,
+        name: actorsName ?? '',
         contactType: ContactType.Actor,
       },
     ]
   }
 
   private prepareDigitalSignee(application: Application): DigitalSignee {
-    const clientPhone = getValueViaPath(
-      application.answers,
-      'about.phoneNumber',
-    ) as string
-    const clientEmail = getValueViaPath(
-      application.answers,
-      'about.email',
-    ) as string
+    const phone =
+      getValueViaPath<string>(application.answers, 'about.phoneNumber') ?? ''
+    const email =
+      getValueViaPath<string>(application.answers, 'about.email') ?? ''
     return {
-      email: clientEmail,
-      phone: clientPhone,
+      email,
+      phone,
     }
   }
 }
