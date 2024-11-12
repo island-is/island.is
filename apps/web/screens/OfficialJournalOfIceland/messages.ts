@@ -60,6 +60,15 @@ export const m = {
       id: 'web.ojoi:search.errorFetchingAdvertsTitle',
       defaultMessage: 'Ekki tókst að sækja auglýsingar',
     },
+    errorFetchingCategoriesTitle: {
+      id: 'web.ojoi:search.errorFetchingCategoriesTitle',
+      defaultMessage: 'Ekki tókst að sækja málaflokka',
+    },
+    errorFetchingCategoriesMessage: {
+      id: 'web.ojoi:search.errorFetchingCategoriesMessage',
+      defaultMessage:
+        'Ekki náðist samband við vefþjónustur Stjórnartíðinda, reynið aftur síðar.',
+    },
     errorFetchingAdvertsMessage: {
       id: 'web.ojoi:search.errorFetchingAdvertsMessage',
       defaultMessage:

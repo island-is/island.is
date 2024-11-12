@@ -76,6 +76,7 @@ export enum ApplicationTypes {
   STREET_REGISTRATION = 'StreetRegistration',
   INCOME_PLAN = 'IncomePlan',
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
+  WORK_ACCIDENT_NOTIFICATION = 'WorkAccidentNotification',
   MACHINE_REGISTRATION = 'MachineRegistration',
 }
 
@@ -367,6 +368,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: {
     slug: 'beidni-um-skodun-taekis',
     translation: 'aosh.rifm.application',
+  },
+  [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: {
+    slug: 'tilkynning-um-vinnuslys',
+    translation: 'aosh.wan.application',
   },
   [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
     slug: 'stjornartidindi',
