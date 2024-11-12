@@ -114,9 +114,9 @@ const ValidationWrap = styled.View`
 `
 
 const OfflineMessage = styled(Typography)`
-  opacity: 1;
   padding: ${({ theme }) => theme.spacing[3]}px;
   text-align: center;
+  max-width: 95%;
 `
 
 const Validation = styled.Text<{ color: string }>`
