@@ -14,6 +14,7 @@ import styled from 'styled-components/native'
 import { useGetVaccinationsQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useLocale } from '../../hooks/use-locale'
 import { VaccinationsCard } from './components/vaccination-card'
 
 const Host = styled(SafeAreaView)`
@@ -53,8 +54,9 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
   const intl = useIntl()
   const [refetching, setRefetching] = useState(false)
   const [selectedTab, setSelectedTab] = useState(0)
+  const locale = useLocale()
 
-  const vaccinationsRes = useGetVaccinationsQuery()
+  const vaccinationsRes = useGetVaccinationsQuery({ variables: { locale } })
 
   const vaccinations = vaccinationsRes.data?.healthDirectorateVaccinations
     .vaccinations
@@ -106,7 +108,7 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
               defaultMessage="Hér getur þú séð lista yfir bóluefni sem þú hefur fengið, stöðu bólusetningar og aðrar upplýsingar."
             />
           </Typography>
-          {vaccinationsRes.data && (
+          {!vaccinationsRes.error && (
             <Tabs>
               <TabButtons
                 buttons={[
@@ -126,7 +128,7 @@ export const VaccinationsScreen: NavigationFunctionComponent = ({
               />
             </Tabs>
           )}
-          {vaccinationsRes.data && (
+          {!vaccinationsRes.error && (
             <Vaccinations>
               {vaccinationsRes.loading && !vaccinationsRes.data
                 ? Array.from({ length: 5 }).map((_, index) => (
