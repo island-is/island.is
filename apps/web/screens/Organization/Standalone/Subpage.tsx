@@ -10,21 +10,21 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import { GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import StandaloneLayout from './StandaloneLayout/StandaloneLayout'
 
-export interface StandaloneSitemapProps {
+export interface StandaloneSubpageProps {
   organizationPage: OrganizationPage
 }
 
-const StandaloneSitemap: Screen<StandaloneSitemapProps> = ({
+const StandaloneSubpage: Screen<StandaloneSubpageProps> = ({
   organizationPage,
 }) => {
   return (
     <StandaloneLayout organizationPage={organizationPage}>
-      Sitemap
+      SubPage
     </StandaloneLayout>
   )
 }
 
-StandaloneSitemap.getProps = async ({ apolloClient, locale, query }) => {
+StandaloneSubpage.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },
@@ -50,4 +50,4 @@ StandaloneSitemap.getProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default StandaloneSitemap
+export default StandaloneSubpage
