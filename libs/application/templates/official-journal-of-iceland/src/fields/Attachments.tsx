@@ -1,9 +1,11 @@
 import { OJOIFieldBaseProps } from '../lib/types'
-import { Box, InputFileUpload } from '@island.is/island-ui/core'
+import { Box, Button, InputFileUpload, Stack } from '@island.is/island-ui/core'
 import { useFileUpload } from '../hooks/useFileUpload'
 import { ALLOWED_FILE_TYPES, ApplicationAttachmentType } from '../lib/constants'
 import { useLocale } from '@island.is/localization'
 import { attachments } from '../lib/messages/attachments'
+import { useState } from 'react'
+import { Additions } from '../components/additions/Additions'
 
 export const Attachments = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
@@ -12,22 +14,43 @@ export const Attachments = ({ application }: OJOIFieldBaseProps) => {
     attachmentType: ApplicationAttachmentType.ADDITIONS,
   })
 
+  const [asAddition, setAsAddition] = useState(true)
+
   return (
-    <Box>
-      <InputFileUpload
-        header={f(attachments.inputs.fileUpload.header)}
-        description={f(attachments.inputs.fileUpload.description)}
-        buttonLabel={f(attachments.inputs.fileUpload.buttonLabel)}
-        fileList={files}
-        accept={ALLOWED_FILE_TYPES}
-        onChange={onChange}
-        onRemove={onRemove}
-        defaultFileBackgroundColor={{
-          background: 'blue100',
-          border: 'blue200',
-          icon: 'blue200',
-        }}
-      />
-    </Box>
+    <Stack space={4}>
+      <Box>
+        <Button
+          icon={asAddition ? 'upload' : 'document'}
+          iconType="outline"
+          variant="ghost"
+          size="small"
+          onClick={() => setAsAddition((toggle) => !toggle)}
+        >
+          {f(
+            asAddition
+              ? attachments.buttons.asAttachment
+              : attachments.buttons.asDocument,
+          )}
+        </Button>
+      </Box>
+      {!asAddition ? (
+        <Additions application={application} />
+      ) : (
+        <InputFileUpload
+          header={f(attachments.inputs.fileUpload.header)}
+          description={f(attachments.inputs.fileUpload.description)}
+          buttonLabel={f(attachments.inputs.fileUpload.buttonLabel)}
+          fileList={files}
+          accept={ALLOWED_FILE_TYPES}
+          onChange={onChange}
+          onRemove={onRemove}
+          defaultFileBackgroundColor={{
+            background: 'blue100',
+            border: 'blue200',
+            icon: 'blue200',
+          }}
+        />
+      )}
+    </Stack>
   )
 }
