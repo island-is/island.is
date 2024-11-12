@@ -136,6 +136,8 @@ import { HealthInsuranceDeclarationModule } from './health-insurance-declaration
 import { HealthInsuranceDeclarationService } from './health-insurance-declaration/health-insurance-declaration.service'
 import { NewPrimarySchoolModule } from './new-primary-school/new-primary-school.module'
 import { NewPrimarySchoolService } from './new-primary-school/new-primary-school.service'
+import { WorkAccidentNotificationTemplateModule } from './aosh/work-accident-notification/work-accident-notification.module'
+import { WorkAccidentNotificationTemplateService } from './aosh/work-accident-notification/work-accident-notification.service'
 import { IdCardModule } from './id-card/id-card.module'
 import { IdCardService } from './id-card/id-card.service'
 import { ParliamentaryListCreationModule } from './signature-collection/parliamentary-list-creation/parliamentary-list-creation.module'
@@ -211,6 +213,7 @@ export const modules = [
   IdCardModule,
   HealthInsuranceDeclarationModule,
   NewPrimarySchoolModule,
+  WorkAccidentNotificationTemplateModule,
   ParliamentaryListCreationModule,
   ParliamentaryListSigningModule,
   ParentalLeaveModule,
@@ -288,6 +291,7 @@ export const services = [
   IdCardService,
   HealthInsuranceDeclarationService,
   NewPrimarySchoolService,
+  WorkAccidentNotificationTemplateService,
   ParliamentaryListCreationService,
   ParliamentaryListSigningService,
 ]
