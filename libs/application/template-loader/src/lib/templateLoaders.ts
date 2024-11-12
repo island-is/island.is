@@ -197,6 +197,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/aosh/street-registration'),
   [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: () =>
     import('@island.is/application/templates/aosh/request-for-inspection'),
+  [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: () =>
+    import('@island.is/application/templates/aosh/work-accident-notification'),
   [ApplicationTypes.ID_CARD]: () =>
     import('@island.is/application/templates/id-card'),
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: () =>
