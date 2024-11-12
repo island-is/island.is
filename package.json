@@ -119,7 +119,7 @@
     "@simplewebauthn/server": "10.0.0",
     "@sindresorhus/slugify": "1.0.0",
     "@statoscope/webpack-plugin": "5.20.1",
-    "@storybook/core-server": "8.4.2",
+    "@storybook/core-server": "7.2.1",
     "@types/archiver": "6.0.2",
     "@types/faker": "5.5.3",
     "@types/nodemailer": "6.4.1",
