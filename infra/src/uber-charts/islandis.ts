@@ -108,6 +108,9 @@ const authAdminApi = authAdminApiSetup()
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
+const paymentsWebApp = paymentsWebAppServiceSetup()
+const paymentsMicroservice = paymentsMicroserviceServiceSetup()
+
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -120,6 +123,7 @@ const api = apiSetup({
   authAdminApi,
   universityGatewayApi: universityGatewayService,
   userNotificationService,
+  paymentsApi: paymentsMicroservice,
 })
 
 const servicePortal = servicePortalSetup({ graphql: api })
@@ -149,9 +153,6 @@ const userNotificationCleanupWorkerService =
 const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
-
-const paymentsWebApp = paymentsWebAppServiceSetup()
-const paymentsMicroservice = paymentsMicroserviceServiceSetup()
 
 export const Services: EnvironmentServices = {
   prod: [

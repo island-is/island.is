@@ -6,14 +6,11 @@ const image = `${namespace}-image`
 
 const basepath = '/greidsla'
 
-export const serviceSetup = ({
-  paymentsApi: ServiceBuilder<'payments-api'>,
-}): ServiceBuilder<typeof serviceName> =>
+export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .namespace(namespace)
     .image(image)
     .env({
-      PAYMENTS_API_URL: ref((h) => `http://${h.svc(paymentsApi)}`),
       BASEPATH: basepath,
     })
     .secrets({

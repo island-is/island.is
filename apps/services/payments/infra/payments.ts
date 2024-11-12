@@ -1,6 +1,6 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-const namespace = 'payments-api'
+const namespace = 'services-payments'
 const serviceName = `${namespace}`
 const imageName = `${namespace}-image`
 
@@ -15,4 +15,4 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     })
     .readiness('/liveness')
     .liveness('/liveness')
-    .grantNamespaces('islandis')
+    .grantNamespaces('nginx-ingress-internal', 'islandis')
