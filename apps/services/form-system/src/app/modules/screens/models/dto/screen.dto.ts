@@ -15,8 +15,8 @@ export class ScreenDto {
   @ApiProperty()
   displayOrder!: number
 
-  // @ApiProperty()
-  // isHidden!: boolean
+  @ApiProperty()
+  isHidden!: boolean
 
   @ApiProperty()
   isCompleted!: boolean

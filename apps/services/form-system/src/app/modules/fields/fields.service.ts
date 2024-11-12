@@ -14,6 +14,9 @@ import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 import { ValueDto } from '../values/models/dto/value.dto'
 import { randomUUID } from 'crypto'
+import defaults from 'lodash/defaults'
+import pick from 'lodash/pick'
+import zipObject from 'lodash/zipObject'
 
 @Injectable()
 export class FieldsService {
@@ -45,28 +48,30 @@ export class FieldsService {
       ),
     } as Field)
 
-    // const newFieldSettingsDto = await this.fieldSettingsService.create(
-    //   newField.id,
-    // )
-
-    const fieldDto: FieldDto = this.fieldMapper.mapFieldToFieldDto(
-      newField,
-      // newFieldSettingsDto,
-    )
-
-    // fieldDto.fieldSettingsType = FieldSettingsTypeFactory.getClass(
-    //   fieldType,
-    //   new FieldSettingsType(),
-    // )
-
-    fieldDto.values = [
-      {
-        id: randomUUID(),
-        order: 0,
-        json: ValueTypeFactory.getClass(fieldType, new ValueType()),
-        // isHidden: false,
-      },
+    const keys = [
+      'id',
+      'screenId',
+      'name',
+      'displayOrder',
+      'description',
+      'isPartOfMultiset',
+      'isRequired',
+      'fieldType',
+      'fieldSettings',
     ]
+    const fieldDto: FieldDto = defaults(
+      pick(newField, keys),
+      zipObject(keys, Array(keys.length).fill(null)),
+    ) as FieldDto
+
+    // fieldDto.values = [
+    //   {
+    //     id: randomUUID(),
+    //     order: 0,
+    //     json: ValueTypeFactory.getClass(fieldType, new ValueType()),
+    //     // isHidden: false,
+    //   },
+    // ]
 
     return fieldDto
   }

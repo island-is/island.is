@@ -20,16 +20,18 @@ export class FormCertificationTypesService {
 
   async create(
     createFormCertificationTypeDto: CreateFormCertificationTypeDto,
-  ): Promise<string> {
-    // const certificationType = CertificationTypes.find(
-    //   (type) => type.id === createFormCertificationDto.certificationId,
-    // )
+  ): Promise<CertificationType> {
+    const certificationType = CertificationTypes.find(
+      (certificationType) =>
+        certificationType.id ===
+        createFormCertificationTypeDto.certificationTypeId,
+    )
 
-    // if (!certificationType) {
-    //   throw new NotFoundException(
-    //     `certificationType with id '${createFormCertificationDto.certificationId}' not found`,
-    //   )
-    // }
+    if (!certificationType) {
+      throw new NotFoundException(
+        `certificationType with id '${createFormCertificationTypeDto.certificationTypeId}' not found`,
+      )
+    }
 
     const formCertificationType =
       createFormCertificationTypeDto as FormCertificationType
@@ -38,6 +40,9 @@ export class FormCertificationTypesService {
       new this.formCertificationTypeModel(formCertificationType)
 
     await newFormCertificationType.save()
+
+    certificationType.formCertificationId =
+      newFormCertificationType.certificationTypeId
 
     // certificationType.id = newFormCertification.id
 
@@ -51,7 +56,7 @@ export class FormCertificationTypesService {
     //   zipObject(keys, Array(keys.length).fill(null)),
     // ) as FormCertificationDto
 
-    return newFormCertificationType.id
+    return certificationType
   }
 
   async delete(id: string): Promise<void> {

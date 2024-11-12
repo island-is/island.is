@@ -19,6 +19,7 @@ import { FormApplicantTypesService } from './formApplicantTypes.service'
 // import { FormApplicantDto } from './models/dto/formApplicant.dto'
 import { CreateFormApplicantTypeDto } from './models/dto/createFormApplicantType.dto'
 import { UpdateFormApplicantTypeDto } from './models/dto/updateFormApplicantType.dto'
+import { ApplicantType } from '../../dataTypes/applicantTypes/applicantType.model'
 
 @ApiTags('form applicant types')
 @Controller({ path: 'formApplicantTypes', version: ['1', VERSION_NEUTRAL] })
@@ -36,7 +37,7 @@ export class FormApplicantTypesController {
   @Post()
   create(
     @Body() createFormApplicantTypeDto: CreateFormApplicantTypeDto,
-  ): Promise<string> {
+  ): Promise<ApplicantType> {
     return this.formApplicantTypesService.create(createFormApplicantTypeDto)
   }
 

@@ -35,6 +35,12 @@ export class Application extends Model<Application> {
   })
   isTest!: boolean
 
+  // @Column({
+  //   type: DataType.JSON,
+  //   allowNull: true,
+  // })
+  // hiddenComponents?: Record<string, string>
+
   @ForeignKey(() => Form)
   @Column({
     type: DataType.STRING,

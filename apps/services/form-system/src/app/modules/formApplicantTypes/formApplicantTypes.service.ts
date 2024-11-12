@@ -7,7 +7,11 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { UpdateFormApplicantTypeDto } from './models/dto/updateFormApplicantType.dto'
-import { ApplicantType } from '../../dataTypes/applicantTypes/applicantType.model'
+import {
+  ApplicantType,
+  ApplicantTypes,
+} from '../../dataTypes/applicantTypes/applicantType.model'
+import { LanguageType } from '../../dataTypes/languageType.model'
 
 @Injectable()
 export class FormApplicantTypesService {
@@ -18,19 +22,33 @@ export class FormApplicantTypesService {
 
   async create(
     createFormApplicantTypeDto: CreateFormApplicantTypeDto,
-  ): Promise<string> {
+  ): Promise<ApplicantType> {
+    const applicantType = ApplicantTypes.find(
+      (applicantType) =>
+        applicantType.id === createFormApplicantTypeDto.applicantTypeId,
+    )
+
+    if (!applicantType) {
+      throw new NotFoundException(
+        `Form applicant type with id '${createFormApplicantTypeDto.applicantTypeId}' not found`,
+      )
+    }
+
     const formApplicantType = createFormApplicantTypeDto as FormApplicantType
     const newFormApplicantType: FormApplicantType =
       new this.formApplicantTypeModel(formApplicantType)
     await newFormApplicantType.save()
 
+    applicantType.formApplicantId = newFormApplicantType.id
+
+    applicantType.name = new LanguageType()
     // const keys = ['id', 'applicantType']
     // const formApplicantDto: FormApplicantDto = defaults(
     //   pick(newFormApplicant, keys),
     //   zipObject(keys, Array(keys.length).fill(null)),
     // ) as FormApplicantDto
 
-    return newFormApplicantType.id
+    return applicantType
   }
 
   async update(
