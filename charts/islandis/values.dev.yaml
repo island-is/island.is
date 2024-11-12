@@ -317,6 +317,7 @@ api:
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=2880 -r dd-trace/init'
+    PAYMENT_API_URL: 'http://web-services-payments.services-payments.svc.cluster.local'
     REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
@@ -1808,9 +1809,8 @@ namespaces:
 payments-web:
   enabled: true
   env:
-    BASEPATH: '/greidsla'
+    BASEPATH: '/greida'
     LOG_LEVEL: 'info'
-    NEXT_PUBLIC_BACKEND_URL: '/backend'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -1847,7 +1847,7 @@ payments-web:
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
-            - '/greidsla'
+            - '/greida'
   namespace: 'payments'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -2533,6 +2533,7 @@ services-payments:
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
+    - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
