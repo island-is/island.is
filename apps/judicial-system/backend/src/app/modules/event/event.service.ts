@@ -225,15 +225,15 @@ export class EventService {
   }
 
   logInfo = (event: CaseEvent, theCase: Case) => {
-    if (caseEventsToLog.indexOf(event) === -1) {
+    if (!caseEventsToLog.includes(event)) {
       return
     }
 
-    let extraInfo = ''
+    let extraInfo
 
     switch (event) {
       case 'SCHEDULE_COURT_DATE':
-        extraInfo = `courtDate ${formatDate(
+        extraInfo = `courtDate: ${formatDate(
           DateLog.courtDate(theCase.dateLogs)?.date ??
             DateLog.arraignmentDate(theCase.dateLogs)?.date,
           'Pp',
