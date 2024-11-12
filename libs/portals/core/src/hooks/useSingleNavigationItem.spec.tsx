@@ -69,10 +69,7 @@ describe('useSingleNavigationItem hook', () => {
           }}
         >
           <BffProvider
-            options={{
-              applicationBasePath: '/minarsidur',
-              authority: 'https://identity-server.dev01.devland.is',
-            }}
+            applicationBasePath="/minarsidur"
             mockedInitialState={mockedInitialState}
           >
             <BrowserRouter>

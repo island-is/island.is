@@ -1,25 +1,25 @@
 import React, { FC, useEffect, useState } from 'react'
 
 import {
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Input,
-  PhoneInput,
+    GridColumn,
+    GridContainer,
+    GridRow,
+    Input,
+    PhoneInput,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  FeatureFlagClient,
-  Features,
-  useFeatureFlagClient,
+    FeatureFlagClient,
+    Features,
+    useFeatureFlagClient,
 } from '@island.is/react/feature-flags'
 import { LoadModal, m, parseNumber } from '@island.is/service-portal/core'
 import {
-  useDeleteIslykillValue,
-  useUserProfile,
+    useDeleteIslykillValue,
+    useUserProfile,
 } from '@island.is/service-portal/graphql'
 
-import { useBff } from '@island.is/react-spa/bff'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { msg } from '../../../../lib/messages'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
 import { DropModal } from './components/DropModal'
@@ -69,7 +69,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   const [v2UserProfileEnabled, setV2UserProfileEnabled] = useState(false)
   const { deleteIslykillValue, loading: deleteLoading } =
     useDeleteIslykillValue()
-  const { authority, userInfo } = useBff()
+  const userInfo = useUserInfo()
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const { formatMessage } = useLocale()
@@ -98,7 +98,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
    * By setting the state to update, the user will exit the onboarding process after updating the desired field.
    */
   const getIDSLink = (linkPath: IdsUserProfileLinks) => {
-    return `${authority}${linkPath}?state=update&returnUrl=${encodeURIComponent(
+    return `${userInfo.profile.iss}${linkPath}?state=update&returnUrl=${encodeURIComponent(
       window.location.toString(),
     )}`
   }

@@ -26,10 +26,7 @@ export const App = () => (
     <LocaleProvider locale={defaultLanguage} messages={{}}>
       <ApplicationErrorBoundary>
         <BffProvider
-          options={{
-            applicationBasePath: AdminPortalPaths.Base,
-            authority: environment.identityServer.authority,
-          }}
+          applicationBasePath={AdminPortalPaths.Base}
           mockedInitialState={mockedInitialState}
         >
           <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>

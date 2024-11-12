@@ -20,11 +20,6 @@ export const serviceSetup = (services: {
     })
     .env({
       BASEPATH: '/minarsidur',
-      SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
       SI_PUBLIC_ENVIRONMENT: ref((h) => h.env.type),
       SI_PUBLIC_GRAPHQL_API: {
         prod: graphqlApiPath,

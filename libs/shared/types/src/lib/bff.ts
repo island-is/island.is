@@ -16,6 +16,7 @@ export interface IdTokenClaims {
   subjectType: 'person' | 'legalEntity'
   delegationType?: AuthDelegationType[]
   locale?: string
+  iss: string
 }
 
 export type BffUser = {
