@@ -1,22 +1,22 @@
 import React, { FC, useEffect, useState } from 'react'
 
 import {
-    GridColumn,
-    GridContainer,
-    GridRow,
-    Input,
-    PhoneInput,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Input,
+  PhoneInput,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-    FeatureFlagClient,
-    Features,
-    useFeatureFlagClient,
+  FeatureFlagClient,
+  Features,
+  useFeatureFlagClient,
 } from '@island.is/react/feature-flags'
 import { LoadModal, m, parseNumber } from '@island.is/service-portal/core'
 import {
-    useDeleteIslykillValue,
-    useUserProfile,
+  useDeleteIslykillValue,
+  useUserProfile,
 } from '@island.is/service-portal/graphql'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -98,7 +98,9 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
    * By setting the state to update, the user will exit the onboarding process after updating the desired field.
    */
   const getIDSLink = (linkPath: IdsUserProfileLinks) => {
-    return `${userInfo.profile.iss}${linkPath}?state=update&returnUrl=${encodeURIComponent(
+    return `${
+      userInfo.profile.iss
+    }${linkPath}?state=update&returnUrl=${encodeURIComponent(
       window.location.toString(),
     )}`
   }
