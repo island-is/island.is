@@ -4,18 +4,19 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { Section } from '@island.is/application/types'
+import { application } from '../lib/messages'
 
 export const Signing: Section = buildSection({
   id: 'signing',
-  title: 'Undirritun',
+  title: application.signingSectionName,
   children: [
     buildMultiField({
-      id: 'signingInfo',
+      id: 'signing.info',
       title: 'Undirritun',
       description: 'Vinsamlegast undirritið samninginn',
       children: [
         buildDescriptionField({
-          id: 'signingDescription',
+          id: 'signing.description',
           title: 'Undirritun',
           description: 'Vinsamlegast undirritið samninginn',
         }),

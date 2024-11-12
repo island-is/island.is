@@ -6,16 +6,16 @@ import {
 } from '@island.is/application/core'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { formatNationalId } from '../../lib/utils'
-import * as m from '../../lib/messages'
+import { landlordDetails } from '../../lib/messages'
 
 export const RentalHousingLandlordInfo = buildSubSection({
   id: 'landlordInfo',
-  title: m.landlordDetails.subSectionName,
+  title: landlordDetails.subSectionName,
   children: [
     buildMultiField({
       id: 'landlordInfo.multiField',
-      title: m.landlordDetails.pageTitle,
-      description: m.landlordDetails.pageDescription,
+      title: landlordDetails.pageTitle,
+      description: landlordDetails.pageDescription,
       children: [
         buildTableRepeaterField({
           id: 'landlordInfo.table',
@@ -25,25 +25,25 @@ export const RentalHousingLandlordInfo = buildSubSection({
           fields: {
             name: {
               component: 'input',
-              label: m.landlordDetails.nameInputLabel,
+              label: landlordDetails.nameInputLabel,
               width: 'half',
             },
             nationalId: {
               component: 'input',
-              label: m.landlordDetails.nationalIdInputLabel,
+              label: landlordDetails.nationalIdInputLabel,
               format: '######-####',
               width: 'half',
             },
             phone: {
               component: 'input',
-              label: m.landlordDetails.phoneInputLabel,
+              label: landlordDetails.phoneInputLabel,
               type: 'tel',
               format: '###-####',
               width: 'half',
             },
             email: {
               component: 'input',
-              label: m.landlordDetails.emailInputLabel,
+              label: landlordDetails.emailInputLabel,
               type: 'email',
               width: 'half',
             },
@@ -51,10 +51,10 @@ export const RentalHousingLandlordInfo = buildSubSection({
               component: 'checkbox',
               large: true,
               displayInTable: false,
-              label: m.landlordDetails.representativeLabel,
+              label: landlordDetails.representativeLabel,
               options: [
                 {
-                  label: m.landlordDetails.representativeLabel,
+                  label: landlordDetails.representativeLabel,
                   value: YES,
                 },
               ],
@@ -66,10 +66,10 @@ export const RentalHousingLandlordInfo = buildSubSection({
               nationalId: (value) => formatNationalId(value),
             },
             header: [
-              m.landlordDetails.nameInputLabel,
-              m.landlordDetails.nationalIdHeaderLabel,
-              m.landlordDetails.phoneInputLabel,
-              m.landlordDetails.emailInputLabel,
+              landlordDetails.nameInputLabel,
+              landlordDetails.nationalIdHeaderLabel,
+              landlordDetails.phoneInputLabel,
+              landlordDetails.emailInputLabel,
             ],
           },
         }),

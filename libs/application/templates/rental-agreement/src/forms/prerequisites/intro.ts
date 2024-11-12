@@ -4,9 +4,9 @@ import {
   buildSection,
 } from '@island.is/application/core'
 
-import * as m from '../../lib/messages'
+import { prerequisites } from '../../lib/messages'
 
-const messages = m.prerequisites.intro
+const messages = prerequisites.intro
 
 export const intro = buildSection({
   id: 'prerequisitesIntro',

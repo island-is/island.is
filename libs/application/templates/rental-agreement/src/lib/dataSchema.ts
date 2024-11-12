@@ -1,9 +1,13 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { RentOtherFeesPayeeOptions } from './constants'
 import {
+  RentalAmountIndexTypes,
+  RentalAmountPaymentDateOptions,
+  RentalHousingCategoryClass,
+  RentOtherFeesPayeeOptions,
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
+  TRUE,
 } from './constants'
 import * as m from './messages'
 
@@ -17,11 +21,10 @@ const isValidMeterStatus = (value: string) => {
   return meterStatusRegex.test(value)
 }
 
-const fileSchema = z.object({
-  name: z.string(),
-  key: z.string(),
-  url: z.string().optional(),
-})
+const isValidIndexValue = (value: string) => {
+  const indexValueRegex = /^\d{1,10}(\.\d{3})*(,\d)?$/
+  return indexValueRegex.test(value)
+}
 
 const checkIfNegative = (inputNumber: string) => {
   if (Number(inputNumber) < 0) {
@@ -31,27 +34,128 @@ const checkIfNegative = (inputNumber: string) => {
   }
 }
 
-// debug error messages
-const requiredErrorMsg = {
-  id: 'ra.application:error.required',
-  defaultMessage: 'Reitur má ekki vera tómur',
-  description: 'Error message when a required field has not been filled',
-}
-
-const negativeNumberError = {
-  id: 'ra.application:error.negativeNumber',
-  defaultMessage: 'Ekki er leyfilegt að setja inn neikvæðar tölur',
-  description: 'Error message when a required field has not been filled',
-}
-
-const rentalAmount = z.object({
-  amount: z
-    .string()
-    .refine((x) => Boolean(x), {
-      params: requiredErrorMsg,
-    })
-    .refine((x) => checkIfNegative(x), { params: negativeNumberError }),
+const fileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
 })
+
+const registerProperty = z
+  .object({
+    categoryClass: z
+      .enum([
+        RentalHousingCategoryClass.GENERAL_MARKET,
+        RentalHousingCategoryClass.SPECIAL_GROUPS,
+      ])
+      .optional(),
+    categoryClassGroup: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      data.categoryClass &&
+      data.categoryClass.includes('specialGroups') &&
+      !data.categoryClassGroup
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.registerProperty.category.classGroupRequiredError,
+        path: ['categoryClassGroup'],
+      })
+    }
+  })
+
+const rentalPeriod = z
+  .object({
+    startDate: z
+      .string()
+      .optional()
+      .refine((x) => !!x && x.trim().length > 0, {
+        params: m.rentalPeriod.errorAgreementStartDateNotFilled,
+      }),
+    endDate: z.string().optional(),
+    isDefinite: z.string().array().optional(),
+  })
+  .superRefine((data, ctx) => {
+    const start = data.startDate ? new Date(data.startDate) : ''
+    const end = data.endDate ? new Date(data.endDate) : ''
+    const isDefiniteChecked = data.isDefinite && data.isDefinite.includes(TRUE)
+    if (isDefiniteChecked) {
+      if (!data.endDate || !data.endDate.trim().length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['endDate'],
+          params: m.rentalPeriod.errorAgreementEndDateNotFilled,
+        })
+      } else if (start >= end) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['endDate'],
+          params: m.rentalPeriod.errorEndDateBeforeStart,
+        })
+      }
+    }
+  })
+
+const rentalAmount = z
+  .object({
+    amount: z
+      .string()
+      .refine((x) => Boolean(x), {
+        params: m.dataSchema.requiredErrorMsg,
+      })
+      .refine((x) => checkIfNegative(x), {
+        params: m.dataSchema.negativeNumberError,
+      }),
+    indexTypes: z
+      .enum([
+        RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
+        RentalAmountIndexTypes.CONSTRUCTION_COST_INDEX,
+        RentalAmountIndexTypes.WAGE_INDEX,
+      ])
+      .optional(),
+    indexValue: z.string().optional(),
+    isIndexConnected: z.string().array().optional(),
+    paymentDateOptions: z.enum([
+      RentalAmountPaymentDateOptions.FIRST_DAY,
+      RentalAmountPaymentDateOptions.LAST_DAY,
+      RentalAmountPaymentDateOptions.OTHER,
+    ]),
+    paymentDateOther: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.isIndexConnected && data.isIndexConnected.includes(TRUE)) {
+      if (!data.indexValue?.trim().length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.rentalAmount.indexValueRequiredError,
+          path: ['indexValue'],
+        })
+      }
+      if (data.indexValue && !isValidIndexValue(data.indexValue)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.rentalAmount.indexValueValidationError,
+          path: ['indexValue'],
+        })
+      }
+    }
+
+    if (
+      data.paymentDateOptions &&
+      data.paymentDateOptions.includes(RentalAmountPaymentDateOptions.OTHER) &&
+      !data.paymentDateOther?.trim().length
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.rentalAmount.paymentDateOtherOptionRequiredError,
+        path: ['paymentDateOther'],
+      })
+    }
+  })
 
 const securityDeposit = z
   .object({
@@ -202,8 +306,9 @@ const rentOtherFees = z
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorHousingFundLength,
           path: ['housingFundAmount'],
-          params: m.dataSchema.errorHousingFundLength,
         })
       }
     }
@@ -214,8 +319,9 @@ const rentOtherFees = z
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorMeterNumberRegex,
           path: ['electricityCostMeterNumber'],
-          params: m.dataSchema.errorMeterNumberRegex,
         })
       }
       if (
@@ -224,8 +330,9 @@ const rentOtherFees = z
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorMeterStatusRegex,
           path: ['electricityCostMeterStatus'],
-          params: m.dataSchema.errorMeterStatusRegex,
         })
       }
     }
@@ -236,8 +343,9 @@ const rentOtherFees = z
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorMeterNumberRegex,
           path: ['heatingCostMeterNumber'],
-          params: m.dataSchema.errorMeterNumberRegex,
         })
       }
       if (
@@ -246,8 +354,9 @@ const rentOtherFees = z
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorMeterStatusRegex,
           path: ['heatingCostMeterStatus'],
-          params: m.dataSchema.errorMeterStatusRegex,
         })
       }
     }
@@ -263,6 +372,8 @@ export const dataSchema = z.object({
         params: m.dataSchema.nationalId,
       }),
   }),
+  registerProperty,
+  rentalPeriod,
   rentalAmount,
   securityDeposit,
   condition: z.object({

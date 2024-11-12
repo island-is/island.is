@@ -123,4 +123,21 @@ export const rentalAmount = defineMessages({
     defaultMessage: 'Tryggingar er krafist við upphaf leigutíma',
     description: 'Rental amount payment insurance option label',
   },
+
+  // Error messages
+  indexValueRequiredError: {
+    id: 'ra.application:rentalAmount.indexValueRequiredError',
+    defaultMessage: 'Sláðu inn vísitölu',
+    description: 'Rental amount index value required error',
+  },
+  indexValueValidationError: {
+    id: 'ra.application:rentalAmount.indexValueRequiredError',
+    defaultMessage: 'vísitala má aðeins innihalda tölustafi með einum aukastaf',
+    description: 'Rental amount index value required error',
+  },
+  paymentDateOtherOptionRequiredError: {
+    id: 'ra.application:rentalAmount.paymentDateOtherOptionRequiredError',
+    defaultMessage: 'Sláðu inn mánaðardag greiðslu',
+    description: 'Rental amount payment date other option required error',
+  },
 })
