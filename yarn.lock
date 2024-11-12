@@ -15549,6 +15549,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nx/playwright@npm:19.4.0":
+  version: 19.4.0
+  resolution: "@nx/playwright@npm:19.4.0"
+  dependencies:
+    "@nx/devkit": 19.4.0
+    "@nx/eslint": 19.4.0
+    "@nx/js": 19.4.0
+    "@phenomnomnominal/tsquery": ~5.0.1
+    minimatch: 9.0.3
+    tslib: ^2.3.0
+  peerDependencies:
+    "@playwright/test": ^1.36.0
+  peerDependenciesMeta:
+    "@playwright/test":
+      optional: true
+  checksum: a3696125e1b18447f1591111679b3247926d9c716a9e6c66de4e9187c47a8a7a6231599abb4f9a36c1fcd7fe923eade48c9b799dc20478934b1fa2e032bc1c45
+  languageName: node
+  linkType: hard
+
 "@nx/react@npm:19.4.0":
   version: 19.4.0
   resolution: "@nx/react@npm:19.4.0"
@@ -38632,6 +38651,7 @@ __metadata:
     "@nx/nest": 19.4.0
     "@nx/next": 19.4.0
     "@nx/node": 19.4.0
+    "@nx/playwright": 19.4.0
     "@nx/react": 19.4.0
     "@nx/storybook": 19.4.0
     "@nx/web": 19.4.0
