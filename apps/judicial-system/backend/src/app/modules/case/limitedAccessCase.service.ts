@@ -314,23 +314,6 @@ export class LimitedAccessCaseService {
     update: LimitedAccessUpdateCase,
     user: TUser,
   ): Promise<Case> {
-    if (update.accusedPostponedAppealDate) {
-      const relevantInfo = {
-        appealState: theCase.appealState,
-        accusedAppealDecision: theCase.accusedAppealDecision,
-        accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
-        prosecutorAppealDecision: theCase.prosecutorAppealDecision,
-        prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
-        update: update,
-      }
-
-      this.logger.info(
-        `Updating accusedPostponedAppealDate in limited access case service for case ${
-          theCase.id
-        }. Relevant info: ${JSON.stringify(relevantInfo)}`,
-      )
-    }
-
     const [numberOfAffectedRows] = await this.caseModel.update(
       { ...update },
       { where: { id: theCase.id } },
