@@ -13,6 +13,7 @@ type Props = {
   onChange?: (value: HTMLText) => void
   error?: string
   readOnly?: boolean
+  controller?: boolean
 }
 
 export const HTMLEditor = ({
@@ -24,6 +25,7 @@ export const HTMLEditor = ({
   onChange,
   hideWarnings,
   readOnly = false,
+  controller = true,
 }: Props) => {
   const [initialValue, setInitalValue] = useState(value)
   const valueRef = useRef(() => value)
@@ -42,7 +44,7 @@ export const HTMLEditor = ({
     throw new Error('Not implemented')
   }
 
-  return (
+  return controller ? (
     <Controller
       name={name}
       defaultValue={initialValue}
@@ -82,5 +84,35 @@ export const HTMLEditor = ({
         )
       }}
     />
+  ) : (
+    <>
+      {title && (
+        <Text marginBottom={2} variant="h5">
+          {title}
+        </Text>
+      )}
+      <Box
+        className={editorWrapper({
+          error: !!error,
+        })}
+      >
+        <Editor
+          readOnly={readOnly}
+          hideWarnings={hideWarnings}
+          elmRef={editorRef}
+          config={config}
+          fileUploader={fileUploader}
+          valueRef={valueRef}
+          classes={classes}
+          onChange={() => {
+            onChange && onChange(valueRef.current())
+          }}
+          onBlur={() => {
+            onChange && onChange(valueRef.current())
+          }}
+        />
+      </Box>
+      {error && <div className={errorStyle}>{error}</div>}
+    </>
   )
 }
