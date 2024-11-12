@@ -480,10 +480,9 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
       identity = await this.nationalRegistryService.getName(nationalId)
       return identity?.birtNafn ?? ''
-
-    } catch(error) {
+    } catch (error) {
       this.logger.error('Error getting name from national registry', {
-        error
+        error,
       })
       return ''
     }
