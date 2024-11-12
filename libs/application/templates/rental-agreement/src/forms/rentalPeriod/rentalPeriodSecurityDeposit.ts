@@ -6,6 +6,7 @@ import {
   buildDescriptionField,
   buildAlertMessageField,
   buildHiddenInputWithWatchedValue,
+  buildRadioField,
 } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import {
@@ -37,6 +38,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
           id: 'securityDeposit.securityType',
           title: m.securityDeposit.typeSelectionTitle,
           options: getSecurityDepositTypeOptions,
+          placeholder: m.securityDeposit.typeSelectionPlaceholder,
         }),
 
         // Tegund tryggingar: Bankaábyrgð
@@ -134,16 +136,12 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
             )
           },
         }),
-        buildDescriptionField({
-          id: 'securityDeposit.amountTitle',
-          title: m.securityDeposit.amountHeaderTitle,
-          titleVariant: 'h3',
-          space: 5,
-        }),
-        buildSelectField({
+        buildRadioField({
           id: 'securityDeposit.securityAmount',
-          title: m.securityDeposit.amountSelectionTitle,
+          title: m.securityDeposit.amountRadioFieldTitle,
           options: getSecurityAmountOptions,
+          width: 'half',
+          space: 3,
           condition: (answers) => {
             const securityDeposit = answers.securityDeposit as FormValue
             return (
@@ -181,7 +179,6 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
 
             return (
               securityDeposit &&
-              Boolean(securityDeposit.securityType) &&
               (securityDeposit.securityType ===
                 SecurityDepositTypeOptions.MUTUAL_FUND ||
                 securityDeposit.securityAmount ===

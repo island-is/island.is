@@ -172,7 +172,7 @@ const securityDeposit = z
       (data.securityType === SecurityDepositTypeOptions.CAPITAL ||
         data.securityType ===
           SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE) &&
-      Number(data.rentalAmount) * 3 < Number(data.securityAmount)
+      Number(data.rentalAmount) * 3 < Number(data.securityAmountOther)
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

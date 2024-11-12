@@ -33,6 +33,11 @@ export const securityDeposit = defineMessages({
     defaultMessage: 'Tegund tryggingar',
     description: 'security deposit type selection title',
   },
+  typeSelectionPlaceholder: {
+    id: 'ra.application:securityDeposit.typeSelectionPlaceholder',
+    defaultMessage: 'Veldu tegund',
+    description: 'security deposit type selection placeholder',
+  },
   typeSelectionBankGuaranteeTitle: {
     id: 'ra.application:securityDeposit.typeSelectionBankGuaranteeTitle',
     defaultMessage: 'Bankaábyrgð',
@@ -125,10 +130,10 @@ export const securityDeposit = defineMessages({
     defaultMessage: 'Upphæð tryggingar',
     description: 'security deposit amount header title',
   },
-  amountSelectionTitle: {
-    id: 'ra.application:securityDeposit.amountSelectionTitle',
-    defaultMessage: 'Upphæð tryggingar',
-    description: 'security deposit amount selection title',
+  amountRadioFieldTitle: {
+    id: 'ra.application:securityDeposit.amountRadioFieldTitle',
+    defaultMessage: 'Veldu upphæð',
+    description: 'security deposit amount radio field title',
   },
   amountSelection1Month: {
     id: 'ra.application:securityDeposit.amountSelection1Month',
