@@ -51,7 +51,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
       href: linkResolver('homepage', [], locale).href,
     },
     {
-      title: 'Styrkir og sjóðir',
+      title: 'Styrkjatorg',
       href: baseUrl,
     },
     {
