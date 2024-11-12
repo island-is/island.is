@@ -151,8 +151,7 @@ export function FieldCard(props: FieldCardProps) {
 
   return (
     <Host>
-      {(props.title !== null &&
-        !(props.title === undefined && props.code === undefined)) ||
+      {(props.title !== null && (!!props.title || !!props.code)) ||
       (props.title !== undefined && props.code) ? (
         <Header hideBorder={!props.hasFields}>
           <HeaderTextBold rightSpacing={!props.hasFields}>
