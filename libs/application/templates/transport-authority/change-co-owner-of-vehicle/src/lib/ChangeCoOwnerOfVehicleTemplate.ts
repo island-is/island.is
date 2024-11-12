@@ -201,6 +201,9 @@ const template: ApplicationTemplate<
               pruneInDaysAtMidnight(application, 7),
             shouldDeleteChargeIfPaymentFulfilled: true,
           },
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

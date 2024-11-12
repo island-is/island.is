@@ -218,6 +218,11 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:not-found',
     defaultMessage: 'Ökutæki fannst ekki',
   },
+  invalidFileType: {
+    id: 'sp.vehicles:invalid-file-type',
+    defaultMessage:
+      'Ógild skráargerð. Einungis .xlsx og .csv skrár eru samþykktar',
+  },
   infoNote: {
     id: 'sp.vehicles:detail-info-note',
     defaultMessage:
@@ -981,6 +986,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:upload-failed',
     defaultMessage: 'Upphleðsla mistókst',
   },
+  noDataInUploadedFile: {
+    id: 'sp.vehicles:no-data-in-uploaded-file',
+    defaultMessage: 'Upphleðsla mistókst. Engin gögn í skjali',
+  },
   wrongFileType: {
     id: 'sp.vehicles:wrong-file-type',
     defaultMessage: 'Vitlaus skráartýpa. Skrá verður að vera .csv eða .xslx',
@@ -988,6 +997,16 @@ export const vehicleMessage = defineMessages({
   errorWhileProcessing: {
     id: 'sp.vehicles:error-while-processing',
     defaultMessage: 'Villa við að meðhöndla skjal. Villur: ',
+  },
+  invalidPermNoColumn: {
+    id: 'sp.vehicles:invalid-perm-no-column',
+    defaultMessage:
+      'Fastanúmersdálk vantar eða er skrifaður rangt. Dálkanafn þarf að vera eitt af eftirfarandi; "permno", "vehicleid", "bilnumer","okutaeki","fastanumer"',
+  },
+  invalidMileageColumn: {
+    id: 'sp.vehicles:invalid-mileage-column',
+    defaultMessage:
+      'Kílómetrastöðudálk vantar eða er skrifaður rangt. Dálkanafn þarf að vera eitt af eftirfarandi; "kilometrastada", "mileage", "odometer"',
   },
   downloadFailed: {
     id: 'sp.vehicles:download-failed',

@@ -30,6 +30,7 @@ import {
   UserProfileApi,
   VinnueftirlitidPaymentCatalogApi,
   MachinesApi,
+  MockableVinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
 import { getChargeItemCodes, hasReviewerApproved } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
@@ -138,6 +139,7 @@ const template: ApplicationTemplate<
               api: [
                 IdentityApi,
                 UserProfileApi,
+                MockableVinnueftirlitidPaymentCatalogApi,
                 VinnueftirlitidPaymentCatalogApi,
                 MachinesApi,
               ],
@@ -214,6 +216,9 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Tilkynning um eigendaskipti að ökutæki',
           status: 'inprogress',
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
+          }),
           actionCard: {
             tag: {
               label: applicationMessage.actionCardDraft,
