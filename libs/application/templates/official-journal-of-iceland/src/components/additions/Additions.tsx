@@ -110,28 +110,29 @@ export const Additions = ({ application }: Props) => {
 
   const onAddAddition = () => {
     const currentAnswers = structuredClone(currentApplication.answers)
-    const currentAdditions = getValueViaPath(
+    let currentAdditions = getValueViaPath(
       currentAnswers,
       InputFields.advert.additions,
     )
 
-    // this should never happen, but how do we handle it?
-    if (!Array.isArray(currentAdditions)) {
-      console.error('Additions is not an array')
-      return
+    if (!isAddition(currentAdditions)) {
+      currentAdditions = []
     }
 
-    const newAddition = getAddition(additions.length + 1, asRoman)
+    // TS not inferring the type after the check above
+    if (isAddition(currentAdditions)) {
+      const newAddition = getAddition(additions.length + 1, asRoman)
 
-    const updatedAdditions = [...additions, newAddition]
-    const updatedAnswers = set(
-      currentAnswers,
-      InputFields.advert.additions,
-      updatedAdditions,
-    )
+      const updatedAdditions = [...currentAdditions, newAddition]
+      const updatedAnswers = set(
+        currentAnswers,
+        InputFields.advert.additions,
+        updatedAdditions,
+      )
 
-    setValue(InputFields.advert.additions, updatedAdditions)
-    updateApplication(updatedAnswers)
+      setValue(InputFields.advert.additions, updatedAdditions)
+      updateApplication(updatedAnswers)
+    }
   }
 
   const onAdditionChange = (index: number, value: string) => {
