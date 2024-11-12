@@ -109,6 +109,7 @@ export class TransportAuthorityApi {
     return {
       basicVehicleInformation: {
         permno: vehicle.permno,
+        // Note: subModel (vehcom+speccom) has already been added to this field
         make: vehicle.make,
         color: vehicle.colorName,
         requireMileage: vehicle.requiresMileageRegistration,
@@ -273,6 +274,7 @@ export class TransportAuthorityApi {
         : null,
       basicVehicleInformation: {
         color: vehicle.colorName,
+        // Note: subModel (vehcom+speccom) has already been added to this field
         make: vehicle.make,
         permno: vehicle.permno,
         requireMileage: vehicle.requiresMileageRegistration,
@@ -347,10 +349,14 @@ export class TransportAuthorityApi {
         : null,
       basicVehicleInformation: {
         color: vehicleInfo.color,
-        make: `${vehicleInfo.make} ${vehicleInfo.vehcom}`,
+        make: `${vehicleInfo.make} ${this.getVehicleSubModel(vehicleInfo)}`,
         permno: vehicleInfo.permno,
       },
     }
+  }
+
+  private getVehicleSubModel(vehicle: BasicVehicleInformationDto) {
+    return [vehicle.vehcom, vehicle.speccom].filter(Boolean).join(' ')
   }
 
   async getMyPlateOwnershipChecksByRegno(
