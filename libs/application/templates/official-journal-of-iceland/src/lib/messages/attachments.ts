@@ -26,6 +26,35 @@ export const attachments = {
       description: 'Heading of the attachments section',
     },
   }),
+  buttons: defineMessages({
+    asDocument: {
+      id: 'ojoi.application:attachments.buttons.additionType.asDocument',
+      defaultMessage: 'Bæta við viðaukum',
+      description: 'Label of the button to add documents',
+    },
+    asAttachment: {
+      id: 'ojoi.application:attachments.buttons.additionType.asAttachment',
+      defaultMessage: 'Hlaða upp skjölum',
+      description: 'Label of the button to upload attachments',
+    },
+    removeAddition: {
+      id: 'ojoi.application:attachments.buttons.removeAddition',
+      defaultMessage: 'Fjarlægja viðauka',
+      description: 'Label of the button to remove an addition',
+    },
+    addAddition: {
+      id: 'ojoi.application:attachments.buttons.addAddition',
+      defaultMessage: 'Bæta við viðauka',
+      description: 'Label of the button to add an addition',
+    },
+  }),
+  additions: defineMessages({
+    title: {
+      id: 'ojoi.application:attachments.additions.title',
+      defaultMessage: 'Viðauki {index}',
+      description: 'Title of the additions section',
+    },
+  }),
   inputs: {
     fileUpload: defineMessages({
       header: {
@@ -46,17 +75,24 @@ export const attachments = {
       },
     }),
     radio: {
-      additions: defineMessages({
+      title: defineMessages({
+        label: {
+          id: 'ojoi.application:attachments.radio.title.label',
+          defaultMessage: 'Viðaukar eða fylgiskjöl',
+          description: 'Label of the radio buttons',
+        },
+      }),
+      numeric: defineMessages({
         label: {
           id: 'ojoi.application:attachments.radio.additions.label',
-          defaultMessage: 'Viðaukar (1, 2, 3..)',
+          defaultMessage: 'Viðauki (1, 2, 3..)',
           description: 'Label of the additions radio button',
         },
       }),
-      documents: defineMessages({
+      roman: defineMessages({
         label: {
           id: 'ojoi.application:attachments.radio.documents.label',
-          defaultMessage: 'Fylgiskjöl (I, II, III..)',
+          defaultMessage: 'Viðauki (I, II, III..)',
           description: 'Label of the documents radio button',
         },
       }),
