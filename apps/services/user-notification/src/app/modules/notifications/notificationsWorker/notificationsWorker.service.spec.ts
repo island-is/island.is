@@ -236,7 +236,7 @@ describe('NotificationsWorkerService', () => {
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         nationalId: userWithDelegations.nationalId,
-        notificationId: recipientMessage.id,
+        notificationId: recipientMessage?.id,
       }),
     )
 
