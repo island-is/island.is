@@ -17,10 +17,10 @@ describe('InternalDefendantController - Update defendant guards', () => {
 
   it('should have the right guard configuration', () => {
     expect(guards).toHaveLength(2)
-    expect(new guards[0]()).toBeInstanceOf(DefendantNationalIdExistsGuard)
-    expect(guards[1]).toBeInstanceOf(CaseTypeGuard)
-    expect(guards[1]).toEqual({
+    expect(guards[0]).toBeInstanceOf(CaseTypeGuard)
+    expect(guards[0]).toEqual({
       allowedCaseTypes: investigationCases,
     })
+    expect(new guards[1]()).toBeInstanceOf(DefendantNationalIdExistsGuard)
   })
 })

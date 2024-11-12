@@ -95,42 +95,48 @@ export class DefendantService {
     updatedDefendant: Defendant,
     oldDefendant: Defendant,
     user: User,
-  ) {
+  ): Promise<void> {
     if (!theCase.courtCaseNumber) {
       return
     }
+
+    const messages: Message[] = []
 
     // Handling of updates sent to the court system
     // A defendant is updated after the case has been received by the court.
     if (updatedDefendant.noNationalId !== oldDefendant.noNationalId) {
       // A defendant nationalId is added or removed. Attempt to add the defendant to the court case.
       // In case there is no national id, the court will be notified.
-      await this.messageService.sendMessagesToQueue([
+      messages.push(
         this.getMessageForDeliverDefendantToCourt(updatedDefendant, user),
-      ])
+      )
     } else if (updatedDefendant.nationalId !== oldDefendant.nationalId) {
       // A defendant is replaced. Attempt to add the defendant to the court case,
       // but also ask the court to verify defendants.
-      await this.messageService.sendMessagesToQueue([
+      messages.push(
         this.getMessageForSendDefendantsNotUpdatedAtCourtNotification(
           theCase,
           user,
         ),
         this.getMessageForDeliverDefendantToCourt(updatedDefendant, user),
-      ])
+      )
     }
+
+    if (messages.length === 0) {
+      return
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private async sendIndictmentCaseUpdateDefendantMessages(
     theCase: Case,
     updatedDefendant: Defendant,
     oldDefendant: Defendant,
-  ) {
+  ): Promise<void> {
     if (!theCase.courtCaseNumber) {
       return
     }
-
-    const messages: Message[] = []
 
     if (updatedDefendant.isDefenderChoiceConfirmed) {
       if (
@@ -141,29 +147,15 @@ export class DefendantService {
 
         // Defender was just confirmed by judge
         if (!oldDefendant.isDefenderChoiceConfirmed) {
-          messages.push({
-            type: MessageType.DEFENDANT_NOTIFICATION,
-            caseId: theCase.id,
-            body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
-            elementId: updatedDefendant.id,
-          })
+          await this.messageService.sendMessagesToQueue([
+            {
+              type: MessageType.DEFENDANT_NOTIFICATION,
+              caseId: theCase.id,
+              body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
+              elementId: updatedDefendant.id,
+            },
+          ])
         }
-      }
-    } else {
-      if (
-        updatedDefendant.defenderChoice === DefenderChoice.CHOOSE &&
-        (updatedDefendant.defenderChoice !== oldDefendant.defenderChoice ||
-          updatedDefendant.defenderNationalId !==
-            oldDefendant.defenderNationalId)
-      ) {
-        messages.push({
-          type: MessageType.DEFENDANT_NOTIFICATION,
-          caseId: theCase.id,
-          elementId: updatedDefendant.id,
-          body: {
-            type: DefendantNotificationType.DEFENDANT_SELECTED_DEFENDER,
-          },
-        })
       }
     }
   }
@@ -246,13 +238,11 @@ export class DefendantService {
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
-    transaction?: Transaction,
   ): Promise<Defendant> {
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
       defendant.id,
       update,
-      transaction,
     )
 
     await this.sendIndictmentCaseUpdateDefendantMessages(
@@ -290,12 +280,33 @@ export class DefendantService {
     // and go through the update method above using the defendantId.
     // This is also why we may set the isDefenderChoiceConfirmed to false here - the judge needs to confirm all changes.
 
-    return this.updateIndictmentCase(
-      theCase,
-      defendant,
+    const updatedDefendant = await this.updateDatabaseDefendant(
+      theCase.id,
+      defendant.id,
       { ...update, isDefenderChoiceConfirmed },
       transaction,
     )
+
+    // Notify the court if the defendant has changed the defender choice
+    if (
+      updatedDefendant.isDefenderChoiceConfirmed &&
+      updatedDefendant.defenderChoice === DefenderChoice.CHOOSE &&
+      (updatedDefendant.defenderChoice !== defendant.defenderChoice ||
+        updatedDefendant.defenderNationalId !== defendant.defenderNationalId)
+    ) {
+      await this.messageService.sendMessagesToQueue([
+        {
+          type: MessageType.DEFENDANT_NOTIFICATION,
+          caseId: theCase.id,
+          elementId: updatedDefendant.id,
+          body: {
+            type: DefendantNotificationType.DEFENDANT_SELECTED_DEFENDER,
+          },
+        },
+      ])
+    }
+
+    return updatedDefendant
   }
 
   async delete(

@@ -285,11 +285,6 @@ describe('CaseController - Create court case', () => {
     it('should post to queue', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.DELIVERY_TO_COURT_PROSECUTOR,
-          user,
-          caseId: theCase.id,
-        },
-        {
           type: MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD,
           user,
           caseId,
