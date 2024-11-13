@@ -34,6 +34,7 @@ export const aboutSection = buildSubSection({
           width: 'half',
           required: true,
           minDate: new Date('1.1.2020'),
+          maxDate: new Date(),
         }),
         buildTextField({
           id: 'accident.time',

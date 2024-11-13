@@ -118,6 +118,9 @@ export const employeeSubSection = (index: number) =>
             width: 'half',
             required: true,
             title: employee.employee.startDate,
+            maxDate: new Date(),
+            minYear: 1940,
+            maxYear: new Date().getFullYear(),
           }),
           buildSelectField({
             id: `employee[${index}].employmentTime`,
