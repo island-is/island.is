@@ -64,6 +64,7 @@ async function generateChartValues() {
       const services = Charts[name as ChartName][envType as OpsEnv]
       for (const service of services) {
         const serviceName = service.name()
+        console.log(`Processing ${serviceName} ${envName} ${envType}`)
         if (renderedValues[serviceName]) {
           const serviceValues = {
             service: {
