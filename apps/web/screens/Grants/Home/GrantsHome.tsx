@@ -31,6 +31,7 @@ import {
 } from '../../CustomPage/CustomPageWrapper'
 import { GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY } from '../../queries/GenericTag'
 import { m } from '../messages'
+import ca from 'date-fns/esm/locale/ca'
 
 const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   categories,
@@ -48,28 +49,26 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
       href: linkResolver('homepage', [], locale).href,
     },
     {
-      title: 'Styrkjatorg',
+      title: formatMessage(m.home.title),
       href: baseUrl,
     },
   ]
 
   return (
     <GrantWrapper
-      pageTitle={'Styrkjatorg'}
+      pageTitle={formatMessage(m.home.title)}
       pageDescription={formatMessage(m.home.description)}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
     >
       <Stack space={SLICE_SPACING}>
         <GrantSearchSection
-          title={'Styrkjatorg'}
-          description={
-            'Non scelerisque risus amet tincidunt. Sit sed quis cursus hendrerit nulla egestas interdum. In varius quisque.'
-          }
+          title={formatMessage(m.home.title)}
+          description={formatMessage(m.home.description)}
           searchPlaceholder={formatMessage(m.home.inputPlaceholder)}
           searchUrl={searchUrl}
           shortcutsTitle={formatMessage(m.home.mostVisited)}
           featuredImage={formatMessage(m.home.featuredImage)}
-          //TODO!!!
+          //TODO - do when the categories are ready
           quickLinks={[
             {
               title: 'Listamannalaun',
@@ -77,7 +76,7 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
             },
             {
               title: 'Barnamenningarsjóður',
-              href: searchUrl + '?category=nam-og-kennsla ',
+              href: searchUrl + '?category=nam-og-kennsla',
             },
             {
               title: 'Tónlistarsjóður',
@@ -128,9 +127,9 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
             </Box>
 
             <GridRow>
-              {categories?.map((c, idx) => (
+              {categories?.map((c => (
                 <GridColumn
-                  key={idx}
+                  key={c.slug}
                   span={['1/1', '1/2', '1/2', '1/3']}
                   paddingTop={3}
                   paddingBottom={3}

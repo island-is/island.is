@@ -51,11 +51,11 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
       href: linkResolver('homepage', [], locale).href,
     },
     {
-      title: 'Styrkjatorg',
+      title: formatMessage(m.home.title),
       href: baseUrl,
     },
     {
-      title: grant?.name ?? 'Styrkur',
+      title: grant?.name ?? formatMessage(m.home.grant),
       href: currentUrl,
       isTag: true,
     },
@@ -99,13 +99,13 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
             backgroundColor="blue"
             cta={{
               disabled: !grant.applicationUrl?.slug,
-              label: 'Sækja um',
+              label: formatMessage(m.single.whoCanApply),
               onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
               icon: 'open',
               iconType: 'outline',
             }}
           />
-          {grant.specialEmphasis.length ? (
+          {grant.specialEmphasis?.length ? (
             <>
               <Box className="rs_read">
                 {webRichText(
@@ -117,7 +117,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
               <Divider />
             </>
           ) : undefined}
-          {grant.whoCanApply.length ? (
+          {grant.whoCanApply?.length ? (
             <>
               <Box>
                 <Text variant="h3">{formatMessage(m.single.whoCanApply)}</Text>
@@ -132,7 +132,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
               <Divider />
             </>
           ) : undefined}
-          {grant.howToApply.length ? (
+          {grant.howToApply?.length ? (
             <Box>
               <Text variant="h3">{formatMessage(m.single.howToApply)}</Text>
               <Box className="rs_read">
@@ -144,7 +144,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
               </Box>
             </Box>
           ) : undefined}
-          {grant.applicationDeadline.length ? (
+          {grant.applicationDeadline?.length ? (
             <Box className="rs_read">
               {webRichText(
                 grant.applicationDeadline as SliceType[],
@@ -153,7 +153,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
               )}
             </Box>
           ) : undefined}
-          {grant.applicationHints.length ? (
+          {grant.applicationHints?.length ? (
             <Box className="rs_read">
               {webRichText(
                 grant.applicationHints as SliceType[],

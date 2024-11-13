@@ -94,6 +94,10 @@ export const m = {
       id: 'web.grants:single.whoCanApply',
       defaultMessage: 'Hverjir geta sótt um?',
     },
+    apply: {
+      id: 'web.grants:single.apply',
+      defaultMessage: 'Sækja um',
+    },
     howToApply: {
       id: 'web.grants:single.howToApply',
       defaultMessage: 'Hvernig er sótt um?',
@@ -103,6 +107,10 @@ export const m = {
     title: {
       id: 'web.grants:home.title',
       defaultMessage: 'Styrkjatorg',
+    },
+    grant: {
+      id: 'web.grants:home.gramt',
+      defaultMessage: 'Styrkur',
     },
     description: {
       id: 'web.grants:home.description',

@@ -289,7 +289,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                     }
 
                     return (
-                      <Box>
+                      <Box key={grant.id}>
                         {grant.applicationId && (
                           <PlazaCard
                             eyebrow={grant.fund?.title ?? grant.name ?? ''}
@@ -335,6 +335,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                                 : null,
                               {
                                 icon: 'time' as const,
+                                //todo: fix when the text is ready
                                 text: 'Frestur til 16.08.2024, kl. 15.00',
                               },
                               grant.categoryTag?.title
