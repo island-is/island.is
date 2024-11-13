@@ -1,6 +1,6 @@
 import { defineConfig, ReporterDescription } from '@playwright/test'
 
-interface GlobalConfigParams {
+interface PlaywrightConfigParams {
   webServerUrl: string
   port?: number
   command: string
@@ -27,7 +27,7 @@ export const createPlaywrightConfig = ({
   command,
   cwd = '../../../',
   timeoutMs = 5 * 60 * 1000,
-}: GlobalConfigParams) => {
+}: PlaywrightConfigParams) => {
   return defineConfig({
     testDir: 'e2e',
     fullyParallel: true,

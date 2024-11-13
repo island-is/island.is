@@ -50,6 +50,9 @@ export const findByTestId = (page: Page, name: string): Locator => {
  * @param page - The Playwright Page object representing the browser page.
  * @returns A promise that resolves when the click action is completed.
  */
-export const proceed = async (page: Page): Promise<void> => {
-  await page.locator('[data-testid="proceed"]').click()
+export const proceed = async (
+  page: Page,
+  testId = 'proceed',
+): Promise<void> => {
+  await findByTestId(page, testId).click()
 }
