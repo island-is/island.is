@@ -2,6 +2,7 @@ import { Locale } from '@island.is/shared/types'
 import { GenericLicenseError } from './dto/GenericLicenseError.dto'
 import { Payload } from './dto/Payload.dto'
 import { GenericUserLicense as GenericUserLicenseModel } from './dto/GenericUserLicense.dto'
+import { UserAgent } from '@island.is/nest/core'
 
 export interface GenericLicenseMappedPayloadResponse {
   licenseName: string
@@ -145,5 +146,6 @@ export interface GenericLicenseMapper {
   parsePayload: (
     payload: Array<unknown>,
     locale: Locale,
+    userAgent?: UserAgent,
   ) => Promise<Array<GenericLicenseMappedPayloadResponse>>
 }

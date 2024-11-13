@@ -21,6 +21,8 @@ import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
 import { expiryTag, formatDate } from '../utils'
 import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
+import { UserAgent } from '@island.is/nest/core'
+import { enableAppCompatibilityMode } from '../utils/appCompatibilityMode'
 
 @Injectable()
 export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
@@ -28,8 +30,14 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
   async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
+    userAgent?: UserAgent,
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
     if (!payload) return Promise.resolve([])
+
+    const enableAppCompatibility = enableAppCompatibilityMode(
+      userAgent?.app.version,
+      '1.4.7',
+    )
 
     const typedPayload = payload as Array<FirearmLicenseDto>
 
@@ -97,7 +105,7 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
                   formatMessage,
                 )
               : null,
-            properties
+            properties && enableAppCompatibility
               ? {
                   type: GenericLicenseDataFieldType.Group,
                   hideFromServicePortal: true,
