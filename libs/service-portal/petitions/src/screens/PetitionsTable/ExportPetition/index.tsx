@@ -127,7 +127,6 @@ const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
           },
           {
             title: formatMessage(m.asCsv),
-            onClick: () => exportCsv(),
             render: () =>
               loadingCsv ? (
                 <Box marginY={3} display="flex" justifyContent="center">
