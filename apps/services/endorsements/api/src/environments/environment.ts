@@ -20,7 +20,7 @@ const devConfig = {
     sender: 'devland.is',
     address: 'development@island.is',
   },
-  exportsBucketName: process.env.ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME,
+  exportsBucketName: 'island-is-dev-exports-endorsement-system'
 }
 
 const prodConfig = {
@@ -46,3 +46,5 @@ export default isProductionEnvironment ? prodConfig : devConfig
 
 // global settings for endorsementsystem
 export const ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS = ['generalPetition']
+
+

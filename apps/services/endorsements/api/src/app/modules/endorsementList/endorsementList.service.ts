@@ -255,6 +255,7 @@ export class EndorsementListService {
   }
 
   async findOpenListsTaggedGeneralPetition(query: any) {
+    console.log(environment)
     const dateOb = new Date()
     try {
       const where = {
@@ -785,12 +786,13 @@ export class EndorsementListService {
       })
       return { success: true }
     } catch (error) {
-      this.logger.error('Failed to send creation notification email', {
-        error: error.message,
-        listId: endorsementList.id,
-      })
-      return { success: false }
-    }
+    this.logger.error('Failed to send creation notification email', {
+      error: error.message,
+      listId: endorsementList.id
+    })
+    return { success: false }
+  }
+
   }
   async exportList(
     listId: string,
