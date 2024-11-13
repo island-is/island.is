@@ -129,7 +129,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         )}
       </Box>
       {displayAppealExpirationInfo && (
-        <Box>
+        <Box marginTop={1}>
           <Text as="span">
             {formatMessage(appealExpirationInfo.message, {
               appealExpirationDate: appealExpirationInfo.date,
