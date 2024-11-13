@@ -99,7 +99,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
             backgroundColor="blue"
             cta={{
               disabled: !grant.applicationUrl?.slug,
-              label: formatMessage(m.single.whoCanApply),
+              label: formatMessage(m.single.apply),
               onClick: () => router.push(grant.applicationUrl?.slug ?? ''),
               icon: 'open',
               iconType: 'outline',
