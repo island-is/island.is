@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  InternalServerErrorException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
@@ -192,12 +193,22 @@ export class EndorsementListService {
   }
 
   async lock(endorsementList: EndorsementList): Promise<EndorsementList> {
-    this.logger.info(`Locking endorsement list: ${endorsementList.id}`)
-    if (process.env.NODE_ENV === 'production') {
-      await this.emailLock(endorsementList)
+    try {
+      this.logger.info(`Locking endorsement list: ${endorsementList.id}`)
+      if (process.env.NODE_ENV === 'production') {
+        await this.emailLock(endorsementList)
+      }
+      return await endorsementList.update({ adminLock: true })
+    } catch (error) {
+      this.logger.error('Failed to lock endorsement list', {
+        error: error.message,
+        listId: endorsementList.id
+      })
+      throw new InternalServerErrorException(
+        `Failed to lock endorsement list: ${error.message}`
+      )
     }
-    return await endorsementList.update({ adminLock: true })
-  }
+}
 
   async unlock(endorsementList: EndorsementList): Promise<EndorsementList> {
     this.logger.info(`Unlocking endorsement list: ${endorsementList.id}`)
@@ -279,7 +290,7 @@ export class EndorsementListService {
     return result
   }
 
-  async getOwnerInfo(listId: string, owner?: string) {
+  async getOwnerInfo(listId: string, owner?: string): Promise<string> {
     this.logger.info(`Finding single endorsement lists by id "${listId}"`)
     if (!owner) {
       const endorsementList = await this.endorsementListModel.findOne({
@@ -297,17 +308,15 @@ export class EndorsementListService {
     try {
       const person = await this.nationalRegistryApiV3.getName(owner)
       return person?.fulltNafn ? person.fulltNafn : ''
-    } catch (e) {
-      if (e instanceof Error) {
-        this.logger.warn(
-          `Occured when fetching owner name from NationalRegistryApi ${e.message} \n${e.stack}`,
-        )
-        return ''
-      } else {
-        throw e
-      }
+    } catch (error) {
+      this.logger.error('Failed to fetch owner name from NationalRegistry', {
+        error: error.message,
+        listId,
+        owner
+      })
+      return ''
     }
-  }
+}
 
   async createDocumentBuffer(
     endorsementList: any,
@@ -592,10 +601,16 @@ export class EndorsementListService {
       })
       return { success: true }
     } catch (error) {
-      this.logger.error('Failed to send email', error)
-      return { success: false }
+      this.logger.error('Failed to send PDF email', {
+        error: error.message,
+        listId,
+        recipientEmail
+      })
+      throw new InternalServerErrorException(
+        `Failed to send PDF email: ${error.message}`
+      )
     }
-  }
+}
 
   getOwnerContact(obj: any, search: string): string {
     for (const [key, value] of Object.entries(obj)) {
@@ -668,10 +683,16 @@ export class EndorsementListService {
       })
       return { success: true }
     } catch (error) {
-      this.logger.error('Failed to send email', error)
-      return { success: false }
+      this.logger.error('Failed to send lock notification email', {
+        error: error.message,
+        listId: endorsementList.id
+      })
+      throw new InternalServerErrorException(
+        `Failed to send lock notification: ${error.message}`
+      )
     }
-  }
+}
+
 
   async emailCreated(
     endorsementList: EndorsementList,
@@ -778,48 +799,54 @@ export class EndorsementListService {
     listId: string,
     user: User,
     fileType: 'pdf' | 'csv',
-  ): Promise<EndorsementListExportUrlResponse> {
+): Promise<EndorsementListExportUrlResponse> {
     try {
-      this.logger.info(`Exporting list ${listId} as ${fileType}`, { listId })
-
-      // Validate file type
       if (!['pdf', 'csv'].includes(fileType)) {
         throw new BadRequestException(
-          'Invalid file type. Allowed values are "pdf" or "csv".',
+          `Invalid file type. Allowed values are "pdf" or "csv"`
         )
       }
 
-      // Fetch endorsement list
       const endorsementList = await this.fetchEndorsementList(listId, user)
       if (!endorsementList) {
         throw new NotFoundException(
-          `Endorsement list ${listId} not found or access denied.`,
+          `Endorsement list ${listId} not found or access denied`
         )
       }
-      console.log("**************************************")
-      // Create file buffer
-      const fileBuffer =
-        fileType === 'pdf'
-          ? await this.createPdfBuffer(endorsementList)
-          : this.createCsvBuffer(endorsementList)
 
-      // Upload to S3
+      const fileBuffer = fileType === 'pdf'
+        ? await this.createPdfBuffer(endorsementList)
+        : this.createCsvBuffer(endorsementList)
+
       const filename = `undirskriftalisti-${listId}-${new Date()
         .toISOString()
         .replace(/[:.]/g, '-')}.${fileType}`
+
       await this.uploadFileToS3(fileBuffer, filename, fileType)
 
-      // Generate presigned URL with 60 minutes expiration
       const url = await this.s3Service.getPresignedUrl({
         bucket: environment.exportsBucketName,
         key: filename,
       })
+
       return { url }
     } catch (error) {
-      this.logger.error(`Failed to export list ${listId}`, { error })
-      throw error
+      this.logger.error('Failed to export list', {
+        error: error.message,
+        listId,
+        fileType
+      })
+      
+      if (error instanceof BadRequestException || 
+          error instanceof NotFoundException) {
+        throw error // Re-throw validation errors
+      }
+      
+      throw new InternalServerErrorException(
+        `Failed to export list: ${error.message}`
+      )
     }
-  }
+}
 
   private async fetchEndorsementList(
     listId: string,
@@ -848,7 +875,7 @@ export class EndorsementListService {
 
   private async createPdfBuffer(
     endorsementList: EndorsementList,
-  ): Promise<Buffer> {
+): Promise<Buffer> {
     try {
       const ownerName = await this.getOwnerInfo(
         endorsementList.id,
@@ -860,53 +887,45 @@ export class EndorsementListService {
       )
 
       if (!Buffer.isBuffer(pdfBuffer)) {
-        throw new Error('Generated PDF is not a valid buffer');
+        throw new BadRequestException('Generated PDF is not a valid buffer')
       }
 
       return pdfBuffer
     } catch (error) {
-      this.logger.error(
-        `Failed to create PDF buffer for endorsement list ${endorsementList.id}`,
-        { error: error.message }
-      )
-
-      throw new Error(
-        `Error generating PDF for endorsement list ${endorsementList.id}: ${error.message}`
+      this.logger.error('Failed to create PDF buffer', {
+        error: error.message,
+        listId: endorsementList.id
+      })
+      throw new InternalServerErrorException(
+        `Failed to generate PDF: ${error.message}`
       )
     }
-  }
+}
 
   private async uploadFileToS3(
     fileBuffer: Buffer,
     filename: string,
     fileType: 'pdf' | 'csv',
-  ): Promise<void> {
-    console.log("bucket", environment.exportsBucketName)
+): Promise<void> {
     try {
       if (!environment.exportsBucketName) {
-        throw new Error('S3 bucket name is undefined');
+        throw new BadRequestException('S3 bucket name is undefined')
       }
 
       await this.s3Service.uploadFile(
         fileBuffer,
         { bucket: environment.exportsBucketName, key: filename },
-        {
-          ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
-        },
+        { ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv' },
       )
     } catch (error) {
-      // Log the full error details
-      this.logger.error(`Failed to upload file to S3`, {
-        error: {
-          message: error.message
-        },
+      this.logger.error('Failed to upload file to S3', {
+        error: error.message,
         filename,
         bucketName: environment.exportsBucketName
       })
-
-      throw new Error(
-        `Error uploading file to S3: ${error.message}. Bucket: ${environment.exportsBucketName}`
+      throw new InternalServerErrorException(
+        `Failed to upload file to S3: ${error.message}`
       )
     }
-  }
+}
 }
