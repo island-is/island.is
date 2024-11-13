@@ -1,6 +1,6 @@
 import { test, BrowserContext, expect } from '@playwright/test'
 
-import { mNotifications } from '@island.is/service-portal/information/messages'
+import { mNotifications } from '@island.is/portals/my-pages/information/messages'
 
 import { session } from '../../../../support/session'
 import { disableI18n } from '../../../../support/disablers'
