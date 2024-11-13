@@ -58,7 +58,7 @@ const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
       },
     },
     onCompleted: (data) => {
-      window.open(data.endorsementSystemExportList.url, '_blank')
+      window.location.href = data.endorsementSystemExportList.url
     },
   })
 
