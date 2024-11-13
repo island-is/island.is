@@ -2,6 +2,11 @@
   "name": "infra",
   "version": "1.0.0",
   "main": "index.js",
+  "engines": {
+    "npm": "please-use-yarn",
+    "node": "20.15.0",
+    "yarn": "4.5.1"
+  },
   "scripts": {
     "test": "jest",
     "charts": "node -r esbuild-register src/cli/generate-chart-values.ts",
@@ -36,6 +41,8 @@
     "yargs": "17.7.2"
   },
   "volta": {
-    "node": "18.12.1"
-  }
+    "node": "20.15.0",
+    "yarn": "4.5.1"
+  },
+  "packageManager": "yarn@4.5.1"
 }

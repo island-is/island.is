@@ -5,7 +5,7 @@
   "engines": {
     "npm": "please-use-yarn",
     "node": "20.15.0",
-    "yarn": "4.5"
+    "yarn": "4.5.1"
   },
   "repository": {
     "type": "git",
@@ -502,7 +502,7 @@
   },
   "volta": {
     "node": "20.15.0",
-    "yarn": "3.2.3"
+    "yarn": "4.5.1"
   },
   "packageManager": "yarn@4.5.1"
 }
