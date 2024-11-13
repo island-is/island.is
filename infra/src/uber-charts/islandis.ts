@@ -62,10 +62,10 @@ import {
 } from '../../../apps/services/sessions/infra/sessions'
 
 import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
+import { serviceSetup as unicornAppSetup } from '../../../apps/unicorn-app/infra/infra'
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
-import { serviceSetup as unicornAppSetup } from '../../../apps/unicorn-app/infra/infra'
 
 const endorsement = endorsementServiceSetup({})
 
@@ -130,8 +130,6 @@ const consultationPortal = consultationPortalSetup({ api })
 
 const xroadCollector = xroadCollectorSetup()
 
-const unicornApp = unicornAppSetup()
-
 const licenseApi = licenseApiSetup()
 
 const storybook = storybookSetup({})
@@ -142,8 +140,9 @@ const downloadService = downloadServiceSetup({
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
-const userNotificationCleanupWorkerService =
-  userNotificationCleanUpWorkerSetup()
+const userNotificationCleanupWorkerService = userNotificationCleanUpWorkerSetup()
+
+const unicornApp = unicornAppSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
 
@@ -185,6 +184,7 @@ export const Services: EnvironmentServices = {
     contentfulApps,
     contentfulEntryTagger,
     bffAdminPortalService,
+    unicornApp,
   ],
   staging: [
     appSystemApi,
@@ -219,6 +219,7 @@ export const Services: EnvironmentServices = {
     universityGatewayService,
     universityGatewayWorker,
     bffAdminPortalService,
+    unicornApp,
   ],
   dev: [
     appSystemApi,
