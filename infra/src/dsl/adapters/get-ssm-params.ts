@@ -1,7 +1,9 @@
 import { GetParametersCommand, SSMClient } from '@aws-sdk/client-ssm'
 import { logger } from '../../common'
 
-const client = new SSMClient({})
+const client = new SSMClient({
+  maxAttempts: 10,
+})
 export async function getSsmParams(
   ssmNames: string[],
 ): Promise<{ [name: string]: string }> {
