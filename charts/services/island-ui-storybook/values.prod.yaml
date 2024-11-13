@@ -1,21 +1,21 @@
 service:
-  name: island-ui-storybook
+  name: 'island-ui-storybook'
   enabled: true
   env:
-    LOG_LEVEL: info
-    NODE_OPTIONS: --max-old-space-size=230
-    SERVERSIDE_FEATURES_ON: driving-license-use-v1-endpoint-for-v2-comms
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=230'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - nginx-ingress-external
+    - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /readiness
+      path: '/readiness'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -26,17 +26,17 @@ service:
         max: 10
         min: 3
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
   ingress:
     primary-alb:
       annotations:
-        kubernetes.io/ingress.class: nginx-external-alb
-        nginx.ingress.kubernetes.io/service-upstream: "true"
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
-        - host: ui.devland.is
+        - host: 'ui.devland.is'
           paths:
-            - /
-  namespace: storybook
+            - '/'
+  namespace: 'storybook'
   podDisruptionBudget:
     maxUnavailable: 1
   pvcs: []
@@ -46,13 +46,13 @@ service:
     min: 3
   resources:
     limits:
-      cpu: 200m
-      memory: 256Mi
+      cpu: '200m'
+      memory: '256Mi'
     requests:
-      cpu: 10m
-      memory: 128Mi
+      cpu: '10m'
+      memory: '128Mi'
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

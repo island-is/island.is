@@ -1,27 +1,26 @@
 service:
-  name: services-documents
+  name: 'services-documents'
   enabled: true
   env:
-    DB_HOST: postgres-applications.internal
-    DB_NAME: services_documents
-    DB_REPLICAS_HOST: postgres-applications-reader.internal
-    DB_USER: services_documents
-    IDENTITY_SERVER_ISSUER_URL: https://identity-server.dev01.devland.is
-    LOG_LEVEL: info
-    NODE_OPTIONS: --max-old-space-size=230 -r dd-trace/init
-    SERVERSIDE_FEATURES_ON: ""
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_documents'
+    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
+    DB_USER: 'services_documents'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
   grantNamespaces:
-    - islandis
-    - application-system
+    - 'islandis'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: /liveness
+      path: '/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: /readiness
+      path: '/readiness'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -32,31 +31,30 @@ service:
         max: 3
         min: 1
   image:
-    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
   initContainer:
     containers:
       - args:
-          - sequelize-cli
-          - db:migrate
+          - 'sequelize-cli'
+          - 'db:migrate'
         command:
-          - npx
-        name: migrations
+          - 'npx'
+        name: 'migrations'
         resources:
           limits:
-            cpu: 200m
-            memory: 256Mi
+            cpu: '200m'
+            memory: '256Mi'
           requests:
-            cpu: 50m
-            memory: 128Mi
+            cpu: '50m'
+            memory: '128Mi'
     env:
-      DB_HOST: postgres-applications.internal
-      DB_NAME: services_documents
-      DB_REPLICAS_HOST: postgres-applications-reader.internal
-      DB_USER: services_documents
-      SERVERSIDE_FEATURES_ON: ""
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'services_documents'
+      DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
+      DB_USER: 'services_documents'
     secrets:
-      DB_PASS: /k8s/services-documents/DB_PASSWORD
-  namespace: services-documents
+      DB_PASS: '/k8s/services-documents/DB_PASSWORD'
+  namespace: 'services-documents'
   podDisruptionBudget:
     maxUnavailable: 1
   pvcs: []
@@ -66,14 +64,14 @@ service:
     min: 1
   resources:
     limits:
-      cpu: 200m
-      memory: 256Mi
+      cpu: '200m'
+      memory: '256Mi'
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
-    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
-    DB_PASS: /k8s/services-documents/DB_PASSWORD
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
