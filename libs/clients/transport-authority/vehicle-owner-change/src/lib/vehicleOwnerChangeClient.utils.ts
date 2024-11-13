@@ -8,7 +8,7 @@ export const getDateAtTimestamp = (oldDate: Date, timestamp: string): Date => {
 }
 
 export interface ErrorMessage {
-  errorNo: string
+  errorNo: string | undefined
   defaultMessage: string | null | undefined
 }
 
@@ -62,7 +62,7 @@ export const getCleanErrorMessagesFromTryCatch = (e: any): ErrorMessage[] => {
     }
 
     return {
-      errorNo: (item.warnSever || '_') + errorNo,
+      errorNo: errorNo ? (item.warnSever || '_') + errorNo : undefined,
       defaultMessage: item.errorMess,
     }
   })

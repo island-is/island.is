@@ -38,21 +38,41 @@ export class VehiclePlateOrderingClient {
     }))
   }
 
-  public async validatePlateOrder(
+  public async validateVehicleForPlateOrder(
     auth: User,
     permno: string,
     frontType: string,
     rearType: string,
   ): Promise<PlateOrderValidation> {
+    // Dummy values
+    // Note: option "Pick up at Samgöngustofa" which is always valid
+    const deliveryStationType = SGS_DELIVERY_STATION_TYPE
+    const deliveryStationCode = SGS_DELIVERY_STATION_CODE
+    const expressOrder = false
+
+    return await this.validateAllForPlateOrder(
+      auth,
+      permno,
+      frontType,
+      rearType,
+      deliveryStationType,
+      deliveryStationCode,
+      expressOrder,
+    )
+  }
+
+  public async validateAllForPlateOrder(
+    auth: User,
+    permno: string,
+    frontType: string,
+    rearType: string,
+    deliveryStationType: string,
+    deliveryStationCode: string,
+    expressOrder: boolean,
+  ): Promise<PlateOrderValidation> {
     let errorMessages: ErrorMessage[] | undefined
 
     try {
-      // Dummy values
-      // Note: option "Pick up at Samgöngustofa" which is always valid
-      const deliveryStationType = SGS_DELIVERY_STATION_TYPE
-      const deliveryStationCode = SGS_DELIVERY_STATION_CODE
-      const expressOrder = false
-
       await this.plateOrderingApiWithAuth(auth).orderplatesPost({
         apiVersion: '1.0',
         apiVersion2: '1.0',
@@ -81,19 +101,30 @@ export class VehiclePlateOrderingClient {
   public async savePlateOrders(
     auth: User,
     plateOrder: PlateOrder,
-  ): Promise<void> {
-    await this.plateOrderingApiWithAuth(auth).orderplatesPost({
-      apiVersion: '1.0',
-      apiVersion2: '1.0',
-      postOrderPlatesModel: {
-        permno: plateOrder.permno,
-        frontType: plateOrder.frontType,
-        rearType: plateOrder.rearType || null,
-        stationToDeliverTo: plateOrder.deliveryStationCode || '',
-        stationType: plateOrder.deliveryStationType || '',
-        expressOrder: plateOrder.expressOrder,
-        checkOnly: false,
-      },
-    })
+  ): Promise<PlateOrderValidation> {
+    let errorMessages: ErrorMessage[] | undefined
+
+    try {
+      await this.plateOrderingApiWithAuth(auth).orderplatesPost({
+        apiVersion: '1.0',
+        apiVersion2: '1.0',
+        postOrderPlatesModel: {
+          permno: plateOrder.permno,
+          frontType: plateOrder.frontType,
+          rearType: plateOrder.rearType || null,
+          stationToDeliverTo: plateOrder.deliveryStationCode || '',
+          stationType: plateOrder.deliveryStationType || '',
+          expressOrder: plateOrder.expressOrder,
+          checkOnly: false,
+        },
+      })
+    } catch (e) {
+      errorMessages = getCleanErrorMessagesFromTryCatch(e)
+    }
+
+    return {
+      hasError: !!errorMessages?.length,
+      errorMessages: errorMessages,
+    }
   }
 }

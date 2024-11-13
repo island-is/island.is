@@ -3,7 +3,10 @@ import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
-import { LicensePlateRenewalAnswers } from '@island.is/application/templates/transport-authority/license-plate-renewal'
+import {
+  applicationCheck,
+  LicensePlateRenewalAnswers,
+} from '@island.is/application/templates/transport-authority/license-plate-renewal'
 import {
   PlateOwnership,
   PlateOwnershipValidation,
@@ -102,7 +105,22 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
     const regno = answers?.pickPlate?.regno
 
     // Submit the application
-    await this.vehiclePlateRenewalClient.renewPlateOwnership(auth, regno)
+    const submitResult =
+      await this.vehiclePlateRenewalClient.renewPlateOwnership(auth, regno)
+
+    if (
+      submitResult.hasError &&
+      submitResult.errorMessages &&
+      submitResult.errorMessages.length > 0
+    ) {
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.validation.alertTitle,
+          summary: submitResult.errorMessages,
+        },
+        400,
+      )
+    }
   }
 
   private async handlePayment({

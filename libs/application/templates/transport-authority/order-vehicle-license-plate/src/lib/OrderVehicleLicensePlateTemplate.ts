@@ -85,6 +85,9 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: EphemeralStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

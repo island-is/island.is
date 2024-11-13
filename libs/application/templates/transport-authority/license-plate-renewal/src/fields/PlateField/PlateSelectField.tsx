@@ -134,7 +134,6 @@ export const PlateSelectField: FC<
                     },
                   ),
                   variant: canRenew ? 'mint' : 'red',
-                  // TODO disabled: true,
                 }}
               />
             )}

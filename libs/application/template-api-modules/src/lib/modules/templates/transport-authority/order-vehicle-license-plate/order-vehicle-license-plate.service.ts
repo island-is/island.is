@@ -3,7 +3,10 @@ import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
-import { OrderVehicleLicensePlateAnswers } from '@island.is/application/templates/transport-authority/order-vehicle-license-plate'
+import {
+  applicationCheck,
+  OrderVehicleLicensePlateAnswers,
+} from '@island.is/application/templates/transport-authority/order-vehicle-license-plate'
 import {
   PlateOrderValidation,
   SGS_DELIVERY_STATION_CODE,
@@ -133,12 +136,13 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
       })
 
       // Get plate order validation
-      validation = await this.vehiclePlateOrderingClient.validatePlateOrder(
-        auth,
-        vehicle.permno || '',
-        vehicleInfo?.platetypefront || '',
-        vehicleInfo?.platetyperear || '',
-      )
+      validation =
+        await this.vehiclePlateOrderingClient.validateVehicleForPlateOrder(
+          auth,
+          vehicle.permno || '',
+          vehicleInfo?.platetypefront || '',
+          vehicleInfo?.platetyperear || '',
+        )
     }
 
     return {
@@ -154,6 +158,58 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
 
   async getPlateTypeList() {
     return await this.vehicleCodetablesClient.getPlateTypes()
+  }
+
+  async validateApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const answers = application.answers as OrderVehicleLicensePlateAnswers
+
+    const includeRushFee =
+      answers?.plateDelivery?.includeRushFee?.includes(YES) || false
+
+    // Check if used selected delivery method: Pick up at delivery station
+    const deliveryStationTypeCode =
+      answers?.plateDelivery?.deliveryStationTypeCode
+    let deliveryStationType: string
+    let deliveryStationCode: string
+    if (
+      answers.plateDelivery?.deliveryMethodIsDeliveryStation === YES &&
+      deliveryStationTypeCode
+    ) {
+      // Split up code+type (was merged when we fetched that data)
+      deliveryStationType = deliveryStationTypeCode.split('_')[0]
+      deliveryStationCode = deliveryStationTypeCode.split('_')[1]
+    } else {
+      // Otherwise we will default to option "Pick up at Samgöngustofa"
+      deliveryStationType = SGS_DELIVERY_STATION_TYPE
+      deliveryStationCode = SGS_DELIVERY_STATION_CODE
+    }
+
+    const result =
+      await this.vehiclePlateOrderingClient.validateAllForPlateOrder(
+        auth,
+        answers?.pickVehicle?.plate,
+        answers?.plateSize?.frontPlateSize?.[0],
+        answers?.plateSize?.rearPlateSize?.[0],
+        deliveryStationType,
+        deliveryStationCode,
+        includeRushFee,
+      )
+
+    // If we get any error messages, we will just throw an error with a default title
+    // We will fetch these error messages again through graphql in the template, to be able
+    // to translate the error message
+    if (result.hasError && result.errorMessages?.length) {
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.validation.alertTitle,
+          summary: applicationCheck.validation.alertTitle,
+        },
+        400,
+      )
+    }
   }
 
   async submitApplication({
@@ -201,13 +257,30 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
       deliveryStationCode = SGS_DELIVERY_STATION_CODE
     }
 
-    await this.vehiclePlateOrderingClient.savePlateOrders(auth, {
-      permno: answers?.pickVehicle?.plate,
-      frontType: answers?.plateSize?.frontPlateSize?.[0],
-      rearType: answers?.plateSize?.rearPlateSize?.[0],
-      deliveryStationType: deliveryStationType,
-      deliveryStationCode: deliveryStationCode,
-      expressOrder: includeRushFee,
-    })
+    const submitResult = await this.vehiclePlateOrderingClient.savePlateOrders(
+      auth,
+      {
+        permno: answers?.pickVehicle?.plate,
+        frontType: answers?.plateSize?.frontPlateSize?.[0],
+        rearType: answers?.plateSize?.rearPlateSize?.[0],
+        deliveryStationType: deliveryStationType,
+        deliveryStationCode: deliveryStationCode,
+        expressOrder: includeRushFee,
+      },
+    )
+
+    if (
+      submitResult.hasError &&
+      submitResult.errorMessages &&
+      submitResult.errorMessages.length > 0
+    ) {
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.validation.alertTitle,
+          summary: submitResult.errorMessages,
+        },
+        400,
+      )
+    }
   }
 }

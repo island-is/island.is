@@ -71,16 +71,30 @@ export class VehiclePlateRenewalClient {
     }
   }
 
-  public async renewPlateOwnership(auth: User, regno: string): Promise<void> {
-    await this.plateOwnershipApiWithAuth(auth).renewplateownershipPost({
-      apiVersion: '1.0',
-      apiVersion2: '1.0',
-      postRenewPlateOwnershipModel: {
-        regno: regno,
-        persidno: auth.nationalId,
-        check: false,
-      },
-    })
+  public async renewPlateOwnership(
+    auth: User,
+    regno: string,
+  ): Promise<PlateOwnershipValidation> {
+    let errorMessages: ErrorMessage[] | undefined
+
+    try {
+      await this.plateOwnershipApiWithAuth(auth).renewplateownershipPost({
+        apiVersion: '1.0',
+        apiVersion2: '1.0',
+        postRenewPlateOwnershipModel: {
+          regno: regno,
+          persidno: auth.nationalId,
+          check: false,
+        },
+      })
+    } catch (e) {
+      errorMessages = getCleanErrorMessagesFromTryCatch(e)
+    }
+
+    return {
+      hasError: !!errorMessages?.length,
+      errorMessages: errorMessages,
+    }
   }
 
   public async getPlateAvailability(regno: string) {
