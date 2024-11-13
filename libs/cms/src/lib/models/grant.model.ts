@@ -108,8 +108,8 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
   applicationHints: fields.grantApplicationHints
     ? mapDocument(fields.grantApplicationHints, sys.id + ':application-hints')
     : [],
-  dateFrom: fields.grantDateFrom ?? '',
-  dateTo: fields.grantDateTo ?? '',
+  dateFrom: fields.grantDateFrom,
+  dateTo: fields.grantDateTo,
   isOpen: fields.grantIsOpen ?? undefined,
   statusText: fields.grantStatus ?? 'Óvirkur sjóður',
   status:
