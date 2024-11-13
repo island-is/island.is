@@ -20,82 +20,49 @@ export type HeaderWithImageProps = {
 }
 
 export const HeaderWithImage = (props: HeaderWithImageProps) => {
-  if (props.imageLayout !== 'left') {
+  const renderImage = () => {
+    if (!props.featuredImage) return null
+
     return (
-      <GridContainer>
-        <GridRow>
-          <GridColumn
-            offset={['0', '0', '0', '0', '1/12']}
-            span={['1/1', '1/1', '1/1', '9/12', '7/12']}
-            paddingTop={[0, 0, 0, 8]}
-            paddingBottom={2}
-          >
-            {props.breadcrumbs}
-
-            <Text as="h1" variant="h1" marginTop={2} marginBottom={2}>
-              {props.title}
-            </Text>
-
-            {props.description && (
-              <Text variant="default">{props.description}</Text>
-            )}
-
-            {props.children}
-          </GridColumn>
-          <GridColumn span="3/12" hiddenBelow="lg" paddingTop={[0, 0, 0, 2]}>
-            <Box
-              display="flex"
-              height="full"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <img
-                className={styles.introImage}
-                src={props.featuredImage}
-                alt="todo"
-              />
-            </Box>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+      <GridColumn span="3/12" hiddenBelow="lg" paddingTop={[0, 0, 0, 2]}>
+        <Box
+          display="flex"
+          height="full"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <img
+            className={styles.introImage}
+            src={props.featuredImage}
+            alt={'Featured header'}
+          />
+        </Box>
+      </GridColumn>
     )
   }
+
+  const renderContent = () => (
+    <GridColumn
+      offset={['0', '0', '0', '0', '1/12']}
+      span={['1/1', '1/1', '1/1', '9/12', '7/12']}
+      paddingTop={[0, 0, 0, 8]}
+      paddingBottom={2}
+    >
+      {props.breadcrumbs}
+      <Text as="h1" variant="h1" marginTop={2} marginBottom={2}>
+        {props.title}
+      </Text>
+      {props.description && <Text variant="default">{props.description}</Text>}
+      {props.children}
+    </GridColumn>
+  )
 
   return (
     <GridContainer>
       <GridRow>
-        <GridColumn span="3/12" hiddenBelow="lg" paddingTop={[0, 0, 0, 2]}>
-          <Box
-            display="flex"
-            height="full"
-            justifyContent="center"
-            alignItems="center"
-          >
-            <img
-              className={styles.introImage}
-              src={props.featuredImage}
-              alt="todo"
-            />
-          </Box>
-        </GridColumn>
-        <GridColumn
-          offset={['0', '0', '0', '0', '1/12']}
-          span={['1/1', '1/1', '1/1', '9/12', '7/12']}
-          paddingTop={[0, 0, 0, 8]}
-          paddingBottom={2}
-        >
-          {props.breadcrumbs}
-
-          <Text as="h1" variant="h1" marginTop={2} marginBottom={2}>
-            {props.title}
-          </Text>
-
-          {props.description && (
-            <Text variant="default">{props.description}</Text>
-          )}
-
-          {props.children}
-        </GridColumn>
+        {props.imageLayout === 'left' && renderImage()}
+        {renderContent()}
+        {props.imageLayout === 'right' && renderImage()}
       </GridRow>
     </GridContainer>
   )
