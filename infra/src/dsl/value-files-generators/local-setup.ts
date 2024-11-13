@@ -94,8 +94,8 @@ export const getLocalrunValueFile = async (
           : []),
         `cd "${rootDir}"`, // Change directory to the root directory
         `. ./.env.${serviceNXName}`, // Source the environment variables for the service
-        `echo "Preparing dev-services for ${name}`, // Log preparation message
-        `if yarn nx show projects --with-target dev-services | grep -q ${serviceNXName}; then yarn nx dev-services ${serviceNXName} || exit $?; fi`, // Check and set up dev-services if needed
+        `echo "Preparing dev-services for ${name}"`, // Log preparation message
+        `if yarn nx show projects --with-target dev-services | grep -q '^${serviceNXName}$'; then yarn nx dev-services ${serviceNXName} || return $?; fi`, // Check and set up dev-services if needed
         `echo "Starting ${name} in $PWD"`,
         `yarn nx serve ${serviceNXName}`, // Log start message and start the service
       ],
