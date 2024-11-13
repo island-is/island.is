@@ -40,13 +40,6 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
           }
 
           const content = [
-            mapped?.whatIsGranted
-              ? extractStringsFromObject(
-                  mapped?.whatIsGranted?.map(
-                    pruneNonSearchableSliceUnionFields,
-                  ),
-                )
-              : undefined,
             mapped.specialEmphasis
               ? extractStringsFromObject(
                   mapped?.specialEmphasis?.map(
@@ -67,6 +60,13 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
             mapped.applicationDeadline
               ? extractStringsFromObject(
                   mapped?.applicationDeadline?.map(
+                    pruneNonSearchableSliceUnionFields,
+                  ),
+                )
+              : undefined,
+            mapped?.applicationHints
+              ? extractStringsFromObject(
+                  mapped?.applicationHints?.map(
                     pruneNonSearchableSliceUnionFields,
                   ),
                 )
