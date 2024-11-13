@@ -255,7 +255,6 @@ export class EndorsementListService {
   }
 
   async findOpenListsTaggedGeneralPetition(query: any) {
-    console.log(environment)
     const dateOb = new Date()
     try {
       const where = {
