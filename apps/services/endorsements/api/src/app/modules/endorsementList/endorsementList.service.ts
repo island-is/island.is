@@ -359,7 +359,7 @@ export class EndorsementListService {
       .text('Upplýsingar um undirskriftalista', 60, currentYPosition, {
         align: 'left',
       })
-    currentYPosition = doc.y + 30
+    currentYPosition = doc.y + 20
 
     doc
       .font('Bold')
@@ -524,7 +524,7 @@ export class EndorsementListService {
     })
 
     // Add footer image at the bottom of the page
-    const footerY = doc.page.height - 65
+    const footerY = doc.page.height - 60
     doc.image(footerImagePath, 60, footerY, { width: 120 })
 
     doc.end()
