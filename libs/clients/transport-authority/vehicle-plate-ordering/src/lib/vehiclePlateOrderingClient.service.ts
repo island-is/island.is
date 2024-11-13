@@ -78,10 +78,10 @@ export class VehiclePlateOrderingClient {
         apiVersion2: '1.0',
         postOrderPlatesModel: {
           permno: permno,
-          frontType: frontType,
-          rearType: rearType,
-          stationToDeliverTo: deliveryStationCode,
-          stationType: deliveryStationType,
+          frontType: frontType || null,
+          rearType: rearType || null,
+          stationToDeliverTo: deliveryStationCode || '',
+          stationType: deliveryStationType || '',
           expressOrder: expressOrder,
           checkOnly: true, // to make sure we are only validating
         },
@@ -110,7 +110,7 @@ export class VehiclePlateOrderingClient {
         apiVersion2: '1.0',
         postOrderPlatesModel: {
           permno: plateOrder.permno,
-          frontType: plateOrder.frontType,
+          frontType: plateOrder.frontType || null,
           rearType: plateOrder.rearType || null,
           stationToDeliverTo: plateOrder.deliveryStationCode || '',
           stationType: plateOrder.deliveryStationType || '',
