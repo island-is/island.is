@@ -44,7 +44,14 @@ export const GrantsSearchResultsFilter = ({
       <Box marginBottom={3}>
         <Text fontWeight="semiBold">{formatMessage(m.search.search)}</Text>
       </Box>
-      <Box component="form" borderRadius="large" action={url}>
+      <Box
+        component="form"
+        borderRadius="large"
+        action={url}
+        onSubmit={(e) => {
+          e.preventDefault()
+        }}
+      >
         <Box marginBottom={[1, 1, 2]}>
           <Input
             name="query"
@@ -62,7 +69,7 @@ export const GrantsSearchResultsFilter = ({
             onFilterClear={onReset}
           >
             <FilterMultiChoice
-              labelClear={'Hreinsa flokk'}
+              labelClear={formatMessage(m.search.clearFilterCategory)}
               onChange={({ categoryId, selected }) => {
                 onSearchUpdate(
                   categoryId as keyof SearchState,
@@ -89,10 +96,6 @@ export const GrantsSearchResultsFilter = ({
                     {
                       value: 'closed',
                       label: 'Lokað fyrir umsóknir',
-                    },
-                    {
-                      value: 'inactive',
-                      label: 'Óvirkur sjóður',
                     },
                   ],
                 },

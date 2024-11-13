@@ -20,6 +20,10 @@ export const m = {
       id: 'web.grants:search.clearFilters',
       defaultMessage: 'Hreinsa allar síur',
     },
+    clearFilterCategory: {
+      id: 'web.grants:search.clearFilterCategory',
+      defaultMessage: 'Hreinsa flokk',
+    },
     applicationStatus: {
       id: 'web.grants:search.applicationStatus',
       defaultMessage: 'Staða umsóknar',
@@ -61,6 +65,10 @@ export const m = {
     provider: {
       id: 'web.grants:single.provider',
       defaultMessage: 'Þjónustuaðili',
+    },
+    unknownInstitution: {
+      id: 'web.grants:single.unknownInstitution',
+      defaultMessage: 'Óþekkt stofnun',
     },
     type: {
       id: 'web.grants:single.type',

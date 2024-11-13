@@ -84,12 +84,16 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
   const filesPanelData = useMemo(
     () =>
       grant.files
-        ?.map((f) => {
+        ?.map((f, index) => {
           if (!f.url) {
             return null
           }
           return (
-            <LinkV2 href={f.url} underlineVisibility="hover">
+            <LinkV2
+              key={`${f.url}-${index}`}
+              href={f.url}
+              underlineVisibility="hover"
+            >
               <Button icon="download" iconType="outline" variant="text">
                 {f.title}
               </Button>
@@ -104,7 +108,10 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
     <Stack space={3}>
       <InstitutionPanel
         institutionTitle={formatMessage(m.single.provider)}
-        institution={grant.fund?.parentOrganization.title ?? 'Óþekkt stofnun'}
+        institution={
+          grant.fund?.parentOrganization.title ??
+          formatMessage(m.single.unknownInstitution)
+        }
         img={grant.fund?.parentOrganization.logo?.url}
         locale={locale}
       />

@@ -92,8 +92,13 @@ export const PlazaCard = ({
     return (
       <Box marginTop={2}>
         <Stack space={1}>
-          {detailLines?.map((d) => (
-            <Box display="flex" flexDirection={'row'} alignItems="center">
+          {detailLines?.map((d, index) => (
+            <Box
+              key={index}
+              display="flex"
+              flexDirection={'row'}
+              alignItems="center"
+            >
               <Icon
                 icon={d.icon}
                 size="small"

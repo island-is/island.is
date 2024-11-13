@@ -612,8 +612,9 @@ export class CmsContentfulService {
       .getLocalizedEntries<types.IGrantFields>(lang, params)
       .catch(errorHandler('getGrant'))
 
-    return (result.items as types.IGrant[]).map(mapGrant)[0]
+    return (result.items as types.IGrant[]).map(mapGrant)[0] ?? null
   }
+
   async getSingleEvent(lang: string, slug: string) {
     const params = {
       ['content_type']: 'event',
