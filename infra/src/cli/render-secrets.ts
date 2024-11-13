@@ -15,7 +15,9 @@ const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
 }
 
 export const renderSecretsCommand = async (service: string) => {
-  return renderSecrets(service).catch((error) => {
+  try {
+    return await renderSecrets(service)
+  } catch (error: any) {
     if (error.name === 'CredentialsProviderError') {
       logger.error(
         '\x1b[33mCould not load AWS credentials from any providers. Did you forget to configure environment variables, aws profile or run `aws sso login`?\x1b[0m',
@@ -23,17 +25,16 @@ export const renderSecretsCommand = async (service: string) => {
     } else {
       logger.error(error)
     }
-    process.exit(1)
-  })
+    throw error
+  }
 }
 
 export const renderSecrets = async (service: string) => {
   const services = await Promise.all(
     Object.values(Charts).map(
       async (chart) =>
-        (
-          await renderHelmServices(Envs.dev01, chart.dev, chart.dev, 'no-mocks')
-        ).services,
+        (await renderHelmServices(Envs.dev01, chart.dev, chart.dev, 'no-mocks'))
+          .services,
     ),
   )
 
