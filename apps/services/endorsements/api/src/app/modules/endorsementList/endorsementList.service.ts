@@ -311,8 +311,7 @@ export class EndorsementListService {
     } catch (error) {
       this.logger.error('Failed to fetch owner name from NationalRegistry', {
         error: error.message,
-        listId,
-        owner
+        listId
       })
       return ''
     }
@@ -887,7 +886,7 @@ export class EndorsementListService {
       )
 
       if (!Buffer.isBuffer(pdfBuffer)) {
-        throw new BadRequestException('Generated PDF is not a valid buffer')
+        throw new InternalServerErrorException('Generated PDF is not a valid buffer')
       }
 
       return pdfBuffer
@@ -909,7 +908,7 @@ export class EndorsementListService {
 ): Promise<void> {
     try {
       if (!environment.exportsBucketName) {
-        throw new BadRequestException('S3 bucket name is undefined')
+        throw new InternalServerErrorException('S3 bucket name is undefined')
       }
 
       await this.s3Service.uploadFile(
