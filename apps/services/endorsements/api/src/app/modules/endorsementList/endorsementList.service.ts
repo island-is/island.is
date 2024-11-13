@@ -605,9 +605,7 @@ export class EndorsementListService {
         listId,
         recipientEmail
       })
-      throw new InternalServerErrorException(
-        `Failed to send PDF email: ${error.message}`
-      )
+      return { success: false }
     }
 }
 
