@@ -38851,7 +38851,7 @@ __metadata:
     juice: 8.0.0
     jwks-rsa: 3.0.1
     jwt-decode: 4.0.0
-    kennitala: 2.0.0-beta.2
+    kennitala: 2.0.2
     keyv: 4.5.2
     libphonenumber-js: 1.7.53
     license-checker: 25.0.1
@@ -40911,10 +40911,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kennitala@npm:2.0.0-beta.2":
-  version: 2.0.0-beta.2
-  resolution: "kennitala@npm:2.0.0-beta.2"
-  checksum: 0d0eb21bf78ede932e7bdf60f3b3df44de4e6f1162a69c22c2391660f8531e58b8137996eb7035387856c8733ff6451503902cabc69ccf9475eac4d574c504c7
+"kennitala@npm:2.0.2":
+  version: 2.0.2
+  resolution: "kennitala@npm:2.0.2"
+  checksum: eebc330a574926efbad641b3dd9f98957048c6c4e9b5b02ebeb54538042c13098c63ffae595cee6dc22bbca7e4e5b1a931005ef8ac7982ebd656fd6f1ebfd659
   languageName: node
   linkType: hard
 
