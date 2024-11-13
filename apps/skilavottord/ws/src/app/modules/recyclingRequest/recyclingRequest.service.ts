@@ -1,4 +1,9 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  forwardRef,
+} from '@nestjs/common'
 import { HttpService } from '@nestjs/axios'
 import { InjectModel } from '@nestjs/sequelize'
 import format from 'date-fns/format'
@@ -159,8 +164,12 @@ export class RecyclingRequestService {
           )
         }
       } else {
-        throw new Error(
-          `Could not find any requestType for vehicle's number: ${loggedPermno} in database`,
+        this.logger.warn(
+          `car-recycling: Could not find any requestType for vehicle's number: ${loggedPermno} in database from partner ${user.partnerId}`,
+        )
+        throw new NotFoundException(
+          `Could not find any requestType for vehicle's number: ${loggedPermno} in database from partner ${user.partnerId}`,
+          'NOT_FOUND',
         )
       }
 
@@ -173,6 +182,10 @@ export class RecyclingRequestService {
       }
       return res
     } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw err
+      }
+
       throw new Error(
         `Failed on getVehicleInfoToDeregistered request from partner ${user.partnerId} with error: ${err}`,
       )
