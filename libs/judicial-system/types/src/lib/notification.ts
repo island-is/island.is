@@ -6,8 +6,7 @@ export enum CaseNotificationType {
   RULING = 'RULING',
   MODIFIED = 'MODIFIED',
   REVOKED = 'REVOKED',
-  DEFENDER_ASSIGNED = 'DEFENDER_ASSIGNED', // Depricated and will be removed after db migration
-  ADVOCATE_ASSIGNED = 'ADVOCATE_ASSIGNED',
+  ADVOCATE_ASSIGNED = 'ADVOCATE_ASSIGNED', // Will be removed
   DEFENDANTS_NOT_UPDATED_AT_COURT = 'DEFENDANTS_NOT_UPDATED_AT_COURT',
   APPEAL_TO_COURT_OF_APPEALS = 'APPEAL_TO_COURT_OF_APPEALS',
   APPEAL_RECEIVED_BY_COURT = 'APPEAL_RECEIVED_BY_COURT',
@@ -27,6 +26,10 @@ export enum SubpoenaNotificationType {
   DEFENDANT_SELECTED_DEFENDER = 'DEFENDANT_SELECTED_DEFENDER',
 }
 
+export enum DefendantNotificationType {
+  DEFENDER_ASSIGNED = 'DEFENDER_ASSIGNED',
+}
+
 export enum NotificationType {
   HEADS_UP = CaseNotificationType.HEADS_UP,
   READY_FOR_COURT = CaseNotificationType.READY_FOR_COURT,
@@ -35,7 +38,7 @@ export enum NotificationType {
   RULING = CaseNotificationType.RULING,
   MODIFIED = CaseNotificationType.MODIFIED,
   REVOKED = CaseNotificationType.REVOKED,
-  DEFENDER_ASSIGNED = CaseNotificationType.DEFENDER_ASSIGNED,
+  DEFENDER_ASSIGNED = DefendantNotificationType.DEFENDER_ASSIGNED,
   ADVOCATE_ASSIGNED = CaseNotificationType.ADVOCATE_ASSIGNED,
   DEFENDANTS_NOT_UPDATED_AT_COURT = CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
   APPEAL_TO_COURT_OF_APPEALS = CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,

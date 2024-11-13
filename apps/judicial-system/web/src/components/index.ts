@@ -63,6 +63,7 @@ export { default as RulingAccordionItem } from './AccordionItems/RulingAccordion
 export { default as RulingInput } from './RulingInput/RulingInput'
 export { default as SectionHeading } from './SectionHeading/SectionHeading'
 export { default as ServiceAnnouncement } from './ServiceAnnouncement/ServiceAnnouncement'
+export { strings as serviceAnnouncementStrings } from './ServiceAnnouncement/ServiceAnnouncement.strings'
 export { default as ServiceInterruptionBanner } from './ServiceInterruptionBanner/ServiceInterruptionBanner'
 export { default as SignedDocument } from './SignedDocument/SignedDocument'
 export { default as TagAppealState } from './TagAppealState/TagAppealState'

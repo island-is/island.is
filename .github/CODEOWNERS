@@ -386,10 +386,10 @@ codemagic.yaml                                                                  
 /charts/                                                                                                 @island-is/devops
 .dockerignore                                                                                            @island-is/devops
 
-
-# System tests
-# Catch-all
+# QA
 /apps/system-e2e/                                                                                        @island-is/qa
+/libs/testing/e2e                                                                                        @island-is/qa        
+
 # Islandis
 /apps/system-e2e/src/tests/islandis/admin-portal/                                                        @island-is/aranja
 /apps/system-e2e/src/tests/islandis/application-system/                                                  @island-is/norda-applications
