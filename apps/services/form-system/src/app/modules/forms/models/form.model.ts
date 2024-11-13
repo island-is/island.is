@@ -99,12 +99,6 @@ export class Form extends Model<Form> {
   })
   dependencies?: Dependency[]
 
-  // @Column({
-  //   type: DataType.JSON,
-  //   allowNull: true,
-  // })
-  // hidden?: Record<string, string[]>
-
   @HasMany(() => Section)
   sections!: Section[]
 

@@ -37,6 +37,7 @@ export class ApplicationsService {
 
     const newApplication: Application = await this.applicationModel.create({
       formId: form.id,
+      dependencies: form.dependencies,
     } as Application)
 
     form.sections.map((section) => {
@@ -162,7 +163,7 @@ export class ApplicationsService {
       ],
     })
 
-    console.log(JSON.stringify(form, null, 2))
+    // console.log(JSON.stringify(form, null, 2))
 
     if (!form) {
       throw new NotFoundException(`Form with id '${formId}' not found`)

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, PreconditionFailedException } from '@nestjs/common'
 import { Form } from '../../forms/models/form.model'
 import { ApplicationDto } from './dto/application.dto'
 import { Application } from './application.model'
@@ -8,6 +8,7 @@ import { OrganizationDto } from '../../organizations/models/dto/organization.dto
 import { ScreenDto } from '../../screens/models/dto/screen.dto'
 import { SectionDto } from '../../sections/models/dto/section.dto'
 import { ValueDto } from '../../values/models/dto/value.dto'
+import { Dependency } from '../../../dataTypes/dependency.model'
 
 @Injectable()
 export class ApplicationMapper {
@@ -18,6 +19,7 @@ export class ApplicationMapper {
   ): ApplicationDto {
     const applicationDto: ApplicationDto = {
       id: application.id,
+      dependencies: application.dependencies,
       formId: form.id,
       slug: form.slug,
       formName: form.name,
@@ -32,6 +34,7 @@ export class ApplicationMapper {
         sectionType: section.sectionType,
         displayOrder: section.displayOrder,
         waitingText: section.waitingText,
+        isHidden: this.isHidden(section.id, application.dependencies),
         screens: section.screens?.map((screen) => {
           return {
             id: screen.id,
@@ -40,6 +43,7 @@ export class ApplicationMapper {
             displayOrder: screen.displayOrder,
             multiset: screen.multiset,
             callRuleset: screen.callRuleset,
+            isHidden: this.isHidden(screen.id, application.dependencies),
             fields: screen.fields?.map((field) => {
               return {
                 id: field.id,
@@ -50,6 +54,7 @@ export class ApplicationMapper {
                 isPartOfMultiset: field.isPartOfMultiset,
                 fieldType: field.fieldType,
                 fieldSettings: field.fieldSettings,
+                isHidden: this.isHidden(field.id, application.dependencies),
                 values: field.values?.map((value) => {
                   return {
                     id: value.id,
@@ -65,5 +70,41 @@ export class ApplicationMapper {
     })
 
     return applicationDto
+  }
+
+  private isHidden(
+    id: string,
+    dependencies: Dependency[] | undefined,
+  ): boolean {
+    if (!dependencies) {
+      return false
+    }
+
+    let isDependant = false
+
+    for (let i = 0; i < dependencies.length; i++) {
+      if (dependencies[i].childProps.includes(id)) {
+        isDependant = true
+        break
+      }
+    }
+
+    if (!isDependant) {
+      return false
+    }
+
+    let isHidden = true
+
+    for (let i = 0; i < dependencies.length; i++) {
+      if (
+        dependencies[i].childProps.includes(id) &&
+        dependencies[i].isSelected === true
+      ) {
+        isHidden = false
+        break
+      }
+    }
+
+    return isHidden
   }
 }

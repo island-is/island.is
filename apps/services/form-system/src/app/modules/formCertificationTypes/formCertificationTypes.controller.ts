@@ -29,7 +29,7 @@ export class FormCertificationTypesController {
   @ApiOperation({ summary: 'Add form certification type' })
   @ApiCreatedResponse({
     description: 'Add form certification type',
-    type: String,
+    type: CertificationType,
   })
   @ApiBody({ type: CreateFormCertificationTypeDto })
   @Post()
