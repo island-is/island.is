@@ -17,7 +17,6 @@ updates:
       prefix-development: chore(deps-dev)
     open-pull-requests-limit: 2
     groups:
-      # Group minor and patch updates together
       minor-patch-dependencies:
         patterns:
           - '*'
@@ -25,10 +24,8 @@ updates:
           - minor
           - patch
     ignore:
-      # Ignore major updates as they might break things
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
-    versioning-strategy: increase
 
   # Infra npm dependencies
   - package-ecosystem: npm
@@ -45,7 +42,6 @@ updates:
       prefix-development: chore(deps-infra)
     open-pull-requests-limit: 2
     groups:
-      # Group minor and patch updates together
       minor-patch-dependencies:
         patterns:
           - '*'
@@ -53,16 +49,14 @@ updates:
           - minor
           - patch
     ignore:
-      # Ignore major updates as they might break things
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
-    versioning-strategy: increase
 
   # GitHub Actions
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly # Less frequent for Actions
+      interval: weekly
       day: saturday
       time: '04:00'
       timezone: Etc/UTC
@@ -73,7 +67,6 @@ updates:
       prefix: chore(ci)
     open-pull-requests-limit: 2
     groups:
-      # Group minor and patch updates together
       minor-patch-dependencies:
         patterns:
           - '*'
@@ -81,10 +74,8 @@ updates:
           - minor
           - patch
     ignore:
-      # Ignore major updates as they might break things
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
-    versioning-strategy: increase
 
   # GitHub Actions npm dependencies
   - package-ecosystem: npm
@@ -101,7 +92,6 @@ updates:
       prefix: chore(ci-deps)
     open-pull-requests-limit: 2
     groups:
-      # Group minor and patch updates together
       minor-patch-dependencies:
         patterns:
           - '*'
@@ -109,10 +99,8 @@ updates:
           - minor
           - patch
     ignore:
-      # Ignore major updates as they might break things
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
-    versioning-strategy: increase
 
   # CI Scripts dependencies
   - package-ecosystem: npm
@@ -129,7 +117,6 @@ updates:
       prefix: chore(ci-deps)
     open-pull-requests-limit: 2
     groups:
-      # Group minor and patch updates together
       minor-patch-dependencies:
         patterns:
           - '*'
@@ -137,7 +124,5 @@ updates:
           - minor
           - patch
     ignore:
-      # Ignore major updates as they might break things
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
-    versioning-strategy: increase
