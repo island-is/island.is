@@ -102,6 +102,14 @@ const useHtmlStyles = () => {
       color: ${theme.color.blue400};
       text-decoration: none;
     }
+    svg {
+      max-width: 100%;
+      display: block;
+    }
+    img {
+      max-width: 100%;
+      display: block;
+    }
     </style>
     <meta name="viewport" content="width=device-width">`
 }

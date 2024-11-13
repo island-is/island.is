@@ -395,6 +395,14 @@ export const is = {
     'Í augnablikinu er ekki hægt að senda ökuskírteini í síma.',
   'walletPass.moreInfo': 'Nánari upplýsingar',
   'walletPass.alertClose': 'Loka',
+  'walletPass.errorCannotAddPasses':
+    'Þú getur ekki bætt við skírteini. Vinsamlegast vertu viss um að þú sért með Smartwallet appið sett upp á tækinu.',
+  'walletPass.errorAddingOrFetching':
+    'Tókst ekki að sækja eða bæta við skírteini.',
+  'walletPass.errorNotPossibleOnThisDevice':
+    'Þú getur ekki bætt við skírteinum á þetta tæki.',
+  'walletPass.errorNotConnectedNoBarcode':
+    'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
 
   // wallet passport
   'walletPassport.screenTitle': 'Vegabréf',
