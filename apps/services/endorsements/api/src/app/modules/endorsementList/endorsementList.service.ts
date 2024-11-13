@@ -796,7 +796,7 @@ export class EndorsementListService {
           `Endorsement list ${listId} not found or access denied.`,
         )
       }
-
+      console.log("**************************************")
       // Create file buffer
       const fileBuffer =
         fileType === 'pdf'
@@ -858,14 +858,20 @@ export class EndorsementListService {
         endorsementList,
         ownerName,
       )
+
+      if (!Buffer.isBuffer(pdfBuffer)) {
+        throw new Error('Generated PDF is not a valid buffer');
+      }
+
       return pdfBuffer
     } catch (error) {
       this.logger.error(
         `Failed to create PDF buffer for endorsement list ${endorsementList.id}`,
-        { error },
+        { error: error.message }
       )
+
       throw new Error(
-        `Error generating PDF for endorsement list ${endorsementList.id}`,
+        `Error generating PDF for endorsement list ${endorsementList.id}: ${error.message}`
       )
     }
   }
@@ -875,7 +881,12 @@ export class EndorsementListService {
     filename: string,
     fileType: 'pdf' | 'csv',
   ): Promise<void> {
+    console.log("bucket", environment.exportsBucketName)
     try {
+      if (!environment.exportsBucketName) {
+        throw new Error('S3 bucket name is undefined');
+      }
+
       await this.s3Service.uploadFile(
         fileBuffer,
         { bucket: environment.exportsBucketName, key: filename },
@@ -884,8 +895,18 @@ export class EndorsementListService {
         },
       )
     } catch (error) {
-      this.logger.error(`Failed to upload file to S3`, { error, filename })
-      throw new Error('Error uploading file to S3')
+      // Log the full error details
+      this.logger.error(`Failed to upload file to S3`, {
+        error: {
+          message: error.message
+        },
+        filename,
+        bucketName: environment.exportsBucketName
+      })
+
+      throw new Error(
+        `Error uploading file to S3: ${error.message}. Bucket: ${environment.exportsBucketName}`
+      )
     }
   }
 }
