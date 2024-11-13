@@ -227,7 +227,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     >
       <GrantHeaderWithImage
         title={formatMessage(m.home.title)}
-        description="Non scelerisque risus amet tincidunt. Sit sed quis cursus hendrerit nulla egestas interdum. In varius quisque."
+        description={formatMessage(m.home.description)}
         featuredImage={formatMessage(m.home.featuredImage)}
         featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
         imageLayout="left"
