@@ -30,15 +30,22 @@ import path from 'path'
 
       // Write individual service values files
       for (const service of services) {
+        const serviceName = service.name()
         const serviceDir = path.join(
           __dirname,
           '/../../../charts/services',
-          service.name(),
+          serviceName,
         )
         mkdirSync(serviceDir, { recursive: true })
+
+        // Create service-specific values by isolating just that service's section
+        const serviceValues = {
+          [serviceName]: service,
+        }
+
         writeFileSync(
           path.join(serviceDir, `values.${Envs[envName].type}.yaml`),
-          renderedValues, // For now, writing the same values - we can modify this later
+          JSON.stringify(serviceValues, null, 2), // or however you format your YAML
           { encoding: 'utf8' },
         )
       }
