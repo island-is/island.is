@@ -30,7 +30,7 @@ interface TextButtonProps extends ButtonBaseProps {
   icon?: ImageSourcePropType
 }
 
-type ButtonProps = IconButtonProps | TextButtonProps
+export type ButtonProps = IconButtonProps | TextButtonProps
 
 type HostProps = Omit<ButtonProps, 'title'>
 

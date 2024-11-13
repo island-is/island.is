@@ -6,7 +6,7 @@ import { useLocale } from '@island.is/localization'
 import { employee } from '../../lib/messages'
 import { Controller, useFormContext } from 'react-hook-form'
 import { VictimsOccupationDto } from '@island.is/clients/work-accident-ver'
-import { WorkAccidentNotification } from '../../lib/dataSchema'
+import { WorkAccidentNotification } from '../..'
 
 export type Options = {
   label: string

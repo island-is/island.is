@@ -9,10 +9,11 @@ import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
 import { ReviewGroup } from '../Components/ReviewGroup'
 import { KeyValueFormField } from '@island.is/application/ui-fields'
-import { EmployeeType, WorkAccidentNotification } from '../../lib/dataSchema'
+import { EmployeeType } from '../../lib/dataSchema'
 import { getEmployeeInformationForOverview } from '../../utils/getEmployeeInformationForOverview'
 import { getCauseAndConsequencesForOverview } from '../../utils/getCauseAndConsequencesForOverview'
 import { DeleteEmployee } from '../DeleteEmployee'
+import { WorkAccidentNotification } from '../..'
 
 type EmployeeAccordionItemType = {
   employee: EmployeeType
@@ -23,7 +24,7 @@ type EmployeeAccordionItemType = {
 export const EmployeeAccordionItem: FC<
   React.PropsWithChildren<FieldBaseProps & EmployeeAccordionItemType>
 > = ({ ...props }) => {
-  const { application, field, employee, onClick, index } = props
+  const { application, employee, onClick, index } = props
   const { formatMessage } = useLocale()
   const answers = application.answers as WorkAccidentNotification
 

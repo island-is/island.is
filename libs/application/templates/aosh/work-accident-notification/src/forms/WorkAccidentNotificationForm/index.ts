@@ -8,9 +8,10 @@ import { EmployeeAndAccidentInformationSection } from '../RepeatableSection'
 import { overviewSection } from './OverviewSection'
 import { announcementSection } from './AnnouncementSection'
 import { conclusionSection } from './ConclusionSection'
+import { MAX_EMPLOYEES } from '../../shared/constants'
 
 const buildRepeatableSections = (): Section[] => {
-  const sections = [...Array(20)].map((_key, index) => {
+  const sections = [...Array(MAX_EMPLOYEES)].map((_key, index) => {
     return EmployeeAndAccidentInformationSection(index)
   })
   return sections.flat()

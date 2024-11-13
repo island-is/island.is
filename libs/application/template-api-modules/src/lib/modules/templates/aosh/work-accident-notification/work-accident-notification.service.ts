@@ -12,10 +12,8 @@ import {
 } from '@island.is/clients/work-accident-ver'
 import {
   getDateAndTime,
-  getValueList,
   mapVictimData,
 } from './work-accident-notification.utils'
-import { getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()

@@ -2,8 +2,8 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { causeAndConsequences } from '../../lib/messages'
 import { Option } from '../Components/types'
-import { WorkAccidentNotification } from '../../lib/dataSchema'
 import { CausesAndEffects } from '../Components/CausesAndEffects'
+import { WorkAccidentNotification } from '../..'
 
 export type OptionAndKey = {
   option: Option

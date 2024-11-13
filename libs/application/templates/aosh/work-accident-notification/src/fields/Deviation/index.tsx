@@ -1,8 +1,8 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { causeAndConsequences } from '../../lib/messages'
-import { WorkAccidentNotification } from '../../lib/dataSchema'
 import { CausesAndEffects } from '../Components/CausesAndEffects'
+import { WorkAccidentNotification } from '../..'
 
 interface DeviationProps {
   field: {

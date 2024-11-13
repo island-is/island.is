@@ -10,12 +10,14 @@ import { FileStorageModule } from '@island.is/file-storage'
 import { ApplicationAttachmentProvider } from './attachments/providers/applicationAttachmentProvider'
 import { PdfFileProvider } from './attachments/providers/pdfFileProvider'
 import { AttachmentS3Service } from './attachments/attachment-s3.service'
+import { AwsModule } from '@island.is/nest/aws'
 
 @Module({
   imports: [
     SharedTemplateAPIModule,
     FileStorageModule,
     ClientsDataProtectionComplaintModule,
+    AwsModule,
   ],
   providers: [
     ApplicationAttachmentProvider,

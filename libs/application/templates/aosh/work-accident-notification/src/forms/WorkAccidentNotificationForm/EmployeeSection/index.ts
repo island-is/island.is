@@ -2,7 +2,7 @@ import { buildSection } from '@island.is/application/core'
 import { sections } from '../../../lib/messages/sections'
 import { employeeSubSection } from './employee'
 import { FormValue } from '@island.is/application/types'
-import { WorkAccidentNotification } from '../../../lib/dataSchema'
+import { WorkAccidentNotification } from '../../..'
 
 export const employeeSection = (index: number) =>
   buildSection({

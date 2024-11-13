@@ -1,11 +1,11 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Button } from '@island.is/island-ui/core'
 import { FC } from 'react'
-import { WorkAccidentNotification } from '../../lib/dataSchema'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 import { shared } from '../../lib/messages'
+import { WorkAccidentNotification } from '../..'
 
 interface DeleteEmployeeProps {
   index: number

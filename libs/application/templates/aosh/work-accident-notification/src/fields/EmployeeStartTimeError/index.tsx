@@ -4,8 +4,8 @@ import { Box, ErrorMessage } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
 import { employee } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { WorkAccidentNotification } from '../../lib/dataSchema'
 import { dateIsWithin36Hours } from '../../utils'
+import { WorkAccidentNotification } from '../..'
 
 interface EmployeeStartTimeErrorProps {
   field: {
