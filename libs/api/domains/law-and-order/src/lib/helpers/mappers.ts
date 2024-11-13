@@ -6,6 +6,7 @@ import {
 } from '@island.is/clients/judicial-system-sp'
 import { CourtCaseStateTagColorEnum } from '../../models/courtCases.model'
 import { DefenseChoiceEnum } from '../../models/defenseChoiceEnum.model'
+import { m } from '../messages'
 
 // Maps the application's internal representation of defense choices to the judicial system's representation.
 export const mapDefenseChoice = (
@@ -28,7 +29,7 @@ export const mapDefenseChoice = (
 }
 
 // Maps the application's internal representation of defense choices to the judicial system's representation.
-export const mapDefenseChoiceForSubpoena = (
+export const mapDefenseChoiceForSummon = (
   choice?: DefenderInfoDefenderChoiceEnum,
 ): DefenseChoiceEnum => {
   switch (choice) {
@@ -48,7 +49,7 @@ export const mapDefenseChoiceForSubpoena = (
 }
 
 // Maps the application's internal representation of defense choices to the judicial system's representation.
-export const mapDefenseChoiceForSubpoenaDefaultChoice = (
+export const mapDefenseChoiceForSummonDefaultChoice = (
   choice?: SubpoenaDataDefaultDefenderChoiceEnum,
 ): DefenseChoiceEnum => {
   switch (choice) {
@@ -111,24 +112,13 @@ interface Choice {
 // Get localized messages for defense choices in Subpoena
 export const DefenseChoices: Record<DefenseChoiceEnum, Choice> = {
   WAIVE: {
-    message: {
-      id: 'api.law-and-order:no-defender',
-      defaultMessage: 'Ég óska ekki eftir verjanda',
-    },
+    message: m.waiveMessage,
   },
   CHOOSE: {
-    message: {
-      id: 'api.law-and-order:choosing-lawyer',
-      defaultMessage:
-        'Ég óska þess að valinn lögmaður verði skipaður verjandi minn',
-    },
+    message: m.chooseMessage,
   },
   DELAY: {
-    message: {
-      id: 'api.law-and-order:delay-choice',
-      defaultMessage:
-        'Ég óska eftir fresti fram að þingfestingu til þess að tilnefna verjanda',
-    },
+    message: m.delayMessage,
   },
   DELEGATE: {
     message: {

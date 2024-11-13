@@ -16,14 +16,15 @@ import { CourtCase } from '../models/courtCase.model'
 import { CourtCases } from '../models/courtCases.model'
 import { Item } from '../models/item.model'
 import { Lawyers } from '../models/lawyers.model'
-import { Subpoena } from '../models/subpoena.model'
+import { Subpoena } from '../models/summon.model'
 import {
   DefenseChoices,
   mapDefenseChoice,
-  mapDefenseChoiceForSubpoena,
-  mapDefenseChoiceForSubpoenaDefaultChoice,
+  mapDefenseChoiceForSummon,
+  mapDefenseChoiceForSummonDefaultChoice,
   mapTagTypes,
 } from './helpers/mappers'
+import { m } from './messages'
 
 const namespaces = ['api.law-and-order']
 
@@ -61,35 +62,20 @@ export class LawAndOrderService {
     const singleCase = await this.api.getCase(id, user, locale)
     const hasBeenServed = singleCase?.data.hasBeenServed
 
-    const subpoenaString = formatMessage({
-      id: 'api.law-and-order:subpoena',
-      defaultMessage: 'Fyrirkall',
-    })
-    const seeSubpoenaString = formatMessage({
-      id: 'api.law-and-order:see-subpoena',
-      defaultMessage: 'Sjá fyrirkall',
-    })
-    const seeSubpoenaInMailboxString = formatMessage({
-      id: 'api.law-and-order:see-subpoena-in-mailbox',
-      defaultMessage: 'Sjá fyrirkall í pósthólfi',
-    })
-    const mailboxLink = formatMessage({
-      id: 'api.law-and-order:mailbox-link',
-      defaultMessage: '/postholf',
-    })
-    const subpoenaLink = {
-      id: 'api.law-and-order:subpoena-link',
-      defaultMessage: `/log-og-reglur/domsmal/{caseId}/fyrirkall`,
-    }
+    const summonString = formatMessage(m.summon)
+    const seeSummonString = formatMessage(m.seeSummon)
+    const seeSummonInMailboxString = formatMessage(m.seeSummonInMailbox)
+    const mailboxLink = formatMessage(m.mailboxLink)
+    const summonLink = m.summonLink
 
-    // If the subpoena has not been acknowledged
+    // If the summon has not been acknowledged
     // add an action to the line including "fyrirkall" to redirect to the digital mailbox or detail page
-    const subpoenaSentItem: Item | undefined = {
+    const summonSentItem: Item | undefined = {
       action: {
         data: hasBeenServed
-          ? formatMessage(subpoenaLink, { caseId: singleCase?.caseId })
+          ? formatMessage(summonLink, { caseId: singleCase?.caseId })
           : mailboxLink,
-        title: hasBeenServed ? seeSubpoenaString : seeSubpoenaInMailboxString,
+        title: hasBeenServed ? seeSummonString : seeSummonInMailboxString,
         type: hasBeenServed ? ActionTypeEnum.inbox : ActionTypeEnum.url,
       },
     }
@@ -105,9 +91,9 @@ export class LawAndOrderService {
               // Adding action to the line including "fyrirkall"
               if (
                 groupIndex === 0 &&
-                item.label.toLowerCase().includes(subpoenaString.toLowerCase())
+                item.label.toLowerCase().includes(summonString.toLowerCase())
               ) {
-                return { ...item, action: subpoenaSentItem.action }
+                return { ...item, action: summonSentItem.action }
               }
               return item
             }),
@@ -121,20 +107,20 @@ export class LawAndOrderService {
     return data
   }
 
-  async getSubpoena(user: User, id: string, locale: Locale) {
+  async getSummon(user: User, id: string, locale: Locale) {
     const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
 
-    const subpoena: SubpoenaResponse | null = await this.api.getSubpoena(
+    const summon: SubpoenaResponse | null = await this.api.getSummon(
       id,
       user,
       locale,
     )
 
-    if (!isDefined(subpoena)) return null
-    const subpoenaData = subpoena.data
-    if (!isDefined(subpoenaData)) return null
+    if (!isDefined(summon)) return null
+    const summonData = summon.data
+    if (!isDefined(summonData)) return null
 
-    const defenderInfo = subpoena.defenderInfo
+    const defenderInfo = summon.defenderInfo
     const defenderChoice = defenderInfo?.defenderChoice
     const message = defenderChoice
       ? formatMessage(DefenseChoices[defenderChoice].message)
@@ -142,26 +128,26 @@ export class LawAndOrderService {
 
     const data: Subpoena = {
       data: {
-        id: subpoena.caseId ?? id,
-        hasBeenServed: subpoenaData.hasBeenServed,
+        id: summon.caseId ?? id,
+        hasBeenServed: summonData.hasBeenServed,
         chosenDefender: [message, defenderInfo?.defenderName]
           .filter(isDefined)
           .join(', '),
-        defenderChoice: mapDefenseChoiceForSubpoena(defenderChoice),
-        defaultChoice: mapDefenseChoiceForSubpoenaDefaultChoice(
-          subpoenaData.defaultDefenderChoice,
+        defenderChoice: mapDefenseChoiceForSummon(defenderChoice),
+        defaultChoice: mapDefenseChoiceForSummonDefaultChoice(
+          summonData.defaultDefenderChoice,
         ),
-        hasChosen: subpoenaData.hasChosenDefender,
+        hasChosen: summonData.hasChosenDefender,
         canEditDefenderChoice: defenderInfo?.canEdit,
-        groups: subpoenaData.groups,
+        groups: summonData.groups,
         courtContactInfo: defenderInfo?.courtContactInfo,
       },
       actions: undefined,
       texts: {
-        confirmation: subpoenaData.alerts?.find(
+        confirmation: summonData.alerts?.find(
           (alert) => alert.type === AlertMessageTypeEnum.Success,
         )?.message,
-        description: subpoenaData.subtitle,
+        description: summonData.subtitle,
       },
     }
     return data
@@ -195,7 +181,7 @@ export class LawAndOrderService {
   ) {
     if (!input || !input.choice) return null
 
-    return await this.api.patchSubpoena(
+    return await this.api.patchSummon(
       {
         caseId: input.caseId,
         updateSubpoenaDto: {
