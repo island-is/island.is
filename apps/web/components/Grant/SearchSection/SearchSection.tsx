@@ -29,12 +29,18 @@ type SearchSectionProps = HeaderWithImageProps & {
 export const SearchSection = (props: SearchSectionProps) => {
   return (
     <HeaderWithImage {...props}>
-      <Box paddingTop={6} component="form" action={props.searchUrl}>
+      <Box
+        paddingTop={6}
+        component="form"
+        aria-label="Search grants"
+        action={props.searchUrl}
+      >
         <Input
           id="query"
           name="query"
           placeholder={props.searchPlaceholder}
           backgroundColor={['blue']}
+          aria-label="Search input"
           size="md"
           icon={{ name: 'search', type: 'outline' }}
         />
