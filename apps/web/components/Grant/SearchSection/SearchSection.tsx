@@ -23,7 +23,6 @@ type SearchSectionProps = HeaderWithImageProps & {
   quickLinks: Array<QuickLink>
   searchUrl: string
   shortcutsTitle: string
-  featuredImage?: string
 }
 
 export const SearchSection = (props: SearchSectionProps) => {

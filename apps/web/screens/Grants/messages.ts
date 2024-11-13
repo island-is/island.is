@@ -121,6 +121,10 @@ export const m = {
       defaultMessage:
         'https://images.ctfassets.net/8k0h54kbe6bj/5LqU9yD9nzO5oOijpZF0K0/b595e1cf3e72bc97b2f9d869a53f5da9/LE_-_Jobs_-_S3.png',
     },
+    featuredImageAlt: {
+      id: 'web.grants:home.featuredImageAlt',
+      defaultMessage: 'Mynd af klemmuspjaldi ásamt blýanti',
+    },
     inputPlaceholder: {
       id: 'web.grants:home.inputPlaceholder',
       defaultMessage: 'Leitaðu á styrkjatorgi',

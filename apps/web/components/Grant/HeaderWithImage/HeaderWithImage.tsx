@@ -16,6 +16,7 @@ export type HeaderWithImageProps = {
   imageLayout?: 'left' | 'right'
   breadcrumbs: ReactNode
   featuredImage?: string
+  featuredImageAlt?: string
   children?: ReactNode
 }
 
@@ -34,7 +35,7 @@ export const HeaderWithImage = (props: HeaderWithImageProps) => {
           <img
             className={styles.introImage}
             src={props.featuredImage}
-            alt={'Featured header'}
+            alt={props.featuredImageAlt}
           />
         </Box>
       </GridColumn>

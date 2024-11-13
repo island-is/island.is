@@ -68,6 +68,7 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
           searchUrl={searchUrl}
           shortcutsTitle={formatMessage(m.home.mostVisited)}
           featuredImage={formatMessage(m.home.featuredImage)}
+          featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
           //TODO - do when the categories are ready
           quickLinks={[
             {
@@ -127,7 +128,7 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
             </Box>
 
             <GridRow>
-              {categories?.map((c => (
+              {categories?.map((c) => (
                 <GridColumn
                   key={c.slug}
                   span={['1/1', '1/2', '1/2', '1/3']}
