@@ -1,7 +1,7 @@
-import { GetParametersCommand, SSMClient } from '@aws-sdk/client-ssm'
+import { GetParametersCommand, SSM } from '@aws-sdk/client-ssm'
 import { logger } from '../../common'
 
-const client = new SSMClient({
+const client = new SSM({
   maxAttempts: 10,
 })
 export async function getSsmParams(
