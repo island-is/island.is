@@ -3016,7 +3016,6 @@ unicorn-app:
   env:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
-    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
