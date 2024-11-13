@@ -260,7 +260,6 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
             />
           }
         >
-          {loading && !error && <Box>loading - todo</Box>}
           {!loading && !error && (
             <Box marginLeft={3}>
               <Box marginBottom={3}>
