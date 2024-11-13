@@ -45,6 +45,16 @@ export const notifications = {
       'Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.',
     description: 'Notaður sem texti í email til þess að tilgreina slóð á RVG',
   }),
+  emailWhitelist: defineMessage({
+    id: 'judicial.system.backend:notifications.email_whitelist',
+    defaultMessage: '',
+    description: 'Notað til að tilgreina hvort póstfang sé í hvítlista',
+  }),
+  emailWhitelistDomains: defineMessage({
+    id: 'judicial.system.backend:notifications.email_whitelist_domains',
+    defaultMessage: 'kolibri.is',
+    description: 'Notað til að tilgreina hvort póstfang sé í hvítlista',
+  }),
   readyForCourt: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.ready_for_court.subjectV2',

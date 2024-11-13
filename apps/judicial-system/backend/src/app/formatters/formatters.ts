@@ -802,3 +802,31 @@ export const formatDefenderRoute = (
 
 export const formatConfirmedIndictmentKey = (key?: string) =>
   key?.replace(/\/([^/]*)$/, '/confirmed/$1') ?? ''
+
+export const filterWhitelistEmails = (
+  emails: string[],
+  domainWhitelist: string,
+  emailWhitelist: string,
+) => {
+  if (!emails || emails.length === 0) return []
+
+  const allowedDomains = new Set(
+    domainWhitelist
+      .split(',')
+      .map((d) => d.trim())
+      .filter(Boolean),
+  )
+  const allowedEmails = new Set(
+    emailWhitelist
+      .split(',')
+      .map((e) => e.trim())
+      .filter(Boolean),
+  )
+
+  return emails.filter((email) => {
+    const domain = email.split('@')[1]
+    return (
+      domain && (allowedDomains.has(domain) || allowedEmails.has(email.trim()))
+    )
+  })
+}
