@@ -375,7 +375,11 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                       Borem ipsum dolor sit amet, consectetur adipiscing elit.
                     </Text>
                   </Box>
-                  <img width="240" src="/assets/sofa.svg" alt={'bingbong'} />
+                  <img
+                    width="240"
+                    src="/assets/sofa.svg"
+                    alt={formatMessage(m.search.noResultsFound)}
+                  />
                 </Box>
               )}
             </Box>
