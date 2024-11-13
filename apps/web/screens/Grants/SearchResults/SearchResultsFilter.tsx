@@ -99,7 +99,7 @@ export const GrantsSearchResultsFilter = ({
                 categoryFilters
                   ? {
                       id: 'category',
-                      label: 'Flokkur',
+                      label: 'Flokkun',
                       selected: searchState?.['category'] ?? [],
                       filters: categoryFilters.map((t) => ({
                         value: t.slug,

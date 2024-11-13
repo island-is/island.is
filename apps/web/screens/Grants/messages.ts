@@ -26,7 +26,7 @@ export const m = {
     },
     category: {
       id: 'web.grants:search.category',
-      defaultMessage: 'Flokkur',
+      defaultMessage: 'Flokkun',
     },
     type: {
       id: 'web.grants:search.type',
@@ -56,7 +56,7 @@ export const m = {
     },
     category: {
       id: 'web.grants:single.category',
-      defaultMessage: 'Styrkjaflokkur',
+      defaultMessage: 'Styrkjaflokkun',
     },
     provider: {
       id: 'web.grants:single.provider',
