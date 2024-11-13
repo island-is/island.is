@@ -6,7 +6,7 @@ updates:
     directory: /
     schedule:
       interval: weekly
-      time: 02:00
+      time: '02:00'
       day: saturday
       timezone: Etc/UTC
     labels:
@@ -35,7 +35,7 @@ updates:
     directory: /infra
     schedule:
       interval: weekly
-      time: 03:00
+      time: '03:00'
       timezone: Etc/UTC
     labels:
       - automerge
@@ -64,7 +64,7 @@ updates:
     schedule:
       interval: weekly # Less frequent for Actions
       day: saturday
-      time: 04:00
+      time: '04:00'
       timezone: Etc/UTC
     labels:
       - automerge
@@ -92,7 +92,7 @@ updates:
     schedule:
       interval: weekly
       day: saturday
-      time: 05:00
+      time: '05:00'
       timezone: Etc/UTC
     labels:
       - automerge
@@ -120,7 +120,7 @@ updates:
     schedule:
       interval: weekly
       day: saturday
-      time: 06:00
+      time: '06:00'
       timezone: Etc/UTC
     labels:
       - automerge
