@@ -27,6 +27,7 @@ import {
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
+import { PRELOADED_FONTS } from '@island.is/web/constants'
 
 import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import { GlobalContextProvider } from '../context'
@@ -237,14 +238,6 @@ const Layout: Screen<LayoutProps> = ({
     }
   }, [router.asPath, router.events])
 
-  const preloadedFonts = [
-    '/fonts/ibm-plex-sans-v7-latin-300.woff2',
-    '/fonts/ibm-plex-sans-v7-latin-regular.woff2',
-    '/fonts/ibm-plex-sans-v7-latin-italic.woff2',
-    '/fonts/ibm-plex-sans-v7-latin-500.woff2',
-    '/fonts/ibm-plex-sans-v7-latin-600.woff2',
-  ]
-
   const isServiceWeb = pathIsRoute(router.asPath, 'serviceweb', activeLocale)
 
   const organizationSearchFilter = extractOrganizationSlugFromPathname(
@@ -256,7 +249,7 @@ const Layout: Screen<LayoutProps> = ({
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
       <Page component="div">
         <Head>
-          {preloadedFonts.map((href, index) => {
+          {PRELOADED_FONTS.map((href, index) => {
             return (
               <link
                 key={index}

@@ -10,3 +10,11 @@ export const FRONTPAGE_NEWS_TAG_ID = 'forsidufrettir'
 export const PLAUSIBLE_SCRIPT_SRC = 'https://plausible.io/js/plausible.js'
 export const DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN =
   'island.is/s/stafraent-island'
+
+export const PRELOADED_FONTS = [
+  '/fonts/ibm-plex-sans-v7-latin-300.woff2',
+  '/fonts/ibm-plex-sans-v7-latin-regular.woff2',
+  '/fonts/ibm-plex-sans-v7-latin-italic.woff2',
+  '/fonts/ibm-plex-sans-v7-latin-500.woff2',
+  '/fonts/ibm-plex-sans-v7-latin-600.woff2',
+]

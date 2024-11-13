@@ -84,6 +84,19 @@ import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
 import { mapManual } from './models/manual.model'
 import { mapServiceWebPage } from './models/serviceWebPage.model'
 import { mapEvent } from './models/event.model'
+import {
+  mapSitemapLink,
+  SitemapLink,
+  SitemapResponse,
+} from './models/sitemapResponse.model'
+import { GetSitemapInput } from './dto/getSitemap.input'
+import {
+  SitemapTree,
+  SitemapTreeNode,
+  SitemapTreeNodeType,
+} from '@island.is/shared/types'
+import { EntryCollection } from 'contentful'
+import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -1109,5 +1122,116 @@ export class CmsContentfulService {
       .catch(errorHandler('getGenericTag'))
 
     return (result.items as types.IGenericTag[]).map(mapGenericTag)[0] ?? null
+  }
+
+  private async extractSitemapEntryIds(
+    root: SitemapTreeNode | SitemapTree,
+    entryMap: Map<
+      string,
+      (SitemapTreeNode & { label?: string; href?: string })[]
+    >,
+  ) {
+    for (const node of root.childNodes) {
+      if (node.type === SitemapTreeNodeType.ENTRY) {
+        const nodes = entryMap.get(node.entryId)
+        if (nodes) {
+          nodes.push(node)
+        } else {
+          entryMap.set(node.entryId, [node])
+        }
+      }
+      this.extractSitemapEntryIds(node, entryMap)
+    }
+  }
+
+  async getSitemap({
+    rootPageSlug,
+    lang = 'is',
+    slugs,
+  }: GetSitemapInput): Promise<SitemapResponse | null> {
+    const organizationPageResponse =
+      await this.contentfulRepository.getLocalizedEntries<types.IOrganizationPageFields>(
+        lang,
+        {
+          content_type: 'organizationPage',
+          'fields.slug': rootPageSlug,
+          select: 'fields.sitemap,fields.slug',
+          limit: 1,
+        },
+      )
+
+    const organizationPage = organizationPageResponse.items?.[0]
+    if (!organizationPage?.fields?.sitemap?.fields?.tree) {
+      return null
+    }
+
+    const tree = organizationPage.fields.sitemap.fields.tree as SitemapTree
+    if (!tree) {
+      return null
+    }
+
+    // TODO: test
+    // Prune sitemap in case there are any slugs provided
+    let currentNode = tree
+    for (const slug of slugs ?? []) {
+      let found = false
+      for (const childNode of currentNode.childNodes) {
+        if (childNode.type !== SitemapTreeNodeType.CATEGORY) {
+          continue
+        }
+        if (childNode.slug === slug) {
+          currentNode.childNodes = [childNode]
+          currentNode = childNode
+          found = true
+          break
+        }
+      }
+      if (!found) {
+        break
+      }
+    }
+
+    const entryMap = new Map<
+      string,
+      (SitemapTreeNode & { label?: string; href?: string })[]
+    >()
+    this.extractSitemapEntryIds(tree, entryMap)
+
+    const entryResponse: EntryCollection<{ title?: string; slug?: string }> =
+      await this.contentfulRepository.getLocalizedEntries(lang, {
+        // TODO: Perhaps split this request up
+        'sys.id[in]': Array.from(entryMap.keys()).join(','),
+        limit: 1000,
+      })
+
+    const prefix = getOrganizationPageUrlPrefix(lang)
+
+    for (const entry of entryResponse.items) {
+      const nodes = entryMap.get(entry.sys.id)
+      if (!nodes) {
+        continue
+      }
+      for (const node of nodes) {
+        if (node.type === SitemapTreeNodeType.ENTRY) {
+          if (!entry.fields.title || !entry.fields.slug) {
+            continue
+          }
+          node.label = entry.fields.title
+          node.href = `/${prefix}/${rootPageSlug}/${entry.fields.slug}`
+        }
+      }
+    }
+
+    console.log(
+      tree.childNodes
+        .map((node) => mapSitemapLink(node, [prefix, rootPageSlug]))
+        .filter(Boolean) as SitemapLink[],
+    )
+
+    return {
+      links: tree.childNodes
+        .map((node) => mapSitemapLink(node, [prefix, rootPageSlug]))
+        .filter(Boolean) as SitemapLink[],
+    }
   }
 }

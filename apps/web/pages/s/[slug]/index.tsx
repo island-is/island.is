@@ -18,7 +18,7 @@ interface ComponentProps {
   }
 }
 
-const Component: ScreenType<ComponentProps> = ({
+export const Component: ScreenType<ComponentProps> = ({
   standaloneProps,
   defaultProps,
 }) => {

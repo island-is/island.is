@@ -8,12 +8,67 @@ import type { LayoutProps } from '@island.is/web/layouts/main'
 import GenericListItemPage, {
   type GenericListItemPageProps,
 } from '@island.is/web/screens/GenericList/GenericListItem'
+import StandaloneSitemapLevel2, {
+  StandaloneSitemapLevel2Props,
+} from '@island.is/web/screens/Organization/Standalone/sitemap/Level2'
 import SubPageLayout, {
   type SubPageProps,
 } from '@island.is/web/screens/Organization/SubPage'
 import type { Screen as ScreenType } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
+
+type ComponentWrapperProps =
+  | {
+      type: 'standalone-sitemap'
+      props: StandaloneSitemapLevel2Props
+    }
+  | {
+      type: 'default'
+      props: ComponentProps
+    }
+
+export const ComponentWrapper: ScreenType<ComponentWrapperProps> = ({
+  props,
+  type,
+}) => {
+  if (type === 'standalone-sitemap')
+    return <StandaloneSitemapLevel2 {...props} />
+  return <Component {...props} />
+}
+
+ComponentWrapper.getProps = async (ctx) => {
+  try {
+    const sitemapProps = await StandaloneSitemapLevel2.getProps?.(ctx)
+    return {
+      type: 'standalone-sitemap',
+      props: sitemapProps as StandaloneSitemapLevel2Props,
+    }
+  } catch {
+    const [parentProps, genericListItemProps] = await Promise.all([
+      SubPageLayout.getProps?.(ctx),
+      GenericListItemPage.getProps?.(ctx),
+    ])
+
+    if (!parentProps) {
+      throw new CustomNextError(
+        404,
+        'Could not fetch subpage layout for generic list item',
+      )
+    }
+    if (!genericListItemProps) {
+      throw new CustomNextError(404, 'Could not fetch generic list item props')
+    }
+
+    return {
+      type: 'default',
+      props: {
+        parentProps,
+        genericListItemProps,
+      },
+    }
+  }
+}
 
 interface ComponentProps {
   parentProps: {
@@ -23,7 +78,7 @@ interface ComponentProps {
   genericListItemProps: GenericListItemPageProps
 }
 
-export const Component: ScreenType<ComponentProps> = ({
+const Component: ScreenType<ComponentProps> = ({
   parentProps,
   genericListItemProps,
 }) => {
@@ -84,31 +139,9 @@ export const Component: ScreenType<ComponentProps> = ({
   )
 }
 
-Component.getProps = async (ctx) => {
-  const [parentProps, genericListItemProps] = await Promise.all([
-    SubPageLayout.getProps?.(ctx),
-    GenericListItemPage.getProps?.(ctx),
-  ])
-
-  if (!parentProps) {
-    throw new CustomNextError(
-      404,
-      'Could not fetch subpage layout for generic list item',
-    )
-  }
-  if (!genericListItemProps) {
-    throw new CustomNextError(404, 'Could not fetch generic list item props')
-  }
-
-  return {
-    parentProps,
-    genericListItemProps,
-  }
-}
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore make web strict
-const Screen = withApollo(withLocale('is')(Component))
+const Screen = withApollo(withLocale('is')(ComponentWrapper))
 
 export default Screen
 

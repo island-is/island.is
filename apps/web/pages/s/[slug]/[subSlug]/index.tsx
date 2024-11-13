@@ -1,9 +1,9 @@
 import withApollo from '@island.is/web/graphql/withApollo'
 import { withLocale } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
-import StandaloneSitemap, {
-  type StandaloneSitemapProps,
-} from '@island.is/web/screens/Organization/Standalone/Sitemap'
+import StandaloneSitemapLevel1, {
+  type StandaloneSitemapLevel1Props,
+} from '@island.is/web/screens/Organization/Standalone/sitemap/Level1'
 import StandaloneSubpage, {
   type StandaloneSubpageProps,
 } from '@island.is/web/screens/Organization/Standalone/Subpage'
@@ -17,7 +17,7 @@ import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePro
 type ComponentProps =
   | {
       type: 'standalone-sitemap'
-      props: StandaloneSitemapProps
+      props: StandaloneSitemapLevel1Props
     }
   | {
       type: 'standalone-subpage'
@@ -31,45 +31,41 @@ type ComponentProps =
       }
     }
 
-const Component: ScreenType<ComponentProps> = ({ props, type }) => {
-  if (type === 'standalone-sitemap') return <StandaloneSitemap {...props} />
+export const Component: ScreenType<ComponentProps> = ({ props, type }) => {
+  if (type === 'standalone-sitemap')
+    return <StandaloneSitemapLevel1 {...props} />
   if (type === 'standalone-subpage') return <StandaloneSubpage {...props} />
   return <SubPage {...props} />
 }
 
 Component.getProps = async (ctx) => {
-  const sitemapProps = await StandaloneSitemap.getProps?.(ctx)
-
-  if (
-    sitemapProps?.organizationPage?.theme === 'standalone' &&
-    sitemapProps.organizationPage.topLevelNavigation?.links.some((link) => {
-      return link.href === `/s/${ctx.query.slug}/${ctx.query.subSlug}`
-    })
-  ) {
+  try {
+    const sitemapProps = await StandaloneSitemapLevel1.getProps?.(ctx)
+    console.log(sitemapProps)
     return {
-      props: sitemapProps,
+      props: sitemapProps as StandaloneSitemapLevel1Props,
       type: 'standalone-sitemap',
     }
-  }
+  } catch {
+    const standaloneSubpageProps = await StandaloneSubpage.getProps?.(ctx)
 
-  const standaloneSubpageProps = await StandaloneSubpage.getProps?.(ctx)
-
-  if (standaloneSubpageProps) {
-    return {
-      props: standaloneSubpageProps,
-      type: 'standalone-subpage',
+    if (standaloneSubpageProps) {
+      return {
+        props: standaloneSubpageProps,
+        type: 'standalone-subpage',
+      }
     }
-  }
 
-  const defaultProps = await SubPage.getProps?.(ctx)
+    const defaultProps = await SubPage.getProps?.(ctx)
 
-  if (!defaultProps) {
-    throw new CustomNextError(404, 'Organization subpage was not found')
-  }
+    if (!defaultProps) {
+      throw new CustomNextError(404, 'Organization subpage was not found')
+    }
 
-  return {
-    props: defaultProps,
-    type: 'default-subpage',
+    return {
+      props: defaultProps,
+      type: 'default-subpage',
+    }
   }
 }
 
