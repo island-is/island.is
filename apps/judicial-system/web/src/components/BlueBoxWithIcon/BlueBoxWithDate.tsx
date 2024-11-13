@@ -156,15 +156,16 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       )
     }
 
-    const sentToPrisonAdmin = workingCase.eventLogs?.find(
+    const sentToPrisonAdminEvent = workingCase.eventLogs?.find(
       (evt) =>
         evt.eventType === EventType.INDICTMENT_SENT_TO_FMST &&
         evt.nationalId === defendant.nationalId,
     )
-    if (sentToPrisonAdmin && defendant.isSentToPrisonAdmin) {
+
+    if (sentToPrisonAdminEvent && defendant.isSentToPrisonAdmin) {
       texts.push(
         formatMessage(strings.sendToPrisonAdminDate, {
-          date: formatDate(sentToPrisonAdmin.created),
+          date: formatDate(sentToPrisonAdminEvent.created),
         }),
       )
     }
