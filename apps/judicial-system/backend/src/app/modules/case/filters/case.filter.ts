@@ -290,16 +290,10 @@ const canPrisonAdminUserAccessCase = (
       return false
     }
 
-    // Check defendant verdict appeal deadline access
-    const canAppealVerdict = true
-    const verdictInfo = (theCase.defendants || []).map<
-      [boolean, Date | undefined]
-    >((defendant) => [canAppealVerdict, defendant.verdictViewDate])
-
-    const [_, indictmentVerdictAppealDeadlineExpired] =
-      getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
-
-    if (!indictmentVerdictAppealDeadlineExpired) {
+    // Check if a defendant has been sent to the prison admin
+    if (
+      !theCase.defendants?.some((defendant) => defendant.isSentToPrisonAdmin)
+    ) {
       return false
     }
   }

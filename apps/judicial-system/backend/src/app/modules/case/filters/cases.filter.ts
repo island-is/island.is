@@ -25,7 +25,6 @@ import {
   RequestSharedWithDefender,
   restrictionCases,
   UserRole,
-  VERDICT_APPEAL_WINDOW_DAYS,
 } from '@island.is/judicial-system/types'
 
 const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
@@ -215,7 +214,7 @@ const getPrisonAdminUserCasesQueryFilter = (): WhereOptions => {
           [Op.notIn]: Sequelize.literal(`
             (SELECT case_id
               FROM defendant
-              WHERE (verdict_appeal_date IS NOT NULL OR verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '${VERDICT_APPEAL_WINDOW_DAYS} days'))
+              WHERE is_sent_to_prison_admin = true)
           `),
         },
       },
