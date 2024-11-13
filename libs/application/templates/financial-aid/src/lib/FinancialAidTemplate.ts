@@ -160,11 +160,11 @@ const FinancialAidTemplate: ApplicationTemplate<
         on: {
           SUBMIT: [
             {
-              target: ApplicationStates.SPOUSE,
+              target: ApplicationStates.SUBMITTED,
               cond: hasActiveCurrentApplication,
             },
           ],
-          EDIT: { target: ApplicationStates.PREREQUISITESSPOUSE },
+          EDIT: { target: ApplicationStates.SPOUSE },
         },
       },
       [ApplicationStates.SPOUSE]: {
