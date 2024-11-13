@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, ReporterDescription } from '@playwright/test'
 
 interface GlobalConfigParams {
   webServerUrl: string
@@ -8,7 +8,20 @@ interface GlobalConfigParams {
   timeoutMs?: number
 }
 
-export const createGlobalConfig = ({
+/**
+ * Creates a Playwright configuration for running end-to-end tests with
+ * customizable server settings, reporting options, and project environments.
+ *
+ * @param {PlaywrightConfigParams} config - Configuration options for the Playwright setup.
+ * @param {string} config.webServerUrl - Base URL for the web server used in tests.
+ * @param {number} config.port - Optional port number for the web server.
+ * @param {string} config.command - Command to start the web server.
+ * @param {string} config.cwd - Working directory for the web server command.
+ * @param {number} config.timeoutMs - Timeout in milliseconds for server startup.
+ *
+ * @returns A configuration object for Playwright E2E tests.
+ */
+export const createPlaywrightConfig = ({
   webServerUrl,
   port,
   command,
@@ -21,25 +34,19 @@ export const createGlobalConfig = ({
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
     workers: process.env.CI ? 1 : undefined,
-    reporter: 'html',
+    reporter: [
+      ...((process.env.CI ? [['line']] : [['dot']]) as ReporterDescription[]),
+      ['html', { open: 'never' }],
+    ],
 
     use: {
       baseURL: webServerUrl,
       trace: 'on-first-retry',
     },
     projects: [
-      {
-        name: 'chromium',
-        use: { ...devices['Desktop Chrome'] },
-      },
-      {
-        name: 'firefox',
-        use: { ...devices['Desktop Firefox'] },
-      },
-      {
-        name: 'webkit',
-        use: { ...devices['Desktop Safari'] },
-      },
+      { name: 'everything', testMatch: 'e2e/**/*.spec.[tj]s' },
+      { name: 'smoke', testMatch: 'e2e/smoke/**/*.spec.[tj]s' },
+      { name: 'acceptance', testMatch: 'e2e/acceptance/**/*.spec.[tj]s' },
     ],
     webServer: {
       stdout: 'pipe',
