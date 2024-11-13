@@ -10,15 +10,25 @@ import {
 
 import * as styles from './HeaderWithImage.css'
 
-export type HeaderWithImageProps = {
+export type HeaderProps = {
   title: string
   description?: string
   imageLayout?: 'left' | 'right'
   breadcrumbs: ReactNode
-  featuredImage?: string
-  featuredImageAlt?: string
   children?: ReactNode
 }
+
+export type ImageProps = HeaderProps & {
+  featuredImage: string
+  featuredImageAlt: string
+}
+
+export type NoImageProps = HeaderProps & {
+  featuredImage: never
+  featuredImageAlt: never
+}
+
+export type HeaderWithImageProps = ImageProps | NoImageProps
 
 export const HeaderWithImage = (props: HeaderWithImageProps) => {
   const renderImage = () => {
