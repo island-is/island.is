@@ -1,12 +1,11 @@
 import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence } from 'framer-motion'
 import { useParams } from 'next/navigation'
 import { useRouter } from 'next/router'
 
-import { Box, InputFileUpload, toast } from '@island.is/island-ui/core'
+import { Box, InputFileUpload } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
-import { core, errors } from '@island.is/judicial-system-web/messages'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -22,13 +21,13 @@ import { EventType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 
-import { strings } from './SendToFMST.strings'
+import { strings } from './SendToPrisonAdmin.strings'
 
 enum AvailableModal {
   SUCCESS = 'SUCCESS',
 }
 
-const SendToFMST: FC = () => {
+const SendToPrisonAdmin: FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -130,4 +129,4 @@ const SendToFMST: FC = () => {
   )
 }
 
-export default SendToFMST
+export default SendToPrisonAdmin

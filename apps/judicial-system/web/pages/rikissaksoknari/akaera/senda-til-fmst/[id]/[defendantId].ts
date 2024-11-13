@@ -1,3 +1,3 @@
-import SendToFMST from '@island.is/judicial-system-web/src/routes/PublicProsecutor/Indictments/SendToFMST/SendToFMST'
+import SendToPrisonAdmin from '@island.is/judicial-system-web/src/routes/PublicProsecutor/Indictments/SendToPrisonAdmin/SendToPrisonAdmin'
 
-export default SendToFMST
+export default SendToPrisonAdmin
