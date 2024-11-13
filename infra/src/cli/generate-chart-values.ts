@@ -10,6 +10,7 @@ import type { ToStringOptions } from 'yaml'
 const yamlOptions: ToStringOptions = {
   defaultStringType: 'QUOTE_SINGLE',
   defaultKeyType: 'PLAIN',
+  lineWidth: 0,
 }
 
 // Recursive function to filter out empty string properties
