@@ -101,6 +101,17 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     )
   }
 
+  const handleRevokeSendToPrisonAdmin = () => {
+    setAndSendDefendantToServer(
+      {
+        caseId: workingCase.id,
+        defendantId: defendant.id,
+        isSentToPrisonAdmin: false,
+      },
+      setWorkingCase,
+    )
+  }
+
   const appealExpirationInfo = useMemo(() => {
     const deadline =
       defendant.verdictAppealDeadline ||
@@ -171,17 +182,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     serviceRequired,
     workingCase.eventLogs,
   ])
-
-  const handleRevokeSendToPrisonAdmin = () => {
-    setAndSendDefendantToServer(
-      {
-        caseId: workingCase.id,
-        defendantId: defendant.id,
-        isSentToPrisonAdmin: false,
-      },
-      setWorkingCase,
-    )
-  }
 
   const datePickerVariants = {
     dpHidden: { opacity: 0, y: 15, marginTop: '16px' },
