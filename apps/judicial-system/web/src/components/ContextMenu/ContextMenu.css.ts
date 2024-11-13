@@ -25,7 +25,3 @@ export const menuItem = style({
     },
   },
 })
-
-export const disabled = style({
-  color: theme.color.dark200,
-})
