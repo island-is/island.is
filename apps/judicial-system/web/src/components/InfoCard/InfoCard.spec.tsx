@@ -149,7 +149,10 @@ describe('InfoCard', () => {
 
     // Act and Assert
     expect(
-      await screen.findByText('Verjandi: Hefur ekki verið skráður'),
+      await screen.findByText(
+        (_, element) =>
+          element?.textContent === 'Verjandi: Hefur ekki verið skráður',
+      ),
     ).toBeTruthy()
   })
 })
