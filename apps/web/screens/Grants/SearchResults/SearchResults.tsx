@@ -222,7 +222,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   return (
     <GrantWrapper
       pageTitle={formatMessage(m.home.title)}
-      pageDescription={formatMessage(m.home.description)}
+      pageDescription={formatMessage(m.search.description)}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
     >
       <GrantHeaderWithImage

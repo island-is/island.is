@@ -12,6 +12,10 @@ export const m = {
       id: 'web.grants:search.search',
       defaultMessage: 'Leit',
     },
+    description: {
+      id: 'web.grants:search.description',
+      defaultMessage: 'lýsing',
+    },
     results: {
       id: 'web.grants:search.results',
       defaultMessage: 'Leitarniðurstöður',
