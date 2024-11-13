@@ -31,7 +31,7 @@ export class FormApplicantTypesController {
   @ApiOperation({ summary: 'Add form applicant type' })
   @ApiCreatedResponse({
     description: 'Add form applicant type',
-    type: String,
+    type: ApplicantType,
   })
   @ApiBody({ type: CreateFormApplicantTypeDto })
   @Post()

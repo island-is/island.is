@@ -25,6 +25,10 @@ module.exports = {
             allowNull: false,
             defaultValue: false,
           },
+          dependencies: {
+            type: Sequelize.JSON,
+            allowNull: true,
+          },
           form_id: {
             type: Sequelize.UUID,
             allowNull: false,

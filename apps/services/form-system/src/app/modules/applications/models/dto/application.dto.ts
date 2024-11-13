@@ -26,8 +26,8 @@ export class ApplicationDto {
   @ApiPropertyOptional({ type: Date })
   modified?: Date
 
-  @ApiPropertyOptional({ type: [String] })
-  hidden?: string[]
+  @ApiPropertyOptional({ type: [Dependency] })
+  dependencies?: Dependency[]
 
   @ApiPropertyOptional({ type: [SectionDto] })
   sections?: SectionDto[]
