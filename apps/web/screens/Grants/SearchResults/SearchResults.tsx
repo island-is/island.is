@@ -183,11 +183,11 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
       href: linkResolver('homepage', [], locale).href,
     },
     {
-      title: 'Styrkjatorg',
+      title: formatMessage(m.home.title),
       href: parentUrl,
     },
     {
-      title: 'Leitarniðurstöður',
+      title: formatMessage(m.search.results),
       href: currentUrl,
       isTag: true,
     },

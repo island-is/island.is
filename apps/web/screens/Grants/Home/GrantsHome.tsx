@@ -31,7 +31,6 @@ import {
 } from '../../CustomPage/CustomPageWrapper'
 import { GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY } from '../../queries/GenericTag'
 import { m } from '../messages'
-import ca from 'date-fns/esm/locale/ca'
 
 const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   categories,

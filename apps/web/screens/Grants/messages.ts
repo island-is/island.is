@@ -12,6 +12,10 @@ export const m = {
       id: 'web.grants:search.search',
       defaultMessage: 'Leit',
     },
+    results: {
+      id: 'web.grants:search.results',
+      defaultMessage: 'Leitarniðurstöður',
+    },
     inputPlaceholder: {
       id: 'web.grants:search.inputPlaceholder',
       defaultMessage: 'Sía eftir leitarorði',
