@@ -89,6 +89,9 @@ export const getLocalrunValueFile = async (
         portConfig,
       ) as Record<string, string>,
       commands: [
+        ...(logger.logLevel === 'debug' || logger.logLevel === 'trace'
+          ? ['set -x']
+          : []),
         `cd "${rootDir}"`, // Change directory to the root directory
         `. ./.env.${serviceNXName}`, // Source the environment variables for the service
         `echo "Preparing dev-services for ${name}`, // Log preparation message
