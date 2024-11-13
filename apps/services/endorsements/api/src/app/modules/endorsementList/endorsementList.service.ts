@@ -377,8 +377,13 @@ export class EndorsementListService {
     doc
       .font('Regular')
       .fontSize(12)
-      .text(format(new Date(), 'dd.MM.yyyy HH:mm'))
-    currentYPosition = doc.y + 20
+      .text(
+        format(new Date(), 'dd.MM.yyyy HH:mm'),
+        60,
+        currentYPosition,
+        { align: 'left' },
+      )
+    currentYPosition = doc.y + 15
 
     doc
       .font('Bold')
