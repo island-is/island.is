@@ -36,6 +36,7 @@ export enum Routes {
   PUBLISHING = 'publishing',
   SUMMARY = 'summary',
   COMPLETE = 'complete',
+  REJECTED = 'rejected',
   MISC = 'misc',
 }
 
@@ -48,6 +49,7 @@ export enum TypeIds {
   SKIPULAGSSKRA = '3',
 }
 
+export const FAST_TRACK_DAYS = 10
 export const MEMBER_INDEX = '{memberIndex}'
 export const SIGNATURE_INDEX = '{institutionIndex}'
 
@@ -77,3 +79,5 @@ export const MAXIMUM_REGULAR_SIGNATURE_COUNT = 3
 export const MINIMUM_COMMITTEE_SIGNATURE_MEMBER_COUNT = 2
 export const DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT = 2
 export const MAXIMUM_COMMITTEE_SIGNATURE_MEMBER_COUNT = 10
+export const MAXIMUM_ADDITIONS_COUNT = 10
+export const DEFAULT_ADDITIONS_COUNT = 1

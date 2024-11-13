@@ -1,4 +1,4 @@
-import { MessageDescriptor } from 'react-intl'
+import { MessageDescriptor } from '@formatjs/intl'
 
 import {
   Inject,
@@ -12,21 +12,16 @@ import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
-import { NotificationType } from '@island.is/judicial-system/types'
+import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
+import { SubpoenaNotificationType } from '@island.is/judicial-system/types'
 
+import { Case } from '../case'
 import { EventService } from '../event'
-import { Subpoena } from '../subpoena'
 import { DeliverResponse } from './models/deliver.response'
 import { Notification, Recipient } from './models/notification.model'
 import { BaseNotificationService } from './baseNotification.service'
 import { notificationModuleConfig } from './notification.config'
 import { strings } from './subpoenaNotification.strings'
-
-type SubpoenaNotificationType =
-  | NotificationType.SERVICE_SUCCESSFUL
-  | NotificationType.SERVICE_FAILED
-  | NotificationType.DEFENDANT_SELECTED_DEFENDER
 
 @Injectable()
 export class SubpoenaNotificationService extends BaseNotificationService {
@@ -50,147 +45,146 @@ export class SubpoenaNotificationService extends BaseNotificationService {
     )
   }
 
-  private getEmailContents(notificationType: SubpoenaNotificationType): {
-    subject: MessageDescriptor
-    body: MessageDescriptor
-  } {
-    switch (notificationType) {
-      case NotificationType.SERVICE_SUCCESSFUL:
-        return {
-          subject: strings.serviceSuccessfulSubject,
-          body: strings.serviceSuccessfulBody,
-        }
-      case NotificationType.SERVICE_FAILED:
-        return {
-          subject: strings.serviceFailedSubject,
-          body: strings.serviceFailedBody,
-        }
-      case NotificationType.DEFENDANT_SELECTED_DEFENDER:
-        return {
-          subject: strings.defendantSelectedDefenderSubject,
-          body: strings.defendantSelectedDefenderBody,
-        }
-      default:
-        throw new InternalServerErrorException('Email contents not found')
-    }
-  }
-
-  private async sendSubpoenaNotification(
-    notificationType: SubpoenaNotificationType,
-    subpoena: Subpoena,
-  ): Promise<unknown> {
-    const theCase = subpoena.case
-
-    if (!theCase) {
-      throw new InternalServerErrorException('Missing case')
-    }
-
-    const hasSentSuccessfulServiceNotification = Boolean(
-      this.hasSentNotification(
-        NotificationType.SERVICE_SUCCESSFUL,
-        theCase.notifications,
-      ) && notificationType === NotificationType.SERVICE_SUCCESSFUL,
-    )
-
-    const hasSentFailedServiceNotification = Boolean(
-      this.hasSentNotification(
-        NotificationType.SERVICE_FAILED,
-        theCase.notifications,
-      ) && notificationType === NotificationType.SERVICE_FAILED,
-    )
-
-    const hasSendDefendantSelectedDefenderNotification = Boolean(
-      this.hasSentNotification(
-        NotificationType.DEFENDANT_SELECTED_DEFENDER,
-        theCase.notifications,
-      ) && notificationType === NotificationType.DEFENDANT_SELECTED_DEFENDER,
-    )
-
-    if (
-      hasSentSuccessfulServiceNotification ||
-      hasSentFailedServiceNotification ||
-      hasSendDefendantSelectedDefenderNotification
-    ) {
-      return
-    }
-
-    await this.refreshFormatMessage()
-
-    const emailContents = this.getEmailContents(notificationType)
-
-    const formattedSubject = this.formatMessage(emailContents.subject, {
-      courtCaseNumber: theCase.courtCaseNumber,
-    })
-
-    const formattedBody = this.formatMessage(emailContents.body, {
-      courtCaseNumber: theCase.courtCaseNumber,
-      linkStart: `<a href="${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}">`,
-      linkEnd: '</a>',
-    })
-
-    return this.sendEmails(
-      theCase.id,
-      notificationType,
-      formattedSubject,
-      formattedBody,
-      theCase.judge?.name,
-      theCase.judge?.email,
-      theCase.registrar?.name,
-      theCase.registrar?.email,
-    )
-  }
-
   private async sendEmails(
-    caseId: string,
+    theCase: Case,
     notificationType: SubpoenaNotificationType,
-    subject: string,
-    body: string,
-    judgeName?: string,
-    judgeEmail?: string,
-    registrarName?: string,
-    registrarEmail?: string,
+    subject: MessageDescriptor,
+    body: MessageDescriptor,
+    to: { name?: string; email?: string }[],
   ) {
+    const formattedSubject = this.formatMessage(subject, {
+      courtCaseNumber: theCase.courtCaseNumber,
+    })
+
     const promises: Promise<Recipient>[] = []
 
-    if (judgeName && judgeEmail) {
-      promises.push(
-        this.sendEmail(subject, body, judgeName, judgeEmail, undefined, true),
-      )
-    }
+    for (const recipient of to) {
+      if (recipient.email && recipient.name) {
+        const formattedBody = this.formatMessage(body, {
+          courtCaseNumber: theCase.courtCaseNumber,
+          linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
+          linkEnd: '</a>',
+        })
 
-    if (registrarName && registrarEmail) {
-      promises.push(
-        this.sendEmail(
-          subject,
-          body,
-          registrarName,
-          registrarEmail,
-          undefined,
-          true,
-        ),
-      )
+        promises.push(
+          this.sendEmail(
+            formattedSubject,
+            formattedBody,
+            recipient.name,
+            recipient.email,
+            undefined,
+            true,
+          ),
+        )
+      }
     }
 
     const recipients = await Promise.all(promises)
 
-    return this.recordNotification(caseId, notificationType, recipients)
+    return this.recordNotification(theCase.id, notificationType, recipients)
   }
 
-  async sendNotification(
-    type: NotificationType,
-    subpoena: Subpoena,
+  private sendServiceSuccessfulNotification(
+    theCase: Case,
   ): Promise<DeliverResponse> {
+    return this.sendEmails(
+      theCase,
+      SubpoenaNotificationType.SERVICE_SUCCESSFUL,
+      strings.serviceSuccessfulSubject,
+      strings.serviceSuccessfulBody,
+      [
+        {
+          name: theCase.judge?.name,
+          email: theCase.judge?.email,
+        },
+        {
+          name: theCase.registrar?.name,
+          email: theCase.registrar?.email,
+        },
+        {
+          name: theCase.prosecutor?.name,
+          email: theCase.prosecutor?.email,
+        },
+      ],
+    )
+  }
+
+  private sendServiceFailedNotification(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    return this.sendEmails(
+      theCase,
+      SubpoenaNotificationType.SERVICE_FAILED,
+      strings.serviceFailedSubject,
+      strings.serviceFailedBody,
+      [
+        {
+          name: theCase.judge?.name,
+          email: theCase.judge?.email,
+        },
+        {
+          name: theCase.registrar?.name,
+          email: theCase.registrar?.email,
+        },
+        {
+          name: theCase.prosecutor?.name,
+          email: theCase.prosecutor?.email,
+        },
+      ],
+    )
+  }
+
+  private sendDefendantSelectedDefenderNotification(
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    return this.sendEmails(
+      theCase,
+      SubpoenaNotificationType.DEFENDANT_SELECTED_DEFENDER,
+      strings.defendantSelectedDefenderSubject,
+      strings.defendantSelectedDefenderBody,
+      [
+        {
+          name: theCase.judge?.name,
+          email: theCase.judge?.email,
+        },
+        {
+          name: theCase.registrar?.name,
+          email: theCase.registrar?.email,
+        },
+      ],
+    )
+  }
+
+  private sendNotification(
+    type: SubpoenaNotificationType,
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    switch (type) {
+      case SubpoenaNotificationType.SERVICE_SUCCESSFUL:
+        return this.sendServiceSuccessfulNotification(theCase)
+      case SubpoenaNotificationType.SERVICE_FAILED:
+        return this.sendServiceFailedNotification(theCase)
+      case SubpoenaNotificationType.DEFENDANT_SELECTED_DEFENDER:
+        return this.sendDefendantSelectedDefenderNotification(theCase)
+      default:
+        throw new InternalServerErrorException(
+          `Invalid notification type: ${type}`,
+        )
+    }
+  }
+
+  async sendSubpoenaNotification(
+    type: SubpoenaNotificationType,
+    theCase: Case,
+  ): Promise<DeliverResponse> {
+    await this.refreshFormatMessage()
+
     try {
-      await this.sendSubpoenaNotification(
-        type as SubpoenaNotificationType,
-        subpoena,
-      )
+      return await this.sendNotification(type, theCase)
     } catch (error) {
       this.logger.error('Failed to send notification', error)
 
       return { delivered: false }
     }
-
-    return { delivered: true }
   }
 }

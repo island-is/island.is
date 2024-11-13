@@ -1656,6 +1656,10 @@ export const m = defineMessages({
     defaultMessage:
       'Hér eru upplýsingar og yfirlit yfir mál sem þú átt hjá dómskerfinu.',
   },
+  myCourtCases: {
+    id: 'service.portal:my-court-cases',
+    defaultMessage: 'Mín dómsmál',
+  },
   courtCases: {
     id: 'service.portal:court-cases',
     defaultMessage: 'Dómsmál',

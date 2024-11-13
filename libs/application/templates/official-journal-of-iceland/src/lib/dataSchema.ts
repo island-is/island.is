@@ -1,9 +1,12 @@
 import { z } from 'zod'
 import { error } from './messages'
 import { AnswerOption, SignatureTypes } from './constants'
-import { institution } from '../components/signatures/Signatures.css'
 import { MessageDescriptor } from 'react-intl'
 
+const emailRegex =
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+const isValidEmail = (value?: string) =>
+  value ? emailRegex.test(value) : false
 export const memberItemSchema = z
   .object({
     name: z.string().optional(),
@@ -13,6 +16,17 @@ export const memberItemSchema = z
     after: z.string().optional(),
   })
   .partial()
+
+export const additionSchema = z.array(
+  z
+    .object({
+      id: z.string().optional(),
+      title: z.string().optional(),
+      content: z.string().optional(),
+      type: z.enum(['html', 'file']).optional(),
+    })
+    .partial(),
+)
 
 export const membersSchema = z.array(memberItemSchema).optional()
 
@@ -39,6 +53,7 @@ export const committeeSignatureSchema = regularSignatureItemSchema
 
 export const channelSchema = z
   .object({
+    name: z.string(),
     email: z.string(),
     phone: z.string(),
   })
@@ -47,6 +62,7 @@ export const channelSchema = z
 const advertSchema = z
   .object({
     departmentId: z.string().optional(),
+    typeName: z.string().optional(),
     typeId: z.string().optional(),
     title: z.string().optional(),
     html: z.string().optional(),
@@ -54,6 +70,7 @@ const advertSchema = z
     categories: z.array(z.string()).optional(),
     channels: z.array(channelSchema).optional(),
     message: z.string().optional(),
+    additions: additionSchema.optional(),
   })
   .partial()
 
@@ -118,6 +135,35 @@ export const advertValidationSchema = z.object({
   }),
 })
 
+export const previewValidationSchema = z.object({
+  advert: z.object({
+    departmentId: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingPreviewDepartment,
+      }),
+    typeId: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingPreviewType,
+      }),
+    title: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingPreviewTitle,
+      }),
+    html: z
+      .string()
+      .optional()
+      .refine((value) => value && value.length > 0, {
+        params: error.missingPreviewHtml,
+      }),
+  }),
+})
+
 export const publishingValidationSchema = z.object({
   requestedDate: z
     .string()
@@ -131,6 +177,37 @@ export const publishingValidationSchema = z.object({
     .optional()
     .refine((value) => Array.isArray(value) && value.length > 0, {
       params: error.noCategorySelected,
+    }),
+  channels: z
+    .array(channelSchema)
+    .optional()
+    .superRefine((schema, context) => {
+      let pass = true
+      if (!schema || schema.length === 0) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: error.emptyChannel,
+          path: ['advert', 'channels'],
+        })
+
+        pass = false
+      }
+
+      const validChannels = schema?.every(
+        (channel) => validateChannel(channel) === true,
+      )
+
+      if (!validChannels) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          params: error.invalidChannel,
+          path: ['advert', 'channels'],
+        })
+
+        pass = false
+      }
+
+      return pass
     }),
 })
 
@@ -205,13 +282,14 @@ const validateInstitutionAndDate = (
   date: string | undefined,
   context: z.RefinementCtx,
 ) => {
+  let success = true
   if (!institution) {
     context.addIssue({
       code: z.ZodIssueCode.custom,
       params: error.missingSignatureInstitution,
     })
 
-    return false
+    success = false
   }
 
   if (!date) {
@@ -220,10 +298,10 @@ const validateInstitutionAndDate = (
       params: error.missingSignatureDate,
     })
 
-    return false
+    success = false
   }
 
-  return true
+  return success
 }
 
 const validateRegularSignature = (
@@ -305,6 +383,12 @@ const validateCommitteeSignature = (
       .every((isValid) => isValid) ?? false
 
   return hasValidInstitutionAndDate && hasValidChairman && hasValidMembers
+}
+
+const validateChannel = (channel: z.infer<typeof channelSchema>) => {
+  const validEmail = isValidEmail(channel.email)
+
+  return validEmail
 }
 
 type Flatten<T> = T extends any[] ? T[number] : T

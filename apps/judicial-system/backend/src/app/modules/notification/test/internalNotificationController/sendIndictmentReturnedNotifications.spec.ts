@@ -3,8 +3,8 @@ import { uuid } from 'uuidv4'
 import { EmailService } from '@island.is/email-service'
 
 import {
+  CaseNotificationType,
   CaseType,
-  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -63,7 +63,7 @@ describe('InternalNotificationController - Send indictment returned notification
 
     const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
-      type: NotificationType.INDICTMENT_RETURNED,
+      type: CaseNotificationType.INDICTMENT_RETURNED,
     }
 
     const theCase = {

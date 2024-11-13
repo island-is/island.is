@@ -10,7 +10,6 @@ import {
   Inject,
   Injectable,
   NotFoundException,
-  NotImplementedException,
   ServiceUnavailableException,
 } from '@nestjs/common'
 
@@ -337,7 +336,7 @@ export class PoliceService {
       })
   }
 
-  async getSubpoenaStatus(subpoenaId: string, user: User): Promise<Subpoena> {
+  async getSubpoenaStatus(subpoenaId: string, user?: User): Promise<Subpoena> {
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
     )
@@ -408,8 +407,8 @@ export class PoliceService {
           'Failed to get subpoena',
           {
             subpoenaId,
-            actor: user.name,
-            institution: user.institution?.name,
+            actor: user?.name || 'Digital-mailbox',
+            institution: user?.institution?.name,
           },
           reason,
         )
@@ -623,12 +622,6 @@ export class PoliceService {
     indictment: string,
     user: User,
   ): Promise<CreateSubpoenaResponse> {
-    if (!this.config.policeCreateSubpoenaApiAvailable) {
-      throw new NotImplementedException(
-        'Police create subpoena API not available in current environment',
-      )
-    }
-
     const { courtCaseNumber, dateLogs, prosecutor, policeCaseNumbers, court } =
       workingCase
     const { nationalId: defendantNationalId } = defendant

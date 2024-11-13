@@ -42,6 +42,18 @@ describe('AuthGuard', () => {
     expect(isValid).toBe(true)
   })
 
+  it('Api key should work for Myflug', async () => {
+    const request: any = {
+      headers: {
+        authorization: `bearer ${airlineApiKeys.myflug}`,
+      },
+    }
+
+    const isValid = authGuard.hasValidApiKey(request)
+
+    expect(isValid).toBe(true)
+  })
+
   it('Api key should not work with empty authorization header', async () => {
     const request: any = {
       headers: {},

@@ -8,7 +8,10 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import { type User } from '@island.is/judicial-system/types'
-import { CaseState, NotificationType } from '@island.is/judicial-system/types'
+import {
+  CaseNotificationType,
+  CaseState,
+} from '@island.is/judicial-system/types'
 
 import { type Case } from '../case'
 import { EventService } from '../event'
@@ -22,7 +25,7 @@ export class NotificationService {
   ) {}
 
   private getNotificationMessage(
-    type: NotificationType,
+    type: CaseNotificationType,
     user: User,
     theCase: Case,
   ): Message {
@@ -35,7 +38,7 @@ export class NotificationService {
   }
 
   async addNotificationMessagesToQueue(
-    type: NotificationType,
+    type: CaseNotificationType,
     eventOnly = false,
     theCase: Case,
     user: User,
@@ -43,7 +46,7 @@ export class NotificationService {
     let messages: Message[]
 
     switch (type) {
-      case NotificationType.READY_FOR_COURT:
+      case CaseNotificationType.READY_FOR_COURT:
         messages = [this.getNotificationMessage(type, user, theCase)]
 
         if (theCase.state === CaseState.RECEIVED) {
@@ -54,7 +57,7 @@ export class NotificationService {
           })
         }
         break
-      case NotificationType.COURT_DATE:
+      case CaseNotificationType.COURT_DATE:
         if (eventOnly) {
           this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase, true)
 
@@ -62,7 +65,7 @@ export class NotificationService {
           // the judge chooses not to send a calendar invitation
           messages = [
             this.getNotificationMessage(
-              NotificationType.ADVOCATE_ASSIGNED,
+              CaseNotificationType.ADVOCATE_ASSIGNED,
               user,
               theCase,
             ),
@@ -71,11 +74,10 @@ export class NotificationService {
           messages = [this.getNotificationMessage(type, user, theCase)]
         }
         break
-      case NotificationType.HEADS_UP:
-      case NotificationType.ADVOCATE_ASSIGNED:
-      case NotificationType.APPEAL_JUDGES_ASSIGNED:
-      case NotificationType.APPEAL_CASE_FILES_UPDATED:
-      case NotificationType.CASE_FILES_UPDATED:
+      case CaseNotificationType.HEADS_UP:
+      case CaseNotificationType.APPEAL_JUDGES_ASSIGNED:
+      case CaseNotificationType.APPEAL_CASE_FILES_UPDATED:
+      case CaseNotificationType.CASE_FILES_UPDATED:
         messages = [this.getNotificationMessage(type, user, theCase)]
         break
       default:

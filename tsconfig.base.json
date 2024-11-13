@@ -306,6 +306,9 @@
       "@island.is/application/templates/aosh/transfer-of-machine-ownership": [
         "libs/application/templates/aosh/transfer-of-machine-ownership/src/index.ts"
       ],
+      "@island.is/application/templates/aosh/work-accident-notification": [
+        "libs/application/templates/aosh/work-accident-notification/src/index.ts"
+      ],
       "@island.is/application/templates/car-recycling": [
         "libs/application/templates/car-recycling/src/index.ts"
       ],
@@ -503,6 +506,9 @@
       ],
       "@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly": [
         "libs/application/templates/social-insurance-administration/additional-support-for-the-elderly/src/index.ts"
+      ],
+      "@island.is/application/templates/social-insurance-administration/death-benefits": [
+        "libs/application/templates/social-insurance-administration/death-benefits/src/index.ts"
       ],
       "@island.is/application/templates/social-insurance-administration/household-supplement": [
         "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
@@ -843,6 +849,9 @@
         "libs/clients/vehicles-mileage/src/index.ts"
       ],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
+      "@island.is/clients/work-accident-ver": [
+        "libs/clients/work-accident-ver/src/index.ts"
+      ],
       "@island.is/clients/work-machines": [
         "libs/clients/work-machines/src/index.ts"
       ],
@@ -988,6 +997,7 @@
       "@island.is/portals/shared-modules/delegations/messages": [
         "libs/portals/shared-modules/delegations/src/lib/messages.ts"
       ],
+      "@island.is/react-spa/bff": ["libs/react-spa/bff/src/index.ts"],
       "@island.is/react-spa/shared": ["libs/react-spa/shared/src/index.ts"],
       "@island.is/react/components": ["libs/react/components/src/index.ts"],
       "@island.is/react/feature-flags": [

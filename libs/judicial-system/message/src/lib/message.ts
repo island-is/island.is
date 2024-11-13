@@ -27,7 +27,9 @@ export enum MessageType {
   DELIVERY_TO_POLICE_APPEAL = 'DELIVERY_TO_POLICE_APPEAL',
   NOTIFICATION = 'NOTIFICATION',
   SUBPOENA_NOTIFICATION = 'SUBPOENA_NOTIFICATION',
+  INSTITUTION_NOTIFICATION = 'INSTITUTION_NOTIFICATION',
   NOTIFICATION_DISPATCH = 'NOTIFICATION_DISPATCH',
+  DEFENDANT_NOTIFICATION = 'DEFENDANT_NOTIFICATION',
 }
 
 export const messageEndpoint: { [key in MessageType]: string } = {
@@ -61,7 +63,9 @@ export const messageEndpoint: { [key in MessageType]: string } = {
   DELIVERY_TO_POLICE_APPEAL: 'deliverAppealToPolice',
   NOTIFICATION: 'notification',
   SUBPOENA_NOTIFICATION: 'subpoenaNotification',
+  INSTITUTION_NOTIFICATION: 'institutionNotification',
   NOTIFICATION_DISPATCH: 'notification/dispatch',
+  DEFENDANT_NOTIFICATION: 'defendantNotification',
 }
 
 export type Message = {

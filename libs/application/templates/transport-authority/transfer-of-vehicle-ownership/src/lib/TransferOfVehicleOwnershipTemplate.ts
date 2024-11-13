@@ -30,6 +30,7 @@ import {
   IdentityApi,
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
+  MockableSamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
   InsuranceCompaniesApi,
 } from '../dataProviders'
@@ -142,6 +143,7 @@ const template: ApplicationTemplate<
                 IdentityApi,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
+                MockableSamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
                 InsuranceCompaniesApi,
               ],
@@ -201,8 +203,12 @@ const template: ApplicationTemplate<
             action: ApiActions.addReview,
             shouldPersistToExternalData: true,
           }),
+          // Note: only re-validating because it is possible to add buyerCoOwners and buyerOperators in this step
           onExit: defineTemplateApi({
             action: ApiActions.validateApplication,
+          }),
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
           }),
           roles: [
             {

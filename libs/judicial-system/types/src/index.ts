@@ -11,7 +11,14 @@ export {
   isFailedServiceStatus,
 } from './lib/defendant'
 export { InstitutionType } from './lib/institution'
-export { NotificationType } from './lib/notification'
+export {
+  CaseNotificationType,
+  SubpoenaNotificationType,
+  NotificationType,
+  InstitutionNotificationType,
+  NotificationDispatchType,
+  DefendantNotificationType,
+} from './lib/notification'
 export type { Institution } from './lib/institution'
 export { EventType } from './lib/eventLog'
 export { DateType } from './lib/dateLog'
@@ -85,7 +92,10 @@ export {
   courtSessionTypeNames,
 } from './lib/case'
 
-export { getIndictmentVerdictAppealDeadlineStatus } from './lib/indictmentCase'
+export {
+  getIndictmentVerdictAppealDeadlineStatus,
+  VERDICT_APPEAL_WINDOW_DAYS,
+} from './lib/indictmentCase'
 
 export type {
   CrimeScene,

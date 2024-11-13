@@ -1,8 +1,8 @@
 import PDFDocument from 'pdfkit'
-import { MessageDescriptor } from 'react-intl'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
+import { getIntro } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatDate,
@@ -11,7 +11,7 @@ import {
   lowercase,
   Word,
 } from '@island.is/judicial-system/formatters'
-import { Gender, SubpoenaType } from '@island.is/judicial-system/types'
+import { SubpoenaType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../factories/date.factory'
 import { subpoena as strings } from '../messages'
@@ -29,36 +29,6 @@ import {
   Confirmation,
   setTitle,
 } from './pdfHelpers'
-
-const getIntro = (
-  gender?: Gender,
-): {
-  intro: MessageDescriptor
-  absenceIntro: MessageDescriptor
-  arrestIntro: MessageDescriptor
-} => {
-  switch (gender) {
-    case Gender.MALE:
-      return {
-        intro: strings.intro,
-        absenceIntro: strings.absenceIntro,
-        arrestIntro: strings.arrestIntro,
-      }
-
-    case Gender.FEMALE:
-      return {
-        intro: strings.intro_female,
-        absenceIntro: strings.absenceIntroFemale,
-        arrestIntro: strings.arrestIntroFemale,
-      }
-    default:
-      return {
-        intro: strings.intro_non_binary,
-        absenceIntro: strings.absenceIntroNonBinary,
-        arrestIntro: strings.arrestIntroNonBinary,
-      }
-  }
-}
 
 export const createSubpoena = (
   theCase: Case,
@@ -192,7 +162,7 @@ export const createSubpoena = (
   }
 
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(strings.deadline), 'Times-Roman')
+  addNormalText(doc, formatMessage(intro.deadline), 'Times-Roman')
 
   addFooter(doc)
 

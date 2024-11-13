@@ -1,4 +1,4 @@
-import { Button } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import { getValueViaPath } from '@island.is/application/core'
 import { InputFields } from '../../lib/types'
@@ -46,13 +46,15 @@ export const RemoveRegularSignature = ({
   }
 
   return (
-    <Button
-      variant="utility"
-      size="small"
-      icon="trash"
-      iconType="outline"
-      disabled={signatureIndex === 0}
-      onClick={onRemove}
-    />
+    <Box display="flex" flexDirection="column" justifyContent="flexEnd">
+      <Button
+        variant="utility"
+        size="small"
+        icon="trash"
+        iconType="outline"
+        disabled={signatureIndex === 0}
+        onClick={onRemove}
+      />
+    </Box>
   )
 }

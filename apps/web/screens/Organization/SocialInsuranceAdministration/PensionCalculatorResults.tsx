@@ -448,15 +448,30 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
                                       translationStrings.after1stSeptember2025,
                                     )}
                                   </Text>
-                                  <Text>
-                                    {formatMessage(
-                                      translationStrings.after1stSeptember2025Description,
-                                    )}
-                                  </Text>
+                                  <Inline space={3} alignY="center">
+                                    <img
+                                      width="80px"
+                                      height="80px"
+                                      src={formatMessage(
+                                        translationStrings.results2025ImageUrl,
+                                      )}
+                                      alt=""
+                                    />
+                                    {
+                                      <Box className={styles.text2025Container}>
+                                        <Text>
+                                          {formatMessage(
+                                            translationStrings.after1stSeptember2025Description,
+                                          )}
+                                        </Text>
+                                      </Box>
+                                    }
+                                  </Inline>
                                   <Button
                                     onClick={() => {
                                       setShowDisabilityChangesIn2025(true)
                                     }}
+                                    variant="ghost"
                                     size="small"
                                   >
                                     {formatMessage(
@@ -591,6 +606,14 @@ const PensionCalculatorResults: CustomScreen<PensionCalculatorResultsProps> = ({
   )
 }
 
+const isSameYear = (
+  date1: string | null | undefined,
+  date2: string | null | undefined,
+) => {
+  if (!date1 || !date2) return false
+  return new Date(date1).getFullYear() === new Date(date2).getFullYear()
+}
+
 PensionCalculatorResults.getProps = async ({
   apolloClient,
   locale,
@@ -599,6 +622,7 @@ PensionCalculatorResults.getProps = async ({
 }) => {
   const calculationInput = convertQueryParametersToCalculationInput(query)
   const slug = extractSlug(locale, customPageData)
+  const dateOfCalculationsOptions = getDateOfCalculationsOptions(customPageData)
   const [
     {
       data: { getOrganizationPage },
@@ -639,14 +663,17 @@ PensionCalculatorResults.getProps = async ({
     }),
     calculationInput.typeOfBasePension ===
       SocialInsurancePensionCalculationBasePensionType.Disability &&
-    is2025PreviewActive(customPageData)
+    is2025PreviewActive(customPageData) &&
+    isSameYear(
+      dateOfCalculationsOptions?.[0]?.value,
+      calculationInput.dateOfCalculations,
+    )
       ? apolloClient.query<Query, QueryGetPensionCalculationArgs>({
           query: GET_PENSION_CALCULATION,
           variables: {
             input: {
               ...calculationInput,
-              startYear: 2025,
-              startMonth: 9,
+              dateOfCalculations: new Date(2025, 8, 1).toISOString(),
               typeOfBasePension:
                 SocialInsurancePensionCalculationBasePensionType.NewSystem,
             },
@@ -685,7 +712,7 @@ PensionCalculatorResults.getProps = async ({
     calculation: getPensionCalculation,
     calculation2025: getPensionCalculation2025,
     calculationInput,
-    dateOfCalculationsOptions: getDateOfCalculationsOptions(customPageData),
+    dateOfCalculationsOptions,
     queryParamString: queryParams.toString(),
     ...getThemeConfig(
       getOrganizationPage?.theme,

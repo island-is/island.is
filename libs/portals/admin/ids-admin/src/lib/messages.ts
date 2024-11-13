@@ -77,6 +77,14 @@ export const m = defineMessages({
     id: 'ap.ids-admin:clients-description',
     defaultMessage: 'Here you can view and create applications.',
   },
+  needHelpTitle: {
+    id: 'ap.ids-admin:need-help-title',
+    defaultMessage: 'Do you need help?',
+  },
+  needHelpDescription: {
+    id: 'ap.ids-admin:need-help-description',
+    defaultMessage: 'Check out the documentation.',
+  },
   learnMore: {
     id: 'ap.ids-admin:learn-more',
     defaultMessage: 'Learn more',
@@ -532,6 +540,14 @@ export const m = defineMessages({
     defaultMessage:
       'List of permissions (scopes) the application can request during authentication. Applications can always request standard scopes like oidc, profile, email, phone and address.{br}{br}Here you can add permissions from the current tenant. For third party permissions, the owner must grant access to your application.',
   },
+  documentation: {
+    id: 'ap.ids-admin:documentation',
+    defaultMessage: 'Documentation',
+  },
+  documentationDescription: {
+    id: 'ap.ids-admin:documentation-description',
+    defaultMessage: 'Link to external documentation for IDS admin.',
+  },
   permissionsAdd: {
     id: 'ap.ids-admin:permissions-add',
     defaultMessage: 'Add permissions',
@@ -899,6 +915,14 @@ export const m = defineMessages({
     defaultMessage:
       'Allow users to sign into this application as children which they are legal guardians of according to the Registers Iceland.',
   },
+  clientDelegationTypeLegalGuardianMinorName: {
+    id: 'ap.ids-admin:client-delegation-type-legal-guardian-minor-name',
+    defaultMessage: 'Legal guardian minor',
+  },
+  clientDelegationTypeLegalGuardianMinorDescription: {
+    id: 'ap.ids-admin:client-delegation-type-legal-guardian-minor-description',
+    defaultMessage: 'Legal guardian of children 16 years and younger.',
+  },
   clientDelegationTypeLegalGuardianName: {
     id: 'ap.ids-admin:client-delegation-type-legal-guardian-name',
     defaultMessage: 'Legal guardian',
@@ -962,6 +986,15 @@ export const m = defineMessages({
   apiScopeDelegationProviderThjodskraName: {
     id: 'ap.ids-admin:api-scope-delegation-provider-tjodskra-name',
     defaultMessage: 'National registry',
+  },
+  apiScopeDelegationTypeLegalGuardianMinorName: {
+    id: 'ap.ids-admin:api-scope-delegation-type-legal-guardian-minor-name',
+    defaultMessage: 'Legal guardian minor',
+  },
+  apiScopeDelegationTypeLegalGuardianMinorDescription: {
+    id: 'ap.ids-admin:api-scope-delegation-type-legal-guardian-minor-description',
+    defaultMessage:
+      'Should legal guardians automatically get this permission for their wards, 16 and younger.',
   },
   apiScopeDelegationTypeLegalGuardianName: {
     id: 'ap.ids-admin:api-scope-delegation-type-legal-guardian-name',

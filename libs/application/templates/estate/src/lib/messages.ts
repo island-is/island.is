@@ -1140,6 +1140,12 @@ export const m = defineMessages({
       'Ekki er hægt að halda áfram með umsókn þar sem aðili undir 18 er skráður án málssvara yfir lögaldri',
     description: '',
   },
+  missingHeirUndividedEstateValidation: {
+    id: 'es.application:missingHeirUndividedEstateValidation',
+    defaultMessage:
+      'Ekki er hægt að halda áfram með umsókn þar sem engin erfingi er skráður',
+    description: '',
+  },
 
   // Properties
   realEstatesDescription: {

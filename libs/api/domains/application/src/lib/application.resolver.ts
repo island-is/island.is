@@ -17,15 +17,9 @@ import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { SubmitApplicationInput } from './dto/submitApplication.input'
 import { AssignApplicationInput } from './dto/assignApplication.input'
-import { GeneratePdfInput } from './dto/generatePdf.input'
-import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
-import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
-import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import { ApplicationApplicationInput } from './dto/applicationApplication.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
-import { RequestFileSignatureResponse } from './dto/requestFileSignature.response'
 import { PresignedUrlResponse } from './dto/presignedUrl.response'
-import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 import { DeleteApplicationInput } from './dto/deleteApplication.input'
 
@@ -133,38 +127,6 @@ export class ApplicationResolver {
     @CurrentUser() user: User,
   ): Promise<Application> {
     return this.applicationService.assignApplication(input, user)
-  }
-
-  @Mutation(() => PresignedUrlResponse, { nullable: true })
-  async generatePdfPresignedUrl(
-    @Args('input') input: GeneratePdfInput,
-    @CurrentUser() user: User,
-  ): Promise<PresignedUrlResponse> {
-    return this.applicationService.generatePdfPresignedUrl(input, user)
-  }
-
-  @Mutation(() => RequestFileSignatureResponse, { nullable: true })
-  requestFileSignature(
-    @Args('input') input: RequestFileSignatureInput,
-    @CurrentUser() user: User,
-  ): Promise<RequestFileSignatureResponse> {
-    return this.applicationService.requestFileSignature(input, user)
-  }
-
-  @Mutation(() => UploadSignedFileResponse, { nullable: true })
-  uploadSignedFile(
-    @Args('input') input: UploadSignedFileInput,
-    @CurrentUser() user: User,
-  ): Promise<UploadSignedFileResponse> {
-    return this.applicationService.uploadSignedFile(input, user)
-  }
-
-  @Query(() => PresignedUrlResponse, { nullable: true })
-  getPresignedUrl(
-    @Args('input') input: GetPresignedUrlInput,
-    @CurrentUser() user: User,
-  ): Promise<PresignedUrlResponse> {
-    return this.applicationService.presignedUrl(input, user)
   }
 
   @Query(() => PresignedUrlResponse, { nullable: true })
