@@ -36,19 +36,8 @@ const writeYamlFile = (filePath: string, content: unknown) => {
   writeFileSync(filePath, doc.toString(yamlOptions), { encoding: 'utf8' })
 }
 
-const getReleaseTag = () => {
-  const releaseTagArg = process.argv.find((arg) =>
-    arg.startsWith('--release-tag='),
-  )
-  return releaseTagArg ? releaseTagArg.split('=')[1] : undefined
-}
-
 async function generateChartValues() {
-  const releaseTag = getReleaseTag()
-  console.log(
-    'Gathering charts',
-    releaseTag ? `with release tag: ${releaseTag}` : '',
-  )
+  console.log('Gathering charts')
 
   for (const [name, envs] of Object.entries(Deployments)) {
     for (const [envType, envName] of Object.entries(envs)) {
@@ -81,11 +70,6 @@ async function generateChartValues() {
               name: serviceName,
               ...renderedValues[serviceName],
             },
-          }
-
-          // Add release tag to image if provided
-          if (releaseTag && serviceValues.service.image?.repository) {
-            serviceValues.service.image.repository += `:${releaseTag}`
           }
 
           writeYamlFile(
