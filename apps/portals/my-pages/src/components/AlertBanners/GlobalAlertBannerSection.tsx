@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie'
 import { AlertBanner, Box, Stack } from '@island.is/island-ui/core'
 import { AlertBannerVariants } from '@island.is/island-ui/core'
-import { AlertBannerType } from '@island.is/service-portal/graphql'
+import { AlertBannerType } from '@island.is/portals/my-pages/graphql'
 import { forwardRef } from 'react'
 import * as styles from './Banners.css'
 
