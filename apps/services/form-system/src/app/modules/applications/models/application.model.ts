@@ -11,6 +11,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Form } from '../../forms/models/form.model'
+import { Dependency } from '../../../dataTypes/dependency.model'
 
 @Table({ tableName: 'application' })
 export class Application extends Model<Application> {
@@ -35,11 +36,11 @@ export class Application extends Model<Application> {
   })
   isTest!: boolean
 
-  // @Column({
-  //   type: DataType.JSON,
-  //   allowNull: true,
-  // })
-  // hiddenComponents?: Record<string, string>
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  dependencies?: Dependency[]
 
   @ForeignKey(() => Form)
   @Column({
