@@ -221,14 +221,15 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
 
   return (
     <GrantWrapper
-      pageTitle={'Styrkjatorg'}
+      pageTitle={formatMessage(m.home.title)}
       pageDescription={formatMessage(m.home.description)}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
     >
       <GrantHeaderWithImage
-        title={'Styrkjatorg'}
+        title={formatMessage(m.home.title)}
         description="Non scelerisque risus amet tincidunt. Sit sed quis cursus hendrerit nulla egestas interdum. In varius quisque."
         featuredImage={formatMessage(m.home.featuredImage)}
+        featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
         imageLayout="left"
         breadcrumbs={
           breadcrumbItems && (
