@@ -1,4 +1,4 @@
-import { FC, isValidElement, ReactNode } from 'react'
+import { FC, ReactNode } from 'react'
 
 import { Box, ResponsiveProp, Space, Text } from '@island.is/island-ui/core'
 
@@ -31,10 +31,10 @@ const SectionHeading: FC<Props> = ({
     </Text>
     {description && (
       <Box component="span" marginTop={1}>
-        {isValidElement(description) ? (
-          description
-        ) : (
+        {typeof description === 'string' || description instanceof String ? (
           <Text marginTop={2}>{description}</Text>
+        ) : (
+          description
         )}
       </Box>
     )}
