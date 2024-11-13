@@ -15,11 +15,11 @@ export class CertificationType {
   @ApiProperty()
   isCommon!: boolean
 
-  @ApiProperty()
-  formCertificationId?: string
+  // @ApiProperty()
+  // formCertificationId?: string
 
-  @ApiProperty()
-  organizationCertificationId?: string
+  // @ApiProperty()
+  // organizationCertificationId?: string
 }
 
 export const CertificationTypes: CertificationType[] = [

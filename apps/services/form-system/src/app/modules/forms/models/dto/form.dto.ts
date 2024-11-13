@@ -8,6 +8,8 @@ import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import { CertificationType } from '../../../../dataTypes/certificationTypes/certificationType.model'
 import { ApplicantType } from '../../../../dataTypes/applicantTypes/applicantType.model'
+import { FormApplicantTypeDto } from '../../../formApplicantTypes/models/dto/formApplicantType.dto'
+import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
 
 export class FormDto {
   @ApiProperty()
@@ -49,11 +51,11 @@ export class FormDto {
   @ApiPropertyOptional({ type: [Dependency] })
   dependencies?: Dependency[]
 
-  @ApiPropertyOptional({ type: [CertificationType] })
-  certificationTypes?: CertificationType[]
+  @ApiPropertyOptional({ type: [FormCertificationTypeDto] })
+  certificationTypes?: FormCertificationTypeDto[]
 
-  @ApiPropertyOptional({ type: [ApplicantType] })
-  applicantTypes?: ApplicantType[]
+  @ApiPropertyOptional({ type: [FormApplicantTypeDto] })
+  applicantTypes?: FormApplicantTypeDto[]
 
   @ApiPropertyOptional({ type: [SectionDto] })
   sections?: SectionDto[]
