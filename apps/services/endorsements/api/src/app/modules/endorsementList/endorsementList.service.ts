@@ -921,7 +921,7 @@ export class EndorsementListService {
       this.logger.error('Failed to upload file to S3', {
         error: error.message,
         filename,
-        bucketName: environment.exportsBucketName
+        bucketName: environment.exportsBucketName,
       })
       throw new InternalServerErrorException(
         `Failed to upload file to S3: ${error.message}`
