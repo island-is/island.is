@@ -683,7 +683,7 @@ export class EndorsementListService {
     } catch (error) {
       this.logger.error('Failed to send creation notification email', {
         error: error.message,
-        listId: endorsementList.id
+        listId: endorsementList.id,
       })
       return { success: false }
     }
