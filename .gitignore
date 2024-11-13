@@ -99,3 +99,8 @@ apps/**/index.html
 
 .nx/
 .zed/
+
+# E2E outputs
+test-results/
+playwright-report/
+tmp-sessions/
