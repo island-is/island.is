@@ -38,10 +38,10 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
       [
         generateLine(
           formatMessage(m.single.fund),
-          grant?.fund?.url ? (
+          grant?.fund?.link?.slug ? (
             <Text fontWeight="semiBold" color="blue400">
               <LinkV2
-                href={grant.fund.url}
+                href={grant.fund.link.slug}
                 color="blue400"
                 underline="normal"
                 underlineVisibility="hover"

@@ -36,8 +36,6 @@ export const GET_GRANTS_QUERY = gql`
         fund {
           id
           title
-          url
-
           link {
             slug
             type
@@ -86,7 +84,6 @@ export const GET_GRANT_QUERY = gql`
       fund {
         id
         title
-        url
         link {
           slug
           type
@@ -103,10 +100,6 @@ export const GET_GRANT_QUERY = gql`
           }
         }
       }
-      whatIsGranted {
-        ...AllSlices
-        ${nestedFields}
-      }
       specialEmphasis {
         ...AllSlices
         ${nestedFields}
@@ -120,6 +113,10 @@ export const GET_GRANT_QUERY = gql`
         ${nestedFields}
       }
       applicationDeadline {
+        ...AllSlices
+        ${nestedFields}
+      }
+      applicationHints {
         ...AllSlices
         ${nestedFields}
       }

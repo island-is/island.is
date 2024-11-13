@@ -105,31 +105,14 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
               iconType: 'outline',
             }}
           />
-          {grant.whatIsGranted.length ? (
-            <Box>
-              <Text variant="h3">{formatMessage(m.single.whatIsGranted)}</Text>
+          {grant.specialEmphasis.length ? (
+            <>
               <Box className="rs_read">
                 {webRichText(
-                  grant.whatIsGranted as SliceType[],
+                  grant.specialEmphasis as SliceType[],
                   undefined,
                   locale,
                 )}
-              </Box>
-            </Box>
-          ) : undefined}
-          {grant.specialEmphasis.length ? (
-            <>
-              <Box>
-                <Text variant="h3">
-                  {formatMessage(m.single.specialEmphasis)}
-                </Text>
-                <Box className="rs_read">
-                  {webRichText(
-                    grant.specialEmphasis as SliceType[],
-                    undefined,
-                    locale,
-                  )}
-                </Box>
               </Box>
               <Divider />
             </>
@@ -162,15 +145,21 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
             </Box>
           ) : undefined}
           {grant.applicationDeadline.length ? (
-            <Box>
-              <Text variant="h4">{formatMessage(m.single.deadline)}</Text>
-              <Box className="rs_read">
-                {webRichText(
-                  grant.applicationDeadline as SliceType[],
-                  undefined,
-                  locale,
-                )}
-              </Box>
+            <Box className="rs_read">
+              {webRichText(
+                grant.applicationDeadline as SliceType[],
+                undefined,
+                locale,
+              )}
+            </Box>
+          ) : undefined}
+          {grant.applicationHints.length ? (
+            <Box className="rs_read">
+              {webRichText(
+                grant.applicationHints as SliceType[],
+                undefined,
+                locale,
+              )}
             </Box>
           ) : undefined}
         </Stack>
