@@ -14,9 +14,6 @@ export class Fund {
   @Field()
   title!: string
 
-  @Field({ nullable: true })
-  url?: string
-
   @CacheField(() => ReferenceLink, { nullable: true })
   link?: ReferenceLink
 
@@ -30,7 +27,6 @@ export class Fund {
 export const mapFund = ({ fields, sys }: IFund): Fund => ({
   id: sys.id,
   title: fields.fundTitle,
-  url: fields.fundUrl,
   link: fields.fundLink ? mapReferenceLink(fields.fundLink) : undefined,
   featuredImage: fields.fundFeaturedImage
     ? mapImage(fields.fundFeaturedImage)
