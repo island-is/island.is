@@ -10,8 +10,8 @@ export class ApplicantType {
   @ApiProperty({ type: LanguageType })
   description!: LanguageType
 
-  @ApiPropertyOptional()
-  formApplicantId?: string
+  // @ApiPropertyOptional()
+  // formApplicantId?: string
 
   @ApiPropertyOptional({ type: LanguageType })
   name?: LanguageType
@@ -24,8 +24,8 @@ export const ApplicantTypes: ApplicantType[] = [
   {
     id: ApplicantTypesEnum.INDIVIDUAL,
     description: {
-      is: 'Innskráður einstaklingur',
-      en: 'Signed in user',
+      is: 'Einstaklingur (innskráður)',
+      en: 'Individual (logged in)',
     },
     nameSuggestions: ApplicantTypeNames.filter(
       (item) => item.id === ApplicantTypesEnum.INDIVIDUAL,
@@ -34,29 +34,29 @@ export const ApplicantTypes: ApplicantType[] = [
   {
     id: ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL,
     description: {
-      is: 'Innskráður einstaklingur - handhafi umboðs frá einstaklingi',
-      en: 'Logged in user - holder of delegation from individual',
+      is: 'Einstaklingur í umboði annars einstaklings',
+      en: 'Individual with delegation from another individual',
     },
   },
   {
     id: ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,
     description: {
-      is: 'Innskráður einstaklingur - handhafi umboðs frá lögaðila',
-      en: 'Logged in user - holder of delegation from legal entity',
+      is: 'Einstaklingur í umboði lögaðila',
+      en: 'Individual with delegation from legal entity',
     },
   },
   {
     id: ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION,
     description: {
-      is: 'Innskráður einstaklingur - prókúruhafi',
-      en: 'Logged in user - procuration holder',
+      is: 'Einstaklingur með prókúru',
+      en: 'Individual with procuration',
     },
   },
   {
     id: ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION,
     description: {
-      is: 'Umboðsveitandi - einstaklingur',
-      en: 'Delegation provider - individual',
+      is: 'Umboðsveitandi (einstaklingur)',
+      en: 'Individual giving delegation',
     },
   },
   {
