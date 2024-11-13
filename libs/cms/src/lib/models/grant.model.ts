@@ -84,7 +84,7 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
   id: sys.id,
   name: fields.grantName,
   description: fields.grantDescription,
-  applicationId: fields.grantApplicationId ?? '',
+  applicationId: fields.grantApplicationId,
   applicationDeadlineText: fields.grantApplicationDeadlineText,
   applicationUrl: fields.granApplicationUrl?.fields
     ? mapReferenceLink(fields.granApplicationUrl)
