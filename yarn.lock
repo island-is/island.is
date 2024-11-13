@@ -39356,7 +39356,7 @@ __metadata:
     juice: "npm:8.0.0"
     jwks-rsa: "npm:3.0.1"
     jwt-decode: "npm:4.0.0"
-    kennitala: "npm:2.0.0-beta.2"
+    kennitala: "npm:@island.is/kennitala@3.1.0-rc.1"
     keyv: "npm:4.5.2"
     libphonenumber-js: "npm:1.7.53"
     license-checker: "npm:25.0.1"
@@ -41438,10 +41438,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kennitala@npm:2.0.0-beta.2":
-  version: 2.0.0-beta.2
-  resolution: "kennitala@npm:2.0.0-beta.2"
-  checksum: 10/f92779793c6da1f92bdd29377d1b342f3875ce714af448ce964f19cf80c06bcf115f4fcecf06a23c22e4ef50ec455b40413dfa1abb1303058cf83d0cfbeb2cf5
+"kennitala@npm:@island.is/kennitala@3.1.0-rc.1":
+  version: 3.1.0-rc.1
+  resolution: "@island.is/kennitala@npm:3.1.0-rc.1"
+  checksum: 10/d81a8d821119f5c4dd273a8ec3b4523577b8fc511d047511421e92b2c88eee1f6a9cdae2b563cb57acb716d54c33d620eb017214dd412a642b61e2012183fac8
   languageName: node
   linkType: hard
 
