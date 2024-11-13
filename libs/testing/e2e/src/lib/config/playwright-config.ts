@@ -35,7 +35,9 @@ export const createPlaywrightConfig = ({
     retries: process.env.CI ? 2 : 0,
     workers: process.env.CI ? 1 : undefined,
     reporter: [
-      ...((process.env.CI ? [['line']] : [['dot']]) as ReporterDescription[]),
+      ...((process.env.CI
+        ? [['json', { outputFile: 'test-results.json' }]]
+        : [['dot']]) as ReporterDescription[]),
       ['html', { open: 'never' }],
     ],
 
