@@ -12,9 +12,15 @@ import {
   HeaderWithImageProps,
 } from '../HeaderWithImage/HeaderWithImage'
 
+type QuickLink = {
+  title: string
+  href: string
+  variant?: TagVariant
+}
+
 type SearchSectionProps = HeaderWithImageProps & {
   searchPlaceholder: string
-  quickLinks: Array<{ title: string; href: string; variant?: TagVariant }>
+  quickLinks: Array<QuickLink>
   searchUrl: string
   shortcutsTitle: string
   featuredImage?: string
