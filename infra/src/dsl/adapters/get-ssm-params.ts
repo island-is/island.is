@@ -36,7 +36,12 @@ function handleCredentialsProviderError(err: Error): never {
   logger.debug('AWS environment is not configured properly', {
     err,
     AWS_ENV: Object.fromEntries(
-      Object.entries(process.env).filter(([k, _]) => k.startsWith('AWS_')),
+      Object.entries(process.env)
+        .filter(([k, _]) => k.startsWith('AWS_'))
+        .map(([k, v]) => [
+          k,
+          k.includes('SECRET') || k.includes('KEY') ? '[REDACTED]' : v,
+        ]),
     ),
   })
   if (err.name === 'CredentialsProviderError') {
