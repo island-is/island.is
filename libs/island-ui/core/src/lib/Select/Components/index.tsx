@@ -79,10 +79,13 @@ export const Option = <
   props: OptionProps<OptionType<Value>, IsMulti, Group>,
 ) => {
   const { size = 'md' } = props.selectProps
+
   const description = props.data?.description
   // Truncate description by default
   const descriptionTruncated =
     !!description && props.data?.descriptionTruncated !== false
+
+  const showCheckmark = props.data?.withCheckmark
 
   return (
     <components.Option
@@ -92,6 +95,32 @@ export const Option = <
       {...props}
     >
       <>
+        {showCheckmark && (
+          <>
+            <input
+              type="checkbox"
+              checked={props.isSelected && props.data?.isSelected}
+              onChange={() => null}
+              className={cn(styles.inputCheckbox)}
+            />
+            <div
+              className={cn(styles.checkbox, {
+                [styles.checkboxChecked]:
+                  props.isSelected && props.data?.isSelected,
+              })}
+            >
+              <Icon
+                icon="checkmark"
+                color={
+                  props.isSelected && props.data?.isSelected
+                    ? 'white'
+                    : 'transparent'
+                }
+                ariaHidden
+              />
+            </div>
+          </>
+        )}
         {props.children}
         {!!description && (
           <div

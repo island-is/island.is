@@ -7,6 +7,7 @@ import {
   LinkButton,
   EmptyTable,
   formatDateWithTime,
+  IntroWrapper,
 } from '@island.is/service-portal/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useGetRequestsStatusQuery } from './VehicleBulkMileageJobOverview.generated'
@@ -63,16 +64,18 @@ const VehicleBulkMileageUploadJobOverview = () => {
   const jobs: Array<VehiclesBulkMileageRegistrationJob> =
     data?.vehicleBulkMileageRegistrationJobHistory?.history ?? []
 
-  const sortedJobs = jobs.length > 1 ? [...jobs] : []
-  sortedJobs.sort((a, b) => sortJobs(a, b))
+  const sortedJobs = [...jobs]
+  if (sortedJobs.length > 1) {
+    sortedJobs.sort((a, b) => sortJobs(a, b))
+  }
+
   return (
-    <Box>
-      <IntroHeader
-        title={m.vehiclesBulkMileageJobOverview}
-        intro={m.vehiclesBulkMileageJobOverviewDescription}
-        serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-        serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-      />
+    <IntroWrapper
+      title={m.vehiclesBulkMileageJobOverview}
+      intro={m.vehiclesBulkMileageJobOverviewDescription}
+      serviceProviderSlug={SAMGONGUSTOFA_SLUG}
+      serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
+    >
       {error && <Problem error={error} noBorder={false} />}
       {!error && (
         <T.Table>
@@ -141,7 +144,7 @@ const VehicleBulkMileageUploadJobOverview = () => {
           message={formatMessage(vehicleMessage.noJobsFound)}
         />
       )}
-    </Box>
+    </IntroWrapper>
   )
 }
 
