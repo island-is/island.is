@@ -89,6 +89,7 @@ export const getLocalrunValueFile = async (
         portConfig,
       ) as Record<string, string>,
       commands: [
+        // Enable verbose logging for shell commands
         ...(logger.logLevel === 'debug' || logger.logLevel === 'trace'
           ? ['set -x']
           : []),
