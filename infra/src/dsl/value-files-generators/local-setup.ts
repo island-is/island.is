@@ -91,7 +91,8 @@ export const getLocalrunValueFile = async (
       commands: [
         `cd "${rootDir}"`,
         `. ./.env.${serviceNXName}`, // `source` is bashism
-        `(yarn nx show projects --with-target dev-services | grep -qi ${serviceNXName} || yarn nx dev-services ${serviceNXName})`,
+        `echo "Preparing dev-services for ${name} in $PWD"`,
+        `(if yarn nx show projects --with-target dev-services | grep -q ${serviceNXName}; then yarn nx dev-services ${serviceNXName}; fi)`,
         `echo "Starting ${name} in $PWD"`,
         `yarn nx serve ${serviceNXName}`,
       ],
