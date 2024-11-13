@@ -1823,9 +1823,6 @@ export interface IGrantFields {
   /** Application Url */
   granApplicationUrl?: ILinkUrl | undefined
 
-  /** What is granted? */
-  grantWhatIsGranted?: Document | undefined
-
   /** Special emphasis */
   grantSpecialEmphasis?: Document | undefined
 
@@ -1837,6 +1834,9 @@ export interface IGrantFields {
 
   /** Application deadline */
   grantApplicationDeadline?: Document | undefined
+
+  /** Application hints */
+  grantApplicationHints?: Document | undefined
 
   /** Date from */
   grantDateFrom?: string | undefined

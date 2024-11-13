@@ -38,9 +38,6 @@ export class Grant {
   applicationUrl?: ReferenceLink
 
   @CacheField(() => [SliceUnion])
-  whatIsGranted?: Array<typeof SliceUnion>
-
-  @CacheField(() => [SliceUnion])
   specialEmphasis?: Array<typeof SliceUnion>
 
   @CacheField(() => [SliceUnion])
@@ -51,6 +48,9 @@ export class Grant {
 
   @CacheField(() => [SliceUnion])
   applicationDeadline?: Array<typeof SliceUnion>
+
+  @CacheField(() => [SliceUnion])
+  applicationHints?: Array<typeof SliceUnion>
 
   @Field({ nullable: true })
   dateFrom?: string
@@ -89,9 +89,7 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
   applicationUrl: fields.granApplicationUrl?.fields
     ? mapReferenceLink(fields.granApplicationUrl)
     : undefined,
-  whatIsGranted: fields.grantWhatIsGranted
-    ? mapDocument(fields.grantWhatIsGranted, sys.id + ':what-is-granted')
-    : [],
+
   specialEmphasis: fields.grantSpecialEmphasis
     ? mapDocument(fields.grantSpecialEmphasis, sys.id + ':special-emphasis')
     : [],
@@ -107,6 +105,9 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
         sys.id + ':application-deadline',
       )
     : [],
+  applicationHints: fields.grantApplicationHints
+    ? mapDocument(fields.grantApplicationHints, sys.id + ':application-hints')
+    : [],
   dateFrom: fields.grantDateFrom ?? '',
   dateTo: fields.grantDateTo ?? '',
   isOpen: fields.grantIsOpen ?? undefined,
@@ -118,7 +119,7 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
       ? GrantStatus.CLOSED
       : fields.grantStatus === 'Opnar fljótlega'
       ? GrantStatus.OPENS_SOON
-      : GrantStatus.INACTIVE,
+      : undefined,
   fund: fields.grantFund ? mapFund(fields.grantFund) : undefined,
   files: (fields.grantFiles ?? []).map((file) => mapAsset(file)) ?? [],
   categoryTag: fields.grantCategoryTag
