@@ -680,13 +680,11 @@ export class EndorsementListService {
       })
       return { success: true }
     } catch (error) {
-      this.logger.error('Failed to send lock notification email', {
+      this.logger.error('Failed to send creation notification email', {
         error: error.message,
-        listId: endorsementList.id,
+        listId: endorsementList.id
       })
-      throw new InternalServerErrorException(
-        `Failed to send lock notification: ${error.message}`,
-      )
+      return { success: false }
     }
   }
 
