@@ -2,7 +2,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { OwnerCoOwnersInformation, CoOwnersInformation } from '../shared'
 
-// Function to check if a reviewer has pending approval
+// Function to check if an application has pending approval
 export const applicationHasPendingApproval = (
   answers: FormValue,
   excludeNationalId?: string,
