@@ -12,6 +12,7 @@ import {
   ApplicantTypes,
 } from '../../dataTypes/applicantTypes/applicantType.model'
 import { LanguageType } from '../../dataTypes/languageType.model'
+import { FormApplicantTypeDto } from './models/dto/formApplicantType.dto'
 
 @Injectable()
 export class FormApplicantTypesService {
@@ -22,7 +23,7 @@ export class FormApplicantTypesService {
 
   async create(
     createFormApplicantTypeDto: CreateFormApplicantTypeDto,
-  ): Promise<ApplicantType> {
+  ): Promise<FormApplicantTypeDto> {
     const applicantType = ApplicantTypes.find(
       (applicantType) =>
         applicantType.id === createFormApplicantTypeDto.applicantTypeId,
@@ -39,16 +40,16 @@ export class FormApplicantTypesService {
       new this.formApplicantTypeModel(formApplicantType)
     await newFormApplicantType.save()
 
-    applicantType.formApplicantId = newFormApplicantType.id
+    // applicantType.id = newFormApplicantType.id
 
-    applicantType.name = new LanguageType()
-    // const keys = ['id', 'applicantType']
-    // const formApplicantDto: FormApplicantDto = defaults(
-    //   pick(newFormApplicant, keys),
-    //   zipObject(keys, Array(keys.length).fill(null)),
-    // ) as FormApplicantDto
+    // applicantType.name = new LanguageType()
+    const keys = ['id', 'applicantTypeId', 'name']
+    const formApplicantTypeDto: FormApplicantTypeDto = defaults(
+      pick(newFormApplicantType, keys),
+      zipObject(keys, Array(keys.length).fill(null)),
+    ) as FormApplicantTypeDto
 
-    return applicantType
+    return formApplicantTypeDto
   }
 
   async update(

@@ -52,6 +52,8 @@ import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { randomUUID } from 'crypto'
 import { ListType, ListTypes } from '../../dataTypes/listTypes/listType.model'
 import { OrganizationListType } from '../organizationListTypes/models/organizationListType.model'
+import { FormApplicantTypeDto } from '../formApplicantTypes/models/dto/formApplicantType.dto'
+import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
 // import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 // import { ValueFactory } from '../../dataTypes/valueTypes/valueType.factory'
 
@@ -410,45 +412,72 @@ export class FormsService {
       },
     ) as FormDto
 
-    const certificationTypes: CertificationType[] = []
+    // const certificationTypes: CertificationType[] = []
 
-    const keys = ['id', 'type', 'name', 'description']
-    form?.formCertificationTypes?.map((formCertification) => {
-      CertificationTypes.map((certification) => {
-        if (formCertification.certificationTypeId === certification.id) {
-          certificationTypes.push(
-            defaults(
-              pick(
-                { ...certification, formCertificationId: formCertification.id },
-                keys,
-              ),
-              zipObject(keys, Array(keys.length).fill(null)),
-            ) as CertificationType,
-          )
-        }
-      })
+    // const keys = ['id', 'type', 'name', 'description']
+    // form?.formCertificationTypes?.map((formCertification) => {
+    //   CertificationTypes.map((certification) => {
+    //     if (formCertification.certificationTypeId === certification.id) {
+    //       certificationTypes.push(
+    //         defaults(
+    //           pick(
+    //             { ...certification, formCertificationId: formCertification.id },
+    //             keys,
+    //           ),
+    //           zipObject(keys, Array(keys.length).fill(null)),
+    //         ) as CertificationType,
+    //       )
+    //     }
+    //   })
+    // })
+
+    // formDto.certificationTypes = certificationTypes
+
+    const certificationKeys = ['id', 'certificationTypeId']
+    form.formCertificationTypes?.map((formCertification) => {
+      formDto.certificationTypes?.push(
+        defaults(
+          pick(formCertification, certificationKeys),
+          zipObject(
+            certificationKeys,
+            Array(certificationKeys.length).fill(null),
+          ),
+        ) as FormCertificationTypeDto,
+      )
     })
-
-    formDto.certificationTypes = certificationTypes
 
     const applicantKeys = ['id', 'applicantTypeId', 'name']
     form.formApplicantTypes?.map((formApplicant) => {
-      ApplicantTypes.map((applicant) => {
-        if (formApplicant.applicantTypeId === applicant.id) {
-          formDto.applicantTypes?.push(
-            defaults(
-              pick(
-                { ...applicant, formApplicantId: formApplicant.id },
-                applicantKeys,
-              ),
-              zipObject(applicantKeys, Array(applicantKeys.length).fill(null)),
-            ) as ApplicantType,
-          )
-        }
-      })
+      formDto.applicantTypes?.push(
+        defaults(
+          pick(formApplicant, applicantKeys),
+          zipObject(applicantKeys, Array(applicantKeys.length).fill(null)),
+        ) as FormApplicantTypeDto,
+      )
     })
 
-    console.log(formDto.applicantTypes)
+    // const formApplicantTypeDto: FormApplicantTypeDto = defaults(
+    //   pick(form.formApplicantTypes, applicantKeys),
+    //   zipObject(applicantKeys, Array(applicantKeys.length).fill(null)),
+    // ) as FormApplicantTypeDto
+
+    // form.formApplicantTypes?.map((formApplicant) => {
+    //   ApplicantTypes.map((applicant) => {
+    //     if (formApplicant.applicantTypeId === applicant.id) {
+    //       formDto.applicantTypes?.push(
+    //         defaults(
+    //           pick(
+    //             { ...applicant, formApplicantId: formApplicant.id },
+    //             applicantKeys,
+    //           ),
+    //           zipObject(applicantKeys, Array(applicantKeys.length).fill(null)),
+    //         ) as ApplicantType,
+    //       )
+    //     }
+    //   })
+    // })
+
+    // console.log(formDto.applicantTypes)
 
     const sectionKeys = [
       'id',

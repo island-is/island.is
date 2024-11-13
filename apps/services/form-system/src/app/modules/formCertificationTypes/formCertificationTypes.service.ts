@@ -10,6 +10,7 @@ import {
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
+import { FormCertificationTypeDto } from './models/dto/formCertificationType.dto'
 
 @Injectable()
 export class FormCertificationTypesService {
@@ -20,7 +21,7 @@ export class FormCertificationTypesService {
 
   async create(
     createFormCertificationTypeDto: CreateFormCertificationTypeDto,
-  ): Promise<CertificationType> {
+  ): Promise<FormCertificationTypeDto> {
     const certificationType = CertificationTypes.find(
       (certificationType) =>
         certificationType.id ===
@@ -41,7 +42,7 @@ export class FormCertificationTypesService {
 
     await newFormCertificationType.save()
 
-    certificationType.formCertificationId = newFormCertificationType.id
+    // certificationType.formCertificationId = newFormCertificationType.id
 
     // certificationType.id = newFormCertification.id
 
@@ -49,13 +50,13 @@ export class FormCertificationTypesService {
     //   (x) => x.id == newFormCertification.certificationId,
     // )
 
-    // const keys = ['id', 'type', 'name', 'description']
-    // const formCertificationDto: FormCertificationDto = defaults(
-    //   pick({ ...certification, id: newFormCertification.id }, keys),
-    //   zipObject(keys, Array(keys.length).fill(null)),
-    // ) as FormCertificationDto
+    const keys = ['id', 'certificationTypeId']
+    const formCertificationTypeDto: FormCertificationTypeDto = defaults(
+      pick(newFormCertificationType, keys),
+      zipObject(keys, Array(keys.length).fill(null)),
+    ) as FormCertificationTypeDto
 
-    return certificationType
+    return formCertificationTypeDto
   }
 
   async delete(id: string): Promise<void> {
