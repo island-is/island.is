@@ -4,10 +4,6 @@ import { Charts } from '../uber-charts/all-charts'
 import { service, ServiceBuilder } from '../dsl/dsl'
 import { SecretOptions } from '../dsl/output-generators/map-to-localrun'
 import { renderLocalServices } from './render-local-mocks'
-import {
-  GetParametersCommand,
-  GetParametersCommandOutput,
-} from '@aws-sdk/client-ssm'
 
 jest.mock('../uber-charts/all-charts')
 
@@ -20,41 +16,35 @@ jest.spyOn(console, 'log').mockImplementation(() => {})
 jest.spyOn(console, 'error')
 
 jest.mock('@aws-sdk/client-ssm', () => ({
-  GetParametersCommand: jest.fn(() => ({
-    $metadata: {},
-  })),
   SSM: jest.fn(() => ({
-    send: jest.fn(
-      (params: GetParametersCommand): GetParametersCommandOutput => ({
-        $metadata: {},
-        Parameters: [
-          {
-            Name: '/k8s/my-service/A',
-            Value: 'B',
-          },
-          {
-            Name: '/k8s/my-service/REMOTE_URL',
-            Value: 'https://www.website.tld/some/slug-path',
-          },
-          {
-            Name: '/k8s/my-service/JSON_SECRET',
-            Value: '{"key": ["value"]}',
-          },
-          {
-            Name: '/k8s/my-service/ARRAY_SECRET',
-            Value: '["ITEM1","ITEM2"]',
-          },
-          {
-            Name: '/k8s/my-service/JSON_URLS',
-            Value: `{ ${[
-              '"string": "https://example.com/slug"',
-              '"object": {"key": "https://example.com/slug"}',
-              '"array": ["https://example.com/slug", "https://example.com/slug"]',
-            ].join(', ')}}`,
-          },
-        ],
-      }),
-    ),
+    getParameters: jest.fn(() => ({
+      Parameters: [
+        {
+          Name: '/k8s/my-service/A',
+          Value: 'B',
+        },
+        {
+          Name: '/k8s/my-service/REMOTE_URL',
+          Value: 'https://www.website.tld/some/slug-path',
+        },
+        {
+          Name: '/k8s/my-service/JSON_SECRET',
+          Value: '{"key": ["value"]}',
+        },
+        {
+          Name: '/k8s/my-service/ARRAY_SECRET',
+          Value: '["ITEM1","ITEM2"]',
+        },
+        {
+          Name: '/k8s/my-service/JSON_URLS',
+          Value: `{ ${[
+            '"string": "https://example.com/slug"',
+            '"object": {"key": "https://example.com/slug"}',
+            '"array": ["https://example.com/slug", "https://example.com/slug"]',
+          ].join(', ')}}`,
+        },
+      ],
+    })),
   })),
 }))
 

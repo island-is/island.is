@@ -1,9 +1,11 @@
-import { GetParametersCommand, SSM } from '@aws-sdk/client-ssm'
+import { SSM } from '@aws-sdk/client-ssm'
 import { logger } from '../../common'
 
-const client = new SSM({
+const API_INITIALIZATION_OPTIONS = {
+  region: 'eu-west-1',
   maxAttempts: 10,
-})
+}
+const client = new SSM(API_INITIALIZATION_OPTIONS)
 export async function getSsmParams(
   ssmNames: string[],
 ): Promise<{ [name: string]: string }> {
@@ -16,7 +18,7 @@ export async function getSsmParams(
 
   const allParams = await Promise.all(
     chunks.map((Names) =>
-      client.send(new GetParametersCommand({ Names, WithDecryption: true })),
+      client.getParameters({ Names, WithDecryption: true }),
     ),
   ).catch(handleCredentialsProviderError)
   const params = allParams
@@ -35,17 +37,6 @@ export async function getSsmParams(
 }
 
 function handleCredentialsProviderError(err: Error): never {
-  logger.debug('AWS environment is not configured properly', {
-    err,
-    AWS_ENV: Object.fromEntries(
-      Object.entries(process.env)
-        .filter(([k, _]) => k.startsWith('AWS_'))
-        .map(([k, v]) => [
-          k,
-          k.includes('SECRET') || k.includes('KEY') ? '[REDACTED]' : v,
-        ]),
-    ),
-  })
   if (err.name === 'CredentialsProviderError') {
     console.error(
       'Could not load AWS credentials from any providers. Did you forget to configure environment variables, aws profile or run `aws sso login`?',
