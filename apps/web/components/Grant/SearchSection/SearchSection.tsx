@@ -51,8 +51,8 @@ export const SearchSection = (props: SearchSectionProps) => {
           {props.shortcutsTitle}
         </Text>
         <Inline space={1}>
-          {props.quickLinks.map((q, i) => (
-            <Tag key={i} href={q.href} variant={q.variant}>
+          {props.quickLinks.map((q) => (
+            <Tag key={`${q.href}-${q.title}`} href={q.href} variant={q.variant}>
               {q.title}
             </Tag>
           ))}
