@@ -55,7 +55,9 @@ const StandaloneLayout = ({
     <>
       <Navigation {...navigationProps} />
       <Header {...headerProps} />
-      {children}
+      <main>
+        <GridContainer>{children}</GridContainer>
+      </main>
       <Footer
         heading={organizationPage?.organization?.title || ''}
         columns={organizationPage?.organization?.footerItems || []}

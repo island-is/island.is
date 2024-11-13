@@ -1,3 +1,6 @@
+import { Stack } from '@island.is/island-ui/core'
+import { SliceMachine } from '@island.is/web/components'
+import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   OrganizationPage,
@@ -18,6 +21,36 @@ const StandaloneHome: Screen<StandaloneHomeProps> = ({ organizationPage }) => {
   return (
     <StandaloneLayout organizationPage={organizationPage}>
       Home
+      <Stack space={SLICE_SPACING}>
+        {organizationPage?.slices?.map((slice, index) => {
+          return (
+            <SliceMachine
+              key={slice.id}
+              slice={slice}
+              slug={organizationPage.slug}
+              fullWidth={organizationPage.theme === 'landing_page'}
+              marginBottom={
+                index === organizationPage.slices.length - 1 ? 5 : 0
+              }
+            />
+          )
+        })}
+      </Stack>
+      <Stack space={SLICE_SPACING}>
+        {organizationPage?.bottomSlices?.map((slice, index) => {
+          return (
+            <SliceMachine
+              key={slice.id}
+              slice={slice}
+              slug={organizationPage.slug}
+              fullWidth={true}
+              marginBottom={
+                index === organizationPage.slices.length - 1 ? 5 : 0
+              }
+            />
+          )
+        })}
+      </Stack>
     </StandaloneLayout>
   )
 }
