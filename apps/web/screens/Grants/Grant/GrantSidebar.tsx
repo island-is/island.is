@@ -41,7 +41,9 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
           grant?.fund?.link?.slug ? (
             <Text fontWeight="semiBold" color="blue400">
               <LinkV2
-                href={grant.fund.link.slug}
+                {...linkResolver(grant.fund.link.type as LinkType, [
+                  grant.fund.link.slug,
+                ])}
                 color="blue400"
                 underline="normal"
                 underlineVisibility="hover"
