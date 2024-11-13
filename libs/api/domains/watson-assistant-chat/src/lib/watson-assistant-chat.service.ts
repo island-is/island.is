@@ -1,10 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { publicEncrypt, constants } from 'crypto'
 import { ConfigType } from '@island.is/nest/config'
-import {
-  createEnhancedFetch,
-  EnhancedFetchAPI,
-} from '@island.is/clients/middlewares'
+import { IamAuthenticator, CloudantV1 } from '@ibm-cloud/cloudant'
 import { IdentityTokenInput } from './dto/identityToken.input'
 import { WatsonAssistantChatConfig } from './watson-assistant-chat.config'
 import { ThumbStatus, SubmitFeedbackInput } from './dto/submitFeedback.input'
@@ -16,10 +13,14 @@ const thumbStatusToNumberMap: Record<ThumbStatus, number> = {
 }
 
 export class WatsonAssistantChatService {
-  private fetch: EnhancedFetchAPI
+  private cloudant: CloudantV1
 
   constructor(private config: ConfigType<typeof WatsonAssistantChatConfig>) {
-    this.fetch = createEnhancedFetch({ name: 'WatsonAssistantChatService' })
+    const authenticator = new IamAuthenticator({
+      apikey: config.chatFeedbackApiKey,
+    })
+    this.cloudant = CloudantV1.newInstance({ authenticator })
+    this.cloudant.setServiceUrl(this.config.chatFeedbackUrl)
   }
 
   async createIdentityToken(input: IdentityTokenInput) {
@@ -53,46 +54,18 @@ export class WatsonAssistantChatService {
     }
   }
 
-  private async fetchAccessToken() {
-    const body = new URLSearchParams()
-    body.append('grant_type', 'urn:ibm:params:oauth:grant-type:apikey')
-    body.append('apikey', this.config.chatFeedbackApiKey)
-
-    const response = await fetch('https://iam.cloud.ibm.com/identity/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body,
-      redirect: 'follow',
-    })
-
-    const result = await response.json()
-    return result.access_token
-  }
-
   async submitFeedback(input: SubmitFeedbackInput) {
-    const accessToken = await this.fetchAccessToken()
-    const requestParameters = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({
+    const response = await this.cloudant.postDocument({
+      db: this.config.chatFeedbackDatabaseName,
+      document: {
         ...input,
         thumbStatus: thumbStatusToNumberMap[input.thumbStatus],
         timestamp: new Date().toISOString(),
-      }),
-    }
-
-    const response = await this.fetch(
-      this.config.chatFeedbackUrl,
-      requestParameters,
-    )
+      },
+    })
 
     return {
-      success: response.ok,
+      success: response.result.ok,
     }
   }
 }
