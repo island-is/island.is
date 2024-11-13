@@ -39,8 +39,9 @@ export const PlateRadioField: FC<
     const options = [] as Option[]
 
     for (const [index, plate] of plates.entries()) {
+      const hasError = !!plate.validationErrorMessages?.length
       const canRenew = checkCanRenew(plate)
-      const disabled = !!plate?.validationErrorMessages?.length || !canRenew
+      const disabled = hasError || !canRenew
 
       options.push({
         value: `${index}`,
@@ -56,13 +57,13 @@ export const PlateRadioField: FC<
                   {plate.regno}
                 </Text>
               </Box>
-              <Tag variant={canRenew ? 'red' : 'mint'} disabled>
+              <Tag variant={canRenew ? 'mint' : 'red'} disabled>
                 {formatMessage(information.labels.pickPlate.expiresTag, {
                   date: formatDateFns(new Date(plate.endDate), 'do MMM yyyy'),
                 })}
               </Tag>
             </Box>
-            {disabled && (
+            {hasError && (
               <Box marginTop={2}>
                 <AlertMessage
                   type="error"
@@ -72,10 +73,9 @@ export const PlateRadioField: FC<
                   message={
                     <Box>
                       <BulletList>
-                        {!!plate.validationErrorMessages?.length &&
-                          plate.validationErrorMessages?.map((error) => {
-                            return <Bullet>{error.defaultMessage}</Bullet>
-                          })}
+                        {plate.validationErrorMessages?.map((error) => {
+                          return <Bullet>{error.defaultMessage}</Bullet>
+                        })}
                       </BulletList>
                     </Box>
                   }

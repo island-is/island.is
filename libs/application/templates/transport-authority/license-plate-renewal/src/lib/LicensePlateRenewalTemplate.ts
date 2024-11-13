@@ -25,6 +25,7 @@ import { LicensePlateRenewalSchema } from './dataSchema'
 import {
   SamgongustofaPaymentCatalogApi,
   MyPlateOwnershipsApi,
+  MockableSamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -108,6 +109,7 @@ const template: ApplicationTemplate<
               delete: true,
               api: [
                 SamgongustofaPaymentCatalogApi,
+                MockableSamgongustofaPaymentCatalogApi,
                 MyPlateOwnershipsApi,
                 IdentityApi,
               ],

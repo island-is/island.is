@@ -1,6 +1,6 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import {
   Box,
   SkeletonLoader,
@@ -24,7 +24,7 @@ interface PlateSearchFieldProps {
 
 export const PlateSelectField: FC<
   React.PropsWithChildren<PlateSearchFieldProps & FieldBaseProps>
-> = ({ myPlateOwnershipList, application, errors }) => {
+> = ({ myPlateOwnershipList, application, errors, setFieldLoadingState }) => {
   const { formatMessage, formatDateFns } = useLocale()
   const { setValue } = useFormContext()
 
@@ -77,21 +77,27 @@ export const PlateSelectField: FC<
               response?.myPlateOwnershipChecksByRegno?.validationErrorMessages,
           })
 
-          const canRenew = checkCanRenew(currentPlate)
-          const disabled =
+          const resHasError =
             !!response?.myPlateOwnershipChecksByRegno?.validationErrorMessages
-              ?.length || !canRenew
+              ?.length
+          const resCanRenew = checkCanRenew(currentPlate)
+          const resDisabled = resHasError || !resCanRenew
 
-          setPlate(disabled ? '' : currentPlate.regno || '')
-          setValue('pickPlate.regno', disabled ? '' : currentPlate.regno)
+          setPlate(resDisabled ? '' : currentPlate.regno || '')
+          setValue('pickPlate.regno', resDisabled ? '' : currentPlate.regno)
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
     }
   }
 
+  const hasError = !!selectedPlate?.validationErrorMessages?.length
   const canRenew = checkCanRenew(selectedPlate)
-  const disabled = !!selectedPlate?.validationErrorMessages?.length || !canRenew
+  const disabled = hasError || !canRenew
+
+  useEffect(() => {
+    setFieldLoadingState?.(isLoading)
+  }, [isLoading])
 
   return (
     <Box>
@@ -127,12 +133,12 @@ export const PlateSelectField: FC<
                       date: formatDateFns(new Date(selectedPlate.endDate)),
                     },
                   ),
-                  variant: canRenew ? 'red' : 'mint',
+                  variant: canRenew ? 'mint' : 'red',
                   // TODO disabled: true,
                 }}
               />
             )}
-            {selectedPlate && disabled && (
+            {selectedPlate && hasError && (
               <Box marginTop={2}>
                 <AlertMessage
                   type="error"
@@ -142,12 +148,9 @@ export const PlateSelectField: FC<
                   message={
                     <Box>
                       <BulletList>
-                        {!!selectedPlate.validationErrorMessages?.length &&
-                          selectedPlate.validationErrorMessages?.map(
-                            (error) => {
-                              return <Bullet>{error.defaultMessage}</Bullet>
-                            },
-                          )}
+                        {selectedPlate.validationErrorMessages?.map((error) => {
+                          return <Bullet>{error.defaultMessage}</Bullet>
+                        })}
                       </BulletList>
                     </Box>
                   }
