@@ -75,8 +75,6 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
         ? formatMessage(strings.servedToElectronically)
         : servedBy
 
-    console.log(serviceStatus)
-
     return [processServer, formatDate(serviceDate, 'Pp')]
       .filter(Boolean)
       .join(', ')
