@@ -72,3 +72,22 @@ export const edMessage = defineMessages({
       'Hér getur þú séð yfirlit yfir námsferil þinn úr framhaldsskóla',
   },
 })
+
+export const compulsorySchoolMessages = defineMessages({
+  studentAssessment: {
+    id: 'sp.education-student-assessment:student-assessment',
+    defaultMessage: 'Samræmd könnunarpróf',
+  },
+  studentAssessmentIntroText: {
+    id: 'sp.education-student-assessment:education-student-assessment-intro',
+    defaultMessage: 'Hér getur þú fundið yfirlit yfir námsmat.',
+  },
+  assessment: {
+    id: 'sp.education-student-assessment:assessment',
+    defaultMessage: 'Námsmat',
+  },
+  examDateSpan: {
+    id: 'sp.education-student-assessment:exam-date-span',
+    defaultMessage: 'Prófár',
+  },
+})

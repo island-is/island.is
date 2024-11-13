@@ -4,8 +4,16 @@ import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 
-const EducationCareer = lazy(() =>
-  import('../../education-career/src/screens/EducationCareer/EducationCareer'),
+const CompulsorySchoolFamilyExamOverview = lazy(() =>
+  import(
+    '../../education/src/screens/CompulsorySchoolFamilyExamOverview/CompulsorySchoolFamilyExamOverview'
+  ),
+)
+
+const CompulsorySchoolExamDetail = lazy(() =>
+  import(
+    '../../education/src/screens/CompulsorySchoolFamilyExamDetail/CompulsorySchoolFamilyExamDetail'
+  ),
 )
 
 const EducationGraduation = lazy(() =>
@@ -50,7 +58,12 @@ export const educationModule: PortalModule = {
       name: 'Menntun',
       path: EducationPaths.EducationRoot,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <Navigate to={EducationPaths.EducationAssessment} replace />,
+      element: (
+        <Navigate
+          to={EducationPaths.EducationCompulsorySchoolAssessment}
+          replace
+        />
+      ),
     },
 
     // Grunnskóli - Elementary
@@ -58,13 +71,24 @@ export const educationModule: PortalModule = {
       name: 'Grunnskóli',
       path: EducationPaths.EducationGrunnskoli,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <Navigate to={EducationPaths.EducationAssessment} replace />,
+      element: (
+        <Navigate
+          to={EducationPaths.EducationCompulsorySchoolAssessment}
+          replace
+        />
+      ),
     },
     {
       name: 'Námsmat',
-      path: EducationPaths.EducationAssessment,
+      path: EducationPaths.EducationCompulsorySchoolAssessment,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <EducationCareer />,
+      element: <CompulsorySchoolFamilyExamOverview />,
+    },
+    {
+      name: 'Námsmat nánar',
+      path: EducationPaths.EducationCompulsorySchoolAssessmentDetail,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: <CompulsorySchoolExamDetail />,
     },
 
     // Framhaldsskóli - Secondary education

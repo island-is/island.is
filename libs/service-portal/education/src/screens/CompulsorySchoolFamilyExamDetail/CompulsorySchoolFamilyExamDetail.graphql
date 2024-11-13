@@ -1,0 +1,52 @@
+query userFamilyMemberExamResults(
+  $input: EducationCompulsorySchoolExamUserFamilyMemberResultsInput!
+) {
+  userFamilyMemberExamResults(input: $input) {
+    nationalId
+    name
+    examDateSpan
+    examResults {
+      gradeLevel
+      coursesExamResults {
+        label
+        totalGrade {
+          compulsorySchoolGrade {
+            grade
+            weight
+            label
+          }
+          serialGrade {
+            grade
+            weight
+            label
+          }
+        }
+        competence {
+          competencyGrade
+          competenceStatus
+        }
+        gradeCategories {
+          label
+          ... on EducationCompulsorySchoolGradeCategoryText {
+            text
+          }
+          ... on EducationCompulsorySchoolGradeCategoryWeighted {
+            label
+            grade {
+              compulsorySchoolGrade {
+                grade
+                weight
+                label
+              }
+              serialGrade {
+                grade
+                weight
+                label
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

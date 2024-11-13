@@ -1,6 +1,6 @@
 import { StudentAssessmentsDto } from '@island.is/clients/mms/grade'
 import { generateExamDateSpan } from './education.utils'
-import { StudentCareer } from './models/studentCareer.model'
+import { StudentCareer } from './graphql/models/studentCareer.model'
 
 export const mapCareer = (
   data: StudentAssessmentsDto,
