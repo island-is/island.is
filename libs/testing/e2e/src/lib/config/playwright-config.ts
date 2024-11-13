@@ -27,8 +27,8 @@ export const createPlaywrightConfig = ({
   command,
   cwd = '../../../',
   timeoutMs = 5 * 60 * 1000,
-}: PlaywrightConfigParams) => {
-  return defineConfig({
+}: PlaywrightConfigParams) =>
+  defineConfig({
     testDir: 'e2e',
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
@@ -58,4 +58,3 @@ export const createPlaywrightConfig = ({
       cwd,
     },
   })
-}
