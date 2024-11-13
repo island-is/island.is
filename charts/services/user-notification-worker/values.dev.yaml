@@ -1,192 +1,120 @@
-{
-  "user-notification-worker": {
-    "serviceDef": {
-      "liveness": {
-        "path": "/liveness",
-        "timeoutSeconds": 3,
-        "initialDelaySeconds": 3
-      },
-      "readiness": {
-        "path": "/health/check",
-        "timeoutSeconds": 3,
-        "initialDelaySeconds": 3
-      },
-      "env": {
-        "MAIN_QUEUE_NAME": "user-notification",
-        "DEAD_LETTER_QUEUE_NAME": "user-notification-failure",
-        "IDENTITY_SERVER_ISSUER_URL": {
-          "dev": "https://identity-server.dev01.devland.is",
-          "staging": "https://identity-server.staging01.devland.is",
-          "prod": "https://innskra.island.is"
-        },
-        "AUTH_DELEGATION_API_URL": {
-          "dev": "http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local",
-          "staging": "http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local",
-          "prod": "https://auth-delegation-api.internal.innskra.island.is"
-        },
-        "AUTH_DELEGATION_MACHINE_CLIENT_SCOPE": "[\"@island.is/auth/delegations/index:system\"]",
-        "SERVICE_PORTAL_CLICK_ACTION_URL": "https://island.is/minarsidur",
-        "EMAIL_FROM_ADDRESS": {
-          "dev": "development@island.is",
-          "staging": "development@island.is",
-          "prod": "noreply@island.is"
-        },
-        "REDIS_USE_SSL": "true",
-        "EMAIL_REGION": "eu-west-1",
-        "CONTENTFUL_HOST": {
-          "dev": "preview.contentful.com",
-          "staging": "cdn.contentful.com",
-          "prod": "cdn.contentful.com"
-        }
-      },
-      "features": {},
-      "name": "user-notification-worker",
-      "grantNamespaces": [],
-      "grantNamespacesEnabled": false,
-      "secrets": {
-        "CONFIGCAT_SDK_KEY": "/k8s/configcat/CONFIGCAT_SDK_KEY",
-        "FIREBASE_CREDENTIALS": "/k8s/user-notification/firestore-credentials",
-        "IDENTITY_SERVER_CLIENT_ID": "/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID",
-        "IDENTITY_SERVER_CLIENT_SECRET": "/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET",
-        "CONTENTFUL_ACCESS_TOKEN": "/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN",
-        "NATIONAL_REGISTRY_B2C_CLIENT_SECRET": "/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET"
-      },
-      "ingress": {},
-      "namespace": "user-notification",
-      "serviceAccountEnabled": true,
-      "securityContext": {
-        "privileged": false,
-        "allowPrivilegeEscalation": false
-      },
-      "resources": {
-        "limits": {
-          "cpu": "400m",
-          "memory": "384Mi"
-        },
-        "requests": {
-          "cpu": "150m",
-          "memory": "256Mi"
-        }
-      },
-      "xroadConfig": [
-        {
-          "config": {
-            "env": {
-              "XROAD_BASE_PATH": {
-                "prod": "http://securityserver.island.is"
-              },
-              "XROAD_BASE_PATH_WITH_ENV": {
-                "staging": "http://securityserver.staging01.devland.is/r1/IS-TEST",
-                "prod": "http://securityserver.island.is/r1/IS"
-              },
-              "XROAD_TLS_BASE_PATH": {
-                "dev": "https://securityserver.dev01.devland.is",
-                "staging": "https://securityserver.staging01.devland.is",
-                "prod": "https://securityserver.island.is"
-              },
-              "XROAD_TLS_BASE_PATH_WITH_ENV": {
-                "dev": "https://securityserver.dev01.devland.is/r1/IS-DEV",
-                "staging": "https://securityserver.staging01.devland.is/r1/IS-TEST",
-                "prod": "https://securityserver.island.is/r1/IS"
-              }
-            }
-          }
-        },
-        {
-          "config": {
-            "env": {
-              "XROAD_CLIENT_ID": {
-                "dev": "IS-DEV/GOV/10000/island-is-client",
-                "staging": "IS-TEST/GOV/5501692829/island-is-client",
-                "prod": "IS/GOV/5501692829/island-is-client"
-              }
-            }
-          }
-        },
-        {
-          "config": {
-            "env": {
-              "NATIONAL_REGISTRY_B2C_CLIENT_ID": {
-                "dev": "b464afdd-056b-406d-b650-6d41733cfeb7",
-                "staging": "ca128c23-b43c-443d-bade-ec5a146a933f",
-                "prod": "2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f"
-              },
-              "NATIONAL_REGISTRY_B2C_ENDPOINT": {
-                "dev": "https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token",
-                "staging": "https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token",
-                "prod": "https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token"
-              },
-              "NATIONAL_REGISTRY_B2C_SCOPE": {
-                "dev": "https://skraidentitydev.onmicrosoft.com/midlun/.default",
-                "staging": "https://skraidentitystaging.onmicrosoft.com/midlun/.default",
-                "prod": "https://skraidentity.onmicrosoft.com/midlun/.default"
-              },
-              "NATIONAL_REGISTRY_B2C_PATH": {
-                "dev": "IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1",
-                "staging": "IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1",
-                "prod": "IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1"
-              }
-            }
-          }
-        },
-        {
-          "config": {
-            "env": {
-              "COMPANY_REGISTRY_XROAD_PROVIDER_ID": {
-                "dev": "IS-DEV/GOV/10006/Skatturinn/ft-v1",
-                "staging": "IS-TEST/GOV/5402696029/Skatturinn/ft-v1",
-                "prod": "IS/GOV/5402696029/Skatturinn/ft-v1"
-              },
-              "COMPANY_REGISTRY_REDIS_NODES": {
-                "dev": "[\"clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379\"]",
-                "staging": "[\"clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379\"]",
-                "prod": "[\"clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379\"]"
-              }
-            }
-          }
-        }
-      ],
-      "files": [],
-      "volumes": [],
-      "image": "services-user-notification",
-      "accountName": "user-notification-worker",
-      "cmds": "node",
-      "args": [
-        "--no-experimental-fetch",
-        "main.js",
-        "--job=worker"
-      ],
-      "postgres": {
-        "username": "user_notification",
-        "passwordSecret": "/k8s/user-notification/DB_PASSWORD",
-        "name": "user_notification"
-      },
-      "initContainers": {
-        "envs": {},
-        "secrets": {},
-        "features": {},
-        "containers": [
-          {
-            "name": "migrations",
-            "command": "npx",
-            "args": [
-              "sequelize-cli",
-              "db:migrate"
-            ]
-          }
-        ],
-        "postgres": {
-          "username": "user_notification",
-          "passwordSecret": "/k8s/user-notification/DB_PASSWORD",
-          "name": "user_notification"
-        }
-      },
-      "redis": {},
-      "replicaCount": {
-        "min": 1,
-        "max": 2,
-        "default": 1
-      }
-    }
-  }
-}
+service:
+  name: user-notification-worker
+  args:
+    - --no-experimental-fetch
+    - main.js
+    - --job=worker
+  command:
+    - node
+  enabled: true
+  env:
+    AUTH_DELEGATION_API_URL: http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local
+    AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: '["@island.is/auth/delegations/index:system"]'
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: IS-DEV/GOV/10006/Skatturinn/ft-v1
+    CONTENTFUL_HOST: preview.contentful.com
+    DB_HOST: postgres-applications.internal
+    DB_NAME: user_notification
+    DB_REPLICAS_HOST: postgres-applications-reader.internal
+    DB_USER: user_notification
+    DEAD_LETTER_QUEUE_NAME: user-notification-failure
+    EMAIL_FROM_ADDRESS: development@island.is
+    EMAIL_REGION: eu-west-1
+    IDENTITY_SERVER_ISSUER_URL: https://identity-server.dev01.devland.is
+    LOG_LEVEL: info
+    MAIN_QUEUE_NAME: user-notification
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: b464afdd-056b-406d-b650-6d41733cfeb7
+    NATIONAL_REGISTRY_B2C_ENDPOINT: https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token
+    NATIONAL_REGISTRY_B2C_PATH: IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1
+    NATIONAL_REGISTRY_B2C_SCOPE: https://skraidentitydev.onmicrosoft.com/midlun/.default
+    NODE_OPTIONS: --max-old-space-size=345 -r dd-trace/init
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    REDIS_USE_SSL: "true"
+    SERVERSIDE_FEATURES_ON: ""
+    SERVICE_PORTAL_CLICK_ACTION_URL: https://island.is/minarsidur
+    USER_PROFILE_CLIENT_URL: http://web-service-portal-api.service-portal.svc.cluster.local
+    XROAD_BASE_PATH: http://securityserver.dev01.devland.is
+    XROAD_BASE_PATH_WITH_ENV: http://securityserver.dev01.devland.is/r1/IS-DEV
+    XROAD_CLIENT_ID: IS-DEV/GOV/10000/island-is-client
+    XROAD_TLS_BASE_PATH: https://securityserver.dev01.devland.is
+    XROAD_TLS_BASE_PATH_WITH_ENV: https://securityserver.dev01.devland.is/r1/IS-DEV
+  grantNamespaces:
+    - nginx-ingress-internal
+    - islandis
+    - identity-server-delegation
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: /liveness
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: /health/check
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 2
+        min: 1
+  image:
+    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification
+  initContainer:
+    containers:
+      - args:
+          - sequelize-cli
+          - db:migrate
+        command:
+          - npx
+        name: migrations
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+    env:
+      DB_HOST: postgres-applications.internal
+      DB_NAME: user_notification
+      DB_REPLICAS_HOST: postgres-applications-reader.internal
+      DB_USER: user_notification
+      SERVERSIDE_FEATURES_ON: ""
+    secrets:
+      DB_PASS: /k8s/user-notification/DB_PASSWORD
+  namespace: user-notification
+  podDisruptionBudget:
+    maxUnavailable: 1
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 2
+    min: 1
+  resources:
+    limits:
+      cpu: 400m
+      memory: 384Mi
+    requests:
+      cpu: 150m
+      memory: 256Mi
+  secrets:
+    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    CONTENTFUL_ACCESS_TOKEN: /k8s/user-notification/CONTENTFUL_ACCESS_TOKEN
+    DB_PASS: /k8s/user-notification/DB_PASSWORD
+    FIREBASE_CREDENTIALS: /k8s/user-notification/firestore-credentials
+    IDENTITY_SERVER_CLIENT_ID: /k8s/user-notification/USER_NOTIFICATION_CLIENT_ID
+    IDENTITY_SERVER_CLIENT_SECRET: /k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: /k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::013313053092:role/user-notification-worker
+    create: true
+    name: user-notification-worker

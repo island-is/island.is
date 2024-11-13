@@ -1,76 +1,65 @@
-{
-  "judicial-system-web": {
-    "serviceDef": {
-      "liveness": {
-        "path": "/liveness",
-        "timeoutSeconds": 3,
-        "initialDelaySeconds": 3
-      },
-      "readiness": {
-        "path": "/readiness",
-        "timeoutSeconds": 10,
-        "initialDelaySeconds": 3
-      },
-      "env": {
-        "API_URL": {
-          "prod": "https://rettarvorslugatt.island.is"
-        }
-      },
-      "features": {},
-      "name": "judicial-system-web",
-      "grantNamespaces": [],
-      "grantNamespacesEnabled": false,
-      "secrets": {
-        "CONFIGCAT_SDK_KEY": "/k8s/configcat/CONFIGCAT_SDK_KEY",
-        "NATIONAL_REGISTRY_API_KEY": "/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY",
-        "LAWYERS_ICELAND_API_KEY": "/k8s/judicial-system/LAWYERS_ICELAND_API_KEY",
-        "SUPPORT_EMAIL": "/k8s/judicial-system/SUPPORT_EMAIL"
-      },
-      "ingress": {
-        "primary": {
-          "host": {
-            "dev": "judicial-system",
-            "staging": "judicial-system",
-            "prod": "rettarvorslugatt.island.is"
-          },
-          "paths": [
-            "/"
-          ],
-          "extraAnnotations": {
-            "dev": {
-              "nginx.ingress.kubernetes.io/proxy-buffering": "on",
-              "nginx.ingress.kubernetes.io/proxy-buffer-size": "8k"
-            },
-            "staging": {
-              "nginx.ingress.kubernetes.io/proxy-buffering": "on",
-              "nginx.ingress.kubernetes.io/proxy-buffer-size": "8k"
-            },
-            "prod": {
-              "nginx.ingress.kubernetes.io/proxy-buffering": "on",
-              "nginx.ingress.kubernetes.io/proxy-buffer-size": "8k"
-            }
-          }
-        }
-      },
-      "namespace": "judicial-system",
-      "serviceAccountEnabled": false,
-      "securityContext": {
-        "privileged": false,
-        "allowPrivilegeEscalation": false
-      },
-      "resources": {
-        "limits": {
-          "cpu": "200m",
-          "memory": "256Mi"
-        },
-        "requests": {
-          "cpu": "15m",
-          "memory": "128Mi"
-        }
-      },
-      "xroadConfig": [],
-      "files": [],
-      "volumes": []
-    }
-  }
-}
+service:
+  name: judicial-system-web
+  enabled: true
+  env:
+    API_URL: https://judicial-system.staging01.devland.is
+    INTERNAL_API_URL: http://web-judicial-system-api
+    LOG_LEVEL: info
+    NODE_OPTIONS: --max-old-space-size=230 -r dd-trace/init
+    SERVERSIDE_FEATURES_ON: ""
+  grantNamespaces:
+    - nginx-ingress-external
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: /liveness
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: /readiness
+      timeoutSeconds: 10
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-web
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: nginx-external-alb
+        nginx.ingress.kubernetes.io/proxy-buffer-size: 8k
+        nginx.ingress.kubernetes.io/proxy-buffering: on
+        nginx.ingress.kubernetes.io/service-upstream: "true"
+      hosts:
+        - host: judicial-system.staging01.devland.is
+          paths:
+            - /
+  namespace: judicial-system
+  podDisruptionBudget:
+    maxUnavailable: 1
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 15m
+      memory: 128Mi
+  secrets:
+    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    LAWYERS_ICELAND_API_KEY: /k8s/judicial-system/LAWYERS_ICELAND_API_KEY
+    NATIONAL_REGISTRY_API_KEY: /k8s/judicial-system/NATIONAL_REGISTRY_API_KEY
+    SUPPORT_EMAIL: /k8s/judicial-system/SUPPORT_EMAIL
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false

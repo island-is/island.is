@@ -1,204 +1,134 @@
-{
-  "search-indexer-service": {
-    "serviceDef": {
-      "liveness": {
-        "path": "/",
-        "timeoutSeconds": 3,
-        "initialDelaySeconds": 3
-      },
-      "readiness": {
-        "path": "/",
-        "timeoutSeconds": 3,
-        "initialDelaySeconds": 3
-      },
-      "env": {
-        "APPLICATION_URL": "http://search-indexer-service",
-        "ELASTIC_NODE": {
-          "dev": "https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com",
-          "staging": "https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com",
-          "prod": "https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com"
-        },
-        "ELASTIC_INDEX": "island-is",
-        "CONTENTFUL_SPACE": "8k0h54kbe6bj",
-        "CONTENTFUL_ENVIRONMENT": "master",
-        "CONTENTFUL_HOST": {
-          "dev": "preview.contentful.com",
-          "staging": "cdn.contentful.com",
-          "prod": "cdn.contentful.com"
-        },
-        "CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE": {
-          "dev": "40",
-          "staging": "40",
-          "prod": "40"
-        },
-        "AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME": {
-          "dev": "loftbru.dev01.devland.is",
-          "staging": "loftbru.staging01.devland.is",
-          "prod": "loftbru.island.is"
-        }
-      },
-      "features": {},
-      "name": "search-indexer-service",
-      "grantNamespaces": [],
-      "grantNamespacesEnabled": false,
-      "secrets": {
-        "CONFIGCAT_SDK_KEY": "/k8s/configcat/CONFIGCAT_SDK_KEY",
-        "CONTENTFUL_ACCESS_TOKEN": "/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN",
-        "API_CMS_SYNC_TOKEN": "/k8s/search-indexer/API_CMS_SYNC_TOKEN",
-        "API_CMS_DELETION_TOKEN": "/k8s/search-indexer/API_CMS_DELETION_TOKEN",
-        "APOLLO_BYPASS_CACHE_SECRET": "/k8s/api/APOLLO_BYPASS_CACHE_SECRET"
-      },
-      "ingress": {
-        "primary": {
-          "host": {
-            "dev": "search-indexer-service",
-            "staging": "search-indexer-service",
-            "prod": "search-indexer-service.devland.is"
-          },
-          "paths": [
-            "/"
-          ],
-          "extraAnnotations": {
-            "dev": {
-              "nginx.ingress.kubernetes.io/enable-global-auth": "false"
-            },
-            "staging": {
-              "nginx.ingress.kubernetes.io/enable-global-auth": "false"
-            },
-            "prod": {}
-          }
-        }
-      },
-      "namespace": "search-indexer",
-      "serviceAccountEnabled": true,
-      "securityContext": {
-        "privileged": false,
-        "allowPrivilegeEscalation": false
-      },
-      "resources": {
-        "requests": {
-          "cpu": "400m",
-          "memory": "3072Mi"
-        },
-        "limits": {
-          "cpu": "800m",
-          "memory": "4096Mi"
-        }
-      },
-      "xroadConfig": [],
-      "files": [],
-      "volumes": [],
-      "image": "services-search-indexer",
-      "accountName": "search-indexer",
-      "initContainers": {
-        "envs": {
-          "APPLICATION_URL": "http://search-indexer-service",
-          "ELASTIC_NODE": {
-            "dev": "https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com",
-            "staging": "https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com",
-            "prod": "https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com"
-          },
-          "ELASTIC_INDEX": "island-is",
-          "CONTENTFUL_SPACE": "8k0h54kbe6bj",
-          "CONTENTFUL_ENVIRONMENT": "master",
-          "CONTENTFUL_HOST": {
-            "dev": "preview.contentful.com",
-            "staging": "cdn.contentful.com",
-            "prod": "cdn.contentful.com"
-          },
-          "CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE": {
-            "dev": "40",
-            "staging": "40",
-            "prod": "40"
-          },
-          "AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME": {
-            "dev": "loftbru.dev01.devland.is",
-            "staging": "loftbru.staging01.devland.is",
-            "prod": "loftbru.island.is"
-          },
-          "S3_BUCKET": {
-            "dev": "dev-es-custom-packages",
-            "staging": "staging-es-custom-packages",
-            "prod": "prod-es-custom-packages"
-          },
-          "ELASTIC_DOMAIN": "search",
-          "NODE_OPTIONS": "--max-old-space-size=2048"
-        },
-        "secrets": {
-          "CONTENTFUL_ACCESS_TOKEN": "/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN",
-          "CONFIGCAT_SDK_KEY": "/k8s/configcat/CONFIGCAT_SDK_KEY"
-        },
-        "features": {},
-        "containers": [
-          {
-            "command": "/usr/local/bin/node",
-            "args": [
-              "/webapp/migrateAws.js"
-            ],
-            "name": "migrate-aws",
-            "resources": {
-              "requests": {
-                "cpu": "100m",
-                "memory": "512Mi"
-              },
-              "limits": {
-                "cpu": "400m",
-                "memory": "2048Mi"
-              }
-            }
-          },
-          {
-            "command": "/usr/local/bin/node",
-            "args": [
-              "/webapp/migrateElastic.js"
-            ],
-            "name": "migrate-elastic",
-            "resources": {
-              "requests": {
-                "cpu": "300m",
-                "memory": "3072Mi"
-              },
-              "limits": {
-                "cpu": "700m",
-                "memory": "4096Mi"
-              }
-            }
-          },
-          {
-            "command": "/usr/local/bin/node",
-            "args": [
-              "/webapp/migrateKibana.js"
-            ],
-            "name": "migrate-kibana",
-            "resources": {
-              "requests": {
-                "cpu": "100m",
-                "memory": "512Mi"
-              },
-              "limits": {
-                "cpu": "400m",
-                "memory": "2048Mi"
-              }
-            }
-          }
-        ]
-      },
-      "replicaCount": {
-        "min": 1,
-        "max": 1,
-        "default": 1
-      },
-      "extraAttributes": {
-        "dev": {
-          "progressDeadlineSeconds": 1500
-        },
-        "staging": {
-          "progressDeadlineSeconds": 1500
-        },
-        "prod": {
-          "progressDeadlineSeconds": 1500
-        }
-      }
-    }
-  }
-}
+service:
+  name: search-indexer-service
+  enabled: true
+  env:
+    AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: loftbru.dev01.devland.is
+    APPLICATION_URL: http://search-indexer-service
+    CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: "40"
+    CONTENTFUL_ENVIRONMENT: master
+    CONTENTFUL_HOST: preview.contentful.com
+    CONTENTFUL_SPACE: 8k0h54kbe6bj
+    ELASTIC_INDEX: island-is
+    ELASTIC_NODE: https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com
+    ENVIRONMENT: dev
+    LOG_LEVEL: info
+    NODE_OPTIONS: --max-old-space-size=3686 -r dd-trace/init
+    SERVERSIDE_FEATURES_ON: ""
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: /
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: /
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 1
+        min: 1
+  image:
+    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: nginx-external-alb
+        nginx.ingress.kubernetes.io/enable-global-auth: "false"
+        nginx.ingress.kubernetes.io/service-upstream: "true"
+      hosts:
+        - host: search-indexer-service.dev01.devland.is
+          paths:
+            - /
+  initContainer:
+    containers:
+      - args:
+          - /webapp/migrateAws.js
+        command:
+          - /usr/local/bin/node
+        name: migrate-aws
+        resources:
+          limits:
+            cpu: 400m
+            memory: 2048Mi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+      - args:
+          - /webapp/migrateElastic.js
+        command:
+          - /usr/local/bin/node
+        name: migrate-elastic
+        resources:
+          limits:
+            cpu: 700m
+            memory: 4096Mi
+          requests:
+            cpu: 300m
+            memory: 3072Mi
+      - args:
+          - /webapp/migrateKibana.js
+        command:
+          - /usr/local/bin/node
+        name: migrate-kibana
+        resources:
+          limits:
+            cpu: 400m
+            memory: 2048Mi
+          requests:
+            cpu: 100m
+            memory: 512Mi
+    env:
+      AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: loftbru.dev01.devland.is
+      APPLICATION_URL: http://search-indexer-service
+      CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: "40"
+      CONTENTFUL_ENVIRONMENT: master
+      CONTENTFUL_HOST: preview.contentful.com
+      CONTENTFUL_SPACE: 8k0h54kbe6bj
+      ELASTIC_DOMAIN: search
+      ELASTIC_INDEX: island-is
+      ELASTIC_NODE: https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com
+      ENVIRONMENT: dev
+      NODE_OPTIONS: --max-old-space-size=2048
+      S3_BUCKET: dev-es-custom-packages
+      SERVERSIDE_FEATURES_ON: ""
+    secrets:
+      CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+      CONTENTFUL_ACCESS_TOKEN: /k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN
+  namespace: search-indexer
+  podDisruptionBudget:
+    maxUnavailable: 1
+  podSecurityContext:
+    fsGroup: 65534
+  progressDeadlineSeconds: 1500
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 1
+    min: 1
+  resources:
+    limits:
+      cpu: 800m
+      memory: 4096Mi
+    requests:
+      cpu: 400m
+      memory: 3072Mi
+  secrets:
+    API_CMS_DELETION_TOKEN: /k8s/search-indexer/API_CMS_DELETION_TOKEN
+    API_CMS_SYNC_TOKEN: /k8s/search-indexer/API_CMS_SYNC_TOKEN
+    APOLLO_BYPASS_CACHE_SECRET: /k8s/api/APOLLO_BYPASS_CACHE_SECRET
+    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    CONTENTFUL_ACCESS_TOKEN: /k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::013313053092:role/search-indexer
+    create: true
+    name: search-indexer

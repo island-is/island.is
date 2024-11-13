@@ -4,6 +4,7 @@ import { writeFileSync, mkdirSync } from 'fs'
 import { Envs } from '../environments'
 import { OpsEnv } from '../dsl/types/input-types'
 import path from 'path'
+import yaml from 'yaml'
 ;(async () => {
   console.log('Gathering charts')
   for (const [name, envs] of Object.entries(Deployments)) {
@@ -28,6 +29,9 @@ import path from 'path'
       // Get services for this chart and environment
       const services = Charts[name as ChartName][envType as OpsEnv]
 
+      // Parse the rendered YAML
+      const parsedValues = yaml.parse(renderedValues)
+
       // Write individual service values files
       for (const service of services) {
         const serviceName = service.name()
@@ -38,16 +42,21 @@ import path from 'path'
         )
         mkdirSync(serviceDir, { recursive: true })
 
-        // Create service-specific values by isolating just that service's section
-        const serviceValues = {
-          [serviceName]: service,
-        }
+        // Extract just this service's section and restructure it
+        if (parsedValues[serviceName]) {
+          const serviceValues = {
+            service: {
+              name: serviceName,
+              ...parsedValues[serviceName],
+            },
+          }
 
-        writeFileSync(
-          path.join(serviceDir, `values.${Envs[envName].type}.yaml`),
-          JSON.stringify(serviceValues, null, 2), // or however you format your YAML
-          { encoding: 'utf8' },
-        )
+          writeFileSync(
+            path.join(serviceDir, `values.${Envs[envName].type}.yaml`),
+            yaml.stringify(serviceValues),
+            { encoding: 'utf8' },
+          )
+        }
       }
     }
   }

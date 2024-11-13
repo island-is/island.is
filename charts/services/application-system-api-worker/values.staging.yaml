@@ -1,203 +1,102 @@
-{
-  "application-system-api-worker": {
-    "serviceDef": {
-      "liveness": {
-        "path": "/",
-        "timeoutSeconds": 3,
-        "initialDelaySeconds": 3
-      },
-      "readiness": {
-        "path": "/",
-        "timeoutSeconds": 3,
-        "initialDelaySeconds": 3
-      },
-      "env": {
-        "IDENTITY_SERVER_CLIENT_ID": "@island.is/clients/application-system",
-        "IDENTITY_SERVER_ISSUER_URL": {
-          "dev": "https://identity-server.dev01.devland.is",
-          "staging": "https://identity-server.staging01.devland.is",
-          "prod": "https://innskra.island.is"
-        },
-        "XROAD_CHARGE_FJS_V2_PATH": {
-          "dev": "IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2",
-          "staging": "IS-TEST/GOV/10021/FJS-Public/chargeFJS_v2",
-          "prod": "IS/GOV/5402697509/FJS-Public/chargeFJS_v2"
-        },
-        "APPLICATION_ATTACHMENT_BUCKET": {
-          "dev": "island-is-dev-storage-application-system",
-          "staging": "island-is-staging-storage-application-system",
-          "prod": "island-is-prod-storage-application-system"
-        },
-        "FILE_SERVICE_PRESIGN_BUCKET": {
-          "dev": "island-is-dev-fs-presign-bucket",
-          "staging": "island-is-staging-fs-presign-bucket",
-          "prod": "island-is-prod-fs-presign-bucket"
-        },
-        "FILE_STORAGE_UPLOAD_BUCKET": {
-          "dev": "island-is-dev-upload-api",
-          "staging": "island-is-staging-upload-api",
-          "prod": "island-is-prod-upload-api"
-        },
-        "CLIENT_LOCATION_ORIGIN": {
-          "dev": "https://beta.dev01.devland.is/umsoknir",
-          "staging": "https://beta.staging01.devland.is/umsoknir",
-          "prod": "https://island.is/umsoknir",
-          "local": "http://localhost:4200/umsoknir"
-        }
-      },
-      "features": {},
-      "name": "application-system-api-worker",
-      "grantNamespaces": [],
-      "grantNamespacesEnabled": false,
-      "secrets": {
-        "CONFIGCAT_SDK_KEY": "/k8s/configcat/CONFIGCAT_SDK_KEY",
-        "IDENTITY_SERVER_CLIENT_SECRET": "/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET",
-        "SYSLUMENN_HOST": "/k8s/application-system-api/SYSLUMENN_HOST",
-        "SYSLUMENN_USERNAME": "/k8s/application-system/api/SYSLUMENN_USERNAME",
-        "SYSLUMENN_PASSWORD": "/k8s/application-system/api/SYSLUMENN_PASSWORD",
-        "DRIVING_LICENSE_BOOK_XROAD_PATH": "/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH",
-        "DRIVING_LICENSE_BOOK_USERNAME": "/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME",
-        "DRIVING_LICENSE_BOOK_PASSWORD": "/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD",
-        "DOKOBIT_ACCESS_TOKEN": "/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN",
-        "DOKOBIT_URL": "/k8s/application-system-api/DOKOBIT_URL",
-        "ARK_BASE_URL": "/k8s/application-system-api/ARK_BASE_URL",
-        "DOMSYSLA_PASSWORD": "/k8s/application-system-api/DOMSYSLA_PASSWORD",
-        "DOMSYSLA_USERNAME": "/k8s/application-system-api/DOMSYSLA_USERNAME"
-      },
-      "ingress": {},
-      "namespace": "application-system",
-      "serviceAccountEnabled": true,
-      "securityContext": {
-        "privileged": false,
-        "allowPrivilegeEscalation": false
-      },
-      "resources": {
-        "limits": {
-          "cpu": "400m",
-          "memory": "768Mi"
-        },
-        "requests": {
-          "cpu": "150m",
-          "memory": "384Mi"
-        }
-      },
-      "xroadConfig": [
-        {
-          "config": {
-            "env": {
-              "XROAD_BASE_PATH": {
-                "prod": "http://securityserver.island.is"
-              },
-              "XROAD_BASE_PATH_WITH_ENV": {
-                "staging": "http://securityserver.staging01.devland.is/r1/IS-TEST",
-                "prod": "http://securityserver.island.is/r1/IS"
-              },
-              "XROAD_TLS_BASE_PATH": {
-                "dev": "https://securityserver.dev01.devland.is",
-                "staging": "https://securityserver.staging01.devland.is",
-                "prod": "https://securityserver.island.is"
-              },
-              "XROAD_TLS_BASE_PATH_WITH_ENV": {
-                "dev": "https://securityserver.dev01.devland.is/r1/IS-DEV",
-                "staging": "https://securityserver.staging01.devland.is/r1/IS-TEST",
-                "prod": "https://securityserver.island.is/r1/IS"
-              }
-            }
-          }
-        },
-        {
-          "config": {
-            "env": {
-              "XROAD_CLIENT_ID": {
-                "dev": "IS-DEV/GOV/10000/island-is-client",
-                "staging": "IS-TEST/GOV/5501692829/island-is-client",
-                "prod": "IS/GOV/5501692829/island-is-client"
-              }
-            }
-          }
-        },
-        {
-          "config": {
-            "env": {
-              "XROAD_PAYMENT_PROVIDER_ID": {
-                "dev": "IS-DEV/GOV/10021/FJS-Public",
-                "staging": "IS-TEST/GOV/10021/FJS-DEV-Public",
-                "prod": "IS/GOV/5402697509/FJS-Public"
-              },
-              "XROAD_PAYMENT_BASE_CALLBACK_URL": {
-                "dev": "XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/",
-                "staging": "XROAD:",
-                "prod": "XROAD:/IS/GOV/5501692829/island-is/application-callback-v2/application-payment/"
-              },
-              "XROAD_PAYMENT_ADDITION_CALLBACK_URL": "/"
-            },
-            "secrets": {
-              "XROAD_PAYMENT_USER": "/k8s/application-system-api/PAYMENT_USER",
-              "XROAD_PAYMENT_PASSWORD": "/k8s/application-system-api/PAYMENT_PASSWORD"
-            }
-          }
-        },
-        {
-          "config": {
-            "env": {
-              "XROAD_INNA_PATH": {
-                "dev": "IS-DEV/GOV/10066/MMS-Protected/inna-v1",
-                "staging": "IS-TEST/GOV/6601241280/MMS-Protected/inna-v1",
-                "prod": "IS/GOV/6601241280/MMS-Protected/inna-v1"
-              }
-            }
-          }
-        },
-        {
-          "config": {
-            "env": {
-              "EHIC_XROAD_PROVIDER_ID": {
-                "dev": "IS-DEV/GOV/10007/SJUKRA-Protected/ehic",
-                "staging": "IS-TEST/GOV/4804080550/SJUKRA-Protected/ehic",
-                "prod": "IS/GOV/4804080550/SJUKRA-Protected/ehic"
-              }
-            }
-          }
-        },
-        {
-          "config": {
-            "env": {
-              "XROAD_WORK_MACHINE_LICENSE_PATH": {
-                "dev": "IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token",
-                "staging": "IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token",
-                "prod": "IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token"
-              }
-            }
-          }
-        }
-      ],
-      "files": [],
-      "volumes": [],
-      "image": "application-system-api",
-      "postgres": {
-        "username": "application_system_api",
-        "passwordSecret": "/k8s/application-system-api/DB_PASSWORD",
-        "name": "application_system_api"
-      },
-      "accountName": "application-system-api-worker",
-      "redis": {},
-      "args": [
-        "main.js",
-        "--job",
-        "worker"
-      ],
-      "cmds": "node",
-      "extraAttributes": {
-        "dev": {
-          "schedule": "*/30 * * * *"
-        },
-        "staging": {
-          "schedule": "*/30 * * * *"
-        },
-        "prod": {
-          "schedule": "*/30 * * * *"
-        }
-      }
-    }
-  }
-}
+service:
+  name: application-system-api-worker
+  args:
+    - main.js
+    - --job
+    - worker
+  command:
+    - node
+  enabled: true
+  env:
+    APPLICATION_ATTACHMENT_BUCKET: island-is-staging-storage-application-system
+    CLIENT_LOCATION_ORIGIN: https://beta.staging01.devland.is/umsoknir
+    DB_HOST: postgres-applications.internal
+    DB_NAME: application_system_api
+    DB_REPLICAS_HOST: postgres-applications.internal
+    DB_USER: application_system_api
+    EHIC_XROAD_PROVIDER_ID: IS-TEST/GOV/4804080550/SJUKRA-Protected/ehic
+    FILE_SERVICE_PRESIGN_BUCKET: island-is-staging-fs-presign-bucket
+    FILE_STORAGE_UPLOAD_BUCKET: island-is-staging-upload-api
+    IDENTITY_SERVER_CLIENT_ID: "@island.is/clients/application-system"
+    IDENTITY_SERVER_ISSUER_URL: https://identity-server.staging01.devland.is
+    LOG_LEVEL: info
+    NODE_OPTIONS: --max-old-space-size=691 -r dd-trace/init
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: ""
+    XROAD_BASE_PATH: http://securityserver.staging01.devland.is
+    XROAD_BASE_PATH_WITH_ENV: http://securityserver.staging01.devland.is/r1/IS-TEST
+    XROAD_CHARGE_FJS_V2_PATH: IS-TEST/GOV/10021/FJS-Public/chargeFJS_v2
+    XROAD_CLIENT_ID: IS-TEST/GOV/5501692829/island-is-client
+    XROAD_INNA_PATH: IS-TEST/GOV/6601241280/MMS-Protected/inna-v1
+    XROAD_PAYMENT_ADDITION_CALLBACK_URL: /
+    XROAD_PAYMENT_BASE_CALLBACK_URL: "XROAD:"
+    XROAD_PAYMENT_PROVIDER_ID: IS-TEST/GOV/10021/FJS-DEV-Public
+    XROAD_TLS_BASE_PATH: https://securityserver.staging01.devland.is
+    XROAD_TLS_BASE_PATH_WITH_ENV: https://securityserver.staging01.devland.is/r1/IS-TEST
+    XROAD_WORK_MACHINE_LICENSE_PATH: IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token
+  grantNamespaces:
+    - nginx-ingress-internal
+    - islandis
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: /
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: /
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api
+  namespace: application-system
+  podDisruptionBudget:
+    maxUnavailable: 1
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: 400m
+      memory: 768Mi
+    requests:
+      cpu: 150m
+      memory: 384Mi
+  schedule: "*/30 * * * *"
+  secrets:
+    ARK_BASE_URL: /k8s/application-system-api/ARK_BASE_URL
+    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+    DB_PASS: /k8s/application-system-api/DB_PASSWORD
+    DOKOBIT_ACCESS_TOKEN: /k8s/application-system/api/DOKOBIT_ACCESS_TOKEN
+    DOKOBIT_URL: /k8s/application-system-api/DOKOBIT_URL
+    DOMSYSLA_PASSWORD: /k8s/application-system-api/DOMSYSLA_PASSWORD
+    DOMSYSLA_USERNAME: /k8s/application-system-api/DOMSYSLA_USERNAME
+    DRIVING_LICENSE_BOOK_PASSWORD: /k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD
+    DRIVING_LICENSE_BOOK_USERNAME: /k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME
+    DRIVING_LICENSE_BOOK_XROAD_PATH: /k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH
+    IDENTITY_SERVER_CLIENT_SECRET: /k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET
+    SYSLUMENN_HOST: /k8s/application-system-api/SYSLUMENN_HOST
+    SYSLUMENN_PASSWORD: /k8s/application-system/api/SYSLUMENN_PASSWORD
+    SYSLUMENN_USERNAME: /k8s/application-system/api/SYSLUMENN_USERNAME
+    XROAD_PAYMENT_PASSWORD: /k8s/application-system-api/PAYMENT_PASSWORD
+    XROAD_PAYMENT_USER: /k8s/application-system-api/PAYMENT_USER
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::261174024191:role/application-system-api-worker
+    create: true
+    name: application-system-api-worker

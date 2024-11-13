@@ -1,101 +1,57 @@
-{
-  "external-contracts-tests": {
-    "serviceDef": {
-      "liveness": {
-        "path": "/",
-        "timeoutSeconds": 3,
-        "initialDelaySeconds": 3
-      },
-      "readiness": {
-        "path": "/",
-        "timeoutSeconds": 3,
-        "initialDelaySeconds": 3
-      },
-      "env": {},
-      "features": {},
-      "name": "external-contracts-tests",
-      "grantNamespaces": [],
-      "grantNamespacesEnabled": false,
-      "secrets": {
-        "CONFIGCAT_SDK_KEY": "/k8s/configcat/CONFIGCAT_SDK_KEY"
-      },
-      "ingress": {},
-      "namespace": "external-contracts-tests",
-      "serviceAccountEnabled": false,
-      "securityContext": {
-        "privileged": false,
-        "allowPrivilegeEscalation": false
-      },
-      "resources": {
-        "limits": {
-          "cpu": "1",
-          "memory": "1024Mi"
-        },
-        "requests": {
-          "cpu": "500m",
-          "memory": "512Mi"
-        }
-      },
-      "xroadConfig": [
-        {
-          "config": {
-            "env": {
-              "XROAD_BASE_PATH": {
-                "prod": "http://securityserver.island.is"
-              },
-              "XROAD_BASE_PATH_WITH_ENV": {
-                "staging": "http://securityserver.staging01.devland.is/r1/IS-TEST",
-                "prod": "http://securityserver.island.is/r1/IS"
-              },
-              "XROAD_TLS_BASE_PATH": {
-                "dev": "https://securityserver.dev01.devland.is",
-                "staging": "https://securityserver.staging01.devland.is",
-                "prod": "https://securityserver.island.is"
-              },
-              "XROAD_TLS_BASE_PATH_WITH_ENV": {
-                "dev": "https://securityserver.dev01.devland.is/r1/IS-DEV",
-                "staging": "https://securityserver.staging01.devland.is/r1/IS-TEST",
-                "prod": "https://securityserver.island.is/r1/IS"
-              }
-            }
-          }
-        },
-        {
-          "config": {
-            "env": {
-              "XROAD_NATIONAL_REGISTRY_SERVICE_PATH": {
-                "dev": "IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1",
-                "staging": "IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1",
-                "prod": "IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1"
-              },
-              "XROAD_NATIONAL_REGISTRY_REDIS_NODES": {
-                "dev": "[\"clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379\"]",
-                "staging": "[\"clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379\"]",
-                "prod": "[\"clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379\"]"
-              },
-              "XROAD_TJODSKRA_API_PATH": "/SKRA-Protected/Einstaklingar-v1",
-              "XROAD_TJODSKRA_MEMBER_CODE": {
-                "prod": "6503760649",
-                "dev": "10001",
-                "staging": "6503760649"
-              }
-            }
-          }
-        }
-      ],
-      "files": [],
-      "volumes": [],
-      "extraAttributes": {
-        "dev": {
-          "schedule": "0 11 * * *"
-        },
-        "staging": {
-          "schedule": "0 11 * * *"
-        },
-        "prod": {
-          "schedule": "0 11 * * *"
-        }
-      }
-    }
-  }
-}
+service:
+  name: external-contracts-tests
+  enabled: true
+  env:
+    LOG_LEVEL: info
+    NODE_OPTIONS: --max-old-space-size=921 -r dd-trace/init
+    SERVERSIDE_FEATURES_ON: ""
+    XROAD_BASE_PATH: http://securityserver.dev01.devland.is
+    XROAD_BASE_PATH_WITH_ENV: http://securityserver.dev01.devland.is/r1/IS-DEV
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1
+    XROAD_TJODSKRA_API_PATH: /SKRA-Protected/Einstaklingar-v1
+    XROAD_TJODSKRA_MEMBER_CODE: "10001"
+    XROAD_TLS_BASE_PATH: https://securityserver.dev01.devland.is
+    XROAD_TLS_BASE_PATH_WITH_ENV: https://securityserver.dev01.devland.is/r1/IS-DEV
+  grantNamespaces: []
+  grantNamespacesEnabled: false
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: /
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: /
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/external-contracts-tests
+  namespace: external-contracts-tests
+  podDisruptionBudget:
+    maxUnavailable: 1
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1024Mi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  schedule: 0 11 * * *
+  secrets:
+    CONFIGCAT_SDK_KEY: /k8s/configcat/CONFIGCAT_SDK_KEY
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
