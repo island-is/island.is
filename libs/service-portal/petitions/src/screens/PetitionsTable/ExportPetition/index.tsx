@@ -1,4 +1,4 @@
-import { FC, ReactElement} from 'react'
+import { FC, ReactElement } from 'react'
 import {
   Box,
   DropdownMenu,
