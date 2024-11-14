@@ -28,7 +28,7 @@ import {
   MinarsidurAPIModelsAccidentReportsInjuredDTO,
   MinarsidurAPIModelsAccidentReportsAccidentDTO,
   MinarsidurAPIModelsAccidentReportsEmployerDTO,
-  MinarsidurAPIModelsAccidentReportsClubDTO,
+  // MinarsidurAPIModelsAccidentReportsClubDTO,
   MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentDTO,
   MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum,
   MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentTypeEnum,
@@ -43,7 +43,7 @@ export const applicationToAccidentReport = (
     injured: getInjured(answers),
     accident: getAccident(answers),
     employer: getEmployer(answers),
-    club: getClub(answers),
+    // club: getClub(answers),
     attachments: getAttachments(attachments),
   }
 }
@@ -399,26 +399,26 @@ const getEmployer = (
   }
 }
 
-const getClub = (
-  answers: AccidentNotificationAnswers,
-): MinarsidurAPIModelsAccidentReportsClubDTO | undefined => {
-  const accidentType = getValueViaPath<AccidentTypeEnum>(
-    answers,
-    'accidentType.radioButton',
-  )
-  if (accidentType !== AccidentTypeEnum.SPORTS) return
+// const getClub = (
+//   answers: AccidentNotificationAnswers,
+// ): MinarsidurAPIModelsAccidentReportsClubDTO | undefined => {
+//   const accidentType = getValueViaPath<AccidentTypeEnum>(
+//     answers,
+//     'accidentType.radioButton',
+//   )
+//   if (accidentType !== AccidentTypeEnum.SPORTS) return
 
-  const club = getValueViaPath<CompanyInfoV2>(answers, 'companyInfo')
-  const accidentLocation = getValueViaPath<string>(
-    answers,
-    'accidentLocation.answer',
-  )
-  return {
-    nationalId: club?.nationalRegistrationId ?? '',
-    name: club?.name ?? '',
-    accidentType: accidentLocation ?? '',
-  }
-}
+//   const club = getValueViaPath<CompanyInfoV2>(answers, 'companyInfo')
+//   const accidentLocation = getValueViaPath<string>(
+//     answers,
+//     'accidentLocation.answer',
+//   )
+//   return {
+//     nationalId: club?.nationalRegistrationId ?? '',
+//     name: club?.name ?? '',
+//     accidentType: accidentLocation ?? '',
+//   }
+// }
 
 const getAttachments = (
   attachments: Array<AccidentNotificationAttachment>,
