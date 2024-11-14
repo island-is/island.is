@@ -41,7 +41,6 @@ service:
     PersistenceSettings__DelegationsCacheEnabled: 'true'
     RedisSettings__Address: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com'
     RedisSettings__Port: '6379'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SessionsApiSettings__BaseAddress: 'https://sessions-api.internal.island.is'
   files:
     - 'ids-signing.pfx'

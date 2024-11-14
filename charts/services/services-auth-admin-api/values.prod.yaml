@@ -20,7 +20,6 @@ service:
     IDENTITY_SERVER_ISSUER_URL_LIST: '["https://innskra.island.is"]'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SYSLUMENN_HOST: 'https://api.syslumenn.is/api'
     SYSLUMENN_TIMEOUT: '3000'
     XROAD_BASE_PATH: 'http://securityserver.island.is'

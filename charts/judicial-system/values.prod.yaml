@@ -33,7 +33,6 @@ judicial-system-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -121,7 +120,6 @@ judicial-system-backend:
     S3_REGION: 'eu-west-1'
     S3_TIME_TO_LIVE_GET: '5'
     S3_TIME_TO_LIVE_POST: '15'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
     SQS_QUEUE_NAME: 'sqs-judicial-system'
     SQS_REGION: 'eu-west-1'
@@ -177,7 +175,6 @@ judicial-system-backend:
       DB_NAME: 'judicial_system'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'judicial_system'
-      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
   namespace: 'judicial-system'
@@ -248,7 +245,6 @@ judicial-system-digital-mailbox-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
@@ -321,7 +317,6 @@ judicial-system-message-handler:
     BACKEND_URL: 'http://web-judicial-system-backend'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
     SQS_QUEUE_NAME: 'sqs-judicial-system'
     SQS_REGION: 'eu-west-1'
@@ -384,7 +379,6 @@ judicial-system-robot-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
@@ -456,7 +450,6 @@ judicial-system-scheduler:
     BACKEND_URL: 'http://web-judicial-system-backend'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
     SQS_QUEUE_NAME: 'sqs-judicial-system'
     SQS_REGION: 'eu-west-1'
@@ -519,7 +512,6 @@ judicial-system-web:
     INTERNAL_API_URL: 'http://web-judicial-system-api'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
   grantNamespacesEnabled: true
@@ -585,7 +577,6 @@ judicial-system-xrd-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true

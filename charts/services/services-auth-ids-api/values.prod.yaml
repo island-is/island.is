@@ -32,7 +32,6 @@ service:
     PASSKEY_CORE_RP_NAME: 'Island.is'
     PUBLIC_URL: 'https://innskra.island.is/api'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
-    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SYSLUMENN_HOST: 'https://api.syslumenn.is/api'
     SYSLUMENN_TIMEOUT: '3000'
     USER_PROFILE_CLIENT_SCOPE: '["@island.is/user-profile:read"]'
@@ -106,7 +105,6 @@ service:
       DB_NAME: 'servicesauth'
       DB_REPLICAS_HOST: 'postgres-ids.internal'
       DB_USER: 'servicesauth'
-      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
   namespace: 'identity-server'
