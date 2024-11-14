@@ -6,7 +6,6 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'
 import { FormsModule } from './modules/forms/forms.module'
 import { ScreensModule } from './modules/screens/screens.module'
-// import { FieldSettingsModule } from './modules/fieldSettings/fieldSettings.module'
 import { FieldsModule } from './modules/fields/fields.module'
 import { OrganizationListTypesModule } from './modules/organizationListTypes/organizationListTypes.module'
 import { OrganizationsModule } from './modules/organizations/organizations.module'
@@ -33,7 +32,6 @@ import { OrganizationFieldTypesModule } from './modules/organizationFieldTypes/o
     SectionsModule,
     ScreensModule,
     FieldsModule,
-    // FieldSettingsModule,
     ListItemsModule,
     ApplicationsModule,
     ValuesModule,

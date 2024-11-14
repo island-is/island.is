@@ -10,7 +10,4 @@ export class ValueDto {
 
   @ApiProperty({ type: ValueType })
   json?: ValueType
-
-  // @ApiProperty({ type: Boolean })
-  // isHidden!: boolean
 }

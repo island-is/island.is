@@ -20,23 +20,9 @@ export class FieldSettingsFactory {
       case FieldTypesEnum.DATE_PICKER:
         keys = ['minDate', 'maxDate']
         return this.pickSettings(fieldSettings, keys)
-      case FieldTypesEnum.DROPDOWN_LIST: {
+      case FieldTypesEnum.DROPDOWN_LIST:
         keys = ['listType']
         return this.pickSettings(fieldSettings, keys)
-        // const dropdownListFieldSettings = this.pickSettings(fieldSettingsType, keys)
-        // dropdownListFieldSettings.list = fieldSettingsType?.list
-        //   ? this.listItemMapper.mapListItemsToListItemsDto(fieldSettingsType.list)
-        //   : []
-        // return dropdownListFieldSettings
-      }
-      // case FieldTypes.RADIO_BUTTONS: {
-      //   keys = ['list', 'isRequired']
-      //   const radioButtonsFieldSettings = this.pickSettings(fieldSettingsType, keys)
-      //   radioButtonsFieldSettings.list = fieldSettingsType?.list
-      //     ? this.listItemMapper.mapListItemsToListItemsDto(fieldSettingsType.list)
-      //     : []
-      //   return radioButtonsFieldSettings
-      // }
       case FieldTypesEnum.ISK_NUMBERBOX:
         keys = ['minAmount', 'maxAmount']
         return this.pickSettings(fieldSettings, keys)

@@ -5,10 +5,6 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Value } from './models/value.model'
-import defaults from 'lodash/defaults'
-import pick from 'lodash/pick'
-import zipObject from 'lodash/zipObject'
-import { ValueDto } from './models/dto/value.dto'
 import { UpdateValueDto } from './models/dto/updateValue.dto'
 import { CreateValueDto } from './models/dto/createValue.dto'
 

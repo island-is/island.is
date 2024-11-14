@@ -29,11 +29,6 @@ module.exports = {
             allowNull: false,
             defaultValue: 0,
           },
-          // is_hidden: {
-          //   type: Sequelize.BOOLEAN,
-          //   allowNull: false,
-          //   defaultValue: false,
-          // },
           field_id: {
             type: Sequelize.UUID,
             onDelete: 'CASCADE',
@@ -47,15 +42,6 @@ module.exports = {
             type: Sequelize.UUID,
             allowNull: false,
           },
-          // application_id: {
-          //   type: Sequelize.UUID,
-          //   onDelete: 'CASCADE',
-          //   allowNull: false,
-          //   references: {
-          //     model: 'application',
-          //     key: 'id',
-          //   },
-          // },
         },
         { transaction: t },
       ),

@@ -1,20 +1,16 @@
 import { CreationOptional } from 'sequelize'
 import {
-  AllowNull,
   Column,
   CreatedAt,
   DataType,
   ForeignKey,
   HasMany,
-  HasOne,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Screen } from '../../screens/models/screen.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-// import { FieldType } from './fieldType.model'
-// import { FieldSettings } from '../../fieldSettings/models/fieldSettings.model'
 import { Value } from '../../values/models/value.model'
 import { FieldSettings } from '../../../dataTypes/fieldSettings/fieldSettings.model'
 import { ListItem } from '../../listItems/models/listItem.model'
@@ -56,13 +52,6 @@ export class Field extends Model<Field> {
   })
   description!: LanguageType
 
-  // @Column({
-  //   type: DataType.BOOLEAN,
-  //   allowNull: false,
-  //   defaultValue: false,
-  // })
-  // isHidden!: boolean
-
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
@@ -84,9 +73,6 @@ export class Field extends Model<Field> {
     field: 'screen_id',
   })
   screenId!: string
-
-  // @HasOne(() => FieldSettings)
-  // fieldSettings?: FieldSettings
 
   @Column({
     type: DataType.JSON,

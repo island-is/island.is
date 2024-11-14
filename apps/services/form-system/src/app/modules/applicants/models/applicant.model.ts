@@ -8,7 +8,6 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-// import { ApplicantTypes } from '../../../enums/applicantTypes'
 import { Application } from '../../applications/models/application.model'
 
 @Table({ tableName: 'applicant' })

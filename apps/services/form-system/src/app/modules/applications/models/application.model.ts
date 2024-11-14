@@ -1,11 +1,9 @@
 import { CreationOptional } from 'sequelize'
 import {
-  AllowNull,
   Column,
   CreatedAt,
   DataType,
   ForeignKey,
-  HasOne,
   Model,
   Table,
   UpdatedAt,

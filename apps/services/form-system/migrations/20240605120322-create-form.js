@@ -1,5 +1,3 @@
-const { randomUUID } = require('crypto')
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>

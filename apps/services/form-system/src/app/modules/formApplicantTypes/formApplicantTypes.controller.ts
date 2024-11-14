@@ -16,10 +16,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { FormApplicantTypesService } from './formApplicantTypes.service'
-// import { FormApplicantDto } from './models/dto/formApplicant.dto'
 import { CreateFormApplicantTypeDto } from './models/dto/createFormApplicantType.dto'
 import { UpdateFormApplicantTypeDto } from './models/dto/updateFormApplicantType.dto'
-import { ApplicantType } from '../../dataTypes/applicantTypes/applicantType.model'
 import { FormApplicantTypeDto } from './models/dto/formApplicantType.dto'
 
 @ApiTags('form applicant types')
