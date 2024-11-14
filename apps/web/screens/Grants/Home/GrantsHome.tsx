@@ -13,7 +13,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
-import { GrantSearchSection, GrantWrapper } from '@island.is/web/components'
+import { GrantSearchSection } from '@island.is/web/components'
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
@@ -35,6 +35,7 @@ import { m } from '../messages'
 const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   categories,
   locale,
+  customPageData,
 }) => {
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
@@ -57,12 +58,16 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
     <Box>
       <Stack space={SLICE_SPACING}>
         <GrantSearchSection
-          title={formatMessage(m.home.title)}
-          description={formatMessage(m.home.description)}
+          title={customPageData?.ogTitle ?? formatMessage(m.home.title)}
+          description={
+            customPageData?.ogDescription ?? formatMessage(m.home.description)
+          }
           searchPlaceholder={formatMessage(m.home.inputPlaceholder)}
           searchUrl={searchUrl}
           shortcutsTitle={formatMessage(m.home.mostVisited)}
-          featuredImage={formatMessage(m.home.featuredImage)}
+          featuredImage={
+            customPageData?.ogImage?.url ?? formatMessage(m.home.featuredImage)
+          }
           featuredImageAlt={formatMessage(m.home.featuredImageAlt)}
           //TODO - do when the categories are ready
           quickLinks={[

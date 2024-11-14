@@ -4,12 +4,12 @@ import format from 'date-fns/format'
 import debounce from 'lodash/debounce'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
-import { useLazyQuery } from '@apollo/client'
 import {
-  parseAsString,
-  parseAsInteger,
   parseAsArrayOf,
+  parseAsInteger,
+  parseAsString,
 } from 'next-usequerystate'
+import { useLazyQuery } from '@apollo/client'
 
 import {
   Box,
@@ -49,9 +49,7 @@ import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY } from '../../queries/GenericTag'
 import { GET_GRANTS_QUERY } from '../../queries/Grants'
 import { m } from '../messages'
-import { convertToArray } from '../utils'
 import { GrantsSearchResultsFilter } from './SearchResultsFilter'
-import { logger } from '@island.is/logging'
 
 export interface SearchState {
   page?: number
@@ -74,15 +72,14 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   const parentUrl = linkResolver('styrkjatorg', [], locale).href
   const currentUrl = linkResolver('styrkjatorgsearch', [], locale).href
 
-  const [grants, setGrants] = useState<Array<Grant>>()
+  const [grants, setGrants] = useState<Array<Grant>>(initialGrants ?? [])
   const [searchState, setSearchState] = useState<SearchState>()
+  const [initialRender, setInitialRender] = useState<boolean>(true)
 
-  const [getGrants, { refetch, called, error, loading }] = useLazyQuery<
+  const [getGrants, { error }] = useLazyQuery<
     { getGrants: GrantList },
     QueryGetGrantsArgs
-  >(GET_GRANTS_QUERY, {
-    fetchPolicy: 'no-cache',
-  })
+  >(GET_GRANTS_QUERY)
 
   //load params into search state on first render
   useEffect(() => {
@@ -126,8 +123,8 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   }, [searchState, router, currentUrl])
 
   const fetchGrants = useCallback(() => {
-    if (!grants) {
-      setGrants(initialGrants)
+    if (initialRender) {
+      setInitialRender(false)
       return
     }
     getGrants({
@@ -156,7 +153,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
         setGrants([])
         console.error('Error fetching grants', err)
       })
-  }, [searchState, initialGrants])
+  }, [searchState, initialRender])
 
   //SEARCH STATE UPDATES
   const debouncedSearchUpdate = useMemo(() => {
@@ -267,7 +264,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
             />
           }
         >
-          {!loading && !error && (
+          {!error && (
             <Box marginLeft={3}>
               <Box marginBottom={3}>
                 <Text>{hitsMessage}</Text>
@@ -358,7 +355,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                   })}
                 </Inline>
               ) : undefined}
-              {!grants?.length && !error && !loading && called && (
+              {!grants?.length && (
                 <Box
                   display="flex"
                   alignItems="center"
@@ -418,9 +415,15 @@ const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
 GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
   const arrayParser = parseAsArrayOf<string>(parseAsString)
 
-  const parseArray = (arg: string | string[] | undefined) =>
-    arrayParser.parseServerSide(arg) ?? undefined
+  const parseArray = (arg: string | string[] | undefined) => {
+    const array = arrayParser.parseServerSide(arg)
 
+    if (array && array.length > 0) {
+      return array
+    }
+
+    return undefined
+  }
   const [
     {
       data: { getGrants },
