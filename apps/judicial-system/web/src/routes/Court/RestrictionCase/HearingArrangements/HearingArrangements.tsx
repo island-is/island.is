@@ -15,6 +15,7 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  PageTitle,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -155,11 +156,7 @@ export const HearingArrangements = () => {
             />
           </Box>
         )}
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(m.title)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>

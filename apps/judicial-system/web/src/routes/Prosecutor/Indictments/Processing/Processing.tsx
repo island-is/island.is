@@ -26,6 +26,7 @@ import {
   InputNationalId,
   PageHeader,
   PageLayout,
+  PageTitle,
   ProsecutorCaseInfo,
   SectionHeading,
   UserContext,
@@ -287,11 +288,7 @@ const Processing: FC = () => {
         title={formatMessage(titles.prosecutor.indictments.processing)}
       />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
         <ProsecutorSection />
         <Box component="section" marginBottom={5}>

@@ -32,6 +32,7 @@ import {
   FormFooter,
   PageHeader,
   PageLayout,
+  PageTitle,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseOrigin,
@@ -246,11 +247,7 @@ const Defendant = () => {
 
       <FormContentContainer>
         <Box marginBottom={10}>
-          <Box marginBottom={7}>
-            <Text as="h1" variant="h1">
-              {formatMessage(m.heading)}
-            </Text>
-          </Box>
+          <PageTitle>{formatMessage(m.heading)}</PageTitle>
           <Box component="section" marginBottom={5}>
             <PoliceCaseNumbers
               workingCase={workingCase}
