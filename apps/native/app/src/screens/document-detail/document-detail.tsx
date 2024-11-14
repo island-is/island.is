@@ -27,6 +27,7 @@ import {
   DocumentV2Action,
   ListDocumentFragmentDoc,
   useGetDocumentQuery,
+  useDocumentConfirmActionsLazyQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -248,6 +249,17 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [pdfUrl, setPdfUrl] = useState('')
   const [refetching, setRefetching] = useState(false)
 
+  const [logConfirmedAction] = useDocumentConfirmActionsLazyQuery({
+    fetchPolicy: 'no-cache',
+  })
+
+  const confirmAction = (confirmed: boolean | null) => {
+    // Adding a suffix _app since the backend is currently not distinguishing between the app and the web
+    logConfirmedAction({
+      variables: { input: { id: `${docId}_app`, confirmed: confirmed } },
+    })
+  }
+
   const refetchDocumentContent = async () => {
     setRefetching(true)
     try {
@@ -268,11 +280,17 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       {
         text: intl.formatMessage({ id: 'inbox.markAllAsReadPromptCancel' }),
         style: 'cancel',
-        onPress: () => Navigation.pop(componentId),
+        onPress: () => {
+          confirmAction(false)
+          Navigation.pop(componentId)
+        },
       },
       {
         text: intl.formatMessage({ id: 'inbox.openDocument' }),
-        onPress: refetchDocumentContent,
+        onPress: () => {
+          confirmAction(true)
+          refetchDocumentContent()
+        },
       },
     ])
   }
