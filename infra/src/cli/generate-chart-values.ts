@@ -58,7 +58,6 @@ async function generateChartValues() {
   for (const [name, envs] of Object.entries(Deployments)) {
     for (const [envType, envName] of Object.entries(envs)) {
       console.log(`Processing ${name} ${envName} ${envType}`)
-
       // Get rendered environment values and parse
       const renderedYaml = await renderEnv(envType as OpsEnv, name as ChartName)
       const renderedValues = yaml
@@ -80,12 +79,12 @@ async function generateChartValues() {
       const services = Charts[name as ChartName][envType as OpsEnv]
       for (const service of services) {
         const serviceName = service.name()
+        console.log(`Processing ${serviceName} ${envName} ${envType}`)
         if (renderedValues[serviceName]) {
           const serviceValues = {
-            service: {
-              name: serviceName,
-              ...renderedValues[serviceName],
-            },
+            global: renderedValues.global,
+            name: serviceName,
+            ...renderedValues[serviceName],
           }
 
           writeYamlFile(
