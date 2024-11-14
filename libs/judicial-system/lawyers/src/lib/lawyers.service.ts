@@ -31,7 +31,7 @@ export class LawyersService {
     )
 
     if (response.ok) {
-      return await response.json()
+      return response.json()
     }
 
     const reason = await response.text()
@@ -51,11 +51,16 @@ export class LawyersService {
     )
 
     if (response.ok) {
-      return await response.json()
+      return response.json()
     }
 
     const reason = await response.text()
     this.logger.info('Failed to get lawyer from lawyer registry:', reason)
-    throw new NotFoundException(reason)
+
+    if (response.status === 404) {
+      throw new NotFoundException('Lawyer not found')
+    }
+
+    throw new Error(reason)
   }
 }
