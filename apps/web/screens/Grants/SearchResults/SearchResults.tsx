@@ -52,8 +52,8 @@ import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY } from '../../queries/GenericTag'
 import { GET_GRANTS_QUERY } from '../../queries/Grants'
 import { m } from '../messages'
-import { GrantsSearchResultsFilter } from './SearchResultsFilter'
 import { SearchResultsContent } from './SearchResultsContent'
+import { GrantsSearchResultsFilter } from './SearchResultsFilter'
 
 export interface SearchState {
   page?: number
