@@ -2,11 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { FormCertificationType } from './models/formCertificationType.model'
 import { CreateFormCertificationTypeDto } from './models/dto/createFormCertificationType.dto'
-// import { FormCertificationDto } from './models/dto/formCertification.dto'
-import {
-  CertificationType,
-  CertificationTypes,
-} from '../../dataTypes/certificationTypes/certificationType.model'
+import { CertificationTypes } from '../../dataTypes/certificationTypes/certificationType.model'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
@@ -41,14 +37,6 @@ export class FormCertificationTypesService {
       new this.formCertificationTypeModel(formCertificationType)
 
     await newFormCertificationType.save()
-
-    // certificationType.formCertificationId = newFormCertificationType.id
-
-    // certificationType.id = newFormCertification.id
-
-    // const certification = CertificationTypes.find(
-    //   (x) => x.id == newFormCertification.certificationId,
-    // )
 
     const keys = ['id', 'certificationTypeId']
     const formCertificationTypeDto: FormCertificationTypeDto = defaults(

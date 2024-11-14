@@ -9,7 +9,6 @@ import {
 } from 'sequelize-typescript'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { CreationOptional } from 'sequelize'
-// import { FieldSettings } from '../../fieldSettings/models/fieldSettings.model'
 import { Field } from '../../fields/models/field.model'
 
 @Table({ tableName: 'list_item' })

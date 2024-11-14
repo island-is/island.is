@@ -9,7 +9,6 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Organization } from '../../organizations/models/organization.model'
-// import { ListType } from './listType.model'
 
 @Table({ tableName: 'organization_list_type' })
 export class OrganizationListType extends Model<OrganizationListType> {

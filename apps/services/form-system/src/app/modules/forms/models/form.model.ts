@@ -1,6 +1,5 @@
-import { CreationOptional, NonAttribute } from 'sequelize'
+import { CreationOptional } from 'sequelize'
 import {
-  BelongsToMany,
   Column,
   CreatedAt,
   DataType,
@@ -14,7 +13,6 @@ import { Section } from '../../sections/models/section.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FormApplicantType } from '../../formApplicantTypes/models/formApplicantType.model'
-// import { Certification } from '../../certifications/models/certification.model'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
 

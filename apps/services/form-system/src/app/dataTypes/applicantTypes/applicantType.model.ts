@@ -10,9 +10,6 @@ export class ApplicantType {
   @ApiProperty({ type: LanguageType })
   description!: LanguageType
 
-  // @ApiPropertyOptional()
-  // formApplicantId?: string
-
   @ApiPropertyOptional({ type: LanguageType })
   name?: LanguageType
 

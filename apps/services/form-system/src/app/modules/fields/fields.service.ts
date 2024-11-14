@@ -1,19 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-// import { FieldSettingsService } from '../fieldSettings/fieldSettings.service'
 import { CreateFieldDto } from './models/dto/createField.dto'
 import { FieldDto } from './models/dto/field.dto'
 import { UpdateFieldDto } from './models/dto/updateField.dto'
 import { FieldMapper } from './models/field.mapper'
 import { Field } from './models/field.model'
 import { UpdateFieldsDisplayOrderDto } from './models/dto/updateFieldsDisplayOrder.dto'
-import { FieldTypesEnum } from '../../dataTypes/fieldTypes/fieldTypes.enum'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
-import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
-import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
-import { ValueDto } from '../values/models/dto/value.dto'
-import { randomUUID } from 'crypto'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
@@ -23,7 +17,6 @@ export class FieldsService {
   constructor(
     @InjectModel(Field)
     private readonly fieldModel: typeof Field,
-    // private readonly fieldSettingsService: FieldSettingsService,
     private readonly fieldMapper: FieldMapper,
   ) {}
 
@@ -64,15 +57,6 @@ export class FieldsService {
       zipObject(keys, Array(keys.length).fill(null)),
     ) as FieldDto
 
-    // fieldDto.values = [
-    //   {
-    //     id: randomUUID(),
-    //     order: 0,
-    //     json: ValueTypeFactory.getClass(fieldType, new ValueType()),
-    //     // isHidden: false,
-    //   },
-    // ]
-
     return fieldDto
   }
 
@@ -80,10 +64,6 @@ export class FieldsService {
     const field = await this.findById(id)
 
     this.fieldMapper.mapUpdateFieldDtoToField(field, updateFieldDto)
-
-    // if (updateFieldDto.fieldSettings) {
-    //   await this.fieldSettingsService.update(id, updateFieldDto.fieldSettings)
-    // }
 
     await field.save()
   }

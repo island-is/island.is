@@ -1,5 +1,4 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-// import { ApplicantTypes } from '../../../../enums/applicantTypes'
 
 export class ApplicationApplicantDto {
   @ApiProperty()

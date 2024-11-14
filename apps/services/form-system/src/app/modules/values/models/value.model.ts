@@ -1,6 +1,5 @@
 import { CreationOptional } from 'sequelize'
 import {
-  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -10,7 +9,6 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Field } from '../../fields/models/field.model'
-import { Application } from '../../applications/models/application.model'
 import { ValueType } from '../../../dataTypes/valueTypes/valueType.model'
 
 @Table({ tableName: 'value' })
@@ -42,13 +40,6 @@ export class Value extends Model<Value> {
   })
   order!: number
 
-  // @Column({
-  //   type: DataType.BOOLEAN,
-  //   allowNull: false,
-  //   defaultValue: false,
-  // })
-  // isHidden!: boolean
-
   @ForeignKey(() => Field)
   @Column({
     type: DataType.STRING,
@@ -57,14 +48,9 @@ export class Value extends Model<Value> {
   })
   fieldId!: string
 
-  // @ForeignKey(() => Application)
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    // field: 'application_id',
   })
   applicationId!: string
-
-  // @BelongsTo(() => Application)
-  // application?: Application
 }

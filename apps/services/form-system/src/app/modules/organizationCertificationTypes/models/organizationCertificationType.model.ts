@@ -9,7 +9,6 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Organization } from '../../organizations/models/organization.model'
-// import { Certification } from './certification.model'
 
 @Table({ tableName: 'organization_certification_type' })
 export class OrganizationCertificationType extends Model<OrganizationCertificationType> {

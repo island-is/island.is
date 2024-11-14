@@ -1,13 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
-// import { FormApplicantDto } from '../../../formApplicantTypes/models/dto/formApplicant.dto'
 import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 import { FieldDto } from '../../../fields/models/dto/field.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
-// import { FormCertificationDto } from '../../../formCertificationsTypes/models/dto/formCertification.dto'
 import { Dependency } from '../../../../dataTypes/dependency.model'
-import { CertificationType } from '../../../../dataTypes/certificationTypes/certificationType.model'
-import { ApplicantType } from '../../../../dataTypes/applicantTypes/applicantType.model'
 import { FormApplicantTypeDto } from '../../../formApplicantTypes/models/dto/formApplicantType.dto'
 import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
 
