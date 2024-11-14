@@ -145,7 +145,11 @@ export const PlazaCard = ({
   }
 
   return (
-    <Box background="white" className={styles.container}>
+    <Box
+      background="white"
+      className={styles.container}
+      borderRadius="standard"
+    >
       <Box paddingX={4} paddingY={3}>
         {renderEyebrow()}
         <Text variant="h3" color="blue400">

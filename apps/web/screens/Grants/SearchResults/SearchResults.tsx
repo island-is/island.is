@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useWindowSize } from 'react-use'
 import format from 'date-fns/format'
 import debounce from 'lodash/debounce'
 import NextLink from 'next/link'
@@ -15,10 +16,12 @@ import {
   Box,
   BreadCrumbItem,
   Breadcrumbs,
+  FilterInput,
   Inline,
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
@@ -75,6 +78,10 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
   const [grants, setGrants] = useState<Array<Grant>>(initialGrants ?? [])
   const [searchState, setSearchState] = useState<SearchState>()
   const [initialRender, setInitialRender] = useState<boolean>(true)
+
+  const { width } = useWindowSize()
+  const isMobile = width <= theme.breakpoints.md
+  const isTablet = width <= theme.breakpoints.lg && width > theme.breakpoints.md
 
   const [getGrants, { error }] = useLazyQuery<
     { getGrants: GrantList },
@@ -222,6 +229,131 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     })
   }, [formatMessage, grants])
 
+  const mainContent = useMemo(
+    () =>
+      !error && (
+        <Box>
+          {!isMobile && (
+            <Box marginBottom={3}>
+              <Text>{hitsMessage}</Text>
+            </Box>
+          )}
+          {grants?.length ? (
+            <Inline space={3} justifyContent={isMobile ? 'center' : undefined}>
+              {grants?.map((grant) => {
+                if (!grant) {
+                  return null
+                }
+
+                let tagVariant: TagVariant | undefined
+                switch (grant.status) {
+                  case GrantStatus.Open:
+                    tagVariant = 'mint'
+                    break
+                  case GrantStatus.Closed:
+                    tagVariant = 'rose'
+                    break
+                  case GrantStatus.OpensSoon:
+                    tagVariant = 'purple'
+                    break
+                  default:
+                    break
+                }
+
+                return (
+                  <Box key={grant.id}>
+                    {grant.applicationId && (
+                      <PlazaCard
+                        eyebrow={grant.fund?.title ?? grant.name ?? ''}
+                        subEyebrow={grant.fund?.parentOrganization?.title}
+                        title={grant.name ?? ''}
+                        text={grant.description ?? ''}
+                        logo={grant.fund?.parentOrganization?.logo?.url ?? ''}
+                        logoAlt={
+                          grant.fund?.parentOrganization?.logo?.title ?? ''
+                        }
+                        tag={{
+                          label: grant.statusText ?? '',
+                          variant: tagVariant,
+                        }}
+                        cta={{
+                          label: formatMessage(m.general.seeMore),
+                          variant: 'text',
+                          onClick: () => {
+                            router.push(
+                              linkResolver(
+                                'styrkjatorggrant',
+                                [grant?.applicationId ?? ''],
+                                locale,
+                              ).href,
+                            )
+                          },
+                          icon: 'arrowForward',
+                        }}
+                        detailLines={[
+                          grant.dateFrom && grant.dateTo
+                            ? {
+                                icon: 'calendar' as const,
+                                text: `${format(
+                                  new Date(grant.dateFrom),
+                                  'dd.MM.',
+                                )}-${format(
+                                  new Date(grant.dateTo),
+                                  'dd.MM.yyyy',
+                                )}`,
+                              }
+                            : null,
+                          {
+                            icon: 'time' as const,
+                            //todo: fix when the text is ready
+                            text: 'Frestur til 16.08.2024, kl. 15.00',
+                          },
+                          grant.categoryTag?.title
+                            ? {
+                                icon: 'informationCircle' as const,
+                                text: grant.categoryTag.title,
+                              }
+                            : undefined,
+                        ].filter(isDefined)}
+                      />
+                    )}
+                  </Box>
+                )
+              })}
+            </Inline>
+          ) : undefined}
+          {!grants?.length && (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              background="white"
+              borderWidth="standard"
+              borderRadius="xl"
+              borderColor="blue200"
+              flexDirection={['columnReverse', 'columnReverse', 'row']}
+              columnGap={[2, 4, 8, 8, 20]}
+              paddingY={[5, 8]}
+              paddingX={[3, 3, 5, 10]}
+              rowGap={[7, 7, 0]}
+            >
+              <Box display="flex" flexDirection="column" rowGap={1}>
+                <Text variant={'h3'} as={'h3'} color="dark400">
+                  {formatMessage(m.search.noResultsFound)}
+                </Text>
+              </Box>
+              <img
+                width="240"
+                src="/assets/sofa.svg"
+                alt={formatMessage(m.search.noResultsFound)}
+              />
+            </Box>
+          )}
+        </Box>
+      ),
+    [error, hitsMessage, grants, formatMessage, router, linkResolver, locale],
+  )
+
   return (
     <GrantWrapper
       pageTitle={formatMessage(m.home.title)}
@@ -252,139 +384,74 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
         }
       />
       <Box background="blue100">
-        <SidebarLayout
-          fullWidthContent={true}
-          sidebarContent={
-            <GrantsSearchResultsFilter
-              searchState={searchState}
-              onSearchUpdate={updateSearchStateValue}
-              onReset={onResetFilter}
-              tags={tags ?? []}
-              url={currentUrl}
-            />
-          }
-        >
-          {!error && (
-            <Box marginLeft={3}>
-              <Box marginBottom={3}>
-                <Text>{hitsMessage}</Text>
-              </Box>
-              {grants?.length ? (
-                <Inline space={3}>
-                  {grants?.map((grant) => {
-                    if (!grant) {
-                      return null
+        {!isMobile && (
+          <SidebarLayout
+            fullWidthContent={true}
+            sidebarContent={
+              <Box marginBottom={[1, 1, 2]}>
+                <Box marginBottom={3}>
+                  <Text fontWeight="semiBold">
+                    {formatMessage(m.search.search)}
+                  </Text>
+                </Box>
+                <Box marginBottom={[1, 1, 2]}>
+                  <FilterInput
+                    name="query"
+                    placeholder={formatMessage(m.search.inputPlaceholder)}
+                    value={searchState?.query ?? ''}
+                    onChange={(option) =>
+                      updateSearchStateValue('query', option)
                     }
-
-                    let tagVariant: TagVariant | undefined
-                    switch (grant.status) {
-                      case GrantStatus.Open:
-                        tagVariant = 'mint'
-                        break
-                      case GrantStatus.Closed:
-                        tagVariant = 'rose'
-                        break
-                      case GrantStatus.OpensSoon:
-                        tagVariant = 'purple'
-                        break
-                      default:
-                        break
-                    }
-
-                    return (
-                      <Box key={grant.id}>
-                        {grant.applicationId && (
-                          <PlazaCard
-                            eyebrow={grant.fund?.title ?? grant.name ?? ''}
-                            subEyebrow={grant.fund?.parentOrganization?.title}
-                            title={grant.name ?? ''}
-                            text={grant.description ?? ''}
-                            logo={
-                              grant.fund?.parentOrganization?.logo?.url ?? ''
-                            }
-                            logoAlt={
-                              grant.fund?.parentOrganization?.logo?.title ?? ''
-                            }
-                            tag={{
-                              label: grant.statusText ?? '',
-                              variant: tagVariant,
-                            }}
-                            cta={{
-                              label: formatMessage(m.general.seeMore),
-                              variant: 'text',
-                              onClick: () => {
-                                router.push(
-                                  linkResolver(
-                                    'styrkjatorggrant',
-                                    [grant?.applicationId ?? ''],
-                                    locale,
-                                  ).href,
-                                )
-                              },
-                              icon: 'arrowForward',
-                            }}
-                            detailLines={[
-                              grant.dateFrom && grant.dateTo
-                                ? {
-                                    icon: 'calendar' as const,
-                                    text: `${format(
-                                      new Date(grant.dateFrom),
-                                      'dd.MM.',
-                                    )}-${format(
-                                      new Date(grant.dateTo),
-                                      'dd.MM.yyyy',
-                                    )}`,
-                                  }
-                                : null,
-                              {
-                                icon: 'time' as const,
-                                //todo: fix when the text is ready
-                                text: 'Frestur til 16.08.2024, kl. 15.00',
-                              },
-                              grant.categoryTag?.title
-                                ? {
-                                    icon: 'informationCircle' as const,
-                                    text: grant.categoryTag.title,
-                                  }
-                                : undefined,
-                            ].filter(isDefined)}
-                          />
-                        )}
-                      </Box>
-                    )
-                  })}
-                </Inline>
-              ) : undefined}
-              {!grants?.length && (
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  background="white"
-                  borderWidth="standard"
-                  borderRadius="xl"
-                  borderColor="blue200"
-                  flexDirection={['columnReverse', 'columnReverse', 'row']}
-                  columnGap={[2, 4, 8, 8, 20]}
-                  paddingY={[5, 8]}
-                  paddingX={[3, 3, 5, 10]}
-                  rowGap={[7, 7, 0]}
-                >
-                  <Box display="flex" flexDirection="column" rowGap={1}>
-                    <Text variant={'h3'} as={'h3'} color="dark400">
-                      {formatMessage(m.search.noResultsFound)}
-                    </Text>
-                  </Box>
-                  <img
-                    width="240"
-                    src="/assets/sofa.svg"
-                    alt={formatMessage(m.search.noResultsFound)}
                   />
                 </Box>
-              )}
+                <GrantsSearchResultsFilter
+                  searchState={searchState}
+                  onSearchUpdate={updateSearchStateValue}
+                  onReset={onResetFilter}
+                  tags={tags ?? []}
+                  url={currentUrl}
+                />
+              </Box>
+            }
+          >
+            {mainContent ?? undefined}
+          </SidebarLayout>
+        )}
+        {isMobile && (
+          <Box padding={[1, 1, 2]} margin={[1, 1, 2]} paddingBottom={3}>
+            <Box marginBottom={3}>
+              <Text fontWeight="semiBold">
+                {formatMessage(m.search.search)}
+              </Text>
             </Box>
-          )}
-        </SidebarLayout>
+            <Box marginBottom={[1, 1, 2]}>
+              <FilterInput
+                name="query"
+                placeholder={formatMessage(m.search.inputPlaceholder)}
+                value={searchState?.query ?? ''}
+                onChange={(option) => updateSearchStateValue('query', option)}
+                backgroundColor={'white'}
+              />
+            </Box>
+            <Box
+              marginY={2}
+              display="flex"
+              alignItems="center"
+              justifyContent="spaceBetween"
+            >
+              <Text>{hitsMessage}</Text>
+              <GrantsSearchResultsFilter
+                searchState={searchState}
+                onReset={onResetFilter}
+                onSearchUpdate={updateSearchStateValue}
+                tags={tags ?? []}
+                url={currentUrl}
+                variant="popover"
+              />
+            </Box>
+            {mainContent}
+          </Box>
+        )}
       </Box>
     </GrantWrapper>
   )
