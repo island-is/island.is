@@ -4,11 +4,13 @@ import {
   Get,
   Param,
   Post,
+  Put,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
@@ -16,6 +18,7 @@ import {
 import { ApplicationsService } from './applications.service'
 import { ApplicationDto } from './models/dto/application.dto'
 import { CreateApplicationDto } from './models/dto/createApplication.dto'
+import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 
 @ApiTags('applications')
 @Controller({ path: 'applications', version: ['1', VERSION_NEUTRAL] })
@@ -46,5 +49,19 @@ export class ApplicationsController {
     @Body() createApplicationDto: CreateApplicationDto,
   ): Promise<ApplicationDto> {
     return this.applicationsService.create(slug, createApplicationDto)
+  }
+
+  @ApiOperation({ summary: 'Update application dependencies' })
+  @ApiNoContentResponse({
+    description: 'Update application dependencies',
+  })
+  @ApiBody({ type: UpdateApplicationDto })
+  @ApiParam({ name: 'id', type: String })
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateApplicationDto: UpdateApplicationDto,
+  ): Promise<void> {
+    await this.applicationsService.update(id, updateApplicationDto)
   }
 }
