@@ -80,7 +80,7 @@ export class InternalCaseController {
   @ApiOkResponse({
     type: Case,
     isArray: true,
-    description: 'Gets all indictment cases',
+    description: 'Gets all indictment cases for digital mailbox',
   })
   @UseInterceptors(CasesInterceptor)
   getIndictmentCases(
@@ -96,7 +96,7 @@ export class InternalCaseController {
   @Post('case/indictment/:caseId')
   @ApiOkResponse({
     type: Case,
-    description: 'Gets indictment case by id',
+    description: 'Gets indictment case by id for digital mailbox',
   })
   @UseInterceptors(CaseInterceptor)
   getIndictmentCase(
