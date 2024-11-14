@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class FormCertificationTypeDto {
+export class OrganizationCertificationTypeDto {
   @ApiProperty()
   id!: string
 
