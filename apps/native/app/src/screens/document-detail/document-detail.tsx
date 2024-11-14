@@ -254,7 +254,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   })
 
   const confirmAction = (confirmed: boolean | null) => {
-    // Adding a suffix _app since the backend is currently not distinguishing between the app and the web
+    // Adding a suffix '_app' to the id since the backend is currently not distinguishing between the app and the web
     logConfirmedAction({
       variables: { input: { id: `${docId}_app`, confirmed: confirmed } },
     })
