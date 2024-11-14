@@ -30,6 +30,8 @@ import csvStringify from 'csv-stringify/lib/sync'
 import { S3Service } from '@island.is/nest/aws'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 import * as path from 'path'
+import * as nationalId from 'kennitala'
+import format from 'date-fns/format'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -354,9 +356,9 @@ export class EndorsementListService {
 
     // Add header image
     const headerImageHeight = 40
-    doc.image(headerImagePath, 60, 40, { width: 120 })
+    doc.image(headerImagePath, 52, 40, { width: 120 })
 
-    let currentYPosition = 40 + headerImageHeight + 20
+    let currentYPosition = 40 + headerImageHeight + 30
 
     // Title and petition details
     doc
@@ -365,14 +367,28 @@ export class EndorsementListService {
       .text('Upplýsingar um undirskriftalista', 60, currentYPosition, {
         align: 'left',
       })
+    currentYPosition = doc.y + 20
+
+    doc
+      .font('Bold')
       .fontSize(12)
       .text(
-        'Þetta skjal var framkallað sjálfvirkt þann: ' +
-          new Date().toLocaleDateString(locale) +
-          ' klukkan ' +
-          new Date().toLocaleTimeString(locale),
+        'Þetta skjal var framkallað sjálfvirkt þann: ',
+        60,
+        currentYPosition,
+        {
+          align: 'left',
+        },
       )
-    currentYPosition = doc.y + 20 // Adjust vertical space
+    currentYPosition = doc.y + 5
+
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(format(new Date(), 'dd.MM.yyyy HH:mm'), 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 15
 
     doc
       .font('Bold')
@@ -381,6 +397,7 @@ export class EndorsementListService {
         align: 'left',
       })
     currentYPosition = doc.y + 5
+
     doc
       .font('Regular')
       .fontSize(12)
@@ -395,6 +412,7 @@ export class EndorsementListService {
       .fontSize(12)
       .text('Um undirskriftalista: ', 60, currentYPosition, { align: 'left' })
     currentYPosition = doc.y + 5
+
     doc
       .font('Regular')
       .fontSize(12)
@@ -406,8 +424,9 @@ export class EndorsementListService {
     doc
       .font('Bold')
       .fontSize(12)
-      .text('Opin til: ', 60, currentYPosition, { align: 'left' })
+      .text('Opinn til: ', 60, currentYPosition, { align: 'left' })
     currentYPosition = doc.y + 5
+
     doc
       .font('Regular')
       .fontSize(12)
@@ -423,8 +442,8 @@ export class EndorsementListService {
       .font('Bold')
       .fontSize(12)
       .text('Fjöldi undirskrifta: ', 60, currentYPosition, { align: 'left' })
-
     currentYPosition = doc.y + 5
+
     doc
       .font('Regular')
       .fontSize(12)
@@ -438,6 +457,7 @@ export class EndorsementListService {
       .fontSize(12)
       .text('Ábyrgðarmaður: ', 60, currentYPosition, { align: 'left' })
     currentYPosition = doc.y + 5
+
     doc
       .font('Regular')
       .fontSize(12)
@@ -451,11 +471,14 @@ export class EndorsementListService {
         align: 'left',
       })
     currentYPosition = doc.y + 5
+
     doc
       .font('Regular')
       .fontSize(12)
-      .text(endorsementList.owner, 60, currentYPosition, { align: 'left' })
-    currentYPosition = doc.y + 30
+      .text(nationalId.format(endorsementList.owner), 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 50
 
     const dateX = 60 // Column X position for 'Dags. skráð'
     const nameX = 160 // Column X position for 'Nafn'
@@ -511,7 +534,7 @@ export class EndorsementListService {
     })
 
     // Add footer image at the bottom of the page
-    const footerY = doc.page.height - 80
+    const footerY = doc.page.height - 60
     doc.image(footerImagePath, 60, footerY, { width: 120 })
 
     doc.end()

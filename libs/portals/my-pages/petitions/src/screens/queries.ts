@@ -171,26 +171,10 @@ export const OpenList = gql`
   }
 `
 
-export const LockList = gql`
-  mutation Mutants($input: FindEndorsementListInput!) {
-    endorsementSystemLockEndorsementList(input: $input) {
-      id
-    }
-  }
-`
-
-export const UnlockList = gql`
-  mutation Mutants($input: FindEndorsementListInput!) {
-    endorsementSystemUnlockEndorsementList(input: $input) {
-      id
-    }
-  }
-`
-
-export const UpdateList = gql`
-  mutation Mutants($input: UpdateEndorsementListInput!) {
-    endorsementSystemUpdateEndorsementList(input: $input) {
-      id
+export const ExportList = gql`
+  mutation Mutants($input: ExportEndorsementListInput!) {
+    endorsementSystemExportList(input: $input) {
+      url
     }
   }
 `
