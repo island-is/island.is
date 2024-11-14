@@ -268,7 +268,7 @@ jobs:
             SHA="$GITHUB_SHA"
             echo "SHA='$SHA', retrived from action environment"
           fi
-          echo "Using SHA='$SHA' as docker tag sha"
+          echo "Using SHA='$SHA' as docker tag SHA"
           export DOCKER_TAG="${DOCKER_BRANCH_TAG}_${SHA:0:10}_${GITHUB_RUN_NUMBER}"
           echo "Docker tag will be '${DOCKER_TAG}'"
           echo DOCKER_TAG="${DOCKER_TAG}" >> "$GITHUB_OUTPUT"
@@ -346,6 +346,14 @@ jobs:
         uses: docker/setup-qemu-action@v3
         with:
           image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
+      - name: Check if cached buildx image exists
+        id: cache-check
+        run: |
+          if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
+            docker pull docker.io/moby/buildkit:buildx-stable-1
+            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+            docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+          fi
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
@@ -555,6 +563,14 @@ jobs:
         uses: docker/setup-qemu-action@v3
         with:
           image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
+      - name: Check if cached buildx image exists
+        id: cache-check
+        run: |
+          if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
+            docker pull docker.io/moby/buildkit:buildx-stable-1
+            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+            docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+          fi
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
@@ -566,16 +582,20 @@ jobs:
         if: steps.gather.outcome == 'success'
         env:
           NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
-          SHA: ${{ github.sha }}
+          GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
+          # Strip protocol prefix and .git postfix
+          SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
+          SERVER_URL="${SERVER_URL#*://}"
+          SERVER_URL="${SERVER_URL%.git}"
           build_args=(
             --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
             --build-arg="NODE_IMAGE_TAG=${NODE_IMAGE_TAG}"
             --build-arg="GIT_BRANCH=${GIT_BRANCH}"
-            --build-arg="GIT_SHA=${SHA}"
-            --build-arg="GIT_REPOSITORY_URL=${{ github.server_url }}/${{ github.repository }}"
+            --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
+            --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
           )
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
@@ -586,7 +606,7 @@ jobs:
         if: steps.gather.outcome == 'success'
         env:
           NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
-          SHA: ${{ github.sha }}
+          GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x
@@ -599,7 +619,7 @@ jobs:
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         env:
           NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
-          SHA: ${{ github.sha }}
+          GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
         run: |
           set -x

@@ -179,7 +179,8 @@ const ChartComponentSourceDataKeyField = () => {
     }))
   }
 
-  const disableMoreThanOneItemOnPieChart = manualData?.categoryItems?.length > 0
+  const disableMoreThanOneItemOnPieChart =
+    typeIsPieChart && manualData?.categoryItems?.length > 0
 
   return (
     <>
