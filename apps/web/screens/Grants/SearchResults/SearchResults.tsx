@@ -53,6 +53,7 @@ import { GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY } from '../../queries/GenericTag'
 import { GET_GRANTS_QUERY } from '../../queries/Grants'
 import { m } from '../messages'
 import { GrantsSearchResultsFilter } from './SearchResultsFilter'
+import { SearchResultsContent } from './SearchResultsContent'
 
 export interface SearchState {
   page?: number
@@ -81,7 +82,6 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
 
   const { width } = useWindowSize()
   const isMobile = width <= theme.breakpoints.md
-  const isTablet = width <= theme.breakpoints.lg && width > theme.breakpoints.md
 
   const [getGrants, { error }] = useLazyQuery<
     { getGrants: GrantList },
@@ -229,133 +229,6 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
     })
   }, [formatMessage, grants])
 
-  const mainContent = useMemo(
-    () =>
-      !error && (
-        <Box>
-          {!isMobile && (
-            <Box marginBottom={3}>
-              <Text>{hitsMessage}</Text>
-            </Box>
-          )}
-          {grants?.length ? (
-            <Inline space={3} justifyContent={isMobile ? 'center' : undefined}>
-              {grants?.map((grant) => {
-                if (!grant) {
-                  return null
-                }
-
-                let tagVariant: TagVariant | undefined
-                switch (grant.status) {
-                  case GrantStatus.Open:
-                    tagVariant = 'mint'
-                    break
-                  case GrantStatus.Closed:
-                    tagVariant = 'rose'
-                    break
-                  case GrantStatus.OpensSoon:
-                    tagVariant = 'purple'
-                    break
-                  default:
-                    break
-                }
-
-                return (
-                  <Box key={grant.id}>
-                    {grant.applicationId && (
-                      <PlazaCard
-                        eyebrow={grant.fund?.title ?? grant.name ?? ''}
-                        subEyebrow={grant.fund?.parentOrganization?.title}
-                        title={grant.name ?? ''}
-                        text={grant.description ?? ''}
-                        logo={grant.fund?.parentOrganization?.logo?.url ?? ''}
-                        logoAlt={
-                          grant.fund?.parentOrganization?.logo?.title ?? ''
-                        }
-                        tag={{
-                          label: grant.statusText ?? '',
-                          variant: tagVariant,
-                        }}
-                        cta={{
-                          label: formatMessage(m.general.seeMore),
-                          variant: 'text',
-                          onClick: () => {
-                            router.push(
-                              linkResolver(
-                                'styrkjatorggrant',
-                                [grant?.applicationId ?? ''],
-                                locale,
-                              ).href,
-                            )
-                          },
-                          icon: 'arrowForward',
-                        }}
-                        detailLines={[
-                          grant.dateFrom && grant.dateTo
-                            ? {
-                                icon: 'calendar' as const,
-                                text: `${format(
-                                  new Date(grant.dateFrom),
-                                  'dd.MM.',
-                                )}-${format(
-                                  new Date(grant.dateTo),
-                                  'dd.MM.yyyy',
-                                )}`,
-                              }
-                            : null,
-                          {
-                            icon: 'time' as const,
-                            //todo: fix when the text is ready
-                            text: 'Frestur til 16.08.2024, kl. 15.00',
-                          },
-                          grant.categoryTag?.title
-                            ? {
-                                icon: 'informationCircle' as const,
-                                text: grant.categoryTag.title,
-                              }
-                            : undefined,
-                        ].filter(isDefined)}
-                      />
-                    )}
-                  </Box>
-                )
-              })}
-            </Inline>
-          ) : undefined}
-          {!grants?.length && (
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              background="white"
-              borderWidth="standard"
-              borderRadius="xl"
-              borderColor="blue200"
-              flexDirection={['columnReverse', 'columnReverse', 'row']}
-              columnGap={[2, 4, 8, 8, 20]}
-              paddingY={[5, 8]}
-              paddingX={[3, 3, 5, 10]}
-              rowGap={[7, 7, 0]}
-            >
-              <Box display="flex" flexDirection="column" rowGap={1}>
-                <Text variant={'h3'} as={'h3'} color="dark400">
-                  {formatMessage(m.search.noResultsFound)}
-                </Text>
-              </Box>
-              {!(isTablet || isMobile) && (
-                <img
-                  width="240"
-                  src="/assets/sofa.svg"
-                  alt={formatMessage(m.search.noResultsFound)}
-                />
-              )}
-            </Box>
-          )}
-        </Box>
-      ),
-    [error, hitsMessage, grants, locale],
-  )
-
   return (
     <GrantWrapper
       pageTitle={formatMessage(m.home.title)}
@@ -416,7 +289,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
               </Box>
             }
           >
-            {mainContent ?? undefined}
+            <SearchResultsContent grants={grants} subheader={hitsMessage} />
           </SidebarLayout>
         )}
         {isMobile && (
@@ -451,7 +324,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                 variant="popover"
               />
             </Box>
-            {mainContent}
+            <SearchResultsContent grants={grants} />
           </Box>
         )}
       </Box>
