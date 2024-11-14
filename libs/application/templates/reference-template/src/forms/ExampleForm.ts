@@ -114,6 +114,62 @@ export const ExampleForm: Form = buildForm({
       children: [],
     }),
     buildSection({
+      id: 'tableRepeaterWithPhone',
+      title: 'Table repeater',
+      children: [
+        buildTableRepeaterField({
+          id: 'rentalHousingLandlordInfoTable',
+          title: '',
+          marginTop: 1,
+          fields: {
+            name: {
+              component: 'input',
+              label: 'test 1',
+              width: 'half',
+            },
+            nationalId: {
+              component: 'input',
+              label: 'test 2',
+              format: '######-####',
+              width: 'half',
+            },
+            phone: {
+              component: 'phone',
+              label: 'test 3',
+              format: '###-####',
+              width: 'half',
+            },
+            email: {
+              component: 'input',
+              label: 'test 4',
+              type: 'email',
+              width: 'half',
+            },
+            isRepresentative: {
+              component: 'checkbox',
+              large: true,
+              displayInTable: false,
+              label: 'test 5',
+              options: [
+                {
+                  label: 'test 6',
+                  value: 'YES',
+                },
+              ],
+            },
+          },
+          table: {
+            header: [
+              'nameInputLabel',
+              'nationalIdHeaderLabel',
+              'phoneInputLabel',
+              'emailInputLabel',
+            ],
+          },
+        }),
+      ],
+    }),
+    buildSection({
       id: 'intro',
       title: m.introSection,
       children: [
