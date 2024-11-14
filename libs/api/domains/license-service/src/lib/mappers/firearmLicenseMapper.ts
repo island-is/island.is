@@ -24,6 +24,8 @@ import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 import { UserAgent } from '@island.is/nest/core'
 import { enableAppCompatibilityMode } from '../utils/appCompatibilityMode'
 
+const APP_VERSION_CUTOFF = '1.4.7'
+
 @Injectable()
 export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
   constructor(private readonly intlService: IntlService) {}
@@ -36,7 +38,7 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
 
     const enableAppCompatibility = enableAppCompatibilityMode(
       userAgent?.app.version,
-      '1.4.7',
+      APP_VERSION_CUTOFF,
     )
 
     const typedPayload = payload as Array<FirearmLicenseDto>
