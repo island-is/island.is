@@ -15,8 +15,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { OrganizationFieldTypesService } from './organizationFieldTypes.service'
-import { OrganizationFieldTypeDto } from './models/organizationFieldType.dto'
-import { CreateOrganizationFieldTypeDto } from './models/createOrganizationFieldType.dto'
+import { OrganizationFieldTypeDto } from './models/dto/organizationFieldType.dto'
+import { CreateOrganizationFieldTypeDto } from './models/dto/createOrganizationFieldType.dto'
 
 @ApiTags('organization field types')
 @Controller({
