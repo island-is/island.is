@@ -119,6 +119,12 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
 
   const medicinePurchaseData =
     medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
+  const healthInsuranceData =
+    healthInsuranceRes.data?.rightsPortalInsuranceOverview
+  const paymentStatusData = paymentStatusRes.data?.rightsPortalCopaymentStatus
+  const paymentOverviewData =
+    paymentOverviewRes.data?.rightsPortalPaymentOverview?.items?.[0]
+
   const isMedicinePeriodActive =
     medicinePurchaseData?.active ||
     (medicinePurchaseData?.dateTo &&
@@ -283,19 +289,15 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               openBrowser(`${origin}/minarsidur/heilsa/yfirlit`, componentId)
             }
           />
-          {healthInsuranceRes.data?.rightsPortalInsuranceOverview?.isInsured ||
-          healthInsuranceRes.loading ? (
+          {healthInsuranceData?.isInsured || healthInsuranceRes.loading ? (
             <InputRow background>
               <Input
                 label={intl.formatMessage({
                   id: 'health.overview.insuredFrom',
                 })}
                 value={
-                  healthInsuranceRes.data?.rightsPortalInsuranceOverview?.from
-                    ? intl.formatDate(
-                        healthInsuranceRes.data?.rightsPortalInsuranceOverview
-                          .from,
-                      )
+                  healthInsuranceData?.from
+                    ? intl.formatDate(healthInsuranceData.from)
                     : null
                 }
                 loading={healthInsuranceRes.loading && !healthInsuranceRes.data}
@@ -306,10 +308,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 label={intl.formatMessage({
                   id: 'health.overview.status',
                 })}
-                value={
-                  healthInsuranceRes.data?.rightsPortalInsuranceOverview?.status
-                    ?.display
-                }
+                value={healthInsuranceData?.status?.display}
                 loading={healthInsuranceRes.loading && !healthInsuranceRes.data}
                 error={healthInsuranceRes.error && !healthInsuranceRes.data}
                 noBorder
@@ -319,10 +318,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             <Alert
               type="info"
               title={intl.formatMessage({ id: 'health.overview.notInsured' })}
-              message={
-                healthInsuranceRes.data?.rightsPortalInsuranceOverview
-                  ?.explanation ?? ''
-              }
+              message={healthInsuranceData?.explanation ?? ''}
               hasBorder
             />
           )}
@@ -343,11 +339,9 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 id: 'health.overview.maxMonthlyPayment',
               })}
               value={
-                paymentStatusRes.data?.rightsPortalCopaymentStatus
-                  ?.maximumMonthlyPayment
+                paymentStatusData?.maximumMonthlyPayment
                   ? `${intl.formatNumber(
-                      paymentStatusRes.data?.rightsPortalCopaymentStatus
-                        ?.maximumMonthlyPayment,
+                      paymentStatusData?.maximumMonthlyPayment,
                     )} kr.`
                   : '0 kr.'
               }
@@ -362,11 +356,9 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 id: 'health.overview.paymentLimit',
               })}
               value={
-                paymentStatusRes.data?.rightsPortalCopaymentStatus
-                  ?.maximumPayment
+                paymentStatusData?.maximumPayment
                   ? `${intl.formatNumber(
-                      paymentStatusRes.data?.rightsPortalCopaymentStatus
-                        ?.maximumPayment,
+                      paymentStatusData?.maximumPayment,
                     )} kr.`
                   : '0 kr.'
               }
@@ -381,12 +373,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 id: 'health.overview.paymentCredit',
               })}
               value={
-                paymentOverviewRes.data?.rightsPortalPaymentOverview.items?.[0]
-                  ?.credit
-                  ? `${intl.formatNumber(
-                      paymentOverviewRes.data?.rightsPortalPaymentOverview
-                        .items?.[0]?.credit,
-                    )} kr.`
+                paymentOverviewData?.credit
+                  ? `${intl.formatNumber(paymentOverviewData?.credit)} kr.`
                   : '0 kr.'
               }
               loading={paymentOverviewRes.loading && !paymentOverviewRes.data}
@@ -398,12 +386,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 id: 'health.overview.paymentDebt',
               })}
               value={
-                paymentOverviewRes.data?.rightsPortalPaymentOverview.items?.[0]
-                  ?.debt
-                  ? `${intl.formatNumber(
-                      paymentOverviewRes.data?.rightsPortalPaymentOverview
-                        .items?.[0]?.debt,
-                    )} kr.`
+                paymentOverviewData?.debt
+                  ? `${intl.formatNumber(paymentOverviewData?.debt)} kr.`
                   : '0 kr.'
               }
               loading={paymentOverviewRes.loading && !paymentOverviewRes.data}
