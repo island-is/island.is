@@ -161,6 +161,10 @@ export type TableRepeaterItem = {
   | {
       component: 'nationalIdWithName'
     }
+  | {
+      component: 'phone'
+      format: string
+    }
 )
 
 export type AlertMessageLink = {
