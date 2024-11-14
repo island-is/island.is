@@ -24,57 +24,37 @@ export const JUDICIAL_SYSTEM_COA_JUDGE_HOME_URL =
 export const JUDICIAL_SYSTEM_DEFENDER_HOME_URL =
   '/api/auth/login?nationalId=0909090909'
 
-export const shouldSkipNavigation = (url: string) => {
-  return [
-    JUDICIAL_SYSTEM_COA_JUDGE_HOME_URL,
-    JUDICIAL_SYSTEM_DEFENDER_HOME_URL,
-    JUDICIAL_SYSTEM_HOME_URL,
-    JUDICIAL_SYSTEM_JUDGE_HOME_URL,
-  ].includes(url)
-}
-
-export const getEnvironmentBaseUrl = (authority: string) => {
-  const baseurlPrefix = process.env.BASE_URL_PREFIX ?? ''
-  const prefix =
-    (baseurlPrefix?.length ?? 0) > 0 && baseurlPrefix !== 'main'
-      ? `${baseurlPrefix}-`
-      : ''
-  return `https://${prefix}${authority}`
-}
-const localUrl = `http://${BaseAuthority.local}:${process.env.PORT ?? 4200}`
 // This set of query params is used to hide the onboarding modal as well as force locale to Icelandic.
-// Useful if you need to test something that is using icelandic labels for example.
+// Useful if you need to test something that is using Icelandic labels, for example.
 const icelandicAndNoPopup = {
   locale: 'is',
   hide_onboarding_modal: 'true',
 }
-const addQueryParameters = (
-  url: string,
-  parameters: Record<string, string>,
-): string => {
-  const urlObject = new URL(url, 'http://dummyurl.com')
 
-  // Check if each parameter already exists in the URL's query string
-  for (const [key, value] of Object.entries(parameters)) {
-    if (!urlObject.searchParams.has(key)) {
-      urlObject.searchParams.set(key, value)
-    }
-  }
+const localUrl = `http://${BaseAuthority.local}:${process.env.PORT ?? 4200}`
 
-  return urlObject.toString().replace(/^http:\/\/dummyurl\.com/, '')
+/**
+ * Constructs the base URL for a given authority based on the environment.
+ *
+ * @param authority - The authority (domain) for which the base URL is constructed.
+ * @returns The constructed base URL as a string.
+ */
+export const getEnvironmentBaseUrl = (authority: string) => {
+  const baseUrlPrefix = process.env.BASE_URL_PREFIX ?? ''
+  const prefix =
+    baseUrlPrefix && baseUrlPrefix !== 'main' ? `${baseUrlPrefix}-` : ''
+  return `https://${prefix}${authority}`
 }
 
-export const icelandicAndNoPopupUrl = (url: string) =>
-  addQueryParameters(url, icelandicAndNoPopup)
-
-const envs: {
-  [envName in TestEnvironment]: {
+const envs: Record<
+  TestEnvironment,
+  {
     authUrl: string
     islandisBaseUrl: string
     adsBaseUrl: string
     judicialSystemBaseUrl: string
   }
-} = {
+> = {
   dev: {
     authUrl: AuthUrl.dev,
     islandisBaseUrl: getEnvironmentBaseUrl(BaseAuthority.dev),
@@ -108,3 +88,49 @@ const hotEnv = process.env.TEST_URL
   ? { islandisBaseUrl: process.env.TEST_URL }
   : {}
 export const urls = { ...envs[env], ...hotEnv }
+
+/**
+ * Determines if the navigation to the given URL should be skipped.
+ *
+ * @param url - The URL to check.
+ * @returns `true` if the URL is in the list of URLs to skip navigation for, otherwise `false`.
+ */
+export const shouldSkipNavigation = (url: string) =>
+  [
+    JUDICIAL_SYSTEM_COA_JUDGE_HOME_URL,
+    JUDICIAL_SYSTEM_DEFENDER_HOME_URL,
+    JUDICIAL_SYSTEM_HOME_URL,
+    JUDICIAL_SYSTEM_JUDGE_HOME_URL,
+  ].includes(url)
+
+/**
+ * Appends Icelandic language and no-popup query parameters to the given URL.
+ *
+ * @param url - The base URL to which the query parameters will be added.
+ * @returns The URL with Icelandic language and no-popup query parameters appended.
+ */
+export const icelandicAndNoPopupUrl = (url: string) =>
+  addQueryParameters(url, icelandicAndNoPopup)
+
+/**
+ * Adds query parameters to a given URL if they do not already exist.
+ *
+ * @param url - The URL to which the query parameters will be added.
+ * @param parameters - An object containing key-value pairs of query parameters to add.
+ * @returns The URL with the added query parameters.
+ */
+const addQueryParameters = (
+  url: string,
+  parameters: Record<string, string>,
+): string => {
+  const urlObject = new URL(url, 'http://dummyurl.com')
+
+  // Check if each parameter already exists in the URL's query string
+  for (const [key, value] of Object.entries(parameters)) {
+    if (!urlObject.searchParams.has(key)) {
+      urlObject.searchParams.set(key, value)
+    }
+  }
+
+  return urlObject.toString().replace(/^http:\/\/dummyurl\.com/, '')
+}

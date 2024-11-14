@@ -13,7 +13,7 @@ import {
 } from '@aws-sdk/client-ses'
 import { join } from 'path'
 import { sessionsPath } from './session'
-import { debug } from './utils'
+import { debug } from '../helpers/utils'
 
 /**
  * Register the email address with AWS SES, so we can send emails to it
@@ -70,6 +70,7 @@ export type EmailAccount = {
   } | null>
   email: string
 }
+
 const makeEmailAccount = async (name: string): Promise<EmailAccount> => {
   const storagePath = join(sessionsPath, `${name}-email.json`)
   const emailAccountExists = existsSync(storagePath)
