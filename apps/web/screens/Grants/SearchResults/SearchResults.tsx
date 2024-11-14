@@ -4,6 +4,11 @@ import format from 'date-fns/format'
 import debounce from 'lodash/debounce'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsString,
+} from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
 import {
@@ -14,6 +19,7 @@ import {
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
+import { logger } from '@island.is/logging'
 import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
@@ -307,7 +313,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                               variant: tagVariant,
                             }}
                             cta={{
-                              label: 'Skoða nánar',
+                              label: formatMessage(m.general.seeMore),
                               variant: 'text',
                               onClick: () => {
                                 router.push(
@@ -352,7 +358,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                   })}
                 </Inline>
               ) : undefined}
-              {!grants?.length && !error && !loading && (
+              {!grants?.length && !error && !loading && called && (
                 <Box
                   display="flex"
                   alignItems="center"
@@ -370,9 +376,6 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                   <Box display="flex" flexDirection="column" rowGap={1}>
                     <Text variant={'h3'} as={'h3'} color="dark400">
                       {formatMessage(m.search.noResultsFound)}
-                    </Text>
-                    <Text whiteSpace="preLine">
-                      Borem ipsum dolor sit amet, consectetur adipiscing elit.
                     </Text>
                   </Box>
                   <img
@@ -413,11 +416,10 @@ const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
 }
 
 GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
-  const queryPage = query?.page
-    ? Array.isArray(query.page)
-      ? query.page[0]
-      : query.page
-    : undefined
+  const arrayParser = parseAsArrayOf<string>(parseAsString)
+
+  const parseArray = (arg: string | string[] | undefined) =>
+    arrayParser.parseServerSide(arg) ?? undefined
 
   const [
     {
@@ -432,16 +434,12 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
       variables: {
         input: {
           lang: locale as ContentLanguage,
-          page: queryPage ? Number.parseInt(queryPage) : undefined,
-          search: query?.query
-            ? Array.isArray(query.query)
-              ? query.query[0]
-              : query.query
-            : undefined,
-          categories: convertToArray(query?.category),
-          statuses: convertToArray(query?.status),
-          types: convertToArray(query?.type),
-          organizations: convertToArray(query?.organization),
+          page: parseAsInteger.withDefault(1).parseServerSide(query?.page),
+          search: parseAsString.parseServerSide(query?.query) ?? undefined,
+          categories: parseArray(query?.category),
+          statuses: parseArray(query?.status),
+          types: parseArray(query?.type),
+          organizations: parseArray(query?.organization),
         },
       },
     }),
