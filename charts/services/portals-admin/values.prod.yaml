@@ -12,6 +12,7 @@ service:
     BASEPATH: '/stjornbord'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces:

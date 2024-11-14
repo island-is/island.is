@@ -34,6 +34,7 @@ service:
     NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.island.is'

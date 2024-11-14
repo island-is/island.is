@@ -25,6 +25,7 @@ service:
     PASSKEY_CORE_RP_NAME: 'Island.is'
     PUBLIC_URL: 'https://innskra.island.is/api'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SYSLUMENN_HOST: 'https://api.syslumenn.is/api'
     SYSLUMENN_TIMEOUT: '3000'
     XROAD_BASE_PATH: 'http://securityserver.island.is'

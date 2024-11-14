@@ -17,6 +17,7 @@ service:
     BACKEND_URL: 'http://web-judicial-system-backend'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: ''
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
     SQS_QUEUE_NAME: 'sqs-judicial-system'
     SQS_REGION: 'eu-west-1'

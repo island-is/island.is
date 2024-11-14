@@ -16,6 +16,7 @@ service:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'islandis'
   grantNamespacesEnabled: true
@@ -71,6 +72,7 @@ service:
       DB_NAME: 'icelandic_names_registry_backend'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'icelandic_names_registry_backend'
+      SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
