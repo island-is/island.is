@@ -6,10 +6,38 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
-import { useNationalRegistryChildrenQuery } from '../../graphql/types/schema'
+import {
+  NationalRegistryBioChildQuery,
+  NationalRegistryChildCustodyQuery,
+  NationalRegistrySpouseQuery,
+  useNationalRegistryBioChildQuery,
+  useNationalRegistryChildCustodyQuery,
+  useNationalRegistrySpouseQuery,
+} from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { formatNationalId } from '../../lib/format-national-id'
 import { testIDs } from '../../utils/test-ids'
+
+type Person =
+  | NonNullable<
+      NonNullable<
+        NonNullable<
+          NonNullable<
+            NationalRegistryChildCustodyQuery['nationalRegistryPerson']
+          >
+        >['childCustody']
+      >[number]
+    >['details']
+  | NonNullable<
+      NonNullable<
+        NonNullable<
+          NonNullable<NationalRegistryBioChildQuery['nationalRegistryPerson']>
+        >['biologicalChildren']
+      >[number]
+    >['details']
+  | NonNullable<
+      NonNullable<NationalRegistrySpouseQuery['nationalRegistryPerson']>
+    >['spouse']
 
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
@@ -20,25 +48,35 @@ const { getNavigationOptions, useNavigationOptions } =
 
 export const FamilyDetailScreen: NavigationFunctionComponent<{
   id: string
-  type: string
+  type: 'bioChild' | 'custodyChild' | 'spouse'
 }> = ({ componentId, id, type }) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
 
-  const { data, loading, error } = useNationalRegistryChildrenQuery({
-    fetchPolicy: 'cache-first',
+  const bioChildRes = useNationalRegistryBioChildQuery({
+    variables: { childNationalId: id },
+    skip: type !== 'bioChild',
   })
-  const { nationalRegistryUser, nationalRegistryChildren = [] } = data || {}
 
-  const listOfPeople = [
-    { ...(nationalRegistryUser?.spouse ?? {}), type: 'spouse' },
-    ...(nationalRegistryChildren ?? []).map((item: any) => ({
-      ...item,
-      type: 'child',
-    })),
-  ].filter((item) => item.nationalId)
+  const custodyChildRes = useNationalRegistryChildCustodyQuery({
+    variables: { childNationalId: id },
+    skip: type !== 'custodyChild',
+  })
 
-  const person = listOfPeople?.find((x) => x.nationalId === id) || null
+  const spouseRes = useNationalRegistrySpouseQuery({
+    skip: type !== 'spouse',
+  })
+
+  const person: Person =
+    bioChildRes.data?.nationalRegistryPerson?.biologicalChildren?.[0]
+      ?.details ||
+    custodyChildRes?.data?.nationalRegistryPerson?.childCustody?.[0]?.details ||
+    spouseRes.data?.nationalRegistryPerson?.spouse ||
+    null
+
+  const loading =
+    bioChildRes.loading || custodyChildRes.loading || spouseRes.loading
+  const error = bioChildRes.error || custodyChildRes.error || spouseRes.error
 
   if (!person) return null
 
@@ -64,13 +102,12 @@ export const FamilyDetailScreen: NavigationFunctionComponent<{
               label={intl.formatMessage({
                 id: 'familyDetail.natreg.displayName',
               })}
-              value={person?.name || person?.displayName}
+              value={person?.fullName}
               loading={loading}
               error={!!error}
               size="big"
             />
           </InputRow>
-
           <InputRow>
             <Input
               label={intl.formatMessage({
@@ -78,7 +115,12 @@ export const FamilyDetailScreen: NavigationFunctionComponent<{
               })}
               value={intl.formatMessage(
                 { id: 'familyDetail.natreg.familyRelationValue' },
-                { type },
+                {
+                  type:
+                    type === 'bioChild' || type === 'custodyChild'
+                      ? 'child'
+                      : type,
+                },
               )}
               loading={loading}
               error={!!error}
@@ -93,24 +135,32 @@ export const FamilyDetailScreen: NavigationFunctionComponent<{
               loading={loading}
               error={!!error}
             />
-            {person?.nationality ? (
+            {'citizenship' in person && person?.citizenship ? (
               <Input
                 label={intl.formatMessage({
                   id: 'familyDetail.natreg.citizenship',
                 })}
-                value={person?.nationality}
+                value={person?.citizenship?.name}
                 loading={loading}
                 error={!!error}
               />
             ) : null}
           </InputRow>
-          {person?.legalResidence ? (
+          {'housing' in person &&
+          person?.housing &&
+          'address' in person.housing &&
+          person.housing.address ? (
             <InputRow>
               <Input
                 label={intl.formatMessage({
                   id: 'familyDetail.natreg.legalResidence',
                 })}
-                value={person?.legalResidence}
+                value={
+                  'postalCode' in person.housing.address &&
+                  'city' in person.housing.address
+                    ? `${person?.housing.address?.streetAddress}, ${person?.housing.address?.postalCode} ${person?.housing.address?.city}`
+                    : person?.housing.address?.streetAddress
+                }
                 loading={loading}
                 error={!!error}
               />
@@ -118,20 +168,23 @@ export const FamilyDetailScreen: NavigationFunctionComponent<{
           ) : null}
 
           <InputRow>
-            {person?.genderDisplay ? (
+            {'gender' in person && person.gender ? (
               <Input
                 label={intl.formatMessage({ id: 'familyDetail.natreg.gender' })}
-                value={person?.genderDisplay}
+                value={intl.formatMessage(
+                  { id: 'user.natreg.genderValue' },
+                  { gender: person.gender },
+                )}
                 loading={loading}
                 error={!!error}
               />
             ) : null}
-            {person?.birthplace ? (
+            {'birthplace' in person && person?.birthplace ? (
               <Input
                 label={intl.formatMessage({
                   id: 'familyDetail.natreg.birthPlace',
                 })}
-                value={person?.birthplace}
+                value={person?.birthplace?.location}
                 loading={loading}
                 error={!!error}
               />

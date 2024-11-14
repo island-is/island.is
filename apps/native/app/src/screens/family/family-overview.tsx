@@ -1,4 +1,4 @@
-import { EmptyList, FamilyMemberCard, Skeleton, TopLine } from '@ui'
+import { EmptyList, FamilyMemberCard, Problem, Skeleton, TopLine } from '@ui'
 import React, { useCallback, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -14,7 +14,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/hero_spring.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { useNationalRegistryChildrenQuery } from '../../graphql/types/schema'
+import { useNationalRegistryPersonQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
@@ -48,7 +48,7 @@ const FamilyMember = React.memo(({ item }: { item: any }) => {
       >
         <SafeAreaView>
           <FamilyMemberCard
-            name={item?.name || item?.displayName}
+            name={item?.fullName}
             nationalId={formatNationalId(item?.nationalId)}
           />
         </SafeAreaView>
@@ -68,7 +68,7 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
   const theme = useTheme()
   const scrollY = useRef(new Animated.Value(0)).current
   const loadingTimeout = useRef<number>()
-  const familyRes = useNationalRegistryChildrenQuery()
+  const familyRes = useNationalRegistryPersonQuery()
 
   useConnectivityIndicator({
     componentId,
@@ -76,16 +76,25 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
     refetching,
   })
 
-  const { nationalRegistryUser, nationalRegistryChildren = [] } =
-    familyRes?.data || {}
+  const { biologicalChildren, spouse, childCustody } =
+    familyRes.data?.nationalRegistryPerson || {}
+
+  // Filter out bio children with custody so we don't show them twice
+  const bioChildren = biologicalChildren?.filter(
+    (child) => !childCustody?.some((c) => c.nationalId === child.nationalId),
+  )
 
   const listOfPeople = [
-    { ...(nationalRegistryUser?.spouse ?? {}), type: 'spouse' },
-    ...(nationalRegistryChildren ?? []).map((item: any) => ({
+    { ...(spouse ?? {}), type: 'spouse' },
+    ...(childCustody ?? []).map((item: any) => ({
       ...item,
-      type: 'child',
+      type: 'custodyChild',
     })),
-  ].filter((item) => item.nationalId)
+    ...(bioChildren ?? []).map((item: any) => ({
+      ...item,
+      type: 'bioChild',
+    })),
+  ]
 
   const isSkeleton = familyRes.loading && !familyRes.data
 
@@ -172,34 +181,39 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
   const isEmpty = listOfPeople.length === 0
   return (
     <>
-      <Animated.FlatList
-        ref={flatListRef}
-        testID={testIDs.SCREEN_FAMILY_OVERVIEW}
-        style={{
-          paddingTop: 16,
-          zIndex: 9,
-        }}
-        contentInset={{
-          bottom: 32,
-        }}
-        contentContainerStyle={{
-          paddingBottom: 16,
-        }}
-        refreshControl={
-          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
-        }
-        scrollEventThrottle={16}
-        scrollToOverflowEnabled={true}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          {
-            useNativeDriver: true,
-          },
-        )}
-        data={isSkeleton ? skeletonItems : isEmpty ? emptyItems : listOfPeople}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-      />
+      {(familyRes.data || familyRes.loading) && (
+        <Animated.FlatList
+          ref={flatListRef}
+          testID={testIDs.SCREEN_FAMILY_OVERVIEW}
+          style={{
+            paddingTop: 16,
+            zIndex: 9,
+          }}
+          contentInset={{
+            bottom: 32,
+          }}
+          contentContainerStyle={{
+            paddingBottom: 16,
+          }}
+          refreshControl={
+            <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
+          }
+          scrollEventThrottle={16}
+          scrollToOverflowEnabled={true}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            {
+              useNativeDriver: true,
+            },
+          )}
+          data={
+            isSkeleton ? skeletonItems : isEmpty ? emptyItems : listOfPeople
+          }
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+        />
+      )}
+      {familyRes.error && !familyRes.data && <Problem withContainer />}
       <TopLine scrollY={scrollY} />
       <BottomTabsIndicator index={2} total={3} />
     </>
