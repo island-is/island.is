@@ -9,7 +9,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import { Request, Response } from 'express'
+import type { Request, Response } from 'express'
 import jwksClient from 'jwks-rsa'
 import { jwtDecode } from 'jwt-decode'
 

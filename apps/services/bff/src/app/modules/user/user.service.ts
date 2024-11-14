@@ -3,7 +3,6 @@ import type { Request, Response } from 'express'
 
 import { BffUser } from '@island.is/shared/types'
 import { SESSION_COOKIE_NAME } from '../../constants/cookies'
-import { CryptoService } from '../../services/crypto.service'
 
 import { ErrorService } from '../../services/error.service'
 import { hasTimestampExpiredInMS } from '../../utils/has-timestamp-expired-in-ms'
@@ -30,13 +29,6 @@ export class UserService {
   }
 
   /**
-   * Creates a key for storing token response data in cache
-   */
-  private createTokenResponseKey(sid: string): string {
-    return this.cacheService.createSessionKeyType('current', sid)
-  }
-
-  /**
    * Gets the current user data, refreshing the token if needed
    */
   public async getUser({
@@ -54,7 +46,10 @@ export class UserService {
       throw new UnauthorizedException()
     }
 
-    const tokenResponseKey = this.createTokenResponseKey(sid)
+    const tokenResponseKey = this.cacheService.createSessionKeyType(
+      'current',
+      sid,
+    )
     const cachedTokenResponse =
       await this.cacheService.get<CachedTokenResponse>(
         tokenResponseKey,
