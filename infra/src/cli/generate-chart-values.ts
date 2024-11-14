@@ -35,7 +35,7 @@ const removeEmptyStringProperties = (obj: any): any => {
   return Object.fromEntries(
     Object.entries(obj)
       .filter(
-        ([key, value]) => value !== '' && !NON_EMPTYABLE_PROPERTIES.has(key),
+        ([key, value]) => value !== '' || NON_EMPTYABLE_PROPERTIES.has(key),
       ) // Filter out empty strings
       .map(([key, value]) => [key, removeEmptyStringProperties(value)]), // Recursively apply to nested objects
   )
