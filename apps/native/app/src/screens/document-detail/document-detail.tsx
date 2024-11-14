@@ -253,7 +253,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     fetchPolicy: 'no-cache',
   })
 
-  const confirmAction = (confirmed: boolean | null) => {
+  const confirmAction = (confirmed: boolean) => {
     // Adding a suffix '_app' to the id since the backend is currently not distinguishing between the app and the web
     logConfirmedAction({
       variables: { input: { id: `${docId}_app`, confirmed: confirmed } },
