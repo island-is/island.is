@@ -17,6 +17,17 @@ export const memberItemSchema = z
   })
   .partial()
 
+export const additionSchema = z.array(
+  z
+    .object({
+      id: z.string().optional(),
+      title: z.string().optional(),
+      content: z.string().optional(),
+      type: z.enum(['html', 'file']).optional(),
+    })
+    .partial(),
+)
+
 export const membersSchema = z.array(memberItemSchema).optional()
 
 export const regularSignatureItemSchema = z
@@ -59,6 +70,7 @@ const advertSchema = z
     categories: z.array(z.string()).optional(),
     channels: z.array(channelSchema).optional(),
     message: z.string().optional(),
+    additions: additionSchema.optional(),
   })
   .partial()
 
