@@ -68,7 +68,7 @@ export const runServer = ({
     err: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
     _req: Request,
     res: Response,
-    _next: NextFunction, // eslint-disable-line
+    _next: NextFunction,
   ) {
     logger.error(`Status code: ${err.status}, msg: ${err.message}`)
     res.status(err.status || 500)
