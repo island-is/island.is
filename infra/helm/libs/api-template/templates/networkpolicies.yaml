@@ -57,18 +57,6 @@ spec:
             matchLabels:
               namespaceType: feature
 ---
-kind: NetworkPolicy
-apiVersion: networking.k8s.io/v1
-metadata:
-  name: grant-feature-deployments
-  namespace: {{ $namespace }}
-metadata:
-  name: default-deny-ingress
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
----
 {{- range .Values.grantNamespaces }}
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
