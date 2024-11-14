@@ -1,5 +1,4 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { BoardMember } from '@island.is/application/templates/financial-statements-inao/types'
 import { FormValue } from '@island.is/application/types'
 import {
   Contact,
@@ -7,6 +6,12 @@ import {
   ClientRoles,
   DigitalSignee,
 } from '@island.is/clients/financial-statements-inao'
+
+type BoardMember = {
+  nationalId: string
+  name: string
+  role: string
+}
 
 export const mapValuesToCemeterytype = (answers: FormValue) => {
   return {

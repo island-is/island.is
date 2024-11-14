@@ -18,11 +18,12 @@ interface Props {
     | 'custodyNotice'
     | 'indictment'
     | 'subpoena'
+    | 'serviceCertificate'
 
   disabled?: boolean
   renderAs?: 'button' | 'row'
   handleClick?: () => void
-  elementId?: string
+  elementId?: string | string[]
   queryParameters?: string
 }
 
@@ -46,7 +47,9 @@ const PdfButton: FC<PropsWithChildren<Props>> = ({
     const prefix = `${limitedAccess ? 'limitedAccess/' : ''}${
       connectedCaseParentId ? `mergedCase/${caseId}/` : ''
     }`
-    const postfix = elementId ? `/${elementId}` : ''
+    const postfix = elementId
+      ? `/${Array.isArray(elementId) ? elementId.join('/') : elementId}`
+      : ''
     const query = queryParameters ? `?${queryParameters}` : ''
     const url = `${api.apiUrl}/api/case/${
       connectedCaseParentId ?? caseId

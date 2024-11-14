@@ -254,6 +254,30 @@ export const getTransferredDays = (
   return days
 }
 
+export const getPersonalDays = (application: Application) => {
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
+  if (!selectedChild) {
+    throw new Error('Missing selected child')
+  }
+  const maximumDaysToSpend = getAvailableRightsInDays(application)
+  const maximumMultipleBirthsDaysToSpend = getMultipleBirthsDays(application)
+  const maximumAdditionalSingleParentDaysToSpend =
+    getAdditionalSingleParentRightsInDays(application)
+  const transferredDays = getTransferredDays(application, selectedChild)
+  const personalDays =
+    maximumDaysToSpend -
+    maximumAdditionalSingleParentDaysToSpend -
+    maximumMultipleBirthsDaysToSpend -
+    Math.max(transferredDays, 0)
+  return personalDays
+}
+
+export const getPersonalDaysInMonths = (application: Application) =>
+  daysToMonths(getPersonalDays(application)).toFixed(1)
+
 export const getMultipleBirthsDays = (application: Application) => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -270,6 +294,9 @@ export const getMultipleBirthsDays = (application: Application) => {
 
   return getMultipleBirthRequestDays(application.answers)
 }
+
+export const getMultipleBirthsDaysInMonths = (application: Application) =>
+  daysToMonths(getMultipleBirthsDays(application)).toFixed(1)
 
 export const getMultipleBirthRequestDays = (
   answers: Application['answers'],
@@ -388,6 +415,10 @@ export const getAvailablePersonalRightsSingleParentInMonths = (
       getAdditionalSingleParentRightsInDays(application),
   )
 
+export const getAdditionalSingleParentRightsInMonths = (
+  application: Application,
+) => daysToMonths(getAdditionalSingleParentRightsInDays(application)).toFixed(1)
+
 export const getAvailablePersonalRightsInMonths = (application: Application) =>
   daysToMonths(getAvailablePersonalRightsInDays(application))
 
@@ -396,6 +427,11 @@ export const getAvailablePersonalRightsInMonths = (application: Application) =>
  */
 export const getAvailableRightsInMonths = (application: Application) =>
   daysToMonths(getAvailableRightsInDays(application))
+
+export const getTransferredDaysInMonths = (
+  application: Application,
+  selectedChild: ChildInformation,
+) => daysToMonths(getTransferredDays(application, selectedChild)).toFixed(1)
 
 export const getSpouse = (
   application: Application,
@@ -1355,13 +1391,21 @@ export const getMinimumStartDate = (application: Application): Date => {
   return today
 }
 
+export const clamp = (value: number, min: number, max: number): number =>
+  Math.min(max, Math.max(min, value))
+
 export const calculateDaysUsedByPeriods = (periods: Period[]) =>
   Math.round(
     periods.reduce((total, period) => {
       const start = parseISO(period.startDate)
       const end = parseISO(period.endDate)
       const percentage = Number(period.ratio) / 100
-      const periodLength = calculatePeriodLength(start, end)
+      const periodLength = calculatePeriodLength(
+        start,
+        end,
+        undefined,
+        period.months,
+      )
 
       const calculatedLength = period.daysToUse
         ? Number(period.daysToUse)
@@ -1386,7 +1430,10 @@ export const calculateEndDateForPeriodWithStartAndLength = (
   const daysInMonth = getDaysInMonth(lastMonthBeforeEndDate)
 
   // If startDay is first day of the month and daysToAdd = 0
-  if (daysToAdd === 0 && start.getDate() === 1) {
+  if (daysToAdd === 0) {
+    if (start.getDate() === 31) {
+      endDate = addDays(endDate, 1)
+    }
     return endDate
   }
 
@@ -1405,8 +1452,9 @@ export const calculateEndDateForPeriodWithStartAndLength = (
       endDate = addDays(endDate, -1)
     }
   } else {
-    // startDate is 16 and months with 31 days
-    if (start.getDate() === 16 && daysInMonth === 31) {
+    // startDate is 16 or 17 and months with 31 days
+    const startDay = start.getDate()
+    if ((startDay === 16 || startDay === 17) && daysInMonth === 31) {
       endDate = addDays(endDate, 1)
     }
   }
@@ -1422,9 +1470,10 @@ export const calculatePeriodLengthInMonths = (
   const end = parseISO(endDate)
 
   const diffMonths = differenceInMonths(end, start)
-  const diffDays = differenceInDays(addMonths(end, -diffMonths), start)
+  const diffDays = differenceInDays(end, addMonths(start, diffMonths))
 
-  const roundedDays = Math.min((diffDays / 28) * 100, 100) / 100
+  const roundedDays =
+    Math.min((diffDays / getDaysInMonth(end)) * 100, 100) / 100
 
   return round(diffMonths + roundedDays, 1)
 }

@@ -2,11 +2,17 @@ import { IsEnum } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
+import { getIntro } from '@island.is/judicial-system/consts'
 import {
   formatDate,
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { DateType, DefenderChoice } from '@island.is/judicial-system/types'
+import {
+  DateType,
+  DefenderChoice,
+  isSuccessfulServiceStatus,
+  SubpoenaType,
+} from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
 import { Groups } from './shared/groups.model'
@@ -49,6 +55,12 @@ class SubpoenaData {
   title!: string
 
   @ApiProperty({ type: String })
+  subpoenaInfoText!: string
+
+  @ApiProperty({ type: String })
+  subpoenaNotificationDeadline!: string
+
+  @ApiProperty({ type: String })
   subtitle?: string
 
   @ApiProperty({ type: () => [Groups] })
@@ -59,6 +71,12 @@ class SubpoenaData {
 
   @ApiProperty({ type: Boolean })
   hasBeenServed?: boolean
+
+  @ApiProperty({ type: Boolean })
+  hasChosenDefender?: boolean
+
+  @ApiProperty({ enum: DefenderChoice })
+  defaultDefenderChoice?: DefenderChoice
 }
 
 export class SubpoenaResponse {
@@ -85,11 +103,26 @@ export class SubpoenaResponse {
           defendant.nationalId,
         ),
     )
+    const subpoenaType = defendantInfo?.subpoenaType
 
-    const waivedRight = defendantInfo?.defenderChoice === DefenderChoice.WAIVE
-    const hasDefender = defendantInfo?.defenderName !== undefined
-    const subpoena = defendantInfo?.subpoenas ?? []
-    const hasBeenServed = subpoena[0]?.acknowledged ?? false
+    const intro = getIntro(defendantInfo?.gender, lang)
+    const formatedSubpoenaInfoText = `${intro.intro}${
+      subpoenaType
+        ? ` ${
+            subpoenaType === SubpoenaType.ABSENCE
+              ? intro.absenceIntro
+              : intro.arrestIntro
+          }`
+        : ''
+    }`
+
+    const waivedRight =
+      defendantInfo?.requestedDefenderChoice === DefenderChoice.WAIVE
+    const hasDefender = defendantInfo?.requestedDefenderNationalId !== null
+    const subpoenas = defendantInfo?.subpoenas ?? []
+    const hasBeenServed =
+      subpoenas.length > 0 &&
+      isSuccessfulServiceStatus(subpoenas[0].serviceStatus)
     const canChangeDefenseChoice = !waivedRight && !hasDefender
 
     const subpoenaDateLog = internalCase.dateLogs?.find(
@@ -106,8 +139,15 @@ export class SubpoenaResponse {
       caseId: internalCase.id,
       data: {
         title: t.subpoena,
+        subpoenaInfoText: formatedSubpoenaInfoText,
+        subpoenaNotificationDeadline: intro.deadline,
         subtitle: courtNameAndAddress,
         hasBeenServed: hasBeenServed,
+        hasChosenDefender: Boolean(
+          defendantInfo?.requestedDefenderChoice &&
+            defendantInfo.requestedDefenderChoice !== DefenderChoice.DELAY,
+        ),
+        defaultDefenderChoice: DefenderChoice.DELAY,
         alerts: [
           ...(hasBeenServed
             ? [
@@ -143,12 +183,12 @@ export class SubpoenaResponse {
         ],
       },
 
-      defenderInfo: defendantInfo?.defenderChoice
+      defenderInfo: defendantInfo?.requestedDefenderChoice
         ? {
-            defenderChoice: defendantInfo?.defenderChoice,
+            defenderChoice: defendantInfo?.requestedDefenderChoice,
             defenderName:
               !waivedRight && hasDefender
-                ? defendantInfo?.defenderName
+                ? defendantInfo?.requestedDefenderName
                 : undefined,
             canEdit: canChangeDefenseChoice,
             courtContactInfo: canChangeDefenseChoice

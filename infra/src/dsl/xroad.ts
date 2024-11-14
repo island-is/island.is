@@ -240,6 +240,17 @@ export const AdrAndMachine = new XroadConf({
   },
 })
 
+export const WorkAccidents = new XroadConf({
+  env: {
+    XROAD_WORK_ACCIDENT_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/slysaskraning-token',
+      staging:
+        'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/slysaskraning-token',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/slysaskraning-token',
+    },
+  },
+})
+
 export const WorkMachines = new XroadConf({
   env: {
     XROAD_WORK_MACHINE_LICENSE_PATH: {
@@ -515,9 +526,9 @@ export const PaymentSchedule = new XroadConf({
 export const IntellectualProperties = new XroadConf({
   env: {
     XROAD_INTELLECTUAL_PROPERTIES_PATH: {
-      dev: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI/',
-      staging: 'IS-TEST/GOV/6501912189/WebAPI-Public/HUG-webAPI/',
-      prod: 'IS/GOV/6501912189/WebAPI-Public/HUG-webAPI/',
+      dev: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI',
+      staging: 'IS-TEST/GOV/6501912189/WebAPI-Public/HUG-webAPI',
+      prod: 'IS/GOV/6501912189/WebAPI-Public/HUG-webAPI',
     },
   },
 })
@@ -841,6 +852,17 @@ export const UniversityGatewayReykjavikUniversity = new XroadConf({
   },
 })
 
+export const JudicialSystemServicePortal = new XroadConf({
+  env: {
+    XROAD_JUDICIAL_SYSTEM_SP_PATH: {
+      dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      staging:
+        'IS-TEST/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      prod: 'IS/GOV/5804170510/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+    },
+  },
+})
+
 export const SocialInsuranceAdministration = new XroadConf({
   env: {
     XROAD_TR_PATH: {
@@ -884,9 +906,9 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
 export const Frigg = new XroadConf({
   env: {
     XROAD_MMS_FRIGG_PATH: {
-      dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
-      staging: 'IS-TEST/GOV/10066/MMS-Protected/frigg-api',
-      prod: 'IS/GOV/10066/MMS-Protected/frigg-api',
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-service',
+      staging: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-service',
+      prod: 'IS/GOV/10066/MMS-Protected/frigg-form-service',
     },
   },
 })

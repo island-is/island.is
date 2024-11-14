@@ -33,7 +33,13 @@ export class MessageHandlerService implements OnModuleDestroy {
       `${this.config.backendUrl}/api/internal${
         message.caseId ? `/case/${message.caseId}` : ''
       }/${messageEndpoint[message.type]}${
-        message.elementId ? `/${message.elementId}` : ''
+        message.elementId
+          ? `/${
+              Array.isArray(message.elementId)
+                ? message.elementId.join('/')
+                : message.elementId
+            }`
+          : ''
       }`,
       message.user,
       message.body,

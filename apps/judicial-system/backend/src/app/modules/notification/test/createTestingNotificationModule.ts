@@ -24,9 +24,10 @@ import { DefendantService } from '../../defendant'
 import { eventModuleConfig, EventService } from '../../event'
 import { InstitutionService } from '../../institution'
 import { UserService } from '../../user'
+import { CaseNotificationService } from '../caseNotification.service'
+import { DefendantNotificationService } from '../defendantNotification.service'
 import { InstitutionNotificationService } from '../institutionNotification.service'
 import { InternalNotificationController } from '../internalNotification.controller'
-import { InternalNotificationService } from '../internalNotification.service'
 import { Notification } from '../models/notification.model'
 import { notificationModuleConfig } from '../notification.config'
 import { NotificationController } from '../notification.controller'
@@ -99,9 +100,10 @@ export const createTestingNotificationModule = async () => {
       { provide: InstitutionService, useValue: { getAll: jest.fn() } },
       EventService,
       NotificationService,
-      InternalNotificationService,
+      CaseNotificationService,
       NotificationDispatchService,
       InstitutionNotificationService,
+      DefendantNotificationService,
     ],
   })
     .useMocker((token) => {

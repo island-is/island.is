@@ -122,18 +122,18 @@ export const m = defineMessages({
   },
   healthDeclarationSectionTitle: {
     id: 'dl.application:healthDeclarationSection.title',
-    defaultMessage: 'Heilbrigðisyfirlýsing',
+    defaultMessage: 'Læknisvottorð',
     description: 'Health declaration',
   },
   healthDeclarationMultiFieldTitle: {
     id: 'dl.application:healthDeclarationMultiField.title',
-    defaultMessage: 'Heilbrigðisyfirlýsing',
+    defaultMessage: 'Læknisvottorð',
     description: 'Health declaration',
   },
   healthDeclarationMultiField65Description: {
     id: 'dl.application:healthDeclarationMultiField65Description#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nunc nec ultricies ultricies, nunc nisl ultricies nunc, nec ultricies nunc nisl nec nunc. Nullam auctor, nunc nec ultricies ultricies, nunc nisl ultricies nunc, nec ultricies nunc nisl nec nunc.',
+      'Þú þarft að skila inn læknisvottorði vegna ökuleyfis til að endurnýja ökuskírteini þitt. Læknisvottorðið þarf að vera frá **heimilislækni** og vegna ökuleyfis. Þegar búið er að ljúka umsókn þarf að skila inn læknisvottorði á valið sýslumannsembætti til að hægt sé að panta skírteinið.  **Athugið að skírteinið verður ekki pantað fyrr en búið er að skila inn vottorði.**',
     description: 'Health declaration',
   },
   healthDeclarationMultiFieldSubTitle: {
@@ -486,6 +486,12 @@ export const m = defineMessages({
       'Þú ert að sækja um fullnaðarökuskírteini. Ökuskírteini þitt verður núna einungis gefið út sem stafrænt ökuskírteini og verður aðgengilegt fyrir þig þegar þú hefur lokið þessari pöntun um fullnaðarökuskírteini. Fullnaðarökuskírteini þitt verður framleitt í plasti í byrjun febrúar 2025 og sent til þín með Póstinum, á skráð lögheimili þitt um leið og plastökuskírteinið er tilbúið.',
     description: 'Digital driving license',
   },
+  digitalLicenseInfoAlertMessageExtraInfo: {
+    id: 'dl.application:digitalLicenseInfoAlertMessageExtraInfo#markdown',
+    defaultMessage:
+      'Upplýsingar um stafrænt ökuskírteini, hvernig þú sækir það og hleður því í símannn þinn eru aðgengilegar hér [https://island.is/okuskirteini](https://island.is/okuskirteini)',
+    description: 'Digital driving license',
+  },
   congratulationsTempHelpText: {
     id: 'dl.application:congratulationsTempHelpText',
     defaultMessage:
@@ -635,15 +641,15 @@ export const m = defineMessages({
     defaultMessage: 'Veldu sýslumannsembætti',
     description: 'Choose district commissioner',
   },
-  chooseDistrictCommisionerForFullLicense: {
-    id: 'dl.application:chooseDistrictCommisionerForFullLicense',
+  chooseDistrictCommissionerForFullLicense: {
+    id: 'dl.application:chooseDistrictCommissionerForFullLicense',
     defaultMessage:
-      'Veldu það embætti sýslumanns þar sem þú vilt skila inn bráðabirgðaskírteini og fá afhent nýtt fullnaðarskírteini',
+      'Veldu það embætti sýslumanns þar sem þú vilt skila inn eldra ökuskírteini og fá afhent nýtt með nýjum réttindunum',
     description:
       'Choose district commissioner for returning a temporary license and recieve a new full license',
   },
-  chooseDistrictCommisionerForTempLicense: {
-    id: 'dl.application:chooseDistrictCommisionerForTempLicense',
+  chooseDistrictCommissionerForTempLicense: {
+    id: 'dl.application:chooseDistrictCommissionerForTempLicense',
     defaultMessage:
       'Veldu það embætti sýslumanns sem þú hyggst skila inn gæðamerktri ljósmynd',
     description: 'Choose district commissioner for submitting a quality photo',
@@ -973,5 +979,15 @@ export const requirementsMessages = defineMessages({
       'Ef ekki er til gæðavottuð mynd, þarf umsækjandi að mæta í sitt sýslumanns embætti með nýja mynd og leggja inn umsókn á staðnum',
     description:
       'requirement unmet api returned false for an unspecified reason',
+  },
+  noExtendedDrivingLicenseTitle: {
+    id: 'dl.application:requirementunmet.noExtendedDrivingLicenseTitle',
+    defaultMessage: 'Ekki hægt að sækja um endurnýjun á 65+ ökuskírteini.',
+    description: 'requirement unmet 65 plus renewal',
+  },
+  noExtendedDrivingLicenseDescription: {
+    id: 'dl.application:requirementunmet.noExtendedDrivingLicenseDescription#markdown',
+    defaultMessage: 'Ekki hægt að sækja um endurnýjun á 65+ ökuskírteini.',
+    description: 'requirement unmet 65 plus renewal',
   },
 })

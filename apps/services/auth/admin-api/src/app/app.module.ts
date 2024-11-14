@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import {
-  DelegationApiUserSystemNotificationConfig,
   DelegationConfig,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
@@ -32,6 +31,7 @@ import { ProvidersModule } from './v2/providers/providers.module'
 import { ScopesModule } from './v2/scopes/scopes.module'
 import { ClientSecretsModule } from './v2/secrets/client-secrets.module'
 import { TenantsModule } from './v2/tenants/tenants.module'
+import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 
 @Module({
   imports: [
@@ -66,6 +66,7 @@ import { TenantsModule } from './v2/tenants/tenants.module'
         XRoadConfig,
         IdsClientConfig,
         SyslumennClientConfig,
+        ZendeskServiceConfig,
       ],
       envFilePath: ['.env', '.env.secret'],
     }),

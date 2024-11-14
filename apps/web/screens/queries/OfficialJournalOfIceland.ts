@@ -174,6 +174,37 @@ export const MAIN_CATEGORIES_QUERY = gql`
         title
         slug
         description
+        categories {
+          id
+          title
+          slug
+        }
+      }
+      paging {
+        page
+        pageSize
+        totalPages
+        totalItems
+        hasNextPage
+        hasPreviousPage
+        nextPage
+        previousPage
+      }
+    }
+  }
+`
+
+export const CASES_IN_PROGRESS_QUERY = gql`
+  query CasesInProgress($params: OfficialJournalOfIcelandQueryInput!) {
+    officialJournalOfIcelandCasesInProgress(params: $params) {
+      cases {
+        id
+        title
+        status
+        involvedParty
+        createdAt
+        fastTrack
+        requestedPublicationDate
       }
       paging {
         page

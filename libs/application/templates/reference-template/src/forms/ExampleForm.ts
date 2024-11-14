@@ -14,6 +14,7 @@ import {
   buildPhoneField,
   buildHiddenInput,
   buildHiddenInputWithWatchedValue,
+  buildTableRepeaterField,
 } from '@island.is/application/core'
 import {
   Comparators,
@@ -35,6 +36,62 @@ export const ExampleForm: Form = buildForm({
       children: [],
     }),
     buildSection({
+      id: 'tableRepeaterWithPhone',
+      title: 'Table repeater',
+      children: [
+        buildTableRepeaterField({
+          id: 'rentalHousingLandlordInfoTable',
+          title: '',
+          marginTop: 1,
+          fields: {
+            name: {
+              component: 'input',
+              label: 'test 1',
+              width: 'half',
+            },
+            nationalId: {
+              component: 'input',
+              label: 'test 2',
+              format: '######-####',
+              width: 'half',
+            },
+            phone: {
+              component: 'phone',
+              label: 'test 3',
+              format: '###-####',
+              width: 'half',
+            },
+            email: {
+              component: 'input',
+              label: 'test 4',
+              type: 'email',
+              width: 'half',
+            },
+            isRepresentative: {
+              component: 'checkbox',
+              large: true,
+              displayInTable: false,
+              label: 'test 5',
+              options: [
+                {
+                  label: 'test 6',
+                  value: 'YES',
+                },
+              ],
+            },
+          },
+          table: {
+            header: [
+              'nameInputLabel',
+              'nationalIdHeaderLabel',
+              'phoneInputLabel',
+              'emailInputLabel',
+            ],
+          },
+        }),
+      ],
+    }),
+    buildSection({
       id: 'intro',
       title: m.introSection,
       children: [
@@ -48,7 +105,7 @@ export const ExampleForm: Form = buildForm({
         }),
         buildMultiField({
           id: 'about',
-          title: m.about,
+          title: m.about.defaultMessage,
           children: [
             buildTextField({
               id: 'person.name',
@@ -97,7 +154,12 @@ export const ExampleForm: Form = buildForm({
         }),
         buildFileUploadField({
           id: 'attachments',
-          title: 'Viðhengi',
+          title: (application, locale) => {
+            if (locale === 'is') {
+              return 'Viðhengi'
+            }
+            return 'Attachments'
+          },
           introduction: 'Hér getur þú bætt við viðhengjum við umsóknina þína.',
           uploadMultiple: true,
         }),
@@ -116,12 +178,24 @@ export const ExampleForm: Form = buildForm({
               title: m.careerIndustry,
               description: m.careerIndustryDescription,
               required: true,
-              options: [
-                { label: 'Hugbúnaður', value: 'software' },
-                { label: 'Fjármál', value: 'finance' },
-                { label: 'Efnahagsráðgjöf', value: 'consulting' },
-                { label: 'Önnur', value: 'other' },
-              ],
+              options: (options, application, locale) => {
+                if (locale === 'is') {
+                  return [
+                    { label: locale, value: locale },
+                    { label: 'Hugbúnaður', value: 'software' },
+                    { label: 'Fjármál', value: 'finance' },
+                    { label: 'Efnahagsráðgjöf', value: 'consulting' },
+                    { label: 'Önnur', value: 'other' },
+                  ]
+                }
+                return [
+                  { label: locale, value: locale },
+                  { label: 'Software', value: 'software' },
+                  { label: 'Finance', value: 'finance' },
+                  { label: 'Consulting', value: 'consulting' },
+                  { label: 'Other', value: 'other' },
+                ]
+              },
             }),
             buildRadioField({
               id: 'careerHistory',

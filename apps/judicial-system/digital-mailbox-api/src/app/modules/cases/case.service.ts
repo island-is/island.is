@@ -11,6 +11,7 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { LawyersService } from '@island.is/judicial-system/lawyers'
 import { DefenderChoice } from '@island.is/judicial-system/types'
 
@@ -86,6 +87,7 @@ export class CaseService {
     lang?: string,
   ): Promise<CasesResponse[]> {
     const response = await this.fetchCases(nationalId)
+
     return CasesResponse.fromInternalCasesResponse(response, lang)
   }
 
@@ -95,6 +97,23 @@ export class CaseService {
     lang?: string,
   ): Promise<CaseResponse> {
     const response = await this.fetchCase(id, nationalId)
+    const defendantInfo = response.defendants.find(
+      (defendant) =>
+        defendant.nationalId &&
+        normalizeAndFormatNationalId(nationalId).includes(defendant.nationalId),
+    )
+
+    if (!defendantInfo) {
+      throw new NotFoundException('Defendant not found')
+    }
+
+    if (
+      defendantInfo.subpoenas?.[0]?.subpoenaId &&
+      !defendantInfo.subpoenas[0].serviceStatus
+    ) {
+      await this.fetchServiceStatus(id, defendantInfo.subpoenas[0].subpoenaId)
+    }
+
     return CaseResponse.fromInternalCaseResponse(response, lang)
   }
 
@@ -104,6 +123,7 @@ export class CaseService {
     lang?: string,
   ): Promise<SubpoenaResponse> {
     const caseData = await this.fetchCase(caseId, defendantNationalId)
+
     return SubpoenaResponse.fromInternalCaseResponse(
       caseData,
       defendantNationalId,
@@ -117,7 +137,7 @@ export class CaseService {
     defenderAssignment: UpdateSubpoenaDto,
     lang?: string,
   ): Promise<SubpoenaResponse> {
-    let defenderChoice = { ...defenderAssignment }
+    let chosenLawyer = null
 
     if (defenderAssignment.defenderChoice === DefenderChoice.CHOOSE) {
       if (!defenderAssignment.defenderNationalId) {
@@ -126,7 +146,7 @@ export class CaseService {
         )
       }
 
-      const chosenLawyer = await this.lawyersService.getLawyer(
+      chosenLawyer = await this.lawyersService.getLawyer(
         defenderAssignment.defenderNationalId,
       )
 
@@ -135,20 +155,21 @@ export class CaseService {
           'Selected lawyer was not found in the lawyer registry',
         )
       }
-
-      defenderChoice = {
-        ...defenderChoice,
-        ...{
-          defenderName: chosenLawyer.Name,
-          defenderEmail: chosenLawyer.Email,
-          defenderPhoneNumber: chosenLawyer.Phone,
-        },
-      }
     }
 
-    await this.patchSubpoenaInfo(defendantNationalId, caseId, defenderChoice)
-
+    const defenderChoice = {
+      defenderChoice: defenderAssignment.defenderChoice,
+      defenderNationalId: defenderAssignment.defenderNationalId,
+      defenderName: chosenLawyer?.Name,
+      defenderEmail: chosenLawyer?.Email,
+      defenderPhoneNumber: chosenLawyer?.Phone,
+      requestedDefenderChoice: defenderAssignment.defenderChoice,
+      requestedDefenderNationalId: defenderAssignment.defenderNationalId,
+      requestedDefenderName: chosenLawyer?.Name,
+    }
+    await this.patchDefenseInfo(defendantNationalId, caseId, defenderChoice)
     const updatedCase = await this.fetchCase(caseId, defendantNationalId)
+
     return SubpoenaResponse.fromInternalCaseResponse(
       updatedCase,
       defendantNationalId,
@@ -230,10 +251,60 @@ export class CaseService {
     }
   }
 
-  private async patchSubpoenaInfo(
+  private async fetchServiceStatus(
+    caseId: string,
+    subpoenaId: string,
+  ): Promise<InternalCaseResponse> {
+    try {
+      const res = await fetch(
+        `${this.config.backendUrl}/api/internal/case/${caseId}/subpoenaStatus/${subpoenaId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.secretToken}`,
+          },
+        },
+      )
+
+      if (!res.ok) {
+        if (res.status === 404) {
+          throw new NotFoundException(`Case ${caseId} not found`)
+        }
+
+        const reason = await res.text()
+
+        throw new BadGatewayException(
+          reason ||
+            'Unexpected error occurred while fetching serviceStatus by subpoenaID',
+        )
+      }
+
+      const caseData = await res.json()
+
+      return caseData
+    } catch (reason) {
+      if (
+        reason instanceof BadGatewayException ||
+        reason instanceof NotFoundException
+      ) {
+        throw reason
+      }
+
+      throw new BadGatewayException(
+        `Failed to fetch serviceStatus by subpoenaId: ${reason.message}`,
+      )
+    }
+  }
+
+  private async patchDefenseInfo(
     defendantNationalId: string,
     caseId: string,
-    defenderChoice: UpdateSubpoenaDto,
+    defenderChoice: {
+      requestedDefenderChoice: DefenderChoice
+      requestedDefenderNationalId: string | undefined
+      requestedDefenderName?: string
+    },
   ): Promise<InternalDefendantResponse> {
     try {
       const response = await fetch(

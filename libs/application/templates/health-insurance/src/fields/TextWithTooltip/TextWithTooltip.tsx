@@ -1,36 +1,38 @@
-import React, { FC } from 'react'
-import { formatText } from '@island.is/application/core'
+import { formatText, formatTextWithLocale } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as styles from './TextWithTooltip.css'
+import { Locale } from '@island.is/shared/types'
 
 export interface Props extends FieldBaseProps {
   title?: string
   description?: string
 }
 
-const TextWithTooltip: FC<React.PropsWithChildren<Props>> = ({
+export const TextWithTooltip = ({
   application,
   field,
   title = '',
   description = '',
-}) => {
-  const { formatMessage } = useLocale()
+}: Props) => {
+  const { formatMessage, lang: locale } = useLocale()
 
   return (
     <Box paddingTop={2} className={styles.marginFix}>
       <Text as="span">
-        {formatText(
+        {formatTextWithLocale(
           field.title ? field.title : title,
           application,
+          locale as Locale,
           formatMessage,
         )}{' '}
         <Tooltip
           placement="top"
-          text={formatText(
+          text={formatTextWithLocale(
             field.description ? field.description : description,
             application,
+            locale as Locale,
             formatMessage,
           )}
         />
@@ -38,5 +40,3 @@ const TextWithTooltip: FC<React.PropsWithChildren<Props>> = ({
     </Box>
   )
 }
-
-export default TextWithTooltip

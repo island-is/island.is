@@ -23,6 +23,7 @@ import {
 import { helpers } from '../../../../support/locator-helpers'
 import { session } from '../../../../support/session'
 import { setupXroadMocks } from './setup-xroad.mocks'
+import { createMockPdf, deleteMockPdf } from '../../../../support/utils'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -323,6 +324,19 @@ test.describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.attachmentScreen.title),
       }),
     ).toBeVisible()
+
+    // Upload additional document
+    createMockPdf()
+    const fileChooserPromise = page.waitForEvent('filechooser')
+    await page
+      .getByRole('button', {
+        name: label(parentalLeaveFormMessages.fileUpload.attachmentButton),
+      })
+      .click()
+    const filechooser = await fileChooserPromise
+    await filechooser.setFiles('./mockPdf.pdf')
+    await page.waitForTimeout(1000)
+    deleteMockPdf()
     await proceed()
 
     // These are your rights

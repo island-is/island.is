@@ -1,5 +1,5 @@
 import archiver from 'archiver'
-import { Includeable, Op, OrderItem } from 'sequelize'
+import { Includeable, Op } from 'sequelize'
 import { Writable } from 'stream'
 
 import {
@@ -20,24 +20,27 @@ import {
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
+  CaseNotificationType,
   CaseState,
-  DateType,
-  EventType,
-  NotificationType,
-  StringType,
+  dateTypes,
+  eventTypes,
+  stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
-import { CivilClaimant, Defendant, DefendantService } from '../defendant'
-import { EventLog } from '../event-log'
 import {
-  CaseFile,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
-} from '../file'
+  CivilClaimant,
+  CivilClaimantService,
+  Defendant,
+  DefendantService,
+} from '../defendant'
+import { EventLog } from '../event-log'
+import { CaseFile, defenderCaseFileCategoriesForRequestCases } from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
+import { Subpoena } from '../subpoena'
 import { User } from '../user'
 import { Case } from './models/case.model'
 import { CaseString } from './models/caseString.model'
@@ -116,10 +119,6 @@ export interface LimitedAccessUpdateCase
     | 'appealRulingDecision'
   > {}
 
-const eventTypes = Object.values(EventType)
-const dateTypes = Object.values(DateType)
-const stringTypes = Object.values(StringType)
-
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
@@ -170,9 +169,36 @@ export const include: Includeable[] = [
   },
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },
-  { model: Defendant, as: 'defendants' },
-  { model: IndictmentCount, as: 'indictmentCounts' },
-  { model: CivilClaimant, as: 'civilClaimants' },
+  {
+    model: Defendant,
+    as: 'defendants',
+    required: false,
+    order: [['created', 'ASC']],
+    include: [
+      {
+        model: Subpoena,
+        as: 'subpoenas',
+        required: false,
+        order: [['created', 'DESC']],
+        separate: true,
+      },
+    ],
+    separate: true,
+  },
+  {
+    model: CivilClaimant,
+    as: 'civilClaimants',
+    required: false,
+    order: [['created', 'ASC']],
+    separate: true,
+  },
+  {
+    model: IndictmentCount,
+    as: 'indictmentCounts',
+    required: false,
+    order: [['created', 'ASC']],
+    separate: true,
+  },
   {
     model: CaseFile,
     as: 'caseFiles',
@@ -200,12 +226,13 @@ export const include: Includeable[] = [
         CaseFileCategory.CIVIL_CLAIM,
       ],
     },
+    separate: true,
   },
   {
     model: EventLog,
     as: 'eventLogs',
     required: false,
-    where: { eventType: { [Op.in]: eventTypes } },
+    where: { eventType: eventTypes },
     order: [['created', 'DESC']],
     separate: true,
   },
@@ -213,13 +240,16 @@ export const include: Includeable[] = [
     model: DateLog,
     as: 'dateLogs',
     required: false,
-    where: { dateType: { [Op.in]: dateTypes } },
+    where: { dateType: dateTypes },
+    order: [['created', 'DESC']],
+    separate: true,
   },
   {
     model: CaseString,
     as: 'caseStrings',
     required: false,
-    where: { stringType: { [Op.in]: stringTypes } },
+    where: { stringType: stringTypes },
+    separate: true,
   },
   { model: Case, as: 'mergeCase', attributes },
   {
@@ -254,18 +284,12 @@ export const include: Includeable[] = [
   },
 ]
 
-export const order: OrderItem[] = [
-  [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
-  [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
-  [{ model: CivilClaimant, as: 'civilClaimants' }, 'created', 'ASC'],
-  [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
-]
-
 @Injectable()
 export class LimitedAccessCaseService {
   constructor(
     private readonly messageService: MessageService,
     private readonly defendantService: DefendantService,
+    private readonly civilClaimantService: CivilClaimantService,
     private readonly pdfService: PdfService,
     private readonly awsS3Service: AwsS3Service,
     @InjectModel(Case) private readonly caseModel: typeof Case,
@@ -276,7 +300,6 @@ export class LimitedAccessCaseService {
     const theCase = await this.caseModel.findOne({
       attributes,
       include,
-      order,
       where: {
         id: caseId,
         state: { [Op.not]: CaseState.DELETED },
@@ -296,6 +319,23 @@ export class LimitedAccessCaseService {
     update: LimitedAccessUpdateCase,
     user: TUser,
   ): Promise<Case> {
+    if (update.accusedPostponedAppealDate) {
+      const relevantInfo = {
+        appealState: theCase.appealState,
+        accusedAppealDecision: theCase.accusedAppealDecision,
+        accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
+        prosecutorAppealDecision: theCase.prosecutorAppealDecision,
+        prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
+        update: update,
+      }
+
+      this.logger.info(
+        `Updating accusedPostponedAppealDate in limited access case service for case ${
+          theCase.id
+        }. Relevant info: ${JSON.stringify(relevantInfo)}`,
+      )
+    }
+
     const [numberOfAffectedRows] = await this.caseModel.update(
       { ...update },
       { where: { id: theCase.id } },
@@ -340,7 +380,7 @@ export class LimitedAccessCaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_TO_COURT_OF_APPEALS },
+        body: { type: CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS },
       })
     }
 
@@ -349,7 +389,7 @@ export class LimitedAccessCaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_WITHDRAWN },
+        body: { type: CaseNotificationType.APPEAL_WITHDRAWN },
       })
     }
 
@@ -364,7 +404,7 @@ export class LimitedAccessCaseService {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
-        body: { type: NotificationType.APPEAL_STATEMENT },
+        body: { type: CaseNotificationType.APPEAL_STATEMENT },
       })
     }
 
@@ -410,6 +450,7 @@ export class LimitedAccessCaseService {
       })
       .then((theCase) => {
         if (theCase) {
+          // The national id is associated with a defender in a request case
           return this.constructDefender(
             nationalId,
             theCase.defenderName,
@@ -422,6 +463,7 @@ export class LimitedAccessCaseService {
           .findLatestDefendantByDefenderNationalId(nationalId)
           .then((defendant) => {
             if (defendant) {
+              // The national id is associated with a defender in an indictment case
               return this.constructDefender(
                 nationalId,
                 defendant.defenderName,
@@ -430,7 +472,21 @@ export class LimitedAccessCaseService {
               )
             }
 
-            throw new NotFoundException('Defender not found')
+            return this.civilClaimantService
+              .findLatestClaimantBySpokespersonNationalId(nationalId)
+              .then((civilClaimant) => {
+                if (civilClaimant) {
+                  // The national id is associated with a spokesperson for a civil claimant in an indictment case
+                  return this.constructDefender(
+                    nationalId,
+                    civilClaimant.spokespersonName,
+                    civilClaimant.spokespersonPhoneNumber,
+                    civilClaimant.spokespersonEmail,
+                  )
+                }
+
+                throw new NotFoundException('Defender not found')
+              })
           })
       })
   }
@@ -473,9 +529,7 @@ export class LimitedAccessCaseService {
         (file) =>
           file.key &&
           file.category &&
-          defenderCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
-            file.category,
-          ),
+          defenderCaseFileCategoriesForRequestCases.includes(file.category),
       ) ?? []
 
     // TODO: speed this up by fetching all files in parallel

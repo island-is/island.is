@@ -176,7 +176,7 @@ export const en: TranslatedMessages = {
   'home.onboardingModule.card2':
     'The app’s purpose is to provide faster access to your documents, applications, and other dealings with governmental institutions.',
   'home.onboardingModule.card3':
-    'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at',
+    'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at island@island.is',
   'home.onboardingModule.card4':
     'We encourage our users to read Digital Iceland’s privacy policy on',
   'home.vehicleModule.summary':
@@ -207,13 +207,14 @@ export const en: TranslatedMessages = {
   'inbox.emptyListTitle': 'There are currently no documents',
   'inbox.emptyListDescription':
     'When you receive electronic documents from the government, they will appear here.',
-
   'inbox.markAllAsReadPromptTitle': 'Do you want to mark all as read?',
   'inbox.markAllAsReadPromptDescription': 'This action cannot be undone',
   'inbox.markAllAsReadPromptCancel': 'Cancel',
   'inbox.markAllAsReadPromptConfirm': 'Mark all as read',
   'inbox.cardNoInboxDocuments':
     'When you receive mail in your mailbox, it will appear here.',
+  'inbox.urgent': 'Urgent',
+  'inbox.openDocument': 'Open document',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Filter documents',
@@ -258,6 +259,13 @@ export const en: TranslatedMessages = {
     'At the moment it is not possible to add driving licenses to the phone.',
   'walletPass.moreInfo': 'More information',
   'walletPass.alertClose': 'Cancel',
+  'walletPass.errorCannotAddPasses':
+    'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
+  'walletPass.errorAddingOrFetching': 'Failed to fetch or add pass.',
+  'walletPass.errorNotPossibleOnThisDevice':
+    'You cannot add passes on this device.',
+  'walletPass.errorNotConnectedNoBarcode':
+    'Not possible to scan barcode if the device is not connected to the internet.',
 
   // wallet passport
   'walletPassport.screenTitle': 'Passport',
@@ -344,7 +352,8 @@ export const en: TranslatedMessages = {
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
   'profile.finance': 'Finance',
-  'profile.airDiscount': 'Air discount scheme',
+  'profile.airDiscount': 'Air discount',
+  'profile.health': 'Health',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
@@ -592,8 +601,62 @@ export const en: TranslatedMessages = {
     'You are opening Island.is in a browser. Do you want to create a passkey to sign in automatically with the app?',
   'passkeys.headingSubtitle':
     'Do you want to create a passkey to sign in automatically with the app?',
+  'passkeys.settings':
+    'In settings it is always possible to delete or add a passkey',
+  'passkeys.furtherInformation': 'More about passkeys',
   'passkeys.createButton': 'Create a passkey',
   'passkeys.skipButton': 'Skip',
   'passkeys.errorRegistering': 'Error',
   'passkeys.errorRegisteringMessage': 'Could not create a passkey',
+
+  // update app
+  'updateApp.title': 'Update app',
+  'updateApp.description':
+    'You are about to use an old version of the Island.is app. Please update the app to be able to continue.',
+  'updateApp.button': 'Update',
+  'updateApp.buttonSkip': 'Skip',
+
+  // health - overview
+  'health.overview.screenTitle': 'Health',
+  'health.overview.title': 'My health',
+  'health.overview.description':
+    'Here you can find your health data, health center and health insurance.',
+  'health.overview.healthCenter': 'Health center',
+  'health.overview.noHealthCenterRegistered': 'No health center registered',
+  'health.overview.physician': 'Physician',
+  'health.overview.noPhysicianRegistered': 'No doctor registered',
+  'health.overview.statusOfRights': 'Status of rights',
+  'health.overview.insuredFrom': 'Insured from',
+  'health.overview.status': 'Status',
+  'health.overview.notInsured': 'You do not have health insurance',
+  'health.overview.coPayments': 'Co-payment',
+  'health.overview.maxMonthlyPayment': 'Max monthly payment',
+  'health.overview.paymentLimit': 'Payment Limit',
+  'health.overview.paymentCredit': 'Credit',
+  'health.overview.paymentDebt': 'Debt',
+  'health.overview.therapy': 'Therapy',
+  'health.overview.vaccinations': 'Vaccinations',
+  'health.overview.aidsAndNutrition': 'Aids and nutrition',
+  'health.overview.medicinePurchase': 'Medicine purchase',
+  'health.overview.period': 'Period',
+  'health.overview.levelStatus': 'Medicine step',
+  'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
+  'health.overview.medicinePurchaseNoActivePeriodWarning':
+    'A new payment period begins with the next medicine purchase',
+
+  // health - vaccinations
+  'health.vaccinations.screenTitle': 'Vaccinations',
+  'health.vaccinations.title': 'Vaccinations',
+  'health.vaccinations.description':
+    'Here you can see a list of vaccines you have received, vaccination status and other information.',
+  'health.vaccinations.generalVaccinations': 'General vaccinations',
+  'health.vaccinations.otherVaccinations': 'Other vaccinations',
+  'health.vaccinations.number': 'No.',
+  'health.vaccinations.date': 'Date',
+  'health.vaccinations.age': 'Age',
+  'health.vaccinations.vaccine': 'Vaccine',
+  'health.vaccinations.noVaccinations': 'No vaccinations recorded',
+  'health.vaccinations.noVaccinationsDescription':
+    'If you believe you have data that should appear here, please contact service provider.',
+  'health.vaccinations.directorateOfHealth': 'The directorate of Health',
 }

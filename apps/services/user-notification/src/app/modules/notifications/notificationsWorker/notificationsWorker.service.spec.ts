@@ -159,10 +159,6 @@ describe('NotificationsWorkerService', () => {
     )
   })
 
-  afterAll(async () => {
-    await app.close()
-  })
-
   afterEach(async () => {
     await truncate(sequelize)
   })
@@ -240,7 +236,7 @@ describe('NotificationsWorkerService', () => {
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         nationalId: userWithDelegations.nationalId,
-        notificationId: recipientMessage.id,
+        notificationId: recipientMessage?.id,
       }),
     )
 
@@ -372,21 +368,23 @@ describe('NotificationsWorkerService', () => {
   })
 
   it('should not send email or push notification if we are outside working hours (8 AM - 11 PM) ', async () => {
-    // set time to be outside of working hours
     jest.setSystemTime(outsideWorkingHours)
 
+    // First message will be handled since the receiveMessages call is waiting (wait time is max 20s and returns when a message is ready)
+    // This ensures that the next message is added after time is set outside working hours
+    await addToQueue(userWithNoDelegations.nationalId)
     await addToQueue(userWithNoDelegations.nationalId)
 
-    expect(emailService.sendEmail).not.toHaveBeenCalled()
-    expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
+    expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
+    expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
 
     // reset time to inside working hour
     jest.advanceTimersByTime(workingHoursDelta)
     // give worker some time to process message
     await wait(2)
 
-    expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
-    expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
+    expect(emailService.sendEmail).toHaveBeenCalledTimes(2)
+    expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(2)
   }, 10_000)
 
   it('should not send email or push notification if no profile is found for recipient', async () => {

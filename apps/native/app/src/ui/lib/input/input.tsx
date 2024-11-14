@@ -4,18 +4,24 @@ import { Image, TouchableOpacity, View } from 'react-native'
 import styled from 'styled-components/native'
 import CopyIcon from '../../assets/icons/copy.png'
 import { dynamicColor } from '../../utils'
-import { font } from '../../utils/font'
 import { Skeleton } from '../skeleton/skeleton'
-const Host = styled.SafeAreaView<{ noBorder: boolean; borderDark?: boolean }>`
+import { Typography } from '../typography/typography'
+import { Label } from '@ui'
+
+const Host = styled.SafeAreaView<{
+  noBorder: boolean
+  darkBorder?: boolean
+  background?: boolean
+}>`
   flex: 1;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
   border-bottom-color: ${dynamicColor(
-    ({ theme, noBorder, borderDark }) => ({
+    ({ theme, noBorder, darkBorder }) => ({
       light: noBorder
         ? 'transparent'
-        : borderDark
-        ? theme.color.blue200
-        : theme.color.blue100,
+        : darkBorder
+        ? theme.color.blueberry200
+        : theme.color.blue200,
       dark: noBorder ? 'transparent' : theme.shades.dark.shade200,
     }),
     true,
@@ -30,20 +36,13 @@ const Content = styled.View<{ isCompact: boolean }>`
     theme.spacing[isCompact ? 1 : 3]}px;
 `
 
-const Label = styled.Text`
+const LabelText = styled(Typography)`
   margin-bottom: ${({ theme }) => theme.spacing[1]}px;
-
-  ${font({
-    fontSize: 13,
-    lineHeight: 17,
-  })}
 `
 
-const Value = styled.Text<{ size?: 'normal' | 'big' }>`
-  ${font({
-    fontSize: ({ size }) => (size === 'big' ? 20 : 16),
-    fontWeight: '600',
-  })}
+const WarningMessage = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+  flex-direction: row;
 `
 
 interface InputProps {
@@ -55,8 +54,9 @@ interface InputProps {
   noBorder?: boolean
   size?: 'normal' | 'big'
   isCompact?: boolean
-  borderDark?: boolean
+  darkBorder?: boolean
   copy?: boolean
+  warningText?: string
 }
 
 export function Input({
@@ -68,16 +68,17 @@ export function Input({
   noBorder = false,
   size = 'normal',
   isCompact = false,
-  borderDark = false,
+  darkBorder = false,
   copy = false,
+  warningText = '',
 }: InputProps) {
   const tvalue =
     value !== undefined && typeof value === 'string' && value.trim()
 
   return (
-    <Host noBorder={noBorder} borderDark={borderDark}>
+    <Host noBorder={noBorder} darkBorder={darkBorder}>
       <Content isCompact={isCompact}>
-        <Label>{label}</Label>
+        <LabelText variant="body3">{label}</LabelText>
         {loading || error ? (
           <Skeleton
             active={loading}
@@ -85,23 +86,36 @@ export function Input({
             height={size === 'big' ? 26 : undefined}
           />
         ) : (
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Value testID={valueTestID} selectable size={size}>
-              {tvalue === '' || !value ? '-' : value}
-            </Value>
-            {copy && (
-              <TouchableOpacity
-                onPress={() => Clipboard.setString(value ?? '')}
-                style={{ marginLeft: 4 }}
+          <>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Typography
+                testID={valueTestID}
+                selectable
+                variant={size === 'normal' ? 'heading5' : 'heading3'}
               >
-                <Image
-                  source={CopyIcon}
-                  style={{ width: 24, height: 24 }}
-                  resizeMode="contain"
-                />
-              </TouchableOpacity>
+                {tvalue === '' || !value ? '-' : value}
+              </Typography>
+              {copy && (
+                <TouchableOpacity
+                  onPress={() => Clipboard.setString(value ?? '')}
+                  style={{ marginLeft: 4 }}
+                >
+                  <Image
+                    source={CopyIcon}
+                    style={{ width: 24, height: 24 }}
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+            {warningText && (
+              <WarningMessage>
+                <Label color="warning" icon>
+                  {warningText}
+                </Label>
+              </WarningMessage>
             )}
-          </View>
+          </>
         )}
       </Content>
     </Host>

@@ -23,13 +23,19 @@ import {
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  ServiceStatus,
+} from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
+import { Subpoena, SubpoenaService } from '../subpoena'
+import { UpdateSubpoenaDto } from '../subpoena/dto/updateSubpoena.dto'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -122,6 +128,18 @@ export class PoliceService {
     skjol: z.optional(z.array(this.policeCaseFileStructure)),
     malseinings: z.optional(z.array(this.crimeSceneStructure)),
   })
+  private subpoenaStructure = z.object({
+    acknowledged: z.boolean().nullish(),
+    comment: z.string().nullish(),
+    defenderChoice: z.string().nullish(),
+    defenderNationalId: z.string().nullish(),
+    prosecutedConfirmedSubpoenaThroughIslandis: z.boolean().nullish(),
+    servedBy: z.string().nullish(),
+    servedAt: z.string().nullish(),
+    delivered: z.boolean().nullish(),
+    deliveredOnPaper: z.boolean().nullish(),
+    deliveredToLawyer: z.boolean().nullish(),
+  })
 
   constructor(
     @Inject(policeModuleConfig.KEY)
@@ -130,6 +148,8 @@ export class PoliceService {
     private readonly eventService: EventService,
     @Inject(forwardRef(() => AwsS3Service))
     private readonly awsS3Service: AwsS3Service,
+    @Inject(forwardRef(() => SubpoenaService))
+    private readonly subpoenaService: SubpoenaService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.xRoadPath = createXRoadAPIPath(
@@ -311,6 +331,91 @@ export class PoliceService {
         throw new BadGatewayException({
           ...reason,
           message: `Failed to get police case files for case ${caseId}`,
+          detail: reason.message,
+        })
+      })
+  }
+
+  async getSubpoenaStatus(subpoenaId: string, user?: User): Promise<Subpoena> {
+    return this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/GetSubpoenaStatus?id=${subpoenaId}`,
+    )
+      .then(async (res: Response) => {
+        if (res.ok) {
+          const response: z.infer<typeof this.subpoenaStructure> =
+            await res.json()
+
+          this.subpoenaStructure.parse(response)
+
+          const subpoenaToUpdate = await this.subpoenaService.findBySubpoenaId(
+            subpoenaId,
+          )
+
+          const serviceStatus = response.deliveredToLawyer
+            ? ServiceStatus.DEFENDER
+            : response.prosecutedConfirmedSubpoenaThroughIslandis
+            ? ServiceStatus.ELECTRONICALLY
+            : response.deliveredOnPaper || response.delivered === true
+            ? ServiceStatus.IN_PERSON
+            : response.acknowledged === false && response.delivered === false
+            ? ServiceStatus.FAILED
+            : // TODO: handle expired
+              undefined
+
+          if (serviceStatus === undefined) {
+            return subpoenaToUpdate
+          }
+
+          const updatedSubpoena = await this.subpoenaService.update(
+            subpoenaToUpdate,
+            {
+              comment: response.comment ?? undefined,
+              servedBy: response.servedBy ?? undefined,
+              defenderNationalId: response.defenderNationalId ?? undefined,
+              serviceDate: response.servedAt ?? undefined,
+              serviceStatus,
+            } as UpdateSubpoenaDto,
+          )
+
+          return updatedSubpoena
+        }
+
+        const reason = await res.text()
+
+        // The police system does not provide a structured error response.
+        // When a subpoena does not exist, a stack trace is returned.
+        throw new NotFoundException({
+          message: `Subpoena with id ${subpoenaId} does not exist`,
+          detail: reason,
+        })
+      })
+      .catch((reason) => {
+        if (reason instanceof NotFoundException) {
+          throw reason
+        }
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case does not exist
+          throw new NotFoundException({
+            ...reason,
+            message: `Subpoena ${subpoenaId} does not exist`,
+            detail: reason.message,
+          })
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to get subpoena',
+          {
+            subpoenaId,
+            actor: user?.name || 'Digital-mailbox',
+            institution: user?.institution?.name,
+          },
+          reason,
+        )
+
+        throw new BadGatewayException({
+          ...reason,
+          message: `Failed to get subpoena ${subpoenaId}`,
           detail: reason.message,
         })
       })
@@ -514,6 +619,7 @@ export class PoliceService {
     workingCase: Case,
     defendant: Defendant,
     subpoena: string,
+    indictment: string,
     user: User,
   ): Promise<CreateSubpoenaResponse> {
     const { courtCaseNumber, dateLogs, prosecutor, policeCaseNumbers, court } =
@@ -542,7 +648,7 @@ export class PoliceService {
           agent: this.agent,
           body: JSON.stringify({
             documentName: documentName,
-            documentBase64: subpoena,
+            documentsBase64: [subpoena, indictment],
             courtRegistrationDate: arraignmentInfo?.date,
             prosecutorSsn: prosecutor?.nationalId,
             prosecutedSsn: normalizedNationalId,
@@ -552,16 +658,17 @@ export class PoliceService {
             lokeCaseNumber: policeCaseNumbers?.[0],
             courtCaseNumber: courtCaseNumber,
             fileTypeCode: 'BRTNG',
+            rvgCaseId: workingCase.id,
           }),
         } as RequestInit,
       )
 
-      if (!res.ok) {
-        throw await res.json()
+      if (res.ok) {
+        const subpoenaResponse = await res.json()
+        return { subpoenaId: subpoenaResponse.id }
       }
 
-      const subpoenaId = await res.json()
-      return { subpoenaId }
+      throw await res.text()
     } catch (error) {
       this.logger.error(`Failed create subpoena for case ${workingCase.id}`, {
         error,
@@ -571,7 +678,7 @@ export class PoliceService {
         'Failed to create subpoena',
         {
           caseId: workingCase.id,
-          defendantId: defendant?.nationalId,
+          defendantId: defendant?.id,
           actor,
         },
         error,

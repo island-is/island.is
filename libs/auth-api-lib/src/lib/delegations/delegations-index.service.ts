@@ -1,11 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import startOfDay from 'date-fns/startOfDay'
-import * as kennitala from 'kennitala'
 import union from 'lodash/union'
 import { Op } from 'sequelize'
+import * as kennitala from 'kennitala'
 
-import { User } from '@island.is/auth-nest-tools'
+import { Auth, User } from '@island.is/auth-nest-tools'
+import { AuditService } from '@island.is/nest/audit'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
@@ -38,6 +39,8 @@ import {
   validateDelegationTypeAndProvider,
   validateToAndFromNationalId,
 } from './utils/delegations'
+import { getXBirthday } from './utils/getXBirthday'
+import { isUnderXAge } from './utils/isUnderXAge'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
@@ -78,27 +81,6 @@ type FetchDelegationRecordsArgs = {
   scope: ApiScope
   nationalId: string
   direction: DelegationDirection
-}
-
-const getTimeUntilEighteen = (nationalId: string) => {
-  const birthDate = kennitala.info(nationalId).birthday
-
-  if (!birthDate) {
-    return null
-  }
-
-  const now = startOfDay(new Date())
-  const eighteen = startOfDay(
-    new Date(
-      birthDate.getFullYear() + 18,
-      birthDate.getMonth(),
-      birthDate.getDate(),
-    ),
-  )
-
-  const timeUntilEighteen = eighteen.getTime() - now.getTime()
-
-  return timeUntilEighteen > 0 ? new Date(timeUntilEighteen) : null
 }
 
 const validateCrudParams = (delegation: DelegationRecordInputDTO) => {
@@ -170,6 +152,9 @@ export class DelegationsIndexService {
     private delegationsIncomingWardService: DelegationsIncomingWardService,
     private personalRepresentativeScopePermissionService: PersonalRepresentativeScopePermissionService,
     private userIdentitiesService: UserIdentitiesService,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+    private auditService: AuditService,
   ) {}
 
   /* Lookup delegations in index for user for specific scope */
@@ -258,7 +243,7 @@ export class DelegationsIndexService {
       this.getWardDelegations(user),
     ]).then((d) => d.flat())
 
-    await this.saveToIndex(user.nationalId, delegations)
+    await this.saveToIndex(user.nationalId, delegations, user)
 
     // set next reindex to one week in the future
     await this.delegationIndexMetaModel.update(
@@ -275,49 +260,95 @@ export class DelegationsIndexService {
   }
 
   /* Index incoming custom delegations */
-  async indexCustomDelegations(nationalId: string) {
+  async indexCustomDelegations(nationalId: string, auth: Auth) {
     const delegations = await this.getCustomDelegations(nationalId, true)
-    await this.saveToIndex(nationalId, delegations)
+    await this.saveToIndex(nationalId, delegations, auth)
   }
 
   /* Index incoming general mandate delegations */
-  async indexGeneralMandateDelegations(nationalId: string) {
+  async indexGeneralMandateDelegations(nationalId: string, auth: Auth) {
     const delegations = await this.getGeneralMandateDelegation(nationalId, true)
-    await this.saveToIndex(nationalId, delegations)
+    await this.saveToIndex(nationalId, delegations, auth)
   }
 
   /* Index incoming personal representative delegations */
-  async indexRepresentativeDelegations(nationalId: string) {
+  async indexRepresentativeDelegations(nationalId: string, auth: Auth) {
     const delegations = await this.getRepresentativeDelegations(
       nationalId,
       true,
     )
-    await this.saveToIndex(nationalId, delegations)
+    await this.saveToIndex(nationalId, delegations, auth)
   }
 
   /* Add item to index */
-  async createOrUpdateDelegationRecord(delegation: DelegationRecordInputDTO) {
+  async createOrUpdateDelegationRecord(
+    delegation: DelegationRecordInputDTO,
+    auth: Auth,
+  ) {
     validateCrudParams(delegation)
 
-    const [updatedDelegation] = await this.delegationIndexModel.upsert(
-      delegation,
+    // legal guardian delegations have a validTo date
+    if (delegation.type === AuthDelegationType.LegalGuardian) {
+      // ensure delegation only exists if child is under 18
+      if (!delegation.validTo) {
+        delegation.validTo = getXBirthday(18, delegation.fromNationalId)
+      }
+
+      // create additional delegation for children under 16
+      const isMinor = isUnderXAge(16, delegation.fromNationalId)
+      if (isMinor) {
+        await this.delegationIndexModel.upsert({
+          ...delegation,
+          type: AuthDelegationType.LegalGuardianMinor,
+          validTo: getXBirthday(16, delegation.fromNationalId),
+        })
+      }
+    }
+
+    const [updatedDelegation] = await this.auditService.auditPromise(
+      {
+        auth,
+        action: 'create-or-update-delegation-record',
+        namespace: '@island.is/auth/delegation-index',
+        resources: delegation.toNationalId,
+        alsoLog: true,
+        meta: {
+          delegation,
+        },
+      },
+      this.delegationIndexModel.upsert(delegation),
     )
 
     return updatedDelegation.toDTO()
   }
 
   /* Delete record from index */
-  async removeDelegationRecord(delegation: DelegationRecordInputDTO) {
+  async removeDelegationRecord(
+    delegation: DelegationRecordInputDTO,
+    auth: Auth,
+  ) {
     validateCrudParams(delegation)
 
-    await this.delegationIndexModel.destroy({
-      where: {
-        fromNationalId: delegation.fromNationalId,
-        toNationalId: delegation.toNationalId,
-        provider: delegation.provider,
-        type: delegation.type,
+    await this.auditService.auditPromise(
+      {
+        auth,
+        action: 'remove-delegation-record',
+        namespace: '@island.is/auth/delegation-index',
+        resources: delegation.toNationalId,
+        alsoLog: true,
+        meta: {
+          delegation,
+        },
       },
-    })
+      this.delegationIndexModel.destroy({
+        where: {
+          fromNationalId: delegation.fromNationalId,
+          toNationalId: delegation.toNationalId,
+          provider: delegation.provider,
+          type: delegation.type,
+        },
+      }),
+    )
   }
 
   async getAvailableDistrictCommissionersRegistryRecords(
@@ -338,7 +369,7 @@ export class DelegationsIndexService {
       }
     }
 
-    return await this.delegationIndexModel
+    return this.delegationIndexModel
       .findAll({
         where: {
           toNationalId: user.nationalId,
@@ -356,11 +387,17 @@ export class DelegationsIndexService {
   private async saveToIndex(
     nationalId: string,
     delegations: DelegationIndexInfo[],
+    // Some entrypoints to indexing do not have a user auth object or have a 3rd party user
+    // so we take the auth separately from the subject nationalId
+    auth: Auth,
   ) {
+    const types = Array.from(new Set(delegations.map((d) => d.type)))
+
     const currRecords = await this.delegationIndexModel.findAll({
       where: {
         toNationalId: nationalId,
         provider: INDEXED_DELEGATION_PROVIDERS,
+        type: types,
       },
     })
 
@@ -375,7 +412,7 @@ export class DelegationsIndexService {
       currRecords,
     })
 
-    await Promise.all([
+    const indexingPromises = await Promise.allSettled([
       this.delegationIndexModel.bulkCreate(created),
       updated.map((d) =>
         this.delegationIndexModel.update(d, {
@@ -398,6 +435,28 @@ export class DelegationsIndexService {
         }),
       ),
     ])
+
+    // log any errors
+    indexingPromises.forEach((p) => {
+      if (p.status === 'rejected') {
+        console.error(p.reason)
+      }
+    })
+
+    // saveToIndex is used by multiple entry points, when indexing so this
+    // is the common place to audit updates in the index.
+    this.auditService.audit({
+      auth,
+      action: 'save-to-index',
+      namespace: '@island.is/auth/delegation-index',
+      alsoLog: true,
+      resources: nationalId,
+      meta: {
+        created,
+        updated,
+        deleted,
+      },
+    })
   }
 
   private sortDelegation({
@@ -411,6 +470,7 @@ export class DelegationsIndexService {
       (acc, curr) => {
         const existing = currRecords.find(
           (d) =>
+            d.toNationalId === curr.toNationalId &&
             d.fromNationalId === curr.fromNationalId &&
             d.type === curr.type &&
             d.provider === curr.provider,
@@ -571,10 +631,13 @@ export class DelegationsIndexService {
           .map((delegation) =>
             toDelegationIndexInfo({
               ...delegation,
-              validTo: getTimeUntilEighteen(delegation.fromNationalId), // validTo is the date the child turns 18
+              validTo:
+                delegation.type === AuthDelegationType.LegalGuardian
+                  ? getXBirthday(18, delegation.fromNationalId) // validTo is the date the child turns 18 for legal guardian delegations
+                  : getXBirthday(16, delegation.fromNationalId), // validTo is the date the child turns 16 for legal guardian minor delegations
             }),
           )
-          .filter((d) => d.validTo !== null), // if child has already turned 18, we don't want to index the delegation
+          .filter((d) => d.validTo !== null), // if child has already turned 18/16, we don't want to index the delegation
     )
   }
 

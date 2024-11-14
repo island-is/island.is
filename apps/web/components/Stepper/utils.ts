@@ -45,6 +45,7 @@ interface StepOptionCMS {
   labelEN: string
   transition: string
   optionSlug: string
+  linksToDisplayInHistory?: { label?: string; href?: string }[]
 }
 
 interface StepOptionsFromSourceTransitionCMS {
@@ -71,6 +72,7 @@ interface StepOption {
   label: string
   transition: string
   value: string
+  linksToDisplayInHistory?: StepOptionCMS['linksToDisplayInHistory']
 }
 
 interface StateMeta {
@@ -88,7 +90,7 @@ const getStepBySlug = (stepper: Stepper, slug: string): Step | undefined => {
 // The following code discards the state node ID keys and merges the meta data, as
 // demonstrated in the documentation, see https://xstate.js.org/docs/guides/states.html#state-meta-data
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mergeMeta(meta: any) {
+const mergeMeta = (meta: any) => {
   return Object.keys(meta).reduce((acc, key) => {
     const value = meta[key]
 
@@ -190,12 +192,15 @@ const validateStepperConfig = (stepper: Stepper) => {
   return errors
 }
 
-const validateStepConfig = (step: Step) => {
+const validateStepConfig = (step: Step | undefined) => {
   const errors: Set<string> = new Set<string>()
 
-  if (resolveStepType(step) === STEP_TYPES.ANSWER) return errors
+  const stepType = resolveStepType(step)
 
-  if (!step.config) {
+  if (stepType === STEP_TYPES.ANSWER || stepType === STEP_TYPES.INFORMATION)
+    return errors
+
+  if (!step?.config) {
     errors.add('Missing config!')
     return errors
   }
@@ -261,6 +266,7 @@ const getStepperMachine = (stepper: Stepper): StepperMachine => {
 const STEP_TYPES = {
   QUESTION_RADIO: 'question-radio',
   QUESTION_DROPDOWN: 'question-dropdown',
+  INFORMATION: 'information',
   ANSWER: 'answer',
 }
 
@@ -284,11 +290,15 @@ const resolveStepType = (step: Step | undefined): string => {
   if (step.stepType && step.stepType.toLowerCase().includes('answer')) {
     return STEP_TYPES.ANSWER
   }
+  if (step.stepType && step.stepType.toLowerCase().includes('information')) {
+    return STEP_TYPES.INFORMATION
+  }
+
   return ''
 }
 
 const getStepOptions = (
-  step: Step,
+  step: Step | undefined,
   lang = 'en',
   optionsFromNamespace: {
     slug: string
@@ -372,6 +382,7 @@ const getStepOptions = (
       label: label,
       transition: o.transition,
       value: o.optionSlug,
+      linksToDisplayInHistory: o.linksToDisplayInHistory,
     }
   })
 }
@@ -391,6 +402,7 @@ const stepContainsQuestion = (step: Step) => {
     step.subtitle &&
     step.subtitle.length > 0 &&
     step.stepType !== STEP_TYPES.ANSWER &&
+    step.stepType !== STEP_TYPES.INFORMATION &&
     step.subtitle[0].__typename === 'Html' &&
     step.subtitle[0].document.content.length > 0 &&
     step.subtitle[0].document.content[0].content &&
@@ -398,7 +410,10 @@ const stepContainsQuestion = (step: Step) => {
   )
 }
 
-const getStepQuestion = (step: Step): string => {
+const getStepQuestion = (step?: Step): string => {
+  if (!step) {
+    return ''
+  }
   if (stepContainsQuestion(step) && step.subtitle?.[0].__typename === 'Html') {
     return step.subtitle[0].document.content[0].content[0].value
   }

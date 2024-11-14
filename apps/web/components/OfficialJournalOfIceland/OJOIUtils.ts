@@ -17,7 +17,9 @@ export const splitArrayIntoGroups = <T>(array: Array<T>, groupSize: number) => {
   )
 }
 
-export const removeEmptyFromObject = (obj: Record<string, string>) => {
+export const removeEmptyFromObject = (
+  obj: Record<string, string | number | Date | undefined>,
+) => {
   return Object.entries(obj)
     .filter(([_, v]) => !!v)
     .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {})
@@ -79,10 +81,41 @@ export const sortCategories = (cats: EntityOption[]) => {
   })
 }
 
-export const formatDate = (date: string, df = 'dd.MM.yyyy') => {
+export const formatDate = (date?: string, df = 'dd.MM.yyyy') => {
+  if (!date) {
+    return '-'
+  }
   try {
     return format(new Date(date), df, { locale: is })
   } catch (e) {
     throw new Error(`Could not format date: ${date}`)
   }
+}
+
+export const getStringArrayFromQueryString = (
+  value?: string | string[],
+): string[] => {
+  if (!value) {
+    return []
+  }
+
+  if (Array.isArray(value)) {
+    return value
+  }
+
+  return value.split(',')
+}
+
+export const getStringFromQueryString = (
+  value?: string | string[],
+): string | undefined => {
+  if (!value) {
+    return undefined
+  }
+
+  if (Array.isArray(value)) {
+    return value[0]
+  }
+
+  return value
 }

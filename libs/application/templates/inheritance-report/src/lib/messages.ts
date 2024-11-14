@@ -425,7 +425,7 @@ export const m = defineMessages({
     description: '',
   },
   realEstateDescriptionPrePaid: {
-    id: 'ir.application:realEstateDescriptionPrePaid',
+    id: 'ir.application:realEstateDescriptionPrePaid#markdown',
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
     description: '',
   },
@@ -1349,8 +1349,9 @@ export const m = defineMessages({
     description: '',
   },
   heirsDescriptionPrePaid: {
-    id: 'ir.application:heirsDescriptionPrePaid',
-    defaultMessage: 'Lorem ipsum lorem ipsum',
+    id: 'ir.application:heirsDescriptionPrePaid#markdown',
+    defaultMessage:
+      'Vinsamlegast skráðu upplýsingar um þá erfingja sem eiga að taka við fyrirframgreiddum arfi.',
     description: '',
   },
   heirsAndPartition: {
@@ -1471,6 +1472,11 @@ export const m = defineMessages({
   },
   inheritanceAdvocateLabel: {
     id: 'ir.application:inheritanceAdvocateLabel',
+    defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
+    description: 'Custody label',
+  },
+  inheritanceAdvocateLabelPrePaid: {
+    id: 'ir.application:inheritanceAdvocateLabelPrePaid',
     defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
     description: 'Custody label',
   },
@@ -1734,6 +1740,18 @@ export const m = defineMessages({
     id: 'ir.application:doneDescriptionPrepaidEFS#markdown',
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet urna nec nunc ultricies ultricies.',
+    description: '',
+  },
+  bottomButtonMessagePrepaidEFS: {
+    id: 'ir.application:bottomButtonMessagePrepaidEFS',
+    defaultMessage:
+      'Inni á Mínum síðum og í Ísland.is appinu hefur þú aðgang að þínum upplýsingum og Stafrænu pósthólfi.',
+    description: '',
+  },
+  bottomButtonMessageEFS: {
+    id: 'ir.application:bottomButtonMessageEFS',
+    defaultMessage:
+      'Inni á Mínum síðum og í Ísland.is appinu hefur þú aðgang að þínum upplýsingum og Stafrænu pósthólfi.',
     description: '',
   },
   errorRelation: {

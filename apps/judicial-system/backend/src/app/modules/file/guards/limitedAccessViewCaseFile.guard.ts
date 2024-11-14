@@ -10,7 +10,7 @@ import { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
 import { CaseFile } from '../models/file.model'
-import { canLimitedAcccessUserViewCaseFile } from './caseFileCategory'
+import { canLimitedAccessUserViewCaseFile } from './caseFileCategory'
 
 @Injectable()
 export class LimitedAccessViewCaseFileGuard implements CanActivate {
@@ -35,12 +35,18 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case file')
     }
 
+    // If the user is accessing a case file from a merged case,
+    // then the parent case is used for access control
+    const accessControlCase: Case = request.mergedCaseParent ?? theCase
+
     if (
-      canLimitedAcccessUserViewCaseFile(
+      canLimitedAccessUserViewCaseFile(
         user,
-        theCase.type,
-        theCase.state,
+        accessControlCase.type,
+        accessControlCase.state,
         caseFile.category,
+        accessControlCase.defendants,
+        accessControlCase.civilClaimants,
       )
     ) {
       return true

@@ -12,6 +12,7 @@ export const InputFields = {
   },
   [Routes.ADVERT]: {
     departmentId: 'advert.departmentId',
+    typeName: 'advert.typeName',
     typeId: 'advert.typeId',
     title: 'advert.title',
     html: 'advert.html',
@@ -19,6 +20,8 @@ export const InputFields = {
     categories: 'advert.categories',
     channels: 'advert.channels',
     message: 'advert.message',
+    involvedPartyId: 'advert.involvedPartyId',
+    additions: 'advert.additions',
   },
   [Routes.SIGNATURE]: {
     regular: 'signatures.regular',

@@ -13,15 +13,18 @@ import {
   DefendantModule,
   EventModule,
   InstitutionModule,
+  SubpoenaModule,
   UserModule,
 } from '../index'
 import { Notification } from './models/notification.model'
+import { CaseNotificationService } from './caseNotification.service'
+import { DefendantNotificationService } from './defendantNotification.service'
 import { InstitutionNotificationService } from './institutionNotification.service'
 import { InternalNotificationController } from './internalNotification.controller'
-import { InternalNotificationService } from './internalNotification.service'
 import { NotificationController } from './notification.controller'
 import { NotificationService } from './notification.service'
 import { NotificationDispatchService } from './notificationDispatch.service'
+import { SubpoenaNotificationService } from './subpoenaNotification.service'
 
 @Module({
   imports: [
@@ -31,6 +34,7 @@ import { NotificationDispatchService } from './notificationDispatch.service'
     MessageModule,
     InstitutionModule,
     UserModule,
+    forwardRef(() => SubpoenaModule),
     forwardRef(() => CaseModule),
     forwardRef(() => CourtModule),
     forwardRef(() => EventModule),
@@ -40,9 +44,11 @@ import { NotificationDispatchService } from './notificationDispatch.service'
   controllers: [NotificationController, InternalNotificationController],
   providers: [
     NotificationService,
-    InternalNotificationService,
+    CaseNotificationService,
     NotificationDispatchService,
     InstitutionNotificationService,
+    SubpoenaNotificationService,
+    DefendantNotificationService,
   ],
 })
 export class NotificationModule {}

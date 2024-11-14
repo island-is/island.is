@@ -86,11 +86,20 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       SYSLUMENN_HOST: {
         dev: 'https://api.syslumenn.is/staging',
         staging: 'https://api.syslumenn.is/staging',
-        prod: 'https://api.syslumenn.is',
+        prod: 'https://api.syslumenn.is/api',
       },
       SYSLUMENN_TIMEOUT: '3000',
+      ZENDESK_CONTACT_FORM_SUBDOMAIN: {
+        prod: 'digitaliceland',
+        staging: 'digitaliceland',
+        dev: 'digitaliceland',
+      },
     })
     .secrets({
+      ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
+      ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN',
+      ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE:
+        '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE',
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
       NOVA_URL: '/k8s/services-auth/NOVA_URL',
@@ -122,6 +131,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       min: 2,
       max: 15,
     })
+    .grantNamespaces('nginx-ingress-external', 'user-notification')
 }
 
 const cleanupId = 'services-auth-ids-api-cleanup'

@@ -1,0 +1,79 @@
+query GetHealthInsuranceOverview {
+  rightsPortalInsuranceOverview {
+    isInsured
+    explanation
+    from
+    status {
+      display
+      code
+    }
+    maximumPayment
+  }
+}
+
+query GetMedicineData {
+  rightsPortalDrugPeriods {
+    id
+    dateFrom
+    dateTo
+    active
+    paidAmount
+    paymentStatus
+    numberOfBills
+    levelNumber
+    levelPercentage
+  }
+}
+
+query GetHealthCenter($input: RightsPortalHealthCenterHistoryInput) {
+  rightsPortalHealthCenterRegistrationHistory(input: $input) {
+    current {
+      healthCenterName
+      doctor
+    }
+  }
+}
+
+query GetPaymentOverview($input: RightsPortalPaymentOverviewInput!) {
+  rightsPortalPaymentOverview(input: $input) {
+    items {
+      credit
+      debt
+    }
+  }
+}
+
+query GetPaymentStatus {
+  rightsPortalCopaymentStatus {
+    maximumPayment
+    maximumMonthlyPayment
+  }
+}
+
+query GetVaccinations($locale: String) {
+  healthDirectorateVaccinations(locale: $locale) {
+    vaccinations {
+      id
+      name
+      description
+      isFeatured
+      status
+      statusName
+      statusColor
+      lastVaccinationDate
+      vaccinationsInfo {
+        id
+        name
+        date
+        age {
+          years
+          months
+        }
+        url
+        comment
+        rejected
+      }
+      comments
+    }
+  }
+}

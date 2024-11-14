@@ -14,7 +14,6 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { environment } from '../environments/environment'
-import { CacheInvalidationService } from './cache-invalidation.service'
 
 type SyncStatus = {
   running?: boolean
@@ -28,7 +27,6 @@ export class IndexingService {
   constructor(
     private readonly elasticService: ElasticService,
     private readonly cmsSyncService: CmsSyncService,
-    private readonly cacheInvalidationService: CacheInvalidationService,
   ) {
     // add importer service to this array to make it import
     this.importers = [this.cmsSyncService]
@@ -61,17 +59,47 @@ export class IndexingService {
       })
 
       let nextPageToken: string | undefined = undefined
-      let initialFetch = true
       let postSyncOptions: SyncResponse['postSyncOptions']
 
       const isIncrementalUpdate = syncType === 'fromLast'
 
+      // Fetch initial page specifically in case importing is skipped (no need to wait for a new sync token if we don't need it)
+      {
+        const importerResponse = await importer.doSync({
+          ...options,
+          elasticIndex,
+          nextPageToken,
+          folderHash: postSyncOptions?.folderHash,
+        })
+
+        // importers can skip import by returning null
+        if (!importerResponse) {
+          didImportAll = false
+          return true
+        }
+
+        const {
+          nextPageToken: importerResponseNextPageToken,
+          postSyncOptions: importerResponsePostSyncOptions,
+          ...elasticData
+        } = importerResponse
+        await this.elasticService.bulk(
+          elasticIndex,
+          elasticData,
+          isIncrementalUpdate,
+        )
+
+        nextPageToken = importerResponseNextPageToken
+        postSyncOptions = importerResponsePostSyncOptions
+      }
+
       const [nextSyncToken] = await Promise.all([
         importer.getNextSyncToken?.(syncType),
         (async () => {
-          while (initialFetch || nextPageToken) {
+          while (nextPageToken) {
             const importerResponse = await importer.doSync({
               ...options,
+              elasticIndex,
               nextPageToken,
               folderHash: postSyncOptions?.folderHash,
             })
@@ -93,26 +121,19 @@ export class IndexingService {
               isIncrementalUpdate,
             )
 
-            // Invalidate cached pages in the background if we are performing an incremental update
-            if (isIncrementalUpdate) {
-              this.cacheInvalidationService.invalidateCache(
-                elasticData.add,
-                options.locale,
-              )
-            }
-
             nextPageToken = importerResponseNextPageToken
             postSyncOptions = importerResponsePostSyncOptions
-            initialFetch = false
           }
         })(),
       ])
 
-      if (nextSyncToken) {
-        postSyncOptions = { ...postSyncOptions, token: nextSyncToken }
-      }
-
       if (postSyncOptions && importer.postSync) {
+        if (nextSyncToken) {
+          postSyncOptions = {
+            ...postSyncOptions,
+            token: nextSyncToken,
+          }
+        }
         logger.info('Importer started post sync', {
           importer: importer.constructor.name,
           index: elasticIndex,

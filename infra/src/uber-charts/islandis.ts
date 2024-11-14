@@ -10,10 +10,15 @@ import {
 } from '../../../apps/application-system/api/infra/application-system-api'
 import { serviceSetup as appSystemFormSetup } from '../../../apps/application-system/form/infra/application-system-form'
 
+// Portals
 import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
-import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
+import { serviceSetup as servicePortalSetup } from '../../../apps/portals/my-pages/infra/portals-my-pages'
 
 import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/infra/portals-admin'
+
+// Bff's
+import { serviceSetup as bffAdminPortalServiceSetup } from '../../../apps/services/bff/infra/admin-portal.infra'
+
 import { serviceSetup as consultationPortalSetup } from '../../../apps/consultation-portal/infra/samradsgatt'
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
 
@@ -71,11 +76,16 @@ const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 const documentsService = serviceDocumentsSetup()
 const servicePortalApi = servicePortalApiSetup()
 
+const userNotificationService = userNotificationServiceSetup({
+  userProfileApi: servicePortalApi,
+})
+
 const appSystemApi = appSystemApiSetup({
   documentsService,
   servicesEndorsementApi: endorsement,
   skilavottordWs,
   servicePortalApi,
+  userNotificationService,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
@@ -96,10 +106,6 @@ const authAdminApi = authAdminApiSetup()
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
-const userNotificationService = userNotificationServiceSetup({
-  userProfileApi: servicePortalApi,
-})
-
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
@@ -113,13 +119,15 @@ const api = apiSetup({
   universityGatewayApi: universityGatewayService,
   userNotificationService,
 })
+
 const servicePortal = servicePortalSetup({ graphql: api })
-const appSystemForm = appSystemFormSetup({ api: api })
-const web = webSetup({ api: api })
+const bffAdminPortalService = bffAdminPortalServiceSetup({ api })
+const appSystemForm = appSystemFormSetup({ api })
+const web = webSetup({ api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
 const contentfulApps = contentfulAppsSetup()
-const consultationPortal = consultationPortalSetup({ api: api })
+const consultationPortal = consultationPortalSetup({ api })
 
 const xroadCollector = xroadCollectorSetup()
 
@@ -177,6 +185,7 @@ export const Services: EnvironmentServices = {
     universityGatewayWorker,
     contentfulApps,
     contentfulEntryTagger,
+    bffAdminPortalService,
   ],
   staging: [
     appSystemApi,
@@ -210,6 +219,7 @@ export const Services: EnvironmentServices = {
     sessionsCleanupWorker,
     universityGatewayService,
     universityGatewayWorker,
+    bffAdminPortalService,
   ],
   dev: [
     appSystemApi,
@@ -248,6 +258,7 @@ export const Services: EnvironmentServices = {
     contentfulApps,
     universityGatewayService,
     universityGatewayWorker,
+    bffAdminPortalService,
   ],
 }
 

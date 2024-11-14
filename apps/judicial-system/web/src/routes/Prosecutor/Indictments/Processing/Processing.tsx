@@ -10,7 +10,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { isTrafficViolationCase } from '@island.is/judicial-system/types'
+import {
+  AdvocateType,
+  isTrafficViolationCase,
+} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -112,9 +115,7 @@ const Processing: FC = () => {
     civilClaimantNationalIdUpdate?.nationalId,
   )
 
-  const stepIsValid =
-    isProcessingStepValidIndictments(workingCase) &&
-    nationalIdNotFound === false
+  const stepIsValid = isProcessingStepValidIndictments(workingCase)
 
   const handleUpdateDefendant = useCallback(
     (updatedDefendant: UpdateDefendantInput) => {
@@ -598,8 +599,8 @@ const Processing: FC = () => {
                           clientId={civilClaimant.id}
                           advocateType={
                             civilClaimant.spokespersonIsLawyer
-                              ? 'defender'
-                              : 'legal_rights_protector'
+                              ? AdvocateType.LAWYER
+                              : AdvocateType.LEGAL_RIGHTS_PROTECTOR
                           }
                           disabled={
                             civilClaimant.spokespersonIsLawyer === null ||

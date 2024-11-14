@@ -558,6 +558,11 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
     defaultMessage: 'Númer má ekki vera tómt',
     description: 'Invalid general asset number error message',
   },
+  errorNoDateOfBirthProvided: {
+    id: 'aod.application:error.errorNoDateOfBirthProvided',
+    defaultMessage: 'Fæðingardagur þarf að vera fylltur út',
+    description: 'Date of birth is required',
+  },
 
   /* Announcement */
   announcementTitle: {

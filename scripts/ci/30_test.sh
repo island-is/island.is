@@ -25,13 +25,12 @@ else
   IS_FLAKY_TEST=false
 fi
 
-
 projects_uncollectible_coverage=(
   "application-templates-no-debt-certificate"
   "api-domains-email-signup"
   "skilavottord-web"
   "shared-babel"
-  "service-portal-core"
+  "portals-my-pages-core"
 )
 # shellcheck disable=SC2076
 if [[ ! " ${projects_uncollectible_coverage[*]} " =~ " ${APP} " ]]; then
@@ -48,7 +47,7 @@ export DD_CIVISIBILITY_AGENTLESS_ENABLED \
 
 FLAKY_TEST_RETRIES=$(if [[ "$IS_FLAKY_TEST" == true ]]; then echo "$FLAKY_TEST_RETRIES"; else echo 1; fi)
 
-for ((i=1; i<=FLAKY_TEST_RETRIES; i++)); do
+for ((i = 1; i <= FLAKY_TEST_RETRIES; i++)); do
   echo "Running test ${APP} (attempt: ${i}/${FLAKY_TEST_RETRIES})"
   if yarn run test "${APP}" ${EXTRA_OPTS} --verbose --no-watchman "$@"; then
     exit 0

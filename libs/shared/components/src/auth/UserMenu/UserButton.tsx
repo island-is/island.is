@@ -1,19 +1,17 @@
-import React from 'react'
 import {
+  Box,
   Button,
   Hidden,
   Inline,
   UserAvatar,
-  Box,
 } from '@island.is/island-ui/core'
-import { User } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { userMessages } from '@island.is/shared/translations'
-import * as styles from './UserMenu.css'
 import { checkDelegation } from '@island.is/shared/utils'
+import * as styles from './UserMenu.css'
 
 interface UserButtonProps {
-  user: User
   small: boolean
   onClick(): void
   iconOnlyMobile?: boolean
@@ -22,11 +20,11 @@ interface UserButtonProps {
 
 export const UserButton = ({
   onClick,
-  user,
   small,
   iconOnlyMobile = false,
   userMenuOpen,
 }: UserButtonProps) => {
+  const user = useUserInfo()
   const isDelegation = checkDelegation(user)
   const { profile } = user
   const { formatMessage } = useLocale()
@@ -77,7 +75,9 @@ export const UserButton = ({
             {isDelegation ? (
               <>
                 <div className={styles.delegationName}>{profile.name}</div>
-                <div className={styles.actorName}>{profile.actor!.name}</div>
+                {profile?.actor?.name && (
+                  <div className={styles.actorName}>{profile.actor.name}</div>
+                )}
               </>
             ) : (
               profile.name
