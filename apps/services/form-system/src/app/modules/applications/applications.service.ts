@@ -14,6 +14,7 @@ import { Value } from '../values/models/value.model'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { CreateApplicationDto } from './models/dto/createApplication.dto'
+import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 // import { BaseValueType } from '../../dataTypes/valueTypes/baseValueType.interface'
 // import { TextboxValue } from '../../dataTypes/valueTypes/models/textbox.valuetype'
 
@@ -73,6 +74,21 @@ export class ApplicationsService {
   //   const value = new ValueClass(order)
   //   return value
   // }
+
+  async update(
+    id: string,
+    updateApplicationDto: UpdateApplicationDto,
+  ): Promise<void> {
+    const application = await this.applicationModel.findByPk(id)
+
+    if (!application) {
+      throw new NotFoundException(`Application with id '${id}' not found`)
+    }
+
+    application.dependencies = updateApplicationDto.dependencies
+
+    await application.save()
+  }
 
   async getApplication(applicationId: string): Promise<ApplicationDto> {
     const application = await this.applicationModel.findByPk(applicationId)
