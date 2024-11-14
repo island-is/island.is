@@ -1,8 +1,14 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-import { EventType, UserRole } from '@island.is/judicial-system/types'
+import {
+  DefendantEventType,
+  EventType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 registerEnumType(EventType, { name: 'EventType' })
+registerEnumType(DefendantEventType, { name: 'DefendantEventType' })
+
 @ObjectType()
 export class EventLog {
   @Field(() => ID)

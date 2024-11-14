@@ -1,0 +1,5 @@
+mutation AddToEventLog($input: EventLogInput!) {
+  addToEventLog(input: $input) {
+    success
+  }
+}

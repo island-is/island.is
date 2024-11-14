@@ -17,9 +17,11 @@ import type { User } from '@island.is/judicial-system/types'
 import { BackendService } from '../backend'
 import { CreateDefendantInput } from './dto/createDefendant.input'
 import { DeleteDefendantInput } from './dto/deleteDefendant.input'
+import { EventLogInput } from './dto/eventLog.input'
 import { UpdateDefendantInput } from './dto/updateDefendant.input'
 import { Defendant } from './models/defendant.model'
 import { DeleteDefendantResponse } from './models/delete.response'
+import { EventLogResponse } from './models/eventLog.response'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
@@ -83,6 +85,27 @@ export class DefendantResolver {
       user.id,
       AuditedAction.UPDATE_DEFENDANT,
       backendService.deleteDefendant(caseId, defendantId),
+      defendantId,
+    )
+  }
+
+  @Mutation(() => EventLogResponse, { nullable: true })
+  addToEventLog(
+    @Args('input', { type: () => EventLogInput })
+    input: EventLogInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<EventLogResponse> {
+    const { caseId, defendantId, eventType } = input
+    this.logger.debug(
+      `Adding event ${eventType} for defendant ${defendantId} of case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.ADD_TO_DEFENDANT_EVENT_LOG,
+      backendService.addToDefendantEventLog(caseId, defendantId, eventType),
       defendantId,
     )
   }

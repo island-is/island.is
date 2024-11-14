@@ -34,11 +34,15 @@ import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { Defendant } from './models/defendant.model'
 import { DeliverResponse } from './models/deliver.response'
+import { DefendantEventLog } from './models/eventLog.model'
+import { EventLogResponse } from './models/eventLog.response'
 
 @Injectable()
 export class DefendantService {
   constructor(
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
+    @InjectModel(DefendantEventLog)
+    private readonly defendantEventLogModel: typeof DefendantEventLog,
     private readonly courtService: CourtService,
     private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -391,6 +395,30 @@ export class DefendantService {
         this.logger.error('Failed to update case with defendant', { reason })
 
         return { delivered: false }
+      })
+  }
+
+  async addToEventLog(
+    caseId: string,
+    defendantId: string,
+    eventType: string,
+  ): Promise<EventLogResponse> {
+    return this.defendantEventLogModel
+      .create({
+        caseId,
+        defendantId,
+        eventType,
+      })
+      .then(() => {
+        return { success: true }
+      })
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to add event ${eventType} for defendant ${defendantId} of case ${caseId}`,
+          { reason },
+        )
+
+        return { success: false }
       })
   }
 }

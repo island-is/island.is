@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 
 import { Box, InputFileUpload } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
+import { DefendantEventType } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
@@ -17,7 +18,6 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { EventType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
 
@@ -35,7 +35,7 @@ const SendToPrisonAdmin: FC = () => {
   const router = useRouter()
   const { defendantId } = useParams<{ caseId: string; defendantId: string }>()
   const { createEventLog } = useEventLog()
-  const { updateDefendant } = useDefendants()
+  const { updateDefendant, addToEventLog } = useDefendants()
 
   const defendant = workingCase.defendants?.find(
     (defendant) => defendant.id === defendantId,
@@ -60,10 +60,10 @@ const SendToPrisonAdmin: FC = () => {
       isSentToPrisonAdmin: true,
     })
 
-    await createEventLog.action({
+    await addToEventLog({
       caseId: workingCase.id,
-      eventType: EventType.INDICTMENT_SENT_TO_FMST,
-      nationalId: defendant?.nationalId,
+      defendantId: defendant.id,
+      eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
     })
 
     router.push(

@@ -36,6 +36,7 @@ import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { Defendant } from './models/defendant.model'
 import { DeleteDefendantResponse } from './models/delete.response'
+import { EventLogResponse } from './models/eventLog.response'
 import { DefendantService } from './defendant.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -127,5 +128,27 @@ export class DefendantController {
     )
 
     return { deleted }
+  }
+
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
+  @RolesRules(publicProsecutorStaffRule)
+  @Post(':defendantId/event-log/:eventType')
+  @ApiOkResponse({ description: 'Adds to defendant event log' })
+  async addToEventLog(
+    @Param('eventType') eventType: string,
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+  ): Promise<EventLogResponse> {
+    this.logger.debug(
+      `Adding event ${eventType} for defendant ${defendantId} of case ${caseId}`,
+    )
+
+    return await this.defendantService.addToEventLog(
+      theCase.id,
+      defendantId,
+      eventType,
+    )
   }
 }

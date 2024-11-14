@@ -21,6 +21,7 @@ import {
   DeleteCivilClaimantResponse,
   DeleteDefendantResponse,
 } from '../defendant'
+import { EventLogResponse } from '../defendant/models/eventLog.response'
 import { CreateEventLogInput } from '../event-log'
 import {
   CaseFile,
@@ -348,6 +349,16 @@ export class BackendService extends DataSource<{ req: Request }> {
     defendantId: string,
   ): Promise<DeleteDefendantResponse> {
     return this.delete(`case/${caseId}/defendant/${defendantId}`)
+  }
+
+  addToDefendantEventLog(
+    caseId: string,
+    defendantId: string,
+    eventType: string,
+  ): Promise<EventLogResponse> {
+    return this.post(
+      `case/${caseId}/defendant/${defendantId}/event-log/${eventType}`,
+    )
   }
 
   createCivilClaimant(

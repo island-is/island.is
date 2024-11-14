@@ -7,6 +7,7 @@ import { CaseModule } from '../case/case.module'
 import { CourtModule } from '../court/court.module'
 import { CivilClaimant } from './models/civilClaimant.model'
 import { Defendant } from './models/defendant.model'
+import { DefendantEventLog } from './models/eventLog.model'
 import { CivilClaimantController } from './civilClaimant.controller'
 import { CivilClaimantService } from './civilClaimant.service'
 import { DefendantController } from './defendant.controller'
@@ -18,7 +19,7 @@ import { InternalDefendantController } from './internalDefendant.controller'
     MessageModule,
     forwardRef(() => CourtModule),
     forwardRef(() => CaseModule),
-    SequelizeModule.forFeature([Defendant, CivilClaimant]),
+    SequelizeModule.forFeature([Defendant, CivilClaimant, DefendantEventLog]),
   ],
   controllers: [
     DefendantController,

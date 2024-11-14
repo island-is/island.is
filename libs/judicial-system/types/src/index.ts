@@ -20,7 +20,7 @@ export {
   DefendantNotificationType,
 } from './lib/notification'
 export type { Institution } from './lib/institution'
-export { EventType } from './lib/eventLog'
+export { EventType, DefendantEventType } from './lib/eventLog'
 export { DateType } from './lib/dateLog'
 export { StringType } from './lib/caseString'
 
