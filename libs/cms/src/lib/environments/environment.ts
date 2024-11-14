@@ -54,7 +54,6 @@ export default {
     'menuLink',
     'menuLinkWithChildren',
     'menu',
-    'grant',
     'linkGroup',
     'districts',
     'featuredArticles',
