@@ -16,7 +16,7 @@ import { LicenseService } from '../licenseService.service'
 import { LicenseCollection } from '../dto/GenericLicenseCollection.dto'
 import { GenericUserLicense } from '../dto/GenericUserLicense.dto'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { ParsedUserAgent, UserAgent } from '@island.is/nest/core'
+import { ParsedUserAgent, type UserAgent } from '@island.is/nest/core'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal, ApiScope.licenses)
