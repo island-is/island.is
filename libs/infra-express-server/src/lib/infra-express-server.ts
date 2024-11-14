@@ -41,11 +41,11 @@ export const runServer = ({
     return next()
   })
 
-  app.get('/liveness', function liveness(req, res) {
+  app.get('/liveness', function liveness(_req, res) {
     res.json({ ok: true })
   })
 
-  app.get('/version', function versionOfCode(req, res) {
+  app.get('/version', function versionOfCode(_req, res) {
     res.json({ version: process.env.REVISION })
   })
 
@@ -56,7 +56,7 @@ export const runServer = ({
 
   // security middleware
   // we should implemente something along the lines of this https://auth0.com/docs/quickstart/backend/nodejs/01-authorization
-  app.use((req, res, next) => {
+  app.use((_req, _res, next) => {
     // we need to secure all routes by default. OAuth?
     next()
   })
@@ -66,9 +66,9 @@ export const runServer = ({
 
   app.use(function errorHandler(
     err: any, // eslint-disable-line  @typescript-eslint/no-explicit-any
-    req: Request,
+    _req: Request,
     res: Response,
-    next: NextFunction, // eslint-disable-line
+    _next: NextFunction, // eslint-disable-line
   ) {
     logger.error(`Status code: ${err.status}, msg: ${err.message}`)
     res.status(err.status || 500)
@@ -85,5 +85,15 @@ export const runServer = ({
     logger.info(`Listening on port ${servicePort}`)
   })
   server.on('error', logger.error)
+  process.on('SIGTERM', () => {
+    logger.info('Shutting down for SIGTERM')
+    server.close((error) => {
+      if (error) {
+        logger.error("Server wasn't even started", { name, error })
+      } else {
+        logger.info(`Webserver successfully shut down`, { name })
+      }
+    })
+  })
   return server
 }
