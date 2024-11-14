@@ -37,11 +37,7 @@ const PetitionsTable = (data: {
     <Box>
       <Box display="flex" justifyContent="spaceBetween" marginBottom={2}>
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
-        <Box>
-          {data.canEdit && (
-            <DropdownExport petitionId={data.listId} />
-          )}
-        </Box>
+        <Box>{data.canEdit && <DropdownExport petitionId={data.listId} />}</Box>
       </Box>
       <Stack space={3}>
         <T.Table>
