@@ -22,6 +22,8 @@ const headerComment = `#########################################################
 
 `
 
+const NON_EMPTYABLE_PROPERTIES = new Set(['SERVERSIDE_FEATURES_ON'])
+
 // Recursive function to filter out empty string properties
 const removeEmptyStringProperties = (obj: any): any => {
   if (typeof obj !== 'object' || obj === null) return obj
@@ -32,7 +34,9 @@ const removeEmptyStringProperties = (obj: any): any => {
 
   return Object.fromEntries(
     Object.entries(obj)
-      .filter(([_, value]) => value !== '') // Filter out empty strings
+      .filter(
+        ([key, value]) => value !== '' || NON_EMPTYABLE_PROPERTIES.has(key),
+      ) // Filter out empty strings
       .map(([key, value]) => [key, removeEmptyStringProperties(value)]), // Recursively apply to nested objects
   )
 }

@@ -20,6 +20,7 @@ service:
     ENVIRONMENT: 'staging'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=3686 -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -102,6 +103,7 @@ service:
       ENVIRONMENT: 'staging'
       NODE_OPTIONS: '--max-old-space-size=2048'
       S3_BUCKET: 'staging-es-custom-packages'
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
       CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'

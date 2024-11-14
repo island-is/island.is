@@ -32,6 +32,7 @@ service:
     PASSKEY_CORE_RP_NAME: 'Island.is'
     PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
     USER_PROFILE_CLIENT_SCOPE: '["@island.is/user-profile:read"]'
@@ -105,6 +106,7 @@ service:
       DB_NAME: 'servicesauth'
       DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
       DB_USER: 'servicesauth'
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
   namespace: 'identity-server'
