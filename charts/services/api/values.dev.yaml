@@ -59,6 +59,7 @@ service:
     NODE_OPTIONS: '--max-old-space-size=2880 -r dd-trace/init'
     REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
     SEND_FROM_EMAIL: 'development@island.is'
+    SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SESSIONS_API_URL: 'http://web-services-sessions.services-sessions.svc.cluster.local'
     SYSLUMENN_TIMEOUT: '40000'
