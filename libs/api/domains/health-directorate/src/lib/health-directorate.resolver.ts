@@ -28,7 +28,6 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@Scopes(ApiScope.internal)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver(() => OrganDonation)
 export class HealthDirectorateResolver {
@@ -39,6 +38,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateOrganDonation',
   })
   @Audit()
+  @Scopes(ApiScope.healthOrganDonation)
   @FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
   async getDonorStatus(
     @Args('locale', { type: () => String, nullable: true })
@@ -48,6 +48,7 @@ export class HealthDirectorateResolver {
     const data = await this.api.getDonorStatus(user, locale)
     return { donor: data, locale: locale }
   }
+
   @ResolveField('organList', () => [Organ], {
     nullable: true,
   })
@@ -63,6 +64,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateOrganDonationUpdateDonorStatus',
   })
   @Audit()
+  @Scopes(ApiScope.healthOrganDonation)
   @FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
   async updateDonorStatus(
     @Args('input') input: DonorInput,
@@ -78,6 +80,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateVaccinations',
   })
   @Audit()
+  @Scopes(ApiScope.healthVaccinations)
   @FeatureFlag(Features.servicePortalHealthVaccinationsPageEnabled)
   getVaccinations(
     @Args('locale', { type: () => String, nullable: true })
