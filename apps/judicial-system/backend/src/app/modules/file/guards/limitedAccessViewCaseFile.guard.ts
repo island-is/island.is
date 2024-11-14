@@ -35,14 +35,18 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case file')
     }
 
+    // If the user is accessing a case file from a merged case,
+    // then the parent case is used for access control
+    const accessControlCase: Case = request.mergedCaseParent ?? theCase
+
     if (
       canLimitedAccessUserViewCaseFile(
         user,
-        theCase.type,
-        theCase.state,
+        accessControlCase.type,
+        accessControlCase.state,
         caseFile.category,
-        theCase.defendants,
-        theCase.civilClaimants,
+        accessControlCase.defendants,
+        accessControlCase.civilClaimants,
       )
     ) {
       return true
