@@ -1,8 +1,7 @@
 {
   "name": "island.is",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
-  "forceRebuild": true,
   "engines": {
     "npm": "please-use-yarn",
     "node": "20.15.0",
