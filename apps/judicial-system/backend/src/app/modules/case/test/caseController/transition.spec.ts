@@ -31,7 +31,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { caseModuleConfig } from '../../case.config'
-import { include, order } from '../../case.service'
+import { include } from '../../case.service'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 import { Case } from '../../models/case.model'
 
@@ -282,7 +282,6 @@ describe('CaseController - Transition', () => {
             } else {
               expect(mockCaseModel.findOne).toHaveBeenCalledWith({
                 include,
-                order,
                 where: {
                   id: caseId,
                   isArchived: false,
@@ -541,7 +540,6 @@ describe('CaseController - Transition', () => {
           } else {
             expect(mockCaseModel.findOne).toHaveBeenCalledWith({
               include,
-              order,
               where: {
                 id: caseId,
                 isArchived: false,
