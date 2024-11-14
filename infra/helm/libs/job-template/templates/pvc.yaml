@@ -1,4 +1,4 @@
-{{- $labels := include "cronjob-template.labels" . -}}
+{{- $labels := include "job-template.labels" . -}}
 {{- $namespace := $.Values.namespace -}}
 {{- if .Values.enabled }}
 {{- range .Values.pvcs }}
