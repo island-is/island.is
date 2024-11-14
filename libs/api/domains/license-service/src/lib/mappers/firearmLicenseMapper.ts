@@ -36,6 +36,7 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
     if (!payload) return Promise.resolve([])
 
+    //App version before 1.4.7 doesn't know how to handle table
     const enableAppCompatibility = enableAppCompatibilityMode(
       userAgent?.app.version,
       APP_VERSION_CUTOFF,
