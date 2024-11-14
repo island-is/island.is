@@ -5,29 +5,18 @@ import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
 import { SectionTypes } from '../../enums/sectionTypes'
-// import { FormApplicantDto } from '../formApplicants/models/dto/formApplicant.dto'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Screen } from '../screens/models/screen.model'
-// import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
-// import { FieldSettings } from '../fieldSettings/models/fieldSettings.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
-// import { FieldTypeDto } from '../fields/models/dto/fieldType.dto'
 import { Field } from '../fields/models/field.model'
-// import { FieldType } from '../fields/models/fieldType.model'
-// import { ListTypeDto } from '../organizationListTypes/models/dto/listType.dto'
-// import { ListType } from '../organizationListTypes/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { Section } from '../sections/models/section.model'
-// import { FormCertificationDto } from '../formCertifications/models/dto/formCertification.dto'
-// import { Certification } from '../certifications/models/certification.model'
 import { CreateFormDto } from './models/dto/createForm.dto'
 import { FormDto } from './models/dto/form.dto'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
-import { createFormTranslations } from '../translations/form'
-import { createSectionTranslations } from '../translations/section'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { OrganizationCertificationType } from '../organizationCertificationTypes/models/organizationCertificationType.model'
 import {
@@ -54,8 +43,6 @@ import { ListType, ListTypes } from '../../dataTypes/listTypes/listType.model'
 import { OrganizationListType } from '../organizationListTypes/models/organizationListType.model'
 import { FormApplicantTypeDto } from '../formApplicantTypes/models/dto/formApplicantType.dto'
 import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
-// import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
-// import { ValueFactory } from '../../dataTypes/valueTypes/valueType.factory'
 
 @Injectable()
 export class FormsService {
@@ -67,7 +54,7 @@ export class FormsService {
     @InjectModel(Screen)
     private readonly screenModel: typeof Screen,
     @InjectModel(Organization)
-    private readonly organizationModel: typeof Organization, // @InjectModel(FieldType) // private readonly fieldTypeModel: typeof FieldType, // @InjectModel(ListType) // private readonly listTypeModel: typeof ListType, // private readonly fieldSettingsMapper: FieldSettingsMapper,
+    private readonly organizationModel: typeof Organization,
   ) {}
 
   async findAll(organizationId: string): Promise<FormResponseDto> {
@@ -261,34 +248,10 @@ export class FormsService {
       uncommonCertificationTypes,
     )
 
-    // const organization = await this.organizationModel.findByPk(organizationId, {
-    //   include: [OrganizationCertification],
-    // })
-
-    // const certificationTypes: CertificationType[] = []
-
-    // const keys = ['id', 'type', 'name', 'description']
-    // organization?.organizationCertifications?.map((orgCertification) => {
-    //   CertificationTypes.map((certification) => {
-    //     if (orgCertification.certificationId === certification.id) {
-    //       certificationTypes.push(
-    //         defaults(
-    //           pick(certification, keys),
-    //           zipObject(keys, Array(keys.length).fill(null)),
-    //         ) as FormCertificationDto,
-    //       )
-    //     }
-    //   })
-    // })
-
     return organizationCertificationTypes
   }
 
   private async getFieldTypes(organizationId: string): Promise<FieldType[]> {
-    // const commonFieldTypes = await this.fieldTypeModel.findAll({
-    //   where: { isCommon: true },
-    // })
-
     const commonFieldTypes = FieldTypes.filter(
       (fieldType) => fieldType.isCommon,
     )
@@ -320,25 +283,6 @@ export class FormsService {
         ])
     })
 
-    // const fieldTypesDto: FieldType[] = []
-    // const keys = ['id', 'type', 'name', 'description', 'isCommon']
-    // organizationFieldTypes.map((fieldType) => {
-    //   fieldTypesDto.push(
-    //     Object.assign(
-    //       defaults(
-    //         pick(fieldType, keys),
-    //         zipObject(keys, Array(keys.length).fill(null)),
-    //       ),
-    //       {
-    //         fieldSettings: FieldSettingsFactory.getClass(
-    //           fieldType.type,
-    //           new FieldSettings(),
-    //         ),
-    //       },
-    //     ) as FieldType,
-    //   )
-    // })
-
     return organizationFieldTypes
   }
 
@@ -356,29 +300,6 @@ export class FormsService {
     )
 
     const organizationListTypes = commonListTypes.concat(uncommonListTypes)
-
-    // const commonListTypes = await this.listTypeModel.findAll({
-    //   where: { isCommon: true },
-    // })
-    // const organizationSpecificListTypes = await this.organizationModel.findByPk(
-    //   organizationId,
-    //   { include: [ListType] },
-    // )
-
-    // const organizationListTypes = commonListTypes.concat(
-    //   organizationSpecificListTypes?.organizationListTypes as ListType[],
-    // )
-
-    // const listTypesDto: ListTypeDto[] = []
-    // const keys = ['id', 'type', 'name', 'description', 'isCommon']
-    // organizationListTypes.map((listType) => {
-    //   listTypesDto.push(
-    //     defaults(
-    //       pick(listType, keys),
-    //       zipObject(keys, Array(keys.length).fill(null)),
-    //     ) as ListTypeDto,
-    //   )
-    // })
 
     return organizationListTypes
   }
@@ -412,27 +333,6 @@ export class FormsService {
       },
     ) as FormDto
 
-    // const certificationTypes: CertificationType[] = []
-
-    // const keys = ['id', 'type', 'name', 'description']
-    // form?.formCertificationTypes?.map((formCertification) => {
-    //   CertificationTypes.map((certification) => {
-    //     if (formCertification.certificationTypeId === certification.id) {
-    //       certificationTypes.push(
-    //         defaults(
-    //           pick(
-    //             { ...certification, formCertificationId: formCertification.id },
-    //             keys,
-    //           ),
-    //           zipObject(keys, Array(keys.length).fill(null)),
-    //         ) as CertificationType,
-    //       )
-    //     }
-    //   })
-    // })
-
-    // formDto.certificationTypes = certificationTypes
-
     const certificationKeys = ['id', 'certificationTypeId']
     form.formCertificationTypes?.map((formCertification) => {
       formDto.certificationTypes?.push(
@@ -455,29 +355,6 @@ export class FormsService {
         ) as FormApplicantTypeDto,
       )
     })
-
-    // const formApplicantTypeDto: FormApplicantTypeDto = defaults(
-    //   pick(form.formApplicantTypes, applicantKeys),
-    //   zipObject(applicantKeys, Array(applicantKeys.length).fill(null)),
-    // ) as FormApplicantTypeDto
-
-    // form.formApplicantTypes?.map((formApplicant) => {
-    //   ApplicantTypes.map((applicant) => {
-    //     if (formApplicant.applicantTypeId === applicant.id) {
-    //       formDto.applicantTypes?.push(
-    //         defaults(
-    //           pick(
-    //             { ...applicant, formApplicantId: formApplicant.id },
-    //             applicantKeys,
-    //           ),
-    //           zipObject(applicantKeys, Array(applicantKeys.length).fill(null)),
-    //         ) as ApplicantType,
-    //       )
-    //     }
-    //   })
-    // })
-
-    // console.log(formDto.applicantTypes)
 
     const sectionKeys = [
       'id',
@@ -539,7 +416,6 @@ export class FormsService {
                   field.fieldType,
                   new FieldSettings(),
                 ),
-                // values: [this.createValue(field.fieldType, 0)],
               },
             ) as FieldDto,
           )
@@ -550,31 +426,25 @@ export class FormsService {
     return formDto
   }
 
-  // private createValue(type: string, order: number) {
-  //   const ValueClass = ValueFactory.getClass(type)
-  //   const value = new ValueClass(order)
-  //   return value
-  // }
-
   private async createFormTemplate(form: Form): Promise<void> {
     await this.sectionModel.bulkCreate([
       {
         formId: form.id,
         sectionType: SectionTypes.PREMISES,
         displayOrder: 0,
-        name: createFormTranslations.premise,
+        name: { is: 'Forsendur', en: 'Premises' },
       } as Section,
       {
         formId: form.id,
         sectionType: SectionTypes.PARTIES,
         displayOrder: 1,
-        name: createFormTranslations.parties,
+        name: { is: 'Hlutaðeigandi aðilar', en: 'Relevant parties' },
       } as Section,
       {
         formId: form.id,
         sectionType: SectionTypes.PAYMENT,
         displayOrder: 3,
-        name: createFormTranslations.payment,
+        name: { is: 'Greiðsla', en: 'Payment' },
       } as Section,
     ])
 
@@ -582,13 +452,13 @@ export class FormsService {
       formId: form.id,
       sectionType: SectionTypes.INPUT,
       displayOrder: 2,
-      name: createSectionTranslations.input,
+      name: { is: 'Kafli', en: 'Section' },
     } as Section)
 
     await this.screenModel.create({
       sectionId: inputSection.id,
       displayOrder: 0,
-      name: createFormTranslations.input,
+      name: { is: 'innsláttarsíða 1', en: 'Input screen 1' },
     } as Screen)
   }
 }

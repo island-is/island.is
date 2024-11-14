@@ -32,11 +32,6 @@ module.exports = {
             type: Sequelize.INTEGER,
             allowNull: false,
           },
-          // is_hidden: {
-          //   type: Sequelize.BOOLEAN,
-          //   allowNull: false,
-          //   defaultValue: false,
-          // },
           is_required: {
             type: Sequelize.BOOLEAN,
             allowNull: false,

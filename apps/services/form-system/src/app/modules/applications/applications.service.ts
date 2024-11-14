@@ -4,19 +4,15 @@ import { Application } from './models/application.model'
 import { ApplicationDto } from './models/dto/application.dto'
 import { Form } from '../forms/models/form.model'
 import { Section } from '../sections/models/section.model'
-// import { FieldSettings } from '../fieldSettings/models/fieldSettings.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { Field } from '../fields/models/field.model'
 import { Screen } from '../screens/models/screen.model'
 import { ApplicationMapper } from './models/application.mapper'
 import { Value } from '../values/models/value.model'
-// import { ValueFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { CreateApplicationDto } from './models/dto/createApplication.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
-// import { BaseValueType } from '../../dataTypes/valueTypes/baseValueType.interface'
-// import { TextboxValue } from '../../dataTypes/valueTypes/models/textbox.valuetype'
 
 @Injectable()
 export class ApplicationsService {
@@ -53,7 +49,6 @@ export class ApplicationsService {
             fieldId: field.id,
             applicationId: newApplication.id,
             json: this.createValue(field.fieldType),
-            // isHidden: field.isHidden,
           } as Value)
         })
       })
@@ -66,14 +61,8 @@ export class ApplicationsService {
 
   private createValue(type: string) {
     const value = ValueTypeFactory.getClass(type, new ValueType())
-    // const value = new ValueClass(order)
     return value
   }
-  // private createValue(type: string, order: number) {
-  //   const ValueClass = ValueFactory.getClass(type)
-  //   const value = new ValueClass(order)
-  //   return value
-  // }
 
   async update(
     id: string,
@@ -104,21 +93,10 @@ export class ApplicationsService {
       applicationId,
     )
 
-    // console.log(JSON.stringify(form, null, 2))
     const applicationDto = this.applicationMapper.mapFormToApplicationDto(
       form,
       application,
     )
-
-    // const j = await this.valueModel.findByPk(
-    //   '0c98264f-b460-483d-ab1e-4a8eb0d92072',
-    // )
-
-    // if (j) {
-    //   const k: BaseValueType = j.json as BaseValueType
-    //   const h: TextboxValue = k
-    //   console.log(h)
-    // }
 
     return applicationDto
   }
@@ -183,8 +161,6 @@ export class ApplicationsService {
         ],
       ],
     })
-
-    // console.log(JSON.stringify(form, null, 2))
 
     if (!form) {
       throw new NotFoundException(`Form with id '${formId}' not found`)

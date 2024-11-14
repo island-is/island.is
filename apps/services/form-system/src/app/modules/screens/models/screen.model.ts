@@ -43,13 +43,6 @@ export class Screen extends Model<Screen> {
   })
   displayOrder!: number
 
-  // @Column({
-  //   type: DataType.BOOLEAN,
-  //   allowNull: false,
-  //   defaultValue: false,
-  // })
-  // isHidden!: boolean
-
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,

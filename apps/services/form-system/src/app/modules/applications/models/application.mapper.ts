@@ -1,8 +1,7 @@
-import { Injectable, PreconditionFailedException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Form } from '../../forms/models/form.model'
 import { ApplicationDto } from './dto/application.dto'
 import { Application } from './application.model'
-// import { FieldSettingsMapper } from '../../fieldSettings/models/fieldSettings.mapper'
 import { FieldDto } from '../../fields/models/dto/field.dto'
 import { OrganizationDto } from '../../organizations/models/dto/organization.dto'
 import { ScreenDto } from '../../screens/models/dto/screen.dto'
@@ -12,7 +11,6 @@ import { Dependency } from '../../../dataTypes/dependency.model'
 
 @Injectable()
 export class ApplicationMapper {
-  // constructor(private readonly fieldSettingsMapper: FieldSettingsMapper) {}
   mapFormToApplicationDto(
     form: Form,
     application: Application,

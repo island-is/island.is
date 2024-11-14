@@ -2,16 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { FormApplicantType } from './models/formApplicantType.model'
 import { CreateFormApplicantTypeDto } from './models/dto/createFormApplicantType.dto'
-// import { FormApplicantDto } from './models/dto/formApplicant.dto'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { UpdateFormApplicantTypeDto } from './models/dto/updateFormApplicantType.dto'
-import {
-  ApplicantType,
-  ApplicantTypes,
-} from '../../dataTypes/applicantTypes/applicantType.model'
-import { LanguageType } from '../../dataTypes/languageType.model'
+import { ApplicantTypes } from '../../dataTypes/applicantTypes/applicantType.model'
 import { FormApplicantTypeDto } from './models/dto/formApplicantType.dto'
 
 @Injectable()
@@ -40,9 +35,6 @@ export class FormApplicantTypesService {
       new this.formApplicantTypeModel(formApplicantType)
     await newFormApplicantType.save()
 
-    // applicantType.id = newFormApplicantType.id
-
-    // applicantType.name = new LanguageType()
     const keys = ['id', 'applicantTypeId', 'name']
     const formApplicantTypeDto: FormApplicantTypeDto = defaults(
       pick(newFormApplicantType, keys),

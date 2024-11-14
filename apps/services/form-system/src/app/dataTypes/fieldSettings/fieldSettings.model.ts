@@ -1,6 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../languageType.model'
-import { ListItemDto } from '../../modules/listItems/models/dto/listItem.dto'
 import {
   IsBoolean,
   IsDateString,

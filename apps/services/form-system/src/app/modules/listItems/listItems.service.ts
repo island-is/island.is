@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import { ListItem } from './models/listItem.model'
 import { ListItemDto } from './models/dto/listItem.dto'
 import { CreateListItemDto } from './models/dto/createListItem.dto'
-// import { FieldSettingsService } from '../fieldSettings/fieldSettings.service'
 import { ListItemMapper } from './models/listItem.mapper'
 import { UpdateListItemDto } from './models/dto/updateListItem.dto'
 import { UpdateListItemsDisplayOrderDto } from './models/dto/updateListItemsDisplayOrder.dto'
@@ -13,7 +12,6 @@ export class ListItemsService {
   constructor(
     @InjectModel(ListItem)
     private readonly listItemModel: typeof ListItem,
-    // private readonly fieldSettingsService: FieldSettingsService,
     private listItemMapper: ListItemMapper,
   ) {}
 
@@ -28,10 +26,6 @@ export class ListItemsService {
   }
 
   async create(createListItem: CreateListItemDto): Promise<ListItemDto> {
-    // const fieldSettings = await this.fieldSettingsService.findByFieldId(
-    //   createListItem.fieldId,
-    // )
-
     const listItem = await this.listItemModel.create({
       fieldId: createListItem.fieldId,
       displayOrder: createListItem.displayOrder,

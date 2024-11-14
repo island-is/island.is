@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
-// import { UpdateFieldSettingsDto } from '../../../fieldSettings/models/dto/updateFieldSettings.dto'
 import { FieldTypesEnum } from '../../../../dataTypes/fieldTypes/fieldTypes.enum'
 import { IsEnum, IsNotEmpty, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
@@ -26,10 +25,6 @@ export class UpdateFieldDto {
   @IsNotEmpty()
   @ApiProperty({ type: Boolean })
   isRequired!: boolean
-
-  // @IsNotEmpty()
-  // @ApiProperty({ type: Boolean })
-  // isHidden!: boolean
 
   @IsOptional()
   @ValidateNested()
