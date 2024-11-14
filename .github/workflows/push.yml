@@ -658,13 +658,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
 
-      - name: Comment what is being deployed in PR
+      - name: Docker build and push helm-config image
         working-directory: infra
+        env:
+          PUBLISH: 'true'
         run: |
-          yarn install --immutable
-          echo "COMMENT<<EOF" >> "$GITHUB_ENV"
-          ts-node ./infra/src/feature-env.ts ingress-comment --images= --chart=islandis --feature="main" >> GITHUB_ENV
-          echo 'EOF' >> "$GITHUB_ENV"
+          set -euxo pipefail
+          echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
+          echo Image tag is: ${{env.NODE_IMAGE_TAG}}
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{env.DOCKER_BASE_IMAGE_REGISTRY}} --build-arg NODE_IMAGE_TAG=${{env.NODE_IMAGE_TAG}}"
+          ./scripts/build-docker-container.sh "$DOCKER_TAG"
 
       - name: Retag as latest
         if: ${{ env.GIT_BRANCH == 'main' && env.NX_AFFECTED_ALL != 'true' }}
@@ -673,6 +676,14 @@ jobs:
           LAST_GOOD_BUILD_DOCKER_TAG: ${{ env.DOCKER_TAG }}
           DOCKER_TAG: latest
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
+
+      - name: Create comment with what is being deployed in PR
+        working-directory: infra
+        run: |
+          yarn install --immutable
+          echo "COMMENT<<EOF" >> "$GITHUB_ENV"
+          ts-node ./infra/src/feature-env.ts ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature="$FEATURE_NAME"  >> GITHUB_ENV
+          echo 'EOF' >> "$GITHUB_ENV"
 
       - name: Comment on PR
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
