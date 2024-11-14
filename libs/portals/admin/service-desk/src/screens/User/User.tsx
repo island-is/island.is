@@ -1,5 +1,5 @@
 import format from 'date-fns/format'
-import { useLoaderData, useNavigate } from 'react-router-dom'
+import { useLoaderData, useNavigate, useRevalidator } from 'react-router-dom'
 
 import { ActionCard, Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -10,16 +10,42 @@ import { dateFormat } from '@island.is/shared/constants'
 import { ServiceDeskPaths } from '../../lib/paths'
 import { UserProfileResult } from './User.loader'
 import { m } from '../../lib/messages'
+import { useUpdateUserProfileMutation } from './User.generated'
+import { UpdateUserProfileInput } from '@island.is/api/schema'
+import React from 'react'
 
 const User = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const user = useLoaderData() as UserProfileResult
   const formattedNationalId = formatNationalId(user.nationalId)
+  const [updateProfile] = useUpdateUserProfileMutation()
+  const { revalidate } = useRevalidator()
+
+  const handleUpdateProfile = async (input: UpdateUserProfileInput) => {
+    try {
+      const updatedProfile = await updateProfile({
+        variables: {
+          nationalId: user.nationalId,
+          input,
+        },
+      })
+
+      if (updatedProfile.data) {
+        revalidate()
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   return (
     <Stack space={'containerGutter'}>
-      <BackButton onClick={() => navigate(ServiceDeskPaths.Users)} />
+      <BackButton
+        onClick={() => {
+          navigate(-1)
+        }}
+      />
       <div>
         <div>
           <IntroHeader
@@ -93,14 +119,30 @@ const User = () => {
             <ActionCard
               heading={formatMessage(m.email)}
               text={user.email ?? ''}
-              unavailable={{
-                active: true,
+              cta={
+                !user.email || user.emailVerified
+                  ? undefined
+                  : {
+                      label: formatMessage(m.delete),
+                      buttonType: {
+                        variant: 'text',
+                        colorScheme: 'destructive',
+                      },
+                      size: 'small',
+                      icon: 'trash',
+                      onClick: () => handleUpdateProfile({ email: '' }),
+                    }
+              }
+              tag={{
                 label: formatMessage(
-                  user.emailVerified ? m.verified : m.unverified,
+                  !user.email
+                    ? m.noEmail
+                    : user.emailVerified
+                    ? m.verified
+                    : m.unverified,
                 ),
-                message: formatMessage(
-                  user.emailVerified ? m.verifiedTooltip : m.unverifiedTooltip,
-                ),
+                variant: 'blue',
+                outlined: true,
               }}
             />
           </Box>
@@ -108,16 +150,31 @@ const User = () => {
             <ActionCard
               heading={formatMessage(m.phone)}
               text={user.mobilePhoneNumber ?? ''}
-              unavailable={{
-                active: true,
+              cta={
+                !user.mobilePhoneNumber || user.mobilePhoneNumberVerified
+                  ? undefined
+                  : {
+                      label: formatMessage(m.delete),
+                      buttonType: {
+                        variant: 'text',
+                        colorScheme: 'destructive',
+                      },
+                      size: 'small',
+                      icon: 'trash',
+                      onClick: () =>
+                        handleUpdateProfile({ mobilePhoneNumber: '' }),
+                    }
+              }
+              tag={{
                 label: formatMessage(
-                  user.mobilePhoneNumberVerified ? m.verified : m.unverified,
+                  !user.mobilePhoneNumber
+                    ? m.noMobilePhone
+                    : user.mobilePhoneNumberVerified
+                    ? m.verified
+                    : m.unverified,
                 ),
-                message: formatMessage(
-                  user.mobilePhoneNumberVerified
-                    ? m.verifiedTooltip
-                    : m.unverifiedTooltip,
-                ),
+                variant: 'blue',
+                outlined: true,
               }}
             />
           </Box>

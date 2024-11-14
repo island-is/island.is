@@ -25,6 +25,7 @@ service:
     PASSKEY_CORE_RP_NAME: 'Island.is'
     PUBLIC_URL: 'https://identity-server.dev01.devland.is/api'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'

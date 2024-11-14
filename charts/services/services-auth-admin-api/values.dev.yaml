@@ -20,6 +20,7 @@ service:
     IDENTITY_SERVER_ISSUER_URL_LIST: '["https://identity-server.dev01.devland.is","https://identity-server.staging01.devland.is","https://innskra.island.is"]'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: ''
     SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
     SYSLUMENN_TIMEOUT: '3000'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'

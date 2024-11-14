@@ -37,6 +37,7 @@ export class MergedCaseExistsGuard implements CanActivate {
       throw new BadRequestException('Merged case not found')
     }
 
+    request.mergedCaseParent = theCase
     request.params.caseId = mergedCaseId
     request.case = mergedCase
 
