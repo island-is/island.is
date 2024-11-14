@@ -69,6 +69,7 @@
     "@apollo/gateway": "2.1.1",
     "@apollo/subgraph": "2.1.1",
     "@apollo/utils.keyvadapter": "3.0.0",
+    "@aws-sdk/abort-controller": "3.374.0",
     "@aws-sdk/client-s3": "3.687.0",
     "@aws-sdk/client-sqs": "3.687.0",
     "@aws-sdk/credential-provider-node": "3.687.0",

@@ -806,6 +806,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/abort-controller@npm:3.374.0":
+  version: 3.374.0
+  resolution: "@aws-sdk/abort-controller@npm:3.374.0"
+  dependencies:
+    "@smithy/abort-controller": ^1.0.1
+    tslib: ^2.5.0
+  checksum: 0cd46e1da1e553568b863fe9b821bb853e9de3c74bbdbe9c03fba3cd864a5b9f4d340b4c69625ef665751b9ac8035fe229d23bb8322d418b48525a27ff6fa31d
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/client-s3@npm:3.687.0":
   version: 3.687.0
   resolution: "@aws-sdk/client-s3@npm:3.687.0"
@@ -17191,6 +17201,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@smithy/abort-controller@npm:^1.0.1":
+  version: 1.1.0
+  resolution: "@smithy/abort-controller@npm:1.1.0"
+  dependencies:
+    "@smithy/types": ^1.2.0
+    tslib: ^2.5.0
+  checksum: 4299368f0b7dbeb8ffba00632b191ec39113fa9b9d29c3ff33c54d5a8663d42d769aa5d79ecd656fe8d09ccb23a7351095305524c27c5650ec7f96a312e5e522
+  languageName: node
+  linkType: hard
+
 "@smithy/abort-controller@npm:^3.1.5":
   version: 3.1.5
   resolution: "@smithy/abort-controller@npm:3.1.5"
@@ -17656,6 +17676,15 @@ __metadata:
     "@smithy/util-stream": ^3.2.1
     tslib: ^2.6.2
   checksum: 4b53e695e18bf0ed4805dd66839e272129be5384f6de5356a2adc03311f5c372766b490a3c001086aec8728f6c9bb90ca625a09e9b4c3fe875c1ee7567118f34
+  languageName: node
+  linkType: hard
+
+"@smithy/types@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@smithy/types@npm:1.2.0"
+  dependencies:
+    tslib: ^2.5.0
+  checksum: 376a1402d356a8dddd804af66ff2d273e57e332a3e9537a98039b47572684aae044d5fcd879ac6eee5cc08640ea00fbef0725a6a16026db5fb8d189473d44fe6
   languageName: node
   linkType: hard
 
@@ -37999,6 +38028,7 @@ __metadata:
     "@apollo/gateway": 2.1.1
     "@apollo/subgraph": 2.1.1
     "@apollo/utils.keyvadapter": 3.0.0
+    "@aws-sdk/abort-controller": 3.374.0
     "@aws-sdk/client-s3": 3.687.0
     "@aws-sdk/client-ses": 3.687.0
     "@aws-sdk/client-sqs": 3.687.0
