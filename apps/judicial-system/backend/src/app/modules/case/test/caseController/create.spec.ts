@@ -13,7 +13,7 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { DefendantService } from '../../../defendant'
-import { include, order } from '../../case.service'
+import { include } from '../../case.service'
 import { CreateCaseDto } from '../../dto/createCase.dto'
 import { Case } from '../../models/case.model'
 
@@ -113,7 +113,7 @@ describe('CaseController - Create', () => {
       )
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         include,
-        order,
+
         where: {
           id: caseId,
           isArchived: false,

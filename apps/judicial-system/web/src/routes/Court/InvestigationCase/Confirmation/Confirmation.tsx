@@ -18,6 +18,7 @@ import {
   FormFooter,
   PageHeader,
   PageLayout,
+  PageTitle,
   PdfButton,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
@@ -129,11 +130,7 @@ const Confirmation: FC = () => {
         title={formatMessage(titles.court.investigationCases.conclusion)}
       />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.title)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box marginBottom={9}>
           <Accordion>

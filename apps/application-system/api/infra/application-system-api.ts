@@ -36,6 +36,7 @@ import {
   Frigg,
   HealthDirectorateVaccination,
   HealthDirectorateOrganDonation,
+  WorkAccidents,
   NationalRegistryB2C,
 } from '../../../../infra/src/dsl/xroad'
 
@@ -300,6 +301,7 @@ export const serviceSetup = (services: {
       Frigg,
       HealthDirectorateVaccination,
       HealthDirectorateOrganDonation,
+      WorkAccidents,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
