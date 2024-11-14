@@ -39,7 +39,7 @@ const PetitionsTable = (data: {
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
         <Box>
           {data.canEdit && (
-            <DropdownExport petition={data.petition} petitionId={data.listId} />
+            <DropdownExport petitionId={data.listId} />
           )}
         </Box>
       </Box>

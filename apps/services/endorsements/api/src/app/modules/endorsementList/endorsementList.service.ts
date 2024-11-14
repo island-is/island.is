@@ -356,7 +356,7 @@ export class EndorsementListService {
 
     // Add header image
     const headerImageHeight = 40
-    doc.image(headerImagePath, 52, 40, { width: 120 })
+    doc.image(headerImagePath ?? '', 52, 40, { width: 120 })
 
     let currentYPosition = 40 + headerImageHeight + 30
 
@@ -535,7 +535,7 @@ export class EndorsementListService {
 
     // Add footer image at the bottom of the page
     const footerY = doc.page.height - 60
-    doc.image(footerImagePath, 60, footerY, { width: 120 })
+    doc.image(footerImagePath ?? '', 60, footerY, { width: 120 })
 
     doc.end()
     return await getStream.buffer(doc)
