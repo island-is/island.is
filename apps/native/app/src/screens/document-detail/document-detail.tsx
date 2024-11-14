@@ -253,9 +253,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     fetchPolicy: 'no-cache',
   })
 
-  const confirmAction = (confirmed: boolean) => {
+  const confirmAction = async (confirmed: boolean) => {
     // Adding a suffix '_app' to the id since the backend is currently not distinguishing between the app and the web
-    logConfirmedAction({
+    await logConfirmedAction({
       variables: { input: { id: `${docId}_app`, confirmed: confirmed } },
     })
   }
@@ -280,16 +280,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       {
         text: intl.formatMessage({ id: 'inbox.markAllAsReadPromptCancel' }),
         style: 'cancel',
-        onPress: () => {
-          confirmAction(false)
+        onPress: async () => {
+          await confirmAction(false)
           Navigation.pop(componentId)
         },
       },
       {
         text: intl.formatMessage({ id: 'inbox.openDocument' }),
-        onPress: () => {
-          confirmAction(true)
-          refetchDocumentContent()
+        onPress: async () => {
+          await confirmAction(true)
+          await refetchDocumentContent()
         },
       },
     ])
