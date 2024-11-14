@@ -19,6 +19,7 @@ export class ApplicationMapper {
   ): ApplicationDto {
     const applicationDto: ApplicationDto = {
       id: application.id,
+      isTest: application.isTest,
       dependencies: application.dependencies,
       formId: form.id,
       slug: form.slug,
