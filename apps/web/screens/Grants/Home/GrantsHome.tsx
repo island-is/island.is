@@ -54,11 +54,7 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   ]
 
   return (
-    <GrantWrapper
-      pageTitle={formatMessage(m.home.title)}
-      pageDescription={formatMessage(m.home.description)}
-      pageFeaturedImage={formatMessage(m.home.featuredImage)}
-    >
+    <Box>
       <Stack space={SLICE_SPACING}>
         <GrantSearchSection
           title={formatMessage(m.home.title)}
@@ -145,7 +141,7 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
           </GridContainer>
         </Box>
       </Stack>
-    </GrantWrapper>
+    </Box>
   )
 }
 

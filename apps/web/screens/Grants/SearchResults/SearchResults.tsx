@@ -4,12 +4,12 @@ import format from 'date-fns/format'
 import debounce from 'lodash/debounce'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
-import {
-  parseAsArrayOf,
-  parseAsInteger,
-  parseAsString,
-} from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
+import {
+  parseAsString,
+  parseAsInteger,
+  parseAsArrayOf,
+} from 'next-usequerystate'
 
 import {
   Box,
@@ -19,7 +19,6 @@ import {
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
-import { logger } from '@island.is/logging'
 import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
@@ -52,6 +51,7 @@ import { GET_GRANTS_QUERY } from '../../queries/Grants'
 import { m } from '../messages'
 import { convertToArray } from '../utils'
 import { GrantsSearchResultsFilter } from './SearchResultsFilter'
+import { logger } from '@island.is/logging'
 
 export interface SearchState {
   page?: number

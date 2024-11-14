@@ -14,7 +14,7 @@ export const m = {
     },
     description: {
       id: 'web.grants:search.description',
-      defaultMessage: 'lýsing',
+      defaultMessage: 'Lýsing',
     },
     results: {
       id: 'web.grants:search.results',
