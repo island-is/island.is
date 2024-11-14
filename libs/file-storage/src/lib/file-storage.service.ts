@@ -5,7 +5,6 @@ import kebabCase from 'lodash/kebabCase'
 import { ConfigType } from '@nestjs/config'
 import { FileStorageConfig } from './file-storage.configuration'
 import { PresignedPost } from '@aws-sdk/s3-presigned-post'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 const PRESIGNED_POST_EXPIRES = 1000 * 60 * 5
 const SIGNED_GET_EXPIRES = 10 * 60
@@ -16,7 +15,6 @@ export class FileStorageService {
     @Inject(FileStorageConfig.KEY)
     private config: ConfigType<typeof FileStorageConfig>,
     private readonly s3Service: S3Service,
-    @Inject(LOGGER_PROVIDER) protected readonly logger: Logger,
   ) {}
 
   generatePresignedPost(filename: string): Promise<PresignedPost> {
@@ -68,7 +66,6 @@ export class FileStorageService {
       throw new Error('Upload bucket not configured.')
     }
     const region = await this.s3Service.getClientRegion()
-    this.logger.error(`copySource: ${this.config.secondUploadBucket}/${sourceKey}. Returned value: https://${destinationBucket}.s3-${region}.amazonaws.com/${destinationKey}`)
 
     await this.s3Service.copyObject(
       {
