@@ -18,9 +18,9 @@ const initDdRum = (params: DdRumInitParams) => {
     service: params.service,
     env: params.env,
     version: params.version,
-    sampleRate: 100,
+    sampleRate: 0,
     sessionReplaySampleRate: 0,
-    trackInteractions: true,
+    trackInteractions: false,
     allowedTracingOrigins: [
       'https://island.is',
       /https:\/\/.*\.island\.is/,
