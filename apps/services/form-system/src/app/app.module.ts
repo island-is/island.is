@@ -33,7 +33,6 @@ import { OrganizationFieldTypesModule } from './modules/organizationFieldTypes/o
     SectionsModule,
     ScreensModule,
     FieldsModule,
-    OrganizationListTypesModule,
     // FieldSettingsModule,
     ListItemsModule,
     ApplicationsModule,
@@ -42,6 +41,7 @@ import { OrganizationFieldTypesModule } from './modules/organizationFieldTypes/o
     FormCertificationTypesModule,
     OrganizationCertificationTypesModule,
     OrganizationFieldTypesModule,
+    OrganizationListTypesModule,
   ],
 })
 export class AppModule {}
