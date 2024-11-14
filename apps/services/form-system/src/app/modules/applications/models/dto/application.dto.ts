@@ -18,6 +18,9 @@ export class ApplicationDto {
   formName?: LanguageType
 
   @ApiPropertyOptional()
+  isTest?: boolean
+
+  @ApiPropertyOptional()
   slug?: string
 
   @ApiPropertyOptional({ type: Date })

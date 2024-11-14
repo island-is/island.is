@@ -13,6 +13,7 @@ import { Value } from '../values/models/value.model'
 // import { ValueFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
+import { CreateApplicationDto } from './models/dto/createApplication.dto'
 // import { BaseValueType } from '../../dataTypes/valueTypes/baseValueType.interface'
 // import { TextboxValue } from '../../dataTypes/valueTypes/models/textbox.valuetype'
 
@@ -28,7 +29,10 @@ export class ApplicationsService {
     private readonly applicationMapper: ApplicationMapper,
   ) {}
 
-  async create(slug: string): Promise<ApplicationDto> {
+  async create(
+    slug: string,
+    createApplicationDto: CreateApplicationDto,
+  ): Promise<ApplicationDto> {
     const form: Form = await this.getForm(slug)
 
     if (!form) {
@@ -37,6 +41,7 @@ export class ApplicationsService {
 
     const newApplication: Application = await this.applicationModel.create({
       formId: form.id,
+      isTest: createApplicationDto.isTest,
       dependencies: form.dependencies,
     } as Application)
 

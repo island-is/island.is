@@ -31,7 +31,11 @@ export class ValueType {
 
   @IsOptional()
   @ApiPropertyOptional({ type: String })
-  kennitala?: string
+  listValue?: string
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  nationalId?: string
 
   @IsOptional()
   @ApiPropertyOptional({ type: String })
@@ -62,6 +66,10 @@ export class ValueType {
   homestayNumber?: string
 
   @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  propertyNumber?: string
+
+  @IsOptional()
   @ApiPropertyOptional({ type: Number })
   totalDays?: number
 
@@ -83,4 +91,28 @@ export class ValueType {
   @IsArray()
   @ApiPropertyOptional({ type: [Month] })
   months?: Month[]
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  email?: string
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  iskNumber?: string
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: Boolean })
+  checkboxValue?: boolean
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  phoneNumber?: string
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  bankAccount?: string
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: String })
+  time?: string
 }
