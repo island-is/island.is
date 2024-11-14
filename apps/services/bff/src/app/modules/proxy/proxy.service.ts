@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import AgentKeepAlive, { HttpsAgent } from 'agentkeepalive'
-import { Request, Response } from 'express'
+import type { Request, Response } from 'express'
 import fetch from 'node-fetch'
 import { BffConfig } from '../../bff.config'
 import { CryptoService } from '../../services/crypto.service'
@@ -17,12 +17,12 @@ import {
   AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
   AGENT_DEFAULT_MAX_SOCKETS,
 } from '@island.is/shared/constants'
-import { hasTimestampExpiredInMS } from '../../utils/has-timestamp-expired-in-ms'
+import { SESSION_COOKIE_NAME } from '../../constants/cookies'
+import { ErrorService } from '../../services/error.service'
 import { validateUri } from '../../utils/validate-uri'
-import { AuthService } from '../auth/auth.service'
 import { CachedTokenResponse } from '../auth/auth.types'
+import { TokenRefreshService } from '../auth/token-refresh.service'
 import { CacheService } from '../cache/cache.service'
-import { IdsService } from '../ids/ids.service'
 import { ApiProxyDto } from './dto/api-proxy.dto'
 
 const droppedResponseHeaders = [
@@ -41,6 +41,7 @@ const agentOptions: AgentKeepAlive.HttpOptions = {
   freeSocketTimeout: AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
   maxSockets: AGENT_DEFAULT_MAX_SOCKETS,
 }
+
 const customAgent = new AgentKeepAlive(agentOptions)
 /**
  * Only applies to none same domain requests.
@@ -63,9 +64,9 @@ export class ProxyService {
     private readonly config: ConfigType<typeof BffConfig>,
 
     private readonly cacheService: CacheService,
-    private readonly idsService: IdsService,
-    private readonly authService: AuthService,
     private readonly cryptoService: CryptoService,
+    private readonly tokenRefreshService: TokenRefreshService,
+    private readonly errorService: ErrorService,
   ) {}
 
   /**
@@ -73,47 +74,53 @@ export class ProxyService {
    * - If the token is expired, it will attempt to update tokens with the refresh token from cache.
    * - Then access token is decrypted and returned.
    */
-  private async getAccessToken(req: Request) {
-    const sid = req.cookies['sid']
+  private async getAccessToken({
+    req,
+    res,
+  }: {
+    req: Request
+    res: Response
+  }): Promise<string> {
+    const sid = req.cookies[SESSION_COOKIE_NAME]
 
     if (!sid) {
       throw new UnauthorizedException()
     }
 
+    const tokenResponseKey = this.cacheService.createSessionKeyType(
+      'current',
+      sid,
+    )
+
     try {
       let cachedTokenResponse =
-        await this.cacheService.get<CachedTokenResponse>(
-          this.cacheService.createSessionKeyType('current', sid),
-        )
+        await this.cacheService.get<CachedTokenResponse>(tokenResponseKey)
 
-      if (hasTimestampExpiredInMS(cachedTokenResponse.accessTokenExp)) {
-        const tokenResponse = await this.idsService.refreshToken(
-          cachedTokenResponse.encryptedRefreshToken,
-        )
-
-        if (tokenResponse.type === 'error') {
-          throw tokenResponse.data
-        }
-
-        cachedTokenResponse = await this.authService.updateTokenCache(
-          tokenResponse.data,
-        )
+      if (cachedTokenResponse.accessTokenExp) {
+        cachedTokenResponse = await this.tokenRefreshService.refreshToken({
+          sid,
+          encryptedRefreshToken: cachedTokenResponse.encryptedRefreshToken,
+        })
       }
 
       return this.cryptoService.decrypt(
         cachedTokenResponse.encryptedAccessToken,
       )
     } catch (error) {
-      this.logger.error('Error getting access token:', error)
-
-      throw new UnauthorizedException()
+      return this.errorService.handleAuthorizedError({
+        error,
+        res,
+        sid,
+        tokenResponseKey,
+        operation: `${ProxyService.name}.getAccessToken`,
+      })
     }
   }
 
   /**
    * This method proxies the request to the target URL and streams the response back to the client.
    */
-  async executeStreamRequest({
+  private async executeStreamRequest({
     targetUrl,
     accessToken,
     req,
@@ -144,31 +151,23 @@ export class ProxyService {
         },
       })
 
-      // Set the status code of the response
       res.status(response.status)
 
       response.headers.forEach((value, key) => {
-        // Only set headers that are not in the droppedResponseHeaders array
         if (!droppedResponseHeaders.includes(key.toLowerCase())) {
           res.setHeader(key, value)
         }
       })
 
-      // Pipe the response body directly to the client
       response.body.pipe(res)
 
       response.body.on('error', (err) => {
         this.logger.error('Proxy stream error:', err)
-
-        // This check ensures that `res.end()` is only called if the response has not already been ended.
         if (!res.writableEnded) {
-          // Ensure the response is properly ended if an error occurs
           res.end()
         }
       })
 
-      // Make sure to end the response when the stream ends,
-      // so that the client knows the request is complete.
       response.body.on('end', () => {
         if (!res.writableEnded) {
           res.end()
@@ -176,7 +175,6 @@ export class ProxyService {
       })
     } catch (error) {
       this.logger.error('Error during proxy request processing: ', error)
-
       res.status(error.status || 500).send('Failed to proxy request')
     }
   }
@@ -192,13 +190,13 @@ export class ProxyService {
     req: Request
     res: Response
   }): Promise<void> {
-    const accessToken = await this.getAccessToken(req)
+    const accessToken = await this.getAccessToken({ req, res })
     const queryString = req.url.split('?')[1]
     const targetUrl = `${this.config.graphqlApiEndpoint}${
       queryString ? `?${queryString}` : ''
     }`
 
-    this.executeStreamRequest({
+    await this.executeStreamRequest({
       accessToken,
       targetUrl,
       req,
@@ -210,7 +208,7 @@ export class ProxyService {
    * Forwards an incoming HTTP GET request to the specified URL (provided in the query string),
    * managing authentication, refreshing tokens if needed, and streaming the response back to the client.
    */
-  async forwardGetApiRequest({
+  public async forwardGetApiRequest({
     req,
     res,
     query,
@@ -218,16 +216,16 @@ export class ProxyService {
     req: Request
     res: Response
     query: ApiProxyDto
-  }) {
+  }): Promise<void> {
     const { url } = query
 
     if (!validateUri(url, this.config.allowedExternalApiUrls)) {
       this.logger.error('Invalid external api url provided:', url)
 
-      throw new BadRequestException('Proxing url failed!')
+      throw new BadRequestException('Proxying url failed!')
     }
 
-    const accessToken = await this.getAccessToken(req)
+    const accessToken = await this.getAccessToken({ req, res })
 
     this.executeStreamRequest({
       accessToken,
