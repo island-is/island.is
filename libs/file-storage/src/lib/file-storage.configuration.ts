@@ -14,9 +14,6 @@ export const FileStorageConfig = defineConfig({
       'FILE_STORAGE_UPLOAD_BUCKET',
       'island-is-dev-upload-api',
     ),
-    secondUploadBucket: env.optional(
-      'APPLICATION_ATTACHMENT_BUCKET',
-      'bruh'
-    ),
+    secondUploadBucket: env.optional('APPLICATION_ATTACHMENT_BUCKET', 'bruh'),
   }),
 })
