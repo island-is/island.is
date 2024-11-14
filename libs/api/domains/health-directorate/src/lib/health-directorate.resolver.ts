@@ -22,8 +22,12 @@ import { DonorInput, Organ, OrganDonation } from './models/organ-donation.model'
 import type { Locale } from '@island.is/shared/types'
 import { Vaccinations } from './models/vaccinations.model'
 import { HealthDirectorateService } from './health-directorate.service'
-
-@UseGuards(IdsUserGuard, ScopesGuard)
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.internal)
 @Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver(() => OrganDonation)
@@ -35,6 +39,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateOrganDonation',
   })
   @Audit()
+  @FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
   async getDonorStatus(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -58,6 +63,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateOrganDonationUpdateDonorStatus',
   })
   @Audit()
+  @FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
   async updateDonorStatus(
     @Args('input') input: DonorInput,
     @Args('locale', { type: () => String, nullable: true })
@@ -72,6 +78,7 @@ export class HealthDirectorateResolver {
     name: 'healthDirectorateVaccinations',
   })
   @Audit()
+  @FeatureFlag(Features.servicePortalHealthVaccinationsPageEnabled)
   getVaccinations(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
