@@ -225,7 +225,7 @@ const Overview: FC = () => {
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCardActiveIndictment displayVerdictViewDate={true} />
+          <InfoCardActiveIndictment displayVerdictViewDate />
         </Box>
         {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
