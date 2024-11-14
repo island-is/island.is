@@ -342,16 +342,18 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                   {formatMessage(m.search.noResultsFound)}
                 </Text>
               </Box>
-              <img
-                width="240"
-                src="/assets/sofa.svg"
-                alt={formatMessage(m.search.noResultsFound)}
-              />
+              {!isTablet && (
+                <img
+                  width="240"
+                  src="/assets/sofa.svg"
+                  alt={formatMessage(m.search.noResultsFound)}
+                />
+              )}
             </Box>
           )}
         </Box>
       ),
-    [error, hitsMessage, grants, formatMessage, router, linkResolver, locale],
+    [error, hitsMessage, grants, locale],
   )
 
   return (
