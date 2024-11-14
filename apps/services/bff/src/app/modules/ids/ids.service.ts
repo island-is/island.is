@@ -6,8 +6,6 @@ import { BffConfig } from '../../bff.config'
 import { CryptoService } from '../../services/crypto.service'
 import { ENHANCED_FETCH_PROVIDER_KEY } from '../enhancedFetch/enhanced-fetch.provider'
 import {
-  ApiResponse,
-  ErrorRes,
   GetLoginSearchParamsReturnValue,
   ParResponse,
   TokenResponse,
@@ -35,60 +33,28 @@ export class IdsService {
   private async postRequest<T>(
     endpoint: string,
     body: Record<string, string>,
-  ): Promise<ApiResponse<T>> {
-    try {
-      const response = await this.enhancedFetch(
-        `${this.issuerUrl}${endpoint}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: this.createPARAuthorizationHeader(),
-          },
-          body: new URLSearchParams(body).toString(),
-        },
-      )
+  ): Promise<T> {
+    const response = await this.enhancedFetch(`${this.issuerUrl}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: this.createPARAuthorizationHeader(),
+      },
+      body: new URLSearchParams(body).toString(),
+    })
 
-      const contentType = response.headers.get('content-type') || ''
+    const contentType = response.headers.get('content-type') || ''
 
-      if (contentType.includes('application/json')) {
-        const data = await response.json()
+    if (contentType.includes('application/json')) {
+      const data = await response.json()
 
-        if (!response.ok) {
-          // If error response from Ids is not in the expected format, throw the data as is
-          if (!data.error || !data.error_description) {
-            throw data
-          }
-
-          return {
-            type: 'error',
-            data: {
-              error: data.error,
-              error_description: data.error_description,
-            },
-          } as ErrorRes
-        }
-
-        return {
-          type: 'success',
-          data: data as T,
-        }
-      }
-
-      // Handle plain text responses
-      const textResponse = await response.text()
-
-      if (!response.ok) {
-        throw textResponse
-      }
-
-      return {
-        type: 'success',
-        data: textResponse,
-      } as ApiResponse<T>
-    } catch (error) {
-      throw new Error(error)
+      return data
     }
+
+    // Handle plain text responses
+    const textResponse = await response.text()
+
+    return textResponse as T
   }
 
   public getLoginSearchParams({
@@ -103,6 +69,7 @@ export class IdsService {
     prompt?: string
   }): GetLoginSearchParamsReturnValue {
     const { ids } = this.config
+
     return {
       client_id: ids.clientId,
       redirect_uri: this.config.callbacksRedirectUris.login,

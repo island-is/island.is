@@ -5,13 +5,11 @@ import { AuthModule as AppAuthModule } from './modules/auth/auth.module'
 import { CacheModule } from './modules/cache/cache.module'
 import { EnhancedFetchModule } from './modules/enhancedFetch/enhanced-fetch.module'
 import { ProxyModule } from './modules/proxy/proxy.module'
-import { PubSubModule } from './modules/pubsub/pubsub.module'
 import { UserModule } from './modules/user/user.module'
 
 @Module({
   imports: [
     CacheModule.register(),
-    PubSubModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [BffConfig],
