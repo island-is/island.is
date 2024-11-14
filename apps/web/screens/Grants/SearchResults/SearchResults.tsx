@@ -342,7 +342,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                   {formatMessage(m.search.noResultsFound)}
                 </Text>
               </Box>
-              {!isTablet && (
+              {!(isTablet || isMobile) && (
                 <img
                   width="240"
                   src="/assets/sofa.svg"
