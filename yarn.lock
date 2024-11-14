@@ -32374,6 +32374,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"esbuild-register@npm:3.6.0, esbuild-register@npm:^3.5.0":
+  version: 3.6.0
+  resolution: "esbuild-register@npm:3.6.0"
+  dependencies:
+    debug: ^4.3.4
+  peerDependencies:
+    esbuild: ">=0.12 <1"
+  checksum: 9221e26dde3366398a43183b600d8e9252b8003516cd766983a06c321eb07cf1b6b236948a21e4d1728c17a341c0fa52b49409c951d89fc7bf65d07d43c31a05
+  languageName: node
+  linkType: hard
+
 "esbuild-register@npm:^3.4.0":
   version: 3.4.2
   resolution: "esbuild-register@npm:3.4.2"
@@ -32382,17 +32393,6 @@ __metadata:
   peerDependencies:
     esbuild: ">=0.12 <1"
   checksum: f65d1ccb58b1ccbba376efb1fc023abe22731d9b79eead1b0120e57d4413318f063696257a5af637b527fa1d3f009095aa6edb1bf6ff69d637a9ab281fb727b3
-  languageName: node
-  linkType: hard
-
-"esbuild-register@npm:^3.5.0":
-  version: 3.6.0
-  resolution: "esbuild-register@npm:3.6.0"
-  dependencies:
-    debug: ^4.3.4
-  peerDependencies:
-    esbuild: ">=0.12 <1"
-  checksum: 9221e26dde3366398a43183b600d8e9252b8003516cd766983a06c321eb07cf1b6b236948a21e4d1728c17a341c0fa52b49409c951d89fc7bf65d07d43c31a05
   languageName: node
   linkType: hard
 
@@ -38793,6 +38793,7 @@ __metadata:
     downshift: 5.4.3
     entropy-string: 4.2.0
     esbuild: ^0.16.17
+    esbuild-register: 3.6.0
     escape-html: 1.0.3
     eslint: 8.57.0
     eslint-config-next: 14.2.3
