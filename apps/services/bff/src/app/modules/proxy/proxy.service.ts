@@ -2,6 +2,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   BadRequestException,
+  HttpStatus,
   Inject,
   Injectable,
   UnauthorizedException,
@@ -19,6 +20,7 @@ import {
 } from '@island.is/shared/constants'
 import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 import { ErrorService } from '../../services/error.service'
+import { hasTimestampExpiredInMS } from '../../utils/has-timestamp-expired-in-ms'
 import { validateUri } from '../../utils/validate-uri'
 import { CachedTokenResponse } from '../auth/auth.types'
 import { TokenRefreshService } from '../auth/token-refresh.service'
@@ -96,7 +98,7 @@ export class ProxyService {
       let cachedTokenResponse =
         await this.cacheService.get<CachedTokenResponse>(tokenResponseKey)
 
-      if (cachedTokenResponse.accessTokenExp) {
+      if (hasTimestampExpiredInMS(cachedTokenResponse.accessTokenExp)) {
         cachedTokenResponse = await this.tokenRefreshService.refreshToken({
           sid,
           encryptedRefreshToken: cachedTokenResponse.encryptedRefreshToken,
@@ -151,23 +153,31 @@ export class ProxyService {
         },
       })
 
+      // Set the status code of the response
       res.status(response.status)
 
       response.headers.forEach((value, key) => {
+        // Only set headers that are not in the droppedResponseHeaders array
         if (!droppedResponseHeaders.includes(key.toLowerCase())) {
           res.setHeader(key, value)
         }
       })
 
+      // Pipe the response body directly to the client
       response.body.pipe(res)
 
       response.body.on('error', (err) => {
         this.logger.error('Proxy stream error:', err)
+
+        // This check ensures that `res.end()` is only called if the response has not already been ended.
         if (!res.writableEnded) {
+          // Ensure the response is properly ended if an error occurs
           res.end()
         }
       })
 
+      // Make sure to end the response when the stream ends,
+      // so that the client knows the request is complete.
       response.body.on('end', () => {
         if (!res.writableEnded) {
           res.end()
@@ -175,7 +185,10 @@ export class ProxyService {
       })
     } catch (error) {
       this.logger.error('Error during proxy request processing: ', error)
-      res.status(error.status || 500).send('Failed to proxy request')
+
+      res
+        .status(error.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        .send('Failed to proxy request')
     }
   }
 
@@ -196,7 +209,7 @@ export class ProxyService {
       queryString ? `?${queryString}` : ''
     }`
 
-    await this.executeStreamRequest({
+    this.executeStreamRequest({
       accessToken,
       targetUrl,
       req,
