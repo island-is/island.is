@@ -20,6 +20,7 @@ type Translations = {
     institution: string
     indictment: string
     judge: string
+    districtCourtAssistant: string
     location: string
     name: string
     nationalId: string
@@ -57,6 +58,7 @@ const translations: Translations = {
     institution: 'Institution',
     indictment: 'Indictment',
     judge: 'Judge',
+    districtCourtAssistant: 'Assistant judge',
     location: 'Location',
     name: 'Name',
     nationalId: 'National ID',
@@ -68,7 +70,7 @@ const translations: Translations = {
     subpoena: 'Subpoena',
     subpoenaSent: 'Subpoena sent',
     subpoenaServed:
-      'Confirmation of subpoena service has been sent to the court',
+      'Confirmation of subpoena service has been sent to the police and court',
     type: 'Type',
     waiveRightToCounsel: 'Right to counsel waived',
   },
@@ -92,6 +94,7 @@ const translations: Translations = {
     institution: 'Embætti',
     indictment: 'Ákæra',
     judge: 'Dómari',
+    districtCourtAssistant: 'Aðstoðarmaður dómara',
     location: 'Staður',
     name: 'Nafn',
     nationalId: 'Kennitala',
@@ -102,7 +105,8 @@ const translations: Translations = {
     prosecutorsOffice: 'Embætti',
     subpoena: 'Fyrirkall',
     subpoenaSent: 'Fyrirkall sent',
-    subpoenaServed: 'Staðfesting á móttöku hefur verið send á dómstóla',
+    subpoenaServed:
+      'Staðfesting á móttöku hefur verið send á lögreglu og dómstóla',
     type: 'Tegund',
     waiveRightToCounsel: 'Ekki er óskað eftir verjanda',
   },

@@ -91,3 +91,31 @@ export const formatDate = (date?: string, df = 'dd.MM.yyyy') => {
     throw new Error(`Could not format date: ${date}`)
   }
 }
+
+export const getStringArrayFromQueryString = (
+  value?: string | string[],
+): string[] => {
+  if (!value) {
+    return []
+  }
+
+  if (Array.isArray(value)) {
+    return value
+  }
+
+  return value.split(',')
+}
+
+export const getStringFromQueryString = (
+  value?: string | string[],
+): string | undefined => {
+  if (!value) {
+    return undefined
+  }
+
+  if (Array.isArray(value)) {
+    return value[0]
+  }
+
+  return value
+}

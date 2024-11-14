@@ -9,7 +9,7 @@ import { Field, RecordObject, SubmitField } from './Fields'
 import { Condition } from './Condition'
 import { Application, FormValue } from './Application'
 import { TestSupport } from '@island.is/island-ui/utils'
-
+import { Locale } from '@island.is/shared/types'
 export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
 
 export type SetBeforeSubmitCallback = (
@@ -32,6 +32,13 @@ export type StaticText = StaticTextObject | string
 export type FormText =
   | StaticText
   | ((application: Application) => StaticText | null | undefined)
+
+export type FormTextWithLocale =
+  | StaticText
+  | ((
+      application: Application,
+      locale: Locale,
+    ) => StaticText | null | undefined)
 
 export type FormComponent =
   | React.FC<React.PropsWithChildren<unknown>>
@@ -95,7 +102,7 @@ export interface FormItem extends TestSupport {
   readonly id?: string
   condition?: Condition
   readonly type: string
-  readonly title: FormText
+  readonly title: FormTextWithLocale
   readonly nextButtonText?: FormText
 }
 
