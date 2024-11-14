@@ -26,6 +26,8 @@ export const ApplicantStatus = ({
   const { municipality } = application.externalData
   const isWaitingForSpouse = waitingForSpouse(application.state)
 
+  console.log(currentApplication, isWaitingForSpouse)
+
   const state =
     !currentApplication && isWaitingForSpouse
       ? ApplicationState.NEW
@@ -34,6 +36,8 @@ export const ApplicantStatus = ({
   if (loading) {
     return <LoadingDots />
   }
+
+  console.log(state)
 
   return (
     <Box paddingBottom={5}>
