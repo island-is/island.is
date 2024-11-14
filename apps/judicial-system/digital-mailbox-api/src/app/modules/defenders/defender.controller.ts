@@ -68,12 +68,11 @@ export class DefenderController {
         practice: lawyer.Practice,
       }
     } catch (error) {
-      this.logger.error('Failed to retrieve lawyer', error)
-
       if (error instanceof NotFoundException) {
         throw error
       }
 
+      this.logger.error('Failed to retrieve lawyer', error)
       throw new BadGatewayException('Failed to retrieve lawyer')
     }
   }
