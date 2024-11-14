@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react'
 import Head from 'next/head'
 
-import { GridContainer, ResponsiveSpace } from '@island.is/island-ui/core'
+import { Box, GridContainer, ResponsiveSpace } from '@island.is/island-ui/core'
 import {
   Footer,
   PageLoader,
@@ -193,9 +193,9 @@ const StandaloneLayout = ({
       <PageLoader />
       <Navigation {...navigationProps} />
       <Header {...headerProps} />
-      <main id="main-content">
+      <Box component="main" id="main-content" paddingY={5}>
         <GridContainer>{children}</GridContainer>
-      </main>
+      </Box>
       <Footer
         heading={organizationPage?.organization?.title || ''}
         columns={organizationPage?.organization?.footerItems || []}

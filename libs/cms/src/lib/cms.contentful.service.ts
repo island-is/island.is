@@ -97,6 +97,8 @@ import {
 } from '@island.is/shared/types'
 import { EntryCollection } from 'contentful'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
+import { GetOrganizationParentSubpageInput } from './dto/getOrganizationParentSubpage.input'
+import { mapOrganizationParentSubpage } from './models/organizationParentSubpage.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -1173,14 +1175,18 @@ export class CmsContentfulService {
     // TODO: test
     // Prune sitemap in case there are any slugs provided
     let currentNode = tree
+    let i = -1
     for (const slug of slugs ?? []) {
+      i += 1
       let found = false
       for (const childNode of currentNode.childNodes) {
         if (childNode.type !== SitemapTreeNodeType.CATEGORY) {
           continue
         }
         if (childNode.slug === slug) {
-          currentNode.childNodes = [childNode]
+          if (i === 2) {
+            currentNode.childNodes = [childNode]
+          }
           currentNode = childNode
           found = true
           break
@@ -1222,16 +1228,30 @@ export class CmsContentfulService {
       }
     }
 
-    console.log(
-      tree.childNodes
-        .map((node) => mapSitemapLink(node, [prefix, rootPageSlug]))
-        .filter(Boolean) as SitemapLink[],
-    )
-
     return {
       links: tree.childNodes
         .map((node) => mapSitemapLink(node, [prefix, rootPageSlug]))
         .filter(Boolean) as SitemapLink[],
     }
+  }
+
+  async getOrganizationParentSubpage(input: GetOrganizationParentSubpageInput) {
+    const params = {
+      content_type: 'organizationParentSubpage',
+      'fields.slug': input.slug,
+      limit: 1,
+    }
+
+    const response =
+      await this.contentfulRepository.getLocalizedEntries<types.IOrganizationParentSubpageFields>(
+        input.lang,
+        params,
+      )
+
+    return (
+      (response?.items as types.IOrganizationParentSubpage[])?.map(
+        mapOrganizationParentSubpage,
+      )?.[0] ?? null
+    )
   }
 }

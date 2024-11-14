@@ -41,19 +41,22 @@ export const Component: ScreenType<ComponentProps> = ({ props, type }) => {
 Component.getProps = async (ctx) => {
   try {
     const sitemapProps = await StandaloneSitemapLevel1.getProps?.(ctx)
-    console.log(sitemapProps)
     return {
       props: sitemapProps as StandaloneSitemapLevel1Props,
       type: 'standalone-sitemap',
     }
   } catch {
-    const standaloneSubpageProps = await StandaloneSubpage.getProps?.(ctx)
+    try {
+      const standaloneSubpageProps = await StandaloneSubpage.getProps?.(ctx)
 
-    if (standaloneSubpageProps) {
-      return {
-        props: standaloneSubpageProps,
-        type: 'standalone-subpage',
+      if (standaloneSubpageProps) {
+        return {
+          props: standaloneSubpageProps,
+          type: 'standalone-subpage',
+        }
       }
+    } catch {
+      //
     }
 
     const defaultProps = await SubPage.getProps?.(ctx)

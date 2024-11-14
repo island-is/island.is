@@ -123,6 +123,8 @@ import { TeamMember } from './models/teamMember.model'
 import { LatestGenericListItems } from './models/latestGenericListItems.model'
 import { SitemapResponse } from './models/sitemapResponse.model'
 import { GetSitemapInput } from './dto/getSitemap.input'
+import { GetOrganizationParentSubpageInput } from './dto/getOrganizationParentSubpage.input'
+import { OrganizationParentSubpage } from './models/organizationParentSubpage.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -686,6 +688,14 @@ export class CmsResolver {
     @Args('input') input: GetSitemapInput,
   ): Promise<SitemapResponse | null> {
     return this.cmsContentfulService.getSitemap(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => OrganizationParentSubpage, { nullable: true })
+  getOrganizationParentSubpage(
+    @Args('input') input: GetOrganizationParentSubpageInput,
+  ): Promise<OrganizationParentSubpage | null> {
+    return this.cmsContentfulService.getOrganizationParentSubpage(input)
   }
 }
 
