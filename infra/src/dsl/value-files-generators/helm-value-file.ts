@@ -3,7 +3,20 @@ import { HelmValueFile, HelmService, Services } from '../types/output-types'
 import { renderers } from '../upstream-dependencies'
 import { EnvironmentConfig } from '../types/charts'
 
+/**
+ * Type representing whether mocks should be included or not.
+ */
 export type Mocks = 'with-mocks' | 'no-mocks'
+
+/**
+ * Generates a Helm value file based on the provided Kubernetes runtime, services, mock configuration, and environment configuration.
+ *
+ * @param runtime - The Kubernetes runtime environment.
+ * @param services - The services to be included in the Helm value file.
+ * @param withMocks - Indicates whether to include mock services.
+ * @param env - The environment configuration.
+ * @returns A HelmValueFile containing namespaces and services.
+ */
 export const getHelmValueFile = (
   runtime: Kubernetes,
   services: Services<HelmService>,

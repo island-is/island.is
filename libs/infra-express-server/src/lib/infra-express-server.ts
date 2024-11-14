@@ -85,5 +85,15 @@ export const runServer = ({
     logger.info(`Listening on port ${servicePort}`)
   })
   server.on('error', logger.error)
+  process.on('SIGTERM', () => {
+    logger.info('Shutting down for SIGTERM')
+    server.close((error) => {
+      if (error) {
+        logger.error("Server wasn't even started", { name, error })
+      } else {
+        logger.info(`Webserver successfully shut down`, { name })
+      }
+    })
+  })
   return server
 }
