@@ -6,13 +6,11 @@ import {
   Page,
   session,
   test,
-  urls,
 } from '@island.is/testing/e2e'
 
 type GetByRole = Pick<Page, 'getByRole'>['getByRole']
 type GetByRoleParameters = Parameters<GetByRole>
 
-test.use({ baseURL: urls.islandisBaseUrl })
 type Orgs = {
   organisationName: string
   organisationHome?: string
@@ -45,6 +43,7 @@ const orgs: Orgs[] = [
 
 test.describe('Sites of institutions', () => {
   let context: BrowserContext
+
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser,
@@ -52,29 +51,37 @@ test.describe('Sites of institutions', () => {
       homeUrl: '/s',
     })
   })
+
   test.afterAll(async () => {
     await context.close()
   })
+
   for (const {
     organisationName,
     organisationHome = `/${slugify(organisationName, { lower: true })}`,
     target,
     enabled,
   } of orgs) {
-    test(organisationName, async () => {
+    test(organisationName, async ({ browser }) => {
       if (enabled) return
-      const page = await context.newPage()
+      const pageContext = await session({
+        browser,
+        idsLoginOn: false,
+        homeUrl: '/s',
+      })
+      const page = await pageContext.newPage()
       const url = `/s${organisationHome}`
       await page.goto(url)
       await expect(
         page
           .getByRole(target?.role ?? 'heading', {
-            ...{ name: organisationName },
+            name: organisationName,
             ...target?.options,
           })
           .first(),
       ).toBeVisible()
       await page.close()
+      await pageContext.close()
     })
   }
 })
