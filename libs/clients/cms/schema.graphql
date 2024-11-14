@@ -1,10 +1,7 @@
-directive @contentSourceMaps on QUERY
-
 """
 A slice with accordions [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/accordionSlice)
 """
-type AccordionSlice implements Entry & _Node {
-  _id: ID!
+type AccordionSlice implements Entry {
   accordionItemsCollection(
     limit: Int = 100
     locale: String
@@ -243,8 +240,7 @@ enum AccordionSliceOrder {
 """
 Alert banner will show on top of all pages [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/alertBanner)
 """
-type AlertBanner implements Entry & _Node {
-  _id: ID!
+type AlertBanner implements Entry {
   bannerVariant(locale: String): String
   contentfulMetadata: ContentfulMetadata!
   description(locale: String): String
@@ -343,13 +339,6 @@ type AlertBannerLinkingCollections {
     preview: Boolean
     skip: Int = 0
   ): EntryCollection
-  organizationCollection(
-    limit: Int = 100
-    locale: String
-    order: [AlertBannerLinkingCollectionsOrganizationCollectionOrder]
-    preview: Boolean
-    skip: Int = 0
-  ): OrganizationCollection
   organizationPageCollection(
     limit: Int = 100
     locale: String
@@ -410,47 +399,6 @@ enum AlertBannerLinkingCollectionsCustomPageCollectionOrder {
   title_DESC
   uniqueIdentifier_ASC
   uniqueIdentifier_DESC
-}
-
-enum AlertBannerLinkingCollectionsOrganizationCollectionOrder {
-  email_ASC
-  email_DESC
-  hasALandingPage_ASC
-  hasALandingPage_DESC
-  kennitala_ASC
-  kennitala_DESC
-  link_ASC
-  link_DESC
-  nameInVacancyList_ASC
-  nameInVacancyList_DESC
-  phone_ASC
-  phone_DESC
-  referenceIdentifier_ASC
-  referenceIdentifier_DESC
-  serviceWebEnabled_ASC
-  serviceWebEnabled_DESC
-  serviceWebPopularQuestionCount_ASC
-  serviceWebPopularQuestionCount_DESC
-  serviceWebTitle_ASC
-  serviceWebTitle_DESC
-  shortTitle_ASC
-  shortTitle_DESC
-  showsUpOnTheOrganizationsPage_ASC
-  showsUpOnTheOrganizationsPage_DESC
-  slug_ASC
-  slug_DESC
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-  title_ASC
-  title_DESC
-  trackingDomain_ASC
-  trackingDomain_DESC
 }
 
 enum AlertBannerLinkingCollectionsOrganizationPageCollectionOrder {
@@ -527,8 +475,7 @@ enum AlertBannerOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/anchorPage)
 """
-type AnchorPage implements Entry & _Node {
-  _id: ID!
+type AnchorPage implements Entry {
   category(
     locale: String
     preview: Boolean
@@ -781,8 +728,7 @@ enum AnchorPageLinkingCollectionsMenuLinkWithChildrenCollectionOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/anchorPageList)
 """
-type AnchorPageList implements Entry & _Node {
-  _id: ID!
+type AnchorPageList implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): AnchorPageListLinkingCollections
   pagesCollection(
@@ -954,8 +900,7 @@ enum AnchorPageOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/appUri)
 """
-type AppUri implements Entry & _Node {
-  _id: ID!
+type AppUri implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): AppUriLinkingCollections
   sys: Sys!
@@ -1008,8 +953,7 @@ enum AppUriOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/article)
 """
-type Article implements Entry & _Node {
-  _id: ID!
+type Article implements Entry {
   activeTranslations(locale: String): JSON
   alertBanner(
     locale: String
@@ -1133,8 +1077,7 @@ type Article implements Entry & _Node {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/articleCategory)
 """
-type ArticleCategory implements Entry & _Node {
-  _id: ID!
+type ArticleCategory implements Entry {
   contentfulMetadata: ContentfulMetadata!
   description(locale: String): String
   linkedFrom(allowedLocales: [String]): ArticleCategoryLinkingCollections
@@ -1675,8 +1618,7 @@ input ArticleFilter {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/articleGroup)
 """
-type ArticleGroup implements Entry & _Node {
-  _id: ID!
+type ArticleGroup implements Entry {
   contentfulMetadata: ContentfulMetadata!
   description(locale: String): String
   importance(locale: String): Int
@@ -2489,8 +2431,7 @@ enum ArticleSubArticlesCollectionOrder {
 """
 Used inside groups to further categorize articles by subject [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/articleSubgroup)
 """
-type ArticleSubgroup implements Entry & _Node {
-  _id: ID!
+type ArticleSubgroup implements Entry {
   contentfulMetadata: ContentfulMetadata!
   importance(locale: String): Int
   linkedFrom(allowedLocales: [String]): ArticleSubgroupLinkingCollections
@@ -2858,12 +2799,6 @@ type AssetLinkingCollections {
     preview: Boolean
     skip: Int = 0
   ): FrontpageSliderCollection
-  genericListItemCollection(
-    limit: Int = 100
-    locale: String
-    preview: Boolean
-    skip: Int = 0
-  ): GenericListItemCollection
   graphCardCollection(
     limit: Int = 100
     locale: String
@@ -3030,8 +2965,7 @@ enum AssetOrder {
 """
 Used for syslumenn auctions [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/auction)
 """
-type Auction implements Entry & _Node {
-  _id: ID!
+type Auction implements Entry {
   content(locale: String): AuctionContent
   contentfulMetadata: ContentfulMetadata!
   date(locale: String): DateTime
@@ -3157,8 +3091,7 @@ enum AuctionOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/bigBulletList)
 """
-type BigBulletList implements Entry & _Node {
-  _id: ID!
+type BigBulletList implements Entry {
   bulletsCollection(
     limit: Int = 100
     locale: String
@@ -3167,7 +3100,6 @@ type BigBulletList implements Entry & _Node {
     where: BigBulletListBulletsFilter
   ): BigBulletListBulletsCollection
   contentfulMetadata: ContentfulMetadata!
-  dividerOnTop(locale: String): Boolean
   linkedFrom(allowedLocales: [String]): BigBulletListLinkingCollections
   sys: Sys!
   title(locale: String): String
@@ -3209,9 +3141,6 @@ input BigBulletListFilter {
   bullets: cfbulletsMultiTypeNestedFilter
   bulletsCollection_exists: Boolean
   contentfulMetadata: ContentfulMetadataFilter
-  dividerOnTop: Boolean
-  dividerOnTop_exists: Boolean
-  dividerOnTop_not: Boolean
   sys: SysFilter
   title: String
   title_contains: String
@@ -3352,8 +3281,6 @@ enum BigBulletListLinkingCollectionsProjectSubpageCollectionOrder {
 }
 
 enum BigBulletListOrder {
-  dividerOnTop_ASC
-  dividerOnTop_DESC
   sys_firstPublishedAt_ASC
   sys_firstPublishedAt_DESC
   sys_id_ASC
@@ -3369,8 +3296,7 @@ enum BigBulletListOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/card)
 """
-type Card implements Entry & _Node {
-  _id: ID!
+type Card implements Entry {
   body(locale: String): String
   contentfulMetadata: ContentfulMetadata!
   link(locale: String): String
@@ -3481,8 +3407,7 @@ enum CardOrder {
 """
 List of link cards [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/cardSection)
 """
-type CardSection implements Entry & _Node {
-  _id: ID!
+type CardSection implements Entry {
   cardsCollection(
     limit: Int = 100
     locale: String
@@ -3601,8 +3526,7 @@ enum CardSectionOrder {
 """
 A wrapper to render any graphical representation of data using [Chart Component]s. [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/chart)
 """
-type Chart implements Entry & _Node {
-  _id: ID!
+type Chart implements Entry {
   alternativeDescription(locale: String): String
   chartDescription(locale: String): String
   componentsCollection(
@@ -3629,7 +3553,6 @@ type Chart implements Entry & _Node {
   xAxisFormat(locale: String): String
   xAxisKey(locale: String): String
   xAxisValueType(locale: String): String
-  yAxisLabel(locale: String): String
 }
 
 type ChartCollection {
@@ -3642,8 +3565,7 @@ type ChartCollection {
 """
 A component to be used with [Chart]. This component controls how data is visualised on a chart. What type of visualisation, what data is used and how it is used. [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/chartComponent)
 """
-type ChartComponent implements Entry & _Node {
-  _id: ID!
+type ChartComponent implements Entry {
   contentfulMetadata: ContentfulMetadata!
   interval(locale: String): String
   label(locale: String): String
@@ -3750,8 +3672,6 @@ enum ChartComponentLinkingCollectionsChartCollectionOrder {
   xAxisKey_DESC
   xAxisValueType_ASC
   xAxisValueType_DESC
-  yAxisLabel_ASC
-  yAxisLabel_DESC
 }
 
 enum ChartComponentOrder {
@@ -3893,13 +3813,6 @@ input ChartFilter {
   xAxisValueType_not: String
   xAxisValueType_not_contains: String
   xAxisValueType_not_in: [String]
-  yAxisLabel: String
-  yAxisLabel_contains: String
-  yAxisLabel_exists: Boolean
-  yAxisLabel_in: [String]
-  yAxisLabel_not: String
-  yAxisLabel_not_contains: String
-  yAxisLabel_not_in: [String]
 }
 
 type ChartLinkingCollections {
@@ -3914,8 +3827,7 @@ type ChartLinkingCollections {
 """
 A standalone component to display a value for a data key and optionally how it has evolved over a period of time. [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/chartNumberBox)
 """
-type ChartNumberBox implements Entry & _Node {
-  _id: ID!
+type ChartNumberBox implements Entry {
   contentfulMetadata: ContentfulMetadata!
   displayChangeMonthOverMonth(locale: String): Boolean
   displayChangeYearOverYear(locale: String): Boolean
@@ -4000,30 +3912,6 @@ type ChartNumberBoxLinkingCollections {
     preview: Boolean
     skip: Int = 0
   ): EntryCollection
-  organizationPageCollection(
-    limit: Int = 100
-    locale: String
-    order: [ChartNumberBoxLinkingCollectionsOrganizationPageCollectionOrder]
-    preview: Boolean
-    skip: Int = 0
-  ): OrganizationPageCollection
-}
-
-enum ChartNumberBoxLinkingCollectionsOrganizationPageCollectionOrder {
-  slug_ASC
-  slug_DESC
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-  theme_ASC
-  theme_DESC
-  title_ASC
-  title_DESC
 }
 
 enum ChartNumberBoxOrder {
@@ -4086,15 +3974,12 @@ enum ChartOrder {
   xAxisKey_DESC
   xAxisValueType_ASC
   xAxisValueType_DESC
-  yAxisLabel_ASC
-  yAxisLabel_DESC
 }
 
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/contactUs)
 """
-type ContactUs implements Entry & _Node {
-  _id: ID!
+type ContactUs implements Entry {
   contentfulMetadata: ContentfulMetadata!
   errorMessage(locale: String): String
   invalidEmail(locale: String): String
@@ -4353,8 +4238,7 @@ enum ContactUsOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/location)
 """
-type ContentTypeLocation implements Entry & _Node {
-  _id: ID!
+type ContentTypeLocation implements Entry {
   address(locale: String): String
   background(locale: String, preview: Boolean): Asset
   contentfulMetadata: ContentfulMetadata!
@@ -4444,7 +4328,7 @@ input ContentfulMetadataTagsFilter {
 
 """
 Represents a tag entity for finding and organizing content easily.
-      Find out more here: https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/content-tags
+    Find out more here: https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/content-tags
 """
 type ContentfulTag {
   id: String
@@ -4456,8 +4340,7 @@ This content type is meant to represent a custom made page. Examples include (/s
 The idea is that new custom pages should rely on this content type for it's translations, configuration and so forth.
 There should also be an effort made in updating the code for already existing custom pages so that they'll utilize this content type. [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/customPage)
 """
-type CustomPage implements Entry & _Node {
-  _id: ID!
+type CustomPage implements Entry {
   alertBanner(
     locale: String
     preview: Boolean
@@ -4660,8 +4543,7 @@ scalar Dimension
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/districts)
 """
-type Districts implements Entry & _Node {
-  _id: ID!
+type Districts implements Entry {
   contentfulMetadata: ContentfulMetadata!
   description(locale: String): String
   hasBorderAbove(locale: String): Boolean
@@ -4850,8 +4732,7 @@ enum DistrictsOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/emailSignup)
 """
-type EmailSignup implements Entry & _Node {
-  _id: ID!
+type EmailSignup implements Entry {
   configuration(locale: String): JSON
   contentfulMetadata: ContentfulMetadata!
   description(locale: String): String
@@ -5084,8 +4965,7 @@ enum EmailSignupOrder {
 """
 A content type which allows you to embed an iframe (but only from sources that have been approved of) [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/embed)
 """
-type Embed implements Entry & _Node {
-  _id: ID!
+type Embed implements Entry {
   altText(locale: String): String
   aspectRatio(locale: String): String
   contentfulMetadata: ContentfulMetadata!
@@ -5166,8 +5046,7 @@ enum EmbedOrder {
 """
 YouTube or Vimeo [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/embeddedVideo)
 """
-type EmbeddedVideo implements Entry & _Node {
-  _id: ID!
+type EmbeddedVideo implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): EmbeddedVideoLinkingCollections
   sys: Sys!
@@ -5406,8 +5285,7 @@ enum EmbeddedVideoOrder {
 """
 An Asset that can be tagged with generic tags [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/enhancedAsset)
 """
-type EnhancedAsset implements Entry & _Node {
-  _id: ID!
+type EnhancedAsset implements Entry {
   contentfulMetadata: ContentfulMetadata!
   description(locale: String): String
   file(locale: String, preview: Boolean): Asset
@@ -5555,8 +5433,7 @@ enum EntryOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/errorPage)
 """
-type ErrorPage implements Entry & _Node {
-  _id: ID!
+type ErrorPage implements Entry {
   contentfulMetadata: ContentfulMetadata!
   description(locale: String): ErrorPageDescription
   errorCode(locale: String): String
@@ -5663,8 +5540,7 @@ enum ErrorPageOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/event)
 """
-type Event implements Entry & _Node {
-  _id: ID!
+type Event implements Entry {
   content(locale: String): EventContent
   contentImage(locale: String, preview: Boolean): Asset
   contentfulMetadata: ContentfulMetadata!
@@ -5813,8 +5689,7 @@ enum EventOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/eventSlice)
 """
-type EventSlice implements Entry & _Node {
-  _id: ID!
+type EventSlice implements Entry {
   backgroundImage(locale: String, preview: Boolean): Asset
   contentfulMetadata: ContentfulMetadata!
   date(locale: String): DateTime
@@ -6014,8 +5889,7 @@ enum EventSliceOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/faqList)
 """
-type FaqList implements Entry & _Node {
-  _id: ID!
+type FaqList implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): FaqListLinkingCollections
   questionsCollection(
@@ -6168,8 +6042,7 @@ enum FaqListQuestionsCollectionOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/featured)
 """
-type Featured implements Entry & _Node {
-  _id: ID!
+type Featured implements Entry {
   attention(locale: String): Boolean
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): FeaturedLinkingCollections
@@ -6181,8 +6054,7 @@ type Featured implements Entry & _Node {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/featuredArticles)
 """
-type FeaturedArticles implements Entry & _Node {
-  _id: ID!
+type FeaturedArticles implements Entry {
   articleCount(locale: String): Int
   articlesCollection(
     limit: Int = 100
@@ -6535,8 +6407,7 @@ type FeaturedCollection {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/featuredEvents)
 """
-type FeaturedEvents implements Entry & _Node {
-  _id: ID!
+type FeaturedEvents implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): FeaturedEventsLinkingCollections
   noEventsFoundText(locale: String): FeaturedEventsNoEventsFoundText
@@ -6736,8 +6607,7 @@ enum FeaturedOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/featuredSupportQNAs)
 """
-type FeaturedSupportQnAs implements Entry & _Node {
-  _id: ID!
+type FeaturedSupportQnAs implements Entry {
   automaticallyFetchSupportQnAs(locale: String): Boolean
   contentfulMetadata: ContentfulMetadata!
   link(locale: String, preview: Boolean, where: LinkFilter): Link
@@ -6880,8 +6750,7 @@ union FeaturedThing = Article | LinkUrl | VidspyrnaFrontpage | VidspyrnaPage
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/footerItem)
 """
-type FooterItem implements Entry & _Node {
-  _id: ID!
+type FooterItem implements Entry {
   content(locale: String): FooterItemContent
   contentfulMetadata: ContentfulMetadata!
   link(locale: String, preview: Boolean, where: LinkFilter): Link
@@ -7153,8 +7022,7 @@ type FooterItemServiceWebContentResourcesInline implements ResourceLink {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/form)
 """
-type Form implements Entry & _Node {
-  _id: ID!
+type Form implements Entry {
   aboutYouHeadingText(locale: String): String
   contentfulMetadata: ContentfulMetadata!
   defaultFieldNamespace(locale: String): JSON
@@ -7191,8 +7059,7 @@ type FormCollection {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/formField)
 """
-type FormField implements Entry & _Node {
-  _id: ID!
+type FormField implements Entry {
   contentfulMetadata: ContentfulMetadata!
   emailConfig(locale: String): JSON
   informationText(locale: String): String
@@ -7459,8 +7326,7 @@ enum FormOrder {
 This is the frontpage for Island.is.
 Contains life events, frontpage sliders, featured, etc... [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/frontpage)
 """
-type Frontpage implements Entry & _Node {
-  _id: ID!
+type Frontpage implements Entry {
   contentfulMetadata: ContentfulMetadata!
   featuredCollection(
     limit: Int = 100
@@ -7651,8 +7517,7 @@ enum FrontpageOrder {
 """
 Efni í haus á forsíðu [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/frontpageSlider)
 """
-type FrontpageSlider implements Entry & _Node {
-  _id: ID!
+type FrontpageSlider implements Entry {
   animationJson(locale: String): JSON
   animationJsonAsset(locale: String, preview: Boolean): Asset
   animationJsonFile(locale: String, preview: Boolean): Asset
@@ -7838,8 +7703,7 @@ enum FrontpageSlidesCollectionOrder {
 """
 A list of items which can be embedded into rich text [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/genericList)
 """
-type GenericList implements Entry & _Node {
-  _id: ID!
+type GenericList implements Entry {
   cardIntroTemplate(locale: String): GenericListCardIntroTemplate
   contentfulMetadata: ContentfulMetadata!
   filterTagsCollection(
@@ -7964,9 +7828,7 @@ enum GenericListFilterTagsCollectionOrder {
 """
 An item that belongs to a generic list [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/genericListItem)
 """
-type GenericListItem implements Entry & _Node {
-  _id: ID!
-  asset(locale: String, preview: Boolean): Asset
+type GenericListItem implements Entry {
   cardIntro(locale: String): GenericListItemCardIntro
   content(locale: String): GenericListItemContent
   contentfulMetadata: ContentfulMetadata!
@@ -8081,7 +7943,6 @@ type GenericListItemContentResourcesInline implements ResourceLink {
 input GenericListItemFilter {
   AND: [GenericListItemFilter]
   OR: [GenericListItemFilter]
-  asset_exists: Boolean
   cardIntro_contains: String
   cardIntro_exists: Boolean
   cardIntro_not_contains: String
@@ -8192,13 +8053,6 @@ type GenericListLinkingCollections {
     preview: Boolean
     skip: Int = 0
   ): GenericListItemCollection
-  latestGenericListItemsCollection(
-    limit: Int = 100
-    locale: String
-    order: [GenericListLinkingCollectionsLatestGenericListItemsCollectionOrder]
-    preview: Boolean
-    skip: Int = 0
-  ): LatestGenericListItemsCollection
 }
 
 enum GenericListLinkingCollectionsGenericListItemCollectionOrder {
@@ -8208,23 +8062,6 @@ enum GenericListLinkingCollectionsGenericListItemCollectionOrder {
   internalTitle_DESC
   slug_ASC
   slug_DESC
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-  title_ASC
-  title_DESC
-}
-
-enum GenericListLinkingCollectionsLatestGenericListItemsCollectionOrder {
-  internalTitle_ASC
-  internalTitle_DESC
-  seeMoreLinkText_ASC
-  seeMoreLinkText_DESC
   sys_firstPublishedAt_ASC
   sys_firstPublishedAt_DESC
   sys_id_ASC
@@ -8257,8 +8094,7 @@ enum GenericListOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/genericOverviewPage)
 """
-type GenericOverviewPage implements Entry & _Node {
-  _id: ID!
+type GenericOverviewPage implements Entry {
   contentfulMetadata: ContentfulMetadata!
   intro(locale: String): GenericOverviewPageIntro
   linkedFrom(allowedLocales: [String]): GenericOverviewPageLinkingCollections
@@ -8404,8 +8240,7 @@ enum GenericOverviewPageOverviewLinksCollectionOrder {
 """
 Generic content page with optional sidebar [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/genericPage)
 """
-type GenericPage implements Entry & _Node {
-  _id: ID!
+type GenericPage implements Entry {
   contentfulMetadata: ContentfulMetadata!
   intro(locale: String): GenericPageIntro
   linkedFrom(allowedLocales: [String]): GenericPageLinkingCollections
@@ -8602,8 +8437,7 @@ type GenericPageSidebarResourcesInline implements ResourceLink {
 """
 A generic uniquely named tag that can be used to tag miscellaneous things. [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/genericTag)
 """
-type GenericTag implements Entry & _Node {
-  _id: ID!
+type GenericTag implements Entry {
   contentfulMetadata: ContentfulMetadata!
   genericTagGroup(
     locale: String
@@ -8657,10 +8491,8 @@ input GenericTagFilter {
 """
 A way to group together generic tags [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/genericTagGroup)
 """
-type GenericTagGroup implements Entry & _Node {
-  _id: ID!
+type GenericTagGroup implements Entry {
   contentfulMetadata: ContentfulMetadata!
-  items(locale: String): JSON
   linkedFrom(allowedLocales: [String]): GenericTagGroupLinkingCollections
   slug(locale: String): String
   sys: Sys!
@@ -8678,7 +8510,6 @@ input GenericTagGroupFilter {
   AND: [GenericTagGroupFilter]
   OR: [GenericTagGroupFilter]
   contentfulMetadata: ContentfulMetadataFilter
-  items_exists: Boolean
   slug: String
   slug_contains: String
   slug_exists: Boolean
@@ -8710,13 +8541,6 @@ type GenericTagGroupLinkingCollections {
     preview: Boolean
     skip: Int = 0
   ): GenericTagCollection
-  teamListCollection(
-    limit: Int = 100
-    locale: String
-    order: [GenericTagGroupLinkingCollectionsTeamListCollectionOrder]
-    preview: Boolean
-    skip: Int = 0
-  ): TeamListCollection
 }
 
 enum GenericTagGroupLinkingCollectionsGenericTagCollectionOrder {
@@ -8734,21 +8558,6 @@ enum GenericTagGroupLinkingCollectionsGenericTagCollectionOrder {
   sys_publishedVersion_DESC
   title_ASC
   title_DESC
-}
-
-enum GenericTagGroupLinkingCollectionsTeamListCollectionOrder {
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-  title_ASC
-  title_DESC
-  variant_ASC
-  variant_DESC
 }
 
 enum GenericTagGroupOrder {
@@ -8808,13 +8617,6 @@ type GenericTagLinkingCollections {
     preview: Boolean
     skip: Int = 0
   ): NewsCollection
-  oneColumnTextCollection(
-    limit: Int = 100
-    locale: String
-    order: [GenericTagLinkingCollectionsOneColumnTextCollectionOrder]
-    preview: Boolean
-    skip: Int = 0
-  ): OneColumnTextCollection
   organizationCollection(
     limit: Int = 100
     locale: String
@@ -8836,20 +8638,6 @@ type GenericTagLinkingCollections {
     preview: Boolean
     skip: Int = 0
   ): ProjectPageCollection
-  teamListCollection(
-    limit: Int = 100
-    locale: String
-    order: [GenericTagLinkingCollectionsTeamListCollectionOrder]
-    preview: Boolean
-    skip: Int = 0
-  ): TeamListCollection
-  teamMemberCollection(
-    limit: Int = 100
-    locale: String
-    order: [GenericTagLinkingCollectionsTeamMemberCollectionOrder]
-    preview: Boolean
-    skip: Int = 0
-  ): TeamMemberCollection
 }
 
 enum GenericTagLinkingCollectionsEnhancedAssetCollectionOrder {
@@ -8935,23 +8723,6 @@ enum GenericTagLinkingCollectionsNewsCollectionOrder {
   slug_DESC
   subtitle_ASC
   subtitle_DESC
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-  title_ASC
-  title_DESC
-}
-
-enum GenericTagLinkingCollectionsOneColumnTextCollectionOrder {
-  dividerOnTop_ASC
-  dividerOnTop_DESC
-  showTitle_ASC
-  showTitle_DESC
   sys_firstPublishedAt_ASC
   sys_firstPublishedAt_DESC
   sys_id_ASC
@@ -9051,40 +8822,6 @@ enum GenericTagLinkingCollectionsProjectPageCollectionOrder {
   title_DESC
 }
 
-enum GenericTagLinkingCollectionsTeamListCollectionOrder {
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-  title_ASC
-  title_DESC
-  variant_ASC
-  variant_DESC
-}
-
-enum GenericTagLinkingCollectionsTeamMemberCollectionOrder {
-  email_ASC
-  email_DESC
-  name_ASC
-  name_DESC
-  phone_ASC
-  phone_DESC
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-  title_ASC
-  title_DESC
-}
-
 enum GenericTagOrder {
   internalTitle_ASC
   internalTitle_DESC
@@ -9103,348 +8840,9 @@ enum GenericTagOrder {
 }
 
 """
-Grant is a part of "Styrkjatorg". [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/grant)
-"""
-type Grant implements Entry & _Node {
-  _id: ID!
-  contentfulMetadata: ContentfulMetadata!
-  grantApplicationDeadline(locale: String): GrantGrantApplicationDeadline
-  grantCategory(locale: String): String
-  grantDescription(locale: String): GrantGrantDescription
-  grantHowToApply(locale: String): GrantGrantHowToApply
-  grantName(locale: String): String
-  grantSpecialEmphasis(locale: String): GrantGrantSpecialEmphasis
-  grantType(locale: String): String
-  grantWhatIsGranted(locale: String): GrantGrantWhatIsGranted
-  grantWhoCanApply(locale: String): GrantGrantWhoCanApply
-  linkedFrom(allowedLocales: [String]): GrantLinkingCollections
-  sys: Sys!
-}
-
-type GrantCollection {
-  items: [Grant]!
-  limit: Int!
-  skip: Int!
-  total: Int!
-}
-
-input GrantFilter {
-  AND: [GrantFilter]
-  OR: [GrantFilter]
-  contentfulMetadata: ContentfulMetadataFilter
-  grantApplicationDeadline_contains: String
-  grantApplicationDeadline_exists: Boolean
-  grantApplicationDeadline_not_contains: String
-  grantCategory: String
-  grantCategory_contains: String
-  grantCategory_exists: Boolean
-  grantCategory_in: [String]
-  grantCategory_not: String
-  grantCategory_not_contains: String
-  grantCategory_not_in: [String]
-  grantDescription_contains: String
-  grantDescription_exists: Boolean
-  grantDescription_not_contains: String
-  grantHowToApply_contains: String
-  grantHowToApply_exists: Boolean
-  grantHowToApply_not_contains: String
-  grantName: String
-  grantName_contains: String
-  grantName_exists: Boolean
-  grantName_in: [String]
-  grantName_not: String
-  grantName_not_contains: String
-  grantName_not_in: [String]
-  grantSpecialEmphasis_contains: String
-  grantSpecialEmphasis_exists: Boolean
-  grantSpecialEmphasis_not_contains: String
-  grantType: String
-  grantType_contains: String
-  grantType_exists: Boolean
-  grantType_in: [String]
-  grantType_not: String
-  grantType_not_contains: String
-  grantType_not_in: [String]
-  grantWhatIsGranted_contains: String
-  grantWhatIsGranted_exists: Boolean
-  grantWhatIsGranted_not_contains: String
-  grantWhoCanApply_contains: String
-  grantWhoCanApply_exists: Boolean
-  grantWhoCanApply_not_contains: String
-  sys: SysFilter
-}
-
-type GrantGrantApplicationDeadline {
-  json: JSON!
-  links: GrantGrantApplicationDeadlineLinks!
-}
-
-type GrantGrantApplicationDeadlineAssets {
-  block: [Asset]!
-  hyperlink: [Asset]!
-}
-
-type GrantGrantApplicationDeadlineEntries {
-  block: [Entry]!
-  hyperlink: [Entry]!
-  inline: [Entry]!
-}
-
-type GrantGrantApplicationDeadlineLinks {
-  assets: GrantGrantApplicationDeadlineAssets!
-  entries: GrantGrantApplicationDeadlineEntries!
-  resources: GrantGrantApplicationDeadlineResources!
-}
-
-type GrantGrantApplicationDeadlineResources {
-  block: [GrantGrantApplicationDeadlineResourcesBlock!]!
-  hyperlink: [GrantGrantApplicationDeadlineResourcesHyperlink!]!
-  inline: [GrantGrantApplicationDeadlineResourcesInline!]!
-}
-
-type GrantGrantApplicationDeadlineResourcesBlock implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantApplicationDeadlineResourcesHyperlink implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantApplicationDeadlineResourcesInline implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantDescription {
-  json: JSON!
-  links: GrantGrantDescriptionLinks!
-}
-
-type GrantGrantDescriptionAssets {
-  block: [Asset]!
-  hyperlink: [Asset]!
-}
-
-type GrantGrantDescriptionEntries {
-  block: [Entry]!
-  hyperlink: [Entry]!
-  inline: [Entry]!
-}
-
-type GrantGrantDescriptionLinks {
-  assets: GrantGrantDescriptionAssets!
-  entries: GrantGrantDescriptionEntries!
-  resources: GrantGrantDescriptionResources!
-}
-
-type GrantGrantDescriptionResources {
-  block: [GrantGrantDescriptionResourcesBlock!]!
-  hyperlink: [GrantGrantDescriptionResourcesHyperlink!]!
-  inline: [GrantGrantDescriptionResourcesInline!]!
-}
-
-type GrantGrantDescriptionResourcesBlock implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantDescriptionResourcesHyperlink implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantDescriptionResourcesInline implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantHowToApply {
-  json: JSON!
-  links: GrantGrantHowToApplyLinks!
-}
-
-type GrantGrantHowToApplyAssets {
-  block: [Asset]!
-  hyperlink: [Asset]!
-}
-
-type GrantGrantHowToApplyEntries {
-  block: [Entry]!
-  hyperlink: [Entry]!
-  inline: [Entry]!
-}
-
-type GrantGrantHowToApplyLinks {
-  assets: GrantGrantHowToApplyAssets!
-  entries: GrantGrantHowToApplyEntries!
-  resources: GrantGrantHowToApplyResources!
-}
-
-type GrantGrantHowToApplyResources {
-  block: [GrantGrantHowToApplyResourcesBlock!]!
-  hyperlink: [GrantGrantHowToApplyResourcesHyperlink!]!
-  inline: [GrantGrantHowToApplyResourcesInline!]!
-}
-
-type GrantGrantHowToApplyResourcesBlock implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantHowToApplyResourcesHyperlink implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantHowToApplyResourcesInline implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantSpecialEmphasis {
-  json: JSON!
-  links: GrantGrantSpecialEmphasisLinks!
-}
-
-type GrantGrantSpecialEmphasisAssets {
-  block: [Asset]!
-  hyperlink: [Asset]!
-}
-
-type GrantGrantSpecialEmphasisEntries {
-  block: [Entry]!
-  hyperlink: [Entry]!
-  inline: [Entry]!
-}
-
-type GrantGrantSpecialEmphasisLinks {
-  assets: GrantGrantSpecialEmphasisAssets!
-  entries: GrantGrantSpecialEmphasisEntries!
-  resources: GrantGrantSpecialEmphasisResources!
-}
-
-type GrantGrantSpecialEmphasisResources {
-  block: [GrantGrantSpecialEmphasisResourcesBlock!]!
-  hyperlink: [GrantGrantSpecialEmphasisResourcesHyperlink!]!
-  inline: [GrantGrantSpecialEmphasisResourcesInline!]!
-}
-
-type GrantGrantSpecialEmphasisResourcesBlock implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantSpecialEmphasisResourcesHyperlink implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantSpecialEmphasisResourcesInline implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantWhatIsGranted {
-  json: JSON!
-  links: GrantGrantWhatIsGrantedLinks!
-}
-
-type GrantGrantWhatIsGrantedAssets {
-  block: [Asset]!
-  hyperlink: [Asset]!
-}
-
-type GrantGrantWhatIsGrantedEntries {
-  block: [Entry]!
-  hyperlink: [Entry]!
-  inline: [Entry]!
-}
-
-type GrantGrantWhatIsGrantedLinks {
-  assets: GrantGrantWhatIsGrantedAssets!
-  entries: GrantGrantWhatIsGrantedEntries!
-  resources: GrantGrantWhatIsGrantedResources!
-}
-
-type GrantGrantWhatIsGrantedResources {
-  block: [GrantGrantWhatIsGrantedResourcesBlock!]!
-  hyperlink: [GrantGrantWhatIsGrantedResourcesHyperlink!]!
-  inline: [GrantGrantWhatIsGrantedResourcesInline!]!
-}
-
-type GrantGrantWhatIsGrantedResourcesBlock implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantWhatIsGrantedResourcesHyperlink implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantWhatIsGrantedResourcesInline implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantWhoCanApply {
-  json: JSON!
-  links: GrantGrantWhoCanApplyLinks!
-}
-
-type GrantGrantWhoCanApplyAssets {
-  block: [Asset]!
-  hyperlink: [Asset]!
-}
-
-type GrantGrantWhoCanApplyEntries {
-  block: [Entry]!
-  hyperlink: [Entry]!
-  inline: [Entry]!
-}
-
-type GrantGrantWhoCanApplyLinks {
-  assets: GrantGrantWhoCanApplyAssets!
-  entries: GrantGrantWhoCanApplyEntries!
-  resources: GrantGrantWhoCanApplyResources!
-}
-
-type GrantGrantWhoCanApplyResources {
-  block: [GrantGrantWhoCanApplyResourcesBlock!]!
-  hyperlink: [GrantGrantWhoCanApplyResourcesHyperlink!]!
-  inline: [GrantGrantWhoCanApplyResourcesInline!]!
-}
-
-type GrantGrantWhoCanApplyResourcesBlock implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantWhoCanApplyResourcesHyperlink implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantGrantWhoCanApplyResourcesInline implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type GrantLinkingCollections {
-  entryCollection(
-    limit: Int = 100
-    locale: String
-    preview: Boolean
-    skip: Int = 0
-  ): EntryCollection
-}
-
-enum GrantOrder {
-  grantCategory_ASC
-  grantCategory_DESC
-  grantName_ASC
-  grantName_DESC
-  grantType_ASC
-  grantType_DESC
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-}
-
-"""
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/graphCard)
 """
-type GraphCard implements Entry & _Node {
-  _id: ID!
+type GraphCard implements Entry {
   contentfulMetadata: ContentfulMetadata!
   data(locale: String): JSON
   datakeys(locale: String): JSON
@@ -9593,8 +8991,7 @@ enum GraphCardOrder {
 """
 Includes multiple menu groups for complex menu structures such as footers or mega menu [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/groupedMenu)
 """
-type GroupedMenu implements Entry & _Node {
-  _id: ID!
+type GroupedMenu implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): GroupedMenuLinkingCollections
   menusCollection(
@@ -9682,8 +9079,7 @@ scalar HexColor
 """
 push notification templates for island.is [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/hnippTemplate)
 """
-type HnippTemplate implements Entry & _Node {
-  _id: ID!
+type HnippTemplate implements Entry {
   args(locale: String): [String]
   category(locale: String): String
   clickAction(locale: String): String
@@ -9818,8 +9214,7 @@ enum HnippTemplateOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/iconBullet)
 """
-type IconBullet implements Entry & _Node {
-  _id: ID!
+type IconBullet implements Entry {
   body(locale: String): String
   contentfulMetadata: ContentfulMetadata!
   icon(locale: String, preview: Boolean): Asset
@@ -9890,8 +9285,6 @@ type IconBulletLinkingCollections {
 }
 
 enum IconBulletLinkingCollectionsBigBulletListCollectionOrder {
-  dividerOnTop_ASC
-  dividerOnTop_DESC
   sys_firstPublishedAt_ASC
   sys_firstPublishedAt_DESC
   sys_id_ASC
@@ -10094,8 +9487,7 @@ input ImageTransformOptions {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/introLinkImage)
 """
-type IntroLinkImage implements Entry & _Node {
-  _id: ID!
+type IntroLinkImage implements Entry {
   contentfulMetadata: ContentfulMetadata!
   image(locale: String, preview: Boolean): Asset
   intro(locale: String): IntroLinkImageIntro
@@ -10278,8 +9670,7 @@ scalar JSON
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/latestEventsSlice)
 """
-type LatestEventsSlice implements Entry & _Node {
-  _id: ID!
+type LatestEventsSlice implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): LatestEventsSliceLinkingCollections
   organization(
@@ -10393,122 +9784,9 @@ enum LatestEventsSliceOrder {
 }
 
 """
-[See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/latestGenericListItems)
-"""
-type LatestGenericListItems implements Entry & _Node {
-  _id: ID!
-  contentfulMetadata: ContentfulMetadata!
-  genericList(
-    locale: String
-    preview: Boolean
-    where: GenericListFilter
-  ): GenericList
-  internalTitle(locale: String): String
-  linkedFrom(allowedLocales: [String]): LatestGenericListItemsLinkingCollections
-  seeMoreLinkText(locale: String): String
-  seeMorePage(
-    locale: String
-    preview: Boolean
-    where: OrganizationSubpageFilter
-  ): OrganizationSubpage
-  sys: Sys!
-  title(locale: String): String
-}
-
-type LatestGenericListItemsCollection {
-  items: [LatestGenericListItems]!
-  limit: Int!
-  skip: Int!
-  total: Int!
-}
-
-input LatestGenericListItemsFilter {
-  AND: [LatestGenericListItemsFilter]
-  OR: [LatestGenericListItemsFilter]
-  contentfulMetadata: ContentfulMetadataFilter
-  genericList: cfGenericListNestedFilter
-  genericList_exists: Boolean
-  internalTitle: String
-  internalTitle_contains: String
-  internalTitle_exists: Boolean
-  internalTitle_in: [String]
-  internalTitle_not: String
-  internalTitle_not_contains: String
-  internalTitle_not_in: [String]
-  seeMoreLinkText: String
-  seeMoreLinkText_contains: String
-  seeMoreLinkText_exists: Boolean
-  seeMoreLinkText_in: [String]
-  seeMoreLinkText_not: String
-  seeMoreLinkText_not_contains: String
-  seeMoreLinkText_not_in: [String]
-  seeMorePage: cfOrganizationSubpageNestedFilter
-  seeMorePage_exists: Boolean
-  sys: SysFilter
-  title: String
-  title_contains: String
-  title_exists: Boolean
-  title_in: [String]
-  title_not: String
-  title_not_contains: String
-  title_not_in: [String]
-}
-
-type LatestGenericListItemsLinkingCollections {
-  entryCollection(
-    limit: Int = 100
-    locale: String
-    preview: Boolean
-    skip: Int = 0
-  ): EntryCollection
-  organizationPageCollection(
-    limit: Int = 100
-    locale: String
-    order: [LatestGenericListItemsLinkingCollectionsOrganizationPageCollectionOrder]
-    preview: Boolean
-    skip: Int = 0
-  ): OrganizationPageCollection
-}
-
-enum LatestGenericListItemsLinkingCollectionsOrganizationPageCollectionOrder {
-  slug_ASC
-  slug_DESC
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-  theme_ASC
-  theme_DESC
-  title_ASC
-  title_DESC
-}
-
-enum LatestGenericListItemsOrder {
-  internalTitle_ASC
-  internalTitle_DESC
-  seeMoreLinkText_ASC
-  seeMoreLinkText_DESC
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-  title_ASC
-  title_DESC
-}
-
-"""
 Slice to show latest news entries [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/latestNewsSlice)
 """
-type LatestNewsSlice implements Entry & _Node {
-  _id: ID!
+type LatestNewsSlice implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): LatestNewsSliceLinkingCollections
   newsTag(locale: String, preview: Boolean, where: GenericTagFilter): GenericTag
@@ -10704,8 +9982,7 @@ enum LatestNewsSliceOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/lifeEventPage)
 """
-type LifeEventPage implements Entry & _Node {
-  _id: ID!
+type LifeEventPage implements Entry {
   category(
     locale: String
     preview: Boolean
@@ -11058,8 +10335,7 @@ enum LifeEventPageLinkingCollectionsUrlCollectionOrder {
 """
 !!DO NOT USE!! - This content type has been deprecated. Use Anchor Page List [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/lifeEventPageListSlice)
 """
-type LifeEventPageListSlice implements Entry & _Node {
-  _id: ID!
+type LifeEventPageListSlice implements Entry {
   contentfulMetadata: ContentfulMetadata!
   lifeEventPageListCollection(
     limit: Int = 100
@@ -11284,8 +10560,7 @@ enum LifeEventPageRelatedLifeEventsCollectionOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/link)
 """
-type Link implements Entry & _Node {
-  _id: ID!
+type Link implements Entry {
   contentfulMetadata: ContentfulMetadata!
   date(locale: String): DateTime
   intro(locale: String): String
@@ -11353,8 +10628,7 @@ input LinkFilter {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/linkGroup)
 """
-type LinkGroup implements Entry & _Node {
-  _id: ID!
+type LinkGroup implements Entry {
   childrenLinksCollection(
     limit: Int = 100
     locale: String
@@ -12088,8 +11362,6 @@ enum LinkLinkingCollectionsTwoColumnTextCollectionOrder {
   dividerOnTop_DESC
   leftTitle_ASC
   leftTitle_DESC
-  onlyUseOneTitle_ASC
-  onlyUseOneTitle_DESC
   rightTitle_ASC
   rightTitle_DESC
   sys_firstPublishedAt_ASC
@@ -12105,8 +11377,7 @@ enum LinkLinkingCollectionsTwoColumnTextCollectionOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/linkList)
 """
-type LinkList implements Entry & _Node {
-  _id: ID!
+type LinkList implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): LinkListLinkingCollections
   linksCollection(
@@ -12240,8 +11511,7 @@ enum LinkOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/linkUrl)
 """
-type LinkUrl implements Entry & _Node {
-  _id: ID!
+type LinkUrl implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): LinkUrlLinkingCollections
   sys: Sys!
@@ -12440,8 +11710,7 @@ enum LinkUrlOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/linkedPage)
 """
-type LinkedPage implements Entry & _Node {
-  _id: ID!
+type LinkedPage implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): LinkedPageLinkingCollections
   page(locale: String, preview: Boolean): LinkedPagePage
@@ -12524,8 +11793,7 @@ union LinkedPagePage = Article | ArticleCategory | News
 """
 A List of logos/images with a heading and short description [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/logoListSlice)
 """
-type LogoListSlice implements Entry & _Node {
-  _id: ID!
+type LogoListSlice implements Entry {
   body(locale: String): String
   contentfulMetadata: ContentfulMetadata!
   imagesCollection(
@@ -12653,8 +11921,7 @@ enum LogoListSliceOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/manual)
 """
-type Manual implements Entry & _Node {
-  _id: ID!
+type Manual implements Entry {
   category(
     locale: String
     preview: Boolean
@@ -12696,8 +11963,7 @@ type Manual implements Entry & _Node {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/manualChapter)
 """
-type ManualChapter implements Entry & _Node {
-  _id: ID!
+type ManualChapter implements Entry {
   changelog(locale: String): JSON
   chapterItemsCollection(
     limit: Int = 100
@@ -13053,8 +12319,7 @@ enum ManualOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/menu)
 """
-type Menu implements Entry & _Node {
-  _id: ID!
+type Menu implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): MenuLinkingCollections
   linksCollection(
@@ -13105,8 +12370,7 @@ input MenuFilter {
 """
 Simple link for menu [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/menuLink)
 """
-type MenuLink implements Entry & _Node {
-  _id: ID!
+type MenuLink implements Entry {
   contentfulMetadata: ContentfulMetadata!
   link(locale: String, preview: Boolean): MenuLinkLink
   linkedFrom(allowedLocales: [String]): MenuLinkLinkingCollections
@@ -13218,8 +12482,7 @@ enum MenuLinkOrder {
 """
 Menu link that can have child links for hierarchical menu structures [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/menuLinkWithChildren)
 """
-type MenuLinkWithChildren implements Entry & _Node {
-  _id: ID!
+type MenuLinkWithChildren implements Entry {
   childLinksCollection(
     limit: Int = 100
     locale: String
@@ -13471,8 +12734,7 @@ enum MenuOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/multipleStatistics)
 """
-type MultipleStatistics implements Entry & _Node {
-  _id: ID!
+type MultipleStatistics implements Entry {
   contentfulMetadata: ContentfulMetadata!
   hasBorderAbove(locale: String): Boolean
   link(locale: String, preview: Boolean, where: LinkFilter): Link
@@ -13684,8 +12946,7 @@ enum MultipleStatisticsStatisticsCollectionOrder {
 """
 Namespace containing translations [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/namespace)
 """
-type Namespace implements Entry & _Node {
-  _id: ID!
+type Namespace implements Entry {
   contentfulMetadata: ContentfulMetadata!
   defaults(locale: String): JSON
   fallback(locale: String): JSON
@@ -13733,13 +12994,6 @@ type NamespaceLinkingCollections {
     preview: Boolean
     skip: Int = 0
   ): EntryCollection
-  sliceConnectedComponentCollection(
-    limit: Int = 100
-    locale: String
-    order: [NamespaceLinkingCollectionsSliceConnectedComponentCollectionOrder]
-    preview: Boolean
-    skip: Int = 0
-  ): SliceConnectedComponentCollection
 }
 
 enum NamespaceLinkingCollectionsCustomPageCollectionOrder {
@@ -13763,21 +13017,6 @@ enum NamespaceLinkingCollectionsCustomPageCollectionOrder {
   uniqueIdentifier_DESC
 }
 
-enum NamespaceLinkingCollectionsSliceConnectedComponentCollectionOrder {
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-  title_ASC
-  title_DESC
-  type_ASC
-  type_DESC
-}
-
 enum NamespaceOrder {
   namespace_ASC
   namespace_DESC
@@ -13794,8 +13033,7 @@ enum NamespaceOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/news)
 """
-type News implements Entry & _Node {
-  _id: ID!
+type News implements Entry {
   author(locale: String, preview: Boolean): Entry
   content(locale: String): NewsContent
   contentStatus(locale: String): String
@@ -14228,8 +13466,7 @@ enum NewsOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/numberBullet)
 """
-type NumberBullet implements Entry & _Node {
-  _id: ID!
+type NumberBullet implements Entry {
   body(locale: String): String
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): NumberBulletLinkingCollections
@@ -14312,8 +13549,7 @@ enum NumberBulletOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/numberBulletSection)
 """
-type NumberBulletSection implements Entry & _Node {
-  _id: ID!
+type NumberBulletSection implements Entry {
   bulletsCollection(
     limit: Int = 100
     locale: String
@@ -14398,8 +13634,6 @@ type NumberBulletSectionLinkingCollections {
 }
 
 enum NumberBulletSectionLinkingCollectionsBigBulletListCollectionOrder {
-  dividerOnTop_ASC
-  dividerOnTop_DESC
   sys_firstPublishedAt_ASC
   sys_firstPublishedAt_DESC
   sys_id_ASC
@@ -14430,19 +13664,10 @@ enum NumberBulletSectionOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/oneColumnText)
 """
-type OneColumnText implements Entry & _Node {
-  _id: ID!
+type OneColumnText implements Entry {
   content(locale: String): OneColumnTextContent
   contentfulMetadata: ContentfulMetadata!
   dividerOnTop(locale: String): Boolean
-  filterTagsCollection(
-    limit: Int = 100
-    locale: String
-    order: [OneColumnTextFilterTagsCollectionOrder]
-    preview: Boolean
-    skip: Int = 0
-    where: GenericTagFilter
-  ): OneColumnTextFilterTagsCollection
   link(locale: String, preview: Boolean, where: LinkFilter): Link
   linkedFrom(allowedLocales: [String]): OneColumnTextLinkingCollections
   showTitle(locale: String): Boolean
@@ -14507,8 +13732,6 @@ input OneColumnTextFilter {
   dividerOnTop: Boolean
   dividerOnTop_exists: Boolean
   dividerOnTop_not: Boolean
-  filterTags: cfGenericTagNestedFilter
-  filterTagsCollection_exists: Boolean
   link: cfLinkNestedFilter
   link_exists: Boolean
   showTitle: Boolean
@@ -14522,30 +13745,6 @@ input OneColumnTextFilter {
   title_not: String
   title_not_contains: String
   title_not_in: [String]
-}
-
-type OneColumnTextFilterTagsCollection {
-  items: [GenericTag]!
-  limit: Int!
-  skip: Int!
-  total: Int!
-}
-
-enum OneColumnTextFilterTagsCollectionOrder {
-  internalTitle_ASC
-  internalTitle_DESC
-  slug_ASC
-  slug_DESC
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-  title_ASC
-  title_DESC
 }
 
 type OneColumnTextLinkingCollections {
@@ -14771,8 +13970,7 @@ enum OneColumnTextOrder {
 """
 Landing page for Open Data Page, where public data is made available. [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/openDataPage)
 """
-type OpenDataPage implements Entry & _Node {
-  _id: ID!
+type OpenDataPage implements Entry {
   chartSectionTitle(locale: String): String
   contentfulMetadata: ContentfulMetadata!
   externalLinkCardSelection(
@@ -14977,8 +14175,7 @@ enum OpenDataPageStatisticsCardsSectionCollectionOrder {
 """
 Organization dashboard [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/openDataSubpage)
 """
-type OpenDataSubpage implements Entry & _Node {
-  _id: ID!
+type OpenDataSubpage implements Entry {
   contentfulMetadata: ContentfulMetadata!
   fundDescription(locale: String): String
   fundTitle(locale: String): String
@@ -15123,13 +14320,7 @@ enum OpenDataSubpageStatisticsCardsCollectionOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/organization)
 """
-type Organization implements Entry & _Node {
-  _id: ID!
-  alertBanner(
-    locale: String
-    preview: Boolean
-    where: AlertBannerFilter
-  ): AlertBanner
+type Organization implements Entry {
   contentfulMetadata: ContentfulMetadata!
   description(locale: String): String
   email(locale: String): String
@@ -15193,8 +14384,6 @@ type OrganizationCollection {
 input OrganizationFilter {
   AND: [OrganizationFilter]
   OR: [OrganizationFilter]
-  alertBanner: cfAlertBannerNestedFilter
-  alertBanner_exists: Boolean
   contentfulMetadata: ContentfulMetadataFilter
   description: String
   description_contains: String
@@ -15923,8 +15112,7 @@ enum OrganizationOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/organizationPage)
 """
-type OrganizationPage implements Entry & _Node {
-  _id: ID!
+type OrganizationPage implements Entry {
   alertBanner(
     locale: String
     preview: Boolean
@@ -16445,12 +15633,10 @@ union OrganizationPageSlicesItem =
     AccordionSlice
   | AnchorPageList
   | BigBulletList
-  | ChartNumberBox
   | Districts
   | EmailSignup
   | EventSlice
   | FeaturedArticles
-  | LatestGenericListItems
   | LogoListSlice
   | MultipleStatistics
   | OneColumnText
@@ -16491,8 +15677,7 @@ enum OrganizationPublishedMaterialSearchFilterGenericTagsCollectionOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/organizationSubpage)
 """
-type OrganizationSubpage implements Entry & _Node {
-  _id: ID!
+type OrganizationSubpage implements Entry {
   contentfulMetadata: ContentfulMetadata!
   description(locale: String): OrganizationSubpageDescription
   featuredImage(locale: String, preview: Boolean): Asset
@@ -16650,13 +15835,6 @@ type OrganizationSubpageLinkingCollections {
     preview: Boolean
     skip: Int = 0
   ): EntryCollection
-  latestGenericListItemsCollection(
-    limit: Int = 100
-    locale: String
-    order: [OrganizationSubpageLinkingCollectionsLatestGenericListItemsCollectionOrder]
-    preview: Boolean
-    skip: Int = 0
-  ): LatestGenericListItemsCollection
   linkGroupCollection(
     limit: Int = 100
     locale: String
@@ -16678,23 +15856,6 @@ type OrganizationSubpageLinkingCollections {
     preview: Boolean
     skip: Int = 0
   ): MenuLinkWithChildrenCollection
-}
-
-enum OrganizationSubpageLinkingCollectionsLatestGenericListItemsCollectionOrder {
-  internalTitle_ASC
-  internalTitle_DESC
-  seeMoreLinkText_ASC
-  seeMoreLinkText_DESC
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-  title_ASC
-  title_DESC
 }
 
 enum OrganizationSubpageLinkingCollectionsLinkGroupCollectionOrder {
@@ -16827,8 +15988,7 @@ union OrganizationSubpageSlicesItem =
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/organizationTag)
 """
-type OrganizationTag implements Entry & _Node {
-  _id: ID!
+type OrganizationTag implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): OrganizationTagLinkingCollections
   sys: Sys!
@@ -16942,8 +16102,7 @@ enum OrganizationTagOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/overviewLinks)
 """
-type OverviewLinks implements Entry & _Node {
-  _id: ID!
+type OverviewLinks implements Entry {
   contentfulMetadata: ContentfulMetadata!
   hasBorderAbove(locale: String): Boolean
   link(locale: String, preview: Boolean, where: LinkFilter): Link
@@ -17161,8 +16320,7 @@ enum OverviewLinksOverviewLinksCollectionOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/pageHeader)
 """
-type PageHeader implements Entry & _Node {
-  _id: ID!
+type PageHeader implements Entry {
   contentfulMetadata: ContentfulMetadata!
   introduction(locale: String): String
   linkedFrom(allowedLocales: [String]): PageHeaderLinkingCollections
@@ -17301,8 +16459,7 @@ union PageHeaderSlicesItem = SectionHeading | Timeline
 """
 A Slice that embeds a Power BI report [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/powerBiSlice)
 """
-type PowerBiSlice implements Entry & _Node {
-  _id: ID!
+type PowerBiSlice implements Entry {
   config(locale: String): JSON
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): PowerBiSliceLinkingCollections
@@ -17447,8 +16604,7 @@ enum PowerBiSliceOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/price)
 """
-type Price implements Entry & _Node {
-  _id: ID!
+type Price implements Entry {
   amount(locale: String): Int
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): PriceLinkingCollections
@@ -17530,8 +16686,7 @@ enum PriceOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/processEntry)
 """
-type ProcessEntry implements Entry & _Node {
-  _id: ID!
+type ProcessEntry implements Entry {
   buttonText(locale: String): String
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): ProcessEntryLinkingCollections
@@ -17678,8 +16833,7 @@ enum ProcessEntryOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/projectPage)
 """
-type ProjectPage implements Entry & _Node {
-  _id: ID!
+type ProjectPage implements Entry {
   alertBanner(
     locale: String
     preview: Boolean
@@ -18116,8 +17270,7 @@ union ProjectPageSlicesItem =
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/projectSubpage)
 """
-type ProjectSubpage implements Entry & _Node {
-  _id: ID!
+type ProjectSubpage implements Entry {
   bottomSlicesCollection(
     limit: Int = 100
     locale: String
@@ -18819,15 +17972,6 @@ type Query {
     skip: Int = 0
     where: GenericTagGroupFilter
   ): GenericTagGroupCollection
-  grant(id: String!, locale: String, preview: Boolean): Grant
-  grantCollection(
-    limit: Int = 100
-    locale: String
-    order: [GrantOrder]
-    preview: Boolean
-    skip: Int = 0
-    where: GrantFilter
-  ): GrantCollection
   graphCard(id: String!, locale: String, preview: Boolean): GraphCard
   graphCardCollection(
     limit: Int = 100
@@ -18886,19 +18030,6 @@ type Query {
     skip: Int = 0
     where: LatestEventsSliceFilter
   ): LatestEventsSliceCollection
-  latestGenericListItems(
-    id: String!
-    locale: String
-    preview: Boolean
-  ): LatestGenericListItems
-  latestGenericListItemsCollection(
-    limit: Int = 100
-    locale: String
-    order: [LatestGenericListItemsOrder]
-    preview: Boolean
-    skip: Int = 0
-    where: LatestGenericListItemsFilter
-  ): LatestGenericListItemsCollection
   latestNewsSlice(
     id: String!
     locale: String
@@ -19610,8 +18741,7 @@ type Query {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/questionAndAnswer)
 """
-type QuestionAndAnswer implements Entry & _Node {
-  _id: ID!
+type QuestionAndAnswer implements Entry {
   answer(locale: String): QuestionAndAnswerAnswer
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): QuestionAndAnswerLinkingCollections
@@ -19749,8 +18879,7 @@ type ResourceSys {
 """
 Heading with title and description for separating page sections [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/sectionHeading)
 """
-type SectionHeading implements Entry & _Node {
-  _id: ID!
+type SectionHeading implements Entry {
   body(locale: String): String
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): SectionHeadingLinkingCollections
@@ -19925,8 +19054,7 @@ enum SectionHeadingOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/sectionWithImage)
 """
-type SectionWithImage implements Entry & _Node {
-  _id: ID!
+type SectionWithImage implements Entry {
   body(locale: String): SectionWithImageBody
   contentfulMetadata: ContentfulMetadata!
   image(locale: String, preview: Boolean): Asset
@@ -20049,8 +19177,7 @@ enum SectionWithImageOrder {
 """
 A section containing a video on the left and text on the right (which wraps below the video on smaller screens) [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/sectionWithVideo)
 """
-type SectionWithVideo implements Entry & _Node {
-  _id: ID!
+type SectionWithVideo implements Entry {
   content(locale: String): SectionWithVideoContent
   contentfulMetadata: ContentfulMetadata!
   link(locale: String, preview: Boolean, where: LinkFilter): Link
@@ -20225,8 +19352,7 @@ enum SectionWithVideoOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/serviceWebPage)
 """
-type ServiceWebPage implements Entry & _Node {
-  _id: ID!
+type ServiceWebPage implements Entry {
   contactFormDisclaimer(locale: String): ServiceWebPageContactFormDisclaimer
   contentfulMetadata: ContentfulMetadata!
   emailConfig(locale: String): JSON
@@ -20400,8 +19526,7 @@ enum ServiceWebPageSlicesCollectionOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/sidebarCard)
 """
-type SidebarCard implements Entry & _Node {
-  _id: ID!
+type SidebarCard implements Entry {
   content(locale: String): String
   contentfulMetadata: ContentfulMetadata!
   image(locale: String, preview: Boolean): Asset
@@ -20501,8 +19626,7 @@ enum SidebarCardOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/sliceConnectedComponent)
 """
-type SliceConnectedComponent implements Entry & _Node {
-  _id: ID!
+type SliceConnectedComponent implements Entry {
   config(locale: String): JSON
   contentfulMetadata: ContentfulMetadata!
   json(locale: String): JSON
@@ -20511,11 +19635,6 @@ type SliceConnectedComponent implements Entry & _Node {
   ): SliceConnectedComponentLinkingCollections
   sys: Sys!
   title(locale: String): String
-  translationNamespace(
-    locale: String
-    preview: Boolean
-    where: NamespaceFilter
-  ): Namespace
   type(locale: String): String
 }
 
@@ -20540,8 +19659,6 @@ input SliceConnectedComponentFilter {
   title_not: String
   title_not_contains: String
   title_not_in: [String]
-  translationNamespace: cfNamespaceNestedFilter
-  translationNamespace_exists: Boolean
   type: String
   type_contains: String
   type_exists: Boolean
@@ -20670,8 +19787,7 @@ enum SliceConnectedComponentOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/sliceDropdown)
 """
-type SliceDropdown implements Entry & _Node {
-  _id: ID!
+type SliceDropdown implements Entry {
   alphabeticallyOrdered(locale: String): Boolean
   contentfulMetadata: ContentfulMetadata!
   dropdownLabel(locale: String): String
@@ -20774,8 +19890,7 @@ enum SliceDropdownSlicesCollectionOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/statistic)
 """
-type Statistic implements Entry & _Node {
-  _id: ID!
+type Statistic implements Entry {
   contentfulMetadata: ContentfulMetadata!
   label(locale: String): String
   linkedFrom(allowedLocales: [String]): StatisticLinkingCollections
@@ -20858,8 +19973,7 @@ enum StatisticOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/statistics)
 """
-type Statistics implements Entry & _Node {
-  _id: ID!
+type Statistics implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): StatisticsLinkingCollections
   statisticsCollection(
@@ -20877,8 +19991,7 @@ type Statistics implements Entry & _Node {
 """
 Statistic Card for Open data page and open data dashboards. [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/statisticsCard)
 """
-type StatisticsCard implements Entry & _Node {
-  _id: ID!
+type StatisticsCard implements Entry {
   contentfulMetadata: ContentfulMetadata!
   image(locale: String, preview: Boolean): Asset
   linkedFrom(allowedLocales: [String]): StatisticsCardLinkingCollections
@@ -21086,8 +20199,7 @@ enum StatisticsStatisticsCollectionOrder {
 """
 Step for stepper [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/step)
 """
-type Step implements Entry & _Node {
-  _id: ID!
+type Step implements Entry {
   config(locale: String): JSON
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): StepLinkingCollections
@@ -21226,8 +20338,7 @@ type StepSubtitleResourcesInline implements ResourceLink {
 """
 Used for asking users questions and returning an answer. [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/stepper)
 """
-type Stepper implements Entry & _Node {
-  _id: ID!
+type Stepper implements Entry {
   config(locale: String): JSON
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): StepperLinkingCollections
@@ -21384,8 +20495,7 @@ enum StepperStepsCollectionOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/story)
 """
-type Story implements Entry & _Node {
-  _id: ID!
+type Story implements Entry {
   body(locale: String): StoryBody
   contentfulMetadata: ContentfulMetadata!
   intro(locale: String): String
@@ -21554,8 +20664,7 @@ enum StoryOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/storySection)
 """
-type StorySection implements Entry & _Node {
-  _id: ID!
+type StorySection implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): StorySectionLinkingCollections
   readMoreText(locale: String): String
@@ -21678,8 +20787,7 @@ enum StorySectionStoriesCollectionOrder {
 """
 A sub article that's a part of another main article [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/subArticle)
 """
-type SubArticle implements Entry & _Node {
-  _id: ID!
+type SubArticle implements Entry {
   content(locale: String): SubArticleContent
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): SubArticleLinkingCollections
@@ -21910,8 +21018,7 @@ enum SubArticleOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/subpageHeader)
 """
-type SubpageHeader implements Entry & _Node {
-  _id: ID!
+type SubpageHeader implements Entry {
   body(locale: String): SubpageHeaderBody
   contentfulMetadata: ContentfulMetadata!
   featuredImage(locale: String, preview: Boolean): Asset
@@ -22028,8 +21135,7 @@ enum SubpageHeaderOrder {
 """
 Category for the helpdesk questions, used for grouping QNAs [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/supportCategory)
 """
-type SupportCategory implements Entry & _Node {
-  _id: ID!
+type SupportCategory implements Entry {
   contentfulMetadata: ContentfulMetadata!
   description(locale: String): String
   importance(locale: String): Int
@@ -22173,8 +21279,7 @@ enum SupportCategoryOrder {
 """
 Helpdesk support questions and answer [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/supportQNA)
 """
-type SupportQna implements Entry & _Node {
-  _id: ID!
+type SupportQna implements Entry {
   answer(locale: String): SupportQnaAnswer
   category(
     locale: String
@@ -22401,8 +21506,7 @@ union SupportQnaRelatedLinksItem = Link | SupportQna
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/supportSubCategory)
 """
-type SupportSubCategory implements Entry & _Node {
-  _id: ID!
+type SupportSubCategory implements Entry {
   contentfulMetadata: ContentfulMetadata!
   description(locale: String): String
   importance(locale: String): Int
@@ -22590,8 +21694,7 @@ input SysFilter {
 """
 Tab with content [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/tabContent)
 """
-type TabContent implements Entry & _Node {
-  _id: ID!
+type TabContent implements Entry {
   body(locale: String): TabContentBody
   contentTitle(locale: String): String
   contentfulMetadata: ContentfulMetadata!
@@ -22720,8 +21823,7 @@ enum TabContentOrder {
 """
 List of tab contents [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/tabSection)
 """
-type TabSection implements Entry & _Node {
-  _id: ID!
+type TabSection implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): TabSectionLinkingCollections
   sys: Sys!
@@ -22926,8 +22028,7 @@ enum TabSectionTabsCollectionOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/tableSlice)
 """
-type TableSlice implements Entry & _Node {
-  _id: ID!
+type TableSlice implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): TableSliceLinkingCollections
   sys: Sys!
@@ -23024,25 +22125,8 @@ type TableSliceTableContentResourcesInline implements ResourceLink {
 """
 list of team members [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/teamList)
 """
-type TeamList implements Entry & _Node {
-  _id: ID!
+type TeamList implements Entry {
   contentfulMetadata: ContentfulMetadata!
-  filterGroupsCollection(
-    limit: Int = 100
-    locale: String
-    order: [TeamListFilterGroupsCollectionOrder]
-    preview: Boolean
-    skip: Int = 0
-    where: GenericTagGroupFilter
-  ): TeamListFilterGroupsCollection
-  filterTagsCollection(
-    limit: Int = 100
-    locale: String
-    order: [TeamListFilterTagsCollectionOrder]
-    preview: Boolean
-    skip: Int = 0
-    where: GenericTagFilter
-  ): TeamListFilterTagsCollection
   linkedFrom(allowedLocales: [String]): TeamListLinkingCollections
   sys: Sys!
   teamMembersCollection(
@@ -23054,7 +22138,6 @@ type TeamList implements Entry & _Node {
     where: TeamMemberFilter
   ): TeamListTeamMembersCollection
   title(locale: String): String
-  variant(locale: String): String
 }
 
 type TeamListCollection {
@@ -23068,10 +22151,6 @@ input TeamListFilter {
   AND: [TeamListFilter]
   OR: [TeamListFilter]
   contentfulMetadata: ContentfulMetadataFilter
-  filterGroups: cfGenericTagGroupNestedFilter
-  filterGroupsCollection_exists: Boolean
-  filterTags: cfGenericTagNestedFilter
-  filterTagsCollection_exists: Boolean
   sys: SysFilter
   teamMembers: cfTeamMemberNestedFilter
   teamMembersCollection_exists: Boolean
@@ -23082,59 +22161,6 @@ input TeamListFilter {
   title_not: String
   title_not_contains: String
   title_not_in: [String]
-  variant: String
-  variant_contains: String
-  variant_exists: Boolean
-  variant_in: [String]
-  variant_not: String
-  variant_not_contains: String
-  variant_not_in: [String]
-}
-
-type TeamListFilterGroupsCollection {
-  items: [GenericTagGroup]!
-  limit: Int!
-  skip: Int!
-  total: Int!
-}
-
-enum TeamListFilterGroupsCollectionOrder {
-  slug_ASC
-  slug_DESC
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-  title_ASC
-  title_DESC
-}
-
-type TeamListFilterTagsCollection {
-  items: [GenericTag]!
-  limit: Int!
-  skip: Int!
-  total: Int!
-}
-
-enum TeamListFilterTagsCollectionOrder {
-  internalTitle_ASC
-  internalTitle_DESC
-  slug_ASC
-  slug_DESC
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-  title_ASC
-  title_DESC
 }
 
 type TeamListLinkingCollections {
@@ -23253,8 +22279,6 @@ enum TeamListOrder {
   sys_publishedVersion_DESC
   title_ASC
   title_DESC
-  variant_ASC
-  variant_DESC
 }
 
 type TeamListTeamMembersCollection {
@@ -23265,12 +22289,8 @@ type TeamListTeamMembersCollection {
 }
 
 enum TeamListTeamMembersCollectionOrder {
-  email_ASC
-  email_DESC
   name_ASC
   name_DESC
-  phone_ASC
-  phone_DESC
   sys_firstPublishedAt_ASC
   sys_firstPublishedAt_DESC
   sys_id_ASC
@@ -23286,24 +22306,12 @@ enum TeamListTeamMembersCollectionOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/teamMember)
 """
-type TeamMember implements Entry & _Node {
-  _id: ID!
+type TeamMember implements Entry {
   contentfulMetadata: ContentfulMetadata!
-  email(locale: String): String
-  filterTagsCollection(
-    limit: Int = 100
-    locale: String
-    order: [TeamMemberFilterTagsCollectionOrder]
-    preview: Boolean
-    skip: Int = 0
-    where: GenericTagFilter
-  ): TeamMemberFilterTagsCollection
   imageOnSelect(locale: String, preview: Boolean): Asset
-  intro(locale: String): TeamMemberIntro
   linkedFrom(allowedLocales: [String]): TeamMemberLinkingCollections
   mynd(locale: String, preview: Boolean): Asset
   name(locale: String): String
-  phone(locale: String): String
   sys: Sys!
   title(locale: String): String
 }
@@ -23319,19 +22327,7 @@ input TeamMemberFilter {
   AND: [TeamMemberFilter]
   OR: [TeamMemberFilter]
   contentfulMetadata: ContentfulMetadataFilter
-  email: String
-  email_contains: String
-  email_exists: Boolean
-  email_in: [String]
-  email_not: String
-  email_not_contains: String
-  email_not_in: [String]
-  filterTags: cfGenericTagNestedFilter
-  filterTagsCollection_exists: Boolean
   imageOnSelect_exists: Boolean
-  intro_contains: String
-  intro_exists: Boolean
-  intro_not_contains: String
   mynd_exists: Boolean
   name: String
   name_contains: String
@@ -23340,13 +22336,6 @@ input TeamMemberFilter {
   name_not: String
   name_not_contains: String
   name_not_in: [String]
-  phone: String
-  phone_contains: String
-  phone_exists: Boolean
-  phone_in: [String]
-  phone_not: String
-  phone_not_contains: String
-  phone_not_in: [String]
   sys: SysFilter
   title: String
   title_contains: String
@@ -23355,70 +22344,6 @@ input TeamMemberFilter {
   title_not: String
   title_not_contains: String
   title_not_in: [String]
-}
-
-type TeamMemberFilterTagsCollection {
-  items: [GenericTag]!
-  limit: Int!
-  skip: Int!
-  total: Int!
-}
-
-enum TeamMemberFilterTagsCollectionOrder {
-  internalTitle_ASC
-  internalTitle_DESC
-  slug_ASC
-  slug_DESC
-  sys_firstPublishedAt_ASC
-  sys_firstPublishedAt_DESC
-  sys_id_ASC
-  sys_id_DESC
-  sys_publishedAt_ASC
-  sys_publishedAt_DESC
-  sys_publishedVersion_ASC
-  sys_publishedVersion_DESC
-  title_ASC
-  title_DESC
-}
-
-type TeamMemberIntro {
-  json: JSON!
-  links: TeamMemberIntroLinks!
-}
-
-type TeamMemberIntroAssets {
-  block: [Asset]!
-  hyperlink: [Asset]!
-}
-
-type TeamMemberIntroEntries {
-  block: [Entry]!
-  hyperlink: [Entry]!
-  inline: [Entry]!
-}
-
-type TeamMemberIntroLinks {
-  assets: TeamMemberIntroAssets!
-  entries: TeamMemberIntroEntries!
-  resources: TeamMemberIntroResources!
-}
-
-type TeamMemberIntroResources {
-  block: [TeamMemberIntroResourcesBlock!]!
-  hyperlink: [TeamMemberIntroResourcesHyperlink!]!
-  inline: [TeamMemberIntroResourcesInline!]!
-}
-
-type TeamMemberIntroResourcesBlock implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type TeamMemberIntroResourcesHyperlink implements ResourceLink {
-  sys: ResourceSys!
-}
-
-type TeamMemberIntroResourcesInline implements ResourceLink {
-  sys: ResourceSys!
 }
 
 type TeamMemberLinkingCollections {
@@ -23448,17 +22373,11 @@ enum TeamMemberLinkingCollectionsTeamListCollectionOrder {
   sys_publishedVersion_DESC
   title_ASC
   title_DESC
-  variant_ASC
-  variant_DESC
 }
 
 enum TeamMemberOrder {
-  email_ASC
-  email_DESC
   name_ASC
   name_DESC
-  phone_ASC
-  phone_DESC
   sys_firstPublishedAt_ASC
   sys_firstPublishedAt_DESC
   sys_id_ASC
@@ -23474,8 +22393,7 @@ enum TeamMemberOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/tellUsAStory)
 """
-type TellUsAStory implements Entry & _Node {
-  _id: ID!
+type TellUsAStory implements Entry {
   contentfulMetadata: ContentfulMetadata!
   dateOfStoryInputErrorMessage(locale: String): String
   dateOfStoryLabel(locale: String): String
@@ -24024,8 +22942,7 @@ type TellUsAStorySuccessMessageResourcesInline implements ResourceLink {
 """
 Timeline section with a collection of timeline events [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/timeline)
 """
-type Timeline implements Entry & _Node {
-  _id: ID!
+type Timeline implements Entry {
   contentfulMetadata: ContentfulMetadata!
   eventsCollection(
     limit: Int = 100
@@ -24052,8 +22969,7 @@ type TimelineCollection {
 """
 Single event on a timeline [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/timelineEvent)
 """
-type TimelineEvent implements Entry & _Node {
-  _id: ID!
+type TimelineEvent implements Entry {
   body(locale: String): TimelineEventBody
   contentfulMetadata: ContentfulMetadata!
   date(locale: String): DateTime
@@ -24391,15 +23307,13 @@ enum TimelineOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/twoColumnText)
 """
-type TwoColumnText implements Entry & _Node {
-  _id: ID!
+type TwoColumnText implements Entry {
   contentfulMetadata: ContentfulMetadata!
   dividerOnTop(locale: String): Boolean
   leftContent(locale: String): TwoColumnTextLeftContent
   leftLink(locale: String, preview: Boolean, where: LinkFilter): Link
   leftTitle(locale: String): String
   linkedFrom(allowedLocales: [String]): TwoColumnTextLinkingCollections
-  onlyUseOneTitle(locale: String): Boolean
   rightContent(locale: String): TwoColumnTextRightContent
   rightLink(locale: String, preview: Boolean, where: LinkFilter): Link
   rightTitle(locale: String): String
@@ -24432,9 +23346,6 @@ input TwoColumnTextFilter {
   leftTitle_not: String
   leftTitle_not_contains: String
   leftTitle_not_in: [String]
-  onlyUseOneTitle: Boolean
-  onlyUseOneTitle_exists: Boolean
-  onlyUseOneTitle_not: Boolean
   rightContent_contains: String
   rightContent_exists: Boolean
   rightContent_not_contains: String
@@ -24624,8 +23535,6 @@ enum TwoColumnTextOrder {
   dividerOnTop_DESC
   leftTitle_ASC
   leftTitle_DESC
-  onlyUseOneTitle_ASC
-  onlyUseOneTitle_DESC
   rightTitle_ASC
   rightTitle_DESC
   sys_firstPublishedAt_ASC
@@ -24681,8 +23590,7 @@ type TwoColumnTextRightContentResourcesInline implements ResourceLink {
 """
 Each entry is a namespace that contains key->value pairs [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/uiConfiguration)
 """
-type UiConfiguration implements Entry & _Node {
-  _id: ID!
+type UiConfiguration implements Entry {
   contentfulMetadata: ContentfulMetadata!
   fields(locale: String): JSON
   linkedFrom(allowedLocales: [String]): UiConfigurationLinkingCollections
@@ -24847,8 +23755,7 @@ enum UiConfigurationOrder {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/url)
 """
-type Url implements Entry & _Node {
-  _id: ID!
+type Url implements Entry {
   contentfulMetadata: ContentfulMetadata!
   explicitRedirect(locale: String): String
   linkedFrom(allowedLocales: [String]): UrlLinkingCollections
@@ -24928,8 +23835,7 @@ union UrlPage =
 """
 Icelandic Government Institution Vacancy that appears on island.is/starfatorg [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/vacancy)
 """
-type Vacancy implements Entry & _Node {
-  _id: ID!
+type Vacancy implements Entry {
   applicationDeadlineFrom(locale: String): DateTime
   applicationDeadlineTo(locale: String): DateTime
   applicationHref(locale: String): String
@@ -25270,8 +24176,7 @@ type VacancyTasksAndResponsibilitiesResourcesInline implements ResourceLink {
 """
 [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/vidspyrnaFeaturedNews)
 """
-type VidspyrnaFeaturedNews implements Entry & _Node {
-  _id: ID!
+type VidspyrnaFeaturedNews implements Entry {
   contentfulMetadata: ContentfulMetadata!
   featuredCollection(
     limit: Int = 100
@@ -25390,8 +24295,7 @@ enum VidspyrnaFeaturedNewsOrder {
 """
 A group of "covid" articles shown in a slider. [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/vidspyrnaFlokkur)
 """
-type VidspyrnaFlokkur implements Entry & _Node {
-  _id: ID!
+type VidspyrnaFlokkur implements Entry {
   contentfulMetadata: ContentfulMetadata!
   description(locale: String): String
   image(locale: String, preview: Boolean): Asset
@@ -25522,8 +24426,7 @@ enum VidspyrnaFlokkurPagesCollectionOrder {
 """
 Frontpage of /covid-adgerdir [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/vidspyrna-frontpage)
 """
-type VidspyrnaFrontpage implements Entry & _Node {
-  _id: ID!
+type VidspyrnaFrontpage implements Entry {
   category(
     locale: String
     preview: Boolean
@@ -25878,8 +24781,7 @@ union VidspyrnaFrontpageSlicesItem = VidspyrnaFeaturedNews | VidspyrnaFlokkur
 """
 A "covid" article, seen on /covid-adgerdir [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/vidspyrnaPage)
 """
-type VidspyrnaPage implements Entry & _Node {
-  _id: ID!
+type VidspyrnaPage implements Entry {
   content(locale: String): VidspyrnaPageContent
   contentfulMetadata: ContentfulMetadata!
   description(locale: String): String
@@ -26191,8 +25093,7 @@ enum VidspyrnaPageTagsCollectionOrder {
 """
 A tag used to tag "covid" articles [See type definition](https://app.contentful.com/spaces/8k0h54kbe6bj/content_types/vidspyrnaTag)
 """
-type VidspyrnaTag implements Entry & _Node {
-  _id: ID!
+type VidspyrnaTag implements Entry {
   contentfulMetadata: ContentfulMetadata!
   linkedFrom(allowedLocales: [String]): VidspyrnaTagLinkingCollections
   sys: Sys!
@@ -26949,7 +25850,6 @@ input cfGenericTagGroupNestedFilter {
   AND: [cfGenericTagGroupNestedFilter]
   OR: [cfGenericTagGroupNestedFilter]
   contentfulMetadata: ContentfulMetadataFilter
-  items_exists: Boolean
   slug: String
   slug_contains: String
   slug_exists: Boolean
@@ -27441,7 +26341,6 @@ input cfOneColumnTextNestedFilter {
   dividerOnTop: Boolean
   dividerOnTop_exists: Boolean
   dividerOnTop_not: Boolean
-  filterTagsCollection_exists: Boolean
   link_exists: Boolean
   showTitle: Boolean
   showTitle_exists: Boolean
@@ -27459,7 +26358,6 @@ input cfOneColumnTextNestedFilter {
 input cfOrganizationNestedFilter {
   AND: [cfOrganizationNestedFilter]
   OR: [cfOrganizationNestedFilter]
-  alertBanner_exists: Boolean
   contentfulMetadata: ContentfulMetadataFilter
   description: String
   description_contains: String
@@ -27622,66 +26520,6 @@ input cfOrganizationPageNestedFilter {
   theme_not: String
   theme_not_contains: String
   theme_not_in: [String]
-  title: String
-  title_contains: String
-  title_exists: Boolean
-  title_in: [String]
-  title_not: String
-  title_not_contains: String
-  title_not_in: [String]
-}
-
-input cfOrganizationSubpageNestedFilter {
-  AND: [cfOrganizationSubpageNestedFilter]
-  OR: [cfOrganizationSubpageNestedFilter]
-  contentfulMetadata: ContentfulMetadataFilter
-  description_contains: String
-  description_exists: Boolean
-  description_not_contains: String
-  featuredImage_exists: Boolean
-  intro: String
-  intro_contains: String
-  intro_exists: Boolean
-  intro_in: [String]
-  intro_not: String
-  intro_not_contains: String
-  intro_not_in: [String]
-  linksCollection_exists: Boolean
-  organizationPage_exists: Boolean
-  shortTitle: String
-  shortTitle_contains: String
-  shortTitle_exists: Boolean
-  shortTitle_in: [String]
-  shortTitle_not: String
-  shortTitle_not_contains: String
-  shortTitle_not_in: [String]
-  showTableOfContents: Boolean
-  showTableOfContents_exists: Boolean
-  showTableOfContents_not: Boolean
-  signLanguageVideo_exists: Boolean
-  sliceCustomRenderer: String
-  sliceCustomRenderer_contains: String
-  sliceCustomRenderer_exists: Boolean
-  sliceCustomRenderer_in: [String]
-  sliceCustomRenderer_not: String
-  sliceCustomRenderer_not_contains: String
-  sliceCustomRenderer_not_in: [String]
-  sliceExtraText: String
-  sliceExtraText_contains: String
-  sliceExtraText_exists: Boolean
-  sliceExtraText_in: [String]
-  sliceExtraText_not: String
-  sliceExtraText_not_contains: String
-  sliceExtraText_not_in: [String]
-  slicesCollection_exists: Boolean
-  slug: String
-  slug_contains: String
-  slug_exists: Boolean
-  slug_in: [String]
-  slug_not: String
-  slug_not_contains: String
-  slug_not_in: [String]
-  sys: SysFilter
   title: String
   title_contains: String
   title_exists: Boolean
@@ -28148,18 +26986,7 @@ input cfTeamMemberNestedFilter {
   AND: [cfTeamMemberNestedFilter]
   OR: [cfTeamMemberNestedFilter]
   contentfulMetadata: ContentfulMetadataFilter
-  email: String
-  email_contains: String
-  email_exists: Boolean
-  email_in: [String]
-  email_not: String
-  email_not_contains: String
-  email_not_in: [String]
-  filterTagsCollection_exists: Boolean
   imageOnSelect_exists: Boolean
-  intro_contains: String
-  intro_exists: Boolean
-  intro_not_contains: String
   mynd_exists: Boolean
   name: String
   name_contains: String
@@ -28168,13 +26995,6 @@ input cfTeamMemberNestedFilter {
   name_not: String
   name_not_contains: String
   name_not_in: [String]
-  phone: String
-  phone_contains: String
-  phone_exists: Boolean
-  phone_in: [String]
-  phone_not: String
-  phone_not_contains: String
-  phone_not_in: [String]
   sys: SysFilter
   title: String
   title_contains: String
