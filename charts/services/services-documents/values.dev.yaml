@@ -16,6 +16,7 @@ service:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
     - 'application-system'
@@ -59,6 +60,7 @@ service:
       DB_NAME: 'services_documents'
       DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
       DB_USER: 'services_documents'
+      SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'

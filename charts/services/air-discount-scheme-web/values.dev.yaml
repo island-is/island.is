@@ -15,6 +15,7 @@ service:
     LOG_LEVEL: 'info'
     NEXTAUTH_URL: 'https://loftbru.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'islandis'
