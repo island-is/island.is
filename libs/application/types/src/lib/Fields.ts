@@ -243,6 +243,7 @@ export enum FieldTypes {
   NATIONAL_ID_WITH_NAME = 'NATIONAL_ID_WITH_NAME',
   ACTION_CARD_LIST = 'ACTION_CARD_LIST',
   TABLE_REPEATER = 'TABLE_REPEATER',
+  FIELDS_REPEATER = 'FIELDS_REPEATER',
   HIDDEN_INPUT = 'HIDDEN_INPUT',
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
@@ -278,6 +279,7 @@ export enum FieldComponents {
   NATIONAL_ID_WITH_NAME = 'NationalIdWithNameFormField',
   ACTION_CARD_LIST = 'ActionCardListFormField',
   TABLE_REPEATER = 'TableRepeaterFormField',
+  FIELDS_REPEATER = 'FieldsRepeaterFormField',
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
   STATIC_TABLE = 'StaticTableFormField',
@@ -642,6 +644,37 @@ export type TableRepeaterField = BaseField & {
     format?: Record<string, (value: string) => string | StaticText>
   }
 }
+
+export type FieldsRepeaterField = BaseField & {
+  readonly type: FieldTypes.TABLE_REPEATER
+  component: FieldComponents.TABLE_REPEATER
+  formTitle?: StaticText
+  addItemButtonText?: StaticText
+  saveItemButtonText?: StaticText
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+  fields: Record<string, TableRepeaterItem>
+  /**
+   * Maximum rows that can be added to the table.
+   * When the maximum is reached, the button to add a new row is disabled.
+   */
+  maxRows?: number
+  table?: {
+    /**
+     * List of strings to render,
+     * if not provided it will be auto generated from the fields
+     */
+    header?: StaticText[]
+    /**
+     * List of field id's to render,
+     * if not provided it will be auto generated from the fields
+     */
+    rows?: string[]
+    format?: Record<string, (value: string) => string | StaticText>
+  }
+}
+
 export interface FindVehicleField extends InputField {
   readonly type: FieldTypes.FIND_VEHICLE
   component: FieldComponents.FIND_VEHICLE
