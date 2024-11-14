@@ -64,7 +64,7 @@ export type TagVariant =
   | 'mint'
   | 'disabled'
 
-export type TableRepeaterFields =
+export type RepeaterFields =
   | 'input'
   | 'select'
   | 'radio'
@@ -82,8 +82,8 @@ type TableRepeaterOptions =
       activeField?: Record<string, string>,
     ) => RepeaterOption[] | [])
 
-export type TableRepeaterItem = {
-  component: TableRepeaterFields
+export type RepeaterItem = {
+  component: RepeaterFields
   /**
    * Defaults to true
    */
@@ -634,7 +634,7 @@ export type TableRepeaterField = BaseField & {
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
-  fields: Record<string, TableRepeaterItem>
+  fields: Record<string, RepeaterItem>
   /**
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
@@ -664,7 +664,7 @@ export type FieldsRepeaterField = BaseField & {
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
-  fields: Record<string, TableRepeaterItem>
+  fields: Record<string, RepeaterItem>
   /**
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
