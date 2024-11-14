@@ -1,9 +1,47 @@
+import { AuthContext } from '@island.is/auth/react'
 import { createBroadcasterHook } from '@island.is/react-spa/shared'
-import { BffUser } from '@island.is/shared/types'
+import { BffUser, User } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import * as kennitala from 'kennitala'
 import { useContext, useMemo } from 'react'
 import { BffContext, BffContextType } from './BffContext'
+
+/**
+ * Maps an object to a BffUser type.
+ */
+export const mapToBffUser = (input: User, iss?: string): BffUser => {
+  const {
+    profile: {
+      sid,
+      birthdate,
+      nationalId,
+      name,
+      idp,
+      actor,
+      subjectType,
+      delegationType,
+      locale,
+    },
+    scopes,
+  } = input
+
+  // Return a mapped BffUser object
+  return {
+    scopes: scopes || [],
+    profile: {
+      sid: sid || '',
+      birthdate,
+      nationalId,
+      name,
+      idp,
+      actor,
+      subjectType,
+      delegationType,
+      locale,
+      iss: iss || '',
+    },
+  }
+}
 
 /**
  * This hook is used to get the BFF authentication context.
@@ -39,6 +77,46 @@ export const useDynamicBffHook = <Key extends keyof BffContextType>(
  */
 export const useBffUrlGenerator = () => useDynamicBffHook('bffUrlGenerator')
 export const useUserInfo = () => useDynamicBffHook('userInfo')
+
+/**
+ * Legacy hook for retrieving user information across different authentication contexts.
+ * @deprecated Use useUserInfo hook directly with BffContext instead
+ *
+ * This hook provides backwards compatibility during the transition from AuthContext to BffContext.
+ * It attempts to retrieve user information in the following order:
+ * 1. First tries BffContext (preferred)
+ * 2. Falls back to AuthContext (legacy) and maps it to BffUser format
+ *
+ * @throws {Error} If no user information is available in either context
+ * @returns {BffUser} Standardized user information object
+ *
+ * @example
+ * // Instead of:
+ * const user = useLegacyUserInfo()
+ *
+ * // Prefer:
+ * const user = useUserInfo()
+ */
+export const useLegacyUserInfo = (): BffUser => {
+  const bffContext = useContext(BffContext)
+  const authContext = useContext(AuthContext)
+
+  const mappedAuthUserInfo = useMemo(() => {
+    if (authContext.userInfo) {
+      return mapToBffUser(authContext.userInfo, authContext?.authority)
+    }
+
+    return null
+  }, [authContext.userInfo, authContext?.authority])
+
+  if (bffContext?.userInfo) {
+    return bffContext.userInfo
+  } else if (mappedAuthUserInfo) {
+    return mappedAuthUserInfo
+  }
+
+  throw new Error('User info is not available. Is the user authenticated?')
+}
 
 export const useUserBirthday = () => {
   const userInfo = useUserInfo()
