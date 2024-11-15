@@ -30,6 +30,7 @@
 /apps/icelandic-names-registry*/                                                                         @island-is/juni
 /apps/web/screens/PetitionView/                                                                          @island-is/juni
 /libs/cms/                                                                                               @island-is/juni @island-is/stefna
+/libs/clients/cms/                                                                                       @island-is/juni @island-is/aranja
 /libs/residence-history                                                                                  @island-is/juni
 /libs/api/domains/endorsement-system                                                                     @island-is/juni
 /libs/api/domains/icelandic-names-registry/                                                              @island-is/juni
