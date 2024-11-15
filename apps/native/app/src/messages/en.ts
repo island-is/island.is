@@ -594,6 +594,9 @@ export const en: TranslatedMessages = {
   'problem.offline.title': 'No internet connection',
   'problem.offline.message':
     'An error occurred while communicating with the service provider',
+  'problem.thirdParty.title': 'No connection',
+  'problem.thirdParty.message':
+    'An error occurred while communicating with the service provider',
 
   // passkeys
   'passkeys.headingTitle': 'Sign in with Island.is app',

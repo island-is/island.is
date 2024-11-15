@@ -595,6 +595,8 @@ export const is = {
     'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
   'problem.offline.title': 'Samband næst ekki',
   'problem.offline.message': 'Villa kom upp í samskiptum við þjónustuaðila',
+  'problem.thirdParty.title': 'Samband næst ekki',
+  'problem.thirdParty.message': 'Villa kom upp í samskiptum við þjónustuaðila',
 
   // passkeys
   'passkeys.headingTitle': 'Innskrá með Ísland.is appinu',
