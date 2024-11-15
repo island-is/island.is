@@ -680,9 +680,13 @@ jobs:
       - name: Create comment with what is being deployed in PR
         working-directory: infra
         run: |
-          yarn install --immutable
           echo "COMMENT<<EOF" >> "$GITHUB_ENV"
-          ts-node ./infra/src/feature-env.ts ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature="$FEATURE_NAME"  >> GITHUB_ENV
+          # Run `feature-env` CLI being built above
+          docker run --rm "${DOCKER_REGISTRY%/}/helm-config:$DOCKER_TAG" ingress-comment \
+            --images=${{needs.prepare.outputs.IMAGES}} \
+            --chart=islandis \
+            --feature="$FEATURE_NAME" \
+            >> "$GITHUB_ENV"
           echo 'EOF' >> "$GITHUB_ENV"
 
       - name: Comment on PR
