@@ -38,7 +38,7 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
 
     //App version before 1.4.8 doesn't know how to handle table
     const enableAppCompatibility = enableAppCompatibilityMode(
-      userAgent?.app.version,
+      userAgent?.app?.version,
       APP_VERSION_CUTOFF,
     )
 
