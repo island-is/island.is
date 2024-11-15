@@ -8,7 +8,9 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .namespace(namespace)
     .image(imageName)
-    .db()
+    .db({
+      extensions: ['uuid-ossp'],
+    })
     .migrations()
     .env({
       // TODO
