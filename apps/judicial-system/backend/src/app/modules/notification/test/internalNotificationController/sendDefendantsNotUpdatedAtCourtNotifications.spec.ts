@@ -2,7 +2,11 @@ import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
 
-import { CaseNotificationType, User } from '@island.is/judicial-system/types'
+import {
+  CaseNotificationType,
+  NotificationType,
+  User,
+} from '@island.is/judicial-system/types'
 
 import {
   createTestingNotificationModule,
@@ -95,7 +99,7 @@ describe('InternalNotificationController - Send defendants not updated at court 
           ...theCase,
           notifications: [
             {
-              type: CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
+              type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
               recipients: [{ address: registrar.email, success: true }],
             },
           ],

@@ -48,13 +48,12 @@ describe('InternalNotificationController - Send ready for court notifications fo
   const userId = uuid()
   const caseId = uuid()
   const policeCaseNumber = uuid()
-  const courtId = uuid()
   const courtCaseNumber = uuid()
 
-  const { prosecutor, defender, testCourt1 } = createTestUsers([
+  const { prosecutor, defender, testCourt } = createTestUsers([
     'prosecutor',
     'defender',
-    'testCourt1',
+    'testCourt',
   ])
 
   const theCase = {
@@ -66,7 +65,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       name: prosecutor.name,
       email: prosecutor.email,
     },
-    courtId: testCourt1.id,
+    courtId: testCourt.id,
     court: { name: 'Héraðsdómur Reykjavíkur' },
     courtCaseNumber,
     defenderNationalId: defender.nationalId,
@@ -87,7 +86,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    process.env.COURTS_MOBILE_NUMBERS = `{"${courtId}": "${testCourt1.mobile}"}`
+    process.env.COURTS_MOBILE_NUMBERS = `{"${testCourt.id}": "${testCourt.mobile}"}`
 
     const {
       emailService,
@@ -139,8 +138,8 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
     it('should send ready for court sms notification to court', () => {
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
-        [testCourt1.mobile],
-        'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Sækjandi: Derrick (Héraðsdómur Derricks). Sjá nánar á rettarvorslugatt.island.is.',
+        [testCourt.mobile],
+        `Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Sækjandi: ${prosecutor.name} (Héraðsdómur Derricks). Sjá nánar á rettarvorslugatt.island.is.`,
       )
     })
 
@@ -163,7 +162,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
                 {
                   address:
                     mockNotificationConfig.sms.courtsMobileNumbers[
-                      testCourt1.id
+                      testCourt.id
                     ],
                   success: true,
                 },
@@ -195,7 +194,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
     it('should send ready for court sms notification to court', () => {
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
-        [testCourt1.mobile],
+        [testCourt.mobile],
         `Sækjandi í máli ${courtCaseNumber} hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði. Sjá nánar á rettarvorslugatt.island.is.`,
       )
     })
@@ -269,7 +268,6 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
 describe('InternalNotificationController - Send ready for court notifications for indictment cases', () => {
   const userId = uuid()
-
   const { testCourt } = createTestUsers(['testCourt'])
 
   const notificationDto = {
