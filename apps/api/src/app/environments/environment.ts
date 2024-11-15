@@ -127,7 +127,6 @@ const devConfig = () => ({
   },
   fileStorage: {
     uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
-    secondUploadBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
   },
   healthInsurance: {
     wsdlUrl:

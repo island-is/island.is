@@ -18,7 +18,7 @@ export class FileStorageService {
   ) {}
 
   generatePresignedPost(filename: string): Promise<PresignedPost> {
-    if (!this.config.secondUploadBucket) {
+    if (!this.config.uploadBucket) {
       throw new Error('Upload bucket not configured.')
     }
 
@@ -37,7 +37,7 @@ export class FileStorageService {
     const key = `${fileId}_${kebabCase(fName)}${fExt}`
 
     const params = {
-      Bucket: this.config.secondUploadBucket,
+      Bucket: this.config.uploadBucket,
       Key: key,
       Expires: PRESIGNED_POST_EXPIRES,
       Fields: {
@@ -54,7 +54,7 @@ export class FileStorageService {
   }
 
   public getObjectUrl(key: string): string {
-    return `s3://${this.config.secondUploadBucket}/${key}`
+    return `s3://${this.config.uploadBucket}/${key}`
   }
 
   async copyObjectFromUploadBucket(
@@ -62,7 +62,7 @@ export class FileStorageService {
     destinationBucket: string,
     destinationKey: string,
   ): Promise<string> {
-    if (!this.config.secondUploadBucket) {
+    if (!this.config.uploadBucket) {
       throw new Error('Upload bucket not configured.')
     }
     const region = await this.s3Service.getClientRegion()
@@ -72,7 +72,7 @@ export class FileStorageService {
         bucket: destinationBucket,
         key: destinationKey,
       },
-      `${this.config.secondUploadBucket}/${sourceKey}`,
+      `${this.config.uploadBucket}/${sourceKey}`,
     )
 
     return `https://${destinationBucket}.s3-${region}.amazonaws.com/${destinationKey}`
