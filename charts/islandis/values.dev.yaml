@@ -2525,6 +2525,7 @@ services-documents:
 services-payments:
   enabled: true
   env:
+    DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_payments'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
@@ -2571,6 +2572,7 @@ services-payments:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: 'uuid-ossp'
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_payments'
       DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
