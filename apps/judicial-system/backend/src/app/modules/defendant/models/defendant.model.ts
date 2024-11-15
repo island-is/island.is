@@ -17,7 +17,6 @@ import {
   DefendantEventType,
   DefendantPlea,
   DefenderChoice,
-  EventType,
   Gender,
   ServiceRequirement,
   SubpoenaType,
