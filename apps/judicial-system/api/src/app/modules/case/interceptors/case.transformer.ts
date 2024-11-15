@@ -206,10 +206,11 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
       : false
 
     const sentToPrisonAdminDate = theCase.defendantEventLogs?.find(
-      (d) =>
-        d.eventType === DefendantEventType.SENT_TO_PRISON_ADMIN &&
-        d.caseId === theCase.id &&
-        d.defendantId === defendant.id,
+      (defendantEventLog) =>
+        defendantEventLog.eventType ===
+          DefendantEventType.SENT_TO_PRISON_ADMIN &&
+        defendantEventLog.caseId === theCase.id &&
+        defendantEventLog.defendantId === defendant.id,
     )?.created
 
     return {
