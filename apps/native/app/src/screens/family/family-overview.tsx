@@ -14,12 +14,28 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/hero_spring.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { useNationalRegistryPersonQuery } from '../../graphql/types/schema'
+import {
+  NationalRegistryChildCustody,
+  NationalRegistrySpouse,
+  useNationalRegistryPersonQuery,
+} from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { formatNationalId } from '../../lib/format-national-id'
 import { testIDs } from '../../utils/test-ids'
+
+type ChildItem = NationalRegistryChildCustody & {
+  type: 'custodyChild' | 'bioChild'
+}
+
+type SpouseItem = NationalRegistrySpouse & { type: 'spouse' }
+
+type FamilyListItem =
+  | ChildItem
+  | SpouseItem
+  | { type: 'skeleton'; id: string }
+  | { type: 'empty'; id: string }
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({
@@ -30,32 +46,34 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   }))
 
-const FamilyMember = React.memo(({ item }: { item: any }) => {
-  const theme = useTheme()
+const FamilyMember = React.memo(
+  ({ item }: { item: ChildItem | SpouseItem }) => {
+    const theme = useTheme()
 
-  return (
-    <View style={{ paddingHorizontal: 16 }}>
-      <TouchableHighlight
-        underlayColor={
-          theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
-        }
-        style={{ marginBottom: 16, borderRadius: 16 }}
-        onPress={() => {
-          navigateTo(`/family/${item.type}/${item.nationalId}`, {
-            id: item?.nationalId,
-          })
-        }}
-      >
-        <SafeAreaView>
-          <FamilyMemberCard
-            name={item?.fullName}
-            nationalId={formatNationalId(item?.nationalId)}
-          />
-        </SafeAreaView>
-      </TouchableHighlight>
-    </View>
-  )
-})
+    return (
+      <View style={{ paddingHorizontal: 16 }}>
+        <TouchableHighlight
+          underlayColor={
+            theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
+          }
+          style={{ marginBottom: 16, borderRadius: 16 }}
+          onPress={() => {
+            navigateTo(`/family/${item.type}/${item.nationalId}`, {
+              id: item?.nationalId,
+            })
+          }}
+        >
+          <SafeAreaView>
+            <FamilyMemberCard
+              name={item?.fullName ?? ''}
+              nationalId={formatNationalId(item?.nationalId)}
+            />
+          </SafeAreaView>
+        </TouchableHighlight>
+      </View>
+    )
+  },
+)
 
 export const FamilyOverviewScreen: NavigationFunctionComponent = ({
   componentId,
@@ -86,15 +104,15 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
 
   const listOfPeople = [
     { ...(spouse ?? {}), type: 'spouse' },
-    ...(childCustody ?? []).map((item: any) => ({
+    ...(childCustody ?? []).map((item: NationalRegistryChildCustody) => ({
       ...item,
       type: 'custodyChild',
     })),
-    ...(bioChildren ?? []).map((item: any) => ({
+    ...(bioChildren ?? []).map((item: NationalRegistryChildCustody) => ({
       ...item,
       type: 'bioChild',
     })),
-  ]
+  ].filter((item) => item.nationalId)
 
   const isSkeleton = familyRes.loading && !familyRes.data
 
@@ -119,7 +137,7 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
     }
   }, [])
 
-  const renderItem = ({ item }: { item: any }) => {
+  const renderItem = ({ item }: { item: FamilyListItem }) => {
     if (item.type === 'skeleton') {
       return (
         <View style={{ paddingHorizontal: 16 }}>
@@ -179,6 +197,7 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
   }))
 
   const isEmpty = listOfPeople.length === 0
+
   return (
     <>
       {(familyRes.data || familyRes.loading) && (
