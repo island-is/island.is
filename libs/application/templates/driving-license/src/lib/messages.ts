@@ -931,12 +931,12 @@ export const m = defineMessages({
   applicationForAdvancedLicenseLabelC1: {
     id: 'dl.application:applicationForAdvancedLicenseLabelC1',
     defaultMessage:
-      'Gefur réttindi til að aka bifreið þyngri en 3.500 kg en þó ekki þyngri en 7.500 kg. Sá sem hefur C1 réttindi má tengja eftirvagn/tengitæki sem er 750 kg eða minna af leyfðri heildarþyngd. Til þess að mega draga þyngri eftirvagna/tengitæki þarf að taka C1E réttindi.',
+      'Gefur réttindi til að aka bifreið fyrir 8 farþega eða færri, sem er þyngri en 3.500 kg en þó ekki þyngri en 7.500 kg. Sá sem hefur C1 réttindi má tengja eftirvagn/tengitæki sem er 750 kg eða minna af leyfðri heildarþyngd. Til þess að mega draga þyngri eftirvagna/tengitæki þarf að taka C1E réttindi.',
     description: 'C1 description',
   },
   applicationForAdvancedLicenseLabelC1A: {
     id: 'dl.application:applicationForAdvancedLicenseLabelC1A',
-    defaultMessage: 'Sækja um leyfi í atvinnurekstri',
+    defaultMessage: 'Sækja um leyfi í atvinnuskyni',
     description: 'C1A description',
   },
   applicationForAdvancedLicenseTitleD1: {
@@ -952,7 +952,7 @@ export const m = defineMessages({
   },
   applicationForAdvancedLicenseLabelD1A: {
     id: 'dl.application:applicationForAdvancedLicenseLabelD1A',
-    defaultMessage: 'Sækja um leyfi í atvinnurekstri',
+    defaultMessage: 'Sækja um leyfi í atvinnuskyni',
     description: 'D1A description',
   },
   applicationForAdvancedLicenseTitleC: {
@@ -963,12 +963,12 @@ export const m = defineMessages({
   applicationForAdvancedLicenseLabelC: {
     id: 'dl.application:applicationForAdvancedLicenseLabelC',
     defaultMessage:
-      'Gefur réttindi til að aka vörubifreið sem er þyngri en 7.500 kg. C flokkur gefur einnig réttindi til að aka bifreiðinni með eftirvagni sem er 750 kg eða minna af leyfðri heildarþyngd.',
+      'Gefur réttindi til að aka vörubifreið fyrir 8 farþega eða færri, sem er þyngri en 7.500 kg. C flokkur gefur einnig réttindi til að aka bifreiðinni með eftirvagni sem er 750 kg eða minna af leyfðri heildarþyngd.',
     description: 'C description',
   },
   applicationForAdvancedLicenseLabelCA: {
     id: 'dl.application:applicationForAdvancedLicenseLabelCA',
-    defaultMessage: 'Sækja um leyfi í atvinnurekstri',
+    defaultMessage: 'Sækja um leyfi í atvinnuskyni',
     description: 'CA description',
   },
   applicationForAdvancedLicenseTitleD: {
@@ -984,7 +984,7 @@ export const m = defineMessages({
   },
   applicationForAdvancedLicenseLabelDA: {
     id: 'dl.application:applicationForAdvancedLicenseLabelDA',
-    defaultMessage: 'Sækja um leyfi í atvinnurekstri',
+    defaultMessage: 'Sækja um leyfi í atvinnuskyni',
     description: 'DA description',
   },
   applicationForAdvancedLicenseTitleC1E: {
