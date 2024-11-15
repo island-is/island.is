@@ -700,11 +700,11 @@ application-system-api:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
-      initialDelaySeconds: 3
+      initialDelaySeconds: 20
       path: '/liveness'
       timeoutSeconds: 3
     readiness:
-      initialDelaySeconds: 3
+      initialDelaySeconds: 20
       path: '/liveness'
       timeoutSeconds: 3
   hpa:
