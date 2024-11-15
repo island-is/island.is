@@ -340,8 +340,8 @@ export const serviceSetup = (services: {
     })
     .db()
     .migrations()
-    .liveness('/liveness')
-    .readiness('/liveness')
+    .liveness({ path: '/liveness', initialDelaySeconds: 20 })
+    .readiness({ path: '/liveness', initialDelaySeconds: 20 })
     .resources({
       limits: { cpu: '400m', memory: '1024Mi' },
       requests: { cpu: '75m', memory: '512Mi' },
