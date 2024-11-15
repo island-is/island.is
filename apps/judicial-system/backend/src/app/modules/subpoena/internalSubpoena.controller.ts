@@ -33,7 +33,7 @@ import { DeliverResponse } from './models/deliver.response'
 import { Subpoena } from './models/subpoena.model'
 import { SubpoenaService } from './subpoena.service'
 
-@Controller('api/internal/')
+@Controller('api/internal')
 @ApiTags('internal subpoenas')
 @UseGuards(TokenGuard)
 export class InternalSubpoenaController {
