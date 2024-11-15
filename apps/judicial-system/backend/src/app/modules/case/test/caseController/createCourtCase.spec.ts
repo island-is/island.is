@@ -18,7 +18,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { randomEnum } from '../../../../test'
 import { CourtService } from '../../../court'
-import { include, order } from '../../case.service'
+import { include } from '../../case.service'
 import { Case } from '../../models/case.model'
 
 interface Then {
@@ -135,7 +135,6 @@ describe('CaseController - Create court case', () => {
       )
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         include,
-        order,
         where: {
           id: caseId,
           isArchived: false,

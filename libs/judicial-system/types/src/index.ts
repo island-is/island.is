@@ -19,11 +19,12 @@ export {
   NotificationDispatchType,
   DefendantNotificationType,
   CivilClaimantNotificationType,
+  notificationTypes,
 } from './lib/notification'
 export type { Institution } from './lib/institution'
-export { EventType } from './lib/eventLog'
-export { DateType } from './lib/dateLog'
-export { StringType } from './lib/caseString'
+export { EventType, eventTypes } from './lib/eventLog'
+export { DateType, dateTypes } from './lib/dateLog'
+export { StringType, stringTypes } from './lib/caseString'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
 

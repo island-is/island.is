@@ -8,7 +8,7 @@ import {
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
 
-import { include, order } from '../../case.service'
+import { include } from '../../case.service'
 import { Case } from '../../models/case.model'
 import { CaseHasExistedGuard } from '../caseHasExisted.guard'
 
@@ -62,7 +62,6 @@ describe('Case Has Existed Guard', () => {
     it('should activate', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         include,
-        order,
         where: {
           id: caseId,
           isArchived: false,

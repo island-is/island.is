@@ -1,6 +1,3 @@
-import { PdfTypes } from '@island.is/application/types'
-import { KeyMapping } from './types'
-
 export const PdfConstants = {
   BOLD_FONT: 'Helvetica-Bold',
   NORMAL_FONT: 'Helvetica',
@@ -17,16 +14,6 @@ export const PdfConstants = {
   IMAGE_WIDTH: 126,
   IMAGE_HEIGHT: 40,
   PAGE_SIZE: 'A4',
-}
-
-export const BucketTypePrefix: KeyMapping<PdfTypes, string> = {
-  ChildrenResidenceChange: 'children-residence-change',
-  ChildrenResidenceChangeV2: 'children-residence-change',
-}
-
-export const DokobitFileName: KeyMapping<PdfTypes, string> = {
-  ChildrenResidenceChange: 'Logheimilisbreyting-barns.pdf',
-  ChildrenResidenceChangeV2: 'Logheimilisbreyting-barns.pdf',
 }
 
 export const DokobitErrorCodes = {

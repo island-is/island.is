@@ -33,6 +33,7 @@ import {
   InfoCard,
   PageHeader,
   PageLayout,
+  PageTitle,
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -108,13 +109,11 @@ export const JudgeOverview = () => {
             />
           </Box>
         )}
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(rcCourtOverview.sections.title, {
-              caseType: workingCase.type,
-            })}
-          </Text>
-        </Box>
+        <PageTitle>
+          {formatMessage(rcCourtOverview.sections.title, {
+            caseType: workingCase.type,
+          })}
+        </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
           workingCase.arraignmentDate?.date &&
