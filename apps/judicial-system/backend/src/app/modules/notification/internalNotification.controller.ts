@@ -128,8 +128,8 @@ export class InternalNotificationController {
 
     return this.defendantNotificationService.sendDefendantNotification(
       notificationDto.type,
-      defendant,
       theCase,
+      defendant,
     )
   }
 
