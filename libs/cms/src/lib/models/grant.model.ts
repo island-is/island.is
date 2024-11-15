@@ -70,8 +70,8 @@ export class Grant {
   @CacheField(() => [Asset], { nullable: true })
   files?: Array<Asset>
 
-  @CacheField(() => GenericTag, { nullable: true })
-  categoryTag?: GenericTag
+  @CacheField(() => [GenericTag], { nullable: true })
+  categoryTags?: Array<GenericTag>
 
   @CacheField(() => GenericTag, { nullable: true })
   typeTag?: GenericTag
@@ -122,8 +122,8 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
       : undefined,
   fund: fields.grantFund ? mapFund(fields.grantFund) : undefined,
   files: (fields.grantFiles ?? []).map((file) => mapAsset(file)) ?? [],
-  categoryTag: fields.grantCategoryTag
-    ? mapGenericTag(fields.grantCategoryTag)
+  categoryTags: fields.grantCategoryTags
+    ? fields.grantCategoryTags.map((tag) => mapGenericTag(tag))
     : undefined,
   typeTag: fields.grantTypeTag ? mapGenericTag(fields.grantTypeTag) : undefined,
 })

@@ -55,9 +55,12 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         ),
         generateLine(
           formatMessage(m.single.category),
-          grant?.categoryTag?.title ? (
-            <Text variant="medium">{grant.categoryTag?.title}</Text>
-          ) : undefined,
+          grant?.categoryTags
+            ? grant.categoryTags
+                .map((ct) => ct.title)
+                .filter(isDefined)
+                .join(', ')
+            : undefined,
         ),
         generateLine(
           formatMessage(m.single.type),

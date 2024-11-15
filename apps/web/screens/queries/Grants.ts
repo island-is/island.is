@@ -19,7 +19,7 @@ export const GET_GRANTS_QUERY = gql`
         isOpen
         status
         statusText
-        categoryTag {
+        categoryTags {
           id
           title
           genericTagGroup {
@@ -70,7 +70,7 @@ export const GET_GRANT_QUERY = gql`
     }
       applicationDeadlineText
       statusText
-      categoryTag {
+      categoryTags {
         id
         title
       }

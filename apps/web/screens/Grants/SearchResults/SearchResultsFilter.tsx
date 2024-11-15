@@ -78,11 +78,11 @@ export const GrantsSearchResultsFilter = ({
                   },
                   {
                     value: 'open-soon',
-                    label: formatMessage(m.search.applicationClosed),
+                    label: formatMessage(m.search.applicationOpensSoon),
                   },
                   {
                     value: 'closed',
-                    label: formatMessage(m.search.applicationOpensSoon),
+                    label: formatMessage(m.search.applicationClosed),
                   },
                 ],
               },

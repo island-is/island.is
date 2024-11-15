@@ -80,13 +80,6 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
             type: string
             value?: string
           }> = [
-            mapped.categoryTag
-              ? {
-                  key: mapped.categoryTag.slug,
-                  type: 'genericTag',
-                  value: mapped.categoryTag.title,
-                }
-              : null,
             mapped.typeTag
               ? {
                   key: mapped.typeTag.slug,
@@ -95,6 +88,16 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
                 }
               : null,
           ].filter(isDefined)
+
+          mapped.categoryTags?.forEach((tag) => {
+            if (tag) {
+              tags.push({
+                key: tag.slug,
+                type: 'genericTag',
+                value: tag.title,
+              })
+            }
+          })
 
           // Tag the document with the ids of its children so we can later look up what document a child belongs to
           const childEntryIds = extractChildEntryIds(entry)
