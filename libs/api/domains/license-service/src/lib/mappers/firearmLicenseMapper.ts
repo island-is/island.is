@@ -24,7 +24,7 @@ import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 import { UserAgent } from '@island.is/nest/core'
 import { enableAppCompatibilityMode } from '../utils/appCompatibilityMode'
 
-const APP_VERSION_CUTOFF = '1.4.7'
+const APP_VERSION_CUTOFF = '1.4.8'
 
 @Injectable()
 export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
@@ -36,7 +36,7 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
     if (!payload) return Promise.resolve([])
 
-    //App version before 1.4.7 doesn't know how to handle table
+    //App version before 1.4.8 doesn't know how to handle table
     const enableAppCompatibility = enableAppCompatibilityMode(
       userAgent?.app.version,
       APP_VERSION_CUTOFF,
