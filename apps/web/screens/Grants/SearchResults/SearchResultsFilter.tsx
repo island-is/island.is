@@ -69,27 +69,27 @@ export const GrantsSearchResultsFilter = ({
             categories={[
               {
                 id: 'status',
-                label: 'Staða umsóknar',
+                label: formatMessage(m.search.applicationStatus),
                 selected: searchState?.['status'] ?? [],
                 filters: [
                   {
                     value: 'open',
-                    label: 'Opið fyrir umsóknir',
+                    label: formatMessage(m.search.applicationOpen),
                   },
                   {
                     value: 'open-soon',
-                    label: 'Opnar fljótlega',
+                    label: formatMessage(m.search.applicationClosed),
                   },
                   {
                     value: 'closed',
-                    label: 'Lokað fyrir umsóknir',
+                    label: formatMessage(m.search.applicationOpensSoon),
                   },
                 ],
               },
               categoryFilters
                 ? {
                     id: 'category',
-                    label: 'Flokkun',
+                    label: formatMessage(m.search.category),
                     selected: searchState?.['category'] ?? [],
                     filters: categoryFilters.map((t) => ({
                       value: t.slug,
@@ -100,7 +100,7 @@ export const GrantsSearchResultsFilter = ({
               typeFilters
                 ? {
                     id: 'type',
-                    label: 'Tegund',
+                    label: formatMessage(m.search.type),
                     selected: searchState?.['type'] ?? [],
                     filters: typeFilters.map((t) => ({
                       value: t.slug,
@@ -110,7 +110,7 @@ export const GrantsSearchResultsFilter = ({
                 : undefined,
               {
                 id: 'organization',
-                label: 'Stofnun',
+                label: formatMessage(m.search.organization),
 
                 selected: searchState?.['organization'] ?? [],
                 filters: [

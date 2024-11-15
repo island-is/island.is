@@ -36,6 +36,18 @@ export const m = {
       id: 'web.grants:search.applicationStatus',
       defaultMessage: 'Staða umsóknar',
     },
+    applicationOpen: {
+      id: 'web.grants:search.applicationOpen',
+      defaultMessage: 'Opið fyrir umsóknir',
+    },
+    applicationClosed: {
+      id: 'web.grants:search.applicationClosed',
+      defaultMessage: 'Lokað fyrir umsóknir',
+    },
+    applicationOpensSoon: {
+      id: 'web.grants:search.applicationOpensSoon',
+      defaultMessage: 'Opnar fljótlega',
+    },
     category: {
       id: 'web.grants:search.category',
       defaultMessage: 'Flokkun',
