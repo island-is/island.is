@@ -1,5 +1,5 @@
 import { Box, Hidden } from '@island.is/island-ui/core'
-import { useBff } from '@island.is/react-spa/bff'
+import { useLegacyAuth } from '@island.is/react-spa/bff'
 import { useEffect, useState } from 'react'
 import { UserButton } from './UserButton'
 import { UserDropdown } from './UserDropdown'
@@ -29,7 +29,7 @@ export const UserMenu = ({
   const [dropdownState, setDropdownState] = useState<'closed' | 'open'>(
     'closed',
   )
-  const { signOut, switchUser, userInfo: user } = useBff()
+  const { signOut, switchUser, userInfo: user } = useLegacyAuth()
 
   const handleClick = () => {
     setDropdownState(dropdownState === 'open' ? 'closed' : 'open')

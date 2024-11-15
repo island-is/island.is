@@ -1,6 +1,6 @@
 import { Box, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useBff, useUserInfo } from '@island.is/react-spa/bff'
+import { useBff, useLegacyUserInfo } from '@island.is/react-spa/bff'
 import { userMessages } from '@island.is/shared/translations'
 import { UserDropdownItem } from './UserDropdownItem'
 import { UserTopicCard } from './UserTopicCard'
@@ -14,7 +14,7 @@ export const UserDelegations = ({
   showActorButton,
   onSwitchUser,
 }: UserDelegationsProps) => {
-  const user = useUserInfo()
+  const user = useLegacyUserInfo()
   const { formatMessage } = useLocale()
   const { switchUser } = useBff()
   const actor = user.profile.actor

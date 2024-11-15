@@ -6,7 +6,7 @@ import {
   UserAvatar,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useUserInfo } from '@island.is/react-spa/bff'
+import { useLegacyUserInfo } from '@island.is/react-spa/bff'
 import { userMessages } from '@island.is/shared/translations'
 import { checkDelegation } from '@island.is/shared/utils'
 import * as styles from './UserMenu.css'
@@ -24,7 +24,7 @@ export const UserButton = ({
   iconOnlyMobile = false,
   userMenuOpen,
 }: UserButtonProps) => {
-  const user = useUserInfo()
+  const user = useLegacyUserInfo()
   const isDelegation = checkDelegation(user)
   const { profile } = user
   const { formatMessage } = useLocale()

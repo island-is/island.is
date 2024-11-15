@@ -118,6 +118,47 @@ export const useLegacyUserInfo = (): BffUser => {
   throw new Error('User info is not available. Is the user authenticated?')
 }
 
+/**
+ * Legacy hook for retrieving authentication context across different providers.
+ * @deprecated Use useBff hook directly with BffContext instead
+ *
+ * This hook provides backwards compatibility during the transition from AuthContext to BffContext.
+ * It attempts to retrieve authentication context in the following order:
+ * 1. First tries BffContext (preferred)
+ * 2. Falls back to AuthContext (legacy)
+ *
+ * @throws {Error} If neither BffProvider nor AuthProvider is available in the component tree
+ * @returns {BffContextType | AuthContext} Authentication context from either provider
+ *
+ * @example
+ * // Instead of:
+ * const auth = useLegacyAuth()
+ *
+ * // Prefer:
+ * const auth = useBff()
+ */
+export const useLegacyAuth = () => {
+  const bffContext = useContext(BffContext)
+  const authContext = useContext(AuthContext)
+
+  if (bffContext) {
+    return bffContext
+  }
+
+  if (authContext) {
+    return authContext
+  }
+
+  const errorMsg = (providerStr: string) =>
+    `useLegacyAuth must be used within a ${providerStr}`
+
+  if (!authContext) {
+    throw new Error(errorMsg('AuthProvider'))
+  }
+
+  throw new Error(errorMsg('BffProvider'))
+}
+
 export const useUserBirthday = () => {
   const userInfo = useUserInfo()
 
