@@ -241,7 +241,11 @@ export class SubpoenaService {
       defenderNationalId,
     )
 
-    if (update.serviceStatus && subpoena.case) {
+    if (
+      update.serviceStatus &&
+      update.serviceStatus !== subpoena.serviceStatus &&
+      subpoena.case
+    ) {
       this.eventService.postEvent(
         'SUBPOENA_SERVICE_STATUS',
         subpoena.case,
@@ -330,6 +334,10 @@ export class SubpoenaService {
           `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena for subpoena ${subpoena.id}`,
         )
       }
+
+      this.logger.info(
+        `Subpoena ${createdSubpoena.subpoenaId} delivered to police`,
+      )
 
       return { delivered: true }
     } catch (error) {
