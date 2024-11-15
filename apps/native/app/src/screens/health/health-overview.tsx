@@ -1,4 +1,12 @@
-import { Alert, Button, Heading, Input, InputRow, Typography } from '@ui'
+import {
+  Alert,
+  Button,
+  Heading,
+  Input,
+  InputRow,
+  Problem,
+  Typography,
+} from '@ui'
 import React, { useCallback, useMemo, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import {
@@ -12,6 +20,7 @@ import {
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
+import { ApolloError } from '@apollo/client'
 
 import {
   useGetHealthCenterQuery,
@@ -75,6 +84,10 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({ title, onPress }) => {
       </Heading>
     </TouchableOpacity>
   )
+}
+
+const showErrorComponent = (error: ApolloError) => {
+  return <Problem error={error} size="small" />
 }
 
 const { getNavigationOptions, useNavigationOptions } =
@@ -247,49 +260,57 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               )
             }
           />
-          <InputRow background>
-            <Input
-              label={intl.formatMessage({
-                id: 'health.overview.healthCenter',
-              })}
-              value={
-                healthCenterRes.data
-                  ?.rightsPortalHealthCenterRegistrationHistory?.current
-                  ?.healthCenterName ??
-                intl.formatMessage({
-                  id: 'health.overview.noHealthCenterRegistered',
-                })
-              }
-              loading={healthCenterRes.loading && !healthCenterRes.data}
-              error={healthCenterRes.error && !healthCenterRes.data}
-              darkBorder
-            />
-          </InputRow>
-          <InputRow background>
-            <Input
-              label={intl.formatMessage({
-                id: 'health.overview.physician',
-              })}
-              value={
-                healthCenterRes.data
-                  ?.rightsPortalHealthCenterRegistrationHistory?.current
-                  ?.doctor ??
-                intl.formatMessage({
-                  id: 'health.overview.noPhysicianRegistered',
-                })
-              }
-              loading={healthCenterRes.loading && !healthCenterRes.data}
-              error={healthCenterRes.error && !healthCenterRes.data}
-              noBorder
-            />
-          </InputRow>
+          {(healthCenterRes.data || healthCenterRes.loading) && (
+            <>
+              <InputRow background>
+                <Input
+                  label={intl.formatMessage({
+                    id: 'health.overview.healthCenter',
+                  })}
+                  value={
+                    healthCenterRes.data
+                      ?.rightsPortalHealthCenterRegistrationHistory?.current
+                      ?.healthCenterName ??
+                    intl.formatMessage({
+                      id: 'health.overview.noHealthCenterRegistered',
+                    })
+                  }
+                  loading={healthCenterRes.loading && !healthCenterRes.data}
+                  error={healthCenterRes.error && !healthCenterRes.data}
+                  darkBorder
+                />
+              </InputRow>
+              <InputRow background>
+                <Input
+                  label={intl.formatMessage({
+                    id: 'health.overview.physician',
+                  })}
+                  value={
+                    healthCenterRes.data
+                      ?.rightsPortalHealthCenterRegistrationHistory?.current
+                      ?.doctor ??
+                    intl.formatMessage({
+                      id: 'health.overview.noPhysicianRegistered',
+                    })
+                  }
+                  loading={healthCenterRes.loading && !healthCenterRes.data}
+                  error={healthCenterRes.error && !healthCenterRes.data}
+                  noBorder
+                />
+              </InputRow>
+            </>
+          )}
+          {healthCenterRes.error &&
+            !healthCenterRes.data &&
+            showErrorComponent(healthCenterRes.error)}
           <HeadingSection
             title={intl.formatMessage({ id: 'health.overview.statusOfRights' })}
             onPress={() =>
               openBrowser(`${origin}/minarsidur/heilsa/yfirlit`, componentId)
             }
           />
-          {healthInsuranceData?.isInsured || healthInsuranceRes.loading ? (
+          {(healthInsuranceRes.data && healthInsuranceData?.isInsured) ||
+          healthInsuranceRes.loading ? (
             <InputRow background>
               <Input
                 label={intl.formatMessage({
@@ -315,13 +336,19 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               />
             </InputRow>
           ) : (
-            <Alert
-              type="info"
-              title={intl.formatMessage({ id: 'health.overview.notInsured' })}
-              message={healthInsuranceData?.explanation ?? ''}
-              hasBorder
-            />
+            !healthInsuranceRes.error &&
+            healthInsuranceRes.data && (
+              <Alert
+                type="info"
+                title={intl.formatMessage({ id: 'health.overview.notInsured' })}
+                message={healthInsuranceData?.explanation ?? ''}
+                hasBorder
+              />
+            )
           )}
+          {healthInsuranceRes.error &&
+            !healthInsuranceRes.data &&
+            showErrorComponent(healthInsuranceRes.error)}
           <HeadingSection
             title={intl.formatMessage({
               id: 'health.overview.coPayments',
@@ -333,68 +360,81 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               )
             }
           />
-          <InputRow background>
-            <Input
-              label={intl.formatMessage({
-                id: 'health.overview.maxMonthlyPayment',
-              })}
-              value={
-                paymentStatusData?.maximumMonthlyPayment
-                  ? `${intl.formatNumber(
-                      paymentStatusData?.maximumMonthlyPayment,
-                    )} kr.`
-                  : '0 kr.'
-              }
-              loading={paymentStatusRes.loading && !paymentStatusRes.data}
-              error={paymentStatusRes.error && !paymentStatusRes.data}
-              darkBorder
-            />
-          </InputRow>
-          <InputRow background>
-            <Input
-              label={intl.formatMessage({
-                id: 'health.overview.paymentLimit',
-              })}
-              value={
-                paymentStatusData?.maximumPayment
-                  ? `${intl.formatNumber(
-                      paymentStatusData?.maximumPayment,
-                    )} kr.`
-                  : '0 kr.'
-              }
-              loading={paymentStatusRes.loading && !paymentStatusRes.data}
-              error={paymentStatusRes.error && !paymentStatusRes.data}
-              darkBorder
-            />
-          </InputRow>
-          <InputRow background>
-            <Input
-              label={intl.formatMessage({
-                id: 'health.overview.paymentCredit',
-              })}
-              value={
-                paymentOverviewData?.credit
-                  ? `${intl.formatNumber(paymentOverviewData?.credit)} kr.`
-                  : '0 kr.'
-              }
-              loading={paymentOverviewRes.loading && !paymentOverviewRes.data}
-              error={paymentOverviewRes.error && !paymentOverviewRes.data}
-              noBorder
-            />
-            <Input
-              label={intl.formatMessage({
-                id: 'health.overview.paymentDebt',
-              })}
-              value={
-                paymentOverviewData?.debt
-                  ? `${intl.formatNumber(paymentOverviewData?.debt)} kr.`
-                  : '0 kr.'
-              }
-              loading={paymentOverviewRes.loading && !paymentOverviewRes.data}
-              error={paymentOverviewRes.error && !paymentOverviewRes.data}
-              noBorder
-            />
-          </InputRow>
+          {(paymentOverviewRes.loading || paymentOverviewRes.data) && (
+            <>
+              <InputRow background>
+                <Input
+                  label={intl.formatMessage({
+                    id: 'health.overview.maxMonthlyPayment',
+                  })}
+                  value={
+                    paymentStatusData?.maximumMonthlyPayment
+                      ? `${intl.formatNumber(
+                          paymentStatusData?.maximumMonthlyPayment,
+                        )} kr.`
+                      : '0 kr.'
+                  }
+                  loading={paymentStatusRes.loading && !paymentStatusRes.data}
+                  error={paymentStatusRes.error && !paymentStatusRes.data}
+                  darkBorder
+                />
+              </InputRow>
+              <InputRow background>
+                <Input
+                  label={intl.formatMessage({
+                    id: 'health.overview.paymentLimit',
+                  })}
+                  value={
+                    paymentStatusData?.maximumPayment
+                      ? `${intl.formatNumber(
+                          paymentStatusData?.maximumPayment,
+                        )} kr.`
+                      : '0 kr.'
+                  }
+                  loading={paymentStatusRes.loading && !paymentStatusRes.data}
+                  error={paymentStatusRes.error && !paymentStatusRes.data}
+                  darkBorder
+                />
+              </InputRow>
+              <InputRow background>
+                <Input
+                  label={intl.formatMessage({
+                    id: 'health.overview.paymentCredit',
+                  })}
+                  value={
+                    paymentOverviewData?.credit
+                      ? `${intl.formatNumber(paymentOverviewData?.credit)} kr.`
+                      : '0 kr.'
+                  }
+                  loading={
+                    paymentOverviewRes.loading && !paymentOverviewRes.data
+                  }
+                  error={paymentOverviewRes.error && !paymentOverviewRes.data}
+                  noBorder
+                />
+                <Input
+                  label={intl.formatMessage({
+                    id: 'health.overview.paymentDebt',
+                  })}
+                  value={
+                    paymentOverviewData?.debt
+                      ? `${intl.formatNumber(paymentOverviewData?.debt)} kr.`
+                      : '0 kr.'
+                  }
+                  loading={
+                    paymentOverviewRes.loading && !paymentOverviewRes.data
+                  }
+                  error={paymentOverviewRes.error && !paymentOverviewRes.data}
+                  noBorder
+                />
+              </InputRow>
+            </>
+          )}
+          {paymentOverviewRes.error &&
+            !paymentOverviewRes.data &&
+            paymentStatusRes.error &&
+            !paymentStatusRes.data &&
+            showErrorComponent(paymentOverviewRes.error)}
           <HeadingSection
             title={intl.formatMessage({
               id: 'health.overview.medicinePurchase',
@@ -406,54 +446,66 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               )
             }
           />
-          <InputRow background>
-            <Input
-              label={intl.formatMessage({
-                id: 'health.overview.period',
-              })}
-              value={
-                medicinePurchaseData?.dateFrom && medicinePurchaseData?.dateTo
-                  ? `${intl.formatDate(
-                      medicinePurchaseData.dateFrom,
-                    )} - ${intl.formatDate(medicinePurchaseData.dateTo)}`
-                  : ''
-              }
-              loading={medicinePurchaseRes.loading && !medicinePurchaseRes.data}
-              error={medicinePurchaseRes.error && !medicinePurchaseRes.data}
-              darkBorder
-            />
-          </InputRow>
-          <InputRow background>
-            <Input
-              label={intl.formatMessage({
-                id: 'health.overview.levelStatus',
-              })}
-              value={
-                medicinePurchaseData?.levelNumber &&
-                medicinePurchaseData?.levelPercentage
-                  ? intl.formatMessage(
-                      {
-                        id: 'health.overview.levelStatusValue',
-                      },
-                      {
-                        level: medicinePurchaseData?.levelNumber,
-                        percentage: medicinePurchaseData?.levelPercentage,
-                      },
-                    )
-                  : ''
-              }
-              loading={medicinePurchaseRes.loading && !medicinePurchaseRes.data}
-              error={medicinePurchaseRes.error && !medicinePurchaseRes.data}
-              noBorder
-              warningText={
-                !isMedicinePeriodActive
-                  ? intl.formatMessage({
-                      id: 'health.overview.medicinePurchaseNoActivePeriodWarning',
-                    })
-                  : ''
-              }
-            />
-          </InputRow>
+          {(medicinePurchaseRes.loading || medicinePurchaseRes.data) && (
+            <>
+              <InputRow background>
+                <Input
+                  label={intl.formatMessage({
+                    id: 'health.overview.period',
+                  })}
+                  value={
+                    medicinePurchaseData?.dateFrom &&
+                    medicinePurchaseData?.dateTo
+                      ? `${intl.formatDate(
+                          medicinePurchaseData.dateFrom,
+                        )} - ${intl.formatDate(medicinePurchaseData.dateTo)}`
+                      : ''
+                  }
+                  loading={
+                    medicinePurchaseRes.loading && !medicinePurchaseRes.data
+                  }
+                  error={medicinePurchaseRes.error && !medicinePurchaseRes.data}
+                  darkBorder
+                />
+              </InputRow>
+              <InputRow background>
+                <Input
+                  label={intl.formatMessage({
+                    id: 'health.overview.levelStatus',
+                  })}
+                  value={
+                    medicinePurchaseData?.levelNumber &&
+                    medicinePurchaseData?.levelPercentage
+                      ? intl.formatMessage(
+                          {
+                            id: 'health.overview.levelStatusValue',
+                          },
+                          {
+                            level: medicinePurchaseData?.levelNumber,
+                            percentage: medicinePurchaseData?.levelPercentage,
+                          },
+                        )
+                      : ''
+                  }
+                  loading={
+                    medicinePurchaseRes.loading && !medicinePurchaseRes.data
+                  }
+                  error={medicinePurchaseRes.error && !medicinePurchaseRes.data}
+                  noBorder
+                  warningText={
+                    !isMedicinePeriodActive
+                      ? intl.formatMessage({
+                          id: 'health.overview.medicinePurchaseNoActivePeriodWarning',
+                        })
+                      : ''
+                  }
+                />
+              </InputRow>
+            </>
+          )}
+          {medicinePurchaseRes.error &&
+            !medicinePurchaseRes.data &&
+            showErrorComponent(medicinePurchaseRes.error)}
         </Host>
       </ScrollView>
     </View>
