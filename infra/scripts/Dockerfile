@@ -1,18 +1,17 @@
-ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws/docker
+ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 ARG NODE_IMAGE_TAG
-FROM ${DOCKER_IMAGE_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS runner
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS runner
 
 # hadolint ignore=DL3018
 RUN apk add --no-cache postgresql-client bash
 
-FROM ${DOCKER_IMAGE_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS build
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS build
 WORKDIR /app/infra
 
 ENV NODE_OPTIONS=--openssl-legacy-provider
-RUN corepack enable
 
 COPY infra/package.json infra/yarn.lock /app/infra/
-COPY infra/.yarn/ /app/.yarn/
+COPY .yarn/ ./.yarn
 RUN yarn install --immutable
 
 COPY infra/ /app/infra/
