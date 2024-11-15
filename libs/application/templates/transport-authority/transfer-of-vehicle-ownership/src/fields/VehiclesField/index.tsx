@@ -5,7 +5,6 @@ import {
 } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { FC, useCallback, useEffect } from 'react'
-import { VehicleRadioField } from './VehicleRadioField'
 import { useFormContext } from 'react-hook-form'
 import { CurrentVehiclesAndRecords } from '../../shared'
 import { ApolloQueryResult, useMutation } from '@apollo/client'
@@ -95,31 +94,29 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           {...props}
         />
       ) : (
-        <VehicleRadioField
-          currentVehicleList={currentVehicleList?.vehicles}
+        <VehicleRadioFormField
           {...props}
+          field={{
+            id: 'pickVehicle',
+            title: information.labels.pickVehicle.title,
+            description: information.labels.pickVehicle.description,
+            type: FieldTypes.VEHICLE_RADIO,
+            component: FieldComponents.VEHICLE_RADIO,
+            children: undefined,
+            itemType: 'VEHICLE',
+            itemList: currentVehicleList?.vehicles,
+            validateDebtStatus: true,
+            alertMessageErrorTitle:
+              information.labels.pickVehicle.hasErrorTitle,
+            debtStatusErrorMessage:
+              information.labels.pickVehicle.isNotDebtLessTag,
+            validationErrorMessages: applicationCheck.validation,
+            validationErrorFallbackMessage:
+              applicationCheck.validation.fallbackErrorMessage,
+            inputErrorMessage: error.requiredValidVehicle,
+          }}
         />
       )}
-
-      <VehicleRadioFormField
-        {...props}
-        field={{
-          id: 'pickVehicle',
-          title: information.labels.pickVehicle.title,
-          description: information.labels.pickVehicle.description,
-          type: FieldTypes.VEHICLE_RADIO,
-          component: FieldComponents.VEHICLE_RADIO,
-          children: undefined,
-          alertMessageErrorTitle: information.labels.pickVehicle.hasErrorTitle,
-          errorIsNotDebtLessMessage:
-            information.labels.pickVehicle.isNotDebtLessTag,
-          validationErrorMessages: applicationCheck.validation,
-          validationErrorFallbackMessage:
-            applicationCheck.validation.fallbackErrorMessage,
-          inputErrorMessage: error.requiredValidVehicle,
-          itemList: currentVehicleList?.vehicles,
-        }}
-      />
     </Box>
   )
 }

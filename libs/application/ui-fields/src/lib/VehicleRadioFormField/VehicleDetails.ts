@@ -1,4 +1,7 @@
-import { VehicleValidationErrorMessage } from '@island.is/api/schema'
+interface ValidationErrorMessage {
+  errorNo?: string | null
+  defaultMessage?: string | null
+}
 
 export interface VehicleDetails {
   permno?: string
@@ -8,5 +11,12 @@ export interface VehicleDetails {
   requireMileage?: boolean | null
   mileageReading?: string | null
   isDebtLess?: boolean | null
-  validationErrorMessages?: VehicleValidationErrorMessage[] | null
+  validationErrorMessages?: ValidationErrorMessage[] | null
+}
+
+export interface PlateOwnership {
+  regno: string
+  startDate: string
+  endDate: string
+  validationErrorMessages?: ValidationErrorMessage[] | null
 }

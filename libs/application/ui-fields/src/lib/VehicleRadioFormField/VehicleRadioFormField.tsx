@@ -7,12 +7,13 @@ import {
   BulletList,
   Text,
   InputError,
+  Tag,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { RadioController } from '@island.is/shared/form-fields'
-import { VehicleDetails } from './VehicleDetails'
+import { PlateOwnership, VehicleDetails } from './VehicleDetails'
 
 interface Option {
   value: string
@@ -29,37 +30,61 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
   field,
   errors,
 }) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatDateFns } = useLocale()
   const { setValue } = useFormContext()
 
-  const [plate, setPlate] = useState<string>(
-    getValueViaPath(application.answers, `${field.id}.plate`, '') as string,
+  let selectedValueFieldKey: string | undefined
+  if (field.itemType === 'VEHICLE') {
+    selectedValueFieldKey = `${field.id}.plate`
+  } else if (field.itemType === 'PLATE') {
+    selectedValueFieldKey = `${field.id}.regno`
+  }
+
+  const [selectedValue, setSelectedValue] = useState<string | undefined>(
+    selectedValueFieldKey &&
+      (getValueViaPath(
+        application.answers,
+        selectedValueFieldKey,
+        '',
+      ) as string),
   )
 
-  const currentVehicleList = field.itemList as VehicleDetails[]
-
   const onRadioControllerSelect = (s: string) => {
-    const currentVehicle = currentVehicleList[parseInt(s, 10)]
-    const permno = currentVehicle.permno || ''
+    if (field.itemType === 'VEHICLE') {
+      const currentVehicleList = field.itemList as VehicleDetails[]
+      const currentVehicle = currentVehicleList?.[parseInt(s, 10)]
+      const permno = currentVehicle?.permno || ''
 
-    setPlate(permno)
-    setValue(`${field.id}.plate`, permno)
-    setValue(`${field.id}.type`, currentVehicle.make)
-    setValue(`${field.id}.color`, currentVehicle.color || undefined)
+      setSelectedValue(permno)
 
-    setValue('vehicleMileage.requireMileage', currentVehicle?.requireMileage)
-    setValue('vehicleMileage.mileageReading', currentVehicle?.mileageReading)
+      setValue(`${field.id}.plate`, permno)
+      setValue(`${field.id}.type`, currentVehicle?.make)
+      setValue(`${field.id}.color`, currentVehicle?.color || undefined)
 
-    if (permno) setValue('vehicleInfo.plate', permno)
-    if (permno) setValue('vehicleInfo.type', currentVehicle.make)
+      setValue('vehicleMileage.requireMileage', currentVehicle?.requireMileage)
+      setValue('vehicleMileage.mileageReading', currentVehicle?.mileageReading)
+
+      if (permno) setValue('vehicleInfo.plate', permno)
+      if (permno) setValue('vehicleInfo.type', currentVehicle?.make)
+    } else if (field.itemType === 'PLATE') {
+      const currentPlateList = field.itemList as PlateOwnership[]
+      const currentPlate = currentPlateList?.[parseInt(s, 10)]
+      const regno = currentPlate?.regno
+
+      setSelectedValue(regno)
+
+      setValue(`${field.id}.regno`, regno)
+    }
   }
 
   const vehicleOptions = (vehicles: VehicleDetails[]) => {
     const options = [] as Option[]
 
     for (const [index, vehicle] of vehicles.entries()) {
-      const disabled =
-        !vehicle.isDebtLess || !!vehicle.validationErrorMessages?.length
+      const hasError = !!vehicle.validationErrorMessages?.length
+      const hasDebtError = field.validateDebtStatus && !vehicle.isDebtLess
+      const disabled = hasError || hasDebtError
+
       options.push({
         value: `${index}`,
         label: (
@@ -87,11 +112,11 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                   message={
                     <Box>
                       <BulletList>
-                        {!vehicle.isDebtLess && (
+                        {field.validateDebtStatus && !vehicle.isDebtLess && (
                           <Bullet>
-                            {field.errorIsNotDebtLessMessage &&
+                            {field.debtStatusErrorMessage &&
                               formatText(
-                                field.errorIsNotDebtLessMessage,
+                                field.debtStatusErrorMessage,
                                 application,
                                 formatMessage,
                               )}
@@ -138,6 +163,100 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
     return options
   }
 
+  const plateOptions = (plates: PlateOwnership[]) => {
+    const options = [] as Option[]
+
+    for (const [index, plate] of plates.entries()) {
+      const hasError = !!plate.validationErrorMessages?.length
+      const canRenew = field.checkExpireAtIfCanRenew?.(plate)
+      const disabled = hasError || !canRenew
+
+      options.push({
+        value: `${index}`,
+        label: (
+          <Box display="flex" flexDirection="column">
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="spaceBetween"
+            >
+              <Box>
+                <Text variant="h3" color={disabled ? 'dark200' : 'dark400'}>
+                  {plate.regno}
+                </Text>
+              </Box>
+              <Tag variant={canRenew ? 'mint' : 'red'} disabled>
+                {field.expiresAtTag &&
+                  formatMessage(field.expiresAtTag, {
+                    date: formatDateFns(new Date(plate.endDate), 'do MMM yyyy'),
+                  })}
+              </Tag>
+            </Box>
+            {hasError && (
+              <Box marginTop={2}>
+                <AlertMessage
+                  type="error"
+                  title={
+                    field.alertMessageErrorTitle &&
+                    formatText(
+                      field.alertMessageErrorTitle,
+                      application,
+                      formatMessage,
+                    )
+                  }
+                  message={
+                    <Box>
+                      <BulletList>
+                        {!!plate.validationErrorMessages?.length &&
+                          plate.validationErrorMessages?.map((error) => {
+                            const message =
+                              field.validationErrorMessages &&
+                              formatMessage(
+                                getValueViaPath(
+                                  field.validationErrorMessages,
+                                  error.errorNo || '',
+                                ),
+                              )
+
+                            const defaultMessage = error.defaultMessage
+
+                            const fallbackMessage =
+                              (field.validationErrorFallbackMessage &&
+                                formatText(
+                                  field.validationErrorFallbackMessage,
+                                  application,
+                                  formatMessage,
+                                )) +
+                              ' - ' +
+                              error.errorNo
+
+                            return (
+                              <Bullet>
+                                {message || defaultMessage || fallbackMessage}
+                              </Bullet>
+                            )
+                          })}
+                      </BulletList>
+                    </Box>
+                  }
+                />
+              </Box>
+            )}
+          </Box>
+        ),
+        disabled: disabled,
+      })
+    }
+    return options
+  }
+
+  let options: Option[] = []
+  if (field.itemType === 'VEHICLE') {
+    options = vehicleOptions(field.itemList as VehicleDetails[])
+  } else if (field.itemType === 'PLATE') {
+    options = plateOptions(field.itemList as PlateOwnership[])
+  }
+
   return (
     <div>
       <RadioController
@@ -145,9 +264,10 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
         largeButtons
         backgroundColor="blue"
         onSelect={onRadioControllerSelect}
-        options={vehicleOptions(currentVehicleList as VehicleDetails[])}
+        options={options}
       />
-      {plate.length === 0 && (errors as any)?.[field.id] && (
+
+      {!selectedValue?.length && (errors as any)?.[field.id] && (
         <InputError
           errorMessage={
             field.inputErrorMessage &&

@@ -6,8 +6,10 @@ import {
 import { Box } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import { CurrentVehiclesAndRecords } from '../../shared'
-import { VehicleRadioField } from './VehicleRadioField'
-import { FindVehicleFormField } from '@island.is/application/ui-fields'
+import {
+  FindVehicleFormField,
+  VehicleRadioFormField,
+} from '@island.is/application/ui-fields'
 import { information, error } from '../../lib/messages'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 import { ApolloQueryResult } from '@apollo/client'
@@ -64,9 +66,23 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           {...props}
         />
       ) : (
-        <VehicleRadioField
-          currentVehicleList={currentVehicleList?.vehicles}
+        <VehicleRadioFormField
           {...props}
+          field={{
+            id: 'pickVehicle',
+            title: information.labels.pickVehicle.title,
+            type: FieldTypes.VEHICLE_RADIO,
+            component: FieldComponents.VEHICLE_RADIO,
+            children: undefined,
+            itemType: 'VEHICLE',
+            itemList: currentVehicleList?.vehicles,
+            validateDebtStatus: false,
+            alertMessageErrorTitle:
+              information.labels.pickVehicle.hasErrorTitle,
+            validationErrorFallbackMessage:
+              error.validationFallbackErrorMessage,
+            inputErrorMessage: error.requiredValidVehicle,
+          }}
         />
       )}
     </Box>

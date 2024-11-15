@@ -3,22 +3,22 @@ import {
   FieldComponents,
   FieldTypes,
 } from '@island.is/application/types'
-import { Box, InputError } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import { CurrentVehiclesAndRecords } from '../../shared'
-import { VehicleRadioField } from './VehicleRadioField'
-import { useLocale } from '@island.is/localization'
 import { error, information } from '../../lib/messages'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
-import { FindVehicleFormField } from '@island.is/application/ui-fields'
+import {
+  FindVehicleFormField,
+  VehicleRadioFormField,
+} from '@island.is/application/ui-fields'
 import { ApolloQueryResult } from '@apollo/client'
 import { VehicleSelectField } from './VehicleSelectField'
 
 export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
-  const { formatMessage } = useLocale()
-  const { application, errors } = props
+  const { application } = props
 
   const getVehicleDetails = useLazyVehicleDetails()
   const createGetVehicleDetailsWrapper = (
@@ -65,13 +65,20 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           {...props}
         />
       ) : (
-        <VehicleRadioField
-          currentVehicleList={currentVehicleList?.vehicles}
+        <VehicleRadioFormField
           {...props}
+          field={{
+            id: 'pickVehicle',
+            title: information.labels.pickVehicle.title,
+            type: FieldTypes.VEHICLE_RADIO,
+            component: FieldComponents.VEHICLE_RADIO,
+            children: undefined,
+            itemType: 'VEHICLE',
+            itemList: currentVehicleList?.vehicles,
+            validateDebtStatus: false,
+            inputErrorMessage: error.requiredValidVehicle,
+          }}
         />
-      )}
-      {(errors as any)?.pickVehicle && (
-        <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
       )}
     </Box>
   )
