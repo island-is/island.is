@@ -580,6 +580,10 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
               />
             </InputRow>
           )}
+          {isOrganDonationEnabled &&
+            organDonationRes.error &&
+            !organDonationRes.data &&
+            showErrorComponent(organDonationRes.error)}
         </Host>
       </ScrollView>
     </View>
