@@ -1,28 +1,30 @@
-import { DocumentsScope } from '@island.is/auth/scopes'
+import React, { FC, useEffect, useState, ReactNode } from 'react'
 import {
   Box,
-  BreadcrumbsDeprecated as Breadcrumbs,
-  Button,
-  GridColumn,
   GridContainer,
   GridRow,
+  GridColumn,
+  BreadcrumbsDeprecated as Breadcrumbs,
+  Button,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import {
+  m,
+  ModuleAlertBannerSection,
+  TabNavigation,
+} from '@island.is/portals/my-pages/core'
+import * as styles from './Layout.css'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import {
   IntroHeader,
-  ModuleAlertBannerSection,
   ServicePortalPaths,
-  TabNavigation,
-  m,
-} from '@island.is/service-portal/core'
-import { DocumentsPaths } from '@island.is/service-portal/documents'
-import { FinancePaths } from '@island.is/service-portal/finance'
-import { FC, ReactNode, useEffect, useState } from 'react'
+} from '@island.is/portals/my-pages/core'
 import { Link, matchPath, useNavigate } from 'react-router-dom'
-import * as styles from './Layout.css'
+import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
+import { theme } from '@island.is/island-ui/theme'
+import { DocumentsScope } from '@island.is/auth/scopes'
+import { FinancePaths } from '@island.is/portals/my-pages/finance'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 interface FullWidthLayoutWrapperProps {
   activeParent?: PortalNavigationItem

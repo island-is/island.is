@@ -36,6 +36,7 @@ import {
   Frigg,
   HealthDirectorateVaccination,
   HealthDirectorateOrganDonation,
+  WorkAccidents,
   NationalRegistryB2C,
 } from '../../../../infra/src/dsl/xroad'
 
@@ -300,6 +301,7 @@ export const serviceSetup = (services: {
       Frigg,
       HealthDirectorateVaccination,
       HealthDirectorateOrganDonation,
+      WorkAccidents,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -347,8 +349,8 @@ export const serviceSetup = (services: {
     .liveness('/liveness')
     .readiness('/liveness')
     .resources({
-      limits: { cpu: '400m', memory: '1024Mi' },
-      requests: { cpu: '75m', memory: '512Mi' },
+      limits: { cpu: '600m', memory: '1024Mi' },
+      requests: { cpu: '200m', memory: '512Mi' },
     })
     .replicaCount({
       default: 2,
