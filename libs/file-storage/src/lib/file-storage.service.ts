@@ -74,7 +74,6 @@ export class FileStorageService {
       },
       `${this.config.uploadBucket}/${sourceKey}`,
     )
-
     return `https://${destinationBucket}.s3-${region}.amazonaws.com/${destinationKey}`
   }
 }
