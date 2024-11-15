@@ -39,6 +39,7 @@ const VehicleBulkMileage = () => {
   const [page, setPage] = useState<number>(1)
   const [totalPages, setTotalPages] = useState<number>(1)
   const [search, setSearch] = useState<string>()
+  const [filterValue, setFilterValue] = useState<boolean>(false)
 
   const [vehicleListQuery, { data, loading, error, called }] =
     useVehiclesListLazyQuery()
@@ -56,7 +57,7 @@ const VehicleBulkMileage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const debouncedSearchUpdate = useMemo(() => {
+  const debouncedQuery = useMemo(() => {
     return debounce(() => {
       vehicleListQuery({
         variables: {
@@ -64,6 +65,7 @@ const VehicleBulkMileage = () => {
             page,
             pageSize: 10,
             query: search ?? undefined,
+            filterOnlyRequiredMileageRegistration: filterValue,
           },
         },
       }).then((res) => {
@@ -73,10 +75,29 @@ const VehicleBulkMileage = () => {
               if (!v.type) {
                 return null
               }
+
+              const lastMileageRegistration =
+                v.mileageDetails?.lastMileageRegistration &&
+                v.mileageDetails.lastMileageRegistration.date &&
+                v.mileageDetails.lastMileageRegistration.mileage &&
+                v.mileageDetails.lastMileageRegistration.originCode
+                  ? {
+                      date: new Date(
+                        v.mileageDetails.lastMileageRegistration.date,
+                      ),
+                      mileage: v.mileageDetails.lastMileageRegistration.mileage,
+                      origin:
+                        v.mileageDetails.lastMileageRegistration.originCode,
+                      internalId:
+                        v.mileageDetails.lastMileageRegistration.internalId ??
+                        undefined,
+                    }
+                  : undefined
+
               return {
                 vehicleId: v.vehicleId,
                 vehicleType: v.type,
-                lastMileageRegistration: undefined,
+                lastMileageRegistration,
               }
             })
             .filter(isDefined) ?? []
@@ -85,14 +106,14 @@ const VehicleBulkMileage = () => {
       })
     }, debounceTime.search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, page])
+  }, [search, filterValue, page])
 
   useEffect(() => {
-    debouncedSearchUpdate()
+    debouncedQuery()
     return () => {
-      debouncedSearchUpdate.cancel()
+      debouncedQuery.cancel()
     }
-  }, [debouncedSearchUpdate])
+  }, [debouncedQuery])
 
   const methods = useForm<FormData>()
 
