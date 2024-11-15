@@ -30,6 +30,10 @@ export enum SubpoenaNotificationType {
   SERVICE_FAILED = 'SERVICE_FAILED',
 }
 
+export enum CivilClaimantNotificationType {
+  SPOKESPERSON_ASSIGNED = 'SPOKESPERSON_ASSIGNED',
+}
+
 export enum InstitutionNotificationType {
   INDICTMENTS_WAITING_FOR_CONFIRMATION = 'INDICTMENTS_WAITING_FOR_CONFIRMATION',
 }
@@ -58,6 +62,7 @@ export enum NotificationType {
   DEFENDER_ASSIGNED = DefendantNotificationType.DEFENDER_ASSIGNED,
   SERVICE_SUCCESSFUL = SubpoenaNotificationType.SERVICE_SUCCESSFUL,
   SERVICE_FAILED = SubpoenaNotificationType.SERVICE_FAILED,
+  SPOKESPERSON_ASSIGNED = CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED,
   INDICTMENTS_WAITING_FOR_CONFIRMATION = InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
 }
 

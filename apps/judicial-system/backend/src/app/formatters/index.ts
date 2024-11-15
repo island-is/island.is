@@ -21,7 +21,6 @@ export {
   formatProsecutorReceivedByCourtSmsNotification,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
-  formatAdvocateAssignedEmailNotification,
   formatCourtIndictmentReadyForCourtEmailNotification,
   formatDefenderRoute,
   formatDefenderReadyForCourtEmailNotification,

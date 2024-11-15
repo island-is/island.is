@@ -13,9 +13,12 @@ import { MessageService } from '@island.is/judicial-system/message'
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
 import { UserService } from '../../user'
+import { CivilClaimantController } from '../civilClaimant.controller'
+import { CivilClaimantService } from '../civilClaimant.service'
 import { DefendantController } from '../defendant.controller'
 import { DefendantService } from '../defendant.service'
 import { InternalDefendantController } from '../internalDefendant.controller'
+import { CivilClaimant } from '../models/civilClaimant.model'
 import { Defendant } from '../models/defendant.model'
 
 jest.mock('@island.is/judicial-system/message')
@@ -26,7 +29,11 @@ jest.mock('../../case/case.service')
 export const createTestingDefendantModule = async () => {
   const defendantModule = await Test.createTestingModule({
     imports: [ConfigModule.forRoot({ load: [sharedAuthModuleConfig] })],
-    controllers: [DefendantController, InternalDefendantController],
+    controllers: [
+      DefendantController,
+      InternalDefendantController,
+      CivilClaimantController,
+    ],
     providers: [
       SharedAuthModule,
       MessageService,
@@ -52,7 +59,19 @@ export const createTestingDefendantModule = async () => {
           findByPk: jest.fn(),
         },
       },
+      {
+        provide: getModelToken(CivilClaimant),
+        useValue: {
+          findOne: jest.fn(),
+          findAll: jest.fn(),
+          create: jest.fn(),
+          update: jest.fn(),
+          destroy: jest.fn(),
+          findByPk: jest.fn(),
+        },
+      },
       DefendantService,
+      CivilClaimantService,
     ],
   }).compile()
 
@@ -77,6 +96,17 @@ export const createTestingDefendantModule = async () => {
       InternalDefendantController,
     )
 
+  const civilClaimantModel = await defendantModule.resolve<
+    typeof CivilClaimant
+  >(getModelToken(CivilClaimant))
+
+  const civilClaimantService =
+    defendantModule.get<CivilClaimantService>(CivilClaimantService)
+
+  const civilClaimantController = defendantModule.get<CivilClaimantController>(
+    CivilClaimantController,
+  )
+
   defendantModule.close()
 
   return {
@@ -87,5 +117,8 @@ export const createTestingDefendantModule = async () => {
     defendantService,
     defendantController,
     internalDefendantController,
+    civilClaimantService,
+    civilClaimantController,
+    civilClaimantModel,
   }
 }
