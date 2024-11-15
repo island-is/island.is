@@ -16,7 +16,10 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { Defendant, DefendantService } from '../../../defendant'
@@ -43,6 +46,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     user: { id: userId } as User,
     type: CaseNotificationType.RULING,
   }
+  const { testProsecutor } = createTestUsers(['prosecutor'])
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
@@ -82,7 +86,12 @@ describe('InternalNotificationController - Send ruling notifications', () => {
 
   describe('email to prosecutor for indictment case', () => {
     const caseId = uuid()
-    const prosecutor = { name: 'Lögmaður', email: 'logmadur@gmail.com' }
+    const { testProsecutor } = createTestUsers(['prosecutor'])
+
+    const prosecutor = {
+      name: testProsecutor.name,
+      email: testProsecutor.email,
+    }
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
@@ -111,7 +120,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
 
   describe('email to prosecutor for restriction case', () => {
     const caseId = uuid()
-    const prosecutor = { name: 'Lögmaður', email: 'logmadur@gmail.com' }
+    const prosecutor = {
+      name: testProsecutor.name,
+      email: testProsecutor.email,
+    }
     const theCase = {
       id: caseId,
       state: CaseState.ACCEPTED,
@@ -141,7 +153,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
 
   describe('email to prosecutor for modified ruling restriction case', () => {
     const caseId = uuid()
-    const prosecutor = { name: 'Lögmaður', email: 'logmadur@gmail.com' }
+    const prosecutor = {
+      name: testProsecutor.name,
+      email: testProsecutor.email,
+    }
     const theCase = {
       id: caseId,
       type: CaseType.CUSTODY,

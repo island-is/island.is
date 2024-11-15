@@ -66,7 +66,7 @@ export abstract class BaseNotificationService {
     )
 
     if (whitelistedEmails.length === 0) {
-      this.logger.warn('No whitelisted emails found')
+      this.logger.warn('No whitelisted emails found in recipients')
     }
 
     if (whitelistedEmails.length !== recipients?.length) {

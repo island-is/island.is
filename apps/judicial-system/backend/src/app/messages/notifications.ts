@@ -52,7 +52,7 @@ export const notifications = {
   }),
   emailWhitelistDomains: defineMessage({
     id: 'judicial.system.backend:notifications.email_whitelist_domains',
-    defaultMessage: 'kolibri.is',
+    defaultMessage: 'omnitrix.is,kolibri.is',
     description: 'Notað til að tilgreina hvort póstfang sé í hvítlista',
   }),
   readyForCourt: defineMessages({

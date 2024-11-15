@@ -4,7 +4,10 @@ import { EmailService } from '@island.is/email-service'
 
 import { CaseNotificationType } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
@@ -19,22 +22,27 @@ interface Then {
 type GivenWhenThen = (notifications?: Notification[]) => Promise<Then>
 
 describe('InternalNotificationController - Send revoked notifications for indictment cases', () => {
+  const { judge, registrar, defender } = createTestUsers([
+    'judge',
+    'registar',
+    'defender',
+  ])
   const caseId = uuid()
-  const judgeName = uuid()
-  const judgeEmail = uuid()
-  const registrarName = uuid()
-  const registrarEmail = uuid()
-  const defenderNationalId = uuid()
-  const defenderName = uuid()
-  const defenderEmail = uuid()
+
   const prosecutorsOfficeName = uuid()
   const courtName = uuid()
   const courtCaseNumber = uuid()
   const theCase = {
     id: caseId,
-    judge: { name: judgeName, email: judgeEmail },
-    registrar: { name: registrarName, email: registrarEmail },
-    defendants: [{ defenderNationalId, defenderName, defenderEmail }],
+    judge: { name: judge.name, email: judge.email },
+    registrar: { name: registrar.name, email: registrar.email },
+    defendants: [
+      {
+        defenderNationalId: defender.nationalId,
+        defenderName: defender.name,
+        defenderEmail: defender.email,
+      },
+    ],
     creatingProsecutor: { institution: { name: prosecutorsOfficeName } },
     court: { name: courtName },
     courtCaseNumber,
@@ -74,7 +82,7 @@ describe('InternalNotificationController - Send revoked notifications for indict
       then = await givenWhenThen([
         {
           type: CaseNotificationType.COURT_DATE,
-          recipients: [{ address: defenderEmail, success: true }],
+          recipients: [{ address: defender.email, success: true }],
         } as Notification,
       ])
     })
@@ -82,21 +90,21 @@ describe('InternalNotificationController - Send revoked notifications for indict
     it('should send a notifications', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ address: judgeEmail, name: judgeName }],
+          to: [{ address: judge.email, name: judge.name }],
           subject: `Ákæra afturkölluð í máli ${courtCaseNumber}`,
           html: `${prosecutorsOfficeName} hefur afturkallað ákæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ address: registrarEmail, name: registrarName }],
+          to: [{ address: registrar.email, name: registrar.name }],
           subject: `Ákæra afturkölluð í máli ${courtCaseNumber}`,
           html: `${prosecutorsOfficeName} hefur afturkallað ákæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ address: defenderEmail, name: defenderName }],
+          to: [{ address: defender.email, name: defender.name }],
           subject: `Ákæra afturkölluð í máli ${courtCaseNumber}`,
           html: `Dómstóllinn hafði skráð þig sem verjanda í málinu.<br /><br />Sjá nánar á <a href="http://localhost:4200/verjandi/akaera/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
@@ -105,9 +113,9 @@ describe('InternalNotificationController - Send revoked notifications for indict
         caseId: caseId,
         type: CaseNotificationType.REVOKED,
         recipients: [
-          { address: judgeEmail, success: true },
-          { address: registrarEmail, success: true },
-          { address: defenderEmail, success: true },
+          { address: judge.email, success: true },
+          { address: registrar.email, success: true },
+          { address: defender.email, success: true },
         ],
       })
       expect(then.result).toEqual({ delivered: true })

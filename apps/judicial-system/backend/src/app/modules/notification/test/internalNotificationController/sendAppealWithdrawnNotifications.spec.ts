@@ -9,7 +9,10 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -27,26 +30,33 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal withdrawn notifications', () => {
-  const courtOfAppealsEmail = uuid()
-  const courtEmail = uuid()
+  const {
+    courtOfAppeals,
+    court,
+    judge,
+    prosecutor,
+    defender,
+    registrar,
+    appealAssistant,
+    appealJudge1,
+  } = createTestUsers([
+    'courtOfAppeals',
+    'court',
+    'judge',
+    'prosecutor',
+    'defender',
+    'registrar',
+    'appealAssistant',
+    'appealJudge1',
+  ])
+
+  const courtOfAppealsEmail = courtOfAppeals.email
+  const courtEmail = court.email
   const courtId = uuid()
   const userId = uuid()
   const caseId = uuid()
-  const judgeName = uuid()
-  const judgeEmail = uuid()
-  const prosecutorName = uuid()
-  const prosecutorEmail = uuid()
-  const prosecutorMobileNumber = uuid()
-  const defenderName = uuid()
-  const defenderEmail = uuid()
   const courtCaseNumber = uuid()
   const receivedDate = new Date()
-  const registrarEmail = uuid()
-  const registrarName = uuid()
-  const appealAssistantName = uuid()
-  const appealAssistantEmail = uuid()
-  const appealJudge1Name = uuid()
-  const appealJudge1Email = uuid()
 
   let mockEmailService: EmailService
   let mockNotificationModel: typeof Notification
@@ -74,22 +84,25 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
           {
             id: caseId,
             prosecutor: {
-              name: prosecutorName,
-              email: prosecutorEmail,
-              mobileNumber: prosecutorMobileNumber,
+              name: prosecutor.name,
+              email: prosecutor.email,
+              mobileNumber: prosecutor.mobile,
             },
             court: { name: 'Héraðsdómur Reykjavíkur', id: courtId },
-            defenderName: defenderName,
-            defenderEmail: defenderEmail,
+            defenderName: defender.name,
+            defenderEmail: defender.email,
             courtCaseNumber,
             appealReceivedByCourtDate,
             appealAssistant: {
-              name: appealAssistantName,
-              email: appealAssistantEmail,
+              name: appealAssistant.name,
+              email: appealAssistant.email,
             },
-            judge: { name: judgeName, email: judgeEmail },
-            appealJudge1: { name: appealJudge1Name, email: appealJudge1Email },
-            registrar: { name: registrarName, email: registrarEmail },
+            judge: { name: judge.name, email: judge.email },
+            appealJudge1: {
+              name: appealJudge1.name,
+              email: appealJudge1.email,
+            },
+            registrar: { name: registrar.name, email: registrar.email },
             notifications,
           } as Case,
           {
@@ -116,7 +129,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     it('should send notification to defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
           html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),
@@ -140,7 +153,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     it('should send notification to appeal assistant ', () => {
       expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: appealAssistantName, address: appealAssistantEmail }],
+          to: [{ name: appealAssistant.name, address: appealAssistant.email }],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
           html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),
@@ -165,7 +178,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     it('should send notification to defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
           html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),
@@ -189,7 +202,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     it('should send notification to appeal assistant ', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: appealAssistantName, address: appealAssistantEmail }],
+          to: [{ name: appealAssistant.name, address: appealAssistant.email }],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
           html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),
@@ -198,7 +211,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     it('should send notification to appeal judges', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: appealJudge1Name, address: appealJudge1Email }],
+          to: [{ name: appealJudge1.name, address: appealJudge1.email }],
         }),
       )
     })
@@ -214,7 +227,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     it('should send notification to prosecutor', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: prosecutorName, address: prosecutorEmail }],
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
           html: `Verjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),
@@ -226,7 +239,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     it('should send notification to judge', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: judgeName, address: judgeEmail }],
+          to: [{ name: judge.name, address: judge.email }],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
           html: `Verjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),
@@ -236,7 +249,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     it('should send notification to registrar', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: registrarName, address: registrarEmail }],
+          to: [{ name: registrar.name, address: registrar.email }],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
           html: `Verjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),

@@ -58,11 +58,9 @@ export class DefendantNotificationService extends BaseNotificationService {
   ) {
     const courtName = theCase.court?.name
     const defenderHasAccessToRVG = !!defendant.defenderNationalId
-
     const formattedSubject = this.formatMessage(subject, {
       courtName,
     })
-
     const formattedBody = this.formatMessage(body, {
       courtName,
       courtCaseNumber: theCase.courtCaseNumber,
@@ -156,7 +154,6 @@ export class DefendantNotificationService extends BaseNotificationService {
     theCase: Case,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
-
     try {
       return await this.sendNotification(type, defendant, theCase)
     } catch (error) {

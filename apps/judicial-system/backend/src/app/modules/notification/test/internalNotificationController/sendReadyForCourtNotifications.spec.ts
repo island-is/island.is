@@ -19,7 +19,10 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { randomDate } from '../../../../test'
 import { Case } from '../../../case'
@@ -46,21 +49,28 @@ describe('InternalNotificationController - Send ready for court notifications fo
   const policeCaseNumber = uuid()
   const courtId = uuid()
   const courtCaseNumber = uuid()
+
+  const { prosecutor, defender, court } = createTestUsers([
+    'prosecutor',
+    'defender',
+    'court',
+  ])
+
   const theCase = {
     id: caseId,
     type: CaseType.CUSTODY,
     state: CaseState.RECEIVED,
     policeCaseNumbers: [policeCaseNumber],
     prosecutor: {
-      name: 'Derrick',
-      email: 'derrick@dummy.is',
+      name: prosecutor.name,
+      email: prosecutor.email,
     },
-    courtId,
+    courtId: court.id,
     court: { name: 'Héraðsdómur Reykjavíkur' },
     courtCaseNumber,
     defenderNationalId: uuid(),
-    defenderName: 'Saul Goodman',
-    defenderEmail: 'saul@dummy.is',
+    defenderName: defender.name,
+    defenderEmail: defender.email,
     requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
     prosecutorsOffice: { name: 'Héraðsdómur Derricks' },
     dateLogs: [{ date: randomDate(), dateType: DateType.ARRAIGNMENT_DATE }],
@@ -119,7 +129,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           name: mockNotificationConfig.email.replyToName,
           address: mockNotificationConfig.email.replyToEmail,
         },
-        to: [{ name: 'Derrick', address: 'derrick@dummy.is' }],
+        to: [{ name: prosecutor.name, address: prosecutor.email }],
         subject: 'Krafa um gæsluvarðhald send',
         text: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir málinu í Réttarvörslugátt.`,
         html: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir <a href="${mockNotificationConfig.clientUrl}${RESTRICTION_CASE_OVERVIEW_ROUTE}/${caseId}">málinu í Réttarvörslugátt</a>.`,
@@ -152,7 +162,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
               recipients: [
                 {
                   address:
-                    mockNotificationConfig.sms.courtsMobileNumbers[courtId],
+                    mockNotificationConfig.sms.courtsMobileNumbers[court.id],
                   success: true,
                 },
               ],
@@ -173,7 +183,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           name: mockNotificationConfig.email.replyToName,
           address: mockNotificationConfig.email.replyToEmail,
         },
-        to: [{ name: 'Derrick', address: 'derrick@dummy.is' }],
+        to: [{ name: prosecutor.name, address: prosecutor.email }],
         subject: 'Krafa um gæsluvarðhald send',
         text: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir málinu í Réttarvörslugátt.`,
         html: `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls ${policeCaseNumber}. Skjalið er aðgengilegt undir <a href="${mockNotificationConfig.clientUrl}${RESTRICTION_CASE_OVERVIEW_ROUTE}/${caseId}">málinu í Réttarvörslugátt</a>.`,
@@ -191,7 +201,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
     it('should not send ready for court email notification to defender', () => {
       expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: 'Saul Goodman', address: 'saul@dummy.is' }],
+          to: [{ name: defender.name, address: defender.email }],
         }),
       )
     })
@@ -225,7 +235,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           notifications: [
             {
               type: CaseNotificationType.READY_FOR_COURT,
-              recipients: [{ address: 'saul@dummy.is', success: true }],
+              recipients: [{ address: defender.email, success: true }],
             },
           ],
         } as Case,
@@ -245,7 +255,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
             name: mockNotificationConfig.email.replyToName,
             address: mockNotificationConfig.email.replyToEmail,
           },
-          to: [{ name: 'Saul Goodman', address: 'saul@dummy.is' }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Krafa í máli ${courtCaseNumber}`,
           html: `Sækjandi í máli ${courtCaseNumber} hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="${mockNotificationConfig.clientUrl}${DEFENDER_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
           attachments: undefined,
@@ -257,8 +267,9 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
 describe('InternalNotificationController - Send ready for court notifications for indictment cases', () => {
   const userId = uuid()
-  const courtId = uuid()
-  const courtEmail = uuid()
+
+  const { testCourt } = createTestUsers(['court'])
+
   const notificationDto = {
     user: { id: userId } as User,
     type: CaseNotificationType.READY_FOR_COURT,
@@ -270,7 +281,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    process.env.COURTS_EMAILS = `{"${courtId}": "${courtEmail}"}`
+    process.env.COURTS_EMAILS = `{"${testCourt.id}": "${testCourt.email}"}`
 
     const {
       emailService,
@@ -298,8 +309,10 @@ describe('InternalNotificationController - Send ready for court notifications fo
   describe('indictment notification with single indictment subtype', () => {
     const caseId = uuid()
     const policeCaseNumbers = [uuid()]
+    const { testCourt } = createTestUsers(['court'])
+
     const court = {
-      id: courtId,
+      id: testCourt.id,
       name: 'Héraðsdómur Reykjavíkur',
     } as Institution
     const prosecutorsOffice = { name: 'Lögreglan á höfuðborgarsvæðinu' }
@@ -312,7 +325,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
       indictmentSubtypes: {
         [policeCaseNumbers[0]]: [IndictmentSubtype.MURDER],
       },
-      courtId,
+      courtId: court.id,
       court,
       prosecutorsOffice,
     } as unknown as Case
@@ -327,7 +340,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           to: [
             {
               name: 'Héraðsdómur Reykjavíkur',
-              address: courtEmail,
+              address: testCourt.email,
             },
           ],
           subject: 'Ákæra tilbúin til afgreiðslu',
@@ -337,7 +350,9 @@ describe('InternalNotificationController - Send ready for court notifications fo
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
         type: CaseNotificationType.READY_FOR_COURT,
-        recipients: [{ success: true, address: courtEmail }] as Recipient[],
+        recipients: [
+          { success: true, address: testCourt.email },
+        ] as Recipient[],
       })
     })
   })
@@ -346,7 +361,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
     const caseId = uuid()
     const policeCaseNumbers = [uuid(), uuid()]
     const court = {
-      id: courtId,
+      id: testCourt.id,
       name: 'Héraðsdómur Reykjavíkur',
     } as Institution
     const prosecutorsOffice = { name: 'Lögreglan á höfuðborgarsvæðinu' }
@@ -366,7 +381,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           IndictmentSubtype.THEFT,
         ],
       },
-      courtId,
+      courtId: court.id,
       court,
       prosecutorsOffice,
     } as unknown as Case
@@ -381,7 +396,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           to: [
             {
               name: 'Héraðsdómur Reykjavíkur',
-              address: courtEmail,
+              address: testCourt.email,
             },
           ],
           subject: 'Ákæra tilbúin til afgreiðslu',
@@ -391,7 +406,9 @@ describe('InternalNotificationController - Send ready for court notifications fo
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
         type: CaseNotificationType.READY_FOR_COURT,
-        recipients: [{ success: true, address: courtEmail }] as Recipient[],
+        recipients: [
+          { success: true, address: testCourt.email },
+        ] as Recipient[],
       })
     })
   })
