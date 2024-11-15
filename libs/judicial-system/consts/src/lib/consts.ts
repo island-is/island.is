@@ -100,7 +100,7 @@ export const DEFENDER_STATEMENT_ROUTE = '/verjandi/greinargerd'
 //#region Public prosecutor user routes
 export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE =
   '/rikissaksoknari/akaera/yfirlit'
-export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_FMST_ROUTE =
+export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE =
   '/rikissaksoknari/akaera/senda-til-fmst'
 //#endregion Public prosecutor user routes
 

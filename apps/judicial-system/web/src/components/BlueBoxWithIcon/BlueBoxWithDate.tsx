@@ -12,7 +12,7 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_FMST_ROUTE } from '@island.is/judicial-system/consts'
+import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { VERDICT_APPEAL_WINDOW_DAYS } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
@@ -96,7 +96,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
 
   const handleSendToPrisonAdmin = () => {
     router.push(
-      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_FMST_ROUTE}/${workingCase.id}/${defendant.id}`,
+      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE}/${workingCase.id}/${defendant.id}`,
     )
   }
 
