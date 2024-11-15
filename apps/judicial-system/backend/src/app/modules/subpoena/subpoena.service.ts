@@ -335,6 +335,10 @@ export class SubpoenaService {
         )
       }
 
+      this.logger.info(
+        `Subpoena ${createdSubpoena.subpoenaId} delivered to police`,
+      )
+
       return { delivered: true }
     } catch (error) {
       this.logger.error('Error delivering subpoena to police', error)
