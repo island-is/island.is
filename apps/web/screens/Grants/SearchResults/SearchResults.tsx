@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
-import format from 'date-fns/format'
 import debounce from 'lodash/debounce'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -17,14 +16,11 @@ import {
   BreadCrumbItem,
   Breadcrumbs,
   FilterInput,
-  Inline,
-  TagVariant,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
-import { isDefined } from '@island.is/shared/utils'
 import { GrantHeaderWithImage, GrantWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,

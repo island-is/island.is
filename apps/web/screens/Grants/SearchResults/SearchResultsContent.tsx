@@ -100,10 +100,13 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                         //todo: fix when the text is ready
                         text: 'Frestur til 16.08.2024, kl. 15.00',
                       },
-                      grant.categoryTag?.title
+                      grant.categoryTags
                         ? {
                             icon: 'informationCircle' as const,
-                            text: grant.categoryTag.title,
+                            text: grant.categoryTags
+                              .map((ct) => ct.title)
+                              .filter(isDefined)
+                              .join(', '),
                           }
                         : undefined,
                     ].filter(isDefined)}
