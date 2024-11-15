@@ -6,6 +6,7 @@ import {
   CaseNotificationType,
   CaseType,
   DateType,
+  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -144,7 +145,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
           notifications: [
             {
               caseId,
-              type: CaseNotificationType.READY_FOR_COURT,
+              type: NotificationType.READY_FOR_COURT,
               recipients: [{ address: defender.email, success: true }],
             },
           ],

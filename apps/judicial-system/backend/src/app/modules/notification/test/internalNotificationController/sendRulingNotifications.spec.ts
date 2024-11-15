@@ -46,7 +46,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     user: { id: userId } as User,
     type: CaseNotificationType.RULING,
   }
-  const { testProsecutor } = createTestUsers(['prosecutor'])
+  const { testProsecutor } = createTestUsers(['testProsecutor'])
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
@@ -54,7 +54,8 @@ describe('InternalNotificationController - Send ruling notifications', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    process.env.PRISON_EMAIL = 'prisonEmail@email.com,prisonEmail2@email.com'
+    process.env.PRISON_EMAIL =
+      'prisonEmail@omnitrix.is,prisonEmail2@omnitrix.is'
 
     const {
       emailService,
@@ -86,7 +87,6 @@ describe('InternalNotificationController - Send ruling notifications', () => {
 
   describe('email to prosecutor for indictment case', () => {
     const caseId = uuid()
-    const { testProsecutor } = createTestUsers(['prosecutor'])
 
     const prosecutor = {
       name: testProsecutor.name,
@@ -141,7 +141,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       const expectedLink = `<a href="${mockConfig.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseId}">`
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
       expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
-        1,
+        2,
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: 'Úrskurður í máli 007-2022-07',
@@ -175,9 +175,9 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       const expectedLink = `<a href="${mockConfig.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseId}">`
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
       expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
-        1,
+        2,
         expect.objectContaining({
-          to: [{ name: prosecutor.name, address: prosecutor.email }],
+          to: [{ name: testProsecutor.name, address: testProsecutor.email }],
           subject: 'Úrskurður í máli 007-2022-07 leiðréttur',
           html: `Dómari hefur leiðrétt úrskurð í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),

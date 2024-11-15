@@ -15,6 +15,7 @@ import {
   CaseType,
   DateType,
   IndictmentSubtype,
+  NotificationType,
   RequestSharedWithDefender,
   User,
 } from '@island.is/judicial-system/types'
@@ -50,10 +51,10 @@ describe('InternalNotificationController - Send ready for court notifications fo
   const courtId = uuid()
   const courtCaseNumber = uuid()
 
-  const { prosecutor, defender, court } = createTestUsers([
+  const { prosecutor, defender, testCourt1 } = createTestUsers([
     'prosecutor',
     'defender',
-    'court',
+    'testCourt1',
   ])
 
   const theCase = {
@@ -65,10 +66,10 @@ describe('InternalNotificationController - Send ready for court notifications fo
       name: prosecutor.name,
       email: prosecutor.email,
     },
-    courtId: court.id,
+    courtId: testCourt1.id,
     court: { name: 'Héraðsdómur Reykjavíkur' },
     courtCaseNumber,
-    defenderNationalId: uuid(),
+    defenderNationalId: defender.nationalId,
     defenderName: defender.name,
     defenderEmail: defender.email,
     requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
@@ -79,7 +80,6 @@ describe('InternalNotificationController - Send ready for court notifications fo
     user: { id: userId } as User,
     type: CaseNotificationType.READY_FOR_COURT,
   }
-  const courtMobileNumber = uuid()
 
   let mockEmailService: EmailService
   let mockSmsService: SmsService
@@ -87,7 +87,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    process.env.COURTS_MOBILE_NUMBERS = `{"${courtId}": "${courtMobileNumber}"}`
+    process.env.COURTS_MOBILE_NUMBERS = `{"${courtId}": "${testCourt1.mobile}"}`
 
     const {
       emailService,
@@ -139,7 +139,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
     it('should send ready for court sms notification to court', () => {
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
-        [courtMobileNumber],
+        [testCourt1.mobile],
         'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Sækjandi: Derrick (Héraðsdómur Derricks). Sjá nánar á rettarvorslugatt.island.is.',
       )
     })
@@ -158,11 +158,13 @@ describe('InternalNotificationController - Send ready for court notifications fo
           notifications: [
             {
               caseId,
-              type: CaseNotificationType.READY_FOR_COURT,
+              type: NotificationType.READY_FOR_COURT,
               recipients: [
                 {
                   address:
-                    mockNotificationConfig.sms.courtsMobileNumbers[court.id],
+                    mockNotificationConfig.sms.courtsMobileNumbers[
+                      testCourt1.id
+                    ],
                   success: true,
                 },
               ],
@@ -193,7 +195,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
 
     it('should send ready for court sms notification to court', () => {
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
-        [courtMobileNumber],
+        [testCourt1.mobile],
         `Sækjandi í máli ${courtCaseNumber} hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði. Sjá nánar á rettarvorslugatt.island.is.`,
       )
     })
@@ -234,7 +236,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
           ...theCase,
           notifications: [
             {
-              type: CaseNotificationType.READY_FOR_COURT,
+              type: NotificationType.READY_FOR_COURT,
               recipients: [{ address: defender.email, success: true }],
             },
           ],
@@ -268,7 +270,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
 describe('InternalNotificationController - Send ready for court notifications for indictment cases', () => {
   const userId = uuid()
 
-  const { testCourt } = createTestUsers(['court'])
+  const { testCourt } = createTestUsers(['testCourt'])
 
   const notificationDto = {
     user: { id: userId } as User,
@@ -309,7 +311,6 @@ describe('InternalNotificationController - Send ready for court notifications fo
   describe('indictment notification with single indictment subtype', () => {
     const caseId = uuid()
     const policeCaseNumbers = [uuid()]
-    const { testCourt } = createTestUsers(['court'])
 
     const court = {
       id: testCourt.id,

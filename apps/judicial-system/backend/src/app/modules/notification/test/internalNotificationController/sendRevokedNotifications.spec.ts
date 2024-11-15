@@ -2,7 +2,10 @@ import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
 
-import { CaseNotificationType } from '@island.is/judicial-system/types'
+import {
+  CaseNotificationType,
+  NotificationType,
+} from '@island.is/judicial-system/types'
 
 import {
   createTestingNotificationModule,
@@ -24,7 +27,7 @@ type GivenWhenThen = (notifications?: Notification[]) => Promise<Then>
 describe('InternalNotificationController - Send revoked notifications for indictment cases', () => {
   const { judge, registrar, defender } = createTestUsers([
     'judge',
-    'registar',
+    'registrar',
     'defender',
   ])
   const caseId = uuid()
@@ -81,7 +84,7 @@ describe('InternalNotificationController - Send revoked notifications for indict
     beforeEach(async () => {
       then = await givenWhenThen([
         {
-          type: CaseNotificationType.COURT_DATE,
+          type: NotificationType.COURT_DATE,
           recipients: [{ address: defender.email, success: true }],
         } as Notification,
       ])
