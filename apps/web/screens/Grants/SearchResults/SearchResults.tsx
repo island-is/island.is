@@ -286,11 +286,13 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
               </Box>
             }
           >
-            <SearchResultsContent
-              grants={grants}
-              subheader={hitsMessage}
-              locale={locale}
-            />
+            <Box marginLeft={3}>
+              <SearchResultsContent
+                grants={grants}
+                subheader={hitsMessage}
+                locale={locale}
+              />
+            </Box>
           </SidebarLayout>
         )}
         {isMobile && (
@@ -311,6 +313,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
             </Box>
             <Box
               marginY={2}
+              marginLeft={4}
               display="flex"
               alignItems="center"
               justifyContent="spaceBetween"
