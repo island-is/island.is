@@ -32,6 +32,7 @@ import {
 import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
 import { Defendant } from '../defendant/models/defendant.model'
+import { EventService } from '../event'
 import { FileService } from '../file'
 import { PoliceService } from '../police'
 import { User } from '../user'
@@ -69,6 +70,7 @@ export class SubpoenaService {
     private readonly policeService: PoliceService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
+    private readonly eventService: EventService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -239,6 +241,15 @@ export class SubpoenaService {
       defenderNationalId,
     )
 
+    if (update.serviceStatus && subpoena.case) {
+      this.eventService.postEvent(
+        'SUBPOENA_SERVICE_STATUS',
+        subpoena.case,
+        false,
+        { Staða: Subpoena.serviceStatusText(update.serviceStatus) },
+      )
+    }
+
     return this.findBySubpoenaId(subpoena.subpoenaId)
   }
 
@@ -319,6 +330,10 @@ export class SubpoenaService {
           `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena for subpoena ${subpoena.id}`,
         )
       }
+
+      this.logger.info(
+        `Subpoena ${createdSubpoena.subpoenaId} delivered to police`,
+      )
 
       return { delivered: true }
     } catch (error) {

@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  BulkMileageReadingRequestResultDto,
   GetbulkmileagereadingrequeststatusGuidGetRequest,
   MileageReadingApi,
 } from '@island.is/clients/vehicles-mileage'
@@ -8,17 +7,24 @@ import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { PostVehicleBulkMileageInput } from '../dto/postBulkVehicleMileage.input'
 import { isDefined } from '@island.is/shared/utils'
+import type { Locale } from '@island.is/shared/types'
 import { LOG_CATEGORY } from '../constants'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { VehiclesBulkMileageReadingResponse } from '../models/v3/bulkMileage/bulkMileageReadingResponse.model'
 import { VehiclesBulkMileageRegistrationJobHistory } from '../models/v3/bulkMileage/bulkMileageRegistrationJobHistory.model'
 import { VehiclesBulkMileageRegistrationRequestStatus } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestStatus.model'
 import { VehiclesBulkMileageRegistrationRequestOverview } from '../models/v3/bulkMileage/bulkMileageRegistrationRequestOverview.model'
+import { FetchError } from '@island.is/clients/middlewares'
+import { IntlService } from '@island.is/cms-translations'
+import { errorCodeMessageMap } from './errorCodes'
+
+const namespaces = ['api.bulk-vehicle-mileage']
 
 @Injectable()
 export class BulkMileageService {
   constructor(
     private mileageReadingApi: MileageReadingApi,
+    private readonly intlService: IntlService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -34,8 +40,10 @@ export class BulkMileageService {
       return null
     }
 
-    const res: BulkMileageReadingRequestResultDto =
-      await this.getMileageWithAuth(auth).requestbulkmileagereadingPost({
+    try {
+      const res = await this.getMileageWithAuth(
+        auth,
+      ).requestbulkmileagereadingPost({
         postBulkMileageReadingModel: {
           originCode: input.originCode,
           mileageData: input.mileageData.map((m) => ({
@@ -45,19 +53,29 @@ export class BulkMileageService {
         },
       })
 
-    if (!res.guid) {
-      this.logger.warn(
-        'Missing guid from bulk mileage reading registration response',
-        {
-          category: LOG_CATEGORY,
-        },
-      )
-      return null
-    }
+      if (!res.guid) {
+        this.logger.warn(
+          'Missing guid from bulk mileage reading registration response',
+          {
+            category: LOG_CATEGORY,
+          },
+        )
+        return null
+      }
 
-    return {
-      requestId: res.guid,
-      errorMessage: res.errorMessage ?? undefined,
+      return {
+        requestId: res.guid,
+      }
+    } catch (e) {
+      const error: Error = e
+      if (error instanceof FetchError && error.status === 429) {
+        return {
+          requestId: undefined,
+          errorCode: 429,
+          errorMessage: error.statusText,
+        }
+      }
+      throw e
     }
   }
 
@@ -114,8 +132,10 @@ export class BulkMileageService {
 
   async getBulkMileageRegistrationRequestOverview(
     auth: User,
+    locale: Locale,
     input: GetbulkmileagereadingrequeststatusGuidGetRequest['guid'],
   ): Promise<VehiclesBulkMileageRegistrationRequestOverview> {
+    const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
     const data = await this.getMileageWithAuth(
       auth,
     ).getbulkmileagereadingrequestdetailsGuidGet({ guid: input })
@@ -126,15 +146,25 @@ export class BulkMileageService {
           if (!d.guid || !d.permno) {
             return null
           }
+
           return {
             guid: d.guid,
             vehicleId: d.permno,
             mileage: d.mileage ?? undefined,
             returnCode: d.returnCode ?? undefined,
-            errors: d.errors?.map((e) => ({
-              code: e.errorCode ?? undefined,
-              message: e.errorText ?? undefined,
-            })),
+            errors: d.errors?.map((e) => {
+              const warningSerial =
+                e.warningSerial === -1 ? 999 : e.warningSerial
+
+              return {
+                code: e.errorCode ?? undefined,
+                message: e.errorText ?? undefined,
+                warningSerialCode: e.warningSerial,
+                warningText: warningSerial
+                  ? formatMessage(errorCodeMessageMap[warningSerial])
+                  : undefined,
+              }
+            }),
           }
         })
         .filter(isDefined),

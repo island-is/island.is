@@ -8,7 +8,13 @@ import type {
   ResponsiveProp,
   SpanType,
 } from '@island.is/island-ui/core/types'
-import { FormItem, FormText, FormTextArray, StaticText } from './Form'
+import {
+  FormItem,
+  FormText,
+  FormTextArray,
+  FormTextWithLocale,
+  StaticText,
+} from './Form'
 import { ApolloClient } from '@apollo/client'
 import { Application } from './Application'
 import { CallToAction } from './StateMachine'
@@ -23,9 +29,13 @@ import { Locale } from '@island.is/shared/types'
 type Space = keyof typeof theme.spacing
 
 export type RecordObject<T = unknown> = Record<string, T>
+export type MaybeWithApplication<T> = T | ((application: Application) => T)
 export type MaybeWithApplicationAndField<T> =
   | T
   | ((application: Application, field: Field) => T)
+export type MaybeWithApplicationAndFieldAndLocale<T> =
+  | T
+  | ((application: Application, field: Field, locale: Locale) => T)
 export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
 export type TitleVariants = 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
@@ -61,6 +71,7 @@ export type TableRepeaterFields =
   | 'checkbox'
   | 'date'
   | 'nationalIdWithName'
+  | 'phone'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -129,6 +140,11 @@ export type TableRepeaterItem = {
       suffix?: string
     }
   | {
+      component: 'phone'
+      allowedCountryCodes?: string[]
+      enableCountrySelector?: boolean
+    }
+  | {
       component: 'date'
       label: StaticText
       locale?: Locale
@@ -154,6 +170,10 @@ export type TableRepeaterItem = {
     }
   | {
       component: 'nationalIdWithName'
+    }
+  | {
+      component: 'phone'
+      format: string
     }
 )
 
@@ -186,8 +206,8 @@ export interface SelectOption<T = string | number> {
 export interface BaseField extends FormItem {
   readonly id: string
   readonly component: FieldComponents | string
-  readonly title: FormText
-  readonly description?: FormText
+  readonly title: FormTextWithLocale
+  readonly description?: FormTextWithLocale
   readonly children: undefined
   disabled?: boolean
   width?: FieldWidth
@@ -196,8 +216,13 @@ export interface BaseField extends FormItem {
   isPartOfRepeater?: boolean
   defaultValue?: MaybeWithApplicationAndField<unknown>
   doesNotRequireAnswer?: boolean
+
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
+}
+
+export interface InputField extends BaseField {
+  required?: MaybeWithApplication<boolean>
 }
 
 export enum FieldTypes {
@@ -271,19 +296,18 @@ export enum FieldComponents {
   SLIDER = 'SliderFormField',
 }
 
-export interface CheckboxField extends BaseField {
+export interface CheckboxField extends InputField {
   readonly type: FieldTypes.CHECKBOX
   component: FieldComponents.CHECKBOX
-  options: MaybeWithApplicationAndField<Option[]>
+  options: MaybeWithApplicationAndFieldAndLocale<Option[]>
   large?: boolean
   strong?: boolean
-  required?: boolean
   backgroundColor?: InputBackgroundColor
   onSelect?: ((s: string[]) => void) | undefined
   spacing?: 0 | 1 | 2
 }
 
-export interface DateField extends BaseField {
+export interface DateField extends InputField {
   readonly type: FieldTypes.DATE
   placeholder?: FormText
   component: FieldComponents.DATE
@@ -292,7 +316,6 @@ export interface DateField extends BaseField {
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
-  required?: boolean
   readOnly?: boolean
 }
 
@@ -308,41 +331,38 @@ export interface DescriptionField extends BaseField {
   titleVariant?: TitleVariants
 }
 
-export interface RadioField extends BaseField {
+export interface RadioField extends InputField {
   readonly type: FieldTypes.RADIO
   component: FieldComponents.RADIO
-  options: MaybeWithApplicationAndField<Option[]>
+  options: MaybeWithApplicationAndFieldAndLocale<Option[]>
   backgroundColor?: InputBackgroundColor
   largeButtons?: boolean
-  required?: boolean
   space?: BoxProps['paddingTop']
   hasIllustration?: boolean
   widthWithIllustration?: '1/1' | '1/2' | '1/3'
   onSelect?(s: string): void
 }
 
-export interface SelectField extends BaseField {
+export interface SelectField extends InputField {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
-  options: MaybeWithApplicationAndField<Option[]>
+  options: MaybeWithApplicationAndFieldAndLocale<Option[]>
   onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
-  required?: boolean
   isMulti?: boolean
 }
 
-export interface CompanySearchField extends BaseField {
+export interface CompanySearchField extends InputField {
   readonly type: FieldTypes.COMPANY_SEARCH
   component: FieldComponents.COMPANY_SEARCH
   placeholder?: FormText
   setLabelToDataSchema?: boolean
   shouldIncludeIsatNumber?: boolean
   checkIfEmployerIsOnForbiddenList?: boolean
-  required?: boolean
 }
 
-export interface AsyncSelectField extends BaseField {
+export interface AsyncSelectField extends InputField {
   readonly type: FieldTypes.ASYNC_SELECT
   component: FieldComponents.ASYNC_SELECT
   placeholder?: FormText
@@ -351,11 +371,10 @@ export interface AsyncSelectField extends BaseField {
   loadingError?: FormText
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
-  required?: boolean
   isMulti?: boolean
 }
 
-export interface TextField extends BaseField {
+export interface TextField extends InputField {
   readonly type: FieldTypes.TEXT
   component: FieldComponents.TEXT
   disabled?: boolean
@@ -372,11 +391,10 @@ export interface TextField extends BaseField {
   format?: string | FormatInputValueFunction
   suffix?: string
   rows?: number
-  required?: boolean
   onChange?: (...event: any[]) => void
 }
 
-export interface PhoneField extends BaseField {
+export interface PhoneField extends InputField {
   readonly type: FieldTypes.PHONE
   component: FieldComponents.PHONE
   disabled?: boolean
@@ -386,7 +404,6 @@ export interface PhoneField extends BaseField {
   backgroundColor?: InputBackgroundColor
   allowedCountryCodes?: string[]
   enableCountrySelector?: boolean
-  required?: boolean
   onChange?: (...event: any[]) => void
 }
 
@@ -559,11 +576,10 @@ export interface PdfLinkButtonField extends BaseField {
   downloadButtonTitle?: StaticText
 }
 
-export interface NationalIdWithNameField extends BaseField {
+export interface NationalIdWithNameField extends InputField {
   readonly type: FieldTypes.NATIONAL_ID_WITH_NAME
   component: FieldComponents.NATIONAL_ID_WITH_NAME
   disabled?: boolean
-  required?: boolean
   customNationalIdLabel?: StaticText
   customNameLabel?: StaticText
   onNationalIdChange?: (s: string) => void
@@ -636,11 +652,10 @@ export type TableRepeaterField = BaseField & {
     format?: Record<string, (value: string) => string | StaticText>
   }
 }
-export interface FindVehicleField extends BaseField {
+export interface FindVehicleField extends InputField {
   readonly type: FieldTypes.FIND_VEHICLE
   component: FieldComponents.FIND_VEHICLE
   disabled?: boolean
-  required?: boolean
   additionalErrors: boolean
   getDetails?: (plate: string) => Promise<unknown>
   findVehicleButtonText?: FormText

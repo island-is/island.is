@@ -30,11 +30,11 @@ import {
   UserProfileApi,
   VinnueftirlitidPaymentCatalogApi,
   MachinesApi,
+  MockableVinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
 import { getChargeItemCodes, hasReviewerApproved } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Features } from '@island.is/feature-flags'
 import { getBuyerNationalId } from '../utils/getBuyerNationalid'
 import { getExtraData } from '../utils/getExtraData'
 import { isPaymentRequired } from '../utils/isPaymentRequired'
@@ -86,7 +86,6 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
-  featureFlag: Features.transferOfMachineOwnership,
   translationNamespaces: [
     ApplicationConfigurations.TransferOfMachineOwnership.translation,
   ],
@@ -140,6 +139,7 @@ const template: ApplicationTemplate<
               api: [
                 IdentityApi,
                 UserProfileApi,
+                MockableVinnueftirlitidPaymentCatalogApi,
                 VinnueftirlitidPaymentCatalogApi,
                 MachinesApi,
               ],
@@ -216,6 +216,9 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Tilkynning um eigendaskipti að ökutæki',
           status: 'inprogress',
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
+          }),
           actionCard: {
             tag: {
               label: applicationMessage.actionCardDraft,

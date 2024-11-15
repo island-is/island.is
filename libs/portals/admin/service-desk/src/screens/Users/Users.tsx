@@ -1,4 +1,10 @@
-import { Form, useActionData, useNavigate } from 'react-router-dom'
+import {
+  Form,
+  useActionData,
+  useNavigate,
+  useSearchParams,
+  useSubmit,
+} from 'react-router-dom'
 
 import {
   AsyncSearchInput,
@@ -10,26 +16,36 @@ import {
 import { formatNationalId, IntroHeader } from '@island.is/portals/core'
 import { maskString } from '@island.is/shared/utils'
 import { useLocale } from '@island.is/localization'
-import { useAuth } from '@island.is/auth/react'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
 
 import * as styles from '../Companies/Companies.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { m } from '../../lib/messages'
 import { Card } from '../../components/Card'
 import { ServiceDeskPaths } from '../../lib/paths'
 import { GetUserProfilesResult } from './Users.action'
 
 const Users = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const searchQuery = searchParams?.get('q')
   const [focused, setFocused] = useState(false)
-  const [searchInput, setSearchInput] = useState('')
+  const [searchInput, setSearchInput] = useState(() => searchQuery || '')
+  const submit = useSubmit()
   const actionData = useActionData() as GetUserProfilesResult
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
   const { isSubmitting, isLoading } = useSubmitting()
   const users = actionData?.data?.data
   const [error, setError] = useState({ hasError: false, message: '' })
+  const formRef = useRef(null)
+
+  useEffect(() => {
+    if (searchInput) {
+      submit(formRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     if (actionData?.errors) {
@@ -53,7 +69,7 @@ const Users = () => {
   return (
     <>
       <IntroHeader title={m.users} intro={m.userIntro} />
-      <Form method="post">
+      <Form method="post" ref={formRef}>
         <Box className={styles.search}>
           <AsyncSearchInput
             hasFocus={focused}
@@ -71,6 +87,16 @@ const Users = () => {
             buttonProps={{
               type: 'submit',
               disabled: searchInput.length === 0,
+              onClick: (e) => {
+                e.preventDefault()
+                if (searchInput) {
+                  setSearchParams((params) => {
+                    params.set('q', searchInput)
+                    return params
+                  })
+                  submit(formRef.current)
+                }
+              },
             }}
             hasError={error.hasError}
             errorMessage={error.hasError ? error.message : undefined}
@@ -80,9 +106,9 @@ const Users = () => {
       <Box marginTop={4}>
         <Box className={styles.relative}>
           <Stack space={3}>
-            {users?.length === 0 ? (
+            {users?.length === 0 && !!searchQuery ? (
               <Card
-                title={searchInput}
+                title={searchQuery}
                 description={formatMessage(m.userNotContent)}
                 bgGrey
               />

@@ -2,11 +2,11 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { FormatMessage } from '@island.is/localization'
 import { arrangeRoutes, filterEnabledModules } from '../modules'
 import { FeatureFlagClient } from '@island.is/feature-flags'
-import { User } from '@island.is/shared/types'
+import { BffUser } from '@island.is/shared/types'
 import { PortalModule, PortalRoute } from '../../types/portalCore'
 
 export type PrepareRouterDataProps = {
-  userInfo: User
+  userInfo: BffUser
   featureFlagClient: FeatureFlagClient
   modules: PortalModule[]
   client: ApolloClient<NormalizedCacheObject>
@@ -16,7 +16,7 @@ export type PrepareRouterDataProps = {
 export type PrepareRouterDataReturnType = {
   modules: PortalModule[]
   routes: PortalRoute[]
-  userInfo: User
+  userInfo: BffUser
   formatMessage: FormatMessage
 }
 
