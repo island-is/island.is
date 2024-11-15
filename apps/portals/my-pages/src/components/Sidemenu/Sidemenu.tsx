@@ -10,7 +10,7 @@ import {
 import {
   ServicePortalPaths,
   useDynamicRoutesWithNavigation,
-} from '@island.is/service-portal/core'
+} from '@island.is/portals/my-pages/core'
 import * as styles from './Sidemenu.css'
 import { sharedMessages } from '@island.is/shared/translations'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -19,7 +19,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 import SidemenuItem from './SidemenuItem'
-import { m } from '@island.is/service-portal/core'
+import { m } from '@island.is/portals/my-pages/core'
 
 interface Props {
   setSideMenuOpen: (status: boolean) => void

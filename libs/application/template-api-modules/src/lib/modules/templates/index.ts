@@ -4,8 +4,6 @@ import { AnnouncementOfDeathModule } from './announcement-of-death/announcement-
 import { AnnouncementOfDeathService } from './announcement-of-death/announcement-of-death.service'
 import { ChildrenResidenceChangeModuleV2 } from './children-residence-change-v2/children-residence-change.module'
 import { ChildrenResidenceChangeServiceV2 } from './children-residence-change-v2/children-residence-change.service'
-import { ChildrenResidenceChangeModule } from './children-residence-change/children-residence-change.module'
-import { ChildrenResidenceChangeService } from './children-residence-change/children-residence-change.service'
 import { ComplaintsToAlthingiOmbudsmanTemplateModule } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.module'
 import { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.service'
 import { CriminalRecordSubmissionModule } from './criminal-record-submission/criminal-record-submission.module'
@@ -217,7 +215,6 @@ export const modules = [
   ParliamentaryListCreationModule,
   ParliamentaryListSigningModule,
   ParentalLeaveModule,
-  ChildrenResidenceChangeModule,
   SocialInsuranceAdministrationModule,
 ]
 
@@ -230,7 +227,6 @@ export const services = [
   DocumentProviderOnboardingService,
   InstitutionCollaborationService,
   HealthInsuranceService,
-  ChildrenResidenceChangeService,
   ChildrenResidenceChangeServiceV2,
   LoginServiceService,
   FundingGovernmentProjectsService,

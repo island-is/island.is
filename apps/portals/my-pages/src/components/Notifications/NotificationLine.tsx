@@ -1,7 +1,7 @@
 import { FC, useRef } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
-import { LinkResolver } from '@island.is/service-portal/core'
+import { LinkResolver } from '@island.is/portals/my-pages/core'
 import format from 'date-fns/format'
 import cn from 'classnames'
 import * as styles from './Notifications.css'
@@ -10,11 +10,11 @@ import {
   NotificationMetadata,
   NotificationSender,
 } from '@island.is/api/schema'
-import { AvatarImage } from '@island.is/service-portal/documents'
+import { AvatarImage } from '@island.is/portals/my-pages/documents'
 import {
   COAT_OF_ARMS,
   resolveLink,
-} from '@island.is/service-portal/information'
+} from '@island.is/portals/my-pages/information'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 

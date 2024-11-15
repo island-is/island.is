@@ -50,8 +50,8 @@ query GetPaymentStatus {
   }
 }
 
-query GetVaccinations {
-  healthDirectorateVaccinations {
+query GetVaccinations($locale: String) {
+  healthDirectorateVaccinations(locale: $locale) {
     vaccinations {
       id
       name
