@@ -151,23 +151,21 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const paymentStatusData = paymentStatusRes.data?.rightsPortalCopaymentStatus
   const paymentOverviewData =
     paymentOverviewRes.data?.rightsPortalPaymentOverview?.items?.[0]
+  const organDonationData =
+    organDonationRes.data?.healthDirectorateOrganDonation.donor
 
   const isMedicinePeriodActive =
     medicinePurchaseData?.active ||
     (medicinePurchaseData?.dateTo &&
       new Date(medicinePurchaseData.dateTo) > new Date())
-  const isOrganDonor =
-    organDonationRes.data?.healthDirectorateOrganDonation.donor?.isDonor ??
-    false
+
+  const isOrganDonor = organDonationData?.isDonor ?? false
 
   const isOrganDonorWithLimitations =
-    isOrganDonor &&
-    (organDonationRes.data?.healthDirectorateOrganDonation.donor?.limitations
-      ?.hasLimitations ??
-      false)
+    isOrganDonor && (organDonationData?.limitations?.hasLimitations ?? false)
 
   const organLimitations = isOrganDonorWithLimitations
-    ? organDonationRes.data?.healthDirectorateOrganDonation.donor?.limitations?.limitedOrgansList?.map(
+    ? organDonationData?.limitations?.limitedOrgansList?.map(
         (organ) => organ.name,
       ) ?? []
     : []
