@@ -23,6 +23,7 @@ import {
   FormFooter,
   PageHeader,
   PageLayout,
+  PageTitle,
   PdfButton,
   PoliceRequestAccordionItem,
   RulingInput,
@@ -123,11 +124,7 @@ const Ruling = () => {
         title={formatMessage(titles.court.investigationCases.ruling)}
       />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(m.title)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Accordion>
