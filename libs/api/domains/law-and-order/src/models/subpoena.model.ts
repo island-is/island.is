@@ -6,16 +6,16 @@ import { Group } from './group.model'
 @ObjectType('LawAndOrderSubpoenaTexts')
 export class Text {
   @Field({ nullable: true })
-  intro?: string
-
-  @Field({ nullable: true })
   confirmation?: string
 
   @Field({ nullable: true })
   description?: string
 
   @Field({ nullable: true })
-  claim?: string
+  information?: string
+
+  @Field({ nullable: true })
+  deadline?: string
 }
 
 @ObjectType('LawAndOrderSubpoenaData')
