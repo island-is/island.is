@@ -30,7 +30,7 @@ export class FormApplicantType extends Model<FormApplicantType> {
   @Column({
     type: DataType.JSON,
     allowNull: false,
-    defaultValue: () => new LanguageType().toString(),
+    defaultValue: () => new LanguageType(),
   })
   name!: LanguageType
 
