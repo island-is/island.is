@@ -11,6 +11,7 @@ import {
   Link,
   NavigationItem,
   Stack,
+  TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
@@ -27,9 +28,11 @@ import {
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
+  OrganizationParentSubpage,
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
+  QueryGetOrganizationParentSubpageArgs,
   QueryGetOrganizationSubpageArgs,
   Slice,
 } from '@island.is/web/graphql/schema'
@@ -46,6 +49,7 @@ import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
+  GET_ORGANIZATION_PARENT_SUBPAGE_QUERY,
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../queries'
 
@@ -58,6 +62,16 @@ export interface SubPageProps {
   backLink?: { text: string; url: string }
   customBreadcrumbItems?: BreadCrumbItem[]
   customContentfulIds?: (string | undefined)[]
+  parentSubpageProps?: {
+    tableOfContentHeadings: {
+      headingId: string
+      headingTitle: string
+      label: string
+      href: string
+    }[]
+    selectedHeadingId: string
+    parentSubpage: OrganizationParentSubpage
+  }
 }
 
 const SubPageContent = ({
@@ -207,7 +221,7 @@ const SubPageContent = ({
   )
 }
 
-const SubPage: Screen<SubPageProps> = ({
+const Default = ({
   organizationPage,
   subpage,
   namespace,
@@ -216,7 +230,7 @@ const SubPage: Screen<SubPageProps> = ({
   customBreadcrumbItems,
   customContentfulIds,
   backLink,
-}) => {
+}: SubPageProps) => {
   const router = useRouter()
 
   const n = useNamespace(namespace)
@@ -308,6 +322,50 @@ const SubPage: Screen<SubPageProps> = ({
   )
 }
 
+const ParentSubpage = (props: SubPageProps) => {
+  const { activeLocale } = useI18n()
+  const router = useRouter()
+
+  if (!props.parentSubpageProps) {
+    return <Default {...props} />
+  }
+
+  return (
+    <div>
+      <TableOfContents
+        headings={props.parentSubpageProps.tableOfContentHeadings}
+        onClick={(headingId) => {
+          const href = props.parentSubpageProps?.tableOfContentHeadings.find(
+            (heading) => heading.headingId === headingId,
+          )?.href
+          if (href) {
+            const sections = href.split('/')
+            const subpageSlug = sections.pop()
+            router.push(`${sections.join('/')}?subpageSlug=${subpageSlug}`)
+          }
+        }}
+        tableOfContentsTitle={
+          activeLocale === 'is' ? 'Efnisyfirlit' : 'Table of contents'
+        }
+        selectedHeadingId={props.parentSubpageProps.selectedHeadingId}
+      />
+      <SubPageContent
+        namespace={props.namespace}
+        organizationPage={props.organizationPage}
+        subpage={props.subpage}
+      />
+    </div>
+  )
+}
+
+const SubPage: Screen<SubPageProps> = (props) => {
+  if (!props.parentSubpageProps) {
+    return <Default {...props} />
+  }
+
+  return <ParentSubpage {...props} />
+}
+
 const renderSlices = (
   slices: Slice[],
   renderType: string,
@@ -367,6 +425,9 @@ SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
     {
       data: { getOrganizationSubpage },
     },
+    {
+      data: { getOrganizationParentSubpage },
+    },
     namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
@@ -383,6 +444,16 @@ SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
       variables: {
         input: {
           organizationSlug: slug as string,
+          slug: subSlug as string,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetOrganizationParentSubpageArgs>({
+      query: GET_ORGANIZATION_PARENT_SUBPAGE_QUERY,
+      variables: {
+        input: {
+          organizationPageSlug: slug as string,
           slug: subSlug as string,
           lang: locale as ContentLanguage,
         },
@@ -405,15 +476,72 @@ SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
       ),
   ])
 
-  if (!getOrganizationSubpage) {
-    throw new CustomNextError(404, 'Organization subpage not found')
-  }
-
   if (!getOrganizationPage) {
     throw new CustomNextError(
       404,
       `Organization page with slug: ${slug} was not found`,
     )
+  }
+
+  if (getOrganizationParentSubpage) {
+    let selectedIndex = 0
+
+    // TODO: perhaps not use query params
+    if (query.subpageSlug) {
+      const index = getOrganizationParentSubpage.childLinks.findIndex(
+        (link) => link.href.split('/').pop() === query.subpageSlug,
+      )
+      if (index > 0) {
+        selectedIndex = index
+      }
+    }
+
+    // TODO: what if this is not found
+    const {
+      data: { getOrganizationSubpage: subpage },
+    } = await apolloClient.query<Query, QueryGetOrganizationSubpageArgs>({
+      query: GET_ORGANIZATION_SUBPAGE_QUERY,
+      variables: {
+        input: {
+          organizationSlug: slug as string,
+          slug: getOrganizationParentSubpage.childLinks[selectedIndex].href
+            .split('/')
+            .pop() as string,
+          lang: locale as ContentLanguage,
+        },
+      },
+    })
+
+    const tableOfContentHeadings = getOrganizationParentSubpage.childLinks.map(
+      (link) => ({
+        headingId: link.href,
+        headingTitle: link.label,
+        label: link.label,
+        href: link.href,
+      }),
+    )
+    const selectedHeadingId = tableOfContentHeadings[selectedIndex].headingId
+
+    return {
+      organizationPage: getOrganizationPage,
+      subpage: subpage,
+      parentSubpageProps: {
+        tableOfContentHeadings,
+        selectedHeadingId,
+        parentSubpage: getOrganizationParentSubpage,
+      },
+      namespace,
+      showSearchInHeader: false,
+      locale: locale as Locale,
+      ...getThemeConfig(
+        getOrganizationPage?.theme,
+        getOrganizationPage?.organization,
+      ),
+    }
+  }
+
+  if (!getOrganizationSubpage) {
+    throw new CustomNextError(404, 'Organization subpage not found')
   }
 
   return {
