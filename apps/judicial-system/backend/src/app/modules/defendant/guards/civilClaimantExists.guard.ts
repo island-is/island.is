@@ -22,7 +22,7 @@ export class CivilClaimantExistsGuard implements CanActivate {
     const civilClaimantId = request.params.civilClaimantId
 
     if (!civilClaimantId) {
-      throw new BadRequestException('Missing civil id')
+      throw new BadRequestException('Missing civil claimant id')
     }
 
     const civilClaimant = theCase.civilClaimants?.find(
