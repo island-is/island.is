@@ -27,7 +27,7 @@ export const plateSizeSubSection = buildSubSection({
           id: 'vehicleInfo.plate',
           title: information.labels.plateSize.vehiclePlate,
           backgroundColor: 'white',
-          width: 'full',
+          width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
             const vehicle = getSelectedVehicle(
@@ -41,7 +41,7 @@ export const plateSizeSubSection = buildSubSection({
           id: 'vehicleInfo.type',
           title: information.labels.plateSize.vehicleType,
           backgroundColor: 'white',
-          width: 'full',
+          width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
             const vehicle = getSelectedVehicle(
