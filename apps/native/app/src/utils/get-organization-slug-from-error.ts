@@ -15,7 +15,7 @@ type CustomExtension = {
 /**
  * Extracts the organization slug from the Apollo error, if it exists.
  */
-export function getOrganizationSlugFromError(error: ApolloError | unknown) {
+export const getOrganizationSlugFromError = (error: ApolloError | unknown) => {
   const graphQLErrors = (error as ApolloError)?.graphQLErrors
 
   if (graphQLErrors) {
