@@ -16,7 +16,7 @@ import { m } from '../messages'
 interface Props {
   grants?: Array<Grant>
   subheader?: React.ReactNode
-  locale?: Locale
+  locale: Locale
 }
 
 export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
@@ -36,7 +36,20 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
         </Box>
       )}
       {grants?.length ? (
-        <Inline space={3} justifyContent={isMobile ? 'center' : undefined}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          background="white"
+          borderWidth="standard"
+          borderRadius="xl"
+          borderColor="blue200"
+          flexDirection={['columnReverse', 'columnReverse', 'row']}
+          columnGap={[2, 4, 8, 8, 20]}
+          paddingY={[5, 8]}
+          paddingX={[3, 3, 5, 10]}
+          rowGap={[7, 7, 0]}
+        >
           {grants?.map((grant) => {
             if (!grant) {
               return null

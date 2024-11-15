@@ -1857,8 +1857,8 @@ export interface IGrantFields {
   /** Files */
   grantFiles?: Asset[] | undefined
 
-  /** Category tag */
-  grantCategoryTag?: IGenericTag | undefined
+  /** Category tags */
+  grantCategoryTags?: IGenericTag[] | undefined
 
   /** Type tag */
   grantTypeTag?: IGenericTag | undefined
@@ -3327,6 +3327,7 @@ export interface IOrganizationSubpageFields {
         | ISectionWithVideo
         | ISectionHeading
         | ILatestEventsSlice
+        | IGenericList
       )[]
     | undefined
 

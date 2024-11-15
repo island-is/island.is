@@ -25,18 +25,13 @@ import { theme } from '@island.is/island-ui/theme'
 import { debounceTime } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import {
-  GrantHeaderWithImage,
-  GrantWrapper,
-  PlazaCard,
-} from '@island.is/web/components'
+import { GrantHeaderWithImage, GrantWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
   GenericTag,
   Grant,
   GrantList,
-  GrantStatus,
   Query,
   QueryGetGenericTagsInTagGroupsArgs,
   QueryGetGrantsArgs,
@@ -160,6 +155,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
         setGrants([])
         console.error('Error fetching grants', err)
       })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchState, initialRender])
 
   //SEARCH STATE UPDATES
@@ -168,6 +164,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
       updateUrl()
       fetchGrants()
     }, debounceTime.search)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchState])
 
   useEffect(() => {
@@ -289,7 +286,11 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
               </Box>
             }
           >
-            <SearchResultsContent grants={grants} subheader={hitsMessage} />
+            <SearchResultsContent
+              grants={grants}
+              subheader={hitsMessage}
+              locale={locale}
+            />
           </SidebarLayout>
         )}
         {isMobile && (
@@ -324,7 +325,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
                 variant="popover"
               />
             </Box>
-            <SearchResultsContent grants={grants} />
+            <SearchResultsContent grants={grants} locale={locale} />
           </Box>
         )}
       </Box>
