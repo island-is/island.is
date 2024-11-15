@@ -20,14 +20,18 @@ export enum CaseNotificationType {
   CASE_FILES_UPDATED = 'CASE_FILES_UPDATED',
 }
 
+export enum DefendantNotificationType {
+  DEFENDANT_SELECTED_DEFENDER = 'DEFENDANT_SELECTED_DEFENDER',
+  DEFENDER_ASSIGNED = 'DEFENDER_ASSIGNED',
+}
+
 export enum SubpoenaNotificationType {
   SERVICE_SUCCESSFUL = 'SERVICE_SUCCESSFUL',
   SERVICE_FAILED = 'SERVICE_FAILED',
-  DEFENDANT_SELECTED_DEFENDER = 'DEFENDANT_SELECTED_DEFENDER',
 }
 
-export enum DefendantNotificationType {
-  DEFENDER_ASSIGNED = 'DEFENDER_ASSIGNED',
+export enum InstitutionNotificationType {
+  INDICTMENTS_WAITING_FOR_CONFIRMATION = 'INDICTMENTS_WAITING_FOR_CONFIRMATION',
 }
 
 export enum NotificationType {
@@ -38,7 +42,6 @@ export enum NotificationType {
   RULING = CaseNotificationType.RULING,
   MODIFIED = CaseNotificationType.MODIFIED,
   REVOKED = CaseNotificationType.REVOKED,
-  DEFENDER_ASSIGNED = DefendantNotificationType.DEFENDER_ASSIGNED,
   ADVOCATE_ASSIGNED = CaseNotificationType.ADVOCATE_ASSIGNED,
   DEFENDANTS_NOT_UPDATED_AT_COURT = CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
   APPEAL_TO_COURT_OF_APPEALS = CaseNotificationType.APPEAL_TO_COURT_OF_APPEALS,
@@ -51,14 +54,14 @@ export enum NotificationType {
   INDICTMENT_DENIED = CaseNotificationType.INDICTMENT_DENIED,
   INDICTMENT_RETURNED = CaseNotificationType.INDICTMENT_RETURNED,
   CASE_FILES_UPDATED = CaseNotificationType.CASE_FILES_UPDATED,
+  DEFENDANT_SELECTED_DEFENDER = DefendantNotificationType.DEFENDANT_SELECTED_DEFENDER,
+  DEFENDER_ASSIGNED = DefendantNotificationType.DEFENDER_ASSIGNED,
   SERVICE_SUCCESSFUL = SubpoenaNotificationType.SERVICE_SUCCESSFUL,
   SERVICE_FAILED = SubpoenaNotificationType.SERVICE_FAILED,
-  DEFENDANT_SELECTED_DEFENDER = SubpoenaNotificationType.DEFENDANT_SELECTED_DEFENDER,
+  INDICTMENTS_WAITING_FOR_CONFIRMATION = InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
 }
 
-export enum InstitutionNotificationType {
-  INDICTMENTS_WAITING_FOR_CONFIRMATION = 'INDICTMENTS_WAITING_FOR_CONFIRMATION',
-}
+export const notificationTypes = Object.values(NotificationType)
 
 export enum NotificationDispatchType {
   INDICTMENTS_WAITING_FOR_CONFIRMATION = InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
