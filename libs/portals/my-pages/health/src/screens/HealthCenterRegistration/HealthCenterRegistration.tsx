@@ -218,7 +218,7 @@ const HealthCenterRegistration = () => {
         <AlertMessage
           type="warning"
           message={
-            <Text variant="small">
+            <Text variant="medium">
               <strong className={styles.strongStyle}>
                 {formatMessage(messages.alert)}
               </strong>
@@ -276,10 +276,20 @@ const HealthCenterRegistration = () => {
                     <T.Head>
                       <T.Row>
                         <T.HeadData>
-                          {formatMessage(messages.healthCenterTitle)}
+                          <Text variant="medium" fontWeight="semiBold">
+                            {formatMessage(messages.healthCenterTitle)}
+                          </Text>
                         </T.HeadData>
-                        <T.HeadData>{formatMessage(m.postcode)}</T.HeadData>
-                        <T.HeadData>{formatMessage(m.address)}</T.HeadData>
+                        <T.HeadData>
+                          <Text variant="medium" fontWeight="semiBold">
+                            {formatMessage(m.postcode)}
+                          </Text>
+                        </T.HeadData>
+                        <T.HeadData>
+                          <Text variant="medium" fontWeight="semiBold">
+                            {formatMessage(m.address)}
+                          </Text>
+                        </T.HeadData>
                         <T.HeadData />
                       </T.Row>
                     </T.Head>
@@ -293,11 +303,17 @@ const HealthCenterRegistration = () => {
                             onMouseLeave={() => setHoverId('')}
                           >
                             <T.Data>
-                              <Text variant="small">{healthCenter.name}</Text>
+                              <Text variant="medium">{healthCenter.name}</Text>
                             </T.Data>
-                            <T.Data>{`${healthCenter.address?.postalCode} ${healthCenter.address?.municipality}`}</T.Data>
                             <T.Data>
-                              {healthCenter.address?.streetAddress}
+                              <Text variant="medium">
+                                {`${healthCenter.address?.postalCode} ${healthCenter.address?.municipality}`}
+                              </Text>
+                            </T.Data>
+                            <T.Data>
+                              <Text variant="medium">
+                                {healthCenter.address?.streetAddress}
+                              </Text>
                             </T.Data>
                             <T.Data>
                               {healthCenter.canRegister ? (
@@ -323,19 +339,17 @@ const HealthCenterRegistration = () => {
                                   </Button>
                                 </Box>
                               ) : (
-                                <>
-                                  <Text>
-                                    {formatMessage(
-                                      messages.healthCenterNotAvailableForRegistration,
-                                    )}
-                                  </Text>
+                                <Text variant="medium">
+                                  {formatMessage(
+                                    messages.healthCenterNotAvailableForRegistration,
+                                  )}
                                   <Tooltip
                                     text={formatMessage(
                                       messages.healthCenterNotAvailableForRegistrationDesc,
                                     )}
                                     placement="right"
                                   />
-                                </>
+                                </Text>
                               )}
                             </T.Data>
                           </tr>

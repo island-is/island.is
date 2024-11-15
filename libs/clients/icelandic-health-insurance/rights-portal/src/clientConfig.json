@@ -2646,33 +2646,11 @@
           "employer": {
             "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.EmployerDTO"
           },
-          "club": {
-            "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.ClubDTO"
-          },
           "attachments": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentDTO"
             },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "Minarsidur.API.Models.AccidentReports.ClubDTO": {
-        "required": ["accidentType", "name", "nationalId"],
-        "type": "object",
-        "properties": {
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "accidentType": {
-            "type": "string",
             "nullable": true
           }
         },
