@@ -1431,6 +1431,9 @@ export const calculateEndDateForPeriodWithStartAndLength = (
 
   // If startDay is first day of the month and daysToAdd = 0
   if (daysToAdd === 0) {
+    if (start.getDate() === 31) {
+      endDate = addDays(endDate, 1)
+    }
     return endDate
   }
 
@@ -1449,8 +1452,9 @@ export const calculateEndDateForPeriodWithStartAndLength = (
       endDate = addDays(endDate, -1)
     }
   } else {
-    // startDate is 16 and months with 31 days
-    if (start.getDate() === 16 && daysInMonth === 31) {
+    // startDate is 16 or 17 and months with 31 days
+    const startDay = start.getDate()
+    if ((startDay === 16 || startDay === 17) && daysInMonth === 31) {
       endDate = addDays(endDate, 1)
     }
   }
@@ -1466,9 +1470,10 @@ export const calculatePeriodLengthInMonths = (
   const end = parseISO(endDate)
 
   const diffMonths = differenceInMonths(end, start)
-  const diffDays = differenceInDays(addMonths(end, -diffMonths), start)
+  const diffDays = differenceInDays(end, addMonths(start, diffMonths))
 
-  const roundedDays = Math.min((diffDays / 28) * 100, 100) / 100
+  const roundedDays =
+    Math.min((diffDays / getDaysInMonth(end)) * 100, 100) / 100
 
   return round(diffMonths + roundedDays, 1)
 }

@@ -29,6 +29,7 @@ export enum MessageType {
   SUBPOENA_NOTIFICATION = 'SUBPOENA_NOTIFICATION',
   INSTITUTION_NOTIFICATION = 'INSTITUTION_NOTIFICATION',
   NOTIFICATION_DISPATCH = 'NOTIFICATION_DISPATCH',
+  DEFENDANT_NOTIFICATION = 'DEFENDANT_NOTIFICATION',
 }
 
 export const messageEndpoint: { [key in MessageType]: string } = {
@@ -64,6 +65,7 @@ export const messageEndpoint: { [key in MessageType]: string } = {
   SUBPOENA_NOTIFICATION: 'subpoenaNotification',
   INSTITUTION_NOTIFICATION: 'institutionNotification',
   NOTIFICATION_DISPATCH: 'notification/dispatch',
+  DEFENDANT_NOTIFICATION: 'defendantNotification',
 }
 
 export type Message = {

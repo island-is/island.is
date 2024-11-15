@@ -11,6 +11,7 @@ import {
   InputController,
   RadioController,
   SelectController,
+  PhoneInputController,
 } from '@island.is/shared/form-fields'
 import { NationalIdWithName } from '@island.is/application/ui-components'
 
@@ -30,6 +31,7 @@ const componentMapper = {
   date: DatePickerController,
   radio: RadioController,
   nationalIdWithName: NationalIdWithName,
+  phone: PhoneInputController,
 }
 
 export const Item = ({
