@@ -13,7 +13,7 @@ import {
 import { MessageService } from '@island.is/judicial-system/message'
 
 import { CaseService, PdfService } from '../../case'
-import { Defendant } from '../../defendant'
+import { Defendant, DefendantService } from '../../defendant'
 import { EventService } from '../../event'
 import { FileService } from '../../file'
 import { PoliceService } from '../../police'
@@ -30,6 +30,7 @@ jest.mock('../../case/pdf.service')
 jest.mock('../../police/police.service')
 jest.mock('../../file/file.service')
 jest.mock('../../event/event.service')
+jest.mock('../../defendant/defendant.service')
 jest.mock('@island.is/judicial-system/message')
 
 export const createTestingSubpoenaModule = async () => {
@@ -49,6 +50,7 @@ export const createTestingSubpoenaModule = async () => {
       PoliceService,
       FileService,
       EventService,
+      DefendantService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
