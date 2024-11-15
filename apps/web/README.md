@@ -90,11 +90,6 @@ yarn nx extract-strings web
 
 Currently, in this project, only the `Custom Page` content type utilizes the `Translation Namespace` content type for translations
 
-### Further Documentation
-
-[Subpages](./docs/subpages.md) - Information on Layouts and Components used when
-creating subpages for the web.
-
 ## E2E Testing
 
 ### Quick Start
@@ -131,6 +126,11 @@ Mock responses can be set up using Mockoon to simulate API behavior. Refer to th
 ### More Resources
 
 Refer to the [E2E Testing Library README](../../libs/testing/e2e/README.md) for common helper functions and utilities.
+
+## Further Documentation
+
+[Subpages](./docs/subpages.md) - Information on Layouts and Components used when
+creating subpages for the web.
 
 ## Code owners and maintainers
 
