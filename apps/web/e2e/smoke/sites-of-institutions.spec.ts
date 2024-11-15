@@ -14,7 +14,7 @@ type GetByRoleParameters = Parameters<GetByRole>
 type Orgs = {
   organisationName: string
   organisationHome?: string
-  enabled?: boolean
+  skip?: boolean
   target?: { role: GetByRoleParameters[0]; options?: GetByRoleParameters[1] }
 }
 const orgs: Orgs[] = [
@@ -27,7 +27,7 @@ const orgs: Orgs[] = [
   { organisationName: 'Sjúkratryggingar', target: { role: 'link' } },
   { organisationName: 'Ríkislögmaður' },
   { organisationName: 'Landskjörstjórn', target: { role: 'link' } },
-  { organisationName: 'Opinber nýsköpun', enabled: true },
+  { organisationName: 'Opinber nýsköpun', skip: true },
   { organisationName: 'Sýslumenn' },
   { organisationName: 'Fjársýslan' },
   {
@@ -43,7 +43,6 @@ const orgs: Orgs[] = [
 
 test.describe('Sites of institutions', () => {
   let context: BrowserContext
-
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser,
@@ -51,37 +50,38 @@ test.describe('Sites of institutions', () => {
       homeUrl: '/s',
     })
   })
-
   test.afterAll(async () => {
     await context.close()
   })
+  orgs.forEach(
+    ({
+      organisationName,
+      organisationHome = `/${slugify(organisationName, { lower: true })}`,
+      target,
+      skip,
+    }) => {
+      test(organisationName, async () => {
+        if (skip) return
+        const page = await context.newPage()
+        const url = `/s${organisationHome}`
 
-  for (const {
-    organisationName,
-    organisationHome = `/${slugify(organisationName, { lower: true })}`,
-    target,
-    enabled,
-  } of orgs) {
-    test(organisationName, async ({ browser }) => {
-      if (enabled) return
-      const pageContext = await session({
-        browser,
-        idsLoginOn: false,
-        homeUrl: '/s',
+        const response = await page.goto(url, { timeout: 30000 })
+        expect(response?.ok()).toBe(true)
+
+        // Verify we landed on the correct URL
+        expect(page.url()).toContain(url)
+
+        await expect(
+          page
+            .getByRole(target?.role ?? 'heading', {
+              ...{ name: organisationName },
+              ...target?.options,
+            })
+            .first(),
+        ).toBeVisible()
+
+        await page.close()
       })
-      const page = await pageContext.newPage()
-      const url = `/s${organisationHome}`
-      await page.goto(url)
-      await expect(
-        page
-          .getByRole(target?.role ?? 'heading', {
-            name: organisationName,
-            ...target?.options,
-          })
-          .first(),
-      ).toBeVisible()
-      await page.close()
-      await pageContext.close()
-    })
-  }
+    },
+  )
 })

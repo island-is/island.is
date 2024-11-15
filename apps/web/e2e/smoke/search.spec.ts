@@ -26,7 +26,7 @@ test.describe('Search feature', () => {
   test('has expected sections', async () => {
     const testPhrase = 'umsókn'
     const page = await context.newPage()
-    await page.goto('/')
+    await page.goto('/', { waitUntil: 'networkidle' })
     await page
       .getByRole('textbox', { name: 'Leitaðu á Ísland.is' })
       .fill(testPhrase)
@@ -41,7 +41,7 @@ test.describe('Search feature', () => {
 
   test('should have no search results for long bogus search words', async () => {
     const page = await context.newPage()
-    await page.goto('/')
+    await page.goto('/', { waitUntil: 'networkidle' })
     await page
       .getByRole('textbox', { name: 'Leitaðu á Ísland.is' })
       .fill('abcdefhijklmnopqrstuvwxyz1234567890')

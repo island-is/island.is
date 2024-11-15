@@ -77,9 +77,6 @@ test.describe('Front page', () => {
   })
 
   test(`should navigate to featured link @lang:is`, async () => {
-    if (!context) {
-      throw new Error('Context is not initialized')
-    }
     test.slow()
     const page = await createPageAndNavigate(context, '/')
     const featuredLinks = page.locator('[data-testid="featured-link"]')
@@ -104,9 +101,6 @@ test.describe('Front page', () => {
   })
 
   test(`should navigate to featured link @lang:en`, async () => {
-    if (!context) {
-      throw new Error('Context is not initialized')
-    }
     test.slow()
     const page = await createPageAndNavigate(context, '/en')
     const featuredLinks = page.locator('[data-testid="featured-link"]')
@@ -131,9 +125,6 @@ test.describe('Front page', () => {
   })
 
   test(`should have link on life events pages to navigate back to the main page @lang:is`, async () => {
-    if (!context) {
-      throw new Error('Context is not initialized')
-    }
     test.slow()
     const page = await createPageAndNavigate(context, '/')
     const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')
@@ -147,7 +138,6 @@ test.describe('Front page', () => {
         await lifeEventPage.goto(url)
         await lifeEventPage.locator('[data-testid="link-back-home"]').click()
       }
-      await lifeEventPage.locator('[data-testid="link-back-home"]').click()
       await expect(
         lifeEventPage.locator('data-testid=home-heading'),
       ).toBeVisible()
@@ -157,9 +147,6 @@ test.describe('Front page', () => {
   })
 
   test(`should have link on life events pages to navigate back to the main page @lang:en`, async () => {
-    if (!context) {
-      throw new Error('Context is not initialized')
-    }
     test.slow()
     const page = await createPageAndNavigate(context, '/en')
     const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')
