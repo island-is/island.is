@@ -19,7 +19,6 @@ import { createTestingNotificationModule } from '../createTestingNotificationMod
 import { Case } from '../../../case'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 
 jest.mock('../../../../factories')
@@ -41,17 +40,12 @@ describe('InternalNotificationController - Send defender assigned notifications'
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
-  let mockNotificationModel: typeof Notification
   let givenWhenThen: GivenWhenThen
   let notificationDTO: CaseNotificationDto
 
   beforeEach(async () => {
-    const {
-      emailService,
-      notificationConfig,
-      notificationModel,
-      internalNotificationController,
-    } = await createTestingNotificationModule()
+    const { emailService, notificationConfig, internalNotificationController } =
+      await createTestingNotificationModule()
 
     notificationDTO = {
       user: { id: userId } as User,
@@ -60,7 +54,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
 
     mockEmailService = emailService
     mockConfig = notificationConfig
-    mockNotificationModel = notificationModel
 
     givenWhenThen = async (
       caseId: string,
