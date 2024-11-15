@@ -98,13 +98,12 @@ if (__DEV__) {
     getConfig().datadog ?? '',
     'production',
     '2736367a-a841-492d-adef-6f5a509d6ec2',
-    true, // track User interactions (e.g.: Tap on buttons. You can use 'accessibilityLabel' element property to give tap action the name, otherwise element type will be reported)
+    false, // do not track User interactions (e.g.: Tap on buttons.)
     true, // track XHR Resources
     true, // track Errors
   )
 
   ddconfig.nativeCrashReportEnabled = true
-  ddconfig.nativeViewTracking = true
   ddconfig.site = 'EU'
   ddconfig.serviceName = 'mobile-app'
 
