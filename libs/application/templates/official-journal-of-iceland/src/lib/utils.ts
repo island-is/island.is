@@ -2,6 +2,7 @@ import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
 import { z } from 'zod'
 import {
+  additionSchema,
   committeeSignatureSchema,
   memberItemSchema,
   partialSchema,
@@ -15,6 +16,7 @@ import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { SignatureTypes, OJOI_DF, FAST_TRACK_DAYS } from './constants'
 import { MessageDescriptor } from 'react-intl'
+import { v4 as uuid } from 'uuid'
 
 export const countDaysAgo = (date: Date) => {
   const now = new Date()
@@ -69,6 +71,16 @@ export const getEmptyMember = () => ({
   below: '',
 })
 
+export const getAddition = (
+  index: number,
+  roman = true,
+): z.infer<typeof additionSchema>[number] => ({
+  id: uuid(),
+  title: roman ? `Viðauki ${convertNumberToRoman(index)}` : `Viðauki ${index}`,
+  content: '',
+  type: 'html',
+})
+
 export const getRegularSignature = (
   signatureCount: number,
   memberCount: number,
@@ -117,6 +129,11 @@ export const getSignatureDefaultValues = (signature: any, index?: number) => {
 
   return { institution: signature.institution, date: signature.date }
 }
+
+export const isAddition = (
+  addition: unknown,
+): addition is z.infer<typeof additionSchema> =>
+  additionSchema.safeParse(addition).success
 
 export const isRegularSignature = (
   any: unknown,
@@ -341,4 +358,18 @@ export const getFastTrack = (date?: Date) => {
     fastTrack,
     now,
   }
+}
+
+export const base64ToBlob = (base64: string, mimeType = 'application/pdf') => {
+  if (!base64) {
+    return null
+  }
+
+  const byteCharacters = Buffer.from(base64, 'base64')
+  return new Blob([byteCharacters], { type: mimeType })
+}
+
+export const convertNumberToRoman = (num: number) => {
+  const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X']
+  return roman[num - 1]
 }
