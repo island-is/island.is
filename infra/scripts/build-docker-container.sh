@@ -3,6 +3,7 @@ set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 DOCKER_REGISTRY=${DOCKER_REGISTRY:-821090935708.dkr.ecr.eu-west-1.amazonaws.com}
+DOCKER_REGISTRY=${DOCKER_REGISTRY%/} # Strip trailing slash
 PUBLISH=${PUBLISH:-false}
 DOCKER_IMAGE="${DOCKER_REGISTRY}/helm-config"
 DOCKER_TAG=$1
