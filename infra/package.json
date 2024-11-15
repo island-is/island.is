@@ -7,6 +7,7 @@
     "node": "20.15.0",
     "yarn": "3.2"
   },
+  "packageManager": "yarn@3.2.3",
   "scripts": {
     "test": "jest",
     "charts": "node -r esbuild-register src/cli/generate-chart-values.ts",
