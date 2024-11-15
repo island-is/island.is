@@ -141,6 +141,7 @@ export class S3Service {
     params: PresignedPostOptions,
   ): Promise<PresignedPost> {
     try {
+      // The S3 Aws sdk v3 returns a trailing forward slash
       const post = await createPresignedPost(this.s3Client, params)
       post.url = post.url.slice(0, -1)
       return post
