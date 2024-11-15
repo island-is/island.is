@@ -10,12 +10,10 @@ import * as styles from '../styles.css'
 import { m } from '../../../lib/messages'
 import copyToClipboard from 'copy-to-clipboard'
 import { toast } from 'react-toastify'
-import { EndorsementList } from '@island.is/api/schema'
 import { useMutation } from '@apollo/client'
 import { ExportList } from '../../queries'
 
 interface Props {
-  petition?: EndorsementList
   petitionId: string
   dropdownItems?: {
     href?: string

@@ -76,7 +76,7 @@ export class AppController {
     @Param('subpoenaId', new ParseUUIDPipe()) subpoenaId: string,
     @Body() updateSubpoena: UpdateSubpoenaDto,
   ): Promise<SubpoenaResponse> {
-    this.logger.debug(`Updating subpoena for ${subpoenaId}`)
+    this.logger.info(`Updating subpoena ${subpoenaId}`)
 
     return this.appService.updateSubpoena(subpoenaId, updateSubpoena)
   }
