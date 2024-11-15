@@ -23,6 +23,8 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
     ))
   }, [formatMessage, vehicles])
 
+  //console.log(vehicles)
+
   return (
     <Box>
       <form>

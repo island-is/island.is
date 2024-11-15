@@ -8,6 +8,8 @@ import {
   Pagination,
   Text,
 } from '@island.is/island-ui/core'
+import debounce from 'lodash/debounce'
+import { debounceTime } from '@island.is/shared/constants'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   m,
@@ -17,11 +19,11 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
 import * as styles from './VehicleBulkMileage.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import VehicleBulkMileageTable from './VehicleBulkMileageTable'
 import { VehicleType } from './types'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useVehiclesListQuery } from './VehicleBulkMileage.generated'
+import { useVehiclesListLazyQuery } from './VehicleBulkMileage.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
@@ -38,35 +40,61 @@ const VehicleBulkMileage = () => {
   const [totalPages, setTotalPages] = useState<number>(1)
   const [search, setSearch] = useState<string>()
 
-  const { data, loading, error } = useVehiclesListQuery({
-    variables: {
-      input: {
-        page,
-        pageSize: 10,
-      },
-    },
-  })
-
-  const methods = useForm<FormData>()
+  const [vehicleListQuery, { data, loading, error, called }] =
+    useVehiclesListLazyQuery()
 
   useEffect(() => {
-    if (data?.vehiclesListV3?.data) {
-      const vehicles: Array<VehicleType> = data.vehiclesListV3?.data
-        .map((v) => {
-          if (!v.type) {
-            return null
-          }
-          return {
-            vehicleId: v.vehicleId,
-            vehicleType: v.type,
-            lastMileageRegistration: undefined,
-          }
-        })
-        .filter(isDefined)
-      setVehicles(vehicles)
-      setTotalPages(data?.vehiclesListV3?.totalPages || 1)
+    vehicleListQuery({
+      variables: {
+        input: {
+          page,
+          pageSize: 10,
+          query: undefined,
+        },
+      },
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const debouncedSearchUpdate = useMemo(() => {
+    return debounce(() => {
+      vehicleListQuery({
+        variables: {
+          input: {
+            page,
+            pageSize: 10,
+            query: search ?? undefined,
+          },
+        },
+      }).then((res) => {
+        const vehicles: Array<VehicleType> =
+          res.data?.vehiclesListV3?.data
+            ?.map((v) => {
+              if (!v.type) {
+                return null
+              }
+              return {
+                vehicleId: v.vehicleId,
+                vehicleType: v.type,
+                lastMileageRegistration: undefined,
+              }
+            })
+            .filter(isDefined) ?? []
+        setVehicles(vehicles)
+        setTotalPages(res?.data?.vehiclesListV3?.totalPages || 1)
+      })
+    }, debounceTime.search)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, page])
+
+  useEffect(() => {
+    debouncedSearchUpdate()
+    return () => {
+      debouncedSearchUpdate.cancel()
     }
-  }, [data?.vehiclesListV3])
+  }, [debouncedSearchUpdate])
+
+  const methods = useForm<FormData>()
 
   return (
     <Stack space={2}>
