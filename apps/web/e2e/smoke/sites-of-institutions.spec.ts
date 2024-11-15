@@ -1,9 +1,9 @@
 import slugify from 'slugify'
 
 import {
-  BrowserContext,
+  type BrowserContext,
   expect,
-  Page,
+  type Page,
   session,
   test,
 } from '@island.is/testing/e2e'

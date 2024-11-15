@@ -1,5 +1,5 @@
 import {
-  BrowserContext,
+  type BrowserContext,
   createPageAndNavigate,
   expect,
   session,

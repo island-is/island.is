@@ -1,5 +1,5 @@
 import {
-  BrowserContext,
+  type BrowserContext,
   expect,
   session,
   test,
