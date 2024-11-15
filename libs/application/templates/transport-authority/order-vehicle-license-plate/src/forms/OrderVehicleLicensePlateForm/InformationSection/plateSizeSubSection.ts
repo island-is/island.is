@@ -24,10 +24,10 @@ export const plateSizeSubSection = buildSubSection({
           titleVariant: 'h5',
         }),
         buildTextField({
-          id: 'plateSize.vehiclePlate',
+          id: 'vehicleInfo.plate',
           title: information.labels.plateSize.vehiclePlate,
           backgroundColor: 'white',
-          width: 'half',
+          width: 'full',
           readOnly: true,
           defaultValue: (application: Application) => {
             const vehicle = getSelectedVehicle(
@@ -38,10 +38,10 @@ export const plateSizeSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'plateSize.vehicleType',
+          id: 'vehicleInfo.type',
           title: information.labels.plateSize.vehicleType,
           backgroundColor: 'white',
-          width: 'half',
+          width: 'full',
           readOnly: true,
           defaultValue: (application: Application) => {
             const vehicle = getSelectedVehicle(

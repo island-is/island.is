@@ -667,12 +667,16 @@ export interface FindVehicleField extends InputField {
 export interface VehicleRadioField extends InputField {
   readonly type: FieldTypes.VEHICLE_RADIO
   component: FieldComponents.VEHICLE_RADIO
+  itemType: 'VEHICLE' | 'PLATE'
+  itemList: unknown[]
+  validateDebtStatus: boolean
   alertMessageErrorTitle?: FormText
-  errorIsNotDebtLessMessage?: FormText
+  debtStatusErrorMessage?: FormText
   validationErrorMessages?: Record<string, FormText>
   validationErrorFallbackMessage?: FormText
-  inputErrorMessage?: FormText
-  itemList: unknown[]
+  inputErrorMessage: FormText
+  expiresAtTag?: StaticText
+  checkExpireAtIfCanRenew?: (item: unknown) => boolean
 }
 
 export interface HiddenInputWithWatchedValueField extends BaseField {

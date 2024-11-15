@@ -6,12 +6,14 @@ import {
 import { Box } from '@island.is/island-ui/core'
 import { FC, useCallback, useEffect } from 'react'
 import { CurrentVehiclesAndRecords } from '../../shared'
-import { VehicleRadioField } from './VehicleRadioField'
 import { useFormContext } from 'react-hook-form'
 import { ApolloQueryResult, useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
-import { FindVehicleFormField } from '@island.is/application/ui-fields'
+import {
+  FindVehicleFormField,
+  VehicleRadioFormField,
+} from '@island.is/application/ui-fields'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleDetails'
 import { applicationCheck, error, information } from '../../lib/messages'
 import { VehicleSelectField } from './VehicleSelectField'
@@ -97,9 +99,27 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
             {...props}
           />
         ) : (
-          <VehicleRadioField
-            currentVehicleList={currentVehicleList?.vehicles}
+          <VehicleRadioFormField
             {...props}
+            field={{
+              id: 'pickVehicle',
+              title: information.labels.pickVehicle.title,
+              description: information.labels.pickVehicle.description,
+              type: FieldTypes.VEHICLE_RADIO,
+              component: FieldComponents.VEHICLE_RADIO,
+              children: undefined,
+              itemType: 'VEHICLE',
+              itemList: currentVehicleList?.vehicles,
+              validateDebtStatus: true,
+              alertMessageErrorTitle:
+                information.labels.pickVehicle.hasErrorTitle,
+              debtStatusErrorMessage:
+                information.labels.pickVehicle.isNotDebtLessTag,
+              validationErrorMessages: applicationCheck.validation,
+              validationErrorFallbackMessage:
+                applicationCheck.validation.fallbackErrorMessage,
+              inputErrorMessage: error.requiredValidVehicle,
+            }}
           />
         )}
       </Box>
