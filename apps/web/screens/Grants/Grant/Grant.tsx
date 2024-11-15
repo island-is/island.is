@@ -32,6 +32,7 @@ import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_GRANT_QUERY } from '../../queries'
 import { m } from '../messages'
 import { GrantSidebar } from './GrantSidebar'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
   const { formatMessage } = useIntl()
@@ -199,6 +200,10 @@ GrantSingle.getProps = async ({ apolloClient, locale, query }) => {
       },
     },
   })
+
+  if (!grant) {
+    throw new CustomNextError(404, 'Grant not found')
+  }
 
   return {
     grant: grant ?? undefined,
