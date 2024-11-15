@@ -18,26 +18,27 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { formatNationalId } from '../../lib/format-national-id'
 import { testIDs } from '../../utils/test-ids'
 
-type Person =
-  | NonNullable<
-      NonNullable<
-        NonNullable<
-          NonNullable<
-            NationalRegistryChildCustodyQuery['nationalRegistryPerson']
-          >
-        >['childCustody']
-      >[number]
-    >['details']
-  | NonNullable<
-      NonNullable<
-        NonNullable<
-          NonNullable<NationalRegistryBioChildQuery['nationalRegistryPerson']>
-        >['biologicalChildren']
-      >[number]
-    >['details']
-  | NonNullable<
-      NonNullable<NationalRegistrySpouseQuery['nationalRegistryPerson']>
-    >['spouse']
+type ChildCustodyDetails = NonNullable<
+  NonNullable<
+    NonNullable<
+      NonNullable<NationalRegistryChildCustodyQuery['nationalRegistryPerson']>
+    >['childCustody']
+  >[number]
+>['details']
+
+type BioChildDetails = NonNullable<
+  NonNullable<
+    NonNullable<
+      NonNullable<NationalRegistryBioChildQuery['nationalRegistryPerson']>
+    >['biologicalChildren']
+  >[number]
+>['details']
+
+type SpouseDetails = NonNullable<
+  NonNullable<NationalRegistrySpouseQuery['nationalRegistryPerson']>
+>['spouse']
+
+type Person = ChildCustodyDetails | BioChildDetails | SpouseDetails
 
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
