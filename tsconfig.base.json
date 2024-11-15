@@ -300,6 +300,9 @@
       "@island.is/application/templates/aosh/request-for-inspection": [
         "libs/application/templates/aosh/request-for-inspection/src/index.ts"
       ],
+      "@island.is/application/templates/aosh/seminars": [
+        "libs/application/templates/aosh/seminars/src/index.ts"
+      ],
       "@island.is/application/templates/aosh/street-registration": [
         "libs/application/templates/aosh/street-registration/src/index.ts"
       ],
@@ -1134,9 +1137,6 @@
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
-      ],
-      "application/templates/aosh/seminars": [
-        "libs/application/templates/aosh/seminars/src/index.ts"
       ],
       "application/templates/inao/financial-statement-political-party": [
         "libs/application/templates/inao/financial-statement-political-party/src/index.ts"
