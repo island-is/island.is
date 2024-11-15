@@ -1,4 +1,5 @@
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { CacheService } from '../cache/cache.service'
 import { IdsService } from '../ids/ids.service'
