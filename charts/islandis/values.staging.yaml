@@ -757,10 +757,10 @@ application-system-api:
     min: 2
   resources:
     limits:
-      cpu: '400m'
+      cpu: '600m'
       memory: '1024Mi'
     requests:
-      cpu: '75m'
+      cpu: '200m'
       memory: '512Mi'
   secrets:
     ALTHINGI_OMBUDSMAN_XROAD_PASSWORD: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD'
