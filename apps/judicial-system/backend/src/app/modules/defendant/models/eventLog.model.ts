@@ -41,18 +41,10 @@ export class DefendantEventLog extends Model {
   @ApiProperty({ type: String })
   caseId!: string
 
-  @BelongsTo(() => Case, 'case_id')
-  @ApiPropertyOptional({ type: () => Case })
-  case?: Case
-
   @ForeignKey(() => Defendant)
   @Column({ type: DataType.UUID, allowNull: false })
   @ApiProperty({ type: String })
   defendantId!: string
-
-  @BelongsTo(() => Case, 'defendant_id')
-  @ApiPropertyOptional({ type: () => Defendant })
-  defendant?: Defendant
 
   @Column({ type: DataType.STRING, allowNull: false })
   @ApiProperty({ type: String })

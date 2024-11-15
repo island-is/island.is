@@ -39,6 +39,7 @@ import {
   CaseTransition,
   CaseType,
   DateType,
+  DefendantEventType,
   EventType,
   isCompletedCase,
   isIndictmentCase,
@@ -56,6 +57,7 @@ import {
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { CivilClaimant, Defendant, DefendantService } from '../defendant'
+import { DefendantEventLog } from '../defendant/models/eventLog.model'
 import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
@@ -201,6 +203,7 @@ const caseStringTypes: Record<CaseStringKeys, StringType> = {
 }
 
 const eventTypes = Object.values(EventType)
+const defendantEventType = Object.values(DefendantEventType)
 const dateTypes = Object.values(DateType)
 const stringTypes = Object.values(StringType)
 
@@ -304,6 +307,12 @@ export const include: Includeable[] = [
     where: { eventType: { [Op.in]: eventTypes } },
     order: [['created', 'DESC']],
     separate: true,
+  },
+  {
+    model: DefendantEventLog,
+    as: 'defendantEventLogs',
+    required: false,
+    where: { eventType: { [Op.in]: defendantEventType } },
   },
   {
     model: DateLog,

@@ -6,7 +6,6 @@ import { errors } from '@island.is/judicial-system-web/messages'
 import {
   CreateDefendantInput,
   Defendant,
-  EventLogInput,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'

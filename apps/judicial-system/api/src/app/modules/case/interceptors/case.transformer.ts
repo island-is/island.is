@@ -1,6 +1,7 @@
 import {
   CaseAppealDecision,
   CaseIndictmentRulingDecision,
+  DefendantEventType,
   EventType,
   getIndictmentVerdictAppealDeadlineStatus,
   getStatementDeadline,
@@ -204,10 +205,18 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
       ? Date.now() >= new Date(verdictAppealDeadline).getTime()
       : false
 
+    const sentToPrisonAdminDate = theCase.defendantEventLogs?.find(
+      (d) =>
+        d.eventType === DefendantEventType.SENT_TO_PRISON_ADMIN &&
+        d.caseId === theCase.id &&
+        d.defendantId === defendant.id,
+    )?.created
+
     return {
       ...defendant,
       verdictAppealDeadline,
       isVerdictAppealDeadlineExpired,
+      sentToPrisonAdminDate,
     }
   })
 }

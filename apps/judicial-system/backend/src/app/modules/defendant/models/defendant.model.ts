@@ -17,6 +17,7 @@ import {
   DefendantEventType,
   DefendantPlea,
   DefenderChoice,
+  EventType,
   Gender,
   ServiceRequirement,
   SubpoenaType,
@@ -60,25 +61,16 @@ export class Defendant extends Model {
     )
   }
 
-  static isSentToPrisonAdmin(defendant: Defendant) {
-    return DefendantEventLog.findOne({
+  static async sentToPoliceAdminDate(defendantId: string, caseId: string) {
+    const dateLog = await DefendantEventLog.findOne({
       where: {
-        defendantId: defendant.id,
         eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+        defendantId,
+        caseId,
       },
-    }).then(async (eventLog) => {
-      console.log({ eventLog })
-      if (eventLog) {
-        const [numberOfAffectedRows] = await Defendant.update(
-          { isSentToPrisonAdmin: true },
-          { where: { id: defendant.id } },
-        )
-        if (numberOfAffectedRows > 0) {
-          return true
-        }
-      }
-      return false
     })
+
+    return dateLog?.created
   }
 
   @Column({

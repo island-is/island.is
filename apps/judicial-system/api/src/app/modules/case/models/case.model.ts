@@ -32,6 +32,7 @@ import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
+import { DefendantEventLog } from './defendantEventLog.model'
 import { Notification } from './notification.model'
 
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
@@ -396,6 +397,9 @@ export class Case {
 
   @Field(() => [EventLog], { nullable: true })
   readonly eventLogs?: EventLog[]
+
+  @Field(() => [DefendantEventLog], { nullable: true })
+  readonly defendantEventLogs?: DefendantEventLog[]
 
   @Field(() => String, { nullable: true })
   readonly appealValidToDate?: string

@@ -38,6 +38,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CivilClaimant, Defendant } from '../../defendant'
+import { DefendantEventLog } from '../../defendant/models/eventLog.model'
 import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
@@ -899,6 +900,13 @@ export class Case extends Model {
   @HasMany(() => DateLog, 'caseId')
   @ApiPropertyOptional({ type: DateLog, isArray: true })
   dateLogs?: DateLog[]
+
+  /**********
+   * The case's defendant logs
+   **********/
+  @HasMany(() => DefendantEventLog, 'caseId')
+  @ApiPropertyOptional({ type: DefendantEventLog, isArray: true })
+  defendantEventLogs?: DefendantEventLog[]
 
   /**********
    * The case's strings
