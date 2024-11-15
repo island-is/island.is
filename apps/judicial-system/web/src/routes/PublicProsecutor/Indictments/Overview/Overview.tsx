@@ -110,7 +110,7 @@ export const Overview = () => {
           </Box>
         ))}
         <Box component="section" marginBottom={5}>
-          <InfoCardClosedIndictment />
+          <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
         </Box>
         {/* 
         NOTE: Temporarily hidden while list of laws broken is not complete in

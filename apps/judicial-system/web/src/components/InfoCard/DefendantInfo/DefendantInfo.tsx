@@ -26,6 +26,7 @@ interface DefendantInfoProps {
   defendant: Defendant
   displayAppealExpirationInfo?: boolean
   displayVerdictViewDate?: boolean
+  displaySentToPrisonAdminDate?: boolean
   defender?: Defender
 }
 
@@ -72,6 +73,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     defendant,
     displayAppealExpirationInfo,
     displayVerdictViewDate,
+    displaySentToPrisonAdminDate = true,
     defender,
   } = props
   const { formatMessage } = useIntl()
@@ -144,6 +146,13 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
             defendant.verdictViewDate,
             defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED,
           )}
+        </Text>
+      )}
+      {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
+        <Text marginTop={1} fontWeight="semiBold">
+          {formatMessage(strings.sendToPrisonAdminDate, {
+            date: formatDate(defendant.sentToPrisonAdminDate),
+          })}
         </Text>
       )}
     </>

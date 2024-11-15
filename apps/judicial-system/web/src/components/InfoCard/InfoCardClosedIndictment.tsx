@@ -8,6 +8,7 @@ import useInfoCardItems from './useInfoCardItems'
 export interface Props {
   displayAppealExpirationInfo?: boolean
   displayVerdictViewDate?: boolean
+  displaySentToPrisonAdminDate?: boolean
 }
 
 const InfoCardClosedIndictment: FC<Props> = (props) => {
@@ -29,7 +30,11 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     civilClaimants,
   } = useInfoCardItems()
 
-  const { displayAppealExpirationInfo, displayVerdictViewDate } = props
+  const {
+    displayAppealExpirationInfo,
+    displayVerdictViewDate,
+    displaySentToPrisonAdminDate,
+  } = props
 
   const reviewedDate = workingCase.eventLogs?.find(
     (log) => log.eventType === EventType.INDICTMENT_REVIEWED,
@@ -45,6 +50,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
               workingCase.type,
               displayAppealExpirationInfo,
               displayVerdictViewDate,
+              displaySentToPrisonAdminDate,
             ),
           ],
         },

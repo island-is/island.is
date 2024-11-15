@@ -19,7 +19,6 @@ import { errors } from '@island.is/judicial-system-web/messages'
 
 import {
   Defendant,
-  EventType,
   IndictmentCaseReviewDecision,
   ServiceRequirement,
 } from '../../graphql/schema'
@@ -156,16 +155,10 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       )
     }
 
-    const sentToPrisonAdminEvent = workingCase.eventLogs?.find(
-      (evt) =>
-        evt.eventType === EventType.INDICTMENT_SENT_TO_FMST &&
-        evt.nationalId === defendant.nationalId,
-    )
-
-    if (sentToPrisonAdminEvent && defendant.isSentToPrisonAdmin) {
+    if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
       texts.push(
         formatMessage(strings.sendToPrisonAdminDate, {
-          date: formatDate(sentToPrisonAdminEvent.created),
+          date: formatDate(defendant.sentToPrisonAdminDate),
         }),
       )
     }
@@ -176,12 +169,11 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     appealExpirationInfo.message,
     dates.verdictViewDate,
     defendant.isSentToPrisonAdmin,
-    defendant.nationalId,
+    defendant.sentToPrisonAdminDate,
     defendant.verdictAppealDate,
     defendant.verdictViewDate,
     formatMessage,
     serviceRequired,
-    workingCase.eventLogs,
   ])
 
   const datePickerVariants = {
