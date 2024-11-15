@@ -672,6 +672,7 @@ export interface VehicleRadioField extends InputField {
   validationErrorMessages?: Record<string, FormText>
   validationErrorFallbackMessage?: FormText
   inputErrorMessage?: FormText
+  itemList: unknown[]
 }
 
 export interface HiddenInputWithWatchedValueField extends BaseField {

@@ -117,8 +117,8 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           validationErrorFallbackMessage:
             applicationCheck.validation.fallbackErrorMessage,
           inputErrorMessage: error.requiredValidVehicle,
+          itemList: currentVehicleList?.vehicles,
         }}
-        currentVehicleList={currentVehicleList?.vehicles}
       />
     </Box>
   )

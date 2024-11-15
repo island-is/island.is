@@ -22,14 +22,12 @@ interface Option {
 
 interface Props extends FieldBaseProps {
   field: VehicleRadioField
-  currentVehicleList: VehicleDetails[]
 }
 
 export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
   application,
   field,
   errors,
-  currentVehicleList,
 }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
@@ -37,6 +35,8 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, `${field.id}.plate`, '') as string,
   )
+
+  const currentVehicleList = field.itemList as VehicleDetails[]
 
   const onRadioControllerSelect = (s: string) => {
     const currentVehicle = currentVehicleList[parseInt(s, 10)]
