@@ -69,9 +69,12 @@ export const FamilyDetailScreen: NavigationFunctionComponent<{
   })
 
   const person: Person =
-    bioChildRes.data?.nationalRegistryPerson?.biologicalChildren?.[0]
-      ?.details ||
-    custodyChildRes?.data?.nationalRegistryPerson?.childCustody?.[0]?.details ||
+    bioChildRes.data?.nationalRegistryPerson?.biologicalChildren?.find(
+      (child) => child.details?.nationalId === id,
+    )?.details ||
+    custodyChildRes?.data?.nationalRegistryPerson?.childCustody?.find(
+      (child) => child.details?.nationalId === id,
+    )?.details ||
     spouseRes.data?.nationalRegistryPerson?.spouse ||
     null
 
