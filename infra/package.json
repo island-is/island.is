@@ -2,6 +2,11 @@
   "name": "infra",
   "version": "1.0.0",
   "main": "index.js",
+  "engines": {
+    "npm": "please-use-yarn",
+    "node": "20.15.0",
+    "yarn": "3.2"
+  },
   "scripts": {
     "test": "jest",
     "charts": "node -r esbuild-register src/cli/generate-chart-values.ts",
