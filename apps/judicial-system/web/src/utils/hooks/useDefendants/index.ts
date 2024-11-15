@@ -11,7 +11,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { useAddToEventLogMutation } from './addToEventLog.generated'
 import { useCreateDefendantMutation } from './createDefendant.generated'
 import { useDeleteDefendantMutation } from './deleteDefendant.generated'
 import { useUpdateDefendantMutation } from './updateDefendant.generated'
@@ -23,7 +22,6 @@ const useDefendants = () => {
     useCreateDefendantMutation()
   const [deleteDefendantMutation] = useDeleteDefendantMutation()
   const [updateDefendantMutation] = useUpdateDefendantMutation()
-  const [addToEventLogMutation] = useAddToEventLogMutation()
 
   const createDefendant = useCallback(
     async (defendant: CreateDefendantInput) => {
@@ -80,24 +78,6 @@ const useDefendants = () => {
     [formatMessage, updateDefendantMutation],
   )
 
-  const addToEventLog = useCallback(
-    async (EventLogInput: EventLogInput) => {
-      try {
-        const { data } = await addToEventLogMutation({
-          variables: {
-            input: EventLogInput,
-          },
-        })
-
-        return Boolean(data)
-      } catch (error) {
-        toast.error(formatMessage(errors.updateDefendant))
-        return false
-      }
-    },
-    [addToEventLogMutation, formatMessage],
-  )
-
   const updateDefendantState = useCallback(
     (
       update: UpdateDefendantInput,
@@ -139,7 +119,6 @@ const useDefendants = () => {
     createDefendant,
     deleteDefendant,
     updateDefendant,
-    addToEventLog,
     updateDefendantState,
     setAndSendDefendantToServer,
   }

@@ -22,6 +22,7 @@ import {
   CaseNotificationType,
   CaseState,
   CaseType,
+  DefendantEventType,
   DefendantNotificationType,
   DefenderChoice,
   isIndictmentCase,
@@ -230,6 +231,14 @@ export class DefendantService {
       defendant.id,
       theCase.id,
     )
+
+    if (update.isSentToPrisonAdmin) {
+      this.defendantEventLogModel.create({
+        caseId: theCase.id,
+        defendantId: defendant.id,
+        eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+      })
+    }
 
     await this.sendUpdateDefendantMessages(
       theCase,

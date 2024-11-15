@@ -35,7 +35,7 @@ const SendToPrisonAdmin: FC = () => {
   const router = useRouter()
   const { defendantId } = useParams<{ caseId: string; defendantId: string }>()
   const { createEventLog } = useEventLog()
-  const { updateDefendant, addToEventLog } = useDefendants()
+  const { updateDefendant } = useDefendants()
 
   const defendant = workingCase.defendants?.find(
     (defendant) => defendant.id === defendantId,
@@ -55,15 +55,9 @@ const SendToPrisonAdmin: FC = () => {
     }
 
     await updateDefendant({
-      caseId: workingCase.id,
       defendantId: defendant.id,
+      caseId: workingCase.id,
       isSentToPrisonAdmin: true,
-    })
-
-    await addToEventLog({
-      caseId: workingCase.id,
-      defendantId: defendant.id,
-      eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
     })
 
     router.push(
