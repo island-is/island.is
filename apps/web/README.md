@@ -90,18 +90,47 @@ yarn nx extract-strings web
 
 Currently, in this project, only the `Custom Page` content type utilizes the `Translation Namespace` content type for translations
 
-### Starting e2e tests locally
-
-You can start the e2e tests by running:
-
-```bash
-yarn e2e web
-```
-
-## Further Documentation
+### Further Documentation
 
 [Subpages](./docs/subpages.md) - Information on Layouts and Components used when
 creating subpages for the web.
+
+## E2E Testing
+
+### Quick Start
+
+To run the E2E tests for the `web` app:
+
+1. **Install dependencies** (if not already installed):
+
+   ```bash
+   yarn install && yarn playwright install
+   ```
+
+2. **Run the tests**:
+
+   ```bash
+   yarn e2e web
+   ```
+
+### Folder Structure
+
+The `e2e` directory is organized as follows:
+
+```shell
+web/
+└── e2e/
+    ├── smoke/                # Smoke tests for basic functionality
+    └── acceptance/           # Acceptance tests for detailed workflows
+```
+
+### Mocking with Mockoon
+
+Mock responses can be set up using Mockoon to simulate API behavior. Refer to the [Mockoon Usage Guide](../../libs/testing/e2e/README.md) for detailed instructions.
+
+### More Resources
+
+Refer to the [E2E Testing Library README](../../libs/testing/e2e/README.md) for common helper functions and utilities.
 
 ## Code owners and maintainers
 
