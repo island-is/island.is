@@ -30,6 +30,10 @@ export enum SubpoenaNotificationType {
   SERVICE_FAILED = 'SERVICE_FAILED',
 }
 
+export enum InstitutionNotificationType {
+  INDICTMENTS_WAITING_FOR_CONFIRMATION = 'INDICTMENTS_WAITING_FOR_CONFIRMATION',
+}
+
 export enum NotificationType {
   HEADS_UP = CaseNotificationType.HEADS_UP,
   READY_FOR_COURT = CaseNotificationType.READY_FOR_COURT,
@@ -54,11 +58,10 @@ export enum NotificationType {
   DEFENDER_ASSIGNED = DefendantNotificationType.DEFENDER_ASSIGNED,
   SERVICE_SUCCESSFUL = SubpoenaNotificationType.SERVICE_SUCCESSFUL,
   SERVICE_FAILED = SubpoenaNotificationType.SERVICE_FAILED,
+  INDICTMENTS_WAITING_FOR_CONFIRMATION = InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
 }
 
-export enum InstitutionNotificationType {
-  INDICTMENTS_WAITING_FOR_CONFIRMATION = 'INDICTMENTS_WAITING_FOR_CONFIRMATION',
-}
+export const notificationTypes = Object.values(NotificationType)
 
 export enum NotificationDispatchType {
   INDICTMENTS_WAITING_FOR_CONFIRMATION = InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,

@@ -49,3 +49,31 @@ query GetPaymentStatus {
     maximumMonthlyPayment
   }
 }
+
+query GetVaccinations($locale: String) {
+  healthDirectorateVaccinations(locale: $locale) {
+    vaccinations {
+      id
+      name
+      description
+      isFeatured
+      status
+      statusName
+      statusColor
+      lastVaccinationDate
+      vaccinationsInfo {
+        id
+        name
+        date
+        age {
+          years
+          months
+        }
+        url
+        comment
+        rejected
+      }
+      comments
+    }
+  }
+}
