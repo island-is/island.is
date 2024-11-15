@@ -115,22 +115,20 @@ const VehicleBulkMileageJobDetail = () => {
       }
       serviceProviderSlug={SAMGONGUSTOFA_SLUG}
       serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-      buttonGroup={
-        <Box marginTop={'containerGutter'}>
-          <Button
-            variant="utility"
-            icon={
-              loading || networkStatus === NetworkStatus.refetch
-                ? undefined
-                : 'reload'
-            }
-            loading={loading || networkStatus === NetworkStatus.refetch}
-            onClick={handleRefresh}
-          >
-            {formatMessage(vehicleMessage.refreshJob)}
-          </Button>
-        </Box>
-      }
+      buttonGroup={[
+        <Button
+          variant="utility"
+          icon={
+            loading || networkStatus === NetworkStatus.refetch
+              ? undefined
+              : 'reload'
+          }
+          loading={loading || networkStatus === NetworkStatus.refetch}
+          onClick={handleRefresh}
+        >
+          {formatMessage(vehicleMessage.refreshJob)}
+        </Button>,
+      ]}
     >
       {!error && !loading && !jobsStatus && (
         <Problem
