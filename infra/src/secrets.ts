@@ -10,7 +10,6 @@ import {
 } from './uber-charts/all-charts'
 import { renderHelmServices } from './dsl/exports/helm'
 import { logger } from './common'
-import { hideBin } from 'yargs/helpers'
 
 interface GetArguments {
   key: string
@@ -29,7 +28,7 @@ const config = {
 }
 
 const ssm = new AWS.SSM(config)
-yargs(hideBin(process.argv))
+yargs(process.argv.slice(2))
   .command(
     'get-all-required-secrets',
     'get all required secrets from all charts',
