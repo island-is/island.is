@@ -217,7 +217,11 @@ export class SubpoenaService {
     // No need to wait for this to finish
     this.addMessagesForSubpoenaUpdateToQueue(subpoena, serviceStatus)
 
-    if (update.serviceStatus && subpoena.case) {
+    if (
+      update.serviceStatus &&
+      update.serviceStatus !== subpoena.serviceStatus &&
+      subpoena.case
+    ) {
       this.eventService.postEvent(
         'SUBPOENA_SERVICE_STATUS',
         subpoena.case,
