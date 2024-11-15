@@ -23,6 +23,7 @@ import {
   CaseNotificationType,
   CaseState,
   DateType,
+  DefendantEventType,
   EventType,
   StringType,
   UserRole,
@@ -36,6 +37,7 @@ import {
   Defendant,
   DefendantService,
 } from '../defendant'
+import { DefendantEventLog } from '../defendant/models/eventLog.model'
 import { EventLog } from '../event-log'
 import { CaseFile, defenderCaseFileCategoriesForRequestCases } from '../file'
 import { IndictmentCount } from '../indictment-count'
@@ -120,6 +122,7 @@ export interface LimitedAccessUpdateCase
   > {}
 
 const eventTypes = Object.values(EventType)
+const defendantEventType = Object.values(DefendantEventType)
 const dateTypes = Object.values(DateType)
 const stringTypes = Object.values(StringType)
 
@@ -226,6 +229,12 @@ export const include: Includeable[] = [
     where: { eventType: { [Op.in]: eventTypes } },
     order: [['created', 'DESC']],
     separate: true,
+  },
+  {
+    model: DefendantEventLog,
+    as: 'defendantEventLogs',
+    required: false,
+    where: { eventType: { [Op.in]: defendantEventType } },
   },
   {
     model: DateLog,

@@ -1,5 +1,4 @@
 import {
-  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -9,7 +8,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 
 import { Case } from '../../case/models/case.model'
 import { Defendant } from './defendant.model'

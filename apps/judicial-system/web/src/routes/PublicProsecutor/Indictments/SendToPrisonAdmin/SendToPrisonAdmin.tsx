@@ -5,7 +5,6 @@ import { useRouter } from 'next/router'
 
 import { Box, InputFileUpload } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
-import { DefendantEventType } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
