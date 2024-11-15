@@ -6,6 +6,7 @@ import CopyIcon from '../../assets/icons/copy.png'
 import { dynamicColor } from '../../utils'
 import { Skeleton } from '../skeleton/skeleton'
 import { Typography } from '../typography/typography'
+import { Label } from '@ui'
 
 const Host = styled.SafeAreaView<{
   noBorder: boolean
@@ -35,8 +36,13 @@ const Content = styled.View<{ isCompact: boolean }>`
     theme.spacing[isCompact ? 1 : 3]}px;
 `
 
-const Label = styled(Typography)`
+const LabelText = styled(Typography)`
   margin-bottom: ${({ theme }) => theme.spacing[1]}px;
+`
+
+const WarningMessage = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+  flex-direction: row;
 `
 
 interface InputProps {
@@ -50,6 +56,7 @@ interface InputProps {
   isCompact?: boolean
   darkBorder?: boolean
   copy?: boolean
+  warningText?: string
 }
 
 export function Input({
@@ -63,6 +70,7 @@ export function Input({
   isCompact = false,
   darkBorder = false,
   copy = false,
+  warningText = '',
 }: InputProps) {
   const tvalue =
     value !== undefined && typeof value === 'string' && value.trim()
@@ -70,7 +78,7 @@ export function Input({
   return (
     <Host noBorder={noBorder} darkBorder={darkBorder}>
       <Content isCompact={isCompact}>
-        <Label variant="body3">{label}</Label>
+        <LabelText variant="body3">{label}</LabelText>
         {loading || error ? (
           <Skeleton
             active={loading}
@@ -78,27 +86,36 @@ export function Input({
             height={size === 'big' ? 26 : undefined}
           />
         ) : (
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Typography
-              testID={valueTestID}
-              selectable
-              variant={size === 'normal' ? 'heading5' : 'heading3'}
-            >
-              {tvalue === '' || !value ? '-' : value}
-            </Typography>
-            {copy && (
-              <TouchableOpacity
-                onPress={() => Clipboard.setString(value ?? '')}
-                style={{ marginLeft: 4 }}
+          <>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Typography
+                testID={valueTestID}
+                selectable
+                variant={size === 'normal' ? 'heading5' : 'heading3'}
               >
-                <Image
-                  source={CopyIcon}
-                  style={{ width: 24, height: 24 }}
-                  resizeMode="contain"
-                />
-              </TouchableOpacity>
+                {tvalue === '' || !value ? '-' : value}
+              </Typography>
+              {copy && (
+                <TouchableOpacity
+                  onPress={() => Clipboard.setString(value ?? '')}
+                  style={{ marginLeft: 4 }}
+                >
+                  <Image
+                    source={CopyIcon}
+                    style={{ width: 24, height: 24 }}
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+            {warningText && (
+              <WarningMessage>
+                <Label color="warning" icon>
+                  {warningText}
+                </Label>
+              </WarningMessage>
             )}
-          </View>
+          </>
         )}
       </Content>
     </Host>

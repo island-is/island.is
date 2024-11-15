@@ -1,0 +1,27 @@
+{
+  "name": "portals-my-pages-graphql",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portals/my-pages/graphql/src",
+  "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/portals/my-pages/graphql/jest.config.ts"
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/portals/my-pages/graphql"]
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/portals/my-pages/graphql/src/schema.ts",
+        "command": "graphql-codegen --config libs/portals/my-pages/graphql/codegen.yml"
+      }
+    }
+  }
+}
