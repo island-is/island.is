@@ -11,7 +11,6 @@ import {
   TRUE,
 } from './constants'
 import * as m from './messages'
-import { table } from 'console'
 
 const isValidMeterNumber = (value: string) => {
   const meterNumberRegex = /^[0-9]{1,20}$/
@@ -81,7 +80,6 @@ const registerProperty = z
     }
   })
 
-<<<<<<< HEAD
 const landlordInfo = z.object({
   table: z.array(
     z.object({
@@ -106,8 +104,6 @@ const tenantInfo = z.object({
   ),
 })
 
-=======
->>>>>>> 4821053e32a274d0ec0a5c45712804f36964e40f
 const rentalPeriod = z
   .object({
     startDate: z
@@ -140,55 +136,6 @@ const rentalPeriod = z
     }
   })
 
-<<<<<<< HEAD
-const rentalAmount = z.object({
-  amount: z
-    .string()
-    .refine((x) => Boolean(x), {
-      params: m.dataSchema.requiredErrorMsg,
-    })
-    .refine((x) => checkIfNegative(x), {
-      params: m.dataSchema.negativeNumberError,
-    }),
-  indexTypes: z
-    .enum([
-      RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
-      RentalAmountIndexTypes.CONSTRUCTION_COST_INDEX,
-      RentalAmountIndexTypes.WAGE_INDEX,
-    ])
-    .optional(),
-  indexValue: z.string().optional(),
-  isIndexConnected: z.string().array().optional(),
-  paymentDateOptions: z
-    .enum([
-      RentalAmountPaymentDateOptions.FIRST_DAY,
-      RentalAmountPaymentDateOptions.LAST_DAY,
-      RentalAmountPaymentDateOptions.OTHER,
-    ])
-    .optional(),
-  paymentDateOther: z.string().optional(),
-  isPaymentInsuranceRequired: z.string().array().optional(),
-})
-
-const specialProvisions = z.object({
-  descriptionInput: z.string().optional(),
-  rulesInput: z.string().optional(),
-})
-
-const condition = z.object({
-  inspector: z.string().optional(),
-  inspectorName: z.string().optional(),
-  resultsDescription: z.string().optional(),
-  resultsFiles: z.array(fileSchema),
-})
-
-const fireProtections = z.object({
-  smokeDetectors: z.string().optional(),
-  fireExtinguisher: z.string().optional(),
-  exits: z.string().optional(),
-  fireBlanket: z.string().optional(),
-})
-=======
 const rentalAmount = z
   .object({
     amount: z
@@ -208,12 +155,15 @@ const rentalAmount = z
       .optional(),
     indexValue: z.string().optional(),
     isIndexConnected: z.string().array().optional(),
-    paymentDateOptions: z.enum([
-      RentalAmountPaymentDateOptions.FIRST_DAY,
-      RentalAmountPaymentDateOptions.LAST_DAY,
-      RentalAmountPaymentDateOptions.OTHER,
-    ]),
+    paymentDateOptions: z
+      .enum([
+        RentalAmountPaymentDateOptions.FIRST_DAY,
+        RentalAmountPaymentDateOptions.LAST_DAY,
+        RentalAmountPaymentDateOptions.OTHER,
+      ])
+      .optional(),
     paymentDateOther: z.string().optional(),
+    isPaymentInsuranceRequired: z.string().array().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.isIndexConnected && data.isIndexConnected.includes(TRUE)) {
@@ -248,7 +198,25 @@ const rentalAmount = z
       })
     }
   })
->>>>>>> 4821053e32a274d0ec0a5c45712804f36964e40f
+
+const specialProvisions = z.object({
+  descriptionInput: z.string().optional(),
+  rulesInput: z.string().optional(),
+})
+
+const condition = z.object({
+  inspector: z.string().optional(),
+  inspectorName: z.string().optional(),
+  resultsDescription: z.string().optional(),
+  resultsFiles: z.array(fileSchema),
+})
+
+const fireProtections = z.object({
+  smokeDetectors: z.string().optional(),
+  fireExtinguisher: z.string().optional(),
+  exits: z.string().optional(),
+  fireBlanket: z.string().optional(),
+})
 
 const securityDeposit = z
   .object({
