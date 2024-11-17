@@ -3,6 +3,7 @@ import { style } from '@vanilla-extract/css'
 
 export const menuItem = style({
   paddingTop: '16px',
+  paddingBottom: '16px',
   display: 'flex',
   justifyContent: 'center',
   transition: 'color .2s',
