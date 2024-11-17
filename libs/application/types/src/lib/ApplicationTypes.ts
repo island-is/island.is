@@ -8,7 +8,6 @@ export enum ApplicationTypes {
   PARENTAL_LEAVE = 'ParentalLeave',
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
   HEALTH_INSURANCE = 'HealthInsurance',
-  CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
   CHILDREN_RESIDENCE_CHANGE_V2 = 'ChildrenResidenceChangeV2',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   LOGIN_SERVICE = 'LoginService',
@@ -77,6 +76,7 @@ export enum ApplicationTypes {
   STREET_REGISTRATION = 'StreetRegistration',
   INCOME_PLAN = 'IncomePlan',
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
+  WORK_ACCIDENT_NOTIFICATION = 'WorkAccidentNotification',
   MACHINE_REGISTRATION = 'MachineRegistration',
   RENTAL_AGREEMENT = 'RentalAgreement',
 }
@@ -117,10 +117,6 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.HEALTH_INSURANCE]: {
     slug: 'sjukratryggingar',
     translation: 'hi.application',
-  },
-  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: {
-    slug: 'breytt-logheimili-barns-old',
-    translation: 'crc.application',
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
     slug: 'breytt-logheimili-barns',
@@ -373,6 +369,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: {
     slug: 'beidni-um-skodun-taekis',
     translation: 'aosh.rifm.application',
+  },
+  [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: {
+    slug: 'tilkynning-um-vinnuslys',
+    translation: 'aosh.wan.application',
   },
   [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
     slug: 'stjornartidindi',

@@ -49,11 +49,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
     contentfulId: InstitutionContentfulIds.SJUKRATRYGGINGAR_ISLANDS,
   },
-  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: {
-    nationalId: InstitutionNationalIds.SYSLUMENN,
-    slug: InstitutionTypes.SYSLUMENN,
-    contentfulId: InstitutionContentfulIds.SYSLUMENN,
-  },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
@@ -403,5 +398,10 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
     slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
     contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+  },
+  [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+    contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
   },
 }

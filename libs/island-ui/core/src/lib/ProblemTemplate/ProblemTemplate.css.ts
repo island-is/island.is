@@ -4,42 +4,30 @@ import { recipe } from '@vanilla-extract/recipes'
 
 export const problemTemplateContainer = recipe({
   base: {
-    ...themeUtils.responsiveStyle({
-      md: {
-        borderWidth: theme.border.width.standard,
-        borderRadius: theme.border.radius.xl,
-      },
-    }),
+    borderWidth: theme.border.width.standard,
+    borderRadius: theme.border.radius.xl,
   },
   variants: {
     red: {
-      true: themeUtils.responsiveStyle({
-        md: {
-          borderColor: theme.color.red200,
-        },
-      }),
+      true: {
+        borderColor: theme.color.red200,
+      },
     },
     blue: {
-      true: themeUtils.responsiveStyle({
-        md: {
-          borderColor: theme.color.blue200,
-        },
-      }),
+      true: {
+        borderColor: theme.color.blue200,
+      },
     },
     yellow: {
-      true: themeUtils.responsiveStyle({
-        md: {
-          borderColor: theme.color.yellow400,
-        },
-      }),
+      true: {
+        borderColor: theme.color.yellow400,
+      },
     },
     noBorder: {
-      true: themeUtils.responsiveStyle({
-        md: {
-          borderWidth: 0,
-          borderRadius: 0,
-        },
-      }),
+      true: {
+        borderWidth: 0,
+        borderRadius: 0,
+      },
     },
   },
 })

@@ -6,11 +6,9 @@ import {
   RentalHousingCategoryClass,
   RentalHousingCategoryTypes,
   RentOtherFeesPayeeOptions,
-  TRUE,
-} from './constants'
-import {
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
+  TRUE,
 } from './constants'
 import * as m from './messages'
 import { table } from 'console'
@@ -23,6 +21,11 @@ const isValidMeterNumber = (value: string) => {
 const isValidMeterStatus = (value: string) => {
   const meterStatusRegex = /^[0-9]{1,10}(,[0-9])?$/
   return meterStatusRegex.test(value)
+}
+
+const isValidIndexValue = (value: string) => {
+  const indexValueRegex = /^\d{1,10}(\.\d{3})*(,\d)?$/
+  return indexValueRegex.test(value)
 }
 
 const checkIfNegative = (inputNumber: string) => {
@@ -78,6 +81,7 @@ const registerProperty = z
     }
   })
 
+<<<<<<< HEAD
 const landlordInfo = z.object({
   table: z.array(
     z.object({
@@ -102,6 +106,8 @@ const tenantInfo = z.object({
   ),
 })
 
+=======
+>>>>>>> 4821053e32a274d0ec0a5c45712804f36964e40f
 const rentalPeriod = z
   .object({
     startDate: z
@@ -134,6 +140,7 @@ const rentalPeriod = z
     }
   })
 
+<<<<<<< HEAD
 const rentalAmount = z.object({
   amount: z
     .string()
@@ -181,6 +188,67 @@ const fireProtections = z.object({
   exits: z.string().optional(),
   fireBlanket: z.string().optional(),
 })
+=======
+const rentalAmount = z
+  .object({
+    amount: z
+      .string()
+      .refine((x) => Boolean(x), {
+        params: m.dataSchema.requiredErrorMsg,
+      })
+      .refine((x) => checkIfNegative(x), {
+        params: m.dataSchema.negativeNumberError,
+      }),
+    indexTypes: z
+      .enum([
+        RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
+        RentalAmountIndexTypes.CONSTRUCTION_COST_INDEX,
+        RentalAmountIndexTypes.WAGE_INDEX,
+      ])
+      .optional(),
+    indexValue: z.string().optional(),
+    isIndexConnected: z.string().array().optional(),
+    paymentDateOptions: z.enum([
+      RentalAmountPaymentDateOptions.FIRST_DAY,
+      RentalAmountPaymentDateOptions.LAST_DAY,
+      RentalAmountPaymentDateOptions.OTHER,
+    ]),
+    paymentDateOther: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.isIndexConnected && data.isIndexConnected.includes(TRUE)) {
+      if (!data.indexValue?.trim().length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.rentalAmount.indexValueRequiredError,
+          path: ['indexValue'],
+        })
+      }
+      if (data.indexValue && !isValidIndexValue(data.indexValue)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.rentalAmount.indexValueValidationError,
+          path: ['indexValue'],
+        })
+      }
+    }
+
+    if (
+      data.paymentDateOptions &&
+      data.paymentDateOptions.includes(RentalAmountPaymentDateOptions.OTHER) &&
+      !data.paymentDateOther?.trim().length
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.rentalAmount.paymentDateOtherOptionRequiredError,
+        path: ['paymentDateOther'],
+      })
+    }
+  })
+>>>>>>> 4821053e32a274d0ec0a5c45712804f36964e40f
 
 const securityDeposit = z
   .object({
@@ -301,7 +369,7 @@ const securityDeposit = z
       (data.securityType === SecurityDepositTypeOptions.CAPITAL ||
         data.securityType ===
           SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE) &&
-      Number(data.rentalAmount) * 3 < Number(data.securityAmount)
+      Number(data.rentalAmount) * 3 < Number(data.securityAmountOther)
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

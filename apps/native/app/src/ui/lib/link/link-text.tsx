@@ -1,4 +1,5 @@
 import React from 'react'
+import { Image } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { ImageSourcePropType, Text } from 'react-native'
 import { fontByWeight } from '@ui/utils'
@@ -6,7 +7,9 @@ import { fontByWeight } from '@ui/utils'
 const Host = styled.View`
   border-bottom-width: 1px;
   border-bottom-color: ${(props) => props.theme.color.blue400};
-  margin-bottom: 1px;
+  padding-bottom: 2px;
+  align-items: center;
+  flex-direction: row;
 `
 
 const variants = {
@@ -19,10 +22,10 @@ type LinkVariant = keyof typeof variants
 interface LinkTextProps {
   children: string | React.ReactNode
   variant?: LinkVariant
-  icon?: React.ReactNode | ImageSourcePropType
+  icon?: ImageSourcePropType
 }
 
-export function LinkText({ children, variant = 'large' }: LinkTextProps) {
+export function LinkText({ children, variant = 'large', icon }: LinkTextProps) {
   const theme = useTheme()
   const styles = variants[variant]
   const variantLineHeight = styles.lineHeight / styles.fontSize
@@ -42,6 +45,9 @@ export function LinkText({ children, variant = 'large' }: LinkTextProps) {
       >
         {children}
       </Text>
+      {icon && (
+        <Image source={icon} style={{ paddingBottom: 1, marginLeft: 3 }} />
+      )}
     </Host>
   )
 }
