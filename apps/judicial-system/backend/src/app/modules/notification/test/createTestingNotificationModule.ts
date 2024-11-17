@@ -25,6 +25,8 @@ import { eventModuleConfig, EventService } from '../../event'
 import { InstitutionService } from '../../institution'
 import { UserService } from '../../user'
 import { CaseNotificationService } from '../caseNotification.service'
+import { CivilClaimantNotificationService } from '../civilClaimantNotification.service'
+import { DefendantNotificationService } from '../defendantNotification.service'
 import { InstitutionNotificationService } from '../institutionNotification.service'
 import { InternalNotificationController } from '../internalNotification.controller'
 import { Notification } from '../models/notification.model'
@@ -102,6 +104,8 @@ export const createTestingNotificationModule = async () => {
       CaseNotificationService,
       NotificationDispatchService,
       InstitutionNotificationService,
+      DefendantNotificationService,
+      CivilClaimantNotificationService,
     ],
   })
     .useMocker((token) => {

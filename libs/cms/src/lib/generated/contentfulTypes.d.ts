@@ -3066,9 +3066,14 @@ export interface IOrganizationPageFields {
     | 'vinnueftirlitid'
     | 'hljodbokasafn-islands'
     | 'thjodskjalasafn'
+    | 'faggilding'
+    | 'standalone'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
+
+  /** Sitemap */
+  sitemap?: ISitemap | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -3081,6 +3086,46 @@ export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
     contentType: {
       sys: {
         id: 'organizationPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IOrganizationParentSubpageFields {
+  /** Internal Title */
+  internalTitle: string
+
+  /** Displayed Title */
+  title: string
+
+  /** Slug */
+  slug?: string | undefined
+
+  /** Pages */
+  pages: IOrganizationSubpage[]
+
+  /** Related Content */
+  relatedContent?: ILink[] | undefined
+
+  /** Image */
+  image?: Asset | undefined
+}
+
+/** Navigation page for content that belongs in multiple organization subpages */
+
+export interface IOrganizationParentSubpage
+  extends Entry<IOrganizationParentSubpageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'organizationParentSubpage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3764,6 +3809,31 @@ export interface ISidebarCard extends Entry<ISidebarCardFields> {
     contentType: {
       sys: {
         id: 'sidebarCard'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ISitemapFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Tree */
+  tree?: Record<string, any> | undefined
+}
+
+export interface ISitemap extends Entry<ISitemapFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sitemap'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -5100,6 +5170,7 @@ export type CONTENT_TYPE =
   | 'openDataSubpage'
   | 'organization'
   | 'organizationPage'
+  | 'organizationParentSubpage'
   | 'organizationSubpage'
   | 'organizationTag'
   | 'overviewLinks'
@@ -5115,6 +5186,7 @@ export type CONTENT_TYPE =
   | 'sectionWithVideo'
   | 'serviceWebPage'
   | 'sidebarCard'
+  | 'sitemap'
   | 'sliceConnectedComponent'
   | 'sliceDropdown'
   | 'statistic'

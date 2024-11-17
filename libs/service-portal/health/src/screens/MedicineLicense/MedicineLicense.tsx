@@ -6,6 +6,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
+<<<<<<<< HEAD:libs/service-portal/health/src/screens/MedicineLicense/MedicineLicense.tsx
 import { useGetDrugCertificatesQuery } from '../Medicine/Medicine.generated'
 import {
   ActionCard,
@@ -13,6 +14,11 @@ import {
   m,
   SJUKRATRYGGINGAR_SLUG,
 } from '@island.is/service-portal/core'
+========
+import { useGetDrugCertificatesQuery } from './Medicine.generated'
+import { SECTION_GAP } from './constants'
+import { ActionCard, m } from '@island.is/portals/my-pages/core'
+>>>>>>>> main:libs/portals/my-pages/health/src/screens/Medicine/MedicineLicense.tsx
 import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
 

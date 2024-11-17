@@ -36,6 +36,8 @@ import {
   Frigg,
   HealthDirectorateVaccination,
   HealthDirectorateOrganDonation,
+  WorkAccidents,
+  NationalRegistryB2C,
 } from '../../../../infra/src/dsl/xroad'
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
@@ -267,6 +269,7 @@ export const serviceSetup = (services: {
       Labor,
       HealthInsurance,
       NationalRegistry,
+      NationalRegistryB2C,
       Payment,
       DrivingLicense,
       PaymentSchedule,
@@ -298,6 +301,7 @@ export const serviceSetup = (services: {
       Frigg,
       HealthDirectorateVaccination,
       HealthDirectorateOrganDonation,
+      WorkAccidents,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -337,14 +341,16 @@ export const serviceSetup = (services: {
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME',
       ALTHINGI_OMBUDSMAN_XROAD_PASSWORD:
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
     .db()
     .migrations()
-    .liveness('/liveness')
-    .readiness('/liveness')
+    .liveness({ path: '/liveness', initialDelaySeconds: 20 })
+    .readiness({ path: '/liveness', initialDelaySeconds: 20 })
     .resources({
-      limits: { cpu: '400m', memory: '1024Mi' },
-      requests: { cpu: '75m', memory: '512Mi' },
+      limits: { cpu: '600m', memory: '1024Mi' },
+      requests: { cpu: '200m', memory: '512Mi' },
     })
     .replicaCount({
       default: 2,

@@ -259,6 +259,13 @@ export const en: TranslatedMessages = {
     'At the moment it is not possible to add driving licenses to the phone.',
   'walletPass.moreInfo': 'More information',
   'walletPass.alertClose': 'Cancel',
+  'walletPass.errorCannotAddPasses':
+    'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
+  'walletPass.errorAddingOrFetching': 'Failed to fetch or add pass.',
+  'walletPass.errorNotPossibleOnThisDevice':
+    'You cannot add passes on this device.',
+  'walletPass.errorNotConnectedNoBarcode':
+    'Not possible to scan barcode if the device is not connected to the internet.',
 
   // wallet passport
   'walletPassport.screenTitle': 'Passport',
@@ -587,6 +594,9 @@ export const en: TranslatedMessages = {
   'problem.offline.title': 'No internet connection',
   'problem.offline.message':
     'An error occurred while communicating with the service provider',
+  'problem.thirdParty.title': 'Service unreachable',
+  'problem.thirdParty.message':
+    'An error occurred while communicating with the service provider',
 
   // passkeys
   'passkeys.headingTitle': 'Sign in with Island.is app',
@@ -609,7 +619,7 @@ export const en: TranslatedMessages = {
   'updateApp.button': 'Update',
   'updateApp.buttonSkip': 'Skip',
 
-  // health
+  // health - overview
   'health.overview.screenTitle': 'Health',
   'health.overview.title': 'My health',
   'health.overview.description':
@@ -628,5 +638,42 @@ export const en: TranslatedMessages = {
   'health.overview.paymentCredit': 'Credit',
   'health.overview.paymentDebt': 'Debt',
   'health.overview.therapy': 'Therapy',
+  'health.overview.vaccinations': 'Vaccinations',
   'health.overview.aidsAndNutrition': 'Aids and nutrition',
+  'health.overview.medicinePurchase': 'Medicine purchase',
+  'health.overview.period': 'Period',
+  'health.overview.levelStatus': 'Medicine step',
+  'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
+  'health.overview.medicinePurchaseNoActivePeriodWarning':
+    'A new payment period begins with the next medicine purchase',
+
+  // health - vaccinations
+  'health.vaccinations.screenTitle': 'Vaccinations',
+  'health.vaccinations.title': 'Vaccinations',
+  'health.vaccinations.description':
+    'Here you can see a list of vaccines you have received, vaccination status and other information.',
+  'health.vaccinations.generalVaccinations': 'General vaccinations',
+  'health.vaccinations.otherVaccinations': 'Other vaccinations',
+  'health.vaccinations.number': 'No.',
+  'health.vaccinations.date': 'Date',
+  'health.vaccinations.age': 'Age',
+  'health.vaccinations.vaccine': 'Vaccine',
+  'health.vaccinations.noVaccinations': 'No vaccinations recorded',
+  'health.vaccinations.noVaccinationsDescription':
+    'If you believe you have data that should appear here, please contact service provider.',
+  'health.vaccinations.directorateOfHealth': 'The directorate of Health',
+
+  // health - organ donation
+  'health.organDonation': 'Organ Donation',
+  'health.organDonation.change': 'Breyta afstöðu',
+  'health.organDonation.isDonor': 'Ég er líffæragjafi',
+  'health.organDonation.isDonorWithLimitations':
+    'Ég heimila líffæragjöf, með takmörkunum.',
+  'health.organDonation.isNotDonor': 'Ég heimila ekki líffæragjöf',
+  'health.organDonation.isDonorDescription':
+    'Öll líffærin mín má nota til ígræðslu.',
+  'health.organDonation.isNotDonorDescription':
+    'Engin líffæri má nota til ígræðslu.',
+  'health.organDonation.isDonorWithLimitationsDescription':
+    'Öll líffærin mín má nota til ígræðslu fyrir utan: {limitations}.',
 }

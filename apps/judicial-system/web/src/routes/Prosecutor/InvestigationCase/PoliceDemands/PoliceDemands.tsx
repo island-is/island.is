@@ -16,6 +16,7 @@ import {
   FormFooter,
   PageHeader,
   PageLayout,
+  PageTitle,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -188,11 +189,7 @@ const PoliceDemands = () => {
         )}
       />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(icDemands.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(icDemands.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
