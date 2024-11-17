@@ -4,7 +4,7 @@ import {
   HEALTH_DIRECTORATE_SLUG,
   IntroHeader,
   TabNavigation,
-} from '@island.is/service-portal/core'
+} from '@island.is/portals/my-pages/core'
 import { messages as m } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
 import { SECTION_GAP } from '../constants'
