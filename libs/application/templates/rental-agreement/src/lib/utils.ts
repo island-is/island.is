@@ -28,6 +28,9 @@ export const formatDate = (date: string) => {
   })
 }
 
+export const formatCurrency = (answer: string) =>
+  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ISK'
+
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const propertyCategoryTypeOptions =
     getValueViaPath<RentalHousingCategoryTypes>(

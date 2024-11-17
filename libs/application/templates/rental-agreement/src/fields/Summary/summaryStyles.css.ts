@@ -1,19 +1,24 @@
 import { style } from '@vanilla-extract/css'
 
-export const summaryWrapper = style({
+export const summaryWrap = style({
   paddingTop: '1.5rem',
   paddingBottom: '1rem',
 })
 
-export const sectionWrapper = style({
+export const summarySection = style({
+  marginTop: '0.5rem',
   marginBottom: '1.5rem',
   padding: '1.5rem',
-  border: '1px solid #eaeaea',
-  borderRadius: '12px',
+  border: '1px solid #ccDfff',
+  borderRadius: '8px',
 })
 
 export const gridRow = style({
-  marginBottom: '1.5rem',
-  paddingBottom: '1.5rem',
-  borderBottom: '1px solid #eaeaea',
+  display: 'flex',
+})
+
+export const divider = style({
+  marginTop: '1rem',
+  marginBottom: '1rem',
+  borderBottom: '1px solid #F2F7FF',
 })

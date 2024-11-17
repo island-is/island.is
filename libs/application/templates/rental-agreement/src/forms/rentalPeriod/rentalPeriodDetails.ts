@@ -19,6 +19,8 @@ const rentalPeriodIsDefinite = (answers: FormValue) => {
   return rentalPeriodDefinite && rentalPeriodDefinite.includes(TRUE)
 }
 
+console.log('RentalPeriodIsDefinite: ', rentalPeriodIsDefinite)
+
 export const RentalPeriodDetails = buildSubSection({
   id: 'rentalPeriod',
   title: rentalPeriod.subSectionName,
@@ -34,6 +36,7 @@ export const RentalPeriodDetails = buildSubSection({
           placeholder: rentalPeriod.startDatePlaceholder,
           required: true,
         }),
+
         buildDateField({
           id: 'rentalPeriod.endDate',
           title: rentalPeriod.endDateTitle,
