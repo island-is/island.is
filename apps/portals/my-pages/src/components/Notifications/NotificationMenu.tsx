@@ -39,7 +39,8 @@ const NotificationMenu = ({
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
 
-  const isMobile = width < theme.breakpoints.lg
+  const isMobile = width < theme.breakpoints.md
+  const isTablet = width < theme.breakpoints.lg && !isMobile
 
   const onClose = () => {
     closeNotificationMenu()
@@ -60,17 +61,17 @@ const NotificationMenu = ({
       <Box
         position="relative"
         background="white"
-        padding={isMobile ? 0 : 2}
+        padding={isMobile || isTablet ? 0 : 2}
         borderRadius="large"
         display="flex"
         flexDirection="column"
         height={isMobile ? 'full' : undefined}
         className={cn(
-          isMobile ? mStyles.fullScreen : mStyles.dropdown,
+          isMobile || isTablet ? mStyles.fullScreen : mStyles.dropdown,
           mStyles.container,
         )}
         style={
-          !isMobile
+          !isMobile && !isTablet
             ? {
                 left: rightPosition ?? '75%',
                 transform: 'translateX(-100%)',
