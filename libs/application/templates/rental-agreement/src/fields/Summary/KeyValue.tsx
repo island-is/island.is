@@ -1,7 +1,18 @@
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { TextVariants } from 'libs/island-ui/core/src/lib/Text/Text.css'
 import { MessageDescriptor } from 'react-intl'
+
+type TextVariants =
+  | 'default'
+  | 'small'
+  | 'medium'
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'h4'
+  | 'h5'
+  | 'intro'
+  | 'eyebrow'
 
 type TextElements =
   | 'h1'
