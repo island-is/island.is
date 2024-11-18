@@ -3,7 +3,7 @@ import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
-import { EmailRecipient, EmailRole } from './types'
+import { EmailRecipient, EmailRole, RejectType } from './types'
 import {
   getAllRoles,
   getRecipients,
@@ -99,7 +99,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       )
     }
 
-    // A. vehicleCount > 20
+    // Case: count > 20
     // Display search box, validate vehicle when permno is entered
     if (totalRecords > 20) {
       return {
@@ -112,13 +112,13 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
     const vehicles = await Promise.all(
       resultData.map(async (vehicle) => {
-        // B. 20 >= vehicleCount > 5
+        // Case: 20 >= count > 5
         // Display dropdown, validate vehicle when selected in dropdown
         if (totalRecords > 5) {
           return this.mapVehicle(auth, vehicle, false)
         }
 
-        // C. vehicleCount <= 5
+        // Case: count <= 5
         // Display radio buttons, validate all vehicles now
         return this.mapVehicle(auth, vehicle, true)
       }),
@@ -297,14 +297,25 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     return recipientList
   }
 
-  async rejectApplication({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps): Promise<void> {
+  async rejectApplication(props: TemplateApiModuleActionProps): Promise<void> {
+    return this.doRejectApplication(props, RejectType.REJECT)
+  }
+
+  async deleteApplication(props: TemplateApiModuleActionProps): Promise<void> {
+    return this.doRejectApplication(props, RejectType.DELETE)
+  }
+
+  private async doRejectApplication(
+    { application, auth }: TemplateApiModuleActionProps,
+    rejectType: RejectType,
+  ): Promise<void> {
     // 1. Delete charge so that the seller gets reimburshed
-    const chargeId = getPaymentIdFromExternalData(application)
-    if (chargeId) {
-      this.chargeFjsV2ClientService.deleteCharge(chargeId)
+    // Note: not necessary on delete, since that is done in the shared delete function
+    if (rejectType !== RejectType.DELETE) {
+      const chargeId = getPaymentIdFromExternalData(application)
+      if (chargeId) {
+        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+      }
     }
 
     // 2. Notify everyone in the process that the application has been withdrawn
@@ -324,13 +335,14 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
                 props,
                 recipientList[i],
                 rejectedByRecipient,
+                rejectType,
               ),
             application,
           )
           .catch((e) => {
             this.logger.error(
               `Error sending email about rejectApplication in application: ID: ${application.id}, 
-            role: ${recipientList[i].role}`,
+            role: ${recipientList[i].role} (${rejectType})`,
               e,
             )
           })
@@ -344,6 +356,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
                 application,
                 recipientList[i],
                 rejectedByRecipient,
+                rejectType,
               ),
             application,
           )
@@ -351,7 +364,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
             this.logger.error(
               `Error sending sms about rejectApplication to 
               a phonenumber in application: ID: ${application.id}, 
-              role: ${recipientList[i].role}`,
+              role: ${recipientList[i].role} (${rejectType})`,
               e,
             )
           })
@@ -426,12 +439,26 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
     const mileage = answers?.vehicleMileage?.value
 
-    await this.vehicleOperatorsClient.saveOperators(
+    const submitResult = await this.vehicleOperatorsClient.saveOperators(
       auth,
       permno,
       operators,
       mileage ? Number(mileage) || 0 : null,
     )
+
+    if (
+      submitResult.hasError &&
+      submitResult.errorMessages &&
+      submitResult.errorMessages.length > 0
+    ) {
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.validation.alertTitle,
+          summary: submitResult.errorMessages,
+        },
+        400,
+      )
+    }
 
     // 3. Notify everyone in the process that the application has successfully been submitted
 

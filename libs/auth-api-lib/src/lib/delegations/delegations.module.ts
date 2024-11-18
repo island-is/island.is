@@ -5,10 +5,7 @@ import { RskRelationshipsClientModule } from '@island.is/clients-rsk-relationshi
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
-import {
-  ZendeskModule,
-  ZendeskServiceOptions,
-} from '@island.is/clients/zendesk'
+import { ZendeskModule } from '@island.is/clients/zendesk'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
@@ -50,9 +47,9 @@ import { NamesService } from './names.service'
     NationalRegistryClientModule,
     RskRelationshipsClientModule,
     CompanyRegistryClientModule,
+    ZendeskModule,
     UserIdentitiesModule,
     FeatureFlagModule,
-    ZendeskModule.register(environment.zendeskOptions as ZendeskServiceOptions),
     SequelizeModule.forFeature([
       ApiScope,
       ApiScopeDelegationType,

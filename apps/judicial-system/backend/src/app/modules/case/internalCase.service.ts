@@ -418,7 +418,7 @@ export class InternalCaseService {
           collectEncryptionProperties(defendantEncryptionProperties, defendant)
         defendantsArchive.push(defendantArchive)
 
-        await this.defendantService.updateForArcive(
+        await this.defendantService.updateDatabaseDefendant(
           theCase.id,
           defendant.id,
           clearedDefendantProperties,
@@ -543,7 +543,9 @@ export class InternalCaseService {
       .then(async (pdf) => {
         await this.refreshFormatMessage()
 
-        const fileName = this.formatMessage(courtUpload.indictment)
+        const fileName = this.formatMessage(courtUpload.indictment, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        })
 
         return this.courtService.createDocument(
           user,
@@ -1003,9 +1005,9 @@ export class InternalCaseService {
         )
         .map(async (caseFile) => {
           // TODO: Tolerate failure, but log error
-          const file = await this.awsS3Service.getObject(
-            theCase.type,
-            caseFile.key,
+          const file = await this.fileService.getCaseFileFromS3(
+            theCase,
+            caseFile,
           )
 
           return {
@@ -1152,9 +1154,9 @@ export class InternalCaseService {
         ?.filter((file) => file.category === CaseFileCategory.APPEAL_RULING)
         .map(async (caseFile) => {
           // TODO: Tolerate failure, but log error
-          const file = await this.awsS3Service.getObject(
-            theCase.type,
-            caseFile.key,
+          const file = await this.fileService.getCaseFileFromS3(
+            theCase,
+            caseFile,
           )
 
           return {
@@ -1221,6 +1223,12 @@ export class InternalCaseService {
       attributes: ['id', 'courtCaseNumber', 'type', 'state'],
       where: {
         type: CaseType.INDICTMENT,
+        // Make sure we don't send cases that are in deleted or other inaccessible states
+        state: [
+          CaseState.RECEIVED,
+          CaseState.COMPLETED,
+          CaseState.WAITING_FOR_CANCELLATION,
+        ],
         // The national id could be without a hyphen or with a hyphen so we need to
         // search for both
         '$defendants.national_id$': normalizeAndFormatNationalId(nationalId),

@@ -14,7 +14,7 @@ import jwksClient from 'jwks-rsa'
 import { jwtDecode } from 'jwt-decode'
 
 import { IdTokenClaims } from '@island.is/shared/types'
-import { decode, verify, Algorithm } from 'jsonwebtoken'
+import { Algorithm, decode, verify } from 'jsonwebtoken'
 import { v4 as uuid } from 'uuid'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
@@ -492,10 +492,6 @@ export class AuthService {
 
   async callbackLogout(res: Response, body: CallbackLogoutDto) {
     const logoutToken = body.logout_token
-
-    this.logger.info('Callback backchannel logout initiated', {
-      logoutToken,
-    })
 
     if (!logoutToken) {
       const errorMessage = 'No param "logout_token" provided!'

@@ -30,12 +30,13 @@ import {
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
+  MockableSamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
 import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { getChargeItemCodes, hasReviewerApproved } from '../utils'
+import { getChargeItemCodes, canReviewerApprove } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getExtraData } from '../utils/getChargeItemCodes'
@@ -65,7 +66,7 @@ const reviewStatePendingAction = (
   role: string,
   nationalId: string,
 ): PendingAction => {
-  if (nationalId && !hasReviewerApproved(nationalId, application.answers)) {
+  if (nationalId && canReviewerApprove(nationalId, application.answers)) {
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
       content: corePendingActionMessages.youNeedToReviewDescription,
@@ -145,6 +146,7 @@ const template: ApplicationTemplate<
                 IdentityApi,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
+                MockableSamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
               ],
             },
@@ -199,6 +201,9 @@ const template: ApplicationTemplate<
               pruneInDaysAtMidnight(application, 7),
             shouldDeleteChargeIfPaymentFulfilled: true,
           },
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

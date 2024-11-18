@@ -126,6 +126,7 @@ export const EditClient = () => {
             clientId={selectedEnvironment.clientId}
             issuerUrl={IssuerUrls[selectedEnvironment.environment]}
             clientSecrets={selectedEnvironment.secrets}
+            clientType={client.clientType}
           />
           <Translations translations={selectedEnvironment.displayName} />
           {!isMachineApplication && (
