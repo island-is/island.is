@@ -258,17 +258,20 @@ const Processing: FC = () => {
   )
 
   useEffect(() => {
-    if (!personData || !personData.items || personData.items.length === 0) {
-      setNationalIdNotFound(true)
+    if (!civilClaimantNationalIdUpdate) {
       return
     }
 
-    setNationalIdNotFound(false)
+    const items = personData?.items || []
+    const person = items[0]
+
+    setNationalIdNotFound(items.length === 0)
+
     const update = {
       caseId: workingCase.id,
-      civilClaimantId: civilClaimantNationalIdUpdate?.civilClaimantId || '',
-      name: personData?.items[0].name,
-      nationalId: personData.items[0].kennitala,
+      civilClaimantId: civilClaimantNationalIdUpdate.civilClaimantId || '',
+      nationalId: civilClaimantNationalIdUpdate.nationalId,
+      ...(person?.name ? { name: person.name } : {}),
     }
 
     handleUpdateCivilClaimant(update)
