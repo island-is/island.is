@@ -31,8 +31,8 @@ const SectionHeading: FC<Props> = ({
     </Text>
     {description && (
       <Box component="span" marginTop={1}>
-        {typeof description === 'string' || description instanceof String ? (
-          <Text marginTop={2}>{description}</Text>
+        {typeof description === 'string' ? (
+          <Text>{description}</Text>
         ) : (
           description
         )}
