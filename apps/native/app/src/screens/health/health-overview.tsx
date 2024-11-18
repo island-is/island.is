@@ -26,6 +26,7 @@ import {
   useGetHealthCenterQuery,
   useGetHealthInsuranceOverviewQuery,
   useGetMedicineDataQuery,
+  useGetOrganDonorStatusQuery,
   useGetPaymentOverviewQuery,
   useGetPaymentStatusQuery,
 } from '../../graphql/types/schema'
@@ -36,6 +37,7 @@ import { useBrowser } from '../../lib/use-browser'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
+import { useLocale } from '../../hooks/use-locale'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -52,10 +54,15 @@ const ButtonWrapper = styled.View`
 
 interface HeadingSectionProps {
   title: string
+  linkTextId?: string
   onPress: () => void
 }
 
-const HeadingSection: React.FC<HeadingSectionProps> = ({ title, onPress }) => {
+const HeadingSection: React.FC<HeadingSectionProps> = ({
+  title,
+  onPress,
+  linkTextId,
+}) => {
   const theme = useTheme()
   return (
     <TouchableOpacity onPress={onPress} style={{ marginTop: theme.spacing[2] }}>
@@ -74,7 +81,7 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({ title, onPress }) => {
               color={theme.color.blue400}
               style={{ marginRight: 4 }}
             >
-              <FormattedMessage id="button.seeAll" />
+              <FormattedMessage id={linkTextId ?? 'button.seeAll'} />
             </Typography>
             <Image source={externalLinkIcon} />
           </TouchableOpacity>
@@ -111,10 +118,17 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const { width } = useWindowDimensions()
   const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
   const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
+  const isOrganDonationEnabled = useFeatureFlag('isOrganDonationEnabled', false)
 
   const now = useMemo(() => new Date().toISOString(), [])
 
   const medicinePurchaseRes = useGetMedicineDataQuery()
+  const organDonationRes = useGetOrganDonorStatusQuery({
+    variables: {
+      locale: useLocale(),
+    },
+    skip: !isOrganDonationEnabled,
+  })
   const healthInsuranceRes = useGetHealthInsuranceOverviewQuery()
   const healthCenterRes = useGetHealthCenterQuery()
   const paymentStatusRes = useGetPaymentStatusQuery()
@@ -137,11 +151,24 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const paymentStatusData = paymentStatusRes.data?.rightsPortalCopaymentStatus
   const paymentOverviewData =
     paymentOverviewRes.data?.rightsPortalPaymentOverview?.items?.[0]
+  const organDonationData =
+    organDonationRes.data?.healthDirectorateOrganDonation.donor
 
   const isMedicinePeriodActive =
     medicinePurchaseData?.active ||
     (medicinePurchaseData?.dateTo &&
       new Date(medicinePurchaseData.dateTo) > new Date())
+
+  const isOrganDonor = organDonationData?.isDonor ?? false
+
+  const isOrganDonorWithLimitations =
+    isOrganDonor && (organDonationData?.limitations?.hasLimitations ?? false)
+
+  const organLimitations = isOrganDonorWithLimitations
+    ? organDonationData?.limitations?.limitedOrgansList?.map(
+        (organ) => organ.name,
+      ) ?? []
+    : []
 
   useConnectivityIndicator({
     componentId,
@@ -165,7 +192,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
         healthCenterRes.refetch(),
         paymentStatusRes.refetch(),
         paymentOverviewRes.refetch(),
-      ]
+        isOrganDonationEnabled && organDonationRes.refetch(),
+      ].filter(Boolean)
       await Promise.all(promises)
     } catch (e) {
       // noop
@@ -178,6 +206,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
     healthCenterRes,
     paymentStatusRes,
     paymentOverviewRes,
+    organDonationRes,
+    isOrganDonationEnabled,
   ])
 
   return (
@@ -506,6 +536,54 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           {medicinePurchaseRes.error &&
             !medicinePurchaseRes.data &&
             showErrorComponent(medicinePurchaseRes.error)}
+          {isOrganDonationEnabled && (
+            <HeadingSection
+              title={intl.formatMessage({
+                id: 'health.organDonation',
+              })}
+              linkTextId="health.organDonation.change"
+              onPress={() =>
+                openBrowser(
+                  `${origin}/minarsidur/heilsa/liffaeragjof/skraning`,
+                  componentId,
+                )
+              }
+            />
+          )}
+          {isOrganDonationEnabled && (
+            <InputRow background>
+              <Input
+                label={intl.formatMessage({
+                  id: isOrganDonorWithLimitations
+                    ? 'health.organDonation.isDonorWithLimitations'
+                    : isOrganDonor
+                    ? 'health.organDonation.isDonor'
+                    : 'health.organDonation.isNotDonor',
+                })}
+                value={`${intl.formatMessage(
+                  {
+                    id: isOrganDonorWithLimitations
+                      ? 'health.organDonation.isDonorWithLimitationsDescription'
+                      : isOrganDonor
+                      ? 'health.organDonation.isDonorDescription'
+                      : 'health.organDonation.isNotDonorDescription',
+                  },
+                  {
+                    limitations: isOrganDonorWithLimitations
+                      ? organLimitations?.join(', ')
+                      : '',
+                  },
+                )}`}
+                loading={organDonationRes.loading && !organDonationRes.data}
+                error={organDonationRes.error && !organDonationRes.data}
+                noBorder
+              />
+            </InputRow>
+          )}
+          {isOrganDonationEnabled &&
+            organDonationRes.error &&
+            !organDonationRes.data &&
+            showErrorComponent(organDonationRes.error)}
         </Host>
       </ScrollView>
     </View>
