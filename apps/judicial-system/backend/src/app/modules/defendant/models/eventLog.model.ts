@@ -12,6 +12,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { Case } from '../../case/models/case.model'
 import { Defendant } from './defendant.model'
+import { DefendantEventType } from '@island.is/judicial-system/types'
 
 @Table({
   tableName: 'defendant_event_log',
@@ -45,7 +46,11 @@ export class DefendantEventLog extends Model {
   @ApiProperty({ type: String })
   defendantId!: string
 
-  @Column({ type: DataType.STRING, allowNull: false })
-  @ApiProperty({ type: String })
-  eventType!: string
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(DefendantEventType),
+  })
+  @ApiProperty({ enum: DefendantEventType })
+  eventType!: DefendantEventType
 }
