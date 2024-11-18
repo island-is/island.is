@@ -1,11 +1,11 @@
-import { FC, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useParams } from 'next/navigation'
 import { useRouter } from 'next/router'
 
-import { Box, InputFileUpload } from '@island.is/island-ui/core'
+import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, errors } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -17,10 +17,14 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
-import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
+import {
+  useDefendants,
+  useS3Upload,
+  useUploadFiles,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './SendToPrisonAdmin.strings'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 
 enum AvailableModal {
   SUCCESS = 'SUCCESS',
@@ -31,18 +35,21 @@ const SendToPrisonAdmin: FC = () => {
     useContext(FormContext)
   const { formatMessage } = useIntl()
   const [modalVisible, setModalVisible] = useState<AvailableModal>()
+  const [uploadFileError, setUploadFileError] = useState<string>()
   const router = useRouter()
   const { defendantId } = useParams<{ caseId: string; defendantId: string }>()
-  const { createEventLog } = useEventLog()
-  const { updateDefendant } = useDefendants()
+  const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
+  const { updateDefendant, isUpdatingDefendant } = useDefendants()
+  const { uploadFiles, removeUploadFile, addUploadFiles, updateUploadFile } =
+    useUploadFiles()
 
   const defendant = workingCase.defendants?.find(
     (defendant) => defendant.id === defendantId,
   )
 
-  const handleNextButtonClick = () => {
+  const handleNextButtonClick = useCallback(async () => {
     setModalVisible(AvailableModal.SUCCESS)
-  }
+  }, [])
 
   const handleSecondaryButtonClick = () => {
     setModalVisible(undefined)
@@ -59,10 +66,42 @@ const SendToPrisonAdmin: FC = () => {
       isSentToPrisonAdmin: true,
     })
 
+    // TODO: UNCOMMENT WHEN THIS FEATURE IS READY
+    // const uploadResult = await handleUpload(
+    //   uploadFiles.filter((file) => file.percent === 0),
+    //   updateUploadFile,
+    // )
+
+    // if (uploadResult !== 'ALL_SUCCEEDED') {
+    //   setUploadFileError(formatMessage(errors.uploadFailed))
+    //   return
+    // }
+
     router.push(
       `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE}/${workingCase.id}`,
     )
   }
+
+  const handleFileUpload = useCallback(
+    (files: File[]) => {
+      addUploadFiles(files, {
+        category: CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+        status: 'done',
+      })
+    },
+    [addUploadFiles],
+  )
+
+  const handleRemoveFile = useCallback(
+    (file: UploadFile) => {
+      if (file.key) {
+        handleRemove(file, removeUploadFile)
+      } else {
+        removeUploadFile(file)
+      }
+    },
+    [handleRemove, removeUploadFile],
+  )
 
   return (
     <PageLayout
@@ -81,17 +120,22 @@ const SendToPrisonAdmin: FC = () => {
           description={formatMessage(strings.fileUploadDescription)}
         />
         <Box marginBottom={10}>
+          {/* NOTE: This is temporarily disabled while we work on this
+          upload feature.
           <InputFileUpload
-            fileList={[]}
+            fileList={uploadFiles.filter(
+              (file) =>
+                file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
+            )}
             accept="application/pdf"
             header={formatMessage(core.uploadBoxTitle)}
             description={formatMessage(core.uploadBoxDescription, {
               fileEndings: '.pdf',
             })}
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-            onChange={(files) => console.log('TODO: IMPLEMENT')}
-            onRemove={(file) => console.log('TODO: IMPLEMENT')}
-          />
+            onChange={handleFileUpload}
+            onRemove={handleRemoveFile}
+          /> */}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
@@ -114,8 +158,9 @@ const SendToPrisonAdmin: FC = () => {
           onPrimaryButtonClick={handlePrimaryButtonClick}
           onSecondaryButtonClick={handleSecondaryButtonClick}
           onClose={handleSecondaryButtonClick}
-          isPrimaryButtonLoading={createEventLog.loading}
-          loading={createEventLog.loading}
+          isPrimaryButtonLoading={isUpdatingDefendant}
+          loading={isUpdatingDefendant}
+          errorMessage={uploadFileError}
         />
       )}
     </PageLayout>

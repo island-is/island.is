@@ -20,7 +20,8 @@ const useDefendants = () => {
   const [createDefendantMutation, { loading: isCreatingDefendant }] =
     useCreateDefendantMutation()
   const [deleteDefendantMutation] = useDeleteDefendantMutation()
-  const [updateDefendantMutation] = useUpdateDefendantMutation()
+  const [updateDefendantMutation, { loading: isUpdatingDefendant }] =
+    useUpdateDefendantMutation()
 
   const createDefendant = useCallback(
     async (defendant: CreateDefendantInput) => {
@@ -118,6 +119,7 @@ const useDefendants = () => {
     createDefendant,
     deleteDefendant,
     updateDefendant,
+    isUpdatingDefendant,
     updateDefendantState,
     setAndSendDefendantToServer,
   }

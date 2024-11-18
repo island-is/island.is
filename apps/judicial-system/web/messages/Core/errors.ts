@@ -162,4 +162,10 @@ export const errors = defineMessages({
     defaultMessage: 'Dagsetning ekki rétt slegin inn',
     description: 'Notaður sem villuskilaboð þegar dagsetning er ekki löggild',
   },
+  uploadFailed: {
+    id: 'judicial.system.core:errors.upload_failed',
+    defaultMessage: 'Upp kom villa við að hlaða upp skjali',
+    description:
+      'Notaður sem villuskilaboð þegar ekki tekst að hlaða upp skjali',
+  },
 })
