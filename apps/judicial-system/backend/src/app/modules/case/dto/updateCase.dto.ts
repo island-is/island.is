@@ -9,6 +9,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  MaxLength,
   ValidateNested,
 } from 'class-validator'
 
@@ -43,6 +44,7 @@ class UpdateDateLog {
   readonly date?: Date
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly location?: string
@@ -60,6 +62,7 @@ export class UpdateCaseDto {
   readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly description?: string
@@ -67,26 +70,31 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsArray()
   @ArrayMinSize(1)
+  @MaxLength(255)
   @IsString({ each: true })
   @ApiPropertyOptional({ type: String, isArray: true })
   readonly policeCaseNumbers?: string[]
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderName?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderEmail?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderPhoneNumber?: string
@@ -107,6 +115,7 @@ export class UpdateCaseDto {
   readonly courtId?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly leadInvestigator?: string
@@ -124,6 +133,7 @@ export class UpdateCaseDto {
   readonly requestedCourtDate?: Date
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly translator?: string
@@ -207,6 +217,7 @@ export class UpdateCaseDto {
   readonly sharedWithProsecutorsOfficeId?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly courtCaseNumber?: string
@@ -229,6 +240,7 @@ export class UpdateCaseDto {
   readonly courtDate?: UpdateDateLog
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly courtLocation?: string
@@ -407,6 +419,7 @@ export class UpdateCaseDto {
   readonly defendantStatementDate?: Date
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly appealCaseNumber?: string
