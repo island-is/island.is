@@ -1,6 +1,7 @@
 import {
   defineTemplateApi,
   InstitutionNationalIds,
+  MockablePaymentCatalogApi,
   PaymentCatalogApi,
 } from '@island.is/application/types'
 
@@ -12,6 +13,14 @@ export const SamgongustofaPaymentCatalogApi = PaymentCatalogApi.configure({
   },
   externalDataId: 'payment',
 })
+
+export const MockableSamgongustofaPaymentCatalogApi =
+  MockablePaymentCatalogApi.configure({
+    params: {
+      organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
+    },
+    externalDataId: 'payment',
+  })
 
 interface CurrentVehiclesParameters {
   showOwned?: boolean

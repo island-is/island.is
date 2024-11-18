@@ -5,7 +5,6 @@ import {
   Get,
   Header,
   Inject,
-  InternalServerErrorException,
   Param,
   Query,
   Res,

@@ -170,7 +170,7 @@ export function VaccinationsCard({
                   />
                 </Typography>
               </Cell>
-              <Cell style={{ flex: 1, maxWidth: '20%' }}>
+              <Cell style={{ flex: 1, maxWidth: '21%' }}>
                 <Typography variant="eyebrow">
                   <FormattedMessage
                     id="health.vaccinations.date"
@@ -241,7 +241,7 @@ export function VaccinationsCard({
                 <RowItem style={{ maxWidth: '6%' }}>
                   <Typography variant="body3">{index + 1}</Typography>
                 </RowItem>
-                <RowItem style={{ maxWidth: '20%' }}>
+                <RowItem style={{ maxWidth: '21%' }}>
                   <Typography variant="body3">
                     {vaccination.date ? intl.formatDate(vaccination.date) : ''}
                   </Typography>
@@ -255,16 +255,24 @@ export function VaccinationsCard({
                     )}
                   </Typography>
                 </RowItem>
-                {vaccination.url && vaccination.name && (
+                {vaccination.name && (
                   <RowItem>
-                    <TouchableOpacity
-                      style={{ flexWrap: 'wrap' }}
-                      onPress={() => openBrowser(vaccination.url!, componentId)}
-                    >
-                      <LinkText variant="small" icon={externalLinkIcon}>
+                    {vaccination.url ? (
+                      <TouchableOpacity
+                        style={{ flexWrap: 'wrap' }}
+                        onPress={() =>
+                          openBrowser(vaccination.url!, componentId)
+                        }
+                      >
+                        <LinkText variant="small" icon={externalLinkIcon}>
+                          {vaccination.name}
+                        </LinkText>
+                      </TouchableOpacity>
+                    ) : (
+                      <Typography variant="body3">
                         {vaccination.name}
-                      </LinkText>
-                    </TouchableOpacity>
+                      </Typography>
+                    )}
                   </RowItem>
                 )}
               </TableRow>

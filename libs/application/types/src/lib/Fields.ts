@@ -71,6 +71,7 @@ export type TableRepeaterFields =
   | 'checkbox'
   | 'date'
   | 'nationalIdWithName'
+  | 'phone'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -139,6 +140,11 @@ export type TableRepeaterItem = {
       suffix?: string
     }
   | {
+      component: 'phone'
+      allowedCountryCodes?: string[]
+      enableCountrySelector?: boolean
+    }
+  | {
       component: 'date'
       label: StaticText
       locale?: Locale
@@ -164,6 +170,10 @@ export type TableRepeaterItem = {
     }
   | {
       component: 'nationalIdWithName'
+    }
+  | {
+      component: 'phone'
+      format: string
     }
 )
 
@@ -303,6 +313,8 @@ export interface DateField extends InputField {
   component: FieldComponents.DATE
   maxDate?: MaybeWithApplicationAndField<Date>
   minDate?: MaybeWithApplicationAndField<Date>
+  minYear?: number
+  maxYear?: number
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
