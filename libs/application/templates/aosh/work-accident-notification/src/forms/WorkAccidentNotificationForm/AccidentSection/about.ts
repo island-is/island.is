@@ -3,7 +3,6 @@ import {
   buildCustomField,
   buildDateField,
   buildDescriptionField,
-  buildHiddenInput,
   buildMultiField,
   buildSelectField,
   buildSubSection,
@@ -156,11 +155,8 @@ export const aboutSection = buildSubSection({
           title: accident.about.locationOfAccidentHeading,
           marginTop: 3,
         }),
-        buildHiddenInput({
-          id: 'accident.accidentLocationParentGroup',
-        }),
         buildCustomField({
-          id: 'accident.accidentLocation',
+          id: 'accident',
           title: '',
           component: 'AccidentLocation',
         }),

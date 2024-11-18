@@ -3,7 +3,6 @@ import {
   buildCustomField,
   buildDateField,
   buildDescriptionField,
-  buildHiddenInput,
   buildMultiField,
   buildNationalIdWithNameField,
   buildSelectField,
@@ -237,18 +236,6 @@ export const employeeSubSection = (index: number) =>
             title: employee.employee.occupationTitle,
             titleVariant: 'h5',
             marginTop: 3,
-          }),
-          buildHiddenInput({
-            id: `employee[${index}].victimsOccupationMajor`,
-          }),
-          buildHiddenInput({
-            id: `employee[${index}].victimsOccupationSubMajor`,
-          }),
-          buildHiddenInput({
-            id: `employee[${index}].victimsOccupationMinor`,
-          }),
-          buildHiddenInput({
-            id: `employee[${index}].victimsOccupationUnit`,
           }),
           buildCustomField(
             {
