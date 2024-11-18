@@ -37,6 +37,7 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
 import { LandingPage, LandingPageFooter } from './LandingPage'
+import { parseAsArrayOf } from 'next-usequerystate'
 
 const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
   if (!organization?.link) return ''
@@ -228,7 +229,7 @@ const OrganizationHomePage: Screen<HomeProps> = ({
   )
 }
 
-interface HomeProps {
+export interface HomeProps {
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -260,6 +261,7 @@ const Home: Screen<HomeProps> = ({
 }
 
 Home.getProps = async ({ apolloClient, locale, query }) => {
+  const slug = (query.slugs as string[])[0]
   const [
     {
       data: { getOrganizationPage },
@@ -273,7 +275,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: query.slug as string,
+          slug,
           lang: locale as ContentLanguage,
         },
       },
@@ -282,7 +284,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: query.slug as string,
+          slug,
           lang: locale as ContentLanguage,
         },
       },

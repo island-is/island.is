@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import cn from 'classnames'
-import type { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 
 import { EmbeddedVideo, Image } from '@island.is/island-ui/contentful'
@@ -14,6 +13,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import type { Locale } from '@island.is/shared/types'
 import {
   EventLocation,
   EventTime,
@@ -133,7 +133,7 @@ const EventInformationBox = ({
   )
 }
 
-interface OrganizationEventArticleProps {
+export interface OrganizationEventArticleProps {
   organizationPage: OrganizationPage
   event: EventModel
   namespace: Record<string, string>
@@ -285,13 +285,14 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
   )
 }
 OrganizationEventArticle.getProps = async ({ apolloClient, query, locale }) => {
+  const [slug, _, eventSlug] = query.slugs as string[]
   const [organizationPageResponse, eventResponse, namespace] =
     await Promise.all([
       apolloClient.query<Query, QueryGetOrganizationPageArgs>({
         query: GET_ORGANIZATION_PAGE_QUERY,
         variables: {
           input: {
-            slug: query.slug as string,
+            slug: slug,
             lang: locale as Locale,
           },
         },
@@ -300,7 +301,7 @@ OrganizationEventArticle.getProps = async ({ apolloClient, query, locale }) => {
         query: GET_SINGLE_EVENT_QUERY,
         variables: {
           input: {
-            slug: query.eventSlug as string,
+            slug: eventSlug,
             lang: locale as Locale,
           },
         },

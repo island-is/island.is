@@ -64,7 +64,7 @@ import * as styles from './PublishedMaterial.css'
 const ASSETS_PER_PAGE = 20
 const DEBOUNCE_TIME_IN_MS = 300
 
-interface PublishedMaterialProps {
+export interface PublishedMaterialProps {
   organizationPage: Query['getOrganizationPage']
   genericTagFilters: GenericTag[]
   namespace: Record<string, string>
@@ -510,7 +510,7 @@ PublishedMaterial.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: query.slug as string,
+          slug: query.slugs?.[0] as string,
           lang: locale as ContentLanguage,
         },
       },
