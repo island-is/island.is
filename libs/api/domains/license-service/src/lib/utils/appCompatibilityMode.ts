@@ -11,5 +11,5 @@ export const enableAppCompatibilityMode = (
     sensitivity: 'base',
   })
 
-  return isVersionLater > 0
+  return isVersionLater <= 0
 }
