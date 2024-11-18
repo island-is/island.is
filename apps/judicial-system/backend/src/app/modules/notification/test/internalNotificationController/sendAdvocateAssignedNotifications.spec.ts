@@ -40,10 +40,7 @@ type GivenWhenThen = (
 describe('InternalNotificationController - Send defender assigned notifications', () => {
   const userId = uuid()
 
-  const { spokesperson, defender } = createTestUsers([
-    'spokesperson',
-    'defender',
-  ])
+  const { defender } = createTestUsers(['defender'])
 
   const court = { name: 'Héraðsdómur Reykjavíkur' } as Case['court']
 
@@ -84,7 +81,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
       return then
     }
   })
-
 
   describe('when sending assigned defender notifications in a restriction case', () => {
     const caseId = uuid()
