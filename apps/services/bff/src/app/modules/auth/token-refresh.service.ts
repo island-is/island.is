@@ -67,26 +67,28 @@ export class TokenRefreshService {
     refreshTokenKey: string
     encryptedRefreshToken: string
   }) {
-    // Set refresh in progress
-    await this.cacheService.save({
-      key: refreshTokenKey,
-      value: true,
-      ttl: TokenRefreshService.MAX_POLL_TIME,
-    })
+    try {
+      // Set refresh in progress
+      await this.cacheService.save({
+        key: refreshTokenKey,
+        value: true,
+        ttl: TokenRefreshService.MAX_POLL_TIME,
+      })
 
-    const tokenResponse = await this.idsService.refreshToken(
-      encryptedRefreshToken,
-    )
+      const tokenResponse = await this.idsService.refreshToken(
+        encryptedRefreshToken,
+      )
 
-    // Update cache with new token data
-    const updatedTokenResponse = await this.authService.updateTokenCache(
-      tokenResponse,
-    )
+      // Update cache with new token data
+      const updatedTokenResponse = await this.authService.updateTokenCache(
+        tokenResponse,
+      )
 
-    // Delete the refresh token key to signal that the refresh operation is complete
-    await this.cacheService.delete(refreshTokenKey)
-
-    return updatedTokenResponse
+      return updatedTokenResponse
+    } finally {
+      // Always clean up the refresh token key
+      await this.cacheService.delete(refreshTokenKey)
+    }
   }
 
   /**

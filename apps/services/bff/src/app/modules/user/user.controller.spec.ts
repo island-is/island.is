@@ -23,8 +23,8 @@ const mockCacheManagerValue = {
   del: jest.fn((key) => mockCacheStore.delete(key)),
 }
 
-const generateTokenTimestamps = () => {
-  const now = Math.floor(Date.now() / 1000)
+const generateTokenTimestamps = (baseTime = 1700000000) => {
+  const now = baseTime
 
   return {
     iat: now,
@@ -73,7 +73,7 @@ describe('UserController', () => {
   let mockConfig: ConfigType<typeof BffConfig>
 
   beforeAll(async () => {
-    const app = await setupTestServer({
+    app = await setupTestServer({
       override: (builder) =>
         builder
           .overrideProvider(CACHE_MANAGER)
