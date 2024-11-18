@@ -1,5 +1,4 @@
 import { gql, useQuery } from '@apollo/client'
-import { VehiclesCurrentVehicle } from '../shared'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   AlertMessage,
@@ -26,7 +25,7 @@ export const MainOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const vehicle = getSelectedVehicle(
     application.externalData,
     application.answers,
-  ) as VehiclesCurrentVehicle
+  )
 
   const { data, loading, error } = useQuery(
     gql`
@@ -35,7 +34,7 @@ export const MainOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (
     {
       variables: {
         input: {
-          permno: vehicle.permno,
+          permno: vehicle?.permno,
           regno: '',
           vin: '',
         },
@@ -47,7 +46,7 @@ export const MainOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
   useEffect(() => {
     setFieldLoadingState?.(loading || !!error)
-  }, [loading, error])
+  }, [loading, error, setFieldLoadingState])
 
   return loading ? (
     <Box marginTop={3}>
