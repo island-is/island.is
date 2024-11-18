@@ -5,7 +5,7 @@ import { Markdown } from '@island.is/shared/components'
 import { messages as m } from '../../lib/messages'
 import { DetailTable } from '../../utils/types'
 
-import * as styles from 
+import * as styles from '../../screens/Vaccinations/tables/VaccinationsTable.css'
 
 export const HealthTable = ({
   footerText,

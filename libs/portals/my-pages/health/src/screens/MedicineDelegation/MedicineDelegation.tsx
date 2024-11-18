@@ -5,9 +5,9 @@ import {
   HEALTH_DIRECTORATE_SLUG,
   IntroHeader,
   SortableTable,
-} from '@island.is/service-portal/core'
+  m,
+} from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
-import { m } from '@island.is/service-portal/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { delegationData, Delegation } from './utils/mockdata'
 import DelegationModal from './components/DelegationModal'

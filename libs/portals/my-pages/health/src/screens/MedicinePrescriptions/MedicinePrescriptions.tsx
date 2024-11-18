@@ -1,5 +1,5 @@
 import { useLocale } from '@island.is/localization'
-import { LinkButton, SortableTable } from '@island.is/service-portal/core'
+import { LinkButton, SortableTable } from '@island.is/portals/my-pages/core'
 import React, { useState } from 'react'
 import { messages } from '../../lib/messages'
 import { Box, Tooltip, Text, Button } from '@island.is/island-ui/core'
@@ -13,7 +13,7 @@ import {
   MedicinePrescriptionDetailData,
   MedicinePrescriptionDetailData2,
   MedicinePrescriptionsData,
-} from '../Medicine/utils/mockData'
+} from '../../utils/mockData'
 import RenewPrescriptionModal from './components/RenewPrescriptionModal/RenewPrescriptionModal'
 
 const MedicinePrescriptions = () => {

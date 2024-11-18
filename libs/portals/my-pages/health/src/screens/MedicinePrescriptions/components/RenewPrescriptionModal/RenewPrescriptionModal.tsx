@@ -16,7 +16,7 @@ import {
   MedicinePrescriptionDetail,
   MedicinePrescriptionDetailData,
   Prescription,
-} from '../../../Medicine/utils/mockData'
+} from '../../../../utils/mockData'
 import * as styles from './RenewPrescriptionModal.css'
 import { messages } from '../../../../lib/messages'
 import cn from 'classnames'
@@ -60,7 +60,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
     // TODO: Implement form submission when service is ready
     e && e.preventDefault()
     const formData2 = e && new FormData(e.currentTarget)
-    const data = formData2 && Object.fromEntries(formData2.entries())
+    const data = formData2 && Object.fromEntries((formData2 as any).entries())
     console.log(data)
     setFormData(null)
     setModalVisible(false)
