@@ -16,3 +16,4 @@ export const getExtraData = (application: Application): ExtraData[] => {
 }
 
 export { getSelectedVehicle } from './getSelectedVehicle'
+export { checkCanRenew } from './checkCanRenew'

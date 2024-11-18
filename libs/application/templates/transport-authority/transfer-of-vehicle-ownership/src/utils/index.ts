@@ -13,7 +13,7 @@ export const formatPhoneNumber = (value: string): string =>
 
 export { getSelectedVehicle } from './getSelectedVehicle'
 export { getReviewSteps } from './getReviewSteps'
-export { hasReviewerApproved } from './hasReviewerApproved'
+export { canReviewerApprove, canReviewerReApprove } from './canReviewerApprove'
 export { getApproveAnswers } from './getApproveAnswers'
 export { isLastReviewer } from './isLastReviewer'
 export { getRejecter } from './getRejecter'

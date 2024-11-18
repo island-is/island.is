@@ -26,11 +26,12 @@ import {
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
+  MockableSamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
 import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
-import { hasReviewerApproved, isRemovingOperatorOnly } from '../utils'
+import { canReviewerApprove, isRemovingOperatorOnly } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
@@ -61,7 +62,7 @@ const reviewStatePendingAction = (
   role: string,
   nationalId: string,
 ): PendingAction => {
-  if (nationalId && !hasReviewerApproved(nationalId, application.answers)) {
+  if (nationalId && canReviewerApprove(nationalId, application.answers)) {
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
       content: corePendingActionMessages.youNeedToReviewDescription,
@@ -141,6 +142,7 @@ const template: ApplicationTemplate<
                 IdentityApi,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
+                MockableSamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
               ],
             },
