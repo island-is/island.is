@@ -1,0 +1,34 @@
+{
+  "name": "portals-my-pages-signature-collection",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portals/my-pages/signature-collection/src",
+  "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "libs/portals/my-pages/signature-collection/jest.config.js"
+      },
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/portals/my-pages/signature-collection"
+      ]
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/portals/my-pages/signature-collection/codegen.yml"
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/portals/my-pages/signature-collection/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+      }
+    }
+  }
+}

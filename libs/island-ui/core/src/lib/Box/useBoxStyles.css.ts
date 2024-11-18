@@ -326,6 +326,46 @@ export const alignItemsXl = styleVariants(
   ),
 )
 
+const alignSelfRules = {
+  flexStart: 'flex-start',
+  center: 'center',
+  flexEnd: 'flex-end',
+  baseline: 'baseline',
+  stretch: 'stretch',
+}
+export const alignSelf = styleVariants(
+  mapToStyleProperty(alignSelfRules, 'alignSelf'),
+)
+
+export const alignSelfSm = styleVariants(
+  mapToStyleProperty(alignSelfRules, 'alignSelf', (value, propertyName) =>
+    themeUtils.responsiveStyle({
+      sm: { [propertyName]: value },
+    }),
+  ),
+)
+export const alignSelfMd = styleVariants(
+  mapToStyleProperty(alignSelfRules, 'alignSelf', (value, propertyName) =>
+    themeUtils.responsiveStyle({
+      md: { [propertyName]: value },
+    }),
+  ),
+)
+export const alignSelfLg = styleVariants(
+  mapToStyleProperty(alignSelfRules, 'alignSelf', (value, propertyName) =>
+    themeUtils.responsiveStyle({
+      lg: { [propertyName]: value },
+    }),
+  ),
+)
+export const alignSelfXl = styleVariants(
+  mapToStyleProperty(alignSelfRules, 'alignSelf', (value, propertyName) =>
+    themeUtils.responsiveStyle({
+      xl: { [propertyName]: value },
+    }),
+  ),
+)
+
 const justifyContentRules = {
   flexStart: 'flex-start',
   center: 'center',
