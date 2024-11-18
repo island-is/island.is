@@ -38,6 +38,10 @@ import {
   CaseState,
   Defendant,
   IndictmentDecision,
+<<<<<<< HEAD
+=======
+  ServiceStatus,
+>>>>>>> a2b25ec5e9e127cae18612134d49e8590a9444bc
   Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -67,15 +71,36 @@ const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
   const getMessage = (
     servedBy?: string | null,
     serviceDate?: string | null,
+<<<<<<< HEAD
   ): string => {
     return [servedBy, formatDate(serviceDate, 'Pp')].filter(Boolean).join(', ')
+=======
+    serviceStatus?: ServiceStatus | null,
+  ): string => {
+    const processServer =
+      serviceStatus === ServiceStatus.ELECTRONICALLY
+        ? formatMessage(strings.servedToElectronically)
+        : servedBy
+
+    return [processServer, formatDate(serviceDate, 'Pp')]
+      .filter(Boolean)
+      .join(', ')
+>>>>>>> a2b25ec5e9e127cae18612134d49e8590a9444bc
   }
 
   return (
     <AlertMessage
       type="success"
       title={getTitle(defendant.name)}
+<<<<<<< HEAD
       message={getMessage(subpoena.servedBy, subpoena.serviceDate)}
+=======
+      message={getMessage(
+        subpoena.servedBy,
+        subpoena.serviceDate,
+        subpoena.serviceStatus,
+      )}
+>>>>>>> a2b25ec5e9e127cae18612134d49e8590a9444bc
     />
   )
 }

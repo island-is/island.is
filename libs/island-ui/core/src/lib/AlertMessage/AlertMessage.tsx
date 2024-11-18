@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { FC, PropsWithChildren, ReactNode, isValidElement } from 'react'
+=======
+import React, { FC, ReactNode, isValidElement } from 'react'
+>>>>>>> a2b25ec5e9e127cae18612134d49e8590a9444bc
 import { Text } from '../Text/Text'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconType } from '../IconRC/iconMap'
@@ -57,6 +61,10 @@ const variantStyles: VariantStyles = {
 interface AlertMessageProps {
   type: AlertMessageType
   testid?: string
+<<<<<<< HEAD
+=======
+  action?: ReactNode
+>>>>>>> a2b25ec5e9e127cae18612134d49e8590a9444bc
 }
 
 type TitleAndOrMessage =
@@ -73,9 +81,19 @@ type TitleAndOrMessage =
       message?: never
     }
 
+<<<<<<< HEAD
 export const AlertMessage: FC<
   PropsWithChildren<AlertMessageProps & TitleAndOrMessage>
 > = ({ type, title, message, testid }) => {
+=======
+export const AlertMessage: FC<AlertMessageProps & TitleAndOrMessage> = ({
+  type,
+  title,
+  message,
+  testid,
+  action,
+}) => {
+>>>>>>> a2b25ec5e9e127cae18612134d49e8590a9444bc
   const variant = variantStyles[type]
 
   return (
@@ -116,6 +134,19 @@ export const AlertMessage: FC<
               ) : (
                 <Box flexGrow={1}>
                   <Text variant="small">{message}</Text>
+<<<<<<< HEAD
+=======
+                </Box>
+              )}
+              {action && (
+                <Box
+                  display="flex"
+                  style={{ alignSelf: 'flex-end' }}
+                  justifyContent="flexEnd"
+                  alignItems="flexEnd"
+                >
+                  {action}
+>>>>>>> a2b25ec5e9e127cae18612134d49e8590a9444bc
                 </Box>
               )}
             </Box>
