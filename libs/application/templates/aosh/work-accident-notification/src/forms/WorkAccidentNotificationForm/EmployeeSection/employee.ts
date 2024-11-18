@@ -166,6 +166,13 @@ export const employeeSubSection = (index: number) =>
                 }))
             },
           }),
+          buildAlertMessageField({
+            id: 'employee.startTimeAlert',
+            title: '',
+            message: employee.employee.startTimeAlert,
+            alertType: 'info',
+            marginBottom: 0,
+          }),
           buildDateField({
             id: `employee[${index}].startOfWorkdayDate`,
             width: 'half',
