@@ -3,6 +3,9 @@ import * as React from 'react'
 import {
   Box,
   Button,
+  GridColumn,
+  GridContainer,
+  GridRow,
   Icon,
   IconMapIcon,
   Inline,
@@ -34,7 +37,7 @@ export type DetailedProps = BaseProps & {
 export const DetailedInfoCard = ({
   title,
   text,
-  type,
+  type = 'default',
   eyebrow,
   subEyebrow,
   detailLines,
@@ -77,7 +80,7 @@ export const DetailedInfoCard = ({
                 color="blue400"
                 useStroke
               />
-              <Box marginLeft={1}>
+              <Box marginLeft={2}>
                 <Text variant="medium">{d.text}</Text>
               </Box>
             </Box>
@@ -157,10 +160,28 @@ export const DetailedInfoCard = ({
     )
   }
 
-  return (
-    <Box className={styles.infoCard} background="white" borderRadius="standard">
-      <Box paddingX={4} paddingY={3}>
-        {renderHeader()}
+  const renderContent = () => {
+    if (type === 'wide') {
+      return (
+        <GridContainer>
+          <GridRow direction="row">
+            <GridColumn span="8/12">
+              <Text variant="h3" color="blue400">
+                {title}
+              </Text>
+              {text && (
+                <Box flexGrow={1} marginTop={1}>
+                  <Text>{text}</Text>
+                </Box>
+              )}
+            </GridColumn>
+            <GridColumn span="4/12">{renderDetails()}</GridColumn>
+          </GridRow>
+        </GridContainer>
+      )
+    }
+    return (
+      <>
         <Text variant="h3" color="blue400">
           {title}
         </Text>
@@ -170,6 +191,20 @@ export const DetailedInfoCard = ({
           </Box>
         )}
         {renderDetails()}
+      </>
+    )
+  }
+
+  return (
+    <Box
+      className={type === 'wide' ? styles.infoCardWide : styles.infoCard}
+      background="white"
+      width="full"
+      borderRadius="standard"
+    >
+      <Box width="full" paddingX={4} paddingY={3}>
+        {renderHeader()}
+        {renderContent()}
         <Box marginTop={3} display="flex" justifyContent="spaceBetween">
           {renderTags()}
           <Box display="flex" alignItems="flexEnd">

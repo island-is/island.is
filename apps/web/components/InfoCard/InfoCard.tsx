@@ -6,7 +6,7 @@ export interface BaseProps {
   title: string
   text: string
   eyebrow: string
-  type: 'wide' | 'default'
+  type?: 'wide' | 'default'
   link: {
     label: string
     href: string

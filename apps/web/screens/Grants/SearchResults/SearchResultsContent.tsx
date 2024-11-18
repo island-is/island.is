@@ -36,7 +36,7 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
         </Box>
       )}
       {grants?.length ? (
-        <Inline space={2}>
+        <Box>
           {grants?.map((grant) => {
             if (!grant) {
               return null
@@ -57,63 +57,63 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                 break
             }
 
+            if (!grant.applicationId) {
+              return null
+            }
+
             return (
-              <Box key={grant.id}>
-                {grant.applicationId && (
-                  <InfoCard
-                    variant="detailed"
-                    type="wide"
-                    eyebrow={grant.fund?.title ?? grant.name ?? ''}
-                    subEyebrow={grant.fund?.parentOrganization?.title}
-                    title={grant.name ?? ''}
-                    text={grant.description ?? ''}
-                    logo={grant.fund?.parentOrganization?.logo?.url ?? ''}
-                    logoAlt={grant.fund?.parentOrganization?.logo?.title ?? ''}
-                    tags={[
-                      {
-                        label: grant.statusText ?? '',
-                        variant: tagVariant,
-                      },
-                    ]}
-                    link={{
-                      label: formatMessage(m.general.seeMore),
-                      href: linkResolver(
-                        'styrkjatorggrant',
-                        [grant?.applicationId ?? ''],
-                        locale,
-                      ).href,
-                    }}
-                    detailLines={[
-                      grant.dateFrom && grant.dateTo
-                        ? {
-                            icon: 'calendar' as const,
-                            text: `${format(
-                              new Date(grant.dateFrom),
-                              'dd.MM.',
-                            )}-${format(new Date(grant.dateTo), 'dd.MM.yyyy')}`,
-                          }
-                        : null,
-                      {
-                        icon: 'time' as const,
-                        //todo: fix when the text is ready
-                        text: 'Frestur til 16.08.2024, kl. 15.00',
-                      },
-                      grant.categoryTags
-                        ? {
-                            icon: 'informationCircle' as const,
-                            text: grant.categoryTags
-                              .map((ct) => ct.title)
-                              .filter(isDefined)
-                              .join(', '),
-                          }
-                        : undefined,
-                    ].filter(isDefined)}
-                  />
-                )}
-              </Box>
+              <InfoCard
+                type="wide"
+                variant="detailed"
+                eyebrow={grant.fund?.title ?? grant.name ?? ''}
+                subEyebrow={grant.fund?.parentOrganization?.title}
+                title={grant.name ?? ''}
+                text={grant.description ?? ''}
+                logo={grant.fund?.parentOrganization?.logo?.url ?? ''}
+                logoAlt={grant.fund?.parentOrganization?.logo?.title ?? ''}
+                tags={[
+                  {
+                    label: grant.statusText ?? '',
+                    variant: tagVariant,
+                  },
+                ]}
+                link={{
+                  label: formatMessage(m.general.seeMore),
+                  href: linkResolver(
+                    'styrkjatorggrant',
+                    [grant?.applicationId ?? ''],
+                    locale,
+                  ).href,
+                }}
+                detailLines={[
+                  grant.dateFrom && grant.dateTo
+                    ? {
+                        icon: 'calendar' as const,
+                        text: `${format(
+                          new Date(grant.dateFrom),
+                          'dd.MM.',
+                        )}-${format(new Date(grant.dateTo), 'dd.MM.yyyy')}`,
+                      }
+                    : null,
+                  {
+                    icon: 'time' as const,
+                    //todo: fix when the text is ready
+                    text: 'Frestur til 16.08.2024, kl. 15.00',
+                  },
+                  grant.categoryTags
+                    ? {
+                        icon: 'informationCircle' as const,
+                        text: grant.categoryTags
+                          .map((ct) => ct.title)
+                          .filter(isDefined)
+                          .join(', '),
+                      }
+                    : undefined,
+                ].filter(isDefined)}
+              />
             )
           })}
-        </Inline>
+        </Box>
       ) : undefined}
       {!grants?.length && (
         <Box
