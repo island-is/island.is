@@ -11,7 +11,6 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
 import { Client } from '../clients/models/client.model'
-import { environment } from '../environments'
 import { PersonalRepresentativeModule } from '../personal-representative/personal-representative.module'
 import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.model'
