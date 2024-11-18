@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import { useLegacyUserInfo } from '@island.is/react-spa/bff'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { checkDelegation } from '@island.is/shared/utils'
@@ -42,7 +42,7 @@ export const UserDropdown = ({
   showActorButton,
   showDropdownLanguage,
 }: UserDropdownProps) => {
-  const user = useLegacyUserInfo()
+  const user = useUserInfo()
   const { formatMessage } = useLocale()
   const isVisible = dropdownState === 'open'
   const onClose = () => {

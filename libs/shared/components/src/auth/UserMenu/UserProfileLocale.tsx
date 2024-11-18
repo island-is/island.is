@@ -1,5 +1,5 @@
 import { isLocale, useLocale, useNamespaces } from '@island.is/localization'
-import { useLegacyUserInfo } from '@island.is/react-spa/bff'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useGetUserProfileLocaleLazyQuery } from '../../../gen/schema'
@@ -15,7 +15,7 @@ import { useGetUserProfileLocaleLazyQuery } from '../../../gen/schema'
 export const UserProfileLocale = () => {
   const { changeLanguage } = useNamespaces()
   const { lang } = useLocale()
-  const userInfo = useLegacyUserInfo()
+  const userInfo = useUserInfo()
   const [getUserProfile, { data }] = useGetUserProfileLocaleLazyQuery()
   const location = useLocation()
 

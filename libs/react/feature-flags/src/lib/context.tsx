@@ -5,7 +5,7 @@ import {
   SettingValue,
   createClientFactory,
 } from '@island.is/feature-flags'
-import { useLegacyUserInfo } from '@island.is/react-spa/bff'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import * as ConfigCatJS from 'configcat-js'
 import React, { FC, createContext, useContext, useMemo } from 'react'
 
@@ -26,7 +26,7 @@ export interface FeatureFlagContextProviderProps {
 export const FeatureFlagProvider: FC<
   React.PropsWithChildren<FeatureFlagContextProviderProps>
 > = ({ children, sdkKey, defaultUser: userProp }) => {
-  const userInfo = useLegacyUserInfo() // This is a temporary solution until all SPA's are migrated to use BFF Pattern.
+  const userInfo = useUserInfo()
   const featureFlagClient = useMemo(() => {
     return createClient({ sdkKey })
   }, [sdkKey])
