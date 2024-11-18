@@ -26,14 +26,14 @@ export const incomePlanFormMessage: MessageDir = {
       defaultMessage:
         'Ástæðan fyrir því er eftirfarandi:\n* Það eru innan við 10 dagar síðan síðasta tekjuáætlun þín var tekin í vinnslu hjá Tryggingastofnun.\n\nEf þú telur það ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
       description:
-        'The reason for this is the following:\n* It has been less than 10 days since your last income plan was processed by the Social Insurance Administration.\n\nIf you do not think that apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
+        '* It has been less than 10 days since your last income plan was processed by the Social Insurance Administration.\n\nIf you do not think that apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
     },
     isNotEligibleNoActiveApplicationDescription: {
       id: 'ip.application:is.not.eligible.no.active.application.description#markdown',
       defaultMessage:
-        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með virka umsókn hjá TR.\n\nEf þú telur það ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með virka umsókn hjá Tryggingastofnun.\n\nEf þú telur það ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
       description:
-        'The reason for this is the following:\n* The Social Insurance Administration is currently not accepting any new income plans.\n\nIf you do not think that apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
+        'The reason for this is the following:\n* You do not have any active applications at the Social Insurance Administration.\n\nIf you do not think that apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
     },
     isNotEligibleClosedDescription: {
       id: 'ip.application:is.not.eligible.closed.description#markdown',
