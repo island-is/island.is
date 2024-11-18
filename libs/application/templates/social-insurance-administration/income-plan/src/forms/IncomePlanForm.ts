@@ -69,8 +69,9 @@ export const IncomePlanForm: Form = buildForm({
               id: 'incomePlanTable',
               title: incomePlanFormMessage.info.section,
               description: (application: Application) => {
-                const { latestIncomePlan } =
-                  getApplicationExternalData(application.externalData)
+                const { latestIncomePlan } = getApplicationExternalData(
+                  application.externalData,
+                )
                 const hasLatestIncomePlan = !isEmpty(latestIncomePlan)
                 const baseMessage = hasLatestIncomePlan
                   ? incomePlanFormMessage.incomePlan
