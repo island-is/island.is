@@ -228,14 +228,6 @@ export class DefendantService {
       update,
     )
 
-    if (update.isSentToPrisonAdmin) {
-      this.defendantEventLogModel.create({
-        caseId: theCase.id,
-        defendantId: defendant.id,
-        eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-      })
-    }
-
     await this.sendRequestCaseUpdateDefendantMessages(
       theCase,
       updatedDefendant,
@@ -256,6 +248,14 @@ export class DefendantService {
       defendant.id,
       update,
     )
+
+    if (update.isSentToPrisonAdmin) {
+      this.defendantEventLogModel.create({
+        caseId: theCase.id,
+        defendantId: defendant.id,
+        eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+      })
+    }
 
     await this.sendIndictmentCaseUpdateDefendantMessages(
       theCase,
