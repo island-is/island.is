@@ -5,11 +5,11 @@ import jwt from 'jsonwebtoken'
 import request from 'supertest'
 import { setupTestServer } from '../../../../test/setupTestServer'
 import {
-  mockedTokensResponse as tokensResponse,
-  SID_VALUE,
-  SESSION_COOKIE_NAME,
   ALGORITM_TYPE,
+  SESSION_COOKIE_NAME,
+  SID_VALUE,
   getLoginSearchParmsFn,
+  mockedTokensResponse as tokensResponse,
 } from '../../../../test/sharedConstants'
 import { BffConfig } from '../../bff.config'
 import { IdsService } from '../ids/ids.service'
@@ -58,17 +58,9 @@ const parResponse: ParResponse = {
 const allowedTargetLinkUri = 'http://test-client.com/testclient'
 
 const mockIdsService = {
-  getPar: jest.fn().mockResolvedValue({
-    type: 'success',
-    data: parResponse,
-  }),
-  getTokens: jest.fn().mockResolvedValue({
-    type: 'success',
-    data: tokensResponse,
-  }),
-  revokeToken: jest.fn().mockResolvedValue({
-    type: 'success',
-  }),
+  getPar: jest.fn().mockResolvedValue(parResponse),
+  getTokens: jest.fn().mockResolvedValue(tokensResponse),
+  revokeToken: jest.fn().mockResolvedValue(undefined),
   getLoginSearchParams: jest.fn().mockImplementation(getLoginSearchParmsFn),
 }
 

@@ -171,7 +171,16 @@ export class TokenRefreshService {
 
           // Get the updated token response from cache
           const tokenResponse =
-            await this.cacheService.get<CachedTokenResponse>(tokenResponseKey)
+            await this.cacheService.get<CachedTokenResponse>(
+              tokenResponseKey,
+              false,
+            )
+
+          if (!tokenResponse) {
+            throw new Error(
+              `Refresh token polling completed but token data not found for sid: ${sid}`,
+            )
+          }
 
           return tokenResponse
         } catch (error) {

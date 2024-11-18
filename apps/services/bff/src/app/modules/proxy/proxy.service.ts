@@ -1,11 +1,11 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  BadRequestException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  UnauthorizedException,
+    BadRequestException,
+    HttpStatus,
+    Inject,
+    Injectable,
+    UnauthorizedException,
 } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import AgentKeepAlive, { HttpsAgent } from 'agentkeepalive'
@@ -15,8 +15,8 @@ import { BffConfig } from '../../bff.config'
 import { CryptoService } from '../../services/crypto.service'
 
 import {
-  AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
-  AGENT_DEFAULT_MAX_SOCKETS,
+    AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
+    AGENT_DEFAULT_MAX_SOCKETS,
 } from '@island.is/shared/constants'
 import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 import { ErrorService } from '../../services/error.service'
@@ -96,7 +96,11 @@ export class ProxyService {
 
     try {
       let cachedTokenResponse =
-        await this.cacheService.get<CachedTokenResponse>(tokenResponseKey)
+        await this.cacheService.get<CachedTokenResponse>(tokenResponseKey, false)
+
+      if(!cachedTokenResponse){
+        throw new UnauthorizedException()
+      }
 
       if (hasTimestampExpiredInMS(cachedTokenResponse.accessTokenExp)) {
         cachedTokenResponse = await this.tokenRefreshService.refreshToken({
@@ -122,7 +126,7 @@ export class ProxyService {
   /**
    * This method proxies the request to the target URL and streams the response back to the client.
    */
-  private async executeStreamRequest({
+  public async executeStreamRequest({
     targetUrl,
     accessToken,
     req,
