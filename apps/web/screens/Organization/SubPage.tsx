@@ -1,4 +1,3 @@
-import { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 
@@ -14,6 +13,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import {
   getThemeConfig,
   OrganizationWrapper,
@@ -60,46 +60,13 @@ export interface SubPageProps {
   customContentfulIds?: (string | undefined)[]
 }
 
-const SubPage: Screen<SubPageProps> = ({
-  organizationPage,
+const SubPageContent = ({
   subpage,
   namespace,
-  locale,
-  customContent,
-  customBreadcrumbItems,
-  customContentfulIds,
-  backLink,
-}) => {
-  const router = useRouter()
-  const { activeLocale } = useI18n()
-
+  organizationPage,
+}: Pick<SubPageProps, 'subpage' | 'organizationPage' | 'namespace'>) => {
   const n = useNamespace(namespace)
-  const { linkResolver } = useLinkResolver()
-
-  const contentfulIds = customContentfulIds
-    ? customContentfulIds
-    : [organizationPage?.id, subpage?.id]
-
-  useContentfulId(...contentfulIds)
-
-  const pathname = new URL(router.asPath, 'https://island.is').pathname
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
-    ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink?.text,
-      href: primaryLink?.url,
-      active:
-        primaryLink?.url === pathname ||
-        childrenLinks.some((link) => link.url === pathname),
-      items: childrenLinks.map(({ text, url }) => ({
-        title: text,
-        href: url,
-        active: url === pathname,
-      })),
-    }),
-  )
-
+  const { activeLocale } = useI18n()
   const content = (
     <>
       {subpage?.showTableOfContents && (
@@ -147,6 +114,137 @@ const SubPage: Screen<SubPageProps> = ({
       </GridRow>
     </>
   )
+  return (
+    <>
+      <GridContainer>
+        <Box paddingTop={4}>
+          <GridRow>
+            <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
+              <GridContainer>
+                <GridRow>
+                  <GridColumn
+                    span={[
+                      '12/12',
+                      '12/12',
+                      subpage?.links?.length ? '7/12' : '12/12',
+                    ]}
+                  >
+                    <>
+                      <Box className="rs_read" marginBottom={2}>
+                        <Text variant="h1" as="h1">
+                          {subpage?.title}
+                        </Text>
+                      </Box>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        columnGap={2}
+                        rowGap={2}
+                        marginBottom={3}
+                        flexWrap="wrap"
+                      >
+                        <Webreader
+                          marginTop={0}
+                          marginBottom={0}
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
+                          readId={null}
+                          readClass="rs_read"
+                        />
+                        {subpage?.signLanguageVideo?.url && (
+                          <SignLanguageButton
+                            videoUrl={subpage.signLanguageVideo.url}
+                            videoThumbnailImageUrl={
+                              subpage.signLanguageVideo.thumbnailImageUrl
+                            }
+                            content={
+                              <>
+                                <Box className="rs_read" marginBottom={2}>
+                                  <Text variant="h2">{subpage.title}</Text>
+                                </Box>
+                                {content}
+                                {renderSlices(
+                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                  // @ts-ignore make web strict
+                                  subpage.slices,
+                                  subpage.sliceCustomRenderer,
+                                  subpage.sliceExtraText,
+                                  namespace,
+                                  organizationPage?.slug,
+                                )}
+                              </>
+                            }
+                          />
+                        )}
+                      </Box>
+                    </>
+                  </GridColumn>
+                </GridRow>
+                {content}
+              </GridContainer>
+            </GridColumn>
+          </GridRow>
+        </Box>
+      </GridContainer>
+      <Stack space={SLICE_SPACING}>
+        {renderSlices(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.slices,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.sliceCustomRenderer,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.sliceExtraText,
+          namespace,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          organizationPage.slug,
+        )}
+      </Stack>
+    </>
+  )
+}
+
+const SubPage: Screen<SubPageProps> = ({
+  organizationPage,
+  subpage,
+  namespace,
+  locale,
+  customContent,
+  customBreadcrumbItems,
+  customContentfulIds,
+  backLink,
+}) => {
+  const router = useRouter()
+
+  const n = useNamespace(namespace)
+  const { linkResolver } = useLinkResolver()
+
+  const contentfulIds = customContentfulIds
+    ? customContentfulIds
+    : [organizationPage?.id, subpage?.id]
+
+  useContentfulId(...contentfulIds)
+
+  const pathname = new URL(router.asPath, 'https://island.is').pathname
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
+    ({ primaryLink, childrenLinks }) => ({
+      title: primaryLink?.text,
+      href: primaryLink?.url,
+      active:
+        primaryLink?.url === pathname ||
+        childrenLinks.some((link) => link.url === pathname),
+      items: childrenLinks.map(({ text, url }) => ({
+        title: text,
+        href: url,
+        active: url === pathname,
+      })),
+    }),
+  )
 
   return (
     <OrganizationWrapper
@@ -186,97 +284,26 @@ const SubPage: Screen<SubPageProps> = ({
         items: navList,
       }}
     >
-      <GridContainer>
-        <Box paddingTop={4}>
-          <GridRow>
-            <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
-              <GridContainer>
-                <GridRow>
-                  <GridColumn
-                    span={[
-                      '12/12',
-                      '12/12',
-                      subpage?.links?.length ? '7/12' : '12/12',
-                    ]}
-                  >
-                    {customContent ? (
-                      customContent
-                    ) : (
-                      <>
-                        <Box className="rs_read" marginBottom={2}>
-                          <Text variant="h1" as="h1">
-                            {subpage?.title}
-                          </Text>
-                        </Box>
-                        <Box
-                          display="flex"
-                          alignItems="center"
-                          columnGap={2}
-                          rowGap={2}
-                          marginBottom={3}
-                          flexWrap="wrap"
-                        >
-                          <Webreader
-                            marginTop={0}
-                            marginBottom={0}
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-ignore make web strict
-                            readId={null}
-                            readClass="rs_read"
-                          />
-                          {subpage?.signLanguageVideo?.url && (
-                            <SignLanguageButton
-                              videoUrl={subpage.signLanguageVideo.url}
-                              videoThumbnailImageUrl={
-                                subpage.signLanguageVideo.thumbnailImageUrl
-                              }
-                              content={
-                                <>
-                                  <Box className="rs_read" marginBottom={2}>
-                                    <Text variant="h2">{subpage.title}</Text>
-                                  </Box>
-                                  {content}
-                                  {renderSlices(
-                                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                    // @ts-ignore make web strict
-                                    subpage.slices,
-                                    subpage.sliceCustomRenderer,
-                                    subpage.sliceExtraText,
-                                    namespace,
-                                    organizationPage?.slug,
-                                  )}
-                                </>
-                              }
-                            />
-                          )}
-                        </Box>
-                      </>
-                    )}
-                  </GridColumn>
-                </GridRow>
-                {!customContent && content}
-              </GridContainer>
-            </GridColumn>
-          </GridRow>
-        </Box>
-      </GridContainer>
-      <Stack space={SLICE_SPACING}>
-        {renderSlices(
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          subpage.slices,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          subpage.sliceCustomRenderer,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          subpage.sliceExtraText,
-          namespace,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          organizationPage.slug,
-        )}
-      </Stack>
+      {customContent ? (
+        <GridContainer>
+          <Box paddingTop={4}>
+            <GridRow>
+              <GridColumn
+                span={['9/9', '9/9', '7/9']}
+                offset={['0', '0', '1/9']}
+              >
+                {customContent}
+              </GridColumn>
+            </GridRow>
+          </Box>
+        </GridContainer>
+      ) : (
+        <SubPageContent
+          subpage={subpage}
+          namespace={namespace}
+          organizationPage={organizationPage}
+        />
+      )}
     </OrganizationWrapper>
   )
 }
