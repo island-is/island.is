@@ -21,4 +21,10 @@ export const divider = style({
   marginTop: '1rem',
   marginBottom: '1rem',
   borderBottom: '1px solid #F2F7FF',
+
+  selectors: {
+    '&:last-child': {
+      display: 'none',
+    },
+  },
 })

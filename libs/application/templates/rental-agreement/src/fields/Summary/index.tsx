@@ -29,17 +29,11 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
         </Text>
         <Text marginBottom={5}>{formatMessage(summary.pageDescription)}</Text>
       </Box>
-
       <RentalInfoSummary answers={answers} />
-
       <OtherFeesSummary answers={answers} />
-
       <PropertyInfoSummary answers={answers} />
-
       <TenantInfoSummary answers={answers} />
-
       <LandlordInfoSummary answers={answers} />
-
       <Box marginTop={2}>
         <Text variant="h5" as="h3">
           {formatMessage(summary.shareLinkLabel)}{' '}

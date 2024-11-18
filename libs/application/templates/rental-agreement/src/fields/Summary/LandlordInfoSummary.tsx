@@ -1,7 +1,7 @@
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { RentalAgreement } from '../../lib/dataSchema'
 import { summary } from '../../lib/messages'
-import { gridRow, summarySection } from './summaryStyles.css'
+import { divider, gridRow, summarySection } from './summaryStyles.css'
 import { KeyValue } from './KeyValue'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '../../lib/utils'
@@ -34,33 +34,36 @@ export const LandlordInfoSummary = ({ answers }: Props) => {
             )
             .map((landlord, index) => {
               return (
-                <GridRow
-                  key={`${index}_${landlord.nationalId}`}
-                  className={gridRow}
-                >
-                  <GridColumn span={['12/12']}>
-                    <KeyValue
-                      labelVariant="h5"
-                      labelAs="p"
-                      label={landlord.name as string}
-                      value={`${formatMessage(
-                        summary.nationalIdLabel,
-                      )}${formatNationalId(landlord.nationalId || '-')}`}
-                    />
-                  </GridColumn>
-                  <GridColumn span={['12/12', '6/12']}>
-                    <KeyValue
-                      label={summary.emailLabel}
-                      value={landlord.email}
-                    />
-                  </GridColumn>
-                  <GridColumn span={['12/12', '6/12']}>
-                    <KeyValue
-                      label={summary.phoneNumberLabel}
-                      value={formatPhoneNumber(landlord.phone || '-')}
-                    />
-                  </GridColumn>
-                </GridRow>
+                <>
+                  <GridRow
+                    key={`${index}_${landlord.nationalId}`}
+                    className={gridRow}
+                  >
+                    <GridColumn span={['12/12']}>
+                      <KeyValue
+                        labelVariant="h5"
+                        labelAs="p"
+                        label={landlord.name as string}
+                        value={`${formatMessage(
+                          summary.nationalIdLabel,
+                        )}${formatNationalId(landlord.nationalId || '-')}`}
+                      />
+                    </GridColumn>
+                    <GridColumn span={['12/12', '6/12']}>
+                      <KeyValue
+                        label={summary.emailLabel}
+                        value={landlord.email}
+                      />
+                    </GridColumn>
+                    <GridColumn span={['12/12', '6/12']}>
+                      <KeyValue
+                        label={summary.phoneNumberLabel}
+                        value={formatPhoneNumber(landlord.phone || '-')}
+                      />
+                    </GridColumn>
+                  </GridRow>
+                  <div className={divider} />
+                </>
               )
             })}
       </Box>
@@ -80,33 +83,38 @@ export const LandlordInfoSummary = ({ answers }: Props) => {
                 )
                 .map((landlordRep, index) => {
                   return (
-                    <GridRow
-                      key={`${index}_${landlordRep.nationalId}`}
-                      className={gridRow}
-                    >
-                      <GridColumn span={['12/12']}>
-                        <KeyValue
-                          labelVariant="h5"
-                          labelAs="p"
-                          label={landlordRep.name as string}
-                          value={`${formatMessage(
-                            summary.nationalIdLabel,
-                          )}${formatNationalId(landlordRep.nationalId || '-')}`}
-                        />
-                      </GridColumn>
-                      <GridColumn span={['12/12', '6/12']}>
-                        <KeyValue
-                          label={summary.emailLabel}
-                          value={landlordRep.email}
-                        />
-                      </GridColumn>
-                      <GridColumn span={['12/12', '6/12']}>
-                        <KeyValue
-                          label={summary.phoneNumberLabel}
-                          value={formatPhoneNumber(landlordRep.phone || '-')}
-                        />
-                      </GridColumn>
-                    </GridRow>
+                    <>
+                      <GridRow
+                        key={`${index}_${landlordRep.nationalId}`}
+                        className={gridRow}
+                      >
+                        <GridColumn span={['12/12']}>
+                          <KeyValue
+                            labelVariant="h5"
+                            labelAs="p"
+                            label={landlordRep.name as string}
+                            value={`${formatMessage(
+                              summary.nationalIdLabel,
+                            )}${formatNationalId(
+                              landlordRep.nationalId || '-',
+                            )}`}
+                          />
+                        </GridColumn>
+                        <GridColumn span={['12/12', '6/12']}>
+                          <KeyValue
+                            label={summary.emailLabel}
+                            value={landlordRep.email}
+                          />
+                        </GridColumn>
+                        <GridColumn span={['12/12', '6/12']}>
+                          <KeyValue
+                            label={summary.phoneNumberLabel}
+                            value={formatPhoneNumber(landlordRep.phone || '-')}
+                          />
+                        </GridColumn>
+                      </GridRow>
+                      <div className={divider} />
+                    </>
                   )
                 })}
           </Box>
