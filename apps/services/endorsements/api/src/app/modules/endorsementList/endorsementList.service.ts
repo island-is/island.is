@@ -332,19 +332,23 @@ export class EndorsementListService {
       ),
     )
 
-
     // Path to assets
     const assetsDir = 'apps/services/endorsements/api/src/assets'
-    const regularFontPath = path.resolve(assetsDir, 'ibm-plex-sans-v7-latin-regular.ttf')
-    const boldFontPath = path.resolve(assetsDir, 'ibm-plex-sans-v7-latin-600.ttf')
+    const regularFontPath = path.resolve(
+      assetsDir,
+      'ibm-plex-sans-v7-latin-regular.ttf',
+    )
+    const boldFontPath = path.resolve(
+      assetsDir,
+      'ibm-plex-sans-v7-latin-600.ttf',
+    )
     const headerImagePath = path.resolve(assetsDir, 'thjodskra.png')
     const footerImagePath = path.resolve(assetsDir, 'island.png')
 
     // Log resolved paths for debugging
-    this.logger.debug(`Assets directory: ${assetsDir}`);
+    this.logger.debug(`Assets directory: ${assetsDir}`)
     this.logger.debug(`Header image path: ${headerImagePath}`)
     this.logger.debug(`Footer image path: ${footerImagePath}`)
-
 
     doc.registerFont('Regular', regularFontPath)
     doc.registerFont('Bold', boldFontPath)
