@@ -141,6 +141,16 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Ekki tókst að búa til umsókn af gerðinni: {type}',
     description: 'Failed to create application of type: {type}',
   },
+  nationalId: {
+    id: 'application.system:nationalId',
+    defaultMessage: 'Kennitala',
+    description: 'National ID',
+  },
+  name: {
+    id: 'application.system:name',
+    defaultMessage: 'Nafn',
+    description: 'Name',
+  },
   applications: {
     id: 'application.system:applications',
     defaultMessage: 'Þínar umsóknir',

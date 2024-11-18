@@ -22,7 +22,11 @@ import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
-import { handleCustomMappedValues } from './utils'
+import {
+  buildDefaultTableHeader,
+  buildDefaultTableRows,
+  handleCustomMappedValues,
+} from './utils'
 import { Item } from './TableRepeaterItem'
 import { Locale } from '@island.is/shared/types'
 
@@ -72,8 +76,8 @@ export const TableRepeaterFormField: FC<Props> = ({
   const activeField = activeIndex >= 0 ? fields[activeIndex] : null
   const savedFields = fields.filter((_, index) => index !== activeIndex)
   const tableItems = items.filter((x) => x.displayInTable !== false)
-  const tableHeader = table?.header ?? tableItems.map((item) => item.label)
-  const tableRows = table?.rows ?? tableItems.map((item) => item.id)
+  const tableHeader = table?.header ?? buildDefaultTableHeader(tableItems)
+  const tableRows = table?.rows ?? buildDefaultTableRows(tableItems)
   const staticData = getStaticTableData?.(application)
   const canAddItem = maxRows ? savedFields.length < maxRows : true
 
