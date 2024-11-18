@@ -34,7 +34,6 @@ import {
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
-  prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
   publicProsecutorStaffRule,
@@ -82,6 +81,7 @@ export class FileController {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
   )
   @Post('file/url')
   @ApiCreatedResponse({
@@ -108,6 +108,7 @@ export class FileController {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
   )
   @Post('file')
   @ApiCreatedResponse({
