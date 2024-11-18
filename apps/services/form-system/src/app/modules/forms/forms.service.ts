@@ -43,6 +43,10 @@ import { ListType, ListTypes } from '../../dataTypes/listTypes/listType.model'
 import { OrganizationListType } from '../organizationListTypes/models/organizationListType.model'
 import { FormApplicantTypeDto } from '../formApplicantTypes/models/dto/formApplicantType.dto'
 import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/formCertificationType.dto'
+import { OrganizationUrlDto } from '../organizationUrls/models/dto/organizationUrl.dto'
+import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
+import { FormUrl } from '../formUrls/models/formUrl.model'
+import { FormUrlDto } from '../formUrls/models/dto/formUrl.dto'
 
 @Injectable()
 export class FormsService {
@@ -55,6 +59,8 @@ export class FormsService {
     private readonly screenModel: typeof Screen,
     @InjectModel(Organization)
     private readonly organizationModel: typeof Organization,
+    @InjectModel(OrganizationUrl)
+    private readonly organizationUrlModel: typeof OrganizationUrl,
   ) {}
 
   async findAll(organizationId: string): Promise<FormResponseDto> {
@@ -131,26 +137,7 @@ export class FormsService {
       throw new NotFoundException(`Form with id '${id}' not found`)
     }
 
-    form.organizationId = updateFormDto.organizationId
-      ? updateFormDto.organizationId
-      : form.organizationId
-    form.name = updateFormDto.name ? updateFormDto.name : form.name
-    form.slug = updateFormDto.slug ? updateFormDto.slug : form.slug
-    form.invalidationDate = updateFormDto.invalidationDate
-      ? updateFormDto.invalidationDate
-      : form.invalidationDate
-    form.isTranslated = updateFormDto.isTranslated
-      ? updateFormDto.isTranslated
-      : form.isTranslated
-    form.applicationDaysToRemove = updateFormDto.applicationDaysToRemove
-      ? updateFormDto.applicationDaysToRemove
-      : form.applicationDaysToRemove
-    form.stopProgressOnValidatingScreen =
-      updateFormDto.stopProgressOnValidatingScreen
-        ? updateFormDto.stopProgressOnValidatingScreen
-        : form.stopProgressOnValidatingScreen
-    form.completedMessage = updateFormDto.completedMessage
-    form.dependencies = updateFormDto.dependencies
+    Object.assign(form, updateFormDto)
 
     await form.save()
   }
@@ -198,6 +185,10 @@ export class FormsService {
           model: FormApplicantType,
           as: 'formApplicantTypes',
         },
+        {
+          model: FormUrl,
+          as: 'formUrls',
+        },
       ],
     })
 
@@ -215,9 +206,31 @@ export class FormsService {
       certificationTypes: await this.getCertificationTypes(form.organizationId),
       applicantTypes: await this.getApplicantTypes(),
       listTypes: await this.getListTypes(form.organizationId),
+      urls: await this.getUrls(form.organizationId),
     }
 
     return response
+  }
+
+  private async getUrls(organizationId: string): Promise<OrganizationUrlDto[]> {
+    const organizationUrls = await this.organizationUrlModel.findAll({
+      where: { organizationId: organizationId },
+    })
+
+    const keys = ['id', 'url', 'isXroad', 'isTest', 'type', 'method']
+
+    const organizationUrlsDto: OrganizationUrlDto[] = []
+
+    organizationUrls.map((organizationUrl) => {
+      organizationUrlsDto.push(
+        defaults(
+          pick(organizationUrl, keys),
+          zipObject(keys, Array(keys.length).fill(null)) as OrganizationUrlDto,
+        ),
+      )
+    })
+
+    return organizationUrlsDto
   }
 
   private async getApplicantTypes(): Promise<ApplicantType[]> {
@@ -278,7 +291,6 @@ export class FormsService {
             id: randomUUID(),
             order: 0,
             json: ValueTypeFactory.getClass(fieldType.id, new ValueType()),
-            // isHidden: false,
           },
         ])
     })
@@ -327,6 +339,7 @@ export class FormsService {
       {
         certificationTypes: [],
         applicantTypes: [],
+        urls: [],
         sections: [],
         screens: [],
         fields: [],
@@ -354,6 +367,22 @@ export class FormsService {
           zipObject(applicantKeys, Array(applicantKeys.length).fill(null)),
         ) as FormApplicantTypeDto,
       )
+    })
+
+    form.formUrls?.map(async (formUrl) => {
+      const organizationUrl = await this.organizationUrlModel.findByPk(
+        formUrl.organizationUrlId,
+      )
+
+      formDto.urls?.push({
+        id: formUrl.id,
+        organizationUrlId: organizationUrl?.id,
+        url: organizationUrl?.url,
+        isXroad: organizationUrl?.isXroad,
+        isTest: organizationUrl?.isTest,
+        type: organizationUrl?.type,
+        method: organizationUrl?.method,
+      } as FormUrlDto)
     })
 
     const sectionKeys = [
