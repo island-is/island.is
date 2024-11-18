@@ -5,7 +5,7 @@ import { PlateOwnership } from '../shared'
 export const getSelectedVehicle = (
   externalData: ExternalData,
   answers: FormValue,
-) => {
+): PlateOwnership | undefined => {
   const currentVehicleList =
     (externalData?.['myPlateOwnershipList']?.data as PlateOwnership[]) || []
   const vehicleValue = getValueViaPath(answers, 'pickPlate.value', '') as string
