@@ -41,6 +41,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Bæta við',
     description: 'Add button',
   },
+  buttonCancel: {
+    id: 'application.system:button.cancel',
+    defaultMessage: 'Hætta við',
+    description: 'Cancel button',
+  },
   cardButtonInProgress: {
     id: 'application.system:card.button.inProgress',
     defaultMessage: 'Opna umsókn',

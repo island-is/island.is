@@ -47,6 +47,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     title,
     titleVariant = 'h4',
     addItemButtonText = coreMessages.buttonAdd,
+    cancelButtonText = coreMessages.buttonCancel,
     saveItemButtonText = coreMessages.reviewButtonSubmit,
     removeButtonTooltipText = coreMessages.deleteFieldText,
     editButtonTooltipText = coreMessages.editFieldText,
@@ -87,6 +88,11 @@ export const TableRepeaterFormField: FC<Props> = ({
     if (isValid) {
       setActiveIndex(-1)
     }
+  }
+
+  const handleCancelItem = (index: number) => {
+    setActiveIndex(-1)
+    remove(index)
   }
 
   const handleNewItem = () => {
@@ -239,14 +245,24 @@ export const TableRepeaterFormField: FC<Props> = ({
                   />
                 ))}
               </GridRow>
-              <Box display="flex" justifyContent="flexEnd">
-                <Button
-                  variant="ghost"
-                  type="button"
-                  onClick={() => handleSaveItem(activeIndex)}
-                >
-                  {formatText(saveItemButtonText, application, formatMessage)}
-                </Button>
+              <Box display="flex" alignItems="center" justifyContent="flexEnd">
+                <Box>
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={() => handleCancelItem(activeIndex)}
+                  >
+                    {formatText(cancelButtonText, application, formatMessage)}
+                  </Button>
+                </Box>
+                <Box marginLeft={2}>
+                  <Button
+                    type="button"
+                    onClick={() => handleSaveItem(activeIndex)}
+                  >
+                    {formatText(saveItemButtonText, application, formatMessage)}
+                  </Button>
+                </Box>
               </Box>
             </Stack>
           ) : (

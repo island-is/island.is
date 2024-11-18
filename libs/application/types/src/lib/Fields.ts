@@ -624,6 +624,7 @@ export type TableRepeaterField = BaseField & {
   component: FieldComponents.TABLE_REPEATER
   formTitle?: StaticText
   addItemButtonText?: StaticText
+  cancelButtonText?: StaticText
   saveItemButtonText?: StaticText
   getStaticTableData?: (application: Application) => Record<string, string>[]
   removeButtonTooltipText?: StaticText
