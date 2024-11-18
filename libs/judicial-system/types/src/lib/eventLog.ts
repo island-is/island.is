@@ -15,3 +15,5 @@ export enum EventType {
 export enum DefendantEventType {
   SENT_TO_PRISON_ADMIN = 'SENT_TO_PRISON_ADMIN',
 }
+
+export const eventTypes = Object.values(EventType)
