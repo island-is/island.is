@@ -48,4 +48,10 @@ export const strings = defineMessages({
     description:
       'Notað sem texti á taggi fyrir "Dómur birtur" í yfirlesin mál málalista',
   },
+  tagVerdictViewSentToPrisonAdmin: {
+    id: 'judicial.system.core:public_prosecutor.tables.cases_reviewed.tag_verdict_sent_to_prison_admin',
+    defaultMessage: 'Til fullnustu',
+    description:
+      'Notað sem texti á taggi fyrir "Til fullnustu" í yfirlesin mál málalista',
+  },
 })
