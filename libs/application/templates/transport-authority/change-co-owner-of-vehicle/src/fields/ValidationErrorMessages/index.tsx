@@ -2,16 +2,25 @@ import { gql, useQuery } from '@apollo/client'
 import { OwnerChangeValidationMessage } from '@island.is/api/schema'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Bullet,
+  BulletList,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect } from 'react'
+import { Dispatch, FC, SetStateAction, useEffect } from 'react'
 import { ChangeCoOwnerOfVehicleAnswers } from '../..'
 import { VALIDATE_VEHICLE_CO_OWNER_CHANGE } from '../../graphql/queries'
 import { applicationCheck } from '../../lib/messages'
 
+interface Props {
+  setValidationErrorFound?: Dispatch<SetStateAction<boolean>>
+}
+
 export const ValidationErrorMessages: FC<
-  React.PropsWithChildren<FieldBaseProps>
-> = (props) => {
+  React.PropsWithChildren<Props & FieldBaseProps>
+> = ({ setValidationErrorFound, ...props }) => {
   const { application, setFieldLoadingState } = props
 
   const { formatMessage } = useLocale()
@@ -47,12 +56,18 @@ export const ValidationErrorMessages: FC<
           })),
         },
       },
+      onCompleted: (data) => {
+        if (data?.vehicleCoOwnerChangeValidation?.hasError) {
+          setValidationErrorFound?.(true)
+        }
+      },
+      fetchPolicy: 'no-cache',
     },
   )
 
   useEffect(() => {
     setFieldLoadingState?.(loading)
-  }, [loading])
+  }, [loading, setFieldLoadingState])
 
   return data?.vehicleCoOwnerChangeValidation?.hasError &&
     data.vehicleCoOwnerChangeValidation.errorMessages.length > 0 ? (
@@ -62,7 +77,7 @@ export const ValidationErrorMessages: FC<
         title={formatMessage(applicationCheck.validation.alertTitle)}
         message={
           <Box component="span" display="block">
-            <ul>
+            <BulletList>
               {data.vehicleCoOwnerChangeValidation.errorMessages.map(
                 (error: OwnerChangeValidationMessage) => {
                   const message = formatMessage(
@@ -80,15 +95,13 @@ export const ValidationErrorMessages: FC<
                     error?.errorNo
 
                   return (
-                    <li>
-                      <Text variant="small">
-                        {message || defaultMessage || fallbackMessage}
-                      </Text>
-                    </li>
+                    <Bullet key={error.errorNo}>
+                      {message || defaultMessage || fallbackMessage}
+                    </Bullet>
                   )
                 },
               )}
-            </ul>
+            </BulletList>
           </Box>
         }
       />

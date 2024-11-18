@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const error = defineMessages({
+  requiredValidPlate: {
+    id: 'ta.lpr.application:error.requiredValidPlate',
+    defaultMessage: 'Einkamerki þarf að vera gilt',
+    description: 'Error message if the plate chosen is invalid or not chosen',
+  },
   errorDataProvider: {
     id: 'ta.lpr.application:error.dataProvider',
     defaultMessage: 'Reyndu aftur síðar',
