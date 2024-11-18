@@ -7,7 +7,7 @@ import { Box, Inline, TagVariant, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-import { PlazaCard } from '@island.is/web/components'
+import { InfoCard } from '@island.is/web/components'
 import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 
@@ -60,30 +60,28 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
             return (
               <Box key={grant.id}>
                 {grant.applicationId && (
-                  <PlazaCard
+                  <InfoCard
+                    variant="detailed"
+                    type="wide"
                     eyebrow={grant.fund?.title ?? grant.name ?? ''}
                     subEyebrow={grant.fund?.parentOrganization?.title}
                     title={grant.name ?? ''}
                     text={grant.description ?? ''}
                     logo={grant.fund?.parentOrganization?.logo?.url ?? ''}
                     logoAlt={grant.fund?.parentOrganization?.logo?.title ?? ''}
-                    tag={{
-                      label: grant.statusText ?? '',
-                      variant: tagVariant,
-                    }}
-                    cta={{
-                      label: formatMessage(m.general.seeMore),
-                      variant: 'text',
-                      onClick: () => {
-                        router.push(
-                          linkResolver(
-                            'styrkjatorggrant',
-                            [grant?.applicationId ?? ''],
-                            locale,
-                          ).href,
-                        )
+                    tags={[
+                      {
+                        label: grant.statusText ?? '',
+                        variant: tagVariant,
                       },
-                      icon: 'arrowForward',
+                    ]}
+                    link={{
+                      label: formatMessage(m.general.seeMore),
+                      href: linkResolver(
+                        'styrkjatorggrant',
+                        [grant?.applicationId ?? ''],
+                        locale,
+                      ).href,
                     }}
                     detailLines={[
                       grant.dateFrom && grant.dateTo
