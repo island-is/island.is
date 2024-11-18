@@ -16,7 +16,14 @@ const foregroundColors = colorTokensLight.foreground
 const interactiveColors = colorTokensLight.interactive
 const overlayColors = colorTokensLight.overlay
 
-console.log(backgroundColors, borderColors, feedbackColors, foregroundColors, interactiveColors, overlayColors)
+console.log(
+  backgroundColors,
+  borderColors,
+  feedbackColors,
+  foregroundColors,
+  interactiveColors,
+  overlayColors,
+)
 
 export const UNIT = 8
 
