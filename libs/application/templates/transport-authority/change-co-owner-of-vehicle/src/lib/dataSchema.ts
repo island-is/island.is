@@ -90,7 +90,7 @@ export const RejecterSchema = z.object({
 export const ChangeCoOwnerOfVehicleSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   pickVehicle: z.object({
-    vehicle: z.string().optional(), // index
+    vehicle: z.string().optional(),
     plate: z.string().min(1),
     type: z.string().optional(),
     color: z.string().optional(),
