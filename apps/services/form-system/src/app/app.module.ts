@@ -18,6 +18,8 @@ import { FormApplicantTypesModule } from './modules/formApplicantTypes/formAppli
 import { FormCertificationTypesModule } from './modules/formCertificationTypes/formCertificationTypes.module'
 import { OrganizationCertificationTypesModule } from './modules/organizationCertificationTypes/organizationCertificationTypes.module'
 import { OrganizationFieldTypesModule } from './modules/organizationFieldTypes/organizationFieldTypes.module'
+import { OrganizationUrlsModule } from './modules/organizationUrls/organizationUrls.module'
+import { FormUrlsModule } from './modules/formUrls/formUrls.module'
 
 @Module({
   imports: [
@@ -37,9 +39,11 @@ import { OrganizationFieldTypesModule } from './modules/organizationFieldTypes/o
     ValuesModule,
     FormApplicantTypesModule,
     FormCertificationTypesModule,
+    FormUrlsModule,
     OrganizationCertificationTypesModule,
     OrganizationFieldTypesModule,
     OrganizationListTypesModule,
+    OrganizationUrlsModule,
   ],
 })
 export class AppModule {}

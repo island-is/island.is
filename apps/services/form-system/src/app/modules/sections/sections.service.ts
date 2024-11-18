@@ -42,7 +42,6 @@ export class SectionsService {
 
     section.name = updateSectionDto.name
     section.waitingText = updateSectionDto.waitingText
-    section.modified = new Date()
 
     await section.save()
 

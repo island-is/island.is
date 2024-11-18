@@ -9,6 +9,7 @@ import { FormsService } from './forms.service'
 import { Form } from './models/form.model'
 import { ListItemMapper } from '../listItems/models/listItem.mapper'
 import { ListItem } from '../listItems/models/listItem.model'
+import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ListItem } from '../listItems/models/listItem.model'
       Screen,
       Organization,
       ListItem,
+      OrganizationUrl,
     ]),
   ],
   controllers: [FormsController],
