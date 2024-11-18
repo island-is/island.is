@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
 import {
   ToastContainer as ToastifyContainer,
   toast as toastify,
