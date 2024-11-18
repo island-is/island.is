@@ -418,7 +418,7 @@ export class InternalCaseService {
           collectEncryptionProperties(defendantEncryptionProperties, defendant)
         defendantsArchive.push(defendantArchive)
 
-        await this.defendantService.updateForArcive(
+        await this.defendantService.updateDatabaseDefendant(
           theCase.id,
           defendant.id,
           clearedDefendantProperties,
@@ -1223,6 +1223,12 @@ export class InternalCaseService {
       attributes: ['id', 'courtCaseNumber', 'type', 'state'],
       where: {
         type: CaseType.INDICTMENT,
+        // Make sure we don't send cases that are in deleted or other inaccessible states
+        state: [
+          CaseState.RECEIVED,
+          CaseState.COMPLETED,
+          CaseState.WAITING_FOR_CANCELLATION,
+        ],
         // The national id could be without a hyphen or with a hyphen so we need to
         // search for both
         '$defendants.national_id$': normalizeAndFormatNationalId(nationalId),

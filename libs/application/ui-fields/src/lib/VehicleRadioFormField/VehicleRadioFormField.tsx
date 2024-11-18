@@ -210,35 +210,34 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                   message={
                     <Box>
                       <BulletList>
-                        {!!plate.validationErrorMessages?.length &&
-                          plate.validationErrorMessages?.map((error) => {
-                            const message =
-                              field.validationErrorMessages &&
-                              formatMessage(
-                                getValueViaPath(
-                                  field.validationErrorMessages,
-                                  error.errorNo || '',
-                                ),
-                              )
-
-                            const defaultMessage = error.defaultMessage
-
-                            const fallbackMessage =
-                              (field.validationErrorFallbackMessage &&
-                                formatText(
-                                  field.validationErrorFallbackMessage,
-                                  application,
-                                  formatMessage,
-                                )) +
-                              ' - ' +
-                              error.errorNo
-
-                            return (
-                              <Bullet>
-                                {message || defaultMessage || fallbackMessage}
-                              </Bullet>
+                        {plate.validationErrorMessages?.map((error) => {
+                          const message =
+                            field.validationErrorMessages &&
+                            formatMessage(
+                              getValueViaPath(
+                                field.validationErrorMessages,
+                                error.errorNo || '',
+                              ),
                             )
-                          })}
+
+                          const defaultMessage = error.defaultMessage
+
+                          const fallbackMessage =
+                            (field.validationErrorFallbackMessage &&
+                              formatText(
+                                field.validationErrorFallbackMessage,
+                                application,
+                                formatMessage,
+                              )) +
+                            ' - ' +
+                            error.errorNo
+
+                          return (
+                            <Bullet>
+                              {message || defaultMessage || fallbackMessage}
+                            </Bullet>
+                          )
+                        })}
                       </BulletList>
                     </Box>
                   }
