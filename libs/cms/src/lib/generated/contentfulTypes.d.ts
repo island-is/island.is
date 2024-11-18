@@ -8,7 +8,7 @@ export interface IAccordionSliceFields {
   title?: string | undefined
 
   /** Type */
-  type: 'accordion' | 'accordion_minimal' | 'CTA' | 'category_card'
+  type: 'accordion' | 'accordion_minimal' | 'category_card'
 
   /** Accordion Items */
   accordionItems?: IOneColumnText[] | undefined
@@ -770,6 +770,7 @@ export interface ICustomPageFields {
     | 'PensionCalculator'
     | 'OfficialJournalOfIceland'
     | 'Vacancies'
+    | 'Grants'
     | undefined
 
   /** Alert Banner */
@@ -1549,6 +1550,39 @@ export interface IFrontpageSlider extends Entry<IFrontpageSliderFields> {
   }
 }
 
+export interface IFundFields {
+  /** Title */
+  fundTitle: string
+
+  /** Link */
+  fundLink?: IArticle | IOrganizationSubpage | ILinkUrl | undefined
+
+  /** Featured Image */
+  fundFeaturedImage: Asset
+
+  /** Parent Organization */
+  fundParentOrganization: IOrganization
+}
+
+/** Fund is a part of "Styrkjatorg". */
+
+export interface IFund extends Entry<IFundFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'fund'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IGenericListFields {
   /** Internal Title */
   internalTitle: string
@@ -1596,7 +1630,7 @@ export interface IGenericListItemFields {
   title: string
 
   /** Date */
-  date: string
+  date?: string | undefined
 
   /** Card Intro */
   cardIntro?: Document | undefined
@@ -1749,6 +1783,9 @@ export interface IGenericTagGroupFields {
 
   /** Slug */
   slug: string
+
+  /** Items */
+  items?: Record<string, any> | undefined
 }
 
 /** A way to group together generic tags */
@@ -1763,6 +1800,85 @@ export interface IGenericTagGroup extends Entry<IGenericTagGroupFields> {
     contentType: {
       sys: {
         id: 'genericTagGroup'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGrantFields {
+  /** Title */
+  grantName: string
+
+  /** Description  */
+  grantDescription?: string | undefined
+
+  /** Grant Application ID */
+  grantApplicationId?: string | undefined
+
+  /** Application deadline text */
+  grantApplicationDeadlineText: string[]
+
+  /** Application Url */
+  granApplicationUrl?: ILinkUrl | undefined
+
+  /** Special emphasis */
+  grantSpecialEmphasis?: Document | undefined
+
+  /** Who can apply? */
+  grantWhoCanApply?: Document | undefined
+
+  /** How to apply? */
+  grantHowToApply?: Document | undefined
+
+  /** Application deadline */
+  grantApplicationDeadline?: Document | undefined
+
+  /** Application hints */
+  grantApplicationHints?: Document | undefined
+
+  /** Date from */
+  grantDateFrom?: string | undefined
+
+  /** Date to */
+  grantDateTo?: string | undefined
+
+  /** Is open? */
+  grantIsOpen?: boolean | undefined
+
+  /** Status */
+  grantStatus?:
+    | 'Opið fyrir umsóknir'
+    | 'Lokað fyrir umsóknir'
+    | 'Opnar fljótlega'
+    | undefined
+
+  /** Files */
+  grantFiles?: Asset[] | undefined
+
+  /** Category tags */
+  grantCategoryTags?: IGenericTag[] | undefined
+
+  /** Type tag */
+  grantTypeTag?: IGenericTag | undefined
+
+  /** Fund */
+  grantFund: IFund
+}
+
+/** Grant is a part of "Styrkjatorg". */
+
+export interface IGrant extends Entry<IGrantFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'grant'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1935,7 +2051,7 @@ export interface IIntroLinkImageFields {
   /** Image */
   image: Asset
 
-  /** Left Image */
+  /** Image Position */
   leftImage?: boolean | undefined
 
   /** Link Title */
@@ -2011,7 +2127,7 @@ export interface ILatestGenericListItemsFields {
   genericList?: IGenericList | undefined
 
   /** See more page */
-  seeMorePage?: IOrganizationSubpage | undefined
+  seeMorePage: IOrganizationSubpage
 
   /** See more link text */
   seeMoreLinkText?: string | undefined
@@ -2128,6 +2244,34 @@ export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
     contentType: {
       sys: {
         id: 'lifeEventPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILifeEventPageListSliceFields {
+  /** Title */
+  title?: string | undefined
+
+  /** List */
+  lifeEventPageList?: (ILifeEventPage | IAnchorPage)[] | undefined
+}
+
+/** !!DO NOT USE!! - This content type has been deprecated. Use Anchor Page List */
+
+export interface ILifeEventPageListSlice
+  extends Entry<ILifeEventPageListSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'lifeEventPageListSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2737,6 +2881,9 @@ export interface IOneColumnTextFields {
 
   /** Show Title */
   showTitle?: boolean | undefined
+
+  /** Filter tags */
+  filterTags?: IGenericTag[] | undefined
 }
 
 export interface IOneColumnText extends Entry<IOneColumnTextFields> {
@@ -2924,6 +3071,9 @@ export interface IOrganizationFields {
 
   /** Kennitala */
   kennitala?: string | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2982,6 +3132,7 @@ export interface IOrganizationPageFields {
         | IAnchorPageList
         | ISectionWithImage
         | IChartNumberBox
+        | ILatestGenericListItems
       )[]
     | undefined
 
@@ -3176,6 +3327,7 @@ export interface IOrganizationSubpageFields {
         | ISectionWithVideo
         | ISectionHeading
         | ILatestEventsSlice
+        | IGenericList
       )[]
     | undefined
 
@@ -3878,6 +4030,10 @@ export interface ISliceConnectedComponentFields {
     | 'SpecificHousingBenefitSupportCalculator'
     | 'GrindavikResidentialPropertyPurchaseCalculator'
     | 'Ums/CostOfLivingCalculator'
+    | 'Sveinslisti/JourneymanList'
+    | 'Starfsrettindi/ProfessionRights'
+    | 'VMST/ParentalLeaveCalculator'
+    | 'DigitalIceland/BenefitsOfDigitalProcesses'
     | undefined
 
   /** Localized JSON */
@@ -5133,12 +5289,14 @@ export type CONTENT_TYPE =
   | 'formField'
   | 'frontpage'
   | 'frontpageSlider'
+  | 'fund'
   | 'genericList'
   | 'genericListItem'
   | 'genericOverviewPage'
   | 'genericPage'
   | 'genericTag'
   | 'genericTagGroup'
+  | 'grant'
   | 'graphCard'
   | 'groupedMenu'
   | 'hnippTemplate'
@@ -5148,6 +5306,7 @@ export type CONTENT_TYPE =
   | 'latestGenericListItems'
   | 'latestNewsSlice'
   | 'lifeEventPage'
+  | 'lifeEventPageListSlice'
   | 'link'
   | 'linkedPage'
   | 'linkGroup'
