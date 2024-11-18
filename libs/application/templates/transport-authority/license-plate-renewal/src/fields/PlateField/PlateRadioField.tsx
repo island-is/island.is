@@ -14,6 +14,7 @@ import { useLocale } from '@island.is/localization'
 import { information } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
+import { checkCanRenew } from '../../utils'
 
 interface Option {
   value: string
@@ -38,9 +39,10 @@ export const PlateRadioField: FC<
     const options = [] as Option[]
 
     for (const [index, plate] of plates.entries()) {
-      const inThreeMonths = new Date().setMonth(new Date().getMonth() + 3)
-      const canRenew = +new Date(plate.endDate) <= +inThreeMonths
-      const disabled = !!plate?.validationErrorMessages?.length || !canRenew
+      const hasError = !!plate.validationErrorMessages?.length
+      const canRenew = checkCanRenew(plate)
+      const disabled = hasError || !canRenew
+
       options.push({
         value: `${index}`,
         label: (
@@ -55,13 +57,13 @@ export const PlateRadioField: FC<
                   {plate.regno}
                 </Text>
               </Box>
-              <Tag variant={canRenew ? 'red' : 'mint'} disabled>
+              <Tag variant={canRenew ? 'mint' : 'red'} disabled>
                 {formatMessage(information.labels.pickPlate.expiresTag, {
                   date: formatDateFns(new Date(plate.endDate), 'do MMM yyyy'),
                 })}
               </Tag>
             </Box>
-            {disabled && (
+            {hasError && (
               <Box marginTop={2}>
                 <AlertMessage
                   type="error"
@@ -71,10 +73,9 @@ export const PlateRadioField: FC<
                   message={
                     <Box>
                       <BulletList>
-                        {!!plate.validationErrorMessages?.length &&
-                          plate.validationErrorMessages?.map((error) => {
-                            return <Bullet>{error.defaultMessage}</Bullet>
-                          })}
+                        {plate.validationErrorMessages?.map((error) => {
+                          return <Bullet>{error.defaultMessage}</Bullet>
+                        })}
                       </BulletList>
                     </Box>
                   }

@@ -52,11 +52,6 @@ export const information = {
         defaultMessage: 'Ekki er hægt að endurnýja einkamerki vegna:',
         description: 'Pick plate has an error title',
       },
-      isNotDebtLessTag: {
-        id: 'ta.lpr.application:information.labels.pickVehicle.isNotDebtLessTag',
-        defaultMessage: 'Ógreidd bifreiðagjöld',
-        description: 'Pick plate is not debt less tag',
-      },
       expiresTag: {
         id: 'ta.lpr.application:information.labels.pickVehicle.expiresTag',
         defaultMessage: 'Rennur út {date}',

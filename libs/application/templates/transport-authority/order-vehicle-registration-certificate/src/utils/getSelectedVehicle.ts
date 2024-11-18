@@ -5,7 +5,7 @@ import { CurrentVehiclesAndRecords, VehiclesCurrentVehicle } from '../shared'
 export const getSelectedVehicle = (
   externalData: ExternalData,
   answers: FormValue,
-): VehiclesCurrentVehicle => {
+): VehiclesCurrentVehicle | undefined => {
   if (answers.findVehicle) {
     const vehicle = getValueViaPath(
       answers,
