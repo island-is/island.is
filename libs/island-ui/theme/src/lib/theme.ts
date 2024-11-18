@@ -3,8 +3,8 @@ import type { StyleRule } from '@vanilla-extract/css'
 import omit from 'lodash/omit'
 import * as color from './colors'
 
-import { colorTokensLight } from './figmaStyles' //test
-console.log('theme', colorTokensLight)
+import { colorPrimitives } from './figmaStyles'
+console.log(colorPrimitives)
 
 export const UNIT = 8
 
