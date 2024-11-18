@@ -279,7 +279,7 @@ export const serviceSetup = (services: {
       UNIVERSITY_GATEWAY_API_URL: ref(
         (h) => `http://${h.svc(services.universityGatewayApi)}`,
       ),
-      PAYMENT_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
       WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: {
         dev: 'island-is-assistant-feedback',
         staging: 'island-is-assistant-feedback',
