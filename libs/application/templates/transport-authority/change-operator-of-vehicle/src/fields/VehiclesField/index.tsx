@@ -110,15 +110,15 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
               children: undefined,
               itemType: 'VEHICLE',
               itemList: currentVehicleList?.vehicles,
-              validateDebtStatus: true,
+              shouldValidateDebtStatus: true,
               alertMessageErrorTitle:
                 information.labels.pickVehicle.hasErrorTitle,
-              debtStatusErrorMessage:
-                information.labels.pickVehicle.isNotDebtLessTag,
               validationErrorMessages: applicationCheck.validation,
               validationErrorFallbackMessage:
                 applicationCheck.validation.fallbackErrorMessage,
               inputErrorMessage: error.requiredValidVehicle,
+              debtStatusErrorMessage:
+                information.labels.pickVehicle.isNotDebtLessTag,
             }}
           />
         )}

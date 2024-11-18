@@ -85,7 +85,7 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
 
     for (const [index, vehicle] of vehicles.entries()) {
       const hasError = !!vehicle.validationErrorMessages?.length
-      const hasDebtError = field.validateDebtStatus && !vehicle.isDebtLess
+      const hasDebtError = field.shouldValidateDebtStatus && !vehicle.isDebtLess
       const disabled = hasError || hasDebtError
 
       options.push({
@@ -115,16 +115,17 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                   message={
                     <Box>
                       <BulletList>
-                        {field.validateDebtStatus && !vehicle.isDebtLess && (
-                          <Bullet>
-                            {field.debtStatusErrorMessage &&
-                              formatText(
-                                field.debtStatusErrorMessage,
-                                application,
-                                formatMessage,
-                              )}
-                          </Bullet>
-                        )}
+                        {field.shouldValidateDebtStatus &&
+                          !vehicle.isDebtLess && (
+                            <Bullet>
+                              {field.debtStatusErrorMessage &&
+                                formatText(
+                                  field.debtStatusErrorMessage,
+                                  application,
+                                  formatMessage,
+                                )}
+                            </Bullet>
+                          )}
                         {!!vehicle.validationErrorMessages?.length &&
                           vehicle.validationErrorMessages?.map((error) => {
                             const message =
@@ -171,7 +172,8 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
 
     for (const [index, plate] of plates.entries()) {
       const hasError = !!plate.validationErrorMessages?.length
-      const canRenew = field.checkExpireAtIfCanRenew?.(plate)
+      const canRenew =
+        !field.shouldValidateRenewal || field.validateRenewal?.(plate)
       const disabled = hasError || !canRenew
 
       options.push({
@@ -189,8 +191,8 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                 </Text>
               </Box>
               <Tag variant={canRenew ? 'mint' : 'red'} disabled>
-                {field.expiresAtTag &&
-                  formatMessage(field.expiresAtTag, {
+                {field.renewalExpiresAtTag &&
+                  formatMessage(field.renewalExpiresAtTag, {
                     date: formatDateFns(new Date(plate.endDate), 'do MMM yyyy'),
                   })}
               </Tag>

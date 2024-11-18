@@ -75,7 +75,6 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
             children: undefined,
             itemType: 'VEHICLE',
             itemList: currentVehicleList?.vehicles,
-            validateDebtStatus: false,
             inputErrorMessage: error.requiredValidVehicle,
           }}
         />

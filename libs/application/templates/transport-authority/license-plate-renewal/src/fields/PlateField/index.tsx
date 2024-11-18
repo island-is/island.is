@@ -63,15 +63,14 @@ export const PlateField: FC<React.PropsWithChildren<FieldBaseProps>> = (
             children: undefined,
             itemType: 'PLATE',
             itemList: myPlateOwnershipList,
-            validateDebtStatus: false,
+            shouldValidateRenewal: true,
             alertMessageErrorTitle: information.labels.pickPlate.hasErrorTitle,
             validationErrorMessages: applicationCheck.validation,
             validationErrorFallbackMessage:
               applicationCheck.validation.fallbackErrorMessage,
             inputErrorMessage: error.requiredValidPlate,
-            expiresAtTag: information.labels.pickPlate.expiresTag,
-            checkExpireAtIfCanRenew: (item) =>
-              checkCanRenew(item as PlateOwnership),
+            renewalExpiresAtTag: information.labels.pickPlate.expiresTag,
+            validateRenewal: (item) => checkCanRenew(item as PlateOwnership),
           }}
         />
       )}
