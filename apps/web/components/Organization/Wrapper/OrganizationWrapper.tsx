@@ -205,13 +205,7 @@ export const getThemeConfig = (
     }
   }
 
-  return {
-    themeConfig: {
-      headerColorScheme: 'white',
-      headerButtonColorScheme: 'negative',
-      footerVersion,
-    },
-  }
+  return { themeConfig: { footerVersion } }
 }
 
 export const OrganizationHeader: React.FC<
