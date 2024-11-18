@@ -171,7 +171,7 @@ await page.waitForSelector(':nth-match("role=checkbox", 3')
 // Wait for any arbitrary function
 await page.waitForFunction(async () => {
   const timer = page.locator('role=timer')
-  const timeLeft = await counter.textContent()
+  const timeLeft = await timer.textContent()
   return Number(timeLeft) < 10
 })
 ```
