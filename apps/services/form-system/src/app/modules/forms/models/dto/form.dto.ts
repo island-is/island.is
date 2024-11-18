@@ -6,6 +6,7 @@ import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import { FormApplicantTypeDto } from '../../../formApplicantTypes/models/dto/formApplicantType.dto'
 import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
+import { FormUrlDto } from '../../../formUrls/models/dto/formUrl.dto'
 
 export class FormDto {
   @ApiProperty()
@@ -52,6 +53,9 @@ export class FormDto {
 
   @ApiPropertyOptional({ type: [FormApplicantTypeDto] })
   applicantTypes?: FormApplicantTypeDto[]
+
+  @ApiPropertyOptional({ type: [FormUrlDto] })
+  urls?: FormUrlDto[]
 
   @ApiPropertyOptional({ type: [SectionDto] })
   sections?: SectionDto[]

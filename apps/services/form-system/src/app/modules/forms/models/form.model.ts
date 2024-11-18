@@ -15,6 +15,7 @@ import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FormApplicantType } from '../../formApplicantTypes/models/formApplicantType.model'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
+import { FormUrl } from '../../formUrls/models/formUrl.model'
 
 @Table({ tableName: 'form' })
 export class Form extends Model<Form> {
@@ -105,6 +106,9 @@ export class Form extends Model<Form> {
 
   @HasMany(() => FormCertificationType)
   formCertificationTypes?: FormCertificationType[]
+
+  @HasMany(() => FormUrl)
+  formUrls?: FormUrl[]
 
   @ForeignKey(() => Organization)
   @Column({
