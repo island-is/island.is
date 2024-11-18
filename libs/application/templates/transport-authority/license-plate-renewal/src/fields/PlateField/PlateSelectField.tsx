@@ -1,6 +1,6 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { FC, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import {
   Box,
   SkeletonLoader,
@@ -8,12 +8,15 @@ import {
   Bullet,
   BulletList,
   ActionCard,
+  InputError,
 } from '@island.is/island-ui/core'
 import { PlateOwnership } from '../../shared'
-import { information } from '../../lib/messages'
+import { error, information } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { getValueViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
+import { useLazyPlateDetails } from '../../hooks/useLazyPlateDetails'
+import { checkCanRenew } from '../../utils'
 
 interface PlateSearchFieldProps {
   myPlateOwnershipList: PlateOwnership[]
@@ -21,7 +24,7 @@ interface PlateSearchFieldProps {
 
 export const PlateSelectField: FC<
   React.PropsWithChildren<PlateSearchFieldProps & FieldBaseProps>
-> = ({ myPlateOwnershipList, application }) => {
+> = ({ myPlateOwnershipList, application, errors, setFieldLoadingState }) => {
   const { formatMessage, formatDateFns } = useLocale()
   const { setValue } = useFormContext()
 
@@ -43,27 +46,59 @@ export const PlateSelectField: FC<
         }
       : null,
   )
+  const [plate, setPlate] = useState<string>(
+    getValueViaPath(application.answers, 'pickPlate.regno', '') as string,
+  )
+
+  const getPlateDetails = useLazyPlateDetails()
+  const getPlateDetailsCallback = useCallback(
+    async ({ regno }: { regno: string }) => {
+      const { data } = await getPlateDetails({
+        regno,
+      })
+      return data
+    },
+    [getPlateDetails],
+  )
 
   const onChange = (option: Option) => {
     const currentPlate = myPlateOwnershipList[parseInt(option.value, 10)]
     setIsLoading(true)
     if (currentPlate.regno) {
-      setSelectedPlate({
+      getPlateDetailsCallback({
         regno: currentPlate.regno,
-        startDate: currentPlate.startDate,
-        endDate: currentPlate.endDate,
-        validationErrorMessages: currentPlate.validationErrorMessages,
       })
-      setValue('pickPlate.regno', disabled ? '' : selectedPlate.regno)
-      setIsLoading(false)
+        .then((response) => {
+          setSelectedPlate({
+            regno: currentPlate.regno,
+            startDate: currentPlate.startDate,
+            endDate: currentPlate.endDate,
+            validationErrorMessages:
+              response?.myPlateOwnershipChecksByRegno?.validationErrorMessages,
+          })
+
+          const resHasError =
+            !!response?.myPlateOwnershipChecksByRegno?.validationErrorMessages
+              ?.length
+          const resCanRenew = checkCanRenew(currentPlate)
+          const resDisabled = resHasError || !resCanRenew
+
+          setPlate(resDisabled ? '' : currentPlate.regno || '')
+          setValue('pickPlate.regno', resDisabled ? '' : currentPlate.regno)
+          setIsLoading(false)
+        })
+        .catch((error) => console.error(error))
     }
   }
-  const inThreeMonths = new Date().setMonth(new Date().getMonth() + 3)
-  const canRenew =
-    selectedPlate && +new Date(selectedPlate.endDate) <= +inThreeMonths
-  const disabled =
-    (selectedPlate && !!selectedPlate.validationErrorMessages?.length) ||
-    !canRenew
+
+  const hasError = !!selectedPlate?.validationErrorMessages?.length
+  const canRenew = checkCanRenew(selectedPlate)
+  const disabled = hasError || !canRenew
+
+  useEffect(() => {
+    setFieldLoadingState?.(isLoading)
+  }, [isLoading])
+
   return (
     <Box>
       <SelectController
@@ -98,10 +133,11 @@ export const PlateSelectField: FC<
                       date: formatDateFns(new Date(selectedPlate.endDate)),
                     },
                   ),
+                  variant: canRenew ? 'mint' : 'red',
                 }}
               />
             )}
-            {selectedPlate && disabled && (
+            {selectedPlate && hasError && (
               <Box marginTop={2}>
                 <AlertMessage
                   type="error"
@@ -111,12 +147,9 @@ export const PlateSelectField: FC<
                   message={
                     <Box>
                       <BulletList>
-                        {!!selectedPlate.validationErrorMessages?.length &&
-                          selectedPlate.validationErrorMessages?.map(
-                            (error) => {
-                              return <Bullet>{error.defaultMessage}</Bullet>
-                            },
-                          )}
+                        {selectedPlate.validationErrorMessages?.map((error) => {
+                          return <Bullet>{error.defaultMessage}</Bullet>
+                        })}
                       </BulletList>
                     </Box>
                   }
@@ -126,6 +159,9 @@ export const PlateSelectField: FC<
           </Box>
         )}
       </Box>
+      {!isLoading && plate.length === 0 && (errors as any)?.pickPlate && (
+        <InputError errorMessage={formatMessage(error.requiredValidPlate)} />
+      )}
     </Box>
   )
 }
