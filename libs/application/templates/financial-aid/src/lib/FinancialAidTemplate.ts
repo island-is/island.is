@@ -84,10 +84,10 @@ const FinancialAidTemplate: ApplicationTemplate<
               target: ApplicationStates.MUNICIPALITYNOTREGISTERED,
               cond: isMunicipalityNotRegistered,
             },
-            {
-              target: ApplicationStates.SUBMITTED,
-              cond: hasActiveCurrentApplication,
-            },
+            // {
+            //   target: ApplicationStates.SUBMITTED,
+            //   cond: hasActiveCurrentApplication,
+            // },
             {
               target: ApplicationStates.DRAFT,
             },
