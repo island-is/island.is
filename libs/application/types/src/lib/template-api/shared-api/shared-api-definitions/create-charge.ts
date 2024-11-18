@@ -6,9 +6,16 @@ export interface ExtraData {
   value: string
 }
 
+export interface ChargeCodeItem {
+  code: string
+  quantity?: number
+}
+
 export interface CreateChargeParameters {
   organizationId: string
-  chargeItemCodes: string[] | ((application: Application) => string[])
+  chargeCodeItems:
+    | ChargeCodeItem[]
+    | ((application: Application) => ChargeCodeItem[])
   extraData?:
     | ExtraData[]
     | ((application: Application) => ExtraData[] | undefined)

@@ -1,4 +1,5 @@
 import {
+  ChargeCodeItem,
   CreateChargeParameters,
   PaymentCatalogItem,
   PaymentCatalogParameters,
@@ -102,7 +103,7 @@ export class PaymentService extends BaseTemplateApiService {
     auth,
     params,
   }: TemplateApiModuleActionProps<CreateChargeParameters>) {
-    const { organizationId, chargeItemCodes, extraData } = params ?? {}
+    const { organizationId, chargeCodeItems, extraData } = params ?? {}
     const { shouldUseMockPayment } = application.answers
 
     if (shouldUseMockPayment && isRunningOnEnvironment('production')) {
@@ -156,12 +157,12 @@ export class PaymentService extends BaseTemplateApiService {
     }
 
     if (!organizationId) throw Error('Missing performing organization ID')
-    if (!chargeItemCodes) throw Error('No selected charge item code')
+    if (!chargeCodeItems) throw Error('No selected charge item code')
 
-    const codes =
-      typeof chargeItemCodes === 'function'
-        ? chargeItemCodes(application)
-        : chargeItemCodes
+    const codeItems =
+      typeof chargeCodeItems === 'function'
+        ? chargeCodeItems(application)
+        : chargeCodeItems
 
     const extraDataItems =
       typeof extraData === 'function' ? extraData(application) : extraData ?? []
@@ -169,7 +170,7 @@ export class PaymentService extends BaseTemplateApiService {
     const response = await this.paymentModelService.createCharge(
       auth,
       organizationId,
-      codes,
+      codeItems,
       application.id,
       extraDataItems,
     )

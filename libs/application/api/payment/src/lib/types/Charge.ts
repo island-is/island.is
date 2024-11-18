@@ -26,6 +26,7 @@ export const formatCharge = (
       chargeItemName: string
       chargeItemCode: string
       amount: number
+      quantity?: number
     },
   ]
 
@@ -41,7 +42,7 @@ export const formatCharge = (
     performerNationalID: user.nationalId,
     charges: parsedDefinitionCharges.map((parsedDefinitionCharge) => ({
       chargeItemCode: parsedDefinitionCharge.chargeItemCode,
-      quantity: 1,
+      quantity: parsedDefinitionCharge.quantity || 1,
       priceAmount: parsedDefinitionCharge.amount,
       amount: parsedDefinitionCharge.amount,
       reference: '',

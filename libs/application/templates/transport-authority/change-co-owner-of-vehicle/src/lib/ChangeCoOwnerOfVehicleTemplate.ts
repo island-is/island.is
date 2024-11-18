@@ -36,10 +36,9 @@ import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { getChargeItemCodes, canReviewerApprove } from '../utils'
+import { getChargeCodeItems, getExtraData, canReviewerApprove } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getExtraData } from '../utils/getChargeItemCodes'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -158,7 +157,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes: getChargeItemCodes,
+        chargeCodeItems: getChargeCodeItems,
         extraData: getExtraData,
         submitTarget: States.REVIEW,
         onExit: [

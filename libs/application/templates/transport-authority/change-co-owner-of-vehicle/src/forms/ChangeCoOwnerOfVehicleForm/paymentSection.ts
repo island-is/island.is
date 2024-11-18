@@ -7,8 +7,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { payment } from '../../lib/messages'
-import { getChargeItemCodes } from '../../utils'
-import { getChargeItemCodeWithAnswers } from '../../utils/getChargeItemCodes'
+import { getChargeCodeItems, getChargeCodeItemsWithAnswers } from '../../utils'
 import { ChangeCoOwnerOfVehicle } from '../../lib/dataSchema'
 
 export const paymentSection = buildSection({
@@ -26,8 +25,9 @@ export const paymentSection = buildSection({
           forPaymentLabel: payment.paymentChargeOverview.forPayment,
           totalLabel: payment.paymentChargeOverview.total,
           getSelectedChargeItems: (application) =>
-            getChargeItemCodes(application).map((x) => ({
-              chargeItemCode: x,
+            getChargeCodeItems(application).map((item) => ({
+              chargeItemCode: item.code,
+              chargeItemQuantity: item.quantity,
             })),
         }),
         buildCustomField({
@@ -46,7 +46,7 @@ export const paymentSection = buildSection({
               name: payment.general.confirm,
               type: 'primary',
               condition: (formValue, externalData) => {
-                const chargeItemCodes = getChargeItemCodeWithAnswers(
+                const chargeCodeItems = getChargeCodeItemsWithAnswers(
                   formValue as ChangeCoOwnerOfVehicle,
                 )
                 const allItems = externalData?.payment?.data as [
@@ -56,9 +56,9 @@ export const paymentSection = buildSection({
                     chargeItemCode: string
                   },
                 ]
-                const items = chargeItemCodes.map((chargeItemCode) => {
+                const items = chargeCodeItems.map((chargeItem) => {
                   return allItems.find(
-                    (item) => item.chargeItemCode === chargeItemCode,
+                    (item) => item.chargeItemCode === chargeItem.code,
                   )
                 })
                 return items.length > 0

@@ -8,8 +8,8 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { payment } from '../../lib/messages'
 import {
-  getChargeItemCodesAndExtraLabel,
-  getChargeItemCodesWithAnswers,
+  getChargeCodeItemsWithExtraLabel,
+  getChargeCodeItemsWithAnswers,
 } from '../../utils'
 import { OrderVehicleLicensePlate } from '../../lib/dataSchema'
 
@@ -27,7 +27,7 @@ export const paymentSection = buildSection({
           title: '',
           forPaymentLabel: payment.paymentChargeOverview.forPayment,
           totalLabel: payment.paymentChargeOverview.total,
-          getSelectedChargeItems: getChargeItemCodesAndExtraLabel,
+          getSelectedChargeItems: getChargeCodeItemsWithExtraLabel,
         }),
         buildCustomField({
           id: 'ValidationErrorMessages',
@@ -45,7 +45,7 @@ export const paymentSection = buildSection({
               name: payment.general.confirm,
               type: 'primary',
               condition: (formValue, externalData) => {
-                const chargeItemCodes = getChargeItemCodesWithAnswers(
+                const chargeCodeItems = getChargeCodeItemsWithAnswers(
                   formValue as OrderVehicleLicensePlate,
                 )
                 const allItems = externalData?.payment?.data as [
@@ -55,9 +55,9 @@ export const paymentSection = buildSection({
                     chargeItemCode: string
                   },
                 ]
-                const items = chargeItemCodes.map((chargeItemCode) => {
+                const items = chargeCodeItems.map((chargeItem) => {
                   return allItems.find(
-                    (item) => item.chargeItemCode === chargeItemCode,
+                    (item) => item.chargeItemCode === chargeItem.code,
                   )
                 })
                 return items.length > 0

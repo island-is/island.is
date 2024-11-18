@@ -34,7 +34,7 @@ import {
   CurrentVehiclesApi,
   InsuranceCompaniesApi,
 } from '../dataProviders'
-import { getChargeItemCodes, getExtraData, canReviewerApprove } from '../utils'
+import { getChargeCodeItems, getExtraData, canReviewerApprove } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 
@@ -156,7 +156,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes: getChargeItemCodes(),
+        chargeCodeItems: getChargeCodeItems(),
         extraData: getExtraData,
         submitTarget: States.REVIEW,
         onExit: [

@@ -515,9 +515,11 @@ export interface PaymentChargeOverviewField extends BaseField {
   component: FieldComponents.PAYMENT_CHARGE_OVERVIEW
   forPaymentLabel: StaticText
   totalLabel: StaticText
-  getSelectedChargeItems: (
-    application: Application,
-  ) => { chargeItemCode: string; extraLabel?: StaticText }[]
+  getSelectedChargeItems: (application: Application) => {
+    chargeItemCode: string
+    chargeItemQuantity?: number
+    extraLabel?: StaticText
+  }[]
 }
 
 type ImageWidthProps = 'full' | 'auto' | '50%'

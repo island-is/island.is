@@ -31,11 +31,15 @@ import {
 import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
-import { canReviewerApprove, isRemovingOperatorOnly } from '../utils'
+import {
+  canReviewerApprove,
+  isRemovingOperatorOnly,
+  getChargeCodeItems,
+  getExtraData,
+} from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItemCodes, getExtraData } from '../utils/getChargeItemCodes'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -154,7 +158,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes: getChargeItemCodes,
+        chargeCodeItems: getChargeCodeItems,
         extraData: getExtraData,
         onExit: [
           defineTemplateApi({

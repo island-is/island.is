@@ -15,6 +15,7 @@ import {
   JurisdictionApi,
   InstitutionNationalIds,
   ApplicationConfigurations,
+  ChargeCodeItem,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -45,7 +46,7 @@ const pruneAfter = (time: number) => {
     whenToPrune: time,
   }
 }
-const getCodes = (application: Application) => {
+const getCodes = (application: Application): ChargeCodeItem[] => {
   const chargeItemCode = getValueViaPath<string>(
     application.answers,
     'chargeItemCode',
@@ -54,7 +55,7 @@ const getCodes = (application: Application) => {
   if (!chargeItemCode) {
     throw new Error('chargeItemCode missing in answers')
   }
-  return [chargeItemCode]
+  return [{ code: chargeItemCode }]
 }
 
 const configuration =
@@ -142,7 +143,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getCodes,
+        chargeCodeItems: getCodes,
       }),
       [States.DONE]: {
         meta: {

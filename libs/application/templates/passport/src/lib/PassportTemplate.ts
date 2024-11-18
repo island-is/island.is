@@ -9,6 +9,7 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
+  ChargeCodeItem,
   DefaultEvents,
   defineTemplateApi,
   InstitutionNationalIds,
@@ -45,7 +46,7 @@ const pruneAfter = (time: number) => {
     whenToPrune: time,
   }
 }
-const getCode = (application: Application) => {
+const getCode = (application: Application): ChargeCodeItem[] => {
   const chargeItemCode = getValueViaPath<string>(
     application.answers,
     'chargeItemCode',
@@ -53,7 +54,7 @@ const getCode = (application: Application) => {
   if (!chargeItemCode) {
     throw new Error('chargeItemCode missing in request')
   }
-  return [chargeItemCode]
+  return [{ code: chargeItemCode }]
 }
 
 export const hasReviewer = (context: ApplicationContext) => {
@@ -130,7 +131,7 @@ const PassportTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getCode,
+        chargeCodeItems: getCode,
         submitTarget: [
           {
             target: States.PARENT_B_CONFIRM,

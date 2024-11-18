@@ -1,5 +1,6 @@
+import { ChargeCodeItem } from '@island.is/application/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
-export const getChargeItemCodes = (): Array<string> => {
-  return [ChargeItemCode.CRIMINAL_RECORD.toString()]
+export const getChargeCodeItems = (): Array<ChargeCodeItem> => {
+  return [{ code: ChargeItemCode.CRIMINAL_RECORD.toString() }]
 }

@@ -1,12 +1,18 @@
-import { Application, ExtraData } from '@island.is/application/types'
+import {
+  Application,
+  ChargeCodeItem,
+  ExtraData,
+} from '@island.is/application/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { OrderVehicleRegistrationCertificateAnswers } from '..'
 
 export { getSelectedVehicle } from './getSelectedVehicle'
 
-export const getChargeItemCodes = (): Array<string> => {
+export const getChargeCodeItems = (): Array<ChargeCodeItem> => {
   return [
-    ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_REGISTRATION_CERTIFICATE.toString(),
+    {
+      code: ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_REGISTRATION_CERTIFICATE.toString(),
+    },
   ]
 }
 

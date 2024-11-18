@@ -42,6 +42,11 @@ export interface ExtraData {
   value: string
 }
 
+export interface ChargeCodeItem {
+  code: string
+  quantity?: number
+}
+
 export interface Catalog {
   item: CatalogItem[]
 }
@@ -52,6 +57,7 @@ export interface CatalogItem {
   chargeItemCode: string
   chargeItemName: string
   priceAmount: number
+  quantity?: number
 }
 
 export enum PayInfoPaymentMeansEnum {

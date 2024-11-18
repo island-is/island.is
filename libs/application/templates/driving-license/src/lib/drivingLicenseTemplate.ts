@@ -22,6 +22,7 @@ import {
   InstitutionNationalIds,
   Application,
   ApplicationConfigurations,
+  ChargeCodeItem,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
@@ -51,14 +52,14 @@ import {
 import { buildPaymentState } from '@island.is/application/utils'
 import { Pickup } from './types'
 
-const getCodes = (application: Application) => {
+const getCodes = (application: Application): ChargeCodeItem[] => {
   const applicationFor = getValueViaPath<
     'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65' | 'B-advanced'
   >(application.answers, 'applicationFor', 'B-full')
 
   const pickup = getValueViaPath<Pickup>(application.answers, 'pickup')
 
-  const codes: string[] = []
+  const codes: ChargeCodeItem[] = []
 
   const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
 
@@ -69,10 +70,10 @@ const getCodes = (application: Application) => {
         : DEFAULT_ITEM_CODE
       : DEFAULT_ITEM_CODE
 
-  codes.push(targetCode)
+  codes.push({ code: targetCode })
 
   if (pickup === Pickup.POST) {
-    codes.push(CHARGE_ITEM_CODES[DELIVERY_FEE])
+    codes.push({ code: CHARGE_ITEM_CODES[DELIVERY_FEE] })
   }
 
   if (!targetCode) {
@@ -231,7 +232,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getCodes,
+        chargeCodeItems: getCodes,
       }),
       [States.DONE]: {
         meta: {

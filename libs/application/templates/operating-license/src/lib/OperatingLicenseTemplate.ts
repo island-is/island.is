@@ -10,6 +10,7 @@ import {
   UserProfileApi,
   InstitutionNationalIds,
   ApplicationConfigurations,
+  ChargeCodeItem,
 } from '@island.is/application/types'
 import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
@@ -43,7 +44,7 @@ const pruneAfter = (time: number) => {
   }
 }
 
-const getCodes = (application: Application) => {
+const getCodes = (application: Application): ChargeCodeItem[] => {
   const chargeItemCode = getValueViaPath<string>(
     application.answers,
     'chargeItemCode',
@@ -52,7 +53,7 @@ const getCodes = (application: Application) => {
     throw new Error('chargeItemCode missing in request')
   }
 
-  return [chargeItemCode]
+  return [{ code: chargeItemCode }]
 }
 
 const configuration =
@@ -127,7 +128,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getCodes,
+        chargeCodeItems: getCodes,
       }),
       [States.DONE]: {
         meta: {

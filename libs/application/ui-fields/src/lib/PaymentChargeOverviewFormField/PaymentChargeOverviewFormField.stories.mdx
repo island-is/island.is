@@ -53,8 +53,9 @@ You can create a PaymentChargeOverviewFormField using the following function `bu
         forPaymentLabel: 'payment.paymentChargeOverview.forPayment',
         totalLabel: 'payment.paymentChargeOverview.total',
         getSelectedChargeItems: (_) =>
-            getChargeItemCodes().map((x) => ({
-                chargeItemCode: x,
+            getChargeCodeItems().map((item) => ({
+                chargeItemCode: item.code,
+                chargeItemQuantity: item.quantity,
             })),
     })`)}
 />

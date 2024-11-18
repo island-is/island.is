@@ -25,7 +25,10 @@ import {
 import { PaymentModuleConfig } from './payment.config'
 import { ConfigType } from '@nestjs/config'
 import { formatCharge } from './types/Charge'
-import { PaymentType as BasePayment } from '@island.is/application/types'
+import {
+  PaymentType as BasePayment,
+  ChargeCodeItem,
+} from '@island.is/application/types'
 import { AuditService } from '@island.is/nest/audit'
 import { PaymentStatus } from './types/paymentStatus'
 import type { Logger } from '@island.is/logging'
@@ -154,7 +157,7 @@ export class PaymentService {
       application_id: applicationId,
       fulfilled: false,
       amount: chargeItems.reduce(
-        (sum, item) => sum + (item?.priceAmount || 0),
+        (sum, item) => sum + (item?.priceAmount || 0) * (item?.quantity || 1),
         0,
       ),
       definition: {
@@ -164,6 +167,7 @@ export class PaymentService {
           chargeItemName: chargeItem.chargeItemName,
           chargeItemCode: chargeItem.chargeItemCode,
           amount: chargeItem.priceAmount,
+          quantity: chargeItem.quantity,
         })),
       },
       expires_at: new Date(),
@@ -181,14 +185,14 @@ export class PaymentService {
   async createCharge(
     user: User,
     performingOrganizationID: string,
-    chargeItemCodes: string[],
+    chargeCodeItems: ChargeCodeItem[],
     applicationId: string,
     extraData: ExtraData[] | undefined,
   ): Promise<CreateChargeResult> {
     //1. Retrieve charge items from FJS
     const chargeItems = await this.findChargeItems(
       performingOrganizationID,
-      chargeItemCodes,
+      chargeCodeItems,
     )
 
     //2. Fetch existing payment if any
@@ -320,38 +324,38 @@ export class PaymentService {
 
   async findChargeItems(
     performingOrganizationID: string,
-    targetChargeItemCodes: string[],
+    targetChargeItems: ChargeCodeItem[],
   ): Promise<CatalogItem[]> {
-    const { item: allItems } =
+    const { item: catalogItems } =
       await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
         performingOrganizationID,
       )
 
     // get list of items with catalog info, but make sure to allow duplicates
-    const items: CatalogItem[] = []
-    for (let i = 0; i < targetChargeItemCodes.length; i++) {
-      const chargeItemCode = targetChargeItemCodes[i]
-      const item = allItems.find(
-        (item) => item.chargeItemCode === chargeItemCode,
+    const result: CatalogItem[] = []
+    for (let i = 0; i < targetChargeItems.length; i++) {
+      const chargeItem = targetChargeItems[i]
+      const catalogItem = catalogItems.find(
+        (item) => item.chargeItemCode === chargeItem.code,
       )
-      if (item) {
-        items.push(item)
+      if (catalogItem) {
+        result.push({ ...catalogItem, quantity: chargeItem.quantity })
       }
     }
 
-    if (!items || items.length === 0) {
-      throw new Error('Bad chargeItemCodes or empty catalog')
+    if (!result || result.length === 0) {
+      throw new Error('Bad chargeCodeItems or empty catalog')
     }
 
-    const firstItem = items[0]
-    const notSame = items.find(
+    const firstItem = result[0]
+    const notSame = result.find(
       (item) => item.chargeType !== firstItem.chargeType,
     )
     if (notSame) {
-      throw new Error('Not all chargeItemCodes have the same chargeType')
+      throw new Error('Not all chargeCodeItems have the same chargeType')
     }
 
-    return items
+    return result
   }
 
   async findApplicationById(

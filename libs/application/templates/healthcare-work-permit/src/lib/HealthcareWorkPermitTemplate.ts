@@ -28,7 +28,7 @@ import {
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { HealthcareWorkPermitSchema } from './dataSchema'
-import { getChargeItemCodes } from '../utils'
+import { getChargeCodeItems } from '../utils'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -135,7 +135,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.EMBAETTI_LANDLAEKNIS,
-        chargeItemCodes: getChargeItemCodes,
+        chargeCodeItems: getChargeCodeItems,
         submitTarget: States.COMPLETED,
         lifecycle: {
           shouldBeListed: true,

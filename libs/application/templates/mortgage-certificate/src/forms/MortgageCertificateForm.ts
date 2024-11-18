@@ -15,7 +15,7 @@ import {
   propertySearch,
 } from '../lib/messages'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
-import { getChargeItemCodesAndExtraLabel } from '../util'
+import { getChargeCodeItemsWithExtraLabel } from '../util'
 import Logo from '../assets/Logo'
 
 export const MortgageCertificateForm = (
@@ -86,7 +86,7 @@ export const MortgageCertificateForm = (
         sectionTitle: payment.general.sectionTitle,
         forPaymentLabel: payment.labels.forPayment,
         getSelectedChargeItems: (application) =>
-          getChargeItemCodesAndExtraLabel(application),
+          getChargeCodeItemsWithExtraLabel(application),
       }),
       buildSection({
         id: 'confirmation',

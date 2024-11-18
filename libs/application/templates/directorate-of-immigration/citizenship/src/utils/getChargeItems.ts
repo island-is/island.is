@@ -3,8 +3,6 @@ import { ChargeItemCode } from '@island.is/shared/constants'
 
 export const getChargeCodeItems = (): Array<ChargeCodeItem> => {
   return [
-    {
-      code: ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_COMPANY_CARD,
-    },
+    { code: ChargeItemCode.DIRECTORATE_OF_IMMIGRATION_CITIZENSHIP.toString() },
   ]
 }

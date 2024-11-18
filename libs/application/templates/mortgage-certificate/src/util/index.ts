@@ -1,5 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application, StaticText } from '@island.is/application/types'
+import {
+  Application,
+  ChargeCodeItem,
+  StaticText,
+} from '@island.is/application/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { SelectedProperty } from '../shared'
 
@@ -8,15 +12,22 @@ export { getUserProfileData } from './getUserProfileData'
 export { concatPropertyList } from './concatPropertyList'
 export { getApplicationFeatureFlags } from './getApplicationFeatureFlags'
 
-export const getChargeItemCodes = (application: Application): Array<string> => {
-  return getChargeItemCodesAndExtraLabel(application).map(
-    (x) => x.chargeItemCode,
-  )
+export const getChargeCodeItems = (
+  application: Application,
+): Array<ChargeCodeItem> => {
+  return getChargeCodeItemsWithExtraLabel(application).map((item) => ({
+    code: item.chargeItemCode,
+    quantity: item.chargeItemQuantity,
+  }))
 }
 
-export const getChargeItemCodesAndExtraLabel = (
+export const getChargeCodeItemsWithExtraLabel = (
   application: Application,
-): Array<{ chargeItemCode: string; extraLabel?: StaticText }> => {
+): Array<{
+  chargeItemCode: string
+  chargeItemQuantity?: number
+  extraLabel?: StaticText
+}> => {
   const properties = getValueViaPath(
     application.answers,
     'selectedProperties.properties',
@@ -28,7 +39,11 @@ export const getChargeItemCodesAndExtraLabel = (
     [],
   ) as SelectedProperty[]
 
-  const result: Array<{ chargeItemCode: string; extraLabel?: StaticText }> = []
+  const result: Array<{
+    chargeItemCode: string
+    chargeItemQuantity?: number
+    extraLabel?: StaticText
+  }> = []
 
   properties
     .filter(

@@ -1,15 +1,21 @@
-import { Application, ExtraData } from '@island.is/application/types'
+import {
+  Application,
+  ChargeCodeItem,
+  ExtraData,
+} from '@island.is/application/types'
 import { ChangeOperatorOfVehicle } from '../lib/dataSchema'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
-export const getChargeItemCodes = (application: Application): Array<string> => {
+export const getChargeCodeItems = (
+  application: Application,
+): Array<ChargeCodeItem> => {
   const answers = application.answers as ChangeOperatorOfVehicle
-  return getChargeItemCodeWithAnswers(answers)
+  return getChargeCodeItemsWithAnswers(answers)
 }
 
-export const getChargeItemCodeWithAnswers = (
+export const getChargeCodeItemsWithAnswers = (
   answers: ChangeOperatorOfVehicle,
-): Array<string> => {
+): Array<ChargeCodeItem> => {
   const operatorWasAdded =
     answers.operators?.filter(({ wasRemoved }) => wasRemoved !== 'true')
       .length > 0
@@ -17,18 +23,18 @@ export const getChargeItemCodeWithAnswers = (
     (x) => x.wasRemoved === 'true',
   )
 
-  const result: Array<string> = []
+  const result: Array<ChargeCodeItem> = []
 
   if (operatorWasAdded) {
-    result.push(
-      ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_ADD.toString(),
-    )
+    result.push({
+      code: ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_ADD.toString(),
+    })
   }
 
   if (operatorWasRemoved) {
-    result.push(
-      ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_REMOVE.toString(),
-    )
+    result.push({
+      code: ChargeItemCode.TRANSPORT_AUTHORITY_CHANGE_OPERATOR_OF_VEHICLE_REMOVE.toString(),
+    })
   }
   return result
 }

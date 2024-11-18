@@ -24,7 +24,7 @@ import {
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getApplicationFeatureFlags, getChargeItemCodes } from '../util'
+import { getApplicationFeatureFlags, getChargeCodeItems } from '../util'
 import { MortgageCertificateSchema } from './dataSchema'
 import { application } from './messages'
 import { FeatureFlagClient } from '@island.is/feature-flags'
@@ -145,7 +145,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: getChargeItemCodes,
+        chargeCodeItems: getChargeCodeItems,
         submitTarget: States.COMPLETED,
         onExit: [
           defineTemplateApi({

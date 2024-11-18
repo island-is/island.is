@@ -7,7 +7,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { payment } from '../../lib/messages'
-import { getChargeItemCodes } from '../../utils'
+import { getChargeCodeItems } from '../../utils'
 
 export const paymentSection = buildSection({
   id: 'payment',
@@ -24,8 +24,9 @@ export const paymentSection = buildSection({
           forPaymentLabel: payment.paymentChargeOverview.forPayment,
           totalLabel: payment.paymentChargeOverview.total,
           getSelectedChargeItems: (_) =>
-            getChargeItemCodes().map((x) => ({
-              chargeItemCode: x,
+            getChargeCodeItems().map((item) => ({
+              chargeItemCode: item.code,
+              chargeItemQuantity: item.quantity,
             })),
         }),
         buildCustomField({
