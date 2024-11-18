@@ -11,6 +11,7 @@ import {
   getLoginSearchParmsFn,
   mockedTokensResponse as tokensResponse,
 } from '../../../../test/sharedConstants'
+import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { IdsService } from '../ids/ids.service'
 import { ParResponse } from '../ids/ids.types'
@@ -81,7 +82,7 @@ describe('AuthController', () => {
     })
 
     mockConfig = app.get<ConfigType<typeof BffConfig>>(BffConfig.KEY)
-    baseUrlWithKey = `${mockConfig.clientBaseUrl}${process.env.BFF_CLIENT_KEY_PATH}`
+    baseUrlWithKey = `${mockConfig.clientBaseUrl}${environment.keyPath}`
 
     server = request(app.getHttpServer())
   })
