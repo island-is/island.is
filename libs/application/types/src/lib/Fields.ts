@@ -656,9 +656,10 @@ export type TableRepeaterField = BaseField & {
 }
 
 export type FieldsRepeaterField = BaseField & {
-  readonly type: FieldTypes.TABLE_REPEATER
-  component: FieldComponents.TABLE_REPEATER
+  readonly type: FieldTypes.FIELDS_REPEATER
+  component: FieldComponents.FIELDS_REPEATER
   formTitle?: StaticText
+  removeItemButtonText?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
   marginTop?: ResponsiveProp<Space>
@@ -796,6 +797,7 @@ export type Field =
   | NationalIdWithNameField
   | ActionCardListField
   | TableRepeaterField
+  | FieldsRepeaterField
   | HiddenInputWithWatchedValueField
   | HiddenInputField
   | FindVehicleField

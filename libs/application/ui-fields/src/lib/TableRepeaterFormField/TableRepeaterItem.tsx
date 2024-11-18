@@ -1,5 +1,5 @@
 import { formatText, getValueViaPath } from '@island.is/application/core'
-import { Application, TableRepeaterItem } from '@island.is/application/types'
+import { Application, RepeaterItem } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useRef } from 'react'
@@ -18,7 +18,7 @@ import { NationalIdWithName } from '@island.is/application/ui-components'
 interface ItemFieldProps {
   application: Application
   error?: string
-  item: TableRepeaterItem & { id: string }
+  item: RepeaterItem & { id: string }
   dataId: string
   activeIndex: number
   values: Array<Record<string, string>>
@@ -121,7 +121,7 @@ export const Item = ({
   }
 
   const getDefaultValue = (
-    item: TableRepeaterItem,
+    item: RepeaterItem,
     application: Application,
     activeField?: Record<string, string>,
   ) => {

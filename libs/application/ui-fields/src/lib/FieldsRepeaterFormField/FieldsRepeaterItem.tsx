@@ -11,6 +11,7 @@ import {
   InputController,
   RadioController,
   SelectController,
+  PhoneInputController,
 } from '@island.is/shared/form-fields'
 import { NationalIdWithName } from '@island.is/application/ui-components'
 
@@ -19,7 +20,7 @@ interface ItemFieldProps {
   error?: string
   item: RepeaterItem & { id: string }
   dataId: string
-  activeIndex: number
+  index: number
   values: Array<Record<string, string>>
 }
 
@@ -30,6 +31,7 @@ const componentMapper = {
   date: DatePickerController,
   radio: RadioController,
   nationalIdWithName: NationalIdWithName,
+  phone: PhoneInputController,
 }
 
 export const Item = ({
@@ -37,7 +39,7 @@ export const Item = ({
   error,
   item,
   dataId,
-  activeIndex,
+  index,
   values,
 }: ItemFieldProps) => {
   const { formatMessage } = useLocale()
@@ -63,9 +65,8 @@ export const Item = ({
   const isThirdColumn = component !== 'radio' && width === 'third'
   const span = isHalfColumn ? '1/2' : isThirdColumn ? '1/3' : '1/1'
   const Component = componentMapper[component]
-  const id = `${dataId}[${activeIndex}].${itemId}`
-  const activeValues =
-    activeIndex >= 0 && values ? values[activeIndex] : undefined
+  const id = `${dataId}[${index}].${itemId}`
+  const activeValues = index >= 0 && values ? values[index] : undefined
 
   let watchedValues: string | (string | undefined)[] | undefined
   if (updateValueObj) {
@@ -114,7 +115,7 @@ export const Item = ({
      * This hack is needed to get the correct type
      */
     const errorList = error as unknown as Record<string, string>[] | undefined
-    const errors = errorList?.[activeIndex]
+    const errors = errorList?.[index]
     return errors?.[id]
   }
 
@@ -187,6 +188,8 @@ export const Item = ({
   if (condition && !condition(application, activeValues)) {
     return null
   }
+
+  console.log(application.answers)
 
   return (
     <GridColumn span={['1/1', '1/1', '1/1', span]}>

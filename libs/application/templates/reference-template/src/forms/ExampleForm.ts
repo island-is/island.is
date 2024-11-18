@@ -73,8 +73,9 @@ export const ExampleForm: Form = buildForm({
               },
             }),
             buildFieldsRepeaterField({
-              id: 'tableRepeater',
-              title: 'Table repeater title',
+              id: 'FieldsRepeater',
+              title: 'Fields repeater title',
+              description: 'Fields repeater description',
               fields: {
                 email: {
                   component: 'input',

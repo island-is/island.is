@@ -1,29 +1,25 @@
+import { useEffect, useState } from 'react'
 import {
   coreMessages,
   formatText,
   formatTextWithLocale,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldsRepeaterField,
-  TableRepeaterField,
 } from '@island.is/application/types'
 import {
   AlertMessage,
   Box,
   Button,
   GridRow,
-  Icon,
   Stack,
-  Table as T,
   Text,
-  Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
-import { handleCustomMappedValues } from './utils'
 import { Item } from './FieldsRepeaterItem'
 import { Locale } from '@island.is/shared/types'
 
@@ -31,25 +27,42 @@ interface Props extends FieldBaseProps {
   field: FieldsRepeaterField
 }
 
-export const TableRepeaterFormField: FC<Props> = ({
+export const FieldsRepeaterFormField = ({
   application,
   field: data,
   showFieldName,
   error,
-}) => {
+}: Props) => {
   const {
+    id,
     fields: rawItems,
-    table,
-    formTitle,
     description,
     marginTop = 6,
     marginBottom,
     title,
     titleVariant = 'h4',
+    removeItemButtonText = coreMessages.buttonRemove,
     addItemButtonText = coreMessages.buttonAdd,
-    saveItemButtonText = coreMessages.reviewButtonSubmit,
     maxRows,
   } = data
+
+  const { control, getValues, setValue } = useFormContext()
+  const answers = getValues()
+  const numberOfItemsInAnswers = getValueViaPath<Array<any>>(
+    answers,
+    id,
+  )?.length
+  const [numberOfItems, setNumberOfItems] = useState(
+    numberOfItemsInAnswers || 1,
+  )
+  const [updatedApplication, setUpdatedApplication] = useState(application)
+
+  useEffect(() => {
+    setUpdatedApplication({
+      ...application,
+      answers: { ...answers },
+    })
+  }, [answers])
 
   const items = Object.keys(rawItems).map((key) => ({
     id: key,
@@ -57,57 +70,55 @@ export const TableRepeaterFormField: FC<Props> = ({
   }))
 
   const { formatMessage, lang: locale } = useLocale()
-  const methods = useFormContext()
+
   const [activeIndex, setActiveIndex] = useState(-1)
   const { fields, append, remove } = useFieldArray({
-    control: methods.control,
-    name: data.id,
+    control: control,
+    name: id,
   })
 
-  const values = useWatch({ name: data.id, control: methods.control })
-  const activeField = activeIndex >= 0 ? fields[activeIndex] : null
+  const values = useWatch({ name: data.id, control: control })
   const savedFields = fields.filter((_, index) => index !== activeIndex)
-  const tableItems = items.filter((x) => x.displayInTable !== false)
-  const tableHeader = table?.header ?? tableItems.map((item) => item.label)
-  const tableRows = table?.rows ?? tableItems.map((item) => item.id)
   const canAddItem = maxRows ? savedFields.length < maxRows : true
 
-  // check for components that might need some custom value mapping
-  const customMappedValues = handleCustomMappedValues(tableItems, values)
+  const handleNewItem = () => {
+    console.log(answers)
 
-  const handleSaveItem = async (index: number) => {
-    const isValid = await methods.trigger(`${data.id}[${index}]`, {
-      shouldFocus: true,
-    })
+    setNumberOfItems(numberOfItems + 1)
+  }
 
-    if (isValid) {
-      setActiveIndex(-1)
+  const handleRemoveItem = () => {
+    console.log('NumberOfItems: ', numberOfItems)
+    console.log('NumberOfItemsInAnswer: ', numberOfItemsInAnswers)
+    console.log(answers)
+
+    if (numberOfItems > (numberOfItemsInAnswers || 0)) {
+      setNumberOfItems(numberOfItems - 1)
+    } else if (numberOfItems === numberOfItemsInAnswers) {
+      setValue(id, answers[id].slice(0, -1))
+      setNumberOfItems(numberOfItems - 1)
+    } else if (
+      numberOfItemsInAnswers &&
+      numberOfItems < numberOfItemsInAnswers
+    ) {
+      const difference = numberOfItems - numberOfItemsInAnswers
+      setValue(id, answers[id].slice(0, difference))
+      setNumberOfItems(numberOfItems)
     }
   }
 
-  const handleNewItem = () => {
-    append({})
-    setActiveIndex(fields.length)
-    methods.clearErrors()
-  }
-
-  const handleRemoveItem = (index: number) => {
-    if (activeIndex === index) setActiveIndex(-1)
-    if (activeIndex > index) setActiveIndex(activeIndex - 1)
-    remove(index)
-  }
-
-  const handleEditItem = (index: number) => {
-    setActiveIndex(index)
-  }
-
-  const formatTableValue = (key: string, item: Record<string, string>) => {
-    const formatFn = table?.format?.[key]
-    const formatted = formatFn ? formatFn(item[key]) : item[key]
-    return typeof formatted === 'string'
-      ? formatted
-      : formatText(formatted, application, formatMessage)
-  }
+  const repeaterFields = (index: number) =>
+    items.map((item) => (
+      <Item
+        key={`${id}[${activeIndex}].${item.id}.${index}`}
+        application={updatedApplication}
+        error={error}
+        item={item}
+        dataId={id}
+        index={index}
+        values={values}
+      />
+    ))
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -125,7 +136,7 @@ export const TableRepeaterFormField: FC<Props> = ({
         <FieldDescription
           description={formatTextWithLocale(
             description,
-            application,
+            updatedApplication,
             locale as Locale,
             formatMessage,
           )}
@@ -133,49 +144,38 @@ export const TableRepeaterFormField: FC<Props> = ({
       )}
       <Box marginTop={description ? 3 : 0}>
         <Stack space={4}>
-          {activeField ? (
-            <Stack space={2} key={activeField.id}>
-              {formTitle && (
-                <Text variant="h4">
-                  {formatText(formTitle, application, formatMessage)}
-                </Text>
-              )}
-              <GridRow rowGap={[2, 2, 2, 3]}>
-                {items.map((item) => (
-                  <Item
-                    key={`${data.id}[${activeIndex}].${item.id}`}
-                    application={application}
-                    error={error}
-                    item={item}
-                    dataId={data.id}
-                    activeIndex={activeIndex}
-                    values={values}
-                  />
-                ))}
-              </GridRow>
-              <Box display="flex" justifyContent="flexEnd">
+          <GridRow rowGap={[2, 2, 2, 3]}>
+            {Array.from({ length: numberOfItems }).map((_i, i) =>
+              repeaterFields(i),
+            )}
+          </GridRow>
+          <Box display="flex" justifyContent="flexEnd">
+            {numberOfItems > 1 && (
+              <Box marginRight={2}>
                 <Button
                   variant="ghost"
+                  colorScheme="destructive"
                   type="button"
-                  onClick={() => handleSaveItem(activeIndex)}
+                  onClick={handleRemoveItem}
                 >
-                  {formatText(saveItemButtonText, application, formatMessage)}
+                  {formatText(
+                    removeItemButtonText,
+                    updatedApplication,
+                    formatMessage,
+                  )}
                 </Button>
               </Box>
-            </Stack>
-          ) : (
-            <Box display="flex" justifyContent="flexEnd">
-              <Button
-                variant="ghost"
-                type="button"
-                onClick={handleNewItem}
-                icon="add"
-                disabled={!canAddItem}
-              >
-                {formatText(addItemButtonText, application, formatMessage)}
-              </Button>
-            </Box>
-          )}
+            )}
+            <Button
+              variant="ghost"
+              type="button"
+              onClick={handleNewItem}
+              icon="add"
+              disabled={!canAddItem}
+            >
+              {formatText(addItemButtonText, updatedApplication, formatMessage)}
+            </Button>
+          </Box>
         </Stack>
         {error && typeof error === 'string' && fields.length === 0 && (
           <Box marginTop={3}>
