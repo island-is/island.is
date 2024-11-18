@@ -106,6 +106,9 @@ export enum Features {
 
   // General mandate delegation type
   isGeneralMandateDelegationEnabled = 'isGeneralMandateDelegationEnabled',
+
+  // Should auth api use national registry v3 for checking deceased status
+  isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
 }
 
 export enum ServerSideFeature {

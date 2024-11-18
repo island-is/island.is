@@ -27,6 +27,7 @@ import { DelegationsIncomingWardService } from './delegations-incoming-ward.serv
 import { DelegationsIndexService } from './delegations-index.service'
 import { DelegationDTO } from './dto/delegation.dto'
 import { MergedDelegationDTO } from './dto/merged-delegation.dto'
+import { NationalRegistryV3FeatureService } from './national-registry-v3-feature.service'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -67,6 +68,7 @@ export class DelegationsIncomingService {
     private aliveStatusService: AliveStatusService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly syslumennService: SyslumennService,
+    private readonly nationalRegistryV3FeatureService: NationalRegistryV3FeatureService,
   ) {}
 
   async findAllValid(
@@ -94,22 +96,31 @@ export class DelegationsIncomingService {
     )
 
     delegationPromises.push(
-      this.delegationsIncomingCustomService.findAllValidIncoming({
-        nationalId: user.nationalId,
-        domainName,
-      }),
+      this.delegationsIncomingCustomService.findAllValidIncoming(
+        {
+          nationalId: user.nationalId,
+          domainName,
+        },
+        user,
+      ),
     )
 
     delegationPromises.push(
-      this.delegationsIncomingCustomService.findAllValidGeneralMandate({
-        nationalId: user.nationalId,
-      }),
+      this.delegationsIncomingCustomService.findAllValidGeneralMandate(
+        {
+          nationalId: user.nationalId,
+        },
+        user,
+      ),
     )
 
     delegationPromises.push(
-      this.delegationsIncomingRepresentativeService.findAllIncoming({
-        nationalId: user.nationalId,
-      }),
+      this.delegationsIncomingRepresentativeService.findAllIncoming(
+        {
+          nationalId: user.nationalId,
+        },
+        user,
+      ),
     )
 
     const delegationSets = await Promise.all(delegationPromises)
@@ -209,11 +220,14 @@ export class DelegationsIncomingService {
     ) {
       delegationPromises.push(
         this.delegationsIncomingRepresentativeService
-          .findAllIncoming({
-            nationalId: user.nationalId,
-            clientAllowedApiScopes,
-            requireApiScopes: client.requireApiScopes,
-          })
+          .findAllIncoming(
+            {
+              nationalId: user.nationalId,
+              clientAllowedApiScopes,
+              requireApiScopes: client.requireApiScopes,
+            },
+            user,
+          )
           .then((ds) =>
             ds.map((d) => DelegationDTOMapper.toMergedDelegationDTO(d)),
           ),
@@ -334,9 +348,13 @@ export class DelegationsIncomingService {
         requireApiScopes,
       )
 
+    const isNationalRegistryV3DeceasedStatusEnabled =
+      await this.nationalRegistryV3FeatureService.getValue(user)
+
     const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
       await this.aliveStatusService.getStatus(
         uniq(records.map((d) => d.fromNationalId)),
+        isNationalRegistryV3DeceasedStatusEnabled,
       )
 
     if (deceasedNationalIds.length > 0) {

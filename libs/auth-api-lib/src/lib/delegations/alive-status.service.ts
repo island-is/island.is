@@ -1,13 +1,10 @@
-import { Inject, Logger } from '@nestjs/common'
+import { Inject, Injectable, Logger } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 
-import {
-  IndividualDto,
-  NationalRegistryClientService,
-} from '@island.is/clients/national-registry-v2'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { isDefined } from '@island.is/shared/utils'
 
 import { UNKNOWN_NAME } from './constants/names'
 import { partitionWithIndex } from './utils/partitionWithIndex'
@@ -17,10 +14,16 @@ export type NameInfo = {
   name: string
 }
 
+type IdentityInfo = NameInfo & { isDeceased: boolean }
+
+const decesead = 'LÉST'
+
+@Injectable()
 export class AliveStatusService {
   constructor(
-    private nationalRegistryClient: NationalRegistryClientService,
-    private companyRegistryClient: CompanyRegistryClientService,
+    private readonly nationalRegistryClient: NationalRegistryClientService,
+    private readonly nationalRegistryV3Client: NationalRegistryV3ClientService,
+    private readonly companyRegistryClient: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -32,7 +35,10 @@ export class AliveStatusService {
    *   1. All companies will be divided into alive.
    *   2. If the person exists in NationalRegistry, then the person is alive.
    */
-  public async getStatus(nationalIds: string[]): Promise<{
+  public async getStatus(
+    nationalIds: string[],
+    useNationalRegistryV3: boolean,
+  ): Promise<{
     aliveNationalIds: string[]
     deceasedNationalIds: string[]
     aliveNameInfo: NameInfo[]
@@ -44,43 +50,29 @@ export class AliveStatusService {
         aliveNameInfo: [],
       }
     }
-
-    const promises = nationalIds.map((nationalId) =>
-      kennitala.isCompany(nationalId)
-        ? this.companyRegistryClient
-            .getCompany(nationalId)
-            .catch(this.handlerGetError)
-        : this.nationalRegistryClient
-            .getIndividual(nationalId)
-            .catch(this.handlerGetError),
-    )
-
+    let identitiesValuesNoError: IdentityInfo[] = []
     try {
-      // Check if nationalId is linked to a person, i.e. not deceased
-      const identities = await Promise.all(promises)
-      const identitiesValuesNoError = identities
-        .filter(this.isNotError)
-        .filter(isDefined)
-        .map((identity) => ({
-          nationalId: identity.nationalId,
-          name: identity.name ?? UNKNOWN_NAME,
-        }))
-
-      // Divide nationalIds into alive or deceased.
-      const [aliveNationalIds, deceasedNationalIds] = partitionWithIndex(
-        nationalIds,
-        (nationalId, index) =>
-          // All companies will be divided into alive
-          kennitala.isCompany(nationalId) ||
-          // Pass through although Þjóðskrá API throws an error
-          identities[index] instanceof Error ||
-          // Make sure we can match the person to the nationalId, i.e. not deceased
-          (identities[index] as IndividualDto)?.nationalId === nationalId,
+      const identities = await (
+        await Promise.allSettled(
+          this.getIdentities(nationalIds, useNationalRegistryV3),
+        )
+      ).map((promiseResult) =>
+        promiseResult.status === 'fulfilled'
+          ? promiseResult.value
+          : new Error('Error getting identity'),
       )
 
+      identitiesValuesNoError = identities.filter(this.isNotError)
+
+      const deceasedNationalIds = identitiesValuesNoError
+        .filter((individual) => individual.isDeceased)
+        .map((individual) => individual.nationalId)
+
       return {
-        aliveNationalIds,
-        deceasedNationalIds,
+        aliveNationalIds: nationalIds.filter(
+          (id) => !deceasedNationalIds.includes(id),
+        ),
+        deceasedNationalIds: deceasedNationalIds,
         aliveNameInfo: identitiesValuesNoError,
       }
     } catch (error) {
@@ -91,13 +83,105 @@ export class AliveStatusService {
       return {
         aliveNationalIds: nationalIds,
         deceasedNationalIds: [],
-        aliveNameInfo: [],
+        aliveNameInfo: identitiesValuesNoError,
       }
     }
   }
 
-  private handlerGetError(error: null | Error) {
-    return error
+  private getIdentities(
+    nationalIds: string[],
+    useNationalRegistryV3: boolean,
+  ): Promise<IdentityInfo>[] {
+    const [companies, individuals] = partitionWithIndex(
+      nationalIds,
+      (nationalId) => kennitala.isCompany(nationalId),
+    )
+
+    const companyPromises = companies.map((nationalId) =>
+      this.getCompanyIdentity(nationalId),
+    )
+
+    const individualPromises = individuals.map((nationalId) =>
+      this.getIndividualIdentity(nationalId, useNationalRegistryV3),
+    )
+
+    return [...companyPromises, ...individualPromises]
+  }
+
+  private getCompanyIdentity(companyNationalId: string): Promise<IdentityInfo> {
+    // All companies will be divided into alive
+    return this.companyRegistryClient
+      .getCompany(companyNationalId)
+      .then((company) => {
+        if (company && this.isNotError(company)) {
+          return {
+            nationalId: company.nationalId,
+            name: company.name,
+            isDeceased: false,
+          }
+        } else {
+          return {
+            nationalId: companyNationalId,
+            name: UNKNOWN_NAME,
+            isDeceased: false,
+          }
+        }
+      })
+  }
+
+  private async getIndividualIdentity(
+    individualNationalId: string,
+    useNationalRegistryV3: boolean,
+  ): Promise<IdentityInfo> {
+    if (useNationalRegistryV3) {
+      return await this.nationalRegistryV3Client
+        .getAllDataIndividual(individualNationalId)
+        .then((individual) => {
+          if (
+            individual &&
+            this.isNotError(individual) &&
+            individual?.kennitala &&
+            individual?.kennitala !== null
+          ) {
+            return {
+              nationalId: individual.kennitala,
+              name: individual.nafn ?? UNKNOWN_NAME,
+              isDeceased: individual.afdrif === decesead,
+            }
+          } else {
+            // Pass through although Þjóðskrá API throws an error
+            return {
+              nationalId: individualNationalId,
+              name: UNKNOWN_NAME,
+              isDeceased: false,
+            }
+          }
+        })
+    } else {
+      return await this.getIndividualIdentityV2(individualNationalId)
+    }
+  }
+
+  private getIndividualIdentityV2(
+    individualNationalId: string,
+  ): Promise<IdentityInfo> {
+    return this.nationalRegistryClient
+      .getIndividual(individualNationalId)
+      .then((individual) => {
+        if (individual === null) {
+          return {
+            nationalId: individualNationalId,
+            name: UNKNOWN_NAME,
+            isDeceased: true,
+          }
+        } else {
+          return {
+            nationalId: individual?.nationalId ?? individualNationalId,
+            name: individual?.name ?? UNKNOWN_NAME,
+            isDeceased: false,
+          }
+        }
+      })
   }
 
   /**

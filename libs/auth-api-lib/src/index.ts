@@ -61,6 +61,7 @@ export * from './lib/delegations/utils/scopes'
 export * from './lib/delegations/admin/delegation-admin-custom.service'
 export * from './lib/delegations/constants/names'
 export * from './lib/delegations/constants/zendesk'
+export * from './lib/delegations/national-registry-v3-feature.service'
 
 // Resources module
 export * from './lib/resources/resources.module'

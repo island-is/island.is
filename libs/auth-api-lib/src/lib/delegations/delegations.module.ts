@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { RskRelationshipsClientModule } from '@island.is/clients-rsk-relationships'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
 import { ZendeskModule } from '@island.is/clients/zendesk'
@@ -39,12 +40,14 @@ import { DelegationScope } from './models/delegation-scope.model'
 import { DelegationTypeModel } from './models/delegation-type.model'
 import { Delegation } from './models/delegation.model'
 import { NamesService } from './names.service'
+import { NationalRegistryV3FeatureService } from './national-registry-v3-feature.service'
 
 @Module({
   imports: [
     ResourcesModule,
     PersonalRepresentativeModule,
     NationalRegistryClientModule,
+    NationalRegistryV3ClientModule,
     RskRelationshipsClientModule,
     CompanyRegistryClientModule,
     ZendeskModule,
@@ -82,6 +85,7 @@ import { NamesService } from './names.service'
     DelegationProviderService,
     DelegationAdminCustomService,
     AliveStatusService,
+    NationalRegistryV3FeatureService,
   ],
   exports: [
     DelegationsService,

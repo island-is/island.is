@@ -1,5 +1,6 @@
 import { Inject, Logger } from '@nestjs/common'
 
+import { User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AuditService } from '@island.is/nest/audit'
 import {
@@ -14,6 +15,7 @@ import { AliveStatusService } from './alive-status.service'
 import { UNKNOWN_NAME } from './constants/names'
 import { ApiScopeInfo } from './delegations-incoming.service'
 import { DelegationDTO } from './dto/delegation.dto'
+import { NationalRegistryV3FeatureService } from './national-registry-v3-feature.service'
 
 type FindAllIncomingOptions = {
   nationalId: string
@@ -28,6 +30,7 @@ export class DelegationsIncomingRepresentativeService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private auditService: AuditService,
+    private readonly nationalRegistryV3FeatureService: NationalRegistryV3FeatureService,
   ) {}
 
   async findAllIncoming(
@@ -36,6 +39,7 @@ export class DelegationsIncomingRepresentativeService {
       clientAllowedApiScopes,
       requireApiScopes,
     }: FindAllIncomingOptions,
+    user: User,
     useMaster = false,
   ): Promise<DelegationDTO[]> {
     if (
@@ -91,9 +95,13 @@ export class DelegationsIncomingRepresentativeService {
         }
       })
 
+      const isNationalRegistryV3DeceasedStatusEnabled =
+        await this.nationalRegistryV3FeatureService.getValue(user)
+
       const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
         await this.aliveStatusService.getStatus(
           personalRepresentatives.map((d) => d.nationalIdRepresentedPerson),
+          isNationalRegistryV3DeceasedStatusEnabled,
         )
 
       if (deceasedNationalIds.length > 0) {
