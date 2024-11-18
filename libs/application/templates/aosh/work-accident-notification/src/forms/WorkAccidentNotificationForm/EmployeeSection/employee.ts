@@ -3,7 +3,6 @@ import {
   buildCustomField,
   buildDateField,
   buildDescriptionField,
-  buildHiddenInput,
   buildMultiField,
   buildNationalIdWithNameField,
   buildSelectField,
@@ -118,6 +117,9 @@ export const employeeSubSection = (index: number) =>
             width: 'half',
             required: true,
             title: employee.employee.startDate,
+            maxDate: new Date(),
+            minYear: 1940,
+            maxYear: new Date().getFullYear(),
           }),
           buildSelectField({
             id: `employee[${index}].employmentTime`,
@@ -234,18 +236,6 @@ export const employeeSubSection = (index: number) =>
             title: employee.employee.occupationTitle,
             titleVariant: 'h5',
             marginTop: 3,
-          }),
-          buildHiddenInput({
-            id: `employee[${index}].victimsOccupationMajor`,
-          }),
-          buildHiddenInput({
-            id: `employee[${index}].victimsOccupationSubMajor`,
-          }),
-          buildHiddenInput({
-            id: `employee[${index}].victimsOccupationMinor`,
-          }),
-          buildHiddenInput({
-            id: `employee[${index}].victimsOccupationUnit`,
           }),
           buildCustomField(
             {
