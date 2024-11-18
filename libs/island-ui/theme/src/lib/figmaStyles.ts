@@ -10,8 +10,7 @@ export const radiusPrimitives = primitives.radius
 export const spacingPrimitives = primitives.spacing
 
 // Color Tokens
-const colorTokensLight =
-  designTokens[1]['01 Colors Tokens'].modes['Light Mode']
+const colorTokensLight = designTokens[1]['01 Colors Tokens'].modes['Light Mode']
 
 export const backgroundColors = colorTokensLight.background
 export const borderColors = colorTokensLight.border
