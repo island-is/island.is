@@ -57,8 +57,8 @@ export class DelegationsIncomingCustomService {
       domainName,
       validity = DelegationValidity.NOW,
     }: FindAllValidIncomingOptions,
-    user: User,
     useMaster = false,
+    user?: User,
   ): Promise<DelegationDTO[]> {
     const { delegations, fromNameInfo } = await this.findAllIncoming(
       {
@@ -66,8 +66,8 @@ export class DelegationsIncomingCustomService {
         validity,
         domainName,
       },
-      user,
       useMaster,
+      user,
     )
 
     const delegationDTOs = delegations.map((d) => d.toDTO())
@@ -84,16 +84,16 @@ export class DelegationsIncomingCustomService {
 
   async findAllValidGeneralMandate(
     { nationalId }: FindAllValidIncomingOptions,
-    user: User,
     useMaster = false,
+    user?: User,
   ): Promise<DelegationDTO[]> {
     const { delegations, fromNameInfo } =
       await this.findAllIncomingGeneralMandates(
         {
           nationalId,
         },
-        user,
         useMaster,
+        user,
       )
 
     return delegations.map((delegation) => {
@@ -130,6 +130,7 @@ export class DelegationsIncomingCustomService {
         nationalId: user.nationalId,
         validity: DelegationValidity.NOW,
       },
+      false,
       user,
     )
 
@@ -218,6 +219,7 @@ export class DelegationsIncomingCustomService {
         {
           nationalId: user.nationalId,
         },
+        false,
         user,
       )
 
@@ -240,8 +242,8 @@ export class DelegationsIncomingCustomService {
 
   private async findAllIncomingGeneralMandates(
     { nationalId }: FindAllValidIncomingOptions,
-    user: User,
     useMaster = false,
+    user?: User,
   ): Promise<{ delegations: Delegation[]; fromNameInfo: NameInfo[] }> {
     const startOfToday = startOfDay(new Date())
 
@@ -268,12 +270,12 @@ export class DelegationsIncomingCustomService {
 
     // Check live status, i.e. dead or alive for delegations
     const isNationalRegistryV3DeceasedStatusEnabled =
-      await this.nationalRegistryV3FeatureService.getValue(user)
+      user && (await this.nationalRegistryV3FeatureService.getValue(user))
 
     const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
       await this.aliveStatusService.getStatus(
         delegations.map((d) => d.fromNationalId),
-        isNationalRegistryV3DeceasedStatusEnabled,
+        isNationalRegistryV3DeceasedStatusEnabled ?? false,
       )
 
     if (deceasedNationalIds.length > 0) {
@@ -310,8 +312,8 @@ export class DelegationsIncomingCustomService {
     }: FindAllValidIncomingOptions & {
       validity: DelegationValidity
     },
-    user: User,
     useMaster = false,
+    user?: User,
   ): Promise<{ delegations: Delegation[]; fromNameInfo: NameInfo[] }> {
     let whereOptions = getScopeValidityWhereClause(validity)
     if (domainName) whereOptions = { ...whereOptions, domainName: domainName }
@@ -351,12 +353,12 @@ export class DelegationsIncomingCustomService {
 
     // Check live status, i.e. dead or alive for delegations
     const isNationalRegistryV3DeceasedStatusEnabled =
-      await this.nationalRegistryV3FeatureService.getValue(user)
+      user && (await this.nationalRegistryV3FeatureService.getValue(user))
 
     const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
       await this.aliveStatusService.getStatus(
         delegations.map((d) => d.fromNationalId),
-        isNationalRegistryV3DeceasedStatusEnabled,
+        isNationalRegistryV3DeceasedStatusEnabled ?? false,
       )
 
     if (deceasedNationalIds.length > 0) {

@@ -39,8 +39,8 @@ export class DelegationsIncomingRepresentativeService {
       clientAllowedApiScopes,
       requireApiScopes,
     }: FindAllIncomingOptions,
-    user: User,
     useMaster = false,
+    user?: User,
   ): Promise<DelegationDTO[]> {
     if (
       requireApiScopes &&
@@ -96,12 +96,12 @@ export class DelegationsIncomingRepresentativeService {
       })
 
       const isNationalRegistryV3DeceasedStatusEnabled =
-        await this.nationalRegistryV3FeatureService.getValue(user)
+        user && await this.nationalRegistryV3FeatureService.getValue(user)
 
       const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
         await this.aliveStatusService.getStatus(
           personalRepresentatives.map((d) => d.nationalIdRepresentedPerson),
-          isNationalRegistryV3DeceasedStatusEnabled,
+          isNationalRegistryV3DeceasedStatusEnabled ?? false,
         )
 
       if (deceasedNationalIds.length > 0) {
