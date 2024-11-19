@@ -29,3 +29,9 @@ export const GET_VEHICLE_QUERY = gql`
     }
   }
 `
+
+export const GET_ELECTRONIC_ID_STATUS = gql`
+  query GetElectronicIDStatus($input: GetElectronicIDInput!) {
+    getSyslumennElectronicIDStatus(input: $input)
+  }
+`

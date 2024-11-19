@@ -106,8 +106,53 @@ export const AdditionalHeir = ({
     return memberAge !== undefined && memberAge < 18
   }, [memberAge])
 
+  const phoneInput = useWatch({
+    name: phoneField,
+    defaultValue: '',
+  })
+
+  const nationalIdInput = useWatch({
+    name: `${fieldIndex}.nationalId`,
+    defaultValue: '',
+  })
+
   const isDisabledField =
     values.applicationFor === PREPAID_INHERITANCE ? false : !currentHeir.enabled
+
+  useEffect(() => {
+    const cleanPhone = phoneNumber.replace(/\D/g, '')
+    if (cleanPhone.length === 7 && nationalId?.length === 10) {
+      setLoading(true)
+
+      if (fakeDataIsEnabled(answers)) {
+        // For fake data
+        // Allow electronic ID for phone numbers ending in 9
+        if (cleanPhone.slice(-1) === '9') {
+          setValue(`${topId}.electronicID`, 'true')
+        } else {
+          setValue(`${topId}.electronicID`, '')
+        }
+        setLoading(false)
+        return
+      }
+
+      getElectronicIdStatus({
+        variables: {
+          input: {
+            nationalId,
+            phoneNumber: cleanPhone,
+          },
+        },
+      }).then((res) => {
+        if (!res.data?.getSyslumennElectronicIDStatus) {
+          setValue(`${topId}.electronicID`, '')
+        } else {
+          setValue(`${topId}.electronicID`, 'true')
+        }
+        setLoading(false)
+      })
+    }
+  }, [phoneNumber, nationalId])
 
   useEffect(() => {
     clearErrors(nameField)
