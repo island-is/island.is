@@ -3,6 +3,7 @@ import {
   getApplicationNameTranslationString,
   getApplicationStatisticsNameTranslationString,
   getPaymentStatusForAdmin,
+  removeAttachmentFromAnswers,
 } from './application'
 import {
   createApplication,
@@ -194,6 +195,99 @@ describe('Testing utility functions for applications', () => {
           ),
         ).toEqual('test name 1 formatted')
       })
+    })
+  })
+
+  describe.only('removeAttachmentFromAnswers', () => {
+    it('Should remove an object from an array that contains the given key', () => {
+      const givenAnswers = {
+        documents: [
+          { id: 'doc1', attachmentId: 'some-key-123', name: 'Document 1' },
+          { id: 'doc2', attachmentId: 'keep-this-key', name: 'Document 2' }
+        ]
+      }
+      const expectedAnswers = {
+        documents: [
+          { id: 'doc2', attachmentId: 'keep-this-key', name: 'Document 2' }
+        ]
+      }
+
+      const result = removeAttachmentFromAnswers(givenAnswers, 'some-key-123')
+
+      expect(result).toEqual(expectedAnswers)
+    })
+
+    it('Should remove nested objects that contain the given key', () => {
+      const givenAnswers = {
+        section1: {
+          attachment: { id: 'some-key-123', name: 'Remove me' },
+          otherData: 'keep this'
+        },
+        section2: {
+          data: 'keep this too'
+        }
+      }
+      const expectedAnswers = {
+        section1: {
+          otherData: 'keep this'
+        },
+        section2: {
+          data: 'keep this too'
+        }
+      }
+
+      const result = removeAttachmentFromAnswers(givenAnswers, 'some-key-123')
+
+      expect(result).toEqual(expectedAnswers)
+    })
+
+    it('Should handle deeply nested arrays and objects', () => {
+      const givenAnswers = {
+        deepSection: {
+          documents: [
+            {
+              files: [
+                { id: 'file1', attachmentId: 'some-key-123' },
+                { id: 'file2', attachmentId: 'keep-this' }
+              ]
+            },
+            {
+              files: [
+                { id: 'file3', attachmentId: 'also-keep-this' }
+              ]
+            }
+          ]
+        }
+      }
+      const expectedAnswers = {
+        deepSection: {
+          documents: [
+            {
+              files: [
+                { id: 'file2', attachmentId: 'keep-this' }
+              ]
+            },
+            {
+              files: [
+                { id: 'file3', attachmentId: 'also-keep-this' }
+              ]
+            }
+          ]
+        }
+      }
+
+      const result = removeAttachmentFromAnswers(givenAnswers, 'some-key-123')
+
+      expect(result).toEqual(expectedAnswers)
+    })
+
+    it('Should return empty object when no answers provided', () => {
+      const givenAnswers = {}
+      const expectedAnswers = {}
+
+      const result = removeAttachmentFromAnswers(givenAnswers, 'some-key-123')
+
+      expect(result).toEqual(expectedAnswers)
     })
   })
 })
