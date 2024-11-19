@@ -44,7 +44,8 @@ export const formatCharge = (
       chargeItemCode: parsedDefinitionCharge.chargeItemCode,
       quantity: parsedDefinitionCharge.quantity || 1,
       priceAmount: parsedDefinitionCharge.amount,
-      amount: parsedDefinitionCharge.amount,
+      amount:
+        parsedDefinitionCharge.amount * (parsedDefinitionCharge.quantity || 1),
       reference: '',
     })),
     immediateProcess: true,

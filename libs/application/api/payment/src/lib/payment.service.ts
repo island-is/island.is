@@ -166,7 +166,7 @@ export class PaymentService {
         charges: chargeItems.map((chargeItem) => ({
           chargeItemName: chargeItem.chargeItemName,
           chargeItemCode: chargeItem.chargeItemCode,
-          amount: chargeItem.priceAmount,
+          amount: chargeItem.priceAmount, // Note: this field should be called priceAmount (since it is not summarized)
           quantity: chargeItem.quantity,
         })),
       },
