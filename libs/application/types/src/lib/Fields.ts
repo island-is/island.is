@@ -517,8 +517,8 @@ export interface LinkField extends BaseField {
 export interface PaymentChargeOverviewField extends BaseField {
   readonly type: FieldTypes.PAYMENT_CHARGE_OVERVIEW
   component: FieldComponents.PAYMENT_CHARGE_OVERVIEW
-  forPaymentLabel: StaticText
-  totalLabel: StaticText
+  forPaymentLabel?: StaticText
+  totalLabel?: StaticText
   getSelectedChargeItems: (
     application: Application,
   ) => { chargeItemCode: string; extraLabel?: StaticText }[]
