@@ -2,11 +2,12 @@ import { uuid } from 'uuidv4'
 
 import { CaseType, User } from '@island.is/judicial-system/types'
 
-import { createTestingCaseModule } from '../createTestingCaseModule'
+import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
+import { Case } from '../../../case'
 import { CourtService } from '../../../court'
 import { DeliverDto } from '../../dto/deliver.dto'
-import { Case } from '../../models/case.model'
+import { Defendant } from '../../models/defendant.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
@@ -16,56 +17,64 @@ interface Then {
 
 type GivenWhenThen = (
   caseId: string,
+  defendantId: string,
   theCase: Case,
+  defendant: Defendant,
   body: DeliverDto,
 ) => Promise<Then>
 
-describe('InternalCaseController - Deliver indictment defender info to court', () => {
+describe('InternalDefendantController - Deliver indictment defender to court', () => {
   const user = { id: uuid() } as User
   const caseId = uuid()
+  const defendantId = uuid()
   const courtName = uuid()
   const courtCaseNumber = uuid()
 
+  const defendant = {
+    id: defendantId,
+    name: 'Test Ákærði',
+    nationalId: '1234567890',
+    defenderNationalId: '1234567899',
+    defenderName: 'Test Verjandi',
+    defenderEmail: 'defenderEmail',
+  } as Defendant
   const theCase = {
     id: caseId,
     type: CaseType.INDICTMENT,
     court: { name: courtName },
     courtCaseNumber,
-    defendants: [
-      {
-        name: 'Test Ákærði',
-        nationalId: '1234567890',
-        defenderNationalId: '1234567899',
-        defenderName: 'Test Verjandi',
-        defenderEmail: 'defenderEmail',
-      },
-      {
-        name: 'Test Ákærði 2',
-        nationalId: '1234567891',
-        defenderNationalId: '1234567898',
-        defenderName: 'Test Verjandi 2',
-        defenderEmail: 'defenderEmail2',
-      },
-    ],
+    defendants: [defendant],
   } as Case
 
   let mockCourtService: jest.Mocked<CourtService>
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { courtService, internalCaseController } =
-      await createTestingCaseModule()
+    const { courtService, internalDefendantController } =
+      await createTestingDefendantModule()
 
     mockCourtService = courtService as jest.Mocked<CourtService>
     mockCourtService.updateIndictmentCaseWithDefenderInfo.mockResolvedValue(
       uuid(),
     )
 
-    givenWhenThen = async (caseId: string, theCase: Case, body: DeliverDto) => {
+    givenWhenThen = async (
+      caseId: string,
+      defendantId: string,
+      theCase: Case,
+      defendant: Defendant,
+      body: DeliverDto,
+    ) => {
       const then = {} as Then
 
-      await internalCaseController
-        .deliverIndictmentDefenderInfoToCourt(caseId, theCase, body)
+      await internalDefendantController
+        .deliverIndictmentDefenderToCourt(
+          caseId,
+          defendantId,
+          theCase,
+          defendant,
+          body,
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -74,7 +83,9 @@ describe('InternalCaseController - Deliver indictment defender info to court', (
   })
 
   it('should deliver the defender information to court', async () => {
-    const then = await givenWhenThen(caseId, theCase, { user })
+    const then = await givenWhenThen(caseId, defendantId, theCase, defendant, {
+      user,
+    })
 
     expect(
       mockCourtService.updateIndictmentCaseWithDefenderInfo,
@@ -83,7 +94,9 @@ describe('InternalCaseController - Deliver indictment defender info to court', (
       caseId,
       courtName,
       courtCaseNumber,
-      theCase.defendants,
+      defendant.nationalId,
+      defendant.defenderName,
+      defendant.defenderEmail,
     )
 
     expect(then.result).toEqual({ delivered: true })
@@ -96,7 +109,9 @@ describe('InternalCaseController - Deliver indictment defender info to court', (
       error,
     )
 
-    const then = await givenWhenThen(caseId, theCase, { user })
+    const then = await givenWhenThen(caseId, defendantId, theCase, defendant, {
+      user,
+    })
 
     expect(then.result).toEqual({ delivered: false })
   })

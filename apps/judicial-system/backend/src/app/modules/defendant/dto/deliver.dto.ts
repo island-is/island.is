@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import type { User } from '@island.is/judicial-system/types'
 
-export class DeliverDefendantToCourtDto {
+export class DeliverDto {
   @IsNotEmpty()
   @IsObject()
   @ApiProperty({ type: Object })

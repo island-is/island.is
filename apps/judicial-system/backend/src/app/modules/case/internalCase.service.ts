@@ -617,29 +617,6 @@ export class InternalCaseService {
       })
   }
 
-  async deliverIndictmentDefenderInfoToCourt(
-    theCase: Case,
-    user: TUser,
-  ): Promise<DeliverResponse> {
-    return this.courtService
-      .updateIndictmentCaseWithDefenderInfo(
-        user,
-        theCase.id,
-        theCase.court?.name,
-        theCase.courtCaseNumber,
-        theCase.defendants,
-      )
-      .then(() => ({ delivered: true }))
-      .catch((reason) => {
-        this.logger.error(
-          `Failed to update indictment case ${theCase.id} with defender info`,
-          { reason },
-        )
-
-        return { delivered: false }
-      })
-  }
-
   async deliverIndictmentAssignedRolesToCourt(
     theCase: Case,
     user: TUser,
