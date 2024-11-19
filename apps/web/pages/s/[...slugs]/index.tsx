@@ -5,7 +5,7 @@ import { withLocale } from '@island.is/web/i18n'
 import type { LayoutProps } from '@island.is/web/layouts/main'
 import OrganizationSubPageGenericListItem, {
   OrganizationSubPageGenericListItemProps,
-} from '@island.is/web/screens/GenericList/OrganizationSubpageGenericListItem'
+} from '@island.is/web/screens/GenericList/OrganizationSubPageGenericListItem'
 import Home, {
   type HomeProps,
 } from '@island.is/web/screens/Organization/Home/Home'
@@ -125,7 +125,7 @@ Component.getProps = async (context) => {
     return {
       page: {
         type: PageType.FRONTPAGE,
-        props: await Home.getProps?.(context),
+        props: await Home.getProps(context),
       },
     }
   }
@@ -136,7 +136,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.ALL_NEWS,
-            props: await OrganizationNewsList.getProps?.(context),
+            props: await OrganizationNewsList.getProps(context),
           },
         }
       }
@@ -144,7 +144,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.ALL_EVENTS,
-            props: await OrganizationEventList.getProps?.(context),
+            props: await OrganizationEventList.getProps(context),
           },
         }
       }
@@ -152,7 +152,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.PUBLISHED_MATERIAL,
-            props: await PublishedMaterial.getProps?.(context),
+            props: await PublishedMaterial.getProps(context),
           },
         }
       }
@@ -161,7 +161,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.ALL_NEWS,
-            props: await OrganizationNewsList.getProps?.(context),
+            props: await OrganizationNewsList.getProps(context),
           },
         }
       }
@@ -169,7 +169,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.ALL_EVENTS,
-            props: await OrganizationEventList.getProps?.(context),
+            props: await OrganizationEventList.getProps(context),
           },
         }
       }
@@ -177,14 +177,14 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.PUBLISHED_MATERIAL,
-            props: await PublishedMaterial.getProps?.(context),
+            props: await PublishedMaterial.getProps(context),
           },
         }
       }
     }
 
     // Subpage
-    const props = await SubPage.getProps?.(context)
+    const props = await SubPage.getProps(context)
     return {
       page: {
         type: PageType.SUBPAGE,
@@ -199,7 +199,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.NEWS_DETAILS,
-            props: await OrganizationNewsArticle.getProps?.(context),
+            props: await OrganizationNewsArticle.getProps(context),
           },
         }
       }
@@ -207,7 +207,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.EVENT_DETAILS,
-            props: await OrganizationEventArticle.getProps?.(context),
+            props: await OrganizationEventArticle.getProps(context),
           },
         }
       }
@@ -216,7 +216,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.NEWS_DETAILS,
-            props: await OrganizationNewsArticle.getProps?.(context),
+            props: await OrganizationNewsArticle.getProps(context),
           },
         }
       }
@@ -224,7 +224,7 @@ Component.getProps = async (context) => {
         return {
           page: {
             type: PageType.EVENT_DETAILS,
-            props: await OrganizationEventArticle.getProps?.(context),
+            props: await OrganizationEventArticle.getProps(context),
           },
         }
       }
@@ -233,7 +233,7 @@ Component.getProps = async (context) => {
     return {
       page: {
         type: PageType.GENERIC_LIST_ITEM,
-        props: await OrganizationSubPageGenericListItem.getProps?.(context),
+        props: await OrganizationSubPageGenericListItem.getProps(context),
       },
     }
   }
