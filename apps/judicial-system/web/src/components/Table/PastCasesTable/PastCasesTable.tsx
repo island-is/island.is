@@ -1,4 +1,4 @@
-import { FC, useContext } from 'react'
+import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -49,6 +49,14 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
     shouldDisplayWithdrawAppealOption,
   } = useWithdrawAppealMenuOption()
 
+  const pastCasesData = useMemo(
+    () =>
+      cases.sort((a: CaseListEntry, b: CaseListEntry) =>
+        (b['created'] ?? '').localeCompare(a['created'] ?? ''),
+      ),
+    [cases],
+  )
+
   return (
     <>
       <Table
@@ -70,7 +78,7 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
           { title: formatMessage(tables.state) },
           { title: formatMessage(tables.duration) },
         ]}
-        data={cases}
+        data={pastCasesData}
         generateContextMenuItems={(row) => [
           openCaseInNewTabMenuItem(row.id),
           ...(shouldDisplayWithdrawAppealOption(row)
