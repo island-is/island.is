@@ -754,6 +754,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Þú uppfyllir ekki skilyrði fyrir umsókn um nafnskírteini',
     description: 'Requirements for id card application not met',
   },
+  drivingLicenseBookActiveBookNotFound: {
+    id: 'application.system:core.fetch.data.drivingLicenseBookActiveBookNotFound',
+    defaultMessage: 'Ekki fannst virk ökunámsbók',
+    description: 'Did not find active student book',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({
