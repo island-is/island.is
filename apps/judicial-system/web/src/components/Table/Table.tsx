@@ -150,6 +150,7 @@ const Table: FC<TableProps> = (props) => {
             {theCase.postponedIndefinitelyExplanation ? (
               <Text>{formatMessage(strings.postponed)}</Text>
             ) : (
+              !isCompletedCase(theCase.state) &&
               theCase.courtDate && (
                 <Text fontWeight="medium" variant="small">
                   {`${formatMessage(strings.hearing)} ${formatDate(
