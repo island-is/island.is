@@ -13,7 +13,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { FootNote } from '../../../../components/FootNote/FootNote'
 import { TherapyStatus } from '../../../../utils/constants'
 import { formatNumberToString } from '../../../../utils/format'
-import { CONTENT_GAP_SM } from '../../../Medicine/constants'
+import { CONTENT_GAP_SM } from '../../../../utils/constants'
 import * as styles from './TherapiesTabContent.css'
 interface Props {
   data: RightsPortalTherapy[]

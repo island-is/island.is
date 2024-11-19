@@ -75,6 +75,8 @@ const Vaccinations = lazy(() =>
   import('./screens/Vaccinations/VaccinationsWrapper'),
 )
 
+const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
+
 export const healthModule: PortalModule = {
   name: 'Heilsa',
   enabled: ({ isCompany }) => !isCompany,
@@ -168,39 +170,41 @@ export const healthModule: PortalModule = {
       name: hm.medicineTitle,
       path: HealthPaths.HealthMedicine,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
-      element: <Navigate to={HealthPaths.HealthMedicinePrescription} replace />,
+      element: (
+        <Navigate to={HealthPaths.HealthMedicinePaymentParticipation} replace />
+      ), // Change to HealthPaths.HealthMedicinePrescription after release of Landlæknir Lyf data
     },
     {
       name: hm.medicinePrescriptions,
       path: HealthPaths.HealthMedicinePrescription,
-      key: 'HealthMedicine',
+      key: MEDICINE_LANDLAEKNIR_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicinePrescriptions />,
     },
     {
       name: hm.medicinePrescriptions,
       path: HealthPaths.HealthMedicinePrescriptionOverview,
-      key: 'HealthMedicine',
+      key: MEDICINE_LANDLAEKNIR_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <Navigate to={HealthPaths.HealthMedicinePrescription} />,
     },
     {
       name: hm.medicinePrescriptionHistory,
       path: HealthPaths.HealthMedicinePrescriptionHistory,
-      key: 'HealthMedicine',
+      key: MEDICINE_LANDLAEKNIR_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicinePrescriptionHistory />,
     },
     {
       name: hm.medicineDelegation,
       path: HealthPaths.HealthMedicineDelegation,
+      key: MEDICINE_LANDLAEKNIR_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicineDelegation />,
     },
     {
       name: hm.medicinePaymentParticipation,
       path: HealthPaths.HealthMedicinePaymentParticipation,
-      key: 'HealthMedicine',
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicinePurchase />,
     },
