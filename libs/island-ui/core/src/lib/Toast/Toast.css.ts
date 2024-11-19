@@ -14,7 +14,7 @@ globalStyle(`${root} .Toastify__toast-container`, {
   transform: 'translate3d(0, 0, 9999px)',
   position: 'fixed',
   padding: '4px',
-  width: '320px',
+  width: '432px',
   boxSizing: 'border-box',
   color: theme.color.dark400,
   '@media': {
@@ -97,18 +97,19 @@ globalStyle(`${root} .Toastify__toast`, {
   minHeight: '64px',
   boxSizing: 'border-box',
   marginBottom: theme.spacing[2],
-  padding: theme.spacing[1],
+  padding: theme.spacing[2],
   borderWidth: 1,
   borderStyle: 'solid',
   borderRadius: theme.border.radius.large,
   display: 'flex',
-  justifyContent: 'space-between',
   overflow: 'hidden',
   cursor: 'pointer',
   direction: 'ltr',
   fontWeight: theme.typography.medium,
   '@media': {
     [`(max-width: ${theme.breakpoints.sm}px)`]: {
+      padding: theme.spacing[1],
+      minHeight: '48px',
       marginBottom: 0,
     },
   },
@@ -147,7 +148,6 @@ globalStyle(`${root} .Toastify__toast--error`, {
 })
 globalStyle(`${root} .Toastify__toast-body`, {
   flex: '1 1 auto',
-  margin: 'auto 0',
 })
 
 /** Close button **/
@@ -160,7 +160,7 @@ globalStyle(`${root} .Toastify__close-button`, {
   cursor: 'pointer',
   opacity: 0.7,
   transition: '0.3s ease',
-  alignSelf: 'flex-start',
+  alignSelf: 'center',
 })
 globalStyle(`${root} .Toastify__close-button--default`, {
   color: '#000',

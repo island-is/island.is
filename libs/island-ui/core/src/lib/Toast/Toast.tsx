@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React, { FC } from 'react'
 import {
   ToastContainer as ToastifyContainer,
   toast as toastify,
@@ -6,10 +6,11 @@ import {
   ToastOptions,
 } from 'react-toastify'
 import cn from 'classnames'
+
 import { Box } from '../Box/Box'
-import { Icon } from '../Icon/Icon'
 import { Text } from '../Text/Text'
 import * as toastStyles from './Toast.css'
+import { Icon } from '../IconRC/Icon'
 
 interface ToastProps {
   hideProgressBar?: boolean
@@ -32,16 +33,16 @@ const RenderMessage = ({
     info: 'blue400',
   } as const
   const icons = {
-    error: 'toasterError',
-    success: 'toasterSuccess',
-    warning: 'toasterWarning',
-    info: 'toasterInfo',
+    error: 'warning',
+    success: 'checkmarkCircle',
+    warning: 'warning',
+    info: 'informationCircle',
   } as const
 
   return (
-    <Box display="flex" padding={1} alignItems="flexStart">
-      <Box flexShrink={0}>
-        <Icon type={icons[type]} color={colors[type]} />
+    <Box display="flex" alignItems="center">
+      <Box display="flex">
+        <Icon icon={icons[type]} color={colors[type]} size="large" />
       </Box>
       <Box paddingLeft={2}>
         <Text variant="h5">{message}</Text>
@@ -50,7 +51,7 @@ const RenderMessage = ({
   )
 }
 
-export const ToastContainer: React.FC<React.PropsWithChildren<ToastProps>> = ({
+export const ToastContainer: FC<ToastProps> = ({
   hideProgressBar = false,
   timeout = 5000,
   closeButton = false,
