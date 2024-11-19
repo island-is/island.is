@@ -54,6 +54,7 @@ describe('BFF PortalEnv serialization', () => {
       clientId: `@admin.island.is/bff-stjornbord`,
       clientName,
       services,
+      globalPrefix: '/stjornbord/bff',
     })
     .command('node')
     .args('main.js')
@@ -156,7 +157,7 @@ describe('BFF PortalEnv serialization', () => {
       IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is',
       // BFF
       BFF_NAME: 'stjornbord',
-      BFF_GLOBAL_PREFIX: `/${key}`,
+      BFF_GLOBAL_PREFIX: `/${key}/bff`,
       BFF_PAR_SUPPORT_ENABLED: 'true',
       BFF_ALLOWED_REDIRECT_URIS: json(['https://beta.dev01.devland.is']),
       BFF_CLIENT_BASE_URL: 'https://beta.dev01.devland.is',
