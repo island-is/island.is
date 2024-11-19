@@ -2,6 +2,8 @@ import Head from 'next/head'
 import React, { FC } from 'react'
 import { ApolloProvider } from '@apollo/client/react'
 
+import { LocaleProvider } from '@island.is/localization'
+
 import initApollo from '../graphql/client'
 
 const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
@@ -21,9 +23,11 @@ const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
 const PaymentsApp: any = ({ Component, pageProps }: any) => {
   return (
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <LocaleProvider locale={'is'}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </LocaleProvider>
     </ApolloProvider>
   )
 }
