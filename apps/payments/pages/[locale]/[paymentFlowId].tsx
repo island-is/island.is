@@ -162,6 +162,11 @@ export default function PaymentPage({
     console.log('Submit', data)
   }
 
+  const changePaymentMethod = (paymentMethod: string) => {
+    methods.reset()
+    setSelectedPaymentMethod(paymentMethod)
+  }
+
   return (
     <PageCard
       headerSlot={
@@ -185,7 +190,7 @@ export default function PaymentPage({
                 <PaymentSelector
                   availablePaymentMethods={['card', 'invoice']}
                   selectedPayment={selectedPaymentMethod as any}
-                  onSelectPayment={setSelectedPaymentMethod}
+                  onSelectPayment={changePaymentMethod}
                 />
                 {selectedPaymentMethod === 'card' && <CardPayment />}
                 {selectedPaymentMethod === 'invoice' && <InvoicePayment />}
