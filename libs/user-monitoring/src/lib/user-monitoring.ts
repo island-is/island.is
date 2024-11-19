@@ -21,9 +21,8 @@ const initDdRum = (params: DdRumInitParams) => {
     sampleRate: 100,
     sessionReplaySampleRate: 0,
     trackInteractions: false,
-    trackResources: false,
-    trackLongTasks: false,
-    defaultPrivacyLevel: 'mask',
+    trackResources: true,
+    trackLongTasks: true,
     allowedTracingOrigins: [
       'https://island.is',
       /https:\/\/.*\.island\.is/,
