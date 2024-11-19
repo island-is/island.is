@@ -89,7 +89,7 @@ describe('AuthController', () => {
     })
 
     mockConfig = app.get<ConfigType<typeof BffConfig>>(BffConfig.KEY)
-    baseUrlWithKey = `${mockConfig.clientBaseUrl}${process.env.BFF_GLOBAL_PREFIX}`
+    baseUrlWithKey = `${mockConfig.clientBaseUrl}${mockConfig.clientBasePath}`
 
     server = request(app.getHttpServer())
   })

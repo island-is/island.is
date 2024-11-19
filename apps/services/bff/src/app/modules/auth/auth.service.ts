@@ -71,7 +71,7 @@ export class AuthService {
    */
   private createClientBaseUrl() {
     const baseUrl = new URL(this.config.clientBaseUrl)
-    baseUrl.pathname = `${baseUrl.pathname}${environment.globalPrefix}`
+    baseUrl.pathname = `${baseUrl.pathname}${this.config.clientBasePath}`
       // Prevent potential issues with malformed URLs.
       .replace('//', '/')
 

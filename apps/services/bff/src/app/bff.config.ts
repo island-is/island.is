@@ -28,6 +28,10 @@ const BffConfigSchema = z.object({
    * Bff client base URL
    */
   clientBaseUrl: z.string(),
+  /**
+   * Bff client base path (without the domain) for app communicating with the BFF, e.g. /minarsidur
+   */
+  clientBasePath: z.string(),
   ids: idsSchema,
   /**
    * The base64 encoded secret used for encrypting and decrypting tokens.
@@ -72,6 +76,7 @@ export const BffConfig = defineConfig({
     return {
       parSupportEnabled: env.optionalJSON('BFF_PAR_SUPPORT_ENABLED') ?? false,
       clientBaseUrl: env.required('BFF_CLIENT_BASE_URL'),
+      clientBasePath: env.required('BFF_CLIENT_BASE_PATH'),
       logoutRedirectUri: env.required('BFF_LOGOUT_REDIRECT_URI'),
       /**
        * Our main GraphQL API endpoint
