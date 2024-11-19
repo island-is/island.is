@@ -96,7 +96,7 @@ export class DelegationsIncomingRepresentativeService {
       })
 
       const isNationalRegistryV3DeceasedStatusEnabled =
-        user && await this.nationalRegistryV3FeatureService.getValue(user)
+        user && (await this.nationalRegistryV3FeatureService.getValue(user))
 
       const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
         await this.aliveStatusService.getStatus(

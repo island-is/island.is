@@ -65,7 +65,7 @@ describe('DelegationsController', () => {
             return { kennitala: user.nationalId, nafn: user.name }
           })
         rskApi = app.get(RskRelationshipsClient)
-        
+
         const nationalRegistryV3FeatureService = app.get(
           NationalRegistryV3FeatureService,
         )
