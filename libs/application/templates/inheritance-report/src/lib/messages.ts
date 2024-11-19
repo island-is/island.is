@@ -227,6 +227,12 @@ export const m = defineMessages({
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
   },
+  applicantsPrePaidInfoSubtitle: {
+    id: 'ir.application:applicantsPrePaidInfoSubtitle',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
+    description: 'Subtitle text shown above prepaid applicant information form',
+  },
   name: {
     id: 'ir.application:name',
     defaultMessage: 'Nafn',

@@ -80,12 +80,12 @@ export const employee = {
     },
     startOfWorkdayDate: {
       id: 'aosh.wan.application:employee.time',
-      defaultMessage: 'Dagsetning byrjun starfsdags',
+      defaultMessage: 'Dagsetning',
       description: 'Start of employees workday date',
     },
     time: {
       id: 'aosh.wan.application:employee.time',
-      defaultMessage: 'Tími byrjun starfsdags',
+      defaultMessage: 'Tími',
       description: 'Start of employees workday time',
     },
     timePlaceholder: {
@@ -153,6 +153,12 @@ export const employee = {
       id: 'aosh.wan.application:employee.errorMessage',
       defaultMessage:
         'Starfsdagur má byrja allt að 36 tímum fyrir slys og að tímasetningu slyss',
+      description: 'Error message for employee start time',
+    },
+    startTimeAlert: {
+      id: 'aosh.wan.application:employee.startTimeAlert',
+      defaultMessage:
+        'Dagsetning og tími þegar starfsmaður mætti til vinnu á slysadegi',
       description: 'Error message for employee start time',
     },
   }),
