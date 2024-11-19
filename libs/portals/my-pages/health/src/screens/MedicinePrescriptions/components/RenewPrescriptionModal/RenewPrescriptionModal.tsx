@@ -59,7 +59,6 @@ const RenewPrescriptionModal: React.FC<Props> = ({
     e && e.preventDefault()
     const formData2 = e && new FormData(e.currentTarget)
     const data = formData2 && Object.fromEntries((formData2 as any).entries())
-    console.log(data)
     setFormData(null)
     setModalVisible(false)
   }

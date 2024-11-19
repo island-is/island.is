@@ -21,7 +21,7 @@ export const TableRow = ({
   tagOutlined?: boolean
   expandable?: boolean
 }) => {
-  const { id, name, tag, lastNode, children, ...itemObject } = item
+  const { id, tag, lastNode, children, ...itemObject } = item
   const valueItems = Object.values(itemObject)
 
   const renderValueItem = (valueItem: any, i: number) => {
@@ -75,11 +75,6 @@ export const TableRow = ({
     </ExpandRow>
   ) : (
     <T.Row key={id}>
-      <T.Data>
-        <Text variant="medium" as="span">
-          {name}
-        </Text>
-      </T.Data>
       {valueItems.map((valueItem, i) => (
         <T.Data key={`body-${id}-${i}`}>{renderValueItem(valueItem, i)}</T.Data>
       ))}

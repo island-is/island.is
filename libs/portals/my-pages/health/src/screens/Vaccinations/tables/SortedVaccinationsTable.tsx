@@ -3,6 +3,7 @@ import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyTable,
+  LinkButton,
   SortableTable,
   formatDate,
 } from '@island.is/portals/my-pages/core'
@@ -17,23 +18,7 @@ interface Props {
 export const SortedVaccinationsTable = ({ data }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
-  const headerDataDetail: Array<DetailHeader> = [
-    {
-      value: formatMessage(messages.vaccinesTableHeaderNr),
-    },
-    {
-      value: formatMessage(messages.vaccinesTableHeaderDate),
-    },
-    {
-      value: formatMessage(messages.vaccinesTableHeaderAge),
-    },
-    {
-      value: formatMessage(messages.vaccinesTableHeaderVaccine),
-    },
-    {
-      value: formatMessage(messages.vaccinesTableHeaderLocation),
-    },
-  ]
+
   if (!data || data?.length === 0)
     return <EmptyTable message={formatMessage(messages.noVaccinesRegistered)} />
 
@@ -56,46 +41,52 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
             date: formatDate(item?.lastVaccinationDate) ?? '',
             status: item?.statusName ?? '',
             tag: tagSelector(item?.status ?? undefined),
-            children: (
-              <VaccinationsDetailTable
-                headerData={headerDataDetail}
-                rowData={item.vaccinationsInfo?.map(
-                  (vaccination, i): Array<DetailRow> => {
-                    return [
-                      {
-                        value: (i + 1).toString(),
-                      },
-                      {
-                        value: new Date(vaccination.date).toLocaleDateString(
-                          'is-IS',
-                        ),
-                      },
-                      {
-                        value: [
-                          vaccination.age?.years,
-                          vaccination.age?.years
-                            ? formatMessage(messages.years)
-                            : undefined,
-                          vaccination.age?.months,
-                          formatMessage(messages.months),
-                        ]
-                          .filter(Boolean)
-                          .join(' '),
-                      },
-                      {
-                        value: vaccination.name ?? '',
-                        type: 'link',
-                        url: vaccination.url ?? '',
-                      },
-                      {
-                        value: vaccination.location ?? '',
-                      },
-                    ]
-                  },
-                )}
-                footerText={item.comments ?? []}
-              />
-            ),
+            children:
+              item.vaccinationsInfo && item.vaccinationsInfo.length > 0 ? (
+                <SortableTable
+                  labels={{
+                    nr: formatMessage(messages.vaccinesTableHeaderNr),
+                    date: formatMessage(messages.vaccinesTableHeaderDate),
+                    age: formatMessage(messages.vaccinesTableHeaderAge),
+                    vaccine: formatMessage(messages.vaccinesTableHeaderVaccine),
+                    location: formatMessage(
+                      messages.vaccinesTableHeaderLocation,
+                    ),
+                  }}
+                  defaultSortByKey="nr"
+                  inner
+                  items={
+                    item.vaccinationsInfo?.map((vaccination, x) => ({
+                      id: vaccination?.id.toString() ?? `${x}`,
+                      nr: (x + 1).toString(),
+                      date: new Date(vaccination.date).toLocaleDateString(
+                        'is-IS',
+                      ),
+                      age: [
+                        vaccination.age?.years,
+                        vaccination.age?.years
+                          ? formatMessage(messages.years)
+                          : undefined,
+                        vaccination.age?.months,
+                        formatMessage(messages.months),
+                      ]
+                        .filter(Boolean)
+                        .join(' '),
+                      vaccine: vaccination.url ? (
+                        <LinkButton
+                          icon={undefined}
+                          size="small"
+                          to={vaccination.url ?? '/'}
+                          text={vaccination.name ?? ''}
+                        />
+                      ) : (
+                        vaccination.name ?? ''
+                      ),
+                      location: vaccination.location ?? '',
+                    })) ?? []
+                  }
+                />
+              ) : null,
           })) ?? []
         }
       />

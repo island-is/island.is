@@ -37,17 +37,19 @@ export const NestedLines = ({ data, width = 'full' }: Props) => {
                 })}
               >
                 <GridRow>
-                  <GridColumn span={titleWidth}>
+                  <GridColumn span={['12/12', '12/12', titleWidth]}>
                     <Box className={styles.titleCol}>
                       <Text fontWeight="semiBold" variant="small" as="span">
                         {item.title}
                       </Text>
                     </Box>
                   </GridColumn>
-                  <GridColumn span={columnWidth}>
-                    <Text variant="small" as="span">
-                      {item.value}
-                    </Text>
+                  <GridColumn span={['12/12', '12/12', columnWidth]}>
+                    <Box className={styles.valueCol}>
+                      <Text variant="small" as="span">
+                        {item.value}
+                      </Text>
+                    </Box>
                   </GridColumn>
                 </GridRow>
               </GridContainer>

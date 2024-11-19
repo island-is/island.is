@@ -7,12 +7,14 @@ import {
   ExpandRow,
   LinkButton,
   NestedTable,
+  SortableTable,
   amountFormat,
   formatDate,
   m,
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { exportAidTable } from '../../utils/FileBreakdown'
+import NestedInfoLines from '../MedicinePrescriptions/components/NestedInfoLines/NestedInfoLines'
 
 interface Props {
   data: Array<RightsPortalAidOrNutrition>
@@ -62,51 +64,44 @@ const Aids = ({ data }: Props) => {
   return (
     <Box>
       <Box marginTop={2}>
-        <T.Table>
-          <ExpandHeader
-            data={[
-              { value: '' },
-              { value: formatMessage(messages.name) },
-              { value: formatMessage(messages.maxUnitRefund) },
-              { value: formatMessage(messages.insuranceRatio) },
-              { value: formatMessage(messages.availableRefund) },
-              { value: formatMessage(messages.nextAvailableRefund) },
-              { value: '' },
-            ]}
-          />
-          <T.Body>
-            {data.map((rowItem, idx) => (
-              <ExpandRow
-                key={`aids-table-row-${idx}`}
-                data={[
-                  {
-                    value: rowItem.name.split('/').join(' / '),
-                  },
-                  {
-                    value: rowItem.maxUnitRefund ?? '',
-                  },
-                  {
-                    value:
-                      rowItem.refund.type === 'amount'
-                        ? amountFormat(rowItem.refund.value)
-                        : `${rowItem.refund.value}%`,
-                  },
-                  {
-                    value: rowItem.available ?? '',
-                  },
-                  {
-                    value: rowItem.nextAllowedMonth ?? '',
-                  },
-                  {
-                    value: rowItem.expiring ? expiringIcon : '',
-                  },
-                ]}
-              >
-                <NestedTable data={generateFoldedValues(rowItem)} />
-              </ExpandRow>
-            ))}
-          </T.Body>
-        </T.Table>
+        <SortableTable
+          expandable
+          labels={{
+            aidsName: formatMessage(messages.name),
+            maxUnitRefund: formatMessage(messages.maxUnitRefund),
+            insuranceRatio: formatMessage(messages.insuranceRatio),
+            availableRefund: formatMessage(messages.availableRefund),
+            nextAvailableRefund: formatMessage(messages.nextAvailableRefund),
+            lastNode: formatMessage(messages.renew),
+          }}
+          defaultSortByKey="aidsName"
+          mobileTitleKey="aidsName"
+          items={data.map((rowItem, idx) => ({
+            id: rowItem.id ?? `${idx}`,
+            aidsName: rowItem.name.split('/').join(' / '),
+            maxUnitRefund: rowItem.maxUnitRefund ?? '',
+            insuranceRatio:
+              rowItem.refund.type === 'amount'
+                ? amountFormat(rowItem.refund.value)
+                : `${rowItem.refund.value}%`,
+            availableRefund: rowItem.available ?? '',
+            nextAvailableRefund: rowItem.nextAllowedMonth ?? '',
+            lastNode: rowItem.expiring
+              ? {
+                  type: 'info',
+                  label: formatMessage(messages.timeRemainingOfRefund),
+                  icon: { icon: 'time', type: 'outline' },
+                }
+              : undefined,
+            children: (
+              <NestedInfoLines
+                data={generateFoldedValues(rowItem)}
+                width="full"
+              />
+            ),
+          }))}
+        />
+
         <DownloadFileButtons
           BoxProps={{
             paddingTop: 2,

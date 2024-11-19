@@ -57,7 +57,7 @@ import { useSortableData } from './useSortableData'
 export const SortableTable = (props: SortableTableProps) => {
   const { items, requestSort, sortConfig } = useSortableData<SortableData>(
     props.items,
-    { direction: 'ascending', key: props.defaultSortByKey ?? 'name' },
+    { direction: 'ascending', key: props.defaultSortByKey },
   )
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
@@ -70,17 +70,15 @@ export const SortableTable = (props: SortableTableProps) => {
       .filter((value, index, self) => self.indexOf(value) === index)
 
     if (props.expandable) {
-      const childrenIndex = headerItems.indexOf('children')
-      headerItems.splice(childrenIndex, 1)
+      headerItems.unshift('')
     }
-
     setHeaderSorted(headerItems)
   }, [props.items])
 
   const mobileHeaderData = headerSorted
+    .filter((headItem) => headItem !== props.mobileTitleKey)
     .map((headItem) => props.labels[headItem])
     .filter(isDefined)
-  if (!props.expandable) mobileHeaderData.splice(0, 1)
 
   return (
     <>
@@ -91,13 +89,18 @@ export const SortableTable = (props: SortableTableProps) => {
       )}
       {isMobile ? (
         <MobileTable
+          inner={props.inner}
           header={props.title ?? ''}
           rows={items.map((item) => {
-            const { id, tag, name, lastNode, children, ...itemObject } = item
-            const valueItems = Object.values(itemObject)
+            const { id, tag, lastNode, children, ...itemObject } = item
+            const valueItems = Object.entries(itemObject)
+              .filter(([key]) => key !== props.mobileTitleKey)
+              .map(([, value]) => value)
             let action = undefined
             return {
-              title: name ?? valueItems[0]?.toString() ?? '',
+              title: props.mobileTitleKey
+                ? item[props.mobileTitleKey]
+                : undefined,
               data: valueItems
                 .map((valueItem, valueIndex) => {
                   if (tag && valueItems.length - 1 === valueIndex) {
@@ -201,6 +204,13 @@ export const SortableTable = (props: SortableTableProps) => {
             ))}
             {props.footer && (
               <T.Row>
+                <T.Data
+                  text={{ fontWeight: 'semiBold' }}
+                  borderColor="white"
+                  key="footer-empty"
+                >
+                  {/* Empty cell at index 0 */}
+                </T.Data>
                 {Object.values(props.footer).map((valueItem) => (
                   <T.Data
                     text={{ fontWeight: 'semiBold' }}

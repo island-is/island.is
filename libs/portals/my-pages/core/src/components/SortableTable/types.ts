@@ -2,7 +2,7 @@ import { IconProps, TagVariant } from '@island.is/island-ui/core'
 export type ConfigType = { direction: 'ascending' | 'descending'; key: string }
 
 export type SortableData = {
-  name: string
+  mobileTitle?: string
   id: string
   tag?: TagVariant
   lastNode?: {
@@ -11,7 +11,7 @@ export type SortableData = {
     icon?: Pick<IconProps, 'icon' | 'type'>
     action?: () => void
   }
-  children?: React.ReactElement // Children for each row if expandable
+  children?: React.ReactElement | null // Children for each row if expandable
 } & { [key: string]: string | React.ReactElement | any }
 
 export type SortableTableProps = {
@@ -25,5 +25,7 @@ export type SortableTableProps = {
   title?: string
   tagOutlined?: boolean // If tags are set, should they be filled or outlined
   expandable?: boolean // Uses "children" key for expandable rows
-  defaultSortByKey?: string // Starting sort key, use one of keys in SortableData
+  defaultSortByKey: string // Starting sort key, use one of keys in SortableData
+  mobileTitleKey?: string // Key to use for mobile title
+  inner?: boolean // Is the table inside another table
 }

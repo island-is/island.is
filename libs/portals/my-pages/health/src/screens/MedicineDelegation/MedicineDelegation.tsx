@@ -20,7 +20,6 @@ const MedicineDelegation = () => {
   } | null>(null)
 
   const openModal = (id: string) => {
-    console.log('openModal', id)
     setNewDelegationModelOpen({ id, open: true })
   }
   return (
@@ -46,6 +45,8 @@ const MedicineDelegation = () => {
               delegationType: formatMessage(messages.delegationType),
               date: formatMessage(m.dateShort),
             }}
+            defaultSortByKey="name"
+            mobileTitleKey="name"
             items={delegationData.map((item, i) => ({
               id: item.id ?? `${i}`,
               name: item.name,

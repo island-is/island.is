@@ -10,13 +10,15 @@ export interface TableRow {
     content?: React.ReactElement | JSX.Element | string
   }[]
   action?: React.ReactElement | JSX.Element | string
-  children?: React.ReactElement
+  children?: React.ReactElement | null
 }
 interface Props {
   tableRow: TableRow
+  inner?: boolean
+  background?: 'white' | 'blue'
 }
 
-const MobileTableRow: React.FC<Props> = ({ tableRow }) => {
+const MobileTableRow: React.FC<Props> = ({ tableRow, inner, background }) => {
   const [extended, setExtended] = useState(false)
 
   const ref = useRef<HTMLDivElement>(null)
@@ -28,12 +30,18 @@ const MobileTableRow: React.FC<Props> = ({ tableRow }) => {
 
   return (
     <Box
-      borderRadius="standard"
-      borderColor="blue200"
-      border="standard"
-      padding={2}
+      borderRadius={inner ? undefined : 'standard'}
+      borderColor={inner ? undefined : 'blue200'}
+      border={inner ? undefined : 'standard'}
+      padding={inner ? 1 : 2}
       marginBottom={2}
-      background={extended ? 'blue100' : undefined}
+      background={
+        extended || background === 'blue'
+          ? 'blue100'
+          : background === 'white'
+          ? 'white'
+          : undefined
+      }
     >
       <Box
         marginBottom={1}
@@ -44,7 +52,7 @@ const MobileTableRow: React.FC<Props> = ({ tableRow }) => {
         <Text variant="h4" as="h2" color="blue400">
           {tableRow.title}
         </Text>
-        {tableRow.children && (
+        {!inner && tableRow.children && (
           <Box>
             <Button
               circle
@@ -65,12 +73,12 @@ const MobileTableRow: React.FC<Props> = ({ tableRow }) => {
             return (
               <Box key={index} display="flex" flexDirection="row">
                 <Box width="half" display="flex" alignItems="center">
-                  <Text fontWeight="medium" variant="medium">
+                  <Text fontWeight="semiBold" variant="default">
                     {title}
                   </Text>
                 </Box>
                 <Box width="half">
-                  <Text variant="medium">{content}</Text>
+                  <Text variant="default">{content}</Text>
                 </Box>
               </Box>
             )

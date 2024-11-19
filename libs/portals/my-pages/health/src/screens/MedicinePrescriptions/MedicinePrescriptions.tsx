@@ -37,10 +37,10 @@ const MedicinePrescriptions = () => {
           }}
           expandable
           defaultSortByKey="medicine"
+          mobileTitleKey="medicine"
           items={
             MedicinePrescriptionsData?.map((item, i) => ({
               id: item?.id ?? `${i}`,
-              name: item?.medicineName ?? '',
               medicine: item?.medicineName ?? '',
               usedFor: item?.usedFor ?? '',
               process: item?.process ?? '',
