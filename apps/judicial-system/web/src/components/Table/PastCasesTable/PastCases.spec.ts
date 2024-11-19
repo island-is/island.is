@@ -6,14 +6,6 @@ const date2 = '2022-09-04T19:30:08.033Z'
 const date3 = '2022-09-13T19:50:07.033Z'
 const date4 = '2022-12-24T18:00:00.033Z'
 
-jest.mock('next/router', () => ({
-  useRouter() {
-    return {
-      pathname: '',
-    }
-  },
-}))
-
 describe('getDurationDate', () => {
   test.each`
     state
