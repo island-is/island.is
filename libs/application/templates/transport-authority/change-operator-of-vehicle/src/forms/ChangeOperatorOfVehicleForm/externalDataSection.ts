@@ -9,6 +9,7 @@ import {
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
+  MockableSamgongustofaPaymentCatalogApi,
 } from '../../dataProviders'
 
 export const externalDataSection = buildSection({
@@ -38,6 +39,10 @@ export const externalDataSection = buildSection({
         }),
         buildDataProviderItem({
           provider: SamgongustofaPaymentCatalogApi,
+          title: '',
+        }),
+        buildDataProviderItem({
+          provider: MockableSamgongustofaPaymentCatalogApi,
           title: '',
         }),
       ],
