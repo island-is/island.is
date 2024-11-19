@@ -84,7 +84,7 @@ export const accident = {
     wasDoingPlaceholder: {
       id: 'aosh.wan.application:accident.about.wasDoingPlaceholder#markdown',
       defaultMessage:
-        'Tilgreinið hvaða verkfæri eða vélar voru notaðar.\nDæmi:\n  - Vann með handborvél\n  - Vann með handborvél',
+        'Tilgreinið hvaða verkfæri eða vélar voru notaðar.\nDæmi:\n  - Vann með handborvél\n  - Var að styðja sjúkling á leið til baðherbergis',
       description: 'Placeholder of wasDoing text area',
     },
     wentWrongTitle: {
@@ -95,7 +95,7 @@ export const accident = {
     wenWrongPlaceholder: {
       id: 'aosh.wan.application:accident.about.wenWrongPlaceholder#markdown',
       defaultMessage:
-        'Tilgreinið hvaða verkfæri eða vélar voru notaðar.\nDæmi:\n  - Vann með handborvél\n  - Vann með handborvél',
+        'Tilgreinið hvaða verkfæri, vélar eða byrði áttu þátt í því.\nDæmi:\n  - Borinn brotnaði í efninu\n  - Sjúklingurinn gat skyndilega ekki staðið á fótunum',
       description: 'Placeholder of wentWrong text area',
     },
     howTitle: {
@@ -106,7 +106,7 @@ export const accident = {
     howPlaceholder: {
       id: 'aosh.wan.application:accident.about.howPlaceholder#markdown',
       defaultMessage:
-        'Tilgreinið hvaða verkfæri eða vélar voru notaðar.\nDæmi:\n  - Vann með handborvél\n  - Vann með handborvél',
+        'Tilgreinið hvaða verkfæri, vélar eða byrði var orsök slyssins.\nDæmi:\n  - Borinn lenti í hendinni\n  - Við að reyna að halda sjúklingnum uppi hrasaði slasaði og fékk hnykk á bakið',
       description: 'Placeholder of how text area',
     },
     locationOfAccidentHeading: {
