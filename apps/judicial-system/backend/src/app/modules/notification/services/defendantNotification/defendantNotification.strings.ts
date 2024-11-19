@@ -27,4 +27,29 @@ export const strings = {
     description:
       'Body of the notification when a defender is assigned a confirmed as a defender in indictment cases',
   }),
+  indictmentSentToPrisonAdminSubject: defineMessage({
+    id: 'judicial.system.backend:defendant_notifications.indictment_sent_to_prison_admin_subject',
+    defaultMessage: 'Mál {courtCaseNumber} til fullnustu',
+    description:
+      'Titill í tilkynningu til FMST þegar mál er sent til fullnustu',
+  }),
+  indictmentSentToPrisonAdminBody: defineMessage({
+    id: 'judicial.system.backend:defendant_notifications.indictment_sent_to_prison_admin_body',
+    defaultMessage:
+      'Ríkissaksóknari hefur sent mál {courtCaseNumber} til fullnustu.<br /><br />Skjöl málsins eru aðgengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
+    description: 'Texti í tilkynningu til FMST þegar mál er sent til fullnustu',
+  }),
+  indictmentWithdrawnFromPrisonAdminSubject: defineMessage({
+    id: 'judicial.system.backend:defendant_notifications.indictment_withdrawn_from_prison_admin_subject',
+    defaultMessage: 'Mál {courtCaseNumber} afturkallað úr fullnustu',
+    description:
+      'Titill í tilkynningu til FMST þegar mál er afturkallað úr fullnustu',
+  }),
+  indictmentWithdrawnFromPrisonAdminBody: defineMessage({
+    id: 'judicial.system.backend:defendant_notifications.indictment_withdrawn_from_prison_admin_body',
+    defaultMessage:
+      'Ríkissaksóknari hefur afturkallað mál {courtCaseNumber} úr fullnustu.',
+    description:
+      'Texti í tilkynningu til FMST þegar mál er afturkallað úr fullnustu',
+  }),
 }

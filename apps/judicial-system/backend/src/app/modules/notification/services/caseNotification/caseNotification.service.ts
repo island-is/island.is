@@ -30,7 +30,6 @@ import {
   lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
-  AdvocateType,
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
@@ -69,20 +68,20 @@ import {
   formatProsecutorCourtDateEmailNotification,
   formatProsecutorReadyForCourtEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
-} from '../../formatters'
-import { notifications } from '../../messages'
-import { type Case, DateLog } from '../case'
-import { CourtService } from '../court'
+} from '../../../../formatters'
+import { notifications } from '../../../../messages'
+import { type Case, DateLog } from '../../../case'
+import { CourtService } from '../../../court'
 import {
   type CivilClaimant,
   type Defendant,
   DefendantService,
-} from '../defendant'
-import { EventService } from '../event'
-import { DeliverResponse } from './models/deliver.response'
-import { Notification, Recipient } from './models/notification.model'
-import { BaseNotificationService } from './baseNotification.service'
-import { notificationModuleConfig } from './notification.config'
+} from '../../../defendant'
+import { EventService } from '../../../event'
+import { BaseNotificationService } from '../../baseNotification.service'
+import { DeliverResponse } from '../../models/deliver.response'
+import { Notification, Recipient } from '../../models/notification.model'
+import { notificationModuleConfig } from '../../notification.config'
 
 interface Attachment {
   filename: string

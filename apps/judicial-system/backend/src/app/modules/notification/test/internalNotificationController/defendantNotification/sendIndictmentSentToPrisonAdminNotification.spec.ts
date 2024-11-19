@@ -1,0 +1,156 @@
+import { uuid } from 'uuidv4'
+
+import { EmailService } from '@island.is/email-service'
+import { ConfigType } from '@island.is/nest/config'
+
+import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  CaseType,
+  DefendantNotificationType,
+} from '@island.is/judicial-system/types'
+
+import { createTestingNotificationModule } from '../../createTestingNotificationModule'
+
+import { Case } from '../../../../case'
+import { Defendant } from '../../../../defendant'
+import { DefendantNotificationDto } from '../../../dto/defendantNotification.dto'
+import { DeliverResponse } from '../../../models/deliver.response'
+import { Notification } from '../../../models/notification.model'
+import { notificationModuleConfig } from '../../../notification.config'
+
+jest.mock('../../../../../factories')
+
+interface Then {
+  result: DeliverResponse
+  error: Error
+}
+
+type GivenWhenThen = (
+  caseId: string,
+  defendantId: string,
+  theCase: Case,
+  defendant: Defendant,
+  notificationDto: DefendantNotificationDto,
+) => Promise<Then>
+
+describe('InternalNotificationController - Defendant - Send indictment sent to prison admin notification', () => {
+  const caseId = uuid()
+  const defendantId = uuid()
+  const court = { name: 'Héraðsdómur Reykjavíkur' } as Case['court']
+
+  let mockEmailService: EmailService
+  let mockConfig: ConfigType<typeof notificationModuleConfig>
+  let mockNotificationModel: typeof Notification
+  let givenWhenThen: GivenWhenThen
+
+  let defendantNotificationDTO: DefendantNotificationDto
+
+  beforeEach(async () => {
+    const {
+      emailService,
+      notificationConfig,
+      internalNotificationController,
+      notificationModel,
+    } = await createTestingNotificationModule()
+
+    process.env.PRISON_ADMIN_INDICTMENT_EMAILS =
+      'prisonadminindictment@omnitrix.is, prisonadminindictment2@omnitrix.is'
+
+    defendantNotificationDTO = {
+      type: DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
+    }
+
+    mockEmailService = emailService
+    mockConfig = notificationConfig
+    mockNotificationModel = notificationModel
+
+    givenWhenThen = async (
+      caseId: string,
+      defendantId: string,
+      theCase: Case,
+      defendant: Defendant,
+      notificationDto: DefendantNotificationDto,
+    ) => {
+      const then = {} as Then
+
+      try {
+        then.result =
+          await internalNotificationController.sendDefendantNotification(
+            caseId,
+            defendantId,
+            theCase,
+            defendant,
+            notificationDto,
+          )
+      } catch (error) {
+        then.error = error as Error
+      }
+
+      return then
+    }
+  })
+
+  describe('when sending indictment to prison admin', () => {
+    const defendant = {
+      id: defendantId,
+    } as Defendant
+
+    const theCase = {
+      id: caseId,
+      court,
+      courtCaseNumber: 'R-123-456/2024',
+      type: CaseType.INDICTMENT,
+      defendants: [defendant],
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(
+        caseId,
+        defendantId,
+        theCase,
+        defendant,
+        defendantNotificationDTO,
+      )
+    })
+
+    it('should send a notification to prison admin emails', () => {
+      expect(mockEmailService.sendEmail).toBeCalledTimes(1)
+      expect(mockEmailService.sendEmail).toBeCalledWith({
+        from: {
+          name: mockConfig.email.fromName,
+          address: mockConfig.email.fromEmail,
+        },
+        to: [
+          {
+            name: 'Fangelsismálastofnun',
+            address: mockConfig.email.prisonAdminEmail,
+          },
+        ],
+        replyTo: {
+          name: mockConfig.email.replyToName,
+          address: mockConfig.email.replyToEmail,
+        },
+        attachments: undefined,
+        subject: `Héraðsdómur Reykjavíkur - aðgangur að máli`,
+        html: expect.stringContaining(ROUTE_HANDLER_ROUTE),
+        text: expect.stringContaining(
+          'Héraðsdómur Reykjavíkur hefur skráð þig verjanda í máli R-123-456/2024',
+        ),
+      })
+    })
+
+    it('should record notification', () => {
+      expect(mockNotificationModel.create).toHaveBeenCalledTimes(1)
+      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+        caseId,
+        type: defendantNotificationDTO.type,
+        recipients: [
+          {
+            name: 'Fangelsismálastofnun',
+            address: mockConfig.email.prisonAdminEmail,
+          },
+        ],
+      })
+    })
+  })
+})

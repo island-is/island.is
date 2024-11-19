@@ -19,14 +19,14 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../case'
-import { Defendant } from '../defendant'
-import { EventService } from '../event'
-import { DeliverResponse } from './models/deliver.response'
-import { Notification, Recipient } from './models/notification.model'
-import { BaseNotificationService } from './baseNotification.service'
+import { Case } from '../../../case'
+import { Defendant } from '../../../defendant'
+import { EventService } from '../../../event'
+import { BaseNotificationService } from '../../baseNotification.service'
+import { DeliverResponse } from '../../models/deliver.response'
+import { Notification, Recipient } from '../../models/notification.model'
+import { notificationModuleConfig } from '../../notification.config'
 import { strings } from './defendantNotification.strings'
-import { notificationModuleConfig } from './notification.config'
 
 @Injectable()
 export class DefendantNotificationService extends BaseNotificationService {
@@ -179,6 +179,68 @@ export class DefendantNotificationService extends BaseNotificationService {
     return { delivered: true }
   }
 
+  private sendIndictmentSentToPrisonAdminNotification(theCase: Case) {
+    const formattedSubject = this.formatMessage(
+      strings.indictmentSentToPrisonAdminSubject,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+      },
+    )
+
+    const formattedBody = this.formatMessage(
+      strings.indictmentSentToPrisonAdminBody,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+        linkStart: `<a href="${this.config.clientUrl}${ROUTE_HANDLER_ROUTE}/${theCase.id}">`,
+        linkEnd: '</a>',
+      },
+    )
+
+    return this.sendEmails(
+      theCase,
+      DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
+      formattedSubject,
+      formattedBody,
+      [
+        {
+          name: 'Fangelsismálastofnun',
+          email: this.config.email.prisonAdminEmail,
+        },
+      ],
+    )
+  }
+
+  private sendIndictmentWithdrawnFromPrisonAdminNotification(theCase: Case) {
+    const courtCaseNumber = theCase.courtCaseNumber
+
+    const formattedSubject = this.formatMessage(
+      strings.indictmentWithdrawnFromPrisonAdminSubject,
+      {
+        courtCaseNumber,
+      },
+    )
+
+    const formattedBody = this.formatMessage(
+      strings.indictmentWithdrawnFromPrisonAdminBody,
+      {
+        courtCaseNumber,
+      },
+    )
+
+    return this.sendEmails(
+      theCase,
+      DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN,
+      formattedSubject,
+      formattedBody,
+      [
+        {
+          name: 'Fangelsismálastofnun',
+          email: this.config.email.prisonAdminEmail,
+        },
+      ],
+    )
+  }
+
   private sendNotification(
     notificationType: DefendantNotificationType,
     theCase: Case,
@@ -189,6 +251,10 @@ export class DefendantNotificationService extends BaseNotificationService {
         return this.sendDefendantSelectedDefenderNotification(theCase)
       case DefendantNotificationType.DEFENDER_ASSIGNED:
         return this.sendDefenderAssignedNotification(theCase, defendant)
+      case DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN:
+        return this.sendIndictmentSentToPrisonAdminNotification(theCase)
+      case DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN:
+        return this.sendIndictmentWithdrawnFromPrisonAdminNotification(theCase)
       default:
         throw new InternalServerErrorException(
           `Invalid notification type: ${notificationType}`,

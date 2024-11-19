@@ -74,6 +74,26 @@ export class DefendantService {
     return message
   }
 
+  private getMessagesForIndictmentToPrisonAdminChanges(
+    defendant: Defendant,
+  ): Message {
+    const messageType =
+      defendant.isSentToPrisonAdmin === true
+        ? DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN
+        : DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN
+
+    const message = {
+      type: MessageType.DEFENDANT_NOTIFICATION,
+      caseId: defendant.id,
+      elementId: defendant.id,
+      body: {
+        type: messageType,
+      },
+    }
+
+    return message
+  }
+
   private getUpdatedDefendant(
     numberOfAffectedRows: number,
     defendants: Defendant[],
@@ -142,6 +162,8 @@ export class DefendantService {
       return
     }
 
+    const messages: Message[] = []
+
     if (updatedDefendant.isDefenderChoiceConfirmed) {
       if (
         updatedDefendant.defenderChoice === DefenderChoice.CHOOSE ||
@@ -151,16 +173,21 @@ export class DefendantService {
 
         // Defender was just confirmed by judge
         if (!oldDefendant.isDefenderChoiceConfirmed) {
-          await this.messageService.sendMessagesToQueue([
-            {
-              type: MessageType.DEFENDANT_NOTIFICATION,
-              caseId: theCase.id,
-              body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
-              elementId: updatedDefendant.id,
-            },
-          ])
+          messages.push({
+            type: MessageType.DEFENDANT_NOTIFICATION,
+            caseId: theCase.id,
+            body: { type: DefendantNotificationType.DEFENDER_ASSIGNED },
+            elementId: updatedDefendant.id,
+          })
         }
       }
+    } else if (
+      updatedDefendant.isSentToPrisonAdmin &&
+      updatedDefendant.isSentToPrisonAdmin !== oldDefendant.isSentToPrisonAdmin
+    ) {
+      messages.push(
+        this.getMessagesForIndictmentToPrisonAdminChanges(updatedDefendant),
+      )
     }
   }
 

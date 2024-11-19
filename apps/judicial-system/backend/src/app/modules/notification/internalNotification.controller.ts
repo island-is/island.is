@@ -34,12 +34,12 @@ import { InstitutionNotificationDto } from './dto/institutionNotification.dto'
 import { NotificationDispatchDto } from './dto/notificationDispatch.dto'
 import { SubpoenaNotificationDto } from './dto/subpoenaNotification.dto'
 import { DeliverResponse } from './models/deliver.response'
-import { CaseNotificationService } from './caseNotification.service'
-import { CivilClaimantNotificationService } from './civilClaimantNotification.service'
-import { DefendantNotificationService } from './defendantNotification.service'
-import { InstitutionNotificationService } from './institutionNotification.service'
+import { CaseNotificationService } from './services/caseNotification/caseNotification.service'
+import { CivilClaimantNotificationService } from './services/civilClaimantNotification/civilClaimantNotification.service'
+import { DefendantNotificationService } from './services/defendantNotification/defendantNotification.service'
+import { InstitutionNotificationService } from './services/institutionNotification/institutionNotification.service'
+import { SubpoenaNotificationService } from './services/subpoenaNotification/subpoenaNotification.service'
 import { NotificationDispatchService } from './notificationDispatch.service'
-import { SubpoenaNotificationService } from './subpoenaNotification.service'
 
 @UseGuards(TokenGuard)
 @Controller('api/internal')

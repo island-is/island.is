@@ -16,14 +16,14 @@ import { DEFENDER_INDICTMENT_ROUTE } from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { CivilClaimantNotificationType } from '@island.is/judicial-system/types'
 
-import { Case } from '../case'
-import { CivilClaimant } from '../defendant'
-import { EventService } from '../event'
-import { DeliverResponse } from './models/deliver.response'
-import { Notification, Recipient } from './models/notification.model'
-import { BaseNotificationService } from './baseNotification.service'
+import { Case } from '../../../case'
+import { CivilClaimant } from '../../../defendant'
+import { EventService } from '../../../event'
+import { DeliverResponse } from '../../models/deliver.response'
+import { Notification, Recipient } from '../../models/notification.model'
+import { BaseNotificationService } from '../../baseNotification.service'
 import { strings } from './civilClaimantNotification.strings'
-import { notificationModuleConfig } from './notification.config'
+import { notificationModuleConfig } from '../../notification.config'
 
 @Injectable()
 export class CivilClaimantNotificationService extends BaseNotificationService {
