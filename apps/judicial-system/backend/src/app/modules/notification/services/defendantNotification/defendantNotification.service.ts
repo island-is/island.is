@@ -274,7 +274,6 @@ export class DefendantNotificationService extends BaseNotificationService {
     defendant: Defendant,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
-
     try {
       return await this.sendNotification(type, theCase, defendant)
     } catch (error) {
