@@ -96,12 +96,12 @@ export class DelegationsIncomingRepresentativeService {
       })
 
       const isNationalRegistryV3DeceasedStatusEnabled =
-        user && (await this.nationalRegistryV3FeatureService.getValue(user))
+        await this.nationalRegistryV3FeatureService.getValue(user)
 
       const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
         await this.aliveStatusService.getStatus(
           personalRepresentatives.map((d) => d.nationalIdRepresentedPerson),
-          isNationalRegistryV3DeceasedStatusEnabled ?? false,
+          isNationalRegistryV3DeceasedStatusEnabled,
         )
 
       if (deceasedNationalIds.length > 0) {

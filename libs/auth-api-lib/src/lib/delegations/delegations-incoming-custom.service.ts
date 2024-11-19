@@ -270,12 +270,12 @@ export class DelegationsIncomingCustomService {
 
     // Check live status, i.e. dead or alive for delegations
     const isNationalRegistryV3DeceasedStatusEnabled =
-      user && (await this.nationalRegistryV3FeatureService.getValue(user))
+      await this.nationalRegistryV3FeatureService.getValue(user)
 
     const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
       await this.aliveStatusService.getStatus(
         delegations.map((d) => d.fromNationalId),
-        isNationalRegistryV3DeceasedStatusEnabled ?? false,
+        isNationalRegistryV3DeceasedStatusEnabled,
       )
 
     if (deceasedNationalIds.length > 0) {
@@ -353,12 +353,12 @@ export class DelegationsIncomingCustomService {
 
     // Check live status, i.e. dead or alive for delegations
     const isNationalRegistryV3DeceasedStatusEnabled =
-      user && (await this.nationalRegistryV3FeatureService.getValue(user))
+      await this.nationalRegistryV3FeatureService.getValue(user)
 
     const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
       await this.aliveStatusService.getStatus(
         delegations.map((d) => d.fromNationalId),
-        isNationalRegistryV3DeceasedStatusEnabled ?? false,
+        isNationalRegistryV3DeceasedStatusEnabled,
       )
 
     if (deceasedNationalIds.length > 0) {

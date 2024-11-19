@@ -7,8 +7,8 @@ import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 export class NationalRegistryV3FeatureService {
   constructor(private readonly featureFlagService: FeatureFlagService) {}
 
-  getValue(user: User): Promise<boolean> {
-    return this.featureFlagService.getValue(
+  getValue(user?: User): Promise<boolean> {
+    return this.featureFlagService.getValue<boolean>(
       Features.isNationalRegistryV3DeceasedStatusEnabled,
       false,
       user,

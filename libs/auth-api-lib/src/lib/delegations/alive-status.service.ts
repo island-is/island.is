@@ -65,8 +65,8 @@ export class AliveStatusService {
       identitiesValuesNoError = identities.filter(this.isNotError)
 
       const deceasedNationalIds = identitiesValuesNoError
-        .filter((individual) => individual.isDeceased)
-        .map((individual) => individual.nationalId)
+        .filter((identity) => identity.isDeceased)
+        .map((identity) => identity.nationalId)
 
       return {
         aliveNationalIds: nationalIds.filter(
