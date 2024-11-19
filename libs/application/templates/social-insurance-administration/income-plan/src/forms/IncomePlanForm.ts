@@ -4,6 +4,7 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  buildSelectField,
   buildSubSection,
   buildSubmitField,
   buildTableRepeaterField,
@@ -37,6 +38,7 @@ import {
   getTypesOptions,
 } from '../lib/incomePlanUtils'
 import { incomePlanFormMessage } from '../lib/messages'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const IncomePlanForm: Form = buildForm({
   id: 'IncomePlanDraft',
@@ -625,6 +627,19 @@ export const IncomePlanForm: Form = buildForm({
           title: incomePlanFormMessage.info.temporaryCalculationTitle,
           description: incomePlanFormMessage.info.tableDescription,
           children: [
+            buildCustomField({
+              title: '',
+              id: 'overviewPrint',
+              doesNotRequireAnswer: true,
+              component: 'PrintScreen',
+            }),
+            buildSelectField({
+              id: 'temporaryCalculation.month',
+              title: socialInsuranceAdministrationMessage.period.month,
+              width: 'half',
+              options: MONTHS,
+              defaultValue: 'January',
+            }),
             buildCustomField({
               id: 'temporaryCalculationTable',
               title: '',

@@ -98,20 +98,15 @@ export const incomePlanFormMessage: MessageDir = {
       defaultMessage: 'Bráðabirgðaútreikningur',
       description: 'Temporary calculation',
     },
-    tableHeaderOne: {
-      id: 'ip.application:table.header.one',
+    tableHeaderPaymentTypes: {
+      id: 'ip.application:table.header.payment.type',
       defaultMessage: 'Greiðslutegundir',
       description: 'Payment types',
     },
-    tableHeaderTwo: {
-      id: 'ip.application:table.header.two',
-      defaultMessage: 'Samtals á mánuði',
-      description: 'Montly total',
-    },
-    tableHeaderThree: {
-      id: 'ip.application:table.header.three',
-      defaultMessage: 'Samtals á ári',
-      description: 'Annual total',
+    tableHeaderTotal: {
+      id: 'ip.application:table.header.total',
+      defaultMessage: 'Samtals {year}',
+      description: 'Total {year}',
     },
     tableDescription: {
       id: 'ip.application:table.description',

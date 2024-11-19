@@ -6,7 +6,6 @@ import { formatCurrency } from '@island.is/application/ui-components'
 import {
   AlertMessage,
   Box,
-  Button,
   SkeletonLoader,
   Stack,
   Table as T,
@@ -21,6 +20,8 @@ import {
 } from '../../lib/incomePlanUtils'
 import { incomePlanFormMessage } from '../../lib/messages'
 import { SocialInsuranceTemporaryCalculationGroup } from '../../types/schema'
+import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { useFormContext } from 'react-hook-form'
 
 export const TemporaryCalculationTable: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -28,6 +29,11 @@ export const TemporaryCalculationTable: FC<
   const { formatMessage } = useLocale()
 
   const { incomePlan } = getApplicationAnswers(application.answers)
+  const { watch } = useFormContext()
+  const temporaryCalculationMonth = watch('temporaryCalculation.month')
+  const monthIndex = MONTHS.findIndex(
+    (month) => month.value === temporaryCalculationMonth,
+  )
   const { categorizedIncomeTypes, incomePlanConditions } =
     getApplicationExternalData(application.externalData)
 
@@ -149,29 +155,27 @@ export const TemporaryCalculationTable: FC<
 
   return (
     <Box>
-      <Box display="flex" justifyContent="flexEnd">
-        <Button
-          variant="utility"
-          icon="print"
-          onClick={(e) => {
-            e.preventDefault()
-            window.print()
-          }}
-        />
-      </Box>
       <Box marginY={3}>
         <Stack space={3}>
           <T.Table>
             <T.Head>
               <T.Row>
                 <T.HeadData width="50%">
-                  {formatMessage(incomePlanFormMessage.info.tableHeaderOne)}
+                  {formatMessage(
+                    incomePlanFormMessage.info.tableHeaderPaymentTypes,
+                  )}
                 </T.HeadData>
                 <T.HeadData width="25%" align="right" box={{ paddingRight: 0 }}>
-                  {formatMessage(incomePlanFormMessage.info.tableHeaderTwo)}
+                  {formatMessage(
+                    MONTHS.find(
+                      ({ value }) => value === temporaryCalculationMonth,
+                    )?.label ?? MONTHS[0].label,
+                  )}
                 </T.HeadData>
                 <T.HeadData width="25%" align="right">
-                  {formatMessage(incomePlanFormMessage.info.tableHeaderThree)}
+                  {formatMessage(incomePlanFormMessage.info.tableHeaderTotal, {
+                    year: incomePlanConditions.incomePlanYear,
+                  })}
                 </T.HeadData>
               </T.Row>
             </T.Head>
@@ -190,8 +194,7 @@ export const TemporaryCalculationTable: FC<
                       align="right"
                       box={{ paddingRight: 0 }}
                     >
-                      {group.total &&
-                        formatCurrency(Math.round(group.total / 12).toString())}
+                      {group.monthTotals?.[monthIndex].amount}
                     </T.HeadData>
                     <T.HeadData width="25%" align="right">
                       {group.total && formatCurrency(group.total.toString())}
@@ -203,8 +206,7 @@ export const TemporaryCalculationTable: FC<
                     <T.Row key={`row-${rowIndex}`}>
                       <T.Data>{row.name}</T.Data>
                       <T.Data align="right" box={{ paddingRight: 0 }}>
-                        {row.total &&
-                          formatCurrency(Math.round(row.total / 12).toString())}
+                        {row.months?.[monthIndex].amount}
                       </T.Data>
                       <T.Data align="right">
                         {row.total && formatCurrency(row.total.toString())}
@@ -221,13 +223,11 @@ export const TemporaryCalculationTable: FC<
                 <T.HeadData width="50%">
                   {formatMessage(incomePlanFormMessage.info.paidTableHeader)}
                 </T.HeadData>
-                <T.HeadData width="25%" align="right" box={{ paddingRight: 0 }}>
-                  {formatCurrency(
-                    Math.round(
-                      data?.getTemporaryCalculations?.paidOut / 12,
-                    ).toString(),
-                  )}
-                </T.HeadData>
+                <T.HeadData
+                  width="25%"
+                  align="right"
+                  box={{ paddingRight: 0 }}
+                ></T.HeadData>
                 <T.HeadData width="25%" align="right">
                   {formatCurrency(
                     data?.getTemporaryCalculations?.paidOut.toString(),
