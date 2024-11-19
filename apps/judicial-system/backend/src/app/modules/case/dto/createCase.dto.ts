@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer'
 import {
   ArrayMinSize,
   IsArray,
@@ -7,6 +8,7 @@ import {
   IsOptional,
   IsString,
   MaxLength,
+  MinLength,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
@@ -20,6 +22,8 @@ import {
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
+import { nationalIdTransformer } from '../../../transformers'
+
 export class CreateCaseDto {
   @IsNotEmpty()
   @IsEnum(CaseType)
@@ -32,40 +36,42 @@ export class CreateCaseDto {
   readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly description?: string
 
   @IsNotEmpty()
   @IsArray()
   @ArrayMinSize(1)
-  @MaxLength(255, { each: true })
   @IsString({ each: true })
+  @MaxLength(255)
   @ApiProperty({ type: String, isArray: true })
   readonly policeCaseNumbers!: string[]
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly defenderName?: string
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MinLength(10)
+  @MaxLength(10)
+  @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly defenderEmail?: string
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly defenderPhoneNumber?: string
 
@@ -75,8 +81,8 @@ export class CreateCaseDto {
   readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly leadInvestigator?: string
 

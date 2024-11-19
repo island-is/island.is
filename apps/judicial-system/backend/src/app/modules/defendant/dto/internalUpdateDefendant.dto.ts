@@ -1,8 +1,17 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator'
+import { Transform } from 'class-transformer'
+import {
+  IsEnum,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import { DefenderChoice } from '@island.is/judicial-system/types'
+
+import { nationalIdTransformer } from '../../../transformers'
 
 export class InternalUpdateDefendantDto {
   @IsOptional()
@@ -12,6 +21,9 @@ export class InternalUpdateDefendantDto {
 
   @IsOptional()
   @IsString()
+  @MinLength(10)
+  @MaxLength(10)
+  @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
 
@@ -37,6 +49,9 @@ export class InternalUpdateDefendantDto {
 
   @IsOptional()
   @IsString()
+  @MinLength(10)
+  @MaxLength(10)
+  @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly requestedDefenderNationalId?: string
 
