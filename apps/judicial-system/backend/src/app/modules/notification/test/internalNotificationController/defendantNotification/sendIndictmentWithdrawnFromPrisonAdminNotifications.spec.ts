@@ -2,7 +2,6 @@ import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
 
-import { ROUTE_HANDLER_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseType,
   DefendantNotificationType,
@@ -31,7 +30,7 @@ type GivenWhenThen = (
   notificationDto: DefendantNotificationDto,
 ) => Promise<Then>
 
-describe('InternalNotificationController - Defendant - Send indictment sent to prison admin notification', () => {
+describe('InternalNotificationController - Defendant - Send indictment withdrawn from prison admin notification', () => {
   const caseId = uuid()
   const defendantId = uuid()
   const emails = [
@@ -52,7 +51,7 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
       await createTestingNotificationModule()
 
     defendantNotificationDTO = {
-      type: DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
+      type: DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN,
     }
 
     mockEmailService = emailService
@@ -84,7 +83,7 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
     }
   })
 
-  describe('when sending indictment to prison admin', () => {
+  describe('when withdrawing indictment from prison admin', () => {
     const defendant = {
       id: defendantId,
     } as Defendant
@@ -117,12 +116,9 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
                 address: email,
               },
             ],
-
-            attachments: undefined,
-            subject: `Mál S-123-456/2024 til fullnustu`,
-            html: expect.stringContaining(ROUTE_HANDLER_ROUTE),
+            subject: `Mál S-123-456/2024 afturkallað úr fullnustu`,
             text: expect.stringContaining(
-              'Ríkissaksóknari hefur sent mál S-123-456/2024 til fullnustu.',
+              'Ríkissaksóknari hefur afturkallað mál S-123-456/2024 úr fullnustu.',
             ),
           }),
         )
