@@ -1,12 +1,11 @@
-import React, { ReactNode, FC, AllHTMLAttributes } from 'react'
-import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
+import cn from 'classnames'
+import React, { AllHTMLAttributes, FC, ReactNode } from 'react'
 
+import { TestSupport } from '@island.is/island-ui/utils'
 import { useBoxStyles, UseBoxStylesProps } from '../Box/useBoxStyles'
 import { getTextStyles, TextProps } from '../Text/Text'
 import * as styles from './Table.css'
-import { TestSupport } from '@island.is/island-ui/utils'
-import { Box } from 'reakit'
 
 type DataField = {
   children?: ReactNode
@@ -28,65 +27,52 @@ export const Table = ({
   children,
   box,
   ...props
-}: Table & Omit<AllHTMLAttributes<HTMLTableElement>, 'className'>) => {
-  const isMobile = false
-
-  return (
-    <div
-      className={useBoxStyles({ component: 'div', overflow: 'auto', ...box })}
+}: Table & Omit<AllHTMLAttributes<HTMLTableElement>, 'className'>) => (
+  <div className={useBoxStyles({ component: 'div', overflow: 'auto', ...box })}>
+    <table
+      className={cn(
+        useBoxStyles({
+          component: 'table',
+          width: 'full',
+        }),
+        styles.table,
+      )}
+      {...props}
     >
-      <table
-        className={cn(
-          useBoxStyles({
-            component: 'table',
-            width: 'full',
-          }),
-          styles.table,
-        )}
-        {...props}
-      >
-        {children}
-      </table>
-    </div>
-  )
-}
+      {children}
+    </table>
+  </div>
+)
 
 interface HeadProps {
   sticky?: boolean
-  isMobile?: boolean
 }
 
 export const Head: FC<React.PropsWithChildren<HeadProps>> = ({
   children,
   sticky,
-  isMobile,
-}) =>
-  isMobile ? (
-    <Box></Box>
-  ) : (
-    <thead
-      {...(sticky && {
-        className: styles.stickyHead,
-      })}
-    >
-      {children}
-    </thead>
-  )
+}) => (
+  <thead
+    {...(sticky && {
+      className: styles.stickyHead,
+    })}
+  >
+    {children}
+  </thead>
+)
 
-export const Body: FC<React.PropsWithChildren<{ isMobile?: boolean }>> = ({
+export const Body: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
+  <tbody>{children}</tbody>
+)
+
+export const Foot: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
+  <tfoot>{children}</tfoot>
+)
+
+export const Row: FC<React.PropsWithChildren<TestSupport>> = ({
   children,
-  isMobile,
-}) => (isMobile ? <Box></Box> : <tbody>{children}</tbody>)
-
-export const Foot: FC<React.PropsWithChildren<{ isMobile?: boolean }>> = ({
-  children,
-  isMobile,
-}) => (isMobile ? <Box></Box> : <tfoot>{children}</tfoot>)
-
-export const Row: FC<
-  React.PropsWithChildren<TestSupport & { isMobile?: boolean }>
-> = ({ children, dataTestId, isMobile }) =>
-  isMobile ? <Box></Box> : <tr data-testid={dataTestId}>{children}</tr>
+  dataTestId,
+}) => <tr data-testid={dataTestId}>{children}</tr>
 
 export const Data = ({
   children,
@@ -94,12 +80,9 @@ export const Data = ({
   box = {},
   borderColor = 'blue200',
   align,
-  isMobile,
   ...props
 }: DataField &
-  Omit<AllHTMLAttributes<HTMLTableDataCellElement>, 'className'> & {
-    isMobile?: boolean
-  }) => {
+  Omit<AllHTMLAttributes<HTMLTableDataCellElement>, 'className'>) => {
   const classNames = cn(
     styles.cell,
     getTextStyles({
@@ -118,26 +101,20 @@ export const Data = ({
       ...box,
     }),
   )
-  return isMobile ? (
-    <Box></Box>
-  ) : (
+  return (
     <td className={classNames} {...props}>
       {children}
     </td>
   )
 }
-
 export const HeadData = ({
   children,
   text = {},
   box = {},
   align = 'left',
-  isMobile,
   ...props
 }: DataField &
-  Omit<AllHTMLAttributes<HTMLTableHeaderCellElement>, 'className'> & {
-    isMobile?: boolean
-  }) => {
+  Omit<AllHTMLAttributes<HTMLTableHeaderCellElement>, 'className'>) => {
   const classNames = cn(
     styles.cell,
     getTextStyles({
@@ -157,9 +134,7 @@ export const HeadData = ({
       ...box,
     }),
   )
-  return isMobile ? (
-    <Box></Box>
-  ) : (
+  return (
     <th className={classNames} {...props}>
       {children}
     </th>
