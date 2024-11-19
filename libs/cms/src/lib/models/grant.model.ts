@@ -111,7 +111,7 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
   dateFrom: fields.grantDateFrom,
   dateTo: fields.grantDateTo,
   isOpen: fields.grantIsOpen ?? undefined,
-  statusText: fields.grantStatus ?? 'Óvirkur sjóður',
+  statusText: fields.grantStatus ?? undefined,
   status:
     fields.grantStatus === 'Opið fyrir umsóknir'
       ? GrantStatus.OPEN
