@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-
 import {
   Text,
   Box,
@@ -16,9 +15,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps, RecordObject } from '@island.is/application/types'
-
 import { filesText, missingFiles } from '../../lib/messages'
-
 import { UploadFileType } from '../../lib/types'
 import useApplication from '../../lib/hooks/useApplication'
 import { Controller, useFormContext } from 'react-hook-form'
