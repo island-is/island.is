@@ -1,14 +1,12 @@
 import '@island.is/api/mocks'
-import React, { StrictMode } from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
-import './auth'
-
-import { environment } from './environments'
-import App from './app/App'
 import { userMonitoring } from '@island.is/user-monitoring'
+import App from './app/App'
+import { environment } from './environments'
 
 if (!isRunningOnEnvironment('local')) {
   userMonitoring.initDdRum({
