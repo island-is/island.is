@@ -8,8 +8,10 @@ import {
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
+import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
@@ -17,12 +19,11 @@ import {
   XRoadConfig,
 } from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
-import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 
 import { environment } from '../environments'
-import { PersonalRepresentativeTypesModule } from './modules/personalRepresentativeTypes/personalRepresentativeTypes.module'
 import { AccessLogsModule } from './modules/accessLogs/accessLogs.module'
 import { PersonalRepresentativesModule } from './modules/personalRepresentatives/personalRepresentatives.module'
+import { PersonalRepresentativeTypesModule } from './modules/personalRepresentativeTypes/personalRepresentativeTypes.module'
 import { RightTypesModule } from './modules/rightTypes/rightTypes.module'
 
 @Module({
@@ -38,6 +39,7 @@ import { RightTypesModule } from './modules/rightTypes/rightTypes.module'
         DelegationConfig,
         IdsClientConfig,
         NationalRegistryClientConfig,
+        NationalRegistryV3ClientConfig,
         RskRelationshipsClientConfig,
         CompanyRegistryConfig,
         XRoadConfig,

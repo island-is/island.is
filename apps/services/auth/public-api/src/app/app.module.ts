@@ -9,8 +9,10 @@ import {
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
+import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
@@ -23,7 +25,6 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { environment } from '../environments'
 import { DelegationsModule } from './modules/delegations/delegations.module'
 import { PasskeysModule } from './modules/passkeys/passkeys.module'
-import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
         FeatureFlagConfig,
         IdsClientConfig,
         NationalRegistryClientConfig,
+        NationalRegistryV3ClientConfig,
         RskRelationshipsClientConfig,
         CompanyRegistryConfig,
         XRoadConfig,
