@@ -103,7 +103,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       )
     }
 
-    // A. vehicleCount > 20
+    // Case: count > 20
     // Display search box, validate vehicle when permno is entered
     if (totalRecords > 20) {
       return {
@@ -116,13 +116,13 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
 
     const vehicles = await Promise.all(
       resultData.map(async (vehicle) => {
-        // B. 20 >= vehicleCount > 5
+        // Case: 20 >= count > 5
         // Display dropdown, validate vehicle when selected in dropdown
         if (totalRecords > 5) {
           return this.mapVehicle(auth, vehicle, false)
         }
 
-        // C. vehicleCount <= 5
+        // Case: count <= 5
         // Display radio buttons, validate all vehicles now
         return this.mapVehicle(auth, vehicle, true)
       }),
@@ -584,34 +584,51 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
 
     const mileage = answers?.vehicleMileage?.value
 
-    await this.vehicleOwnerChangeClient.saveOwnerChange(auth, {
-      permno: answers?.pickVehicle?.plate,
-      seller: {
-        ssn: answers?.seller?.nationalId,
-        email: answers?.seller?.email,
+    const submitResult = await this.vehicleOwnerChangeClient.saveOwnerChange(
+      auth,
+      {
+        permno: answers?.pickVehicle?.plate,
+        seller: {
+          ssn: answers?.seller?.nationalId,
+          email: answers?.seller?.email,
+        },
+        buyer: {
+          ssn: answers?.buyer?.nationalId,
+          email: answers?.buyer?.email,
+        },
+        dateOfPurchase: new Date(answers?.vehicle?.date),
+        dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
+        saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
+        mileage: mileage ? Number(mileage) || 0 : null,
+        insuranceCompanyCode: answers?.insurance?.value,
+        coOwners: buyerCoOwners?.map((coOwner) => ({
+          ssn: coOwner.nationalId || '',
+          email: coOwner.email || '',
+        })),
+        operators: buyerOperators?.map((operator) => ({
+          ssn: operator.nationalId || '',
+          email: operator.email || '',
+          isMainOperator:
+            buyerOperators.length > 1
+              ? operator.nationalId === answers.buyerMainOperator?.nationalId
+              : true,
+        })),
       },
-      buyer: {
-        ssn: answers?.buyer?.nationalId,
-        email: answers?.buyer?.email,
-      },
-      dateOfPurchase: new Date(answers?.vehicle?.date),
-      dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
-      saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
-      mileage: mileage ? Number(mileage) || 0 : null,
-      insuranceCompanyCode: answers?.insurance?.value,
-      coOwners: buyerCoOwners?.map((coOwner) => ({
-        ssn: coOwner.nationalId || '',
-        email: coOwner.email || '',
-      })),
-      operators: buyerOperators?.map((operator) => ({
-        ssn: operator.nationalId || '',
-        email: operator.email || '',
-        isMainOperator:
-          buyerOperators.length > 1
-            ? operator.nationalId === answers.buyerMainOperator?.nationalId
-            : true,
-      })),
-    })
+    )
+
+    if (
+      submitResult.hasError &&
+      submitResult.errorMessages &&
+      submitResult.errorMessages.length > 0
+    ) {
+      throw new TemplateApiError(
+        {
+          title: applicationCheck.validation.alertTitle,
+          summary: submitResult.errorMessages,
+        },
+        400,
+      )
+    }
 
     // 3. Notify everyone in the process that the application has successfully been submitted
 

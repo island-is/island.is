@@ -24,7 +24,6 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory } from '../../factories'
 import { EventService } from '../event'
 import { RobotLog } from './models/robotLog.model'
 import { courtModuleConfig } from './court.config'
@@ -323,6 +322,7 @@ export class CourtService {
     caseId: string,
     courtId = '',
     type: CaseType,
+    receivalDate: Date,
     policeCaseNumbers: string[],
     isExtension: boolean,
     indictmentSubtypes?: IndictmentSubtypeMap,
@@ -341,7 +341,7 @@ export class CourtService {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
         subtype: courtSubtype as string,
         status: 'Skráð',
-        receivalDate: formatISO(nowFactory(), { representation: 'date' }),
+        receivalDate: formatISO(receivalDate, { representation: 'date' }),
         basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
         // TODO: pass in all policeCaseNumbers when CourtService supports it
         sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
