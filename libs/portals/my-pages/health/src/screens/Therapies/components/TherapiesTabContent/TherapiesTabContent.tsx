@@ -1,20 +1,20 @@
-import { useState } from 'react'
+import { Box, Divider, Select, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, Text, Stack, Divider, Select } from '@island.is/island-ui/core'
-import { messages } from '../../lib/messages'
 import {
   formatDate,
   LinkButton,
   UserInfoLine,
 } from '@island.is/portals/my-pages/core'
+import { useState } from 'react'
+import { messages } from '../../../../lib/messages'
 
-import { FootNote } from '../FootNote/FootNote'
-import * as styles from './TherapiesTabContent.css'
-import { formatNumberToString } from '../../utils/format'
-import { TherapyStatus } from '../../utils/constants'
 import { RightsPortalTherapy } from '@island.is/api/schema'
 import { Problem } from '@island.is/react-spa/shared'
-import { CONTENT_GAP, CONTENT_GAP_SM } from '../../screens/Medicine/constants'
+import { FootNote } from '../../../../components/FootNote/FootNote'
+import { TherapyStatus } from '../../../../utils/constants'
+import { formatNumberToString } from '../../../../utils/format'
+import { CONTENT_GAP_SM } from '../../../Medicine/constants'
+import * as styles from './TherapiesTabContent.css'
 interface Props {
   data: RightsPortalTherapy[]
   link?: string

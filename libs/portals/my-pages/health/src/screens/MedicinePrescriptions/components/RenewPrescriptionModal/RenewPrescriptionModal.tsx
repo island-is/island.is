@@ -7,19 +7,17 @@ import {
   ModalBase,
   Text,
 } from '@island.is/island-ui/core'
-import React, { ReactElement, useState } from 'react'
-import NestedInfoLines from '../../../Medicine/components/NestedInfoLines/NestedInfoLines'
 import { useLocale } from '@island.is/localization'
+import cn from 'classnames'
+import React, { useState } from 'react'
+import { messages } from '../../../../lib/messages'
 import {
   HealthCenter,
   HealthCenterData,
-  MedicinePrescriptionDetail,
   MedicinePrescriptionDetailData,
   Prescription,
 } from '../../../../utils/mockData'
 import * as styles from './RenewPrescriptionModal.css'
-import { messages } from '../../../../lib/messages'
-import cn from 'classnames'
 
 interface Props {
   id: string

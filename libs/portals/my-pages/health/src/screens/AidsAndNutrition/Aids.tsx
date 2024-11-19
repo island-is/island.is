@@ -1,4 +1,5 @@
 import { RightsPortalAidOrNutrition } from '@island.is/api/schema'
+import { Box, Icon, Table as T, Text, Tooltip } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DownloadFileButtons,
@@ -12,7 +13,6 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { exportAidTable } from '../../utils/FileBreakdown'
-import { Box, Icon, Table as T, Tooltip, Text } from '@island.is/island-ui/core'
 
 interface Props {
   data: Array<RightsPortalAidOrNutrition>

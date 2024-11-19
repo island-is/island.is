@@ -2,19 +2,18 @@ import { useUserInfo } from '@island.is/auth/react'
 import {
   AlertMessage,
   Box,
-  Text,
   Button,
   GridColumn,
   GridRow,
+  Icon,
   SkeletonLoader,
   Stack,
+  Text,
   toast,
-  Icon,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Problem } from '@island.is/react-spa/shared'
 import {
-  IntroHeader,
+  IntroWrapper,
   SJUKRATRYGGINGAR_SLUG,
   StackWithBottomDivider,
   UserInfoLine,
@@ -24,6 +23,7 @@ import {
   isDateAfterToday,
   m,
 } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useState } from 'react'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
@@ -32,7 +32,7 @@ import {
   CONTENT_GAP_LG,
   CONTENT_GAP_SM,
   SECTION_GAP,
-} from '../Medicine/constants'
+} from '../../utils/constants'
 import {
   useGetInsuranceConfirmationLazyQuery,
   useGetInsuranceOverviewQuery,
@@ -85,15 +85,13 @@ export const HealthOverview = () => {
   )
 
   return (
-    <Box>
-      <Box marginBottom={CONTENT_GAP_LG}>
-        <IntroHeader
-          title={formatMessage(user.profile.name)}
-          intro={formatMessage(messages.overviewIntro)}
-          serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-          serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-        />
-      </Box>
+    <IntroWrapper
+      marginBottom={CONTENT_GAP_LG}
+      title={formatMessage(user.profile.name)}
+      intro={formatMessage(messages.overviewIntro)}
+      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+    >
       {error ? (
         <Problem error={error} noBorder={false} />
       ) : loading ? (
@@ -209,7 +207,7 @@ export const HealthOverview = () => {
           )}
         </Stack>
       )}
-    </Box>
+    </IntroWrapper>
   )
 }
 

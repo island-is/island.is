@@ -1,11 +1,11 @@
 import {
   Box,
-  Text,
-  Icon,
-  IconProps,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
+  Icon,
+  IconProps,
+  Text,
 } from '@island.is/island-ui/core'
 import React from 'react'
 import * as styles from './DispensingContainer.css'

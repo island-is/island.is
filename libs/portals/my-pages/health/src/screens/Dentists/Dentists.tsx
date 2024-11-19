@@ -1,13 +1,3 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  m,
-  UserInfoLine,
-  IntroHeader,
-  SJUKRATRYGGINGAR_SLUG,
-} from '@island.is/portals/my-pages/core'
-import { useLocation } from 'react-router-dom'
-import { useGetDentistsQuery } from './Dentists.generated'
 import {
   AlertMessage,
   Box,
@@ -17,12 +7,22 @@ import {
   SkeletonLoader,
   Stack,
 } from '@island.is/island-ui/core'
-import { messages } from '../../lib/messages'
-import BillsTable from './BillsTable'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import {
+  IntroWrapper,
+  m,
+  SJUKRATRYGGINGAR_SLUG,
+  UserInfoLine,
+} from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
 import add from 'date-fns/add'
 import sub from 'date-fns/sub'
+import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
+import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
-import { Problem } from '@island.is/react-spa/shared'
+import BillsTable from './BillsTable'
+import { useGetDentistsQuery } from './Dentists.generated'
 
 const Dentists = () => {
   useNamespaces('sp.health')
@@ -62,13 +62,13 @@ const Dentists = () => {
   }, [dentist?.name, dentist?.id])
 
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={formatMessage(messages.dentistsTitle)}
-        intro={formatMessage(messages.dentistsDescription)}
-        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-      />
+    <IntroWrapper
+      marginBottom={[6, 6, 10]}
+      title={formatMessage(messages.dentistsTitle)}
+      intro={formatMessage(messages.dentistsDescription)}
+      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}
 
       {!error && !loading && !dentist && (
@@ -152,7 +152,7 @@ const Dentists = () => {
         </Stack>
       )}
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
-    </Box>
+    </IntroWrapper>
   )
 }
 

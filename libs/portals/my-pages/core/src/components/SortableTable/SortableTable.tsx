@@ -1,22 +1,20 @@
 import {
   AlertMessage,
   Button,
-  Icon,
   Table as T,
   Tag,
   Text,
-  Tooltip,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { isDefined } from 'class-validator'
 import { useMemo, useState } from 'react'
 import { useWindowSize } from 'react-use'
-import { ExpandHeader, ExpandRow } from '../ExpandableTable'
-import * as styles from './SortableTable.css'
-import { ConfigType, SortableData, SortableTableProps } from './types'
-import MobileTable from './Mobile/MobileTable'
+import { ExpandHeader } from '../ExpandableTable'
 import { HeaderButton } from './HeaderButton'
+import MobileTable from './Mobile/MobileTable'
+import * as styles from './SortableTable.css'
 import { TableRow } from './TableRow'
+import { SortableData, SortableTableProps } from './types'
 import { useSortableData } from './useSortableData'
 
 /**

@@ -1,37 +1,37 @@
+import { RightsPortalHealthCenter } from '@island.is/api/schema'
 import {
-  Stack,
-  SkeletonLoader,
-  Box,
-  AlertMessage,
-  Text,
   Accordion,
   AccordionItem,
-  Table as T,
+  AlertMessage,
+  Box,
   Button,
   FilterInput,
+  SkeletonLoader,
+  Stack,
+  Table as T,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroHeader } from '@island.is/portals/core'
 import {
   EmptyState,
   ErrorScreen,
   ExcludesFalse,
+  IntroWrapper,
+  m,
 } from '@island.is/portals/my-pages/core'
-import { messages } from '../../lib/messages'
-import * as styles from './HealthRegistration.css'
-import { m } from '@island.is/portals/my-pages/core'
 import groupBy from 'lodash/groupBy'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { RightsPortalHealthCenter } from '@island.is/api/schema'
 import { useNavigate } from 'react-router-dom'
+import { RegisterModal } from '../../components/RegisterModal'
+import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { formatHealthCenterName } from '../../utils/format'
-import { RegisterModal } from '../../components/RegisterModal'
 import {
   useGetHealthCenterDoctorsLazyQuery,
   useGetHealthCenterQuery,
   useRightsPortalTransferHealthCenterMutation,
 } from './HealthCenterRegistration.generated'
+import * as styles from './HealthRegistration.css'
 
 type SelectedHealthCenter = Pick<RightsPortalHealthCenter, 'id' | 'name'>
 
@@ -197,11 +197,11 @@ const HealthCenterRegistration = () => {
     )
 
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={formatMessage(messages.healthCenterRegistrationTitle)}
-        intro={formatMessage(messages.healthCenterRegistrationInfo)}
-      />
+    <IntroWrapper
+      marginBottom={[6, 6, 10]}
+      title={formatMessage(messages.healthCenterRegistrationTitle)}
+      intro={formatMessage(messages.healthCenterRegistrationInfo)}
+    >
       {errorTransfer && (
         <Box paddingBottom={4} ref={errorBoxRef}>
           <AlertMessage
@@ -334,7 +334,7 @@ const HealthCenterRegistration = () => {
       ) : null}
 
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
-    </Box>
+    </IntroWrapper>
   )
 }
 

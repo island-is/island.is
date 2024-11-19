@@ -1,15 +1,15 @@
+import { HealthDirectorateVaccination } from '@island.is/api/schema'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyTable,
   SortableTable,
   formatDate,
 } from '@island.is/portals/my-pages/core'
+import { HealthTable as VaccinationsDetailTable } from '../../../components/Table/HealthTable'
 import { messages } from '../../../lib/messages'
 import { tagSelector } from '../../../utils/tagSelector'
-import { HealthTable as VaccinationsDetailTable } from '../../../components/Table/HealthTable'
 import { DetailHeader, DetailRow } from '../../../utils/types'
-import { HealthDirectorateVaccination } from '@island.is/api/schema'
-import { Box } from '@island.is/island-ui/core'
 
 interface Props {
   data?: Array<HealthDirectorateVaccination>

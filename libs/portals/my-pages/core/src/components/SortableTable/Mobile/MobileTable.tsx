@@ -1,4 +1,4 @@
-import { Box, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import React from 'react'
 import MobileTableRow, { TableRow } from './MobileTableRow'
 

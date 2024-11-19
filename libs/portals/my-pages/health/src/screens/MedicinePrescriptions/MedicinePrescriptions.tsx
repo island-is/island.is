@@ -1,19 +1,19 @@
+import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { LinkButton, SortableTable } from '@island.is/portals/my-pages/core'
+import { SortableTable } from '@island.is/portals/my-pages/core'
 import React, { useState } from 'react'
 import { messages } from '../../lib/messages'
-import { Box, Tooltip, Text, Button } from '@island.is/island-ui/core'
-import { MedicinePrescriptionWrapper } from '../Medicine/wrapper/MedicinePrescriptionWrapper'
 import { HealthPaths } from '../../lib/paths'
+import { MedicinePrescriptionWrapper } from '../Medicine/wrapper/MedicinePrescriptionWrapper'
 
-import DispensingContainer from './components/DispensingContainer/DispensingContainer'
-import NestedInfoLines from '../Medicine/components/NestedInfoLines/NestedInfoLines'
 import {
   MedicineDispenseData,
   MedicinePrescriptionDetailData,
   MedicinePrescriptionDetailData2,
   MedicinePrescriptionsData,
 } from '../../utils/mockData'
+import DispensingContainer from './components/DispensingContainer/DispensingContainer'
+import NestedInfoLines from './components/NestedInfoLines/NestedInfoLines'
 import RenewPrescriptionModal from './components/RenewPrescriptionModal/RenewPrescriptionModal'
 
 const MedicinePrescriptions = () => {

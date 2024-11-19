@@ -1,12 +1,12 @@
 import {
   Button,
-  Tag,
-  Tooltip,
-  Text,
   Table as T,
+  Tag,
+  Text,
+  Tooltip,
 } from '@island.is/island-ui/core'
-import { SortableData } from './types'
 import { ExpandRow } from '../ExpandableTable'
+import { SortableData } from './types'
 
 export const TableRow = ({
   item,

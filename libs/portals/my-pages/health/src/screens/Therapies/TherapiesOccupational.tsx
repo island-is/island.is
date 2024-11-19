@@ -3,11 +3,11 @@ import { RightsPortalTherapy as TherapiesType } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { messages } from '../../lib/messages'
-import TherapiesTabContent from '../../components/TherapiesTabContent/TherapiesTabContent'
+import { HealthPaths } from '../../lib/paths'
 import { OCCUPATIONAL_THERAPY } from '../../utils/constants'
+import TherapiesTabContent from './components/TherapiesTabContent/TherapiesTabContent'
 import { useGetTherapiesQuery } from './Therapies.generated'
 import { TherapiesWrapper } from './wrapper/TherapiesWrapper'
-import { HealthPaths } from '../../lib/paths'
 
 const Therapies = () => {
   useNamespaces('sp.health')

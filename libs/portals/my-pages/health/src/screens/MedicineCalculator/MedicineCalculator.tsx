@@ -15,22 +15,22 @@ import {
   CONTENT_GAP_LG,
   CONTENT_GAP_SM,
   SECTION_GAP,
-} from './constants'
+} from '../../utils/constants'
 import { amountFormat, m } from '@island.is/portals/my-pages/core'
 import { useEffect, useRef, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import {
   useGetDrugCalculationMutation,
   useGetDrugsQuery,
-} from './Medicine.generated'
+} from '../Medicine/Medicine.generated'
 import {
   RightsPortalCalculatorRequestInput,
   RightsPortalDrug,
   RightsPortalDrugCalculatorResponse,
 } from '@island.is/api/schema'
-import * as styles from './Medicine.css'
+import * as styles from '../Medicine/Medicine.css'
 import { DrugRow } from './components/DrugRow/DrugRow'
-import { MedicinePaymentParticipationWrapper } from './wrapper/MedicinePaymentParticipationWrapper'
+import { MedicinePaymentParticipationWrapper } from '../Medicine/wrapper/MedicinePaymentParticipationWrapper'
 import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
 import { EmptyTable } from '@island.is/portals/my-pages/core'

@@ -5,18 +5,16 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { messages } from '../../lib/messages'
-import { useGetDrugCertificatesQuery } from './Medicine.generated'
-import { SECTION_GAP } from './constants'
 import {
   ActionCard,
-  m,
-  IntroHeader,
-  SJUKRATRYGGINGAR_SLUG,
   IntroWrapper,
+  m,
+  SJUKRATRYGGINGAR_SLUG,
 } from '@island.is/portals/my-pages/core'
-import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
+import { messages } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
+import { useGetDrugCertificatesQuery } from './Medicine.generated'
 
 export const MedicineLicense = () => {
   const { formatMessage } = useLocale()

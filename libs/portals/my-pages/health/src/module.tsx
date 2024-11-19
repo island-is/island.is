@@ -1,11 +1,10 @@
 import { lazy } from 'react'
-
 import { ApiScope } from '@island.is/auth/scopes'
-import { HealthPaths } from './lib/paths'
 import { PortalModule } from '@island.is/portals/core'
-import { messages as hm } from './lib/messages'
 import { m } from '@island.is/portals/my-pages/core'
 import { Navigate } from 'react-router-dom'
+import { messages as hm } from './lib/messages'
+import { HealthPaths } from './lib/paths'
 
 const HealthOverview = lazy(() =>
   import('./screens/HealthOverview/HealthOverview'),
@@ -34,7 +33,7 @@ const MedicinePurchase = lazy(() =>
 const MedicineLicence = lazy(() => import('./screens/Medicine/MedicineLicense'))
 
 const MedicineCalculator = lazy(() =>
-  import('./screens/Medicine/MedicineCalculator'),
+  import('./screens/MedicineCalculator/MedicineCalculator'),
 )
 
 const MedicinePrescriptions = lazy(() =>
@@ -174,21 +173,21 @@ export const healthModule: PortalModule = {
     {
       name: hm.medicinePrescriptions,
       path: HealthPaths.HealthMedicinePrescription,
-      // key: 'HealthMedicineHD', TODO: Add feature flag
+      key: 'HealthMedicine',
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicinePrescriptions />,
     },
     {
       name: hm.medicinePrescriptions,
       path: HealthPaths.HealthMedicinePrescriptionOverview,
-      // key: 'HealthMedicineHD', TODO: Add feature flag
+      key: 'HealthMedicine',
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <Navigate to={HealthPaths.HealthMedicinePrescription} />,
     },
     {
       name: hm.medicinePrescriptionHistory,
       path: HealthPaths.HealthMedicinePrescriptionHistory,
-      // key: 'HealthMedicineHD', TODO: Add feature flag
+      key: 'HealthMedicine',
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicinePrescriptionHistory />,
     },
@@ -201,35 +200,31 @@ export const healthModule: PortalModule = {
     {
       name: hm.medicinePaymentParticipation,
       path: HealthPaths.HealthMedicinePaymentParticipation,
-      // key: 'HealthMedicineHD', TODO: Add feature flag
+      key: 'HealthMedicine',
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicinePurchase />,
     },
     {
       name: hm.medicinePurchaseTitle,
       path: HealthPaths.HealthMedicinePurchase,
-      key: 'HealthMedicine',
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicinePurchase />,
     },
     {
       name: hm.medicineCalculatorTitle,
       path: HealthPaths.HealthMedicineCalculator,
-      key: 'HealthMedicine',
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicineCalculator />,
     },
     {
       name: hm.medicineLicenseTitle,
       path: HealthPaths.HealthMedicineCertificates,
-      key: 'HealthMedicine',
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicineLicence />,
     },
     {
       name: hm.medicineLicenseTitle,
       path: HealthPaths.HealthMedicineCertificate,
-      key: 'HealthMedicine',
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicineCertificate />,
     },

@@ -1,14 +1,14 @@
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
-  IntroHeader,
+  IntroWrapper,
   LinkResolver,
 } from '@island.is/portals/my-pages/core'
-import { messages as m } from '../../lib/messages'
-import { Button, Box, Text } from '@island.is/island-ui/core'
-import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
+import { messages as m } from '../../lib/messages'
+import { HealthPaths } from '../../lib/paths'
 import { useGetDonorStatusQuery } from './OrganDonation.generated'
 
 const OrganDonation = () => {
@@ -40,11 +40,10 @@ const OrganDonation = () => {
     : formatMessage(m.iAmNotOrganDonor)
 
   return (
-    <Box>
-      <IntroHeader
-        title={formatMessage(m.organDonation)}
-        intro={formatMessage(m.organDonationDescription)}
-      />
+    <IntroWrapper
+      title={formatMessage(m.organDonation)}
+      intro={formatMessage(m.organDonationDescription)}
+    >
       <Box marginBottom={6}>
         <LinkResolver
           href={formatMessage(m.organDonationLink)}
@@ -82,7 +81,7 @@ const OrganDonation = () => {
       {!error && !loading && data === null && (
         <Problem type="no_data" noBorder={false} />
       )}
-    </Box>
+    </IntroWrapper>
   )
 }
 

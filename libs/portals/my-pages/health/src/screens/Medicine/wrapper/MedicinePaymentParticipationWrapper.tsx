@@ -1,13 +1,13 @@
-import { useLocale } from '@island.is/localization'
 import { Box, Hidden } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import {
-  IntroHeader,
+  IntroWrapper,
   SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
 } from '@island.is/portals/my-pages/core'
 import { messages as m } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
-import { SECTION_GAP } from '../constants'
+import { SECTION_GAP } from '../../../utils/constants'
 
 export const MedicinePaymentParticipationWrapper = ({
   children,
@@ -28,14 +28,12 @@ export const MedicinePaymentParticipationWrapper = ({
     )?.children ?? []
 
   return (
-    <Box>
-      <IntroHeader
-        title={formatMessage(m.medicineTitle)}
-        intro={formatMessage(m.medicineTitleIntro)}
-        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-        serviceProviderTooltip={formatMessage(m.healthTooltip)}
-      />
-
+    <IntroWrapper
+      title={formatMessage(m.medicineTitle)}
+      intro={formatMessage(m.medicineTitleIntro)}
+      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+      serviceProviderTooltip={formatMessage(m.healthTooltip)}
+    >
       <Hidden print={true}>
         <TabNavigation
           label={formatMessage(m.medicineTitle)}
@@ -44,6 +42,6 @@ export const MedicinePaymentParticipationWrapper = ({
         />
       </Hidden>
       <Box paddingY={SECTION_GAP}>{children}</Box>
-    </Box>
+    </IntroWrapper>
   )
 }

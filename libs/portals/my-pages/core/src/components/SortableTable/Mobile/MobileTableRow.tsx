@@ -1,7 +1,7 @@
-import { Box, Text, Button, Stack } from '@island.is/island-ui/core'
+import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { isDefined } from 'class-validator'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import AnimateHeight, { Height } from 'react-animate-height'
+import React, { useEffect, useRef, useState } from 'react'
+import AnimateHeight from 'react-animate-height'
 
 export interface TableRow {
   title: string

@@ -1,6 +1,6 @@
-import React from 'react'
 import { Box, SkeletonLoader, Stack } from '@island.is/island-ui/core'
 import { useIsMobile } from '@island.is/portals/my-pages/core'
+import React from 'react'
 
 interface Props {
   amount?: number

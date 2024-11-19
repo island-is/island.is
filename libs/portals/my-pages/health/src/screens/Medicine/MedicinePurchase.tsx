@@ -1,14 +1,20 @@
 import {
+  RightsPortalDrugBill,
+  RightsPortalDrugBillLine,
+  RightsPortalDrugPeriod,
+} from '@island.is/api/schema'
+import {
   Box,
-  Text,
-  Select,
-  Stack,
   Button,
-  SkeletonLoader,
-  Table as T,
-  LinkV2,
   Hyphen,
+  LinkV2,
+  Select,
+  SkeletonLoader,
+  Stack,
+  Table as T,
+  Text,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DownloadFileButtons,
   ExpandHeader,
@@ -18,28 +24,22 @@ import {
   amountFormat,
   m,
 } from '@island.is/portals/my-pages/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { messages } from '../../lib/messages'
-import {
-  useGetDrugBillLineItemLazyQuery,
-  useGetDrugsBillsLazyQuery,
-  useGetDrugsDataQuery,
-} from './Medicine.generated'
-import {
-  RightsPortalDrugBillLine,
-  RightsPortalDrugBill,
-  RightsPortalDrugPeriod,
-} from '@island.is/api/schema'
+import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useState } from 'react'
-import * as styles from './Medicine.css'
-import { CONTENT_GAP, DATE_FORMAT, SECTION_GAP } from './constants'
-import { MedicinePaymentParticipationWrapper } from './wrapper/MedicinePaymentParticipationWrapper'
+import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import {
   exportMedicineBill,
   exportMedicineFile,
 } from '../../utils/FileBreakdown'
-import { Problem } from '@island.is/react-spa/shared'
+import * as styles from './Medicine.css'
+import {
+  useGetDrugBillLineItemLazyQuery,
+  useGetDrugsBillsLazyQuery,
+  useGetDrugsDataQuery,
+} from './Medicine.generated'
+import { CONTENT_GAP, DATE_FORMAT, SECTION_GAP } from '../../utils/constants'
+import { MedicinePaymentParticipationWrapper } from './wrapper/MedicinePaymentParticipationWrapper'
 
 export const MedicinePurchase = () => {
   useNamespaces('sp.health')
