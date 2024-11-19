@@ -36,25 +36,27 @@ type GivenWhenThen = (
 describe('InternalNotificationController - Defendant - Send indictment sent to prison admin notification', () => {
   const caseId = uuid()
   const defendantId = uuid()
-  const court = { name: 'Héraðsdómur Reykjavíkur' } as Case['court']
+  const emails = [
+    'prisonadminindictment@omnitrix.is',
+    'prisonadminindictment2@omnitrix.is',
+  ]
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
   let mockNotificationModel: typeof Notification
-  let givenWhenThen: GivenWhenThen
-
   let defendantNotificationDTO: DefendantNotificationDto
 
+  let givenWhenThen: GivenWhenThen
+
   beforeEach(async () => {
+    process.env.PRISON_ADMIN_INDICTMENT_EMAILS = emails.join(',')
+
     const {
       emailService,
       notificationConfig,
       internalNotificationController,
       notificationModel,
     } = await createTestingNotificationModule()
-
-    process.env.PRISON_ADMIN_INDICTMENT_EMAILS =
-      'prisonadminindictment@omnitrix.is, prisonadminindictment2@omnitrix.is'
 
     defendantNotificationDTO = {
       type: DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
@@ -97,8 +99,7 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
 
     const theCase = {
       id: caseId,
-      court,
-      courtCaseNumber: 'R-123-456/2024',
+      courtCaseNumber: 'S-123-456/2024',
       type: CaseType.INDICTMENT,
       defendants: [defendant],
     } as Case
@@ -114,28 +115,25 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
     })
 
     it('should send a notification to prison admin emails', () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(1)
-      expect(mockEmailService.sendEmail).toBeCalledWith({
-        from: {
-          name: mockConfig.email.fromName,
-          address: mockConfig.email.fromEmail,
-        },
-        to: [
-          {
-            name: 'Fangelsismálastofnun',
-            address: mockConfig.email.prisonAdminEmail,
-          },
-        ],
-        replyTo: {
-          name: mockConfig.email.replyToName,
-          address: mockConfig.email.replyToEmail,
-        },
-        attachments: undefined,
-        subject: `Héraðsdómur Reykjavíkur - aðgangur að máli`,
-        html: expect.stringContaining(ROUTE_HANDLER_ROUTE),
-        text: expect.stringContaining(
-          'Héraðsdómur Reykjavíkur hefur skráð þig verjanda í máli R-123-456/2024',
-        ),
+      expect(mockEmailService.sendEmail).toBeCalledTimes(emails.length)
+      emails.forEach((email) => {
+        expect(mockEmailService.sendEmail).toBeCalledWith(
+          expect.objectContaining({
+            to: [
+              {
+                name: 'Fangelsismálastofnun',
+                address: email,
+              },
+            ],
+
+            attachments: undefined,
+            subject: `Mál S-123-456/2024 til fullnustu`,
+            html: expect.stringContaining(ROUTE_HANDLER_ROUTE),
+            text: expect.stringContaining(
+              'Ríkissaksóknari hefur sent mál S-123-456/2024 til fullnustu.',
+            ),
+          }),
+        )
       })
     })
 
@@ -144,12 +142,10 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
         type: defendantNotificationDTO.type,
-        recipients: [
-          {
-            name: 'Fangelsismálastofnun',
-            address: mockConfig.email.prisonAdminEmail,
-          },
-        ],
+        recipients: emails.map((email) => ({
+          address: email,
+          success: true,
+        })),
       })
     })
   })

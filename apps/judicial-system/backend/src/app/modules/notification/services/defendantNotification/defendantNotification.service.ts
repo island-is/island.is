@@ -196,17 +196,23 @@ export class DefendantNotificationService extends BaseNotificationService {
       },
     )
 
+    // We want to send separate emails to each recipient
+    const to = this.config.email.prisonAdminIndictmentEmails
+      .split(',')
+      .map((email) => email.trim())
+      .map((email) => {
+        return {
+          name: 'Fangelsismálastofnun',
+          email,
+        }
+      })
+
     return this.sendEmails(
       theCase,
       DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
       formattedSubject,
       formattedBody,
-      [
-        {
-          name: 'Fangelsismálastofnun',
-          email: this.config.email.prisonAdminEmail,
-        },
-      ],
+      to,
     )
   }
 
