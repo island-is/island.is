@@ -41,6 +41,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Bæta við',
     description: 'Add button',
   },
+  buttonCancel: {
+    id: 'application.system:button.cancel',
+    defaultMessage: 'Hætta við',
+    description: 'Cancel button',
+  },
   cardButtonInProgress: {
     id: 'application.system:card.button.inProgress',
     defaultMessage: 'Opna umsókn',
@@ -135,6 +140,16 @@ export const coreMessages = defineMessages({
     id: 'application.system:create.error.application.message',
     defaultMessage: 'Ekki tókst að búa til umsókn af gerðinni: {type}',
     description: 'Failed to create application of type: {type}',
+  },
+  nationalId: {
+    id: 'application.system:nationalId',
+    defaultMessage: 'Kennitala',
+    description: 'National ID',
+  },
+  name: {
+    id: 'application.system:name',
+    defaultMessage: 'Nafn',
+    description: 'Name',
   },
   applications: {
     id: 'application.system:applications',
@@ -738,6 +753,11 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.fetch.data.idCardApplicationRequirementsNotMet',
     defaultMessage: 'Þú uppfyllir ekki skilyrði fyrir umsókn um nafnskírteini',
     description: 'Requirements for id card application not met',
+  },
+  drivingLicenseBookActiveBookNotFound: {
+    id: 'application.system:core.fetch.data.drivingLicenseBookActiveBookNotFound',
+    defaultMessage: 'Ekki fannst virk ökunámsbók',
+    description: 'Did not find active student book',
   },
 })
 
