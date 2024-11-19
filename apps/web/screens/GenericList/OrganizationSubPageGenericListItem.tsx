@@ -81,8 +81,8 @@ const OrganizationSubPageGenericListItem: Screen<
 
 OrganizationSubPageGenericListItem.getProps = async (context) => {
   const [subPageProps, genericListItemProps] = await Promise.all([
-    SubPage.getProps?.(context),
-    GenericListItemPage.getProps?.(context),
+    SubPage.getProps(context),
+    GenericListItemPage.getProps(context),
   ])
   return {
     parentProps: subPageProps,

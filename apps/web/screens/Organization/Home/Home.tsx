@@ -37,7 +37,6 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
 import { LandingPage, LandingPageFooter } from './LandingPage'
-import { parseAsArrayOf } from 'next-usequerystate'
 
 const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
   if (!organization?.link) return ''
@@ -51,11 +50,11 @@ const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
   return link
 }
 
-const OrganizationHomePage: Screen<HomeProps> = ({
+const OrganizationHomePage = ({
   organizationPage,
   organization,
   namespace,
-}) => {
+}: HomeProps) => {
   const n = useNamespace(namespace)
   useContentfulId(organizationPage?.id)
   const { linkResolver } = useLinkResolver()
