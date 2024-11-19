@@ -49,7 +49,8 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
     let message: MessageDescriptor
 
     const someDefendantIsSentToPrisonAdmin = Boolean(
-      row.defendants?.some((defendant) => defendant.isSentToPrisonAdmin),
+      row.defendants?.length &&
+        row.defendants?.some((defendant) => defendant.isSentToPrisonAdmin),
     )
 
     if (someDefendantIsSentToPrisonAdmin) {
