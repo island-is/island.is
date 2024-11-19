@@ -333,7 +333,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   async addReview({
     application,
     auth,
-  }: TemplateApiModuleActionProps): Promise<void> {
+  }: TemplateApiModuleActionProps): Promise<Array<EmailRecipient>> {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
 
     // 1. Make sure review comes from buyer, he is the only one that can add more reviewers
@@ -342,7 +342,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       !answers.buyer.nationalId ||
       auth.nationalId !== answers.buyer.nationalId
     ) {
-      return
+      return []
     }
 
     // 2. Notify users that were added that need to review
@@ -453,6 +453,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           })
       }
     }
+
+    return newlyAddedRecipientList
   }
 
   async rejectApplication(props: TemplateApiModuleActionProps): Promise<void> {
