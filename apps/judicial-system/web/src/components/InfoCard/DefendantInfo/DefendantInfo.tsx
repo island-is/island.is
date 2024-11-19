@@ -54,11 +54,14 @@ export const getAppealExpirationInfo = (
 const getVerdictViewDateText = (
   formatMessage: IntlShape['formatMessage'],
   verdictViewDate?: string | null,
+  serviceNotRequired?: boolean,
 ): string => {
   if (verdictViewDate) {
     return formatMessage(strings.verdictDisplayedDate, {
       date: formatDate(verdictViewDate, 'PPP'),
     })
+  } else if (serviceNotRequired) {
+    return formatMessage(strings.serviceNotRequired)
   } else {
     return formatMessage(strings.serviceRequired)
   }
@@ -126,19 +129,23 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         )}
       </Box>
       {displayAppealExpirationInfo && (
-        <Text as="p" marginTop={1} fontWeight="semiBold">
-          {formatMessage(appealExpirationInfo.message, {
-            appealExpirationDate: appealExpirationInfo.date,
-          })}
+        <Box marginTop={1}>
+          <Text as="span">
+            {formatMessage(appealExpirationInfo.message, {
+              appealExpirationDate: appealExpirationInfo.date,
+            })}
+          </Text>
+        </Box>
+      )}
+      {displayVerdictViewDate && defendant.serviceRequirement && (
+        <Text marginTop={1} fontWeight="semiBold">
+          {getVerdictViewDateText(
+            formatMessage,
+            defendant.verdictViewDate,
+            defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED,
+          )}
         </Text>
       )}
-      {displayVerdictViewDate &&
-        defendant.serviceRequirement &&
-        defendant.serviceRequirement !== ServiceRequirement.NOT_REQUIRED && (
-          <Text marginTop={1} fontWeight="semiBold">
-            {getVerdictViewDateText(formatMessage, defendant.verdictViewDate)}
-          </Text>
-        )}
     </>
   )
 }
