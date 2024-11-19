@@ -42,6 +42,7 @@ enum PageType {
   GENERIC_LIST_ITEM = 'generic-list-item',
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pageMap: Record<PageType, FC<any>> = {
   [PageType.FRONTPAGE]: (props) => <Home {...props} />,
   [PageType.SUBPAGE]: (props) => <SubPage {...props} />,
