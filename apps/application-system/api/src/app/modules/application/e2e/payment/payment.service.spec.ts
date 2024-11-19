@@ -125,6 +125,21 @@ describe('Payment Service', () => {
     expect(result).toBeTruthy()
   })
 
+  it('should create a charge with multiple charge items using quantity', async () => {
+    const performingOrganizationID = '1'
+    const chargeCodeItems = [{ code: 'asdf', quantity: 3 }]
+
+    const result = await service.createCharge(
+      user,
+      performingOrganizationID,
+      chargeCodeItems,
+      applicationId,
+      undefined,
+    )
+
+    expect(result).toBeTruthy()
+  })
+
   it('should throw an error when charge item is not found', async () => {
     const performingOrganizationID = '1'
     const chargeCodeItems = [{ code: '13' }]
