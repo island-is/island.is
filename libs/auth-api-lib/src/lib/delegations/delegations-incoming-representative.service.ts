@@ -100,7 +100,10 @@ export class DelegationsIncomingRepresentativeService {
 
       const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
         await this.aliveStatusService.getStatus(
-          personalRepresentatives.map((d) => d.nationalIdRepresentedPerson),
+          personalRepresentatives.map((d) => ({
+            nationalId: d.nationalIdRepresentedPerson,
+            name: UNKNOWN_NAME,
+          })),
           isNationalRegistryV3DeceasedStatusEnabled,
         )
 

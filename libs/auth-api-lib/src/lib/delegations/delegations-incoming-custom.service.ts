@@ -274,7 +274,10 @@ export class DelegationsIncomingCustomService {
 
     const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
       await this.aliveStatusService.getStatus(
-        delegations.map((d) => d.fromNationalId),
+        delegations.map((d) => ({
+          nationalId: d.fromNationalId,
+          name: d.fromDisplayName,
+        })),
         isNationalRegistryV3DeceasedStatusEnabled,
       )
 
@@ -357,7 +360,10 @@ export class DelegationsIncomingCustomService {
 
     const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
       await this.aliveStatusService.getStatus(
-        delegations.map((d) => d.fromNationalId),
+        delegations.map((d) => ({
+          nationalId: d.fromNationalId,
+          name: d.fromDisplayName,
+        })),
         isNationalRegistryV3DeceasedStatusEnabled,
       )
 

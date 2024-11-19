@@ -357,7 +357,12 @@ export class DelegationsIncomingService {
 
     const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
       await this.aliveStatusService.getStatus(
-        uniq(records.map((d) => d.fromNationalId)),
+        uniq(
+          records.map((d) => ({
+            nationalId: d.fromNationalId,
+            name: UNKNOWN_NAME,
+          })),
+        ),
         isNationalRegistryV3DeceasedStatusEnabled,
       )
 
