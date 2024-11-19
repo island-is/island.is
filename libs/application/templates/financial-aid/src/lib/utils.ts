@@ -84,7 +84,7 @@ export function hasActiveCurrentApplication(context: ApplicationContext) {
   // When working with gervimaður we might need to have many active applications
   const isProd = isRunningOnEnvironment('production')
   if (!isProd) {
-    false
+    return false
   }
 
   const { externalData } = context.application
