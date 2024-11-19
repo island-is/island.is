@@ -313,6 +313,8 @@ export interface DateField extends InputField {
   component: FieldComponents.DATE
   maxDate?: MaybeWithApplicationAndField<Date>
   minDate?: MaybeWithApplicationAndField<Date>
+  minYear?: number
+  maxYear?: number
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
