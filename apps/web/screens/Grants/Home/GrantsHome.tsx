@@ -31,6 +31,11 @@ import {
 } from '../../CustomPage/CustomPageWrapper'
 import { GET_GENERIC_TAGS_IN_TAG_GROUPS_QUERY } from '../../queries/GenericTag'
 import { m } from '../messages'
+import {
+  CATEGORY_TAG_SLUGS,
+  CategorySlug,
+  mapTagToMessageId,
+} from './mapTagToMessageId'
 
 const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
   categories,
@@ -138,7 +143,13 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
                   <CategoryCard
                     href={`${searchUrl}?category=${c.slug}`}
                     heading={c.title}
-                    text={'Lýsing á flokk'}
+                    text={
+                      CATEGORY_TAG_SLUGS.includes(c.slug as CategorySlug)
+                        ? formatMessage(
+                            mapTagToMessageId(c.slug as CategorySlug),
+                          )
+                        : ''
+                    }
                   />
                 </GridColumn>
               ))}
