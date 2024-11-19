@@ -12,7 +12,10 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -29,25 +32,24 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal completed notifications', () => {
+  const { prosecutor, defender, judge, courtOfAppeals } = createTestUsers([
+    'prosecutor',
+    'defender',
+    'judge',
+    'courtOfAppeals',
+  ])
   const userId = uuid()
   const caseId = uuid()
-  const prosecutorName = uuid()
-  const prosecutorEmail = uuid()
-  const defenderName = uuid()
-  const defenderEmail = uuid()
-  const judgeName = uuid()
-  const judgeEmail = uuid()
   const courtCaseNumber = uuid()
   const appealCaseNumber = uuid()
   const courtId = uuid()
-  const courtOfAppealsEmail = uuid()
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    process.env.COURTS_EMAILS = `{"4676f08b-aab4-4b4f-a366-697540788088":"${courtOfAppealsEmail}"}`
+    process.env.COURTS_EMAILS = `{"4676f08b-aab4-4b4f-a366-697540788088":"${courtOfAppeals.email}"}`
 
     const { emailService, notificationConfig, internalNotificationController } =
       await createTestingNotificationModule()
@@ -71,12 +73,12 @@ describe('InternalNotificationController - Send appeal completed notifications',
             decision: CaseDecision.ACCEPTING,
             appealRulingDecision:
               appealRulingDecision ?? CaseAppealRulingDecision.ACCEPTING,
-            prosecutor: { name: prosecutorName, email: prosecutorEmail },
-            judge: { name: judgeName, email: judgeEmail },
+            prosecutor: { name: prosecutor.name, email: prosecutor.email },
+            judge: { name: judge.name, email: judge.email },
             court: { name: 'Héraðsdómur Reykjavíkur' },
             defenderNationalId,
-            defenderName: defenderName,
-            defenderEmail: defenderEmail,
+            defenderName: defender.name,
+            defenderEmail: defender.email,
             courtCaseNumber,
             appealCaseNumber,
             courtId: courtId,
@@ -102,14 +104,14 @@ describe('InternalNotificationController - Send appeal completed notifications',
     it('should send notifications', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: judgeName, address: judgeEmail }],
+          to: [{ name: judge.name, address: judge.email }],
           subject: `Úrskurður í landsréttarmáli ${appealCaseNumber} (${courtCaseNumber})`,
           html: `Landsréttur hefur úrskurðað í máli ${appealCaseNumber} (héraðsdómsmál nr. ${courtCaseNumber}). Niðurstaða Landsréttar: Staðfest. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: prosecutorName, address: prosecutorEmail }],
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Úrskurður í landsréttarmáli ${appealCaseNumber} (${courtCaseNumber})`,
           html: `Landsréttur hefur úrskurðað í máli ${appealCaseNumber} (héraðsdómsmál nr. ${courtCaseNumber}). Niðurstaða Landsréttar: Staðfest. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
@@ -140,7 +142,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Úrskurður í landsréttarmáli ${appealCaseNumber} (${courtCaseNumber})`,
           html: `Landsréttur hefur úrskurðað í máli ${appealCaseNumber} (héraðsdómsmál nr. ${courtCaseNumber}). Niðurstaða Landsréttar: Staðfest. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/verjandi/krafa/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
@@ -159,7 +161,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
     it('should send notification without a link to defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Úrskurður í landsréttarmáli ${appealCaseNumber} (${courtCaseNumber})`,
           html: `Landsréttur hefur úrskurðað í máli ${appealCaseNumber} (héraðsdómsmál nr. ${courtCaseNumber}). Niðurstaða Landsréttar: Staðfest. Hægt er að nálgast gögn málsins hjá Héraðsdómi Reykjavíkur ef þau hafa ekki þegar verið afhent.`,
         }),
@@ -178,14 +180,14 @@ describe('InternalNotificationController - Send appeal completed notifications',
     it('should send notification about discontinuance', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: prosecutorName, address: prosecutorEmail }],
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Niðurfelling máls ${appealCaseNumber} (${courtCaseNumber})`,
           html: `Landsréttur hefur móttekið afturköllun á kæru í máli ${courtCaseNumber}. Landsréttarmálið ${appealCaseNumber} hefur verið fellt niður. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Niðurfelling máls ${appealCaseNumber} (${courtCaseNumber})`,
           html: `Landsréttur hefur móttekið afturköllun á kæru í máli ${courtCaseNumber}. Landsréttarmálið ${appealCaseNumber} hefur verið fellt niður.`,
         }),
