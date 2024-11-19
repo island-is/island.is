@@ -1,4 +1,4 @@
-import { Box, Text, Button } from '@island.is/island-ui/core'
+import { Box, Text, Button, Stack } from '@island.is/island-ui/core'
 import { isDefined } from 'class-validator'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import AnimateHeight, { Height } from 'react-animate-height'
@@ -57,23 +57,25 @@ const MobileTableRow: React.FC<Props> = ({ tableRow }) => {
       </Box>
       {/* Map through data */}
       <Box marginBottom={2}>
-        {tableRow.data.map((item, index) => {
-          const { title, content } = item
-          // eslint-disable-next-line array-callback-return
-          if (!isDefined(content)) return
-          return (
-            <Box key={index} display="flex" flexDirection="row">
-              <Box width="half">
-                <Text fontWeight="medium" variant="medium">
-                  {title}
-                </Text>
+        <Stack space={1}>
+          {tableRow.data.map((item, index) => {
+            const { title, content } = item
+            // eslint-disable-next-line array-callback-return
+            if (!isDefined(content)) return
+            return (
+              <Box key={index} display="flex" flexDirection="row">
+                <Box width="half" display="flex" alignItems="center">
+                  <Text fontWeight="medium" variant="medium">
+                    {title}
+                  </Text>
+                </Box>
+                <Box width="half">
+                  <Text variant="medium">{content}</Text>
+                </Box>
               </Box>
-              <Box width="half">
-                <Text variant="medium">{content}</Text>
-              </Box>
-            </Box>
-          )
-        })}
+            )
+          })}
+        </Stack>
       </Box>
       <Box width="full">{tableRow.action}</Box>
       {/* Children - visible when extended */}

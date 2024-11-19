@@ -40,22 +40,22 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
   return (
     <Box paddingY={4}>
       <SortableTable
-        title=""
         labels={{
           vaccine: formatMessage(messages.vaccinatedFor),
           date: formatMessage(messages.vaccinatedLast),
           status: formatMessage(messages.status),
         }}
-        tagOutlined
         expandable
         defaultSortByKey="vaccine"
+        tagOutlined
         items={
           data.map((item, i) => ({
             id: item?.id ?? `${i}`,
             name: item?.name ?? '',
             vaccine: item?.name ?? '',
             date: formatDate(item?.lastVaccinationDate) ?? '',
-
+            status: item?.statusName ?? '',
+            tag: tagSelector(item?.status ?? undefined),
             children: (
               <VaccinationsDetailTable
                 headerData={headerDataDetail}
@@ -96,8 +96,6 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
                 footerText={item.comments ?? []}
               />
             ),
-            status: item?.statusName ?? '',
-            tag: tagSelector(item?.status ?? undefined),
           })) ?? []
         }
       />

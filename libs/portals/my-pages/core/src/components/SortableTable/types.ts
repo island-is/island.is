@@ -1,4 +1,5 @@
 import { IconProps, TagVariant } from '@island.is/island-ui/core'
+export type ConfigType = { direction: 'ascending' | 'descending'; key: string }
 
 export type SortableData = {
   name: string

@@ -13,42 +13,49 @@ import { useMemo, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import { ExpandHeader, ExpandRow } from '../ExpandableTable'
 import * as styles from './SortableTable.css'
-import { SortableData, SortableTableProps } from './dataMapper'
+import { ConfigType, SortableData, SortableTableProps } from './types'
 import MobileTable from './Mobile/MobileTable'
+import { HeaderButton } from './HeaderButton'
+import { TableRow } from './TableRow'
+import { useSortableData } from './useSortableData'
 
-type ConfigType = { direction: 'ascending' | 'descending'; key: string }
-
-const useSortableData = <T,>(
-  items: T[],
-  config: ConfigType = { direction: 'ascending', key: '' },
-) => {
-  const [sortConfig, setSortConfig] = useState<ConfigType>(config)
-
-  const sortedItems = useMemo(() => {
-    const sortableItems = [...items]
-    if (sortConfig.key !== '') {
-      sortableItems.sort((a, b) => {
-        const keyA = a[sortConfig.key as keyof T] as string
-        const keyB = b[sortConfig.key as keyof T] as string
-        return sortConfig.direction === 'ascending'
-          ? keyA.localeCompare(keyB, undefined, { numeric: true })
-          : keyA.localeCompare(keyB, undefined, { numeric: true }) * -1
-      })
-    }
-    return sortableItems
-  }, [items, sortConfig])
-
-  const requestSort = (key: string) => {
-    let direction: 'ascending' | 'descending' = 'ascending'
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending'
-    }
-    setSortConfig({ key, direction })
-  }
-
-  return { items: sortedItems, requestSort, sortConfig }
-}
-
+/**
+ * SortableTable component renders a table that can be sorted and is responsive to different screen sizes.
+ * It supports expandable rows and custom headers.
+ *
+ * @param {SortableTableProps} props - The properties for the SortableTable component.
+ * @param {Array} props.items - The data items to be displayed in the table.
+ * @param {Function} props.requestSort - Function to request sorting of the table.
+ * @param {Object} props.sortConfig - Configuration object for sorting.
+ * @param {string} [props.defaultSortByKey] - The default key to sort by.
+ * @param {boolean} [props.expandable] - Flag to indicate if the table rows are expandable.
+ * @param {Object} props.labels - Labels for the table headers.
+ * @param {string} [props.title] - Title of the table.
+ * @param {boolean} [props.tagOutlined] - Flag to indicate if tags should be outlined.
+ * @param {Object} [props.footer] - Footer data for the table.
+ *
+ * @returns {JSX.Element} The rendered SortableTable component.
+ *
+ * @example
+ * <SortableTable
+ *   items={data}
+ *   requestSort={handleSort}
+ *   sortConfig={sortConfig}
+ *   defaultSortByKey="name"
+ *   expandable={true}
+ *   labels={labels}
+ *   title="My Table"
+ *   tagOutlined={false}
+ *   footer={footerData}
+ * />
+ *
+ * @remarks
+ * - The component uses `useSortableData` hook to manage sorting logic.
+ * - It uses `useWindowSize` hook to determine if the screen size is mobile.
+ * - The headers are dynamically generated based on the items' keys.
+ * - On mobile, it renders a `MobileTable` component.
+ * - On larger screens, it renders a table with sortable headers and expandable rows.
+ */
 export const SortableTable = (props: SortableTableProps) => {
   const { items, requestSort, sortConfig } = useSortableData<SortableData>(
     props.items,
@@ -71,27 +78,6 @@ export const SortableTable = (props: SortableTableProps) => {
 
     setHeaderSorted(headerItems)
   }, [props.items])
-
-  const headerButton = (headItem: string, i: number) => (
-    <button
-      type="button"
-      onClick={() => requestSort(headItem)}
-      className={styles.btn}
-      key={`head-${headItem}-${i}`}
-    >
-      {props.labels[headItem] || ''}
-      {sortConfig.key === headItem && (
-        <Icon
-          className={styles.chevron}
-          color="dark400"
-          icon={
-            sortConfig.direction === 'ascending' ? 'chevronDown' : 'chevronUp'
-          }
-          size="small"
-        />
-      )}
-    </button>
-  )
 
   const mobileHeaderData = headerSorted
     .map((headItem) => props.labels[headItem])
@@ -116,7 +102,7 @@ export const SortableTable = (props: SortableTableProps) => {
               title: name ?? valueItems[0]?.toString() ?? '',
               data: valueItems
                 .map((valueItem, valueIndex) => {
-                  if (tag) {
+                  if (tag && valueItems.length - 1 === valueIndex) {
                     return {
                       title: valueItem ?? '',
                       content: (
@@ -170,7 +156,15 @@ export const SortableTable = (props: SortableTableProps) => {
           {props.expandable ? (
             <ExpandHeader
               data={headerSorted.map((headItem, i) => ({
-                value: headerButton(headItem, i),
+                value: (
+                  <HeaderButton
+                    headItem={headItem}
+                    sortConfig={sortConfig}
+                    requestSort={requestSort}
+                    labels={props.labels}
+                    index={i}
+                  />
+                ),
                 align: headerSorted.slice(-2).includes(headItem)
                   ? 'right'
                   : 'left',
@@ -183,7 +177,13 @@ export const SortableTable = (props: SortableTableProps) => {
                 {headerSorted.map((headItem, i) => (
                   <T.HeadData key={`head-${headItem}`}>
                     <Text variant="medium" fontWeight="semiBold" as="p">
-                      {headerButton(headItem, i)}
+                      <HeaderButton
+                        headItem={headItem}
+                        sortConfig={sortConfig}
+                        requestSort={requestSort}
+                        labels={props.labels}
+                        index={i}
+                      />
                     </Text>
                   </T.HeadData>
                 ))}
@@ -191,90 +191,16 @@ export const SortableTable = (props: SortableTableProps) => {
             </T.Head>
           )}
           <T.Body>
-            {items.map((item) => {
-              const { id, name, tag, lastNode, children, ...itemObject } = item
-              const valueItems = Object.values(itemObject)
-
-              return props.expandable ? (
-                <ExpandRow
-                  key={id}
-                  data={valueItems.map((valueItem, i) => ({
-                    value: tag ? (
-                      <Tag variant={tag} outlined={props.tagOutlined}>
-                        {valueItem}
-                      </Tag>
-                    ) : valueItems.length - 1 === i && lastNode ? (
-                      lastNode.type === 'info' ? (
-                        <Tooltip text={lastNode.label} />
-                      ) : lastNode.type === 'action' ? (
-                        <Button
-                          variant="text"
-                          type="button"
-                          icon={lastNode.icon?.icon}
-                          iconType={lastNode.icon?.type}
-                          onClick={lastNode.action}
-                          size="small"
-                        >
-                          {lastNode.label}
-                        </Button>
-                      ) : (
-                        <Text variant="medium" as="span">
-                          {lastNode.label}
-                        </Text>
-                      )
-                    ) : (
-                      <Text variant="medium" as="span">
-                        {valueItem}
-                      </Text>
-                    ),
-                    align: valueItems.slice(-2).includes(valueItem)
-                      ? 'right'
-                      : 'left',
-                  }))}
-                >
-                  {children}
-                </ExpandRow>
-              ) : (
-                <T.Row key={id}>
-                  <T.Data>
-                    <Text variant="medium" as="span">
-                      {name}
-                    </Text>
-                  </T.Data>
-                  {valueItems.map((valueItem, i) => (
-                    <T.Data key={`body-${id}-${i}`}>
-                      {tag ? (
-                        <Tag variant={tag} outlined={props.tagOutlined}>
-                          {valueItem}
-                        </Tag>
-                      ) : lastNode ? (
-                        lastNode.type === 'info' ? (
-                          <Tooltip text={lastNode.label} />
-                        ) : lastNode.type === 'action' ? (
-                          <Button
-                            variant="text"
-                            type="button"
-                            icon={lastNode.icon?.icon}
-                            iconType={lastNode.icon?.type}
-                            onClick={lastNode.action}
-                          >
-                            {lastNode.label}
-                          </Button>
-                        ) : (
-                          <Text variant="medium" as="span">
-                            {lastNode.label}
-                          </Text>
-                        )
-                      ) : (
-                        <Text variant="medium" as="span">
-                          {valueItem}
-                        </Text>
-                      )}
-                    </T.Data>
-                  ))}
-                </T.Row>
-              )
-            })}
+            {items.map((item) => (
+              <TableRow
+                key={item.id}
+                item={item}
+                headerSorted={headerSorted}
+                labels={props.labels}
+                tagOutlined={props.tagOutlined}
+                expandable={props.expandable}
+              />
+            ))}
             {props.footer && (
               <T.Row>
                 {Object.values(props.footer).map((valueItem) => (

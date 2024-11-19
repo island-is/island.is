@@ -18,30 +18,34 @@ interface Props {
   id: string
   activeDelegation?: Delegation
   disclosure?: ReactElement
+  visible?: boolean
 }
 
 const DelegationModal: React.FC<Props> = ({
   id,
   activeDelegation,
   disclosure,
+  visible,
 }) => {
   const { formatMessage } = useLocale()
   const [formData, setFormData] = useState<{
     nationalId?: string
     date?: Date
     lookup?: boolean
-  } | null>(
-    {
-      nationalId: activeDelegation?.nationalId,
-      date: activeDelegation?.date,
-      lookup: activeDelegation?.delegationType.includes('/'),
-    } ?? null,
-  )
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  } | null>({
+    nationalId: activeDelegation?.nationalId,
+    date: activeDelegation?.date,
+    lookup: activeDelegation?.delegationType.includes('/'),
+  })
+  const [modalVisible, setModalVisible] = useState<boolean>(!!visible)
 
   const closeModal = () => {
     setModalVisible(false)
   }
+
+  useEffect(() => {
+    setModalVisible(!!visible)
+  }, [visible])
 
   const submitForm = async (e?: React.FormEvent<HTMLFormElement>) => {
     // TODO: Implement form submission when service is ready
@@ -62,7 +66,6 @@ const DelegationModal: React.FC<Props> = ({
         setModalVisible(visibility)
       }}
       removeOnClose
-      disclosure={disclosure}
       className={styles.modal}
     >
       <Box className={styles.closeButton}>

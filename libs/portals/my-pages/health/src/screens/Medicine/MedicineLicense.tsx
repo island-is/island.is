@@ -13,6 +13,7 @@ import {
   m,
   IntroHeader,
   SJUKRATRYGGINGAR_SLUG,
+  IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
@@ -23,13 +24,12 @@ export const MedicineLicense = () => {
   const { data, error, loading } = useGetDrugCertificatesQuery()
 
   return (
-    <>
-      <IntroHeader
-        title={formatMessage(messages.medicineLicenseTitle)}
-        intro={formatMessage(messages.medicineLicenseIntroText)}
-        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-      />
+    <IntroWrapper
+      title={formatMessage(messages.medicineLicenseTitle)}
+      intro={formatMessage(messages.medicineLicenseIntroText)}
+      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+    >
       {error ? (
         <Problem error={error} noBorder={false} />
       ) : loading ? (
@@ -85,7 +85,7 @@ export const MedicineLicense = () => {
           )}
         </Box>
       )}
-    </>
+    </IntroWrapper>
   )
 }
 

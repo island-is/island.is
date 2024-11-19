@@ -1,31 +1,37 @@
-import React, { useState } from 'react'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   EmptyTable,
   HEALTH_DIRECTORATE_SLUG,
-  IntroHeader,
+  IntroWrapper,
   SortableTable,
   m,
 } from '@island.is/portals/my-pages/core'
+import { useState } from 'react'
 import { messages } from '../../lib/messages'
-import { Box, Button, Text } from '@island.is/island-ui/core'
-import { delegationData, Delegation } from './utils/mockdata'
 import DelegationModal from './components/DelegationModal'
+import { delegationData } from './utils/mockdata'
 
 const MedicineDelegation = () => {
   const { formatMessage } = useLocale()
-  const [newDelegationModelOpen, setNewDelegationModelOpen] = useState(false)
+  const [newDelegationModelOpen, setNewDelegationModelOpen] = useState<{
+    id: string
+    open: boolean
+  } | null>(null)
 
+  const openModal = (id: string) => {
+    console.log('openModal', id)
+    setNewDelegationModelOpen({ id, open: true })
+  }
   return (
-    <>
-      <IntroHeader
-        title={formatMessage(messages.medicineDelegation)}
-        intro={formatMessage(messages.medicineDelegationIntroText)}
-        serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
-        serviceProviderTooltip={formatMessage(
-          messages.landlaeknirMedicineDelegationTooltip,
-        )}
-      />
+    <IntroWrapper
+      title={formatMessage(messages.medicineDelegation)}
+      intro={formatMessage(messages.medicineDelegationIntroText)}
+      serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
+      serviceProviderTooltip={formatMessage(
+        messages.landlaeknirMedicineDelegationTooltip,
+      )}
+    >
       <Box>
         <Text as="h2" fontWeight="medium" marginBottom={2}>
           {formatMessage(messages.myDelegations)}
@@ -46,50 +52,30 @@ const MedicineDelegation = () => {
               kennitala: item.nationalId,
               delegationType: item.delegationType,
               date: item.date.toDateString(),
-              change: (
-                <DelegationModal
-                  id={`delegationRegistrationModal-${item.id}`}
-                  activeDelegation={item}
-                  disclosure={
-                    <Button
-                      as="span"
-                      size="small"
-                      variant="text"
-                      unfocusable
-                      icon="pencil"
-                      onClick={() => {
-                        console.log('clicking edit button')
-                      }}
-                    >
-                      {formatMessage(m.buttonEdit)}
-                    </Button>
-                  }
-                />
-              ),
+              lastNode: {
+                type: 'action',
+                label: formatMessage(m.buttonEdit),
+                icon: { icon: 'pencil', type: 'outline' },
+                action: () => openModal(item.id),
+              },
             }))}
           />
         )}
-
-        <DelegationModal
-          id="newDelegationRegistrationModal"
-          activeDelegation={undefined}
-          disclosure={
-            <Box display="flex" flexDirection="rowReverse" marginTop={4}>
-              <Button
-                size="medium"
-                icon="add"
-                type="button"
-                onClick={() => {
-                  setNewDelegationModelOpen(true)
-                }}
-              >
-                {formatMessage(messages.addDelegation)}
-              </Button>
-            </Box>
-          }
-        />
+        {delegationData.map((item, i) => {
+          return (
+            <DelegationModal
+              key={i}
+              id={`delegationRegistrationModal-${item.id}`}
+              activeDelegation={item}
+              visible={
+                newDelegationModelOpen?.id === item.id &&
+                newDelegationModelOpen.open
+              }
+            />
+          )
+        })}
       </Box>
-    </>
+    </IntroWrapper>
   )
 }
 
