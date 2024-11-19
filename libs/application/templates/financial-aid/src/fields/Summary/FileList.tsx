@@ -22,7 +22,6 @@ const FileList = ({ files, applicationSystemId }: Props) => {
   if (files === undefined || files.length === 0) {
     return null
   }
-  console.log(files)
 
   return (
     <Box marginBottom={2}>

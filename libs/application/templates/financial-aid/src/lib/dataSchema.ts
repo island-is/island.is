@@ -90,8 +90,9 @@ const incomeSchema = z.object({
   }),
 })
 
-const incomeFilesSchema = z.array(fileSchema)
-// .refine((v) => v.length > 0, { params: error.validation.missingFiles })
+const incomeFilesSchema = z
+  .array(fileSchema)
+  .refine((v) => v.length > 0, { params: error.validation.missingFiles })
 
 const employmentSchema = z
   .object({
