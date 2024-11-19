@@ -15,10 +15,27 @@ export { getApplicationFeatureFlags } from './getApplicationFeatureFlags'
 export const getChargeCodeItems = (
   application: Application,
 ): Array<ChargeCodeItem> => {
-  return getChargeCodeItemsWithExtraLabel(application).map((item) => ({
+  const allItems: ChargeCodeItem[] = getChargeCodeItemsWithExtraLabel(
+    application,
+  ).map((item) => ({
     code: item.chargeItemCode,
     quantity: item.chargeItemQuantity,
   }))
+
+  //summarize items
+  const summarizedItems = Object.values(
+    allItems.reduce((acc, item) => {
+      const quantity = item.quantity ?? 1 // Default to 1 if quantity is undefined
+      if (acc[item.code]) {
+        acc[item.code].quantity = (acc[item.code].quantity ?? 0) + quantity
+      } else {
+        acc[item.code] = { code: item.code, quantity }
+      }
+      return acc
+    }, {} as { [key: string]: ChargeCodeItem }),
+  )
+
+  return summarizedItems
 }
 
 export const getChargeCodeItemsWithExtraLabel = (
