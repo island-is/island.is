@@ -24,9 +24,10 @@ export const serviceSetup = (
     })
     .bff({
       key,
-      clientId: '@island.is/bff',
+      clientId: '@island.is/web',
       clientName,
       services,
+      globalPrefix: '/bff',
     })
     .readiness(`/${key}/bff/health/check`)
     .liveness(`/${key}/bff/liveness`)

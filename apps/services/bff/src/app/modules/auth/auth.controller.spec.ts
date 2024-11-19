@@ -5,11 +5,11 @@ import jwt from 'jsonwebtoken'
 import request from 'supertest'
 import { setupTestServer } from '../../../../test/setupTestServer'
 import {
-  mockedTokensResponse as tokensResponse,
-  SID_VALUE,
-  SESSION_COOKIE_NAME,
   ALGORITM_TYPE,
+  SESSION_COOKIE_NAME,
+  SID_VALUE,
   getLoginSearchParmsFn,
+  mockedTokensResponse as tokensResponse,
 } from '../../../../test/sharedConstants'
 import { BffConfig } from '../../bff.config'
 import { IdsService } from '../ids/ids.service'
@@ -89,7 +89,7 @@ describe('AuthController', () => {
     })
 
     mockConfig = app.get<ConfigType<typeof BffConfig>>(BffConfig.KEY)
-    baseUrlWithKey = `${mockConfig.clientBaseUrl}${process.env.BFF_CLIENT_KEY_PATH}`
+    baseUrlWithKey = `${mockConfig.clientBaseUrl}${process.env.BFF_GLOBAL_PREFIX}`
 
     server = request(app.getHttpServer())
   })

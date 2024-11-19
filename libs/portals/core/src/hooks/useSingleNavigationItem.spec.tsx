@@ -70,6 +70,7 @@ describe('useSingleNavigationItem hook', () => {
         >
           <BffProvider
             applicationBasePath="/minarsidur"
+            bffGlobalPrefix="/minarsidur/bff"
             mockedInitialState={mockedInitialState}
           >
             <BrowserRouter>

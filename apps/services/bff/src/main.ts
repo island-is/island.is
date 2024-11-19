@@ -7,6 +7,6 @@ bootstrap({
   appModule: AppModule,
   name: 'bff',
   port: environment.port,
-  globalPrefix: `${environment.keyPath}/bff`,
+  globalPrefix: environment.globalPrefix,
   healthCheck: true,
 })

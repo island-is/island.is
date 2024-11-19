@@ -1,16 +1,16 @@
-import fetch from 'cross-fetch'
 import {
   ApolloClient,
   ApolloLink,
   HttpLink,
   InMemoryCache,
 } from '@apollo/client'
+import fetch from 'cross-fetch'
 
-import { RetryLink } from '@apollo/client/link/retry'
 import { onError } from '@apollo/client/link/error'
+import { RetryLink } from '@apollo/client/link/retry'
 
 const httpLink = new HttpLink({
-  uri: ({ operationName }) => `/minarsidur/bff/api/graphql?op=${operationName}`,
+  uri: ({ operationName }) => `/bff/api/graphql?op=${operationName}`,
   fetch,
   credentials: 'include',
 })

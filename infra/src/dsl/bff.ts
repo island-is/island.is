@@ -6,6 +6,11 @@ import {
   servicePortalScopes,
 } from '../../../libs/auth/scopes/src/index'
 
+/**
+ * Trim any leading and trailing slashes
+ */
+const sanitizePath = (path: string) => path.replace(/^\/+|\/+$/g, '')
+
 export const getScopes = (key: PortalKeys) => {
   switch (key) {
     case 'minarsidur':
@@ -17,7 +22,15 @@ export const getScopes = (key: PortalKeys) => {
   }
 }
 
-export const bffConfig = ({ key, services, clientName, clientId }: BffInfo) => {
+export const bffConfig = ({
+  key,
+  services,
+  clientName,
+  clientId,
+  globalPrefix,
+}: BffInfo) => {
+  const sanitizeGlobalPrefix = sanitizePath(globalPrefix)
+
   const getBaseUrl = (ctx: Context) =>
     ctx.featureDeploymentName
       ? `${ctx.featureDeploymentName}-beta.${ctx.env.domain}`
@@ -40,7 +53,7 @@ export const bffConfig = ({ key, services, clientName, clientId }: BffInfo) => {
         staging: key,
         prod: key,
       },
-      BFF_CLIENT_KEY_PATH: `/${key}`,
+      BFF_GLOBAL_PREFIX: globalPrefix,
       BFF_PAR_SUPPORT_ENABLED: 'true',
       BFF_CLIENT_BASE_URL: {
         local: 'http://localhost:4200',
@@ -61,10 +74,16 @@ export const bffConfig = ({ key, services, clientName, clientId }: BffInfo) => {
         prod: 'https://island.is',
       },
       BFF_CALLBACKS_BASE_PATH: {
-        local: `http://localhost:3010/${key}/bff/callbacks`,
-        dev: ref((c) => `https://${getBaseUrl(c)}/${key}/bff/callbacks`),
-        staging: ref((c) => `https://${getBaseUrl(c)}/${key}/bff/callbacks`),
-        prod: ref((c) => `https://${getBaseUrl(c)}/${key}/bff/callbacks`),
+        local: `http://localhost:3010/${sanitizeGlobalPrefix}/callbacks`,
+        dev: ref(
+          (c) => `https://${getBaseUrl(c)}/${sanitizeGlobalPrefix}/callbacks`,
+        ),
+        staging: ref(
+          (c) => `https://${getBaseUrl(c)}/${sanitizeGlobalPrefix}/callbacks`,
+        ),
+        prod: ref(
+          (c) => `https://${getBaseUrl(c)}/${sanitizeGlobalPrefix}/callbacks`,
+        ),
       },
       BFF_PROXY_API_ENDPOINT: {
         local: 'http://localhost:4444/api/graphql',

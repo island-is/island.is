@@ -1,9 +1,8 @@
 import { z } from 'zod'
 
-const KEY_PATH_ENV_VAR = 'BFF_CLIENT_KEY_PATH'
-
 export const environmentSchema = z.strictObject({
   production: z.boolean().default(false),
+  name: z.string({ required_error: 'BFF_NAME is required' }),
   port: z.preprocess(
     (val) => (val ? parseInt(val as string, 10) : 3010),
     z
@@ -12,16 +11,16 @@ export const environmentSchema = z.strictObject({
       .max(65535),
   ),
   /**
-   * The global prefix for the API
+   * The global prefix path for the API
+   * This is used to create the base path for the API
    */
-  keyPath: z
+  globalPrefix: z
     .string({
-      required_error: `${KEY_PATH_ENV_VAR} is required`,
+      required_error: 'BFF_GLOBAL_PREFIX is required',
     })
-    .refine((val) => !val.endsWith('/bff'), {
-      message: `${KEY_PATH_ENV_VAR} must not end with /bff`,
+    .refine((val) => val.endsWith('/bff'), {
+      message: 'BFF_GLOBAL_PREFIX must end with /bff',
     }),
-  name: z.string({ required_error: 'BFF_NAME is required' }),
 })
 
 export type BffEnvironment = z.infer<typeof environmentSchema>

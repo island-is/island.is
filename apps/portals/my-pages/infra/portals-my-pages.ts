@@ -1,10 +1,6 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-const graphqlApiPath = '/minarsidur/bff/api/graphql'
-
-export const serviceSetup = (services: {
-  graphql: ServiceBuilder<'api'>
-}): ServiceBuilder<'service-portal'> =>
+export const serviceSetup = (): ServiceBuilder<'service-portal'> =>
   service('service-portal')
     .namespace('service-portal')
     .liveness('/liveness')
