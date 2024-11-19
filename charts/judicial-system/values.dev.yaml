@@ -224,6 +224,7 @@ judicial-system-backend:
     NOVA_URL: '/k8s/judicial-system/NOVA_URL'
     NOVA_USERNAME: '/k8s/judicial-system/NOVA_USERNAME'
     PRISON_ADMIN_EMAIL: '/k8s/judicial-system/PRISON_ADMIN_EMAIL'
+    PRISON_ADMIN_INDICTMENT_EMAILS: '/k8s/judicial-system/PRISON_ADMIN_INDICTMENT_EMAILS'
     PRISON_EMAIL: '/k8s/judicial-system/PRISON_EMAIL'
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT'
     XROAD_CLIENT_KEY: '/k8s/judicial-system/XROAD_CLIENT_KEY'
