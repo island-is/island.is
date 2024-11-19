@@ -32,16 +32,6 @@ export const th = style({
   padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
 })
 
-export const largeColumn = style({
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
-      // The width needed to make sure a 33 character name doesn't wrap
-      maxWidth: 334,
-      whiteSpace: 'nowrap',
-    },
-  },
-})
-
 export const smallContainer = style({
   display: 'flex',
   alignItems: 'center',
@@ -60,10 +50,6 @@ globalStyle(`${table} td, th`, {
   paddingTop: theme.spacing[2],
   paddingBottom: theme.spacing[2],
   textAlign: 'left',
-})
-
-export const row = style({
-  cursor: 'pointer',
 })
 
 export const sortIcon = style({
@@ -85,8 +71,4 @@ export const sortAsc = style({
 export const sortDes = style({
   opacity: 1,
   transform: 'rotate(0deg)',
-})
-
-export const loadingContainer = style({
-  minWidth: '67px',
 })

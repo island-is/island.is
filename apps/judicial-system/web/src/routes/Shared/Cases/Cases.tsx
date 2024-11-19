@@ -347,11 +347,7 @@ export const Cases: FC = () => {
             )}
             <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
             {loading || pastCases.length > 0 ? (
-              <PastCasesTable
-                cases={pastCases}
-                loading={loading || isFiltering}
-                testid="pastCasesTable"
-              />
+              <PastCasesTable cases={pastCases} />
             ) : (
               <div className={styles.infoContainer}>
                 <AlertMessage

@@ -7,7 +7,11 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { isDistrictCourtUser } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isDistrictCourtUser,
+  isRestrictionCase,
+} from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 
 import { CaseListEntry, CaseState } from '../../graphql/schema'
@@ -22,6 +26,7 @@ import SortButton from './SortButton/SortButton'
 import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
+import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
 
 interface Sortable {
   isSortable: boolean
@@ -154,6 +159,17 @@ const Table: FC<TableProps> = (props) => {
                 </Text>
               )
             )}
+            {isRestrictionCase(theCase.type) &&
+              isCompletedCase(theCase.state) && (
+                <DurationDate
+                  date={getDurationDate(
+                    theCase.state,
+                    theCase.validToDate,
+                    theCase.initialRulingDate,
+                    theCase.rulingDate,
+                  )}
+                />
+              )}
           </MobileCase>
         </Box>
       ))}
