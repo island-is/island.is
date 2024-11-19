@@ -8,6 +8,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
+  CaseType,
   isCompletedCase,
   isDistrictCourtUser,
   isRestrictionCase,
@@ -97,6 +98,76 @@ const Table: FC<TableProps> = (props) => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
+  const handleCaseClick = (theCase: CaseListEntry) => {
+    if (!onClick?.(theCase)) {
+      handleOpenCase(theCase.id)
+    }
+  }
+
+  const renderProsecutorText = (
+    state?: CaseState | null,
+    prosecutorName?: string | null,
+  ) => {
+    if (
+      state &&
+      state === CaseState.WAITING_FOR_CONFIRMATION &&
+      prosecutorName
+    ) {
+      return (
+        <Text fontWeight="medium" variant="small">
+          {`${formatMessage(core.prosecutorPerson)}: ${prosecutorName}`}
+        </Text>
+      )
+    }
+    return null
+  }
+
+  const renderPostponedOrCourtDateText = (
+    postponedIndefinitelyExplanation?: string | null,
+    caseState?: CaseState | null,
+    courtDate?: string | null,
+  ) => {
+    if (postponedIndefinitelyExplanation) {
+      return <Text>{formatMessage(strings.postponed)}</Text>
+    }
+
+    if (!isCompletedCase(caseState) && courtDate) {
+      return (
+        <Text fontWeight="medium" variant="small">
+          {`${formatMessage(strings.hearing)} ${formatDate(
+            parseISO(courtDate),
+            'd.M.y',
+          )} kl. ${formatDate(parseISO(courtDate), 'kk:mm')}`}
+        </Text>
+      )
+    }
+
+    return null
+  }
+
+  const renderDurationDate = (
+    caseType?: CaseType | null,
+    caseState?: CaseState | null,
+    validToDate?: string | null,
+    initialRulingDate?: string | null,
+    rulingDate?: string | null,
+  ) => {
+    if (isRestrictionCase(caseType) && isCompletedCase(caseState)) {
+      return (
+        <DurationDate
+          date={getDurationDate(
+            caseState,
+            validToDate,
+            initialRulingDate,
+            rulingDate,
+          )}
+        />
+      )
+    }
+
+    return null
+  }
+
   useMemo(() => {
     if (sortConfig) {
       data.sort((a: CaseListEntry, b: CaseListEntry) => {
@@ -130,47 +201,24 @@ const Table: FC<TableProps> = (props) => {
       {data.map((theCase: CaseListEntry) => (
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
-            onClick={() => {
-              if (!onClick?.(theCase)) {
-                handleOpenCase(theCase.id)
-              }
-            }}
+            onClick={() => handleCaseClick(theCase)}
             theCase={theCase}
             isCourtRole={isDistrictCourtUser(user)}
             isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
-            {theCase.state &&
-              theCase.state === CaseState.WAITING_FOR_CONFIRMATION && (
-                <Text fontWeight="medium" variant="small">
-                  {`${formatMessage(core.prosecutorPerson)}: ${
-                    theCase.prosecutor?.name
-                  }`}
-                </Text>
-              )}
-            {theCase.postponedIndefinitelyExplanation ? (
-              <Text>{formatMessage(strings.postponed)}</Text>
-            ) : (
-              !isCompletedCase(theCase.state) &&
-              theCase.courtDate && (
-                <Text fontWeight="medium" variant="small">
-                  {`${formatMessage(strings.hearing)} ${formatDate(
-                    parseISO(theCase.courtDate),
-                    'd.M.y',
-                  )} kl. ${formatDate(parseISO(theCase.courtDate), 'kk:mm')}`}
-                </Text>
-              )
+            {renderProsecutorText(theCase.state, theCase.prosecutor?.name)}
+            {renderPostponedOrCourtDateText(
+              theCase.postponedIndefinitelyExplanation,
+              theCase.state,
+              theCase.courtDate,
             )}
-            {isRestrictionCase(theCase.type) &&
-              isCompletedCase(theCase.state) && (
-                <DurationDate
-                  date={getDurationDate(
-                    theCase.state,
-                    theCase.validToDate,
-                    theCase.initialRulingDate,
-                    theCase.rulingDate,
-                  )}
-                />
-              )}
+            {renderDurationDate(
+              theCase.type,
+              theCase.state,
+              theCase.validToDate,
+              theCase.initialRulingDate,
+              theCase.rulingDate,
+            )}
           </MobileCase>
         </Box>
       ))}
@@ -209,9 +257,7 @@ const Table: FC<TableProps> = (props) => {
             aria-disabled={isOpeningCaseId === row.id || isTransitioningCase}
             className={styles.tableRowContainer}
             onClick={() => {
-              if (!onClick?.(row)) {
-                handleOpenCase(row.id)
-              }
+              handleCaseClick(row)
             }}
             data-testid="tableRow"
           >
