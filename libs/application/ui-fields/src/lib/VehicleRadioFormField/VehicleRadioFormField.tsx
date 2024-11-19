@@ -14,6 +14,7 @@ import { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { RadioController } from '@island.is/shared/form-fields'
 import { PlateOwnership, VehicleDetails } from './VehicleDetails'
+import { MessageDescriptor } from 'react-intl'
 
 interface Option {
   value: string
@@ -45,11 +46,7 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
 
   const [selectedValue, setSelectedValue] = useState<string | undefined>(
     answersSelectedValueKey &&
-      (getValueViaPath(
-        application.answers,
-        answersSelectedValueKey,
-        '',
-      ) as string),
+      getValueViaPath<string>(application.answers, answersSelectedValueKey, ''),
   )
 
   const onRadioControllerSelect = (s: string) => {
@@ -81,7 +78,7 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
   }
 
   const vehicleOptions = (vehicles: VehicleDetails[]) => {
-    const options = [] as Option[]
+    const options: Option[] = []
 
     for (const [index, vehicle] of vehicles.entries()) {
       const hasError = !!vehicle.validationErrorMessages?.length
@@ -131,10 +128,10 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                             const message =
                               field.validationErrorMessages &&
                               formatMessage(
-                                getValueViaPath(
+                                getValueViaPath<MessageDescriptor>(
                                   field.validationErrorMessages,
                                   error.errorNo || '',
-                                ),
+                                ) || '',
                               )
                             const defaultMessage = error.defaultMessage
                             const fallbackMessage =
@@ -168,7 +165,7 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
   }
 
   const plateOptions = (plates: PlateOwnership[]) => {
-    const options = [] as Option[]
+    const options: Option[] = []
 
     for (const [index, plate] of plates.entries()) {
       const hasError = !!plate.validationErrorMessages?.length
@@ -216,10 +213,10 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
                           const message =
                             field.validationErrorMessages &&
                             formatMessage(
-                              getValueViaPath(
+                              getValueViaPath<MessageDescriptor>(
                                 field.validationErrorMessages,
                                 error.errorNo || '',
-                              ),
+                              ) || '',
                             )
 
                           const defaultMessage = error.defaultMessage
@@ -271,7 +268,7 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
         options={options}
       />
 
-      {!selectedValue?.length && (errors as any)?.[field.id] && (
+      {!selectedValue?.length && !!errors?.[field.id] && (
         <InputError
           errorMessage={
             field.inputErrorMessage &&

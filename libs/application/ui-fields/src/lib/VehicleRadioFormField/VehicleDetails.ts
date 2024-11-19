@@ -11,12 +11,12 @@ export interface VehicleDetails {
   requireMileage?: boolean | null
   mileageReading?: string | null
   isDebtLess?: boolean | null
-  validationErrorMessages?: ValidationErrorMessage[] | null
+  validationErrorMessages?: ValidationErrorMessage[]
 }
 
 export interface PlateOwnership {
   regno: string
   startDate: string
   endDate: string
-  validationErrorMessages?: ValidationErrorMessage[] | null
+  validationErrorMessages?: ValidationErrorMessage[]
 }
