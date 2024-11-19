@@ -73,7 +73,7 @@ export const textInnerContainer = style({
       maxWidth: '100%',
       display: 'flex',
       alignItems: 'flex-end',
-      paddingLeft: '60px',
+      paddingLeft: '16px',
       paddingRight: '16px',
       paddingBottom: '105px',
       justifyContent: 'center',
@@ -99,80 +99,15 @@ export const textInnerContainerSubpage = style({
 
 export const headerImage = style({
   width: '100%',
-  maxHeight: '100%',
+  order: 1,
   ...themeUtils.responsiveStyle({
     xs: {
-      order: 0,
       maxHeight: '200px',
     },
     lg: {
-      order: 1,
+      maxHeight: '100%',
     },
   }),
-})
-
-export const logoContainer = style({
-  width: '136px',
-  height: '136px',
-  boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.08)',
-  position: 'absolute',
-  bottom: '-92px',
-  left: '7%',
-  display: 'grid',
-  placeItems: 'center',
-  zIndex: 1,
-})
-
-export const logoContainerSubpage = style({
-  bottom: '-48px',
-})
-
-export const logo = style({
-  width: '70px',
-  height: '70px',
-})
-
-export const logoSubpage = style({
-  width: '30px',
-  height: '30px',
-})
-
-export const contentContainer = style({
-  maxWidth: '1440px',
-  width: '100%',
-  height: '255px',
-  position: 'absolute',
-  left: '50%',
-  transform: 'translate(-50%, 0)',
-  paddingLeft: '48px',
-  paddingRight: '48px',
-})
-
-export const contentContainerSubpage = style({
-  height: '115px',
-})
-
-export const innerContentContainer = style({
-  width: '100%',
-  height: '100%',
-  margin: '0 auto',
-  position: 'relative',
-})
-
-export const logoContainerMobile = style({
-  width: '136px',
-  height: '136px',
-  boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.08)',
-  display: 'grid',
-  placeItems: 'center',
-  margin: '0 auto',
-  marginBottom: '4px',
-})
-
-export const logoContainerMobileSubpage = style({
-  width: '60px',
-  height: '60px',
-  marginBottom: '0px',
 })
 
 export const title = style({

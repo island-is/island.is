@@ -19,11 +19,8 @@ export interface HeaderProps {
   image?: string
   background?: string
   mobileBackground?: string | null
-  title: string
   underTitle?: string
   titleSectionPaddingLeft?: ResponsiveSpace
-  logo?: string
-  logoHref?: string
   titleColor?: TextProps['color']
   customTitleColor?: string
   imagePadding?: string
@@ -31,9 +28,6 @@ export interface HeaderProps {
   imageObjectFit?: 'contain' | 'cover'
   imageObjectPosition?: 'left' | 'center' | 'right'
   className?: string
-  titleClassName?: string
-  logoImageClassName?: string
-  logoAltText?: string
   isSubpage?: boolean
 }
 
@@ -42,7 +36,6 @@ export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   image,
   background,
   mobileBackground,
-  title,
   underTitle,
   titleColor = 'dark400',
   customTitleColor,
@@ -91,7 +84,11 @@ export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
             className={cn(styles.textInnerContainer, {
               [styles.textInnerContainerSubpage]: isSubpage,
             })}
-          ></div>
+          >
+            <Text variant="h1" as="h1" color={titleColor}>
+              {underTitle}
+            </Text>
+          </div>
         </div>
         {imageProvided && !isSubpage && (
           <img
