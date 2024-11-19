@@ -1,5 +1,4 @@
 import { ApolloProvider } from '@apollo/client'
-import { client } from '@island.is/portals/my-pages/graphql'
 import { servicePortalScopes } from '@island.is/auth/scopes'
 import { LocaleProvider } from '@island.is/localization'
 import {
@@ -7,10 +6,11 @@ import {
   PortalRouter,
   isMockMode,
 } from '@island.is/portals/core'
-import { BffProvider, createMockedInitialState } from '@island.is/react-spa/bff'
-import { defaultLanguage } from '@island.is/shared/constants'
 import { ServicePortalPaths } from '@island.is/portals/my-pages/core'
+import { client } from '@island.is/portals/my-pages/graphql'
+import { BffProvider, createMockedInitialState } from '@island.is/react-spa/bff'
 import { FeatureFlagProvider } from '@island.is/react/feature-flags'
+import { defaultLanguage } from '@island.is/shared/constants'
 import { environment } from '../environments'
 import { modules } from '../lib/modules'
 import { createRoutes } from '../lib/routes'
@@ -29,6 +29,7 @@ export const App = () => (
         <BffProvider
           applicationBasePath={ServicePortalPaths.Base}
           mockedInitialState={mockedInitialState}
+          bffGlobalPrefix="/bff"
         >
           <ApplicationErrorBoundary>
             <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>

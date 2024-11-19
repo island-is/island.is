@@ -122,7 +122,7 @@ describe('Feature-deployment support', () => {
       IDENTITY_SERVER_CLIENT_ID: `@admin.island.is/bff-stjornbord`,
       IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is',
       BFF_NAME: 'stjornbord',
-      BFF_CLIENT_KEY_PATH: `/stjornbord`,
+      BFF_GLOBAL_PREFIX: `/stjornbord`,
       BFF_PAR_SUPPORT_ENABLED: 'true',
       BFF_ALLOWED_REDIRECT_URIS: json([
         'https://feature-A-beta.dev01.devland.is',

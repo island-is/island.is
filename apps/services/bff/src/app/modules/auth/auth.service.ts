@@ -62,7 +62,7 @@ export class AuthService {
       // The lax setting allows cookies to be sent on top-level navigations (such as redirects),
       // while still providing some protection against CSRF attacks.
       sameSite: 'lax',
-      path: environment.keyPath,
+      path: environment.globalPrefix,
     }
   }
 
@@ -71,7 +71,7 @@ export class AuthService {
    */
   private createClientBaseUrl() {
     const baseUrl = new URL(this.config.clientBaseUrl)
-    baseUrl.pathname = `${baseUrl.pathname}${environment.keyPath}`
+    baseUrl.pathname = `${baseUrl.pathname}${environment.globalPrefix}`
       // Prevent potential issues with malformed URLs.
       .replace('//', '/')
 

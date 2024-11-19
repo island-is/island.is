@@ -9,7 +9,7 @@ process.env.IDENTITY_SERVER_CLIENT_SCOPES = '["testscope"]'
 process.env.IDENTITY_SERVER_CLIENT_ID = '@test_client_id'
 process.env.BFF_PAR_SUPPORT_ENABLED = 'false'
 
-process.env.BFF_CLIENT_KEY_PATH = '/testclient'
+process.env.BFF_GLOBAL_PREFIX = '/testclient'
 process.env.BFF_CLIENT_BASE_URL = 'http://test-client.com'
 process.env.BFF_ALLOWED_REDIRECT_URIS = '["http://test-client.com/testclient"]'
 process.env.BFF_ALLOWED_EXTERNAL_API_URLS = '["https://api.external.com"]'
