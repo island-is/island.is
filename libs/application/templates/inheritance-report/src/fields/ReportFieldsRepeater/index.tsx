@@ -153,8 +153,8 @@ export const ReportFieldsRepeater: FC<
     const faceValue = stockValues?.amount
     const rateOfExchange = stockValues?.exchangeRateOrInterest
 
-    const a = faceValue?.replace(/[^\d.]/g, '') || explicitAVal
-    const b = rateOfExchange?.replace(/[^\d.]/g, '') || explicitBVal
+    const a = faceValue?.replace(',', '.') || explicitAVal
+    const b = rateOfExchange?.replace(',', '.') || explicitBVal
 
     const aVal = parseFloat(a)
     const bVal = parseFloat(b)
@@ -447,7 +447,9 @@ export const ReportFieldsRepeater: FC<
                         required={field.required}
                         error={err}
                         disabled={!repeaterField.enabled}
-                        onChange={() => {
+                        onChange={(e) => {
+                          parseFloat(e.target.value.replace(',', '.'))
+                          console.log('her', e.target.value)
                           if (valueKeys.includes(field.id)) {
                             updateValue(fieldIndex)
                           }
