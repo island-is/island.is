@@ -186,6 +186,16 @@ export const summary = defineMessages({
     defaultMessage: 'Ástandsskoðun',
     description: 'Property condition inspector label',
   },
+  propertyConditionInspectorValuePrefix: {
+    id: 'ra.application:summary.propertyConditionInspectorValuePrefix',
+    defaultMessage: 'Framkvæmd af ',
+    description: 'Property condition inspector value prefix',
+  },
+  propertyConditionInspectorValueContractParties: {
+    id: 'ra.application:summary.propertyConditionInspectorValueContractParties',
+    defaultMessage: 'samningsaðilum',
+    description: 'Property condition inspector value contract parties',
+  },
   propertyConditionDescriptionLabel: {
     id: 'ra.application:summary.propertyConditionDescriptionLabel',
     defaultMessage: 'Ástandsúttekt',
@@ -220,6 +230,11 @@ export const summary = defineMessages({
   // Tenants and landlords information
   tenantsHeader: {
     id: 'ra.application:summary.tenantsHeader',
+    defaultMessage: 'Leigjandi',
+    description: 'Tenants header',
+  },
+  tenantsHeaderPlural: {
+    id: 'ra.application:summary.tenantsHeaderPlural',
     defaultMessage: 'Leigjendur',
     description: 'Tenants header',
   },
@@ -230,6 +245,11 @@ export const summary = defineMessages({
   },
   landlordsHeader: {
     id: 'ra.application:summary.landlordsHeader',
+    defaultMessage: 'Leigusali',
+    description: 'Landlords header',
+  },
+  landlordsHeaderPlural: {
+    id: 'ra.application:summary.landlordsHeaderPlural',
     defaultMessage: 'Leigusalar',
     description: 'Landlords header',
   },

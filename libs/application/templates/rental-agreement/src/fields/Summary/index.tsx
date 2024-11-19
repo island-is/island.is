@@ -14,6 +14,7 @@ import { TenantInfoSummary } from './TenantInfoSummary'
 import { PropertyInfoSummary } from './PropertyInfoSummary'
 import { OtherFeesSummary } from './OtherFeesSummary'
 import { RentalInfoSummary } from './RentalInfoSummary'
+import { ApplicantsRepresentativesSummary } from './ApplicantsRepresentativesSummary'
 
 export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application } = props
@@ -29,11 +30,13 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
         </Text>
         <Text marginBottom={5}>{formatMessage(summary.pageDescription)}</Text>
       </Box>
-      <RentalInfoSummary answers={answers} />
-      <OtherFeesSummary answers={answers} />
-      <PropertyInfoSummary answers={answers} />
-      <TenantInfoSummary answers={answers} />
       <LandlordInfoSummary answers={answers} />
+      <TenantInfoSummary answers={answers} />
+      <ApplicantsRepresentativesSummary answers={answers} />
+      <RentalInfoSummary answers={answers} />
+      <PropertyInfoSummary answers={answers} />
+      <OtherFeesSummary answers={answers} />
+
       <Box marginTop={2}>
         <Text variant="h5" as="h3">
           {formatMessage(summary.shareLinkLabel)}{' '}
