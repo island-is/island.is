@@ -29,7 +29,8 @@ export const TemporaryCalculationTable: FC<
   const { formatMessage } = useLocale()
 
   const { incomePlan } = getApplicationAnswers(application.answers)
-  const { watch } = useFormContext()
+  const { watch, setValue } = useFormContext()
+  setValue('temporaryCalculation.show', false)
   const temporaryCalculationMonth = watch('temporaryCalculation.month')
   const monthIndex = MONTHS.findIndex(
     (month) => month.value === temporaryCalculationMonth,
@@ -152,6 +153,7 @@ export const TemporaryCalculationTable: FC<
       </Box>
     )
   }
+  setValue('temporaryCalculation.show', true)
 
   return (
     <Box>
@@ -194,7 +196,7 @@ export const TemporaryCalculationTable: FC<
                       align="right"
                       box={{ paddingRight: 0 }}
                     >
-                      {group.monthTotals?.[monthIndex].amount}
+                      {group.monthTotals?.[monthIndex]?.amount}
                     </T.HeadData>
                     <T.HeadData width="25%" align="right">
                       {group.total && formatCurrency(group.total.toString())}
@@ -206,7 +208,7 @@ export const TemporaryCalculationTable: FC<
                     <T.Row key={`row-${rowIndex}`}>
                       <T.Data>{row.name}</T.Data>
                       <T.Data align="right" box={{ paddingRight: 0 }}>
-                        {row.months?.[monthIndex].amount}
+                        {row.months?.[monthIndex]?.amount}
                       </T.Data>
                       <T.Data align="right">
                         {row.total && formatCurrency(row.total.toString())}

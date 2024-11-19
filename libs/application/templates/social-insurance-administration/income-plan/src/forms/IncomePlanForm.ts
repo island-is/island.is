@@ -33,6 +33,7 @@ import {
   YES,
 } from '../lib/constants'
 import {
+  getApplicationAnswers,
   getApplicationExternalData,
   getCategoriesOptions,
   getTypesOptions,
@@ -639,6 +640,8 @@ export const IncomePlanForm: Form = buildForm({
               width: 'half',
               options: MONTHS,
               defaultValue: MONTHS[new Date().getMonth()].value,
+              condition: (answers) =>
+                getApplicationAnswers(answers).temporaryCalculationShow,
             }),
             buildCustomField({
               id: 'temporaryCalculationTable',
