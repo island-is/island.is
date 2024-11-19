@@ -6,6 +6,7 @@ export enum CustomPageUniqueIdentifier {
   PensionCalculator = 'PensionCalculator',
   OfficialJournalOfIceland = 'OfficialJournalOfIceland',
   Vacancies = 'Vacancies',
+  Grants = 'Grants',
 }
 
 export interface StatisticSourceValue {

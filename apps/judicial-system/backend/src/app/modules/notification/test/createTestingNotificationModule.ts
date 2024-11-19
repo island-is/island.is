@@ -4,7 +4,7 @@ import { uuid } from 'uuidv4'
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
-import { IntlService } from '@island.is/cms-translations'
+import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
 import { EmailService } from '@island.is/email-service'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -25,6 +25,7 @@ import { eventModuleConfig, EventService } from '../../event'
 import { InstitutionService } from '../../institution'
 import { UserService } from '../../user'
 import { CaseNotificationService } from '../caseNotification.service'
+import { CivilClaimantNotificationService } from '../civilClaimantNotification.service'
 import { DefendantNotificationService } from '../defendantNotification.service'
 import { InstitutionNotificationService } from '../institutionNotification.service'
 import { InternalNotificationController } from '../internalNotification.controller'
@@ -35,6 +36,30 @@ import { NotificationService } from '../notification.service'
 import { NotificationDispatchService } from '../notificationDispatch.service'
 
 jest.mock('@island.is/judicial-system/message')
+
+export const createTestUsers = (
+  roles: string[],
+): Record<
+  string,
+  {
+    id: string
+    name: string
+    email: string
+    mobile: string
+    nationalId: string
+  }
+> =>
+  roles.reduce((acc, role) => {
+    const id = uuid()
+    acc[role] = {
+      id: id,
+      name: `${role}-${id}`,
+      email: `${role}-${id}@omnitrix.is`,
+      mobile: id,
+      nationalId: '1234567890',
+    }
+    return acc
+  }, {} as Record<string, { id: string; name: string; email: string; mobile: string; nationalId: string }>)
 
 const formatMessage = createTestIntl({
   onError: jest.fn(),
@@ -104,6 +129,7 @@ export const createTestingNotificationModule = async () => {
       NotificationDispatchService,
       InstitutionNotificationService,
       DefendantNotificationService,
+      CivilClaimantNotificationService,
     ],
   })
     .useMocker((token) => {
