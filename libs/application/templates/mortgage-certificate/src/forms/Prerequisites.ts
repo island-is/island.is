@@ -11,6 +11,7 @@ import {
   IdentityApi,
   UserProfileApi,
   SyslumadurPaymentCatalogApi,
+  MockableSyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { confirmation, externalData, payment, property } from '../lib/messages'
 import Logo from '../assets/Logo'
@@ -58,6 +59,10 @@ export const PrerequisitesForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SyslumadurPaymentCatalogApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: MockableSyslumadurPaymentCatalogApi,
               title: '',
             }),
           ],
