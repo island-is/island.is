@@ -27,11 +27,15 @@ export class ClientService {
     this.receiveMessagesAbortController = new AbortController()
   }
 
-  async add(url: string, message: unknown): Promise<string> {
+  async add(
+    url: string,
+    message: unknown,
+    messageAttributes?: Record<string, { DataType: string; StringValue: string }>,
+  ): Promise<string> {
     const r = await this.client.send(
       new SendMessageCommand({
         QueueUrl: url,
-        MessageAttributes: {},
+        MessageAttributes: messageAttributes || {},
         MessageBody: JSON.stringify(message),
       }),
     )

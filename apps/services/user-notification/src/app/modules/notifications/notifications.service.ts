@@ -12,7 +12,7 @@ import { paginate } from '@island.is/nest/pagination'
 import type { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 import { Notification } from './notification.model'
-import { ArgumentDto } from './dto/createHnippNotification.dto'
+import { ArgumentDto, CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import {
   PaginatedNotificationDto,
@@ -30,6 +30,8 @@ import {
   GetTemplates,
   GetOrganizationByNationalId,
 } from '@island.is/clients/cms'
+import { InjectQueue, QueueService } from '@island.is/message-queue'
+import { ProcessingState } from './types/processing'
 
 /**
  * These are the properties that can be replaced in the template
@@ -53,6 +55,7 @@ export class NotificationsService {
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
     private readonly cmsService: CmsService,
+    @InjectQueue('notifications') private readonly queue: QueueService,
   ) {}
 
   async getSenderOrganizationTitle(
@@ -151,6 +154,7 @@ export class NotificationsService {
       throw new NotFoundException(`Template not found for ID: ${templateId}`)
     }
   }
+
   /**
    * Checks if the arguments provided in the request body are valid for the template and checks if the number of arguments match
    */
@@ -392,5 +396,56 @@ export class NotificationsService {
         'Error marking all notifications as read',
       )
     }
+  }
+
+  /**
+   * Creates a new notification and adds it to the queue
+   */
+  async createNotification(
+    body: CreateHnippNotificationDto,
+  ): Promise<{ id: string }> {
+    await this.validate(body.templateId, body.args)
+    
+    // Add message attributes for processing states
+    const messageAttributes = {
+      processDb: {
+        DataType: 'String',
+        StringValue: ProcessingState.PENDING,
+      },
+      processPush: {
+        DataType: 'String',
+        StringValue: ProcessingState.PENDING,
+      },
+      processEmail: {
+        DataType: 'String',
+        StringValue: ProcessingState.PENDING,
+      },
+      processDelegations: {
+        DataType: 'String',
+        StringValue: ProcessingState.PENDING,
+      },
+    }
+    
+    const id = await this.queue.add(body, messageAttributes)
+    
+    // Flatten args for logging
+    const flattenedArgs = body.args.reduce(
+      (acc, arg) => ({
+        ...acc,
+        [arg.key]: arg.value,
+      }),
+      {},
+    )
+
+    this.logger.info('Message queued', {
+      messageId: id,
+      ...flattenedArgs,
+      recipient: body.recipient,
+      templateId: body.templateId,
+      senderId: body.senderId,
+      processingStates: messageAttributes,
+    })
+
+    return { id }
   }
 }

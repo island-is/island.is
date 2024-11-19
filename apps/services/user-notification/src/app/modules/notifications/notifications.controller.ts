@@ -95,20 +95,6 @@ export class NotificationsController {
   async createHnippNotification(
     @Body() body: CreateHnippNotificationDto,
   ): Promise<CreateNotificationResponse> {
-    await this.notificationsService.validate(body.templateId, body.args)
-    const id = await this.queue.add(body)
-    const flattenedArgs: Record<string, string> = {}
-    for (const arg of body.args) {
-      flattenedArgs[arg.key] = arg.value
-    }
-    this.logger.info('Message queued', {
-      messageId: id,
-      ...flattenedArgs,
-      ...body,
-    })
-
-    return {
-      id,
-    }
+    return await this.notificationsService.createNotification(body)
   }
 }

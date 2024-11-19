@@ -30,8 +30,11 @@ export class QueueService implements OnApplicationBootstrap {
   }
 
   // Add new message to queue.
-  async add(message: unknown): Promise<string> {
-    return await this.client.add(this.url, message)
+  async add(
+    message: unknown,
+    messageAttributes?: Record<string, { DataType: string; StringValue: string }>,
+  ): Promise<string> {
+    return await this.client.add(this.url, message, messageAttributes)
   }
 
   // Purge all messages from queue. This is probably mainly useful in test
