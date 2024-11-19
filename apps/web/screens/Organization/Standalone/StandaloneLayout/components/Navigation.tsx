@@ -85,7 +85,9 @@ export const Navigation: React.FC<React.PropsWithChildren<NavigationProps>> = ({
             </Box>
           </Hidden>
           <Hidden above="md">
-            <MobileMenu links={links} />
+            <Box display="flex" alignItems="center" justifyContent="flexEnd">
+              <MobileMenu links={links} homeHref={homeHref} title={title} />
+            </Box>
           </Hidden>
         </GridColumn>
       </GridRow>
