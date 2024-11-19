@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css'
+
 import { theme } from '@island.is/island-ui/theme'
 
 export const footerBg = style({
@@ -11,4 +12,8 @@ export const footerItemFirst = style({
       flexBasis: '100%',
     },
   },
+})
+
+export const serviceWebFooterBg = style({
+  background: theme.color.purple100,
 })

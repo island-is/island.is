@@ -14,6 +14,7 @@ import {
   LinkProps,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { GlobalContext } from '@island.is/web/context'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
@@ -38,12 +39,15 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
   namespace,
 }) => {
   const n = useNamespace(namespace)
-  const questionsAndAnswersText = n('questionsAndAnswers', 'Spurningar og svör')
   const canWeHelpText = n('canWeHelp', 'Getum við aðstoðað?')
   const { activeLocale } = useI18n()
 
   const { isServiceWeb } = useContext(GlobalContext)
-  const { linkResolver } = useLinkResolver()
+
+  const footerTitle = isServiceWeb ? n('serviceWebFooterTitle', title) : title
+  const footerTextColor: keyof typeof theme.color = isServiceWeb
+    ? 'dark400'
+    : 'white'
 
   const items = footerItems.map((item, index) => (
     <GridColumn
@@ -60,7 +64,7 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
               {item.title}
             </HeaderLink>
           ) : (
-            <Text fontWeight="semiBold" color="white">
+            <Text fontWeight="semiBold" color={footerTextColor}>
               <Hyphen>{item.title}</Hyphen>
             </Text>
           )}
@@ -70,7 +74,7 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
           {
             renderNode: {
               [BLOCKS.PARAGRAPH]: (_node: never, children: ReactNode) => (
-                <Text variant="small" color="white">
+                <Text variant="small" color={footerTextColor}>
                   {children}
                 </Text>
               ),
@@ -85,7 +89,7 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
     <Box
       component="footer"
       aria-labelledby="organizationFooterTitle"
-      className={styles.footerBg}
+      className={isServiceWeb ? styles.serviceWebFooterBg : styles.footerBg}
       paddingTop={5}
     >
       <GridContainer>
@@ -105,8 +109,8 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
               </Box>
             )}
             <div id="organizationFooterTitle">
-              <Text variant="h2" color="white">
-                {title}
+              <Text variant="h2" color={footerTextColor}>
+                {footerTitle}
               </Text>
             </div>
           </Box>
@@ -117,6 +121,7 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
               <>
                 <GridColumn span={['12/12', '12/12', '1/5']} paddingBottom={4}>
                   <HeaderLink
+                    color={footerTextColor}
                     linkType="serviceweborganization"
                     slug={
                       n(
@@ -127,20 +132,15 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
                       ) as string
                     }
                   >
-                    {questionsAndAnswersText}
+                    {canWeHelpText}
                   </HeaderLink>
                   <Box marginTop={3}>
                     <Link
-                      href={
-                        linkResolver('serviceweborganization', [
-                          n(
-                            'organizationSlug',
-                            activeLocale === 'is'
-                              ? 'syslumenn'
-                              : 'district-commissioner',
-                          ) as string,
-                        ])?.href
-                      }
+                      color={footerTextColor === 'white' ? 'white' : 'blue400'}
+                      href={n(
+                        'privacyPolicyHref',
+                        '/s/syslumenn/personuverndarstefna-syslumanna',
+                      )}
                       skipTab
                     >
                       <Button
@@ -150,7 +150,10 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
                         variant="text"
                         as="span"
                       >
-                        {canWeHelpText}
+                        {n(
+                          'privacyPolicyLabel',
+                          'Persónuverndarstefna Sýslumanna',
+                        )}
                       </Button>
                     </Link>
                   </Box>
@@ -173,6 +176,7 @@ interface HeaderLink {
   linkType?: LinkType
   underline?: LinkProps['underline']
   slug: string
+  color?: keyof typeof theme.color
 }
 
 const HeaderLink: FC<React.PropsWithChildren<HeaderLink>> = ({
@@ -180,6 +184,7 @@ const HeaderLink: FC<React.PropsWithChildren<HeaderLink>> = ({
   slug,
   children,
   underline = 'normal',
+  color = 'white',
 }) => {
   const { linkResolver } = useLinkResolver()
 
@@ -198,7 +203,7 @@ const HeaderLink: FC<React.PropsWithChildren<HeaderLink>> = ({
         ),
       }}
     >
-      <Text fontWeight="semiBold" color="white">
+      <Text fontWeight="semiBold" color={color}>
         <a
           href={
             linkType
