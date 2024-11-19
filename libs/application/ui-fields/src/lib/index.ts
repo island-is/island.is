@@ -25,6 +25,7 @@ export { HiddenInputFormField } from './HiddenInputFormField/HiddenInputFormFiel
 export { ActionCardListFormField } from './ActionCardListFormField/ActionCardListFormField'
 export { TableRepeaterFormField } from './TableRepeaterFormField/TableRepeaterFormField'
 export { FindVehicleFormField } from './FindVehicleFormField/FindVehicleFormField'
+export { VehicleRadioFormField } from './VehicleRadioFormField/VehicleRadioFormField'
 export { StaticTableFormField } from './StaticTableFormField/StaticTableFormField'
 export { AccordionFormField } from './AccordionFormField/AccordionFormField'
 export { BankAccountFormField } from './BankAccountFormField/BankAccountFormField'
