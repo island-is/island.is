@@ -18,9 +18,9 @@ type BffProviderProps = {
   applicationBasePath: string
   /**
    * Bff API - Global prefix path
-   * @example /bff, /stjornbord/bff, etc.
+   * @example /stjornbord/bff, etc.
    */
-  bffGlobalPrefix: string
+  bffGlobalPrefix?: string
 }
 
 export const BffProvider = ({

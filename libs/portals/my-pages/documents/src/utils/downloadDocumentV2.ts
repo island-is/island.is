@@ -1,4 +1,3 @@
-import { ServicePortalPaths } from '@island.is/portals/my-pages/core'
 import { createBffUrlGenerator } from '@island.is/react-spa/bff'
 import { ActiveDocumentType2 } from '../lib/types'
 
@@ -24,7 +23,7 @@ export const downloadFile = async ({ doc, query }: DownloadFileArgs) => {
       win?.focus()
     }, 250)
   } else {
-    const bffUrlGenerator = createBffUrlGenerator(ServicePortalPaths.Base)
+    const bffUrlGenerator = createBffUrlGenerator()
     const bffUrl = bffUrlGenerator('/api', {
       url: query ? `${doc?.downloadUrl}?action=${query}` : doc?.downloadUrl,
     })
