@@ -30,18 +30,18 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
       <Box paddingBottom={2}>
         {ogTitle && <HeadWithSocialSharing title={ogTitle} />}
         <Stack space={1}>
-          {item?.date && (
+          {item.date && (
             <Text variant="eyebrow">
               {format(new Date(item.date), 'dd.MM.yyyy')}
             </Text>
           )}
           <Stack space={1}>
             <Text variant="h1" as="h1">
-              {item?.title}
+              {item.title}
             </Text>
             {showReadspeaker && <Webreader readClass="rs_read" marginTop={0} />}
           </Stack>
-          <Text as="div">{webRichText(item?.content ?? [])}</Text>
+          <Text as="div">{webRichText(item.content ?? [])}</Text>
         </Stack>
       </Box>
     </GridContainer>
@@ -49,7 +49,7 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
 }
 
 GenericListItemPage.getProps = async ({ apolloClient, query, locale }) => {
-  const [_slug, _subSlug, slug] = query.slugs as string[]
+  const slug = (query.slugs as string[])[2]
 
   if (!slug) {
     throw new CustomNextError(
@@ -71,7 +71,7 @@ GenericListItemPage.getProps = async ({ apolloClient, query, locale }) => {
     },
   })
 
-  if (!response?.data?.getGenericListItemBySlug?.title) {
+  if (!response?.data?.getGenericListItemBySlug) {
     throw new CustomNextError(
       404,
       `Generic List item with slug: ${slug} could not be found`,

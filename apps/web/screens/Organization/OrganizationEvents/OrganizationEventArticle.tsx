@@ -285,14 +285,14 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
   )
 }
 OrganizationEventArticle.getProps = async ({ apolloClient, query, locale }) => {
-  const [slug, _, eventSlug] = query.slugs as string[]
+  const [organizationPageSlug, _, eventSlug] = query.slugs as string[]
   const [organizationPageResponse, eventResponse, namespace] =
     await Promise.all([
       apolloClient.query<Query, QueryGetOrganizationPageArgs>({
         query: GET_ORGANIZATION_PAGE_QUERY,
         variables: {
           input: {
-            slug: slug,
+            slug: organizationPageSlug,
             lang: locale as Locale,
           },
         },

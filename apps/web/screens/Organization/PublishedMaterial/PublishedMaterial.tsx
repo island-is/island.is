@@ -500,6 +500,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
 }
 
 PublishedMaterial.getProps = async ({ apolloClient, locale, query }) => {
+  const organizationPageSlug = (query.slugs as string[])[0]
   const [
     {
       data: { getOrganizationPage },
@@ -510,7 +511,7 @@ PublishedMaterial.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: query.slugs?.[0] as string,
+          slug: organizationPageSlug,
           lang: locale as ContentLanguage,
         },
       },
@@ -541,7 +542,7 @@ PublishedMaterial.getProps = async ({ apolloClient, locale, query }) => {
     query: GET_ORGANIZATION_QUERY,
     variables: {
       input: {
-        slug: getOrganizationPage.organization?.slug ?? (query.slug as string),
+        slug: getOrganizationPage.organization?.slug ?? organizationPageSlug,
         lang: locale as ContentLanguage,
       },
     },

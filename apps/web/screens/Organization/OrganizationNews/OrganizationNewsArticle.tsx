@@ -163,8 +163,7 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
 }
 
 OrganizationNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
-  const slug = (query.slugs as string[])[0]
-  const newsSlug = (query.slugs as string[])[2]
+  const [organizationPageSlug, _, newsSlug] = query.slugs as string[]
 
   const organizationPage = (
     await Promise.resolve(
@@ -172,7 +171,7 @@ OrganizationNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
         query: GET_ORGANIZATION_PAGE_QUERY,
         variables: {
           input: {
-            slug,
+            slug: organizationPageSlug,
             lang: locale as Locale,
           },
         },
