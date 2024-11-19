@@ -113,7 +113,7 @@ const PastCasesTable: FC<Props> = ({ cases }) => {
           {
             cell: (row) => {
               const indictmentCaseStateTag = getIndictmentCaseStateTag(
-                row as Case,
+                row,
                 user,
               )
 
