@@ -638,7 +638,7 @@ export const IncomePlanForm: Form = buildForm({
               title: socialInsuranceAdministrationMessage.period.month,
               width: 'half',
               options: MONTHS,
-              defaultValue: 'January',
+              defaultValue: MONTHS[new Date().getMonth()].value,
             }),
             buildCustomField({
               id: 'temporaryCalculationTable',
