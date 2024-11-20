@@ -1,6 +1,5 @@
 import { RepeaterItem } from '@island.is/application/types'
 import { coreMessages } from '@island.is/application/core'
-import { TableRepeaterItem } from '@island.is/application/types'
 
 type Item = {
   id: string
@@ -43,7 +42,7 @@ const handleNationalIdWithNameItem = <T>(
   return newValues
 }
 
-export const buildDefaultTableHeader = (items: Array<TableRepeaterItem>) =>
+export const buildDefaultTableHeader = (items: Array<RepeaterItem>) =>
   items
     .map((item) =>
       // nationalIdWithName is a special case where the value is an object of name and nationalId
@@ -54,7 +53,7 @@ export const buildDefaultTableHeader = (items: Array<TableRepeaterItem>) =>
     .flat(2)
 
 export const buildDefaultTableRows = (
-  items: Array<TableRepeaterItem & { id: string }>,
+  items: Array<RepeaterItem & { id: string }>,
 ) =>
   items
     .map((item) =>
