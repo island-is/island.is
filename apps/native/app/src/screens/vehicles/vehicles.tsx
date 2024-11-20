@@ -14,8 +14,8 @@ import { useTheme } from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/le-moving-s4.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
-  ListVehiclesV2Query,
-  useListVehiclesV2Query,
+  ListVehiclesQuery,
+  useListVehiclesQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -32,7 +32,7 @@ const { useNavigationOptions, getNavigationOptions } =
   }))
 
 type VehicleListItem = NonNullable<
-  NonNullable<ListVehiclesV2Query['vehiclesListV2']>['vehicleList']
+  NonNullable<ListVehiclesQuery['vehiclesList']>['vehicleList']
 >[0]
 
 type ListItem =
@@ -61,6 +61,8 @@ const Empty = () => (
 const input = {
   page: 1,
   pageSize: 10,
+  showDeregeristered: false,
+  showHistory: false,
 }
 
 export const VehiclesScreen: NavigationFunctionComponent = ({
@@ -75,7 +77,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
   const scrollY = useRef(new Animated.Value(0)).current
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
 
-  const res = useListVehiclesV2Query({
+  const res = useListVehiclesQuery({
     variables: {
       input,
     },
@@ -133,9 +135,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
   // Extract key of data
   const keyExtractor = useCallback(
     (item: ListItem, index: number) =>
-      item.__typename === 'Skeleton'
-        ? String(item.id)
-        : `${item.permno}${index}`,
+      item.__typename === 'Skeleton' ? String(item.id) : `${item.vin}${index}`,
     [],
   )
 
@@ -147,7 +147,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
         __typename: 'Skeleton',
       }))
     }
-    return res?.data?.vehiclesListV2?.vehicleList || []
+    return res?.data?.vehiclesList?.vehicleList || []
   }, [res.data, res.loading])
 
   return (
@@ -184,8 +184,8 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
           if (res.loading) {
             return
           }
-          const pageNumber = res.data?.vehiclesListV2?.paging?.pageNumber ?? 1
-          const totalPages = res.data?.vehiclesListV2?.paging?.totalPages ?? 1
+          const pageNumber = res.data?.vehiclesList?.paging?.pageNumber ?? 1
+          const totalPages = res.data?.vehiclesList?.paging?.totalPages ?? 1
           if (pageNumber >= totalPages) {
             return
           }
@@ -200,11 +200,11 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
               },
               updateQuery(prev, { fetchMoreResult }) {
                 return {
-                  vehiclesListV2: {
-                    ...fetchMoreResult.vehiclesListV2,
+                  vehiclesList: {
+                    ...fetchMoreResult.vehiclesList,
                     vehicleList: [
-                      ...(prev.vehiclesListV2?.vehicleList ?? []),
-                      ...(fetchMoreResult.vehiclesListV2?.vehicleList ?? []),
+                      ...(prev.vehiclesList?.vehicleList ?? []),
+                      ...(fetchMoreResult.vehiclesList?.vehicleList ?? []),
                     ],
                   },
                 }

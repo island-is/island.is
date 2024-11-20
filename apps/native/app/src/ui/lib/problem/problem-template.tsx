@@ -10,6 +10,7 @@ export type ProblemTemplateBaseProps = {
   title: string
   message: string | ReactNode
   withContainer?: boolean
+  size?: 'small' | 'large'
 }
 
 interface WithIconProps extends ProblemTemplateBaseProps {
@@ -68,6 +69,7 @@ const getColorsByVariant = (
 const Host = styled.View<{
   borderColor: Colors
   noContainer?: boolean
+  size: 'small' | 'large'
 }>`
   border-color: ${({ borderColor, theme }) => theme.color[borderColor]};
   border-width: 1px;
@@ -76,11 +78,12 @@ const Host = styled.View<{
   justify-content: center;
   align-items: center;
   flex: 1;
-  row-gap: ${({ theme }) => theme.spacing[3]}px;
+  row-gap: ${({ theme, size }) =>
+    size === 'small' ? theme.spacing[2] : theme.spacing[3]}px;
 
   padding: ${({ theme }) => theme.spacing[2]}px;
   ${({ noContainer, theme }) => noContainer && `margin: ${theme.spacing[2]}px;`}
-  min-height: 280px;
+  min-height: ${({ size }) => (size === 'large' ? '280' : '142')}px;
 `
 
 const Tag = styled(View)<{
@@ -114,12 +117,13 @@ export const ProblemTemplate = ({
   showIcon,
   tag,
   withContainer,
+  size = 'large',
 }: ProblemTemplateProps) => {
   const { borderColor, tagColor, tagBackgroundColor } =
     getColorsByVariant(variant)
 
   return (
-    <Host borderColor={borderColor} noContainer={withContainer}>
+    <Host borderColor={borderColor} noContainer={withContainer} size={size}>
       {tag && (
         <Tag backgroundColor={tagBackgroundColor}>
           <TagText variant="eyebrow" color={tagColor}>
@@ -129,10 +133,18 @@ export const ProblemTemplate = ({
       )}
       {showIcon && <Icon source={getIcon(variant)} />}
       <Content>
-        <Typography variant="heading3" textAlign="center">
+        <Typography
+          variant={size === 'small' ? 'heading5' : 'heading3'}
+          textAlign="center"
+        >
           {title}
         </Typography>
-        <Typography textAlign="center">{message}</Typography>
+        <Typography
+          variant={size === 'small' ? 'body3' : 'body'}
+          textAlign="center"
+        >
+          {message}
+        </Typography>
       </Content>
     </Host>
   )
