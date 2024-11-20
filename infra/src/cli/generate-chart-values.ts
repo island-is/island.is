@@ -22,6 +22,8 @@ const headerComment = `#########################################################
 
 `
 
+const NON_EMPTYABLE_PROPERTIES = new Set(['SERVERSIDE_FEATURES_ON'])
+
 // Recursive function to filter out empty string properties
 const removeEmptyStringProperties = (obj: any): any => {
   if (typeof obj !== 'object' || obj === null) return obj
@@ -32,7 +34,9 @@ const removeEmptyStringProperties = (obj: any): any => {
 
   return Object.fromEntries(
     Object.entries(obj)
-      .filter(([_, value]) => value !== '') // Filter out empty strings
+      .filter(
+        ([key, value]) => value !== '' || NON_EMPTYABLE_PROPERTIES.has(key),
+      ) // Filter out empty strings
       .map(([key, value]) => [key, removeEmptyStringProperties(value)]), // Recursively apply to nested objects
   )
 }
@@ -54,7 +58,6 @@ async function generateChartValues() {
   for (const [name, envs] of Object.entries(Deployments)) {
     for (const [envType, envName] of Object.entries(envs)) {
       console.log(`Processing ${name} ${envName} ${envType}`)
-
       // Get rendered environment values and parse
       const renderedYaml = await renderEnv(envType as OpsEnv, name as ChartName)
       const renderedValues = yaml
@@ -76,12 +79,12 @@ async function generateChartValues() {
       const services = Charts[name as ChartName][envType as OpsEnv]
       for (const service of services) {
         const serviceName = service.name()
+        console.log(`Processing ${serviceName} ${envName} ${envType}`)
         if (renderedValues[serviceName]) {
           const serviceValues = {
-            service: {
-              name: serviceName,
-              ...renderedValues[serviceName],
-            },
+            global: renderedValues.global,
+            name: serviceName,
+            ...renderedValues[serviceName],
           }
 
           writeYamlFile(

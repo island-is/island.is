@@ -5,7 +5,8 @@ import { useFormContext } from 'react-hook-form'
 import { employee } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { WorkAccidentNotification } from '../../lib/dataSchema'
-import { dateIsWithin36Hours } from '../../utils'
+import { dateIsWithin36Hours, formatDate } from '../../utils'
+import { getValueViaPath } from '@island.is/application/core'
 
 interface EmployeeStartTimeErrorProps {
   field: {
@@ -23,6 +24,10 @@ export const EmployeeStartTimeError: FC<
   const { getValues } = useFormContext<WorkAccidentNotification>()
   const { formatMessage } = useLocale()
   const [inputError, setInputError] = useState<boolean>(false)
+  const startDate =
+    getValueViaPath<string>(application.answers, 'accident.date') ?? ''
+  const startTime =
+    getValueViaPath<string>(application.answers, 'accident.time') ?? ''
 
   setBeforeSubmitCallback?.(async () => {
     const values = getValues('employee')
@@ -48,7 +53,9 @@ export const EmployeeStartTimeError: FC<
       {inputError && (
         <Box>
           <ErrorMessage id={field.id}>
-            {formatMessage(employee.employee.errorMessage)}
+            {`${formatMessage(employee.employee.errorMessage)}, ${formatDate(
+              startDate,
+            )} ${startTime.slice(0, 2)}:${startTime.slice(2, 4)}`}
           </ErrorMessage>
         </Box>
       )}

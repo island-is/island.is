@@ -25,6 +25,7 @@ import {
   CurrentVehiclesApi,
   DeliveryStationsApi,
   PlateTypesApi,
+  MockableSamgongustofaPaymentCatalogApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -84,6 +85,9 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: EphemeralStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.validateApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -103,6 +107,7 @@ const template: ApplicationTemplate<
               delete: true,
               api: [
                 SamgongustofaPaymentCatalogApi,
+                MockableSamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
                 DeliveryStationsApi,
                 PlateTypesApi,

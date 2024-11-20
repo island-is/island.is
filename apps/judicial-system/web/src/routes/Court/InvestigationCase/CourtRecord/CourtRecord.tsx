@@ -30,6 +30,7 @@ import {
   HideableText,
   PageHeader,
   PageLayout,
+  PageTitle,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -233,11 +234,7 @@ const CourtRecord: FC = () => {
         title={formatMessage(titles.court.investigationCases.courtRecord)}
       />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(m.sections.title)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(m.sections.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={3}>
           <BlueBox>
