@@ -182,7 +182,7 @@ OrganizationNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
   if (!organizationPage) {
     throw new CustomNextError(
       404,
-      `Could not find organization page with slug: ${query.slug}`,
+      `Could not find organization page with slug: ${organizationPageSlug}`,
     )
   }
 

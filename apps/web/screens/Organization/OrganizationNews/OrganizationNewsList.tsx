@@ -236,7 +236,7 @@ OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
   const month = year && getIntParam(query.m, { minValue: 1, maxValue: 12 })
   const selectedPage = getIntParam(query.page, { minValue: 1 }) ?? 1
 
-  const slug = (query.slugs as string[])[0]
+  const organizationPageSlug = (query.slugs as string[])[0]
 
   const organizationPage = (
     await Promise.resolve(
@@ -244,7 +244,7 @@ OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
         query: GET_ORGANIZATION_PAGE_QUERY,
         variables: {
           input: {
-            slug,
+            slug: organizationPageSlug,
             lang: locale as Locale,
           },
         },
@@ -255,7 +255,7 @@ OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
   if (!organizationPage) {
     throw new CustomNextError(
       404,
-      `Could not find organization page with slug: ${query.slug}`,
+      `Could not find organization page with slug: ${organizationPageSlug}`,
     )
   }
 
