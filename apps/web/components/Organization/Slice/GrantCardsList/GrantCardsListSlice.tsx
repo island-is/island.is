@@ -30,8 +30,6 @@ export const GrantCardsListSlice = ({ slice }: SliceProps) => {
     },
   })
 
-  console.log(slice)
-
   if (!slice.funds) {
     return undefined
   }
@@ -45,11 +43,12 @@ export const GrantCardsListSlice = ({ slice }: SliceProps) => {
         return (
           <Box component="li" className={styles.listItem}>
             <LinkV2
+              color="blue400"
               href={linkResolver(fund.link?.type as LinkType, [
                 fund.link.slug ?? '',
               ])}
             >
-              <Text>{fund.title}</Text>
+              {fund.title}
             </LinkV2>
           </Box>
         )
