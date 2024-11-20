@@ -60,7 +60,10 @@ export class Defendant extends Model {
     )
   }
 
-  static async sentToPoliceAdminDate(defendantId: string, caseId: string) {
+  static async sentToPoliceAdminDate(
+    defendantId: string,
+    caseId: string,
+  ): Promise<Date | undefined> {
     const dateLog = await DefendantEventLog.findOne({
       where: {
         eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,

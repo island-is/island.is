@@ -1,11 +1,10 @@
 import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useParams } from 'next/navigation'
-import { useRouter } from 'next/router'
+import { useParams, useRouter } from 'next/navigation'
 
-import { Box, InputFileUpload, UploadFile } from '@island.is/island-ui/core'
+import { Box, UploadFile } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
-import { core, errors } from '@island.is/judicial-system-web/messages'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,

@@ -40,7 +40,7 @@ module.exports = {
           },
           event_type: {
             type: Sequelize.STRING,
-            allowNull: true,
+            allowNull: false,
           },
         },
         { transaction: t },
