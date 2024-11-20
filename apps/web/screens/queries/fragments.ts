@@ -792,6 +792,20 @@ export const slices = gql`
     aspectRatio
   }
 
+  fragment GrantCardsListFields on GrantCardsList {
+    title
+    displayTitle
+    funds {
+      title
+      link {
+        slug
+        type
+      }
+    }
+    maxNumberOfCards
+    sorting
+  }
+
   fragment LatestEventsSliceFields on LatestEventsSlice {
     title
     events {
@@ -965,6 +979,7 @@ export const slices = gql`
     ...FeaturedEventsFields
     ...GenericListFields
     ...LatestGenericListItemsFields
+    ...GrantCardsListFields
   }
 
   fragment AllSlices on Slice {
