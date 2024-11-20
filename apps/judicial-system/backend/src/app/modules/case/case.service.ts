@@ -1,5 +1,5 @@
 import { Op, WhereOptions } from 'sequelize'
-import { Includeable, OrderItem, Transaction } from 'sequelize/types'
+import { Includeable, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -39,12 +39,16 @@ import {
   CaseTransition,
   CaseType,
   DateType,
+  dateTypes,
   EventType,
+  eventTypes,
   isCompletedCase,
   isIndictmentCase,
   isRequestCase,
   isTrafficViolationCase,
+  notificationTypes,
   StringType,
+  stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -200,10 +204,6 @@ const caseStringTypes: Record<CaseStringKeys, StringType> = {
   civilDemands: StringType.CIVIL_DEMANDS,
 }
 
-const eventTypes = Object.values(EventType)
-const dateTypes = Object.values(DateType)
-const stringTypes = Object.values(StringType)
-
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
@@ -288,8 +288,20 @@ export const include: Includeable[] = [
     ],
     separate: true,
   },
-  { model: CivilClaimant, as: 'civilClaimants' },
-  { model: IndictmentCount, as: 'indictmentCounts' },
+  {
+    model: CivilClaimant,
+    as: 'civilClaimants',
+    required: false,
+    order: [['created', 'ASC']],
+    separate: true,
+  },
+  {
+    model: IndictmentCount,
+    as: 'indictmentCounts',
+    required: false,
+    order: [['created', 'ASC']],
+    separate: true,
+  },
   {
     model: CaseFile,
     as: 'caseFiles',
@@ -301,7 +313,7 @@ export const include: Includeable[] = [
     model: EventLog,
     as: 'eventLogs',
     required: false,
-    where: { eventType: { [Op.in]: eventTypes } },
+    where: { eventType: eventTypes },
     order: [['created', 'DESC']],
     separate: true,
   },
@@ -309,21 +321,47 @@ export const include: Includeable[] = [
     model: DateLog,
     as: 'dateLogs',
     required: false,
-    where: { dateType: { [Op.in]: dateTypes } },
+    where: { dateType: dateTypes },
+    order: [['created', 'DESC']],
+    separate: true,
   },
   {
     model: CaseString,
     as: 'caseStrings',
     required: false,
-    where: { stringType: { [Op.in]: stringTypes } },
+    where: { stringType: stringTypes },
+    separate: true,
   },
-  { model: Notification, as: 'notifications' },
+  {
+    model: Notification,
+    as: 'notifications',
+    required: false,
+    where: { type: notificationTypes },
+    order: [['created', 'DESC']],
+    separate: true,
+  },
   { model: Case, as: 'mergeCase' },
   {
     model: Case,
     as: 'mergedCases',
     where: { state: CaseState.COMPLETED },
     include: [
+      {
+        model: Defendant,
+        as: 'defendants',
+        required: false,
+        order: [['created', 'ASC']],
+        include: [
+          {
+            model: Subpoena,
+            as: 'subpoenas',
+            required: false,
+            order: [['created', 'DESC']],
+            separate: true,
+          },
+        ],
+        separate: true,
+      },
       {
         model: CaseFile,
         as: 'caseFiles',
@@ -355,16 +393,15 @@ export const include: Includeable[] = [
   },
 ]
 
-export const order: OrderItem[] = [
-  [{ model: CivilClaimant, as: 'civilClaimants' }, 'created', 'ASC'],
-  [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
-  [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
-  [{ model: Notification, as: 'notifications' }, 'created', 'DESC'],
-]
-
 export const caseListInclude: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
-  { model: Defendant, as: 'defendants' },
+  {
+    model: Defendant,
+    as: 'defendants',
+    required: false,
+    order: [['created', 'ASC']],
+    separate: true,
+  },
   {
     model: User,
     as: 'creatingProsecutor',
@@ -394,26 +431,25 @@ export const caseListInclude: Includeable[] = [
     model: DateLog,
     as: 'dateLogs',
     required: false,
-    where: { dateType: { [Op.in]: dateTypes } },
+    where: { dateType: dateTypes },
+    order: [['created', 'DESC']],
+    separate: true,
   },
   {
     model: CaseString,
     as: 'caseStrings',
     required: false,
-    where: { stringType: { [Op.in]: stringTypes } },
+    where: { stringType: stringTypes },
+    separate: true,
   },
   {
     model: EventLog,
     as: 'eventLogs',
     required: false,
-    where: { eventType: { [Op.in]: eventTypes } },
+    where: { eventType: eventTypes },
+    order: [['created', 'DESC']],
+    separate: true,
   },
-]
-
-export const listOrder: OrderItem[] = [
-  [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
-  [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
-  [{ model: EventLog, as: 'eventLogs' }, 'created', 'DESC'],
 ]
 
 @Injectable()
@@ -748,10 +784,9 @@ export class CaseService {
           elementId: caseFile.id,
         })) ?? []
 
-    const messages = this.getDeliverProsecutorToCourtMessages(theCase, user)
-      .concat(this.getDeliverDefendantToCourtMessages(theCase, user))
-      .concat(deliverCaseFilesRecordToCourtMessages)
-      .concat(deliverCaseFileToCourtMessages)
+    const messages: Message[] = deliverCaseFilesRecordToCourtMessages.concat(
+      deliverCaseFileToCourtMessages,
+    )
 
     if (isTrafficViolationCase(theCase)) {
       messages.push({
@@ -1392,7 +1427,6 @@ export class CaseService {
   async findById(caseId: string, allowDeleted = false): Promise<Case> {
     const theCase = await this.caseModel.findOne({
       include,
-      order,
       where: {
         id: caseId,
         ...(allowDeleted ? {} : { state: { [Op.not]: CaseState.DELETED } }),
@@ -1410,7 +1444,6 @@ export class CaseService {
   getAll(user: TUser): Promise<Case[]> {
     return this.caseModel.findAll({
       include: caseListInclude,
-      order: listOrder,
       where: getCasesQueryFilter(user),
     })
   }
@@ -1668,23 +1701,6 @@ export class CaseService {
     const updatedArraignmentDate = update.arraignmentDate
     const schedulingNewArraignmentDateForIndictmentCase =
       isIndictmentCase(theCase.type) && Boolean(updatedArraignmentDate)
-
-    if (update.accusedPostponedAppealDate) {
-      const relevantInfo = {
-        appealState: theCase.appealState,
-        accusedAppealDecision: theCase.accusedAppealDecision,
-        accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
-        prosecutorAppealDecision: theCase.prosecutorAppealDecision,
-        prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
-        update: update,
-      }
-
-      this.logger.info(
-        `Updating accusedPostponedAppealDate in case service for case ${
-          theCase.id
-        }. Relevant info: ${JSON.stringify(relevantInfo)}`,
-      )
-    }
 
     return this.sequelize
       .transaction(async (transaction) => {
@@ -2018,11 +2034,23 @@ export class CaseService {
   }
 
   async createCourtCase(theCase: Case, user: TUser): Promise<Case> {
+    let receivalDate: Date
+
+    if (isIndictmentCase(theCase.type)) {
+      receivalDate =
+        theCase.eventLogs?.find(
+          (eventLog) => eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
+        )?.created ?? nowFactory()
+    } else {
+      receivalDate = nowFactory()
+    }
+
     const courtCaseNumber = await this.courtService.createCourtCase(
       user,
       theCase.id,
       theCase.courtId,
       theCase.type,
+      receivalDate,
       theCase.policeCaseNumbers,
       Boolean(theCase.parentCaseId),
       theCase.indictmentSubtypes,

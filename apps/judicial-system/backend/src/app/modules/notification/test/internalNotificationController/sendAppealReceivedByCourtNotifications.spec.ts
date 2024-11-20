@@ -10,7 +10,10 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -23,14 +26,14 @@ interface Then {
 type GivenWhenThen = (defenderNationalId?: string) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal received by court notifications', () => {
-  const courtOfAppealsEmail = uuid()
+  const { coa, defender, prosecutor } = createTestUsers([
+    'coa',
+    'defender',
+    'prosecutor',
+  ])
+
   const userId = uuid()
   const caseId = uuid()
-  const prosecutorName = uuid()
-  const prosecutorEmail = uuid()
-  const prosecutorMobileNumber = uuid()
-  const defenderName = uuid()
-  const defenderEmail = uuid()
   const courtCaseNumber = uuid()
   const receivedDate = new Date()
 
@@ -40,7 +43,7 @@ describe('InternalNotificationController - Send appeal received by court notific
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    process.env.COURTS_EMAILS = `{"4676f08b-aab4-4b4f-a366-697540788088":"${courtOfAppealsEmail}"}`
+    process.env.COURTS_EMAILS = `{"4676f08b-aab4-4b4f-a366-697540788088":"${coa.email}"}`
 
     const { emailService, smsService, internalNotificationController } =
       await createTestingNotificationModule()
@@ -57,14 +60,14 @@ describe('InternalNotificationController - Send appeal received by court notific
           {
             id: caseId,
             prosecutor: {
-              name: prosecutorName,
-              email: prosecutorEmail,
-              mobileNumber: prosecutorMobileNumber,
+              name: prosecutor.name,
+              email: prosecutor.email,
+              mobileNumber: prosecutor.mobile,
             },
             court: { name: 'Héraðsdómur Reykjavíkur' },
             defenderNationalId,
-            defenderName: defenderName,
-            defenderEmail: defenderEmail,
+            defenderName: defender.name,
+            defenderEmail: defender.email,
             courtCaseNumber,
             appealReceivedByCourtDate: receivedDate,
           } as Case,
@@ -92,7 +95,7 @@ describe('InternalNotificationController - Send appeal received by court notific
           to: [
             {
               name: 'Landsréttur',
-              address: courtOfAppealsEmail,
+              address: coa.email,
             },
           ],
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
@@ -104,7 +107,7 @@ describe('InternalNotificationController - Send appeal received by court notific
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: prosecutorName, address: prosecutorEmail }],
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
           html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
             getStatementDeadline(receivedDate),
@@ -114,7 +117,7 @@ describe('InternalNotificationController - Send appeal received by court notific
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
           html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
             getStatementDeadline(receivedDate),
@@ -127,7 +130,7 @@ describe('InternalNotificationController - Send appeal received by court notific
 
     it('should send sms notification to prosecutor', () => {
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
-        [prosecutorMobileNumber],
+        [prosecutor.mobile],
         `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
           getStatementDeadline(receivedDate),
           'PPPp',
@@ -146,7 +149,7 @@ describe('InternalNotificationController - Send appeal received by court notific
     it('should send notification to prosecutor and defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: prosecutorName, address: prosecutorEmail }],
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
           html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
             getStatementDeadline(receivedDate),
@@ -156,7 +159,7 @@ describe('InternalNotificationController - Send appeal received by court notific
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
           html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
             getStatementDeadline(receivedDate),

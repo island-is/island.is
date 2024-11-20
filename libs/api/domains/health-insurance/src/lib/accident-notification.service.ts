@@ -69,7 +69,7 @@ export class AccidentNotificationService {
     auth: Auth,
     ihiDocumentID: number,
   ): Promise<AccidentNotificationStatus | null> {
-    this.logger.log('starting call to get accident', ihiDocumentID)
+    this.logger.debug('starting call to get accident', ihiDocumentID)
 
     const accidentStatus = await this.accidentsReportsApiWithAuth(
       auth,
