@@ -44,6 +44,7 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
                 {...linkResolver(grant.fund.link.type as LinkType, [
                   grant.fund.link.slug,
                 ])}
+                newTab
                 color="blue400"
                 underline="normal"
                 underlineVisibility="hover"
