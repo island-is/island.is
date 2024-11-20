@@ -201,7 +201,7 @@ export const webRenderConnectedComponent = (
       )
       break
     case 'WHODAS/Calculator':
-      connectedComponent = <WHODASCalculator />
+      connectedComponent = <WHODASCalculator slice={slice} />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)
