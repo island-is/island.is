@@ -199,6 +199,45 @@ describe('Testing utility functions for applications', () => {
   })
 
   describe('removeAttachmentFromAnswers', () => {
+    it('Should remove an object from an array that contains the given key and leave the array empty', () => {
+      const givenAnswers = {
+        documents: [
+          { id: 'doc1', attachmentId: 'some-key-123', name: 'Document 1' }
+        ],
+      }
+      const expectedAnswers = {
+        documents: [],
+      }
+
+      const result = removeAttachmentFromAnswers(givenAnswers, 'some-key-123')
+
+      expect(result).toEqual(expectedAnswers)
+    })
+
+    it('Should remove nested objects that contain the given key', () => {
+      const givenAnswers = {
+        section1: {
+          attachment: { id: 'some-key-123', name: 'Remove me' },
+          otherData: 'keep this',
+        },
+        section2: {
+          data: 'keep this too',
+        },
+      }
+      const expectedAnswers = {
+        section1: {
+          otherData: 'keep this',
+        },
+        section2: {
+          data: 'keep this too',
+        },
+      }
+
+      const result = removeAttachmentFromAnswers(givenAnswers, 'some-key-123')
+
+      expect(result).toEqual(expectedAnswers)
+    })
+
     it('Should remove an object from an array that contains the given key', () => {
       const givenAnswers = {
         documents: [
@@ -268,6 +307,69 @@ describe('Testing utility functions for applications', () => {
             },
           ],
         },
+      }
+
+      const result = removeAttachmentFromAnswers(givenAnswers, 'some-key-123')
+
+      expect(result).toEqual(expectedAnswers)
+    })
+
+    it('Should handle even more complex deeply nested arrays and objects', () => {
+      const givenAnswers = {
+        deepSection: {
+          someRandomProp: { data: 'Some data' },
+          deeperSection: {
+            documents: [
+              {
+                files: [
+                  { id: 'file1', attachmentId: 'some-key-123', nr: 77 },
+                  { id: 'file2', attachmentId: 'keep-this', nr: 55 }
+                ]
+              },
+              {
+                files: [
+                  { id: 'file3', attachmentId: 'also-keep-this' }
+                ]
+              }
+            ],
+            otherSection: {
+              nr: 100,
+              name: 'Some Name',
+              kids: [
+                { kid: 'Some kid', phone: 1234567 },
+                { kid: 'Some other kid', phone: 1234568 }
+              ]
+            }
+          }
+        }
+      }
+
+      const expectedAnswers = {
+        deepSection: {
+          someRandomProp: { data: 'Some data' },
+          deeperSection: {
+            documents: [
+              {
+                files: [
+                  { id: 'file2', attachmentId: 'keep-this', nr: 55}
+                ]
+              },
+              {
+                files: [
+                  { id: 'file3', attachmentId: 'also-keep-this' }
+                ]
+              }
+            ],
+            otherSection: {
+              nr: 100,
+              name: 'Some Name',
+              kids: [
+                { kid: 'Some kid', phone: 1234567 },
+                { kid: 'Some other kid', phone: 1234568 }
+              ]
+            }
+          }
+        }
       }
 
       const result = removeAttachmentFromAnswers(givenAnswers, 'some-key-123')

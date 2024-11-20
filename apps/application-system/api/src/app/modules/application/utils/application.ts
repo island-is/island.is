@@ -196,13 +196,19 @@ const cleanArray = (array: unknown[], keyToRemove: string): unknown[] => {
 const cleanObject = (obj: object, keyToRemove: string): RecordType => {
   return Object.entries(obj).reduce<RecordType>((acc, [field, value]) => {
     if (isValidObject(value)) {
-      if (containsKey(value, keyToRemove)) {
-        return acc // Skip this object if it contains the key
+      // If it's not an array and contains the key, skip this object entirely
+      if (!Array.isArray(value) && containsKey(value, keyToRemove)) {
+        return acc
       }
 
       const cleanedValue = removeAttachmentFromAnswers(value, keyToRemove)
-
+      
+      // For arrays or objects with content, keep them
       if (hasContent(cleanedValue)) {
+        acc[field] = cleanedValue
+      }
+      // Special case: keep empty arrays
+      else if (Array.isArray(value)) {
         acc[field] = cleanedValue
       }
       return acc

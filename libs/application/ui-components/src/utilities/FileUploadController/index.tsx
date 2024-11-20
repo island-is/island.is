@@ -121,17 +121,12 @@ export const FileUploadController = ({
           filename: file.name,
         },
       })
-      console.error('createUploadUrl complete')
-      console.error(data)
 
       // 2. Upload the file to S3
       const {
         createUploadUrl: { url, fields },
       } = data
-      console.error('url from deconstruction: ' + url)
-      console.error(fields)
       const response = await uploadFileToS3(file, dispatch, url, fields)
-      console.error('uploadFileToS3 complete')
 
       // 3. Add Attachment Data
       await addAttachment({
@@ -235,6 +230,9 @@ export const FileUploadController = ({
         return
       }
     }
+
+    // Update sum of file sizes by subtracting the removed file's size
+    setSumOfFileSizes((prevSum) => prevSum - (fileToRemove.size || 0))
 
     // We remove it from the list if: the delete attachment above succeeded,
     // or if the user clicked x for a file that failed to upload and is in
