@@ -704,6 +704,7 @@ export class CmsElasticsearchService {
       })
     })
 
+    logger.warn('funds', funds)
     if (funds) {
       must.push({
         nested: {

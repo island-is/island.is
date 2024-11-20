@@ -38,8 +38,6 @@ export const mapGrantCardsList = ({
   fields,
   sys,
 }: IGrantCardsList): SystemMetadata<GrantCardsList> => {
-  logger.warn('fields', fields)
-
   return {
     typename: 'GrantCardsList',
     id: sys.id,
