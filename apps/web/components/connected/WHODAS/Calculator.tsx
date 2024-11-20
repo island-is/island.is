@@ -214,6 +214,7 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
   const [stepIndex, setStepIndex] = useState(0)
   const formRef = useRef<HTMLDivElement | null>(null)
   const steps = (slice.json?.steps ?? []) as Step[]
+  const initialRender = useRef(true)
 
   const step = steps[stepIndex]
   const showResults = stepIndex >= steps.length
@@ -232,6 +233,10 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
   })
 
   useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false
+      return
+    }
     window.scrollTo({
       behavior: 'smooth',
       top: formRef.current?.offsetTop ?? 0,
