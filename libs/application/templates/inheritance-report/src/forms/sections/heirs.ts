@@ -384,18 +384,14 @@ export const heirs = buildSection({
             }),
             buildDescriptionField({
               id: 'heirs_space6',
-              title: '',
+              title: m.fileUploadOtherDocuments,
+              titleVariant: 'h5',
               space: 'gutter',
             }),
-            buildKeyValueField({
-              label: m.fileUploadOtherDocuments,
-              value: ({ answers }) => {
-                const files = getValueViaPath<any>(
-                  answers,
-                  'heirsAdditionalInfoFilesOtherDocuments',
-                )
-                return files.map((file: any) => file.name).join(', ')
-              },
+            buildCustomField({
+              title: '',
+              id: 'otherDocs',
+              component: 'OverviewOtherDocuments',
             }),
             buildDescriptionField({
               id: 'heirs_space7',
