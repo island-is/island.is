@@ -25,7 +25,7 @@ export const createPlaywrightConfig = ({
   webServerUrl,
   port,
   command,
-  cwd = '../../../',
+  cwd,
   timeoutMs = 5 * 60 * 1000,
 }: PlaywrightConfigParams) =>
   defineConfig({
