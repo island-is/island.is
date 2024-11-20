@@ -24,6 +24,7 @@ import { DelegationsIncomingCustomService } from './delegations-incoming-custom.
 import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
 import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
 import { DelegationsIndexService } from './delegations-index.service'
+import { DelegationRecordDTO } from './dto/delegation-index.dto'
 import { DelegationDTO } from './dto/delegation.dto'
 import { MergedDelegationDTO } from './dto/merged-delegation.dto'
 import { NationalRegistryV3FeatureService } from './national-registry-v3-feature.service'
@@ -395,12 +396,19 @@ export class DelegationsIncomingService {
       })
     }
 
-    const merged = records
-      .filter((d) => aliveNationalIds.includes(d.fromNationalId))
-      .map((d) => ({
-        ...DelegationDTOMapper.recordToMergedDelegationDTO(d),
-        fromName: this.getNameFromNameInfo(d.fromNationalId, aliveNameInfo),
-      }))
+    const aliveNationalIdSet = new Set(aliveNationalIds)
+    const merged = records.reduce(
+      (acc: MergedDelegationDTO[], d: DelegationRecordDTO) => {
+        if (aliveNationalIdSet.has(d.fromNationalId)) {
+          acc.push({
+            ...DelegationDTOMapper.recordToMergedDelegationDTO(d),
+            fromName: this.getNameFromNameInfo(d.fromNationalId, aliveNameInfo),
+          })
+        }
+        return acc
+      },
+      [],
+    )
 
     return merged
   }
