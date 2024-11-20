@@ -36,6 +36,7 @@ export class ApplicationMapper {
         displayOrder: section.displayOrder,
         waitingText: section.waitingText,
         isHidden: this.isHidden(section.id, application.dependencies),
+        isCompleted: this.isCompleted(section.id, application.completed),
         screens: section.screens?.map((screen) => {
           return {
             id: screen.id,
@@ -45,6 +46,7 @@ export class ApplicationMapper {
             multiset: screen.multiset,
             callRuleset: screen.callRuleset,
             isHidden: this.isHidden(screen.id, application.dependencies),
+            isCompleted: this.isCompleted(screen.id, application.completed),
             fields: screen.fields?.map((field) => {
               return {
                 id: field.id,
@@ -107,5 +109,13 @@ export class ApplicationMapper {
     }
 
     return isHidden
+  }
+
+  private isCompleted(id: string, completed: string[] | undefined) {
+    if (!completed) {
+      return false
+    }
+
+    return completed?.includes(id)
   }
 }
