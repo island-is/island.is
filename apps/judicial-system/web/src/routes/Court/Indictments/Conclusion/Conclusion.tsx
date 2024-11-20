@@ -186,13 +186,13 @@ const Conclusion: FC = () => {
         if (workingCase.postponedIndefinitelyExplanation) {
           setPostponementReason(workingCase.postponedIndefinitelyExplanation)
         }
-        setSelectedAction(IndictmentDecision.SCHEDULING)
+
         break
       case IndictmentDecision.SCHEDULING:
         if (workingCase.courtSessionType) {
           setSelectedCourtSessionType(workingCase.courtSessionType)
         }
-        setSelectedAction(IndictmentDecision.SCHEDULING)
+
         break
       case IndictmentDecision.COMPLETING:
         if (workingCase.indictmentRulingDecision) {
@@ -201,7 +201,7 @@ const Conclusion: FC = () => {
         setSelectedAction(IndictmentDecision.COMPLETING)
         break
       default:
-        setSelectedAction(IndictmentDecision.SCHEDULING)
+        return
     }
   }, [
     workingCase.courtSessionType,
@@ -209,6 +209,15 @@ const Conclusion: FC = () => {
     workingCase.indictmentRulingDecision,
     workingCase.postponedIndefinitelyExplanation,
   ])
+
+  useEffect(() => {
+    if (
+      workingCase.indictmentDecision &&
+      workingCase.indictmentDecision !== IndictmentDecision.COMPLETING
+    ) {
+      setSelectedAction(IndictmentDecision.SCHEDULING)
+    }
+  }, [])
 
   const stepIsValid = () => {
     // Do not leave any downloads unfinished
