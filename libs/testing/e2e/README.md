@@ -58,7 +58,7 @@ yarn e2e <app-name>
    yarn e2e <app-name> --skip-nx-cache
   ```
 
-- **Run with Specific Tag**: Run only the tests tagged with a specific tag:
+- **Run with a Specific Tag**: Run only the tests tagged with a specific tag:
 
   ```bash
    yarn e2e <app-name> --grep @fast
