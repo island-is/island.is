@@ -157,20 +157,32 @@ export class DefendantService {
     theCase: Case,
     updatedDefendant: Defendant,
     oldDefendant: Defendant,
+    user: User,
   ): Promise<void> {
     if (!theCase.courtCaseNumber) {
       return
     }
 
     const messages: Message[] = []
+  
+    if (
+      updatedDefendant.isDefenderChoiceConfirmed &&
+      !oldDefendant.isDefenderChoiceConfirmed
+    ) {
+      // Defender choice was just confirmed by the court
+      const messages: Message[] = [
+        {
+          type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER,
+          user,
+          caseId: theCase.id,
+          elementId: updatedDefendant.id,
+        },
+      ]
 
-    if (updatedDefendant.isDefenderChoiceConfirmed) {
       if (
         updatedDefendant.defenderChoice === DefenderChoice.CHOOSE ||
         updatedDefendant.defenderChoice === DefenderChoice.DELEGATE
       ) {
-        // TODO: Update defender with robot if needed
-
         // Defender was just confirmed by judge
         if (!oldDefendant.isDefenderChoiceConfirmed) {
           messages.push({
@@ -181,6 +193,8 @@ export class DefendantService {
           })
         }
       }
+
+     
     } else if (
       updatedDefendant.isSentToPrisonAdmin &&
       updatedDefendant.isSentToPrisonAdmin !== oldDefendant.isSentToPrisonAdmin
@@ -189,6 +203,7 @@ export class DefendantService {
         this.getMessagesForIndictmentToPrisonAdminChanges(updatedDefendant),
       )
     }
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   async createForNewCase(
@@ -243,7 +258,7 @@ export class DefendantService {
     )
   }
 
-  async updateRequestCase(
+  async updateRequestCaseDefendant(
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
@@ -265,10 +280,11 @@ export class DefendantService {
     return updatedDefendant
   }
 
-  async updateIndictmentCase(
+  async updateIndictmentCaseDefendant(
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
+    user: User,
   ): Promise<Defendant> {
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
@@ -288,6 +304,7 @@ export class DefendantService {
       theCase,
       updatedDefendant,
       defendant,
+      user,
     )
 
     return updatedDefendant
@@ -300,9 +317,14 @@ export class DefendantService {
     user: User,
   ): Promise<Defendant> {
     if (isIndictmentCase(theCase.type)) {
-      return this.updateIndictmentCase(theCase, defendant, update)
+      return this.updateIndictmentCaseDefendant(
+        theCase,
+        defendant,
+        update,
+        user,
+      )
     } else {
-      return this.updateRequestCase(theCase, defendant, update, user)
+      return this.updateRequestCaseDefendant(theCase, defendant, update, user)
     }
   }
 
@@ -464,6 +486,32 @@ export class DefendantService {
       })
       .catch((reason) => {
         this.logger.error('Failed to update case with defendant', { reason })
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverIndictmentDefenderToCourt(
+    theCase: Case,
+    defendant: Defendant,
+    user: User,
+  ): Promise<DeliverResponse> {
+    return this.courtService
+      .updateIndictmentCaseWithDefenderInfo(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        defendant.nationalId,
+        defendant.defenderName,
+        defendant.defenderEmail,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update defender info for defendant ${defendant.id} of indictment case ${theCase.id}`,
+          { reason },
+        )
 
         return { delivered: false }
       })

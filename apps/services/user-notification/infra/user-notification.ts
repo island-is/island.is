@@ -111,6 +111,7 @@ export const userNotificationServiceSetup = (services: {
       'nginx-ingress-internal',
       'islandis',
       'identity-server-delegation',
+      'application-system',
     )
 
 export const userNotificationWorkerSetup = (services: {
