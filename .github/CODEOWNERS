@@ -234,6 +234,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/                @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/              @island-is/norda
 /libs/shared/form-fields/                                                                                @island-is/norda @island-is/island-ui
+/libs/clients/financial-statements-inao                                                                  @island-is/norda
 
 /libs/portals/my-pages/applications/                                                                     @island-is/norda-applications
 /libs/portals/admin/application-system/                                                                  @island-is/norda-applications
@@ -316,7 +317,6 @@ codemagic.yaml                                                                  
 /apps/services/auth/personal-representative/                                                             @island-is/programm @island-is/aranja
 /apps/services/auth/personal-representative-public/                                                      @island-is/programm @island-is/aranja
 /libs/api/domains/financial-statements-inao/                                                             @island-is/programm
-/libs/clients/financial-statements-inao                                                                  @island-is/programm
 /libs/application/templates/financial-statements-inao/                                                   @island-is/programm
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statements-inao               @island-is/programm
 
