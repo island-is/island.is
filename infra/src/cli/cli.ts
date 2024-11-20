@@ -7,7 +7,7 @@ import { OpsEnv } from '../dsl/types/input-types'
 import { renderServiceEnvVars } from './render-env-vars'
 import { renderLocalServices, runLocalServices } from './render-local-mocks'
 
-const infra = yargs(process.argv.slice(2))
+const cli = yargs(process.argv.slice(2))
   .scriptName('yarn infra')
   .command(
     'render-env',
@@ -130,8 +130,6 @@ const infra = yargs(process.argv.slice(2))
       )
     },
     async (argv) => {
-      console.log('Is TTY:', process.stdout.isTTY ? 'Yes' : 'No')
-      console.log('Current Directory:', process.cwd())
       await runLocalServices(argv.services, argv.dependencies, {
         dryRun: argv.dry,
         json: argv.json,

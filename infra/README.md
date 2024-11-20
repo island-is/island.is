@@ -10,7 +10,7 @@ This CLI tool simplifies the management and setup of local environments for deve
 
 ### Available Commands
 
-While infra offers various commands, one of the most powerful and useful for developers is the `run-local-env` command. This command allows developers to render the required environment and start a local development environment with the necessary configuration.
+While the infra tool offers various commands, one of the most powerful and useful for developers is the `run-local-env` command. This command allows developers to render the required environment and start a local development environment with the necessary configuration.
 
 Here is a summary of all available commands in the CLI:
 
