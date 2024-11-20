@@ -25,7 +25,7 @@ export const createPlaywrightConfig = ({
   webServerUrl,
   port,
   command,
-  cwd,
+  cwd = '../../../',
   timeoutMs = 5 * 60 * 1000,
 }: PlaywrightConfigParams) =>
   defineConfig({
@@ -45,6 +45,11 @@ export const createPlaywrightConfig = ({
       baseURL: webServerUrl,
       trace: 'on-first-retry',
     },
+    projects: [
+      { name: 'everything', testMatch: 'e2e/**/*.spec.[tj]s' },
+      { name: 'smoke', testMatch: 'e2e/smoke/**/*.spec.[tj]s' },
+      { name: 'acceptance', testMatch: 'e2e/acceptance/**/*.spec.[tj]s' },
+    ],
     webServer: {
       stdout: 'pipe',
       port: port ? port : undefined,
