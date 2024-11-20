@@ -4,7 +4,7 @@ type Props = {
   sectionLabel?: string
   tooltipText?: string
   children: React.ReactNode
-  noBorder?: Boolean
+  noBorder?: boolean
 }
 
 export const SummarySection = ({

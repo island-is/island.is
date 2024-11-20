@@ -58,8 +58,9 @@ export const RentalInfoSummary = ({ answers }: Props) => {
       case SecurityDepositAmountOptions.THREE_MONTHS:
         return formatCurrency((rentalAmount * 3).toString())
       case SecurityDepositAmountOptions.OTHER:
-        const amount = answers.securityDeposit.securityAmountOther
-        return amount ? formatCurrency(amount) : '-'
+        return answers.securityDeposit.securityAmountOther
+          ? formatCurrency(answers.securityDeposit.securityAmountOther)
+          : '-'
       default:
         return '-'
     }
