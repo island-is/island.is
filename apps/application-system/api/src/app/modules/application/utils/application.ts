@@ -158,75 +158,78 @@ export const mockApplicationFromTypeId = (
   }
 }
 
-type RecordType = Record<string, unknown>;
+type RecordType = Record<string, unknown>
 
-export const removeAttachmentFromAnswers = (answers: object, keyToRemove: string): object => {
+export const removeAttachmentFromAnswers = (
+  answers: object,
+  keyToRemove: string,
+): object => {
   // Handle arrays
   if (Array.isArray(answers)) {
-    return cleanArray(answers, keyToRemove);
+    return cleanArray(answers, keyToRemove)
   }
-  
+
   // Handle objects
   if (typeof answers === 'object' && answers !== null) {
-    return cleanObject(answers, keyToRemove);
+    return cleanObject(answers, keyToRemove)
   }
-  
-  return answers;
+
+  return answers
 }
 
 const cleanArray = (array: unknown[], keyToRemove: string): unknown[] => {
-  const filteredArray = array.filter(item => {
+  const filteredArray = array.filter((item) => {
     if (isValidObject(item)) {
-      return !containsKey(item, keyToRemove);
+      return !containsKey(item, keyToRemove)
     }
-    return item !== keyToRemove;
-  });
+    return item !== keyToRemove
+  })
 
-  return filteredArray.map(item => {
+  return filteredArray.map((item) => {
     if (isObject(item)) {
-      return removeAttachmentFromAnswers(item, keyToRemove);
+      return removeAttachmentFromAnswers(item, keyToRemove)
     }
-    return item;
-  });
+    return item
+  })
 }
 
 const cleanObject = (obj: object, keyToRemove: string): RecordType => {
   return Object.entries(obj).reduce<RecordType>((acc, [field, value]) => {
     if (isValidObject(value)) {
       if (containsKey(value, keyToRemove)) {
-        return acc; // Skip this object if it contains the key
+        return acc // Skip this object if it contains the key
       }
 
-      const cleanedValue = removeAttachmentFromAnswers(value, keyToRemove);
-      
+      const cleanedValue = removeAttachmentFromAnswers(value, keyToRemove)
+
       if (hasContent(cleanedValue)) {
-        acc[field] = cleanedValue;
+        acc[field] = cleanedValue
       }
-      return acc;
+      return acc
     }
 
     // Handle primitive values
     if (value !== keyToRemove) {
-      acc[field] = value;
+      acc[field] = value
     }
-    return acc;
-  }, {});
+    return acc
+  }, {})
 }
 
 const isValidObject = (value: unknown): value is object => {
-  return value !== null && typeof value === 'object';
+  return value !== null && typeof value === 'object'
 }
 
 const containsKey = (obj: object, key: string): boolean => {
-  return Object.values(obj).includes(key);
+  return Object.values(obj).includes(key)
 }
 
 const hasContent = (value: unknown): boolean => {
   if (Array.isArray(value)) {
-    return value.length > 0;
+    return value.length > 0
   }
   if (isValidObject(value)) {
-    return Object.keys(value).length > 0;
+    return Object.keys(value).length > 0
   }
-  return false;
+  return false
 }
