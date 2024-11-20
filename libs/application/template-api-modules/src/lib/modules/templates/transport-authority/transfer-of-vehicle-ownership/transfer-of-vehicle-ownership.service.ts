@@ -365,10 +365,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     )
     if (buyerCoOwners) {
       for (let i = 0; i < buyerCoOwners.length; i++) {
-        const oldEntry = oldRecipientList.find((x) => {
-          x.role === EmailRole.buyerCoOwner &&
-            x.ssn === buyerCoOwners[i].nationalId
-        })
+        const oldEntry = oldRecipientList.find(
+          (x) =>
+            x.role === EmailRole.buyerCoOwner &&
+            x.ssn === buyerCoOwners[i].nationalId,
+        )
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerCoOwners[i].email
           : true
@@ -393,10 +394,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     )
     if (buyerOperators) {
       for (let i = 0; i < buyerOperators.length; i++) {
-        const oldEntry = oldRecipientList.find((x) => {
-          x.role === EmailRole.buyerOperator &&
-            x.ssn === buyerOperators[i].nationalId
-        })
+        const oldEntry = oldRecipientList.find(
+          (x) =>
+            x.role === EmailRole.buyerOperator &&
+            x.ssn === buyerOperators[i].nationalId,
+        )
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerOperators[i].email
           : true
