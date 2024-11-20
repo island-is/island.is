@@ -12,7 +12,7 @@ ENV NODE_OPTIONS=--openssl-legacy-provider
 
 COPY infra/package.json infra/yarn.lock /app/infra/
 COPY .yarn/ ./.yarn
-RUN ls -lah && id && pwd && cat package.json && corepack enable && yarn install --immutable
+RUN yarn install --immutable
 
 COPY infra/ /app/infra/
 COPY apps /app/apps/
