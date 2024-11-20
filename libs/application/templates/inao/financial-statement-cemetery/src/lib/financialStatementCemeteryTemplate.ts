@@ -90,8 +90,7 @@ const FinancialStatementCemeteryTemplate: ApplicationTemplate<
                 import('../forms/notAllowed').then((val) =>
                   Promise.resolve(val.notAllowedForm),
                 ),
-              write: 'all',
-              delete: true,
+              read: 'all',
             },
           ],
         },

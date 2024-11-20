@@ -92,8 +92,7 @@ const FinancialStatementPoliticalPartyTemplate: ApplicationTemplate<
                 import('../forms/notAllowedForm').then((val) =>
                   Promise.resolve(val.notAllowedForm),
                 ),
-              write: 'all',
-              delete: true,
+              read: 'all',
             },
           ],
         },
