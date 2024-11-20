@@ -143,7 +143,7 @@ export class FormsService {
   }
 
   async delete(id: string): Promise<void> {
-    const form = await this.findById(id)
+    const form = await this.formModel.findByPk(id)
 
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
@@ -202,6 +202,14 @@ export class FormsService {
           { model: Section, as: 'sections' },
           { model: Screen, as: 'screens' },
           { model: Field, as: 'fields' },
+          'displayOrder',
+          'ASC',
+        ],
+        [
+          { model: Section, as: 'sections' },
+          { model: Screen, as: 'screens' },
+          { model: Field, as: 'fields' },
+          { model: ListItem, as: 'list' },
           'displayOrder',
           'ASC',
         ],
@@ -434,6 +442,7 @@ export class FormsService {
       'isHidden',
       'isPartOfMultiset',
       'fieldType',
+      'list',
     ]
     form.sections.map((section) => {
       formDto.sections?.push(

@@ -9,6 +9,7 @@ import {
   ValidateNested,
 } from 'class-validator'
 import { Type } from 'class-transformer'
+import { ListTypesEnum } from '../listTypes/listTypes.enum'
 
 export class FieldSettings {
   @IsOptional()
@@ -92,7 +93,7 @@ export class FieldSettings {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  listType?: string = ''
+  listType?: string = ListTypesEnum.CUSTOM
 
   @IsOptional()
   @IsString()
