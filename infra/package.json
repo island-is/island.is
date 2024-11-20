@@ -2,12 +2,6 @@
   "name": "infra",
   "version": "1.0.0",
   "main": "index.js",
-  "engines": {
-    "npm": "please-use-yarn",
-    "node": "20.15.0",
-    "yarn": "3.2"
-  },
-  "packageManager": "yarn@3.2.3",
   "scripts": {
     "test": "jest",
     "charts": "node -r esbuild-register src/cli/generate-chart-values.ts",
@@ -33,7 +27,6 @@
   "dependencies": {
     "@aws-sdk/client-ssm": "3.145.0",
     "@types/lodash": "4.14.160",
-    "@types/yargs": "17.0.33",
     "aws-sdk": "^2.1003.0",
     "glob": "10.3.3",
     "json-refs": "3.0.15",
@@ -43,7 +36,6 @@
     "yargs": "17.7.2"
   },
   "volta": {
-    "node": "20.15.0",
-    "yarn": "3.2.3"
+    "node": "18.12.1"
   }
 }
