@@ -113,6 +113,17 @@ export const FileUploadController = ({
     setValue(id, uploadAnswer)
   }, [state, id, setValue])
 
+  // Add a useEffect to reset the state when val changes
+  useEffect(() => {
+    const newInitialFiles = (val && val.map((f) => answerToUploadFile(f))) || []
+    dispatch({
+      type: ActionTypes.ADD,
+      payload: {
+        newFiles: newInitialFiles,
+      },
+    })
+  }, [val]) // Only run when val changes
+
   const uploadFileFlow = async (file: UploadFile) => {
     try {
       // 1. Get the upload URL
@@ -231,8 +242,6 @@ export const FileUploadController = ({
       }
     }
 
-    // Update sum of file sizes by subtracting the removed file's size
-    setSumOfFileSizes((prevSum) => prevSum - (fileToRemove.size || 0))
 
     // We remove it from the list if: the delete attachment above succeeded,
     // or if the user clicked x for a file that failed to upload and is in
