@@ -2,7 +2,6 @@ import { bootstrap } from '@island.is/infra-next-server'
 
 import proxyConfig from './proxy.config.json'
 
-// test
 bootstrap({
   name: 'web',
   appDir: 'apps/web',

@@ -122,10 +122,6 @@ test('should get paid', { tag: '@slow' }, () => {
 })
 ```
 
-### Mocking with Mockoon
-
-Mock responses can be set up using Mockoon to simulate API behavior. Refer to the [Mockoon Usage Guide](../../libs/testing/e2e/README.md) for detailed instructions.
-
 ### More Resources
 
 Refer to the [E2E Testing Library README](../../libs/testing/e2e/README.md) for common helper functions and utilities.
