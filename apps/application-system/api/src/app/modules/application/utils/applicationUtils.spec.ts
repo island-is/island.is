@@ -198,7 +198,7 @@ describe('Testing utility functions for applications', () => {
     })
   })
 
-  describe.only('removeAttachmentFromAnswers', () => {
+  describe('removeAttachmentFromAnswers', () => {
     it('Should remove an object from an array that contains the given key', () => {
       const givenAnswers = {
         documents: [

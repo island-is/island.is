@@ -176,7 +176,7 @@ export const removeAttachmentFromAnswers = (answers: object, keyToRemove: string
 
 const cleanArray = (array: unknown[], keyToRemove: string): unknown[] => {
   const filteredArray = array.filter(item => {
-    if (isObject(item)) {
+    if (isValidObject(item)) {
       return !containsKey(item, keyToRemove);
     }
     return item !== keyToRemove;
@@ -192,7 +192,7 @@ const cleanArray = (array: unknown[], keyToRemove: string): unknown[] => {
 
 const cleanObject = (obj: object, keyToRemove: string): RecordType => {
   return Object.entries(obj).reduce<RecordType>((acc, [field, value]) => {
-    if (isObject(value)) {
+    if (isValidObject(value)) {
       if (containsKey(value, keyToRemove)) {
         return acc; // Skip this object if it contains the key
       }
@@ -213,7 +213,7 @@ const cleanObject = (obj: object, keyToRemove: string): RecordType => {
   }, {});
 }
 
-const isObject = (value: unknown): value is object => {
+const isValidObject = (value: unknown): value is object => {
   return value !== null && typeof value === 'object';
 }
 
@@ -225,7 +225,7 @@ const hasContent = (value: unknown): boolean => {
   if (Array.isArray(value)) {
     return value.length > 0;
   }
-  if (isObject(value)) {
+  if (isValidObject(value)) {
     return Object.keys(value).length > 0;
   }
   return false;
