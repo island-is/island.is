@@ -14,7 +14,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
-  DefendantEventType,
   DefendantPlea,
   DefenderChoice,
   Gender,
@@ -24,7 +23,6 @@ import {
 
 import { Case } from '../../case/models/case.model'
 import { Subpoena } from '../../subpoena/models/subpoena.model'
-import { DefendantEventLog } from './eventLog.model'
 
 @Table({
   tableName: 'defendant',
@@ -58,21 +56,6 @@ export class Defendant extends Model {
           defendant.defenderNationalId,
         ),
     )
-  }
-
-  static async sentToPoliceAdminDate(
-    defendantId: string,
-    caseId: string,
-  ): Promise<Date | undefined> {
-    const dateLog = await DefendantEventLog.findOne({
-      where: {
-        eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-        defendantId,
-        caseId,
-      },
-    })
-
-    return dateLog?.created
   }
 
   @Column({
