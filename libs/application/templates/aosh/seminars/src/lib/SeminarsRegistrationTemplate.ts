@@ -15,14 +15,21 @@ import {
   ApplicationConfigurations,
   Application,
   defineTemplateApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { Roles, States, Events } from './constants'
 import { SeminarAnswersSchema } from './dataSchema'
-import { IdentityApi } from '../dataProviders'
+import {
+  IdentityApi,
+  MockableVinnueftirlitidPaymentCatalogApi,
+  VinnueftirlitidPaymentCatalogApi,
+} from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { application as applicationMessage } from './messages'
 import { ApiActions } from '../shared/contstants'
+import { buildPaymentState } from '@island.is/application/utils'
+import { getChargeItemCodes } from '../utils'
 // import { ApiScope } from '@island.is/auth/scopes'
 
 const template: ApplicationTemplate<
@@ -85,7 +92,12 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [IdentityApi, UserProfileApi],
+              api: [
+                IdentityApi,
+                UserProfileApi,
+                VinnueftirlitidPaymentCatalogApi,
+                MockableVinnueftirlitidPaymentCatalogApi,
+              ],
             },
           ],
         },
@@ -130,9 +142,20 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
+        chargeItemCodes: getChargeItemCodes,
+        submitTarget: States.COMPLETED,
+        onExit: [
+          defineTemplateApi({
+            action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+          }),
+        ],
+      }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',

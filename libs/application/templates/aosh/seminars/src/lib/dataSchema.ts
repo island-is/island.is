@@ -25,6 +25,7 @@ export const UserInformationSchema = z.intersection(
 )
 
 export const SeminarAnswersSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
   applicant: UserInformationSchema,
 })
 

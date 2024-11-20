@@ -6,7 +6,12 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { externalData } from '../../lib/messages'
-import { UserProfileApi, IdentityApi } from '../../dataProviders'
+import {
+  UserProfileApi,
+  IdentityApi,
+  VinnueftirlitidPaymentCatalogApi,
+  MockableVinnueftirlitidPaymentCatalogApi,
+} from '../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
 
 export const prerequisitesSection = buildSection({
@@ -14,7 +19,7 @@ export const prerequisitesSection = buildSection({
   title: '',
   children: [
     buildExternalDataProvider({
-      id: 'externalData',
+      id: 'approveExternalData',
       title: externalData.dataProvider.pageTitle,
       subTitle: externalData.dataProvider.subTitle,
       checkboxLabel: externalData.dataProvider.checkboxLabel,
@@ -32,6 +37,14 @@ export const prerequisitesSection = buildSection({
         ],
       }),
       dataProviders: [
+        buildDataProviderItem({
+          provider: VinnueftirlitidPaymentCatalogApi,
+          title: '',
+        }),
+        buildDataProviderItem({
+          provider: MockableVinnueftirlitidPaymentCatalogApi,
+          title: '',
+        }),
         buildDataProviderItem({
           provider: IdentityApi,
           title: externalData.nationalRegistry.title,
