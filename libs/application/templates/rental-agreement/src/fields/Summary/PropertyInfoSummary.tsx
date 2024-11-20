@@ -1,15 +1,16 @@
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
-import { RentalAgreement } from '../../lib/dataSchema'
-import { summary } from '../../lib/messages'
-import { divider, gridRow } from './summaryStyles.css'
 import { useLocale } from '@island.is/localization'
-import { KeyValue } from './KeyValue'
+import { RentalAgreement } from '../../lib/dataSchema'
 import { RentalHousingConditionInspector } from '../../lib/constants'
 import {
   getPropertyCategoryClassOptions,
   getPropertyCategoryTypeOptions,
 } from '../../lib/utils'
+import { summary } from '../../lib/messages'
+import { KeyValue } from './KeyValue'
 import { SummarySection } from './SummarySection'
+import { Divider } from './Divider'
+import { gridRow } from './summaryStyles.css'
 
 type Props = {
   answers: RentalAgreement
@@ -56,7 +57,7 @@ export const PropertyInfoSummary = ({ answers }: Props) => {
         </GridColumn>
       </GridRow>
 
-      <div className={divider} />
+      <Divider />
 
       <GridRow className={gridRow}>
         <GridColumn span={['12/12']}>
@@ -71,7 +72,7 @@ export const PropertyInfoSummary = ({ answers }: Props) => {
         </GridColumn>
       </GridRow>
 
-      <div className={divider} />
+      <Divider />
 
       <GridRow className={gridRow}>
         <GridColumn span={['12/12']}>
@@ -82,7 +83,7 @@ export const PropertyInfoSummary = ({ answers }: Props) => {
         </GridColumn>
       </GridRow>
 
-      <div className={divider} />
+      <Divider />
 
       <GridRow className={gridRow}>
         <GridColumn span={['12/12']}>
@@ -93,7 +94,7 @@ export const PropertyInfoSummary = ({ answers }: Props) => {
         </GridColumn>
       </GridRow>
 
-      <div className={divider} />
+      <Divider />
 
       <GridRow className={gridRow}>
         <GridColumn span={['12/12', '4/12']}>
@@ -122,7 +123,7 @@ export const PropertyInfoSummary = ({ answers }: Props) => {
         </GridColumn>
       </GridRow>
 
-      <div className={divider} />
+      <Divider />
 
       <GridRow className={gridRow}>
         <GridColumn span={['12/12']}>
@@ -130,7 +131,7 @@ export const PropertyInfoSummary = ({ answers }: Props) => {
         </GridColumn>
       </GridRow>
 
-      <div className={divider} />
+      <Divider />
 
       <GridRow className={gridRow}>
         <GridColumn span={['12/12', '6/12', '3/12']}>

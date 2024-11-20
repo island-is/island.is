@@ -1,20 +1,20 @@
 import { FC } from 'react'
 import { useLocale } from '@island.is/localization'
-import { Box, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import {
   ApplicationConfigurations,
   FieldBaseProps,
 } from '@island.is/application/types'
 import { CopyLink } from '@island.is/application/ui-components'
-import { summaryWrap } from './summaryStyles.css'
 import { RentalAgreement } from '../../lib/dataSchema'
 import { summary } from '../../lib/messages'
-import { LandlordInfoSummary } from './LandlordInfoSummary'
-import { TenantInfoSummary } from './TenantInfoSummary'
 import { PropertyInfoSummary } from './PropertyInfoSummary'
 import { OtherFeesSummary } from './OtherFeesSummary'
 import { RentalInfoSummary } from './RentalInfoSummary'
 import { ApplicantsRepresentativesSummary } from './ApplicantsRepresentativesSummary'
+import { SummarySection } from './SummarySection'
+import { ApplicantsSummary } from './ApplicantsSummary'
+import { summaryWrap } from './summaryStyles.css'
 
 export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application } = props
@@ -30,23 +30,21 @@ export const Summary: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
         </Text>
         <Text marginBottom={5}>{formatMessage(summary.pageDescription)}</Text>
       </Box>
-      <LandlordInfoSummary answers={answers} />
-      <TenantInfoSummary answers={answers} />
+      <ApplicantsSummary answers={answers} />
       <ApplicantsRepresentativesSummary answers={answers} />
       <RentalInfoSummary answers={answers} />
       <PropertyInfoSummary answers={answers} />
       <OtherFeesSummary answers={answers} />
-
-      <Box marginTop={2}>
-        <Text variant="h5" as="h3">
-          {formatMessage(summary.shareLinkLabel)}{' '}
-          <Tooltip text={formatMessage(summary.shareLinkTooltip)} />
-        </Text>
+      <SummarySection
+        sectionLabel={formatMessage(summary.shareLinkLabel)}
+        tooltipText={formatMessage(summary.shareLinkTooltip)}
+        noBorder
+      >
         <CopyLink
           linkUrl={`${document.location.origin}/umsoknir/${ApplicationConfigurations.RentalAgreement.slug}/${application.id}`}
           buttonTitle={formatMessage(summary.shareLinkbuttonLabel)}
         />
-      </Box>
+      </SummarySection>
     </Box>
   )
 }

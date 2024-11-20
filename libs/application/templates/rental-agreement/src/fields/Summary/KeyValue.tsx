@@ -1,4 +1,4 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, ResponsiveSpace, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 
@@ -29,31 +29,38 @@ type TextElements =
 
 type Props = {
   label: string | MessageDescriptor
-  value?: string | MessageDescriptor
+  value: string | MessageDescriptor
   isTotal?: boolean
   labelVariant?: TextVariants
   labelAs?: TextElements
   valueVariant?: TextVariants
   valueAs?: TextElements
+  gap?: ResponsiveSpace
 }
 
 export const KeyValue = ({
   label,
-  value = '-',
+  value,
   isTotal = false,
-  labelVariant = 'medium',
+  labelVariant = 'small',
   labelAs = 'label',
+  gap = 1,
 }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box paddingY={1}>
-      <Text variant={labelVariant} as={labelAs} fontWeight="semiBold">
+    <Box paddingY={'p2'}>
+      <Text
+        variant={labelVariant}
+        as={labelAs}
+        fontWeight="semiBold"
+        marginBottom={gap}
+      >
         {formatMessage(label)}
       </Text>
 
       <Text
-        variant="default"
+        variant="medium"
         as="p"
         fontWeight={isTotal ? 'semiBold' : 'regular'}
       >

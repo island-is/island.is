@@ -35,10 +35,9 @@ export const RentalHousingTenantInfo = buildSubSection({
               width: 'half',
             },
             phone: {
-              component: 'input',
+              component: 'phone',
               label: tenantDetails.phoneInputLabel,
-              type: 'tel',
-              format: '###-####',
+              enableCountrySelector: true,
               width: 'half',
             },
             email: {
@@ -49,9 +48,8 @@ export const RentalHousingTenantInfo = buildSubSection({
             },
             isRepresentative: {
               component: 'checkbox',
-              large: true,
-              displayInTable: false,
               label: tenantDetails.representativeLabel,
+              large: true,
               options: [
                 {
                   label: tenantDetails.representativeLabel,
@@ -62,15 +60,19 @@ export const RentalHousingTenantInfo = buildSubSection({
           },
           table: {
             format: {
+              isRepresentative: (value) =>
+                value.includes(YES) ? 'Umboðsaðili' : '',
+              name: (value: string) => value,
               phone: (value) => formatPhoneNumber(value),
               nationalId: (value) => formatNationalId(value),
             },
             header: [
               tenantDetails.nameInputLabel,
-              tenantDetails.nationalIdHeaderLabel,
               tenantDetails.phoneInputLabel,
+              tenantDetails.nationalIdHeaderLabel,
               tenantDetails.emailInputLabel,
             ],
+            rows: ['name', 'phone', 'nationalId', 'email'],
           },
         }),
       ],

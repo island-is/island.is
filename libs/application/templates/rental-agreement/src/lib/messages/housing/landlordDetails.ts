@@ -27,10 +27,20 @@ export const landlordDetails = defineMessages({
     defaultMessage: 'Kennitala',
     description: 'Landlord details national id header label',
   },
+  cancelButtonText: {
+    id: 'ra.application:landlordDetails.cancelButtonText',
+    defaultMessage: 'Hætta við',
+    description: 'Landlord details cancel button text',
+  },
   nameInputLabel: {
     id: 'ra.application:landlordDetails.nameLabel',
     defaultMessage: 'Fullt nafn',
     description: 'Landlord details name input label',
+  },
+  isRepresentative: {
+    id: 'ra.application:landlordDetails.isRepresentative',
+    defaultMessage: 'umboðsaðili',
+    description: 'Landlord is representative',
   },
   emailInputLabel: {
     id: 'ra.application:landlordDetails.emailLabel',

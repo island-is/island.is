@@ -1,13 +1,14 @@
 import { Fragment } from 'react'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { useLocale } from '@island.is/localization'
 import { RentalAgreement } from '../../lib/dataSchema'
 import { summary } from '../../lib/messages'
-import { divider, gridRow } from './summaryStyles.css'
-import { KeyValue } from './KeyValue'
-import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '../../lib/utils'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import { KeyValue } from './KeyValue'
 import { SummarySection } from './SummarySection'
+import { Divider } from './Divider'
+import { gridRow } from './summaryStyles.css'
 
 type Props = {
   answers: RentalAgreement
@@ -16,11 +17,11 @@ type Props = {
 export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
   const { formatMessage } = useLocale()
 
-  const landlordHasRepresentatives = answers.landlordInfo.table.some(
+  const landlordListHasRepresentatives = answers.landlordInfo.table.some(
     (landlord) =>
       landlord.isRepresentative && landlord.isRepresentative.length > 0,
   )
-  const tenantHasRepresentatives = answers.tenantInfo.table.some(
+  const tenantListHasRepresentatives = answers.tenantInfo.table.some(
     (tenant) => tenant.isRepresentative && tenant.isRepresentative.length > 0,
   )
 
@@ -33,10 +34,10 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
       tenantRep.isRepresentative && tenantRep.isRepresentative.length > 0,
   )
 
-  if (landlordHasRepresentatives || tenantHasRepresentatives) {
+  if (landlordListHasRepresentatives || tenantListHasRepresentatives) {
     return (
       <>
-        {landlordHasRepresentatives ? (
+        {landlordListHasRepresentatives ? (
           <SummarySection
             sectionLabel={formatMessage(summary.landlordsRepresentativeLabel)}
           >
@@ -52,12 +53,13 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
                         value={`${formatMessage(
                           summary.nationalIdLabel,
                         )}${formatNationalId(landlordRep.nationalId || '-')}`}
+                        gap={'smallGutter'}
                       />
                     </GridColumn>
                     <GridColumn span={['12/12', '6/12']}>
                       <KeyValue
                         label={summary.emailLabel}
-                        value={landlordRep.email}
+                        value={landlordRep.email || '-'}
                       />
                     </GridColumn>
                     <GridColumn span={['12/12', '6/12']}>
@@ -67,7 +69,7 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
                       />
                     </GridColumn>
                   </GridRow>
-                  <div className={divider} />
+                  <Divider />
                 </Fragment>
               )
             })}
@@ -75,7 +77,7 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
         ) : (
           ''
         )}
-        {tenantHasRepresentatives ? (
+        {tenantListHasRepresentatives ? (
           <SummarySection
             sectionLabel={formatMessage(summary.tenantsRepresentativeLabel)}
           >
@@ -91,12 +93,13 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
                         value={`${formatMessage(
                           summary.nationalIdLabel,
                         )}${formatNationalId(tenantRep.nationalId || '-')}`}
+                        gap={'smallGutter'}
                       />
                     </GridColumn>
                     <GridColumn span={['12/12', '6/12']}>
                       <KeyValue
                         label={summary.emailLabel}
-                        value={tenantRep.email}
+                        value={tenantRep.email || '-'}
                       />
                     </GridColumn>
                     <GridColumn span={['12/12', '6/12']}>
@@ -106,7 +109,7 @@ export const ApplicantsRepresentativesSummary = ({ answers }: Props) => {
                       />
                     </GridColumn>
                   </GridRow>
-                  <div className={divider} />
+                  <Divider />
                 </Fragment>
               )
             })}

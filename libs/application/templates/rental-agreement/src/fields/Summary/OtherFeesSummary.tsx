@@ -1,16 +1,16 @@
-import { GridColumn, GridRow } from '@island.is/island-ui/core'
-import { RentalAgreement } from '../../lib/dataSchema'
-import { summary } from '../../lib/messages'
-import { divider, gridRow } from './summaryStyles.css'
-import { KeyValue } from './KeyValue'
+import { Divider, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { RentalAgreement } from '../../lib/dataSchema'
+import { RentOtherFeesPayeeOptions } from '../../lib/constants'
 import {
   formatCurrency,
   formatDate,
   getRentalOtherFeesPayeeOptions,
 } from '../../lib/utils'
-import { RentOtherFeesPayeeOptions } from '../../lib/constants'
+import { summary } from '../../lib/messages'
+import { KeyValue } from './KeyValue'
 import { SummarySection } from './SummarySection'
+import { gridRow } from './summaryStyles.css'
 
 type Props = {
   answers: RentalAgreement
@@ -31,21 +31,26 @@ export const OtherFeesSummary = ({ answers }: Props) => {
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.electricityCostLabel}
-            value={otherFeesPayee(
-              answers.rentOtherFees.electricityCost as string,
-            )}
+            value={
+              otherFeesPayee(answers.rentOtherFees.electricityCost as string) ||
+              '-'
+            }
           />
         </GridColumn>
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.heatingCostLabel}
-            value={otherFeesPayee(answers.rentOtherFees.heatingCost as string)}
+            value={
+              otherFeesPayee(answers.rentOtherFees.heatingCost as string) || '-'
+            }
           />
         </GridColumn>
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.houseFundLabel}
-            value={otherFeesPayee(answers.rentOtherFees.housingFund as string)}
+            value={
+              otherFeesPayee(answers.rentOtherFees.housingFund as string) || '-'
+            }
           />
         </GridColumn>
       </GridRow>
@@ -53,29 +58,30 @@ export const OtherFeesSummary = ({ answers }: Props) => {
       {answers.rentOtherFees.electricityCost ===
         RentOtherFeesPayeeOptions.TENANT && (
         <>
-          <div className={divider} />
+          <Divider />
 
           <GridRow className={gridRow}>
             <GridColumn span={['12/12', '4/12']}>
               <KeyValue
                 label={summary.electricityMeterNumberLabel}
-                value={answers.rentOtherFees.electricityCostMeterNumber}
+                value={answers.rentOtherFees.electricityCostMeterNumber || '-'}
               />
             </GridColumn>
             <GridColumn span={['12/12', '4/12']}>
               <KeyValue
                 label={summary.meterStatusLabel}
-                value={answers.rentOtherFees.electricityCostMeterStatus}
+                value={answers.rentOtherFees.electricityCostMeterStatus || '-'}
               />
             </GridColumn>
             <GridColumn span={['12/12', '4/12']}>
               <KeyValue
                 label={summary.dateOfMeterReadingLabel}
                 value={
-                  answers.rentOtherFees.electricityCostMeterStatusDate &&
-                  formatDate(
-                    answers.rentOtherFees.electricityCostMeterStatusDate.toString(),
-                  )
+                  (answers.rentOtherFees.electricityCostMeterStatusDate &&
+                    formatDate(
+                      answers.rentOtherFees.electricityCostMeterStatusDate.toString(),
+                    )) ||
+                  '-'
                 }
               />
             </GridColumn>
@@ -86,29 +92,30 @@ export const OtherFeesSummary = ({ answers }: Props) => {
       {answers.rentOtherFees.heatingCost ===
         RentOtherFeesPayeeOptions.TENANT && (
         <>
-          <div className={divider} />
+          <Divider />
 
           <GridRow className={gridRow}>
             <GridColumn span={['12/12', '4/12']}>
               <KeyValue
                 label={summary.heatingCostMeterNumberLabel}
-                value={answers.rentOtherFees.heatingCostMeterNumber}
+                value={answers.rentOtherFees.heatingCostMeterNumber || '-'}
               />
             </GridColumn>
             <GridColumn span={['12/12', '4/12']}>
               <KeyValue
                 label={summary.meterStatusLabel}
-                value={answers.rentOtherFees.heatingCostMeterStatus}
+                value={answers.rentOtherFees.heatingCostMeterStatus || '-'}
               />
             </GridColumn>
             <GridColumn span={['12/12', '4/12']}>
               <KeyValue
                 label={summary.dateOfMeterReadingLabel}
                 value={
-                  answers.rentOtherFees.heatingCostMeterStatusDate &&
-                  formatDate(
-                    answers.rentOtherFees.heatingCostMeterStatusDate.toString(),
-                  )
+                  (answers.rentOtherFees.heatingCostMeterStatusDate &&
+                    formatDate(
+                      answers.rentOtherFees.heatingCostMeterStatusDate.toString(),
+                    )) ||
+                  '-'
                 }
               />
             </GridColumn>
@@ -119,15 +126,17 @@ export const OtherFeesSummary = ({ answers }: Props) => {
       {answers.rentOtherFees.housingFund ===
         RentOtherFeesPayeeOptions.TENANT && (
         <>
-          <div className={divider} />
+          <Divider />
 
           <GridRow className={gridRow}>
             <GridColumn span={['12/12', '4/12']}>
               <KeyValue
                 label={summary.houseFundAmountLabel}
-                value={formatCurrency(
-                  answers.rentOtherFees.housingFundAmount as string,
-                )}
+                value={
+                  formatCurrency(
+                    answers.rentOtherFees.housingFundAmount as string,
+                  ) || '-'
+                }
               />
             </GridColumn>
           </GridRow>

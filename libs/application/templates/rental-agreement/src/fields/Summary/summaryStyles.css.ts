@@ -1,16 +1,13 @@
 import { style } from '@vanilla-extract/css'
 
 export const summaryWrap = style({
-  paddingTop: '1.5rem',
-  paddingBottom: '1rem',
+  paddingTop: '.75rem',
+  paddingBottom: '.75rem',
 })
 
-export const summarySection = style({
-  marginTop: '0.5rem',
-  marginBottom: '1.5rem',
-  padding: '1.5rem',
-  border: '1px solid #ccDfff',
-  borderRadius: '8px',
+export const summaryNoBorder = style({
+  border: 'none',
+  padding: '0',
 })
 
 export const gridRow = style({
@@ -18,8 +15,8 @@ export const gridRow = style({
 })
 
 export const divider = style({
-  marginTop: '1rem',
-  marginBottom: '1rem',
+  marginTop: '.75rem',
+  marginBottom: '.75rem',
   borderBottom: '1px solid #F2F7FF',
 
   selectors: {

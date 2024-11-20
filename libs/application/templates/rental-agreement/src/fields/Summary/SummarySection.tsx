@@ -1,29 +1,35 @@
-import { Text, Tooltip } from '@island.is/island-ui/core'
-import { Box } from 'reakit'
-import { summarySection } from './summaryStyles.css'
+import { Box, Text, Tooltip } from '@island.is/island-ui/core'
 
 type Props = {
   sectionLabel?: string
   tooltipText?: string
   children: React.ReactNode
+  noBorder?: Boolean
 }
 
 export const SummarySection = ({
   sectionLabel,
   tooltipText,
   children,
+  noBorder = false,
 }: Props) => {
   return (
-    <>
+    <Box marginTop={3}>
       {sectionLabel && (
-        <>
-          <Text variant="h5" as="h3">
-            {sectionLabel}
-          </Text>
-          {tooltipText && <Tooltip text={tooltipText} />}
-        </>
+        <Text variant="h5" as="h3">
+          {sectionLabel} {tooltipText && <Tooltip text={tooltipText} />}
+        </Text>
       )}
-      <Box className={summarySection}>{children}</Box>
-    </>
+      <Box
+        marginTop={1}
+        paddingX={noBorder ? 0 : 4}
+        paddingY={noBorder ? 0 : 2}
+        border={noBorder ? 'disabled' : 'standard'}
+        borderColor="blue200"
+        borderRadius="large"
+      >
+        {children}
+      </Box>
+    </Box>
   )
 }
