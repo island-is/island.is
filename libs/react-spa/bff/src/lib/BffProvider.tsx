@@ -226,13 +226,7 @@ export const BffProvider = ({
     }
 
     if (showNewUserScreen) {
-      return (
-        <BffNewUserSameSessionModal
-          onReload={() => {
-            window.location.reload()
-          }}
-        />
-      )
+      return <BffNewUserSameSessionModal />
     }
 
     if (isLoggedIn) {
