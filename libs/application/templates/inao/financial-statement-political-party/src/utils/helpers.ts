@@ -1,9 +1,7 @@
 import { Config } from '../types/types'
 import subYears from 'date-fns/subYears'
 import getYear from 'date-fns/getYear'
-import { POLITICALPARTY_USER_TYPE, TOTAL } from './constants'
-import { ApplicationContext } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
+import { TOTAL } from './constants'
 
 export const getConfigInfoForKey = (config: Config[], configKey: string) => {
   return config?.filter((config: Config) => config.key === configKey)[0].value
