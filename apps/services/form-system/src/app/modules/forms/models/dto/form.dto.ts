@@ -7,6 +7,7 @@ import { Dependency } from '../../../../dataTypes/dependency.model'
 import { FormApplicantTypeDto } from '../../../formApplicantTypes/models/dto/formApplicantType.dto'
 import { FormCertificationTypeDto } from '../../../formCertificationTypes/models/dto/formCertificationType.dto'
 import { FormUrlDto } from '../../../formUrls/models/dto/formUrl.dto'
+import { UUIDV4 } from 'sequelize'
 
 export class FormDto {
   @ApiProperty()
@@ -38,6 +39,9 @@ export class FormDto {
 
   @ApiProperty()
   derivedFrom!: number
+
+  @ApiPropertyOptional({ type: UUIDV4 })
+  status!: string
 
   @ApiProperty()
   stopProgressOnValidatingScreen!: boolean

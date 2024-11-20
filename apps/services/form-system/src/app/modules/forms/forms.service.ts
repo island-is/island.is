@@ -47,6 +47,7 @@ import { OrganizationUrlDto } from '../organizationUrls/models/dto/organizationU
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { FormUrl } from '../formUrls/models/formUrl.model'
 import { FormUrlDto } from '../formUrls/models/dto/formUrl.dto'
+import { FormStatus } from '../../enums/formStatus'
 
 @Injectable()
 export class FormsService {
@@ -76,6 +77,7 @@ export class FormsService {
       'created',
       'modified',
       'isTranslated',
+      'status',
       'applicationDaysToRemove',
       'stopProgressOnValidatingScreen',
     ]
@@ -119,6 +121,7 @@ export class FormsService {
 
     const newForm: Form = await this.formModel.create({
       organizationId: organizationId,
+      status: FormStatus.IN_DEVELOPMENT,
     } as Form)
 
     await this.createFormTemplate(newForm)
@@ -350,6 +353,7 @@ export class FormsService {
       'created',
       'modified',
       'isTranslated',
+      'status',
       'applicationDaysToRemove',
       'stopProgressOnValidatingScreen',
       'completedMessage',

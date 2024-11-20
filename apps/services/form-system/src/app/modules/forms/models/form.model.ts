@@ -76,11 +76,10 @@ export class Form extends Model<Form> {
   derivedFrom!: number
 
   @Column({
-    type: DataType.BOOLEAN,
+    type: DataType.STRING,
     allowNull: false,
-    defaultValue: false,
   })
-  isPublishedInChanging!: boolean
+  status!: string
 
   @Column({
     type: DataType.BOOLEAN,
