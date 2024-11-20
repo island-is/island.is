@@ -58,12 +58,10 @@ yarn e2e <app-name>
    yarn e2e <app-name> --skip-nx-cache
   ```
 
-- **Run a Specific Project**: Run only the tests defined under a specific project in your Playwright config:
+- **Run with Specific Tag**: Run only the tests tagged with a specific tag:
 
   ```bash
-  yarn e2e <app-name> -- --project=smoke
-  yarn e2e <app-name> -- --project=acceptance
-  yarn e2e <app-name> -- --project=everything
+   yarn e2e <app-name> --grep @fast
   ```
 
 - **View the Test Report**: After running tests, use this command to view the generated report:
@@ -100,14 +98,12 @@ You should therefore aim to write test for:
 
 ### 🏗️ Test structure
 
-Test cases are written in spec files. Tests that do not modify anything (e.g., _create_ an application, _change_ the user’s name, etc.) and verify basic functionality are called **smoke tests**. Tests that are more detailed and/or make any changes at all, are called **acceptance tests**. Test cases are put into folders by what app they are testing, smoke/acceptance test, and each file tests some aspect of an app. Here is an example of the folder layout for testing the search engine and front-page of the `web` project (within the system-e2e app):
+Test cases are written in spec files. Tests are tagged based on their execution time or other criteria. For example, you can use tags like `@fast` for quick tests and `@slow` for longer-running tests. Here is an example of the folder layout for testing the search engine and front-page of the `web` project:
 
 ```shell
 web/                      (app name)
-├── smoke/                (test type)
-│   └── home-page.spec.ts (feature name, kebab-case)
-└── acceptance/
-    └── search.spec.ts
+├── home-page.spec.ts     (feature name, kebab-case)
+└── search.spec.ts
 ```
 
 ### 🗃️ Spec files
@@ -132,7 +128,7 @@ test.describe('Overview part of banking app', () => {
     // Basic state reset, e.g. clear inbox
   })
 
-  test('should get paid', () => {
+  test('should get paid @slow', () => {
     // Make user get money using page.selector, page.click, etc.
     // Verify money is present
   })
