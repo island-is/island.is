@@ -3,12 +3,19 @@ import { BffUser } from '@island.is/shared/types'
 /**
  * Creates a function that can generate a BFF URLs.
  *
+ * @param bffGlobalPrefix - The global prefix for the BFF URLs
+ *
  * @usage
  * const bffBaseUrl = createBffUrlGenerator('/myapplication/bff')
  * const userUrl = bffBaseUrl('/user') // http://localhost:3010/myapplication/bff/user
  * const userUrlWithParams = bffBaseUrl('/user', { id: '123' }) // http://localhost:3010/myapplication/bff/user?id=123
+ *
+ * With default bffGlobalPrefix prefix:
+ * const bffBaseUrl = createBffUrlGenerator()
+ * const userUrl = bffBaseUrl('/user') // http://localhost:3010/bff/user
+ * const userUrlWithParams = bffBaseUrl('/user', { id: '123' }) // http://localhost:3010/bff/user?id=123
  */
-export const createBffUrlGenerator = (bffGlobalPrefix: string) => {
+export const createBffUrlGenerator = (bffGlobalPrefix = 'bff') => {
   const baseUrl = `${window.location.origin}/${sanitizePath(bffGlobalPrefix)}`
 
   return (relativePath = '', params?: Record<string, string>) => {

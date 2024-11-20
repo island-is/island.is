@@ -54,6 +54,7 @@ export const bffConfig = ({
         prod: key,
       },
       BFF_GLOBAL_PREFIX: globalPrefix,
+      BFF_CLIENT_BASE_PATH: `/${key}`,
       BFF_PAR_SUPPORT_ENABLED: 'true',
       BFF_CLIENT_BASE_URL: {
         local: 'http://localhost:4200',

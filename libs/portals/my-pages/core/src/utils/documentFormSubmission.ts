@@ -1,8 +1,7 @@
 import { createBffUrlGenerator } from '@island.is/react-spa/bff'
-import { ServicePortalPaths } from '../lib/navigation/paths'
 
 export const formSubmit = async (url: string, annual?: boolean) => {
-  const bffUrlGenerator = createBffUrlGenerator(ServicePortalPaths.Base)
+  const bffUrlGenerator = createBffUrlGenerator()
   const bffUrl = bffUrlGenerator('/api', {
     url,
   })

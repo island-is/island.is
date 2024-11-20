@@ -1,4 +1,3 @@
-import { ServicePortalPaths } from '@island.is/portals/my-pages/core'
 import { createBffUrlGenerator } from '@island.is/react-spa/bff'
 import { ActiveDocumentType2 } from '../lib/types'
 
@@ -10,12 +9,14 @@ type DownloadFileArgs = {
 export const downloadFile = async ({ doc, query }: DownloadFileArgs) => {
   let html: string | undefined = undefined
 
-  if (doc?.document.type === 'HTML') {
+  if (document.type === 'HTML') {
     html =
       doc.document.value && doc.document.value.length > 0
         ? doc?.document.value
         : undefined
   }
+
+  const downloadUrl = doc?.downloadUrl
 
   if (html) {
     setTimeout(() => {
@@ -23,12 +24,14 @@ export const downloadFile = async ({ doc, query }: DownloadFileArgs) => {
       win && html && win.document.write(html)
       win?.focus()
     }, 250)
-  } else {
-    const bffUrlGenerator = createBffUrlGenerator(ServicePortalPaths.Base)
+  } else if (downloadUrl) {
+    const bffUrlGenerator = createBffUrlGenerator()
     const bffUrl = bffUrlGenerator('/api', {
-      url: query ? `${doc?.downloadUrl}?action=${query}` : doc?.downloadUrl,
+      url: query ? `${downloadUrl}?action=${query}` : downloadUrl,
     })
 
     window.open(bffUrl, '_blank')
+  } else {
+    console.error('No download url found')
   }
 }

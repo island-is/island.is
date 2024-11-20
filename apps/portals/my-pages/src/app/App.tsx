@@ -29,7 +29,6 @@ export const App = () => (
         <BffProvider
           applicationBasePath={ServicePortalPaths.Base}
           mockedInitialState={mockedInitialState}
-          bffGlobalPrefix="/bff"
         >
           <ApplicationErrorBoundary>
             <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
