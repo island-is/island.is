@@ -134,7 +134,7 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
                   >
                     {canWeHelpText}
                   </HeaderLink>
-                  <Box marginTop={3}>
+                  <Box marginTop={3} className={styles.linkMaxWidth}>
                     <Link
                       color={footerTextColor === 'white' ? 'white' : 'blue400'}
                       href={n(
