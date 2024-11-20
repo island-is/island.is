@@ -94,7 +94,7 @@ export const FileUploadController = ({
   console.log('FileUploadController render:', {
     val: getValueViaPath(application.answers, id, []),
     applicationAnswers: application.answers,
-    id
+    id,
   })
 
   const { formatMessage } = useLocale()
@@ -254,7 +254,6 @@ export const FileUploadController = ({
         return
       }
     }
-
 
     // We remove it from the list if: the delete attachment above succeeded,
     // or if the user clicked x for a file that failed to upload and is in
