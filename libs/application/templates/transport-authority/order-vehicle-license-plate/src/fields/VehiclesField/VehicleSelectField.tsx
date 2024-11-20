@@ -1,6 +1,6 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import {
   ActionCard,
   AlertMessage,
@@ -27,7 +27,7 @@ interface VehicleSearchFieldProps {
 
 export const VehicleSelectField: FC<
   React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
-> = ({ currentVehicleList, application, errors }) => {
+> = ({ currentVehicleList, application, errors, setFieldLoadingState }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
@@ -100,6 +100,10 @@ export const VehicleSelectField: FC<
 
   const disabled =
     selectedVehicle && !!selectedVehicle.validationErrorMessages?.length
+
+  useEffect(() => {
+    setFieldLoadingState?.(isLoading)
+  }, [isLoading])
 
   return (
     <Box>
