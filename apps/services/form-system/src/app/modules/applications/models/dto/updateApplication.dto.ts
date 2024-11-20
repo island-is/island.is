@@ -1,13 +1,26 @@
-import { IsArray, IsNotEmpty, ValidateNested } from 'class-validator'
+import {
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import { Type } from 'class-transformer'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { UUIDV4 } from 'sequelize'
 
 export class UpdateApplicationDto {
   @ValidateNested()
   @Type(() => Dependency)
   @IsArray()
-  @IsNotEmpty()
-  @ApiProperty({ type: [Dependency] })
-  dependencies!: Dependency[]
+  @IsOptional()
+  @ApiPropertyOptional({ type: [Dependency] })
+  dependencies?: Dependency[]
+
+  @ValidateNested()
+  @Type(() => UUIDV4)
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional({ type: [UUIDV4] })
+  completed?: string[]
 }

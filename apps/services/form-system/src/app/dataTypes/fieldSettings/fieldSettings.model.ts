@@ -14,101 +14,103 @@ export class FieldSettings {
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  minValue?: number
+  minValue?: number = 0
 
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  maxValue?: number
+  maxValue?: number = 0
 
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  minLength?: number
+  minLength?: number = 0
 
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  maxLength?: number
+  maxLength?: number = 1000
 
   @IsOptional()
   @IsDateString()
   @ApiPropertyOptional({ type: Date })
-  minDate?: Date
+  minDate?: Date = new Date(0)
 
   @IsOptional()
   @IsDateString()
   @ApiPropertyOptional({ type: Date })
-  maxDate?: Date
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  minAmount?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  maxAmount?: string
+  maxDate?: Date = new Date(
+    new Date().setFullYear(new Date().getFullYear() + 10),
+  )
 
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  year?: number
+  minAmount?: number = 0
+
+  @IsOptional()
+  @IsNumber()
+  @ApiPropertyOptional({ type: Number })
+  maxAmount?: number = 1000000000
+
+  @IsOptional()
+  @IsNumber()
+  @ApiPropertyOptional({ type: Number })
+  year?: number = new Date().getFullYear()
 
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  hasLink?: boolean
+  hasLink?: boolean = false
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  url?: string
+  url?: string = ''
 
   @IsOptional()
   @ValidateNested()
   @Type(() => LanguageType)
   @ApiPropertyOptional({ type: LanguageType })
-  buttonText?: LanguageType
+  buttonText?: LanguageType = new LanguageType()
 
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  isLarge?: boolean
+  isLarge?: boolean = false
 
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  hasPropertyInput?: boolean
+  hasPropertyInput?: boolean = false
 
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  hasPropertyList?: boolean
+  hasPropertyList?: boolean = false
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  listType?: string
+  listType?: string = ''
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  fileTypes?: string
+  fileTypes?: string = ''
 
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  fileMaxSize?: number
+  fileMaxSize?: number = 10
 
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  maxFiles?: number
+  maxFiles?: number = 1
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  timeInterval?: string
+  timeInterval?: string = ''
 }

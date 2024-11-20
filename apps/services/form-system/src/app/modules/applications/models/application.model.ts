@@ -35,6 +35,18 @@ export class Application extends Model<Application> {
   isTest!: boolean
 
   @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  status!: string
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  completed?: string[]
+
+  @Column({
     type: DataType.JSON,
     allowNull: true,
   })
