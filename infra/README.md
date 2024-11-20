@@ -8,35 +8,12 @@ This CLI tool simplifies the management and setup of local environments for deve
 - **Ingress URL Management**: Generate and render ingress URLs for your services.
 - **Service Configuration**: Ensure all necessary secrets and environment variables are loaded to correctly configure services.
 
-### Available Commands
+## Available Commands
 
-While the infra tool offers various commands, one of the most powerful and useful for developers is the `run-local-env` command. This command allows developers to render the required environment and start a local development environment with the necessary configuration.
+For a full list of available commands and options, run:
 
-Here is a summary of all available commands in the CLI:
-
-```text
-yarn infra <command>
-
-Commands:
-  yarn infra render-env        Render a chart for environment
-  yarn infra render-urls       Render urls from ingress for environment
-  yarn infra render-secrets    Render secrets secrets needed by service
-  yarn infra render-env-vars   Render environment variables needed by service.
-                             This is to be used when developing locally and
-                             loading of the environment variables for "dev"
-                             environment is needed.
-  yarn infra render-local-env  Render environment variables needed by service.
-                             This is to be used when developing locally and
-                             loading of the environment variables for "dev"
-                             environment is needed.
-  yarn infra run-local-env     Render environment and run the local environment.
-                             This is to be used when developing locally and
-                             loading of the environment variables for "dev"
-                             environment is needed.
-
-Options:
-  --help     Show help                                                 [boolean]
-  --version  Show version number                                       [boolean]
+```bash
+yarn infra --help
 ```
 
 ### `run-local-env` Command
