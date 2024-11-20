@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import {
   coreMessages,
   formatText,
@@ -22,6 +22,7 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { Item } from './FieldsRepeaterItem'
 import { Locale } from '@island.is/shared/types'
+import isEqual from 'lodash/isEqual'
 
 interface Props extends FieldBaseProps {
   field: FieldsRepeaterField
@@ -40,9 +41,13 @@ export const FieldsRepeaterFormField = ({
     marginTop = 6,
     marginBottom,
     title,
-    titleVariant = 'h4',
+    titleVariant = 'h2',
+    formTitle,
+    formTitleVariant = 'h4',
+    formTitleNumbering = 'suffix',
     removeItemButtonText = coreMessages.buttonRemove,
     addItemButtonText = coreMessages.buttonAdd,
+    minRows = 1,
     maxRows,
   } = data
 
@@ -53,15 +58,17 @@ export const FieldsRepeaterFormField = ({
     id,
   )?.length
   const [numberOfItems, setNumberOfItems] = useState(
-    numberOfItemsInAnswers || 1,
+    Math.max(numberOfItemsInAnswers ?? 0, minRows),
   )
   const [updatedApplication, setUpdatedApplication] = useState(application)
 
   useEffect(() => {
-    setUpdatedApplication({
-      ...application,
-      answers: { ...answers },
-    })
+    if (!isEqual(application, updatedApplication)) {
+      setUpdatedApplication({
+        ...application,
+        answers: { ...answers },
+      })
+    }
   }, [answers])
 
   const items = Object.keys(rawItems).map((key) => ({
@@ -71,19 +78,14 @@ export const FieldsRepeaterFormField = ({
 
   const { formatMessage, lang: locale } = useLocale()
 
-  const [activeIndex, setActiveIndex] = useState(-1)
-  const { fields, append, remove } = useFieldArray({
+  const { fields } = useFieldArray({
     control: control,
     name: id,
   })
 
   const values = useWatch({ name: data.id, control: control })
-  const savedFields = fields.filter((_, index) => index !== activeIndex)
-  const canAddItem = maxRows ? savedFields.length < maxRows : true
 
   const handleNewItem = () => {
-    console.log(answers)
-
     setNumberOfItems(numberOfItems + 1)
   }
 
@@ -110,7 +112,7 @@ export const FieldsRepeaterFormField = ({
   const repeaterFields = (index: number) =>
     items.map((item) => (
       <Item
-        key={`${id}[${activeIndex}].${item.id}.${index}`}
+        key={`${id}[${index}].${item.id}`}
         application={updatedApplication}
         error={error}
         item={item}
@@ -145,9 +147,26 @@ export const FieldsRepeaterFormField = ({
       <Box marginTop={description ? 3 : 0}>
         <Stack space={4}>
           <GridRow rowGap={[2, 2, 2, 3]}>
-            {Array.from({ length: numberOfItems }).map((_i, i) =>
-              repeaterFields(i),
-            )}
+            {Array.from({ length: numberOfItems }).map((_i, i) => (
+              <Fragment key={i}>
+                {(formTitleNumbering !== 'none' || formTitle) && (
+                  <Box marginTop={4} marginLeft={2}>
+                    <Text variant={formTitleVariant}>
+                      {formTitleNumbering === 'prefix' ? `${i + 1}. ` : ''}
+                      {formTitle &&
+                        formatTextWithLocale(
+                          formTitle,
+                          application,
+                          locale as Locale,
+                          formatMessage,
+                        )}
+                      {formTitleNumbering === 'suffix' ? ` ${i + 1}` : ''}
+                    </Text>
+                  </Box>
+                )}
+                {repeaterFields(i)}
+              </Fragment>
+            ))}
           </GridRow>
           <Box display="flex" justifyContent="flexEnd">
             {numberOfItems > 1 && (
@@ -171,7 +190,7 @@ export const FieldsRepeaterFormField = ({
               type="button"
               onClick={handleNewItem}
               icon="add"
-              disabled={!canAddItem}
+              disabled={!maxRows ? false : numberOfItems >= maxRows}
             >
               {formatText(addItemButtonText, updatedApplication, formatMessage)}
             </Button>

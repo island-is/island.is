@@ -75,7 +75,10 @@ export const ExampleForm: Form = buildForm({
             buildFieldsRepeaterField({
               id: 'FieldsRepeater',
               title: 'Fields repeater title',
+              formTitle: 'Title for each form',
               description: 'Fields repeater description',
+              minRows: 2,
+              maxRows: 4,
               fields: {
                 email: {
                   component: 'input',

@@ -874,13 +874,17 @@ export const buildFieldsRepeaterField = (
   const {
     fields,
     table,
+    title,
+    titleVariant,
     formTitle,
+    formTitleVariant,
+    formTitleNumbering,
     marginTop,
     marginBottom,
-    titleVariant,
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
+    minRows,
     maxRows,
   } = data
 
@@ -891,13 +895,17 @@ export const buildFieldsRepeaterField = (
     component: FieldComponents.FIELDS_REPEATER,
     fields,
     table,
+    title,
+    titleVariant,
     formTitle,
+    formTitleVariant,
+    formTitleNumbering,
     marginTop,
     marginBottom,
-    titleVariant,
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
+    minRows,
     maxRows,
   }
 }

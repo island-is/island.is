@@ -663,18 +663,21 @@ export type TableRepeaterField = BaseField & {
 export type FieldsRepeaterField = BaseField & {
   readonly type: FieldTypes.FIELDS_REPEATER
   component: FieldComponents.FIELDS_REPEATER
+  titleVariant?: TitleVariants
   formTitle?: StaticText
+  formTitleVariant?: TitleVariants
+  formTitleNumbering?: 'prefix' | 'suffix' | 'none'
   removeItemButtonText?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
-  titleVariant?: TitleVariants
   fields: Record<string, RepeaterItem>
   /**
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
    */
+  minRows?: number
   maxRows?: number
   table?: {
     /**

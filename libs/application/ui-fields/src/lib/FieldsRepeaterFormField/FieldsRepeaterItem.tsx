@@ -189,8 +189,6 @@ export const Item = ({
     return null
   }
 
-  console.log(application.answers)
-
   return (
     <GridColumn span={['1/1', '1/1', '1/1', span]}>
       {component === 'radio' && label && (
