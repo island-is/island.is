@@ -4,7 +4,6 @@ import {
   buildSection,
   buildSubmitField,
   coreMessages,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
@@ -13,7 +12,6 @@ import {
   UserInfoApi,
 } from '../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
-import { POLITICALPARTY_USER_TYPE } from '../../utils/constants'
 
 export const prerequisitesSection = buildSection({
   id: 'ExternalDataSection',
