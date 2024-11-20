@@ -13,6 +13,7 @@ import {
   BulletList,
   Button,
   Inline,
+  ProgressMeter,
   RadioButton,
   Stack,
   Text,
@@ -265,12 +266,23 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
   return (
     <Stack space={6}>
       <Box ref={formRef}>
-        <WHODASForm
-          step={step}
-          stepIndex={stepIndex}
-          state={state}
-          setState={setState}
-        />
+        <Stack space={4}>
+          <Stack space={1}>
+            <Text>
+              {formatMessage(m.form.progress, {
+                stepIndex: stepIndex + 1,
+                stepCount: steps.length,
+              })}
+            </Text>
+            <ProgressMeter progress={(stepIndex + 1) / steps.length} />
+          </Stack>
+          <WHODASForm
+            step={step}
+            stepIndex={stepIndex}
+            state={state}
+            setState={setState}
+          />
+        </Stack>
       </Box>
       <Inline alignY="center" space={2}>
         {stepIndex > 0 && (

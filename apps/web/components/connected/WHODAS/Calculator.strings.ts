@@ -17,6 +17,11 @@ export const m = {
       defaultMessage: 'Senda inn svör',
       description: 'Senda inn svör',
     },
+    progress: {
+      id: 'web.whodas.calculator:form.progress',
+      defaultMessage: 'Skref {stepIndex} af {stepCount}',
+      description: 'Skref {stepIndex} af {stepCount}',
+    },
   }),
   answerLabel: defineMessages({
     '0': {
