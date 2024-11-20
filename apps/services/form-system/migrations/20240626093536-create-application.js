@@ -20,6 +20,11 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
+          submitted: {
+            type: Sequelize.DATE,
+            allowNull: true,
+            defaultValue: null,
+          },
           is_test: {
             type: Sequelize.BOOLEAN,
             allowNull: false,

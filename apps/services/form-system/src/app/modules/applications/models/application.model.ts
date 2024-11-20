@@ -28,6 +28,13 @@ export class Application extends Model<Application> {
   modified!: CreationOptional<Date>
 
   @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
+  submitted?: Date
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: false,
