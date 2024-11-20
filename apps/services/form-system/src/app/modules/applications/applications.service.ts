@@ -79,6 +79,7 @@ export class ApplicationsService {
     }
 
     application.dependencies = updateApplicationDto.dependencies
+    application.completed = updateApplicationDto.completed
 
     await application.save()
   }

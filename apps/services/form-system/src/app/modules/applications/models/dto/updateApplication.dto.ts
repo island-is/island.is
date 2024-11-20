@@ -17,10 +17,9 @@ export class UpdateApplicationDto {
   @ApiPropertyOptional({ type: [Dependency] })
   dependencies?: Dependency[]
 
-  @ValidateNested()
-  @Type(() => UUIDV4)
+  @Type(() => String)
   @IsArray()
   @IsOptional()
-  @ApiPropertyOptional({ type: [UUIDV4] })
+  @ApiPropertyOptional({ type: [String] })
   completed?: string[]
 }
