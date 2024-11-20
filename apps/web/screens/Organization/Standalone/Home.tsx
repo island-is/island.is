@@ -19,7 +19,7 @@ export interface StandaloneHomeProps {
 
 const StandaloneHome: Screen<StandaloneHomeProps> = ({ organizationPage }) => {
   return (
-    <StandaloneLayout organizationPage={organizationPage}>
+    <StandaloneLayout organizationPage={organizationPage} isFrontpage={true}>
       <Stack space={SLICE_SPACING}>
         {organizationPage?.slices?.map((slice, index) => {
           return (

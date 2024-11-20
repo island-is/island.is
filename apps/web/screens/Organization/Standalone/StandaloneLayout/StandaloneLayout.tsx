@@ -28,20 +28,22 @@ interface StandaloneLayoutProps {
       height?: number
     }
   }
+  isFrontpage?: boolean
 }
 
 const StandaloneLayout = ({
   organizationPage,
   seo,
   children,
+  isFrontpage,
 }: PropsWithChildren<StandaloneLayoutProps>) => {
   const headerProps: HeaderProps = {
     fullWidth: organizationPage?.themeProperties.fullWidth ?? false,
     image: organizationPage?.defaultHeaderImage?.url,
     background: getBackgroundStyle(organizationPage?.themeProperties),
-    title: organizationPage?.title ?? '',
-    logo: organizationPage?.organization?.logo?.url,
-    titleColor: 'dark400',
+    titleColor:
+      (organizationPage.themeProperties
+        .textColor as HeaderProps['titleColor']) ?? 'dark400',
     imagePadding: organizationPage?.themeProperties.imagePadding || '20px',
     imageIsFullHeight:
       organizationPage?.themeProperties.imageIsFullHeight ?? true,
@@ -55,11 +57,10 @@ const StandaloneLayout = ({
         : organizationPage?.themeProperties.imageObjectPosition === 'right'
         ? 'right'
         : 'center',
-    logoAltText: '',
     titleSectionPaddingLeft: organizationPage?.themeProperties
       .titleSectionPaddingLeft as ResponsiveSpace,
     mobileBackground: organizationPage?.themeProperties.mobileBackgroundColor,
-    isSubpage: false,
+    isFrontpage: isFrontpage,
   }
 
   const { activeLocale } = useI18n()

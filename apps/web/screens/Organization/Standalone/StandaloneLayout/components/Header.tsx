@@ -2,14 +2,7 @@ import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 
-import {
-  Box,
-  Hidden,
-  Link,
-  ResponsiveSpace,
-  Text,
-  TextProps,
-} from '@island.is/island-ui/core'
+import { ResponsiveSpace, Text, TextProps } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './Header.css'
@@ -28,7 +21,7 @@ export interface HeaderProps {
   imageObjectFit?: 'contain' | 'cover'
   imageObjectPosition?: 'left' | 'center' | 'right'
   className?: string
-  isSubpage?: boolean
+  isFrontpage?: boolean
 }
 
 export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
@@ -44,7 +37,7 @@ export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   imageObjectFit = 'contain',
   imageObjectPosition = 'center',
   className,
-  isSubpage,
+  isFrontpage = false,
 }) => {
   const { width } = useWindowSize()
   const imageProvided = !!image
@@ -65,32 +58,31 @@ export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
         className={cn(
           {
             [styles.gridContainer]: !className,
-            [styles.gridContainerSubpage]: isSubpage,
+            [styles.gridContainerSubpage]: !isFrontpage,
           },
           className,
         )}
       >
         <div
-          className={cn(styles.textContainer, {
-            [styles.textContainerSubpage]: isSubpage,
+          className={cn({
+            [styles.textContainerNoTitle]: isFrontpage && !underTitle,
+            [styles.textContainer]: isFrontpage && underTitle,
+            [styles.textContainerSubpage]: !isFrontpage,
           })}
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-          }}
         >
-          <div
-            className={cn(styles.textInnerContainer, {
-              [styles.textInnerContainerSubpage]: isSubpage,
-            })}
-          >
-            <Text variant="h1" as="h1" color={titleColor}>
-              {underTitle}
-            </Text>
-          </div>
+          {underTitle && isFrontpage && (
+            <div
+              className={cn(styles.textInnerContainer, {
+                [styles.textInnerContainerSubpage]: !isFrontpage,
+              })}
+            >
+              <Text variant="h1" as="h1" color={titleColor}>
+                {underTitle}
+              </Text>
+            </div>
+          )}
         </div>
-        {imageProvided && !isSubpage && (
+        {imageProvided && isFrontpage && (
           <img
             style={{
               padding: imagePadding,

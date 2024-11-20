@@ -29,11 +29,13 @@ export const gridContainerWidth = style({
 })
 
 export const textContainer = style({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
   textAlign: 'center',
   ...themeUtils.responsiveStyle({
     xs: {
       order: 1,
-      minHeight: '255px',
       paddingTop: '32px',
       paddingBottom: '20px',
     },
@@ -47,23 +49,12 @@ export const textContainer = style({
   }),
 })
 
+export const textContainerNoTitle = style({
+  order: 0,
+})
+
 export const textContainerSubpage = style({
-  ...themeUtils.responsiveStyle({
-    xs: {
-      minHeight: '90px',
-      paddingLeft: '15px',
-      paddingRight: '15px',
-      paddingTop: '15px',
-      paddingBottom: '15px',
-      textAlign: 'left',
-    },
-    lg: {
-      minHeight: '115px',
-      paddingTop: '15px',
-      paddingLeft: '0px',
-      paddingRight: '0px',
-    },
-  }),
+  minHeight: '20px',
 })
 
 export const textInnerContainer = style({

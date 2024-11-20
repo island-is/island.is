@@ -1,6 +1,3 @@
-import { useEffect, useState } from 'react'
-import { useWindowSize } from 'react-use'
-
 import {
   Box,
   GridColumn,
@@ -10,7 +7,6 @@ import {
   LinkV2,
   Text,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { LanguageToggler, SearchInput } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 
@@ -22,7 +18,6 @@ export interface NavigationProps {
   title?: string
   fullWidth?: boolean
   logoAltText?: string
-  isSubpage?: boolean
   customTitleColor?: string
   links: { label: string; href: string }[]
   homeHref: string
@@ -32,18 +27,11 @@ export const Navigation: React.FC<React.PropsWithChildren<NavigationProps>> = ({
   logo,
   title,
   logoAltText,
-  isSubpage = false,
   customTitleColor = 'dark400',
   homeHref,
   links,
 }) => {
   const { activeLocale } = useI18n()
-  const { width } = useWindowSize()
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    setIsMobile(width < theme.breakpoints.lg)
-  }, [width])
 
   return (
     <GridContainer>
