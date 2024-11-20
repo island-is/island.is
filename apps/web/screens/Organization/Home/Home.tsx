@@ -50,11 +50,11 @@ const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
   return link
 }
 
-const OrganizationHomePage: Screen<HomeProps> = ({
+const OrganizationHomePage = ({
   organizationPage,
   organization,
   namespace,
-}) => {
+}: HomeProps) => {
   const n = useNamespace(namespace)
   useContentfulId(organizationPage?.id)
   const { linkResolver } = useLinkResolver()
@@ -228,7 +228,7 @@ const OrganizationHomePage: Screen<HomeProps> = ({
   )
 }
 
-interface HomeProps {
+export interface HomeProps {
   organizationPage?: Query['getOrganizationPage']
   organization?: Query['getOrganization']
   namespace: Record<string, string>
@@ -260,6 +260,7 @@ const Home: Screen<HomeProps> = ({
 }
 
 Home.getProps = async ({ apolloClient, locale, query }) => {
+  const slug = (query.slugs as string[])[0]
   const [
     {
       data: { getOrganizationPage },
@@ -273,7 +274,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: query.slug as string,
+          slug,
           lang: locale as ContentLanguage,
         },
       },
@@ -282,7 +283,7 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: query.slug as string,
+          slug,
           lang: locale as ContentLanguage,
         },
       },
