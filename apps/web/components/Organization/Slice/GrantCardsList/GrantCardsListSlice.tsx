@@ -34,8 +34,6 @@ export const GrantCardsListSlice = ({ slice }: SliceProps) => {
     return undefined
   }
 
-  data?.getGrants.items.forEach((i) => console.log(i.fund?.title))
-
   return (
     <Box component="ul" className={styles.unorderedList}>
       {slice.funds.map((fund) => {
