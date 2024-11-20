@@ -92,6 +92,7 @@ export class FinancialStatementsInaoClientService {
     const data = await this.getData(url)
 
     if (!data || !data.value) return null
+    console.dir(data, { depth: null })
 
     const typeValue = data.value.map((x: any) => {
       return x.star_type

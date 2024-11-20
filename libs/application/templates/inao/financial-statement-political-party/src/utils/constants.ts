@@ -5,6 +5,7 @@ export const TOTAL = 'total'
 export const LESS = 'less'
 export const GREATER = 'greater'
 export const ELECTIONLIMIT = 550000
+export const POLITICALPARTY_USER_TYPE = 150000001
 
 export const ABOUTIDS = {
   operatingYear: 'conditionalAbout.operatingYear',

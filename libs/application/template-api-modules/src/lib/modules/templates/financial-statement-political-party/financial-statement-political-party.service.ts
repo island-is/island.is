@@ -89,7 +89,7 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
   async getUserType({ auth }: TemplateApiModuleActionProps) {
     const { nationalId } = auth
     if (kennitala.isPerson(nationalId)) {
-      return this.financialStatementClientService.getClientType('Einstaklingur')
+      return null
     } else {
       return this.financialStatementClientService.getUserClientType(nationalId)
     }
