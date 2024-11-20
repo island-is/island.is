@@ -46,8 +46,7 @@ export const PaymentChargeOverviewFormField: FC<
     <Box>
       <Box>
         <Text variant="h5">
-          {field.forPaymentLabel &&
-            formatText(field.forPaymentLabel, application, formatMessage)}
+          {formatText(field.forPaymentLabel, application, formatMessage)}
         </Text>
         {selectedChargeWithInfoList.map((charge) => (
           <Box
@@ -72,8 +71,7 @@ export const PaymentChargeOverviewFormField: FC<
       </Box>
       <Box paddingBottom={4} display="flex" justifyContent="spaceBetween">
         <Text variant="h5">
-          {field.totalLabel &&
-            formatText(field.totalLabel, application, formatMessage)}
+          {formatText(field.totalLabel, application, formatMessage)}
         </Text>
         <Text color="blue400" variant="h3">
           {formatIsk(totalPrice)}
