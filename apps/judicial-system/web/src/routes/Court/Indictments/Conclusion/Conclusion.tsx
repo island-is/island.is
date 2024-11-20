@@ -185,6 +185,7 @@ const Conclusion: FC = () => {
       case IndictmentDecision.POSTPONING:
         if (workingCase.postponedIndefinitelyExplanation) {
           setPostponementReason(workingCase.postponedIndefinitelyExplanation)
+          return
         }
         setSelectedAction(IndictmentDecision.SCHEDULING)
         break
