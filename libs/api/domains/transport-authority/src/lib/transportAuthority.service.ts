@@ -21,13 +21,10 @@ import {
   PlateOrderAnswers,
 } from './graphql/dto'
 import {
-  // OwnerChangeValidation,
-  // OperatorChangeValidation,
   CheckTachoNetExists,
   VehicleOwnerchangeChecksByPermno,
   VehicleOperatorChangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
-  // PlateOrderValidation,
 } from './graphql/models'
 import { ApolloError } from 'apollo-server-express'
 import { CoOwnerChangeAnswers } from './graphql/dto/coOwnerChangeAnswers.input'

@@ -19,14 +19,11 @@ import {
 } from './dto'
 import {
   CheckTachoNetExists,
-  // OperatorChangeValidation,
-  // OwnerChangeValidation,
   VehicleOperatorChangeChecksByPermno,
   VehicleOwnerchangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
   MyPlateOwnershipChecksByRegno,
   PlateAvailability,
-  // PlateOrderValidation,
 } from './models'
 import { CoOwnerChangeAnswers } from './dto/coOwnerChangeAnswers.input'
 import { TransportAuthorityValidation } from './models/validation.model'
