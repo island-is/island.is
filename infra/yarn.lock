@@ -3808,15 +3808,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/yargs@npm:17.0.33":
-  version: 17.0.33
-  resolution: "@types/yargs@npm:17.0.33"
-  dependencies:
-    "@types/yargs-parser": "*"
-  checksum: ee013f257472ab643cb0584cf3e1ff9b0c44bca1c9ba662395300a7f1a6c55fa9d41bd40ddff42d99f5d95febb3907c9ff600fbcb92dadbec22c6a76de7e1236
-  languageName: node
-  linkType: hard
-
 "@types/yargs@npm:^15.0.0":
   version: 15.0.11
   resolution: "@types/yargs@npm:15.0.11"
@@ -6690,7 +6681,6 @@ __metadata:
     "@types/js-yaml": 3.12.5
     "@types/lodash": 4.14.160
     "@types/node": 14.14.14
-    "@types/yargs": 17.0.33
     "@zeit/ncc": 0.22.3
     aws-sdk: ^2.1003.0
     esbuild: 0.14.39
