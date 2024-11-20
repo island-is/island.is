@@ -31,9 +31,7 @@ export const dataSchema = z.object({
         })
         .refine(
           ({ income, incomePerYear }) =>
-            income === RatioType.YEARLY
-              ? !!incomePerYear
-              : true,
+            income === RatioType.YEARLY ? !!incomePerYear : true,
           {
             path: ['incomePerYear'],
           },
@@ -106,7 +104,7 @@ export const dataSchema = z.object({
             path: ['incomePerYear'],
             params: errorMessages.monthsRequired,
           },
-        )
+        ),
     )
     .refine((i) => i === undefined || i.length > 0, {
       params: errorMessages.incomePlanRequired,
