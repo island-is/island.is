@@ -1,4 +1,3 @@
-import { coreErrorMessages } from '@island.is/application/core'
 import { z } from 'zod'
 import { INCOME, ISK, RatioType, YES } from './constants'
 import { errorMessages } from './messages'
@@ -33,7 +32,7 @@ export const dataSchema = z.object({
         .refine(
           ({ income, incomePerYear }) =>
             income === RatioType.YEARLY
-              ? !!incomePerYear && Number(incomePerYear) > 0
+              ? !!incomePerYear
               : true,
           {
             path: ['incomePerYear'],
@@ -54,7 +53,7 @@ export const dataSchema = z.object({
             return income === RatioType.MONTHLY &&
               currency === ISK &&
               unevenAndEmploymentIncome
-              ? !!equalIncomePerMonth && Number(equalIncomePerMonth) > 0
+              ? !!equalIncomePerMonth
               : true
           },
           {
@@ -76,8 +75,7 @@ export const dataSchema = z.object({
             return income === RatioType.MONTHLY &&
               currency !== ISK &&
               unevenAndEmploymentIncome
-              ? !!equalForeignIncomePerMonth &&
-                  Number(equalForeignIncomePerMonth) > 0
+              ? !!equalForeignIncomePerMonth
               : true
           },
           {
@@ -109,38 +107,6 @@ export const dataSchema = z.object({
             params: errorMessages.monthsRequired,
           },
         )
-        .superRefine((incomePlanTable, ctx) => {
-          if (
-            incomePlanTable.income === RatioType.MONTHLY &&
-            incomePlanTable?.incomeCategory === INCOME &&
-            incomePlanTable.unevenIncomePerYear?.[0] === YES
-          ) {
-            const months = {
-              january: incomePlanTable.january,
-              february: incomePlanTable.february,
-              march: incomePlanTable.march,
-              april: incomePlanTable.april,
-              may: incomePlanTable.may,
-              june: incomePlanTable.june,
-              july: incomePlanTable.july,
-              august: incomePlanTable.august,
-              september: incomePlanTable.september,
-              october: incomePlanTable.october,
-              november: incomePlanTable.november,
-              december: incomePlanTable.december,
-            }
-
-            Object.entries(months).forEach(([key, value]) => {
-              if (value && !(Number(value) > 0)) {
-                ctx.addIssue({
-                  code: z.ZodIssueCode.custom,
-                  path: [key],
-                  params: coreErrorMessages.defaultError,
-                })
-              }
-            })
-          }
-        }),
     )
     .refine((i) => i === undefined || i.length > 0, {
       params: errorMessages.incomePlanRequired,
