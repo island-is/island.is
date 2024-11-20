@@ -202,7 +202,7 @@ const cleanObject = (obj: object, keyToRemove: string): RecordType => {
       }
 
       const cleanedValue = removeAttachmentFromAnswers(value, keyToRemove)
-      
+
       // For arrays or objects with content, keep them
       if (hasContent(cleanedValue)) {
         acc[field] = cleanedValue

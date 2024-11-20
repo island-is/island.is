@@ -202,7 +202,7 @@ describe('Testing utility functions for applications', () => {
     it('Should remove an object from an array that contains the given key and leave the array empty', () => {
       const givenAnswers = {
         documents: [
-          { id: 'doc1', attachmentId: 'some-key-123', name: 'Document 1' }
+          { id: 'doc1', attachmentId: 'some-key-123', name: 'Document 1' },
         ],
       }
       const expectedAnswers = {
@@ -323,25 +323,23 @@ describe('Testing utility functions for applications', () => {
               {
                 files: [
                   { id: 'file1', attachmentId: 'some-key-123', nr: 77 },
-                  { id: 'file2', attachmentId: 'keep-this', nr: 55 }
-                ]
+                  { id: 'file2', attachmentId: 'keep-this', nr: 55 },
+                ],
               },
               {
-                files: [
-                  { id: 'file3', attachmentId: 'also-keep-this' }
-                ]
-              }
+                files: [{ id: 'file3', attachmentId: 'also-keep-this' }],
+              },
             ],
             otherSection: {
               nr: 100,
               name: 'Some Name',
               kids: [
                 { kid: 'Some kid', phone: 1234567 },
-                { kid: 'Some other kid', phone: 1234568 }
-              ]
-            }
-          }
-        }
+                { kid: 'Some other kid', phone: 1234568 },
+              ],
+            },
+          },
+        },
       }
 
       const expectedAnswers = {
@@ -350,26 +348,22 @@ describe('Testing utility functions for applications', () => {
           deeperSection: {
             documents: [
               {
-                files: [
-                  { id: 'file2', attachmentId: 'keep-this', nr: 55}
-                ]
+                files: [{ id: 'file2', attachmentId: 'keep-this', nr: 55 }],
               },
               {
-                files: [
-                  { id: 'file3', attachmentId: 'also-keep-this' }
-                ]
-              }
+                files: [{ id: 'file3', attachmentId: 'also-keep-this' }],
+              },
             ],
             otherSection: {
               nr: 100,
               name: 'Some Name',
               kids: [
                 { kid: 'Some kid', phone: 1234567 },
-                { kid: 'Some other kid', phone: 1234568 }
-              ]
-            }
-          }
-        }
+                { kid: 'Some other kid', phone: 1234568 },
+              ],
+            },
+          },
+        },
       }
 
       const result = removeAttachmentFromAnswers(givenAnswers, 'some-key-123')
