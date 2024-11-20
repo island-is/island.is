@@ -156,7 +156,6 @@ const FinancialStatementCemeteryTemplate: ApplicationTemplate<
       application.externalData,
       'getUserType.data.value',
     )
-    console.log(userType)
 
     if (userType === CEMETERY_USER_TYPE) {
       return Roles.APPLICANT
