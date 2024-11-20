@@ -58,10 +58,17 @@ yarn e2e <app-name>
    yarn e2e <app-name> --skip-nx-cache
   ```
 
-- **Run with a Specific Tag**: Run only the tests tagged with a specific tag:
+- **Run Tests with Tags**: Use tags to include or exclude specific tests.
 
   ```bash
-   yarn e2e <app-name> --grep @fast
+    # Run only tests tagged with @fast
+    yarn e2e <app-name> --grep @fast
+
+    # Exclude tests tagged with @fast
+    yarn e2e <app-name> --grep-invert @fast
+
+    # Run tests tagged with either @fast or @slow
+    npx playwright test --grep "@fast|@slow"
   ```
 
 - **View the Test Report**: After running tests, use this command to view the generated report:
@@ -81,6 +88,8 @@ yarn e2e <app-name>
   ```bash
   yarn e2e <app-name> --debug
   ```
+
+For more details on Playwright commands and flags, refer to the [official documentation](https://playwright.dev/docs/test-cli)
 
 ## ✍️ Writing Tests
 
