@@ -30,6 +30,9 @@ import {
 import { LookupPerson } from '../LookupPerson'
 import { HeirsRepeaterProps } from './types'
 import ShareInput from '../../components/ShareInput'
+import { isFakePerson } from '../../lib/utils/fakeData'
+import { useLazyQuery } from '@apollo/client'
+import { GET_ELECTRONIC_ID_STATUS } from '../../graphql'
 
 export const AdditionalHeir = ({
   field,
@@ -81,6 +84,8 @@ export const AdditionalHeir = ({
   const { control, setValue, clearErrors, getValues, unregister } =
     useFormContext()
 
+  const [getElectronicIdStatus] = useLazyQuery(GET_ELECTRONIC_ID_STATUS)
+
   const values = getValues()
 
   const currentHeir = useMemo(
@@ -120,39 +125,39 @@ export const AdditionalHeir = ({
     values.applicationFor === PREPAID_INHERITANCE ? false : !currentHeir.enabled
 
   useEffect(() => {
-    const cleanPhone = phoneNumber.replace(/\D/g, '')
-    if (cleanPhone.length === 7 && nationalId?.length === 10) {
-      setLoading(true)
+    const cleanPhone = phoneInput
+      .replace(/\D/g, '')
+      .replace(/^00354/, '')
+      .replace(/^354/, '')
 
-      if (fakeDataIsEnabled(answers)) {
+    if (cleanPhone.length === 7 && nationalIdInput?.length === 10) {
+      if (isFakePerson(nationalIdInput)) {
         // For fake data
         // Allow electronic ID for phone numbers ending in 9
         if (cleanPhone.slice(-1) === '9') {
-          setValue(`${topId}.electronicID`, 'true')
+          setValue(`${fieldIndex}.electronicID`, 'true')
         } else {
-          setValue(`${topId}.electronicID`, '')
+          setValue(`${fieldIndex}.electronicID`, '')
         }
-        setLoading(false)
         return
       }
 
       getElectronicIdStatus({
         variables: {
           input: {
-            nationalId,
+            nationalIdInput,
             phoneNumber: cleanPhone,
           },
         },
       }).then((res) => {
         if (!res.data?.getSyslumennElectronicIDStatus) {
-          setValue(`${topId}.electronicID`, '')
+          setValue(`${fieldIndex}.electronicID`, '')
         } else {
-          setValue(`${topId}.electronicID`, 'true')
+          setValue(`${fieldIndex}.electronicID`, 'true')
         }
-        setLoading(false)
       })
     }
-  }, [phoneNumber, nationalId])
+  }, [phoneInput, nationalIdInput])
 
   useEffect(() => {
     clearErrors(nameField)

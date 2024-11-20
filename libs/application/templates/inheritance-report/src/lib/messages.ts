@@ -258,6 +258,11 @@ export const m = defineMessages({
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
     description: 'National id is invalid',
   },
+  errorElectronicId: {
+    id: 'ir.application:error.electronicId',
+    defaultMessage: 'Rafræn skilríki fundust ekki fyrir kennitölu og símanúmer',
+    description: 'User needs to have electronic id',
+  },
   address: {
     id: 'ir.application:address',
     defaultMessage: 'Lögheimili',

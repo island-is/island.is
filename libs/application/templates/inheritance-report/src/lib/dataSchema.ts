@@ -547,6 +547,7 @@ export const inheritanceReportSchema = z.object({
         inheritance: z.string(),
         taxableInheritance: z.string(),
         inheritanceTax: z.string(),
+        electronicID: z.string().optional(),
         // Málsvari
         advocate: z
           .object({
@@ -606,6 +607,20 @@ export const inheritanceReportSchema = z.object({
         },
         {
           path: ['phone'],
+        },
+      )
+      .refine(
+        ({ enabled, advocate, electronicID }) => {
+          console.log({
+            enabled,
+            advocate,
+            electronicID,
+          })
+          return enabled && !advocate && electronicID
+        },
+        {
+          path: ['phone'],
+          message: m.errorElectronicId.defaultMessage,
         },
       )
       .refine(
