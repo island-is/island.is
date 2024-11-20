@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import uniq from 'lodash/uniq'
 
 import { User } from '@island.is/auth-nest-tools'
 import { SyslumennService } from '@island.is/clients/syslumenn'
@@ -357,11 +356,13 @@ export class DelegationsIncomingService {
 
     const { aliveNationalIds, deceasedNationalIds, aliveNameInfo } =
       await this.aliveStatusService.getStatus(
-        uniq(
-          records.map((d) => ({
-            nationalId: d.fromNationalId,
-            name: UNKNOWN_NAME,
-          })),
+        Array.from(
+          new Set(
+            records.map((d) => ({
+              nationalId: d.fromNationalId,
+              name: UNKNOWN_NAME,
+            })),
+          ),
         ),
         isNationalRegistryV3DeceasedStatusEnabled,
       )
