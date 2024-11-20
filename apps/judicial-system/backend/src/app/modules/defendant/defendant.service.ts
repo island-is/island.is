@@ -264,7 +264,6 @@ export class DefendantService {
 
     if (update.isSentToPrisonAdmin) {
       this.defendantEventLogModel.create({
-        caseId: theCase.id,
         defendantId: defendant.id,
         eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
       })
