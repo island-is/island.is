@@ -164,7 +164,7 @@ export class DefendantService {
     }
 
     const messages: Message[] = []
-  
+
     if (
       updatedDefendant.isDefenderChoiceConfirmed &&
       !oldDefendant.isDefenderChoiceConfirmed
@@ -193,8 +193,6 @@ export class DefendantService {
           })
         }
       }
-
-     
     } else if (
       updatedDefendant.isSentToPrisonAdmin &&
       updatedDefendant.isSentToPrisonAdmin !== oldDefendant.isSentToPrisonAdmin
