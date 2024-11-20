@@ -429,10 +429,10 @@ export class DelegationsIncomingCustomService {
    * Finds person by nationalId.
    */
   private getPersonByNationalId(
-    identities: Array<NameInfo | null>,
+    identities: Array<NameInfo | null> | undefined,
     nationalId: string,
   ) {
-    return identities.find((identity) => identity?.nationalId === nationalId)
+    return identities?.find((identity) => identity?.nationalId === nationalId)
   }
 
   private async findAccessControlList(
