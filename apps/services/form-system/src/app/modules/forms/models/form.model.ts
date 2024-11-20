@@ -42,7 +42,11 @@ export class Form extends Model<Form> {
   })
   slug!: string
 
-  @Column
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
   invalidationDate?: Date
 
   @CreatedAt

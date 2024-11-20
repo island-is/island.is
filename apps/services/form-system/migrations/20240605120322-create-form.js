@@ -32,6 +32,7 @@ module.exports = {
           invalidation_date: {
             type: Sequelize.DATE,
             allowNull: true,
+            defaultValue: null,
           },
           is_translated: {
             type: Sequelize.BOOLEAN,
