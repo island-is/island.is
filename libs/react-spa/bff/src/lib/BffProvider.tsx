@@ -3,12 +3,17 @@ import { ReactNode, useCallback, useEffect, useReducer, useState } from 'react'
 
 import { LoadingScreen } from '@island.is/react/components'
 import { BffContext } from './BffContext'
+import { BffNewUserSameSessionModal } from './BffNewUserSameSessionModal'
 import { BffPoller } from './BffPoller'
 import { BffSessionExpiredModal } from './BffSessionExpiredModal'
 import { ErrorScreen } from './ErrorScreen'
 import { BffBroadcastEvents, useBffBroadcaster } from './bff.hooks'
 import { ActionType, LoggedInState, initialState, reducer } from './bff.state'
-import { createBffUrlGenerator, isNewSession } from './bff.utils'
+import {
+  createBffUrlGenerator,
+  isNewSession,
+  isNewUserWithSameSession,
+} from './bff.utils'
 
 const BFF_SERVER_UNAVAILABLE = 'BFF_SERVER_UNAVAILABLE'
 
@@ -27,11 +32,12 @@ export const BffProvider = ({
   mockedInitialState,
 }: BffProviderProps) => {
   const [showSessionExpiredScreen, setSessionExpiredScreen] = useState(false)
+  const [showNewUserScreen, setNewUserScreen] = useState(false)
+
   const bffUrlGenerator = createBffUrlGenerator(applicationBasePath)
-  const [state, dispatch] = useReducer(
-    reducer,
-    mockedInitialState ?? initialState,
-  )
+  const [state, dispatch] = useReducer(reducer, {
+    ...(mockedInitialState ?? initialState),
+  })
 
   const { authState } = state
   const showErrorScreen = authState === 'error'
@@ -42,12 +48,14 @@ export const BffProvider = ({
   const isLoggedIn = authState === 'logged-in'
 
   const { postMessage } = useBffBroadcaster((event) => {
-    if (
-      isLoggedIn &&
-      event.data.type === BffBroadcastEvents.NEW_SESSION &&
-      isNewSession(state.userInfo, event.data.userInfo)
-    ) {
-      setSessionExpiredScreen(true)
+    if (isLoggedIn && event.data.type === BffBroadcastEvents.NEW_SESSION) {
+      if (isNewSession(state.userInfo, event.data.userInfo)) {
+        setSessionExpiredScreen(true)
+      } else if (
+        isNewUserWithSameSession(state.userInfo, event.data.userInfo)
+      ) {
+        setNewUserScreen(true)
+      }
     } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
       // We will wait 1 seconds before we dispatch logout action.
       // The reason is that IDS will not log the user out immediately.
@@ -215,6 +223,16 @@ export const BffProvider = ({
 
     if (showSessionExpiredScreen) {
       return <BffSessionExpiredModal onLogin={signIn} />
+    }
+
+    if (showNewUserScreen) {
+      return (
+        <BffNewUserSameSessionModal
+          onReload={() => {
+            window.location.reload()
+          }}
+        />
+      )
     }
 
     if (isLoggedIn) {

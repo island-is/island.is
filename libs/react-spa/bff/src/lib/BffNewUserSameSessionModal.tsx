@@ -2,24 +2,24 @@ import { BffProblemTemplateModal } from './BffProblemTemplateModal'
 
 type BffSessionExpiredModalProps = {
   /**
-   * Login callback
+   * Reload callback
    */
-  onLogin(): void
+  onReload(): void
 }
 
 /**
  * This screen is unfortunately not translated because at this point we don't have a user locale.
  */
-export const BffSessionExpiredModal = ({
-  onLogin,
+export const BffNewUserSameSessionModal = ({
+  onReload,
 }: BffSessionExpiredModalProps) => (
   <BffProblemTemplateModal
-    title="Innskráning útrunnin"
+    title="Nýr notandi"
     action={{
-      prefixText: 'Þú hefur skráð þig inn í öðru umboði. Viltu',
-      text: 'skrá þig',
-      postfixText: 'aftur inn?',
-      onClick: onLogin,
+      prefixText: 'Þú hefur skipt um notanda. Viltu',
+      text: 'endurhlaða',
+      postfixText: 'síðunni?',
+      onClick: onReload,
     }}
   />
 )

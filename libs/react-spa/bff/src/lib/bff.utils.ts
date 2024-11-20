@@ -37,12 +37,27 @@ export const createQueryStr = (params: Record<string, string>) => {
   return new URLSearchParams(params).toString()
 }
 
+type UserCheckFn = (oldUser: BffUser, newUser: BffUser) => boolean
+
 /**
  *  This method checks if the user has a new session
  */
-export const isNewSession = (oldUser: BffUser, newUser: BffUser) => {
+export const isNewSession: UserCheckFn = (oldUser, newUser) => {
   const oldSid = oldUser.profile.sid
   const newSid = newUser.profile.sid
 
-  return oldSid && newSid && oldSid !== newSid
+  return !!(oldSid && newSid && oldSid !== newSid)
+}
+
+/**
+ * Checks if the user is a new user with the same session
+ */
+export const isNewUserWithSameSession: UserCheckFn = (oldUser, newUser) => {
+  const isSameSession = !isNewSession(oldUser, newUser)
+
+  if (isSameSession) {
+    return oldUser.profile.nationalId !== newUser.profile.nationalId
+  }
+
+  return false
 }
