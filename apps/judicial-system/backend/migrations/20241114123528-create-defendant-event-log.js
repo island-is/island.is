@@ -22,6 +22,14 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
+          case_id: {
+            type: Sequelize.UUID,
+            references: {
+              model: 'case',
+              key: 'id',
+            },
+            allowNull: false,
+          },
           defendant_id: {
             type: Sequelize.UUID,
             references: {

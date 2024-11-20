@@ -10,6 +10,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
+import { Case } from '../../case/models/case.model'
 import { Defendant } from './defendant.model'
 import { DefendantEventType } from '@island.is/judicial-system/types'
 
@@ -34,6 +35,11 @@ export class DefendantEventLog extends Model {
   @UpdatedAt
   @ApiProperty({ type: Date })
   modified!: Date
+
+  @ForeignKey(() => Case)
+  @Column({ type: DataType.UUID, allowNull: false })
+  @ApiProperty({ type: String })
+  caseId!: string
 
   @ForeignKey(() => Defendant)
   @Column({ type: DataType.UUID, allowNull: false })
