@@ -41,6 +41,8 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     excludeDates,
     minDate,
     maxDate,
+    minYear,
+    maxYear,
     onChange,
     readOnly,
   } = field
@@ -139,6 +141,8 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
           excludeDates={finalExcludeDates}
           minDate={finalMinDate}
           maxDate={finalMaxDate}
+          minYear={minYear}
+          maxYear={maxYear}
           backgroundColor={backgroundColor}
           readOnly={readOnly}
           label={formatTextWithLocale(title, application, lang, formatMessage)}

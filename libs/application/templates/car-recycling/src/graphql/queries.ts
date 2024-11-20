@@ -9,7 +9,7 @@ export const GetUsersVehiclesV2Query = gql`
         colorName
         modelYear
         requiresMileageRegistration
-        canRegisterMilage
+        canRegisterMileage
         role
       }
       paging {
