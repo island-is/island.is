@@ -128,7 +128,7 @@ test.describe('Overview part of banking app', () => {
     // Basic state reset, e.g. clear inbox
   })
 
-  test('should get paid @slow', () => {
+  test('should get paid', { tag: '@slow' }, () => {
     // Make user get money using page.selector, page.click, etc.
     // Verify money is present
   })
