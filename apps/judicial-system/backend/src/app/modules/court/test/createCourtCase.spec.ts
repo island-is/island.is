@@ -14,11 +14,8 @@ import {
 
 import { createTestingCourtModule } from './createTestingCourtModule'
 
-import { nowFactory } from '../../../factories'
 import { randomBoolean, randomDate, randomEnum } from '../../../test'
 import { courtSubtypes, Subtype } from '../court.service'
-
-jest.mock('../../../factories')
 
 interface Then {
   result: string
@@ -30,13 +27,14 @@ type GivenWhenThen = (
   caseId: string,
   courtId: string,
   type: CaseType,
+  receivalDate: Date,
   policeCaseNumbers: string[],
   isExtension: boolean,
   indictmentSubtypes?: IndictmentSubtypeMap,
 ) => Promise<Then>
 
 describe('CourtService - Create court case', () => {
-  const date = randomDate()
+  const receivalDate = randomDate()
   let mockCourtClientService: CourtClientService
   let givenWhenThen: GivenWhenThen
 
@@ -46,14 +44,12 @@ describe('CourtService - Create court case', () => {
 
     mockCourtClientService = courtClientService
 
-    const mockToday = nowFactory as jest.Mock
-    mockToday.mockReturnValueOnce(date)
-
     givenWhenThen = async (
       user: User,
       caseId: string,
       courtId: string,
       type: CaseType,
+      receivalDate: Date,
       policeCaseNumbers: string[],
       isExtension: boolean,
       indictmentSubtypes?: IndictmentSubtypeMap,
@@ -66,6 +62,7 @@ describe('CourtService - Create court case', () => {
           caseId,
           courtId,
           type,
+          receivalDate,
           policeCaseNumbers,
           isExtension,
           indictmentSubtypes,
@@ -93,6 +90,7 @@ describe('CourtService - Create court case', () => {
           caseId,
           courtId,
           type,
+          receivalDate,
           policeCaseNumbers,
           isExtension,
         )
@@ -105,7 +103,7 @@ describe('CourtService - Create court case', () => {
             caseType: 'R - Rannsóknarmál',
             subtype: courtSubtypes[type as Subtype],
             status: 'Skráð',
-            receivalDate: formatISO(date, { representation: 'date' }),
+            receivalDate: formatISO(receivalDate, { representation: 'date' }),
             basedOn: 'Rannsóknarhagsmunir',
             sourceNumber: policeCaseNumbers[0],
           },
@@ -132,6 +130,7 @@ describe('CourtService - Create court case', () => {
           caseId,
           courtId,
           type,
+          receivalDate,
           policeCaseNumbers,
           isExtension,
           indictmentSubtypes,
@@ -145,7 +144,7 @@ describe('CourtService - Create court case', () => {
             caseType: 'S - Ákærumál',
             subtype: courtSubtypes[indictmentSubtype],
             status: 'Skráð',
-            receivalDate: formatISO(date, { representation: 'date' }),
+            receivalDate: formatISO(receivalDate, { representation: 'date' }),
             basedOn: 'Sakamál',
             sourceNumber: policeCaseNumbers[0],
           },
@@ -171,6 +170,7 @@ describe('CourtService - Create court case', () => {
         caseId,
         courtId,
         type,
+        receivalDate,
         policeCaseNumbers,
         isExtension,
       )
@@ -181,7 +181,7 @@ describe('CourtService - Create court case', () => {
         caseType: 'R - Rannsóknarmál',
         subtype: courtSubtypes[type as Subtype][0],
         status: 'Skráð',
-        receivalDate: formatISO(date, { representation: 'date' }),
+        receivalDate: formatISO(receivalDate, { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
         sourceNumber: policeCaseNumbers[0],
       })
@@ -205,6 +205,7 @@ describe('CourtService - Create court case', () => {
         caseId,
         courtId,
         type,
+        receivalDate,
         policeCaseNumbers,
         isExtension,
       )
@@ -215,7 +216,7 @@ describe('CourtService - Create court case', () => {
         caseType: 'R - Rannsóknarmál',
         subtype: courtSubtypes[type as Subtype][1],
         status: 'Skráð',
-        receivalDate: formatISO(date, { representation: 'date' }),
+        receivalDate: formatISO(receivalDate, { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
         sourceNumber: policeCaseNumbers[0],
       })
@@ -248,6 +249,7 @@ describe('CourtService - Create court case', () => {
         caseId,
         courtId,
         type,
+        receivalDate,
         policeCaseNumbers,
         isExtension,
         indictmentSubtypes,
@@ -284,6 +286,7 @@ describe('CourtService - Create court case', () => {
         caseId,
         courtId,
         type,
+        receivalDate,
         policeCaseNumbers,
         isExtension,
         indictmentSubtypes,
