@@ -9,7 +9,7 @@ import { States } from '../../../lib/constants'
 import { ReviewGroup } from '../../ReviewGroup'
 import { ReviewScreenProps, InsuranceCompany } from '../../../shared'
 import { getValueViaPath } from '@island.is/application/core'
-import { hasReviewerApproved } from '../../../utils'
+import { canReviewerApprove } from '../../../utils'
 
 interface Props {
   noInsuranceError: boolean
@@ -52,7 +52,7 @@ export const InsuranceSection: FC<
     <ReviewGroup
       editMessage={
         isBuyer &&
-        !hasReviewerApproved(reviewerNationalId, answers) &&
+        canReviewerApprove(reviewerNationalId, answers) &&
         application.state !== States.COMPLETED
           ? formatMessage(overview.labels.addInsuranceButton)
           : undefined
