@@ -134,29 +134,33 @@ const SyslumennFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
                   >
                     {canWeHelpText}
                   </HeaderLink>
-                  <Box marginTop={3} className={styles.linkMaxWidth}>
-                    <Link
-                      color={footerTextColor === 'white' ? 'white' : 'blue400'}
-                      href={n(
-                        'privacyPolicyHref',
-                        '/s/syslumenn/personuverndarstefna-syslumanna',
-                      )}
-                      skipTab
-                    >
-                      <Button
-                        size="small"
-                        colorScheme="negative"
-                        icon="arrowForward"
-                        variant="text"
-                        as="span"
-                      >
-                        {n(
-                          'privacyPolicyLabel',
-                          'Persónuverndarstefna Sýslumanna',
+                  {n('showPrivacyPolicyLink', true) && (
+                    <Box marginTop={3} className={styles.linkMaxWidth}>
+                      <Link
+                        color={
+                          footerTextColor === 'white' ? 'white' : 'blue400'
+                        }
+                        href={n(
+                          'privacyPolicyHref',
+                          '/s/syslumenn/personuverndarstefna-syslumanna',
                         )}
-                      </Button>
-                    </Link>
-                  </Box>
+                        skipTab
+                      >
+                        <Button
+                          size="small"
+                          colorScheme="negative"
+                          icon="arrowForward"
+                          variant="text"
+                          as="span"
+                        >
+                          {n(
+                            'privacyPolicyLabel',
+                            'Persónuverndarstefna Sýslumanna',
+                          )}
+                        </Button>
+                      </Link>
+                    </Box>
+                  )}
                 </GridColumn>
                 <GridColumn span={['12/12', '12/12', '4/5']}>
                   <GridContainer>
