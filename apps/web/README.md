@@ -108,15 +108,18 @@ To run the E2E tests for the `web` app:
    yarn e2e web
    ```
 
-### Folder Structure
+### Test Organization
 
-The `e2e` directory is organized as follows:
+The E2E tests for the `web` app are located in the `e2e` folder.
 
-```shell
-web/
-└── e2e/
-    ├── smoke/                # Smoke tests for basic functionality
-    └── acceptance/           # Acceptance tests for detailed workflows
+Tests are tagged based on their execution time or other criteria. Use `@fast` for quick tests and `@slow` for longer-running tests. Example:
+
+```typescript
+import { test, expect } from '@playwright/test'
+
+test('should get paid', { tag: '@slow' }, () => {
+  // ...
+})
 ```
 
 ### Mocking with Mockoon

@@ -9,7 +9,7 @@ import {
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe('Front page', () => {
+test.describe('Front page', { tag: '@fast' }, () => {
   let context: BrowserContext
 
   test.beforeAll(async ({ browser }) => {

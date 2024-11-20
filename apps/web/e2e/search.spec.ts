@@ -8,7 +8,7 @@ import {
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe('Search feature', () => {
+test.describe('Search feature', { tag: '@fast' }, () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {
     context = await session({

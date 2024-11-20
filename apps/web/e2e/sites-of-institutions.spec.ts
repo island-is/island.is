@@ -41,7 +41,7 @@ const orgs: Orgs[] = [
   { organisationName: 'Útlendingastofnun', target: { role: 'link' } },
 ]
 
-test.describe('Sites of institutions', () => {
+test.describe('Sites of institutions', { tag: '@fast' }, () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {
     context = await session({
