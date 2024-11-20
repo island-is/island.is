@@ -256,6 +256,7 @@ export enum FieldTypes {
   HIDDEN_INPUT = 'HIDDEN_INPUT',
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
+  VEHICLE_RADIO = 'VEHICLE_RADIO',
   STATIC_TABLE = 'STATIC_TABLE',
   ACCORDION = 'ACCORDION',
   BANK_ACCOUNT = 'BANK_ACCOUNT',
@@ -290,6 +291,7 @@ export enum FieldComponents {
   TABLE_REPEATER = 'TableRepeaterFormField',
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
+  VEHICLE_RADIO = 'VehicleRadioFormField',
   STATIC_TABLE = 'StaticTableFormField',
   ACCORDION = 'AccordionFormField',
   BANK_ACCOUNT = 'BankAccountFormField',
@@ -675,6 +677,22 @@ export interface FindVehicleField extends InputField {
   energyFundsMessages?: Record<string, FormText>
 }
 
+export interface VehicleRadioField extends InputField {
+  readonly type: FieldTypes.VEHICLE_RADIO
+  component: FieldComponents.VEHICLE_RADIO
+  itemType: 'VEHICLE' | 'PLATE'
+  itemList: unknown[]
+  shouldValidateDebtStatus?: boolean
+  shouldValidateRenewal?: boolean
+  alertMessageErrorTitle?: FormText
+  validationErrorMessages?: Record<string, FormText>
+  validationErrorFallbackMessage?: FormText
+  inputErrorMessage: FormText
+  debtStatusErrorMessage?: FormText
+  renewalExpiresAtTag?: StaticText
+  validateRenewal?: (item: unknown) => boolean
+}
+
 export interface HiddenInputWithWatchedValueField extends BaseField {
   watchValue: string
   type: FieldTypes.HIDDEN_INPUT_WITH_WATCHED_VALUE
@@ -769,6 +787,7 @@ export type Field =
   | HiddenInputWithWatchedValueField
   | HiddenInputField
   | FindVehicleField
+  | VehicleRadioField
   | StaticTableField
   | AccordionField
   | BankAccountField
