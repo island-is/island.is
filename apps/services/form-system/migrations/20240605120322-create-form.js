@@ -48,10 +48,9 @@ module.exports = {
             type: Sequelize.INTEGER,
             allowNull: false,
           },
-          is_published_in_changing: {
-            type: Sequelize.BOOLEAN,
+          status: {
+            type: Sequelize.STRING,
             allowNull: false,
-            defaultValue: false,
           },
           stop_progress_on_validating_screen: {
             type: Sequelize.BOOLEAN,
