@@ -5,7 +5,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CemeteryFinancialStatementValues,
   FinancialStatementsInaoClientService,
-  ClientRoles,
 } from '@island.is/clients/financial-statements-inao'
 import {
   ApplicationTypes,
@@ -36,9 +35,9 @@ export const getCurrentUserType = (
   answers: Application['answers'],
   externalData: Application['externalData'],
 ) => {
-  const fakeUserType: any = getValueViaPath(answers, 'fakeData.options')
+  const fakeUserType = getValueViaPath<number>(answers, 'fakeData.options')
 
-  const currentUserType: any = getValueViaPath(
+  const currentUserType = getValueViaPath<number>(
     externalData,
     'getUserType.data.value',
   )
@@ -86,9 +85,7 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
   async getUserType({ auth }: TemplateApiModuleActionProps) {
     const { nationalId } = auth
     if (kennitala.isPerson(nationalId)) {
-      return this.financialStatementClientService.getClientType(
-        ClientRoles.Individual,
-      )
+      return null
     } else {
       return this.financialStatementClientService.getUserClientType(nationalId)
     }
@@ -97,63 +94,51 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { nationalId, actor } = auth
     const answers = application.answers
-    const externalData = application.externalData
-    const currentUserType = getCurrentUserType(answers, externalData)
-
-    // Todo test before this goes live
-    // if (currentUserType !== FSIUSERTYPE.CEMETRY) {
-    //   throw new Error('Application submission failed')
-    // }
-
     if (!actor) {
       return new Error('Enginn umboðsmaður fannst')
     }
 
-    const values: CemeteryFinancialStatementValues =
-      mapValuesToCemeterytype(answers)
-
+    const values = this.prepareValues(application)
+    const client = { nationalId }
     const { year, actorsName, contactsAnswer, clientPhone, clientEmail, file } =
       getNeededCemeteryValues(answers)
-
+    const digitalSignee = mapDigitalSignee(clientEmail, clientPhone)
     const fileName = file ? await this.getAttachments(application) : undefined
-
-    const client = { nationalId }
-
     const contacts = mapContactsAnswersToContacts(
       actor,
       actorsName,
       contactsAnswer,
     )
-    const digitalSignee = mapDigitalSignee(clientEmail, clientPhone)
 
-    const result: DataResponse = await this.financialStatementClientService
-      .postFinancialStatementForCemetery(
-        client,
-        contacts,
-        digitalSignee,
-        year,
-        '',
-        values,
-        fileName,
-      )
-      .then((data) => {
-        if (data === true) {
-          return { success: true }
-        } else {
-          return { success: false }
-        }
-      })
-      .catch((e) => {
-        return {
-          success: false,
-          errorMessages: e.message,
-        }
-      })
+    try {
+      const result =
+        await this.financialStatementClientService.postFinancialStatementForCemetery(
+          client,
+          contacts,
+          digitalSignee,
+          year,
+          '',
+          values,
+          fileName,
+        )
 
-    if (!result.success) {
-      throw new Error('Application submission failed')
+      if (!result) {
+        throw new Error('Application submission failed')
+      }
+
+      return { success: true }
+    } catch (error) {
+      this.logger.error('Error submitting application', error)
+      return {
+        success: false,
+        message: error.message,
+      }
     }
+  }
 
-    return { success: result.success }
+  private prepareValues(
+    application: Application,
+  ): CemeteryFinancialStatementValues {
+    return mapValuesToCemeterytype(application.answers)
   }
 }

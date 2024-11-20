@@ -33,12 +33,12 @@ export const getCurrentUserType = (
   answers: Application['answers'],
   externalData: Application['externalData'],
 ) => {
+  const fakeUserType = getValueViaPath<number>(answers, 'fakeData.options')
+
   const currentUserType = getValueViaPath<number>(
     externalData,
     'getUserType.data.value',
   )
-
-  const fakeUserType = getValueViaPath<number>(answers, 'fakeData.options')
 
   return fakeUserType ?? currentUserType
 }
