@@ -82,7 +82,12 @@ export class VehiclesResolver {
     const res = await this.vehiclesService.getVehiclesListV2(user, input)
     const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
     return {
-      vehicleList: res.data,
+      vehicleList: res.data?.map((vehicle) => {
+        return {
+          ...vehicle,
+          canRegisterMileage: vehicle.canRegisterMilage,
+        }
+      }),
       downloadServiceURL,
       paging: {
         pageNumber: res.pageNumber,
