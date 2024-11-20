@@ -68,7 +68,7 @@ yarn e2e <app-name>
     yarn e2e <app-name> --grep-invert @fast
 
     # Run tests tagged with either @fast or @slow
-    npx playwright test --grep "@fast|@slow"
+    yarn e2e <app-name> --grep "@fast|@slow"
   ```
 
 - **View the Test Report**: After running tests, use this command to view the generated report:
