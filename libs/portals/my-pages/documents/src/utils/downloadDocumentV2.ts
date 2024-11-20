@@ -9,7 +9,7 @@ type DownloadFileArgs = {
 export const downloadFile = async ({ doc, query }: DownloadFileArgs) => {
   let html: string | undefined = undefined
 
-  if (document.type === 'HTML') {
+  if (doc.document?.type === 'HTML') {
     html =
       doc.document.value && doc.document.value.length > 0
         ? doc?.document.value
