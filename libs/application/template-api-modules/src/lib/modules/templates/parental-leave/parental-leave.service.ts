@@ -842,7 +842,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return periods.map((period, index) => {
       const isFirstPeriod = index === 0
       return {
-        rightsCodePeriod: rights,
+        rightsCodePeriod:
+          period.rightCodePeriod === 'VEIKMEÐG' ? 'VEIKMEÐG' : rights,
         from: getFromDate(
           isFirstPeriod,
           isActualDateOfBirth,
@@ -869,7 +870,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     firstPeriodStart: string | undefined,
   ): Promise<{ rightsDTO: ApplicationRights[]; periodsDTO: Period[] }> {
     const rightsDTO = await this.createRightsDTO(application)
-    const rights = rightsDTO.map(({ rightsUnit }) => rightsUnit).join(',')
+    const rightUnits = rightsDTO.map(({ rightsUnit }) => rightsUnit)
+    const rights = rightUnits
+      .filter((rightUnit) => rightUnit !== 'VEIKMEÐG')
+      .join(',')
     const isActualDateOfBirth =
       firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
     const periodsDTO = this.createPeriodsDTO(
