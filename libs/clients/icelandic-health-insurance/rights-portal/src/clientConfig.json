@@ -12,9 +12,7 @@
   "paths": {
     "/v1/accidentreports/submit": {
       "post": {
-        "tags": [
-          "accidentreports"
-        ],
+        "tags": ["accidentreports"],
         "operationId": "SubmitAccidentReport",
         "requestBody": {
           "content": {
@@ -61,9 +59,7 @@
     },
     "/v1/accidentreports/{reportId}/attachment": {
       "post": {
-        "tags": [
-          "accidentreports"
-        ],
+        "tags": ["accidentreports"],
         "operationId": "SubmitAccidentReportAttachment",
         "parameters": [
           {
@@ -121,9 +117,7 @@
     },
     "/v1/accidentreports/{reportId}/confirmation": {
       "post": {
-        "tags": [
-          "accidentreports"
-        ],
+        "tags": ["accidentreports"],
         "operationId": "SubmitAccidentReportConfirmation",
         "parameters": [
           {
@@ -181,9 +175,7 @@
     },
     "/v1/accidentreports/{reportId}/status": {
       "get": {
-        "tags": [
-          "accidentreports"
-        ],
+        "tags": ["accidentreports"],
         "operationId": "GetAccidentReportStatus",
         "parameters": [
           {
@@ -231,9 +223,7 @@
     },
     "/v1/admin/rollnationalid/{nationalid}/{service}": {
       "post": {
-        "tags": [
-          "admin"
-        ],
+        "tags": ["admin"],
         "operationId": "RollNationalId",
         "parameters": [
           {
@@ -285,9 +275,7 @@
     },
     "/v1/aidsandnutrition": {
       "get": {
-        "tags": [
-          "aidsandnutrition"
-        ],
+        "tags": ["aidsandnutrition"],
         "operationId": "GetAidsAndNutrition",
         "responses": {
           "200": {
@@ -324,9 +312,7 @@
     },
     "/v1/aidsandnutrition/{iso}/renew": {
       "get": {
-        "tags": [
-          "aidsandnutrition"
-        ],
+        "tags": ["aidsandnutrition"],
         "operationId": "RenewAidOrNutrition",
         "parameters": [
           {
@@ -366,9 +352,7 @@
     },
     "/v1/application": {
       "post": {
-        "tags": [
-          "application"
-        ],
+        "tags": ["application"],
         "operationId": "Application",
         "requestBody": {
           "content": {
@@ -415,9 +399,7 @@
     },
     "/v1/application/upload": {
       "post": {
-        "tags": [
-          "application"
-        ],
+        "tags": ["application"],
         "operationId": "ApplicationUpload",
         "requestBody": {
           "content": {
@@ -464,9 +446,7 @@
     },
     "/v1/dentists/status": {
       "get": {
-        "tags": [
-          "dentists"
-        ],
+        "tags": ["dentists"],
         "operationId": "dentiststatus",
         "responses": {
           "200": {
@@ -503,9 +483,7 @@
     },
     "/v1/dentists/current": {
       "get": {
-        "tags": [
-          "dentists"
-        ],
+        "tags": ["dentists"],
         "operationId": "GetCurrentDentist",
         "responses": {
           "200": {
@@ -542,9 +520,7 @@
     },
     "/v1/dentists": {
       "get": {
-        "tags": [
-          "dentists"
-        ],
+        "tags": ["dentists"],
         "operationId": "GetDentists",
         "parameters": [
           {
@@ -628,9 +604,7 @@
     },
     "/v1/dentists/{id}/register": {
       "post": {
-        "tags": [
-          "dentists"
-        ],
+        "tags": ["dentists"],
         "operationId": "RegisterDentist",
         "parameters": [
           {
@@ -671,9 +645,7 @@
     },
     "/v1/dentists/bills": {
       "get": {
-        "tags": [
-          "dentists"
-        ],
+        "tags": ["dentists"],
         "operationId": "GetDentistBills",
         "parameters": [
           {
@@ -733,9 +705,7 @@
     },
     "/v1/drugs/paymentperiods": {
       "get": {
-        "tags": [
-          "drugs"
-        ],
+        "tags": ["drugs"],
         "operationId": "GetDrugPaymentPeriods",
         "responses": {
           "200": {
@@ -775,9 +745,7 @@
     },
     "/v1/drugs/paymentperiods/{paymentPeriodId}/bills": {
       "get": {
-        "tags": [
-          "drugs"
-        ],
+        "tags": ["drugs"],
         "operationId": "GetDrugBills",
         "parameters": [
           {
@@ -828,9 +796,7 @@
     },
     "/v1/drugs/paymentperiods/{paymentPeriodId}/bills/{billId}/lineitems": {
       "get": {
-        "tags": [
-          "drugs"
-        ],
+        "tags": ["drugs"],
         "operationId": "GetDrugBillLineItems",
         "parameters": [
           {
@@ -890,9 +856,7 @@
     },
     "/v1/drugs/drugs": {
       "get": {
-        "tags": [
-          "drugs"
-        ],
+        "tags": ["drugs"],
         "operationId": "GetDrugs",
         "parameters": [
           {
@@ -968,9 +932,7 @@
     },
     "/v1/drugs/drugcalculator": {
       "post": {
-        "tags": [
-          "drugs"
-        ],
+        "tags": ["drugs"],
         "operationId": "DrugCalculator",
         "requestBody": {
           "content": {
@@ -1017,9 +979,7 @@
     },
     "/v1/drugs/certificates": {
       "get": {
-        "tags": [
-          "drugs"
-        ],
+        "tags": ["drugs"],
         "operationId": "GetDrugCertificates",
         "responses": {
           "200": {
@@ -1059,9 +1019,7 @@
     },
     "/v1/ehic/card": {
       "get": {
-        "tags": [
-          "ehic"
-        ],
+        "tags": ["ehic"],
         "operationId": "GetEhicCard",
         "responses": {
           "200": {
@@ -1098,9 +1056,7 @@
     },
     "/v1/ehic/card/pdf": {
       "get": {
-        "tags": [
-          "ehic"
-        ],
+        "tags": ["ehic"],
         "operationId": "GetEhicPdfCard",
         "responses": {
           "200": {
@@ -1137,9 +1093,7 @@
     },
     "/v1/ehic/cardstatus/{applicantnationalids}": {
       "get": {
-        "tags": [
-          "ehic"
-        ],
+        "tags": ["ehic"],
         "operationId": "GetEhicCardStatus",
         "parameters": [
           {
@@ -1189,9 +1143,7 @@
     },
     "/v1/ehic/requestcard/{applicantnationalid}/{cardtype}": {
       "post": {
-        "tags": [
-          "ehic"
-        ],
+        "tags": ["ehic"],
         "operationId": "RequestEhicCard",
         "parameters": [
           {
@@ -1246,9 +1198,7 @@
     },
     "/v1/ehic/fetchtemppdfcard/{applicantnationalid}/{cardnumber}": {
       "get": {
-        "tags": [
-          "ehic"
-        ],
+        "tags": ["ehic"],
         "operationId": "FetchTempEhicPDFCard",
         "parameters": [
           {
@@ -1303,9 +1253,7 @@
     },
     "/v1/healthcenters": {
       "get": {
-        "tags": [
-          "healthcenters"
-        ],
+        "tags": ["healthcenters"],
         "operationId": "GetHealthCenters",
         "parameters": [
           {
@@ -1374,9 +1322,7 @@
     },
     "/v1/healthcenters/{id}/doctors": {
       "get": {
-        "tags": [
-          "healthcenters"
-        ],
+        "tags": ["healthcenters"],
         "operationId": "GetHealthCenterDoctors",
         "parameters": [
           {
@@ -1426,9 +1372,7 @@
     },
     "/v1/healthcenters/current": {
       "get": {
-        "tags": [
-          "healthcenters"
-        ],
+        "tags": ["healthcenters"],
         "operationId": "GetCurrentHealthCenter",
         "responses": {
           "200": {
@@ -1465,9 +1409,7 @@
     },
     "/v1/healthcenters/{id}/register": {
       "post": {
-        "tags": [
-          "healthcenters"
-        ],
+        "tags": ["healthcenters"],
         "operationId": "RegisterHealthCenter",
         "parameters": [
           {
@@ -1515,9 +1457,7 @@
     },
     "/v1/healthcenters/history": {
       "get": {
-        "tags": [
-          "healthcenters"
-        ],
+        "tags": ["healthcenters"],
         "operationId": "GetHealthCenterHistory",
         "parameters": [
           {
@@ -1577,9 +1517,7 @@
     },
     "/healthcheck": {
       "get": {
-        "tags": [
-          "healthcheck"
-        ],
+        "tags": ["healthcheck"],
         "operationId": "HealthCheck",
         "responses": {
           "200": {
@@ -1590,9 +1528,7 @@
     },
     "/v1/insurancestatements/status/{applicantNationalId}": {
       "get": {
-        "tags": [
-          "insurancestatements"
-        ],
+        "tags": ["insurancestatements"],
         "operationId": "GetInsuranceStatementStatus",
         "parameters": [
           {
@@ -1639,9 +1575,7 @@
     },
     "/v1/insurancestatements/continents": {
       "get": {
-        "tags": [
-          "insurancestatements"
-        ],
+        "tags": ["insurancestatements"],
         "operationId": "GetInsuranceStatementContinents",
         "responses": {
           "200": {
@@ -1681,9 +1615,7 @@
     },
     "/v1/insurancestatements/countries": {
       "get": {
-        "tags": [
-          "insurancestatements"
-        ],
+        "tags": ["insurancestatements"],
         "operationId": "GetInsuranceStatementCountries",
         "responses": {
           "200": {
@@ -1723,9 +1655,7 @@
     },
     "/v1/insurancestatements/studentapplication": {
       "post": {
-        "tags": [
-          "insurancestatements"
-        ],
+        "tags": ["insurancestatements"],
         "operationId": "InsuranceStatementStudentApplication",
         "requestBody": {
           "content": {
@@ -1772,9 +1702,7 @@
     },
     "/v1/insurancestatements/touristapplication": {
       "post": {
-        "tags": [
-          "insurancestatements"
-        ],
+        "tags": ["insurancestatements"],
         "operationId": "InsuranceStatementTouristApplication",
         "requestBody": {
           "content": {
@@ -1821,9 +1749,7 @@
     },
     "/v1/insurancestatements/pdf/{documentId}": {
       "get": {
-        "tags": [
-          "insurancestatements"
-        ],
+        "tags": ["insurancestatements"],
         "operationId": "GetInsuranceStatementPdf",
         "parameters": [
           {
@@ -1871,9 +1797,7 @@
     },
     "/v1/overview/insurance/confirmation": {
       "get": {
-        "tags": [
-          "overview-insurance"
-        ],
+        "tags": ["overview-insurance"],
         "operationId": "GetInsuranceConfirmation",
         "responses": {
           "200": {
@@ -1910,9 +1834,7 @@
     },
     "/v1/overview/insurance": {
       "get": {
-        "tags": [
-          "overview-insurance"
-        ],
+        "tags": ["overview-insurance"],
         "operationId": "GetInsuranceOverview",
         "responses": {
           "200": {
@@ -1949,9 +1871,7 @@
     },
     "/v1/payments/copayment/status": {
       "get": {
-        "tags": [
-          "payments-copayment"
-        ],
+        "tags": ["payments-copayment"],
         "operationId": "GetCopaymentStatus",
         "responses": {
           "200": {
@@ -1988,9 +1908,7 @@
     },
     "/v1/payments/copayment/periods": {
       "get": {
-        "tags": [
-          "payments-copayment"
-        ],
+        "tags": ["payments-copayment"],
         "operationId": "GetCopaymentPeriods",
         "parameters": [
           {
@@ -2050,9 +1968,7 @@
     },
     "/v1/payments/copayment/periods/{periodId}/bills": {
       "get": {
-        "tags": [
-          "payments-copayment"
-        ],
+        "tags": ["payments-copayment"],
         "operationId": "GetCopaymentBills",
         "parameters": [
           {
@@ -2100,9 +2016,7 @@
     },
     "/v1/payments/overview/servicetypes": {
       "get": {
-        "tags": [
-          "payments-overview"
-        ],
+        "tags": ["payments-overview"],
         "operationId": "GetPaymentsOverviewServiceTypes",
         "responses": {
           "200": {
@@ -2142,9 +2056,7 @@
     },
     "/v1/payments/overview": {
       "get": {
-        "tags": [
-          "payments-overview"
-        ],
+        "tags": ["payments-overview"],
         "operationId": "GetPaymentsOverview",
         "parameters": [
           {
@@ -2208,9 +2120,7 @@
     },
     "/v1/payments/overview/documents/{documentId}": {
       "get": {
-        "tags": [
-          "payments-overview"
-        ],
+        "tags": ["payments-overview"],
         "operationId": "GetPaymentsOverviewDocument",
         "parameters": [
           {
@@ -2258,9 +2168,7 @@
     },
     "/v1/sicknessallowance/applications": {
       "get": {
-        "tags": [
-          "sicknessallowance"
-        ],
+        "tags": ["sicknessallowance"],
         "operationId": "GetSicknessAllowanceApplications",
         "parameters": [
           {
@@ -2320,9 +2228,7 @@
     },
     "/v1/sicknessallowance/applications/documents/{documentId}": {
       "get": {
-        "tags": [
-          "sicknessallowance"
-        ],
+        "tags": ["sicknessallowance"],
         "operationId": "GetSicknessAllowanceApplicationDocument",
         "parameters": [
           {
@@ -2370,9 +2276,7 @@
     },
     "/v1/sicknessallowance/doctorCertificates": {
       "get": {
-        "tags": [
-          "sicknessallowance"
-        ],
+        "tags": ["sicknessallowance"],
         "operationId": "GetSicknessAllowanceDoctorCertificates",
         "responses": {
           "200": {
@@ -2412,9 +2316,7 @@
     },
     "/v1/sicknessallowance/applications/submit": {
       "post": {
-        "tags": [
-          "sicknessallowance"
-        ],
+        "tags": ["sicknessallowance"],
         "operationId": "SubmitSicknessAllowanceApplication",
         "requestBody": {
           "content": {
@@ -2461,9 +2363,7 @@
     },
     "/v1/sicknessallowance/applications/{applicationId}/attachment": {
       "post": {
-        "tags": [
-          "sicknessallowance"
-        ],
+        "tags": ["sicknessallowance"],
         "operationId": "SubmitSicknessAllowanceApplicationAttachment",
         "parameters": [
           {
@@ -2514,9 +2414,7 @@
     },
     "/v1/therapies": {
       "get": {
-        "tags": [
-          "therapies"
-        ],
+        "tags": ["therapies"],
         "operationId": "GetTherapies",
         "responses": {
           "200": {
@@ -2558,11 +2456,7 @@
   "components": {
     "schemas": {
       "Minarsidur.API.Models.AccidentReports.AccidentDTO": {
-        "required": [
-          "datetime",
-          "description",
-          "type"
-        ],
+        "required": ["datetime", "description", "type"],
         "type": "object",
         "properties": {
           "type": {
@@ -2627,11 +2521,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtHomeDTO": {
-        "required": [
-          "address",
-          "city",
-          "postcode"
-        ],
+        "required": ["address", "city", "postcode"],
         "type": "object",
         "properties": {
           "address": {
@@ -2654,11 +2544,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtSailorWorkDTO": {
-        "required": [
-          "shipDesignation",
-          "shipLocation",
-          "shipName"
-        ],
+        "required": ["shipDesignation", "shipLocation", "shipName"],
         "type": "object",
         "properties": {
           "shipLocation": {
@@ -2684,18 +2570,12 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtSailorWorkDTO_AccidentAtSailorWorkShipLocationEnum": {
-        "enum": [
-          1,
-          2,
-          3
-        ],
+        "enum": [1, 2, 3],
         "type": "integer",
         "format": "int32"
       },
       "Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentAtWorkDTO": {
-        "required": [
-          "machineDescription"
-        ],
+        "required": ["machineDescription"],
         "type": "object",
         "properties": {
           "machineDescription": {
@@ -2706,19 +2586,12 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.AccidentReports.AccidentDTO_AccidentLocationEnum": {
-        "enum": [
-          0,
-          1,
-          2
-        ],
+        "enum": [0, 1, 2],
         "type": "integer",
         "format": "int32"
       },
       "Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentDTO": {
-        "required": [
-          "document",
-          "type"
-        ],
+        "required": ["document", "type"],
         "type": "object",
         "properties": {
           "type": {
@@ -2731,20 +2604,12 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.AccidentReports.AccidentReportAttachmentTypeEnum": {
-        "enum": [
-          1,
-          2,
-          3,
-          4
-        ],
+        "enum": [1, 2, 3, 4],
         "type": "integer",
         "format": "int32"
       },
       "Minarsidur.API.Models.AccidentReports.AccidentReportConfirmationDTO": {
-        "required": [
-          "accepted",
-          "party"
-        ],
+        "required": ["accepted", "party"],
         "type": "object",
         "properties": {
           "party": {
@@ -2761,19 +2626,12 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.AccidentReports.AccidentReportConfirmationPartyEnum": {
-        "enum": [
-          1,
-          2
-        ],
+        "enum": [1, 2],
         "type": "integer",
         "format": "int32"
       },
       "Minarsidur.API.Models.AccidentReports.AccidentReportDTO": {
-        "required": [
-          "accident",
-          "injured",
-          "reporter"
-        ],
+        "required": ["accident", "injured", "reporter"],
         "type": "object",
         "properties": {
           "reporter": {
@@ -2831,11 +2689,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.AccidentReports.InjuredDTO": {
-        "required": [
-          "email",
-          "name",
-          "nationalId"
-        ],
+        "required": ["email", "name", "nationalId"],
         "type": "object",
         "properties": {
           "nationalId": {
@@ -2908,12 +2762,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.AccidentReports.ReporterDTO_ReportingForEnum": {
-        "enum": [
-          1,
-          2,
-          3,
-          4
-        ],
+        "enum": [1, 2, 3, 4],
         "type": "integer",
         "format": "int32"
       },
@@ -2954,12 +2803,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.AccidentReports.Response.GetAccidentReportStatusResponseDTO_AccidentReportStatusEnum": {
-        "enum": [
-          1,
-          2,
-          3,
-          4
-        ],
+        "enum": [1, 2, 3, 4],
         "type": "integer",
         "format": "int32"
       },
@@ -3089,12 +2933,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.AidsAndNutrition.AidOrNutritionDTO_RenewalStatusEnum": {
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ],
+        "enum": [0, 1, 2, 3],
         "type": "integer",
         "format": "int32"
       },
@@ -3175,23 +3014,12 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.Application.ApplicantType": {
-        "enum": [
-          0,
-          1,
-          2,
-          -2
-        ],
+        "enum": [0, 1, 2, -2],
         "type": "integer",
         "format": "int32"
       },
       "Minarsidur.API.Models.Application.ApplicationFileTypes": {
-        "enum": [
-          1,
-          2,
-          3,
-          4,
-          5
-        ],
+        "enum": [1, 2, 3, 4, 5],
         "type": "integer",
         "format": "int32"
       },
@@ -3254,10 +3082,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.Application.ApplicationSystem": {
-        "required": [
-          "adilar",
-          "notandagogn"
-        ],
+        "required": ["adilar", "notandagogn"],
         "type": "object",
         "properties": {
           "language": {
@@ -3308,15 +3133,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.Application.CurrentApplicationStatus": {
-        "enum": [
-          70,
-          71,
-          73,
-          80,
-          90,
-          100,
-          1100
-        ],
+        "enum": [70, 71, 73, 80, 90, 100, 1100],
         "type": "integer",
         "format": "int32"
       },
@@ -3391,11 +3208,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.Application.ResultStatus": {
-        "enum": [
-          200,
-          300,
-          400
-        ],
+        "enum": [200, 300, 400],
         "type": "integer",
         "format": "int32"
       },
@@ -3681,10 +3494,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.DocumentDTO": {
-        "required": [
-          "data",
-          "fileName"
-        ],
+        "required": ["data", "fileName"],
         "type": "object",
         "properties": {
           "fileName": {
@@ -4006,12 +3816,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.Drugs.DrugCertificateDTO_DrugCertificateStatusEnum": {
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ],
+        "enum": [0, 1, 2, 3],
         "type": "integer",
         "format": "int32"
       },
@@ -4413,11 +4218,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.InsuranceStatements.ApplicantDTO": {
-        "required": [
-          "name",
-          "nationalId",
-          "type"
-        ],
+        "required": ["name", "nationalId", "type"],
         "type": "object",
         "properties": {
           "nationalId": {
@@ -4435,11 +4236,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.InsuranceStatements.ApplicantDTO_InsuranceApplicantTypeEnum": {
-        "enum": [
-          0,
-          1,
-          2
-        ],
+        "enum": [0, 1, 2],
         "type": "integer",
         "format": "int32"
       },
@@ -4573,10 +4370,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.InsuranceStatements.StudentApplicationDTO": {
-        "required": [
-          "applicants",
-          "attachment"
-        ],
+        "required": ["applicants", "attachment"],
         "type": "object",
         "properties": {
           "applicants": {
@@ -4607,9 +4401,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.InsuranceStatements.TouristApplicationDTO": {
-        "required": [
-          "applicants"
-        ],
+        "required": ["applicants"],
         "type": "object",
         "properties": {
           "applicants": {
@@ -4881,10 +4673,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.SicknessAllowance.ApplicationDTO": {
-        "required": [
-          "applicant",
-          "applicationDetails"
-        ],
+        "required": ["applicant", "applicationDetails"],
         "type": "object",
         "properties": {
           "applicant": {
@@ -4999,10 +4788,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.SicknessAllowance.ChildDTO": {
-        "required": [
-          "name",
-          "nationalId"
-        ],
+        "required": ["name", "nationalId"],
         "type": "object",
         "properties": {
           "nationalId": {
@@ -5106,10 +4892,7 @@
         "additionalProperties": false
       },
       "Minarsidur.API.Models.SicknessAllowance.SubmittedDoctorCertificateDTO": {
-        "required": [
-          "certificate",
-          "confirmed"
-        ],
+        "required": ["certificate", "confirmed"],
         "type": "object",
         "properties": {
           "certificate": {
