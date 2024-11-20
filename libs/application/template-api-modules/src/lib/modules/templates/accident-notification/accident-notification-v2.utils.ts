@@ -51,9 +51,9 @@ export const applicationToAccidentReport = (
 const reportingForMap = {
   [WhoIsTheNotificationForEnum.ME]:
     MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_1,
-  [WhoIsTheNotificationForEnum.JURIDICALPERSON]:
-    MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_2,
   [WhoIsTheNotificationForEnum.POWEROFATTORNEY]:
+    MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_2,
+  [WhoIsTheNotificationForEnum.JURIDICALPERSON]:
     MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_3,
   [WhoIsTheNotificationForEnum.CHILDINCUSTODY]:
     MinarsidurAPIModelsAccidentReportsReporterDTOReportingForEnum.NUMBER_4,
@@ -373,12 +373,14 @@ const getEmployer = (
     answers.applicant &&
     utils.isRepresentativeOfCompanyOrInstitute(answers)
   ) {
+    const { companyName, companyNationalId } = answers.juridicalPerson
+    const { name, email, phoneNumber } = answers.applicant
     return {
-      companyName: answers.juridicalPerson.companyNationalId,
-      companyNationalId: answers.juridicalPerson.companyName,
-      representativeName: answers.applicant.name ?? '',
-      representativeEmail: answers.applicant.email ?? '',
-      representativePhone: answers.applicant.phoneNumber ?? '',
+      companyName,
+      companyNationalId,
+      representativeName: name ?? '',
+      representativeEmail: email ?? '',
+      representativePhone: phoneNumber ?? '',
     }
   }
 
@@ -390,12 +392,18 @@ const getEmployer = (
     return undefined
   }
 
+  const {
+    name: companyName = '',
+    nationalRegistrationId: companyNationalId = '',
+  } = companyInfo
+  const { name, email, phoneNumber } = representative
+
   return {
-    companyName: companyInfo.name ?? '',
-    companyNationalId: companyInfo.nationalRegistrationId ?? '',
-    representativeName: representative.name ?? '',
-    representativeEmail: representative.email ?? '',
-    representativePhone: representative.phoneNumber ?? '',
+    companyName,
+    companyNationalId,
+    representativeName: name ?? '',
+    representativeEmail: email ?? '',
+    representativePhone: phoneNumber ?? '',
   }
 }
 
