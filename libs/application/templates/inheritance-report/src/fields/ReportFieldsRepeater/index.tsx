@@ -447,9 +447,7 @@ export const ReportFieldsRepeater: FC<
                         required={field.required}
                         error={err}
                         disabled={!repeaterField.enabled}
-                        onChange={(e) => {
-                          parseFloat(e.target.value.replace(',', '.'))
-                          console.log('her', e.target.value)
+                        onChange={() => {
                           if (valueKeys.includes(field.id)) {
                             updateValue(fieldIndex)
                           }
