@@ -58,6 +58,10 @@ export const VALIDATE_VEHICLE_OPERATOR_CHANGE = `
         errorNo
         defaultMessage
       }
+      infoMessages {
+        errorNo
+        defaultMessage
+      }
     }
   } 
 `

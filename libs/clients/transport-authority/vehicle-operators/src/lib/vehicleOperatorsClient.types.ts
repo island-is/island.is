@@ -1,3 +1,5 @@
+import { ValidationMessage } from '@island.is/clients/transport-authority/vehicle-owner-change'
+
 export interface Operator {
   ssn?: string | null
   name?: string | null
@@ -6,10 +8,6 @@ export interface Operator {
 
 export interface OperatorChangeValidation {
   hasError: boolean
-  errorMessages?: Array<OperatorChangeValidationMessage> | null
-}
-
-export interface OperatorChangeValidationMessage {
-  errorNo?: string | null
-  defaultMessage?: string | null
+  errorMessages?: Array<ValidationMessage>
+  infoMessages?: Array<ValidationMessage>
 }

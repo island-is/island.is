@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { OperatorChangeValidationMessage } from '@island.is/api/schema'
+import { TransportAuthorityValidationMessage } from '@island.is/api/schema'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -15,12 +15,13 @@ import { VALIDATE_VEHICLE_OPERATOR_CHANGE } from '../../graphql/queries'
 import { applicationCheck } from '../../lib/messages'
 
 interface Props {
+  showErrorOnly?: boolean
   setValidationErrorFound?: Dispatch<SetStateAction<boolean>>
 }
 
 export const ValidationErrorMessages: FC<
   React.PropsWithChildren<Props & FieldBaseProps>
-> = ({ setValidationErrorFound, ...props }) => {
+> = ({ showErrorOnly, setValidationErrorFound, ...props }) => {
   const { application, setFieldLoadingState } = props
 
   const { formatMessage } = useLocale()
@@ -71,42 +72,69 @@ export const ValidationErrorMessages: FC<
     setFieldLoadingState?.(loading)
   }, [loading, setFieldLoadingState])
 
-  return data?.vehicleOperatorChangeValidation?.hasError &&
-    data.vehicleOperatorChangeValidation.errorMessages.length > 0 ? (
-    <Box>
-      <AlertMessage
-        type="error"
-        title={formatMessage(applicationCheck.validation.alertTitle)}
-        message={
-          <Box component="span" display="block">
-            <BulletList>
-              {data.vehicleOperatorChangeValidation.errorMessages.map(
-                (error: OperatorChangeValidationMessage) => {
-                  const message = formatMessage(
-                    getValueViaPath(
-                      applicationCheck.validation,
-                      error?.errorNo || '',
-                    ),
-                  )
-                  const defaultMessage = error.defaultMessage
-                  const fallbackMessage =
-                    formatMessage(
-                      applicationCheck.validation.fallbackErrorMessage,
-                    ) +
-                    ' - ' +
-                    error?.errorNo
+  return (
+    <>
+      {data?.vehicleOperatorChangeValidation?.errorMessages?.length > 0 && (
+        <Box marginBottom={2}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(applicationCheck.validation.alertTitle)}
+            message={
+              <Box component="span" display="block">
+                <BulletList>
+                  {data.vehicleOperatorChangeValidation.errorMessages.map(
+                    (error: TransportAuthorityValidationMessage) => {
+                      const message = formatMessage(
+                        getValueViaPath(
+                          applicationCheck.validation,
+                          error?.errorNo || '',
+                        ),
+                      )
+                      const defaultMessage = error.defaultMessage
+                      const fallbackMessage =
+                        formatMessage(
+                          applicationCheck.validation.fallbackErrorMessage,
+                        ) +
+                        ' - ' +
+                        error?.errorNo
 
-                  return (
-                    <Bullet key={error.errorNo}>
-                      {message || defaultMessage || fallbackMessage}
-                    </Bullet>
-                  )
-                },
-              )}
-            </BulletList>
+                      return (
+                        <Bullet key={error.errorNo}>
+                          {message || defaultMessage || fallbackMessage}
+                        </Bullet>
+                      )
+                    },
+                  )}
+                </BulletList>
+              </Box>
+            }
+          />
+        </Box>
+      )}
+      {!showErrorOnly &&
+        !!data?.vehicleOperatorChangeValidation?.infoMessages?.length && (
+          <Box>
+            <AlertMessage
+              type="info"
+              title={formatMessage(applicationCheck.validation.alertInfoTitle)}
+              message={
+                <Box component="span" display="block">
+                  <BulletList color="blue400">
+                    {data.vehicleOperatorChangeValidation.infoMessages.map(
+                      (error: TransportAuthorityValidationMessage) => {
+                        return (
+                          <Bullet key={error.errorNo}>
+                            {error.defaultMessage}
+                          </Bullet>
+                        )
+                      },
+                    )}
+                  </BulletList>
+                </Box>
+              }
+            />
           </Box>
-        }
-      />
-    </Box>
-  ) : null
+        )}
+    </>
+  )
 }

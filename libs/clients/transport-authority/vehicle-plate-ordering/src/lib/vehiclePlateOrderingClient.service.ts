@@ -9,9 +9,11 @@ import {
   PlateOrderValidation,
 } from './vehiclePlateOrderingClient.types'
 import {
-  ErrorMessage,
-  getCleanErrorMessagesFromTryCatch,
+  getCleanMessagesFromRequestResult,
+  getCleanMessagesFromTryCatch,
+  ValidationMessage,
 } from '@island.is/clients/transport-authority/vehicle-owner-change'
+import { ReturnTypeMessage } from '../../gen/fetch'
 
 @Injectable()
 export class VehiclePlateOrderingClient {
@@ -70,7 +72,8 @@ export class VehiclePlateOrderingClient {
     deliveryStationCode: string,
     expressOrder: boolean,
   ): Promise<PlateOrderValidation> {
-    let errorMessages: ErrorMessage[] | undefined
+    let errorMessages: ValidationMessage[] | undefined
+    let infoMessages: ValidationMessage[] | undefined
 
     try {
       await this.plateOrderingApiWithAuth(auth).orderplatesPost({
@@ -89,12 +92,14 @@ export class VehiclePlateOrderingClient {
     } catch (e) {
       // Note: We had to wrap in try-catch to get the error messages, because if this action results in error,
       // we get 4xx error (instead of 200 with error messages) with the error messages in the body
-      errorMessages = getCleanErrorMessagesFromTryCatch(e)
+      errorMessages = getCleanMessagesFromTryCatch(e, 'ERROR')
+      infoMessages = getCleanMessagesFromTryCatch(e, 'INFO')
     }
 
     return {
       hasError: !!errorMessages?.length,
-      errorMessages: errorMessages,
+      errorMessages,
+      infoMessages,
     }
   }
 
@@ -102,7 +107,8 @@ export class VehiclePlateOrderingClient {
     auth: User,
     plateOrder: PlateOrder,
   ): Promise<PlateOrderValidation> {
-    let errorMessages: ErrorMessage[] | undefined
+    let errorMessages: ValidationMessage[] | undefined
+    let infoMessages: ValidationMessage[] | undefined
 
     try {
       await this.plateOrderingApiWithAuth(auth).orderplatesPost({
@@ -119,12 +125,14 @@ export class VehiclePlateOrderingClient {
         },
       })
     } catch (e) {
-      errorMessages = getCleanErrorMessagesFromTryCatch(e)
+      errorMessages = getCleanMessagesFromTryCatch(e, 'ERROR')
+      infoMessages = getCleanMessagesFromTryCatch(e, 'INFO')
     }
 
     return {
       hasError: !!errorMessages?.length,
-      errorMessages: errorMessages,
+      errorMessages,
+      infoMessages,
     }
   }
 }

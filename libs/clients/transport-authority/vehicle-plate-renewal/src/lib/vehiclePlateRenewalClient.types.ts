@@ -1,3 +1,5 @@
+import { ValidationMessage } from '@island.is/clients/transport-authority/vehicle-owner-change'
+
 export interface PlateOwnership {
   regno: string
   startDate: Date
@@ -8,10 +10,6 @@ export interface PlateOwnership {
 
 export interface PlateOwnershipValidation {
   hasError: boolean
-  errorMessages?: Array<PlateOwnershipValidationMessage> | null
-}
-
-export interface PlateOwnershipValidationMessage {
-  errorNo?: string | null
-  defaultMessage?: string | null
+  errorMessages?: Array<ValidationMessage>
+  infoMessages?: Array<ValidationMessage>
 }

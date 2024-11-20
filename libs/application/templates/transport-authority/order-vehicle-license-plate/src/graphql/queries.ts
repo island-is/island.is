@@ -41,6 +41,10 @@ export const VALIDATE_VEHICLE_PLATE_ORDER = `
         errorNo
         defaultMessage
       }
+      infoMessages {
+        errorNo
+        defaultMessage
+      }
     }
   } 
 `

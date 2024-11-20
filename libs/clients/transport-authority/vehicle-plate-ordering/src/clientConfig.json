@@ -2,18 +2,14 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Plate ordering API developed in .Net6.0 - Release-3 : 20230125.2",
+    "description": "Plate ordering API developed in .Net6.0 - Release-6 : 20240126.3",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
     },
     "version": "1.0"
   },
-  "servers": [
-    {
-      "url": "/vehicle/PlateOrdering"
-    }
-  ],
+  "servers": [{ "url": "/vehicle/PlateOrdering" }],
   "paths": {
     "/authenticate": {
       "post": {
@@ -23,57 +19,37 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "requestBody": {
           "content": {
             "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "text/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "application/*+xml": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             }
           }
         },
@@ -82,59 +58,37 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
+                "schema": { "$ref": "#/components/schemas/User" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
+                "schema": { "$ref": "#/components/schemas/User" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
+                "schema": { "$ref": "#/components/schemas/User" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
+                "schema": { "$ref": "#/components/schemas/User" }
               },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
+              "text/xml": { "schema": { "$ref": "#/components/schemas/User" } }
             }
           },
           "401": {
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -149,105 +103,73 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "requestBody": {
           "content": {
             "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostOrderPlatesModel"
-              }
+              "schema": { "$ref": "#/components/schemas/PostOrderPlatesModel" }
             },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostOrderPlatesModel"
-              }
+              "schema": { "$ref": "#/components/schemas/PostOrderPlatesModel" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostOrderPlatesModel"
-              }
+              "schema": { "$ref": "#/components/schemas/PostOrderPlatesModel" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostOrderPlatesModel"
-              }
+              "schema": { "$ref": "#/components/schemas/PostOrderPlatesModel" }
             },
             "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostOrderPlatesModel"
-              }
+              "schema": { "$ref": "#/components/schemas/PostOrderPlatesModel" }
             },
             "text/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostOrderPlatesModel"
-              }
+              "schema": { "$ref": "#/components/schemas/PostOrderPlatesModel" }
             },
             "application/*+xml": {
-              "schema": {
-                "$ref": "#/components/schemas/PostOrderPlatesModel"
-              }
+              "schema": { "$ref": "#/components/schemas/PostOrderPlatesModel" }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Success"
-          },
+          "200": { "description": "Success" },
           "400": {
             "description": "Bad Request",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
                 }
               }
             }
@@ -256,29 +178,19 @@
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -293,19 +205,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -315,41 +221,31 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/StationDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/StationDTO" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/StationDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/StationDTO" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/StationDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/StationDTO" }
                 }
               },
               "application/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/StationDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/StationDTO" }
                 }
               },
               "text/xml": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/StationDTO"
-                  }
+                  "items": { "$ref": "#/components/schemas/StationDTO" }
                 }
               }
             }
@@ -364,14 +260,8 @@
         "required": ["password", "username"],
         "type": "object",
         "properties": {
-          "username": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "password": {
-            "minLength": 1,
-            "type": "string"
-          }
+          "username": { "minLength": 1, "type": "string" },
+          "password": { "minLength": 1, "type": "string" }
         },
         "additionalProperties": false
       },
@@ -385,58 +275,27 @@
             "pattern": "^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
             "type": "string"
           },
-          "frontType": {
-            "type": "string",
-            "nullable": true
-          },
-          "rearType": {
-            "type": "string",
-            "nullable": true
-          },
+          "frontType": { "type": "string", "nullable": true },
+          "rearType": { "type": "string", "nullable": true },
           "stationToDeliverTo": {
             "minLength": 1,
             "pattern": "[1-9]*",
             "type": "string"
           },
-          "stationType": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "expressOrder": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "checkOnly": {
-            "type": "boolean",
-            "nullable": true
-          }
+          "stationType": { "minLength": 1, "type": "string" },
+          "expressOrder": { "type": "boolean", "nullable": true },
+          "checkOnly": { "type": "boolean", "nullable": true }
         },
         "additionalProperties": false
       },
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -448,18 +307,9 @@
             "format": "int32",
             "nullable": true
           },
-          "warnSever": {
-            "type": "string",
-            "nullable": true
-          },
-          "errorMess": {
-            "type": "string",
-            "nullable": true
-          },
-          "permno": {
-            "type": "string",
-            "nullable": true
-          },
+          "warnSever": { "type": "string", "nullable": true },
+          "errorMess": { "type": "string", "nullable": true },
+          "permno": { "type": "string", "nullable": true },
           "warningSerialNumber": {
             "type": "integer",
             "format": "int32",
@@ -471,97 +321,38 @@
       "StationDTO": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "stationCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "stationType": {
-            "type": "string",
-            "nullable": true
-          }
+          "name": { "type": "string", "nullable": true },
+          "stationCode": { "type": "string", "nullable": true },
+          "stationType": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "User": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "userName": {
-            "type": "string",
-            "nullable": true
-          },
-          "normalizedUserName": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "normalizedEmail": {
-            "type": "string",
-            "nullable": true
-          },
-          "emailConfirmed": {
-            "type": "boolean"
-          },
-          "passwordHash": {
-            "type": "string",
-            "nullable": true
-          },
-          "securityStamp": {
-            "type": "string",
-            "nullable": true
-          },
-          "concurrencyStamp": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumberConfirmed": {
-            "type": "boolean"
-          },
-          "twoFactorEnabled": {
-            "type": "boolean"
-          },
+          "id": { "type": "string", "nullable": true },
+          "userName": { "type": "string", "nullable": true },
+          "normalizedUserName": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "normalizedEmail": { "type": "string", "nullable": true },
+          "emailConfirmed": { "type": "boolean" },
+          "passwordHash": { "type": "string", "nullable": true },
+          "securityStamp": { "type": "string", "nullable": true },
+          "concurrencyStamp": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "phoneNumberConfirmed": { "type": "boolean" },
+          "twoFactorEnabled": { "type": "boolean" },
           "lockoutEnd": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "lockoutEnabled": {
-            "type": "boolean"
-          },
-          "accessFailedCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "username": {
-            "type": "string",
-            "nullable": true
-          },
-          "password": {
-            "type": "string",
-            "nullable": true
-          },
-          "jwtToken": {
-            "type": "string",
-            "nullable": true
-          },
-          "role": {
-            "type": "string",
-            "nullable": true
-          }
+          "lockoutEnabled": { "type": "boolean" },
+          "accessFailedCount": { "type": "integer", "format": "int32" },
+          "username": { "type": "string", "nullable": true },
+          "password": { "type": "string", "nullable": true },
+          "jwtToken": { "type": "string", "nullable": true },
+          "role": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       }
@@ -575,9 +366,5 @@
       }
     }
   },
-  "security": [
-    {
-      "Bearer": []
-    }
-  ]
+  "security": [{ "Bearer": [] }]
 }

@@ -6,11 +6,13 @@ import {
   OperatorChangeValidation,
 } from './vehicleOperatorsClient.types'
 import {
-  ErrorMessage,
-  getCleanErrorMessagesFromTryCatch,
+  getCleanMessagesFromRequestResult,
+  getCleanMessagesFromTryCatch,
+  ValidationMessage,
 } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
 import { logger } from '@island.is/logging'
+import { ReturnTypeMessage } from '../../gen/fetch'
 
 @Injectable()
 export class VehicleOperatorsClient {
@@ -77,7 +79,9 @@ export class VehicleOperatorsClient {
     operators: Operator[] | null,
     mileage: number | null,
   ): Promise<OperatorChangeValidation> {
-    let errorMessages: ErrorMessage[] | undefined
+    let result: ReturnTypeMessage[] | undefined
+    let errorMessages: ValidationMessage[] | undefined
+    let infoMessages: ValidationMessage[] | undefined
 
     // In case we dont have the operators selected yet,
     // then we will send in the owner as operator
@@ -88,7 +92,7 @@ export class VehicleOperatorsClient {
     }
 
     try {
-      await this.operatorsApiWithAuth(auth).withoutcontractPost({
+      result = await this.operatorsApiWithAuth(auth).withoutcontractPost({
         apiVersion: '3.0',
         apiVersion2: '3.0',
         postOperatorsWithoutContractModel: {
@@ -106,12 +110,18 @@ export class VehicleOperatorsClient {
     } catch (e) {
       // Note: We had to wrap in try-catch to get the error messages, because if this action results in error,
       // we get 4xx error (instead of 200 with error messages) with the error messages in the body
-      errorMessages = getCleanErrorMessagesFromTryCatch(e)
+      errorMessages = getCleanMessagesFromTryCatch(e, 'ERROR')
+      infoMessages = getCleanMessagesFromTryCatch(e, 'INFO')
+    }
+
+    if (result) {
+      infoMessages = getCleanMessagesFromRequestResult(result, 'INFO')
     }
 
     return {
       hasError: !!errorMessages?.length,
-      errorMessages: errorMessages,
+      errorMessages,
+      infoMessages,
     }
   }
 
@@ -124,25 +134,31 @@ export class VehicleOperatorsClient {
     operators: Operator[],
     mileage?: number | null,
   ): Promise<OperatorChangeValidation> {
-    let errorMessages: ErrorMessage[] | undefined
+    let result: ReturnTypeMessage[] | undefined
+    let errorMessages: ValidationMessage[] | undefined
+    let infoMessages: ValidationMessage[] | undefined
 
     if (operators.length === 0) {
       try {
-        await this.operatorsApiWithAuth(auth).closeWithoutcontractPost({
-          apiVersion: '3.0',
-          apiVersion2: '3.0',
-          postCloseOperatorsWithoutContractModel: {
-            permno: permno,
-            endDate: new Date(),
-            reportingPersonIdNumber: auth.nationalId,
+        //TODOx 204 er void - tala við SGS
+        result = await this.operatorsApiWithAuth(auth).closeWithoutcontractPost(
+          {
+            apiVersion: '3.0',
+            apiVersion2: '3.0',
+            postCloseOperatorsWithoutContractModel: {
+              permno: permno,
+              endDate: new Date(),
+              reportingPersonIdNumber: auth.nationalId,
+            },
           },
-        })
+        )
       } catch (e) {
-        errorMessages = getCleanErrorMessagesFromTryCatch(e)
+        errorMessages = getCleanMessagesFromTryCatch(e, 'ERROR')
+        infoMessages = getCleanMessagesFromTryCatch(e, 'INFO')
       }
     } else {
       try {
-        await this.operatorsApiWithAuth(auth).withoutcontractPost({
+        result = await this.operatorsApiWithAuth(auth).withoutcontractPost({
           apiVersion: '3.0',
           apiVersion2: '3.0',
           postOperatorsWithoutContractModel: {
@@ -158,13 +174,19 @@ export class VehicleOperatorsClient {
           },
         })
       } catch (e) {
-        errorMessages = getCleanErrorMessagesFromTryCatch(e)
+        errorMessages = getCleanMessagesFromTryCatch(e, 'ERROR')
+        infoMessages = getCleanMessagesFromTryCatch(e, 'INFO')
       }
+    }
+
+    if (result) {
+      infoMessages = getCleanMessagesFromRequestResult(result, 'INFO')
     }
 
     return {
       hasError: !!errorMessages?.length,
-      errorMessages: errorMessages,
+      errorMessages,
+      infoMessages,
     }
   }
 }

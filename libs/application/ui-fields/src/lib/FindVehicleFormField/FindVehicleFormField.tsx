@@ -17,7 +17,7 @@ import {
   VehicleOperatorChangeChecksByPermno,
   VehicleOwnerchangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
-  VehicleValidationErrorMessage,
+  TransportAuthorityValidationMessage,
 } from '@island.is/api/schema'
 import { FieldBaseProps, FindVehicleField } from '@island.is/application/types'
 import { formatText, getValueViaPath } from '@island.is/application/core'
@@ -35,7 +35,7 @@ interface VehicleDetails {
   make: string
   color: string
   isDebtLess?: boolean
-  validationErrorMessages?: VehicleValidationErrorMessage[]
+  validationErrorMessages?: TransportAuthorityValidationMessage[]
   requireMileage?: boolean
   mileageReading: string
 }

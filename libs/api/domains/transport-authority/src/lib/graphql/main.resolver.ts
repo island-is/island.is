@@ -19,16 +19,17 @@ import {
 } from './dto'
 import {
   CheckTachoNetExists,
-  OperatorChangeValidation,
-  OwnerChangeValidation,
+  // OperatorChangeValidation,
+  // OwnerChangeValidation,
   VehicleOperatorChangeChecksByPermno,
   VehicleOwnerchangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
   MyPlateOwnershipChecksByRegno,
   PlateAvailability,
-  PlateOrderValidation,
+  // PlateOrderValidation,
 } from './models'
 import { CoOwnerChangeAnswers } from './dto/coOwnerChangeAnswers.input'
+import { TransportAuthorityValidation } from './models/validation.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -60,7 +61,7 @@ export class MainResolver {
   }
 
   @Scopes(ApiScope.samgongustofaVehicles)
-  @Query(() => OwnerChangeValidation, { nullable: true })
+  @Query(() => TransportAuthorityValidation, { nullable: true })
   vehicleOwnerChangeValidation(
     @CurrentUser() user: User,
     @Args('answers') answers: OwnerChangeAnswers,
@@ -72,7 +73,7 @@ export class MainResolver {
   }
 
   @Scopes(ApiScope.samgongustofaVehicles)
-  @Query(() => OwnerChangeValidation, { nullable: true })
+  @Query(() => TransportAuthorityValidation, { nullable: true })
   vehicleCoOwnerChangeValidation(
     @CurrentUser() user: User,
     @Args('answers') answers: CoOwnerChangeAnswers,
@@ -99,7 +100,7 @@ export class MainResolver {
   }
 
   @Scopes(ApiScope.samgongustofaVehicles)
-  @Query(() => OperatorChangeValidation, { nullable: true })
+  @Query(() => TransportAuthorityValidation, { nullable: true })
   vehicleOperatorChangeValidation(
     @CurrentUser() user: User,
     @Args('answers') answers: OperatorChangeAnswers,
@@ -126,7 +127,7 @@ export class MainResolver {
   }
 
   @Scopes(ApiScope.samgongustofaVehicles)
-  @Query(() => PlateOrderValidation, { nullable: true })
+  @Query(() => TransportAuthorityValidation, { nullable: true })
   vehiclePlateOrderValidation(
     @CurrentUser() user: User,
     @Args('answers') answers: PlateOrderAnswers,

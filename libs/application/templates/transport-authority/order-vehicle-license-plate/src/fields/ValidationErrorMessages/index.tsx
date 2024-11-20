@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { PlateOrderValidationMessage } from '@island.is/api/schema'
+import { TransportAuthorityValidationMessage } from '@island.is/api/schema'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -63,42 +63,68 @@ export const ValidationErrorMessages: FC<
     setFieldLoadingState?.(loading)
   }, [loading, setFieldLoadingState])
 
-  return data?.vehiclePlateOrderValidation?.hasError &&
-    data.vehiclePlateOrderValidation.errorMessages.length > 0 ? (
-    <Box>
-      <AlertMessage
-        type="error"
-        title={formatMessage(applicationCheck.validation.alertTitle)}
-        message={
-          <Box component="span" display="block">
-            <BulletList>
-              {data.vehiclePlateOrderValidation.errorMessages.map(
-                (error: PlateOrderValidationMessage) => {
-                  const message = formatMessage(
-                    getValueViaPath(
-                      applicationCheck.validation,
-                      error?.errorNo || '',
-                    ),
-                  )
-                  const defaultMessage = error.defaultMessage
-                  const fallbackMessage =
-                    formatMessage(
-                      applicationCheck.validation.fallbackErrorMessage,
-                    ) +
-                    ' - ' +
-                    error?.errorNo
+  return (
+    <>
+      {data?.vehiclePlateOrderValidation?.errorMessages?.length > 0 && (
+        <Box>
+          <AlertMessage
+            type="error"
+            title={formatMessage(applicationCheck.validation.alertTitle)}
+            message={
+              <Box component="span" display="block">
+                <BulletList>
+                  {data.vehiclePlateOrderValidation.errorMessages.map(
+                    (error: TransportAuthorityValidationMessage) => {
+                      const message = formatMessage(
+                        getValueViaPath(
+                          applicationCheck.validation,
+                          error?.errorNo || '',
+                        ),
+                      )
+                      const defaultMessage = error.defaultMessage
+                      const fallbackMessage =
+                        formatMessage(
+                          applicationCheck.validation.fallbackErrorMessage,
+                        ) +
+                        ' - ' +
+                        error?.errorNo
 
-                  return (
-                    <Bullet key={error.errorNo}>
-                      {message || defaultMessage || fallbackMessage}
-                    </Bullet>
-                  )
-                },
-              )}
-            </BulletList>
-          </Box>
-        }
-      />
-    </Box>
-  ) : null
+                      return (
+                        <Bullet key={error.errorNo}>
+                          {message || defaultMessage || fallbackMessage}
+                        </Bullet>
+                      )
+                    },
+                  )}
+                </BulletList>
+              </Box>
+            }
+          />
+        </Box>
+      )}
+      {!!data?.vehiclePlateOrderValidation?.infoMessages?.length && (
+        <Box>
+          <AlertMessage
+            type="info"
+            title={formatMessage(applicationCheck.validation.alertInfoTitle)}
+            message={
+              <Box component="span" display="block">
+                <BulletList color="blue400">
+                  {data.vehiclePlateOrderValidation.infoMessages.map(
+                    (error: TransportAuthorityValidationMessage) => {
+                      return (
+                        <Bullet key={error.errorNo}>
+                          {error.defaultMessage}
+                        </Bullet>
+                      )
+                    },
+                  )}
+                </BulletList>
+              </Box>
+            }
+          />
+        </Box>
+      )}
+    </>
+  )
 }

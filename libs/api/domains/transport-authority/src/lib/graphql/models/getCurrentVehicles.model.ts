@@ -1,13 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-
-@ObjectType()
-export class VehicleValidationErrorMessage {
-  @Field(() => String, { nullable: true })
-  errorNo?: string | null
-
-  @Field(() => String, { nullable: true })
-  defaultMessage?: string | null
-}
+import { TransportAuthorityValidationMessage } from './validation.model'
 
 @ObjectType()
 export class BasicVehicleInformation {
@@ -35,8 +27,8 @@ export class VehicleOwnerchangeChecksByPermno {
   @Field(() => Boolean, { nullable: true })
   isDebtLess?: boolean
 
-  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
-  validationErrorMessages?: VehicleValidationErrorMessage[] | null
+  @Field(() => [TransportAuthorityValidationMessage], { nullable: true })
+  validationErrorMessages?: TransportAuthorityValidationMessage[] | null
 
   @Field(() => BasicVehicleInformation, { nullable: true })
   basicVehicleInformation?: BasicVehicleInformation | null
@@ -47,8 +39,8 @@ export class VehicleOperatorChangeChecksByPermno {
   @Field(() => Boolean, { nullable: true })
   isDebtLess?: boolean
 
-  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
-  validationErrorMessages?: VehicleValidationErrorMessage[] | null
+  @Field(() => [TransportAuthorityValidationMessage], { nullable: true })
+  validationErrorMessages?: TransportAuthorityValidationMessage[] | null
 
   @Field(() => BasicVehicleInformation, { nullable: true })
   basicVehicleInformation?: BasicVehicleInformation | null
@@ -56,8 +48,8 @@ export class VehicleOperatorChangeChecksByPermno {
 
 @ObjectType()
 export class VehiclePlateOrderChecksByPermno {
-  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
-  validationErrorMessages?: VehicleValidationErrorMessage[] | null
+  @Field(() => [TransportAuthorityValidationMessage], { nullable: true })
+  validationErrorMessages?: TransportAuthorityValidationMessage[] | null
 
   @Field(() => BasicVehicleInformation, { nullable: true })
   basicVehicleInformation?: BasicVehicleInformation | null
@@ -65,6 +57,6 @@ export class VehiclePlateOrderChecksByPermno {
 
 @ObjectType()
 export class MyPlateOwnershipChecksByRegno {
-  @Field(() => [VehicleValidationErrorMessage], { nullable: true })
-  validationErrorMessages?: VehicleValidationErrorMessage[] | null
+  @Field(() => [TransportAuthorityValidationMessage], { nullable: true })
+  validationErrorMessages?: TransportAuthorityValidationMessage[] | null
 }

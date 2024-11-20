@@ -50,6 +50,10 @@ export const VALIDATE_VEHICLE_OWNER_CHANGE = `
         errorNo
         defaultMessage
       }
+      infoMessages {
+        errorNo
+        defaultMessage
+      }
     }
   } 
 `

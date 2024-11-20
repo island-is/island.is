@@ -160,6 +160,7 @@ export const Overview: FC<
         {!buttonLoading && shouldLoadValidation && (
           <ValidationErrorMessages
             {...props}
+            showErrorOnly={true}
             setValidationErrorFound={setValidationErrorFound}
           />
         )}

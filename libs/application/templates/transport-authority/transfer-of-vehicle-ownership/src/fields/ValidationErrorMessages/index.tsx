@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client'
-import { OwnerChangeValidationMessage } from '@island.is/api/schema'
+import { TransportAuthorityValidationMessage } from '@island.is/api/schema'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -85,56 +85,76 @@ export const ValidationErrorMessages: FC<
     setFieldLoadingState?.(loading)
   }, [loading, setFieldLoadingState])
 
-  return data?.vehicleOwnerChangeValidation?.hasError &&
-    data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (
-    <Box>
-      <AlertMessage
-        type="error"
-        title={formatMessage(applicationCheck.validation.alertTitle)}
-        message={
-          <Box component="span" display="block">
-            <BulletList>
-              {data.vehicleOwnerChangeValidation.errorMessages.map(
-                (error: OwnerChangeValidationMessage) => {
-                  const message = formatMessage(
-                    getValueViaPath(
-                      applicationCheck.validation,
-                      error?.errorNo || '',
-                    ),
-                  )
-                  const defaultMessage = error.defaultMessage
-                  const fallbackMessage =
-                    formatMessage(
-                      applicationCheck.validation.fallbackErrorMessage,
-                    ) +
-                    ' - ' +
-                    error?.errorNo
+  return (
+    <>
+      {!!data?.vehicleOwnerChangeValidation?.errorMessages?.length && (
+        <Box marginBottom={2}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(applicationCheck.validation.alertTitle)}
+            message={
+              <Box component="span" display="block">
+                <BulletList>
+                  {data.vehicleOwnerChangeValidation.errorMessages.map(
+                    (error: TransportAuthorityValidationMessage) => {
+                      const message = formatMessage(
+                        getValueViaPath(
+                          applicationCheck.validation,
+                          error?.errorNo || '',
+                        ),
+                      )
+                      const defaultMessage = error.defaultMessage
+                      const fallbackMessage =
+                        formatMessage(
+                          applicationCheck.validation.fallbackErrorMessage,
+                        ) +
+                        ' - ' +
+                        error?.errorNo
 
-                  return (
-                    <Bullet key={error.errorNo}>
-                      {message || defaultMessage || fallbackMessage}
-                    </Bullet>
-                  )
-                },
-              )}
-            </BulletList>
-          </Box>
-        }
-      />
-    </Box>
-  ) : !showErrorOnly ? (
-    <Box>
-      <AlertMessage
-        type="info"
-        title={formatMessage(payment.paymentChargeOverview.alertTitle)}
-        message={
-          <Box component="span" display="block">
-            <Text variant="small">
-              {formatMessage(payment.paymentChargeOverview.alertMessage)}
-            </Text>
-          </Box>
-        }
-      />
-    </Box>
-  ) : null
+                      return (
+                        <Bullet key={error.errorNo}>
+                          {message || defaultMessage || fallbackMessage}
+                        </Bullet>
+                      )
+                    },
+                  )}
+                </BulletList>
+              </Box>
+            }
+          />
+        </Box>
+      )}
+      {!showErrorOnly && (
+        <Box>
+          <AlertMessage
+            type="info"
+            title={formatMessage(payment.paymentChargeOverview.alertTitle)}
+            message={
+              <Box component="span" display="block">
+                <Text>
+                  {formatMessage(payment.paymentChargeOverview.alertMessage)}
+                </Text>
+
+                {!!data?.vehicleOwnerChangeValidation?.infoMessages?.length && (
+                  <Box marginTop={2}>
+                    <BulletList color="blue400">
+                      {data.vehicleOwnerChangeValidation.infoMessages.map(
+                        (error: TransportAuthorityValidationMessage) => {
+                          return (
+                            <Bullet key={error.errorNo}>
+                              {error.defaultMessage}
+                            </Bullet>
+                          )
+                        },
+                      )}
+                    </BulletList>
+                  </Box>
+                )}
+              </Box>
+            }
+          />
+        </Box>
+      )}
+    </>
+  )
 }

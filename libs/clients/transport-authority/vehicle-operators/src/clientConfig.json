@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Operators API developed in .Net7.0 - Release-10 : 20231211.1",
+    "description": "Operators API developed in .Net7.0 - Release-13 : 20240906.1",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
@@ -48,7 +48,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/User" }
@@ -103,7 +103,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -127,6 +127,20 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
@@ -176,7 +190,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -200,6 +214,20 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
@@ -254,7 +282,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/OperatorDto" }
@@ -269,6 +297,20 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
@@ -311,7 +353,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -335,6 +377,20 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
@@ -395,7 +451,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -453,6 +509,20 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
@@ -512,7 +582,29 @@
           }
         },
         "responses": {
-          "200": { "description": "" },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
+                }
+              }
+            }
+          },
           "201": {
             "description": "Created",
             "content": {
@@ -549,6 +641,20 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
@@ -609,7 +715,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "text/plain": {
                 "schema": {
@@ -648,6 +754,20 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
@@ -707,7 +827,29 @@
           }
         },
         "responses": {
-          "200": { "description": "" },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ReturnTypeMessage" }
+                }
+              }
+            }
+          },
           "204": { "description": "No Content" },
           "400": {
             "description": "Bad Request",
@@ -725,6 +867,20 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "text/plain": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
@@ -808,7 +964,7 @@
           "permno": {
             "maxLength": 5,
             "minLength": 5,
-            "pattern": "^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
+            "pattern": "(?i)^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
             "type": "string",
             "description": "Vehicle permanent number"
           },
@@ -849,7 +1005,7 @@
           "permno": {
             "maxLength": 5,
             "minLength": 5,
-            "pattern": "^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
+            "pattern": "(?i)^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
             "type": "string",
             "description": "Vehicle permanent number"
           },
@@ -932,7 +1088,7 @@
           "permno": {
             "maxLength": 5,
             "minLength": 5,
-            "pattern": "^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
+            "pattern": "(?i)^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
             "type": "string",
             "description": "Vehicle permanent number"
           },
@@ -981,7 +1137,7 @@
           "permno": {
             "maxLength": 5,
             "minLength": 5,
-            "pattern": "^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
+            "pattern": "(?i)^[A-Z,Þ,Ö]{2}[0-9A-Z]{1}[0-9]{2}",
             "type": "string",
             "description": "Vehicle permanent number"
           },
