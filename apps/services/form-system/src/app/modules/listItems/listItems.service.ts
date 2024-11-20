@@ -14,9 +14,8 @@ import zipObject from 'lodash/zipObject'
 export class ListItemsService {
   constructor(
     @InjectModel(ListItem)
-    private readonly listItemModel: typeof ListItem,
-  ) // private listItemMapper: ListItemMapper,
-  {}
+    private readonly listItemModel: typeof ListItem, // private listItemMapper: ListItemMapper,
+  ) {}
 
   async findById(id: string): Promise<ListItem> {
     const listItem = await this.listItemModel.findByPk(id)
