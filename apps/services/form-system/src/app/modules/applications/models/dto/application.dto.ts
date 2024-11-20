@@ -3,6 +3,7 @@ import { OrganizationDto } from '../../../organizations/models/dto/organization.
 import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
+import { UUIDV4 } from 'sequelize'
 
 export class ApplicationDto {
   @ApiPropertyOptional()
@@ -31,6 +32,12 @@ export class ApplicationDto {
 
   @ApiPropertyOptional({ type: [Dependency] })
   dependencies?: Dependency[]
+
+  @ApiPropertyOptional({ type: [UUIDV4] })
+  completed?: string[]
+
+  @ApiPropertyOptional({ type: UUIDV4 })
+  status?: string
 
   @ApiPropertyOptional({ type: [SectionDto] })
   sections?: SectionDto[]

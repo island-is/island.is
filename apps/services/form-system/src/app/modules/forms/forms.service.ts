@@ -190,6 +190,22 @@ export class FormsService {
           as: 'formUrls',
         },
       ],
+      order: [
+        [{ model: Section, as: 'sections' }, 'displayOrder', 'ASC'],
+        [
+          { model: Section, as: 'sections' },
+          { model: Screen, as: 'screens' },
+          'displayOrder',
+          'ASC',
+        ],
+        [
+          { model: Section, as: 'sections' },
+          { model: Screen, as: 'screens' },
+          { model: Field, as: 'fields' },
+          'displayOrder',
+          'ASC',
+        ],
+      ],
     })
 
     if (!form) {

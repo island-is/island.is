@@ -7,10 +7,16 @@ import { Form } from '../forms/models/form.model'
 import { ApplicationMapper } from './models/application.mapper'
 import { ListItemMapper } from '../listItems/models/listItem.mapper'
 import { Value } from '../values/models/value.model'
+import { FormsService } from '../forms/forms.service'
 
 @Module({
   imports: [SequelizeModule.forFeature([Application, Form, Value])],
   controllers: [ApplicationsController],
-  providers: [ApplicationsService, ApplicationMapper, ListItemMapper],
+  providers: [
+    ApplicationsService,
+    ApplicationMapper,
+    ListItemMapper,
+    // FormsService,
+  ],
 })
 export class ApplicationsModule {}

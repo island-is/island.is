@@ -13,6 +13,8 @@ import { ValueTypeFactory } from '../../dataTypes/valueTypes/valueType.factory'
 import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { CreateApplicationDto } from './models/dto/createApplication.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
+import { ApplicationStatus } from '../../enums/applicationStatus'
+import { FormsService } from '../forms/forms.service'
 
 @Injectable()
 export class ApplicationsService {
@@ -23,6 +25,7 @@ export class ApplicationsService {
     private readonly valueModel: typeof Value,
     @InjectModel(Form)
     private readonly formModel: typeof Form,
+    // private readonly formsService: typeof FormsService,
     private readonly applicationMapper: ApplicationMapper,
   ) {}
 
@@ -40,6 +43,7 @@ export class ApplicationsService {
       formId: form.id,
       isTest: createApplicationDto.isTest,
       dependencies: form.dependencies,
+      status: ApplicationStatus.IN_PROGRESS,
     } as Application)
 
     form.sections.map((section) => {

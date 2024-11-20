@@ -25,7 +25,15 @@ module.exports = {
             allowNull: false,
             defaultValue: false,
           },
+          status: {
+            type: Sequelize.STRING,
+            allowNull: false,
+          },
           dependencies: {
+            type: Sequelize.JSON,
+            allowNull: true,
+          },
+          completed: {
             type: Sequelize.JSON,
             allowNull: true,
           },

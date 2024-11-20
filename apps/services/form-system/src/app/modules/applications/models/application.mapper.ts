@@ -19,6 +19,8 @@ export class ApplicationMapper {
       id: application.id,
       isTest: application.isTest,
       dependencies: application.dependencies,
+      completed: application.completed,
+      status: application.status,
       formId: form.id,
       slug: form.slug,
       formName: form.name,

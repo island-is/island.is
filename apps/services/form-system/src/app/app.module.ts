@@ -20,6 +20,8 @@ import { OrganizationCertificationTypesModule } from './modules/organizationCert
 import { OrganizationFieldTypesModule } from './modules/organizationFieldTypes/organizationFieldTypes.module'
 import { OrganizationUrlsModule } from './modules/organizationUrls/organizationUrls.module'
 import { FormUrlsModule } from './modules/formUrls/formUrls.module'
+import { FormsService } from './modules/forms/forms.service'
+import { ApplicationsService } from './modules/applications/applications.service'
 
 @Module({
   imports: [
