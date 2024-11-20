@@ -46,11 +46,11 @@ export class FieldSettingsFactory {
   private static pickSettings = (
     obj: FieldSettings,
     keys: string[],
-    defaultValue = null,
+    defaultValue = '',
   ): FieldSettings => {
     return defaults(
       pick(obj, keys),
-      zipObject(keys, Array(keys.length).fill(defaultValue)),
+      zipObject(keys, Array(keys.length)),
     ) as FieldSettings
   }
 }
