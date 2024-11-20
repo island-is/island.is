@@ -90,10 +90,6 @@ export const FieldsRepeaterFormField = ({
   }
 
   const handleRemoveItem = () => {
-    console.log('NumberOfItems: ', numberOfItems)
-    console.log('NumberOfItemsInAnswer: ', numberOfItemsInAnswers)
-    console.log(answers)
-
     if (numberOfItems > (numberOfItemsInAnswers || 0)) {
       setNumberOfItems(numberOfItems - 1)
     } else if (numberOfItems === numberOfItemsInAnswers) {
