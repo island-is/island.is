@@ -12,6 +12,11 @@ export const m = {
       defaultMessage: 'Næsta skref',
       description: 'Næsta skref',
     },
+    seeResults: {
+      id: 'web.whodas.calculator:form.seeResults',
+      defaultMessage: 'Senda inn svör',
+      description: 'Senda inn svör',
+    },
   }),
   answerLabel: defineMessages({
     '0': {

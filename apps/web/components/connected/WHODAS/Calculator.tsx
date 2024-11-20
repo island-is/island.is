@@ -291,7 +291,9 @@ export const WHODASCalculator = ({ slice }: WHODASCalculatorProps) => {
             setStepIndex((s) => s + 1)
           }}
         >
-          {formatMessage(m.form.nextStep)}
+          {formatMessage(
+            stepIndex >= steps.length - 1 ? m.form.seeResults : m.form.nextStep,
+          )}
         </Button>
       </Inline>
     </Stack>
