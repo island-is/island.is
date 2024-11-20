@@ -174,9 +174,9 @@ export const heirs = buildSection({
               id: 'heirsAdditionalInfoPrivateTransferFiles',
               uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
               uploadDescription: m.uploadPrivateTransferDescription,
-              uploadMultiple: false,
               title: '',
               uploadHeader: '',
+              uploadMultiple: false,
             }),
             buildDescriptionField({
               id: 'heirsAdditionalInfoFilesOtherDocumentsTitle',
@@ -192,6 +192,7 @@ export const heirs = buildSection({
               uploadDescription: m.uploadOtherDocumentsDescription,
               title: '',
               uploadHeader: '',
+              uploadMultiple: true,
             }),
           ],
         }),

@@ -112,6 +112,7 @@ export const prePaidHeirs = buildSection({
               uploadDescription: m.fileUploadOtherDocumentsPrePaidDescription,
               title: '',
               uploadHeader: '',
+              uploadMultiple: true,
             }),
           ],
         }),
