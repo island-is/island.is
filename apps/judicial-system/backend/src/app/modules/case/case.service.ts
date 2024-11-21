@@ -324,6 +324,8 @@ export const include: Includeable[] = [
     as: 'defendantEventLogs',
     required: false,
     where: { eventType: { [Op.in]: DefendantEventType } },
+    order: [['created', 'DESC']],
+    separate: true,
   },
   {
     model: DateLog,
