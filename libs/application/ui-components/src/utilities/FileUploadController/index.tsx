@@ -231,7 +231,6 @@ export const FileUploadController = ({
       }
     }
 
-
     // We remove it from the list if: the delete attachment above succeeded,
     // or if the user clicked x for a file that failed to upload and is in
     // an error state.
