@@ -3,7 +3,10 @@ import { defineConfig, ReporterDescription } from '@playwright/test'
 interface PlaywrightConfigParams {
   webServerUrl: string
   port?: number
-  command: string
+  command?: string
+  app?: string
+  dependencies?: string[]
+  proxies?: boolean
   cwd?: string
   timeoutMs?: number
 }
@@ -18,6 +21,9 @@ interface PlaywrightConfigParams {
  * @param {string} config.command - Command to start the web server.
  * @param {string} config.cwd - Working directory for the web server command.
  * @param {number} config.timeoutMs - Timeout in milliseconds for server startup.
+ * @param {string} config.app - Application to run.
+ * @param {string} config.dependencies - Space-separated list of dependencies.
+ * @param {boolean} config.proxies - Whether to use proxies.
  *
  * @returns A configuration object for Playwright E2E tests.
  */
@@ -27,8 +33,24 @@ export const createPlaywrightConfig = ({
   command,
   cwd,
   timeoutMs = 5 * 60 * 1000,
-}: PlaywrightConfigParams) =>
-  defineConfig({
+  app,
+  dependencies = [],
+  proxies = false,
+}: PlaywrightConfigParams) => {
+  if (!command) {
+    if (!app) {
+      throw new Error('Either command or app must be specified.')
+    }
+    command = `yarn infra run-local-env ${app} --print --no-secrets`
+    if (dependencies.length > 0) {
+      command += ` --dependencies ${dependencies}`
+    }
+    if (proxies) {
+      command += ' --proxies'
+    }
+  }
+
+  return defineConfig({
     testDir: 'e2e',
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
@@ -40,16 +62,10 @@ export const createPlaywrightConfig = ({
         : [['dot']]) as ReporterDescription[]),
       ['html', { open: 'never' }],
     ],
-
     use: {
       baseURL: webServerUrl,
       trace: 'on-first-retry',
     },
-    projects: [
-      { name: 'everything', testMatch: 'e2e/**/*.spec.[tj]s' },
-      { name: 'smoke', testMatch: 'e2e/smoke/**/*.spec.[tj]s' },
-      { name: 'acceptance', testMatch: 'e2e/acceptance/**/*.spec.[tj]s' },
-    ],
     webServer: {
       stdout: 'pipe',
       port: port ? port : undefined,
@@ -60,3 +76,4 @@ export const createPlaywrightConfig = ({
       cwd,
     },
   })
+}
