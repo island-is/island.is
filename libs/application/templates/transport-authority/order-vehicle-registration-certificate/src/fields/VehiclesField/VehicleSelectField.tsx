@@ -1,9 +1,14 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import { ActionCard, Box, SkeletonLoader } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  Box,
+  InputError,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { VehiclesCurrentVehicle } from '../../shared'
-import { information } from '../../lib/messages'
+import { error, information } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
@@ -14,7 +19,7 @@ interface VehicleSearchFieldProps {
 
 export const VehicleSelectField: FC<
   React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
-> = ({ currentVehicleList, application }) => {
+> = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
@@ -38,6 +43,10 @@ export const VehicleSelectField: FC<
         : null,
     )
 
+  const [plate, setPlate] = useState<string>(
+    getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
+  )
+
   const onChange = (option: Option) => {
     const currentVehicle = currentVehicleList[parseInt(option.value, 10)]
     setIsLoading(true)
@@ -49,6 +58,7 @@ export const VehicleSelectField: FC<
         role: currentVehicle?.role,
       })
       setValue('pickVehicle.plate', currentVehicle.permno || '')
+      setPlate(currentVehicle.permno || '')
       setIsLoading(false)
     }
   }
@@ -85,6 +95,9 @@ export const VehicleSelectField: FC<
           </Box>
         )}
       </Box>
+      {!isLoading && plate.length === 0 && (errors as any)?.pickVehicle && (
+        <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
+      )}
     </Box>
   )
 }

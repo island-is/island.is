@@ -12,6 +12,7 @@
  */
 
 export * from './Card/Card'
+export * from './PlazaCard/PlazaCard'
 export * from './Header/Header'
 export * from './SearchInput/SearchInput'
 export * from './LanguageToggler/LanguageToggler'
@@ -21,6 +22,7 @@ export * from './SideMenu/SideMenu'
 export * from './StoryList/StoryList'
 export * from './ContentLink/ContentLink'
 export * from './NewsCard/NewsCard'
+export * from './Grant'
 export * from './LogoList/LogoList'
 export * from './List/List'
 export * from './Bullet/Bullet'
