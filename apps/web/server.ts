@@ -1,6 +1,6 @@
 import { bootstrap } from '@island.is/infra-next-server'
 
-import proxyConfig from './proxy.config.json'
+import proxyConfig from './proxy.config'
 
 bootstrap({
   name: 'web',
