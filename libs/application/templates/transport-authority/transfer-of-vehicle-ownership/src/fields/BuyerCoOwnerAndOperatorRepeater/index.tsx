@@ -2,32 +2,30 @@ import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useState, useCallback, useEffect } from 'react'
+import { FC, useState } from 'react'
 import { information } from '../../lib/messages'
-import { CoOwnerAndOperator, UserInformation } from '../../shared'
-import { BuyerItem } from './BuyerItem'
-import { repeaterButtons } from './CoOwnerAndOperatorRepeater.css'
-import { CoOwnerAndOperatorRepeaterItem } from './CoOwnerAndOperatorRepeaterItem'
-import { useMutation } from '@apollo/client'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { CoOwnerAndOperator } from '../../shared'
+import { repeaterButtons } from './BuyerCoOwnerAndOperatorRepeater.css'
+import { BuyerCoOwnerAndOperatorRepeaterItem } from './BuyerCoOwnerAndOperatorRepeaterItem'
+import { useLazyQuery } from '@apollo/client'
+import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 
-const emailRegex =
-  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
-
-export const CoOwnerAndOperatorRepeater: FC<
+export const BuyerCoOwnerAndOperatorRepeater: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = (props) => {
-  const { locale, formatMessage } = useLocale()
-  const { application, setBeforeSubmitCallback } = props
-  const [updateApplication] = useMutation(UPDATE_APPLICATION)
-  const [buyer, setBuyer] = useState<UserInformation>(
-    getValueViaPath(application.answers, 'buyer', {
-      name: '',
-      nationalId: '',
-      phone: '',
-      email: '',
-    }) as UserInformation,
-  )
+  const { formatMessage } = useLocale()
+  const { application, field, setBeforeSubmitCallback } = props
+  const { id } = field
+
+  const [identicalError, setIdenticalError] = useState<boolean>(false)
+
+  const [getApplicationInfo] = useLazyQuery(APPLICATION_APPLICATION, {
+    onError: (e) => {
+      console.error(e, e.message)
+      return
+    },
+  })
+
   const [buyerCoOwnerAndOperator, setBuyerCoOwnerAndOperator] = useState<
     CoOwnerAndOperator[]
   >(
@@ -37,7 +35,6 @@ export const CoOwnerAndOperatorRepeater: FC<
       [],
     ) as CoOwnerAndOperator[],
   )
-  const [identicalError, setIdenticalError] = useState<boolean>(false)
 
   const filteredCoOwnersAndOperators = buyerCoOwnerAndOperator.filter(
     ({ wasRemoved }) => wasRemoved !== 'true',
@@ -49,42 +46,56 @@ export const CoOwnerAndOperatorRepeater: FC<
     (field) => field.type === 'coOwner',
   )
 
-  const updateBuyer = useCallback(async (buyer: UserInformation) => {
-    await updateApplication({
-      variables: {
-        input: {
-          id: application.id,
-          answers: {
-            buyer: buyer,
-          },
-        },
-        locale,
-      },
-    })
-  }, [])
-
   const addNationalIdToCoOwners = (nationalId: string, newIndex: number) => {
     setBuyerCoOwnerAndOperator(
-      buyerCoOwnerAndOperator.map((coOwnerOroperator, index) => {
+      buyerCoOwnerAndOperator.map((coOwnerOrOperator, index) => {
         if (newIndex === index) {
           return {
-            ...coOwnerOroperator,
+            ...coOwnerOrOperator,
             nationalId,
           }
         }
-        return coOwnerOroperator
+        return coOwnerOrOperator
       }),
     )
   }
 
-  const checkDuplicate = () => {
+  const getBuyerNationalId = async () => {
+    // Get buyer nationalId from updated answers (cannot use application.answers),
+    // since that is filled out in the same step as this,
+    // but the buyer value is updated in answers right away
+    const applicationInfo = await getApplicationInfo({
+      variables: {
+        input: {
+          id: application.id,
+        },
+        locale: 'is',
+      },
+      fetchPolicy: 'no-cache',
+    })
+
+    const updatedApplication = applicationInfo?.data?.applicationApplication
+
+    const buyerNationalId =
+      getValueViaPath<string>(
+        updatedApplication.answers,
+        'buyer.nationalId',
+        '',
+      ) || ''
+
+    return buyerNationalId
+  }
+
+  const checkDuplicate = async () => {
     const existingCoOwnersAndOperators = filteredCoOwnersAndOperators.map(
       ({ nationalId }) => {
         return nationalId
       },
     )
 
-    const jointOperators = [...existingCoOwnersAndOperators, buyer.nationalId]
+    const buyerNationalId = await getBuyerNationalId()
+
+    const jointOperators = [...existingCoOwnersAndOperators, buyerNationalId]
     return !!jointOperators.some((nationalId, index) => {
       return (
         nationalId &&
@@ -110,47 +121,35 @@ export const CoOwnerAndOperatorRepeater: FC<
   const handleRemove = (position: number) => {
     if (position > -1) {
       setBuyerCoOwnerAndOperator(
-        buyerCoOwnerAndOperator.map((coOwnerOroperator, index) => {
+        buyerCoOwnerAndOperator.map((coOwnerOrOperator, index) => {
           if (index === position) {
-            return { ...coOwnerOroperator, wasRemoved: 'true' }
+            return { ...coOwnerOrOperator, wasRemoved: 'true' }
           }
-          return coOwnerOroperator
+          return coOwnerOrOperator
         }),
       )
     }
   }
 
-  useEffect(() => {
-    if (
-      buyer.name.length > 0 &&
-      buyer.nationalId.length === 10 &&
-      buyer.phone.length >= 7 &&
-      emailRegex.test(buyer.email)
-    ) {
-      updateBuyer(buyer)
+  setBeforeSubmitCallback?.(async () => {
+    const hasDuplicate = await checkDuplicate()
+    setIdenticalError(hasDuplicate)
+    if (hasDuplicate) {
+      return [false, 'Identical nationalIds']
     }
-  }, [buyer])
-
-  setBeforeSubmitCallback &&
-    setBeforeSubmitCallback(async () => {
-      setIdenticalError(checkDuplicate())
-      if (checkDuplicate()) {
-        return [false, 'Identical nationalIds']
-      }
-      return [true, null]
-    })
+    return [true, null]
+  })
 
   return (
     <Box>
-      <BuyerItem id="buyer" buyer={buyer} setBuyer={setBuyer} {...props} />
       {buyerCoOwnerAndOperator.map((field, index) => {
         const rowLocation =
           field.type === 'operator'
             ? allOperators.indexOf(field)
             : allCoOwners.indexOf(field)
         return (
-          <CoOwnerAndOperatorRepeaterItem
-            id="buyerCoOwnerAndOperator"
+          <BuyerCoOwnerAndOperatorRepeaterItem
+            id={id}
             repeaterField={field}
             index={index}
             rowLocation={rowLocation + 1}
