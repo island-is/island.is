@@ -83,7 +83,8 @@ StandaloneHome.getProps = async ({
   query,
   organizationPage,
 }) => {
-  const [slug] = query.slugs as string[]
+  const [slug] = (query.slugs ?? []) as string[]
+
   const [
     {
       data: { getOrganizationPage },
