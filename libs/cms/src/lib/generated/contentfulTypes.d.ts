@@ -1817,8 +1817,8 @@ export interface IGrantFields {
   /** Grant Application ID */
   grantApplicationId?: string | undefined
 
-  /** Application deadline text */
-  grantApplicationDeadlineText: string[]
+  /** Application Deadline Status */
+  grantApplicationDeadlineStatus?: string | undefined
 
   /** Application Url */
   granApplicationUrl?: ILinkUrl | undefined

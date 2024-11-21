@@ -71,8 +71,8 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         ),
         generateLine(
           formatMessage(m.single.deadline),
-          grant?.applicationDeadlineText ? (
-            <Text variant="medium">{grant.applicationDeadlineText}</Text>
+          grant?.applicationDeadlineStatus ? (
+            <Text variant="medium">{grant.applicationDeadlineStatus}</Text>
           ) : undefined,
         ),
         generateLine(

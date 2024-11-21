@@ -675,9 +675,6 @@ export class CmsElasticsearchService {
     if (statuses) {
       tagFilters.push(statuses)
     }
-    if (organizations) {
-      tagFilters.push(organizations)
-    }
 
     tagFilters.forEach((filter) => {
       must.push({

@@ -99,6 +99,14 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
             }
           })
 
+          if (mapped.fund?.parentOrganization.slug) {
+            tags.push({
+              key: mapped.fund.parentOrganization.slug,
+              type: 'organization',
+              value: mapped.fund.parentOrganization.title,
+            })
+          }
+
           // Tag the document with the ids of its children so we can later look up what document a child belongs to
           const childEntryIds = extractChildEntryIds(entry)
           for (const id of childEntryIds) {

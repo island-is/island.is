@@ -31,8 +31,8 @@ export class Grant {
   @Field({ nullable: true })
   applicationId?: string
 
-  @Field(() => [String], { nullable: true })
-  applicationDeadlineText?: Array<string>
+  @Field({ nullable: true })
+  applicationDeadlineStatus?: string
 
   @CacheField(() => ReferenceLink, { nullable: true })
   applicationUrl?: ReferenceLink
@@ -85,7 +85,7 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
   name: fields.grantName,
   description: fields.grantDescription,
   applicationId: fields.grantApplicationId,
-  applicationDeadlineText: fields.grantApplicationDeadlineText,
+  applicationDeadlineStatus: fields.grantApplicationDeadlineStatus,
   applicationUrl: fields.granApplicationUrl?.fields
     ? mapReferenceLink(fields.granApplicationUrl)
     : undefined,

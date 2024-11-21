@@ -9,7 +9,7 @@ export const GET_GRANTS_QUERY = gql`
         name
         description
         applicationId
-        applicationDeadlineText
+        applicationDeadlineStatus
         applicationUrl {
           slug
           type
@@ -68,7 +68,7 @@ export const GET_GRANT_QUERY = gql`
           slug
           type
     }
-      applicationDeadlineText
+      applicationDeadlineStatus
       statusText
       categoryTags {
         id

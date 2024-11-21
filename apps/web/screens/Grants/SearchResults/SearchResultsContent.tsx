@@ -95,11 +95,13 @@ export const SearchResultsContent = ({ grants, subheader, locale }: Props) => {
                             )}-${format(new Date(grant.dateTo), 'dd.MM.yyyy')}`,
                           }
                         : null,
-                      {
-                        icon: 'time' as const,
-                        //todo: fix when the text is ready
-                        text: 'Frestur til 16.08.2024, kl. 15.00',
-                      },
+                      grant.applicationDeadlineStatus
+                        ? {
+                            icon: 'time' as const,
+                            //todo: fix when the text is ready
+                            text: grant.applicationDeadlineStatus,
+                          }
+                        : undefined,
                       grant.categoryTags
                         ? {
                             icon: 'informationCircle' as const,
