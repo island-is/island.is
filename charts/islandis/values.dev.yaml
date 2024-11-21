@@ -3373,11 +3373,11 @@ user-notification-worker:
 web:
   enabled: true
   env:
-    API_URL: 'http://web-api'
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'dev'
+    GRAPHQL_API_URL: 'http://web-api'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
