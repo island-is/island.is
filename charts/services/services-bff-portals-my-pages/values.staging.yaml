@@ -44,11 +44,11 @@ grantNamespacesEnabled: true
 healthCheck:
   liveness:
     initialDelaySeconds: 3
-    path: '/minarsidur/bff/liveness'
+    path: '/bff/liveness'
     timeoutSeconds: 3
   readiness:
     initialDelaySeconds: 3
-    path: '/minarsidur/bff/health/check'
+    path: '/bff/health/check'
     timeoutSeconds: 3
 hpa:
   scaling:
@@ -71,7 +71,7 @@ ingress:
     hosts:
       - host: 'beta.staging01.devland.is'
         paths:
-          - '/minarsidur/bff'
+          - '/bff'
 namespace: 'portals-my-pages'
 podDisruptionBudget:
   maxUnavailable: 1

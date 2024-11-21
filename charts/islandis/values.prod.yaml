@@ -2273,11 +2273,11 @@ services-bff-portals-my-pages:
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: '/minarsidur/bff/liveness'
+      path: '/bff/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/minarsidur/bff/health/check'
+      path: '/bff/health/check'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -2299,10 +2299,10 @@ services-bff-portals-my-pages:
       hosts:
         - host: 'island.is'
           paths:
-            - '/minarsidur/bff'
+            - '/bff'
         - host: 'www.island.is'
           paths:
-            - '/minarsidur/bff'
+            - '/bff'
   namespace: 'portals-my-pages'
   podDisruptionBudget:
     maxUnavailable: 1
@@ -3054,6 +3054,7 @@ user-notification:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3138,6 +3139,7 @@ user-notification-cleanup-worker:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3253,6 +3255,7 @@ user-notification-worker:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

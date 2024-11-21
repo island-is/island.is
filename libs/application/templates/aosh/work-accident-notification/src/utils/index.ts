@@ -9,3 +9,4 @@ export {
   isValidPhoneNumber,
 } from './dateManipulation'
 export { isCompany } from './isCompany'
+export { formatDate } from './formatDate'
