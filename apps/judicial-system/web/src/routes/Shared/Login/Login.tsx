@@ -8,6 +8,7 @@ import {
   COURT_OF_APPEAL_CASES_ROUTE,
   DEFENDER_CASES_ROUTE,
   PRISON_CASES_ROUTE,
+  USERS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   isCourtOfAppealsUser,
@@ -20,6 +21,7 @@ import {
   PageTitle,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
 
@@ -71,15 +73,17 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      if (isDefenceUser(user)) {
-        router.push(DEFENDER_CASES_ROUTE)
-      } else if (isPrisonStaffUser(user)) {
-        router.push(PRISON_CASES_ROUTE)
-      } else if (isCourtOfAppealsUser(user)) {
-        router.push(COURT_OF_APPEAL_CASES_ROUTE)
-      } else {
-        router.push(CASES_ROUTE)
-      }
+      const redirectRoute = isDefenceUser(user)
+        ? DEFENDER_CASES_ROUTE
+        : isPrisonStaffUser(user)
+        ? PRISON_CASES_ROUTE
+        : isCourtOfAppealsUser(user)
+        ? COURT_OF_APPEAL_CASES_ROUTE
+        : user.role === UserRole.ADMIN
+        ? USERS_ROUTE
+        : CASES_ROUTE
+
+      router.push(redirectRoute)
     }
   }, [router, user])
 
