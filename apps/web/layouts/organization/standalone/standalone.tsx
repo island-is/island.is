@@ -1,5 +1,6 @@
 import { PropsWithChildren } from 'react'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 
 import { Box, ResponsiveSpace } from '@island.is/island-ui/core'
 import {
@@ -68,6 +69,7 @@ export const StandaloneLayout = ({
 
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
+  const router = useRouter()
 
   const navigationProps: NavigationProps = {
     logo: organizationPage?.organization?.logo?.url,
@@ -123,8 +125,16 @@ export const StandaloneLayout = ({
         <meta property="og:type" content="website" key="ogWebsite" />
 
         {/* Url */}
-        <meta property="og:url" content={'fullUrl'} key="ogUrl" />
-        <meta property="twitter:url" content={'fullUrl'} key="twitterUrl" />
+        <meta
+          property="og:url"
+          content={`https://island.is${router.asPath}`}
+          key="ogUrl"
+        />
+        <meta
+          property="twitter:url"
+          content={`https://island.is${router.asPath}`}
+          key="twitterUrl"
+        />
 
         {/* Title */}
         <title>{featuredTitle}</title>
