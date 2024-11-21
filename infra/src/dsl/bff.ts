@@ -3,6 +3,7 @@ import { BffInfo, Context, PortalKeys } from './types/input-types'
 
 import {
   adminPortalScopes,
+  applicationSystemScopes,
   servicePortalScopes,
 } from '../../../libs/auth/scopes/src/index'
 
@@ -14,7 +15,7 @@ const sanitizePath = (path: string) => path.replace(/^\/+|\/+$/g, '')
 export const getScopes = (key: PortalKeys) => {
   switch (key) {
     case 'minarsidur':
-      return servicePortalScopes
+      return [...servicePortalScopes, ...applicationSystemScopes]
     case 'stjornbord':
       return adminPortalScopes
     default:
@@ -28,6 +29,7 @@ export const bffConfig = ({
   clientName,
   clientId,
   globalPrefix,
+  allowedRedirectUris,
 }: BffInfo) => {
   const sanitizeGlobalPrefix = sanitizePath(globalPrefix)
 
@@ -63,10 +65,23 @@ export const bffConfig = ({
         prod: 'https://island.is',
       },
       BFF_ALLOWED_REDIRECT_URIS: {
-        local: json([`http://localhost:4200/${key}`]),
-        dev: ref((ctx) => json([`https://${getBaseUrl(ctx)}`])),
-        staging: ref((ctx) => json([`https://${getBaseUrl(ctx)}`])),
-        prod: json(['https://island.is']),
+        local: json([
+          `http://localhost:4200/${key}`,
+          ...(allowedRedirectUris?.local ?? []),
+        ]),
+        dev: ref((ctx) =>
+          json([
+            `https://${getBaseUrl(ctx)}`,
+            ...(allowedRedirectUris?.dev ?? []),
+          ]),
+        ),
+        staging: ref((ctx) =>
+          json([
+            `https://${getBaseUrl(ctx)}`,
+            ...(allowedRedirectUris?.staging ?? []),
+          ]),
+        ),
+        prod: json(['https://island.is', ...(allowedRedirectUris?.prod ?? [])]),
       },
       BFF_LOGOUT_REDIRECT_URI: {
         local: `http://localhost:4200/${key}`,

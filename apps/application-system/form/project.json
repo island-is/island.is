@@ -64,11 +64,15 @@
       "executor": "@nx/webpack:dev-server",
       "options": {
         "port": 4242,
-        "buildTarget": "application-system-form:build"
+        "buildTarget": "application-system-form:build",
+        "proxyConfig": "apps/application-system/form/proxy.config.json"
       },
       "configurations": {
         "production": {
           "buildTarget": "application-system-form:build:production"
+        },
+        "mock": {
+          "proxyConfig": false
         }
       },
       "dependsOn": [
@@ -103,14 +107,32 @@
         "parallel": false
       }
     },
+    "start-bff": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node -r esbuild-register src/cli/cli.ts run-local-env services-bff-portals-my-pages"
+        ],
+        "cwd": "infra"
+      }
+    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn nx run application-system-api:dev",
+          "yarn nx run service-portal:start-bff",
           "yarn start application-system-form"
         ],
         "parallel": true
+      }
+    },
+    "mock": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "API_MOCKS=true yarn start application-system-form --configuration=mock"
+        ]
       }
     },
     "docker-static": {

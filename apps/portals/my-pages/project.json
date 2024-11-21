@@ -68,6 +68,9 @@
       "configurations": {
         "production": {
           "buildTarget": "service-portal:build:production"
+        },
+        "mock": {
+          "proxyConfig": false
         }
       },
       "dependsOn": [
@@ -121,10 +124,12 @@
         "parallel": true
       }
     },
-    "mockmode": {
+    "mock": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["API_MOCKS=true yarn start service-portal"]
+        "commands": [
+          "API_MOCKS=true yarn start service-portal --configuration=mock"
+        ]
       }
     },
     "docker-static": {

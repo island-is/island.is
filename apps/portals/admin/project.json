@@ -62,6 +62,9 @@
         "production": {
           "buildTarget": "portals-admin:build:production",
           "hmr": false
+        },
+        "mock": {
+          "proxyConfig": false
         }
       },
       "dependsOn": [
@@ -111,10 +114,12 @@
         ]
       }
     },
-    "mockmode": {
+    "mock": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["API_MOCKS=true yarn start portals-admin"]
+        "commands": [
+          "API_MOCKS=true yarn start portals-admin --configuration=mock"
+        ]
       }
     },
     "docker-static": {

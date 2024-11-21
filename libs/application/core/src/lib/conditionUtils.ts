@@ -8,14 +8,14 @@ import {
   SingleConditionCheck,
   StaticCheck,
 } from '@island.is/application/types'
+import { BffUser } from '@island.is/shared/types'
 import { getValueViaPath } from './formUtils'
-import { User } from '@island.is/shared/types'
 
 const applyStaticConditionalCheck = (
   formValue: FormValue,
   externalData: ExternalData,
   check: StaticCheck,
-  user: User | null,
+  user: BffUser | null,
 ): boolean => {
   const { value, questionId, comparator, externalDataId, userPropId } = check
   let isValid = false
@@ -72,7 +72,7 @@ export const shouldShowFormItem = (
   formItem: FormItem,
   formValue: FormValue,
   externalData: ExternalData = {},
-  user: User | null,
+  user: BffUser | null,
 ): boolean => {
   const { condition } = formItem
   if (!condition) {
