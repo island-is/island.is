@@ -13,5 +13,4 @@ export default {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
   coverageDirectory: '<rootDir>/coverage/apps/web',
   displayName: 'web',
-  testPathIgnorePatterns: ['<rootDir>/apps/web/e2e'],
 }

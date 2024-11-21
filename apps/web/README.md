@@ -96,35 +96,17 @@ Currently, in this project, only the `Custom Page` content type utilizes the `Tr
 
 To run the E2E tests for the `web` app:
 
-1. **Install dependencies** (if not already installed):
+```bash
+# Install dependencies
+yarn install && yarn codegen
 
-   ```bash
-   yarn install && yarn playwright install
-   ```
-
-2. **Run the tests**:
-
-   ```bash
-   yarn e2e web
-   ```
-
-### Test Organization
-
-The E2E tests for the `web` app are located in the `e2e` folder.
-
-Tests are tagged based on their execution time or other criteria. Use `@fast` for quick tests and `@slow` for longer-running tests. Example:
-
-```typescript
-import { test, expect } from '@playwright/test'
-
-test('should get paid', { tag: '@slow' }, () => {
-  // ...
-})
+# Start the server
+yarn nx e2e web
 ```
 
 ### More Resources
 
-Refer to the [E2E Testing Library README](../../libs/testing/e2e/README.md) for common helper functions and utilities.
+For further details, refer to the [E2E Testing Library README](../../libs/testing/e2e/README.md).
 
 ## Further Documentation
 
