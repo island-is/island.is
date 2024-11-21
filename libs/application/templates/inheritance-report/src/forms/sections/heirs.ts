@@ -94,8 +94,7 @@ export const heirs = buildSection({
             buildAlertMessageField({
               id: 'reminderToFillInSpouse',
               title: '',
-              message:
-                m.heirsReminderToFillInSpouse,
+              message: m.heirsReminderToFillInSpouse,
               alertType: 'info',
               marginBottom: 'containerGutter',
               condition: (answers) => {
