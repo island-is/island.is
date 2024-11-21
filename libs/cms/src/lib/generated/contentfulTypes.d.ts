@@ -1555,7 +1555,7 @@ export interface IFundFields {
   fundTitle: string
 
   /** Link */
-  fundLink?: IArticle | IOrganizationSubpage | ILinkUrl | undefined
+  fundLink?: ILinkUrl | undefined
 
   /** Featured Image */
   fundFeaturedImage: Asset
