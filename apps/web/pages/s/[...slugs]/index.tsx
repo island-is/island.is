@@ -28,11 +28,14 @@ import OrganizationNewsList, {
 import PublishedMaterial, {
   type PublishedMaterialProps,
 } from '@island.is/web/screens/Organization/PublishedMaterial/PublishedMaterial'
+import StandaloneHome, {
+  type StandaloneHomeProps,
+} from '@island.is/web/screens/Organization/Standalone/Home'
 import SubPage, {
   type SubPageProps,
 } from '@island.is/web/screens/Organization/SubPage'
 import { GET_ORGANIZATION_PAGE_QUERY } from '@island.is/web/screens/queries'
-import { Screen as ScreenType } from '@island.is/web/types'
+import type { Screen as ScreenType } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
@@ -51,7 +54,7 @@ enum PageType {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pageMap: Record<PageType, FC<any>> = {
   [PageType.FRONTPAGE]: (props) => <Home {...props} />,
-  [PageType.STANDALONE_FRONTPAGE]: (props) => <div>Hello standalone world</div>,
+  [PageType.STANDALONE_FRONTPAGE]: (props) => <StandaloneHome {...props} />,
   [PageType.SUBPAGE]: (props) => <SubPage {...props} />,
   [PageType.ALL_NEWS]: (props) => <OrganizationNewsList {...props} />,
   [PageType.PUBLISHED_MATERIAL]: (props) => <PublishedMaterial {...props} />,
@@ -74,7 +77,7 @@ interface Props {
       }
     | {
         type: PageType.STANDALONE_FRONTPAGE
-        props: {}
+        props: StandaloneHomeProps
       }
     | {
         type: PageType.SUBPAGE
@@ -153,7 +156,10 @@ Component.getProps = async (context) => {
       return {
         page: {
           type: PageType.STANDALONE_FRONTPAGE,
-          props: {},
+          props: await StandaloneHome.getProps({
+            ...context,
+            organizationPage,
+          }),
         },
       }
     }
