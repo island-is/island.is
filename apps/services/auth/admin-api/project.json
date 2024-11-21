@@ -42,6 +42,12 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/auth/admin-api"]
     },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn start --project services-auth-admin-api"
+      }
+    },
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
