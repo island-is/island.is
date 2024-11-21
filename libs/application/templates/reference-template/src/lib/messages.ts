@@ -217,9 +217,37 @@ export const m = defineMessages({
     description: 'Example use of markdown code',
   },
   customComponentDescription: {
+    id: 'example.application:customComponentDescription',
+    defaultMessage:
+      'Before you make a custom component, go through this list to determine if you really need a custom component. A custom component should be the last option you go for when building an application.',
+    description: 'Rules for custom components',
+  },
+  customComponentNumberedList: {
     id: 'example.application:customComponentDescription#markdown',
     defaultMessage:
-      '1. Try to use the shared components, `buildTextField`, `buildCheckboxField`, `buildSelectField`, `buildFileUploadField` and so on. This is most preferable to make the look and feel of the application more consistent and uniform.\n\n 2. If the shared components almost fullfill your needs but you need something more, consider consulting with the designer of the application and try to adjust the design to the built in components.\n\n 3. If the design can not be adjusted to the built in components, then consult Norda if a shared component can possibly be adjusted or expanded to fulfill your needs.\n\n 4. Is there another application that has made a similar custom component before? If so, then it should be a shared component. 5. If you still need a new component, ask yourself if this is a component that another application might also need in the future. If so make the new component shared. 6. Make a custom component if none of the above apply.',
+      '1. Try to use the shared components, such as `buildTextField`, `buildCheckboxField`, `buildSelectField`, `buildFileUploadField`, and others. This approach ensures a more consistent and uniform look and feel for the application.\n- If the shared components almost fulfill your needs but require slight adjustments, consult with the designer of the application to explore adapting the design to the built-in components.\n- If the design cannot be adjusted to the built-in components, consult Norda to determine if the shared components can be modified or expanded to meet your requirements.\n- Check if another application has created a similar custom component before. If so, it should be made into a shared component.\n- If you still need a new component, evaluate whether it is something that other applications might need in the future. If so, make the new component shared.\n- Create a custom component only if none of the above conditions apply.',
     description: 'Rules for custom components',
+  },
+  customComponentAbout: {
+    id: 'example.application:customComponentAbout',
+    defaultMessage:
+      'Custom components are just regular React components. They can take in some data you specify in the template and they have access to the application object. They can also be styled with vanilla-extract.',
+    description: 'About custom components',
+  },
+  overviewTitle: {
+    id: 'example.application:overviewTitle',
+    defaultMessage: 'Overview',
+    description: 'Overview title',
+  },
+  overviewDescription: {
+    id: 'example.application:overviewTitle',
+    defaultMessage:
+      'At the moment the form overview is a custom component. The plan is to make this a shared component in the near future.',
+    description: 'Overview title',
+  },
+  overviewSubmit: {
+    id: 'example.application:overviewSubmit',
+    defaultMessage: 'Submit',
+    description: 'Overview title',
   },
 })

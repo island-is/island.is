@@ -27,15 +27,7 @@ import {
   NationalRegistryApi,
 } from '../dataProviders'
 import { ExampleSchema } from './dataSchema'
-
-const States = {
-  prerequisites: 'prerequisites',
-  draft: 'draft',
-  inReview: 'inReview',
-  approved: 'approved',
-  rejected: 'rejected',
-  waitingToAssign: 'waitingToAssign',
-}
+import { States } from '../utils/constants'
 
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
@@ -86,9 +78,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   allowMultipleApplicationsInDraft: true,
 
   stateMachineConfig: {
-    initial: States.prerequisites,
+    initial: States.PREREQUISITES,
     states: {
-      [States.prerequisites]: {
+      [States.PREREQUISITES]: {
         meta: {
           name: 'Skilyrði',
           progress: 0,
@@ -132,11 +124,11 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: States.draft,
+            target: States.DRAFT,
           },
         },
       },
-      [States.draft]: {
+      [States.DRAFT]: {
         meta: {
           name: 'Umsókn um ökunám',
 
@@ -168,12 +160,12 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         on: {
           SUBMIT: [
             {
-              target: States.waitingToAssign,
+              target: States.WAITINGTOASSIGN,
             },
           ],
         },
       },
-      [States.waitingToAssign]: {
+      [States.WAITINGTOASSIGN]: {
         meta: {
           name: 'Waiting to assign',
           progress: 0.75,
@@ -225,12 +217,12 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: { target: States.inReview },
-          ASSIGN: { target: States.inReview },
-          EDIT: { target: States.draft },
+          SUBMIT: { target: States.INREVIEW },
+          ASSIGN: { target: States.INREVIEW },
+          EDIT: { target: States.DRAFT },
         },
       },
-      [States.inReview]: {
+      [States.INREVIEW]: {
         meta: {
           name: 'In Review',
           progress: 0.75,
@@ -287,11 +279,11 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: { target: States.approved },
-          REJECT: { target: States.rejected },
+          APPROVE: { target: States.APPROVED },
+          REJECT: { target: States.REJECTED },
         },
       },
-      [States.approved]: {
+      [States.APPROVED]: {
         meta: {
           name: 'Approved',
           progress: 1,
@@ -309,7 +301,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           ],
         },
       },
-      [States.rejected]: {
+      [States.REJECTED]: {
         meta: {
           name: 'Rejected',
           progress: 1,

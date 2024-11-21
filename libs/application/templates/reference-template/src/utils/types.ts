@@ -22,3 +22,9 @@ export type FriggSchoolsByMunicipality = {
     }> | null
   }> | null
 }
+
+export type TableRepeaterAnswers = {
+  fullName: string
+  nationalId: string
+  relation: string
+}
