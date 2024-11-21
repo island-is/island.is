@@ -668,49 +668,6 @@ export const formatCustodyRestrictions = (
   })
 }
 
-export const formatAdvocateAssignedEmailNotification = (
-  formatMessage: FormatMessage,
-  theCase: Case,
-  advocateType: AdvocateType,
-  overviewUrl?: string,
-): SubjectAndBody => {
-  const subject =
-    advocateType === AdvocateType.DEFENDER
-      ? formatMessage(
-          notifications.advocateAssignedEmail.subjectAccessToCaseFiles,
-          {
-            court: capitalize(theCase.court?.name ?? ''),
-          },
-        )
-      : formatMessage(notifications.advocateAssignedEmail.subjectAccess, {
-          courtCaseNumber: theCase.courtCaseNumber,
-        })
-
-  const body =
-    advocateType === AdvocateType.DEFENDER
-      ? formatMessage(
-          notifications.advocateAssignedEmail.bodyAccessToCaseFiles,
-          {
-            defenderHasAccessToRVG: Boolean(overviewUrl),
-            courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
-            court: theCase.court?.name ?? '',
-            courtName: theCase.court?.name.replace('dómur', 'dómi') ?? '',
-            linkStart: `<a href="${overviewUrl}">`,
-            linkEnd: '</a>',
-          },
-        )
-      : formatMessage(notifications.advocateAssignedEmail.bodyAccess, {
-          defenderHasAccessToRVG: Boolean(overviewUrl),
-          court: theCase.court?.name,
-          advocateType,
-          courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
-          linkStart: `<a href="${overviewUrl}">`,
-          linkEnd: '</a>',
-        })
-
-  return { body, subject }
-}
-
 export const formatCourtOfAppealJudgeAssignedEmailNotification = (
   formatMessage: FormatMessage,
   caseNumber: string,
@@ -802,3 +759,31 @@ export const formatDefenderRoute = (
 
 export const formatConfirmedIndictmentKey = (key?: string) =>
   key?.replace(/\/([^/]*)$/, '/confirmed/$1') ?? ''
+
+export const filterWhitelistEmails = (
+  emails: string[],
+  domainWhitelist: string,
+  emailWhitelist: string,
+) => {
+  if (!emails || emails.length === 0) return []
+
+  const allowedDomains = new Set(
+    domainWhitelist
+      .split(',')
+      .map((d) => d.trim())
+      .filter(Boolean),
+  )
+  const allowedEmails = new Set(
+    emailWhitelist
+      .split(',')
+      .map((e) => e.trim())
+      .filter(Boolean),
+  )
+
+  return emails.filter((email) => {
+    const domain = email.split('@')[1]
+    return (
+      domain && (allowedDomains.has(domain) || allowedEmails.has(email.trim()))
+    )
+  })
+}
