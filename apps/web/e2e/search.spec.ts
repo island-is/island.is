@@ -23,7 +23,7 @@ test.describe('Search feature', { tag: '@fast' }, () => {
     await context.close()
   })
 
-  test('has expected sections', async () => {
+  test('should display search results and navigate to result page', async () => {
     const testPhrase = 'umsókn'
     const page = await context.newPage()
     await page.goto('/', { waitUntil: 'networkidle' })

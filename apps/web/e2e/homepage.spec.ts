@@ -47,11 +47,13 @@ test.describe('Front page', { tag: '@fast' }, () => {
     )
     const lifeEventPage = await context.newPage()
     for (const url of lifeEventUrls) {
-      const result = await lifeEventPage.goto(url ?? '')
-      await expect(
-        lifeEventPage.getByRole('link', { name: 'island.is logo' }),
-      ).toBeVisible()
-      expect(result?.status()).toBe(200)
+      if (url) {
+        const result = await lifeEventPage.goto(url ?? '')
+        await expect(
+          lifeEventPage.getByRole('link', { name: 'island.is logo' }),
+        ).toBeVisible()
+        expect(result?.status()).toBe(200)
+      }
     }
     await lifeEventPage.close()
   })
@@ -67,11 +69,13 @@ test.describe('Front page', { tag: '@fast' }, () => {
     )
     const lifeEventPage = await context.newPage()
     for (const url of lifeEventUrls) {
-      const result = await lifeEventPage.goto(url ?? '')
-      await expect(
-        lifeEventPage.getByRole('link', { name: 'island.is logo' }),
-      ).toBeVisible()
-      expect(result?.status()).toBe(200)
+      if (url) {
+        const result = await lifeEventPage.goto(url ?? '')
+        await expect(
+          lifeEventPage.getByRole('link', { name: 'island.is logo' }),
+        ).toBeVisible()
+        expect(result?.status()).toBe(200)
+      }
     }
     await lifeEventPage.close()
   })
@@ -137,11 +141,11 @@ test.describe('Front page', { tag: '@fast' }, () => {
       if (url) {
         await lifeEventPage.goto(url)
         await lifeEventPage.locator('[data-testid="link-back-home"]').click()
+        await expect(
+          lifeEventPage.locator('data-testid=home-heading'),
+        ).toBeVisible()
+        await expect(lifeEventPage).toHaveURL('/')
       }
-      await expect(
-        lifeEventPage.locator('data-testid=home-heading'),
-      ).toBeVisible()
-      await expect(lifeEventPage).toHaveURL('/')
     }
     await lifeEventPage.close()
   })
@@ -159,12 +163,12 @@ test.describe('Front page', { tag: '@fast' }, () => {
       if (url) {
         await lifeEventPage.goto(url)
         await lifeEventPage.locator('[data-testid="link-back-home"]').click()
+        await lifeEventPage.locator('[data-testid="link-back-home"]').click()
+        await expect(
+          lifeEventPage.locator('data-testid=home-heading'),
+        ).toBeVisible()
+        await expect(lifeEventPage).toHaveURL('/en')
       }
-      await lifeEventPage.locator('[data-testid="link-back-home"]').click()
-      await expect(
-        lifeEventPage.locator('data-testid=home-heading'),
-      ).toBeVisible()
-      await expect(lifeEventPage).toHaveURL('/en')
     }
     await lifeEventPage.close()
   })
@@ -195,9 +199,7 @@ test.describe('Front page', { tag: '@fast' }, () => {
     await page.getByRole('button', { name: 'Valmynd' }).click()
 
     await expect(page.getByRole('dialog', { name: 'Menu' })).toBeVisible()
-    await expect(
-      page.getByRole('paragraph').filter({ hasText: 'Þjónustuflokkar' }),
-    ).toBeVisible()
+    await expect(page.getByText('Þjónustuflokkar')).toBeVisible()
     await expect(page.getByRole('dialog', { name: 'Menu' })).toBeVisible()
     // Heading is "visible" behind menu
     // await expect(page.getByTestId('home-heading')).not.toBeVisible()
