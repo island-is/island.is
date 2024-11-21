@@ -65,3 +65,30 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Resolve the image tag.
+Prioritizes .Values.image.tag, falling back to .Values.global.image.tag if not set.
+*/}}
+{{- define "api-template.version" -}}
+{{- $tag := .Values.image.tag -}}
+{{- if not $tag }}
+{{- $tag = .Values.global.image.tag -}}
+{{- end }}
+{{- $tag -}}
+{{- end -}}
+
+{{/*
+Resolve the full image reference (repository:tag).
+Prioritizes .Values.image.repository and uses the tag resolved by api-template.version.
+*/}}
+{{- define "api-template.image" -}}
+{{- if not .Values.image.repository }}
+{{- fail "image.repository is required and must be set" }}
+{{- end }}
+
+{{- $repository := .Values.image.repository -}}
+{{- $tag := include "api-template.version" . -}}
+
+{{- printf "%s:%s" $repository $tag -}}
+{{- end }}
