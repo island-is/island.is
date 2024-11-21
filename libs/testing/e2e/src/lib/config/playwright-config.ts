@@ -37,13 +37,14 @@ export const createPlaywrightConfig = ({
   dependencies = [],
   proxies = false,
 }: PlaywrightConfigParams) => {
+  if (!command && !app) {
+    throw new Error('Either command or app must be specified.')
+  }
+
   if (!command) {
-    if (!app) {
-      throw new Error('Either command or app must be specified.')
-    }
     command = `yarn infra run-local-env ${app} --print --no-secrets`
     if (dependencies.length > 0) {
-      command += ` --dependencies ${dependencies}`
+      command += ` --dependencies ${dependencies.join(' ')}`
     }
     if (proxies) {
       command += ' --proxies'
