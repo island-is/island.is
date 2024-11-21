@@ -65,6 +65,7 @@ interface FileUploadControllerProps {
   readonly id: string
   error?: string
   application: Application
+  onRemove?: (f: UploadFile) => void
   readonly header?: string
   readonly description?: string
   readonly buttonLabel?: string
@@ -89,6 +90,7 @@ export const FileUploadController = ({
   maxSizeErrorText,
   totalMaxSize = DEFAULT_TOTAL_MAX_SIZE,
   forImageUpload,
+  onRemove,
 }: FileUploadControllerProps) => {
   const { formatMessage } = useLocale()
   const { clearErrors, setValue } = useFormContext()
@@ -101,6 +103,7 @@ export const FileUploadController = ({
   const initialUploadFiles: UploadFile[] =
     (val && val.map((f) => answerToUploadFile(f))) || []
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
+  console.log('file controller state', state)
 
   useEffect(() => {
     const onlyUploadedFiles = state.filter(
@@ -126,6 +129,7 @@ export const FileUploadController = ({
       const {
         createUploadUrl: { url, fields },
       } = data
+
       const response = await uploadFileToS3(file, dispatch, url, fields)
 
       // 3. Add Attachment Data
@@ -211,6 +215,8 @@ export const FileUploadController = ({
         setUploadError(formatMessage(coreErrorMessages.fileUpload))
       }
     })
+
+    // Update application (answers) with new attachments (from state)?
   }
 
   const onRemoveFile = async (fileToRemove: UploadFile) => {
@@ -231,6 +237,8 @@ export const FileUploadController = ({
       }
     }
 
+    onRemove?.(fileToRemove)
+
     // We remove it from the list if: the delete attachment above succeeded,
     // or if the user clicked x for a file that failed to upload and is in
     // an error state.
@@ -240,6 +248,8 @@ export const FileUploadController = ({
         fileToRemove,
       },
     })
+
+    // Update application (answers) with new attachments (from state)?
 
     setUploadError(undefined)
   }
