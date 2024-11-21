@@ -68,27 +68,34 @@ Create the name of the service account to use
 
 {{/*
 Resolve the image tag.
-Prioritizes .Values.image.tag, falling back to .Values.global.image.tag if not set.
+Prioritizes .Values.image.tag, falling back to .Values.global.image.tag if available.
+Fails if both are missing.
 */}}
-{{- define "api-template.version" -}}
-{{- $tag := .Values.image.tag -}}
-{{- if not $tag }}
-{{- $tag = .Values.global.image.tag -}}
+{{- define "job-template.version" -}}
+{{- $tag := .Values.image.tag | default "" -}}
+{{- if eq $tag "" }}
+    {{- if and (hasKey .Values "global") (hasKey .Values.global "image") (hasKey .Values.global.image "tag") -}}
+        {{- $tag = .Values.global.image.tag -}}
+    {{- end -}}
+{{- end }}
+{{- if eq $tag "" }}
+    {{- fail "Either image.tag or global.image.tag must be set" }}
 {{- end }}
 {{- $tag -}}
-{{- end -}}
+{{- end }}
 
 {{/*
 Resolve the full image reference (repository:tag).
 Prioritizes .Values.image.repository and uses the tag resolved by api-template.version.
+Fails if image.repository is missing.
 */}}
-{{- define "api-template.image" -}}
-{{- if not .Values.image.repository }}
-{{- fail "image.repository is required and must be set" }}
+{{- define "job-template.image" -}}
+{{- $repository := .Values.image.repository | default "" -}}
+{{- if eq $repository "" }}
+    {{- fail "image.repository is required and must be set" }}
 {{- end }}
 
-{{- $repository := .Values.image.repository -}}
-{{- $tag := include "api-template.version" . -}}
+{{- $tag := include "job-template.version" . -}}
 
 {{- printf "%s:%s" $repository $tag -}}
 {{- end }}

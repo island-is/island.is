@@ -12,7 +12,7 @@ metadata:
     chart: "{{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}"
     tags.datadoghq.com/env: {{ .Values.global.env.name }}
     tags.datadoghq.com/service: {{ include "cronjob-template.name" . }}
-    tags.datadoghq.com/version: {{ include "api-template.version" . }}
+    tags.datadoghq.com/version: {{ include "cronjob-template.version" . }}
 spec:
   concurrencyPolicy: {{ .Values.concurrencyPolicy | default "Allow" }}
   failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit | default 1 }}
@@ -52,13 +52,13 @@ spec:
             chart: "{{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}"
             tags.datadoghq.com/env: {{ .Values.global.env.name }}
             tags.datadoghq.com/service: {{ include "cronjob-template.name" . }}
-            tags.datadoghq.com/version: {{ include "api-template.version" . }}
+            tags.datadoghq.com/version: {{ include "cronjob-template.version" . }}
         spec:
           serviceAccountName: {{ include "cronjob-template.serviceAccountName" $ }}
           securityContext:
             {{- toYaml $.Values.podSecurityContext | nindent 12 }}
           containers:
-          - image: "{{ include "api-template.image" . }}"
+          - image: "{{ include "cronjob-template.image" . }}"
             name: {{ .Chart.Name }}
             securityContext:
               {{- toYaml $.Values.securityContext | nindent 14 }}
@@ -92,7 +92,7 @@ spec:
                     key: {{ $key }}
               {{- end }}
               - name: APP_VERSION
-                value: {{ include "api-template.version" . }}
+                value: {{ include "cronjob-template.version" . }}
               - name: DD_ENV
                 valueFrom:
                   fieldRef:
