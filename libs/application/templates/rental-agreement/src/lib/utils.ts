@@ -12,12 +12,24 @@ import {
   SecurityDepositAmountOptions,
 } from './constants'
 import * as m from './messages'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
+import is from 'date-fns/locale/is'
 
 export const insertAt = (str: string, sub: string, pos: number) =>
   `${str.slice(0, pos)}${sub}${str.slice(pos)}`
 
 export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
+
+export const formatDate = (date: string) => {
+  return format(parseISO(date), 'dd.MM.yyyy', {
+    locale: is,
+  })
+}
+
+export const formatCurrency = (answer: string) =>
+  answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ISK'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const propertyCategoryTypeOptions =

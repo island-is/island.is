@@ -4,7 +4,6 @@ import {
   buildTableRepeaterField,
   YES,
 } from '@island.is/application/core'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { formatNationalId } from '../../lib/utils'
 import { landlordDetails } from '../../lib/messages'
 
@@ -22,6 +21,7 @@ export const RentalHousingLandlordInfo = buildSubSection({
           title: '',
           editField: true,
           marginTop: 1,
+          maxRows: 10,
           fields: {
             name: {
               component: 'input',
@@ -35,10 +35,9 @@ export const RentalHousingLandlordInfo = buildSubSection({
               width: 'half',
             },
             phone: {
-              component: 'input',
+              component: 'phone',
               label: landlordDetails.phoneInputLabel,
-              type: 'tel',
-              format: '###-####',
+              enableCountrySelector: true,
               width: 'half',
             },
             email: {
@@ -49,9 +48,8 @@ export const RentalHousingLandlordInfo = buildSubSection({
             },
             isRepresentative: {
               component: 'checkbox',
-              large: true,
-              displayInTable: false,
               label: landlordDetails.representativeLabel,
+              large: true,
               options: [
                 {
                   label: landlordDetails.representativeLabel,
@@ -62,15 +60,18 @@ export const RentalHousingLandlordInfo = buildSubSection({
           },
           table: {
             format: {
-              phone: (value) => formatPhoneNumber(value),
-              nationalId: (value) => formatNationalId(value),
+              isRepresentative: (value) => (value.includes(YES) ? 'Check' : ''),
+              name: (value: string) => value,
+              phone: (value: string) => value,
+              nationalId: (value: string) => formatNationalId(value),
             },
             header: [
               landlordDetails.nameInputLabel,
-              landlordDetails.nationalIdHeaderLabel,
               landlordDetails.phoneInputLabel,
+              landlordDetails.nationalIdHeaderLabel,
               landlordDetails.emailInputLabel,
             ],
+            rows: ['name', 'phone', 'nationalId', 'email'],
           },
         }),
       ],

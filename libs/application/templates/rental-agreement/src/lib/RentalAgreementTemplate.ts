@@ -1,4 +1,5 @@
 import {
+  Application,
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
@@ -14,6 +15,7 @@ import {
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
 } from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.EDIT }
 
@@ -27,6 +29,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
   institution: 'Húsnæðis- og mannvirkjastofnun',
   dataSchema,
   featureFlag: Features.rentalAgreement,
+  allowedDelegations: [{ type: AuthDelegationType.GeneralMandate }],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -88,8 +91,14 @@ const RentalAgreementTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole() {
-    return Roles.APPLICANT
+  mapUserToRole(
+    nationalId: string,
+    application: Application,
+  ): Roles | undefined {
+    if (application.applicant === nationalId) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

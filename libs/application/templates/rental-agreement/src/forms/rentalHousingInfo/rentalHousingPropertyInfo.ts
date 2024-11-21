@@ -55,7 +55,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           title: messagesInfo.propertyUnitIdLabel,
           placeholder: messagesInfo.propertyUnitIdPlaceholder,
           width: 'half',
-          maxLength: 6,
+          format: '## ####',
           required: true,
         }),
         buildSelectField({

@@ -4,6 +4,7 @@ import {
   RentalAmountIndexTypes,
   RentalAmountPaymentDateOptions,
   RentalHousingCategoryClass,
+  RentalHousingCategoryTypes,
   RentOtherFeesPayeeOptions,
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
@@ -42,6 +43,20 @@ const fileSchema = z.object({
 
 const registerProperty = z
   .object({
+    address: z.string().optional(),
+    propertyId: z.string().optional(),
+    unitId: z.string().optional(),
+    postalCode: z.string().optional(),
+    municipality: z.string().optional(),
+    size: z.string().optional(),
+    numOfRooms: z.string().optional(),
+    categoryType: z
+      .enum([
+        RentalHousingCategoryTypes.ENTIRE_HOME,
+        RentalHousingCategoryTypes.ROOM,
+        RentalHousingCategoryTypes.COMMERCIAL,
+      ])
+      .optional(),
     categoryClass: z
       .enum([
         RentalHousingCategoryClass.GENERAL_MARKET,
@@ -64,6 +79,30 @@ const registerProperty = z
       })
     }
   })
+
+const landlordInfo = z.object({
+  table: z.array(
+    z.object({
+      name: z.string().optional(),
+      nationalId: z.string().optional(),
+      phone: z.string().optional(),
+      email: z.string().optional(),
+      isRepresentative: z.string().array().optional(),
+    }),
+  ),
+})
+
+const tenantInfo = z.object({
+  table: z.array(
+    z.object({
+      name: z.string().optional(),
+      nationalId: z.string().optional(),
+      phone: z.string().optional(),
+      email: z.string().optional(),
+      isRepresentative: z.string().array().optional(),
+    }),
+  ),
+})
 
 const rentalPeriod = z
   .object({
@@ -116,12 +155,15 @@ const rentalAmount = z
       .optional(),
     indexValue: z.string().optional(),
     isIndexConnected: z.string().array().optional(),
-    paymentDateOptions: z.enum([
-      RentalAmountPaymentDateOptions.FIRST_DAY,
-      RentalAmountPaymentDateOptions.LAST_DAY,
-      RentalAmountPaymentDateOptions.OTHER,
-    ]),
+    paymentDateOptions: z
+      .enum([
+        RentalAmountPaymentDateOptions.FIRST_DAY,
+        RentalAmountPaymentDateOptions.LAST_DAY,
+        RentalAmountPaymentDateOptions.OTHER,
+      ])
+      .optional(),
     paymentDateOther: z.string().optional(),
+    isPaymentInsuranceRequired: z.string().array().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.isIndexConnected && data.isIndexConnected.includes(TRUE)) {
@@ -156,6 +198,25 @@ const rentalAmount = z
       })
     }
   })
+
+const specialProvisions = z.object({
+  descriptionInput: z.string().optional(),
+  rulesInput: z.string().optional(),
+})
+
+const condition = z.object({
+  inspector: z.string().optional(),
+  inspectorName: z.string().optional(),
+  resultsDescription: z.string().optional(),
+  resultsFiles: z.array(fileSchema),
+})
+
+const fireProtections = z.object({
+  smokeDetectors: z.string().optional(),
+  fireExtinguisher: z.string().optional(),
+  exits: z.string().optional(),
+  fireBlanket: z.string().optional(),
+})
 
 const securityDeposit = z
   .object({
@@ -294,9 +355,11 @@ const rentOtherFees = z
     electricityCost: z.string().optional(),
     electricityCostMeterNumber: z.string().optional(),
     electricityCostMeterStatus: z.string().optional(),
+    electricityCostMeterStatusDate: z.string().optional(),
     heatingCost: z.string().optional(),
     heatingCostMeterNumber: z.string().optional(),
     heatingCostMeterStatus: z.string().optional(),
+    heatingCostMeterStatusDate: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.housingFund === RentOtherFeesPayeeOptions.TENANT) {
@@ -372,12 +435,16 @@ export const dataSchema = z.object({
         params: m.dataSchema.nationalId,
       }),
   }),
+  landlordInfo,
+  tenantInfo,
   registerProperty,
+  specialProvisions,
   rentalPeriod,
   rentalAmount,
-  securityDeposit,
-  condition: z.object({
-    resultsFiles: z.array(fileSchema),
-  }),
   rentOtherFees,
+  securityDeposit,
+  condition,
+  fireProtections,
 })
+
+export type RentalAgreement = z.TypeOf<typeof dataSchema>
