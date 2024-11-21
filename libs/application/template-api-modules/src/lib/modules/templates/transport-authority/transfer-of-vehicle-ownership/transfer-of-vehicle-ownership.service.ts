@@ -333,7 +333,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   async addReview({
     application,
     auth,
-  }: TemplateApiModuleActionProps): Promise<void> {
+  }: TemplateApiModuleActionProps): Promise<Array<EmailRecipient>> {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
 
     // 1. Make sure review comes from buyer, he is the only one that can add more reviewers
@@ -342,7 +342,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       !answers.buyer.nationalId ||
       auth.nationalId !== answers.buyer.nationalId
     ) {
-      return
+      return []
     }
 
     // 2. Notify users that were added that need to review
@@ -365,10 +365,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     )
     if (buyerCoOwners) {
       for (let i = 0; i < buyerCoOwners.length; i++) {
-        const oldEntry = oldRecipientList.find((x) => {
-          x.role === EmailRole.buyerCoOwner &&
-            x.ssn === buyerCoOwners[i].nationalId
-        })
+        const oldEntry = oldRecipientList.find(
+          (x) =>
+            x.role === EmailRole.buyerCoOwner &&
+            x.ssn === buyerCoOwners[i].nationalId,
+        )
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerCoOwners[i].email
           : true
@@ -393,10 +394,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     )
     if (buyerOperators) {
       for (let i = 0; i < buyerOperators.length; i++) {
-        const oldEntry = oldRecipientList.find((x) => {
-          x.role === EmailRole.buyerOperator &&
-            x.ssn === buyerOperators[i].nationalId
-        })
+        const oldEntry = oldRecipientList.find(
+          (x) =>
+            x.role === EmailRole.buyerOperator &&
+            x.ssn === buyerOperators[i].nationalId,
+        )
         const emailChanged = oldEntry
           ? oldEntry.email !== buyerOperators[i].email
           : true
@@ -453,6 +455,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           })
       }
     }
+
+    return newlyAddedRecipientList
   }
 
   async rejectApplication(props: TemplateApiModuleActionProps): Promise<void> {
