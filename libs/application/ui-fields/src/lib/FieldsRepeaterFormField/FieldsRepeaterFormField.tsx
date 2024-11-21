@@ -78,7 +78,7 @@ export const FieldsRepeaterFormField = ({
 
   const { formatMessage, lang: locale } = useLocale()
 
-  const { fields } = useFieldArray({
+  const { fields, remove } = useFieldArray({
     control: control,
     name: id,
   })
@@ -103,6 +103,8 @@ export const FieldsRepeaterFormField = ({
       setValue(id, answers[id].slice(0, difference))
       setNumberOfItems(numberOfItems)
     }
+
+    remove(numberOfItems - 1)
   }
 
   const repeaterFields = (index: number) =>
@@ -165,7 +167,7 @@ export const FieldsRepeaterFormField = ({
             ))}
           </GridRow>
           <Box display="flex" justifyContent="flexEnd">
-            {numberOfItems > 1 && (
+            {numberOfItems > minRows && (
               <Box marginRight={2}>
                 <Button
                   variant="ghost"

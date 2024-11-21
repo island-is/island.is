@@ -113,6 +113,10 @@ export const ExampleForm: Form = buildForm({
       ],
     }),
     buildSection({
+      condition: (application) => {
+        console.log(application)
+        return true
+      },
       id: 'conditions',
       title: m.conditionsSection,
       children: [],
