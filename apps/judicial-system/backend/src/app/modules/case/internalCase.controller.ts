@@ -80,7 +80,7 @@ export class InternalCaseController {
   @ApiOkResponse({
     type: Case,
     isArray: true,
-    description: 'Gets all indictment cases',
+    description: 'Gets all indictment cases for digital mailbox',
   })
   @UseInterceptors(CasesInterceptor)
   getIndictmentCases(
@@ -96,7 +96,7 @@ export class InternalCaseController {
   @Post('case/indictment/:caseId')
   @ApiOkResponse({
     type: Case,
-    description: 'Gets indictment case by id',
+    description: 'Gets indictment case by id for digital mailbox',
   })
   @UseInterceptors(CaseInterceptor)
   getIndictmentCase(
@@ -173,31 +173,6 @@ export class InternalCaseController {
     )
 
     return this.internalCaseService.deliverIndictmentInfoToCourt(
-      theCase,
-      deliverDto.user,
-    )
-  }
-
-  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
-  @Post(
-    `case/:caseId/${
-      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER]
-    }`,
-  )
-  @ApiOkResponse({
-    type: DeliverResponse,
-    description: 'Delivers indictment case defender info to court',
-  })
-  deliverIndictmentDefenderInfoToCourt(
-    @Param('caseId') caseId: string,
-    @CurrentCase() theCase: Case,
-    @Body() deliverDto: DeliverDto,
-  ): Promise<DeliverResponse> {
-    this.logger.debug(
-      `Delivering the indictment defender info for case ${caseId} to court`,
-    )
-
-    return this.internalCaseService.deliverIndictmentDefenderInfoToCourt(
       theCase,
       deliverDto.user,
     )

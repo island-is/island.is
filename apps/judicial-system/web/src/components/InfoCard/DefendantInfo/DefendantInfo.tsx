@@ -54,14 +54,11 @@ export const getAppealExpirationInfo = (
 const getVerdictViewDateText = (
   formatMessage: IntlShape['formatMessage'],
   verdictViewDate?: string | null,
-  serviceNotRequired?: boolean,
 ): string => {
   if (verdictViewDate) {
     return formatMessage(strings.verdictDisplayedDate, {
       date: formatDate(verdictViewDate, 'PPP'),
     })
-  } else if (serviceNotRequired) {
-    return formatMessage(strings.serviceNotRequired)
   } else {
     return formatMessage(strings.serviceRequired)
   }
@@ -75,6 +72,16 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     defender,
   } = props
   const { formatMessage } = useIntl()
+  const hasDefender = defendant.defenderName || defender?.name
+  const defenderLabel =
+    defender?.sessionArrangement ===
+    SessionArrangements.ALL_PRESENT_SPOKESPERSON
+      ? formatMessage(strings.spokesperson)
+      : formatMessage(strings.defender)
+  const defenderName = defendant.defenderName || defender?.name
+  const defenderEmail = defendant.defenderEmail || defender?.email
+  const defenderPhoneNumber =
+    defendant.defenderPhoneNumber || defender?.phoneNumber
 
   const appealExpirationInfo = getAppealExpirationInfo(
     defendant.verdictAppealDeadline,
@@ -103,44 +110,35 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           {defendant.address ? defendant.address : 'Ekki skráð'}
         </Text>
       </Box>
-      {defendant.defenderName || defender?.name ? (
-        <Box component="p">
-          <Text as="span" whiteSpace="pre" fontWeight="semiBold">
-            {defender?.sessionArrangement ===
-            SessionArrangements.ALL_PRESENT_SPOKESPERSON
-              ? `${formatMessage(strings.spokesperson)}: `
-              : `${formatMessage(strings.defender)}: `}
-          </Text>
-          {RenderPersonalData(
-            defendant.defenderName || defender?.name,
-            defendant.defenderEmail || defender?.email,
-            defendant.defenderPhoneNumber || defender?.phoneNumber,
+      <Box component="p">
+        <Text as="span" whiteSpace="pre" fontWeight="semiBold">
+          {`${defenderLabel}: `}
+        </Text>
+        {hasDefender ? (
+          RenderPersonalData(
+            defenderName,
+            defenderEmail,
+            defenderPhoneNumber,
             false,
-          )}
-        </Box>
-      ) : (
-        <Text>{`${formatMessage(strings.defender)}: ${formatMessage(
-          strings.noDefender,
-        )}`}</Text>
-      )}
+          )
+        ) : (
+          <Text as="span">{formatMessage(strings.noDefender)}</Text>
+        )}
+      </Box>
       {displayAppealExpirationInfo && (
-        <Box>
-          <Text as="span">
-            {formatMessage(appealExpirationInfo.message, {
-              appealExpirationDate: appealExpirationInfo.date,
-            })}
-          </Text>
-        </Box>
-      )}
-      {displayVerdictViewDate && (
-        <Text marginTop={1} fontWeight="semiBold">
-          {getVerdictViewDateText(
-            formatMessage,
-            defendant.verdictViewDate,
-            defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED,
-          )}
+        <Text as="p" marginTop={1} fontWeight="semiBold">
+          {formatMessage(appealExpirationInfo.message, {
+            appealExpirationDate: appealExpirationInfo.date,
+          })}
         </Text>
       )}
+      {displayVerdictViewDate &&
+        defendant.serviceRequirement &&
+        defendant.serviceRequirement !== ServiceRequirement.NOT_REQUIRED && (
+          <Text marginTop={1} fontWeight="semiBold">
+            {getVerdictViewDateText(formatMessage, defendant.verdictViewDate)}
+          </Text>
+        )}
     </>
   )
 }

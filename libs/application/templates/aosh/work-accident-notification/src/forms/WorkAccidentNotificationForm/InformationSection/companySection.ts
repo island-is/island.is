@@ -38,12 +38,12 @@ export const companySection = buildSubSection({
           },
         }),
         buildDescriptionField({
-          id: 'companyInformation.description',
+          id: 'basicInformation.description',
           title: information.labels.company.descriptionField,
           titleVariant: 'h5',
         }),
         buildTextField({
-          id: 'companyInformation.nationalId',
+          id: 'basicInformation.nationalId',
           title: information.labels.company.nationalId,
           backgroundColor: 'white',
           width: 'half',
@@ -59,10 +59,11 @@ export const companySection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'companyInformation.name',
+          id: 'basicInformation.name',
           title: information.labels.company.name,
           backgroundColor: 'white',
           width: 'half',
+          readOnly: true,
           defaultValue: (application: Application) => {
             const name = getValueViaPath<string>(
               application.externalData,
@@ -73,10 +74,11 @@ export const companySection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'companyInformation.address',
+          id: 'basicInformation.address',
           title: information.labels.company.address,
           backgroundColor: 'white',
           width: 'half',
+          readOnly: true,
           defaultValue: (application: Application) => {
             const streetAddress = getValueViaPath<string>(
               application.externalData,
@@ -87,10 +89,11 @@ export const companySection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'companyInformation.postnumber',
+          id: 'basicInformation.postnumber',
           title: information.labels.company.postNumberAndTown,
           backgroundColor: 'white',
           width: 'half',
+          readOnly: true,
           defaultValue: (application: Application) => {
             const postalCode = getValueViaPath<string>(
               application.externalData,
@@ -105,7 +108,7 @@ export const companySection = buildSubSection({
           },
         }),
         buildSelectField({
-          id: 'companyInformation.numberOfEmployees',
+          id: 'basicInformation.numberOfEmployees',
           title: information.labels.company.numberOfEmployees,
           width: 'half',
           required: true,

@@ -4,6 +4,7 @@
 # Run "yarn charts" instead.
 #
 #####################################################################
+
 air-discount-scheme-api:
   enabled: true
   env:
@@ -302,7 +303,6 @@ api:
     FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token'
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS-TEST/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1'
     FISKISTOFA_ZENTER_CLIENT_ID: '1114'
-    FORM_SYSTEM_API_BASE_PATH: ''
     HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK'
     HUNTING_LICENSE_PASS_TEMPLATE_ID: '1da72d52-a93a-4d0f-8463-1933a2bd210b'
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
@@ -327,6 +327,7 @@ api:
     UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
     USER_NOTIFICATION_API_URL: 'http://web-user-notification.user-notification.svc.cluster.local'
     USER_PROFILE_CLIENT_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: 'island-is-assistant-feedback'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-TEST/EDU/10056/LBHI-Protected/brautskraning-v1'
     XROAD_AIRCRAFT_REGISTRY_PATH: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Loftfaraskra-V1'
@@ -695,11 +696,11 @@ application-system-api:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
-      initialDelaySeconds: 3
+      initialDelaySeconds: 20
       path: '/liveness'
       timeoutSeconds: 3
     readiness:
-      initialDelaySeconds: 3
+      initialDelaySeconds: 20
       path: '/liveness'
       timeoutSeconds: 3
   hpa:
@@ -763,10 +764,10 @@ application-system-api:
     min: 2
   resources:
     limits:
-      cpu: '400m'
+      cpu: '600m'
       memory: '1024Mi'
     requests:
-      cpu: '75m'
+      cpu: '200m'
       memory: '512Mi'
   secrets:
     ALTHINGI_OMBUDSMAN_XROAD_PASSWORD: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD'
@@ -928,7 +929,6 @@ application-system-form:
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'staging'
-    SI_PUBLIC_GRAPHQL_PATH: ''
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -2829,6 +2829,7 @@ user-notification:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2913,6 +2914,7 @@ user-notification-cleanup-worker:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3028,6 +3030,7 @@ user-notification-worker:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

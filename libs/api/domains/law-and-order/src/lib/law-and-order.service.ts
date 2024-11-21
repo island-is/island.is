@@ -148,6 +148,8 @@ export class LawAndOrderService {
           (alert) => alert.type === AlertMessageTypeEnum.Success,
         )?.message,
         description: summonData.subtitle,
+        information: summonData.subpoenaInfoText,
+        deadline: summonData.subpoenaNotificationDeadline,
       },
     }
     return data
