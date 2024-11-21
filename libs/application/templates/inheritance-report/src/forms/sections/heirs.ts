@@ -11,6 +11,7 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  NO,
   YES,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
@@ -102,7 +103,11 @@ export const heirs = buildSection({
                   getValueViaPath<string>(
                     answers,
                     'customShare.deceasedWasMarried',
-                  ) === YES
+                  ) === YES &&
+                  getValueViaPath<string>(
+                    answers,
+                    'customShare.hasCustomSpouseSharePercentage',
+                  ) === NO
                 )
               },
             }),
