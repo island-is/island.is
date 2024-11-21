@@ -38,11 +38,8 @@ export const createQueryStr = (params: Record<string, string>) => {
 }
 
 /**
- *  This method checks if the user has a new session
+ *  Checks if the user is a new user compared to the old user, by comparing the nationalId's
  */
-export const isNewSession = (oldUser: BffUser, newUser: BffUser) => {
-  const oldSid = oldUser.profile.sid
-  const newSid = newUser.profile.sid
-
-  return oldSid && newSid && oldSid !== newSid
+export const isNewUser = (oldUser: BffUser, newUser: BffUser) => {
+  return oldUser.profile.nationalId !== newUser.profile.nationalId
 }
