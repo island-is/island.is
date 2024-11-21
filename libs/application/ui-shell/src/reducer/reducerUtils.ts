@@ -1,37 +1,37 @@
 import {
-    findSectionIndex,
-    findSubSectionIndex,
-    getSectionsInForm,
-    getSubSectionsInSection,
-    getValueViaPath,
-    isValidScreen,
-    shouldShowFormItem,
+  findSectionIndex,
+  findSubSectionIndex,
+  getSectionsInForm,
+  getSubSectionsInSection,
+  getValueViaPath,
+  isValidScreen,
+  shouldShowFormItem,
 } from '@island.is/application/core'
 import {
-    ExternalData,
-    ExternalDataProvider,
-    Field,
-    FieldTypes,
-    Form,
-    FormItemTypes,
-    FormLeaf,
-    FormNode,
-    FormValue,
-    MultiField,
-    Repeater,
-    Section,
-    SubSection,
+  ExternalData,
+  ExternalDataProvider,
+  Field,
+  FieldTypes,
+  Form,
+  FormItemTypes,
+  FormLeaf,
+  FormNode,
+  FormValue,
+  MultiField,
+  Repeater,
+  Section,
+  SubSection,
 } from '@island.is/application/types'
 import get from 'lodash/get'
 import isArray from 'lodash/isArray'
 
 import { BffUser } from '@island.is/shared/types'
 import {
-    ExternalDataProviderScreen,
-    FieldDef,
-    FormScreen,
-    MultiFieldScreen,
-    RepeaterScreen,
+  ExternalDataProviderScreen,
+  FieldDef,
+  FormScreen,
+  MultiFieldScreen,
+  RepeaterScreen,
 } from '../types'
 import { answerIsMissing } from '../utils'
 
