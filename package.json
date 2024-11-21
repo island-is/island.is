@@ -62,7 +62,8 @@
     "infra": "node scripts/infra-cmds.js",
     "run-proxies": "./scripts/run-proxies.sh",
     "proxies": "yarn run-proxies",
-    "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts"
+    "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts",
+    "mock": "nx mock"
   },
   "dependencies": {
     "@apollo/client": "3.7.15",
