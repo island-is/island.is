@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { FieldTypesEnum } from '../../../../dataTypes/fieldTypes/fieldTypes.enum'
 import { IsEnum, IsNotEmpty, IsOptional, ValidateNested } from 'class-validator'
@@ -6,34 +6,34 @@ import { Type } from 'class-transformer'
 import { FieldSettings } from '../../../../dataTypes/fieldSettings/fieldSettings.model'
 
 export class UpdateFieldDto {
-  @IsNotEmpty()
+  @IsOptional()
   @ValidateNested()
   @Type(() => LanguageType)
-  @ApiProperty({ type: LanguageType })
-  name!: LanguageType
+  @ApiPropertyOptional({ type: LanguageType })
+  name?: LanguageType
 
-  @IsNotEmpty()
+  @IsOptional()
   @ValidateNested()
   @Type(() => LanguageType)
-  @ApiProperty({ type: LanguageType })
-  description!: LanguageType
+  @ApiPropertyOptional({ type: LanguageType })
+  description?: LanguageType
 
-  @IsNotEmpty()
-  @ApiProperty({ type: Boolean })
-  isPartOfMultiset!: boolean
+  @IsOptional()
+  @ApiPropertyOptional({ type: Boolean })
+  isPartOfMultiset?: boolean
 
-  @IsNotEmpty()
-  @ApiProperty({ type: Boolean })
-  isRequired!: boolean
+  @IsOptional()
+  @ApiPropertyOptional({ type: Boolean })
+  isRequired?: boolean
 
   @IsOptional()
   @ValidateNested()
   @Type(() => FieldSettings)
-  @ApiProperty({ type: FieldSettings })
+  @ApiPropertyOptional({ type: FieldSettings })
   fieldSettings?: FieldSettings
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(FieldTypesEnum)
-  @ApiProperty({ enum: FieldTypesEnum })
-  fieldType!: string
+  @ApiPropertyOptional({ enum: FieldTypesEnum })
+  fieldType?: string
 }

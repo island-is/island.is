@@ -447,6 +447,8 @@ export class FormsService {
       'isPartOfMultiset',
       'fieldType',
       'list',
+      'isRequired',
+      'fieldSettings',
     ]
     form.sections.map((section) => {
       formDto.sections?.push(
@@ -472,7 +474,7 @@ export class FormsService {
               {
                 fieldSettings: FieldSettingsFactory.getClass(
                   field.fieldType,
-                  new FieldSettings(),
+                  field.fieldSettings,
                 ),
               },
             ) as FieldDto,

@@ -5,7 +5,10 @@ import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
 export class FieldSettingsFactory {
-  static getClass(type: string, fieldSettings: FieldSettings) {
+  static getClass(type: string, fieldSettings: FieldSettings | undefined) {
+    if (!fieldSettings) {
+      return undefined
+    }
     let keys: string[]
     switch (type) {
       case FieldTypesEnum.TEXTBOX:
@@ -46,10 +49,11 @@ export class FieldSettingsFactory {
   private static pickSettings = (
     obj: FieldSettings,
     keys: string[],
+    defaultValue = null,
   ): FieldSettings => {
     return defaults(
       pick(obj, keys),
-      zipObject(keys, Array(keys.length)),
+      zipObject(keys, Array(keys.length).fill(defaultValue)),
     ) as FieldSettings
   }
 }
