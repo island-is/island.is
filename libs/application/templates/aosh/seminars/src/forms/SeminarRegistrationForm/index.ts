@@ -7,7 +7,8 @@ import { participantsSection } from './ParticipantsSection'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
 import { confirmation, payment } from '../../lib/messages'
 import { getChargeItemCodes } from '../../utils'
-import { paymentArrangementSection } from './paymentArrangementSection'
+import { paymentArrangementSection } from './PaymentArrangement'
+import { overviewSection } from './Overview'
 
 export const SeminarRegistrationForm: Form = buildForm({
   id: 'SeminarRegistrationFormDraft',
@@ -21,6 +22,7 @@ export const SeminarRegistrationForm: Form = buildForm({
     personalInformationSection,
     participantsSection,
     paymentArrangementSection,
+    overviewSection,
     buildFormPaymentChargeOverviewSection({
       sectionTitle: payment.general.sectionTitle,
       getSelectedChargeItems: (_) =>

@@ -157,3 +157,10 @@ export const hasError = style({
   borderColor: `${theme.color.red600}`,
   background: `${theme.color.red100}`,
 })
+
+export const isCompanySearch = style({
+  paddingTop: 32,
+  paddingLeft: 20,
+  paddingBottom: 8,
+  fontWeight: theme.typography.medium,
+})
