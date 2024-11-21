@@ -1429,9 +1429,15 @@ export const calculateEndDateForPeriodWithStartAndLength = (
   let endDate = addDays(lastMonthBeforeEndDate, daysToAdd - 1)
   const daysInMonth = getDaysInMonth(lastMonthBeforeEndDate)
 
-  // If startDay is first day of the month and daysToAdd = 0
   if (daysToAdd === 0) {
     if (start.getDate() === 31) {
+      endDate = addDays(endDate, 1)
+    }
+    if (
+      start.getDate() > 28 &&
+      daysInMonth === 28 &&
+      endDate.getDate() !== 28
+    ) {
       endDate = addDays(endDate, 1)
     }
     return endDate
