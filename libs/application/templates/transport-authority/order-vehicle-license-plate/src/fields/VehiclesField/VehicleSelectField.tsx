@@ -1,6 +1,6 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import {
   ActionCard,
   AlertMessage,
@@ -27,7 +27,7 @@ interface VehicleSearchFieldProps {
 
 export const VehicleSelectField: FC<
   React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
-> = ({ currentVehicleList, application, errors }) => {
+> = ({ currentVehicleList, application, errors, setFieldLoadingState }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
@@ -87,11 +87,16 @@ export const VehicleSelectField: FC<
           const disabled =
             !!response?.vehiclePlateOrderChecksByPermno?.validationErrorMessages
               ?.length
-          setPlate(disabled ? '' : currentVehicle.permno || '')
-          setValue(
-            'pickVehicle.plate',
-            disabled ? '' : currentVehicle.permno || '',
-          )
+
+          const permno = disabled ? '' : currentVehicle.permno || ''
+
+          setPlate(permno)
+
+          setValue('pickVehicle.plate', permno)
+
+          setValue('plateSize.frontPlateSize', [])
+          setValue('plateSize.rearPlateSize', [])
+
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
@@ -100,6 +105,10 @@ export const VehicleSelectField: FC<
 
   const disabled =
     selectedVehicle && !!selectedVehicle.validationErrorMessages?.length
+
+  useEffect(() => {
+    setFieldLoadingState?.(isLoading)
+  }, [isLoading])
 
   return (
     <Box>
