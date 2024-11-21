@@ -1,17 +1,19 @@
 import { Box, Stack } from '@island.is/island-ui/core'
-import { SliceMachine } from '@island.is/web/components'
+import { renderSlice } from '@island.is/web/components'
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   OrganizationPage,
   Query,
+  QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
-import { StandaloneLayout } from '@island.is/web/layouts/standalone/standalone'
+import { StandaloneLayout } from '@island.is/web/layouts/organization/standalone'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 
-import { GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
+import * as styles from './Home.css'
 
 type StandaloneHomeScreenContext = ScreenContext & {
   organizationPage?: Query['getOrganizationPage']
@@ -19,45 +21,39 @@ type StandaloneHomeScreenContext = ScreenContext & {
 
 export interface StandaloneHomeProps {
   organizationPage: OrganizationPage
+  namespace: Record<string, string>
 }
 
 const StandaloneHome: Screen<
   StandaloneHomeProps,
   StandaloneHomeScreenContext
-> = ({ organizationPage }) => {
+> = ({ organizationPage, namespace }) => {
   return (
     <StandaloneLayout organizationPage={organizationPage} isFrontpage={true}>
       <Stack space={SLICE_SPACING}>
-        {organizationPage?.slices?.map((slice, index) => {
+        {organizationPage.slices.map((slice) => {
           return (
-            <SliceMachine
+            <Box
               key={slice.id}
-              slice={slice}
-              slug={organizationPage.slug}
-              fullWidth={organizationPage.theme === 'landing_page'}
-              marginBottom={
-                index === organizationPage.slices.length - 1 ? 5 : 0
+              className={styles.slicesContainer}
+              paddingX={
+                slice.__typename !== 'LatestNewsSlice' ? [3, 3, 6] : undefined
               }
-            />
+            >
+              {renderSlice(slice, namespace, organizationPage.slug, {})}
+            </Box>
           )
         })}
       </Stack>
       <Stack space={SLICE_SPACING}>
-        {organizationPage?.bottomSlices?.map((slice, index) => {
+        {organizationPage.bottomSlices.map((slice, index) => {
           return (
             <Box
+              key={slice.id}
               background={index === 0 ? 'dark100' : undefined}
               paddingTop={index === 0 ? 6 : undefined}
             >
-              <SliceMachine
-                key={slice.id}
-                slice={slice}
-                slug={organizationPage.slug}
-                fullWidth={true}
-                marginBottom={
-                  index === organizationPage.slices.length - 1 ? 5 : 0
-                }
-              />
+              {renderSlice(slice, namespace, organizationPage.slug, {})}
             </Box>
           )
         })}
@@ -77,6 +73,7 @@ StandaloneHome.getProps = async ({
     {
       data: { getOrganizationPage },
     },
+    namespace,
   ] = await Promise.all([
     !organizationPage
       ? apolloClient.query<Query, QueryGetOrganizationPageArgs>({
@@ -91,6 +88,21 @@ StandaloneHome.getProps = async ({
       : {
           data: { getOrganizationPage: organizationPage },
         },
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'OrganizationPages',
+            lang: locale,
+          },
+        },
+      })
+      .then((variables) =>
+        variables?.data?.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   if (!getOrganizationPage) {
@@ -99,6 +111,7 @@ StandaloneHome.getProps = async ({
 
   return {
     organizationPage: getOrganizationPage,
+    namespace,
   }
 }
 

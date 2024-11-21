@@ -15,7 +15,6 @@ export interface HeaderProps {
   underTitle?: string
   titleSectionPaddingLeft?: ResponsiveSpace
   titleColor?: TextProps['color']
-  customTitleColor?: string
   imagePadding?: string
   imageIsFullHeight?: boolean
   imageObjectFit?: 'contain' | 'cover'
@@ -31,7 +30,6 @@ export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   mobileBackground,
   underTitle,
   titleColor = 'dark400',
-  customTitleColor,
   imagePadding = '20px',
   imageIsFullHeight = true,
   imageObjectFit = 'contain',

@@ -193,7 +193,7 @@ export const StandaloneLayout = ({
       <PageLoader />
       <Navigation {...navigationProps} />
       <Header {...headerProps} />
-      <Box component="main" id="main-content" paddingY={5}>
+      <Box component="main" id="main-content" paddingY={8}>
         {children}
       </Box>
       <Footer
