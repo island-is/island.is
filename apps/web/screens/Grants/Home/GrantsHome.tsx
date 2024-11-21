@@ -51,6 +51,7 @@ const GrantsHomePage: CustomScreen<GrantsHomeProps> = ({
     {
       title: formatMessage(m.home.title),
       href: baseUrl,
+      isTag: true,
     },
   ]
 
