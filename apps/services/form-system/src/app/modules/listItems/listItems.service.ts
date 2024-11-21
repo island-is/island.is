@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import { ListItem } from './models/listItem.model'
 import { ListItemDto } from './models/dto/listItem.dto'
 import { CreateListItemDto } from './models/dto/createListItem.dto'
-// import { ListItemMapper } from './models/listItem.mapper'
 import { UpdateListItemDto } from './models/dto/updateListItem.dto'
 import { UpdateListItemsDisplayOrderDto } from './models/dto/updateListItemsDisplayOrder.dto'
 import defaults from 'lodash/defaults'
@@ -14,7 +13,7 @@ import zipObject from 'lodash/zipObject'
 export class ListItemsService {
   constructor(
     @InjectModel(ListItem)
-    private readonly listItemModel: typeof ListItem, // private listItemMapper: ListItemMapper,
+    private readonly listItemModel: typeof ListItem,
   ) {}
 
   async findById(id: string): Promise<ListItem> {

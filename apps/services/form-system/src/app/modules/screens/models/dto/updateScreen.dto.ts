@@ -1,27 +1,27 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import {
   IsBoolean,
-  IsNotEmpty,
   IsNumber,
+  IsOptional,
   ValidateNested,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
 export class UpdateScreenDto {
-  @IsNotEmpty()
+  @IsOptional()
   @ValidateNested()
   @Type(() => LanguageType)
-  @ApiProperty({ type: LanguageType })
-  name!: LanguageType
+  @ApiPropertyOptional({ type: LanguageType })
+  name?: LanguageType
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
-  @ApiProperty()
-  multiset!: number
+  @ApiPropertyOptional()
+  multiset?: number
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsBoolean()
-  @ApiProperty()
-  callRuleset!: boolean
+  @ApiPropertyOptional()
+  callRuleset?: boolean
 }

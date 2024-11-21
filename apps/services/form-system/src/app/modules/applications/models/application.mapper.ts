@@ -3,7 +3,6 @@ import { Form } from '../../forms/models/form.model'
 import { ApplicationDto } from './dto/application.dto'
 import { Application } from './application.model'
 import { FieldDto } from '../../fields/models/dto/field.dto'
-import { OrganizationDto } from '../../organizations/models/dto/organization.dto'
 import { ScreenDto } from '../../screens/models/dto/screen.dto'
 import { SectionDto } from '../../sections/models/dto/section.dto'
 import { ValueDto } from '../../values/models/dto/value.dto'
@@ -24,7 +23,6 @@ export class ApplicationMapper {
       formId: form.id,
       slug: form.slug,
       formName: form.name,
-      organization: new OrganizationDto(),
       sections: [],
     }
 

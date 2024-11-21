@@ -1,8 +1,7 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import {
   IsBoolean,
-  IsNotEmpty,
   IsOptional,
   IsString,
   ValidateNested,

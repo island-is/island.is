@@ -14,6 +14,7 @@ import { ValueType } from '../../dataTypes/valueTypes/valueType.model'
 import { CreateApplicationDto } from './models/dto/createApplication.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { ApplicationStatus } from '../../enums/applicationStatus'
+import { Organization } from '../organizations/models/organization.model'
 
 @Injectable()
 export class ApplicationsService {
@@ -24,7 +25,8 @@ export class ApplicationsService {
     private readonly valueModel: typeof Value,
     @InjectModel(Form)
     private readonly formModel: typeof Form,
-    // private readonly formsService: typeof FormsService,
+    @InjectModel(Organization)
+    private readonly organizationModel: typeof Organization,
     private readonly applicationMapper: ApplicationMapper,
   ) {}
 
@@ -101,6 +103,11 @@ export class ApplicationsService {
       form,
       application,
     )
+
+    const organization = await this.organizationModel.findByPk(
+      form.organizationId,
+    )
+    applicationDto.organizationName = organization?.name
 
     return applicationDto
   }
