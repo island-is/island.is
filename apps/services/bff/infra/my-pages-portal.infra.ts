@@ -29,8 +29,8 @@ export const serviceSetup = (
       services,
       globalPrefix: '/bff',
     })
-    .readiness(`/${key}/bff/health/check`)
-    .liveness(`/${key}/bff/liveness`)
+    .readiness('/bff/health/check')
+    .liveness('/bff/liveness')
     .replicaCount({
       default: 2,
       min: 2,
@@ -69,7 +69,7 @@ export const serviceSetup = (
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
         },
-        paths: [`/${key}/bff`],
+        paths: ['/bff'],
       },
     })
     .grantNamespaces('identity-server')
