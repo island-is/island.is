@@ -13,3 +13,5 @@ CI=true docker build --load -f "$DIR"/Dockerfile ${EXTRA_DOCKER_BUILD_ARGS:-} -t
 if [[ "true" = "$PUBLISH" ]]; then
   docker push "$DOCKER_IMAGE":"${DOCKER_TAG}"
 fi
+
+echo "Successfully built docker image '$DOCKER_IMAGE:${DOCKER_TAG}'"
