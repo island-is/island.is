@@ -73,9 +73,9 @@ export const MobileMenu: React.FC<React.PropsWithChildren<MobileMenuProps>> = ({
               </LinkV2>
               <Divider />
               {links.map((link) => (
-                <>
+                <Box key={link.label}>
                   <Box className={styles.links}>
-                    <LinkV2 key={link.label} href={link.href}>
+                    <LinkV2 href={link.href}>
                       <Text
                         variant="default"
                         color="dark400"
@@ -87,7 +87,7 @@ export const MobileMenu: React.FC<React.PropsWithChildren<MobileMenuProps>> = ({
                     </LinkV2>
                   </Box>
                   <Divider />
-                </>
+                </Box>
               ))}
             </Box>
           </>
