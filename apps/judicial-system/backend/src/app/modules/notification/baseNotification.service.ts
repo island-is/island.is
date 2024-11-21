@@ -89,7 +89,7 @@ export abstract class BaseNotificationService {
       // We use the first one as the main recipient and the rest as CC
       let recipients = recipientEmail ? recipientEmail.split(',') : undefined
 
-      if (!this.config.shouldUseWhitelist && recipients) {
+      if (this.config.shouldUseWhitelist && recipients) {
         recipients = await this.handleWhitelist(recipients)
       }
 
