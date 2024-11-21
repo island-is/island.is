@@ -11,20 +11,20 @@ import { CreateDelegationInput } from './dto/createDelegation.input'
 export class DelegationAdminService {
   constructor(private readonly delegationAdminApi: DelegationAdminApi) {}
 
-  delegationsWithAuth(auth: Auth) {
-    return this.delegationAdminApi.withMiddleware(new AuthMiddleware(auth))
-  }
+    delegationsWithAuth(auth: Auth) {
+      return this.delegationAdminApi.withMiddleware(new AuthMiddleware(auth))
+    }
 
-  async getDelegationAdmin(
-    user: User,
-    nationalId: string,
-  ): Promise<DelegationAdminCustomDto> {
-    return await this.delegationsWithAuth(
-      user,
-    ).delegationAdminControllerGetDelegationAdmin({
-      xQueryNationalId: nationalId,
-    })
-  }
+    async getDelegationAdmin(
+      user: User,
+      nationalId: string,
+    ): Promise<DelegationAdminCustomDto> {
+      return await this.delegationsWithAuth(
+        user,
+      ).delegationAdminControllerGetDelegationAdmin({
+        xQueryNationalId: nationalId,
+      })
+    }
 
   async deleteDelegationAdmin(
     user: User,

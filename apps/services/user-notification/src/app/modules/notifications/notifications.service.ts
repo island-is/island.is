@@ -261,7 +261,7 @@ export class NotificationsService {
   }
 
   async findMany(
-    user: User,
+    nationalId: string,
     query: ExtendedPaginationDto,
   ): Promise<PaginatedNotificationDto> {
     const locale = mapToLocale(query.locale as Locale)
@@ -273,7 +273,7 @@ export class NotificationsService {
       before: query.before,
       primaryKeyField: 'id',
       orderOption: [['id', 'DESC']],
-      where: { recipient: user.nationalId },
+      where: { recipient: nationalId },
     })
 
     const formattedNotifications = await Promise.all(

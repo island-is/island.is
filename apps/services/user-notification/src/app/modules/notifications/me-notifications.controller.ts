@@ -52,7 +52,7 @@ export class MeNotificationsController {
     @CurrentUser() user: User,
     @Query() query: ExtendedPaginationDto,
   ): Promise<PaginatedNotificationDto> {
-    return this.notificationService.findMany(user, query)
+    return this.notificationService.findMany(user.nationalId, query)
   }
 
   @Get('/unread-count')

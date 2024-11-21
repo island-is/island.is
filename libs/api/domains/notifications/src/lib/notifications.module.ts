@@ -8,6 +8,8 @@ import {
   NotificationSenderResolver,
 } from './notificationsList.resolver'
 import { NotificationsService } from './notifications.service'
+import { NotificationsAdminResolver } from './notificationsAdmin.resolver'
+import { NotificationsAdminService } from './notificationsAdmin.service'
 
 @Module({
   imports: [UserNotificationClientModule],
@@ -15,7 +17,9 @@ import { NotificationsService } from './notifications.service'
     NotificationsResolver,
     NotificationsListResolver,
     NotificationSenderResolver,
+    NotificationsAdminResolver,
     NotificationsService,
+    NotificationsAdminService
   ],
   exports: [],
 })

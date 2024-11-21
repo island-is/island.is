@@ -87,14 +87,12 @@ const Users = () => {
             buttonProps={{
               type: 'submit',
               disabled: searchInput.length === 0,
-              onClick: (e) => {
-                e.preventDefault()
+              onClick: () => {
                 if (searchInput) {
                   setSearchParams((params) => {
                     params.set('q', searchInput)
                     return params
                   })
-                  submit(formRef.current)
                 }
               },
             }}

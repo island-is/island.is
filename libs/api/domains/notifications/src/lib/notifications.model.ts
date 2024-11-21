@@ -89,6 +89,21 @@ export class Notification {
   message!: NotificationMessage
 }
 
+@ObjectType()
+export class AdminNotification {
+  @Field(() => Int)
+  id!: number
+
+  @Field(() => ID)
+  notificationId!: string
+
+  @Field(() => NotificationSender)
+  sender!: NotificationSender
+
+  @Field(() => GraphQLISODateTime)
+  sent!: Date
+}
+
 @InputType()
 export class NotificationsInput extends PaginationInput() {}
 
@@ -99,6 +114,10 @@ export class NotificationsResponse extends PaginatedResponse(Notification) {
 
   @Field(() => Int, { nullable: true })
   unseenCount?: number
+}
+
+@ObjectType('AdminNotifications')
+export class AdminNotificationsResponse extends PaginatedResponse(AdminNotification) {
 }
 
 @ObjectType()

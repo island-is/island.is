@@ -79,14 +79,12 @@ const Companies = () => {
             buttonProps={{
               type: 'submit',
               disabled: !searchInput,
-              onClick: (e) => {
-                e.preventDefault()
+              onClick: () => {
                 if (searchInput) {
                   setSearchParams((params) => {
                     params.set('q', searchInput)
                     return params
                   })
-                  submit(formRef.current)
                 }
               },
             }}

@@ -1,18 +1,23 @@
 import format from 'date-fns/format'
 import { useLoaderData, useNavigate, useRevalidator } from 'react-router-dom'
 
-import { ActionCard, Box, Stack, Text } from '@island.is/island-ui/core'
+import { ActionCard, Box, Stack, Text, Table as T, LoadingDots, SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { BackButton } from '@island.is/portals/admin/core'
 import { IntroHeader, formatNationalId } from '@island.is/portals/core'
 import { dateFormat } from '@island.is/shared/constants'
+import InfiniteScroll from 'react-infinite-scroller'
 
-import { ServiceDeskPaths } from '../../lib/paths'
-import { UserProfileResult } from './User.loader'
 import { m } from '../../lib/messages'
 import { useUpdateUserProfileMutation } from './User.generated'
 import { UpdateUserProfileInput } from '@island.is/api/schema'
 import React from 'react'
+import { isValidDate } from '@island.is/shared/utils'
+import {useGetAdminNotificationsQuery,  } from './User.generated'
+import { UserProfileResult } from './User.loader'
+import { Problem } from '@island.is/react-spa/shared'
+
+const DEFAULT_PAGE_SIZE = 10
 
 const User = () => {
   const { formatMessage } = useLocale()
@@ -21,6 +26,11 @@ const User = () => {
   const formattedNationalId = formatNationalId(user.nationalId)
   const [updateProfile] = useUpdateUserProfileMutation()
   const { revalidate } = useRevalidator()
+
+  const { data: notifications, loading, error, fetchMore, } = useGetAdminNotificationsQuery({
+    variables: {         nationalId: user.nationalId,
+      input: { limit: DEFAULT_PAGE_SIZE } },
+  })
 
   const handleUpdateProfile = async (input: UpdateUserProfileInput) => {
     try {
@@ -37,6 +47,34 @@ const User = () => {
     } catch (e) {
       console.error(e)
     }
+  }
+
+  const loadMore = async () => {
+    if (loading || !notifications || !notifications?.adminNotifications?.pageInfo.hasNextPage) {
+      return
+    }
+
+    await fetchMore({
+      variables: {
+        nationalId: user.nationalId,
+        input: {
+          limit: DEFAULT_PAGE_SIZE,
+          after: notifications?.adminNotifications?.pageInfo.endCursor ?? undefined,
+        },
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        return {
+          adminNotifications: {
+            ...fetchMoreResult.adminNotifications,
+            data: [
+              ...(prev.adminNotifications?.data || []),
+              ...(fetchMoreResult.adminNotifications?.data || []),
+            ],
+          },
+
+        }
+      },
+    })
   }
 
   return (
@@ -179,6 +217,52 @@ const User = () => {
             />
           </Box>
         </Box>
+      </Stack>
+      <Stack space="gutter">
+        <Text variant="h4">{formatMessage(m.notifications)}</Text>
+        {error ? (
+          <Problem error={error} />
+        ) : loading ? (
+          <SkeletonLoader height={40} repeat={6} width={'100%'} />
+        ) : (
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={loadMore}
+          hasMore={notifications?.adminNotifications?.pageInfo.hasNextPage}
+          loader={
+            <Box
+              key={'user.screens.notifications.loader'}
+              marginTop={'gutter'}
+              display={'flex'}
+              justifyContent={'center'}
+            >
+              <LoadingDots />
+            </Box>
+          }
+        >
+      <T.Table>
+        <T.Head>
+          <T.Row>
+            <T.HeadData>ID</T.HeadData>
+            <T.HeadData>Message ID</T.HeadData>
+            <T.HeadData>Sender ID</T.HeadData>
+            <T.HeadData>Sent</T.HeadData>
+
+          </T.Row>
+        </T.Head>
+        <T.Body>
+          {notifications?.adminNotifications?.data.map((notification, index) => <T.Row key={index}>
+            <T.Data>{notification.id}</T.Data>
+            <T.Data>{notification.notificationId}</T.Data>
+            <T.Data>{notification.sender.id}</T.Data>
+            <T.Data>
+            {notification.sent && isValidDate(new Date(notification.sent)) ? format(new Date(notification.sent), 'dd.MM.yyyy') : ''}
+            </T.Data>
+            </T.Row>)}
+        </T.Body>
+      </T.Table>
+          </InfiniteScroll>
+          )}
       </Stack>
     </Stack>
   )

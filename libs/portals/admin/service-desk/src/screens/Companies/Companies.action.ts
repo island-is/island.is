@@ -68,19 +68,6 @@ export const CompaniesAction: WrappedActionFn =
         throw res.error
       }
 
-      const companies = res.data?.companyRegistryCompanies?.data
-
-      // Redirect to Procurers screen if only one company is found
-      if (companies?.length === 1) {
-        return redirect(
-          replaceParams({
-            href: ServiceDeskPaths.Company,
-            params: {
-              nationalId: companies[0].nationalId,
-            },
-          }),
-        )
-      }
 
       return {
         errors: null,
