@@ -54,6 +54,7 @@ export class ApplicationMapper {
                 description: field.description,
                 isPartOfMultiset: field.isPartOfMultiset,
                 fieldType: field.fieldType,
+                isRequired: field.isRequired,
                 fieldSettings: field.fieldSettings,
                 isHidden: this.isHidden(field.id, application.dependencies),
                 values: field.values?.map((value) => {

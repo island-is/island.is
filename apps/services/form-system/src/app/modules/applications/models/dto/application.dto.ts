@@ -2,7 +2,6 @@ import { ApiPropertyOptional } from '@nestjs/swagger'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
-import { UUIDV4 } from 'sequelize'
 import { ApplicationStatus } from '../../../../enums/applicationStatus'
 
 export class ApplicationDto {

@@ -15,103 +15,101 @@ export class FieldSettings {
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  minValue?: number = 0
+  minValue?: number
 
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  maxValue?: number = 0
+  maxValue?: number
 
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  minLength?: number = 0
+  minLength?: number
 
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  maxLength?: number = 1000
+  maxLength?: number
 
   @IsOptional()
   @IsDateString()
   @ApiPropertyOptional({ type: Date })
-  minDate?: Date = new Date(0)
+  minDate?: string
 
   @IsOptional()
   @IsDateString()
   @ApiPropertyOptional({ type: Date })
-  maxDate?: Date = new Date(
-    new Date().setFullYear(new Date().getFullYear() + 10),
-  )
+  maxDate?: string
 
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  minAmount?: number = 0
+  minAmount?: number
 
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  maxAmount?: number = 1000000000
+  maxAmount?: number
 
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  year?: number = new Date().getFullYear()
+  year?: number
 
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  hasLink?: boolean = false
+  hasLink?: boolean
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  url?: string = ''
+  url?: string
 
   @IsOptional()
   @ValidateNested()
   @Type(() => LanguageType)
   @ApiPropertyOptional({ type: LanguageType })
-  buttonText?: LanguageType = new LanguageType()
+  buttonText?: LanguageType
 
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  isLarge?: boolean = false
+  isLarge?: boolean
 
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  hasPropertyInput?: boolean = false
+  hasPropertyInput?: boolean
 
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  hasPropertyList?: boolean = false
+  hasPropertyList?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ enum: ListTypesEnum })
+  listType?: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  listType?: string = ListTypesEnum.CUSTOM
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String })
-  fileTypes?: string = ''
+  fileTypes?: string
 
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  fileMaxSize?: number = 10
+  fileMaxSize?: number
 
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional({ type: Number })
-  maxFiles?: number = 1
+  maxFiles?: number
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
-  timeInterval?: string = ''
+  timeInterval?: string
 }
