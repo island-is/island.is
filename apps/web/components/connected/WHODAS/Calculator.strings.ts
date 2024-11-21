@@ -107,7 +107,7 @@ export const m = {
       description: 'Ráðleggingar',
     },
     breakdownHeading: {
-      id: 'web.whodas.calculator:form.adviceHeading',
+      id: 'web.whodas.calculator:form.breakdownHeading',
       defaultMessage: 'Sundurliðun á niðurstöðum',
       description: 'Sundurliðun á niðurstöðum',
     },
