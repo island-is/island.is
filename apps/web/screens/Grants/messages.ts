@@ -18,7 +18,7 @@ export const m = {
     },
     results: {
       id: 'web.grants:search.results',
-      defaultMessage: 'Leitarniðurstöður',
+      defaultMessage: 'Styrkir',
     },
     inputPlaceholder: {
       id: 'web.grants:search.inputPlaceholder',
