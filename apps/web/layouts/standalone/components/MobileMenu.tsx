@@ -9,42 +9,43 @@ import {
   ModalBase,
   Text,
 } from '@island.is/island-ui/core'
+import { useI18n } from '@island.is/web/i18n'
 
 import * as styles from './MobileMenu.css'
 
 interface MobileMenuProps {
   links: { label: string; href: string }[]
   homeHref: string
-  title?: string
+  homeLabel?: string
 }
 
 export const MobileMenu: React.FC<React.PropsWithChildren<MobileMenuProps>> = ({
   links,
   homeHref,
-  title,
+  homeLabel,
 }) => {
   const [isVisible, setIsVisible] = useState(false)
+  const { activeLocale } = useI18n()
+
+  const menuLabel = activeLocale === 'is' ? 'Valmynd' : 'Menu'
+  const homeLabelPrefix = activeLocale === 'is' ? 'Forsíða' : 'Frontpage'
 
   return (
     <>
       <Button icon="menu" variant="utility" onClick={() => setIsVisible(true)}>
-        {'Valmynd'}
+        {menuLabel}
       </Button>
       <ModalBase
-        baseId={'id'}
+        baseId={`${homeLabel ? homeLabel + '-' : ''}mobile-menu`}
         className={styles.container}
         isVisible={isVisible}
-        onVisibilityChange={(visibility) => {
-          if (visibility !== isVisible) {
-            setIsVisible(visibility)
-          }
-        }}
+        onVisibilityChange={setIsVisible}
       >
         {({ closeModal }: { closeModal: () => void }) => (
           <>
             <Box display="flex" justifyContent="flexEnd">
               <Button icon={'close'} variant="utility" onClick={closeModal}>
-                {'Valmynd'}
+                {menuLabel}
               </Button>
             </Box>
             <Box className={styles.mobileContent}>
@@ -66,7 +67,7 @@ export const MobileMenu: React.FC<React.PropsWithChildren<MobileMenuProps>> = ({
                     paddingTop={1}
                     paddingBottom={1}
                   >
-                    {'Forsíða: ' + title}
+                    {`${homeLabelPrefix}${homeLabel ? ': ' + homeLabel : ''}`}
                   </Text>
                 </Box>
               </LinkV2>
