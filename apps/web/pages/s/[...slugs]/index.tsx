@@ -1,5 +1,9 @@
 import { type FC } from 'react'
 
+import {
+  Query,
+  QueryGetOrganizationPageArgs,
+} from '@island.is/web/graphql/schema'
 import withApollo from '@island.is/web/graphql/withApollo'
 import { withLocale } from '@island.is/web/i18n'
 import type { LayoutProps } from '@island.is/web/layouts/main'
@@ -27,12 +31,14 @@ import PublishedMaterial, {
 import SubPage, {
   type SubPageProps,
 } from '@island.is/web/screens/Organization/SubPage'
+import { GET_ORGANIZATION_PAGE_QUERY } from '@island.is/web/screens/queries'
 import { Screen as ScreenType } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
 enum PageType {
   FRONTPAGE = 'frontpage',
+  STANDALONE_FRONTPAGE = 'standalone-frontpage',
   SUBPAGE = 'subpage',
   ALL_NEWS = 'news',
   PUBLISHED_MATERIAL = 'published-material',
@@ -45,6 +51,7 @@ enum PageType {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const pageMap: Record<PageType, FC<any>> = {
   [PageType.FRONTPAGE]: (props) => <Home {...props} />,
+  [PageType.STANDALONE_FRONTPAGE]: (props) => <div>Hello standalone world</div>,
   [PageType.SUBPAGE]: (props) => <SubPage {...props} />,
   [PageType.ALL_NEWS]: (props) => <OrganizationNewsList {...props} />,
   [PageType.PUBLISHED_MATERIAL]: (props) => <PublishedMaterial {...props} />,
@@ -64,6 +71,10 @@ interface Props {
           layoutProps: LayoutProps
           componentProps: HomeProps
         }
+      }
+    | {
+        type: PageType.STANDALONE_FRONTPAGE
+        props: {}
       }
     | {
         type: PageType.SUBPAGE
@@ -123,10 +134,34 @@ Component.getProps = async (context) => {
 
   // Frontpage
   if (slugs.length === 1) {
+    const {
+      data: { getOrganizationPage: organizationPage },
+    } = await context.apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+      query: GET_ORGANIZATION_PAGE_QUERY,
+      variables: {
+        input: {
+          slug: slugs[0],
+        },
+      },
+    })
+
+    if (!organizationPage) {
+      throw new CustomNextError(404)
+    }
+
+    if (organizationPage.theme === 'standalone') {
+      return {
+        page: {
+          type: PageType.STANDALONE_FRONTPAGE,
+          props: {},
+        },
+      }
+    }
+
     return {
       page: {
         type: PageType.FRONTPAGE,
-        props: await Home.getProps(context),
+        props: await Home.getProps({ ...context, organizationPage }),
       },
     }
   }
