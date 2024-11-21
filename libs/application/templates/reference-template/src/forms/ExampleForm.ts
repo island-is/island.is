@@ -14,9 +14,7 @@ import {
   buildPhoneField,
   buildHiddenInput,
   buildHiddenInputWithWatchedValue,
-  buildRepeater,
   buildTableRepeaterField,
-  buildFieldsRepeaterField,
 } from '@island.is/application/core'
 import {
   Comparators,
@@ -33,90 +31,6 @@ export const ExampleForm: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     buildSection({
-      id: 'test',
-      title: 'Test repeater',
-      children: [
-        buildMultiField({
-          id: 'testMulti',
-          title: 'Test Multi Field',
-          children: [
-            buildTableRepeaterField({
-              id: 'tableRepeater',
-              title: 'Table repeater title',
-              fields: {
-                email: {
-                  component: 'input',
-                  label: 'Email',
-                  type: 'email',
-                  dataTestId: 'employer-email',
-                },
-                phoneNumber: {
-                  component: 'input',
-                  label: 'Phonenumber',
-                  type: 'tel',
-                  format: '###-####',
-                  placeholder: '000-0000',
-                  dataTestId: 'employer-phone-number',
-                },
-                ratio: {
-                  component: 'select',
-                  label: 'Radio',
-                  placeholder: 'placeholder',
-                  dataTestId: 'employment-ratio',
-                  options: Array(100)
-                    .fill(undefined)
-                    .map((_, idx, array) => ({
-                      value: `${array.length - idx}`,
-                      label: `${array.length - idx}%`,
-                    })),
-                },
-              },
-            }),
-            buildFieldsRepeaterField({
-              id: 'FieldsRepeater',
-              title: 'Fields repeater title',
-              formTitle: 'Title for each form',
-              description: 'Fields repeater description',
-              minRows: 2,
-              maxRows: 4,
-              fields: {
-                email: {
-                  component: 'input',
-                  label: 'Email',
-                  type: 'email',
-                  dataTestId: 'employer-email',
-                },
-                phoneNumber: {
-                  component: 'input',
-                  label: 'Phonenumber',
-                  type: 'tel',
-                  format: '###-####',
-                  placeholder: '000-0000',
-                  dataTestId: 'employer-phone-number',
-                },
-                ratio: {
-                  component: 'select',
-                  label: 'Radio',
-                  placeholder: 'placeholder',
-                  dataTestId: 'employment-ratio',
-                  options: Array(100)
-                    .fill(undefined)
-                    .map((_, idx, array) => ({
-                      value: `${array.length - idx}`,
-                      label: `${array.length - idx}%`,
-                    })),
-                },
-              },
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      condition: (application) => {
-        console.log(application)
-        return true
-      },
       id: 'conditions',
       title: m.conditionsSection,
       children: [],
