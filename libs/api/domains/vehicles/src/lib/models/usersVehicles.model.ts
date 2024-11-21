@@ -232,7 +232,7 @@ export class VehicleListed {
   requiresMileageRegistration?: boolean | null
 
   @Field(() => Boolean, { nullable: true })
-  canRegisterMilage?: boolean | null
+  canRegisterMileage?: boolean | null
 
   @Field({ nullable: true })
   regTypeCode?: string

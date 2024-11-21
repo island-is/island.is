@@ -21,6 +21,7 @@ import {
   IdentityApi,
   UserProfileApi,
   SyslumadurPaymentCatalogApi,
+  MockableSyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { buildPaymentState } from '@island.is/application/utils'
@@ -84,7 +85,12 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [IdentityApi, UserProfileApi, SyslumadurPaymentCatalogApi],
+              api: [
+                IdentityApi,
+                UserProfileApi,
+                SyslumadurPaymentCatalogApi,
+                MockableSyslumadurPaymentCatalogApi,
+              ],
             },
           ],
         },
