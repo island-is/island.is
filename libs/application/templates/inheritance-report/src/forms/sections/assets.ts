@@ -502,7 +502,7 @@ export const assets = buildSection({
                   {
                     title: m.stocksRateOfChange,
                     id: 'exchangeRateOrInterest',
-                    type: 'number',
+                    type: 'currency',
                     required: true,
                   },
                   {
