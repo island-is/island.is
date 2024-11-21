@@ -1,12 +1,9 @@
 import { RightsPortalAidOrNutrition } from '@island.is/api/schema'
-import { Box, Icon, Table as T, Text, Tooltip } from '@island.is/island-ui/core'
+import { Box, Icon, Text, Tooltip } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DownloadFileButtons,
-  ExpandHeader,
-  ExpandRow,
   LinkButton,
-  NestedTable,
   SortableTable,
   amountFormat,
   formatDate,
@@ -77,7 +74,7 @@ const Aids = ({ data }: Props) => {
           defaultSortByKey="aidsName"
           mobileTitleKey="aidsName"
           items={data.map((rowItem, idx) => ({
-            id: rowItem.id ?? `${idx}`,
+            id: rowItem.id ?? idx,
             aidsName: rowItem.name.split('/').join(' / '),
             maxUnitRefund: rowItem.maxUnitRefund ?? '',
             insuranceRatio:

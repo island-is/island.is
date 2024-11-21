@@ -9,17 +9,20 @@ export const HeaderButton = ({
   requestSort,
   labels,
   index,
+  align = 'left',
 }: {
   headItem: string
   sortConfig: ConfigType
   requestSort: (key: string) => void
   labels: Record<string, string>
   index: number
+  align?: 'left' | 'right'
 }) => (
   <button
     type="button"
     onClick={() => requestSort(headItem)}
     className={styles.btn}
+    style={{ textAlign: align }}
     key={`head-${headItem}-${index}`}
   >
     {labels[headItem] || ''}

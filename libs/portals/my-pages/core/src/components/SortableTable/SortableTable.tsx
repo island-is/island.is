@@ -164,11 +164,13 @@ export const SortableTable = (props: SortableTableProps) => {
                     requestSort={requestSort}
                     labels={props.labels}
                     index={i}
+                    align={
+                      headerSorted.slice(-2).includes(headItem)
+                        ? 'right'
+                        : 'left'
+                    }
                   />
                 ),
-                align: headerSorted.slice(-2).includes(headItem)
-                  ? 'right'
-                  : 'left',
                 element: true,
               }))}
             />
