@@ -8,7 +8,7 @@ import { Asset, mapAsset } from './asset.model'
 import { ReferenceLink, mapReferenceLink } from './referenceLink.model'
 import { Fund, mapFund } from './fund.model'
 
-enum GrantStatus {
+export enum GrantStatus {
   CLOSED,
   OPEN,
   SEE_DESCRIPTION,
@@ -108,11 +108,11 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
   dateTo: fields.grantDateTo,
   isOpen: fields.grantIsOpen ?? undefined,
   status:
-    fields.grantStatus === 'OPEN'
+    fields.grantStatus === 'open'
       ? GrantStatus.OPEN
-      : fields.grantStatus === 'CLOSED'
+      : fields.grantStatus === 'closed'
       ? GrantStatus.CLOSED
-      : fields.grantStatus === 'SEE DESCRIPTION'
+      : fields.grantStatus === 'see_description'
       ? GrantStatus.SEE_DESCRIPTION
       : undefined,
   fund: fields.grantFund ? mapFund(fields.grantFund) : undefined,

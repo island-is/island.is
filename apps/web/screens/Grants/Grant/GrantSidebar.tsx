@@ -40,7 +40,7 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         generateLine(
           formatMessage(m.single.fund),
           grant?.fund?.link?.slug ? (
-            <Text fontWeight="semiBold" color="blue400">
+            <Text fontWeight="semiBold" variant="medium" color="blue400">
               <LinkV2
                 {...linkResolver(grant.fund.link.type as LinkType, [
                   grant.fund.link.slug,
@@ -57,12 +57,14 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         ),
         generateLine(
           formatMessage(m.single.category),
-          grant?.categoryTags
-            ? grant.categoryTags
+          grant?.categoryTags ? (
+            <Text variant="medium">
+              {grant.categoryTags
                 .map((ct) => ct.title)
                 .filter(isDefined)
-                .join(', ')
-            : undefined,
+                .join(', ')}
+            </Text>
+          ) : undefined,
         ),
         generateLine(
           formatMessage(m.single.type),

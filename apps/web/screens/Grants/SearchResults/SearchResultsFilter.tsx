@@ -38,26 +38,6 @@ export const GrantsSearchResultsFilter = ({
     (t) => t.genericTagGroup?.slug === 'grant-type',
   )
 
-  const hardcodedFilters = [
-    {
-      value: 'open',
-      label: formatMessage(m.search.applicationOpen),
-    },
-    {
-      value: 'open-soon',
-      label: formatMessage(m.search.applicationOpensSoon),
-    },
-    {
-      value: 'closed',
-      label: formatMessage(m.search.applicationClosed),
-    },
-  ]
-
-  const dynamicFilters = Object.entries(GrantStatus).map((entry) => ({
-    value: entry[0],
-    label: entry[1],
-  }))
-
   return (
     <Box
       component="form"
@@ -93,15 +73,11 @@ export const GrantsSearchResultsFilter = ({
                 selected: searchState?.['status'] ?? [],
                 filters: [
                   {
-                    value: 'open',
+                    value: GrantStatus.Open.toString().toLowerCase(),
                     label: formatMessage(m.search.applicationOpen),
                   },
                   {
-                    value: 'open-soon',
-                    label: formatMessage(m.search.applicationOpensSoon),
-                  },
-                  {
-                    value: 'closed',
+                    value: GrantStatus.Closed.toString().toLowerCase(),
                     label: formatMessage(m.search.applicationClosed),
                   },
                 ],
@@ -135,16 +111,8 @@ export const GrantsSearchResultsFilter = ({
                 selected: searchState?.['organization'] ?? [],
                 filters: [
                   {
-                    value: 'rannis',
+                    value: 'rannsoknamidstoed-islands-rannis',
                     label: 'Rannís',
-                  },
-                  {
-                    value: 'tonlistarmidstod',
-                    label: 'Tónlistarmiðstöð',
-                  },
-                  {
-                    value: 'kvikmyndastod',
-                    label: 'Kvikmyndastöð',
                   },
                 ],
               },

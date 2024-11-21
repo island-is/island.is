@@ -5,15 +5,15 @@ import { useRouter } from 'next/router'
 
 import { Box, Inline, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import { PlazaCard } from '@island.is/web/components'
-import { Grant, GrantStatus } from '@island.is/web/graphql/schema'
+import { Grant } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
 import { generateStatusTag } from '../utils'
-import { useLocale } from '@island.is/localization'
 
 interface Props {
   grants?: Array<Grant>

@@ -1848,7 +1848,7 @@ export interface IGrantFields {
   grantIsOpen?: boolean | undefined
 
   /** Status */
-  grantStatus: 'OPEN' | 'CLOSED' | 'SEE DESCRIPTION'
+  grantStatus: 'open' | 'closed' | 'see_description'
 
   /** Files */
   grantFiles?: Asset[] | undefined
