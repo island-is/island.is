@@ -40,7 +40,6 @@ export class SectionsController {
   @ApiOperation({ summary: 'Updates a section' })
   @ApiCreatedResponse({
     description: 'Updates a section',
-    type: SectionDto,
   })
   @ApiBody({ type: UpdateSectionDto })
   @ApiParam({ name: 'id', type: String })
@@ -48,7 +47,7 @@ export class SectionsController {
   async update(
     @Param('id') id: string,
     @Body() updateSectionDto: UpdateSectionDto,
-  ): Promise<SectionDto> {
+  ): Promise<void> {
     return await this.sectionsService.update(id, updateSectionDto)
   }
 

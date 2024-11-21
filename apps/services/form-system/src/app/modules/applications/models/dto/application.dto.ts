@@ -1,16 +1,16 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { OrganizationDto } from '../../../organizations/models/dto/organization.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import { UUIDV4 } from 'sequelize'
+import { ApplicationStatus } from '../../../../enums/applicationStatus'
 
 export class ApplicationDto {
   @ApiPropertyOptional()
   id?: string
 
-  @ApiPropertyOptional({ type: OrganizationDto })
-  organization?: OrganizationDto
+  @ApiPropertyOptional({ type: LanguageType })
+  organizationName?: LanguageType
 
   @ApiPropertyOptional()
   formId?: string
@@ -33,10 +33,10 @@ export class ApplicationDto {
   @ApiPropertyOptional({ type: [Dependency] })
   dependencies?: Dependency[]
 
-  @ApiPropertyOptional({ type: [UUIDV4] })
+  @ApiPropertyOptional({ type: [String] })
   completed?: string[]
 
-  @ApiPropertyOptional({ type: UUIDV4 })
+  @ApiPropertyOptional({ enum: ApplicationStatus })
   status?: string
 
   @ApiPropertyOptional({ type: [SectionDto] })

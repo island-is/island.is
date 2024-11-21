@@ -40,9 +40,7 @@ export class ScreensService {
       throw new NotFoundException(`Screen with id '${id}' not found`)
     }
 
-    screen.name = updateScreenDto.name
-    screen.multiset = updateScreenDto.multiset
-    screen.callRuleset = updateScreenDto.callRuleset
+    Object.assign(screen, updateScreenDto)
 
     await screen.save()
 

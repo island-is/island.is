@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  NotAcceptableException,
-  NotFoundException,
-  PreconditionFailedException,
-} from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'

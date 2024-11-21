@@ -46,7 +46,6 @@ export class FieldSettingsFactory {
   private static pickSettings = (
     obj: FieldSettings,
     keys: string[],
-    defaultValue = '',
   ): FieldSettings => {
     return defaults(
       pick(obj, keys),
