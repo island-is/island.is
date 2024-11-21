@@ -74,7 +74,7 @@ export class UpdateCaseDto {
   @IsArray()
   @ArrayMinSize(1)
   @IsString({ each: true })
-  @MaxLength(255)
+  @MaxLength(255, { each: true })
   @ApiPropertyOptional({ type: String, isArray: true })
   readonly policeCaseNumbers?: string[]
 
