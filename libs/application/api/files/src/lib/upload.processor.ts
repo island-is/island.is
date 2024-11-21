@@ -6,6 +6,7 @@ import { Inject } from '@nestjs/common'
 import AmazonS3URI from 'amazon-s3-uri'
 import { ApplicationFilesConfig } from './files.config'
 import { ConfigType } from '@nestjs/config'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 interface JobData {
   applicationId: string
@@ -25,54 +26,66 @@ export class UploadProcessor {
     private readonly fileStorageService: FileStorageService,
     @Inject(ApplicationFilesConfig.KEY)
     private config: ConfigType<typeof ApplicationFilesConfig>,
+    @Inject(LOGGER_PROVIDER) protected readonly logger: Logger,
+
   ) {}
 
   @Process('upload')
   async handleUpload(job: Job<JobData>): Promise<JobResult> {
-    const { attachmentUrl, applicationId } = job.data
-    const destinationBucket = this.config.attachmentBucket
-
-    if (!destinationBucket) {
-      throw new Error('Application attachment bucket not configured.')
-    }
-
-    const { key: sourceKey } = AmazonS3URI(attachmentUrl)
-    const destinationKey = `${applicationId}/${sourceKey}`
-    const resultUrl = await this.fileStorageService.copyObjectFromUploadBucket(
-      sourceKey,
-      destinationBucket,
-      destinationKey,
-    )
-
-    return {
-      attachmentKey: sourceKey,
-      resultUrl,
+    try {
+      const { attachmentUrl, applicationId } = job.data
+      const destinationBucket = this.config.attachmentBucket
+  
+      if (!destinationBucket) {
+        throw new Error('Application attachment bucket not configured.')
+      }
+  
+      const { key: sourceKey } = AmazonS3URI(attachmentUrl)
+      const destinationKey = `${applicationId}/${sourceKey}`
+      const resultUrl = await this.fileStorageService.copyObjectFromUploadBucket(
+        sourceKey,
+        destinationBucket,
+        destinationKey,
+      )
+  
+      return {
+        attachmentKey: sourceKey,
+        resultUrl,
+      }
+    } catch (error) {
+      this.logger.error('An error occurred while processing upload job', error)
+      throw error
     }
   }
 
   @OnQueueCompleted()
   async onCompleted(job: Job, result: JobResult) {
-    const { applicationId, nationalId }: JobData = job.data
-    const existingApplication = await this.applicationService.findOneById(
-      applicationId,
-      nationalId,
-    )
-
-    if (
-      existingApplication &&
-      !Object.prototype.hasOwnProperty.call(
-        existingApplication.attachments,
-        result.attachmentKey,
+    try {
+      const { applicationId, nationalId }: JobData = job.data
+      const existingApplication = await this.applicationService.findOneById(
+        applicationId,
+        nationalId,
       )
-    ) {
-      return
+  
+      if (
+        existingApplication &&
+        !Object.prototype.hasOwnProperty.call(
+          existingApplication.attachments,
+          result.attachmentKey,
+        )
+      ) {
+        return
+      }
+  
+      return await this.applicationService.updateAttachment(
+        applicationId,
+        nationalId,
+        result.attachmentKey,
+        result.resultUrl,
+      )
+    } catch (error) {
+      this.logger.error('An error occurred while completing upload job', error)
+      throw error
     }
-
-    return await this.applicationService.updateAttachment(
-      applicationId,
-      nationalId,
-      result.attachmentKey,
-      result.resultUrl,
-    )
   }
 }

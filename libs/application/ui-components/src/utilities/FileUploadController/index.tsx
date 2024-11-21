@@ -90,13 +90,6 @@ export const FileUploadController = ({
   totalMaxSize = DEFAULT_TOTAL_MAX_SIZE,
   forImageUpload,
 }: FileUploadControllerProps) => {
-  // Add logging here, at the start of the component
-  console.log('FileUploadController render:', {
-    val: getValueViaPath(application.answers, id, []),
-    applicationAnswers: application.answers,
-    id
-  })
-
   const { formatMessage } = useLocale()
   const { clearErrors, setValue } = useFormContext()
   const [uploadError, setUploadError] = useState<string | undefined>(error)
@@ -119,23 +112,6 @@ export const FileUploadController = ({
 
     setValue(id, uploadAnswer)
   }, [state, id, setValue])
-
-  // Add a useEffect to reset the state when val changes
-  useEffect(() => {
-    const newInitialFiles = (val && val.map((f) => answerToUploadFile(f))) || []
-    dispatch({
-      type: ActionTypes.ADD,
-      payload: {
-        newFiles: newInitialFiles,
-      },
-    })
-  }, [val]) // Only run when val changes
-
-  useEffect(() => {
-    return () => {
-      console.log('FileUploadController unmounting')
-    }
-  }, [])
 
   const uploadFileFlow = async (file: UploadFile) => {
     try {
