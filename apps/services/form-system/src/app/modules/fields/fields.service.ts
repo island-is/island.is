@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import { CreateFieldDto } from './models/dto/createField.dto'
 import { FieldDto } from './models/dto/field.dto'
 import { UpdateFieldDto } from './models/dto/updateField.dto'
-import { FieldMapper } from './models/field.mapper'
 import { Field } from './models/field.model'
 import { UpdateFieldsDisplayOrderDto } from './models/dto/updateFieldsDisplayOrder.dto'
 import { FieldSettingsFactory } from '../../dataTypes/fieldSettings/fieldSettings.factory'
@@ -17,7 +16,6 @@ export class FieldsService {
   constructor(
     @InjectModel(Field)
     private readonly fieldModel: typeof Field,
-    private readonly fieldMapper: FieldMapper,
   ) {}
 
   async findById(id: string): Promise<Field> {
@@ -63,7 +61,7 @@ export class FieldsService {
   async update(id: string, updateFieldDto: UpdateFieldDto): Promise<void> {
     const field = await this.findById(id)
 
-    this.fieldMapper.mapUpdateFieldDtoToField(field, updateFieldDto)
+    Object.assign(field, updateFieldDto)
 
     await field.save()
   }

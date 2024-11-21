@@ -1,8 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import defaults from 'lodash/defaults'
-import pick from 'lodash/pick'
-import zipObject from 'lodash/zipObject'
 import { FormUrl } from './models/formUrl.model'
 import { CreateFormUrlDto } from './models/dto/createFormUrl.dto'
 import { FormUrlDto } from './models/dto/formUrl.dto'

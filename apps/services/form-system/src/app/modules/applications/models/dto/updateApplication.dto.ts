@@ -1,13 +1,7 @@
-import {
-  IsArray,
-  IsNotEmpty,
-  IsOptional,
-  ValidateNested,
-} from 'class-validator'
+import { IsArray, IsOptional, ValidateNested } from 'class-validator'
 import { Dependency } from '../../../../dataTypes/dependency.model'
 import { Type } from 'class-transformer'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { UUIDV4 } from 'sequelize'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateApplicationDto {
   @ValidateNested()
