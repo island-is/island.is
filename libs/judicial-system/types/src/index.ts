@@ -22,7 +22,12 @@ export {
   notificationTypes,
 } from './lib/notification'
 export type { Institution } from './lib/institution'
-export { EventType, eventTypes, DefendantEventType } from './lib/eventLog'
+export {
+  EventType,
+  eventTypes,
+  DefendantEventType,
+  defendantEventTypes,
+} from './lib/eventLog'
 export { DateType, dateTypes } from './lib/dateLog'
 export { StringType, stringTypes } from './lib/caseString'
 

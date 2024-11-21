@@ -23,6 +23,7 @@ import {
 
 import { Case } from '../../case/models/case.model'
 import { Subpoena } from '../../subpoena/models/subpoena.model'
+import { DefendantEventLog } from './defendantEventLog.model'
 
 @Table({
   tableName: 'defendant',
@@ -199,4 +200,8 @@ export class Defendant extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   isSentToPrisonAdmin?: boolean
+
+  @HasMany(() => DefendantEventLog, { foreignKey: 'defendantId' })
+  @ApiPropertyOptional({ type: () => DefendantEventLog, isArray: true })
+  eventLogs?: DefendantEventLog[]
 }
