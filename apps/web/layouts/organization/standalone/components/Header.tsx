@@ -69,11 +69,7 @@ export const Header: React.FC<React.PropsWithChildren<HeaderProps>> = ({
           })}
         >
           {underTitle && isFrontpage && (
-            <div
-              className={cn(styles.textInnerContainer, {
-                [styles.textInnerContainerSubpage]: !isFrontpage,
-              })}
-            >
+            <div className={cn(styles.textInnerContainer)}>
               <Text variant="h1" as="h1" color={titleColor}>
                 {underTitle}
               </Text>

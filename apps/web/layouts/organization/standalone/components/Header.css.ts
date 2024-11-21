@@ -41,10 +41,6 @@ export const textContainer = style({
     },
     lg: {
       order: 0,
-      display: 'grid',
-      placeItems: 'left',
-      textAlign: 'left',
-      paddingTop: '0px',
     },
   }),
 })
@@ -68,22 +64,6 @@ export const textInnerContainer = style({
       paddingRight: '16px',
       paddingBottom: '105px',
       justifyContent: 'center',
-    },
-  }),
-})
-
-export const textInnerContainerSubpage = style({
-  ...themeUtils.responsiveStyle({
-    lg: {
-      paddingLeft: '288px',
-      paddingBottom: '0',
-      justifyContent: 'flex-start',
-      alignItems: 'center',
-    },
-    xs: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
     },
   }),
 })
