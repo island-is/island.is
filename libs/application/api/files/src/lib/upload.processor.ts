@@ -27,7 +27,6 @@ export class UploadProcessor {
     @Inject(ApplicationFilesConfig.KEY)
     private config: ConfigType<typeof ApplicationFilesConfig>,
     @Inject(LOGGER_PROVIDER) protected readonly logger: Logger,
-
   ) {}
 
   @Process('upload')
@@ -35,19 +34,20 @@ export class UploadProcessor {
     try {
       const { attachmentUrl, applicationId } = job.data
       const destinationBucket = this.config.attachmentBucket
-  
+
       if (!destinationBucket) {
         throw new Error('Application attachment bucket not configured.')
       }
-  
+
       const { key: sourceKey } = AmazonS3URI(attachmentUrl)
       const destinationKey = `${applicationId}/${sourceKey}`
-      const resultUrl = await this.fileStorageService.copyObjectFromUploadBucket(
-        sourceKey,
-        destinationBucket,
-        destinationKey,
-      )
-  
+      const resultUrl =
+        await this.fileStorageService.copyObjectFromUploadBucket(
+          sourceKey,
+          destinationBucket,
+          destinationKey,
+        )
+
       return {
         attachmentKey: sourceKey,
         resultUrl,
@@ -66,7 +66,7 @@ export class UploadProcessor {
         applicationId,
         nationalId,
       )
-  
+
       if (
         existingApplication &&
         !Object.prototype.hasOwnProperty.call(
@@ -76,7 +76,7 @@ export class UploadProcessor {
       ) {
         return
       }
-  
+
       return await this.applicationService.updateAttachment(
         applicationId,
         nationalId,
