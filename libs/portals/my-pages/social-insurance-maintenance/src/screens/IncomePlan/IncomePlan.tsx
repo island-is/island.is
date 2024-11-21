@@ -145,7 +145,13 @@ const IncomePlan = () => {
               heading={formatMessage(coreMessages.incomePlan)}
               cta={{
                 label: formatMessage(m.viewIncomePlan),
-                url: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
+                url:
+                  data.socialInsuranceIncomePlan.status ===
+                  SocialInsuranceIncomePlanStatus.IN_PROGRESS
+                    ? `${document.location.origin}/${formatMessage(
+                        m.incomePlanModifyLink,
+                      )}`
+                    : SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
                 variant: 'text',
               }}
             />

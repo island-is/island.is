@@ -130,10 +130,7 @@ export class SocialInsuranceService {
   }
 
   async getIncomePlan(user: User): Promise<IncomePlan | undefined> {
-    this.logger.debug('bingbong')
     const data = await this.socialInsuranceApi.getLatestIncomePlan(user)
-
-    this.logger.debug('data', data)
 
     if (!data?.registrationDate || !data?.status || !data.incomeTypeLines) {
       this.logger.info('Income plan incomplete, returning', {
