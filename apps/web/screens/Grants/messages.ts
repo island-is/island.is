@@ -48,6 +48,10 @@ export const m = {
       id: 'web.grants:search.applicationOpensSoon',
       defaultMessage: 'Opnar fljótlega',
     },
+    applicationSeeDescription: {
+      id: 'web.grants:search.applicationSeeDescription',
+      defaultMessage: 'Sjá lýsingu',
+    },
     category: {
       id: 'web.grants:search.category',
       defaultMessage: 'Flokkun',

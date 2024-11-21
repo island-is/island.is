@@ -7,7 +7,7 @@ import {
   FilterProps,
 } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
-import { GenericTag } from '@island.is/web/graphql/schema'
+import { GenericTag, GrantStatus } from '@island.is/web/graphql/schema'
 
 import { m } from '../messages'
 import { SearchState } from './SearchResults'
@@ -37,6 +37,26 @@ export const GrantsSearchResultsFilter = ({
   const typeFilters = tags?.filter(
     (t) => t.genericTagGroup?.slug === 'grant-type',
   )
+
+  const hardcodedFilters = [
+    {
+      value: 'open',
+      label: formatMessage(m.search.applicationOpen),
+    },
+    {
+      value: 'open-soon',
+      label: formatMessage(m.search.applicationOpensSoon),
+    },
+    {
+      value: 'closed',
+      label: formatMessage(m.search.applicationClosed),
+    },
+  ]
+
+  const dynamicFilters = Object.entries(GrantStatus).map((entry) => ({
+    value: entry[0],
+    label: entry[1],
+  }))
 
   return (
     <Box

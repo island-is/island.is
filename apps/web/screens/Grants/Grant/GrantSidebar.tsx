@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Box, Button, LinkV2, Stack, Text } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
@@ -9,6 +8,8 @@ import { Grant } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
+import { useLocale } from '@island.is/localization'
+import { generateStatusTag } from '../utils'
 
 interface Props {
   grant: Grant
@@ -30,8 +31,8 @@ const generateLine = (heading: string, content?: React.ReactNode) => {
 }
 
 export const GrantSidebar = ({ grant, locale }: Props) => {
-  const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
+  const { formatMessage } = useLocale()
 
   const detailPanelData = useMemo(
     () =>
@@ -77,8 +78,10 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         ),
         generateLine(
           formatMessage(m.single.status),
-          grant?.statusText ? (
-            <Text variant="medium">{grant.statusText}</Text>
+          grant?.status ? (
+            <Text variant="medium">
+              {generateStatusTag(grant.status, formatMessage)?.label}
+            </Text>
           ) : undefined,
         ),
       ].filter(isDefined) ?? [],

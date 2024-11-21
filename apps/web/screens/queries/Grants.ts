@@ -18,7 +18,6 @@ export const GET_GRANTS_QUERY = gql`
         dateTo
         isOpen
         status
-        statusText
         categoryTags {
           id
           title
@@ -69,7 +68,7 @@ export const GET_GRANT_QUERY = gql`
           type
     }
       applicationDeadlineStatus
-      statusText
+      status
       categoryTags {
         id
         title

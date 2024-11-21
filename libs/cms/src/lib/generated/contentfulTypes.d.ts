@@ -1848,11 +1848,7 @@ export interface IGrantFields {
   grantIsOpen?: boolean | undefined
 
   /** Status */
-  grantStatus?:
-    | 'Opið fyrir umsóknir'
-    | 'Lokað fyrir umsóknir'
-    | 'Opnar fljótlega'
-    | undefined
+  grantStatus: 'OPEN' | 'CLOSED' | 'SEE DESCRIPTION'
 
   /** Files */
   grantFiles?: Asset[] | undefined

@@ -11,8 +11,7 @@ import { Fund, mapFund } from './fund.model'
 enum GrantStatus {
   CLOSED,
   OPEN,
-  OPENS_SOON,
-  INACTIVE,
+  SEE_DESCRIPTION,
 }
 
 registerEnumType(GrantStatus, { name: 'GrantStatus' })
@@ -61,9 +60,6 @@ export class Grant {
   @Field({ nullable: true })
   isOpen?: boolean
 
-  @Field({ nullable: true })
-  statusText?: string
-
   @CacheField(() => GrantStatus, { nullable: true })
   status?: GrantStatus
 
@@ -111,14 +107,13 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
   dateFrom: fields.grantDateFrom,
   dateTo: fields.grantDateTo,
   isOpen: fields.grantIsOpen ?? undefined,
-  statusText: fields.grantStatus ?? 'Óvirkur sjóður',
   status:
-    fields.grantStatus === 'Opið fyrir umsóknir'
+    fields.grantStatus === 'OPEN'
       ? GrantStatus.OPEN
-      : fields.grantStatus === 'Lokað fyrir umsóknir'
+      : fields.grantStatus === 'CLOSED'
       ? GrantStatus.CLOSED
-      : fields.grantStatus === 'Opnar fljótlega'
-      ? GrantStatus.OPENS_SOON
+      : fields.grantStatus === 'SEE DESCRIPTION'
+      ? GrantStatus.SEE_DESCRIPTION
       : undefined,
   fund: fields.grantFund ? mapFund(fields.grantFund) : undefined,
   files: (fields.grantFiles ?? []).map((file) => mapAsset(file)) ?? [],
