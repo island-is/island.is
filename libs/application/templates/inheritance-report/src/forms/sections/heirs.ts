@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
@@ -88,6 +89,22 @@ export const heirs = buildSection({
             buildDescriptionField({
               id: 'heirs.hasModified',
               title: '',
+            }),
+            buildAlertMessageField({
+              id: 'reminderToFillInSpouse',
+              title: '',
+              message:
+                m.heirsReminderToFillInSpouse,
+              alertType: 'info',
+              marginBottom: 'containerGutter',
+              condition: (answers) => {
+                return (
+                  getValueViaPath<string>(
+                    answers,
+                    'customShare.deceasedWasMarried',
+                  ) === YES
+                )
+              },
             }),
             buildCustomField(
               {
