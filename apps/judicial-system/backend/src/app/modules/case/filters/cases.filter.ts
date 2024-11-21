@@ -214,7 +214,7 @@ const getPrisonAdminUserCasesQueryFilter = (): WhereOptions => {
         indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
         indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
         id: {
-          [Op.notIn]: Sequelize.literal(`
+          [Op.in]: Sequelize.literal(`
             (SELECT case_id
               FROM defendant
               WHERE is_sent_to_prison_admin = true)

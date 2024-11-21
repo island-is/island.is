@@ -14,7 +14,7 @@ import { CaseString } from '../models/caseString.model'
 export const transformDefendants = (defendants?: Defendant[]) => {
   return defendants?.map((defendant) => ({
     ...defendant.toJSON(),
-    setnToPrisonAdminDate: DefendantEventLog.sentToPrisonAdminDate(
+    sentToPrisonAdminDate: DefendantEventLog.sentToPrisonAdminDate(
       defendant.eventLogs,
     )?.created,
   }))
