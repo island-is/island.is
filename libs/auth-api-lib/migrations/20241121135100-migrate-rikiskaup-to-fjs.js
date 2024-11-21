@@ -5,8 +5,14 @@ module.exports = {
     return queryInterface.sequelize.query(`
         BEGIN;
 
-        -- If delegator has granted a delegation to the delegatee for FJS AND Rikiskaup we change the delegetion_id reference for all 
-        -- delegation_scopes in domain rikiskaup
+        -- There's 2 cases we need to handle
+        -- A) Party A has granted a delegation to party B for both FJS and Rikiskaup domains. 
+        --      In this case we want to change the delegation_id reference in delegation_scope from the Rikiskaup entry to the FJS entry.
+        --      This avoids having duplicate (domain_name, to_national_id, from_national_id) trios
+        -- B) Party A has granted a delegation to party B for Rikiskaup but not for FJS domain.
+        --      In this case we can simply change the domain name for the delegation entry
+
+        -- Find all entries in case A and change the delegation_id reference to the FJS entry. 
         UPDATE delegation_scope
         SET delegation_id = fjs_entry.id
         FROM delegation rikiskaup_entry
@@ -24,8 +30,8 @@ module.exports = {
                 AND d.from_national_id = rikiskaup_entry.from_national_id
         );
 
-        -- This leaves us with rows in delegation that have same to_national_id and from_national_id and domain=@rikiskaup.is as another row  
-        -- with domain=@fjs.is. We need to delete those entries before the next step to avoid breaking uniqueness constraint
+        -- Delete all rows in delegation which would break uniqueness contraint. 
+        -- All foreign key references to these rows should have been changed in the previous step
         DELETE FROM delegation
         WHERE domain_name = '@rikiskaup.is'
             AND EXISTS (
@@ -37,6 +43,7 @@ module.exports = {
             );
 
         -- Move remaining delegations from domain Rikiskaup to FJS
+        -- TODO: change this to only change rows with foreign key references from delegation_scope
             UPDATE delegation
             SET domain_name='@fjs.is'
             WHERE domain_name='@rikiskaup.is'
