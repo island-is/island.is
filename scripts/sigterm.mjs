@@ -98,7 +98,7 @@ const execCommand = (command) => {
     try {
       const response = await fetch(`http://localhost:${PORT}/${CHECK_ENDPOINT}`)
       const text = await response.text()
-      if (text.includes('ready')) {
+      if (response.status === 200 || text.includes('ready')) {
         ready = true
       }
     } catch (error) {
