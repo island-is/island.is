@@ -1,11 +1,24 @@
+import { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  CASES_ROUTE,
+  COURT_OF_APPEAL_CASES_ROUTE,
+  DEFENDER_CASES_ROUTE,
+  PRISON_CASES_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
+  isCourtOfAppealsUser,
+  isDefenceUser,
+  isPrisonStaffUser,
+} from '@island.is/judicial-system/types'
 import { login, titles } from '@island.is/judicial-system-web/messages'
 import {
   PageHeader,
   PageTitle,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
@@ -15,6 +28,7 @@ import * as styles from './Login.css'
 const Login = () => {
   const router = useRouter()
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
 
   const getErrorAlert = (errorCode: LoginErrorCodes): JSX.Element | null => {
     switch (errorCode) {
@@ -54,6 +68,20 @@ const Login = () => {
         return null
     }
   }
+
+  useEffect(() => {
+    if (user) {
+      if (isDefenceUser(user)) {
+        router.push(DEFENDER_CASES_ROUTE)
+      } else if (isPrisonStaffUser(user)) {
+        router.push(PRISON_CASES_ROUTE)
+      } else if (isCourtOfAppealsUser(user)) {
+        router.push(COURT_OF_APPEAL_CASES_ROUTE)
+      } else {
+        router.push(CASES_ROUTE)
+      }
+    }
+  }, [router, user])
 
   return (
     <>
