@@ -44,32 +44,34 @@ const StandaloneHome: Screen<
       bannerTitle={n('bannerTitle', '')}
     >
       <Stack space={SLICE_SPACING}>
-        {organizationPage.slices.map((slice) => {
-          return (
-            <Box
-              key={slice.id}
-              className={styles.slicesContainer}
-              paddingX={
-                slice.__typename !== 'LatestNewsSlice' ? [3, 3, 6] : undefined
-              }
-            >
-              {renderSlice(slice, namespace, organizationPage.slug, {})}
-            </Box>
-          )
-        })}
-      </Stack>
-      <Stack space={SLICE_SPACING}>
-        {organizationPage.bottomSlices.map((slice, index) => {
-          return (
-            <Box
-              key={slice.id}
-              background={index === 0 ? 'dark100' : undefined}
-              paddingTop={index === 0 ? 6 : undefined}
-            >
-              {renderSlice(slice, namespace, organizationPage.slug, {})}
-            </Box>
-          )
-        })}
+        <Stack space={SLICE_SPACING}>
+          {organizationPage.slices.map((slice) => {
+            return (
+              <Box
+                key={slice.id}
+                className={styles.slicesContainer}
+                paddingX={
+                  slice.__typename !== 'LatestNewsSlice' ? [3, 3, 6] : undefined
+                }
+              >
+                {renderSlice(slice, namespace, organizationPage.slug, {})}
+              </Box>
+            )
+          })}
+        </Stack>
+        <Stack space={SLICE_SPACING}>
+          {organizationPage.bottomSlices.map((slice, index) => {
+            return (
+              <Box
+                key={slice.id}
+                background={index === 0 ? 'dark100' : undefined}
+                paddingTop={index === 0 ? 5 : undefined}
+              >
+                {renderSlice(slice, namespace, organizationPage.slug, {})}
+              </Box>
+            )
+          })}
+        </Stack>
       </Stack>
     </StandaloneLayout>
   )

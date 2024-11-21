@@ -76,6 +76,7 @@ export const StandaloneLayout = ({
     logoAltText: '',
     links: organizationPage.topLevelNavigation?.links ?? [],
     homeHref: linkResolver('organizationpage', [organizationPage.slug]).href,
+    organizationSlug: organizationPage.organization?.slug,
   }
 
   const featuredTitle = seo?.title ?? organizationPage.title

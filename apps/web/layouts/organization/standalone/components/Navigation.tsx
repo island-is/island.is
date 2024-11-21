@@ -21,6 +21,7 @@ export interface NavigationProps {
   logoAltText?: string
   links: { label: string; href: string }[]
   homeHref: string
+  organizationSlug?: string
 }
 
 export const Navigation: React.FC<React.PropsWithChildren<NavigationProps>> = ({
@@ -29,6 +30,7 @@ export const Navigation: React.FC<React.PropsWithChildren<NavigationProps>> = ({
   logoAltText,
   homeHref,
   links,
+  organizationSlug,
 }) => {
   const { activeLocale } = useI18n()
 
@@ -63,7 +65,12 @@ export const Navigation: React.FC<React.PropsWithChildren<NavigationProps>> = ({
         <GridColumn span="3/12">
           <Hidden below="lg">
             <Box display="flex" alignItems="center" justifyContent="flexEnd">
-              <SearchInput size="medium" activeLocale={activeLocale} />
+              <SearchInput
+                size="medium"
+                activeLocale={activeLocale}
+                placeholder={activeLocale === 'is' ? 'Leit' : 'Search'}
+                organization={organizationSlug}
+              />
               <Box marginLeft={[1, 1, 1, 2]}>
                 <LanguageToggler />
               </Box>
