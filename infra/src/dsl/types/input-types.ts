@@ -28,6 +28,7 @@ export type BffInfo = {
   globalPrefix: string
   env?: EnvironmentVariables
   secrets?: Secrets
+  allowedRedirectUris?: Partial<Record<OpsEnvWithLocal, string[]>>
 }
 
 export type PostgresInfo = {
