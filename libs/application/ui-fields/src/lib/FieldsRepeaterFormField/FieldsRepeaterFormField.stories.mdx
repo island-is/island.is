@@ -8,7 +8,7 @@ import {
 } from '@storybook/addon-docs'
 import { dedent } from 'ts-dedent'
 
-import { TableRepeaterFormField } from './TableRepeaterFormField'
+import { FieldsRepeaterFormField } from './FieldsRepeaterFormField'
 
 export const createMockApplication = (data = {}) => ({
   id: '123',
@@ -24,55 +24,45 @@ export const createMockApplication = (data = {}) => ({
 })
 
 <Meta
-  title="Application System/TableRepeaterFormField"
-  component={TableRepeaterFormField}
+  title="Application System/FieldsRepeaterFormField"
+  component={FieldsRepeaterFormField}
 />
 
 # TableRepeaterFormField
 
 ### Usage in a template
 
-You can create a TableRepeaterFormField using the following function `buildTableRepeaterField`.
+You can create a FieldsRepeaterFormField using the following function `FieldsTableRepeaterField`.
 Validation should be done via zod schema.
 
 <Source
   language="typescript"
   code={dedent(`
-    buildTableRepeaterField({
-      id: 'contacts',
-      title: 'My repeater',
-      formTitle: 'Add new contact',
-      addItemButtonText: 'Add new contact',
-      saveItemButtonText: 'Save',
+    buildFieldsRepeaterField({
+      id: 'fieldsRepeater',
+      title: 'My fields repeater',
+      description: 'Description for the fields repeater',
+      formTitle: 'Title for each form',
+      minRows: 2,
+      maxRows: 4,
       fields: {
-        name: {
-          component: 'input',
-          label: 'Name',
-          width: 'full',
-        },
         email: {
           component: 'input',
           label: 'Email',
           type: 'email',
-          width: 'half',
         },
-        phone: {
+        phoneNumber: {
           component: 'input',
-          label: 'Phone',
+          label: 'Phonenumber',
           type: 'tel',
           format: '###-####',
-          width: 'half',
+          placeholder: '000-0000',
         },
-        agreeToTerms: {
-          component: 'checkbox',
-          large: true,
-          options: [{ label: 'I agree to the terms', value: 'yes' }],
-          displayInTable: false,
-        },
-      },
-      table: {
-        format: {
-            phone: (value) => value.replace(/^(.{3})/, '$1-'),
+        radio: {
+          component: 'select',
+          label: 'Radio',
+          placeholder: 'placeholder',
+          options: [{ label: 'Option 1', value: '1' }, { label: 'Option 2', value: '2' }],
         },
       },
     })`)}
@@ -82,7 +72,7 @@ The previous configuration object will result in the following component:
 
 <Canvas>
   <Story name="Default">
-    <TableRepeaterFormField
+    <FieldsRepeaterFormField
       application={createMockApplication()}
       field={{
         id: 'field.id',
@@ -91,10 +81,17 @@ The previous configuration object will result in the following component:
         addItemButtonText: 'Add new contact',
         saveItemButtonText: 'Save',
         fields: {
-          name: {
+          email: {
             component: 'input',
-            label: 'Name',
-            width: 'full',
+            type: 'email',
+            label: 'Email',
+          },
+          phone: {
+            component: 'input',
+            label: 'Phone',
+            type: 'tel',
+            format: '###-####',
+            placeholder: '000-0000',
           },
           email: {
             component: 'input',
@@ -102,18 +99,14 @@ The previous configuration object will result in the following component:
             type: 'email',
             width: 'half',
           },
-          phone: {
-            component: 'input',
-            label: 'Phone',
-            type: 'tel',
-            format: '###-####',
-            width: 'half',
-          },
-          agreeToTerms: {
-            component: 'checkbox',
-            large: true,
-            options: [{ label: 'I agree to the terms', value: 'yes' }],
-            displayInTable: false,
+          radio: {
+            component: 'radio',
+            label: 'Radio',
+            options: [
+              { label: 'Option 1', value: '1' },
+              { label: 'Option 2', value: '2' },
+            ],
+            placeholder: 'placeholder',
           },
         },
         table: {
@@ -126,10 +119,10 @@ The previous configuration object will result in the following component:
   </Story>
 </Canvas>
 
-You can also use this field into a custom component by using `<TableRepeaterFormField field={...} />` with the configuration object defined above.
+You can also use this field into a custom component by using `<FieldsRepeaterFormField field={...} />` with the configuration object defined above.
 
 # Props
 
-## TableRepeaterFormField
+## FieldsRepeaterFormField
 
-<ArgsTable of={TableRepeaterFormField} />
+<ArgsTable of={FieldsRepeaterFormField} />

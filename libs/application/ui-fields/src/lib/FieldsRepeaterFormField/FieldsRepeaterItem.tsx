@@ -137,13 +137,14 @@ export const Item = ({
   if (typeof options === 'function') {
     translatedOptions = options(application, activeValues)
   } else {
-    translatedOptions = options?.map((option) => ({
-      ...option,
-      label: formatText(option.label, application, formatMessage),
-      ...(option.tooltip && {
-        tooltip: formatText(option.tooltip, application, formatMessage),
-      }),
-    }))
+    translatedOptions =
+      options?.map((option) => ({
+        ...option,
+        label: formatText(option.label, application, formatMessage),
+        ...(option.tooltip && {
+          tooltip: formatText(option.tooltip, application, formatMessage),
+        }),
+      })) ?? []
   }
 
   let Readonly: boolean | undefined
