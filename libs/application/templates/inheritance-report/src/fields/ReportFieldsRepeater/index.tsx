@@ -153,8 +153,8 @@ export const ReportFieldsRepeater: FC<
     const faceValue = stockValues?.amount
     const rateOfExchange = stockValues?.exchangeRateOrInterest
 
-    const a = faceValue?.replace(/[^\d.]/g, '') || explicitAVal
-    const b = rateOfExchange?.replace(/[^\d.]/g, '') || explicitBVal
+    const a = faceValue?.replace(',', '.') || explicitAVal
+    const b = rateOfExchange?.replace(',', '.') || explicitBVal
 
     const aVal = parseFloat(a)
     const bVal = parseFloat(b)
