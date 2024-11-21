@@ -29,7 +29,10 @@ export const FileUploadFormField = ({ application, field, error }: Props) => {
   const currentValue = watch(id)
 
   const onRemove = (fileToRemove: UploadFile) => {
-    setValue(id, currentValue?.filter((x: UploadFile) => x.key !== fileToRemove.key))
+    setValue(
+      id,
+      currentValue?.filter((x: UploadFile) => x.key !== fileToRemove.key),
+    )
   }
   return (
     <div>
