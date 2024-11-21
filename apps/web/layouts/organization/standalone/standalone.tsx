@@ -29,6 +29,7 @@ interface StandaloneLayoutProps {
     }
   }
   isFrontpage?: boolean
+  bannerTitle?: string
 }
 
 export const StandaloneLayout = ({
@@ -36,6 +37,7 @@ export const StandaloneLayout = ({
   seo,
   children,
   isFrontpage,
+  bannerTitle,
 }: PropsWithChildren<StandaloneLayoutProps>) => {
   const headerProps: HeaderProps = {
     fullWidth: organizationPage?.themeProperties.fullWidth ?? false,
@@ -61,6 +63,7 @@ export const StandaloneLayout = ({
       .titleSectionPaddingLeft as ResponsiveSpace,
     mobileBackground: organizationPage?.themeProperties.mobileBackgroundColor,
     isFrontpage: isFrontpage,
+    underTitle: bannerTitle,
   }
 
   const { activeLocale } = useI18n()
@@ -149,7 +152,6 @@ export const StandaloneLayout = ({
           key="twitterDescription"
         />
 
-        {/*  TODO: Maybe we should also check if the image is an svg or other invalid formats */}
         {/* Image */}
         {featuredImage?.url && (
           <>

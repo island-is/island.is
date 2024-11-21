@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import { Box, Stack } from '@island.is/island-ui/core'
 import { renderSlice } from '@island.is/web/components'
 import { SLICE_SPACING } from '@island.is/web/constants'
@@ -8,6 +10,7 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 import { StandaloneLayout } from '@island.is/web/layouts/organization/standalone'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -28,8 +31,18 @@ const StandaloneHome: Screen<
   StandaloneHomeProps,
   StandaloneHomeScreenContext
 > = ({ organizationPage, namespace }) => {
+  const organizationNamespace = useMemo(() => {
+    return JSON.parse(organizationPage.organization?.namespace?.fields || '{}')
+  }, [organizationPage.organization?.namespace?.fields])
+
+  const n = useNamespace(organizationNamespace)
+
   return (
-    <StandaloneLayout organizationPage={organizationPage} isFrontpage={true}>
+    <StandaloneLayout
+      organizationPage={organizationPage}
+      isFrontpage={true}
+      bannerTitle={n('bannerTitle', '')}
+    >
       <Stack space={SLICE_SPACING}>
         {organizationPage.slices.map((slice) => {
           return (
