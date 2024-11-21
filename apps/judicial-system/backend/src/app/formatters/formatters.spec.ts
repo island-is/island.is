@@ -15,6 +15,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
+  filterWhitelistEmails,
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
@@ -1980,5 +1981,40 @@ describe('formatDefenderResubmittedToCourtEmailNotification', () => {
       'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="https://rettarvorslugatt.island.is/overviewUrl">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
     )
     expect(result.subject).toEqual('Krafa í máli R-2022/999')
+  })
+})
+
+describe('filterWhitelistEmails', () => {
+  const emails = [
+    'test@rvg.is',
+    'test2@rvg.is',
+    'test3@rvg.is',
+    'test4@example.com',
+  ]
+
+  it('should return only whitelisted emails', () => {
+    const whitelist = `${emails[0]}, ${emails[2]}`
+    const domainWhitelist = 'example.com'
+
+    const result = filterWhitelistEmails(emails, domainWhitelist, whitelist)
+
+    expect(result).toEqual([emails[0], emails[2], emails[3]])
+  })
+
+  it('should return empty array if no emails are whitelisted', () => {
+    const whitelist = ''
+    const domainWhitelist = ''
+
+    const result = filterWhitelistEmails(emails, domainWhitelist, whitelist)
+
+    expect(result).toEqual([])
+  })
+  it('should return domain whitelisted emails', () => {
+    const whitelist = ''
+    const domainWhitelist = 'rvg.is'
+
+    const result = filterWhitelistEmails(emails, domainWhitelist, whitelist)
+
+    expect(result).toEqual([emails[0], emails[1], emails[2]])
   })
 })

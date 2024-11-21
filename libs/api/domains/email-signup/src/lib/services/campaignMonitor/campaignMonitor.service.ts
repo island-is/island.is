@@ -35,7 +35,12 @@ export class CampaignMonitorSignupService {
     const obj = Object.fromEntries(map)
 
     return axios
-      .post(url, obj, { headers: { Authorization: authHeader } })
+      .post(url, obj, {
+        headers: {
+          Authorization: authHeader,
+          'Content-Type': 'application/json',
+        },
+      })
       .then((response) => {
         return {
           subscribed: response?.data?.result === 'error' ? false : true,
