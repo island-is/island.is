@@ -9,11 +9,11 @@ import { dateFormat } from '@island.is/shared/constants'
 import InfiniteScroll from 'react-infinite-scroller'
 
 import { m } from '../../lib/messages'
-import { useUpdateUserProfileMutation } from './User.generated'
+import { GetAdminNotificationsQuery, useUpdateUserProfileMutation } from './User.generated'
 import { UpdateUserProfileInput } from '@island.is/api/schema'
 import React from 'react'
 import { isValidDate } from '@island.is/shared/utils'
-import {useGetAdminNotificationsQuery,  } from './User.generated'
+import {useGetAdminNotificationsQuery} from './User.generated'
 import { UserProfileResult } from './User.loader'
 import { Problem } from '@island.is/react-spa/shared'
 
@@ -62,7 +62,7 @@ const User = () => {
           after: notifications?.adminNotifications?.pageInfo.endCursor ?? undefined,
         },
       },
-      updateQuery: (prev, { fetchMoreResult }) => {
+      updateQuery: (prev, { fetchMoreResult }): GetAdminNotificationsQuery => {
         return {
           adminNotifications: {
             ...fetchMoreResult.adminNotifications,
@@ -70,7 +70,7 @@ const User = () => {
               ...(prev.adminNotifications?.data || []),
               ...(fetchMoreResult.adminNotifications?.data || []),
             ],
-          },
+          } as GetAdminNotificationsQuery['adminNotifications'],
 
         }
       },
