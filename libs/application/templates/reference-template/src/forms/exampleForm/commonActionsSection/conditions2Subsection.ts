@@ -7,14 +7,10 @@ import {
 
 export const conditions2Subsection = buildSubSection({
   condition: (answers) => {
-    console.log(answers)
-
     const checkbox2Value = getValueViaPath<Array<string>>(
       answers,
       'conditions2Checkbox',
     )
-
-    console.log(checkbox2Value)
 
     return checkbox2Value ? checkbox2Value[0] === YES : false
   },

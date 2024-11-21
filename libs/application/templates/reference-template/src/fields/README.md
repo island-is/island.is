@@ -4,7 +4,7 @@ This folder contains all custom components that are used by the application.
 
 ## Organisation
 
-- All components should be in a folder that holds the .tsx file and the .css.ts file.
+- All components should be in a folder that holds all files for that component. This includes the .tsx file, possibly a .css.ts file and maybe others.
   The folders should be named like the component, but with the first letter in lowercase (camelCase), and then the .tsx and .css.ts files should be capitalized (PascalCase).
 - The folder should have an index.ts file that re-exports all the components.
 - The index.ts file in the /src folder should then re-export the components in the /fields folder.

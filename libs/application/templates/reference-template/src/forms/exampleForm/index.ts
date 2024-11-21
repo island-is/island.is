@@ -23,6 +23,7 @@ import { dividerSection } from './dividerSection/dividerSection'
 import { keyValueSection } from './keyValueSection/keyValueSection'
 import { commonActionsSection } from './commonActionsSection'
 import { customSection } from './customSection/customSection'
+import { overviewSection } from './overviewSection/overviewSection'
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',
   title: 'Main form',
@@ -46,6 +47,7 @@ export const ExampleForm: Form = buildForm({
     actionCardSection,
     keyValueSection,
     customSection,
+    overviewSection,
     buildSection({
       id: 'confirmation',
       title: 'Staðfesta',
