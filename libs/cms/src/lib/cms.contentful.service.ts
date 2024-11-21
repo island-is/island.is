@@ -35,7 +35,6 @@ import { ContentfulRepository, localeMap } from './contentful.repository'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
 import { mapUrl, Url } from './models/url.model'
-import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
 import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
 import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
 import {
@@ -78,10 +77,16 @@ import { mapImage } from './models/image.model'
 import { EmailSignup, mapEmailSignup } from './models/emailSignup.model'
 import { GetTabSectionInput } from './dto/getTabSection.input'
 import { mapTabSection, TabSection } from './models/tabSection.model'
-import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { GenericTag, mapGenericTag } from './models/genericTag.model'
 import { GetEmailSignupInput } from './dto/getEmailSignup.input'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
+import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
+import { GetGenericTagsInTagGroupsInput } from './dto/getGenericTagsInTagGroups.input'
+import { Grant, mapGrant } from './models/grant.model'
+import { GrantList } from './models/grantList.model'
+import { mapManual } from './models/manual.model'
+import { mapServiceWebPage } from './models/serviceWebPage.model'
+import { mapEvent } from './models/event.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -90,20 +95,42 @@ const errorHandler = (name: string) => {
   }
 }
 
-const ArticleFields = [
-  // we want to exclude relatedArticles because it's a self-referencing
-  // relation and selecting related articles to a depth of 10 would make the
-  // response huge
-  'sys',
-  'fields.slug',
-  'fields.title',
-  'fields.shortTitle',
-  'fields.content',
-  'fields.subgroup',
-  'fields.group',
-  'fields.category',
-  'fields.subArticles',
-].join(',')
+const ArticleFields = (
+  [
+    // we want to exclude relatedArticles because it's a self-referencing
+    // relation and selecting related articles to a depth of 10 would make the
+    // response huge
+    'sys',
+    'fields.activeTranslations',
+    'fields.alertBanner',
+    'fields.category',
+    'fields.content',
+    'fields.contentStatus',
+    'fields.featuredImage',
+    'fields.group',
+    'fields.importance',
+    'fields.intro',
+    'fields.organization',
+    'fields.otherCategories',
+    'fields.otherGroups',
+    'fields.otherSubgroups',
+    'fields.processEntry',
+    'fields.processEntryButtonText',
+    'fields.relatedContent',
+    'fields.relatedOrganization',
+    'fields.responsibleParty',
+    'fields.shortTitle',
+    'fields.showTableOfContents',
+    'fields.signLanguageVideo',
+    'fields.slug',
+    'fields.stepper',
+    'fields.subArticles',
+    'fields.subgroup',
+    'fields.title',
+    'fields.userStories',
+    'fields.keywords',
+  ] as ('sys' | `fields.${keyof types.IArticle['fields']}`)[]
+).join(',')
 
 @Injectable()
 export class CmsContentfulService {
@@ -378,8 +405,9 @@ export class CmsContentfulService {
   ): Promise<OrganizationPage> {
     const params = {
       ['content_type']: 'organizationPage',
-      include: 10,
+      include: 5,
       'fields.slug': slug,
+      limit: 1,
     }
 
     const result = await this.contentfulRepository
@@ -399,10 +427,11 @@ export class CmsContentfulService {
   ): Promise<OrganizationSubpage> {
     const params = {
       ['content_type']: 'organizationSubpage',
-      include: 10,
+      include: 5,
       'fields.slug': slug,
       'fields.organizationPage.sys.contentType.sys.id': 'organizationPage',
       'fields.organizationPage.fields.slug': organizationSlug,
+      limit: 1,
     }
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.IOrganizationSubpageFields>(lang, params)
@@ -412,6 +441,23 @@ export class CmsContentfulService {
       (result.items as types.IOrganizationSubpage[]).map(
         mapOrganizationSubpage,
       )[0] ?? null
+    )
+  }
+
+  async getServiceWebPage(slug: string, lang: string) {
+    const params = {
+      ['content_type']: 'serviceWebPage',
+      include: 5,
+      'fields.slug': slug,
+      limit: 1,
+    }
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IServiceWebPageFields>(lang, params)
+      .catch(errorHandler('getServiceWebPage'))
+
+    return (
+      (result.items as types.IServiceWebPage[]).map(mapServiceWebPage)[0] ??
+      null
     )
   }
 
@@ -467,6 +513,7 @@ export class CmsContentfulService {
     const params = {
       ['content_type']: 'projectPage',
       'fields.slug': slug,
+      limit: 1,
     }
 
     const result = await this.contentfulRepository
@@ -483,7 +530,8 @@ export class CmsContentfulService {
       ['content_type']: 'article',
       'fields.slug': slug,
       select: ArticleFields,
-      include: 10,
+      include: 5,
+      limit: 1,
     }
 
     const result = await this.contentfulRepository
@@ -542,8 +590,9 @@ export class CmsContentfulService {
   async getNews(lang: string, slug: string): Promise<News | null> {
     const params = {
       ['content_type']: 'news',
-      include: 10,
+      include: 5,
       'fields.slug': slug,
+      limit: 1,
     }
 
     const result = await this.contentfulRepository
@@ -551,6 +600,49 @@ export class CmsContentfulService {
       .catch(errorHandler('getNews'))
 
     return (result.items as types.INews[]).map(mapNews)[0] ?? null
+  }
+
+  async getGrant(lang: string, id: string): Promise<Grant | null> {
+    const params = {
+      ['content_type']: 'grant',
+      'fields.grantApplicationId': id,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IGrantFields>(lang, params)
+      .catch(errorHandler('getGrant'))
+
+    return (result.items as types.IGrant[]).map(mapGrant)[0] ?? null
+  }
+
+  async getSingleEvent(lang: string, slug: string) {
+    const params = {
+      ['content_type']: 'event',
+      include: 5,
+      'fields.slug': slug,
+      limit: 1,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IEventFields>(lang, params)
+      .catch(errorHandler('getSingleEvent'))
+
+    return (result.items as types.IEvent[]).map(mapEvent)[0] ?? null
+  }
+
+  async getSingleManual(lang: string, slug: string) {
+    const params = {
+      ['content_type']: 'manual',
+      include: 5,
+      'fields.slug': slug,
+      limit: 1,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IManualFields>(lang, params)
+      .catch(errorHandler('getSingleManual'))
+
+    return (result.items as types.IManual[]).map(mapManual)[0] ?? null
   }
 
   async getContentSlug({
@@ -828,8 +920,9 @@ export class CmsContentfulService {
     const params = {
       ['content_type']: 'frontpage',
       'fields.pageIdentifier': pageIdentifier,
-      include: 10,
+      include: 5,
       order: '-sys.createdAt',
+      limit: 1,
     }
 
     const result = await this.contentfulRepository
@@ -1032,5 +1125,30 @@ export class CmsContentfulService {
       .catch(errorHandler('getGenericTag'))
 
     return (result.items as types.IGenericTag[]).map(mapGenericTag)[0] ?? null
+  }
+
+  async getGenericTagsInTagGroups({
+    lang = 'is',
+    tagGroupSlugs,
+  }: GetGenericTagsInTagGroupsInput): Promise<Array<GenericTag> | null> {
+    let params
+    if (tagGroupSlugs) {
+      params = {
+        ['content_type']: 'genericTag',
+        'fields.genericTagGroup.fields.slug[in]': tagGroupSlugs.join(','),
+        'fields.genericTagGroup.sys.contentType.sys.id': 'genericTagGroup',
+      }
+    } else {
+      params = {
+        ['content_type']: 'genericTag',
+        'fields.genericTagGroup.sys.contentType.sys.id': 'genericTagGroup',
+      }
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IGenericTagFields>(lang, params)
+      .catch(errorHandler('getGenericTag'))
+
+    return (result.items as types.IGenericTag[]).map(mapGenericTag)
   }
 }

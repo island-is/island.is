@@ -30,6 +30,7 @@ query Case($input: CaseQueryInput!) {
       serviceRequirement
       verdictViewDate
       verdictAppealDeadline
+      verdictAppealDate
       isVerdictAppealDeadlineExpired
       subpoenaType
       subpoenas {
@@ -312,6 +313,43 @@ query Case($input: CaseQueryInput!) {
       prosecutorsOffice {
         id
         name
+      }
+      defendants {
+        id
+        noNationalId
+        nationalId
+        name
+        gender
+        address
+        citizenship
+        defenderName
+        defenderNationalId
+        defenderEmail
+        defenderPhoneNumber
+        defenderChoice
+        defendantPlea
+        requestedDefenderChoice
+        requestedDefenderNationalId
+        requestedDefenderName
+        isDefenderChoiceConfirmed
+        caseFilesSharedWithDefender
+        serviceRequirement
+        verdictViewDate
+        verdictAppealDeadline
+        verdictAppealDate
+        isVerdictAppealDeadlineExpired
+        subpoenaType
+        subpoenas {
+          id
+          created
+          serviceStatus
+          serviceDate
+          servedBy
+          comment
+          defenderNationalId
+          caseId
+          subpoenaId
+        }
       }
       caseFiles {
         id

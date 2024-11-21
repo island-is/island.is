@@ -14,12 +14,14 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 
 jest.mock('../../../../factories')
@@ -37,21 +39,19 @@ type GivenWhenThen = (
 
 describe('InternalNotificationController - Send defender assigned notifications', () => {
   const userId = uuid()
+
+  const { defender } = createTestUsers(['defender'])
+
   const court = { name: 'Héraðsdómur Reykjavíkur' } as Case['court']
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
-  let mockNotificationModel: typeof Notification
   let givenWhenThen: GivenWhenThen
   let notificationDTO: CaseNotificationDto
 
   beforeEach(async () => {
-    const {
-      emailService,
-      notificationConfig,
-      notificationModel,
-      internalNotificationController,
-    } = await createTestingNotificationModule()
+    const { emailService, notificationConfig, internalNotificationController } =
+      await createTestingNotificationModule()
 
     notificationDTO = {
       user: { id: userId } as User,
@@ -60,7 +60,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
 
     mockEmailService = emailService
     mockConfig = notificationConfig
-    mockNotificationModel = notificationModel
 
     givenWhenThen = async (
       caseId: string,
@@ -83,361 +82,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
     }
   })
 
-  describe('when sending defender assigned notifications', () => {
-    const caseId = uuid()
-
-    const defendant = {
-      defenderNationalId: '1234567890',
-      defenderEmail: 'recipient@gmail.com',
-      defenderName: 'John Doe',
-    }
-    const theCase = {
-      id: caseId,
-      type: CaseType.INDICTMENT,
-      court,
-      courtCaseNumber: 'S-123/2022',
-      defendants: [defendant],
-    } as Case
-
-    beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, notificationDTO)
-    })
-
-    it('should send correct email', () => {
-      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
-      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
-        from: {
-          name: mockConfig.email.fromName,
-          address: mockConfig.email.fromEmail,
-        },
-        to: [
-          {
-            name: defendant.defenderName,
-            address: defendant.defenderEmail,
-          },
-        ],
-        replyTo: {
-          name: mockConfig.email.replyToName,
-          address: mockConfig.email.replyToEmail,
-        },
-        attachments: undefined,
-        subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
-        text: expect.anything(), // same as html but stripped html tags
-        html: `Héraðsdómur Reykjavíkur hefur skráð þig verjanda í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
-      })
-    })
-  })
-
-  describe('when the case has civil claims and the advocate is a lawyer', () => {
-    const caseId = uuid()
-    const civilClaimant = {
-      hasSpokesperson: true,
-      spokespersonNationalId: '1234567890',
-      spokespersonEmail: 'recipient@gmail.com',
-      spokespersonName: 'John Doe',
-      spokespersonIsLawyer: true,
-    }
-    const theCase = {
-      id: caseId,
-      type: CaseType.INDICTMENT,
-      court,
-      courtCaseNumber: 'S-123/2022',
-      civilClaimants: [civilClaimant],
-    } as Case
-
-    beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, notificationDTO)
-    })
-
-    it('should send correct email', () => {
-      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
-      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
-        from: {
-          name: mockConfig.email.fromName,
-          address: mockConfig.email.fromEmail,
-        },
-        to: [
-          {
-            name: civilClaimant.spokespersonName,
-            address: civilClaimant.spokespersonEmail,
-          },
-        ],
-        replyTo: {
-          name: mockConfig.email.replyToName,
-          address: mockConfig.email.replyToEmail,
-        },
-        attachments: undefined,
-        subject: `Skráning í máli ${theCase.courtCaseNumber}`,
-        text: expect.anything(), // same as html but stripped html tags
-        html: `Héraðsdómur Reykjavíkur hefur skráð þig lögmann einkaréttarkröfuhafa í máli ${theCase.courtCaseNumber}.<br /><br />Sjá nánar á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
-      })
-    })
-  })
-
-  describe('when the case has civil claims and the advocate is a legal rights protector', () => {
-    const caseId = uuid()
-    const civilClaimant = {
-      hasSpokesperson: true,
-      spokespersonNationalId: '1234567890',
-      spokespersonEmail: 'recipient@gmail.com',
-      spokespersonName: 'John Doe',
-      spokespersonIsLawyer: false,
-    }
-    const theCase = {
-      id: caseId,
-      type: CaseType.INDICTMENT,
-      court,
-      courtCaseNumber: 'S-123/2022',
-      civilClaimants: [civilClaimant],
-    } as Case
-
-    beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, notificationDTO)
-    })
-
-    it('should send correct email', () => {
-      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
-      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
-        from: {
-          name: mockConfig.email.fromName,
-          address: mockConfig.email.fromEmail,
-        },
-        to: [
-          {
-            name: civilClaimant.spokespersonName,
-            address: civilClaimant.spokespersonEmail,
-          },
-        ],
-        replyTo: {
-          name: mockConfig.email.replyToName,
-          address: mockConfig.email.replyToEmail,
-        },
-        attachments: undefined,
-        subject: `Skráning í máli ${theCase.courtCaseNumber}`,
-        text: expect.anything(), // same as html but stripped html tags
-        html: `Héraðsdómur Reykjavíkur hefur skráð þig réttargæslumann einkaréttarkröfuhafa í máli ${theCase.courtCaseNumber}.<br /><br />Sjá nánar á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
-      })
-    })
-  })
-
-  describe('when the case has civil claims and civil claimant does not have representation', () => {
-    const caseId = uuid()
-    const civilClaimant = {
-      hasSpokesperson: false,
-    }
-    const theCase = {
-      id: caseId,
-      type: CaseType.INDICTMENT,
-      court,
-      courtCaseNumber: 'S-123/2022',
-      civilClaimants: [civilClaimant],
-    } as Case
-
-    beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, notificationDTO)
-    })
-
-    it('should send correct email', () => {
-      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('when sending defender data is missing', () => {
-    const caseId = uuid()
-    const theCase = {
-      type: CaseType.INDICTMENT,
-    } as Case
-    let then: Then
-
-    beforeEach(async () => {
-      const mockCreate = mockNotificationModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce({} as Notification)
-      then = await givenWhenThen(caseId, theCase, notificationDTO)
-    })
-
-    it('should not send notification', () => {
-      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
-      expect(mockNotificationModel.create).not.toHaveBeenCalled()
-      expect(then.result).toStrictEqual({ delivered: true })
-    })
-  })
-
-  describe('record notification', () => {
-    const caseId = uuid()
-    const defendant = {
-      defenderEmail: 'recipient@gmail.com',
-      defenderNationalId: '1234567890',
-      defenderName: 'Sibbi',
-    }
-    const theCase = {
-      id: caseId,
-      type: CaseType.INDICTMENT,
-      defendants: [defendant],
-    } as Case
-
-    beforeEach(async () => {
-      const mockCreate = mockNotificationModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce({} as Notification)
-      await givenWhenThen(caseId, theCase, notificationDTO)
-    })
-
-    it('should record notification', () => {
-      expect(mockNotificationModel.create).toHaveBeenCalledTimes(1)
-      expect(mockNotificationModel.create).toHaveBeenCalledWith({
-        caseId,
-        type: notificationDTO.type,
-        recipients: [
-          {
-            address: defendant.defenderEmail,
-            success: true,
-          },
-        ],
-      })
-    })
-  })
-
-  describe('returns that the notification was sent', () => {
-    const caseId = uuid()
-    const theCase = {
-      id: caseId,
-      type: CaseType.INDICTMENT,
-      defendants: [
-        {
-          defenderEmail: 'recipient@gmail.com',
-          defenderNationalId: '1234567890',
-          defenderName: 'Sibbi',
-        },
-      ],
-    } as Case
-    let then: Then
-
-    beforeEach(async () => {
-      const mockCreate = mockNotificationModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce({} as Notification)
-      then = await givenWhenThen(caseId, theCase, notificationDTO)
-    })
-
-    it('should return notification was sent', () => {
-      expect(then.result).toEqual(expect.objectContaining({ delivered: true }))
-    })
-  })
-
-  describe('only send notification once to defender', () => {
-    const caseId = uuid()
-    const defendant = {
-      defenderEmail: 'recipient@gmail.com',
-      defenderNationalId: '1234567890',
-      defenderName: 'Sibbi',
-    }
-    const theCase = {
-      id: caseId,
-      type: CaseType.INDICTMENT,
-      defendants: [defendant],
-    } as Case
-    let then: Then
-
-    beforeEach(async () => {
-      const mockCreate = mockNotificationModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce({} as Notification)
-
-      then = await givenWhenThen(
-        caseId,
-        {
-          ...theCase,
-          notifications: [
-            {
-              caseId,
-              type: notificationDTO.type,
-              recipients: [{ address: defendant.defenderEmail, success: true }],
-            },
-          ],
-        } as Case,
-        notificationDTO,
-      )
-    })
-
-    it('should return notification was not sent', () => {
-      expect(mockNotificationModel.create).not.toHaveBeenCalled()
-      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
-      expect(then.result).toEqual(expect.objectContaining({ delivered: true }))
-    })
-  })
-
-  describe('should send email to every defender', () => {
-    const caseId = uuid()
-    const defender1 = { defenderEmail: 'some-email@island.is' }
-    const defender2 = { defenderEmail: 'other-email@island.is' }
-    const defendants = [defender1, defender2]
-    const theCase = {
-      id: caseId,
-      type: CaseType.INDICTMENT,
-      defendants,
-    } as Case
-    let then: Then
-
-    beforeEach(async () => {
-      const mockCreate = mockNotificationModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce({} as Notification)
-      then = await givenWhenThen(caseId, theCase, notificationDTO)
-    })
-
-    it('should return notification was sent', () => {
-      expect(mockNotificationModel.create).toHaveBeenCalled()
-      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
-      expect(then.result).toEqual(expect.objectContaining({ delivered: true }))
-    })
-  })
-
-  describe('should only send one email to each defender', () => {
-    const caseId = uuid()
-    const defender1 = {
-      defenderNationalId: '1234567890',
-      defenderEmail: 'some-email@island.is',
-      defenderName: 'Saul',
-    }
-    const defendants = [defender1, defender1]
-    const theCase = {
-      id: caseId,
-      type: CaseType.INDICTMENT,
-      defendants,
-      court,
-      courtCaseNumber: 'S-123/2022',
-    } as Case
-    let then: Then
-
-    beforeEach(async () => {
-      const mockCreate = mockNotificationModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce({} as Notification)
-      then = await givenWhenThen(caseId, theCase, notificationDTO)
-    })
-
-    it('should return notification was sent', () => {
-      expect(mockNotificationModel.create).toHaveBeenCalled()
-      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
-      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
-        from: {
-          name: mockConfig.email.fromName,
-          address: mockConfig.email.fromEmail,
-        },
-        to: [
-          {
-            name: defender1.defenderName,
-            address: defender1.defenderEmail,
-          },
-        ],
-        replyTo: {
-          name: mockConfig.email.replyToName,
-          address: mockConfig.email.replyToEmail,
-        },
-        attachments: undefined,
-        subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
-        text: expect.anything(), // same as html but stripped html tags
-        html: `Héraðsdómur Reykjavíkur hefur skráð þig verjanda í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg á <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
-      })
-      expect(then.result).toEqual(expect.objectContaining({ delivered: true }))
-    })
-  })
-
   describe('when sending assigned defender notifications in a restriction case', () => {
     const caseId = uuid()
     const theCase = {
@@ -445,8 +89,8 @@ describe('InternalNotificationController - Send defender assigned notifications'
       type: CaseType.ADMISSION_TO_FACILITY,
       court,
       courtCaseNumber: 'R-123/2022',
-      defenderEmail: 'recipient@gmail.com',
-      defenderName: 'John Doe',
+      defenderEmail: defender.email,
+      defenderName: defender.name,
       defenderNationalId: '1234567890',
       dateLogs: [{ date: new Date(), dateType: DateType.ARRAIGNMENT_DATE }],
     } as Case
@@ -487,8 +131,8 @@ describe('InternalNotificationController - Send defender assigned notifications'
       type: CaseType.ADMISSION_TO_FACILITY,
       court,
       courtCaseNumber: 'R-123/2022',
-      defenderEmail: 'recipient@gmail.com',
-      defenderName: 'John Doe',
+      defenderEmail: defender.email,
+      defenderName: defender.name,
       dateLogs: [{ date: new Date(), dateType: DateType.ARRAIGNMENT_DATE }],
     } as Case
 
@@ -528,8 +172,8 @@ describe('InternalNotificationController - Send defender assigned notifications'
       type: CaseType.PHONE_TAPPING,
       court,
       courtCaseNumber: 'R-123/2022',
-      defenderEmail: 'recipient@gmail.com',
-      defenderName: 'John Doe',
+      defenderEmail: defender.email,
+      defenderName: defender.name,
       dateLogs: [{ date: new Date(), dateType: DateType.ARRAIGNMENT_DATE }],
     } as Case
 

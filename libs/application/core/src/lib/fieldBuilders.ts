@@ -44,8 +44,10 @@ import {
   AccordionField,
   BankAccountField,
   SliderField,
+  MaybeWithApplication,
+  MaybeWithApplicationAndFieldAndLocale,
 } from '@island.is/application/types'
-
+import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
 import { SpanType, BoxProps } from '@island.is/island-ui/core/types'
 import { coreDefaultFieldMessages } from './messages'
@@ -116,6 +118,8 @@ export const buildDateField = (
   const {
     maxDate,
     minDate,
+    minYear,
+    maxYear,
     excludeDates,
     placeholder,
     backgroundColor = 'blue',
@@ -128,6 +132,8 @@ export const buildDateField = (
     placeholder,
     maxDate,
     minDate,
+    minYear,
+    maxYear,
     excludeDates,
     type: FieldTypes.DATE,
     component: FieldComponents.DATE,
@@ -525,15 +531,25 @@ export const buildSubmitField = (data: {
 }
 
 export const buildFieldOptions = (
-  maybeOptions: MaybeWithApplicationAndField<Option[]>,
+  maybeOptions: MaybeWithApplicationAndFieldAndLocale<Option[]>,
   application: Application,
   field: Field,
+  locale: Locale,
 ): Option[] => {
   if (typeof maybeOptions === 'function') {
-    return maybeOptions(application, field)
+    return maybeOptions(application, field, locale)
   }
-
   return maybeOptions
+}
+
+export const buildFieldRequired = (
+  application: Application,
+  maybeRequired?: MaybeWithApplication<boolean>,
+) => {
+  if (typeof maybeRequired === 'function') {
+    return maybeRequired(application)
+  }
+  return maybeRequired
 }
 
 export const buildRedirectToServicePortalField = (data: {

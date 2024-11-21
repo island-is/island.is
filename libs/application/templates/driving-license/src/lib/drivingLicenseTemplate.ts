@@ -43,13 +43,17 @@ import {
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
 import { hasCompletedPrerequisitesStep } from './utils'
-import { GlassesCheckApi, SyslumadurPaymentCatalogApi } from '../dataProviders'
+import {
+  GlassesCheckApi,
+  MockableSyslumadurPaymentCatalogApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { Pickup } from './types'
 
 const getCodes = (application: Application) => {
   const applicationFor = getValueViaPath<
-    'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'
+    'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65' | 'B-advanced'
   >(application.answers, 'applicationFor', 'B-full')
 
   const pickup = getValueViaPath<Pickup>(application.answers, 'pickup')
@@ -138,6 +142,8 @@ const template: ApplicationTemplate<
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
                   allow65Renewal:
                     featureFlags[DrivingLicenseFeatureFlags.ALLOW_65_RENEWAL],
+                  allowAdvanced:
+                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_ADVANCED],
                 })
               },
               write: 'all',
@@ -147,6 +153,7 @@ const template: ApplicationTemplate<
                 TeachersApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
+                MockableSyslumadurPaymentCatalogApi,
                 GlassesCheckApi,
                 JurisdictionApi,
                 CurrentLicenseApi.configure({

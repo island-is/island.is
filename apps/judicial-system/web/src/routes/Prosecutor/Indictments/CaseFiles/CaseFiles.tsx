@@ -2,7 +2,7 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
+import { Box, InputFileUpload } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { isTrafficViolationCase } from '@island.is/judicial-system/types'
@@ -13,6 +13,7 @@ import {
   FormFooter,
   PageHeader,
   PageLayout,
+  PageTitle,
   PdfButton,
   ProsecutorCaseInfo,
   SectionHeading,
@@ -49,11 +50,6 @@ const CaseFiles = () => {
           file.category === CaseFileCategory.INDICTMENT &&
           file.status === 'done',
       )) &&
-    uploadFiles.some(
-      (file) =>
-        file.category === CaseFileCategory.CRIMINAL_RECORD &&
-        file.status === 'done',
-    ) &&
     allFilesDoneOrError
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -72,11 +68,7 @@ const CaseFiles = () => {
         title={formatMessage(titles.prosecutor.indictments.caseFiles)}
       />
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.caseFiles.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.caseFiles.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         {!isTrafficViolationCaseCheck && (
           <Box component="section" marginBottom={5}>
@@ -107,7 +99,6 @@ const CaseFiles = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.caseFiles.criminalRecordSection)}
-            required
           />
           <InputFileUpload
             fileList={uploadFiles.filter(

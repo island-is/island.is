@@ -7,7 +7,8 @@
     "charts": "node -r esbuild-register src/cli/generate-chart-values.ts",
     "update": "yarn update:packagejson",
     "update:packagejson": "node -r esbuild-register scripts/update-package-json.ts",
-    "cli": "node -r esbuild-register src/cli/cli.ts"
+    "cli": "echo 'Please use `yarn infra` instead of `yarn cli`' && exit 1",
+    "infra": "node -r esbuild-register src/cli/cli.ts"
   },
   "license": "MIT",
   "devDependencies": {
@@ -29,8 +30,10 @@
     "@types/lodash": "4.14.160",
     "aws-sdk": "^2.1003.0",
     "glob": "10.3.3",
-    "js-yaml": "4.0.0",
+    "json-refs": "3.0.15",
+    "json-schema-to-zod": "2.4.1",
     "lodash": "4.17.21",
+    "yaml": "2.6.0",
     "yargs": "17.7.2"
   },
   "volta": {

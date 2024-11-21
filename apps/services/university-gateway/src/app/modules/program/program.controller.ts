@@ -183,7 +183,7 @@ export class ProgramController {
   @BypassAuth()
   @Get('programs/:id')
   @Documentation({
-    description: 'Get program (and courses) by ID',
+    description: 'Get program by ID',
     response: {
       status: 200,
       type: Program,

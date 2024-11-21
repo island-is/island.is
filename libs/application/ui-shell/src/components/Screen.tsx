@@ -10,7 +10,7 @@ import React, {
 import { ApolloError, useMutation } from '@apollo/client'
 import {
   coreMessages,
-  formatText,
+  formatTextWithLocale,
   mergeAnswers,
 } from '@island.is/application/core'
 import {
@@ -55,6 +55,7 @@ import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
 import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
 import { MessageDescriptor } from 'react-intl'
+import { Locale } from '@island.is/shared/types'
 
 type ScreenProps = {
   activeScreenIndex: number
@@ -345,7 +346,12 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
             marginBottom={1}
             {...(shouldCreateTopLevelRegion ? { id: screen.id } : {})}
           >
-            {formatText(screen.title, application, formatMessage)}
+            {formatTextWithLocale(
+              screen.title,
+              application,
+              locale as Locale,
+              formatMessage,
+            )}
           </Text>
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
@@ -375,7 +381,6 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                 application={application}
                 addExternalData={addExternalData}
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
-                enableMockPayment={screen.enableMockPayment}
                 applicationId={applicationId}
                 externalData={externalData}
                 externalDataProvider={screen}

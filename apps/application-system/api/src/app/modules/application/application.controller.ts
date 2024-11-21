@@ -40,7 +40,6 @@ import {
   FormValue,
   ExternalData,
   TemplateApi,
-  PdfTypes,
   ApplicationStatus,
   ApplicationTemplate,
   ApplicationContext,
@@ -69,17 +68,12 @@ import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
-import { GeneratePdfDto } from './dto/generatePdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
-import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
-import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
 import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
 import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
-import { RequestFileSignatureResponseDto } from './dto/requestFileSignature.response.dto'
-import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { verifyToken } from './utils/tokenUtils'
 import { getApplicationLifecycle } from './utils/application'
@@ -891,140 +885,6 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Scopes(ApplicationScope.write)
-  @Put('applications/:id/generatePdf')
-  @ApiParam({
-    name: 'id',
-    type: String,
-    required: true,
-    description: 'The id of the application to create a pdf for',
-    allowEmptyValue: false,
-  })
-  @ApiOkResponse({ type: PresignedUrlResponseDto })
-  async generatePdf(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() input: GeneratePdfDto,
-    @CurrentUser() user: User,
-  ): Promise<PresignedUrlResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
-    const url = await this.fileService.generatePdf(
-      existingApplication,
-      input.type,
-    )
-
-    this.auditService.audit({
-      auth: user,
-      action: 'generatePdf',
-      resources: existingApplication.id,
-      meta: { type: input.type },
-    })
-
-    return { url }
-  }
-
-  @Scopes(ApplicationScope.write)
-  @Put('applications/:id/requestFileSignature')
-  @ApiParam({
-    name: 'id',
-    type: String,
-    required: true,
-    description:
-      'The id of the application which the file signature is requested for.',
-    allowEmptyValue: false,
-  })
-  @ApiOkResponse({ type: RequestFileSignatureResponseDto })
-  async requestFileSignature(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() input: RequestFileSignatureDto,
-    @CurrentUser() user: User,
-  ): Promise<RequestFileSignatureResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
-    const { controlCode, documentToken } =
-      await this.fileService.requestFileSignature(
-        existingApplication,
-        input.type,
-      )
-
-    this.auditService.audit({
-      auth: user,
-      action: 'requestFileSignature',
-      resources: existingApplication.id,
-      meta: { type: input.type },
-    })
-
-    return { controlCode, documentToken }
-  }
-
-  @Scopes(ApplicationScope.write)
-  @Put('applications/:id/uploadSignedFile')
-  @ApiParam({
-    name: 'id',
-    type: String,
-    required: true,
-    description: 'The id of the application which the file was created for.',
-    allowEmptyValue: false,
-  })
-  @ApiOkResponse({ type: UploadSignedFileResponseDto })
-  async uploadSignedFile(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() input: UploadSignedFileDto,
-    @CurrentUser() user: User,
-  ): Promise<UploadSignedFileResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
-
-    await this.fileService.uploadSignedFile(
-      existingApplication,
-      input.documentToken,
-      input.type,
-    )
-
-    this.auditService.audit({
-      auth: user,
-      action: 'uploadSignedFile',
-      resources: existingApplication.id,
-      meta: { type: input.type },
-    })
-
-    return {
-      documentSigned: true,
-    }
-  }
-
-  @Scopes(ApplicationScope.read)
-  @Get('applications/:id/:pdfType/presignedUrl')
-  @ApiParam({
-    name: 'id',
-    type: String,
-    required: true,
-    description: 'The id of the application which the file was created for.',
-    allowEmptyValue: false,
-  })
-  @ApiOkResponse({ type: PresignedUrlResponseDto })
-  async getPresignedUrl(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Param('pdfType') type: PdfTypes,
-    @CurrentUser() user: User,
-  ): Promise<PresignedUrlResponseDto> {
-    const existingApplication =
-      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
-    const url = await this.fileService.getPresignedUrl(
-      existingApplication,
-      type,
-    )
-
-    this.auditService.audit({
-      auth: user,
-      action: 'getPresignedUrl',
-      resources: existingApplication.id,
-      meta: { type },
-    })
-
-    return { url }
-  }
-
   @Get('applications/:id/attachments/:attachmentKey/presigned-url')
   @Scopes(ApplicationScope.read)
   @Documentation({
@@ -1079,6 +939,7 @@ export class ApplicationController {
   async delete(
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() user: User,
+    @CurrentLocale() locale: Locale,
   ) {
     const { nationalId } = user
     const existingApplication =
@@ -1097,6 +958,53 @@ export class ApplicationController {
       )
     }
 
+    const template = await getApplicationTemplateByTypeId(
+      existingApplication.typeId,
+    )
+    if (template === null) {
+      throw new BadRequestException(
+        `No application template exists for type: ${existingApplication.typeId}`,
+      )
+    }
+
+    let onDeleteActions = new ApplicationTemplateHelper(
+      existingApplication,
+      template,
+    ).getOnDeleteStateAPIAction()
+    if (onDeleteActions) {
+      const namespaces = await getApplicationTranslationNamespaces(
+        existingApplication,
+      )
+      if (!Array.isArray(onDeleteActions)) {
+        onDeleteActions = [onDeleteActions]
+      }
+
+      const intl = await this.intlService.useIntl(namespaces, locale)
+      const deletingApplication = await this.templateApiActionRunner.run(
+        existingApplication,
+        onDeleteActions,
+        user,
+        locale,
+        intl.formatMessage,
+      )
+
+      for (const api of onDeleteActions) {
+        const result =
+          deletingApplication.externalData[api.externalDataId || api.action]
+
+        this.logger.debug(
+          `Performing action ${api.action} on ${JSON.stringify(
+            template.name,
+          )} ended with ${result.status}`,
+        )
+
+        if (result.status === 'failure' && api.throwOnError) {
+          const reason = result.reason ?? 'Unknown error'
+          throw new TemplateApiError(reason, 500)
+        }
+      }
+    }
+
     // delete charge in FJS
     await this.applicationChargeService.deleteCharge(existingApplication)
 
@@ -1111,5 +1019,12 @@ export class ApplicationController {
     )
 
     await this.applicationService.delete(existingApplication.id)
+
+    this.auditService.audit({
+      auth: user,
+      action: 'delete',
+      resources: existingApplication.id,
+      meta: { type: existingApplication.typeId },
+    })
   }
 }

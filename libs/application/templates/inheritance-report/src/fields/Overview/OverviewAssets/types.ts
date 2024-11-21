@@ -2,7 +2,7 @@ import { MessageDescriptor } from 'react-intl'
 
 export type SectionType = {
   title: MessageDescriptor | string
-  data: RowType[]
+  data?: RowType[]
   total?: string
   totalTitle?: MessageDescriptor | string
   showTotalFirst?: boolean

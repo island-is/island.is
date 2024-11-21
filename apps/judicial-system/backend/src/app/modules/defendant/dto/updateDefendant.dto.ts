@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsOptional,
   IsString,
+  MaxLength,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -24,11 +25,13 @@ export class UpdateDefendantDto {
   readonly noNationalId?: boolean
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly nationalId?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly name?: string
@@ -39,31 +42,37 @@ export class UpdateDefendantDto {
   readonly gender?: Gender
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly address?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly citizenship?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderName?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderEmail?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderPhoneNumber?: string
@@ -90,6 +99,12 @@ export class UpdateDefendantDto {
   readonly verdictViewDate?: Date
 
   @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
+  readonly verdictAppealDate?: Date
+
+  @IsOptional()
   @IsEnum(SubpoenaType)
   @ApiPropertyOptional({ enum: SubpoenaType })
   readonly subpoenaType?: SubpoenaType
@@ -100,11 +115,13 @@ export class UpdateDefendantDto {
   readonly requestedDefenderChoice?: DefenderChoice
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly requestedDefenderNationalId?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly requestedDefenderName?: string

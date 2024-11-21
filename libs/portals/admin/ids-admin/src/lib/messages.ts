@@ -77,6 +77,14 @@ export const m = defineMessages({
     id: 'ap.ids-admin:clients-description',
     defaultMessage: 'Here you can view and create applications.',
   },
+  needHelpTitle: {
+    id: 'ap.ids-admin:need-help-title',
+    defaultMessage: 'Do you need help?',
+  },
+  needHelpDescription: {
+    id: 'ap.ids-admin:need-help-description',
+    defaultMessage: 'Check out the documentation.',
+  },
   learnMore: {
     id: 'ap.ids-admin:learn-more',
     defaultMessage: 'Learn more',
@@ -532,6 +540,14 @@ export const m = defineMessages({
     defaultMessage:
       'List of permissions (scopes) the application can request during authentication. Applications can always request standard scopes like oidc, profile, email, phone and address.{br}{br}Here you can add permissions from the current tenant. For third party permissions, the owner must grant access to your application.',
   },
+  documentation: {
+    id: 'ap.ids-admin:documentation',
+    defaultMessage: 'Documentation',
+  },
+  documentationDescription: {
+    id: 'ap.ids-admin:documentation-description',
+    defaultMessage: 'Link to external documentation for IDS admin.',
+  },
   permissionsAdd: {
     id: 'ap.ids-admin:permissions-add',
     defaultMessage: 'Add permissions',
@@ -820,11 +836,11 @@ export const m = defineMessages({
   },
   successDeletingClient: {
     id: 'ap.ids-admin:success-deleting-client',
-    defaultMessage: 'Successfully deleted application',
+    defaultMessage: 'Successfully archived application',
   },
   delete: {
     id: 'ap.ids-admin:delete',
-    defaultMessage: 'Delete',
+    defaultMessage: 'Archive',
   },
   closeDeleteModal: {
     id: 'ap.ids-admin:close-delete-modal',
@@ -836,12 +852,12 @@ export const m = defineMessages({
   },
   deleteClient: {
     id: 'ap.ids-admin:delete-client-all-env',
-    defaultMessage: 'Delete application',
+    defaultMessage: 'Archive application',
   },
   deleteClientAlertMessage: {
     id: 'ap.ids-admin:delete-client-alert-message',
     defaultMessage:
-      'The client ID will be deleted from all available environments and cannot be reused. Authentications will stop working immediately for your application.',
+      'The client ID will be archived from all available environments and cannot be reused. Authentications will stop working immediately for your application.',
   },
   partiallyCreatedClient: {
     id: 'ap.ids-admin:partially-created-client',

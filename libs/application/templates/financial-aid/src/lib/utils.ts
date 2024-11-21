@@ -19,6 +19,7 @@ import { ApplicationStates } from './constants'
 import sortBy from 'lodash/sortBy'
 import * as m from '../lib/messages'
 import { AnswersSchema } from './dataSchema'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -79,6 +80,13 @@ export function findFamilyStatus(
 }
 
 export function hasActiveCurrentApplication(context: ApplicationContext) {
+  // On prod there should only be one active application per user
+  // When working with gervimaður we might need to have many active applications
+  const isProd = isRunningOnEnvironment('production')
+  if (!isProd) {
+    return false
+  }
+
   const { externalData } = context.application
   const currentApplication = getValueViaPath<CurrentApplication>(
     externalData,

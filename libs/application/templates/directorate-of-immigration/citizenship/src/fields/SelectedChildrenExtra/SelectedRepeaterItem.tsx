@@ -76,7 +76,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
     `,
     {
       onCompleted: (data) => {
-        const currentName = `${data.identity?.givenName} ${data.identity?.familyName}`
+        const currentName = data.identity?.name ?? ''
         setCurrentName(currentName)
         setValue(currentNameField, currentName)
       },

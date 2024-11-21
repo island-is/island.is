@@ -8,7 +8,7 @@ import { renderServiceEnvVars } from './render-env-vars'
 import { renderLocalServices, runLocalServices } from './render-local-mocks'
 
 const cli = yargs(process.argv.slice(2))
-  .scriptName('yarn cli')
+  .scriptName('yarn infra')
   .command(
     'render-env',
     'Render a chart for environment',
@@ -83,15 +83,13 @@ const cli = yargs(process.argv.slice(2))
       )
     },
     async (argv) => {
-      const services = await renderLocalServices({
+      await renderLocalServices({
         services: argv.services,
         dryRun: argv.dry,
         json: argv.json,
         print: true,
         noUpdateSecrets: argv['no-update-secrets'],
       })
-
-      return
     },
   )
   .command(
@@ -131,7 +129,7 @@ const cli = yargs(process.argv.slice(2))
           })
       )
     },
-    async (argv) =>
+    async (argv) => {
       await runLocalServices(argv.services, argv.dependencies, {
         dryRun: argv.dry,
         json: argv.json,
@@ -139,7 +137,8 @@ const cli = yargs(process.argv.slice(2))
         noUpdateSecrets: argv['no-update-secrets'],
         print: argv.print,
         startProxies: argv.proxies,
-      }),
+      })
+    },
   )
   .demandCommand(1)
   .parse()

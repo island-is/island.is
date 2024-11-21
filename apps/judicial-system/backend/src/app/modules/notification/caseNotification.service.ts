@@ -50,7 +50,6 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
-  formatAdvocateAssignedEmailNotification,
   formatCourtHeadsUpSmsNotification,
   formatCourtIndictmentReadyForCourtEmailNotification,
   formatCourtOfAppealJudgeAssignedEmailNotification,
@@ -1506,17 +1505,7 @@ export class CaseNotificationService extends BaseNotificationService {
     if (!advocateEmail) {
       return false
     }
-    if (isIndictmentCase(theCase.type)) {
-      const hasSentNotificationBefore = this.hasReceivedNotification(
-        CaseNotificationType.ADVOCATE_ASSIGNED,
-        advocateEmail,
-        theCase.notifications,
-      )
-
-      if (hasSentNotificationBefore) {
-        return false
-      }
-    } else if (isInvestigationCase(theCase.type)) {
+    if (isInvestigationCase(theCase.type)) {
       const isDefenderIncludedInSessionArrangements =
         theCase.sessionArrangements &&
         [
@@ -1527,7 +1516,7 @@ export class CaseNotificationService extends BaseNotificationService {
       if (!isDefenderIncludedInSessionArrangements) {
         return false
       }
-    } else {
+    } else if (isRequestCase(theCase.type)) {
       const hasDefenderBeenNotified = this.hasReceivedNotification(
         [
           CaseNotificationType.READY_FOR_COURT,
@@ -1546,96 +1535,12 @@ export class CaseNotificationService extends BaseNotificationService {
     return true
   }
 
-  private sendAdvocateAssignedNotification(
-    theCase: Case,
-    advocateType: AdvocateType,
-    advocateNationalId?: string,
-    advocateName?: string,
-    advocateEmail?: string,
-  ): Promise<Recipient> {
-    const { subject, body } = formatAdvocateAssignedEmailNotification(
-      this.formatMessage,
-      theCase,
-      advocateType,
-      advocateNationalId &&
-        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
-    )
-
-    return this.sendEmail(
-      subject,
-      body,
-      advocateName,
-      advocateEmail,
-      undefined,
-      Boolean(advocateNationalId) === false,
-    )
-  }
-
   private async sendAdvocateAssignedNotifications(
     theCase: Case,
   ): Promise<DeliverResponse> {
     const promises: Promise<Recipient>[] = []
 
-    if (isIndictmentCase(theCase.type)) {
-      const uniqDefendants = _uniqBy(
-        theCase.defendants ?? [],
-        (d: Defendant) => d.defenderEmail,
-      )
-
-      for (const defendant of uniqDefendants) {
-        const { defenderEmail, defenderNationalId, defenderName } = defendant
-
-        const shouldSend = this.shouldSendAdvocateAssignedNotification(
-          theCase,
-          defenderEmail,
-        )
-
-        if (shouldSend === true) {
-          promises.push(
-            this.sendAdvocateAssignedNotification(
-              theCase,
-              AdvocateType.DEFENDER,
-              defenderNationalId,
-              defenderName,
-              defenderEmail,
-            ),
-          )
-        }
-      }
-
-      if (theCase.civilClaimants) {
-        for (const civilClaimant of theCase.civilClaimants) {
-          const {
-            spokespersonEmail,
-            spokespersonIsLawyer,
-            spokespersonName,
-            spokespersonNationalId,
-            hasSpokesperson,
-          } = civilClaimant
-
-          const shouldSend =
-            hasSpokesperson &&
-            this.shouldSendAdvocateAssignedNotification(
-              theCase,
-              spokespersonEmail,
-            )
-
-          if (shouldSend === true) {
-            promises.push(
-              this.sendAdvocateAssignedNotification(
-                theCase,
-                spokespersonIsLawyer
-                  ? AdvocateType.LAWYER
-                  : AdvocateType.LEGAL_RIGHTS_PROTECTOR,
-                spokespersonNationalId,
-                spokespersonName,
-                spokespersonEmail,
-              ),
-            )
-          }
-        }
-      }
-    } else if (DateLog.arraignmentDate(theCase.dateLogs)?.date) {
+    if (DateLog.arraignmentDate(theCase.dateLogs)?.date) {
       const shouldSend = this.shouldSendAdvocateAssignedNotification(
         theCase,
         theCase.defenderEmail,

@@ -205,13 +205,7 @@ export const getThemeConfig = (
     }
   }
 
-  return {
-    themeConfig: {
-      headerColorScheme: 'white',
-      headerButtonColorScheme: 'negative',
-      footerVersion,
-    },
-  }
+  return { themeConfig: { footerVersion } }
 }
 
 export const OrganizationHeader: React.FC<
@@ -611,6 +605,13 @@ export const OrganizationHeader: React.FC<
         <DefaultHeader
           {...defaultProps}
           customTitleColor={n('tryggingastofnunHeaderTitleColor', '#007339')}
+        />
+      )
+    case 'faggilding':
+      return (
+        <DefaultHeader
+          {...defaultProps}
+          logoImageClassName={styles.logoLarge}
         />
       )
     default:
