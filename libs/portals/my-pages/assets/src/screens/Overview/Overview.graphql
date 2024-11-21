@@ -7,7 +7,7 @@ query GetUsersVehiclesV2($input: GetVehiclesListV2Input!) {
       colorName
       modelYear
       requiresMileageRegistration
-      canRegisterMilage
+      canRegisterMileage
       nextMainInspection
     }
     paging {

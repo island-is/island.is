@@ -1,36 +1,37 @@
 import { useRouter } from 'next/router'
+
 import { BreadCrumbItem, NavigationItem } from '@island.is/island-ui/core'
-import { Screen } from '@island.is/web/types'
-import {
-  GET_NAMESPACE_QUERY,
-  GET_ORGANIZATION_PAGE_QUERY,
-  GET_SINGLE_NEWS_ITEM_QUERY,
-} from '@island.is/web/screens/queries'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import {
-  ContentLanguage,
-  GetSingleNewsItemQuery,
-  QueryGetSingleNewsArgs,
-  QueryGetNamespaceArgs,
-  GetNamespaceQuery,
-  Query,
-  QueryGetOrganizationPageArgs,
-  OrganizationPage,
-} from '@island.is/web/graphql/schema'
+import { Locale } from '@island.is/shared/types'
 import {
   getThemeConfig,
   HeadWithSocialSharing,
   NewsArticle,
   OrganizationWrapper,
 } from '@island.is/web/components'
+import {
+  ContentLanguage,
+  GetNamespaceQuery,
+  GetSingleNewsItemQuery,
+  OrganizationPage,
+  Query,
+  QueryGetNamespaceArgs,
+  QueryGetOrganizationPageArgs,
+  QueryGetSingleNewsArgs,
+} from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks'
-import { CustomNextError } from '@island.is/web/units/errors'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { Locale } from '@island.is/shared/types'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_ORGANIZATION_PAGE_QUERY,
+  GET_SINGLE_NEWS_ITEM_QUERY,
+} from '@island.is/web/screens/queries'
+import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
 
-interface OrganizationNewsArticleProps {
+export interface OrganizationNewsArticleProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
   namespace: GetNamespaceQuery['getNamespace']
   organizationPage: OrganizationPage
@@ -162,13 +163,15 @@ const OrganizationNewsArticle: Screen<OrganizationNewsArticleProps> = ({
 }
 
 OrganizationNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
+  const [organizationPageSlug, _, newsSlug] = query.slugs as string[]
+
   const organizationPage = (
     await Promise.resolve(
       apolloClient.query<Query, QueryGetOrganizationPageArgs>({
         query: GET_ORGANIZATION_PAGE_QUERY,
         variables: {
           input: {
-            slug: query.slug as string,
+            slug: organizationPageSlug,
             lang: locale as Locale,
           },
         },
@@ -179,7 +182,7 @@ OrganizationNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
   if (!organizationPage) {
     throw new CustomNextError(
       404,
-      `Could not find organization page with slug: ${query.slug}`,
+      `Could not find organization page with slug: ${organizationPageSlug}`,
     )
   }
 
@@ -193,7 +196,7 @@ OrganizationNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_SINGLE_NEWS_ITEM_QUERY,
       variables: {
         input: {
-          slug: query.newsSlug as string,
+          slug: newsSlug,
           lang: locale as ContentLanguage,
         },
       },
