@@ -31,7 +31,9 @@ export const downloadFile = async (
   } else {
     const sheetData = [header, ...data]
     const dateString = new Date().toISOString().split('T')[0]
-    const fileName = `${name.replace(/\./g, '')} - ${dateString}`
+    const fileName = sanitizeSheetName(
+      `${name.replace(/\./g, '')} - ${dateString}`,
+    )
     const sheetName = sanitizeSheetName(name)
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)

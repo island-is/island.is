@@ -15,7 +15,7 @@ export const getNameAbbreviation = (name: string) => {
 
 export const sanitizeSheetName = (sheetName: string) => {
   return sheetName
-    .replace(/[:\\/?*[\]]/g, '')
+    .replace(/[:\\/?*[\]]/g, '_')
     .trim()
     .substring(0, 31) // Max length for a sheet name.
 }
