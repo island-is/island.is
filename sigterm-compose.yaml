@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  ads-web:
+    image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web:release-32-3-0_d7a1ed4de3_111062
+    container_name: ads-web
+    ports:
+      - '4200:4200'
+    environment:
+      NODE_ENV: production
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:4200/readiness']
+      interval: 1s
+      timeout: 2s
+      retries: 30
+
+  dss:
+    image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/dss:4fd6e4cc2f5e17773cfc41669cf6aa5e85e1613a
+    container_name: dss
+    ports:
+      - '8080:8080'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/readiness']
+      interval: 1s
+      timeout: 2s
+      retries: 30
