@@ -22,7 +22,7 @@ interface PlaywrightConfigParams {
  * @param {string} config.cwd - Working directory for the web server command.
  * @param {number} config.timeoutMs - Timeout in milliseconds for server startup.
  * @param {string} config.app - Application to run.
- * @param {string} config.dependencies - Space-separated list of dependencies.
+ * @param {string[]} config.dependencies - List of dependencies.
  * @param {boolean} config.proxies - Whether to use proxies.
  *
  * @returns A configuration object for Playwright E2E tests.
