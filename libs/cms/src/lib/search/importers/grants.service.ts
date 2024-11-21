@@ -100,7 +100,7 @@ export class GrantsSyncService implements CmsSyncProvider<IGrant> {
             }
           })
 
-          if (mapped.fund?.parentOrganization.slug) {
+          if (mapped.fund?.parentOrganization?.slug) {
             tags.push({
               key: mapped.fund.parentOrganization.slug,
               type: 'organization',
