@@ -5,10 +5,10 @@ import { useRouter } from 'next/router'
 import { Box, ResponsiveSpace } from '@island.is/island-ui/core'
 import {
   Footer,
+  OrganizationIslandFooter,
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
-import { OrganizationIslandFooter } from '@island.is/web/components'
 import { PRELOADED_FONTS } from '@island.is/web/constants'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
