@@ -7,19 +7,22 @@ import {
   CaseFileState,
   CaseState,
   CaseType,
+  EventType,
   IndictmentSubtype,
   investigationCases,
-  isIndictmentCase,
   restrictionCases,
   User as TUser,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { randomEnum } from '../../../../test'
+import { nowFactory } from '../../../../factories'
+import { randomDate, randomEnum } from '../../../../test'
 import { CourtService } from '../../../court'
 import { include } from '../../case.service'
 import { Case } from '../../models/case.model'
+
+jest.mock('../../../../factories')
 
 interface Then {
   result: Case
@@ -84,16 +87,71 @@ describe('CaseController - Create court case', () => {
     }
   })
 
-  describe('court case created', () => {
+  describe('request court case created', () => {
+    const date = randomDate()
     const caseId = uuid()
-    const type = randomEnum(CaseType)
+    const type = CaseType.CUSTODY
     const policeCaseNumber = uuid()
-    const indictmentSubtype = isIndictmentCase(type)
-      ? randomEnum(IndictmentSubtype)
-      : undefined
-    const indictmentSubtypes = isIndictmentCase(type)
-      ? { [policeCaseNumber]: [indictmentSubtype] }
-      : undefined
+    const policeCaseNumbers = [policeCaseNumber]
+    const courtId = uuid()
+    const theCase = {
+      id: caseId,
+      type,
+      policeCaseNumbers,
+      courtId,
+    } as Case
+    const returnedCase = {
+      id: caseId,
+      type,
+      policeCaseNumbers,
+      courtId,
+      courtCaseNumber,
+    } as Case
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(returnedCase)
+
+      const mockToday = nowFactory as jest.Mock
+      mockToday.mockReturnValueOnce(date)
+
+      then = await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should create a court case', () => {
+      expect(mockCourtService.createCourtCase).toHaveBeenCalledWith(
+        user,
+        caseId,
+        courtId,
+        type,
+        date,
+        policeCaseNumbers,
+        false,
+        undefined,
+      )
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
+        { courtCaseNumber },
+        { where: { id: caseId }, transaction },
+      )
+      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+        include,
+        where: {
+          id: caseId,
+          isArchived: false,
+        },
+      })
+      expect(then.result).toBe(returnedCase)
+    })
+  })
+
+  describe('indictment court case created', () => {
+    const caseId = uuid()
+    const type = CaseType.INDICTMENT
+    const policeCaseNumber = uuid()
+    const indictmentSubtype = randomEnum(IndictmentSubtype)
+    const indictmentSubtypes = { [policeCaseNumber]: [indictmentSubtype] }
+    const indictmentConfirmedDate = randomDate()
     const policeCaseNumbers = [policeCaseNumber]
     const courtId = uuid()
     const theCase = {
@@ -102,9 +160,16 @@ describe('CaseController - Create court case', () => {
       policeCaseNumbers,
       indictmentSubtypes,
       courtId,
+      eventLogs: [
+        {
+          eventType: EventType.INDICTMENT_CONFIRMED,
+          created: indictmentConfirmedDate,
+        },
+      ],
     } as Case
     const returnedCase = {
       id: caseId,
+      type,
       policeCaseNumbers,
       indictmentSubtypes,
       courtId,
@@ -125,6 +190,7 @@ describe('CaseController - Create court case', () => {
         caseId,
         courtId,
         type,
+        indictmentConfirmedDate,
         policeCaseNumbers,
         false,
         indictmentSubtypes,
@@ -283,11 +349,6 @@ describe('CaseController - Create court case', () => {
 
     it('should post to queue', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        {
-          type: MessageType.DELIVERY_TO_COURT_PROSECUTOR,
-          user,
-          caseId: theCase.id,
-        },
         {
           type: MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD,
           user,
