@@ -116,7 +116,7 @@ StandaloneHome.getProps = async ({
       })
       .then((variables) =>
         variables?.data?.getNamespace?.fields
-          ? JSON.parse(variables.data.getNamespace.fields)
+          ? JSON.parse(variables.data.getNamespace.fields || '{}')
           : {},
       ),
   ])
