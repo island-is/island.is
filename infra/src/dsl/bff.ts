@@ -3,6 +3,7 @@ import { BffInfo, Context, PortalKeys } from './types/input-types'
 
 import {
   adminPortalScopes,
+  applicationSystemScopes,
   servicePortalScopes,
 } from '../../../libs/auth/scopes/src/index'
 
@@ -14,7 +15,7 @@ const sanitizePath = (path: string) => path.replace(/^\/+|\/+$/g, '')
 export const getScopes = (key: PortalKeys) => {
   switch (key) {
     case 'minarsidur':
-      return servicePortalScopes
+      return [...servicePortalScopes, ...applicationSystemScopes]
     case 'stjornbord':
       return adminPortalScopes
     default:
