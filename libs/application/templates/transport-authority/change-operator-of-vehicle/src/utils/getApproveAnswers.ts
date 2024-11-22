@@ -17,7 +17,7 @@ export const getApproveAnswers = (
   )
   if (ownerCoOwner) {
     return {
-      ownerCoOwners: ownerCoOwners.map((ownerCoOwner) => {
+      ownerCoOwner: ownerCoOwners.map((ownerCoOwner) => {
         return {
           nationalId: ownerCoOwner.nationalId,
           name: ownerCoOwner.name,
