@@ -105,3 +105,41 @@ export const useAffectedRegulations = (
     mentionedOptions,
   }
 }
+
+export const usePristineRegulations = () => {
+  const [pristineRegulations, setPristineRegulations] = useState(() => {
+    const storedRegulations = sessionStorage.getItem('PRISTINE_REGULATIONS')
+    return storedRegulations ? JSON.parse(storedRegulations) : []
+  })
+
+  const addPristineRegulation = (regId: string) => {
+    if (!pristineRegulations.includes(regId)) {
+      const updatedRegulations = [...pristineRegulations, regId]
+      setPristineRegulations(updatedRegulations)
+      sessionStorage.setItem(
+        'PRISTINE_REGULATIONS',
+        JSON.stringify(updatedRegulations),
+      )
+    }
+  }
+
+  const removePristineRegulation = (regId: string) => {
+    const updatedRegulations = pristineRegulations.filter(
+      (id: string) => id !== regId,
+    )
+    setPristineRegulations(updatedRegulations)
+    sessionStorage.setItem(
+      'PRISTINE_REGULATIONS',
+      JSON.stringify(updatedRegulations),
+    )
+  }
+
+  const isPristineRegulation = (regId: string) =>
+    pristineRegulations.includes(regId)
+
+  return {
+    addPristineRegulation,
+    removePristineRegulation,
+    isPristineRegulation,
+  }
+}

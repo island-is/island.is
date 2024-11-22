@@ -7,6 +7,7 @@ import {
   GridRow,
   GridColumn,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { useEffect, useState, useMemo } from 'react'
 import {
@@ -51,7 +52,10 @@ import {
   updateFieldValue,
   validateImpact,
 } from '../../state/validations'
-import { useGetRegulationHistory } from '../../utils/hooks'
+import {
+  useGetRegulationHistory,
+  usePristineRegulations,
+} from '../../utils/hooks'
 import { DraftRegulationChange } from '@island.is/regulations/admin'
 import { useLocale } from '@island.is/localization'
 import { cleanTitle } from '@island.is/regulations-tools/cleanTitle'
@@ -74,6 +78,7 @@ export const EditChange = (props: EditChangeProp) => {
   const today = useMemo(() => new Date(), [])
   const [minDate, setMinDate] = useState<Date | undefined>()
   const [showChangeForm, setShowChangeForm] = useState(false)
+  const { addPristineRegulation } = usePristineRegulations()
 
   // Target regulation for impact
   const [activeRegulation, setActiveRegulation] = useState<
@@ -280,7 +285,12 @@ export const EditChange = (props: EditChangeProp) => {
           }
           return { success: true, error: undefined }
         })
+        .then(() => {
+          addPristineRegulation(draft.id)
+          closeModal(true)
+        })
         .catch((error) => {
+          toast.error(t(msg.errorOnSaveReg))
           return { success: false, error: error as Error }
         })
     } else {
@@ -306,12 +316,15 @@ export const EditChange = (props: EditChangeProp) => {
           }
           return { success: true, error: undefined }
         })
+        .then(() => {
+          addPristineRegulation(draft.id)
+          closeModal(true)
+        })
         .catch((error) => {
+          toast.error(t(msg.errorOnSaveReg))
           return { success: false, error: error as Error }
         })
     }
-
-    closeModal(true)
   }
 
   const localActions = {
