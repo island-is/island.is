@@ -1,6 +1,5 @@
 export { OperatingYear } from './OperatingYear/OperatingYear'
 export { PowerOfAttorneyFields } from './PowerOfAttorneyFields/PowerOfAttorneyFields'
-export { DelegationCheck } from './DelegationCheck/DelegationCheck'
 export { PartyOperatingIncome } from './PartyOperatingIncome/PartyOperatingIncome'
 export { KeyNumbersCapital } from './KeyNumbersCapital/KeyNumbersCapital'
 export { ElectionEquities } from './ElectionEquities/ElectionEquities'

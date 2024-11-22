@@ -53,12 +53,20 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
+  const isTablet = width < theme.breakpoints.lg && !isMobile
 
   const { data: organization, loading } = useOrganization(
     props.serviceProviderSlug ?? ISLANDIS_SLUG,
   )
 
-  const columnSpan = isMobile ? '8/8' : props.narrow ? '4/8' : '5/8'
+  const columnSpan = isMobile
+    ? '8/8'
+    : isTablet
+    ? '6/8'
+    : props.narrow
+    ? '4/8'
+    : '5/8'
+
   return (
     <Box>
       <GridRow marginBottom={marginBottom ?? 4}>
@@ -88,7 +96,7 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
           )}
         </GridColumn>
         {!isMobile && props.serviceProviderSlug && organization?.link && (
-          <GridColumn span={'2/8'} offset={'1/8'}>
+          <GridColumn span={'2/8'} offset={isTablet ? '0' : '1/8'}>
             <InstitutionPanel
               loading={loading}
               linkHref={organization.link ?? ''}
