@@ -1,4 +1,13 @@
-import { Stack, Pagination, Text, Inline } from '@island.is/island-ui/core'
+import {
+  Stack,
+  Box,
+  Filter,
+  Pagination,
+  Text,
+  Inline,
+  FilterInput,
+  Checkbox,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   m,
@@ -27,6 +36,7 @@ const VehicleBulkMileage = () => {
   const [vehicles, setVehicles] = useState<Array<VehicleType>>([])
   const [page, setPage] = useState<number>(1)
   const [totalPages, setTotalPages] = useState<number>(1)
+  const [search, setSearch] = useState<string>()
 
   const { data, loading, error } = useVehiclesListQuery({
     variables: {
@@ -99,6 +109,43 @@ const VehicleBulkMileage = () => {
               variant="utility"
             />
           </Inline>
+
+          <Filter
+            labelClear={formatMessage(m.clearFilter)}
+            labelClearAll={formatMessage(m.clearAllFilters)}
+            labelOpen={formatMessage(m.openFilter)}
+            labelClose={formatMessage(m.closeFilter)}
+            variant="popover"
+            onFilterClear={() => {
+              console.log('clear')
+            }}
+            align="left"
+            reverse
+            filterInput={
+              <FilterInput
+                backgroundColor="blue"
+                value={search ?? ''}
+                onChange={(search) => {
+                  setSearch(search)
+                }}
+                name={formatMessage(m.searchLabel)}
+                placeholder={formatMessage(vehicleMessage.searchForPlate)}
+              />
+            }
+          >
+            <Box padding={4}>
+              <Text variant="eyebrow" as="p" paddingBottom={2}>
+                {formatMessage(m.filterBy)}
+              </Text>
+              <Checkbox
+                name="onlyMileageRequiredVehicles"
+                label={'beg'}
+                value="onlyMileageRequiredVehicles"
+                checked={true}
+                onChange={() => undefined}
+              />
+            </Box>
+          </Filter>
           {error && !loading && <Problem error={error} noBorder={false} />}
           {!error && (
             <VehicleBulkMileageTable loading={loading} vehicles={vehicles} />
