@@ -167,7 +167,9 @@ export const removeObjectWithKeyFromAnswers = (
   depth = 0,
 ): object => {
   if (depth >= MAX_DEPTH) {
-    console.warn('Maximum recursion depth reached while calling removeObjectWithKeyFromAnswers')
+    console.warn(
+      'Maximum recursion depth reached while calling removeObjectWithKeyFromAnswers',
+    )
     return answers
   }
   // Handle arrays
@@ -183,7 +185,11 @@ export const removeObjectWithKeyFromAnswers = (
   return answers
 }
 
-const cleanArray = (array: unknown[], keyToRemove: string, depth: number): unknown[] => {
+const cleanArray = (
+  array: unknown[],
+  keyToRemove: string,
+  depth: number,
+): unknown[] => {
   const filteredArray = array.filter((item) => {
     if (isValidObject(item)) {
       return !containsKey(item, keyToRemove)
@@ -199,14 +205,22 @@ const cleanArray = (array: unknown[], keyToRemove: string, depth: number): unkno
   })
 }
 
-const cleanObject = (obj: object, keyToRemove: string, depth: number): RecordType => {
+const cleanObject = (
+  obj: object,
+  keyToRemove: string,
+  depth: number,
+): RecordType => {
   return Object.entries(obj).reduce<RecordType>((acc, [field, value]) => {
     if (isValidObject(value)) {
       if (!Array.isArray(value) && containsKey(value, keyToRemove)) {
         return acc
       }
 
-      const cleanedValue = removeObjectWithKeyFromAnswers(value, keyToRemove, depth + 1)
+      const cleanedValue = removeObjectWithKeyFromAnswers(
+        value,
+        keyToRemove,
+        depth + 1,
+      )
 
       // For arrays or objects with content, keep them
       if (hasContent(cleanedValue)) {
