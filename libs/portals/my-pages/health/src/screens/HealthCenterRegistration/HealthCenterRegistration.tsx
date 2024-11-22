@@ -9,6 +9,7 @@ import {
   Table as T,
   Button,
   FilterInput,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
@@ -21,7 +22,7 @@ import { messages } from '../../lib/messages'
 import * as styles from './HealthRegistration.css'
 import { m } from '@island.is/portals/my-pages/core'
 import groupBy from 'lodash/groupBy'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { RightsPortalHealthCenter } from '@island.is/api/schema'
 import { useNavigate } from 'react-router-dom'
 import { HealthPaths } from '../../lib/paths'
@@ -69,6 +70,13 @@ const HealthCenterRegistration = () => {
     setLoadingTransfer(false)
     setErrorTransfer(true)
   }
+
+  const handleHealthCenterSelect = useCallback(
+    (id: string, name?: string | null) => {
+      setSelectedHealthCenter({ id, name })
+    },
+    [],
+  )
 
   const [getHealthCenterDoctors] = useGetHealthCenterDoctorsLazyQuery({
     onCompleted: (data) => {
@@ -217,7 +225,7 @@ const HealthCenterRegistration = () => {
         <AlertMessage
           type="warning"
           message={
-            <Text variant="small">
+            <Text variant="medium">
               <strong className={styles.strongStyle}>
                 {formatMessage(messages.alert)}
               </strong>
@@ -275,10 +283,20 @@ const HealthCenterRegistration = () => {
                     <T.Head>
                       <T.Row>
                         <T.HeadData>
-                          {formatMessage(messages.healthCenterTitle)}
+                          <Text variant="medium" fontWeight="semiBold">
+                            {formatMessage(messages.healthCenterTitle)}
+                          </Text>
                         </T.HeadData>
-                        <T.HeadData>{formatMessage(m.postcode)}</T.HeadData>
-                        <T.HeadData>{formatMessage(m.address)}</T.HeadData>
+                        <T.HeadData>
+                          <Text variant="medium" fontWeight="semiBold">
+                            {formatMessage(m.postcode)}
+                          </Text>
+                        </T.HeadData>
+                        <T.HeadData>
+                          <Text variant="medium" fontWeight="semiBold">
+                            {formatMessage(m.address)}
+                          </Text>
+                        </T.HeadData>
                         <T.HeadData />
                       </T.Row>
                     </T.Head>
@@ -292,34 +310,59 @@ const HealthCenterRegistration = () => {
                             onMouseLeave={() => setHoverId('')}
                           >
                             <T.Data>
-                              <Text variant="small">{healthCenter.name}</Text>
-                            </T.Data>
-                            <T.Data>{`${healthCenter.address?.postalCode} ${healthCenter.address?.municipality}`}</T.Data>
-                            <T.Data>
-                              {healthCenter.address?.streetAddress}
+                              <Text variant="medium">{healthCenter.name}</Text>
                             </T.Data>
                             <T.Data>
-                              <Box
-                                className={styles.saveButtonWrapperStyle({
-                                  visible: healthCenter.id === hoverId,
-                                })}
-                              >
-                                <Button
-                                  size="small"
-                                  variant="text"
-                                  icon="pencil"
-                                  onClick={() => {
-                                    setSelectedHealthCenter({
-                                      id: healthCenter.id,
-                                      name: healthCenter.name,
-                                    })
-                                  }}
+                              <Text variant="medium">
+                                {`${healthCenter.address?.postalCode} ${healthCenter.address?.municipality}`}
+                              </Text>
+                            </T.Data>
+                            <T.Data>
+                              <Text variant="medium">
+                                {healthCenter.address?.streetAddress}
+                              </Text>
+                            </T.Data>
+                            <T.Data>
+                              {healthCenter.canRegister ? (
+                                <Box
+                                  className={styles.saveButtonWrapperStyle({
+                                    visible: healthCenter.id === hoverId,
+                                  })}
+                                >
+                                  <Button
+                                    size="small"
+                                    variant="text"
+                                    icon="pencil"
+                                    onClick={() =>
+                                      handleHealthCenterSelect(
+                                        healthCenter.id,
+                                        healthCenter.name,
+                                      )
+                                    }
+                                  >
+                                    {formatMessage(
+                                      messages.healthRegistrationSave,
+                                    )}
+                                  </Button>
+                                </Box>
+                              ) : (
+                                <Text
+                                  variant="medium"
+                                  aria-label={formatMessage(
+                                    messages.healthCenterNotAvailableForRegistration,
+                                  )}
                                 >
                                   {formatMessage(
-                                    messages.healthRegistrationSave,
+                                    messages.healthCenterNotAvailableForRegistration,
                                   )}
-                                </Button>
-                              </Box>
+                                  <Tooltip
+                                    text={formatMessage(
+                                      messages.healthCenterNotAvailableForRegistrationDesc,
+                                    )}
+                                    placement="right"
+                                  />
+                                </Text>
+                              )}
                             </T.Data>
                           </tr>
                         )
