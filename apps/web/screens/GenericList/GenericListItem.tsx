@@ -49,7 +49,8 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
 }
 
 GenericListItemPage.getProps = async ({ apolloClient, query, locale }) => {
-  const slug = query.genericListItemSlug
+  const slug =
+    (query.slugs as string[])?.[2] ?? (query.genericListItemSlug as string)
 
   if (!slug) {
     throw new CustomNextError(

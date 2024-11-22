@@ -125,6 +125,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
       setInitialRender(false)
       return
     }
+
     getGrants({
       variables: {
         input: {
@@ -357,15 +358,14 @@ const GrantsSearchResults: CustomScreen<GrantsHomeProps> = ({
 GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
   const arrayParser = parseAsArrayOf<string>(parseAsString)
 
-  const parseArray = (arg: string | string[] | undefined) => {
-    const array = arrayParser.parseServerSide(arg)
-
+  const filterArray = <T,>(array: Array<T> | null | undefined) => {
     if (array && array.length > 0) {
       return array
     }
 
     return undefined
   }
+
   const [
     {
       data: { getGrants },
@@ -381,10 +381,16 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
           lang: locale as ContentLanguage,
           page: parseAsInteger.withDefault(1).parseServerSide(query?.page),
           search: parseAsString.parseServerSide(query?.query) ?? undefined,
-          categories: parseArray(query?.category),
-          statuses: parseArray(query?.status),
-          types: parseArray(query?.type),
-          organizations: parseArray(query?.organization),
+          categories: filterArray<string>(
+            arrayParser.parseServerSide(query?.category),
+          ),
+          statuses: filterArray<string>(
+            arrayParser.parseServerSide(query?.status),
+          ),
+          types: filterArray<string>(arrayParser.parseServerSide(query?.type)),
+          organizations: filterArray<string>(
+            arrayParser.parseServerSide(query?.organization),
+          ),
         },
       },
     }),
