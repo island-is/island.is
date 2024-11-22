@@ -3,6 +3,9 @@ ARG PLAYWRIGHT_VERSION
 ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
 ARG NODE_IMAGE_TAG=latest
 ARG DOCKER_REGISTRY=${DOCKER_ECR_REGISTRY%/docker}/docker
+ARG APP_HOME
+ARG APP_DIST_HOME=dist/${APP_HOME}
+ARG APP
 
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS deps
 
@@ -44,14 +47,13 @@ RUN pwd && \
 
 
 FROM src AS builder
-ARG APP
-ARG APP_HOME
-ARG APP_DIST_HOME=dist/${APP_HOME}
-ENV APP=${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
+ARG APP
+ENV APP=${APP}
 RUN yarn run build ${APP} --prod
+ARG APP_DIST_HOME
 RUN pwd && \
   ls -lah ./ && \
   ls -lah ${APP_DIST_HOME}/main.js
@@ -78,8 +80,7 @@ USER runner
 
 FROM output-base-with-pg AS output-express
 
-ARG APP_HOME
-ARG APP_DIST_HOME=dist/${APP_HOME}
+ARG APP_DIST_HOME
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ARG GIT_BRANCH GIT_COMMIT_SHA GIT_REPOSITORY_URL
@@ -97,8 +98,7 @@ ENV PORT=4200
 
 # TODO: smallify
 COPY --from=deps /build/node_modules /webapp/node_modules
-ARG APP_HOME
-ARG APP_DIST_HOME=dist/${APP_HOME}
+ARG APP_DIST_HOME
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ARG GIT_BRANCH GIT_COMMIT_SHA GIT_REPOSITORY_URL
@@ -115,15 +115,10 @@ FROM ${DOCKER_REGISTRY}/nginx/nginx:1.21-alpine AS output-static
 # hadolint ignore=DL3018
 RUN apk add --no-cache bash nodejs
 
-ARG APP
-ARG APP_HOME
-ARG APP_DIST_HOME=dist/${APP_HOME}
-ENV APP=${APP}
-ENV BASEPATH=/
-
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates/
 COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d/
 COPY scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d/
+ARG APP_DIST_HOME
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
 ARG GIT_BRANCH GIT_COMMIT_SHA GIT_REPOSITORY_URL
@@ -132,6 +127,10 @@ ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOS
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 
+ARG APP
+ENV APP=${APP}
+ENV BASEPATH=/
+
 
 FROM output-base AS output-jest
 
@@ -139,8 +138,7 @@ FROM output-base AS output-jest
 RUN npm install -g jest && \
   echo 'module.exports = {};' > jest.config.js
 
-ARG APP_HOME
-ARG APP_DIST_HOME=dist/${APP_HOME}
+ARG APP_DIST_HOME
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 USER runner
@@ -166,11 +164,10 @@ RUN apt-get update -y && \
   apt-get install --no-install-recommends -y zip awscli && \
   apt-get purge
 
+ARG APP_DIST_HOME
+COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} ./
 ARG APP_HOME
-ARG APP_DIST_HOME=dist/${APP_HOME}
-
-COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} .
-COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
+COPY --chown=pwuser:pwuser ${APP_HOME}/package.json ./
 
 USER pwuser
 COPY --chown=pwuser:pwuser .yarnrc.yml ./
@@ -178,9 +175,11 @@ RUN mkdir ./.yarn
 COPY --chown=pwuser:pwuser .yarn/releases ./.yarn/releases
 RUN CI=true yarn install --immutable
 
-ENV PLAYWRIGHT_BROWSER=chromium
+ARG PLAYWRIGHT_BROWSER=chromium
+ENV PLAYWRIGHT_BROWSER=${PLAYWRIGHT_BROWSER}
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
+ARG APP_HOME
 COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
 
 ARG GIT_BRANCH GIT_COMMIT_SHA GIT_REPOSITORY_URL
@@ -195,16 +194,14 @@ ENTRYPOINT ["./entrypoint.sh"]
 
 
 FROM playwright-base AS output-local
-ARG APP_HOME
-ARG APP_DIST_HOME=dist/${APP_HOME}
-
+ARG APP_DIST_HOME
 WORKDIR ${APP_DIST_HOME}
-
 
 # node user exists in the base image
 RUN mkdir -p /out && \
   chown node:node /out
 
+ARG APP_HOME
 COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
 
 USER pwuser
