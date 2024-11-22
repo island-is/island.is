@@ -19,7 +19,7 @@ import { NotificationsAdminService } from './notificationsAdmin.service'
     NotificationSenderResolver,
     NotificationsAdminResolver,
     NotificationsService,
-    NotificationsAdminService
+    NotificationsAdminService,
   ],
   exports: [],
 })

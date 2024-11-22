@@ -68,7 +68,6 @@ export const CompaniesAction: WrappedActionFn =
         throw res.error
       }
 
-
       return {
         errors: null,
         data: res.data.companyRegistryCompanies,

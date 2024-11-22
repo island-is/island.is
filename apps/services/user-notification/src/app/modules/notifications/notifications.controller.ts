@@ -2,11 +2,14 @@ import { InjectQueue, QueueService } from '@island.is/message-queue'
 import {
   Body,
   Controller,
-  Get, Headers, HttpStatus,
+  Get,
+  Headers,
+  HttpStatus,
   Inject,
   Param,
   Post,
-  Query, UseGuards,
+  Query,
+  UseGuards,
   Version,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
@@ -19,7 +22,10 @@ import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { NotificationsService } from './notifications.service'
 import type { Locale } from '@island.is/shared/types'
-import { ExtendedPaginationDto, PaginatedNotificationDto } from './dto/notification.dto'
+import {
+  ExtendedPaginationDto,
+  PaginatedNotificationDto,
+} from './dto/notification.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 

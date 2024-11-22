@@ -159,7 +159,9 @@ describe('NotificationsService', () => {
         .spyOn(service, 'findMany')
         .mockImplementation(async () => mockedResponse)
 
-      expect(await service.findMany(user.nationalId, query)).toBe(mockedResponse)
+      expect(await service.findMany(user.nationalId, query)).toBe(
+        mockedResponse,
+      )
     })
   })
 
