@@ -44,7 +44,7 @@ COPY infra infra/
 COPY libs libs/
 COPY scripts scripts/
 COPY tools tools/
-RUN pwd && \
+RUN echo "PWD: $PWD" && \
   ls -lah
 
 # Build stage
@@ -60,7 +60,7 @@ ENV APP=${APP}
 
 RUN yarn run build ${APP} --prod
 
-RUN pwd && \
+RUN echo "PWD: $PWD" && \
   ls -lah ./ && \
   ls -lah ${APP_DIST_HOME}/main.js
 
@@ -99,7 +99,7 @@ ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOS
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 
-RUN pwd && \
+RUN echo "PWD: $PWD" && \
   ls -lah ./ && \
   ls -lah main.js
 
@@ -124,7 +124,7 @@ ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOS
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 
-RUN pwd && \
+RUN echo "PWD: $PWD" && \
   ls -lah ./ && \
   ls -lah main.js
 
@@ -217,7 +217,7 @@ ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOS
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 
-RUN pwd && \
+RUN echo "PWD: $PWD" && \
   ls -lah ./ && \
   ls -lah ./entrypoint.sh
 
@@ -247,7 +247,7 @@ ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOS
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 
-RUN pwd && \
+RUN echo "PWD: $PWD" && \
   ls -lah ./ && \
   ls -lah ./entrypoint.sh
 
