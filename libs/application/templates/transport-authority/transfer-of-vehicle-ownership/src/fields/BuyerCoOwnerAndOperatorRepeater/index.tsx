@@ -7,8 +7,7 @@ import { information } from '../../lib/messages'
 import { CoOwnerAndOperator } from '../../shared'
 import { repeaterButtons } from './BuyerCoOwnerAndOperatorRepeater.css'
 import { BuyerCoOwnerAndOperatorRepeaterItem } from './BuyerCoOwnerAndOperatorRepeaterItem'
-import { useLazyQuery } from '@apollo/client'
-import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
+import { useFormContext } from 'react-hook-form'
 
 export const BuyerCoOwnerAndOperatorRepeater: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -16,15 +15,9 @@ export const BuyerCoOwnerAndOperatorRepeater: FC<
   const { formatMessage } = useLocale()
   const { application, field, setBeforeSubmitCallback } = props
   const { id } = field
+  const { watch } = useFormContext()
 
   const [identicalError, setIdenticalError] = useState<boolean>(false)
-
-  const [getApplicationInfo] = useLazyQuery(APPLICATION_APPLICATION, {
-    onError: (e) => {
-      console.error(e, e.message)
-      return
-    },
-  })
 
   const [buyerCoOwnerAndOperator, setBuyerCoOwnerAndOperator] = useState<
     CoOwnerAndOperator[]
@@ -60,30 +53,6 @@ export const BuyerCoOwnerAndOperatorRepeater: FC<
     )
   }
 
-  const getBuyerNationalId = async () => {
-    // Get updated buyer nationalId from answers
-    const applicationInfo = await getApplicationInfo({
-      variables: {
-        input: {
-          id: application.id,
-        },
-        locale: 'is',
-      },
-      fetchPolicy: 'no-cache',
-    })
-
-    const updatedApplication = applicationInfo?.data?.applicationApplication
-
-    const buyerNationalId =
-      getValueViaPath<string>(
-        updatedApplication?.answers,
-        'buyer.nationalId',
-        '',
-      ) || ''
-
-    return buyerNationalId
-  }
-
   const checkDuplicate = async () => {
     const existingCoOwnersAndOperators = filteredCoOwnersAndOperators.map(
       ({ nationalId }) => {
@@ -91,7 +60,7 @@ export const BuyerCoOwnerAndOperatorRepeater: FC<
       },
     )
 
-    const buyerNationalId = await getBuyerNationalId()
+    const buyerNationalId = watch('buyer.nationalId')
 
     const jointOperators = [...existingCoOwnersAndOperators, buyerNationalId]
     return !!jointOperators.some((nationalId, index) => {
