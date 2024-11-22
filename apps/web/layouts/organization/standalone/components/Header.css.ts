@@ -54,15 +54,14 @@ export const textContainerSubpage = style({
 })
 
 export const textInnerContainer = style({
+  paddingLeft: '16px',
+  paddingRight: '16px',
   ...themeUtils.responsiveStyle({
     lg: {
       height: '100%',
       maxWidth: '100%',
       display: 'flex',
-      alignItems: 'flex-end',
-      paddingLeft: '16px',
-      paddingRight: '16px',
-      paddingBottom: '105px',
+      alignItems: 'center',
       justifyContent: 'center',
     },
   }),
