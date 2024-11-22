@@ -4,6 +4,7 @@ import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
 import { Case } from '../../../case'
 import { Defendant } from '../../../defendant'
+import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Subpoena } from '../../models/subpoena.model'
 import { SubpoenaService } from '../../subpoena.service'
@@ -22,7 +23,7 @@ describe('InternalSubpoenaController - Deliver subpoena to police', () => {
   const subpoena = { id: subpoenaId } as Subpoena
   const defendant = { id: defendantId, subpoenas: [subpoena] } as Defendant
   const theCase = { id: caseId } as Case
-  const user = { user: { id: uuid() } } as any
+  const user = { user: { id: uuid() } } as DeliverDto
   const delivered = { delivered: true } as DeliverResponse
 
   let mockSubpoenaService: SubpoenaService

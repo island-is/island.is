@@ -96,7 +96,7 @@ describe('InternalCaseController - Deliver indictment info to court', () => {
         caseId,
         courtName,
         courtCaseNumber,
-        receivedDate,
+        indictmentDate,
         indictmentDate,
         policeCaseNumber,
         ['Umferðarlagabrot', 'Hylming', 'Þjófnaður'],

@@ -794,6 +794,15 @@ export const m = defineMessages({
     defaultMessage:
       'Should the authenticated individual get this scope (uncheck if only delegated users should be allowed).',
   },
+  automaticDelegationGrant: {
+    id: 'ap.ids-admin:automatic-delegation-grant',
+    defaultMessage: 'Automatic delegation grant',
+  },
+  automaticDelegationGrantDescription: {
+    id: 'ap.ids-admin:automatic-delegation-grant-description',
+    defaultMessage:
+      'Should users automatically get this permission when they authenticate with this application',
+  },
   grantToProcuringHolders: {
     id: 'ap.ids-admin:grant-to-procuring-holders',
     defaultMessage: 'Companies',
