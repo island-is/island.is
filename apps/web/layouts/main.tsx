@@ -693,6 +693,7 @@ interface LayoutComponentProps {
     imgSrc: string
     label: string
     buttonType: string
+    blacklistedPathnames?: string[]
   }
 }
 

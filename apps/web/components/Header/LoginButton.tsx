@@ -11,6 +11,7 @@ import {
 import { webLoginButtonSelect } from '@island.is/plausible'
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
+import { useRouter } from 'next/router'
 
 const minarsidurLink = '/minarsidur/'
 const minarsidurDelegationsLink = '/minarsidur/login?prompt=select_account'
@@ -20,6 +21,7 @@ export function LoginButton(props: {
   topItem?: LayoutProps['customTopLoginButtonItem']
 }) {
   const { t } = useI18n()
+  const router = useRouter()
 
   function trackAndNavigate(
     buttonType: 'Dropdown - Individuals' | 'Dropdown - Companies' | string,
@@ -58,7 +60,12 @@ export function LoginButton(props: {
     },
   ]
 
-  if (props.topItem) {
+  if (
+    props.topItem &&
+    !props.topItem.blacklistedPathnames?.includes(
+      new URL(router.asPath, 'https://island.is').pathname,
+    )
+  ) {
     items.unshift({
       href: props.topItem.href,
       title: (
@@ -71,7 +78,7 @@ export function LoginButton(props: {
           </Inline>
         </Box>
       ),
-      onClick: trackAndNavigate.bind(null, props.topItem.buttonType), // TODO: button type read from organization?
+      onClick: trackAndNavigate.bind(null, props.topItem.buttonType),
     })
   }
 
