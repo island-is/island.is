@@ -63,10 +63,21 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 ENV APP=${APP}
 
 RUN yarn run build ${APP} --prod
-
+RUN cp yarn.lock .yarnrc.yml "${APP_DIST_HOME}" && \
+  mkdir -p "${APP_DIST_HOME}/.yarn" && \
+  cp -r .yarn/patches .yarn/releases "${APP_DIST_HOME}/.yarn/"
 RUN echo "PWD: $PWD" && \
   ls -lah ./ && \
-  ls -lah ${APP_DIST_HOME}/main.js
+  ls -lah ${APP_DIST_HOME} && \
+  cat "${APP_DIST_HOME}/package.json"
+
+
+WORKDIR ${APP_DIST_HOME}
+RUN yarn install && \
+  yarn cache clean
+RUN ls -lah ./ && \
+  du -hd 1 ./
+
 
 # Base image for runtime containers
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS output-base
