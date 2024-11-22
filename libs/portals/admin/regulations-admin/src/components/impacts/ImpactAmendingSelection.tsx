@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react'
 
 import { impactMsgs } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { RegulationOptionList, RegulationType } from '@island.is/regulations'
+import {
+  RegulationOption,
+  RegulationOptionList,
+  RegulationType,
+} from '@island.is/regulations'
 import { DraftImpactName } from '@island.is/regulations/admin'
 
 import { AsyncSearch, Option, Text } from '@island.is/island-ui/core'
@@ -39,10 +43,24 @@ export const ImpactAmendingSelection = ({
     RegulationSearchListQuery,
     {
       onCompleted: (data) => {
-        setResults(
-          (data.getRegulationsOptionSearch as RegulationOptionList) ||
-            undefined,
-        )
+        // The search results need to be reordered so that the objects with titles containing the input string are first
+        const results = data.getRegulationsOptionSearch
+        const reorderedResults = value
+          ? [
+              // Objects with titles containing the input string
+              ...results.filter((obj: RegulationOption) =>
+                obj.title.toLowerCase().includes(value.toLowerCase()),
+              ),
+              // The rest of the objects
+              ...results.filter(
+                (obj: RegulationOption) =>
+                  !obj.title.toLowerCase().includes(value.toLowerCase()),
+              ),
+            ]
+          : results // If value is undefined, keep the original order
+
+        setIsLoading(false)
+        setResults((reorderedResults as RegulationOptionList) || undefined)
       },
       fetchPolicy: 'no-cache',
     },
@@ -64,7 +82,6 @@ export const ImpactAmendingSelection = ({
           variables: { input: { q: value, iA: false, iR: false } },
         })
       }
-      setIsLoading(false)
     },
     600,
     [value],
