@@ -1,4 +1,4 @@
-import { sanitizeSheetName } from '@island.is/portals/my-pages/core'
+import { sanitizeSheetName } from '@island.is/service-portal/core'
 import XLSX from 'xlsx'
 const locale = 'is-IS'
 
