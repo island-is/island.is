@@ -263,6 +263,29 @@ const createDateTime = (date?: string | null, time?: string | null): Date => {
   return new Date(year, month - 1, day, hours, minutes)
 }
 
+const createNullableDateTime = (
+  date?: string | null,
+  time?: string | null,
+): Date | null => {
+  if (!date) {
+    return null
+  }
+
+  const [year, month, day] = date.split('-').map(Number)
+  let hours = time ? parseInt(time.slice(0, 2), 10) : 0
+  let minutes = time ? parseInt(time.slice(2, 4), 10) : 0
+
+  if (hours > 23 || hours < 0) {
+    hours = 0
+  }
+
+  if (minutes > 59 || minutes < 0) {
+    minutes = 0
+  }
+
+  return new Date(year, month - 1, day, hours, minutes)
+}
+
 const getAccident = (
   answers: AccidentNotificationAnswers,
 ): MinarsidurAPIModelsAccidentReportsAccidentDTO => {
@@ -294,7 +317,7 @@ const getAccident = (
     location: accidentLocation,
     locationDescription: locationDescription ?? '',
     symptoms: accidentDetails?.accidentSymptoms ?? '',
-    dateTimeOfDoctorVisit: createDateTime(
+    dateTimeOfDoctorVisit: createNullableDateTime(
       accidentDetails?.dateOfDoctorVisit,
       accidentDetails?.timeOfDoctorVisit,
     ),
