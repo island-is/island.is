@@ -64,6 +64,9 @@ export const VehicleRadioFormField: FC<React.PropsWithChildren<Props>> = ({
       setValue('vehicleMileage.requireMileage', currentVehicle?.requireMileage)
       setValue('vehicleMileage.mileageReading', currentVehicle?.mileageReading)
 
+      setValue('plateSize.frontPlateSize', [])
+      setValue('plateSize.rearPlateSize', [])
+
       if (permno) setValue('vehicleInfo.plate', permno)
       if (permno) setValue('vehicleInfo.type', currentVehicle?.make)
     } else if (field.itemType === 'PLATE') {

@@ -41,7 +41,7 @@ export default playwrightConfig
 Use the following command structure to run tests for any app:
 
 ```bash
-yarn e2e <app-name>
+yarn nx e2e <app-name>
 ```
 
 ### Useful Playwright Commands and Flags
@@ -49,21 +49,26 @@ yarn e2e <app-name>
 - **Run with UI Mode**: Launch the tests with a UI to select and debug tests interactively.
 
   ```bash
-  yarn e2e <app-name> --ui
+  yarn nx e2e <app-name> --ui
   ```
 
 - **Run Tests Without Caching**: Ensure a fresh run of tests without using cached results.
 
   ```bash
-   yarn e2e <app-name> --skip-nx-cache
+   yarn nx e2e <app-name> --skip-nx-cache
   ```
 
-- **Run a Specific Project**: Run only the tests defined under a specific project in your Playwright config:
+- **Run Tests with Tags**: Use tags to include or exclude specific tests.
 
   ```bash
-  yarn e2e <app-name> -- --project=smoke
-  yarn e2e <app-name> -- --project=acceptance
-  yarn e2e <app-name> -- --project=everything
+    # Run only tests tagged with @fast
+    yarn nx e2e <app-name> --grep @fast
+
+    # Exclude tests tagged with @fast
+    yarn nx e2e <app-name> --grep-invert @fast
+
+    # Run tests tagged with either @fast or @slow
+    yarn nx e2e <app-name> --grep "@fast|@slow"
   ```
 
 - **View the Test Report**: After running tests, use this command to view the generated report:
@@ -75,14 +80,16 @@ yarn e2e <app-name>
 - **Run Specific Tests**: Use `--grep` to run tests matching a specific pattern:
 
   ```bash
-  yarn e2e <app-name> --grep "Home Page Test"
+  yarn nx e2e <app-name> --grep "Home Page Test"
   ```
 
 - **Debug Mode**: Run tests in debug mode for better visibility:
 
   ```bash
-  yarn e2e <app-name> --debug
+  yarn nx e2e <app-name> --debug
   ```
+
+For more details on Playwright commands and flags, refer to the [official documentation](https://playwright.dev/docs/test-cli)
 
 ## ✍️ Writing Tests
 
@@ -100,14 +107,12 @@ You should therefore aim to write test for:
 
 ### 🏗️ Test structure
 
-Test cases are written in spec files. Tests that do not modify anything (e.g., _create_ an application, _change_ the user’s name, etc.) and verify basic functionality are called **smoke tests**. Tests that are more detailed and/or make any changes at all, are called **acceptance tests**. Test cases are put into folders by what app they are testing, smoke/acceptance test, and each file tests some aspect of an app. Here is an example of the folder layout for testing the search engine and front-page of the `web` project (within the system-e2e app):
+Test cases are written in spec files. Tests are tagged based on their execution time or other criteria. For example, you can use tags like `@fast` for quick tests and `@slow` for longer-running tests. Here is an example of the folder layout for testing the search engine and front-page of the `web` project:
 
 ```shell
 web/                      (app name)
-├── smoke/                (test type)
-│   └── home-page.spec.ts (feature name, kebab-case)
-└── acceptance/
-    └── search.spec.ts
+├── home-page.spec.ts     (feature name, kebab-case)
+└── search.spec.ts
 ```
 
 ### 🗃️ Spec files
@@ -132,7 +137,7 @@ test.describe('Overview part of banking app', () => {
     // Basic state reset, e.g. clear inbox
   })
 
-  test('should get paid', () => {
+  test('should get paid', { tag: '@slow' }, () => {
     // Make user get money using page.selector, page.click, etc.
     // Verify money is present
   })
