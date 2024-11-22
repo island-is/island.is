@@ -1340,12 +1340,20 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.setVMSTPeriods,
-            triggerEvent: DefaultEvents.EDIT,
-            externalDataId: 'VMSTPeriods',
-            throwOnError: false,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.setVMSTPeriods,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTPeriods',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.setApplicationRights,
+              triggerEvent: DefaultEvents.EDIT,
+              externalDataId: 'VMSTApplicationRights',
+              throwOnError: false,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
