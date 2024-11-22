@@ -1,5 +1,6 @@
 import CSVStringify from 'csv-stringify'
 import XLSX from 'xlsx'
+import { sanitizeSheetName } from './utils'
 
 export const downloadFile = async (
   name: string,
@@ -30,8 +31,10 @@ export const downloadFile = async (
   } else {
     const sheetData = [header, ...data]
     const dateString = new Date().toISOString().split('T')[0]
-    const fileName = `${name.replace(/\./g, '')} - ${dateString}`
-    const sheetName = name.substring(0, 31) // Max length for a sheet name.
+    const fileName = sanitizeSheetName(
+      `${name.replace(/\./g, '')} - ${dateString}`,
+    )
+    const sheetName = sanitizeSheetName(name)
 
     const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)
     const workbook: XLSX.WorkBook = {
