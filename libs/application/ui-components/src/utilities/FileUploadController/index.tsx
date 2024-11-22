@@ -103,7 +103,6 @@ export const FileUploadController = ({
   const initialUploadFiles: UploadFile[] =
     (val && val.map((f) => answerToUploadFile(f))) || []
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
-  console.log('file controller state', state)
 
   useEffect(() => {
     const onlyUploadedFiles = state.filter(
@@ -215,8 +214,6 @@ export const FileUploadController = ({
         setUploadError(formatMessage(coreErrorMessages.fileUpload))
       }
     })
-
-    // Update application (answers) with new attachments (from state)?
   }
 
   const onRemoveFile = async (fileToRemove: UploadFile) => {
@@ -248,8 +245,6 @@ export const FileUploadController = ({
         fileToRemove,
       },
     })
-
-    // Update application (answers) with new attachments (from state)?
 
     setUploadError(undefined)
   }
