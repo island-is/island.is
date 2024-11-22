@@ -76,7 +76,7 @@ export const BuyerCoOwnerAndOperatorRepeater: FC<
 
     const buyerNationalId =
       getValueViaPath<string>(
-        updatedApplication.answers,
+        updatedApplication?.answers,
         'buyer.nationalId',
         '',
       ) || ''
