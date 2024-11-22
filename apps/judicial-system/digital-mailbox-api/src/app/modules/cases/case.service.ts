@@ -182,7 +182,7 @@ export class CaseService {
   ): Promise<InternalCasesResponse[]> {
     try {
       const res = await fetch(
-        `${this.config.backendUrl}/api/internal/cases/indictments`,
+        `${this.config.backendUrl}/api/internal/cases/indictments/defendant/${nationalId}`,
         {
           method: 'POST',
           headers: {

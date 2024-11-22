@@ -1180,7 +1180,7 @@ export class InternalCaseService {
 
   // As this is only currently used by the digital mailbox API
   // we will only return indictment cases that have a court date
-  async getIndictmentCases(nationalId: string): Promise<Case[]> {
+  async getAllDefendantIndictmentCases(nationalId: string): Promise<Case[]> {
     return this.caseModel.findAll({
       include: [
         {
@@ -1211,47 +1211,6 @@ export class InternalCaseService {
         '$defendants.national_id$': normalizeAndFormatNationalId(nationalId),
       },
     })
-  }
-
-  async getIndictmentCase(caseId: string, nationalId: string): Promise<Case> {
-    const caseById = await this.caseModel.findOne({
-      include: [
-        {
-          model: Defendant,
-          as: 'defendants',
-          include: [
-            {
-              model: Subpoena,
-              as: 'subpoenas',
-              order: [['created', 'DESC']],
-            },
-          ],
-        },
-        { model: Institution, as: 'court' },
-        { model: Institution, as: 'prosecutorsOffice' },
-        { model: User, as: 'judge' },
-        {
-          model: User,
-          as: 'prosecutor',
-          include: [{ model: Institution, as: 'institution' }],
-        },
-        { model: DateLog, as: 'dateLogs' },
-      ],
-      attributes: ['courtCaseNumber', 'id'],
-      where: {
-        type: CaseType.INDICTMENT,
-        id: caseId,
-        // The national id could be without a hyphen or with a hyphen so we need to
-        // search for both
-        '$defendants.national_id$': normalizeAndFormatNationalId(nationalId),
-      },
-    })
-
-    if (!caseById) {
-      throw new NotFoundException(`Case ${caseId} not found`)
-    }
-
-    return caseById
   }
 
   countIndictmentsWaitingForConfirmation(prosecutorsOfficeId: string) {

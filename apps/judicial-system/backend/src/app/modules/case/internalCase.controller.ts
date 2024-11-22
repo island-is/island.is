@@ -28,7 +28,6 @@ import { DefendantNationalIdExistsGuard } from '../defendant'
 import { EventService } from '../event'
 import { DeliverDto } from './dto/deliver.dto'
 import { DeliverCancellationNoticeDto } from './dto/deliverCancellationNotice.dto'
-import { InternalCasesDto } from './dto/internalCases.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
@@ -77,20 +76,20 @@ export class InternalCaseController {
     return this.internalCaseService.archive()
   }
 
-  @Post('cases/indictments')
+  @Post('cases/indictments/defendant/:defendantNationalId')
   @ApiOkResponse({
     type: Case,
     isArray: true,
-    description: 'Gets all indictment cases for digital mailbox',
+    description: 'Gets all indictment cases for a given defendant',
   })
   @UseInterceptors(CasesInterceptor)
-  getIndictmentCases(
-    @Body() internalCasesDto: InternalCasesDto,
+  getAllDefendantIndictmentCases(
+    @Param('defendantNationalId') defendantNationalId: string,
   ): Promise<Case[]> {
-    this.logger.debug('Getting all indictment cases')
+    this.logger.debug('Getting all indictment cases for a given defendant')
 
-    return this.internalCaseService.getIndictmentCases(
-      internalCasesDto.nationalId,
+    return this.internalCaseService.getAllDefendantIndictmentCases(
+      defendantNationalId,
     )
   }
 
@@ -102,15 +101,17 @@ export class InternalCaseController {
   @Post('case/indictment/:caseId/defendant/:defendantNationalId')
   @ApiOkResponse({
     type: Case,
-    description: 'Gets an existing indictment case by id',
+    description: 'Gets an existing indictment case by id for a given defendant',
   })
   @UseInterceptors(CaseInterceptor)
-  getIndictmentCaseById(
+  getDefendantIndictmentCaseById(
     @Param('caseId') caseId: string,
     @Param('defendantNationalId') _: string,
     @CurrentCase() theCase: Case,
   ): Case {
-    this.logger.debug(`Getting indictment case ${caseId} by id`)
+    this.logger.debug(
+      `Getting indictment case ${caseId} by id for a given defendant`,
+    )
 
     return theCase
   }
