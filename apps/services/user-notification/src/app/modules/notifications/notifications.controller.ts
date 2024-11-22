@@ -21,7 +21,7 @@ import { NotificationsService } from './notifications.service'
 import type { Locale } from '@island.is/shared/types'
 import { ExtendedPaginationDto, PaginatedNotificationDto } from './dto/notification.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { UserProfileScope } from '@island.is/auth/scopes'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @Controller('notifications')
 @ApiTags('notifications')
@@ -89,7 +89,7 @@ export class NotificationsController {
   }
 
   @UseGuards(IdsUserGuard, ScopesGuard)
-  @Scopes(UserProfileScope.read)
+  @Scopes(AdminPortalScope.serviceDesk)
   @Get('/')
   @Documentation({
     summary: 'Returns a paginated list of notifications for a national id',

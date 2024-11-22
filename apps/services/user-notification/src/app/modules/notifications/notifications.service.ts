@@ -260,7 +260,23 @@ export class NotificationsService {
     )
   }
 
-  async findMany(
+ findMany(
+    nationalId: string,
+    query: ExtendedPaginationDto,
+  ): Promise<PaginatedNotificationDto> {
+    return paginate({
+      Model: this.notificationModel,
+      limit: query.limit || 10,
+      after: query.after || '',
+      before: query.before,
+      primaryKeyField: 'id',
+      orderOption: [['id', 'DESC']],
+      where: { recipient: nationalId },
+      attributes: ['id', 'messageId', 'senderId', 'created', 'updated'],
+    })
+  }
+
+  async findManyWithTemplate(
     nationalId: string,
     query: ExtendedPaginationDto,
   ): Promise<PaginatedNotificationDto> {

@@ -28,8 +28,6 @@ export class NotificationsAdminService {
     user: User,
     input?: NotificationsInput,
   ): Promise<AdminNotificationsResponse | null> {
-    this.logger.debug('getting potential admin notifications')
-
     const notifications = await this.notificationsWAuth(
       user,
     ).notificationsControllerFindMany({
@@ -41,7 +39,7 @@ export class NotificationsAdminService {
     })
 
     if (!notifications.data) {
-      this.logger.debug('no notification found')
+      this.logger.debug('no admin notification found')
       return null
     }
 
