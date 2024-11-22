@@ -32,7 +32,7 @@ import {
   VinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
-import { getChargeCodeItems } from '../utils'
+import { getChargeItems } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getExtraData } from '../utils/getSelectedMachine'
 
@@ -163,7 +163,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeCodeItems: getChargeCodeItems,
+        chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
         onExit: [
           defineTemplateApi({

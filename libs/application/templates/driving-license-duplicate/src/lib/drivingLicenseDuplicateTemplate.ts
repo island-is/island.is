@@ -15,7 +15,7 @@ import {
   JurisdictionApi,
   InstitutionNationalIds,
   ApplicationConfigurations,
-  ChargeCodeItem,
+  BasicChargeItem,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -46,7 +46,7 @@ const pruneAfter = (time: number) => {
     whenToPrune: time,
   }
 }
-const getCodes = (application: Application): ChargeCodeItem[] => {
+const getCodes = (application: Application): BasicChargeItem[] => {
   const chargeItemCode = getValueViaPath<string>(
     application.answers,
     'chargeItemCode',
@@ -143,7 +143,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeCodeItems: getCodes,
+        chargeItems: getCodes,
       }),
       [States.DONE]: {
         meta: {

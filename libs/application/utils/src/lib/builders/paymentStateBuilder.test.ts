@@ -9,7 +9,7 @@ describe('buildPaymentState', () => {
   it('should handle submitTarget as a string', () => {
     const result = buildPaymentState({
       organizationId: InstitutionNationalIds.SYSLUMENN,
-      chargeCodeItems: [{ code: 'SOME_CODE' }],
+      chargeItems: [{ code: 'SOME_CODE' }],
       submitTarget: 'TARGET_STRING',
     })
 
@@ -21,7 +21,7 @@ describe('buildPaymentState', () => {
   it('should handle submitTarget as an array with conditions', () => {
     const result = buildPaymentState({
       organizationId: InstitutionNationalIds.SYSLUMENN,
-      chargeCodeItems: [{ code: 'SOME_CODE' }],
+      chargeItems: [{ code: 'SOME_CODE' }],
       submitTarget: [
         { target: 'TARGET_1', cond: (context) => false },
         { target: 'TARGET_2' },
@@ -49,7 +49,7 @@ describe('buildPaymentState', () => {
   it('sets default transitions if none are provided', () => {
     const options = {
       organizationId: InstitutionNationalIds.SYSLUMENN,
-      chargeCodeItems: [{ code: 'SOME_CHARGE_CODE' }],
+      chargeItems: [{ code: 'SOME_CHARGE_CODE' }],
     }
     const result = buildPaymentState(options)
     const onTransitions = result.on as { [key: string]: any }
@@ -61,7 +61,7 @@ describe('buildPaymentState', () => {
   it('sets provided single submit target string', () => {
     const options = {
       organizationId: InstitutionNationalIds.SYSLUMENN,
-      chargeCodeItems: [{ code: 'SOME_CHARGE_CODE' }],
+      chargeItems: [{ code: 'SOME_CHARGE_CODE' }],
       submitTarget: 'CUSTOM_TARGET',
     }
     const result = buildPaymentState(options)
@@ -74,7 +74,7 @@ describe('buildPaymentState', () => {
     const customCondition = (context: any) => context.someKey === 'someValue'
     const options = {
       organizationId: InstitutionNationalIds.SYSLUMENN,
-      chargeCodeItems: [{ code: 'SOME_CHARGE_CODE' }],
+      chargeItems: [{ code: 'SOME_CHARGE_CODE' }],
       submitTarget: [
         { target: 'TARGET_ONE', cond: customCondition },
         { target: 'TARGET_TWO' },
@@ -92,7 +92,7 @@ describe('buildPaymentState', () => {
   it('configures the CreateChargeApi correctly', () => {
     const options = {
       organizationId: InstitutionNationalIds.SYSLUMENN,
-      chargeCodeItems: [{ code: 'SOME_CHARGE_CODE' }],
+      chargeItems: [{ code: 'SOME_CHARGE_CODE' }],
       extraData: [{ name: 'test', value: '1234' }],
     }
     const result = buildPaymentState(options)
@@ -115,8 +115,8 @@ describe('buildPaymentState', () => {
       InstitutionNationalIds.SYSLUMENN,
     )
 
-    // Verify that the chargeCodeItems are set correctly
-    expect(configuredApi.params.chargeCodeItems).toEqual([
+    // Verify that the chargeItems are set correctly
+    expect(configuredApi.params.chargeItems).toEqual([
       { code: 'SOME_CHARGE_CODE' },
     ])
 

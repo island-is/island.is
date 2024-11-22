@@ -1,6 +1,6 @@
 export {
-  getChargeCodeItems,
-  getChargeCodeItemsWithAnswers,
+  getChargeItems,
+  getChargeItemsWithAnswers,
   getExtraData,
 } from './getChargeItems'
 export { getReviewSteps } from './getReviewSteps'

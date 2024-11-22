@@ -9,7 +9,7 @@ import {
   Application,
   ApplicationContext,
   ApplicationStateSchema,
-  ChargeCodeItem,
+  BasicChargeItem,
   CreateChargeApi,
   DefaultEvents,
   DeletePaymentApi,
@@ -42,9 +42,9 @@ type PaymentStateConfigOptions<
    * The codes for the charge items. This can either be an array of strings
    * or a function that returns an array based on the application data.
    */
-  chargeCodeItems:
-    | ChargeCodeItem[]
-    | ((application: Application) => ChargeCodeItem[])
+  chargeItems:
+    | BasicChargeItem[]
+    | ((application: Application) => BasicChargeItem[])
 
   /**
    * Any additional data that needs to be passed for the payment to the create charge function.
@@ -158,7 +158,7 @@ export const buildPaymentState = <
         CreateChargeApi.configure({
           params: {
             organizationId: options.organizationId,
-            chargeCodeItems: options.chargeCodeItems,
+            chargeItems: options.chargeItems,
             extraData: options.extraData,
           },
         }),

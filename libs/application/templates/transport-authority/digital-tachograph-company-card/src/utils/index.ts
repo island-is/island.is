@@ -1,7 +1,7 @@
-import { ChargeCodeItem } from '@island.is/application/types'
+import { BasicChargeItem } from '@island.is/application/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
-export const getChargeCodeItems = (): Array<ChargeCodeItem> => {
+export const getChargeItems = (): Array<BasicChargeItem> => {
   return [
     {
       code: ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_COMPANY_CARD,

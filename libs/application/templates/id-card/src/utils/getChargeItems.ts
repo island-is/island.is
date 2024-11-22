@@ -1,13 +1,13 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application, ChargeCodeItem } from '@island.is/application/types'
+import { Application, BasicChargeItem } from '@island.is/application/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { Routes } from '../lib/constants'
 import { checkForDiscount } from './hasDiscount'
 import { Services } from '../shared/types'
 
-export const getChargeCodeItems = (
+export const getChargeItems = (
   application: Application,
-): Array<ChargeCodeItem> => {
+): Array<BasicChargeItem> => {
   const chosenPaymentForm = getValueViaPath(
     application.answers,
     `${Routes.PRICELIST}.priceChoice`,

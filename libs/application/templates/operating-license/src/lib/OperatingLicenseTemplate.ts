@@ -10,7 +10,7 @@ import {
   UserProfileApi,
   InstitutionNationalIds,
   ApplicationConfigurations,
-  ChargeCodeItem,
+  BasicChargeItem,
 } from '@island.is/application/types'
 import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
@@ -44,7 +44,7 @@ const pruneAfter = (time: number) => {
   }
 }
 
-const getCodes = (application: Application): ChargeCodeItem[] => {
+const getCodes = (application: Application): BasicChargeItem[] => {
   const chargeItemCode = getValueViaPath<string>(
     application.answers,
     'chargeItemCode',
@@ -128,7 +128,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeCodeItems: getCodes,
+        chargeItems: getCodes,
       }),
       [States.DONE]: {
         meta: {

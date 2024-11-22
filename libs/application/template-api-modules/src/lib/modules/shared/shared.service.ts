@@ -3,7 +3,7 @@ import { ConfigType } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 import {
   Application,
-  ChargeCodeItem,
+  BasicChargeItem,
   GraphqlGatewayResponse,
 } from '@island.is/application/types'
 import {
@@ -199,13 +199,13 @@ export class SharedTemplateApiService {
     user: User,
     applicationId: string,
     performingOrganizationID: string,
-    chargeCodeItems: ChargeCodeItem[],
+    chargeItems: BasicChargeItem[],
     extraData: ExtraData[] | undefined = undefined,
   ) {
     return this.paymentService.createCharge(
       user,
       performingOrganizationID,
-      chargeCodeItems,
+      chargeItems,
       applicationId,
       extraData,
     )

@@ -7,7 +7,7 @@ import {
   buildFormPaymentChargeOverviewSection,
 } from '@island.is/application/ui-forms'
 import { conclusion, externalData, payment } from '../../lib/messages'
-import { getChargeCodeItems } from '../../utils'
+import { getChargeItems } from '../../utils'
 
 export const TransferOfMachineOwnershipForm: Form = buildForm({
   id: 'TransferOfMachineOwnershipFormDraft',
@@ -26,7 +26,7 @@ export const TransferOfMachineOwnershipForm: Form = buildForm({
     buildFormPaymentChargeOverviewSection({
       sectionTitle: payment.general.sectionTitle,
       getSelectedChargeItems: (application) =>
-        getChargeCodeItems(application).map((item) => ({
+        getChargeItems(application).map((item) => ({
           chargeItemCode: item.code,
           chargeItemQuantity: item.quantity,
         })),

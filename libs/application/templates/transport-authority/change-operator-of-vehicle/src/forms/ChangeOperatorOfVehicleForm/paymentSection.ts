@@ -7,7 +7,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { payment } from '../../lib/messages'
-import { getChargeCodeItems, getChargeCodeItemsWithAnswers } from '../../utils'
+import { getChargeItems, getChargeItemsWithAnswers } from '../../utils'
 import { ChangeOperatorOfVehicle } from '../../lib/dataSchema'
 
 export const paymentSection = buildSection({
@@ -25,7 +25,7 @@ export const paymentSection = buildSection({
           forPaymentLabel: payment.paymentChargeOverview.forPayment,
           totalLabel: payment.paymentChargeOverview.total,
           getSelectedChargeItems: (application) =>
-            getChargeCodeItems(application).map((item) => ({
+            getChargeItems(application).map((item) => ({
               chargeItemCode: item.code,
               chargeItemQuantity: item.quantity,
             })),
@@ -46,7 +46,7 @@ export const paymentSection = buildSection({
               name: payment.general.confirm,
               type: 'primary',
               condition: (formValue, externalData) => {
-                const chargeCodeItems = getChargeCodeItemsWithAnswers(
+                const chargeItems = getChargeItemsWithAnswers(
                   formValue as ChangeOperatorOfVehicle,
                 )
                 const allItems = externalData?.payment?.data as [
@@ -56,7 +56,7 @@ export const paymentSection = buildSection({
                     chargeItemCode: string
                   },
                 ]
-                const items = chargeCodeItems.map((chargeItem) => {
+                const items = chargeItems.map((chargeItem) => {
                   return allItems.find(
                     (item) => item.chargeItemCode === chargeItem.code,
                   )

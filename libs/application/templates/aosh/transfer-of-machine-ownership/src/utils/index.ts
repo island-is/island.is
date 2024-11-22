@@ -2,7 +2,7 @@ import { ChargeItemCode } from '@island.is/shared/constants'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import {
   Application,
-  ChargeCodeItem,
+  BasicChargeItem,
   FormValue,
 } from '@island.is/application/types'
 import { TransferOfMachineOwnershipAnswers } from '..'
@@ -21,9 +21,9 @@ export { getApproveAnswers } from './getApproveAnswers'
 export { getRejecter } from './getRejecter'
 export { doSellerAndBuyerHaveSameNationalId } from './doSellerAndBuyerHaveSameNationalId'
 
-export const getChargeCodeItems = (
+export const getChargeItems = (
   application: Application<FormValue>,
-): Array<ChargeCodeItem> => {
+): Array<BasicChargeItem> => {
   const answers = application.answers as TransferOfMachineOwnershipAnswers
   if (answers.machine?.paymentRequiredForOwnerChange === false) {
     return []

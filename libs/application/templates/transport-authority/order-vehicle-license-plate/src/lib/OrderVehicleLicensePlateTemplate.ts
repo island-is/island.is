@@ -30,7 +30,7 @@ import {
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeCodeItems, getExtraData } from '../utils'
+import { getChargeItems, getExtraData } from '../utils'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -121,7 +121,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeCodeItems: getChargeCodeItems,
+        chargeItems: getChargeItems,
         extraData: getExtraData,
         submitTarget: States.COMPLETED,
         onExit: [

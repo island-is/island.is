@@ -1,22 +1,22 @@
 import { ChargeItemCode } from '@island.is/shared/constants'
 import {
   Application,
-  ChargeCodeItem,
+  BasicChargeItem,
   StaticText,
 } from '@island.is/application/types'
 import { HealthcareWorkPermit } from '../lib/dataSchema'
 import { PermitProgram } from '../lib'
 
-export const getChargeCodeItems = (
+export const getChargeItems = (
   application: Application,
-): Array<ChargeCodeItem> => {
-  return getChargeCodeItemsWithExtraLabel(application).map((item) => ({
+): Array<BasicChargeItem> => {
+  return getChargeItemsWithExtraLabel(application).map((item) => ({
     code: item.chargeItemCode,
     quantity: item.chargeItemQuantity,
   }))
 }
 
-export const getChargeCodeItemsWithExtraLabel = (
+export const getChargeItemsWithExtraLabel = (
   application: Application,
 ): Array<{
   chargeItemCode: string

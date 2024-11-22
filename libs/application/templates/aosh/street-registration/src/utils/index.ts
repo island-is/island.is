@@ -1,6 +1,6 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { ChargeItemCode } from '@island.is/shared/constants'
-import { ChargeCodeItem } from '@island.is/application/types'
+import { BasicChargeItem } from '@island.is/application/types'
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -8,7 +8,7 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
 }
 export { getSelectedMachine } from './getSelectedMachine'
 
-export const getChargeCodeItems = (): Array<ChargeCodeItem> => {
+export const getChargeItems = (): Array<BasicChargeItem> => {
   return [
     { code: ChargeItemCode.AOSH_STREET_REGISTRATION_SA102 },
     { code: ChargeItemCode.AOSH_STREET_REGISTRATION_SA111 },

@@ -1,6 +1,6 @@
 import {
   Application,
-  ChargeCodeItem,
+  BasicChargeItem,
   ExtraData,
 } from '@island.is/application/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
@@ -22,7 +22,7 @@ export { getApproveAnswers } from './getApproveAnswers'
 export { isLastReviewer } from './isLastReviewer'
 export { getRejecter } from './getRejecter'
 
-export const getChargeCodeItems = (): Array<ChargeCodeItem> => {
+export const getChargeItems = (): Array<BasicChargeItem> => {
   return [
     {
       code: ChargeItemCode.TRANSPORT_AUTHORITY_TRANSFER_OF_VEHICLE_OWNERSHIP.toString(),

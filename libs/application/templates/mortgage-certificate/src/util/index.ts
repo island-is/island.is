@@ -1,7 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
-  ChargeCodeItem,
+  BasicChargeItem,
   StaticText,
 } from '@island.is/application/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
@@ -12,10 +12,10 @@ export { getUserProfileData } from './getUserProfileData'
 export { concatPropertyList } from './concatPropertyList'
 export { getApplicationFeatureFlags } from './getApplicationFeatureFlags'
 
-export const getChargeCodeItems = (
+export const getChargeItems = (
   application: Application,
-): Array<ChargeCodeItem> => {
-  const allItems: ChargeCodeItem[] = getChargeCodeItemsWithExtraLabel(
+): Array<BasicChargeItem> => {
+  const allItems: BasicChargeItem[] = getChargeItemsWithExtraLabel(
     application,
   ).map((item) => ({
     code: item.chargeItemCode,
@@ -32,13 +32,13 @@ export const getChargeCodeItems = (
         acc[item.code] = { code: item.code, quantity }
       }
       return acc
-    }, {} as { [key: string]: ChargeCodeItem }),
+    }, {} as { [key: string]: BasicChargeItem }),
   )
 
   return summarizedItems
 }
 
-export const getChargeCodeItemsWithExtraLabel = (
+export const getChargeItemsWithExtraLabel = (
   application: Application,
 ): Array<{
   chargeItemCode: string

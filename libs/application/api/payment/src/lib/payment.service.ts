@@ -27,7 +27,7 @@ import { ConfigType } from '@nestjs/config'
 import { formatCharge } from './types/Charge'
 import {
   PaymentType as BasePayment,
-  ChargeCodeItem,
+  BasicChargeItem,
 } from '@island.is/application/types'
 import { AuditService } from '@island.is/nest/audit'
 import { PaymentStatus } from './types/paymentStatus'
@@ -146,7 +146,7 @@ export class PaymentService {
   }
 
   async createPaymentModel(
-    chargeItems: CatalogItem[],
+    catalogChargeItems: CatalogItem[],
     applicationId: string,
     performingOrganizationID: string,
   ): Promise<Payment> {
@@ -156,14 +156,14 @@ export class PaymentService {
     > = {
       application_id: applicationId,
       fulfilled: false,
-      amount: chargeItems.reduce(
+      amount: catalogChargeItems.reduce(
         (sum, item) => sum + (item?.priceAmount || 0) * (item?.quantity || 1),
         0,
       ),
       definition: {
         performingOrganizationID: performingOrganizationID,
-        chargeType: chargeItems[0].chargeType,
-        charges: chargeItems.map((chargeItem) => ({
+        chargeType: catalogChargeItems[0].chargeType,
+        charges: catalogChargeItems.map((chargeItem) => ({
           chargeItemName: chargeItem.chargeItemName,
           chargeItemCode: chargeItem.chargeItemCode,
           amount: chargeItem.priceAmount, // Note: this field should be called priceAmount (since it is not summarized)
@@ -185,14 +185,14 @@ export class PaymentService {
   async createCharge(
     user: User,
     performingOrganizationID: string,
-    chargeCodeItems: ChargeCodeItem[],
+    chargeItems: BasicChargeItem[],
     applicationId: string,
     extraData: ExtraData[] | undefined,
   ): Promise<CreateChargeResult> {
     //1. Retrieve charge items from FJS
-    const chargeItems = await this.findChargeItems(
+    const catalogChargeItems = await this.findCatalogChargeItems(
       performingOrganizationID,
-      chargeCodeItems,
+      chargeItems,
     )
 
     //2. Fetch existing payment if any
@@ -249,7 +249,7 @@ export class PaymentService {
     } else {
       //3. Create new payment entry
       paymentModel = await this.createPaymentModel(
-        chargeItems,
+        catalogChargeItems,
         applicationId,
         performingOrganizationID,
       )
@@ -322,9 +322,9 @@ export class PaymentService {
     )}`
   }
 
-  async findChargeItems(
+  async findCatalogChargeItems(
     performingOrganizationID: string,
-    targetChargeItems: ChargeCodeItem[],
+    targetChargeItems: BasicChargeItem[],
   ): Promise<CatalogItem[]> {
     const { item: catalogItems } =
       await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
@@ -344,7 +344,7 @@ export class PaymentService {
     }
 
     if (!result || result.length === 0) {
-      throw new Error('Bad chargeCodeItems or empty catalog')
+      throw new Error('Bad chargeItems or empty catalog')
     }
 
     const firstItem = result[0]
@@ -352,7 +352,7 @@ export class PaymentService {
       (item) => item.chargeType !== firstItem.chargeType,
     )
     if (notSame) {
-      throw new Error('Not all chargeCodeItems have the same chargeType')
+      throw new Error('Not all chargeItems have the same chargeType')
     }
 
     return result

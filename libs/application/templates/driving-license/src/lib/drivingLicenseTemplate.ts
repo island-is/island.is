@@ -22,7 +22,7 @@ import {
   InstitutionNationalIds,
   Application,
   ApplicationConfigurations,
-  ChargeCodeItem,
+  BasicChargeItem,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
@@ -52,14 +52,14 @@ import {
 import { buildPaymentState } from '@island.is/application/utils'
 import { Pickup } from './types'
 
-const getCodes = (application: Application): ChargeCodeItem[] => {
+const getCodes = (application: Application): BasicChargeItem[] => {
   const applicationFor = getValueViaPath<
     'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65' | 'B-advanced'
   >(application.answers, 'applicationFor', 'B-full')
 
   const pickup = getValueViaPath<Pickup>(application.answers, 'pickup')
 
-  const codes: ChargeCodeItem[] = []
+  const codes: BasicChargeItem[] = []
 
   const DEFAULT_ITEM_CODE = CHARGE_ITEM_CODES[B_FULL]
 
@@ -232,7 +232,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeCodeItems: getCodes,
+        chargeItems: getCodes,
       }),
       [States.DONE]: {
         meta: {

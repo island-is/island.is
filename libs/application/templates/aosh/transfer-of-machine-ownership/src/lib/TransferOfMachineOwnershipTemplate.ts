@@ -32,7 +32,7 @@ import {
   MachinesApi,
   MockableVinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
-import { getChargeCodeItems, hasReviewerApproved } from '../utils'
+import { getChargeItems, hasReviewerApproved } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { getBuyerNationalId } from '../utils/getBuyerNationalid'
@@ -201,7 +201,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
-        chargeCodeItems: getChargeCodeItems,
+        chargeItems: getChargeItems,
         submitTarget: States.REVIEW,
         onExit: [
           defineTemplateApi({

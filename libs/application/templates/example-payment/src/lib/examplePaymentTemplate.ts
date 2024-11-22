@@ -14,7 +14,7 @@ import {
   VerifyPaymentApi,
   InstitutionNationalIds,
   MockablePaymentCatalogApi,
-  ChargeCodeItem,
+  BasicChargeItem,
 } from '@island.is/application/types'
 import { MockPaymentCatalogWithTwoItems } from '../dataProviders'
 import { ApiActions } from '../shared'
@@ -25,7 +25,7 @@ import { PaymentCatalogApi } from '@island.is/application/types'
 import { CatalogItem } from '@island.is/clients/charge-fjs-v2'
 import { buildPaymentState } from '@island.is/application/utils'
 
-const getCodes = (application: Application): ChargeCodeItem[] => {
+const getCodes = (application: Application): BasicChargeItem[] => {
   // This is where you'd pick and validate that you are going to create a charge for a
   // particular charge item code. Note that creating these charges creates an actual "krafa"
   // with FJS
@@ -84,7 +84,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeCodeItems: getCodes,
+        chargeItems: getCodes,
       }),
       [States.DONE]: {
         meta: {

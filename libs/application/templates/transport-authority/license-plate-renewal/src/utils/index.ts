@@ -2,14 +2,14 @@ import { LicensePlateRenewal } from '../lib/dataSchema'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import {
   Application,
-  ChargeCodeItem,
+  BasicChargeItem,
   ExtraData,
 } from '@island.is/application/types'
 import { isPaymentRequired } from './isPaymentRequired'
 
-export const getChargeCodeItems = (
+export const getChargeItems = (
   application: Application,
-): Array<ChargeCodeItem> => {
+): Array<BasicChargeItem> => {
   const paymentRequired = isPaymentRequired({ application })
   return paymentRequired
     ? [

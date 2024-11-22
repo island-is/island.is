@@ -34,7 +34,7 @@ import set from 'lodash/set'
 import {
   canReviewerApprove,
   isRemovingOperatorOnly,
-  getChargeCodeItems,
+  getChargeItems,
   getExtraData,
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -158,7 +158,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeCodeItems: getChargeCodeItems,
+        chargeItems: getChargeItems,
         extraData: getExtraData,
         onExit: [
           defineTemplateApi({

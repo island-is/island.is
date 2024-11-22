@@ -1,21 +1,21 @@
 import {
   Application,
-  ChargeCodeItem,
+  BasicChargeItem,
   ExtraData,
 } from '@island.is/application/types'
 import { ChangeOperatorOfVehicle } from '../lib/dataSchema'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
-export const getChargeCodeItems = (
+export const getChargeItems = (
   application: Application,
-): Array<ChargeCodeItem> => {
+): Array<BasicChargeItem> => {
   const answers = application.answers as ChangeOperatorOfVehicle
-  return getChargeCodeItemsWithAnswers(answers)
+  return getChargeItemsWithAnswers(answers)
 }
 
-export const getChargeCodeItemsWithAnswers = (
+export const getChargeItemsWithAnswers = (
   answers: ChangeOperatorOfVehicle,
-): Array<ChargeCodeItem> => {
+): Array<BasicChargeItem> => {
   const operatorWasAdded =
     answers.operators?.filter(({ wasRemoved }) => wasRemoved !== 'true')
       .length > 0
@@ -23,7 +23,7 @@ export const getChargeCodeItemsWithAnswers = (
     (x) => x.wasRemoved === 'true',
   )
 
-  const result: Array<ChargeCodeItem> = []
+  const result: Array<BasicChargeItem> = []
 
   if (operatorWasAdded) {
     result.push({

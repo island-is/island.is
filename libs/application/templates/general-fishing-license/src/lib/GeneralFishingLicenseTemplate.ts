@@ -6,7 +6,7 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  ChargeCodeItem,
+  BasicChargeItem,
   DefaultEvents,
   defineTemplateApi,
   InstitutionNationalIds,
@@ -58,7 +58,7 @@ export const getExtraData = (application: Application): ExtraData[] => {
   ]
 }
 
-const getCodes = (application: Application): ChargeCodeItem[] => {
+const getCodes = (application: Application): BasicChargeItem[] => {
   const answers = application.answers as GeneralFishingLicenseAnswers
   const chargeItemCode = getValueViaPath(
     answers,
@@ -69,7 +69,7 @@ const getCodes = (application: Application): ChargeCodeItem[] => {
     throw new Error('Vörunúmer fyrir FJS vantar.')
   }
 
-  const result: ChargeCodeItem[] = [{ code: chargeItemCode }]
+  const result: BasicChargeItem[] = [{ code: chargeItemCode }]
 
   // If strandveiðileyfi, then we add "Sérstakt gjald vegna strandleyfa"
   if (chargeItemCode === ChargeItemCode.GENERAL_FISHING_LICENSE_COASTAL) {
@@ -188,7 +188,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.FISKISTOFA,
-        chargeCodeItems: getCodes,
+        chargeItems: getCodes,
         extraData: getExtraData,
         submitTarget: States.SUBMITTED,
       }),

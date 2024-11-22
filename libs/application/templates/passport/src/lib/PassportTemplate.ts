@@ -9,7 +9,7 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  ChargeCodeItem,
+  BasicChargeItem,
   DefaultEvents,
   defineTemplateApi,
   InstitutionNationalIds,
@@ -46,7 +46,7 @@ const pruneAfter = (time: number) => {
     whenToPrune: time,
   }
 }
-const getCode = (application: Application): ChargeCodeItem[] => {
+const getCode = (application: Application): BasicChargeItem[] => {
   const chargeItemCode = getValueViaPath<string>(
     application.answers,
     'chargeItemCode',
@@ -131,7 +131,7 @@ const PassportTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeCodeItems: getCode,
+        chargeItems: getCode,
         submitTarget: [
           {
             target: States.PARENT_B_CONFIRM,

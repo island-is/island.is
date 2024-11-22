@@ -3,7 +3,7 @@ import { ChargeItemCode } from '@island.is/shared/constants'
 import { YES } from '@island.is/application/core'
 import {
   Application,
-  ChargeCodeItem,
+  BasicChargeItem,
   ExtraData,
   StaticText,
 } from '@island.is/application/types'
@@ -11,17 +11,17 @@ import { payment } from '../lib/messages'
 
 export { getSelectedVehicle } from './getSelectedVehicle'
 
-export const getChargeCodeItems = (
+export const getChargeItems = (
   application: Application,
-): Array<ChargeCodeItem> => {
+): Array<BasicChargeItem> => {
   const answers = application.answers as OrderVehicleLicensePlate
-  return getChargeCodeItemsWithAnswers(answers)
+  return getChargeItemsWithAnswers(answers)
 }
 
-export const getChargeCodeItemsWithAnswers = (
+export const getChargeItemsWithAnswers = (
   answers: OrderVehicleLicensePlate,
-): Array<ChargeCodeItem> => {
-  return getChargeCodeItemsWithExtraLabelUsingAnswers(answers).map((item) => ({
+): Array<BasicChargeItem> => {
+  return getChargeItemsWithExtraLabelUsingAnswers(answers).map((item) => ({
     code: item.chargeItemCode,
     quantity: item.chargeItemQuantity,
   }))
@@ -37,7 +37,7 @@ export enum PlateType {
   rear = 'rear',
 }
 
-export const getChargeCodeItemsWithExtraLabel = (
+export const getChargeItemsWithExtraLabel = (
   application: Application,
 ): Array<{
   chargeItemCode: string
@@ -45,10 +45,10 @@ export const getChargeCodeItemsWithExtraLabel = (
   extraLabel?: StaticText
 }> => {
   const answers = application.answers as OrderVehicleLicensePlate
-  return getChargeCodeItemsWithExtraLabelUsingAnswers(answers)
+  return getChargeItemsWithExtraLabelUsingAnswers(answers)
 }
 
-const getChargeCodeItemsWithExtraLabelUsingAnswers = (
+const getChargeItemsWithExtraLabelUsingAnswers = (
   answers: OrderVehicleLicensePlate,
 ): Array<{
   chargeItemCode: string

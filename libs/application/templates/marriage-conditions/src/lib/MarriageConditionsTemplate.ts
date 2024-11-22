@@ -113,7 +113,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeCodeItems: [{ code: 'AY129' }],
+        chargeItems: [{ code: 'AY129' }],
         submitTarget: States.SPOUSE_CONFIRM,
       }),
       [States.SPOUSE_CONFIRM]: {

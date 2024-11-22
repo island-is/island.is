@@ -5,7 +5,7 @@ import { informationSection } from './InformationSection'
 import { prerequisitesSection } from './prerequisitesSection'
 import { Logo } from '../../assets/Logo'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
-import { getChargeCodeItems } from '../../utils'
+import { getChargeItems } from '../../utils'
 
 export const OrderVehicleRegistrationCertificateForm: Form = buildForm({
   id: 'OrderVehicleRegistrationCertificateFormDraft',
@@ -20,7 +20,7 @@ export const OrderVehicleRegistrationCertificateForm: Form = buildForm({
     buildFormPaymentChargeOverviewSection({
       sectionTitle: payment.general.sectionTitle,
       getSelectedChargeItems: (_) =>
-        getChargeCodeItems().map((item) => ({
+        getChargeItems().map((item) => ({
           chargeItemCode: item.code,
           chargeItemQuantity: item.quantity,
         })),

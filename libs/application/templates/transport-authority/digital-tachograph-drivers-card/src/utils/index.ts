@@ -2,22 +2,22 @@ import { DigitalTachographDriversCard } from '../lib/dataSchema'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import {
   Application,
-  ChargeCodeItem,
+  BasicChargeItem,
   ExternalData,
 } from '@island.is/application/types'
 import { getValueViaPath, YES } from '@island.is/application/core'
 
-export const getChargeCodeItems = (
+export const getChargeItems = (
   application: Application,
-): Array<ChargeCodeItem> => {
+): Array<BasicChargeItem> => {
   const answers = application.answers as DigitalTachographDriversCard
-  return getChargeCodeItemsWithAnswers(answers)
+  return getChargeItemsWithAnswers(answers)
 }
 
-export const getChargeCodeItemsWithAnswers = (
+export const getChargeItemsWithAnswers = (
   answers: DigitalTachographDriversCard,
-): Array<ChargeCodeItem> => {
-  const result: Array<ChargeCodeItem> = []
+): Array<BasicChargeItem> => {
+  const result: Array<BasicChargeItem> = []
 
   const deliveryMethodIsSend =
     answers.cardDelivery?.deliveryMethodIsSend === YES

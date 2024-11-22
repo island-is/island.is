@@ -1,19 +1,19 @@
-import { Application, ChargeCodeItem } from '@island.is/application/types'
+import { Application, BasicChargeItem } from '@island.is/application/types'
 import { ChangeCoOwnerOfVehicle } from '../lib/dataSchema'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
 import { ExtraData } from '@island.is/clients/charge-fjs-v2'
 
-export const getChargeCodeItems = (
+export const getChargeItems = (
   application: Application,
-): Array<ChargeCodeItem> => {
+): Array<BasicChargeItem> => {
   const answers = application.answers as ChangeCoOwnerOfVehicle
-  return getChargeCodeItemsWithAnswers(answers)
+  return getChargeItemsWithAnswers(answers)
 }
 
-export const getChargeCodeItemsWithAnswers = (
+export const getChargeItemsWithAnswers = (
   answers: ChangeCoOwnerOfVehicle,
-): Array<ChargeCodeItem> => {
+): Array<BasicChargeItem> => {
   const coOwnerWasAdded =
     answers.coOwners?.filter(({ wasRemoved }) => wasRemoved !== 'true').length >
     0
@@ -21,7 +21,7 @@ export const getChargeCodeItemsWithAnswers = (
     (x) => x.wasRemoved === 'true',
   )
 
-  const result: Array<ChargeCodeItem> = []
+  const result: Array<BasicChargeItem> = []
 
   if (coOwnerWasAdded) {
     result.push({

@@ -104,12 +104,12 @@ describe('Payment Service', () => {
 
   it('should create a charge', async () => {
     const performingOrganizationID = '1'
-    const chargeCodeItems = [{ code: 'asdf' }]
+    const chargeItems = [{ code: 'asdf' }]
 
     const result = await service.createCharge(
       user,
       performingOrganizationID,
-      chargeCodeItems,
+      chargeItems,
       applicationId,
       undefined,
     )
@@ -119,12 +119,12 @@ describe('Payment Service', () => {
 
   it('should create a charge with multiple charge items', async () => {
     const performingOrganizationID = '1'
-    const chargeCodeItems = [{ code: 'asdf' }, { code: 'asdf' }]
+    const chargeItems = [{ code: 'asdf' }, { code: 'asdf' }]
 
     const result = await service.createCharge(
       user,
       performingOrganizationID,
-      chargeCodeItems,
+      chargeItems,
       applicationId,
       undefined,
     )
@@ -134,12 +134,12 @@ describe('Payment Service', () => {
 
   it('should create a charge with multiple charge items using quantity', async () => {
     const performingOrganizationID = '1'
-    const chargeCodeItems = [{ code: 'asdf', quantity: 3 }]
+    const chargeItems = [{ code: 'asdf', quantity: 3 }]
 
     const result = await service.createCharge(
       user,
       performingOrganizationID,
-      chargeCodeItems,
+      chargeItems,
       applicationId,
       undefined,
     )
@@ -149,13 +149,13 @@ describe('Payment Service', () => {
 
   it('should throw an error when charge item is not found', async () => {
     const performingOrganizationID = '1'
-    const chargeCodeItems = [{ code: '13' }]
+    const chargeItems = [{ code: '13' }]
 
     await expect(
       service.createCharge(
         user,
         performingOrganizationID,
-        chargeCodeItems,
+        chargeItems,
         applicationId,
         undefined,
       ),
@@ -164,12 +164,12 @@ describe('Payment Service', () => {
 
   it('should get a payment status', async () => {
     const performingOrganizationID = '1'
-    const chargeCodeItems = [{ code: 'asdf' }, { code: 'asdf' }]
+    const chargeItems = [{ code: 'asdf' }, { code: 'asdf' }]
 
     const charge = await service.createCharge(
       user,
       performingOrganizationID,
-      chargeCodeItems,
+      chargeItems,
       applicationId,
       undefined,
     )
@@ -180,12 +180,12 @@ describe('Payment Service', () => {
 
   it('should get a fulfilled payment status', async () => {
     const performingOrganizationID = '1'
-    const chargeCodeItems = [{ code: 'asdf' }, { code: 'asdf' }]
+    const chargeItems = [{ code: 'asdf' }, { code: 'asdf' }]
 
     const charge = await service.createCharge(
       user,
       performingOrganizationID,
-      chargeCodeItems,
+      chargeItems,
       applicationId,
       undefined,
     )
@@ -203,17 +203,17 @@ describe('Payment Service', () => {
     const quantityA = 2
     const quantityB = 3
     const performingOrganizationID = '1'
-    const chargeCodeItems = [
+    const chargeItems = [
       { code: 'asdf', quantity: quantityA },
       { code: 'asdf2', quantity: quantityB },
     ]
 
-    const chargeItems = await service.findChargeItems(
+    const catalogChargeItems = await service.findCatalogChargeItems(
       performingOrganizationID,
-      chargeCodeItems,
+      chargeItems,
     )
 
-    const totalQuantity = chargeItems.reduce(
+    const totalQuantity = catalogChargeItems.reduce(
       (sum, item) => sum + item.quantity,
       0,
     )
@@ -223,7 +223,7 @@ describe('Payment Service', () => {
 
   it('Should throw when payment exists and status is in progress.', async () => {
     const performingOrganizationID = '1'
-    const chargeCodeItems = [{ code: 'asdf' }, { code: 'asdf' }]
+    const chargeItems = [{ code: 'asdf' }, { code: 'asdf' }]
 
     jest.spyOn(fjsClient, 'getChargeStatus').mockResolvedValueOnce({
       statusResult: {
@@ -236,13 +236,13 @@ describe('Payment Service', () => {
       },
     })
 
-    const chargeItems = await service.findChargeItems(
+    const catalogChargeItems = await service.findCatalogChargeItems(
       performingOrganizationID,
-      chargeCodeItems,
+      chargeItems,
     )
 
     const payment = await service.createPaymentModel(
-      chargeItems,
+      catalogChargeItems,
       applicationId,
       performingOrganizationID,
     )
@@ -251,7 +251,7 @@ describe('Payment Service', () => {
       service.createCharge(
         user,
         performingOrganizationID,
-        chargeCodeItems,
+        chargeItems,
         applicationId,
         undefined,
       ),
@@ -260,7 +260,7 @@ describe('Payment Service', () => {
 
   it('Should continue with a payment that exists and status with an unpaid status.', async () => {
     const performingOrganizationID = '1'
-    const chargeCodeItems = [{ code: 'asdf' }, { code: 'asdf' }]
+    const chargeItems = [{ code: 'asdf' }, { code: 'asdf' }]
 
     const mock = jest.spyOn(fjsClient, 'getChargeStatus')
 
@@ -277,13 +277,13 @@ describe('Payment Service', () => {
       }),
     )
 
-    const chargeItems = await service.findChargeItems(
+    const catalogChargeItems = await service.findCatalogChargeItems(
       performingOrganizationID,
-      chargeCodeItems,
+      chargeItems,
     )
 
     const payment = await service.createPaymentModel(
-      chargeItems,
+      catalogChargeItems,
       applicationId,
       performingOrganizationID,
     )
@@ -291,7 +291,7 @@ describe('Payment Service', () => {
     const charge = await service.createCharge(
       user,
       performingOrganizationID,
-      chargeCodeItems,
+      chargeItems,
       applicationId,
       undefined,
     )
@@ -301,7 +301,7 @@ describe('Payment Service', () => {
 
   it('Should not create a new charge and a payment when payment exists', async () => {
     const performingOrganizationID = '1'
-    const chargeCodeItems = [{ code: 'asdf' }, { code: 'asdf' }]
+    const chargeItems = [{ code: 'asdf' }, { code: 'asdf' }]
 
     const mock = jest.spyOn(fjsClient, 'getChargeStatus')
     const createChargeSpy = jest.spyOn(fjsClient, 'createCharge')
@@ -319,13 +319,13 @@ describe('Payment Service', () => {
       }),
     )
 
-    const chargeItems = await service.findChargeItems(
+    const catalogChargeItems = await service.findCatalogChargeItems(
       performingOrganizationID,
-      chargeCodeItems,
+      chargeItems,
     )
 
     const payment = await service.createPaymentModel(
-      chargeItems,
+      catalogChargeItems,
       applicationId,
       performingOrganizationID,
     )
@@ -333,7 +333,7 @@ describe('Payment Service', () => {
     const charge = await service.createCharge(
       user,
       performingOrganizationID,
-      chargeCodeItems,
+      chargeItems,
       applicationId,
       undefined,
     )

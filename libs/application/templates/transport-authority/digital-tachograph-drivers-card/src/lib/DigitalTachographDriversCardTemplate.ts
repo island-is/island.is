@@ -30,7 +30,7 @@ import {
   NationalRegistryBirthplaceApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeCodeItems } from '../utils'
+import { getChargeItems } from '../utils'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -99,7 +99,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeCodeItems: getChargeCodeItems,
+        chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
         onExit: [
           defineTemplateApi({

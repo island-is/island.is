@@ -42,7 +42,7 @@ export interface ExtraData {
   value: string
 }
 
-export interface ChargeCodeItem {
+export interface BasicChargeItem {
   code: string
   quantity?: number
 }
