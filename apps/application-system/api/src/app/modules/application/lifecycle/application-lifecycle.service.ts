@@ -7,12 +7,22 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApplicationChargeService } from '../charge/application-charge.service'
 import { FileService } from '@island.is/application/api/files'
+import {
+  NotificationsService,
+  NotificationType,
+} from '@island.is/application/template-api-modules'
 
 export interface ApplicationPruning {
   pruned: boolean
   application: Pick<
     Application,
-    'id' | 'attachments' | 'answers' | 'externalData' | 'typeId' | 'state'
+    | 'id'
+    | 'attachments'
+    | 'answers'
+    | 'externalData'
+    | 'typeId'
+    | 'state'
+    | 'applicant'
   >
   failedAttachments: object
 }
@@ -27,6 +37,7 @@ export class ApplicationLifeCycleService {
     private applicationService: ApplicationService,
     private fileService: FileService,
     private applicationChargeService: ApplicationChargeService,
+    private notificationsService: NotificationsService,
   ) {
     this.logger = logger.child({ context: 'ApplicationLifeCycleService' })
   }
@@ -50,7 +61,13 @@ export class ApplicationLifeCycleService {
     const applications =
       (await this.applicationService.findAllDueToBePruned()) as Pick<
         Application,
-        'id' | 'attachments' | 'answers' | 'externalData' | 'typeId' | 'state'
+        | 'id'
+        | 'attachments'
+        | 'answers'
+        | 'externalData'
+        | 'typeId'
+        | 'state'
+        | 'applicant'
       >[]
 
     this.logger.info(`Found ${applications.length} applications to be pruned.`)
@@ -117,7 +134,7 @@ export class ApplicationLifeCycleService {
     }
   }
 
-  private reportResults() {
+  private async reportResults() {
     const failed = this.processingApplications.filter(
       (application) => !application.pruned,
     )
@@ -126,6 +143,15 @@ export class ApplicationLifeCycleService {
       (application) => application.pruned,
     )
 
+    await this.notificationsService.sendNotification({
+      type: NotificationType.System,
+      messageParties: {
+        recipient: '0101302399',
+      },
+      args: {
+        documentId: '1337',
+      },
+    })
     this.logger.info(`Successful: ${success.length}, Failed: ${failed.length}`)
   }
 }

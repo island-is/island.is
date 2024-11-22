@@ -16,6 +16,7 @@ import { environment } from '../../../../environments'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { ApplicationChargeModule } from '../charge/application-charge.module'
 import { ApplicationLifeCycleService } from './application-lifecycle.service'
+import { ApplicationsNotificationsModule } from '@island.is/application/template-api-modules'
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ApplicationLifeCycleService } from './application-lifecycle.service'
       isGlobal: true,
       load: [signingModuleConfig, ApplicationFilesConfig, FileStorageConfig],
     }),
+    ApplicationsNotificationsModule,
   ],
   providers: [ApplicationLifeCycleService],
 })
