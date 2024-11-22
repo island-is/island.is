@@ -6,7 +6,6 @@ import { prerequisitesSection } from './prerequisitesSection'
 import { Logo } from '../../assets/Logo'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
 import { getChargeCodeItems } from '../../utils'
-import { time } from 'console'
 
 export const DigitalTachographWorkshopCardForm: Form = buildForm({
   id: 'DigitalTachographWorkshopCardFormDraft',

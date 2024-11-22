@@ -42,6 +42,13 @@ class MockChargeFjsV2ClientService {
           chargeItemName: '1',
           priceAmount: 1,
         },
+        {
+          performingOrgID: performingOrganizationID,
+          chargeType: '1',
+          chargeItemCode: 'asdf2',
+          chargeItemName: '2',
+          priceAmount: 2,
+        },
       ],
     })
   }
@@ -190,6 +197,28 @@ describe('Payment Service', () => {
     )
     const result = await service.getStatus(user, applicationId)
     expect(result.fulfilled).toBe(true)
+  })
+
+  it('should find charge items using quantity', async () => {
+    const quantityA = 2
+    const quantityB = 3
+    const performingOrganizationID = '1'
+    const chargeCodeItems = [
+      { code: 'asdf', quantity: quantityA },
+      { code: 'asdf2', quantity: quantityB },
+    ]
+
+    const chargeItems = await service.findChargeItems(
+      performingOrganizationID,
+      chargeCodeItems,
+    )
+
+    const totalQuantity = chargeItems.reduce(
+      (sum, item) => sum + item.quantity,
+      0,
+    )
+
+    await expect(totalQuantity).toBe(quantityA + quantityB)
   })
 
   it('Should throw when payment exists and status is in progress.', async () => {
