@@ -20,6 +20,7 @@ import { DefendantService } from '../defendant.service'
 import { InternalDefendantController } from '../internalDefendant.controller'
 import { CivilClaimant } from '../models/civilClaimant.model'
 import { Defendant } from '../models/defendant.model'
+import { DefendantEventLog } from '../models/defendantEventLog.model'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../user/user.service')
@@ -61,6 +62,17 @@ export const createTestingDefendantModule = async () => {
       },
       {
         provide: getModelToken(CivilClaimant),
+        useValue: {
+          findOne: jest.fn(),
+          findAll: jest.fn(),
+          create: jest.fn(),
+          update: jest.fn(),
+          destroy: jest.fn(),
+          findByPk: jest.fn(),
+        },
+      },
+      {
+        provide: getModelToken(DefendantEventLog),
         useValue: {
           findOne: jest.fn(),
           findAll: jest.fn(),
