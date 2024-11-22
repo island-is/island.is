@@ -8,11 +8,10 @@ import { Asset, mapAsset } from './asset.model'
 import { ReferenceLink, mapReferenceLink } from './referenceLink.model'
 import { Fund, mapFund } from './fund.model'
 
-enum GrantStatus {
+export enum GrantStatus {
   CLOSED,
   OPEN,
-  OPENS_SOON,
-  INACTIVE,
+  SEE_DESCRIPTION,
 }
 
 registerEnumType(GrantStatus, { name: 'GrantStatus' })
@@ -31,8 +30,8 @@ export class Grant {
   @Field({ nullable: true })
   applicationId?: string
 
-  @Field(() => [String], { nullable: true })
-  applicationDeadlineText?: Array<string>
+  @Field({ nullable: true })
+  applicationDeadlineStatus?: string
 
   @CacheField(() => ReferenceLink, { nullable: true })
   applicationUrl?: ReferenceLink
@@ -61,9 +60,6 @@ export class Grant {
   @Field({ nullable: true })
   isOpen?: boolean
 
-  @Field({ nullable: true })
-  statusText?: string
-
   @CacheField(() => GrantStatus, { nullable: true })
   status?: GrantStatus
 
@@ -85,7 +81,7 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
   name: fields.grantName,
   description: fields.grantDescription,
   applicationId: fields.grantApplicationId,
-  applicationDeadlineText: fields.grantApplicationDeadlineText,
+  applicationDeadlineStatus: fields.grantApplicationDeadlineStatus,
   applicationUrl: fields.granApplicationUrl?.fields
     ? mapReferenceLink(fields.granApplicationUrl)
     : undefined,
@@ -111,14 +107,13 @@ export const mapGrant = ({ fields, sys }: IGrant): Grant => ({
   dateFrom: fields.grantDateFrom,
   dateTo: fields.grantDateTo,
   isOpen: fields.grantIsOpen ?? undefined,
-  statusText: fields.grantStatus ?? 'Óvirkur sjóður',
   status:
-    fields.grantStatus === 'Opið fyrir umsóknir'
+    fields.grantStatus === 'open'
       ? GrantStatus.OPEN
-      : fields.grantStatus === 'Lokað fyrir umsóknir'
+      : fields.grantStatus === 'closed'
       ? GrantStatus.CLOSED
-      : fields.grantStatus === 'Opnar fljótlega'
-      ? GrantStatus.OPENS_SOON
+      : fields.grantStatus === 'see_description'
+      ? GrantStatus.SEE_DESCRIPTION
       : undefined,
   fund: fields.grantFund ? mapFund(fields.grantFund) : undefined,
   files: (fields.grantFiles ?? []).map((file) => mapAsset(file)) ?? [],
