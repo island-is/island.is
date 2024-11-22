@@ -62,6 +62,13 @@ const setupExitHook = () => {
       process.exit(0)
     })
   }
+
+  for (const signal of ['SIGHUP', 'SIGINT', 'SIGTERM']) {
+    process.on(signal, () => {
+      logger.warning(`Received ${signal}, exiting...`)
+      process.exit(0)
+    })
+  }
 }
 
 export const bootstrap = async (options: BootstrapOptions) => {
