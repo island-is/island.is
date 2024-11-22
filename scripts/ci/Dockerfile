@@ -45,8 +45,7 @@ COPY libs libs/
 COPY scripts scripts/
 COPY tools tools/
 RUN pwd && \
-  ls -lah && \
-  exit 0
+  ls -lah
 
 # Build stage
 FROM src AS builder
