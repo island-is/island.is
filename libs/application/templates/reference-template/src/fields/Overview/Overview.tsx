@@ -31,8 +31,6 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
     if (goToScreen) goToScreen(screen)
   }
 
-  console.log(application.answers)
-
   const tableRepeaterAnswers = getValueViaPath<Array<TableRepeaterAnswers>>(
     application.answers,
     'tableRepeater',
