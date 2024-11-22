@@ -123,7 +123,10 @@ const Debt = ({
   return (
     <Box marginBottom={2}>
       {description && (
-        <TopRow title={description} value={propertyValuation ?? ''} />
+        <TopRow
+          title={description + ' (' + debtType + ')'}
+          value={propertyValuation ?? ''}
+        />
       )}
       <Box marginLeft={[0, 4]}>
         {nationalId && (
@@ -133,7 +136,6 @@ const Debt = ({
           />
         )}
         <Row title={formatMessage(m.debtsLoanIdentity)} value={assetNumber} />
-        <Row title={formatMessage(m.debtType)} value={debtType} />
       </Box>
     </Box>
   )

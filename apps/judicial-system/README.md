@@ -226,18 +226,6 @@ You can serve this service locally by running:
 yarn start judicial-system-xrd-api
 ```
 
-## Robot API
-
-This service is for access through xRoad.
-
-### Running locally
-
-You can serve this service locally by running:
-
-```bash
-yarn start judicial-system-robot-api
-```
-
 ## Digital Mailbox API
 
 This service is for access through xRoad.

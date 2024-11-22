@@ -502,7 +502,7 @@ export const assets = buildSection({
                   {
                     title: m.stocksRateOfChange,
                     id: 'exchangeRateOrInterest',
-                    type: 'number',
+                    type: 'currency',
                     required: true,
                   },
                   {
@@ -707,6 +707,12 @@ export const assets = buildSection({
               large: false,
               backgroundColor: 'white',
               options: [{ value: YES, label: m.assetsOverviewConfirmation }],
+            }),
+            buildCustomField({
+              title: '',
+              id: 'overviewPrint',
+              doesNotRequireAnswer: true,
+              component: 'PrintScreen',
             }),
           ],
         }),

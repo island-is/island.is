@@ -456,8 +456,8 @@ describe('AuthController', () => {
       expect(res.status).toEqual(HttpStatus.BAD_REQUEST)
       // Expect error to be
       expect(res.body).toMatchObject({
-        statusCode: 400,
-        message: 'No param "logout_token" provided!',
+        status: 400,
+        detail: 'No param "logout_token" provided!',
       })
     })
 
