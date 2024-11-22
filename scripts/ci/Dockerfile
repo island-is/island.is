@@ -1,4 +1,6 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
+
+# Global ARGs (used across multiple stages)
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_ECR_REGISTRY=public.ecr.aws/docker
 ARG NODE_IMAGE_TAG=latest
@@ -7,6 +9,7 @@ ARG APP_HOME
 ARG APP_DIST_HOME=dist/${APP_HOME}
 ARG APP
 
+# Base image for dependencies
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS deps
 
 # We don't want to pin specific versions; it's verbose and will become outdated quickly
@@ -18,7 +21,6 @@ RUN apk --update --no-cache add git python3 build-base gcc && \
   chmod a+x /tmp/jq-linux64 && \
   mv /tmp/jq-linux64 /usr/bin/jq
 
-
 WORKDIR /build
 
 # Adding and installing packages
@@ -29,6 +31,7 @@ COPY .yarn/ ./.yarn
 RUN CI=true yarn install --immutable && \
   yarn cache clean
 
+# Image with source code
 FROM deps AS src
 
 # # image with the source code
@@ -45,23 +48,27 @@ RUN pwd && \
   ls -lah && \
   exit 0
 
-
+# Build stage
 FROM src AS builder
+
+# Stage-specific ARGs
+ARG APP
+ARG APP_DIST_HOME
+
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
-
-ARG APP
 ENV APP=${APP}
+
 RUN yarn run build ${APP} --prod
-ARG APP_DIST_HOME
+
 RUN pwd && \
   ls -lah ./ && \
   ls -lah ${APP_DIST_HOME}/main.js
 
-# This is base image for containers that are to be deployed
+# Base image for runtime containers
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS output-base
-ENV NODE_ENV=production
 
+ENV NODE_ENV=production
 WORKDIR /webapp
 
 # Adding user for running the app
@@ -80,93 +87,119 @@ USER runner
 
 FROM output-base-with-pg AS output-express
 
+# Stage-specific ARGs
 ARG APP_DIST_HOME
+ARG GIT_BRANCH
+ARG GIT_COMMIT_SHA
+ARG GIT_REPOSITORY_URL
+
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
-ARG GIT_BRANCH GIT_COMMIT_SHA GIT_REPOSITORY_URL
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
+
 RUN pwd && \
   ls -lah ./ && \
   ls -lah main.js
+
 ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
 
 FROM output-base-with-pg AS output-next
+
+# Stage-specific ARGs
+ARG APP_DIST_HOME
+ARG GIT_BRANCH
+ARG GIT_COMMIT_SHA
+ARG GIT_REPOSITORY_URL
+
 ENV PORT=4200
 
 # TODO: smallify
 COPY --from=deps /build/node_modules /webapp/node_modules
-ARG APP_DIST_HOME
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
-ARG GIT_BRANCH GIT_COMMIT_SHA GIT_REPOSITORY_URL
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
+
 RUN pwd && \
   ls -lah ./ && \
   ls -lah main.js
+
 ENTRYPOINT [ "node", "main.js" ]
 
 FROM ${DOCKER_REGISTRY}/nginx/nginx:1.21-alpine AS output-static
+
+# Stage-specific ARGs
+ARG APP_DIST_HOME
+ARG GIT_BRANCH
+ARG GIT_COMMIT_SHA
+ARG GIT_REPOSITORY_URL
+ARG APP
+
 # hadolint ignore=DL3018
 RUN apk add --no-cache bash nodejs
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates/
 COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d/
 COPY scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d/
-ARG APP_DIST_HOME
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
-ARG GIT_BRANCH GIT_COMMIT_SHA GIT_REPOSITORY_URL
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
 
-ARG APP
 ENV APP=${APP}
 ENV BASEPATH=/
 
-
 FROM output-base AS output-jest
+
+# Stage-specific ARGs
+ARG APP_DIST_HOME
+ARG GIT_BRANCH
+ARG GIT_COMMIT_SHA
+ARG GIT_REPOSITORY_URL
 
 # hadolint ignore=DL3016
 RUN npm install -g jest && \
   echo 'module.exports = {};' > jest.config.js
 
-ARG APP_DIST_HOME
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 USER runner
 
-ARG GIT_BRANCH GIT_COMMIT_SHA GIT_REPOSITORY_URL
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
+
 CMD [ "jest", "main.spec.js" ]
-
-
 
 FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal AS playwright-base
 
 FROM playwright-base AS output-playwright
+
+# Stage-specific ARGs
+ARG APP_DIST_HOME
+ARG APP_HOME
+ARG PLAYWRIGHT_BROWSER=chromium
+ARG GIT_BRANCH
+ARG GIT_COMMIT_SHA
+ARG GIT_REPOSITORY_URL
+
 WORKDIR ${APP_DIST_HOME}
 
 # TODO: remove awscli dependency (157 MB extra)
-
 # hadolint ignore=DL3008
 RUN apt-get update -y && \
   apt-get install --no-install-recommends -y zip awscli && \
   apt-get purge
 
-ARG APP_DIST_HOME
 COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} ./
-ARG APP_HOME
 COPY --chown=pwuser:pwuser ${APP_HOME}/package.json ./
 
 USER pwuser
@@ -175,46 +208,52 @@ RUN mkdir ./.yarn
 COPY --chown=pwuser:pwuser .yarn/releases ./.yarn/releases
 RUN CI=true yarn install --immutable
 
-ARG PLAYWRIGHT_BROWSER=chromium
 ENV PLAYWRIGHT_BROWSER=${PLAYWRIGHT_BROWSER}
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
-ARG APP_HOME
 COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
 
-ARG GIT_BRANCH GIT_COMMIT_SHA GIT_REPOSITORY_URL
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
+
 RUN pwd && \
   ls -lah ./ && \
   ls -lah ./entrypoint.sh
+
 ENTRYPOINT ["./entrypoint.sh"]
 
-
 FROM playwright-base AS output-local
+
+# Stage-specific ARGs
 ARG APP_DIST_HOME
+ARG APP_HOME
+ARG GIT_BRANCH
+ARG GIT_COMMIT_SHA
+ARG GIT_REPOSITORY_URL
+
 WORKDIR ${APP_DIST_HOME}
 
 # node user exists in the base image
 RUN mkdir -p /out && \
   chown node:node /out
 
-ARG APP_HOME
 COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
 
 USER pwuser
 
-ARG GIT_BRANCH GIT_COMMIT_SHA GIT_REPOSITORY_URL
 ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
+
 RUN pwd && \
   ls -lah ./ && \
   ls -lah ./entrypoint.sh
+
 ENTRYPOINT ["./entrypoint.sh"]
 
 FROM output-base AS output-native
+
 RUN echo "not-implemented"
