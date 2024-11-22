@@ -122,7 +122,7 @@ const servicePortal = servicePortalSetup()
 const bffAdminPortalService = bffAdminPortalServiceSetup({ api })
 const bffServicePortalService = bffServicePortalServiceSetup({ api })
 
-const appSystemForm = appSystemFormSetup({ api })
+const appSystemForm = appSystemFormSetup()
 const web = webSetup({ api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
