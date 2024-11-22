@@ -172,7 +172,7 @@ export async function paginate<T = any>({
 
   const totalCountQueryOptions = {
     where,
-    ...queryArgs
+    ...queryArgs,
   }
 
   const cursorCountQueryOptions = {

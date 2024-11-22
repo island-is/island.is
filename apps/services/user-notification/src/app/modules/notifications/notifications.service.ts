@@ -260,7 +260,7 @@ export class NotificationsService {
     )
   }
 
- findMany(
+  findMany(
     nationalId: string,
     query: ExtendedPaginationDto,
   ): Promise<PaginatedNotificationDto> {
