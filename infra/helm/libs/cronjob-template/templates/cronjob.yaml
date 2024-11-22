@@ -18,8 +18,21 @@ spec:
   failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit | default 1 }}
   successfulJobsHistoryLimit: {{ .Values.successfulJobsHistoryLimit | default 3}}
   schedule: {{ .Values.schedule | quote }}
+  {{- if .Values.startingDeadlineSeconds }}
+  startingDeadlineSeconds: {{ .Values.startingDeadlineSeconds }}
+  {{- end }}
   jobTemplate:
     spec:
+      {{- if .Values.armBetaEnrolled }}
+        tolerations:
+        - key: "arm"
+          operator: "Equal"
+          value: "true"
+          effect: "NoSchedule"
+        nodeSelector:
+          nodetype: "arm"
+      {{- end }}
+      ttlSecondsAfterFinished: {{ .Values.ttlSecondsAfterFinished | default 600 }}
       template:
         metadata:
           annotations:

@@ -41,16 +41,4 @@ describe('InternalDefendantController - guards', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
-
-  describe('Method level guards', () => {
-    it('should have DefendantExistsGuard on deliverDefendantToCourt method', () => {
-      const methodGuards = Reflect.getMetadata(
-        '__guards__',
-        InternalDefendantController.prototype.deliverDefendantToCourt,
-      )
-      expect(methodGuards).toHaveLength(1)
-      const guard = new methodGuards[0]()
-      expect(guard).toBeInstanceOf(DefendantExistsGuard)
-    })
-  })
 })
