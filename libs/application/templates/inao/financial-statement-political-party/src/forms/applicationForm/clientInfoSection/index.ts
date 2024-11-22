@@ -83,11 +83,6 @@ export const clientInfoSection = buildSection({
             return userProfile.mobilePhoneNumber
           },
         }),
-        buildCustomField({
-          id: 'delegationCheck',
-          title: '',
-          component: 'DelegationCheck',
-        }),
       ],
     }),
   ],
