@@ -18,7 +18,7 @@ export const m = {
     },
     results: {
       id: 'web.grants:search.results',
-      defaultMessage: 'Leitarniðurstöður',
+      defaultMessage: 'Styrkir',
     },
     inputPlaceholder: {
       id: 'web.grants:search.inputPlaceholder',
@@ -47,6 +47,10 @@ export const m = {
     applicationOpensSoon: {
       id: 'web.grants:search.applicationOpensSoon',
       defaultMessage: 'Opnar fljótlega',
+    },
+    applicationSeeDescription: {
+      id: 'web.grants:search.applicationSeeDescription',
+      defaultMessage: 'Sjá lýsingu',
     },
     category: {
       id: 'web.grants:search.category',

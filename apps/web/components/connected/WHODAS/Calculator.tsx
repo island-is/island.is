@@ -78,7 +78,7 @@ const WHODASForm = ({ step, stepIndex, state, setState }: WHODASFormProps) => {
                 {answerOptions.map((option, answerIndex) => {
                   const id = `${step.title}-${questionIndex}-${answerIndex}`
 
-                  if (answerIndex > 3) {
+                  if (answerIndex > 4) {
                     return null
                   }
 
