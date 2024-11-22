@@ -1,11 +1,17 @@
+import React from 'react'
 import { useEffect } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 
-type PropTypes = { name: string; total: number; label: string; title?: string }
+type Props = {
+  name: string
+  total: number
+  label: string
+  title?: string
+}
 
-export const Total = ({ name, total, label, title }: PropTypes) => {
+export const Total = ({ name, total, label, title }: Props) => {
   const { setValue } = useFormContext()
 
   useEffect(() => {

@@ -1,4 +1,3 @@
-import React from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useQuery } from '@apollo/client'
 import {
@@ -8,17 +7,18 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-
 import { m } from '../../lib/messages'
 import { PartyIncome } from './PartyIncome'
 import { PartyExpenses } from './PartyExpenses'
-
 import { TaxInfoQuery } from '../../graphql'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Total } from '../../components/Total'
 import { useTotals } from '../../hooks/useTotals'
-import { OPERATINGCOST, PARTYOPERATIONIDS } from '../../utils/constants'
+import { PARTYOPERATIONIDS } from '../../utils/constants'
+import {
+  Total,
+  OPERATINGCOST,
+} from '@island.is/application/templates/inao/shared'
 
 export const PartyOperatingIncome = ({ application }: FieldBaseProps) => {
   const { answers } = application

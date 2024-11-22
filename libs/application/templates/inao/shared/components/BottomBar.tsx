@@ -1,19 +1,21 @@
 import { Box, Button, Divider } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
+import { MessageDescriptor } from 'react-intl'
 
 type Props = {
   onBackButtonClick: () => void
   onSendButtonClick: () => void
   loading?: boolean
-  sendText?: string
+  goBack: MessageDescriptor
+  send: MessageDescriptor
 }
 
-const BottomBar = ({
+export const BottomBar = ({
   onBackButtonClick,
   onSendButtonClick,
   loading = false,
-  sendText,
+  goBack,
+  send,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -24,14 +26,12 @@ const BottomBar = ({
       </Box>
       <Box display="flex" justifyContent="spaceBetween" paddingY={5}>
         <Button variant="ghost" onClick={onBackButtonClick} disabled={loading}>
-          {formatMessage(m.goBack)}
+          {formatMessage(goBack)}
         </Button>
         <Button icon="checkmark" onClick={onSendButtonClick} loading={loading}>
-          {sendText ? sendText : formatMessage(m.send)}
+          {formatMessage(send)}
         </Button>
       </Box>
     </>
   )
 }
-
-export default BottomBar

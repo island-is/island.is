@@ -2,7 +2,6 @@ import {
   DefaultStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
-
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -14,18 +13,17 @@ import {
   defineTemplateApi,
   ApplicationConfigurations,
 } from '@island.is/application/types'
-
 import {
   CurrentUserTypeProvider,
   IndentityApiProvider,
   NationalRegistryUserApi,
   UserInfoApi,
 } from '../dataProviders'
-
 import { m } from './utils/messages'
 import { ApiActions, Events, Roles, States } from '../types/types'
 import { dataSchema } from './utils/dataSchema'
 import { Features } from '@island.is/feature-flags'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const configuration =
   ApplicationConfigurations[
@@ -43,7 +41,14 @@ const FinancialStatementIndividualElectionTemplate: ApplicationTemplate<
   dataSchema,
   translationNamespaces: [configuration.translation],
   featureFlag: Features.FinancialStatementIndividualElectionEnabled,
-  // allowedDelegations: ...,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

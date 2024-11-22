@@ -1,6 +1,6 @@
 import { buildCustomField, buildSubSection } from '@island.is/application/core'
 import { m } from '../../../../lib/messages'
-import { EQUITIESANDLIABILITIESIDS } from '../../../../utils/constants'
+import { EQUITIESANDLIABILITIESIDS } from '@island.is/application/templates/inao/shared'
 
 export const equitiesAndLiabilitiesSubsection = buildSubSection({
   id: 'keyNumbers.equitiesAndLiabilities',

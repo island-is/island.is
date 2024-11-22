@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Box,
   GridColumn,
@@ -11,10 +11,12 @@ import { useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { m } from '../../lib/messages'
-import { Total } from '../KeyNumbers'
-
 import { getErrorViaPath } from '@island.is/application/core'
-import { CAPITALNUMBERS, INPUTCHANGEINTERVAL } from '../../utils/constants'
+import {
+  CAPITALNUMBERS,
+  INPUTCHANGEINTERVAL,
+  Total,
+} from '@island.is/application/templates/inao/shared'
 
 export const KeyNumbersCapital = () => {
   const { formatMessage } = useLocale()

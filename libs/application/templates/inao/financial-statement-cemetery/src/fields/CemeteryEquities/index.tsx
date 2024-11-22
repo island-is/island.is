@@ -13,17 +13,17 @@ import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
 import { InputController } from '@island.is/shared/form-fields'
 import { m } from '../../lib/messages'
-import { Total } from '../KeyNumbers'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import {
   CAPITALNUMBERS,
-  CEMETERYEQUITIESANDLIABILITIESIDS,
   INPUTCHANGEINTERVAL,
   OPERATINGCOST,
   VALIDATOR,
-} from '../../utils/constants'
+  Total,
+  getTotal,
+} from '@island.is/application/templates/inao/shared'
+import { CEMETERYEQUITIESANDLIABILITIESIDS } from '../../utils/constants'
 import { useTotals } from '../../hooks/useTotals'
-import { getTotal } from '../../utils/helpers'
 
 export const CemeteryEquities = ({
   application,

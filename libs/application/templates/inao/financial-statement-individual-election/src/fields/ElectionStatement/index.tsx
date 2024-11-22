@@ -6,10 +6,13 @@ import { format as formatNationalId } from 'kennitala'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { useFormContext } from 'react-hook-form'
 import { FinancialStatementIndividualElection } from '../../lib/utils/dataSchema'
-import { ELECTIONLIMIT, GREATER } from '../../lib/utils/constants'
-import BottomBar from '../Overview/BottomBar'
+import { ELECTIONLIMIT } from '../../lib/utils/constants'
 import { m } from '../../lib/utils/messages'
-import { formatNumber } from '../../lib/utils/helpers'
+import {
+  formatNumber,
+  BottomBar,
+  GREATER,
+} from '@island.is/application/templates/inao/shared'
 
 export const ElectionStatement = ({
   application,
@@ -77,7 +80,8 @@ export const ElectionStatement = ({
         loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
-        sendText={formatMessage(m.sendStatement)}
+        goBack={m.goBack}
+        send={m.sendStatement}
       />
     </Box>
   )

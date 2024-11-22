@@ -5,15 +5,15 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  INDIVIDUALOPERATIONIDS,
-  OPERATINGCOST,
-} from '../../lib/utils/constants'
+import { INDIVIDUALOPERATIONIDS } from '../../lib/utils/constants'
 import { m } from '../../lib/utils/messages'
 import { Income } from './Income'
 import { Expenses } from './Expenses'
-import { Total } from './Total'
 import { useTotals } from '../../hooks/useTotals'
+import {
+  Total,
+  OPERATINGCOST,
+} from '@island.is/application/templates/inao/shared'
 
 export const IndividualElectionOperatingIncome = () => {
   const { formatMessage } = useLocale()
