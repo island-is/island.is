@@ -242,8 +242,12 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
           value: vehicle.vehicleId,
         },
         {
-          value: vehicle.lastMileageRegistration?.date
-            ? formatDate(vehicle.lastMileageRegistration.date)
+          value: vehicle.lastMileageRegistration?.mileage
+            ? displayWithUnit(
+                vehicle.lastMileageRegistration.mileage,
+                'km',
+                true,
+              )
             : '-',
         },
         {
