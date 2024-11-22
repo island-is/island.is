@@ -1,4 +1,4 @@
-import { SubpoenaExistsOptionalGuard } from '../../guards/subpoenaExists.guard'
+import { SubpoenaExistsGuard } from '../../guards/subpoenaExists.guard'
 import { SubpoenaController } from '../../subpoena.controller'
 
 describe('SubpoenaController - Get subpoena pdf guards', () => {
@@ -14,6 +14,6 @@ describe('SubpoenaController - Get subpoena pdf guards', () => {
 
   it('should have the right guard configuration', () => {
     expect(guards).toHaveLength(1)
-    expect(new guards[0]()).toBeInstanceOf(SubpoenaExistsOptionalGuard)
+    expect(new guards[0]()).toBeInstanceOf(SubpoenaExistsGuard)
   })
 })
