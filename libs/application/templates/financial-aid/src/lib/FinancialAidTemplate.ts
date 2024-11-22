@@ -163,8 +163,8 @@ const FinancialAidTemplate: ApplicationTemplate<
               target: ApplicationStates.SUBMITTED,
               cond: hasActiveCurrentApplication,
             },
-            { target: ApplicationStates.SPOUSE },
           ],
+          EDIT: { target: ApplicationStates.SPOUSE },
         },
       },
       [ApplicationStates.SPOUSE]: {

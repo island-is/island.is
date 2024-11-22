@@ -18,7 +18,7 @@ export const m = {
     },
     results: {
       id: 'web.grants:search.results',
-      defaultMessage: 'Leitarniðurstöður',
+      defaultMessage: 'Styrkir',
     },
     inputPlaceholder: {
       id: 'web.grants:search.inputPlaceholder',
@@ -47,6 +47,10 @@ export const m = {
     applicationOpensSoon: {
       id: 'web.grants:search.applicationOpensSoon',
       defaultMessage: 'Opnar fljótlega',
+    },
+    applicationSeeDescription: {
+      id: 'web.grants:search.applicationSeeDescription',
+      defaultMessage: 'Sjá lýsingu',
     },
     category: {
       id: 'web.grants:search.category',
@@ -160,6 +164,42 @@ export const m = {
     allGrants: {
       id: 'web.grants:home.allGrants',
       defaultMessage: 'Allir styrkir',
+    },
+    grantCategoryYouthAndSportsDescription: {
+      id: 'web.grants:home.grantCategoryYouthAndSportsDescription',
+      defaultMessage: 'Lýsing á æskulýðsstarfi og íþróttum',
+    },
+    grantCategoryEducationAndTeachingDescription: {
+      id: 'web.grants:home.grantCategoryEducationAndTeachingDescription',
+      defaultMessage: 'Lýsing á námi og kennslu',
+    },
+    grantCategoryProfessionalEducationDescription: {
+      id: 'web.grants:home.grantCategoryProfessionalEducationDescription',
+      defaultMessage: 'Lýsing á starfs- og símenntun',
+    },
+    grantCategoryGlobalDescription: {
+      id: 'web.grants:home.grantCategoryGlobalDescription',
+      defaultMessage: 'Lýsing á alþjóðlegum',
+    },
+    grantCategoryInnovationDescription: {
+      id: 'web.grants:home.grantCategoryInnovationDescription',
+      defaultMessage: 'Lýsing á nýsköpun',
+    },
+    grantCategoryResearchDescription: {
+      id: 'web.grants:home.grantCategoryResearchDescription',
+      defaultMessage: 'Lýsing á rannsóknum',
+    },
+    grantCategoryNativeDescription: {
+      id: 'web.grants:home.grantCategoryNativeDescription',
+      defaultMessage: 'Lýsing á innlendu',
+    },
+    grantCategoryCultureAndArtsDescription: {
+      id: 'web.grants:home.grantCategoryCultureAndArtsDescription',
+      defaultMessage: 'Lýsing á menningu og list',
+    },
+    grantCategoryBusinessDescription: {
+      id: 'web.grants:home.grantCategoryBusinessDescription',
+      defaultMessage: 'Lýsing á atvinnulífi',
     },
   }),
 }

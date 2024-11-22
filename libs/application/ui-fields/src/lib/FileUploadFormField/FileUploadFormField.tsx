@@ -10,7 +10,12 @@ interface Props extends FieldBaseProps {
   field: FileUploadField
 }
 
-export const FileUploadFormField = ({ application, answerQuestions, field, error }: Props) => {
+export const FileUploadFormField = ({
+  application,
+  answerQuestions,
+  field,
+  error,
+}: Props) => {
   const {
     id,
     introduction,
@@ -27,8 +32,10 @@ export const FileUploadFormField = ({ application, answerQuestions, field, error
   const setNestedProperty = (obj: any, path: string, value: any): any => {
     const keys = path.split('.')
     const lastKey = keys.pop()
-    if(!lastKey) return obj
-    const nested = keys.reduce((acc, key) => (acc[key] = acc[key] || {}), { ...obj })
+    if (!lastKey) return obj
+    const nested = keys.reduce((acc, key) => (acc[key] = acc[key] || {}), {
+      ...obj,
+    })
     nested[lastKey] = value
     return obj
   }
@@ -37,11 +44,11 @@ export const FileUploadFormField = ({ application, answerQuestions, field, error
   const { watch } = useFormContext()
   const currentValue = watch(id)
 
-  const onFileRemoveWhenInAnswers = (fileToRemove : UploadFile) => {
+  const onFileRemoveWhenInAnswers = (fileToRemove: UploadFile) => {
     const updatedAnswers = setNestedProperty(
       { ...application.answers },
       id,
-      currentValue.filter((x: UploadFile) => x.key !== fileToRemove.key)
+      currentValue.filter((x: UploadFile) => x.key !== fileToRemove.key),
     )
     answerQuestions?.({
       ...application.answers,

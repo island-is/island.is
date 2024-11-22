@@ -14,12 +14,14 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 
 jest.mock('../../../../factories')
@@ -37,21 +39,19 @@ type GivenWhenThen = (
 
 describe('InternalNotificationController - Send defender assigned notifications', () => {
   const userId = uuid()
+
+  const { defender } = createTestUsers(['defender'])
+
   const court = { name: 'Héraðsdómur Reykjavíkur' } as Case['court']
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
-  let mockNotificationModel: typeof Notification
   let givenWhenThen: GivenWhenThen
   let notificationDTO: CaseNotificationDto
 
   beforeEach(async () => {
-    const {
-      emailService,
-      notificationConfig,
-      notificationModel,
-      internalNotificationController,
-    } = await createTestingNotificationModule()
+    const { emailService, notificationConfig, internalNotificationController } =
+      await createTestingNotificationModule()
 
     notificationDTO = {
       user: { id: userId } as User,
@@ -60,7 +60,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
 
     mockEmailService = emailService
     mockConfig = notificationConfig
-    mockNotificationModel = notificationModel
 
     givenWhenThen = async (
       caseId: string,
@@ -90,8 +89,8 @@ describe('InternalNotificationController - Send defender assigned notifications'
       type: CaseType.ADMISSION_TO_FACILITY,
       court,
       courtCaseNumber: 'R-123/2022',
-      defenderEmail: 'recipient@gmail.com',
-      defenderName: 'John Doe',
+      defenderEmail: defender.email,
+      defenderName: defender.name,
       defenderNationalId: '1234567890',
       dateLogs: [{ date: new Date(), dateType: DateType.ARRAIGNMENT_DATE }],
     } as Case
@@ -132,8 +131,8 @@ describe('InternalNotificationController - Send defender assigned notifications'
       type: CaseType.ADMISSION_TO_FACILITY,
       court,
       courtCaseNumber: 'R-123/2022',
-      defenderEmail: 'recipient@gmail.com',
-      defenderName: 'John Doe',
+      defenderEmail: defender.email,
+      defenderName: defender.name,
       dateLogs: [{ date: new Date(), dateType: DateType.ARRAIGNMENT_DATE }],
     } as Case
 
@@ -173,8 +172,8 @@ describe('InternalNotificationController - Send defender assigned notifications'
       type: CaseType.PHONE_TAPPING,
       court,
       courtCaseNumber: 'R-123/2022',
-      defenderEmail: 'recipient@gmail.com',
-      defenderName: 'John Doe',
+      defenderEmail: defender.email,
+      defenderName: defender.name,
       dateLogs: [{ date: new Date(), dateType: DateType.ARRAIGNMENT_DATE }],
     } as Case
 

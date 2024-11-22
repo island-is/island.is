@@ -87,11 +87,16 @@ export const VehicleSelectField: FC<
           const disabled =
             !!response?.vehiclePlateOrderChecksByPermno?.validationErrorMessages
               ?.length
-          setPlate(disabled ? '' : currentVehicle.permno || '')
-          setValue(
-            'pickVehicle.plate',
-            disabled ? '' : currentVehicle.permno || '',
-          )
+
+          const permno = disabled ? '' : currentVehicle.permno || ''
+
+          setPlate(permno)
+
+          setValue('pickVehicle.plate', permno)
+
+          setValue('plateSize.frontPlateSize', [])
+          setValue('plateSize.rearPlateSize', [])
+
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
