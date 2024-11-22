@@ -175,11 +175,6 @@ export const information = {
         defaultMessage: 'Það má ekki nota sömu kennitölu tvisvar',
         description: 'coOwner identical error',
       },
-      noChangesError: {
-        id: 'ta.ccov.application:information.labels.coOwner.noChangesError',
-        defaultMessage: 'Ekki er búið að gera neinar breytingar á meðeigendum',
-        description: 'coOwner no changes error',
-      },
     }),
     vehicle: defineMessages({
       sectionTitle: {
