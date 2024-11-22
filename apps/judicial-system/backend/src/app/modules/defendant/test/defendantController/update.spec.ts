@@ -22,6 +22,7 @@ interface Then {
 
 type GivenWhenThen = (
   defendantUpdate: UpdateDefendantDto,
+  type: CaseType,
   courtCaseNumber?: string,
 ) => Promise<Then>
 
@@ -52,6 +53,7 @@ describe('DefendantController - Update', () => {
 
     givenWhenThen = async (
       defendantUpdate: UpdateDefendantDto,
+      type: CaseType,
       courtCaseNumber?: string,
     ) => {
       const then = {} as Then
@@ -61,7 +63,7 @@ describe('DefendantController - Update', () => {
           caseId,
           defendantId,
           user,
-          { id: caseId, courtCaseNumber, type: CaseType.INDICTMENT } as Case,
+          { id: caseId, courtCaseNumber, type } as Case,
           defendant,
           defendantUpdate,
         )
@@ -81,7 +83,7 @@ describe('DefendantController - Update', () => {
       const mockUpdate = mockDefendantModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
 
-      then = await givenWhenThen(defendantUpdate)
+      then = await givenWhenThen(defendantUpdate, CaseType.CUSTODY)
     })
 
     it('should update the defendant without queuing', () => {
@@ -102,7 +104,7 @@ describe('DefendantController - Update', () => {
       const mockUpdate = mockDefendantModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
 
-      await givenWhenThen(defendantUpdate, uuid())
+      await givenWhenThen(defendantUpdate, CaseType.INDICTMENT, uuid())
     })
 
     it('should not queue', () => {
@@ -118,7 +120,7 @@ describe('DefendantController - Update', () => {
       const mockUpdate = mockDefendantModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
 
-      await givenWhenThen(defendantUpdate, uuid())
+      await givenWhenThen(defendantUpdate, CaseType.CUSTODY, uuid())
     })
 
     it('should queue messages', () => {
@@ -141,7 +143,7 @@ describe('DefendantController - Update', () => {
       const mockUpdate = mockDefendantModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
 
-      await givenWhenThen(defendantUpdate, uuid())
+      await givenWhenThen(defendantUpdate, CaseType.TELECOMMUNICATIONS, uuid())
     })
 
     it('should queue messages', () => {
@@ -152,29 +154,6 @@ describe('DefendantController - Update', () => {
           caseId,
           body: { type: CaseNotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
         },
-        {
-          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
-          user,
-          caseId,
-          elementId: defendantId,
-        },
-      ])
-    })
-  })
-
-  describe(`defendant's defender email changed after case is delivered to court`, () => {
-    const defendantUpdate = { defenderEmail: uuid() }
-    const updatedDefendant = { ...defendant, ...defendantUpdate }
-
-    beforeEach(async () => {
-      const mockUpdate = mockDefendantModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
-
-      await givenWhenThen(defendantUpdate, uuid())
-    })
-
-    it('should queue messages', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
           user,
@@ -202,12 +181,18 @@ describe('DefendantController - Update', () => {
         const mockUpdate = mockDefendantModel.update as jest.Mock
         mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
 
-        await givenWhenThen(defendantUpdate, uuid())
+        await givenWhenThen(defendantUpdate, CaseType.INDICTMENT, uuid())
       })
 
       if (shouldSendEmail) {
-        it('should queue message if defender has been confirmed', () => {
+        it('should queue messages if defender has been confirmed', () => {
           expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+            {
+              type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER,
+              user,
+              caseId,
+              elementId: defendantId,
+            },
             {
               type: MessageType.DEFENDANT_NOTIFICATION,
               caseId,
@@ -228,7 +213,7 @@ describe('DefendantController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen({})
+      then = await givenWhenThen({}, CaseType.CUSTODY)
     })
 
     it('should throw Error', () => {

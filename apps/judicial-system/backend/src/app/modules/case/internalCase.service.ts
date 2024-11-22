@@ -418,7 +418,7 @@ export class InternalCaseService {
           collectEncryptionProperties(defendantEncryptionProperties, defendant)
         defendantsArchive.push(defendantArchive)
 
-        await this.defendantService.updateForArcive(
+        await this.defendantService.updateDatabaseDefendant(
           theCase.id,
           defendant.id,
           clearedDefendantProperties,
@@ -580,6 +580,10 @@ export class InternalCaseService {
       : []
 
     const mappedSubtypes = subtypeList.flatMap((key) => courtSubtypes[key])
+    const indictmentIssuedByProsecutorAndReceivedByCourt =
+      theCase.eventLogs?.find(
+        (eventLog) => eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
+      )?.created
 
     return this.courtService
       .updateIndictmentCaseWithIndictmentInfo(
@@ -587,12 +591,8 @@ export class InternalCaseService {
         theCase.id,
         theCase.court?.name,
         theCase.courtCaseNumber,
-        theCase.eventLogs?.find(
-          (eventLog) => eventLog.eventType === EventType.CASE_RECEIVED_BY_COURT,
-        )?.created,
-        theCase.eventLogs?.find(
-          (eventLog) => eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
-        )?.created,
+        indictmentIssuedByProsecutorAndReceivedByCourt,
+        indictmentIssuedByProsecutorAndReceivedByCourt,
         theCase.policeCaseNumbers[0],
         mappedSubtypes,
         theCase.defendants?.map((defendant) => ({
@@ -610,29 +610,6 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error(
           `Failed to update indictment case ${theCase.id} with indictment info`,
-          { reason },
-        )
-
-        return { delivered: false }
-      })
-  }
-
-  async deliverIndictmentDefenderInfoToCourt(
-    theCase: Case,
-    user: TUser,
-  ): Promise<DeliverResponse> {
-    return this.courtService
-      .updateIndictmentCaseWithDefenderInfo(
-        user,
-        theCase.id,
-        theCase.court?.name,
-        theCase.courtCaseNumber,
-        theCase.defendants,
-      )
-      .then(() => ({ delivered: true }))
-      .catch((reason) => {
-        this.logger.error(
-          `Failed to update indictment case ${theCase.id} with defender info`,
           { reason },
         )
 

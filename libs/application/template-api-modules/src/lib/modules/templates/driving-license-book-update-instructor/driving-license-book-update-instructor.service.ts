@@ -4,6 +4,8 @@ import { DrivingLicenseBookUpdateInstructorAnswers } from '@island.is/applicatio
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { DrivingLicenseBookClientApiFactory } from '@island.is/clients/driving-license-book'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class DrivingLicenseBookUpdateInstructorService extends BaseTemplateApiService {
@@ -21,7 +23,13 @@ export class DrivingLicenseBookUpdateInstructorService extends BaseTemplateApiSe
       )
 
     if (!overview?.active) {
-      throw new Error('Did not find active student book')
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.drivingLicenseBookActiveBookNotFound,
+          summary: coreErrorMessages.drivingLicenseBookActiveBookNotFound,
+        },
+        400,
+      )
     }
 
     const teacherNationalId = overview.book?.teacherNationalId
