@@ -117,6 +117,7 @@ const VehicleBulkMileageJobDetail = () => {
       serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       buttonGroup={[
         <Button
+          key="refresh-button"
           variant="utility"
           icon={
             loading || networkStatus === NetworkStatus.refetch
