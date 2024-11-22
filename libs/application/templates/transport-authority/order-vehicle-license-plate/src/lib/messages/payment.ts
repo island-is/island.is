@@ -7,8 +7,28 @@ export const payment = {
       defaultMessage: 'Greiðsla',
       description: 'Title of for payment section',
     },
+    pageTitle: {
+      id: 'ta.ovlp.application:payment.general.pageTitle',
+      defaultMessage: 'Greiðsla',
+      description: 'Title of for payment page',
+    },
+    confirm: {
+      id: 'ta.ovlp.application:payment.general.confirm',
+      defaultMessage: 'Staðfesta',
+      description: 'confirm',
+    },
   }),
   paymentChargeOverview: defineMessages({
+    forPayment: {
+      id: 'ta.ovlp.application:payment.paymentChargeOverview.forPayment',
+      defaultMessage: 'Til greiðslu',
+      description: 'For payment label',
+    },
+    total: {
+      id: 'ta.ovlp.application:payment.paymentChargeOverview.total',
+      defaultMessage: 'Samtals',
+      description: 'Total amount label',
+    },
     frontLabel: {
       id: 'ta.ovlp.application:payment.paymentChargeOverview.frontLabel',
       defaultMessage: 'merki að framan',

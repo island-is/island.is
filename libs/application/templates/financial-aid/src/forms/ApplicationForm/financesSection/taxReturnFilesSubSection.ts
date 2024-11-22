@@ -1,11 +1,9 @@
 import {
-  buildDescriptionField,
-  buildFileUploadField,
-  buildMultiField,
+  buildCustomField,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { FILE_SIZE_LIMIT, Routes, UPLOAD_ACCEPT } from '../../../lib/constants'
+import { Routes } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
 
 export const taxReturnFilesSubSection = buildSubSection({
@@ -23,33 +21,10 @@ export const taxReturnFilesSubSection = buildSubSection({
     return personalTaxSuccess === false || personalTaxReturn == null
   },
   children: [
-    buildMultiField({
+    buildCustomField({
       id: Routes.TAXRETURNFILES,
       title: m.taxReturnForm.general.pageTitle,
-      description: m.taxReturnForm.general.description,
-      children: [
-        buildFileUploadField({
-          id: Routes.TAXRETURNFILES,
-          title: '',
-          uploadMultiple: true,
-          maxSize: FILE_SIZE_LIMIT,
-          uploadAccept: UPLOAD_ACCEPT,
-        }),
-        buildDescriptionField({
-          id: `${Routes.TAXRETURNFILES}.findTaxReturn`,
-          title: m.taxReturnForm.instructions.findTaxReturnTitle,
-          titleVariant: 'h3',
-          marginTop: 3,
-          description: m.taxReturnForm.instructions.findTaxReturn,
-        }),
-        buildDescriptionField({
-          id: `${Routes.TAXRETURNFILES}.findTaxReturn2`,
-          title: m.taxReturnForm.instructions.findDirectTaxPaymentsTitle,
-          titleVariant: 'h3',
-          marginTop: 3,
-          description: m.taxReturnForm.instructions.findDirectTaxPayments,
-        }),
-      ],
+      component: 'TaxReturnFilesForm',
     }),
   ],
 })
