@@ -42,7 +42,7 @@ export const Comments = ({ application, canAddComment = true }: Props) => {
         repeat={3}
         height={OJOI_INPUT_HEIGHT}
         space={2}
-        borderRadius="standard"
+        borderRadius="xs"
       />
     )
   }

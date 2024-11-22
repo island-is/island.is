@@ -72,7 +72,7 @@ export const ApplicationDetails = ({
         <Box paddingLeft={2} />
         <Text variant="h3">{formatMessage(m.applicant)}</Text>
       </Box>
-      <Box padding={4} background="blue100" borderRadius="large">
+      <Box padding={4} background="blue100" borderRadius="default">
         <GridRow rowGap={3}>
           <GridColumn span={['2/2', '2/2', '1/2']}>
             <ValueLine title={formatMessage(m.name)}>
@@ -99,7 +99,7 @@ export const ApplicationDetails = ({
               <Box paddingLeft={2} />
               <Text variant="h3">{formatMessage(m.procurer)}</Text>
             </Box>
-            <Box padding={4} background="purple100" borderRadius="large">
+            <Box padding={4} background="purple100" borderRadius="default">
               <GridRow rowGap={3}>
                 <GridColumn span={['2/2', '2/2', '1/2']}>
                   <ValueLine title={formatMessage(m.nationalId)}>

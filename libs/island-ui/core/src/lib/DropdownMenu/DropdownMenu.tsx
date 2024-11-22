@@ -69,7 +69,7 @@ export const DropdownMenu = ({
     background: 'white',
     display: 'flex',
     flexDirection: 'column',
-    borderRadius: 'large',
+    borderRadius: 'default',
   })
   const menuItemBoxStyle = useBoxStyles({
     component: 'button',

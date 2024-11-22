@@ -52,7 +52,7 @@ export const ListItem = ({
       <Box
         border="focus"
         borderWidth="large"
-        borderRadius="standard"
+        borderRadius="xs"
         padding={2}
         marginTop={2}
         className={styles.draggingBox}
@@ -69,7 +69,7 @@ export const ListItem = ({
       border="standard"
       padding={2}
       marginTop={1}
-      borderRadius="standard"
+      borderRadius="xs"
     >
       <Box
         display="flex"

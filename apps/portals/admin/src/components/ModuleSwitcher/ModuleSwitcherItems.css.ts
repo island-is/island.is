@@ -11,6 +11,6 @@ export const link = style({
 export const itemHover = style({
   ':hover': {
     background: theme.color.blue100,
-    borderRadius: theme.border.radius.large,
+    borderRadius: theme.border.radius.default,
   },
 })

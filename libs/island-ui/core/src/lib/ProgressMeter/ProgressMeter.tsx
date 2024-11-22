@@ -56,20 +56,20 @@ export const ProgressMeter: React.FC<
         className={cn(styles.outer, className)}
         position="relative"
         background={colorSchemes[variant].outer}
-        borderRadius="large"
+        borderRadius="default"
         width="full"
       >
         <Box
           position="relative"
           overflow="hidden"
-          borderRadius="large"
+          borderRadius="default"
           height="full"
           width="full"
         >
           <Box
             className={styles.inner}
             background={colorSchemes[variant].inner}
-            borderRadius="large"
+            borderRadius="default"
             position="absolute"
             style={{ transform: `translateX(${(progress - 1) * 100}%)` }}
           />

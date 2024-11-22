@@ -80,7 +80,7 @@ export const CardWithFeaturedItems = ({
     <FocusableBox
       href={href ?? undefined}
       background="purple100"
-      borderRadius="large"
+      borderRadius="default"
       color="purple"
       data-testid={dataTestId}
       className={styles.container}

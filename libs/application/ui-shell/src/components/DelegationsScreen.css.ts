@@ -6,7 +6,7 @@ export const buttonStyle = style({
   padding: `${theme.spacing[3]}px ${theme.spacing[4]}px`,
   textAlign: 'left',
   width: '100%',
-  borderRadius: `${theme.border.radius.large}`,
+  borderRadius: `${theme.border.radius.default}`,
   outlineColor: `${theme.color.mint400}`,
   outlineWidth: 'thick',
   border: `1px solid ${theme.color.blue100}`,
@@ -21,7 +21,7 @@ export const buttonStyle = style({
 export const delegationContainer = style({
   maxWidth: '660px',
   margin: `0 auto ${theme.spacing[5]}px auto`,
-  borderRadius: `${theme.border.radius.large}`,
+  borderRadius: `${theme.border.radius.default}`,
   border: `1px solid ${theme.color.blue200}`,
   paddingBottom: `${theme.spacing[5]}px`,
 })

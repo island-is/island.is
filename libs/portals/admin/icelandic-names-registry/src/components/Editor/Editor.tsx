@@ -244,7 +244,7 @@ const Editor = () => {
         }}
       >
         {({ closeModal }: { closeModal: () => void }) => (
-          <Box position="relative" borderRadius="large" background="white">
+          <Box position="relative" borderRadius="default" background="white">
             {!!isVisible && (
               <EditForm
                 onSubmit={onSubmit}

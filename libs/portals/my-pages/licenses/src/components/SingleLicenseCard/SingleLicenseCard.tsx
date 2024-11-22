@@ -55,7 +55,7 @@ export const SingleLicenseCard = ({
   return (
     <Box
       border="standard"
-      borderRadius="large"
+      borderRadius="default"
       padding={4}
       display="flex"
       flexDirection="row"

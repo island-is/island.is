@@ -5,5 +5,5 @@ export const container = style({
   width: '100%',
   borderStyle: 'solid',
   borderWidth: 1,
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
 })

@@ -4,7 +4,7 @@ import { Animated, useWindowDimensions } from 'react-native'
 import { Typography } from '../typography/typography'
 
 const Host = styled.View`
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
   justify-content: center;
   background-color: ${({ theme }) => theme.color.blue100};
   position: relative;

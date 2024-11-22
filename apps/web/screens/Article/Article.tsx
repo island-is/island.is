@@ -164,7 +164,7 @@ const RelatedContent: FC<
     )
 
   return (
-    <Box background="purple100" borderRadius="large" padding={[3, 3, 4]}>
+    <Box background="purple100" borderRadius="default" padding={[3, 3, 4]}>
       <Stack space={[1, 1, 2]}>
         <Text variant="eyebrow" as="h2">
           {title}

@@ -336,7 +336,7 @@ export const AdditionalHeir = ({
           marginBottom={2}
           paddingY={5}
           paddingX={7}
-          borderRadius="large"
+          borderRadius="default"
           border="standard"
         >
           <GridRow>
@@ -391,7 +391,7 @@ export const AdditionalHeir = ({
           marginBottom={2}
           paddingY={5}
           paddingX={7}
-          borderRadius="large"
+          borderRadius="default"
           border="standard"
         >
           <GridRow>

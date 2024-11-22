@@ -8,7 +8,7 @@ export const BlueBoxContainer = style({
   paddingBottom: theme.spacing[3],
   paddingRight: theme.spacing[3],
   paddingLeft: theme.spacing[3],
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
 })
 
 export const small = style({

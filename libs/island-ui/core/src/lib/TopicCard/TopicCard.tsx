@@ -46,7 +46,7 @@ export const TopicCard: React.FC<React.PropsWithChildren<TopicCardProps>> = ({
     <FocusableBox
       alignItems="center"
       background={colorSchemes[colorScheme].backgroundColor}
-      borderRadius="large"
+      borderRadius="default"
       display="flex"
       component={href ? Link : onClick ? 'button' : 'span'}
       href={href}

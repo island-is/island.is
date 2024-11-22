@@ -21,7 +21,7 @@ export const card = style({
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      borderRadius: theme.border.radius.large,
+      borderRadius: theme.border.radius.default,
     },
   },
 })

@@ -66,7 +66,7 @@ export const SubscriptionCard = ({
   return (
     <CardSkeleton
       borderColor="blue400"
-      borderRadius="large"
+      borderRadius="default"
       background="white"
       padding={3}
     >

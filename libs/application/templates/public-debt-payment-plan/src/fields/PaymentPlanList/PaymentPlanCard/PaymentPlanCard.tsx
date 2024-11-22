@@ -52,7 +52,7 @@ export const PaymentPlanCard = ({ payment, isAnswered }: Props) => {
       paddingY={3}
       paddingX={4}
       border="standard"
-      borderRadius="large"
+      borderRadius="default"
       marginBottom={2}
     >
       <Box display="flex" justifyContent="spaceBetween">
@@ -77,7 +77,7 @@ export const PaymentPlanCard = ({ payment, isAnswered }: Props) => {
               paddingX={3}
               marginTop={2}
               background="blue100"
-              borderRadius="large"
+              borderRadius="default"
             >
               <Box marginBottom={1}>
                 <Text variant="default">

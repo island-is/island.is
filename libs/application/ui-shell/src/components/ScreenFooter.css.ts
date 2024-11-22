@@ -3,8 +3,8 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const buttonContainer = style({
   borderTop: `2px solid ${theme.color.purple100}`,
-  borderBottomLeftRadius: theme.border.radius.large,
-  borderBottomRightRadius: theme.border.radius.large,
+  borderBottomLeftRadius: theme.border.radius.default,
+  borderBottomRightRadius: theme.border.radius.default,
 
   // Add an extra 20px so that when the user clicks the Continue button on a scrolled page on mobile Safari,
   // the chrome doesn't animate up and make them click Continue a second time.

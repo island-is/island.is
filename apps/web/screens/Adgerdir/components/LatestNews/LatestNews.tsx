@@ -69,7 +69,7 @@ const BigNewsItem = ({ news }: { news: LatestNewsItem }) => {
 }
 
 const NewsItem = ({ news }: { news: LatestNewsItem }) => (
-  <Box boxShadow="subtle" overflow="hidden" borderRadius="large">
+  <Box boxShadow="subtle" overflow="hidden" borderRadius="default">
     <img src={news.image?.url} alt={news.image?.title ?? ''} />
     <Box paddingX={3} paddingY={4}>
       <Stack space={2}>

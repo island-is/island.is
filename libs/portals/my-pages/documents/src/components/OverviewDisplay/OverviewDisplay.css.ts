@@ -49,7 +49,7 @@ export const reveal = style({
   padding: 10,
   background: theme.color.dark400,
   color: theme.color.white,
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   opacity: 0,
   borderWidth: 1,
   outline: 0,

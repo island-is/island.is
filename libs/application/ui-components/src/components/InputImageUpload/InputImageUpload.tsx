@@ -129,7 +129,7 @@ export const UploadedImage = ({
       borderWidth="standard"
       background={statusColor(file.status)}
       borderColor={statusColorDarker(file.status)}
-      borderRadius="large"
+      borderRadius="default"
       aria-label={onOpenFile ? `Opna ${file.name}` : undefined}
       position="relative"
       title={file.name}
@@ -152,7 +152,7 @@ export const UploadedImage = ({
           <Box
             className={styles.imageContainer}
             marginRight={1}
-            borderRadius="standard"
+            borderRadius="xs"
             background={statusColorDarker(file.status)}
           >
             {presignedUrl && file.status === 'done' && (
@@ -304,7 +304,7 @@ export const InputImageUpload = ({
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
-      borderRadius="standard"
+      borderRadius="xs"
       textAlign="center"
       padding={4}
       className={cn(styles.container, { [styles.containerDisabled]: disabled })}

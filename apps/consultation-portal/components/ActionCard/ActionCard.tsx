@@ -49,7 +49,7 @@ const ActionCard = ({ heading, text, button, input }: Props) => {
         noInput ? 'flexStart' : ['flexStart', 'flexStart', 'center', 'center']
       }
       borderColor={noInput ? 'blue400' : 'blue200'}
-      borderRadius="large"
+      borderRadius="default"
       borderWidth="standard"
       background="white"
       paddingX={[3, 3, 4, 4]}

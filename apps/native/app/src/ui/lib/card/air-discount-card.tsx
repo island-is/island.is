@@ -10,7 +10,7 @@ import { ViewStyle } from 'react-native'
 
 const Host = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing[1]}px;
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${dynamicColor(
     ({ theme }) => ({
@@ -56,7 +56,7 @@ const CopyCodeButton = styled.TouchableOpacity`
 `
 
 const ValidUntil = styled.Text`
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
   background-color: ${dynamicColor(
     ({ theme }) => ({
       dark: theme.shades.dark.shade300,

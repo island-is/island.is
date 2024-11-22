@@ -90,7 +90,7 @@ const ShipSearchBoxedInput = () => {
   const searchButtonText = formatMessage(translationStrings.searcButtonText)
 
   return (
-    <Box background="blue100" padding="containerGutter" borderRadius="large">
+    <Box background="blue100" padding="containerGutter" borderRadius="default">
       <Stack space={2}>
         {title && <Text variant="h2">{title}</Text>}
         {description && (

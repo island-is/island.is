@@ -86,7 +86,7 @@ export const AlertMessage: FC<AlertMessageProps & TitleAndOrMessage> = ({
   return (
     <Box
       padding={[1, 1, 2]}
-      borderRadius="large"
+      borderRadius="default"
       background={variant.background}
       borderColor={variant.borderColor}
       borderWidth="standard"

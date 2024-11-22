@@ -24,7 +24,7 @@ export const WarningSection: FC<
     <Box
       position="relative"
       border="standard"
-      borderRadius="large"
+      borderRadius="default"
       padding={4}
       marginBottom={2}
       borderColor={'red600'}

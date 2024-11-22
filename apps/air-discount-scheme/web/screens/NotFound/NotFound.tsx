@@ -31,7 +31,7 @@ function NotFound() {
             borderColor="blue300"
             borderWidth="standard"
             borderStyle="solid"
-            borderRadius="standard"
+            borderRadius="xs"
             display="flex"
             alignItems="center"
             padding={3}

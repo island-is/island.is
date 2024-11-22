@@ -92,7 +92,7 @@ const Tag = styled(View)<{
   background-color: ${({ backgroundColor, theme }) =>
     theme.color[backgroundColor]};
   padding: ${({ theme }) => theme.spacing[1]}px;
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
   overflow: hidden;
 `
 

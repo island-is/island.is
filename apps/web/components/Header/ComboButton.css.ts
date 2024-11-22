@@ -5,7 +5,7 @@ export const buttonBase = style({
   fontFamily: 'IBM Plex Sans, sans-serif',
   fontStyle: 'normal',
   fontWeight: theme.typography.semiBold,
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   fontSize: 12,
   lineHeight: 1.333333,
   minHeight: 40,
@@ -29,12 +29,12 @@ export const buttonBase = style({
 })
 
 export const searchButton = style({
-  borderRadius: `${theme.border.radius.large} 0 0 ${theme.border.radius.large}`,
+  borderRadius: `${theme.border.radius.default} 0 0 ${theme.border.radius.default}`,
   marginRight: '-1px',
 })
 
 export const menuButton = style({
-  borderRadius: `0 ${theme.border.radius.large}  ${theme.border.radius.large} 0`,
+  borderRadius: `0 ${theme.border.radius.default}  ${theme.border.radius.default} 0`,
 })
 
 export const buttonText = style({

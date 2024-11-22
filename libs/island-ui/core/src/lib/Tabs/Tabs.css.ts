@@ -36,7 +36,7 @@ export const tabList = style({
   gridAutoColumns: 'minmax(0, 1fr)',
   gridAutoFlow: 'column',
   width: '100%',
-  borderRadius: `${theme.border.radius.large} ${theme.border.radius.large} 0 0`,
+  borderRadius: `${theme.border.radius.default} ${theme.border.radius.default} 0 0`,
   borderColor: theme.border.color.blue100,
   borderWidth: theme.border.width.large,
   background: theme.color.blue100,
@@ -48,7 +48,7 @@ export const tabListAlternative = style({
   overflow: 'hidden',
   width: 'fit-content',
   background: theme.color.blue100,
-  borderRadius: theme.border.radius.standard,
+  borderRadius: theme.border.radius.xs,
   borderColor: theme.border.color.blue100,
   borderWidth: theme.border.width.large,
 })
@@ -78,8 +78,8 @@ export const tab = style({
 })
 
 export const tabAlternative = style({
-  border: `${theme.border.radius.standard} solid ${theme.color.transparent}`,
-  borderRadius: `${theme.border.radius.large}`,
+  border: `${theme.border.radius.xs} solid ${theme.color.transparent}`,
+  borderRadius: `${theme.border.radius.default}`,
   padding: `${theme.spacing[1]}px ${theme.spacing[3]}px`,
   margin: '-1px 0',
   selectors: {
@@ -116,7 +116,7 @@ export const tabSelected = style({
 
 export const tabSelectedAlternative = style({
   border: `1px solid ${theme.color.blue200}`,
-  borderRadius: theme.border.radius.standard,
+  borderRadius: theme.border.radius.xs,
   backgroundColor: theme.color.white,
 })
 

@@ -31,7 +31,7 @@ const PersonIcon: FC<React.PropsWithChildren<IProps>> = ({
         background={
           sessionType === SessionType.onBehalf ? 'blue100' : 'purple100'
         }
-        borderRadius="large"
+        borderRadius="default"
         padding={1}
       >
         <Icon size="small" icon="person" type="outline" color={textColor} />

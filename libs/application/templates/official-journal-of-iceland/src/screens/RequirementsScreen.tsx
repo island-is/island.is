@@ -88,7 +88,7 @@ export const RequirementsScreen = ({
         repeat={3}
         height={OJOI_INPUT_HEIGHT}
         space={2}
-        borderRadius="standard"
+        borderRadius="xs"
       />
     )
   }

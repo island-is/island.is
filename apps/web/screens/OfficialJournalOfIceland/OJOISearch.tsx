@@ -269,7 +269,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           component="form"
           background="blue100"
           padding={[2, 2, 3]}
-          borderRadius="large"
+          borderRadius="default"
           action={searchUrl}
         >
           <Stack space={[1, 1, 2]}>
@@ -436,7 +436,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
         <SkeletonLoader
           repeat={5}
           height={200}
-          borderRadius="large"
+          borderRadius="default"
           space={3}
         />
       ) : adverts?.length ? (
@@ -460,7 +460,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           )}
         </Stack>
       ) : (
-        <Box padding={[2, 3, 4]} border={'standard'} borderRadius="large">
+        <Box padding={[2, 3, 4]} border={'standard'} borderRadius="default">
           <Text variant="h3" as="h2">
             {formatMessage(m.search.notFoundTitle)}
           </Text>

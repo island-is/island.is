@@ -90,7 +90,7 @@ export const ProcessPageLayout: FC<
                 paddingY={[3, 3, 6, 6]}
                 background="white"
                 borderColor="white"
-                borderRadius="large"
+                borderRadius="default"
                 className={styles.processContent}
               >
                 <GridColumn

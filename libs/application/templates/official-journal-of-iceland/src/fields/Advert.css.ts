@@ -32,7 +32,7 @@ export const modal = style({
   height: '90vh',
   width: '100%',
   overflowY: 'auto',
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.16)',
   background: theme.color.white,
 })

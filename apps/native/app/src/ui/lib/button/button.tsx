@@ -66,7 +66,7 @@ const Host = styled.TouchableHighlight<HostProps>`
           },
   )};
 
-  border-radius: ${(props) => props.theme.border.radius.large};
+  border-radius: ${(props) => props.theme.border.radius.default};
   min-width: ${(props) => (props.isUtilityButton ? 0 : '192px')};
   ${(props) =>
     props.isOutlined &&

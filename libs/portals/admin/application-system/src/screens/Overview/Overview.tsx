@@ -181,7 +181,7 @@ const Overview = () => {
           height={60}
           repeat={10}
           space={2}
-          borderRadius="large"
+          borderRadius="default"
         />
       ) : nationalId === '' ? (
         <Box display="flex" justifyContent="center" marginTop={[3, 3, 6]}>

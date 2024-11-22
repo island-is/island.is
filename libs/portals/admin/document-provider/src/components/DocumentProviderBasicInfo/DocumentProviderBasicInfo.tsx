@@ -82,7 +82,7 @@ export const DocumentProviderBasicInfo: FC<React.PropsWithChildren<Props>> = ({
           </Box>
           <Box marginBottom={2}>
             {isFetching ? (
-              <SkeletonLoader borderRadius="large" height={80} />
+              <SkeletonLoader borderRadius="default" height={80} />
             ) : (
               <Controller
                 control={control}

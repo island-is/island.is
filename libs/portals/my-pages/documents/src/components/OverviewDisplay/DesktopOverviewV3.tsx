@@ -55,7 +55,7 @@ export const DesktopOverview: FC<Props> = ({
       marginLeft={8}
       marginTop={3}
       padding={5}
-      borderRadius="large"
+      borderRadius="default"
       background="white"
       className={styles.docWrap}
     >

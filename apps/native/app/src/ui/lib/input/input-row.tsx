@@ -5,7 +5,7 @@ const Host = styled.View<{ background: boolean }>`
   flex-direction: row;
   background-color: ${({ theme, background }) =>
     background ? theme.color.blueberry100 : 'transparent'};
-  border-radius: ${({ theme }) => theme.border.radius.standard};
+  border-radius: ${({ theme }) => theme.border.radius.xs};
 `
 
 interface InputRowProps {

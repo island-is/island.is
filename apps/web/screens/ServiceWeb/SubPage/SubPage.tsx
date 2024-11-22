@@ -283,7 +283,7 @@ const SubPage: Screen<SubPageProps> = ({
                           {question.relatedLinks?.length > 0 && (
                             <Box
                               background="purple100"
-                              borderRadius="large"
+                              borderRadius="default"
                               padding={4}
                               marginTop={6}
                               marginBottom={2}

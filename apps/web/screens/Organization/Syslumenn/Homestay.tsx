@@ -241,7 +241,7 @@ const Homestay: Screen<HomestayProps> = ({
           <Box
             key={index}
             border="standard"
-            borderRadius="large"
+            borderRadius="default"
             marginY={2}
             paddingY={3}
             paddingX={4}

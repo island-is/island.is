@@ -85,7 +85,7 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
         display="flex"
         height="full"
         background="white"
-        borderRadius="large"
+        borderRadius="default"
         borderColor="blue200"
         borderWidth="standard"
       >

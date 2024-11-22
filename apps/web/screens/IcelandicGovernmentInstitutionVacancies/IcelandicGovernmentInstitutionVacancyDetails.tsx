@@ -62,7 +62,7 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
             imgContainerDisplay={['block', 'block', 'none', 'block']}
           />
         )}
-        <Box background="dark100" borderRadius="large" padding={[3, 3, 4]}>
+        <Box background="dark100" borderRadius="default" padding={[3, 3, 4]}>
           <Stack space={3}>
             <Text variant="h3">
               {n('informationAboutJob', 'Upplýsingar um starf')}

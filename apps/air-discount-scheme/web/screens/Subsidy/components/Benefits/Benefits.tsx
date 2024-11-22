@@ -85,7 +85,7 @@ function Benefits({ misc }: PropTypes) {
           borderColor="yellow400"
           borderWidth="standard"
           borderStyle="solid"
-          borderRadius="standard"
+          borderRadius="xs"
           display="flex"
           alignItems="center"
           padding={3}

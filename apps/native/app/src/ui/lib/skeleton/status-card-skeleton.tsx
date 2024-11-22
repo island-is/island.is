@@ -7,7 +7,7 @@ import { Loader } from '../loader/loader'
 
 const Host = styled.View`
   width: 100%;
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${dynamicColor(
     ({ theme }) => ({

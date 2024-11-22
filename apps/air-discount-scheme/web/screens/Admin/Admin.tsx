@@ -142,7 +142,7 @@ const Admin: Screen = () => {
               background="purple100"
               padding={4}
               marginBottom={3}
-              borderRadius="standard"
+              borderRadius="xs"
             >
               <Box marginBottom={2}>
                 <Typography variant="h4">Síun</Typography>
@@ -153,7 +153,7 @@ const Admin: Screen = () => {
               background="purple100"
               padding={4}
               marginBottom={3}
-              borderRadius="standard"
+              borderRadius="xs"
             >
               <Box marginBottom={2}>
                 <Typography variant="h4">Aðgerðir</Typography>

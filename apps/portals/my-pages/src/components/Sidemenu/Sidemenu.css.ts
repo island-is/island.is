@@ -106,7 +106,7 @@ const dropdownBase: StyleWithSelectors = {
 const dropdownBaseMD: StyleWithSelectors = {
   top: spacing[3],
   width: 448,
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   filter: 'drop-shadow(0px 4px 70px rgba(0, 97, 255, 0.1))',
 }
 

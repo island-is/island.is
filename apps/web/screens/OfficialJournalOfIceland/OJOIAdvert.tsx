@@ -63,7 +63,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
       goBackUrl={searchUrl}
       sidebarContent={
         <Stack space={[2]}>
-          <Box background="blue100" padding={[2, 2, 3]} borderRadius="large">
+          <Box background="blue100" padding={[2, 2, 3]} borderRadius="default">
             <Stack space={[1, 1, 2]}>
               <Text variant="h4">{formatMessage(m.advert.sidebarTitle)}</Text>
 
@@ -114,7 +114,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
             <Box
               background="blueberry100"
               padding={[2, 2, 3]}
-              borderRadius="large"
+              borderRadius="default"
             >
               <Stack space={[1, 1, 2]}>
                 <Box href={advert.document.pdfUrl} component={Link}>

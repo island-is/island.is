@@ -21,7 +21,7 @@ const CopyLink: FC<React.PropsWithChildren<CopyLinkProps>> = ({
       alignItems="center"
       justifyContent="spaceBetween"
       padding={3}
-      borderRadius="large"
+      borderRadius="default"
     >
       <Box style={{ overflowWrap: 'anywhere' }} paddingRight={4}>
         <Text color="blue400">{linkUrl}</Text>

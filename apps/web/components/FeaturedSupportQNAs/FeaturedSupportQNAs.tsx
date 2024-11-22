@@ -16,7 +16,7 @@ interface FeaturedSupportQNAsProps {
 const FeaturedSupportQNAs = ({ slice }: FeaturedSupportQNAsProps) => {
   const { linkResolver } = useLinkResolver()
   return (
-    <Box background="blueberry100" borderRadius="large" padding={4}>
+    <Box background="blueberry100" borderRadius="default" padding={4}>
       <Inline flexWrap="nowrap" alignY="center" justifyContent="spaceBetween">
         <Text variant="eyebrow" fontWeight="semiBold" color="blueberry600">
           {slice?.renderedTitle ?? ''}

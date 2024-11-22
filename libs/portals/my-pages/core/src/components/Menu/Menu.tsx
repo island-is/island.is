@@ -30,7 +30,7 @@ export const Menu: FC<React.PropsWithChildren<Props>> = ({
         position="relative"
         background="white"
         padding={3}
-        borderRadius="large"
+        borderRadius="default"
         className={cn(styles.menu, {
           [styles.isOpen]: isOpen,
         })}

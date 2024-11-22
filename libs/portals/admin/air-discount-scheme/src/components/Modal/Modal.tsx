@@ -58,7 +58,7 @@ const Modal: FC<React.PropsWithChildren<ModalProps>> = ({
               padding={[3, 3, 6, 10]}
               paddingTop={[8, 8, 10, 12]}
               background="white"
-              borderRadius="large"
+              borderRadius="default"
               boxShadow="strong"
               position="relative"
             >

@@ -79,7 +79,7 @@ export const NonClickableItem = ({ item }: ItemProps) => {
     <Box
       padding={[2, 2, 3]}
       border="standard"
-      borderRadius="large"
+      borderRadius="default"
       height="full"
     >
       <Stack space={3}>
@@ -144,7 +144,7 @@ export const ClickableItem = ({ item, baseUrl }: ClickableItemProps) => {
     <FocusableBox
       padding={[2, 2, 3]}
       border="standard"
-      borderRadius="large"
+      borderRadius="default"
       href={href}
       height="full"
       width="full"

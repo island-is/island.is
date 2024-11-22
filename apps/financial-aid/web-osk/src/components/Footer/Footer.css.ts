@@ -5,7 +5,7 @@ export const infoBoxContainer = style({
   maxWidth: '432px',
   padding: theme.spacing[2],
   border: `1px solid ${theme.color.blue200}`,
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   background: theme.color.blue100,
 })
 

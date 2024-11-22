@@ -36,7 +36,7 @@ const DirectTaxPaymentModal = ({
           <Box
             position="relative"
             background="white"
-            borderRadius="large"
+            borderRadius="default"
             paddingY={4}
             paddingX={4}
             className={styles.modal}

@@ -20,7 +20,7 @@ const Host = styled.View<{ color: any }>`
   width: 283px;
   min-height: 406px;
   background-color: ${dynamicColor((props) => props.color)};
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
 `
 
 const IllustrationImage = styled.Image`

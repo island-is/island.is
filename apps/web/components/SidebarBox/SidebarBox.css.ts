@@ -7,7 +7,7 @@ export const container = style({
   ...themeUtils.responsiveStyle({
     md: {
       margin: 0,
-      borderRadius: theme.border.radius.large,
+      borderRadius: theme.border.radius.default,
     },
   }),
 })

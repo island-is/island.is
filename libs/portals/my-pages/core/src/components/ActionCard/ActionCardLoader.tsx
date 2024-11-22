@@ -20,7 +20,7 @@ export const ActionCardLoader: FC<React.PropsWithChildren<Props>> = ({
         paddingY={3}
         paddingX={4}
         border="standard"
-        borderRadius="large"
+        borderRadius="default"
         key={index}
       >
         <Stack space={1}>

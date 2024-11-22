@@ -7,7 +7,7 @@ export const chapterContainer = style({
   position: 'relative',
   backgroundColor: '#fff',
   border: `1px solid ${theme.color.blue400}`,
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   padding: `12px 20px`,
 })
 

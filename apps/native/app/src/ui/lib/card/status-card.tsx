@@ -10,7 +10,7 @@ import { ProgressMeter } from '../progress-meter/progress-meter'
 
 const Host = styled.View`
   min-height: 180px;
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${dynamicColor(
     ({ theme }) => ({

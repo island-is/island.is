@@ -105,7 +105,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
                 component={PopoverDisclosure}
                 background="white"
                 display="inlineBlock"
-                borderRadius="large"
+                borderRadius="default"
                 tabIndex={-1}
                 {...popover}
               >
@@ -120,7 +120,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
           <Box
             component={Popover}
             background="white"
-            borderRadius="large"
+            borderRadius="default"
             boxShadow="subtle"
             className={styles.popoverContainer}
             {...popover}
@@ -159,7 +159,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
               borderColor="blue200"
               background="white"
               padding={2}
-              borderRadius="large"
+              borderRadius="default"
             >
               <Text variant="h5" as="h5">
                 {labelOpen}

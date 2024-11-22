@@ -3,7 +3,7 @@ import { theme } from '@island.is/island-ui/theme'
 
 const base = style({
   border: `1px solid ${theme.border.color.blue200}`,
-  borderRadius: theme.border.radius.standard,
+  borderRadius: theme.border.radius.xs,
   marginBottom: '2px',
   height: '46px',
   marginLeft: 'auto',
@@ -16,7 +16,7 @@ const base = style({
 
 export const step = style({
   border: `1px solid ${theme.border.color.blue200}`,
-  borderRadius: theme.border.radius.standard,
+  borderRadius: theme.border.radius.xs,
   marginBottom: '2px',
   height: '46px',
   width: '100%',
@@ -70,7 +70,7 @@ export const navComponent = styleVariants({
 const baseBackground = style({
   width: '25px',
   height: '44px',
-  borderRadius: `${theme.border.radius.standard} 0 0 ${theme.border.radius.standard}`,
+  borderRadius: `${theme.border.radius.xs} 0 0 ${theme.border.radius.xs}`,
   textAlign: 'center',
 })
 

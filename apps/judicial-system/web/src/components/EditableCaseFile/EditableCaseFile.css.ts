@@ -10,7 +10,7 @@ export const caseFileWrapper = style({
   paddingTop: `${theme.spacing[1]}px`,
   paddingBottom: `${theme.spacing[1]}px`,
   minHeight: '64px',
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   border: '1px solid',
   transition: 'background-color 0.2s ease-in-out',
 })
@@ -53,7 +53,7 @@ export const editCaseFileButton = style({
   width: '32px',
   height: '34px',
   padding: '4px',
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   transition: 'background-color 0.2s ease-in-out',
   cursor: 'default',
 })

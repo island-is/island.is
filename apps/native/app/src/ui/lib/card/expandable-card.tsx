@@ -11,15 +11,15 @@ import { Typography } from '../typography/typography'
 
 const Host = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
 `
 
 const Card = styled.TouchableHighlight<{ open?: boolean }>`
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
   border-bottom-left-radius: ${({ theme, open }) =>
-    open ? 0 : theme.border.radius.large};
+    open ? 0 : theme.border.radius.default};
   border-bottom-right-radius: ${({ theme, open }) =>
-    open ? 0 : theme.border.radius.large};
+    open ? 0 : theme.border.radius.default};
   background-color: ${dynamicColor((props) => ({
     dark: 'shade100',
     light: props.theme.color.blue100,
@@ -71,8 +71,8 @@ const Message = styled(Typography)`
 
 const Expanded = styled.View`
   background-color: ${dynamicColor('background')};
-  border-bottom-left-radius: ${({ theme }) => theme.border.radius.large};
-  border-bottom-right-radius: ${({ theme }) => theme.border.radius.large};
+  border-bottom-left-radius: ${({ theme }) => theme.border.radius.default};
+  border-bottom-right-radius: ${({ theme }) => theme.border.radius.default};
 `
 
 interface CardProps {

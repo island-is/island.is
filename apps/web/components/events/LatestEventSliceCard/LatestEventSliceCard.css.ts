@@ -7,6 +7,6 @@ export const container = style({
     outlineWidth: '1px',
     outlineColor: theme.color.blue400,
     outlineStyle: 'solid',
-    borderRadius: theme.border.radius.large,
+    borderRadius: theme.border.radius.default,
   },
 })

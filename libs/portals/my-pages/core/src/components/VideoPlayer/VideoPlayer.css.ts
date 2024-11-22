@@ -4,7 +4,7 @@ import { style } from '@vanilla-extract/css'
 export const container = style({
   maxWidth: '100%',
   aspectRatio: '1.55/1',
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   borderWidth: theme.border.width.large,
   borderStyle: theme.border.style.solid,
   borderColor: theme.border.color.blue200,
@@ -26,7 +26,7 @@ export const container = style({
   },
 })
 export const video = style({
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   background: theme.color.blue100,
   padding: `${theme.spacing[1]}px ${theme.spacing.smallGutter}px`,
   margin: 0,

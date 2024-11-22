@@ -142,7 +142,7 @@ export const FishingLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <Box marginBottom={3}>
         <Box
           border="standard"
-          borderRadius="large"
+          borderRadius="default"
           padding={3}
           width="full"
           display="flex"
@@ -156,12 +156,7 @@ export const FishingLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           {formatMessage(fishingLicense.labels.radioButtonTitle)}
         </Text>
         {loading ? (
-          <SkeletonLoader
-            repeat={2}
-            space={2}
-            height={75}
-            borderRadius="standard"
-          />
+          <SkeletonLoader repeat={2} space={2} height={75} borderRadius="xs" />
         ) : (
           <>
             <RadioController

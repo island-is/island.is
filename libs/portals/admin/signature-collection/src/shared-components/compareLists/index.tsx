@@ -85,7 +85,7 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
     <Box marginTop={10}>
       <Box
         background="blue100"
-        borderRadius="large"
+        borderRadius="default"
         display={['block', 'flex', 'flex']}
         justifyContent="spaceBetween"
         alignItems="center"

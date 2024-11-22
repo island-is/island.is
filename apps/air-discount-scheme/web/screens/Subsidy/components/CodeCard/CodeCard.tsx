@@ -56,7 +56,7 @@ function CodeCard({
       padding={2}
       borderWidth="standard"
       borderStyle="solid"
-      borderRadius="standard"
+      borderRadius="xs"
       display={['block', 'flex', 'block', 'flex']}
       justifyContent="spaceBetween"
       alignItems={['flexStart', 'center', 'flexStart', 'center']}

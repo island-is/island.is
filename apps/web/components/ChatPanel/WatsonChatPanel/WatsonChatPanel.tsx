@@ -93,7 +93,7 @@ const ChatFeedbackPanel = ({
   return (
     <Box
       className={cn(styles.feedbackPanelContainer, { [styles.pushUp]: pushUp })}
-      borderRadius="large"
+      borderRadius="default"
       padding="gutter"
       background="white"
     >

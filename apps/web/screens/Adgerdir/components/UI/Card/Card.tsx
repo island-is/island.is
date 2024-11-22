@@ -146,7 +146,7 @@ export const Card: FC<React.PropsWithChildren<CardProps>> = ({
       ref={ref}
       display="flex"
       height="full"
-      borderRadius="large"
+      borderRadius="default"
       flexDirection="column"
     >
       <Box
@@ -166,7 +166,7 @@ export const Card: FC<React.PropsWithChildren<CardProps>> = ({
       <FocusableBox
         href={href}
         as={as}
-        borderRadius="large"
+        borderRadius="default"
         flexDirection="column"
         height="full"
         width="full"
@@ -214,7 +214,7 @@ export const Frame = ({ children }: { children: ReactNode }) => {
     <Box
       className={cn(styles.card)}
       position="relative"
-      borderRadius="large"
+      borderRadius="default"
       overflow="hidden"
       height="full"
       background="white"

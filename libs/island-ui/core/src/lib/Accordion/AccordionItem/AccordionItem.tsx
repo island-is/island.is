@@ -236,7 +236,7 @@ export const AccordionCard = ({ dataTestId, ...props }: AccordionCardProps) => {
     <Box
       height="full"
       background="white"
-      borderRadius="large"
+      borderRadius="default"
       className={cn(styles.card({ color: props.colorVariant }), {
         [styles.focused]: isFocused,
       })}

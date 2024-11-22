@@ -17,5 +17,5 @@ export const faqs = style({
   borderWidth: 1,
   borderStyle: 'solid',
   borderColor: theme.color.blue200,
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
 })

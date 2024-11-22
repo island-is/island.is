@@ -202,7 +202,7 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
     <Box
       paddingY={3}
       paddingX={[2, 2, 4, 4, 4]}
-      borderRadius="standard"
+      borderRadius="xs"
       borderWidth="standard"
       borderColor="blue300"
       flexDirection="column"

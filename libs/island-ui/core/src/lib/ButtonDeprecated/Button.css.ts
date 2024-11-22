@@ -18,7 +18,7 @@ export const button = style({
   position: 'relative',
   justifyContent: 'center',
   alignItems: 'center',
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   outline: 0,
   border: 0,
   cursor: 'pointer',
@@ -44,7 +44,7 @@ export const button = style({
     borderStyle: 'solid',
     borderWidth: 4,
     borderColor: theme.color.mint400,
-    borderRadius: theme.border.radius.large,
+    borderRadius: theme.border.radius.default,
     top: 0,
     left: 0,
     bottom: 0,
@@ -167,7 +167,7 @@ export const variants = styleVariants({
       opacity: 1,
       borderWidth: 1,
       borderColor: theme.color.blue400,
-      borderRadius: theme.border.radius.large,
+      borderRadius: theme.border.radius.default,
     },
     ':hover': {
       color: theme.color.blueberry400,
@@ -205,7 +205,7 @@ export const variants = styleVariants({
       opacity: 1,
       borderWidth: 1,
       borderColor: theme.color.red400,
-      borderRadius: theme.border.radius.large,
+      borderRadius: theme.border.radius.default,
     },
     ':hover': {
       color: theme.color.red600,
@@ -304,7 +304,7 @@ export const variants = styleVariants({
     borderStyle: 'solid',
     borderColor: theme.color.blue200,
     borderWidth: 1,
-    borderRadius: theme.border.radius.large,
+    borderRadius: theme.border.radius.default,
     transition: `border-color ${speed} ease`,
     ...themeUtils.responsiveStyle({
       xs: sizeMenuMobile,
@@ -314,7 +314,7 @@ export const variants = styleVariants({
       borderColor: theme.color.mint400,
       borderWidth: 3,
       opacity: 0,
-      borderRadius: theme.border.radius.large,
+      borderRadius: theme.border.radius.default,
       top: -3,
       left: -3,
       bottom: -3,
@@ -527,8 +527,8 @@ export const leftSpacer = style({
 
 export const leftContentContainer = style({
   backgroundColor: theme.color.blue100,
-  borderTopLeftRadius: theme.border.radius.large,
-  borderBottomLeftRadius: theme.border.radius.large,
+  borderTopLeftRadius: theme.border.radius.default,
+  borderBottomLeftRadius: theme.border.radius.default,
   ...themeUtils.responsiveStyle({
     xs: {
       width: 40,

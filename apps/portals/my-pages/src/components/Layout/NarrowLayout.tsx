@@ -80,7 +80,7 @@ export const NarrowLayout = ({
             <GoBack />
 
             {subNavItems && subNavItems.length > 0 && (
-              <Box borderRadius="large" background="blue100">
+              <Box borderRadius="default" background="blue100">
                 <Navigation
                   renderLink={(link, item: SubNavItemType | undefined) => {
                     return item?.href ? (

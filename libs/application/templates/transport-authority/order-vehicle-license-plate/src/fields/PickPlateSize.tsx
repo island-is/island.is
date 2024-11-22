@@ -75,7 +75,7 @@ export const PickPlateSize: FC<React.PropsWithChildren<FieldBaseProps>> = (
           height={100}
           space={2}
           repeat={2}
-          borderRadius="large"
+          borderRadius="default"
         />
       ) : !error && !plateTypeFrontError && !plateTypeFrontListEmptyError ? (
         <>

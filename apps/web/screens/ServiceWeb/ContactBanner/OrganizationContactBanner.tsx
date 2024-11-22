@@ -21,7 +21,7 @@ const OrganizationContactBanner = ({
   linkText = 'Hafa samband',
 }: OrganizationContactBannerProps) => {
   return (
-    <Box background="purple100" borderRadius="large" padding={4}>
+    <Box background="purple100" borderRadius="default" padding={4}>
       <GridRow direction="row">
         <GridColumn>
           {organizationLogoUrl && (

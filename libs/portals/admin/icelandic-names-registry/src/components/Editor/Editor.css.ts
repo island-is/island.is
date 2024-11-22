@@ -6,7 +6,7 @@ export const modal = style({
   maxWidth: 1000,
   width: '100%',
   margin: `${theme.spacing['6']}px auto`,
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   overflowY: 'auto',
   boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
 })

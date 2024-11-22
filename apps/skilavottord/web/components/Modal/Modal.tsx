@@ -64,7 +64,7 @@ export const Modal: FC<React.PropsWithChildren<ModalProps>> = ({
                   paddingX={[3, 0, 0, 0]}
                   className={styles.modalContainer}
                   background="white"
-                  borderRadius="large"
+                  borderRadius="default"
                 >
                   <Box className={styles.modalClose}>
                     <Button

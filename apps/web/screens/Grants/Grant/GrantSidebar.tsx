@@ -125,12 +125,12 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         locale={locale}
       />
       {detailPanelData.length ? (
-        <Box background="blue100" padding={3} borderRadius="standard">
+        <Box background="blue100" padding={3} borderRadius="xs">
           <Stack space={2}>{detailPanelData}</Stack>
         </Box>
       ) : undefined}
       {filesPanelData.length ? (
-        <Box background="red100" padding={3} borderRadius="standard">
+        <Box background="red100" padding={3} borderRadius="xs">
           <Stack space={2}>{filesPanelData}</Stack>
         </Box>
       ) : undefined}

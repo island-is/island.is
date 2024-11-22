@@ -98,7 +98,7 @@ const EventInformationBox = ({
   const n = useNamespace(namespace)
 
   return (
-    <Box background="blue100" borderRadius="large" padding={[3, 3, 3, 2, 3]}>
+    <Box background="blue100" borderRadius="default" padding={[3, 3, 3, 2, 3]}>
       <Stack space={3}>
         <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
           <Icon color="blue400" icon="calendar" type="outline" />

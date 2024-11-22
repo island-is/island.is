@@ -38,7 +38,7 @@ const ErrorModal: FC<React.PropsWithChildren<Props>> = ({
         background="white"
         paddingX={[3, 3, 3, 12]}
         paddingY={[7, 7, 7, 12]}
-        borderRadius="large"
+        borderRadius="default"
       >
         <Stack space={[5, 5, 5, 7]}>
           <Stack space={2}>

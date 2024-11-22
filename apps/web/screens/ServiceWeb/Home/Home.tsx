@@ -234,7 +234,7 @@ const Home: Screen<HomeProps> = ({
 
                         {featuredQNAs.length > 0 && (
                           <Box
-                            borderRadius="large"
+                            borderRadius="default"
                             border="standard"
                             borderColor="blue200"
                             paddingX={[4, 4, 14]}

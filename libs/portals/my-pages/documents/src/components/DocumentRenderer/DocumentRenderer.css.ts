@@ -12,7 +12,7 @@ export const pdfControls = style({
   borderWidth: 1,
   borderStyle: 'solid',
   borderColor: theme.color.blue200,
-  borderRadius: `${theme.border.radius.standard} ${theme.border.radius.standard} 0 0`,
+  borderRadius: `${theme.border.radius.xs} ${theme.border.radius.xs} 0 0`,
   justifyContent: 'center',
   ...themeUtils.responsiveStyle({
     md: {

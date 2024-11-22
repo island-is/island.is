@@ -19,7 +19,7 @@ interface SidebarCardProps {
 export const SidebarCard: React.FC<
   React.PropsWithChildren<SidebarCardProps>
 > = ({ sidebarCard }) => (
-  <Box marginTop={4} border="standard" borderRadius="large" padding={4}>
+  <Box marginTop={4} border="standard" borderRadius="default" padding={4}>
     <GridContainer>
       <GridRow>
         <GridColumn span={['3/12', '3/12', '12/12']}>

@@ -6,21 +6,21 @@ const Skeleton = () => {
     <Stack space={5}>
       <>
         <Box display="flex" justifyContent="spaceBetween">
-          <SkeletonLoader height={50} width="47%" borderRadius="large" />
-          <SkeletonLoader height={50} width="47%" borderRadius="large" />
+          <SkeletonLoader height={50} width="47%" borderRadius="default" />
+          <SkeletonLoader height={50} width="47%" borderRadius="default" />
         </Box>
         <Box display="flex" justifyContent="spaceBetween">
-          <SkeletonLoader height={50} width="47%" borderRadius="large" />
-          <SkeletonLoader height={50} width="47%" borderRadius="large" />
+          <SkeletonLoader height={50} width="47%" borderRadius="default" />
+          <SkeletonLoader height={50} width="47%" borderRadius="default" />
         </Box>
         <Box display="flex" justifyContent="spaceBetween">
-          <SkeletonLoader height={50} width="47%" borderRadius="large" />
-          <SkeletonLoader height={50} width="47%" borderRadius="large" />
+          <SkeletonLoader height={50} width="47%" borderRadius="default" />
+          <SkeletonLoader height={50} width="47%" borderRadius="default" />
         </Box>
       </>
-      <SkeletonLoader height={80} width="100%" borderRadius="large" />
-      <SkeletonLoader height={60} width="60%" borderRadius="large" />
-      <SkeletonLoader height={300} width="100%" borderRadius="large" />
+      <SkeletonLoader height={80} width="100%" borderRadius="default" />
+      <SkeletonLoader height={60} width="60%" borderRadius="default" />
+      <SkeletonLoader height={300} width="100%" borderRadius="default" />
     </Stack>
   )
 }

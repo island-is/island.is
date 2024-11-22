@@ -32,7 +32,7 @@ export const Card = ({
 }: CardProps) => (
   <Box
     display="flex"
-    borderRadius="large"
+    borderRadius="default"
     width="full"
     paddingX={4}
     paddingY={3}

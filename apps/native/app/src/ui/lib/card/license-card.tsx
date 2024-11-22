@@ -55,7 +55,7 @@ const ContentContainer = styled.View`
 
 const BarcodeWrapper = styled.View<{ minHeight?: number }>`
   flex: 1;
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
   min-height: ${({ minHeight }) => minHeight}px;
   overflow: hidden;
 `

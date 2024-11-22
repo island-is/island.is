@@ -18,7 +18,7 @@ const CheckboxBox = ({ children }: CProps) => {
       padding={2}
       background="blue100"
       borderColor="blue400"
-      borderRadius="standard"
+      borderRadius="xs"
       border="standard"
     >
       {children}

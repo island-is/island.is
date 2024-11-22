@@ -10,5 +10,5 @@ export const flexNone = style({
 })
 
 export const bottomBorderRadius = style({
-  borderRadius: `0 0 ${theme.border.radius.large} ${theme.border.radius.large}`,
+  borderRadius: `0 0 ${theme.border.radius.default} ${theme.border.radius.default}`,
 })

@@ -30,7 +30,12 @@ export const ButtonItem = (onclick?: () => void, content?: string) => {
 export const OtherItem = (other?: string) => {
   return (
     other && (
-      <Box background="blue100" borderRadius="large" padding={2} marginTop={1}>
+      <Box
+        background="blue100"
+        borderRadius="default"
+        padding={2}
+        marginTop={1}
+      >
         <Text variant="small">
           „<em>{other}</em>“
         </Text>

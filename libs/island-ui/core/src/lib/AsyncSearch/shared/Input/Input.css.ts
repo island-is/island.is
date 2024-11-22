@@ -9,7 +9,7 @@ export const input = style({
   appearance: 'none',
   position: 'relative',
   width: '100%',
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   background: theme.color.white,
   fontWeight: theme.typography.light,
   borderColor: theme.color.blue200,

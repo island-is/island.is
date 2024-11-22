@@ -84,7 +84,7 @@ const FrameWrapper = ({ children }: { children: ReactNode }) => {
     <Box
       className={cn(styles.card)}
       position="absolute"
-      borderRadius="large"
+      borderRadius="default"
       overflow="visible"
       background="blue100"
       outline="none"

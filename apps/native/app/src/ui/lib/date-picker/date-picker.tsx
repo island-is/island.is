@@ -19,7 +19,7 @@ const DateInput = styled.Pressable`
   justify-content: space-between;
   padding: ${({ theme }) => theme.spacing[1]}px;
   padding-right: ${({ theme }) => theme.spacing[2]}px;
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
   border-width: 1px;
   border-style: solid;
   border-color: ${dynamicColor(

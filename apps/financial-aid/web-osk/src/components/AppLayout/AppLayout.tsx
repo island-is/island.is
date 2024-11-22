@@ -58,7 +58,7 @@ const AppLayout = ({ children }: Props) => {
             <Box
               background="white"
               borderColor="white"
-              borderRadius="large"
+              borderRadius="default"
               className={styles.formContainer}
             >
               {children}

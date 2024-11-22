@@ -56,7 +56,7 @@ const OwnerView = ({
             </Text>
             <Box
               background="purple100"
-              borderRadius="large"
+              borderRadius="default"
               display={['block', 'flex', 'flex']}
               justifyContent="spaceBetween"
               alignItems="center"

@@ -72,7 +72,7 @@ const ContextMenu = forwardRef<HTMLElement, ContextMenuProps & TestSupport>(
       background: 'white',
       display: 'flex',
       flexDirection: 'column',
-      borderRadius: 'large',
+      borderRadius: 'default',
       zIndex: 10,
     })
 

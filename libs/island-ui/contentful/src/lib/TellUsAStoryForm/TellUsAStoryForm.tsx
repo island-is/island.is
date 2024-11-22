@@ -211,7 +211,7 @@ export const TellUsAStoryForm: React.FC<
       <Box
         paddingY={[3, 3, 8]}
         paddingX={showIntro ? [3, 3, 8] : [3, 3, 3, 3, 15]}
-        borderRadius="large"
+        borderRadius="default"
         background="blue100"
       >
         {state !== 'success' ? (

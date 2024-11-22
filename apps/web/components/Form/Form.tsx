@@ -634,7 +634,7 @@ export const Form = ({ form }: FormProps) => {
       background="blue100"
       paddingY={[3, 3, 5]}
       paddingX={[3, 3, 3, 3, 12]}
-      borderRadius="large"
+      borderRadius="default"
     >
       {success && (
         <>

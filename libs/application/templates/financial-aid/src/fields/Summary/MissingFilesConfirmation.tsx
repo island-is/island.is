@@ -39,7 +39,7 @@ export const MissingFilesConfirmation = ({
           background="purple100"
           paddingX={4}
           paddingY={3}
-          borderRadius="large"
+          borderRadius="default"
         >
           <Text variant="eyebrow" marginBottom={1}>
             {formatMessage(missingFiles.confirmation.commentTitle)}

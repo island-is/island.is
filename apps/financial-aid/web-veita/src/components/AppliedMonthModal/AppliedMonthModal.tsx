@@ -99,7 +99,7 @@ const AppliedMonthModal = ({
       <Box className={modalStyles.modalContainer}>
         <Box
           position="relative"
-          borderRadius="large"
+          borderRadius="default"
           overflow="hidden"
           background="white"
           className={styles.modal}

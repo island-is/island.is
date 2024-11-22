@@ -25,7 +25,7 @@ export const editorWrapper = recipe({
     position: 'relative',
     zIndex: 0,
     boxShadow: `0 0 0 1px ${theme.color.blue200}`,
-    borderRadius: theme.border.radius.large,
+    borderRadius: theme.border.radius.default,
     selectors: {
       '&:focus-within': {
         zIndex: 1,
@@ -166,7 +166,7 @@ export const classes: EditorClasses = {
     left: '50%',
     backgroundColor: theme.color.white,
     overflow: 'hidden',
-    borderRadius: theme.border.radius.standard,
+    borderRadius: theme.border.radius.xs,
     border: `1px solid ${theme.color.blue200}`,
     transition: 'all 300ms 200ms ease-in-out',
     transitionProperty: 'transform',
@@ -413,8 +413,8 @@ globalStyle(`${classes.toolbar} .tox .tox-menu`, {
   width: 'max-content',
 })
 globalStyle(`${classes.toolbar} .tox .tox-editor-container`, {
-  borderTopRightRadius: theme.border.radius.large,
-  borderTopLeftRadius: theme.border.radius.large,
+  borderTopRightRadius: theme.border.radius.default,
+  borderTopLeftRadius: theme.border.radius.default,
 })
 globalStyle(`${classes.toolbar} .tox .tox-editor-header`, {
   border: 'none',

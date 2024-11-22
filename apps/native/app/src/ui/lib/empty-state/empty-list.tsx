@@ -22,7 +22,7 @@ const HostWithBorder = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-vertical: ${({ theme }) => theme.spacing[4]}px;
 
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${dynamicColor(
     ({ theme }) => ({

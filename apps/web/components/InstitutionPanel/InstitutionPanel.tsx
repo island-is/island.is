@@ -33,7 +33,7 @@ export const InstitutionPanel = ({
     <Link {...linkProps}>
       <Box
         background="purple100"
-        borderRadius="large"
+        borderRadius="default"
         padding={[3, 3, 4]}
         display="flex"
         alignItems="center"

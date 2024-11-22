@@ -137,7 +137,7 @@ export const FilterMultiChoice: FC<
       ))}
     </Stack>
   ) : (
-    <Box paddingX={3} paddingY={1} borderRadius="large" background="white">
+    <Box paddingX={3} paddingY={1} borderRadius="default" background="white">
       <Accordion
         space={3}
         dividerOnBottom={false}

@@ -17,7 +17,7 @@ const ReviewSection: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
     <Box
       position="relative"
       border="standard"
-      borderRadius="large"
+      borderRadius="default"
       padding={4}
       marginBottom={2}
       borderColor={state === ReviewSectionState.complete ? 'mint600' : 'red600'}

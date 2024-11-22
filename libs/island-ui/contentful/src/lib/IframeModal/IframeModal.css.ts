@@ -36,7 +36,7 @@ export const dialog = style({
   display: 'flex',
   margin: `0 auto`,
   position: 'absolute',
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   overflow: 'hidden',
   top: spacing,
   right: spacing,

@@ -82,7 +82,7 @@ export const StaticTableFormField: FC<Props> = ({
               justifyContent="spaceBetween"
               alignItems="center"
               padding={3}
-              borderRadius="large"
+              borderRadius="default"
               background="blue100"
             >
               <Text

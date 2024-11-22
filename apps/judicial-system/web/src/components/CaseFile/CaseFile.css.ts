@@ -7,7 +7,7 @@ export const caseFileWrapper = style({
   alignItems: 'center',
   justifyContent: 'space-between',
   padding: `${theme.spacing[1]}px ${theme.spacing[2]}px`,
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   cursor: 'pointer',
 
   ':hover': {

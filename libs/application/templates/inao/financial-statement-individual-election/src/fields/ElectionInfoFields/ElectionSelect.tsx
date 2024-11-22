@@ -45,7 +45,7 @@ export const ElectionSelect = ({
   }, [getDefaultElection])
 
   if (loading) {
-    return <SkeletonLoader height={70} width="100%" borderRadius="large" />
+    return <SkeletonLoader height={70} width="100%" borderRadius="default" />
   }
 
   if (error || financialStatementsInaoElections?.length <= 0) {

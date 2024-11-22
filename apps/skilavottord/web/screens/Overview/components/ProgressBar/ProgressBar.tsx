@@ -10,12 +10,12 @@ const ProgressBar: FC<React.PropsWithChildren<Props>> = ({ progress }) => {
   return (
     <Box
       background={progress === 100 ? 'mint100' : 'roseTinted100'}
-      borderRadius="large"
+      borderRadius="default"
       className={styles.wrapper}
     >
       <Box
         background={progress === 100 ? 'mint400' : 'roseTinted400'}
-        borderRadius="large"
+        borderRadius="default"
         style={{ width: `${progress}%` }}
         className={styles.bar}
       />

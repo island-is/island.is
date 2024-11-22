@@ -85,7 +85,7 @@ export const MobileAppBanner = ({ namespace }: MobileAppBannerProps) => {
           background="white"
           marginLeft={2}
           marginRight={2}
-          borderRadius="large"
+          borderRadius="default"
         >
           <Logo iconOnly={true} height={24} width={24} />
         </Box>

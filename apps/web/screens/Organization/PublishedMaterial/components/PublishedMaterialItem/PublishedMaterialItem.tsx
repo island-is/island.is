@@ -30,7 +30,7 @@ export const PublishedMaterialItem = ({ item }: PublishedMaterialItemProps) => {
           : item.file?.url
       }
       border="standard"
-      borderRadius="large"
+      borderRadius="default"
       display="flex"
       flexDirection="row"
     >

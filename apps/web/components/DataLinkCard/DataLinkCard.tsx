@@ -44,7 +44,7 @@ export const DataLinkCard = ({ title, body, linkUrl }: LinkCard) => {
     return (
       <FocusableBox
         href={linkUrl}
-        borderRadius="large"
+        borderRadius="default"
         flexDirection="column"
         height="full"
         width="full"
@@ -66,7 +66,7 @@ const FrameWrapper = ({ children }: { children: ReactNode }) => {
     <Box
       className={styles.card}
       position="relative"
-      borderRadius="large"
+      borderRadius="default"
       overflow="hidden"
       background="blue100"
       borderColor="transparent"

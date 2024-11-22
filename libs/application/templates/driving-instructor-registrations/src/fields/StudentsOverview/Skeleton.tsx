@@ -5,13 +5,13 @@ const Skeleton = () => {
   const skeleton = Array(10).fill(
     <>
       <T.Data box={{ textAlign: 'left' }}>
-        <SkeletonLoader height={40} width="100%" borderRadius="large" />
+        <SkeletonLoader height={40} width="100%" borderRadius="default" />
       </T.Data>
       <T.Data>
-        <SkeletonLoader height={40} width="100%" borderRadius="large" />
+        <SkeletonLoader height={40} width="100%" borderRadius="default" />
       </T.Data>
       <T.Data>
-        <SkeletonLoader height={40} width="100%" borderRadius="large" />
+        <SkeletonLoader height={40} width="100%" borderRadius="default" />
       </T.Data>
       <T.Data></T.Data>
     </>,

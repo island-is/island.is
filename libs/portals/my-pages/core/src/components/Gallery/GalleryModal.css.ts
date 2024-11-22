@@ -5,7 +5,7 @@ export const container = style({
   height: '100%',
   width: '100%',
   display: 'grid',
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   gridTemplateRows: `${theme.spacing[8]}px 2fr ${theme.spacing[1]}px 1fr`,
   gridTemplateColumns: `${theme.spacing[6]}px 1fr ${theme.spacing[6]}px`,
   gridTemplateAreas:
@@ -32,7 +32,7 @@ export const modal = style({
   transform: 'translate(-50%, -50%)',
   aspectRatio: '1/1',
   maxWidth: theme.contentWidth.medium,
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
 
   ...themeUtils.responsiveStyle({

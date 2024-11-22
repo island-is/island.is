@@ -42,7 +42,7 @@ export const wrapper = style({
   width: '100%',
   padding: spacing,
   border: `1px solid ${theme.color.blue200}`,
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
 })
 
 export const institutionWrapper = style({})
@@ -110,7 +110,7 @@ export const inputWrapper = style({
 
 export const removeInputGroup = style({
   border: `1px solid ${theme.color.blue200}`,
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   display: 'flex',
   width: OJOI_INPUT_HEIGHT,
   height: OJOI_INPUT_HEIGHT,

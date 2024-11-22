@@ -50,7 +50,7 @@ export const MainOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
   return loading ? (
     <Box marginTop={3}>
-      <SkeletonLoader height={84} space={2} repeat={3} borderRadius="large" />
+      <SkeletonLoader height={84} space={2} repeat={3} borderRadius="default" />
     </Box>
   ) : owner ? (
     <Box marginTop={3}>

@@ -41,7 +41,7 @@ export const MultiSet = ({ group }: Props) => {
           style={{ width: '50%', height: '50px', cursor: 'pointer' }}
           cursor="pointer"
           border="standard"
-          borderRadius="standard"
+          borderRadius="xs"
           borderWidth="large"
           background="white"
           display="flex"

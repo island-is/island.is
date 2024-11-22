@@ -6,7 +6,7 @@ import { Typography } from '../typography/typography'
 
 const Host = styled.Pressable`
   padding: ${({ theme }) => theme.spacing[1]}px;
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
   border-width: 1px;
   border-style: solid;
   border-color: ${dynamicColor(

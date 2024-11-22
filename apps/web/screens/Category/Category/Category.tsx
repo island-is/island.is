@@ -190,7 +190,7 @@ const Category: Screen<CategoryProps> = ({
                       }
 
                       return (
-                        <FocusableBox key={page.slug} borderRadius="large">
+                        <FocusableBox key={page.slug} borderRadius="default">
                           <TopicCard
                             href={
                               linkResolver(

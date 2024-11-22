@@ -57,7 +57,7 @@ export const TabBar = ({ tabs, variant = 'default', ...boxProps }: Props) => {
     return (
       <Box
         role="tablist"
-        borderRadius="standard"
+        borderRadius="xs"
         borderColor="blue100"
         borderWidth="large"
         display="flex"

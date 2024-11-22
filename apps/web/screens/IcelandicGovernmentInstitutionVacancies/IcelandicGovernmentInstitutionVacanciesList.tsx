@@ -540,7 +540,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                           .href
                       }`}
                       background="white"
-                      borderRadius="large"
+                      borderRadius="default"
                       borderColor="blue200"
                       borderWidth="standard"
                       padding={[3, 3, 'containerGutter']}

@@ -27,7 +27,12 @@ export const ComplaineeTable: FC<React.PropsWithChildren<Props>> = ({
 
   return (
     <Box marginTop={3}>
-      <Box border="standard" borderRadius="large" marginBottom={3} padding={4}>
+      <Box
+        border="standard"
+        borderRadius="default"
+        marginBottom={3}
+        padding={4}
+      >
         <Text variant="h5">
           {formatMessage(complaint.labels.complaineeName)}
         </Text>

@@ -7,7 +7,7 @@ const UrgentTag = () => {
   return (
     <Box
       border="standard"
-      borderRadius="large"
+      borderRadius="default"
       borderColor="red200"
       background="red100"
       display="flex"

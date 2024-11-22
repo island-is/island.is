@@ -79,7 +79,7 @@ function Toast() {
         marginRight={4}
         marginTop={3}
         padding={[2, 2, 3]}
-        borderRadius="large"
+        borderRadius="default"
         role="status"
       >
         <Columns>

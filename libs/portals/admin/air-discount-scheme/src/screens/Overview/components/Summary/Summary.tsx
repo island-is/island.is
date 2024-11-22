@@ -110,7 +110,7 @@ function Summary({
               <Box
                 key={airline}
                 border="standard"
-                borderRadius="large"
+                borderRadius="default"
                 padding={[2, 4]}
               >
                 <Stack space={2} key={airline}>
@@ -118,7 +118,11 @@ function Summary({
                     <span className={styles.capitalize}>{airline}</span>
                   </Text>
                   <Stack space={3}>
-                    <Box background="blue100" borderRadius="large" padding={2}>
+                    <Box
+                      background="blue100"
+                      borderRadius="default"
+                      padding={2}
+                    >
                       <KeyValues
                         title="Í gjaldfærslubið"
                         data={data.awaitingDebit}
@@ -130,15 +134,19 @@ function Summary({
                         data={data.awaitingCredit}
                       />
                     </Box>
-                    <Box background="red100" borderRadius="large" padding={2}>
+                    <Box background="red100" borderRadius="default" padding={2}>
                       <KeyValues title="Afturkallaðir" data={data.cancelled} />
                     </Box>
-                    <Box padding={2} background="mint100" borderRadius="large">
+                    <Box
+                      padding={2}
+                      background="mint100"
+                      borderRadius="default"
+                    >
                       <KeyValues title="Gjaldfært" data={data.sentDebit} />
                     </Box>
                     <Box
                       background="yellow100"
-                      borderRadius="large"
+                      borderRadius="default"
                       padding={2}
                     >
                       <KeyValues title="Endurgreitt" data={data.sentCredit} />

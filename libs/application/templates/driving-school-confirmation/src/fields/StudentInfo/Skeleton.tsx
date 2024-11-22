@@ -6,16 +6,16 @@ const Skeleton = () => {
     <Stack space={3}>
       <>
         <Box display="flex" justifyContent="spaceBetween">
-          <SkeletonLoader height={70} width="30%" borderRadius="large" />
-          <SkeletonLoader height={70} width="30%" borderRadius="large" />
-          <SkeletonLoader height={70} width="30%" borderRadius="large" />
+          <SkeletonLoader height={70} width="30%" borderRadius="default" />
+          <SkeletonLoader height={70} width="30%" borderRadius="default" />
+          <SkeletonLoader height={70} width="30%" borderRadius="default" />
         </Box>
         <Box display="flex" justifyContent="spaceBetween">
-          <SkeletonLoader height={70} width="50%" borderRadius="large" />
+          <SkeletonLoader height={70} width="50%" borderRadius="default" />
         </Box>
       </>
-      <SkeletonLoader height={90} width="50%" borderRadius="large" />
-      <SkeletonLoader height={90} width="100%" borderRadius="large" />
+      <SkeletonLoader height={90} width="50%" borderRadius="default" />
+      <SkeletonLoader height={90} width="100%" borderRadius="default" />
     </Stack>
   )
 }

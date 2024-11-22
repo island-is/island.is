@@ -17,7 +17,7 @@ export const AssetLink: FC<React.PropsWithChildren<AssetLinkProps>> = ({
   const secureUrl = `${url.startsWith('//') ? 'https:' : ''}${url}`
 
   return (
-    <FocusableBox href={secureUrl} border="standard" borderRadius="large">
+    <FocusableBox href={secureUrl} border="standard" borderRadius="default">
       <LinkCard background="white" tag={extension}>
         {title || children}
       </LinkCard>

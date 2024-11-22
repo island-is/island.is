@@ -34,7 +34,7 @@ export const card = recipe({
     boxSizing: 'border-box',
     borderStyle: 'solid',
     transition: 'border-color 150ms ease',
-    borderRadius: theme.border.radius.large,
+    borderRadius: theme.border.radius.default,
     textDecoration: 'none',
     position: 'relative',
     ':hover': {

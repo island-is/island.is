@@ -187,7 +187,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
               span={['12/12', '12/12', '12/12', '5/12']}
             >
               <Box
-                borderRadius="large"
+                borderRadius="default"
                 paddingY={3}
                 paddingX={4}
                 borderWidth="standard"

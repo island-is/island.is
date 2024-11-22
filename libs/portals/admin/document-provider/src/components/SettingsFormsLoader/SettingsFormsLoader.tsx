@@ -9,7 +9,7 @@ export function SettingsFormsLoader({
   return (
     <Stack space={2}>
       {[...Array(numberOfLoaders)].map((_, i) => (
-        <SkeletonLoader borderRadius="large" height={62} key={'' + i} />
+        <SkeletonLoader borderRadius="default" height={62} key={'' + i} />
       ))}
     </Stack>
   )

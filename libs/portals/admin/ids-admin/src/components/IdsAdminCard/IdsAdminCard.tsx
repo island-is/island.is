@@ -63,7 +63,7 @@ export default function IdsAdminCard({
   return (
     <Box
       component="article"
-      borderRadius="large"
+      borderRadius="default"
       border="standard"
       padding={[3, 4]}
       display="flex"

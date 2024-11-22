@@ -71,7 +71,7 @@ export const ContactUs: FC<React.PropsWithChildren<ContactUsProps>> = ({
 
   return (
     <Box position="relative">
-      <Box background="blue100" borderRadius="large" paddingY={6}>
+      <Box background="blue100" borderRadius="default" paddingY={6}>
         <GridRow>
           <GridColumn span="7/9" offset="1/9">
             <form onSubmit={handleSubmit(onSubmit)}>

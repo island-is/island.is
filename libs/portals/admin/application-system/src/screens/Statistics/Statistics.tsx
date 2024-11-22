@@ -84,7 +84,7 @@ const Statistics = () => {
             height={60}
             repeat={10}
             space={2}
-            borderRadius="large"
+            borderRadius="default"
           />
         </Box>
       )}

@@ -33,7 +33,7 @@ export const NewLinks = ({
       paddingX={[3, 3, 4]}
       paddingY={[4, 4, 5]}
       background="purple100"
-      borderRadius="large"
+      borderRadius="default"
       className={styles.container}
     >
       <Box marginRight={[0, 0, 3]} className={styles.logo}>

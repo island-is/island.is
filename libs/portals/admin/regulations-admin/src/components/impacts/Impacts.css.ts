@@ -51,7 +51,7 @@ export const referenceTextContainer = style({
 export const referenceText = style({
   height: '96vh',
   overflow: 'hidden',
-  borderRadius: theme.border.radius.standard,
+  borderRadius: theme.border.radius.xs,
   border: `1px solid ${theme.color.dark200}`,
   backgroundColor: '#ffffff',
   boxShadow: '1rem 1rem 2rem rgba(black, 0.15)',

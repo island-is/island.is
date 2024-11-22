@@ -84,7 +84,7 @@ const Clients = () => {
         display="flex"
         flexDirection="column"
         border="standard"
-        borderRadius="large"
+        borderRadius="default"
         justifyContent="center"
         alignItems="center"
         padding={10}

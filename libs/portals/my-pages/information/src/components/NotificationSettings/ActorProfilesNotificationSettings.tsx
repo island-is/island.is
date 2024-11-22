@@ -21,7 +21,7 @@ export const ActorProfilesNotificationSettings = () => {
 
   const getContent = () => {
     if (loading) {
-      return <SkeletonLoader borderRadius="large" height={206} />
+      return <SkeletonLoader borderRadius="default" height={206} />
     }
 
     if (error) {
@@ -39,7 +39,7 @@ export const ActorProfilesNotificationSettings = () => {
           paddingRight={[2, 4, 4, 12]}
           paddingY={2}
           border="standard"
-          borderRadius="large"
+          borderRadius="default"
         >
           <Box flexGrow={1}>
             <Text variant="h4" as="h5" paddingBottom={1}>

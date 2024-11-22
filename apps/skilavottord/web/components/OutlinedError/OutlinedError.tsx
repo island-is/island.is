@@ -31,7 +31,7 @@ export const OutlinedError: FC<React.PropsWithChildren<OutlinedErrorProps>> = ({
             paddingY={2}
             paddingLeft={2}
             paddingRight={[3, 3, 3, 2]}
-            borderRadius="large"
+            borderRadius="default"
           >
             <Box flexShrink={0} marginRight={[1, 1, 1, 2]}>
               <Icon icon="warning" color="red400" size="large" />

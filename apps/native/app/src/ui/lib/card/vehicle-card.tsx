@@ -10,7 +10,7 @@ const Host = styled.View<{ minHeight?: number }>`
   flex-direction: row;
   padding: ${({ theme }) => theme.spacing[3]}px;
   padding-right: ${({ theme }) => theme.spacing[1]}px;
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${dynamicColor(
     ({ theme }) => ({

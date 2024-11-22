@@ -68,7 +68,7 @@ export const UserProfileNotificationSettings = () => {
   }
 
   if (loading) {
-    return <SkeletonLoader borderRadius="large" height={326} />
+    return <SkeletonLoader borderRadius="default" height={326} />
   }
 
   if (fetchError) {

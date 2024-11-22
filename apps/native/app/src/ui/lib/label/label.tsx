@@ -81,7 +81,7 @@ const LabelHost = styled.View<{ color: LabelColor }>`
   justify-content: center;
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-style: solid;
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
   border-color: ${dynamicColor(getBorderColor, true)};
   background-color: ${dynamicColor(getBackgroundColor)};
 `

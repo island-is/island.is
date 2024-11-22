@@ -14,7 +14,7 @@ export const NotificationSettingsCard: FC<
       paddingX={[2, 4]}
       paddingTop={3}
       paddingBottom={[3, 4]}
-      borderRadius="large"
+      borderRadius="default"
     >
       <Text variant="h4" marginBottom={3} as="h3">
         {title}

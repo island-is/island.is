@@ -35,7 +35,7 @@ export const InstitutionsPanel = ({
   onContactClick,
 }: InstitutionsPanelProps) => {
   return (
-    <Box background="purple100" borderRadius="large">
+    <Box background="purple100" borderRadius="default">
       <Box padding={[3, 3, 6]}>
         <Box
           display="flex"

@@ -16,7 +16,7 @@ export const CommentsList = ({ comments, loading }: Props) => {
         repeat={3}
         space={1}
         height={OJOI_INPUT_HEIGHT}
-        borderRadius="standard"
+        borderRadius="xs"
       />
     )
   }

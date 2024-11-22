@@ -36,7 +36,7 @@ export const Comparison: React.FC<React.PropsWithChildren<ComparisonProps>> = ({
     <FocusableBox
       alignItems="center"
       background={colorSchemes[colorScheme].backgroundColor}
-      borderRadius="large"
+      borderRadius="default"
       display="flex"
       component="div"
       href={href}

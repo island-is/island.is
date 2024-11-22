@@ -216,7 +216,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
       <FocusableBox
         component={asSpan ? 'span' : 'a'}
         href={asSpan ? undefined : titleLink?.href}
-        borderRadius="large"
+        borderRadius="default"
         className={styles.link}
         {...basePadding}
       >
@@ -270,7 +270,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
         <Box
           background={backgroundColor}
           alignItems="center"
-          borderRadius="large"
+          borderRadius="default"
           position="relative"
         >
           <MenuButton
@@ -318,7 +318,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
       ) : (
         <Box
           component="nav"
-          borderRadius="large"
+          borderRadius="default"
           paddingY={2}
           aria-label={label ?? title}
           background={backgroundColor}
@@ -544,7 +544,7 @@ export const NavigationTree: FC<
                   <FocusableBox
                     component={asSpan ? 'span' : 'a'}
                     href={asSpan ? undefined : href}
-                    borderRadius="large"
+                    borderRadius="default"
                     paddingLeft={isChildren ? 2 : 3}
                     paddingRight={2}
                     paddingY={isChildren ? 'smallGutter' : 1}

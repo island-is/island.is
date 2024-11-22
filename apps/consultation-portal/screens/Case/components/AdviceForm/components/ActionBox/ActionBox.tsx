@@ -25,7 +25,7 @@ export const ActionBox = ({ heading, text, cta }: Props) => {
       ]}
       alignItems={['flexStart', 'flexStart', 'center', 'center']}
       borderColor="blue200"
-      borderRadius="large"
+      borderRadius="default"
       borderWidth="standard"
       background="white"
       paddingX={[3, 3, 4, 4]}

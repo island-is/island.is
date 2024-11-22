@@ -112,7 +112,7 @@ export const Form = () => {
         <Column span="9/12">
           <Box
             border="standard"
-            borderRadius="standard"
+            borderRadius="xs"
             width="full"
             marginTop={5}
             style={{ minHeight: '500px' }}

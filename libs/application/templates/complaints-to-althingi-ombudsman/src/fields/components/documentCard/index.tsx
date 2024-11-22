@@ -11,7 +11,7 @@ export const DocumentCard = ({ fileType, text }: Props) => {
   return (
     <Box
       marginTop={3}
-      borderRadius="large"
+      borderRadius="default"
       background="blue100"
       display="flex"
       justifyContent="spaceBetween"
@@ -24,7 +24,7 @@ export const DocumentCard = ({ fileType, text }: Props) => {
       </Text>
       {fileType && (
         <Box
-          borderRadius="large"
+          borderRadius="default"
           padding={1}
           borderColor="blue200"
           border="standard"

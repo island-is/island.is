@@ -2,8 +2,8 @@ import { theme } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
 
 export const subTabItem = style({
-  border: `${theme.border.radius.standard} solid ${theme.color.transparent}`,
-  borderRadius: `${theme.border.radius.large}`,
+  border: `${theme.border.radius.xs} solid ${theme.color.transparent}`,
+  borderRadius: `${theme.border.radius.default}`,
   padding: `${theme.spacing[1]}px ${theme.spacing[3]}px`,
   margin: '-1px 0',
   selectors: {
@@ -18,7 +18,7 @@ export const subTabItem = style({
 
 export const activeSubTabItem = style({
   border: `1px solid ${theme.color.blue200}`,
-  borderRadius: theme.border.radius.standard,
+  borderRadius: theme.border.radius.xs,
   //overwrite focusable box
   ':hover': {
     borderColor: theme.color.blue200,

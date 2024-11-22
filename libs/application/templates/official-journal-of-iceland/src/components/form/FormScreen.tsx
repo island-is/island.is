@@ -123,7 +123,7 @@ export const FormScreen = ({
         <SkeletonLoader
           height={OJOI_INPUT_HEIGHT}
           repeat={3}
-          borderRadius="standard"
+          borderRadius="xs"
           space={2}
         />
       ) : (

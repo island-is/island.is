@@ -19,7 +19,12 @@ export const EligibilitySummary: FC<
 
   if (loading) {
     return (
-      <SkeletonLoader repeat={4} space={2} height={130} borderRadius="large" />
+      <SkeletonLoader
+        repeat={4}
+        space={2}
+        height={130}
+        borderRadius="default"
+      />
     )
   }
 

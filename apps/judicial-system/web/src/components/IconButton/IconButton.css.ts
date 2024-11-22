@@ -7,7 +7,7 @@ export const iconButtonContainer = style({
   alignItems: 'center',
   justifyContent: 'center',
   padding: theme.spacing[1],
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   width: '34px',
   height: '34px',
   transition: 'filter .2s, background-color .2s',

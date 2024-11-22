@@ -43,7 +43,7 @@ export const DocumentProviderInput: FC<React.PropsWithChildren<Props>> = ({
   return (
     <Box marginBottom={2}>
       {loading ? (
-        <SkeletonLoader borderRadius="large" height={62} />
+        <SkeletonLoader borderRadius="default" height={62} />
       ) : (
         <Controller
           control={control}

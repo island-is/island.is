@@ -31,7 +31,7 @@ const ContactBanner = ({
   ]).href
 
   return (
-    <Box background="purple100" padding={[7, 10, 10]} borderRadius="large">
+    <Box background="purple100" padding={[7, 10, 10]} borderRadius="default">
       <GridRow>
         <GridColumn span={['8/8', '6/8', '5/8']} order={[2, 1]}>
           <Text variant="h3" as="h3" marginBottom={2}>

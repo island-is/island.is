@@ -24,7 +24,7 @@ function NoBenefits({ misc }: PropTypes) {
         borderColor="red200"
         borderWidth="standard"
         borderStyle="solid"
-        borderRadius="standard"
+        borderRadius="xs"
         display="flex"
         padding={3}
       >

@@ -8,7 +8,7 @@ export const container = style({
   alignItems: 'center',
 
   border: `1px dashed ${theme.color.blue200}`,
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
 
   padding: `${theme.spacing[10]}px`,
   marginBottom: `${theme.spacing[10]}px`,

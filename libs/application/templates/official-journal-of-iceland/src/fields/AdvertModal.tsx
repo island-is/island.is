@@ -191,7 +191,7 @@ export const AdvertModal = ({
                     repeat={DEFAULT_PAGE_SIZE}
                     height={OJOI_INPUT_HEIGHT}
                     space={1}
-                    borderRadius="standard"
+                    borderRadius="xs"
                   />
                 )}
                 {adverts?.length !== 0 ? (

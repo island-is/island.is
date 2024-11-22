@@ -173,7 +173,7 @@ export const FormCard = <Intent extends string>({
     <Form ref={formRef} method="post" onChange={onFormChange}>
       <Box
         padding={4}
-        borderRadius="large"
+        borderRadius="default"
         display="flex"
         flexDirection="column"
         justifyContent="spaceBetween"

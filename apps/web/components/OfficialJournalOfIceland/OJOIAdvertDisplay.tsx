@@ -27,7 +27,7 @@ export const OJOIAdvertDisplay = ({
     <Box
       border="standard"
       borderColor="purple200"
-      borderRadius="large"
+      borderRadius="default"
       padding={[2, 3, 4]}
     >
       <Box

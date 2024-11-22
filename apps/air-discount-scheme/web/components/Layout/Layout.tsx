@@ -35,7 +35,7 @@ function Layout({ main, aside }: PropTypes) {
                 padding={3}
                 borderStyle="solid"
                 borderWidth="standard"
-                borderRadius="standard"
+                borderRadius="xs"
                 borderColor="dark100"
               >
                 <LoftbruLogo title="Loftbrú" />
@@ -46,7 +46,7 @@ function Layout({ main, aside }: PropTypes) {
               padding={3}
               borderStyle="solid"
               borderWidth="standard"
-              borderRadius="standard"
+              borderRadius="xs"
               borderColor="dark100"
             >
               <SRNLogo title="Samgöngu- og sveitarstjórnarráðuneyti" />
@@ -56,7 +56,7 @@ function Layout({ main, aside }: PropTypes) {
               padding={3}
               borderStyle="solid"
               borderWidth="standard"
-              borderRadius="standard"
+              borderRadius="xs"
               borderColor="dark100"
             >
               <VEGLogo title="Vegagerðin" />

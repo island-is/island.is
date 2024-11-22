@@ -48,7 +48,7 @@ export const ActionMenu: FC<React.PropsWithChildren<{}>> = ({ children }) => {
           paddingX={3}
           background="blue100"
           border="standard"
-          borderRadius="standard"
+          borderRadius="xs"
           className={styles.menu}
         >
           <Stack space={[0, 1]} dividers>

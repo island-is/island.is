@@ -119,7 +119,7 @@ export const FormShell: FC<
               <Box
                 paddingTop={[3, 6, 10]}
                 height="full"
-                borderRadius="large"
+                borderRadius="default"
                 background="white"
               >
                 <Screen

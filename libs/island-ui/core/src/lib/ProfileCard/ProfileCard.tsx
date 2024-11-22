@@ -66,7 +66,7 @@ export const ProfileCard: FC<React.PropsWithChildren<ProfileCardProps>> = ({
 
   return (
     <Box
-      borderRadius="large"
+      borderRadius="default"
       overflow="hidden"
       background="white"
       borderWidth="standard"

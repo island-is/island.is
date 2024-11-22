@@ -55,7 +55,7 @@ const NoVaccinations = styled.View`
   gap: ${({ theme }) => theme.spacing[1]}px;
   border-width: ${({ theme }) => theme.border.width.standard}px;
   border-color: ${({ theme }) => theme.color.blue200};
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  border-radius: ${({ theme }) => theme.border.radius.default};
 `
 
 const RowItem = styled.View`

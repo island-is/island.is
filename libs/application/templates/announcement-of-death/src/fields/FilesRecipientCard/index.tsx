@@ -61,7 +61,7 @@ export const FilesRecipientCard: FC<
     <Box
       marginBottom={5}
       padding={3}
-      borderRadius="large"
+      borderRadius="default"
       borderColor="blue200"
       border="standard"
     >

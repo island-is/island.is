@@ -60,7 +60,7 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
             <Box
               padding={[2, 2, 2]}
               background="purple100"
-              borderRadius="large"
+              borderRadius="default"
               marginBottom={3}
               display="flex"
               flexDirection="row"
@@ -90,7 +90,7 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
               <Box
                 padding={[2, 2, 4]}
                 background="blueberry100"
-                borderRadius="large"
+                borderRadius="default"
               >
                 <Text variant="eyebrow" color="blueberry600">
                   Tengt efni
@@ -141,7 +141,7 @@ const OpenDataSubPage: Screen<OpenDataSubpageProps> = ({ page }) => {
             <Box
               background="roseTinted100"
               padding={[2, 2, 4]}
-              borderRadius="large"
+              borderRadius="default"
               marginBottom={3}
             >
               <Inline space={2}>

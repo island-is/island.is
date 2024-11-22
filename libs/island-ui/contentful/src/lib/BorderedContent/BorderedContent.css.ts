@@ -2,7 +2,7 @@ import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   borderWidth: 1,
   borderStyle: 'solid',
   borderColor: theme.color.blue200,

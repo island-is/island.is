@@ -57,7 +57,7 @@ export const School = ({
         </GridRow>
 
         {loading ? (
-          <SkeletonLoader height={40} width="100%" borderRadius="large" />
+          <SkeletonLoader height={40} width="100%" borderRadius="default" />
         ) : (
           <>
             <GridRow rowGap={2}>

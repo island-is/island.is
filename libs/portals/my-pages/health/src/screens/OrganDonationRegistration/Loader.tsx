@@ -15,7 +15,7 @@ export const Loader = ({ amount = 3 }: Props) => {
       paddingY={[4, 3, 4]}
       paddingX={[2, 3, 4]}
       border="standard"
-      borderRadius="large"
+      borderRadius="default"
     >
       <div>
         <SkeletonLoader display="block" width={length} height={24} />

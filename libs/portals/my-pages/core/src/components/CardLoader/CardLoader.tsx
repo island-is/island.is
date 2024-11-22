@@ -9,7 +9,7 @@ export const CardLoader: FC<React.PropsWithChildren<unknown>> = () => {
       paddingY={[4, 3, 4]}
       paddingX={[2, 3, 4]}
       border="standard"
-      borderRadius="large"
+      borderRadius="default"
     >
       <Hidden below="sm">
         <Box marginRight={[2, 3]}>

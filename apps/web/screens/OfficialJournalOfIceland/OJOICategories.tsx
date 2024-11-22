@@ -263,7 +263,7 @@ const OJOICategoriesPage: CustomScreen<OJOICategoriesProps> = ({
           component="form"
           background="blue100"
           padding={[2, 2, 3]}
-          borderRadius="large"
+          borderRadius="default"
           action={categoriesUrl}
         >
           <Stack space={[1, 1, 2]}>

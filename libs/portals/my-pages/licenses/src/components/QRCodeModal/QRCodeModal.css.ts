@@ -7,7 +7,7 @@ export const modal = style({
   maxHeight: `calc(100% - ${theme.spacing[6]}px)`,
   margin: theme.spacing[3],
   marginTop: theme.spacing[3],
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   overflowY: 'auto',
   boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
   ...themeUtils.responsiveStyle({

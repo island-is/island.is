@@ -50,7 +50,7 @@ export const ProgressBar: FC<Props> = ({
       })}
       position="relative"
       overflow="hidden"
-      borderRadius="large"
+      borderRadius="default"
       background={variant ? 'white' : 'blue100'}
       width="full"
       style={{ top: 0 }}
@@ -61,7 +61,7 @@ export const ProgressBar: FC<Props> = ({
         <Box
           className={styles.inner}
           background={'blue400'}
-          borderRadius="large"
+          borderRadius="default"
           position="absolute"
           style={{
             transform: `translate${vertical ? 'Y' : 'X'}(${

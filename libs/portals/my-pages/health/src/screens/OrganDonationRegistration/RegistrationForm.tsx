@@ -108,7 +108,7 @@ export const Form2 = () => {
           <Stack space={2}>
             <Box
               background="blue100"
-              borderRadius="large"
+              borderRadius="default"
               border="standard"
               borderColor="blue200"
               padding={3}
@@ -124,7 +124,7 @@ export const Form2 = () => {
             </Box>
             <Box
               background="blue100"
-              borderRadius="large"
+              borderRadius="default"
               border="standard"
               borderColor="blue200"
               padding={3}
@@ -150,7 +150,7 @@ export const Form2 = () => {
             </Box>
             <Box
               background="blue100"
-              borderRadius="large"
+              borderRadius="default"
               border="standard"
               borderColor="blue200"
               padding={3}

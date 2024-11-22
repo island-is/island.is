@@ -14,7 +14,7 @@ export const container = style({
 })
 
 export const audio = style({
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   background: theme.color.blue100,
   padding: `${theme.spacing[1]}px ${theme.spacing.smallGutter}px`,
   margin: 0,

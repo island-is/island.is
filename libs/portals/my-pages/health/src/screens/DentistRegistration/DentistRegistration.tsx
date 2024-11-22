@@ -121,7 +121,7 @@ export const DentistRegistration = () => {
       <Box paddingY={2}>
         <Stack space={4}>
           <SkeletonLoader
-            borderRadius="large"
+            borderRadius="default"
             space={2}
             height={40}
             repeat={3}

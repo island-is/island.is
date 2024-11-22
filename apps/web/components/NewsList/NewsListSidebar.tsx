@@ -45,7 +45,7 @@ export const NewsListSidebar = ({
     <Hidden below="md">
       <Box
         background="purple100"
-        borderRadius="large"
+        borderRadius="default"
         padding={4}
         marginTop={4}
       >

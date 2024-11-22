@@ -108,7 +108,7 @@ export const FilterBox = ({
   return (
     <Box
       borderColor="blue200"
-      borderRadius="standard"
+      borderRadius="xs"
       borderWidth="standard"
       padding={2}
     >

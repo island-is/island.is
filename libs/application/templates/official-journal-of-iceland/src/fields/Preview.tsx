@@ -223,7 +223,7 @@ export const Preview = ({ application, goToScreen }: OJOIFieldBaseProps) => {
           )}
         </Stack>
       </Box>
-      <Box border="standard" borderRadius="large">
+      <Box border="standard" borderRadius="default">
         <HTMLEditor
           name="preview.document"
           config={signatureConfig}

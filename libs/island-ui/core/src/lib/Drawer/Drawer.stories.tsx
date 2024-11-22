@@ -43,7 +43,7 @@ export const OverflowScroll = () => (
   >
     <Stack space={3}>
       {[...Array.from({ length: 20 })].map((_, i) => (
-        <Box key={i} padding={3} background="blue100" borderRadius="large">
+        <Box key={i} padding={3} background="blue100" borderRadius="default">
           Content box {i + 1}
         </Box>
       ))}

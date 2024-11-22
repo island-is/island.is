@@ -37,7 +37,7 @@ export const EmbedDisclaimer = ({
     <Box
       className={styles.modal}
       background="blue100"
-      borderRadius="large"
+      borderRadius="default"
       padding="gutter"
     >
       <Stack space={1}>

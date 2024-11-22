@@ -272,7 +272,7 @@ export const PropertiesOverview: FC<
           height={76}
           repeat={properties.length}
           space={1}
-          borderRadius="standard"
+          borderRadius="xs"
         />
       )}
       {!loading &&

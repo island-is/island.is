@@ -32,8 +32,8 @@ export const IncomeLimitFields = ({ clientType, year }: IncomeLimitProps) => {
   if (loading || !year) {
     return (
       <ContentBlock>
-        <SkeletonLoader height={100} width="100%" borderRadius="large" />
-        <SkeletonLoader height={100} width="100%" borderRadius="large" />
+        <SkeletonLoader height={100} width="100%" borderRadius="default" />
+        <SkeletonLoader height={100} width="100%" borderRadius="default" />
       </ContentBlock>
     )
   }

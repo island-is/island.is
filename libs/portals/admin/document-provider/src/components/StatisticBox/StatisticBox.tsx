@@ -26,7 +26,7 @@ export const StatisticBox: FC<React.PropsWithChildren<Props>> = ({
   }
 
   return (
-    <Box padding={2} border="standard" borderRadius="large">
+    <Box padding={2} border="standard" borderRadius="default">
       <Box>
         <Box>
           <Text variant="eyebrow">{name}</Text>

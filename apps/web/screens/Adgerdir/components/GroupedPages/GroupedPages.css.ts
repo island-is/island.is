@@ -3,7 +3,7 @@ import { theme } from '@island.is/island-ui/theme'
 import covidColors from '../UI/colors'
 
 export const container = style({
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   borderWidth: 1,
   borderStyle: 'solid',
 })
@@ -18,7 +18,7 @@ export const variants = styleVariants({
 })
 
 export const bottom = style({
-  borderRadius: `0 0 ${theme.border.radius.large} ${theme.border.radius.large}`,
+  borderRadius: `0 0 ${theme.border.radius.default} ${theme.border.radius.default}`,
   selectors: {
     [`${variants.blue} &`]: {
       background: covidColors.blue100,

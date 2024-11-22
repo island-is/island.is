@@ -41,7 +41,7 @@ const Overview = () => {
             <Hidden below="lg">
               <PortalNavigation navigation={airDiscountSchemeNavigation} />
             </Hidden>
-            <Box background="purple100" marginY={3} borderRadius="large">
+            <Box background="purple100" marginY={3} borderRadius="default">
               <Box paddingX={4} paddingY={3}>
                 <Text variant="h4">Síun</Text>
               </Box>

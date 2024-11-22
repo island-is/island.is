@@ -102,7 +102,7 @@ const SelectableList: FC<Props> = (props) => {
         borderWidth="standard"
         paddingX={4}
         paddingY={3}
-        borderRadius="standard"
+        borderRadius="xs"
       >
         <Box marginBottom={2}>
           <Checkbox
@@ -175,7 +175,7 @@ const SelectableList: FC<Props> = (props) => {
                     paddingX={3}
                     paddingY={2}
                     background="blue100"
-                    borderRadius="standard"
+                    borderRadius="xs"
                   >
                     <Checkbox
                       label={

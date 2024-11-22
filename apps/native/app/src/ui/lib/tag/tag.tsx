@@ -9,7 +9,7 @@ const Host = styled.Pressable`
   overflow: hidden;
   flex-direction: row;
   gap: 4px;
-  border-radius: ${({ theme }) => theme.border.radius.standard};
+  border-radius: ${({ theme }) => theme.border.radius.xs};
   align-items: center;
   justify-content: center;
   padding: 8px;

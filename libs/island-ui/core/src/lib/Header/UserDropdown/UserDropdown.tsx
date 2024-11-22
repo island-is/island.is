@@ -53,7 +53,7 @@ export const UserDropdown = ({
             position="relative"
             background="white"
             padding={3}
-            borderRadius="large"
+            borderRadius="default"
             className={styles.dropdown}
           >
             <button

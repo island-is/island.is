@@ -134,7 +134,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <ReviewGroup>
         <Box
           border="standard"
-          borderRadius="large"
+          borderRadius="default"
           padding={3}
           width="full"
           display="flex"

@@ -31,7 +31,7 @@ const InfoBox = ({ title, text }: { title: string | number; text: string }) => (
     display="flex"
     alignItems={['flexStart', 'flexStart', 'flexStart', 'center']}
     background="blue100"
-    borderRadius="large"
+    borderRadius="default"
     paddingY={2}
     paddingX={3}
     flexDirection={['column', 'column', 'column', 'row']}

@@ -497,7 +497,7 @@ const Stepper = ({
         <Box
           marginTop={10}
           background="purple100"
-          borderRadius="large"
+          borderRadius="default"
           padding="containerGutter"
         >
           <Box display="flex" alignItems="center" justifyContent="spaceBetween">

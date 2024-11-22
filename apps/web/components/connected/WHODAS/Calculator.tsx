@@ -149,7 +149,7 @@ const WHODASResults = ({ results, bracket }: WHODASResultsProps) => {
         <Text variant="h3" as="h3">
           {formatMessage(m.results.scoreHeading)}
         </Text>
-        <Box background="purple100" padding="p2" borderRadius="large">
+        <Box background="purple100" padding="p2" borderRadius="default">
           <Text>
             {formatMessage(
               bracket === 1

@@ -100,7 +100,7 @@ globalStyle(`${root} .Toastify__toast`, {
   padding: theme.spacing[2],
   borderWidth: 1,
   borderStyle: 'solid',
-  borderRadius: theme.border.radius.large,
+  borderRadius: theme.border.radius.default,
   display: 'flex',
   overflow: 'hidden',
   cursor: 'pointer',

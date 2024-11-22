@@ -78,7 +78,7 @@ export const Timeline: FC<Props> = ({
             className={cn(styles.outer, className)}
             position="relative"
             background="blue100"
-            borderRadius="large"
+            borderRadius="default"
             width="full"
           >
             {currentProgress && (
