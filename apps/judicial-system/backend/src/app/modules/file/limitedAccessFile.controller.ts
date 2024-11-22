@@ -49,9 +49,9 @@ import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { FileService } from './file.service'
 
-@UseGuards(JwtAuthGuard, RolesGuard, LimitedAccessCaseExistsGuard)
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('files')
+@UseGuards(JwtAuthGuard, RolesGuard, LimitedAccessCaseExistsGuard)
 export class LimitedAccessFileController {
   constructor(
     private readonly fileService: FileService,

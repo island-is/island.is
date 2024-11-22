@@ -41,9 +41,9 @@ import { InstitutionNotificationService } from './institutionNotification.servic
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { SubpoenaNotificationService } from './subpoenaNotification.service'
 
-@UseGuards(TokenGuard)
 @Controller('api/internal')
 @ApiTags('internal notifications')
+@UseGuards(TokenGuard)
 export class InternalNotificationController {
   constructor(
     private readonly caseNotificationService: CaseNotificationService,

@@ -34,9 +34,9 @@ import { CivilClaimant } from './models/civilClaimant.model'
 import { DeleteCivilClaimantResponse } from './models/deleteCivilClaimant.response'
 import { CivilClaimantService } from './civilClaimant.service'
 
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId/civilClaimant')
 @ApiTags('civilClaimants')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CivilClaimantController {
   constructor(
     private readonly civilClaimantService: CivilClaimantService,

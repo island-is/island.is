@@ -62,9 +62,9 @@ import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { FileService } from './file.service'
 
-@UseGuards(JwtAuthGuard)
 @Controller('api/case/:caseId')
 @ApiTags('files')
+@UseGuards(JwtAuthGuard)
 export class FileController {
   constructor(
     private readonly fileService: FileService,

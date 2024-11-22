@@ -38,6 +38,7 @@ import { Subpoena } from './models/subpoena.model'
 @Controller([
   'api/case/:caseId/limitedAccess/defendant/:defendantId/subpoena/:subpoenaId',
 ])
+@ApiTags('limited access subpoenas')
 @UseGuards(
   JwtAuthGuard,
   CaseExistsGuard,
@@ -46,7 +47,6 @@ import { Subpoena } from './models/subpoena.model'
   CaseReadGuard,
   DefendantExistsGuard,
 )
-@ApiTags('limited access subpoenas')
 export class LimitedAccessSubpoenaController {
   constructor(
     private readonly pdfService: PdfService,

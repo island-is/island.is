@@ -43,6 +43,8 @@ import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { PoliceService } from './police.service'
 
+@Controller('api/case/:caseId')
+@ApiTags('police files')
 @UseGuards(
   JwtAuthGuard,
   RolesGuard,
@@ -50,8 +52,6 @@ import { PoliceService } from './police.service'
   CaseReadGuard,
   CaseNotCompletedGuard,
 )
-@Controller('api/case/:caseId')
-@ApiTags('police files')
 export class PoliceController {
   constructor(
     private readonly policeService: PoliceService,

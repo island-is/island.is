@@ -9,9 +9,9 @@ import { Case, CaseExistsGuard, CurrentCase } from '../case'
 import { Subpoena } from '../subpoena'
 import { PoliceService } from './police.service'
 
-@UseGuards(TokenGuard, CaseExistsGuard)
 @Controller('api/internal/case/:caseId')
 @ApiTags('internal police')
+@UseGuards(TokenGuard, CaseExistsGuard)
 export class InternalPoliceController {
   constructor(
     private readonly policeService: PoliceService,
