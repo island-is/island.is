@@ -67,9 +67,14 @@ export const m = defineMessages({
     description: '',
   },
   // Application begin
-  applicationName: {
-    id: 'ir.application:applicationName',
-    defaultMessage: 'Erfðafjárskýrsla eftir andlát',
+  selectEstate: {
+    id: 'ir.application:selectEstate',
+    defaultMessage: 'Veldu dánarbú',
+    description: '',
+  },
+  selectEstateDescription: {
+    id: 'ir.application:selectEstateDescription',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     description: '',
   },
   applicationNamePrepaid: {

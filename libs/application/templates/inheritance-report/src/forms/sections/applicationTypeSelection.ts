@@ -31,7 +31,8 @@ export const preSelection = buildSection({
     }),
     buildMultiField({
       id: 'estate',
-      title: m.applicationName,
+      title: m.selectEstate,
+      description: m.selectEstateDescription,
       condition: (answers) => answers.applicationFor === ESTATE_INHERITANCE,
       children: [
         buildSelectField({
