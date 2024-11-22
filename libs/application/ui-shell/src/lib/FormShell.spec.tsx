@@ -11,9 +11,15 @@ import {
   ApplicationTypes,
   Form,
 } from '@island.is/application/types'
+import { applicationSystemScopes } from '@island.is/auth/scopes'
 import { LocaleProvider } from '@island.is/localization'
+import { BffProvider, createMockedInitialState } from '@island.is/react-spa/bff'
 import { RouterProvider, createMemoryRouter } from 'react-router-dom'
 import { FormShell } from './FormShell'
+
+const mockedInitialState = createMockedInitialState({
+  scopes: applicationSystemScopes,
+})
 
 describe(' FormShell', () => {
   const applicant = '1111112219'
@@ -66,7 +72,12 @@ describe(' FormShell', () => {
     const wrapper = await render(
       <ApolloProvider client={client}>
         <LocaleProvider locale="is" messages={{}}>
-          <RouterProvider router={router} />
+          <BffProvider
+            applicationBasePath="/umsoknir"
+            mockedInitialState={mockedInitialState}
+          >
+            <RouterProvider router={router} />
+          </BffProvider>
         </LocaleProvider>
       </ApolloProvider>,
     )
@@ -83,7 +94,12 @@ describe(' FormShell', () => {
       render(
         <ApolloProvider client={client}>
           <LocaleProvider locale="is" messages={{}}>
-            <RouterProvider router={router} />
+            <BffProvider
+              applicationBasePath="/umsoknir"
+              mockedInitialState={mockedInitialState}
+            >
+              <RouterProvider router={router} />
+            </BffProvider>
           </LocaleProvider>
         </ApolloProvider>,
       )
