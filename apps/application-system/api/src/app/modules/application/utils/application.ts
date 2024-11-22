@@ -13,7 +13,6 @@ import {
   ApplicationStatus,
   ApplicationTemplate,
   ApplicationTypes,
-  FormValue,
 } from '@island.is/application/types'
 import { Unwrap } from '@island.is/shared/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
