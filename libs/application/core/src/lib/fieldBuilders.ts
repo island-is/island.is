@@ -46,6 +46,7 @@ import {
   SliderField,
   MaybeWithApplication,
   MaybeWithApplicationAndFieldAndLocale,
+  InformationCardField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -972,5 +973,31 @@ export const buildSliderField = (
     labelMultiplier,
     condition,
     saveAsString,
+  }
+}
+
+export const buildInformationFormField = (data: {
+  width?: FieldWidth
+  colSpan?: SpanType
+  condition?: Condition
+  items: Array<{ label: FormText; value: FormText | FormTextArray }>
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
+}): InformationCardField => {
+  const { condition, width = 'full', colSpan, paddingX, paddingY, items } = data
+
+  return {
+    id: '',
+    title: '',
+    children: undefined,
+    doesNotRequireAnswer: true,
+    condition,
+    width,
+    colSpan,
+    type: FieldTypes.INFORMATION_CARD,
+    component: FieldComponents.INFORMATION_CARD,
+    items,
+    paddingX,
+    paddingY,
   }
 }

@@ -15,8 +15,6 @@ const UserSchemaBase = z.object({
           kennitala.info(nationalId).age >= 18),
     ),
   name: z.string().min(1),
-  email: z.string().min(1),
-  phone: z.string().min(1),
 })
 
 const PaymentArrangementSchema = z.object({
@@ -51,10 +49,16 @@ export const UserInformationSchema = z.intersection(
   }),
 )
 
+const ParticipantSchema = z.object({
+  name: z.string().min(1),
+  ssn: z.string().min(1),
+})
+
 export const SeminarAnswersSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: UserInformationSchema,
   paymentArrangement: PaymentArrangementSchema,
+  participantList: z.array(ParticipantSchema),
 })
 
 export type SeminarAnswers = z.TypeOf<typeof SeminarAnswersSchema>

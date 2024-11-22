@@ -261,6 +261,7 @@ export enum FieldTypes {
   ACCORDION = 'ACCORDION',
   BANK_ACCOUNT = 'BANK_ACCOUNT',
   SLIDER = 'SLIDER',
+  INFORMATION_CARD = 'INFORMATION_CARD',
 }
 
 export enum FieldComponents {
@@ -296,6 +297,7 @@ export enum FieldComponents {
   ACCORDION = 'AccordionFormField',
   BANK_ACCOUNT = 'BankAccountFormField',
   SLIDER = 'SliderFormField',
+  INFORMATION_CARD = 'InformationCardFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -459,6 +461,14 @@ export interface KeyValueField extends BaseField {
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
   paddingBottom?: BoxProps['padding']
+}
+
+export interface InformationCardField extends BaseField {
+  readonly type: FieldTypes.INFORMATION_CARD
+  component: FieldComponents.INFORMATION_CARD
+  items: Array<{ label: FormText; value: FormText | FormTextArray }>
+  paddingX?: BoxProps['padding']
+  paddingY?: BoxProps['padding']
 }
 
 export interface CustomField extends BaseField {
@@ -794,3 +804,4 @@ export type Field =
   | AccordionField
   | BankAccountField
   | SliderField
+  | InformationCardField
