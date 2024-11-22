@@ -159,24 +159,34 @@ export const mockApplicationFromTypeId = (
 
 type RecordType = Record<string, unknown>
 
+const MAX_DEPTH = 100
+
 export const removeObjectWithKeyFromAnswers = (
   answers: object,
   keyToRemove: string,
+  depth = 0,  // Add depth parameter
 ): object => {
+  // Add depth check
+  console.log(depth)
+  if (depth >= MAX_DEPTH) {
+    console.warn('Maximum recursion depth reached while calling removeObjectWithKeyFromAnswers')
+    return answers
+  }
+
   // Handle arrays
   if (Array.isArray(answers)) {
-    return cleanArray(answers, keyToRemove)
+    return cleanArray(answers, keyToRemove, depth)
   }
 
   // Handle objects
   if (typeof answers === 'object' && answers !== null) {
-    return cleanObject(answers, keyToRemove)
+    return cleanObject(answers, keyToRemove, depth)
   }
 
   return answers
 }
 
-const cleanArray = (array: unknown[], keyToRemove: string): unknown[] => {
+const cleanArray = (array: unknown[], keyToRemove: string, depth: number): unknown[] => {
   const filteredArray = array.filter((item) => {
     if (isValidObject(item)) {
       return !containsKey(item, keyToRemove)
@@ -186,21 +196,20 @@ const cleanArray = (array: unknown[], keyToRemove: string): unknown[] => {
 
   return filteredArray.map((item) => {
     if (isObject(item)) {
-      return removeObjectWithKeyFromAnswers(item, keyToRemove)
+      return removeObjectWithKeyFromAnswers(item, keyToRemove, depth + 1)
     }
     return item
   })
 }
 
-const cleanObject = (obj: object, keyToRemove: string): RecordType => {
+const cleanObject = (obj: object, keyToRemove: string, depth: number): RecordType => {
   return Object.entries(obj).reduce<RecordType>((acc, [field, value]) => {
     if (isValidObject(value)) {
-      // If it's not an array and contains the key, skip this object entirely
       if (!Array.isArray(value) && containsKey(value, keyToRemove)) {
         return acc
       }
 
-      const cleanedValue = removeObjectWithKeyFromAnswers(value, keyToRemove)
+      const cleanedValue = removeObjectWithKeyFromAnswers(value, keyToRemove, depth + 1)
 
       // For arrays or objects with content, keep them
       if (hasContent(cleanedValue)) {
