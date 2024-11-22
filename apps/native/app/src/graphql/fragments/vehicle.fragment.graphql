@@ -5,6 +5,6 @@ fragment VehicleFragment on VehicleListed {
   colorName
   modelYear
   requiresMileageRegistration
-  canRegisterMilage
+  canRegisterMileage
   nextMainInspection
 }
