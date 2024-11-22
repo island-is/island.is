@@ -177,7 +177,7 @@ export const removeObjectWithKeyFromAnswers = (
   }
 
   // Handle objects
-  if (typeof answers === 'object' && answers !== null) {
+  if (isValidObject(answers)) {
     return cleanObject(answers, keyToRemove, depth)
   }
 
