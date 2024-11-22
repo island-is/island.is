@@ -164,10 +164,8 @@ const MAX_DEPTH = 100
 export const removeObjectWithKeyFromAnswers = (
   answers: object,
   keyToRemove: string,
-  depth = 0,  // Add depth parameter
+  depth = 0,
 ): object => {
-  // Add depth check
-  console.log(depth)
   if (depth >= MAX_DEPTH) {
     console.warn('Maximum recursion depth reached while calling removeObjectWithKeyFromAnswers')
     return answers
