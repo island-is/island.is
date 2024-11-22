@@ -18,18 +18,21 @@ import { format as formatNationalId } from 'kennitala'
 import { useSubmitApplication } from '../../hooks/useSubmitApplication'
 import { m } from '../../lib/messages'
 import { FinancialStatementCemetery } from '../../lib/dataSchema'
-import { currencyStringToNumber, formatCurrency } from '../../utils/helpers'
-import { AboutOverview } from './AboutOverview'
-import { ValueLine } from './ValueLine'
-import { CapitalNumberOverview } from './CapitalNumbersOverview'
-import { BOARDMEMEBER } from '../../utils/constants'
-import { FileValueLine } from './FileValueLine'
-import BottomBar from './BottomBar'
+import { BOARDMEMBER } from '../../utils/constants'
 import {
   columnStyle,
   sectionColumn,
   starterColumnStyle,
 } from './overviewStyles.css'
+import {
+  AboutOverview,
+  CapitalNumberOverview,
+  ValueLine,
+  BottomBar,
+  FileValueLine,
+  formatCurrency,
+  currencyStringToNumber,
+} from '@island.is/application/templates/inao/shared'
 
 export const CemeteryOverview = ({
   application,
@@ -86,7 +89,15 @@ export const CemeteryOverview = ({
     <Box marginBottom={2}>
       <Divider />
       <Box paddingY={3}>
-        <AboutOverview answers={answers} />
+        <AboutOverview
+          about={answers.about}
+          fullName={m.fullName}
+          nationalId={m.nationalId}
+          powerOfAttorneyName={m.powerOfAttorneyName}
+          powerOfAttorneyNationalId={m.powerOfAttorneyNationalId}
+          email={m.email}
+          phoneNumber={m.phoneNumber}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>
@@ -175,7 +186,19 @@ export const CemeteryOverview = ({
       <Divider />
 
       <Box paddingY={3}>
-        <CapitalNumberOverview answers={answers} />
+        <CapitalNumberOverview
+          data={{
+            capitalIncome: answers.capitalNumbers.capitalIncome,
+            capitalCost: answers.capitalNumbers.capitalCost,
+            total: answers.capitalNumbers.total,
+          }}
+          messages={{
+            capitalNumbersMessage: m.capitalNumbers,
+            capitalIncomeMessage: m.capitalIncome,
+            capitalCostMessage: m.capitalCost,
+            totalCapitalMessage: m.totalCapital,
+          }}
+        />
       </Box>
       <Divider />
       <Box paddingY={3}>
@@ -294,7 +317,7 @@ export const CemeteryOverview = ({
                     <ValueLine
                       label={m.role}
                       value={
-                        careTaker.role === BOARDMEMEBER
+                        careTaker.role === BOARDMEMBER
                           ? formatMessage(m.cemeteryBoardMember)
                           : formatMessage(m.cemeteryInspector)
                       }
@@ -309,7 +332,10 @@ export const CemeteryOverview = ({
       ) : null}
       {fileName ? (
         <>
-          <FileValueLine label={answers.attachments?.file?.[0]?.name} />
+          <FileValueLine
+            heading={m.files}
+            description={answers.attachments?.file?.[0]?.name}
+          />
           <Divider />
         </>
       ) : null}
@@ -372,6 +398,8 @@ export const CemeteryOverview = ({
         loading={loading}
         onSendButtonClick={onSendButtonClick}
         onBackButtonClick={onBackButtonClick}
+        goBack={m.goBack}
+        send={m.send}
       />
     </Box>
   )

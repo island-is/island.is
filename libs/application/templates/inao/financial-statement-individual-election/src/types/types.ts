@@ -17,12 +17,6 @@ export enum ApiActions {
   submitApplication = 'submitApplication',
 }
 
-export enum FSIUSERTYPE {
-  INDIVIDUAL = 150000000,
-  PARTY = 150000001,
-  CEMETRY = 150000002,
-}
-
 export type Options = {
   label: string
   value: string

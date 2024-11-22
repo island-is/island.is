@@ -4,11 +4,9 @@ import { InputController } from '@island.is/shared/form-fields'
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { getErrorViaPath } from '@island.is/application/core'
-import {
-  INDIVIDUALOPERATIONIDS,
-  INPUTCHANGEINTERVAL,
-} from '../../lib/utils/constants'
+import { INDIVIDUALOPERATIONIDS } from '../../lib/utils/constants'
 import { m } from '../../lib/utils/messages'
+import { INPUTCHANGEINTERVAL } from '@island.is/application/templates/inao/shared'
 
 type Props = {
   getSum: () => void

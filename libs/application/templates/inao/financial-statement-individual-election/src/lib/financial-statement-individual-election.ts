@@ -2,7 +2,6 @@ import {
   DefaultStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
-
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -14,14 +13,12 @@ import {
   defineTemplateApi,
   ApplicationConfigurations,
 } from '@island.is/application/types'
-
 import {
   CurrentUserTypeProvider,
   IndentityApiProvider,
   NationalRegistryUserApi,
   UserInfoApi,
 } from '../dataProviders'
-
 import { m } from './utils/messages'
 import { ApiActions, Events, Roles, States } from '../types/types'
 import { dataSchema } from './utils/dataSchema'
