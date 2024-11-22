@@ -3,9 +3,6 @@ import type { StyleRule } from '@vanilla-extract/css'
 import omit from 'lodash/omit'
 import * as color from './colors'
 
-import { colorPrimitives } from './figmaStyles'
-console.log(colorPrimitives)
-
 export const UNIT = 8
 
 export const spacing = {
