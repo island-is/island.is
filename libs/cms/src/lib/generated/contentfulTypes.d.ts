@@ -1817,8 +1817,8 @@ export interface IGrantFields {
   /** Grant Application ID */
   grantApplicationId?: string | undefined
 
-  /** Application deadline text */
-  grantApplicationDeadlineText: string[]
+  /** Application Deadline Status */
+  grantApplicationDeadlineStatus?: string | undefined
 
   /** Application Url */
   granApplicationUrl?: ILinkUrl | undefined
@@ -1848,11 +1848,7 @@ export interface IGrantFields {
   grantIsOpen?: boolean | undefined
 
   /** Status */
-  grantStatus?:
-    | 'Opið fyrir umsóknir'
-    | 'Lokað fyrir umsóknir'
-    | 'Opnar fljótlega'
-    | undefined
+  grantStatus: 'open' | 'closed' | 'see_description'
 
   /** Files */
   grantFiles?: Asset[] | undefined
