@@ -10,39 +10,57 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect } from 'react'
-import { information } from '../../lib/messages'
 import { useFormContext } from 'react-hook-form'
+import { NationalIdWithName } from '../NationalIdWithName'
+import { information } from '../../lib/messages'
+import { CoOwnersInformation } from '../../shared'
 
 interface Props {
   id: string
   index: number
   rowLocation: number
+  repeaterField: CoOwnersInformation
   handleRemove: (index: number) => void
-  wasRemoved: boolean
+  addNationalIdToCoOwners: (nationalId: string, index: number) => void
 }
 
-export const OwnerCoOwners: FC<
+export const NewCoOwnerRepeaterItem: FC<
   React.PropsWithChildren<Props & FieldBaseProps>
-> = ({ id, index, rowLocation, handleRemove, wasRemoved, ...props }) => {
+> = ({
+  id,
+  index,
+  rowLocation,
+  handleRemove,
+  repeaterField,
+  addNationalIdToCoOwners,
+  ...props
+}) => {
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const { application, errors } = props
   const fieldIndex = `${id}[${index}]`
   const emailField = `${fieldIndex}.email`
   const phoneField = `${fieldIndex}.phone`
-  const nameField = `${fieldIndex}.name`
-  const nationaIdField = `${fieldIndex}.nationalId`
   const wasRemovedField = `${fieldIndex}.wasRemoved`
 
+  const onNationalIdChange = (nationalId: string) => {
+    addNationalIdToCoOwners(nationalId, index)
+  }
+
   useEffect(() => {
-    setValue(wasRemovedField, `${wasRemoved}`)
-  }, [wasRemoved, setValue])
+    setValue(wasRemovedField, repeaterField.wasRemoved)
+  }, [repeaterField.wasRemoved, setValue, wasRemovedField])
 
   return (
-    <Box position="relative" marginBottom={4} hidden={wasRemoved}>
+    <Box
+      position="relative"
+      marginBottom={4}
+      hidden={repeaterField.wasRemoved === 'true'}
+    >
       <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
         <Text variant="h5">
-          {formatMessage(information.labels.coOwner.title)} {rowLocation}
+          {formatMessage(information.labels.coOwner.coOwnerTempTitle)}{' '}
+          {rowLocation}
         </Text>
         <Box>
           <Button variant="text" onClick={handleRemove.bind(null, index)}>
@@ -50,35 +68,16 @@ export const OwnerCoOwners: FC<
           </Button>
         </Box>
       </Box>
+      <NationalIdWithName
+        {...props}
+        customId={fieldIndex}
+        customNameLabel={formatMessage(information.labels.coOwner.name)}
+        customNationalIdLabel={formatMessage(
+          information.labels.coOwner.nationalId,
+        )}
+        onNationalIdChange={onNationalIdChange}
+      />
       <GridRow>
-        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-          <InputController
-            id={nationaIdField}
-            name={nationaIdField}
-            format="######-####"
-            label={formatMessage(information.labels.coOwner.nationalId)}
-            error={errors && getErrorViaPath(errors, nationaIdField)}
-            backgroundColor="white"
-            readOnly
-            defaultValue={
-              getValueViaPath(application.answers, nationaIdField, '') as string
-            }
-          />
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-          <InputController
-            id={nameField}
-            name={nameField}
-            type="email"
-            label={formatMessage(information.labels.coOwner.name)}
-            error={errors && getErrorViaPath(errors, nameField)}
-            backgroundColor="white"
-            readOnly
-            defaultValue={
-              getValueViaPath(application.answers, nameField, '') as string
-            }
-          />
-        </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
             id={emailField}
@@ -86,8 +85,8 @@ export const OwnerCoOwners: FC<
             type="email"
             label={formatMessage(information.labels.coOwner.email)}
             error={errors && getErrorViaPath(errors, emailField)}
-            backgroundColor="white"
-            readOnly
+            backgroundColor="blue"
+            required
             defaultValue={
               getValueViaPath(application.answers, emailField, '') as string
             }
@@ -101,8 +100,8 @@ export const OwnerCoOwners: FC<
             format="###-####"
             label={formatMessage(information.labels.coOwner.phone)}
             error={errors && getErrorViaPath(errors, phoneField)}
-            backgroundColor="white"
-            readOnly
+            backgroundColor="blue"
+            required
             defaultValue={
               getValueViaPath(application.answers, phoneField, '') as string
             }

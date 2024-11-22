@@ -10,57 +10,39 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect } from 'react'
-import { useFormContext } from 'react-hook-form'
-import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
-import { CoOwnersInformation } from '../../shared'
+import { useFormContext } from 'react-hook-form'
 
 interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: CoOwnersInformation
   handleRemove: (index: number) => void
-  addNationalIdToCoOwners: (nationalId: string, index: number) => void
+  wasRemoved: boolean
 }
 
-export const CoOwnerRepeaterItem: FC<
+export const OldCoOwnerRepeaterItem: FC<
   React.PropsWithChildren<Props & FieldBaseProps>
-> = ({
-  id,
-  index,
-  rowLocation,
-  handleRemove,
-  repeaterField,
-  addNationalIdToCoOwners,
-  ...props
-}) => {
+> = ({ id, index, rowLocation, handleRemove, wasRemoved, ...props }) => {
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const { application, errors } = props
   const fieldIndex = `${id}[${index}]`
   const emailField = `${fieldIndex}.email`
   const phoneField = `${fieldIndex}.phone`
+  const nameField = `${fieldIndex}.name`
+  const nationaIdField = `${fieldIndex}.nationalId`
   const wasRemovedField = `${fieldIndex}.wasRemoved`
 
-  const onNationalIdChange = (nationalId: string) => {
-    addNationalIdToCoOwners(nationalId, index)
-  }
-
   useEffect(() => {
-    setValue(wasRemovedField, repeaterField.wasRemoved)
-  }, [repeaterField.wasRemoved, setValue])
+    setValue(wasRemovedField, `${wasRemoved}`)
+  }, [wasRemoved, setValue, wasRemovedField])
 
   return (
-    <Box
-      position="relative"
-      marginBottom={4}
-      hidden={repeaterField.wasRemoved === 'true'}
-    >
+    <Box position="relative" marginBottom={4} hidden={wasRemoved}>
       <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
         <Text variant="h5">
-          {formatMessage(information.labels.coOwner.coOwnerTempTitle)}{' '}
-          {rowLocation}
+          {formatMessage(information.labels.coOwner.title)} {rowLocation}
         </Text>
         <Box>
           <Button variant="text" onClick={handleRemove.bind(null, index)}>
@@ -68,16 +50,35 @@ export const CoOwnerRepeaterItem: FC<
           </Button>
         </Box>
       </Box>
-      <NationalIdWithName
-        {...props}
-        customId={fieldIndex}
-        customNameLabel={formatMessage(information.labels.coOwner.name)}
-        customNationalIdLabel={formatMessage(
-          information.labels.coOwner.nationalId,
-        )}
-        onNationalIdChange={onNationalIdChange}
-      />
       <GridRow>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={nationaIdField}
+            name={nationaIdField}
+            format="######-####"
+            label={formatMessage(information.labels.coOwner.nationalId)}
+            error={errors && getErrorViaPath(errors, nationaIdField)}
+            backgroundColor="white"
+            readOnly
+            defaultValue={
+              getValueViaPath(application.answers, nationaIdField, '') as string
+            }
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={nameField}
+            name={nameField}
+            type="email"
+            label={formatMessage(information.labels.coOwner.name)}
+            error={errors && getErrorViaPath(errors, nameField)}
+            backgroundColor="white"
+            readOnly
+            defaultValue={
+              getValueViaPath(application.answers, nameField, '') as string
+            }
+          />
+        </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
             id={emailField}
@@ -85,8 +86,8 @@ export const CoOwnerRepeaterItem: FC<
             type="email"
             label={formatMessage(information.labels.coOwner.email)}
             error={errors && getErrorViaPath(errors, emailField)}
-            backgroundColor="blue"
-            required
+            backgroundColor="white"
+            readOnly
             defaultValue={
               getValueViaPath(application.answers, emailField, '') as string
             }
@@ -100,8 +101,8 @@ export const CoOwnerRepeaterItem: FC<
             format="###-####"
             label={formatMessage(information.labels.coOwner.phone)}
             error={errors && getErrorViaPath(errors, phoneField)}
-            backgroundColor="blue"
-            required
+            backgroundColor="white"
+            readOnly
             defaultValue={
               getValueViaPath(application.answers, phoneField, '') as string
             }

@@ -61,9 +61,7 @@ export const BuyerCoOwnerAndOperatorRepeater: FC<
   }
 
   const getBuyerNationalId = async () => {
-    // Get buyer nationalId from updated answers (cannot use application.answers),
-    // since that is filled out in the same step as this,
-    // but the buyer value is updated in answers right away
+    // Get updated buyer nationalId from answers
     const applicationInfo = await getApplicationInfo({
       variables: {
         input: {
@@ -73,7 +71,6 @@ export const BuyerCoOwnerAndOperatorRepeater: FC<
       },
       fetchPolicy: 'no-cache',
     })
-
     const updatedApplication = applicationInfo?.data?.applicationApplication
 
     const buyerNationalId =
