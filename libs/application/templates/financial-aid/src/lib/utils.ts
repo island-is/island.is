@@ -167,9 +167,9 @@ type File = {
   key: string
 }
 
-export const hasIncomeFiles = (formValue: FormValue) => {
-  const income = formValue.income === ApproveOptions.Yes
-  const incomeFiles = formValue.incomeFiles as Array<File>
+export const hasIncomeFiles = (answers: FormValue) => {
+  const income = answers.income === ApproveOptions.Yes
+  const incomeFiles = answers.incomeFiles as Array<File>
 
   return income && incomeFiles && incomeFiles.length > 0
 }

@@ -26,6 +26,7 @@ export const confirmationMultiField = buildMultiField({
       title: m.confirmation.alertMessagesInRelationship.success,
       alertType: 'success',
       condition: (answers) => {
+        console.log('!!!Hér: ', answers)
         return !hasIncomeFiles(answers)
       },
     }),
