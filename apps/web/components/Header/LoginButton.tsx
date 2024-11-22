@@ -1,7 +1,7 @@
 import React, { MouseEvent } from 'react'
+import { useRouter } from 'next/router'
 
 import {
-  Box,
   Button,
   ButtonTypes,
   DropdownMenu,
@@ -11,7 +11,6 @@ import {
 import { webLoginButtonSelect } from '@island.is/plausible'
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
-import { useRouter } from 'next/router'
 
 const minarsidurLink = '/minarsidur/'
 const minarsidurDelegationsLink = '/minarsidur/login?prompt=select_account'
