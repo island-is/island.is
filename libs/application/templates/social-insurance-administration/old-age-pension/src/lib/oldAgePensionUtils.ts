@@ -254,6 +254,11 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationCurrencies.data',
   ) as Array<string>
 
+  const hasIncomePlanStatus = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationLatestIncomePlan.data.status',
+  ) as string
+
   return {
     residenceHistory,
     applicantName,
@@ -268,6 +273,7 @@ export const getApplicationExternalData = (
     currencies,
     userProfileEmail,
     userProfilePhoneNumber,
+    hasIncomePlanStatus,
   }
 }
 

@@ -788,20 +788,28 @@ export const OldAgePensionForm: Form = buildForm({
       ],
     }),
     buildFormConclusionSection({
-      multiFieldTitle:
-        socialInsuranceAdministrationMessage.conclusionScreen
-          .receivedAwaitingIncomePlanTitle,
-      alertTitle:
-        socialInsuranceAdministrationMessage.conclusionScreen
-          .receivedAwaitingIncomePlanTitle,
-      alertMessage:
+      multiFieldTitle: (application: Application) => {
+        const { hasIncomePlanStatus } = getApplicationExternalData(application.externalData)
+        return hasIncomePlanStatus === 'Accepted' || hasIncomePlanStatus === 'InProgress'
+        ? socialInsuranceAdministrationMessage.conclusionScreen
+          .receivedAwaitingIncomePlanTitle
+        : socialInsuranceAdministrationMessage.conclusionScreen.receivedTitle
+      },  
+      alertTitle: (application: Application) => {
+        const { hasIncomePlanStatus } = getApplicationExternalData(application.externalData)
+        console.log('hasIncomePlanStatus ===>', hasIncomePlanStatus)
+        return hasIncomePlanStatus === 'Accepted' || hasIncomePlanStatus === 'InProgress'
+         ? socialInsuranceAdministrationMessage.conclusionScreen.receivedAwaitingIncomePlanTitle
+         : 'Boop'
+      },
+      alertMessage: 
         socialInsuranceAdministrationMessage.conclusionScreen
           .incomePlanAlertMessage,
       alertType: 'warning',
       expandableDescription:
         oldAgePensionFormMessage.conclusionScreen.bulletList,
       expandableIntro: oldAgePensionFormMessage.conclusionScreen.nextStepsText,
-      bottomButtonLink: 'https://minarsidur.tr.is/forsendur/tekjuaetlun',
+      bottomButtonLink: 'https://island.is/umsoknir/tekjuaaetlun',
       bottomButtonLabel:
         socialInsuranceAdministrationMessage.conclusionScreen
           .incomePlanCardLabel,
