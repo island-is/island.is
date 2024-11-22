@@ -117,8 +117,9 @@ export class NotificationsResponse extends PaginatedResponse(Notification) {
 }
 
 @ObjectType('AdminNotifications')
-export class AdminNotificationsResponse extends PaginatedResponse(AdminNotification) {
-}
+export class AdminNotificationsResponse extends PaginatedResponse(
+  AdminNotification,
+) {}
 
 @ObjectType()
 export class NotificationResponse {

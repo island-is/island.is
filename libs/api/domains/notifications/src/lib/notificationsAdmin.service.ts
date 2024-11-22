@@ -51,5 +51,4 @@ export class NotificationsAdminService {
       pageInfo: notifications.pageInfo,
     }
   }
-
 }

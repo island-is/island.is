@@ -1,8 +1,4 @@
-import {
-  Args,
-  Query,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { IdsUserGuard, CurrentUser } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
@@ -36,7 +32,7 @@ export class NotificationsAdminResolver {
   async getNotifications(
     @Args('nationalId') nationalId: string,
     @Args('input', { type: () => NotificationsInput, nullable: true })
-      input: NotificationsInput,
+    input: NotificationsInput,
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -44,7 +40,12 @@ export class NotificationsAdminResolver {
     let notifications: AdminNotificationsResponse | null
 
     try {
-      notifications = await this.service.getNotifications(locale, nationalId, user, input)
+      notifications = await this.service.getNotifications(
+        locale,
+        nationalId,
+        user,
+        input,
+      )
     } catch (e) {
       this.logger.error('failed to get admin notifications', {
         locale,
