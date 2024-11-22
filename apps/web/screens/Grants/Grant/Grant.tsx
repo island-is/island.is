@@ -40,6 +40,7 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
   const router = useRouter()
 
   const baseUrl = linkResolver('styrkjatorg', [], locale).href
+  const searchUrl = linkResolver('styrkjatorgsearch', [], locale).href
   const currentUrl = linkResolver(
     'styrkjatorggrant',
     [grant?.applicationId ?? ''],
@@ -54,6 +55,10 @@ const GrantSinglePage: CustomScreen<GrantSingleProps> = ({ grant, locale }) => {
     {
       title: formatMessage(m.home.title),
       href: baseUrl,
+    },
+    {
+      title: formatMessage(m.search.results),
+      href: searchUrl,
     },
     {
       title: grant?.name ?? formatMessage(m.home.grant),
