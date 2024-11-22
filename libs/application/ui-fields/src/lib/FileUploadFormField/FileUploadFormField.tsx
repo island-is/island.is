@@ -34,7 +34,7 @@ export const FileUploadFormField = ({
   const currentValue = watch(id)
 
   const onFileRemoveWhenInAnswers = (fileToRemove: UploadFile) => {
-   const updatedAnswers = set(
+    const updatedAnswers = set(
       application.answers,
       id,
       currentValue.filter((x: UploadFile) => x.key !== fileToRemove.key),

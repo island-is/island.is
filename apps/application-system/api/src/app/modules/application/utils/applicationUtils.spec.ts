@@ -209,7 +209,10 @@ describe('Testing utility functions for applications', () => {
         documents: [],
       }
 
-      const result = removeObjectWithKeyFromAnswers(givenAnswers, 'some-key-123')
+      const result = removeObjectWithKeyFromAnswers(
+        givenAnswers,
+        'some-key-123',
+      )
 
       expect(result).toEqual(expectedAnswers)
     })
@@ -233,7 +236,10 @@ describe('Testing utility functions for applications', () => {
         },
       }
 
-      const result = removeObjectWithKeyFromAnswers(givenAnswers, 'some-key-123')
+      const result = removeObjectWithKeyFromAnswers(
+        givenAnswers,
+        'some-key-123',
+      )
 
       expect(result).toEqual(expectedAnswers)
     })
@@ -251,7 +257,10 @@ describe('Testing utility functions for applications', () => {
         ],
       }
 
-      const result = removeObjectWithKeyFromAnswers(givenAnswers, 'some-key-123')
+      const result = removeObjectWithKeyFromAnswers(
+        givenAnswers,
+        'some-key-123',
+      )
 
       expect(result).toEqual(expectedAnswers)
     })
@@ -275,7 +284,10 @@ describe('Testing utility functions for applications', () => {
         },
       }
 
-      const result = removeObjectWithKeyFromAnswers(givenAnswers, 'some-key-123')
+      const result = removeObjectWithKeyFromAnswers(
+        givenAnswers,
+        'some-key-123',
+      )
 
       expect(result).toEqual(expectedAnswers)
     })
@@ -309,7 +321,10 @@ describe('Testing utility functions for applications', () => {
         },
       }
 
-      const result = removeObjectWithKeyFromAnswers(givenAnswers, 'some-key-123')
+      const result = removeObjectWithKeyFromAnswers(
+        givenAnswers,
+        'some-key-123',
+      )
 
       expect(result).toEqual(expectedAnswers)
     })
@@ -366,7 +381,10 @@ describe('Testing utility functions for applications', () => {
         },
       }
 
-      const result = removeObjectWithKeyFromAnswers(givenAnswers, 'some-key-123')
+      const result = removeObjectWithKeyFromAnswers(
+        givenAnswers,
+        'some-key-123',
+      )
 
       expect(result).toEqual(expectedAnswers)
     })
@@ -375,7 +393,10 @@ describe('Testing utility functions for applications', () => {
       const givenAnswers = {}
       const expectedAnswers = {}
 
-      const result = removeObjectWithKeyFromAnswers(givenAnswers, 'some-key-123')
+      const result = removeObjectWithKeyFromAnswers(
+        givenAnswers,
+        'some-key-123',
+      )
 
       expect(result).toEqual(expectedAnswers)
     })
