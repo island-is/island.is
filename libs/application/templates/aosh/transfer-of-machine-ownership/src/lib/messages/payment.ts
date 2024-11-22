@@ -14,16 +14,6 @@ export const payment = {
     },
   }),
   paymentChargeOverview: defineMessages({
-    forPayment: {
-      id: 'aosh.tmo.application:payment.paymentChargeOverview.forPayment',
-      defaultMessage: 'Til greiðslu',
-      description: 'For payment label',
-    },
-    total: {
-      id: 'aosh.tmo.application:payment.paymentChargeOverview.total',
-      defaultMessage: 'Samtals',
-      description: 'Total amount label',
-    },
     alertTitle: {
       id: 'aosh.tmo.application:payment.paymentChargeOverview.alertTitle',
       defaultMessage: 'Til athugunar!',

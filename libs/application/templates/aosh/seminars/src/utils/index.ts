@@ -10,6 +10,7 @@ export const staticData = (application: Application) => {
     [],
   ) as Array<Record<string, string>>
 
-  console.log('participantsFromAnswers', participantsFromAnswers)
   return participantsFromAnswers
 }
+export * from './isIndividual'
+export * from './isCompany'

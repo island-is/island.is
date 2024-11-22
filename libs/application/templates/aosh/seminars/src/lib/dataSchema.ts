@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { IndividualOrCompany, PaymentOptions } from '../shared/contstants'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -14,6 +15,31 @@ const UserSchemaBase = z.object({
     ),
   name: z.string().min(1),
 })
+
+const PaymentArrangementSchema = z.object({
+  individualOrCompany: z.enum([
+    IndividualOrCompany.individual,
+    IndividualOrCompany.company,
+  ]),
+  paymentOptions: z.enum([
+    PaymentOptions.cashOnDelivery,
+    PaymentOptions.putIntoAccount,
+  ]),
+  companyInfo: z.object({
+    nationalId: z.string().refine((v) => kennitala.isCompany(v)),
+    label: z.string().min(1),
+  }),
+  // individualInfo: z.object({
+  //   email: z.string().optional(), // .min(1),
+  //   phone: z.string().optional(), // .min(1),
+  // }).optional(),
+  contactInfo: z.object({
+    email: z.string().min(1),
+    phone: z.string().min(1),
+  }),
+  explanation: z.string().min(1),
+  // agreementCheckbox: z.string().optional(), // .min(1),
+}) // TODO: refine super well!
 
 export const UserInformationSchema = z.intersection(
   UserSchemaBase,
@@ -30,6 +56,7 @@ const ParticipantSchema = z.object({
 export const SeminarAnswersSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: UserInformationSchema,
+  paymentArrangement: PaymentArrangementSchema,
   participantList: z.array(ParticipantSchema),
 })
 

@@ -635,12 +635,20 @@ export const buildAlertMessageField = (
 export const buildLinkField = (
   data: Omit<LinkField, 'type' | 'component' | 'children'>,
 ): LinkField => {
-  const { s3key, link, iconProps } = data
+  const {
+    s3key,
+    link,
+    iconProps,
+    variant = 'ghost',
+    justifyContent = 'flexStart',
+  } = data
   return {
     ...extractCommonFields(data),
     s3key,
     link,
     iconProps,
+    variant,
+    justifyContent,
     children: undefined,
     type: FieldTypes.LINK,
     component: FieldComponents.LINK,

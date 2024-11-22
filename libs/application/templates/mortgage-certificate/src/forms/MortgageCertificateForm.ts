@@ -10,7 +10,6 @@ import {
   confirmation,
   externalData,
   overview,
-  payment,
   property,
   propertySearch,
 } from '../lib/messages'
@@ -83,8 +82,6 @@ export const MortgageCertificateForm = (
         ],
       }),
       buildFormPaymentChargeOverviewSection({
-        sectionTitle: payment.general.sectionTitle,
-        forPaymentLabel: payment.labels.forPayment,
         getSelectedChargeItems: (application) =>
           getChargeItemCodesAndExtraLabel(application),
       }),
