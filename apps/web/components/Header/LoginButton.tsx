@@ -69,14 +69,12 @@ export function LoginButton(props: {
     items.unshift({
       href: props.topItem.href,
       title: (
-        <Box paddingX={1}>
-          <Inline alignY="center" space={1} flexWrap="nowrap">
-            {props.topItem.imgSrc && (
-              <img width={17} height={17} src={props.topItem.imgSrc} alt="" />
-            )}
-            {props.topItem.label}
-          </Inline>
-        </Box>
+        <Inline alignY="center" space={1} flexWrap="nowrap">
+          {props.topItem.imgSrc && (
+            <img width={17} height={17} src={props.topItem.imgSrc} alt="" />
+          )}
+          {props.topItem.label}
+        </Inline>
       ),
       onClick: trackAndNavigate.bind(null, props.topItem.buttonType),
     })
