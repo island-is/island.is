@@ -242,7 +242,6 @@ export const customStyles = (): StylesConfig<
     left: 0,
     width: '100%',
     height: '100%',
-    zIndex: 1,
   }),
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
