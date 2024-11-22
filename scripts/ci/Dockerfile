@@ -39,8 +39,8 @@ COPY libs libs/
 COPY scripts scripts/
 COPY tools tools/
 RUN pwd && \
-  id && \
-  ls -lah && exit 0
+  ls -lah && \
+  exit 0
 
 
 FROM src AS builder
@@ -51,6 +51,9 @@ ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
 RUN yarn run build ${APP} --prod
+RUN pwd && \
+  ls -lah ./ && \
+  ls -lah ${APP_DIST_HOME}/main.js
 
 # This is base image for containers that are to be deployed
 FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS output-base
@@ -74,6 +77,7 @@ USER runner
 
 FROM output-base-with-pg AS output-express
 
+ARG APP_DIST_HOME
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ARG GIT_BRANCH GIT_COMMIT_SHA GIT_REPOSITORY_URL
@@ -81,7 +85,9 @@ ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
-RUN "ls -lah main.js"
+RUN pwd && \
+  ls -lah ./ && \
+  ls -lah main.js
 ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
 
 FROM output-base-with-pg AS output-next
@@ -89,6 +95,8 @@ ENV PORT=4200
 
 # TODO: smallify
 COPY --from=deps /build/node_modules /webapp/node_modules
+ARG APP_HOME
+ARG APP_DIST_HOME
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ARG GIT_BRANCH GIT_COMMIT_SHA GIT_REPOSITORY_URL
@@ -96,17 +104,19 @@ ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
-RUN "ls -lah main.js"
+RUN pwd && \
+  ls -lah ./ && \
+  ls -lah main.js
 ENTRYPOINT [ "node", "main.js" ]
 
 FROM ${DOCKER_REGISTRY}/nginx/nginx:1.21-alpine AS output-static
+# hadolint ignore=DL3018
+RUN apk add --no-cache bash nodejs
+
 ARG APP
 ARG APP_DIST_HOME
 ENV APP=${APP}
 ENV BASEPATH=/
-
-# hadolint ignore=DL3018
-RUN apk add --no-cache bash nodejs
 
 COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates/
 COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d/
@@ -126,6 +136,7 @@ FROM output-base AS output-jest
 RUN npm install -g jest && \
   echo 'module.exports = {};' > jest.config.js
 
+ARG APP_DIST_HOME
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 USER runner
@@ -173,7 +184,9 @@ ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
-RUN "ls -lah ./entrypoint.sh"
+RUN pwd && \
+  ls -lah ./ && \
+  ls -lah ./entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
 
 
@@ -197,7 +210,9 @@ ENV GIT_BRANCH=${GIT_BRANCH} GIT_COMMIT_SHA=${GIT_COMMIT_SHA} GIT_REPOSITORY_URL
 ENV DD_GIT_BRANCH=${GIT_BRANCH} DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
 LABEL branch=${GIT_BRANCH}
 LABEL commit=${GIT_COMMIT_SHA}
-RUN "ls -lah ./entrypoint.sh"
+RUN pwd && \
+  ls -lah ./ && \
+  ls -lah ./entrypoint.sh
 ENTRYPOINT ["./entrypoint.sh"]
 
 FROM output-base AS output-native
