@@ -28,6 +28,8 @@ import {
 } from '../../guards'
 import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
 import { UpdateCivilClaimantDto } from './dto/updateCivilClaimant.dto'
+import { CurrentCivilClaimant } from './guards/civilClaimaint.decorator'
+import { CivilClaimantExistsGuard } from './guards/civilClaimantExists.guard'
 import { CivilClaimant } from './models/civilClaimant.model'
 import { DeleteCivilClaimantResponse } from './models/deleteCivilClaimant.response'
 import { CivilClaimantService } from './civilClaimant.service'
@@ -63,7 +65,7 @@ export class CivilClaimantController {
     return this.civilClaimantService.create(theCase)
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CivilClaimantExistsGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -79,19 +81,20 @@ export class CivilClaimantController {
   async update(
     @Param('caseId') caseId: string,
     @Param('civilClaimantId') civilClaimantId: string,
+    @CurrentCivilClaimant() civilClaimant: CivilClaimant,
     @Body() updateCivilClaimantDto: UpdateCivilClaimantDto,
   ): Promise<CivilClaimant> {
     this.logger.debug(
-      `Updating civil claimant ${civilClaimantId} in case ${caseId}`,
+      `Updating civil claimant ${civilClaimantId} of case ${caseId}`,
     )
     return this.civilClaimantService.update(
       caseId,
-      civilClaimantId,
+      civilClaimant,
       updateCivilClaimantDto,
     )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CivilClaimantExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':civilClaimantId')
   @ApiOkResponse({
@@ -102,7 +105,9 @@ export class CivilClaimantController {
     @Param('caseId') caseId: string,
     @Param('civilClaimantId') civilClaimantId: string,
   ): Promise<DeleteCivilClaimantResponse> {
-    this.logger.debug(`Deleting civil claimant ${civilClaimantId}`)
+    this.logger.debug(
+      `Deleting civil claimant ${civilClaimantId} of case ${caseId}`,
+    )
 
     const deleted = await this.civilClaimantService.delete(
       caseId,

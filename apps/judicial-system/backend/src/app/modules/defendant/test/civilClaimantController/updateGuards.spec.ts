@@ -2,10 +2,15 @@ import { CanActivate } from '@nestjs/common'
 
 import { CaseExistsGuard, CaseWriteGuard } from '../../../case'
 import { CivilClaimantController } from '../../civilClaimant.controller'
+import { CivilClaimantExistsGuard } from '../../guards/civilClaimantExists.guard'
 
 describe('CivilClaimantController - Update guards', () => {
   let guards: Array<new () => CanActivate>
-  const expectedGuards = [CaseExistsGuard, CaseWriteGuard]
+  const expectedGuards = [
+    CaseExistsGuard,
+    CaseWriteGuard,
+    CivilClaimantExistsGuard,
+  ]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(

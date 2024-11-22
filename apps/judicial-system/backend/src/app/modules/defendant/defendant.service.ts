@@ -70,26 +70,6 @@ export class DefendantService {
     return message
   }
 
-  private getUpdatedDefendant(
-    numberOfAffectedRows: number,
-    defendants: Defendant[],
-    defendantId: string,
-    caseId: string,
-  ): Defendant {
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating defendant ${defendantId} of case ${caseId}`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not update defendant ${defendantId} of case ${caseId}`,
-      )
-    }
-
-    return defendants[0]
-  }
-
   private async sendRequestCaseUpdateDefendantMessages(
     theCase: Case,
     updatedDefendant: Defendant,
@@ -216,12 +196,18 @@ export class DefendantService {
       { where: { id: defendantId, caseId }, returning: true, transaction },
     )
 
-    return this.getUpdatedDefendant(
-      numberOfAffectedRows,
-      defendants,
-      defendantId,
-      caseId,
-    )
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating defendant ${defendantId} of case ${caseId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not update defendant ${defendantId} of case ${caseId}`,
+      )
+    }
+
+    return defendants[0]
   }
 
   async updateRequestCaseDefendant(
