@@ -431,7 +431,7 @@ SubPage.getProps = async ({ apolloClient, locale, query, req }) => {
 
 const getSlugAndSubSlug = (query: ParsedUrlQuery, pathname: string) => {
   const path = pathname?.split('/') ?? []
-  let { slug, subSlug } = query
+  let [slug, subSlug] = (query.slugs as string[]) ?? []
 
   if (!slug && path.length >= 2) {
     // The slug is the next-last index in the path, i.e. "syslumenn" in the case of "/s/syslumenn/utgefid-efni"
@@ -439,7 +439,7 @@ const getSlugAndSubSlug = (query: ParsedUrlQuery, pathname: string) => {
   }
   if (!subSlug && path.length > 0) {
     // The subslug is the last index in the path, i.e. "utgefid-efni" in the case of "/s/syslumenn/utgefid-efni"
-    subSlug = path.pop()
+    subSlug = path.pop() as string
   }
 
   return { slug, subSlug }
