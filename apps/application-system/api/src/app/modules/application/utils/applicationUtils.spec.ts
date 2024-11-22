@@ -3,7 +3,6 @@ import {
   getApplicationNameTranslationString,
   getApplicationStatisticsNameTranslationString,
   getPaymentStatusForAdmin,
-  removeAttachmentFromAnswers,
 } from './application'
 import {
   createApplication,
