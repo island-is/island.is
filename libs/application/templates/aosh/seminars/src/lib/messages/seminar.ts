@@ -18,4 +18,37 @@ export const seminar = {
       description: `seminar page description `,
     },
   }),
+
+  labels: defineMessages({
+    seminarType: {
+      id: 'aosh.sem.application:seminar.labels.seminarType',
+      defaultMessage: 'Tegund:',
+      description: `seminar type label `,
+    },
+    seminarPrice: {
+      id: 'aosh.sem.application:seminar.labels.seminarPrice',
+      defaultMessage: 'Verð:',
+      description: `seminar price label `,
+    },
+    seminarBegins: {
+      id: 'aosh.sem.application:seminar.labels.seminarBegins',
+      defaultMessage: 'Hefst:',
+      description: `seminar begins label `,
+    },
+    seminarEnds: {
+      id: 'aosh.sem.application:seminar.labels.seminarEnds',
+      defaultMessage: 'Lýkur:',
+      description: `seminar ends label `,
+    },
+    seminarDescription: {
+      id: 'aosh.sem.application:seminar.labels.seminarDescription',
+      defaultMessage: 'Lýsing:',
+      description: `seminar description label `,
+    },
+    seminarLocation: {
+      id: 'aosh.sem.application:seminar.labels.seminarLocation',
+      defaultMessage: 'Staðsetning:',
+      description: `seminar location label `,
+    },
+  }),
 }

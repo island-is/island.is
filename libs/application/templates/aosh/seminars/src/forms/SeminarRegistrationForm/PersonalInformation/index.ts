@@ -18,7 +18,7 @@ export const personalInformationSection = buildSection({
       description: personalMessages.general.pageDescription,
       children: [
         buildTextField({
-          id: 'userInformation.nationalId',
+          id: 'applicant.nationalId',
           title: personalMessages.labels.userNationalId,
           backgroundColor: 'white',
           width: 'half',
@@ -35,7 +35,7 @@ export const personalInformationSection = buildSection({
           },
         }),
         buildTextField({
-          id: 'userInformation.name',
+          id: 'applicant.name',
           title: personalMessages.labels.userName,
           backgroundColor: 'white',
           width: 'half',
