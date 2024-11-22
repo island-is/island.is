@@ -395,6 +395,10 @@ export class VehiclesService {
       permno: input.permno,
     })
 
+    if (!res.length) {
+      return null
+    }
+
     const samplePermno = res[0].permno
 
     if (!samplePermno) {
