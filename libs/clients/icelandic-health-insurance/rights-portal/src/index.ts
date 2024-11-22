@@ -28,7 +28,6 @@ export {
   MinarsidurAPIModelsAccidentReportsInjuredDTO,
   MinarsidurAPIModelsAccidentReportsAccidentDTO,
   MinarsidurAPIModelsAccidentReportsEmployerDTO,
-  MinarsidurAPIModelsAccidentReportsClubDTO,
   MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentDTO,
   MinarsidurAPIModelsAccidentReportsAccidentDTOAccidentLocationEnum,
   MinarsidurAPIModelsAccidentReportsAccidentDTOAccidentAtSailorWorkDTOAccidentAtSailorWorkShipLocationEnum,
