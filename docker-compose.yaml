@@ -8,7 +8,6 @@ services:
         DOCKER_TAG: local
         APP: air-discount-scheme-web
         APP_HOME: apps/air-discount-scheme/web
-        APP_DIST_HOME: dist/apps/air-discount-scheme/web
         NODE_IMAGE_TAG: 18-alpine3.20
     # image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web:release-32-3-0_d7a1ed4de3_111062
     container_name: ads-web
