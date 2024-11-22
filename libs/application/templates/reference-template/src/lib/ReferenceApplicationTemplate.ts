@@ -1,3 +1,14 @@
+/*
+ ***
+ *** The state machine is for this template is as follows:
+ ***
+ ***                                                            /-> Approved
+ *** Prerequisites -> Draft -> Waiting to assign -> In review --
+ ***                    Λ             |                         \-> Rejected
+ ***                    |_____________|
+ ***
+ */
+
 import {
   DefaultStateLifeCycle,
   getValueViaPath,
@@ -64,6 +75,7 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   }
   return m.name
 }
+
 const ReferenceApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<ReferenceTemplateEvent>,
@@ -123,7 +135,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
+          [DefaultEvents.SUBMIT]: {
             target: States.DRAFT,
           },
         },
@@ -131,7 +143,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Umsókn um ökunám',
-
           actionCard: {
             description: m.draftDescription,
             historyLogs: {
@@ -158,7 +169,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [
+          [DefaultEvents.SUBMIT]: [
             {
               target: States.WAITINGTOASSIGN,
             },
@@ -217,9 +228,9 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: { target: States.INREVIEW },
-          ASSIGN: { target: States.INREVIEW },
-          EDIT: { target: States.DRAFT },
+          [DefaultEvents.SUBMIT]: { target: States.INREVIEW },
+          [DefaultEvents.ASSIGN]: { target: States.INREVIEW },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.INREVIEW]: {
@@ -279,8 +290,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          APPROVE: { target: States.APPROVED },
-          REJECT: { target: States.REJECTED },
+          [DefaultEvents.APPROVE]: { target: States.APPROVED },
+          [DefaultEvents.REJECT]: { target: States.REJECTED },
         },
       },
       [States.APPROVED]: {
@@ -307,7 +318,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 1,
           status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
-
           roles: [
             {
               id: Roles.APPLICANT,
