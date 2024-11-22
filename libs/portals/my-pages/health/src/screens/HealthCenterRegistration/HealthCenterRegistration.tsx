@@ -22,7 +22,7 @@ import { messages } from '../../lib/messages'
 import * as styles from './HealthRegistration.css'
 import { m } from '@island.is/portals/my-pages/core'
 import groupBy from 'lodash/groupBy'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { RightsPortalHealthCenter } from '@island.is/api/schema'
 import { useNavigate } from 'react-router-dom'
 import { HealthPaths } from '../../lib/paths'
@@ -70,6 +70,13 @@ const HealthCenterRegistration = () => {
     setLoadingTransfer(false)
     setErrorTransfer(true)
   }
+
+  const handleHealthCenterSelect = useCallback(
+    (id: string, name?: string | null) => {
+      setSelectedHealthCenter({ id, name })
+    },
+    [],
+  )
 
   const [getHealthCenterDoctors] = useGetHealthCenterDoctorsLazyQuery({
     onCompleted: (data) => {
@@ -326,12 +333,12 @@ const HealthCenterRegistration = () => {
                                     size="small"
                                     variant="text"
                                     icon="pencil"
-                                    onClick={() => {
-                                      setSelectedHealthCenter({
-                                        id: healthCenter.id,
-                                        name: healthCenter.name,
-                                      })
-                                    }}
+                                    onClick={() =>
+                                      handleHealthCenterSelect(
+                                        healthCenter.id,
+                                        healthCenter.name,
+                                      )
+                                    }
                                   >
                                     {formatMessage(
                                       messages.healthRegistrationSave,
@@ -339,7 +346,12 @@ const HealthCenterRegistration = () => {
                                   </Button>
                                 </Box>
                               ) : (
-                                <Text variant="medium">
+                                <Text
+                                  variant="medium"
+                                  aria-label={formatMessage(
+                                    messages.healthCenterNotAvailableForRegistration,
+                                  )}
+                                >
                                   {formatMessage(
                                     messages.healthCenterNotAvailableForRegistration,
                                   )}

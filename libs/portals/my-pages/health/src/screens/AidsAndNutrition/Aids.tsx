@@ -115,7 +115,7 @@ const Aids = ({ data }: Props) => {
                           RightsPortalAidOrNutritionRenewalStatus.RENEWAL_IN_PROGRESS
                         ? formatMessage(messages.renewalInProgress)
                         : rowItem.renewalStatus ===
-                          RightsPortalAidOrNutritionRenewalStatus.NOT_VALID_FOR_RENWAL
+                          RightsPortalAidOrNutritionRenewalStatus.NOT_VALID_FOR_RENEWAL
                         ? formatMessage(messages.notValidForRenewal)
                         : '',
                   },

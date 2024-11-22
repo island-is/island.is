@@ -10,8 +10,15 @@ export enum AidOrNutritionRenewalStatus {
   'VALID' = 'VALID',
   'VALID_FOR_RENEWAL' = 'VALID_FOR_RENEWAL',
   'RENEWAL_IN_PROGRESS' = 'RENEWAL_IN_PROGRESS',
-  'NOT_VALID_FOR_RENWAL' = 'NOT_VALID_FOR_RENWAL',
+  'NOT_VALID_FOR_RENEWAL' = 'NOT_VALID_FOR_RENEWAL',
 }
+
+const RENEWAL_STATUS_MAP = {
+  0: AidOrNutritionRenewalStatus.VALID,
+  1: AidOrNutritionRenewalStatus.VALID_FOR_RENEWAL,
+  2: AidOrNutritionRenewalStatus.RENEWAL_IN_PROGRESS,
+  3: AidOrNutritionRenewalStatus.NOT_VALID_FOR_RENEWAL,
+} as const
 
 export const generateAidOrNutrition = (
   data: AidOrNutritionDTO,
@@ -26,7 +33,6 @@ export const generateAidOrNutrition = (
   ) {
     return null
   }
-  console.log(data)
   return {
     id: data.id,
     iso: data.iso,
@@ -46,14 +52,10 @@ export const generateAidOrNutrition = (
     location: data.location ?? undefined,
     expiring: data.expiring ? data.expiring : false,
     renewalStatus:
-      data.renewalStatus === 0
-        ? AidOrNutritionRenewalStatus.VALID
-        : data.renewalStatus === 1
-        ? AidOrNutritionRenewalStatus.VALID_FOR_RENEWAL
-        : data.renewalStatus === 2
-        ? AidOrNutritionRenewalStatus.RENEWAL_IN_PROGRESS
-        : data.renewalStatus === 3
-        ? AidOrNutritionRenewalStatus.NOT_VALID_FOR_RENWAL
+      data.renewalStatus !== undefined
+        ? RENEWAL_STATUS_MAP[
+            data.renewalStatus as keyof typeof RENEWAL_STATUS_MAP
+          ]
         : undefined,
   }
 }
