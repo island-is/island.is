@@ -34,6 +34,7 @@ export class LicenseCollectionResolver {
   @Audit()
   async genericLicenses(
     @CurrentUser() user: User,
+    @ParsedUserAgent() agent: UserAgent,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('input', { nullable: true }) input?: GetGenericLicensesInput,
@@ -48,6 +49,7 @@ export class LicenseCollectionResolver {
         force: input?.force,
         onlyList: input?.onlyList,
       },
+      agent,
     )
 
     return collection.licenses
