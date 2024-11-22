@@ -58,7 +58,6 @@ export const FormShell: FC<
     },
     initializeReducer,
   )
-  console.log('application', application)
   const { formatMessage } = useLocale()
   const {
     activeScreen,
