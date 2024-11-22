@@ -62,58 +62,51 @@ const OccupationalLicenseDetail = () => {
       intro={res?.headerText ?? ''}
       serviceProviderSlug={license?.issuer as OrganizationSlugType}
       buttonGroup={
-        !isOldEducationLicense &&
-        res?.actions && (
-          <Box paddingTop={3}>
-            {
-              <Inline space={1} collapseBelow="sm">
-                {res.actions.map((a, index) => {
-                  if (!a) {
-                    return null
-                  }
-                  if (a.type === OccupationalLicensesV2LinkType.FILE) {
-                    return (
-                      <Button
-                        key={`button-file-${index}`}
-                        variant="utility"
-                        iconType="outline"
-                        onClick={() => {
-                          if (a.url) {
-                            formSubmit(a.url)
-                          }
-                        }}
-                        icon={'download'}
-                      >
-                        {a.text}
-                      </Button>
-                    )
-                  }
+        !isOldEducationLicense && res?.actions
+          ? res.actions.map((a, index) => {
+              if (!a) {
+                return null
+              }
+              if (a.type === OccupationalLicensesV2LinkType.FILE) {
+                return (
+                  <Button
+                    key={`button-file-${index}`}
+                    variant="utility"
+                    iconType="outline"
+                    onClick={() => {
+                      if (a.url) {
+                        formSubmit(a.url)
+                      }
+                    }}
+                    icon={'download'}
+                  >
+                    {a.text}
+                  </Button>
+                )
+              }
 
-                  return (
-                    <LinkButton
-                      key={`button-link-${index}`}
-                      variant="utility"
-                      to={
-                        a.type === OccupationalLicensesV2LinkType.DOCUMENT
-                          ? DocumentsPaths.ElectronicDocumentSingle.replace(
-                              ':id',
-                              a.url,
-                            )
-                          : a.url
-                      }
-                      text={a.text}
-                      icon={
-                        a.type === OccupationalLicensesV2LinkType.DOCUMENT
-                          ? 'mailOpen'
-                          : 'open'
-                      }
-                    />
-                  )
-                })}
-              </Inline>
-            }
-          </Box>
-        )
+              return (
+                <LinkButton
+                  key={`button-link-${index}`}
+                  variant="utility"
+                  to={
+                    a.type === OccupationalLicensesV2LinkType.DOCUMENT
+                      ? DocumentsPaths.ElectronicDocumentSingle.replace(
+                          ':id',
+                          a.url,
+                        )
+                      : a.url
+                  }
+                  text={a.text}
+                  icon={
+                    a.type === OccupationalLicensesV2LinkType.DOCUMENT
+                      ? 'mailOpen'
+                      : 'open'
+                  }
+                />
+              )
+            })
+          : undefined
       }
     >
       {error && !loading && <Problem noBorder={false} error={error} />}

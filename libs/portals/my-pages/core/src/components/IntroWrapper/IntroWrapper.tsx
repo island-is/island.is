@@ -7,6 +7,7 @@ import {
   GridRow,
   SkeletonLoader,
   Stack,
+  Inline,
 } from '@island.is/island-ui/core'
 import FootNote from '../FootNote/FootNote'
 import { MessageDescriptor } from 'react-intl'
@@ -24,7 +25,7 @@ type BaseProps = {
   img?: string
   isSubheading?: boolean
   children?: React.ReactNode
-  buttonGroup?: React.ReactNode
+  buttonGroup?: Array<React.ReactNode>
   serviceProviderSlug?: OrganizationSlugType
   serviceProviderTooltip?: string
   span?: GridColumnProps['span']
@@ -88,7 +89,9 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
               {props.introComponent && (
                 <Box paddingTop={1}>{props.introComponent}</Box>
               )}
-              {props.buttonGroup}
+              <Box marginTop={4}>
+                <Inline space={2}>{props.buttonGroup}</Inline>
+              </Box>
             </>
           )}
         </GridColumn>

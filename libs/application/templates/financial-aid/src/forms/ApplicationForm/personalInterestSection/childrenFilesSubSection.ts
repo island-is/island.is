@@ -1,10 +1,10 @@
 import {
-  buildFileUploadField,
+  buildCustomField,
   buildMultiField,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { FILE_SIZE_LIMIT, Routes, UPLOAD_ACCEPT } from '../../../lib/constants'
+import { Routes } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
 import { ApplicantChildCustodyInformation } from '@island.is/application/types'
 
@@ -23,12 +23,10 @@ export const childrenFilesSubSection = buildSubSection({
       title: m.childrenFilesForm.general.pageTitle,
       description: m.childrenFilesForm.general.description,
       children: [
-        buildFileUploadField({
+        buildCustomField({
           id: Routes.CHILDRENFILES,
-          uploadMultiple: true,
-          maxSize: FILE_SIZE_LIMIT,
-          uploadAccept: UPLOAD_ACCEPT,
-          title: '',
+          title: m.childrenFilesForm.general.pageTitle,
+          component: 'ChildrenFilesForm',
         }),
       ],
     }),
