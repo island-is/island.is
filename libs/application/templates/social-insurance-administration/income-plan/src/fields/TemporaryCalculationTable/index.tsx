@@ -19,7 +19,7 @@ import {
   getApplicationExternalData,
 } from '../../lib/incomePlanUtils'
 import { incomePlanFormMessage } from '../../lib/messages'
-import { SocialInsuranceTemporaryCalculationGroup } from '../../types/schema'
+import { SocialInsuranceTemporaryCalculation } from '../../types/schema'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { useFormContext } from 'react-hook-form'
 
@@ -88,7 +88,9 @@ export const TemporaryCalculationTable: FC<
     }),
   }
 
-  const { data, loading, error } = useQuery(TemporaryCalculationQuery, {
+  const { data, loading, error } = useQuery<{
+    getTemporaryCalculations: SocialInsuranceTemporaryCalculation
+  }>(TemporaryCalculationQuery, {
     variables: {
       input,
     },
@@ -155,6 +157,11 @@ export const TemporaryCalculationTable: FC<
   }
   setValue('temporaryCalculation.show', true)
 
+  const paidOutMonths = data?.getTemporaryCalculations?.groups
+    ?.find(({ group }) => group === 'Frádráttur')
+    ?.rows?.find(({ name }) => name === 'Útborgað')?.months
+  const paidOutSelectedMonth = paidOutMonths?.[monthIndex]?.amount
+
   return (
     <Box>
       <Box marginY={3}>
@@ -182,11 +189,8 @@ export const TemporaryCalculationTable: FC<
               </T.Row>
             </T.Head>
           </T.Table>
-          {data?.getTemporaryCalculations?.groups.map(
-            (
-              group: SocialInsuranceTemporaryCalculationGroup,
-              index: number,
-            ) => (
+          {data?.getTemporaryCalculations?.groups?.map(
+            (group, index: number) => (
               <T.Table key={index}>
                 <T.Head>
                   <T.Row>
@@ -196,7 +200,9 @@ export const TemporaryCalculationTable: FC<
                       align="right"
                       box={{ paddingRight: 0 }}
                     >
-                      {group.monthTotals?.[monthIndex]?.amount}
+                      {formatCurrency(
+                        String(group.monthTotals?.[monthIndex]?.amount),
+                      )}
                     </T.HeadData>
                     <T.HeadData width="25%" align="right">
                       {group.total && formatCurrency(group.total.toString())}
@@ -204,17 +210,21 @@ export const TemporaryCalculationTable: FC<
                   </T.Row>
                 </T.Head>
                 <T.Body>
-                  {group?.rows?.map((row, rowIndex) => (
-                    <T.Row key={`row-${rowIndex}`}>
-                      <T.Data>{row.name}</T.Data>
-                      <T.Data align="right" box={{ paddingRight: 0 }}>
-                        {row.months?.[monthIndex]?.amount}
-                      </T.Data>
-                      <T.Data align="right">
-                        {row.total && formatCurrency(row.total.toString())}
-                      </T.Data>
-                    </T.Row>
-                  ))}
+                  {group?.rows
+                    ?.filter(({ name }) => name !== 'Útborgað')
+                    .map((row, rowIndex) => (
+                      <T.Row key={`row-${rowIndex}`}>
+                        <T.Data>{row.name}</T.Data>
+                        <T.Data align="right" box={{ paddingRight: 0 }}>
+                          {formatCurrency(
+                            String(row.months?.[monthIndex]?.amount),
+                          )}
+                        </T.Data>
+                        <T.Data align="right">
+                          {row.total && formatCurrency(row.total.toString())}
+                        </T.Data>
+                      </T.Row>
+                    ))}
                 </T.Body>
               </T.Table>
             ),
@@ -225,11 +235,9 @@ export const TemporaryCalculationTable: FC<
                 <T.HeadData width="50%">
                   {formatMessage(incomePlanFormMessage.info.paidTableHeader)}
                 </T.HeadData>
-                <T.HeadData
-                  width="25%"
-                  align="right"
-                  box={{ paddingRight: 0 }}
-                ></T.HeadData>
+                <T.HeadData width="25%" align="right" box={{ paddingRight: 0 }}>
+                  {formatCurrency(String(paidOutSelectedMonth))}
+                </T.HeadData>
                 <T.HeadData width="25%" align="right">
                   {formatCurrency(
                     data?.getTemporaryCalculations?.paidOut.toString(),
