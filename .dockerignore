@@ -1,9 +1,31 @@
-apps/native/app/node_modules
-node_modules/
-dist/
-scripts/ci/
+# vi: ft=gitignore
+
+# Known ignores
+/.github/
+/.git/
+/scripts/ci/
+/.env.*
+/.envrc*
+
+# Cache and packages
+**/node_modules/
+**/cache/
 /cache*
-cache/
-.git/
-log/
-*.log
+
+# Logs and temporaries
+**/log/
+**/*.log
+**/tmp/
+**/temp/
+
+# Outputs
+**/dist/
+**/out/
+
+# Docker-stuff
+**/Dockerfile
+**/Dockerfile.*
+**/Containerfile
+**/Containerfile.*
+**/*-compose.yaml
+**/*-compose.yml
