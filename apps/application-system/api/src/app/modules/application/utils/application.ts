@@ -170,7 +170,6 @@ export const removeObjectWithKeyFromAnswers = (
     console.warn('Maximum recursion depth reached while calling removeObjectWithKeyFromAnswers')
     return answers
   }
-
   // Handle arrays
   if (Array.isArray(answers)) {
     return cleanArray(answers, keyToRemove, depth)
