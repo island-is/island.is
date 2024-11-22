@@ -67,26 +67,25 @@ export const debtsAndFuneralCost = buildSection({
                 ],
                 hideDeceasedShare: true,
                 repeaterButtonText: m.debtsRepeaterButton,
-                fromExternalData: 'otherDebts',
                 sumField: 'propertyValuation',
                 selections: [
                   {
-                    label: DebtTypes.Overdraft,
-                  },
-                  {
-                    label: DebtTypes.CreditCard,
+                    label: DebtTypes.PublicCharges,
                   },
                   {
                     label: DebtTypes.Loan,
                   },
                   {
-                    label: DebtTypes.InsuranceCompany,
+                    label: DebtTypes.CreditCard,
+                  },
+                  {
+                    label: DebtTypes.Overdraft,
                   },
                   {
                     label: DebtTypes.PropertyFees,
                   },
                   {
-                    label: DebtTypes.PropertyFees,
+                    label: DebtTypes.OtherDebts,
                   },
                 ],
               },
@@ -195,6 +194,12 @@ export const debtsAndFuneralCost = buildSection({
               large: false,
               backgroundColor: 'white',
               options: [{ value: YES, label: m.debtsOverviewConfirmation }],
+            }),
+            buildCustomField({
+              title: '',
+              id: 'overviewPrint',
+              doesNotRequireAnswer: true,
+              component: 'PrintScreen',
             }),
           ],
         }),

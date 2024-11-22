@@ -31,7 +31,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractCustomTopLoginButtonItemFromOrganization'
 
-import { Screen } from '../../../types'
+import { Screen, ScreenContext } from '../../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
@@ -235,7 +235,11 @@ export interface HomeProps {
   namespace: Record<string, string>
 }
 
-const Home: Screen<HomeProps> = ({
+type HomeScreenContext = ScreenContext & {
+  organizationPage?: Query['getOrganizationPage']
+}
+
+const Home: Screen<HomeProps, HomeScreenContext> = ({
   organizationPage,
   organization,
   namespace,
@@ -260,7 +264,7 @@ const Home: Screen<HomeProps> = ({
   )
 }
 
-Home.getProps = async ({ apolloClient, locale, query }) => {
+Home.getProps = async ({ apolloClient, locale, query, organizationPage }) => {
   const slug = (query.slugs as string[])[0]
   const [
     {
@@ -271,15 +275,17 @@ Home.getProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-      query: GET_ORGANIZATION_PAGE_QUERY,
-      variables: {
-        input: {
-          slug,
-          lang: locale as ContentLanguage,
-        },
-      },
-    }),
+    !organizationPage
+      ? apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+          query: GET_ORGANIZATION_PAGE_QUERY,
+          variables: {
+            input: {
+              slug,
+              lang: locale as ContentLanguage,
+            },
+          },
+        })
+      : { data: { getOrganizationPage: organizationPage } },
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_QUERY,
       variables: {

@@ -29,6 +29,7 @@ import {
 } from '@island.is/web/components'
 
 import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
+import { PRELOADED_FONTS } from '../constants'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import {
@@ -56,7 +57,7 @@ import { getLocaleFromPath, useI18n } from '../i18n'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
-import { Screen } from '../types'
+import { Screen, ScreenContext } from '../types'
 import { extractOrganizationSlugFromPathname } from '../utils/organization'
 import {
   formatMegaMenuCategoryLinks,
@@ -239,14 +240,6 @@ const Layout: Screen<LayoutProps> = ({
     }
   }, [router.asPath, router.events])
 
-  const preloadedFonts = [
-    '/fonts/ibm-plex-sans-v7-latin-300.woff2',
-    '/fonts/ibm-plex-sans-v7-latin-regular.woff2',
-    '/fonts/ibm-plex-sans-v7-latin-italic.woff2',
-    '/fonts/ibm-plex-sans-v7-latin-500.woff2',
-    '/fonts/ibm-plex-sans-v7-latin-600.woff2',
-  ]
-
   const isServiceWeb = pathIsRoute(router.asPath, 'serviceweb', activeLocale)
 
   const organizationSearchFilter = extractOrganizationSlugFromPathname(
@@ -258,7 +251,7 @@ const Layout: Screen<LayoutProps> = ({
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
       <Page component="div">
         <Head>
-          {preloadedFonts.map((href, index) => {
+          {PRELOADED_FONTS.map((href, index) => {
             return (
               <link
                 key={index}
@@ -684,7 +677,10 @@ Layout.getProps = async ({ apolloClient, locale, req }) => {
   }
 }
 
-type LayoutWrapper<T> = Screen<{ layoutProps: LayoutProps; componentProps: T }>
+type LayoutWrapper<T, C = ScreenContext> = Screen<
+  { layoutProps: LayoutProps; componentProps: T },
+  C
+>
 
 interface LayoutComponentProps {
   themeConfig?: Partial<LayoutProps>
@@ -700,11 +696,11 @@ interface LayoutComponentProps {
   }
 }
 
-export const withMainLayout = <T,>(
-  Component: Screen<T>,
+export const withMainLayout = <T, C extends ScreenContext>(
+  Component: Screen<T, C>,
   layoutConfig: Partial<LayoutProps> = {},
-): LayoutWrapper<T> => {
-  const WithMainLayout: LayoutWrapper<T> = ({
+): LayoutWrapper<T, C> => {
+  const WithMainLayout: LayoutWrapper<T, C> = ({
     layoutProps,
     componentProps,
   }) => {
