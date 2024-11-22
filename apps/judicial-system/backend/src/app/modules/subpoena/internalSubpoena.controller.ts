@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Get,
   Inject,
   Param,
   Patch,
@@ -41,17 +40,6 @@ export class InternalSubpoenaController {
     private readonly subpoenaService: SubpoenaService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  @UseGuards(SubpoenaExistsGuard)
-  @Get('subpoena/:subpoenaId')
-  async getSubpoena(
-    @Param('subpoenaId') subpoenaId: string,
-    @CurrentSubpoena() subpoena: Subpoena,
-  ): Promise<Subpoena | null> {
-    this.logger.debug(`Getting subpoena by subpoena id ${subpoenaId}`)
-
-    return subpoena
-  }
 
   @UseGuards(SubpoenaExistsGuard)
   @Patch('subpoena/:subpoenaId')
