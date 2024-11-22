@@ -11,6 +11,9 @@ query vehiclesList($input: VehiclesListInputV3!) {
       type
       color
       mileageDetails {
+        lastMileageRegistration {
+          ...mileageRegistration
+        }
         canRegisterMileage
         requiresMileageRegistration
       }
@@ -68,14 +71,12 @@ fragment mileageRegistration on VehiclesMileageRegistration {
   originCode
   mileage
   date
+  internalId
 }
 
 query vehicleMileageRegistrationHistory($input: GetVehicleMileageInput) {
   vehiclesMileageRegistrationHistory(input: $input) {
     vehicleId
-    lastMileageRegistration {
-      ...mileageRegistration
-    }
     mileageRegistrationHistory {
       ...mileageRegistration
     }
