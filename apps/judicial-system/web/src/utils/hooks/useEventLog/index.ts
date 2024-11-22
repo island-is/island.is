@@ -9,8 +9,7 @@ import { useCreateEventLogMutation } from './createEventLog.generated'
 
 const useEventLog = () => {
   const { formatMessage } = useIntl()
-  const [createEventLogMutation, { loading: createEventLogLoading }] =
-    useCreateEventLogMutation()
+  const [createEventLogMutation] = useCreateEventLogMutation()
 
   const createEventLog = useCallback(
     async (eventLog: CreateEventLogInput) => {
@@ -31,7 +30,7 @@ const useEventLog = () => {
   )
 
   return {
-    createEventLog: { action: createEventLog, loading: createEventLogLoading },
+    createEventLog,
   }
 }
 export default useEventLog

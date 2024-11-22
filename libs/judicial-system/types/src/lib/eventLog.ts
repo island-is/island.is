@@ -9,11 +9,12 @@ export enum EventType {
   INDICTMENT_REVIEWED = 'INDICTMENT_REVIEWED',
   CASE_RECEIVED_BY_COURT = 'CASE_RECEIVED_BY_COURT',
   INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR = 'INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR',
-  INDICTMENT_SENT_TO_FMST = 'INDICTMENT_SENT_TO_FMST',
 }
+
+export const eventTypes = Object.values(EventType)
 
 export enum DefendantEventType {
   SENT_TO_PRISON_ADMIN = 'SENT_TO_PRISON_ADMIN',
 }
 
-export const eventTypes = Object.values(EventType)
+export const defendantEventTypes = Object.values(DefendantEventType)

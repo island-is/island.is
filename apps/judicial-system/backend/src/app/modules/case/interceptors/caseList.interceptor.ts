@@ -12,6 +12,7 @@ import { IndictmentDecision } from '@island.is/judicial-system/types'
 import { Case } from '../models/case.model'
 import { CaseString } from '../models/caseString.model'
 import { DateLog } from '../models/dateLog.model'
+import { transformDefendants } from './case.interceptor'
 
 @Injectable()
 export class CaseListInterceptor implements NestInterceptor {
@@ -29,7 +30,7 @@ export class CaseListInterceptor implements NestInterceptor {
             policeCaseNumbers: theCase.policeCaseNumbers,
             state: theCase.state,
             type: theCase.type,
-            defendants: theCase.defendants,
+            defendants: transformDefendants(theCase.defendants),
             courtCaseNumber: theCase.courtCaseNumber,
             decision: theCase.decision,
             validToDate: theCase.validToDate,

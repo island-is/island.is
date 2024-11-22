@@ -40,7 +40,7 @@ import {
   CaseType,
   DateType,
   dateTypes,
-  DefendantEventType,
+  defendantEventTypes,
   EventType,
   eventTypes,
   isCompletedCase,
@@ -60,8 +60,12 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { CivilClaimant, Defendant, DefendantService } from '../defendant'
-import { DefendantEventLog } from '../defendant/models/eventLog.model'
+import {
+  CivilClaimant,
+  Defendant,
+  DefendantEventLog,
+  DefendantService,
+} from '../defendant'
 import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
@@ -287,6 +291,14 @@ export const include: Includeable[] = [
         order: [['created', 'DESC']],
         separate: true,
       },
+      {
+        model: DefendantEventLog,
+        as: 'eventLogs',
+        required: false,
+        where: { eventType: defendantEventTypes },
+        order: [['created', 'DESC']],
+        separate: true,
+      },
     ],
     separate: true,
   },
@@ -318,12 +330,6 @@ export const include: Includeable[] = [
     where: { eventType: eventTypes },
     order: [['created', 'DESC']],
     separate: true,
-  },
-  {
-    model: DefendantEventLog,
-    as: 'defendantEventLogs',
-    required: false,
-    where: { eventType: { [Op.in]: DefendantEventType } },
   },
   {
     model: DateLog,

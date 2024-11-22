@@ -10,15 +10,23 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
+import { DefendantEventType } from '@island.is/judicial-system/types'
+
 import { Case } from '../../case/models/case.model'
 import { Defendant } from './defendant.model'
-import { DefendantEventType } from '@island.is/judicial-system/types'
 
 @Table({
   tableName: 'defendant_event_log',
   timestamps: true,
 })
 export class DefendantEventLog extends Model {
+  static sentToPrisonAdminDate(defendantEventLogs?: DefendantEventLog[]) {
+    return defendantEventLogs?.find(
+      (defendantEventLog) =>
+        defendantEventLog.eventType === DefendantEventType.SENT_TO_PRISON_ADMIN,
+    )
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,

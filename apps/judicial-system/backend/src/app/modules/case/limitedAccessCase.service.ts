@@ -22,10 +22,10 @@ import {
   CaseFileState,
   CaseNotificationType,
   CaseState,
-  DateType,
-  DefendantEventType,
-  EventType,
-  StringType,
+  dateTypes,
+  defendantEventTypes,
+  eventTypes,
+  stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -35,9 +35,9 @@ import {
   CivilClaimant,
   CivilClaimantService,
   Defendant,
+  DefendantEventLog,
   DefendantService,
 } from '../defendant'
-import { DefendantEventLog } from '../defendant/models/eventLog.model'
 import { EventLog } from '../event-log'
 import { CaseFile, defenderCaseFileCategoriesForRequestCases } from '../file'
 import { IndictmentCount } from '../indictment-count'
@@ -184,6 +184,14 @@ export const include: Includeable[] = [
         order: [['created', 'DESC']],
         separate: true,
       },
+      {
+        model: DefendantEventLog,
+        as: 'eventLogs',
+        required: false,
+        where: { eventType: defendantEventTypes },
+        order: [['created', 'DESC']],
+        separate: true,
+      },
     ],
     separate: true,
   },
@@ -234,21 +242,15 @@ export const include: Includeable[] = [
     model: EventLog,
     as: 'eventLogs',
     required: false,
-    where: { eventType: EventType },
+    where: { eventType: eventTypes },
     order: [['created', 'DESC']],
     separate: true,
-  },
-  {
-    model: DefendantEventLog,
-    as: 'defendantEventLogs',
-    required: false,
-    where: { eventType: { [Op.in]: DefendantEventType } },
   },
   {
     model: DateLog,
     as: 'dateLogs',
     required: false,
-    where: { dateType: DateType },
+    where: { dateType: dateTypes },
     order: [['created', 'DESC']],
     separate: true,
   },
@@ -256,7 +258,7 @@ export const include: Includeable[] = [
     model: CaseString,
     as: 'caseStrings',
     required: false,
-    where: { stringType: StringType },
+    where: { stringType: stringTypes },
     separate: true,
   },
   { model: Case, as: 'mergeCase', attributes },

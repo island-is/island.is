@@ -7,12 +7,23 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
+import { Defendant, DefendantEventLog } from '../../defendant'
 import { Case } from '../models/case.model'
 import { CaseString } from '../models/caseString.model'
+
+export const transformDefendants = (defendants?: Defendant[]) => {
+  return defendants?.map((defendant) => ({
+    ...defendant.toJSON(),
+    sentToPrisonAdminDate: DefendantEventLog.sentToPrisonAdminDate(
+      defendant.eventLogs,
+    )?.created,
+  }))
+}
 
 const transformCase = (theCase: Case) => {
   return {
     ...theCase.toJSON(),
+    defendants: transformDefendants(theCase.defendants),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
     civilDemands: CaseString.civilDemands(theCase.caseStrings),
