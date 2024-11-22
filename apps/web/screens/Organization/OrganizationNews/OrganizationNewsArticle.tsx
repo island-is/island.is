@@ -30,6 +30,7 @@ import {
 } from '@island.is/web/screens/queries'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractCustomTopLoginButtonItemFromOrganization'
 
 export interface OrganizationNewsArticleProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -224,11 +225,16 @@ OrganizationNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'News not found')
   }
 
+  const organizationNamespace = extractNamespaceFromOrganization(
+    organizationPage.organization,
+  )
+
   return {
     organizationPage: organizationPage,
     newsItem,
     namespace,
     locale: locale as Locale,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }

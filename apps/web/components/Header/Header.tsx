@@ -32,6 +32,7 @@ interface HeaderProps {
   // @ts-ignore make web strict
   megaMenuData
   organizationSearchFilter?: string
+  customTopLoginButtonItem: LayoutProps['customTopLoginButtonItem']
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -42,6 +43,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   megaMenuData,
   languageToggleQueryParams,
   organizationSearchFilter,
+  customTopLoginButtonItem,
   children,
 }) => {
   const { activeLocale, t } = useI18n()
@@ -102,7 +104,10 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                     )}
 
                     <Box marginLeft={marginLeft}>
-                      <LoginButton colorScheme={buttonColorScheme} />
+                      <LoginButton
+                        colorScheme={buttonColorScheme}
+                        topItem={customTopLoginButtonItem}
+                      />
                     </Box>
 
                     <Box

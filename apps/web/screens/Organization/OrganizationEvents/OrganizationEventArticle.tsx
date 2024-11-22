@@ -43,6 +43,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractCustomTopLoginButtonItemFromOrganization'
 import { getOrganizationSidebarNavigationItems } from '@island.is/web/utils/organization'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -342,11 +343,16 @@ OrganizationEventArticle.getProps = async ({ apolloClient, query, locale }) => {
     )
   }
 
+  const organizationNamespace = extractNamespaceFromOrganization(
+    organizationPage.organization,
+  )
+
   return {
     organizationPage,
     event,
     namespace,
     locale: locale as Locale,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }

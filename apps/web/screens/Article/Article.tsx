@@ -51,6 +51,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractCustomTopLoginButtonItemFromOrganization'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import { getOrganizationLink } from '@island.is/web/utils/organization'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -907,11 +908,16 @@ ArticleScreen.getProps = async ({ apolloClient, query, locale }) => {
         apolloClient,
       )
 
+  const organizationNamespace = extractNamespaceFromOrganization(
+    article.organization?.[0],
+  )
+
   return {
     article,
     namespace,
     stepOptionsFromNamespace,
     stepperNamespace,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     ...getThemeConfig(article),
   }
 }

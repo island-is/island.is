@@ -40,6 +40,7 @@ import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { extractNamespaceFromOrganization } from '@island.is/web/utils/extractCustomTopLoginButtonItemFromOrganization'
 
 import {
   CustomScreen,
@@ -1300,10 +1301,14 @@ PensionCalculator.getProps = async ({
       : dateOfCalculationsOptions[0].value,
   }
 
+  const organizationNamespace =
+    extractNamespaceFromOrganization(getOrganization)
+
   return {
     organizationPage: getOrganizationPage,
     organization: getOrganization,
     defaultValues,
+    customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     dateOfCalculationsOptions,
     ...getThemeConfig(
       getOrganizationPage?.theme,
