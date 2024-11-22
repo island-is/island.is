@@ -1,3 +1,4 @@
+import { sanitizeSheetName } from '@island.is/service-portal/core'
 import XLSX from 'xlsx'
 const locale = 'is-IS'
 
@@ -45,7 +46,7 @@ export const downloadVehicleOwnedFile = async (
     showOperatorVehicles ? header[1] : null,
     ...(showOperatorVehicles ? data[1] : [['Ekkert fannst']]),
   ]
-  const sheetName = name.substring(0, 31) // Max length for a sheet name.
+  const sheetName = sanitizeSheetName(name)
 
   const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)
   const workbook: XLSX.WorkBook = {
