@@ -312,7 +312,7 @@ export const routesTemplate = {
     en: '',
   },
   styrkjatorgsearch: {
-    is: '/styrkjatorg/leit',
+    is: '/styrkjatorg/styrkir',
     en: '',
   },
   styrkjatorggrant: {
