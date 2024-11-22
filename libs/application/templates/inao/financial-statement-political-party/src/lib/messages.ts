@@ -558,4 +558,16 @@ export const m = defineMessages({
     defaultMessage: 'Ekki er leyfilegt að setja inn neikvæðar tölur',
     description: 'Error message when a required field has not been filled',
   },
+  notAllowedTitle: {
+    id: 'fspp.application:notAllowedTitle',
+    defaultMessage:
+      'Þessi kennitala er ekki skráð sem stjórnmálasamtök hjá Ríkisendurskoðun',
+    description: 'Title when user is not allowed to apply',
+  },
+  notAllowedDescription: {
+    id: 'fspp.application:notAllowedDescription',
+    defaultMessage:
+      'Ef þú telur að þessi kennitala ætti að vera skráð sem stjórnmálasamtök þá bendum við þér á að hafa samband við Ríkisendurskoðun í síma 448 8800',
+    description: 'Descriptionwhen user is not allowed to apply',
+  },
 })

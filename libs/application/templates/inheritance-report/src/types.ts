@@ -302,7 +302,7 @@ export enum DebtTypes {
   Overdraft = 'Yfirdráttur',
   CreditCard = 'Kreditkort',
   Loan = 'Lán',
-  InsuranceCompany = 'Tryggingafélag',
-  PropertyFees = 'Fastagjöld',
+  PropertyFees = 'Fasteignagjöld',
   OtherDebts = 'Aðrar skuldir',
+  PublicCharges = 'Opinber gjöld',
 }
