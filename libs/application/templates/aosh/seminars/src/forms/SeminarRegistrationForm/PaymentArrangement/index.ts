@@ -5,6 +5,7 @@ import {
   buildDescriptionField,
   buildLinkField,
   buildMultiField,
+  buildPhoneField,
   buildRadioField,
   buildSection,
   buildTextField,
@@ -49,13 +50,17 @@ export const paymentArrangementSection = buildSection({
           title: paymentArrangement.labels.email,
           width: 'half',
           required: true,
+          backgroundColor: 'white',
+          readOnly: true,
           condition: (answers: FormValue) => isIndividual(answers),
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'paymentArrangement.individualInfo.phone',
           title: paymentArrangement.labels.phonenumber,
           width: 'half',
           required: true,
+          backgroundColor: 'white',
+          readOnly: true,
           condition: (answers: FormValue) => isIndividual(answers),
         }),
         buildLinkField({
@@ -114,7 +119,7 @@ export const paymentArrangementSection = buildSection({
           required: true,
           condition: (answers: FormValue) => isCompany(answers),
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'paymentArrangement.contactInfo.phone',
           title: paymentArrangement.labels.contactPhone,
           width: 'half',

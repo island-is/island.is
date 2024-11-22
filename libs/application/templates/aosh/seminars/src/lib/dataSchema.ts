@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { IndividualOrCompany, PaymentOptions } from '../shared/contstants'
+import { isValidPhoneNumber } from '../utils'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -32,14 +33,14 @@ const PaymentArrangementSchema = z.object({
     label: z.string().min(1),
   }),
   // individualInfo: z.object({
-  //   email: z.string().optional(), // .min(1),
-  //   phone: z.string().optional(), // .min(1),
+  //   email: z.string().email(),
+  //   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   // }).optional(),
   contactInfo: z.object({
-    email: z.string().min(1),
-    phone: z.string().min(1),
+    email: z.string().email(),
+    phone: z.string().refine((v) => isValidPhoneNumber(v)),
   }),
-  explanation: z.string().min(1),
+  explanation: z.string().optional(),
   // agreementCheckbox: z.string().optional(), // .min(1),
 }) // TODO: refine super well!
 
