@@ -159,7 +159,7 @@ export class UserProfileServiceV1 {
     return userProfileResponse
   }
 
-  async updateUserProfile(
+  async updateMeUserProfile(
     input: UpdateUserProfileInput,
     user: User,
   ): Promise<UserProfile> {

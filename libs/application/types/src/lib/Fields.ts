@@ -8,7 +8,13 @@ import type {
   ResponsiveProp,
   SpanType,
 } from '@island.is/island-ui/core/types'
-import { FormItem, FormText, FormTextArray, StaticText } from './Form'
+import {
+  FormItem,
+  FormText,
+  FormTextArray,
+  FormTextWithLocale,
+  StaticText,
+} from './Form'
 import { ApolloClient } from '@apollo/client'
 import { Application } from './Application'
 import { CallToAction } from './StateMachine'
@@ -27,6 +33,9 @@ export type MaybeWithApplication<T> = T | ((application: Application) => T)
 export type MaybeWithApplicationAndField<T> =
   | T
   | ((application: Application, field: Field) => T)
+export type MaybeWithApplicationAndFieldAndLocale<T> =
+  | T
+  | ((application: Application, field: Field, locale: Locale) => T)
 export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
 export type TitleVariants = 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
@@ -62,6 +71,7 @@ export type TableRepeaterFields =
   | 'checkbox'
   | 'date'
   | 'nationalIdWithName'
+  | 'phone'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -130,6 +140,11 @@ export type TableRepeaterItem = {
       suffix?: string
     }
   | {
+      component: 'phone'
+      allowedCountryCodes?: string[]
+      enableCountrySelector?: boolean
+    }
+  | {
       component: 'date'
       label: StaticText
       locale?: Locale
@@ -155,6 +170,10 @@ export type TableRepeaterItem = {
     }
   | {
       component: 'nationalIdWithName'
+    }
+  | {
+      component: 'phone'
+      format: string
     }
 )
 
@@ -187,8 +206,8 @@ export interface SelectOption<T = string | number> {
 export interface BaseField extends FormItem {
   readonly id: string
   readonly component: FieldComponents | string
-  readonly title: FormText
-  readonly description?: FormText
+  readonly title: FormTextWithLocale
+  readonly description?: FormTextWithLocale
   readonly children: undefined
   disabled?: boolean
   width?: FieldWidth
@@ -237,6 +256,7 @@ export enum FieldTypes {
   HIDDEN_INPUT = 'HIDDEN_INPUT',
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
+  VEHICLE_RADIO = 'VEHICLE_RADIO',
   STATIC_TABLE = 'STATIC_TABLE',
   ACCORDION = 'ACCORDION',
   BANK_ACCOUNT = 'BANK_ACCOUNT',
@@ -271,6 +291,7 @@ export enum FieldComponents {
   TABLE_REPEATER = 'TableRepeaterFormField',
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
+  VEHICLE_RADIO = 'VehicleRadioFormField',
   STATIC_TABLE = 'StaticTableFormField',
   ACCORDION = 'AccordionFormField',
   BANK_ACCOUNT = 'BankAccountFormField',
@@ -280,7 +301,7 @@ export enum FieldComponents {
 export interface CheckboxField extends InputField {
   readonly type: FieldTypes.CHECKBOX
   component: FieldComponents.CHECKBOX
-  options: MaybeWithApplicationAndField<Option[]>
+  options: MaybeWithApplicationAndFieldAndLocale<Option[]>
   large?: boolean
   strong?: boolean
   backgroundColor?: InputBackgroundColor
@@ -294,6 +315,8 @@ export interface DateField extends InputField {
   component: FieldComponents.DATE
   maxDate?: MaybeWithApplicationAndField<Date>
   minDate?: MaybeWithApplicationAndField<Date>
+  minYear?: number
+  maxYear?: number
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
@@ -315,7 +338,7 @@ export interface DescriptionField extends BaseField {
 export interface RadioField extends InputField {
   readonly type: FieldTypes.RADIO
   component: FieldComponents.RADIO
-  options: MaybeWithApplicationAndField<Option[]>
+  options: MaybeWithApplicationAndFieldAndLocale<Option[]>
   backgroundColor?: InputBackgroundColor
   largeButtons?: boolean
   space?: BoxProps['paddingTop']
@@ -327,7 +350,7 @@ export interface RadioField extends InputField {
 export interface SelectField extends InputField {
   readonly type: FieldTypes.SELECT
   component: FieldComponents.SELECT
-  options: MaybeWithApplicationAndField<Option[]>
+  options: MaybeWithApplicationAndFieldAndLocale<Option[]>
   onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
@@ -605,6 +628,7 @@ export type TableRepeaterField = BaseField & {
   component: FieldComponents.TABLE_REPEATER
   formTitle?: StaticText
   addItemButtonText?: StaticText
+  cancelButtonText?: StaticText
   saveItemButtonText?: StaticText
   getStaticTableData?: (application: Application) => Record<string, string>[]
   removeButtonTooltipText?: StaticText
@@ -651,6 +675,22 @@ export interface FindVehicleField extends InputField {
   isMachine?: boolean
   isEnergyFunds?: boolean
   energyFundsMessages?: Record<string, FormText>
+}
+
+export interface VehicleRadioField extends InputField {
+  readonly type: FieldTypes.VEHICLE_RADIO
+  component: FieldComponents.VEHICLE_RADIO
+  itemType: 'VEHICLE' | 'PLATE'
+  itemList: unknown[]
+  shouldValidateDebtStatus?: boolean
+  shouldValidateRenewal?: boolean
+  alertMessageErrorTitle?: FormText
+  validationErrorMessages?: Record<string, FormText>
+  validationErrorFallbackMessage?: FormText
+  inputErrorMessage: FormText
+  debtStatusErrorMessage?: FormText
+  renewalExpiresAtTag?: StaticText
+  validateRenewal?: (item: unknown) => boolean
 }
 
 export interface HiddenInputWithWatchedValueField extends BaseField {
@@ -747,6 +787,7 @@ export type Field =
   | HiddenInputWithWatchedValueField
   | HiddenInputField
   | FindVehicleField
+  | VehicleRadioField
   | StaticTableField
   | AccordionField
   | BankAccountField

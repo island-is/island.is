@@ -20,7 +20,6 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
-  DefenderChoice,
   isFailedServiceStatus,
   isSuccessfulServiceStatus,
   isTrafficViolationCase,
@@ -31,7 +30,9 @@ import {
 
 import { Case } from '../case/models/case.model'
 import { PdfService } from '../case/pdf.service'
+import { DefendantService } from '../defendant/defendant.service'
 import { Defendant } from '../defendant/models/defendant.model'
+import { EventService } from '../event'
 import { FileService } from '../file'
 import { PoliceService } from '../police'
 import { User } from '../user'
@@ -60,15 +61,15 @@ export const include: Includeable[] = [
 @Injectable()
 export class SubpoenaService {
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
-    @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
     private readonly pdfService: PdfService,
     private readonly messageService: MessageService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
+    private readonly eventService: EventService,
+    private readonly defendantService: DefendantService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -109,53 +110,36 @@ export class SubpoenaService {
   private async addMessagesForSubpoenaUpdateToQueue(
     subpoena: Subpoena,
     serviceStatus?: ServiceStatus,
-    defenderChoice?: DefenderChoice,
-    defenderNationalId?: string,
   ): Promise<void> {
-    const messages: Message[] = []
+    let message: Message | undefined = undefined
 
     if (serviceStatus && serviceStatus !== subpoena.serviceStatus) {
       if (isSuccessfulServiceStatus(serviceStatus)) {
-        messages.push({
+        message = {
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
           body: {
             type: SubpoenaNotificationType.SERVICE_SUCCESSFUL,
           },
-        })
+        }
       } else if (isFailedServiceStatus(serviceStatus)) {
-        messages.push({
+        message = {
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
           body: {
             type: SubpoenaNotificationType.SERVICE_FAILED,
           },
-        })
+        }
       }
     }
 
-    if (
-      defenderChoice === DefenderChoice.CHOOSE &&
-      (defenderChoice !== subpoena.defendant?.defenderChoice ||
-        defenderNationalId !== subpoena.defendant?.defenderNationalId)
-    ) {
-      messages.push({
-        type: MessageType.SUBPOENA_NOTIFICATION,
-        caseId: subpoena.caseId,
-        elementId: [subpoena.defendantId, subpoena.id],
-        body: {
-          type: SubpoenaNotificationType.DEFENDANT_SELECTED_DEFENDER,
-        },
-      })
-    }
-
-    if (messages.length === 0) {
+    if (!message) {
       return
     }
 
-    return this.messageService.sendMessagesToQueue(messages)
+    return this.messageService.sendMessagesToQueue([message])
   }
 
   async update(
@@ -189,55 +173,60 @@ export class SubpoenaService {
     }
 
     if (
-      defenderChoice ||
-      defenderNationalId ||
-      requestedDefenderChoice ||
-      requestedDefenderNationalId
+      subpoena.case &&
+      subpoena.defendant &&
+      (defenderChoice ||
+        defenderNationalId ||
+        defenderName ||
+        defenderEmail ||
+        defenderPhoneNumber ||
+        requestedDefenderChoice ||
+        requestedDefenderNationalId ||
+        requestedDefenderName)
     ) {
       // If there is a change in the defender choice after the judge has confirmed the choice,
       // we need to set the isDefenderChoiceConfirmed to false
-      const isChangingDefenderChoice =
-        (defenderChoice &&
+      const resetDefenderChoiceConfirmed =
+        subpoena.defendant?.isDefenderChoiceConfirmed &&
+        ((defenderChoice &&
           subpoena.defendant?.defenderChoice !== defenderChoice) ||
-        (defenderNationalId &&
-          subpoena.defendant?.defenderNationalId !== defenderNationalId &&
-          subpoena.defendant?.isDefenderChoiceConfirmed)
+          (defenderNationalId &&
+            subpoena.defendant?.defenderNationalId !== defenderNationalId))
 
-      const defendantUpdate: Partial<Defendant> = {
-        defenderChoice,
-        defenderNationalId,
-        defenderName,
-        defenderEmail,
-        defenderPhoneNumber,
-        requestedDefenderChoice,
-        requestedDefenderNationalId,
-        requestedDefenderName,
-        isDefenderChoiceConfirmed: isChangingDefenderChoice ? false : undefined,
-      }
-
-      const [numberOfAffectedRows] = await this.defendantModel.update(
-        defendantUpdate,
+      // Færa message handling í defendant service
+      await this.defendantService.updateRestricted(
+        subpoena.case,
+        subpoena.defendant,
         {
-          where: { id: subpoena.defendantId },
-          transaction,
+          defenderChoice,
+          defenderNationalId,
+          defenderName,
+          defenderEmail,
+          defenderPhoneNumber,
+          requestedDefenderChoice,
+          requestedDefenderNationalId,
+          requestedDefenderName,
         },
+        resetDefenderChoiceConfirmed ? false : undefined,
+        transaction,
       )
-
-      if (numberOfAffectedRows > 1) {
-        // Tolerate failure, but log error
-        this.logger.error(
-          `Unexpected number of rows ${numberOfAffectedRows} affected when updating defendant`,
-        )
-      }
     }
 
     // No need to wait for this to finish
-    this.addMessagesForSubpoenaUpdateToQueue(
-      subpoena,
-      serviceStatus,
-      defenderChoice,
-      defenderNationalId,
-    )
+    this.addMessagesForSubpoenaUpdateToQueue(subpoena, serviceStatus)
+
+    if (
+      update.serviceStatus &&
+      update.serviceStatus !== subpoena.serviceStatus &&
+      subpoena.case
+    ) {
+      this.eventService.postEvent(
+        'SUBPOENA_SERVICE_STATUS',
+        subpoena.case,
+        false,
+        { Staða: Subpoena.serviceStatusText(update.serviceStatus) },
+      )
+    }
 
     return this.findBySubpoenaId(subpoena.subpoenaId)
   }
@@ -319,6 +308,10 @@ export class SubpoenaService {
           `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena for subpoena ${subpoena.id}`,
         )
       }
+
+      this.logger.info(
+        `Subpoena ${createdSubpoena.subpoenaId} delivered to police`,
+      )
 
       return { delivered: true }
     } catch (error) {

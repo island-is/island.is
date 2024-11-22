@@ -30,6 +30,7 @@ import {
   MachinesWithTotalCount,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
+import { User } from '@island.is/auth-nest-tools'
 @Injectable()
 export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiService {
   constructor(
@@ -270,6 +271,101 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     return null
   }
 
+  private async deleteOwnerChange(
+    auth: User,
+    applicationId: string,
+  ): Promise<void> {
+    try {
+      const deleteChange = {
+        ownerchangeId: applicationId,
+        xCorrelationID: applicationId,
+      }
+      await this.workMachineClientService.deleteOwnerChange(auth, deleteChange)
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete owner change for application ${applicationId}`,
+        error,
+      )
+      throw error
+    }
+  }
+
+  async deleteApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    // 1. Delete charge so that the seller gets reimburshed
+    const chargeId = getPaymentIdFromExternalData(application)
+    try {
+      if (chargeId) {
+        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+      }
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete charge ${chargeId} for application ${application.id}`,
+        error,
+      )
+      throw error
+    }
+
+    // 2. Delete owner change in work machines
+    await this.deleteOwnerChange(auth, application.id)
+
+    // 3. Notify everyone in the process that the application has been withdrawn
+
+    // 3a. Get list of users that need to be notified
+    const answers = application.answers as TransferOfMachineOwnershipAnswers
+    const recipientList = getRecipients(answers, [
+      EmailRole.seller,
+      EmailRole.buyer,
+    ])
+
+    // 3b. Send email/sms individually to each recipient about success of withdrawing application
+    const deletedByRecipient = getRecipientBySsn(answers, auth.nationalId)
+    for (let i = 0; i < recipientList.length; i++) {
+      if (recipientList[i].email) {
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) =>
+              generateApplicationRejectedEmail(
+                props,
+                recipientList[i],
+                deletedByRecipient,
+              ),
+            application,
+          )
+          .catch((e) => {
+            this.logger.error(
+              `Error sending email about deleteApplication in application: ID: ${application.id}, 
+            role: ${recipientList[i].role}`,
+              e,
+            )
+          })
+      }
+
+      if (recipientList[i].phone) {
+        await this.sharedTemplateAPIService
+          .sendSms(
+            () =>
+              generateApplicationRejectedSms(
+                application,
+                recipientList[i],
+                deletedByRecipient,
+              ),
+            application,
+          )
+          .catch((e) => {
+            this.logger.error(
+              `Error sending sms about deleteApplication to 
+              a phonenumber in application: ID: ${application.id}, 
+              role: ${recipientList[i].role}`,
+              e,
+            )
+          })
+      }
+    }
+  }
+
   async rejectApplication({
     application,
     auth,
@@ -280,16 +376,19 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
       await this.chargeFjsV2ClientService.deleteCharge(chargeId)
     }
 
-    // 2. Notify everyone in the process that the application has been withdrawn
+    // 2. Delete owner change in work machines
+    await this.deleteOwnerChange(auth, application.id)
 
-    // 2a. Get list of users that need to be notified
+    // 3. Notify everyone in the process that the application has been withdrawn
+
+    // 3a. Get list of users that need to be notified
     const answers = application.answers as TransferOfMachineOwnershipAnswers
     const recipientList = getRecipients(answers, [
       EmailRole.seller,
       EmailRole.buyer,
     ])
 
-    // 2b. Send email/sms individually to each recipient about success of withdrawing application
+    // 3b. Send email/sms individually to each recipient about success of withdrawing application
     const rejectedByRecipient = getRecipientBySsn(answers, auth.nationalId)
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {

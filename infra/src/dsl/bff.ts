@@ -52,7 +52,7 @@ export const bffConfig = ({ key, services, clientName, clientId }: BffInfo) => {
         local: json([`http://localhost:4200/${key}`]),
         dev: ref((ctx) => json([`https://${getBaseUrl(ctx)}`])),
         staging: ref((ctx) => json([`https://${getBaseUrl(ctx)}`])),
-        prod: 'https://island.is',
+        prod: json(['https://island.is']),
       },
       BFF_LOGOUT_REDIRECT_URI: {
         local: `http://localhost:4200/${key}`,

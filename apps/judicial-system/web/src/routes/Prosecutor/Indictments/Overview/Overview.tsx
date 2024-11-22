@@ -9,7 +9,6 @@ import {
   Box,
   Button,
   RadioButton,
-  Text,
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -27,6 +26,7 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  PageTitle,
   ProsecutorCaseInfo,
   SectionHeading,
   ServiceAnnouncement,
@@ -188,11 +188,7 @@ const Overview: FC = () => {
             ></AlertMessage>
           </Box>
         )}
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            {formatMessage(strings.heading)}
-          </Text>
-        </Box>
+        <PageTitle>{formatMessage(strings.heading)}</PageTitle>
         <ProsecutorCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map((defendant) =>
           defendant.subpoenas?.map(
@@ -225,7 +221,7 @@ const Overview: FC = () => {
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCardActiveIndictment />
+          <InfoCardActiveIndictment displayVerdictViewDate />
         </Box>
         {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>

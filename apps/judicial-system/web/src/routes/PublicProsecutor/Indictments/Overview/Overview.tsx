@@ -25,22 +25,10 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import BlueBoxWithDate from '@island.is/judicial-system-web/src/components/BlueBoxWithIcon/BlueBoxWithDate'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
-import {
-  CaseIndictmentRulingDecision,
-  Defendant,
-  ServiceRequirement,
-} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './Overview.strings'
 type VisibleModal = 'REVIEWER_ASSIGNED'
-
-export const isDefendantInfoActionButtonDisabled = (defendant: Defendant) => {
-  return (
-    defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED ||
-    Boolean(defendant.verdictViewDate)
-  )
-}
 
 export const Overview = () => {
   const router = useRouter()

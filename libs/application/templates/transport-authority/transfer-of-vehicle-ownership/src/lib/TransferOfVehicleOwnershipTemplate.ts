@@ -34,7 +34,7 @@ import {
   CurrentVehiclesApi,
   InsuranceCompaniesApi,
 } from '../dataProviders'
-import { getChargeItemCodes, getExtraData, hasReviewerApproved } from '../utils'
+import { getChargeItemCodes, getExtraData, canReviewerApprove } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 
@@ -63,7 +63,7 @@ const reviewStatePendingAction = (
   role: string,
   nationalId: string,
 ): PendingAction => {
-  if (nationalId && !hasReviewerApproved(nationalId, application.answers)) {
+  if (nationalId && canReviewerApprove(nationalId, application.answers)) {
     return {
       title: corePendingActionMessages.waitingForReviewTitle,
       content: corePendingActionMessages.youNeedToReviewDescription,
@@ -203,8 +203,12 @@ const template: ApplicationTemplate<
             action: ApiActions.addReview,
             shouldPersistToExternalData: true,
           }),
+          // Note: only re-validating because it is possible to add buyerCoOwners and buyerOperators in this step
           onExit: defineTemplateApi({
             action: ApiActions.validateApplication,
+          }),
+          onDelete: defineTemplateApi({
+            action: ApiActions.deleteApplication,
           }),
           roles: [
             {

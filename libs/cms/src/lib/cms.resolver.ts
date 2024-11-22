@@ -121,6 +121,11 @@ import { TeamMemberResponse } from './models/teamMemberResponse.model'
 import { TeamList } from './models/teamList.model'
 import { TeamMember } from './models/teamMember.model'
 import { LatestGenericListItems } from './models/latestGenericListItems.model'
+import { GetGenericTagsInTagGroupsInput } from './dto/getGenericTagsInTagGroups.input'
+import { Grant } from './models/grant.model'
+import { GetGrantsInput } from './dto/getGrants.input'
+import { GetSingleGrantInput } from './dto/getSingleGrant.input'
+import { GrantList } from './models/grantList.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -266,7 +271,10 @@ export class CmsResolver {
   async getServiceWebPage(
     @Args('input') input: GetServiceWebPageInput,
   ): Promise<ServiceWebPage | null> {
-    return this.cmsContentfulService.getServiceWebPage(input.slug, input.lang)
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+      getElasticsearchIndex(input.lang),
+      { type: 'webServiceWebPage', slug: input.slug },
+    )
   }
 
   @CacheControl(defaultCache)
@@ -442,6 +450,23 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
+  @Query(() => GrantList)
+  async getGrants(@Args('input') input: GetGrantsInput): Promise<GrantList> {
+    return this.cmsElasticsearchService.getGrants(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => Grant, { nullable: true })
+  async getSingleGrant(
+    @Args('input') { lang, id }: GetSingleGrantInput,
+  ): Promise<Grant | null> {
+    return this.cmsContentfulService.getGrant(lang, id)
+  }
+
+  @CacheControl(defaultCache)
   @Query(() => News, { nullable: true })
   getSingleNews(
     @Args('input') { lang, slug }: GetSingleNewsInput,
@@ -601,6 +626,14 @@ export class CmsResolver {
     @Args('input') input: GetGenericTagBySlugInput,
   ): Promise<GenericTag | null> {
     return this.cmsContentfulService.getGenericTagBySlug(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => [GenericTag], { nullable: true })
+  getGenericTagsInTagGroups(
+    @Args('input') input: GetGenericTagsInTagGroupsInput,
+  ): Promise<Array<GenericTag> | null> {
+    return this.cmsContentfulService.getGenericTagsInTagGroups(input)
   }
 
   @CacheControl(defaultCache)
