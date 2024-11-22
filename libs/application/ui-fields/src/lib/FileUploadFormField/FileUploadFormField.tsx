@@ -5,6 +5,7 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { FileUploadController } from '@island.is/application/ui-components'
 import { useFormContext } from 'react-hook-form'
+import set from 'lodash/set'
 
 interface Props extends FieldBaseProps {
   field: FileUploadField
@@ -28,25 +29,13 @@ export const FileUploadFormField = ({
     maxSizeErrorText,
     forImageUpload,
   } = field
-
-  const setNestedProperty = (obj: any, path: string, value: any): any => {
-    const keys = path.split('.')
-    const lastKey = keys.pop()
-    if (!lastKey) return obj
-    const nested = keys.reduce((acc, key) => (acc[key] = acc[key] || {}), {
-      ...obj,
-    })
-    nested[lastKey] = value
-    return obj
-  }
-
   const { formatMessage } = useLocale()
   const { watch } = useFormContext()
   const currentValue = watch(id)
 
   const onFileRemoveWhenInAnswers = (fileToRemove: UploadFile) => {
-    const updatedAnswers = setNestedProperty(
-      { ...application.answers },
+   const updatedAnswers = set(
+      application.answers,
       id,
       currentValue.filter((x: UploadFile) => x.key !== fileToRemove.key),
     )

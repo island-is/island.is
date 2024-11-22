@@ -156,3 +156,85 @@ export const mockApplicationFromTypeId = (
     status: ApplicationStatus.IN_PROGRESS,
   }
 }
+
+type RecordType = Record<string, unknown>
+
+export const removeObjectWithKeyFromAnswers = (
+  answers: object,
+  keyToRemove: string,
+): object => {
+  // Handle arrays
+  if (Array.isArray(answers)) {
+    return cleanArray(answers, keyToRemove)
+  }
+
+  // Handle objects
+  if (typeof answers === 'object' && answers !== null) {
+    return cleanObject(answers, keyToRemove)
+  }
+
+  return answers
+}
+
+const cleanArray = (array: unknown[], keyToRemove: string): unknown[] => {
+  const filteredArray = array.filter((item) => {
+    if (isValidObject(item)) {
+      return !containsKey(item, keyToRemove)
+    }
+    return item !== keyToRemove
+  })
+
+  return filteredArray.map((item) => {
+    if (isObject(item)) {
+      return removeObjectWithKeyFromAnswers(item, keyToRemove)
+    }
+    return item
+  })
+}
+
+const cleanObject = (obj: object, keyToRemove: string): RecordType => {
+  return Object.entries(obj).reduce<RecordType>((acc, [field, value]) => {
+    if (isValidObject(value)) {
+      // If it's not an array and contains the key, skip this object entirely
+      if (!Array.isArray(value) && containsKey(value, keyToRemove)) {
+        return acc
+      }
+
+      const cleanedValue = removeObjectWithKeyFromAnswers(value, keyToRemove)
+
+      // For arrays or objects with content, keep them
+      if (hasContent(cleanedValue)) {
+        acc[field] = cleanedValue
+      }
+      // Special case: keep empty arrays
+      else if (Array.isArray(value)) {
+        acc[field] = cleanedValue
+      }
+      return acc
+    }
+
+    // Handle primitive values
+    if (value !== keyToRemove) {
+      acc[field] = value
+    }
+    return acc
+  }, {})
+}
+
+const isValidObject = (value: unknown): value is object => {
+  return value !== null && typeof value === 'object'
+}
+
+const containsKey = (obj: object, key: string): boolean => {
+  return Object.values(obj).includes(key)
+}
+
+const hasContent = (value: unknown): boolean => {
+  if (Array.isArray(value)) {
+    return value.length > 0
+  }
+  if (isValidObject(value)) {
+    return Object.keys(value).length > 0
+  }
+  return false
+}

@@ -76,7 +76,10 @@ import { ApplicationResponseDto } from './dto/application.response.dto'
 import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
 import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { verifyToken } from './utils/tokenUtils'
-import { getApplicationLifecycle } from './utils/application'
+import { 
+  getApplicationLifecycle, 
+  removeObjectWithKeyFromAnswers 
+} from './utils/application'
 import { DecodedAssignmentToken } from './types'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
@@ -870,6 +873,7 @@ export class ApplicationController {
       existingApplication.id,
       {
         attachments: omit(existingApplication.attachments, key),
+        answers: removeObjectWithKeyFromAnswers(existingApplication.answers, key)
       },
     )
 
