@@ -141,7 +141,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       const expectedLink = `<a href="${mockConfig.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseId}">`
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
       expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
-        2,
+        1,
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: 'Úrskurður í máli 007-2022-07',
@@ -175,7 +175,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       const expectedLink = `<a href="${mockConfig.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${caseId}">`
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
       expect(mockEmailService.sendEmail).toHaveBeenNthCalledWith(
-        2,
+        1,
         expect.objectContaining({
           to: [{ name: testProsecutor.name, address: testProsecutor.email }],
           subject: 'Úrskurður í máli 007-2022-07 leiðréttur',
