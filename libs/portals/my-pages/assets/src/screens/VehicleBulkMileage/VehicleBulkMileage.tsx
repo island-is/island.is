@@ -145,12 +145,14 @@ const VehicleBulkMileage = () => {
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
           buttonGroup={[
             <LinkButton
+              key="upload"
               to={AssetsPaths.AssetsVehiclesBulkMileageUpload}
               text={formatMessage(vehicleMessage.bulkPostMileage)}
               icon="upload"
               variant="utility"
             />,
             <LinkButton
+              key="overview"
               to={AssetsPaths.AssetsVehiclesBulkMileageJobOverview}
               text={formatMessage(vehicleMessage.jobOverview)}
               icon="receipt"
