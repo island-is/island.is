@@ -6,7 +6,6 @@ import {
   CaseState,
   CaseType,
   EventType,
-  getIndictmentVerdictAppealDeadlineStatus,
   IndictmentCaseReviewDecision,
   isCourtOfAppealsUser,
   isDefenceUser,

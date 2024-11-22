@@ -3,7 +3,6 @@ import { CanActivate } from '@nestjs/common'
 import { TokenGuard } from '@island.is/judicial-system/auth'
 
 import { CaseExistsGuard } from '../../../case'
-import { DefendantExistsGuard } from '../../guards/defendantExists.guard'
 import { InternalDefendantController } from '../../internalDefendant.controller'
 
 describe('InternalDefendantController - guards', () => {
