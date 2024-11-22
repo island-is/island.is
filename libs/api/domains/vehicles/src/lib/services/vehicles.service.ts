@@ -46,6 +46,7 @@ import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
 import { MileageRegistrationHistory } from '../models/v3/mileageRegistrationHistory.model'
 import { VehiclesMileageUpdateError } from '../models/v3/vehicleMileageResponseError.model'
 import { UpdateResponseError } from '../dto/updateResponseError.dto'
+import { MileageRegistration } from '../models/v3/mileageRegistration.model'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -111,6 +112,7 @@ export class VehiclesService {
       showCoowned: true,
       showOperated: true,
       showOwned: true,
+      onlyMileageRequiredVehicles: input.filterOnlyRequiredMileageRegistration,
       page: input.page,
       pageSize: input.pageSize,
       permno: input.query
@@ -140,6 +142,21 @@ export class VehiclesService {
             if (!d.permno || !d.regno) {
               return null
             }
+
+            let lastMileageRegistration: MileageRegistration | undefined
+
+            if (
+              d.latestOriginCode &&
+              d.latestMileage &&
+              d.latestMileageReadDate
+            ) {
+              lastMileageRegistration = {
+                originCode: d.latestOriginCode,
+                mileage: d.latestMileage,
+                date: d.latestMileageReadDate,
+                internalId: d.latestMileageInternalId ?? undefined,
+              }
+            }
             return {
               vehicleId: d.permno,
               registrationNumber: d.regno,
@@ -147,6 +164,7 @@ export class VehiclesService {
               type: d.make ?? undefined,
               color: d.colorName ?? undefined,
               mileageDetails: {
+                lastMileageRegistration,
                 canRegisterMileage: d.canRegisterMilage ?? undefined,
                 requiresMileageRegistration:
                   d.requiresMileageRegistration ?? undefined,
@@ -377,28 +395,18 @@ export class VehiclesService {
       permno: input.permno,
     })
 
-    const [lastRegistration, ...history] = res
+    const samplePermno = res[0].permno
 
-    if (!lastRegistration.permno) {
+    if (!samplePermno) {
       return null
     }
 
     return {
-      vehicleId: lastRegistration.permno,
-      lastMileageRegistration:
-        lastRegistration.originCode &&
-        lastRegistration.readDate &&
-        lastRegistration.mileage
-          ? {
-              originCode: lastRegistration.originCode,
-              mileage: lastRegistration.mileage,
-              date: lastRegistration.readDate,
-            }
-          : undefined,
-      mileageRegistrationHistory: history?.length
-        ? history
+      vehicleId: samplePermno,
+      mileageRegistrationHistory: res?.length
+        ? res
             .map((h) => {
-              if (h.permno !== lastRegistration.permno) {
+              if (h.permno !== samplePermno) {
                 return null
               }
               if (!h.originCode || !h.mileage || !h.readDate) {
