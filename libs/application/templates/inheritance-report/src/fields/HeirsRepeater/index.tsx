@@ -213,9 +213,17 @@ export const HeirsRepeater: FC<
         : valueToNumber(getValueViaPath(answers, 'netPropertyForExchange'))
 
       const inheritanceValue = netPropertyForExchange * percentage
+      const customSpouseSharePercentage = getValueViaPath<string>(
+        answers,
+        'customShare.customSpouseSharePercentage',
+      )
+      const withCustomPercentage =
+        (100 - Number(customSpouseSharePercentage)) * 2
 
       const taxFreeInheritanceValue = isSpouse
         ? inheritanceValue
+        : customSpouseSharePercentage
+        ? (withCustomPercentage / 100) * inheritanceTaxFreeLimit * percentage
         : inheritanceTaxFreeLimit * percentage
       const taxableInheritanceValue = inheritanceValue - taxFreeInheritanceValue
 
