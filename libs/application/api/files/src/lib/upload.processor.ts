@@ -67,6 +67,9 @@ export class UploadProcessor {
         nationalId,
       )
 
+      // If the application exists
+      // And the attachments object doesnt have a property with the given key
+      // Dont update it with the new storage s3 url (because it doesnt exist)
       if (
         existingApplication &&
         !Object.prototype.hasOwnProperty.call(
