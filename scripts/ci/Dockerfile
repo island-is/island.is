@@ -45,7 +45,8 @@ RUN pwd && \
 
 FROM src AS builder
 ARG APP
-ARG APP_DIST_HOME
+ARG APP_HOME
+ARG APP_DIST_HOME=dist/${APP_HOME}
 ENV APP=${APP}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
@@ -77,7 +78,8 @@ USER runner
 
 FROM output-base-with-pg AS output-express
 
-ARG APP_DIST_HOME
+ARG APP_HOME
+ARG APP_DIST_HOME=dist/${APP_HOME}
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ARG GIT_BRANCH GIT_COMMIT_SHA GIT_REPOSITORY_URL
@@ -96,7 +98,7 @@ ENV PORT=4200
 # TODO: smallify
 COPY --from=deps /build/node_modules /webapp/node_modules
 ARG APP_HOME
-ARG APP_DIST_HOME
+ARG APP_DIST_HOME=dist/${APP_HOME}
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ARG GIT_BRANCH GIT_COMMIT_SHA GIT_REPOSITORY_URL
@@ -114,7 +116,8 @@ FROM ${DOCKER_REGISTRY}/nginx/nginx:1.21-alpine AS output-static
 RUN apk add --no-cache bash nodejs
 
 ARG APP
-ARG APP_DIST_HOME
+ARG APP_HOME
+ARG APP_DIST_HOME=dist/${APP_HOME}
 ENV APP=${APP}
 ENV BASEPATH=/
 
@@ -136,7 +139,8 @@ FROM output-base AS output-jest
 RUN npm install -g jest && \
   echo 'module.exports = {};' > jest.config.js
 
-ARG APP_DIST_HOME
+ARG APP_HOME
+ARG APP_DIST_HOME=dist/${APP_HOME}
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 USER runner
@@ -163,7 +167,7 @@ RUN apt-get update -y && \
   apt-get purge
 
 ARG APP_HOME
-ARG APP_DIST_HOME
+ARG APP_DIST_HOME=dist/${APP_HOME}
 
 COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} .
 COPY --chown=pwuser:pwuser ${APP_HOME}/package.json .
@@ -192,7 +196,7 @@ ENTRYPOINT ["./entrypoint.sh"]
 
 FROM playwright-base AS output-local
 ARG APP_HOME
-ARG APP_DIST_HOME
+ARG APP_DIST_HOME=dist/${APP_HOME}
 
 WORKDIR ${APP_DIST_HOME}
 
