@@ -7,8 +7,8 @@ services:
       args:
         DOCKER_TAG: local
         APP: air-discount-scheme-web
-        APP_HOME: ./apps/air-discount-scheme/web/
-        APP_DIST_HOME: ./apps/air-discount-scheme/web/
+        APP_HOME: apps/air-discount-scheme/web
+        APP_DIST_HOME: dist/apps/air-discount-scheme/web
         NODE_IMAGE_TAG: 18-alpine3.20
     # image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web:release-32-3-0_d7a1ed4de3_111062
     container_name: ads-web
@@ -21,6 +21,8 @@ services:
       interval: 1s
       timeout: 2s
       retries: 30
+    entrypoint: sh
+    command: "-c 'ls -lah && pwd && id && node main.js'"
 
   dss:
     image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/dss:4fd6e4cc2f5e17773cfc41669cf6aa5e85e1613a
