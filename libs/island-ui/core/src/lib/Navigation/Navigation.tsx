@@ -139,7 +139,7 @@ const MAX_LEVELS = 2
 
 const basePadding = {
   paddingY: 1,
-  paddingX: 3,
+  paddingX: 4,
 } as Pick<BoxProps, 'paddingY' | 'paddingX'>
 
 const defaultLinkRender: NavigationTreeProps['renderLink'] = (link) => link
@@ -545,8 +545,8 @@ export const NavigationTree: FC<
                     component={asSpan ? 'span' : 'a'}
                     href={asSpan ? undefined : href}
                     borderRadius="large"
-                    paddingLeft={isChildren ? 2 : 3}
-                    paddingRight={2}
+                    paddingLeft={isChildren ? [2, 2, 2, 3, 3] : [2, 2, 2, 4, 4]}
+                    paddingRight={3}
                     paddingY={isChildren ? 'smallGutter' : 1}
                     className={styles.link}
                     onClick={() => {
@@ -568,6 +568,7 @@ export const NavigationTree: FC<
                         <span
                           className={cn(styles.text, {
                             [styles.textNarrower]: isAccordion,
+                            [styles.innerText]: level === 2,
                           })}
                         >
                           <Text
@@ -576,7 +577,7 @@ export const NavigationTree: FC<
                             }`}
                             as="span"
                             color={textColor}
-                            variant={isChildren ? 'small' : 'default'}
+                            variant={isChildren ? 'medium' : 'default'}
                             fontWeight={active ? 'semiBold' : 'light'}
                           >
                             {title}
@@ -593,7 +594,6 @@ export const NavigationTree: FC<
                     onClick={() => {
                       toggleAccordion(accordionId)
                     }}
-                    background={colorSchemeColors[colorScheme]['dividerColor']}
                     marginRight={2}
                     aria-expanded={activeAccordion}
                     aria-controls={ariaId}
@@ -603,9 +603,9 @@ export const NavigationTree: FC<
                     )}
                   >
                     <Icon
-                      icon="add"
+                      icon="chevronBack"
                       color={colorSchemeColors[colorScheme]['color']}
-                      size="small"
+                      size="medium"
                       className={cn(
                         styles.icon,
                         activeAccordion
@@ -614,9 +614,9 @@ export const NavigationTree: FC<
                       )}
                     />
                     <Icon
-                      icon="remove"
+                      icon="chevronUp"
                       color={colorSchemeColors[colorScheme]['color']}
-                      size="small"
+                      size="medium"
                       className={cn(
                         styles.icon,
                         activeAccordion

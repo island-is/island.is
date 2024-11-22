@@ -1,5 +1,5 @@
-import { style, styleVariants } from '@vanilla-extract/css'
-import { theme } from '@island.is/island-ui/theme'
+import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const divider = style({
   width: '100%',
@@ -40,6 +40,10 @@ export const text = style({
   position: 'relative',
 })
 
+export const innerText = style({
+  position: 'relative',
+})
+
 export const textNarrower = style({
   width: 'calc(100% - 34px)',
 })
@@ -58,8 +62,17 @@ export const level = styleVariants({
   2: {
     marginTop: theme.spacing[1],
     marginBottom: theme.spacing[1],
-    marginLeft: theme.spacing[3],
-    marginRight: theme.spacing[3],
+
+    ...themeUtils.responsiveStyle({
+      xs: {
+        marginLeft: theme.spacing[2],
+        marginRight: theme.spacing[2],
+      },
+      lg: {
+        marginLeft: theme.spacing[4],
+        marginRight: theme.spacing[4],
+      },
+    }),
   },
 })
 
@@ -123,7 +136,6 @@ export const accordionIcon = style({
   lineHeight: 0,
   justifyContent: 'center',
   alignItems: 'center',
-  borderRadius: '50%',
   top: 10,
   right: 0,
   width: 24,
@@ -160,4 +172,12 @@ export const transition = style({
       opacity: 1,
     },
   },
+})
+
+globalStyle(`${text} > span`, {
+  fontSize: 18,
+})
+
+globalStyle(`${innerText} > span`, {
+  fontSize: 16,
 })
