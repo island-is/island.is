@@ -30,6 +30,9 @@ COPY .yarn/ ./.yarn
 # hadolint ignore=DL3018
 RUN CI=true yarn install --immutable && \
   yarn cache clean
+RUN echo "PWD: $PWD" && \
+  ls -lah && \
+  ls -lah -d node_modules/
 
 # Image with source code
 FROM deps AS src
@@ -44,6 +47,7 @@ COPY infra infra/
 COPY libs libs/
 COPY scripts scripts/
 COPY tools tools/
+
 RUN echo "PWD: $PWD" && \
   ls -lah
 
@@ -137,7 +141,6 @@ ARG APP_DIST_HOME
 ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
-ARG APP
 
 # hadolint ignore=DL3018
 RUN apk add --no-cache bash nodejs
@@ -190,13 +193,13 @@ ARG GIT_BRANCH
 ARG GIT_COMMIT_SHA
 ARG GIT_REPOSITORY_URL
 
-WORKDIR ${APP_DIST_HOME}
-
 # TODO: remove awscli dependency (157 MB extra)
 # hadolint ignore=DL3008
 RUN apt-get update -y && \
   apt-get install --no-install-recommends -y zip awscli && \
   apt-get purge
+
+WORKDIR /${APP_DIST_HOME}
 
 COPY --chown=pwuser:pwuser --from=builder /build/${APP_DIST_HOME} ./
 COPY --chown=pwuser:pwuser ${APP_HOME}/package.json ./
@@ -205,7 +208,8 @@ USER pwuser
 COPY --chown=pwuser:pwuser .yarnrc.yml ./
 RUN mkdir ./.yarn
 COPY --chown=pwuser:pwuser .yarn/releases ./.yarn/releases
-RUN CI=true yarn install --immutable
+RUN CI=true yarn install --immutable && \
+  yarn cache clean
 
 ENV PLAYWRIGHT_BROWSER=${PLAYWRIGHT_BROWSER}
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
