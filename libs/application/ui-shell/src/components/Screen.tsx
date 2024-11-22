@@ -399,6 +399,7 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
                   goToScreen={goToScreen}
                   refetch={refetch}
                   setSubmitButtonDisabled={setSubmitButtonDisabled}
+                  answerQuestions={answerQuestions}
                 />
               </Box>
             )}

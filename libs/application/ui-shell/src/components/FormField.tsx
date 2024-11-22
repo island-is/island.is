@@ -8,6 +8,7 @@ import {
   SetFieldLoadingState,
   SetBeforeSubmitCallback,
   SetSubmitButtonDisabled,
+  FormValue,
 } from '@island.is/application/types'
 
 import { useFields } from '../context/FieldContext'
@@ -19,6 +20,7 @@ const FormField: FC<
     setBeforeSubmitCallback?: SetBeforeSubmitCallback
     setFieldLoadingState?: SetFieldLoadingState
     setSubmitButtonDisabled?: SetSubmitButtonDisabled
+    answerQuestions?: (answers: FormValue) => void
     autoFocus?: boolean
     field: FieldDef
     showFieldName?: boolean
@@ -31,6 +33,7 @@ const FormField: FC<
   setBeforeSubmitCallback,
   setFieldLoadingState,
   setSubmitButtonDisabled,
+  answerQuestions,
   autoFocus,
   errors,
   field,
@@ -51,6 +54,7 @@ const FormField: FC<
     setBeforeSubmitCallback,
     setFieldLoadingState,
     setSubmitButtonDisabled,
+    answerQuestions,
     autoFocus,
     error,
     errors,

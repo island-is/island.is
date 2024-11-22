@@ -185,6 +185,7 @@ export interface FieldBaseProps<TAnswers = FormValue> {
   application: Application<TAnswers>
   showFieldName?: boolean
   goToScreen?: (id: string) => void
+  answerQuestions?: (answers: FormValue) => void
   refetch?: () => void
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState

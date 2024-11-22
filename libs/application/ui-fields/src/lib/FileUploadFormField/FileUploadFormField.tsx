@@ -10,7 +10,7 @@ interface Props extends FieldBaseProps {
   field: FileUploadField
 }
 
-export const FileUploadFormField = ({ application, field, error }: Props) => {
+export const FileUploadFormField = ({ application, answerQuestions, field, error }: Props) => {
   const {
     id,
     introduction,
@@ -24,13 +24,31 @@ export const FileUploadFormField = ({ application, field, error }: Props) => {
     forImageUpload,
   } = field
 
+  const setNestedProperty = (obj: any, path: string, value: any): any => {
+    const keys = path.split('.')
+    const lastKey = keys.pop()
+    if(!lastKey) return obj
+    const nested = keys.reduce((acc, key) => (acc[key] = acc[key] || {}), { ...obj })
+    nested[lastKey] = value
+    return obj
+  }
+
   const { formatMessage } = useLocale()
-  const { setValue, watch } = useFormContext()
+  const { watch } = useFormContext()
   const currentValue = watch(id)
 
-  const onRemove = (fileToRemove: UploadFile) => {
-    setValue(id, currentValue?.filter((x: UploadFile) => x.key !== fileToRemove.key))
+  const onFileRemoveWhenInAnswers = (fileToRemove : UploadFile) => {
+    const updatedAnswers = setNestedProperty(
+      { ...application.answers },
+      id,
+      currentValue.filter((x: UploadFile) => x.key !== fileToRemove.key)
+    )
+    answerQuestions?.({
+      ...application.answers,
+      ...updatedAnswers,
+    })
   }
+
   return (
     <div>
       {introduction && (
@@ -63,7 +81,7 @@ export const FileUploadFormField = ({ application, field, error }: Props) => {
             formatText(maxSizeErrorText, application, formatMessage)
           }
           forImageUpload={forImageUpload}
-          onRemove={onRemove}
+          onRemove={onFileRemoveWhenInAnswers}
         />
       </Box>
     </div>

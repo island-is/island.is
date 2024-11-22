@@ -106,6 +106,7 @@ const FormMultiField: FC<
                 setBeforeSubmitCallback={setBeforeSubmitCallback}
                 setFieldLoadingState={setFieldLoadingState}
                 setSubmitButtonDisabled={setSubmitButtonDisabled}
+                answerQuestions={answerQuestions} 
               />
             </Box>
           </GridColumn>
