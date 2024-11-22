@@ -9,4 +9,5 @@ bootstrap({
   port: environment.port,
   globalPrefix: environment.globalPrefix,
   healthCheck: true,
+  jsonBodyLimit: '350kb',
 })
