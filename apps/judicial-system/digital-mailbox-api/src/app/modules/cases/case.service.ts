@@ -211,14 +211,13 @@ export class CaseService {
   ): Promise<InternalCaseResponse> {
     try {
       const res = await fetch(
-        `${this.config.backendUrl}/api/internal/case/indictment/${id}`,
+        `${this.config.backendUrl}/api/internal/case/indictment/${id}/defendant/${nationalId}`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             authorization: `Bearer ${this.config.secretToken}`,
           },
-          body: JSON.stringify({ nationalId }),
         },
       )
 

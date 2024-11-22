@@ -2,6 +2,7 @@ export { Defendant } from './models/defendant.model'
 export { DefendantService } from './defendant.service'
 export { DefendantExistsGuard } from './guards/defendantExists.guard'
 export { CurrentDefendant } from './guards/defendant.decorator'
+export { DefendantNationalIdExistsGuard } from './guards/defendantNationalIdExists.guard'
 
 export { CivilClaimant } from './models/civilClaimant.model'
 export { CivilClaimantService } from './civilClaimant.service'
