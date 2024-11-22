@@ -146,38 +146,6 @@ export const getInventoryDataRow = (answers: FormValue): RowType[] => {
   ]
 }
 
-export const getClaimsDataRow = (answers: FormValue): RowType[] => {
-  const values = (answers.assets as unknown as EstateAssets)?.claims?.data
-
-  const data = (values ?? []).map((item) => {
-    const propertyValuation = roundedValueToNumber(item.propertyValuation)
-
-    const items: RowItemsType = [
-      {
-        title: m.claimsAmount,
-        value: formatCurrency(String(valueToNumber(item.value))),
-      },
-    ]
-
-    const deceasedShare = valueToNumber(item.deceasedShare ?? '0')
-
-    if (hasYes(item.deceasedShareEnabled)) {
-      items.push({
-        title: m.deceasedShare,
-        value: `${String(deceasedShare)}%`,
-      })
-    }
-
-    return {
-      title: item.description,
-      value: formatCurrency(String(propertyValuation)),
-      items,
-    }
-  })
-
-  return data
-}
-
 export const getStocksDataRow = (answers: FormValue): RowType[] => {
   const values = (answers.assets as unknown as EstateAssets)?.stocks?.data
 
@@ -289,26 +257,7 @@ export const getOtherAssetsDataRow = (answers: FormValue): RowType[] => {
 
 export const getMoneyDataRow = (answers: FormValue): RowType[] => {
   const values = (answers.assets as unknown as EstateAssets)?.money
-
   const items: RowItemsType = []
-
-  const deceasedShare = valueToNumber(values?.deceasedShare ?? '0')
-
-  if (values?.info) {
-    items.push({
-      title: m.moneyText,
-      value: values?.info,
-      type: 'info',
-    })
-  }
-
-  if (hasYes(values?.deceasedShareEnabled)) {
-    items.push({
-      title: m.deceasedShare,
-      value: `${String(deceasedShare)}%`,
-    })
-  }
-
   return [
     {
       title:

@@ -273,7 +273,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       const nationalIdOfOriginalRecipient =
         message.onBehalfOf?.nationalId ?? profile.nationalId
 
-      fullName = await this.getFullName(nationalIdOfOriginalRecipient)
+      fullName = await this.getName(nationalIdOfOriginalRecipient)
     }
 
     const isEnglish = profile.locale === 'en'
@@ -412,7 +412,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
               let recipientName = ''
 
               if (delegations.data.length > 0) {
-                recipientName = await this.getFullName(message.recipient)
+                recipientName = await this.getName(message.recipient)
               }
 
               await Promise.all(
@@ -441,16 +441,23 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     )
   }
 
-  private async getFullName(nationalId: string): Promise<string> {
-    let identity: CompanyExtendedInfo | EinstaklingurDTONafnItar | null
+  private async getName(nationalId: string): Promise<string> {
+    try {
+      let identity: CompanyExtendedInfo | EinstaklingurDTONafnItar | null
 
-    if (isCompany(nationalId)) {
-      identity = await this.companyRegistryService.getCompany(nationalId)
-      return identity?.name ?? ''
+      if (isCompany(nationalId)) {
+        identity = await this.companyRegistryService.getCompany(nationalId)
+        return identity?.name ?? ''
+      }
+
+      identity = await this.nationalRegistryService.getName(nationalId)
+      return identity?.birtNafn ?? ''
+    } catch (error) {
+      this.logger.error('Error getting name from national registry', {
+        error,
+      })
+      return ''
     }
-
-    identity = await this.nationalRegistryService.getName(nationalId)
-    return identity?.birtNafn ?? ''
   }
 
   /* Private methods */
