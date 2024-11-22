@@ -16,6 +16,7 @@ import {
   SAMGONGUSTOFA_SLUG,
   LinkButton,
   IntroHeader,
+  formatDate,
 } from '@island.is/service-portal/core'
 import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
 import * as styles from './VehicleBulkMileage.css'
@@ -188,10 +189,11 @@ const VehicleBulkMileage = () => {
               </Text>
               <Checkbox
                 name="onlyMileageRequiredVehicles"
-                label={'beg'}
-                value="onlyMileageRequiredVehicles"
-                checked={true}
-                onChange={() => undefined}
+                label={formatMessage(
+                  vehicleMessage.vehiclesRequireMileageRegistration,
+                )}
+                checked={filterValue}
+                onChange={() => setFilterValue(!filterValue)}
               />
             </Box>
           </Filter>
