@@ -36,6 +36,7 @@ grantNamespaces:
   - 'nginx-ingress-internal'
   - 'islandis'
   - 'identity-server-delegation'
+  - 'application-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

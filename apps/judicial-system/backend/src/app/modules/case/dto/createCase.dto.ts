@@ -6,6 +6,7 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  MaxLength,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
@@ -31,6 +32,7 @@ export class CreateCaseDto {
   readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly description?: string
@@ -38,26 +40,31 @@ export class CreateCaseDto {
   @IsNotEmpty()
   @IsArray()
   @ArrayMinSize(1)
+  @MaxLength(255, { each: true })
   @IsString({ each: true })
   @ApiProperty({ type: String, isArray: true })
   readonly policeCaseNumbers!: string[]
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderName?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderEmail?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly defenderPhoneNumber?: string
@@ -68,6 +75,7 @@ export class CreateCaseDto {
   readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly leadInvestigator?: string

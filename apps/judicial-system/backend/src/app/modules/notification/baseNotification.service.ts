@@ -9,7 +9,7 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { NotificationType } from '@island.is/judicial-system/types'
 
-import { stripHtmlTags } from '../../formatters'
+import { filterWhitelistEmails, stripHtmlTags } from '../../formatters'
 import { notifications } from '../../messages'
 import { EventService } from '../event'
 import { DeliverResponse } from './models/deliver.response'
@@ -53,6 +53,29 @@ export abstract class BaseNotificationService {
       })
   }
 
+  private async handleWhitelist(recipients: string[]): Promise<string[]> {
+    const whitelist = this.formatMessage(notifications.emailWhitelist)
+    const whitelistDomains = this.formatMessage(
+      notifications.emailWhitelistDomains,
+    )
+
+    const whitelistedEmails = filterWhitelistEmails(
+      recipients,
+      whitelistDomains,
+      whitelist,
+    )
+
+    if (whitelistedEmails.length === 0) {
+      this.logger.warn('No whitelisted emails found in recipients')
+    }
+
+    if (whitelistedEmails.length !== recipients?.length) {
+      this.logger.warn('Some emails missing from whitelist')
+    }
+
+    return whitelistedEmails
+  }
+
   protected async sendEmail(
     subject: string,
     html: string,
@@ -64,7 +87,11 @@ export abstract class BaseNotificationService {
     try {
       // This is to handle a comma separated list of emails
       // We use the first one as the main recipient and the rest as CC
-      const recipients = recipientEmail ? recipientEmail.split(',') : undefined
+      let recipients = recipientEmail ? recipientEmail.split(',') : undefined
+
+      if (this.config.shouldUseWhitelist && recipients) {
+        recipients = await this.handleWhitelist(recipients)
+      }
 
       html =
         html.match(/<a/g) || skipTail
