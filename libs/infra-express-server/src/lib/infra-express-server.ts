@@ -10,6 +10,23 @@ type RunServerParams = {
   port?: number
 }
 
+const setupExitHook = () => {
+  // Make sure the server doesn't hang after parent process disconnects, eg when
+  // e2e tests are finished.
+  if (process.env.NX_INVOKED_BY_RUNNER === 'true') {
+    process.on('disconnect', () => {
+      process.exit(0)
+    })
+  }
+
+  for (const signal of ['SIGHUP', 'SIGINT', 'SIGTERM']) {
+    process.on(signal, () => {
+      logger.warning(`Received ${signal}, exiting...`)
+      process.exit(0)
+    })
+  }
+}
+
 export const runServer = ({
   name,
   publicRoutes,
@@ -85,15 +102,6 @@ export const runServer = ({
     logger.info(`Listening on port ${servicePort}`)
   })
   server.on('error', logger.error)
-  process.on('SIGTERM', () => {
-    logger.info('Shutting down for SIGTERM')
-    server.close((error) => {
-      if (error) {
-        logger.error("Server wasn't even started", { name, error })
-      } else {
-        logger.info(`Webserver successfully shut down`, { name })
-      }
-    })
-  })
+  setupExitHook()
   return server
 }
