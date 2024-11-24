@@ -43,15 +43,15 @@ export class CaseService {
   }
 
   async getCase(
-    id: string,
+    caseId: string,
     nationalId: string,
     lang?: string,
   ): Promise<CaseResponse> {
     return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.GET_INDICTMENT,
-      this.getCaseInfo(id, nationalId, lang),
-      () => id,
+      this.getCaseInfo(caseId, nationalId, lang),
+      () => caseId,
     )
   }
 
@@ -92,11 +92,11 @@ export class CaseService {
   }
 
   private async getCaseInfo(
-    id: string,
+    caseId: string,
     nationalId: string,
     lang?: string,
   ): Promise<CaseResponse> {
-    const response = await this.fetchCase(id, nationalId)
+    const response = await this.fetchCase(caseId, nationalId)
     const defendantInfo = response.defendants.find(
       (defendant) =>
         defendant.nationalId &&
@@ -111,7 +111,10 @@ export class CaseService {
       defendantInfo.subpoenas?.[0]?.subpoenaId &&
       !defendantInfo.subpoenas[0].serviceStatus
     ) {
-      await this.fetchServiceStatus(id, defendantInfo.subpoenas[0].subpoenaId)
+      await this.fetchServiceStatus(
+        caseId,
+        defendantInfo.subpoenas[0].subpoenaId,
+      )
     }
 
     return CaseResponse.fromInternalCaseResponse(response, lang)
@@ -168,6 +171,7 @@ export class CaseService {
       requestedDefenderName: chosenLawyer?.Name,
     }
     await this.patchDefenseInfo(defendantNationalId, caseId, defenderChoice)
+
     const updatedCase = await this.fetchCase(caseId, defendantNationalId)
 
     return SubpoenaResponse.fromInternalCaseResponse(
@@ -206,12 +210,12 @@ export class CaseService {
   }
 
   private async fetchCase(
-    id: string,
+    caseId: string,
     nationalId: string,
   ): Promise<InternalCaseResponse> {
     try {
       const res = await fetch(
-        `${this.config.backendUrl}/api/internal/case/indictment/${id}/defendant/${nationalId}`,
+        `${this.config.backendUrl}/api/internal/case/indictment/${caseId}/defendant/${nationalId}`,
         {
           method: 'POST',
           headers: {
@@ -223,7 +227,7 @@ export class CaseService {
 
       if (!res.ok) {
         if (res.status === 404) {
-          throw new NotFoundException(`Case ${id} not found`)
+          throw new NotFoundException(`Case ${caseId} not found`)
         }
 
         const reason = await res.text()
