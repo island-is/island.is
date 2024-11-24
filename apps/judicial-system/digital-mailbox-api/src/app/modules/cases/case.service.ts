@@ -188,7 +188,7 @@ export class CaseService {
       const res = await fetch(
         `${this.config.backendUrl}/api/internal/cases/indictments/defendant/${nationalId}`,
         {
-          method: 'POST',
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             authorization: `Bearer ${this.config.secretToken}`,
@@ -217,7 +217,7 @@ export class CaseService {
       const res = await fetch(
         `${this.config.backendUrl}/api/internal/case/indictment/${caseId}/defendant/${nationalId}`,
         {
-          method: 'POST',
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             authorization: `Bearer ${this.config.secretToken}`,

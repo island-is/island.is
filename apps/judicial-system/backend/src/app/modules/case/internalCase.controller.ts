@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Inject,
   Param,
   Post,
@@ -76,7 +77,7 @@ export class InternalCaseController {
     return this.internalCaseService.archive()
   }
 
-  @Post('cases/indictments/defendant/:defendantNationalId')
+  @Get('cases/indictments/defendant/:defendantNationalId')
   @ApiOkResponse({
     type: Case,
     isArray: true,
@@ -98,7 +99,7 @@ export class InternalCaseController {
     new CaseTypeGuard(indictmentCases),
     DefendantNationalIdExistsGuard,
   )
-  @Post('case/indictment/:caseId/defendant/:defendantNationalId')
+  @Get('case/indictment/:caseId/defendant/:defendantNationalId')
   @ApiOkResponse({
     type: Case,
     description: 'Gets an existing indictment case by id for a given defendant',
