@@ -46,6 +46,7 @@ import {
   SliderField,
   MaybeWithApplication,
   MaybeWithApplicationAndFieldAndLocale,
+  DisplayField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -964,5 +965,13 @@ export const buildSliderField = (
     labelMultiplier,
     condition,
     saveAsString,
+  }
+}
+
+export const buildDisplayField = (
+  data: Omit<DisplayField, 'type' | 'component' | 'children'>,
+): DisplayField => {
+  return {
+    ...extractCommonFields(data),
   }
 }

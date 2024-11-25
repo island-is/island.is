@@ -261,6 +261,7 @@ export enum FieldTypes {
   ACCORDION = 'ACCORDION',
   BANK_ACCOUNT = 'BANK_ACCOUNT',
   SLIDER = 'SLIDER',
+  DISPLAY = 'DISPLAY',
 }
 
 export enum FieldComponents {
@@ -296,6 +297,7 @@ export enum FieldComponents {
   ACCORDION = 'AccordionFormField',
   BANK_ACCOUNT = 'BankAccountFormField',
   SLIDER = 'SliderFormField',
+  DISPLAY = 'DisplayFormField',
 }
 
 export interface CheckboxField extends InputField {
@@ -757,6 +759,11 @@ export interface SliderField extends BaseField {
   saveAsString?: boolean
 }
 
+export interface DisplayField extends BaseField {
+  readonly type: FieldTypes.DISPLAY
+  component: FieldComponents.DISPLAY
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -792,3 +799,4 @@ export type Field =
   | AccordionField
   | BankAccountField
   | SliderField
+  | DisplayField

@@ -2,6 +2,8 @@ import {
   buildCustomField,
   buildMultiField,
   buildSubSection,
+  buildDescriptionField,
+  buildDisplayField,
 } from '@island.is/application/core'
 import { CEMETERYOPERATIONIDS } from '../../../utils/constants'
 import { m } from '../../../lib/messages'
@@ -21,6 +23,17 @@ export const opperatingCostSubSection = buildSubSection({
           component: 'CemeteryOperation',
           childInputIds: Object.values(CEMETERYOPERATIONIDS),
         }),
+        buildDescriptionField({
+          id: 'cemetryKeyNumbersDescription',
+          title: 'title 1',
+          width: 'half',
+        }),
+        buildDescriptionField({
+          id: 'cemetryKeyNumbersDescription2',
+          title: 'title 2',
+          width: 'half',
+        }),
+        buildDisplayField({}),
       ],
     }),
   ],
