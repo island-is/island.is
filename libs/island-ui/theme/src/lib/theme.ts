@@ -2,11 +2,7 @@ import isEqual from 'lodash/isEqual'
 import type { StyleRule } from '@vanilla-extract/css'
 import omit from 'lodash/omit'
 import * as color from './colors/colors'
-import {
-  fontPrimitives,
-  spacingPrimitives,
-  radiusPrimitives,
-} from './tokens/tokens'
+import { fontPrimitives, spacingPrimitives, radiusPrimitives } from './tokens/tokens'
 
 const primaryFont = fontPrimitives.family.primary.$value //?? 'IBM Plex Sans'
 
