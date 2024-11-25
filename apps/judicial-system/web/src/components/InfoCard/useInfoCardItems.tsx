@@ -36,6 +36,7 @@ const useInfoCardItems = () => {
     caseType?: CaseType | null,
     displayAppealExpirationInfo?: boolean,
     displayVerdictViewDate?: boolean,
+    displaySentToPrisonAdminDate?: boolean,
   ): Item => {
     const defendants = workingCase.defendants
     const isMultipleDefendants = defendants && defendants.length > 1
@@ -78,6 +79,7 @@ const useInfoCardItems = () => {
                 }}
                 displayAppealExpirationInfo={displayAppealExpirationInfo}
                 displayVerdictViewDate={displayVerdictViewDate}
+                displaySentToPrisonAdminDate={displaySentToPrisonAdminDate}
               />
             </div>
           ))
