@@ -235,8 +235,8 @@ export const FormField = ({
           }}
           selected={value ? new Date(value) : null}
           hasError={!!error}
-          minYear={currentYear - 82}
-          maxYear={currentYear + 2}
+          minYear={currentYear - 100}
+          maxYear={currentYear + 10}
         />
       )
     }
