@@ -25,7 +25,6 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { DefendantNationalIdExistsGuard } from '../defendant'
 import { EventService } from '../event'
 import { DeliverDto } from './dto/deliver.dto'
 import { DeliverCancellationNoticeDto } from './dto/deliverCancellationNotice.dto'
@@ -34,6 +33,7 @@ import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
+import { IndictmentCaseExistsForDefendantGuard } from './guards/indictmentCaseExistsForDefendant.guard'
 import {
   CaseInterceptor,
   CasesInterceptor,
@@ -94,11 +94,7 @@ export class InternalCaseController {
     )
   }
 
-  @UseGuards(
-    CaseExistsGuard,
-    new CaseTypeGuard(indictmentCases),
-    DefendantNationalIdExistsGuard,
-  )
+  @UseGuards(IndictmentCaseExistsForDefendantGuard)
   @Get('case/indictment/:caseId/defendant/:defendantNationalId')
   @ApiOkResponse({
     type: Case,
@@ -107,14 +103,17 @@ export class InternalCaseController {
   @UseInterceptors(CaseInterceptor)
   getDefendantIndictmentCaseById(
     @Param('caseId') caseId: string,
-    @Param('defendantNationalId') _: string,
+    @Param('defendantNationalId') defendantNationalId: string,
     @CurrentCase() theCase: Case,
-  ): Case {
+  ): Promise<Case> {
     this.logger.debug(
       `Getting indictment case ${caseId} by id for a given defendant`,
     )
 
-    return theCase
+    return this.internalCaseService.getDefendantIndictmentCase(
+      theCase,
+      defendantNationalId,
+    )
   }
 
   @UseGuards(CaseExistsGuard)

@@ -8,7 +8,7 @@ import {
   SubpoenaType,
 } from '@island.is/judicial-system/types'
 
-import { Subpoena } from './subpoena.model'
+import { Subpoena } from '../../subpoena'
 
 registerEnumType(Gender, { name: 'Gender' })
 registerEnumType(DefendantPlea, { name: 'DefendantPlea' })

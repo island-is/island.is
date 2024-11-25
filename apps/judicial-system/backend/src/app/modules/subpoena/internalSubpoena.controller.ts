@@ -44,7 +44,7 @@ export class InternalSubpoenaController {
 
   @UseGuards(PoliceSubpoenaExistsGuard)
   @Patch('subpoena/:subpoenaId')
-  async updateSubpoena(
+  updateSubpoena(
     @Param('subpoenaId') subpoenaId: string,
     @CurrentSubpoena() subpoena: Subpoena,
     @Body() update: UpdateSubpoenaDto,
@@ -69,7 +69,7 @@ export class InternalSubpoenaController {
     type: DeliverResponse,
     description: 'Delivers a subpoena to police',
   })
-  async deliverSubpoenaToPolice(
+  deliverSubpoenaToPolice(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @Param('subpoenaId') subpoenaId: string,
@@ -82,7 +82,7 @@ export class InternalSubpoenaController {
       `Delivering subpoena ${subpoenaId} to police for defendant ${defendantId} of case ${caseId}`,
     )
 
-    return await this.subpoenaService.deliverSubpoenaToPolice(
+    return this.subpoenaService.deliverSubpoenaToPolice(
       theCase,
       defendant,
       subpoena,

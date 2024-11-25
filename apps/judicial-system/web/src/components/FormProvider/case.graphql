@@ -42,6 +42,7 @@ query Case($input: CaseQueryInput!) {
         comment
         defenderNationalId
         caseId
+        defendantId
         subpoenaId
       }
     }

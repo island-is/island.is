@@ -1,6 +1,7 @@
 import CryptoJS from 'crypto-js'
 import format from 'date-fns/format'
 import { Base64 } from 'js-base64'
+import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -57,7 +58,7 @@ import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Institution } from '../institution'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
-import { Subpoena } from '../subpoena'
+import { Subpoena, SubpoenaService } from '../subpoena'
 import { User, UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
@@ -171,6 +172,8 @@ export class InternalCaseService {
     private readonly fileService: FileService,
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
+    @Inject(forwardRef(() => SubpoenaService))
+    private readonly subpoenaService: SubpoenaService,
     @Inject(forwardRef(() => PdfService))
     private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -1211,6 +1214,72 @@ export class InternalCaseService {
         '$defendants.national_id$': normalizeAndFormatNationalId(nationalId),
       },
     })
+  }
+
+  async findByIdAndDefendantNationalId(
+    caseId: string,
+    defendantNationalId: string,
+  ): Promise<Case> {
+    const theCase = await this.caseModel.findOne({
+      include: [
+        {
+          model: Defendant,
+          as: 'defendants',
+          include: [
+            {
+              model: Subpoena,
+              as: 'subpoenas',
+              order: [['created', 'DESC']],
+            },
+          ],
+        },
+        { model: Institution, as: 'court' },
+        { model: Institution, as: 'prosecutorsOffice' },
+        { model: User, as: 'judge' },
+        {
+          model: User,
+          as: 'prosecutor',
+          include: [{ model: Institution, as: 'institution' }],
+        },
+        { model: DateLog, as: 'dateLogs' },
+      ],
+      attributes: ['courtCaseNumber', 'id'],
+      where: {
+        type: CaseType.INDICTMENT,
+        id: caseId,
+        state: { [Op.not]: CaseState.DELETED },
+        isArchived: false,
+        // This select only defendants with the given national id, other defendants are not included
+        '$defendants.national_id$':
+          normalizeAndFormatNationalId(defendantNationalId),
+      },
+    })
+
+    if (!theCase) {
+      throw new NotFoundException(`Case ${caseId} does not exist`)
+    }
+
+    return theCase
+  }
+
+  async getDefendantIndictmentCase(
+    theCase: Case,
+    defendantNationalId: string,
+  ): Promise<Case> {
+    const subpoena = theCase.defendants?.[0].subpoenas?.[0]
+
+    if (!subpoena) {
+      return theCase
+    }
+
+    const latestSubpoena = await this.subpoenaService.getSubpoena(subpoena)
+
+    if (latestSubpoena === subpoena) {
+      // The subpoena was up to date
+      return theCase
+    }
+
+    return this.findByIdAndDefendantNationalId(theCase.id, defendantNationalId)
   }
 
   countIndictmentsWaitingForConfirmation(prosecutorsOfficeId: string) {
