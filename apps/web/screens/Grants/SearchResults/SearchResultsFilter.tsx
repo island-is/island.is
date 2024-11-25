@@ -41,7 +41,7 @@ export const GrantsSearchResultsFilter = ({
   return (
     <Box
       component="form"
-      borderRadius="default"
+      borderRadius="large"
       action={url}
       onSubmit={(e) => {
         e.preventDefault()
@@ -54,7 +54,7 @@ export const GrantsSearchResultsFilter = ({
         onFilterClear={onReset}
         variant={variant}
       >
-        <Box background="white" padding={[1, 1, 2]} borderRadius="default">
+        <Box background="white" padding={[1, 1, 2]} borderRadius="large">
           <FilterMultiChoice
             labelClear={formatMessage(m.search.clearFilterCategory)}
             onChange={({ categoryId, selected }) => {

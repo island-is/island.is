@@ -35,7 +35,7 @@ export const SubmitFormField: FC<React.PropsWithChildren<Props>> = ({
   return (
     <Box
       background="blue100"
-      borderRadius="default"
+      borderRadius="large"
       width="full"
       padding={4}
       marginTop={4}

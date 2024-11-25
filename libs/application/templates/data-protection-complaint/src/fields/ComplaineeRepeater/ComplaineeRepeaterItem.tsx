@@ -154,7 +154,7 @@ export const ComplaineeRepeaterItem: FC<React.PropsWithChildren<Props>> = ({
       <Box
         padding={3}
         background="blue100"
-        borderRadius="default"
+        borderRadius="large"
         hidden={!isOpen}
       >
         <Box marginBottom={2}>

@@ -197,7 +197,7 @@ const EmailSignup = ({ slice, marginLeft }: EmailSignupProps) => {
     <Box
       paddingY={[3, 3, 5]}
       paddingX={[3, 3, 3, 3, 12]}
-      borderRadius="default"
+      borderRadius="large"
       background="blue100"
       marginLeft={marginLeft}
     >

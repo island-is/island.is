@@ -36,7 +36,7 @@ export const sectionNumberComplete = style({
 })
 
 export const container = style({
-  borderRadius: theme.border.radius.default,
+  borderRadius: theme.border.radius.large,
   transition: 'color 150ms ease, background-color 150ms ease',
   outline: 0,
   display: 'inline-flex',

@@ -69,7 +69,7 @@ export const FeaturedArticlesSlice: React.FC<
               return (
                 <FocusableBox
                   key={article.slug}
-                  borderRadius="default"
+                  borderRadius="large"
                   href={url.href}
                 >
                   <TopicCard

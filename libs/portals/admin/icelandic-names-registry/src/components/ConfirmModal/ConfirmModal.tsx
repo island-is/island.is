@@ -28,7 +28,7 @@ const ConfirmModal: FC<React.PropsWithChildren<ConfirmModalProps>> = ({
       {({ closeModal }: { closeModal: () => void }) => (
         <Box
           position="relative"
-          borderRadius="default"
+          borderRadius="large"
           background="white"
           padding={6}
         >

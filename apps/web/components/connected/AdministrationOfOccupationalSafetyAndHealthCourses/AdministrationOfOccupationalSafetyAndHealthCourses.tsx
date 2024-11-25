@@ -136,7 +136,7 @@ const AdministrationOfOccupationalSafetyAndHealthCourses = ({
                 <FocusableBox
                   key={`course-${index}`}
                   href={course.registrationUrl}
-                  borderRadius="default"
+                  borderRadius="large"
                   borderColor="blue200"
                   borderWidth="standard"
                   flexDirection="column"

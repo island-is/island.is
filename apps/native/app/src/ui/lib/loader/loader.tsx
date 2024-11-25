@@ -32,7 +32,7 @@ const Wrapper = styled.View`
 const AnimatedCircle = styled(Animated.View)`
   height: ${spacing(1)};
   width: ${spacing(1)};
-  border-radius: ${({ theme }) => theme.border.radius.default};
+  border-radius: ${({ theme }) => theme.border.radius.large};
   background-color: ${dynamicColor(({ theme }) => ({
     light: theme.color.blue400,
     dark: theme.color.blue600,

@@ -33,7 +33,7 @@ const CancelModal = ({ isVisible, setIsVisible }: Props) => {
           <Box
             position="relative"
             background="white"
-            borderRadius="default"
+            borderRadius="large"
             paddingY={[8, 8, 12]}
             paddingX={[3, 3, 15]}
             className={styles.modal}

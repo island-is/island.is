@@ -4,7 +4,7 @@ import { theme } from '@island.is/island-ui/theme'
 export const tooltip = style({
   display: 'inline-block',
   backgroundColor: '#00003C',
-  borderRadius: theme.border.radius.default,
+  borderRadius: theme.border.radius.large,
   padding: theme.spacing[1],
   maxWidth: '240px',
   transition: theme.transitions.fast,

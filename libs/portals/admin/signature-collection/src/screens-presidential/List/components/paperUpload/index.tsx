@@ -78,13 +78,13 @@ const PaperUpload = ({
         background={withPaperUpload ? 'purple100' : 'white'}
         padding={withPaperUpload ? 5 : 0}
         paddingTop={withPaperUpload ? 3 : 0}
-        borderRadius="default"
+        borderRadius="large"
       >
         <Box
           border={withPaperUpload ? undefined : 'standard'}
           paddingX={withPaperUpload ? 0 : 5}
           paddingY={withPaperUpload ? 0 : 3}
-          borderRadius="default"
+          borderRadius="large"
         >
           <Box display="flex" justifyContent="spaceBetween" alignItems="center">
             <Box

@@ -8,7 +8,7 @@ export const container = style({
   padding: 10,
   background: theme.color.dark400,
   color: theme.color.white,
-  borderRadius: theme.border.radius.default,
+  borderRadius: theme.border.radius.large,
   opacity: 0.8,
   borderWidth: 1,
   outline: 0,

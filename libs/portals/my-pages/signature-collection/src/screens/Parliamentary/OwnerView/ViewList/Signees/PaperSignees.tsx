@@ -119,7 +119,7 @@ export const PaperSignees = ({
         height="full"
         padding={3}
         border="standard"
-        borderRadius="xs"
+        borderRadius="standard"
       >
         <GridContainer>
           <GridRow marginBottom={3}>

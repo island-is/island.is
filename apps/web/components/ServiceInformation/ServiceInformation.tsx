@@ -184,7 +184,7 @@ export const ServiceInformation = ({
         background="blue100"
         paddingY={3}
         marginY={3}
-        borderRadius="default"
+        borderRadius="large"
         display="flex"
         flexDirection="column"
       >

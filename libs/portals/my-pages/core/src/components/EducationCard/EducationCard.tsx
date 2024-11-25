@@ -29,7 +29,7 @@ export const EducationCard = ({
       paddingY={[2, 3, 4]}
       paddingX={[2, 3, 4]}
       border="standard"
-      borderRadius="default"
+      borderRadius="large"
     >
       <Box display="flex" alignItems="center">
         {img && <img src={img} alt="" className={styles.img} />}

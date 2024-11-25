@@ -38,7 +38,7 @@ export const Gallery: FC<GalleryProps> = ({
           component="button"
           onClick={() => setIsModalOpen(true)}
           border="standard"
-          borderRadius="default"
+          borderRadius="large"
           overflow="hidden"
           transition="fast"
           display="flex"

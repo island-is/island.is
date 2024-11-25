@@ -8,7 +8,7 @@ export const infoCardTitleContainer = style({
 
 export const infoCardContainer = style({
   background: theme.color.blue100,
-  borderRadius: theme.border.radius.default,
+  borderRadius: theme.border.radius.large,
 })
 
 export const grid = style({

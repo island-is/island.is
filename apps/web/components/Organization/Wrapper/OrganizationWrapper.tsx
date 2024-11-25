@@ -969,7 +969,7 @@ const SecondaryMenu = ({
 }) => (
   <Box
     background="purple100"
-    borderRadius="default"
+    borderRadius="large"
     padding={[3, 3, 4]}
     marginY={3}
   >

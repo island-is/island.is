@@ -6,7 +6,7 @@ export const tooltip = style({
   backgroundColor: theme.color.white,
   border: `${theme.border.width.standard}px solid ${theme.color.blue100}`,
   padding: theme.spacing[1],
-  borderRadius: theme.border.radius.xs,
+  borderRadius: theme.border.radius.standard,
 })
 
 export const tooltipLabel = style({

@@ -217,7 +217,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
           >
             <FocusableBox
               key={vehicle.permno}
-              borderRadius="default"
+              borderRadius="large"
               borderColor="blue200"
               borderWidth="standard"
               flexDirection="column"
@@ -309,7 +309,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
           repeat={5}
           space={2}
           height={130}
-          borderRadius="default"
+          borderRadius="large"
         />
       ) : currentVehiclesList.length > 0 ? (
         currentVehiclesList.map((vehicle: VehicleDto) => {

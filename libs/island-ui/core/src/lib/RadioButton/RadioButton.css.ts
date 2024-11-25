@@ -15,7 +15,7 @@ export const container = style({
 })
 
 export const large = style({
-  borderRadius: theme.border.radius.default,
+  borderRadius: theme.border.radius.large,
   border: `1px solid ${theme.color.blue200}`,
 })
 

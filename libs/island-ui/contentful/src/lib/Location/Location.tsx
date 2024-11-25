@@ -38,7 +38,7 @@ export const Location: FC<React.PropsWithChildren<LocationProps>> = ({
               offset={['0', '0', '0', '1/12']}
             >
               <Box
-                borderRadius="default"
+                borderRadius="large"
                 overflow="hidden"
                 className={styles.content}
               >

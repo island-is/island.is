@@ -4,7 +4,7 @@ import { Typography } from '../typography/typography'
 
 const Host = styled.View`
   overflow: hidden;
-  border-radius: ${({ theme }) => theme.border.radius.default};
+  border-radius: ${({ theme }) => theme.border.radius.large};
   padding: ${({ theme }) => theme.spacing[1]}px;
 `
 

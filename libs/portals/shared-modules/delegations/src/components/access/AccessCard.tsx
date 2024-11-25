@@ -166,7 +166,7 @@ export const AccessCard = ({
       paddingY={[2, 3, 4]}
       paddingX={[2, 3, 4]}
       border={isExpired ? 'disabled' : 'standard'}
-      borderRadius="default"
+      borderRadius="large"
       data-testid="access-card"
     >
       <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart">

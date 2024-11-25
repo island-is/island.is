@@ -450,7 +450,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           <Box
             key={operatingLicense.id}
             border="standard"
-            borderRadius="default"
+            borderRadius="large"
             marginY={2}
             paddingY={3}
             paddingX={4}

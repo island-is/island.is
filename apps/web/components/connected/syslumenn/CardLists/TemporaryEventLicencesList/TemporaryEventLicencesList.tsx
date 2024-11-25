@@ -305,7 +305,7 @@ const TemporaryEventLicencesList: FC<
                     key={`temporary-event-licence-${index}`}
                     borderWidth="standard"
                     borderColor="standard"
-                    borderRadius="xs"
+                    borderRadius="standard"
                     paddingX={4}
                     paddingY={3}
                     marginBottom={4}

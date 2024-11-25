@@ -155,7 +155,7 @@ const FrameWrapper = ({
       })}
       borderColor="purple100"
       borderWidth="standard"
-      borderRadius="default"
+      borderRadius="large"
       display="flex"
       flexDirection="column"
     >

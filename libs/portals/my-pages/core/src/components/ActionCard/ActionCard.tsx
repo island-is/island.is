@@ -326,7 +326,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           ? 'blue100'
           : 'blue200')
       }
-      borderRadius="default"
+      borderRadius="large"
       borderWidth="standard"
       paddingX={[3, 3, 4]}
       paddingY={3}

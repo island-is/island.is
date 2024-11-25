@@ -140,7 +140,7 @@ export const classes: EditorClasses = {
     left: '50%',
     backgroundColor: theme.color.white,
     overflow: 'hidden',
-    borderRadius: theme.border.radius.xs,
+    borderRadius: theme.border.radius.standard,
     border: `1px solid ${theme.color.blue200}`,
     transition: 'all 300ms 200ms ease-in-out',
     transitionProperty: 'transform',

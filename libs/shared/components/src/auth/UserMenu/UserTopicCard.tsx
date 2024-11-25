@@ -38,7 +38,7 @@ export const UserTopicCard: React.FC<
       className={styles.userTopicCardBox}
       alignItems="center"
       background={colorSchemes[colorScheme].backgroundColor}
-      borderRadius="xs"
+      borderRadius="standard"
       display="flex"
       component={href ? Link : onClick ? 'button' : 'span'}
       href={href}

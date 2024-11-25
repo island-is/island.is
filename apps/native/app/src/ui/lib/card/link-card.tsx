@@ -12,7 +12,7 @@ const Host = styled.View`
     dark: 'shade100',
     light: props.theme.color.blue100,
   }))};
-  border-radius: ${(props) => props.theme.border.radius.default};
+  border-radius: ${(props) => props.theme.border.radius.large};
 `
 
 const Text = styled.Text`

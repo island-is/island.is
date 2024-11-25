@@ -27,7 +27,7 @@ export const multiValue = style(
     backgroundColor: theme.color.blue200,
     color: theme.color.blue600,
     fontWeight: theme.typography.medium,
-    borderRadius: theme.border.radius.default,
+    borderRadius: theme.border.radius.large,
     overflow: 'hidden',
   },
   'multiValue',
@@ -43,7 +43,7 @@ export const multiValueLabel = style(
 )
 
 globalStyle(`${wrapper} .island-select__multi-value`, {
-  borderRadius: theme.border.radius.default,
+  borderRadius: theme.border.radius.large,
 })
 
 globalStyle(
@@ -379,7 +379,7 @@ export const checkbox = style({
   alignSelf: 'center',
   backgroundColor: theme.color.white,
   border: `1px solid ${theme.color.blue200}`,
-  borderRadius: theme.border.radius.xs,
+  borderRadius: theme.border.radius.standard,
   display: 'flex',
   flexShrink: 0,
   height: theme.spacing[3],

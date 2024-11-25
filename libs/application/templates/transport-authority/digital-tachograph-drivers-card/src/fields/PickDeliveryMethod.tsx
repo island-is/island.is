@@ -200,7 +200,7 @@ export const PickDeliveryMethod: FC<React.PropsWithChildren<FieldBaseProps>> = (
           height={100}
           space={2}
           repeat={1}
-          borderRadius="default"
+          borderRadius="large"
         />
       )}
     </Box>

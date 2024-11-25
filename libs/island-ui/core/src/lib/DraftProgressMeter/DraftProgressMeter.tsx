@@ -53,14 +53,14 @@ export const DraftProgressMeter: React.FC<
         className={cn(styles.outer, className)}
         position="relative"
         background={colorSchemes[variant].outer}
-        borderRadius="default"
+        borderRadius="large"
         width="full"
         overflow="hidden"
       >
         <Box
           position="relative"
           overflow="hidden"
-          borderRadius="xs"
+          borderRadius="standard"
           height="full"
           width="full"
           display="flex"
@@ -75,7 +75,7 @@ export const DraftProgressMeter: React.FC<
                     ? colorSchemes[variant].inner
                     : colorSchemes[variant].unfinished
                 }
-                borderRadius="xs"
+                borderRadius="standard"
                 width="full"
               />
             )

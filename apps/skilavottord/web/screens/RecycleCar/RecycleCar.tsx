@@ -119,7 +119,7 @@ const RecycleCar = ({ apolloState }: PropTypes) => {
                 vehicleType={car.type}
                 modelYear={formatYear(car.firstRegDate, dateFormat.is)}
               />
-              <Box padding={4} background="blue100" borderRadius="default">
+              <Box padding={4} background="blue100" borderRadius="large">
                 <Checkbox
                   name="confirm"
                   label={checkboxLabel.props.children}

@@ -84,7 +84,7 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
                   <span className={styles.capitalize}>{airline}</span>
                 </Typography>
                 <Stack space={1}>
-                  <Box background="blue100" borderRadius="xs" padding={2}>
+                  <Box background="blue100" borderRadius="standard" padding={2}>
                     <KeyValues
                       title="Í gjaldfærslubið"
                       data={data.awaitingDebit}
@@ -96,13 +96,13 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
                       data={data.awaitingCredit}
                     />
                   </Box>
-                  <Box background="red100" borderRadius="xs" padding={2}>
+                  <Box background="red100" borderRadius="standard" padding={2}>
                     <KeyValues title="Afturkallaðir" data={data.cancelled} />
                   </Box>
-                  <Box padding={2} background="mint100" borderRadius="xs">
+                  <Box padding={2} background="mint100" borderRadius="standard">
                     <KeyValues title="Gjaldfært" data={data.sentDebit} />
                   </Box>
-                  <Box background="yellow100" borderRadius="xs" padding={2}>
+                  <Box background="yellow100" borderRadius="standard" padding={2}>
                     <KeyValues title="Endurgreitt" data={data.sentCredit} />
                   </Box>
                 </Stack>

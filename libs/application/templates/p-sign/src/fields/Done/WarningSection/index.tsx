@@ -30,7 +30,7 @@ const WarningSection: FC<React.PropsWithChildren<WarningSectionProps>> = ({
     <Box
       position="relative"
       border="standard"
-      borderRadius="default"
+      borderRadius="large"
       padding={4}
       marginBottom={2}
       borderColor={'red600'}

@@ -94,7 +94,7 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
       <Box>
         {loading ? (
           <SkeletonLoader
-            borderRadius="default"
+            borderRadius="large"
             repeat={1}
             height={OJOI_INPUT_HEIGHT / 2}
           />
@@ -122,10 +122,10 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
           repeat={3}
           space={2}
           height={OJOI_INPUT_HEIGHT}
-          borderRadius="default"
+          borderRadius="large"
         />
       ) : (
-        <Box border="standard" borderRadius="default">
+        <Box border="standard" borderRadius="large">
           <HTMLEditor
             name="submitted.document"
             readOnly={true}

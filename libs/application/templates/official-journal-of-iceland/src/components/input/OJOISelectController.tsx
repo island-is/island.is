@@ -60,7 +60,7 @@ export const OJOISelectController = ({
   if (loading) {
     return (
       <SkeletonLoader
-        borderRadius="xs"
+        borderRadius="standard"
         display="block"
         height={OJOI_INPUT_HEIGHT}
       />

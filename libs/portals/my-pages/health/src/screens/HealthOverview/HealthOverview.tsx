@@ -101,7 +101,7 @@ export const HealthOverview = () => {
           repeat={3}
           space={CONTENT_GAP}
           height={24}
-          borderRadius="xs"
+          borderRadius="standard"
         />
       ) : !insurance?.isInsured ? (
         <AlertMessage

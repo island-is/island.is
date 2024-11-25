@@ -65,7 +65,7 @@ function Consent() {
                 height={117}
                 repeat={2}
                 space={2}
-                borderRadius="default"
+                borderRadius="large"
               />
             </Box>
           ) : isData ? (

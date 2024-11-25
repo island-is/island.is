@@ -186,7 +186,7 @@ export const Card = ({
     return (
       <FocusableBox
         href={link.href}
-        borderRadius="default"
+        borderRadius="large"
         flexDirection="column"
         height="full"
         width="full"
@@ -208,7 +208,7 @@ export const Frame = ({ children }: { children: ReactNode }) => {
     <Box
       className={cn(styles.card)}
       position="relative"
-      borderRadius="default"
+      borderRadius="large"
       overflow="hidden"
       background="white"
       outline="none"

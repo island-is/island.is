@@ -55,7 +55,7 @@ export const ModuleSwitcherDesktop = () => {
               background="white"
               paddingTop={3}
               padding={2}
-              borderRadius="default"
+              borderRadius="large"
             >
               <Box
                 marginBottom={4}

@@ -116,7 +116,7 @@ const Card = ({
       width="full"
       className={styles.cardBox}
       padding={3}
-      borderRadius="xs"
+      borderRadius="standard"
       borderWidth="standard"
       borderColor="blue200"
       display="flex"
@@ -130,7 +130,7 @@ const Card = ({
     <Box
       className={styles.cardBox}
       padding={3}
-      borderRadius="xs"
+      borderRadius="standard"
       borderWidth="standard"
       borderColor="blue200"
       display="flex"

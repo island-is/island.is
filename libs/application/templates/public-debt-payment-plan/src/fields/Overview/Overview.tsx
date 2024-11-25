@@ -215,7 +215,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
         padding={4}
         marginTop={5}
         marginBottom={3}
-        borderRadius="default"
+        borderRadius="large"
       >
         <AccordionItem
           id="payment-plan-overview-table"

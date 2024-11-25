@@ -29,7 +29,7 @@ const StateModalContainer = ({
       <Box className={styles.modalContainer}>
         <Box
           position="relative"
-          borderRadius="default"
+          borderRadius="large"
           overflow="hidden"
           background="white"
           className={styles.modal}

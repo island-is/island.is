@@ -22,7 +22,7 @@ export const modalContainer = style({
   maxWidth: '90vw',
   maxHeight: '90vh',
   overflowY: 'auto',
-  borderRadius: theme.border.radius.xs,
+  borderRadius: theme.border.radius.standard,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       maxWidth: '70vw',

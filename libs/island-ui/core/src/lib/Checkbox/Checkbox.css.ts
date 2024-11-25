@@ -17,7 +17,7 @@ export const filled = style({
 })
 
 export const large = style({
-  borderRadius: theme.border.radius.default,
+  borderRadius: theme.border.radius.large,
   border: `1px solid ${theme.color.blue200}`,
 })
 
@@ -68,7 +68,7 @@ export const checkbox = style({
   alignSelf: 'center',
   backgroundColor: theme.color.white,
   border: `1px solid ${theme.color.blue200}`,
-  borderRadius: theme.border.radius.xs,
+  borderRadius: theme.border.radius.standard,
   display: 'flex',
   flexShrink: 0,
   height: checkboxSize,

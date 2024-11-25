@@ -122,7 +122,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
         height="full"
         padding={3}
         border="standard"
-        borderRadius="xs"
+        borderRadius="standard"
       >
         <GridContainer>
           <GridRow marginBottom={3}>

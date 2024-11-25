@@ -10,7 +10,7 @@ export const card = style({
   padding: `${theme.spacing[2]}px`,
   textAlign: 'left',
   backgroundColor: theme.color.white,
-  borderRadius: theme.border.radius.default,
+  borderRadius: theme.border.radius.large,
   borderColor: theme.border.color.blue200,
   borderWidth: theme.border.width.standard,
   ':focus': {

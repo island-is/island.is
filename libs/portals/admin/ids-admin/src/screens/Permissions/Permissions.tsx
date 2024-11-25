@@ -55,7 +55,7 @@ function Permissions() {
 
   const renderEmptyState = () => (
     <Box
-      borderRadius="default"
+      borderRadius="large"
       borderColor="blue200"
       borderWidth="standard"
       paddingY={[5, 8]}

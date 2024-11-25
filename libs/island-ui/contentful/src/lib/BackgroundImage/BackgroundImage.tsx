@@ -42,7 +42,7 @@ export const BackgroundImage: FC<
     width: 'full',
     display: 'inlineFlex',
     overflow: 'hidden',
-    borderRadius: 'default',
+    borderRadius: 'large',
   },
 }) => {
   const src = `${image?.url ? image.url : ''}?w=${width}`

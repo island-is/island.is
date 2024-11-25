@@ -96,7 +96,7 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
       className={styles.container}
       position="relative"
       overflow="hidden"
-      borderRadius="default"
+      borderRadius="large"
       borderWidth="large"
       borderStyle="solid"
       borderColor="blue200"

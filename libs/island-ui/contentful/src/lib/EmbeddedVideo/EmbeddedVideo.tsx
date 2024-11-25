@@ -105,7 +105,7 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
         <Box
           className={styles.modal}
           background="blue100"
-          borderRadius="default"
+          borderRadius="large"
           padding="gutter"
         >
           <Stack space={1}>

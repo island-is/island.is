@@ -15,7 +15,7 @@ const Approved: FC<React.PropsWithChildren<Props>> = ({ title, subtitle }) => {
       background="mint100"
       borderColor="mint200"
       border="standard"
-      borderRadius="xs"
+      borderRadius="standard"
     >
       <Box display="flex" alignItems="center">
         <Text variant="h4">{title}</Text>

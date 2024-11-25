@@ -33,7 +33,7 @@ const CaseFile: FC<Props> = (props) => {
       background={color?.background}
       borderColor={color?.border}
       borderStyle="solid"
-      borderRadius="default"
+      borderRadius="large"
       borderWidth="standard"
       onClick={onClick ? () => onClick(id) : undefined}
       aria-label={onClick ? `Opna ${name}` : undefined}

@@ -15,7 +15,7 @@ export const Property = ({ name, value, loading = false }: Props) => {
   return (
     <Box className={styles.propertyWrap}>
       {loading ? (
-        <SkeletonLoader height={OJOI_INPUT_HEIGHT} borderRadius="xs" />
+        <SkeletonLoader height={OJOI_INPUT_HEIGHT} borderRadius="standard" />
       ) : (
         <>
           <Box className={styles.property}>

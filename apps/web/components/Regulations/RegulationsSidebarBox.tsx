@@ -31,7 +31,7 @@ export const RegulationsSidebarBox = (props: RegulationsSidebarBoxProps) => {
   return (
     <Box
       background={backgroundColor}
-      borderRadius="default"
+      borderRadius="large"
       padding={[3, 3, 4]}
       paddingBottom={2}
       position="relative"

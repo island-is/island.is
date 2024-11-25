@@ -69,7 +69,7 @@ const embeddedNodes = () => ({
           background="purple100"
           padding={4}
           marginBottom={3}
-          borderRadius="xs"
+          borderRadius="standard"
         >
           <Box marginBottom={2}>
             <Typography variant="h4">{title}</Typography>
@@ -91,7 +91,7 @@ const embeddedNodes = () => ({
           background="purple100"
           padding={4}
           marginBottom={3}
-          borderRadius="xs"
+          borderRadius="standard"
         >
           <Stack space={2}>
             <Typography variant="h4">{title}</Typography>
@@ -144,7 +144,7 @@ const options = (type) => ({
             padding={3}
             borderStyle="solid"
             borderWidth="standard"
-            borderRadius="xs"
+            borderRadius="standard"
             borderColor="dark100"
           >
             <img src={url} alt={title} />

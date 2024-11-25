@@ -53,7 +53,7 @@ export const ModuleSwitcherItems = ({
           display="flex"
           alignItems="center"
           background={active && mobile ? 'white' : undefined}
-          borderRadius="default"
+          borderRadius="large"
           className={!mobile && styles.itemHover}
         >
           <Icon

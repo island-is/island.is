@@ -168,7 +168,7 @@ const InstitutionOverview = () => {
           height={60}
           repeat={10}
           space={2}
-          borderRadius="default"
+          borderRadius="large"
         />
       ) : (
         <ApplicationsTable

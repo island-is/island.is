@@ -23,7 +23,7 @@ export const StatusStep: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
     <Box
       position="relative"
       border="standard"
-      borderRadius="default"
+      borderRadius="large"
       marginBottom={2}
     >
       {/* Contents */}

@@ -107,12 +107,12 @@ export const theme = {
       solid: 'solid',
     },
     radius: {
-      xs: `${radiusPrimitives.xs.$value ?? 4}px`,
-      default: `${radiusPrimitives.default.$value ?? 8}px`,
+      standard: `${radiusPrimitives.xs.$value ?? 4}px`,
+      large: `${radiusPrimitives.default.$value ?? 8}px`,
       md: `${radiusPrimitives.md.$value ?? 12}px`,
       lg: `${radiusPrimitives.lg.$value ?? 16}px`,
       xl: '24px',
-      circle: '50%', // ?? Add this to figma tokens
+      circle: '50%',
       full: `${radiusPrimitives.full.$value ?? 9999}px`,
     },
     width: {

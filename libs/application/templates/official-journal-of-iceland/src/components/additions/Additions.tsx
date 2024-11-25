@@ -189,7 +189,7 @@ export const Additions = ({ application }: Props) => {
             <Box
               key={addition.id}
               border="standard"
-              borderRadius="xs"
+              borderRadius="standard"
               padding={2}
             >
               <Stack space={2}>

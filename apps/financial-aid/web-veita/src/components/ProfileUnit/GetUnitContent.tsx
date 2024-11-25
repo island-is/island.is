@@ -32,7 +32,7 @@ export const OtherItem = (other?: string) => {
     other && (
       <Box
         background="blue100"
-        borderRadius="default"
+        borderRadius="large"
         padding={2}
         marginTop={1}
       >

@@ -26,7 +26,7 @@ export const wrapperThreeChildren = style({
 
 export const numberBox = style({
   backgroundColor: theme.color.blue100,
-  borderRadius: theme.border.radius.default,
+  borderRadius: theme.border.radius.large,
   color: theme.color.blue400,
   display: 'flex',
   flexDirection: 'column',

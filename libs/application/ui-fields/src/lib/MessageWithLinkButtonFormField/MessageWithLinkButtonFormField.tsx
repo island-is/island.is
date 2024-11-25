@@ -26,7 +26,7 @@ export const MessageWithLinkButtonFormField: FC<
   return (
     <Box marginTop={field.marginTop} marginBottom={field.marginBottom}>
       <Box
-        borderRadius="xs"
+        borderRadius="standard"
         padding={4}
         background="blue100"
         display={['block', 'block', 'flex']}

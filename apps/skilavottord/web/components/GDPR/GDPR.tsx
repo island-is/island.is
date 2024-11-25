@@ -103,7 +103,7 @@ export const GDPR = () => {
             paddingLeft={[3, 3, 3, 4]}
             paddingRight={[3, 3, 4, 20]}
             background="blue100"
-            borderRadius="default"
+            borderRadius="large"
           >
             <Checkbox
               label={t.checkbox}

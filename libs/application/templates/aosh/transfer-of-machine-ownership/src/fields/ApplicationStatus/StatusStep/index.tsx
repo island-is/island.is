@@ -25,7 +25,7 @@ export const StatusStep: FC<
     <Box
       position="relative"
       border="standard"
-      borderRadius="default"
+      borderRadius="large"
       marginBottom={2}
     >
       <Box padding={4}>

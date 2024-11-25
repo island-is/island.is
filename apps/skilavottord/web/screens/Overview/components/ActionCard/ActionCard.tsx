@@ -83,7 +83,7 @@ export const ActionCard: FC<React.PropsWithChildren<ActionCardProps>> = ({
                 background="blue100"
                 width="full"
                 textAlign="center"
-                borderRadius="default"
+                borderRadius="large"
                 paddingX={4}
                 paddingY={4}
               >
@@ -101,7 +101,7 @@ export const ActionCard: FC<React.PropsWithChildren<ActionCardProps>> = ({
                 borderTopWidth={isTablet ? 'standard' : undefined}
                 borderLeftWidth={isTablet ? undefined : 'standard'}
                 borderStyle="solid"
-                borderRadius="default"
+                borderRadius="large"
                 padding={4}
                 width="full"
                 textAlign="center"

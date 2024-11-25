@@ -20,7 +20,7 @@ export const NoPDF: FC<DocumentRendererProps> = ({ text, error }) => {
       marginLeft={8}
       marginTop={3}
       padding={5}
-      borderRadius="default"
+      borderRadius="large"
       border={error ? undefined : 'standard'}
       {...(!error && {
         display: 'flex',

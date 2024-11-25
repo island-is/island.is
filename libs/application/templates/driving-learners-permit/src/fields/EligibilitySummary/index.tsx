@@ -23,7 +23,7 @@ export const EligibilitySummary: FC<
         repeat={4}
         space={2}
         height={130}
-        borderRadius="default"
+        borderRadius="large"
       />
     )
   }

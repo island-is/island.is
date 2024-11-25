@@ -40,7 +40,7 @@ export const LinkCard = forwardRef<HTMLAnchorElement, LinkCardProps>(
     return (
       <Box
         background={background}
-        borderRadius="default"
+        borderRadius="large"
         position="relative"
         display="flex"
         onClick={onClick}

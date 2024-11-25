@@ -29,7 +29,7 @@ export const ComplaineeTable: FC<React.PropsWithChildren<Props>> = ({
     <Box marginTop={3}>
       <Box
         border="standard"
-        borderRadius="default"
+        borderRadius="large"
         marginBottom={3}
         padding={4}
       >

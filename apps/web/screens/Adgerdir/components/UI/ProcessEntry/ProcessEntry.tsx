@@ -79,7 +79,7 @@ export const ProcessEntry: FC<React.PropsWithChildren<ProcessEntryProps>> = ({
     flexDirection: 'row',
   }
   const defaultProps: BoxProps = {
-    borderRadius: 'default',
+    borderRadius: 'large',
     paddingY: 4,
     paddingX: [3, 3, 3, 3, 4],
     alignItems: ['flexStart', 'center'],

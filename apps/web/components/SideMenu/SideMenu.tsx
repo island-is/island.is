@@ -137,7 +137,7 @@ export const SideMenu = ({
             [styles.isVisible]: isVisible,
           })}
           background="white"
-          borderRadius="default"
+          borderRadius="large"
           height="full"
           id="sideMenu"
           aria-labelledby="sideMenuToggle"

@@ -5,7 +5,7 @@ const InfoBanner = ({ children }: { children: React.ReactNode }) => {
   return (
     <Box
       padding={2}
-      borderRadius="default"
+      borderRadius="large"
       background="blue100"
       borderColor="blue200"
       borderWidth="standard"
