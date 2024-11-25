@@ -405,6 +405,14 @@ const Layout: Screen<LayoutProps> = ({
                 megaMenuData={megaMenuData}
                 languageToggleQueryParams={languageToggleQueryParams}
                 organizationSearchFilter={organizationSearchFilter}
+                searchPlaceholder={
+                  organizationSearchFilter
+                    ? n(
+                        'organizationPageSearchPlaceholder',
+                        activeLocale === 'is' ? 'Leita' : 'Search',
+                      )
+                    : undefined
+                }
                 customTopLoginButtonItem={customTopLoginButtonItem}
               />
             </ColorSchemeContext.Provider>
