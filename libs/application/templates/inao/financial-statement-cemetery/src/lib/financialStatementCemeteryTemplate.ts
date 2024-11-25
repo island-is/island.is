@@ -1,8 +1,8 @@
 import {
   DefaultStateLifeCycle,
   pruneAfterDays,
+  getValueViaPath,
 } from '@island.is/application/core'
-
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -17,7 +17,6 @@ import {
 import { m } from './messages'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { dataSchema } from './dataSchema'
-
 import {
   CurrentUserTypeProvider,
   IndentityApiProvider,
@@ -26,6 +25,7 @@ import {
 } from '../dataProviders'
 import { ApiActions, Events, Roles, States } from '../types/types'
 import { Features } from '@island.is/feature-flags'
+import { CEMETERY_USER_TYPE } from '../utils/constants'
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]
@@ -50,6 +50,10 @@ const FinancialStatementCemeteryTemplate: ApplicationTemplate<
           name: States.PREREQUISITES,
           progress: 0,
           status: 'draft',
+          onEntry: defineTemplateApi({
+            action: ApiActions.getUserType,
+            shouldPersistToExternalData: true,
+          }),
           actionCard: {
             pendingAction: {
               title: '',
@@ -79,6 +83,14 @@ const FinancialStatementCemeteryTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 UserInfoApi,
               ],
+            },
+            {
+              id: Roles.NOTALLOWED,
+              formLoader: () =>
+                import('../forms/notAllowed').then((val) =>
+                  Promise.resolve(val.notAllowedForm),
+                ),
+              read: 'all',
             },
           ],
         },
@@ -136,13 +148,18 @@ const FinancialStatementCemeteryTemplate: ApplicationTemplate<
     },
   },
   mapUserToRole(
-    nationalId: string,
+    _nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.applicant === nationalId) {
+    const userType = getValueViaPath<number>(
+      application.externalData,
+      'getUserType.data.value',
+    )
+
+    if (userType === CEMETERY_USER_TYPE) {
       return Roles.APPLICANT
     }
-    return undefined
+    return Roles.NOTALLOWED
   },
 }
 
