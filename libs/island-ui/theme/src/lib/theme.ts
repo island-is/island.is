@@ -13,7 +13,18 @@ const primaryFont = fontPrimitives.family.primary.$value //?? 'IBM Plex Sans'
 export const UNIT = 8
 
 export const spacing = {
-  // should this be somehow restructured to fit in missing spacings?
+  /* should this be somehow restructured to fit in missing spacings?
+    should this be done same as in figma? will require some manual work to update.
+
+  0: spacingPrimitives['0'].$value ?? UNIT * 0,
+  2: spacingPrimitives['2'].$value ?? UNIT / 4,
+  4: spacingPrimitives['4'].$value ?? UNIT / 2,
+  8: spacingPrimitives['8'].$value ?? UNIT,
+  12: spacingPrimitives['12'].$value ?? UNIT * 1.5,
+  16: spacingPrimitives['16'].$value ?? UNIT * 2,
+  
+  ..and so on*/
+
   0: spacingPrimitives['0'].$value ?? UNIT * 0,
   // add 2
   // add 4
