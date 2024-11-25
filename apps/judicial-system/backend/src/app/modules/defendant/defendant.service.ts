@@ -22,6 +22,7 @@ import {
   CaseNotificationType,
   CaseState,
   CaseType,
+  DefendantEventType,
   DefendantNotificationType,
   DefenderChoice,
   isIndictmentCase,
@@ -33,12 +34,15 @@ import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { Defendant } from './models/defendant.model'
+import { DefendantEventLog } from './models/defendantEventLog.model'
 import { DeliverResponse } from './models/deliver.response'
 
 @Injectable()
 export class DefendantService {
   constructor(
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
+    @InjectModel(DefendantEventLog)
+    private readonly defendantEventLogModel: typeof DefendantEventLog,
     private readonly courtService: CourtService,
     private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -257,6 +261,14 @@ export class DefendantService {
       defendant.id,
       update,
     )
+
+    if (update.isSentToPrisonAdmin) {
+      this.defendantEventLogModel.create({
+        caseId: theCase.id,
+        defendantId: defendant.id,
+        eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+      })
+    }
 
     await this.sendIndictmentCaseUpdateDefendantMessages(
       theCase,
