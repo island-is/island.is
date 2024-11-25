@@ -16,9 +16,9 @@ import {
 } from '../../lib/constants'
 import {
   getApplicationAnswers,
-  getPropertyCategoryClassGroupOptions,
-  getPropertyCategoryClassOptions,
-  getPropertyCategoryTypeOptions,
+  getPropertyTypeOptions,
+  getPropertyClassOptions,
+  getPropertyClassGroupOptions,
 } from '../../lib/utils'
 import { registerProperty } from '../../lib/messages'
 
@@ -154,7 +154,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           id: 'registerProperty.categoryType',
           title: messagesCategory.typeTitle,
           description: messagesCategory.typeDescription,
-          options: getPropertyCategoryTypeOptions(),
+          options: getPropertyTypeOptions(),
           defaultValue: RentalHousingCategoryTypes.ENTIRE_HOME,
           required: true,
         }),
@@ -162,7 +162,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           id: 'registerProperty.categoryClass',
           title: messagesCategory.classTitle,
           description: messagesCategory.classDescription,
-          options: getPropertyCategoryClassOptions(),
+          options: getPropertyClassOptions(),
           defaultValue: RentalHousingCategoryClass.GENERAL_MARKET,
           required: true,
           width: 'half',
@@ -173,14 +173,12 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           title: messagesCategory.classGroupLabel,
           placeholder: messagesCategory.classGroupPlaceholder,
           condition: (answers) => {
-            const { propertyCategoryClassOptions } =
-              getApplicationAnswers(answers)
+            const { propertyClassOptions } = getApplicationAnswers(answers)
             return (
-              propertyCategoryClassOptions ===
-              RentalHousingCategoryClass.SPECIAL_GROUPS
+              propertyClassOptions === RentalHousingCategoryClass.SPECIAL_GROUPS
             )
           },
-          options: getPropertyCategoryClassGroupOptions(),
+          options: getPropertyClassGroupOptions(),
         }),
       ],
     }),

@@ -60,9 +60,6 @@ export const RentalHousingLandlordInfo = buildSubSection({
           },
           table: {
             format: {
-              isRepresentative: (value) => (value.includes(YES) ? 'Check' : ''),
-              name: (value: string) => value,
-              phone: (value: string) => value,
               nationalId: (value: string) => formatNationalId(value),
             },
             header: [
