@@ -10,4 +10,7 @@ export class MileageRegistration {
 
   @Field(() => GraphQLISODateTime)
   date!: Date
+
+  @Field(() => Int, { nullable: true })
+  internalId?: number
 }

@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Box, Button, LinkV2, Stack, Text } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
@@ -9,6 +8,8 @@ import { Grant } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../messages'
+import { useLocale } from '@island.is/localization'
+import { generateStatusTag } from '../utils'
 
 interface Props {
   grant: Grant
@@ -30,8 +31,8 @@ const generateLine = (heading: string, content?: React.ReactNode) => {
 }
 
 export const GrantSidebar = ({ grant, locale }: Props) => {
-  const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
+  const { formatMessage } = useLocale()
 
   const detailPanelData = useMemo(
     () =>
@@ -39,11 +40,12 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         generateLine(
           formatMessage(m.single.fund),
           grant?.fund?.link?.slug ? (
-            <Text fontWeight="semiBold" color="blue400">
+            <Text fontWeight="semiBold" variant="medium" color="blue400">
               <LinkV2
                 {...linkResolver(grant.fund.link.type as LinkType, [
                   grant.fund.link.slug,
                 ])}
+                newTab
                 color="blue400"
                 underline="normal"
                 underlineVisibility="hover"
@@ -55,12 +57,14 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         ),
         generateLine(
           formatMessage(m.single.category),
-          grant?.categoryTags
-            ? grant.categoryTags
+          grant?.categoryTags ? (
+            <Text variant="medium">
+              {grant.categoryTags
                 .map((ct) => ct.title)
                 .filter(isDefined)
-                .join(', ')
-            : undefined,
+                .join(', ')}
+            </Text>
+          ) : undefined,
         ),
         generateLine(
           formatMessage(m.single.type),
@@ -70,14 +74,16 @@ export const GrantSidebar = ({ grant, locale }: Props) => {
         ),
         generateLine(
           formatMessage(m.single.deadline),
-          grant?.applicationDeadlineText ? (
-            <Text variant="medium">{grant.applicationDeadlineText}</Text>
+          grant?.applicationDeadlineStatus ? (
+            <Text variant="medium">{grant.applicationDeadlineStatus}</Text>
           ) : undefined,
         ),
         generateLine(
           formatMessage(m.single.status),
-          grant?.statusText ? (
-            <Text variant="medium">{grant.statusText}</Text>
+          grant?.status ? (
+            <Text variant="medium">
+              {generateStatusTag(grant.status, formatMessage)?.label}
+            </Text>
           ) : undefined,
         ),
       ].filter(isDefined) ?? [],

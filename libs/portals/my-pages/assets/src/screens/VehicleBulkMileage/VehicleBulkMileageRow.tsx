@@ -22,7 +22,6 @@ import { InputController } from '@island.is/shared/form-fields'
 import * as styles from './VehicleBulkMileage.css'
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import { isReadDateToday } from '../../utils/readDate'
-import { isDefined } from '@island.is/shared/utils'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 
@@ -216,22 +215,6 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
       return [[]]
     }
     const tableData: Array<Array<string>> = [[]]
-    if (data?.vehiclesMileageRegistrationHistory?.lastMileageRegistration) {
-      tableData.push([
-        formatDate(
-          data.vehiclesMileageRegistrationHistory.lastMileageRegistration.date,
-        ),
-        data.vehiclesMileageRegistrationHistory.lastMileageRegistration
-          .originCode,
-        //'-',
-        displayWithUnit(
-          data.vehiclesMileageRegistrationHistory.lastMileageRegistration
-            .mileage,
-          'km',
-          true,
-        ),
-      ])
-    }
     for (const mileageRegistration of data?.vehiclesMileageRegistrationHistory
       ?.mileageRegistrationHistory ?? []) {
       if (mileageRegistration) {
@@ -258,10 +241,15 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
         {
           value: vehicle.vehicleId,
         },
-        // Until we get the data from the service
-        /*{
-          value: formatDate(vehicle.lastMileageRegistration),
-        },*/
+        {
+          value: vehicle.lastMileageRegistration?.mileage
+            ? displayWithUnit(
+                vehicle.lastMileageRegistration.mileage,
+                'km',
+                true,
+              )
+            : '-',
+        },
         {
           value: (
             <Box className={styles.mwInput}>
