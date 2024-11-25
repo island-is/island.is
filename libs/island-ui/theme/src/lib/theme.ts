@@ -107,8 +107,8 @@ export const theme = {
       solid: 'solid',
     },
     radius: {
-      standard: `${radiusPrimitives.xs.$value ?? 4}px`,
-      large: `${radiusPrimitives.default.$value ?? 8}px`,
+      standard: `${radiusPrimitives.xs.$value ?? 4}px`, // TODO: check with designers to keep as standard
+      large: `${radiusPrimitives.default.$value ?? 8}px`, // TODO: check with designers to keep as large
       md: `${radiusPrimitives.md.$value ?? 12}px`,
       lg: `${radiusPrimitives.lg.$value ?? 16}px`,
       xl: '24px',
