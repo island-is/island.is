@@ -22,11 +22,11 @@ export class FieldSettings {
   @Field(() => Date, { nullable: true })
   maxDate?: Date
 
-  @Field(() => String, { nullable: true })
-  minAmount?: string
+  @Field(() => Int, { nullable: true })
+  minAmount?: number
 
-  @Field(() => String, { nullable: true })
-  maxAmount?: string
+  @Field(() => Int, { nullable: true })
+  maxAmount?: number
 
   @Field(() => Int, { nullable: true })
   year?: number

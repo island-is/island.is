@@ -4,8 +4,14 @@ import { LanguageFields } from './languageFields'
 export const ApplicantFragment = gql`
   fragment Applicant on FormSystemApplicant {
     id
-    applicantType
+    description {
+      ...LanguageFields
+    }
+    applicantTypeId
     name {
+      ...LanguageFields
+    }
+    nameSuggestions {
       ...LanguageFields
     }
   }

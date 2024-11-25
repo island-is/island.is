@@ -6,6 +6,7 @@ import {
   FormSystemSection,
   FormSystemFieldSettings,
   FormSystemSectionDtoSectionTypeEnum,
+  FormSystemFormCertificationTypeDto,
 } from '@island.is/api/schema'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
@@ -101,6 +102,13 @@ type ChangeActions =
       update: (updatedActiveItem?: ActiveItem) => void
     }
   }
+  | {
+    type: 'CHANGE_CERTIFICATION'
+    payload: {
+      certificate: FormSystemFormCertificationTypeDto
+      checked: boolean
+    }
+  }
 
 type InputSettingsActions =
   | {
@@ -116,7 +124,7 @@ type InputSettingsActions =
   | {
     type: 'SET_FILE_UPLOAD_SETTINGS'
     payload: {
-      property: 'isMulti' | 'maxSize' | 'amount' | 'types'
+      property: 'isMulti' | 'fileMaxSize' | 'maxFiles' | 'fileTypes'
       checked?: boolean
       value?: string | number
       update: (updatedActiveItem?: ActiveItem) => void
@@ -140,7 +148,6 @@ type InputSettingsActions =
     type: 'REMOVE_LIST_ITEM'
     payload: {
       id: UniqueIdentifier
-      update: (updatedActiveItem?: ActiveItem) => void
     }
   }
   | {
@@ -181,7 +188,6 @@ export const controlReducer = (
   action: ControlAction,
 ): ControlState => {
   const { form, activeItem } = state
-  // const { stepsList: steps, groupsList: groups, inputsList: inputs } = form
   const { sections, screens, fields } = form
   switch (action.type) {
     case 'SET_ACTIVE_ITEM':
@@ -229,7 +235,6 @@ export const controlReducer = (
 
     // Screens
     case 'ADD_SCREEN': {
-      console.log('action.payload.screen', action.payload.screen)
       return {
         ...state,
         activeItem: {
@@ -303,7 +308,7 @@ export const controlReducer = (
         ...activeItem,
         data: {
           ...activeItem.data,
-          type: newValue,
+          fieldType: newValue,
           fieldSettings: removeTypename(fieldSettings),
         },
       }
@@ -345,27 +350,27 @@ export const controlReducer = (
     }
     /* Uncomment and finish when field has isRequired property */
 
-    // case 'CHANGE_IS_REQUIRED': {
-    //   const currentData = activeItem.data as FormSystemField
-    //   const newActive = {
-    //     ...activeItem,
-    //     data: {
-    //       ...currentData,
-    //       isRequired: !currentData?.isRequired,
-    //     },
-    //   }
-    //   action.payload.update(newActive)
-    //   return {
-    //     ...state,
-    //     activeItem: newActive,
-    //     form: {
-    //       ...form,
-    //       inputsList: inputs?.map((i) =>
-    //         i?.guid === currentData?.guid ? newActive.data : i,
-    //       ),
-    //     },
-    //   }
-    // }
+    case 'CHANGE_IS_REQUIRED': {
+      const currentData = activeItem.data as FormSystemField
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          isRequired: !currentData?.isRequired,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          fields: fields?.map((i) =>
+            i?.id === currentData?.id ? newActive.data : i,
+          ),
+        },
+      }
+    }
 
     // Change
     case 'CHANGE_NAME': {
@@ -482,7 +487,7 @@ export const controlReducer = (
           const updatedChildProps = dependency?.childProps?.filter(
             (child) => child !== itemId,
           )
-          if (updatedChildProps?.length) {
+          if ((updatedChildProps?.length ?? 0) > 0) {
             updatedDependencies = updatedDependencies.map((dep) =>
               dep?.parentProp === activeId
                 ? { ...dep, childProps: updatedChildProps }
@@ -503,7 +508,7 @@ export const controlReducer = (
       } else {
         updatedDependencies = [
           ...updatedDependencies,
-          { parentProp: activeId, childProps: [itemId] },
+          { parentProp: activeId, childProps: [itemId], isSelected: false },
         ]
       }
       const updatedForm = {
@@ -538,6 +543,18 @@ export const controlReducer = (
         },
       }
     }
+
+    case 'CHANGE_CERTIFICATION': {
+      const { certificate, checked } = action.payload
+      const updatedCertifications = checked ? [...form.certificationTypes ?? [], certificate] : form.certificationTypes?.filter((c) => c?.id !== certificate.id)
+      return {
+        ...state,
+        form: {
+          ...form,
+          certificationTypes: updatedCertifications,
+        },
+      }
+    }
     // Input settings
     case 'SET_MESSAGE_WITH_LINK_SETTINGS': {
       const field = activeItem.data as FormSystemField
@@ -565,7 +582,7 @@ export const controlReducer = (
       return {
         ...state,
         activeItem: {
-          type: 'Section',
+          type: 'Field',
           data: newField,
         },
         form: {
@@ -593,7 +610,7 @@ export const controlReducer = (
         fieldSettings: {
           ...field.fieldSettings,
           [property]:
-            property === 'types'
+            property === 'fileTypes'
               ? updateFileTypesArray()
               : property === 'isMulti'
                 ? checked
@@ -643,31 +660,18 @@ export const controlReducer = (
     case 'SET_LIST_ITEM_SELECTED': {
       const { id } = action.payload
       const field = activeItem.data as FormSystemField
-      const list = field.fieldSettings?.list ?? []
+      const list = field.list ?? []
       const newField = {
         ...field,
-        fieldSettings: {
-          ...field.fieldSettings,
-          list: list
-            .filter((l): l is FormSystemListItem => l !== null && l !== undefined)
-            .map((l: FormSystemListItem) =>
-              l.id === id
-                ? { ...l, isSelected: !l.isSelected }
-                : { ...l, isSelected: false },
-            ),
-        },
+        list: list
+          .filter((l): l is FormSystemListItem => l !== null && l !== undefined)
+          .map((l: FormSystemListItem) =>
+            l.id === id
+              ? { ...l, isSelected: !l.isSelected }
+              : { ...l, isSelected: false },
+          ),
       }
-      //TODO
-      // updateField[0]({
-      //   variables: {
-      //     input: {
-      //       id: id,
-      //       updateFieldDto: {
-      //         updateFieldDto: newField
-      //       }
-      //     }
-      //   }
-      // })
+
       return {
         ...state,
         activeItem: {
@@ -683,25 +687,13 @@ export const controlReducer = (
       }
     }
     case 'REMOVE_LIST_ITEM': {
-      const { id, update } = action.payload
+      const { id } = action.payload
       const field = activeItem.data as FormSystemField
-      const list = field.fieldSettings?.list ?? []
+      const list = field.list ?? []
       const newField = {
         ...field,
-        fieldSettings: {
-          ...field.fieldSettings,
-          list: list.filter((l: FormSystemListItem | null | undefined): l is FormSystemListItem => l !== null && l !== undefined && l.id !== id),
-        },
+        list: list.filter((l: FormSystemListItem | null | undefined): l is FormSystemListItem => l !== null && l !== undefined && l.id !== id),
       }
-      update({ type: 'Field', data: newField })
-      //TODO
-      // deleteListItem[0]({
-      //   variables: {
-      //     input: {
-      //       id: id
-      //     }
-      //   }
-      // })
       return {
         ...state,
         activeItem: {
@@ -719,14 +711,11 @@ export const controlReducer = (
 
     case 'ADD_LIST_ITEM': {
       const field = activeItem.data as FormSystemField
-      const list = field.fieldSettings?.list ?? []
       const newField = {
         ...field,
-        fieldSettings: {
-          ...field.fieldSettings,
-          list: [...list, action.payload.newListItem],
-        },
+        list: [...(field?.list ?? []), action.payload.newListItem],
       }
+
       return {
         ...state,
         activeItem: {
@@ -743,7 +732,7 @@ export const controlReducer = (
     }
     case 'CHANGE_LIST_ITEM': {
       const field = activeItem.data as FormSystemField
-      const list = field.fieldSettings?.list as FormSystemListItem[]
+      const list = field.list as FormSystemListItem[]
       const { property, lang, value, id } = action.payload
       const listItem = list?.find((l) => l?.id === id) as FormSystemListItem
 
@@ -757,25 +746,13 @@ export const controlReducer = (
 
       const newField = {
         ...field,
-        fieldSettings: {
-          ...field.fieldSettings,
-          list: list.filter(l => l !== null).map((l: FormSystemListItem) => {
-            if (l.id === id) {
-              return newListItem
-            }
-            return l
-          }),
-        },
+        list: list.filter(l => l !== null).map((l: FormSystemListItem) => {
+          if (l.id === id) {
+            return newListItem
+          }
+          return l
+        })
       }
-      //TODO
-      // updateListItem[0]({
-      //   variables: {
-      //     input: {
-      //       id: id,
-      //       updateListItemDto: newListItem
-      //     }
-      //   }
-      // })
 
       return {
         ...state,
@@ -844,7 +821,6 @@ export const controlReducer = (
       if (sections && sections[overIndex]) {
         updatedScreens[activeIndex].sectionId = action.payload.overId as string
       }
-      console.log(arrayMove(updatedScreens, activeIndex, overIndex))
       return {
         ...state,
         form: {
@@ -897,17 +873,17 @@ export const controlReducer = (
       const overIndex = screens?.findIndex(
         (screen) => screen?.id === action.payload.overId,
       ) as number
-      const updatedInputs = fields?.map((input) => ({
+      const updatedFields = fields?.map((input) => ({
         ...input,
       })) as FormSystemField[]
       if (screens && screens[overIndex]) {
-        updatedInputs[activeIndex].id = action.payload.overId as string
+        updatedFields[activeIndex].screenId = action.payload.overId as string
       }
       return {
         ...state,
         form: {
           ...form,
-          fields: arrayMove(updatedInputs, activeIndex, overIndex)
+          fields: arrayMove(updatedFields, activeIndex, overIndex)
         },
       }
     }
@@ -918,20 +894,20 @@ export const controlReducer = (
       const overIndex = fields?.findIndex(
         (field) => field?.id === action.payload.overId,
       ) as number
-      const updatedInputs = fields as FormSystemField[]
-      if (updatedInputs[activeIndex] && updatedInputs[overIndex]) {
+      const updatedFields = fields as FormSystemField[]
+      if (updatedFields[activeIndex] && updatedFields[overIndex]) {
         if (
-          updatedInputs[activeIndex].id !==
-          updatedInputs[overIndex].id
+          updatedFields[activeIndex].screenId !==
+          updatedFields[overIndex].screenId
         ) {
-          updatedInputs[activeIndex].id =
-            updatedInputs[overIndex].id
+          updatedFields[activeIndex].screenId =
+            updatedFields[overIndex].screenId
           return {
             ...state,
             form: {
               ...form,
               fields: arrayMove(
-                updatedInputs,
+                updatedFields,
                 activeIndex,
                 overIndex - 1,
               )
@@ -942,7 +918,7 @@ export const controlReducer = (
           ...state,
           form: {
             ...form,
-            fields: arrayMove(updatedInputs, activeIndex, overIndex)
+            fields: arrayMove(updatedFields, activeIndex, overIndex)
           },
         }
       }
@@ -950,7 +926,7 @@ export const controlReducer = (
     }
     case 'LIST_ITEM_OVER_LIST_ITEM': {
       const fieldItem = activeItem.data as FormSystemField
-      const list = fieldItem.fieldSettings?.list as FormSystemListItem[]
+      const list = fieldItem.list as FormSystemListItem[]
       const { activeId, overId } = action.payload
       if (!list) {
         return state
@@ -964,12 +940,9 @@ export const controlReducer = (
 
       const newField: FormSystemField = {
         ...fieldItem,
-        fieldSettings: {
-          ...fieldItem.fieldSettings,
-          list: arrayMove<FormSystemListItem>(list, activeIndex, overIndex).map(
-            (l: FormSystemListItem, i: number) => ({ ...l, displayOrder: i }),
-          ),
-        },
+        list: arrayMove<FormSystemListItem>(list, activeIndex, overIndex).map(
+          (l: FormSystemListItem, i: number) => ({ ...l, displayOrder: i }),
+        )
       }
       return {
         ...state,

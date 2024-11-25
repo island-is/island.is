@@ -8,13 +8,6 @@
       // "@nx/react/typings/image.d.ts"
     ]
   },
-<<<<<<<< HEAD:libs/portals/form-system/ui-components/tsconfig.lib.json
-========
-  "files": [
-    "../../../../../node_modules/@nx/react/typings/cssmodule.d.ts",
-    "../../../../../node_modules/@nx/react/typings/image.d.ts"
-  ],
->>>>>>>> dd03c10c0a65f67627212406bfd78261dec7d631:libs/application/templates/inao/financial-statement-cemetery/tsconfig.lib.json
   "exclude": [
     "jest.config.ts",
     "src/**/*.spec.ts",

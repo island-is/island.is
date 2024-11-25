@@ -34,8 +34,7 @@ export class FormsService {
       error: JSON.stringify(error),
       category: 'forms-service',
     }
-    //this.logger.error(errorDetail || 'Error in forms service', err)
-    console.error(error)
+    this.logger.error(errorDetail || 'Error in forms service', err)
     throw new ApolloError(error.message)
   }
 
@@ -46,7 +45,7 @@ export class FormsService {
   async createForm(auth: User, input: CreateFormInput): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
       .formsControllerCreate({
-        createFormDto: input as CreateFormDto
+        createFormDto: input as CreateFormDto,
       })
       .catch((e) => handle4xx(e, this.handleError, 'failed to create form'))
 

@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 import { Stack } from '@island.is/island-ui/core'
 import { BaseInput } from './components/BaseInput'
@@ -13,12 +13,13 @@ export const FieldContent = () => {
 
   if (inListBuilder) {
     return <ListBuilder />
+  } else {
+    return (
+      <Stack space={2}>
+        <BaseInput />
+        <FieldSettings />
+        <Preview data={currentItem} />
+      </Stack>
+    )
   }
-  return (
-    <Stack space={2}>
-      <BaseInput />
-      <FieldSettings />
-      {currentItem.fieldType !== 'Default' && <Preview data={currentItem} />}
-    </Stack>
-  )
 }

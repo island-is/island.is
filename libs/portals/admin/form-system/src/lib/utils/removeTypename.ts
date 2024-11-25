@@ -13,5 +13,11 @@ export const removeTypename = (obj: any): any => {
       newObj[key] = removeTypename(value)
     }
   }
+  // if the key is fieldSettings remove all properties where the values are null
+  if (newObj.fieldSettings) {
+    newObj.fieldSettings = Object.fromEntries(
+      Object.entries(newObj.fieldSettings).filter(([_, v]) => v !== null),
+    )
+  }
   return newObj
 }

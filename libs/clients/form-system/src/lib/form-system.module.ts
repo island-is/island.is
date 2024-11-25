@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import {
   ApplicationsApiProvider,
+  CertificationsProvider,
   FieldsApiProvider,
   FormApplicantProvider,
   FormsApiProvider,
@@ -8,16 +9,19 @@ import {
   OrganizationsApiProvider,
   ScreensApiProvider,
   SectionsApiProvider,
+  ValuesProvider,
 } from './FormSystemApiProvider'
 import {
   ApplicationsApi,
   FieldsApi,
-  FormApplicantsApi,
+  FormApplicantTypesApi,
+  FormCertificationTypesApi,
   FormsApi,
   ListItemsApi,
   OrganizationsApi,
   ScreensApi,
   SectionsApi,
+  ValuesApi,
 } from '../../gen/fetch'
 
 @Module({
@@ -30,7 +34,9 @@ import {
     OrganizationsApiProvider,
     ScreensApiProvider,
     SectionsApiProvider,
-    FormApplicantProvider
+    FormApplicantProvider,
+    CertificationsProvider,
+    ValuesProvider
   ],
   exports: [
     ApplicationsApi,
@@ -40,7 +46,9 @@ import {
     OrganizationsApi,
     ScreensApi,
     SectionsApi,
-    FormApplicantsApi
+    FormApplicantTypesApi,
+    FormCertificationTypesApi,
+    ValuesApi
   ],
 })
 export class FormSystemClientModule { }

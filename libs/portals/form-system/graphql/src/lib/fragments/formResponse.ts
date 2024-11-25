@@ -3,6 +3,7 @@ import { FormFragment } from './form'
 import { FieldTypeFragment } from './fieldType'
 import { CertificateTypeFragment } from './certificateType'
 import { ListTypeFragment } from './listType'
+import { FormApplicantFragment } from './formApplicant'
 
 export const FormResponseFragment = gql`
   fragment FormResponse on FormSystemFormResponse {
@@ -15,6 +16,9 @@ export const FormResponseFragment = gql`
     certificationTypes {
       ...CertificateType
     }
+    applicantTypes {
+      ...FormApplicant
+    }
     listTypes {
       ...ListType
     }
@@ -22,6 +26,7 @@ export const FormResponseFragment = gql`
       ...Form
     }
   }
+  ${FormApplicantFragment}
   ${FormFragment}
   ${FieldTypeFragment}
   ${CertificateTypeFragment}

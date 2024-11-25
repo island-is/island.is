@@ -13,7 +13,6 @@ export const Form = () => {
   if (!form || !formBuilder) {
     return <div>Loading...</div>
   }
-  console.log('Form', form)
   return (
     <FormProvider formBuilder={formBuilder}>
       <FormLayout />

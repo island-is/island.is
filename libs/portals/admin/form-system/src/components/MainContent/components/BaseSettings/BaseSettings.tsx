@@ -9,7 +9,8 @@ import {
 import { useContext } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 import { useIntl } from 'react-intl'
-import { m } from '../../../../lib/messages'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { m } from '@island.is/form-system/ui'
 
 export const BaseSettings = () => {
   const {
@@ -56,10 +57,6 @@ export const BaseSettings = () => {
                 payload: { lang: 'en', newValue: e.target.value },
               })
             }
-          // buttons={translationButtons(
-          //   form?.name?.is ?? '',
-          //   'CHANGE_FORM_NAME',
-          // )}
           />
         </Column>
       </Row>

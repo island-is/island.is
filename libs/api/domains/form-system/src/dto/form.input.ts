@@ -1,22 +1,15 @@
-import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql'
+import { Field, InputType, Int } from '@nestjs/graphql'
 import { SectionInput } from './section.input'
 import { ScreenInput } from './screen.input'
 import { FieldInput } from './field.input'
 import { LanguageTypeInput } from './languageType.input'
-import {
-  CertificationTypeDtoTypeEnum,
-  FormApplicantDtoApplicantTypeEnum,
-} from '@island.is/clients/form-system'
 import { FieldTypeInput } from './fieldType.input'
 import { ListTypeInput } from './listType.input'
-
-registerEnumType(FormApplicantDtoApplicantTypeEnum, {
-  name: 'FormSystemFormApplicantDtoApplicantTypeEnum',
-})
-
-registerEnumType(CertificationTypeDtoTypeEnum, {
-  name: 'FormSystemCertificationTypeDtoTypeEnum',
-})
+import { FormApplicantInput } from './applicant.input'
+import {
+  CertificationInput,
+  FormCertificationTypeDtoInput,
+} from './certification.input'
 
 @InputType('FormSystemDependencyInput')
 export class DependencyInput {
@@ -25,6 +18,9 @@ export class DependencyInput {
 
   @Field(() => [String], { nullable: 'itemsAndList' })
   childProps?: string[]
+
+  @Field(() => Boolean, { nullable: true })
+  isSelected?: boolean
 }
 
 @InputType('FormSystemCreateFormInput')
@@ -49,33 +45,6 @@ export class GetFormInput {
 export class GetAllFormsInput {
   @Field(() => String, { nullable: true })
   organizationId?: string
-}
-
-@InputType('FormSystemFormApplicantInput')
-export class FormApplicantInput {
-  @Field(() => String, { nullable: true })
-  id?: string
-
-  @Field(() => FormApplicantDtoApplicantTypeEnum, { nullable: true })
-  applicantType?: FormApplicantDtoApplicantTypeEnum
-
-  @Field(() => LanguageTypeInput, { nullable: true })
-  name?: LanguageTypeInput
-}
-
-@InputType('FormSystemFormCertificationTypeInput')
-export class FormCertificationTypeInput {
-  @Field(() => String, { nullable: true })
-  id?: string
-
-  @Field(() => LanguageTypeInput, { nullable: true })
-  name?: LanguageTypeInput
-
-  @Field(() => LanguageTypeInput, { nullable: true })
-  description?: LanguageTypeInput
-
-  @Field(() => CertificationTypeDtoTypeEnum, { nullable: true })
-  type?: CertificationTypeDtoTypeEnum
 }
 
 @InputType('FormSystemUpdateFormDtoInput')
@@ -155,11 +124,11 @@ export class FormInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   completedMessage?: LanguageTypeInput
 
-  @Field(() => [FormCertificationTypeInput], { nullable: 'itemsAndList' })
-  certificationTypes?: FormCertificationTypeInput[]
+  @Field(() => [FormCertificationTypeDtoInput], { nullable: 'itemsAndList' })
+  certificationTypes?: FormCertificationTypeDtoInput[]
 
   @Field(() => [FormApplicantInput], { nullable: 'itemsAndList' })
-  applicants?: FormApplicantInput[]
+  applicantTypes?: FormApplicantInput[]
 
   @Field(() => [SectionInput], { nullable: 'itemsAndList' })
   sections?: SectionInput[]
@@ -182,8 +151,11 @@ export class FormResponseInput {
   @Field(() => [FieldTypeInput], { nullable: 'itemsAndList' })
   fieldTypes?: FieldTypeInput[]
 
-  @Field(() => [FormCertificationTypeInput], { nullable: 'itemsAndList' })
-  certificationTypes?: FormCertificationTypeInput[]
+  @Field(() => [CertificationInput], { nullable: 'itemsAndList' })
+  certificationTypes?: CertificationInput[]
+
+  @Field(() => [FormApplicantInput], { nullable: 'itemsAndList' })
+  applicantTypes?: FormApplicantInput[]
 
   @Field(() => [ListTypeInput], { nullable: 'itemsAndList' })
   listTypes?: ListTypeInput[]

@@ -20,7 +20,7 @@ import { FormResponse } from '../../models/form.model'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class FormsResolver {
-  constructor(private readonly formsService: FormsService) { }
+  constructor(private readonly formsService: FormsService) {}
 
   @Mutation(() => FormResponse, {
     name: 'formSystemCreateForm',
@@ -34,7 +34,7 @@ export class FormsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemDeleteForm',
-    nullable: true
+    nullable: true,
   })
   async deleteForm(
     @Args('input', { type: () => DeleteFormInput }) input: DeleteFormInput,
@@ -65,7 +65,7 @@ export class FormsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemUpdateForm',
-    nullable: true
+    nullable: true,
   })
   async updateForm(
     @Args('input', { type: () => UpdateFormInput }) input: UpdateFormInput,

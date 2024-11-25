@@ -9,9 +9,10 @@ import {
   Button,
   RadioButton,
 } from '@island.is/island-ui/core'
-import { FormSystemField, FormSystemFieldDtoFieldTypeEnum } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
-import { m } from '../../../../../../../lib/messages'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { FieldTypesEnum, m } from '@island.is/form-system/ui'
 
 const predeterminedLists = [
   {
@@ -74,7 +75,7 @@ export const ListSettings = () => {
 
   return (
     <Stack space={2}>
-      {currentItem.fieldType === FormSystemFieldDtoFieldTypeEnum.DropdownList && (
+      {currentItem.fieldType === FieldTypesEnum.DROPDOWN_LIST && (
         <>
           <Row>
             <Column>
@@ -103,11 +104,12 @@ export const ListSettings = () => {
         </>
       )}
       {radio[0] && (
-        <Column span="5/10">
-          <Button variant="ghost" onClick={() => setInListBuilder(true)}>
-            {formatMessage(m.listBuilder)}
-          </Button>
-        </Column>
+        <Button
+          variant="ghost"
+          onClick={() => setInListBuilder(true)}
+        >
+          {formatMessage(m.listBuilder)}
+        </Button>
       )}
       {radio[1] && (
         <Column span="5/10">

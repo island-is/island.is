@@ -32,8 +32,7 @@ export class FieldsService {
       error: JSON.stringify(error),
       category: 'forms-service',
     }
-    //this.logger.error(errorDetail || 'Error in fields service', err)
-    console.error(error)
+    // this.logger.error(errorDetail || 'Error in fields service', err)
     throw new ApolloError(error.message)
   }
 
@@ -67,7 +66,6 @@ export class FieldsService {
     const response = await this.fieldsApiWithAuth(auth)
       .fieldsControllerUpdate(input as unknown as FieldsControllerUpdateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to update field'))
-
     if (!response || response instanceof ApolloError) {
       return
     }

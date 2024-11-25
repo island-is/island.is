@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ApolloCache, DefaultContext, MutationFunctionOptions, MutationTuple, OperationVariables } from '@apollo/client'
+import { ApolloCache, DefaultContext, MutationTuple, OperationVariables } from '@apollo/client'
 import { ActiveItem } from './interfaces'
 import {
   FormSystemSection,
@@ -16,9 +16,9 @@ export const updateActiveItemFn = async (
   currentActiveItem?: ActiveItem,
 ) => {
   const { type } = activeItem
-  const [updateSection, { error: sectionError }] = sectionMutation
-  const [updateScreen, { error: screenError }] = screenMutation
-  const [updateField, { error: fieldError }] = fieldMutation
+  const [updateSection] = sectionMutation
+  const [updateScreen] = screenMutation
+  const [updateField] = fieldMutation
   try {
     if (type === 'Section') {
       const { id, name, waitingText } =
@@ -41,7 +41,6 @@ export const updateActiveItemFn = async (
         currentActiveItem
           ? (currentActiveItem.data as FormSystemScreen)
           : (activeItem.data as FormSystemScreen)
-      console.log('callRuleset', callRuleset)
       updateScreen({
         variables: {
           input: {
@@ -54,9 +53,6 @@ export const updateActiveItemFn = async (
           },
         }
       })
-      if (screenError) {
-        console.error('Error updating screen: ', screenError)
-      }
     } else if (type === 'Field') {
       const {
         id,
@@ -64,7 +60,9 @@ export const updateActiveItemFn = async (
         description,
         isPartOfMultiset,
         fieldSettings,
-        fieldType
+        fieldType,
+        isRequired,
+        isHidden
       } = currentActiveItem
           ? (currentActiveItem.data as FormSystemField)
           : (activeItem.data as FormSystemField)
@@ -72,13 +70,14 @@ export const updateActiveItemFn = async (
         variables: {
           input: {
             id: id,
-            fieldUpdateDto: {
-              id,
+            updateFieldDto: {
               name,
               description,
               isPartOfMultiset,
               fieldSettings,
               fieldType,
+              isRequired: isRequired ? isRequired : false,
+              isHidden: isHidden ? isHidden : false,
             },
           },
         },

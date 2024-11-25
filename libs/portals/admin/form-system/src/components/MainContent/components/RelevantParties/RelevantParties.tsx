@@ -1,58 +1,52 @@
 import { useContext, useState } from "react"
 import { ControlContext } from "../../../../context/ControlContext"
 import { Stack, Checkbox, Box, Text } from "@island.is/island-ui/core"
-import { m } from "@island.is/form-system/ui"
 import { useIntl } from "react-intl"
 import { CREATE_APPLICANT, DELETE_APPLICANT } from "@island.is/form-system/graphql"
 import { useMutation } from "@apollo/client"
-import { FormSystemFormApplicant, FormSystemApplicantTypeEnum } from "@island.is/api/schema"
+import { FormSystemFormApplicant } from "@island.is/api/schema"
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { ApplicantTypesEnum, m } from '@island.is/form-system/ui'
 import { removeTypename } from "../../../../lib/utils/removeTypename"
 import { FormApplicantTypes } from "./components/FormApplicantTypes"
 
-const applicantTypeCheckboxsLabel = [
-  "Einstaklingur (innskráður)",
-  "Einstaklingur í umboði annars einstaklings",
-  "Einstaklingur í umboði lögaðila",
-  "Einstaklingur með prókúru",
-]
-
 const applicantTypeGroups = {
-  individual: [FormSystemApplicantTypeEnum.Individual],
+  individual: [ApplicantTypesEnum.INDIVIDUAL],
   individualDelegation: [
-    FormSystemApplicantTypeEnum.IndividualWithDelegationFromIndividual,
-    FormSystemApplicantTypeEnum.IndividualGivingDelegation,
+    ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL,
+    ApplicantTypesEnum.INDIVIDUAL_GIVING_DELEGATION,
   ],
   legalEntityDelegation: [
-    FormSystemApplicantTypeEnum.IndividualWithDelegationFromLegalEntity,
-    FormSystemApplicantTypeEnum.LegalEntity,
+    ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,
+    ApplicantTypesEnum.LEGAL_ENTITY,
   ],
   procuration: [
-    FormSystemApplicantTypeEnum.IndividualWithProcuration,
-    FormSystemApplicantTypeEnum.LegalEntity,
+    ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION,
+    ApplicantTypesEnum.LEGAL_ENTITY,
   ],
 }
 
 export const RelevantParties = () => {
-  const { control } = useContext(ControlContext)
-  const { formatMessage } = useIntl()
   const [createApplicant] = useMutation(CREATE_APPLICANT)
   const [deleteApplicant] = useMutation(DELETE_APPLICANT)
-  const { applicants, id: formId } = control.form
+  const { control, applicantTypes } = useContext(ControlContext)
+  const { formatMessage } = useIntl()
+  const { applicantTypes: applicants, id: formId } = control.form
   const [formApplicants, setFormApplicants] = useState<FormSystemFormApplicant[]>(
     applicants?.filter((applicant): applicant is FormSystemFormApplicant => applicant !== null) ?? []
   )
 
-  const handleApplicantChange = async (typesArray: FormSystemApplicantTypeEnum[], checked: boolean) => {
+  const handleApplicantChange = async (typesArray: string[], checked: boolean) => {
     if (checked) {
       try {
         const newApplicants = await Promise.all(
-          typesArray.map(async (applicantType) => {
+          typesArray.map(async (applicantTypeId) => {
             const newApplicant = await createApplicant({
               variables: {
                 input: {
-                  createFormApplicantDto: {
+                  createFormApplicantTypeDto: {
                     formId,
-                    applicantType,
+                    applicantTypeId,
                   },
                 },
               },
@@ -69,7 +63,7 @@ export const RelevantParties = () => {
         await Promise.all(
           typesArray.map(async (applicantType) => {
             const applicant = formApplicants.find(
-              (a) => a.applicantType === applicantType
+              (a) => a.applicantTypeId === applicantType
             )
             if (applicant) {
               await deleteApplicant({
@@ -81,7 +75,7 @@ export const RelevantParties = () => {
         setFormApplicants(
           formApplicants.filter(
             (applicant) =>
-              applicant.applicantType !== undefined && applicant.applicantType !== null && !typesArray.includes(applicant.applicantType)
+              applicant.applicantTypeId !== undefined && applicant.applicantTypeId !== null && !typesArray.includes(applicant.applicantTypeId)
           )
         )
       } catch (e) {
@@ -100,32 +94,32 @@ export const RelevantParties = () => {
         break
       case 2: {
         if (checked) {
-          if (formApplicants.some(applicant => applicant.applicantType === FormSystemApplicantTypeEnum.LegalEntity)) {
-            handleApplicantChange([FormSystemApplicantTypeEnum.IndividualWithDelegationFromLegalEntity], checked)
+          if (formApplicants.some(applicant => applicant.id === ApplicantTypesEnum.LEGAL_ENTITY)) {
+            handleApplicantChange([ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY], checked)
           } else {
             handleApplicantChange(applicantTypeGroups.legalEntityDelegation, checked)
           }
         } else {
-          if (!formApplicants.some(applicant => applicant.applicantType === FormSystemApplicantTypeEnum.IndividualWithProcuration)) {
+          if (!formApplicants.some(applicant => applicant.id === ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION)) {
             handleApplicantChange(applicantTypeGroups.legalEntityDelegation, checked)
           } else {
-            handleApplicantChange([FormSystemApplicantTypeEnum.IndividualWithDelegationFromLegalEntity], checked)
+            handleApplicantChange([ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY], checked)
           }
         }
       }
         break
       case 3: {
         if (checked) {
-          if (formApplicants.some(applicant => applicant.applicantType === FormSystemApplicantTypeEnum.LegalEntity)) {
-            handleApplicantChange([FormSystemApplicantTypeEnum.IndividualWithProcuration], checked)
+          if (formApplicants.some(applicant => applicant.id === ApplicantTypesEnum.LEGAL_ENTITY)) {
+            handleApplicantChange([ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION], checked)
           } else {
             handleApplicantChange(applicantTypeGroups.procuration, checked)
           }
         } else {
-          if (!formApplicants.some(applicant => applicant.applicantType === FormSystemApplicantTypeEnum.IndividualWithDelegationFromLegalEntity)) {
+          if (!formApplicants.some(applicant => applicant.id === ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY)) {
             handleApplicantChange(applicantTypeGroups.procuration, checked)
           } else {
-            handleApplicantChange([FormSystemApplicantTypeEnum.IndividualWithProcuration], checked)
+            handleApplicantChange([ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION], checked)
           }
         }
       }
@@ -135,8 +129,6 @@ export const RelevantParties = () => {
     }
   }
 
-
-
   return (
     <Stack space={2}>
       <Box marginBottom={2}>
@@ -144,13 +136,17 @@ export const RelevantParties = () => {
       </Box>
       <Box padding={2}>
         <Stack space={2}>
-          {applicantTypeCheckboxsLabel.map((label, index) => (
-            <Checkbox
-              key={index}
-              label={label}
-              onChange={(e) => handleCheckboxChange(index, e.target.checked)}
-            />
-          ))}
+          {applicantTypes?.map((applicant, index) => {
+            if (index > 3) return null
+            return (
+              <Checkbox
+                key={index}
+                label={applicant?.description?.is}
+                checked={formApplicants.some(a => a.applicantTypeId === applicant?.id)}
+                onChange={(e) => handleCheckboxChange(index, e.target.checked)}
+              />
+            )
+          })}
         </Stack>
       </Box>
       <FormApplicantTypes

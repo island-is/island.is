@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const Radio = ({ item }: Props) => {
-  const radioButtons = item.fieldSettings?.list as FormSystemListItem[]
+  const radioButtons = item.list as FormSystemListItem[]
   const [radioChecked, setRadioChecked] = useState<boolean[]>([])
 
   useEffect(() => {

@@ -1,13 +1,19 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { LanguageTypeInput } from './languageType.input'
 
-@InputType('FormSystemCreateListItemInput')
-export class CreateListItemInput {
+@InputType('FormSystemCreateListItemDtoInput')
+export class CreateListItemDtoInput {
   @Field(() => String, { nullable: true })
   fieldId?: string
 
   @Field(() => Int, { nullable: true })
   displayOrder?: number
+}
+
+@InputType('FormSystemCreateListItemInput')
+export class CreateListItemInput {
+  @Field(() => CreateListItemDtoInput, { nullable: true })
+  createListItemDto?: CreateListItemDtoInput
 }
 
 @InputType('FormSystemDeleteListItemInput')
@@ -16,8 +22,8 @@ export class DeleteListItemInput {
   id?: string
 }
 
-@InputType('FormSystemUpdateListItemInput')
-export class UpdateListItemInput {
+@InputType('FormSystemUpdateListItemDtoInput')
+export class UpdateListItemDto {
   @Field(() => LanguageTypeInput, { nullable: true })
   label?: LanguageTypeInput
 
@@ -31,16 +37,31 @@ export class UpdateListItemInput {
   isSelected?: boolean
 }
 
+@InputType('FormSystemUpdateListItemInput')
+export class UpdateListItemInput {
+  @Field(() => String, { nullable: true })
+  id?: string
+
+  @Field(() => UpdateListItemDto, { nullable: true })
+  updateListItemDto?: UpdateListItemDto
+}
+
 @InputType('FormSystemListItemDisplayOrderInput')
 export class ListItemDisplayOrderInput {
   @Field(() => String, { nullable: true })
   id?: string
 }
 
-@InputType('FormSystemUpdateListItemsDisplayOrderInput')
-export class UpdateListItemsDisplayOrderInput {
+@InputType('FormSystemUpdateListItemsDisplayOrderDtoInput')
+export class UpdateListItemsDisplayOrderDtoInput {
   @Field(() => [ListItemDisplayOrderInput], { nullable: 'itemsAndList' })
   listItemsDisplayOrderDto?: ListItemDisplayOrderInput[]
+}
+
+@InputType('FormSystemUpdateListItemsDisplayOrderInput')
+export class UpdateListItemDisplayOrderInput {
+  @Field(() => UpdateListItemsDisplayOrderDtoInput, { nullable: true })
+  updateListItemsDisplayOrderDto?: UpdateListItemsDisplayOrderDtoInput
 }
 
 @InputType('FormSystemListItemInput')

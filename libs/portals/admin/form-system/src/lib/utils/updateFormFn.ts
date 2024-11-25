@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { OperationVariables, ApolloCache, DefaultContext, MutationFunctionOptions } from "@apollo/client"
 import { FormSystemForm } from "@island.is/api/schema"
 import { ControlState } from "../../hooks/controlReducer"

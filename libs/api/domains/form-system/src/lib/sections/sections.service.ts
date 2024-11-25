@@ -14,7 +14,7 @@ import {
   CreateSectionInput,
   DeleteSectionInput,
   UpdateSectionInput,
-  UpdateSectionsDisplayOrderDtoInput,
+  UpdateSectionsDisplayOrderInput,
 } from '../../dto/section.input'
 import { Section } from '../../models/section.model'
 
@@ -79,7 +79,7 @@ export class SectionsService {
 
   async updateSectionsDisplayOrder(
     auth: User,
-    input: UpdateSectionsDisplayOrderDtoInput,
+    input: UpdateSectionsDisplayOrderInput,
   ): Promise<void> {
     const response = await this.sectionsApiWithAuth(auth)
       .sectionsControllerUpdateDisplayOrder(
@@ -94,9 +94,9 @@ export class SectionsService {
       )
 
     if (!response || response instanceof ApolloError) {
-      return void 0
+      return
     }
 
-    return response
+    return
   }
 }

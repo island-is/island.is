@@ -1,5 +1,6 @@
-import { FormSystemField, FormSystemFieldDtoFieldTypeEnum } from '@island.is/api/schema'
+import { FormSystemField } from '@island.is/api/schema'
 import { Box, DatePicker, Text } from '@island.is/island-ui/core'
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   Banknumber,
   MessageWithLink,
@@ -15,7 +16,8 @@ import {
   Checkbox,
   List,
   HomestayOverview,
-  m
+  m,
+  FieldTypesEnum
 } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
 
@@ -25,19 +27,19 @@ interface Props {
 }
 
 export const Preview = ({ data }: Props) => {
-  const { fieldType: type } = data
+  const type = data.fieldType as unknown as FieldTypesEnum
   const { formatMessage } = useIntl()
   return (
     <Box padding={2} background="blue100">
-      {type === FormSystemFieldDtoFieldTypeEnum.Message && <MessageWithLink item={data} />}
-      {type === FormSystemFieldDtoFieldTypeEnum.BankAccount && (
+      {type === FieldTypesEnum.MESSAGE && <MessageWithLink item={data} />}
+      {type === FieldTypesEnum.BANK_ACCOUNT && (
         <div>
           <Text variant="h5">{data?.name?.is}</Text>
           <Banknumber item={data} />
         </div>
       )}
-      {type === FormSystemFieldDtoFieldTypeEnum.Email && <Email item={data} />}
-      {type === FormSystemFieldDtoFieldTypeEnum.DatePicker && (
+      {type === FieldTypesEnum.EMAIL && <Email item={data} />}
+      {type === FieldTypesEnum.DATE_PICKER && (
         <Box marginTop={2} width="half">
           <DatePicker
             label={
@@ -49,17 +51,17 @@ export const Preview = ({ data }: Props) => {
           />
         </Box>
       )}
-      {type === FormSystemFieldDtoFieldTypeEnum.NationalId && <NationalId item={data} />}
-      {type === FormSystemFieldDtoFieldTypeEnum.Document && <FileUpload item={data} />}
-      {type === FormSystemFieldDtoFieldTypeEnum.Textbox && <TextInput item={data} />}
-      {type === FormSystemFieldDtoFieldTypeEnum.DropdownList && <List item={data} />}
-      {type === FormSystemFieldDtoFieldTypeEnum.RadioButtons && <Radio item={data} />}
-      {type === FormSystemFieldDtoFieldTypeEnum.IskNumberbox && <CurrencyField item={data} />}
-      {type === FormSystemFieldDtoFieldTypeEnum.Checkbox && <Checkbox item={data} />}
-      {type === FormSystemFieldDtoFieldTypeEnum.PhoneNumber && <PhoneNumber item={data} />}
-      {type === FormSystemFieldDtoFieldTypeEnum.TimeInput && <TimeInput item={data} />}
-      {type === FormSystemFieldDtoFieldTypeEnum.PropertyNumber && <PropertyNumber item={data} />}
-      {type === FormSystemFieldDtoFieldTypeEnum.HomestayOverview && <HomestayOverview />}
+      {type === FieldTypesEnum.NATIONAL_ID && <NationalId item={data} />}
+      {type === FieldTypesEnum.DOCUMENT && <FileUpload item={data} />}
+      {type === FieldTypesEnum.TEXTBOX && <TextInput item={data} />}
+      {type === FieldTypesEnum.DROPDOWN_LIST && <List item={data} />}
+      {type === FieldTypesEnum.RADIO_BUTTONS && <Radio item={data} />}
+      {type === FieldTypesEnum.ISK_NUMBERBOX && <CurrencyField item={data} />}
+      {type === FieldTypesEnum.CHECKBOX && <Checkbox item={data} />}
+      {type === FieldTypesEnum.PHONE_NUMBER && <PhoneNumber item={data} />}
+      {type === FieldTypesEnum.TIME_INPUT && <TimeInput item={data} />}
+      {type === FieldTypesEnum.PROPERTY_NUMBER && <PropertyNumber item={data} />}
+      {type === FieldTypesEnum.HOMESTAY_OVERVIEW && <HomestayOverview />}
     </Box>
   )
 }

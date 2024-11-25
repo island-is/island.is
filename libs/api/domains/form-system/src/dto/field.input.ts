@@ -1,16 +1,19 @@
-import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql'
-import { FieldDtoFieldTypeEnum } from '@island.is/clients/form-system'
+import { Field, InputType, Int } from '@nestjs/graphql'
 import { FieldSettingsInput } from './fieldSettings.input'
 import { LanguageTypeInput } from './languageType.input'
-
-registerEnumType(FieldDtoFieldTypeEnum, {
-  name: 'FormSystemFieldDtoFieldTypeEnum',
-})
+import { ListItemInput } from './listItem.input'
+import { ValueDtoInput } from './value.input'
 
 @InputType('FormSystemCreateFieldDtoInput')
 export class CreateFieldDtoInput {
   @Field(() => String, { nullable: true })
   screenId?: string
+
+  @Field(() => String, { nullable: true })
+  fieldType?: string
+
+  @Field(() => Int, { nullable: true })
+  displayOrder?: number
 }
 
 @InputType('FormSystemCreateFieldInput')
@@ -51,11 +54,17 @@ export class UpdateFieldDtoInput {
   @Field(() => Boolean, { nullable: true })
   isPartOfMultiset?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  isRequired?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isHidden?: boolean
+
   @Field(() => FieldSettingsInput, { nullable: true })
   fieldSettings?: FieldSettingsInput
 
-  @Field(() => FieldDtoFieldTypeEnum, { nullable: true })
-  fieldType?: FieldDtoFieldTypeEnum
+  @Field(() => String, { nullable: true })
+  fieldType?: string
 }
 
 @InputType('FormSystemUpdateFieldInput')
@@ -88,12 +97,21 @@ export class FieldInput {
   @Field(() => Boolean, { nullable: true })
   isPartOfMultiset?: boolean
 
-  @Field(() => FieldSettingsInput, { nullable: true })
-  fieldSettings?: FieldSettingsInput
-
-  @Field(() => FieldDtoFieldTypeEnum, { nullable: true })
-  fieldType?: FieldDtoFieldTypeEnum
+  @Field(() => Boolean, { nullable: true })
+  isHidden?: boolean
 
   @Field(() => Boolean, { nullable: true })
   isRequired?: boolean
+
+  @Field(() => FieldSettingsInput, { nullable: true })
+  fieldSettings?: FieldSettingsInput
+
+  @Field(() => String, { nullable: true })
+  fieldType?: string
+
+  @Field(() => [ListItemInput], { nullable: 'itemsAndList' })
+  list?: ListItemInput[]
+
+  @Field(() => [ValueDtoInput], { nullable: 'itemsAndList' })
+  values?: ValueDtoInput[]
 }

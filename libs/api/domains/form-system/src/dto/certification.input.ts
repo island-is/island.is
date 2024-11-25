@@ -1,10 +1,5 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql'
-import { CertificationTypeDtoTypeEnum } from '@island.is/clients/form-system'
+import { Field, InputType } from '@nestjs/graphql'
 import { LanguageTypeInput } from './languageType.input'
-
-registerEnumType(CertificationTypeDtoTypeEnum, {
-  name: 'FormSystemCertificationTypeDtoTypeEnum',
-})
 
 @InputType('FormSystemCertificationInput')
 export class CertificationInput {
@@ -17,6 +12,42 @@ export class CertificationInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   description?: LanguageTypeInput
 
-  @Field(() => CertificationTypeDtoTypeEnum, { nullable: true })
-  type?: CertificationTypeDtoTypeEnum
+  @Field(() => Boolean, { nullable: true })
+  isCommon?: boolean
+
+  @Field(() => String, { nullable: true })
+  certificationTypeId?: string
+
+  @Field(() => String, { nullable: true })
+  organizationCertificationId?: string
+}
+
+@InputType('FormSystemFormCertificationTypeDtoInput')
+export class FormCertificationTypeDtoInput {
+  @Field(() => String, { nullable: true })
+  id?: string
+
+  @Field(() => String, { nullable: true })
+  certificationTypeId?: string
+}
+
+@InputType('FormSystemCreateCertificationDtoInput')
+export class CreateCertificationDtoInput {
+  @Field(() => String, { nullable: true })
+  formId?: string
+
+  @Field(() => String, { nullable: true })
+  certificationTypeId?: string
+}
+
+@InputType('FormSystemCreateCertificationInput')
+export class CreateCertificationInput {
+  @Field(() => CreateCertificationDtoInput, { nullable: true })
+  createFormCertificationTypeDto?: CreateCertificationDtoInput
+}
+
+@InputType('FormSystemDeleteCertificationInput')
+export class DeleteCertificationInput {
+  @Field(() => String, { nullable: true })
+  id?: string
 }

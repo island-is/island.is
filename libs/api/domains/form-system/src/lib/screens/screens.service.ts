@@ -22,8 +22,8 @@ import { Screen } from '../../models/screen.model'
 @Injectable()
 export class ScreensService {
   constructor(
-    // @Inject(LOGGER_PROVIDER)
-    // private logger: Logger,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
     private screensApi: ScreensApi,
   ) { }
 
@@ -33,7 +33,7 @@ export class ScreensService {
       error: JSON.stringify(error),
       category: 'forms-service',
     }
-    //this.logger.error(errorDetail || 'Error in screens service', err)
+    this.logger.error(errorDetail || 'Error in screens service', err)
 
     throw new ApolloError(error.message)
   }

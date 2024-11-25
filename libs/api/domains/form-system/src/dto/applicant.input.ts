@@ -1,18 +1,13 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql'
-import { CreateFormApplicantDtoApplicantTypeEnum } from '@island.is/clients/form-system'
+import { Field, InputType } from '@nestjs/graphql'
 import { LanguageTypeInput } from './languageType.input'
-
-registerEnumType(CreateFormApplicantDtoApplicantTypeEnum, {
-  name: 'FormSystemCreateFormApplicantDtoApplicantTypeEnum',
-})
 
 @InputType('FormSystemCreateApplicantDtoInput')
 export class FormSystemCreateApplicantDtoInput {
   @Field(() => String, { nullable: true })
   formId?: string
 
-  @Field(() => CreateFormApplicantDtoApplicantTypeEnum, { nullable: true })
-  applicantType?: CreateFormApplicantDtoApplicantTypeEnum
+  @Field(() => String, { nullable: true })
+  applicantTypeId?: string
 }
 
 @InputType('FormSystemUpdateApplicantDtoInput')
@@ -24,7 +19,7 @@ export class FormSystemUpdateApplicantDtoInput {
 @InputType('FormSystemCreateApplicantInput')
 export class CreateApplicantInput {
   @Field(() => FormSystemCreateApplicantDtoInput, { nullable: true })
-  createFormApplicantDto?: FormSystemCreateApplicantDtoInput
+  createFormApplicantTypeDto?: FormSystemCreateApplicantDtoInput
 }
 
 @InputType('FormSystemDeleteApplicantInput')
@@ -39,5 +34,23 @@ export class UpdateApplicantInput {
   id?: string
 
   @Field(() => FormSystemUpdateApplicantDtoInput, { nullable: true })
-  updateFormApplicantDto?: FormSystemUpdateApplicantDtoInput
+  updateFormApplicantTypeDto?: FormSystemUpdateApplicantDtoInput
+}
+
+@InputType('FormSystemFormApplicantInput')
+export class FormApplicantInput {
+  @Field(() => String, { nullable: true })
+  id?: string
+
+  @Field(() => LanguageTypeInput, { nullable: true })
+  description?: LanguageTypeInput
+
+  @Field(() => String, { nullable: true })
+  applicantTypeId?: string
+
+  @Field(() => LanguageTypeInput, { nullable: true })
+  name?: LanguageTypeInput
+
+  @Field(() => [LanguageTypeInput], { nullable: true })
+  nameSuggestions?: LanguageTypeInput[]
 }

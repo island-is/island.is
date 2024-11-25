@@ -9,56 +9,12 @@ import {
   Option,
 } from '@island.is/island-ui/core'
 import { useContext } from 'react'
-import { fileTypes } from '../../../../../../../lib/utils/fileTypes'
+import { fileSizes, fileTypes } from '../../../../../../../lib/utils/fileTypes'
 import { ControlContext } from '../../../../../../../context/ControlContext'
 import { FormSystemField } from '@island.is/api/schema'
-import { m } from '../../../../../../../lib/messages'
 import { useIntl } from 'react-intl'
-
-const fileSizes = {
-  fileSizes: [
-    {
-      label: '1 mb',
-      value: 1048576,
-    },
-    {
-      label: '2 mb',
-      value: 2097152,
-    },
-    {
-      label: '3 mb',
-      value: 3145728,
-    },
-    {
-      label: '4 mb',
-      value: 4194304,
-    },
-    {
-      label: '5 mb',
-      value: 5242880,
-    },
-    {
-      label: '6 mb',
-      value: 6291456,
-    },
-    {
-      label: '7 mb',
-      value: 7340032,
-    },
-    {
-      label: '8 mb',
-      value: 8388608,
-    },
-    {
-      label: '9 mb',
-      value: 9437184,
-    },
-    {
-      label: '10 mb',
-      value: 10485760,
-    },
-  ],
-}
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { m } from '@island.is/form-system/ui'
 
 export const FileUploadSettings = () => {
   const { control, controlDispatch, updateActiveItem } =
@@ -67,7 +23,7 @@ export const FileUploadSettings = () => {
   const currentItem = activeItem.data as FormSystemField
   const { fieldSettings } = currentItem
 
-  const fileSizeOptions = fileSizes.fileSizes.map((size) => ({
+  const fileSizeOptions = fileSizes.map((size) => ({
     label: size.label,
     value: size.value,
   }))
@@ -99,7 +55,7 @@ export const FileUploadSettings = () => {
               controlDispatch({
                 type: 'SET_FILE_UPLOAD_SETTINGS',
                 payload: {
-                  property: 'maxSize',
+                  property: 'fileMaxSize',
                   value: e?.value,
                   update: updateActiveItem,
                 },
@@ -121,7 +77,7 @@ export const FileUploadSettings = () => {
               controlDispatch({
                 type: 'SET_FILE_UPLOAD_SETTINGS',
                 payload: {
-                  property: 'amount',
+                  property: 'maxFiles',
                   value: e?.value,
                   update: updateActiveItem,
                 },
@@ -147,7 +103,7 @@ export const FileUploadSettings = () => {
                   controlDispatch({
                     type: 'SET_FILE_UPLOAD_SETTINGS',
                     payload: {
-                      property: 'types',
+                      property: 'fileTypes',
                       checked: e.target.checked,
                       value: key,
                       update: updateActiveItem,

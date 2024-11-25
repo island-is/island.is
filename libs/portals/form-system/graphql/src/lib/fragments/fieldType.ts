@@ -5,7 +5,6 @@ import { LanguageFields } from './languageFields'
 export const FieldTypeFragment = gql`
   fragment FieldType on FormSystemFieldType {
     id
-    type
     name {
       ...LanguageFields
     }
@@ -15,6 +14,9 @@ export const FieldTypeFragment = gql`
     isCommon
     fieldSettings {
       ...FieldSettings
+    }
+    values {
+      ...Value
     }
   }
   ${LanguageFields}

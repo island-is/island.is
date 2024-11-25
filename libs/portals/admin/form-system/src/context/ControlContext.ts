@@ -1,9 +1,10 @@
-import { Dispatch, createContext } from 'react'
+import { Dispatch, SetStateAction, createContext } from 'react'
 import { ControlAction, ControlState } from '../hooks/controlReducer'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import {
   FormSystemFieldType,
   FormSystemForm,
+  FormSystemFormApplicant,
   FormSystemFormCertificationType,
   FormSystemListType,
 } from '@island.is/api/schema'
@@ -28,9 +29,10 @@ export interface IControlContext {
   updateDnD: (type: ItemType) => void
   selectStatus: NavbarSelectStatus
   setSelectStatus: Dispatch<NavbarSelectStatus>
+  setInListBuilder: Dispatch<SetStateAction<boolean>>
   inListBuilder: boolean
-  setInListBuilder: Dispatch<boolean>
   formUpdate: (updatedForm?: FormSystemForm) => void
+  applicantTypes: Maybe<Maybe<FormSystemFormApplicant>[]> | undefined
 }
 
 export const ControlContext = createContext<IControlContext>({
@@ -59,11 +61,12 @@ export const ControlContext = createContext<IControlContext>({
   setSelectStatus: function (_value: NavbarSelectStatus): void {
     throw new Error('Function not implemented.')
   },
-  inListBuilder: false,
-  setInListBuilder: function (_value: boolean): void {
+  setInListBuilder: function (_value: SetStateAction<boolean>): void {
     throw new Error('Function not implemented.')
   },
+  inListBuilder: false,
   formUpdate: function (): void {
     throw new Error('Function not implemented.')
   },
+  applicantTypes: [] as Maybe<Maybe<FormSystemFormApplicant>[]>,
 })

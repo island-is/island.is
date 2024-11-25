@@ -10,7 +10,9 @@ export const CertificateTypeFragment = gql`
     description {
       ...LanguageFields
     }
-    type
+    isCommon
+    certificationTypeId
+    organizationCertificationId
   }
   ${LanguageFields}
 `

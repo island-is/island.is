@@ -15,8 +15,9 @@ import { Premises } from './components/Premises/Premises'
 import { FieldContent } from './components/FieldContent/FieldContent'
 import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import { useIntl } from 'react-intl'
-import { m } from '../../lib/messages'
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { m } from '@island.is/form-system/ui'
 
 export const MainContent = () => {
   const {
@@ -94,7 +95,7 @@ export const MainContent = () => {
                 <Checkbox
                   name="multi"
                   label={formatMessage(m.allowMultiple)}
-                  checked={(activeItem.data as FormSystemScreen).multiset !== 0}
+                  checked={(activeItem.data as FormSystemScreen).multiset !== 0 && (activeItem.data as FormSystemScreen).multiset !== null}
                   onChange={(e) =>
                     controlDispatch({
                       type: 'TOGGLE_MULTI_SET',

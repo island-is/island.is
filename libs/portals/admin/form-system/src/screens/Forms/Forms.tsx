@@ -31,7 +31,6 @@ export const Forms = () => {
                 const { data } = await formSystemCreateFormMutation({
                   variables: { input: { organizationId: 'a4b0db68-e169-416a-8ad9-e46b73ce2d39' } },
                 })
-                console.log('createForm', data)
                 navigate(
                   FormSystemPaths.Form.replace(
                     ':formId',
@@ -53,7 +52,6 @@ export const Forms = () => {
         <TableRow isHeader={true} />
         {forms &&
           forms?.map((f) => {
-            console.log(f)
             return (
               <TableRow
                 key={f?.id}

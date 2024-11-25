@@ -9,18 +9,22 @@ import {
 import { Dispatch, SetStateAction, useContext } from 'react'
 import { ControlContext } from '../../../../../../../context/ControlContext'
 import { useSortable } from '@dnd-kit/sortable'
-import { FormSystemField, FormSystemFieldDtoFieldTypeEnum, FormSystemListItem } from '@island.is/api/schema'
+import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
 import { NavbarSelectStatus } from '../../../../../../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
-import { m } from '../../../../../../../lib/messages'
 import * as styles from './ListItem.css'
 import { getTranslation } from '../../../../../../../lib/utils/getTranslation'
+import { useMutation } from '@apollo/client'
+import { DELETE_LIST_ITEM, UPDATE_LIST_ITEM } from '@island.is/form-system/graphql'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { FieldTypesEnum, m } from '@island.is/form-system/ui'
 
 interface Props {
   listItem: FormSystemListItem
   connecting: boolean
   index: number
   setConnecting: Dispatch<SetStateAction<boolean[]>>
+  toggleSelected: (id: string, checked: boolean) => void
 }
 
 export const ListItem = ({
@@ -28,6 +32,7 @@ export const ListItem = ({
   connecting,
   index,
   setConnecting,
+  toggleSelected
 }: Props) => {
   const {
     control,
@@ -35,11 +40,10 @@ export const ListItem = ({
     setFocus,
     focus,
     setSelectStatus,
-    updateActiveItem,
   } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemField
-  const isRadio = currentItem.fieldType === FormSystemFieldDtoFieldTypeEnum.RadioButtons
+  const isRadio = currentItem.fieldType === FieldTypesEnum.RADIO_BUTTONS
 
   const { setNodeRef, attributes, listeners, isDragging } = useSortable({
     id: listItem.id ?? '',
@@ -47,6 +51,8 @@ export const ListItem = ({
   })
 
   const { formatMessage } = useIntl()
+  const [deleteListItem] = useMutation(DELETE_LIST_ITEM)
+  const [updateListItem] = useMutation(UPDATE_LIST_ITEM)
 
   if (isDragging) {
     return (
@@ -59,6 +65,25 @@ export const ListItem = ({
         className={styles.draggingBox}
       ></Box>
     )
+  }
+
+  const listItemUpdate = () => {
+    try {
+      updateListItem({
+        variables: {
+          input: {
+            id: listItem.id,
+            updateListItemDto: {
+              label: listItem.label,
+              description: listItem.description,
+              isSelected: listItem.isSelected,
+            }
+          }
+        }
+      })
+    } catch (e) {
+      console.error('Error updating list item', e)
+    }
   }
 
   return (
@@ -82,7 +107,7 @@ export const ListItem = ({
           display="flex"
           flexDirection="row"
           alignItems="center"
-          style={{ width: '30%' }}
+          style={{ width: '50%' }}
           justifyContent="spaceBetween"
         >
           <ToggleSwitchCheckbox
@@ -106,29 +131,36 @@ export const ListItem = ({
           <ToggleSwitchCheckbox
             label={formatMessage(m.selected)}
             checked={listItem.isSelected ?? false}
-            onChange={() =>
+            onChange={(e) => {
+              toggleSelected(listItem.id ?? '', e)
               controlDispatch({
                 type: 'SET_LIST_ITEM_SELECTED',
                 payload: {
                   id: listItem.id ?? ''
                 },
               })
-            }
+            }}
           />
         </Box>
         <Box display="flex" flexDirection="row" alignItems="center">
           <Box
             marginRight={2}
             style={{ cursor: 'pointer' }}
-            onClick={() =>
+            onClick={() => {
               controlDispatch({
                 type: 'REMOVE_LIST_ITEM',
                 payload: {
                   id: listItem.id ?? '',
-                  update: updateActiveItem,
                 },
               })
-            }
+              deleteListItem({
+                variables: {
+                  input: {
+                    id: listItem.id ?? '',
+                  }
+                }
+              })
+            }}
           >
             <Icon icon="trash" color="blue400" />
           </Box>
@@ -146,7 +178,7 @@ export const ListItem = ({
             size="sm"
             value={listItem?.label?.is ?? ''}
             onFocus={(e) => setFocus(e.target.value)}
-            onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+            onBlur={(e) => e.target.value !== focus && listItemUpdate()}
             onChange={(e) =>
               controlDispatch({
                 type: 'CHANGE_LIST_ITEM',
@@ -168,7 +200,7 @@ export const ListItem = ({
             size="sm"
             value={listItem?.label?.en ?? ''}
             onFocus={(e) => setFocus(e.target.value)}
-            onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+            onBlur={(e) => e.target.value !== focus && listItemUpdate()}
             onChange={(e) =>
               controlDispatch({
                 type: 'CHANGE_LIST_ITEM',
@@ -212,7 +244,7 @@ export const ListItem = ({
               size="sm"
               value={listItem?.description?.is ?? ''}
               onFocus={(e) => setFocus(e.target.value)}
-              onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+              onBlur={(e) => e.target.value !== focus && listItemUpdate()}
               onChange={(e) =>
                 controlDispatch({
                   type: 'CHANGE_LIST_ITEM',
@@ -234,7 +266,7 @@ export const ListItem = ({
               size="sm"
               value={listItem?.description?.en ?? ''}
               onFocus={(e) => setFocus(e.target.value)}
-              onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+              onBlur={(e) => e.target.value !== focus && listItemUpdate()}
               onChange={(e) =>
                 controlDispatch({
                   type: 'CHANGE_LIST_ITEM',

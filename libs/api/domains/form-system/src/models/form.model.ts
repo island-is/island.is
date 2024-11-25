@@ -1,6 +1,9 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql'
 import { Field as FieldModel } from './field.model'
-import { FormCertificationType } from './formCertificationType.model'
+import {
+  FormCertificationType,
+  FormCertificationTypeDto,
+} from './certification.model'
 import { FormApplicant } from './formApplicant.model'
 import { Section } from './section.model'
 import { ListType } from './listItem.model'
@@ -15,6 +18,9 @@ export class Dependency {
 
   @Field(() => [String], { nullable: 'itemsAndList' })
   childProps?: string[]
+
+  @Field(() => Boolean, { nullable: true })
+  isSelected?: boolean
 }
 
 @ObjectType('FormSystemForm')
@@ -55,11 +61,11 @@ export class Form {
   @Field(() => LanguageType, { nullable: true })
   completedMessage?: LanguageType
 
-  @Field(() => [FormCertificationType], { nullable: 'itemsAndList' })
-  certificationTypes?: FormCertificationType[]
+  @Field(() => [FormCertificationTypeDto], { nullable: 'itemsAndList' })
+  certificationTypes?: FormCertificationTypeDto[]
 
   @Field(() => [FormApplicant], { nullable: 'itemsAndList' })
-  applicants?: FormApplicant[]
+  applicantTypes?: FormApplicant[]
 
   @Field(() => [Section], { nullable: 'itemsAndList' })
   sections?: Section[]
@@ -84,6 +90,9 @@ export class FormResponse {
 
   @Field(() => [FormCertificationType], { nullable: 'itemsAndList' })
   certificationTypes?: FormCertificationType[]
+
+  @Field(() => [FormApplicant], { nullable: 'itemsAndList' })
+  applicantTypes?: FormApplicant[]
 
   @Field(() => [ListType], { nullable: 'itemsAndList' })
   listTypes?: ListType[]

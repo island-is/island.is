@@ -4,9 +4,10 @@ import { FormSystemScreen, FormSystemField } from '@island.is/api/schema'
 import { ControlContext } from '../../../context/ControlContext'
 import { removeTypename } from '../../../lib/utils/removeTypename'
 import { useIntl } from 'react-intl'
-import { m } from '../../../lib/messages'
 import { useMutation } from '@apollo/client'
 import { CREATE_FIELD, CREATE_SCREEN, DELETE_FIELD, DELETE_SCREEN } from '@island.is/form-system/graphql'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { FieldTypesEnum, m } from '@island.is/form-system/ui'
 
 
 export const NavButtons = () => {
@@ -44,12 +45,12 @@ export const NavButtons = () => {
           input: {
             createScreenDto: {
               sectionId: activeItem?.data?.id,
+              displayOrder: screens?.length
             }
           },
         },
       })
       if (newScreen && !createScreen[1].loading) {
-        console.log('newScreen', newScreen)
         controlDispatch({
           type: 'ADD_SCREEN',
           payload: {
@@ -65,6 +66,8 @@ export const NavButtons = () => {
           input: {
             createFieldDto: {
               screenId: activeItem?.data?.id,
+              fieldType: FieldTypesEnum.TEXTBOX,
+              displayOrder: fields?.length ?? 0
             }
           },
         },

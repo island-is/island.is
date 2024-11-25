@@ -12,9 +12,9 @@ import {
 } from '@island.is/island-ui/core'
 import { SingleValue } from 'react-select'
 import { useIntl } from 'react-intl'
-import { m } from '../../../../../lib/messages'
 import { fieldTypesSelectObject } from '../../../../../lib/utils/fieldTypes'
-
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { m } from '@island.is/form-system/ui'
 
 export const BaseInput = () => {
   const {
@@ -27,11 +27,12 @@ export const BaseInput = () => {
   } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemField
-
   const selectList = fieldTypesSelectObject()
-  const defaultValue = selectList.find((i) => i.value === currentItem?.fieldType)
+  const defaultValue = fieldTypes?.find(fieldType => fieldType?.id === currentItem.fieldType)
+  const defaultOption: Option<string> | undefined = defaultValue
+    ? { value: defaultValue.id ?? '', label: defaultValue.name?.is ?? '' }
+    : undefined
   const { formatMessage } = useIntl()
-
   return (
     <Stack space={2}>
       <Row>
@@ -43,19 +44,19 @@ export const BaseInput = () => {
             placeholder={formatMessage(m.chooseType)}
             backgroundColor="blue"
             isSearchable
-            value={defaultValue}
-            onChange={(e: SingleValue<Option<string>>) =>
+            value={defaultOption}
+            onChange={(e: SingleValue<Option<string>>) => {
               controlDispatch({
                 type: 'CHANGE_FIELD_TYPE',
                 payload: {
                   newValue: e?.value ?? '',
                   fieldSettings:
-                    fieldTypes?.find((i) => i?.type === e?.value)
+                    fieldTypes?.find((i) => i?.id === e?.value)
                       ?.fieldSettings ?? {},
                   update: updateActiveItem,
                 },
               })
-            }
+            }}
           />
         </Column>
       </Row>
@@ -157,7 +158,7 @@ export const BaseInput = () => {
         <Column span="5/10">
           <Checkbox
             label={formatMessage(m.required)}
-            //checked={currentItem.isRequired ?? false} // uncomment when isRequired is added to the schema
+            checked={currentItem.isRequired ?? false} // uncomment when isRequired is added to the schema
             onChange={() =>
               controlDispatch({
                 type: 'CHANGE_IS_REQUIRED',

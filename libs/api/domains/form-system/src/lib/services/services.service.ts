@@ -11,7 +11,7 @@ export class ServicesService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

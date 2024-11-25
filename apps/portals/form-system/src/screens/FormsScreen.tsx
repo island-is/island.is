@@ -1,9 +1,8 @@
-import { useMutation } from "@apollo/client"
-import { useAuth } from "@island.is/auth/react"
-import { useLocale, useLocalizedQuery } from "@island.is/localization"
-import { Params, useNavigate, useParams } from "react-router-dom"
-import { CREATE_APPLICATION, CREATE_FORM } from "@island.is/form-system/graphql"
-
+import { useMutation } from '@apollo/client'
+import { useAuth } from '@island.is/auth/react'
+import { useLocale, useLocalizedQuery } from '@island.is/localization'
+import { Params, useNavigate, useParams } from 'react-router-dom'
+import { CREATE_APPLICATION, CREATE_FORM } from '@island.is/form-system/graphql'
 
 export const FormsScreen = () => {
   const { userInfo } = useAuth()
@@ -59,9 +58,9 @@ export const FormsScreen = () => {
       const data = await createFormMutation({
         variables: {
           input: {
-            slug: slug
-          }
-        }
+            slug: slug,
+          },
+        },
       })
       console.log(data)
     } catch (err) {
@@ -69,7 +68,6 @@ export const FormsScreen = () => {
     }
   }
   data()
-
 
   const createForm = () => {
     // Graphql mutation to create form

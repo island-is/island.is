@@ -1,6 +1,8 @@
 import { gql } from '@apollo/client'
 import { LanguageFields } from './languageFields'
 import { FieldSettingsFragment } from './fieldSettings'
+import { ListItemFragment } from './listItem'
+import { ValueDtoFragment } from './value'
 
 export const FieldFragment = gql`
   fragment Field on FormSystemField {
@@ -17,8 +19,17 @@ export const FieldFragment = gql`
       ...FieldSettings
     }
     fieldType
+    list {
+      ...ListItem
+    }
+    values {
+      ...ValueDto
+    }
     isRequired
+    isHidden
   }
+  ${ValueDtoFragment}
+  ${ListItemFragment}
   ${LanguageFields}
   ${FieldSettingsFragment}
 `

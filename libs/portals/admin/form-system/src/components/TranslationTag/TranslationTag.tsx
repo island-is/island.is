@@ -1,6 +1,8 @@
 import { Tag } from '@island.is/island-ui/core'
-import { m } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { m } from '@island.is/form-system/ui'
+
 interface Props {
   translated: boolean
 }

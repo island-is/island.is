@@ -26,7 +26,6 @@ export const formLoader: WrappedLoaderFn = ({ client }) => {
           },
         },
       })
-      console.log(data)
       if (!loading && !data) {
         throw new Error('No form data found')
       }

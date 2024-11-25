@@ -23,7 +23,7 @@ interface YearOption {
   label: string
 }
 
-export const HomestayOverview: React.FC = () => {
+export const HomestayOverview = () => {
   const { formatMessage } = useIntl()
   const datePickerRef = useRef(null)
   const currentYear = new Date().getFullYear()

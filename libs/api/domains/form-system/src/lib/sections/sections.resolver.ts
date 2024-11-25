@@ -11,7 +11,7 @@ import {
   CreateSectionInput,
   DeleteSectionInput,
   UpdateSectionInput,
-  UpdateSectionsDisplayOrderDtoInput,
+  UpdateSectionsDisplayOrderInput,
 } from '../../dto/section.input'
 import { Section } from '../../models/section.model'
 
@@ -34,7 +34,7 @@ export class SectionsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemDeleteSection',
-    nullable: true
+    nullable: true,
   })
   async deleteSection(
     @Args('input', { type: () => DeleteSectionInput })
@@ -60,8 +60,8 @@ export class SectionsResolver {
     nullable: true,
   })
   async updateSectionsDisplayOrder(
-    @Args('input', { type: () => UpdateSectionsDisplayOrderDtoInput })
-    input: UpdateSectionsDisplayOrderDtoInput,
+    @Args('input', { type: () => UpdateSectionsDisplayOrderInput })
+    input: UpdateSectionsDisplayOrderInput,
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.sectionsService.updateSectionsDisplayOrder(user, input)

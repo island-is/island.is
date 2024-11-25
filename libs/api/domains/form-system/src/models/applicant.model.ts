@@ -1,19 +1,20 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
-import { FormApplicantDtoApplicantTypeEnum } from '@island.is/clients/form-system'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { LanguageType } from './languageType.model'
-
-registerEnumType(FormApplicantDtoApplicantTypeEnum, {
-  name: 'FormSystemApplicantTypeEnum',
-})
 
 @ObjectType('FormSystemApplicant')
 export class Applicant {
   @Field(() => String, { nullable: true })
   id?: string
 
-  @Field(() => FormApplicantDtoApplicantTypeEnum, { nullable: true })
-  applicantType?: FormApplicantDtoApplicantTypeEnum
+  @Field(() => LanguageType, { nullable: true })
+  description?: LanguageType
+
+  @Field(() => String, { nullable: true })
+  applicantTypeId?: string
 
   @Field(() => LanguageType, { nullable: true })
   name?: LanguageType
+
+  @Field(() => [LanguageType], { nullable: true })
+  nameSuggestions?: LanguageType[]
 }

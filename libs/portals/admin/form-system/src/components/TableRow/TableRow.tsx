@@ -14,11 +14,11 @@ import { useNavigate } from 'react-router-dom'
 import { TranslationTag } from '../TranslationTag/TranslationTag'
 import { FormSystemPaths } from '../../lib/paths'
 import {
-  LicenseProviderEnum,
   ApplicationTemplateStatus,
 } from '../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
-import { m } from '../../lib/messages'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { m } from '@island.is/form-system/ui'
 
 interface Props {
   id?: string | null
@@ -60,11 +60,10 @@ export const TableRow = ({
     <>
       <Box className={styles.header}>
         <Row>
-          <Column span="1/12">
-            <Text variant="medium">{formatMessage(m.number)}</Text>
-          </Column>
-          <Column span="4/12">
-            <Text variant="medium">{formatMessage(m.name)}</Text>
+          <Column span="5/12">
+            <Box paddingLeft={2}>
+              <Text variant="medium">{formatMessage(m.name)}</Text>
+            </Box>
           </Column>
           <Column span="2/12">
             <Text variant="medium">{formatMessage(m.lastModified)}</Text>
@@ -94,10 +93,7 @@ export const TableRow = ({
       style={{ cursor: '' }}
     >
       <Row key={id}>
-        <Column span="1/12">
-          <ColumnText text={id ? id : ''} />
-        </Column>
-        <Column span="4/12">
+        <Column span="5/12" >
           <ColumnText text={name ? name : ''} />
         </Column>
         <Column span="2/12">

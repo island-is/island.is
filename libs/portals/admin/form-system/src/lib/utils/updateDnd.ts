@@ -2,7 +2,7 @@
 import { ApolloCache, DefaultContext, MutationFunctionOptions, OperationVariables } from "@apollo/client"
 import { ControlState } from "../../hooks/controlReducer"
 
-export const updateDnd = (
+export const updateDnd = async (
   control: ControlState,
   updateSectionDisplayOrder: (options?: MutationFunctionOptions<any, OperationVariables, DefaultContext, ApolloCache<any>> | undefined) => Promise<any>,
   updateScreenDisplayOrder: (options?: MutationFunctionOptions<any, OperationVariables, DefaultContext, ApolloCache<any>> | undefined) => Promise<any>,

@@ -8,10 +8,12 @@ import {
   ListItemsApi,
   ListItemsControllerDeleteRequest,
   ListItemsControllerUpdateRequest,
+  ListItemsControllerUpdateDisplayOrderRequest,
 } from '@island.is/clients/form-system'
 import {
   CreateListItemInput,
   DeleteListItemInput,
+  UpdateListItemDisplayOrderInput,
   UpdateListItemInput,
 } from '../../dto/listItem.input'
 import { ListItem } from '../../models/listItem.model'
@@ -83,10 +85,12 @@ export class ListItemsService {
 
   async updateListItemsDisplayOrder(
     auth: User,
-    input: UpdateListItemInput,
+    input: UpdateListItemDisplayOrderInput,
   ): Promise<void> {
     const response = await this.listItemsApiWithAuth(auth)
-      .listItemsControllerUpdate(input as ListItemsControllerUpdateRequest)
+      .listItemsControllerUpdateDisplayOrder(
+        input as ListItemsControllerUpdateDisplayOrderRequest,
+      )
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to update list item'),
       )

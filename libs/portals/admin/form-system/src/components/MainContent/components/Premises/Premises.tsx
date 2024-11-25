@@ -1,41 +1,80 @@
 import { Stack, Checkbox, Box, Text } from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
-import { FormSystemFormCertificationType, FormSystemCertificationTypeDtoTypeEnum, FormSystemForm } from '@island.is/api/schema'
+import { FormSystemFormCertificationType, Maybe, FormSystemFormCertificationTypeDto } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
-import { m } from '../../../../lib/messages'
+import { useMutation } from '@apollo/client'
+import { CREATE_CERTIFICATION, DELETE_CERTIFICATION } from '@island.is/form-system/graphql'
+import { removeTypename } from '../../../../lib/utils/removeTypename'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { m } from '@island.is/form-system/ui'
 
 export const Premises = () => {
-  const { control, controlDispatch, certificationTypes: certTypes, formUpdate } =
+  const { control, controlDispatch, certificationTypes: certTypes } =
     useContext(ControlContext)
+  const { certificationTypes } = control.form
   const [formCertificationTypes, setFormCertificationTypes] = useState<
-    FormSystemFormCertificationType[]
-  >(
-    control.form?.certificationTypes?.filter(
-      (d): d is FormSystemFormCertificationType => d !== null,
-    ) ?? [],
-  )
+    FormSystemFormCertificationTypeDto[]
+  >((certificationTypes ?? []).filter((type): type is FormSystemFormCertificationTypeDto => type !== null))
+  const [createCertification] = useMutation(CREATE_CERTIFICATION)
+  const [deleteCertification] = useMutation(DELETE_CERTIFICATION)
 
-  const handleCheckboxChange = (certificationType?: FormSystemCertificationTypeDtoTypeEnum) => {
-    const newCertificationTypes = formCertificationTypes.some(
-      (f) => f?.type === certificationType,
-    )
-      ? formCertificationTypes.filter((f) => f?.type !== certificationType)
-      : ([
-        ...formCertificationTypes,
-        certTypes?.find((d) => d?.type === certificationType),
-      ].filter((d) => d !== undefined) as FormSystemFormCertificationType[])
-    setFormCertificationTypes(newCertificationTypes)
-    const updatedForm: FormSystemForm = { ...control.form, certificationTypes: newCertificationTypes }
-    controlDispatch({
-      type: 'CHANGE_FORM_SETTINGS',
-      payload: {
-        newForm: updatedForm,
-      },
-    })
-    formUpdate(updatedForm)
+
+  const handleCheckboxChange = async (certificationTemplate: FormSystemFormCertificationType, checked: boolean) => {
+    if (checked) {
+      try {
+        const newCertificate = await createCertification({
+          variables: {
+            input: {
+              createFormCertificationTypeDto: {
+                formId: control.form.id,
+                certificationTypeId: certificationTemplate.id as string,
+              }
+            }
+          }
+        }).then((res) => {
+          return removeTypename(res.data?.formSystemCreateCertification)
+        })
+        controlDispatch({
+          type: 'CHANGE_CERTIFICATION',
+          payload: {
+            certificate: newCertificate as FormSystemFormCertificationTypeDto,
+            checked: true
+          }
+        })
+        setFormCertificationTypes([...formCertificationTypes, newCertificate])
+      } catch (e) {
+        console.error(e)
+      }
+    } else {
+      const certificationToDelete = formCertificationTypes.find(certification => certification.certificationTypeId === certificationTemplate.id)
+      try {
+        await deleteCertification({
+          variables: {
+            input: {
+              id: certificationToDelete?.id
+            }
+          }
+        })
+        controlDispatch({
+          type: 'CHANGE_CERTIFICATION',
+          payload: {
+            certificate: certificationToDelete as FormSystemFormCertificationTypeDto,
+            checked: false
+          }
+        })
+        setFormCertificationTypes(formCertificationTypes.filter(certification => certification.id !== certificationToDelete?.id))
+      } catch (e) {
+        console.error(e)
+      }
+    }
   }
   const { formatMessage } = useIntl()
+
+  const isChecked = (certificationTypeId?: Maybe<string> | undefined): boolean => {
+    if (!certificationTypeId) return false
+    return formCertificationTypes.some(certification => certification?.certificationTypeId === certificationTypeId)
+  }
 
   return (
     <div>
@@ -44,6 +83,7 @@ export const Premises = () => {
       </Box>
       <Stack space={2}>
         {certTypes?.map((d, i) => {
+          if (!d) return null
           return (
             <Checkbox
               key={i}
@@ -51,10 +91,10 @@ export const Premises = () => {
               name={d?.name?.is ?? ''}
               subLabel={d?.description?.is}
               rightContent={d?.description?.is}
-              value={d?.type ?? ''}
+              value={d?.id ?? ''}
               large
-              checked={formCertificationTypes?.some((f) => f?.type === d?.type)}
-              onChange={() => handleCheckboxChange(d?.type ?? undefined)}
+              checked={isChecked(d?.id)}
+              onChange={(e) => handleCheckboxChange(d as FormSystemFormCertificationType, e.target.checked)}
             />
           )
         })}

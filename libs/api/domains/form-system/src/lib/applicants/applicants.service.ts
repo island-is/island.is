@@ -3,8 +3,17 @@ import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from '@apollo/client'
 import { handle4xx } from '../../utils/errorHandler'
-import { FormApplicantsApi, FormApplicantsControllerCreateRequest, FormApplicantsControllerDeleteRequest, FormApplicantsControllerUpdateRequest } from '@island.is/clients/form-system'
-import { CreateApplicantInput, DeleteApplicantInput, UpdateApplicantInput } from '../../dto/applicant.input'
+import {
+  FormApplicantTypesApi,
+  FormApplicantTypesControllerCreateRequest,
+  FormApplicantTypesControllerDeleteRequest,
+  FormApplicantTypesControllerUpdateRequest,
+} from '@island.is/clients/form-system'
+import {
+  CreateApplicantInput,
+  DeleteApplicantInput,
+  UpdateApplicantInput,
+} from '../../dto/applicant.input'
 import { Applicant } from '../../models/applicant.model'
 
 @Injectable()
@@ -12,7 +21,7 @@ export class ApplicantsService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private formApplicantsApi: FormApplicantsApi,
+    private formApplicantTypesApi: FormApplicantTypesApi,
   ) { }
 
   // eslint-disable-next-line
@@ -27,7 +36,7 @@ export class ApplicantsService {
   }
 
   private applicantsApiWithAuth(auth: User) {
-    return this.formApplicantsApi.withMiddleware(new AuthMiddleware(auth))
+    return this.formApplicantTypesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async createApplicant(
@@ -35,7 +44,9 @@ export class ApplicantsService {
     input: CreateApplicantInput,
   ): Promise<Applicant> {
     const response = await this.applicantsApiWithAuth(auth)
-      .formApplicantsControllerCreate(input as FormApplicantsControllerCreateRequest)
+      .formApplicantTypesControllerCreate(
+        input as FormApplicantTypesControllerCreateRequest,
+      )
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to create applicant'),
       )
@@ -48,10 +59,12 @@ export class ApplicantsService {
 
   async deleteApplicant(
     auth: User,
-    input: DeleteApplicantInput
+    input: DeleteApplicantInput,
   ): Promise<void> {
     const response = await this.applicantsApiWithAuth(auth)
-      .formApplicantsControllerDelete(input as FormApplicantsControllerDeleteRequest)
+      .formApplicantTypesControllerDelete(
+        input as FormApplicantTypesControllerDeleteRequest,
+      )
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to delete applicant'),
       )
@@ -64,10 +77,12 @@ export class ApplicantsService {
 
   async updateApplicant(
     auth: User,
-    input: UpdateApplicantInput
+    input: UpdateApplicantInput,
   ): Promise<void> {
     const response = await this.applicantsApiWithAuth(auth)
-      .formApplicantsControllerUpdate(input as FormApplicantsControllerUpdateRequest)
+      .formApplicantTypesControllerUpdate(
+        input as FormApplicantTypesControllerUpdateRequest,
+      )
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to update applicant'),
       )

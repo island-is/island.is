@@ -1,6 +1,7 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from './messages'
 import { FormSystemPaths } from './paths'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { m } from '@island.is/form-system/ui'
 
 export const formSystemNavigation: PortalNavigationItem = {
   name: m.rootName,

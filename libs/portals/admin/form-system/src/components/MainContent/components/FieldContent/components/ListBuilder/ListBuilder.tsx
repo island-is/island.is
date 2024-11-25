@@ -24,11 +24,16 @@ import { ListItem } from './components/ListItem'
 import { SortableContext } from '@dnd-kit/sortable'
 import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
-import { m } from '../../../../../../lib/messages'
 import { useMutation } from '@apollo/client'
-import { CREATE_LIST_ITEM, UPDATE_LIST_ITEM_DISPLAY_ORDER } from '@island.is/form-system/graphql'
+import { CREATE_LIST_ITEM, UPDATE_LIST_ITEM, UPDATE_LIST_ITEM_DISPLAY_ORDER } from '@island.is/form-system/graphql'
+import { removeTypename } from '../../../../../../lib/utils/removeTypename'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { m } from '@island.is/form-system/ui'
 
 export const ListBuilder = () => {
+  const [createListItem] = useMutation(CREATE_LIST_ITEM)
+  const [updateListItemDisplayOrder] = useMutation(UPDATE_LIST_ITEM_DISPLAY_ORDER)
+  const [updateListItem] = useMutation(UPDATE_LIST_ITEM)
   const {
     control,
     controlDispatch,
@@ -38,7 +43,7 @@ export const ListBuilder = () => {
   const currentItem = control.activeItem.data as FormSystemField
   const { activeListItem } = control
   const listItems =
-    currentItem?.fieldSettings?.list ?? ([] as FormSystemListItem[])
+    currentItem?.list ?? ([] as FormSystemListItem[])
   const listItemIds = useMemo(
     () =>
       listItems
@@ -53,9 +58,6 @@ export const ListBuilder = () => {
 
   const { formatMessage } = useIntl()
 
-  const [createListItem] = useMutation(CREATE_LIST_ITEM)
-  const [updateListItemDisplayOrder] = useMutation(UPDATE_LIST_ITEM_DISPLAY_ORDER)
-
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -65,24 +67,27 @@ export const ListBuilder = () => {
   )
 
   const addListItem = async () => {
-
-    const newListItem = await createListItem({
-      variables: {
-        input: {
-          createListItemDto: {
-            fieldId: currentItem.id,
-            displayOrder: listItems.length,
+    try {
+      const newListItem = await createListItem({
+        variables: {
+          input: {
+            createListItemDto: {
+              fieldId: currentItem.id,
+              displayOrder: listItems.length,
+            }
           }
         }
-      }
-    })
-    controlDispatch({
-      type: 'ADD_LIST_ITEM',
-      payload: {
-        newListItem: newListItem.data.createListItem
-      }
-    })
-    setConnecting((prev) => [...prev, false])
+      })
+      controlDispatch({
+        type: 'ADD_LIST_ITEM',
+        payload: {
+          newListItem: removeTypename(newListItem.data.formSystemCreateListItem)
+        }
+      })
+      setConnecting((prev) => [...prev, false])
+    } catch (e) {
+      console.error('Error creating list item:', e.message)
+    }
   }
 
   const onDragStart = (event: DragStartEvent) => {
@@ -120,9 +125,15 @@ export const ListBuilder = () => {
     updateListItemDisplayOrder({
       variables: {
         input: {
-          listItemsDisplayOrderDto: listItems
-            .filter((l): l is FormSystemListItem => l !== null && l !== undefined)
-            .map((l) => l.id),
+          updateListItemsDisplayOrderDto: {
+            listItemsDisplayOrderDto: listItems
+              .filter((l): l is FormSystemListItem => l !== null && l !== undefined)
+              .map((l) => {
+                return {
+                  id: l.id,
+                }
+              }),
+          }
         },
       },
     })
@@ -135,6 +146,37 @@ export const ListBuilder = () => {
   useEffect(() => {
     setConnecting(listItems.map(() => false))
   }, [listItems])
+
+  const toggleListItemSelected = (id: string, checked: boolean) => {
+    const listItemToUpdate = listItems.find((l) => l?.id === id)
+    if (listItemToUpdate) {
+      updateListItem({
+        variables: {
+          input: {
+            id: id,
+            updateListItemDto: {
+              isSelected: checked,
+            }
+          }
+        }
+      })
+    }
+    if (checked) {
+      const otherSelected = listItems.find((l) => l?.isSelected && l?.id !== id)
+      if (otherSelected) {
+        updateListItem({
+          variables: {
+            input: {
+              id: otherSelected.id,
+              updateListItemDto: {
+                isSelected: false,
+              }
+            }
+          }
+        })
+      }
+    }
+  }
 
   return (
     <Box
@@ -170,6 +212,7 @@ export const ListBuilder = () => {
                       index={i}
                       connecting={connecting ? connecting[i] : false}
                       setConnecting={setConnecting}
+                      toggleSelected={toggleListItemSelected}
                     />
                   )
                 })}
@@ -189,6 +232,7 @@ export const ListBuilder = () => {
                       index={0}
                       connecting={false}
                       setConnecting={setConnecting}
+                      toggleSelected={toggleListItemSelected}
                     />
                   )}
                 </DragOverlay>,

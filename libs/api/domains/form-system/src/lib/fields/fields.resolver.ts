@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -33,7 +33,7 @@ export class FieldsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemUpdateField',
-    nullable: true
+    nullable: true,
   })
   async updateField(
     @Args('input', { type: () => UpdateFieldInput }) input: UpdateFieldInput,
@@ -44,7 +44,7 @@ export class FieldsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemDeleteField',
-    nullable: true
+    nullable: true,
   })
   async deleteField(
     @Args('input', { type: () => DeleteFieldInput }) input: DeleteFieldInput,
@@ -55,7 +55,7 @@ export class FieldsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemUpdateFieldsDisplayOrder',
-    nullable: true
+    nullable: true,
   })
   async updateFieldsDisplayOrder(
     @Args('input', { type: () => UpdateFieldsDisplayOrderInput })

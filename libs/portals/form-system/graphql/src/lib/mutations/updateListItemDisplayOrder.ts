@@ -1,9 +1,9 @@
 import { gql } from '@apollo/client'
 
 export const UPDATE_LIST_ITEM_DISPLAY_ORDER = gql`
-  mutation FormSystemUpdateListItemDisplayOrder(
-    $input: FormSystemUpdateListItemDisplayOrderInput!
+  mutation FormSystemUpdateListItemsDisplayOrder(
+    $input: FormSystemUpdateListItemsDisplayOrderInput!
   ) {
-    formSystemUpdateListItemDisplayOrder(input: $input)
+    formSystemUpdateListItemsDisplayOrder(input: $input)
   }
 `

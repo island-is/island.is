@@ -25,10 +25,11 @@ import { ControlContext, IControlContext } from '../../context/ControlContext'
 import { ItemType } from '../../lib/utils/interfaces'
 import { removeTypename } from '../../lib/utils/removeTypename'
 import { useIntl } from 'react-intl'
-import { m } from '../../lib/messages'
 import { NavComponent } from '../NavComponent/NavComponent'
 import { CREATE_SECTION, UPDATE_SECTION_DISPLAY_ORDER } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { m } from '@island.is/form-system/ui'
 
 type DndAction =
   | 'SECTION_OVER_SECTION'
@@ -75,40 +76,47 @@ export const Navbar = () => {
     }),
   )
   const [createSection, { loading }] = useMutation(CREATE_SECTION)
-  const [updateDisplayOrder, { loading: updateDO }] = useMutation(UPDATE_SECTION_DISPLAY_ORDER)
+  const [updateDisplayOrder] = useMutation(UPDATE_SECTION_DISPLAY_ORDER)
 
   const addSection = async () => {
-    const newSection = await createSection({
-      variables: {
-        input: {
-          createSectionDto: {
-            formId: form.id,
-          }
-        },
-      },
-    })
-    if (newSection && !loading) {
-      controlDispatch({
-        type: 'ADD_SECTION',
-        payload: {
-          section: removeTypename(
-            newSection.data?.formSystemCreateSection,
-          ) as FormSystemSection,
-        },
-      })
-      const updatedSections = sections?.map(s => {
-        return {
-          id: s?.id
-        }
-      })
-      console.log('updatedSections', updatedSections)
-      updateDisplayOrder({
+    try {
+      const newSection = await createSection({
         variables: {
           input: {
-            sectionsDisplayOrderDto: sections?.map((s) => { s?.id })
-          }
-        }
+            createSectionDto: {
+              formId: form.id,
+              displayOrder: sections?.length ?? 0,
+            }
+          },
+        },
       })
+      if (newSection && !loading) {
+        controlDispatch({
+          type: 'ADD_SECTION',
+          payload: {
+            section: removeTypename(
+              newSection.data?.formSystemCreateSection,
+            ) as FormSystemSection,
+          },
+        })
+        const updatedSections = sections?.map(s => {
+          return {
+            id: s?.id
+          }
+        })
+        updateDisplayOrder({
+          variables: {
+            input: {
+              updateSectionsDisplayOrderDto: {
+                sectionsDisplayOrderDto: [...(updatedSections ?? []), { id: newSection.data?.formSystemCreateSection.id }]
+              }
+            }
+          }
+        })
+      }
+    } catch (err) {
+      console.error('Error creating section:', err.message)
+
     }
   }
 

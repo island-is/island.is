@@ -9,58 +9,47 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useIntl } from "react-intl"
-import { m } from '@island.is/form-system/ui'
 import { ControlContext } from "../../../../../context/ControlContext"
 import { useMutation } from "@apollo/client"
 import { UPDATE_APPLICANT } from "@island.is/form-system/graphql"
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { m } from '@island.is/form-system/ui'
+
 
 interface Props {
   formApplicantsTypes: FormSystemFormApplicant[]
   setFormApplicantTypes: Dispatch<SetStateAction<FormSystemFormApplicant[]>>
 }
 
-enum FormSystemApplicantTypeEnum {
-  Individual = 'Individual',
-  IndividualWithDelegationFromIndividual = 'IndividualWithDelegationFromIndividual',
-  IndividualWithDelegationFromLegalEntity = 'IndividualWithDelegationFromLegalEntity',
-  IndividualWithProcuration = 'IndividualWithProcuration',
-  IndividualGivingDelegation = 'IndividualGivingDelegation',
-  LegalEntity = 'LegalEntity',
-}
-
-const applicantTypeLabelMap: Record<FormSystemApplicantTypeEnum, string> = {
-  [FormSystemApplicantTypeEnum.Individual]: 'Einstaklingur (innskráður)',
-  [FormSystemApplicantTypeEnum.IndividualWithDelegationFromIndividual]: 'Einstaklingur í umboði annars einstaklings',
-  [FormSystemApplicantTypeEnum.IndividualWithDelegationFromLegalEntity]: 'Einstaklingur í umboði lögaðila',
-  [FormSystemApplicantTypeEnum.IndividualWithProcuration]: 'Einstaklingur með prókúru',
-  [FormSystemApplicantTypeEnum.IndividualGivingDelegation]: 'Umboðsveitandi (einstaklingur)',
-  [FormSystemApplicantTypeEnum.LegalEntity]: 'Lögaðili',
-}
-
-const getApplicantTypeLabel = (type?: FormSystemApplicantTypeEnum) => {
-  if (!type) return ''
-  return applicantTypeLabelMap[type]
-}
-
 export const FormApplicantTypes = ({ formApplicantsTypes, setFormApplicantTypes }: Props) => {
   const { formatMessage } = useIntl()
-  const { focus, setFocus } = useContext(ControlContext)
+  const { focus, setFocus, applicantTypes } = useContext(ControlContext)
   const [updateApplicant] = useMutation(UPDATE_APPLICANT)
 
   const onBlurHandler = (currentString: string, applicant: FormSystemFormApplicant) => {
     if (currentString !== focus) {
-      updateApplicant({
-        variables: {
-          input: {
-            id: applicant.id,
-            updateFormApplicantDto: {
-              name: applicant.name
+      try {
+        updateApplicant({
+          variables: {
+            input: {
+              id: applicant.id,
+              updateFormApplicantTypeDto: {
+                name: applicant.name
+              }
             }
           }
-        }
-      })
-      setFocus('')
+        })
+        setFocus('')
+      } catch (e) {
+        console.error('Error updating applicant', e)
+      }
     }
+  }
+
+  const getApplicantTypeLabel = (type?: string) => {
+    if (!type) return ''
+    const applicantType = applicantTypes?.find(applicant => applicant?.id === type)
+    return applicantType?.description?.is ?? ''
   }
 
   return (
@@ -71,7 +60,7 @@ export const FormApplicantTypes = ({ formApplicantsTypes, setFormApplicantTypes 
             <Row>
               <Column>
                 <Box marginBottom={1}>
-                  <Text variant="h4">{getApplicantTypeLabel(applicantType?.applicantType ?? undefined)}</Text>
+                  <Text variant="h4">{getApplicantTypeLabel(applicantType?.applicantTypeId as string)}</Text>
                 </Box>
               </Column>
             </Row>

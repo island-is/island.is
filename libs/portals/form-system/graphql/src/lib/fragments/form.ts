@@ -1,6 +1,5 @@
 import { gql } from '@apollo/client'
 import { LanguageFields } from './languageFields'
-import { CertificateTypeFragment } from './certificateType'
 import { FieldFragment } from './field'
 import { ScreenFragment } from './screen'
 import { SectionFragment } from './section'
@@ -26,9 +25,10 @@ export const FormFragment = gql`
       ...LanguageFields
     }
     certificationTypes {
-      ...CertificateType
+      id
+      certificationTypeId
     }
-    applicants {
+    applicantTypes {
       ...FormApplicant
     }
     sections {
@@ -45,7 +45,6 @@ export const FormFragment = gql`
     }
   }
   ${LanguageFields}
-  ${CertificateTypeFragment}
   ${FormApplicantFragment}
   ${SectionFragment}
   ${ScreenFragment}

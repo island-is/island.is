@@ -19,6 +19,8 @@ import { ServicesService } from './services/services.service'
 import { ApplicantsResolver } from './applicants/applicants.resolver'
 import { ApplicantsService } from './applicants/applicants.service'
 import { LoggingModule } from '@island.is/logging'
+import { CertificationsResolver } from './certification/certification.resolver'
+import { CertificationsService } from './certification/certification.service'
 
 @Module({
   providers: [
@@ -40,8 +42,10 @@ import { LoggingModule } from '@island.is/logging'
     ServicesService,
     ApplicantsResolver,
     ApplicantsService,
+    CertificationsResolver,
+    CertificationsService,
   ],
   exports: [],
   imports: [FormSystemClientModule, LoggingModule],
 })
-export class FormSystemModule { }
+export class FormSystemModule {}

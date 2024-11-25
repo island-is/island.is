@@ -1,19 +1,12 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 import { LanguageType } from './languageType.model'
 import { FieldSettings } from './fieldSettings.model'
-import { FieldTypeDtoTypeEnum } from '@island.is/clients/form-system'
-
-registerEnumType(FieldTypeDtoTypeEnum, {
-  name: 'FormSystemFieldTypeDtoTypeEnum',
-})
+import { Value } from './value.model'
 
 @ObjectType('FormSystemFieldType')
 export class FieldType {
   @Field(() => String, { nullable: true })
   id?: string
-
-  @Field(() => FieldTypeDtoTypeEnum, { nullable: true })
-  type?: FieldTypeDtoTypeEnum
 
   @Field(() => LanguageType, { nullable: true })
   name?: LanguageType
@@ -26,4 +19,7 @@ export class FieldType {
 
   @Field(() => FieldSettings, { nullable: true })
   fieldSettings?: FieldSettings
+
+  @Field(() => [Value], { nullable: 'itemsAndList' })
+  values?: Value[]
 }

@@ -6,6 +6,9 @@ import { FieldInput } from './field.input'
 export class CreateScreenDtoInput {
   @Field(() => String, { nullable: true })
   sectionId?: string
+
+  @Field(() => Int, { nullable: true })
+  displayOrder?: number
 }
 
 @InputType('FormSystemCreateScreenInput')

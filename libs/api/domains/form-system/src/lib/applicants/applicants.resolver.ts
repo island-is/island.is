@@ -8,14 +8,17 @@ import {
 import { Audit } from '@island.is/nest/audit'
 import { ApplicantsService } from './applicants.service'
 import { Applicant } from '../../models/applicant.model'
-import { CreateApplicantInput, DeleteApplicantInput, UpdateApplicantInput } from '../../dto/applicant.input'
-
+import {
+  CreateApplicantInput,
+  DeleteApplicantInput,
+  UpdateApplicantInput,
+} from '../../dto/applicant.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class ApplicantsResolver {
-  constructor(private readonly applicantsService: ApplicantsService) { }
+  constructor(private readonly applicantsService: ApplicantsService) {}
 
   @Mutation(() => Applicant, {
     name: 'formSystemCreateApplicant',
@@ -29,7 +32,7 @@ export class ApplicantsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemDeleteApplicant',
-    nullable: true
+    nullable: true,
   })
   async deleteApplicant(
     @Args('input') input: DeleteApplicantInput,
@@ -40,7 +43,7 @@ export class ApplicantsResolver {
 
   @Mutation(() => Boolean, {
     name: 'formSystemUpdateApplicant',
-    nullable: true
+    nullable: true,
   })
   async updateApplicant(
     @Args('input') input: UpdateApplicantInput,

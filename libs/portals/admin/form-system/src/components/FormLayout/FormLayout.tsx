@@ -1,6 +1,6 @@
 import { GridRow as Row, GridColumn as Column } from '@island.is/island-ui/core'
-import { NavbarColumn } from './components/NavbarColumn'
 import { MainContentColumn } from './components/MainColumns'
+import { NavbarColumn } from './components/NavbarColumn'
 
 export const FormLayout = () => (
   <Row>

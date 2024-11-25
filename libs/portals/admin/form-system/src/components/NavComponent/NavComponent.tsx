@@ -40,9 +40,15 @@ export const NavComponent = ({
       ? activeListItem?.id ?? ''
       : activeItem?.data?.id ?? ''
 
-  const connected = form.dependencies?.some(
-    (dep) => dep?.parentProp === activeGuid && dep?.childProps && dep.childProps.length > 0,
-  )
+  const connected = () => {
+    const hasDependency = form.dependencies?.find((dep) => {
+      return dep?.parentProp === activeGuid
+    })
+    if (hasDependency) {
+      return hasDependency.childProps?.includes(data.id as string) ?? false
+    }
+    return false
+  }
 
   const [editMode] = useState(false)
 
@@ -155,7 +161,7 @@ export const NavComponent = ({
           {selectable && (
             <Box className={cn(styles.selectableComponent)} marginLeft="auto">
               <Checkbox
-                checked={connected}
+                checked={connected()}
                 onChange={() =>
                   controlDispatch({
                     type: 'TOGGLE_DEPENDENCY',
