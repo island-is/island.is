@@ -670,4 +670,16 @@ export const m = defineMessages({
     defaultMessage: 'Áfram',
     description: 'continue',
   },
+  notAllowedTitle: {
+    id: 'fsc.application:notAllowedTitle',
+    defaultMessage:
+      'Þessi kennitala er ekki skráð sem kirkjugarður hjá Ríkisendurskoðun',
+    description: 'Title when user is not allowed to apply',
+  },
+  notAllowedDescription: {
+    id: 'fsc.application:notAllowedDescription',
+    defaultMessage:
+      'Ef þú telur að þessi kennitala ætti að vera skráð sem kirkjugarður þá bendum við þér á að hafa samband við Ríkisendurskoðun í síma 448 8800',
+    description: 'Descriptionwhen user is not allowed to apply',
+  },
 })

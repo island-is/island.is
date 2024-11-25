@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { useIntl } from 'react-intl'
+import { MessageDescriptor, useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
 import { Tag, Text } from '@island.is/island-ui/core'
@@ -41,16 +41,28 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
   }
 
   const getVerdictViewTag = (row: CaseListEntry) => {
-    const variant = !row.indictmentVerdictViewedByAll
-      ? 'red'
-      : row.indictmentVerdictAppealDeadlineExpired
-      ? 'mint'
-      : 'blue'
-    const message = !row.indictmentVerdictViewedByAll
-      ? strings.tagVerdictUnviewed
-      : row.indictmentVerdictAppealDeadlineExpired
-      ? strings.tagVerdictViewComplete
-      : strings.tagVerdictViewOnDeadline
+    let variant: 'red' | 'mint' | 'blue'
+    let message: MessageDescriptor
+
+    const someDefendantIsSentToPrisonAdmin = Boolean(
+      row.defendants?.length &&
+        row.defendants.some((defendant) => defendant.isSentToPrisonAdmin),
+    )
+
+    if (someDefendantIsSentToPrisonAdmin) {
+      variant = 'red'
+      message = strings.tagVerdictViewSentToPrisonAdmin
+    } else if (!row.indictmentVerdictViewedByAll) {
+      variant = 'red'
+      message = strings.tagVerdictUnviewed
+    } else if (row.indictmentVerdictAppealDeadlineExpired) {
+      variant = 'mint'
+      message = strings.tagVerdictViewComplete
+    } else {
+      variant = 'blue'
+      message = strings.tagVerdictViewOnDeadline
+    }
+
     return (
       <Tag variant={variant} outlined disabled truncate>
         {formatMessage(message)}
