@@ -11,7 +11,7 @@ import {
   Table as T,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { TemporaryCalculationQuery } from '../../graphql/queries'
 import { INCOME, RatioType, YES } from '../../lib/constants'
 import {
@@ -30,7 +30,9 @@ export const TemporaryCalculationTable: FC<
 
   const { incomePlan } = getApplicationAnswers(application.answers)
   const { watch, setValue } = useFormContext()
-  setValue('temporaryCalculation.show', false)
+  useEffect(() => {
+    setValue('temporaryCalculation.show', false)
+  }, [setValue])
   const temporaryCalculationMonth = watch('temporaryCalculation.month')
   const monthIndex = Math.max(
     0,
