@@ -5,7 +5,12 @@ import { supportingDocuments } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
-import { FieldBaseProps, FileUploadField, FieldTypes, FieldComponents } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FileUploadField,
+  FieldTypes,
+  FieldComponents,
+} from '@island.is/application/types'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { FILE_TYPES_ALLOWED } from '../../shared'
