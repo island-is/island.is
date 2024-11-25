@@ -185,8 +185,14 @@ describe('DefendantController - Update', () => {
       })
 
       if (shouldSendEmail) {
-        it('should queue message if defender has been confirmed', () => {
+        it('should queue messages if defender has been confirmed', () => {
           expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+            {
+              type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER,
+              user,
+              caseId,
+              elementId: defendantId,
+            },
             {
               type: MessageType.DEFENDANT_NOTIFICATION,
               caseId,

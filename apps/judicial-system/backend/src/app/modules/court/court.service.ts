@@ -24,8 +24,6 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import { nowFactory } from '../../factories'
-import { Defendant } from '../defendant'
 import { EventService } from '../event'
 import { RobotLog } from './models/robotLog.model'
 import { courtModuleConfig } from './court.config'
@@ -324,6 +322,7 @@ export class CourtService {
     caseId: string,
     courtId = '',
     type: CaseType,
+    receivalDate: Date,
     policeCaseNumbers: string[],
     isExtension: boolean,
     indictmentSubtypes?: IndictmentSubtypeMap,
@@ -342,7 +341,7 @@ export class CourtService {
         caseType: isIndictment ? 'S - Ákærumál' : 'R - Rannsóknarmál',
         subtype: courtSubtype as string,
         status: 'Skráð',
-        receivalDate: formatISO(nowFactory(), { representation: 'date' }),
+        receivalDate: formatISO(receivalDate, { representation: 'date' }),
         basedOn: isIndictment ? 'Sakamál' : 'Rannsóknarhagsmunir',
         // TODO: pass in all policeCaseNumbers when CourtService supports it
         sourceNumber: policeCaseNumbers[0] ? policeCaseNumbers[0] : '',
@@ -615,17 +614,17 @@ export class CourtService {
     caseId: string,
     courtName?: string,
     courtCaseNumber?: string,
-    defendants?: Defendant[],
+    defendantNationalId?: string,
+    defenderName?: string,
+    defenderEmail?: string,
   ): Promise<unknown> {
     try {
-      const defendantInfo = defendants?.map((defendant) => ({
-        nationalId: defendant.nationalId,
-        defenderName: defendant.defenderName,
-        defenderEmail: defendant.defenderEmail,
-      }))
-
-      const subject = `${courtName} - ${courtCaseNumber} - verjanda upplýsingar`
-      const content = JSON.stringify({ defendants: defendantInfo, courtName })
+      const subject = `${courtName} - ${courtCaseNumber} - verjandi varnaraðila`
+      const content = JSON.stringify({
+        nationalId: defendantNationalId,
+        defenderName,
+        defenderEmail,
+      })
 
       return this.sendToRobot(
         subject,
@@ -635,7 +634,7 @@ export class CourtService {
       )
     } catch (error) {
       this.eventService.postErrorEvent(
-        'Failed to update indictment with defender info',
+        'Failed to update indictment case with defender info',
         {
           caseId,
           actor: user.name,
