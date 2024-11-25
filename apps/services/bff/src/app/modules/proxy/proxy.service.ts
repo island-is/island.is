@@ -95,21 +95,24 @@ export class ProxyService {
     )
 
     try {
-      let cachedTokenResponse =
+      let cachedTokenResponse: CachedTokenResponse | null =
         await this.cacheService.get<CachedTokenResponse>(
           tokenResponseKey,
           false,
         )
 
-      if (!cachedTokenResponse) {
-        throw new UnauthorizedException()
-      }
-
-      if (hasTimestampExpiredInMS(cachedTokenResponse.accessTokenExp)) {
+      if (
+        cachedTokenResponse &&
+        hasTimestampExpiredInMS(cachedTokenResponse.accessTokenExp)
+      ) {
         cachedTokenResponse = await this.tokenRefreshService.refreshToken({
           sid,
           encryptedRefreshToken: cachedTokenResponse.encryptedRefreshToken,
         })
+      }
+
+      if (!cachedTokenResponse) {
+        throw new UnauthorizedException()
       }
 
       return this.cryptoService.decrypt(
@@ -119,7 +122,6 @@ export class ProxyService {
       return this.errorService.handleAuthorizedError({
         error,
         res,
-        sid,
         tokenResponseKey,
         operation: `${ProxyService.name}.getAccessToken`,
       })

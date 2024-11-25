@@ -292,6 +292,10 @@ export class AuthService {
           this.logger.warn(err)
         })
 
+      // Clear any existing session cookie first
+      // This prevents multiple session cookies being set.
+      res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
+
       // Create session cookie with successful login session id
       res.cookie(
         SESSION_COOKIE_NAME,

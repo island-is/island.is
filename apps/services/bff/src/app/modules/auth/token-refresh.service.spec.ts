@@ -15,6 +15,7 @@ jest.mock('uuid', () => ({
 
 const mockLogger = {
   error: jest.fn(),
+  warn: jest.fn(),
 }
 
 const mockCacheStore = new Map()
@@ -169,7 +170,7 @@ describe('TokenRefreshService', () => {
       })
 
       // Assert
-      expect(mockLogger.error).toHaveBeenCalled()
+      expect(mockLogger.warn).toHaveBeenCalled()
       expect(idsService.refreshToken).toHaveBeenCalledWith(testRefreshToken)
       expect(result).toEqual(mockTokenResponse)
     })
@@ -179,15 +180,15 @@ describe('TokenRefreshService', () => {
       const error = new Error('Refresh token failed')
       jest.spyOn(idsService, 'refreshToken').mockRejectedValueOnce(error)
 
-      // Act & Assert
-      await expect(
-        service.refreshToken({
-          sid: testSid,
-          encryptedRefreshToken: testRefreshToken,
-        }),
-      ).rejects.toThrow(error)
+      // Act
+      const cachedTokenResponse = await service.refreshToken({
+        sid: testSid,
+        encryptedRefreshToken: testRefreshToken,
+      })
+      //
+      expect(cachedTokenResponse).toBe(null)
 
-      expect(mockLogger.error).toHaveBeenCalledWith(
+      expect(mockLogger.warn).toHaveBeenCalledWith(
         `Token refresh failed for sid: ${testSid}`,
       )
     })

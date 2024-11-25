@@ -63,21 +63,18 @@ export class ErrorService {
    */
   async handleAuthorizedError({
     res,
-    sid,
     operation,
     error,
     tokenResponseKey,
   }: {
     res: Response
-    sid: string
     operation: string
     error: unknown
     tokenResponseKey: string
   }): Promise<never> {
-    this.logger.error(`${operation} failed: `, error)
+    this.logger.warn(`${operation} failed: `, error)
 
-    // If the session cookie is missing or the error is an UnauthorizedException
-    if (!sid || error instanceof UnauthorizedException) {
+    if (error instanceof UnauthorizedException) {
       throw new UnauthorizedException()
     }
 

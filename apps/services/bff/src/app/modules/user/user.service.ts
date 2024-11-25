@@ -5,7 +5,6 @@ import { BffUser } from '@island.is/shared/types'
 import { SESSION_COOKIE_NAME } from '../../constants/cookies'
 
 import { ErrorService } from '../../services/error.service'
-import { hasTimestampExpiredInMS } from '../../utils/has-timestamp-expired-in-ms'
 import { CachedTokenResponse } from '../auth/auth.types'
 import { TokenRefreshService } from '../auth/token-refresh.service'
 import { CacheService } from '../cache/cache.service'
@@ -50,30 +49,24 @@ export class UserService {
       'current',
       sid,
     )
-    const cachedTokenResponse =
-      await this.cacheService.get<CachedTokenResponse>(
-        tokenResponseKey,
-        // Don't throw if the key is not found
-        false,
-      )
 
     try {
-      if (!cachedTokenResponse) {
-        throw new UnauthorizedException()
+      let cachedTokenResponse: CachedTokenResponse | null =
+        await this.cacheService.get<CachedTokenResponse>(
+          tokenResponseKey,
+          // Don't throw if the key is not found
+          false,
+        )
+
+      if (cachedTokenResponse) {
+        cachedTokenResponse = await this.tokenRefreshService.refreshToken({
+          sid,
+          encryptedRefreshToken: cachedTokenResponse.encryptedRefreshToken,
+        })
       }
 
-      const accessTokenHasExpired = hasTimestampExpiredInMS(
-        cachedTokenResponse.accessTokenExp,
-      )
-
-      if (accessTokenHasExpired && refresh) {
-        const updatedTokenResponse =
-          await this.tokenRefreshService.refreshToken({
-            sid,
-            encryptedRefreshToken: cachedTokenResponse.encryptedRefreshToken,
-          })
-
-        return this.mapToBffUser(updatedTokenResponse)
+      if (!cachedTokenResponse) {
+        throw new UnauthorizedException()
       }
 
       return this.mapToBffUser(cachedTokenResponse)
@@ -81,7 +74,6 @@ export class UserService {
       return this.errorService.handleAuthorizedError({
         error,
         res,
-        sid,
         tokenResponseKey,
         operation: `${UserService.name}.getUser`,
       })
