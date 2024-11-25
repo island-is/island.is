@@ -6,10 +6,10 @@ export const enableAppCompatibilityMode = (
     return false
   }
 
-  const isVersionLater = version.localeCompare(versionToCompare, undefined, {
+  const versionComparison = version.localeCompare(versionToCompare, undefined, {
     numeric: true,
     sensitivity: 'base',
   })
 
-  return isVersionLater <= 0
+  return versionComparison <= 0
 }
