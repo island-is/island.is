@@ -116,6 +116,7 @@ export interface LayoutProps {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error make web strict
   megaMenuData
+  customTopLoginButtonItem: LayoutComponentProps['customTopLoginButtonItem']
   children?: React.ReactNode
 }
 
@@ -158,6 +159,7 @@ const Layout: Screen<LayoutProps> = ({
   respOrigin,
   children,
   megaMenuData,
+  customTopLoginButtonItem,
 }) => {
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
@@ -410,6 +412,7 @@ const Layout: Screen<LayoutProps> = ({
                       : 'Search'
                     : undefined
                 }
+                customTopLoginButtonItem={customTopLoginButtonItem}
               />
             </ColorSchemeContext.Provider>
           )}
@@ -692,6 +695,13 @@ interface LayoutComponentProps {
   article?: GetSingleArticleQuery['getSingleArticle']
   customAlertBanner?: GetAlertBannerQuery['getAlertBanner']
   languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
+  customTopLoginButtonItem?: {
+    href: string
+    imgSrc: string
+    label: string
+    buttonType: string
+    blacklistedPathnames?: string[]
+  }
 }
 
 export const withMainLayout = <T, C extends ScreenContext>(
@@ -737,6 +747,9 @@ export const withMainLayout = <T, C extends ScreenContext>(
     const languageToggleQueryParams =
       layoutComponentProps?.languageToggleQueryParams
 
+    const customTopLoginButtonItem =
+      layoutComponentProps?.customTopLoginButtonItem
+
     return {
       layoutProps: {
         ...layoutProps,
@@ -746,6 +759,7 @@ export const withMainLayout = <T, C extends ScreenContext>(
         articleAlertBannerContent,
         customAlertBannerContent,
         languageToggleQueryParams,
+        customTopLoginButtonItem,
       },
       componentProps,
     }
