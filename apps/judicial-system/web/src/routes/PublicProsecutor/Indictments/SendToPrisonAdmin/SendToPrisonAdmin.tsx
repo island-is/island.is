@@ -16,6 +16,7 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useDefendants,
   useS3Upload,
@@ -23,7 +24,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './SendToPrisonAdmin.strings'
-import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 
 enum AvailableModal {
   SUCCESS = 'SUCCESS',
