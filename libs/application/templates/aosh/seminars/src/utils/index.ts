@@ -15,3 +15,6 @@ export const staticData = (application: Application) => {
 export * from './isIndividual'
 export * from './isCompany'
 export * from './isValidPhoneNumber'
+export * from './isValidEmail'
+export * from './isCompanyType'
+export * from './isPersonType'

@@ -152,7 +152,7 @@ export const CompanySearchController: FC<React.PropsWithChildren<Props>> = ({
       variables: { input: { companyId: nationalId } },
     })
   }
-
+  console.log(name)
   return (
     <>
       <Controller
