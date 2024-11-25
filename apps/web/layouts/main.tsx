@@ -407,9 +407,10 @@ const Layout: Screen<LayoutProps> = ({
                 organizationSearchFilter={organizationSearchFilter}
                 searchPlaceholder={
                   organizationSearchFilter
-                    ? activeLocale === 'is'
-                      ? 'Leita'
-                      : 'Search'
+                    ? n(
+                        'organizationPageSearchPlaceholder',
+                        activeLocale === 'is' ? 'Leita' : 'Search',
+                      )
                     : undefined
                 }
                 customTopLoginButtonItem={customTopLoginButtonItem}
