@@ -1,4 +1,4 @@
-import { color } from "./primitivesMapper"
+import { color } from './primitivesMapper'
 
 // Primary colors
 export const blue600 = color.primary.blue[600] ?? '#0044b3'
