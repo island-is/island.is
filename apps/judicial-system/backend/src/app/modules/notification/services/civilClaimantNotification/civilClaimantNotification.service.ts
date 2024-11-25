@@ -19,11 +19,11 @@ import { CivilClaimantNotificationType } from '@island.is/judicial-system/types'
 import { Case } from '../../../case'
 import { CivilClaimant } from '../../../defendant'
 import { EventService } from '../../../event'
+import { BaseNotificationService } from '../../baseNotification.service'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification, Recipient } from '../../models/notification.model'
-import { BaseNotificationService } from '../../baseNotification.service'
-import { strings } from './civilClaimantNotification.strings'
 import { notificationModuleConfig } from '../../notification.config'
+import { strings } from './civilClaimantNotification.strings'
 
 @Injectable()
 export class CivilClaimantNotificationService extends BaseNotificationService {
