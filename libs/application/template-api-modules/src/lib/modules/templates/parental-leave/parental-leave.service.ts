@@ -866,6 +866,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           isFirstPeriod,
           isActualDateOfBirth,
           period.useLength || '',
+          period.endDateAdjustLength?.includes(YES) || false,
           period,
         ),
         to: period.endDate,
