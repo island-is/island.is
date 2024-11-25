@@ -17,10 +17,14 @@ import {
   messageEndpoint,
   MessageType,
 } from '@island.is/judicial-system/message'
-import { indictmentCases } from '@island.is/judicial-system/types'
+import {
+  indictmentCases,
+  investigationCases,
+  restrictionCases,
+} from '@island.is/judicial-system/types'
 
 import { Case, CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
-import { DeliverDefendantToCourtDto } from './dto/deliverDefendantToCourt.dto'
+import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
@@ -38,7 +42,10 @@ export class InternalDefendantController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(DefendantExistsGuard)
+  @UseGuards(
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    DefendantExistsGuard,
+  )
   @Post(
     `${messageEndpoint[MessageType.DELIVERY_TO_COURT_DEFENDANT]}/:defendantId`,
   )
@@ -51,7 +58,7 @@ export class InternalDefendantController {
     @Param('defendantId') defendantId: string,
     @CurrentCase() theCase: Case,
     @CurrentDefendant() defendant: Defendant,
-    @Body() deliverDefendantToCourtDto: DeliverDefendantToCourtDto,
+    @Body() deliverDefendantToCourtDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
       `Delivering defendant ${defendantId} of case ${caseId} to court`,
@@ -83,6 +90,34 @@ export class InternalDefendantController {
       theCase,
       defendant,
       updatedDefendantChoice,
+    )
+  }
+
+  @UseGuards(new CaseTypeGuard(indictmentCases), DefendantExistsGuard)
+  @Post(
+    `${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER]
+    }/:defendantId`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers indictment case defender info to court',
+  })
+  deliverIndictmentDefenderToCourt(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering defender info for defendant ${defendantId} of case ${caseId} to court`,
+    )
+
+    return this.defendantService.deliverIndictmentDefenderToCourt(
+      theCase,
+      defendant,
+      deliverDto.user,
     )
   }
 }

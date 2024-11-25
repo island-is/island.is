@@ -13,18 +13,6 @@ export const payment = {
       description: 'Payment page title',
     },
   }),
-  paymentChargeOverview: defineMessages({
-    forPayment: {
-      id: 'hlc.application:payment.paymentChargeOverview.forPayment',
-      defaultMessage: 'Til greiðslu',
-      description: 'For payment label',
-    },
-    total: {
-      id: 'hlc.application:payment.paymentChargeOverview.total',
-      defaultMessage: 'Samtals',
-      description: 'Total amount label',
-    },
-  }),
   confirmation: defineMessages({
     confirm: {
       id: 'hlc.application:payment.confirmation.confirm',

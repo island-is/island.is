@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
@@ -10,6 +11,7 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  NO,
   YES,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
@@ -88,6 +90,25 @@ export const heirs = buildSection({
             buildDescriptionField({
               id: 'heirs.hasModified',
               title: '',
+            }),
+            buildAlertMessageField({
+              id: 'reminderToFillInSpouse',
+              title: '',
+              message: m.heirsReminderToFillInSpouse,
+              alertType: 'info',
+              marginBottom: 'containerGutter',
+              condition: (answers) => {
+                return (
+                  getValueViaPath<string>(
+                    answers,
+                    'customShare.deceasedWasMarried',
+                  ) === YES &&
+                  getValueViaPath<string>(
+                    answers,
+                    'customShare.hasCustomSpouseSharePercentage',
+                  ) === NO
+                )
+              },
             }),
             buildCustomField(
               {
@@ -174,9 +195,9 @@ export const heirs = buildSection({
               id: 'heirsAdditionalInfoPrivateTransferFiles',
               uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
               uploadDescription: m.uploadPrivateTransferDescription,
-              uploadMultiple: false,
               title: '',
               uploadHeader: '',
+              uploadMultiple: false,
             }),
             buildDescriptionField({
               id: 'heirsAdditionalInfoFilesOtherDocumentsTitle',
@@ -192,6 +213,7 @@ export const heirs = buildSection({
               uploadDescription: m.uploadOtherDocumentsDescription,
               title: '',
               uploadHeader: '',
+              uploadMultiple: true,
             }),
           ],
         }),
@@ -383,18 +405,14 @@ export const heirs = buildSection({
             }),
             buildDescriptionField({
               id: 'heirs_space6',
-              title: '',
+              title: m.fileUploadOtherDocuments,
+              titleVariant: 'h5',
               space: 'gutter',
             }),
-            buildKeyValueField({
-              label: m.fileUploadOtherDocuments,
-              value: ({ answers }) => {
-                const files = getValueViaPath<any>(
-                  answers,
-                  'heirsAdditionalInfoFilesOtherDocuments',
-                )
-                return files.map((file: any) => file.name).join(', ')
-              },
+            buildCustomField({
+              title: '',
+              id: 'otherDocs',
+              component: 'OverviewOtherDocuments',
             }),
             buildDescriptionField({
               id: 'heirs_space7',
