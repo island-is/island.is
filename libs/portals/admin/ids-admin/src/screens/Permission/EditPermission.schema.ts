@@ -55,6 +55,7 @@ const accessControlSchema = z
   .object({
     isAccessControlled: booleanCheckbox,
     grantToAuthenticatedUser: booleanCheckbox,
+    automaticDelegationGrant: booleanCheckbox,
   })
   .merge(defaultEnvironmentSchema)
 

@@ -126,11 +126,9 @@ const VehicleBulkMileageUpload = () => {
       intro={m.vehiclesBulkMileageUploadDescription}
       serviceProviderSlug={SAMGONGUSTOFA_SLUG}
       serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-      buttonGroup={
-        <Box marginTop={2}>
-          <VehicleBulkMileageFileDownloader onError={handleFileDownloadError} />
-        </Box>
-      }
+      buttonGroup={[
+        <VehicleBulkMileageFileDownloader onError={handleFileDownloadError} />,
+      ]}
     >
       <Stack space={2}>
         {error && <Problem error={error} noBorder={false} />}
