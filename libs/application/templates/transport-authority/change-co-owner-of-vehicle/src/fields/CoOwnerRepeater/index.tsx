@@ -35,6 +35,9 @@ export const CoOwnerRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = (
     ) as CoOwnersInformation[],
   )
   const [identicalError, setIdenticalError] = useState<boolean>(false)
+  const [noCoOwnerChangesError, setNoCoOwnerChangesError] =
+    useState<boolean>(false)
+
   const filteredCoOwners = coOwners.filter(
     ({ wasRemoved }) => wasRemoved !== 'true',
   )
@@ -42,25 +45,28 @@ export const CoOwnerRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = (
     ({ wasRemoved }) => wasRemoved !== 'true',
   )
 
-  const updateData = useCallback(async (position: number) => {
-    await updateApplication({
-      variables: {
-        input: {
-          id: application.id,
-          answers: {
-            ownerCoOwners: ownerCoOwners.map((coOwner, index) => {
-              if (index === position) {
-                return { ...coOwner, wasRemoved: 'true' }
-              } else {
-                return coOwner
-              }
-            }),
+  const updateData = useCallback(
+    async (position: number) => {
+      await updateApplication({
+        variables: {
+          input: {
+            id: application.id,
+            answers: {
+              ownerCoOwners: ownerCoOwners.map((coOwner, index) => {
+                if (index === position) {
+                  return { ...coOwner, wasRemoved: 'true' }
+                } else {
+                  return coOwner
+                }
+              }),
+            },
           },
+          locale,
         },
-        locale,
-      },
-    })
-  }, [])
+      })
+    },
+    [application.id, locale, ownerCoOwners, updateApplication],
+  )
 
   const addNationalIdToCoOwners = (nationalId: string, newIndex: number) => {
     setCoOwners(
@@ -144,14 +150,29 @@ export const CoOwnerRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = (
     }
   }, [coOwners, setValue])
 
-  setBeforeSubmitCallback &&
-    setBeforeSubmitCallback(async () => {
-      setIdenticalError(checkDuplicate())
-      if (checkDuplicate()) {
-        return [false, 'Identical nationalIds']
-      }
-      return [true, null]
-    })
+  setBeforeSubmitCallback?.(async () => {
+    setIdenticalError(false)
+    setNoCoOwnerChangesError(false)
+
+    const hasDuplicate = await checkDuplicate()
+    if (hasDuplicate) {
+      setIdenticalError(true)
+      return [false, 'Identical nationalIds']
+    }
+
+    const coOwnerWasAdded =
+      coOwners?.filter(({ wasRemoved }) => wasRemoved !== 'true').length > 0
+    const coOwnerWasRemoved = !!ownerCoOwners?.find(
+      (x) => x.wasRemoved === 'true',
+    )
+    const noCoOwnerChanges = !coOwnerWasAdded && !coOwnerWasRemoved
+    if (noCoOwnerChanges) {
+      setNoCoOwnerChangesError(true)
+      return [false, 'No co-owner has been added/removed']
+    }
+
+    return [true, null]
+  })
 
   return (
     <Box>
@@ -203,6 +224,14 @@ export const CoOwnerRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = (
           <AlertMessage
             type="error"
             title={formatMessage(information.labels.coOwner.identicalError)}
+          />
+        </Box>
+      )}
+      {noCoOwnerChangesError && (
+        <Box marginTop={4}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(information.labels.coOwner.noChangesError)}
           />
         </Box>
       )}

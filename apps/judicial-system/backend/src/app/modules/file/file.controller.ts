@@ -81,6 +81,7 @@ export class FileController {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
   )
   @Post('file/url')
   @ApiCreatedResponse({
@@ -107,6 +108,7 @@ export class FileController {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
+    publicProsecutorStaffRule,
   )
   @Post('file')
   @ApiCreatedResponse({
