@@ -1,4 +1,3 @@
-import type { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 
 import {
@@ -9,6 +8,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import type { Locale } from '@island.is/shared/types'
 import {
   EventList,
   getThemeConfig,
@@ -39,7 +39,7 @@ import { GET_EVENTS_QUERY } from '../../queries/Events'
 
 const PAGE_SIZE = 10
 
-interface OrganizationEventListProps {
+export interface OrganizationEventListProps {
   organizationPage: OrganizationPage
   eventList: EventListSchema
   namespace: Record<string, string>
@@ -153,12 +153,13 @@ const extractPageNumberQueryParameter = (query: ScreenContext['query']) => {
 }
 
 OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
+  const slug = (query.slugs as string[])[0]
   const [organizationPageResponse] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: query.slug as string,
+          slug,
           lang: locale as Locale,
         },
       },
@@ -170,7 +171,7 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
   if (!organizationPage) {
     throw new CustomNextError(
       404,
-      `Could not find organization page with slug: ${query.slug}`,
+      `Could not find organization page with slug: ${slug}`,
     )
   }
 
@@ -181,8 +182,7 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
       query: GET_EVENTS_QUERY,
       variables: {
         input: {
-          organization:
-            organizationPage?.organization?.slug ?? (query.slug as string),
+          organization: organizationPage?.organization?.slug ?? slug,
           lang: locale as Locale,
           page: selectedPage,
           size: PAGE_SIZE,

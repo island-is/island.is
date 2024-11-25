@@ -11,10 +11,14 @@ export const OrderVehicleLicensePlateSchema = z.object({
     plate: z.string(),
     type: z.string(),
   }),
-  plateSize: z.object({
-    frontPlateSize: z.array(z.string()),
-    rearPlateSize: z.array(z.string()),
-  }),
+  plateSize: z
+    .object({
+      frontPlateSize: z.array(z.string()),
+      rearPlateSize: z.array(z.string()),
+    })
+    .refine(({ frontPlateSize, rearPlateSize }) => {
+      return frontPlateSize.length !== 0 || rearPlateSize.length !== 0
+    }),
   plateDelivery: z.object({
     deliveryMethodIsDeliveryStation: z.enum([YES, NO]),
     deliveryStationTypeCode: z.string().optional(),
