@@ -2,7 +2,7 @@ import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Icon, Option, Select, Text } from '@island.is/island-ui/core'
+import { Box, Option, Select, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -25,7 +25,6 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
-import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './Overview.strings'
@@ -103,39 +102,11 @@ export const Overview = () => {
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map((defendant) => (
           <Box component="section" marginBottom={5} key={defendant.id}>
-            {workingCase.indictmentRulingDecision ===
-            CaseIndictmentRulingDecision.FINE ? (
-              <BlueBox>
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  marginBottom={2}
-                >
-                  <Text variant="h4">
-                    {fm(strings.indictmentRulingDecisionFine)}
-                  </Text>
-                  <Icon
-                    icon="calendar"
-                    size="large"
-                    color="blue400"
-                    type="outline"
-                  />
-                </Box>
-                <Text variant="eyebrow" marginBottom={2}>
-                  {defendant.name}
-                </Text>
-                <Text>{`• ${fm(strings.fineAppealDeadline, {
-                  appealDeadlineIsInThePast: true,
-                  appealDeadline: 'asdas',
-                })}`}</Text>
-              </BlueBox>
-            ) : (
-              <BlueBoxWithDate
-                defendant={defendant}
-                indictmentReviewDecision={workingCase.indictmentReviewDecision}
-                icon="calendar"
-              />
-            )}
+            <BlueBoxWithDate
+              defendant={defendant}
+              indictmentReviewDecision={workingCase.indictmentReviewDecision}
+              icon="calendar"
+            />
           </Box>
         ))}
         <Box component="section" marginBottom={5}>

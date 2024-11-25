@@ -18,6 +18,7 @@ import { VERDICT_APPEAL_WINDOW_DAYS } from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
 import {
+  CaseIndictmentRulingDecision,
   Defendant,
   IndictmentCaseReviewDecision,
   ServiceRequirement,
@@ -29,6 +30,7 @@ import { getAppealExpirationInfo } from '../InfoCard/DefendantInfo/DefendantInfo
 import SectionHeading from '../SectionHeading/SectionHeading'
 import { strings } from './BlueBoxWithDate.strings'
 import * as styles from './BlueBoxWithIcon.css'
+import { string } from 'yargs'
 
 interface Props {
   defendant: Defendant
@@ -51,6 +53,9 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const { setAndSendDefendantToServer } = useDefendants()
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const router = useRouter()
+
+  const isFine =
+    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
   const serviceRequired =
     defendant.serviceRequirement === ServiceRequirement.REQUIRED
@@ -133,34 +138,45 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const textItems = useMemo(() => {
     const texts = []
 
-    if (serviceRequired) {
+    if (isFine) {
       texts.push(
-        formatMessage(strings.defendantVerdictViewedDate, {
-          date: formatDate(dates.verdictViewDate ?? defendant.verdictViewDate),
+        formatMessage(strings.fineAppealDeadline, {
+          appealDeadlineIsInThePast: true,
+          appealDeadline: 'asdas',
         }),
       )
-    }
+    } else {
+      if (serviceRequired) {
+        texts.push(
+          formatMessage(strings.defendantVerdictViewedDate, {
+            date: formatDate(
+              dates.verdictViewDate ?? defendant.verdictViewDate,
+            ),
+          }),
+        )
+      }
 
-    texts.push(
-      formatMessage(appealExpirationInfo.message, {
-        appealExpirationDate: appealExpirationInfo.date,
-      }),
-    )
-
-    if (defendant.verdictAppealDate) {
       texts.push(
-        formatMessage(strings.defendantAppealDate, {
-          date: formatDate(defendant.verdictAppealDate),
+        formatMessage(appealExpirationInfo.message, {
+          appealExpirationDate: appealExpirationInfo.date,
         }),
       )
-    }
 
-    if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
-      texts.push(
-        formatMessage(strings.sendToPrisonAdminDate, {
-          date: formatDate(defendant.sentToPrisonAdminDate),
-        }),
-      )
+      if (defendant.verdictAppealDate) {
+        texts.push(
+          formatMessage(strings.defendantAppealDate, {
+            date: formatDate(defendant.verdictAppealDate),
+          }),
+        )
+      }
+
+      if (defendant.sentToPrisonAdminDate && defendant.isSentToPrisonAdmin) {
+        texts.push(
+          formatMessage(strings.sendToPrisonAdminDate, {
+            date: formatDate(defendant.sentToPrisonAdminDate),
+          }),
+        )
+      }
     }
 
     return texts
@@ -173,6 +189,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     defendant.verdictAppealDate,
     defendant.verdictViewDate,
     formatMessage,
+    isFine,
     serviceRequired,
   ])
 
@@ -205,7 +222,9 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       <Box className={styles.container} padding={[2, 2, 3, 3]}>
         <Box className={styles.titleContainer}>
           <SectionHeading
-            title={formatMessage(strings.keyDates)}
+            title={formatMessage(
+              isFine ? strings.indictmentRulingDecisionFine : strings.keyDates,
+            )}
             heading="h4"
             marginBottom={2}
           />
@@ -217,7 +236,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           </Box>
         </Box>
         <AnimatePresence>
-          {(!serviceRequired || defendant.verdictViewDate) &&
+          {(!serviceRequired || defendant.verdictViewDate || isFine) &&
             textItems.map((text, index) => (
               <motion.div
                 key={index}
@@ -241,8 +260,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         </AnimatePresence>
         <AnimatePresence mode="wait">
           {defendant.verdictAppealDate ||
-          defendant.isVerdictAppealDeadlineExpired ? null : !serviceRequired ||
-            defendant.verdictViewDate ? (
+          defendant.isVerdictAppealDeadlineExpired ||
+          isFine ? null : !serviceRequired || defendant.verdictViewDate ? (
             <motion.div
               key="defendantAppealDate"
               variants={datePicker2Variants}
@@ -328,7 +347,10 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             variant="text"
             onClick={handleSendToPrisonAdmin}
             size="small"
-            disabled={!indictmentReviewDecision || !defendant.verdictViewDate}
+            disabled={
+              !indictmentReviewDecision ||
+              (!isFine && !defendant.verdictViewDate)
+            }
           >
             {formatMessage(strings.sendToPrisonAdmin)}
           </Button>

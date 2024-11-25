@@ -38,17 +38,4 @@ export const strings = defineMessages({
       'Máli {caseNumber} hefur verið úthlutað til yfirlestrar á {reviewer}.',
     description: 'Notaður sem texti í tilkynningaglugga um yfirlesara.',
   },
-  indictmentRulingDecisionFine: {
-    id: 'judicial.system.core:public_prosecutor.indictments.overview.indictment_ruling_decision_fine',
-    defaultMessage: 'Viðurlagaákvörðun',
-    description:
-      'Notaður sem titill í svæði þar sem kærufrestur viðurlagaákvörðunar er tekinn fram',
-  },
-  fineAppealDeadline: {
-    id: 'judicial.system.core:public_prosecutor.indictments.overview.fine_appeal_deadline',
-    defaultMessage:
-      'Kærufrestur {appealDeadlineIsInThePast, select, true {er} other {var}} til {appealDeadline}',
-    description:
-      'Notaður sem titill í svæði þar sem kærufrestur viðurlagaákvörðunar er tekinn fram',
-  },
 })

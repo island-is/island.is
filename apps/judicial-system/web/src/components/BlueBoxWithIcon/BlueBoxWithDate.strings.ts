@@ -70,4 +70,17 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti í valmynd fyrir aðgerðina að senda mál til fullnustu',
   },
+  indictmentRulingDecisionFine: {
+    id: 'judicial.system.core:blue_box_with_date.indictment_ruling_decision_fine',
+    defaultMessage: 'Viðurlagaákvörðun',
+    description:
+      'Notaður sem titill í svæði þar sem kærufrestur viðurlagaákvörðunar er tekinn fram',
+  },
+  fineAppealDeadline: {
+    id: 'judicial.system.core:blue_box_with_date.fine_appeal_deadline',
+    defaultMessage:
+      'Kærufrestur {appealDeadlineIsInThePast, select, true {er} other {var}} til {appealDeadline}',
+    description:
+      'Notaður sem titill í svæði þar sem kærufrestur viðurlagaákvörðunar er tekinn fram',
+  },
 })
