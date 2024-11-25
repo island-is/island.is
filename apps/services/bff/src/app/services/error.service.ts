@@ -1,11 +1,6 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common'
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import type { Response } from 'express'
 import { SESSION_COOKIE_NAME } from '../constants/cookies'
 import { CacheService } from '../modules/cache/cache.service'
@@ -72,12 +67,6 @@ export class ErrorService {
     error: unknown
     tokenResponseKey: string
   }): Promise<never> {
-    this.logger.warn(`${operation} failed: `, error)
-
-    if (error instanceof UnauthorizedException) {
-      throw new UnauthorizedException()
-    }
-
     const errorCode = (error as { body?: { error?: string } })?.body?.error
 
     // If the error is an OAuth2 error
@@ -85,13 +74,17 @@ export class ErrorService {
     // 2. Clear the session cookie
     // 3. Throw an UnauthorizedException
     if (errorCode && this.isKnownOAuth2ErrorCode(errorCode)) {
-      res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
+      this.logger.warn(
+        `${operation} failed with OAuth2 error: ${errorCode}`,
+        error,
+      )
 
+      res.clearCookie(SESSION_COOKIE_NAME, getCookieOptions())
       await this.cacheService.delete(tokenResponseKey)
 
       throw new UnauthorizedException()
     }
 
-    throw new InternalServerErrorException()
+    throw error
   }
 }
