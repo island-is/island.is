@@ -9,6 +9,7 @@ query getHealthCenter {
         municipality
         streetAddress
       }
+      canRegister
     }
     totalCount
   }

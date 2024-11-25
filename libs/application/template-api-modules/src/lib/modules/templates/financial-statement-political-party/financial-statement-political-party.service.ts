@@ -30,7 +30,7 @@ export interface DataResponse {
 }
 
 export const getCurrentUserType = (
-  answers: Application['answers'],
+  _answers: Application['answers'],
   externalData: Application['externalData'],
 ) => {
   const currentUserType = getValueViaPath<number>(
@@ -38,9 +38,7 @@ export const getCurrentUserType = (
     'getUserType.data.value',
   )
 
-  const fakeUserType = getValueViaPath<number>(answers, 'fakeData.options')
-
-  return fakeUserType ?? currentUserType
+  return currentUserType
 }
 
 @Injectable()
@@ -89,7 +87,7 @@ export class FinancialStatementPoliticalPartyTemplateService extends BaseTemplat
   async getUserType({ auth }: TemplateApiModuleActionProps) {
     const { nationalId } = auth
     if (kennitala.isPerson(nationalId)) {
-      return this.financialStatementClientService.getClientType('Einstaklingur')
+      return null
     } else {
       return this.financialStatementClientService.getUserClientType(nationalId)
     }

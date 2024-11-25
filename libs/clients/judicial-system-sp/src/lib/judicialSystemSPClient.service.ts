@@ -46,7 +46,7 @@ export class JudicialSystemSPClientService {
       .catch(handle404)
   }
 
-  async getSubpoena(id: string, user: User, locale: string) {
+  async getSummon(id: string, user: User, locale: string) {
     return this.casesApiWithAuth(user)
       .caseControllerGetSubpoena({
         caseId: id,
@@ -55,7 +55,7 @@ export class JudicialSystemSPClientService {
       .catch(handle404)
   }
 
-  async patchSubpoena(input: CaseControllerUpdateSubpoenaRequest, user: User) {
+  async patchSummon(input: CaseControllerUpdateSubpoenaRequest, user: User) {
     return this.casesApiWithAuth(user)
       .caseControllerUpdateSubpoena(input)
       .catch(handle404)
