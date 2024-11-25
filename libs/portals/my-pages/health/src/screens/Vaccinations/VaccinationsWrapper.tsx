@@ -66,7 +66,12 @@ export const VaccinationsWrapper = () => {
 
       <Box>
         {loading && (
-          <SkeletonLoader repeat={3} space={2} height={24} borderRadius="standard" />
+          <SkeletonLoader
+            repeat={3}
+            space={2}
+            height={24}
+            borderRadius="standard"
+          />
         )}
         {!error && vaccinations?.length === 0 && (
           <EmptyTable message={formatMessage(m.noVaccinesRegistered)} />

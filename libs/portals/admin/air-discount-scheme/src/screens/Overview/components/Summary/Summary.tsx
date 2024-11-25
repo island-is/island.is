@@ -118,11 +118,7 @@ function Summary({
                     <span className={styles.capitalize}>{airline}</span>
                   </Text>
                   <Stack space={3}>
-                    <Box
-                      background="blue100"
-                      borderRadius="large"
-                      padding={2}
-                    >
+                    <Box background="blue100" borderRadius="large" padding={2}>
                       <KeyValues
                         title="Í gjaldfærslubið"
                         data={data.awaitingDebit}
@@ -137,11 +133,7 @@ function Summary({
                     <Box background="red100" borderRadius="large" padding={2}>
                       <KeyValues title="Afturkallaðir" data={data.cancelled} />
                     </Box>
-                    <Box
-                      padding={2}
-                      background="mint100"
-                      borderRadius="large"
-                    >
+                    <Box padding={2} background="mint100" borderRadius="large">
                       <KeyValues title="Gjaldfært" data={data.sentDebit} />
                     </Box>
                     <Box

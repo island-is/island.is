@@ -102,7 +102,11 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
                   <Box padding={2} background="mint100" borderRadius="standard">
                     <KeyValues title="Gjaldfært" data={data.sentDebit} />
                   </Box>
-                  <Box background="yellow100" borderRadius="standard" padding={2}>
+                  <Box
+                    background="yellow100"
+                    borderRadius="standard"
+                    padding={2}
+                  >
                     <KeyValues title="Endurgreitt" data={data.sentCredit} />
                   </Box>
                 </Stack>

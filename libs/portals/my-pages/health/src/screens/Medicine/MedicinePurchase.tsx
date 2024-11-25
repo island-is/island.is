@@ -111,7 +111,12 @@ export const MedicinePurchase = () => {
       )}
       {!error && loading && (
         <Box marginBottom={CONTENT_GAP}>
-          <SkeletonLoader repeat={4} borderRadius="standard" space={2} height={32} />
+          <SkeletonLoader
+            repeat={4}
+            borderRadius="standard"
+            space={2}
+            height={32}
+          />
         </Box>
       )}
       {!error && !loading && !!data?.rightsPortalDrugPeriods?.length && (

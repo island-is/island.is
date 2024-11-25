@@ -98,7 +98,12 @@ export const RoleCard = ({ role, contentTypes, tags }: RoleCardProps) => {
   }, [role.name, tags])
 
   return (
-    <Box border="standard" borderWidth="standard" borderRadius="standard" padding={3}>
+    <Box
+      border="standard"
+      borderWidth="standard"
+      borderRadius="standard"
+      padding={3}
+    >
       <Stack space={2}>
         <Inline justifyContent="spaceBetween" space={2}>
           <Box marginBottom={2}>

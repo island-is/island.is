@@ -156,7 +156,12 @@ export const FishingLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           {formatMessage(fishingLicense.labels.radioButtonTitle)}
         </Text>
         {loading ? (
-          <SkeletonLoader repeat={2} space={2} height={75} borderRadius="standard" />
+          <SkeletonLoader
+            repeat={2}
+            space={2}
+            height={75}
+            borderRadius="standard"
+          />
         ) : (
           <>
             <RadioController
