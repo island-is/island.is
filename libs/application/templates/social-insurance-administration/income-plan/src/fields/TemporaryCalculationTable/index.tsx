@@ -32,8 +32,9 @@ export const TemporaryCalculationTable: FC<
   const { watch, setValue } = useFormContext()
   setValue('temporaryCalculation.show', false)
   const temporaryCalculationMonth = watch('temporaryCalculation.month')
-  const monthIndex = MONTHS.findIndex(
-    (month) => month.value === temporaryCalculationMonth,
+  const monthIndex = Math.max(
+    0,
+    MONTHS.findIndex((month) => month.value === temporaryCalculationMonth),
   )
   const { categorizedIncomeTypes, incomePlanConditions } =
     getApplicationExternalData(application.externalData)
