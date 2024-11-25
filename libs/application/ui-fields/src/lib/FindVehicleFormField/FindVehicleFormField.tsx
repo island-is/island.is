@@ -250,6 +250,9 @@ export const FindVehicleFormField: FC<React.PropsWithChildren<Props>> = ({
     setValue('vehicleMileage.requireMileage', vehicleDetails?.requireMileage)
     setValue('vehicleMileage.mileageReading', vehicleDetails?.mileageReading)
 
+    setValue('plateSize.frontPlateSize', [])
+    setValue('plateSize.rearPlateSize', [])
+
     if (permno) setValue('vehicleInfo.plate', permno)
     if (permno) setValue('vehicleInfo.type', vehicleDetails.make)
 

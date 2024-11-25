@@ -33,7 +33,7 @@ export const containerSizes = styleVariants(inputMixins.containerSizes)
 export const input = recipe({
   base: {
     ...inputMixins.input,
-    zIndex: 2,
+    position: 'relative',
     marginLeft: '120px',
     '::placeholder': inputMixins.inputPlaceholder,
     ':focus': inputMixins.inputFocus,
@@ -118,7 +118,6 @@ export const hasError = style({
 export const label = recipe({
   base: {
     ...inputMixins.label,
-    zIndex: 2,
     position: 'relative',
     selectors: {
       [`${hasError} &`]: inputMixins.labelErrorState,

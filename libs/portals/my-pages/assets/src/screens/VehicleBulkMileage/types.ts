@@ -1,7 +1,6 @@
 export interface VehicleProps {
   vehicleId: string
   vehicleType: string
-  lastMileageRegistration?: Date
 }
 
 export type SubmissionStatus = 'success' | 'error' | 'loading' | 'idle'
@@ -13,6 +12,12 @@ export interface Props {
 export interface VehicleType extends VehicleProps {
   mileageUploadedFromFile?: number
   isCurrentlyEditing?: boolean
+  lastMileageRegistration?: {
+    date: Date
+    origin: string
+    mileage: number
+    internalId?: number
+  }
   registrationHistory?: Array<{
     date: Date
     origin: string

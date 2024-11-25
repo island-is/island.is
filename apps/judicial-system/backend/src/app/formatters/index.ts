@@ -27,6 +27,7 @@ export {
   formatCourtOfAppealJudgeAssignedEmailNotification,
   formatPostponedCourtDateEmailNotification,
   stripHtmlTags,
+  filterWhitelistEmails,
 } from './formatters'
 export { Confirmation } from './pdfHelpers'
 export { getRequestPdfAsBuffer, getRequestPdfAsString } from './requestPdf'

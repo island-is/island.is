@@ -8,7 +8,7 @@ import { BffSessionExpiredModal } from './BffSessionExpiredModal'
 import { ErrorScreen } from './ErrorScreen'
 import { BffBroadcastEvents, useBffBroadcaster } from './bff.hooks'
 import { ActionType, LoggedInState, initialState, reducer } from './bff.state'
-import { createBffUrlGenerator, isNewSession } from './bff.utils'
+import { createBffUrlGenerator, isNewUser } from './bff.utils'
 
 const BFF_SERVER_UNAVAILABLE = 'BFF_SERVER_UNAVAILABLE'
 
@@ -45,7 +45,7 @@ export const BffProvider = ({
     if (
       isLoggedIn &&
       event.data.type === BffBroadcastEvents.NEW_SESSION &&
-      isNewSession(state.userInfo, event.data.userInfo)
+      isNewUser(state.userInfo, event.data.userInfo)
     ) {
       setSessionExpiredScreen(true)
     } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
