@@ -32,7 +32,7 @@ interface HeaderProps {
   // @ts-ignore make web strict
   megaMenuData
   organizationSearchFilter?: string
-  customTopLoginButtonItem: LayoutProps['customTopLoginButtonItem']
+  customTopLoginButtonItem?: LayoutProps['customTopLoginButtonItem']
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
