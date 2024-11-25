@@ -99,6 +99,12 @@
         "jestConfig": "apps/consultation-portal/jest.config.ts"
       }
     },
+    "e2e": {
+      "executor": "@nx/playwright:playwright",
+      "options": {
+        "config": "{projectRoot}/playwright.config.ts"
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint"
     },

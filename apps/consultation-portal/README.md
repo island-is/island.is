@@ -69,6 +69,24 @@ Login here https://island-is.awsapps.com/start#/ (Contact devops if you need acc
 Copy env variables as instructed [here](https://docs.devland.is/technical-overview/devops/dockerizing#troubleshooting) (image arrows 1,2,3)
 Paste env variables into terminal
 
+## E2E Testing
+
+### Quick Start
+
+To run the E2E tests for the `consultation-portal` app:
+
+```bash
+# Install dependencies
+yarn install && yarn codegen
+
+# Start the server
+yarn nx e2e consultation-portal
+```
+
+### More Resources
+
+For further details, refer to the [E2E Testing Library README](../../libs/testing/e2e/README.md).
+
 ## Project owner
 
 - [Stjórnarráðið](https://www.stjornarradid.is)
