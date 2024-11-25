@@ -55,6 +55,15 @@ spec:
         {{- toYaml .Values.annotations | nindent 8 }}
         {{- end }}
     spec:
+    {{- if .Values.armBetaEnrolled }}
+      tolerations:
+      - key: "arm"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      nodeSelector:
+        nodetype: "arm"
+    {{- end }}
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -175,6 +184,8 @@ spec:
                   fieldPath: metadata.labels['tags.datadoghq.com/version']
             - name: DD_LOGS_INJECTION
               value: "true"
+            - name: DD_DBM_PROPAGATION_MODE
+              value: "full"
             - name: DD_AGENT_HOST
               valueFrom:
                 fieldRef:
@@ -183,6 +194,8 @@ spec:
               value: "true"
             - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
               value: "true"
+            - name: DD_PROFILING_ENABLED
+              value: "false"
             - name: DD_APM_REPLACE_TAGS
               value: '[
                 {

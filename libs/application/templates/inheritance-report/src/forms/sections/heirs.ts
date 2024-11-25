@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
@@ -10,6 +11,7 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
+  NO,
   YES,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
@@ -88,6 +90,25 @@ export const heirs = buildSection({
             buildDescriptionField({
               id: 'heirs.hasModified',
               title: '',
+            }),
+            buildAlertMessageField({
+              id: 'reminderToFillInSpouse',
+              title: '',
+              message: m.heirsReminderToFillInSpouse,
+              alertType: 'info',
+              marginBottom: 'containerGutter',
+              condition: (answers) => {
+                return (
+                  getValueViaPath<string>(
+                    answers,
+                    'customShare.deceasedWasMarried',
+                  ) === YES &&
+                  getValueViaPath<string>(
+                    answers,
+                    'customShare.hasCustomSpouseSharePercentage',
+                  ) === NO
+                )
+              },
             }),
             buildCustomField(
               {
