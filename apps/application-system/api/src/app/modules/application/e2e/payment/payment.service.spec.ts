@@ -200,12 +200,10 @@ describe('Payment Service', () => {
   })
 
   it('should find charge items using quantity', async () => {
-    const quantityA = 2
-    const quantityB = 3
     const performingOrganizationID = '1'
     const chargeItems = [
-      { code: 'asdf', quantity: quantityA },
-      { code: 'asdf2', quantity: quantityB },
+      { code: 'asdf', quantity: 2 },
+      { code: 'asdf2', quantity: 3 },
     ]
 
     const catalogChargeItems = await service.findCatalogChargeItems(
@@ -213,12 +211,26 @@ describe('Payment Service', () => {
       chargeItems,
     )
 
-    const totalQuantity = catalogChargeItems.reduce(
-      (sum, item) => sum + item.quantity,
+    // make sure quantity is correct for item 1 (code 'asdf')
+    const catalogQuantityItem1 = catalogChargeItems.find(
+      ({ chargeItemCode }) => chargeItemCode === chargeItems[0].code,
+    )?.quantity
+    expect(catalogQuantityItem1).toBe(chargeItems[0].quantity)
+
+    // make sure quantity is correct for item 2 (code 'asdf2')
+    const catalogQuantityItem2 = catalogChargeItems.find(
+      ({ chargeItemCode }) => chargeItemCode === chargeItems[1].code,
+    )?.quantity
+    expect(catalogQuantityItem2).toBe(chargeItems[1].quantity)
+
+    // make sure total sum is correct
+    const catalogTotalQuantity = catalogChargeItems.reduce(
+      (sum, item) => sum + (item.quantity || 0),
       0,
     )
-
-    await expect(totalQuantity).toBe(quantityA + quantityB)
+    expect(catalogTotalQuantity).toBe(
+      chargeItems[0].quantity + chargeItems[1].quantity,
+    )
   })
 
   it('Should throw when payment exists and status is in progress.', async () => {
