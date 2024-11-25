@@ -13,6 +13,7 @@ export const color = {
       100: colorPrimitives.primary.dark['100'].$value,
       200: colorPrimitives.primary.dark['200'].$value,
       300: colorPrimitives.primary.dark['300'].$value,
+      350: colorPrimitives.primary.dark['350'].$value,
       400: colorPrimitives.primary.dark['400'].$value,
     },
     red: {

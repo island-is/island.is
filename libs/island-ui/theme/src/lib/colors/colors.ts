@@ -8,6 +8,7 @@ export const blue200 = color.primary.blue[200] ?? '#ccdfff'
 export const blue100 = color.primary.blue[100] ?? '#ccdfff'
 
 export const dark400 = color.primary.dark[400] ?? '#00003c'
+export const dark350 = color.primary.dark[350] ?? '#33335a'
 export const dark300 = color.primary.dark[300] ?? '#9999b1'
 export const dark200 = color.primary.dark[200] ?? '#ccccd8'
 export const dark100 = color.primary.dark[100] ?? '#f2f2f5'
@@ -61,16 +62,16 @@ export const currentColor = 'currentColor'
 // Note: They are veeeeery many! Example:
 
 //  Background Colors
-export const bgBrand = blue400
-export const bgBrandLighter = blue200
-export const bgBrandMinimal = blue100
-export const bgBrandSecondary = purple400
-export const bgBrandSecondaryLighter = purple200
-export const bgBrandSecondaryMinimal = purple100
-export const bgInvert = white
+export const backgroundBrand = blue400
+export const backgroundBrandLighter = blue200
+export const backgroundBrandMinimal = blue100
+export const backgroundBrandSecondary = purple400
+export const backgroundBrandSecondaryLighter = purple200
+export const backgroundBrandSecondaryMinimal = purple100
+export const backgroundInvert = white
 
 // Border Colors
-export const borderInvert = dark200
+export const borderInvert = white
 export const borderPrimary = blue200
 export const borderPrimaryContrast = blue400
 export const borderSecondaryActive = purple400
@@ -93,11 +94,6 @@ export const infoForegroundContrast = blue600
 export const successBackground = mint100
 export const successBorder = mint200
 export const successForeground = mint400
-
-// Feedback Colors - Warning
-export const warningBackground = yellow200
-export const warningBorder = yellow400
-export const warningForeground = yellow600
 
 // Feedback Colors - Tag
 export const tagBlueAccent = blue400
@@ -126,9 +122,44 @@ export const tagRedBorder = red200
 
 export const tagRoseAccent = roseTinted400
 export const tagRoseBackground = roseTinted100
-export const tagRoseBorder = roseTinted200
+export const tagRoseAccentBorder = roseTinted200
 
 export const tagYellowAccent = dark400
 export const tagYellowBackground = yellow300
 export const tagYellowBorder = yellow600
 export const tagYellowHover = yellow400
+
+// Feedback Colors - Warning
+export const warningBackground = yellow200
+export const warningBorder = yellow400
+export const warningForeground = yellow600
+
+// Foreground Colors
+export const foregroundBrand = blue400
+export const foregroundBrandContrast = blue600
+export const foregroundBrandSecondary = purple400
+export const foregroundBrandSecondaryContrast = purple600
+export const foregroundInvert = white
+export const foregroundModal = dark400
+export const foregroundPrimary = dark400
+export const foregroundPrimaryMinimal = dark300
+
+// Interactive Background Colors
+export const interactiveBackgroundBrandSecondaryActive = purple200
+export const interactiveBackgroundBrandSecondaryMinimal = purple100
+export const interactiveBackgroundDestructive = red600
+export const interactiveBackgroundDestructiveActive = roseTinted400
+export const interactiveBackgroundDestructiveDisabled = red300
+export const interactiveBackgroundFocus = mint400
+export const interactiveBackgroundInvert = white
+export const interactiveBackgroundNeutral = dark300
+export const interactiveBackgroundNeutralActive = dark350
+export const interactiveBackgroundPrimary = blue400
+export const interactiveBackgroundPrimaryActive = blueberry400
+export const interactiveBackgroundPrimaryDisabled = blue300
+export const interactiveBackgroundPrimaryMinimal = blue100
+export const interactiveBackgroundPrimaryMinimalActive = blue200
+export const interactiveBackgroundTooltip = dark400
+
+// Interactive Border Colors
+// TBC.....
