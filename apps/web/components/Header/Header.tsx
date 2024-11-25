@@ -32,6 +32,7 @@ interface HeaderProps {
   // @ts-ignore make web strict
   megaMenuData
   organizationSearchFilter?: string
+  searchPlaceholder?: string
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -42,6 +43,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
   megaMenuData,
   languageToggleQueryParams,
   organizationSearchFilter,
+  searchPlaceholder,
   children,
 }) => {
   const { activeLocale, t } = useI18n()
@@ -93,7 +95,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                           id="search_input_header"
                           size="medium"
                           activeLocale={locale}
-                          placeholder={t.searchPlaceholder}
+                          placeholder={searchPlaceholder ?? t.searchPlaceholder}
                           autocomplete={true}
                           autosuggest={true}
                           organization={organizationSearchFilter}

@@ -403,6 +403,13 @@ const Layout: Screen<LayoutProps> = ({
                 megaMenuData={megaMenuData}
                 languageToggleQueryParams={languageToggleQueryParams}
                 organizationSearchFilter={organizationSearchFilter}
+                searchPlaceholder={
+                  organizationSearchFilter
+                    ? activeLocale === 'is'
+                      ? 'Leita'
+                      : 'Search'
+                    : undefined
+                }
               />
             </ColorSchemeContext.Provider>
           )}
