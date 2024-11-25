@@ -1,7 +1,20 @@
+/*
+ * DataSchema uses Zod to validate the answers object and can be used to refine values, provide
+ * error messages, and more.
+ *
+ * When checking if a value is of an enum type, use z.nativeEnum instead of z.enum. This eliminates the need to list up all possible values in the enum.
+ */
+
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { isValidNumber } from 'libphonenumber-js'
 import { m } from './messages'
+import {
+  ApprovedByReviewerEnum,
+  CareerHistoryEnum,
+  CareerIndustryEnum,
+  YesNoEnum,
+} from '../utils/constants'
 
 const careerHistoryCompaniesValidation = (data: any) => {
   // Applicant selected other but didnt supply the reason so we dont allow it
@@ -13,63 +26,47 @@ const careerHistoryCompaniesValidation = (data: any) => {
   }
   return true
 }
-export const ExampleSchema = z.object({
-  approveExternalData: z.boolean().refine((v) => v),
-  person: z.object({
-    name: z.string().min(1).max(256),
-    age: z.string().refine((x) => {
-      const asNumber = parseInt(x)
-      if (isNaN(asNumber)) {
-        return false
-      }
-      return asNumber > 15
-    }),
-    nationalId: z
-      .string()
-      /**
-       * We are depending on this template for the e2e tests on the application-system-api.
-       * Because we are not allowing committing valid kennitala, I reversed the condition
-       * to check for invalid kenitala so it passes the test.
-       */
-      .refine((n) => n && !kennitala.isValid(n), {
-        params: m.dataSchemeNationalId,
-      }),
-    phoneNumber: z
-      .string()
-      .refine(isValidNumber, { params: m.dataSchemePhoneNumber }),
-    email: z.string().email(),
-    // removed due to e2e tests failing, example still works
-    // someHiddenInputRequired: z.string().refine((x) => x === 'validAnswer'),
-    // someHiddenInputWatchedRequired: z
-    //   .string()
-    //   .refine((x) => x.includes('Valid')),
+
+const personSchema = z.object({
+  name: z.string().min(1).max(256),
+  age: z.string().refine((x) => {
+    const asNumber = parseInt(x)
+    if (isNaN(asNumber)) {
+      return false
+    }
+    return asNumber > 15
   }),
-  careerHistory: z.enum(['yes', 'no']).optional(),
-  careerIndustry: z.enum(['software', 'finance', 'consulting', 'other']),
-  careerHistoryDetails: z
-    .object({
-      careerHistoryCompanies: z
-        .array(z.enum(['government', 'aranja', 'advania', 'other']))
-        .nonempty(),
-      careerHistoryOther: z.string(),
-    })
-    .partial()
-    .refine((data) => careerHistoryCompaniesValidation(data), {
-      params: m.careerHistoryOtherError,
-      path: ['careerHistoryOther'],
-    }),
-  deepNestedValues: z.object({
-    something: z.object({
-      very: z.object({
-        deep: z.object({
+  nationalId: z.string().refine((n) => n && !kennitala.isValid(n), {
+    params: m.dataSchemeNationalId,
+  }),
+  phoneNumber: z
+    .string()
+    .refine(isValidNumber, { params: m.dataSchemePhoneNumber }),
+  email: z.string().email(),
+})
+
+const careerHistoryDetailsSchema = z
+  .object({
+    careerHistoryCompanies: z.array(z.nativeEnum(CareerHistoryEnum)).nonempty(),
+    careerHistoryOther: z.string(),
+  })
+  .partial()
+  .refine((data) => careerHistoryCompaniesValidation(data), {
+    params: m.careerHistoryOtherError,
+    path: ['careerHistoryOther'],
+  })
+
+const deepNestedSchema = z.object({
+  something: z.object({
+    very: z.object({
+      deep: z.object({
+        so: z.object({
           so: z.object({
-            so: z.object({
+            very: z.object({
               very: z.object({
-                very: z.object({
-                  deep: z.object({
-                    nested: z.object({
-                      value: z.string(),
-                    }),
+                deep: z.object({
+                  nested: z.object({
+                    value: z.string(),
                   }),
                 }),
               }),
@@ -79,7 +76,19 @@ export const ExampleSchema = z.object({
       }),
     }),
   }),
+})
+
+// The exported dataSchema should be as flat and easy to read as possible.
+export const dataSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
+  person: personSchema,
+  careerHistory: z.nativeEnum(YesNoEnum).optional(),
+  careerIndustry: z.nativeEnum(CareerIndustryEnum),
+  careerHistoryDetails: careerHistoryDetailsSchema,
+  deepNestedValues: deepNestedSchema,
   dreamJob: z.string().optional(),
   assigneeEmail: z.string().email(),
-  approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
+  approvedByReviewer: z.nativeEnum(ApprovedByReviewerEnum),
 })
+
+export type AnswersSchema = z.infer<typeof dataSchema>

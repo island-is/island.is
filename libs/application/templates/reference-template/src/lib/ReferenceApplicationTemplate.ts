@@ -37,7 +37,7 @@ import {
   MyMockProvider,
   NationalRegistryApi,
 } from '../dataProviders'
-import { ExampleSchema } from './dataSchema'
+import { dataSchema } from './dataSchema'
 import { States } from '../utils/constants'
 
 type ReferenceTemplateEvent =
@@ -85,7 +85,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   name: determineMessageFromApplicationAnswers,
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
-  dataSchema: ExampleSchema,
+  dataSchema: dataSchema,
   featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,
 
