@@ -731,6 +731,30 @@ describe('getIndictmentInfo', () => {
       indictmentVerdictAppealDeadlineExpired: false,
     })
   })
+
+  it('should return correct indictment info when the indictment ruling decision is FINE', () => {
+    const rulingDate = new Date().toISOString()
+    const defendants = [
+      {
+        serviceRequirement: ServiceRequirement.NOT_REQUIRED,
+        verdictViewDate: undefined,
+      } as Defendant,
+    ]
+
+    const indictmentInfo = getIndictmentInfo(
+      CaseIndictmentRulingDecision.FINE,
+      rulingDate,
+      defendants,
+    )
+
+    expect(indictmentInfo).toEqual({
+      indictmentAppealDeadline: new Date(
+        new Date(rulingDate).setDate(new Date(rulingDate).getDate() + 3),
+      ).toISOString(),
+      indictmentVerdictViewedByAll: true,
+      indictmentVerdictAppealDeadlineExpired: false,
+    })
+  })
 })
 
 describe('getIndictmentDefendantsInfo', () => {

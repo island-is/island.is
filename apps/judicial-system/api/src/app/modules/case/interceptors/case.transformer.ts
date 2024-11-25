@@ -13,6 +13,7 @@ import {
 import { Defendant } from '../../defendant'
 import { EventLog } from '../../event-log'
 import { Case } from '../models/case.model'
+import { FINE_APPEAL_WINDOW_DAYS } from 'libs/judicial-system/types/src/lib/indictmentCase'
 
 const getDays = (days: number) => days * 24 * 60 * 60 * 1000
 
@@ -158,7 +159,12 @@ export const getIndictmentInfo = (
 
   const theRulingDate = new Date(rulingDate)
   indictmentInfo.indictmentAppealDeadline = new Date(
-    theRulingDate.getTime() + getDays(VERDICT_APPEAL_WINDOW_DAYS),
+    theRulingDate.getTime() +
+      getDays(
+        rulingDecision === CaseIndictmentRulingDecision.FINE
+          ? FINE_APPEAL_WINDOW_DAYS
+          : VERDICT_APPEAL_WINDOW_DAYS,
+      ),
   ).toISOString()
 
   const verdictInfo = defendants?.map<[boolean, Date | undefined]>(
