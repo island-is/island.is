@@ -85,6 +85,13 @@ export class AdminPatchScopeDto {
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional({
+    example: false,
+  })
+  automaticDelegationGrant?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional({
     deprecated: true,
     description: 'Use addedDelegationTypes or removedDelegationTypes instead',
   })

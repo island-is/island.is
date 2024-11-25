@@ -6,10 +6,14 @@ import {
   CaseNotificationType,
   CaseType,
   DateType,
+  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
+import {
+  createTestingNotificationModule,
+  createTestUsers,
+} from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
@@ -31,12 +35,11 @@ type GivenWhenThen = (
 describe('InternalNotificationController - Send court date notifications', () => {
   const userId = uuid()
   const caseId = uuid()
-  const prosecutorName = uuid()
-  const prosecutorEmail = uuid()
-  const defenderName = uuid()
-  const defenderEmail = uuid()
+
   const courtName = 'Héraðsdómur Reykjavíkur'
   const courtCaseNumber = uuid()
+
+  const { prosecutor, defender } = createTestUsers(['prosecutor', 'defender'])
 
   let mockEmailService: EmailService
   let mockNotificationModel: typeof Notification
@@ -75,11 +78,11 @@ describe('InternalNotificationController - Send court date notifications', () =>
     const theCase = {
       id: caseId,
       type: CaseType.CUSTODY,
-      prosecutor: { name: prosecutorName, email: prosecutorEmail },
+      prosecutor: { name: prosecutor.name, email: prosecutor.email },
       court: { name: courtName },
       courtCaseNumber,
-      defenderName,
-      defenderEmail,
+      defenderName: defender.name,
+      defenderEmail: defender.email,
     } as Case
 
     beforeEach(async () => {
@@ -89,23 +92,23 @@ describe('InternalNotificationController - Send court date notifications', () =>
     it('should send notifications to prosecutor and defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: prosecutorName, address: prosecutorEmail }],
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Fyrirtaka í máli: ${courtCaseNumber}`,
-          html: `Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram á ótilgreindum tíma.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Verjandi sakbornings: ${defenderName}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          html: `Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram á ótilgreindum tíma.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Verjandi sakbornings: ${defender.name}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
         }),
       )
 
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Fyrirtaka í máli ${courtCaseNumber}`,
-          html: `Héraðsdómur Reykjavíkur hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram á ótilgreindum tíma.<br /><br />Málsnúmer: ${courtCaseNumber}.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: .<br /><br />Sækjandi: ${prosecutorName} ().`,
+          html: `Héraðsdómur Reykjavíkur hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram á ótilgreindum tíma.<br /><br />Málsnúmer: ${courtCaseNumber}.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: .<br /><br />Sækjandi: ${prosecutor.name} ().`,
         }),
       )
 
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Yfirlit máls ${courtCaseNumber}`,
         }),
       )
@@ -125,11 +128,11 @@ describe('InternalNotificationController - Send court date notifications', () =>
     const theCase = {
       id: caseId,
       type: CaseType.CUSTODY,
-      prosecutor: { name: prosecutorName, email: prosecutorEmail },
+      prosecutor: { name: prosecutor.name, email: prosecutor.email },
       court: { name: courtName },
       courtCaseNumber,
-      defenderName,
-      defenderEmail,
+      defenderName: defender.name,
+      defenderEmail: defender.email,
     } as Case
 
     beforeEach(async () => {
@@ -142,8 +145,8 @@ describe('InternalNotificationController - Send court date notifications', () =>
           notifications: [
             {
               caseId,
-              type: CaseNotificationType.READY_FOR_COURT,
-              recipients: [{ address: defenderEmail, success: true }],
+              type: NotificationType.READY_FOR_COURT,
+              recipients: [{ address: defender.email, success: true }],
             },
           ],
         } as Case,
@@ -154,7 +157,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
     it('should not send link to case to defender', () => {
       expect(mockEmailService.sendEmail).not.toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Yfirlit máls ${courtCaseNumber}`,
         }),
       )
@@ -175,11 +178,11 @@ describe('InternalNotificationController - Send court date notifications', () =>
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
-      prosecutor: { name: prosecutorName, email: prosecutorEmail },
+      prosecutor: { name: prosecutor.name, email: prosecutor.email },
       defendants: [
         {
-          defenderName,
-          defenderEmail,
+          defenderName: defender.name,
+          defenderEmail: defender.email,
         },
       ],
       court: { name: courtName },
@@ -194,7 +197,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
     it('should send notifications to prosecutor and defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: prosecutorName, address: prosecutorEmail }],
+          to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Nýtt þinghald í máli ${courtCaseNumber}`,
           html: `Héraðsdómur Reykjavíkur boðar til þinghalds í máli ${courtCaseNumber}.<br />Fyrirtaka mun fara fram 2. maí 2024, kl. 14:32.<br /><br />Tegund þinghalds: Óþekkt.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/akaera/stadfesta/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
@@ -202,7 +205,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
 
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: defenderName, address: defenderEmail }],
+          to: [{ name: defender.name, address: defender.email }],
           subject: `Nýtt þinghald í máli ${courtCaseNumber}`,
           html: `Héraðsdómur Reykjavíkur boðar til þinghalds í máli ${courtCaseNumber}.<br />Fyrirtaka mun fara fram 2. maí 2024, kl. 14:32.<br /><br />Tegund þinghalds: Óþekkt.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Hægt er að nálgast gögn málsins hjá Héraðsdómur Reykjavíkur.`,
         }),

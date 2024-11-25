@@ -61,9 +61,7 @@ export const include: Includeable[] = [
 @Injectable()
 export class SubpoenaService {
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
-    @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
     private readonly pdfService: PdfService,
     private readonly messageService: MessageService,
     @Inject(forwardRef(() => PoliceService))
