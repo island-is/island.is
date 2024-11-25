@@ -124,3 +124,79 @@ export const yellow100 = color.accent.yellow[100] ?? '#fffef7'
 
 export const transparent = 'transparent'
 export const currentColor = 'currentColor'
+
+// Note: I suppose we also need to introduce colors in a way that they are now used in figma.
+// Note: They are veeeeery many! Example:
+
+//  Background Colors
+export const bgBrand = blue400
+export const bgBrandLighter = blue200
+export const bgBrandMinimal = blue100
+export const bgBrandSecondary = purple400
+export const bgBrandSecondaryLighter = purple200
+export const bgBrandSecondaryMinimal = purple100
+export const bgInvert = white
+
+// Border Colors
+export const borderInvert = dark200
+export const borderPrimary = blue200
+export const borderPrimaryContrast = blue400
+export const borderSecondaryActive = purple400
+export const borderSecondaryInactive = purple200
+
+// Feedback Colors - Error
+export const errorBackground = red100
+export const errorBorder = red200
+export const errorBorderContrast = red600
+export const errorForeground = red400
+export const errorForegroundContrast = red600
+
+// Feedback Colors - Information
+export const infoBackgroundMinimal = blue100
+export const infoBorder = blue200
+export const infoForeground = blue400
+export const infoForegroundContrast = blue600
+
+// Feedback Colors - Success
+export const successBackground = mint100
+export const successBorder = mint200
+export const successForeground = mint400
+
+// Feedback Colors - Warning
+export const warningBackground = yellow200
+export const warningBorder = yellow400
+export const warningForeground = yellow600
+
+// Feedback Colors - Tag
+export const tagBlueAccent = blue400
+export const tagBlueBackground = blue100
+export const tagBlueBorder = blue200
+
+export const tagBlueberryAccent = blueberry400
+export const tagBlueberryBackground = blueberry100
+export const tagBlueberryBorder = blueberry200
+
+export const tagDarkBlueAccent = blue600
+export const tagDarkBlueBackground = blue200
+export const tagDarkBlueBorder = blue200
+
+export const tagMintAccent = mint800
+export const tagMintBackground = mint200
+export const tagMintBorder = mint200
+
+export const tagPurpleAccent = purple400
+export const tagPurpleBackground = purple100
+export const tagPurpleBorder = purple200
+
+export const tagRedAccent = red600
+export const tagRedBackground = red100
+export const tagRedBorder = red200
+
+export const tagRoseAccent = roseTinted400
+export const tagRoseBackground = roseTinted100
+export const tagRoseBorder = roseTinted200
+
+export const tagYellowAccent = dark400
+export const tagYellowBackground = yellow300
+export const tagYellowBorder = yellow600
+export const tagYellowHover = yellow400
