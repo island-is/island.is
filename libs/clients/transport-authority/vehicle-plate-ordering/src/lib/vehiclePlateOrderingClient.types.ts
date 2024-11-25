@@ -1,3 +1,5 @@
+import { ValidationMessage } from '@island.is/clients/transport-authority/vehicle-owner-change'
+
 export interface DeliveryStation {
   name?: string | null
   type: string
@@ -6,12 +8,8 @@ export interface DeliveryStation {
 
 export interface PlateOrderValidation {
   hasError: boolean
-  errorMessages?: Array<PlateOrderValidationMessage> | null
-}
-
-export interface PlateOrderValidationMessage {
-  errorNo?: string | null
-  defaultMessage?: string | null
+  errorMessages?: Array<ValidationMessage>
+  infoMessages?: Array<ValidationMessage>
 }
 
 export interface PlateOrder {

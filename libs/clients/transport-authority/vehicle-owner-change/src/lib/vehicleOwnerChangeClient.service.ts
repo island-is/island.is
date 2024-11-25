@@ -5,14 +5,16 @@ import {
   NewestOwnerChange,
   OwnerChange,
   OwnerChangeValidation,
+  ValidationMessage,
 } from './vehicleOwnerChangeClient.types'
 import {
-  ErrorMessage,
-  getCleanErrorMessagesFromTryCatch,
+  getCleanMessagesFromRequestResult,
+  getCleanMessagesFromTryCatch,
   getDateAtTimestamp,
 } from './vehicleOwnerChangeClient.utils'
 import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
 import { logger } from '@island.is/logging'
+import { ReturnTypeMessage } from '../../gen/fetch'
 
 @Injectable()
 export class VehicleOwnerChangeClient {
@@ -79,7 +81,9 @@ export class VehicleOwnerChangeClient {
   ): Promise<OwnerChangeValidation> {
     const useGroup = '000'
 
-    let errorMessages: ErrorMessage[] | undefined
+    let result: ReturnTypeMessage[] | undefined
+    let errorMessages: ValidationMessage[] | undefined
+    let infoMessages: ValidationMessage[] | undefined
 
     try {
       // Note: If insurance company has not been supplied (we have not required the user to fill in at this point),
@@ -97,11 +101,8 @@ export class VehicleOwnerChangeClient {
         ownerChange.dateOfPurchaseTimestamp,
       )
 
-      // Note: we have manually changed this endpoint to void (in clientConfig), since the messages we want only
-      // come with error code 400. If this function returns an array of ReturnTypeMessage, then
-      // we will get an error with code 204, since the openapi generator tries to convert empty result
-      // into an array of ReturnTypeMessage
-      await this.ownerchangeApiWithAuth(auth).personcheckPost({
+      //TODOx 204 er void - tala við SGS
+      result = await this.ownerchangeApiWithAuth(auth).personcheckPost({
         apiVersion: '2.0',
         apiVersion2: '2.0',
         postPersonOwnerChange: {
@@ -124,12 +125,18 @@ export class VehicleOwnerChangeClient {
     } catch (e) {
       // Note: We had to wrap in try-catch to get the error messages, because if this action results in error,
       // we get 4xx error (instead of 200 with error messages) with the error messages in the body
-      errorMessages = getCleanErrorMessagesFromTryCatch(e)
+      errorMessages = getCleanMessagesFromTryCatch(e, 'ERROR')
+      infoMessages = getCleanMessagesFromTryCatch(e, 'INFO')
+    }
+
+    if (result) {
+      infoMessages = getCleanMessagesFromRequestResult(result, 'INFO')
     }
 
     return {
       hasError: !!errorMessages?.length,
-      errorMessages: errorMessages,
+      errorMessages,
+      infoMessages,
     }
   }
 
@@ -170,10 +177,12 @@ export class VehicleOwnerChangeClient {
       ownerChange.dateOfPurchaseTimestamp,
     )
 
-    let errorMessages: ErrorMessage[] | undefined
+    let result: ReturnTypeMessage[] | undefined
+    let errorMessages: ValidationMessage[] | undefined
+    let infoMessages: ValidationMessage[] | undefined
 
     try {
-      await this.ownerchangeApiWithAuth(auth).rootPost({
+      result = await this.ownerchangeApiWithAuth(auth).rootPost({
         apiVersion: '2.0',
         apiVersion2: '2.0',
         postOwnerChange: {
@@ -200,12 +209,18 @@ export class VehicleOwnerChangeClient {
         },
       })
     } catch (e) {
-      errorMessages = getCleanErrorMessagesFromTryCatch(e)
+      errorMessages = getCleanMessagesFromTryCatch(e, 'ERROR')
+      infoMessages = getCleanMessagesFromTryCatch(e, 'INFO')
+    }
+
+    if (result) {
+      infoMessages = getCleanMessagesFromRequestResult(result, 'INFO')
     }
 
     return {
       hasError: !!errorMessages?.length,
-      errorMessages: errorMessages,
+      errorMessages,
+      infoMessages,
     }
   }
 }

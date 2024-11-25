@@ -7,6 +7,11 @@ export const applicationCheck = {
       defaultMessage: 'Það kom upp villa',
       description: 'Application check validation alert title',
     },
+    alertInfoTitle: {
+      id: 'ta.ovlp.application:applicationCheck.validation.alertInfoTitle',
+      defaultMessage: 'Til athugunar!',
+      description: 'Alert title',
+    },
     fallbackErrorMessage: {
       id: 'ta.ovlp.application:applicationCheck.validation.fallbackErrorMessage',
       defaultMessage: 'Það kom upp villa við að sannreyna gögn',

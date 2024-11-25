@@ -7,8 +7,8 @@ import {
 } from './vehiclePlateRenewalClient.types'
 import { PlateOwnershipApiWithoutIdsAuth } from './apiConfiguration'
 import {
-  ErrorMessage,
-  getCleanErrorMessagesFromTryCatch,
+  getCleanMessagesFromTryCatch,
+  ValidationMessage,
 } from '@island.is/clients/transport-authority/vehicle-owner-change'
 
 @Injectable()
@@ -47,7 +47,8 @@ export class VehiclePlateRenewalClient {
     auth: User,
     regno: string,
   ): Promise<PlateOwnershipValidation> {
-    let errorMessages: ErrorMessage[] | undefined
+    let errorMessages: ValidationMessage[] | undefined
+    let infoMessages: ValidationMessage[] | undefined
 
     try {
       await this.plateOwnershipApiWithAuth(auth).renewplateownershipPost({
@@ -62,12 +63,14 @@ export class VehiclePlateRenewalClient {
     } catch (e) {
       // Note: We had to wrap in try-catch to get the error messages, because if this action results in error,
       // we get 4xx error (instead of 200 with error messages) with the error messages in the body
-      errorMessages = getCleanErrorMessagesFromTryCatch(e)
+      errorMessages = getCleanMessagesFromTryCatch(e, 'ERROR')
+      infoMessages = getCleanMessagesFromTryCatch(e, 'INFO')
     }
 
     return {
       hasError: !!errorMessages?.length,
-      errorMessages: errorMessages,
+      errorMessages,
+      infoMessages,
     }
   }
 
@@ -75,7 +78,8 @@ export class VehiclePlateRenewalClient {
     auth: User,
     regno: string,
   ): Promise<PlateOwnershipValidation> {
-    let errorMessages: ErrorMessage[] | undefined
+    let errorMessages: ValidationMessage[] | undefined
+    let infoMessages: ValidationMessage[] | undefined
 
     try {
       await this.plateOwnershipApiWithAuth(auth).renewplateownershipPost({
@@ -88,12 +92,14 @@ export class VehiclePlateRenewalClient {
         },
       })
     } catch (e) {
-      errorMessages = getCleanErrorMessagesFromTryCatch(e)
+      errorMessages = getCleanMessagesFromTryCatch(e, 'ERROR')
+      infoMessages = getCleanMessagesFromTryCatch(e, 'INFO')
     }
 
     return {
       hasError: !!errorMessages?.length,
-      errorMessages: errorMessages,
+      errorMessages,
+      infoMessages,
     }
   }
 

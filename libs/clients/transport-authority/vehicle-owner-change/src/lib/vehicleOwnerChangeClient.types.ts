@@ -44,10 +44,11 @@ export interface NewestOwnerChange {
 
 export interface OwnerChangeValidation {
   hasError: boolean
-  errorMessages?: Array<OwnerChangeValidationMessage> | null
+  errorMessages?: Array<ValidationMessage>
+  infoMessages?: Array<ValidationMessage>
 }
 
-export interface OwnerChangeValidationMessage {
-  errorNo?: string | null
-  defaultMessage?: string | null
+export interface ValidationMessage {
+  errorNo?: string
+  defaultMessage?: string
 }

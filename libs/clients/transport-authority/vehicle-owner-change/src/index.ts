@@ -5,6 +5,6 @@ export * from './lib/vehicleOwnerChangeClient.types'
 export { VehicleOwnerChangeClientConfig } from './lib/vehicleOwnerChangeClient.config'
 
 export {
-  ErrorMessage,
-  getCleanErrorMessagesFromTryCatch,
+  getCleanMessagesFromTryCatch,
+  getCleanMessagesFromRequestResult,
 } from './lib/vehicleOwnerChangeClient.utils'

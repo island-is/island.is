@@ -21,17 +21,15 @@ import {
   PlateOrderAnswers,
 } from './graphql/dto'
 import {
-  OwnerChangeValidation,
-  OperatorChangeValidation,
   CheckTachoNetExists,
   VehicleOwnerchangeChecksByPermno,
   VehicleOperatorChangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
-  PlateOrderValidation,
 } from './graphql/models'
 import { ApolloError } from 'apollo-server-express'
 import { CoOwnerChangeAnswers } from './graphql/dto/coOwnerChangeAnswers.input'
 import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
+import { TransportAuthorityValidation } from './graphql/models/validation.model'
 
 @Injectable()
 export class TransportAuthorityApi {
@@ -131,7 +129,7 @@ export class TransportAuthorityApi {
   async validateApplicationForOwnerChange(
     user: User,
     answers: OwnerChangeAnswers,
-  ): Promise<OwnerChangeValidation | null> {
+  ): Promise<TransportAuthorityValidation | null> {
     const sellerSsn = answers?.seller?.nationalId
     const sellerEmail = answers?.seller?.email
     const buyerSsn = answers?.buyer?.nationalId
@@ -190,7 +188,7 @@ export class TransportAuthorityApi {
   async validateApplicationForCoOwnerChange(
     user: User,
     answers: CoOwnerChangeAnswers,
-  ): Promise<OwnerChangeValidation | null> {
+  ): Promise<TransportAuthorityValidation | null> {
     const permno = answers?.pickVehicle?.plate
     const ownerSsn = answers?.owner?.nationalId
     const ownerEmail = answers?.owner?.email
@@ -292,7 +290,7 @@ export class TransportAuthorityApi {
   async validateApplicationForOperatorChange(
     user: User,
     answers: OperatorChangeAnswers,
-  ): Promise<OperatorChangeValidation | null> {
+  ): Promise<TransportAuthorityValidation | null> {
     const permno = answers?.pickVehicle?.plate
 
     const filteredOldOperators = answers?.oldOperators?.filter(
@@ -369,7 +367,7 @@ export class TransportAuthorityApi {
   async validateApplicationForPlateOrder(
     user: User,
     answers: PlateOrderAnswers,
-  ): Promise<PlateOrderValidation | null> {
+  ): Promise<TransportAuthorityValidation | null> {
     const YES = 'yes'
 
     const includeRushFee =
