@@ -48,4 +48,9 @@ export const strings = defineMessages({
     defaultMessage: 'Hefur ekki verið skráður',
     description: 'Notaður sem texti þegar enginn verjandi er skráður.',
   },
+  sendToPrisonAdminDate: {
+    id: 'judicial.system.core:info_card.send_to_prison_admin_date',
+    defaultMessage: 'Sent til fullnustu {date}',
+    description: 'Notaður sem texti fyrir hvenær mál var sent til fullnustu',
+  },
 })
