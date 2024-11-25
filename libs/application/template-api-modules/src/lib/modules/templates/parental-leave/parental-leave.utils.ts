@@ -549,3 +549,10 @@ export const getFromDate = (
     ? apiConstants.actualDateOfBirth
     : period.startDate
 }
+
+export const isPreBirthRight = (right: string | undefined) => {
+  if (!right) {
+    return false
+  }
+  return ['VEIKMEÐG', 'ÖRYGGI-L'].includes(right)
+}
