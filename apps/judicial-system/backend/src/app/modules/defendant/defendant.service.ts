@@ -84,7 +84,7 @@ export class DefendantService {
 
     const message = {
       type: MessageType.DEFENDANT_NOTIFICATION,
-      caseId: defendant.id,
+      caseId: defendant.caseId,
       elementId: defendant.id,
       body: {
         type: messageType,
