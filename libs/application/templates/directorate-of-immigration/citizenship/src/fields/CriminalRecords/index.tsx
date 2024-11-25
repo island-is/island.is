@@ -5,10 +5,11 @@ import { supportingDocuments } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, FileUploadField, FieldTypes, FieldComponents } from '@island.is/application/types'
 import { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { FILE_TYPES_ALLOWED } from '../../shared'
+import { FileUploadFormField } from '@island.is/application/ui-fields'
 
 export const CriminalRecords: FC<FieldBaseProps> = ({
   field,
@@ -37,35 +38,38 @@ export const CriminalRecords: FC<FieldBaseProps> = ({
   }
 
   return (
-    <Box paddingTop={2}>
+    <Box>
       {filteredCountryList &&
         filteredCountryList.map((x, index) => {
           setCountryId(x.countryId, index)
+          const fileUploadField: FileUploadField = {
+            ...field,
+            type: FieldTypes.FILEUPLOAD,
+            component: FieldComponents.FILEUPLOAD,
+            id: `${field.id}[${index}].attachment`,
+            uploadHeader: `${formatMessage(
+              supportingDocuments.labels.otherDocuments.criminalRecord,
+            )} - ${
+              countryOptions.find((z) => z.id?.toString() === x.countryId)?.name
+            }`,
+            uploadDescription: formatMessage(
+              supportingDocuments.labels.otherDocuments.acceptedFileTypes,
+            ),
+            uploadButtonLabel: formatMessage(
+              supportingDocuments.labels.otherDocuments.buttonText,
+            ),
+            uploadAccept: FILE_TYPES_ALLOWED,
+          }
           return (
-            <Box paddingBottom={2}>
-              <FileUploadController
-                key={x.countryId}
-                application={application}
-                id={`${field.id}[${index}].attachment`}
-                error={
-                  errors &&
-                  getErrorViaPath(errors, `${field.id}[${index}].attachment`)
-                }
-                accept={FILE_TYPES_ALLOWED}
-                header={`${formatMessage(
-                  supportingDocuments.labels.otherDocuments.criminalRecord,
-                )} - ${
-                  countryOptions.find((z) => z.id?.toString() === x.countryId)
-                    ?.name
-                }`}
-                description={formatMessage(
-                  supportingDocuments.labels.otherDocuments.acceptedFileTypes,
-                )}
-                buttonLabel={formatMessage(
-                  supportingDocuments.labels.otherDocuments.buttonText,
-                )}
-              />
-            </Box>
+            <FileUploadFormField
+              key={x.countryId}
+              application={application}
+              field={fileUploadField}
+              error={
+                errors &&
+                getErrorViaPath(errors, `${field.id}[${index}].attachment`)
+              }
+            />
           )
         })}
     </Box>
