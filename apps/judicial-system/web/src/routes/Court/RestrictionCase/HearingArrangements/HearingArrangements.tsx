@@ -33,6 +33,11 @@ import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-syste
 
 import { rcHearingArrangements as m } from './HearingArrangements.strings'
 
+enum ModalButtonLoading {
+  PRIMARY = 'PRIMARY',
+  SECONDARY = 'SECONDARY',
+}
+
 export const HearingArrangements = () => {
   const {
     workingCase,
@@ -43,6 +48,8 @@ export const HearingArrangements = () => {
   } = useContext(FormContext)
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const [modalButtonLoading, setModalButtonLoading] =
+    useState<ModalButtonLoading>()
 
   const {
     setAndSendCaseToServer,
@@ -209,13 +216,23 @@ export const HearingArrangements = () => {
               courtDateHasChanged,
             },
           )}
-          isPrimaryButtonLoading={isSendingNotification}
+          isPrimaryButtonLoading={
+            isSendingNotification &&
+            modalButtonLoading === ModalButtonLoading.PRIMARY
+          }
+          isSecondaryButtonLoading={
+            isSendingNotification &&
+            modalButtonLoading === ModalButtonLoading.SECONDARY
+          }
           onSecondaryButtonClick={() => {
-            sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
+            setModalButtonLoading(ModalButtonLoading.SECONDARY)
 
+            sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
             router.push(`${navigateTo}/${workingCase.id}`)
           }}
           onPrimaryButtonClick={async () => {
+            setModalButtonLoading(ModalButtonLoading.PRIMARY)
+
             const notificationSent = await sendNotification(
               workingCase.id,
               NotificationType.COURT_DATE,

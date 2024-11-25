@@ -6,7 +6,7 @@ import {
 import { information } from '../../../lib/messages'
 
 export const buyerSubSection = buildSubSection({
-  id: 'buyer',
+  id: 'buyerSubSection',
   title: information.labels.buyer.sectionTitle,
   children: [
     buildMultiField({
@@ -15,8 +15,13 @@ export const buyerSubSection = buildSubSection({
       description: information.labels.buyer.description,
       children: [
         buildCustomField({
+          id: 'buyer',
+          component: 'Buyer',
+          title: '',
+        }),
+        buildCustomField({
           id: 'buyerCoOwnerAndOperator',
-          component: 'CoOwnerAndOperatorRepeater',
+          component: 'BuyerCoOwnerAndOperatorRepeater',
           title: '',
         }),
       ],
