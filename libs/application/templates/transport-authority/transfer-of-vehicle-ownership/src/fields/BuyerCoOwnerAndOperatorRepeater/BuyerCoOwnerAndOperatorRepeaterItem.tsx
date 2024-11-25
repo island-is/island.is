@@ -24,7 +24,7 @@ interface Props {
   addNationalIdToCoOwners: (nationalId: string, index: number) => void
 }
 
-export const CoOwnerAndOperatorRepeaterItem: FC<
+export const BuyerCoOwnerAndOperatorRepeaterItem: FC<
   React.PropsWithChildren<Props & FieldBaseProps>
 > = ({
   id,
