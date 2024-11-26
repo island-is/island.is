@@ -5,7 +5,7 @@ import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { InternalCaseController } from '../../internalCase.controller'
 
-describe('InternalCaseController - Get indictment case by id', () => {
+describe('InternalCaseController - Get indictment case by id guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
