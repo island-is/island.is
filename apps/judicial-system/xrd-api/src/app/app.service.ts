@@ -199,7 +199,6 @@ export class AppService {
         throw reason
       }
 
-      // TODO: Reconsider exception type
       throw new BadGatewayException({
         ...reason,
         message: 'Failed to update subpoena',
