@@ -416,3 +416,17 @@ export const EMAIL_SIGNUP_MUTATION = gql`
     }
   }
 `
+
+export const GET_ORGANIZATION_PARENT_SUBPAGE_QUERY = gql`
+  query GetOrganizationParentSubpageQuery(
+    $input: GetOrganizationParentSubpageInput!
+  ) {
+    getOrganizationParentSubpage(input: $input) {
+      title
+      childLinks {
+        label
+        href
+      }
+    }
+  }
+`

@@ -6,7 +6,11 @@ import {
 } from '@island.is/application/types'
 import { information, overview } from '../lib/messages'
 import { format as formatKennitala } from 'kennitala'
-import { CompanyLaborProtectionType, CompanyType } from '../lib/dataSchema'
+import {
+  BasicCompanyType,
+  CompanyLaborProtectionType,
+  CompanyType,
+} from '../lib/dataSchema'
 import {
   SizeOfTheEnterpriseDto,
   WorkplaceHealthAndSafetyDto,
@@ -18,6 +22,10 @@ export const getCompanyInformationForOverview = (
   externalData: ExternalData,
   formatMessage: FormatMessage,
 ) => {
+  const basicCompany = getValueViaPath<BasicCompanyType>(
+    answers,
+    'basicInformation',
+  )
   const company = getValueViaPath<CompanyType>(answers, 'companyInformation')
   const companyLaborProtection = getValueViaPath<CompanyLaborProtectionType>(
     answers,
@@ -34,13 +42,15 @@ export const getCompanyInformationForOverview = (
       'aoshData.data.workplaceHealthAndSafety',
     ) ?? []
   const chosenSizeOfEnterprise = sizeOfEnterprises.find(
-    (size) => company?.numberOfEmployees === size?.code,
+    (size) => basicCompany?.numberOfEmployees === size?.code,
   )
 
   return [
-    company?.name ?? undefined,
-    company?.nationalId ? formatKennitala(company.nationalId) : undefined,
-    `${company?.address ?? ''}, ${company?.postnumber ?? ''}`,
+    basicCompany?.name ?? undefined,
+    basicCompany?.nationalId
+      ? formatKennitala(basicCompany.nationalId)
+      : undefined,
+    `${basicCompany?.address ?? ''}, ${basicCompany?.postnumber ?? ''}`,
     company?.industryClassification ?? undefined,
     chosenSizeOfEnterprise?.name ?? undefined,
     `${formatMessage(information.labels.workhealth.sectionTitle)}: ${

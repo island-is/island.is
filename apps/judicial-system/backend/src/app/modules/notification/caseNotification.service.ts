@@ -30,7 +30,6 @@ import {
   lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
-  AdvocateType,
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,

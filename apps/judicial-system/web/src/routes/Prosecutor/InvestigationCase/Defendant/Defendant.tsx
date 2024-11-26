@@ -336,6 +336,7 @@ const Defendant = () => {
                     setWorkingCase,
                   )
                 }
+                maxLength={255}
               />
             </BlueBox>
           </Box>

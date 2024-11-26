@@ -6,10 +6,24 @@ export enum AidOrNutritionType {
   NUTRITION,
 }
 
-export function generateAidOrNutrition(
+export enum AidOrNutritionRenewalStatus {
+  'VALID' = 'VALID',
+  'VALID_FOR_RENEWAL' = 'VALID_FOR_RENEWAL',
+  'RENEWAL_IN_PROGRESS' = 'RENEWAL_IN_PROGRESS',
+  'NOT_VALID_FOR_RENEWAL' = 'NOT_VALID_FOR_RENEWAL',
+}
+
+const RENEWAL_STATUS_MAP = {
+  0: AidOrNutritionRenewalStatus.VALID,
+  1: AidOrNutritionRenewalStatus.VALID_FOR_RENEWAL,
+  2: AidOrNutritionRenewalStatus.RENEWAL_IN_PROGRESS,
+  3: AidOrNutritionRenewalStatus.NOT_VALID_FOR_RENEWAL,
+} as const
+
+export const generateAidOrNutrition = (
   data: AidOrNutritionDTO,
   type: AidOrNutritionType,
-): AidOrNutrition | null {
+): AidOrNutrition | null => {
   if (
     !data.id ||
     !data.iso ||
@@ -37,5 +51,11 @@ export function generateAidOrNutrition(
     available: data.available ?? undefined,
     location: data.location ?? undefined,
     expiring: data.expiring ? data.expiring : false,
+    renewalStatus:
+      data.renewalStatus !== undefined
+        ? RENEWAL_STATUS_MAP[
+            data.renewalStatus as keyof typeof RENEWAL_STATUS_MAP
+          ]
+        : undefined,
   }
 }
