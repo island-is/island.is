@@ -8,50 +8,23 @@ import {
   radiusPrimitives,
 } from './tokens/tokens'
 
-const primaryFont = fontPrimitives.family.primary.$value //?? 'IBM Plex Sans'
+const primaryFont = fontPrimitives.family.primary.$value
 
 export const UNIT = 8
 
 export const spacing = {
-  /* should this be somehow restructured to fit in missing spacings?
-    should this be done same as in figma? will require some manual work to update.
-
   0: spacingPrimitives['0'].$value ?? UNIT * 0,
-  2: spacingPrimitives['2'].$value ?? UNIT / 4,
-  4: spacingPrimitives['4'].$value ?? UNIT / 2,
-  8: spacingPrimitives['8'].$value ?? UNIT,
-  12: spacingPrimitives['12'].$value ?? UNIT * 1.5,
-  16: spacingPrimitives['16'].$value ?? UNIT * 2,
-  
-  ..and so on*/
-
-  0: spacingPrimitives['0'].$value ?? UNIT * 0,
-  // add 2
-  // add 4
   1: spacingPrimitives['8'].$value ?? UNIT * 1,
-  // add 12
   2: spacingPrimitives['16'].$value ?? UNIT * 2,
-  // add 20
   3: spacingPrimitives['24'].$value ?? UNIT * 3,
-  // add 28
   4: spacingPrimitives['32'].$value ?? UNIT * 4,
-  // add 36
   5: spacingPrimitives['40'].$value ?? UNIT * 5,
-  // add 44
   6: spacingPrimitives['48'].$value ?? UNIT * 6,
-  // add 52
   7: spacingPrimitives['56'].$value ?? UNIT * 7,
-  // add 60
   8: spacingPrimitives['64'].$value ?? UNIT * 8,
-  // add 68
   9: spacingPrimitives['72'].$value ?? UNIT * 9,
-  // add 76
   10: spacingPrimitives['80'].$value ?? UNIT * 10,
-  // add 84
-  // add 88
-  // add 92
   12: spacingPrimitives['96'].$value ?? UNIT * 12,
-  // add 100
   13: spacingPrimitives['104'].$value ?? UNIT * 13,
   14: UNIT * 14, // DEPRECATED
   15: spacingPrimitives['120'].$value ?? UNIT * 15,
@@ -72,11 +45,11 @@ export const spacing = {
   gutter: UNIT * 2, // 16
   containerGutter: UNIT * 6, // 48
   auto: 'auto',
-  p1: 8, // Are these being used correctly?
-  p2: 12, // Are these being used correctly?
-  p3: 14, // Are these being used correctly?
-  p4: 16, // Are these being used correctly?
-  p5: 18, // Are these being used correctly?
+  p1: 8,
+  p2: 12,
+  p3: 14,
+  p4: 16,
+  p5: 18,
 }
 
 export const zIndex = {
