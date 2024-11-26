@@ -1,20 +1,11 @@
 import { FC, ReactElement } from 'react'
-import { Box, DropdownMenu } from '@island.is/island-ui/core'
+import { Box, DropdownMenu, LoadingDots } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import * as styles from './styles.css'
 import { m } from '../../lib/messages'
-import {
-  EndorsementList,
-  PaginatedEndorsementResponse,
-} from '@island.is/api/schema'
-import MyPdfDocument from './MyPdfDocument'
-import { usePDF } from '@react-pdf/renderer'
-
+import { useExportListMutation } from './exportList.generated'
 interface Props {
-  petition: EndorsementList
-  petitionSigners: PaginatedEndorsementResponse
   petitionId: string
-  onGetCSV: () => void
   dropdownItems?: {
     href?: string
     onClick?: () => void
@@ -28,43 +19,75 @@ interface Props {
 }
 
 export const ExportList: FC<React.PropsWithChildren<Props>> = ({
-  petition,
-  petitionSigners,
   petitionId,
-  onGetCSV,
   dropdownItems = [],
 }) => {
   const { formatMessage } = useLocale()
 
-  const [document] = usePDF({
-    document: (
-      <MyPdfDocument petition={petition} petitionSigners={petitionSigners} />
-    ),
+  const [exportListPdf, { loading: loadingPdf }] = useExportListMutation({
+    variables: {
+      input: {
+        listId: petitionId,
+        fileType: 'pdf',
+      },
+    },
+    onCompleted: (data) => {
+      window.open(data.endorsementSystemExportList.url, '_blank')
+    },
+  })
+
+  const [exportListCsv, { loading: loadingCsv }] = useExportListMutation({
+    variables: {
+      input: {
+        listId: petitionId,
+        fileType: 'csv',
+      },
+    },
+    onCompleted: (data) => {
+      window.open(data.endorsementSystemExportList.url, '_blank')
+    },
   })
 
   return (
     <Box className={styles.buttonWrapper}>
       <DropdownMenu
-        icon="download"
+        icon="ellipsisVertical"
         iconType="outline"
         menuLabel={formatMessage(m.downloadPetitions)}
         items={[
           {
             title: formatMessage(m.asPdf),
-            render: () => (
-              <a
-                key={petitionId}
-                href={document.url ?? ''}
-                download={'Undirskriftalisti.pdf'}
-                className={styles.menuItem}
-              >
-                {formatMessage(m.asPdf)}
-              </a>
-            ),
+            render: () =>
+              loadingPdf ? (
+                <Box marginY={3} display="flex" justifyContent="center">
+                  <LoadingDots />
+                </Box>
+              ) : (
+                <Box
+                  className={styles.menuItem}
+                  cursor="pointer"
+                  onClick={() => exportListPdf()}
+                >
+                  {formatMessage(m.asPdf)}
+                </Box>
+              ),
           },
           {
-            onClick: () => onGetCSV(),
             title: formatMessage(m.asCsv),
+            render: () =>
+              loadingCsv ? (
+                <Box marginY={3} display="flex" justifyContent="center">
+                  <LoadingDots />
+                </Box>
+              ) : (
+                <Box
+                  className={styles.menuItem}
+                  cursor="pointer"
+                  onClick={() => exportListCsv()}
+                >
+                  {formatMessage(m.asCsv)}
+                </Box>
+              ),
           },
           ...dropdownItems,
         ]}

@@ -17,6 +17,7 @@ import {
   AdminCreateClientDto,
   AdminPatchClientDto,
   MeTenantGuard,
+  ClientType,
 } from '@island.is/auth-api-lib'
 import {
   CurrentUser,
@@ -99,6 +100,10 @@ export class MeClientsController {
     @Body() input: AdminCreateClientDto,
   ): Promise<AdminClientDto> {
     const client = await this.clientsService.create(input, user, tenantId)
+
+    if (client.clientType === ClientType.native) {
+      return client
+    }
 
     await this.clientsSecretsService.create(tenantId, client.clientId)
 

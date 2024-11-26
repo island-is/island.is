@@ -25,22 +25,10 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import BlueBoxWithDate from '@island.is/judicial-system-web/src/components/BlueBoxWithIcon/BlueBoxWithDate'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
-import {
-  CaseIndictmentRulingDecision,
-  Defendant,
-  ServiceRequirement,
-} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './Overview.strings'
 type VisibleModal = 'REVIEWER_ASSIGNED'
-
-export const isDefendantInfoActionButtonDisabled = (defendant: Defendant) => {
-  return (
-    defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED ||
-    Boolean(defendant.verdictViewDate)
-  )
-}
 
 export const Overview = () => {
   const router = useRouter()
@@ -116,13 +104,13 @@ export const Overview = () => {
           <Box component="section" marginBottom={5} key={defendant.id}>
             <BlueBoxWithDate
               defendant={defendant}
-              indictmentRulingDecision={workingCase.indictmentRulingDecision}
+              indictmentReviewDecision={workingCase.indictmentReviewDecision}
               icon="calendar"
             />
           </Box>
         ))}
         <Box component="section" marginBottom={5}>
-          <InfoCardClosedIndictment />
+          <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
         </Box>
         {/* 
         NOTE: Temporarily hidden while list of laws broken is not complete in

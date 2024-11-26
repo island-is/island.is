@@ -1,5 +1,5 @@
 import { getSlugFromType } from '@island.is/application/core'
-import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change-v2'
 import { EmailTemplateGenerator } from '../../../../types'
 import { DistrictCommissionerLogo, fontStyles } from './consts'
 

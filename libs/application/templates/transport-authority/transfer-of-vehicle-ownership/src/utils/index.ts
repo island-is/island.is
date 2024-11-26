@@ -1,4 +1,8 @@
-import { Application, ExtraData } from '@island.is/application/types'
+import {
+  Application,
+  BasicChargeItem,
+  ExtraData,
+} from '@island.is/application/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { TransferOfVehicleOwnershipAnswers } from '..'
 
@@ -13,15 +17,17 @@ export const formatPhoneNumber = (value: string): string =>
 
 export { getSelectedVehicle } from './getSelectedVehicle'
 export { getReviewSteps } from './getReviewSteps'
-export { hasReviewerApproved } from './hasReviewerApproved'
+export { canReviewerApprove, canReviewerReApprove } from './canReviewerApprove'
 export { getApproveAnswers } from './getApproveAnswers'
 export { isLastReviewer } from './isLastReviewer'
 export { getRejecter } from './getRejecter'
 
-export const getChargeItemCodes = (): Array<string> => {
+export const getChargeItems = (): Array<BasicChargeItem> => {
   return [
-    ChargeItemCode.TRANSPORT_AUTHORITY_TRANSFER_OF_VEHICLE_OWNERSHIP.toString(),
-    ChargeItemCode.TRANSPORT_AUTHORITY_TRAFFIC_SAFETY_FEE.toString(),
+    {
+      code: ChargeItemCode.TRANSPORT_AUTHORITY_TRANSFER_OF_VEHICLE_OWNERSHIP.toString(),
+    },
+    { code: ChargeItemCode.TRANSPORT_AUTHORITY_TRAFFIC_SAFETY_FEE.toString() },
   ]
 }
 

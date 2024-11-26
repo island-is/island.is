@@ -49,6 +49,7 @@ import {
   Vehicles,
   VehicleServiceFjsV1,
   VehiclesMileage,
+  WorkAccidents,
   WorkMachines,
 } from '../../../infra/src/dsl/xroad'
 
@@ -277,6 +278,11 @@ export const serviceSetup = (services: {
       UNIVERSITY_GATEWAY_API_URL: ref(
         (h) => `http://${h.svc(services.universityGatewayApi)}`,
       ),
+      WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: {
+        dev: 'island-is-assistant-feedback',
+        staging: 'island-is-assistant-feedback',
+        prod: 'island-is-assistant-feedback',
+      },
     })
 
     .secrets({
@@ -440,6 +446,7 @@ export const serviceSetup = (services: {
       Frigg,
       HealthDirectorateOrganDonation,
       HealthDirectorateVaccination,
+      WorkAccidents,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

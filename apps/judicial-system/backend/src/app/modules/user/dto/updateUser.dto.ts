@@ -4,6 +4,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  MaxLength,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -12,21 +13,25 @@ import { UserRole } from '@island.is/judicial-system/types'
 
 export class UpdateUserDto {
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly name?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly title?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly mobileNumber?: string
 
   @IsOptional()
+  @MaxLength(255)
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly email?: string

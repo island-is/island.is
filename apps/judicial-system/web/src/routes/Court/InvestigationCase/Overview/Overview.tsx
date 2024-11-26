@@ -31,6 +31,7 @@ import {
   InfoCard,
   PageHeader,
   PageLayout,
+  PageTitle,
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -101,11 +102,7 @@ const Overview = () => {
             />
           </Box>
         )}
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            Yfirlit kröfu um rannsóknarheimild
-          </Text>
-        </Box>
+        <PageTitle>Yfirlit kröfu um rannsóknarheimild</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.state === CaseState.RECEIVED &&
           workingCase.arraignmentDate?.date &&

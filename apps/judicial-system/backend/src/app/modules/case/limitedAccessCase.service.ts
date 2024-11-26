@@ -1,5 +1,5 @@
 import archiver from 'archiver'
-import { Includeable, Op, OrderItem } from 'sequelize'
+import { Includeable, Op } from 'sequelize'
 import { Writable } from 'stream'
 
 import {
@@ -22,9 +22,10 @@ import {
   CaseFileState,
   CaseNotificationType,
   CaseState,
-  DateType,
-  EventType,
-  StringType,
+  dateTypes,
+  defendantEventTypes,
+  eventTypes,
+  stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -34,6 +35,7 @@ import {
   CivilClaimant,
   CivilClaimantService,
   Defendant,
+  DefendantEventLog,
   DefendantService,
 } from '../defendant'
 import { EventLog } from '../event-log'
@@ -119,10 +121,6 @@ export interface LimitedAccessUpdateCase
     | 'appealRulingDecision'
   > {}
 
-const eventTypes = Object.values(EventType)
-const dateTypes = Object.values(DateType)
-const stringTypes = Object.values(StringType)
-
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
@@ -186,11 +184,31 @@ export const include: Includeable[] = [
         order: [['created', 'DESC']],
         separate: true,
       },
+      {
+        model: DefendantEventLog,
+        as: 'eventLogs',
+        required: false,
+        where: { eventType: defendantEventTypes },
+        order: [['created', 'DESC']],
+        separate: true,
+      },
     ],
     separate: true,
   },
-  { model: IndictmentCount, as: 'indictmentCounts' },
-  { model: CivilClaimant, as: 'civilClaimants' },
+  {
+    model: CivilClaimant,
+    as: 'civilClaimants',
+    required: false,
+    order: [['created', 'ASC']],
+    separate: true,
+  },
+  {
+    model: IndictmentCount,
+    as: 'indictmentCounts',
+    required: false,
+    order: [['created', 'ASC']],
+    separate: true,
+  },
   {
     model: CaseFile,
     as: 'caseFiles',
@@ -218,12 +236,13 @@ export const include: Includeable[] = [
         CaseFileCategory.CIVIL_CLAIM,
       ],
     },
+    separate: true,
   },
   {
     model: EventLog,
     as: 'eventLogs',
     required: false,
-    where: { eventType: { [Op.in]: eventTypes } },
+    where: { eventType: eventTypes },
     order: [['created', 'DESC']],
     separate: true,
   },
@@ -231,13 +250,16 @@ export const include: Includeable[] = [
     model: DateLog,
     as: 'dateLogs',
     required: false,
-    where: { dateType: { [Op.in]: dateTypes } },
+    where: { dateType: dateTypes },
+    order: [['created', 'DESC']],
+    separate: true,
   },
   {
     model: CaseString,
     as: 'caseStrings',
     required: false,
-    where: { stringType: { [Op.in]: stringTypes } },
+    where: { stringType: stringTypes },
+    separate: true,
   },
   { model: Case, as: 'mergeCase', attributes },
   {
@@ -272,12 +294,6 @@ export const include: Includeable[] = [
   },
 ]
 
-export const order: OrderItem[] = [
-  [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
-  [{ model: CivilClaimant, as: 'civilClaimants' }, 'created', 'ASC'],
-  [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
-]
-
 @Injectable()
 export class LimitedAccessCaseService {
   constructor(
@@ -294,7 +310,6 @@ export class LimitedAccessCaseService {
     const theCase = await this.caseModel.findOne({
       attributes,
       include,
-      order,
       where: {
         id: caseId,
         state: { [Op.not]: CaseState.DELETED },
@@ -314,23 +329,6 @@ export class LimitedAccessCaseService {
     update: LimitedAccessUpdateCase,
     user: TUser,
   ): Promise<Case> {
-    if (update.accusedPostponedAppealDate) {
-      const relevantInfo = {
-        appealState: theCase.appealState,
-        accusedAppealDecision: theCase.accusedAppealDecision,
-        accusedPostponedAppealDate: theCase.accusedPostponedAppealDate,
-        prosecutorAppealDecision: theCase.prosecutorAppealDecision,
-        prosecutorPostponedAppealDate: theCase.prosecutorPostponedAppealDate,
-        update: update,
-      }
-
-      this.logger.info(
-        `Updating accusedPostponedAppealDate in limited access case service for case ${
-          theCase.id
-        }. Relevant info: ${JSON.stringify(relevantInfo)}`,
-      )
-    }
-
     const [numberOfAffectedRows] = await this.caseModel.update(
       { ...update },
       { where: { id: theCase.id } },

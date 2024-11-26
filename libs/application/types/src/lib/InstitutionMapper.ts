@@ -49,11 +49,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
     contentfulId: InstitutionContentfulIds.SJUKRATRYGGINGAR_ISLANDS,
   },
-  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: {
-    nationalId: InstitutionNationalIds.SYSLUMENN,
-    slug: InstitutionTypes.SYSLUMENN,
-    contentfulId: InstitutionContentfulIds.SYSLUMENN,
-  },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
@@ -395,6 +390,11 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
   },
   [ApplicationTypes.MACHINE_REGISTRATION]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+    contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.WORK_ACCIDENT_NOTIFICATION]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
     contentfulId: InstitutionContentfulIds.VINNUEFTIRLITID,

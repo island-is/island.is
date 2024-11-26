@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
@@ -32,11 +31,12 @@ import {
 } from '@island.is/application/templates/university'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { InnaClientService } from '@island.is/clients/inna'
+import { AttachmentS3Service } from '../../shared/services'
 
 @Injectable()
 export class UniversityService extends BaseTemplateApiService {
   constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly attachmentService: AttachmentS3Service,
     private readonly nationalRegistryApi: NationalRegistryClientService,
     private readonly programApi: ProgramApi,
     private readonly universityApi: UniversityApi,
@@ -298,7 +298,7 @@ export class UniversityService extends BaseTemplateApiService {
       attachments?.map(async (file) => {
         return {
           fileName: file.name,
-          fileUrl: await this.sharedTemplateAPIService.getAttachmentUrl(
+          fileUrl: await this.attachmentService.getAttachmentUrl(
             application,
             file.key,
             expiry,

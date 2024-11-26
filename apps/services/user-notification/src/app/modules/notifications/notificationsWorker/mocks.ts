@@ -15,6 +15,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import type { ConfigType } from '@island.is/nest/config'
 
 export const mockFullName = 'mockFullName'
+export const mockBirtNafn = 'mockBirtNafn'
 export const delegationSubjectId = 'delegation-subject-id'
 
 interface MockUserProfileDto extends UserProfileDto {
@@ -218,6 +219,7 @@ export class MockNationalRegistryV3ClientService {
 
     return {
       fulltNafn: user?.name ?? mockFullName,
+      birtNafn: user?.name ?? mockBirtNafn,
     }
   }
 }

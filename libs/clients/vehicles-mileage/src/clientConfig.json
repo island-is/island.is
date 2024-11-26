@@ -2,13 +2,14 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Mileage reading API developed in .Net8.0 - Release-6 : 20231122.2",
+    "description": "Mileage reading API developed in .Net8.0 - Release-21 : 20241105.1",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
     },
     "version": "1.0"
   },
+  "servers": [{ "url": "/vehicle/mileagereading" }],
   "paths": {
     "/authenticate": {
       "post": {
@@ -243,11 +244,14 @@
           }
         },
         "responses": {
-          "201": {
+          "200": {
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/MileageReadingDto" }
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MileageReadingDto" }
+                }
               }
             }
           },
@@ -788,6 +792,11 @@
             "description": "Error code",
             "nullable": true
           },
+          "warningSerial": {
+            "type": "integer",
+            "description": "Warning serial",
+            "format": "int32"
+          },
           "errorText": {
             "type": "string",
             "description": "Error text",
@@ -849,11 +858,6 @@
           "guid": {
             "type": "string",
             "description": "Guid to check for status and results",
-            "nullable": true
-          },
-          "errorMessage": {
-            "type": "string",
-            "description": "Error message if any",
             "nullable": true
           }
         },

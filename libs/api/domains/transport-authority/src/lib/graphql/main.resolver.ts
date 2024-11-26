@@ -15,6 +15,7 @@ import {
   CheckTachoNetInput,
   OperatorChangeAnswers,
   PlateAvailabilityInput,
+  PlateOrderAnswers,
 } from './dto'
 import {
   CheckTachoNetExists,
@@ -25,6 +26,7 @@ import {
   VehiclePlateOrderChecksByPermno,
   MyPlateOwnershipChecksByRegno,
   PlateAvailability,
+  PlateOrderValidation,
 } from './models'
 import { CoOwnerChangeAnswers } from './dto/coOwnerChangeAnswers.input'
 
@@ -120,6 +122,18 @@ export class MainResolver {
     return await this.transportAuthorityApi.getVehiclePlateOrderChecksByPermno(
       user,
       permno,
+    )
+  }
+
+  @Scopes(ApiScope.samgongustofaVehicles)
+  @Query(() => PlateOrderValidation, { nullable: true })
+  vehiclePlateOrderValidation(
+    @CurrentUser() user: User,
+    @Args('answers') answers: PlateOrderAnswers,
+  ) {
+    return this.transportAuthorityApi.validateApplicationForPlateOrder(
+      user,
+      answers,
     )
   }
 

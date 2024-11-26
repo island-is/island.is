@@ -6,12 +6,10 @@ import {
   PlateOwnershipValidation,
 } from './vehiclePlateRenewalClient.types'
 import { PlateOwnershipApiWithoutIdsAuth } from './apiConfiguration'
-
-interface ReturnTypeMessage {
-  warnSever?: string | null
-  errorMess?: string | null
-  warningSerialNumber?: number | null
-}
+import {
+  ErrorMessage,
+  getCleanErrorMessagesFromTryCatch,
+} from '@island.is/clients/transport-authority/vehicle-owner-change'
 
 @Injectable()
 export class VehiclePlateRenewalClient {
@@ -49,7 +47,7 @@ export class VehiclePlateRenewalClient {
     auth: User,
     regno: string,
   ): Promise<PlateOwnershipValidation> {
-    let errorList: ReturnTypeMessage[] | undefined
+    let errorMessages: ErrorMessage[] | undefined
 
     try {
       await this.plateOwnershipApiWithAuth(auth).renewplateownershipPost({
@@ -62,45 +60,41 @@ export class VehiclePlateRenewalClient {
         },
       })
     } catch (e) {
-      // Note: We need to wrap in try-catch to get the error messages, because if this action results in error,
-      // we get 4xx error (instead of 200 with error messages) with the errorList in this field
-      // ("body.Errors" for input validation, and "body" for data validation (in database)),
-      // that is of the same class as 200 result schema
-      if (e?.body?.Errors) {
-        errorList = e.body.Errors as ReturnTypeMessage[]
-      } else if (e?.body) {
-        errorList = e.body as ReturnTypeMessage[]
-      } else {
-        throw e
-      }
+      // Note: We had to wrap in try-catch to get the error messages, because if this action results in error,
+      // we get 4xx error (instead of 200 with error messages) with the error messages in the body
+      errorMessages = getCleanErrorMessagesFromTryCatch(e)
     }
 
-    const warnSeverityError = 'E'
-    errorList = errorList?.filter(
-      (x) => x.errorMess && x.warnSever === warnSeverityError,
-    )
-
     return {
-      hasError: !!errorList?.length,
-      errorMessages: errorList?.map((item) => {
-        return {
-          errorNo: (item.warnSever || '_') + item.warningSerialNumber,
-          defaultMessage: item.errorMess,
-        }
-      }),
+      hasError: !!errorMessages?.length,
+      errorMessages: errorMessages,
     }
   }
 
-  public async renewPlateOwnership(auth: User, regno: string): Promise<void> {
-    await this.plateOwnershipApiWithAuth(auth).renewplateownershipPost({
-      apiVersion: '1.0',
-      apiVersion2: '1.0',
-      postRenewPlateOwnershipModel: {
-        regno: regno,
-        persidno: auth.nationalId,
-        check: false,
-      },
-    })
+  public async renewPlateOwnership(
+    auth: User,
+    regno: string,
+  ): Promise<PlateOwnershipValidation> {
+    let errorMessages: ErrorMessage[] | undefined
+
+    try {
+      await this.plateOwnershipApiWithAuth(auth).renewplateownershipPost({
+        apiVersion: '1.0',
+        apiVersion2: '1.0',
+        postRenewPlateOwnershipModel: {
+          regno: regno,
+          persidno: auth.nationalId,
+          check: false,
+        },
+      })
+    } catch (e) {
+      errorMessages = getCleanErrorMessagesFromTryCatch(e)
+    }
+
+    return {
+      hasError: !!errorMessages?.length,
+      errorMessages: errorMessages,
+    }
   }
 
   public async getPlateAvailability(regno: string) {

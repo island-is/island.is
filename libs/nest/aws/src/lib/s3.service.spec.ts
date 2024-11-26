@@ -130,7 +130,7 @@ describe('S3Service', () => {
 
       expect(logger.error).toBeCalledTimes(1)
       expect(logger.error).toBeCalledWith(
-        'Error occurred while checking if file exists in S3',
+        'Error occurred while checking if file: y exists in S3 bucket: x',
         Error(),
       )
 
@@ -145,13 +145,13 @@ describe('S3Service', () => {
 
     expect(logger.error).toBeCalledTimes(1)
     expect(logger.error).toBeCalledWith(
-      'Error occurred while checking if file exists in S3',
+      'Error occurred while checking if file: y exists in S3 bucket: x',
       TypeError(
         "Cannot read properties of undefined (reading 'httpStatusCode')",
       ),
     )
 
-    expect(result).toEqual(false)
+    expect(result).toBe(false)
   })
 
   it.each([200, 204])(
@@ -160,8 +160,9 @@ describe('S3Service', () => {
       const metadata = { httpStatusCode: code }
       s3Mock.on(DeleteObjectCommand).resolvesOnce({ $metadata: metadata })
 
-      await s3Service.deleteObject({ bucket: 'x', key: 'y' })
+      const result = await s3Service.deleteObject({ bucket: 'x', key: 'y' })
 
+      expect(result).toBe(true)
       expect(logger.error).toBeCalledTimes(0)
     },
   )
@@ -172,17 +173,29 @@ describe('S3Service', () => {
       const metadata = { httpStatusCode: code }
       s3Mock.on(DeleteObjectCommand).resolvesOnce({ $metadata: metadata })
 
-      const act = () => s3Service.deleteObject({ bucket: 'x', key: 'y' })
+      const result = await s3Service.deleteObject({ bucket: 'x', key: 'y' })
 
-      await expect(act()).rejects.toThrow()
+      expect(result).toBe(false)
 
       expect(logger.error).toBeCalledTimes(1)
       expect(logger.error).toBeCalledWith(
-        'Error occurred while deleting file from S3',
+        'Error occurred while deleting file: y from S3 bucket: x',
         Error('Unexpected http response when deleting object from S3'),
       )
     },
   )
+
+  it('should handle DeleteObjectCommand throwing an error', async () => {
+    s3Mock.on(DeleteObjectCommand).rejects(new Error('Network error'))
+
+    const result = await s3Service.deleteObject({ bucket: 'x', key: 'y' })
+
+    expect(result).toBe(false)
+    expect(logger.error).toBeCalledWith(
+      'Error occurred while deleting file: y from S3 bucket: x',
+      expect.any(Error),
+    )
+  })
 
   it('should return correct bucket and key strings', async () => {
     const bucketKeyPair = { bucket: 'abc', key: 'def' }
