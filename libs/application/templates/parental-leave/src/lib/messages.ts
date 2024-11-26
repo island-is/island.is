@@ -1361,6 +1361,13 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Veldu lokadag tímabilsins',
       description: 'Pick the end date',
     },
+    adjustPeriodLength: {
+      id: 'pl.application:end.date.adjust.period.length',
+      defaultMessage:
+        'Ef barnið fæðist á annarri dagsetningu en áætlað er óska ég eftir að lengd tímabilsins aðlagist út frá raunverulegum fæðingardegi barnsins.',
+      description:
+        "If the child is born on a different date than estimated, I request that the period length be adjusted based on the child's actual date of birth.",
+    },
   }),
 
   startDate: defineMessages({

@@ -144,6 +144,7 @@ Component.getProps = async (context) => {
       variables: {
         input: {
           slug: slugs[0],
+          lang: locale,
         },
       },
     })
