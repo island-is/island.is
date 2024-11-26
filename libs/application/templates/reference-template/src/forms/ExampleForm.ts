@@ -15,11 +15,8 @@ import {
   buildHiddenInput,
   buildHiddenInputWithWatchedValue,
   buildTableRepeaterField,
-  buildDisplayField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import {
-  Application,
   Comparators,
   Form,
   FormModes,
@@ -33,85 +30,6 @@ export const ExampleForm: Form = buildForm({
   title: 'Atvinnuleysisbætur',
   mode: FormModes.DRAFT,
   children: [
-    buildSection({
-      id: 'conditions',
-      title: m.conditionsSection,
-      children: [
-        buildMultiField({
-          id: 'test',
-          title: 'test',
-          children: [
-            buildTextField({
-              id: 'test1',
-              title: 'title 1',
-              width: 'half',
-              variant: 'number',
-            }),
-            buildTextField({
-              id: 'test2',
-              title: 'title 2',
-              width: 'half',
-              variant: 'number',
-            }),
-            buildDisplayField({
-              id: 'displayFieldTest',
-              title: 'Full width',
-              titleVariant: 'h3',
-              label: 'test label',
-              variant: 'number',
-              rightAlign: false,
-              value: (answers: FormValue) => {
-                const test1 = getValueViaPath<string>(answers, 'test1')
-                const test2 = getValueViaPath<string>(answers, 'test2')
-                return `${parseInt(test1 ?? '0') + parseInt(test2 ?? '0')}`
-              },
-            }),
-            buildDisplayField({
-              id: 'displayFieldTest',
-              title: 'Half width',
-              titleVariant: 'h3',
-              label: 'test label',
-              variant: 'number',
-              rightAlign: false,
-              width: 'half',
-              value: (answers: FormValue) => {
-                const test1 = getValueViaPath<string>(answers, 'test1')
-                const test2 = getValueViaPath<string>(answers, 'test2')
-                return `${parseInt(test1 ?? '0') + parseInt(test2 ?? '0')}`
-              },
-            }),
-            buildDisplayField({
-              id: 'displayFieldTest',
-              title: 'Currency',
-              titleVariant: 'h3',
-              variant: 'currency',
-              rightAlign: true,
-              width: 'half',
-              value: (answers: FormValue) => {
-                const test1 = getValueViaPath<string>(answers, 'test1')
-                const test2 = getValueViaPath<string>(answers, 'test2')
-                return `${parseInt(test1 ?? '0') + parseInt(test2 ?? '0')}`
-              },
-            }),
-            buildDisplayField({
-              id: 'displayFieldTest',
-              title: 'Test title',
-              titleVariant: 'h3',
-              label: 'Custom suffix',
-              variant: 'number',
-              suffix: ' $',
-              rightAlign: false,
-              width: 'half',
-              value: (answers: FormValue) => {
-                const test1 = getValueViaPath<string>(answers, 'test1')
-                const test2 = getValueViaPath<string>(answers, 'test2')
-                return `${parseInt(test1 ?? '0') + parseInt(test2 ?? '0')}`
-              },
-            }),
-          ],
-        }),
-      ],
-    }),
     buildSection({
       id: 'tableRepeaterWithPhone',
       title: 'Table repeater',

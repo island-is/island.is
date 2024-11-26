@@ -28,13 +28,10 @@ export const DisplayFormField = ({ field, application }: Props) => {
   const [displayValue, setDisplayValue] = useState(allValues[id])
 
   useEffect(() => {
-    console.log(allValues)
-    setDisplayValue(value(allValues))
+    const newDisplayValue = value(allValues)
+    setDisplayValue(newDisplayValue)
+    setValue(id, newDisplayValue)
   }, [allValues])
-
-  useEffect(() => {
-    setValue(id, displayValue)
-  }, [displayValue])
 
   return (
     <Box paddingY={3}>
