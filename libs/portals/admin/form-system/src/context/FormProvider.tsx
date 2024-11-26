@@ -38,17 +38,17 @@ export const FormProvider: React.FC<{ children: React.ReactNode, formBuilder: Fo
   const updateSection = useMutation(UPDATE_SECTION)
   const updateScreen = useMutation(UPDATE_SCREEN)
   const updateField = useMutation(UPDATE_FIELD)
+  const [updateSectionDisplayOrder] = useMutation(UPDATE_SECTION_DISPLAY_ORDER)
+  const [updateScreenDisplayOrder] = useMutation(UPDATE_SCREEN_DISPLAY_ORDER)
+  const [updateFieldDisplayOrder] = useMutation(UPDATE_FIELDS_DISPLAY_ORDER)
+  const [updateForm] = useMutation(UPDATE_FORM)
 
   const updateActiveItem = useCallback((updatedActiveItem?: ActiveItem) =>
     updateActiveItemFn(control.activeItem, updateSection, updateScreen, updateField, updatedActiveItem), [control.activeItem, updateSection, updateScreen, updateField])
 
-  const [updateSectionDisplayOrder] = useMutation(UPDATE_SECTION_DISPLAY_ORDER)
-  const [updateScreenDisplayOrder] = useMutation(UPDATE_SCREEN_DISPLAY_ORDER)
-  const [updateFieldDisplayOrder] = useMutation(UPDATE_FIELDS_DISPLAY_ORDER)
   const updateDragAndDrop = useCallback(() =>
     updateDnd(control, updateSectionDisplayOrder, updateScreenDisplayOrder, updateFieldDisplayOrder), [control, updateSectionDisplayOrder, updateScreenDisplayOrder, updateFieldDisplayOrder])
 
-  const [updateForm] = useMutation(UPDATE_FORM)
   const formUpdate = useCallback((updatedForm?: FormSystemForm) => {
     updateFormFn(control, updateForm, updatedForm)
   }, [control, updateForm])

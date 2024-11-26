@@ -348,7 +348,6 @@ export const controlReducer = (
         },
       }
     }
-    /* Uncomment and finish when field has isRequired property */
 
     case 'CHANGE_IS_REQUIRED': {
       const currentData = activeItem.data as FormSystemField

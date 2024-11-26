@@ -32,7 +32,7 @@ export class FieldsService {
       error: JSON.stringify(error),
       category: 'forms-service',
     }
-    // this.logger.error(errorDetail || 'Error in fields service', err)
+    this.logger.error(errorDetail || 'Error in fields service', err)
     throw new ApolloError(error.message)
   }
 

@@ -27,7 +27,6 @@ import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
 import { CREATE_LIST_ITEM, UPDATE_LIST_ITEM, UPDATE_LIST_ITEM_DISPLAY_ORDER } from '@island.is/form-system/graphql'
 import { removeTypename } from '../../../../../../lib/utils/removeTypename'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { m } from '@island.is/form-system/ui'
 
 export const ListBuilder = () => {

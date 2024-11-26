@@ -1,8 +1,6 @@
 import { Option } from '@island.is/island-ui/core'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { FieldTypesEnum } from '@island.is/form-system/ui'
 
-//TODO: use the enum from the schema
 /* eslint-disable @typescript-eslint/naming-convention */
 enum FieldTypes {
   BANK_ACCOUNT = 'Bankareikningur',

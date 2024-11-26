@@ -50,7 +50,6 @@ export class ScreensService {
     if (!response || response instanceof ApolloError) {
       return {}
     }
-    console.log(response)
     return response
   }
 

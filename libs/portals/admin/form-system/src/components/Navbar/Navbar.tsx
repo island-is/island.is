@@ -28,7 +28,6 @@ import { useIntl } from 'react-intl'
 import { NavComponent } from '../NavComponent/NavComponent'
 import { CREATE_SECTION, UPDATE_SECTION_DISPLAY_ORDER } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { m } from '@island.is/form-system/ui'
 
 type DndAction =

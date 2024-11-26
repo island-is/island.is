@@ -17,7 +17,6 @@ import {
   ApplicationTemplateStatus,
 } from '../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { m } from '@island.is/form-system/ui'
 
 interface Props {
@@ -154,17 +153,7 @@ export const TableRow = ({
                   title: 'Export',
                 },
                 {
-                  title: formatMessage(m.getJson),
-                  onClick: () => {
-                    navigate(
-                      FormSystemPaths.FormApplications.replace(':slug', String(slug)),
-                      {
-                        state: {
-                          slug: slug
-                        }
-                      }
-                    )
-                  }
+                  title: 'Json'
                 },
               ]}
             />

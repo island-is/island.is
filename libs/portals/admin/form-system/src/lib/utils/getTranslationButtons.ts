@@ -1,6 +1,5 @@
 import { Dispatch } from 'react'
 import { ControlAction } from '../../hooks/controlReducer'
-import { translate } from './translation'
 
 type Types = 'CHANGE_NAME' | 'CHANGE_FORM_NAME' | 'CHANGE_DESCRIPTION'
 type Icon =
@@ -109,10 +108,7 @@ export const getTranslationButtons = (
       label: 'Translate',
       name: 'reader',
       onClick: async () => {
-        const translation = await translate(text).catch((e) => {
-          console.error('Translation failed', e)
-          return text
-        })
+        const translation = ''
         controlDispatch({
           type: type,
           payload: {

@@ -6,7 +6,6 @@ import { TextFieldSettings } from './components/TextFieldSettings'
 import { ListSettings } from './components/ListSettings'
 import { ToggleConnection } from './components/ToggleConnection'
 import { FileUploadSettings } from './components/UploadSettings'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { FieldTypesEnum } from '@island.is/form-system/ui'
 
 export const FieldSettings = () => {

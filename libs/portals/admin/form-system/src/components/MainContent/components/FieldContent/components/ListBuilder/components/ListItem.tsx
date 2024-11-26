@@ -16,7 +16,6 @@ import * as styles from './ListItem.css'
 import { getTranslation } from '../../../../../../../lib/utils/getTranslation'
 import { useMutation } from '@apollo/client'
 import { DELETE_LIST_ITEM, UPDATE_LIST_ITEM } from '@island.is/form-system/graphql'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { FieldTypesEnum, m } from '@island.is/form-system/ui'
 
 interface Props {

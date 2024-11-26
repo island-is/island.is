@@ -14,7 +14,6 @@ import {
   NavbarSelectStatus,
 } from '../lib/utils/interfaces'
 
-// Removed formUpdate and updateSettings from the context
 export interface IControlContext {
   control: ControlState
   controlDispatch: Dispatch<ControlAction>

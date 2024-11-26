@@ -12,7 +12,6 @@ import { useIntl } from "react-intl"
 import { ControlContext } from "../../../../../context/ControlContext"
 import { useMutation } from "@apollo/client"
 import { UPDATE_APPLICANT } from "@island.is/form-system/graphql"
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { m } from '@island.is/form-system/ui'
 
 

@@ -13,7 +13,14 @@
         "{workspaceRoot}/coverage/{projectRoot}"
       ],
       "options": {
-        "jestConfig": "libs/portals/form-system/ui-components/jest.config.ts"
+        "jestConfig": "libs/portals/form-system/ui-components/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
       }
     }
   },

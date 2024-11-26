@@ -287,11 +287,15 @@ export const m = defineMessages({
   },
   largeTextArea: {
     id: 'portals-admin.form-system:large-text-area',
-    defaultMessage: 'Stór textasvæði',
+    defaultMessage: 'Stórt textasvæði',
   },
   connect: {
     id: 'portals-admin.form-system:connect',
     defaultMessage: 'Tengja',
+  },
+  hasConnections: {
+    id: 'portals-admin.form-system:has-connections',
+    defaultMessage: 'Hefur tengingar',
   },
   selected: {
     id: 'portals-admin.form-system:selected',

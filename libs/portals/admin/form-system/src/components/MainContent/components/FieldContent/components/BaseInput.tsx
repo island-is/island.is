@@ -13,7 +13,6 @@ import {
 import { SingleValue } from 'react-select'
 import { useIntl } from 'react-intl'
 import { fieldTypesSelectObject } from '../../../../../lib/utils/fieldTypes'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { m } from '@island.is/form-system/ui'
 
 export const BaseInput = () => {
@@ -158,7 +157,7 @@ export const BaseInput = () => {
         <Column span="5/10">
           <Checkbox
             label={formatMessage(m.required)}
-            checked={currentItem.isRequired ?? false} // uncomment when isRequired is added to the schema
+            checked={currentItem.isRequired ?? false}
             onChange={() =>
               controlDispatch({
                 type: 'CHANGE_IS_REQUIRED',

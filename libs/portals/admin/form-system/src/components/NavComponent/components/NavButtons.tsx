@@ -6,7 +6,6 @@ import { removeTypename } from '../../../lib/utils/removeTypename'
 import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
 import { CREATE_FIELD, CREATE_SCREEN, DELETE_FIELD, DELETE_SCREEN } from '@island.is/form-system/graphql'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { FieldTypesEnum, m } from '@island.is/form-system/ui'
 
 

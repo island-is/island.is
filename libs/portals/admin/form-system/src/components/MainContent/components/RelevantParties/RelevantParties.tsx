@@ -5,7 +5,6 @@ import { useIntl } from "react-intl"
 import { CREATE_APPLICANT, DELETE_APPLICANT } from "@island.is/form-system/graphql"
 import { useMutation } from "@apollo/client"
 import { FormSystemFormApplicant } from "@island.is/api/schema"
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { ApplicantTypesEnum, m } from '@island.is/form-system/ui'
 import { removeTypename } from "../../../../lib/utils/removeTypename"
 import { FormApplicantTypes } from "./components/FormApplicantTypes"

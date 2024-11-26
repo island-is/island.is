@@ -3,10 +3,10 @@ import { useLoaderData, useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../lib/paths'
 import { TableRow } from '../../components/TableRow/TableRow'
 import { CREATE_FORM } from '@island.is/form-system/graphql'
-import { m } from '@island.is/form-system/ui'
 import { FormsLoaderResponse } from './Forms.loader'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
+import { m } from '@island.is/form-system/ui'
 
 
 

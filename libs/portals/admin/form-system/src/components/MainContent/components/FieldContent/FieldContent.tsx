@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 import { Stack } from '@island.is/island-ui/core'
 import { BaseInput } from './components/BaseInput'

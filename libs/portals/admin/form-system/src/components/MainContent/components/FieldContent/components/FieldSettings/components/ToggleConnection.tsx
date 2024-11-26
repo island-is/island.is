@@ -9,7 +9,6 @@ import { FormSystemField } from '@island.is/api/schema'
 import { ControlContext } from '../../../../../../../context/ControlContext'
 import { NavbarSelectStatus } from '../../../../../../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { m } from '@island.is/form-system/ui'
 
 export const ToggleConnection = () => {
@@ -24,7 +23,7 @@ export const ToggleConnection = () => {
     <Row>
       <Column>
         <ToggleSwitchCheckbox
-          name="Tengja"
+          name="connect"
           label={formatMessage(m.connect)}
           checked={selectStatus === NavbarSelectStatus.NORMAL}
           onChange={(e) =>
@@ -36,7 +35,7 @@ export const ToggleConnection = () => {
       </Column>
       {hasConnections && (
         <Column>
-          <Text variant="eyebrow"> Hefur tengingar</Text>
+          <Text variant="eyebrow">{formatMessage(m.hasConnections)}</Text>
         </Column>
       )}
     </Row>

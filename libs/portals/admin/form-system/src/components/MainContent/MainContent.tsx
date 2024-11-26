@@ -16,7 +16,6 @@ import { FieldContent } from './components/FieldContent/FieldContent'
 import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import { useIntl } from 'react-intl'
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { m } from '@island.is/form-system/ui'
 
 export const MainContent = () => {

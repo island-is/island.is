@@ -6,7 +6,6 @@ import { baseSettingsStep } from '../../../../lib/utils/getBaseSettingsSection'
 import { ControlContext } from '../../../../context/ControlContext'
 import { useIntl } from 'react-intl'
 import { FormSystemSectionDtoSectionTypeEnum } from '@island.is/api/schema'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { m } from '@island.is/form-system/ui'
 
 export const NavbarTab = () => {
