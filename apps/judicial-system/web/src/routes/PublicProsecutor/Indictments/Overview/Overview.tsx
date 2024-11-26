@@ -102,11 +102,7 @@ export const Overview = () => {
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map((defendant) => (
           <Box component="section" marginBottom={5} key={defendant.id}>
-            <BlueBoxWithDate
-              defendant={defendant}
-              indictmentReviewDecision={workingCase.indictmentReviewDecision}
-              icon="calendar"
-            />
+            <BlueBoxWithDate defendant={defendant} icon="calendar" />
           </Box>
         ))}
         <Box component="section" marginBottom={5}>

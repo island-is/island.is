@@ -33,12 +33,11 @@ import * as styles from './BlueBoxWithIcon.css'
 
 interface Props {
   defendant: Defendant
-  indictmentReviewDecision?: IndictmentCaseReviewDecision | null
   icon?: IconMapIcon
 }
 
 const BlueBoxWithDate: FC<Props> = (props) => {
-  const { defendant, indictmentReviewDecision, icon } = props
+  const { defendant, icon } = props
   const { formatMessage } = useIntl()
   const [dates, setDates] = useState<{
     verdictViewDate?: Date
@@ -347,7 +346,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             onClick={handleSendToPrisonAdmin}
             size="small"
             disabled={
-              !indictmentReviewDecision ||
+              !workingCase.indictmentReviewDecision ||
               (!isFine && !defendant.verdictViewDate)
             }
           >
