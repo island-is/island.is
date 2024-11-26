@@ -54,8 +54,8 @@ export const getSelectedCustodyChild = (
   ) as ApplicantChildCustodyInformation[] | undefined
 
   const childInfo = childNationalId
-    ? custodyChildren?.filter((x) => x.nationalId === childNationalId)[0]
-    : custodyChildren && custodyChildren[index]
+    ? custodyChildren?.find((x) => x.nationalId === childNationalId)
+    : custodyChildren?.[index]
 
   const selectedChildren = (answers as Citizenship).selectedChildren
   const isSelected =
