@@ -38,6 +38,8 @@ export const getIndictmentVerdictAppealDeadlineStatus = (
 
   return [
     true,
-    Date.now() > newestViewDate.getTime() + getDays(isFine ? 3 : 28),
+    Date.now() >
+      newestViewDate.getTime() +
+        getDays(isFine ? FINE_APPEAL_WINDOW_DAYS : VERDICT_APPEAL_WINDOW_DAYS),
   ]
 }
