@@ -21,6 +21,7 @@ export const red100 = color.primary.red[100] ?? '#fff2f6'
 
 export const white = color.primary.white[400] ?? '#ffffff'
 export const black = '#000000'
+export const overlay = '#f2f7ff'
 
 // Secondary colors
 export const blueberry600 = color.secondary.blueberry[600] ?? '#24268e'
@@ -141,7 +142,7 @@ export const foregroundModal = dark400
 export const foregroundPrimary = dark400
 export const foregroundPrimaryMinimal = dark300
 
-// Interactive Background Colors
+// Interactive Colors - Background
 export const interactiveBackgroundBrandSecondaryActive = purple200
 export const interactiveBackgroundBrandSecondaryMinimal = purple100
 export const interactiveBackgroundDestructive = red600
@@ -158,7 +159,7 @@ export const interactiveBackgroundPrimaryMinimal = blue100
 export const interactiveBackgroundPrimaryMinimalActive = blue200
 export const interactiveBackgroundTooltip = dark400
 
-// Interactive Border Colors
+// Interactive Colors - Border
 export const interactiveBorderActive = dark400
 export const interactiveBorderDisabled = blue300
 export const interactiveBorderPrimary = blue400
@@ -172,7 +173,7 @@ export const interactiveBorderFocus = mint400
 export const interactiveBorderInvert = white
 export const interactiveBorderInvertActive = blueberry100
 
-// Interactive Foreground Colors
+// Interactive Colors - Foreground
 export const interactiveForegroundBrandSecondary = purple400
 export const interactiveForegroundBrandSecondaryContrast = purple600
 export const interactiveForegroundDefault = dark400
@@ -190,4 +191,4 @@ export const interactiveForegroundRed = red400
 export const interactiveForegroundRedMinimalActive = red200
 
 // Overlay Colors
-export const overlayDefault = blue100
+export const overlayDefault = overlay
