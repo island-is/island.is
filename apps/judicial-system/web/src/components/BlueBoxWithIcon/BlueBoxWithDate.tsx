@@ -141,8 +141,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     if (isFine) {
       texts.push(
         formatMessage(strings.fineAppealDeadline, {
-          appealDeadlineIsInThePast: true,
-          appealDeadline: 'asdas',
+          appealDeadlineIsInThePast: !defendant.isVerdictAppealDeadlineExpired,
+          appealDeadline: formatDate(defendant.verdictAppealDeadline),
         }),
       )
     } else {

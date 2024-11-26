@@ -196,6 +196,8 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
   return theCase.defendants?.map((defendant) => {
     const serviceRequired =
       defendant.serviceRequirement === ServiceRequirement.REQUIRED
+    const isFine =
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
     const { verdictViewDate } = defendant
 
@@ -203,7 +205,10 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
 
     const verdictAppealDeadline = baseDate
       ? new Date(
-          new Date(baseDate).getTime() + getDays(VERDICT_APPEAL_WINDOW_DAYS),
+          new Date(baseDate).getTime() +
+            getDays(
+              isFine ? FINE_APPEAL_WINDOW_DAYS : VERDICT_APPEAL_WINDOW_DAYS,
+            ),
         ).toISOString()
       : undefined
 
