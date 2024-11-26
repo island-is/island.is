@@ -1,7 +1,7 @@
 import { color } from './primitivesMapper'
 
 const {
-  primary: { blue, dark, red, white },
+  primary: { blue, dark, red, white: white400 },
   secondary: { blueberry, purple, rose },
   accent: { mint, yellow },
 } = color
@@ -25,7 +25,7 @@ export const red300 = red[300] ?? '#ff99b9'
 export const red200 = red[200] ?? '#ffccdc'
 export const red100 = red[100] ?? '#fff2f6'
 
-export const white400 = white[400] ?? '#ffffff'
+export const white = white400[400] ?? '#ffffff'
 export const black = '#000000'
 export const overlay = '#f2f7ff'
 
@@ -74,10 +74,10 @@ export const backgroundBrandMinimal = blue100
 export const backgroundBrandSecondary = purple400
 export const backgroundBrandSecondaryLighter = purple200
 export const backgroundBrandSecondaryMinimal = purple100
-export const backgroundInvert = white400
+export const backgroundInvert = white
 
 // Border Colors
-export const borderInvert = white400
+export const borderInvert = white
 export const borderPrimary = blue200
 export const borderPrimaryContrast = blue400
 export const borderSecondaryActive = purple400
@@ -145,7 +145,7 @@ export const foregroundBrand = blue400
 export const foregroundBrandContrast = blue600
 export const foregroundBrandSecondary = purple400
 export const foregroundBrandSecondaryContrast = purple600
-export const foregroundInvert = white400
+export const foregroundInvert = white
 export const foregroundModal = dark400
 export const foregroundPrimary = dark400
 export const foregroundPrimaryMinimal = dark300
@@ -157,7 +157,7 @@ export const interactiveBackgroundDestructive = red600
 export const interactiveBackgroundDestructiveActive = roseTinted400
 export const interactiveBackgroundDestructiveDisabled = red300
 export const interactiveBackgroundFocus = mint400
-export const interactiveBackgroundInvert = white400
+export const interactiveBackgroundInvert = white
 export const interactiveBackgroundNeutral = dark300
 export const interactiveBackgroundNeutralActive = dark350
 export const interactiveBackgroundPrimary = blue400
@@ -178,7 +178,7 @@ export const interactiveBorderDestructiveActive = roseTinted400
 export const interactiveBorderDestructiveDefault = red600
 export const interactiveBorderDestructiveDisabled = red300
 export const interactiveBorderFocus = mint400
-export const interactiveBorderInvert = white400
+export const interactiveBorderInvert = white
 export const interactiveBorderInvertActive = blueberry100
 
 // Interactive Colors - Foreground
@@ -189,7 +189,7 @@ export const interactiveForegroundDestructive = red600
 export const interactiveForegroundDestructiveActive = roseTinted400
 export const interactiveForegroundDestructiveDisabled = red300
 export const interactiveForegroundDisabled = dark300
-export const interactiveForegroundInvert = white400
+export const interactiveForegroundInvert = white
 export const interactiveForegroundInvertActive = blueberry100
 export const interactiveForegroundPrimary = blue400
 export const interactiveForegroundPrimaryActive = blueberry400
