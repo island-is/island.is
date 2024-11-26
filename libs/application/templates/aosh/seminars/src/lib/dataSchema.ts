@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { IndividualOrCompany, PaymentOptions } from '../shared/contstants'
-import { isValidPhoneNumber } from '../utils'
+import { isValidEmail, isValidPhoneNumber } from '../utils'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -17,30 +17,124 @@ const UserSchemaBase = z.object({
   name: z.string().min(1),
 })
 
-const PaymentArrangementSchema = z.object({
-  individualOrCompany: z.enum([
-    IndividualOrCompany.individual,
-    IndividualOrCompany.company,
-  ]),
-  paymentOptions: z.enum([
-    PaymentOptions.cashOnDelivery,
-    PaymentOptions.putIntoAccount,
-  ]),
-  companyInfo: z.object({
-    nationalId: z.string().refine((v) => kennitala.isCompany(v)),
-    label: z.string().min(1),
-  }),
-  // individualInfo: z.object({
-  //   email: z.string().email(),
-  //   phone: z.string().refine((v) => isValidPhoneNumber(v)),
-  // }).optional(),
-  contactInfo: z.object({
-    email: z.string().email(),
-    phone: z.string().refine((v) => isValidPhoneNumber(v)),
-  }),
-  explanation: z.string().optional(),
-  // agreementCheckbox: z.string().optional(), // .min(1),
-}) // TODO: refine super well!
+const PaymentArrangementSchema = z
+  .object({
+    individualOrCompany: z.enum([
+      IndividualOrCompany.individual,
+      IndividualOrCompany.company,
+    ]),
+    paymentOptions: z
+      .enum([PaymentOptions.cashOnDelivery, PaymentOptions.putIntoAccount])
+      .optional(),
+    companyInfo: z
+      .object({
+        nationalId: z.string().optional(),
+        label: z.string().optional(),
+      })
+      .optional(),
+    individualInfo: z
+      .object({
+        email: z.string().optional(),
+        phone: z.string().optional(),
+      })
+      .optional(),
+    contactInfo: z
+      .object({
+        email: z.string().optional(),
+        phone: z.string().optional(),
+      })
+      .optional(),
+    explanation: z.string().optional(),
+    agreementCheckbox: z.array(z.string().min(1)).nonempty(),
+  })
+  .refine(
+    ({ individualInfo, individualOrCompany }) => {
+      if (individualOrCompany === IndividualOrCompany.company) return true
+      return (
+        individualOrCompany === IndividualOrCompany.individual &&
+        individualInfo &&
+        individualInfo.email &&
+        individualInfo.email.length > 0 &&
+        isValidEmail(individualInfo.email)
+      )
+    },
+    {
+      path: ['individualInfo', 'email'],
+    },
+  )
+  .refine(
+    ({ individualInfo, individualOrCompany }) => {
+      if (individualOrCompany === IndividualOrCompany.company) return true
+      return (
+        individualOrCompany === IndividualOrCompany.individual &&
+        individualInfo &&
+        individualInfo.phone &&
+        isValidPhoneNumber(individualInfo?.phone)
+      )
+    },
+    {
+      path: ['individualInfo', 'phone'],
+    },
+  )
+  .refine(
+    ({ companyInfo, individualOrCompany }) => {
+      if (individualOrCompany === IndividualOrCompany.individual) return true
+      return (
+        individualOrCompany === IndividualOrCompany.company &&
+        companyInfo &&
+        companyInfo.label &&
+        companyInfo.nationalId &&
+        companyInfo.nationalId.length > 0 &&
+        kennitala.isCompany(companyInfo.nationalId)
+      )
+    },
+    {
+      path: ['companyInfo', 'nationalId'],
+    },
+  )
+  .refine(
+    ({ paymentOptions, individualOrCompany }) => {
+      if (individualOrCompany === IndividualOrCompany.individual) return true
+      return (
+        individualOrCompany === IndividualOrCompany.company &&
+        (paymentOptions === PaymentOptions.cashOnDelivery ||
+          paymentOptions === PaymentOptions.putIntoAccount)
+      )
+    },
+    {
+      path: ['paymentOptions'],
+    },
+  )
+  .refine(
+    ({ contactInfo, individualOrCompany }) => {
+      if (individualOrCompany === IndividualOrCompany.individual) return true
+      return (
+        individualOrCompany === IndividualOrCompany.company &&
+        contactInfo &&
+        contactInfo.email &&
+        contactInfo.email.length > 0 &&
+        isValidEmail(contactInfo.email)
+      )
+    },
+    {
+      path: ['contactInfo', 'email'],
+    },
+  )
+  .refine(
+    ({ contactInfo, individualOrCompany }) => {
+      if (individualOrCompany === IndividualOrCompany.individual) return true
+      return (
+        individualOrCompany === IndividualOrCompany.company &&
+        contactInfo &&
+        contactInfo.phone &&
+        contactInfo.phone.length > 0 &&
+        isValidPhoneNumber(contactInfo.phone)
+      )
+    },
+    {
+      path: ['contactInfo', 'phone'],
+    },
+  )
 
 export const UserInformationSchema = z.intersection(
   UserSchemaBase,
@@ -62,3 +156,4 @@ export const SeminarAnswersSchema = z.object({
 })
 
 export type SeminarAnswers = z.TypeOf<typeof SeminarAnswersSchema>
+export type PaymentArrangementType = z.TypeOf<typeof PaymentArrangementSchema>

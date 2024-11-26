@@ -9,6 +9,7 @@ import { useLocale } from '@island.is/localization'
 import { ReviewGroup } from '../Components/ReviewGroup'
 import { KeyValueFormField } from '@island.is/application/ui-fields'
 import { overview } from '../../lib/messages'
+import { getPaymentArrangementForOverview } from '../../utils'
 
 export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
@@ -73,12 +74,11 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             component: FieldComponents.KEY_VALUE,
             title: '',
             label: '',
-            value: ['TODO: Payment Arrangement'],
-            // getAccidentInformationForOverview(
-            //   application.answers,
-            //   application.externalData,
-            //   formatMessage,
-            // ),
+            value: getPaymentArrangementForOverview(
+              application.answers,
+              application.externalData,
+              formatMessage,
+            ),
           }}
         />
       </ReviewGroup>
