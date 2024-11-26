@@ -2,11 +2,7 @@ import isEqual from 'lodash/isEqual'
 import type { StyleRule } from '@vanilla-extract/css'
 import omit from 'lodash/omit'
 import * as color from './colors/colors'
-import {
-  fontPrimitives,
-  spacingPrimitives,
-  radiusPrimitives,
-} from './tokens/tokens'
+import { font, spacing as spacingPrimitives, radius } from './tokens/tokens'
 
 export const UNIT = 8
 
@@ -82,7 +78,7 @@ export const theme = {
   zIndex,
   touchableSize: 10,
   typography: {
-    fontFamily: `"${fontPrimitives.family.primary.$value}", San Francisco, Segoe UI, sans-serif`,
+    fontFamily: `"${font.family.primary.$value}", San Francisco, Segoe UI, sans-serif`,
     light: 300,
     regular: 400,
     medium: 500,
@@ -104,13 +100,13 @@ export const theme = {
       solid: 'solid',
     },
     radius: {
-      standard: `${radiusPrimitives.xs.$value ?? 4}px`, // TODO: check with designers to keep as standard
-      large: `${radiusPrimitives.default.$value ?? 8}px`, // TODO: check with designers to keep as large
-      md: `${radiusPrimitives.md.$value ?? 12}px`,
-      lg: `${radiusPrimitives.lg.$value ?? 16}px`,
+      standard: `${radius.xs.$value ?? 4}px`, // TODO: check with designers to keep as standard
+      large: `${radius.default.$value ?? 8}px`, // TODO: check with designers to keep as large
+      md: `${radius.md.$value ?? 12}px`,
+      lg: `${radius.lg.$value ?? 16}px`,
       xl: '24px', // TODO: should be added to figma?
       circle: '50%', // TODO: should be added to figma?
-      full: `${radiusPrimitives.full.$value ?? 9999}px`,
+      full: `${radius.full.$value ?? 9999}px`,
     },
     width: {
       standard: 1,

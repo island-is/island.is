@@ -1,4 +1,4 @@
-import { colorPrimitives } from '../tokens/tokens'
+import { color as colorPrimitives } from '../tokens/tokens'
 
 export const color = {
   primary: {
