@@ -3,22 +3,20 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  InternalServerErrorException,
 } from '@nestjs/common'
 
 import { Defendant } from '../../defendant'
-import { SubpoenaService } from '../subpoena.service'
 
 @Injectable()
 export class SubpoenaExistsGuard implements CanActivate {
-  constructor(private readonly subpoenaService: SubpoenaService) {}
-
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
 
     const defendant: Defendant = request.defendant
 
     if (!defendant) {
-      throw new BadRequestException('Missing defendant')
+      throw new InternalServerErrorException('Missing defendant')
     }
 
     const subpoenaId = request.params.subpoenaId
