@@ -1,7 +1,8 @@
+import React, { useEffect, useState } from 'react'
+import { Form, Outlet, useActionData, useNavigate } from 'react-router-dom'
+
 import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
-import { m } from '../lib/messages'
-import { Form, Outlet, useActionData, useNavigate } from 'react-router-dom'
 import {
   AsyncSearchInput,
   Button,
@@ -9,12 +10,13 @@ import {
   GridRow,
   Box,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useState } from 'react'
 import { useSubmitting } from '@island.is/react-spa/shared'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { useBff } from '@island.is/react-spa/bff'
+
+import { m } from '../lib/messages'
 import { GetDelegationForNationalIdResult } from './Root.action'
 import { DelegationAdminPaths } from '../lib/paths'
-import { useAuth } from '@island.is/auth/react'
-import { AdminPortalScope } from '@island.is/auth/scopes'
 
 const Root = () => {
   const [focused, setFocused] = useState(false)
@@ -24,7 +26,7 @@ const Root = () => {
   const { isSubmitting, isLoading } = useSubmitting()
   const [error, setError] = useState({ hasError: false, message: '' })
   const navigate = useNavigate()
-  const { userInfo } = useAuth()
+  const { userInfo } = useBff()
 
   const hasAdminAccess = userInfo?.scopes.includes(
     AdminPortalScope.delegationSystemAdmin,

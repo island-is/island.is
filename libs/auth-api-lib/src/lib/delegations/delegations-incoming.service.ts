@@ -164,6 +164,25 @@ export class DelegationsIncomingService {
       )
     }
 
+    // If procuration holder is enabled, we need to get the general mandate delegations
+    if (types?.includes(AuthDelegationType.ProcurationHolder)) {
+      const isGeneralMandateDelegationEnabled =
+        await this.featureFlagService.getValue(
+          Features.isGeneralMandateDelegationEnabled,
+          false,
+          user,
+        )
+      if (isGeneralMandateDelegationEnabled) {
+        delegationPromises.push(
+          this.delegationsIncomingCustomService.findCompanyGeneralMandate(
+            user,
+            clientAllowedApiScopes,
+            client.requireApiScopes,
+          ),
+        )
+      }
+    }
+
     if (providers.includes(AuthDelegationProvider.CompanyRegistry)) {
       delegationPromises.push(
         this.incomingDelegationsCompanyService
