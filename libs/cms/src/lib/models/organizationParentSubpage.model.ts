@@ -2,7 +2,6 @@ import { CacheField } from '@island.is/nest/graphql'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { IOrganizationParentSubpage } from '../generated/contentfulTypes'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
-import { Image, mapImage } from './image.model'
 
 @ObjectType()
 class OrganizationSubpageLink {
@@ -23,9 +22,6 @@ export class OrganizationParentSubpage {
 
   @CacheField(() => [OrganizationSubpageLink])
   childLinks!: OrganizationSubpageLink[]
-
-  @CacheField(() => Image, { nullable: true })
-  image?: Image | null
 }
 
 export const mapOrganizationParentSubpage = ({
@@ -42,6 +38,5 @@ export const mapOrganizationParentSubpage = ({
           page.fields.organizationPage.fields.slug
         }/${fields.slug}/${page.fields.slug}`,
       })) ?? [],
-    image: fields.image ? mapImage(fields.image) : null,
   }
 }

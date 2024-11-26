@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -21,7 +20,7 @@ import {
   QueryGetOrganizationParentSubpageArgs,
   QueryGetOrganizationSubpageArgs,
 } from '@island.is/web/graphql/schema'
-import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { StandaloneLayout } from '@island.is/web/layouts/organization/standalone'
 import type { Screen, ScreenContext } from '@island.is/web/types'
@@ -64,25 +63,16 @@ const StandaloneParentSubpage: Screen<
   tableOfContentHeadings,
   namespace,
 }) => {
-  const organizationNamespace = useMemo(() => {
-    return JSON.parse(organizationPage.organization?.namespace?.fields || '{}')
-  }, [organizationPage.organization?.namespace?.fields])
-
-  const n = useNamespace(organizationNamespace)
-
   const router = useRouter()
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
 
   return (
-    <StandaloneLayout
-      organizationPage={organizationPage}
-      bannerTitle={n('bannerTitle', '')}
-    >
+    <StandaloneLayout organizationPage={organizationPage}>
       <GridContainer>
         <GridRow>
           <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
-            <Stack space={4}>
+            <Stack space={3}>
               <Breadcrumbs
                 items={[
                   {
@@ -93,27 +83,31 @@ const StandaloneParentSubpage: Screen<
                   },
                 ]}
               />
-              <Text variant="h1" as="h1">
-                {parentSubpage.title}
-              </Text>
-              <TableOfContents
-                headings={tableOfContentHeadings}
-                onClick={(headingId) => {
-                  const href = tableOfContentHeadings.find(
-                    (heading) => heading.headingId === headingId,
-                  )?.href
-                  if (href) {
-                    router.push(href)
-                  }
-                }}
-                tableOfContentsTitle={
-                  namespace?.['standaloneTableOfContentsTitle'] ??
-                  activeLocale === 'is'
-                    ? 'Efnisyfirlit'
-                    : 'Table of contents'
-                }
-                selectedHeadingId={selectedHeadingId}
-              />
+              {parentSubpage.childLinks.length > 1 && (
+                <Stack space={4}>
+                  <Text variant="h1" as="h1">
+                    {parentSubpage.title}
+                  </Text>
+                  <TableOfContents
+                    headings={tableOfContentHeadings}
+                    onClick={(headingId) => {
+                      const href = tableOfContentHeadings.find(
+                        (heading) => heading.headingId === headingId,
+                      )?.href
+                      if (href) {
+                        router.push(href)
+                      }
+                    }}
+                    tableOfContentsTitle={
+                      namespace?.['standaloneTableOfContentsTitle'] ??
+                      activeLocale === 'is'
+                        ? 'Efnisyfirlit'
+                        : 'Table of contents'
+                    }
+                    selectedHeadingId={selectedHeadingId}
+                  />
+                </Stack>
+              )}
             </Stack>
           </GridColumn>
         </GridRow>
@@ -121,7 +115,9 @@ const StandaloneParentSubpage: Screen<
           namespace={namespace}
           organizationPage={organizationPage}
           subpage={subpage}
-          subpageTitleVariant="h2"
+          subpageTitleVariant={
+            parentSubpage.childLinks.length > 1 ? 'h2' : 'h1'
+          }
         />
       </GridContainer>
     </StandaloneLayout>
@@ -200,12 +196,17 @@ StandaloneParentSubpage.getProps = async ({
     const index = getOrganizationParentSubpage.childLinks.findIndex(
       (link) => link.href.split('/').pop() === subpageSlug,
     )
-    if (index > 0) {
+    if (index >= 0) {
       selectedIndex = index
+    } else {
+      throw new CustomNextError(
+        404,
+        'Subpage belonging to an organization parent subpage was not found',
+      )
     }
   }
 
-  let subpage = (
+  const subpage = (
     await apolloClient.query<Query, QueryGetOrganizationSubpageArgs>({
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {
@@ -219,25 +220,6 @@ StandaloneParentSubpage.getProps = async ({
       },
     })
   ).data.getOrganizationSubpage
-
-  // Try getting the first subpage in case others can't be found
-  if (!subpage && selectedIndex > 0) {
-    selectedIndex = 0
-    subpage = (
-      await apolloClient.query<Query, QueryGetOrganizationSubpageArgs>({
-        query: GET_ORGANIZATION_SUBPAGE_QUERY,
-        variables: {
-          input: {
-            organizationSlug: organizationPageSlug,
-            slug: getOrganizationParentSubpage.childLinks[selectedIndex].href
-              .split('/')
-              .pop() as string,
-            lang: locale as ContentLanguage,
-          },
-        },
-      })
-    ).data.getOrganizationSubpage
-  }
 
   if (!subpage) {
     throw new CustomNextError(

@@ -166,7 +166,6 @@ Component.getProps = async (context) => {
 
   const STANDALONE_THEME = 'standalone'
 
-  // Frontpage
   if (slugs.length === 1) {
     if (organizationPage.theme === STANDALONE_THEME) {
       return {
