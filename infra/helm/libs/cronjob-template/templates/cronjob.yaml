@@ -1,5 +1,6 @@
+{{- if .Values.schedule }}
 {{- if .Values.enabled }}
-{{- $fullName := include "cronjob-template.fullname" . -}}
+{{- $fullName := include "api-template.fullname" . -}}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -144,4 +145,5 @@ spec:
           {{- end }}
           {{- end }}
           restartPolicy: {{ .Values.restartPolicy | default "Never" }}
+{{- end }}
 {{- end }}
