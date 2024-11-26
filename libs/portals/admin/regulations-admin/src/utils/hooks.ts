@@ -107,19 +107,27 @@ export const useAffectedRegulations = (
 }
 
 export const usePristineRegulations = () => {
-  const [pristineRegulations, setPristineRegulations] = useState(() => {
-    const storedRegulations = sessionStorage.getItem('PRISTINE_REGULATIONS')
-    return storedRegulations ? JSON.parse(storedRegulations) : []
-  })
+  const P_REG_KEY = 'PRISTINE_REGULATIONS'
+
+  const [pristineRegulations, setPristineRegulations] = useState<string[]>(
+    () => {
+      const storedRegulations = sessionStorage.getItem(P_REG_KEY)
+      if (!storedRegulations) return []
+
+      try {
+        return JSON.parse(storedRegulations)
+      } catch (e) {
+        console.error('Failed to parse pristine regulations:', e)
+        return []
+      }
+    },
+  )
 
   const addPristineRegulation = (regId: string) => {
     if (!pristineRegulations.includes(regId)) {
       const updatedRegulations = [...pristineRegulations, regId]
       setPristineRegulations(updatedRegulations)
-      sessionStorage.setItem(
-        'PRISTINE_REGULATIONS',
-        JSON.stringify(updatedRegulations),
-      )
+      sessionStorage.setItem(P_REG_KEY, JSON.stringify(updatedRegulations))
     }
   }
 
@@ -128,10 +136,7 @@ export const usePristineRegulations = () => {
       (id: string) => id !== regId,
     )
     setPristineRegulations(updatedRegulations)
-    sessionStorage.setItem(
-      'PRISTINE_REGULATIONS',
-      JSON.stringify(updatedRegulations),
-    )
+    sessionStorage.setItem(P_REG_KEY, JSON.stringify(updatedRegulations))
   }
 
   const isPristineRegulation = (regId: string) =>
