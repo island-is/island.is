@@ -10,6 +10,7 @@ import { ReviewGroup } from '../Components/ReviewGroup'
 import { KeyValueFormField } from '@island.is/application/ui-fields'
 import { overview } from '../../lib/messages'
 import { getPaymentArrangementForOverview } from '../../utils'
+import { ParticipantsOverviewExpandableTable } from '../Components/ParticipantsOverviewExpandableTable'
 
 export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
@@ -89,7 +90,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         title={formatMessage(overview.labels.participants)}
         isLast
       >
-        TODO: Participants
+        <ParticipantsOverviewExpandableTable data={[]} />
       </ReviewGroup>
     </Box>
   )

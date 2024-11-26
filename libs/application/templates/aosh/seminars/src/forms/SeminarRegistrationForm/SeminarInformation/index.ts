@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCustomField,
   buildDescriptionField,
   buildInformationFormField,
@@ -8,6 +9,8 @@ import {
 } from '@island.is/application/core'
 
 import { seminar as seminarMessages } from '../../../lib/messages'
+import { ExternalData, FormValue } from '@island.is/application/types'
+import { isPersonType } from '../../../utils'
 
 export const seminarInformationSection = buildSection({
   id: 'seminarInformation',
@@ -47,6 +50,15 @@ export const seminarInformationSection = buildSection({
               value: 'Fræðslukerfi Vinnueftirlitsins (á netinu)',
             },
           ],
+        }),
+        buildAlertMessageField({
+          id: 'seminarInformationAlert',
+          title: '',
+          message: seminarMessages.labels.alertMessage,
+          alertType: 'info',
+          marginTop: 3,
+          condition: (answers: FormValue, externalData: ExternalData) =>
+            isPersonType(externalData),
         }),
       ],
     }),

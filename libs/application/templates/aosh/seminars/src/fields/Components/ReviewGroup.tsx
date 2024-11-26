@@ -58,7 +58,7 @@ export const ReviewGroup: FC<React.PropsWithChildren<ReviewGroupProps>> = ({
           )}
         </GridRow>
         <GridRow>
-          <GridColumn>{children}</GridColumn>
+          <GridColumn span={['12/12']}>{children}</GridColumn>
         </GridRow>
       </Box>
 
