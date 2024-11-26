@@ -62,7 +62,6 @@ export class AppService {
           return { id: response?.id }
         }
 
-        // TODO: Reconsider exception type
         if (res.status < 500) {
           throw new BadRequestException(response?.detail)
         }
@@ -74,7 +73,6 @@ export class AppService {
           throw reason
         }
 
-        // TODO: Reconsider exception type
         throw new BadGatewayException({
           ...reason,
           message: 'Failed to create a new case',
@@ -134,7 +132,7 @@ export class AppService {
           `Failed to retrieve lawyer with national id ${updateSubpoena.defenderNationalId}`,
           reason,
         )
-        // TODO: Reconsider exception type
+
         throw new BadRequestException('Lawyer not found')
       }
     }
@@ -192,7 +190,6 @@ export class AppService {
       }
 
       if (res.status < 500) {
-        // TODO: Reconsider exception type
         throw new BadRequestException(response?.detail)
       }
 
