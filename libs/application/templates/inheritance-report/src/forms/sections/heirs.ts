@@ -161,6 +161,27 @@ export const heirs = buildSection({
       ],
     }),
     buildSubSection({
+      id: 'privateTransfer',
+      title: m.fileUploadPrivateTransfer,
+      children: [
+        buildMultiField({
+          id: 'heirsAdditionalInfo',
+          title: m.fileUploadPrivateTransfer,
+          description: m.uploadPrivateTransferUserGuidelines,
+          children: [
+            buildFileUploadField({
+              id: 'heirsAdditionalInfoPrivateTransferFiles',
+              uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
+              uploadDescription: m.uploadPrivateTransferDescription,
+              title: '',
+              uploadHeader: '',
+              uploadMultiple: false,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSubSection({
       id: 'heirsAdditionalInfo',
       title: m.heirAdditionalInfo,
       children: [
@@ -182,22 +203,6 @@ export const heirs = buildSection({
               variant: 'textarea',
               rows: 4,
               maxLength: 1800,
-            }),
-            buildDescriptionField({
-              id: 'heirsAdditionalInfoFilesPrivateTitle',
-              title: m.fileUploadPrivateTransfer,
-              description: m.uploadPrivateTransferUserGuidelines,
-              titleVariant: 'h5',
-              space: 'containerGutter',
-              marginBottom: 'smallGutter',
-            }),
-            buildFileUploadField({
-              id: 'heirsAdditionalInfoPrivateTransferFiles',
-              uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
-              uploadDescription: m.uploadPrivateTransferDescription,
-              title: '',
-              uploadHeader: '',
-              uploadMultiple: false,
             }),
             buildDescriptionField({
               id: 'heirsAdditionalInfoFilesOtherDocumentsTitle',
