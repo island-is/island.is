@@ -348,11 +348,30 @@ export class SubpoenaService {
 
     // We don't know if the subpoena has been served to the defendant
     // so we need to check the police service
-    const serviceInfo = await this.policeService.getSubpoenaStatus(
+    const subpoenaInfo = await this.policeService.getSubpoenaStatus(
       subpoena.subpoenaId,
       user,
     )
 
-    return this.update(subpoena, serviceInfo)
+    if (
+      (!subpoenaInfo.serviceStatus ||
+        subpoenaInfo.serviceStatus === subpoena.serviceStatus) &&
+      (!subpoenaInfo.comment || subpoenaInfo.comment === subpoena.comment) &&
+      (!subpoenaInfo.servedBy || subpoenaInfo.servedBy === subpoena.servedBy) &&
+      (!subpoenaInfo.defenderNationalId ||
+        subpoenaInfo.defenderNationalId === subpoena.defenderNationalId) &&
+      (!subpoenaInfo.serviceDate ||
+        subpoenaInfo.serviceDate === subpoena.serviceDate)
+    ) {
+      // The subpoena has not changed
+      return subpoena
+    }
+
+    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', {
+      subpoena,
+      subpoenaInfo,
+    })
+
+    return this.update(subpoena, subpoenaInfo)
   }
 }
