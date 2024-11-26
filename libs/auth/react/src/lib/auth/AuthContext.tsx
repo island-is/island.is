@@ -50,7 +50,7 @@ export const useAuth: () => AuthContextType = () => {
  * @deprecated Use useUserInfo from `libs/react-spa/bff` instead.
  */
 export const useUserInfo = () => {
-  warnDeprecated('useUserInfo', 'useUserInfo from `libs/react-spa/bff`')
+  warnDeprecated('useUserInfo', 'useUserInfo')
   const { userInfo } = useContext(AuthContext)
 
   if (!userInfo) {
