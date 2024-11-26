@@ -22,12 +22,6 @@ type GivenWhenThen = (
 describe('CivilClaimantController - Update', () => {
   const caseId = uuid()
   const civilClaimantId = uuid()
-  const civilClaimaint = {
-    id: civilClaimantId,
-    caseId,
-    nationalId: uuid(),
-    name: 'Original Name',
-  } as CivilClaimant
 
   let mockMessageService: MessageService
   let mockCivilClaimantModel: typeof CivilClaimant

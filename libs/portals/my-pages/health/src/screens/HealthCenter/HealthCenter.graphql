@@ -23,5 +23,6 @@ query getHealthCenter($input: RightsPortalHealthCenterHistoryInput) {
       doctor
     }
     canRegister
+    neighborhoodCenter
   }
 }
