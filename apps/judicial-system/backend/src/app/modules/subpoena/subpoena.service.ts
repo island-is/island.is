@@ -367,11 +367,6 @@ export class SubpoenaService {
       return subpoena
     }
 
-    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', {
-      subpoena,
-      subpoenaInfo,
-    })
-
     return this.update(subpoena, subpoenaInfo)
   }
 }
