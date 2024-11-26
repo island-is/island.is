@@ -1,63 +1,71 @@
 import { color } from './primitivesMapper'
 
+const {
+  primary: { blue, dark, red, white },
+  secondary: { blueberry, purple, rose },
+  accent: { mint, yellow },
+} = color
+
 // Primary colors
-export const blue600 = color.primary.blue[600] ?? '#0044b3'
-export const blue400 = color.primary.blue[400] ?? '#0061ff'
-export const blue300 = color.primary.blue[300] ?? '#99c0ff'
-export const blue200 = color.primary.blue[200] ?? '#ccdfff'
-export const blue100 = color.primary.blue[100] ?? '#ccdfff'
+export const blue600 = blue[600] ?? '#0044b3'
+export const blue400 = blue[400] ?? '#0061ff'
+export const blue300 = blue[300] ?? '#99c0ff'
+export const blue200 = blue[200] ?? '#ccdfff'
+export const blue100 = blue[100] ?? '#ccdfff'
 
-export const dark400 = color.primary.dark[400] ?? '#00003c'
-export const dark350 = color.primary.dark[350] ?? '#33335a'
-export const dark300 = color.primary.dark[300] ?? '#9999b1'
-export const dark200 = color.primary.dark[200] ?? '#ccccd8'
-export const dark100 = color.primary.dark[100] ?? '#f2f2f5'
+export const dark400 = dark[400] ?? '#00003c'
+export const dark350 = dark[350] ?? '#33335a'
+export const dark300 = dark[300] ?? '#9999b1'
+export const dark200 = dark[200] ?? '#ccccd8'
+export const dark100 = dark[100] ?? '#f2f2f5'
 
-export const red600 = color.primary.red[600] ?? '#b30038'
-export const red400 = color.primary.red[400] ?? '#ff0050'
-export const red300 = color.primary.red[300] ?? '#ff99b9'
-export const red200 = color.primary.red[200] ?? '#ffccdc'
-export const red100 = color.primary.red[100] ?? '#fff2f6'
+export const red600 = red[600] ?? '#b30038'
+export const red400 = red[400] ?? '#ff0050'
+export const red300 = red[300] ?? '#ff99b9'
+export const red200 = red[200] ?? '#ffccdc'
+export const red100 = red[100] ?? '#fff2f6'
 
-export const white = color.primary.white[400] ?? '#ffffff'
+export const white400 = white[400] ?? '#ffffff'
 export const black = '#000000'
 export const overlay = '#f2f7ff'
 
 // Secondary colors
-export const blueberry600 = color.secondary.blueberry[600] ?? '#24268e'
-export const blueberry400 = color.secondary.blueberry[400] ?? '#4649d0'
-export const blueberry300 = color.secondary.blueberry[300] ?? '#b5b6ec'
-export const blueberry200 = color.secondary.blueberry[200] ?? '#dadbf6'
-export const blueberry100 = color.secondary.blueberry[100] ?? '#f6f6fd'
+export const blueberry600 = blueberry[600] ?? '#24268e'
+export const blueberry400 = blueberry[400] ?? '#4649d0'
+export const blueberry300 = blueberry[300] ?? '#b5b6ec'
+export const blueberry200 = blueberry[200] ?? '#dadbf6'
+export const blueberry100 = blueberry[100] ?? '#f6f6fd'
 
-export const purple600 = color.secondary.purple[600] ?? '#421c63'
-export const purple400 = color.secondary.purple[400] ?? '#6a2ea0'
-export const purple300 = color.secondary.purple[300] ?? '#c3abd9'
-export const purple200 = color.secondary.purple[200] ?? '#e1d5ec'
-export const purple100 = color.secondary.purple[100] ?? '#f8f5fa'
+export const purple600 = purple[600] ?? '#421c63'
+export const purple400 = purple[400] ?? '#6a2ea0'
+export const purple300 = purple[300] ?? '#c3abd9'
+export const purple200 = purple[200] ?? '#e1d5ec'
+export const purple100 = purple[100] ?? '#f8f5fa'
 
-export const roseTinted600 = color.secondary.rose[600] ?? '#4d003a'
-export const roseTinted400 = color.secondary.rose[400] ?? '#9a0074'
-export const roseTinted300 = color.secondary.rose[300] ?? '#d799c7'
-export const roseTinted200 = color.secondary.rose[200] ?? '#ebcce3'
-export const roseTinted100 = color.secondary.rose[100] ?? '#faf2f8'
+export const roseTinted600 = rose[600] ?? '#4d003a'
+export const roseTinted400 = rose[400] ?? '#9a0074'
+export const roseTinted300 = rose[300] ?? '#d799c7'
+export const roseTinted200 = rose[200] ?? '#ebcce3'
+export const roseTinted100 = rose[100] ?? '#faf2f8'
 
 // Accent colors
-export const mint800 = color.accent.mint[800] ?? '#005B52'
-export const mint600 = color.accent.mint[600] ?? '#00b39e'
-export const mint400 = color.accent.mint[400] ?? '#00e4ca'
-export const mint300 = color.accent.mint[300] ?? '#99f4ea'
-export const mint200 = color.accent.mint[200] ?? '#ccfaf4'
-export const mint100 = color.accent.mint[100] ?? '#f2fefc'
+export const mint800 = mint[800] ?? '#005B52'
+export const mint600 = mint[600] ?? '#00b39e'
+export const mint400 = mint[400] ?? '#00e4ca'
+export const mint300 = mint[300] ?? '#99f4ea'
+export const mint200 = mint[200] ?? '#ccfaf4'
+export const mint100 = mint[100] ?? '#f2fefc'
 
-export const yellow600 = color.accent.yellow[600] ?? '#e6cf00'
-export const yellow400 = color.accent.yellow[400] ?? '#fff066'
-export const yellow300 = color.accent.yellow[300] ?? '#fff9c2'
-export const yellow200 = color.accent.yellow[200] ?? '#fffce0'
-export const yellow100 = color.accent.yellow[100] ?? '#fffef7'
+export const yellow600 = yellow[600] ?? '#e6cf00'
+export const yellow400 = yellow[400] ?? '#fff066'
+export const yellow300 = yellow[300] ?? '#fff9c2'
+export const yellow200 = yellow[200] ?? '#fffce0'
+export const yellow100 = yellow[100] ?? '#fffef7'
 
 export const transparent = 'transparent'
 export const currentColor = 'currentColor'
+
+/* ----- Mapping colors to match the design tokens ----- */
 
 // Background Colors
 export const backgroundBrand = blue400
@@ -66,10 +74,10 @@ export const backgroundBrandMinimal = blue100
 export const backgroundBrandSecondary = purple400
 export const backgroundBrandSecondaryLighter = purple200
 export const backgroundBrandSecondaryMinimal = purple100
-export const backgroundInvert = white
+export const backgroundInvert = white400
 
 // Border Colors
-export const borderInvert = white
+export const borderInvert = white400
 export const borderPrimary = blue200
 export const borderPrimaryContrast = blue400
 export const borderSecondaryActive = purple400
@@ -137,7 +145,7 @@ export const foregroundBrand = blue400
 export const foregroundBrandContrast = blue600
 export const foregroundBrandSecondary = purple400
 export const foregroundBrandSecondaryContrast = purple600
-export const foregroundInvert = white
+export const foregroundInvert = white400
 export const foregroundModal = dark400
 export const foregroundPrimary = dark400
 export const foregroundPrimaryMinimal = dark300
@@ -149,7 +157,7 @@ export const interactiveBackgroundDestructive = red600
 export const interactiveBackgroundDestructiveActive = roseTinted400
 export const interactiveBackgroundDestructiveDisabled = red300
 export const interactiveBackgroundFocus = mint400
-export const interactiveBackgroundInvert = white
+export const interactiveBackgroundInvert = white400
 export const interactiveBackgroundNeutral = dark300
 export const interactiveBackgroundNeutralActive = dark350
 export const interactiveBackgroundPrimary = blue400
@@ -170,7 +178,7 @@ export const interactiveBorderDestructiveActive = roseTinted400
 export const interactiveBorderDestructiveDefault = red600
 export const interactiveBorderDestructiveDisabled = red300
 export const interactiveBorderFocus = mint400
-export const interactiveBorderInvert = white
+export const interactiveBorderInvert = white400
 export const interactiveBorderInvertActive = blueberry100
 
 // Interactive Colors - Foreground
@@ -181,7 +189,7 @@ export const interactiveForegroundDestructive = red600
 export const interactiveForegroundDestructiveActive = roseTinted400
 export const interactiveForegroundDestructiveDisabled = red300
 export const interactiveForegroundDisabled = dark300
-export const interactiveForegroundInvert = white
+export const interactiveForegroundInvert = white400
 export const interactiveForegroundInvertActive = blueberry100
 export const interactiveForegroundPrimary = blue400
 export const interactiveForegroundPrimaryActive = blueberry400
