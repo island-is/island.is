@@ -31,9 +31,26 @@ export const defaultAuthContext = {
 
 export const AuthContext = createContext<AuthContextType>(defaultAuthContext)
 
-export const useAuth: () => AuthContextType = () => useContext(AuthContext)
+const warnDeprecated = (hookName: string, alternative: string) => {
+  console.warn(
+    `[Deprecation Warning] "${hookName}" is being replaced by BFF auth pattern Please use "${alternative}" from "libs/react-spa/bff".`,
+  )
+}
 
+/**
+ * @deprecated Use useBff from `libs/react-spa/bff` instead.
+ */
+export const useAuth: () => AuthContextType = () => {
+  warnDeprecated('useAuth', 'useBff')
+
+  return useContext(AuthContext)
+}
+
+/**
+ * @deprecated Use useUserInfo from `libs/react-spa/bff` instead.
+ */
 export const useUserInfo = () => {
+  warnDeprecated('useUserInfo', 'useUserInfo from `libs/react-spa/bff`')
   const { userInfo } = useContext(AuthContext)
 
   if (!userInfo) {
@@ -43,7 +60,11 @@ export const useUserInfo = () => {
   return userInfo
 }
 
+/**
+ * @deprecated Use useUserInfo from `libs/react-spa/bff` instead where the user info is already decoded.
+ */
 export const useUserDecodedIdToken = () => {
+  warnDeprecated('useUserDecodedIdToken', 'useUserInfo')
   const userInfo = useUserInfo()
 
   if (!userInfo.id_token) {
