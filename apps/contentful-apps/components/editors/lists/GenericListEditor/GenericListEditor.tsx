@@ -140,6 +140,9 @@ export const GenericListEditor = () => {
         contentTypeId={LIST_ITEM_CONTENT_TYPE_ID}
         contentTypeLabel="List Item"
         contentTypeTitleField="internalTitle"
+        query={{
+          'fields.genericList.sys.id': sdk.ids.entry,
+        }}
       />
     </Box>
   )

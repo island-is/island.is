@@ -63,6 +63,9 @@ const GenericTagGroupItemsField = () => {
         contentTypeId="genericTag"
         contentTypeLabel="Generic Tag"
         contentTypeTitleField="title"
+        query={{
+          'fields.genericTagGroup.sys.id': sdk.ids.entry,
+        }}
       />
     </div>
   )
