@@ -32,11 +32,17 @@ export const mapOrganizationParentSubpage = ({
     id: sys.id,
     title: fields.title,
     childLinks:
-      fields.pages?.map((page) => ({
-        label: page.fields.title,
-        href: `/${getOrganizationPageUrlPrefix(sys.locale)}/${
-          page.fields.organizationPage.fields.slug
-        }/${fields.slug}/${page.fields.slug}`,
-      })) ?? [],
+      fields.pages
+        ?.filter(
+          (page) =>
+            Boolean(page.fields.organizationPage?.fields?.slug) &&
+            Boolean(page.fields.slug),
+        )
+        .map((page) => ({
+          label: page.fields.title,
+          href: `/${getOrganizationPageUrlPrefix(sys.locale)}/${
+            page.fields.organizationPage.fields.slug
+          }/${fields.slug}/${page.fields.slug}`,
+        })) ?? [],
   }
 }
