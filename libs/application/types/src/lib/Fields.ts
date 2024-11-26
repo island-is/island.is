@@ -64,7 +64,7 @@ export type TagVariant =
   | 'mint'
   | 'disabled'
 
-export type TableRepeaterFields =
+export type RepeaterFields =
   | 'input'
   | 'select'
   | 'radio'
@@ -82,8 +82,8 @@ type TableRepeaterOptions =
       activeField?: Record<string, string>,
     ) => RepeaterOption[] | [])
 
-export type TableRepeaterItem = {
-  component: TableRepeaterFields
+export type RepeaterItem = {
+  component: RepeaterFields
   /**
    * Defaults to true
    */
@@ -253,6 +253,7 @@ export enum FieldTypes {
   NATIONAL_ID_WITH_NAME = 'NATIONAL_ID_WITH_NAME',
   ACTION_CARD_LIST = 'ACTION_CARD_LIST',
   TABLE_REPEATER = 'TABLE_REPEATER',
+  FIELDS_REPEATER = 'FIELDS_REPEATER',
   HIDDEN_INPUT = 'HIDDEN_INPUT',
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
@@ -289,6 +290,7 @@ export enum FieldComponents {
   NATIONAL_ID_WITH_NAME = 'NationalIdWithNameFormField',
   ACTION_CARD_LIST = 'ActionCardListFormField',
   TABLE_REPEATER = 'TableRepeaterFormField',
+  FIELDS_REPEATER = 'FieldsRepeaterFormField',
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
   VEHICLE_RADIO = 'VehicleRadioFormField',
@@ -639,7 +641,7 @@ export type TableRepeaterField = BaseField & {
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
-  fields: Record<string, TableRepeaterItem>
+  fields: Record<string, RepeaterItem>
   /**
    * Maximum rows that can be added to the table.
    * When the maximum is reached, the button to add a new row is disabled.
@@ -659,6 +661,41 @@ export type TableRepeaterField = BaseField & {
     format?: Record<string, (value: string) => string | StaticText>
   }
 }
+
+export type FieldsRepeaterField = BaseField & {
+  readonly type: FieldTypes.FIELDS_REPEATER
+  component: FieldComponents.FIELDS_REPEATER
+  titleVariant?: TitleVariants
+  formTitle?: StaticText
+  formTitleVariant?: TitleVariants
+  formTitleNumbering?: 'prefix' | 'suffix' | 'none'
+  removeItemButtonText?: StaticText
+  addItemButtonText?: StaticText
+  saveItemButtonText?: StaticText
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  fields: Record<string, RepeaterItem>
+  /**
+   * Maximum rows that can be added to the table.
+   * When the maximum is reached, the button to add a new row is disabled.
+   */
+  minRows?: number
+  maxRows?: number
+  table?: {
+    /**
+     * List of strings to render,
+     * if not provided it will be auto generated from the fields
+     */
+    header?: StaticText[]
+    /**
+     * List of field id's to render,
+     * if not provided it will be auto generated from the fields
+     */
+    rows?: string[]
+    format?: Record<string, (value: string) => string | StaticText>
+  }
+}
+
 export interface FindVehicleField extends InputField {
   readonly type: FieldTypes.FIND_VEHICLE
   component: FieldComponents.FIND_VEHICLE
@@ -786,6 +823,7 @@ export type Field =
   | NationalIdWithNameField
   | ActionCardListField
   | TableRepeaterField
+  | FieldsRepeaterField
   | HiddenInputWithWatchedValueField
   | HiddenInputField
   | FindVehicleField
