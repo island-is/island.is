@@ -163,11 +163,12 @@ Component.getProps = async (context) => {
   }
 
   const modifiedContext = { ...context, organizationPage }
-  // TODO: make use of organizationPage field in other screens
+
+  const STANDALONE_THEME = 'standalone'
 
   // Frontpage
   if (slugs.length === 1) {
-    if (organizationPage.theme === 'standalone') {
+    if (organizationPage.theme === STANDALONE_THEME) {
       return {
         page: {
           type: PageType.STANDALONE_FRONTPAGE,
@@ -237,7 +238,7 @@ Component.getProps = async (context) => {
       }
     }
 
-    if (organizationPage.theme === 'standalone') {
+    if (organizationPage.theme === STANDALONE_THEME) {
       return {
         page: {
           type: PageType.STANDALONE_PARENT_SUBPAGE,
@@ -291,7 +292,7 @@ Component.getProps = async (context) => {
       }
     }
 
-    if (organizationPage.theme !== 'standalone') {
+    if (organizationPage.theme === STANDALONE_THEME) {
       return {
         page: {
           type: PageType.STANDALONE_PARENT_SUBPAGE,
