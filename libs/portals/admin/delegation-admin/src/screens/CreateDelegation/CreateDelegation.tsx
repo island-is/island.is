@@ -1,54 +1,53 @@
-import React, { useEffect, useState } from 'react'
 import {
-  Box,
-  Stack,
   AlertMessage,
+  Box,
   Checkbox,
+  DatePicker,
   GridColumn,
   GridRow,
+  Icon,
   Input,
   Select,
-  DatePicker,
+  Stack,
   toast,
-  Icon,
 } from '@island.is/island-ui/core'
-import { BackButton } from '@island.is/portals/admin/core'
 import { useLocale } from '@island.is/localization'
+import { BackButton } from '@island.is/portals/admin/core'
+import React, { useEffect, useState } from 'react'
 
+import { Identity } from '@island.is/api/schema'
 import { IntroHeader, m as coreMessages } from '@island.is/portals/core'
-import { m } from '../../lib/messages'
-import { DelegationAdminPaths } from '../../lib/paths'
-import NumberFormat from 'react-number-format'
+import {
+  DelegationsFormFooter,
+  useDynamicShadow,
+} from '@island.is/portals/shared-modules/delegations'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { replaceParams } from '@island.is/react-spa/shared'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { maskString, unmaskString } from '@island.is/shared/utils'
+import cn from 'classnames'
 import startOfDay from 'date-fns/startOfDay'
+import kennitala from 'kennitala'
+import debounce from 'lodash/debounce'
+import NumberFormat from 'react-number-format'
 import {
   Form,
-  redirect,
   useActionData,
   useNavigate,
   useSearchParams,
   useSubmit,
 } from 'react-router-dom'
+import { CreateDelegationConfirmModal } from '../../components/CreateDelegationConfirmModal'
+import { FORM_ERRORS } from '../../constants/errors'
+import { m } from '../../lib/messages'
+import { DelegationAdminPaths } from '../../lib/paths'
 import { CreateDelegationResult } from './CreateDelegation.action'
 import * as styles from './CreateDelegation.css'
 import { useIdentityLazyQuery } from './CreateDelegation.generated'
-import debounce from 'lodash/debounce'
-import cn from 'classnames'
-import {
-  DelegationsFormFooter,
-  useDynamicShadow,
-} from '@island.is/portals/shared-modules/delegations'
-import { CreateDelegationConfirmModal } from '../../components/CreateDelegationConfirmModal'
-import { Identity } from '@island.is/api/schema'
-import kennitala from 'kennitala'
-import { maskString, unmaskString } from '@island.is/shared/utils'
-import { useAuth } from '@island.is/auth/react'
-import { replaceParams } from '@island.is/react-spa/shared'
-import { FORM_ERRORS } from '../../constants/errors'
-import { AuthDelegationType } from '@island.is/shared/types'
 
 const CreateDelegationScreen = () => {
   const { formatMessage } = useLocale()
-  const { userInfo } = useAuth()
+  const userInfo = useUserInfo()
 
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
