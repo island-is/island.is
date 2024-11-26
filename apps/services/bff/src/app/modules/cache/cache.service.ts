@@ -26,11 +26,11 @@ export class CacheService {
    * `current` represents the current login session.
    *
    * @example
-   * createSessionKeyType('attempt', '1234') // attempt_{bffName}_1234
-   * createSessionKeyType('current', '1234') // current_{bffName}_1234
+   * createSessionKeyType('attempt', '1234') // attempt::{bffName}::1234
+   * createSessionKeyType('current', '1234') // current::{bffName}::1234
    */
   public createSessionKeyType(type: 'attempt' | 'current', sid: string) {
-    return `${type}_${this.config.name}_${sid}`
+    return `${type}::${this.config.name}::${sid}`
   }
 
   public async save({

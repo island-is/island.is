@@ -121,7 +121,7 @@ describe('AuthController', () => {
 
       const [key, value] = setSpy.mock.calls[0]
 
-      expect(key).toEqual(`attempt_${SID_VALUE}`)
+      expect(key).toEqual(`attempt::${mockConfig.name}::${SID_VALUE}`)
       expect(value).toMatchObject({
         originUrl: baseUrlWithKey,
         codeVerifier: expect.any(String),
@@ -319,7 +319,9 @@ describe('AuthController', () => {
         const loginAttempt = setCacheSpy.mock.calls[0]
 
         // Assert - First request should cache the login attempt
-        expect(setCacheSpy.mock.calls[0]).toContain(`attempt_${SID_VALUE}`)
+        expect(setCacheSpy.mock.calls[0]).toContain(
+          `attempt::${mockConfig.name}::${SID_VALUE}`,
+        )
         expect(loginAttempt[1]).toMatchObject({
           originUrl: baseUrlWithKey,
           codeVerifier: expect.any(String),
@@ -337,7 +339,9 @@ describe('AuthController', () => {
         // Assert
         expect(setCacheSpy).toHaveBeenCalled()
 
-        expect(currentLogin[0]).toContain(`current_${SID_VALUE}`)
+        expect(currentLogin[0]).toContain(
+          `current::${mockConfig.name}::${SID_VALUE}`,
+        )
         // Check if the cache contains the correct values for the current login
         expect(currentLogin[1]).toMatchObject(tokensResponse)
 
