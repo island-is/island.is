@@ -2,6 +2,7 @@ import {
   CaseAppealDecision,
   CaseIndictmentRulingDecision,
   EventType,
+  FINE_APPEAL_WINDOW_DAYS,
   getIndictmentVerdictAppealDeadlineStatus,
   getStatementDeadline,
   isRequestCase,
@@ -13,7 +14,6 @@ import {
 import { Defendant } from '../../defendant'
 import { EventLog } from '../../event-log'
 import { Case } from '../models/case.model'
-import { FINE_APPEAL_WINDOW_DAYS } from 'libs/judicial-system/types/src/lib/indictmentCase'
 
 const getDays = (days: number) => days * 24 * 60 * 60 * 1000
 
