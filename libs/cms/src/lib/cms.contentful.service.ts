@@ -1162,16 +1162,17 @@ export class CmsContentfulService {
       limit: 1,
     }
 
-    const response =
-      await this.contentfulRepository.getLocalizedEntries<types.IOrganizationParentSubpageFields>(
+    const response = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationParentSubpageFields>(
         input.lang,
         params,
       )
+      .catch(errorHandler('getOrganizationParentSubpage'))
 
     return (
-      (response?.items as types.IOrganizationParentSubpage[])?.map(
+      (response?.items as types.IOrganizationParentSubpage[]).map(
         mapOrganizationParentSubpage,
-      )?.[0] ?? null
+      )[0] ?? null
     )
   }
 }
