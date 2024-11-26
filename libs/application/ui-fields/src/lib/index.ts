@@ -31,3 +31,4 @@ export { StaticTableFormField } from './StaticTableFormField/StaticTableFormFiel
 export { AccordionFormField } from './AccordionFormField/AccordionFormField'
 export { BankAccountFormField } from './BankAccountFormField/BankAccountFormField'
 export { SliderFormField } from './SliderFormField/SliderFormField'
+export { DisplayFormField } from './DisplayFormField/DisplayFormField'
