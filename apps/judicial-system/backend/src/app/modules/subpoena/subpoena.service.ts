@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64'
-import { Includeable } from 'sequelize'
+import { Includeable, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 
 import {
@@ -9,7 +9,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
