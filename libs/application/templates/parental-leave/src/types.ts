@@ -81,6 +81,7 @@ export interface Period {
   paid?: boolean
   approved?: boolean
   months?: number
+  endDateAdjustLength?: string[]
 }
 
 export interface Payment {

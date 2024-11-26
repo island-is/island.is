@@ -84,7 +84,7 @@ export const deceased = buildSection({
         }),
         buildDescriptionField({
           id: 'space3',
-          space: 'gutter',
+          space: 'containerGutter',
           title: '',
         }),
         buildRadioField({
@@ -123,7 +123,7 @@ export const deceased = buildSection({
         ),
         buildDescriptionField({
           id: 'space4',
-          space: 'gutter',
+          space: 'containerGutter',
           title: '',
         }),
         buildRadioField({

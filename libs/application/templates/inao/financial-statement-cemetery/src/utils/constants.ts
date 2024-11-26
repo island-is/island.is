@@ -14,6 +14,7 @@ export const PartiesBackwardLimit = 'PartiesBackwardLimit'
 export const CemeteriesBackwardLimit = 'CemeteriesBackwardLimit'
 export const PartiesYearAllowed = 'PartiesYearAllowed'
 export const CemeteriesYearAllowed = 'CemeteriesYearAllowed'
+export const CEMETERY_USER_TYPE = 150000002 // Number that comes from the INAO API
 
 // error helpers
 export const VALIDATOR = 'validator'
