@@ -17,7 +17,7 @@ export class PoliceSubpoenaExistsGuard implements CanActivate {
     const subpoenaId = request.params.subpoenaId
 
     if (!subpoenaId) {
-      throw new BadRequestException('Missing subpoena id')
+      throw new BadRequestException('Missing police subpoena id')
     }
 
     // subpoenaId is the external police document id

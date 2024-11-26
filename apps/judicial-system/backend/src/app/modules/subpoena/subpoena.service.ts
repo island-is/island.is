@@ -255,7 +255,7 @@ export class SubpoenaService {
 
     if (!subpoena) {
       throw new NotFoundException(
-        `Subpoena with subpoena id ${policeSubpoenaId} does not exist`,
+        `Subpoena with police subpoena id ${policeSubpoenaId} does not exist`,
       )
     }
 
