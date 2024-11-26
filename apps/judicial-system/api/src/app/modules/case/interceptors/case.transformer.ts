@@ -152,6 +152,7 @@ export const getIndictmentInfo = (
   eventLog?: EventLog[],
 ): IndictmentInfo => {
   const indictmentInfo: IndictmentInfo = {}
+  const isFine = rulingDecision === CaseIndictmentRulingDecision.FINE
 
   if (!rulingDate) {
     return indictmentInfo
@@ -169,9 +170,8 @@ export const getIndictmentInfo = (
 
   const verdictInfo = defendants?.map<[boolean, Date | undefined]>(
     (defendant) => [
-      rulingDecision === CaseIndictmentRulingDecision.RULING ||
-        rulingDecision === CaseIndictmentRulingDecision.FINE,
-      defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED
+      rulingDecision === CaseIndictmentRulingDecision.RULING || isFine,
+      defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED || isFine
         ? new Date()
         : defendant.verdictViewDate
         ? new Date(defendant.verdictViewDate)
@@ -180,7 +180,7 @@ export const getIndictmentInfo = (
   )
 
   const [indictmentVerdictViewedByAll, indictmentVerdictAppealDeadlineExpired] =
-    getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
+    getIndictmentVerdictAppealDeadlineStatus(verdictInfo, isFine)
   indictmentInfo.indictmentVerdictViewedByAll = indictmentVerdictViewedByAll
   indictmentInfo.indictmentVerdictAppealDeadlineExpired =
     indictmentVerdictAppealDeadlineExpired

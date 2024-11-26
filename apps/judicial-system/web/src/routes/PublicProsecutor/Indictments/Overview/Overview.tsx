@@ -28,6 +28,7 @@ import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './Overview.strings'
+import { CaseIndictmentRulingDecision } from '@island.is/judicial-system/types'
 type VisibleModal = 'REVIEWER_ASSIGNED'
 
 export const Overview = () => {
@@ -126,9 +127,14 @@ export const Overview = () => {
             description={
               <Text variant="eyebrow">
                 {fm(strings.reviewerSubtitle, {
+                  isFine:
+                    workingCase.indictmentRulingDecision ===
+                    CaseIndictmentRulingDecision.FINE,
                   indictmentAppealDeadline: formatDate(
                     workingCase.indictmentAppealDeadline,
                   ),
+                  appealDeadlineIsInThePast:
+                    workingCase.indictmentVerdictAppealDeadlineExpired,
                 })}
               </Text>
             }
