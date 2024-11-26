@@ -127,13 +127,13 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
             )
             return [
               [
-                propertyId ? `F${propertyId}` : '-',
+                propertyId ? `F${propertyId}` : '--',
                 address
                   ? `${address}${municipality ? `, ${municipality}` : ''}`
-                  : '-',
-                unitId ? unitId : '-',
-                size ? `${size} m²` : '-',
-                numOfRooms ? numOfRooms : '-',
+                  : '--',
+                unitId ? unitId : '--',
+                size ? `${size} m²` : '--',
+                numOfRooms ? numOfRooms : '--',
               ],
             ]
           },
