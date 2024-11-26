@@ -31,6 +31,11 @@ export const ExampleForm: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     buildSection({
+      id: 'conditions',
+      title: m.conditionsSection,
+      children: [],
+    }),
+    buildSection({
       id: 'tableRepeaterWithPhone',
       title: 'Table repeater',
       children: [
