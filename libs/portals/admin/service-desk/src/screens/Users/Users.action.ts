@@ -78,22 +78,6 @@ export const UsersAction: WrappedActionFn =
         throw res.error
       }
 
-      const { data: respData, totalCount } = res.data.UserProfileAdminProfiles
-
-      if (totalCount === 1) {
-        return redirect(
-          replaceParams({
-            href: ServiceDeskPaths.User,
-            params: {
-              nationalId: (await maskString(
-                respData[0].nationalId,
-                userInfo.profile.nationalId,
-              )) as string,
-            },
-          }),
-        )
-      }
-
       return {
         data: res.data.UserProfileAdminProfiles,
         errors: null,
