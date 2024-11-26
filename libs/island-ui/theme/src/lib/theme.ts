@@ -27,6 +27,7 @@ export const spacing = {
   21: UNIT * 21, // DEPRECATED
   22: UNIT * 22, // DEPRECATED
   23: UNIT * 23, // DEPRECATED
+  24: UNIT * 24, // DEPRECATED
   28: UNIT * 28, // DEPRECATED
   30: UNIT * 30, // DEPRECATED
   200: spacingPrimitives['200'].$value ?? UNIT * 25,
