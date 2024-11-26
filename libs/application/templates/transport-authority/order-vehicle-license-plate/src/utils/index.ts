@@ -3,6 +3,7 @@ import { ChargeItemCode } from '@island.is/shared/constants'
 import { YES } from '@island.is/application/core'
 import {
   Application,
+  BasicChargeItem,
   ExtraData,
   StaticText,
 } from '@island.is/application/types'
@@ -10,17 +11,20 @@ import { payment } from '../lib/messages'
 
 export { getSelectedVehicle } from './getSelectedVehicle'
 
-export const getChargeItemCodes = (application: Application): Array<string> => {
+export const getChargeItems = (
+  application: Application,
+): Array<BasicChargeItem> => {
   const answers = application.answers as OrderVehicleLicensePlate
-  return getChargeItemCodesWithAnswers(answers)
+  return getChargeItemsWithAnswers(answers)
 }
 
-export const getChargeItemCodesWithAnswers = (
+export const getChargeItemsWithAnswers = (
   answers: OrderVehicleLicensePlate,
-): Array<string> => {
-  return getChargeItemCodesAndExtraLabelUsingAnswers(answers).map(
-    (x) => x.chargeItemCode,
-  )
+): Array<BasicChargeItem> => {
+  return getChargeItemsWithExtraLabelUsingAnswers(answers).map((item) => ({
+    code: item.chargeItemCode,
+    quantity: item.chargeItemQuantity,
+  }))
 }
 
 export const getExtraData = (application: Application): ExtraData[] => {
@@ -33,17 +37,29 @@ export enum PlateType {
   rear = 'rear',
 }
 
-export const getChargeItemCodesAndExtraLabel = (
+export const getChargeItemsWithExtraLabel = (
   application: Application,
-): Array<{ chargeItemCode: string; extraLabel?: StaticText }> => {
+): Array<{
+  chargeItemCode: string
+  chargeItemQuantity?: number
+  extraLabel?: StaticText
+}> => {
   const answers = application.answers as OrderVehicleLicensePlate
-  return getChargeItemCodesAndExtraLabelUsingAnswers(answers)
+  return getChargeItemsWithExtraLabelUsingAnswers(answers)
 }
 
-const getChargeItemCodesAndExtraLabelUsingAnswers = (
+const getChargeItemsWithExtraLabelUsingAnswers = (
   answers: OrderVehicleLicensePlate,
-): Array<{ chargeItemCode: string; extraLabel?: StaticText }> => {
-  const result: Array<{ chargeItemCode: string; extraLabel?: StaticText }> = []
+): Array<{
+  chargeItemCode: string
+  chargeItemQuantity?: number
+  extraLabel?: StaticText
+}> => {
+  const result: Array<{
+    chargeItemCode: string
+    chargeItemQuantity?: number
+    extraLabel?: StaticText
+  }> = []
 
   if (answers?.plateSize?.frontPlateSize?.length > 0) {
     result.push({

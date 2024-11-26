@@ -41,6 +41,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Bæta við',
     description: 'Add button',
   },
+  buttonRemove: {
+    id: 'application.system:button.remove',
+    defaultMessage: 'Fjarlægja',
+    description: 'Remove button',
+  },
   buttonCancel: {
     id: 'application.system:button.cancel',
     defaultMessage: 'Hætta við',
