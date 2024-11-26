@@ -1170,7 +1170,7 @@ export class CmsContentfulService {
       .catch(errorHandler('getOrganizationParentSubpage'))
 
     return (
-      (response?.items as types.IOrganizationParentSubpage[]).map(
+      (response.items as types.IOrganizationParentSubpage[]).map(
         mapOrganizationParentSubpage,
       )[0] ?? null
     )
