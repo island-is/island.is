@@ -7,6 +7,7 @@ import {
   FormValue,
   ApplicationStatus,
   ApplicationLifecycle,
+  PruningApplication,
 } from '@island.is/application/types'
 import {
   Application,
@@ -226,11 +227,17 @@ export class ApplicationService {
     })
   }
 
-  async findAllDueToBePruned(): Promise<
-    Pick<Application, 'id' | 'attachments' | 'typeId' | 'state'>[]
-  > {
+  async findAllDueToBePruned(): Promise<PruningApplication[]> {
     return this.applicationModel.findAll({
-      attributes: ['id', 'attachments', 'typeId', 'state'],
+      attributes: [
+        'id',
+        'attachments',
+        'typeId',
+        'state',
+        'applicant',
+        'answers',
+        'externalData',
+      ],
       where: {
         [Op.and]: {
           pruneAt: {

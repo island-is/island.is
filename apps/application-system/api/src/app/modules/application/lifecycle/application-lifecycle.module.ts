@@ -16,7 +16,10 @@ import { environment } from '../../../../environments'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { ApplicationChargeModule } from '../charge/application-charge.module'
 import { ApplicationLifeCycleService } from './application-lifecycle.service'
-import { ApplicationsNotificationsModule } from '@island.is/application/template-api-modules'
+import {
+  UserNotificationClientConfig,
+  UserNotificationEagerClientModule,
+} from '@island.is/clients/user-notification'
 
 @Module({
   imports: [
@@ -27,12 +30,17 @@ import { ApplicationsNotificationsModule } from '@island.is/application/template
     LoggingModule,
     ApplicationChargeModule,
     ApplicationFilesModule,
+    UserNotificationEagerClientModule,
     AuditModule.forRoot(environment.audit),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [signingModuleConfig, ApplicationFilesConfig, FileStorageConfig],
+      load: [
+        UserNotificationClientConfig,
+        signingModuleConfig,
+        ApplicationFilesConfig,
+        FileStorageConfig,
+      ],
     }),
-    ApplicationsNotificationsModule,
   ],
   providers: [ApplicationLifeCycleService],
 })

@@ -12,6 +12,8 @@ import { Application, ActionCardTag } from './Application'
 import { Condition } from './Condition'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { TemplateApi } from './template-api/TemplateApi'
+import { Application as ApplicationCore } from '@island.is/application/api/core'
+import { PruningApplication, PruningNotification } from './ApplicationLifecycle'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
@@ -69,6 +71,9 @@ export type StateLifeCycle =
       // If set to a number prune date will equal current timestamp + whenToPrune (ms)
       whenToPrune: number | ((application: Application) => Date)
       shouldDeleteChargeIfPaymentFulfilled?: boolean | null
+      pruneMessage?:
+        | PruningNotification
+        | ((application: PruningApplication) => PruningNotification)
     }
 
 export type PendingActionDisplayType = 'warning' | 'success' | 'info' | 'error'

@@ -1,29 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common'
-import {
-  ApplicationService,
-  Application,
-} from '@island.is/application/api/core'
+import { ApplicationService } from '@island.is/application/api/core'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApplicationChargeService } from '../charge/application-charge.service'
 import { FileService } from '@island.is/application/api/files'
-import {
-  NotificationsService,
-  NotificationType,
-} from '@island.is/application/template-api-modules'
+import { NotificationsApi } from '@island.is/clients/user-notification'
+import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import { PruningApplication } from '@island.is/application/types'
 
 export interface ApplicationPruning {
   pruned: boolean
-  application: Pick<
-    Application,
-    | 'id'
-    | 'attachments'
-    | 'answers'
-    | 'externalData'
-    | 'typeId'
-    | 'state'
-    | 'applicant'
-  >
+  application: PruningApplication
   failedAttachments: object
 }
 
@@ -37,7 +24,7 @@ export class ApplicationLifeCycleService {
     private applicationService: ApplicationService,
     private fileService: FileService,
     private applicationChargeService: ApplicationChargeService,
-    private notificationsService: NotificationsService,
+    private readonly notificationApi: NotificationsApi,
   ) {
     this.logger = logger.child({ context: 'ApplicationLifeCycleService' })
   }
@@ -49,7 +36,7 @@ export class ApplicationLifeCycleService {
     await this.pruneAttachments()
     await this.pruneApplicationCharge()
     await this.pruneApplicationData()
-    this.reportResults()
+    await this.reportResults()
     this.logger.info(`Application pruning done.`)
   }
 
@@ -59,16 +46,7 @@ export class ApplicationLifeCycleService {
 
   private async fetchApplicationsToBePruned() {
     const applications =
-      (await this.applicationService.findAllDueToBePruned()) as Pick<
-        Application,
-        | 'id'
-        | 'attachments'
-        | 'answers'
-        | 'externalData'
-        | 'typeId'
-        | 'state'
-        | 'applicant'
-      >[]
+      (await this.applicationService.findAllDueToBePruned()) as PruningApplication[]
 
     this.logger.info(`Found ${applications.length} applications to be pruned.`)
 
@@ -143,15 +121,53 @@ export class ApplicationLifeCycleService {
       (application) => application.pruned,
     )
 
-    await this.notificationsService.sendNotification({
-      type: NotificationType.System,
-      messageParties: {
-        recipient: '0101302399',
-      },
-      args: {
-        documentId: '1337',
-      },
-    })
     this.logger.info(`Successful: ${success.length}, Failed: ${failed.length}`)
+
+    for (const { application } of this.processingApplications) {
+      await this.sendPrunedNotificationForInProgress(application)
+    }
+  }
+
+  private async sendPrunedNotificationForInProgress(
+    application: PruningApplication,
+  ) {
+    const template = await getApplicationTemplateByTypeId(application.typeId)
+    const stateConfig = template.stateMachineConfig.states[application.state]
+    const lifeCycle = stateConfig.meta?.lifecycle
+    if (lifeCycle && lifeCycle.shouldBePruned && lifeCycle.pruneMessage) {
+      const pruneMessage =
+        typeof lifeCycle.pruneMessage === 'function'
+          ? lifeCycle.pruneMessage(application)
+          : lifeCycle.pruneMessage
+      const notification = {
+        recipient: application.applicant,
+        templateId: 'HNIPP.AS.PRUNED.INPROGRESS',
+        args: [
+          {
+            key: 'externalBody',
+            value: pruneMessage.externalBody,
+          },
+          {
+            key: 'internalBody',
+            value: pruneMessage.internalBody,
+          },
+        ],
+      }
+      try {
+        const response =
+          await this.notificationApi.notificationsControllerCreateHnippNotification(
+            {
+              createHnippNotificationDto: notification,
+            },
+          )
+        this.logger.info(
+          `Prune notification sent with response: ${JSON.stringify(response)}`,
+        )
+      } catch (error) {
+        this.logger.error(
+          `Failed to send pruning notification with error: ${error} for application ${application.id}`,
+        )
+      }
+    }
   }
 }
