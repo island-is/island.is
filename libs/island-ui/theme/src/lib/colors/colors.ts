@@ -58,10 +58,7 @@ export const yellow100 = color.accent.yellow[100] ?? '#fffef7'
 export const transparent = 'transparent'
 export const currentColor = 'currentColor'
 
-// Note: I suppose we also need to introduce colors in a way that they are now used in figma.
-// Note: They are veeeeery many! Example:
-
-//  Background Colors
+// Background Colors
 export const backgroundBrand = blue400
 export const backgroundBrandLighter = blue200
 export const backgroundBrandMinimal = blue100
@@ -78,61 +75,61 @@ export const borderSecondaryActive = purple400
 export const borderSecondaryInactive = purple200
 
 // Feedback Colors - Error
-export const errorBackground = red100
-export const errorBorder = red200
-export const errorBorderContrast = red600
-export const errorForeground = red400
-export const errorForegroundContrast = red600
+export const feedbackErrorBackground = red100
+export const feedbackErrorBorder = red200
+export const feedbackErrorBorderContrast = red600
+export const feedbackErrorForeground = red400
+export const feedbackErrorForegroundContrast = red600
 
 // Feedback Colors - Information
-export const infoBackgroundMinimal = blue100
-export const infoBorder = blue200
-export const infoForeground = blue400
-export const infoForegroundContrast = blue600
+export const feedbackInfoBackgroundMinimal = blue100
+export const feedbackInfoBorder = blue200
+export const feedbackInfoForeground = blue400
+export const feedbackInfoForegroundContrast = blue600
 
 // Feedback Colors - Success
-export const successBackground = mint100
-export const successBorder = mint200
-export const successForeground = mint400
+export const feedbackSuccessBackground = mint100
+export const feedbackSuccessBorder = mint200
+export const feedbackSuccessForeground = mint400
 
-// Feedback Colors - Tag
-export const tagBlueAccent = blue400
-export const tagBlueBackground = blue100
-export const tagBlueBorder = blue200
+// Feedback Colors - Tags
+export const feedbackTagsBlueAccent = blue400
+export const feedbackTagsBlueBackground = blue100
+export const feedbackTagsBlueBorder = blue200
 
-export const tagBlueberryAccent = blueberry400
-export const tagBlueberryBackground = blueberry100
-export const tagBlueberryBorder = blueberry200
+export const feedbackTagsBlueberryAccent = blueberry400
+export const feedbackTagsBlueberryBackground = blueberry100
+export const feedbackTagsBlueberryBorder = blueberry200
 
-export const tagDarkBlueAccent = blue600
-export const tagDarkBlueBackground = blue200
-export const tagDarkBlueBorder = blue200
+export const feedbackTagsDarkBlueAccent = blue600
+export const feedbackTagsDarkBlueBackground = blue200
+export const feedbackTagsDarkBlueBorder = blue200
 
-export const tagMintAccent = mint800
-export const tagMintBackground = mint200
-export const tagMintBorder = mint200
+export const feedbackTagsMintAccent = mint800
+export const feedbackTagsMintBackground = mint200
+export const feedbackTagsMintBorder = mint200
 
-export const tagPurpleAccent = purple400
-export const tagPurpleBackground = purple100
-export const tagPurpleBorder = purple200
+export const feedbackTagsPurpleAccent = purple400
+export const feedbackTagsPurpleBackground = purple100
+export const feedbackTagsPurpleBorder = purple200
 
-export const tagRedAccent = red600
-export const tagRedBackground = red100
-export const tagRedBorder = red200
+export const feedbackTagsRedAccent = red600
+export const feedbackTagsRedBackground = red100
+export const feedbackTagsRedBorder = red200
 
-export const tagRoseAccent = roseTinted400
-export const tagRoseBackground = roseTinted100
-export const tagRoseAccentBorder = roseTinted200
+export const feedbackTagsRoseAccent = roseTinted400
+export const feedbackTagsRoseBackground = roseTinted100
+export const feedbackTagsRoseAccentBorder = roseTinted200
 
-export const tagYellowAccent = dark400
-export const tagYellowBackground = yellow300
-export const tagYellowBorder = yellow600
-export const tagYellowHover = yellow400
+export const feedbackTagsYellowAccent = dark400
+export const feedbackTagsYellowBackground = yellow300
+export const feedbackTagsYellowBorder = yellow600
+export const feedbackTagsYellowHover = yellow400
 
 // Feedback Colors - Warning
-export const warningBackground = yellow200
-export const warningBorder = yellow400
-export const warningForeground = yellow600
+export const feedbackWarningBackground = yellow200
+export const feedbackWarningBorder = yellow400
+export const feedbackWarningForeground = yellow600
 
 // Foreground Colors
 export const foregroundBrand = blue400
@@ -162,4 +159,35 @@ export const interactiveBackgroundPrimaryMinimalActive = blue200
 export const interactiveBackgroundTooltip = dark400
 
 // Interactive Border Colors
-// TBC.....
+export const interactiveBorderActive = dark400
+export const interactiveBorderDisabled = blue300
+export const interactiveBorderPrimary = blue400
+export const interactiveBorderPrimaryMinimal = blue200
+export const interactiveBorderSecondary = purple400
+export const interactiveBorderSecondaryMinimal = purple200
+export const interactiveBorderDestructiveActive = roseTinted400
+export const interactiveBorderDestructiveDefault = red600
+export const interactiveBorderDestructiveDisabled = red300
+export const interactiveBorderFocus = mint400
+export const interactiveBorderInvert = white
+export const interactiveBorderInvertActive = blueberry100
+
+// Interactive Foreground Colors
+export const interactiveForegroundBrandSecondary = purple400
+export const interactiveForegroundBrandSecondaryContrast = purple600
+export const interactiveForegroundDefault = dark400
+export const interactiveForegroundDestructive = red600
+export const interactiveForegroundDestructiveActive = roseTinted400
+export const interactiveForegroundDestructiveDisabled = red300
+export const interactiveForegroundDisabled = dark300
+export const interactiveForegroundInvert = white
+export const interactiveForegroundInvertActive = blueberry100
+export const interactiveForegroundPrimary = blue400
+export const interactiveForegroundPrimaryActive = blueberry400
+export const interactiveForegroundPrimaryContrast = blue600
+export const interactiveForegroundPrimaryDisabled = blue300
+export const interactiveForegroundRed = red400
+export const interactiveForegroundRedMinimalActive = red200
+
+// Overlay Colors
+export const overlayDefault = blue100

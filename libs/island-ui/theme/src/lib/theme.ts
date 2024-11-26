@@ -8,8 +8,6 @@ import {
   radiusPrimitives,
 } from './tokens/tokens'
 
-const primaryFont = fontPrimitives.family.primary.$value
-
 export const UNIT = 8
 
 export const spacing = {
@@ -84,7 +82,7 @@ export const theme = {
   zIndex,
   touchableSize: 10,
   typography: {
-    fontFamily: `"${primaryFont}", San Francisco, Segoe UI, sans-serif`,
+    fontFamily: `"${fontPrimitives.family.primary.$value}", San Francisco, Segoe UI, sans-serif`,
     light: 300,
     regular: 400,
     medium: 500,
