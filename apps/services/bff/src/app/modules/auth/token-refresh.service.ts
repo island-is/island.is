@@ -31,6 +31,9 @@ export class TokenRefreshService {
   /**
    * Creates a unique key for tracking refresh token operations in progress
    * This key is used to prevent concurrent refresh token requests for the same session
+   *
+   * @param sid - Session ID
+   * @returns Formatted key string for refresh token tracking
    */
   private createRefreshTokenKey(sid: string): string {
     return `refresh_token_in_progress:${sid}`
@@ -39,6 +42,9 @@ export class TokenRefreshService {
   /**
    * Creates a key for storing token response data in cache
    * This key is used to store and retrieve the current token data for a session
+   *
+   * @param sid - Session ID
+   * @returns Formatted key string for token response data
    */
   private createTokenResponseKey(sid: string): string {
     return this.cacheService.createSessionKeyType('current', sid)
@@ -46,7 +52,17 @@ export class TokenRefreshService {
 
   /**
    * Executes the token refresh operation and updates the cache
-   * Sets a flag during refresh, gets new tokens, and updates cache
+   * This method:
+   * 1. Sets a flag in cache to indicate refresh is in progress
+   * 2. Requests new tokens from the identity server
+   * 3. Updates the cache with the new token data
+   * 4. Cleans up the refresh flag
+   *
+   * @param params.refreshTokenKey - Redis key for tracking refresh status
+   * @param params.encryptedRefreshToken - Encrypted refresh token for getting new tokens
+   *
+   * @returns Promise<CachedTokenResponse> Updated token data
+   * @throws Will throw if token refresh fails or cache operations fail
    */
   private async executeTokenRefresh({
     refreshTokenKey,
@@ -81,6 +97,8 @@ export class TokenRefreshService {
   /**
    * Waits for an ongoing refresh operation to complete
    * Uses polling with a maximum wait time
+   *
+   * @param sid Session ID
    */
   private async waitForRefreshCompletion(sid: string): Promise<boolean> {
     let attempts = 0
@@ -117,6 +135,8 @@ export class TokenRefreshService {
   /**
    * Retrieves and validates token from cache
    * Checks for existence and expiration
+   *
+   * @param tokenResponseKey - Key in cache service for token response data
    */
   private async getTokenFromCache(
     tokenResponseKey: string,
