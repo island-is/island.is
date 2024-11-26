@@ -175,17 +175,15 @@ OrganizationNewsArticle.getProps = async ({
 
   const organizationPage = !_organizationPage
     ? (
-        await Promise.resolve(
-          apolloClient.query<Query, QueryGetOrganizationPageArgs>({
-            query: GET_ORGANIZATION_PAGE_QUERY,
-            variables: {
-              input: {
-                slug: organizationPageSlug,
-                lang: locale as Locale,
-              },
+        await apolloClient.query<Query, QueryGetOrganizationPageArgs>({
+          query: GET_ORGANIZATION_PAGE_QUERY,
+          variables: {
+            input: {
+              slug: organizationPageSlug,
+              lang: locale as Locale,
             },
-          }),
-        )
+          },
+        })
       ).data?.getOrganizationPage
     : _organizationPage
 
