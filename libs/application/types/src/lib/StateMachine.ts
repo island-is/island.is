@@ -131,6 +131,7 @@ export interface ApplicationStateMeta<
   roles?: RoleInState<T>[]
   onExit?: TemplateApi<R>[] | TemplateApi<R>
   onEntry?: TemplateApi<R>[] | TemplateApi<R>
+  onDelete?: TemplateApi<R>[] | TemplateApi<R>
 }
 
 export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>

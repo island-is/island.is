@@ -45,11 +45,6 @@ const validateAssetNumber = (assetNumber: string) => {
   return assetNumberPattern.test(assetNumber)
 }
 
-const validateDebtBankAccount = (assetNumber: string) => {
-  const assetNumberPattern = /^\d{4}-\d{2}-\d{6}|\d{12}$/
-  return assetNumberPattern.test(assetNumber)
-}
-
 const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
   z
     .object({

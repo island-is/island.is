@@ -316,8 +316,13 @@ describe('getCasesQueryFilter', () => {
             ],
           },
           {
-            '$eventLogs.event_type$':
-              EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+            id: {
+              [Op.in]: Sequelize.literal(`
+            (SELECT case_id
+              FROM event_log
+              WHERE event_type = '${EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR}')
+          `),
+            },
           },
         ],
       })
@@ -386,10 +391,10 @@ describe('getCasesQueryFilter', () => {
           indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
           indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
           id: {
-            [Op.notIn]: Sequelize.literal(`
+            [Op.in]: Sequelize.literal(`
             (SELECT case_id
               FROM defendant
-              WHERE (verdict_view_date IS NULL OR verdict_view_date > NOW() - INTERVAL '28 days'))
+              WHERE is_sent_to_prison_admin = true)
           `),
           },
         },
@@ -431,7 +436,15 @@ describe('getCasesQueryFilter', () => {
                     {
                       [Op.and]: [
                         { state: CaseState.RECEIVED },
-                        { '$dateLogs.date_type$': DateType.ARRAIGNMENT_DATE },
+                        {
+                          id: {
+                            [Op.in]: Sequelize.literal(`
+                          (SELECT case_id
+                            FROM date_log
+                            WHERE date_type = '${DateType.ARRAIGNMENT_DATE}')
+                        `),
+                          },
+                        },
                       ],
                     },
                     { state: completedRequestCaseStates },
@@ -459,7 +472,8 @@ describe('getCasesQueryFilter', () => {
                         [Op.in]: Sequelize.literal(`
                       (SELECT case_id
                         FROM defendant
-                        WHERE defender_national_id in ('${user.nationalId}', '${user.nationalId}') and is_defender_choice_confirmed = true)
+                        WHERE defender_national_id in ('${user.nationalId}', '${user.nationalId}')
+                          AND is_defender_choice_confirmed = true)
                     `),
                       },
                     },
@@ -468,7 +482,9 @@ describe('getCasesQueryFilter', () => {
                         [Op.in]: Sequelize.literal(`
                       (SELECT case_id
                         FROM civil_claimant
-                        WHERE has_spokesperson = true AND spokesperson_national_id in ('${user.nationalId}', '${user.nationalId}') and is_spokesperson_confirmed = true)
+                        WHERE has_spokesperson = true
+                          AND spokesperson_national_id in ('${user.nationalId}', '${user.nationalId}')
+                          AND is_spokesperson_confirmed = true)
                     `),
                       },
                     },

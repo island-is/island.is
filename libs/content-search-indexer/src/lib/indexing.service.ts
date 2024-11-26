@@ -14,7 +14,6 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { environment } from '../environments/environment'
-import { CacheInvalidationService } from './cache-invalidation.service'
 
 type SyncStatus = {
   running?: boolean
@@ -28,7 +27,6 @@ export class IndexingService {
   constructor(
     private readonly elasticService: ElasticService,
     private readonly cmsSyncService: CmsSyncService,
-    private readonly cacheInvalidationService: CacheInvalidationService,
   ) {
     // add importer service to this array to make it import
     this.importers = [this.cmsSyncService]
@@ -91,14 +89,6 @@ export class IndexingService {
           isIncrementalUpdate,
         )
 
-        // Invalidate cached pages in the background if we are performing an incremental update
-        if (isIncrementalUpdate) {
-          this.cacheInvalidationService.invalidateCache(
-            elasticData.add,
-            options.locale,
-          )
-        }
-
         nextPageToken = importerResponseNextPageToken
         postSyncOptions = importerResponsePostSyncOptions
       }
@@ -130,14 +120,6 @@ export class IndexingService {
               elasticData,
               isIncrementalUpdate,
             )
-
-            // Invalidate cached pages in the background if we are performing an incremental update
-            if (isIncrementalUpdate) {
-              this.cacheInvalidationService.invalidateCache(
-                elasticData.add,
-                options.locale,
-              )
-            }
 
             nextPageToken = importerResponseNextPageToken
             postSyncOptions = importerResponsePostSyncOptions

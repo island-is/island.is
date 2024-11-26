@@ -1,4 +1,4 @@
-import { pruneAfterDays } from '@island.is/application/core'
+import { getValueViaPath, pruneAfterDays } from '@island.is/application/core'
 
 import {
   Application,
@@ -13,7 +13,7 @@ import {
 } from '@island.is/application/types'
 import { partialSchema } from './dataSchema'
 import { general } from './messages'
-import { TemplateApiActions } from './types'
+import { InputFields, TemplateApiActions } from './types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import set from 'lodash/set'
@@ -24,16 +24,39 @@ export enum ApplicationStates {
   DRAFT_RETRY = 'draft_retry',
   SUBMITTED = 'submitted',
   COMPLETE = 'complete',
+  REJECTED = 'rejected',
 }
 
 enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
 }
-type OJOIEvents =
+
+const getApplicationName = (application: Application) => {
+  const title = getValueViaPath(
+    application.answers,
+    InputFields.advert.title,
+    '',
+  )
+
+  const type = getValueViaPath(
+    application.answers,
+    InputFields.advert.typeName,
+    '',
+  )
+
+  if (!title || !type) {
+    return general.applicationName
+  }
+
+  return `${type} ${title}`
+}
+
+export type OJOIEvents =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.EDIT }
 
 const OJOITemplate: ApplicationTemplate<
   ApplicationContext,
@@ -41,7 +64,7 @@ const OJOITemplate: ApplicationTemplate<
   OJOIEvents
 > = {
   type: ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND,
-  name: general.applicationName,
+  name: getApplicationName,
   institution: general.ministryOfJustice,
   featureFlag: Features.officialJournalOfIceland,
   translationNamespaces: [
@@ -98,6 +121,12 @@ const OJOITemplate: ApplicationTemplate<
           name: general.applicationName.defaultMessage,
           status: 'inprogress',
           progress: 0.66,
+          actionCard: {
+            tag: {
+              label: general.draftStatusLabel,
+              variant: 'blue',
+            },
+          },
           lifecycle: pruneAfterDays(90),
           roles: [
             {
@@ -125,11 +154,14 @@ const OJOITemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [
+          [DefaultEvents.SUBMIT]: [
             {
               target: ApplicationStates.SUBMITTED,
             },
           ],
+          [DefaultEvents.REJECT]: {
+            target: ApplicationStates.REJECTED,
+          },
         },
       },
       [ApplicationStates.DRAFT_RETRY]: {
@@ -138,24 +170,18 @@ const OJOITemplate: ApplicationTemplate<
           status: 'inprogress',
           progress: 0.66,
           lifecycle: pruneAfterDays(90),
-          onEntry: [
-            defineTemplateApi({
-              action: TemplateApiActions.departments,
-              externalDataId: 'departments',
-              order: 1,
-            }),
-            defineTemplateApi({
-              action: TemplateApiActions.types,
-              externalDataId: 'types',
-              order: 2,
-            }),
-          ],
+          actionCard: {
+            tag: {
+              label: general.draftStatusLabel,
+              variant: 'blue',
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
               read: 'all',
               write: 'all',
-              delete: true,
+              delete: false,
               formLoader: () =>
                 import('../forms/DraftRetry').then((val) =>
                   Promise.resolve(val.DraftRetry),
@@ -176,11 +202,14 @@ const OJOITemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [
+          [DefaultEvents.SUBMIT]: [
             {
               target: ApplicationStates.SUBMITTED,
             },
           ],
+          [DefaultEvents.REJECT]: {
+            target: ApplicationStates.REJECTED,
+          },
         },
       },
       [ApplicationStates.SUBMITTED]: {
@@ -195,11 +224,18 @@ const OJOITemplate: ApplicationTemplate<
             externalDataId: 'successfullyPosted',
             throwOnError: false,
           }),
+          actionCard: {
+            tag: {
+              label: general.submittedStatusLabel,
+              variant: 'purple',
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
               read: 'all',
               write: 'all',
+              delete: false,
               formLoader: () =>
                 import('../forms/Submitted').then((val) =>
                   Promise.resolve(val.Submitted),
@@ -216,8 +252,11 @@ const OJOITemplate: ApplicationTemplate<
           [DefaultEvents.APPROVE]: {
             target: ApplicationStates.COMPLETE,
           },
-          [DefaultEvents.REJECT]: {
+          [DefaultEvents.EDIT]: {
             target: ApplicationStates.DRAFT_RETRY,
+          },
+          [DefaultEvents.REJECT]: {
+            target: ApplicationStates.REJECTED,
           },
         },
       },
@@ -227,15 +266,50 @@ const OJOITemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(90),
+          actionCard: {
+            tag: {
+              label: 'Útgefið',
+              variant: 'mint',
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
               read: 'all',
               write: 'all',
-              delete: true,
+              delete: false,
               formLoader: () =>
                 import('../forms/Complete').then((val) =>
                   Promise.resolve(val.Complete),
+                ),
+            },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+      },
+      [ApplicationStates.REJECTED]: {
+        meta: {
+          name: 'Umsókn hafnað',
+          status: 'rejected',
+          lifecycle: pruneAfterDays(30),
+          actionCard: {
+            tag: {
+              label: 'Hafnað',
+              variant: 'red',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              read: 'all',
+              delete: false,
+              formLoader: () =>
+                import('../forms/Rejected').then((val) =>
+                  Promise.resolve(val.Rejected),
                 ),
             },
             {

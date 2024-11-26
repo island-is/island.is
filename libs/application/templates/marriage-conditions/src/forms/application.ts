@@ -73,7 +73,6 @@ export const getApplication = ({ allowFakeData = false }): Form => {
             description: m.dataCollectionDescription,
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: dataCollection,
-            enableMockPayment: true,
           }),
         ],
       }),

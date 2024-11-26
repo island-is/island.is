@@ -132,11 +132,9 @@ const IndictmentOverview = () => {
             ))}
           </Accordion>
         )}
-        {workingCase.caseFiles && (
-          <Box component="section" marginBottom={10}>
-            <IndictmentCaseFilesList workingCase={workingCase} />
-          </Box>
-        )}
+        <Box component="section" marginBottom={10}>
+          <IndictmentCaseFilesList workingCase={workingCase} />
+        </Box>
         {workingCase.defendants && (
           <Box component="section" marginBottom={5}>
             {

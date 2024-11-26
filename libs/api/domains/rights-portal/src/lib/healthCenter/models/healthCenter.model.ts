@@ -18,6 +18,9 @@ export class HealthCenter {
 
   @Field(() => Boolean, { nullable: true })
   waitListRegistration?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  canRegister?: boolean | null
 }
 
 @ObjectType('RightsPortalPaginatedHealthCenters')

@@ -170,7 +170,7 @@ export const formatSpouse = (
 export const formatAddress = (
   address?: EinstaklingurDTOHeimili | null,
 ): Address | null => {
-  if (!address || !address.husHeiti || !address.poststod) {
+  if (!address || !address.husHeiti) {
     return null
   }
 
@@ -178,7 +178,7 @@ export const formatAddress = (
     streetAddress: address.husHeiti,
     postalCode: address.postnumer ?? null,
     apartment: address.ibud ?? null,
-    city: address.poststod,
+    city: address.poststod ?? null,
     municipalityText: address.sveitarfelag ?? null,
   }
 }

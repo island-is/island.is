@@ -55,7 +55,8 @@
       "executor": "@nx/webpack:dev-server",
       "options": {
         "buildTarget": "portals-admin:build",
-        "hmr": true
+        "hmr": true,
+        "proxyConfig": "apps/portals/admin/proxy.config.json"
       },
       "configurations": {
         "production": {
@@ -92,11 +93,28 @@
         "parallel": false
       }
     },
+    "start-bff": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node -r esbuild-register src/cli/cli.ts run-local-env services-bff-portals-admin"
+        ],
+        "cwd": "infra"
+      }
+    },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn start portals-admin"],
-        "parallel": true
+        "commands": [
+          "yarn nx run portals-admin:start-bff",
+          "yarn start portals-admin"
+        ]
+      }
+    },
+    "mockmode": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["API_MOCKS=true yarn start portals-admin"]
       }
     },
     "docker-static": {

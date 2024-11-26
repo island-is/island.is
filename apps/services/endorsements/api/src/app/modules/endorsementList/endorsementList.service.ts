@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  InternalServerErrorException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
@@ -29,6 +30,8 @@ import csvStringify from 'csv-stringify/lib/sync'
 import { S3Service } from '@island.is/nest/aws'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 import * as path from 'path'
+import * as nationalId from 'kennitala'
+import format from 'date-fns/format'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -192,11 +195,21 @@ export class EndorsementListService {
   }
 
   async lock(endorsementList: EndorsementList): Promise<EndorsementList> {
-    this.logger.info(`Locking endorsement list: ${endorsementList.id}`)
-    if (process.env.NODE_ENV === 'production') {
-      await this.emailLock(endorsementList)
+    try {
+      this.logger.info(`Locking endorsement list: ${endorsementList.id}`)
+      if (process.env.NODE_ENV === 'production') {
+        await this.emailLock(endorsementList)
+      }
+      return await endorsementList.update({ adminLock: true })
+    } catch (error) {
+      this.logger.error('Failed to lock endorsement list', {
+        error: error.message,
+        listId: endorsementList.id,
+      })
+      throw new InternalServerErrorException(
+        `Failed to lock endorsement list: ${error.message}`,
+      )
     }
-    return await endorsementList.update({ adminLock: true })
   }
 
   async unlock(endorsementList: EndorsementList): Promise<EndorsementList> {
@@ -279,7 +292,7 @@ export class EndorsementListService {
     return result
   }
 
-  async getOwnerInfo(listId: string, owner?: string) {
+  async getOwnerInfo(listId: string, owner?: string): Promise<string> {
     this.logger.info(`Finding single endorsement lists by id "${listId}"`)
     if (!owner) {
       const endorsementList = await this.endorsementListModel.findOne({
@@ -297,15 +310,12 @@ export class EndorsementListService {
     try {
       const person = await this.nationalRegistryApiV3.getName(owner)
       return person?.fulltNafn ? person.fulltNafn : ''
-    } catch (e) {
-      if (e instanceof Error) {
-        this.logger.warn(
-          `Occured when fetching owner name from NationalRegistryApi ${e.message} \n${e.stack}`,
-        )
-        return ''
-      } else {
-        throw e
-      }
+    } catch (error) {
+      this.logger.error('Failed to fetch owner name from NationalRegistry', {
+        error: error.message,
+        listId,
+      })
+      return ''
     }
   }
 
@@ -346,9 +356,9 @@ export class EndorsementListService {
 
     // Add header image
     const headerImageHeight = 40
-    doc.image(headerImagePath, 60, 40, { width: 120 })
+    doc.image(headerImagePath, 52, 40, { width: 120 })
 
-    let currentYPosition = 40 + headerImageHeight + 20
+    let currentYPosition = 40 + headerImageHeight + 30
 
     // Title and petition details
     doc
@@ -357,14 +367,28 @@ export class EndorsementListService {
       .text('Upplýsingar um undirskriftalista', 60, currentYPosition, {
         align: 'left',
       })
+    currentYPosition = doc.y + 20
+
+    doc
+      .font('Bold')
       .fontSize(12)
       .text(
-        'Þetta skjal var framkallað sjálfvirkt þann: ' +
-          new Date().toLocaleDateString(locale) +
-          ' klukkan ' +
-          new Date().toLocaleTimeString(locale),
+        'Þetta skjal var framkallað sjálfvirkt þann: ',
+        60,
+        currentYPosition,
+        {
+          align: 'left',
+        },
       )
-    currentYPosition = doc.y + 20 // Adjust vertical space
+    currentYPosition = doc.y + 5
+
+    doc
+      .font('Regular')
+      .fontSize(12)
+      .text(format(new Date(), 'dd.MM.yyyy HH:mm'), 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 15
 
     doc
       .font('Bold')
@@ -373,6 +397,7 @@ export class EndorsementListService {
         align: 'left',
       })
     currentYPosition = doc.y + 5
+
     doc
       .font('Regular')
       .fontSize(12)
@@ -387,6 +412,7 @@ export class EndorsementListService {
       .fontSize(12)
       .text('Um undirskriftalista: ', 60, currentYPosition, { align: 'left' })
     currentYPosition = doc.y + 5
+
     doc
       .font('Regular')
       .fontSize(12)
@@ -398,8 +424,9 @@ export class EndorsementListService {
     doc
       .font('Bold')
       .fontSize(12)
-      .text('Opin til: ', 60, currentYPosition, { align: 'left' })
+      .text('Opinn til: ', 60, currentYPosition, { align: 'left' })
     currentYPosition = doc.y + 5
+
     doc
       .font('Regular')
       .fontSize(12)
@@ -415,8 +442,8 @@ export class EndorsementListService {
       .font('Bold')
       .fontSize(12)
       .text('Fjöldi undirskrifta: ', 60, currentYPosition, { align: 'left' })
-
     currentYPosition = doc.y + 5
+
     doc
       .font('Regular')
       .fontSize(12)
@@ -430,6 +457,7 @@ export class EndorsementListService {
       .fontSize(12)
       .text('Ábyrgðarmaður: ', 60, currentYPosition, { align: 'left' })
     currentYPosition = doc.y + 5
+
     doc
       .font('Regular')
       .fontSize(12)
@@ -443,11 +471,14 @@ export class EndorsementListService {
         align: 'left',
       })
     currentYPosition = doc.y + 5
+
     doc
       .font('Regular')
       .fontSize(12)
-      .text(endorsementList.owner, 60, currentYPosition, { align: 'left' })
-    currentYPosition = doc.y + 30
+      .text(nationalId.format(endorsementList.owner), 60, currentYPosition, {
+        align: 'left',
+      })
+    currentYPosition = doc.y + 50
 
     const dateX = 60 // Column X position for 'Dags. skráð'
     const nameX = 160 // Column X position for 'Nafn'
@@ -503,7 +534,7 @@ export class EndorsementListService {
     })
 
     // Add footer image at the bottom of the page
-    const footerY = doc.page.height - 80
+    const footerY = doc.page.height - 60
     doc.image(footerImagePath, 60, footerY, { width: 120 })
 
     doc.end()
@@ -592,7 +623,11 @@ export class EndorsementListService {
       })
       return { success: true }
     } catch (error) {
-      this.logger.error('Failed to send email', error)
+      this.logger.error('Failed to send PDF email', {
+        error: error.message,
+        listId,
+        recipientEmail,
+      })
       return { success: false }
     }
   }
@@ -668,7 +703,10 @@ export class EndorsementListService {
       })
       return { success: true }
     } catch (error) {
-      this.logger.error('Failed to send email', error)
+      this.logger.error('Failed to send creation notification email', {
+        error: error.message,
+        listId: endorsementList.id,
+      })
       return { success: false }
     }
   }
@@ -770,7 +808,10 @@ export class EndorsementListService {
       })
       return { success: true }
     } catch (error) {
-      this.logger.error('Failed to send email', error)
+      this.logger.error('Failed to send creation notification email', {
+        error: error.message,
+        listId: endorsementList.id,
+      })
       return { success: false }
     }
   }
@@ -780,44 +821,53 @@ export class EndorsementListService {
     fileType: 'pdf' | 'csv',
   ): Promise<EndorsementListExportUrlResponse> {
     try {
-      this.logger.info(`Exporting list ${listId} as ${fileType}`, { listId })
-
-      // Validate file type
       if (!['pdf', 'csv'].includes(fileType)) {
         throw new BadRequestException(
-          'Invalid file type. Allowed values are "pdf" or "csv".',
+          `Invalid file type. Allowed values are "pdf" or "csv"`,
         )
       }
 
-      // Fetch endorsement list
       const endorsementList = await this.fetchEndorsementList(listId, user)
       if (!endorsementList) {
         throw new NotFoundException(
-          `Endorsement list ${listId} not found or access denied.`,
+          `Endorsement list ${listId} not found or access denied`,
         )
       }
 
-      // Create file buffer
       const fileBuffer =
         fileType === 'pdf'
           ? await this.createPdfBuffer(endorsementList)
           : this.createCsvBuffer(endorsementList)
 
-      // Upload to S3
       const filename = `undirskriftalisti-${listId}-${new Date()
         .toISOString()
         .replace(/[:.]/g, '-')}.${fileType}`
+
       await this.uploadFileToS3(fileBuffer, filename, fileType)
 
-      // Generate presigned URL with 60 minutes expiration
       const url = await this.s3Service.getPresignedUrl({
         bucket: environment.exportsBucketName,
         key: filename,
       })
+
       return { url }
     } catch (error) {
-      this.logger.error(`Failed to export list ${listId}`, { error })
-      throw error
+      this.logger.error('Failed to export list', {
+        error: error.message,
+        listId,
+        fileType,
+      })
+
+      if (
+        error instanceof BadRequestException ||
+        error instanceof NotFoundException
+      ) {
+        throw error // Re-throw validation errors
+      }
+
+      throw new InternalServerErrorException(
+        `Failed to export list: ${error.message}`,
+      )
     }
   }
 
@@ -858,14 +908,21 @@ export class EndorsementListService {
         endorsementList,
         ownerName,
       )
+
+      if (!Buffer.isBuffer(pdfBuffer)) {
+        throw new InternalServerErrorException(
+          'Generated PDF is not a valid buffer',
+        )
+      }
+
       return pdfBuffer
     } catch (error) {
-      this.logger.error(
-        `Failed to create PDF buffer for endorsement list ${endorsementList.id}`,
-        { error },
-      )
-      throw new Error(
-        `Error generating PDF for endorsement list ${endorsementList.id}`,
+      this.logger.error('Failed to create PDF buffer', {
+        error: error.message,
+        listId: endorsementList.id,
+      })
+      throw new InternalServerErrorException(
+        `Failed to generate PDF: ${error.message}`,
       )
     }
   }
@@ -876,16 +933,24 @@ export class EndorsementListService {
     fileType: 'pdf' | 'csv',
   ): Promise<void> {
     try {
+      if (!environment.exportsBucketName) {
+        throw new InternalServerErrorException('S3 bucket name is undefined')
+      }
+
       await this.s3Service.uploadFile(
         fileBuffer,
         { bucket: environment.exportsBucketName, key: filename },
-        {
-          ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
-        },
+        { ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv' },
       )
     } catch (error) {
-      this.logger.error(`Failed to upload file to S3`, { error, filename })
-      throw new Error('Error uploading file to S3')
+      this.logger.error('Failed to upload file to S3', {
+        error: error.message,
+        filename,
+        bucketName: environment.exportsBucketName,
+      })
+      throw new InternalServerErrorException(
+        `Failed to upload file to S3: ${error.message}`,
+      )
     }
   }
 }

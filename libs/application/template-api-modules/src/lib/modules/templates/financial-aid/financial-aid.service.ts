@@ -149,20 +149,19 @@ export class FinancialAidService extends BaseTemplateApiService {
     }
 
     const directTaxPayments = () => {
-      if (externalDataSchema?.taxDataSpouse?.data) {
-        externalDataSchema?.taxData?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.concat(
-          externalDataSchema?.taxDataSpouse?.data
-            .municipalitiesDirectTaxPayments?.directTaxPayments,
-        )
-      }
-      return externalDataSchema?.taxData?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.map(
-        (d) => {
-          d.userType = application.assignees.includes(auth.nationalId)
-            ? UserType.SPOUSE
-            : UserType.APPLICANT
-          return d
-        },
-      )
+      const combinedTaxPayments = [
+        ...(externalDataSchema?.taxData?.data?.municipalitiesDirectTaxPayments
+          ?.directTaxPayments || []),
+        ...(externalDataSchema?.taxDataSpouse?.data
+          ?.municipalitiesDirectTaxPayments?.directTaxPayments || []),
+      ]
+
+      return combinedTaxPayments.map((d) => {
+        d.userType = application.assignees.includes(auth.nationalId)
+          ? UserType.SPOUSE
+          : UserType.APPLICANT
+        return d
+      })
     }
 
     const files = formatFiles(
@@ -201,8 +200,8 @@ export class FinancialAidService extends BaseTemplateApiService {
       usePersonalTaxCredit: Boolean(
         answersSchema.personalTaxCredit.type === ApproveOptions.Yes,
       ),
-      bankNumber: answersSchema.bankInfo.accountNumber,
-      ledger: answersSchema.bankInfo.accountNumber,
+      bankNumber: answersSchema.bankInfo.bankNumber,
+      ledger: answersSchema.bankInfo.ledger,
       accountNumber: answersSchema.bankInfo.accountNumber,
       employment: answersSchema.employment.type,
       employmentCustom: answersSchema.employment.custom,

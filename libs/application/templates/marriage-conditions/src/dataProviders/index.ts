@@ -1,5 +1,6 @@
 import {
   InstitutionNationalIds,
+  MockablePaymentCatalogApi,
   PaymentCatalogApi,
   defineTemplateApi,
 } from '@island.is/application/types'
@@ -21,6 +22,14 @@ export const ReligionCodesApi = defineTemplateApi({
 
 export const DistrictCommissionersPaymentCatalogApi =
   PaymentCatalogApi.configure({
+    params: {
+      organizationId: InstitutionNationalIds.SYSLUMENN,
+    },
+    externalDataId: 'paymentDistrictCommissioners',
+  })
+
+export const MockableDistrictCommissionersPaymentCatalogApi =
+  MockablePaymentCatalogApi.configure({
     params: {
       organizationId: InstitutionNationalIds.SYSLUMENN,
     },

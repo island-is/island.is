@@ -17,8 +17,8 @@ import {
   LinkResolver,
   ServicePortalPaths,
   m,
-} from '@island.is/service-portal/core'
-import { DocumentsPaths } from '@island.is/service-portal/documents'
+} from '@island.is/portals/my-pages/core'
+import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -130,7 +130,7 @@ export const Header = ({ position }: Props) => {
                         />
                       )}
 
-                      {user && <UserLanguageSwitcher user={user} />}
+                      {user && <UserLanguageSwitcher />}
 
                       <Box className={styles.overview} marginRight={[1, 1, 2]}>
                         <Button

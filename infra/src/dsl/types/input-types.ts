@@ -16,6 +16,16 @@ export type ValueSource = string | ((e: Context) => string)
 export type ValueType = MissingSettingType | ValueSource
 // See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes for more info
 export type AccessModes = 'ReadWrite' | 'ReadOnly'
+
+export type BffInfo = {
+  key: PortalKeys
+  clientId: string
+  clientName: string
+  services: BffInfraServices
+  env?: EnvironmentVariables
+  secrets?: Secrets
+}
+
 export type PostgresInfo = {
   host?: {
     [env in OpsEnv]: string
@@ -79,6 +89,11 @@ export type Feature = {
 
 export type Features = { [name in FeatureNames]: Feature }
 export type MountedFile = { filename: string; env: string }
+export type PortalKeys = 'stjornbord' | 'minarsidur'
+
+export interface BffInfraServices {
+  api: ServiceBuilder<string> | string
+}
 
 export type ServiceDefinitionCore = {
   liveness: HealthProbe

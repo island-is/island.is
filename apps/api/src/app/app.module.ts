@@ -146,6 +146,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
 import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
+import { WorkAccidentClientConfig } from '@island.is/clients/work-accident-ver'
 
 import {
   ConfigModule,
@@ -200,6 +201,7 @@ import { GradeClientConfig } from '@island.is/clients/mms/grade'
 import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-skuldara'
 import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
 import { emailModuleConfig } from '@island.is/email-service'
+import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 
 const environment = getConfig
 
@@ -431,6 +433,8 @@ const environment = getConfig
         CriminalRecordClientConfig,
         HealthInsuranceV2ClientConfig,
         UmbodsmadurSkuldaraClientConfig,
+        WorkAccidentClientConfig,
+        ZendeskServiceConfig,
         emailModuleConfig,
       ],
     }),

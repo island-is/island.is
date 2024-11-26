@@ -4,6 +4,7 @@
 # Run "yarn charts" instead.
 #
 #####################################################################
+
 auth-admin-web:
   enabled: true
   env:
@@ -123,8 +124,11 @@ identity-server:
     SessionsApiSettings__BaseAddress: 'http://web-services-sessions.services-sessions.svc.cluster.local'
   files:
     - 'ids-signing.pfx'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+    - 'user-notification'
+    - 'portals-admin'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -330,6 +334,7 @@ services-auth-delegation-api:
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+    ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
     - 'nginx-ingress-internal'
     - 'islandis'
@@ -386,6 +391,9 @@ services-auth-delegation-api:
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
     SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
+    ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
+    ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
+    ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -431,8 +439,11 @@ services-auth-ids-api:
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+    ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
+  grantNamespaces:
+    - 'nginx-ingress-external'
+    - 'user-notification'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -514,6 +525,9 @@ services-auth-ids-api:
     NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
     SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
+    ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
+    ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
+    ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -533,8 +547,11 @@ services-auth-ids-api-cleanup:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+    - 'user-notification'
+    - 'portals-admin'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -603,6 +620,7 @@ services-auth-personal-representative:
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+    ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -654,6 +672,9 @@ services-auth-personal-representative:
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
+    ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
+    ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
+    ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -754,6 +775,7 @@ services-auth-public-api:
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+    ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
@@ -813,6 +835,9 @@ services-auth-public-api:
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
     SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
+    ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
+    ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
+    ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE: '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

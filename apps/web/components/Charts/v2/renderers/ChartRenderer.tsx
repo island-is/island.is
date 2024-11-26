@@ -22,7 +22,12 @@ import {
   useGetChartData,
 } from '../hooks'
 import { messages } from '../messages'
-import { ChartType, CustomStyleConfig } from '../types'
+import {
+  ChartComponentType,
+  ChartType,
+  CustomStyleConfig,
+  DataItem,
+} from '../types'
 import {
   calculateChartSkeletonLoaderHeight,
   createTickFormatter,
@@ -37,6 +42,56 @@ import { renderTooltip } from './TooltipRenderer'
 
 type ChartProps = {
   slice: IChart
+}
+
+const getData = (slice: IChart, queryResult: DataItem[]) => {
+  const base = slice.sourceData ? JSON.parse(slice.sourceData) : queryResult
+
+  const values = slice.components.map((component) =>
+    JSON.parse(component.values || '{}'),
+  )
+
+  if (values[0]?.typeOfSource !== 'manual') {
+    return base
+  }
+
+  const sourceDataType = values[0]?.typeOfManualDataKey
+  const componentType = slice.components[0]?.type
+
+  if (componentType === ChartComponentType.pie) {
+    const pieData = {
+      statisticsForHeader: values
+        .flatMap((item: { categoryItems: [] }) => item.categoryItems)
+        .map((item: { key: string; value: string }) => ({
+          key: item.key,
+          value: parseFloat(item.value) || 0,
+        })),
+    }
+    return [pieData]
+  }
+
+  const allItems = values.flatMap((item) =>
+    sourceDataType === 'date' ? item.dateItems : item.categoryItems,
+  )
+
+  const groupedData = allItems.reduce(
+    (acc: Record<string, Record<string, any>>, item) => {
+      const key =
+        sourceDataType === 'date'
+          ? new Date(item.dateOfChange).getTime()
+          : item.category
+
+      if (!acc[key]) {
+        acc[key] = { header: key }
+      }
+
+      acc[key][item.key] = item.value
+      return acc
+    },
+    {},
+  )
+
+  return Object.values(groupedData).reverse()
 }
 
 export const Chart = ({ slice }: ChartProps) => {
@@ -107,15 +162,15 @@ export const Chart = ({ slice }: ChartProps) => {
   const xAxisKey = slice.xAxisKey || DEFAULT_XAXIS_KEY
   const xAxisValueType = slice.xAxisValueType || DEFAULT_XAXIS_VALUE_TYPE
 
-  const data = (
-    slice.sourceData ? JSON.parse(slice.sourceData) : queryResult.data ?? []
-  ).map((d: Record<string, unknown>) => ({
-    ...d,
-    [xAxisKey]:
-      xAxisValueType === 'date' || xAxisValueType === 'number'
-        ? Number(d[xAxisKey])
-        : d[xAxisKey],
-  }))
+  const data = getData(slice, queryResult.data ?? []).map(
+    (d: Record<string, unknown>) => ({
+      ...d,
+      [xAxisKey]:
+        xAxisValueType === 'date' || xAxisValueType === 'number'
+          ? Number(d[xAxisKey])
+          : d[xAxisKey],
+    }),
+  )
 
   if (!data || data.length === 0) {
     return messages[activeLocale].noDataForChart

@@ -53,7 +53,7 @@ export const Overview = ({
     })
 
   const onBackButtonClick = () => {
-    const incomeLimit = getValueViaPath(answers, 'election.incomeLimit')
+    const incomeLimit = getValueViaPath<string>(answers, 'election.incomeLimit')
 
     if (incomeLimit === GREATER) {
       goToScreen?.('attachments.file')

@@ -24,7 +24,7 @@ export class TemplateApiApplicationService extends BaseTemplateApiApplicationSer
     super()
   }
 
-  async saveAttachmentToApplicaton(
+  async saveAttachmentToApplication(
     application: ApplicationWithAttachments,
     fileName: string,
     buffer: Buffer,

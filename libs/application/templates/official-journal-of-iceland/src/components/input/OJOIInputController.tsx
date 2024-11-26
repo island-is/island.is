@@ -71,6 +71,7 @@ export const OJOIInputController = ({
       disabled={disabled}
       textarea={textarea}
       rows={4}
+      required={false}
       onChange={(e) =>
         debouncedOnUpdateApplicationHandler(
           handleChange(e.target.value),

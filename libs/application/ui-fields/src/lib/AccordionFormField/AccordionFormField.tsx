@@ -5,9 +5,10 @@ import {
 } from '@island.is/application/types'
 import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatText } from '@island.is/application/core'
+import { formatText, formatTextWithLocale } from '@island.is/application/core'
 import { Markdown } from '@island.is/shared/components'
 import { useEffect, useState } from 'react'
+import { Locale } from '@island.is/shared/types'
 
 interface Props extends FieldBaseProps {
   field: AccordionField
@@ -15,7 +16,7 @@ interface Props extends FieldBaseProps {
 
 export const AccordionFormField = ({ field, application }: Props) => {
   const [items, setItems] = useState<Array<AccordionItemType>>()
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const { accordionItems, marginBottom, marginTop, title, titleVariant } = field
 
   useEffect(() => {
@@ -35,7 +36,12 @@ export const AccordionFormField = ({ field, application }: Props) => {
       {title && (
         <Box marginBottom={1}>
           <Text variant={titleVariant ?? 'h3'}>
-            {formatText(field.title, application, formatMessage)}
+            {formatTextWithLocale(
+              field.title,
+              application,
+              locale as Locale,
+              formatMessage,
+            )}
           </Text>
         </Box>
       )}

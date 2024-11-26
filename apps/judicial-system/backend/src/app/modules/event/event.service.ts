@@ -62,6 +62,7 @@ const caseEvent: Record<CaseEvent, string> = {
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
   [CaseTransition.RETURN_INDICTMENT]: ':woman-gesturing-no: Ákæru afturkallað',
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
+  SUBPOENA_SERVICE_STATUS: ':page_with_curl: Staða fyrirkalls uppfærð',
   [CaseTransition.SUBMIT]: ':mailbox_with_mail: Sent',
   [CaseTransition.WITHDRAW_APPEAL]:
     ':leftwards_arrow_with_hook: Kæru afturkallað',
@@ -75,6 +76,18 @@ export type CaseEvent =
   | 'EXTEND'
   | 'RESUBMIT'
   | 'SCHEDULE_COURT_DATE'
+  | 'SUBPOENA_SERVICE_STATUS'
+
+const caseEventsToLog = [
+  'CREATE',
+  'CREATE_XRD',
+  'SCHEDULE_COURT_DATE',
+  'SUBPOENA_SERVICE_STATUS',
+  'COMPLETE',
+  'ACCEPT',
+  'REJECT',
+  'DISMISS',
+]
 
 @Injectable()
 export class EventService {
@@ -85,7 +98,12 @@ export class EventService {
     private readonly logger: Logger,
   ) {}
 
-  async postEvent(event: CaseEvent, theCase: Case, eventOnly = false) {
+  async postEvent(
+    event: CaseEvent,
+    theCase: Case,
+    eventOnly = false,
+    info?: { [key: string]: string | boolean | Date | undefined },
+  ) {
     try {
       if (!this.config.url) {
         return
@@ -113,7 +131,7 @@ export class EventService {
       const courtOfAppealsText = theCase.appealCaseNumber
         ? `\n>Landsréttur *${theCase.appealCaseNumber}*`
         : ''
-      const extraText =
+      const courtDateText =
         event === 'SCHEDULE_COURT_DATE'
           ? `\n>Dómari ${
               theCase.judge?.name ?? 'er ekki skráður'
@@ -128,6 +146,8 @@ export class EventService {
             }`
           : ''
 
+      const infoText = this.getInfoText(info)
+
       await fetch(`${this.config.url}`, {
         method: 'POST',
         headers: { 'Content-type': 'application/json' },
@@ -137,12 +157,13 @@ export class EventService {
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `*${title}*\n>${typeText}\n>${prosecutionText}${courtText}${courtOfAppealsText}${extraText}`,
+                text: `*${title}*\n>${typeText}\n>${prosecutionText}${courtText}${courtOfAppealsText}${courtDateText}\n>${infoText}`,
               },
             },
           ],
         }),
       })
+      this.logInfo(event, theCase)
     } catch (error) {
       // Tolerate failure, but log error
       this.logger.error(
@@ -162,14 +183,7 @@ export class EventService {
         return
       }
 
-      let infoText = ''
-
-      if (info) {
-        let property: keyof typeof info
-        for (property in info) {
-          infoText = `${infoText}${property}: ${info[property]}\n`
-        }
-      }
+      const infoText = this.getInfoText(info)
 
       await fetch(`${this.config.errorUrl}`, {
         method: 'POST',
@@ -192,5 +206,46 @@ export class EventService {
       // Tolerate failure, but log error
       this.logger.error(`Failed to post an error event`, { error })
     }
+  }
+
+  getInfoText = (info?: {
+    [key: string]: string | boolean | Date | undefined
+  }) => {
+    let infoText = ''
+
+    if (info) {
+      let property: keyof typeof info
+      for (property in info) {
+        infoText = `${infoText}${property}: ${info[property]}\n`
+      }
+    }
+
+    return infoText
+  }
+
+  logInfo = (event: CaseEvent, theCase: Case) => {
+    if (!caseEventsToLog.includes(event)) {
+      return
+    }
+
+    let extraInfo
+
+    switch (event) {
+      case 'SCHEDULE_COURT_DATE':
+        extraInfo = `courtDate: ${formatDate(
+          DateLog.courtDate(theCase.dateLogs)?.date ??
+            DateLog.arraignmentDate(theCase.dateLogs)?.date,
+          'Pp',
+        )}`
+        break
+      default:
+        break
+    }
+
+    this.logger.info(`Event ${event} for case ${theCase.id}`, {
+      caseId: theCase.id,
+      event,
+      extraInfo,
+    })
   }
 }

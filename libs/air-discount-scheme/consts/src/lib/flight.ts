@@ -15,4 +15,5 @@ export const Airlines = {
   ernir: 'ernir',
   icelandair: 'icelandair',
   norlandair: 'norlandair',
+  myflug: 'myflug',
 }

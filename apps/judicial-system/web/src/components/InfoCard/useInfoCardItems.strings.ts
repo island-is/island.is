@@ -65,4 +65,9 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill á "kröfuhafar" hluta í yfirliti ákæru þegar kröfuhafar eru fleiri en einn.',
   },
+  name: {
+    id: 'judicial.system.core:info_card.defendant_info.name',
+    defaultMessage: 'Nafn',
+    description: 'Notaður sem titill fyrir nafn',
+  },
 })

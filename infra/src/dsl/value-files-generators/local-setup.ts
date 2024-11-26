@@ -16,6 +16,14 @@ const mapServiceToNXname = async (serviceName: string) => {
   const projects = globSync(['apps/*/project.json', 'apps/*/*/project.json'], {
     cwd: projectRootPath,
   })
+
+  // This is a hack to make sure we are running `services-bff` project with the desired infra config.
+  // We have multiple infra files under the `services-bff` project, e.g. `services-bff-admin-portal`, `services-bff-my-pages-portal`, etc.
+  // For the project to run correctly, we need to run the `services-bff` project.
+  if (serviceName.startsWith('services-bff-')) {
+    serviceName = 'services-bff'
+  }
+
   const nxName = (
     await Promise.all(
       projects.map(async (path) => {
@@ -69,6 +77,7 @@ export const getLocalrunValueFile = async (
       ? { PORT: runtime.ports[name].toString() }
       : {}
     const serviceNXName = await mapServiceToNXname(name)
+
     logger.debug('Process service', { name, service, serviceNXName })
     dockerComposeServices[name] = {
       env: Object.assign(
@@ -80,10 +89,16 @@ export const getLocalrunValueFile = async (
         portConfig,
       ) as Record<string, string>,
       commands: [
-        `cd "${rootDir}"`,
-        `. ./.env.${serviceNXName}`, // `source` is bashism
+        // Enable verbose logging for shell commands
+        ...(logger.logLevel === 'debug' || logger.logLevel === 'trace'
+          ? ['set -x']
+          : []),
+        `cd "${rootDir}"`, // Change directory to the root directory
+        `. ./.env.${serviceNXName}`, // Source the environment variables for the service
+        `echo "Preparing dev-services for ${name}"`, // Log preparation message
+        `if yarn nx show projects --with-target dev-services | grep -q '^${serviceNXName}$'; then yarn nx dev-services ${serviceNXName} || return $?; fi`, // Check and set up dev-services if needed
         `echo "Starting ${name} in $PWD"`,
-        `yarn nx serve ${serviceNXName}`,
+        `yarn nx serve ${serviceNXName}`, // Log start message and start the service
       ],
     }
   }

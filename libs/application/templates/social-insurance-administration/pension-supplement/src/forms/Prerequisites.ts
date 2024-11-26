@@ -25,7 +25,7 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { isEligible } from '../lib/pensionSupplementUtils'
 
 export const PrerequisitesForm: Form = buildForm({
-  id: 'HousholdSupplementPrerequisites',
+  id: 'PensionSupplementPrerequisites',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,

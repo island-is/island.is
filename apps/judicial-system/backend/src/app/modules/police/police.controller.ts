@@ -22,7 +22,9 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import {
+  districtCourtAssistantRule,
   districtCourtJudgeRule,
+  districtCourtRegistrarRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
 } from '../../guards'
@@ -78,6 +80,8 @@ export class PoliceController {
     prosecutorRule,
     prosecutorRepresentativeRule,
     districtCourtJudgeRule,
+    districtCourtAssistantRule,
+    districtCourtRegistrarRule,
   )
   @Get('subpoenaStatus/:subpoenaId')
   @ApiOkResponse({

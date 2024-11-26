@@ -15,7 +15,7 @@ import { replaceParams } from '@island.is/react-spa/shared'
 
 import { m } from '../../lib/messages'
 import * as styles from './Permissions.css'
-import { IDSAdminPaths } from '../../lib/paths'
+import { IDSAdminExternalPaths, IDSAdminPaths } from '../../lib/paths'
 import IdsAdminCard from '../../components/IdsAdminCard/IdsAdminCard'
 import { PermissionsLoaderData } from './Permissions.loader'
 import { useLooseSearch } from '../../hooks/useLooseSearch'
@@ -79,10 +79,11 @@ function Permissions() {
         </Text>
         {createButton}
         <LinkV2
-          href="#"
           color="blue400"
           underline="normal"
           underlineVisibility="always"
+          href={IDSAdminExternalPaths.DocsPermissions}
+          newTab
         >
           {formatMessage(m.learnMore)}
         </LinkV2>

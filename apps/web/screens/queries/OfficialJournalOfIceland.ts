@@ -174,6 +174,11 @@ export const MAIN_CATEGORIES_QUERY = gql`
         title
         slug
         description
+        categories {
+          id
+          title
+          slug
+        }
       }
       paging {
         page

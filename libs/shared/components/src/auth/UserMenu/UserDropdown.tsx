@@ -1,29 +1,29 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import {
   Box,
-  Text,
-  ModalBase,
-  UserAvatar,
-  Icon,
-  GridContainer,
   Divider,
+  GridContainer,
   Hidden,
+  Icon,
+  ModalBase,
+  Text,
+  UserAvatar,
 } from '@island.is/island-ui/core'
-import { AuthDelegationType, User } from '@island.is/shared/types'
-import { sharedMessages, userMessages } from '@island.is/shared/translations'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import * as styles from './UserMenu.css'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { sharedMessages, userMessages } from '@island.is/shared/translations'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { checkDelegation } from '@island.is/shared/utils'
+import cn from 'classnames'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
 import { UserDelegations } from './UserDelegations'
 import { UserDropdownItem } from './UserDropdownItem'
-import { UserProfileInfo } from './UserProfileInfo'
 import { UserLanguageSwitcher } from './UserLanguageSwitcher'
-import cn from 'classnames'
-import { theme } from '@island.is/island-ui/theme'
-import { useWindowSize } from 'react-use'
-import { checkDelegation } from '@island.is/shared/utils'
+import * as styles from './UserMenu.css'
+import { UserProfileInfo } from './UserProfileInfo'
 
 interface UserDropdownProps {
-  user: User
   dropdownState: 'open' | 'closed'
   setDropdownState: Dispatch<SetStateAction<'closed' | 'open'>>
   onLogout?: () => void
@@ -34,7 +34,6 @@ interface UserDropdownProps {
 }
 
 export const UserDropdown = ({
-  user,
   dropdownState,
   setDropdownState,
   onSwitchUser,
@@ -43,6 +42,7 @@ export const UserDropdown = ({
   showActorButton,
   showDropdownLanguage,
 }: UserDropdownProps) => {
+  const user = useUserInfo()
   const { formatMessage } = useLocale()
   const isVisible = dropdownState === 'open'
   const onClose = () => {
@@ -127,16 +127,13 @@ export const UserDropdown = ({
             </Box>
           </Box>
           {showDropdownLanguage && (
-            <Hidden above="sm">
-              {<UserLanguageSwitcher user={user} dropdown />}
-            </Hidden>
+            <Hidden above="sm">{<UserLanguageSwitcher dropdown />}</Hidden>
           )}
 
           <Divider />
 
           <Box paddingTop={2}>
             <UserDelegations
-              user={user}
               onSwitchUser={onSwitchUser}
               showActorButton={showActorButton}
             />

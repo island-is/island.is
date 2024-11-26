@@ -10,7 +10,7 @@ export const involvedParty = {
     intro: {
       id: 'ojoi.application:original.general.intro',
       defaultMessage:
-        'Hér getur þú valið stofnun sem þú vilt tengja við umsóknina þína.',
+        'Þú hefur aðgang að fleiri en einum lögaðila, veldu þann sem þú vilt senda auglýsingu fyrir.',
       description: 'Intro of the involved party form',
     },
     section: {

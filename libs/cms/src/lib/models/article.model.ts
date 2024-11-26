@@ -98,6 +98,9 @@ export class Article {
 
   @CacheField(() => EmbeddedVideo, { nullable: true })
   signLanguageVideo?: EmbeddedVideo | null
+
+  @CacheField(() => [String], { nullable: true })
+  keywords?: string[] | null
 }
 
 export const mapArticle = ({
@@ -152,4 +155,5 @@ export const mapArticle = ({
   signLanguageVideo: fields.signLanguageVideo
     ? mapEmbeddedVideo(fields.signLanguageVideo)
     : null,
+  keywords: fields.keywords ?? [],
 })

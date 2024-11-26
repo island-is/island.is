@@ -511,6 +511,11 @@ export const m = defineMessages({
     defaultMessage: 'Læsa söfnun',
     description: '',
   },
+  listOpen: {
+    id: 'admin-portal.signature-collection:listOpened',
+    defaultMessage: 'Söfnun í gangi',
+    description: '',
+  },
   listLocked: {
     id: 'admin-portal.signature-collection:listLocked',
     defaultMessage: 'Lista læst',
@@ -710,7 +715,7 @@ export const m = defineMessages({
     description: '',
   },
   editPaperNumberError: {
-    id: 'admin-portal.signature-collection:editPaperNumberSuccess',
+    id: 'admin-portal.signature-collection:editPaperNumberError',
     defaultMessage: 'Ekki tókst að breyta blaðsíðunúmeri',
     description: '',
   },

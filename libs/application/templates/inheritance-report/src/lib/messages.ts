@@ -67,9 +67,14 @@ export const m = defineMessages({
     description: '',
   },
   // Application begin
-  applicationName: {
-    id: 'ir.application:applicationName',
-    defaultMessage: 'Erfðafjárskýrsla eftir andlát',
+  selectEstate: {
+    id: 'ir.application:selectEstate',
+    defaultMessage: 'Veldu dánarbú',
+    description: '',
+  },
+  selectEstateDescription: {
+    id: 'ir.application:selectEstateDescription',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     description: '',
   },
   applicationNamePrepaid: {
@@ -226,6 +231,12 @@ export const m = defineMessages({
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
+  },
+  applicantsPrePaidInfoSubtitle: {
+    id: 'ir.application:applicantsPrePaidInfoSubtitle',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
+    description: 'Subtitle text shown above prepaid applicant information form',
   },
   name: {
     id: 'ir.application:name',
@@ -1349,8 +1360,9 @@ export const m = defineMessages({
     description: '',
   },
   heirsDescriptionPrePaid: {
-    id: 'ir.application:heirsDescriptionPrePaid',
-    defaultMessage: 'Lorem ipsum lorem ipsum',
+    id: 'ir.application:heirsDescriptionPrePaid#markdown',
+    defaultMessage:
+      'Vinsamlegast skráðu upplýsingar um þá erfingja sem eiga að taka við fyrirframgreiddum arfi.',
     description: '',
   },
   heirsAndPartition: {
@@ -1362,6 +1374,11 @@ export const m = defineMessages({
     id: 'ir.application:heirsAndPartitionDescription',
     defaultMessage:
       'Skrá skal netfang erfingja vegna tilkynninga skattstjóra skv. 9. og 10. gr. laga nr. 14/2004.',
+    description: '',
+  },
+  heirsReminderToFillInSpouse: {
+    id: 'ir.application:heirsReminderToFillInSpouse',
+    defaultMessage: 'Athugið að passa þarf að skrá inn upplýsingar um maka.',
     description: '',
   },
   heirsName: {
@@ -1471,6 +1488,11 @@ export const m = defineMessages({
   },
   inheritanceAdvocateLabel: {
     id: 'ir.application:inheritanceAdvocateLabel',
+    defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
+    description: 'Custody label',
+  },
+  inheritanceAdvocateLabelPrePaid: {
+    id: 'ir.application:inheritanceAdvocateLabelPrePaid',
     defaultMessage: 'Forsjáraðili/málsvari/sérstakur lögráðamaður',
     description: 'Custody label',
   },
@@ -1734,6 +1756,18 @@ export const m = defineMessages({
     id: 'ir.application:doneDescriptionPrepaidEFS#markdown',
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet urna nec nunc ultricies ultricies.',
+    description: '',
+  },
+  bottomButtonMessagePrepaidEFS: {
+    id: 'ir.application:bottomButtonMessagePrepaidEFS',
+    defaultMessage:
+      'Inni á Mínum síðum og í Ísland.is appinu hefur þú aðgang að þínum upplýsingum og Stafrænu pósthólfi.',
+    description: '',
+  },
+  bottomButtonMessageEFS: {
+    id: 'ir.application:bottomButtonMessageEFS',
+    defaultMessage:
+      'Inni á Mínum síðum og í Ísland.is appinu hefur þú aðgang að þínum upplýsingum og Stafrænu pósthólfi.',
     description: '',
   },
   errorRelation: {

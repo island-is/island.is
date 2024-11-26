@@ -9,7 +9,9 @@ import {
   DelegationScope,
   DelegationsIndexService,
 } from '@island.is/auth-api-lib'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import {
   expectMatchingDelegations,
   FixtureFactory,
@@ -41,9 +43,16 @@ describe('MeDelegationsController', () => {
         })
         server = request(app.getHttpServer())
         delegationIndexService = app.get(DelegationsIndexService)
+        const rskRelationshipsClientService = app.get(RskRelationshipsClient)
         const nationalRegistryClientService = app.get(
           NationalRegistryClientService,
         )
+        const companyRegistryClientService = app.get(
+          CompanyRegistryClientService,
+        )
+        jest
+          .spyOn(nationalRegistryClientService, 'getCustodyChildren')
+          .mockImplementation(async () => [])
         jest
           .spyOn(nationalRegistryClientService, 'getIndividual')
           .mockImplementation(async (nationalId: string) =>
@@ -52,6 +61,12 @@ describe('MeDelegationsController', () => {
               name: fromName,
             }),
           )
+        jest
+          .spyOn(rskRelationshipsClientService, 'getIndividualRelationships')
+          .mockImplementation(async () => null)
+        jest
+          .spyOn(companyRegistryClientService, 'getCompany')
+          .mockImplementation(async () => null)
         jest
           .spyOn(delegationIndexService, 'indexDelegations')
           .mockImplementation()

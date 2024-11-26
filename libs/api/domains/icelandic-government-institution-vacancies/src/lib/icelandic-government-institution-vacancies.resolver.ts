@@ -103,7 +103,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       if (organization?.referenceIdentifier) {
         organizationMap.set(organization.referenceIdentifier, {
           logoUrl: organization.logo?.url,
-          title: organization.shortTitle || organization.title,
+          title: organization.title,
         })
       }
     }
