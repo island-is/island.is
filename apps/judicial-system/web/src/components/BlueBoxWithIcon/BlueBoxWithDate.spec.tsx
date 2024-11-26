@@ -56,7 +56,7 @@ describe('BlueBoxWithDate', () => {
     expect(screen.getByText(name)).toBeInTheDocument()
   })
 
-  it('renders correctly when ruling decision is FINE', () => {
+  it('renders correctly when ruling decision is RULING', () => {
     render(
       <IntlProviderWrapper>
         <ApolloProviderWrapper>
