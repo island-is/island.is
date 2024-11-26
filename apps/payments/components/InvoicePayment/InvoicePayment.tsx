@@ -1,7 +1,10 @@
 import { useFormContext } from 'react-hook-form'
 
 import { Input } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
 import { PaymentContainer } from '../PaymentContainer/PaymentContainer'
+import { invoice } from '../../messages'
 
 interface InvoicePaymentInput {
   nationalId: string
@@ -9,6 +12,7 @@ interface InvoicePaymentInput {
 }
 
 export const InvoicePayment = () => {
+  const { formatMessage } = useLocale()
   const { register } = useFormContext<InvoicePaymentInput>()
 
   return (
@@ -16,15 +20,17 @@ export const InvoicePayment = () => {
       <PaymentContainer>
         <Input
           backgroundColor="blue"
-          label="Kennitala greiðanda"
+          label={formatMessage(invoice.nationalIdOfPayer)}
           {...register('nationalId', {
             required: true,
           })}
           size="md"
+          disabled
+          value={'123456-7890'}
         />
         <Input
           backgroundColor="blue"
-          label="Tilvísun"
+          label={formatMessage(invoice.invoiceReference)}
           {...register('reference', {
             required: false,
           })}

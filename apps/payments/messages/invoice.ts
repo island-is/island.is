@@ -1,7 +1,7 @@
 import { defineMessages } from 'react-intl'
 
-export const card = defineMessages({
-  invoicePaymentMethodTitle: {
+export const invoice = defineMessages({
+  paymentMethodTitle: {
     id: 'payments.invoice:title',
     defaultMessage: 'Krafa',
     description: 'Title for invoice payment method',

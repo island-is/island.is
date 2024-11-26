@@ -1,7 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 export const card = defineMessages({
-  cardPaymentMethodTitle: {
+  paymentMethodTitle: {
     id: 'payments.card:title',
     defaultMessage: 'Kortagreiðsla',
     description: 'Title for card payment method',

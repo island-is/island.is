@@ -1,4 +1,7 @@
 import { Box, Button } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
+import { card, invoice } from '../../messages'
 
 type PaymentMethod = 'card' | 'invoice'
 
@@ -13,6 +16,7 @@ export const PaymentSelector = ({
   selectedPayment,
   onSelectPayment,
 }: PaymentSelectorProps) => {
+  const { formatMessage } = useLocale()
   const hasCard = availablePaymentMethods.includes('card')
   const hasInvoice = availablePaymentMethods.includes('invoice')
 
@@ -35,7 +39,7 @@ export const PaymentSelector = ({
           onClick={() => onSelectPayment('card')}
           fluid
         >
-          Kortagreiðsla
+          {formatMessage(card.paymentMethodTitle)}
         </Button>
       )}
       {hasInvoice && (
@@ -44,7 +48,7 @@ export const PaymentSelector = ({
           onClick={() => onSelectPayment('invoice')}
           fluid
         >
-          Krafa í heimabanka
+          {formatMessage(invoice.paymentMethodTitle)}
         </Button>
       )}
     </Box>

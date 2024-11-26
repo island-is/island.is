@@ -10,6 +10,7 @@ import {
 } from '@island.is/api/schema'
 import { Box, Button } from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
+import { useLocale } from '@island.is/localization'
 
 import { PageCard } from '../../components/PageCard/PageCard'
 import initApollo from '../../graphql/client'
@@ -19,6 +20,7 @@ import { CardPayment } from '../../components/CardPayment/CardPayment'
 import { InvoicePayment } from '../../components/InvoicePayment/InvoicePayment'
 import { ALLOWED_LOCALES, Locale } from '../../utils'
 import { getConfigcatClient } from '../../clients/configcat'
+import { card, generic, invoice } from '../../messages'
 
 interface PaymentPageProps {
   locale: string
@@ -148,6 +150,7 @@ export default function PaymentPage({
     mode: 'onBlur',
     reValidateMode: 'onChange',
   })
+  const { formatMessage } = useLocale()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>(
     paymentFlow?.availablePaymentMethods?.[0] ?? '',
   )
@@ -199,10 +202,12 @@ export default function PaymentPage({
                   fluid
                   disabled={!methods.formState.isValid}
                 >
-                  {selectedPaymentMethod === 'card' ? 'Greiða' : 'Stofna kröfu'}
+                  {selectedPaymentMethod === 'card'
+                    ? formatMessage(card.pay)
+                    : formatMessage(invoice.create)}
                 </Button>
                 <Button colorScheme="white" fluid>
-                  Hætta við
+                  {formatMessage(generic.buttonCancel)}
                 </Button>
               </Box>
             </form>

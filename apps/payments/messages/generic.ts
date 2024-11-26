@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const card = defineMessages({
+export const generic = defineMessages({
   buttonCancel: {
     id: 'payments.generic:buttonCancel',
     defaultMessage: 'Hætta við',
