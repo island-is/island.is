@@ -287,6 +287,10 @@ const IndictmentOverview: FC = () => {
             }
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
+            isFine={
+              workingCase.indictmentRulingDecision ===
+              CaseIndictmentRulingDecision.FINE
+            }
             onSelect={() => setIsReviewDecisionSelected(true)}
           />
         )}
