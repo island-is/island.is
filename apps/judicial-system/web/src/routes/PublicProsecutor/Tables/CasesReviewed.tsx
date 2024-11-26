@@ -21,6 +21,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './CasesReviewed.strings'
+import { CaseIndictmentRulingDecision } from '@island.is/judicial-system/types'
 
 interface Props {
   loading: boolean
@@ -31,13 +32,19 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
   const { formatMessage } = useIntl()
   const { openCaseInNewTabMenuItem } = useContextMenu()
 
-  const decisionMapping = {
-    [IndictmentCaseReviewDecision.ACCEPT]: formatMessage(
-      strings.reviewTagAccepted,
-    ),
-    [IndictmentCaseReviewDecision.APPEAL]: formatMessage(
-      strings.reviewTagAppealed,
-    ),
+  const indictmentReviewDecisionMapping = (
+    reviewDecision: IndictmentCaseReviewDecision,
+    isFine: boolean,
+  ) => {
+    if (reviewDecision === IndictmentCaseReviewDecision.ACCEPT) {
+      return formatMessage(strings.reviewTagAccepted)
+    } else if (reviewDecision === IndictmentCaseReviewDecision.APPEAL) {
+      return formatMessage(
+        isFine ? strings.reviewTagFineAppealed : strings.reviewTagAppealed,
+      )
+    } else {
+      return null
+    }
   }
 
   const getVerdictViewTag = (row: CaseListEntry) => {
@@ -49,7 +56,9 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
         row.defendants.some((defendant) => defendant.isSentToPrisonAdmin),
     )
 
-    if (someDefendantIsSentToPrisonAdmin) {
+    if (row.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE) {
+      return null
+    } else if (someDefendantIsSentToPrisonAdmin) {
       variant = 'red'
       message = strings.tagVerdictViewSentToPrisonAdmin
     } else if (!row.indictmentVerdictViewedByAll) {
@@ -112,7 +121,11 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
                   cell: (row) => (
                     <Tag variant="darkerBlue" outlined disabled truncate>
                       {row.indictmentReviewDecision &&
-                        decisionMapping[row.indictmentReviewDecision]}
+                        indictmentReviewDecisionMapping(
+                          row.indictmentReviewDecision,
+                          row.indictmentRulingDecision ===
+                            CaseIndictmentRulingDecision.FINE,
+                        )}
                     </Tag>
                   ),
                 },
