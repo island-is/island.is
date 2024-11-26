@@ -54,7 +54,7 @@ const variantStyles: VariantStyles = {
   },
 }
 
-interface AlertMessageProps {
+export interface AlertMessageProps {
   type: AlertMessageType
   testid?: string
   action?: ReactNode
