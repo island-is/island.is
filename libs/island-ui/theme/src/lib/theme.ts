@@ -6,6 +6,7 @@ import { font, spacing as spacingPrimitives, radius } from './tokens/tokens'
 
 export const UNIT = 8
 
+// TODO: spacing will be further updated in the followup PR
 export const spacing = {
   0: spacingPrimitives['0'].$value ?? UNIT * 0,
   1: spacingPrimitives['8'].$value ?? UNIT * 1,
@@ -26,14 +27,9 @@ export const spacing = {
   21: UNIT * 21, // DEPRECATED
   22: UNIT * 22, // DEPRECATED
   23: UNIT * 23, // DEPRECATED
-  24: UNIT * 24, // DEPRECATED
-  25: spacingPrimitives['200'].$value ?? UNIT * 25,
-  26: UNIT * 26, // DEPRECATED
-  27: UNIT * 27, // DEPRECATED
   28: UNIT * 28, // DEPRECATED
-  29: UNIT * 29, // DEPRECATED
   30: UNIT * 30, // DEPRECATED
-  31: UNIT * 31, // DEPRECATED
+  200: spacingPrimitives['200'].$value ?? UNIT * 25,
   none: UNIT * 0,
   smallGutter: spacingPrimitives['4'].$value ?? UNIT * 0.5,
   gutter: spacingPrimitives['16'].$value ?? UNIT * 2,
