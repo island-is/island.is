@@ -24,25 +24,24 @@ const headerComment = `#########################################################
 
 const NON_EMPTYABLE_PROPERTIES = new Set(['SERVERSIDE_FEATURES_ON'])
 
-// Recursive function to filter out empty string properties
-const removeEmptyStringProperties = (obj: any): any => {
+// Recursive function to filter out (error on) empty string properties
+const verifiablyNonEmptyProperties = (obj: unknown): unknown => {
   if (typeof obj !== 'object' || obj === null) return obj
 
   if (Array.isArray(obj)) {
-    return obj.map(removeEmptyStringProperties)
+    return obj.map(verifiablyNonEmptyProperties)
   }
 
-  return Object.fromEntries(
-    Object.entries(obj)
-      .filter(
-        ([key, value]) => value !== '' || NON_EMPTYABLE_PROPERTIES.has(key),
-      ) // Filter out empty strings
-      .map(([key, value]) => [key, removeEmptyStringProperties(value)]), // Recursively apply to nested objects
-  )
+  const stripped = Object.entries(obj)
+    .filter(([key, value]) => value !== '' || NON_EMPTYABLE_PROPERTIES.has(key)) // Filter out empty strings
+    .map(([key, value]) => [key, verifiablyNonEmptyProperties(value)]) // Recursively apply to nested objects
+  if (new Set(Object.keys(obj)) !== new Set(Object.fromEntries(stripped)))
+    throw new Error('Empty properties not allowed')
+  return stripped
 }
 
 const writeYamlFile = (filePath: string, content: unknown) => {
-  const filteredContent = removeEmptyStringProperties(content)
+  const filteredContent = verifiablyNonEmptyProperties(content)
   const doc = new yaml.Document()
   doc.contents = doc.createNode(filteredContent, { keepUndefined: false })
 
