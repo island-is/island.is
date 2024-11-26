@@ -171,10 +171,10 @@ export const getIndictmentInfo = (
   const verdictInfo = defendants?.map<[boolean, Date | undefined]>(
     (defendant) => [
       rulingDecision === CaseIndictmentRulingDecision.RULING || isFine,
-      defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED
-        ? new Date()
-        : isFine
+      isFine
         ? theRulingDate
+        : defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED
+        ? new Date()
         : defendant.verdictViewDate
         ? new Date(defendant.verdictViewDate)
         : undefined,
