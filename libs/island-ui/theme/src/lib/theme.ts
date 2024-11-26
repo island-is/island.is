@@ -35,9 +35,9 @@ export const spacing = {
   30: UNIT * 30, // DEPRECATED
   31: UNIT * 31, // DEPRECATED
   none: UNIT * 0,
-  smallGutter: UNIT * 0.5, // 4
-  gutter: UNIT * 2, // 16
-  containerGutter: UNIT * 6, // 48
+  smallGutter: spacingPrimitives['4'].$value ?? UNIT * 0.5,
+  gutter: spacingPrimitives['16'].$value ?? UNIT * 2,
+  containerGutter: spacingPrimitives['48'].$value ?? UNIT * 6,
   auto: 'auto',
   p1: 8,
   p2: 12,
