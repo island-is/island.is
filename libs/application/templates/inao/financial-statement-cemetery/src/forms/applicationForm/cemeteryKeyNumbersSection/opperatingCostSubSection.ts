@@ -3,7 +3,6 @@ import {
   buildMultiField,
   buildSubSection,
   buildDescriptionField,
-  buildDisplayField,
 } from '@island.is/application/core'
 import { CEMETERYOPERATIONIDS } from '../../../utils/constants'
 import { m } from '../../../lib/messages'
@@ -33,7 +32,6 @@ export const opperatingCostSubSection = buildSubSection({
           title: 'title 2',
           width: 'half',
         }),
-        buildDisplayField({}),
       ],
     }),
   ],

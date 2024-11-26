@@ -16,7 +16,7 @@ import {
   StaticText,
 } from './Form'
 import { ApolloClient } from '@apollo/client'
-import { Application } from './Application'
+import { Application, FormValue } from './Application'
 import { CallToAction } from './StateMachine'
 import { Colors, theme } from '@island.is/island-ui/theme'
 import { Condition } from './Condition'
@@ -762,6 +762,14 @@ export interface SliderField extends BaseField {
 export interface DisplayField extends BaseField {
   readonly type: FieldTypes.DISPLAY
   component: FieldComponents.DISPLAY
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+  suffix?: MessageDescriptor | string
+  rightAlign?: boolean
+  variant?: TextFieldVariant
+  label?: MessageDescriptor | string
+  value: (answers: FormValue) => string
 }
 
 export type Field =

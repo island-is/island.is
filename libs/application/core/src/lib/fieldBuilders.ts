@@ -971,7 +971,30 @@ export const buildSliderField = (
 export const buildDisplayField = (
   data: Omit<DisplayField, 'type' | 'component' | 'children'>,
 ): DisplayField => {
+  const {
+    title,
+    titleVariant,
+    label,
+    variant,
+    marginTop,
+    marginBottom,
+    value,
+    suffix,
+    rightAlign,
+  } = data
   return {
     ...extractCommonFields(data),
+    title,
+    titleVariant,
+    label,
+    variant,
+    marginTop,
+    marginBottom,
+    type: FieldTypes.DISPLAY,
+    component: FieldComponents.DISPLAY,
+    children: undefined,
+    value,
+    suffix,
+    rightAlign,
   }
 }
