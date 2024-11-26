@@ -20,7 +20,6 @@ import { errors } from '@island.is/judicial-system-web/messages'
 import {
   CaseIndictmentRulingDecision,
   Defendant,
-  IndictmentCaseReviewDecision,
   ServiceRequirement,
 } from '../../graphql/schema'
 import { formatDateForServer, useDefendants } from '../../utils/hooks'
@@ -183,8 +182,10 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     appealExpirationInfo.message,
     dates.verdictViewDate,
     defendant.isSentToPrisonAdmin,
+    defendant.isVerdictAppealDeadlineExpired,
     defendant.sentToPrisonAdminDate,
     defendant.verdictAppealDate,
+    defendant.verdictAppealDeadline,
     defendant.verdictViewDate,
     formatMessage,
     isFine,

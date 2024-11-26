@@ -4,6 +4,7 @@ import { AnimatePresence } from 'framer-motion'
 
 import { Tag, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { CaseIndictmentRulingDecision } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
@@ -21,7 +22,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './CasesReviewed.strings'
-import { CaseIndictmentRulingDecision } from '@island.is/judicial-system/types'
 
 interface Props {
   loading: boolean

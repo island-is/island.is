@@ -1,18 +1,18 @@
-import { render, screen } from '@testing-library/react'
 import faker from 'faker'
+import { render, screen } from '@testing-library/react'
 
-import BlueBoxWithDate from './BlueBoxWithDate'
 import {
   CaseIndictmentRulingDecision,
   CaseType,
   Defendant,
 } from '../../graphql/schema'
+import { mockCase } from '../../utils/mocks'
 import {
   ApolloProviderWrapper,
   FormContextWrapper,
   IntlProviderWrapper,
 } from '../../utils/testHelpers'
-import { mockCase } from '../../utils/mocks'
+import BlueBoxWithDate from './BlueBoxWithDate'
 
 jest.mock('next/router', () => ({
   useRouter() {
