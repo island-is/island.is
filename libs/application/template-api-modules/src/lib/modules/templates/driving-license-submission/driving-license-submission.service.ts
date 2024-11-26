@@ -64,7 +64,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       auth,
       id,
       InstitutionNationalIds.SYSLUMENN,
-      [chargeItemCode],
+      [{ code: chargeItemCode }],
     )
 
     // last chance to validate before the user receives a dummy

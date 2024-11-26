@@ -47,6 +47,7 @@ import {
   MaybeWithApplication,
   MaybeWithApplicationAndFieldAndLocale,
   DisplayField,
+  FieldsRepeaterField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -864,6 +865,48 @@ export const buildTableRepeaterField = (
     editButtonTooltipText,
     editField,
     getStaticTableData,
+    maxRows,
+  }
+}
+
+export const buildFieldsRepeaterField = (
+  data: Omit<FieldsRepeaterField, 'type' | 'component' | 'children'>,
+): FieldsRepeaterField => {
+  const {
+    fields,
+    table,
+    title,
+    titleVariant,
+    formTitle,
+    formTitleVariant,
+    formTitleNumbering,
+    marginTop,
+    marginBottom,
+    removeItemButtonText,
+    addItemButtonText,
+    saveItemButtonText,
+    minRows,
+    maxRows,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.FIELDS_REPEATER,
+    component: FieldComponents.FIELDS_REPEATER,
+    fields,
+    table,
+    title,
+    titleVariant,
+    formTitle,
+    formTitleVariant,
+    formTitleNumbering,
+    marginTop,
+    marginBottom,
+    removeItemButtonText,
+    addItemButtonText,
+    saveItemButtonText,
+    minRows,
     maxRows,
   }
 }

@@ -24,6 +24,7 @@ export { NationalIdWithNameFormField } from './NationalIdWithNameFormField/Natio
 export { HiddenInputFormField } from './HiddenInputFormField/HiddenInputFormField'
 export { ActionCardListFormField } from './ActionCardListFormField/ActionCardListFormField'
 export { TableRepeaterFormField } from './TableRepeaterFormField/TableRepeaterFormField'
+export { FieldsRepeaterFormField } from './FieldsRepeaterFormField/FieldsRepeaterFormField'
 export { FindVehicleFormField } from './FindVehicleFormField/FindVehicleFormField'
 export { VehicleRadioFormField } from './VehicleRadioFormField/VehicleRadioFormField'
 export { StaticTableFormField } from './StaticTableFormField/StaticTableFormField'
