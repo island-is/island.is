@@ -25,10 +25,10 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
+import { CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './Overview.strings'
-import { CaseIndictmentRulingDecision } from '@island.is/judicial-system/types'
 type VisibleModal = 'REVIEWER_ASSIGNED'
 
 export const Overview = () => {
