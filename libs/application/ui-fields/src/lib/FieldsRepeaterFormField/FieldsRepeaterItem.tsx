@@ -20,7 +20,7 @@ interface ItemFieldProps {
   error?: string
   item: RepeaterItem & { id: string }
   dataId: string
-  activeIndex: number
+  index: number
   values: Array<Record<string, string>>
 }
 
@@ -39,7 +39,7 @@ export const Item = ({
   error,
   item,
   dataId,
-  activeIndex,
+  index,
   values,
 }: ItemFieldProps) => {
   const { formatMessage } = useLocale()
@@ -65,9 +65,8 @@ export const Item = ({
   const isThirdColumn = component !== 'radio' && width === 'third'
   const span = isHalfColumn ? '1/2' : isThirdColumn ? '1/3' : '1/1'
   const Component = componentMapper[component]
-  const id = `${dataId}[${activeIndex}].${itemId}`
-  const activeValues =
-    activeIndex >= 0 && values ? values[activeIndex] : undefined
+  const id = `${dataId}[${index}].${itemId}`
+  const activeValues = index >= 0 && values ? values[index] : undefined
 
   let watchedValues: string | (string | undefined)[] | undefined
   if (updateValueObj) {
@@ -116,7 +115,7 @@ export const Item = ({
      * This hack is needed to get the correct type
      */
     const errorList = error as unknown as Record<string, string>[] | undefined
-    const errors = errorList?.[activeIndex]
+    const errors = errorList?.[index]
     return errors?.[id]
   }
 
@@ -138,13 +137,14 @@ export const Item = ({
   if (typeof options === 'function') {
     translatedOptions = options(application, activeValues)
   } else {
-    translatedOptions = options?.map((option) => ({
-      ...option,
-      label: formatText(option.label, application, formatMessage),
-      ...(option.tooltip && {
-        tooltip: formatText(option.tooltip, application, formatMessage),
-      }),
-    }))
+    translatedOptions =
+      options?.map((option) => ({
+        ...option,
+        label: formatText(option.label, application, formatMessage),
+        ...(option.tooltip && {
+          tooltip: formatText(option.tooltip, application, formatMessage),
+        }),
+      })) ?? []
   }
 
   let Readonly: boolean | undefined
