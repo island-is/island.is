@@ -2,12 +2,17 @@ import { Inject, Injectable } from '@nestjs/common'
 import { Cache as CacheManager } from 'cache-manager'
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
+import { ConfigType } from '@nestjs/config'
+import { BffConfig } from '../../bff.config'
 
 @Injectable()
 export class CacheService {
   constructor(
     @Inject(CACHE_MANAGER)
     private readonly cacheManager: CacheManager,
+
+    @Inject(BffConfig.KEY)
+    private readonly config: ConfigType<typeof BffConfig>,
   ) {}
 
   public createKeyError(key: string) {
@@ -15,13 +20,17 @@ export class CacheService {
   }
 
   /**
-   * Creates s unique key with session id.
+   * Creates s unique key with Bff name and session id.
    * Type is either 'attempt' or 'current'.
    * `attempt` represents the login attempt.
    * `current` represents the current login session.
+   *
+   * @example
+   * createSessionKeyType('attempt', '1234') // attempt_{bffName}_1234
+   * createSessionKeyType('current', '1234') // current_{bffName}_1234
    */
   public createSessionKeyType(type: 'attempt' | 'current', sid: string) {
-    return `${type}_${sid}`
+    return `${type}_${this.config.name}_${sid}`
   }
 
   public async save({

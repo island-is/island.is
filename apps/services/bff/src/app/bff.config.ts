@@ -12,6 +12,10 @@ export const idsSchema = z.strictObject({
 
 const BffConfigSchema = z.object({
   /**
+   * Unique name of the BFF
+   */
+  name: z.string(),
+  /**
    * Redis configuration
    */
   redis: z.object({
@@ -74,6 +78,7 @@ export const BffConfig = defineConfig({
     const bffName = env.required('BFF_NAME')
 
     return {
+      name: bffName,
       parSupportEnabled: env.optionalJSON('BFF_PAR_SUPPORT_ENABLED') ?? false,
       clientBaseUrl: env.required('BFF_CLIENT_BASE_URL'),
       clientBasePath: env.required('BFF_CLIENT_BASE_PATH'),
