@@ -21,6 +21,7 @@ import * as styles from './ReviewDecision.css'
 interface Props {
   caseId: string
   indictmentAppealDeadline?: string
+  indictmentAppealDeadlineIsInThePast?: boolean
   modalVisible?: boolean
   setModalVisible: Dispatch<SetStateAction<boolean>>
   isFine: boolean
@@ -31,6 +32,7 @@ export const ReviewDecision: FC<Props> = (props) => {
   const {
     caseId,
     indictmentAppealDeadline,
+    indictmentAppealDeadlineIsInThePast,
     modalVisible,
     setModalVisible,
     isFine,
@@ -85,6 +87,7 @@ export const ReviewDecision: FC<Props> = (props) => {
             {fm(strings.subtitle, {
               isFine,
               indictmentAppealDeadline: formatDate(indictmentAppealDeadline),
+              appealDeadlineIsInThePast: indictmentAppealDeadlineIsInThePast,
             })}
           </Text>
         }

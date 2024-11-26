@@ -9,7 +9,7 @@ export const strings = defineMessages({
   subtitle: {
     id: 'judicial.system.core:public_prosecutor.indictments.review_decision.subtitle_v1',
     defaultMessage:
-      'Frestur til að {isFine, select, true {kæra viðurlagaákvörðun} other {áfrýja dómi}} rennur út {indictmentAppealDeadline}',
+      'Frestur til að {isFine, select, true {kæra viðurlagaákvörðun} other {áfrýja dómi}} {appealDeadlineIsInThePast, select, true {rann} other {rennur}} út {indictmentAppealDeadline}',
     description:
       'Notaður sem undirtitill á ákvörðum um áfrýjun boxi fyrir ákæru.',
   },
