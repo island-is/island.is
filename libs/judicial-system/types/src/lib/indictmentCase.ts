@@ -23,8 +23,6 @@ export const getIndictmentVerdictAppealDeadlineStatus = (
     return [true, true]
   }
 
-  console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', { verdictInfo })
-
   if (
     verdictInfo.some(
       ([canBeAppealed, viewedDate]) => canBeAppealed && !viewedDate,
@@ -32,7 +30,7 @@ export const getIndictmentVerdictAppealDeadlineStatus = (
   ) {
     return [false, false]
   }
-  console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+
   const newestViewDate = verdictInfo.reduce(
     (newest, [_, current]) => (current && current > newest ? current : newest),
     new Date(0),

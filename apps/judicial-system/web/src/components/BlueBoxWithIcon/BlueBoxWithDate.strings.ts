@@ -79,7 +79,7 @@ export const strings = defineMessages({
   fineAppealDeadline: {
     id: 'judicial.system.core:blue_box_with_date.fine_appeal_deadline',
     defaultMessage:
-      'Kærufrestur Ríkissaksóknara {appealDeadlineIsInThePast, select, true {er} other {var}} til {appealDeadline}',
+      'Kærufrestur Ríkissaksóknara {appealDeadlineIsInThePast, select, true {var} other {er}} til {appealDeadline}',
     description:
       'Notaður sem titill í svæði þar sem kærufrestur viðurlagaákvörðunar er tekinn fram',
   },
