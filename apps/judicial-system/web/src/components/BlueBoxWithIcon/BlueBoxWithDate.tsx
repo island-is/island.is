@@ -30,7 +30,6 @@ import { getAppealExpirationInfo } from '../InfoCard/DefendantInfo/DefendantInfo
 import SectionHeading from '../SectionHeading/SectionHeading'
 import { strings } from './BlueBoxWithDate.strings'
 import * as styles from './BlueBoxWithIcon.css'
-import { string } from 'yargs'
 
 interface Props {
   defendant: Defendant
