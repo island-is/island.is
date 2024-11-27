@@ -4,7 +4,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApplicationChargeService } from '../charge/application-charge.service'
 import { FileService } from '@island.is/application/api/files'
-import { NotificationsApi } from '@island.is/clients/user-notification'
+import {
+  CreateHnippNotificationDto,
+  NotificationsApi,
+} from '@island.is/clients/user-notification'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { PruningApplication } from '@island.is/application/types'
 
@@ -17,6 +20,7 @@ export interface ApplicationPruning {
 @Injectable()
 export class ApplicationLifeCycleService {
   private processingApplications: ApplicationPruning[] = []
+  private pruneNotifications = new Map<string, CreateHnippNotificationDto>()
 
   constructor(
     @Inject(LOGGER_PROVIDER)
@@ -57,6 +61,13 @@ export class ApplicationLifeCycleService {
         failedAttachments: {},
       }
     })
+
+    for (const { application } of this.processingApplications) {
+      const notification = await this.preparePrunedNotification(application)
+      if (notification) {
+        this.pruneNotifications.set(application.id, notification)
+      }
+    }
   }
 
   private async pruneAttachments() {
@@ -121,16 +132,19 @@ export class ApplicationLifeCycleService {
       (application) => application.pruned,
     )
 
-    this.logger.info(`Successful: ${success.length}, Failed: ${failed.length}`)
-
-    for (const { application } of this.processingApplications) {
-      await this.sendPrunedNotificationForInProgress(application)
+    for (const { application } of success) {
+      const notification = this.pruneNotifications.get(application.id)
+      if (notification) {
+        await this.sendPrunedNotification(notification, application.id)
+      }
     }
+
+    this.logger.info(`Successful: ${success.length}, Failed: ${failed.length}`)
   }
 
-  private async sendPrunedNotificationForInProgress(
+  private async preparePrunedNotification(
     application: PruningApplication,
-  ) {
+  ): Promise<CreateHnippNotificationDto | null> {
     const template = await getApplicationTemplateByTypeId(application.typeId)
     const stateConfig = template.stateMachineConfig.states[application.state]
     const lifeCycle = stateConfig.meta?.lifecycle
@@ -141,7 +155,7 @@ export class ApplicationLifeCycleService {
           : lifeCycle.pruneMessage
       const notification = {
         recipient: application.applicant,
-        templateId: 'HNIPP.AS.PRUNED.INPROGRESS',
+        templateId: pruneMessage.notificationTemplateId,
         args: [
           {
             key: 'externalBody',
@@ -153,21 +167,29 @@ export class ApplicationLifeCycleService {
           },
         ],
       }
-      try {
-        const response =
-          await this.notificationApi.notificationsControllerCreateHnippNotification(
-            {
-              createHnippNotificationDto: notification,
-            },
-          )
-        this.logger.info(
-          `Prune notification sent with response: ${JSON.stringify(response)}`,
+      return notification
+    }
+    return null
+  }
+
+  private async sendPrunedNotification(
+    notification: CreateHnippNotificationDto,
+    applicationId: string,
+  ) {
+    try {
+      const response =
+        await this.notificationApi.notificationsControllerCreateHnippNotification(
+          {
+            createHnippNotificationDto: notification,
+          },
         )
-      } catch (error) {
-        this.logger.error(
-          `Failed to send pruning notification with error: ${error} for application ${application.id}`,
-        )
-      }
+      this.logger.info(
+        `Prune notification sent with response: ${JSON.stringify(response)}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Failed to send pruning notification with error: ${error} for application ${applicationId}`,
+      )
     }
   }
 }

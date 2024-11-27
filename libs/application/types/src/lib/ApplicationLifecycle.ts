@@ -19,4 +19,5 @@ export type PruningApplication = Pick<
 export type PruningNotification = {
   externalBody: string
   internalBody: string
+  notificationTemplateId: string
 }
