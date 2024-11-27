@@ -29,7 +29,7 @@ import { AuthDelegationType } from '@island.is/shared/types'
 import { application as applicationMessage } from './messages'
 import { ApiActions } from '../shared/contstants'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItemCodes } from '../utils'
+import { getChargeItems } from '../utils'
 // import { ApiScope } from '@island.is/auth/scopes'
 
 const template: ApplicationTemplate<
@@ -147,7 +147,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
-        chargeItemCodes: getChargeItemCodes,
+        chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
         onExit: [
           defineTemplateApi({
