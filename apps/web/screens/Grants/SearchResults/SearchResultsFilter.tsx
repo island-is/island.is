@@ -7,7 +7,7 @@ import {
   FilterProps,
 } from '@island.is/island-ui/core'
 import { isDefined } from '@island.is/shared/utils'
-import { GenericTag } from '@island.is/web/graphql/schema'
+import { GenericTag, GrantStatus } from '@island.is/web/graphql/schema'
 
 import { m } from '../messages'
 import { SearchState } from './SearchResults'
@@ -73,15 +73,11 @@ export const GrantsSearchResultsFilter = ({
                 selected: searchState?.['status'] ?? [],
                 filters: [
                   {
-                    value: 'open',
+                    value: GrantStatus.Open.toString().toLowerCase(),
                     label: formatMessage(m.search.applicationOpen),
                   },
                   {
-                    value: 'open-soon',
-                    label: formatMessage(m.search.applicationOpensSoon),
-                  },
-                  {
-                    value: 'closed',
+                    value: GrantStatus.Closed.toString().toLowerCase(),
                     label: formatMessage(m.search.applicationClosed),
                   },
                 ],
@@ -115,16 +111,8 @@ export const GrantsSearchResultsFilter = ({
                 selected: searchState?.['organization'] ?? [],
                 filters: [
                   {
-                    value: 'rannis',
+                    value: 'rannsoknamidstoed-islands-rannis',
                     label: 'Rannís',
-                  },
-                  {
-                    value: 'tonlistarmidstod',
-                    label: 'Tónlistarmiðstöð',
-                  },
-                  {
-                    value: 'kvikmyndastod',
-                    label: 'Kvikmyndastöð',
                   },
                 ],
               },
