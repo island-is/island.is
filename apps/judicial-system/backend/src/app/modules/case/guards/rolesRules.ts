@@ -1,5 +1,6 @@
 import { RolesRule, RulesType } from '@island.is/judicial-system/auth'
 import {
+  CaseIndictmentRulingDecision,
   CaseTransition,
   CaseType,
   User,
@@ -211,7 +212,7 @@ export const prosecutorTransitionRule: RolesRule = {
     const dto: TransitionCaseDto = request.body
     const theCase: Case = request.case
 
-    // Deny if something is missing - shuould never happen
+    // Deny if something is missing - should never happen
     if (!user || !dto || !theCase) {
       return false
     }
@@ -258,7 +259,7 @@ export const defenderTransitionRule: RolesRule = {
     const dto: TransitionCaseDto = request.body
     const theCase: Case = request.case
 
-    // Deny if something is missing - shuould never happen
+    // Deny if something is missing - should never happen
     if (!dto || !theCase) {
       return false
     }
@@ -326,6 +327,27 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
     CaseTransition.REOPEN,
     CaseTransition.RECEIVE_APPEAL,
   ],
+  canActivate: (request) => {
+    const user: User = request.user
+    const theCase: Case = request.case
+    const transition = request.body.transition
+
+    if (!user || !theCase || !transition) {
+      return false
+    }
+
+    if (theCase.type === CaseType.INDICTMENT) {
+      if (
+        theCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.RULING ||
+        theCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.DISMISSAL
+      )
+        return user.id === theCase.judgeId
+    }
+
+    return true
+  },
 }
 
 // Allows registrars to transition cases
@@ -350,6 +372,30 @@ export const districtCourtAssistantTransitionRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [CaseTransition.RECEIVE, CaseTransition.COMPLETE],
+  canActivate: (request) => {
+    const user: User = request.user
+    const theCase: Case = request.case
+    const transition = request.body.transition
+
+    if (!user || !theCase || !transition) {
+      return false
+    }
+
+    if (
+      theCase.type === CaseType.INDICTMENT &&
+      transition === CaseTransition.COMPLETE
+    ) {
+      if (
+        theCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.RULING ||
+        theCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.DISMISSAL
+      )
+        return false
+    }
+
+    return true
+  },
 }
 
 // Allows court of appeals judges to transition cases
@@ -393,7 +439,7 @@ export const districtCourtJudgeSignRulingRule: RolesRule = {
     const user: User = request.user
     const theCase: Case = request.case
 
-    // Deny if something is missing - shuould never happen
+    // Deny if something is missing - should never happen
     if (!user || !theCase) {
       return false
     }
