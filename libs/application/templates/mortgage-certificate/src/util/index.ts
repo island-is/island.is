@@ -1,5 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application, StaticText } from '@island.is/application/types'
+import {
+  Application,
+  BasicChargeItem,
+  StaticText,
+} from '@island.is/application/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { SelectedProperty } from '../shared'
 
@@ -8,15 +12,39 @@ export { getUserProfileData } from './getUserProfileData'
 export { concatPropertyList } from './concatPropertyList'
 export { getApplicationFeatureFlags } from './getApplicationFeatureFlags'
 
-export const getChargeItemCodes = (application: Application): Array<string> => {
-  return getChargeItemCodesAndExtraLabel(application).map(
-    (x) => x.chargeItemCode,
+export const getChargeItems = (
+  application: Application,
+): Array<BasicChargeItem> => {
+  const allItems: BasicChargeItem[] = getChargeItemsWithExtraLabel(
+    application,
+  ).map((item) => ({
+    code: item.chargeItemCode,
+    quantity: item.chargeItemQuantity,
+  }))
+
+  //summarize items
+  const summarizedItems = Object.values(
+    allItems.reduce((acc, item) => {
+      const quantity = item.quantity ?? 1 // Default to 1 if quantity is undefined
+      if (acc[item.code]) {
+        acc[item.code].quantity = (acc[item.code].quantity ?? 0) + quantity
+      } else {
+        acc[item.code] = { code: item.code, quantity }
+      }
+      return acc
+    }, {} as { [key: string]: BasicChargeItem }),
   )
+
+  return summarizedItems
 }
 
-export const getChargeItemCodesAndExtraLabel = (
+export const getChargeItemsWithExtraLabel = (
   application: Application,
-): Array<{ chargeItemCode: string; extraLabel?: StaticText }> => {
+): Array<{
+  chargeItemCode: string
+  chargeItemQuantity?: number
+  extraLabel?: StaticText
+}> => {
   const properties = getValueViaPath(
     application.answers,
     'selectedProperties.properties',
@@ -28,7 +56,11 @@ export const getChargeItemCodesAndExtraLabel = (
     [],
   ) as SelectedProperty[]
 
-  const result: Array<{ chargeItemCode: string; extraLabel?: StaticText }> = []
+  const result: Array<{
+    chargeItemCode: string
+    chargeItemQuantity?: number
+    extraLabel?: StaticText
+  }> = []
 
   properties
     .filter(
