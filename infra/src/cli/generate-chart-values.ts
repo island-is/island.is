@@ -22,21 +22,43 @@ const headerComment = `#########################################################
 
 `
 
+const NON_EMPTYABLE_PROPERTIES = new Set(['SERVERSIDE_FEATURES_ON'])
+
+// Recursive function to filter out empty string properties
+const removeEmptyStringProperties = (obj: any): any => {
+  if (typeof obj !== 'object' || obj === null) return obj
+
+  if (Array.isArray(obj)) {
+    return obj.map(removeEmptyStringProperties)
+  }
+
+  return Object.fromEntries(
+    Object.entries(obj)
+      .filter(
+        ([key, value]) => value !== '' || NON_EMPTYABLE_PROPERTIES.has(key),
+      ) // Filter out empty strings
+      .map(([key, value]) => [key, removeEmptyStringProperties(value)]), // Recursively apply to nested objects
+  )
+}
+
 const writeYamlFile = (filePath: string, content: unknown) => {
+  const filteredContent = removeEmptyStringProperties(content)
   const doc = new yaml.Document()
-  doc.contents = doc.createNode(content)
+  doc.contents = doc.createNode(filteredContent, { keepUndefined: false })
+
   mkdirSync(path.dirname(filePath), { recursive: true })
   writeFileSync(filePath, headerComment + doc.toString(yamlOptions), {
     encoding: 'utf8',
   })
 }
 
-const generateChartValues = async () => {
+async function generateChartValues() {
   console.log('Gathering charts')
 
   for (const [name, envs] of Object.entries(Deployments)) {
     for (const [envType, envName] of Object.entries(envs)) {
       console.log(`Processing ${name} ${envName} ${envType}`)
+      // Get rendered environment values and parse
       const renderedYaml = await renderEnv(envType as OpsEnv, name as ChartName)
       const renderedValues = yaml
         .parseDocument(renderedYaml, { schema: 'json' })
