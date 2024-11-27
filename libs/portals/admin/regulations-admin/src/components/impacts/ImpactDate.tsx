@@ -1,4 +1,10 @@
-import { Box, Button, DatePicker, Checkbox } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  DatePicker,
+  Checkbox,
+  Text,
+} from '@island.is/island-ui/core'
 import { impactMsgs } from '../../lib/messages'
 import { DraftImpactForm } from '../../state/types'
 import { useLocale } from '@island.is/localization'
@@ -36,13 +42,19 @@ export const ImpactDate = (props: ImpactDateProps) => {
 
   return (
     <Box marginBottom={4} width={size}>
-      <Box marginBottom={3}>
+      <Box marginBottom={2}>
         <Checkbox
           label={t(impactMsgs.specificDateApply)}
           labelVariant="default"
           checked={hasCustomDate}
           onChange={() => setHasCustomDate(!hasCustomDate)}
         />
+      </Box>
+
+      <Box marginBottom={3}>
+        <Text variant="small" color="dark400">
+          {t(impactMsgs.specificDateApplyTextDetails)}
+        </Text>
       </Box>
       {hasCustomDate ? (
         <>
@@ -65,7 +77,10 @@ export const ImpactDate = (props: ImpactDateProps) => {
               size="small"
               variant="text"
               preTextIcon="close"
-              onClick={() => onChange(undefined)}
+              onClick={() => {
+                onChange(undefined)
+                setHasCustomDate(false)
+              }}
             >
               {t(impactMsgs.effectiveDate_default)}
             </Button>

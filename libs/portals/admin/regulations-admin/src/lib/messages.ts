@@ -425,6 +425,12 @@ export const impactMsgs = defineMessages({
     defaultMessage: 'Breyting tekur gildi á ákveðinni dagsetningu',
   },
 
+  specificDateApplyTextDetails: {
+    id: 'ap.regulations-admin:change-applied-on-specific-date-text-details',
+    defaultMessage:
+      'Sjálfgefið er að breytingar taki gildi þegar í stað, daginn eftir útgáfudag. Veljið dagsetningu úr dagatali ef gildistaka er á ákveðinni dagsetningu.',
+  },
+
   // ---------------------------------------------------------------------------
 
   regExplainer: {
