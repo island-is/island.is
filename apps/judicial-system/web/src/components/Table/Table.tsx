@@ -23,11 +23,11 @@ import { compareLocaleIS } from '../../utils/sortHelper'
 import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
 import IconButton from '../IconButton/IconButton'
 import { UserContext } from '../UserProvider/UserProvider'
+import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
 import SortButton from './SortButton/SortButton'
 import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
-import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
 
 interface Sortable {
   isSortable: boolean

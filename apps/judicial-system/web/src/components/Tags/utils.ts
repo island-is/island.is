@@ -5,7 +5,6 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
-  Case,
   CaseIndictmentRulingDecision,
   CaseListEntry,
   CaseState,

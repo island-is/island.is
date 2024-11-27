@@ -22,16 +22,13 @@ import {
   DefendantInfo,
   getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
-import {
-  Case,
-  CaseListEntry,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { useContextMenu } from '../../ContextMenu/ContextMenu'
 import WithdrawAppealContextMenuModal, {
   useWithdrawAppealMenuOption,
 } from '../../ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'
 import Table from '../Table'
-import { useContextMenu } from '../../ContextMenu/ContextMenu'
 
 interface Props {
   cases: CaseListEntry[]
