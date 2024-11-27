@@ -395,6 +395,14 @@ export const is = {
     'Í augnablikinu er ekki hægt að senda ökuskírteini í síma.',
   'walletPass.moreInfo': 'Nánari upplýsingar',
   'walletPass.alertClose': 'Loka',
+  'walletPass.errorCannotAddPasses':
+    'Þú getur ekki bætt við skírteini. Vinsamlegast vertu viss um að þú sért með Smartwallet appið sett upp á tækinu.',
+  'walletPass.errorAddingOrFetching':
+    'Tókst ekki að sækja eða bæta við skírteini.',
+  'walletPass.errorNotPossibleOnThisDevice':
+    'Þú getur ekki bætt við skírteinum á þetta tæki.',
+  'walletPass.errorNotConnectedNoBarcode':
+    'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
 
   // wallet passport
   'walletPassport.screenTitle': 'Vegabréf',
@@ -587,6 +595,8 @@ export const is = {
     'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
   'problem.offline.title': 'Samband næst ekki',
   'problem.offline.message': 'Villa kom upp í samskiptum við þjónustuaðila',
+  'problem.thirdParty.title': 'Samband næst ekki',
+  'problem.thirdParty.message': 'Villa kom upp í samskiptum við þjónustuaðila',
 
   // passkeys
   'passkeys.headingTitle': 'Innskrá með Ísland.is appinu',
@@ -653,4 +663,18 @@ export const is = {
   'health.vaccinations.noVaccinationsDescription':
     'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
   'health.vaccinations.directorateOfHealth': 'Embætti landlæknis',
+
+  // health - organ donation
+  'health.organDonation': 'Líffæragjöf',
+  'health.organDonation.change': 'Breyta afstöðu',
+  'health.organDonation.isDonor': 'Ég er líffæragjafi',
+  'health.organDonation.isDonorWithLimitations':
+    'Ég heimila líffæragjöf, með takmörkunum.',
+  'health.organDonation.isNotDonor': 'Ég heimila ekki líffæragjöf',
+  'health.organDonation.isDonorDescription':
+    'Öll líffærin mín má nota til ígræðslu.',
+  'health.organDonation.isNotDonorDescription':
+    'Engin líffæri má nota til ígræðslu.',
+  'health.organDonation.isDonorWithLimitationsDescription':
+    'Öll líffærin mín má nota til ígræðslu fyrir utan: {limitations}.',
 }

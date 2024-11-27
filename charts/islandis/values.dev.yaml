@@ -4,6 +4,7 @@
 # Run "yarn charts" instead.
 #
 #####################################################################
+
 air-discount-scheme-api:
   enabled: true
   env:
@@ -700,11 +701,11 @@ application-system-api:
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
-      initialDelaySeconds: 3
+      initialDelaySeconds: 20
       path: '/liveness'
       timeoutSeconds: 3
     readiness:
-      initialDelaySeconds: 3
+      initialDelaySeconds: 20
       path: '/liveness'
       timeoutSeconds: 3
   hpa:
@@ -768,10 +769,10 @@ application-system-api:
     min: 2
   resources:
     limits:
-      cpu: '400m'
+      cpu: '600m'
       memory: '1024Mi'
     requests:
-      cpu: '75m'
+      cpu: '200m'
       memory: '512Mi'
   secrets:
     ALTHINGI_OMBUDSMAN_XROAD_PASSWORD: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD'
@@ -933,7 +934,6 @@ application-system-form:
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'dev'
-    SI_PUBLIC_GRAPHQL_PATH: ''
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -3239,6 +3239,7 @@ user-notification:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3323,6 +3324,7 @@ user-notification-cleanup-worker:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3438,6 +3440,7 @@ user-notification-worker:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

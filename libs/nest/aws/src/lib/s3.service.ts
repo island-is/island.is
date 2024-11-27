@@ -141,7 +141,12 @@ export class S3Service {
     params: PresignedPostOptions,
   ): Promise<PresignedPost> {
     try {
-      return await createPresignedPost(this.s3Client, params)
+      // The S3 Aws sdk v3 returns a trailing forward slash
+      const post = await createPresignedPost(this.s3Client, params)
+      if (post.url.endsWith('/')) {
+        post.url = post.url.slice(0, -1)
+      }
+      return post
     } catch (error) {
       this.logger.error(
         `An error occurred while trying to create a presigned post for file: ${params.Key} in bucket: ${params.Bucket}`,

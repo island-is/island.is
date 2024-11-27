@@ -45,7 +45,8 @@ export enum Features {
   servicePortalVehicleBulkMileagePageEnabled = 'isServicePortalVehicleBulkMileagePageEnabled',
   servicePortalSocialInsurancePageEnabled = 'isServicePortalSocialInsurancePageEnabled',
   servicePortalSocialInsuranceIncomePlanPageEnabled = 'isServicePortalSocialInsuranceIncomePlanPageEnabled',
-
+  servicePortalHealthVaccinationsPageEnabled = 'isServicePortalHealthVaccinationsPageEnabled',
+  servicePortalHealthOrganDonationPageEnabled = 'isServicePortalHealthOrganDonationPageEnabled',
   ServicePortalNotificationsEnabled = 'isServicePortalNotificationsPageEnabled',
   servicePortalLawAndOrderModuleEnabled = 'isServicePortalLawAndOrderModuleEnabled',
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
@@ -108,6 +109,9 @@ export enum Features {
 
   // Islandis Payment
   isIslandisPaymentEnabled = 'islandisPayment',
+
+  // Should auth api use national registry v3 for checking deceased status
+  isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
 }
 
 export enum ServerSideFeature {

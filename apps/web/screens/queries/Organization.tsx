@@ -127,6 +127,12 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       slug
       title
       description
+      topLevelNavigation {
+        links {
+          label
+          href
+        }
+      }
       defaultHeaderImage {
         url
         contentType
@@ -407,6 +413,20 @@ export const EMAIL_SIGNUP_MUTATION = gql`
   mutation EmailSignupSubscription($input: EmailSignupInput!) {
     emailSignupSubscription(input: $input) {
       subscribed
+    }
+  }
+`
+
+export const GET_ORGANIZATION_PARENT_SUBPAGE_QUERY = gql`
+  query GetOrganizationParentSubpageQuery(
+    $input: GetOrganizationParentSubpageInput!
+  ) {
+    getOrganizationParentSubpage(input: $input) {
+      title
+      childLinks {
+        label
+        href
+      }
     }
   }
 `

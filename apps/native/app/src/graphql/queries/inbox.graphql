@@ -48,3 +48,10 @@ mutation PostMailActionMutation($input: DocumentsV2MailActionInput!) {
     success
   }
 }
+
+query DocumentConfirmActions($input: DocumentConfirmActionsInput!) {
+  documentV2ConfirmActions(input: $input) {
+    id
+    confirmed
+  }
+}

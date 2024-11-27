@@ -14,8 +14,6 @@ import { Citizenship } from '../../../lib/dataSchema'
 import {
   getSelectedIndividualAge,
   getSelectedIndividualName,
-  getSelectedCustodyChildren,
-  getSelectedCustodyChild,
 } from '../../../utils'
 import { Routes } from '../../../lib/constants'
 import { FILE_TYPES_ALLOWED, MIN_AGE_WRITTEN_CONSENT } from '../../../shared'

@@ -78,6 +78,17 @@ export type CaseEvent =
   | 'SCHEDULE_COURT_DATE'
   | 'SUBPOENA_SERVICE_STATUS'
 
+const caseEventsToLog = [
+  'CREATE',
+  'CREATE_XRD',
+  'SCHEDULE_COURT_DATE',
+  'SUBPOENA_SERVICE_STATUS',
+  'COMPLETE',
+  'ACCEPT',
+  'REJECT',
+  'DISMISS',
+]
+
 @Injectable()
 export class EventService {
   constructor(
@@ -152,6 +163,7 @@ export class EventService {
           ],
         }),
       })
+      this.logInfo(event, theCase)
     } catch (error) {
       // Tolerate failure, but log error
       this.logger.error(
@@ -209,5 +221,31 @@ export class EventService {
     }
 
     return infoText
+  }
+
+  logInfo = (event: CaseEvent, theCase: Case) => {
+    if (!caseEventsToLog.includes(event)) {
+      return
+    }
+
+    let extraInfo
+
+    switch (event) {
+      case 'SCHEDULE_COURT_DATE':
+        extraInfo = `courtDate: ${formatDate(
+          DateLog.courtDate(theCase.dateLogs)?.date ??
+            DateLog.arraignmentDate(theCase.dateLogs)?.date,
+          'Pp',
+        )}`
+        break
+      default:
+        break
+    }
+
+    this.logger.info(`Event ${event} for case ${theCase.id}`, {
+      caseId: theCase.id,
+      event,
+      extraInfo,
+    })
   }
 }

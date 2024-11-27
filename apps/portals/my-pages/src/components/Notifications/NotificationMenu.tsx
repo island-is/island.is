@@ -8,16 +8,16 @@ import {
   ModalBase,
   Text,
 } from '@island.is/island-ui/core'
-import { LinkResolver } from '@island.is/service-portal/core'
+import { LinkResolver } from '@island.is/portals/my-pages/core'
 import {
   GetUserNotificationsOverviewQuery,
   InformationPaths,
-} from '@island.is/service-portal/information'
+} from '@island.is/portals/my-pages/information'
 import { sharedMessages } from '@island.is/shared/translations'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
-import { m } from '@island.is/service-portal/core'
+import { m } from '@island.is/portals/my-pages/core'
 import NotificationLine from './NotificationLine'
 import cn from 'classnames'
 import * as styles from './Notifications.css'

@@ -55,7 +55,7 @@ export class UserService {
         cachedTokenResponse.accessTokenExp,
       )
 
-      if (accessTokenHasExpired && !refresh) {
+      if (accessTokenHasExpired && refresh) {
         // Get new token data with refresh token
         const tokenResponse = await this.idsService.refreshToken(
           cachedTokenResponse.encryptedRefreshToken,

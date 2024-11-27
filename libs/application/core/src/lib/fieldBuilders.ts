@@ -46,6 +46,8 @@ import {
   SliderField,
   MaybeWithApplication,
   MaybeWithApplicationAndFieldAndLocale,
+  DisplayField,
+  FieldsRepeaterField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -118,6 +120,8 @@ export const buildDateField = (
   const {
     maxDate,
     minDate,
+    minYear,
+    maxYear,
     excludeDates,
     placeholder,
     backgroundColor = 'blue',
@@ -130,6 +134,8 @@ export const buildDateField = (
     placeholder,
     maxDate,
     minDate,
+    minYear,
+    maxYear,
     excludeDates,
     type: FieldTypes.DATE,
     component: FieldComponents.DATE,
@@ -863,6 +869,48 @@ export const buildTableRepeaterField = (
   }
 }
 
+export const buildFieldsRepeaterField = (
+  data: Omit<FieldsRepeaterField, 'type' | 'component' | 'children'>,
+): FieldsRepeaterField => {
+  const {
+    fields,
+    table,
+    title,
+    titleVariant,
+    formTitle,
+    formTitleVariant,
+    formTitleNumbering,
+    marginTop,
+    marginBottom,
+    removeItemButtonText,
+    addItemButtonText,
+    saveItemButtonText,
+    minRows,
+    maxRows,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.FIELDS_REPEATER,
+    component: FieldComponents.FIELDS_REPEATER,
+    fields,
+    table,
+    title,
+    titleVariant,
+    formTitle,
+    formTitleVariant,
+    formTitleNumbering,
+    marginTop,
+    marginBottom,
+    removeItemButtonText,
+    addItemButtonText,
+    saveItemButtonText,
+    minRows,
+    maxRows,
+  }
+}
+
 export const buildStaticTableField = (
   data: Omit<
     StaticTableField,
@@ -960,5 +1008,36 @@ export const buildSliderField = (
     labelMultiplier,
     condition,
     saveAsString,
+  }
+}
+
+export const buildDisplayField = (
+  data: Omit<DisplayField, 'type' | 'component' | 'children'>,
+): DisplayField => {
+  const {
+    title,
+    titleVariant,
+    label,
+    variant,
+    marginTop,
+    marginBottom,
+    value,
+    suffix,
+    rightAlign,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    title,
+    titleVariant,
+    label,
+    variant,
+    marginTop,
+    marginBottom,
+    type: FieldTypes.DISPLAY,
+    component: FieldComponents.DISPLAY,
+    children: undefined,
+    value,
+    suffix,
+    rightAlign,
   }
 }

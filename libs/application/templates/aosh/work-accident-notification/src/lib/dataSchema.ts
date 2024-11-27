@@ -27,7 +27,7 @@ const accidentSchema = z.object({
   wentWrong: z.string().min(1).max(499),
 })
 
-const companySchema = z.object({
+const basicCompanySchema = z.object({
   nationalId: z
     .string()
     .refine(
@@ -35,10 +35,13 @@ const companySchema = z.object({
         nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId),
     ),
   address: z.string(),
-  addressOfBranch: z.string().optional(),
   name: z.string(),
   numberOfEmployees: z.string(),
   postnumber: z.string(),
+})
+
+const companySchema = z.object({
+  addressOfBranch: z.string().optional(),
   nameOfBranch: z.string().optional(), // VER needs to confirm requirement here for individuals vs company
   postnumberOfBranch: z.string().optional(),
   industryClassification: z.string().optional(),
@@ -191,6 +194,7 @@ const projectPurchaseSchema = z
 
 export const WorkAccidentNotificationAnswersSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  basicInformation: basicCompanySchema,
   companyInformation: companySchema,
   companyLaborProtection: companyLaborProtectionSchema,
   accident: accidentSchema,
@@ -208,6 +212,7 @@ export const WorkAccidentNotificationAnswersSchema = z.object({
 export type WorkAccidentNotification = z.TypeOf<
   typeof WorkAccidentNotificationAnswersSchema
 >
+export type BasicCompanyType = z.TypeOf<typeof basicCompanySchema>
 export type CompanyType = z.TypeOf<typeof companySchema>
 export type CompanyLaborProtectionType = z.TypeOf<
   typeof companyLaborProtectionSchema

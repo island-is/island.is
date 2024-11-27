@@ -17,8 +17,8 @@ import illustrationSrc from '../../assets/illustrations/le-moving-s4.png'
 import { navigateTo } from '../../lib/deep-linking'
 import { VehicleItem } from '../vehicles/components/vehicle-item'
 import {
-  ListVehiclesV2Query,
-  useListVehiclesV2Query,
+  ListVehiclesQuery,
+  useListVehiclesQuery,
 } from '../../graphql/types/schema'
 import { screenWidth } from '../../utils/dimensions'
 
@@ -30,7 +30,7 @@ const validateVehiclesInitialData = ({
   data,
   loading,
 }: {
-  data: ListVehiclesV2Query | undefined
+  data: ListVehiclesQuery | undefined
   loading: boolean
 }) => {
   if (loading) {
@@ -38,7 +38,7 @@ const validateVehiclesInitialData = ({
   }
   // Only show widget initially if there are vehicles that require mileage registration
   if (
-    data?.vehiclesListV2?.vehicleList?.some(
+    data?.vehiclesList?.vehicleList?.some(
       (vehicle) => vehicle.requiresMileageRegistration,
     )
   ) {
@@ -49,7 +49,7 @@ const validateVehiclesInitialData = ({
 }
 
 interface VehiclesModuleProps {
-  data: ListVehiclesV2Query | undefined
+  data: ListVehiclesQuery | undefined
   loading: boolean
   error?: ApolloError | undefined
 }
@@ -59,7 +59,7 @@ const VehiclesModule = React.memo(
     const theme = useTheme()
     const intl = useIntl()
 
-    const vehicles = data?.vehiclesListV2?.vehicleList
+    const vehicles = data?.vehiclesList?.vehicleList
 
     // Reorder vehicles so vehicles that require mileage registration are shown first
     const reorderedVehicles = useMemo(
@@ -170,4 +170,4 @@ const VehiclesModule = React.memo(
   },
 )
 
-export { VehiclesModule, validateVehiclesInitialData, useListVehiclesV2Query }
+export { VehiclesModule, validateVehiclesInitialData, useListVehiclesQuery }

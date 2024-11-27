@@ -54,12 +54,19 @@ const IconWrapper = styled.View`
 const IconMessage = styled.View`
   flex-direction: row;
   justify-content: flex-start;
+  flex: 1;
 `
 
 const Row = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+`
+
+const Message = styled(Typography)`
+  flex: 1;
+  flex-shrink: 1;
+  margin-right: ${({ theme }) => theme.spacing[1]}px;
 `
 
 const Expanded = styled.View`
@@ -182,7 +189,7 @@ export const ExpandableCard = ({
                   />
                 </IconWrapper>
               )}
-              <Typography variant="heading5">{message}</Typography>
+              <Message variant="heading5">{message}</Message>
             </IconMessage>
             <Typography variant="heading5">{value}</Typography>
           </Row>

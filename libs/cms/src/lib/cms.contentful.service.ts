@@ -77,13 +77,17 @@ import { mapImage } from './models/image.model'
 import { EmailSignup, mapEmailSignup } from './models/emailSignup.model'
 import { GetTabSectionInput } from './dto/getTabSection.input'
 import { mapTabSection, TabSection } from './models/tabSection.model'
-import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { GenericTag, mapGenericTag } from './models/genericTag.model'
 import { GetEmailSignupInput } from './dto/getEmailSignup.input'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
+import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
+import { GetGenericTagsInTagGroupsInput } from './dto/getGenericTagsInTagGroups.input'
+import { Grant, mapGrant } from './models/grant.model'
 import { mapManual } from './models/manual.model'
 import { mapServiceWebPage } from './models/serviceWebPage.model'
 import { mapEvent } from './models/event.model'
+import { GetOrganizationParentSubpageInput } from './dto/getOrganizationParentSubpage.input'
+import { mapOrganizationParentSubpage } from './models/organizationParentSubpage.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -599,6 +603,19 @@ export class CmsContentfulService {
     return (result.items as types.INews[]).map(mapNews)[0] ?? null
   }
 
+  async getGrant(lang: string, id: string): Promise<Grant | null> {
+    const params = {
+      ['content_type']: 'grant',
+      'fields.grantApplicationId': id,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IGrantFields>(lang, params)
+      .catch(errorHandler('getGrant'))
+
+    return (result.items as types.IGrant[]).map(mapGrant)[0] ?? null
+  }
+
   async getSingleEvent(lang: string, slug: string) {
     const params = {
       ['content_type']: 'event',
@@ -1109,5 +1126,53 @@ export class CmsContentfulService {
       .catch(errorHandler('getGenericTag'))
 
     return (result.items as types.IGenericTag[]).map(mapGenericTag)[0] ?? null
+  }
+
+  async getGenericTagsInTagGroups({
+    lang = 'is',
+    tagGroupSlugs,
+  }: GetGenericTagsInTagGroupsInput): Promise<Array<GenericTag> | null> {
+    let params
+    if (tagGroupSlugs) {
+      params = {
+        ['content_type']: 'genericTag',
+        'fields.genericTagGroup.fields.slug[in]': tagGroupSlugs.join(','),
+        'fields.genericTagGroup.sys.contentType.sys.id': 'genericTagGroup',
+      }
+    } else {
+      params = {
+        ['content_type']: 'genericTag',
+        'fields.genericTagGroup.sys.contentType.sys.id': 'genericTagGroup',
+      }
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IGenericTagFields>(lang, params)
+      .catch(errorHandler('getGenericTag'))
+
+    return (result.items as types.IGenericTag[]).map(mapGenericTag)
+  }
+
+  async getOrganizationParentSubpage(input: GetOrganizationParentSubpageInput) {
+    const params = {
+      content_type: 'organizationParentSubpage',
+      'fields.slug': input.slug,
+      'fields.organizationPage.sys.contentType.sys.id': 'organizationPage',
+      'fields.organizationPage.fields.slug': input.organizationPageSlug,
+      limit: 1,
+    }
+
+    const response = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationParentSubpageFields>(
+        input.lang,
+        params,
+      )
+      .catch(errorHandler('getOrganizationParentSubpage'))
+
+    return (
+      (response.items as types.IOrganizationParentSubpage[]).map(
+        mapOrganizationParentSubpage,
+      )[0] ?? null
+    )
   }
 }
