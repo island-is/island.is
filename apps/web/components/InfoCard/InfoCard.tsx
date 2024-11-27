@@ -5,7 +5,7 @@ import { SimpleInfoCard } from './SimpleInfoCard'
 
 export interface BaseProps {
   title: string
-  text: string
+  description: string
   eyebrow: string
   type?: 'wide' | 'default'
   link: {
@@ -14,7 +14,7 @@ export interface BaseProps {
   }
 }
 
-type Props =
+export type InfoCardProps =
   | (BaseProps & {
       variant?: 'simple'
     })
@@ -22,7 +22,7 @@ type Props =
       variant: 'detailed'
     })
 
-export const InfoCard = (props: Props) => {
+export const InfoCard = (props: InfoCardProps) => {
   if (props.variant === 'detailed') {
     return <DetailedInfoCard {...props} />
   } else {

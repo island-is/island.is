@@ -1,4 +1,6 @@
 import * as React from 'react'
+import { useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
 
 import {
   Box,
@@ -15,13 +17,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { ActionCardProps } from '@island.is/island-ui/core/types'
+import { theme } from '@island.is/island-ui/theme'
 import { isDefined } from '@island.is/shared/utils'
 
 import { BaseProps } from './InfoCard'
 import * as styles from './InfoCard.css'
-import { useWindowSize } from 'react-use'
-import { useEffect, useState } from 'react'
-import { theme } from '@island.is/island-ui/theme'
 
 const eyebrowColor = 'blueberry600'
 
@@ -39,7 +39,7 @@ export type DetailedProps = BaseProps & {
 
 export const DetailedInfoCard = ({
   title,
-  text,
+  description,
   type = 'default',
   eyebrow,
   subEyebrow,
@@ -182,9 +182,9 @@ export const DetailedInfoCard = ({
               <Text variant="h3" color="blue400">
                 {title}
               </Text>
-              {text && (
+              {description && (
                 <Box flexGrow={1} marginTop={1}>
-                  <Text>{text}</Text>
+                  <Text>{description}</Text>
                 </Box>
               )}
             </GridColumn>
@@ -198,9 +198,9 @@ export const DetailedInfoCard = ({
         <Text variant="h3" color="blue400">
           {title}
         </Text>
-        {text && (
+        {description && (
           <Box marginTop={1}>
-            <Text>{text}</Text>
+            <Text>{description}</Text>
           </Box>
         )}
         {renderDetails()}

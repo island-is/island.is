@@ -1,4 +1,6 @@
 import * as React from 'react'
+import { useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
 
 import {
   Box,
@@ -6,28 +8,19 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Icon,
-  IconMapIcon,
-  Inline,
   LinkV2,
-  Stack,
-  Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { ActionCardProps } from '@island.is/island-ui/core/types'
-import { isDefined } from '@island.is/shared/utils'
+import { theme } from '@island.is/island-ui/theme'
 
 import { BaseProps } from './InfoCard'
 import * as styles from './InfoCard.css'
-import { useWindowSize } from 'react-use'
-import { useEffect, useState } from 'react'
-import { theme } from '@island.is/island-ui/theme'
 
 const eyebrowColor = 'blueberry600'
 
 export const SimpleInfoCard = ({
   title,
-  text,
+  description,
   type = 'default',
   eyebrow,
   link,
@@ -86,9 +79,9 @@ export const SimpleInfoCard = ({
               <Text variant="h3" color="blue400">
                 {title}
               </Text>
-              {text && (
+              {description && (
                 <Box flexGrow={1} marginTop={1}>
-                  <Text>{text}</Text>
+                  <Text>{description}</Text>
                 </Box>
               )}
             </GridColumn>
@@ -112,9 +105,9 @@ export const SimpleInfoCard = ({
         <Text variant="h3" color="blue400">
           {title}
         </Text>
-        {text && (
+        {description && (
           <Box marginTop={1}>
-            <Text>{text}</Text>
+            <Text>{description}</Text>
           </Box>
         )}
         <Box marginTop={1}>{renderCta()}</Box>
