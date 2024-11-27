@@ -388,7 +388,12 @@ describe('getCasesQueryFilter', () => {
         {
           type: indictmentCases,
           state: CaseState.COMPLETED,
-          indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+          indictment_ruling_decision: {
+            [Op.or]: [
+              CaseIndictmentRulingDecision.RULING,
+              CaseIndictmentRulingDecision.FINE,
+            ],
+          },
           indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
           id: {
             [Op.in]: Sequelize.literal(`

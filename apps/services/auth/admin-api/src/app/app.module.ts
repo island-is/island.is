@@ -9,8 +9,10 @@ import {
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
+import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { AuditModule } from '@island.is/nest/audit'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
@@ -31,7 +33,6 @@ import { ProvidersModule } from './v2/providers/providers.module'
 import { ScopesModule } from './v2/scopes/scopes.module'
 import { ClientSecretsModule } from './v2/secrets/client-secrets.module'
 import { TenantsModule } from './v2/tenants/tenants.module'
-import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
         DelegationConfig,
         RskRelationshipsClientConfig,
         NationalRegistryClientConfig,
+        NationalRegistryV3ClientConfig,
         CompanyRegistryConfig,
         FeatureFlagConfig,
         XRoadConfig,

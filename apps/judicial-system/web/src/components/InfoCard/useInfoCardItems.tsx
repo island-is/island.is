@@ -15,6 +15,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 import {
   Case,
+  CaseIndictmentRulingDecision,
   CaseType,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -279,6 +280,11 @@ const useInfoCardItems = () => {
           IndictmentCaseReviewDecision.ACCEPT
           ? strings.reviewTagAccepted
           : strings.reviewTagAppealed,
+        {
+          isFine:
+            workingCase.indictmentRulingDecision ===
+            CaseIndictmentRulingDecision.FINE,
+        },
       ),
     ],
   }

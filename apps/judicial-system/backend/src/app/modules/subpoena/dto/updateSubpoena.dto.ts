@@ -1,15 +1,18 @@
-import { Type } from 'class-transformer'
+import { Transform, Type } from 'class-transformer'
 import {
   IsDate,
   IsEnum,
   IsOptional,
   IsString,
   MaxLength,
+  MinLength,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import { DefenderChoice, ServiceStatus } from '@island.is/judicial-system/types'
+
+import { nationalIdTransformer } from '../../../transformers'
 
 export class UpdateSubpoenaDto {
   @IsOptional()
@@ -18,8 +21,8 @@ export class UpdateSubpoenaDto {
   readonly serviceStatus?: ServiceStatus
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly servedBy?: string
 
@@ -40,26 +43,28 @@ export class UpdateSubpoenaDto {
   readonly defenderChoice?: DefenderChoice
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MinLength(10)
+  @MaxLength(10)
+  @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly defenderNationalId?: string
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly defenderName?: string
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly defenderEmail?: string
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly defenderPhoneNumber?: string
 
@@ -69,14 +74,16 @@ export class UpdateSubpoenaDto {
   readonly requestedDefenderChoice?: DefenderChoice
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MinLength(10)
+  @MaxLength(10)
+  @Transform(nationalIdTransformer)
   @ApiPropertyOptional({ type: String })
   readonly requestedDefenderNationalId?: string
 
   @IsOptional()
-  @MaxLength(255)
   @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly requestedDefenderName?: string
 }

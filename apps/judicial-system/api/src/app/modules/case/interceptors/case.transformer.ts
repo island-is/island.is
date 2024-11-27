@@ -2,6 +2,7 @@ import {
   CaseAppealDecision,
   CaseIndictmentRulingDecision,
   EventType,
+  FINE_APPEAL_WINDOW_DAYS,
   getIndictmentVerdictAppealDeadlineStatus,
   getStatementDeadline,
   isRequestCase,
@@ -151,6 +152,8 @@ export const getIndictmentInfo = (
   eventLog?: EventLog[],
 ): IndictmentInfo => {
   const indictmentInfo: IndictmentInfo = {}
+  const isFine = rulingDecision === CaseIndictmentRulingDecision.FINE
+  const isRuling = rulingDecision === CaseIndictmentRulingDecision.RULING
 
   if (!rulingDate) {
     return indictmentInfo
@@ -158,13 +161,16 @@ export const getIndictmentInfo = (
 
   const theRulingDate = new Date(rulingDate)
   indictmentInfo.indictmentAppealDeadline = new Date(
-    theRulingDate.getTime() + getDays(VERDICT_APPEAL_WINDOW_DAYS),
+    theRulingDate.getTime() +
+      getDays(isFine ? FINE_APPEAL_WINDOW_DAYS : VERDICT_APPEAL_WINDOW_DAYS),
   ).toISOString()
 
   const verdictInfo = defendants?.map<[boolean, Date | undefined]>(
     (defendant) => [
-      rulingDecision === CaseIndictmentRulingDecision.RULING,
-      defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED
+      isRuling || isFine,
+      isFine
+        ? theRulingDate
+        : defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED
         ? new Date()
         : defendant.verdictViewDate
         ? new Date(defendant.verdictViewDate)
@@ -173,7 +179,7 @@ export const getIndictmentInfo = (
   )
 
   const [indictmentVerdictViewedByAll, indictmentVerdictAppealDeadlineExpired] =
-    getIndictmentVerdictAppealDeadlineStatus(verdictInfo)
+    getIndictmentVerdictAppealDeadlineStatus(verdictInfo, isFine)
   indictmentInfo.indictmentVerdictViewedByAll = indictmentVerdictViewedByAll
   indictmentInfo.indictmentVerdictAppealDeadlineExpired =
     indictmentVerdictAppealDeadlineExpired
@@ -189,6 +195,8 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
   return theCase.defendants?.map((defendant) => {
     const serviceRequired =
       defendant.serviceRequirement === ServiceRequirement.REQUIRED
+    const isFine =
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
     const { verdictViewDate } = defendant
 
@@ -196,7 +204,10 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
 
     const verdictAppealDeadline = baseDate
       ? new Date(
-          new Date(baseDate).getTime() + getDays(VERDICT_APPEAL_WINDOW_DAYS),
+          new Date(baseDate).getTime() +
+            getDays(
+              isFine ? FINE_APPEAL_WINDOW_DAYS : VERDICT_APPEAL_WINDOW_DAYS,
+            ),
         ).toISOString()
       : undefined
 
