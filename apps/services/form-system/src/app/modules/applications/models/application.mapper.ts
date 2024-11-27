@@ -23,6 +23,7 @@ export class ApplicationMapper {
       formId: form.id,
       slug: form.slug,
       formName: form.name,
+      submittedAt: application.submittedAt,
       sections: [],
     }
 

@@ -79,6 +79,9 @@ export class ValueTypeFactory {
       case FieldTypesEnum.TIME_INPUT:
         keys = ['time']
         return this.pickSettings(valueType, keys)
+      case FieldTypesEnum.FILE:
+        keys = ['s3Key']
+        return this.pickSettings(valueType, keys)
       default:
         return undefined
     }

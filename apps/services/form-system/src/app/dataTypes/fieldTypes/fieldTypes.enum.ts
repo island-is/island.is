@@ -20,6 +20,6 @@ export const FieldTypesEnum = {
   PHONE_NUMBER: 'ac3fa8a0-9258-49d1-aff2-1dacf31538f0',
   BANK_ACCOUNT: '94819d53-69b6-464b-abda-3bb6299d2511',
   TIME_INPUT: '83f6f77d-1ca7-4f99-8806-05cec59a48e4',
-  DOCUMENT: '6a616adc-80ab-47c1-8037-1d9a8dc68a5c',
+  FILE: '6a616adc-80ab-47c1-8037-1d9a8dc68a5c',
   PAYMENT: 'd4143c45-6d45-4052-93c6-42d46572a874',
 }

@@ -2,7 +2,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'application',
+        'application_event',
         {
           id: {
             type: Sequelize.UUID,
@@ -20,33 +20,24 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
-          submitted_at: {
-            type: Sequelize.DATE,
-            allowNull: true,
-            defaultValue: null,
-          },
-          is_test: {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-          },
-          status: {
+          event_type: {
             type: Sequelize.STRING,
             allowNull: false,
           },
-          dependencies: {
-            type: Sequelize.JSON,
+          is_file_event: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+          },
+          value_id: {
+            type: Sequelize.STRING,
             allowNull: true,
           },
-          completed: {
-            type: Sequelize.JSON,
-            allowNull: true,
-          },
-          form_id: {
+          application_id: {
             type: Sequelize.UUID,
+            onDelete: 'CASCADE',
             allowNull: false,
             references: {
-              model: 'form',
+              model: 'application',
               key: 'id',
             },
           },
@@ -58,7 +49,9 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('application', { transaction: t }),
+      queryInterface.dropTable('application_event', {
+        transaction: t,
+      }),
     )
   },
 }
