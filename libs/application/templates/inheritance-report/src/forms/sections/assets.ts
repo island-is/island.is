@@ -708,6 +708,12 @@ export const assets = buildSection({
               backgroundColor: 'white',
               options: [{ value: YES, label: m.assetsOverviewConfirmation }],
             }),
+            buildCustomField({
+              title: '',
+              id: 'overviewPrint',
+              doesNotRequireAnswer: true,
+              component: 'PrintScreen',
+            }),
           ],
         }),
       ],

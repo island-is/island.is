@@ -24255,18 +24255,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"adler-32@npm:~1.2.0":
-  version: 1.2.0
-  resolution: "adler-32@npm:1.2.0"
-  dependencies:
-    exit-on-epipe: ~1.0.1
-    printj: ~1.1.0
-  bin:
-    adler32: ./bin/adler32.njs
-  checksum: aa611316fa224349b3eb1b7fcccc05195c38e425ff2b678fde67c0440b27074c42ad97b03efb7478f045b094f0dcb51a8711a2d5571d8940e1c5c52593af7bf6
-  languageName: node
-  linkType: hard
-
 "agent-base@npm:5":
   version: 5.1.1
   resolution: "agent-base@npm:5.1.1"
@@ -27506,17 +27494,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cfb@npm:^1.1.4":
-  version: 1.2.0
-  resolution: "cfb@npm:1.2.0"
-  dependencies:
-    adler-32: ~1.2.0
-    crc-32: ~1.2.0
-    printj: ~1.1.2
-  checksum: 3c1bb1a7459bdff5a76c4fd39b1845c515634be1ca23a32c5eecd42dfd4f9e96bd162920a9664a9d87bc7082a00fe65d1a755404041def37af5699e7ec776f72
-  languageName: node
-  linkType: hard
-
 "chalk@npm:1.1.1":
   version: 1.1.1
   resolution: "chalk@npm:1.1.1"
@@ -28288,18 +28265,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"codepage@npm:~1.14.0":
-  version: 1.14.0
-  resolution: "codepage@npm:1.14.0"
-  dependencies:
-    commander: ~2.14.1
-    exit-on-epipe: ~1.0.1
-  bin:
-    codepage: ./bin/codepage.njs
-  checksum: ea06cbb7b646029d4e252b143b09048f1dee466d80be9e68cc4da05981f982a02f1199db0ea27d5e05a026bfa77b91e3ae8e0d3ed9665bd77ba54911bf2b82b7
-  languageName: node
-  linkType: hard
-
 "collect-v8-coverage@npm:^1.0.0":
   version: 1.0.1
   resolution: "collect-v8-coverage@npm:1.0.1"
@@ -28488,20 +28453,6 @@ __metadata:
   version: 9.5.0
   resolution: "commander@npm:9.5.0"
   checksum: c7a3e27aa59e913b54a1bafd366b88650bc41d6651f0cbe258d4ff09d43d6a7394232a4dadd0bf518b3e696fdf595db1028a0d82c785b88bd61f8a440cecfade
-  languageName: node
-  linkType: hard
-
-"commander@npm:~2.14.1":
-  version: 2.14.1
-  resolution: "commander@npm:2.14.1"
-  checksum: 26bd49febeac8efabb7488fb5a4a2480b04bc4c4eef3c50da93eead72959f7a5232d003deda5b9761937205721274e80108f6d1d2b45ae7a8387cfb92031084e
-  languageName: node
-  linkType: hard
-
-"commander@npm:~2.17.1":
-  version: 2.17.1
-  resolution: "commander@npm:2.17.1"
-  checksum: 22e7ed5b422079a13a496e5eb8f73f36c15b5809d46f738e168e20f9ad485c12951bdc2cb366a36eb5f4927dae4f17b355b8adb96a5b9093f5fa4c439e8b9419
   languageName: node
   linkType: hard
 
@@ -29394,7 +29345,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"crc-32@npm:^1.2.0, crc-32@npm:~1.2.0":
+"crc-32@npm:^1.2.0":
   version: 1.2.0
   resolution: "crc-32@npm:1.2.0"
   dependencies:
@@ -34262,13 +34213,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fflate@npm:^0.3.8":
-  version: 0.3.11
-  resolution: "fflate@npm:0.3.11"
-  checksum: 1eca8d3e86fda9f82c8acd16a970dd20bfeb4bd31c7808351ef413bc2673911d2aedc2fed6e8a4b68f5f2598b07f0579fdf6f085f5a8105b49cde8a8f3528def
-  languageName: node
-  linkType: hard
-
 "figlet@npm:^1.1.1, figlet@npm:^1.2.0":
   version: 1.5.2
   resolution: "figlet@npm:1.5.2"
@@ -34933,13 +34877,6 @@ __metadata:
   version: 2.9.5
   resolution: "fp-ts@npm:2.9.5"
   checksum: 92151abdc5d354c5b7f175554fa7beea57781b00d73bb77e114872e48cd8ac88653a95cc9771df965fa2388b807c3a82864a5c12676ed6d02131d46edb3ac242
-  languageName: node
-  linkType: hard
-
-"frac@npm:~1.1.2":
-  version: 1.1.2
-  resolution: "frac@npm:1.1.2"
-  checksum: fbfbb28003bb84506dd35e7aad8543c5a358bdc95451d0065b6127d40d2c45106f14221575c3e9ce3ea4bf0bbf1225b73c5d655965c9f4ce44332cbe1b34667d
   languageName: node
   linkType: hard
 
@@ -39000,7 +38937,7 @@ __metadata:
     winston: 3.7.2
     winston-cloudwatch: 3.1.1
     winston-transport: 4.6.0
-    xlsx: 0.17.0
+    xlsx: "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
     xml2js: 0.4.23
     xstate: 4.20.0
     yargs: 17.7.2
@@ -47766,7 +47703,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"printj@npm:~1.1.0, printj@npm:~1.1.2":
+"printj@npm:~1.1.0":
   version: 1.1.2
   resolution: "printj@npm:1.1.2"
   bin:
@@ -52850,15 +52787,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ssf@npm:~0.11.2":
-  version: 0.11.2
-  resolution: "ssf@npm:0.11.2"
-  dependencies:
-    frac: ~1.1.2
-  checksum: 6ecef6ae0a90e67dc4b05bc3cca883e2dffad9773b41124af36ee308884e4a29f98bde66d6c8d2bd1ccf5f860ea4f6c49338bd8d733007fc42ebe02dd5295dcf
-  languageName: node
-  linkType: hard
-
 "ssh-remote-port-forward@npm:^1.0.4":
   version: 1.0.4
   resolution: "ssh-remote-port-forward@npm:1.0.4"
@@ -57390,13 +57318,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wmf@npm:~1.0.1":
-  version: 1.0.2
-  resolution: "wmf@npm:1.0.2"
-  checksum: d336acb2c76fa868ef006fbb06c4e64c7c1ed5ff77d16c48a273cf1f4d0a44e35df209b8fde28d93dd4a924d652a9c4fc8a92ad57885a5e437df0b0900769e3b
-  languageName: node
-  linkType: hard
-
 "wonka@npm:^4.0.14":
   version: 4.0.15
   resolution: "wonka@npm:4.0.15"
@@ -57415,13 +57336,6 @@ __metadata:
   version: 1.2.3
   resolution: "word-wrap@npm:1.2.3"
   checksum: 30b48f91fcf12106ed3186ae4fa86a6a1842416df425be7b60485de14bec665a54a68e4b5156647dec3a70f25e84d270ca8bc8cd23182ed095f5c7206a938c1f
-  languageName: node
-  linkType: hard
-
-"word@npm:~0.3.0":
-  version: 0.3.0
-  resolution: "word@npm:0.3.0"
-  checksum: f84e7061883380c1bcb0d98bd183b7f2b281688011924af7a96d3ed3ee20aeb12cc59a0451b66e5e57520338a056725ff8e0c07b358c0afecf5488a9557c19fe
   languageName: node
   linkType: hard
 
@@ -57558,23 +57472,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xlsx@npm:0.17.0":
-  version: 0.17.0
-  resolution: "xlsx@npm:0.17.0"
-  dependencies:
-    adler-32: ~1.2.0
-    cfb: ^1.1.4
-    codepage: ~1.14.0
-    commander: ~2.17.1
-    crc-32: ~1.2.0
-    exit-on-epipe: ~1.0.1
-    fflate: ^0.3.8
-    ssf: ~0.11.2
-    wmf: ~1.0.1
-    word: ~0.3.0
+"xlsx@https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz":
+  version: 0.20.3
+  resolution: "xlsx@https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   bin:
-    xlsx: bin/xlsx.njs
-  checksum: 64e44eba53b64b989667b11655b88ef59a695aa07cce2415f9edff64ef6a48d936ed33208d98db3654e31769d79c42fd50e96d983d55e0850cb54a591b28960e
+    xlsx: ./bin/xlsx.njs
+  checksum: c08ac699e6d31222404871240aa2c2804cb8bae59f0bea08d3293e99756cf0d3122fd34739189edaae1d9b0b493bbb8eb95d021950ee7b5cba9d55ecd6fcb4e4
   languageName: node
   linkType: hard
 

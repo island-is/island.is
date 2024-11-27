@@ -6,10 +6,12 @@ export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   DONE = 'done',
+  REJECTED = 'rejected',
 }
 
 export enum Roles {
   APPLICANT = 'applicant',
+  NOTALLOWED = 'notAllowed',
 }
 
 export type Config = { key: string; value: string }
