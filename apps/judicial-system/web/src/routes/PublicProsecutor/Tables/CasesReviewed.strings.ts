@@ -18,6 +18,12 @@ export const strings = defineMessages({
     description:
       'Notað sem texti á tagg fyrir "Unun" tillögu í yfirlesin mál málalista',
   },
+  reviewTagFineAppealed: {
+    id: 'judicial.system.core:public_prosecutor.tables.cases_reviewed.review_tag_fine_appealed',
+    defaultMessage: 'Kært',
+    description:
+      'Notað sem texti á tagg fyrir "Kært" tillögu í yfirlesin mál málalista',
+  },
   infoContainerMessage: {
     id: 'judicial.system.core:public_prosecutor.tables.cases_reviewed.info_container_message',
     defaultMessage: 'Engin yfirlesin mál.',
