@@ -22,7 +22,7 @@ jobs:
         id: unicorn-affected
         run: |
           UNICORN=$(yarn is-unicorn)
-          if [ "$UNICORN" = 'true' ]; then
+          if [ "$UNICORN" == 'true' ]; then
               echo "unicorn is detected"
               echo IS_UNICORN=true >> "$GITHUB_OUTPUT"
           else
