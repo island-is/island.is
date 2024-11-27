@@ -2,9 +2,8 @@ import { json, ref } from './dsl'
 import { BffInfo, Context, PortalKeys } from './types/input-types'
 
 import {
-  adminPortalScopes,
-  applicationSystemScopes,
-  servicePortalScopes,
+    applicationSystemScopes,
+    servicePortalScopes
 } from '../../../libs/auth/scopes/src/index'
 
 /**
@@ -15,9 +14,16 @@ const sanitizePath = (path: string) => path.replace(/^\/+|\/+$/g, '')
 export const getScopes = (key: PortalKeys) => {
   switch (key) {
     case 'minarsidur':
-      return [...servicePortalScopes, ...applicationSystemScopes]
+      const combinedScopes = new Set([
+        ...servicePortalScopes,
+        ...applicationSystemScopes,
+      ])
+
+      return [...combinedScopes]
     case 'stjornbord':
-      return adminPortalScopes
+      const uniqueScopes = new Set([...servicePortalScopes])
+
+      return [...uniqueScopes]
     default:
       throw new Error('Invalid BFF client')
   }
