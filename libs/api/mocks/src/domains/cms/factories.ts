@@ -167,7 +167,7 @@ export const articleGroup = factory<ArticleGroup>({
 })
 
 export const news = factory<News>({
-  id: () => faker.datatype.uuid(),
+  id: () => faker.string.uuid(),
   title: () => title(),
   slug: slugify('title'),
   date: () => faker.date.past().toISOString(),
