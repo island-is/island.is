@@ -27,7 +27,7 @@ interface Then {
 
 type GivenWhenThen = () => Promise<Then>
 
-describe('Inditment Case Exists For Defendant Guard', () => {
+describe('Indictment Case Exists For Defendant Guard', () => {
   const mockRequest = jest.fn()
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
